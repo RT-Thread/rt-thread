@@ -1,9 +1,8 @@
 # for module compiling
 import os
 Import('RTT_ROOT')
-from building import *
 
-cwd = GetCurrentDir()
+cwd = str(Dir('#'))
 objs = []
 list = os.listdir(cwd)
 

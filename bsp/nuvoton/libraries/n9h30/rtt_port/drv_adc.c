@@ -21,6 +21,7 @@
 
 /* Private define ---------------------------------------------------------------*/
 #define DEF_ADC_TOUCH_SMPL_TICK  40
+#define TOUCH_MQ_LENGTH      64
 
 /* Private Typedef --------------------------------------------------------------*/
 struct nu_adc

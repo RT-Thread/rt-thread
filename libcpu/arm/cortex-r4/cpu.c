@@ -87,9 +87,11 @@ void rt_hw_cpu_dcache_disable()
 }
 
 #elif __GNUC__
+#ifdef RT_USING_CPU_FFS
 int __rt_ffs(int value)
 {
     return __builtin_ffs(value);
 }
+#endif
 #endif
 /*@}*/

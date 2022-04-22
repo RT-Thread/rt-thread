@@ -119,14 +119,8 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
     uart->handle.Instance          = uart->config->Instance;
     uart->handle.Init.BaudRate     = cfg->baud_rate;
-    uart->handle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
     uart->handle.Init.Mode         = UART_MODE_TX_RX;
     uart->handle.Init.OverSampling = UART_OVERSAMPLING_16;
-
-    if(uart->handle.Instance == USART3)
-    {
-        uart->handle.Init.HwFlowCtl    = UART_HWCONTROL_RTS_CTS;
-    }
 
     switch (cfg->data_bits)
     {
@@ -171,6 +165,19 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     default:
         uart->handle.Init.Parity     = UART_PARITY_NONE;
         break;
+    }
+
+    switch (cfg->flowcontrol)
+    {
+        case RT_SERIAL_FLOWCONTROL_NONE:
+            uart->handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+            break;
+        case RT_SERIAL_FLOWCONTROL_CTSRTS:
+            uart->handle.Init.HwFlowCtl = UART_HWCONTROL_RTS_CTS;
+            break;
+        default:
+            uart->handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+            break;
     }
 
 #ifdef RT_SERIAL_USING_DMA

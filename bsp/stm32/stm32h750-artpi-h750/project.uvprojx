@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>STM32H750xx, USE_HAL_DRIVER, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Core\Inc;board\port;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc;..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Include;..\libraries\STM32H7xx_HAL\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\touch;..\..\..\components\drivers\include;board;board\CubeMX_Config\Core\Inc;board\port;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc;..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Include;..\libraries\STM32H7xx_HAL\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -404,16 +404,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -442,9 +442,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>cpu_cache.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -456,9 +456,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpu_cache.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -466,23 +466,23 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>ringblk_buf.c</FileName>
+              <FileName>i2c_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>i2c_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>i2c-bit-ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -494,9 +494,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -508,9 +522,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -522,9 +543,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>serial_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\serial_v2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\touch\touch.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -532,9 +574,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>stm32h7xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FilePath>board\CubeMX_Config\Core\Src\stm32h7xx_hal_msp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -546,9 +588,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32h7xx_hal_msp.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\CubeMX_Config\Core\Src\stm32h7xx_hal_msp.c</FilePath>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_sdram.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -560,9 +609,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_usart.c</FileName>
+              <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drv_usart_v2.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -570,6 +619,13 @@
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -601,6 +657,20 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
@@ -608,16 +678,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -636,37 +699,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
+              <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\timer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -678,16 +727,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -698,6 +754,13 @@
               <FileName>stm32h7xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32h7xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -730,6 +793,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>stm32h7xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>stm32h7xx_hal_cryp_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp_ex.c</FilePath>
@@ -740,6 +810,20 @@
               <FileName>stm32h7xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32h7xx_ll_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_fmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32h7xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -761,6 +845,13 @@
               <FileName>stm32h7xx_hal_crc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32h7xx_hal_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sdram.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -831,6 +922,13 @@
               <FileName>stm32h7xx_hal_cec.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cec.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32h7xx_hal_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_qspi.c</FilePath>
             </File>
           </Files>
           <Files>

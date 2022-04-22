@@ -24,9 +24,9 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += [startup_path_prefix + '/HAL_Driver/Startup/gcc/startup_gcc.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/HAL_Driver/Startup/arm/startup_gcc.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/HAL_Driver/Startup/iar/startup_gcc.s']

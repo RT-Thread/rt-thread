@@ -9,7 +9,7 @@
  * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
  * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
  * 2012-12-29     Bernard      add rt_hw_exception_install declaration
- * 2017-10-17     Hichard      add some micros
+ * 2017-10-17     Hichard      add some macros
  * 2018-11-17     Jesven       add rt_hw_spinlock_t
  *                             add smp support
  */
@@ -26,6 +26,9 @@ extern "C" {
 /*
  * Some macros define
  */
+#ifndef HWREG64
+#define HWREG64(x)          (*((volatile rt_uint64_t *)(x)))
+#endif
 #ifndef HWREG32
 #define HWREG32(x)          (*((volatile rt_uint32_t *)(x)))
 #endif

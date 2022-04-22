@@ -14,7 +14,6 @@
  * 2021-07-30     Meco Man     move rtc_core.c to rtc.c
  */
 
-#include <sys/time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <rtthread.h>
@@ -22,6 +21,7 @@
 
 #ifdef RT_USING_RTC
 
+static rt_device_t _rtc_device;
 /*
  * This function initializes rtc_core
  */
@@ -145,16 +145,28 @@ rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
  */
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
-    time_t now;
-    struct tm tm_new;
-    rt_device_t device;
+    time_t now, old_timestamp = 0;
+    struct tm tm_new = {0};
     rt_err_t ret = -RT_ERROR;
 
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
     /* get current time */
-    now = time(RT_NULL);
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_GET_TIME, &old_timestamp);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     /* converts calendar time into local time. */
-    localtime_r(&now, &tm_new);
+    localtime_r(&old_timestamp, &tm_new);
 
     /* update date. */
     tm_new.tm_year = year - 1900;
@@ -164,15 +176,8 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
-    device = rt_device_find("rtc");
-    if (device == RT_NULL)
-    {
-        return -RT_ERROR;
-    }
-
     /* update to RTC device. */
-    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
-
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
     return ret;
 }
 
@@ -187,16 +192,28 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
  */
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 {
-    time_t now;
-    struct tm tm_new;
-    rt_device_t device;
+    time_t now, old_timestamp = 0;
+    struct tm tm_new = {0};
     rt_err_t ret = -RT_ERROR;
 
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
     /* get current time */
-    now = time(RT_NULL);
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_GET_TIME, &old_timestamp);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     /* converts calendar time into local time. */
-    localtime_r(&now, &tm_new);
+    localtime_r(&old_timestamp, &tm_new);
 
     /* update time. */
     tm_new.tm_hour = hour;
@@ -206,16 +223,53 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
-    device = rt_device_find("rtc");
-    if (device == RT_NULL)
+    /* update to RTC device. */
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+    return ret;
+}
+
+/**
+ * Set timestamp(UTC).
+ *
+ * @param time_t timestamp
+ *
+ * @return rt_err_t if set success, return RT_EOK.
+ */
+rt_err_t set_timestamp(time_t timestamp)
+{
+    if (_rtc_device == RT_NULL)
     {
-        return -RT_ERROR;
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
     }
 
     /* update to RTC device. */
-    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+    return rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_SET_TIME, &timestamp);
+}
 
-    return ret;
+/**
+ * Get timestamp(UTC).
+ *
+ * @param time_t* timestamp
+ *
+ * @return rt_err_t if set success, return RT_EOK.
+ */
+rt_err_t get_timestamp(time_t *timestamp)
+{
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
+    /* Get timestamp from RTC device. */
+    return rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_GET_TIME, timestamp);
 }
 
 #ifdef RT_USING_FINSH
@@ -225,57 +279,81 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
  */
 static void date(int argc, char **argv)
 {
+    time_t now = (time_t)0;
+
     if (argc == 1)
     {
-        time_t now;
+        struct timeval tv = { 0 };
+        struct timezone tz = { 0 };
+
+        gettimeofday(&tv, &tz);
+        now = tv.tv_sec;
         /* output current time */
-        now = time(RT_NULL);
-        rt_kprintf("%.*s", 25, ctime(&now));
+        rt_kprintf("local time: %.*s", 25, ctime(&now));
+        rt_kprintf("timestamps: %ld\n", (long)tv.tv_sec);
+        rt_kprintf("timezone: UTC%c%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60);
     }
     else if (argc >= 7)
     {
         /* set time and date */
-        rt_uint16_t year;
-        rt_uint8_t month, day, hour, min, sec;
+        struct tm tm_new = {0};
+        time_t old = (time_t)0;
+        rt_err_t err;
 
-        year = atoi(argv[1]);
-        month = atoi(argv[2]);
-        day = atoi(argv[3]);
-        hour = atoi(argv[4]);
-        min = atoi(argv[5]);
-        sec = atoi(argv[6]);
-        if (year > 2099 || year < 2000)
+        tm_new.tm_year = atoi(argv[1]) - 1900;
+        tm_new.tm_mon = atoi(argv[2]) - 1; /* .tm_min's range is [0-11] */
+        tm_new.tm_mday = atoi(argv[3]);
+        tm_new.tm_hour = atoi(argv[4]);
+        tm_new.tm_min = atoi(argv[5]);
+        tm_new.tm_sec = atoi(argv[6]);
+        if (tm_new.tm_year <= 0)
         {
-            rt_kprintf("year is out of range [2000-2099]\n");
+            rt_kprintf("year is out of range [1900-]\n");
             return;
         }
-        if (month == 0 || month > 12)
+        if (tm_new.tm_mon > 11) /* .tm_min's range is [0-11] */
         {
             rt_kprintf("month is out of range [1-12]\n");
             return;
         }
-        if (day == 0 || day > 31)
+        if (tm_new.tm_mday == 0 || tm_new.tm_mday > 31)
         {
             rt_kprintf("day is out of range [1-31]\n");
             return;
         }
-        if (hour > 23)
+        if (tm_new.tm_hour > 23)
         {
             rt_kprintf("hour is out of range [0-23]\n");
             return;
         }
-        if (min > 59)
+        if (tm_new.tm_min > 59)
         {
             rt_kprintf("minute is out of range [0-59]\n");
             return;
         }
-        if (sec > 59)
+        if (tm_new.tm_sec > 60)
         {
-            rt_kprintf("second is out of range [0-59]\n");
+            rt_kprintf("second is out of range [0-60]\n");
             return;
         }
-        set_time(hour, min, sec);
-        set_date(year, month, day);
+        /* save old timestamp */
+        err = get_timestamp(&old);
+        if (err != RT_EOK)
+        {
+            rt_kprintf("Get current timestamp failed. %d\n", err);
+            return;
+        }
+        /* converts the local time into the calendar time. */
+        now = mktime(&tm_new);
+        err = set_timestamp(now);
+        if (err != RT_EOK)
+        {
+            rt_kprintf("set date failed. %d\n", err);
+            return;
+        }
+        get_timestamp(&now); /* get new timestamp */
+        rt_kprintf("old: %.*s", 25, ctime(&old));
+        rt_kprintf("now: %.*s", 25, ctime(&now));
     }
     else
     {

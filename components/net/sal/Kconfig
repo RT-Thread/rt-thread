@@ -1,5 +1,5 @@
 menuconfig RT_USING_SAL
-    bool "Enable socket abstraction layer (SAL)"
+    bool "SAL: socket abstraction layer"
     select RT_USING_NETDEV
     select RT_USING_SYSTEM_WORKQUEUE
     default n
@@ -35,19 +35,16 @@ if RT_USING_SAL
     endif
 
     config SAL_USING_POSIX
-        bool "Enable BSD socket operated by file system API"
-        default n
-        select RT_USING_POSIX_FS
-        select RT_USING_POSIX_SELECT
+        bool
+        depends on DFS_USING_POSIX
+        default y
         help
+            Enable BSD socket operated by file system API
             Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
 
-    if !SAL_USING_POSIX
-
-        config SAL_SOCKETS_NUM
-            int "the maximum number of sockets"
-            default 16
-
-    endif
+    config SAL_SOCKETS_NUM
+        int "the maximum number of sockets"
+        depends on !SAL_USING_POSIX
+        default 16
 
 endif

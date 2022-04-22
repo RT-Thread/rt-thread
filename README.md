@@ -106,7 +106,7 @@ RT-Thread Studio IDE (a.k.a. RT-Studio) is a one-stop intergrated development en
 
 ## Env Tool
 
-[User Manual](https://www.rt-thread.io/document/site/programming-manual/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
+[User Manual](documentation/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 In the early stage, RT-Thread team also created an auxiliary tool called Env. It is an auxiliary tool with a TUI (Text-based user interface). Developers can use Env tool to configure and generate the GCC, Keil MDK, and IAR projects.
 
@@ -122,9 +122,9 @@ Based on [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master
 
 RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details.
 
-- [Getting Started of QEMU with Env(Windows)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu.md)
+- [Getting Started of QEMU with Env(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
 
-- [Getting Started of QEMU with Env(Ubuntu)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu_linux.md)
+- [Getting Started of QEMU with Env(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
 
 # License
 
@@ -146,5 +146,5 @@ RT-Thread is very grateful for the support from all community developers, and if
 
 # Contribution
 
-If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/contribution_guide/contribution_guide.md).
+If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
 

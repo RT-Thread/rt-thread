@@ -45,6 +45,13 @@ static volatile int __rt_errno;
 static rt_device_t _console_device = RT_NULL;
 #endif
 
+RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
+{
+    (void) us;
+    RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
+        "Please consider implementing rt_hw_us_delay() in another file."));
+}
+
 /**
  * This function gets the global errno for the current thread.
  *
@@ -117,7 +124,7 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
-#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
+#ifndef RT_KSERVICE_USING_STDLIB_MEMORY
 /**
  * This function will set the content of memory to specified value.
  *
@@ -203,9 +210,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
 
-#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 /**
  * This function will copy memory content from source address to destination address.
  *
@@ -289,9 +294,6 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
-
-#ifndef RT_KSERVICE_USING_STDLIB
 
 /**
  * This function will move memory content from source address to destination
@@ -354,7 +356,9 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
     return res;
 }
 RTM_EXPORT(rt_memcmp);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMORY*/
 
+#ifndef RT_KSERVICE_USING_STDLIB
 /**
  * This function will return the first occurrence of a string, without the
  * terminator '\0'.
@@ -629,18 +633,18 @@ RTM_EXPORT(rt_show_version);
  *
  * @return the duplicated string pointer.
  */
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
 rt_inline int divide(long long *n, int base)
 #else
 rt_inline int divide(long *n, int base)
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
 {
     int res;
 
     /* optimized for processor which does not support divide instructions. */
     if (base == 10)
     {
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
         res = (int)(((unsigned long long)*n) % 10U);
         *n = (long long)(((unsigned long long)*n) / 10U);
 #else
@@ -650,7 +654,7 @@ rt_inline int divide(long *n, int base)
     }
     else
     {
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
         res = (int)(((unsigned long long)*n) % 16U);
         *n = (long long)(((unsigned long long)*n) / 16U);
 #else
@@ -681,11 +685,11 @@ rt_inline int skip_atoi(const char **s)
 
 static char *print_number(char *buf,
                           char *end,
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
                           long long  num,
 #else
                           long  num,
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
                           int   base,
                           int   s,
 #ifdef RT_PRINTF_PRECISION
@@ -694,11 +698,11 @@ static char *print_number(char *buf,
                           int   type)
 {
     char c, sign;
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
     char tmp[32];
 #else
     char tmp[16];
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
     int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
@@ -855,11 +859,11 @@ static char *print_number(char *buf,
  */
 RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
     unsigned long long num;
 #else
     rt_uint32_t num;
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
     int i, len;
     char *str, *end, c;
     const char *s;
@@ -941,21 +945,21 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
 #endif /* RT_PRINTF_PRECISION */
         /* get the conversion qualifier */
         qualifier = 0;
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
         if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
 #else
         if (*fmt == 'h' || *fmt == 'l')
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
         {
             qualifier = *fmt;
             ++ fmt;
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
             if (qualifier == 'l' && *fmt == 'l')
             {
                 qualifier = 'L';
                 ++ fmt;
             }
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
         }
 
         /* the default base */
@@ -1073,12 +1077,12 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             continue;
         }
 
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KPRINTF_USING_LONGLONG
         if (qualifier == 'L') num = va_arg(args, long long);
         else if (qualifier == 'l')
 #else
         if (qualifier == 'l')
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KPRINTF_USING_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
             if (flags & SIGN) num = (rt_int32_t)num;
@@ -1383,8 +1387,8 @@ rt_inline void _heap_unlock(rt_base_t level)
 
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
 static rt_smem_t system_heap;
-rt_inline void _smem_info(rt_uint32_t *total,
-    rt_uint32_t *used, rt_uint32_t *max_used)
+rt_inline void _smem_info(rt_size_t *total,
+    rt_size_t *used, rt_size_t *max_used)
 {
     if (total)
         *total = system_heap->total;
@@ -1420,8 +1424,8 @@ void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
     rt_memheap_info(&system_heap, _total, _used, _max)
 #elif defined(RT_USING_SLAB_AS_HEAP)
 static rt_slab_t system_heap;
-rt_inline void _slab_info(rt_uint32_t *total,
-    rt_uint32_t *used, rt_uint32_t *max_used)
+rt_inline void _slab_info(rt_size_t *total,
+    rt_size_t *used, rt_size_t *max_used)
 {
     if (total)
         *total = system_heap->total;

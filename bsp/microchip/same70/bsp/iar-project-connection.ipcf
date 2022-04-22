@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iarProjectConnection name="src" oneShot="false">
+    <device>
+        <name>ATSAME70Q21B</name>
+    </device>
+
+    <includePath>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\examples</path>
+        <path>$PROJ_DIR$\hal\include</path>
+        <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\afec</path>
+        <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\gmac</path>
+        <path>$PROJ_DIR$\hpl\mcan</path>
+        <path>$PROJ_DIR$\hpl\pio</path>
+        <path>$PROJ_DIR$\hpl\pmc</path>
+        <path>$PROJ_DIR$\hpl\twihs</path>
+        <path>$PROJ_DIR$\hpl\usart</path>
+        <path>$PROJ_DIR$\hpl\xdmac</path>
+        <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\ethernet_phy</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\CMSIS\Core\Include</path>
+        <path>$PROJ_DIR$\same70b\include</path>
+    </includePath>
+
+    <asmIncludePath>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\examples</path>
+        <path>$PROJ_DIR$\hal\include</path>
+        <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\afec</path>
+        <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\gmac</path>
+        <path>$PROJ_DIR$\hpl\mcan</path>
+        <path>$PROJ_DIR$\hpl\pio</path>
+        <path>$PROJ_DIR$\hpl\pmc</path>
+        <path>$PROJ_DIR$\hpl\twihs</path>
+        <path>$PROJ_DIR$\hpl\usart</path>
+        <path>$PROJ_DIR$\hpl\xdmac</path>
+        <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\ethernet_phy</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\CMSIS\Core\Include</path>
+        <path>$PROJ_DIR$\same70b\include</path>
+    </asmIncludePath>
+
+    <defines>
+        <define>__SAME70Q21B__</define>
+        <define>F_CPU=300000000</define>
+    </defines>
+
+    <asmDefines>
+        <define>__SAME70Q21B__</define>
+    </asmDefines>
+
+    <linkerFile>
+		<override>True</override>
+		<path>$PROJ_DIR$\same70b\iar\config\linker\Microchip\atsame70q21b\sram.icf</path>
+    </linkerFile>
+
+    <files>
+
+            <path>atmel_start.c</path>
+            <path>atmel_start.h</path>
+            <path>atmel_start_pins.h</path>
+            <path>driver_init.c</path>
+            <path>driver_init.h</path>
+            <path>ethernet_phy_main.c</path>
+            <path>ethernet_phy_main.h</path>
+            <path>main.c</path>
+    
+
+        <group name="CMSIS/Core/Include">
+            <path>CMSIS/Core/Include/cmsis_armcc.h</path>
+            <path>CMSIS/Core/Include/cmsis_armclang.h</path>
+            <path>CMSIS/Core/Include/cmsis_compiler.h</path>
+            <path>CMSIS/Core/Include/cmsis_gcc.h</path>
+            <path>CMSIS/Core/Include/cmsis_iccarm.h</path>
+            <path>CMSIS/Core/Include/cmsis_version.h</path>
+            <path>CMSIS/Core/Include/core_armv8mbl.h</path>
+            <path>CMSIS/Core/Include/core_armv8mml.h</path>
+            <path>CMSIS/Core/Include/core_cm0.h</path>
+            <path>CMSIS/Core/Include/core_cm0plus.h</path>
+            <path>CMSIS/Core/Include/core_cm1.h</path>
+            <path>CMSIS/Core/Include/core_cm23.h</path>
+            <path>CMSIS/Core/Include/core_cm3.h</path>
+            <path>CMSIS/Core/Include/core_cm33.h</path>
+            <path>CMSIS/Core/Include/core_cm4.h</path>
+            <path>CMSIS/Core/Include/core_cm7.h</path>
+            <path>CMSIS/Core/Include/core_sc000.h</path>
+            <path>CMSIS/Core/Include/core_sc300.h</path>
+            <path>CMSIS/Core/Include/mpu_armv7.h</path>
+            <path>CMSIS/Core/Include/mpu_armv8.h</path>
+            <path>CMSIS/Core/Include/tz_context.h</path>
+        </group>
+
+        <group name="config">
+            <path>config/hpl_afec_config.h</path>
+            <path>config/hpl_gmac_config.h</path>
+            <path>config/hpl_mcan_config.h</path>
+            <path>config/hpl_pmc_config.h</path>
+            <path>config/hpl_twihs_config.h</path>
+            <path>config/hpl_usart_config.h</path>
+            <path>config/hpl_xdmac_config.h</path>
+            <path>config/ieee8023_mii_standard_config.h</path>
+            <path>config/peripheral_clk_config.h</path>
+        </group>
+
+        <group name="ethernet_phy">
+            <path>ethernet_phy/ethernet_phy.c</path>
+            <path>ethernet_phy/ethernet_phy.h</path>
+            <path>ethernet_phy/ieee8023_mii_standard_register.h</path>
+        </group>
+
+        <group name="examples">
+            <path>examples/driver_examples.c</path>
+            <path>examples/driver_examples.h</path>
+        </group>
+
+        <group name="hal/include">
+            <path>hal/include/hal_adc_sync.h</path>
+            <path>hal/include/hal_atomic.h</path>
+            <path>hal/include/hal_can_async.h</path>
+            <path>hal/include/hal_delay.h</path>
+            <path>hal/include/hal_gpio.h</path>
+            <path>hal/include/hal_i2c_m_sync.h</path>
+            <path>hal/include/hal_init.h</path>
+            <path>hal/include/hal_io.h</path>
+            <path>hal/include/hal_mac_async.h</path>
+            <path>hal/include/hal_sleep.h</path>
+            <path>hal/include/hal_usart_async.h</path>
+            <path>hal/include/hpl_adc_async.h</path>
+            <path>hal/include/hpl_adc_sync.h</path>
+            <path>hal/include/hpl_can.h</path>
+            <path>hal/include/hpl_can_async.h</path>
+            <path>hal/include/hpl_core.h</path>
+            <path>hal/include/hpl_delay.h</path>
+            <path>hal/include/hpl_dma.h</path>
+            <path>hal/include/hpl_ext_irq.h</path>
+            <path>hal/include/hpl_gpio.h</path>
+            <path>hal/include/hpl_i2c_m_async.h</path>
+            <path>hal/include/hpl_i2c_m_sync.h</path>
+            <path>hal/include/hpl_i2c_s_async.h</path>
+            <path>hal/include/hpl_i2c_s_sync.h</path>
+            <path>hal/include/hpl_init.h</path>
+            <path>hal/include/hpl_irq.h</path>
+            <path>hal/include/hpl_mac_async.h</path>
+            <path>hal/include/hpl_missing_features.h</path>
+            <path>hal/include/hpl_reset.h</path>
+            <path>hal/include/hpl_sleep.h</path>
+            <path>hal/include/hpl_usart.h</path>
+            <path>hal/include/hpl_usart_async.h</path>
+            <path>hal/include/hpl_usart_dma.h</path>
+            <path>hal/include/hpl_usart_sync.h</path>
+        </group>
+
+        <group name="hal/src">
+            <path>hal/src/hal_adc_sync.c</path>
+            <path>hal/src/hal_atomic.c</path>
+            <path>hal/src/hal_can_async.c</path>
+            <path>hal/src/hal_delay.c</path>
+            <path>hal/src/hal_gpio.c</path>
+            <path>hal/src/hal_i2c_m_sync.c</path>
+            <path>hal/src/hal_init.c</path>
+            <path>hal/src/hal_io.c</path>
+            <path>hal/src/hal_mac_async.c</path>
+            <path>hal/src/hal_sleep.c</path>
+            <path>hal/src/hal_usart_async.c</path>
+        </group>
+
+        <group name="hal/utils/include">
+            <path>hal/utils/include/compiler.h</path>
+            <path>hal/utils/include/err_codes.h</path>
+            <path>hal/utils/include/events.h</path>
+            <path>hal/utils/include/parts.h</path>
+            <path>hal/utils/include/utils.h</path>
+            <path>hal/utils/include/utils_assert.h</path>
+            <path>hal/utils/include/utils_event.h</path>
+            <path>hal/utils/include/utils_increment_macro.h</path>
+            <path>hal/utils/include/utils_list.h</path>
+            <path>hal/utils/include/utils_repeat_macro.h</path>
+            <path>hal/utils/include/utils_ringbuffer.h</path>
+        </group>
+
+        <group name="hal/utils/src">
+            <path>hal/utils/src/utils_assert.c</path>
+            <path>hal/utils/src/utils_event.c</path>
+            <path>hal/utils/src/utils_list.c</path>
+            <path>hal/utils/src/utils_ringbuffer.c</path>
+        </group>
+
+        <group name="hpl/afec">
+            <path>hpl/afec/hpl_afec.c</path>
+        </group>
+
+        <group name="hpl/core">
+            <path>hpl/core/hpl_core_m7_base.c</path>
+            <path>hpl/core/hpl_core_port.h</path>
+            <path>hpl/core/hpl_init.c</path>
+        </group>
+
+        <group name="hpl/gmac">
+            <path>hpl/gmac/hpl_gmac.c</path>
+            <path>hpl/gmac/hpl_gmac_base.h</path>
+        </group>
+
+        <group name="hpl/mcan">
+            <path>hpl/mcan/hpl_mcan.c</path>
+            <path>hpl/mcan/hpl_mcan.h</path>
+        </group>
+
+        <group name="hpl/pio">
+            <path>hpl/pio/hpl_gpio_base.h</path>
+        </group>
+
+        <group name="hpl/pmc">
+            <path>hpl/pmc/hpl_pmc.c</path>
+            <path>hpl/pmc/hpl_pmc.h</path>
+            <path>hpl/pmc/hpl_sleep.c</path>
+        </group>
+
+        <group name="hpl/twihs">
+            <path>hpl/twihs/hpl_twihs.c</path>
+        </group>
+
+        <group name="hpl/usart">
+            <path>hpl/usart/hpl_usart.c</path>
+            <path>hpl/usart/hpl_usart_base.h</path>
+        </group>
+
+        <group name="hpl/xdmac">
+            <path>hpl/xdmac/hpl_xdmac.c</path>
+        </group>
+
+        <group name="hri">
+            <path>hri/hri_acc_e70b.h</path>
+            <path>hri/hri_aes_e70b.h</path>
+            <path>hri/hri_afec_e70b.h</path>
+            <path>hri/hri_chipid_e70b.h</path>
+            <path>hri/hri_dacc_e70b.h</path>
+            <path>hri/hri_e70b.h</path>
+            <path>hri/hri_efc_e70b.h</path>
+            <path>hri/hri_gmac_e70b.h</path>
+            <path>hri/hri_gpbr_e70b.h</path>
+            <path>hri/hri_hsmci_e70b.h</path>
+            <path>hri/hri_i2sc_e70b.h</path>
+            <path>hri/hri_icm_e70b.h</path>
+            <path>hri/hri_isi_e70b.h</path>
+            <path>hri/hri_lockbit_e70b.h</path>
+            <path>hri/hri_matrix_e70b.h</path>
+            <path>hri/hri_mcan_e70b.h</path>
+            <path>hri/hri_pio_e70b.h</path>
+            <path>hri/hri_pmc_e70b.h</path>
+            <path>hri/hri_pwm_e70b.h</path>
+            <path>hri/hri_qspi_e70b.h</path>
+            <path>hri/hri_rstc_e70b.h</path>
+            <path>hri/hri_rswdt_e70b.h</path>
+            <path>hri/hri_rtc_e70b.h</path>
+            <path>hri/hri_rtt_e70b.h</path>
+            <path>hri/hri_sdramc_e70b.h</path>
+            <path>hri/hri_smc_e70b.h</path>
+            <path>hri/hri_spi_e70b.h</path>
+            <path>hri/hri_ssc_e70b.h</path>
+            <path>hri/hri_supc_e70b.h</path>
+            <path>hri/hri_tc_e70b.h</path>
+            <path>hri/hri_trng_e70b.h</path>
+            <path>hri/hri_twihs_e70b.h</path>
+            <path>hri/hri_uart_e70b.h</path>
+            <path>hri/hri_usart_e70b.h</path>
+            <path>hri/hri_usbhs_e70b.h</path>
+            <path>hri/hri_utmi_e70b.h</path>
+            <path>hri/hri_wdt_e70b.h</path>
+            <path>hri/hri_xdmac_e70b.h</path>
+        </group>
+
+        <group name="same70b/iar">
+            <path>same70b/iar/system_same70q21b.c</path>
+        </group>
+
+        <group name="same70b/iar/iar">
+            <path>same70b/iar/iar/startup_same70q21b.c</path>
+        </group>
+
+        <group name="same70b/include">
+            <path>same70b/include/component-version.h</path>
+            <path>same70b/include/sam.h</path>
+            <path>same70b/include/sam.h</path>
+            <path>same70b/include/same70j19b.h</path>
+            <path>same70b/include/same70j20b.h</path>
+            <path>same70b/include/same70j21b.h</path>
+            <path>same70b/include/same70n19b.h</path>
+            <path>same70b/include/same70n20b.h</path>
+            <path>same70b/include/same70n21b.h</path>
+            <path>same70b/include/same70q19b.h</path>
+            <path>same70b/include/same70q20b.h</path>
+            <path>same70b/include/same70q21b.h</path>
+            <path>same70b/include/system_same70.h</path>
+        </group>
+
+        <group name="same70b/include/component">
+            <path>same70b/include/component/acc.h</path>
+            <path>same70b/include/component/aes.h</path>
+            <path>same70b/include/component/afec.h</path>
+            <path>same70b/include/component/chipid.h</path>
+            <path>same70b/include/component/dacc.h</path>
+            <path>same70b/include/component/efc.h</path>
+            <path>same70b/include/component/gmac.h</path>
+            <path>same70b/include/component/gpbr.h</path>
+            <path>same70b/include/component/hsmci.h</path>
+            <path>same70b/include/component/i2sc.h</path>
+            <path>same70b/include/component/icm.h</path>
+            <path>same70b/include/component/isi.h</path>
+            <path>same70b/include/component/matrix.h</path>
+            <path>same70b/include/component/mcan.h</path>
+            <path>same70b/include/component/pio.h</path>
+            <path>same70b/include/component/pmc.h</path>
+            <path>same70b/include/component/pwm.h</path>
+            <path>same70b/include/component/qspi.h</path>
+            <path>same70b/include/component/rstc.h</path>
+            <path>same70b/include/component/rswdt.h</path>
+            <path>same70b/include/component/rtc.h</path>
+            <path>same70b/include/component/rtt.h</path>
+            <path>same70b/include/component/sdramc.h</path>
+            <path>same70b/include/component/smc.h</path>
+            <path>same70b/include/component/spi.h</path>
+            <path>same70b/include/component/ssc.h</path>
+            <path>same70b/include/component/supc.h</path>
+            <path>same70b/include/component/tc.h</path>
+            <path>same70b/include/component/trng.h</path>
+            <path>same70b/include/component/twihs.h</path>
+            <path>same70b/include/component/uart.h</path>
+            <path>same70b/include/component/usart.h</path>
+            <path>same70b/include/component/usbhs.h</path>
+            <path>same70b/include/component/utmi.h</path>
+            <path>same70b/include/component/wdt.h</path>
+            <path>same70b/include/component/xdmac.h</path>
+        </group>
+
+        <group name="same70b/include/component/deprecated">
+            <path>same70b/include/component/deprecated/tc.h</path>
+            <path>same70b/include/component/deprecated/template.h</path>
+            <path>same70b/include/component/deprecated/usart.h</path>
+            <path>same70b/include/component/deprecated/usbhs.h</path>
+        </group>
+
+        <group name="same70b/include/instance">
+            <path>same70b/include/instance/acc.h</path>
+            <path>same70b/include/instance/aes.h</path>
+            <path>same70b/include/instance/afec0.h</path>
+            <path>same70b/include/instance/afec1.h</path>
+            <path>same70b/include/instance/chipid.h</path>
+            <path>same70b/include/instance/dacc.h</path>
+            <path>same70b/include/instance/efc.h</path>
+            <path>same70b/include/instance/gmac.h</path>
+            <path>same70b/include/instance/gpbr.h</path>
+            <path>same70b/include/instance/hsmci.h</path>
+            <path>same70b/include/instance/i2sc0.h</path>
+            <path>same70b/include/instance/i2sc1.h</path>
+            <path>same70b/include/instance/icm.h</path>
+            <path>same70b/include/instance/isi.h</path>
+            <path>same70b/include/instance/matrix.h</path>
+            <path>same70b/include/instance/mcan0.h</path>
+            <path>same70b/include/instance/mcan1.h</path>
+            <path>same70b/include/instance/pioa.h</path>
+            <path>same70b/include/instance/piob.h</path>
+            <path>same70b/include/instance/pioc.h</path>
+            <path>same70b/include/instance/piod.h</path>
+            <path>same70b/include/instance/pioe.h</path>
+            <path>same70b/include/instance/pmc.h</path>
+            <path>same70b/include/instance/pwm0.h</path>
+            <path>same70b/include/instance/pwm1.h</path>
+            <path>same70b/include/instance/qspi.h</path>
+            <path>same70b/include/instance/rstc.h</path>
+            <path>same70b/include/instance/rswdt.h</path>
+            <path>same70b/include/instance/rtc.h</path>
+            <path>same70b/include/instance/rtt.h</path>
+            <path>same70b/include/instance/sdramc.h</path>
+            <path>same70b/include/instance/smc.h</path>
+            <path>same70b/include/instance/spi0.h</path>
+            <path>same70b/include/instance/spi1.h</path>
+            <path>same70b/include/instance/ssc.h</path>
+            <path>same70b/include/instance/supc.h</path>
+            <path>same70b/include/instance/tc0.h</path>
+            <path>same70b/include/instance/tc1.h</path>
+            <path>same70b/include/instance/tc2.h</path>
+            <path>same70b/include/instance/tc3.h</path>
+            <path>same70b/include/instance/trng.h</path>
+            <path>same70b/include/instance/twihs0.h</path>
+            <path>same70b/include/instance/twihs1.h</path>
+            <path>same70b/include/instance/twihs2.h</path>
+            <path>same70b/include/instance/uart0.h</path>
+            <path>same70b/include/instance/uart1.h</path>
+            <path>same70b/include/instance/uart2.h</path>
+            <path>same70b/include/instance/uart3.h</path>
+            <path>same70b/include/instance/uart4.h</path>
+            <path>same70b/include/instance/usart0.h</path>
+            <path>same70b/include/instance/usart1.h</path>
+            <path>same70b/include/instance/usart2.h</path>
+            <path>same70b/include/instance/usbhs.h</path>
+            <path>same70b/include/instance/utmi.h</path>
+            <path>same70b/include/instance/wdt.h</path>
+            <path>same70b/include/instance/xdmac.h</path>
+        </group>
+
+        <group name="same70b/include/pio">
+            <path>same70b/include/pio/same70j19b.h</path>
+            <path>same70b/include/pio/same70j20b.h</path>
+            <path>same70b/include/pio/same70j21b.h</path>
+            <path>same70b/include/pio/same70n19b.h</path>
+            <path>same70b/include/pio/same70n20b.h</path>
+            <path>same70b/include/pio/same70n21b.h</path>
+            <path>same70b/include/pio/same70q19b.h</path>
+            <path>same70b/include/pio/same70q20b.h</path>
+            <path>same70b/include/pio/same70q21b.h</path>
+        </group>
+    </files>
+</iarProjectConnection>

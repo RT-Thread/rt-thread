@@ -55,14 +55,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -75,16 +69,12 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
-/* Device virtual file system */
-
-
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V1
+#define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -94,7 +84,7 @@
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -106,21 +96,8 @@
 
 /* Socket is in the 'Network' category */
 
+
 /* Network */
-
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
@@ -149,6 +126,11 @@
 
 
 /* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
 
 
 /* multimedia packages */
@@ -190,6 +172,8 @@
 
 /* miscellaneous packages */
 
+/* project laboratory */
+
 /* samples: kernel and components samples */
 
 
@@ -201,6 +185,7 @@
 /* Hardware Drivers Config */
 
 #define SOC_STM32H750XB
+#define BOARD_STM32H750_ARTPI
 
 /* Board extended module */
 

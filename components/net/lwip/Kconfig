@@ -1,10 +1,17 @@
 menuconfig RT_USING_LWIP
-    bool "Enable light weight TCP/IP stack (lwIP)"
+    bool "LwIP: light weight TCP/IP stack"
     select RT_USING_DEVICE
     select RT_USING_DEVICE_IPC
     default n
 
 if RT_USING_LWIP
+    config RT_USING_LWIP_LOCAL_VERSION
+        bool "Use LwIP local version only"
+        default n
+        help
+            If don't select this option, both local version and upstream
+            version can be selected. If select this option, only local version
+            can be selected.
     choice
         prompt "lwIP version"
         default RT_USING_LWIP203
@@ -20,10 +27,17 @@ if RT_USING_LWIP
         config RT_USING_LWIP212
             bool "lwIP v2.1.2"
 
+        # online version
+        if !RT_USING_LWIP_LOCAL_VERSION
+            config RT_USING_LWIP_LATEST
+                bool "lwIP latest"
+                select PKG_USING_LWIP
+        endif
     endchoice
 
     config RT_USING_LWIP_VER_NUM
         hex
+        default 0x99999    if RT_USING_LWIP_LATEST
         default 0x20102    if RT_USING_LWIP212
         default 0x20003    if RT_USING_LWIP203
         default 0x10401    if RT_USING_LWIP141

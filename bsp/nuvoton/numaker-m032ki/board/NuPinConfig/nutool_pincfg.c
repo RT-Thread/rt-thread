@@ -45,6 +45,7 @@ Pin128:ADC0_CH6
 ********************/
 
 #include "M031Series.h"
+#include "rtconfig.h"
 
 void nutool_pincfg_init_ice(void)
 {
@@ -118,6 +119,13 @@ void nutool_pincfg_init_qspi0(void)
     /* pull high qspi quad mode pins. */
     GPIO_SetMode(PA, BIT4 | BIT5, GPIO_MODE_QUASI);
 
+}
+
+void nutool_pincfg_init_usci0(void)
+{
+    SYS->GPA_MFPH &= ~(SYS_GPA_MFPH_PA8MFP_Msk | SYS_GPA_MFPH_PA9MFP_Msk | SYS_GPA_MFPH_PA10MFP_Msk | SYS_GPA_MFPH_PA11MFP_Msk);
+
+    SYS->GPA_MFPH |= (/*SYS_GPA_MFPH_PA8MFP_USCI0_CTL1 |*/ SYS_GPA_MFPH_PA9MFP_USCI0_DAT1 | SYS_GPA_MFPH_PA10MFP_USCI0_DAT0 | SYS_GPA_MFPH_PA11MFP_USCI0_CLK);
 }
 
 void nutool_pincfg_deinit_qspi0(void)
@@ -208,10 +216,15 @@ void nutool_pincfg_init(void)
     nutool_pincfg_init_x32();
     nutool_pincfg_init_xt1();
     nutool_pincfg_init_qspi0();
+#if defined(BOARD_USING_LCD_ILI9341)
+    nutool_pincfg_init_usci0();
+#endif
     nutool_pincfg_init_i2c0();
     nutool_pincfg_init_adc0();
-    nutool_pincfg_init_pwm0();
-    nutool_pincfg_init_uart1();
+#if !defined(BOARD_USING_LCD_ILI9341)
+    nutool_pincfg_deinit_pwm0();
+    nutool_pincfg_deinit_uart1();
+#endif
 
     return;
 }
@@ -223,6 +236,7 @@ void nutool_pincfg_deinit(void)
     nutool_pincfg_deinit_x32();
     nutool_pincfg_deinit_xt1();
     nutool_pincfg_deinit_qspi0();
+    nutool_pincfg_init_usci0();
     nutool_pincfg_deinit_i2c0();
     nutool_pincfg_deinit_adc0();
     nutool_pincfg_deinit_pwm0();

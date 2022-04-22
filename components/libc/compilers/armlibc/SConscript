@@ -6,7 +6,7 @@ group = []
 
 CPPDEFINES = ['RT_USING_ARM_LIBC']
 
-if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     group = DefineGroup('Compiler', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 Return('group')

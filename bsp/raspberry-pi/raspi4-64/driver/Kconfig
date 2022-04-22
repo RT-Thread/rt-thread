@@ -31,6 +31,10 @@ menu "Hardware Drivers Config"
             bool
             default y
 
+            config BSP_USING_GICV2
+                bool
+                default y
+
         config BSP_USING_PIN
             bool "Using PIN"
             select RT_USING_PIN

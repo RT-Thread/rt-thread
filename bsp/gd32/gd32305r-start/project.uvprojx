@@ -336,7 +336,7 @@
               <MiscControls />
               <Define>USE_STDPERIPH_DRIVER, GD32F30X_CL, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\gd32_drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\GD32F30x_Firmware_Library\CMSIS\GD\GD32F30x\Include;..\libraries\GD32F30x_Firmware_Library\CMSIS;..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\gd32_drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\GD32F30x_Firmware_Library\CMSIS\GD\GD32F30x\Include;..\libraries\GD32F30x_Firmware_Library\CMSIS;..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -391,16 +391,16 @@
           <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -460,9 +460,9 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -481,16 +481,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -502,9 +502,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -581,72 +581,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -658,9 +595,72 @@
           </Files>
           <Files>
             <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>

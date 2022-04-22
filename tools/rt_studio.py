@@ -4,6 +4,7 @@ from string import Template
 
 import rtconfig
 import shutil
+import time
 
 # version
 MODULE_VER_NUM = 1
@@ -200,27 +201,25 @@ project_temp = """<?xml version="1.0" encoding="UTF-8"?>
 </projectDescription>"""
 
 projcfg_ini_temp = """#RT-Thread Studio Project Configuration
-#Sat Jan 16 15:18:32 CST 2021
-project_type=rtt
-chip_name=${chip_name}
-cpu_name=None
-target_freq=
-clock_source=
-dvendor_name=
-rx_pin_name=
-rtt_path=
-source_freq=
-csp_path=
-sub_series_name=
-selected_rtt_version=latest
+# $time
 cfg_version=v3.0
-tool_chain=gcc
-uart_name=
-tx_pin_name=
-rtt_nano_path=
-output_project_path=
-hardware_adapter=J-Link
-project_name=${project_name}"""
+
+board_name=
+bsp_version=
+bsp_path=
+chip_name=
+project_base_rtt_bsp=true
+is_use_scons_build=true
+hardware_adapter=
+selected_rtt_version=latest
+board_base_nano_proj=false
+is_base_example_project=false
+example_name=
+project_type=rt-thread
+os_branch=master
+os_version=latest
+project_name=$project_name
+output_project_path=$output_project_path"""
 
 eclipse_core_runtime_temp = """content-types/enabled=true
 content-types/org.eclipse.cdt.core.asmSource/file-extensions=s
@@ -338,9 +337,9 @@ def gen_project_file(output_file_path):
 def gen_projcfg_ini_file(chip_name, project_name, output_file_path):
     try:
         projcfg_file_tmp = Template(projcfg_ini_temp)
-        w_str = projcfg_file_tmp.substitute(project_name=project_name,
-                                            chip_name=(chip_name))
-
+        w_str = projcfg_file_tmp.substitute(time=time.strftime("%a %b %d %H:%M:%S %Y", time.localtime()),
+                                            project_name=project_name,
+                                            output_project_path=os.path.abspath(""))
         dir_name = os.path.dirname(output_file_path)
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)

@@ -348,7 +348,7 @@
               <MiscControls />
               <Define>USE_SPIFI, CORE_M4, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\drivers;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\drivers;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,16 +390,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\applications\application.c</FilePath>
+              <FilePath>..\applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\applications\startup.c</FilePath>
+              <FilePath>..\applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -424,13 +424,6 @@
           <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
@@ -438,9 +431,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -448,6 +441,13 @@
               <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -500,9 +500,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -521,23 +528,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -552,6 +552,13 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
+              <FileName>drv_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\drv_led.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\drivers\drv_uart.c</FilePath>
@@ -562,13 +569,6 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\drivers\drv_led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -593,23 +593,16 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>memheap.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\memheap.c</FilePath>
+              <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -621,9 +614,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
+              <FilePath>..\..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -642,23 +635,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -666,6 +645,13 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -684,9 +670,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>memheap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
+              <FilePath>..\..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -3,10 +3,12 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m23'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -25,15 +27,16 @@ if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = ''
-# BUILD = 'debug'
-
+#BUILD = 'debug'
 
 if PLATFORM == 'gcc':
-    # tool-chains
+    # toolchains
+
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
+    CXX = PREFIX + 'g++'
     LINK = PREFIX + 'gcc'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
@@ -53,6 +56,8 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS 
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 

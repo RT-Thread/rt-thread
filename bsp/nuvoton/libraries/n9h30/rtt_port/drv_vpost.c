@@ -342,6 +342,7 @@ int rt_hw_vpost_init(void)
         else
         {
             uint32_t u32FBSize = psVpost->info.pitch * psVpostLcmInst->u32DevHeight;
+            psVpost->info.smem_len = u32FBSize * DEF_VPOST_BUFFER_NUMBER;
             rt_memset(psVpost->info.framebuffer, 0, u32FBSize);
         }
 

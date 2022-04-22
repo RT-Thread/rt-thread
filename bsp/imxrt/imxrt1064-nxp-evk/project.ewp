@@ -358,29 +358,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\board\MCUX_Config</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
+          <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\examples\utest\testcases\kernel</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\xip</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\board\MCUX_Config</state>
-          <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\libraries\peripherals</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1082,31 +1080,31 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
   </group>
   <group>
@@ -1136,25 +1134,25 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\cputime\cputime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
@@ -1196,43 +1194,43 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
   </group>
   <group>
@@ -1263,15 +1261,12 @@
     <name>POSIX</name>
   </group>
   <group>
-    <name>utestcases</name>
-  </group>
-  <group>
     <name>xip</name>
     <file>
-      <name>$PROJ_DIR$\xip\evkmimxrt1064_flexspi_nor_config.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+      <name>$PROJ_DIR$\xip\evkmimxrt1064_flexspi_nor_config.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\xip\evkmimxrt1064_sdram_ini_dcd.c</name>

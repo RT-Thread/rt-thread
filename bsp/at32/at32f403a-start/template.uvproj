@@ -10,17 +10,16 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>AT32F403AVGT7</Device>
+          <Device>-AT32F403AVGT7</Device>
           <Vendor>ArteryTek</Vendor>
           <Cpu>IRAM(0x20000000-0x20037FFF) IROM(0x08000000-0x080FFFFF) CLOCK(8000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"Startup\ArteryTek\AT32F4xx\startup_at32f403avgt7.s" ("AT32F403A Startup Code")</StartupFile>
+          <StartupFile>"Startup\ArteryTek\AT32F403A_407\startup_at32f403a_f407.s" ("AT32F403A_407 Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0AT32F403A_1024 -FS08000000 -FL0100000)</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>at32f4xx.h</RegisterFile>
+          <RegisterFile>at32f403a_407.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -30,14 +29,14 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>SFD\ArteryTek\AT32F403A\AT32F403Axx.SFR</SFDFile>
+          <SFDFile>SFD\ArteryTek\AT32F403A\AT32F403Axx_v2.SFR</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>ArteryTek\AT32F4xx\</RegisterFilePath>
-          <DBRegisterFilePath>ArteryTek\AT32F4xx\</DBRegisterFilePath>
+          <RegisterFilePath>ArteryTek\AT32F403A_407\</RegisterFilePath>
+          <DBRegisterFilePath>ArteryTek\AT32F403A_407\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -73,8 +72,6 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
-            <nStopB1X>0</nStopB1X>
-            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
@@ -83,8 +80,6 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
-            <nStopA1X>0</nStopA1X>
-            <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
           <SVCSIdString></SVCSIdString>
@@ -146,9 +141,10 @@
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>0</RestoreTracepoints>
             <RestoreSysVw>1</RestoreSysVw>
+            <UsePdscDebugDescription>0</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>3</TargetSelection>
+          <TargetSelection>12</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -175,8 +171,8 @@
             <DriverSelection>4099</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\CMSIS_AGDI.dll</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -222,15 +218,12 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
-            <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
-            <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
@@ -364,15 +357,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
-            <vShortEn>1</vShortEn>
-            <vShortWch>1</vShortWch>
-            <v6Lto>0</v6Lto>
-            <v6WtE>0</v6WtE>
-            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -390,7 +375,6 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>1</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>

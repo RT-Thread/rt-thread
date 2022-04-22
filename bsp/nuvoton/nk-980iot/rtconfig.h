@@ -58,14 +58,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -77,9 +71,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
@@ -123,12 +114,15 @@
 #define RT_USING_PIN
 #define RT_USING_ADC
 #define RT_USING_PWM
-#define RT_USING_MTD_NAND
-#define RT_MTD_NAND_DEBUG
 #define RT_USING_RTC
 #define RT_USING_ALARM
 #define RT_USING_SPI
 #define RT_USING_QSPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_USING_QSPI
+#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
 #define RT_USING_AUDIO
 #define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
@@ -173,24 +167,26 @@
 #define RT_VCOM_TX_TIMEOUT 1000
 #define RT_USB_MSTORAGE_DISK_NAME "ramdisk1"
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* POSIX (Portable Operating System Interface) layer */
 
 #define RT_USING_POSIX_FS
+#define RT_USING_POSIX_DEVIO
+#define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_SOCKET
 
 /* Interprocess Communication (IPC) */
 
 
 /* Socket is in the 'Network' category */
 
-/* Network */
 
-/* Socket abstraction layer */
+/* Network */
 
 #define RT_USING_SAL
 
@@ -198,9 +194,6 @@
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
-
-/* Network interface device */
-
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
 #define NETDEV_USING_PING
@@ -208,11 +201,9 @@
 #define NETDEV_USING_AUTO_DEFAULT
 #define NETDEV_IPV4 1
 #define NETDEV_IPV6 0
-
-/* light weight TCP/IP stack */
-
 #define RT_USING_LWIP
 #define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
@@ -256,12 +247,6 @@
 #define RT_LWIP_STATS
 #define RT_LWIP_USING_PING
 
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
-
-
 /* Utilities */
 
 #define RT_USING_UTEST
@@ -304,6 +289,11 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
 
 /* multimedia packages */
 
@@ -312,18 +302,14 @@
 
 /* u8g2: a monochrome graphic library */
 
-#define PKG_USING_WAVPLAYER
-#define PKG_WP_USING_PLAY
-#define PKG_WP_PLAY_DEVICE "sound0"
-#define PKG_WP_USING_RECORD
-#define PKG_WP_RECORD_DEVICE "sound0"
-#define PKG_USING_WAVPLAYER_LATEST_VERSION
 
 /* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
 
+#define PKG_USING_MEM_SANDBOX
+#define PKG_USING_MEM_SANDBOX_LATEST_VERSION
 
 /* system packages */
 
@@ -332,6 +318,7 @@
 
 /* POSIX extension functions */
 
+#define PKG_USING_POSIX_STRINGS
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
@@ -341,11 +328,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_DFS_UFFS
-#define RT_USING_DFS_UFFS
-#define RT_UFFS_ECC_MODE_3
-#define RT_UFFS_ECC_MODE 3
-#define PKG_USING_DFS_UFFS_LATEST_VERSION
 #define PKG_USING_RAMDISK
 #define PKG_USING_RAMDISK_LATEST_VERSION
 
@@ -357,6 +339,8 @@
 
 /* miscellaneous packages */
 
+/* project laboratory */
+
 /* samples: kernel and components samples */
 
 
@@ -364,6 +348,23 @@
 
 #define PKG_USING_OPTPARSE
 #define PKG_USING_OPTPARSE_LATEST_VERSION
+#define PKG_USING_VI
+#define VI_SANDBOX_SIZE_KB 20
+#define VI_MAX_LEN 4096
+#define VI_ENABLE_COLON
+#define VI_ENABLE_COLON_EXPAND
+#define VI_ENABLE_YANKMARK
+#define VI_ENABLE_SEARCH
+#define VI_ENABLE_DOT_CMD
+#define VI_ENABLE_READONLY
+#define VI_ENABLE_SETOPTS
+#define VI_ENABLE_SET
+#define VI_ENABLE_VI_ASK_TERMINAL
+#define VI_ENABLE_UNDO
+#define VI_ENABLE_UNDO_QUEUE
+#define VI_UNDO_QUEUE_MAX 256
+#define VI_ENABLE_VERBOSE_STATUS
+#define PKG_USING_VI_LATEST_VERSION
 
 /* Hardware Drivers Config */
 
@@ -415,9 +416,7 @@
 #define BSP_USING_I2S
 #define NU_I2S_DMA_FIFO_SIZE 4096
 #define BSP_USING_QSPI
-#define BSP_USING_QSPI_PDMA
 #define BSP_USING_QSPI0
-#define BSP_USING_QSPI0_PDMA
 #define BSP_USING_CRYPTO
 #define BSP_USING_WDT
 #define BSP_USING_USBD
@@ -429,7 +428,7 @@
 #define BOARD_USING_IP101GR
 #define BOARD_USING_NAU8822
 #define BOARD_USING_STORAGE_SDCARD
-#define BOARD_USING_STORAGE_SPINAND
+#define BOARD_USING_STORAGE_SPIFLASH
 #define BOARD_USING_USB0_DEVICE_HOST
 #define BOARD_USING_USB1_HOST
 
@@ -441,8 +440,5 @@
 #define NU_PKG_USING_UTILS
 #define NU_PKG_USING_DEMO
 #define NU_PKG_USING_NAU8822
-#define NU_PKG_USING_SPINAND
-#define BOARD_USE_UTEST
-#define UTEST_CMD_PREFIX "bsp.nuvoton.nk980-iot.test.utest."
 
 #endif

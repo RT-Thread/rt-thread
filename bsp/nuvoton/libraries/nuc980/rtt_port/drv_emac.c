@@ -20,6 +20,7 @@
 #include <netif/etharp.h>
 #include <lwip/icmp.h>
 #include <lwip/pbuf.h>
+#include <lwip/sys.h>
 #include "lwipopts.h"
 
 #include "drv_sys.h"
