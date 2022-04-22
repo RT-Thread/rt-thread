@@ -6,8 +6,7 @@ cwd   = GetCurrentDir()
 CPPPATH = [cwd]
 group = []
 
-if rtconfig.PLATFORM == 'armcc' or\
-   rtconfig.PLATFORM == 'armclang' or\
+if rtconfig.PLATFORM in ['armcc', 'armclang'] or\
    rtconfig.PLATFORM == 'iar' or\
    rtconfig.CROSS_TOOL == 'msvc':
     group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
