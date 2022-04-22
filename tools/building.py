@@ -30,6 +30,7 @@ import string
 import utils
 import operator
 import rtconfig
+import platform
 
 from SCons.Script import *
 from utils import _make_path_relative
@@ -297,11 +298,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         from WCS import ThreadStackStaticAnalysis
         ThreadStackStaticAnalysis(Env)
         exit(0)
-    
-    if GetOption('menuconfig'):
-        from menuconfig import menuconfig
-        menuconfig(Rtt_Root)
-        exit(0)
+    if platform.system() != 'Windows':
+        if GetOption('menuconfig'):
+            from menuconfig import menuconfig
+            menuconfig(Rtt_Root)
+            exit(0)
 
     if GetOption('pyconfig_silent'):    
         from menuconfig import guiconfig_silent
