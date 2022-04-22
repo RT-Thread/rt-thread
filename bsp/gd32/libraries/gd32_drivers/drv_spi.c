@@ -401,7 +401,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     gpio_init(cs_gpiox, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, cs_gpio_pin);
     gpio_bit_set(cs_gpiox, cs_gpio_pin);
 #endif
-	
+
     /* attach the device to spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
