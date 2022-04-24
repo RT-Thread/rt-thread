@@ -43,30 +43,6 @@ extern "C" {
 #define O_NONBLOCK		0x0004	/* non blocking I/O, from BSD apple https://opensource.apple.com/source/xnu/xnu-1228.0.2/bsd/sys/fcntl.h */
 #define O_DIRECTORY		0x200000 /* from Newlib */
 
-/*
-
-#define O_NOCTTY       0400
-
-#define O_DSYNC      010000
-#define O_SYNC     04010000
-#define O_RSYNC    04010000
-
-#define O_DIRECTORY 0200000
-#define O_NOFOLLOW  0400000
-#define O_CLOEXEC  02000000
-
-#define O_ASYNC      020000
-#define O_DIRECT     040000
-#define O_LARGEFILE 0100000
-#define O_NOATIME  01000000
-#define O_PATH    010000000
-#define O_TMPFILE 020200000
-#define O_NDELAY O_NONBLOCK
-
-#define O_SEARCH  O_PATH
-#define O_EXEC    O_PATH
-*/
-
 #define F_DUPFD  0
 #define F_GETFD  1
 #define F_SETFD  2
