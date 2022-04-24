@@ -31,8 +31,8 @@
 #define RT_USING_HEAP
 // <o>the stack size of main thread<1-4086>
 //  <i>Default: 512
-#define RT_MAIN_THREAD_STACK_SIZE     256
-
+#define RT_MAIN_THREAD_STACK_SIZE     2048
+#define RT_MAIN_THREAD_PRIORITY 10
 // </h>
 
 // <h>Debug Configuration

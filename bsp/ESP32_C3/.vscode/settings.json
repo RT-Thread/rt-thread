@@ -19,7 +19,8 @@
     "thread": "c",
     "rthw.h": "c",
     "typeinfo": "c",
-    "serial.h": "c"
+    "serial.h": "c",
+    "timer.h": "c"
   },
   "RTT_Studio.Build.Parallel_Jobs": "4"
 }

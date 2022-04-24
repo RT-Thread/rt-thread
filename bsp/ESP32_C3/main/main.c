@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2021-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-04-24     supperthomas first version
+ */
 #include <stdio.h>
 #include "driver/gpio.h"
-#define BLINK_GPIO 12
-#define LOOP_COUNT 100000000
-#include "rtthread.h"
+
+
 #include "esp_private/panic_internal.h"
 #include "hal/uart_hal.h"
 #include "driver/timer.h"
@@ -11,40 +19,53 @@
 #include "hal/systimer_ll.h"
 #include "esp_intr_alloc.h"
 
-#include <rthw.h>
-uint32_t scount = 0;
+#include "rtthread.h"
+#include "rthw.h"
 
-#define rt_kprintf printf
-static uart_hal_context_t s_panic_uart = { .dev = CONFIG_ESP_CONSOLE_UART_NUM == 0 ? &UART0 :&UART1 };
 
-void t_panic_print_char(const char c)
+void main_thread_entry(void *parameter)
 {
-    uint32_t sz = 0;
-    while (!uart_hal_get_txfifo_len(&s_panic_uart));
-    uart_hal_write_txfifo(&s_panic_uart, (uint8_t *) &c, 1, &sz);
+#define BLINK_GPIO 12
+    gpio_reset_pin(BLINK_GPIO);
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+    while(1) {
+        gpio_set_level(BLINK_GPIO, 1);
+        rt_thread_mdelay(1000);
+        gpio_set_level(BLINK_GPIO, 0);
+        rt_thread_mdelay(1000);
+    }
 }
-static systimer_hal_context_t systimer_hal;
-IRAM_ATTR void t_SysTickIsrHandler(void *arg)
+void rt_application_init(void)
 {
-           // printf("t_SysTickIsrHandler=====\n");
-systimer_ll_clear_alarm_int(systimer_hal.dev, 1);
+    rt_thread_t tid;
+
+    tid = rt_thread_create("main", main_thread_entry, RT_NULL,
+                           RT_MAIN_THREAD_STACK_SIZE, RT_MAIN_THREAD_PRIORITY, 20);
+    RT_ASSERT(tid != RT_NULL);
+
+    rt_thread_startup(tid);
+}
+
+//component
+static uint32_t uwTick = 0;
+static systimer_hal_context_t systimer_hal;
+IRAM_ATTR void rt_SysTickIsrHandler(void *arg)
+{
+    systimer_ll_clear_alarm_int(systimer_hal.dev, 1);
     rt_interrupt_enter();
 
     rt_tick_increase();
-    scount++;
-  //   printf("t_SysTickIsrHandler=====\n");
+    uwTick++;
     /* leave interrupt */
     rt_interrupt_leave();
     systimer_ll_is_alarm_int_fired(systimer_hal.dev, 1);
 }
-
-void main_thread_entry(void)
+void rt_hw_systick_init(void)
 {
-        uint32_t count = 0;
-        uint8_t system_timer_counter=1;
+    uint8_t system_timer_counter=1;
 
     //rt_hw_interrupt_enable(0);
-    esp_intr_alloc(ETS_SYSTIMER_TARGET1_EDGE_INTR_SOURCE, ESP_INTR_FLAG_IRAM | ESP_INTR_FLAG_LEVEL1, t_SysTickIsrHandler, &systimer_hal, NULL);
+    esp_intr_alloc(ETS_SYSTIMER_TARGET1_EDGE_INTR_SOURCE, ESP_INTR_FLAG_IRAM | ESP_INTR_FLAG_LEVEL1, rt_SysTickIsrHandler, &systimer_hal, NULL);
     systimer_hal_init(&systimer_hal);
     systimer_ll_set_counter_value(systimer_hal.dev, system_timer_counter, 0);
     systimer_ll_apply_counter_value(systimer_hal.dev, system_timer_counter);
@@ -56,52 +77,20 @@ void main_thread_entry(void)
     systimer_hal_enable_alarm_int(&systimer_hal, alarm_id);
 
     systimer_hal_enable_counter(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK);
-
-    gpio_reset_pin(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-    while(1) {
-        /* Blink off (output low) */
-        gpio_set_level(BLINK_GPIO, 1);
-        rt_thread_mdelay(1000);
-        printf("Hello world!cout %x\n",scount);
-        gpio_set_level(BLINK_GPIO, 0);
-        rt_thread_mdelay(1000);
-
-    }
-}
-static struct rt_thread _main_thread;
-static rt_uint8_t _main_thread_stack[2048];
-void rt_application_init(void)
-{
-    rt_thread_t tid;
-
-    rt_thread_init(&_main_thread,
-                "main",
-                main_thread_entry,
-                RT_NULL,
-                &_main_thread_stack[0],
-                sizeof(_main_thread_stack),
-                2,
-                10);
-
-    rt_thread_startup(&_main_thread);
-}
-
-int rt_hw_uart_init(void)
-{
-    return 1;
 }
 void rt_hw_board_init(void)
 {
+    rt_hw_systick_init();
+
 extern int __heap_start__;
 extern int __heap_end__;
     printf("%s:%d__heap_start__:%p,__heap_end__:%p\n",__func__,__LINE__,&__heap_start__,&__heap_end__);
     rt_system_heap_init((void *)&__heap_start__, (void *)&__heap_end__);
-
+    
 }
 void rtthread_startup(void)
 {
+    rt_hw_interrupt_disable();
     /* init board */
     rt_hw_board_init();
     /* show RT-Thread version */
