@@ -58,7 +58,7 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
         if(resolution != 0)
         {
             *((rt_uint8_t*)args) = resolution;
-            LOG_D("ADC resolution:%d", resolution);
+            LOG_D("resolution: %d bits", resolution);
             result = RT_EOK;
         }
     }

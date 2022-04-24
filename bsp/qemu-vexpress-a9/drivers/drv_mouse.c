@@ -114,7 +114,12 @@ rt_inline int kmi_read(struct mouse_pl050_pdata_t * pdat, rt_uint8_t * value)
     return RT_FALSE;
 }
 
+#ifdef PKG_USING_GUIENGINE
 static rt_uint32_t emouse_id;
+#endif
+#ifdef PKG_USING_LVGL
+extern void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state);
+#endif
 
 void push_event_touch_move(int x, int y)
 {
