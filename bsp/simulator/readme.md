@@ -54,7 +54,7 @@ RTGUI的最新源码目前托管在github上：https://github.com/RT-Thread/RTGU
  nand.bin-模拟nand flash，挂载uffs，参数page=2048+64bytes，block=64pages，16M
  nor.bin--模拟nor flash，挂载jffs2，型号为sst25vf，2M
 第一次启动时，会看到fatfs挂在失败，因为文件系统没有格式化，需要键入以下命令：
-mkfs sd0
+`mkfs sd0`
 重启运行程序，可以正确挂载、使用FATFS文件系统。
 
 2) 测试RTGUI
