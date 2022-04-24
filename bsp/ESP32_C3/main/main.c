@@ -28,7 +28,8 @@ void main_thread_entry(void *parameter)
 #define BLINK_GPIO 12
     gpio_reset_pin(BLINK_GPIO);
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-    while(1) {
+    while (1)
+    {
         gpio_set_level(BLINK_GPIO, 1);
         rt_thread_mdelay(1000);
         gpio_set_level(BLINK_GPIO, 0);
@@ -82,11 +83,11 @@ void rt_hw_board_init(void)
 {
     rt_hw_systick_init();
 
-extern int __heap_start__;
-extern int __heap_end__;
+    extern int __heap_start__;
+    extern int __heap_end__;
     printf("%s:%d__heap_start__:%p,__heap_end__:%p\n",__func__,__LINE__,&__heap_start__,&__heap_end__);
     rt_system_heap_init((void *)&__heap_start__, (void *)&__heap_end__);
-    
+
 }
 void rtthread_startup(void)
 {
@@ -114,15 +115,15 @@ void rtthread_startup(void)
     /* start scheduler */
     rt_system_scheduler_start();
     /* init scheduler system */
-    
+
     /* never reach here */
     return ;
 }
 
 void app_main(void)
 {
-    /* startup RT-Thread RTOS */        
+    /* startup RT-Thread RTOS */
     rtthread_startup();                                                                                                                                                                                                                                 ;
     return;
- 
+
 }
