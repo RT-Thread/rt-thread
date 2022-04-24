@@ -390,24 +390,6 @@ struct usb_os_header_comp_id_descriptor
 };
 typedef struct usb_os_header_comp_id_descriptor * usb_os_header_desc_t;
 
-struct usb_os_function_comp_id_descriptor
-{
-    rt_list_t list;
-    rt_uint8_t bFirstInterfaceNumber;
-    rt_uint8_t reserved1;
-    rt_uint8_t compatibleID[8];
-    rt_uint8_t subCompatibleID[8];
-    rt_uint8_t reserved2[6];
-};
-typedef struct usb_os_function_comp_id_descriptor * usb_os_func_comp_id_desc_t;
-
-struct usb_os_comp_id_descriptor
-{
-    struct usb_os_header_comp_id_descriptor head_desc;
-    rt_list_t func_desc;
-};
-typedef struct usb_os_comp_id_descriptor * usb_os_comp_id_desc_t;
-
 struct usb_os_property_header
 {
     rt_uint32_t dwLength;
@@ -556,6 +538,24 @@ struct ustorage_csw
 typedef struct ustorage_csw* ustorage_csw_t;
 
 #pragma pack()
+
+struct usb_os_comp_id_descriptor
+{
+    struct usb_os_header_comp_id_descriptor head_desc;
+    rt_list_t func_desc;
+};
+typedef struct usb_os_comp_id_descriptor * usb_os_comp_id_desc_t;
+
+struct usb_os_function_comp_id_descriptor
+{
+    rt_list_t list;
+    rt_uint8_t bFirstInterfaceNumber;
+    rt_uint8_t reserved1;
+    rt_uint8_t compatibleID[8];
+    rt_uint8_t subCompatibleID[8];
+    rt_uint8_t reserved2[6];
+};
+typedef struct usb_os_function_comp_id_descriptor * usb_os_func_comp_id_desc_t;
 
 /*
  * USB device event loop thread configurations
