@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "driver/gpio.h"
-#define BLINK_GPIO 8
+#define BLINK_GPIO 12
 #define LOOP_COUNT 100000000
 #include "rtthread.h"
 #include "esp_private/panic_internal.h"

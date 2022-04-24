@@ -4,7 +4,7 @@
   "idf.openOcdConfigs": [
     "board/esp32c3-builtin.cfg"
   ],
-  "idf.portWin": "COM5",
+  "idf.portWin": "COM7",
   "idf.flashType": "UART",
   "files.associations": {
     "panic_internal.h": "c",
