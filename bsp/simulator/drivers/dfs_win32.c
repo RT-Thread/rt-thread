@@ -246,7 +246,7 @@ static int dfs_win32_close(struct dfs_fd *file)
         WINDIR *wdirp = (WINDIR*)(file->data);
         RT_ASSERT(wdirp != RT_NULL);
         if (_findclose((intptr_t)wdirp->handle) == 0) {
-            free(wdirp->start); //NOTE: here we don't use rt_free!
+            free(wdirp->start); /* NOTE: here we don't use rt_free! */
             rt_free(wdirp);
             return 0;
         }
