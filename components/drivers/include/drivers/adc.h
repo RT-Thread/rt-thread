@@ -18,6 +18,7 @@ struct rt_adc_ops
 {
     rt_err_t (*enabled)(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
     rt_err_t (*convert)(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
+    rt_uint8_t (*get_resolution)(struct rt_adc_device *device);
 };
 
 struct rt_adc_device
@@ -31,6 +32,7 @@ typedef enum
 {
     RT_ADC_CMD_ENABLE = RT_DEVICE_CTRL_BASE(ADC) + 1,
     RT_ADC_CMD_DISABLE = RT_DEVICE_CTRL_BASE(ADC) + 2,
+    RT_ADC_CMD_GET_RESOLUTION = RT_DEVICE_CTRL_BASE(ADC) + 3,
 } rt_adc_cmd_t;
 
 rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct rt_adc_ops *ops, const void *user_data);
