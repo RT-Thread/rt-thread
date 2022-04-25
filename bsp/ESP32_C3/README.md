@@ -91,4 +91,8 @@ IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一�
 
 维护人:
 
--  [supperthomas] 邮箱：<78900636@qq.com>
+-  [supperthomas](https://github.com/supperthomas) 邮箱：<78900636@qq.com>
+
+## 特别感谢
+
+- 感谢[chenyingchun0312](https://github.com/chenyingchun0312) 提供了RISCV的强力支持
