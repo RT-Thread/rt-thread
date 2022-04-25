@@ -123,7 +123,7 @@ void rtthread_startup(void)
 void app_main(void)
 {
     /* startup RT-Thread RTOS */
-    rtthread_startup();                                                                                                                                                                                                                                 ;
+    rtthread_startup();
     return;
 
 }
