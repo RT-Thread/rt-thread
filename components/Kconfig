@@ -5,21 +5,21 @@ config RT_USING_COMPONENTS_INIT
     default n
     
 config RT_USING_USER_MAIN
-    bool 
+    bool "Prepare rtthread before MAIN"
     default n
     
-    if RT_USING_USER_MAIN
-        config RT_MAIN_THREAD_STACK_SIZE
-            int "Set main thread stack size"
-            default 6144 if ARCH_CPU_64BIT
-            default 2048
 
-        config RT_MAIN_THREAD_PRIORITY
-            int "Set main thread priority" 
-            default 4  if RT_THREAD_PRIORITY_8
-            default 10  if RT_THREAD_PRIORITY_32
-            default 85  if RT_THREAD_PRIORITY_256
-    endif
+config RT_MAIN_THREAD_STACK_SIZE
+    int "Set main thread stack size"
+    default 6144 if ARCH_CPU_64BIT
+    default 2048
+
+config RT_MAIN_THREAD_PRIORITY
+    int "Set main thread priority" 
+    default 4  if RT_THREAD_PRIORITY_8
+    default 10  if RT_THREAD_PRIORITY_32
+    default 85  if RT_THREAD_PRIORITY_256
+
 
 config RT_USING_LEGACY
     bool "Support legacy version for compatibility"

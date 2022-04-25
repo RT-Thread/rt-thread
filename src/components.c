@@ -20,14 +20,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#ifdef RT_USING_USER_MAIN
+
 #ifndef RT_MAIN_THREAD_STACK_SIZE
 #define RT_MAIN_THREAD_STACK_SIZE     2048
 #endif /* RT_MAIN_THREAD_STACK_SIZE */
 #ifndef RT_MAIN_THREAD_PRIORITY
 #define RT_MAIN_THREAD_PRIORITY       (RT_THREAD_PRIORITY_MAX / 3)
 #endif /* RT_MAIN_THREAD_PRIORITY */
-#endif /* RT_USING_USER_MAIN */
+
 
 #ifdef RT_USING_COMPONENTS_INIT
 /*
@@ -130,12 +130,12 @@ void rt_components_init(void)
 }
 #endif /* RT_USING_COMPONENTS_INIT */
 
-#ifdef RT_USING_USER_MAIN
+
 
 void rt_application_init(void);
 void rt_hw_board_init(void);
 int rtthread_startup(void);
-
+#ifdef RT_USING_USER_MAIN
 #ifdef __ARMCC_VERSION
 extern int $Super$$main(void);
 /* re-define main function */
@@ -163,6 +163,7 @@ int entry(void)
     return 0;
 }
 #endif
+#endif /* RT_USING_USER_MAIN */
 
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
@@ -189,6 +190,8 @@ void main_thread_entry(void *parameter)
     rt_hw_secondary_cpu_up();
 #endif /* RT_USING_SMP */
     /* invoke system main function */
+
+#ifdef RT_USING_USER_MAIN
 #ifdef __ARMCC_VERSION
     {
         extern int $Super$$main(void);
@@ -196,6 +199,10 @@ void main_thread_entry(void *parameter)
     }
 #elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
     main();
+#endif
+#else
+    extern int rtt_main(void);
+    rtt_main();
 #endif
 }
 
@@ -272,4 +279,4 @@ int rtthread_startup(void)
     /* never reach here */
     return 0;
 }
-#endif /* RT_USING_USER_MAIN */
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,11 @@
 /* defined the LED2 pin: PB7 */
 #define LED2_PIN    GET_PIN(B, 7)
 
+#ifdef RT_USING_USER_MAIN
 int main(void)
+#else
+int rtt_main(void)
+#endif
 {
     /* set LED2 pin mode to output */
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
@@ -28,3 +32,10 @@ int main(void)
         rt_thread_mdelay(500);
     }
 }
+
+#ifndef RT_USING_USER_MAIN
+int main(void)
+{
+    rtthread_startup();
+}
+#endif
