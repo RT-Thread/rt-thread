@@ -26,7 +26,7 @@
 
 
 
-该开发板常用 **板载资源** 如下：
+该LUATOS_ESP32C3开发板常用 **板载资源** 如下：
 
 - MCU：[esp32-c3](https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf)，主频  160MHz， 407.22 CoreMark; 2.55  CoreMark/MHz
 - 芯片内置：384KB ROM,  400KB SRAM,
@@ -49,20 +49,11 @@
 
 ## 使用说明
 
-使用说明分为如下两个章节：
-
-- VSCODE-IDF tool 快速搭建
-
-    本章节是如何为快速搭建ESP-IDF的开发环境。
-
-- 编译
-
-    这里会演示如何编译ESP32-C3。
-
-
 ### 快速上手
 
-IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一个最快速的方法，非常简单方便，具体方法见链接[ESP-IDF 一键式搭建环境基于VSCODE](https://blog.csdn.net/lt6210925/article/details/123699249)。 安装的时候请选择IDF 4.4版本
+说先要搭建IDE开发环境，乐鑫官方推荐使用IDF开发。
+
+IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一个最快速的方法，并且可以使用vscode跨平台安装，非常简单方便，具体方法见链接[ESP-IDF 一键式搭建环境基于VSCODE](https://blog.csdn.net/lt6210925/article/details/123699249)。 安装的时候IDF版本请选择IDF 4.4版本。如果你对官方IDF命令行的方式熟悉的话，你也可以使用命令行的方式，这边已经测试过，是可以使用的。
 
 ### IDF patch加载
 
@@ -74,7 +65,7 @@ IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一�
 
 ![build](images/build.png)
 
-这边通常采用串口下载，需要根据你自己开发板选择对应的串口
+这边通常采用串口下载，需要根据你自己开发板选择对应的串口（如果有JTAG的，也可以用JTAG下载和调试）
 
 ![burn](images/burn.png)
 
