@@ -75,7 +75,6 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     adc_config_struct.repeat_mode = FALSE;
     adc_config_struct.sequence_mode = FALSE;
     adc_base_config(adc_x, &adc_config_struct);
-    adc_ordinary_software_trigger_enable(adc_x, TRUE);
 
     if (!enabled)
     {
