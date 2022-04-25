@@ -169,7 +169,9 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     }
 
 #ifdef RT_SERIAL_USING_DMA
-    uart->dma_rx.last_index = 0;
+    if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
+        uart->dma_rx.last_index = 0;
+    }
 #endif
 
     if (HAL_UART_Init(&uart->handle) != HAL_OK)
