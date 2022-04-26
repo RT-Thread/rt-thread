@@ -62,6 +62,8 @@ extern "C" {
                                         }                                           \
                                     }while(0)
 
+#define RT_USBD_CLASS_CTRL_CONNECTED 0x13
+
 struct ufunction;
 struct udevice;
 struct uendpoint;
