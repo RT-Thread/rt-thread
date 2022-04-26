@@ -172,6 +172,11 @@ static rt_uint8_t main_stack[RT_MAIN_THREAD_STACK_SIZE];
 struct rt_thread main_thread;
 #endif /* RT_USING_HEAP */
 
+RT_WEAK int rtt_main(void)
+{
+    
+}
+
 /**
  * @brief  The system main thread. In this thread will call the rt_components_init()
  *         for initialization of RT-Thread Components and call the user's programming
@@ -201,7 +206,6 @@ void main_thread_entry(void *parameter)
     main();
 #endif
 #else
-    extern int rtt_main(void);
     rtt_main();
 #endif
 }

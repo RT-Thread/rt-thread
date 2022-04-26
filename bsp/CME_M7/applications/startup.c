@@ -39,7 +39,7 @@ extern int __bss_end;
 /**
  * This function will startup RT-Thread RTOS.
  */
-void rtthread_startup(void)
+static void rtthread_startup(void)
 {
     /* init board */
     rt_hw_board_init();
