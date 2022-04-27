@@ -2,6 +2,10 @@
 
 Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
+## ARM Cortex-M23 Series
+- saml10 | 3.3V Cortex-M23 with ultra low power
+- saml11 | 3.3V Cortex-M23 with ultra low power and trust-zone
+
 ## ARM Cortex-M0+ Series
 - samc21 | 5V Cortex-M0+ with 2 CAN-FD support
 - saml21 | 3.3V low power Cortex-M0+

@@ -16,7 +16,7 @@
 
 #ifdef SAM_ADC_EXAMPLE
 
-#if defined(SOC_SAMC21)
+#if defined(SOC_SAMC21) || defined(SOC_SAML10)
 #define ADC_RESOLUTION_12BIT    ADC_CTRLC_RESSEL_12BIT_Val
 #define ADC_RESOLUTION_16BIT    ADC_CTRLC_RESSEL_16BIT_Val
 #elif defined(SOC_SAME54)
