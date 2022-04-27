@@ -53,4 +53,6 @@
  */
 #define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
 
+#define ARDUINO_DEFAULT_SPI_BUS_NAME "spi2"
+
 #endif /* Pins_Arduino_h */
