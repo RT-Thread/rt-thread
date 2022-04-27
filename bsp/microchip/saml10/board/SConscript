@@ -1,0 +1,17 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+#remove other no use files
+#SrcRemove(src, '*.c')
+
+# You can select chips from the list above
+CPPDEFINES = ['SAML10xxx']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
