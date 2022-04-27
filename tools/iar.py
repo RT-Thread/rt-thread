@@ -190,7 +190,7 @@ def IARVersion():
 
         return path
 
-    path = IARPath();
+    path = IARPath()
 
     if os.path.exists(path):
         cmd = os.path.join(path, 'iccarm.exe')
@@ -200,7 +200,8 @@ def IARVersion():
 
     child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = child.communicate()
-
+    if not isinstance(stdout, str):
+        stdout = str(stdout, 'utf8') # Patch for Python 3
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
     iar_version = re.search('[\d\.]+', stdout).group(0)
     if GetOption('verbose'):

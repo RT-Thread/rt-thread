@@ -5,9 +5,9 @@ from building import *
 src = Glob('*.c')
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src = src + ['start_gcc.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['start_rvds.S']
 elif rtconfig.CROSS_TOOL == 'iar':
     src = src + ['start_iar.S']

@@ -16,7 +16,7 @@ SECTIONS
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
         __rt_utest_tc_tab_end = .;
-        
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -59,8 +59,9 @@ SECTIONS
     .ctors :
     {
         PROVIDE(__ctors_start__ = .);
-        KEEP(*(SORT(.ctors.*)))
-        KEEP(*(.ctors))
+        /* new GCC version uses .init_array */
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
         PROVIDE(__ctors_end__ = .);
     }
 

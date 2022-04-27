@@ -151,7 +151,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  */
 RT_WEAK void rt_hw_cpu_shutdown()
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();

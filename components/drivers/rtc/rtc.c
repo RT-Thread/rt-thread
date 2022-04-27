@@ -289,9 +289,9 @@ static void date(int argc, char **argv)
         gettimeofday(&tv, &tz);
         now = tv.tv_sec;
         /* output current time */
-        rt_kprintf("local: %.*s", 25, ctime(&now));
-        rt_kprintf("stamp: %ld\n", (long)tv.tv_sec);
-        rt_kprintf("tz: %c%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60);
+        rt_kprintf("local time: %.*s", 25, ctime(&now));
+        rt_kprintf("timestamps: %ld\n", (long)tv.tv_sec);
+        rt_kprintf("timezone: UTC%c%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60);
     }
     else if (argc >= 7)
     {
@@ -301,17 +301,17 @@ static void date(int argc, char **argv)
         rt_err_t err;
 
         tm_new.tm_year = atoi(argv[1]) - 1900;
-        tm_new.tm_mon = atoi(argv[2]);
+        tm_new.tm_mon = atoi(argv[2]) - 1; /* .tm_min's range is [0-11] */
         tm_new.tm_mday = atoi(argv[3]);
         tm_new.tm_hour = atoi(argv[4]);
         tm_new.tm_min = atoi(argv[5]);
         tm_new.tm_sec = atoi(argv[6]);
-        if (tm_new.tm_year > 199 || tm_new.tm_year < 100)
+        if (tm_new.tm_year <= 0)
         {
-            rt_kprintf("year is out of range [2000-2099]\n");
+            rt_kprintf("year is out of range [1900-]\n");
             return;
         }
-        if (tm_new.tm_mon == 0 || tm_new.tm_mon > 12)
+        if (tm_new.tm_mon > 11) /* .tm_min's range is [0-11] */
         {
             rt_kprintf("month is out of range [1-12]\n");
             return;
@@ -331,9 +331,9 @@ static void date(int argc, char **argv)
             rt_kprintf("minute is out of range [0-59]\n");
             return;
         }
-        if (tm_new.tm_sec > 59)
+        if (tm_new.tm_sec > 60)
         {
-            rt_kprintf("second is out of range [0-59]\n");
+            rt_kprintf("second is out of range [0-60]\n");
             return;
         }
         /* save old timestamp */
@@ -351,8 +351,7 @@ static void date(int argc, char **argv)
             rt_kprintf("set date failed. %d\n", err);
             return;
         }
-        /* get new timestamp */
-        get_timestamp(&now);
+        get_timestamp(&now); /* get new timestamp */
         rt_kprintf("old: %.*s", 25, ctime(&old));
         rt_kprintf("now: %.*s", 25, ctime(&now));
     }

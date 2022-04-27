@@ -51,9 +51,9 @@ if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['
     src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_tmra.c']
 
 #add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src = src + ['CMSIS/Device/HDSC/HC32F4A0/Source/GCC/startup_hc32f4a0.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32F4A0/Source/ARM/startup_hc32f4a0.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src = src + ['CMSIS/Device/HDSC/HC32F4A0/Source/IAR/startup_hc32f4a0.s']

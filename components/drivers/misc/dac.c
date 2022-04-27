@@ -40,20 +40,26 @@ static rt_size_t _dac_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
 
 static rt_err_t _dac_control(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_EINVAL;
     rt_dac_device_t dac = (struct rt_dac_device *)dev;
 
-    if (dac->ops->enabled == RT_NULL)
-    {
-        return -RT_ENOSYS;
-    }
-    if (cmd == RT_DAC_CMD_ENABLE)
+    if (cmd == RT_DAC_CMD_ENABLE && dac->ops->enabled)
     {
         result = dac->ops->enabled(dac, (rt_uint32_t)args);
     }
-    else if (cmd == RT_DAC_CMD_DISABLE)
+    else if (cmd == RT_DAC_CMD_DISABLE && dac->ops->enabled)
     {
         result = dac->ops->disabled(dac, (rt_uint32_t)args);
+    }
+    else if (cmd == RT_DAC_CMD_GET_RESOLUTION && dac->ops->get_resolution)
+    {
+        rt_uint8_t resolution = dac->ops->get_resolution(dac);
+        if(resolution != 0)
+        {
+            *((rt_uint8_t*)args) = resolution;
+            LOG_D("resolution: %d bits", resolution);
+            result = RT_EOK;
+        }
     }
 
     return result;
@@ -98,13 +104,11 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t device, const char *name, const stru
     return result;
 }
 
-rt_uint32_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value)
+rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value)
 {
     RT_ASSERT(dev);
 
-    dev->ops->convert(dev, channel, &value);
-
-    return RT_EOK;
+    return dev->ops->convert(dev, channel, &value);
 }
 
 rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel)

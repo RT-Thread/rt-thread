@@ -12,9 +12,13 @@
 extern "C" {
 #endif
 
+void ADC_0_example(void);
+
 void CRYPTOGRAPHY_0_example(void);
 
 void TARGET_IO_example(void);
+
+void I2C_0_example(void);
 
 void CAN_0_example(void);
 
