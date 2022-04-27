@@ -132,11 +132,11 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 #ifdef RT_USING_SMP
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
-    register struct rt_thread *highest_priority_thread;
-    register rt_ubase_t highest_ready_priority, local_highest_ready_priority;
+    struct rt_thread *highest_priority_thread;
+    rt_ubase_t highest_ready_priority, local_highest_ready_priority;
     struct rt_cpu* pcpu = rt_cpu_self();
 #if RT_THREAD_PRIORITY_MAX > 32
-    register rt_ubase_t number;
+    rt_ubase_t number;
 
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
@@ -168,11 +168,11 @@ static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *high
 #else
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
-    register struct rt_thread *highest_priority_thread;
-    register rt_ubase_t highest_ready_priority;
+    struct rt_thread *highest_priority_thread;
+    rt_ubase_t highest_ready_priority;
 
 #if RT_THREAD_PRIORITY_MAX > 32
-    register rt_ubase_t number;
+    rt_ubase_t number;
 
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
@@ -199,7 +199,7 @@ void rt_system_scheduler_init(void)
 #ifdef RT_USING_SMP
     int cpu;
 #endif /* RT_USING_SMP */
-    register rt_base_t offset;
+    rt_base_t offset;
 
 #ifndef RT_USING_SMP
     rt_scheduler_lock_nest = 0;
@@ -247,7 +247,7 @@ void rt_system_scheduler_init(void)
  */
 void rt_system_scheduler_start(void)
 {
-    register struct rt_thread *to_thread;
+    struct rt_thread *to_thread;
     rt_ubase_t highest_ready_priority;
 
     to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
@@ -870,7 +870,7 @@ void rt_enter_critical(void)
      */
 
     {
-        register rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
+        rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
         current_thread->cpus_lock_nest++;
         if (lock_nest == 0)
         {
