@@ -62,7 +62,7 @@ extern "C" {
                                         }                                           \
                                     }while(0)
 
-#define RT_USBD_CLASS_CTRL_CONNECTED 0x13
+#define RT_USBD_CLASS_CTRL_CONNECTED (RT_DEVICE_CTRL_BASE(USBDevice) + 0)
 
 struct ufunction;
 struct udevice;
