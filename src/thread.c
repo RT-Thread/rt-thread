@@ -327,7 +327,7 @@ RTM_EXPORT(rt_thread_init);
 rt_thread_t rt_thread_self(void)
 {
 #ifdef RT_USING_SMP
-    register rt_base_t lock;
+    rt_base_t lock;
     rt_thread_t self;
 
     lock = rt_hw_local_irq_disable();
@@ -836,7 +836,7 @@ RTM_EXPORT(rt_thread_control);
  */
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
-    register rt_base_t stat;
+    rt_base_t stat;
     rt_base_t level;
 
     /* parameter check */
