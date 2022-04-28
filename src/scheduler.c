@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -90,7 +90,7 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 #endif /* RT_USING_HOOK */
 
 #ifdef RT_USING_OVERFLOW_CHECK
-static void _rt_scheduler_stack_check(struct rt_thread *thread)
+static void _scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
@@ -378,7 +378,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, current_thread->name, current_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
@@ -485,7 +485,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, from_thread->name, from_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
                 if (rt_interrupt_nest == 0)
@@ -623,7 +623,7 @@ void rt_scheduler_do_irq_switch(void *context)
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
