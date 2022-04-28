@@ -40,6 +40,9 @@ void rt_application_init(void)
 {
     rt_thread_t tid;
 
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
+
     tid = rt_thread_create("main", main_thread_entry, RT_NULL,
                            RT_MAIN_THREAD_STACK_SIZE, RT_MAIN_THREAD_PRIORITY, 20);
     RT_ASSERT(tid != RT_NULL);
@@ -89,7 +92,8 @@ void rt_hw_board_init(void)
     rt_system_heap_init((void *)&__heap_start__, (void *)&__heap_end__);
 
 }
-void rtthread_startup(void)
+
+static void rtthread_startup(void)
 {
     rt_hw_interrupt_disable();
     /* init board */
