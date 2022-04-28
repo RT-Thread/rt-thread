@@ -827,7 +827,7 @@ RTM_EXPORT(rt_thread_control);
  *              rt_thread_suspend(rt_thread_self());
  *
  *          Do not use the rt_thread_suspend to suspend other threads. You have no way of knowing what code a
- *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with 
+ *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with
  *          other threads and occupying this resouce, starvation can occur very easily.
  *
  * @param   thread is the thread to be suspended.
