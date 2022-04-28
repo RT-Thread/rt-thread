@@ -15,7 +15,7 @@ int main(void)
 {
     while (1)
     {
-        rt_kprintf("Hello RT-Thread from main.c\n");
+        rt_kprintf("Hello RT-Thread!\n");
         rt_thread_mdelay(1000);
     }
 }
