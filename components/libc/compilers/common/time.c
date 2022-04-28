@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -172,7 +172,7 @@ static int set_timeval(struct timeval *tv)
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     time_t i;
-    register time_t work = *timep % (SPD);
+    time_t work = *timep % (SPD);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
@@ -181,7 +181,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_wday = (4 + work) % 7;
     for (i = 1970;; ++i)
     {
-        register time_t k = __isleap(i) ? 366 : 365;
+        time_t k = __isleap(i) ? 366 : 365;
         if (work >= k)
             work -= k;
         else
@@ -367,9 +367,9 @@ RTM_EXPORT(stime);
 
 time_t timegm(struct tm * const t)
 {
-    register time_t day;
-    register time_t i;
-    register time_t years = (time_t)t->tm_year - 70;
+    time_t day;
+    time_t i;
+    time_t years = (time_t)t->tm_year - 70;
 
     if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
     {

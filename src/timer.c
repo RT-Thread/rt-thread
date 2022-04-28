@@ -409,7 +409,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     unsigned int row_lvl;
     rt_list_t *timer_list;
     rt_base_t level;
-    register rt_bool_t need_schedule;
+    rt_bool_t need_schedule;
     rt_list_t *row_head[RT_TIMER_SKIP_LIST_LEVEL];
     unsigned int tst_nr;
     static unsigned int random_nr;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -495,7 +495,7 @@ RTM_EXPORT(rt_strcpy);
  */
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
 {
-    register signed char __res = 0;
+    signed char __res = 0;
 
     while (count)
     {
@@ -668,7 +668,7 @@ rt_inline int divide(long *n, int base)
 
 rt_inline int skip_atoi(const char **s)
 {
-    register int i = 0;
+    int i = 0;
     while (_ISDIGIT(**s))
         i = i * 10 + *((*s)++) - '0';
 
@@ -707,8 +707,7 @@ static char *print_number(char *buf,
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
-    register int i;
-    register int size;
+    int i, size;
 
     size = s;
 

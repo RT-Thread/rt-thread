@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -344,9 +344,9 @@ void rt_thread_idle_init(void)
 rt_thread_t rt_thread_idle_gethandler(void)
 {
 #ifdef RT_USING_SMP
-    register int id = rt_hw_cpu_id();
+    int id = rt_hw_cpu_id();
 #else
-    register int id = 0;
+    int id = 0;
 #endif /* RT_USING_SMP */
 
     return (rt_thread_t)(&idle[id]);

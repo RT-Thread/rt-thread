@@ -75,7 +75,7 @@ int __wqueue_default_wake(struct rt_wqueue_node *wait, void *key)
 void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 {
     rt_base_t level;
-    register int need_schedule = 0;
+    int need_schedule = 0;
 
     rt_list_t *queue_list;
     struct rt_list_node *node;
