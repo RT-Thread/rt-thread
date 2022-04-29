@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -822,10 +822,11 @@ RTM_EXPORT(rt_thread_control);
  * @brief   This function will suspend the specified thread and change it to suspend state.
  *
  * @note    This function ONLY can suspend current thread itself.
- *          Do not use the rt_thread_suspend and rt_thread_resume functions to synchronize the activities of threads.
- *          You have no way of knowing what code a thread is executing when you suspend it.
- *          If you suspend a thread while it is executing a critical area which is protected by a mutex,
- *          other threads attempt to use that mutex and have to wait. Deadlocks can occur very easily.
+ *              rt_thread_suspend(rt_thread_self());
+ *
+ *          Do not use the rt_thread_suspend to suspend other threads. You have no way of knowing what code a
+ *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with
+ *          other threads and occupying this resouce, starvation can occur very easily.
  *
  * @param   thread is the thread to be suspended.
  *
@@ -871,8 +872,6 @@ RTM_EXPORT(rt_thread_suspend);
 
 /**
  * @brief   This function will resume a thread and put it to system ready queue.
- *
- * @note    Do not use the rt_thread_suspend and rt_thread_resume functions to synchronize the activities of threads.
  *
  * @param   thread is the thread to be resumed.
  *
