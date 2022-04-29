@@ -12,7 +12,6 @@
 #define __DRV_PWM_H_INCLUDE__
 
 #include <rtthread.h>
-#include <rtdevice.h>
 
 #define PWM_CMD_ENABLE      (RT_DEVICE_CTRL_BASE(PWM) + 0)
 #define PWM_CMD_DISABLE     (RT_DEVICE_CTRL_BASE(PWM) + 1)

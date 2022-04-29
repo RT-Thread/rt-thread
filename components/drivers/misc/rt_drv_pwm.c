@@ -9,7 +9,7 @@
  * 2022-05-14     Stanley Lwin add pwm function
  */
 
-#include <drivers/rt_drv_pwm.h>
+#include <rtdevice.h>
 
 static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
