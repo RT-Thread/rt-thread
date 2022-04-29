@@ -8,7 +8,6 @@
  * 2015-08-31     heyuanjie87    first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
 

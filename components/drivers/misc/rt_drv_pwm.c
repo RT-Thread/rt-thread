@@ -8,7 +8,7 @@
  * 2018-05-07     aozima       the first version
  */
 
-#include <drivers/rt_drv_pwm.h>
+#include <rtdevice.h>
 
 static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
