@@ -20,6 +20,7 @@
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
+ * 2022-04-29     WangQiang    add some function for process arguments in MSH
  */
 
 #include <rtthread.h>
@@ -607,6 +608,157 @@ RTM_EXPORT(rt_strdup);
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif /* __ARMCC_VERSION */
 #endif /* RT_USING_HEAP */
+
+#define forstrloop(str) for (; '\0' != *(str); (str)++)
+
+/**
+ * This function will tolower.
+ *
+ * @param c char
+ *
+ * @return tolower char
+ */
+int rt_tolower(int c)
+{
+    int temp = 'a' - 'A';
+
+    if ((c < 'A') || (c > 'Z'))
+    {
+        return c;
+    }
+    return (c + temp);
+}
+
+/**
+ * This function will check digit.
+ *
+ * @param c char
+ *
+ * @return true or false
+ */
+rt_bool_t rt_isdigit(int ch)
+{
+    if ((ch >= '0') && (ch <= '9'))
+    {
+        return RT_TRUE;
+    }
+    return RT_FALSE;
+}
+
+/**
+ * This function will check integer.
+ *
+ * @param strvalue string
+ *
+ * @return true or false
+ */
+rt_bool_t rt_isint(char *strvalue)
+{
+    if ((RT_NULL == strvalue) || ('\0' == strvalue[0]))
+    {
+        return RT_FALSE;
+    }
+    if (('+' == *strvalue) || ('-' == *strvalue))
+    {
+        strvalue++;
+    }
+    forstrloop(strvalue)
+    {
+        if (!rt_isdigit(*strvalue))
+        {
+            return RT_FALSE;
+        }
+    }
+    return RT_TRUE;
+}
+RTM_EXPORT(rt_isint);
+
+/**
+ * This function will transform for string to integer.
+ *
+ * @param strvalue string
+ *
+ * @return true or false
+ */
+int rt_strtoint(char *strvalue)
+{
+    int value = 0;
+    int sign = 1;
+    if ('-' == *strvalue)
+    {
+        sign = -1;
+        strvalue++;
+    }
+    else if ('+' == *strvalue)
+    {
+        strvalue++;
+    }
+
+    forstrloop(strvalue)
+    {
+        value *= 10;
+        value += *strvalue - '0';
+    }
+    return value * sign;
+}
+RTM_EXPORT(rt_strtoint);
+
+/**
+ * This function will check hex.
+ *
+ * @param strvalue string
+ *
+ * @return true or false
+ */
+rt_bool_t rt_ishex(char *strvalue)
+{
+    char c;
+    if ((RT_NULL == strvalue) || ('\0' == strvalue[0]))
+    {
+        return RT_FALSE;
+    }
+    if ('0' != *(strvalue++))
+    {
+        return RT_FALSE;
+    }
+    if ('x' != *(strvalue++))
+    {
+        return RT_FALSE;
+    }
+
+    forstrloop(strvalue)
+    {
+        c = rt_tolower(*strvalue);
+        if (!rt_isdigit(c) && ((c < 'a') || (c > 'f')))
+        {
+            return RT_FALSE;
+        }
+    }
+    return RT_TRUE;
+}
+RTM_EXPORT(rt_ishex);
+
+/**
+ * This function will transform for string to hex.
+ *
+ * @param strvalue string
+ *
+ * @return true or false
+ */
+int rt_strtohex(char *strvalue)
+{
+    char c = 0;
+    int value = 0;
+    strvalue += 2;
+    forstrloop(strvalue)
+    {
+        value *= 16;
+        c = rt_tolower(*strvalue);
+        value += rt_isdigit(c) ? c - '0' : c - 'a' + 10;
+    }
+    return value;
+}
+RTM_EXPORT(rt_strtohex);
 
 /**
  * This function will show the version of rt-thread rtos
