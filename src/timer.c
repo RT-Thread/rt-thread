@@ -118,10 +118,10 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
  * @param flag the flag of timer
  */
 static void _timer_init(rt_timer_t timer,
-                           void (*timeout)(void *parameter),
-                           void      *parameter,
-                           rt_tick_t  time,
-                           rt_uint8_t flag)
+                        void (*timeout)(void *parameter),
+                        void      *parameter,
+                        rt_tick_t  time,
+                        rt_uint8_t flag)
 {
     int i;
 

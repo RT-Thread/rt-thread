@@ -85,8 +85,7 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 {
     rt_thread_inited_hook = hook;
 }
-
-#endif /* RT_USING_HOOK */
+#endif /* defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR) */
 
 static void _thread_exit(void)
 {
@@ -195,7 +194,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_EVENT
     thread->event_set = 0;
     thread->event_info = 0;
-#endif
+#endif /* RT_USING_EVENT */
 
 #if RT_THREAD_PRIORITY_MAX > 32
     thread->number = 0;
@@ -251,12 +250,11 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
 #ifdef RT_USING_CPU_USAGE
     thread->duration_tick = 0;
-#endif
-
+#endif /* RT_USING_CPU_USAGE */
 
 #ifdef RT_USING_MODULE
     thread->module_id = 0;
-#endif
+#endif /* RT_USING_MODULE */
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
@@ -473,13 +471,13 @@ rt_thread_t rt_thread_create(const char *name,
     }
 
     _thread_init(thread,
-                    name,
-                    entry,
-                    parameter,
-                    stack_start,
-                    stack_size,
-                    priority,
-                    tick);
+                 name,
+                 entry,
+                 parameter,
+                 stack_start,
+                 stack_size,
+                 priority,
+                 tick);
 
     return thread;
 }
