@@ -69,34 +69,35 @@ static rt_err_t _pin_control(rt_device_t dev, int cmd, void *args)
 
 #ifdef RT_USING_DEVICE_OPS
 const static struct rt_device_ops pin_ops =
-    {
-        RT_NULL,
-        RT_NULL,
-        RT_NULL,
-        _pin_read,
-        _pin_write,
-        _pin_control};
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _pin_read,
+    _pin_write,
+    _pin_control
+};
 #endif
 
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data)
 {
-    _hw_pin.parent.type = RT_Device_Class_Miscellaneous;
-    _hw_pin.parent.rx_indicate = RT_NULL;
-    _hw_pin.parent.tx_complete = RT_NULL;
+    _hw_pin.parent.type         = RT_Device_Class_Pin;
+    _hw_pin.parent.rx_indicate  = RT_NULL;
+    _hw_pin.parent.tx_complete  = RT_NULL;
 
 #ifdef RT_USING_DEVICE_OPS
-    _hw_pin.parent.ops = &pin_ops;
+    _hw_pin.parent.ops          = &pin_ops;
 #else
-    _hw_pin.parent.init = RT_NULL;
-    _hw_pin.parent.open = RT_NULL;
-    _hw_pin.parent.close = RT_NULL;
-    _hw_pin.parent.read = _pin_read;
-    _hw_pin.parent.write = _pin_write;
-    _hw_pin.parent.control = _pin_control;
+    _hw_pin.parent.init         = RT_NULL;
+    _hw_pin.parent.open         = RT_NULL;
+    _hw_pin.parent.close        = RT_NULL;
+    _hw_pin.parent.read         = _pin_read;
+    _hw_pin.parent.write        = _pin_write;
+    _hw_pin.parent.control      = _pin_control;
 #endif
 
-    _hw_pin.ops = ops;
-    _hw_pin.parent.user_data = user_data;
+    _hw_pin.ops                 = ops;
+    _hw_pin.parent.user_data    = user_data;
 
     /* register a character device */
     rt_device_register(&_hw_pin.parent, name, RT_DEVICE_FLAG_RDWR);
@@ -175,8 +176,6 @@ static void pinMode(int argc, char *argv[])
     rt_pin_mode(pin, mode);
 }
 MSH_CMD_EXPORT(pinMode, set hardware pin mode);
-#else
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_mode, pinMode, set hardware pin mode);
 #endif
 
 void rt_pin_write(rt_base_t pin, rt_base_t value)
@@ -217,8 +216,6 @@ static void pinWrite(int argc, char *argv[])
     rt_pin_write(pin, value);
 }
 MSH_CMD_EXPORT(pinWrite, write value to hardware pin);
-#else
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pinWrite, write value to hardware pin);
 #endif
 
 int rt_pin_read(rt_base_t pin)
@@ -254,8 +251,6 @@ static void pinRead(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(pinRead, read status from hardware pin);
-#else
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_read, pinRead, read status from hardware pin);
 #endif
 
 rt_base_t rt_pin_get(const char *name)
@@ -284,6 +279,4 @@ static void pinGet(int argc, char *argv[])
     rt_kprintf("%s : %d\r\n", argv[1], pin);
 }
 MSH_CMD_EXPORT(pinGet, get pin number from hardware pin);
-#else
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_get, pinGet, get pin number from hardware pin);
 #endif
