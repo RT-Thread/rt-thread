@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config SOC_GD32303E
-    bool 
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -28,7 +28,7 @@ config RT_USING_USART0
     bool "Using USART0"
     select RT_USING_SERIAL
     default y
-    
+
 config RT_USING_USART1
     bool "Using USART1"
     select RT_USING_SERIAL
@@ -43,7 +43,7 @@ config RT_USING_UART3
     bool "Using UART3"
     select RT_USING_SERIAL
     default n
-    
+
 config RT_USING_UART4
     bool "Using UART4"
     select RT_USING_SERIAL
@@ -52,33 +52,33 @@ config RT_USING_UART4
 config RT_USING_SPI0
     bool "Using SPI0"
     select RT_USING_SPI
-    default y 
+    default y
 
 config RT_USING_SPI1
     bool "Using SPI1"
     select RT_USING_SPI
-    default n  
+    default n
 
 config RT_USING_SPI2
     bool "Using SPI2"
     select RT_USING_SPI
-    default n 
+    default n
 
 config RT_USING_SPI3
     bool "Using SPI2 BUS (software simulation)"
     select RT_USING_SPI
     select RT_USING_SPI_BITOPS
-    default n 
+    default n
 
 config RT_USING_I2C0
     bool "Using I2C0"
     select RT_USING_I2C
-    default n 
+    default n
 
 config RT_USING_I2C1
     bool "Using I2C1"
     select RT_USING_I2C
-    default n  
+    default n
 
 
 

@@ -19,7 +19,7 @@ choice
     help
         Refer to SAMC21 DataSheet
 
-endchoice 
+endchoice
 endmenu
 
 menu "Onboard Peripheral Drivers"

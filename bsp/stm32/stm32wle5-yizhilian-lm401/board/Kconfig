@@ -23,7 +23,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-    
+
     config BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         default n
@@ -35,17 +35,17 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART1
                 bool "Enable UART1"
-                default n   
-                
+                default n
+
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART2
                 bool "Enable UART2"
-                default n   
-                
+                default n
+
             config BSP_UART2_RX_USING_DMA
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
@@ -58,9 +58,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable LPUART1 RX DMA"
                 depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
                 default n
-               
+
         endif
-        
+
 endmenu
 
 menu "Board extended module Drivers"

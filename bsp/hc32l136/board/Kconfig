@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config MCU_HC32L136
-    bool 
+    bool
     select ARCH_ARM_CORTEX_M0
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -36,7 +36,7 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
-        select RT_USING_PIN 
+        select RT_USING_PIN
         if BSP_USING_I2C1
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
@@ -46,7 +46,7 @@ menu "On-chip Peripheral Drivers"
                 int "I2C1 sda pin number"
                 range 1 176
                 default 90
-        endif 
+        endif
 
 endmenu
 

@@ -101,7 +101,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
-        
+
     config BSP_USING_FMC
         bool "Enable Flash Memory Controller(FMC)"
         default n
@@ -110,11 +110,11 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

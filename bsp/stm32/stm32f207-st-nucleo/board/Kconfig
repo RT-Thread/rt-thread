@@ -27,9 +27,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART3"
                 default y
         endif
-        
+
     source "../libraries/HAL_Drivers/Kconfig"
-   
+
 endmenu
 
 menu "Board extended module Drivers"

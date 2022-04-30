@@ -5,9 +5,9 @@ config SOC_NRF52840
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-    
+
 config SOC_NORDIC
-    bool 
+    bool
     default y
 
 choice
@@ -16,24 +16,24 @@ choice
 
     config BSP_BOARD_PCA_10056
         bool "NRF52840 pca10056 "
-        
+
 endchoice
 
-menu "On-chip Peripheral Drivers"    
+menu "On-chip Peripheral Drivers"
     config BSP_USING_UART
-		bool "Enable UART"
+        bool "Enable UART"
         default y
         select RT_USING_SERIAL
             config BSP_USING_UART0
                 bool "Enable UART0"
-                default y 
+                default y
                 depends on BSP_USING_UART
-                
+
                 config BSP_UART0_RX_PIN
                     depends on BSP_USING_UART0
                     int "uart0 rx pin number"
                     default 8 if BSP_BOARD_PCA_10056
-                    
+
                 config BSP_UART0_TX_PIN
                     depends on BSP_USING_UART0
                     int "uart0 tx pin number"
@@ -41,52 +41,52 @@ menu "On-chip Peripheral Drivers"
 
     menu "On-chip flash config"
 
-        config MCU_FLASH_START_ADDRESS  
+        config MCU_FLASH_START_ADDRESS
             hex "MCU FLASH START ADDRESS"
             default 0x00000000
 
-        config MCU_FLASH_SIZE_KB  
+        config MCU_FLASH_SIZE_KB
             int "MCU FLASH SIZE, MAX size 1024 KB"
             default 1024
 
-        config MCU_SRAM_START_ADDRESS 
+        config MCU_SRAM_START_ADDRESS
             hex "MCU RAM START ADDRESS"
             default 0x20000000
 
-        config MCU_SRAM_SIZE_KB  
+        config MCU_SRAM_SIZE_KB
             int "MCU RAM SIZE"
             default 256
 
-        config MCU_FLASH_PAGE_SIZE 
+        config MCU_FLASH_PAGE_SIZE
             hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
             default 0x1000
-	endmenu
+    endmenu
 
 endmenu
 
 if SOC_NORDIC
     config NRFX_CLOCK_ENABLED
-    int 
+    int
     default 1
     config    NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
-    int 
+    int
     default 7
     config NRFX_CLOCK_CONFIG_LF_SRC
-    int 
-    default 1    
+    int
+    default 1
 endif
 
 if BSP_USING_UART
     config NRFX_USING_UART
     bool
     default y
-    
+
     config NRFX_UART_ENABLED
-    int 
+    int
     default 1
-    
+
     config NRFX_UART0_ENABLED
-    int 
+    int
     default 1
     depends on BSP_USING_UART0
 endif

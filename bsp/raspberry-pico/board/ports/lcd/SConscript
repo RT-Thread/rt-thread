@@ -4,7 +4,7 @@ import os
 cwd = GetCurrentDir()
 src = ['drv_lcd.c']
 CPPPATH = [cwd]
-    
+
 group = DefineGroup('Drivers', src, depend = ['BSP_USING_LVGL'], CPPPATH = CPPPATH)
 
 Return('group')

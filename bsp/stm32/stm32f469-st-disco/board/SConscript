@@ -17,7 +17,7 @@ if GetDepend(['BSP_USING_QSPI_FLASH']):
 
 if GetDepend(['RT_USING_FAL']):
     src += ['ports/qspi_mnt.c']
-    
+
 if GetDepend(['BSP_USING_LCD_OTM8009A']):
     src += ['ports/drv_otm8009a.c']
 

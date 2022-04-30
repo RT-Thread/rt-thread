@@ -79,7 +79,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_ALARM
                 default n
         endif
-        
+
         menuconfig BSP_USING_SDIO
             bool "Enable SDIO"
             select RT_USING_SDIO

@@ -7,20 +7,20 @@ if BSP_USING_USBD
         # "USB High Speed (HS) Core"
 
     config BSP_USBD_SPEED_HS
-        bool 
+        bool
         # "USB High Speed (HS) Mode"
     config BSP_USBD_SPEED_HSINFS
-        bool 
+        bool
         # "USB High Speed (HS) Core in FS mode"
 
     config BSP_USBD_PHY_EMBEDDED
-        bool 
+        bool
         # "Using Embedded phy interface"
     config BSP_USBD_PHY_UTMI
-        bool 
+        bool
         # "UTMI: USB 2.0 Transceiver Macrocell Interace"
     config BSP_USBD_PHY_ULPI
-        bool 
+        bool
         # "ULPI: UTMI+ Low Pin Interface"
 endif
 
@@ -30,5 +30,5 @@ config BSP_USING_CRC
     select RT_HWCRYPTO_USING_CRC
     # "Crypto device frame dose not support above 8-bits granularity"
     depends on (SOC_SERIES_FT32F0)
-    default n 
+    default n
 

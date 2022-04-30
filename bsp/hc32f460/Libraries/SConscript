@@ -25,8 +25,8 @@ HC32F460_StdPeriph_Driver/src/hc32f460_exint_nmi_swi.c
 
 if GetDepend(['RT_USING_SERIAL']):
     src += ['HC32F460_StdPeriph_Driver/src/hc32f460_usart.c']
-   
-#add for startup script 
+
+#add for startup script
 if rtconfig.PLATFORM == 'gcc':
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/GCC/startup_hc32f460.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -34,8 +34,8 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.CROSS_TOOL == 'iar':
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/IAR/startup_hc32f460.s']
 
-#add headfile script 
-path = [cwd + '/CMSIS/Include', 
+#add headfile script
+path = [cwd + '/CMSIS/Include',
     cwd + '/CMSIS/Device/HDSC/HC32F460/Include',
     cwd + '/HC32F460_StdPeriph_Driver/inc']
 

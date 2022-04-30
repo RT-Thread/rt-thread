@@ -16,7 +16,7 @@ if GetDepend(['UTEST_SLAB_TC']):
 
 if GetDepend(['UTEST_IRQ_TC']):
     src += ['irq_tc.c']
-    
+
 if GetDepend(['UTEST_SEMAPHORE_TC']):
     src += ['semaphore_tc.c']
 

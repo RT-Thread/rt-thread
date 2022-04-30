@@ -70,7 +70,7 @@ menu "On-chip Peripheral Drivers"
             config LCD_WIDTH
                 int "width"
                 default 480
-            
+
             config LCD_HEIGHT
                 int "height"
                 default 272
@@ -100,11 +100,11 @@ menu "On-chip Peripheral Drivers"
                 int "Reset pin"
                 default 2
         endif
-        
+
 endmenu
 
 menu "Onboard Peripheral Drivers"
-    
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n

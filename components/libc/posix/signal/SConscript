@@ -6,8 +6,8 @@ cwd = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
-group = DefineGroup('POSIX', src, 
-    depend = ['RT_USING_SIGNALS', 'RT_USING_PTHREADS'], 
+group = DefineGroup('POSIX', src,
+    depend = ['RT_USING_SIGNALS', 'RT_USING_PTHREADS'],
     CPPPATH = CPPPATH)
 
 Return('group')

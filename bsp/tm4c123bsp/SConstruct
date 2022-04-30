@@ -8,7 +8,7 @@ else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
 # set RTT_ROOT
-#if not os.getenv("RTT_ROOT"): 
+#if not os.getenv("RTT_ROOT"):
     #RTT_ROOT="rt-thread"
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]

@@ -6,7 +6,7 @@ src_bsp = ['application.c', 'startup.c', 'board.c', 'led.c', 'cpuusage.c']
 src_drv = ['adc.c', 'lcd.c', 'key.c']
 
 if GetDepend('RT_USING_RTGUI'):
-	src_drv += ['info.c']
+    src_drv += ['info.c']
 
 src = src_bsp + src_drv
 CPPPATH = [GetCurrentDir()]

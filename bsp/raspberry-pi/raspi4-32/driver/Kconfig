@@ -31,7 +31,7 @@ menu "Hardware Drivers Config"
                 bool "Enabel UART 5"
                 default n
             endif
-            
+
         menuconfig BSP_USING_GIC
             bool "Enable GIC"
             select RT_USING_GIC
@@ -54,8 +54,8 @@ menu "Hardware Drivers Config"
             bool "Enable SPI"
             select RT_USING_SPI
             default n
-        
-        if BSP_USING_SPI   
+
+        if BSP_USING_SPI
             config BSP_USING_SPI0_BUS
                 bool "Enable SPI0 BUS"
                 default n
@@ -74,7 +74,7 @@ menu "Hardware Drivers Config"
             select RT_USING_I2C
             default n
 
-        if BSP_USING_I2C   
+        if BSP_USING_I2C
             config BSP_USING_I2C0
                 bool "Enable I2C0 BUS"
                 default n
@@ -138,7 +138,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_ALARM
                 default n
         endif
-        
+
         menuconfig BSP_USING_SDIO
             bool "Enable SDIO"
             select RT_USING_SDIO

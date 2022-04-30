@@ -10,7 +10,7 @@ fsl_sdmmc.c
 fsl_host.c
 fsl_sd_event.c
 ''')
-#src	= Glob('*.c')
+#src    = Glob('*.c')
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
 

@@ -20,12 +20,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_FMC
         default y
 
-	config BSP_USING_SDRAM
+    config BSP_USING_SDRAM
         bool "Enable SDRAM"
         select BSP_USING_FMC
         default n
-		
-	config BSP_USING_SPI_FLASH
+
+    config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q64 spi3)"
         select BSP_USING_SPI
         select BSP_USING_SPI3
@@ -53,9 +53,9 @@ menu "Onboard Peripheral Drivers"
                 bool "enable phy interrupt mode"
                 select PHY_INT_PIN
                 default n
- 
+
             config PHY_INT_PIN
-                int 
+                int
                 default 118
         endif
 
@@ -116,7 +116,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
@@ -220,11 +220,11 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

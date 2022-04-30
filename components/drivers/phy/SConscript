@@ -1,7 +1,7 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src	= Glob('*.c')
+src = Glob('*.c')
 CPPPATH = [cwd + '/../include']
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_PHY'], CPPPATH = CPPPATH)
 

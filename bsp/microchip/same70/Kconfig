@@ -22,7 +22,7 @@ source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
 
 config SOC_SAME70
-    bool 
+    bool
     select ARCH_ARM
     select ARCH_ARM_CORTEX_M
     select ARCH_ARM_CORTEX_M7

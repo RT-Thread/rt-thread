@@ -45,9 +45,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-                
+
         endif
-        
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -69,23 +69,23 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SPI BUS"
         select RT_USING_SPI
         default y
-        if BSP_USING_SPI  
+        if BSP_USING_SPI
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
         endif
-    
+
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
@@ -118,5 +118,5 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

@@ -66,12 +66,12 @@ config RT_USING_GMAC_INT_MODE
 
 config RT_USING_SPI0
     bool "Enable SPI0"
-	select RT_USING_SPI
+    select RT_USING_SPI
     default y
 
 config RT_USING_SPI1
     bool "Enable SPI1"
-	select RT_USING_SPI
+    select RT_USING_SPI
     default y
 
 if RT_USING_I2C
@@ -87,18 +87,18 @@ endif
 
 config USING_BXCAN0
     bool "Enable CAN0"
-	select RT_USING_CAN
+    select RT_USING_CAN
     default y
 
 config USING_BXCAN1
     bool "Enable CAN1"
-	select RT_USING_CAN
+    select RT_USING_CAN
     default y
 
 if RT_USING_CAN
 config RT_CAN_USING_HDR
     bool "Using RT_CAN_USING_HDR"
-	select RT_USING_CAN
+    select RT_USING_CAN
     default y
 endif
 

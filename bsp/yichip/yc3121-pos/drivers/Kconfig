@@ -10,7 +10,7 @@ menu "Hardware Drivers Config"
             config BSP_USING_UART0
                 bool "Enable UART0 PA2/3(R/T)"
                 select RT_USING_SERIAL
-                default y    
+                default y
 
             config BSP_USING_UART1
                 bool "Enable UART1 PC2/3(R/T)"
@@ -18,5 +18,5 @@ menu "Hardware Drivers Config"
                 default n
         endmenu
     endmenu
-    
+
 endmenu

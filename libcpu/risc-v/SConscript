@@ -17,7 +17,7 @@ elif rtconfig.CPU == "nuclei" :
 elif rtconfig.CPU == "virt64" :
     group = group
 elif rtconfig.CPU == "ch32v1" :
-    group = group    
+    group = group
 else :
     group = group + SConscript(os.path.join('common', 'SConscript'))
 

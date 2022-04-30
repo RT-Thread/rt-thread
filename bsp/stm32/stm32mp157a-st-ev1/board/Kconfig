@@ -14,7 +14,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART4
         default y
-        
+
     config BSP_USING_EXTI
         bool "Enable exti sample"
         default n
@@ -96,7 +96,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable CAMERA (ov5640)"
         select BSP_USING_MFX
         select BSP_USING_PMIC
-	select BSP_USING_SDMMC
+    select BSP_USING_SDMMC
         select BSP_USING_SDCARD
         select BSP_USING_I2C
         select BSP_USING_I2C2
@@ -148,7 +148,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_QSPI
         select RT_USING_SPI
         default n
-    
+
     config BSP_USING_SPDIFRX
         bool "Enable spdifrx"
         select BSP_USING_AUDIO
@@ -292,7 +292,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 117
                 endif
-	    menuconfig BSP_USING_I2C3
+        menuconfig BSP_USING_I2C3
                 bool "Enable I2C3 BUS (software simulation)"
                 default n
                 if BSP_USING_I2C3

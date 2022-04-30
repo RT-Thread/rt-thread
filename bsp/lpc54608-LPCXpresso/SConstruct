@@ -28,7 +28,7 @@ else:
         CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
-        
+
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 Export('RTT_ROOT')

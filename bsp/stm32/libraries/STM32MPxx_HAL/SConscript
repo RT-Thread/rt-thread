@@ -68,7 +68,7 @@ if GetDepend(['RT_USING_AUDIO']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sai_ex.c']
 if GetDepend(['BSP_USING_DCMI']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_dcmi.c']
-    
+
 if GetDepend(['BSP_USING_FMC']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_fmc.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_fsmc.c']

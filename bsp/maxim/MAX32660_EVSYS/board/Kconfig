@@ -8,9 +8,9 @@ config SOC_MAX32660
     select BSP_USING_UART
     select BSP_USING_UART1
     default y
-        
+
 config SOC_MAXIM
-    bool 
+    bool
     config SOC_MAXIM
     default y
 
@@ -32,8 +32,8 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART0_RX_USING_DMA
                 bool "Enable UART0 RX DMA"
                 depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
-                default n   
-                
+                default n
+
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
@@ -75,17 +75,17 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_I2C0
                 bool "Enable I2C0 bus [SCL P0.8; SDA P0.9]"
                 default y
-            
+
             config BSP_USING_I2C1
                 bool "Enable I2C1 bus [SCL P0.2; SDA P0.3]"
                 default n
         endif
-            
+
      config BSP_USING_ONCHIP_RTC
          bool "Enable RTC"
          select RT_USING_RTC
          default n
-        
+
 endmenu
 
 

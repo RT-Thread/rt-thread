@@ -9,19 +9,19 @@ menu "Hardware Drivers Config"
                 default y
                 help
                 config MSS_UART0
-        
+
             config BSP_USING_UART1
                 bool "Enable MSS_UART1"
                 select RT_USING_SERIAL
                 default y
-                help 
+                help
                 config MSS_UART1
-            
+
             config RT_CONSOLE_DEVICE_NAME
                 string "the device name for console"
                 default "uart0"
-        endmenu 
-        
+        endmenu
+
         menu "GPIO Drivers"
             config BSP_USING_GPIO
             bool "Enable MSS_GPIO"
@@ -31,5 +31,5 @@ menu "Hardware Drivers Config"
             config MSS_GPIO
         endmenu
     endmenu
-        
+
 endmenu

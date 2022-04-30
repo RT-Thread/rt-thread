@@ -3,7 +3,7 @@ import rtconfig
 
 cwd     = GetCurrentDir()
 
-src	= [cwd + '/sys_config/sys_config.c']
+src = [cwd + '/sys_config/sys_config.c']
 src += [cwd + '/mss_gpio/mss_gpio.c']
 src += [cwd + '/mss_uart/mss_uart.c']
 

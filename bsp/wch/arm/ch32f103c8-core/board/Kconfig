@@ -27,7 +27,7 @@ config BSP_USING_UART
                         bool "using uart3"
                         default n
         endif
-        
+
 config BSP_USING_SPI
         bool "using onchip spi"
         select RT_USING_SPI
@@ -42,7 +42,7 @@ config BSP_USING_SPI
                         bool "using spi2"
                         default n
         endif
-        
+
 config BSP_USING_HWI2C
         bool "using onchip i2c"
         select RT_USING_I2C

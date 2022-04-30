@@ -5,8 +5,8 @@ from building import *
 cwd = GetCurrentDir()
 group = []
 if GetDepend('BSP_USING_SLCD'):
-	src = Glob('*.c') + Glob('*.cpp')
-	CPPPATH = [cwd]
-	group = DefineGroup('nu_pkgs_slcd', src, depend = [''], CPPPATH = CPPPATH)
+    src = Glob('*.c') + Glob('*.cpp')
+    CPPPATH = [cwd]
+    group = DefineGroup('nu_pkgs_slcd', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

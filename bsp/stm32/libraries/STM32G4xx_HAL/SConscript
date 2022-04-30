@@ -22,7 +22,7 @@ STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc_ex.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rng.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c']
@@ -39,7 +39,7 @@ if GetDepend(['RT_USING_SPI']):
 
 if GetDepend(['RT_USING_USB']):
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pccard.c']
-    src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pcd.c'] 
+    src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pcd.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pcd_ex.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_hcd.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_usb.c']

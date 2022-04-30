@@ -30,7 +30,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/iar/startup_stm32l475xx.s']
 
-	
+
 CPPDEFINES = ['STM32L475xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

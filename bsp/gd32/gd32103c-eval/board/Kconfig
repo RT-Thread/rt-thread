@@ -3,14 +3,14 @@ menu "Hardware Drivers Config"
 config SOC_SERIES_GD32F10x
     bool
     default y
-	
+
 config SOC_GD32103V
     bool
     select SOC_SERIES_GD32F10x
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-	
+
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -33,7 +33,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART0_RX_USING_DMA
                 bool "Enable UART0 RX DMA"
-                depends on BSP_USING_UART0 
+                depends on BSP_USING_UART0
                 select RT_SERIAL_USING_DMA
                 default n
 
@@ -43,7 +43,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 
+                depends on BSP_USING_UART1
                 select RT_SERIAL_USING_DMA
                 default n
 
@@ -53,7 +53,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART2_RX_USING_DMA
                 bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 
+                depends on BSP_USING_UART2
                 select RT_SERIAL_USING_DMA
                 default n
 
@@ -63,7 +63,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART3 
+                depends on BSP_USING_UART3
                 select RT_SERIAL_USING_DMA
                 default n
 
@@ -73,7 +73,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
-                depends on BSP_USING_UART4 
+                depends on BSP_USING_UART4
                 select RT_SERIAL_USING_DMA
                 default n
         endif
@@ -91,7 +91,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1

@@ -9,31 +9,31 @@ menu "Hardware Drivers Config"
 
         config BSP_USING_HWTIMER0
             bool "Using timer0"
-            select RT_USING_HWTIMER 
+            select RT_USING_HWTIMER
             default n
 
         config BSP_USING_ADC
             bool "Using ADC"
-            select RT_USING_ADC 
+            select RT_USING_ADC
             default n
 
         menu "UART Drivers"
             config BSP_USING_UART0
                 bool "Enable UART0 P0.2/P0.3(T/R)"
                 select RT_USING_SERIAL
-                default y    
-       
+                default y
+
             config BSP_USING_UART2
                 bool "Enable UART2 P2.8/P0.11(T/R)"
                 select RT_USING_SERIAL
                 default n
- 
+
         endmenu
 
     endmenu
-    
+
     menu "Onboard Peripheral Drivers"
-        
+
         config BSP_USING_SDRAM
             bool "Enable sdram"
             default n
@@ -42,9 +42,9 @@ menu "Hardware Drivers Config"
             bool "Enable LED"
             default n
     endmenu
-    
+
     menu "Offboard Peripheral Drivers"
 
     endmenu
-    
+
 endmenu

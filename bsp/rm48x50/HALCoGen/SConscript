@@ -4,8 +4,8 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src	= Glob('source/*.c')
-src	+= Glob('source/*.S')
+src = Glob('source/*.c')
+src += Glob('source/*.S')
 
 CPPPATH = [cwd + '/include/']
 

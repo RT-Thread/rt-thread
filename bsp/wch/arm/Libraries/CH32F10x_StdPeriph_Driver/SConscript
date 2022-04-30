@@ -29,7 +29,7 @@ StdPeriph_Driver/src/ch32f10x_wwdg.c
 """)
 
 path = [
-	cwd + '/CMSIS',
+    cwd + '/CMSIS',
     cwd + '/CMSIS/WCH/CH32F10x/Include',
     cwd + '/StdPeriph_Driver/inc']
 

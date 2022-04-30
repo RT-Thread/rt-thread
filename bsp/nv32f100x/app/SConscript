@@ -4,11 +4,11 @@ from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'app')
 
-src	= Glob('./src/*.c')
+src = Glob('./src/*.c')
 
 path = [cwd + '/inc',
-	cwd + '/..',
-	]
+    cwd + '/..',
+    ]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = path)
 

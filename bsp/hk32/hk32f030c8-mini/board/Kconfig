@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n 
+        default n
 
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
@@ -122,7 +122,7 @@ menu "On-chip Peripheral Drivers"
                         range 0 63
                         default 25
                 endif
-            
+
             config BSP_USING_I2C2
                 bool "Enable I2C2 BUS (software simulation)"
                 default n
@@ -137,7 +137,7 @@ menu "On-chip Peripheral Drivers"
                         default 27
                 endif
         endif
-        
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n

@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-    
+
 
     menu "On-chip Peripheral Drivers"
         config BSP_USING_GPIO
@@ -8,7 +8,7 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
-    source "drivers/ES/Kconfig"    
+    source "drivers/ES/Kconfig"
 
     endmenu
 
@@ -44,7 +44,7 @@ endif
         config BSP_USING_EXAMPLE_ADC_VOL
             bool "BSP_USING_EXAMPLE_ADC_VOL"
             default n
-        
+
         config BSP_USING_EXAMPLE_HWTIMER
             bool "BSP_USING_EXAMPLE_HWTIMER"
             default n

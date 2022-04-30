@@ -13,10 +13,10 @@ rtconfig.AFLAGS += ' -I' + str(Dir('#'))
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 Export('RTT_ROOT')
@@ -25,7 +25,7 @@ Export('rtconfig')
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
-   
+
 env.Replace(LINKFLAGS = rtconfig.LFLAGS)
 
 if GetDepend('RT_USING_FPU'):

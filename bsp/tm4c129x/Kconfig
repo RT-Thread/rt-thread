@@ -26,5 +26,5 @@ config SOC_TM4C129
 
 config RT_USING_UART0
     bool "Using RT_USING_UART0"
-    default y    
- 
+    default y
+

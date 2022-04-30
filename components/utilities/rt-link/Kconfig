@@ -7,7 +7,7 @@ if RT_USING_RT_LINK
     choice
         prompt"use hw crc device or not"
         default RT_LINK_USING_SF_CRC
-        
+
         config RT_LINK_USING_SF_CRC
             bool "use software crc table"
         config RT_LINK_USING_HW_CRC

@@ -13,10 +13,10 @@ TARGET = 'rtthread-rm48x50.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 
 if env['PLATFORM'] == 'win32':
     env['ASCOM'] = '$AS $ASFLAGS $CFLAGS $_CCCOMCOM -o $TARGET $SOURCES'

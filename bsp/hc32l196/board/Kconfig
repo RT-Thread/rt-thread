@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config MCU_HC32L196
-    bool 
+    bool
     select ARCH_ARM_CORTEX_M0
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -22,7 +22,7 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-		    config BSP_USING_UART0
+            config BSP_USING_UART0
                 bool "Enable UART0"
                 default y
 

@@ -3,7 +3,7 @@ import rtconfig
 
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
-src	= Glob('*.c')
+src = Glob('*.c')
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
