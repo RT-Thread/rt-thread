@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -198,7 +198,7 @@ int rt_hw_i2c_init(void)
     rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct stm32_i2c);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (unsigned int i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops = stm32_bit_ops_default;
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];

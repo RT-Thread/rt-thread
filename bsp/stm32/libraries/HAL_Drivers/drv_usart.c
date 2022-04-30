@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1162,7 +1162,7 @@ int rt_hw_usart_init(void)
 
     stm32_uart_get_dma_config();
 
-    for (int i = 0; i < obj_num; i++)
+    for (unsigned int i = 0; i < obj_num; i++)
     {
         /* init UART object */
         uart_obj[i].config = &uart_config[i];
