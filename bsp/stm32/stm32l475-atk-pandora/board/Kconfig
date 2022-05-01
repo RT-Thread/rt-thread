@@ -22,6 +22,7 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
         select BSP_USING_PWM
         select BSP_USING_PWM1
@@ -47,8 +48,8 @@ menu "Onboard Peripheral Drivers"
         imply BSP_SPI2_RX_USING_DMA
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_SPI
         imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_SPI
         default n
 
     config BSP_USING_KEY

@@ -17,6 +17,7 @@ menu "Onboard Peripheral Drivers"
    config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC1
@@ -30,11 +31,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C
         select BSP_USING_I2C1
         select BSP_USING_SPI
-        # select BSP_USING_SPI1
+        select BSP_USING_SPI1
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_ADAFRUIT
-        imply RTUSING_USING_SPI
+        imply RTDUINO_USING_SPI
         default n
 
 endmenu

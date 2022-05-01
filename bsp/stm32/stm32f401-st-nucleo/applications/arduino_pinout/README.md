@@ -61,3 +61,8 @@ Hardware Drivers Config --->
 ## 3 I2C总线
 
 STM32F401 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
+
+## 4 SPI总线
+
+STM32F401 Nucleo板的SPI总线是板上丝印的 `SCK/D13`、`MISO/D12`、`MOSI/D11`引脚，这3个引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号。
+
