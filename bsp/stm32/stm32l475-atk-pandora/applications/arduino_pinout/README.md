@@ -94,7 +94,7 @@ Hardware Drivers Config --->
 
 ## 3 I2C总线
 
-潘多拉Arduino支持三条I2C总线，分别是：i2c1、i2c3 和 i2c4。你可以通过`pins_arduino.h`文件中的 `ARDUINO_DEFAULT_IIC_BUS_NAME` 宏来设定Arduino的I2C总线，**默认为 i2c4 总线**。其中：
+潘多拉Arduino支持三条I2C总线，分别是：i2c1、i2c3 和 i2c4。你可以通过`pins_arduino.h`文件中的 `RTDUINO_DEFAULT_IIC_BUS_NAME` 宏来设定Arduino的I2C总线，**默认为 i2c4 总线**。其中：
 
 - i2c1 为用户总线，PC7 为 SDA，PC6 为 SCL。用户可以通过杜邦线连接其他 I2C 传感器/芯片。
 - i2c3 为板载 I2C 外设总线，连接板载 ICM20608（陀螺仪和加速度传感器） 和 AP3216C（距离和光亮度传感器） 芯片
@@ -102,9 +102,13 @@ Hardware Drivers Config --->
 
 I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
 
-## 4 特殊功能说明
+## 4 SPI总线
 
-### 4.1 芯片内部ADC通道
+潘多拉板的Arduino SPI总线是spi2总线，位置为板上左上角的`WIRELESS`插槽。 `SCK`、`MISO`、`MOSI`引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号。
+
+## 5 特殊功能说明
+
+### 5.1 芯片内部ADC通道
 
 本BSP适配了STM32的两个芯片内部ADC通道，可以通过 analogRead 函数来分别获取如下功能：
 
@@ -113,7 +117,7 @@ I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控�
 | 芯片内部参考电压 ADC | A2              | --            |
 | 芯片内部温度 ADC     | A3              | --            |
 
-### 4.2 真模拟输出功能 (True Analog Output)
+### 5.2 真模拟输出功能 (True Analog Output)
 
 Arduino的 analogWrite 函数虽为模拟写，但是实际输出的是PWM数字信号，并非真正的模拟信号。这是由于Arduino早期使用的AVR单片机并不支持DAC的功能，因此这个习惯就被保留了下来。但是随着Arduino支持芯片的丰富，部分高级芯片已经内建了DAC（例如Arduino官方板MKR、Zero等），因此Arduino的 analogWrite 函数后续也支持了真模拟输出功能。
 
