@@ -62,7 +62,7 @@ static const struct gd32_spi spi_bus_obj[] = {
 #if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
 #endif
-        GPIO_PIN_12,
+        GPIO_PIN_13,
         GPIO_PIN_14,
         GPIO_PIN_15,
     },
