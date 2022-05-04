@@ -26,8 +26,8 @@ static lv_disp_draw_buf_t disp_buf;
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
 /* Macros for panel. */
-#define LCD_WIDTH             480
-#define LCD_HEIGHT            272
+#define LCD_WIDTH             LV_HOR_RES_MAX
+#define LCD_HEIGHT            LV_VER_RES_MAX
 #define LCD_FB_BYTE_PER_PIXEL 2
 #define LCD_HSW 41
 #define LCD_HFP 4
@@ -227,9 +227,9 @@ void lv_port_disp_init(void)
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = lcd_fb_flush;
 
-    #if LV_USE_GPU_NXP_PXP
+#if LV_USE_GPU_NXP_PXP
     disp_drv.clean_dcache_cb = DEMO_CleanInvalidateCache;
-    #endif
+#endif
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;
