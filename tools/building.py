@@ -185,6 +185,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'ses' : ('gcc', 'gcc'),
                 'cmake':('gcc', 'gcc'),
                 'cmake-armclang':('keil', 'armclang'),
+                'xmake':('gcc', 'gcc'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -847,7 +848,9 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
-
+    if GetOption('target') == 'xmake':
+        from xmake import XMakeProject
+        XMakeProject(Env, Projects)
 
 def EndBuilding(target, program = None):
 
