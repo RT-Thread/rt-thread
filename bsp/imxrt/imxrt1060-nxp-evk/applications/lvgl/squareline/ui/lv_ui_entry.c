@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,10 +25,10 @@
 static struct rt_thread lvgl_thread;
 static rt_uint8_t lvgl_thread_stack[LV_THREAD_STACK_SIZE];
 
-static void lvgl_entry(void *parameter)
+static void lvgl_thread_entry(void *parameter)
 {
-    extern void lv_demo_music(void);
-    lv_demo_music();
+    extern void ui_init(void);
+    ui_init();
 
     while(1)
     {
@@ -41,7 +41,7 @@ static int lvgl_demo_init(void)
 {
     rt_thread_init(&lvgl_thread,
                    "LVGL",
-                   lvgl_entry,
+                   lvgl_thread_entry,
                    RT_NULL,
                    &lvgl_thread_stack[0],
                    sizeof(lvgl_thread_stack),
