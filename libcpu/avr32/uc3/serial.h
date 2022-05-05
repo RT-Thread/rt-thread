@@ -1,11 +1,7 @@
 /*
- * File      : serial.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -13,6 +9,7 @@
  * 2010-03-29     Bernard      remove interrupt tx and DMA rx mode.
  * 2010-03-30     Kyle         Ported from STM32 to AVR32.
  */
+
 #ifndef __RT_HW_SERIAL_H__
 #define __RT_HW_SERIAL_H__
 

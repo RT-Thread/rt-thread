@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -113,16 +113,14 @@ static rt_err_t get_timeval(struct timeval *tv)
     }
     else
     {
-        /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-        rt_kprintf(_WARNING_NO_RTC);
+        LOG_W(_WARNING_NO_RTC);
         return -RT_ENOSYS;
     }
 
     return rst;
 
 #else
-    /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-    rt_kprintf(_WARNING_NO_RTC);
+    LOG_W(_WARNING_NO_RTC);
     return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
@@ -174,7 +172,7 @@ static int set_timeval(struct timeval *tv)
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     time_t i;
-    register time_t work = *timep % (SPD);
+    time_t work = *timep % (SPD);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
@@ -183,7 +181,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_wday = (4 + work) % 7;
     for (i = 1970;; ++i)
     {
-        register time_t k = __isleap(i) ? 366 : 365;
+        time_t k = __isleap(i) ? 366 : 365;
         if (work >= k)
             work -= k;
         else
@@ -369,26 +367,26 @@ RTM_EXPORT(stime);
 
 time_t timegm(struct tm * const t)
 {
-    register time_t day;
-    register time_t i;
-    register time_t years = (time_t)t->tm_year - 70;
+    time_t day;
+    time_t i;
+    time_t years = (time_t)t->tm_year - 70;
 
-    if (t->tm_sec > 60)
+    if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
         t->tm_sec %= 60;
     }
-    if (t->tm_min > 60)
+    if (t->tm_min >= 60)        /* minutes after the hour - [0, 59] */
     {
         t->tm_hour += t->tm_min / 60;
         t->tm_min %= 60;
     }
-    if (t->tm_hour > 24)
+    if (t->tm_hour >= 24)       /* hours since midnight - [0, 23] */
     {
         t->tm_mday += t->tm_hour / 24;
         t->tm_hour %= 24;
     }
-    if (t->tm_mon > 12)
+    if (t->tm_mon >= 12)        /* months since January - [0, 11] */
     {
         t->tm_year += t->tm_mon / 12;
         t->tm_mon %= 12;
@@ -505,9 +503,9 @@ RTM_EXPORT(nanosleep);
 #ifdef RT_USING_POSIX_CLOCK
 #ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
-static int _rt_clock_time_system_init()
+static int _rt_clock_time_system_init(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     time_t time = 0;
     rt_tick_t tick;
     rt_device_t device;
@@ -595,7 +593,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     case CLOCK_REALTIME:
         {
             int tick;
-            register rt_base_t level;
+            rt_base_t level;
 
             level = rt_hw_interrupt_disable();
             tick = rt_tick_get(); /* get tick */
@@ -646,7 +644,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     LOG_W(_WARNING_NO_RTC);
     return -1;
 #else
-    register rt_base_t level;
+    rt_base_t level;
     int second;
     rt_tick_t tick;
     rt_device_t device;
@@ -988,7 +986,7 @@ static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
 
 void tz_set(int8_t tz)
 {
-    register rt_base_t level;
+    rt_base_t level;
     level = rt_hw_interrupt_disable();
     _current_timezone = tz;
     rt_hw_interrupt_enable(level);

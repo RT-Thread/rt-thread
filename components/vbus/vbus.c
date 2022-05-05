@@ -222,7 +222,7 @@ static void _bus_out_entry(void *param)
         /* wait for enough space */
         while (sp < dnr)
         {
-            rt_ubase_t lvl = rt_hw_interrupt_disable();
+            rt_base_t level = rt_hw_interrupt_disable();
 
             RT_VBUS_OUT_RING->blocked = 1;
             rt_vbus_smp_wmb();
@@ -235,7 +235,7 @@ static void _bus_out_entry(void *param)
 
             RT_VBUS_OUT_RING->blocked = 0;
 
-            rt_hw_interrupt_enable(lvl);
+            rt_hw_interrupt_enable(level);
 
             sp = _bus_ring_space_nr(RT_VBUS_OUT_RING);
         }
@@ -474,11 +474,11 @@ rt_err_t rt_vbus_listen_on(rt_uint8_t chnr,
 
 void rt_vbus_data_push(unsigned int id, struct rt_vbus_data *act)
 {
-    rt_ubase_t lvl;
+    rt_base_t level;
 
     RT_ASSERT(0 < id && id < RT_VBUS_CHANNEL_NR);
 
-    lvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     if (_bus_in_action[id][_IN_ACT_HEAD] == RT_NULL)
     {
@@ -495,7 +495,7 @@ void rt_vbus_data_push(unsigned int id, struct rt_vbus_data *act)
     _bus_in_action_nr[id]++;
 #endif
 
-    rt_hw_interrupt_enable(lvl);
+    rt_hw_interrupt_enable(level);
 
 #ifdef RT_VBUS_USING_FLOW_CONTROL
     _chn_recv_wm[id].level++;
@@ -519,11 +519,11 @@ void rt_vbus_data_push(unsigned int id, struct rt_vbus_data *act)
 struct rt_vbus_data* rt_vbus_data_pop(unsigned int id)
 {
     struct rt_vbus_data *act;
-    rt_ubase_t lvl;
+    rt_base_t level;
 
     RT_ASSERT(0 < id && id < RT_VBUS_CHANNEL_NR);
 
-    lvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     act = _bus_in_action[id][_IN_ACT_HEAD];
     if (act)
@@ -531,7 +531,7 @@ struct rt_vbus_data* rt_vbus_data_pop(unsigned int id)
         _bus_in_action[id][_IN_ACT_HEAD] = act->next;
     }
 
-    rt_hw_interrupt_enable(lvl);
+    rt_hw_interrupt_enable(level);
 
 #ifdef RT_VBUS_USING_FLOW_CONTROL
     if (_chn_recv_wm[id].level != 0)
@@ -901,9 +901,9 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
     int i, chnr, err;
     size_t plen = rt_strlen(req->name) + 2;
     unsigned char *pbuf;
-    rt_ubase_t lvl;
+    rt_base_t level;
 
-    lvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     for (i = 0; i < ARRAY_SIZE(_sess); i++)
     {
         if (_sess[i].st == SESSIOM_AVAILABLE)
@@ -911,7 +911,7 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
     }
     if (i == ARRAY_SIZE(_sess))
     {
-        rt_hw_interrupt_enable(lvl);
+        rt_hw_interrupt_enable(level);
         return -RT_ERROR;
     }
 
@@ -921,7 +921,7 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
     if (req->is_server)
     {
         _sess[i].st = SESSIOM_LISTENING;
-        rt_hw_interrupt_enable(lvl);
+        rt_hw_interrupt_enable(level);
 
         vbus_debug("request listening %s on %d\n", req->name, i);
 
@@ -933,12 +933,12 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
     pbuf = rt_malloc(plen);
     if (!pbuf)
     {
-        rt_hw_interrupt_enable(lvl);
+        rt_hw_interrupt_enable(level);
         return -RT_ENOMEM;
     }
 
     _sess[i].st = SESSIOM_ESTABLISHING;
-    rt_hw_interrupt_enable(lvl);
+    rt_hw_interrupt_enable(level);
 
     pbuf[0] = RT_VBUS_CHN0_CMD_ENABLE;
     rt_memcpy(pbuf+1, req->name, plen-1);

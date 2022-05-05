@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,19 +11,28 @@
  */
 
 #include "rtconfig.h"
-.section ".text.entrypoint","ax"
 
 #define SECONDARY_STACK_SIZE 4096
+
+.section ".text.entrypoint","ax"
 
 .globl _start
 .globl secondary_cpu_start
 _start:
+#ifdef RT_USING_SMP
     mrs     x1, mpidr_el1
-    and     x1, x1, #0xff
-    cbnz    x1, cpu_idle            /* If cpu id > 0, stop slave cores */
+    adr     x4, .boot_cpu_mpidr
+    str     x1, [x4]
+    dsb     sy
+#endif
+
+    bl      __asm_flush_dcache_all  /* The kernel and data must flush to DDR */
 
 secondary_cpu_start:
 #ifdef RT_USING_SMP
+    adr     x4, .boot_cpu_mpidr
+    ldr     x4, [x4]
+    dsb     sy
     /* Read cpu mpidr_el1 */
     mrs     x1, mpidr_el1
 
@@ -34,6 +43,7 @@ secondary_cpu_start:
 cpu_id_confirm:
     add     x2, x2, #1              /* Next cpu id inc */
     ldr     x3, [x0], #8
+    dsb     sy
     cmp     x3, #0
     beq     cpu_idle                /* Mean that `rt_cpu_mpidr_early' table is end */
     cmp     x3, x1
@@ -42,7 +52,8 @@ cpu_id_confirm:
     /* Get cpu id success */
     sub     x0, x2, #1
     msr     tpidr_el1, x0           /* Save cpu id global */
-    cbz     x0, cpu_setup           /* Only go to cpu_setup when cpu id = 0 */
+    cmp     x3, x4                  /* If it is boot cpu */
+    beq     boot_cpu_setup
 
     /* Set current cpu's stack top */
     sub     x0, x0, #1
@@ -53,14 +64,9 @@ cpu_id_confirm:
     b       cpu_check_el
 #else
     msr     tpidr_el1, xzr
-    b       cpu_setup
 #endif /* RT_USING_SMP */
 
-cpu_idle:
-    wfe
-    b       cpu_idle
-
-cpu_setup:
+boot_cpu_setup:
     ldr     x1, =_start
 
 cpu_check_el:
@@ -75,21 +81,24 @@ cpu_check_el:
     mov     x2, #(1 << 0)           /* EL0 and EL1 are in Non-Secure state */
     orr     x2, x2, #(1 << 4)       /* RES1 */
     orr     x2, x2, #(1 << 5)       /* RES1 */
-    orr     x2, x2, #(1 << 7)       /* SMC instructions are undefined at EL1 and above */
+    bic     x2, x2, #(1 << 7)       /* SMC instructions are enabled at EL1 and above */
     orr     x2, x2, #(1 << 8)       /* HVC instructions are enabled at EL1 and above */
     orr     x2, x2, #(1 << 10)      /* The next lower level is AArch64 */
     msr     scr_el3, x2
 
-    /* Change execution level to EL2 */
-    mov     x2, #0x3c9
-    msr     spsr_el3, x2            /* 0b1111001001 */
-    adr     x2, cpu_not_in_el3
+    mov     x2, #9                  /* Next level is 0b1001->EL2h */
+    orr     x2, x2, #(1 << 6)       /* Mask FIQ */
+    orr     x2, x2, #(1 << 7)       /* Mask IRQ */
+    orr     x2, x2, #(1 << 8)       /* Mask SError */
+    orr     x2, x2, #(1 << 9)       /* Mask Debug Exception */
+    msr     spsr_el3, x2
+    adr     x2, cpu_in_el2
     msr     elr_el3, x2
-    eret                            /* Exception Return: from EL3, continue from cpu_not_in_el3 */
+    eret
 
 cpu_not_in_el3:                     /* Running at EL2 or EL1 */
-    cmp     x0, #4                  /* EL1 = 0100  */
-    beq     cpu_in_el1              /* Halt this core if running in El1 */
+    cmp     x0, #4                  /* EL1 = 0100 */
+    beq     cpu_in_el1
 
 cpu_in_el2:
     /* Enable CNTP for EL1 */
@@ -102,9 +111,12 @@ cpu_in_el2:
     orr     x0, x0, #(1 << 1)       /* SWIO hardwired on Pi3 */
     msr     hcr_el2, x0
 
-    /* Change execution level to EL1 */
-    mov     x2, #0x3c4
-    msr     spsr_el2, x2            /* 0b1111000100 */
+    mov     x2, #5                  /* Next level is 0b0101->EL1h */
+    orr     x2, x2, #(1 << 6)       /* Mask FIQ */
+    orr     x2, x2, #(1 << 7)       /* Mask IRQ */
+    orr     x2, x2, #(1 << 8)       /* Mask SError */
+    orr     x2, x2, #(1 << 9)       /* Mask Debug Exception */
+    msr     spsr_el2, x2
     adr     x2, cpu_in_el1
     msr     elr_el2, x2
     eret
@@ -153,9 +165,16 @@ clean_bss_check:
 
 jump_to_entry:
     b       rtthread_startup
-    b       cpu_idle                /* For failsafe, halt this core too */
+
+cpu_idle:
+    wfe
+    b       cpu_idle
 
 #ifdef RT_USING_SMP
+.align 3
+.boot_cpu_mpidr:
+    .quad 0x0
+
 .align 12
 .secondary_cpu_stack:
 .space (SECONDARY_STACK_SIZE * (RT_CPUS_NR - 1))

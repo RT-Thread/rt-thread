@@ -91,7 +91,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             rt_size_t data_size,
                             rt_int32_t timeout)
 {
-    rt_ubase_t  level;
+    rt_base_t level;
     rt_thread_t thread;
     rt_err_t    result;
 
@@ -208,7 +208,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            rt_size_t *size,
                            rt_int32_t timeout)
 {
-    rt_ubase_t  level;
+    rt_base_t level;
     rt_thread_t thread;
     rt_err_t    result;
 
@@ -330,7 +330,7 @@ rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
                             const void** data_ptr,
                             rt_size_t *size)
 {
-    rt_ubase_t  level;
+    rt_base_t level;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
@@ -361,7 +361,7 @@ RTM_EXPORT(rt_data_queue_peek);
  */
 void rt_data_queue_reset(struct rt_data_queue *queue)
 {
-    rt_ubase_t  level;
+    rt_base_t level;
     struct rt_thread *thread;
 
     RT_ASSERT(queue != RT_NULL);
@@ -441,7 +441,7 @@ RTM_EXPORT(rt_data_queue_reset);
  */
 rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
 {
-    rt_ubase_t level;
+    rt_base_t level;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
@@ -468,7 +468,7 @@ RTM_EXPORT(rt_data_queue_deinit);
  */
 rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     rt_int16_t len;
 
     RT_ASSERT(queue != RT_NULL);

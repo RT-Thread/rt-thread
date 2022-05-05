@@ -45,7 +45,8 @@ struct rt_mmcsd_io_cfg {
 #define MMCSD_BUS_WIDTH_1       0
 #define MMCSD_BUS_WIDTH_4       2
 #define MMCSD_BUS_WIDTH_8       3
-
+#define MMCSD_DDR_BUS_WIDTH_4   4
+#define MMCSD_DDR_BUS_WIDTH_8   5
 };
 
 struct rt_mmcsd_host;
@@ -90,6 +91,9 @@ struct rt_mmcsd_host {
 #define controller_is_spi(host) (host->flags & MMCSD_HOST_IS_SPI)
 #define MMCSD_SUP_SDIO_IRQ  (1 << 4)    /* support signal pending SDIO IRQs */
 #define MMCSD_SUP_HIGHSPEED (1 << 5)    /* support high speed */
+#define MMCSD_SUP_HIGHSPEED_DDR     (1 << 6)    /* support high speed(DDR) */
+#define MMCSD_SUP_HIGHSPEED_HS200   (1 << 7)    /* support high speed HS200 */
+#define MMCSD_SUP_HIGHSPEED_HS400   (1 << 8)    /* support high speed HS400 */
 
     rt_uint32_t max_seg_size;   /* maximum size of one dma segment */
     rt_uint32_t max_dma_segs;   /* maximum number of dma segments in one request */

@@ -54,6 +54,23 @@ _reset:
 @-------------------------------------------------------------------------------
 @ Initialize CPU Registers
 @ After reset, the CPU is in the Supervisor mode (M = 10011)
+        mov r0, #0x0000
+        mov r1, #0x0000
+        mov r2, #0x0000
+        mov r3, #0x0000
+        mov r4, #0x0000
+        mov r5, #0x0000
+        mov r6, #0x0000
+        mov r7, #0x0000
+        mov r8, #0x0000
+        mov r9, #0x0000
+        mov r10, #0x0000
+        mov r11, #0x0000
+        mov r12, #0x0000
+        mov r13, #0x0000
+        mrs r1, cpsr
+        msr spsr_cxsf, r1
+
         cpsid  if, #19
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)

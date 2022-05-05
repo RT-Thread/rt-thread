@@ -1,0 +1,55 @@
+
+# Kconfig file for package fal
+menuconfig RT_USING_FAL
+    bool "FAL: flash abstraction layer"
+    default n
+
+if RT_USING_FAL
+    config FAL_DEBUG_CONFIG
+        bool "Enable debug log output"
+        default y
+
+    config FAL_DEBUG
+       int
+       default 1    if FAL_DEBUG_CONFIG
+       default 0
+
+    config FAL_PART_HAS_TABLE_CFG
+        bool "FAL partition table config has defined on 'fal_cfg.h'"
+        default y
+        help
+            If defined partition table on 'fal_cfg.h' please enable this option.
+            When this option is disable, it will auto find and load the partition table
+            on a specified location in flash partition.
+
+    if !FAL_PART_HAS_TABLE_CFG
+
+        config FAL_PART_TABLE_FLASH_DEV_NAME
+            string "The flash device which saving partition table"
+            default "onchip"
+             help
+                It will auto find the partition table on this flash device.
+
+        config FAL_PART_TABLE_END_OFFSET
+            int "The patition table end address relative to flash device offset."
+            default 65536
+            help
+                The auto find and load the partition table process is forward from this
+                offset address on flash.
+
+    endif
+
+    config FAL_USING_SFUD_PORT
+        bool "FAL uses SFUD drivers"
+        default n
+        help
+            The fal_flash_sfud_port.c in the samples\porting directory will be used.
+
+    if FAL_USING_SFUD_PORT
+        config FAL_USING_NOR_FLASH_DEV_NAME
+            string "The name of the device used by FAL"
+            default "norflash0"
+    endif
+
+endif
+

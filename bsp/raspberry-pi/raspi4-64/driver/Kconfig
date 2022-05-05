@@ -1,8 +1,3 @@
-
-config BSP_SUPPORT_FPU
-    bool "Using Float"
-    default n
-
 menu "Hardware Drivers Config"
     menu "BCM Peripheral Drivers"
         menuconfig BSP_USING_UART
@@ -35,6 +30,10 @@ menu "Hardware Drivers Config"
         config BSP_USING_GIC
             bool
             default y
+
+            config BSP_USING_GICV2
+                bool
+                default y
 
         config BSP_USING_PIN
             bool "Using PIN"

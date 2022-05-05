@@ -6,7 +6,11 @@ path = [cwd]
 
 if GetDepend('ULOG_BACKEND_USING_CONSOLE'):
     src += ['backend/console_be.c']
-    
+
+if GetDepend('ULOG_BACKEND_USING_FILE'):
+    path +=  [cwd + '/backend']
+    src += ['backend/file_be.c']
+
 if GetDepend('ULOG_USING_SYSLOG'):
     path +=  [cwd + '/syslog']
     src  += Glob('syslog/*.c')

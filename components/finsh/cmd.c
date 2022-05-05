@@ -40,14 +40,6 @@
 
 #define LIST_FIND_OBJ_NR 8
 
-long hello(void)
-{
-    rt_kprintf("Hello RT-Thread!\n");
-
-    return 0;
-}
-MSH_CMD_EXPORT(hello, say hello world);
-
 static long clear(void)
 {
     rt_kprintf("\x1b[2J\x1b[H");
@@ -63,7 +55,7 @@ long version(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(version, show RT - Thread version information);
+MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 rt_inline void object_split(int len)
 {
@@ -97,7 +89,7 @@ static void list_find_init(list_get_next_t *p, rt_uint8_t type, rt_list_t **arra
 static rt_list_t *list_get_next(rt_list_t *current, list_get_next_t *arg)
 {
     int first_flag = 0;
-    rt_ubase_t level;
+    rt_base_t level;
     rt_list_t *node, *list;
     rt_list_t **array;
     int nr;
@@ -161,7 +153,7 @@ static rt_list_t *list_get_next(rt_list_t *current, list_get_next_t *arg)
 
 long list_thread(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -275,7 +267,7 @@ static void show_wait_queue(struct rt_list_node *list)
 #ifdef RT_USING_SEMAPHORE
 long list_sem(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -342,7 +334,7 @@ MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #ifdef RT_USING_EVENT
 long list_event(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -407,7 +399,7 @@ MSH_CMD_EXPORT(list_event, list event in system);
 #ifdef RT_USING_MUTEX
 long list_mutex(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -465,7 +457,7 @@ MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #ifdef RT_USING_MAILBOX
 long list_mailbox(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -536,7 +528,7 @@ MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #ifdef RT_USING_MESSAGEQUEUE
 long list_msgqueue(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -603,7 +595,7 @@ MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #ifdef RT_USING_MEMHEAP
 long list_memheap(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -660,7 +652,7 @@ MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #ifdef RT_USING_MEMPOOL
 long list_mempool(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -739,7 +731,7 @@ MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 
 long list_timer(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
@@ -801,7 +793,7 @@ long list_timer(void)
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
-static char *const device_type_str[] =
+static char *const device_type_str[RT_Device_Class_Unknown] =
 {
     "Character Device",
     "Block Device",
@@ -827,15 +819,21 @@ static char *const device_type_str[] =
     "Touch Device",
     "Phy Device",
     "Security Device",
-    "Unknown"
+    "WLAN Device",
+    "Pin Device",
+    "ADC Device",
+    "DAC Device",
+    "WDT Device",
+    "PWM Device",
 };
 
 long list_device(void)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
+    const char *device_type;
 
     int maxlen;
     const char *item_title = "device";
@@ -868,12 +866,16 @@ long list_device(void)
                 rt_hw_interrupt_enable(level);
 
                 device = (struct rt_device *)obj;
+                device_type = "Unknown";
+                if (device->type < RT_Device_Class_Unknown &&
+                    device_type_str[device->type] != RT_NULL)
+                {
+                    device_type = device_type_str[device->type];
+                }
                 rt_kprintf("%-*.*s %-20s %-8d\n",
                            maxlen, RT_NAME_MAX,
                            device->parent.name,
-                           (device->type <= RT_Device_Class_Unknown) ?
-                           device_type_str[device->type] :
-                           device_type_str[RT_Device_Class_Unknown],
+                           device_type,
                            device->ref_count);
 
             }
@@ -885,29 +887,5 @@ long list_device(void)
 }
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
-
-long list(void)
-{
-    rt_kprintf("--Commands List:\n");
-    {
-        struct finsh_syscall *index;
-        for (index = _syscall_table_begin;
-                index < _syscall_table_end;
-                FINSH_NEXT_SYSCALL(index))
-        {
-            /* skip the internal command */
-            if (strncmp((char *)index->name, "__", 2) == 0) continue;
-
-#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-            rt_kprintf("%-16s -- %s\n", index->name, index->desc);
-#else
-            rt_kprintf("%s\n", index->name);
-#endif
-        }
-    }
-
-    return 0;
-}
-MSH_CMD_EXPORT(list, list all commands in system)
 
 #endif /* RT_USING_FINSH */

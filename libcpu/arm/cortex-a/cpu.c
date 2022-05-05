@@ -65,7 +65,7 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 /** shutdown CPU */
 RT_WEAK void rt_hw_cpu_shutdown()
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();

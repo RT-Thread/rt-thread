@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_rcm.h
+ * @file        apm32f10x_rcm.h
  *
- * @brief      This file contains all the functions prototypes for the RCM firmware library
+ * @brief       This file contains all the functions prototypes for the RCM firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_RCM_H
 #define __APM32F10X_RCM_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -35,9 +49,9 @@ extern "C" {
  */
 typedef enum
 {
-    RCM_HSE_CLOSE,    //!< CLOSE HSE
-    RCM_HSE_OPEN,     //!< OPEN HSE
-    RCM_HSE_BYPASS,   //!< HSE BYPASS
+    RCM_HSE_CLOSE,
+    RCM_HSE_OPEN,
+    RCM_HSE_BYPASS
 } RCM_HSE_T;
 
 /**
@@ -59,7 +73,7 @@ typedef enum
     RCM_PLLMF_13,
     RCM_PLLMF_14,
     RCM_PLLMF_15,
-    RCM_PLLMF_16,
+    RCM_PLLMF_16
 } RCM_PLLMF_T;
 
 /**
@@ -85,7 +99,7 @@ typedef enum
     RCM_AHB_DIV_64,
     RCM_AHB_DIV_128,
     RCM_AHB_DIV_256,
-    RCM_AHB_DIV_512,
+    RCM_AHB_DIV_512
 } RCM_AHB_DIV_T;
 
 /**
@@ -117,7 +131,7 @@ typedef enum
 typedef enum
 {
     RCM_FPU_DIV_1,
-    RCM_FPU_DIV_2,
+    RCM_FPU_DIV_2
 } RCM_FPU_DIV_T;
 
 /**
@@ -128,7 +142,7 @@ typedef enum
     RCM_PCLK2_DIV_2,
     RCM_PCLK2_DIV_4,
     RCM_PCLK2_DIV_6,
-    RCM_PCLK2_DIV_8,
+    RCM_PCLK2_DIV_8
 } RCM_PCLK2_DIV_T;
 
 /**
@@ -160,7 +174,7 @@ typedef enum
     RCM_MCOCLK_SYSCLK,
     RCM_MCOCLK_HSI,
     RCM_MCOCLK_HSE,
-    RCM_MCOCLK_PLLCLK_DIV_2,
+    RCM_MCOCLK_PLLCLK_DIV_2
 } RCM_MCOCLK_T;
 
 /**
@@ -199,7 +213,7 @@ typedef enum
     RCM_AHB_PERIPH_QSPI = BIT5,
     RCM_AHB_PERIPH_CRC  = BIT6,
     RCM_AHB_PERIPH_EMMC = BIT8,
-    RCM_AHB_PERIPH_SDIO = BIT10,
+    RCM_AHB_PERIPH_SDIO = BIT10
 } RCM_AHB_PERIPH_T;
 
 /**
@@ -221,7 +235,7 @@ typedef enum
     RCM_APB2_PERIPH_SPI1    = BIT12,
     RCM_APB2_PERIPH_TMR8    = BIT13,
     RCM_APB2_PERIPH_USART1  = BIT14,
-    RCM_APB2_PERIPH_ADC3    = BIT15,
+    RCM_APB2_PERIPH_ADC3    = BIT15
 } RCM_APB2_PERIPH_T;
 
 /**
@@ -249,7 +263,7 @@ typedef enum
     RCM_APB1_PERIPH_CAN2   = BIT26,
     RCM_APB1_PERIPH_BAKR   = BIT27,
     RCM_APB1_PERIPH_PMU    = BIT28,
-    RCM_APB1_PERIPH_DAC    = BIT29,
+    RCM_APB1_PERIPH_DAC    = BIT29
 } RCM_APB1_PERIPH_T;
 
 /**
@@ -267,7 +281,7 @@ typedef enum
     RCM_FLAG_SWRST   = 0x21C,   //!< Software reset flag
     RCM_FLAG_IWDTRST = 0x21D,   //!< Independent watchdog reset flag
     RCM_FLAG_WWDTRST = 0x21E,   //!< Window watchdog reset flag
-    RCM_FLAG_LPRRST  = 0x21F,   //!< Low-power reset flag
+    RCM_FLAG_LPRRST  = 0x21F    //!< Low-power reset flag
 } RCM_FLAG_T;
 
 /**@} end of group RCM_Enumerations*/
@@ -287,7 +301,7 @@ void RCM_ConfigHSE(RCM_HSE_T state);
 uint8_t RCM_WaitHSEReady(void);
 
 /** HSI clock */
-void RCM_SetHSITrim(uint8_t HSITrim);
+void RCM_ConfigHSITrim(uint8_t HSITrim);
 void RCM_EnableHSI(void);
 void RCM_DisableHSI(void);
 
@@ -325,7 +339,7 @@ void RCM_DisableRTCCLK(void);
 /** Reads the clock frequency */
 uint32_t RCM_ReadSYSCLKFreq(void);
 uint32_t RCM_ReadHCLKFreq(void);
-void RCM_ReadPCLKFreq(uint32_t* PCLK1, uint32_t* PCLK2);
+void RCM_ReadPCLKFreq(uint32_t *PCLK1, uint32_t *PCLK2);
 uint32_t RCM_ReadADCCLKFreq(void);
 
 /** Enable or disable Periph Clock */

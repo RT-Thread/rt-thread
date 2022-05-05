@@ -19,7 +19,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | IDE/编译器 | 已测试版本                   |
 | ---------- | ---------------------------- |
 | MDK4       | MDK4.74                      |
-| MDK5       | MDK523                       |
+| MDK5       | MDK531                       |
 | IAR        | IAR8.20                      |
 | GCC        | GCC 5.4.1 20160919 (release) |
 
@@ -90,8 +90,8 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | PC3  | ADC1/2_IN13    |
 | PC4  | ADC1/2_IN14    |
 | PC5  | ADC1/2_IN15    |
-| PA11 | CAN1_RX        |
-| PA12 | CAN1_TX        |
+| PB8  | CAN1_RX        |
+| PB9  | CAN1_TX        |
 | PB5  | CAN2_RX        |
 | PB6  | CAN2_TX        |
 
@@ -111,7 +111,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 JLink 下载程序，在通过 JLink 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用AT-LINK SWD下载程序，在通过AT-LINK SWD连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
@@ -122,8 +122,8 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Mar  9 2020
- 2006 - 2020 Copyright by rt-thread team
+ / | \     4.1.0 build Mar 23 2022
+ 2006 - 2022 Copyright by RT-Thread team
 msh />
 ```
 
@@ -135,4 +135,4 @@ msh />
 
 维护人:
 
-- [sheltonyu](https://github.com/sheltonyu) 
+- [sheltonyu]

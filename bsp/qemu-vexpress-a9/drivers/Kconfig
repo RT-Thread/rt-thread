@@ -46,8 +46,8 @@ endif
 config BSP_DRV_EMAC
     bool "Enable EMAC driver"
     select RT_USING_LWIP
-    select RT_USING_SAL
-    select SAL_USING_POSIX
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_SOCKET
     default n
 
 config BSP_DRV_AUDIO
