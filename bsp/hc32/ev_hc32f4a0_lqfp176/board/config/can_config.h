@@ -19,18 +19,18 @@ extern "C" {
 
 #ifdef BSP_USING_CAN1
 #ifndef CAN1_CONFIG
-#define CAN1_CONFIG                                                 \
-    {                                                               \
-       .name = "can1",                          \
+#define CAN1_CONFIG                                         \
+    {                                                       \
+       .name = "can1",                                      \
     }
 #endif /* CAN1_CONFIG */
 #endif /* BSP_USING_CAN1 */
 
 #ifdef BSP_USING_CAN2
 #ifndef CAN2_CONFIG
-#define CAN2_CONFIG                                                 \
-    {                                                               \
-       .name = "can2",                          \
+#define CAN2_CONFIG                                         \
+    {                                                       \
+       .name = "can2",                                      \
     }
 #endif /* CAN2_CONFIG */
 #endif /* BSP_USING_CAN2 */
