@@ -18,6 +18,6 @@ void setup(void)
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    Serial.println("Hello RT-Thread from arduino_main.cpp\n");
+    Serial.println("Hello Arduino!\n");
     delay(800);
 }

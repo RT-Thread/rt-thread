@@ -51,8 +51,8 @@
  * i2c3 - ICM20608, AP3216C (On Board)
  * i2c4 - AHT10 (On Board)
  */
-#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
-
-#define ARDUINO_DEFAULT_SPI_BUS_NAME "spi2"
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
+#define RTDUINO_DEFAULT_SPI_BUS_NAME "spi2"
+#define RTDUINO_SERIAL2_DEVICE_NAME "uart2"
 
 #endif /* Pins_Arduino_h */
