@@ -385,7 +385,7 @@ static rt_size_t hc32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *
         USART_FuncCmd(uart->config->Instance, USART_INT_TX_CPLT, ENABLE);
         return size;
     }
-#endif    
+#endif
 
     return 0;
 }
