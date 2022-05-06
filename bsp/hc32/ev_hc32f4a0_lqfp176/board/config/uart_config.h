@@ -12,6 +12,7 @@
 #define __UART_CONFIG_H__
 
 #include <rtthread.h>
+#include "irq_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,20 +28,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART1,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT010_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART1_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART1_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART1_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT089_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART1_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART1_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART1_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT088_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART1_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART1_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART1_TI,                    \
         },                                                      \
     }
@@ -73,8 +74,8 @@ extern "C" {
         .timeout_bits  = 20UL,                                  \
         .irq_config    =                                        \
         {                                                       \
-            .irq_num   = INT006_IRQn,                           \
-            .irq_prio  = DDL_IRQ_PRIO_DEFAULT,                  \
+            .irq_num   = BSP_UART1_RXTO_IRQ_NUM,                \
+            .irq_prio  = BSP_UART1_RXTO_IRQ_PRIO,               \
             .int_src   = INT_SRC_USART1_RTO,                    \
         },                                                      \
     }
@@ -87,8 +88,8 @@ extern "C" {
     {                                                           \
         .irq_config     =                                       \
         {                                                       \
-            .irq_num    = INT086_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART1_TX_CPLT_IRQ_NUM,            \
+            .irq_prio   = BSP_UART1_TX_CPLT_IRQ_PRIO,           \
             .int_src    = INT_SRC_USART1_TCI,                   \
         },                                                      \
     }
@@ -122,20 +123,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART2,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT011_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART2_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART2_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART2_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT091_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART2_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART2_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART2_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT090_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART2_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART2_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART2_TI,                    \
         },                                                      \
     }
@@ -168,8 +169,8 @@ extern "C" {
         .timeout_bits  = 20UL,                                  \
         .irq_config    =                                        \
         {                                                       \
-            .irq_num   = INT007_IRQn,                           \
-            .irq_prio  = DDL_IRQ_PRIO_DEFAULT,                  \
+            .irq_num   = BSP_UART2_RXTO_IRQ_NUM,                \
+            .irq_prio  = BSP_UART2_RXTO_IRQ_PRIO,               \
             .int_src   = INT_SRC_USART2_RTO,                    \
         },                                                      \
     }
@@ -182,8 +183,8 @@ extern "C" {
     {                                                           \
         .irq_config     =                                       \
         {                                                       \
-            .irq_num    = INT087_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART2_TX_CPLT_IRQ_NUM,            \
+            .irq_prio   = BSP_UART2_TX_CPLT_IRQ_PRIO,           \
             .int_src    = INT_SRC_USART2_TCI,                   \
         },                                                      \
     }
@@ -217,20 +218,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART3,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT012_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART3_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART3_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART3_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT095_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART3_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART3_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART3_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT094_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART3_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART3_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART3_TI,                    \
         },                                                      \
     }
@@ -246,20 +247,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART4,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT013_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART4_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART4_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART4_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT097_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART4_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART4_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART4_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT096_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART4_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART4_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART4_TI,                    \
         },                                                      \
     }
@@ -275,20 +276,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART5,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT014_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART5_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART5_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART5_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT101_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART5_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART5_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART5_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT100_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART5_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART5_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART5_TI,                    \
         },                                                      \
     }
@@ -304,20 +305,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART6,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT015_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART6_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART6_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART6_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT103_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART6_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART6_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART6_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT102_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART6_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART6_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART6_TI,                    \
         },                                                      \
     }
@@ -350,8 +351,8 @@ extern "C" {
         .timeout_bits  = 20UL,                                  \
         .irq_config    =                                        \
         {                                                       \
-            .irq_num   = INT008_IRQn,                           \
-            .irq_prio  = DDL_IRQ_PRIO_DEFAULT,                  \
+            .irq_num   = BSP_UART6_RXTO_IRQ_NUM,                \
+            .irq_prio  = BSP_UART6_RXTO_IRQ_PRIO,               \
             .int_src   = INT_SRC_USART6_RTO,                    \
         },                                                      \
     }
@@ -364,8 +365,8 @@ extern "C" {
     {                                                           \
         .irq_config     =                                       \
         {                                                       \
-            .irq_num    = INT099_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART6_TX_CPLT_IRQ_NUM,            \
+            .irq_prio   = BSP_UART6_TX_CPLT_IRQ_PRIO,           \
             .int_src    = INT_SRC_USART6_TCI,                   \
         },                                                      \
     }
@@ -399,20 +400,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART7,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT016_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART7_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART7_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART7_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT107_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART7_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART7_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART7_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT106_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART7_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART7_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART7_TI,                    \
         },                                                      \
     }
@@ -445,8 +446,8 @@ extern "C" {
         .timeout_bits  = 20UL,                                  \
         .irq_config    =                                        \
         {                                                       \
-            .irq_num   = INT009_IRQn,                           \
-            .irq_prio  = DDL_IRQ_PRIO_DEFAULT,                  \
+            .irq_num   = BSP_UART7_RXTO_IRQ_NUM,                \
+            .irq_prio  = BSP_UART7_RXTO_IRQ_PRIO,               \
             .int_src   = INT_SRC_USART7_RTO,                    \
         },                                                      \
     }
@@ -459,8 +460,8 @@ extern "C" {
     {                                                           \
         .irq_config     =                                       \
         {                                                       \
-            .irq_num    = INT105_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART7_TX_CPLT_IRQ_NUM,            \
+            .irq_prio   = BSP_UART7_TX_CPLT_IRQ_PRIO,           \
             .int_src    = INT_SRC_USART6_TCI,                   \
         },                                                      \
     }
@@ -494,20 +495,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART8,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT017_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART8_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART8_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART8_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT109_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART8_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART8_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART8_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT108_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART8_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART8_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART8_TI,                    \
         },                                                      \
     }
@@ -523,20 +524,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART9,                         \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT112_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART9_RXERR_IRQ_NUM,              \
+            .irq_prio   = BSP_UART9_RXERR_IRQ_PRIO,             \
             .int_src    = INT_SRC_USART9_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT110_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART9_RX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART9_RX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART9_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT111_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART9_TX_IRQ_NUM,                 \
+            .irq_prio   = BSP_UART9_TX_IRQ_PRIO,                \
             .int_src    = INT_SRC_USART9_TI,                    \
         },                                                      \
     }
@@ -552,20 +553,20 @@ extern "C" {
         .clock    = FCG3_PERIPH_USART10,                        \
         .rxerr_irq.irq_config =                                 \
         {                                                       \
-            .irq_num    = INT115_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART10_RXERR_IRQ_NUM,             \
+            .irq_prio   = BSP_UART10_RXERR_IRQ_PRIO,            \
             .int_src    = INT_SRC_USART7_EI,                    \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT114_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART10_RX_IRQ_NUM,                \
+            .irq_prio   = BSP_UART10_RX_IRQ_PRIO,               \
             .int_src    = INT_SRC_USART7_RI,                    \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
-            .irq_num    = INT113_IRQn,                          \
-            .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+            .irq_num    = BSP_UART10_TX_IRQ_NUM,                \
+            .irq_prio   = BSP_UART10_TX_IRQ_PRIO,               \
             .int_src    = INT_SRC_USART7_TI,                    \
         },                                                      \
     }
