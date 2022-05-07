@@ -231,6 +231,15 @@ extern "C" {
 #define BSP_UART10_TX_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif /* BSP_USING_UART10 */
 
+#if defined(BSP_USING_CAN1)
+#define BSP_CAN1_IRQ_PRIO               (DDL_IRQ_PRIO_03)
+#define BSP_CAN1_IRQ_NUM                (INT004_IRQn)
+#endif/* BSP_USING_CAN1 */
+
+#if defined(BSP_USING_CAN2)
+#define BSP_CAN2_IRQ_PRIO               (DDL_IRQ_PRIO_03)
+#define BSP_CAN2_IRQ_NUM                (INT005_IRQn)
+#endif/* BSP_USING_CAN2 */
 
 #ifdef __cplusplus
 }

@@ -87,10 +87,6 @@
     #define CAN1_RX_PORT                     (GPIO_PORT_D)
     #define CAN1_RX_PIN                      (GPIO_PIN_04)
     #define CAN1_RX_PIN_FUNC                 (GPIO_FUNC_61)
-
-    #define CAN1_INT_PRIO                    (DDL_IRQ_PRIO_03)
-    #define CAN1_INT_SRC                     (INT_SRC_CAN1_HOST)
-    #define CAN1_INT_IRQn                    (INT004_IRQn)
 #endif
 
 #if defined(BSP_USING_CAN2)
@@ -101,10 +97,6 @@
     #define CAN2_RX_PORT                     (GPIO_PORT_D)
     #define CAN2_RX_PIN                      (GPIO_PIN_06)
     #define CAN2_RX_PIN_FUNC                 (GPIO_FUNC_63)
-
-    #define CAN2_INT_PRIO                    (DDL_IRQ_PRIO_03)
-    #define CAN2_INT_SRC                     (INT_SRC_CAN2_HOST)
-    #define CAN2_INT_IRQn                    (INT005_IRQn)
 #endif
 
 #endif
