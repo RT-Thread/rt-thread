@@ -924,7 +924,7 @@ int cmd_canstat(int argc, void **argv)
             rt_kprintf(" Can't find can device %s\n", argv[1]);
             return -1;
         }
-        rt_kprintf(" Finded can device: %s...", argv[1]);
+        rt_kprintf(" Found can device: %s...", argv[1]);
 
         rt_device_control(candev, RT_CAN_CMD_GET_STATUS, &status);
         rt_kprintf("\n Receive...error..count: %010ld. Send.....error....count: %010ld.",
@@ -954,9 +954,9 @@ int cmd_canstat(int argc, void **argv)
             rt_kprintf("%s.", ErrCode[3]);
             break;
         }
-        rt_kprintf("\n Total.receive.packages: %010ld. Droped.receive.packages: %010ld.",
+        rt_kprintf("\n Total.receive.packages: %010ld. Dropped.receive.packages: %010ld.",
                    status.rcvpkg, status.dropedrcvpkg);
-        rt_kprintf("\n Total..send...packages: %010ld. Droped...send..packages: %010ld.\n",
+        rt_kprintf("\n Total..send...packages: %010ld. Dropped...send..packages: %010ld.\n",
                    status.sndpkg + status.dropedsndpkg, status.dropedsndpkg);
     }
     else
