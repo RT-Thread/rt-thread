@@ -144,7 +144,7 @@ void rt_pin_mode(rt_base_t pin, rt_base_t mode)
 }
 #ifdef FINSH_USING_MSH
 #define PINMODE_USAGE "\r\npinMode pin_xxx mode_xxx\r\n\tpin_xxx : 1\r\n\tmode_xxx : output or input\r\n"
-static void pinMode(int argc, char *argv[])
+static void pin_mode(int argc, char *argv[])
 {
     rt_base_t pin;
     rt_base_t mode;
@@ -175,7 +175,7 @@ static void pinMode(int argc, char *argv[])
 
     rt_pin_mode(pin, mode);
 }
-MSH_CMD_EXPORT(pinMode, set hardware pin mode);
+MSH_CMD_EXPORT_ALIAS(pin_mode, pinMode, set hardware pin mode);
 #endif
 
 void rt_pin_write(rt_base_t pin, rt_base_t value)
@@ -185,7 +185,7 @@ void rt_pin_write(rt_base_t pin, rt_base_t value)
 }
 #ifdef FINSH_USING_MSH
 #define PINWRITE_USAGE "\r\npinWrite pin_xxx state_xxx\r\n\tpin_xxx : 1\r\n\tstate_xxx : high or low\r\n\tstate_xxx : on or off\r\n"
-static void pinWrite(int argc, char *argv[])
+static void pin_write(int argc, char *argv[])
 {
     rt_base_t pin;
     rt_base_t value;
@@ -215,7 +215,7 @@ static void pinWrite(int argc, char *argv[])
     }
     rt_pin_write(pin, value);
 }
-MSH_CMD_EXPORT(pinWrite, write value to hardware pin);
+MSH_CMD_EXPORT_ALIAS(pin_write, pinWrite, write value to hardware pin);
 #endif
 
 int rt_pin_read(rt_base_t pin)
@@ -225,7 +225,7 @@ int rt_pin_read(rt_base_t pin)
 }
 #ifdef FINSH_USING_MSH
 #define PINREAD_USAGE "\r\npinRead pin_xxx\r\n\tpin_xxx : 1\r\n"
-static void pinRead(int argc, char *argv[])
+static void pin_read(int argc, char *argv[])
 {
     rt_base_t pin;
     rt_base_t value;
@@ -250,7 +250,7 @@ static void pinRead(int argc, char *argv[])
         rt_kprintf("pin[%d] = off\r\n", pin);
     }
 }
-MSH_CMD_EXPORT(pinRead, read status from hardware pin);
+MSH_CMD_EXPORT_ALIAS(pin_read, pinRead, read status from hardware pin);
 #endif
 
 rt_base_t rt_pin_get(const char *name)
@@ -267,7 +267,7 @@ rt_base_t rt_pin_get(const char *name)
 }
 #ifdef FINSH_USING_MSH
 #define PINGET_USAGE "\r\npinGet PortString\r\n\tPortString : PA0\r\n"
-static void pinGet(int argc, char *argv[])
+static void pin_get(int argc, char *argv[])
 {
     rt_base_t pin;
     if (argc < 2)
@@ -278,5 +278,5 @@ static void pinGet(int argc, char *argv[])
     pin = rt_pin_get(argv[1]);
     rt_kprintf("%s : %d\r\n", argv[1], pin);
 }
-MSH_CMD_EXPORT(pinGet, get pin number from hardware pin);
+MSH_CMD_EXPORT_ALIAS(pin_get, pinGet, get pin number from hardware pin);
 #endif
