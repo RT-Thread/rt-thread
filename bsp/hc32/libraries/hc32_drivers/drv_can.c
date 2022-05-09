@@ -590,6 +590,10 @@ int rt_hw_can_init(void)
         RT_ASSERT((g_can_dev_array[i].ll_init.pstcFilter != RT_NULL));
 
         rt_memset(g_can_dev_array[i].ll_init.pstcFilter, 0, sizeof(stc_can_filter_config_t) * FILTER_COUNT);
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32ID = 0U;
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32IDMask = 0x1FFFFFFF;
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32IDType = CAN_ID_STD;
+        g_can_dev_array[i].ll_init.u16FilterSelect = CAN_FILTER1;
         g_can_dev_array[i].rt_can.config = rt_can_config;
 
         /* register CAN1 device */
