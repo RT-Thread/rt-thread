@@ -17,6 +17,8 @@
 #define BUTTON2_PIN        GET_PIN(D, 8)
 #define BUTTON_WKUP_PIN    GET_PIN(C, 13)
 
+lv_indev_t * button_indev;
+
 /*Test if `id` button is pressed or not*/
 static bool button_is_pressed(uint8_t id)
 {
@@ -77,9 +79,6 @@ void button_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
 
     data->btn_id = last_btn;            /*Save the last button*/
 }
-
-
-lv_indev_t * button_indev;
 
 void lv_port_indev_init(void)
 {
