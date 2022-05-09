@@ -44,6 +44,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_DAC1
         select BSP_USING_SPI
         select BSP_USING_SPI2
+        select BSP_USING_TIM
+        select BSP_USING_TIM7
         imply BSP_SPI2_TX_USING_DMA
         imply BSP_SPI2_RX_USING_DMA
         imply RTDUINO_USING_SERVO
@@ -386,6 +388,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_HWTIMER
         if BSP_USING_TIM
+            config BSP_USING_TIM7
+                bool "Enable TIM7"
+                default n
+
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n
