@@ -599,7 +599,8 @@ static int stm32_hwtimer_init(void)
     {
         stm32_hwtimer_obj[i].time_device.info = &_info;
         stm32_hwtimer_obj[i].time_device.ops  = &_ops;
-        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device, stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
+        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device,
+            stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
         {
             LOG_D("%s register success", stm32_hwtimer_obj[i].name);
         }
