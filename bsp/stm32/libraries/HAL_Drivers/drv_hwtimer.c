@@ -317,7 +317,7 @@ static void timer_stop(rt_hwtimer_t *timer)
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
-    rt_err_t result = -RT_ENOSYS;
+    rt_err_t result = -RT_ERROR;
     uint32_t pclk1_doubler, pclk2_doubler;
 
     RT_ASSERT(timer != RT_NULL);
