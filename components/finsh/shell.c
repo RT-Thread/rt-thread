@@ -293,7 +293,7 @@ rt_uint32_t finsh_get_echo()
  */
 rt_err_t finsh_set_password(const char *password)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     rt_size_t pw_len = rt_strlen(password);
 
     if (pw_len < FINSH_PASSWORD_MIN || pw_len > FINSH_PASSWORD_MAX)

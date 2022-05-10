@@ -86,7 +86,7 @@ extern "C"
 #define DDL_PWC_ENABLE                              (DDL_ON)
 #define DDL_QSPI_ENABLE                             (DDL_OFF)
 #define DDL_RMU_ENABLE                              (DDL_OFF)
-#define DDL_RTC_ENABLE                              (DDL_OFF)
+#define DDL_RTC_ENABLE                              (DDL_ON)
 #define DDL_SDIOC_ENABLE                            (DDL_OFF)
 #define DDL_SPI_ENABLE                              (DDL_OFF)
 #define DDL_SRAM_ENABLE                             (DDL_ON)

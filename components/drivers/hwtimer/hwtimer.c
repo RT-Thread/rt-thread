@@ -8,9 +8,12 @@
  * 2015-08-31     heyuanjie87    first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
+
+#define DBG_TAG "hwtimer"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 {
@@ -40,8 +43,8 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 
             if (timeout <= overflow)
             {
-                counter = timeout*timer->freq;
-                devi = tv_sec - (counter/(float)timer->freq)*i;
+                counter = (rt_uint32_t)(timeout * timer->freq);
+                devi = tv_sec - (counter / (float)timer->freq) * i;
                 /* Minimum calculation error */
                 if (devi > devi_min)
                 {
@@ -65,7 +68,7 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     timer->cycles = i;
     timer->reload = i;
     timer->period_sec = timeout;
-    counter = timeout*timer->freq;
+    counter = (rt_uint32_t)(timeout * timer->freq);
 
     return counter;
 }
@@ -160,12 +163,12 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
 
     if (timer->info->cntmode == HWTIMER_CNTMODE_DW)
     {
-        cnt = (timer->freq * timer->period_sec) - cnt;
+        cnt = (rt_uint32_t)(timer->freq * timer->period_sec) - cnt;
     }
 
     t = overflow * timer->period_sec + cnt/(float)timer->freq;
-    tv.sec = t;
-    tv.usec = (t - tv.sec) * 1000000;
+    tv.sec = (rt_int32_t)t;
+    tv.usec = (rt_int32_t)((t - tv.sec) * 1000000);
     size = size > sizeof(tv)? sizeof(tv) : size;
     rt_memcpy(buffer, &tv, size);
 
@@ -234,7 +237,8 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
         f = (rt_uint32_t*)args;
         if ((*f > timer->info->maxfreq) || (*f < timer->info->minfreq))
         {
-            result = -RT_ERROR;
+            LOG_W("frequency setting out of range! It will maintain at %d Hz", timer->freq);
+            result = -RT_EINVAL;
             break;
         }
 

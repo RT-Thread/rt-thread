@@ -14,10 +14,6 @@
 extern "C" {
 #endif
 
-#include <lv_hal_indev.h>
-
-extern lv_indev_t * button_indev;
-
 void lv_port_indev_init(void);
 
 #ifdef __cplusplus

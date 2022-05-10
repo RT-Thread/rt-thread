@@ -22,7 +22,10 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM7
         select BSP_USING_PWM
         select BSP_USING_PWM1
         select BSP_USING_PWM1_CH1
@@ -42,12 +45,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_DAC
         select BSP_USING_DAC1
         select BSP_USING_SPI
-        # select BSP_USING_SPI2
-        # select BSP_SPI2_TX_USING_DMA
-        # select BSP_SPI2_RX_USING_DMA
+        select BSP_USING_SPI2
+        imply BSP_SPI2_TX_USING_DMA
+        imply BSP_SPI2_RX_USING_DMA
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_SPI
         default n
 
     config BSP_USING_KEY
@@ -384,6 +388,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_HWTIMER
         if BSP_USING_TIM
+            config BSP_USING_TIM7
+                bool "Enable TIM7"
+                default n
+
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n

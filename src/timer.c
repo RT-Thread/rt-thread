@@ -118,10 +118,10 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
  * @param flag the flag of timer
  */
 static void _timer_init(rt_timer_t timer,
-                           void (*timeout)(void *parameter),
-                           void      *parameter,
-                           rt_tick_t  time,
-                           rt_uint8_t flag)
+                        void (*timeout)(void *parameter),
+                        void      *parameter,
+                        rt_tick_t  time,
+                        rt_uint8_t flag)
 {
     int i;
 
@@ -157,7 +157,7 @@ static void _timer_init(rt_timer_t timer,
 static rt_err_t _timer_list_next_timeout(rt_list_t timer_list[], rt_tick_t *timeout_tick)
 {
     struct rt_timer *timer;
-    register rt_base_t level;
+    rt_base_t level;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -289,7 +289,7 @@ RTM_EXPORT(rt_timer_init);
  */
 rt_err_t rt_timer_detach(rt_timer_t timer)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -373,7 +373,7 @@ RTM_EXPORT(rt_timer_create);
  */
 rt_err_t rt_timer_delete(rt_timer_t timer)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -408,8 +408,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 {
     unsigned int row_lvl;
     rt_list_t *timer_list;
-    register rt_base_t level;
-    register rt_bool_t need_schedule;
+    rt_base_t level;
+    rt_bool_t need_schedule;
     rt_list_t *row_head[RT_TIMER_SKIP_LIST_LEVEL];
     unsigned int tst_nr;
     static unsigned int random_nr;
@@ -532,7 +532,7 @@ RTM_EXPORT(rt_timer_start);
  */
 rt_err_t rt_timer_stop(rt_timer_t timer)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -568,7 +568,7 @@ RTM_EXPORT(rt_timer_stop);
  */
 rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -628,7 +628,7 @@ void rt_timer_check(void)
 {
     struct rt_timer *t;
     rt_tick_t current_tick;
-    register rt_base_t level;
+    rt_base_t level;
     rt_list_t list;
 
     rt_list_init(&list);
@@ -714,7 +714,7 @@ void rt_soft_timer_check(void)
 {
     rt_tick_t current_tick;
     struct rt_timer *t;
-    register rt_base_t level;
+    rt_base_t level;
     rt_list_t list;
 
     rt_list_init(&list);

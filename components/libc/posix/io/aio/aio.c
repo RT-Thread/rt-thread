@@ -117,7 +117,7 @@ int aio_error (const struct aiocb *cb)
 static void aio_fync_work(struct rt_work* work, void* work_data)
 {
     int result;
-    rt_ubase_t level;
+    rt_base_t level;
     struct aiocb *cb = (struct aiocb*)work_data;
 
     RT_ASSERT(cb != RT_NULL);
@@ -136,7 +136,7 @@ static void aio_fync_work(struct rt_work* work, void* work_data)
 
 int aio_fsync(int op, struct aiocb *cb)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     if (!cb) return -EINVAL;
 
     level = rt_hw_interrupt_disable();
@@ -152,7 +152,7 @@ int aio_fsync(int op, struct aiocb *cb)
 static void aio_read_work(struct rt_work* work, void* work_data)
 {
     int len;
-    rt_ubase_t level;
+    rt_base_t level;
     uint8_t *buf_ptr;
     struct aiocb *cb = (struct aiocb*)work_data;
 
@@ -222,7 +222,7 @@ static void aio_read_work(struct rt_work* work, void* work_data)
  */
 int aio_read(struct aiocb *cb)
 {
-    rt_ubase_t level;
+    rt_base_t level;
 
     if (!cb) return -EINVAL;
     if (cb->aio_offset < 0) return -EINVAL;
@@ -292,7 +292,8 @@ int aio_suspend(const struct aiocb *const list[], int nent,
 
 static void aio_write_work(struct rt_work* work, void* work_data)
 {
-    int len, oflags, level;
+    rt_base_t level;
+    int len, oflags;
     uint8_t *buf_ptr;
     struct aiocb *cb = (struct aiocb*)work_data;
 
@@ -361,7 +362,7 @@ static void aio_write_work(struct rt_work* work, void* work_data)
 int aio_write(struct aiocb *cb)
 {
     int oflags;
-    rt_ubase_t level;
+    rt_base_t level;
 
     if (!cb || (cb->aio_buf == NULL)) return -EINVAL;
 
