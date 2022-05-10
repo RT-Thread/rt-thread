@@ -100,10 +100,6 @@ menu "Onboard Peripheral Drivers"
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
             default n
-
-        config BSP_USING_LVGL_SQUARELINE
-            bool "Support LVGL SuqareLine Studio"
-            default n
     endif
 
     config BSP_USING_SDCARD
