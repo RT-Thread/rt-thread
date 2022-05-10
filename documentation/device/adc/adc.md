@@ -25,7 +25,7 @@ Precision means maximum error values between analog signals and real ADC device 
 
 ### Conversion Rate
 
-The conversation rate is the reciprocal of time taken for an ADC device to complete conversion from analog to digital signals. For example, an ADC device with a conversion rate of 1MHz means ADC conversion time is 1 microsecond. 
+The conversion rate is the reciprocal of time taken for an ADC device to complete conversion from analog to digital signals. For example, an ADC device with a conversion rate of 1MHz means ADC conversion time is 1 microsecond. 
 
 ## Access ADC Device
 
