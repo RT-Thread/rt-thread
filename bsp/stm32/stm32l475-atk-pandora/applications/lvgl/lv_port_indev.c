@@ -17,7 +17,7 @@
 #define BUTTON2_PIN        GET_PIN(D, 8)
 #define BUTTON_WKUP_PIN    GET_PIN(C, 13)
 
-lv_indev_t *button_indev;
+lv_indev_t * button_indev;
 
 /*Test if `id` button is pressed or not*/
 static bool button_is_pressed(uint8_t id)
@@ -83,6 +83,8 @@ void button_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
 void lv_port_indev_init(void)
 {
     static lv_indev_drv_t indev_drv;
+    /*assign buttons to coordinates*/
+    static lv_point_t points_array[] =  {{200,35},{0,0},{70,35},{0,0}};
 
     /* Initialize the on-board buttons */
     rt_pin_mode(BUTTON0_PIN, PIN_MODE_INPUT);
@@ -97,7 +99,5 @@ void lv_port_indev_init(void)
     /*Register the driver in LVGL and save the created input device object*/
     button_indev = lv_indev_drv_register(&indev_drv);
 
-    /*assign buttons to coordinates*/
-    const lv_point_t points_array[] =  {{200,35},{0,0},{70,35},{0,0}};
     lv_indev_set_button_points(button_indev, points_array);
 }
