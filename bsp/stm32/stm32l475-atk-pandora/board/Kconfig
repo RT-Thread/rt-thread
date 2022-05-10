@@ -96,6 +96,16 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI_LCD
         default n
 
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            default n
+
+        config BSP_USING_LVGL_SQUARELINE
+            bool "Support LVGL SuqareLine Studio"
+            default n
+    endif
+
     config BSP_USING_SDCARD
         bool "Enable SDCARD (spi1)"
         select BSP_USING_SPI
