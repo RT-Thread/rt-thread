@@ -168,7 +168,7 @@ rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
 
 ### FinSH Command
 
-To find out the registered device, you can use the command adc probe followed by the registered ADC device’ name as following,
+To find out the registered device, you can use the command adc probe followed by the registered ADC device name as following,
 
 ```c
 msh >adc probe adc1
