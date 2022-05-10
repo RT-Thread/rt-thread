@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2021-10-17     Meco Man      First version
+ * 2021-10-17     Meco Man      first version
+ * 2022-05-10     Meco Man      improve rt-thread initialization process
  */
 #include <lvgl.h>
 
