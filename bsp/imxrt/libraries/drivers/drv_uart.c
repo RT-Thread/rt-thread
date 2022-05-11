@@ -561,29 +561,31 @@ uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
 {
     uint32_t freq;
     uint32_t base = (uint32_t) uart_base;
-
+#ifdef SOC_IMXRT1170_SERIES
     switch (base)
     {
-#ifdef BSP_USING_LPUART1
     case LPUART1_BASE:
         freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
         break;
-#endif
-#ifdef BSP_USING_LPUART2
-    case LPUART1_BASE:
+    case LPUART12_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
+        break;
+    default:
         freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
         break;
-#endif
-#ifdef BSP_USING_LPUART3
-    case LPUART1_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart3);
-        break;
-#endif
-    default:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
-        break;
     }
-
+#else
+    /* To make it simple, we assume default PLL and divider settings, and the only variable
+       from application is use PLL3 source or OSC source */
+    if (CLOCK_GetMux(kCLOCK_UartMux) == 0) /* PLL3 div6 80M */
+    {
+        freq = (CLOCK_GetPllFreq(kCLOCK_PllUsb1) / 6U) / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+    }
+    else
+    {
+        freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+    }
+#endif
     return freq;
 
 }
