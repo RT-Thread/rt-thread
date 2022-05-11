@@ -19,7 +19,7 @@
  * And non-blocking is combine with buffer, no matter bare-metal or rtos.
  * Below shows how to configure in your project if you want to use non-blocking mode.
  * For IAR, right click project and select "Options", define it in "C/C++ Compiler->Preprocessor->Defined symbols".
- * For KEIL, click "Options for Target…", define it in "C/C++->Preprocessor Symbols->Define".
+ * For KEIL, click "Options for Targetâ€¦", define it in "C/C++->Preprocessor Symbols->Define".
  * For ARMGCC, open CmakeLists.txt and add the following lines,
  * "SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG_CONSOLE_TRANSFER_NON_BLOCKING")" for debug target.
  * "SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DDEBUG_CONSOLE_TRANSFER_NON_BLOCKING")" for release target.
