@@ -32,10 +32,14 @@ config RT_USING_DFS_WINSHAREDIR
 config BSP_USING_LVGL
     bool "Enable LVGL for LCD"
     select PKG_USING_LVGL
-    select PKG_USING_LV_MUSIC_DEMO
     default n
 
 if BSP_USING_LVGL
+    config BSP_USING_LVGL_DEMO
+        bool "Enable LVGL demo"
+        select PKG_USING_LV_MUSIC_DEMO
+        default n
+
     config BSP_LCD_WIDTH
         int "LCD width"
         default 800
