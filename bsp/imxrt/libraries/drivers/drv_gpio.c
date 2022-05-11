@@ -125,9 +125,11 @@ static const IRQn_Type irq_tab[13] =
 #endif
     GPIO5_Combined_0_15_IRQn,
     GPIO5_Combined_16_31_IRQn,
+#if defined(SOC_IMXRT1170_SERIES)	
     GPIO6_Combined_0_15_IRQn,
     GPIO6_Combined_16_31_IRQn,
     GPIO13_Combined_0_31_IRQn
+#endif
 };
 
 static struct rt_pin_irq_hdr hdr_tab[] =
@@ -268,6 +270,7 @@ static struct rt_pin_irq_hdr hdr_tab[] =
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
+#if defined(SOC_IMXRT1170_SERIES)
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
@@ -363,6 +366,7 @@ static struct rt_pin_irq_hdr hdr_tab[] =
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
+#endif	
 };
 
 static void imxrt_isr(rt_int16_t index_offset, rt_int8_t pin_start, GPIO_Type *base)
@@ -473,6 +477,7 @@ void GPIO5_Combined_0_15_IRQHandler(void)
 
     rt_interrupt_leave();
 }
+#if defined(SOC_IMXRT1170_SERIES)
 void GPIO5_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -505,6 +510,7 @@ void GPIO13_Combined_0_31_IRQHandler(void)
 
     rt_interrupt_leave();
 }
+#endif
 static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     gpio_pin_config_t gpio;
