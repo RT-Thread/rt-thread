@@ -125,7 +125,7 @@ static const IRQn_Type irq_tab[13] =
 #endif
     GPIO5_Combined_0_15_IRQn,
     GPIO5_Combined_16_31_IRQn,
-#if defined(SOC_IMXRT1170_SERIES)	
+#if defined(SOC_IMXRT1170_SERIES)
     GPIO6_Combined_0_15_IRQn,
     GPIO6_Combined_16_31_IRQn,
     GPIO13_Combined_0_31_IRQn
@@ -366,7 +366,7 @@ static struct rt_pin_irq_hdr hdr_tab[] =
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
-#endif	
+#endif
 };
 
 static void imxrt_isr(rt_int16_t index_offset, rt_int8_t pin_start, GPIO_Type *base)
@@ -566,18 +566,25 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
     break;
     }
-
+#ifndef SOC_IMXRT1170_SERIES
+    if (mask_tab[port].gpio != GPIO5)
+    {
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+        IOMUXC_SetPinMux(MUX_BASE + reg_offset[pin] * 4, 0x5U, 0, 0, CONFIG_BASE + reg_offset[pin] * 4, 1);
+        IOMUXC_SetPinConfig(MUX_BASE + reg_offset[pin] * 4, 0x5U, 0, 0, CONFIG_BASE + reg_offset[pin] * 4, config_value);
+    }
+    else
+    {
+        CLOCK_EnableClock(kCLOCK_IomuxcSnvs);
+        IOMUXC_SetPinMux(GPIO5_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO5_CONFIG_BASE + pin_num * 4, 1);
+        IOMUXC_SetPinConfig(GPIO5_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO5_CONFIG_BASE + pin_num * 4, config_value);
+    }
+#else
     if ((mask_tab[port].gpio != GPIO5) && (mask_tab[port].gpio != GPIO6) && (mask_tab[port].gpio != GPIO13))
     {
         CLOCK_EnableClock(kCLOCK_Iomuxc);
         IOMUXC_SetPinMux(MUX_BASE + reg_offset[pin] * 4, 0x5U, 0, 0, CONFIG_BASE + reg_offset[pin] * 4, 1);
-#ifndef SOC_IMXRT1170_SERIES
-        IOMUXC_SetPinConfig(MUX_BASE + reg_offset[pin] * 4, 0x5U, 0, 0, CONFIG_BASE + reg_offset[pin] * 4, config_value);
-#endif
     }
-    else
-    {
-#if defined(SOC_IMXRT1170_SERIES)
     if ((mask_tab[port].gpio == GPIO5))
     {
         CLOCK_EnableClock(kCLOCK_Iomuxc);
@@ -593,12 +600,9 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         CLOCK_EnableClock(kCLOCK_Iomuxc);
         IOMUXC_SetPinMux(GPIO13_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO13_CONFIG_BASE + pin_num * 4, 1);
     }
-#else
-    CLOCK_EnableClock(kCLOCK_IomuxcSnvs);
-    IOMUXC_SetPinMux(GPIO5_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO5_CONFIG_BASE + pin_num * 4, 1);
-    IOMUXC_SetPinConfig(GPIO5_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO5_CONFIG_BASE + pin_num * 4, config_value);
+
 #endif
-    }
+
     GPIO_PinInit(mask_tab[port].gpio, pin_num, &gpio);
 }
 
