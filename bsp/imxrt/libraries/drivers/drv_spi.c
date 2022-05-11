@@ -68,6 +68,7 @@ struct imxrt_spi
     lpspi_master_handle_t spi_normal;
     struct dma_config *dma;
     rt_uint8_t dma_flag;
+	rt_uint16_t masterclock;
 };
 
 static struct imxrt_spi lpspis[] =
