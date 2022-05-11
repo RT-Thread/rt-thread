@@ -70,6 +70,29 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     return RT_EOK;
 }
 
+static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
+{
+    ADC_HandleTypeDef *stm32_adc_handler;
+
+    RT_ASSERT(device != RT_NULL);
+
+    stm32_adc_handler = device->parent.user_data;
+
+    switch(stm32_adc_handler->Init.Resolution)
+    {
+        case ADC_RESOLUTION_12B:
+            return 12;
+        case ADC_RESOLUTION_10B:
+            return 10;
+        case ADC_RESOLUTION_8B:
+            return 8;
+        case ADC_RESOLUTION_6B:
+            return 6;
+        default:
+            return 0;
+    }
+}
+
 static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
 {
     rt_uint32_t stm32_channel = 0;
@@ -147,7 +170,7 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
     return stm32_channel;
 }
 
-static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     ADC_ChannelConfTypeDef ADC_ChanConf;
     ADC_HandleTypeDef *stm32_adc_handler;
@@ -260,7 +283,8 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
 static const struct rt_adc_ops stm_adc_ops =
 {
     .enabled = stm32_adc_enabled,
-    .convert = stm32_get_adc_value,
+    .convert = stm32_adc_get_value,
+    .get_resolution = stm32_adc_get_resolution,
 };
 
 static int stm32_adc_init(void)

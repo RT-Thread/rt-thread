@@ -548,6 +548,10 @@ int list_fd(void)
             else rt_kprintf("%-8.8s ", "unknown");
             rt_kprintf("%3d ", fd->ref_count);
             rt_kprintf("%04x  ", fd->magic);
+            if (fd->fs && fd->fs->path && rt_strlen(fd->fs->path) > 1)
+            {
+                rt_kprintf("%s", fd->fs->path);
+            }
             if (fd->path)
             {
                 rt_kprintf("%s\n", fd->path);

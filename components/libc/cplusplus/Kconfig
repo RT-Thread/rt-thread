@@ -1,0 +1,15 @@
+menuconfig RT_USING_CPLUSPLUS
+    bool "Enable C++ features"
+    default n
+
+if RT_USING_CPLUSPLUS
+
+    config RT_USING_CPLUSPLUS11
+        bool "Enable c++11 threading feature support"
+        default n
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_STDIO
+        select RT_USING_PTHREADS
+        select RT_USING_RTC
+
+endif

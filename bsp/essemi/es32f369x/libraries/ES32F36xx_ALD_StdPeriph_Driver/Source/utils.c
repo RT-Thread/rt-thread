@@ -28,16 +28,11 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #include <string.h>
-#include "utils.h"
-#include "ald_dma.h"
-#include "ald_cmu.h"  
-#include "ald_iap.h"
-
+#include "ald_conf.h"
 
 /** @defgroup ES32FXXX_ALD EASTSOFT ES32F3xx ALD
   * @brief Shanghai Eastsoft Microelectronics Cortex-M Chip Abstraction Layer Driver(ALD)
@@ -253,9 +248,9 @@ __weak uint32_t ald_get_tick(void)
 {
 	return lib_tick;
 }
- 
+
 /**
-  * @brief  This function provides accurate delay (in milliseconds) based
+  * @brief  This function provides accurate delay (in microseconds) based
   *         on variable incremented.
   * @note   In the default implementation, SysTick timer is the source of time base.
   *         It is used to generate interrupts at regular time intervals where lib_tick

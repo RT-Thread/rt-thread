@@ -15,11 +15,11 @@
 #include <rtdbg.h>
 
 #ifndef LV_THREAD_STACK_SIZE
-    #define LV_THREAD_STACK_SIZE 4096
+#define LV_THREAD_STACK_SIZE 4096
 #endif
 
 #ifndef LV_THREAD_PRIO
-    #define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2 / 8)
+#define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2 / 8)
 #endif
 
 static struct rt_thread lvgl_thread;
@@ -39,8 +39,6 @@ static void lvgl_entry(void *parameter)
 
 static int lvgl_demo_init(void)
 {
-    rt_thread_t tid;
-
     rt_thread_init(&lvgl_thread,
                    "LVGL",
                    lvgl_entry,

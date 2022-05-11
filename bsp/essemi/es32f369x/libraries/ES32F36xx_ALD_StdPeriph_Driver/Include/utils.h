@@ -8,6 +8,9 @@
   * @date    07 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          07 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,8 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __UTILS_H__
@@ -36,7 +38,6 @@
 #endif
 
 #include <stdlib.h>
-#include "ald_conf.h"
 #include "type.h"
 #ifdef ES32F36xx
 #include "es32f36xx.h"
@@ -169,9 +170,9 @@ void ald_systick_interval_select(systick_interval_t value);
   */
 /* Peripheral Control functions */
 void ald_inc_tick(void);
-void ald_systick_irq_cbk(void);
-void ald_delay_us(__IO uint32_t delay);
+void ald_systick_irq_cbk(void);      
 void ald_delay_ms(__IO uint32_t delay);
+void ald_delay_us(__IO uint32_t delay);
 uint32_t ald_get_tick(void);
 void ald_suspend_tick(void);
 void ald_resume_tick(void);

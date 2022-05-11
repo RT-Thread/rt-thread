@@ -137,7 +137,7 @@ def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
 
     return group
 
-def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
+def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
     # don't add an empty group
     if len(files) == 0:
         return
@@ -176,8 +176,35 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
         file_path = SubElement(file, 'FilePath')
-
         file_path.text = path # path.decode(fs_encoding)
+
+        # for local LOCAL_CFLAGS/LOCAL_CXXFLAGS/LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES
+        MiscControls_text = ' '
+        if file_type.text == '1' and 'LOCAL_CFLAGS' in group_scons:
+            MiscControls_text = MiscControls_text + group_scons['LOCAL_CFLAGS']
+        elif file_type.text == '8' and 'LOCAL_CXXFLAGS' in group_scons:
+            MiscControls_text = MiscControls_text + group_scons['LOCAL_CXXFLAGS']
+        if 'LOCAL_CCFLAGS' in group_scons:
+            MiscControls_text = MiscControls_text + group_scons['LOCAL_CCFLAGS']
+        if MiscControls_text != ' ':
+            FileOption     = SubElement(file,  'FileOption')
+            FileArmAds     = SubElement(FileOption, 'FileArmAds')
+            Cads            = SubElement(FileArmAds, 'Cads')
+            VariousControls = SubElement(Cads, 'VariousControls')
+            MiscControls    = SubElement(VariousControls, 'MiscControls')
+            MiscControls.text = MiscControls_text
+            Define          = SubElement(VariousControls, 'Define')
+            if 'LOCAL_CPPDEFINES' in group_scons:
+                Define.text     = ', '.join(set(group_scons['LOCAL_CPPDEFINES']))
+            else:
+                Define.text     = ' '
+            Undefine        = SubElement(VariousControls, 'Undefine')
+            Undefine.text   = ' '
+            IncludePath     = SubElement(VariousControls, 'IncludePath')
+            if 'LOCAL_CPPPATH' in group_scons:
+                IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in group_scons['LOCAL_CPPPATH']])
+            else:
+                IncludePath.text = ' '
 
     return group
 
@@ -201,31 +228,7 @@ def MDK45Project(tree, target, script):
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
     groups.clear() # clean old groups
     for group in script:
-        group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
-
-        # for local CPPPATH/CPPDEFINES
-        if (group_tree != None) and ('LOCAL_CPPPATH' in group or 'LOCAL_CFLAGS' in group or 'LOCAL_CPPDEFINES' in group):
-            GroupOption     = SubElement(group_tree,  'GroupOption')
-            GroupArmAds     = SubElement(GroupOption, 'GroupArmAds')
-            Cads            = SubElement(GroupArmAds, 'Cads')
-            VariousControls = SubElement(Cads, 'VariousControls')
-            MiscControls    = SubElement(VariousControls, 'MiscControls')
-            if 'LOCAL_CFLAGS' in group:
-                MiscControls.text = group['LOCAL_CFLAGS']
-            else:
-                MiscControls.text = ' '
-            Define          = SubElement(VariousControls, 'Define')
-            if 'LOCAL_CPPDEFINES' in group:
-                Define.text     = ', '.join(set(group['LOCAL_CPPDEFINES']))
-            else:
-                Define.text     = ' '
-            Undefine        = SubElement(VariousControls, 'Undefine')
-            Undefine.text   = ' '
-            IncludePath     = SubElement(VariousControls, 'IncludePath')
-            if 'LOCAL_CPPPATH' in group:
-                IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in group['LOCAL_CPPPATH']])
-            else:
-                IncludePath.text = ' '
+        group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path, group)
 
         # get each include path
         if 'CPPPATH' in group and group['CPPPATH']:
@@ -278,6 +281,11 @@ def MDK45Project(tree, target, script):
     out.close()
 
 def MDK4Project(target, script):
+
+    if os.path.isfile('template.uvproj') is False:
+        print ('Warning: The template project file [template.uvproj] not found!')
+        return
+
     template_tree = etree.parse('template.uvproj')
 
     MDK45Project(template_tree, target, script)
@@ -293,6 +301,10 @@ def MDK4Project(target, script):
         shutil.copy2('template.uvopt', 'project.uvopt')
 
 def MDK5Project(target, script):
+
+    if os.path.isfile('template.uvprojx') is False:
+        print ('Warning: The template project file [template.uvprojx] not found!')
+        return
 
     template_tree = etree.parse('template.uvprojx')
 

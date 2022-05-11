@@ -1,6 +1,4 @@
-menu "AT commands"
-
-config RT_USING_AT
+menuconfig RT_USING_AT
     bool "Enable AT commands"
     default n
 
@@ -87,5 +85,3 @@ if RT_USING_AT
             software module version number
 
 endif
-
-endmenu

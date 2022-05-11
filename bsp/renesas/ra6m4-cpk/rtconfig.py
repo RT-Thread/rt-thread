@@ -15,19 +15,19 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = 'C:\Users\XXYYZZ'
+    EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armclang'
-    EXEC_PATH   = 'C:/Keil_v5'
+    EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iar'
-    EXEC_PATH   = 'C:/Program Files/IAR Systems/Embedded Workbench 8.0'
+    EXEC_PATH   = r'C:/Program Files/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-# BUILD = 'debug' 
-BUILD = 'release' 
+BUILD = 'debug' 
+# BUILD = 'release' 
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -60,21 +60,31 @@ if PLATFORM == 'gcc':
     POST_ACTION = OBJCPY + ' -O ihex $TARGET rtthread.hex\n' + SIZE + ' $TARGET \n'
     # POST_ACTION += OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'armcc':
+elif PLATFORM == 'armclang':
     # toolchains
-    CC = 'armcc'
+    CC = 'armclang'
+    CXX = 'armclang'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu=cortex-m4'
-    CFLAGS = DEVICE + ' --apcs=interwork --c99 --gnu'
-    AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --scatter ' + 'script/fsp.scat' + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
-    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
+    DEVICE = ' --cpu Cortex-M33'
 
-    EXEC_PATH += '/ARM/ARMCC/bin/'
+    CFLAGS = ' -mcpu=Cortex-M33 -xc -std=c99 --target=arm-arm-none-eabi -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c'
+    CFLAGS += ' -fno-rtti -funsigned-char -ffunction-sections'
+    CFLAGS += ' -Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal'
+
+    AFLAGS = DEVICE + ' --apcs=interwork '
+
+    LFLAGS = DEVICE + ' --scatter ' + 'script/fsp.scat'
+    LFLAGS +=' --info sizes --info totals --info unused --info veneers '
+    LFLAGS += ' --list rt-thread.map --strict'
+    LFLAGS += ' --diag_suppress 6319,6314 --summary_stderr --info summarysizes'
+    LFLAGS += ' --map --load_addr_map_info --xref --callgraph --symbols'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
+
+    EXEC_PATH += '/ARM/ARMCLANG/bin/'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
@@ -83,4 +93,10 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -Os'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET \n'
-    POST_ACTION += 'python ./makeimg.py'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

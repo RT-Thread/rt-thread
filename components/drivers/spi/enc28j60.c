@@ -85,7 +85,7 @@ static uint8_t spi_read_op(struct rt_spi_device *spi_device, uint8_t op, uint8_t
 
 static void spi_write_op(struct rt_spi_device *spi_device, uint8_t op, uint8_t address, uint8_t data)
 {
-    uint32_t level;
+    rt_base_t level;
     uint8_t buffer[2];
 
     level = rt_hw_interrupt_disable();

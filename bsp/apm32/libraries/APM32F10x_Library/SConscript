@@ -15,6 +15,26 @@ APM32F10x_StdPeriphDriver/src/apm32f10x_usart.c
 APM32F10x_StdPeriphDriver/src/apm32f10x_eint.c
 """)
 
+if GetDepend(['RT_USING_ADC']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_adc.c']
+
+if GetDepend(['RT_USING_DAC']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_dac.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_rtc.c']
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_pmu.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_spi.c']
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_tmr.c']
+    
+if GetDepend(['RT_USING_WDT']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_wwdt.c']
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_iwdt.c']
+    
 path = [cwd + '/Device/Geehy/APM32F10x/Include', 
     cwd + '/APM32F10x_StdPeriphDriver/inc',
     cwd + '/CMSIS/Include']

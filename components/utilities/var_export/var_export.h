@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -42,7 +42,18 @@ typedef struct ve_iterator ve_iterator_t;
 #define VE_NOT_FOUND (0xFFFFFFFFu)  /* not found */
 
 /* exporter's export command */
-#if defined(__GNUC__)
+#if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)
+#define VAR_EXPORT(module, identi, value)                                       \
+    const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
+    const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
+    RT_USED const struct ve_exporter _vexp_##module##identi                     \
+    RT_SECTION("1."#module".VarExpTab."#identi) =                               \
+    {                                                                           \
+        _vexp_##identi##_module,                                                \
+        _vexp_##identi##_identi,                                                \
+        value,                                                                  \
+    }
+#elif defined(__GNUC__)
 #define VAR_EXPORT(module, identi, value)                                       \
     const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
     const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
@@ -60,17 +71,6 @@ typedef struct ve_iterator ve_iterator_t;
     const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
     __declspec(allocate("VarExpTab$f"))                                         \
     RT_USED const struct ve_exporter _vexp_##module##identi =                   \
-    {                                                                           \
-        _vexp_##identi##_module,                                                \
-        _vexp_##identi##_identi,                                                \
-        value,                                                                  \
-    }
-#else
-#define VAR_EXPORT(module, identi, value)                                       \
-    const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
-    const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
-    RT_USED const struct ve_exporter _vexp_##module##identi                     \
-    RT_SECTION("1."#module".VarExpTab."#identi) =                               \
     {                                                                           \
         _vexp_##identi##_module,                                                \
         _vexp_##identi##_identi,                                                \

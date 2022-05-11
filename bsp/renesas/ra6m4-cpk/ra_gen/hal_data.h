@@ -27,8 +27,8 @@ void irq0_callback(external_irq_callback_args_t * p_args);
             extern const uart_cfg_t g_uart7_cfg;
             extern const sci_uart_extended_cfg_t g_uart7_cfg_extend;
 
-            #ifndef uart7_isr_cb
-            void uart7_isr_cb(uart_callback_args_t * p_args);
+            #ifndef user_uart7_callback
+            void user_uart7_callback(uart_callback_args_t * p_args);
             #endif
 void hal_entry(void);
 void g_hal_init(void);

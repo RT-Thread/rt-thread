@@ -75,7 +75,7 @@ int __wqueue_default_wake(struct rt_wqueue_node *wait, void *key)
 void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 {
     rt_base_t level;
-    register int need_schedule = 0;
+    int need_schedule = 0;
 
     rt_list_t *queue_list;
     struct rt_list_node *node;
@@ -129,7 +129,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_base_t level;
 
     /* current context checking */
-    RT_DEBUG_NOT_IN_INTERRUPT;
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
 
     tick = rt_tick_from_millisecond(msec);
 

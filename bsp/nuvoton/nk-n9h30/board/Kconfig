@@ -102,6 +102,7 @@ menu "Hardware Drivers Config"
                 config BOARD_USING_ADCTOUCH
                     bool "ADC touching"
                     select BSP_USING_ADC_TOUCH
+                    select NU_PKG_USING_ADC_TOUCH
                     help
                         Choose this option if you use internal ADC touching function.
 

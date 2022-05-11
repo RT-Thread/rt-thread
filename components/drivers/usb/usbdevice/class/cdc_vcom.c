@@ -257,17 +257,17 @@ static void rt_usb_vcom_init(struct ufunction *func);
 static void _vcom_reset_state(ufunction_t func)
 {
     struct vcom* data;
-    int lvl;
+    rt_base_t level;
 
     RT_ASSERT(func != RT_NULL)
 
     data = (struct vcom*)func->user_data;
 
-    lvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     data->connected = RT_FALSE;
     data->in_sending = RT_FALSE;
     /*rt_kprintf("reset USB serial\n", cnt);*/
-    rt_hw_interrupt_enable(lvl);
+    rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -320,7 +320,7 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
  */
 static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     struct vcom *data;
 
     RT_ASSERT(func != RT_NULL);
@@ -670,6 +670,12 @@ static rt_err_t _vcom_configure(struct rt_serial_device *serial,
 static rt_err_t _vcom_control(struct rt_serial_device *serial,
                               int cmd, void *arg)
 {
+    struct ufunction *func;
+    struct vcom *data;
+
+    func = (struct ufunction*)serial->parent.user_data;
+    data = (struct vcom*)func->user_data;
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -677,6 +683,9 @@ static rt_err_t _vcom_control(struct rt_serial_device *serial,
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
+        break;
+    case RT_USBD_CLASS_CTRL_CONNECTED:
+        (*(rt_bool_t*)arg) = data->connected;
         break;
     }
 
@@ -687,7 +696,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
 {
     int result;
     rt_uint8_t ch;
-    rt_uint32_t level;
+    rt_base_t level;
     struct ufunction *func;
     struct vcom *data;
 
@@ -710,7 +719,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
 
 static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_size_t   put_len = 0;
     rt_size_t   w_ptr = 0;
     rt_uint32_t res;
@@ -799,7 +808,7 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
 }
 static int _vcom_putc(struct rt_serial_device *serial, char c)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     struct ufunction *func;
     struct vcom *data;
 
@@ -838,7 +847,7 @@ static const struct rt_uart_ops usb_vcom_ops =
 /* Vcom Tx Thread */
 static void vcom_tx_thread_entry(void* parameter)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_uint32_t res;
     struct ufunction *func = (struct ufunction *)parameter;
     struct vcom *data = (struct vcom*)func->user_data;

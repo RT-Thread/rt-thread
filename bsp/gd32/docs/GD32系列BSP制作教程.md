@@ -42,7 +42,7 @@ GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards�
 
 安装完成后会自动打开，我们将其关闭。
 
-接下来我们下载GD32F30x的软件支持包。
+接下来我们下载GD32F4xx的软件支持包。
 
 [下载地址](http://www.gd32mcu.com/cn/download)
 
@@ -700,7 +700,7 @@ startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/IAR/startup_gd32f4xx.s']

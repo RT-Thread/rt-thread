@@ -23,5 +23,6 @@ void rt_hw_set_gtimer_val(rt_uint64_t value);
 rt_uint64_t rt_hw_get_gtimer_val();
 rt_uint64_t rt_hw_get_cntpct_val();
 rt_uint64_t rt_hw_get_gtimer_frq();
+rt_uint64_t rt_hw_set_gtimer_frq(rt_uint64_t value);
 
 #endif /* __GTIMER_H__ */

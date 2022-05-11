@@ -11,9 +11,9 @@
 #ifndef __GIC_H__
 #define __GIC_H__
 
-#include <rthw.h>
-#include <stdint.h>
-#include <board.h>
+#include <rtdef.h>
+
+#if defined(BSP_USING_GIC) && defined(BSP_USING_GICV2)
 
 int arm_gic_get_active_irq(rt_uint64_t index);
 void arm_gic_ack(rt_uint64_t index, int irq);
@@ -25,7 +25,7 @@ rt_uint64_t arm_gic_get_pending_irq(rt_uint64_t index, int irq);
 void arm_gic_set_pending_irq(rt_uint64_t index, int irq);
 void arm_gic_clear_pending_irq(rt_uint64_t index, int irq);
 
-void arm_gic_set_configuration(rt_uint64_t index, int irq, uint32_t config);
+void arm_gic_set_configuration(rt_uint64_t index, int irq, rt_uint32_t config);
 rt_uint64_t arm_gic_get_configuration(rt_uint64_t index, int irq);
 
 void arm_gic_clear_active(rt_uint64_t index, int irq);
@@ -58,6 +58,8 @@ int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base);
 
 void arm_gic_dump_type(rt_uint64_t index);
 void arm_gic_dump(rt_uint64_t index);
+
+#endif /* defined(BSP_USING_GIC) && defined(BSP_USING_GICV2) */
 
 #endif
 

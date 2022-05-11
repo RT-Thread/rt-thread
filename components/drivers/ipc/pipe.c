@@ -18,6 +18,7 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
+#include <dfs_file.h>
 
 /**
  * @brief    This function will open a pipe.

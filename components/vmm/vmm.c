@@ -96,7 +96,7 @@ static void vmm_entry_glue(rt_uint32_t level,
 
 void vmm_entry(struct vmm_entry_param *param)
 {
-    rt_uint32_t level;
+    rt_base_t level;
 
     level = rt_hw_interrupt_disable();
 

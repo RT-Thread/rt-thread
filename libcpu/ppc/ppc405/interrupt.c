@@ -1,11 +1,7 @@
 /*
- * File      : interrupt.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -81,7 +77,7 @@ void uic_interrupt(rt_uint32_t uic_base, int vec_base)
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler,
     void* param, const char* name)
 {
-    int intVal;
+    rt_base_t level;
     rt_isr_handler_t old_handler;
 
     if (((int)vector < 0)  || ((int) vector >= MAX_HANDLERS))
@@ -90,13 +86,13 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handle
     }
 
     /* install the handler in the system interrupt table  */
-    intVal = rt_hw_interrupt_disable (); /* lock interrupts to prevent races */
+    level = rt_hw_interrupt_disable(); /* lock interrupts to prevent races */
 
     old_handler = isr_table[vector].handler;
     isr_table[vector].handler = new_handler;
     isr_table[vector].param = param;
 
-    rt_hw_interrupt_enable (intVal);
+    rt_hw_interrupt_enable(level);
 }
 
 void rt_hw_interrupt_mask(int vector)

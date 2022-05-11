@@ -4,9 +4,12 @@
  * @version V1.0
  * @date    09 Nov 2019
  * @author  AE Team
- * @note
- *
- * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          09 Nov 2019     AE Team         The first version
+  *
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
   * SPDX-License-Identifier: Apache-2.0
   *
@@ -21,8 +24,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
- *
- *********************************************************************************
+  **********************************************************************************
  */
 
 #ifndef __ALD_QSPI_H_
@@ -276,9 +278,9 @@ typedef struct {
 	uint8_t *rx_buf;	/**< Pointer to QSPI receive buffer */
 	uint16_t rx_size;       /**< QSPI receive size */
 	uint16_t rx_cnt;        /**< QSPI receive counter */
-#ifdef ALD_DMA
+
 	dma_handle_t hdma;	/**< QSPI Rx/Tx DMA Handle parameters*/
-#endif
+
 	qspi_state_t state;	/**< QSPI communication state */
 	__IO lock_state_t lock;	/**< Locking object*/
 } qspi_handle_t;

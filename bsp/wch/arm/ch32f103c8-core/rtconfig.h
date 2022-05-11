@@ -58,14 +58,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -77,9 +71,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 
 /* Device Drivers */
 
@@ -98,7 +89,7 @@
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -110,21 +101,8 @@
 
 /* Socket is in the 'Network' category */
 
+
 /* Network */
-
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
@@ -153,6 +131,11 @@
 
 
 /* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
 
 
 /* multimedia packages */
@@ -194,6 +177,8 @@
 
 /* miscellaneous packages */
 
+/* project laboratory */
+
 /* samples: kernel and components samples */
 
 
@@ -209,18 +194,7 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_UART
-#define BSP_USING_UART1
 #define BSP_USING_UART2
-#define BSP_USING_UART3
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
-#define BSP_USING_SPI2
-#define BSP_USING_HWI2C
-#define BSP_USING_HWI2C1
-#define BSP_USING_HWI2C2
-#define BSP_USING_IWDT
-#define BSP_USING_RTC
-#define BSP_USING_RTC_LSI
 #define LSI_VALUE 40000
 
 /* Onboard Peripheral Drivers */

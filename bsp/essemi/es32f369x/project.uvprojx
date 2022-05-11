@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>ES32F36xx, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers\ES;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\nogcc;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\components\finsh;.;..\..\..\include;libraries\CMSIS\Device\EastSoft\ES32F36xx\Include;libraries\CMSIS\Include;libraries\ES32F36xx_ALD_StdPeriph_Driver\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;drivers\ES;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\components\finsh;.;..\..\..\include;libraries\CMSIS\Device\EastSoft\ES32F36xx\Include;libraries\CMSIS\Include;libraries\ES32F36xx_ALD_StdPeriph_Driver\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,13 +390,6 @@
           <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
@@ -411,16 +404,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -435,13 +428,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -449,9 +435,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -461,9 +447,65 @@
               <FilePath>..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>pin.c</FileName>
@@ -476,55 +518,6 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -580,16 +573,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -601,37 +587,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>signal.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -643,9 +601,58 @@
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -657,23 +664,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -681,114 +674,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>ald_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_flash_ext.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_nor_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nor_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_rtchw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtchw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\utils.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_bkpc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_bkpc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_acmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_acmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ald_tsense.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_tsense.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -800,30 +688,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_rmu.c</FileName>
+              <FileName>ald_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rmu.c</FilePath>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_can.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_es32f36xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\CMSIS\Device\EastSoft\ES32F36xx\Startup\keil\startup_es32f36xx.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_spi.c</FileName>
+              <FileName>ald_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_cmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_cmu.c</FilePath>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -849,51 +723,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_sram.c</FileName>
+              <FileName>ald_nor_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_sram.c</FilePath>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nor_lcd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ald_timer.c</FileName>
+              <FileName>ald_flash_ext.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_nand.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nand.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_pis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pis.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_adc.c</FilePath>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -905,9 +744,135 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_crypt.c</FileName>
+              <FileName>ald_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crypt.c</FilePath>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_qspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_cmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_cmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_pis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pis.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_rmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_acmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_acmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_usb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_sram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\utils.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_nand.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nand.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_es32f36xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\CMSIS\Device\EastSoft\ES32F36xx\Startup\keil\startup_es32f36xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_bkpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_bkpc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -919,9 +884,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_can.c</FileName>
+              <FileName>ald_crypt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_can.c</FilePath>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crypt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_rtchw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtchw.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_trng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtc.c</FilePath>
             </File>
           </Files>
         </Group>
