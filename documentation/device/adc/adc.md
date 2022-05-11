@@ -2,8 +2,8 @@
 
 ## An Introduction to ADC
 
-ADC is a hardware device that converts continuously changing analog signals to discrete digital signals such as temperature, pressure, sound, or images signals, respectively. Digital signals are easier to be stored, processed, and transmitted.
-This can be achieved using an analog-to-digital converter device and it is widely used in various platforms. According to history, ADC was first used to convert wireless signals to digital signals, for example, television signals, or signals from long-short broadcast stations.
+ADC is a hardware device that converts continuously changing analog signals to discrete digital signals such as temperature, pressure, sound, or images signals, etc. Digital signals are easier to be stored, processed, and transmitted.
+This can be achieved by using an analog-to-digital converter device and it is widely used in various platforms. According to history, ADC was first used to convert wireless signals to digital signals, for example, television signals, or signals from long-short broadcast stations.
 
 ### Conversion Process
 
