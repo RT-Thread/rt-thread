@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2021-10-17     Meco Man      First version
+ * 2022-05-05     Meco Man      First version
  */
 #include <rtthread.h>
 #include <lvgl.h>
@@ -15,17 +15,17 @@
 #include <rtdbg.h>
 
 #ifndef LV_THREAD_STACK_SIZE
-    #define LV_THREAD_STACK_SIZE 4096
+#define LV_THREAD_STACK_SIZE 4096
 #endif
 
 #ifndef LV_THREAD_PRIO
-    #define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2 / 8)
+#define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2 / 8)
 #endif
 
 static struct rt_thread lvgl_thread;
 static rt_uint8_t lvgl_thread_stack[LV_THREAD_STACK_SIZE];
 
-static void lvgl_entry(void *parameter)
+static void lvgl_thread_entry(void *parameter)
 {
     extern void lv_demo_music(void);
     lv_demo_music();
@@ -39,11 +39,9 @@ static void lvgl_entry(void *parameter)
 
 static int lvgl_demo_init(void)
 {
-    rt_thread_t tid;
-
     rt_thread_init(&lvgl_thread,
                    "LVGL",
-                   lvgl_entry,
+                   lvgl_thread_entry,
                    RT_NULL,
                    &lvgl_thread_stack[0],
                    sizeof(lvgl_thread_stack),

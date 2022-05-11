@@ -38,6 +38,7 @@ if GetDepend(['RT_USING_DAC']):
 
 if GetDepend(['RT_USING_RTC']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_rtc.c']
+    src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_pmu.c']
 
 if GetDepend(['RT_USING_WDT']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_wwdgt.c']

@@ -24,6 +24,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM7
         select BSP_USING_PWM
         select BSP_USING_PWM1
         select BSP_USING_PWM1_CH1
@@ -93,6 +95,12 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_LVGL
         select BSP_USING_SPI_LCD
         default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            default n
+    endif
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (spi1)"
@@ -386,6 +394,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_HWTIMER
         if BSP_USING_TIM
+            config BSP_USING_TIM7
+                bool "Enable TIM7"
+                default n
+
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n
