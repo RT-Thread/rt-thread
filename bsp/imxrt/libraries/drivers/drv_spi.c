@@ -68,7 +68,7 @@ struct imxrt_spi
     lpspi_master_handle_t spi_normal;
     struct dma_config *dma;
     rt_uint8_t dma_flag;
-	rt_uint16_t masterclock;
+    rt_uint16_t masterclock;
 };
 
 static struct imxrt_spi lpspis[] =
@@ -324,6 +324,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
        LPSPI_MasterInit(spi->base, &masterConfig, freq);
 #else
     masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut;
+    masterConfig.dataOutConfig                 = kLpspiDataOutTristate;
     masterConfig.pcsToSckDelayInNanoSec        = 1000000000 / masterConfig.baudRate;
     masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / masterConfig.baudRate;
     masterConfig.betweenTransferDelayInNanoSec = 1000000000 / masterConfig.baudRate;
