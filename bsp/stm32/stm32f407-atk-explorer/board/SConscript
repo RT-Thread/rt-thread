@@ -29,7 +29,7 @@ if GetDepend(['BSP_USING_FS']):
 if GetDepend(['BSP_USING_SRAM']):
     src += Glob('ports/drv_sram.c')
 
-if GetDepend(['BSP_USING_MCU_LCD']):
+if GetDepend(['BSP_USING_ONBOARD_LCD']):
     src += Glob('ports/drv_lcd.c')
 
 if GetDepend(['BSP_USING_TOUCH']):
