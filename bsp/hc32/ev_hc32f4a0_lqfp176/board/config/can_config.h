@@ -20,7 +20,7 @@ extern "C" {
 
 #ifdef BSP_USING_CAN1
 #ifndef CAN1_INIT_PARAMS
-#define CAN1_INIT_PARAMS                                         \
+#define CAN1_INIT_PARAMS                                    \
     {                                                       \
        .name = "can1",                                      \
     }
@@ -29,7 +29,7 @@ extern "C" {
 
 #ifdef BSP_USING_CAN2
 #ifndef CAN2_INIT_PARAMS
-#define CAN2_INIT_PARAMS                                         \
+#define CAN2_INIT_PARAMS                                    \
     {                                                       \
        .name = "can2",                                      \
     }
@@ -37,9 +37,9 @@ extern "C" {
 #endif /* BSP_USING_CAN2 */
 
 /* Bit time config
-  Restrictions: u32TimeSeg1 >= u32TimeSeg2 + 1, u32TimeSeg2 >= u32SJW. 
+  Restrictions: u32TimeSeg1 >= u32TimeSeg2 + 1, u32TimeSeg2 >= u32SJW.
 
-  Baudrate = CANClock/(u32Prescaler*(u32TimeSeg1 + u32TimeSeg2)) 
+  Baudrate = CANClock/(u32Prescaler*(u32TimeSeg1 + u32TimeSeg2))
   TQ = u32Prescaler / CANClock.
   Bit time = (u32TimeSeg2 + u32TimeSeg2) x TQ.
 

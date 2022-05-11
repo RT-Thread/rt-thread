@@ -20,7 +20,7 @@ extern "C" {
 
 #ifdef BSP_USING_ADC1
 #ifndef ADC1_INIT_PARAMS
-#define ADC1_INIT_PARAMS                                                             \
+#define ADC1_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc1",                               \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
@@ -42,7 +42,7 @@ extern "C" {
 
 #ifdef BSP_USING_ADC2
 #ifndef ADC2_INIT_PARAMS
-#define ADC2_INIT_PARAMS                                                             \
+#define ADC2_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc2",                               \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
@@ -64,7 +64,7 @@ extern "C" {
 
 #ifdef BSP_USING_ADC3
 #ifndef ADC3_INIT_PARAMS
-#define ADC3_INIT_PARAMS                                                             \
+#define ADC3_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc3",                               \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
