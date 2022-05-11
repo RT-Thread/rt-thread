@@ -8,7 +8,6 @@
  * 2021-10-18     Meco Man     The first version
  */
 #include <lvgl.h>
-#include <stdbool.h>
 #include <rtdevice.h>
 #include <drv_gpio.h>
 
