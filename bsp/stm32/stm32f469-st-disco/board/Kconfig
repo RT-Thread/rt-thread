@@ -30,8 +30,14 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_LCD_OTM8009A
         select BSP_USING_TOUCH
         select PKG_USING_LVGL
-        select PKG_USING_LV_MUSIC_DEMO
         default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            select PKG_USING_LV_MUSIC_DEMO
+            default n
+    endif
 
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (N25Q128A qspi1)"
