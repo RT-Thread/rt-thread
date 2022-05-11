@@ -1,0 +1,1860 @@
+---
+CMSIS_Include_common:
+  section-type: component
+  meta-name: platform.Include_common
+  contents:
+    files:
+    - source: CMSIS/Include/cmsis_armcc.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/cmsis_armclang.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/cmsis_armclang_ltm.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/cmsis_gcc.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/cmsis_compiler.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/cmsis_version.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/cmsis_iccarm.h
+      virtual-dir: CMSIS
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_common # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_common # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_common # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_dsp:
+  section-type: component
+  meta-name: platform.Include_dsp
+  contents:
+    files:
+    - source: CMSIS/Include/arm_common_tables.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/arm_const_structs.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/arm_math.h
+      virtual-dir: CMSIS
+  component_info:
+    common:
+      version: 1.7.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_dsp # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_dsp # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_dsp # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: DSP
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm0:
+  section-type: component
+  meta-name: platform.Include_core_cm0
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm0.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm0.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      class: CMSIS
+      full_name: Cmsis_include_core_cm0 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm0 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm0 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: CORE
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm0plus:
+  section-type: component
+  meta-name: platform.Include_core_cm0plus
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm0plus.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/mpu_armv7.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm0p.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_cm0plus # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm0plus # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm0plus # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: CORE
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm3:
+  section-type: component
+  meta-name: platform.Include_core_cm3
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm3.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/mpu_armv7.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm3.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_cm3 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm3 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm3 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm4:
+  section-type: component
+  meta-name: platform.Include_core_cm4
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm4.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/mpu_armv7.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm4_cm4f.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_cm4 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm4 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm4 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm7:
+  section-type: component
+  meta-name: platform.Include_core_cm7
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm7.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/mpu_armv7.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm7_cm7f.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_cm7 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm7 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm7 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_sc000:
+  section-type: component
+  meta-name: platform.Include_core_sc000
+  contents:
+    files:
+    - source: CMSIS/Include/core_sc000.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_sc000.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_sc000 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_sc000 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_sc000 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_sc300:
+  section-type: component
+  meta-name: platform.Include_core_sc300
+  contents:
+    files:
+    - source: CMSIS/Include/core_sc300.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_sc300.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_sc300 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_sc300 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_sc300 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm23:
+  section-type: component
+  meta-name: platform.Include_core_cm23
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm23.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/tz_context.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/mpu_armv8.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm23.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_cm23 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm23 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm23 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_cm33:
+  section-type: component
+  meta-name: platform.Include_core_cm33
+  contents:
+    files:
+    - source: CMSIS/Include/core_cm33.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/tz_context.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/mpu_armv8.h
+      virtual-dir: CMSIS
+  __requires__:
+  - CMSIS_Include_common cmsis.core_cm33_cm33f.support CMSIS_Include_dsp
+  component_info:
+    common:
+      version: 5.3.0
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_cm33 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_cm33 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_cm33 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Include_core_ca7:
+  section-type: component
+  meta-name: platform.Include_core_ca7
+  contents:
+    files:
+    - source: CMSIS/Include/Core_A/cmsis_armcc.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/cmsis_armclang.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/cmsis_gcc.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/cmsis_compiler.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/cmsis_cp15.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/cmsis_iccarm.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/core_ca.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/irq_ctrl.h
+      virtual-dir: CMSIS
+    - source: CMSIS/Include/Core_A/Source/irq_ctrl_gic.c
+      virtual-dir: CMSIS
+      cores: ca7
+  __requires__:
+  - cmsis.core_ca7.support
+  component_info:
+    common:
+      version: 1.1.4
+      type: CMSIS_Include
+      full_name: Cmsis_include_core_ca7 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_include_core_ca7 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Include_core_ca7 # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      group: CORE
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS:
+  section-type: component
+  meta-name: platform.CMSIS
+  contents:
+    files:
+    - source: CMSIS/*.html
+    - source: CMSIS/*.pdf
+    - source: CMSIS/*.rtf
+    - source: CMSIS/*.txt
+    - source: CMSIS/Include/*.h
+  __requires__:
+  - CMSIS_Include_common CMSIS_Driver_Include.Common CMSIS_Driver CMSIS_Driver_Include.CAN
+    CMSIS_Driver_Include.Ethernet CMSIS_Driver_Include.Ethernet_MAC CMSIS_Driver_Include.Ethernet_PHY
+    CMSIS_Driver_Include.Flash CMSIS_Driver_Include.I2C CMSIS_Driver_Include.MCI CMSIS_Driver_Include.NAND
+    CMSIS_Driver_Include.SAI CMSIS_Driver_Include.SPI CMSIS_Driver_Include.USART CMSIS_Driver_Include.USB
+    CMSIS_Driver_Include.USB_Device CMSIS_Driver_Include.USB_Host CMSIS_Driver_Include.WiFi CMSIS_Driver_Include.GPIO
+    CMSIS_Include_dsp
+  component_info:
+    manifest:
+      version: 5.6.0
+      type: CMSIS
+      full_name: Cmsis # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS # This value is temporarily added, please replace it with suitable value and then remove this comment.
+CMSIS_DSP_Lib.ui_control:
+  section-type: component_support
+  component_info:
+    common:
+      ui_name: CMSIS DSP Library
+      ui_description: CMSIS DSP Software Library
+      ui_category: CMSIS DSP Lib
+      ui_control: true
+      ui_control_default: true
+      ui_release_specific: true
+      version: 1.7.0
+CMSIS_DSP_Lib:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib
+  contents:
+    files:
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_class_marks_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_convolution_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_dotproduct_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fft_bin_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_fir_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_graphic_equalizer_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_linear_interp_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_matrix_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_signal_converge_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_sin_cos_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/*.ini
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/*.txt
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/*.uvoptx
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/*.uvprojx
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/*.h
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM0/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM0/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM3/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM3/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM4_FP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM4_FP/*.s
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM7_SP/*.c
+    - source: CMSIS/DSP/Examples/ARM/arm_variance_example/RTE/Device/ARMCM7_SP/*.s
+    - source: CMSIS/DSP/Projects/ARM/*.bat
+    - source: CMSIS/DSP/Projects/ARM/*.uvoptx
+    - source: CMSIS/DSP/Projects/ARM/*.uvprojx
+    - source: CMSIS/DSP/Projects/GCC/*.bat
+    - source: CMSIS/DSP/Projects/GCC/*.uvoptx
+    - source: CMSIS/DSP/Projects/GCC/*.uvprojx
+    - source: CMSIS/DSP/Projects/IAR/*.bat
+    - source: CMSIS/DSP/Projects/IAR/*.eww
+    - source: CMSIS/DSP/Projects/IAR/*.ewp
+    - source: CMSIS/DSP/Source/BasicMathFunctions/*.c
+    - source: CMSIS/DSP/Source/CommonTables/*.c
+    - source: CMSIS/DSP/Source/ComplexMathFunctions/*.c
+    - source: CMSIS/DSP/Source/ControllerFunctions/*.c
+    - source: CMSIS/DSP/Source/FastMathFunctions/*.c
+    - source: CMSIS/DSP/Source/FilteringFunctions/*.c
+    - source: CMSIS/DSP/Source/MatrixFunctions/*.c
+    - source: CMSIS/DSP/Source/StatisticsFunctions/*.c
+    - source: CMSIS/DSP/Source/SupportFunctions/*.c
+    - source: CMSIS/DSP/Source/TransformFunctions/*.c
+    - source: CMSIS/DSP/Source/TransformFunctions/*.S
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control
+  component_info:
+    manifest:
+      version: 1.7.0
+      type: CMSIS
+      user_visible: false
+      full_name: Cmsis_dsp_lib # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_DSP_Lib # This value is temporarily added, please replace it with suitable value and then remove this comment.
+CMSIS_Driver:
+  section-type: component
+  meta-name: platform.CMSIS_Driver
+  contents:
+    files:
+    - source: CMSIS/Driver/DriverTemplates/*.c
+    - source: CMSIS/Driver/DriverTemplates/*.h
+  component_info:
+    manifest:
+      version: 2.7.1
+      type: CMSIS
+      device_specific: false
+      full_name: Cmsis_driver # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CMSIS_Driver # This value is temporarily added, please replace it with suitable value and then remove this comment.
+CMSIS_Driver_Include.Common:
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.Common_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_Common.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.7.1
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include common # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include common # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: Common # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: NONE
+      group: Common
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.CAN:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.CAN_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_CAN.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 1.2.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include can # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include can # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: CAN # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: CAN
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.Ethernet:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.Ethernet_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_ETH.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.1.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include ethernet # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include ethernet # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: Ethernet # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      group: Ethernet
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.Ethernet_MAC:
+  __requires__:
+  - CMSIS_Driver_Include.Ethernet
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.Ethernet_MAC_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_ETH_MAC.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.1.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include ethernet_mac # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include ethernet_mac # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: Ethernet_MAC # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: Ethernet
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.Ethernet_PHY:
+  __requires__:
+  - CMSIS_Driver_Include.Ethernet
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.Ethernet_PHY_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_ETH_PHY.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.1.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include ethernet_phy # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include ethernet_phy # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: Ethernet_PHY # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      group: Ethernet
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.Flash:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.Flash_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_Flash.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.2.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include flash # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include flash # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: Flash # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: Flash
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.I2C:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.I2C_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_I2C.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.3.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include i2c # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include i2c # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: I2C # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: I2C
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.GPIO:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.GPIO_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_GPIO.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.0.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include gpio # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include gpio # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: GPIO # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: GPIO
+      sub: ''
+      pack_url: http://www.nxp.com
+      pack_vendor: NXP
+      pack_version: 2.0.0
+CMSIS_Driver_Include.MCI:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.MCI_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_MCI.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.3.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include mci # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include mci # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: MCI # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      group: MCI
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.NAND:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.NAND_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_NAND.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.3.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include nand # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include nand # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: NAND # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: NAND
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.SAI:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.SAI_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_SAI.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 1.1.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include sai # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include sai # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: SAI # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: SAI
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.SPI:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.SPI_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_SPI.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.2.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include spi # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include spi # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: SPI # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: SPI
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.USART:
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.USART_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_USART.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.3.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include usart # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include usart # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: USART # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: USART
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.USB:
+  section-type: component
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  meta-name: platform.CMSIS_Driver_Include.USB_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_USB.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.2.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include usb # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include usb # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: USB # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: USB
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.USB_Device:
+  __requires__:
+  - CMSIS_Driver_Include.USB
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.USB_Device_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_USBD.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.2.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include usb_device # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include usb_device # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: USB_Device # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      group: USB Device
+      sub: ''
+      pack_name: CMSIS
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.WiFi:
+  section-type: component
+  __requires__:
+  - CMSIS_Driver_Include.Common
+  meta-name: platform.CMSIS_Driver_Include.WiFi_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_WiFi.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 1.0.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include wifi # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include wifi # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: WiFi # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: WiFi
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_Driver_Include.USB_Host:
+  __requires__:
+  - CMSIS_Driver_Include.USB
+  section-type: component
+  meta-name: platform.CMSIS_Driver_Include.USB_Host_CMSISInclude
+  contents:
+    cc-include:
+    - path: CMSIS/Driver/Include
+    files:
+    - source: CMSIS/Driver/Include/Driver_USBH.h
+      virtual-dir: CMSIS_driver
+  component_info:
+    common:
+      version: 2.2.0
+      type: CMSIS_driver
+      user_visible: false
+      full_name: Cmsis_driver_include usb_host # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_driver_include usb_host # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: USB_Host # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS Driver
+      pack_name: CMSIS
+      group: USB Host
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM0l_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM0l_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM0l_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM0l_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm0p.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm0l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm0l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM0l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM0b_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM0b_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM0b_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm0p.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm0b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm0b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM0b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM3l_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM3l_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM3l_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM3l_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm3.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm3l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm3l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM3l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM3b_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM3b_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM3b_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm3.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm3b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm3b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM3b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM4l_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM4l_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM4l_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM4l_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm4.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm4l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm4l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM4l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM4b_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM4b_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM4b_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm4.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm4b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm4b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM4b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM4lf_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM4lf_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM4lf_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM4lf_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm4f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm4lf_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm4lf_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM4lf_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM4bf_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM4bf_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM4bf_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm4f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm4bf_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm4bf_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM4bf_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM7l_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM7l_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM7l_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM7l_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm7.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm7l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm7l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM7l_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM7b_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM7b_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM7b_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm7.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm7b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm7b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM7b_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM7lfdp_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM7lfdp_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM7lfdp_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM7lfdp_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm7f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm7lfdp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm7lfdp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM7lfdp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM7bfdp_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM7bfdp_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM7bfdp_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm7f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm7bfdp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm7bfdp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM7bfdp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM7lfsp_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM7lfsp_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM7lfsp_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_cortexM7lfsp_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm7f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm7lfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm7lfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM7lfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_cortexM7bfsp_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_cortexM7bfsp_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_cortexM7bfsp_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm7f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_cortexm7bfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_cortexm7bfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_cortexM7bfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_ARMv8MBLl_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_ARMv8MBLl_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_ARMv8MBLl_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_ARMv8MBLl_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm23_cm33.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_armv8mbll_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_armv8mbll_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_ARMv8MBLl_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      group: DSP
+      sub: ''
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_ARMv8MMLl_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_ARMv8MMLl_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_ARMv8MMLl_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_ARMv8MMLl_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm23_cm33.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_armv8mmll_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_armv8mmll_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_ARMv8MMLl_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_ARMv8MMLld_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_ARMv8MMLld_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_ARMv8MMLld_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_ARMv8MMLld_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm33_cm33f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_armv8mmlld_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_armv8mmlld_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_ARMv8MMLld_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_ARMv8MMLldfsp_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_ARMv8MMLldfsp_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_ARMv8MMLldfsp_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_ARMv8MMLldfsp_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm33_cm33f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_armv8mmlldfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_armv8mmlldfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_ARMv8MMLldfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+CMSIS_DSP_Lib.arm_ARMv8MMLlfsp_math:
+  section-type: component
+  meta-name: platform.CMSIS_DSP_Lib.arm_ARMv8MMLlfsp_math
+  contents:
+    files:
+    - source: CMSIS/DSP/Lib/ARM/arm_ARMv8MMLlfsp_math.lib
+      virtual-dir: libs
+      toolchains: mdk
+      attribute: extra-libraries
+    - source: CMSIS/DSP/Lib/GCC/libarm_ARMv8MMLlfsp_math.a
+      virtual-dir: libs
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+  __requires__:
+  - CMSIS_DSP_Lib.ui_control cmsis.core_cm33_cm33f.support
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 1.7.0
+      full_name: Cmsis_dsp_lib arm_armv8mmllfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      description: Cmsis_dsp_lib arm_armv8mmllfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+      manifest_name: arm_ARMv8MMLlfsp_math # This value is temporarily added, please replace it with suitable value and then remove this comment.
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: DSP
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+
+
+CMSIS_RTOS2_Common:
+  section-type: component
+  meta-name: platform.CMSIS_RTOS2_Common
+  contents:
+    cc-include:
+    - path: CMSIS/RTOS2/Include
+    - path: CMSIS/RTOS2/RTX/Include
+    - path: CMSIS/RTOS2/RTX/Config
+    files:
+    - source: CMSIS/RTOS2/RTX/Source/rtx_core_c.h
+      virtual-dir: CMSIS:RTOS2:RTX:Source
+    - source: CMSIS/RTOS2/RTX/Source/rtx_core_ca.h
+      virtual-dir: CMSIS:RTOS2:RTX:Source
+    - source: CMSIS/RTOS2/RTX/Source/rtx_core_cm.h
+      virtual-dir: CMSIS:RTOS2:RTX:Source
+    - source: CMSIS/RTOS2/RTX/Source/rtx_lib.h
+      virtual-dir: CMSIS:RTOS2:RTX:Source
+    - source: CMSIS/RTOS2/RTX/Source/rtx_lib.c
+      virtual-dir: CMSIS:RTOS2:RTX:Source
+    - source: CMSIS/RTOS2/Include/cmsis_os2.h
+      virtual-dir: CMSIS:RTOS2:Include
+    - source: CMSIS/RTOS2/Include/os_tick.h
+      virtual-dir: CMSIS:RTOS2:Include
+    - source: CMSIS/RTOS2/RTX/Include/rtx_evr.h
+      virtual-dir: CMSIS:RTOS2:RTX:Include
+    - source: CMSIS/RTOS2/RTX/Include/rtx_os.h
+      virtual-dir: CMSIS:RTOS2:RTX:Include
+    - source: CMSIS/RTOS2/RTX/Config/RTX_Config.c
+      virtual-dir: CMSIS:RTOS2:RTX:Config
+    - source: CMSIS/RTOS2/RTX/Config/RTX_Config.h
+      virtual-dir: CMSIS:RTOS2:RTX:Config
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_CM0.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm0 cm0p
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_CM3.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm3 cm4 cm7
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_CM4F.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm4f cm7f
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_CM0.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm0 cm0p
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_CM3.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm3 cm4 cm7
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_CM4F.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm4f cm7f
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_CM0.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm0 cm0p
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_CM3.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm3 cm4 cm7
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_CM4F.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm4f cm7f
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 2.1.3
+      full_name: CMSIS RTOS2 Common
+      description: CMSIS RTOS2 Common
+      manifest_name: CMSIS_RTOS2_Common
+      need_require: true
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: RTOS2
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+
+CMSIS_RTOS2_NonSecure:
+  section-type: component
+  meta-name: platform.CMSIS_RTOS2_NonSecure
+  contents:
+    files:
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_V8MBN.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm23
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_V8MMFN.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm33 cm33f
+      fpu: SP_FPU
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_V8MBN.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm23
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_V8MMFN.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm33 cm33f
+      fpu: SP_FPU
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_V8MBN.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm23
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_V8MMFN.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm33 cm33f
+      fpu: SP_FPU
+  __requires__:
+  - CMSIS_RTOS2_Common
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 2.1.3
+      full_name: CMSIS RTOS2 NonSecure
+      description: CMSIS RTOS2 NonSecure
+      manifest_name: CMSIS_RTOS2_NonSecure
+      need_require: true
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: RTOS2
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+
+CMSIS_RTOS2_Secure:
+  section-type: component
+  meta-name: platform.CMSIS_RTOS2_Secure
+  contents:
+    files:
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_V8MB.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm23
+    - source: CMSIS/RTOS2/RTX/Library/IAR/RTX_V8MMF.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: iar
+      attribute: extra-libraries
+      cores: cm33 cm33f
+      fpu: SP_FPU
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_V8MB.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm23
+    - source: CMSIS/RTOS2/RTX/Library/GCC/libRTX_V8MMF.a
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: armgcc mcux
+      attribute: extra-libraries
+      cores: cm33 cm33f
+      fpu: SP_FPU
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_V8MB.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm23
+    - source: CMSIS/RTOS2/RTX/Library/ARM/RTX_V8MMF.lib
+      virtual-dir: CMSIS:RTOS2:RTX:Library
+      toolchains: mdk
+      attribute: extra-libraries
+      cores: cm33 cm33f
+      fpu: SP_FPU
+  __requires__:
+  - CMSIS_RTOS2_Common
+  component_info:
+    common:
+      type: CMSIS_driver
+      version: 2.1.3
+      full_name: CMSIS RTOS2 Secure
+      description: CMSIS RTOS2 Secure
+      manifest_name: CMSIS_RTOS2_Secure
+      need_require: true
+    cmsis_pack:
+      class: CMSIS
+      pack_name: CMSIS
+      sub: ''
+      group: RTOS2
+      pack_url: http://www.keil.com/pack/
+      pack_vendor: ARM
+      pack_version: 5.6.0
+
+cmsis.core_cm0.support:
+  section-type: component_support
+  __requires__:
+  - core.cm0
+cmsis.core_cm0p.support:
+  section-type: component_support
+  __requires__:
+  - core.cm0p
+cmsis.core_cm3.support:
+  section-type: component_support
+  __requires__:
+  - core.cm3
+cmsis.core_cm4.support:
+  section-type: component_support
+  __requires__:
+  - core.cm4
+cmsis.core_cm4f.support:
+  section-type: component_support
+  __requires__:
+  - core.cm4f
+cmsis.core_cm4_cm4f.support:
+  section-type: component_support
+  __requires__:
+  - core.cm4
+  - core.cm4f
+cmsis.core_cm23.support:
+  section-type: component_support
+  __requires__:
+  - core.cm23
+cmsis.core_cm33.support:
+  section-type: component_support
+  __requires__:
+  - core.cm33
+cmsis.core_cm33f.support:
+  section-type: component_support
+  __requires__:
+  - core.cm33f
+cmsis.core_cm33_cm33f.support:
+  section-type: component_support
+  __requires__:
+  - core.cm33
+  - core.cm33f
+cmsis.core_cm23_cm33.support:
+  section-type: component_support
+  __requires__:
+  - core.cm23
+  - core.cm33
+cmsis.core_cm7.support:
+  section-type: component_support
+  __requires__:
+  - core.cm7
+cmsis.core_cm7f.support:
+  section-type: component_support
+  __requires__:
+  - core.cm7f
+cmsis.core_cm7_cm7f.support:
+  section-type: component_support
+  __requires__:
+  - core.cm7
+  - core.cm7f
+cmsis.core_sc300.support:
+  section-type: component_support
+  __requires__:
+  - core.sc300
+cmsis.core_sc000.support:
+  section-type: component_support
+  __requires__:
+  - core.sc000
+cmsis.core_ca7.support:
+  section-type: component_support
+  __requires__:
+  - core.ca7

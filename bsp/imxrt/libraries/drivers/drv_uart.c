@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -78,6 +78,7 @@ struct imxrt_uart
 {
     char *name;
     LPUART_Type *uart_base;
+    uint32_t srcClock_Hz;
     IRQn_Type irqn;
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
     struct dma_rx_config *dma_rx;
@@ -556,22 +557,35 @@ static void imxrt_dma_tx_config(struct imxrt_uart *uart)
 
 #endif
 
-uint32_t GetUartSrcFreq(void)
+uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
 {
     uint32_t freq;
+    uint32_t base = (uint32_t) uart_base;
 
-    /* To make it simple, we assume default PLL and divider settings, and the only variable
-       from application is use PLL3 source or OSC source */
-    if (CLOCK_GetMux(kCLOCK_UartMux) == 0) /* PLL3 div6 80M */
+    switch (base)
     {
-        freq = (CLOCK_GetPllFreq(kCLOCK_PllUsb1) / 6U) / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
-    }
-    else
-    {
-        freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+#ifdef BSP_USING_LPUART1
+    case LPUART1_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
+        break;
+#endif
+#ifdef BSP_USING_LPUART2
+    case LPUART1_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
+        break;
+#endif
+#ifdef BSP_USING_LPUART3
+    case LPUART1_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart3);
+        break;
+#endif
+    default:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
+        break;
     }
 
     return freq;
+
 }
 
 static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -624,7 +638,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     config.enableTx = true;
     config.enableRx = true;
 
-    LPUART_Init(uart->uart_base, &config, GetUartSrcFreq());
+    LPUART_Init(uart->uart_base, &config, GetUartSrcFreq(uart->uart_base));
 
     return RT_EOK;
 }
@@ -755,6 +769,7 @@ int rt_hw_uart_init(void)
     {
         uarts[i].serial.ops    = &imxrt_uart_ops;
         uarts[i].serial.config = config;
+        uarts[i].srcClock_Hz =
 
         ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name, flag | uarts[i].dma_flag, NULL);
     }
