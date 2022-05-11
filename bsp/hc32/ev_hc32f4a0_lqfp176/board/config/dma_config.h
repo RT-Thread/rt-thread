@@ -12,6 +12,7 @@
 #define __DMA_CONFIG_H__
 
 #include <rtthread.h>
+#include "irq_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,8 +24,8 @@ extern "C" {
 #define SPI1_RX_DMA_CHANNEL             DMA_CH0
 #define SPI1_RX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI1_RX_DMA_TRIG_SELECT         AOS_DMA1_0
-#define SPI1_RX_DMA_IRQn                INT038_IRQn
-#define SPI1_RX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI1_RX_DMA_IRQn                BSP_DMA1_CH0_IRQ_NUM
+#define SPI1_RX_DMA_INT_PRIO            BSP_DMA1_CH0_IRQ_PRIO
 #define SPI1_RX_DMA_INT_SRC             INT_SRC_DMA1_TC0
 #endif
 
@@ -34,8 +35,8 @@ extern "C" {
 #define SPI1_TX_DMA_CHANNEL             DMA_CH1
 #define SPI1_TX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI1_TX_DMA_TRIG_SELECT         AOS_DMA1_1
-#define SPI1_TX_DMA_IRQn                INT039_IRQn
-#define SPI1_TX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI1_TX_DMA_IRQn                BSP_DMA1_CH1_IRQ_NUM
+#define SPI1_TX_DMA_INT_PRIO            BSP_DMA1_CH1_IRQ_PRIO
 #define SPI1_TX_DMA_INT_SRC             INT_SRC_DMA1_TC1
 #endif
 
@@ -45,8 +46,8 @@ extern "C" {
 #define SPI2_RX_DMA_CHANNEL             DMA_CH2
 #define SPI2_RX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI2_RX_DMA_TRIG_SELECT         AOS_DMA1_2
-#define SPI2_RX_DMA_IRQn                INT040_IRQn
-#define SPI2_RX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI2_RX_DMA_IRQn                BSP_DMA1_CH2_IRQ_NUM
+#define SPI2_RX_DMA_INT_PRIO            BSP_DMA1_CH2_IRQ_PRIO
 #define SPI2_RX_DMA_INT_SRC             INT_SRC_DMA1_TC2
 #endif
 
@@ -56,8 +57,8 @@ extern "C" {
 #define SPI2_TX_DMA_CHANNEL             DMA_CH3
 #define SPI2_TX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI2_TX_DMA_TRIG_SELECT         AOS_DMA1_3
-#define SPI2_TX_DMA_IRQn                INT041_IRQn
-#define SPI2_TX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI2_TX_DMA_IRQn                BSP_DMA1_CH3_IRQ_NUM
+#define SPI2_TX_DMA_INT_PRIO            BSP_DMA1_CH3_IRQ_PRIO
 #define SPI2_TX_DMA_INT_SRC             INT_SRC_DMA1_TC3
 #endif
 
@@ -67,8 +68,8 @@ extern "C" {
 #define SPI3_RX_DMA_CHANNEL             DMA_CH4
 #define SPI3_RX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI3_RX_DMA_TRIG_SELECT         AOS_DMA1_4
-#define SPI3_RX_DMA_IRQn                INT042_IRQn
-#define SPI3_RX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI3_RX_DMA_IRQn                BSP_DMA1_CH4_IRQ_NUM
+#define SPI3_RX_DMA_INT_PRIO            BSP_DMA1_CH4_IRQ_PRIO
 #define SPI3_RX_DMA_INT_SRC             INT_SRC_DMA1_TC4
 #endif
 
@@ -78,8 +79,8 @@ extern "C" {
 #define SPI3_TX_DMA_CHANNEL             DMA_CH5
 #define SPI3_TX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI3_TX_DMA_TRIG_SELECT         AOS_DMA1_5
-#define SPI3_TX_DMA_IRQn                INT043_IRQn
-#define SPI3_TX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI3_TX_DMA_IRQn                BSP_DMA1_CH5_IRQ_NUM
+#define SPI3_TX_DMA_INT_PRIO            BSP_DMA1_CH5_IRQ_PRIO
 #define SPI3_TX_DMA_INT_SRC             INT_SRC_DMA1_TC5
 #endif
 
@@ -89,8 +90,8 @@ extern "C" {
 #define SPI4_RX_DMA_CHANNEL             DMA_CH6
 #define SPI4_RX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI4_RX_DMA_TRIG_SELECT         AOS_DMA1_6
-#define SPI4_RX_DMA_IRQn                INT018_IRQn
-#define SPI4_RX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI4_RX_DMA_IRQn                BSP_DMA1_CH6_IRQ_NUM
+#define SPI4_RX_DMA_INT_PRIO            BSP_DMA1_CH6_IRQ_PRIO
 #define SPI4_RX_DMA_INT_SRC             INT_SRC_DMA1_TC6
 #endif
 
@@ -100,8 +101,8 @@ extern "C" {
 #define SPI4_TX_DMA_CHANNEL             DMA_CH7
 #define SPI4_TX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
 #define SPI4_TX_DMA_TRIG_SELECT         AOS_DMA1_7
-#define SPI4_TX_DMA_IRQn                INT019_IRQn
-#define SPI4_TX_DMA_INT_PRIO            DDL_IRQ_PRIO_DEFAULT
+#define SPI4_TX_DMA_IRQn                BSP_DMA1_CH7_IRQ_NUM
+#define SPI4_TX_DMA_INT_PRIO            BSP_DMA1_CH7_IRQ_PRIO
 #define SPI4_TX_DMA_INT_SRC             INT_SRC_DMA1_TC7
 #endif
 
@@ -111,8 +112,8 @@ extern "C" {
 #define UART1_RX_DMA_CHANNEL            DMA_CH0
 #define UART1_RX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART1_RX_DMA_TRIG_SELECT        AOS_DMA2_0
-#define UART1_RX_DMA_IRQn               INT044_IRQn
-#define UART1_RX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART1_RX_DMA_IRQn               BSP_DMA2_CH0_IRQ_NUM
+#define UART1_RX_DMA_INT_PRIO           BSP_DMA2_CH0_IRQ_PRIO
 #define UART1_RX_DMA_INT_SRC            INT_SRC_DMA2_TC0
 #endif
 
@@ -122,8 +123,8 @@ extern "C" {
 #define UART1_TX_DMA_CHANNEL            DMA_CH1
 #define UART1_TX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART1_TX_DMA_TRIG_SELECT        AOS_DMA2_1
-#define UART1_TX_DMA_IRQn               INT045_IRQn
-#define UART1_TX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART1_TX_DMA_IRQn               BSP_DMA2_CH1_IRQ_NUM
+#define UART1_TX_DMA_INT_PRIO           BSP_DMA2_CH1_IRQ_PRIO
 #define UART1_TX_DMA_INT_SRC            INT_SRC_DMA2_TC1
 #endif
 
@@ -133,8 +134,8 @@ extern "C" {
 #define UART2_RX_DMA_CHANNEL            DMA_CH2
 #define UART2_RX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART2_RX_DMA_TRIG_SELECT        AOS_DMA2_2
-#define UART2_RX_DMA_IRQn               INT046_IRQn
-#define UART2_RX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART2_RX_DMA_IRQn               BSP_DMA2_CH2_IRQ_NUM
+#define UART2_RX_DMA_INT_PRIO           BSP_DMA2_CH2_IRQ_PRIO
 #define UART2_RX_DMA_INT_SRC            INT_SRC_DMA2_TC2
 #endif
 
@@ -144,8 +145,8 @@ extern "C" {
 #define UART2_TX_DMA_CHANNEL            DMA_CH3
 #define UART2_TX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART2_TX_DMA_TRIG_SELECT        AOS_DMA2_3
-#define UART2_TX_DMA_IRQn               INT047_IRQn
-#define UART2_TX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART2_TX_DMA_IRQn               BSP_DMA2_CH3_IRQ_NUM
+#define UART2_TX_DMA_INT_PRIO           BSP_DMA2_CH3_IRQ_PRIO
 #define UART2_TX_DMA_INT_SRC            INT_SRC_DMA2_TC3
 #endif
 
@@ -155,8 +156,8 @@ extern "C" {
 #define UART6_RX_DMA_CHANNEL            DMA_CH4
 #define UART6_RX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART6_RX_DMA_TRIG_SELECT        AOS_DMA2_4
-#define UART6_RX_DMA_IRQn               INT048_IRQn
-#define UART6_RX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART6_RX_DMA_IRQn               BSP_DMA2_CH4_IRQ_NUM
+#define UART6_RX_DMA_INT_PRIO           BSP_DMA2_CH4_IRQ_PRIO
 #define UART6_RX_DMA_INT_SRC            INT_SRC_DMA2_TC4
 #endif
 
@@ -166,8 +167,8 @@ extern "C" {
 #define UART6_TX_DMA_CHANNEL            DMA_CH5
 #define UART6_TX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART6_TX_DMA_TRIG_SELECT        AOS_DMA2_5
-#define UART6_TX_DMA_IRQn               INT049_IRQn
-#define UART6_TX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART6_TX_DMA_IRQn               BSP_DMA2_CH5_IRQ_NUM
+#define UART6_TX_DMA_INT_PRIO           BSP_DMA2_CH5_IRQ_PRIO
 #define UART6_TX_DMA_INT_SRC            INT_SRC_DMA2_TC5
 #endif
 
@@ -177,8 +178,8 @@ extern "C" {
 #define UART7_RX_DMA_CHANNEL            DMA_CH6
 #define UART7_RX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART7_RX_DMA_TRIG_SELECT        AOS_DMA2_6
-#define UART7_RX_DMA_IRQn               INT020_IRQn
-#define UART7_RX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART7_RX_DMA_IRQn               BSP_DMA2_CH6_IRQ_NUM
+#define UART7_RX_DMA_INT_PRIO           BSP_DMA2_CH6_IRQ_PRIO
 #define UART7_RX_DMA_INT_SRC            INT_SRC_DMA2_TC6
 #endif
 
@@ -188,8 +189,8 @@ extern "C" {
 #define UART7_TX_DMA_CHANNEL            DMA_CH7
 #define UART7_TX_DMA_CLOCK              (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
 #define UART7_TX_DMA_TRIG_SELECT        AOS_DMA2_7
-#define UART7_TX_DMA_IRQn               INT021_IRQn
-#define UART7_TX_DMA_INT_PRIO           DDL_IRQ_PRIO_DEFAULT
+#define UART7_TX_DMA_IRQn               BSP_DMA2_CH7_IRQ_NUM
+#define UART7_TX_DMA_INT_PRIO           BSP_DMA2_CH7_IRQ_PRIO
 #define UART7_TX_DMA_INT_SRC            INT_SRC_DMA2_TC7
 #endif
 

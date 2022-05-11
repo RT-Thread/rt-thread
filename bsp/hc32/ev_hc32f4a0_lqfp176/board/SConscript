@@ -20,6 +20,7 @@ if GetDepend(['BSP_USING_SPI_FLASH']):
 
 path =  [cwd]
 path += [cwd + '/ports']
+path += [cwd + '/config']
 
 startup_path_prefix = SDK_LIB
 
