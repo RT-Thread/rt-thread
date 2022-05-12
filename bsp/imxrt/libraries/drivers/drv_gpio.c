@@ -270,7 +270,6 @@ static struct rt_pin_irq_hdr hdr_tab[] =
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
-#if defined(SOC_IMXRT1170_SERIES)
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
@@ -301,6 +300,7 @@ static struct rt_pin_irq_hdr hdr_tab[] =
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     /* GPIO6 */
+#if defined(SOC_IMXRT1170_SERIES)
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
     __IMXRT_HDR_DEFAULT,
@@ -477,7 +477,6 @@ void GPIO5_Combined_0_15_IRQHandler(void)
 
     rt_interrupt_leave();
 }
-#if defined(SOC_IMXRT1170_SERIES)
 void GPIO5_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -486,6 +485,7 @@ void GPIO5_Combined_16_31_IRQHandler(void)
 
     rt_interrupt_leave();
 }
+#if defined(SOC_IMXRT1170_SERIES)
 void GPIO6_Combined_0_15_IRQHandler(void)
 {
     rt_interrupt_enter();

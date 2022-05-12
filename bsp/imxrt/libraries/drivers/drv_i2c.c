@@ -60,11 +60,11 @@ struct imxrt_i2c_bus
 
 #if defined (BSP_USING_I2C5)
 #define I2C5BUS_NAME "i2c5"
-#endif
+#endif /*BSP_USING_I2C5*/
 
 #if defined (BSP_USING_I2C6)
 #define I2C6BUS_NAME  "i2c6"
-#endif /*BSP_USING_I2C4*/
+#endif /*BSP_USING_I2C6*/
 
 #endif /* MIMXRT1015_SERIES */
 
@@ -120,7 +120,8 @@ static struct imxrt_i2c_bus lpi2c5 =
     .I2C = LPI2C5,
     .device_name = I2C5BUS_NAME,
 };
-#endif
+#endif /* RT_USING_HW_I2C5 */
+
 #ifdef BSP_USING_I2C6
 static struct imxrt_i2c_bus lpi2c6 =
 {
@@ -435,7 +436,7 @@ int rt_hw_i2c_init(void)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C5_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
-#endif  /* HW_I2C4_BADURATE_400kHZ */
+#endif  /* HW_I2C5_BADURATE_400kHZ */
     lpi2c5.clock_root = kCLOCK_Root_Lpi2c5;
     imxrt_lpi2c_configure(&lpi2c5, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c5.parent, lpi2c5.device_name);
@@ -447,7 +448,7 @@ int rt_hw_i2c_init(void)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C6_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
-#endif  /* HW_I2C4_BADURATE_400kHZ */
+#endif  /* HW_I2C6_BADURATE_400kHZ */
     lpi2c6.clock_root = kCLOCK_Root_Lpi2c6;
     imxrt_lpi2c_configure(&lpi2c6, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c6.parent, lpi2c6.device_name);
