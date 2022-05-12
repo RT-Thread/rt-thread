@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -44,6 +44,13 @@ static volatile int __rt_errno;
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
 #endif
+
+RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
+{
+    (void) us;
+    RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
+        "Please consider implementing rt_hw_us_delay() in another file."));
+}
 
 /**
  * This function gets the global errno for the current thread.
@@ -488,7 +495,7 @@ RTM_EXPORT(rt_strcpy);
  */
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
 {
-    register signed char __res = 0;
+    signed char __res = 0;
 
     while (count)
     {
@@ -661,7 +668,7 @@ rt_inline int divide(long *n, int base)
 
 rt_inline int skip_atoi(const char **s)
 {
-    register int i = 0;
+    int i = 0;
     while (_ISDIGIT(**s))
         i = i * 10 + *((*s)++) - '0';
 
@@ -700,8 +707,7 @@ static char *print_number(char *buf,
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
-    register int i;
-    register int size;
+    int i, size;
 
     size = s;
 

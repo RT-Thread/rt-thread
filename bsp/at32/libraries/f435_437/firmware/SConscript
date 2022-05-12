@@ -1,0 +1,49 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+cmsis/cm4/device_support/system_at32f435_437.c
+drivers/src/at32f435_437_acc.c
+drivers/src/at32f435_437_adc.c
+drivers/src/at32f435_437_can.c
+drivers/src/at32f435_437_crc.c
+drivers/src/at32f435_437_crm.c
+drivers/src/at32f435_437_dac.c
+drivers/src/at32f435_437_debug.c
+drivers/src/at32f435_437_dma.c
+drivers/src/at32f435_437_dvp.c
+drivers/src/at32f435_437_edma.c
+drivers/src/at32f435_437_emac.c
+drivers/src/at32f435_437_ertc.c
+drivers/src/at32f435_437_exint.c
+drivers/src/at32f435_437_flash.c
+drivers/src/at32f435_437_gpio.c
+drivers/src/at32f435_437_i2c.c
+drivers/src/at32f435_437_misc.c
+drivers/src/at32f435_437_pwc.c
+drivers/src/at32f435_437_qspi.c
+drivers/src/at32f435_437_scfg.c
+drivers/src/at32f435_437_sdio.c
+drivers/src/at32f435_437_spi.c
+drivers/src/at32f435_437_tmr.c
+drivers/src/at32f435_437_usart.c
+drivers/src/at32f435_437_usb.c
+drivers/src/at32f435_437_wdt.c
+drivers/src/at32f435_437_wwdt.c
+drivers/src/at32f435_437_xmc.c
+""")
+
+path = [
+    cwd + '/cmsis/cm4/device_support',
+    cwd + '/cmsis/cm4/core_support',
+    cwd + '/drivers/inc',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

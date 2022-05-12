@@ -563,7 +563,7 @@ RTM_EXPORT(rt_smem_free);
 int memcheck(int argc, char *argv[])
 {
     int position;
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_small_mem_item *mem;
     struct rt_small_mem *m;
     struct rt_object_information *information;

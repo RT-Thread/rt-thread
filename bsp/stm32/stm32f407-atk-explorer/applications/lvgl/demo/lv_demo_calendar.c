@@ -1,5 +1,4 @@
 #include <lvgl.h>
-#include "lv_demo_calendar.h"
 #include <board.h>
 #include <drv_lcd.h>
 

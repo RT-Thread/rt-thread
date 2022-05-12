@@ -1,0 +1,29 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+src/board.c
+src/at32_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM == 'gcc':
+    src += [startup_path_prefix + '/f435_437/firmware/cmsis/cm4/device_support/startup/gcc/startup_at32f435_437.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/f435_437/firmware/cmsis/cm4/device_support/startup/mdk/startup_at32f435_437.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/f435_437/firmware/cmsis/cm4/device_support/startup/iar/startup_at32f435_437.s']
+    
+CPPDEFINES = ['AT32F435ZMT7']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

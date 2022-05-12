@@ -10,6 +10,7 @@
         <path>$PROJ_DIR$\examples</path>
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\adc</path>
         <path>$PROJ_DIR$\hpl\can</path>
         <path>$PROJ_DIR$\hpl\core</path>
         <path>$PROJ_DIR$\hpl\divas</path>
@@ -34,6 +35,7 @@
         <path>$PROJ_DIR$\examples</path>
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\adc</path>
         <path>$PROJ_DIR$\hpl\can</path>
         <path>$PROJ_DIR$\hpl\core</path>
         <path>$PROJ_DIR$\hpl\divas</path>
@@ -101,6 +103,7 @@
         </group>
 
         <group name="config">
+            <path>config/hpl_adc_config.h</path>
             <path>config/hpl_can_config.h</path>
             <path>config/hpl_divas_config.h</path>
             <path>config/hpl_dmac_config.h</path>
@@ -120,15 +123,20 @@
         </group>
 
         <group name="hal/include">
+            <path>hal/include/hal_adc_sync.h</path>
             <path>hal/include/hal_atomic.h</path>
             <path>hal/include/hal_can_async.h</path>
             <path>hal/include/hal_delay.h</path>
             <path>hal/include/hal_flash.h</path>
             <path>hal/include/hal_gpio.h</path>
+            <path>hal/include/hal_i2c_m_sync.h</path>
             <path>hal/include/hal_init.h</path>
             <path>hal/include/hal_io.h</path>
             <path>hal/include/hal_sleep.h</path>
-            <path>hal/include/hal_usart_sync.h</path>
+            <path>hal/include/hal_usart_async.h</path>
+            <path>hal/include/hpl_adc_async.h</path>
+            <path>hal/include/hpl_adc_dma.h</path>
+            <path>hal/include/hpl_adc_sync.h</path>
             <path>hal/include/hpl_can.h</path>
             <path>hal/include/hpl_can_async.h</path>
             <path>hal/include/hpl_core.h</path>
@@ -161,15 +169,17 @@
         </group>
 
         <group name="hal/src">
+            <path>hal/src/hal_adc_sync.c</path>
             <path>hal/src/hal_atomic.c</path>
             <path>hal/src/hal_can_async.c</path>
             <path>hal/src/hal_delay.c</path>
             <path>hal/src/hal_flash.c</path>
             <path>hal/src/hal_gpio.c</path>
+            <path>hal/src/hal_i2c_m_sync.c</path>
             <path>hal/src/hal_init.c</path>
             <path>hal/src/hal_io.c</path>
             <path>hal/src/hal_sleep.c</path>
-            <path>hal/src/hal_usart_sync.c</path>
+            <path>hal/src/hal_usart_async.c</path>
         </group>
 
         <group name="hal/utils/include">
@@ -183,12 +193,19 @@
             <path>hal/utils/include/utils_increment_macro.h</path>
             <path>hal/utils/include/utils_list.h</path>
             <path>hal/utils/include/utils_repeat_macro.h</path>
+            <path>hal/utils/include/utils_ringbuffer.h</path>
         </group>
 
         <group name="hal/utils/src">
             <path>hal/utils/src/utils_assert.c</path>
             <path>hal/utils/src/utils_event.c</path>
             <path>hal/utils/src/utils_list.c</path>
+            <path>hal/utils/src/utils_ringbuffer.c</path>
+        </group>
+
+        <group name="hpl/adc">
+            <path>hpl/adc/hpl_adc.c</path>
+            <path>hpl/adc/hpl_adc_base.h</path>
         </group>
 
         <group name="hpl/can">

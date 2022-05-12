@@ -16,9 +16,13 @@
 extern "C" {
 #endif
 
-void delay_example(void);
+void ADC_0_example(void);
+
+void I2C_0_example(void);
 
 void TARGET_IO_example(void);
+
+void MACIF_example(void);
 
 void CAN_0_example(void);
 

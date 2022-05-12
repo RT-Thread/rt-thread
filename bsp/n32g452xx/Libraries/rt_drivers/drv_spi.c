@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-06     BalanceTWK        first version
+ * 2022-04-16     wolfJane          fix spixfer, add time out check
  */
 
 #include <board.h>
@@ -21,6 +22,8 @@
 #define DRV_DEBUG
 #define LOG_TAG              "drv.spi"
 #include <drv_log.h>
+
+#define SPI_TIME_OUT    (1000)
 
 enum
 {
@@ -235,13 +238,57 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return n32_spi_init(spi_drv, configuration);
 }
 
+static int _spi_recv(SPI_Module *hspi,
+        uint8_t *tx_buff,
+        uint8_t *rx_buff,
+        uint32_t length,
+        uint32_t timeout)
+{
+    /* Init tickstart for timeout management*/
+    uint32_t tickstart = rt_tick_get();
+    uint8_t dat = 0;
+
+    if ((tx_buff == RT_NULL) && (rx_buff == RT_NULL) || (length == 0))
+    {
+        return RT_EIO;
+    }
+
+    while (length--)
+    {
+        while (SPI_I2S_GetStatus(hspi, SPI_I2S_TE_FLAG) == RESET)
+        {
+            if ((rt_tick_get() - tickstart) > timeout)
+            {
+                return RT_ETIMEOUT;
+            }
+        }
+        SPI_I2S_TransmitData(hspi, *tx_buff++);
+
+        while (SPI_I2S_GetStatus(hspi, SPI_I2S_RNE_FLAG) == RESET)
+        {
+            if ((rt_tick_get() - tickstart) > timeout)
+            {
+                return RT_ETIMEOUT;
+            }
+        }
+        dat = SPI_I2S_ReceiveData(hspi);
+
+        if (rx_buff)
+        {
+            *rx_buff++ = dat;
+        }
+    }
+    return RT_EOK;
+}
+
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    rt_size_t message_length;
-    rt_size_t i = 0;
+    rt_size_t send_length;
     rt_uint8_t *recv_buf;
     const rt_uint8_t *send_buf;
+    rt_err_t stat = RT_EOK;
 
+    /* Check Direction parameter */
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
@@ -254,12 +301,16 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
+        {
             GPIO_SetBits(cs->module, cs->pin);
+        }
         else
+        {
             GPIO_ResetBits(cs->module, cs->pin);
+        }
     }
 
-    message_length = message->length;
+    send_length = message->length;
     recv_buf = message->recv_buf;
     send_buf = message->send_buf;
 
@@ -267,38 +318,44 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     if (message->send_buf && message->recv_buf)
     {
         LOG_D("%s:%d", __FUNCTION__, __LINE__);
+        stat = RT_EIO;
     }
     else if (message->send_buf)
     {
-        while (message_length--)
-        {
-            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_TE_FLAG) == RESET);
-            SPI_I2S_TransmitData(spi_handle, send_buf[i++]);
-            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_RNE_FLAG) == RESET);
-            SPI_I2S_ReceiveData(spi_handle);
-        }
+        stat = _spi_recv(spi_handle,
+                         (uint8_t *)send_buf,
+                         RT_NULL,
+                         send_length,
+                         SPI_TIME_OUT);
     }
     else
     {
-        while (message_length--)
-        {
-            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_TE_FLAG) == RESET);
-            SPI_I2S_TransmitData(spi_handle, 0xff);
-            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_RNE_FLAG) == RESET);
-            recv_buf[i++] = (rt_uint8_t)SPI_I2S_ReceiveData(spi_handle);
-        }
+        rt_memset(recv_buf, 0xff, send_length);
+        stat = _spi_recv(spi_handle,
+                         (uint8_t *)recv_buf,
+                         (uint8_t *)recv_buf,
+                         send_length,
+                         SPI_TIME_OUT);
     }
-
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
+        {
             GPIO_ResetBits(cs->module, cs->pin);
+        }
         else
+        {
             GPIO_SetBits(cs->module, cs->pin);
+        }
     }
 
-    return message->length;
+    if (stat != RT_EOK)
+    {
+        send_length = 0;
+    }
+
+    return send_length;
 }
 
 static const struct rt_spi_ops n32_spi_ops =

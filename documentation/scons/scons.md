@@ -245,7 +245,7 @@ if GetDepend(['RT_USING_USB_DEVICE']):
 if GetDepend(['RT_USING_SDCARD']):
     src += ['drv_sdcard.c']
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += ['gcc_startup.s']
 
 CPPPATH = [cwd]
@@ -333,7 +333,7 @@ msh_file.c
 ''')
 
 CPPPATH = [cwd]
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     LINKFLAGS = '--keep *.o(FSymTab)'
 
     if not GetDepend('FINSH_USING_MSH_ONLY'):

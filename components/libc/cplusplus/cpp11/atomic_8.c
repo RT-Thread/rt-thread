@@ -19,7 +19,7 @@
 uint64_t __atomic_load_8(volatile void *ptr, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
-    register rt_base_t level;
+    rt_base_t level;
     uint64_t tmp;
     level = rt_hw_interrupt_disable();
     tmp = *val_ptr;
@@ -30,7 +30,7 @@ uint64_t __atomic_load_8(volatile void *ptr, int memorder)
 void __atomic_store_8(volatile void *ptr, uint64_t val, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
-    register rt_base_t level;
+    rt_base_t level;
     level = rt_hw_interrupt_disable();
     *val_ptr = val;
     rt_hw_interrupt_enable(level);
@@ -39,7 +39,7 @@ void __atomic_store_8(volatile void *ptr, uint64_t val, int memorder)
 uint64_t __atomic_exchange_8(volatile void *ptr, uint64_t val, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
-    register rt_base_t level;
+    rt_base_t level;
     uint64_t tmp;
     level = rt_hw_interrupt_disable();
     tmp = *val_ptr;
@@ -52,7 +52,7 @@ bool __atomic_compare_exchange_8(volatile void *ptr, volatile void *expected, ui
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
     volatile uint64_t *expected_ptr = (volatile uint64_t *)expected;
-    register rt_base_t level;
+    rt_base_t level;
     bool exchanged;
     level = rt_hw_interrupt_disable();
     if (*val_ptr == *expected_ptr)
@@ -72,7 +72,7 @@ bool __atomic_compare_exchange_8(volatile void *ptr, volatile void *expected, ui
 #define __atomic_fetch_op_8(OPNAME, OP) \
 uint64_t __atomic_fetch_##OPNAME##_8(volatile void *ptr, uint64_t val, int memorder) {\
     volatile uint64_t* val_ptr = (volatile uint64_t*)ptr;\
-    register rt_base_t level;\
+    rt_base_t level;\
     uint64_t tmp;\
     level = rt_hw_interrupt_disable();\
     tmp = *val_ptr;\

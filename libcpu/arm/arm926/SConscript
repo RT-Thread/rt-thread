@@ -9,7 +9,7 @@ src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 ASFLAGS = ''
 
-if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += Glob('*_rvds.S')
     ASFLAGS = ' --cpreproc'
 

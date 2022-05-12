@@ -132,46 +132,6 @@ static void phy_clock_config(void)
 }
 
 /**
-  * @brief emac interface gpio config, rmii mode
-  */
-static void emac_gpio_config(void)
-{
-    gpio_init_type gpio_init_struct;
-
-    crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
-    crm_periph_clock_enable(CRM_GPIOB_PERIPH_CLOCK, TRUE);
-    crm_periph_clock_enable(CRM_GPIOC_PERIPH_CLOCK, TRUE);
-    crm_periph_clock_enable(CRM_GPIOD_PERIPH_CLOCK, TRUE);
-    crm_periph_clock_enable(CRM_IOMUX_PERIPH_CLOCK, TRUE);
-
-    gpio_pin_remap_config(EMAC_MUX, TRUE);
-
-    gpio_default_para_init(&gpio_init_struct);
-    gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_STRONGER;
-    gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
-    gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
-    gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-    gpio_init_struct.gpio_pins = GPIO_PINS_2;
-    gpio_init(GPIOA, &gpio_init_struct);
-
-    gpio_init_struct.gpio_pins = GPIO_PINS_11 | GPIO_PINS_12 | GPIO_PINS_13;
-    gpio_init(GPIOB, &gpio_init_struct);
-
-    gpio_init_struct.gpio_pins = GPIO_PINS_1;
-    gpio_init(GPIOC, &gpio_init_struct);
-
-    gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
-    gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-    gpio_init_struct.gpio_pins = GPIO_PINS_1;
-    gpio_init(GPIOA, &gpio_init_struct);
-
-    gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
-    gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-    gpio_init_struct.gpio_pins = GPIO_PINS_8 | GPIO_PINS_9 | GPIO_PINS_10;
-    gpio_init(GPIOD, &gpio_init_struct);
-}
-
-/**
   * @brief reset phy register
   */
 static error_status emac_phy_register_reset(void)
@@ -822,7 +782,7 @@ static int rt_hw_at32_emac_init(void)
     gpio_pin_remap_config(MII_RMII_SEL_GMUX, TRUE);
 
     /* emac gpio init */
-    emac_gpio_config();
+    at32_msp_emac_init(NULL);
 
     at32_emac_device.emac_speed = EMAC_SPEED_100MBPS;
     at32_emac_device.emac_mode  = EMAC_FULL_DUPLEX;

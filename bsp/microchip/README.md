@@ -2,6 +2,10 @@
 
 Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
+## ARM Cortex-M23 Series
+- saml10 | 3.3V Cortex-M23 with ultra low power
+- saml11 | 3.3V Cortex-M23 with ultra low power and trust-zone
+
 ## ARM Cortex-M0+ Series
 - samc21 | 5V Cortex-M0+ with 2 CAN-FD support
 - saml21 | 3.3V low power Cortex-M0+
@@ -183,6 +187,9 @@ About RT-Thread env tools, click [Here](https://github.com/RT-Thread/rt-thread/b
 
 ![](doc/3-1-8-atmel-start-Studio7-start-debugging3.png)
 
+		* Debugging message output.
+
+![](doc/3-1-9-atmel-start-rt-thread-run.png)
 
 # 4. Reconfigure MCU BSP
 

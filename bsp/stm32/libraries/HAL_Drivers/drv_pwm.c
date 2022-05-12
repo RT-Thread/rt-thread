@@ -162,7 +162,7 @@ static struct stm32_pwm stm32_pwm_obj[] =
 /* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
 static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
 {
-    rt_uint32_t flatency = 0;
+    uint32_t flatency = 0;
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
     RT_ASSERT(pclk1_doubler != RT_NULL);

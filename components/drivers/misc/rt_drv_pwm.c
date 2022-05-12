@@ -8,9 +8,6 @@
  * 2018-05-07     aozima       the first version
  */
 
-#include <string.h>
-#include <stdlib.h>
-
 #include <drivers/rt_drv_pwm.h>
 
 static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
@@ -194,12 +191,9 @@ rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *c
 }
 
 #ifdef RT_USING_FINSH
+#include <stdlib.h>
 #include <finsh.h>
 
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_enable, pwm_enable, enable pwm by channel.);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_set, pwm_set, set pwm.);
-
-#ifdef RT_USING_FINSH
 static int pwm_enable(int argc, char **argv)
 {
     int result = 0;
@@ -324,5 +318,4 @@ _exit:
 }
 MSH_CMD_EXPORT(pwm_get, pwm_get <pwm_dev> <channel>);
 
-#endif /* RT_USING_FINSH */
 #endif /* RT_USING_FINSH */

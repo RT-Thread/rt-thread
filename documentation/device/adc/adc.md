@@ -2,7 +2,8 @@
 
 ## An Introduction to ADC
 
-ADC refers to analog to digital converter which is a device that converts continuously changing analog signals into discrete digital signals. Analog signals , such as temperature, pressure, sound, or images, need to be converted into digital forms that are easier to be stored, processed, and transmitted. The analog-to-digital converter can do this, and it can be found in a variety of different products. The corresponding DAC (Digital-to-Analog Converter) has a reverse conversion process compared to that of the ADC. The ADC was first used to convert wireless signals to digital signals such as television signals, or signals from long-short broadcast stations.
+ADC is a hardware device that converts continuously changing analog signals to discrete digital signals such as temperature, pressure, sound, or images signals, etc. Digital signals are easier to be stored, processed, and transmitted.
+This can be achieved by using an analog-to-digital converter device and it is widely used in various platforms. According to history, ADC was first used to convert wireless signals to digital signals, for example, television signals, or signals from long-short broadcast stations.
 
 ### Conversion Process
 
@@ -16,17 +17,15 @@ The process of converting a numerically continuous analog quantity into a digita
 
 ### Resolution
 
-The resolution is expressed in binary (or decimal) digits. Generally, there are 8 bits, 10 bits, 12 bits, 16 bits, etc. It explains the resolution capability of the input signals by the analog-to-digital converter. The more bits, the higher the resolution, and the more accurate the analog signal will be.
+Resolution is represented as binary (or decimal) numbers. Generally, it comes with 8 bits, 12 bits, 16 bits, etc. Higher bits means higher resolution, thus, more accuracy in conversion of analog to digital signals.
 
 ### Precision
 
-Precision represents the maximum error value between the analog and real values of the ADC devices at all numerical points, that is, the distance at which the output value deviates from the linear maximum.
-
->Precision and resolution are two different concepts, so please pay attention to the distinction.
+Precision means maximum error values between analog signals and real ADC device numerical points’ values.The deviation is measured from the output values to the liner maximum values. However, precision and resolution are used for different purposes and different concepts.
 
 ### Conversion Rate
 
-The conversion rate is the reciprocal of the time it takes for the A/D converter to complete an AD conversion from analog to digital. For example, an A/D converter with a conversion rate of 1MHz means that an AD conversion time is 1 microsecond.
+The conversion rate is the reciprocal of time taken for an ADC device to complete conversion from analog to digital signals. For example, an ADC device with a conversion rate of 1MHz means ADC conversion time is 1 microsecond.
 
 ## Access ADC Device
 
@@ -41,7 +40,7 @@ The application accesses the ADC hardware through the ADC device management inte
 
 ### Find ADC Devices
 
-The application gets the device handle based on the ADC device name, which in turn operates the ADC device. Functions for looking for devices are as follows:
+The application gets the device handler based on the ADC device name to operate the ADC device. Following is the interface function to find the devices, 
 
 ```c
 rt_device_t rt_device_find(const char* name);
@@ -52,9 +51,9 @@ rt_device_t rt_device_find(const char* name);
 | name     | The name of the ADC device |
 | **Return** | ——                                 |
 | Device handle | Finding the corresponding device will return to the corresponding device handle |
-| RT_NULL | No device found                                              |
-
-In general, the names of the ADC device registered to the system are adc0, adc1, etc., and an usage example is as follows:
+| RT_NULL | No device found 
+                                             |
+In a nutshell, the names of the ADC devices are registered as adc0, adc1, and so on. Following is the example how to use it
 
 ```c
 #define ADC_DEV_NAME        "adc1"  /* ADC device name */
@@ -65,7 +64,7 @@ adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
 
 ### Enable ADC Channel
 
-Before reading the ADC device data, Use the following function to enable the device:
+It is required to enable ADC device with the following interface function before reading and operating the ADC device,
 
 ```c
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel);
@@ -169,7 +168,7 @@ rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
 
 ### FinSH Command
 
-Before using the device, you need to find out whether the device exists. You can use the command `adc probe` followed by the name of the registered ADC device. As follows:
+To find out the registered device, you can use the command adc probe followed by the registered ADC device name as following,
 
 ```c
 msh >adc probe adc1
