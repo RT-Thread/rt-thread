@@ -580,22 +580,17 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         IOMUXC_SetPinConfig(GPIO5_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO5_CONFIG_BASE + pin_num * 4, config_value);
     }
 #else
-    if ((mask_tab[port].gpio != GPIO5) && (mask_tab[port].gpio != GPIO6) && (mask_tab[port].gpio != GPIO13))
+    if ((mask_tab[port].gpio != GPIO6) && (mask_tab[port].gpio != GPIO13))
     {
         CLOCK_EnableClock(kCLOCK_Iomuxc);
         IOMUXC_SetPinMux(MUX_BASE + reg_offset[pin] * 4, 0x5U, 0, 0, CONFIG_BASE + reg_offset[pin] * 4, 1);
     }
-    if ((mask_tab[port].gpio == GPIO5))
-    {
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
-        IOMUXC_SetPinMux(MUX_BASE + reg_offset[pin] * 4, 0x5U, 0, 0, CONFIG_BASE + reg_offset[pin] * 4, 1);
-    }
-    if ((mask_tab[port].gpio == GPIO6))
+    if (mask_tab[port].gpio == GPIO6)
     {
         CLOCK_EnableClock(kCLOCK_Iomuxc_Lpsr);
         IOMUXC_SetPinMux(GPIO6_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO6_CONFIG_BASE + pin_num * 4, 1);
     }
-    if ((mask_tab[port].gpio == GPIO13))
+    if (mask_tab[port].gpio == GPIO13)
     {
         CLOCK_EnableClock(kCLOCK_Iomuxc);
         IOMUXC_SetPinMux(GPIO13_MUX_BASE + pin_num * 4, 0x5U, 0, 0, GPIO13_CONFIG_BASE + pin_num * 4, 1);
