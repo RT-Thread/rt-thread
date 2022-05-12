@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <rtdevice.h>
 
+lv_indev_t * button_indev;
+
 #define UP_KEY      2
 #define DOWN_KEY    18
 #define LEFT_KEY    16
@@ -21,8 +23,6 @@
 #define BUTTON1_PIN        18
 #define BUTTON2_PIN        16
 #define BUTTON_WKUP_PIN    20
-
-lv_indev_t * button_indev;
 
 /*Test if `id` button is pressed or not*/
 static bool button_is_pressed(uint8_t id)
