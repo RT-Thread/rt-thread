@@ -2,9 +2,7 @@ from building import *
 import os
 
 cwd = GetCurrentDir()
-
 src = ['main.c']
-
 CPPPATH = [cwd]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
