@@ -26,7 +26,7 @@ extern "C" {
        .resolution                      = AdcResolution_12Bit,                 \
        .data_align                      = AdcDataAlign_Right,                  \
        .auto_clear                      = AdcClren_Disable,                    \
-             .eoc_poll_time_max               = 100,                                  \
+       .eoc_poll_time_max               = 100,                                  \
        .hard_trig_enable                = RT_FALSE,                             \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
@@ -48,7 +48,7 @@ extern "C" {
        .resolution                      = AdcResolution_12Bit,                 \
        .data_align                      = AdcDataAlign_Right,                  \
        .auto_clear                      = AdcClren_Disable,                    \
-             .eoc_poll_time_max               = 100,                                  \
+       .eoc_poll_time_max               = 100,                                  \
        .hard_trig_enable                = RT_FALSE,                             \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
