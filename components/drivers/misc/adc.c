@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
+ * 2022-5-11      Stanley Lwin add finsh voltage conversion command
  */
 
 #include <rtthread.h>
@@ -16,6 +17,7 @@
 #include <stdlib.h>
 
 #define DBG_TAG "adc"
+#define REFER_VOLTAGE 330       /*reference voltage, multiplied by 100 and reserve 2 decimal places for data accuracy*/
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
@@ -152,11 +154,40 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
+rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
+{
+    rt_err_t result = RT_EOK;
+    rt_uint32_t value = 0, voltage = 0;
+
+    RT_ASSERT(dev);
+
+  /*enable the device*/
+    if (dev->ops->enabled != RT_NULL)
+    {
+         result = dev->ops->enabled(dev, channel, RT_TRUE);
+
+         /*read the value and convert to voltage*/
+         if(result == RT_EOK)
+         {
+
+             /*get the convert bits*/
+             rt_uint8_t resolution = dev->ops->get_resolution(dev);
+             dev->ops->convert(dev, channel, &value);
+             voltage = value * REFER_VOLTAGE / (1 << resolution);
+         }
+    }
+    else
+    {
+           result = -RT_ENOSYS;
+    }
+
+    return voltage;
+}
 #ifdef RT_USING_FINSH
 
 static int adc(int argc, char **argv)
 {
-    int value = 0;
+    rt_uint32_t value = 0, voltage = 0;
     int result = RT_EOK;
     static rt_adc_device_t adc_device = RT_NULL;
     char *result_str;
@@ -221,6 +252,19 @@ static int adc(int argc, char **argv)
                     rt_kprintf("adc disable <channel>  - disable adc channel\n");
                 }
             }
+            else if (!strcmp(argv[1], "voltage"))
+            {
+                if(argc == 3)
+                {
+                    voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
+                    result_str = (result == RT_EOK) ? "success" : "failure";
+                    rt_kprintf("%s channel %d voltage is %d.%02d \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 100, voltage % 100);
+                }
+
+                else{
+                    rt_kprintf("adc convert voltage <channel> \n");
+                }
+            }
             else
             {
                 rt_kprintf("Unknown command. Please enter 'adc' for help\n");
@@ -234,10 +278,11 @@ static int adc(int argc, char **argv)
         rt_kprintf("adc read <channel>     - read adc value on the channel\n");
         rt_kprintf("adc disable <channel>  - disable adc channel\n");
         rt_kprintf("adc enable <channel>   - enable adc channel\n");
+        rt_kprintf("adc voltage <channel>  - read adc voltage on the channel\n");
         result = -RT_ERROR;
     }
     return RT_EOK;
 }
-MSH_CMD_EXPORT(adc, adc function);
+MSH_CMD_EXPORT(adc, adc functions);
 
 #endif /* RT_USING_FINSH */
