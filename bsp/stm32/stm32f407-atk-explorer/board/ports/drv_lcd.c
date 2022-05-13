@@ -1945,7 +1945,7 @@ int drv_lcd_hw_init(void)
 }
 INIT_DEVICE_EXPORT(drv_lcd_hw_init);
 
-#ifdef BSP_USING_MCU_LCD_TEST
+#ifdef BSP_USING_ONBOARD_LCD_TEST
 void lcd_auto_fill(void *para)
 {
     int num = (int)para;
