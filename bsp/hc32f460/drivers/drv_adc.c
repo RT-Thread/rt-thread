@@ -51,12 +51,12 @@ static rt_err_t hc32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 {
     hc32_adc_device *adc;
 
-      stc_adc_ch_cfg_t stcChCfg;
-      rt_uint8_t adcSampleTime[] = {0x50};
+    stc_adc_ch_cfg_t stcChCfg;
+    rt_uint8_t adcSampleTime[] = {0x50};
 
-      adc = rt_container_of(device, hc32_adc_device, adc_dev);
+    adc = rt_container_of(device, hc32_adc_device, adc_dev);
 
-      MEM_ZERO_STRUCT(stcChCfg);
+    MEM_ZERO_STRUCT(stcChCfg);
 
     stcChCfg.u32Channel  = 1u << channel;
     stcChCfg.u8Sequence  = ADC_SEQ_A;
