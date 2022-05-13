@@ -63,7 +63,7 @@ extern "C"
 #define DDL_UTILITY_ENABLE                          (DDL_ON)
 #define DDL_PRINT_ENABLE                            (DDL_ON)
 
-#define DDL_ADC_ENABLE                              (DDL_OFF)
+#define DDL_ADC_ENABLE                              (DDL_ON)
 #define DDL_AES_ENABLE                              (DDL_OFF)
 #define DDL_CAN_ENABLE                              (DDL_OFF)
 #define DDL_CLK_ENABLE                              (DDL_ON)

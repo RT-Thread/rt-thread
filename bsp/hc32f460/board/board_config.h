@@ -134,4 +134,16 @@
 
 #endif
 
+/***********  ADC configure *********/
+#if defined(BSP_USING_ADC1)
+    #define ADC1_CH0_PORT                     (PortA)
+    #define ADC1_CH0_PIN                      (Pin00)
+
+#endif
+
+#if defined(BSP_USING_ADC2)
+    #define ADC2_CH0_PORT                     (GPIO_PORT_A)
+    #define ADC2_CH0_PIN                      (GPIO_PIN_04)
+#endif
+
 #endif

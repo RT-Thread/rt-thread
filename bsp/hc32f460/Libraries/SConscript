@@ -19,14 +19,19 @@ HC32F460_StdPeriph_Driver/src/hc32f460_pwc.c
 HC32F460_StdPeriph_Driver/src/hc32f460_sram.c
 HC32F460_StdPeriph_Driver/src/hc32f460_utility.c
 HC32F460_StdPeriph_Driver/src/hc32f460_exint_nmi_swi.c
-HC32F460_StdPeriph_Driver/src/hc32f460_rtc.c
 """)
 
 #src += Glob('HC32F460_StdPeriph_Driver/src/*.c')
 
 if GetDepend(['RT_USING_SERIAL']):
     src += ['HC32F460_StdPeriph_Driver/src/hc32f460_usart.c']
-   
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['HC32F460_StdPeriph_Driver/src/hc32f460_rtc.c']
+	
+if GetDepend(['RT_USING_ADC']):
+    src += ['HC32F460_StdPeriph_Driver/src/hc32f460_adc.c']
+
 #add for startup script 
 if rtconfig.PLATFORM == 'gcc':
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/GCC/startup_hc32f460.S']

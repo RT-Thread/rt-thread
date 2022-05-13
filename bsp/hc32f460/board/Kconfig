@@ -38,7 +38,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
 
         if BSP_USING_RTC
@@ -52,6 +51,19 @@ menu "On-chip Peripheral Drivers"
                 config BSP_RTC_USING_LRC
                     bool "RTC USING LRC"
             endchoice
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "using adc1"
+                default n
+            config BSP_USING_ADC2
+                bool "using adc2"
+                default n
         endif
 
 endmenu
