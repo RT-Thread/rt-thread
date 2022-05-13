@@ -85,6 +85,11 @@ menu "Onboard Peripheral Drivers"
         config BSP_USING_LVGL_SQUARELINE
             bool "Support LVGL SuqareLine Studio"
             default n
+
+        config BSP_USING_NXP_GUIGUIDER
+            bool "Support NXP GUI Guider"
+            select PKG_USING_GUI_GUIDER_DEMO
+            default n
     endif
 endmenu
 
