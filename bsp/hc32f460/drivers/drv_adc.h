@@ -37,8 +37,8 @@ struct hc32_adc_init_type
     en_adc_data_align_t data_align;                /*!< Specifies ADC data alignment.
                                              This parameter can be a value of @ref ADC_Data_Align */
 
-      en_adc_clren_t auto_clear;
-      rt_bool_t hard_trig_enable;
+    en_adc_clren_t auto_clear;
+    rt_bool_t hard_trig_enable;
 
     rt_bool_t internal_trig0_comtrg0_enable;
     rt_bool_t internal_trig0_comtrg1_enable;
