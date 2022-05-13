@@ -124,7 +124,7 @@ rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_
 {
     rt_err_t result = RT_EOK;
     struct rt_wlan_buff buff;
-    
+
     int len = 0;
 
     if (device == RT_NULL)
@@ -142,7 +142,6 @@ rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_
         LOG_E("L:%d password or ssid is too long", __LINE__);
         return -RT_ERROR;
     }
-    
 
     buff.len = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_FAST_CONNECT_INFO, buff.data);
     if(buff.len < 0)
@@ -911,7 +910,6 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
             err = -RT_EEMPTY;
         }
         break;
- 
     }
 
     default:

@@ -440,7 +440,7 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
                 rt_exit_critical();
                 RT_WLAN_LOG_D("run save config! ssid:%s len%d", _sta_mgnt.info.ssid.val, _sta_mgnt.info.ssid.len);
                 rt_wlan_cfg_save(&cfg_info);
-            } 
+            }
         }
 #endif
         break;
@@ -854,7 +854,7 @@ static void rt_wlan_join_scan_callback(int event, struct rt_wlan_buff *buff, voi
 
     RT_WLAN_LOG_D("%s info len:%d tgt info len:%d", __FUNCTION__,info->ssid.len,tgt_info->ssid.len);
     RT_WLAN_LOG_D("%s info ssid:%s tgt info ssid:%s", __FUNCTION__,&info->ssid.val[0],&tgt_info->ssid.val[0]);
-    
+
     if(rt_memcmp(&info->ssid.val[0], &tgt_info->ssid.val[0], info->ssid.len) == 0 &&
             info->ssid.len == tgt_info->ssid.len)
     {

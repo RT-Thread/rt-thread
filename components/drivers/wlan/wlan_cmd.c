@@ -322,7 +322,7 @@ static void wifi_scan_result_clean(void)
 static void print_ap_info(struct rt_wlan_info *info,int index)
 {
         char *security;
-      
+
         if(index == 0)
         {
             rt_kprintf("             SSID                      MAC            security    rssi chn Mbps\n");
@@ -399,14 +399,14 @@ static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *pa
     ret = wifi_scan_result_cache(info);
     if(ret == RT_EOK)
     {
-        if(scan_filter == RT_NULL || 
+        if(scan_filter == RT_NULL ||
                 (scan_filter != RT_NULL &&
-                 scan_filter->ssid.len == info->ssid.len && 
+                 scan_filter->ssid.len == info->ssid.len &&
                  rt_memcmp(&scan_filter->ssid.val[0], &info->ssid.val[0], scan_filter->ssid.len) == 0))
         {
             /*Print the info*/
             print_ap_info(info,index);
-        
+
             index++;
             *((int *)(parameter)) = index;
         }
