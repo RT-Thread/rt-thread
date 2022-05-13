@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -296,7 +296,7 @@ static int pwm(int argc, char **argv)
 
        result = - RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 MSH_CMD_EXPORT(pwm, pwm functions);
