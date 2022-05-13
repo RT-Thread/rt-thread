@@ -196,7 +196,7 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
     int i, insert = -1;
     rt_base_t level;
 
-    if (_sta_is_null() || (info == RT_NULL) || (info->ssid.len == 0)) return -RT_EINVAL;
+    if ((info == RT_NULL) || (info->ssid.len == 0)) return -RT_EINVAL;
 
     LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
                   info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
@@ -390,8 +390,8 @@ static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *pa
     int ret = RT_EOK;
 
     RT_ASSERT(event == RT_WLAN_EVT_SCAN_REPORT);
-    RT_ASSERT(buff != NULL);
-    RT_ASSERT(parameter != NULL);
+    RT_ASSERT(buff != RT_NULL);
+    RT_ASSERT(parameter != RT_NULL);
 
     info = (struct rt_wlan_info *)buff->data;
     index = *((int *)(parameter));

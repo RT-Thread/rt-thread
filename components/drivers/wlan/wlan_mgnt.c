@@ -845,8 +845,8 @@ static void rt_wlan_join_scan_callback(int event, struct rt_wlan_buff *buff, voi
     int ret = RT_EOK;
 
     RT_ASSERT(event == RT_WLAN_EVT_SCAN_REPORT);
-    RT_ASSERT(buff != NULL);
-    RT_ASSERT(parameter != NULL);
+    RT_ASSERT(buff != RT_NULL);
+    RT_ASSERT(parameter != RT_NULL);
 
     info = (struct rt_wlan_info *)buff->data;
     tgt_info = (struct rt_wlan_info *)parameter;
