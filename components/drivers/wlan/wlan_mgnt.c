@@ -51,6 +51,7 @@
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 #define TIME_STOP()    (rt_timer_stop(&reconnect_time))
 #define TIME_START()   (rt_timer_start(&reconnect_time))
+static rt_uint32_t id = 0;
 #else
 #define TIME_STOP()
 #define TIME_START()
@@ -337,7 +338,6 @@ static rt_err_t rt_wlan_sta_info_del_all(int timeout)
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
 {
-    static rt_uint32_t id = 0;
     struct rt_wlan_cfg_info cfg_info;
     char *password = RT_NULL;
     rt_base_t level;
@@ -381,24 +381,19 @@ exit:
 
 static void rt_wlan_cyclic_check(void *parameter)
 {
-    struct rt_workqueue *workqueue;
     static struct rt_work work;
     rt_base_t level;
 
     if ((_is_do_connect() == RT_TRUE) && (work.work_func == RT_NULL))
     {
-        workqueue = rt_wlan_get_workqueue();
-        if (workqueue != RT_NULL)
+        level = rt_hw_interrupt_disable();
+        rt_work_init(&work, rt_wlan_auto_connect_run, RT_NULL);
+        rt_hw_interrupt_enable(level);
+        if(rt_work_submit(&work,RT_TICK_PER_SECOND) != RT_EOK)
         {
             level = rt_hw_interrupt_disable();
-            rt_work_init(&work, rt_wlan_auto_connect_run, RT_NULL);
+            rt_memset(&work, 0, sizeof(struct rt_work));
             rt_hw_interrupt_enable(level);
-            if (rt_workqueue_dowork(workqueue, &work) != RT_EOK)
-            {
-                level = rt_hw_interrupt_disable();
-                rt_memset(&work, 0, sizeof(struct rt_work));
-                rt_hw_interrupt_enable(level);
-            }
         }
     }
 }
@@ -421,6 +416,9 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
     case RT_WLAN_DEV_EVT_CONNECT:
     {
         RT_WLAN_LOG_D("event: CONNECT");
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
+        id = 0;
+#endif
         _sta_mgnt.state |= RT_WLAN_STATE_CONNECT;
         _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECTING;
         user_event = RT_WLAN_EVT_STA_CONNECTED;
@@ -428,6 +426,23 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         user_buff.data = &_sta_mgnt.info;
         user_buff.len = sizeof(struct rt_wlan_info);
         RT_WLAN_LOG_I("wifi connect success ssid:%s", &_sta_mgnt.info.ssid.val[0]);
+
+#ifdef RT_WLAN_CFG_ENABLE
+        {
+            struct rt_wlan_cfg_info cfg_info;
+            rt_memset(&cfg_info, 0, sizeof(cfg_info));
+            /* save config */
+            if (rt_wlan_is_connected() == RT_TRUE)
+            {
+                rt_enter_critical();
+                cfg_info.info = _sta_mgnt.info;
+                cfg_info.key = _sta_mgnt.key;
+                rt_exit_critical();
+                RT_WLAN_LOG_D("run save config! ssid:%s len%d", _sta_mgnt.info.ssid.val, _sta_mgnt.info.ssid.len);
+                rt_wlan_cfg_save(&cfg_info);
+            } 
+        }
+#endif
         break;
     }
     case RT_WLAN_DEV_EVT_CONNECT_FAIL:
