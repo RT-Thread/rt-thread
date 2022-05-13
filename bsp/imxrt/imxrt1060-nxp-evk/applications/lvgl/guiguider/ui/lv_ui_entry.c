@@ -8,8 +8,13 @@
  * 2022-05-13     Meco Man      First version
  */
 
+#include <rtconfig.h>
+#include <lvgl.h>
+
 void lv_user_gui_init(void)
 {
-    extern void ui_init(void);
-    ui_init();
+#ifdef PKG_USING_GUI_GUIDER_DEMO
+    extern void gui_guider_setup(void);
+    gui_guider_setup();
+#endif
 }
