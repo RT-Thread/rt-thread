@@ -78,7 +78,6 @@ struct imxrt_uart
 {
     char *name;
     LPUART_Type *uart_base;
-    uint32_t srcClock_Hz;
     IRQn_Type irqn;
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
     struct dma_rx_config *dma_rx;
@@ -771,7 +770,6 @@ int rt_hw_uart_init(void)
     {
         uarts[i].serial.ops    = &imxrt_uart_ops;
         uarts[i].serial.config = config;
-        uarts[i].srcClock_Hz =
 
         ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name, flag | uarts[i].dma_flag, NULL);
     }

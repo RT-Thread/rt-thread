@@ -2,7 +2,7 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/CMSIS/Core/Include',cwd + '/MIMXRT1176', cwd + '/MIMXRT1176/drivers']
+path = [cwd + '/CMSIS/Include',cwd + '/MIMXRT1176', cwd + '/MIMXRT1176/drivers']
 src = Split('''
             MIMXRT1176/drivers/fsl_anatop_ai.c
             MIMXRT1176/system_MIMXRT1176_cm7.c
