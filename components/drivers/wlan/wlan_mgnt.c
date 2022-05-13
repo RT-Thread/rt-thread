@@ -1035,16 +1035,21 @@ rt_err_t rt_wlan_connect_adv(struct rt_wlan_info *info, const char *password)
     rt_exit_critical();
     /* run wifi connect */
     _sta_mgnt.state |= RT_WLAN_STATE_CONNECTING;
-    err = rt_wlan_dev_connect(_sta_mgnt.device, info, password, password_len);
-    if (err != RT_EOK)
+
+    err = rt_wlan_dev_fast_connect(_sta_mgnt.device, info, password, password_len);
+    if(err != RT_EOK)
     {
-        rt_enter_critical();
-        rt_memset(&_sta_mgnt.info, 0, sizeof(struct rt_wlan_ssid));
-        rt_memset(&_sta_mgnt.key, 0, sizeof(struct rt_wlan_key));
-        rt_exit_critical();
-        _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECTING;
-        MGNT_UNLOCK();
-        return err;
+        err = rt_wlan_dev_connect(_sta_mgnt.device, info, password, password_len);
+        if (err != RT_EOK)
+        {
+            rt_enter_critical();
+            rt_memset(&_sta_mgnt.info, 0, sizeof(struct rt_wlan_ssid));
+            rt_memset(&_sta_mgnt.key, 0, sizeof(struct rt_wlan_key));
+            rt_exit_critical();
+            _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECTING;
+            MGNT_UNLOCK();
+            return err;
+        }
     }
 
     MGNT_UNLOCK();
