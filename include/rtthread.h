@@ -354,6 +354,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem);
 rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t timeout);
 rt_err_t rt_sem_trytake(rt_sem_t sem);
 rt_err_t rt_sem_release(rt_sem_t sem);
+rt_uint16_t rt_sem_get_value(rt_sem_t sem);
 rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg);
 #endif
 

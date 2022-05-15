@@ -656,6 +656,33 @@ RTM_EXPORT(rt_sem_release);
 
 
 /**
+ * @brief    This function will return the current value of a semaphore object.
+ *
+ * @param    sem is a pointer to a semaphore object.
+ *
+ * @return   Return the current semaphore value.
+ */
+rt_uint16_t rt_sem_get_value(rt_sem_t sem)
+{
+    rt_base_t level;
+    rt_uint16_t value;
+
+    /* parameter check */
+    RT_ASSERT(sem != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+    value = sem->value;
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    return value;
+}
+RTM_EXPORT(rt_sem_get_value);
+
+
+/**
  * @brief    This function will set some extra attributions of a semaphore object.
  *
  * @note     Currently this function only supports the RT_IPC_CMD_RESET command to reset the semaphore.
