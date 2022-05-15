@@ -11,16 +11,19 @@ CPPPATH = [cwd + '/include']
 CPPPATH += [cwd + '/include/socket']
 
 if GetDepend('SAL_USING_LWIP'):
-    src += Glob('impl/af_inet_lwip.c')
+    src += Glob('docking/af_inet_lwip.c')
 
 if GetDepend('SAL_USING_AT'):
-    src += Glob('impl/af_inet_at.c')
+    src += Glob('docking/af_inet_at.c')
 
 if GetDepend('SAL_USING_LWIP') or GetDepend('SAL_USING_AT'):
-    CPPPATH += [cwd + '/impl']
+    CPPPATH += [cwd + '/docking']
+
+if GetDepend('SAL_USING_WINSOCK'):
+    src += Glob('docking/af_inet_winsock.c')
 
 if GetDepend('SAL_USING_TLS'):
-    src += Glob('impl/proto_mbedtls.c')
+    src += Glob('docking/proto_mbedtls.c')
 
 if GetDepend('SAL_USING_POSIX'):
     CPPPATH += [cwd + '/include/dfs_net']
