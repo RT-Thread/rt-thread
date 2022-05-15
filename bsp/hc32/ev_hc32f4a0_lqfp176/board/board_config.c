@@ -95,22 +95,6 @@ rt_err_t rt_hw_board_pulse_encoder_init(CM_TMRA_TypeDef *TMRAx)
 #endif
 
 #if defined(RT_USING_ADC)
-void rt_hw_board_adc_clock_init(void)
-{
-    CLK_SetPeriClockSrc(CLK_PERIPHCLK_PCLK);
-
-    /* 1. Enable ADC peripheral clock. */
-#if defined(BSP_USING_ADC1)
-    FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC1, ENABLE);
-#endif
-#if defined(BSP_USING_ADC2)
-    FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC2, ENABLE);
-#endif
-#if defined(BSP_USING_ADC3)
-    FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC3, ENABLE);
-#endif
-}
-
 rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
 {
     rt_err_t result = RT_EOK;
@@ -122,19 +106,16 @@ rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
     {
 #if defined(BSP_USING_ADC1)
     case (rt_uint32_t)CM_ADC1:
-
         (void)GPIO_Init(ADC1_CH_PORT, ADC1_CH_PIN, &stcGpioInit);
         break;
 #endif
 #if defined(BSP_USING_ADC2)
     case (rt_uint32_t)CM_ADC2:
-
         (void)GPIO_Init(ADC2_CH_PORT, ADC2_CH_PIN, &stcGpioInit);
         break;
 #endif
 #if defined(BSP_USING_ADC3)
     case (rt_uint32_t)CM_ADC3:
-
         (void)GPIO_Init(ADC3_CH_PORT, ADC3_CH_PIN, &stcGpioInit);
         break;
 #endif

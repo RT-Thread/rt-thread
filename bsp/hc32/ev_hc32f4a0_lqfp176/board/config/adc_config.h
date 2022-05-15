@@ -12,14 +12,15 @@
 #define __ADC_CONFIG_H__
 
 #include <rtthread.h>
+#include "irq_config.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef BSP_USING_ADC1
-#ifndef ADC1_CONFIG
-#define ADC1_CONFIG                                                             \
+#ifndef ADC1_INIT_PARAMS
+#define ADC1_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc1",                               \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
@@ -36,12 +37,12 @@ extern "C" {
        .continue_conv_mode_enable       = RT_FALSE,                             \
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
-#endif /* ADC1_CONFIG */
+#endif /* ADC1_INIT_PARAMS */
 #endif /* BSP_USING_ADC1 */
 
 #ifdef BSP_USING_ADC2
-#ifndef ADC2_CONFIG
-#define ADC2_CONFIG                                                             \
+#ifndef ADC2_INIT_PARAMS
+#define ADC2_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc2",                               \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
@@ -58,12 +59,12 @@ extern "C" {
        .continue_conv_mode_enable       = RT_FALSE,                             \
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
-#endif /* ADC2_CONFIG */
+#endif /* ADC2_INIT_PARAMS */
 #endif /* BSP_USING_ADC2 */
 
 #ifdef BSP_USING_ADC3
-#ifndef ADC3_CONFIG
-#define ADC3_CONFIG                                                             \
+#ifndef ADC3_INIT_PARAMS
+#define ADC3_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc3",                               \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
@@ -80,7 +81,7 @@ extern "C" {
        .continue_conv_mode_enable       = RT_FALSE,                             \
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
-#endif /* ADC3_CONFIG */
+#endif /* ADC3_INIT_PARAMS */
 #endif /* BSP_USING_ADC3 */
 
 #ifdef __cplusplus

@@ -12,6 +12,7 @@
 #define __ETH_CONFIG_H__
 
 #include <rtthread.h>
+#include "irq_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,8 +24,8 @@ extern "C" {
 #ifndef ETH_IRQ_CONFIG
 #define ETH_IRQ_CONFIG                                      \
     {                                                       \
-        .irq_num    = INT104_IRQn,                          \
-        .irq_prio   = DDL_IRQ_PRIO_DEFAULT,                 \
+        .irq_num    = BSP_ETH_IRQ_NUM,                      \
+        .irq_prio   = BSP_ETH_IRQ_PRIO,                     \
         .int_src    = INT_SRC_ETH_GLB_INT,                  \
     }
 #endif /* ETH_IRQ_CONFIG */
