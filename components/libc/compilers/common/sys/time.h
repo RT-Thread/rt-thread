@@ -17,8 +17,6 @@
 #include <stdint.h>
 #include <time.h>
 #ifdef _WIN32
-#include <winsock.h> /* for struct timeval */
-#include <corecrt.h> /* for __time64_t */
 typedef __time64_t time_t;
 #endif /* _WIN32 */
 
@@ -45,7 +43,7 @@ struct timezone
     int tz_dsttime;       /* type of dst correction */
 };
 
-#if !defined(_TIMEVAL_DEFINED) && !defined(_WIN32)
+#if !defined(_TIMEVAL_DEFINED)
 #define _TIMEVAL_DEFINED
 struct timeval
 {
