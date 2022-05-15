@@ -12,6 +12,7 @@
 #define __TIM_CONFIG_H__
 
 #include <rtthread.h>
+#include "irq_config.h"
 
 #ifdef __cplusplus
 extern "C" {

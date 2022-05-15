@@ -21,8 +21,8 @@ extern "C" {
 
 
 
-/* stm32 can device */
-struct hc32_can_init_type
+/* hc32 can device */
+struct can_dev_init_params
 {
     char *name;
 };
