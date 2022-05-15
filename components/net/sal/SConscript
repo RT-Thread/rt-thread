@@ -5,30 +5,30 @@ from building import *
 cwd = GetCurrentDir()
 
 src = Glob('src/*.c')
-src += Glob('socket/net_netdb.c')
+src += ['socket/net_netdb.c']
 
 CPPPATH = [cwd + '/include']
 CPPPATH += [cwd + '/include/socket']
 
-if GetDepend('SAL_USING_LWIP'):
-    src += Glob('docking/af_inet_lwip.c')
-
-if GetDepend('SAL_USING_AT'):
-    src += Glob('docking/af_inet_at.c')
-
 if GetDepend('SAL_USING_LWIP') or GetDepend('SAL_USING_AT'):
     CPPPATH += [cwd + '/docking']
 
+if GetDepend('SAL_USING_LWIP'):
+    src += ['docking/af_inet_lwip.c']
+
+if GetDepend('SAL_USING_AT'):
+    src += ['docking/af_inet_at.c']
+
 if GetDepend('SAL_USING_WINSOCK'):
-    src += Glob('docking/af_inet_winsock.c')
+    src += ['docking/af_inet_winsock.c']
 
 if GetDepend('SAL_USING_TLS'):
-    src += Glob('docking/proto_mbedtls.c')
+    src += ['docking/proto_mbedtls.c']
 
 if GetDepend('SAL_USING_POSIX'):
     CPPPATH += [cwd + '/include/dfs_net']
-    src += Glob('socket/net_sockets.c')
-    src += Glob('dfs_net/*.c')
+    src += ['socket/net_sockets.c']
+    src += ['dfs_net/*.c']
 
 if not GetDepend('HAVE_SYS_SOCKET_H'):
     CPPPATH += [cwd + '/include/socket/sys_socket']
