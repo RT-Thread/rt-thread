@@ -31,7 +31,9 @@ config RT_USING_DFS_WINSHAREDIR
 
 config BSP_USING_SAL_WINSOCK
     bool "Enable Windows socket (winsock) with SAL"
-    select RT_USING_SAL
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_SOCKET
+    select SAL_USING_WINSOCK
     default n
 
 config BSP_USING_LVGL
