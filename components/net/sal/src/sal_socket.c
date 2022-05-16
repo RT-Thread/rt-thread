@@ -18,7 +18,7 @@
 #ifdef SAL_USING_TLS
 #include <sal_tls.h>
 #endif
-#include <sal.h>
+#include <sal_low_lvl.h>
 #include <netdev.h>
 
 #ifdef SAL_INTERNET_CHECK

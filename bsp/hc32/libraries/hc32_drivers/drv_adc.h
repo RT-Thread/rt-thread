@@ -30,7 +30,7 @@ extern "C"
 /*******************************************************************************
  * Global type definitions ('typedef')
  ******************************************************************************/
-struct hc32_adc_init_type
+struct adc_dev_init_params
 {
     char name[8];
     uint16_t resolution;                /*!< Specifies the ADC resolution.
