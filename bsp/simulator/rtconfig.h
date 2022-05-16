@@ -98,6 +98,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_RTC
 
 /* Using USB */
 
@@ -217,9 +218,10 @@
 
 #define SOC_SIMULATOR
 
-/* Onboard Peripheral Drivers */
+/* Peripheral Drivers */
 
 #define RT_USING_DFS_WINSHAREDIR
+#define BSP_USING_RTC
 #define BSP_USING_SOCKET
 #include "rtconfig_project.h"
 
