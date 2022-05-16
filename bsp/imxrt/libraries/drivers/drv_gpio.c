@@ -66,7 +66,7 @@ const struct pin_mask mask_tab[7] =
     {GPIO1, 0xffffffff},     /* GPIO1 */
     {GPIO2, 0xffffffff},     /* GPIO2 */
     {GPIO3, 0xffffe3ff},     /* GPIO3,10~12 not supported */
-    {GPIO4, 0x00000000},     /* GPIO4 not supported */
+    {GPIO5, 0x00000000},     /* GPIO4 not supported */
     {GPIO5, 0x00000007}      /* GPIO5,3~31 not supported */
 #elif defined(SOC_IMXRT1170_SERIES)
     {GPIO1, 0xffffffff},
