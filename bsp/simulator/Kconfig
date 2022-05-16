@@ -29,14 +29,14 @@ menu "Onboard Peripheral Drivers"
     config RT_USING_DFS_WINSHAREDIR
         bool "Enable shared file system between Windows"
         select RT_USING_POSIX_FS
-        default n
+        default y
 
     config BSP_USING_SOCKET
         bool "Enable BSD Socket"
         select RT_USING_POSIX_FS
         select RT_USING_POSIX_SOCKET
         select SAL_USING_WINSOCK
-        default n
+        default y
 
     config BSP_USING_LVGL
         bool "Enable LVGL for LCD"
