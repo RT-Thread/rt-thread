@@ -80,6 +80,24 @@ rt_inline void rt_list_insert_before(rt_list_t *l, rt_list_t *n)
 }
 
 /**
+ * @brief move the list to its next's next position
+ *
+ * @param l list to operate
+ */
+rt_inline void rt_list_jump_next(rt_list_t *l)
+{
+    l->next->prev = l->prev;
+    l->prev->next = l->next;
+
+    l->prev = l->next;
+
+    l->next->next->prev = l;
+    l->next = l->next->next;
+
+    l->prev->next = l;
+}
+
+/**
  * @brief remove node from list.
  * @param n the node to remove from the list.
  */
