@@ -44,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "console"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 
 /* RT-Thread Components */
 
@@ -91,6 +91,9 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
@@ -106,6 +109,9 @@
 /* POSIX (Portable Operating System Interface) layer */
 
 #define RT_USING_POSIX_FS
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_SOCKET
 
 /* Interprocess Communication (IPC) */
 
@@ -115,6 +121,20 @@
 
 /* Network */
 
+#define RT_USING_SAL
+#define SAL_INTERNET_CHECK
+
+/* Docking with protocol stacks */
+
+#define SAL_USING_WINSOCK
+#define SAL_USING_POSIX
+#define RT_USING_NETDEV
+#define NETDEV_USING_IFCONFIG
+#define NETDEV_USING_PING
+#define NETDEV_USING_NETSTAT
+#define NETDEV_USING_AUTO_DEFAULT
+#define NETDEV_IPV4 1
+#define NETDEV_IPV6 0
 
 /* Utilities */
 
@@ -196,7 +216,11 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define SOC_SIMULATOR
+
+/* Onboard Peripheral Drivers */
+
 #define RT_USING_DFS_WINSHAREDIR
+#define BSP_USING_SOCKET
 #include "rtconfig_project.h"
 
 #endif
