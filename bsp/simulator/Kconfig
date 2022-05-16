@@ -24,12 +24,23 @@ config SOC_SIMULATOR
     select RT_USING_USER_MAIN
     default y
 
-menu "Onboard Peripheral Drivers"
+menu "Peripheral Drivers"
 
     config RT_USING_DFS_WINSHAREDIR
         bool "Enable shared file system between Windows"
         select RT_USING_POSIX_FS
         default y
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default y
+
+    config BSP_USING_ALARM
+        bool "Enable RTC alarm"
+        select RT_USING_ALARM
+        depends on BSP_USING_RTC
+        default n
 
     config BSP_USING_SOCKET
         bool "Enable BSD Socket"
