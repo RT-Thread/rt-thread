@@ -42,7 +42,7 @@ static int mnt_init(void)
     else
     {
         LOG_W("[sd0] File System on SD ('sd0') initialization failed!");
-        LOG_W("[sd0] Try to format and re-mount again...");
+        LOG_W("[sd0] Try to format and re-mount...");
         if (dfs_mkfs("elm", "sd0") == 0)
         {
             if (dfs_mount("sd0", "/sd", "elm", 0, 0) == 0)
