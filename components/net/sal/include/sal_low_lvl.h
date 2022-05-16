@@ -6,10 +6,12 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-17     ChenYong     First version
+ * 2022-05-15     Meco Man     rename sal.h as sal_low_lvl.h to avoid conflicts
+ *                             with Microsoft Visual Studio header file
  */
 
-#ifndef SAL_H__
-#define SAL_H__
+#ifndef SAL_LOW_LEVEL_H__
+#define SAL_LOW_LEVEL_H__
 
 #include <rtdevice.h>
 
