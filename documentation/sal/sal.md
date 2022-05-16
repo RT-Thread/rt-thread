@@ -719,7 +719,7 @@ The following is the access registration process implemented by AT Socket networ
 ```c
 #include <rtthread.h>
 #include <netdb.h>
-#include <sal.h>            /* SAL component structure holds the header file */
+#include <sal_low_lvl.h>            /* SAL component structure holds the header file */
 #include <at_socket.h>      /* AT Socket related header file */
 #include <af_inet.h>
 
