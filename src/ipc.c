@@ -571,6 +571,50 @@ RTM_EXPORT(rt_sem_take);
 
 
 /**
+ * @brief    This function modifies the value of the semaphore, if the semaphore is unavailable, the thread returns immediately.
+ *
+ * @note     When this function is called, the count value of the sem->value will de modified , until it is equal to 0
+ *           
+ *
+ * @see      rt_sem_set_value()
+ *
+ * @param    sem is a pointer to a semaphore object.
+ *
+ * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore take failed.
+ */
+rt_err_t rt_sem_set_value(rt_sem_t sem, rt_uint16_t value)
+{
+    register rt_base_t temp;
+
+    /* parameter check */
+    RT_ASSERT(sem != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
+
+    RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
+
+    if ((sem->value >= 0) && (value >= 0))
+    {
+        /* semaphore is available */
+        sem->value  = value;
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(temp);
+    }
+    else return RT_ERROR;
+
+    RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(sem->parent.parent)));
+    
+    return RT_EOK;
+
+}
+RTM_EXPORT(rt_sem_set_value);
+
+
+/**
  * @brief    This function will try to take a semaphore, if the semaphore is unavailable, the thread returns immediately.
  *
  * @note     This function is very similar to the rt_sem_take() function, when the semaphore is not available,
