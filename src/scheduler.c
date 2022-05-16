@@ -445,27 +445,7 @@ void rt_schedule(void)
 
         if (rt_thread_ready_priority_group != 0)
         {
-            /* need_insert_from_thread: need to insert from_thread to ready queue */
-            int need_insert_from_thread = 0;
-
             to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
-
-            if ((rt_current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
-            {
-                if (rt_current_thread->current_priority < highest_ready_priority)
-                {
-                    to_thread = rt_current_thread;
-                }
-                else if (rt_current_thread->current_priority == highest_ready_priority && (rt_current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
-                {
-                    to_thread = rt_current_thread;
-                }
-                else
-                {
-                    need_insert_from_thread = 1;
-                }
-                rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
-            }
 
             if (to_thread != rt_current_thread)
             {
@@ -476,12 +456,6 @@ void rt_schedule(void)
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));
 
-                if (need_insert_from_thread)
-                {
-                    rt_schedule_insert_thread(from_thread);
-                }
-
-                rt_schedule_remove_thread(to_thread);
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
                 /* switch to new thread */
@@ -540,7 +514,6 @@ void rt_schedule(void)
             }
             else
             {
-                rt_schedule_remove_thread(rt_current_thread);
                 rt_current_thread->stat = RT_THREAD_RUNNING | (rt_current_thread->stat & ~RT_THREAD_STAT_MASK);
             }
         }
