@@ -10,10 +10,14 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#define DBG_TAG     "FileSystem"
+#define DBG_LVL     DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USING_DFS
 #include <dfs_fs.h>
 
-int mnt_init(void)
+static int mnt_init(void)
 {
 #ifdef RT_USING_DFS_WINSHAREDIR
     extern int dfs_win32_init(void);
@@ -24,29 +28,40 @@ int mnt_init(void)
 
     if (dfs_mount("wshare", "/", "wdir", 0, 0) == 0)
     {
-        rt_kprintf("File System on root initialized!\n");
+        LOG_I("[wshare] File System on root ('wshare') initialized!");
     }
     else
     {
-        rt_kprintf("File System on root initialization failed!\n");
+        LOG_E("[wshare] File System on root ('wshare') initialization failed!");
     }
 
     if (dfs_mount("sd0", "/sd", "elm", 0, 0) == 0)
     {
-        rt_kprintf("File System on sd initialized!\n");
+        LOG_I("[sd0] File System on SD ('sd0') initialized!");
     }
     else
     {
-        rt_kprintf("File System on sd initialization failed!\n");
+        LOG_W("[sd0] File System on SD ('sd0') initialization failed!");
+        LOG_W("[sd0] Try to format and re-mount again...");
+        if (dfs_mkfs("elm", "sd0") == 0)
+        {
+            if (dfs_mount("sd0", "/sd", "elm", 0, 0) == 0)
+            {
+                LOG_I("[sd0] File System on SD ('sd0') initialized!");
+                return 0;
+            }
+        }
+
+        LOG_E("[sd0] File System on SD ('sd0') initialization failed!");
     }
 #else
     if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
     {
-        rt_kprintf("File System on sd initialized!\n");
+        LOG_I("[sd0] File System on sd initialized!");
     }
     else
     {
-        rt_kprintf("File System on sd initialization failed!\n");
+        LOG_E("[sd0] File System on sd initialization failed!");
     }
 #endif
 
