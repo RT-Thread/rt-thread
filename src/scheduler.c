@@ -186,7 +186,7 @@ static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *high
         /* move the list head to next */
         rt_list_jump_next(&rt_thread_priority_table[rt_current_thread->current_priority]);
         /* READY thread*/
-        rt_current_thread->stat = RT_THREAD_READY;
+        rt_current_thread->stat = RT_THREAD_READY | (rt_current_thread->stat & ~RT_THREAD_STAT_MASK);
     }
 
     /* get highest ready priority thread */
