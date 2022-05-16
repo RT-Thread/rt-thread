@@ -180,13 +180,14 @@ static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *high
     highest_ready_priority = __rt_ffs(rt_thread_ready_priority_group) - 1;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
-    /* if current thread is yield , move it before its readylist and change its status to READY */
+    /* if current thread is yield , move it before its ready queue and change its status to READY */
     if((rt_current_thread->stat & RT_THREAD_STAT_YIELD_MASK) != 0)
     {
         /* move the list head to next */
         rt_list_jump_next(&rt_thread_priority_table[rt_current_thread->current_priority]);
-        /* READY thread*/
-        rt_current_thread->stat = RT_THREAD_READY | (rt_current_thread->stat & ~RT_THREAD_STAT_MASK);
+
+        /* clear YIELD and ready thread*/
+        rt_current_thread->stat = RT_THREAD_READY | (rt_current_thread->stat & ~(RT_THREAD_STAT_YIELD_MASK|RT_THREAD_STAT_MASK));
     }
 
     /* get highest ready priority thread */
