@@ -267,7 +267,6 @@ void rt_system_scheduler_start(void)
     rt_current_thread = to_thread;
 #endif /* RT_USING_SMP */
 
-    rt_schedule_remove_thread(to_thread);
     to_thread->stat = RT_THREAD_RUNNING;
 
     /* switch to new thread */
