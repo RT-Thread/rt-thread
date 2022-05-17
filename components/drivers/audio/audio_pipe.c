@@ -26,9 +26,9 @@ static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)
                                tlist);
 
         /* resume the write thread */
-        rt_thread_resume(thread);
+        if(rt_thread_resume(thread) == RT_EOK)
+            rt_schedule();
 
-        rt_schedule();
     }
 }
 
@@ -108,9 +108,8 @@ static void _rt_pipe_resume_reader(struct rt_audio_pipe *pipe)
                                tlist);
 
         /* resume the read thread */
-        rt_thread_resume(thread);
-
-        rt_schedule();
+        if(rt_thread_resume(thread) == RT_EOK)
+            rt_schedule();
     }
 }
 

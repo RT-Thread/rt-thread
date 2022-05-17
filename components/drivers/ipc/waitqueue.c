@@ -75,7 +75,7 @@ int __wqueue_default_wake(struct rt_wqueue_node *wait, void *key)
 void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 {
     rt_base_t level;
-    int need_schedule = 0;
+    rt_bool_t need_schedule = RT_FALSE;
 
     rt_list_t *queue_list;
     struct rt_list_node *node;
@@ -94,8 +94,8 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
             entry = rt_list_entry(node, struct rt_wqueue_node, list);
             if (entry->wakeup(entry, key) == 0)
             {
-                rt_thread_resume(entry->polling_thread);
-                need_schedule = 1;
+                if(rt_thread_resume(entry->polling_thread) == RT_EOK)
+                    need_schedule = RT_TRUE;
 
                 rt_wqueue_remove(entry);
                 break;
@@ -104,7 +104,7 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
     }
     rt_hw_interrupt_enable(level);
 
-    if (need_schedule)
+    if (need_schedule == RT_TRUE)
         rt_schedule();
 }
 

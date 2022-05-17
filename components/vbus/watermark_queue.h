@@ -100,7 +100,8 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
  */
 rt_inline void rt_wm_que_dec(struct rt_watermark_queue *wg)
 {
-    int need_sched = 0;
+    rt_bool_t need_schedule = RT_FALSE;
+
     rt_base_t level;
 
     if (wg->level == 0)
@@ -119,12 +120,14 @@ rt_inline void rt_wm_que_dec(struct rt_watermark_queue *wg)
             thread = rt_list_entry(wg->suspended_threads.next,
                                    struct rt_thread,
                                    tlist);
-            rt_thread_resume(thread);
-            need_sched = 1;
+            /* resume it */
+            if(rt_thread_resume(thread) == RT_EOK)
+                need_schedule = RT_TRUE;
         }
     }
     rt_hw_interrupt_enable(level);
 
-    if (need_sched)
+    /* perform a schedule */
+    if (need_schedule == RT_TRUE)
         rt_schedule();
 }

@@ -137,6 +137,7 @@ rt_err_t rt_prio_queue_push(struct rt_prio_queue *que,
                             rt_int32_t timeout)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     struct rt_prio_queue_item *item;
 
     RT_ASSERT(que);
@@ -164,11 +165,14 @@ rt_err_t rt_prio_queue_push(struct rt_prio_queue *que,
                                struct rt_thread,
                                tlist);
         /* resume it */
-        rt_thread_resume(thread);
+        if(rt_thread_resume(thread) == RT_EOK)
+            need_schedule = RT_TRUE;
+
         rt_hw_interrupt_enable(level);
 
         /* perform a schedule */
-        rt_schedule();
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }

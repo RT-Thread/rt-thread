@@ -92,6 +92,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             rt_int32_t timeout)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     rt_thread_t thread;
     rt_err_t    result;
 
@@ -165,11 +166,14 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                                tlist);
 
         /* resume it */
-        rt_thread_resume(thread);
+        if(rt_thread_resume(thread) == RT_EOK)
+            need_schedule = RT_TRUE;
+
         rt_hw_interrupt_enable(level);
 
         /* perform a schedule */
-        rt_schedule();
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return result;
     }
@@ -209,6 +213,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            rt_int32_t timeout)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     rt_thread_t thread;
     rt_err_t    result;
 
@@ -286,11 +291,14 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                                    tlist);
 
             /* resume it */
-            rt_thread_resume(thread);
+            if(rt_thread_resume(thread) == RT_EOK)
+                need_schedule = RT_TRUE;
+
             rt_hw_interrupt_enable(level);
 
             /* perform a schedule */
-            rt_schedule();
+            if (need_schedule == RT_TRUE)
+                rt_schedule();
         }
         else
         {
@@ -362,6 +370,7 @@ RTM_EXPORT(rt_data_queue_peek);
 void rt_data_queue_reset(struct rt_data_queue *queue)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     struct rt_thread *thread;
 
     RT_ASSERT(queue != RT_NULL);
@@ -397,7 +406,8 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
          * In rt_thread_resume function, it will remove current thread from
          * suspend list
          */
-        rt_thread_resume(thread);
+        if(rt_thread_resume(thread) == RT_EOK)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
@@ -421,14 +431,16 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
          * In rt_thread_resume function, it will remove current thread from
          * suspend list
          */
-        rt_thread_resume(thread);
+        if(rt_thread_resume(thread) == RT_EOK)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
     }
     rt_exit_critical();
 
-    rt_schedule();
+    if (need_schedule == RT_TRUE)
+        rt_schedule();
 }
 RTM_EXPORT(rt_data_queue_reset);
 
