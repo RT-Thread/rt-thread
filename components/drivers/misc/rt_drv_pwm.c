@@ -13,7 +13,7 @@
 
 static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
 
     if (pwm->ops->control)
@@ -32,7 +32,7 @@ size : number of pulse, only set to sizeof(rt_uint32_t).
 */
 static rt_size_t _pwm_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
     rt_uint32_t *pulse = (rt_uint32_t *)buffer;
     struct rt_pwm_configuration configuration = {0};
@@ -60,7 +60,7 @@ size : number of pulse, only set to sizeof(rt_uint32_t).
 */
 static rt_size_t _pwm_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
     rt_uint32_t *pulse = (rt_uint32_t *)buffer;
     struct rt_pwm_configuration configuration = {0};
@@ -101,7 +101,7 @@ static const struct rt_device_ops pwm_device_ops =
 
 rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, const struct rt_pwm_ops *ops, const void *user_data)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
 
     rt_memset(device, 0, sizeof(struct rt_device_pwm));
 
@@ -127,7 +127,7 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
 
 rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     struct rt_pwm_configuration configuration = {0};
 
     if (!device)
@@ -144,7 +144,7 @@ rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel)
 
 rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     struct rt_pwm_configuration configuration = {0};
 
     if (!device)
@@ -161,7 +161,7 @@ rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
 
 rt_err_t rt_pwm_set(struct rt_device_pwm *device, int channel, rt_uint32_t period, rt_uint32_t pulse)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     struct rt_pwm_configuration configuration = {0};
 
     if (!device)
@@ -179,7 +179,7 @@ rt_err_t rt_pwm_set(struct rt_device_pwm *device, int channel, rt_uint32_t perio
 
 rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
 
     if (!device)
     {
@@ -198,7 +198,7 @@ rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *c
 
 static int pwm(int argc, char **argv)
 {
-    int result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     char *result_str;
     static struct rt_device_pwm *pwm_device = RT_NULL;
     struct rt_pwm_configuration cfg = {0};
@@ -215,14 +215,14 @@ static int pwm(int argc, char **argv)
             }
             else
             {
-               rt_kprintf("pwm probe <pwm_name>  - probe pwm by name\n");
+               rt_kprintf("pwm probe <device name>  - probe pwm by name\n");
             }
         }
         else
         {
             if(pwm_device == RT_NULL)
             {
-                rt_kprintf("Please using 'pwm probe <pwm_name>' first.\n");
+                rt_kprintf("Please using 'pwm probe <device name>' first.\n");
                 return -RT_ERROR;
             }
             if(!strcmp(argv[1], "enable"))
@@ -288,7 +288,7 @@ static int pwm(int argc, char **argv)
     else
     {
        rt_kprintf("Usage: \n");
-       rt_kprintf("pwm probe <pwm_name> - probe pwm by name\n");
+       rt_kprintf("pwm probe <device name> - probe pwm by name\n");
        rt_kprintf("pwm enable <channel> - enable pwm channel\n");
        rt_kprintf("pwm disable <channel>- disable pwm channel\n");
        rt_kprintf("pwm get <channel>    - get pwm channel info\n");
@@ -299,6 +299,6 @@ static int pwm(int argc, char **argv)
 
     return RT_EOK;
 }
-MSH_CMD_EXPORT(pwm, pwm functions);
+MSH_CMD_EXPORT(pwm, pwm <device name> <option> <channel>);
 
 #endif /* RT_USING_FINSH */
