@@ -50,7 +50,7 @@ Incluye:
 
   El catálogo de código fuente de RT-Thread se muestra como sigue:
 
-| Name          | Description                                             |
+| Name          | Descripción                                             |
 | ------------- | ------------------------------------------------------- |
 | BSP          | Board Support Package basado en la portación de varias placas de desarrollo |
 | componentes    | Componentes, como finsh shell, sistema de archivos, pila de protocolos, etc.|
@@ -114,9 +114,9 @@ En la etapa inicial, el equipo de RT-Thread también creó una herramienta auxil
 
 # Cómo Empezar
 
-[RT-Thread Programming Guide](https://www.rt-thread.io/document/site/tutorial/quick-start/introduction/introduction/) | [RT-Thread Studio IDE](https://www.rt-thread.io/studio.html) | [Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [RT-Thread Beginners Guide](https://www.youtube.com/watch?v=ZMi1O-Rr7yc&list=PLXUV89C_M3G5KVw2IerI-pqApdSM_IaZo)
+[Guía de programación RT-Thread](https://www.rt-thread.io/document/site/tutorial/quick-start/introduction/introduction/) | [RT-Thread Studio IDE](https://www.rt-thread.io/studio.html) | [Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [RT-Thread Guía de iniciación](https://www.youtube.com/watch?v=ZMi1O-Rr7yc&list=PLXUV89C_M3G5KVw2IerI-pqApdSM_IaZo)
 
-Based on [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master/bsp/stm32/stm32f103-blue-pill) | [Raspberry Pi Pico](https://github.com/RT-Thread/rt-thread/tree/master/bsp/raspberry-pico)
+Basado en [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master/bsp/stm32/stm32f103-blue-pill) | [Raspberry Pi Pico](https://github.com/RT-Thread/rt-thread/tree/master/bsp/raspberry-pico)
 
 ## Simulator
 
