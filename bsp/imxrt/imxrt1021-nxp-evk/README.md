@@ -1,123 +1,78 @@
-# BSP README 模板
+# NXP i. MX RT1020 EVK BSP(Board Support Package) Execution Instruction.
 
-## 简介
+[中文页](README_zh.md) |
 
-本文档为 xxx 开发板的 BSP (板级支持包) 说明。
+## Introduction
 
-主要内容如下：
+This document records the execution instruction of the BSP (board support package) provided by the RT-Thread development team for the NXP i. MX RT1020 EVK development board.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The document is covered in three parts:
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+- NXP i. MX RT1020 EVK Board Resources Introduction
+- Quickly Get Started
+- Advanced Features
 
-## 开发板介绍
+By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
-【此处简单介绍一下开发板】
+## Board Resources Introduction
 
-开发板外观如下图所示：
-
-![board](figures/board.png)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：MIMXRT105xxx，主频 xxxMHz，xxxKB FLASH ，xxxKB RAM
-- 外部 RAM：型号，xMB
-- 外部 FLASH：型号，xMB
-- 常用外设
-  - LED：x个，DS0（红色，PB1），DS1（绿色，PB0）
-  - 按键：x个，K0（兼具唤醒功能，PA0），K1（PC13）
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
-- 调试接口，标准 JTAG/SWD
-
-开发板更多详细信息请参考【厂商名】 [xxx开发板介绍](https://xxx)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| SPI Flash         |     支持     |                                       |
-| 以太网            |     支持     |                                       |
-| SD卡              |   暂不支持   |                                       |
-| CAN               |   暂不支持   |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART              |     支持     | UART1/x/x                             |
-| SPI               |     支持     | SPI1/x/x                              |
-| I2C               |     支持     | 软件 I2C                              |
-| SDIO              |   暂不支持   | 即将支持                              |
-| RTC               |   暂不支持   | 即将支持                              |
-| PWM               |   暂不支持   | 即将支持                              |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
-| IWG               |   暂不支持   | 即将支持                              |
-| **扩展模块**      | **支持情况** | **备注**                              |
-|     xxx 模块      |   支持   |                                      |
-
-## 使用说明
-
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+The i.MX RT1020 EVK is a 2-layer low-cost through-hole USB-powered PCB. At its heart lies the i.MX RT1020 crossover MCU in LQFP144 package, featuring NXP’s advanced implementation of the Arm® Cortex®-M7 core. This core operates at speeds up to 500 MHz to provide high CPU performance and excellent real-time response.
+[![board]figures/board.jpg
 
 
-### 快速上手
+## Peripheral Condition
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+Each peripheral supporting condition for this BSP is as follows:
 
-#### 硬件连接
 
-使用数据线连接开发板到 PC，打开电源开关。
+| **On-board Peripherals** | **Support** | **Remark**                            |
+| ------------------------ | ----------- | ------------------------------------- |
+| USB                      | √           |                                       |
+| SPI Flash                | √           |                                       |
+| Ethernet                 | √           |                                       |
+| **On-chip Peripherals**  | **Support** | **Remark**                            |
+| GPIO                     | √           |                                       |
+| SPI                      | √           |                                       |
+| I2C                      | √           |                                       |
+| SDIO                     | √           |                                       |
+| RTC                      | √           |                                       |
+| PWM                      | √           |                                       |
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Execution Instruction
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+### Quickly Get Started
 
-#### 运行结果
+This BSP provides MDK 5 and IAR projects for developers. Here's an example of the IAR development environment, to introduce how to run the system.
 
-下载程序成功之后，系统会自动运行，【这里写开发板运行起来之后的现象，如：LED 闪烁等】。
+#### Hardware Connection
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+Use a USB cable to connect the development board to the PC and turn on the power switch.
 
-```bash
+#### Compile and Download
+
+Double-click the project.eww file, to open the IAR project, compile and download the project to the board.
+
+> By default, the project uses the CMSIS-DAP to download the program, when the CMSIS-DAP connects the board, clicking the download button can download the program to the board.
+
+### **Running Results**
+
+Once the project is successfully downloaded, the system runs automatically. The green LED on the board will flash periodically.
+
+Connect the serial port of the board to the PC, communicate with it via a serial terminal tool(115200-8-1-N). Reset the board and the startup information of RT-Thread will be observed:
+
  \ | /
 - RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
- 2006 - 2018 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
+ / | \     4.1.1 build May 13 2022 11:37:59
+ 2006 - 2022 Copyright by RT-Thread team
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
-1. 在 bsp 下打开 env 工具。
+## **Advanced Features**
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+This BSP only enables GPIO and serial port 1 by default. If you need more advanced features, you need to configure the BSP with RT-Thread [Env tools](https://www.rt-thread.io/download.html?download=Env), as follows:
+1. Open the env tool under BSP;
+2. Enter menuconfig command to configure the project, then save and exit;
+3. Enter pkgs --update command to update the package;
+4. Enter scons --target=mdk5/iar command to regenerate the project.
 
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [IMXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-- xxx
-
-## 联系人信息
-
-维护人:
-
--  [xxx](https://个人主页), 邮箱：<xxx@xxx.com>
+Learn how to use RT-Thread Env, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
