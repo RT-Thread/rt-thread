@@ -58,10 +58,8 @@ static void get_rtc_timeval(struct timeval *tv)
     tv->tv_usec = sys_time.wMilliseconds * 1000UL;
 }
 
-static rt_err_t windows_rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t pc_rtc_control(rt_device_t dev, int cmd, void *args)
 {
-    struct tm newtime;
-
     RT_ASSERT(dev != RT_NULL);
 
     switch (cmd)
@@ -70,7 +68,7 @@ static rt_err_t windows_rtc_control(rt_device_t dev, int cmd, void *args)
     {
         struct timeval tv;
         get_rtc_timeval(&tv);
-        *(rt_uint32_t *) args = tv.tv_sec;
+        *(time_t*) args = tv.tv_sec;
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
@@ -104,18 +102,18 @@ static rt_err_t windows_rtc_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops soft_rtc_ops =
+const static struct rt_device_ops pc_rtc_ops =
 {
     RT_NULL,
     RT_NULL,
     RT_NULL,
     RT_NULL,
     RT_NULL,
-    windows_rtc_control
+    pc_rtc_control
 };
 #endif
 
-int rt_windows_rtc_init(void)
+int rt_pc_rtc_init(void)
 {
     /* make sure only one 'rtc' device */
     RT_ASSERT(!rt_device_find("rtc"));
@@ -133,18 +131,18 @@ int rt_windows_rtc_init(void)
 
     /* register rtc device */
 #ifdef RT_USING_DEVICE_OPS
-    rtc_dev.ops = &soft_rtc_ops;
+    rtc_dev.ops = &pc_rtc_ops;
 #else
     rtc_dev.init = RT_NULL;
     rtc_dev.open = RT_NULL;
     rtc_dev.close = RT_NULL;
     rtc_dev.read = RT_NULL;
     rtc_dev.write = RT_NULL;
-    rtc_dev.control = windows_rtc_control;
+    rtc_dev.control = pc_rtc_control;
 #endif
     rtc_dev.user_data = RT_NULL; /* no private */
 
     rt_device_register(&rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR);
     return 0;
 }
-INIT_BOARD_EXPORT(rt_windows_rtc_init);
+INIT_BOARD_EXPORT(rt_pc_rtc_init);
