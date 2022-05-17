@@ -21,6 +21,7 @@ i.MX RT1170跨界MCU以1GHz的速度刷新了记录。该突破性系列结合�
 ![board](figures/board.jpg)
 
 
+
 开发板更多的详细信息请参考 NXP [i.MX RT1170 EVK 开发板介绍](https://www.nxp.com)。
 
 ## 外设支持
@@ -95,8 +96,6 @@ i.MX RT1170跨界MCU以1GHz的速度刷新了记录。该突破性系列结合�
 3. 输入 `pkgs --update` 命令更新软件包。
 
 4. 输入 `scons --target=mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [i.MXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
 
 ## 注意事项
 

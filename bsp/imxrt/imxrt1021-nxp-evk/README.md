@@ -17,7 +17,7 @@ By reading the Quickly Get Started section developers can quickly get their hand
 ## Board Resources Introduction
 
 The i.MX RT1020 EVK is a 2-layer low-cost through-hole USB-powered PCB. At its heart lies the i.MX RT1020 crossover MCU in LQFP144 package, featuring NXP’s advanced implementation of the Arm® Cortex®-M7 core. This core operates at speeds up to 500 MHz to provide high CPU performance and excellent real-time response.
-[![board]figures/board.jpg
+![board](figures/board.jpg)
 
 
 ## Peripheral Condition

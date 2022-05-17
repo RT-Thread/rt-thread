@@ -96,8 +96,6 @@ i.MX RT1020 EVK是一款2层低成本穿孔式USB供电PCB。该板的核心为i
 
 4. 输入 `scons --target=mdk5/iar` 命令重新生成工程。
 
-本章节更多详细的介绍请参考 [i.MXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
-
 ## 注意事项
 
 暂无
