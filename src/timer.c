@@ -505,8 +505,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
            ((_timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
         {
             /* resume timer thread to check soft timer */
-            rt_thread_resume(&_timer_thread);
-            need_schedule = RT_TRUE;
+            if(rt_thread_resume(&_timer_thread) == RT_EOK)
+                need_schedule = RT_TRUE;
         }
     }
 #endif /* RT_USING_TIMER_SOFT */
@@ -514,7 +514,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    if (need_schedule)
+    if (need_schedule == RT_TRUE)
     {
         rt_schedule();
     }

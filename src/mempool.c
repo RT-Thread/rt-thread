@@ -418,6 +418,7 @@ void rt_mp_free(void *block)
     struct rt_mempool *mp;
     struct rt_thread *thread;
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
 
     /* parameter check */
     if (block == RT_NULL) return;
@@ -449,13 +450,14 @@ void rt_mp_free(void *block)
         thread->error = RT_EOK;
 
         /* resume thread */
-        rt_thread_resume(thread);
-
+        if( rt_thread_resume(thread) == RT_EOK)
+            need_schedule = RT_TRUE;
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
         /* do a schedule */
-        rt_schedule();
+        if(need_schedule == RT_TRUE)
+            rt_schedule();
 
         return;
     }
