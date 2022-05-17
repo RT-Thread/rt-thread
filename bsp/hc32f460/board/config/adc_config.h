@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022, xiaoxiaolisunny
  *
  * SPDX-License-Identifier: Apache-2.0
  *

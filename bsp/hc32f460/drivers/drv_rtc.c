@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, Huada Semiconductor Co., Ltd.
+ * Copyright (C) 2020, xiaoxiaolisunny
  *
  * SPDX-License-Identifier: Apache-2.0
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022, xiaoxiaolisunny
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,6 +19,7 @@ extern "C" {
 #endif
 
 #include "config/adc_config.h"
+#include "config/can_config.h"
 
 #ifdef __cplusplus
 }
