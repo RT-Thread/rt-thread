@@ -76,13 +76,14 @@ i.MX RT1020 EVK是一款2层低成本穿孔式USB供电PCB。该板的核心为i
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.1.1 build May 13 2022 11:37:59
  2006 - 2022 Copyright by RT-Thread team
-
-
 ```
+
+
 ### 进阶使用
 
 此 BSP 默认只开启了 GPIO 和 串口 1 的功能，如果需使用更多高级外设功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：

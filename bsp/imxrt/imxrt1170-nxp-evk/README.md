@@ -62,11 +62,12 @@ Once the project is successfully downloaded, the system runs automatically.
 
 Connect the serial port of the board to the PC, communicate with it via a serial terminal tool(115200-8-1-N). Reset the board and the startup information of RT-Thread will be observed:
 
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.1.1 build May 13 2022 11:37:59
  2006 - 2022 Copyright by RT-Thread team
-
+```
 
 ## **Advanced Features**
 
