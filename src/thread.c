@@ -884,7 +884,9 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 {
     rt_base_t level;
     rt_err_t result = RT_EOK;
+#ifndef RT_USING_SMP
     extern rt_uint8_t rt_current_priority;
+#endif
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
@@ -910,6 +912,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
 
+#ifndef RT_USING_SMP
     /* compare the priority with rt_current_priority*/
     if(thread->current_priority < rt_current_priority)
     {
@@ -919,6 +922,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     {
         result = RT_EBUSY;
     }
+#endif
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
