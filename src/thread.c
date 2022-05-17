@@ -913,11 +913,11 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     /* compare the priority with rt_current_priority*/
     if(thread->current_priority < rt_current_priority)
     {
-        result == RT_EOK;
+        result = RT_EOK;
     }
     else
     {
-        result == RT_EBUSY;
+        result = RT_EBUSY;
     }
 
     /* enable interrupt */
