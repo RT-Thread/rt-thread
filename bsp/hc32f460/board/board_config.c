@@ -125,3 +125,25 @@ rt_err_t rt_hw_board_adc_init(M4_ADC_TypeDef *ADCx)
     return result;
 }
 #endif
+
+#if defined(RT_USING_CAN)
+rt_err_t rt_hw_board_can_init(M4_CAN_TypeDef *CANx)
+{
+    rt_err_t result = RT_EOK;
+
+    switch ((rt_uint32_t)CANx)
+    {
+#if defined(BSP_USING_CAN1)
+    case (rt_uint32_t)M4_CAN:
+        PORT_SetFunc(CAN1_TX_PORT, CAN1_TX_PIN, CAN1_TX_PIN_FUNC, Disable);
+        PORT_SetFunc(CAN1_RX_PORT, CAN1_RX_PIN, CAN1_RX_PIN_FUNC, Disable);
+        break;
+#endif
+    default:
+        result = -RT_ERROR;
+        break;
+    }
+
+    return result;
+}
+#endif

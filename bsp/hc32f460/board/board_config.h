@@ -146,4 +146,19 @@
     #define ADC2_CH0_PIN                      (GPIO_PIN_04)
 #endif
 
+/***********  CAN configure *********/
+#if defined(BSP_USING_CAN1)
+    #define CAN1_TX_PORT                     (PortB)
+    #define CAN1_TX_PIN                      (Pin07)
+    #define CAN1_TX_PIN_FUNC                 (Func_Can1_Tx)
+
+    #define CAN1_RX_PORT                     (PortB)
+    #define CAN1_RX_PIN                      (Pin06)
+    #define CAN1_RX_PIN_FUNC                 (Func_Can1_Rx)
+
+    #define CAN1_INT_PRIO                    (DDL_IRQ_PRIORITY_00)
+    #define CAN1_INT_SRC                     (INT_CAN_INT)
+    #define CAN1_INT_IRQn                    (Int009_IRQn)
+#endif
+
 #endif

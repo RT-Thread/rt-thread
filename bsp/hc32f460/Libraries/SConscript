@@ -1,3 +1,4 @@
+
 # RT-Thread building script for bridge
 
 import rtconfig
@@ -31,6 +32,9 @@ if GetDepend(['RT_USING_RTC']):
 	
 if GetDepend(['RT_USING_ADC']):
     src += ['HC32F460_StdPeriph_Driver/src/hc32f460_adc.c']
+	
+if GetDepend(['RT_USING_CAN']):
+    src += ['HC32F460_StdPeriph_Driver/src/hc32f460_can.c']
 
 #add for startup script 
 if rtconfig.PLATFORM == 'gcc':

@@ -65,6 +65,16 @@ menu "On-chip Peripheral Drivers"
                 bool "using adc2"
                 default n
         endif
+		
+	menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using can1"
+                default n
+        endif
 
 endmenu
 
