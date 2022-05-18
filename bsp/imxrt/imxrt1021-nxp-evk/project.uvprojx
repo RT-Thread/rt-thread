@@ -473,6 +473,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>cputime_cortexm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\cputime\cputime_cortexm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>i2c-bit-ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
@@ -658,37 +665,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\drv_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -750,6 +729,13 @@
               <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
@@ -765,6 +751,20 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -873,13 +873,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_cache.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_cache.c</FilePath>
@@ -908,37 +901,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_gpt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_gpt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_lpi2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpi2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_lpspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpuart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -960,16 +925,16 @@
           <GroupName>rt_usbd</GroupName>
           <Files>
             <File>
-              <FileName>usbdevice_core.c</FileName>
+              <FileName>mstorage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</FilePath>
+              <FilePath>..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mstorage.c</FileName>
+              <FileName>usbdevice_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
+              <FilePath>..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</FilePath>
             </File>
           </Files>
           <Files>

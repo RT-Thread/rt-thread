@@ -218,6 +218,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
+                    <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
                     <state>RT_USING_DLIBC</state>
                     <state>CPU_MIMXRT1176DVMAA_cm7</state>
                     <state>XIP_BOOT_HEADER_ENABLE=1</state>
@@ -226,6 +227,7 @@
                     <state>XIP_EXTERNAL_FLASH=1</state>
                     <state>ARM_MATH_CM7</state>
                     <state>USE_SDRAM</state>
+                    <state>SOC_IMXRT1170_SERIES</state>
                     <state>__RTTHREAD__</state>
                 </option>
                 <option>
@@ -348,6 +350,7 @@
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+                    <state>$PROJ_DIR$\board\MCUX_Config</state>
                     <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
                     <state>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176</state>
                     <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
@@ -355,15 +358,13 @@
                     <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
                     <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
                     <state>$PROJ_DIR$\..\libraries\drivers</state>
-                    <state>$PROJ_DIR$\..\libraries\MIMXRT1170\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\examples\utest\testcases\kernel</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers</state>
                     <state>$PROJ_DIR$\board</state>
-                    <state>$PROJ_DIR$\board\MCUX_Config</state>
+                    <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
                     <state>$PROJ_DIR$\board\ports</state>
-                    <state>$PROJ_DIR$\..\libraries\drivers\config</state>
                     <state>$PROJ_DIR$\applications</state>
+                    <state>$PROJ_DIR$\..\libraries\MIMXRT1170\CMSIS\Include</state>
                     <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
                     <state>$PROJ_DIR$\..\libraries\peripherals</state>
                     <state>$PROJ_DIR$\..\..\..\include</state>
@@ -1301,9 +1302,6 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
         </file>
-    </group>
-    <group>
-        <name>utestcases</name>
     </group>
     <group>
         <name>xip</name>

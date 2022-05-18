@@ -1245,12 +1245,6 @@
             <name>$PROJ_DIR$\..\libraries\drivers\drv_gpio.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\libraries\drivers\drv_i2c.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\libraries\drivers\drv_spi.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
         </file>
         <file>
@@ -1353,28 +1347,10 @@
             <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_common.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_dmamux.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_edma.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_gpio.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpi2c.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpspi.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpspi_edma.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpuart.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_lpuart_edma.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_usdhc.c</name>
