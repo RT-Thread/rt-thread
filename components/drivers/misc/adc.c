@@ -162,7 +162,7 @@ rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
     RT_ASSERT(dev);
 
     /*enable the device*/
-    if (dev->ops->get_resolution != RT_NULL && dev->ops-convert !=RT_NULL)
+    if (dev->ops->get_resolution != RT_NULL && dev->ops->convert !=RT_NULL)
     {
         /*read the value and convert to voltage*/
         if(result == RT_EOK)
@@ -184,7 +184,7 @@ rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 
 static int adc(int argc, char **argv)
 {
-    int value = 0;
+    int value = 0, voltage = 0;
     rt_err_t result = -RT_ERROR;
     static rt_adc_device_t adc_device = RT_NULL;
     char *result_str;
