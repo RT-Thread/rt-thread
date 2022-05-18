@@ -2,7 +2,7 @@
 <img src="documentation/figures/logo.png" width="60%" >
 </p>
 
-**Spanish** | [中文](README_zh.md) |
+[English](README.md) | [中文](README_zh.md) | **Español** | [Deutsch](README_de.md)
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
@@ -44,7 +44,7 @@ Incluye:
 - Alta escalabilidad. RT-Thread tiene una arquitectura de software escalable de alta calidad, acoplamiento suelto, modularidad, es fácil de adaptar y ampliar.
 - Admite aplicaciones de alto rendimiento.
 - Es compatible con todas las herramientas de compilación principales, como GCC, Keil e IAR.
-- Admite una amplia gama de <a href="https://www.rt-thread.io/board.html"> arquitecturas y chips. </a>.
+- Admite una amplia gama de <a href="https://www.rt-thread.io/board.html">arquitecturas y chips</a>.
 
 ## Code Catalogue
 
@@ -120,11 +120,7 @@ Basado en [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/maste
 
 ## Simulator
 
-El BSP de RT-Thread puede compilarse directamente y descargarse en la placa de desarrollo correspondiente para su uso. Además, RT-Thread también proporciona el BSP qemu-vexpress-a9, que puede utilizarse sin plataforma de hardware. Consulte la guía de inicio más abajo para más detalles.
-
-- [Getting Started of QEMU with Env(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
-
-- [Getting Started of QEMU with Env(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
+El BSP de RT-Thread puede compilarse directamente y descargarse en la placa de desarrollo correspondiente para su uso. Además, RT-Thread también proporciona el BSP qemu-vexpress-a9, que puede utilizarse sin plataforma de hardware. Consulte la guía de inicio más abajo para más detalles. [Windows](documentation/quick-start/quick_start_qemu/quick_start_qemu.md) | [Linux Ubuntu](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md) | [Mac OS](documentation/quick-start/quick_start_qemu/quick_start_qemu_macos.md)
 
 # Licencia
 
@@ -140,7 +136,7 @@ RT-Thread es un software de código abierto y ha sido licenciado bajo la Licenci
 
 # Comunidad
 
-RT-Thread está muy agradecido por el apoyo de todos los desarrolladores de la comunidad, y si tienes alguna idea, sugerencia o pregunta en el proceso de uso de RT-Thread, se puede llegar a RT-Thread por los siguientes medios, y también estamos actualizando RT-Thread en tiempo real en estos canales. Al mismo tiempo, cualquier pregunta se puede hacer en [ la sección de problemas del repositorio de RT-Thread](https://github.com/RT-Thread/rt-thread/issues) or [ en el foro de RT-Thread](https://club.rt-thread.io/), y los miembros de la comunidad la responderán.
+RT-Thread está muy agradecido por el apoyo de todos los desarrolladores de la comunidad, y si tienes alguna idea, sugerencia o pregunta en el proceso de uso de RT-Thread, se puede llegar a RT-Thread por los siguientes medios, y también estamos actualizando RT-Thread en tiempo real en estos canales. Al mismo tiempo, cualquier pregunta se puede hacer en [la sección de problemas del repositorio de RT-Thread](https://github.com/RT-Thread/rt-thread/issues) or [en el foro de RT-Thread](https://club.rt-thread.io/), y los miembros de la comunidad la responderán.
 
 [Website](https://www.rt-thread.io) | [Github](https://github.com/RT-Thread/rt-thread) | [Twitter](https://twitter.com/rt_thread) | [LinkedIn](https://www.linkedin.com/company/rt-thread-iot-os/posts/?feedView=all) | [Youtube](https://www.youtube.com/channel/UCdDHtIfSYPq4002r27ffqPw) | [Facebook](https://www.facebook.com/RT-Thread-IoT-OS-110395723808463/?modal=admin_todo_tour) | [Medium](https://rt-thread.medium.com/)
 
