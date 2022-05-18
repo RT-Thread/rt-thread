@@ -13,7 +13,7 @@
 
 static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t result = -RT_EOK;
+    rt_err_t result = RT_EOK;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
 
     if (pwm->ops->control)
