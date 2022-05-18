@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
- * 2022-5-11      Stanley Lwin add finsh voltage conversion command
+ * 2022-05-11      Stanley Lwin add finsh voltage conversion command
  */
 
 #include <rtthread.h>
@@ -233,7 +233,7 @@ static int adc(int argc, char **argv)
                 }
                 else
                 {
-                   rt_kprintf("adc read <channel>     - read adc value on the channel\n");
+                    rt_kprintf("adc read <channel>     - read adc value on the channel\n");
                 }
             }
             else if (!strcmp(argv[1], "disable"))
@@ -258,7 +258,8 @@ static int adc(int argc, char **argv)
                     rt_kprintf("%s channel %d voltage is %d.%02d \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 100, voltage % 100);
                 }
 
-                else{
+                else
+                {
                     rt_kprintf("adc convert voltage <channel> \n");
                 }
             }
