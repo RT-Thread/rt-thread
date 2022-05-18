@@ -2,7 +2,7 @@
 <img src="documentation/figures/logo.png" width="60%" >
 </p>
 
-**German** | [中文](README_zh.md) |
+ [English](README.md) | [中文](README_zh.md) | [Español](README_es.md) | **Deutsch**
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
@@ -33,7 +33,7 @@ Sie umfasst:
 
 - Komponenten und Dienstebene: Die Komponenten basieren auf Software der oberen Ebene des RT-Thread-Kernels, wie z. B. virtuelle Dateisysteme, FinSH-Befehlszeilenschnittstellen, Netzwerk-Frameworks, Geräte-Frameworks und mehr. Der modulare Aufbau ermöglicht eine hohe interne Kohäsion innerhalb der Komponenten und eine geringe Kopplung zwischen den Komponenten.
 
-- [RT-Thread-Softwarepaket:](https://packages.rt-thread.org/en/index.html): Eine Allzweck-Softwarekomponente, die auf der IoT-Betriebssystemplattform RT-Thread für verschiedene Anwendungsbereiche läuft und aus Beschreibungsinformationen, Quellcode oder Bibliotheksdateien besteht. RT-Thread bietet eine offene Paketplattform mit offiziell verfügbaren oder von Entwicklern bereitgestellten Paketen, die Entwicklern eine Auswahl an wiederverwendbaren Paketen bieten, die ein wichtiger Teil des RT-Thread-Ökosystems sind. Das Paket-Ökosystem ist für die Wahl eines Betriebssystems von entscheidender Bedeutung, da diese Pakete in hohem Maße wiederverwendbar und modular sind, was es den Anwendungsentwicklern erleichtert, das gewünschte System in kürzester Zeit zu erstellen. RT-Thread unterstützt mehr als 370 Softwarepakete.
+- [RT-Thread-Softwarepaket](https://packages.rt-thread.org/en/index.html): Eine Allzweck-Softwarekomponente, die auf der IoT-Betriebssystemplattform RT-Thread für verschiedene Anwendungsbereiche läuft und aus Beschreibungsinformationen, Quellcode oder Bibliotheksdateien besteht. RT-Thread bietet eine offene Paketplattform mit offiziell verfügbaren oder von Entwicklern bereitgestellten Paketen, die Entwicklern eine Auswahl an wiederverwendbaren Paketen bieten, die ein wichtiger Teil des RT-Thread-Ökosystems sind. Das Paket-Ökosystem ist für die Wahl eines Betriebssystems von entscheidender Bedeutung, da diese Pakete in hohem Maße wiederverwendbar und modular sind, was es den Anwendungsentwicklern erleichtert, das gewünschte System in kürzester Zeit zu erstellen. RT-Thread unterstützt mehr als 370 Softwarepakete.
 
 ## RT-Thread Merkmale
 
@@ -44,7 +44,7 @@ Sie umfasst:
 - Hohe Skalierbarkeit. RT-Thread hat eine hochwertige skalierbare Software-Architektur, lose Kopplung, Modularität, ist leicht anzupassen und zu erweitern.
 - Unterstützt Hochleistungsanwendungen.
 - Unterstützt alle gängigen Kompilierwerkzeuge wie GCC, Keil und IAR.
-- Unterstützt eine breite Palette von <a href="https://www.rt-thread.io/board.html">architekturen und chips.</a>.
+- Unterstützt eine breite Palette von <a href="https://www.rt-thread.io/board.html">architekturen und chips</a>.
 
 ## Code-Katalog
 
@@ -137,7 +137,7 @@ RT-Thread ist eine Open-Source-Software und steht seit v3.1.1 unter der Apache L
 
 # Gemeinschaft
 
-RT-Thread ist sehr dankbar für die Unterstützung durch alle Entwickler der Community. Wenn Sie Ideen, Vorschläge oder Fragen zur Verwendung von RT-Thread haben, können Sie RT-Thread über die folgenden Kanäle erreichen, und wir aktualisieren RT-Thread auch in Echtzeit über diese Kanäle. Gleichzeitig können alle Fragen im  [Issue-Bereich des RT-Thread-Repositorys](https://github.com/RT-Thread/rt-thread/issues) oder im [RT-Thread-Forum](https://club.rt-thread.io/),  gestellt werden, und die Community-Mitglieder werden sie beantworten.
+RT-Thread ist sehr dankbar für die Unterstützung durch alle Entwickler der Community. Wenn Sie Ideen, Vorschläge oder Fragen zur Verwendung von RT-Thread haben, können Sie RT-Thread über die folgenden Kanäle erreichen, und wir aktualisieren RT-Thread auch in Echtzeit über diese Kanäle. Gleichzeitig können alle Fragen im [Issue-Bereich des RT-Thread-Repositorys](https://github.com/RT-Thread/rt-thread/issues) oder im [RT-Thread-Forum](https://club.rt-thread.io/),  gestellt werden, und die Community-Mitglieder werden sie beantworten.
 
 [Website](https://www.rt-thread.io) | [Github](https://github.com/RT-Thread/rt-thread) | [Twitter](https://twitter.com/rt_thread) | [LinkedIn](https://www.linkedin.com/company/rt-thread-iot-os/posts/?feedView=all) | [Youtube](https://www.youtube.com/channel/UCdDHtIfSYPq4002r27ffqPw) | [Facebook](https://www.facebook.com/RT-Thread-IoT-OS-110395723808463/?modal=admin_todo_tour) | [Medium](https://rt-thread.medium.com/)
 

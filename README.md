@@ -2,7 +2,7 @@
 <img src="documentation/figures/logo.png" width="60%" >
 </p>
 
-**English** | [中文](README_zh.md) |
+**English** | [中文](README_zh.md) | [Español](README_es.md) | [Deutsch](README_de.md)
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
