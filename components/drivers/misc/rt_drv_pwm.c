@@ -215,7 +215,7 @@ static int pwm(int argc, char **argv)
             }
             else
             {
-               rt_kprintf("pwm probe <device name>  - probe pwm by name\n");
+                rt_kprintf("pwm probe <device name>  - probe pwm by name\n");
             }
         }
         else
@@ -255,10 +255,10 @@ static int pwm(int argc, char **argv)
                 result = rt_pwm_get(pwm_device, &cfg);
                 if(result == RT_EOK)
                 {
-                rt_kprintf("Info of device [%s] channel [%d]:\n",pwm_device, atoi(argv[2]));
-                rt_kprintf("period      : %d\n", cfg.period);
-                rt_kprintf("pulse       : %d\n", cfg.pulse);
-                rt_kprintf("Duty cycle  : %d%%\n",(int)(((double)(cfg.pulse)/(cfg.period)) * 100));
+                    rt_kprintf("Info of device [%s] channel [%d]:\n",pwm_device, atoi(argv[2]));
+                    rt_kprintf("period      : %d\n", cfg.period);
+                    rt_kprintf("pulse       : %d\n", cfg.pulse);
+                    rt_kprintf("Duty cycle  : %d%%\n",(int)(((double)(cfg.pulse)/(cfg.period)) * 100));
                 }
                 else
                 {
