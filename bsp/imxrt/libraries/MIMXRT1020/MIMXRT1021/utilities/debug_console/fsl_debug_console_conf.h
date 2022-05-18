@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 - 2019 NXP
+ * Copyright 2017 - 2020 NXP
  * All rights reserved.
  *
  *
@@ -7,6 +7,8 @@
  */
 #ifndef _FSL_DEBUG_CONSOLE_CONF_H_
 #define _FSL_DEBUG_CONSOLE_CONF_H_
+
+#include "fsl_common.h"
 
 /****************Debug console configuration********************/
 
@@ -56,7 +58,7 @@
  */
 #ifndef DEBUG_CONSOLE_TX_RELIABLE_ENABLE
 #define DEBUG_CONSOLE_TX_RELIABLE_ENABLE (1U)
-#endif /* DEBUG_CONSOLE_RX_ENABLE */
+#endif /* DEBUG_CONSOLE_TX_RELIABLE_ENABLE */
 
 #else
 #define DEBUG_CONSOLE_TRANSFER_BLOCKING
@@ -91,7 +93,7 @@
  * corresponding synchronization mechanism per different software environment.
  * Such as, if another RTOS is used,
  * add:
- *  #define DEBUG_CONSOLE_SYNCHRONIZATION_XXXX 3
+ *  \#define DEBUG_CONSOLE_SYNCHRONIZATION_XXXX 3
  * in this configuration file and implement the synchronization in fsl.log.c.
  */
 /*! @brief synchronization for baremetal software */
@@ -106,11 +108,11 @@
  */
 #ifndef DEBUG_CONSOLE_DISABLE_RTOS_SYNCHRONIZATION
 #ifdef DEBUG_CONSOLE_TRANSFER_NON_BLOCKING
-#ifdef FSL_RTOS_FREE_RTOS
+#ifdef SDK_OS_FREE_RTOS
 #define DEBUG_CONSOLE_SYNCHRONIZATION_MODE DEBUG_CONSOLE_SYNCHRONIZATION_FREERTOS
 #else
 #define DEBUG_CONSOLE_SYNCHRONIZATION_MODE DEBUG_CONSOLE_SYNCHRONIZATION_BM
-#endif /* FSL_RTOS_FREE_RTOS */
+#endif /* SDK_OS_FREE_RTOS */
 #else
 #define DEBUG_CONSOLE_SYNCHRONIZATION_MODE DEBUG_CONSOLE_SYNCHRONIZATION_BM
 #endif /* DEBUG_CONSOLE_TRANSFER_NON_BLOCKING */

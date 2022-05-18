@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -15,8 +15,8 @@
  */
 
 #include "fsl_common.h"
-#include "serial_manager.h"
-#include "generic_list.h"
+#include "fsl_component_serial_manager.h"
+#include "fsl_component_generic_list.h"
 
 /*******************************************************************************
  * Definitions
@@ -31,25 +31,43 @@
 #define SHELL_AUTO_COMPLETE (1U)
 
 /*! @brief Macro to set console buffer size. */
+#ifndef SHELL_BUFFER_SIZE
 #define SHELL_BUFFER_SIZE (64U)
+#endif
 
 /*! @brief Macro to set maximum arguments in command. */
 #define SHELL_MAX_ARGS (8U)
 
 /*! @brief Macro to set maximum count of history commands. */
+#ifndef SHELL_HISTORY_COUNT
 #define SHELL_HISTORY_COUNT (3U)
+#endif
 
 /*! @brief Macro to bypass arguments check */
 #define SHELL_IGNORE_PARAMETER_COUNT (0xFF)
 
 /*! @brief The handle size of the shell module. It is the sum of the SHELL_HISTORY_COUNT * SHELL_BUFFER_SIZE +
  * SHELL_BUFFER_SIZE + SERIAL_MANAGER_READ_HANDLE_SIZE + SERIAL_MANAGER_WRITE_HANDLE_SIZE*/
-#define SHELL_HANDLE_SIZE (520U)
+#define SHELL_HANDLE_SIZE                                                                                   \
+    (160U + SHELL_HISTORY_COUNT * SHELL_BUFFER_SIZE + SHELL_BUFFER_SIZE + SERIAL_MANAGER_READ_HANDLE_SIZE + \
+     SERIAL_MANAGER_WRITE_HANDLE_SIZE)
 
-#define SHELL_USE_COMMON_TASK (1U)
+/*! @brief Macro to determine whether use common task. */
+#ifndef SHELL_USE_COMMON_TASK
+#define SHELL_USE_COMMON_TASK (0U)
+#endif
+
+/*! @brief Macro to set shell task priority. */
+#ifndef SHELL_TASK_PRIORITY
 #define SHELL_TASK_PRIORITY (2U)
-#define SHELL_TASK_STACK_SIZE (1000U)
+#endif
 
+/*! @brief Macro to set shell task stack size. */
+#ifndef SHELL_TASK_STACK_SIZE
+#define SHELL_TASK_STACK_SIZE (1000U)
+#endif
+
+/*! @brief Shell status */
 typedef enum _shell_status
 {
     kStatus_SHELL_Success               = kStatus_Success,                    /*!< Success */
@@ -75,6 +93,23 @@ typedef struct _shell_command
     uint8_t cExpectedNumberOfParameters; /*!< Commands expect a fixed number of parameters, which may be zero. */
     list_element_t link;                 /*!< link of the element */
 } shell_command_t;
+
+/*!
+ * @brief Defines the shell handle
+ *
+ * This macro is used to define a 4 byte aligned shell handle.
+ * Then use "(shell_handle_t)name" to get the shell handle.
+ *
+ * The macro should be global and could be optional. You could also define shell handle by yourself.
+ *
+ * This is an example,
+ * @code
+ * SHELL_HANDLE_DEFINE(shellHandle);
+ * @endcode
+ *
+ * @param name The name string of the shell handle.
+ */
+#define SHELL_HANDLE_DEFINE(name) uint32_t name[((SHELL_HANDLE_SIZE + sizeof(uint32_t) - 1U) / sizeof(uint32_t))]
 
 #if defined(__ICCARM__)
 /* disable misra 19.13 */
@@ -143,11 +178,15 @@ _Pragma("diag_suppress=Pm120")
      * how to call the SHELL_Init function by passing in these parameters.
      * This is an example.
      * @code
-     *   static uint8_t s_shellHandleBuffer[SHELL_HANDLE_SIZE];
-     *   static shell_handle_t s_shellHandle = &s_shellHandleBuffer[0];
-     *   SHELL_Init(s_shellHandle, s_serialHandle, "Test@SHELL>");
+     *   static SHELL_HANDLE_DEFINE(s_shellHandle);
+     *   SHELL_Init((shell_handle_t)s_shellHandle, (serial_handle_t)s_serialHandle, "Test@SHELL>");
      * @endcode
      * @param shellHandle Pointer to point to a memory space of size #SHELL_HANDLE_SIZE allocated by the caller.
+     * The handle should be 4 byte aligned, because unaligned access doesn't be supported on some devices.
+     * You can define the handle in the following two ways:
+     * #SHELL_HANDLE_DEFINE(shellHandle);
+     * or
+     * uint32_t shellHandle[((SHELL_HANDLE_SIZE + sizeof(uint32_t) - 1U) / sizeof(uint32_t))];
      * @param serialHandle The serial manager module handle pointer.
      * @param prompt  The string prompt pointer of Shell. Only the global variable can be passed.
      * @retval kStatus_SHELL_Success The shell initialization succeed.
@@ -160,14 +199,14 @@ _Pragma("diag_suppress=Pm120")
     /*!
      * @brief Registers the shell command
      *
-     * This function is used to register the shell command by using the command configuration #shell_command_config_t.
+     * This function is used to register the shell command by using the command configuration shell_command_config_t.
      * This is a example,
      * @code
      * SHELL_COMMAND_DEFINE(exit, "\r\n\"exit\": Exit program\r\n", SHELL_ExitCommand, 0);
      * SHELL_RegisterCommand(s_shellHandle, SHELL_COMMAND(exit));
      * @endcode
      * @param shellHandle The shell module handle pointer.
-     * @param command  The command element.
+     * @param shellCommand  The command element.
      * @retval kStatus_SHELL_Success Successfully register the command.
      * @retval kStatus_SHELL_Error An error occurred.
      */
@@ -178,7 +217,7 @@ _Pragma("diag_suppress=Pm120")
      *
      * This function is used to unregister the shell command.
      *
-     * @param command The command element.
+     * @param shellCommand The command element.
      * @retval kStatus_SHELL_Success Successfully unregister the command.
      */
     shell_status_t SHELL_UnregisterCommand(shell_command_t * shellCommand);
@@ -194,7 +233,7 @@ _Pragma("diag_suppress=Pm120")
      * @retval kStatus_SHELL_Success Successfully send data.
      * @retval kStatus_SHELL_Error An error occurred.
      */
-    shell_status_t SHELL_Write(shell_handle_t shellHandle, char *buffer, uint32_t length);
+    shell_status_t SHELL_Write(shell_handle_t shellHandle, const char *buffer, uint32_t length);
 
     /*!
      * @brief Writes formatted output to the shell output stream.
@@ -207,6 +246,54 @@ _Pragma("diag_suppress=Pm120")
      * @return  Returns the number of characters printed or a negative value if an error occurs.
      */
     int SHELL_Printf(shell_handle_t shellHandle, const char *formatString, ...);
+    /*!
+     * @brief Sends data to the shell output stream with OS synchronization.
+     *
+     * This function is used to send data to the shell output stream with OS synchronization, note the function could
+     * not be called in ISR.
+     *
+     * @param shellHandle The shell module handle pointer.
+     * @param buffer Start address of the data to write.
+     * @param length Length of the data to write.
+     * @retval kStatus_SHELL_Success Successfully send data.
+     * @retval kStatus_SHELL_Error An error occurred.
+     */
+    shell_status_t SHELL_WriteSynchronization(shell_handle_t shellHandle, const char *buffer, uint32_t length);
+
+    /*!
+     * @brief Writes formatted output to the shell output stream with OS synchronization.
+     *
+     * Call this function to write a formatted output to the shell output stream with OS synchronization, note the
+     * function could not be called in ISR.
+     *
+     * @param shellHandle The shell module handle pointer.
+     *
+     * @param   formatString Format string.
+     * @return  Returns the number of characters printed or a negative value if an error occurs.
+     */
+    int SHELL_PrintfSynchronization(shell_handle_t shellHandle, const char *formatString, ...);
+    /*!
+     * @brief Change shell prompt.
+     *
+     * Call this function to change shell prompt.
+     *
+     * @param shellHandle The shell module handle pointer.
+     *
+     * @param prompt The string which will be used for command prompt
+     * @return  NULL.
+     */
+    void SHELL_ChangePrompt(shell_handle_t shellHandle, char *prompt);
+
+    /*!
+     * @brief Print shell prompt.
+     *
+     * Call this function to print shell prompt.
+     *
+     * @param shellHandle The shell module handle pointer.
+     *
+     * @return  NULL.
+     */
+    void SHELL_PrintPrompt(shell_handle_t shellHandle);
 
 /*!
  * @brief The task function for Shell.
@@ -218,6 +305,26 @@ _Pragma("diag_suppress=Pm120")
 #if !(defined(SHELL_NON_BLOCKING_MODE) && (SHELL_NON_BLOCKING_MODE > 0U))
     void SHELL_Task(shell_handle_t shellHandle);
 #endif
+
+    /*!
+     * @brief Check if code is running in ISR.
+     *
+     * This function is used to check if code running in ISR.
+     *
+     * @retval TRUE if code runing in ISR.
+     */
+    static inline bool SHELL_checkRunningInIsr(void)
+    {
+#if (defined(__DSC__) && defined(__CW__))
+        return !(isIRQAllowed());
+#elif defined(__GIC_PRIO_BITS)
+    return (0x13 == (__get_CPSR() & CPSR_M_Msk));
+#elif defined(__get_IPSR)
+    return (0U != __get_IPSR());
+#else
+    return false;
+#endif
+    }
 
     /* @} */
 

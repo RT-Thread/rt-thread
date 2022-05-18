@@ -2,13 +2,13 @@
 /*  @file:    startup_MIMXRT1021.s                                           */
 /*  @purpose: CMSIS Cortex-M7 Core Device Startup File                       */
 /*            MIMXRT1021                                                     */
-/*  @version: 1.0                                                            */
-/*  @date:    2018-11-27                                                     */
-/*  @build:   b190124                                                        */
+/*  @version: 1.1                                                            */
+/*  @date:    2019-4-29                                                      */
+/*  @build:   b201123                                                        */
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
 /* Copyright 1997-2016 Freescale Semiconductor, Inc.                         */
-/* Copyright 2016-2019 NXP                                                   */
+/* Copyright 2016-2020 NXP                                                   */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* SPDX-License-Identifier: BSD-3-Clause                                     */
@@ -88,7 +88,7 @@ __isr_vector:
     .long   WDOG2_IRQHandler                                /* WDOG2 interrupt*/
     .long   SNVS_HP_WRAPPER_IRQHandler                      /* SNVS Functional Interrupt*/
     .long   SNVS_HP_WRAPPER_TZ_IRQHandler                   /* SNVS Security Interrupt*/
-    .long   SNVS_LP_WRAPPER_IRQHandler                      /* ON-OFF button press shorter than 5 secs (pulse event)*/
+    .long   SNVS_LP_HP_WRAPPER_IRQHandler                   /* ON-OFF button press shorter than 5 secs (pulse event)*/
     .long   CSU_IRQHandler                                  /* CSU interrupt*/
     .long   DCP_IRQHandler                                  /* Combined DCP channel interrupts(except channel 0) and CRC interrupt*/
     .long   DCP_VMI_IRQHandler                              /* IRQ of DCP channel 0*/
@@ -960,7 +960,7 @@ ENET_1588_Timer_IRQHandler:
     def_irq_handler    WDOG2_IRQHandler
     def_irq_handler    SNVS_HP_WRAPPER_IRQHandler
     def_irq_handler    SNVS_HP_WRAPPER_TZ_IRQHandler
-    def_irq_handler    SNVS_LP_WRAPPER_IRQHandler
+    def_irq_handler    SNVS_LP_HP_WRAPPER_IRQHandler
     def_irq_handler    CSU_IRQHandler
     def_irq_handler    DCP_IRQHandler
     def_irq_handler    DCP_VMI_IRQHandler

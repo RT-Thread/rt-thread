@@ -6,15 +6,16 @@
 **                          MIMXRT1021DAG5A
 **
 **     Compiler:            GNU C Compiler
-**     Reference manual:    IMXRT1020RM Rev. 1RC, 05/2018
+**     Reference manual:    IMXRT1020RM Rev.1, 12/2018 | IMXRT1020SRM Rev.3
 **     Version:             rev. 0.1, 2017-06-06
-**     Build:               b180801
+**     Build:               b210709
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2018 NXP
+**     Copyright 2016-2021 NXP
+**     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause
 **
@@ -42,17 +43,18 @@ MEMORY
 /* Define output sections */
 SECTIONS
 {
+  __NCACHE_REGION_START = ORIGIN(m_data2);
+  __NCACHE_REGION_SIZE  = 0;
+
   /* The startup code goes first into internal RAM */
   .interrupts :
   {
     __VECTOR_TABLE = .;
+    __Vectors = .;
     . = ALIGN(4);
     KEEP(*(.isr_vector))     /* Startup code */
     . = ALIGN(4);
   } > m_interrupts
-
-  __VECTOR_RAM = __VECTOR_TABLE;
-  __RAM_VECTOR_TABLE_SIZE_BYTES = 0x0;
 
   /* The program code and other data goes into internal RAM */
   .text :
@@ -62,6 +64,7 @@ SECTIONS
     *(.text*)                /* .text* sections (code) */
     *(.rodata)               /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)              /* .rodata* sections (constants, strings, etc.) */
+    *(CodeQuickAccess)       /* quick access code section */
     *(.glue_7)               /* glue arm to thumb code */
     *(.glue_7t)              /* glue thumb to arm code */
     *(.eh_frame)
@@ -143,6 +146,9 @@ SECTIONS
   __etext = .;    /* define a global symbol at end of code */
   __DATA_ROM = .; /* Symbol is used by startup for data initialization */
 
+  __VECTOR_RAM = ORIGIN(m_interrupts);
+  __RAM_VECTOR_TABLE_SIZE_BYTES = 0x0;
+
   .data : AT(__DATA_ROM)
   {
     . = ALIGN(4);
@@ -151,6 +157,7 @@ SECTIONS
     *(m_usb_dma_init_data)
     *(.data)                 /* .data sections */
     *(.data*)                /* .data* sections */
+    *(DataQuickAccess)       /* quick access data section */
     KEEP(*(.jcr*))
     . = ALIGN(4);
     __data_end__ = .;        /* define a global symbol at data end */
@@ -218,4 +225,3 @@ SECTIONS
 
   ASSERT(__StackLimit >= __HeapLimit, "region m_data overflowed with stack and heap")
 }
-

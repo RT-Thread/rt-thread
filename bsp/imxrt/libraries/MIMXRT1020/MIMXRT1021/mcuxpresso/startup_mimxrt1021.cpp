@@ -1,10 +1,10 @@
 //*****************************************************************************
 // MIMXRT1021 startup code for use with MCUXpresso IDE
 //
-// Version : 240119
+// Version : 150621
 //*****************************************************************************
 //
-// Copyright 2016-2019 NXP
+// Copyright 2016-2021 NXP
 // All rights reserved.
 //
 // SPDX-License-Identifier: BSD-3-Clause
@@ -63,7 +63,11 @@ extern void SystemInit(void);
      void ResetISR(void);
 WEAK void NMI_Handler(void);
 WEAK void HardFault_Handler(void);
+WEAK void MemManage_Handler(void);
+WEAK void BusFault_Handler(void);
+WEAK void UsageFault_Handler(void);
 WEAK void SVC_Handler(void);
+WEAK void DebugMon_Handler(void);
 WEAK void PendSV_Handler(void);
 WEAK void SysTick_Handler(void);
 WEAK void IntDefaultHandler(void);
@@ -121,7 +125,7 @@ WEAK void Reserved60_IRQHandler(void);
 WEAK void WDOG2_IRQHandler(void);
 WEAK void SNVS_HP_WRAPPER_IRQHandler(void);
 WEAK void SNVS_HP_WRAPPER_TZ_IRQHandler(void);
-WEAK void SNVS_LP_WRAPPER_IRQHandler(void);
+WEAK void SNVS_LP_HP_WRAPPER_IRQHandler(void);
 WEAK void CSU_IRQHandler(void);
 WEAK void DCP_IRQHandler(void);
 WEAK void DCP_VMI_IRQHandler(void);
@@ -270,7 +274,7 @@ void Reserved60_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void WDOG2_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void SNVS_HP_WRAPPER_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void SNVS_HP_WRAPPER_TZ_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
-void SNVS_LP_WRAPPER_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
+void SNVS_LP_HP_WRAPPER_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void CSU_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void DCP_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void DCP_VMI_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
@@ -387,6 +391,7 @@ extern void _vStackTop(void);
 // The vector table.
 // This relies on the linker script to place at correct location in memory.
 //*****************************************************************************
+
 extern void (* const g_pfnVectors[])(void);
 extern void * __Vectors __attribute__ ((alias ("g_pfnVectors")));
 
@@ -397,15 +402,15 @@ void (* const g_pfnVectors[])(void) = {
     ResetISR,                          // The reset handler
     NMI_Handler,                       // The NMI handler
     HardFault_Handler,                 // The hard fault handler
-    0,                                 // Reserved
-    0,                                 // Reserved
-    0,                                 // Reserved
+    MemManage_Handler,                 // The MPU fault handler
+    BusFault_Handler,                  // The bus fault handler
+    UsageFault_Handler,                // The usage fault handler
     0,                                 // Reserved
     0,                                 // Reserved
     0,                                 // Reserved
     0,                                 // Reserved
     SVC_Handler,                       // SVCall handler
-    0,                                 // Reserved
+    DebugMon_Handler,                  // Debug monitor handler
     0,                                 // Reserved
     PendSV_Handler,                    // The PendSV handler
     SysTick_Handler,                   // The SysTick handler
@@ -459,7 +464,7 @@ void (* const g_pfnVectors[])(void) = {
     WDOG2_IRQHandler,                 // 61 : WDOG2 interrupt
     SNVS_HP_WRAPPER_IRQHandler,       // 62 : SNVS Functional Interrupt
     SNVS_HP_WRAPPER_TZ_IRQHandler,    // 63 : SNVS Security Interrupt
-    SNVS_LP_WRAPPER_IRQHandler,       // 64 : ON-OFF button press shorter than 5 secs (pulse event)
+    SNVS_LP_HP_WRAPPER_IRQHandler,    // 64 : ON-OFF button press shorter than 5 secs (pulse event)
     CSU_IRQHandler,                   // 65 : CSU interrupt
     DCP_IRQHandler,                   // 66 : Combined DCP channel interrupts(except channel 0) and CRC interrupt
     DCP_VMI_IRQHandler,               // 67 : IRQ of DCP channel 0
@@ -553,7 +558,6 @@ void (* const g_pfnVectors[])(void) = {
     PWM2_2_IRQHandler,                // 155: PWM2 capture 2, compare 2, or reload 0 interrupt
     PWM2_3_IRQHandler,                // 156: PWM2 capture 3, compare 3, or reload 0 interrupt
     PWM2_FAULT_IRQHandler,            // 157: PWM2 fault or reload error interrupt
-
 }; /* End of g_pfnVectors */
 
 //*****************************************************************************
@@ -596,12 +600,11 @@ extern unsigned int __bss_section_table_end;
 // Sets up a simple runtime environment and initializes the C/C++
 // library.
 //*****************************************************************************
-__attribute__ ((section(".after_vectors.reset")))
+__attribute__ ((naked, section(".after_vectors.reset")))
 void ResetISR(void) {
-
     // Disable interrupts
     __asm volatile ("cpsid i");
-
+    __asm volatile ("MSR MSP, %0" : : "r" (&_vStackTop) : );
 
 #if defined (__USE_CMSIS)
 // If __USE_CMSIS defined, then call CMSIS SystemInit code
@@ -646,7 +649,6 @@ void ResetISR(void) {
         SectionLen = *SectionTableAddr++;
         bss_init(ExeAddr, SectionLen);
     }
-
 
 #if !defined (__USE_CMSIS)
 // Assume that if __USE_CMSIS defined, then CMSIS SystemInit code
@@ -698,7 +700,23 @@ WEAK_AV void HardFault_Handler(void)
 { while(1) {}
 }
 
+WEAK_AV void MemManage_Handler(void)
+{ while(1) {}
+}
+
+WEAK_AV void BusFault_Handler(void)
+{ while(1) {}
+}
+
+WEAK_AV void UsageFault_Handler(void)
+{ while(1) {}
+}
+
 WEAK_AV void SVC_Handler(void)
+{ while(1) {}
+}
+
+WEAK_AV void DebugMon_Handler(void)
 { while(1) {}
 }
 
@@ -916,8 +934,8 @@ WEAK void SNVS_HP_WRAPPER_TZ_IRQHandler(void)
 {   SNVS_HP_WRAPPER_TZ_DriverIRQHandler();
 }
 
-WEAK void SNVS_LP_WRAPPER_IRQHandler(void)
-{   SNVS_LP_WRAPPER_DriverIRQHandler();
+WEAK void SNVS_LP_HP_WRAPPER_IRQHandler(void)
+{   SNVS_LP_HP_WRAPPER_DriverIRQHandler();
 }
 
 WEAK void CSU_IRQHandler(void)

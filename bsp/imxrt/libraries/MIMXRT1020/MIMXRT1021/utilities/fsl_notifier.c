@@ -51,7 +51,7 @@ status_t NOTIFIER_CreateHandle(notifier_handle_t *notifierHandle,
         return kStatus_Fail;
     }
     /* Initialize handle structure */
-    memset(notifierHandle, 0, sizeof(notifier_handle_t));
+    (void)memset(notifierHandle, 0, sizeof(notifier_handle_t));
     /* Store references to user-defined configurations */
     notifierHandle->configsTable  = configs;
     notifierHandle->configsNumber = configsNumber;
@@ -122,13 +122,13 @@ status_t NOTIFIER_SwitchConfig(notifier_handle_t *notifierHandle, uint8_t config
     {
         callbackConfig = &(notifierHandle->callbacksTable[currentStaticCallback]);
         /* ...notify only those which asked to be called before the configuration switch */
-        if (((uint32_t)callbackConfig->callbackType) & kNOTIFIER_CallbackBefore)
+        if (((uint32_t)callbackConfig->callbackType & (uint32_t)kNOTIFIER_CallbackBefore) != 0U)
         {
             /* In case that call-back returned error code mark it, store the call-back handle and eventually cancel
              * the configuration switch */
             if (callbackConfig->callback(&notifyBlock, callbackConfig->callbackData) != kStatus_Success)
             {
-                returnCode                         = kStatus_NOTIFIER_ErrorNotificationBefore;
+                returnCode                         = (status_t)kStatus_NOTIFIER_ErrorNotificationBefore;
                 notifierHandle->errorCallbackIndex = currentStaticCallback;
                 /* If not forcing configuration switch, call all already notified call-backs to revert their state
                  * as the switch is canceled */
@@ -160,12 +160,12 @@ status_t NOTIFIER_SwitchConfig(notifier_handle_t *notifierHandle, uint8_t config
         {
             callbackConfig = &(notifierHandle->callbacksTable[currentStaticCallback]);
             /* ...notify only those which asked to be called after the configuration switch */
-            if (((uint32_t)callbackConfig->callbackType) & kNOTIFIER_CallbackAfter)
+            if (((uint32_t)callbackConfig->callbackType & (uint32_t)kNOTIFIER_CallbackAfter) != 0U)
             {
                 /* In case that call-back returned error code mark it and store the call-back handle */
                 if (callbackConfig->callback(&notifyBlock, callbackConfig->callbackData) != kStatus_Success)
                 {
-                    returnCode                         = kStatus_NOTIFIER_ErrorNotificationAfter;
+                    returnCode                         = (status_t)kStatus_NOTIFIER_ErrorNotificationAfter;
                     notifierHandle->errorCallbackIndex = currentStaticCallback;
                     if (policy != kNOTIFIER_PolicyForcible)
                     {
@@ -179,12 +179,12 @@ status_t NOTIFIER_SwitchConfig(notifier_handle_t *notifierHandle, uint8_t config
     {
         /* End of unsuccessful switch */
         notifyBlock.notifyType = kNOTIFIER_NotifyRecover;
-        while (currentStaticCallback--)
+        while (currentStaticCallback-- > 0U)
         {
             callbackConfig = &(notifierHandle->callbacksTable[currentStaticCallback]);
-            if (((uint32_t)callbackConfig->callbackType) & kNOTIFIER_CallbackBefore)
+            if (((uint32_t)callbackConfig->callbackType & (uint32_t)kNOTIFIER_CallbackBefore) != 0U)
             {
-                callbackConfig->callback(&notifyBlock, callbackConfig->callbackData);
+                (void)callbackConfig->callback(&notifyBlock, callbackConfig->callbackData);
             }
         }
     }
