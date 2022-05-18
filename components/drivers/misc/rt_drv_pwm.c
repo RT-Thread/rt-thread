@@ -235,7 +235,7 @@ static int pwm(int argc, char **argv)
                 }
                 else
                 {
-                 rt_kprintf("pwm enable <channel>  - enable pwm channel\n");
+                   rt_kprintf("pwm enable <channel>  - enable pwm channel\n");
                 }
              }
             else if(!strcmp(argv[1], "disable"))
