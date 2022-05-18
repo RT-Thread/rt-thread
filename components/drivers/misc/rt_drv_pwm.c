@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
- * 2002-05-14     Stanley Lwin add pwm function
+ * 2022-05-14     Stanley Lwin add pwm function
  */
 
 #include <drivers/rt_drv_pwm.h>
