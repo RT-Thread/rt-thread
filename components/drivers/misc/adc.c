@@ -156,26 +156,17 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
 
 rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
-    rt_err_t result = -RT_ERROR;
-    rt_uint32_t value = 0, voltage = 0;
+   rt_uint32_t value = 0, voltage = 0;
 
     RT_ASSERT(dev);
 
-    /*enable the device*/
+    /*read the value and convert to voltage*/
     if (dev->ops->get_resolution != RT_NULL && dev->ops->convert !=RT_NULL)
     {
-        /*read the value and convert to voltage*/
-        if(result == RT_EOK)
-        {
-            /*get the convert bits*/
-            rt_uint8_t resolution = dev->ops->get_resolution(dev);
-            dev->ops->convert(dev, channel, &value);
-            voltage = value * REFER_VOLTAGE / (1 << resolution);
-            }
-    }
-    else
-    {
-         result = -RT_ENOSYS;
+        /*get the convert bits*/
+        rt_uint8_t resolution = dev->ops->get_resolution(dev);
+        dev->ops->convert(dev, channel, &value);
+        voltage = value * REFER_VOLTAGE / (1 << resolution);
     }
 
     return voltage;
