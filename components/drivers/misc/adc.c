@@ -161,7 +161,7 @@ rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
     RT_ASSERT(dev);
 
     /*read the value and convert to voltage*/
-    if (dev->ops->get_resolution != RT_NULL && dev->ops->convert !=RT_NULL)
+    if (dev->ops->get_resolution != RT_NULL && dev->ops->convert != RT_NULL)
     {
         /*get the convert bits*/
         rt_uint8_t resolution = dev->ops->get_resolution(dev);
@@ -248,7 +248,6 @@ static int adc(int argc, char **argv)
                     result_str = (result == RT_EOK) ? "success" : "failure";
                     rt_kprintf("%s channel %d voltage is %d.%02d \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 100, voltage % 100);
                 }
-
                 else
                 {
                     rt_kprintf("adc convert voltage <channel> \n");
