@@ -40,8 +40,7 @@
 #define RT_USING_SMALL_MEM
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
-#define RT_USING_MEMHEAP_AS_HEAP
-#define RT_USING_MEMHEAP_AUTO_BINDING
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -175,7 +174,5 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_UART2
-#define BSP_USING_UART3
 
 #endif
