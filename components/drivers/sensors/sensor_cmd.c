@@ -362,7 +362,7 @@ static void sensor(int argc, char **argv)
             break;
         case RT_SENSOR_VENDOR_MELEXIS:
             rt_kprintf("vendor    :Melexis\n");
-            break;                
+            break;
         }
         rt_kprintf("model     :%s\n", info.model);
         switch (info.unit)
