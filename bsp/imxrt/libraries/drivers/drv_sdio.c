@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,12 +41,9 @@ static int enable_log = 1;
 
 #define CACHE_LINESIZE              (32)
 
-#define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
-#define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
+
 #define IMXRT_MAX_FREQ              (25UL * 1000UL * 1000UL)
 
-#define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
-#define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
 #define USDHC_READ_BURST_LEN        (8U)        /*!< number of words USDHC read in a single burst */
 #define USDHC_WRITE_BURST_LEN       (8U)        /*!< number of words USDHC write in a single burst */
 #define USDHC_DATA_TIMEOUT          (0xFU)      /*!< data timeout counter value */
@@ -61,8 +58,18 @@ static int enable_log = 1;
 /* Endian mode. */
 #define USDHC_ENDIAN_MODE kUSDHC_EndianModeLittle
 
-ALIGN(USDHC_ADMA2_ADDR_ALIGN) uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS] RT_SECTION("NonCacheable");
+#ifdef SOC_IMXRT1170_SERIES
+#define FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN 1
+#define USDHC_ADMA_TABLE_WORDS      (32U)        /* define the ADMA descriptor table length */
+#define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
+#else
+#define FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN 0
+#define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
+#define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
+#endif
 
+//ALIGN(USDHC_ADMA2_ADDR_ALIGN) uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS] SECTION("NonCacheable");
+AT_NONCACHEABLE_SECTION_ALIGN(uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS], USDHC_ADMA2_ADDR_ALIGN);
 struct imxrt_mmcsd
 {
     struct rt_mmcsd_host *host;
@@ -75,7 +82,9 @@ struct imxrt_mmcsd
 
     //USDHC_Type *base;
     usdhc_host_t usdhc_host;
+#ifndef SOC_IMXRT1170_SERIES
     clock_div_t usdhc_div;
+#endif
     clock_ip_name_t ip_clock;
 
     uint32_t *usdhc_adma2_table;
@@ -114,16 +123,19 @@ static void _mmcsd_host_init(struct imxrt_mmcsd *mmcsd)
     usdhc_host->config.endianMode = USDHC_ENDIAN_MODE;
     usdhc_host->config.readWatermarkLevel = USDHC_READ_WATERMARK_LEVEL;
     usdhc_host->config.writeWatermarkLevel = USDHC_WRITE_WATERMARK_LEVEL;
+#if !(defined(FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN) && FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN)
     usdhc_host->config.readBurstLen = USDHC_READ_BURST_LEN;
     usdhc_host->config.writeBurstLen = USDHC_WRITE_BURST_LEN;
-
+#endif
     USDHC_Init(usdhc_host->base, &(usdhc_host->config));
 }
 
 static void _mmcsd_clk_init(struct imxrt_mmcsd *mmcsd)
 {
     CLOCK_EnableClock(mmcsd->ip_clock);
+#ifndef SOC_IMXRT1170_SERIES
     CLOCK_SetDiv(mmcsd->usdhc_div, 5U);
+#endif
 }
 
 static void _mmcsd_isr_init(struct imxrt_mmcsd *mmcsd)
@@ -159,7 +171,9 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
     memset(&dmaConfig, 0, sizeof(usdhc_adma_config_t));
     /* config adma */
     dmaConfig.dmaMode = USDHC_DMA_MODE;
+#if !(defined(FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN) && FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN)
     dmaConfig.burstLen = kUSDHC_EnBurstLenForINCR;
+#endif
     dmaConfig.admaTable = mmcsd->usdhc_adma2_table;
     dmaConfig.admaTableWords = USDHC_ADMA_TABLE_WORDS;
 
@@ -272,7 +286,7 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
     }
 
     error = USDHC_TransferBlocking(mmcsd->usdhc_host.base, &dmaConfig, &fsl_content);
-    if (error == kStatus_Fail)
+    if (error != kStatus_Success)
     {
         SDMMCHOST_ErrorRecovery(mmcsd->usdhc_host.base);
         MMCSD_DGB(" ***USDHC_TransferBlocking error: %d*** --> \n", error);
@@ -328,9 +342,12 @@ static void _mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
 
     if (usdhc_clk > IMXRT_MAX_FREQ)
         usdhc_clk = IMXRT_MAX_FREQ;
+#ifdef SOC_IMXRT1170_SERIES
+    src_clk = CLOCK_GetRootClockFreq(kCLOCK_Root_Usdhc1);
+#else
     src_clk = (CLOCK_GetSysPfdFreq(kCLOCK_Pfd2) / (CLOCK_GetDiv(mmcsd->usdhc_div) + 1U));
-
-    MMCSD_DGB("\tsrc_clk: %d, usdhc_clk: %d, bus_width: %d\n", src_clk, usdhc_clk, bus_width);
+#endif
+       MMCSD_DGB("\tsrc_clk: %d, usdhc_clk: %d, bus_width: %d\n", src_clk, usdhc_clk, bus_width);
 
     if (usdhc_clk)
     {
@@ -384,7 +401,9 @@ rt_int32_t _imxrt_mci_init(void)
 
     rt_memset(mmcsd, 0, sizeof(struct imxrt_mmcsd));
     mmcsd->usdhc_host.base = USDHC1;
+#ifndef SOC_IMXRT1170_SERIES
     mmcsd->usdhc_div = kCLOCK_Usdhc1Div;
+#endif
     mmcsd->usdhc_adma2_table = g_usdhcAdma2Table;
 
     host->ops = &ops;
