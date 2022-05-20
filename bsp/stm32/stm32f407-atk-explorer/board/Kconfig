@@ -38,12 +38,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_FMC
         default n
 
-    config BSP_USING_MCU_LCD
+    config BSP_USING_ONBOARD_LCD
         bool "Enable ATK LCD"
         select BSP_USING_SRAM
         default n
-        if BSP_USING_MCU_LCD
-            config BSP_USING_MCU_LCD_TEST
+        if BSP_USING_ONBOARD_LCD
+            config BSP_USING_ONBOARD_LCD_TEST
                 bool "Enable lcd fill test"
                 default y
         endif
@@ -60,10 +60,16 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_LVGL
         bool "Enable LVGL for LCD"
-        select BSP_USING_MCU_LCD
+        select BSP_USING_ONBOARD_LCD
         select BSP_USING_TOUCH
         select PKG_USING_LVGL
         default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            default n
+    endif
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q128 spi1)"
@@ -83,13 +89,8 @@ menu "Onboard Peripheral Drivers"
         default n
         select RT_USING_LWIP
         select RT_LWIP_USING_HW_CHECKSUM
-
-    config BSP_USING_ETH_SAL
-        bool "Enable Ethernet with SAL"
-        depends on BSP_USING_ETH
-        default y
-        select RT_USING_SAL
-        select SAL_USING_POSIX
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
 
     config PHY_USING_LAN8720A
         bool
@@ -129,7 +130,7 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_MTD_NOR
             select BSP_USING_SPI_FLASH
             select BSP_USING_FS
-            select PKG_USING_FAL
+            select RT_USING_FAL
             select FAL_USING_AUTO_INIT
             select FAL_PART_HAS_TABLE_CFG
             select PKG_USING_LITTLEFS
@@ -255,12 +256,12 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
         menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output pwm"
+            bool "Enable timer2 output PWM"
             default n
             if BSP_USING_PWM2
                 config BSP_USING_PWM2_CH4

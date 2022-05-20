@@ -253,7 +253,7 @@ RTM_EXPORT(rt_object_get_information);
 int rt_object_get_length(enum rt_object_class_type type)
 {
     int count = 0;
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information = RT_NULL;
 
@@ -288,7 +288,7 @@ RTM_EXPORT(rt_object_get_length);
 int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers, int maxlen)
 {
     int index = 0;
-    rt_ubase_t level;
+    rt_base_t level;
 
     struct rt_object *object;
     struct rt_list_node *node = RT_NULL;
@@ -330,7 +330,7 @@ void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
                     const char               *name)
 {
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
@@ -370,7 +370,7 @@ void rt_object_init(struct rt_object         *object,
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_MODULE
     if (module)
@@ -386,7 +386,7 @@ void rt_object_init(struct rt_object         *object,
     }
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -397,7 +397,7 @@ void rt_object_init(struct rt_object         *object,
  */
 void rt_object_detach(rt_object_t object)
 {
-    register rt_base_t temp;
+    rt_base_t level;
 
     /* object check */
     RT_ASSERT(object != RT_NULL);
@@ -408,13 +408,13 @@ void rt_object_detach(rt_object_t object)
     object->type = 0;
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* remove from old list */
     rt_list_remove(&(object->list));
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 }
 
 #ifdef RT_USING_HEAP
@@ -430,7 +430,7 @@ void rt_object_detach(rt_object_t object)
 rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -466,7 +466,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_MODULE
     if (module)
@@ -482,7 +482,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     }
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* return object */
     return object;
@@ -495,7 +495,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
  */
 void rt_object_delete(rt_object_t object)
 {
-    register rt_base_t temp;
+    rt_base_t level;
 
     /* object check */
     RT_ASSERT(object != RT_NULL);
@@ -507,13 +507,13 @@ void rt_object_delete(rt_object_t object)
     object->type = RT_Object_Class_Null;
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* remove from old list */
     rt_list_remove(&(object->list));
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* free the memory of object */
     RT_KERNEL_FREE(object);

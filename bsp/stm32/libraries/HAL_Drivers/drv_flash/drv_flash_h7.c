@@ -18,7 +18,7 @@
 #include "drv_config.h"
 #include "drv_flash.h"
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include "fal.h"
 #endif
 
@@ -227,7 +227,7 @@ __exit:
     return size;
 }
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write_128k(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase_128k(long offset, size_t size);

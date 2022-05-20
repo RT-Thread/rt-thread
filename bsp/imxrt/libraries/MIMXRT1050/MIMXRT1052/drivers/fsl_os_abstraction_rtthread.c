@@ -379,7 +379,7 @@ osa_status_t OSA_SemaphoreDestroy(osa_semaphore_handle_t semaphoreHandle)
  *END**************************************************************************/
 osa_status_t OSA_SemaphoreWait(osa_semaphore_handle_t semaphoreHandle, uint32_t millisec)
 {
-    uint32_t timeoutTicks;
+    int32_t timeoutTicks;
     assert(semaphoreHandle);
     rt_sem_t sem = (rt_sem_t)(void *)(uint32_t *)(*(uint32_t *)semaphoreHandle);
 
@@ -460,7 +460,7 @@ osa_status_t OSA_MutexCreate(osa_mutex_handle_t mutexHandle)
 osa_status_t OSA_MutexLock(osa_mutex_handle_t mutexHandle, uint32_t millisec)
 {
     assert(mutexHandle);
-    uint32_t timeoutTicks;
+    int32_t timeoutTicks;
     rt_mutex_t mutex = (rt_mutex_t)(void *)(uint32_t *)(*(uint32_t *)mutexHandle);
 
     /* Convert timeout from millisecond to tick. */
@@ -642,7 +642,7 @@ osa_status_t OSA_EventWait(osa_event_handle_t eventHandle,
 {
     assert(eventHandle);
     rt_uint8_t option = 0;
-    rt_uint32_t timeoutTicks;
+    rt_int32_t timeoutTicks;
     rt_uint32_t flagsSave;
     osa_event_struct_t *pEventStruct = (osa_event_struct_t *)eventHandle;
 
@@ -778,7 +778,7 @@ osa_status_t OSA_MsgQGet(osa_msgq_handle_t msgqHandle, osa_msg_handle_t pMessage
     assert(msgqHandle);
     rt_mq_t handler = (rt_mq_t)(void *)(uint32_t *)(*(uint32_t *)msgqHandle);
 
-    uint32_t timeoutTicks;
+    int32_t timeoutTicks;
 
     if (millisec == osaWaitForever_c)
     {

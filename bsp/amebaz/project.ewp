@@ -307,28 +307,26 @@
           <state />
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\posix</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\drivers\wlan</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip_dhcpd</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\libraries\smartconfig\inc</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src</state>
           <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\posix</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1276,28 +1274,26 @@
           <state />
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\posix</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\drivers\wlan</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip_dhcpd</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\libraries\smartconfig\inc</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src</state>
           <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\posix</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1948,58 +1944,58 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
     </file>
   </group>
   <group>
     <name>Compiler</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\stdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscalls.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
   </group>
   <group>
     <name>CPU</name>
     <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
@@ -2011,25 +2007,25 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
@@ -2086,43 +2082,43 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\components.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
     </file>
   </group>
   <group>
@@ -2131,124 +2127,121 @@
   <group>
     <name>lwIP</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\netdb.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\autoip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\netif\ethernet.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\netif.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\sys.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\sockets.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\netifapi.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\tcpip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4_addr.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\dhcp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\init.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\netif\ethernetif.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\etharp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\memp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\netbuf.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\raw.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4_frag.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\tcp_out.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\netif\lowpan6.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\icmp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\api_lib.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\inet_chksum.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\stats.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\err.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\tcp_in.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\dns.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\arch\sys_arch.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\timeouts.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\ipv4\igmp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\apps\ping\ping.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\udp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\pbuf.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\def.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\api\api_msg.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\port\sys_arch.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\core\tcp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\port\ethernetif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip_dhcpd\dhcp_server_raw.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-dhcpd\dhcp_server_raw.c</name>
     </file>
   </group>
   <group>
     <name>POSIX</name>
-  </group>
-  <group>
-    <name>utestcases</name>
   </group>
 </project>

@@ -20,8 +20,13 @@ void __rt_libc_exit(int status)
 
     if (self != RT_NULL)
     {
+#ifdef RT_USING_PTHREADS
+        extern void pthread_exit(void *value);
+        pthread_exit((void *)status);
+#else
         LOG_E("thread:%s exit:%d!", self->name, status);
         rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
+#endif
     }
 }
 
@@ -30,16 +35,12 @@ int system(const char *command)
 {
     extern int msh_exec(char *cmd, rt_size_t length);
 
-    int ret = -RT_ENOMEM;
-    char *cmd = rt_strdup(command);
-
-    if (cmd)
+    if (command)
     {
-        ret = msh_exec(cmd, rt_strlen(cmd));
-        rt_free(cmd);
+        msh_exec((char *)command, rt_strlen(command));
     }
 
-    return ret;
+    return 0;
 }
 RTM_EXPORT(system);
-#endif
+#endif /* RT_USING_MSH */

@@ -10,7 +10,7 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = 'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
+    EXEC_PATH   = r'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
     #EXEC_PATH  = 'C:\Program Files (x86)\yagarto\bin'
 elif CROSS_TOOL == 'keil':
     print('================ERROR============================')

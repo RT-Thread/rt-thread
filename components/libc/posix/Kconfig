@@ -26,6 +26,12 @@ if RT_USING_POSIX_FS
         select RT_USING_POSIX_POLL
         default n
 
+    config RT_USING_POSIX_SOCKET
+        bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
+        select RT_USING_POSIX_SELECT
+        select RT_USING_SAL
+        default n
+
     config RT_USING_POSIX_TERMIOS
         bool "Enable Terminal I/O <termios.h>"
         select RT_USING_POSIX_STDIO
@@ -45,13 +51,13 @@ config RT_USING_POSIX_DELAY
     default n
 
 config RT_USING_POSIX_CLOCK
-    bool "Enable clock/time functions, clock_gettime()/clock_settime()/clock_getres() etc"
+    bool "Enable clock/time APIs, clock_gettime()/clock_settime() etc"
     select RT_USING_POSIX_DELAY
     default n
 
 config RT_USING_POSIX_TIMER
     select RT_USING_TIMER_SOFT
-    bool "Enable posix time functions, timer_create()/timer_gettime()/timer_settime() etc"
+    bool "Enable timer APIs, timer_create()/timer_gettime() etc"
     default n
 
 config RT_USING_PTHREADS
@@ -66,7 +72,7 @@ if RT_USING_PTHREADS
 endif
 
 config RT_USING_MODULE
-    bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
+    bool "Enable dynamic module APIs, dlopen()/dlsym()/dlclose() etc"
     default n
 
 if RT_USING_MODULE

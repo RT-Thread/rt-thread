@@ -12,8 +12,10 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <drv_lcd.h>
-#include <lcd_qrcode.h>
 #include "rttlogo.h"
+#ifdef BSP_USING_LCD_QRCODE
+#include <lcd_qrcode.h>
+#endif /* BSP_USING_LCD_QRCODE */
 
 static int lcd_sample(void)
 {
@@ -24,7 +26,8 @@ static int lcd_sample(void)
     lcd_draw_line(0, 69+24, 240, 69+24);
 #ifdef BSP_USING_LCD_QRCODE
     lcd_show_qrcode(54, 69+24+6, 4, ECC_LOW, "https://www.rt-thread.org/", 4);
-#endif
+#endif /* BSP_USING_LCD_QRCODE */
+
     return RT_EOK;
 }
 INIT_APP_EXPORT(lcd_sample);

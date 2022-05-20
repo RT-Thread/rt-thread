@@ -18,9 +18,9 @@ path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/gcc/startup_stm32wb55xx_cm4.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/arm/startup_stm32wb55xx_cm4.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/iar/startup_stm32wb55xx_cm4.s']

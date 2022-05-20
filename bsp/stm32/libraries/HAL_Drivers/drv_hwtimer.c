@@ -317,7 +317,7 @@ static void timer_stop(rt_hwtimer_t *timer)
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     uint32_t pclk1_doubler, pclk2_doubler;
 
     RT_ASSERT(timer != RT_NULL);
@@ -361,11 +361,13 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
         /* Update frequency value */
         tim->Instance->EGR |= TIM_EVENTSOURCE_UPDATE;
+
+        result = RT_EOK;
     }
     break;
     default:
     {
-        result = -RT_ENOSYS;
+        result = -RT_EINVAL;
     }
     break;
     }
@@ -431,6 +433,16 @@ void TIM5_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
     HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM5_INDEX].tim_handle);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+#ifdef BSP_USING_TIM7
+void TIM7_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM7_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -534,6 +546,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM5_INDEX].time_device);
     }
 #endif
+#ifdef BSP_USING_TIM7
+    if (htim->Instance == TIM7)
+    {
+        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM7_INDEX].time_device);
+    }
+#endif
 #ifdef BSP_USING_TIM11
     if (htim->Instance == TIM11)
     {
@@ -581,7 +599,8 @@ static int stm32_hwtimer_init(void)
     {
         stm32_hwtimer_obj[i].time_device.info = &_info;
         stm32_hwtimer_obj[i].time_device.ops  = &_ops;
-        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device, stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
+        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device,
+            stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
         {
             LOG_D("%s register success", stm32_hwtimer_obj[i].name);
         }

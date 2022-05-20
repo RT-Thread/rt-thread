@@ -19,7 +19,7 @@ rt_hw_spinlock_t _cpus_lock;
  */
 static void _cpu_preempt_disable(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -44,7 +44,7 @@ static void _cpu_preempt_disable(void)
  */
 static void _cpu_preempt_enable(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */

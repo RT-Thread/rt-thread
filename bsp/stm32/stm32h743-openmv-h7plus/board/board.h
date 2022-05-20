@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-12-14     supperthomas first version
+ * 2022-03-16     Miaowulue    add sram2
  */
 
 
@@ -29,6 +30,10 @@ extern "C" {
 #define STM32_SRAM1_START              (0x20000000)
 #define STM32_SRAM1_END                (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024)
 
+#define STM32_SRAM2_SIZE               (512)
+#define STM32_SRAM2_START              (0x24000000)
+#define STM32_SRAM2_END                (STM32_SRAM2_START + STM32_SRAM2_SIZE * 1024)
+
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
@@ -40,7 +45,7 @@ extern int __bss_end;
 #define HEAP_BEGIN      ((void *)&__bss_end)
 #endif
 
-#define HEAP_END                       STM32_SRAM1_END
+#define HEAP_END                       STM32_SRAM2_END
 
 void SystemClock_Config(void);
 

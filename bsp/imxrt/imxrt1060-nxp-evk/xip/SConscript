@@ -7,7 +7,7 @@ if GetDepend('BSP_USING_4MFLASH'):
     src = Glob('*.c')
     CPPPATH = [cwd]
 
-    if rtconfig.CROSS_TOOL == 'keil':
+    if rtconfig.PLATFORM in ['armcc', 'armclang']:
         LINKFLAGS  = '--keep=*(.boot_hdr.ivt)'
         LINKFLAGS += '--keep=*(.boot_hdr.boot_data)'
         LINKFLAGS += '--keep=*(.boot_hdr.dcd_data)'

@@ -62,7 +62,7 @@ config RT_THREAD_PRIORITY_MAX
 config RT_TICK_PER_SECOND
     int "Tick frequency, Hz"
     range 10 1000
-    default 100
+    default 1000
     help
         System's tick frequency, Hz.
 
@@ -80,10 +80,11 @@ config RT_USING_HOOK
     help
         Enable the hook function when system running, such as idle thread hook,
         thread context switch etc.
+
     if RT_USING_HOOK
         config RT_HOOK_USING_FUNC_PTR
-        bool "Using function pointers as system hook"
-        default y
+            bool "Using function pointers as system hook"
+            default y
     endif
 
 config RT_USING_IDLE_HOOK
@@ -91,16 +92,17 @@ config RT_USING_IDLE_HOOK
     default y if RT_USING_HOOK
 
     if RT_USING_IDLE_HOOK
-    config RT_IDLE_HOOK_LIST_SIZE
-        int "The max size of idle hook list"
-        default 4
-        range 1 16
-        help
-            The system has a hook list. This is the hook list size.
+        config RT_IDLE_HOOK_LIST_SIZE
+            int "The max size of idle hook list"
+            default 4
+            range 1 16
+            help
+                The system has a hook list. This is the hook list size.
     endif
 
 config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
+    default 1024 if ARCH_CPU_64BIT
     default 256
 
 config SYSTEM_THREAD_STACK_SIZE
@@ -122,6 +124,7 @@ if RT_USING_TIMER_SOFT
 
     config RT_TIMER_THREAD_STACK_SIZE
         int "The stack size of timer thread"
+        default 2048 if ARCH_CPU_64BIT
         default 512
 endif
 
@@ -129,16 +132,14 @@ menu "kservice optimization"
 
     config RT_KSERVICE_USING_STDLIB
         bool "Enable kservice to use standard C library"
-        default n
+        default y
 
     if RT_KSERVICE_USING_STDLIB
-        config RT_KSERVICE_USING_STDLIB_MEMCPY
-            bool "Use memcpy to replace rt_memcpy (faster, but not safe)"
+        config RT_KSERVICE_USING_STDLIB_MEMORY
+            bool "Use stdlib memory functions to replace (faster, but not safe)"
             default n
-
-        config RT_KSERVICE_USING_STDLIB_MEMSET
-            bool "Use memset to replace rt_memset (faster, but not safe)"
-            default n
+            help
+                e.g. use memcpy to replace rt_memcpy
     endif
 
     config RT_KSERVICE_USING_TINY_SIZE
@@ -149,9 +150,13 @@ menu "kservice optimization"
         bool "Enable kservice to use tiny finding first bit set method"
         default n
 
-    config RT_PRINTF_LONGLONG
-        bool "Enable rt_printf-family functions to support long long format"
+    config RT_KPRINTF_USING_LONGLONG
+        bool "Enable rt_printf-family functions to support long-long format"
+        default y if ARCH_CPU_64BIT
         default n
+        help
+            Enable rt_printf()/rt_snprintf()/rt_sprintf()/rt_vsnprintf()/rt_vsprintf()
+            functions to support long-long format
 
 endmenu
 
@@ -426,7 +431,7 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40100
+    default 0x40101
     help
         RT-Thread version number
 

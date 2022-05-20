@@ -663,7 +663,7 @@ rt_err_t eth_device_ready(struct eth_device* dev)
 
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
-    rt_uint32_t level;
+    rt_base_t level;
 
     RT_ASSERT(dev != RT_NULL);
 
@@ -740,7 +740,6 @@ static void eth_rx_thread_entry(void* parameter)
             if (device->link_changed)
             {
                 int status;
-                rt_uint32_t level;
 
                 level = rt_hw_interrupt_disable();
                 status = device->link_status;

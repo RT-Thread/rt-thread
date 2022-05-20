@@ -11,8 +11,8 @@
 #ifndef __SYS_IOCTL_H__
 #define __SYS_IOCTL_H__
 
-#ifdef _WIN32
-#include <winsock.h>
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 struct winsize
@@ -270,5 +270,9 @@ struct winsize
 #define SIOCPROTOPRIVATE    0x89E0
 
 int ioctl(int fildes, int cmd, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

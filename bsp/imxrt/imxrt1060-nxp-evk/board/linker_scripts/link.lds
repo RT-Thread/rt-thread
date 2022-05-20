@@ -53,11 +53,11 @@ STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 /* Specify the memory areas */
 MEMORY
 {
-  m_boot_data           (RX)  : ORIGIN = 0x70000000, LENGTH = 0x00001000
-  m_image_vertor_table  (RX)  : ORIGIN = 0x70001000, LENGTH = 0x00001000
+  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00001000
+  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00001000
 
-  m_interrupts          (RX)  : ORIGIN = 0x70002000, LENGTH = 0x00000400
-  m_text                (RX)  : ORIGIN = 0x70002400, LENGTH = 0x003FDC00
+  m_interrupts          (RX)  : ORIGIN = 0x60002000, LENGTH = 0x00000400
+  m_text                (RX)  : ORIGIN = 0x60002400, LENGTH = 0x003FDC00
 
   m_itcm                (RW)  : ORIGIN = 0x00000000, LENGTH = 0x00020000
   m_dtcm                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00020000
@@ -220,25 +220,25 @@ SECTIONS
     *(.data)                 /* .data sections */
     *(.data*)                /* .data* sections */
     KEEP(*(.jcr*))
+    *(NonCacheable.init)
+    *(NonCacheable)
     . = ALIGN(4);
     __data_end__ = .;        /* define a global symbol at data end */
-  } > m_dtcm
+  } > m_sdram
 
   __NDATA_ROM = __DATA_ROM + (__data_end__ - __data_start__);
   .ncache.init : AT(__NDATA_ROM)
   {
     __noncachedata_start__ = .;   /* create a global symbol at ncache data start */
-    *(NonCacheable.init)
     . = ALIGN(4);
     __noncachedata_init_end__ = .;   /* create a global symbol at initialized ncache data end */
-  } > m_nocache
+  } > m_ocram
   . = __noncachedata_init_end__;
   .ncache :
   {
-    *(NonCacheable)
     . = ALIGN(4);
     __noncachedata_end__ = .;     /* define a global symbol at ncache data end */
-  } > m_nocache
+  } > m_ocram
 
   __DATA_END = __NDATA_ROM + (__noncachedata_init_end__ - __noncachedata_start__);
   text_end = ORIGIN(m_text) + LENGTH(m_text);
@@ -258,7 +258,7 @@ SECTIONS
     . = ALIGN(4);
     __bss_end__ = .;
     __END_BSS = .;
-  } > m_dtcm
+  } > m_sdram
 
   .stack :
   {
@@ -267,15 +267,15 @@ SECTIONS
     . += STACK_SIZE;
     stack_end = .;
     __StackTop = .;
-  } > m_dtcm
+  } > m_sdram
   
   .RTT_HEAP :
   {
     heap_start = .;
     . = ALIGN(8);
-  } > m_dtcm
+  } > m_sdram
 
-  PROVIDE(heap_end = ORIGIN(m_dtcm) + LENGTH(m_dtcm));
+  PROVIDE(heap_end = ORIGIN(m_sdram) + LENGTH(m_sdram));
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 

@@ -17,8 +17,8 @@
 #include <stdint.h>
 #include <time.h>
 #ifdef _WIN32
-#include <winsock.h> /* for struct timeval */
-#endif
+typedef __time64_t time_t;
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,24 +43,24 @@ struct timezone
     int tz_dsttime;       /* type of dst correction */
 };
 
-#if !defined(_TIMEVAL_DEFINED) && !defined(_WIN32)
+#ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
 struct timeval
 {
     time_t      tv_sec;     /* seconds */
     suseconds_t tv_usec;    /* and microseconds */
 };
-#endif
+#endif /* _TIMEVAL_DEFINED */
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && \
-    !(defined(__ICCARM__) && (__VER__ >= 8010001)) && \
-    !defined(_WIN32)
+#if defined(__ARMCC_VERSION) || defined(_WIN32) || (defined(__ICCARM__) && (__VER__ < 8010001))
 struct timespec
 {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
+#endif /* defined(__ARMCC_VERSION) || defined(_WIN32) || (defined(__ICCARM__) && (__VER__ < 8010001)) */
 
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/)
 /*
  * Structure defined by POSIX.1b to be like a itimerval, but with
  * timespecs. Used in the timer_*() system calls.
@@ -70,7 +70,7 @@ struct itimerspec
     struct timespec  it_interval;
     struct timespec  it_value;
 };
-#endif
+#endif /* !(defined(__GNUC__) && !defined(__ARMCC_VERSION)) */
 
 int stime(const time_t *t);
 time_t timegm(struct tm * const t);

@@ -20,10 +20,16 @@ config RT_USING_UART1
 config BSP_USING_LVGL
     bool "Enable LVGL for LCD"
     select PKG_USING_LVGL
-    select PKG_USING_LV_MUSIC_DEMO
     select BSP_DRV_CLCD
     select BSP_DRV_MOUSE
     default n
+
+if BSP_USING_LVGL
+    config BSP_USING_LVGL_DEMO
+        bool "Enable LVGL demo"
+        select PKG_USING_LV_MUSIC_DEMO
+        default n
+endif
 
 config BSP_DRV_CLCD
     bool "CLCD driver"
@@ -46,8 +52,8 @@ endif
 config BSP_DRV_EMAC
     bool "Enable EMAC driver"
     select RT_USING_LWIP
-    select RT_USING_SAL
-    select SAL_USING_POSIX
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_SOCKET
     default n
 
 config BSP_DRV_AUDIO

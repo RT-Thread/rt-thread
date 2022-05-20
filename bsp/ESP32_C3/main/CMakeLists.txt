@@ -1,0 +1,23 @@
+idf_component_register(SRCS "main.c"
+                    "../../../libcpu/risc-v/common/cpuport.c"
+                    "../../../libcpu/risc-v/common/context_gcc.S"
+                    "../../../src/components.c"
+                    "../../../src/scheduler.c"
+                    "../../../src/device.c"
+                    "../../../src/clock.c"
+                    "../../../src/irq.c"
+                    "../../../src/thread.c"
+                    "../../../src/mempool.c"
+                    "../../../src/ipc.c"
+                    "../../../src/mem.c"
+                    "../../../src/object.c"
+                    "../../../src/idle.c"
+                    "../../../src/timer.c"
+                    "../../../src/kservice.c"
+                    INCLUDE_DIRS 
+                    "../../../include" 
+                    "../../../libcpu/risc-v/common" 
+                    "../")
+ADD_DEFINITIONS(
+	-D__RTTHREAD__
+)
