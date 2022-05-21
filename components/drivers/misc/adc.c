@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
- * 2022-05-11      Stanley Lwin add finsh voltage conversion command
+ * 2022-05-11     Stanley Lwin add finsh voltage conversion command
  */
 
 #include <rtthread.h>
@@ -271,6 +271,6 @@ static int adc(int argc, char **argv)
     }
     return RT_EOK;
 }
-MSH_CMD_EXPORT(adc, adc <device name> <option> <channel>);
+MSH_CMD_EXPORT(adc, adc [option]);
 
 #endif /* RT_USING_FINSH */
