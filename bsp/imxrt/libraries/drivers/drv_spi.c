@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -68,6 +68,7 @@ struct imxrt_spi
     lpspi_master_handle_t spi_normal;
     struct dma_config *dma;
     rt_uint8_t dma_flag;
+    rt_uint16_t masterclock;
 };
 
 static struct imxrt_spi lpspis[] =
@@ -78,6 +79,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI1,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 171,
     },
 #endif
 #ifdef BSP_USING_SPI2
@@ -86,6 +88,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI2,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 172,
     },
 #endif
 #ifdef BSP_USING_SPI3
@@ -94,6 +97,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI3,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 173,
     },
 #endif
 #ifdef BSP_USING_SPI4
@@ -102,6 +106,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI4,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 174,
     },
 #endif
 };
@@ -312,15 +317,22 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     {
         masterConfig.cpol = kLPSPI_ClockPolarityActiveHigh;
     }
+    masterConfig.whichPcs = kLPSPI_Pcs0;
 
+#if defined(SOC_IMXRT1170_SERIES)
+       freq = CLOCK_GetFreqFromObs(spi->masterclock, 2);
+       LPSPI_MasterInit(spi->base, &masterConfig, freq);
+#else
     masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut;
-    masterConfig.dataOutConfig                 = kLpspiDataOutTristate;
     masterConfig.pcsToSckDelayInNanoSec        = 1000000000 / masterConfig.baudRate;
     masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / masterConfig.baudRate;
     masterConfig.betweenTransferDelayInNanoSec = 1000000000 / masterConfig.baudRate;
 
     LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq());
     spi->base->CFGR1 |= LPSPI_CFGR1_PCSCFG_MASK;
+
+#endif
+
 
     return RT_EOK;
 }
@@ -344,7 +356,8 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     transfer.dataSize = message->length;
     transfer.rxData   = (uint8_t *)(message->recv_buf);
     transfer.txData   = (uint8_t *)(message->send_buf);
-
+    transfer.configFlags =
+            kLPSPI_MasterPcs0 | kLPSPI_MasterByteSwap | kLPSPI_MasterPcsContinuous;
     if(RT_FALSE == spi->dma_flag)
     {
 #ifdef BSP_USING_BLOCKING_SPI

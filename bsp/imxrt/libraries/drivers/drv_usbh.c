@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -212,7 +212,7 @@ static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
             }
             goto _ehci0_pipe_xfer_finish;
         }
-        
+
     }
     rt_completion_init(&(imxrt_usb_host_obj[USBH0_INDEX].pipes[pipe->pipe_index].urb_completion));
     if (USB_HostEhciWritePipe(((usb_host_instance_t *)imxrt_usb_host_obj[USBH0_INDEX].host_handle)->controllerHandle, imxrt_usb_host_obj[USBH0_INDEX].pipes[pipe->pipe_index].pipe_handle, transfer) != kStatus_USB_Success)
@@ -392,7 +392,7 @@ static rt_err_t _ehci0_usbh_init(rt_device_t device)
     USB_HostClockInit(kUSB_ControllerEhci0);
 
     if (kStatus_USB_Success == USB_HostInit(kUSB_ControllerEhci0, &imxrt_usb_host_obj[USBH0_INDEX].host_handle, usb0_host_callback))
-    {    
+    {
         usbh0_thread = rt_thread_create("ehci0", _ehci0_usbh_thread, RT_NULL, 500, 4, 9999999);
         rt_thread_startup(usbh0_thread);
         USB_HostIsrEnable(kUSB_ControllerEhci0);
@@ -489,7 +489,7 @@ static int _ehci1_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
             }
             goto _ehci1_pipe_xfer_finish;
         }
-        
+
     }
     rt_completion_init(&(imxrt_usb_host_obj[USBH1_INDEX].pipes[pipe->pipe_index].urb_completion));
     if (USB_HostEhciWritePipe(((usb_host_instance_t *)imxrt_usb_host_obj[USBH1_INDEX].host_handle)->controllerHandle, imxrt_usb_host_obj[USBH1_INDEX].pipes[pipe->pipe_index].pipe_handle, transfer) != kStatus_USB_Success)
@@ -670,7 +670,7 @@ static rt_err_t _ehci1_usbh_init(rt_device_t device)
     USB_HostClockInit(kUSB_ControllerEhci1);
 
     if (kStatus_USB_Success == USB_HostInit(kUSB_ControllerEhci1, &imxrt_usb_host_obj[USBH1_INDEX].host_handle, usb1_host_callback))
-    {    
+    {
         usbh1_thread = rt_thread_create("ehci1", _ehci1_usbh_thread, RT_NULL, 500, 4, 9999999);
         rt_thread_startup(usbh1_thread);
         USB_HostIsrEnable(kUSB_ControllerEhci1);
@@ -720,7 +720,7 @@ int imxrt_usbh_register(void)
         rt_kprintf("register usb0 host failed res = %d\r\n", res);
         return -RT_ERROR;
     }
-    
+
     rt_usb_host_init(usb_host_obj->name);
 #endif
     return RT_EOK;

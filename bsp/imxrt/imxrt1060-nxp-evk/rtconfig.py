@@ -19,7 +19,7 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
+    PLATFORM    = 'armclang'
     # EXEC_PATH   = r'C:/Keil_v5'
     EXEC_PATH   = r'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
@@ -105,6 +105,41 @@ elif PLATFORM == 'armcc':
     # POST_ACTION = 'fromelf -z $TARGET'
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'    
     # POST_ACTION = 'fromelf --i32combined $TARGET --output="rtthread-mdk.hex" \nfromelf -z $TARGET'
+
+elif PLATFORM == 'armclang':
+    CC = 'armclang'
+    CXX = 'armclang'
+    AS = 'armclang'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    DEVICE = ' --cpu=Cortex-M7.fp.dp '
+    CFLAGS = ' -xc -std=c99 '
+    CFLAGS += ' --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 '
+    CFLAGS += ' -mfloat-abi=hard -c -gdwarf-4 '
+    CFLAGS += ' -fno-rtti -funsigned-char -fshort-enums -fshort-wchar -ffunction-sections '
+    CFLAGS += ' -Wa,armasm,--pd,"CPU_MIMXRT1062DVL6A SETA 1"'
+    CFLAGS += ' -Wa,armasm,--pd,"__STARTUP_INITIALIZE_NONCACHEDATA SETA 1"'
+    AFLAGS = ' -masm=auto '
+    AFLAGS += ' --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 '
+    AFLAGS += ' -mfloat-abi=hard -c -gdwarf-4 '
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map '
+    LFLAGS += r' --strict --scatter "board\linker_scripts\link.sct" '
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib '
+
+    EXEC_PATH += '/ARM/ARMCLANG/bin/'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O1' # armclang recommend
+        AFLAGS += ' -g'
+    else:
+        CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS
+
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     CC = 'iccarm'

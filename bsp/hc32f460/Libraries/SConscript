@@ -19,6 +19,7 @@ HC32F460_StdPeriph_Driver/src/hc32f460_pwc.c
 HC32F460_StdPeriph_Driver/src/hc32f460_sram.c
 HC32F460_StdPeriph_Driver/src/hc32f460_utility.c
 HC32F460_StdPeriph_Driver/src/hc32f460_exint_nmi_swi.c
+HC32F460_StdPeriph_Driver/src/hc32f460_rtc.c
 """)
 
 #src += Glob('HC32F460_StdPeriph_Driver/src/*.c')

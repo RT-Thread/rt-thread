@@ -20,7 +20,7 @@
 
 #ifdef RT_USING_SAL
 #include <sal_netdb.h>
-#include <sal.h>
+#include <sal_low_lvl.h>
 #endif /* RT_USING_SAL */
 
 #define DBG_TAG              "netdev"

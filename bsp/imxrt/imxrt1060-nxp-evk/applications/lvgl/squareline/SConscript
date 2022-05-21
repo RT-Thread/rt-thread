@@ -1,15 +1,13 @@
-# RT-Thread building script for bridge
-
-import os
 from building import *
 
 cwd = GetCurrentDir()
-objs = []
-list = os.listdir(cwd)
+group = []
+src = []
+CPPPATH =[]
 
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+src += Glob(cwd + '/ui/*.c')
+CPPPATH += [cwd+'/ui']
 
-Return('objs')
+group = group + DefineGroup('LVGL-SquareLine', src, depend = ['BSP_USING_LVGL', 'BSP_USING_LVGL_SQUARELINE'], CPPPATH = CPPPATH)
+
+Return('group')
