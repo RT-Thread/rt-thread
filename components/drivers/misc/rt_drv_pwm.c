@@ -299,6 +299,6 @@ static int pwm(int argc, char **argv)
 
     return RT_EOK;
 }
-MSH_CMD_EXPORT(pwm, pwm <device name> <option> <channel>);
+MSH_CMD_EXPORT(pwm, pwm [option]);
 
 #endif /* RT_USING_FINSH */
