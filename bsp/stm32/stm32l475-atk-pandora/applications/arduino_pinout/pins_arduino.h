@@ -44,6 +44,7 @@
 #define A3   (29)
 #define DAC0 (30)
 
+#define F_CPU  80000000L /* CPU: 80MHz */
 #define LED_BUILTIN  D22 /* Default Built-in LED */
 
 /*
