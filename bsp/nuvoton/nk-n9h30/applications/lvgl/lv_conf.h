@@ -33,7 +33,5 @@
 #define LV_DEMO_MUSIC_AUTO_PLAY     1
 #endif
 
-//#define LV_DISP_DEF_REFR_PERIOD         16
-
 //#define CONFIG_LV_LOG_LEVEL LV_LOG_LEVEL_TRACE
 #endif
