@@ -159,7 +159,7 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
 
 rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
-   rt_uint32_t value = 0, voltage = 0, vref = 0;
+    rt_uint32_t value = 0, voltage = 0, vref = 0;
 
     RT_ASSERT(dev);
 
