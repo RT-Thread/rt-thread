@@ -13,6 +13,8 @@
 
 #include <drv_clcd.h>
 
+lv_indev_t * touch_indev;
+
 static lv_indev_state_t last_state = LV_INDEV_STATE_REL;
 static rt_int16_t last_x = 0;
 static rt_int16_t last_y = 0;
@@ -31,8 +33,6 @@ void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state)
     last_y = y;
 }
 
-lv_indev_t * button_indev;
-
 void lv_port_indev_init(void)
 {
     static lv_indev_drv_t indev_drv;
@@ -42,5 +42,5 @@ void lv_port_indev_init(void)
     indev_drv.read_cb = input_read;
 
     /*Register the driver in LVGL and save the created input device object*/
-    button_indev = lv_indev_drv_register(&indev_drv);
+    touch_indev = lv_indev_drv_register(&indev_drv);
 }

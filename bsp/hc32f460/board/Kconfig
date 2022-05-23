@@ -35,6 +35,25 @@ menu "On-chip Peripheral Drivers"
                 default y                                               
         endif
 
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LRC
+
+                config BSP_RTC_USING_XTAL32
+                    bool "RTC USING XTAL32"
+
+                config BSP_RTC_USING_LRC
+                    bool "RTC USING LRC"
+            endchoice
+        endif
+
 endmenu
 
 

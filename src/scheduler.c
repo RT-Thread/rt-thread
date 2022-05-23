@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -90,7 +90,7 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 #endif /* RT_USING_HOOK */
 
 #ifdef RT_USING_OVERFLOW_CHECK
-static void _rt_scheduler_stack_check(struct rt_thread *thread)
+static void _scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
@@ -132,11 +132,11 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 #ifdef RT_USING_SMP
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
-    register struct rt_thread *highest_priority_thread;
-    register rt_ubase_t highest_ready_priority, local_highest_ready_priority;
+    struct rt_thread *highest_priority_thread;
+    rt_ubase_t highest_ready_priority, local_highest_ready_priority;
     struct rt_cpu* pcpu = rt_cpu_self();
 #if RT_THREAD_PRIORITY_MAX > 32
-    register rt_ubase_t number;
+    rt_ubase_t number;
 
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
@@ -168,11 +168,11 @@ static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *high
 #else
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
-    register struct rt_thread *highest_priority_thread;
-    register rt_ubase_t highest_ready_priority;
+    struct rt_thread *highest_priority_thread;
+    rt_ubase_t highest_ready_priority;
 
 #if RT_THREAD_PRIORITY_MAX > 32
-    register rt_ubase_t number;
+    rt_ubase_t number;
 
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
@@ -199,7 +199,7 @@ void rt_system_scheduler_init(void)
 #ifdef RT_USING_SMP
     int cpu;
 #endif /* RT_USING_SMP */
-    register rt_base_t offset;
+    rt_base_t offset;
 
 #ifndef RT_USING_SMP
     rt_scheduler_lock_nest = 0;
@@ -247,7 +247,7 @@ void rt_system_scheduler_init(void)
  */
 void rt_system_scheduler_start(void)
 {
-    register struct rt_thread *to_thread;
+    struct rt_thread *to_thread;
     rt_ubase_t highest_ready_priority;
 
     to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
@@ -378,7 +378,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, current_thread->name, current_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
@@ -485,7 +485,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, from_thread->name, from_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
                 if (rt_interrupt_nest == 0)
@@ -623,7 +623,7 @@ void rt_scheduler_do_irq_switch(void *context)
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
@@ -870,7 +870,7 @@ void rt_enter_critical(void)
      */
 
     {
-        register rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
+        rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
         current_thread->cpus_lock_nest++;
         if (lock_nest == 0)
         {

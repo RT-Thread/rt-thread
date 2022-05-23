@@ -1,5 +1,4 @@
 #include <lvgl.h>
-#include "lv_demo_calendar.h"
 #include <drv_lcd.h>
 
 static void event_handler(lv_event_t * e)
