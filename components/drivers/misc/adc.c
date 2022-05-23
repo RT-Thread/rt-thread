@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
- * 2022-05-11      Stanley Lwin add finsh voltage conversion command
+ * 2022-05-11     Stanley Lwin add finsh voltage conversion command
  */
 
 #include <rtthread.h>
@@ -17,7 +17,6 @@
 #include <stdlib.h>
 
 #define DBG_TAG "adc"
-#define REFER_VOLTAGE 330       /*reference voltage, multiplied by 100 and reserve 2 decimal places for data accuracy*/
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
@@ -63,6 +62,10 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
             LOG_D("resolution: %d bits", resolution);
             result = RT_EOK;
         }
+    }
+    else if (cmd == RT_ADC_CMD_GET_VREF && adc->ops->get_resolution)
+    {
+        result = adc->ops->get_vref(adc);
     }
 
     return result;
@@ -156,17 +159,20 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
 
 rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
-   rt_uint32_t value = 0, voltage = 0;
+   rt_uint32_t value = 0, voltage = 0, vref = 0;
 
     RT_ASSERT(dev);
 
     /*read the value and convert to voltage*/
     if (dev->ops->get_resolution != RT_NULL && dev->ops->convert != RT_NULL)
     {
+        /*get reference voltage*/
+        vref = _adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, RT_NULL );
+
         /*get the convert bits*/
         rt_uint8_t resolution = dev->ops->get_resolution(dev);
         dev->ops->convert(dev, channel, &value);
-        voltage = value * REFER_VOLTAGE / (1 << resolution);
+        voltage = value * vref / (1 << resolution);
     }
 
     return voltage;
@@ -246,7 +252,7 @@ static int adc(int argc, char **argv)
                 {
                     voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
-                    rt_kprintf("%s channel %d voltage is %d.%02d \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 100, voltage % 100);
+                    rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 1000, voltage % 1000);
                 }
                 else
                 {
