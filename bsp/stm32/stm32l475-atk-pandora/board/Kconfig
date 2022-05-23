@@ -50,8 +50,9 @@ menu "Onboard Peripheral Drivers"
         imply BSP_SPI2_RX_USING_DMA
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_ADAFRUIT
         imply RTDUINO_USING_SPI
+        imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_MSTIMER2
         default n
 
     config BSP_USING_KEY
