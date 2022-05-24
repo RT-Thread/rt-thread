@@ -22,7 +22,6 @@
 //#define LV_USE_DEMO_BENCHMARK           1
 #define LV_USE_DEMO_WIDGETS             1
 #define LV_DEMO_WIDGETS_SLIDESHOW       1
-//#define LV_DISP_DEF_REFR_PERIOD         16
 
 //#define CONFIG_LV_LOG_LEVEL LV_LOG_LEVEL_TRACE
 #endif
