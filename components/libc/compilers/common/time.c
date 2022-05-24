@@ -307,6 +307,14 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
+double difftime(time_t time1, time_t time2)
+{
+    return (double)(time1 - time2);
+}
+RTM_EXPORT(difftime);
+
+RTM_EXPORT(strftime); /* inherent in the toolchain */
+
 /**
  * Returns the current time.
  *
@@ -485,10 +493,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     }
 }
 RTM_EXPORT(settimeofday);
-
-/* inherent in the toolchain */
-RTM_EXPORT(difftime);
-RTM_EXPORT(strftime);
 
 #ifdef RT_USING_POSIX_DELAY
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
