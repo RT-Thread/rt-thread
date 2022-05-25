@@ -173,17 +173,17 @@ rt_base_t rt_pin_get(const char *name)
 
 static void print_usage(void)
 {
-    rt_kprintf("\r\npin operate command\t\n");
-    rt_kprintf("Usage : pin [option] [pin_num] ...\r\n");
-    rt_kprintf("option : \r\n");
-    rt_kprintf("\tnum\t: get pin number from hardware pin, \r\n\t\t e.g. MSH >pin num PA16\r\n");
-    rt_kprintf("\tmode\t: set pin mode to output/input/input_pullup/input_pulldown/output_od, \r\n\t\t e.g. MSH >pin mode PA16 output\r\n");
-    rt_kprintf("\tread\t: read pin level of hardware pin, \r\n\t\t e.g. MSH >pin read PA16\r\n");
-    rt_kprintf("\twrite\t: write pin level(high/low or on/off) to hardware pin, \r\n\t\t e.g. MSH >pin write PA16 high\r\n");
-    rt_kprintf("\thelp\t: this help list\r\n");
+    rt_kprintf("\npin operate command\n");
+    rt_kprintf("Usage : pin [option] [pin_num] ...\n");
+    rt_kprintf("option : \n");
+    rt_kprintf("\tnum\t: get pin number from hardware pin, \n\t\t e.g. MSH >pin num PA16\n");
+    rt_kprintf("\tmode\t: set pin mode to output/input/input_pullup/input_pulldown/output_od, \n\t\t e.g. MSH >pin mode PA16 output\n");
+    rt_kprintf("\tread\t: read pin level of hardware pin, \n\t\t e.g. MSH >pin read PA16\n");
+    rt_kprintf("\twrite\t: write pin level(high/low or on/off) to hardware pin, \n\t\t e.g. MSH >pin write PA16 high\n");
+    rt_kprintf("\thelp\t: this help list\n");
 }
 
-// e.g. MSH >pin num PA16
+/*e.g. MSH >pin num PA16*/
 static void pin_get(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -198,10 +198,10 @@ static void pin_get(int argc, char *argv[])
         return;
     }
     pin = rt_pin_get(argv[2]);
-    rt_kprintf("%s : %d\r\n", argv[2], pin);
+    rt_kprintf("%s : %d\n", argv[2], pin);
 }
 
-// e.g. MSH >pin mode PA16 output
+/*e.g. MSH >pin mode PA16 output*/
 static void pin_mode(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -235,7 +235,7 @@ static void pin_mode(int argc, char *argv[])
     else if (0 == rt_strcmp("input_pullup", argv[3]))
     {
         mode = PIN_MODE_INPUT_PULLUP;
-    }    
+    }
     else if (0 == rt_strcmp("input_pulldown", argv[3]))
     {
         mode = PIN_MODE_INPUT_PULLDOWN;
@@ -253,7 +253,7 @@ static void pin_mode(int argc, char *argv[])
     rt_pin_mode(pin, mode);
 }
 
-// e.g. MSH >pin read PA16
+/*e.g. MSH >pin read PA16*/
 static void pin_read(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -279,15 +279,15 @@ static void pin_read(int argc, char *argv[])
     value = rt_pin_read(pin);
     if (value == PIN_HIGH)
     {
-        rt_kprintf("pin[%d] = on\r\n", pin);
+        rt_kprintf("pin[%d] = on\n", pin);
     }
     else
     {
-        rt_kprintf("pin[%d] = off\r\n", pin);
+        rt_kprintf("pin[%d] = off\n", pin);
     }
 }
 
-// e.g. MSH >pin write PA16 high
+/*e.g. MSH >pin write PA16 high*/
 static void pin_write(int argc, char *argv[])
 {
     rt_base_t pin;
