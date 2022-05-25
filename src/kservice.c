@@ -671,7 +671,6 @@ rt_bool_t rt_isint(char *strvalue)
     }
     return RT_TRUE;
 }
-RTM_EXPORT(rt_isint);
 
 /**
  * This function will transform for string to integer.
@@ -701,7 +700,6 @@ int rt_strtoint(char *strvalue)
     }
     return value * sign;
 }
-RTM_EXPORT(rt_strtoint);
 
 /**
  * This function will check hex.
@@ -736,7 +734,6 @@ rt_bool_t rt_ishex(char *strvalue)
     }
     return RT_TRUE;
 }
-RTM_EXPORT(rt_ishex);
 
 /**
  * This function will transform for string to hex.
@@ -758,7 +755,6 @@ int rt_strtohex(char *strvalue)
     }
     return value;
 }
-RTM_EXPORT(rt_strtohex);
 
 /**
  * This function will show the version of rt-thread rtos
