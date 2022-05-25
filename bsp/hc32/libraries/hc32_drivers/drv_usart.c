@@ -73,6 +73,8 @@ enum
 #ifdef BSP_USING_UART4
     UART4_INDEX,
 #endif
+	
+#if defined (HC32F4A0)
 #ifdef BSP_USING_UART5
     UART5_INDEX,
 #endif
@@ -91,6 +93,7 @@ enum
 #ifdef BSP_USING_UART10
     UART10_INDEX,
 #endif
+#endif
 };
 
 static struct hc32_uart_config uart_config[] =
@@ -107,6 +110,7 @@ static struct hc32_uart_config uart_config[] =
 #ifdef BSP_USING_UART4
     UART4_CONFIG,
 #endif
+#if defined (HC32F4A0)
 #ifdef BSP_USING_UART5
     UART5_CONFIG,
 #endif
@@ -124,6 +128,7 @@ static struct hc32_uart_config uart_config[] =
 #endif
 #ifdef BSP_USING_UART10
     UART10_CONFIG,
+#endif
 #endif
 };
 
@@ -145,11 +150,16 @@ static rt_err_t hc32_configure(struct rt_serial_device *serial, struct serial_co
     uart_init.u32OverSampleBit = USART_OVER_SAMPLE_8BIT;
     uart_init.u32Baudrate = cfg->baud_rate;
     uart_init.u32ClockSrc = USART_CLK_SRC_INTERNCLK;
-    if ((CM_USART1 == uart->config->Instance) || (CM_USART2 == uart->config->Instance) || \
-            (CM_USART6 == uart->config->Instance) || (CM_USART7 == uart->config->Instance))
+    if ((CM_USART1 == uart->config->Instance) || (CM_USART2 == uart->config->Instance))
     {
         uart_init.u32CKOutput = USART_CK_OUTPUT_ENABLE;
     }
+#if defined (HC32F4A0)
+	if ((CM_USART6 == uart->config->Instance) || (CM_USART7 == uart->config->Instance))
+    {
+        uart_init.u32CKOutput = USART_CK_OUTPUT_ENABLE;
+    }
+#endif
 
     switch (cfg->data_bits)
     {
@@ -219,7 +229,12 @@ static rt_err_t hc32_configure(struct rt_serial_device *serial, struct serial_co
     uart->dma_rx_last_index = 0;
 #endif
     /* Enable USART clock */
+#if defined (HC32F4A0)
     FCG_Fcg3PeriphClockCmd(uart->config->clock, ENABLE);
+#endif
+#if defined (HC32F460)
+    FCG_Fcg1PeriphClockCmd(uart->config->clock, ENABLE);
+#endif
     if (RT_EOK != rt_hw_board_uart_init(uart->config->Instance))
     {
         return -RT_ERROR;

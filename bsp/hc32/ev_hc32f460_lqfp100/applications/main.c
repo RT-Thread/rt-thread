@@ -1,0 +1,33 @@
+/*
+ * Copyright (C) 2022, xiaoxiaolisunny
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author             Notes
+ * 2022-05-25     xiaoxiaolisunny    first version
+ */
+
+#include <rtthread.h>
+#include <rtdevice.h>
+#include <board.h>
+
+
+/* defined the LED_GREEN pin: PD4 */
+#define LED_GREEN_PIN GET_PIN(D, 4)
+
+
+int main(void)
+{
+    /* set LED_GREEN_PIN pin mode to output */
+    rt_pin_mode(LED_GREEN_PIN, PIN_MODE_OUTPUT);
+
+    while (1)
+    {
+        rt_pin_write(LED_GREEN_PIN, PIN_HIGH);
+        rt_thread_mdelay(500);
+        rt_pin_write(LED_GREEN_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
+    }
+}
+
