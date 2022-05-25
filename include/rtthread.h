@@ -631,10 +631,6 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strlen(src)              strlen(src)
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
-rt_bool_t rt_isint(char *strvalue);
-int rt_strtoint(char *strvalue);
-rt_bool_t rt_ishex(char *strvalue);
-int rt_strtohex(char *strvalue);
 
 char *rt_strdup(const char *s);
 

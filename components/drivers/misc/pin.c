@@ -14,6 +14,7 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+#include <msh_parse.h>
 #endif
 
 static struct rt_device_pin _hw_pin;
@@ -211,7 +212,7 @@ static void pin_mode(int argc, char *argv[])
         print_usage();
         return;
     }
-    if (!rt_isint(argv[2]))
+    if (!msh_isint(argv[2]))
     {
         if ('P' != argv[2][0])
         {
@@ -222,7 +223,7 @@ static void pin_mode(int argc, char *argv[])
     }
     else
     {
-        pin = rt_strtoint(argv[2]);
+        pin = msh_strtoint(argv[2]);
     }
     if (0 == rt_strcmp("output", argv[3]))
     {
@@ -263,7 +264,7 @@ static void pin_read(int argc, char *argv[])
         print_usage();
         return;
     }
-    if (!rt_isint(argv[2]))
+    if (!msh_isint(argv[2]))
     {
         if ('P' != argv[2][0])
         {
@@ -274,7 +275,7 @@ static void pin_read(int argc, char *argv[])
     }
     else
     {
-        pin = rt_strtoint(argv[2]);
+        pin = msh_strtoint(argv[2]);
     }
     value = rt_pin_read(pin);
     if (value == PIN_HIGH)
@@ -297,7 +298,7 @@ static void pin_write(int argc, char *argv[])
         print_usage();
         return;
     }
-    if (!rt_isint(argv[2]))
+    if (!msh_isint(argv[2]))
     {
         if ('P' != argv[2][0])
         {
@@ -308,7 +309,7 @@ static void pin_write(int argc, char *argv[])
     }
     else
     {
-        pin = rt_strtoint(argv[2]);
+        pin = msh_strtoint(argv[2]);
     }
     if ((0 == rt_strcmp("high", argv[3])) || (0 == rt_strcmp("on", argv[3])))
     {
