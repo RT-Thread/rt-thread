@@ -12,9 +12,10 @@
 #define MSH_PARSE_H
 
 #include <rtthread.h>
+#include <stdlib.h>
 
 rt_bool_t msh_isint(char *strvalue);
-int msh_strtoint(char *strvalue);
+#define msh_strtoint    atoi
 rt_bool_t msh_ishex(char *strvalue);
 int msh_strtohex(char *strvalue);
 

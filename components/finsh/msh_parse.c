@@ -9,42 +9,9 @@
  */
 
 #include <rtthread.h>
+#include <ctype.h>
 
 #define forstrloop(str) for (; '\0' != *(str); (str)++)
-
-/**
- * This function will tolower.
- *
- * @param c char
- *
- * @return tolower char
- */
-int msh_tolower(int c)
-{
-    int temp = 'a' - 'A';
-
-    if ((c < 'A') || (c > 'Z'))
-    {
-        return c;
-    }
-    return (c + temp);
-}
-
-/**
- * This function will check digit.
- *
- * @param c char
- *
- * @return true or false
- */
-rt_bool_t msh_isdigit(int ch)
-{
-    if ((ch >= '0') && (ch <= '9'))
-    {
-        return RT_TRUE;
-    }
-    return RT_FALSE;
-}
 
 /**
  * This function will check integer.
@@ -65,41 +32,12 @@ rt_bool_t msh_isint(char *strvalue)
     }
     forstrloop(strvalue)
     {
-        if (!msh_isdigit(*strvalue))
+        if (!isdigit(*strvalue))
         {
             return RT_FALSE;
         }
     }
     return RT_TRUE;
-}
-
-/**
- * This function will transform for string to integer.
- *
- * @param strvalue string
- *
- * @return true or false
- */
-int msh_strtoint(char *strvalue)
-{
-    int value = 0;
-    int sign = 1;
-    if ('-' == *strvalue)
-    {
-        sign = -1;
-        strvalue++;
-    }
-    else if ('+' == *strvalue)
-    {
-        strvalue++;
-    }
-
-    forstrloop(strvalue)
-    {
-        value *= 10;
-        value += *strvalue - '0';
-    }
-    return value * sign;
 }
 
 /**
@@ -127,8 +65,8 @@ rt_bool_t msh_ishex(char *strvalue)
 
     forstrloop(strvalue)
     {
-        c = msh_tolower(*strvalue);
-        if (!msh_isdigit(c) && ((c < 'a') || (c > 'f')))
+        c = tolower(*strvalue);
+        if (!isxdigit(c))
         {
             return RT_FALSE;
         }
@@ -151,8 +89,8 @@ int msh_strtohex(char *strvalue)
     forstrloop(strvalue)
     {
         value *= 16;
-        c = msh_tolower(*strvalue);
-        value += msh_isdigit(c) ? c - '0' : c - 'a' + 10;
+        c = tolower(*strvalue);
+        value += isdigit(c) ? c - '0' : c - 'a' + 10;
     }
     return value;
 }
