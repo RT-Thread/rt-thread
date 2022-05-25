@@ -193,7 +193,10 @@ static rt_err_t rt_rtc_config(void)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+#else
+#warning "This series doesn't support yet!"
 #endif
+
         if (HAL_RTC_Init(&RTC_Handler) != HAL_OK)
         {
             return -RT_ERROR;
