@@ -32,7 +32,7 @@ rt_bool_t msh_isint(char *strvalue)
     }
     forstrloop(strvalue)
     {
-        if (!isdigit(*strvalue))
+        if (!isdigit((int)(*strvalue)))
         {
             return RT_FALSE;
         }
@@ -49,7 +49,7 @@ rt_bool_t msh_isint(char *strvalue)
  */
 rt_bool_t msh_ishex(char *strvalue)
 {
-    char c;
+    int c;
     if ((RT_NULL == strvalue) || ('\0' == strvalue[0]))
     {
         return RT_FALSE;
