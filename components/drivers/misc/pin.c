@@ -166,7 +166,6 @@ rt_base_t rt_pin_get(const char *name)
     {
         return -RT_ENOSYS;
     }
-
     return _hw_pin.ops->pin_get(name);
 }
 
@@ -357,4 +356,4 @@ static void pin_cmd(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT_ALIAS(pin_cmd, pin, pin operate command);
-#endif
+#endif /* FINSH_USING_MSH */

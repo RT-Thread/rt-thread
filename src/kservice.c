@@ -20,7 +20,6 @@
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
- * 2022-04-29     WangQiang    add some function for process arguments in MSH
  */
 
 #include <rtthread.h>

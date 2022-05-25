@@ -631,7 +631,6 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strlen(src)              strlen(src)
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
-
 char *rt_strdup(const char *s);
 
 #if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
