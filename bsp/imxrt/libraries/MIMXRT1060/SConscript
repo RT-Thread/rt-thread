@@ -6,6 +6,7 @@ path = [cwd + '/CMSIS/Include',cwd + '/MIMXRT1060', cwd + '/MIMXRT1060/drivers']
 src = Split('''
             MIMXRT1060/system_MIMXRT1062.c
             MIMXRT1060/drivers/fsl_common.c
+            MIMXRT1060/drivers/fsl_common_arm.c
             MIMXRT1060/drivers/fsl_clock.c
             MIMXRT1060/drivers/fsl_cache.c
             ''')
@@ -52,6 +53,12 @@ if GetDepend(['BSP_USING_SDRAM']):
 
 if GetDepend(['BSP_USING_LCD']):
     src += ['MIMXRT1060/drivers/fsl_elcdif.c']
+
+if GetDepend(['DEMO_PANEL_RK043FN02H']):
+    src += ['MIMXRT1060/drivers/fsl_ft5406_rt.c']
+
+if GetDepend(['DEMO_PANEL_RK043FN66HS']):
+    src += ['MIMXRT1060/drivers/fsl_video_common.c', 'MIMXRT1060/drivers/fsl_gt911.c']
 
 if GetDepend(['BSP_USING_CACHE']):
     src += ['MIMXRT1060/drivers/fsl_cache.c']

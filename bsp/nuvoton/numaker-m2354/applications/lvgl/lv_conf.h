@@ -22,7 +22,5 @@
 #define LV_USE_DEMO_RTT_MUSIC           1
 #define LV_DEMO_RTT_MUSIC_AUTO_PLAY     1
 
-#define LV_DISP_DEF_REFR_PERIOD         16
-
 //#define CONFIG_LV_LOG_LEVEL LV_LOG_LEVEL_TRACE
 #endif

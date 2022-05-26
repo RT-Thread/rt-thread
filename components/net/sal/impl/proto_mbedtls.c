@@ -20,7 +20,7 @@
 #include <sal_tls.h>
 #endif
 #include <netdb.h>
-#include <sal.h>
+#include <sal_low_lvl.h>
 
 #include <netdev.h>
 
