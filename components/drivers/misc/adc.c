@@ -53,7 +53,7 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     {
         result = adc->ops->enabled(adc, (rt_uint32_t)args, RT_FALSE);
     }
-    else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution)
+    else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution && args)
     {
         rt_uint8_t resolution = adc->ops->get_resolution(adc);
         if(resolution != 0)
@@ -63,9 +63,21 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
             result = RT_EOK;
         }
     }
-    else if (cmd == RT_ADC_CMD_GET_VREF && adc->ops->get_resolution)
+    else if (cmd == RT_ADC_CMD_GET_VREF && adc->ops->get_vref && args)
     {
-        result = adc->ops->get_vref(adc);
+        rt_int16_t value;
+
+        value = adc->ops->get_vref(adc);
+        *((rt_int16_t *) args) = value;
+
+        if(value == 0)
+        {
+            result = -RT_ENOSYS;
+        }
+        else
+        {
+            result = RT_EOK;
+        }
     }
 
     return result;
@@ -159,15 +171,19 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
 
 rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
-    rt_uint32_t value = 0, voltage = 0, vref = 0;
+    rt_uint32_t value = 0, voltage = 0;
+    rt_int16_t vref = 0;
 
     RT_ASSERT(dev);
 
     /*read the value and convert to voltage*/
-    if (dev->ops->get_resolution != RT_NULL && dev->ops->convert != RT_NULL)
+    if(_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, RT_NULL ) != RT_NULL)
     {
         /*get reference voltage*/
-        vref = _adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, RT_NULL );
+        if(_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK )
+        {
+            return 0;
+        }
 
         /*get the convert bits*/
         rt_uint8_t resolution = dev->ops->get_resolution(dev);

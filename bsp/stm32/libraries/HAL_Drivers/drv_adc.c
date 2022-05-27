@@ -170,11 +170,13 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
 
     return stm32_channel;
 }
-static rt_uint32_t stm32_adc_get_vref (struct rt_adc_device *device)
+
+static rt_uint16_t stm32_adc_get_vref (struct rt_adc_device *device)
 {
     RT_ASSERT(device);
     return 3300;
 }
+
 static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     ADC_ChannelConfTypeDef ADC_ChanConf;
