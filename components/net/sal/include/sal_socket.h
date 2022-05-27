@@ -151,14 +151,17 @@ typedef struct ip_mreq
   #define SHUT_RDWR     2
 #endif
 
+#if !defined(_WINSOCK2API_)
 struct sockaddr
 {
     uint8_t        sa_len;
     sa_family_t    sa_family;
     char           sa_data[14];
 };
+#endif /* !defined(_WINSOCK2API_) */
 
 #if NETDEV_IPV4
+#if !defined(_WINSOCK2API_)
 /* members are in network byte order */
 struct sockaddr_in
 {
@@ -169,6 +172,7 @@ struct sockaddr_in
 #define SIN_ZERO_LEN 8
     char            sin_zero[SIN_ZERO_LEN];
 };
+#endif /* !defined(_WINSOCK2API_) */
 #endif /* NETDEV_IPV4 */
 
 #if NETDEV_IPV6
@@ -183,6 +187,7 @@ struct sockaddr_in6
 };
 #endif /* NETDEV_IPV6 */
 
+#if !defined(_WINSOCK2API_)
 struct sockaddr_storage
 {
     uint8_t        s2_len;
@@ -193,6 +198,7 @@ struct sockaddr_storage
     uint32_t       s2_data3[3];
 #endif /* NETDEV_IPV6 */
 };
+#endif /* !defined(_WINSOCK2API_) */
 
 int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen);
 int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen);

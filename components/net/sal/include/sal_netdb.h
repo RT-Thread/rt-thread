@@ -47,6 +47,8 @@ extern "C" {
 
 #define DNS_MAX_NAME_LENGTH 256
 
+
+#if !defined(_WINSOCK2API_)
 struct hostent {
     char  *h_name;      /* Official name of the host. */
     char **h_aliases;   /* A pointer to an array of pointers to alternative host names,
@@ -57,7 +59,9 @@ struct hostent {
                            network byte order) for the host, terminated by a null pointer. */
 #define h_addr h_addr_list[0] /* for backward compatibility */
 };
+#endif /* !defined(_WINSOCK2API_) */
 
+#if !defined(_WINSOCK2API_)
 struct addrinfo {
     int               ai_flags;      /* Input flags. */
     int               ai_family;     /* Address family of socket. */
@@ -68,6 +72,7 @@ struct addrinfo {
     char             *ai_canonname;  /* Canonical name of service location. */
     struct addrinfo  *ai_next;       /* Pointer to next in list. */
 };
+#endif /* !defined(_WINSOCK2API_) */
 
 struct hostent *sal_gethostbyname(const char *name);
 
