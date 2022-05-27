@@ -40,6 +40,8 @@ else:
 
 if GetDepend('BSP_USING_RTC') == False:
     SrcRemove(src, 'drv_rtc.c')
+if GetDepend('BSP_USING_SOCKET') == False:
+    SrcRemove(src, 'drv_win_eth.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
     SrcRemove(src, 'sd_sim.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MTD_NAND') == False:
@@ -50,8 +52,6 @@ if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_WINSHAREDIR') =
     SrcRemove(src, 'dfs_win32.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MODULE') == False:
     SrcRemove(src, ['module_win32.c'])
-if GetDepend('SAL_USING_WINSOCK') == False:
-    SrcRemove(src, 'af_inet_winsock.c')
 if sys.platform[0:5]=="linux": #check whether under linux
     SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
 

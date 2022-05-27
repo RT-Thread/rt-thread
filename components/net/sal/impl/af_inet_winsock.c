@@ -8,6 +8,7 @@
  * 2022-05-26     xiangxistu   first version
  */
 
+/* Do NOT include sys/time.h in this file */
 #include <WinSock2.h>
 #include <rtthread.h>
 #include <sal_low_lvl.h>
