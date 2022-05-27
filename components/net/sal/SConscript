@@ -10,7 +10,9 @@ src += ['socket/net_netdb.c']
 CPPPATH = [cwd + '/include']
 CPPPATH += [cwd + '/include/socket']
 
-if GetDepend('SAL_USING_LWIP') or GetDepend('SAL_USING_AT'):
+if GetDepend('SAL_USING_LWIP') or \
+   GetDepend('SAL_USING_AT') or \
+   GetDepend('SAL_USING_WINSOCK'):
     CPPPATH += [cwd + '/impl']
 
 if GetDepend('SAL_USING_LWIP'):
@@ -18,6 +20,9 @@ if GetDepend('SAL_USING_LWIP'):
 
 if GetDepend('SAL_USING_AT'):
     src += ['impl/af_inet_at.c']
+
+if GetDepend('SAL_USING_WINSOCK'):
+    src += ['impl/af_inet_winsock.c']
 
 if GetDepend('SAL_USING_TLS'):
     src += ['impl/proto_mbedtls.c']

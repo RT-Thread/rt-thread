@@ -17,19 +17,20 @@
 extern "C" {
 #endif
 
-#ifdef SAL_USING_LWIP
-
 /* Set lwIP network interface device protocol family information  */
+#ifdef SAL_USING_LWIP
 int sal_lwip_netdev_set_pf_info(struct netdev *netdev);
-
 #endif /* SAL_USING_LWIP */
 
-#ifdef SAL_USING_AT
-
 /* Set AT network interface device protocol family information */
+#ifdef SAL_USING_AT
 int sal_at_netdev_set_pf_info(struct netdev *netdev);
-
 #endif /* SAL_USING_AT */
+
+/* Set lwIP network interface device protocol family information */
+#ifdef SAL_USING_WINSOCK
+int sal_win_netdev_set_pf_info(struct netdev* netdev)
+#endif /* SAL_USING_WINSOCK */
 
 #ifdef __cplusplus
 }
