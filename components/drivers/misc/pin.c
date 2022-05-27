@@ -198,6 +198,11 @@ static void pin_get(int argc, char *argv[])
         return;
     }
     pin = rt_pin_get(argv[2]);
+    if (pin < 0)
+    {
+        rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+        return ;
+    }
     rt_kprintf("%s : %d\n", argv[2], pin);
 }
 
@@ -219,6 +224,11 @@ static void pin_mode(int argc, char *argv[])
             return;
         }
         pin = rt_pin_get(argv[2]);
+        if (pin < 0)
+        {
+            rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+            return;
+        }
     }
     else
     {
@@ -271,6 +281,11 @@ static void pin_read(int argc, char *argv[])
             return;
         }
         pin = rt_pin_get(argv[2]);
+        if (pin < 0)
+        {
+            rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+            return;
+        }
     }
     else
     {
@@ -305,6 +320,11 @@ static void pin_write(int argc, char *argv[])
             return;
         }
         pin = rt_pin_get(argv[2]);
+        if (pin < 0)
+        {
+            rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+            return;
+        }
     }
     else
     {
