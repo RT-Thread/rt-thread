@@ -20,7 +20,7 @@ struct rt_adc_ops
     rt_err_t (*enabled)(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
     rt_err_t (*convert)(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
     rt_uint8_t (*get_resolution)(struct rt_adc_device *device);
-    rt_uint16_t (*get_vref) (const struct rt_adc_device *device);
+    rt_int16_t (*get_vref) (const struct rt_adc_device *device);
 };
 
 struct rt_adc_device
@@ -43,6 +43,6 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct r
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel);
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel);
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel);
-rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel);
+rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel);
 
 #endif /* __ADC_H__ */

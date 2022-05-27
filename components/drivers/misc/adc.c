@@ -169,10 +169,10 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
+rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
-    rt_uint32_t value = 0, voltage = 0;
-    rt_int16_t vref = 0;
+    rt_uint32_t value = 0;
+    rt_int16_t vref = 0, voltage = 0;
 
     RT_ASSERT(dev);
 
@@ -197,7 +197,8 @@ rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 
 static int adc(int argc, char **argv)
 {
-    int value = 0, voltage = 0;
+    int value = 0;
+    rt_int16_t voltage = 0;
     rt_err_t result = -RT_ERROR;
     static rt_adc_device_t adc_device = RT_NULL;
     char *result_str;
