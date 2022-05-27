@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -32,34 +33,6 @@
 
     #define USART6_TX_PORT                  (GPIO_PORT_E)
     #define USART6_TX_PIN                   (GPIO_PIN_06)
-#endif
-
-/*********************** PWM port *************************/
-#if defined(BSP_USING_PWM1)
-
-    #if defined(BSP_USING_PWM1_CH1)
-        #define PWM1_CH1_PORT                   (GPIO_PORT_A)
-        #define PWM1_CH1_PIN                    (GPIO_PIN_08)
-        #define PWM1_CH1_FUNC                   (GPIO_FUNC_4)
-    #endif
-
-    #if defined(BSP_USING_PWM1_CH2)
-        #define PWM1_CH2_PORT                   (GPIO_PORT_A)
-        #define PWM1_CH2_PIN                    (GPIO_PIN_09)
-        #define PWM1_CH2_FUNC                   (GPIO_FUNC_4)
-    #endif
-
-#endif
-
-/****************** Pulse encoder port ********************/
-#if defined(BSP_USING_PULSE_ENCODER9)
-    #define PULSE_ENCODER9_CLKA_PORT        (GPIO_PORT_G)
-    #define PULSE_ENCODER9_CLKA_PIN         (GPIO_PIN_04)
-    #define PULSE_ENCODER9_CLKA_FUNC        (GPIO_FUNC_4)
-
-    #define PULSE_ENCODER9_CLKB_PORT        (GPIO_PORT_G)
-    #define PULSE_ENCODER9_CLKB_PIN         (GPIO_PIN_05)
-    #define PULSE_ENCODER9_CLKB_FUNC        (GPIO_FUNC_4)
 #endif
 
 /***********  ADC configure *********/
