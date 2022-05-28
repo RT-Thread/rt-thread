@@ -166,7 +166,7 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
     rt_uint32_t value = 0;
     rt_int16_t vref = 0, voltage = 0;
-    rt_uint8_t resolution;
+    rt_uint8_t resolution = 0;
 
     RT_ASSERT(dev);
 
