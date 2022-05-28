@@ -171,10 +171,16 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
     RT_ASSERT(dev);
 
     /*get the convert bits*/
-    _adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution);
+    if(_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution) != RT_EOK)
+    {
+        goto _voltage_exit;
+    }
 
     /*get the reference voltage*/
-    _adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref);
+   if( _adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK)
+   {
+       goto _voltage_exit;
+   }
 
     /*read the value and convert to voltage*/
     if(resolution != RT_NULL && vref != RT_NULL)
@@ -183,6 +189,7 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
         voltage = value * vref / (1 << resolution);
     }
 
+_voltage_exit:
     return voltage;
 }
 #ifdef RT_USING_FINSH
