@@ -170,16 +170,16 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 
     RT_ASSERT(dev);
 
-    /*get the convert bits*/
-    if(_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution) != RT_EOK)
+    /*get the resolution in bits*/
+    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution) != RT_EOK)
     {
         goto _voltage_exit;
     }
 
     /*get the reference voltage*/
-    if( _adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK)
+    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK)
     {
-       goto _voltage_exit;
+        goto _voltage_exit;
     }
 
     /*read the value and convert to voltage*/
