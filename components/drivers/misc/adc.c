@@ -192,6 +192,7 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 _voltage_exit:
     return voltage;
 }
+
 #ifdef RT_USING_FINSH
 
 static int adc(int argc, char **argv)
