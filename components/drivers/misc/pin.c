@@ -160,8 +160,11 @@ int rt_pin_read(rt_base_t pin)
 rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
-    RT_ASSERT(name[0] == 'P');
 
+    if (name[0] != 'P' && name[0] != 'p')
+    {
+        return -RT_EINVAL;
+    }
     if (_hw_pin.ops->pin_get == RT_NULL)
     {
         return -RT_ENOSYS;
@@ -173,17 +176,15 @@ rt_base_t rt_pin_get(const char *name)
 
 static void print_usage(void)
 {
-    rt_kprintf("\npin operate command\n");
-    rt_kprintf("Usage : pin [option] [pin_num] ...\n");
-    rt_kprintf("option : \n");
-    rt_kprintf("\tnum\t: get pin number from hardware pin, \n\t\t e.g. MSH >pin num PA16\n");
-    rt_kprintf("\tmode\t: set pin mode to output/input/input_pullup/input_pulldown/output_od, \n\t\t e.g. MSH >pin mode PA16 output\n");
-    rt_kprintf("\tread\t: read pin level of hardware pin, \n\t\t e.g. MSH >pin read PA16\n");
-    rt_kprintf("\twrite\t: write pin level(high/low or on/off) to hardware pin, \n\t\t e.g. MSH >pin write PA16 high\n");
-    rt_kprintf("\thelp\t: this help list\n");
+    rt_kprintf("pin [option]\n");
+    rt_kprintf("  num: get pin number from hardware pin\n    e.g. MSH >pin num PA16\n");
+    rt_kprintf("  mode: set pin mode to output/input/input_pullup/input_pulldown/output_od\n    e.g. MSH >pin mode PA16 output\n");
+    rt_kprintf("  read: read pin level of hardware pin\n    e.g. MSH >pin read PA16\n");
+    rt_kprintf("  write: write pin level(high/low or on/off) to hardware pin\n    e.g. MSH >pin write PA16 high\n");
+    rt_kprintf("  help: this help list\n");
 }
 
-/*e.g. MSH >pin num PA16*/
+/* e.g. MSH >pin num PA16 */
 static void pin_get(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -192,21 +193,17 @@ static void pin_get(int argc, char *argv[])
         print_usage();
         return;
     }
-    if ('P' != argv[2][0])
-    {
-        print_usage();
-        return;
-    }
     pin = rt_pin_get(argv[2]);
     if (pin < 0)
     {
         rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+        print_usage();
         return ;
     }
     rt_kprintf("%s : %d\n", argv[2], pin);
 }
 
-/*e.g. MSH >pin mode PA16 output*/
+/* e.g. MSH >pin mode PA16 output */
 static void pin_mode(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -218,15 +215,11 @@ static void pin_mode(int argc, char *argv[])
     }
     if (!msh_isint(argv[2]))
     {
-        if ('P' != argv[2][0])
-        {
-            print_usage();
-            return;
-        }
         pin = rt_pin_get(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+            print_usage();
             return;
         }
     }
@@ -263,7 +256,7 @@ static void pin_mode(int argc, char *argv[])
     rt_pin_mode(pin, mode);
 }
 
-/*e.g. MSH >pin read PA16*/
+/* e.g. MSH >pin read PA16 */
 static void pin_read(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -275,15 +268,11 @@ static void pin_read(int argc, char *argv[])
     }
     if (!msh_isint(argv[2]))
     {
-        if ('P' != argv[2][0])
-        {
-            print_usage();
-            return;
-        }
         pin = rt_pin_get(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+            print_usage();
             return;
         }
     }
@@ -302,7 +291,7 @@ static void pin_read(int argc, char *argv[])
     }
 }
 
-/*e.g. MSH >pin write PA16 high*/
+/* e.g. MSH >pin write PA16 high */
 static void pin_write(int argc, char *argv[])
 {
     rt_base_t pin;
@@ -314,15 +303,11 @@ static void pin_write(int argc, char *argv[])
     }
     if (!msh_isint(argv[2]))
     {
-        if ('P' != argv[2][0])
-        {
-            print_usage();
-            return;
-        }
         pin = rt_pin_get(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
+            print_usage();
             return;
         }
     }
