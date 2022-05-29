@@ -15,6 +15,7 @@
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #include <msh_parse.h>
+#include <string.h>
 #endif
 
 static struct rt_device_pin _hw_pin;
@@ -174,6 +175,24 @@ rt_base_t rt_pin_get(const char *name)
 
 #ifdef FINSH_USING_MSH
 
+static rt_base_t rt_pin_conv(const char *name)
+{
+    int size = 0;
+    char format_name[6] = { 0 };
+    format_name[0] = toupper(name[0]);
+    format_name[1] = toupper(name[1]);
+
+    size = rt_strlen(name);
+    size = (size > 5) ? 5 : size;
+    size -= 2;
+    if (name[2] != '.')
+    {
+        format_name[2] = '.';
+    }
+    strncat(format_name, name + 2, size);
+    return rt_pin_get(format_name);
+}
+
 static void print_usage(void)
 {
     rt_kprintf("pin [option]\n");
@@ -193,7 +212,7 @@ static void pin_get(int argc, char *argv[])
         print_usage();
         return;
     }
-    pin = rt_pin_get(argv[2]);
+    pin = rt_pin_conv(argv[2]);
     if (pin < 0)
     {
         rt_kprintf("Parameter invalid : %s!\n", argv[2]);
@@ -215,7 +234,7 @@ static void pin_mode(int argc, char *argv[])
     }
     if (!msh_isint(argv[2]))
     {
-        pin = rt_pin_get(argv[2]);
+        pin = rt_pin_conv(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
@@ -268,7 +287,7 @@ static void pin_read(int argc, char *argv[])
     }
     if (!msh_isint(argv[2]))
     {
-        pin = rt_pin_get(argv[2]);
+        pin = rt_pin_conv(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
@@ -303,7 +322,7 @@ static void pin_write(int argc, char *argv[])
     }
     if (!msh_isint(argv[2]))
     {
-        pin = rt_pin_get(argv[2]);
+        pin = rt_pin_conv(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);

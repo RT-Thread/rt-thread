@@ -13,6 +13,7 @@
 
 #include <rtthread.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 rt_bool_t msh_isint(char *strvalue);
 #define msh_strtoint    atoi
