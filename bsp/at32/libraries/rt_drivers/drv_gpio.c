@@ -104,33 +104,38 @@ static uint32_t pin_irq_enable_mask = 0;
 
 static rt_base_t at32_pin_get(const char *name)
 {
-    rt_base_t pin = -1;
-    rt_base_t port, index;
-    int32_t cnt = 0;
-    if (((name[1] >= 'A') && (name[1] <= 'Z')) || ((name[1] >= 'a') && (name[1] <= 'z')))
+    rt_base_t pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len;
+
+    name_len = rt_strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
     {
-        if (name[1] >= 'A')
-        {
-            port = name[1] - 'A';
-        }
-        else
-        {
-            port = name[1] - 'a';
-        }
-        cnt++;
+        return -RT_EINVAL;
     }
-    if (((name[2] >= '0') && (name[2] <= '9')) && ((name[3] >= '0') && (name[3] <= '9')))
+    if ((name[0] != 'P') || (name[2] != '.'))
     {
-        index = name[2] - '0';
-        index *= 10;
-        index += name[3] - '0';
-        cnt++;
+        return -RT_EINVAL;
     }
-    if (cnt < 2)
+
+    if ((name[1] >= 'A') && (name[1] <= 'Z'))
     {
-        return pin;
+        hw_port_num = (int)(name[1] - 'A');
     }
-    pin = PIN_NUM(port, index);
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = 3; i < name_len; i++)
+    {
+        hw_pin_num *= 10;
+        hw_pin_num += name[i] - '0';
+    }
+
+    pin = PIN_NUM(hw_port_num, hw_pin_num);
+
     return pin;
 }
 
