@@ -11,12 +11,9 @@
 #ifndef MSH_PARSE_H
 #define MSH_PARSE_H
 
-#include <rtthread.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <rtdef.h>
 
 rt_bool_t msh_isint(char *strvalue);
-#define msh_strtoint    atoi
 rt_bool_t msh_ishex(char *strvalue);
 int msh_strtohex(char *strvalue);
 

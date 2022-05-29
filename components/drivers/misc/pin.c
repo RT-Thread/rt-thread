@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,12 +11,6 @@
  */
 
 #include <drivers/pin.h>
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#include <msh_parse.h>
-#include <string.h>
-#endif
 
 static struct rt_device_pin _hw_pin;
 static rt_size_t _pin_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
@@ -173,9 +167,18 @@ rt_base_t rt_pin_get(const char *name)
     return _hw_pin.ops->pin_get(name);
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <finsh.h>
+#include <msh_parse.h>
 
-static rt_base_t rt_pin_conv(const char *name)
+/*
+ * convert function for port name
+ * support PE02, PE2, PE.02, PE.2, pe02, pe2, pe.02, pe.2
+ */
+static rt_base_t _pin_cmd_conv(const char *name)
 {
     int size = 0;
     char format_name[6] = { 0 };
@@ -193,58 +196,60 @@ static rt_base_t rt_pin_conv(const char *name)
     return rt_pin_get(format_name);
 }
 
-static void print_usage(void)
+static void _pin_cmd_print_usage(void)
 {
     rt_kprintf("pin [option]\n");
-    rt_kprintf("  num: get pin number from hardware pin\n    e.g. MSH >pin num PA16\n");
-    rt_kprintf("  mode: set pin mode to output/input/input_pullup/input_pulldown/output_od\n    e.g. MSH >pin mode PA16 output\n");
-    rt_kprintf("  read: read pin level of hardware pin\n    e.g. MSH >pin read PA16\n");
-    rt_kprintf("  write: write pin level(high/low or on/off) to hardware pin\n    e.g. MSH >pin write PA16 high\n");
+    rt_kprintf("  num: get pin number from hardware pin\n");
+    rt_kprintf("    num can be PE02, PE2, PE.02, PE.2, pe02, pe2, pe.02, pe.2\n");
+    rt_kprintf("    e.g. MSH >pin num PA.16\n");
+    rt_kprintf("  mode: set pin mode to output/input/input_pullup/input_pulldown/output_od\n    e.g. MSH >pin mode PA.16 output\n");
+    rt_kprintf("  read: read pin level of hardware pin\n    e.g. MSH >pin read PA.16\n");
+    rt_kprintf("  write: write pin level(high/low or on/off) to hardware pin\n    e.g. MSH >pin write PA.16 high\n");
     rt_kprintf("  help: this help list\n");
 }
 
-/* e.g. MSH >pin num PA16 */
-static void pin_get(int argc, char *argv[])
+/* e.g. MSH >pin num PA.16 */
+static void _pin_cmd_get(int argc, char *argv[])
 {
     rt_base_t pin;
     if (argc < 3)
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
-    pin = rt_pin_conv(argv[2]);
+    pin = _pin_cmd_conv(argv[2]);
     if (pin < 0)
     {
         rt_kprintf("Parameter invalid : %s!\n", argv[2]);
-        print_usage();
+        _pin_cmd_print_usage();
         return ;
     }
     rt_kprintf("%s : %d\n", argv[2], pin);
 }
 
-/* e.g. MSH >pin mode PA16 output */
-static void pin_mode(int argc, char *argv[])
+/* e.g. MSH >pin mode PA.16 output */
+static void _pin_cmd_mode(int argc, char *argv[])
 {
     rt_base_t pin;
     rt_base_t mode;
     if (argc < 4)
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
     if (!msh_isint(argv[2]))
     {
-        pin = rt_pin_conv(argv[2]);
+        pin = _pin_cmd_conv(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
-            print_usage();
+            _pin_cmd_print_usage();
             return;
         }
     }
     else
     {
-        pin = msh_strtoint(argv[2]);
+        pin = atoi(argv[2]);
     }
     if (0 == rt_strcmp("output", argv[3]))
     {
@@ -268,36 +273,36 @@ static void pin_mode(int argc, char *argv[])
     }
     else
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
 
     rt_pin_mode(pin, mode);
 }
 
-/* e.g. MSH >pin read PA16 */
-static void pin_read(int argc, char *argv[])
+/* e.g. MSH >pin read PA.16 */
+static void _pin_cmd_read(int argc, char *argv[])
 {
     rt_base_t pin;
     rt_base_t value;
     if (argc < 3)
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
     if (!msh_isint(argv[2]))
     {
-        pin = rt_pin_conv(argv[2]);
+        pin = _pin_cmd_conv(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
-            print_usage();
+            _pin_cmd_print_usage();
             return;
         }
     }
     else
     {
-        pin = msh_strtoint(argv[2]);
+        pin = atoi(argv[2]);
     }
     value = rt_pin_read(pin);
     if (value == PIN_HIGH)
@@ -310,29 +315,29 @@ static void pin_read(int argc, char *argv[])
     }
 }
 
-/* e.g. MSH >pin write PA16 high */
-static void pin_write(int argc, char *argv[])
+/* e.g. MSH >pin write PA.16 high */
+static void _pin_cmd_write(int argc, char *argv[])
 {
     rt_base_t pin;
     rt_base_t value;
     if (argc < 4)
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
     if (!msh_isint(argv[2]))
     {
-        pin = rt_pin_conv(argv[2]);
+        pin = _pin_cmd_conv(argv[2]);
         if (pin < 0)
         {
             rt_kprintf("Parameter invalid : %s!\n", argv[2]);
-            print_usage();
+            _pin_cmd_print_usage();
             return;
         }
     }
     else
     {
-        pin = msh_strtoint(argv[2]);
+        pin = atoi(argv[2]);
     }
     if ((0 == rt_strcmp("high", argv[3])) || (0 == rt_strcmp("on", argv[3])))
     {
@@ -344,40 +349,40 @@ static void pin_write(int argc, char *argv[])
     }
     else
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
     rt_pin_write(pin, value);
 }
 
-static void pin_cmd(int argc, char *argv[])
+static void _pin_cmd(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return ;
     }
     if (0 == rt_strcmp("num", argv[1]))
     {
-        pin_get(argc, argv);
+        _pin_cmd_get(argc, argv);
     }
     else if (0 == rt_strcmp("mode", argv[1]))
     {
-        pin_mode(argc, argv);
+        _pin_cmd_mode(argc, argv);
     }
     else if (0 == rt_strcmp("read", argv[1]))
     {
-        pin_read(argc, argv);
+        _pin_cmd_read(argc, argv);
     }
     else if (0 == rt_strcmp("write", argv[1]))
     {
-        pin_write(argc, argv);
+        _pin_cmd_write(argc, argv);
     }
     else
     {
-        print_usage();
+        _pin_cmd_print_usage();
         return;
     }
 }
-MSH_CMD_EXPORT_ALIAS(pin_cmd, pin, pin operate command);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(_pin_cmd, pin, pin [option]);
+#endif /* RT_USING_FINSH */
