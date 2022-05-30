@@ -43,7 +43,7 @@ if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/GCC/startup_ARMCM3.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 	src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/startup_tae32f53xx.c']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/IAR/startup_ARMCM3.s']
 
 #add headfile script 

@@ -37,7 +37,7 @@ if rtconfig.PLATFORM in ['gcc']:
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/samc21/armcc/arm_addon/armcc/' + 'system_samc21.c']
     src += [cwd + '/samc21/armcc/arm_addon/armcc/arm/' + 'startup_samc21.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/samc21/iar/' + 'system_samc21.c']
     src += [cwd + '/samc21/iar/iar/' + 'startup_samc21.c']
 
