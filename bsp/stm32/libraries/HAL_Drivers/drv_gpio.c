@@ -161,6 +161,7 @@ static uint32_t pin_irq_enable_mask = 0;
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
+/* e.g. PE.7 */
 static rt_base_t stm32_pin_get(const char *name)
 {
     rt_base_t pin = 0;
