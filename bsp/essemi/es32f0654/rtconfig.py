@@ -22,7 +22,7 @@ elif CROSS_TOOL == 'keil':
     EXEC_PATH   = r'C:/Keil'
 
 elif CROSS_TOOL == 'iar': # not support iar yet
-    PLATFORM    = 'iar'
+    PLATFORM    = 'iccarm'
     EXEC_PATH   = r'C:/IAR'
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -87,7 +87,7 @@ elif PLATFORM == 'armcc':
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     AS = 'iasmarm'

@@ -228,7 +228,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
-    elif rtconfig.PLATFORM == 'iar':
+    elif rtconfig.PLATFORM == 'iccarm':
         env['LIBPREFIX'] = ''
         env['LIBSUFFIX'] = '.a'
         env['LIBLINKPREFIX'] = ''
