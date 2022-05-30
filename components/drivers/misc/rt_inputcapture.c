@@ -30,6 +30,38 @@ static rt_err_t rt_inputcapture_init(struct rt_device *dev)
     return ret;
 }
 
+rt_err_t rt_inputcapture_enable(struct rt_inputcapture_device *device, inputcapture_ch_t channel)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_inputcapture_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = channel;
+    result = rt_device_control(&device->parent, INPUTCAPTURE_CMD_ENABLE, &configuration);
+
+    return result;
+}
+
+rt_err_t rt_inputcapture_disable(struct rt_inputcapture_device *device, inputcapture_ch_t channel)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_inputcapture_configuration    configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = channel;
+    result = rt_device_control(&device->parent, INPUTCAPTURE_CMD_DISABLE, &configuration);
+
+    return result;
+}
+
 static rt_err_t rt_inputcapture_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     rt_err_t ret;
@@ -116,7 +148,10 @@ static rt_err_t rt_inputcapture_control(struct rt_device *dev, int cmd, void *ar
         inputcapture->watermark = *(rt_size_t *)args;
         break;
     default:
-        result = -RT_ENOSYS;
+        if (inputcapture->ops->control)
+        {
+            result = inputcapture->ops->control(inputcapture, cmd, args);
+        }
         break;
     }
 
@@ -135,12 +170,14 @@ const static struct rt_device_ops inputcapture_ops =
 };
 #endif
 
-rt_err_t rt_device_inputcapture_register(struct rt_inputcapture_device *inputcapture, const char *name, void *user_data)
+rt_err_t rt_device_inputcapture_register(struct rt_inputcapture_device *inputcapture, 
+                                        const char *name, 
+                                        const struct rt_inputcapture_ops *ops, 
+                                        void *user_data)
 {
     struct rt_device *device;
 
     RT_ASSERT(inputcapture != RT_NULL);
-    RT_ASSERT(inputcapture->ops != RT_NULL);
     RT_ASSERT(inputcapture->ops->get_pulsewidth != RT_NULL);
 
     device = &(inputcapture->parent);
@@ -149,6 +186,7 @@ rt_err_t rt_device_inputcapture_register(struct rt_inputcapture_device *inputcap
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
     inputcapture->ringbuff = RT_NULL;
+    inputcapture->ops   = ops;
 
 #ifdef RT_USING_DEVICE_OPS
     device->ops         = &inputcapture_ops;
@@ -167,21 +205,20 @@ rt_err_t rt_device_inputcapture_register(struct rt_inputcapture_device *inputcap
 
 /**
  * This function is ISR for inputcapture interrupt.
- * level: RT_TRUE denotes high level pulse, and RT_FALSE denotes low level pulse.
+ * data: inputcapture pulsewidth data
  */
-void rt_hw_inputcapture_isr(struct rt_inputcapture_device *inputcapture, rt_bool_t level)
+void rt_hw_inputcapture_isr(struct rt_inputcapture_device *inputcapture, struct rt_inputcapture_data *data)
 {
-    struct rt_inputcapture_data data;
     rt_size_t receive_size;
-    if (inputcapture->ops->get_pulsewidth(inputcapture, &data.pulsewidth_us) != RT_EOK)
+
+    if (NULL == data)
     {
         return;
     }
 
-    data.is_high = level;
-    if (rt_ringbuffer_put(inputcapture->ringbuff, (rt_uint8_t *)&data, sizeof(struct rt_inputcapture_data)) == 0)
+    if (rt_ringbuffer_put(inputcapture->ringbuff, (rt_uint8_t *)data, sizeof(struct rt_inputcapture_data)) == 0)
     {
-        LOG_W("inputcapture ringbuffer doesn't have enough space.");
+        //LOG_D("inputcapture ringbuffer doesn't have enough space.");
     }
 
     receive_size =  rt_ringbuffer_data_len(inputcapture->ringbuff) / sizeof(struct rt_inputcapture_data);
@@ -190,6 +227,8 @@ void rt_hw_inputcapture_isr(struct rt_inputcapture_device *inputcapture, rt_bool
     {
         /* indicate to upper layer application */
         if (inputcapture->parent.rx_indicate != RT_NULL)
+        {
             inputcapture->parent.rx_indicate(&inputcapture->parent, receive_size);
+        }
     }
 }
