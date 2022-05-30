@@ -24,7 +24,7 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/HAL_Driver/Startup/gcc/startup_gcc.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/HAL_Driver/Startup/arm/startup_gcc.s']

@@ -17,7 +17,7 @@ path += [cwd + '/inc']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/AT32F435_437_Firmware_Library/cmsis/cm4/device_support/startup/gcc/startup_at32f435_437.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/AT32F435_437_Firmware_Library/cmsis/cm4/device_support/startup/mdk/startup_at32f435_437.s']

@@ -11,7 +11,7 @@ CME_M7/system_cmem7.c
 """)
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['CME_M7/startup/gcc/startup_CME_M7.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['CME_M7/startup/arm/startup_cmem7.s']

@@ -7,7 +7,7 @@ CPPPATH = [cwd]
 
 if rtconfig.PLATFORM == 'iar':
         src += Glob('*_iar.S')
-elif rtconfig.PLATFORM == 'gcc':
+elif rtconfig.PLATFORM in ['gcc']:
         src += Glob('*_gcc.S')
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
         src += Glob('*_rvds.S')

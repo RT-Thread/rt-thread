@@ -9,7 +9,7 @@ CPPPATH = [cwd]
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
 	src = Glob('*.c') + Glob('*_rvds.S')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
 	src = Glob('*.c') + Glob('*_gcc.S') + Glob('*_init.S')
 
 if rtconfig.PLATFORM == 'iar':

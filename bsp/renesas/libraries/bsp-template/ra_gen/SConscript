@@ -10,7 +10,7 @@ CPPPATH = []
 if rtconfig.PLATFORM == 'iar':
     print("\nThe current project does not support iar build\n")
     Return('group')
-elif rtconfig.PLATFORM == 'gcc':
+elif rtconfig.PLATFORM in ['gcc']:
     src = Glob('*.c')
     CPPPATH = [cwd, ]
 elif rtconfig.PLATFORM == 'armclang':

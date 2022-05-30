@@ -13,7 +13,7 @@ if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += Glob('*_rvds.S')
     ASFLAGS = ' --cpreproc'
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
 

@@ -29,7 +29,7 @@ src += [cwd + '/driver_init.c']
 src += [cwd + '/ethernet_phy_main.c']
 
 #add for startup script
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/same70b/gcc/system_same70q21b.c']
     src += [cwd + '/same70b/gcc/gcc/startup_same70q21b.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
