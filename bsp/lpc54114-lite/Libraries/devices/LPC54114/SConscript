@@ -18,7 +18,7 @@ if rtconfig.PLATFORM in ['gcc']:
     CPPDEFINES += ['__USE_CMSIS']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     objs = objs + SConscript(os.path.join('arm', 'SConscript'))
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     objs = objs + SConscript(os.path.join('iar', 'SConscript'))
 
 src = Split("""

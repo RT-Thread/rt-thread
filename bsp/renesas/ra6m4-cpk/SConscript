@@ -9,7 +9,7 @@ src = []
 CPPPATH = []
 list = os.listdir(cwd)
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
     print("\nThe current project does not support iar build\n")
     Return('group')
 elif rtconfig.PLATFORM in ['gcc']:
