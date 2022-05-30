@@ -20,7 +20,7 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armclang'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
+    PLATFORM    = 'iccarm'
     EXEC_PATH   = r'C:/Program Files/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
