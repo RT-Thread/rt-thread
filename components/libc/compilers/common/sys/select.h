@@ -16,10 +16,6 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-#ifdef _WIN32
-#include <winsock.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,7 +33,6 @@ extern "C" {
 
 typedef long    fd_mask;
 
-#ifndef _WIN32
 #ifndef _SYS_TYPES_FD_SET /* Newlib 2.2.0 or lower version */
 #define   NBBY    8       /* number of bits in a byte */
 #define   NFDBITS (sizeof (fd_mask) * NBBY)   /* bits per mask */
@@ -57,7 +52,6 @@ typedef struct _types_fd_set {
 #endif /* _SYS_TYPES_FD_SET */
 
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
-#endif /* _WIN32 */
 
 #ifdef __cplusplus
 }

@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-10-18     Meco Man     The first version
- * 2021-12-24     	Rb         Refresh using dma2d
+ * 2021-12-24     Rb           Refresh using dma2d
  */
 #include <lvgl.h>
 #include <lcd_port.h>

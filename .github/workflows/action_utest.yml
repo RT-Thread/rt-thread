@@ -36,7 +36,7 @@ jobs:
          - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin"}
          - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin"}
          - {UTEST: "components/cpp11", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "cpp11/cpp11.conf",    SD_FILE: "sd.bin"}
-         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-riscv-virt64", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None"}
+         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None"}
     env:
       TEST_QEMU_ARCH: ${{ matrix.legs.QEMU_ARCH }}
       TEST_QEMU_MACHINE: ${{ matrix.legs.QEMU_MACHINE }}

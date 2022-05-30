@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -85,8 +85,7 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 {
     rt_thread_inited_hook = hook;
 }
-
-#endif /* RT_USING_HOOK */
+#endif /* defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR) */
 
 static void _thread_exit(void)
 {
@@ -195,7 +194,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_EVENT
     thread->event_set = 0;
     thread->event_info = 0;
-#endif
+#endif /* RT_USING_EVENT */
 
 #if RT_THREAD_PRIORITY_MAX > 32
     thread->number = 0;
@@ -251,12 +250,11 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
 #ifdef RT_USING_CPU_USAGE
     thread->duration_tick = 0;
-#endif
-
+#endif /* RT_USING_CPU_USAGE */
 
 #ifdef RT_USING_MODULE
     thread->module_id = 0;
-#endif
+#endif /* RT_USING_MODULE */
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
@@ -327,7 +325,7 @@ RTM_EXPORT(rt_thread_init);
 rt_thread_t rt_thread_self(void)
 {
 #ifdef RT_USING_SMP
-    register rt_base_t lock;
+    rt_base_t lock;
     rt_thread_t self;
 
     lock = rt_hw_local_irq_disable();
@@ -473,13 +471,13 @@ rt_thread_t rt_thread_create(const char *name,
     }
 
     _thread_init(thread,
-                    name,
-                    entry,
-                    parameter,
-                    stack_start,
-                    stack_size,
-                    priority,
-                    tick);
+                 name,
+                 entry,
+                 parameter,
+                 stack_start,
+                 stack_size,
+                 priority,
+                 tick);
 
     return thread;
 }
@@ -824,10 +822,11 @@ RTM_EXPORT(rt_thread_control);
  * @brief   This function will suspend the specified thread and change it to suspend state.
  *
  * @note    This function ONLY can suspend current thread itself.
- *          Do not use the rt_thread_suspend and rt_thread_resume functions to synchronize the activities of threads.
- *          You have no way of knowing what code a thread is executing when you suspend it.
- *          If you suspend a thread while it is executing a critical area which is protected by a mutex,
- *          other threads attempt to use that mutex and have to wait. Deadlocks can occur very easily.
+ *              rt_thread_suspend(rt_thread_self());
+ *
+ *          Do not use the rt_thread_suspend to suspend other threads. You have no way of knowing what code a
+ *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with
+ *          other threads and occupying this resouce, starvation can occur very easily.
  *
  * @param   thread is the thread to be suspended.
  *
@@ -836,7 +835,7 @@ RTM_EXPORT(rt_thread_control);
  */
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
-    register rt_base_t stat;
+    rt_base_t stat;
     rt_base_t level;
 
     /* parameter check */
@@ -873,8 +872,6 @@ RTM_EXPORT(rt_thread_suspend);
 
 /**
  * @brief   This function will resume a thread and put it to system ready queue.
- *
- * @note    Do not use the rt_thread_suspend and rt_thread_resume functions to synchronize the activities of threads.
  *
  * @param   thread is the thread to be resumed.
  *

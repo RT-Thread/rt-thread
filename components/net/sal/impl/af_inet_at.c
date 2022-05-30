@@ -11,7 +11,7 @@
 #include <rtthread.h>
 
 #include <netdb.h>
-#include <sal.h>
+#include <sal_low_lvl.h>
 
 #include <at_socket.h>
 #include <af_inet.h>

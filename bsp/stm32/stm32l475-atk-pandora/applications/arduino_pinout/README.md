@@ -2,7 +2,7 @@
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
-STM32L475潘多拉已经完整适配了[RTduino软件包](https://github.com/mysterywolf/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/mysterywolf/RTduino)。
+STM32L475潘多拉已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
 
 ### 1.1 如何开启针对本BSP的Arduino生态兼容层
 
@@ -20,41 +20,41 @@ Hardware Drivers Config --->
 
 ### 2.1 Arduino引脚排布统览
 
-| Arduino引脚编号       | STM32引脚编号 | 备注                                                         |
-| --------------------- | ------------- | ------------------------------------------------------------ |
-| 0 (D0)                | --            | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                  |
-| 1 (D1)                | --            | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                  |
-| 2 (D2)                | PB9           | 普通IO                                                       |
-| 3 (D3)                | PD15          | PWM（定时器4发生）                                           |
-| 4 (D4)                | PA8           | 普通IO                                                       |
-| 5 (D5)                | PD14          | 普通IO                                                       |
-| 6 (D6)                | PB11          | PWM（定时器2发生）                                           |
-| 7 (D7)                | PB14          | 普通IO                                                       |
-| 8 (D8)                | PB12          | 普通IO                                                       |
-| 9 (D9)                | PD12          | PWM（定时器4发生）                                           |
-| 10 (D10)              | PB10          | PWM（定时器2发生）                                           |
-| 11 (D11)              | PB8           | PWM（定时器4发生）                                           |
-| 12 (D12)              | PB15          | 普通IO                                                       |
-| 13 (D13)              | PB13          | 普通IO                                                       |
-| 14 (D14)              | PA1           | 振动电机-A                                                   |
-| 15 (D15)              | PA0           | 振动电机-B                                                   |
-| 16 (D16)              | PB2           | 蜂鸣器                                                       |
-| 17 (D17)              | PD10          | KEY0                                                         |
-| 18 (D18)              | PD9           | KEY1                                                         |
-| 19 (D19)              | PD8           | KEY2                                                         |
-| 20 (D20)              | PC13          | KEY-WKUP                                                     |
-| 21 (D21)              | PE7           | 红色LED                                                      |
-| 22 (D22, LED_BUILTIN) | PE8           | 绿色LED，Arduino默认LED                                      |
-| 23 (D23)              | PE9           | 蓝色LED，具有PWM功能（定时器1发生）                          |
-| 24 (D24)              | PB0           | 红外发送                                                     |
-| 25 (D25)              | PB1           | 红外接收                                                     |
-| A0                    | PC2           | ADC                                                          |
-| A1                    | PC4           | ADC                                                          |
-| A2                    | --            | 芯片内部参考电压 ADC                                         |
-| A3                    | --            | 芯片内部温度 ADC                                             |
-| DAC0                  | PA4           | 真模拟输出 DAC                                               |
-| --                    | PC7           | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
-| --                    | PC6           | I2C1-SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
+| Arduino引脚编号       | STM32引脚编号 | 5V容忍   | 备注                                                         |
+| --------------------- | ------------- | -------- | ------------------------------------------------------------ |
+| 0 (D0)                | --            |          | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                  |
+| 1 (D1)                | --            |          | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                  |
+| 2 (D2)                | PB9           | 是       | 普通IO                                                       |
+| 3 (D3)                | PD15          | 是       | PWM（定时器4发生）                                           |
+| 4 (D4)                | PA8           | 是       | 普通IO                                                       |
+| 5 (D5)                | PD14          | 是       | 普通IO                                                       |
+| 6 (D6)                | PB11          | 是       | PWM（定时器2发生）                                           |
+| 7 (D7)                | PB14          | 是       | 普通IO                                                       |
+| 8 (D8)                | PB12          | 是       | 普通IO                                                       |
+| 9 (D9)                | PD12          | 是       | PWM（定时器4发生）                                           |
+| 10 (D10)              | PB10          | 是       | PWM（定时器2发生）                                           |
+| 11 (D11)              | PB8           | 是       | PWM（定时器4发生）                                           |
+| 12 (D12)              | PB15          | 是       | 普通IO                                                       |
+| 13 (D13)              | PB13          | 是       | 普通IO                                                       |
+| 14 (D14)              | PA1           | 是       | 振动电机-A                                                   |
+| 15 (D15)              | PA0           | 是       | 振动电机-B                                                   |
+| 16 (D16)              | PB2           | 是       | 蜂鸣器                                                       |
+| 17 (D17)              | PD10          | 是       | KEY0                                                         |
+| 18 (D18)              | PD9           | 是       | KEY1                                                         |
+| 19 (D19)              | PD8           | 是       | KEY2                                                         |
+| 20 (D20)              | PC13          | 是       | KEY-WKUP                                                     |
+| 21 (D21)              | PE7           | 是       | 红色LED                                                      |
+| 22 (D22, LED_BUILTIN) | PE8           | 是       | 绿色LED，Arduino默认LED                                      |
+| 23 (D23)              | PE9           | 是       | 蓝色LED，具有PWM功能（定时器1发生）                          |
+| 24 (D24)              | PB0           | 3.6V容忍 | 红外发送                                                     |
+| 25 (D25)              | PB1           | 是       | 红外接收                                                     |
+| A0                    | PC2           | 是       | ADC                                                          |
+| A1                    | PC4           | 是       | ADC                                                          |
+| A2                    | --            |          | 芯片内部参考电压 ADC                                         |
+| A3                    | --            |          | 芯片内部温度 ADC                                             |
+| DAC0                  | PA4           | 3.6V容忍 | 真模拟输出 DAC                                               |
+| --                    | PC7           | 是       | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
+| --                    | PC6           | 是       | I2C1-SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 
 > 注意：
 >
@@ -94,7 +94,7 @@ Hardware Drivers Config --->
 
 ## 3 I2C总线
 
-潘多拉Arduino支持三条I2C总线，分别是：i2c1、i2c3 和 i2c4。你可以通过`pins_arduino.h`文件中的 `ARDUINO_DEFAULT_IIC_BUS_NAME` 宏来设定Arduino的I2C总线，**默认为 i2c4 总线**。其中：
+潘多拉Arduino支持三条I2C总线，分别是：i2c1、i2c3 和 i2c4。你可以通过`pins_arduino.h`文件中的 `RTDUINO_DEFAULT_IIC_BUS_NAME` 宏来设定Arduino的I2C总线，**默认为 i2c4 总线**。其中：
 
 - i2c1 为用户总线，PC7 为 SDA，PC6 为 SCL。用户可以通过杜邦线连接其他 I2C 传感器/芯片。
 - i2c3 为板载 I2C 外设总线，连接板载 ICM20608（陀螺仪和加速度传感器） 和 AP3216C（距离和光亮度传感器） 芯片
@@ -102,9 +102,13 @@ Hardware Drivers Config --->
 
 I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
 
-## 4 特殊功能说明
+## 4 SPI总线
 
-### 4.1 芯片内部ADC通道
+潘多拉板的Arduino SPI总线是spi2总线，位置为板上左上角的`WIRELESS`插槽。 `SCK`、`MISO`、`MOSI`引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号。
+
+## 5 特殊功能说明
+
+### 5.1 芯片内部ADC通道
 
 本BSP适配了STM32的两个芯片内部ADC通道，可以通过 analogRead 函数来分别获取如下功能：
 
@@ -113,7 +117,7 @@ I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控�
 | 芯片内部参考电压 ADC | A2              | --            |
 | 芯片内部温度 ADC     | A3              | --            |
 
-### 4.2 真模拟输出功能 (True Analog Output)
+### 5.2 真模拟输出功能 (True Analog Output)
 
 Arduino的 analogWrite 函数虽为模拟写，但是实际输出的是PWM数字信号，并非真正的模拟信号。这是由于Arduino早期使用的AVR单片机并不支持DAC的功能，因此这个习惯就被保留了下来。但是随着Arduino支持芯片的丰富，部分高级芯片已经内建了DAC（例如Arduino官方板MKR、Zero等），因此Arduino的 analogWrite 函数后续也支持了真模拟输出功能。
 

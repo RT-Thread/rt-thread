@@ -11,10 +11,6 @@
 #ifndef __SYS_IOCTL_H__
 #define __SYS_IOCTL_H__
 
-#ifdef _WIN32
-#include <winsock.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

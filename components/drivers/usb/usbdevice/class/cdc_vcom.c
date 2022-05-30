@@ -670,6 +670,12 @@ static rt_err_t _vcom_configure(struct rt_serial_device *serial,
 static rt_err_t _vcom_control(struct rt_serial_device *serial,
                               int cmd, void *arg)
 {
+    struct ufunction *func;
+    struct vcom *data;
+
+    func = (struct ufunction*)serial->parent.user_data;
+    data = (struct vcom*)func->user_data;
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -677,6 +683,9 @@ static rt_err_t _vcom_control(struct rt_serial_device *serial,
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
+        break;
+    case RT_USBD_CLASS_CTRL_CONNECTED:
+        (*(rt_bool_t*)arg) = data->connected;
         break;
     }
 

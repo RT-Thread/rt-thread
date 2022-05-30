@@ -6,19 +6,15 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-04-13     armink       the first version
+ * 2022-05-17     Meco Man     improve and beautify
  */
 
 #include <sys/time.h>
-#include <string.h>
-#include <rtthread.h>
 #include <rtdevice.h>
-
-#ifdef RT_USING_RTC
 
 static struct rt_device rtc_dev;
 
-#ifdef RT_USING_ALARM
-
+#ifdef BSP_USING_ALARM
 static struct rt_rtc_wkalarm wkalarm;
 static struct rt_timer alarm_time;
 
@@ -42,15 +38,15 @@ static void soft_rtc_alarm_update(struct rt_rtc_wkalarm *palarm)
         rt_timer_stop(&alarm_time);
     }
 }
-
-#endif
+#endif /* BSP_USING_ALARM */
 
 static void get_rtc_timeval(struct timeval *tv)
 {
     struct tm newtime = { 0 };
     SYSTEMTIME sys_time;
 
-    GetSystemTime(&sys_time);
+    GetSystemTime(&sys_time); /* get RTC from Windows */
+
     newtime.tm_year = sys_time.wYear - 1900;
     newtime.tm_mon = sys_time.wMonth - 1;
     newtime.tm_mday = sys_time.wDay;
@@ -62,11 +58,8 @@ static void get_rtc_timeval(struct timeval *tv)
     tv->tv_usec = sys_time.wMilliseconds * 1000UL;
 }
 
-static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t pc_rtc_control(rt_device_t dev, int cmd, void *args)
 {
-    __time32_t *t;
-    struct tm newtime;
-
     RT_ASSERT(dev != RT_NULL);
 
     switch (cmd)
@@ -75,7 +68,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     {
         struct timeval tv;
         get_rtc_timeval(&tv);
-        *(rt_uint32_t *) args = tv.tv_sec;
+        *(time_t*) args = tv.tv_sec;
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
@@ -83,22 +76,24 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         get_rtc_timeval((struct timeval *) args);
         break;
     }
+#ifdef BSP_USING_ALARM
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-#ifdef RT_USING_ALARM
         soft_rtc_alarm_update(&wkalarm);
-#endif
         break;
     }
-#ifdef RT_USING_ALARM
     case RT_DEVICE_CTRL_RTC_GET_ALARM:
+    {
         *((struct rt_rtc_wkalarm *)args) = wkalarm;
         break;
+    }
     case RT_DEVICE_CTRL_RTC_SET_ALARM:
+    {
         wkalarm = *((struct rt_rtc_wkalarm *)args);
         soft_rtc_alarm_update(&wkalarm);
         break;
-#endif
+    }
+#endif /* BSP_USING_ALARM */
     default:
         return -RT_ERROR;
     }
@@ -107,29 +102,23 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops soft_rtc_ops =
+const static struct rt_device_ops pc_rtc_ops =
 {
     RT_NULL,
     RT_NULL,
     RT_NULL,
     RT_NULL,
     RT_NULL,
-    soft_rtc_control
+    pc_rtc_control
 };
 #endif
 
-int rt_win_rtc_init(void)
+int rt_pc_rtc_init(void)
 {
-    static rt_bool_t init_ok = RT_FALSE;
-
-    if (init_ok)
-    {
-        return 0;
-    }
     /* make sure only one 'rtc' device */
     RT_ASSERT(!rt_device_find("rtc"));
 
-#ifdef RT_USING_ALARM
+#ifdef BSP_USING_ALARM
     rt_timer_init(&alarm_time,
         "alarm",
         alarm_timeout,
@@ -142,25 +131,18 @@ int rt_win_rtc_init(void)
 
     /* register rtc device */
 #ifdef RT_USING_DEVICE_OPS
-    rtc_dev.ops = &soft_rtc_ops;
+    rtc_dev.ops = &pc_rtc_ops;
 #else
     rtc_dev.init = RT_NULL;
     rtc_dev.open = RT_NULL;
     rtc_dev.close = RT_NULL;
     rtc_dev.read = RT_NULL;
     rtc_dev.write = RT_NULL;
-    rtc_dev.control = soft_rtc_control;
+    rtc_dev.control = pc_rtc_control;
 #endif
-
-    /* no private */
-    rtc_dev.user_data = RT_NULL;
+    rtc_dev.user_data = RT_NULL; /* no private */
 
     rt_device_register(&rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR);
-
-    init_ok = RT_TRUE;
-
     return 0;
 }
-INIT_BOARD_EXPORT(rt_win_rtc_init);
-
-#endif /* RT_USING_RTC */
+INIT_BOARD_EXPORT(rt_pc_rtc_init);

@@ -2,6 +2,7 @@ menuconfig RT_USING_LWIP
     bool "LwIP: light weight TCP/IP stack"
     select RT_USING_DEVICE
     select RT_USING_DEVICE_IPC
+    select SAL_USING_LWIP if RT_USING_SAL
     default n
 
 if RT_USING_LWIP

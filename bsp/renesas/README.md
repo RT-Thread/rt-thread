@@ -20,3 +20,13 @@ RA 系列 BSP 目前支持情况如下表所示：
 | [BSP 制作教程](docs/RA系列BSP制作教程.md) | 讲解 RA 系列 BSP 的制作方法，以及在制作 BSP 和提交 BSP 时应当遵守的规范 |
 | [外设驱动添加指南](docs/RA系列外设驱动添加指南.md) | 讲解 BSP 添加更多设备驱动的方法 |
 
+English documents：
+
+| **BSP Tutorial** | **Introduction**                              |
+|:-------------------- |:------------------------------------------------- |
+| [BSP Peripheral Driver Tutorial of RA Series](docs/BSP_Peripheral_Driver_Tutorial_of_RA_Series.md) | Explains how to use more peripheral drivers on the BSP |
+| [Introduction to RA Series Drives](docs/Introduction_to_RA_Series_Drives.md) | Explains the support of RA series BSP drivers and how to develop applications using the driver framework |
+| [RA Series Uses FSP to Configure Peripheral Drivers](docs/RA_Series_Uses_FSP_to_Configure_Peripheral_Drivers.md) | Introduces how to add and configure peripherals using the FSP tool |
+| **BSP Production and Submission** | **Introduction**                         |
+| [Building a BSP for the RA Series Dev Board](docs/Building_a_BSP_for_the_RA_Series_Dev_Board.md) | Explains how the RA series BSPs are created and the specifications to be followed when creating and submitting BSPs |
+| [Peripheral Driver Addition Guide of RA Series](docs/Peripheral_Driver_Addition_Guide_of_RA_Series.md) | Explains how to add more device drivers to BSP |

@@ -91,7 +91,7 @@ PendSV_Handler:
     LDR     R0, =rt_thread_switch_interrupt_flag
     LDR     R1, [R0]
     CMP     R1, #0x00
-    BEQ     pendsv_exit     /* pendsv aLReady handled */
+    BEQ     pendsv_exit     /* pendsv already handled */
 
     /* clear rt_thread_switch_interrupt_flag to 0 */
     MOVS    R1, #0

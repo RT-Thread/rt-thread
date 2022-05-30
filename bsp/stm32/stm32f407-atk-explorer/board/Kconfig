@@ -38,12 +38,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_FMC
         default n
 
-    config BSP_USING_MCU_LCD
+    config BSP_USING_ONBOARD_LCD
         bool "Enable ATK LCD"
         select BSP_USING_SRAM
         default n
-        if BSP_USING_MCU_LCD
-            config BSP_USING_MCU_LCD_TEST
+        if BSP_USING_ONBOARD_LCD
+            config BSP_USING_ONBOARD_LCD_TEST
                 bool "Enable lcd fill test"
                 default y
         endif
@@ -60,10 +60,16 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_LVGL
         bool "Enable LVGL for LCD"
-        select BSP_USING_MCU_LCD
+        select BSP_USING_ONBOARD_LCD
         select BSP_USING_TOUCH
         select PKG_USING_LVGL
         default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            default n
+    endif
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q128 spi1)"

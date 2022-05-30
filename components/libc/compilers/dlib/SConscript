@@ -4,7 +4,7 @@ Import('rtconfig')
 src   = Glob('*.c')
 group = []
 
-CPPDEFINES = ['RT_USING_DLIBC']
+CPPDEFINES = ['RT_USING_DLIBC', 'RT_USING_LIBC']
 
 if rtconfig.PLATFORM == 'iar':
     if GetDepend('DFS_USING_POSIX'):
