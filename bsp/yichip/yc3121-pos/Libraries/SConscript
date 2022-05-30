@@ -6,7 +6,7 @@ CPPPATH = [cwd + '/sdk', cwd + '/core', cwd]
 
 src += Glob('core/*.c')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['startup/flash_start_gcc.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 	src += ['startup/startup.s', 'startup/flash_start.s']

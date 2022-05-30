@@ -11,7 +11,7 @@ src += Glob('common/board/*.c')
 src += Glob('common/chip/*.c')
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     print("not gcc startup file")
     exit(0)
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:

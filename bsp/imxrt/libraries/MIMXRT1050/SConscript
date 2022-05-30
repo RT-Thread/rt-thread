@@ -10,7 +10,7 @@ src = Split('''
             MIMXRT1052/drivers/fsl_cache.c
             ''')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['MIMXRT1052/gcc/startup_MIMXRT1052.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['MIMXRT1052/arm/startup_MIMXRT1052.s']
@@ -87,7 +87,7 @@ src += ['MIMXRT1052/drivers/fsl_xbarb.c']
 src += ['MIMXRT1052/drivers/fsl_os_abstraction_rtthread.c']
 src += ['MIMXRT1052/drivers/generic_list.c']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
 else:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)

@@ -28,7 +28,7 @@ if GetDepend(['RT_USING_SERIAL']):
     src += ['HC32F460_StdPeriph_Driver/src/hc32f460_usart.c']
    
 #add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/GCC/startup_hc32f460.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/ARM/startup_hc32f460.s']

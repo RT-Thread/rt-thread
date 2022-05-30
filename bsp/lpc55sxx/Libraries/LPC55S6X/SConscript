@@ -7,7 +7,7 @@ src = Split('''
             LPC55S6X/system_LPC55S69_cm33_core0.c
             ''')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['LPC55S6X/gcc/startup_LPC55S69_cm33_core0.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['LPC55S6X/arm/startup_LPC55S69_cm33_core0.s']
@@ -58,7 +58,7 @@ src += ['middleware/sdmmc/src/fsl_sdmmc_common.c']
 src += ['middleware/sdmmc/port/sdif/rt_thread/fsl_sdmmc_event.c']
 src += ['middleware/sdmmc/port/sdif/rt_thread/fsl_sdmmc_host.c']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['LPC55S6X/gcc/libpower_hardabi.a']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['LPC55S6X/arm/keil_lib_power_cm33_core0.lib']

@@ -11,7 +11,7 @@ if rtconfig.PART_TYPE.startswith('PART_LM4F') != True:
 	 SrcRemove(src, 'fpu.c')
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
 	src += ['startup/gcc/start_gcc.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 	src += ['startup/arm/start_rvds.S']
@@ -21,7 +21,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 CPPPATH = [cwd]
 
 CPPDEFINES = [rtconfig.PART_TYPE]
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
 	CPPDEFINES += ['gcc'];
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)

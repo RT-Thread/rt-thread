@@ -10,7 +10,7 @@ src = Glob('GD32F4xx_standard_peripheral/Source/*.c')
 src += [cwd + '/CMSIS/GD/GD32F4xx/Source/system_gd32f4xx.c']
 
 #add for startup script
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']

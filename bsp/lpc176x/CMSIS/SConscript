@@ -7,7 +7,7 @@ cwd = GetCurrentDir()
 src = ['CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/gcc/startup_LPC17xx.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/arm/startup_LPC17xx.s']
