@@ -7,7 +7,7 @@ path = [cwd + '/inc']
 libs = ['']
 libpath = [cwd + '/libs']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     libs += ['libsmartconfig_armcm4_gcc']
 elif rtconfig.CROSS_TOOL == 'iar':
     libs += ['libsmartconfig_armcm4_iar']

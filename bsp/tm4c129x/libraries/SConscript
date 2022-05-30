@@ -9,7 +9,7 @@ SrcRemove(src, 'onewire.c')
 CFLAGS = ''
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['startup/startup_gcc.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['startup/startup_rvmdk.S']

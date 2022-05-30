@@ -13,7 +13,7 @@ CPPDEFINES = []
 objs = objs + SConscript(os.path.join('drivers', 'SConscript'))
 objs = objs + SConscript(os.path.join('utilities', 'SConscript'))
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     objs = objs + SConscript(os.path.join('mcuxpresso', 'SConscript'))
     CPPDEFINES += ['__USE_CMSIS']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:

@@ -5,7 +5,7 @@ from building import *
 src = Glob('*.c')
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['start_gcc.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['start_rvds.S']

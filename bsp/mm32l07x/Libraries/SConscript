@@ -7,7 +7,7 @@ CPPPATH = [cwd + '/CMSIS/CORE', cwd + '/MM32L0xx/Include',  cwd + '/MM32L0xx/Sou
 src += Glob('MM32L0xx/HAL_lib/src/*.c')
 CPPDEFINES = ['USE_STDPERIPH_DRIVER']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['MM32L0xx/Source/GCC_StartAsm/startup_MM32L0xx.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['MM32L0xx/Source/KEIL_StartAsm/startup_MM32L0xx.s']

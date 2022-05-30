@@ -21,7 +21,7 @@ if rtconfig.PLATFORM in ['armcc', 'armclang']:
 if rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/iar/startup_apm32f10x_hd.s']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/gcc/startup_apm32f10x_hd.s']
 
 # You can select chips from the list above

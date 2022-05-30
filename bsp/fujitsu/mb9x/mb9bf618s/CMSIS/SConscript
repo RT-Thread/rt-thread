@@ -8,7 +8,7 @@ src = Glob('DeviceSupport/fujitsu/mb9bf61x/*.c')
 CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport/fujitsu/mb9bf61x/']
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
 	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/gcc/startup_mb9bf61x.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/arm/startup_mb9bf61x.S']

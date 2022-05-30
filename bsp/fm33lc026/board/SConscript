@@ -15,7 +15,7 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/FM/FM33xx/Source/Templates/gcc/startup_fm33lc0xx.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/FM/FM33xx/Source/Templates/ARM/startup_fm33lc0xx.s']
