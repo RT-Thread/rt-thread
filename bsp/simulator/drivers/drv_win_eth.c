@@ -8,7 +8,6 @@
  * 2022-05-26     xiangxistu   first version
  */
 
-#include <WinSock2.h>
 #include <rtthread.h>
 #include <sal_low_lvl.h>
 #include <sal_socket.h>
@@ -34,7 +33,6 @@ const struct netdev_ops win_netdev_ops =
 #endif /* RT_USING_FINSH */
     RT_NULL,
 };
-
 
 static int win_netdev_add(void)
 {

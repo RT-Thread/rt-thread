@@ -90,12 +90,10 @@ typedef uint32_t in_addr_t;
 #endif
 
 #if NETDEV_IPV4
-#if !defined(_WINSOCK2API_)
 struct in_addr
 {
     in_addr_t s_addr;
 };
-#endif /* !defined(_WINSOCK2API_) */
 
 typedef struct ip4_addr
 {
