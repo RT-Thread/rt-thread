@@ -9,11 +9,15 @@
  */
 
 /* Do NOT include sys/time.h in this file */
-#include <WinSock2.h>
+/* Do NOT include WinSock2.h or winsock.h in this file */
 #include <rtthread.h>
 #include <sal_low_lvl.h>
 #include <sal_socket.h>
 #include <sal_netdb.h>
+
+#define DBG_TAG    "sal.winsock"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /* Important, must reserve */
 #pragma comment( lib, "ws2_32.lib" )
@@ -43,7 +47,7 @@
         iResult = WSAStartup(MAKEWORD(2, 2), &wsa_data);        \
         if (iResult != 0)                                       \
         {                                                       \
-            rt_kprintf("WSAStartup failed: %d\n", iResult);     \
+            LOG_E("WSAStartup failed: %d\n", iResult);     \
             return -RT_ERROR;                                   \
         }                                                       \
     }while(0)
@@ -79,7 +83,7 @@ int win_connect(int s, const struct sockaddr *name, socklen_t namelen)
      * result = connect(s, name, namelen);
      * if (result == -1)
      * {
-     *     rt_kprintf("error :%d\n", WSAGetLastError());
+     *     LOG_E("error :%d\n", WSAGetLastError());
      *     return WSAGetLastError();
      * }
      * else
@@ -239,7 +243,7 @@ static int win_getaddrinfo(const char* nodename, const char* servname, const str
     {
         return EAI_MEMORY;
     }
-    memset(ai, 0, total_size);
+    rt_memset(ai, 0, total_size);
     /* cast through void* to get rid of alignment warnings */
     sa = (struct sockaddr_storage*)(void*)((uint8_t*)ai + sizeof(struct addrinfo));
     struct sockaddr_in* sa4 = (struct sockaddr_in*)sa;
@@ -261,7 +265,7 @@ static int win_getaddrinfo(const char* nodename, const char* servname, const str
     {
         /* copy nodename to canonname if specified */
         ai->ai_canonname = ((char*)ai + sizeof(struct addrinfo) + sizeof(struct sockaddr_storage));
-        memcpy(ai->ai_canonname, nodename, namelen);
+        rt_memcpy(ai->ai_canonname, nodename, namelen);
         ai->ai_canonname[namelen] = 0;
     }
     ai->ai_addrlen = sizeof(struct sockaddr_storage);
@@ -358,9 +362,8 @@ static const struct sal_proto_family windows_inet_family =
     &windows_netdb_ops,
 };
 
-#include <stdint.h>
-#include <netdev_ipaddr.h>
 #include <netdev.h>
+#include <netdev_ipaddr.h>
 /* Set lwIP network interface device protocol family information */
 int sal_win_netdev_set_pf_info(struct netdev* netdev)
 {
@@ -369,4 +372,3 @@ int sal_win_netdev_set_pf_info(struct netdev* netdev)
     netdev->sal_user_data = (void*)&windows_inet_family;
     return 0;
 }
-
