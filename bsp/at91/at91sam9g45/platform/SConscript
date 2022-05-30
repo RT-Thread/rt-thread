@@ -12,7 +12,7 @@ if rtconfig.PLATFORM in ['armcc', 'armclang']:
 if rtconfig.PLATFORM in ['gcc']:
 	src = Glob('*.c') + Glob('*_gcc.S') + Glob('*_init.S')
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
 	src = Glob('*.c') + Glob('*_iar.S')
 
 if rtconfig.PLATFORM == 'cl':

@@ -32,7 +32,7 @@ if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/GCC/startup_hc32f460.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/ARM/startup_hc32f460.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/IAR/startup_hc32f460.s']
 
 #add headfile script 

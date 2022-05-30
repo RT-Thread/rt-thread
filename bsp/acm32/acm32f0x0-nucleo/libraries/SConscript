@@ -29,7 +29,7 @@ if rtconfig.PLATFORM in ['gcc']:
     src = src + ['Device/Startup_ACM32F0x0_gcc.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['Device/Startup_ACM32F0x0.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['Device/Startup_ACM32F0x0_iar.s']
 
 path = [cwd + '/HAL_Driver/Inc',
