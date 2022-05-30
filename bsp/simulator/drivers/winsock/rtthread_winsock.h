@@ -17,7 +17,7 @@
  *
  * So, i define the same structure with "sal" but not include header files aboult "sal".
  * The same sturcture means the same memory in the system. I can offer wonderful compatibility with "sal" ,"winsock", "lwip" and so on.
- * 
+ *
  *
  * Aross the way, "WinSock2.h" only be included in the "af_inet_winsock.c", the more software packages aboult network can
  * work that useless modification is required for "winsock".
@@ -115,5 +115,3 @@ int inet_poll(struct dfs_fd* file, struct rt_pollreq* req);
 struct sal_type_hostent* win_gethostbyname(const char* name);
 int win_getaddrinfo(const char* nodename, const char* servname, const struct sal_type_addrinfo* hints, struct sal_type_addrinfo** res);
 void win_freeaddrinfo(struct sal_type_addrinfo* ai);
-
-
