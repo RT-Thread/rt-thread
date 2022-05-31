@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -134,7 +135,7 @@ void SysTick_Handler(void)
 }
 
 /**
- * This function will initial GD32 board.
+ * This function will initial HC32 board.
  */
 void rt_hw_board_init()
 {
