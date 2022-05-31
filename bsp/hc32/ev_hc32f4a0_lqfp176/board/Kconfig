@@ -40,12 +40,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         default n
 
-    config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (spi1)"
-        select BSP_USING_SPI
-        select BSP_USING_SPI1
-        default n
-
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -220,116 +214,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI4 RX DMA"
                 depends on BSP_USING_SPI4
                 select BSP_SPI4_TX_USING_DMA
-                default n
-        endif
-
-    menuconfig BSP_USING_RTC
-        bool "Enable RTC"
-        select RT_USING_RTC
-        default n
-
-        if BSP_USING_RTC
-            choice
-                prompt "Select clock source"
-                default BSP_RTC_USING_LRC
-
-                config BSP_RTC_USING_XTAL32
-                    bool "RTC USING XTAL32"
-
-                config BSP_RTC_USING_LRC
-                    bool "RTC USING LRC"
-            endchoice
-        endif
-
-    menuconfig BSP_USING_PWM
-        bool "Enable PWM"
-        default n
-        select RT_USING_PWM
-        if BSP_USING_PWM
-        menuconfig BSP_USING_PWM1
-            bool "Enable timer1 output PWM"
-            default n
-            if BSP_USING_PWM1
-                config BSP_USING_PWM1_CH1
-                    bool "Enable PWM1 channel1"
-                    default n
-
-                config BSP_USING_PWM1_CH2
-                    bool "Enable PWM1 channel2"
-                    default n
-
-                config BSP_USING_PWM1_CH3
-                    bool "Enable PWM1 channel3"
-                    default n
-
-                config BSP_USING_PWM1_CH4
-                    bool "Enable PWM1 channel4"
-                    default n
-            endif
-
-        menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output PWM"
-            default n
-            if BSP_USING_PWM2
-                config BSP_USING_PWM2_CH1
-                    bool "Enable PWM2 channel1"
-                    default n
-
-                config BSP_USING_PWM2_CH2
-                    bool "Enable PWM2 channel2"
-                    default n
-
-                config BSP_USING_PWM2_CH3
-                    bool "Enable PWM2 channel3"
-                    default n
-
-                config BSP_USING_PWM2_CH4
-                    bool "Enable PWM2 channel4"
-                    default n
-            endif
-        endif
-
-    menuconfig BSP_USING_TIMER
-        bool "Enable TIMER"
-        default n
-        select RT_USING_HWTIMER
-        if BSP_USING_TIMER
-            config BSP_USING_TIMER5
-                bool "Enable TIMER5"
-                default n
-
-            config BSP_USING_TIMER6
-                bool "Enable TIMER6"
-                default n
-
-            config BSP_USING_TIMER7
-                bool "Enable TIMER7"
-                default n
-
-            config BSP_USING_TIMER8
-                bool "Enable TIMER8"
-                default n
-        endif
-
-    menuconfig BSP_USING_PULSE_ENCODER
-        bool "Enable Pulse Encoder"
-        default n
-        select RT_USING_PULSE_ENCODER
-        if BSP_USING_PULSE_ENCODER
-            config BSP_USING_PULSE_ENCODER9
-                bool "Enable Pulse Encoder9"
-                default n
-
-            config BSP_USING_PULSE_ENCODER10
-                bool "Enable Pulse Encoder10"
-                default n
-
-            config BSP_USING_PULSE_ENCODER11
-                bool "Enable Pulse Encoder11"
-                default n
-
-            config BSP_USING_PULSE_ENCODER12
-                bool "Enable Pulse Encoder12"
                 default n
         endif
 
