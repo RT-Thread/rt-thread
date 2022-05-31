@@ -221,7 +221,7 @@ static rt_err_t nu_rtc_is_date_valid(const time_t t)
 /* Register rt-thread device.control() entry. */
 static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
 {
-    struct tm tm_out, *tm_in;
+    struct tm tm_out, tm_in;
     time_t *time;
     S_RTC_TIME_DATA_T hw_time = {0};
 
@@ -261,14 +261,14 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
         if (nu_rtc_is_date_valid(*time) != RT_EOK)
             return -(RT_ERROR);
 
-        tm_in = gmtime(time);
-        hw_time.u32Year = CONV_FROM_TM_YEAR(tm_in->tm_year);
-        hw_time.u32cMonth = CONV_FROM_TM_MON(tm_in->tm_mon);
-        hw_time.u32cDay = tm_in->tm_mday;
-        hw_time.u32cHour = tm_in->tm_hour;
-        hw_time.u32cMinute = tm_in->tm_min;
-        hw_time.u32cSecond = tm_in->tm_sec;
-        hw_time.u32cDayOfWeek = tm_in->tm_wday;
+        gmtime_r(time, &tm_in);
+        hw_time.u32Year = CONV_FROM_TM_YEAR(tm_in.tm_year);
+        hw_time.u32cMonth = CONV_FROM_TM_MON(tm_in.tm_mon);
+        hw_time.u32cDay = tm_in.tm_mday;
+        hw_time.u32cHour = tm_in.tm_hour;
+        hw_time.u32cMinute = tm_in.tm_min;
+        hw_time.u32cSecond = tm_in.tm_sec;
+        hw_time.u32cDayOfWeek = tm_in.tm_wday;
         hw_time.u8cClockDisplay = RTC_CLOCK_24;
         hw_time.u8cAmPm = 0;
 

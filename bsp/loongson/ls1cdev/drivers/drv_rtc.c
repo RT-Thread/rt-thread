@@ -50,20 +50,20 @@ static time_t get_timestamp(void)
 
 static int set_timestamp(time_t timestamp)
 {
-    struct tm *p_tm;
-    RTC_TimeTypeDef rtcDate; 
+    struct tm now;
+    RTC_TimeTypeDef rtcDate;
     
-    p_tm = gmtime(&timestamp);
+    gmtime_r(&timestamp, &now);
     
-    rtcDate.Seconds= p_tm->tm_sec ; 
-    rtcDate.Minutes= p_tm->tm_min ; 
-    rtcDate.Hours= p_tm->tm_hour; 
+    rtcDate.Seconds= now.tm_sec ;
+    rtcDate.Minutes= now.tm_min ;
+    rtcDate.Hours= now.tm_hour;
 
-    rtcDate.Date= p_tm->tm_mday; 
-    rtcDate.Month= p_tm->tm_mon  + 1;  
-    rtcDate.Year= p_tm->tm_year + 1900 - 2000; 
+    rtcDate.Date= now.tm_mday;
+    rtcDate.Month= now.tm_mon  + 1;
+    rtcDate.Year= now.tm_year + 1900 - 2000;
     
-    RTC_SetTime(RTC_Handler, &rtcDate); 
+    RTC_SetTime(RTC_Handler, &rtcDate);
     rt_kprintf("\r\nrtcDate is %d.%d.%d - %d:%d:%d",rtcDate.Year, rtcDate.Month, rtcDate.Date, rtcDate.Hours, rtcDate.Minutes, rtcDate.Seconds);
     return RT_EOK;
 }
