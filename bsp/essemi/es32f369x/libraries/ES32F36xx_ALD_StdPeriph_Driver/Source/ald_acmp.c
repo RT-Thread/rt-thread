@@ -78,6 +78,8 @@ ald_status_t ald_acmp_init(acmp_handle_t *hperh)
 		(hperh->init.inactval << ACMP_CON_INACTV_POS) | (hperh->init.hystsel << ACMP_CON_HYSTSEL_POSS));
 
 	hperh->perh->CON = tmp;
+	
+	tmp = 0;
 
 	tmp |= ((hperh->init.p_port << ACMP_INPUTSEL_PSEL_POSS) | (hperh->init.n_port << ACMP_INPUTSEL_NSEL_POSS) |
 		(hperh->init.vdd_level << ACMP_INPUTSEL_VDDLVL_POSS));
