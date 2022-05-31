@@ -1,14 +1,12 @@
 /**
   ******************************************************************************
-
   * @file      startup_es32f36xx.s
   * @author    AE Team
   * @brief     ES32F36xx devices vector table for GCC toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
-  *                - Set the vector table entries with the exceptions ISR addres
-s
+  *                - Set the vector table entries with the exceptions ISR address
   *                - Branches to main in the C library (which eventually
   *                  calls main()).
   *            After Reset the Cortex-M3 processor is in Thread mode,
@@ -18,8 +16,7 @@ s
   *          Date            Author          Notes
   *          23 Jan 2019     AE Team         The first version
   *
-  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserve
-d.
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
   * SPDX-License-Identifier: Apache-2.0
   *
@@ -34,8 +31,7 @@ d.
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  ******************************************************************************
-****
+  **********************************************************************************
   */
 
   .syntax unified
@@ -139,13 +135,9 @@ LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
   
-  bl sys_config
-  bl adc_config
+  bl __libc_init_array
 
-/*bl __libc_init_array
-
-  bl main */
-  bl entry
+  bl main
 
 LoopForever:
     b LoopForever
