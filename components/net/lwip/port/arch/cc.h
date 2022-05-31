@@ -100,6 +100,7 @@ typedef uintptr_t mem_ptr_t;
 #define PACK_STRUCT_STRUCT
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
+#define PACK_STRUCT_USE_INCLUDES
 #endif
 
 void sys_arch_assert(const char* file, int line);

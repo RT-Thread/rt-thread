@@ -21,10 +21,6 @@ if RT_USING_SAL
             bool "Docking with AT commands stack"
             default n
 
-        config SAL_USING_WINSOCK
-            bool "Docking with Windows socket (winsock)"
-            default n
-
         config SAL_USING_TLS
             bool "Docking with MbedTLS protocol"
             default n
