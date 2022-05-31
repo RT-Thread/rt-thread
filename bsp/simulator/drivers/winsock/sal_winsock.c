@@ -18,7 +18,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#include <rtthread_winsock.h>
+#include "rtt_winsock.h"
 
 static struct sal_type_hostent sal_hostent;
 static sal_type_ip_addr_t hostent_addr = { 0 };

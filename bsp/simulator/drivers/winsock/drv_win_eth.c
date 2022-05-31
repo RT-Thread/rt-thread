@@ -14,7 +14,7 @@
 #include <sal_netdb.h>
 #include <netdev_ipaddr.h>
 #include <netdev.h>
-#include <rtthread_winsock.h>
+#include "rtt_winsock.h"
 
 static win_netdev_ping(struct netdev* netif, const char* host, size_t data_len,
     uint32_t timeout, struct netdev_ping_resp* ping_resp)
