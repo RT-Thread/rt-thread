@@ -181,6 +181,8 @@ jobs:
          - {RTT_BSP: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pi/raspi3-32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pi/raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "hc32/ev_hc32f4a0_lqfp176", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "hc32/ev_hc32f460_lqfp100_v2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
