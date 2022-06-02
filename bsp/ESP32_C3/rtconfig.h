@@ -148,4 +148,18 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+#define RT_USING_DEVICE
+#define RT_USING_PIN
+
+#define RT_USING_SEMAPHORE
+#define RT_USING_MUTEX
+#define RT_USING_EVENT
+#define RT_USING_MAILBOX
+#define RT_USING_MESSAGEQUEUE
+
+#define RT_USING_COMPONENTS_INIT
+#define RT_DEBUG_INIT 1
+
+#define RT_USING_SERIAL
+#define BSP_USING_UART1
 #endif
