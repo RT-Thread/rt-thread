@@ -60,6 +60,14 @@ if RT_USING_AT
             select SAL_USING_AT
             default n
 
+        if AT_USING_SOCKET
+
+            config AT_USING_SOCKET_SERVER
+                bool "Enable BSD Socket API support about AT server"
+                default n
+
+        endif
+
     endif
 
     if AT_USING_SERVER || AT_USING_CLIENT
