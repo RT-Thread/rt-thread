@@ -69,9 +69,17 @@ static const struct sal_socket_ops at_socket_ops =
     at_socket,
     at_closesocket,
     at_bind,
+#ifdef AT_USING_SOCKET_SERVER
+    at_listen,
+#else
     NULL,
+#endif
     at_connect,
+#ifdef AT_USING_SOCKET_SERVER
+    at_accept,
+#else
     NULL,
+#endif
     at_sendto,
     at_recvfrom,
     at_getsockopt,
