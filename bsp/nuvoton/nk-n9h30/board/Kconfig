@@ -110,9 +110,20 @@ menu "Hardware Drivers Config"
                     bool "GT911 TSC"
                     select BSP_USING_I2C
                     select BSP_USING_I2C0
-                    select PKG_USING_GT911
+                    select NU_PKG_USING_TPC
+                    select NU_PKG_USING_TPC_GT911
                     help
                         Choose this option if you use GT911 external TSC touching function.
+
+                config BOARD_USING_FT5446
+                    bool "FT5446 TSC"
+                    select BSP_USING_I2C
+                    select BSP_USING_I2C0
+                    select NU_PKG_USING_TPC
+                    select NU_PKG_USING_TPC_FT5446
+                    help
+                        Choose this option if you use FT5446 external TSC touching function.
+
             endchoice
 
         endif
