@@ -12,6 +12,10 @@
 
 #include <rtconfig.h>
 
+#define NU_SDH_HOTPLUG
+#define NU_SDH_MOUNT_ON_ROOT
+#undef BSP_USING_SDH
+
 #if defined(BSP_USING_SDH)
 
 #include <rtdevice.h>
