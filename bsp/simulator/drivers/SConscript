@@ -8,7 +8,7 @@ src = ['board.c', 'uart_console.c']
 LIBS = []
 LIBPATH = []
 CPPPATH = [cwd]
-CPPDEFINES = []
+CPPDEFINES = ['RT_USING_LIBC']
 
 if rtconfig.CROSS_TOOL == 'msvc':
     CPPDEFINES += \
