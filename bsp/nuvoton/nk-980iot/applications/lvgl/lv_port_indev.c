@@ -31,14 +31,11 @@ void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t state)
     case RT_TOUCH_EVENT_UP:
         last_state = LV_INDEV_STATE_RELEASED;
         break;
+    case RT_TOUCH_EVENT_MOVE:
     case RT_TOUCH_EVENT_DOWN:
         last_x = x;
         last_y = y;
         last_state = LV_INDEV_STATE_PRESSED;
-        break;
-    case RT_TOUCH_EVENT_MOVE:
-        last_x = x;
-        last_y = y;
         break;
     }
 }
