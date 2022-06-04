@@ -20,7 +20,7 @@ struct rt_adc_ops
     rt_err_t (*enabled)(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
     rt_err_t (*convert)(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
     rt_uint8_t (*get_resolution)(struct rt_adc_device *device);
-    rt_int16_t (*get_vref) (const struct rt_adc_device *device);
+    rt_int16_t (*get_vref) (struct rt_adc_device *device);
 };
 
 struct rt_adc_device
