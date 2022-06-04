@@ -126,9 +126,6 @@ if GetDepend(['BSP_USING_RTC']):
 path = [cwd + '/STM32MP1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32MP1xx/Include']
 
-if not GetDepend('PKG_CMSIS_CORE'):
-    path += [cwd + '/CMSIS/Include']
-
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
