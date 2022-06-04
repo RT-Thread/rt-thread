@@ -1,20 +1,37 @@
-From 8c8c4bd282ed5bf359ef1c0eaeace4c4fbe8ff52 Mon Sep 17 00:00:00 2001
+From 317ee995e9d530587bfb14439b3b1ee38d1afe77 Mon Sep 17 00:00:00 2001
 From: supperthomas <78900636@qq.com>
-Date: Mon, 18 Apr 2022 22:59:02 +0800
-Subject: [PATCH] add fixed of rtthread
+Date: Fri, 6 May 2022 23:06:28 +0800
+Subject: [PATCH] add the config of RTTHREAD
 
+add the init link file
 ---
- .../esp_system/ld/esp32c3/sections.ld.in      |  19 ++
- components/freertos/port/port_common.c        |  11 +-
- components/freertos/port/port_systick.c       |  56 ++---
- components/riscv/vectors.S                    | 236 +++++++++++++++---
- 4 files changed, 254 insertions(+), 68 deletions(-)
+ Kconfig                                       |   4 +
+ .../esp_system/ld/esp32c3/sections.ld.in      |  26 +++
+ components/freertos/port/port_common.c        |   5 +
+ components/freertos/port/port_systick.c       |   3 +
+ components/riscv/vectors.S                    | 220 ++++++++++++++++--
+ 5 files changed, 239 insertions(+), 19 deletions(-)
 
+diff --git a/Kconfig b/Kconfig
+index 928d274106..d368adaa37 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -61,6 +61,10 @@ mainmenu "Espressif IoT Development Framework Configuration"
+         bool
+         default "y" if IDF_TARGET="linux"
+ 
++    config IDF_RTOS_RTTHREAD
++        bool "RT-THREAD SELECT"
++        default "n" 
++
+     config IDF_FIRMWARE_CHIP_ID
+         hex
+         default 0x0000 if IDF_TARGET_ESP32
 diff --git a/components/esp_system/ld/esp32c3/sections.ld.in b/components/esp_system/ld/esp32c3/sections.ld.in
-index 0ebeda06c1..10506d38a3 100644
+index 0ebeda06c1..8215237fff 100644
 --- a/components/esp_system/ld/esp32c3/sections.ld.in
 +++ b/components/esp_system/ld/esp32c3/sections.ld.in
-@@ -183,6 +183,25 @@ SECTIONS
+@@ -183,6 +183,32 @@ SECTIONS
      _noinit_end = ABSOLUTE(.);
    } > dram0_0_seg
  
@@ -36,101 +53,61 @@ index 0ebeda06c1..10506d38a3 100644
 +      __heap_start__ = .;
 +      . += __STACKSIZE__;
 +      __heap_end__ = .;
++        /* section information for initial. */
++        . = ALIGN(4);
++        __rt_init_start = .;
++        KEEP(*(SORT(.rti_fn*)))
++        __rt_init_end = .;
++
++        . = ALIGN(4);
 +  } > dram0_0_seg
    /* Shared RAM */
    .dram0.bss (NOLOAD) :
    {
 diff --git a/components/freertos/port/port_common.c b/components/freertos/port/port_common.c
-index ffca3d5429..dd3cc46f16 100644
+index ffca3d5429..9d8159f588 100644
 --- a/components/freertos/port/port_common.c
 +++ b/components/freertos/port/port_common.c
-@@ -74,11 +74,12 @@ void esp_startup_start_app_common(void)
+@@ -74,11 +74,16 @@ void esp_startup_start_app_common(void)
      esp_gdbstub_init();
  #endif // CONFIG_ESP_SYSTEM_GDBSTUB_RUNTIME
  
--    portBASE_TYPE res = xTaskCreatePinnedToCore(&main_task, "main",
--                                                ESP_TASK_MAIN_STACK, NULL,
--                                                ESP_TASK_MAIN_PRIO, NULL, ESP_TASK_MAIN_CORE);
--    assert(res == pdTRUE);
--    (void)res;
-+    // portBASE_TYPE res = xTaskCreatePinnedToCore(&main_task, "main",
-+    //                                             ESP_TASK_MAIN_STACK, NULL,
-+    //                                             ESP_TASK_MAIN_PRIO, NULL, ESP_TASK_MAIN_CORE);
-+    ///assert(res == pdTRUE);
++#ifdef CONFIG_IDF_RTOS_RTTHREAD
 +    app_main();
-+    //(void)res;
++#else
+     portBASE_TYPE res = xTaskCreatePinnedToCore(&main_task, "main",
+                                                 ESP_TASK_MAIN_STACK, NULL,
+                                                 ESP_TASK_MAIN_PRIO, NULL, ESP_TASK_MAIN_CORE);
+     assert(res == pdTRUE);
+     (void)res;
++#endif
++
  }
  
  static void main_task(void* args)
 diff --git a/components/freertos/port/port_systick.c b/components/freertos/port/port_systick.c
-index 0c14a155a1..cf525f9383 100644
+index 0c14a155a1..0fa203574b 100644
 --- a/components/freertos/port/port_systick.c
 +++ b/components/freertos/port/port_systick.c
-@@ -116,34 +116,34 @@ void vPortSetupTimer(void)
+@@ -116,6 +116,8 @@ void vPortSetupTimer(void)
   */
  IRAM_ATTR void SysTickIsrHandler(void *arg)
  {
--    uint32_t cpuid = xPortGetCoreID();
--    systimer_hal_context_t *systimer_hal = (systimer_hal_context_t *)arg;
--#ifdef CONFIG_PM_TRACE
--    ESP_PM_TRACE_ENTER(TICK, cpuid);
--#endif
--
--    uint32_t alarm_id = SYSTIMER_LL_ALARM_OS_TICK_CORE0 + cpuid;
--    do {
--        systimer_ll_clear_alarm_int(systimer_hal->dev, alarm_id);
--
--        uint32_t diff = systimer_hal_get_counter_value(systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK) / systimer_ll_get_alarm_period(systimer_hal->dev, alarm_id) - s_handled_systicks[cpuid];
--        if (diff > 0) {
--            if (s_handled_systicks[cpuid] == 0) {
--                s_handled_systicks[cpuid] = diff;
--                diff = 1;
--            } else {
--                s_handled_systicks[cpuid] += diff;
--            }
--
--            do {
--                xPortSysTickHandler();
--            } while (--diff);
--        }
--    } while (systimer_ll_is_alarm_int_fired(systimer_hal->dev, alarm_id));
--
--#ifdef CONFIG_PM_TRACE
--    ESP_PM_TRACE_EXIT(TICK, cpuid);
--#endif
-+//     uint32_t cpuid = xPortGetCoreID();
-+//     systimer_hal_context_t *systimer_hal = (systimer_hal_context_t *)arg;
-+// #ifdef CONFIG_PM_TRACE
-+//     ESP_PM_TRACE_ENTER(TICK, cpuid);
-+// #endif
-+
-+//     uint32_t alarm_id = SYSTIMER_LL_ALARM_OS_TICK_CORE0 + cpuid;
-+//     do {
-+//         systimer_ll_clear_alarm_int(systimer_hal->dev, alarm_id);
-+
-+//         uint32_t diff = systimer_hal_get_counter_value(systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK) / systimer_ll_get_alarm_period(systimer_hal->dev, alarm_id) - s_handled_systicks[cpuid];
-+//         if (diff > 0) {
-+//             if (s_handled_systicks[cpuid] == 0) {
-+//                 s_handled_systicks[cpuid] = diff;
-+//                 diff = 1;
-+//             } else {
-+//                 s_handled_systicks[cpuid] += diff;
-+//             }
-+
-+//             do {
-+//                 xPortSysTickHandler();
-+//             } while (--diff);
-+//         }
-+//     } while (systimer_ll_is_alarm_int_fired(systimer_hal->dev, alarm_id));
-+
-+// #ifdef CONFIG_PM_TRACE
-+//     ESP_PM_TRACE_EXIT(TICK, cpuid);
-+// #endif
++#ifdef CONFIG_IDF_RTOS_RTTHREAD
++#else
+     uint32_t cpuid = xPortGetCoreID();
+     systimer_hal_context_t *systimer_hal = (systimer_hal_context_t *)arg;
+ #ifdef CONFIG_PM_TRACE
+@@ -144,6 +146,7 @@ IRAM_ATTR void SysTickIsrHandler(void *arg)
+ #ifdef CONFIG_PM_TRACE
+     ESP_PM_TRACE_EXIT(TICK, cpuid);
+ #endif
++#endif
  }
  
  #endif // CONFIG_FREERTOS_SYSTICK_USES_CCOUNT
 diff --git a/components/riscv/vectors.S b/components/riscv/vectors.S
-index 1006d5bea5..91bb4aa39e 100644
+index 1006d5bea5..963494fcb3 100644
 --- a/components/riscv/vectors.S
 +++ b/components/riscv/vectors.S
 @@ -17,6 +17,9 @@
@@ -143,12 +120,13 @@ index 1006d5bea5..91bb4aa39e 100644
  
  	.equ SAVE_REGS, 32
  	.equ CONTEXT_SIZE, (SAVE_REGS * 4)
-@@ -218,25 +221,25 @@ _call_panic_handler:
+@@ -218,25 +221,27 @@ _call_panic_handler:
  	 */
  	.global _interrupt_handler
  	.type _interrupt_handler, @function
--_interrupt_handler:
-+_interrupt_handler1:
++#ifndef CONFIG_IDF_RTOS_RTTHREAD
++
+ _interrupt_handler:
  	/* entry */
 -	save_regs
 -	save_mepc
@@ -179,31 +157,18 @@ index 1006d5bea5..91bb4aa39e 100644
  	li t2, 0x7fffffff
  	and t1, s1, t2		/* t1 = mcause & mask */
  	slli t1, t1, 2 		/* t1 = mcause * 4 */
-@@ -247,56 +250,219 @@ _interrupt_handler:
+@@ -247,8 +252,8 @@ _interrupt_handler:
  	sw t2, 0(t0)		/* INTERRUPT_CORE0_CPU_INT_THRESH_REG = t2 */
  	fence
  
 -	li t0, 0x8
 -	csrrs t0, mstatus, t0
--
--	#ifdef CONFIG_PM_TRACE
--	li      a0, 0       /* = ESP_PM_TRACE_IDLE */
--	#if SOC_CPU_CORES_NUM == 1
--	li      a1, 0       /* No need to check core ID on single core hardware */
--	#else
--	csrr    a1, mhartid
--	#endif
--	la      t0, esp_pm_trace_exit
--	jalr    t0          /* absolute jump, avoid the 1 MiB range constraint */
--	#endif
 +	li t0, 0x8   /* t0 = 8 */
 +	csrrs t0, mstatus, t0    /*设置状态MIE寄存器，开总中断*/
  
--	#ifdef CONFIG_PM_ENABLE
--	la      t0, esp_pm_impl_isr_hook
--	jalr    t0          /* absolute jump, avoid the 1 MiB range constraint */
--	#endif
- 
+ 	#ifdef CONFIG_PM_TRACE
+ 	li      a0, 0       /* = ESP_PM_TRACE_IDLE */
+@@ -269,34 +274,211 @@ _interrupt_handler:
  	/* call the C dispatcher */
  	mv      a0, sp      /* argument 1, stack pointer */
  	mv      a1, s1      /* argument 2, interrupt number (mcause) */
@@ -248,10 +213,8 @@ index 1006d5bea5..91bb4aa39e 100644
  
  	/* exit, this will also re-enable the interrupts */
  	mret
-+	.size  _interrupt_handler1, .-_interrupt_handler1
-+
-+
-+
+ 	.size  _interrupt_handler, .-_interrupt_handler
++#else
 +_interrupt_handler:
 +    /* 此时CPU的sp = from_thread->sp */
 +    /* 注意： 在这里，并没有将mepc的值赋值为from_thread栈中的epc，但后面会赋值 */
@@ -423,7 +386,8 @@ index 1006d5bea5..91bb4aa39e 100644
 +
 +    addi  sp, sp, 32 * REGBYTES
 +    mret
- 	.size  _interrupt_handler, .-_interrupt_handler
++	.size  _interrupt_handler, .-_interrupt_handler
++#endif
 -- 
 2.35.1.windows.2
 
