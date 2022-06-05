@@ -20,6 +20,7 @@
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
+ * 2022-06-04     Meco Man     remove strnlen
  */
 
 #include <rtthread.h>
@@ -553,7 +554,6 @@ RTM_EXPORT(rt_strlen);
 
 #endif /* RT_KSERVICE_USING_STDLIB */
 
-#if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
 /**
  * The  strnlen()  function  returns the number of characters in the
  * string pointed to by s, excluding the terminating null byte ('\0'),
@@ -577,10 +577,6 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
     return sc - s;
 }
 RTM_EXPORT(rt_strnlen);
-#ifdef __ARMCC_VERSION
-rt_size_t strnlen(const char *s, rt_size_t maxlen) __attribute__((alias("rt_strnlen")));
-#endif /* __ARMCC_VERSION */
-#endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
 #ifdef RT_USING_HEAP
 /**
@@ -603,9 +599,6 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
-#ifdef __ARMCC_VERSION
-char *strdup(const char *s) __attribute__((alias("rt_strdup")));
-#endif /* __ARMCC_VERSION */
 #endif /* RT_USING_HEAP */
 
 /**
