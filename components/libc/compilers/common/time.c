@@ -616,8 +616,8 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
             unit = clock_cpu_getres();
             cpu_tick = clock_cpu_gettime();
 
-            tp->tv_sec  = ((int)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
-            tp->tv_nsec = ((int)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+            tp->tv_sec  = ((long long)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+            tp->tv_nsec = ((long long)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
         }
         break;
 #endif
