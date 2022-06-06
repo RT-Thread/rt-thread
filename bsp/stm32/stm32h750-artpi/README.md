@@ -26,9 +26,9 @@ STM32H750 是RTTHREAD推出的一款基于 ARM Cortex-M7 内核的开发板，�
 - 常用接口：USB 转串口、USB OTG、RGB888等
 - 调试接口，标准 ST-LINK
 
-开发板更多详细信息请参考[H750-ART-PI](https://www.rt-thread.org/product/153.html)。
+开发板更多详细信息请参考 [H750-ART-PI](https://www.rt-thread.org/product/153.html)。
 
-官方仓库[sdk-bsp-stm32h750-realthread-artpi](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi)
+官方仓库 [sdk-bsp-stm32h750-realthread-artpi](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi)
 
 官方主页 [ART-PI](https://art-pi.gitee.io/website)
 
@@ -114,6 +114,16 @@ msh >
     PI9  ------> USART4_RX
 
     PA0 ------> USART4_TX 
+
+- Bootloader 损坏 或 缺失
+
+    如遇到程序下载后，板子跑不起来的情况，请先通过串口查看复位后bootloader打印信息 “ART-PiBOOT” ，以检查bootloader是否损坏或丢失。若 bootloader 缺失，则需要重新烧写目录下 artpi_bootloader.bin 文件到芯片内部flash；在连接开发板至 PC 后，ART-Pi 会显示为存储设备，直接将 artpi_bootloader.bin 拖入文件管理器中 ART-Pi 目录下即可（类似复制文件）。
+
+    此 bin 文件由 ART-Pi sdk 下 art_pi_bootloader 示例工程构建生成，生成过程参考 [ART-Pi 开发手册](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi/blob/master/documents/UM5002-RT-Thread%20ART-Pi%20%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md) ；工程构建后，bin 文件生成在工程目录 Debug 路径下。
+    
+- 外部 flash 下载算法
+
+    参考 [ART-Pi 开发手册](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi/blob/master/documents/UM5002-RT-Thread%20ART-Pi%20%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md) ， 下载算法放在 [ART-Pi 示例工程](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi/tree/master/projects)下 board/stldr 路径中。
 
 ## 联系人信息
 
