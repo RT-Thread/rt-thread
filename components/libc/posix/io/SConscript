@@ -3,27 +3,8 @@
 import os
 from building import *
 
-src     = []
 cwd     = GetCurrentDir()
-CPPPATH = [cwd]
 group   = []
-
-flag = False
-
-if GetDepend('RT_USING_POSIX_DEVIO'):
-    src += ['libc.c']
-    flag = True
-
-if GetDepend('RT_USING_POSIX_SELECT'):
-    src += ['select.c']
-    flag = True
-
-if GetDepend('RT_USING_POSIX_MMAP'):
-    src += ['mmap.c']
-    flag = True
-
-if flag == True:
-    group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
 for d in list:

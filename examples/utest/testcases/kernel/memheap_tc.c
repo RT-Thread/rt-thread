@@ -22,12 +22,12 @@
 static void memheap_test(void)
 {
     struct rt_memheap heap1;
-    rt_uint32_t ptr_start;
+    rt_ubase_t ptr_start;
     void *ptr[SLICE_NUM];
     int i, cnt = 0;
 
     /* init heap */
-    ptr_start = (rt_uint32_t)rt_malloc_align(HEAP_SIZE, HEAP_ALIGN);
+    ptr_start = (rt_ubase_t)rt_malloc_align(HEAP_SIZE, HEAP_ALIGN);
     if (ptr_start == RT_NULL)
     {
         rt_kprintf("totle size too big,can not malloc memory!");

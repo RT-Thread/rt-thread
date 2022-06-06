@@ -3,10 +3,24 @@
  *
  * @brief       This file provides all the ADC firmware functions
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_adc.h"
@@ -25,22 +39,22 @@
 */
 
 /*!
- * @brief     Reset ADC peripheral registers to their default reset values.
+ * @brief       Reset ADC peripheral registers to their default reset values.
  *
- * @param     adc: Select ADC peripheral.
+ * @param       adc: Select ADC peripheral.
  *
- * @retval    None
+ * @retval      None
  *
- * @note      adc can be ADC1, ADC2 or ADC3.
+ * @note        adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_Reset(ADC_T* adc)
+void ADC_Reset(ADC_T *adc)
 {
-    if(adc == ADC1)
+    if (adc == ADC1)
     {
         RCM_EnableAPB2PeriphReset(RCM_APB2_PERIPH_ADC1);
         RCM_DisableAPB2PeriphReset(RCM_APB2_PERIPH_ADC1);
     }
-    else if(adc == ADC2)
+    else if (adc == ADC2)
     {
         RCM_EnableAPB2PeriphReset(RCM_APB2_PERIPH_ADC2);
         RCM_DisableAPB2PeriphReset(RCM_APB2_PERIPH_ADC2);
@@ -63,7 +77,7 @@ void ADC_Reset(ADC_T* adc)
  *
  * @note        adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig)
+void ADC_Config(ADC_T *adc, ADC_Config_T *adcConfig)
 {
     uint32_t reg;
 
@@ -74,8 +88,10 @@ void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig)
 
     reg = adc->CTRL2;
     reg &= 0xFFF1F7FD;
-    reg |= (uint32_t)(adcConfig->dataAlign | adcConfig->externalTrigConv |
-                    ((uint32_t)adcConfig->continuosConvMode << 1));
+    reg |= (uint32_t)adcConfig->dataAlign | \
+           (uint32_t)adcConfig->externalTrigConv | \
+           ((uint32_t)adcConfig->continuosConvMode << 1);
+
     adc->CTRL2 = reg;
 
     reg = adc->REGSEQ1;
@@ -91,7 +107,7 @@ void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig)
  *
  * @retval      None
  */
-void ADC_ConfigStructInit(ADC_Config_T* adcConfig)
+void ADC_ConfigStructInit(ADC_Config_T *adcConfig)
 {
     adcConfig->mode = ADC_MODE_INDEPENDENT;
     adcConfig->scanConvMode = DISABLE;
@@ -110,7 +126,7 @@ void ADC_ConfigStructInit(ADC_Config_T* adcConfig)
  *
  * @note        adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_Enable(ADC_T* adc)
+void ADC_Enable(ADC_T *adc)
 {
     adc->CTRL2_B.ADCEN = BIT_SET;
 }
@@ -124,7 +140,7 @@ void ADC_Enable(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_Disable(ADC_T* adc)
+void ADC_Disable(ADC_T *adc)
 {
     adc->CTRL2_B.ADCEN = BIT_RESET;
 }
@@ -138,7 +154,7 @@ void ADC_Disable(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableDMA(ADC_T* adc)
+void ADC_EnableDMA(ADC_T *adc)
 {
     adc->CTRL2_B.DMAEN = BIT_SET;
 }
@@ -152,7 +168,7 @@ void ADC_EnableDMA(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableDMA(ADC_T* adc)
+void ADC_DisableDMA(ADC_T *adc)
 {
     adc->CTRL2_B.DMAEN = BIT_RESET;
 }
@@ -166,7 +182,7 @@ void ADC_DisableDMA(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ResetCalibration(ADC_T* adc)
+void ADC_ResetCalibration(ADC_T *adc)
 {
     adc->CTRL2_B.CALRST = BIT_SET;
 }
@@ -180,7 +196,7 @@ void ADC_ResetCalibration(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint8_t ADC_ReadResetCalibrationStatus(ADC_T* adc)
+uint8_t ADC_ReadResetCalibrationStatus(ADC_T *adc)
 {
     uint8_t ret;
     ret = (adc->CTRL2_B.CALRST) ? BIT_SET : BIT_RESET;
@@ -196,7 +212,7 @@ uint8_t ADC_ReadResetCalibrationStatus(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_StartCalibration(ADC_T* adc)
+void ADC_StartCalibration(ADC_T *adc)
 {
     adc->CTRL2_B.CAL = BIT_SET;
 }
@@ -210,7 +226,7 @@ void ADC_StartCalibration(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint8_t ADC_ReadCalibrationStartFlag(ADC_T* adc)
+uint8_t ADC_ReadCalibrationStartFlag(ADC_T *adc)
 {
     uint8_t ret;
     ret = (adc->CTRL2_B.CAL) ? BIT_SET : BIT_RESET;
@@ -226,7 +242,7 @@ uint8_t ADC_ReadCalibrationStartFlag(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableSoftwareStartConv(ADC_T* adc)
+void ADC_EnableSoftwareStartConv(ADC_T *adc)
 {
     adc->CTRL2 |= 0x00500000;
 }
@@ -240,7 +256,7 @@ void ADC_EnableSoftwareStartConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableSoftwareStartConv(ADC_T* adc)
+void ADC_DisableSoftwareStartConv(ADC_T *adc)
 {
     adc->CTRL2 &= 0xFFAFFFFF;
 }
@@ -254,7 +270,7 @@ void ADC_DisableSoftwareStartConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc)
+uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T *adc)
 {
     uint8_t ret;
     ret = (adc->CTRL2_B.REGSWSC) ? BIT_SET : BIT_RESET;
@@ -273,7 +289,7 @@ uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigDiscModeChannel(ADC_T* adc, uint8_t number)
+void ADC_ConfigDiscMode(ADC_T *adc, uint8_t number)
 {
     adc->CTRL1_B.DISCNUMCFG |= number - 1;
 }
@@ -287,7 +303,7 @@ void ADC_ConfigDiscModeChannel(ADC_T* adc, uint8_t number)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableDiscMode(ADC_T* adc)
+void ADC_EnableDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.REGDISCEN = BIT_SET;
 }
@@ -301,7 +317,7 @@ void ADC_EnableDiscMode(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableDiscMode(ADC_T* adc)
+void ADC_DisableDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.REGDISCEN = BIT_RESET;
 }
@@ -337,24 +353,24 @@ void ADC_DisableDiscMode(ADC_T* adc)
  *
  * @param        sampleTime: the specified ADC channel SampleTime
  *                           The parameter can be one of following values:
- *                           @arg ADC_SAMPLE_TIME_1_5:   ADC 1.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_7_5:   ADC 7.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_13_5:  ADC 13.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_28_5:  ADC 28.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_41_5:  ADC 41.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_55_5:  ADC 55.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_71_5:  ADC 71.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_239_5: ADC 239.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_1CYCLES5:   ADC 1.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_7CYCLES5:   ADC 7.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_13CYCLES5:  ADC 13.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_28CYCLES5:  ADC 28.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_41CYCLES5:  ADC 41.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_55CYCLES5:  ADC 55.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_71CYCLES5:  ADC 71.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_239CYCLES5: ADC 239.5 clock cycles
  *
  * @retval       None
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel,uint8_t rank, uint8_t sampleTime)
+void ADC_ConfigRegularChannel(ADC_T *adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
 {
     uint32_t temp1 = 0;
     uint32_t temp2 = 0;
-    if(channel > ADC_CHANNEL_9)
+    if (channel > ADC_CHANNEL_9)
     {
         temp1 = adc->SMPTIM1;
         temp2 = SMPCYCCFG_SET_SMPTIM1 << (3 * (channel - 10));
@@ -373,7 +389,7 @@ void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel,uint8_t rank, uint8_t 
         adc->SMPTIM2 = temp1;
     }
 
-    if(rank < 7)
+    if (rank < 7)
     {
         temp1 = adc->REGSEQ3;
         temp2 = REGSEQC_SET_REGSEQ3 << (5 * (rank - 1));
@@ -382,7 +398,7 @@ void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel,uint8_t rank, uint8_t 
         temp1 |= temp2;
         adc->REGSEQ3 = temp1;
     }
-    else if(rank < 13)
+    else if (rank < 13)
     {
         temp1 = adc->REGSEQ2;
         temp2 = REGSEQC_SET_REGSEQ2 << (5 * (rank - 7));
@@ -411,7 +427,7 @@ void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel,uint8_t rank, uint8_t 
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableExternalTrigConv(ADC_T* adc)
+void ADC_EnableExternalTrigConv(ADC_T *adc)
 {
     adc->CTRL2_B.REGEXTTRGEN = BIT_SET;
 }
@@ -425,7 +441,7 @@ void ADC_EnableExternalTrigConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableExternalTrigConv(ADC_T* adc)
+void ADC_DisableExternalTrigConv(ADC_T *adc)
 {
     adc->CTRL2_B.REGEXTTRGEN = BIT_RESET;
 }
@@ -439,7 +455,7 @@ void ADC_DisableExternalTrigConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint16_t ADC_ReadConversionValue(ADC_T* adc)
+uint16_t ADC_ReadConversionValue(ADC_T *adc)
 {
     return (uint16_t) adc->REGDATA;
 }
@@ -453,9 +469,9 @@ uint16_t ADC_ReadConversionValue(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint32_t ADC_ReadDualModeConversionValue(ADC_T* adc)
+uint32_t ADC_ReadDualModeConversionValue(ADC_T *adc)
 {
-      return (*(__IOM uint32_t *) RDG_ADDRESS);
+    return (*(__IOM uint32_t *) RDG_ADDRESS);
 }
 
 /*!
@@ -467,7 +483,7 @@ uint32_t ADC_ReadDualModeConversionValue(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableInjectedConv(ADC_T* adc)
+void ADC_EnableAutoInjectedConv(ADC_T *adc)
 {
     adc->CTRL1_B.INJGACEN = BIT_SET;
 }
@@ -481,7 +497,7 @@ void ADC_EnableInjectedConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableInjectedConv(ADC_T* adc)
+void ADC_DisableAutoInjectedConv(ADC_T *adc)
 {
     adc->CTRL1_B.INJGACEN = BIT_RESET;
 }
@@ -495,7 +511,7 @@ void ADC_DisableInjectedConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableInjectedDiscMode(ADC_T* adc)
+void ADC_EnableInjectedDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.INJDISCEN = BIT_SET;
 }
@@ -509,7 +525,7 @@ void ADC_EnableInjectedDiscMode(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableInjectedDiscMode(ADC_T* adc)
+void ADC_DisableInjectedDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.INJDISCEN = BIT_RESET;
 }
@@ -542,7 +558,7 @@ void ADC_DisableInjectedDiscMode(ADC_T* adc)
  *
  * @note    adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigExternalTrigInjectedConv(ADC_T* adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv)
+void ADC_ConfigExternalTrigInjectedConv(ADC_T *adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv)
 {
     adc->CTRL2_B.INJGEXTTRGSEL = RESET;
     adc->CTRL2_B.INJGEXTTRGSEL |= extTrigInjecConv;
@@ -557,7 +573,7 @@ void ADC_ConfigExternalTrigInjectedConv(ADC_T* adc, ADC_EXT_TRIG_INJEC_CONV_T ex
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableExternalTrigInjectedConv(ADC_T* adc)
+void ADC_EnableExternalTrigInjectedConv(ADC_T *adc)
 {
     adc->CTRL2_B.INJEXTTRGEN = BIT_SET;
 }
@@ -571,7 +587,7 @@ void ADC_EnableExternalTrigInjectedConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableExternalTrigInjectedConv(ADC_T* adc)
+void ADC_DisableExternalTrigInjectedConv(ADC_T *adc)
 {
     adc->CTRL2_B.INJEXTTRGEN = BIT_RESET;
 }
@@ -585,7 +601,7 @@ void ADC_DisableExternalTrigInjectedConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableSoftwareStartInjectedConv(ADC_T* adc)
+void ADC_EnableSoftwareStartInjectedConv(ADC_T *adc)
 {
     adc->CTRL2_B.INJEXTTRGEN = BIT_SET;
     adc->CTRL2_B.INJSWSC = BIT_SET;
@@ -600,7 +616,7 @@ void ADC_EnableSoftwareStartInjectedConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableSoftwareStartInjectedConv(ADC_T* adc)
+void ADC_DisableSoftwareStartInjectedConv(ADC_T *adc)
 {
     adc->CTRL2_B.INJEXTTRGEN = BIT_RESET;
     adc->CTRL2_B.INJSWSC = BIT_RESET;
@@ -615,7 +631,7 @@ void ADC_DisableSoftwareStartInjectedConv(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T* adc)
+uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T *adc)
 {
     uint8_t ret;
     ret = (adc->CTRL2_B.INJSWSC) ? BIT_SET : BIT_RESET;
@@ -653,20 +669,20 @@ uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T* adc)
  *
  * @param        sampleTime: the specified ADC channel SampleTime
  *                           The parameter can be one of following values:
- *                           @arg ADC_SAMPLE_TIME_1_5:   ADC 1.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_7_5:   ADC 7.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_13_5:  ADC 13.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_28_5:  ADC 28.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_41_5:  ADC 41.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_55_5:  ADC 55.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_71_5:  ADC 71.5 clock cycles
- *                           @arg ADC_SAMPLE_TIME_239_5: ADC 239.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_1CYCLES5:   ADC 1.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_7CYCLES5:   ADC 7.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_13CYCLES5:  ADC 13.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_28CYCLES5:  ADC 28.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_41CYCLES5:  ADC 41.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_55CYCLES5:  ADC 55.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_71CYCLES5:  ADC 71.5 clock cycles
+ *                           @arg ADC_SAMPLETIME_239CYCLES5: ADC 239.5 clock cycles
  *
  * @retval       None
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
+void ADC_ConfigInjectedChannel(ADC_T *adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
 {
     uint32_t temp1 = 0;
     uint32_t temp2 = 0;
@@ -674,9 +690,9 @@ void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_
     if (channel > ADC_CHANNEL_9)
     {
         temp1 = adc->SMPTIM1;
-        temp2 = SMPCYCCFG_SET_SMPTIM1 << (3*(channel - 10));
+        temp2 = SMPCYCCFG_SET_SMPTIM1 << (3 * (channel - 10));
         temp1 &= ~temp2;
-        temp2 = (uint32_t)sampleTime << (3*(channel - 10));
+        temp2 = (uint32_t)sampleTime << (3 * (channel - 10));
         temp1 |= temp2;
         adc->SMPTIM1 = temp1;
     }
@@ -690,7 +706,7 @@ void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_
         adc->SMPTIM2 = temp1;
     }
     temp1 = adc->INJSEQ;
-    temp3 =  (temp1 & INJSEQ_SET_INJSEQLEN)>> 20;
+    temp3 = (temp1 & INJSEQ_SET_INJSEQLEN) >> 20;
     temp2 = INJSEQ_SET_INJSEQC << (5 * (uint8_t)((rank + 3) - (temp3 + 1)));
     temp1 &= ~temp2;
     temp2 = (uint32_t)channel << (5 * (uint8_t)((rank + 3) - (temp3 + 1)));
@@ -710,7 +726,7 @@ void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_
  *
  * @note     adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigInjectedSequencerLength(ADC_T* adc, uint8_t length)
+void ADC_ConfigInjectedSequencerLength(ADC_T *adc, uint8_t length)
 {
     adc->INJSEQ_B.INJSEQLEN = RESET;
     adc->INJSEQ_B.INJSEQLEN |= length - 1;
@@ -735,7 +751,7 @@ void ADC_ConfigInjectedSequencerLength(ADC_T* adc, uint8_t length)
  *
  * @note      adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigInjectedOffset(ADC_T* adc, ADC_INJEC_CHANNEL_T channel, uint16_t offSet)
+void ADC_ConfigInjectedOffset(ADC_T *adc, ADC_INJEC_CHANNEL_T channel, uint16_t offSet)
 {
     __IOM uint32_t tmp = 0;
 
@@ -761,14 +777,14 @@ void ADC_ConfigInjectedOffset(ADC_T* adc, ADC_INJEC_CHANNEL_T channel, uint16_t 
  *
  * @note      adc can be ADC1, ADC2 or ADC3.
  */
-uint16_t ADC_ReadInjectedConversionValue(ADC_T* adc, ADC_INJEC_CHANNEL_T channel)
+uint16_t ADC_ReadInjectedConversionValue(ADC_T *adc, ADC_INJEC_CHANNEL_T channel)
 {
-  __IOM uint32_t temp = 0;
+    __IOM uint32_t temp = 0;
 
-  temp = (uint32_t)adc;
-  temp += channel + INJDATA_OFFSET;
+    temp = (uint32_t)adc;
+    temp += channel + INJDATA_OFFSET;
 
-  return (uint16_t) (*(__IOM uint32_t*)  temp);
+    return (uint16_t)(*(__IOM uint32_t *)  temp);
 }
 
 /*!
@@ -790,7 +806,7 @@ uint16_t ADC_ReadInjectedConversionValue(ADC_T* adc, ADC_INJEC_CHANNEL_T channel
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableAnalogWatchdog(ADC_T* adc, uint32_t analogWatchdog)
+void ADC_EnableAnalogWatchdog(ADC_T *adc, uint32_t analogWatchdog)
 {
     adc->CTRL1 &= 0xFF3FFDFF;
     adc->CTRL1 |= analogWatchdog;
@@ -805,7 +821,7 @@ void ADC_EnableAnalogWatchdog(ADC_T* adc, uint32_t analogWatchdog)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableAnalogWatchdog(ADC_T* adc)
+void ADC_DisableAnalogWatchdog(ADC_T *adc)
 {
     adc->CTRL1 &= 0xFF3FFDFF;
 }
@@ -825,7 +841,7 @@ void ADC_DisableAnalogWatchdog(ADC_T* adc)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigAnalogWatchdogThresholds(ADC_T* adc, uint16_t highThreshold, uint16_t lowThreshold)
+void ADC_ConfigAnalogWatchdogThresholds(ADC_T *adc, uint16_t highThreshold, uint16_t lowThreshold)
 {
     adc->AWDHT = highThreshold;
     adc->AWDLT = lowThreshold;
@@ -861,7 +877,7 @@ void ADC_ConfigAnalogWatchdogThresholds(ADC_T* adc, uint16_t highThreshold, uint
  *
  * @note       adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T* adc, uint8_t channel)
+void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T *adc, uint8_t channel)
 {
     adc->CTRL1_B.AWDCHSEL = BIT_RESET;
     adc->CTRL1 |= channel;
@@ -876,7 +892,7 @@ void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T* adc, uint8_t channel)
  *
  * @note       adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableTempSensorVrefint(ADC_T* adc)
+void ADC_EnableTempSensorVrefint(ADC_T *adc)
 {
     adc->CTRL2_B.TSVREFEN = BIT_SET;
 }
@@ -890,7 +906,7 @@ void ADC_EnableTempSensorVrefint(ADC_T* adc)
  *
  * @note       adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableTempSensorVrefint(ADC_T* adc)
+void ADC_DisableTempSensorVrefint(ADC_T *adc)
 {
     adc->CTRL2_B.TSVREFEN = BIT_RESET;
 }
@@ -910,7 +926,7 @@ void ADC_DisableTempSensorVrefint(ADC_T* adc)
  *
  * @note       adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_EnableInterrupt(ADC_T* adc, uint16_t interrupt)
+void ADC_EnableInterrupt(ADC_T *adc, uint16_t interrupt)
 {
     uint8_t mask;
 
@@ -933,7 +949,7 @@ void ADC_EnableInterrupt(ADC_T* adc, uint16_t interrupt)
  *
  * @note       adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_DisableInterrupt(ADC_T* adc, uint16_t interrupt)
+void ADC_DisableInterrupt(ADC_T *adc, uint16_t interrupt)
 {
     uint8_t mask;
 
@@ -958,19 +974,9 @@ void ADC_DisableInterrupt(ADC_T* adc, uint16_t interrupt)
  *
  * @note      adc can be ADC1, ADC2 or ADC3.
  */
-uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag)
+uint8_t ADC_ReadStatusFlag(ADC_T *adc, ADC_FLAG_T flag)
 {
-    uint8_t status = RESET;
-
-    if ((adc->STS & flag) != (uint8_t)RESET)
-    {
-        status = SET;
-    }
-    else
-    {
-    status = RESET;
-    }
-    return  status;
+    return (adc->STS & flag) ? SET : RESET;
 }
 
 /*!
@@ -990,7 +996,7 @@ uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag)
  *
  * @note      adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ClearStatusFlag(ADC_T* adc, uint8_t flag)
+void ADC_ClearStatusFlag(ADC_T *adc, uint8_t flag)
 {
     adc->STS = ~(uint32_t)flag;
 }
@@ -1010,14 +1016,14 @@ void ADC_ClearStatusFlag(ADC_T* adc, uint8_t flag)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-uint8_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_T interrupt)
+uint8_t ADC_ReadIntFlag(ADC_T *adc, ADC_INT_T flag)
 {
     uint8_t bitStatus = RESET;
     uint32_t itmask = 0;
     uint32_t enableStatus = 0;
 
-    itmask = interrupt >> 8;
-    enableStatus = (adc->CTRL1 & (uint8_t)interrupt);
+    itmask = flag >> 8;
+    enableStatus = (adc->CTRL1 & (uint8_t)flag);
 
     if (((adc->STS & itmask) != (uint32_t)RESET) && enableStatus)
     {
@@ -1045,12 +1051,12 @@ uint8_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_T interrupt)
  *
  * @note         adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ClearIntFlag(ADC_T* adc, uint16_t interrupt)
+void ADC_ClearIntFlag(ADC_T *adc, uint16_t flag)
 {
-  uint8_t mask = 0;
+    uint8_t mask = 0;
 
-  mask = (uint8_t)(interrupt >> 8);
-  adc->STS = ~(uint32_t)mask;
+    mask = (uint8_t)(flag >> 8);
+    adc->STS = ~(uint32_t)mask;
 }
 
 /**@} end of group ADC_Fuctions*/

@@ -28,7 +28,8 @@
 #include "msh.h"
 
 #ifdef DFS_USING_POSIX
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <fcntl.h>
 #endif /* DFS_USING_POSIX */
 
 /* finsh thread */
@@ -146,7 +147,7 @@ int finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
     char ch = 0;
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
     if(read(STDIN_FILENO, &ch, 1) > 0)
     {
         return ch;
@@ -167,17 +168,26 @@ int finsh_getchar(void)
     }
 
     while (rt_device_read(device, -1, &ch, 1) != 1)
+    {
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
-
+        if (shell->device != device)
+        {
+            device = shell->device;
+            if (device == RT_NULL)
+            {
+                return -1;
+            }
+        }
+    }
     return ch;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 #else
     extern char rt_hw_console_getchar(void);
     return rt_hw_console_getchar();
 #endif /* RT_USING_DEVICE */
 }
 
-#if !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -221,7 +231,7 @@ void finsh_set_device(const char *device_name)
         }
 
         /* clear line buffer before switch to new device */
-        memset(shell->line, 0, sizeof(shell->line));
+        rt_memset(shell->line, 0, sizeof(shell->line));
         shell->line_curpos = shell->line_position = 0;
 
         shell->device = dev;
@@ -241,7 +251,7 @@ const char *finsh_get_device()
     RT_ASSERT(shell != RT_NULL);
     return shell->device->parent.name;
 }
-#endif /* !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE) */
+#endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
 /**
  * @ingroup finsh
@@ -283,7 +293,7 @@ rt_uint32_t finsh_get_echo()
  */
 rt_err_t finsh_set_password(const char *password)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     rt_size_t pw_len = rt_strlen(password);
 
     if (pw_len < FINSH_PASSWORD_MIN || pw_len > FINSH_PASSWORD_MAX)
@@ -404,11 +414,11 @@ static void shell_push_history(struct finsh_shell *shell)
                 int index;
                 for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
                 {
-                    memcpy(&shell->cmd_history[index][0],
+                    rt_memcpy(&shell->cmd_history[index][0],
                            &shell->cmd_history[index + 1][0], FINSH_CMD_SIZE);
                 }
-                memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
-                memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
+                rt_memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
+                rt_memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
 
                 /* it's the maximum history */
                 shell->history_count = FINSH_HISTORY_LINES;
@@ -420,8 +430,8 @@ static void shell_push_history(struct finsh_shell *shell)
             if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, FINSH_CMD_SIZE))
             {
                 shell->current_history = shell->history_count;
-                memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
-                memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
+                rt_memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
+                rt_memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
 
                 /* increase count and set current history position */
                 shell->history_count ++;
@@ -443,7 +453,7 @@ void finsh_thread_entry(void *parameter)
     shell->echo_mode = 0;
 #endif
 
-#if !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {
@@ -453,7 +463,7 @@ void finsh_thread_entry(void *parameter)
             finsh_set_device(console->parent.name);
         }
     }
-#endif /* !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE) */
+#endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
 #ifdef FINSH_USING_AUTH
     /* set the default password when the password isn't setting */
@@ -517,9 +527,9 @@ void finsh_thread_entry(void *parameter)
                 }
 
                 /* copy the history command */
-                memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
+                rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
-                shell->line_curpos = shell->line_position = strlen(shell->line);
+                shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
                 shell_handle_history(shell);
 #endif
                 continue;
@@ -539,9 +549,9 @@ void finsh_thread_entry(void *parameter)
                         continue;
                 }
 
-                memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
+                rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
-                shell->line_curpos = shell->line_position = strlen(shell->line);
+                shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
                 shell_handle_history(shell);
 #endif
                 continue;
@@ -581,7 +591,7 @@ void finsh_thread_entry(void *parameter)
             /* auto complete */
             shell_auto_complete(&shell->line[0]);
             /* re-calculate position */
-            shell->line_curpos = shell->line_position = strlen(shell->line);
+            shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
 
             continue;
         }
@@ -630,7 +640,7 @@ void finsh_thread_entry(void *parameter)
             msh_exec(shell->line, shell->line_position);
 
             rt_kprintf(FINSH_PROMPT);
-            memset(shell->line, 0, sizeof(shell->line));
+            rt_memset(shell->line, 0, sizeof(shell->line));
             shell->line_curpos = shell->line_position = 0;
             continue;
         }

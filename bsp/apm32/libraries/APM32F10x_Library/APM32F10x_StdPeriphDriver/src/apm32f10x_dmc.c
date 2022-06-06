@@ -3,11 +3,27 @@
  *
  * @brief       This file contains all the functions for the DMC controler peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
+
+#ifdef APM32F10X_HD
 #include "apm32f10x_dmc.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
@@ -29,10 +45,10 @@
  *
  * @retval      None
  */
-void DMC_Config(DMC_Config_T * dmcConfig)
+void DMC_Config(DMC_Config_T *dmcConfig)
 {
     DMC->SW_B.MCSW = 1;
-    while(!DMC->CTRL1_B.INIT);
+    while (!DMC->CTRL1_B.INIT);
 
     DMC->CFG_B.BAWCFG = dmcConfig->bankWidth;
     DMC->CFG_B.RAWCFG = dmcConfig->rowWidth;
@@ -44,7 +60,7 @@ void DMC_Config(DMC_Config_T * dmcConfig)
     DMC_ConfigTiming(&dmcConfig->timing);
 
     DMC->CTRL1_B.MODESET = 1;
-    while(!DMC->CTRL1_B.MODESET);
+    while (!DMC->CTRL1_B.MODESET);
 
     DMC->CTRL2_B.RDDEN = 1;
     DMC->CTRL2_B.RDDCFG = 7;
@@ -57,7 +73,7 @@ void DMC_Config(DMC_Config_T * dmcConfig)
  *
  * @retval      None
  */
-void DMC_ConfigStructInit(DMC_Config_T * dmcConfig)
+void DMC_ConfigStructInit(DMC_Config_T *dmcConfig)
 {
     dmcConfig->bankWidth   = DMC_BANK_WIDTH_2;
     dmcConfig->clkPhase    = DMC_CLK_PHASE_REVERSE;
@@ -75,7 +91,7 @@ void DMC_ConfigStructInit(DMC_Config_T * dmcConfig)
  *
  * @retval      None
  */
-void DMC_ConfigTiming(DMC_TimingConfig_T * timingConfig)
+void DMC_ConfigTiming(DMC_TimingConfig_T *timingConfig)
 {
     DMC->TIM0_B.RASMINTSEL = timingConfig->tRAS;
     DMC->TIM0_B.DTIMSEL    = timingConfig->tRCD;
@@ -100,7 +116,7 @@ void DMC_ConfigTiming(DMC_TimingConfig_T * timingConfig)
  *
  * @retval      None
  */
-void DMC_ConfigTimingStructInit(DMC_TimingConfig_T * timingConfig)
+void DMC_ConfigTimingStructInit(DMC_TimingConfig_T *timingConfig)
 {
     timingConfig->latencyCAS = DMC_CAS_LATENCY_3;
     timingConfig->tARP = DMC_AUTO_REFRESH_10;
@@ -268,6 +284,30 @@ void DMC_EnterSlefRefreshMode(void)
 }
 
 /*!
+ * @brief     Enable Accelerate Module
+ *
+ * @param     None
+ *
+ * @retval    None
+ */
+void DMC_EnableAccelerateModule(void)
+{
+    DMC->CTRL2_B.BUFFEN = BIT_SET;
+}
+
+/*!
+ * @brief     Disable Accelerate Module
+ *
+ * @param     None
+ *
+ * @retval    None
+ */
+void DMC_DisableAccelerateModule(void)
+{
+    DMC->CTRL2_B.BUFFEN = BIT_RESET;
+}
+
+/*!
  * @brief       Init DMC
  *
  * @param       None
@@ -396,14 +436,29 @@ void DMC_Disable(void)
  *                @arg DMC_CLK_PHASE_REVERSE: Clock phase is reverse
  *
  * @retval      None
- *
  */
 void DMC_ConfigClockPhase(DMC_CLK_PHASE_T clkPhase)
 {
     DMC->CTRL2_B.CPHACFG = clkPhase;
 }
 
-/**@} end of group DMC_Fuctions*/
-/**@} end of group DMC_Driver */
-/**@} end of group Peripherals_Library*/
+/*!
+ * @brief       Set DMC WRAP burst
+ *
+ * @param       burst: WRAP burst Type Selection
+ *                The parameter can be one of following values:
+ *                @arg DMC_WRAPB_4: wrap4 burst transfer
+ *                @arg DMC_WRAPB_8: wrap8 burst transfer
+ *
+ * @retval      None
+ */
+void DMC_ConfigWRAPB(DMC_WRPB_T burst)
+{
+    DMC->CTRL2_B.WRPBSEL = burst;
+}
 
+#endif //defined APM32F10X_HD
+
+/**@} end of group DMC_Fuctions*/
+/**@} end of group DMC_Driver*/
+/**@} end of group Peripherals_Library*/

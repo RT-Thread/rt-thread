@@ -472,7 +472,7 @@ static void int_xfer_done_cb(UTR_T *psUTR)
         msg.type = USB_MSG_CALLBACK;
         msg.content.cb.function = pipe->callback;
         msg.content.cb.context = pipe;
-        rt_usbh_event_signal(&msg);
+        rt_usbh_event_signal(&s_sUSBHDev.uhcd, &msg);
     }
 
 exit_int_xfer_done_cb:
@@ -880,7 +880,7 @@ int nu_usbh_register(void)
     RT_ASSERT(res == RT_EOK);
 
     /*initialize the usb host function */
-    res = rt_usb_host_init();
+    res = rt_usb_host_init("usbh");
     RT_ASSERT(res == RT_EOK);
 
 #if defined(RT_USING_PM)

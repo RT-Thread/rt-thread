@@ -109,12 +109,9 @@ if GetDepend(['BSP_USING_DSI']):
 	
 if GetDepend(['BSP_USING_SRAM']):
     src += ['STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_sram.c']	
-	
-	
 
 path = [cwd + '/STM32L5xx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Device/ST/STM32L5xx/Include',
-    cwd + '/CMSIS/Include']
+    cwd + '/CMSIS/Device/ST/STM32L5xx/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

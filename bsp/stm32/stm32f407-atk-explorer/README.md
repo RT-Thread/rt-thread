@@ -44,7 +44,9 @@
 | COM3         |  支持   |                                           |
 | MPU6050      |     支持     |                                       |
 | Flash        |   支持   |                               |
-| SRAM         |   支持   |                               |
+| SRAM         |   支持   |  LVGL 会使用到，但此时不能启用 RT_USING_MEMHEAP_AS_HEAP 内存算法 |
+| TFTLCD       |   支持   | F407 不带 LTDC 外设，所以需要使用 MCU LCD，而不能直接驱动 RGB 屏幕 |
+| LCD-TOUCH    |   支持   | 仅测试过 GT9147, 其他触摸驱动需要添加适配 |
 | SD卡         |   支持   | 支持FATFS文件系统 |
 | W25Q128 | 支持 | 支持LittleFS文件系统 |
 | 以太网       |   支持   |                               |
@@ -53,7 +55,7 @@
 | GPIO         |     支持     | PA0, PA1... PH1 ---> PIN: 0, 1...144 |
 | UART         |     支持     |              UART1/2/3              |
 | SPI          |     支持     |               SPI1/2/3                |
-| I2C          |     支持     |               软件 I2C                |
+| I2C          |     支持     |      软件 I2C1, I2C2[仅触摸屏使用]     |
 | ADC          |     支持     |                                       |
 | RTC          |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT          |     支持     |                                       |
@@ -129,4 +131,4 @@ msh >
 
 维护人:
 
-- [guozhanxin](https://github.com/Guozhanxin) 
+- [guozhanxin](https://github.com/Guozhanxin)

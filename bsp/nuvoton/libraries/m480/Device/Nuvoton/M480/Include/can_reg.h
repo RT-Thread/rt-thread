@@ -10,7 +10,7 @@
 #define __CAN_REG_H__
 
 #if defined ( __CC_ARM   )
-#pragma anon_unions
+    #pragma anon_unions
 #endif
 
 /**
@@ -586,8 +586,8 @@ typedef struct
 #define CAN_BTIME_TSEG2_Pos              (12)                                              /*!< CAN_T::BTIME: TSeg2 Position           */
 #define CAN_BTIME_TSEG2_Msk              (0x7ul << CAN_BTIME_TSEG2_Pos)                    /*!< CAN_T::BTIME: TSeg2 Mask               */
 
-#define CAN_IIDR_IntId_Pos               (0)                                               /*!< CAN_T::IIDR: IntId Position            */
-#define CAN_IIDR_IntId_Msk               (0xfffful << CAN_IIDR_IntId_Pos)                  /*!< CAN_T::IIDR: IntId Mask                */
+#define CAN_IIDR_INTID_Pos               (0)                                               /*!< CAN_T::IIDR: IntId Position            */
+#define CAN_IIDR_INTID_Msk               (0xfffful << CAN_IIDR_INTID_Pos)                  /*!< CAN_T::IIDR: IntId Mask                */
 
 #define CAN_TEST_BASIC_Pos               (2)                                               /*!< CAN_T::TEST: Basic Position            */
 #define CAN_TEST_BASIC_Msk               (0x1ul << CAN_TEST_BASIC_Pos)                     /*!< CAN_T::TEST: Basic Mask                */
@@ -753,7 +753,7 @@ typedef struct
 /**@}*/ /* end of REGISTER group */
 
 #if defined ( __CC_ARM   )
-#pragma no_anon_unions
+    #pragma no_anon_unions
 #endif
 
 #endif /* __CAN_REG_H__ */

@@ -27,7 +27,7 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'aarch64-elf-'
+    PREFIX = 'aarch64-none-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -39,7 +39,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     DEVICE = ' -g -march=armv8-a -mtune=cortex-a53'
-    CFLAGS = DEVICE + ' -Wall'
+    CFLAGS = DEVICE + ' -Wall -Werror'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''

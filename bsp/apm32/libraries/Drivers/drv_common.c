@@ -1,22 +1,23 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-08-20     Abbcc        first version
+ * 2022-03-04     stevetong459 FINSH_FUNCTION_EXPORT_ALIAS change to MSH_CMD_EXPORT for reboot function.
  */
 
 #include "drv_common.h"
 #include "board.h"
 
 #ifdef RT_USING_SERIAL
-#ifdef RT_USING_SERIAL_V2
-#include "drv_usart_v2.h"
-#else
-#include "drv_usart.h"
-#endif
+    #ifdef RT_USING_SERIAL_V2
+        #include "drv_usart_v2.h"
+    #else
+        #include "drv_usart.h"
+    #endif
 #endif
 
 #ifdef RT_USING_FINSH
@@ -25,17 +26,17 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
-    SysTick_Config(RCM_ReadHCLKFreq()/RT_TICK_PER_SECOND);
-    
+    SysTick_Config(RCM_ReadHCLKFreq() / RT_TICK_PER_SECOND);
+
     /*  AHB clock selected as SysTick clock source. */
     SysTick->CTRL |= 0x00000004U;
-    
+
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }
 
@@ -90,7 +91,7 @@ void rt_hw_us_delay(rt_uint32_t us)
 }
 
 /**
- * This function will initial STM32 board.
+ * This function will config the board for initialization.
  */
 RT_WEAK void rt_hw_board_init()
 {

@@ -14,6 +14,22 @@
 
 #if defined(__ICCARM__)
     #include <arm_math.h>
+#elif defined (__ARMCC_VERSION)
+    #ifdef __has_include
+        #if __has_include("cmsis_compiler.h")
+            #include "cmsis_compiler.h"
+        #endif
+    #endif
+
+    #if !defined(__CLZ)
+        #define __CLZ     __clz
+    #endif
+#endif
+
+#include <stdint.h>
+
+#if !defined(__STATIC_INLINE)
+    #define __STATIC_INLINE static inline
 #endif
 
 #ifdef __cplusplus
@@ -41,9 +57,10 @@ extern "C" {
                               Find Highest Set
    nu_clz will start zero-counting from MSB and return the number.
 */
+
 __STATIC_INLINE int nu_clz(uint32_t x)
 {
-    return x ? __CLZ(x):32;
+    return x ? __CLZ(x) : 32;
 }
 
 /* Count Leading Ones in word - Find Highest Zero

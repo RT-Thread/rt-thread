@@ -23,7 +23,7 @@ if GetDepend('RT_USING_GIC_V3'):
     src += ['gicv3.c']
     src += ['trap.c']
 
-if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += Glob('*_rvds.S')
 
 if rtconfig.PLATFORM == 'gcc':

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,6 +14,7 @@
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete
  * 2011-01-24     Bernard      add object allocation check.
  * 2012-03-22     Bernard      fix align issue in rt_mp_init and rt_mp_create.
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to mempool.c
  */
 
 #include <rthw.h>
@@ -21,7 +22,14 @@
 
 #ifdef RT_USING_MEMPOOL
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_mp_alloc_hook
+    #define __on_rt_mp_alloc_hook(mp, block)        __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
+#endif
+#ifndef __on_rt_mp_free_hook
+    #define __on_rt_mp_free_hook(mp, block)         __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_mp_alloc_hook)(struct rt_mempool *mp, void *block);
 static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
 
@@ -85,7 +93,7 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
                     rt_size_t          block_size)
 {
     rt_uint8_t *block_ptr;
-    register rt_size_t offset;
+    rt_size_t offset;
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
@@ -138,7 +146,7 @@ RTM_EXPORT(rt_mp_init);
 rt_err_t rt_mp_detach(struct rt_mempool *mp)
 {
     struct rt_thread *thread;
-    register rt_ubase_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
@@ -193,7 +201,7 @@ rt_mp_t rt_mp_create(const char *name,
 {
     rt_uint8_t *block_ptr;
     struct rt_mempool *mp;
-    register rt_size_t offset;
+    rt_size_t offset;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -256,7 +264,7 @@ RTM_EXPORT(rt_mp_create);
 rt_err_t rt_mp_delete(rt_mp_t mp)
 {
     struct rt_thread *thread;
-    register rt_ubase_t level;
+    rt_base_t level;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -311,7 +319,7 @@ RTM_EXPORT(rt_mp_delete);
 void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 {
     rt_uint8_t *block_ptr;
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *thread;
     rt_uint32_t before_sleep = 0;
 
@@ -409,7 +417,7 @@ void rt_mp_free(void *block)
     rt_uint8_t **block_ptr;
     struct rt_mempool *mp;
     struct rt_thread *thread;
-    register rt_base_t level;
+    rt_base_t level;
 
     /* parameter check */
     if (block == RT_NULL) return;

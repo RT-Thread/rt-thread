@@ -2,11 +2,17 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Split('''
-''')
+src     = []
+CPPPATH = [cwd]
 
 if GetDepend(['UTEST_MEMHEAP_TC']):
     src += ['memheap_tc.c']
+
+if GetDepend(['UTEST_SMALL_MEM_TC']):
+    src += ['mem_tc.c']
+
+if GetDepend(['UTEST_SLAB_TC']):
+    src += ['slab_tc.c']
 
 if GetDepend(['UTEST_IRQ_TC']):
     src += ['irq_tc.c']
@@ -35,8 +41,6 @@ if GetDepend(['UTEST_MAILBOX_TC']):
 if GetDepend(['UTEST_THREAD_TC']):
     src += ['thread_tc.c']
 
-CPPPATH = [cwd]
-
-group = DefineGroup('utestcases', src, depend = [], CPPPATH = CPPPATH)
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
 Return('group')

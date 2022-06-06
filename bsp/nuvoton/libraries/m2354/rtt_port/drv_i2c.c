@@ -99,7 +99,7 @@ static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u3
     RT_ASSERT(bus != RT_NULL);
     nu_i2c = (nu_i2c_bus_t *) bus;
 
-    switch (RT_I2C_DEV_CTRL_CLK)
+    switch (u32Cmd)
     {
     case RT_I2C_DEV_CTRL_CLK:
         I2C_SetBusClockFreq(nu_i2c->I2C, u32Value);

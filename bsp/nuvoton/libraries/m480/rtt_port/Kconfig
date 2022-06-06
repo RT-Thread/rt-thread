@@ -28,7 +28,7 @@ config SOC_SERIES_M480
 
     config BSP_USING_FMC
         bool "Enable Flash Memory Controller(FMC)"
-        select PKG_USING_FAL
+        select RT_USING_FAL
         default n
 
     config BSP_USING_GPIO
@@ -447,6 +447,7 @@ config SOC_SERIES_M480
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
+        select RT_USING_SDIO
 
         if BSP_USING_SDH
             config BSP_USING_SDH0
@@ -454,18 +455,6 @@ config SOC_SERIES_M480
 
             config BSP_USING_SDH1
                 bool "Enable SDH1"
-
-            config NU_SDH_USING_PDMA
-                bool "Using PDMA"
-                select BSP_USING_PDMA
-
-            config NU_SDH_HOTPLUG
-                bool "Using HOTPLUG"
-                default y
-
-            config NU_SDH_MOUNT_ON_ROOT
-                bool "Mount on root"
-
         endif
 
     menuconfig BSP_USING_CAN

@@ -6,10 +6,15 @@
  * Change Logs:
  * Date           Author       Notes
  */
+
 #ifndef __SYS_STATFS_H__
 #define __SYS_STATFS_H__
 
 #include <stddef.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct statfs
 {
@@ -20,5 +25,9 @@ struct statfs
 
 int statfs(const char *path, struct statfs *buf);
 int fstatfs(int fd, struct statfs *buf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

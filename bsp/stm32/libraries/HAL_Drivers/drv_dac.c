@@ -105,6 +105,19 @@ static rt_err_t stm32_dac_disabled(struct rt_dac_device *device, rt_uint32_t cha
     return RT_EOK;
 }
 
+static rt_uint8_t stm32_dac_get_resolution(struct rt_dac_device *device)
+{
+    DAC_HandleTypeDef *stm32_dac_handler;
+
+    RT_ASSERT(device != RT_NULL);
+
+    stm32_dac_handler = device->parent.user_data;
+    (void)stm32_dac_handler;
+
+    /* Only has supported DAC_ALIGN_12B_R, so it will return 12 bits */
+    return 12;
+}
+
 static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     uint32_t dac_channel;
@@ -162,6 +175,7 @@ static const struct rt_dac_ops stm_dac_ops =
     .disabled = stm32_dac_disabled,
     .enabled  = stm32_dac_enabled,
     .convert  = stm32_set_dac_value,
+    .get_resolution = stm32_dac_get_resolution,
 };
 
 static int stm32_dac_init(void)

@@ -191,19 +191,19 @@ static void thread1_recv_static_mb(void *arg)
     rt_err_t result = RT_EOK;
 
     result = rt_mb_recv(&test_static_mb, (rt_ubase_t *)&mb_recv_str1, RT_WAITING_FOREVER);
-    if (result != RT_EOK || strcmp(mb_recv_str1, mb_send_str1) != 0)
+    if (result != RT_EOK || rt_strcmp((const char *)mb_recv_str1, (const char *)mb_send_str1) != 0)
     {
         uassert_false(1);
     }
 
     result = rt_mb_recv(&test_static_mb, (rt_ubase_t *)&mb_recv_str2, RT_WAITING_FOREVER);
-    if (result != RT_EOK || strcmp(mb_recv_str2, mb_send_str2) != 0)
+    if (result != RT_EOK || rt_strcmp((const char *)mb_recv_str2, (const char *)mb_send_str2) != 0)
     {
         uassert_false(1);
     }
 
     result = rt_mb_recv(&test_static_mb, (rt_ubase_t *)&mb_recv_str3, RT_WAITING_FOREVER);
-    if (result != RT_EOK || strcmp(mb_recv_str3, mb_send_str3) != 0)
+    if (result != RT_EOK || rt_strcmp((const char *)mb_recv_str3, (const char *)mb_send_str3) != 0)
     {
         uassert_false(1);
     }
@@ -284,19 +284,19 @@ static void thread3_recv_dynamic_mb(void *arg)
     rt_err_t result = RT_EOK;
 
     result = rt_mb_recv(test_dynamic_mb, (rt_ubase_t *)&mb_recv_str1, RT_WAITING_FOREVER);
-    if (result != RT_EOK || strcmp(mb_recv_str1, mb_send_str1) != 0)
+    if (result != RT_EOK || rt_strcmp((const char *)mb_recv_str1, (const char *)mb_send_str1) != 0)
     {
         uassert_false(1);
     }
 
     result = rt_mb_recv(test_dynamic_mb, (rt_ubase_t *)&mb_recv_str2, RT_WAITING_FOREVER);
-    if (result != RT_EOK || strcmp(mb_recv_str2, mb_send_str2) != 0)
+    if (result != RT_EOK || rt_strcmp((const char *)mb_recv_str2, (const char *)mb_send_str2) != 0)
     {
         uassert_false(1);
     }
 
     result = rt_mb_recv(test_dynamic_mb, (rt_ubase_t *)&mb_recv_str3, RT_WAITING_FOREVER);
-    if (result != RT_EOK || strcmp(mb_recv_str3, mb_send_str3) != 0)
+    if (result != RT_EOK || rt_strcmp((const char *)mb_recv_str3, (const char *)mb_send_str3) != 0)
     {
         uassert_false(1);
     }

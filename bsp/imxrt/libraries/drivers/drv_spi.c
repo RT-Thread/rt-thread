@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,10 +11,10 @@
 #include <rtthread.h>
 #ifdef BSP_USING_SPI
 
-#include "drv_spi.h" 
-#include "fsl_common.h" 
-#include "fsl_iomuxc.h" 
-#include "fsl_lpspi.h" 
+#include "drv_spi.h"
+#include "fsl_common.h"
+#include "fsl_iomuxc.h"
+#include "fsl_lpspi.h"
 #include "fsl_lpspi_edma.h"
 #include "fsl_dmamux.h"
 
@@ -68,6 +68,7 @@ struct imxrt_spi
     lpspi_master_handle_t spi_normal;
     struct dma_config *dma;
     rt_uint8_t dma_flag;
+    rt_uint16_t masterclock;
 };
 
 static struct imxrt_spi lpspis[] =
@@ -78,6 +79,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI1,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 171,
     },
 #endif
 #ifdef BSP_USING_SPI2
@@ -86,6 +88,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI2,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 172,
     },
 #endif
 #ifdef BSP_USING_SPI3
@@ -94,6 +97,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI3,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 173,
     },
 #endif
 #ifdef BSP_USING_SPI4
@@ -102,6 +106,7 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI4,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+        .masterclock = 174,
     },
 #endif
 };
@@ -177,21 +182,21 @@ void edma_xfer_callback(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, st
 
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin)
 {
-    rt_err_t ret = RT_EOK; 
-    
-    struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device)); 
-    RT_ASSERT(spi_device != RT_NULL); 
-    
-    struct imxrt_sw_spi_cs *cs_pin = (struct imxrt_sw_spi_cs *)rt_malloc(sizeof(struct imxrt_sw_spi_cs)); 
+    rt_err_t ret = RT_EOK;
+
+    struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
+    RT_ASSERT(spi_device != RT_NULL);
+
+    struct imxrt_sw_spi_cs *cs_pin = (struct imxrt_sw_spi_cs *)rt_malloc(sizeof(struct imxrt_sw_spi_cs));
     RT_ASSERT(cs_pin != RT_NULL);
-    
+
     cs_pin->pin = pin;
-    rt_pin_mode(pin, PIN_MODE_OUTPUT); 
-    rt_pin_write(pin, PIN_HIGH); 
-    
-    ret = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin); 
-    
-    return ret; 
+    rt_pin_mode(pin, PIN_MODE_OUTPUT);
+    rt_pin_write(pin, PIN_HIGH);
+
+    ret = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+
+    return ret;
 }
 
 static uint32_t imxrt_get_lpspi_freq(void)
@@ -199,31 +204,31 @@ static uint32_t imxrt_get_lpspi_freq(void)
     uint32_t freq = 0;
 
     /* CLOCK_GetMux(kCLOCK_LpspiMux):
-       00b: derive clock from PLL3 PFD1 720M 
-       01b: derive clock from PLL3 PFD0 720M 
-       10b: derive clock from PLL2      528M 
-       11b: derive clock from PLL2 PFD2 396M 
+       00b: derive clock from PLL3 PFD1 720M
+       01b: derive clock from PLL3 PFD0 720M
+       10b: derive clock from PLL2      528M
+       11b: derive clock from PLL2 PFD2 396M
     */
     switch(CLOCK_GetMux(kCLOCK_LpspiMux))
     {
     case 0:
-        freq = CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk); 
-        break; 
-        
+        freq = CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk);
+        break;
+
     case 1:
-        freq = CLOCK_GetFreq(kCLOCK_Usb1PllPfd0Clk); 
-        break; 
-    
+        freq = CLOCK_GetFreq(kCLOCK_Usb1PllPfd0Clk);
+        break;
+
     case 2:
-        freq = CLOCK_GetFreq(kCLOCK_SysPllClk); 
-        break; 
-    
+        freq = CLOCK_GetFreq(kCLOCK_SysPllClk);
+        break;
+
     case 3:
-        freq = CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk); 
-        break; 
+        freq = CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk);
+        break;
     }
-    
-    freq /= (CLOCK_GetDiv(kCLOCK_LpspiDiv) + 1U); 
+
+    freq /= (CLOCK_GetDiv(kCLOCK_LpspiDiv) + 1U);
 
     return freq;
 }
@@ -250,7 +255,7 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
     DMAMUX_SetSource(DMAMUX, spi->dma->tx_channel, spi->dma->tx_request);
     DMAMUX_EnableChannel(DMAMUX, spi->dma->tx_channel);
     EDMA_CreateHandle(&spi->dma->tx_edma, DMA0, spi->dma->tx_channel);
-    
+
     LPSPI_MasterTransferCreateHandleEDMA(spi->base,
                                         &spi->dma->spi_edma,
                                         edma_xfer_callback,
@@ -263,8 +268,8 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
 
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
 {
-    lpspi_master_config_t masterConfig; 
-    struct imxrt_spi *spi = RT_NULL; 
+    lpspi_master_config_t masterConfig;
+    struct imxrt_spi *spi = RT_NULL;
 
     RT_ASSERT(cfg != RT_NULL);
     RT_ASSERT(device != RT_NULL);
@@ -274,77 +279,85 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
 
     if(cfg->data_width != 8 && cfg->data_width != 16 && cfg->data_width != 32)
     {
-        return RT_EINVAL; 
+        return RT_EINVAL;
     }
 
-    LPSPI_MasterGetDefaultConfig(&masterConfig); 
-    
+    LPSPI_MasterGetDefaultConfig(&masterConfig);
+
     if(cfg->max_hz > 40*1000*1000)
     {
         cfg->max_hz = 40*1000*1000;
     }
-    masterConfig.baudRate     = cfg->max_hz; 
-    masterConfig.bitsPerFrame = cfg->data_width; 
-    
+    masterConfig.baudRate     = cfg->max_hz;
+    masterConfig.bitsPerFrame = cfg->data_width;
+
     if(cfg->mode & RT_SPI_MSB)
     {
-        masterConfig.direction = kLPSPI_MsbFirst; 
+        masterConfig.direction = kLPSPI_MsbFirst;
     }
     else
     {
-        masterConfig.direction = kLPSPI_LsbFirst; 
+        masterConfig.direction = kLPSPI_LsbFirst;
     }
-    
+
     if(cfg->mode & RT_SPI_CPHA)
     {
-        masterConfig.cpha = kLPSPI_ClockPhaseSecondEdge; 
+        masterConfig.cpha = kLPSPI_ClockPhaseSecondEdge;
     }
     else
     {
-        masterConfig.cpha = kLPSPI_ClockPhaseFirstEdge; 
+        masterConfig.cpha = kLPSPI_ClockPhaseFirstEdge;
     }
-    
+
     if(cfg->mode & RT_SPI_CPOL)
     {
-        masterConfig.cpol = kLPSPI_ClockPolarityActiveLow; 
+        masterConfig.cpol = kLPSPI_ClockPolarityActiveLow;
     }
     else
     {
-        masterConfig.cpol = kLPSPI_ClockPolarityActiveHigh; 
+        masterConfig.cpol = kLPSPI_ClockPolarityActiveHigh;
     }
+    masterConfig.whichPcs = kLPSPI_Pcs0;
 
-    masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut; 
-    masterConfig.dataOutConfig                 = kLpspiDataOutTristate;
-    masterConfig.pcsToSckDelayInNanoSec        = 1000000000 / masterConfig.baudRate; 
-    masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / masterConfig.baudRate; 
-    masterConfig.betweenTransferDelayInNanoSec = 1000000000 / masterConfig.baudRate; 
+#if defined(SOC_IMXRT1170_SERIES)
+       freq = CLOCK_GetFreqFromObs(spi->masterclock, 2);
+       LPSPI_MasterInit(spi->base, &masterConfig, freq);
+#else
+    masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut;
+    masterConfig.pcsToSckDelayInNanoSec        = 1000000000 / masterConfig.baudRate;
+    masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / masterConfig.baudRate;
+    masterConfig.betweenTransferDelayInNanoSec = 1000000000 / masterConfig.baudRate;
 
-    LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq()); 
-    spi->base->CFGR1 |= LPSPI_CFGR1_PCSCFG_MASK; 
+    LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq());
+    spi->base->CFGR1 |= LPSPI_CFGR1_PCSCFG_MASK;
+
+#endif
+
 
     return RT_EOK;
 }
 
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    lpspi_transfer_t transfer; 
+    lpspi_transfer_t transfer;
     status_t status;
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
 
-    struct imxrt_spi *spi = (struct imxrt_spi *)(device->bus->parent.user_data); 
-    struct imxrt_sw_spi_cs *cs = device->parent.user_data; 
+    struct imxrt_spi *spi = (struct imxrt_spi *)(device->bus->parent.user_data);
+    struct imxrt_sw_spi_cs *cs = device->parent.user_data;
 
     if(message->cs_take)
     {
         rt_pin_write(cs->pin, PIN_LOW);
     }
 
-    transfer.dataSize = message->length; 
-    transfer.rxData   = (uint8_t *)(message->recv_buf); 
-    transfer.txData   = (uint8_t *)(message->send_buf); 
-
+    transfer.dataSize = message->length;
+    transfer.rxData   = (uint8_t *)(message->recv_buf);
+    transfer.txData   = (uint8_t *)(message->send_buf);
+    transfer.configFlags =
+            kLPSPI_MasterPcs0 | kLPSPI_MasterByteSwap | kLPSPI_MasterPcsContinuous;
     if(RT_FALSE == spi->dma_flag)
     {
 #ifdef BSP_USING_BLOCKING_SPI
@@ -370,10 +383,10 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         message->length = 0;
     }
 
-    return message->length; 
+    return message->length;
 }
 
-static struct rt_spi_ops imxrt_spi_ops = 
+static struct rt_spi_ops imxrt_spi_ops =
 {
     .configure = spi_configure,
     .xfer      = spixfer
@@ -405,8 +418,8 @@ int rt_hw_spi_bus_init(void)
         lpspis[i].xfer_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
     }
 
-    return ret; 
+    return ret;
 }
-INIT_BOARD_EXPORT(rt_hw_spi_bus_init); 
+INIT_BOARD_EXPORT(rt_hw_spi_bus_init);
 
 #endif /* BSP_USING_SPI */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -295,7 +295,7 @@ static rt_err_t sdhci_pl180_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     if(clock)
     {
         temp = read32(pdat->virt + PL180_CLOCK) | (0x1<<8);
-        temp = temp; // skip warning 
+        temp = temp; // skip warning
         write32(pdat->virt + PL180_CLOCK, 0x100);
     }
     else
@@ -388,7 +388,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
     LOG_D("clock:%d bus_width:%d", io_cfg->clock, io_cfg->bus_width);
 }
 
-static const struct rt_mmcsd_host_ops ops = 
+static const struct rt_mmcsd_host_ops ops =
 {
     mmc_request_send,
     mmc_set_iocfg,

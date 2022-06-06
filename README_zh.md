@@ -1,3 +1,16 @@
+<p align="center">
+<img src="documentation/figures/logo.png" width="60%" >
+</p>
+
+[English](README.md) | **中文** | [Español](README_es.md) | [Deutsch](README_de.md)
+
+[![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
+[![Build Status](https://travis-ci.org/RT-Thread/rt-thread.svg)](https://travis-ci.org/RT-Thread/rt-thread)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RT-Thread/rt-thread?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
+
 ## 简介
 
 RT-Thread诞生于2006年，是一款以开源、中立、社区化发展起来的物联网操作系统。
@@ -58,7 +71,7 @@ Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统�
 
 [下载 Env 工具](https://www.rt-thread.org/page/download.html)
 
-[Env 用户手册](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md)
+[Env 用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 
 
 # 资源文档
@@ -110,9 +123,9 @@ RT-Thread Studio演示：
 
 RT-Thread BSP可以直接编译并下载到相应的开发板使用。此外，RT-Thread还提供 qemu-vexpress-a9 BSP，无需硬件平台即可使用。有关详细信息，请参阅下面的入门指南。
 
-[QEMU 入门指南(Windows)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu.md)
+[QEMU 入门指南(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
 
-[QEMU 入门指南(Ubuntu)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu_linux.md)
+[QEMU 入门指南(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
 
 
 ## 文档
@@ -149,7 +162,7 @@ RT-Thread系统完全开源，3.1.0 及以前的版本遵循 GPL V2 + 开源许�
 
 # 社区支持
 
-RT-Thread非常感谢所有社区小伙伴的支持，在使用RT-Thread的过程中若您有任何的想法，建议或疑问都可通过以下方式联系到 RT-Thread，我们也实时在这些频道更新RT-Thread的最新讯息。同时，任何问题都可以在 [issue section](https://github.com/RT-Thread/rtthread-manual-doc/issues) 中提出。通过创建一个issue来描述您的问题，社区成员将回答这些问题。
+RT-Thread非常感谢所有社区小伙伴的支持，在使用RT-Thread的过程中若您有任何的想法，建议或疑问都可通过以下方式联系到 RT-Thread，我们也实时在这些频道更新RT-Thread的最新讯息。同时，任何问题都可以在 [论坛](https://club.rt-thread.org/index.html) 中提出，社区成员将回答这些问题。
 
 [官网]( https://www.rt-thread.org) | [论坛]( https://www.rt-thread.org/qa/forum.php) | [哔哩哔哩官方账号](https://space.bilibili.com/423462075?spm_id_from=333.788.b_765f7570696e666f.2) | [微博官方账号](https://weibo.com/rtthread?is_hot=1) | [知乎官方账号](https://www.zhihu.com/topic/19964581/hot)
 
@@ -160,5 +173,5 @@ RT-Thread微信公众号：
 
 # 贡献代码
 
-如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/contribution_guide/contribution_guide.md)。
+如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/githubd)。
 

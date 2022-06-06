@@ -8,11 +8,12 @@
  * 2016-12-28     Bernard      first version
  * 2018-03-09     Bernard      Add protection for pt->triggered.
  */
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <dfs_file.h>
-#include <poll.h>
+#include "poll.h"
 
 struct rt_poll_node;
 
@@ -167,6 +168,7 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
     {
         pf = fds;
         num = 0;
+        pt->triggered = 0;
 
         for (n = 0; n < nfds; n ++)
         {

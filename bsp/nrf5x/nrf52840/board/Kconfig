@@ -37,7 +37,7 @@ menu "Onboard Peripheral Drivers"
 
 
     menuconfig BSP_USING_QSPI_FLASH
-        select PKG_USING_FAL
+        select RT_USING_FAL
         bool "Enable QSPI FLASH(MX25R64 8MB)"
         default n
         depends on BSP_BOARD_PCA_10056
@@ -374,12 +374,11 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
     bool "Enable RTC"
     select RT_USING_RTC
-    select RT_USING_LIBC
     default n
 
 
     config BSP_USING_ON_CHIP_FLASH
-        select PKG_USING_FAL
+        select RT_USING_FAL
         bool "Enable on-chip FLASH"
         default n
 

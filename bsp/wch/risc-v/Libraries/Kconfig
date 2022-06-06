@@ -1,0 +1,8 @@
+config SOC_RISCV_FAMILY_CH32
+    bool
+
+config SOC_RISCV_SERIES_CH32V103
+    bool
+    select ARCH_RISCV
+    select SOC_RISCV_FAMILY_CH32
+    

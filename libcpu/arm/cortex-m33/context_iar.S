@@ -253,6 +253,10 @@ rt_hw_context_switch_to:
     CPSIE   F
     CPSIE   I
 
+    ; ensure PendSV exception taken place before subsequent operation
+    DSB
+    ISB
+
     ; never reach here!
 
 ; compatible with old version
@@ -272,7 +276,7 @@ HardFault_Handler:
 get_sp_done
 
     STMFD   r0!, {r4 - r11}                         ; push r4 - r11 register
-    
+
     LDR     r2,  =rt_trustzone_current_context      ; r2 = &rt_secure_current_context
     LDR     r2, [r2]                                ; r2 = *r2
     MOV     r3, lr                                  ; r3 = lr

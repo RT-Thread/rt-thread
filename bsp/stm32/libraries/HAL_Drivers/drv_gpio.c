@@ -161,6 +161,7 @@ static uint32_t pin_irq_enable_mask = 0;
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
+/* e.g. PE.7 */
 static rt_base_t stm32_pin_get(const char *name)
 {
     rt_base_t pin = 0;
@@ -279,7 +280,7 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
-    int i;
+    rt_uint8_t i;
     for (i = 0; i < 32; i++)
     {
         if ((0x01 << i) == bit)

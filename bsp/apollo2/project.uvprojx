@@ -368,9 +368,9 @@
             <vShortWch>1</vShortWch>
             <VariousControls>
               <MiscControls />
-              <Define>AM_PART_APOLLO2, RT_USING_ARM_LIBC, AM_PACKAGE_BGA</Define>
+              <Define>AM_PACKAGE_BGA, AM_PART_APOLLO2, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>.;..\..\include;applications;.;board;libraries\drivers;libraries\startup;libraries\startup\cmsis\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;board;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;libraries\drivers;libraries\startup;libraries\startup\cmsis\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -411,114 +411,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\cpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Applications</GroupName>
           <Files>
             <File>
@@ -529,251 +421,38 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Board</GroupName>
+          <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\adc.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>flash.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\flash.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gpio.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\led.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pdm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\pdm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>smbus.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\smbus.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\uart.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>am_hal_clkgen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_clkgen.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_debug.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_cachectrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_cachectrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_pwrctrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_pwrctrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_mcuctrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_mcuctrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_sysctrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_sysctrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_reset.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_reset.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_stimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_stimer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_ctimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_ctimer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_queue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_queue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_iom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_iom.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_ios.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_ios.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_vcomp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_vcomp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_pdm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_pdm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>am_hal_i2c_bit_bang.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\drivers\hal\am_hal_i2c_bit_bang.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_keil.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\startup\arm\startup_keil.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -811,58 +490,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>poll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\poll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>select.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\select.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>devfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
@@ -880,6 +507,62 @@
           </Files>
           <Files>
             <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
@@ -887,7 +570,7 @@
           </Files>
           <Files>
             <File>
-              <FileName>rtc_rtc.c</FileName>
+              <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\rtc\rtc.c</FilePath>
             </File>
@@ -913,82 +596,139 @@
               <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <GroupOption>
-            <GroupArmAds>
-              <Cads>
-                <VariousControls>
-                  <MiscControls />
-                  <Define> </Define>
-                  <Undefine> </Undefine>
-                  <IncludePath> </IncludePath>
-                </VariousControls>
-              </Cads>
-            </GroupArmAds>
-          </GroupOption>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\pdm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>smbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\smbus.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\led.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\flash.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>devfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1007,110 +747,260 @@
           </Files>
           <Files>
             <File>
-              <FileName>finsh_compiler.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>libc</GroupName>
+          <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>libc.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+              <FilePath>..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mem_std.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stdio.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stubs.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Libraries</GroupName>
+          <Files>
+            <File>
+              <FileName>am_hal_queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_queue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_iom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_iom.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_mcuctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_mcuctrl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_ctimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_ctimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_debug.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_vcomp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_vcomp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_i2c_bit_bang.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_i2c_bit_bang.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_clkgen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_clkgen.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_sysctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_sysctrl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_ios.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_ios.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_pdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_pdm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_interrupt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_pwrctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_pwrctrl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_reset.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_cachectrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_cachectrl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_stimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_stimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>am_hal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\drivers\hal\am_hal_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_keil.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\startup\arm\startup_keil.s</FilePath>
             </File>
           </Files>
         </Group>

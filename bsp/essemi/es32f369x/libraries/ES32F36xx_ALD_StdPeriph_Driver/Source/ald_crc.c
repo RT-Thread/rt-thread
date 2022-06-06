@@ -8,6 +8,9 @@
   * @date    18 Jun 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          18 Jun 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,11 +27,10 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
-#include "ald_crc.h"
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{
@@ -90,7 +92,7 @@ ald_status_t ald_crc_init(crc_handle_t *hperh)
 
 	tmp = hperh->perh->CR;
 
-	tmp |= ((hperh->init.chs_rev << CRC_CR_CHSREV_POS) | (hperh->init.data_inv << CRC_CR_DATREV_POS) |
+	tmp |= ((hperh->init.chs_rev << CRC_CR_CHSREV_POS) | (hperh->init.data_inv << CRC_CR_DATINV_POS) |
 		(hperh->init.chs_inv << CRC_CR_CHSINV_POS) | (hperh->init.mode << CRC_CR_MODE_POSS) |
 		(CRC_DATASIZE_8 << CRC_CR_DATLEN_POSS) | (hperh->init.data_rev << CRC_CR_DATREV_POS) |
 		(0 << CRC_CR_BYTORD_POS));

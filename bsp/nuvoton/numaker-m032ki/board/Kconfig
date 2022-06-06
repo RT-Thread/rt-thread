@@ -22,6 +22,41 @@ menu "Hardware Drivers Config"
             select BSP_USING_QSPI0
             default n
 
+        config BOARD_USING_LCD_ILI9341
+            bool "LCD ILI9341 (over uspi0)"
+            select RT_USING_TOUCH
+            select BSP_USING_USCI0
+            select BSP_USING_USPI0
+            select BSP_USING_EADC
+            select BSP_USING_EADC0
+            select NU_PKG_USING_ADC_TOUCH
+            select NU_PKG_USING_ADC_TOUCH_SW
+            select NU_PKG_USING_ILI9341
+            select NU_PKG_USING_ILI9341_SPI
+            select NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
+            select NU_PKG_ILI9341_HORIZONTAL
+            default n
+
+        if BOARD_USING_LCD_ILI9341
+
+            config BOARD_USING_ILI9341_PIN_BACKLIGHT
+            int "Specify the pin index of backlight pin index"
+                range 0 127
+                default 6
+
+            config BOARD_USING_ILI9341_PIN_RESET
+            int "Specify the pin index of reset pin index"
+                range 0 127
+                default 19
+
+            config BOARD_USING_ILI9341_PIN_DC
+            int "Specify the pin index of data&command switching"
+                range 0 127
+                default 18
+
+        endif
+
     endmenu
 
+    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
 endmenu

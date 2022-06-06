@@ -8,8 +8,11 @@
   * @date    04 Dec 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          04 Dec 2019     AE Team         The first version
   *
-  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved. 
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
   * SPDX-License-Identifier: Apache-2.0
   *
@@ -24,8 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  ********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __ALD_RMU_H__

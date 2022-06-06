@@ -1,0 +1,349 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32H750XB
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config BOARD_STM32H750_ARTPI
+    bool
+    default y
+
+menu "Board extended module"
+
+    menuconfig ART_PI_USING_MEDIA_IO
+        bool "Media-IO"
+        default n
+        if ART_PI_USING_MEDIA_IO
+            config BSP_USING_SPI_LCD_ILI9488
+                bool
+            config PKG_USING_PERSIMMON_SRC
+                bool
+
+            config MEDIA_IO_USING_SCREEN
+                select BSP_USING_SPI
+                select BSP_USING_SPI2
+                select BSP_USING_SDRAM
+                select BSP_USING_SPI_LCD_ILI9488
+                select PKG_USING_PERSIMMON_SRC
+                bool "Enable Screen"
+                default y
+
+            if MEDIA_IO_USING_SCREEN
+                config BSP_USING_LVGL
+                    bool "Enable LVGL for LCD"
+                    select BSP_USING_SPI_LCD_ILI9488
+                    select PKG_USING_LVGL
+                    select PKG_USING_LV_MUSIC_DEMO
+                    default n
+            endif
+
+            config MEDIA_IO_USING_TOUCH
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select BSP_USING_I2C
+                select BSP_USING_I2C2
+                select PKG_USING_TOUCH_DRIVERS
+                select PKG_USING_FT6236
+                bool "Enable Touch"
+                default y
+            
+            config MEDIA_IO_USING_AUDIO
+                select RT_USING_AUDIO
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select BSP_USING_I2C
+                select BSP_USING_I2C3
+                bool "Enable Audio"
+                default y
+                if MEDIA_IO_USING_AUDIO
+                    config AUDIO_MP3
+                    bool "Support MP3"
+                    select PKG_USING_HELIX
+                    default y
+                endif
+        endif
+
+    menuconfig ART_PI_USING_INDUSTRY_IO
+        bool "Industry-IO"
+        default n
+        if ART_PI_USING_INDUSTRY_IO
+            config INDUSTRY_IO_USING_ETH
+                select BSP_USING_ETH
+                select PHY_USING_LAN8720A
+                bool "Enable Ethernet"
+                default y
+        endif
+        
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USB_TO_USART
+        bool "Enable Debuger USART (uart4)"
+        select BSP_USING_UART
+        select BSP_USING_UART4
+        default n
+
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select RT_USING_FAL
+        select FAL_USING_SFUD_PORT
+        select RT_USING_SFUD
+        default n
+        
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (w25q64 qspi)"
+        select BSP_USING_QSPI
+        select FAL_USING_SFUD_PORT
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
+    menuconfig BSP_USING_FS
+        bool "Enable filesystem"
+        select RT_USING_DFS
+        select RT_USING_DFS_ROMFS
+        default n
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FS
+                bool "Enable SDCARD filesystem"
+                select BSP_USING_SDIO_ARTPI
+                select BSP_USING_SDIO1
+                select RT_USING_DFS_ELMFAT
+                default n        
+            config BSP_USING_SPI_FLASH_FS
+                bool "Enable SPI FLASH filesystem"
+                select BSP_USING_SPI_FLASH
+                select RT_USING_MTD_NOR
+                select PKG_USING_LITTLEFS
+                default n
+        endif
+
+    config BSP_USING_WIFI
+        bool "Enable wifi (AP6212)"
+        select ART_PI_USING_WIFI_6212_LIB
+        select BSP_USING_SPI_FLASH
+        select RT_USING_WIFI
+        select RT_USING_SAL
+        default n
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default n
+        select RT_USING_SERIAL
+        select RT_SERIAL_USING_DMA
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+                
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+                
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+                
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+            config BSP_USING_SPI4
+                bool "Enable SPI4"
+                default n
+        endif
+        
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable Onchip RTC"
+        select RT_USING_RTC
+        default n
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select RT_USING_PIN
+                if BSP_USING_I2C1
+                    comment "Notice: PB6 --> 22; PB7 --> 23" 
+                    config BSP_I2C1_SCL_PIN
+                        int "I2C1 scl pin number"
+                        range 0 175
+                        default 22
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 0 175
+                        default 23
+                endif
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C2
+                    comment "Notice: PH13 --> 125; PH15 --> 127"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 1 176
+                        default 127
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 0 175
+                        default 125
+                endif
+            menuconfig BSP_USING_I2C3
+                bool "Enable I2C3 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C3
+                    comment "Notice: PH12 --> 124; PH11 --> 123"
+                    config BSP_I2C3_SCL_PIN
+                        int "i2c3 scl pin number"
+                        range 0 175
+                        default 123
+                    config BSP_I2C3_SDA_PIN
+                        int "I2C3 sda pin number"
+                        range 0 175
+                        default 124
+                endif
+        endif
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_GPIO
+        select BSP_USING_SDRAM
+        select RT_USING_MEMHEAP
+        default n
+
+    menuconfig BSP_USING_SDIO_ARTPI
+        bool "Enable SDIO"
+        default n
+        select RT_USING_SDIO
+        if BSP_USING_SDIO_ARTPI
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1"
+                default n
+            config BSP_USING_SDIO2
+                bool "Enable SDIO2"
+                default n
+        endif
+
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                select RT_USING_DFS
+                select RT_USING_DFS_ELMFAT
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                        string "Udisk mount dir"
+                        default "/"
+                endif
+        endif
+        
+    menuconfig BSP_USING_ETH_H750
+        bool "Enable Ethernet"
+        default n        
+        select RT_USING_LWIP
+        if BSP_USING_ETH_H750
+            config ETH_RESET_PIN
+                string "ETH RESET PIN"
+                default "PA.3"
+        endif
+        if BSP_USING_ETH_H750
+            choice
+                prompt "Choose ETH PHY"
+                default PHY_USING_LAN8720A
+                        config PHY_USING_LAN8720A
+                    bool "USING LAN8720A"
+                    default n
+            endchoice
+        endif
+
+    config BSP_USING_LTDC
+        bool
+        default n        
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "External Libraries"
+
+    config ART_PI_USING_WIFI_6212_LIB
+        bool "Using Wifi(AP6212) Library"
+        select PKG_USING_EASYFLASH        
+        select BSP_USING_SDIO_ARTPI
+        select BSP_USING_SDIO2
+        select RT_USING_LWIP
+        select RT_USING_WIFI
+        default n
+
+endmenu
+
+endmenu

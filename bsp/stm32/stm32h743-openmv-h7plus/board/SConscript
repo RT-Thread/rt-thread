@@ -1,0 +1,39 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+startup_path_prefix = SDK_LIB
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Core/Inc']
+path += [cwd + '/ports']
+
+if GetDepend(['BSP_USING_QSPI_FLASH']):
+    src += ['ports/drv_qspi_flash.c']
+if GetDepend(['BSP_USING_SDMMC']):
+    src += ['ports/drv_sdio.c']
+if GetDepend(['BSP_USING_OV5640']):
+    src += ['ports/drv_ov5640.c']
+if GetDepend(['BSP_USING_DCMI']):
+    src += ['ports/drv_dcmi.c']
+
+if rtconfig.PLATFORM == 'gcc':
+    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h743xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h743xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h743xx.s']
+
+CPPDEFINES = ['STM32H743xx'] 
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

@@ -1,6 +1,6 @@
 # NK-N9H30
 ## 1. Introduction
-Nuvoton offers the emWin platform which is embedded with Nuvoton N9H MPU, it provides complete HMI solutions which are further enhanced by the emWin software.  The N9H series with ARM926EJ-S core can operate at up to 300 MHz and can drive up to 1024x768 pixels in parallel port. It integrated TFT LCD controller and 2D graphics accelerator, up to 16 million colors (24-bit) LCD screen output, and provides high resolution and high chroma to deliver gorgeous display effects. To play compressed video in HMI screens smoothly, the N9H series is equipped with H.264 video decompression engine. It also offers built-in voice decoder, which can streamline the peripheral circuits of HMI applications with sound playback. It embedded up to 64 MB DDR memory, along with ample hardware storage and computing space for excellent design flexibility.
+Nuvoton offers HMI platforms which are embedded with Nuvoton N9H MPU.  The N9H series with ARM926EJ-S core can operate at up to 300 MHz and can drive up to 1024x768 pixels in parallel port. It integrated TFT LCD controller and 2D graphics accelerator, up to 16 million colors (24-bit) LCD screen output, and provides high resolution and high chroma to deliver gorgeous display effects. It embedded up to 64 MB DDR memory, along with ample hardware storage and computing space for excellent design flexibility.
 
 [![NK-N9H30](https://i.imgur.com/B04MCCf.png "NK-N9H30")](https://i.imgur.com/B04MCCf.png "NK-N9H30")
 
@@ -43,13 +43,13 @@ Nuvoton offers the emWin platform which is embedded with Nuvoton N9H MPU, it pro
 |SPI NOR flash | W25Q256JVEQ (32 MB) | Supported |
 
 ## 2. Supported compiler
-Support GCC, MDK4 and MDK5 IDE/compilers. More information of these compiler version as following:
+Support GCC and MDK IDE/compilers. More information of these compiler version as following:
 | IDE/Compiler  | Tested version            |
 | ---------- | ---------------------------- |
-| MDK5       | 5.26.2                       |
-| GCC        | GCC 5.4.1 20160919 (release) |
+| MDK        | uVision 5.25.2               |
+| GCC        | 6-2017-q1-update             |
 
-Notice: Please install ICE driver for development.
+Notice: Please install ICE driver for development and [NuMicro_ARM9_Device_Database_Keil](https://www.nuvoton.com/resource-download.jsp?tp_GUID=SW1820201207155701).
 
 ## 3. Program firmware
 ### 3.1 SDRAM Downloading using NuWriter
@@ -86,48 +86,11 @@ You can use Tera Term terminate emulator (or other software) to type commands of
 
 [![Serial settings](https://i.imgur.com/5NYuSNM.png "Serial settings")](https://i.imgur.com/5NYuSNM.png "Serial settings")
 
-## 5. Demo
+## 5. Purchase
+* [Nuvoton Direct](https://direct.nuvoton.com/en/numaker-hmi-n9h30)
 
-* Run NUemWin on NK-N9H30
-
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.3 build May 12 2021
- 2006 - 2021 Copyright by rt-thread team
-
-msh /> nu_touch_start
-msh /> nuemwin_start
-
-<Enjoy NuemWin with H/W 2D Graphics Accelerating>
-
-msh /> nuemwin_stop
-```
-
-  [![NUemWin2RTT on NK-N9H30](https://img.youtube.com/vi/TAfkOKpySQk/0.jpg)](https://www.youtube.com/watch?v=TAfkOKpySQk)
-
-* Run LittlevGL2RTT on NK-N9H30
-
-    **Please check out modified version with GE2D accelerating from [HERE](https://github.com/wosayttn/LittlevGL2RTT).**
-
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.3 build May 12 2021
- 2006 - 2021 Copyright by rt-thread team
-
-msh /> nu_touch_start
-msh /> lv_demo
-
-<Enjoy LvGL with H/W 2D Graphics Accelerating>
-```
-
-  [![LvGL2RTT on NK-N9H30](https://img.youtube.com/vi/djz0jAKrfjs/0.jpg)](https://www.youtube.com/watch?v=djz0jAKrfjs)
-
-## 6. Purchase
-* [Nuvoton Direct](https://direct.nuvoton.com/en/numaker-emwin-n9h30)
-
-## 7. Resources
+## 6. Resources
 * [Board Schematic](https://www.nuvoton.com/resource-download.jsp?tp_GUID=HL1020201117191514)
 * [Download NK-N9H30 Quick Start Guide](https://www.nuvoton.com/resource-download.jsp?tp_GUID=UG1320210329155300)
 * [Download NuWriter](https://github.com/OpenNuvoton/NUC970_NuWriter)
+* [Download Windows 32-bit 6-2017-q1-update ARM GCC](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads/6-2017-q1-update)

@@ -110,9 +110,10 @@ static int at_recvpkt_all_delete(rt_slist_t *rlist)
         return 0;
     }
 
-    for(node = rt_slist_first(rlist); node; node = rt_slist_next(node))
+    for(node = rt_slist_first(rlist); node;)
     {
         pkt = rt_slist_entry(node, struct at_recv_pkt, list);
+        node = rt_slist_next(node);
         if (pkt->buff)
         {
             rt_free(pkt->buff);
@@ -157,6 +158,7 @@ static int at_recvpkt_node_delete(rt_slist_t *rlist, rt_slist_t *node)
 static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
 {
     rt_slist_t *node = RT_NULL;
+    rt_slist_t *free_node = RT_NULL;
     at_recv_pkt_t pkt = RT_NULL;
     size_t content_pos = 0, page_pos = 0;
 
@@ -165,29 +167,32 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
         return 0;
     }
 
-    for (node = rt_slist_first(rlist); node; node = rt_slist_next(node))
+    for (node = rt_slist_first(rlist); node;)
     {
         pkt = rt_slist_entry(node, struct at_recv_pkt, list);
+
+        free_node = node;
+        node = rt_slist_next(node);
 
         page_pos = pkt->bfsz_totle - pkt->bfsz_index;
 
         if (page_pos >= len - content_pos)
         {
-            memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, len - content_pos);
+            rt_memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, len - content_pos);
             pkt->bfsz_index += len - content_pos;
             if (pkt->bfsz_index == pkt->bfsz_totle)
             {
-                at_recvpkt_node_delete(rlist, node);
+                at_recvpkt_node_delete(rlist, free_node);
             }
             content_pos = len;
             break;
         }
         else
         {
-            memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, page_pos);
+            rt_memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, page_pos);
             content_pos += page_pos;
             pkt->bfsz_index += page_pos;
-            at_recvpkt_node_delete(rlist, node);
+            at_recvpkt_node_delete(rlist, free_node);
         }
     }
 
@@ -1288,7 +1293,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     {
         return EAI_MEMORY;
     }
-    memset(ai, 0, total_size);
+    rt_memset(ai, 0, total_size);
     /* cast through void* to get rid of alignment warnings */
     sa = (struct sockaddr_storage *) (void *) ((uint8_t *) ai + sizeof(struct addrinfo));
     struct sockaddr_in *sa4 = (struct sockaddr_in *) sa;
@@ -1317,7 +1322,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     {
         /* copy nodename to canonname if specified */
         ai->ai_canonname = ((char *) ai + sizeof(struct addrinfo) + sizeof(struct sockaddr_storage));
-        memcpy(ai->ai_canonname, nodename, namelen);
+        rt_memcpy(ai->ai_canonname, nodename, namelen);
         ai->ai_canonname[namelen] = 0;
     }
     ai->ai_addrlen = sizeof(struct sockaddr_storage);

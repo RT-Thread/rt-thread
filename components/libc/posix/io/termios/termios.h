@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017/08/30     Bernard      The first version
  */
+
 #ifndef __TERMIOS_H__
 #define __TERMIOS_H__
 
@@ -201,10 +202,8 @@ int tcflow (int, int);
 
 pid_t tcgetsid (int);
 
-#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 void cfmakeraw(struct termios *);
 int cfsetspeed(struct termios *, speed_t);
-#endif
 
 #ifdef __cplusplus
 }

@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_gpio.c
+ * @file        apm32f10x_gpio.c
  *
- * @brief      This file provides all the GPIO firmware functions
+ * @brief       This file provides all the GPIO firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_gpio.h"
@@ -32,7 +46,7 @@
  *
  * @retval    None
  */
-void GPIO_Reset(GPIO_T* port)
+void GPIO_Reset(GPIO_T *port)
 {
     RCM_APB2_PERIPH_T APB2Periph;
 
@@ -92,7 +106,7 @@ void GPIO_AFIOReset(void)
  *
  * @retval    None
  */
-void GPIO_Config(GPIO_T* port, GPIO_Config_T* gpioConfig)
+void GPIO_Config(GPIO_T *port, GPIO_Config_T *gpioConfig)
 {
     uint8_t i;
     uint32_t mode;
@@ -167,10 +181,10 @@ void GPIO_Config(GPIO_T* port, GPIO_Config_T* gpioConfig)
  *
  * @retval    None
  */
-void GPIO_StructInit(GPIO_Config_T* gpioConfig)
+void GPIO_ConfigStructInit(GPIO_Config_T *gpioConfig)
 {
     gpioConfig->pin  = GPIO_PIN_ALL;
-    gpioConfig->speed = GPIO_SPEED_2MHz;
+    gpioConfig->speed = GPIO_SPEED_20MHz;
     gpioConfig->mode = GPIO_MODE_IN_FLOATING;
 }
 
@@ -185,7 +199,7 @@ void GPIO_StructInit(GPIO_Config_T* gpioConfig)
  *
  * @retval    The input port pin value
  */
-uint8_t GPIO_ReadInputBit(GPIO_T* port, uint16_t pin)
+uint8_t GPIO_ReadInputBit(GPIO_T *port, uint16_t pin)
 {
     uint8_t ret;
 
@@ -202,7 +216,7 @@ uint8_t GPIO_ReadInputBit(GPIO_T* port, uint16_t pin)
  *
  * @retval    GPIO input data port value
  */
-uint16_t GPIO_ReadInputPort(GPIO_T* port)
+uint16_t GPIO_ReadInputPort(GPIO_T *port)
 {
     return ((uint16_t)port->IDATA);
 }
@@ -218,7 +232,7 @@ uint16_t GPIO_ReadInputPort(GPIO_T* port)
  *
  * @retval    The output port pin value
  */
-uint8_t GPIO_ReadOutputBit(GPIO_T* port, uint16_t pin)
+uint8_t GPIO_ReadOutputBit(GPIO_T *port, uint16_t pin)
 {
 
     uint8_t ret;
@@ -236,7 +250,7 @@ uint8_t GPIO_ReadOutputBit(GPIO_T* port, uint16_t pin)
  *
  * @retval    output data port value
  */
-uint16_t GPIO_ReadOutputPort(GPIO_T* port)
+uint16_t GPIO_ReadOutputPort(GPIO_T *port)
 {
     return ((uint16_t)port->ODATA);
 }
@@ -252,7 +266,7 @@ uint16_t GPIO_ReadOutputPort(GPIO_T* port)
  *
  * @retval    None
  */
-void GPIO_SetBits(GPIO_T* port, uint16_t pin)
+void GPIO_SetBit(GPIO_T *port, uint16_t pin)
 {
     port->BSC = (uint32_t)pin;
 }
@@ -268,7 +282,7 @@ void GPIO_SetBits(GPIO_T* port, uint16_t pin)
  *
  * @retval    None
  */
-void GPIO_ResetBits(GPIO_T* port, uint16_t pin)
+void GPIO_ResetBit(GPIO_T *port, uint16_t pin)
 {
     port->BC = (uint32_t)pin;
 }
@@ -290,7 +304,7 @@ void GPIO_ResetBits(GPIO_T* port, uint16_t pin)
  *
  * @retval    None
  */
-void GPIO_WriteBitValue(GPIO_T* port, uint16_t pin, uint8_t bitVal)
+void GPIO_WriteBitValue(GPIO_T *port, uint16_t pin, uint8_t bitVal)
 {
     if (bitVal != BIT_RESET)
     {
@@ -312,7 +326,7 @@ void GPIO_WriteBitValue(GPIO_T* port, uint16_t pin, uint8_t bitVal)
  *
  * @retval    None
  */
-void GPIO_WriteOutputPort(GPIO_T* port, uint16_t portValue)
+void GPIO_WriteOutputPort(GPIO_T *port, uint16_t portValue)
 {
     port->ODATA = (uint32_t)portValue;
 }
@@ -328,20 +342,20 @@ void GPIO_WriteOutputPort(GPIO_T* port, uint16_t portValue)
  *
  * @retval    None
  */
-void GPIO_ConfigPinLock(GPIO_T* port, uint16_t pin)
+void GPIO_ConfigPinLock(GPIO_T *port, uint16_t pin)
 {
     uint32_t val = 0x00010000;
 
     val  |= pin;
-    /* Set LCKK bit */
+    /** Set LCKK bit */
     port->LOCK = val ;
-    /* Reset LCKK bit */
+    /** Reset LCKK bit */
     port->LOCK =  pin;
-    /* Set LCKK bit */
+    /** Set LCKK bit */
     port->LOCK = val;
-    /* Read LCKK bit*/
+    /** Read LCKK bit*/
     val = port->LOCK;
-    /* Read LCKK bit*/
+    /** Read LCKK bit*/
     val = port->LOCK;
 }
 
@@ -457,7 +471,7 @@ void GPIO_ConfigPinRemap(GPIO_REMAP_T remap)
         regVal = AFIO->REMAP1;
     }
 
-    if(remap >> 8 == 0x18)
+    if (remap >> 8 == 0x18)
     {
         regVal &= 0xF0FFFFFF;
         AFIO->REMAP1 &= 0xF0FFFFFF;
@@ -500,28 +514,28 @@ void GPIO_ConfigEINTLine(GPIO_PORT_SOURCE_T portSource, GPIO_PIN_SOURCE_T pinSou
     if (pinSource <= GPIO_PIN_SOURCE_3)
     {
         shift = pinSource << 2;
-        AFIO->EINTSEL1 &= (uint32_t )~(0x0f << shift);
+        AFIO->EINTSEL1 &= (uint32_t)~(0x0f << shift);
         AFIO->EINTSEL1 |=  portSource << shift;
     }
 
     else if (pinSource <= GPIO_PIN_SOURCE_7)
     {
         shift = (pinSource - GPIO_PIN_SOURCE_4) << 2;
-        AFIO->EINTSEL2 &= (uint32_t )~(0x0f << shift);
+        AFIO->EINTSEL2 &= (uint32_t)~(0x0f << shift);
         AFIO->EINTSEL2 |=  portSource << shift;
     }
 
     else if (pinSource <= GPIO_PIN_SOURCE_11)
     {
         shift = (pinSource - GPIO_PIN_SOURCE_8) << 2;
-        AFIO->EINTSEL3 &= (uint32_t )~(0x0f << shift);
+        AFIO->EINTSEL3 &= (uint32_t)~(0x0f << shift);
         AFIO->EINTSEL3 |=  portSource << shift;
     }
 
     else if (pinSource <= GPIO_PIN_SOURCE_15)
     {
         shift = (pinSource - GPIO_PIN_SOURCE_12) << 2;
-        AFIO->EINTSEL4 &= (uint32_t )~(0x0f << shift);
+        AFIO->EINTSEL4 &= (uint32_t)~(0x0f << shift);
         AFIO->EINTSEL4 |=  portSource << shift;
     }
 }

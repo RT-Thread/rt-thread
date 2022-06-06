@@ -4,3 +4,4 @@
 
 dir_path:
 - Libraries/CH32F10x_StdPeriph_Driver
+- Libraries/CH32F20x_StdPeriph_Driver

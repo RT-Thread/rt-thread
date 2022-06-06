@@ -193,7 +193,11 @@ RTM_EXPORT(rt_module_find);
 
 #ifdef RT_USING_DFS
 #include <windows.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 extern char * dfs_win32_dirdup(char * path);
 static char* _module_name(const char *path)
 {

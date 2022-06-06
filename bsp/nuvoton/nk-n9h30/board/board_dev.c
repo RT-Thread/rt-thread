@@ -12,16 +12,15 @@
 
 #include <rtconfig.h>
 #include <rtdevice.h>
+#include "board.h"
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
-
-#include <drv_qspi.h>
-
 #if defined(RT_USING_SFUD)
     #include "spi_flash.h"
     #include "spi_flash_sfud.h"
 #endif
 
+#include "drv_qspi.h"
 
 #define W25X_REG_READSTATUS    (0x05)
 #define W25X_REG_READSTATUS2   (0x35)
@@ -150,6 +149,33 @@ static int rt_hw_spiflash_init(void)
 INIT_COMPONENT_EXPORT(rt_hw_spiflash_init);
 #endif /* BOARD_USING_STORAGE_SPIFLASH */
 
+#if defined(RT_USING_MTD_NAND) && defined(BSP_USING_FMINAND)
+struct rt_mtd_nand_device mtd_partitions[MTD_FMINAND_PARTITION_NUM] =
+{
+    [0] =
+    {
+        /*nand0: U-boot, env, rtthread*/
+        .block_start = 0,
+        .block_end   = 63,
+        .block_total = 64,
+    },
+    [1] =
+    {
+        /*nand1: for filesystem mounting*/
+        .block_start = 64,
+        .block_end   = 1023,
+        .block_total = 960,
+    },
+    [2] =
+    {
+        /*nand2: Whole blocks size, overlay*/
+        .block_start = 0,
+        .block_end   = 1023,
+        .block_total = 1024,
+    }
+};
+#endif
+
 #if defined(BOARD_USING_NAU8822) && defined(NU_PKG_USING_NAU8822)
 #include <acodec_nau8822.h>
 S_NU_NAU8822_CONFIG sCodecConfig =
@@ -172,6 +198,64 @@ int rt_hw_nau8822_port(void)
 }
 INIT_COMPONENT_EXPORT(rt_hw_nau8822_port);
 #endif /* BOARD_USING_NAU8822 */
+
+#if defined(NU_PKG_USING_ADC_TOUCH)
+#include "adc_touch.h"
+S_CALIBRATION_MATRIX g_sCalMat = { 13321, -53, -1069280, 96, 8461, -1863312, 65536 };
+#endif
+
+#if defined(NU_PKG_USING_TPC_GT911) && defined(BOARD_USING_GT911)
+#include "drv_gpio.h"
+#include "gt911.h"
+
+#define TPC_RST_PIN   NU_GET_PININDEX(NU_PG, 4)
+#define TPC_IRQ_PIN   NU_GET_PININDEX(NU_PG, 5)
+
+extern int tpc_sample(const char *name);
+int rt_hw_gt911_port(void)
+{
+    struct rt_touch_config cfg;
+    rt_uint8_t rst_pin;
+
+    rst_pin = TPC_RST_PIN;
+    cfg.dev_name = "i2c0";
+    cfg.irq_pin.pin = TPC_IRQ_PIN;
+    cfg.irq_pin.mode = PIN_MODE_INPUT_PULLDOWN;
+    cfg.user_data = &rst_pin;
+
+    rt_hw_gt911_init("gt911", &cfg);
+
+    return tpc_sample("gt911");
+}
+INIT_ENV_EXPORT(rt_hw_gt911_port);
+#endif /* if defined(NU_PKG_USING_TPC_GT911) && defined(BOARD_USING_GT911) */
+
+#if defined(NU_PKG_USING_TPC_FT5446) && defined(BOARD_USING_FT5446)
+#include "drv_gpio.h"
+#include "ft5446.h"
+
+#define TPC_RST_PIN   NU_GET_PININDEX(NU_PG, 4)
+#define TPC_IRQ_PIN   NU_GET_PININDEX(NU_PG, 5)
+
+extern int tpc_sample(const char *name);
+int rt_hw_gt911_port(void)
+{
+    struct rt_touch_config cfg;
+    rt_uint8_t rst_pin;
+
+    rst_pin = TPC_RST_PIN;
+    cfg.dev_name = "i2c0";
+    cfg.irq_pin.pin = TPC_IRQ_PIN;
+    cfg.irq_pin.mode = PIN_MODE_INPUT;//PIN_MODE_INPUT_PULLDOWN;
+    cfg.user_data = &rst_pin;
+
+    rt_hw_ft5446_init("ft5446", &cfg);
+
+    return tpc_sample("ft5446");
+}
+INIT_ENV_EXPORT(rt_hw_gt911_port);
+#endif /* if defined(NU_PKG_USING_TPC_FT5446) && defined(BOARD_USING_FT5446) */
+
 
 #if defined(BOARD_USING_BUZZER)
 
@@ -224,13 +308,13 @@ static void PlayRingTone(void)
     #include <drv_gpio.h>
 
     /* defined the LCM_BLEN pin: PH3 */
-    #define LCM_BLEN  NU_GET_PININDEX(NU_PH, 3)
+    #define LCM_BACKLIGHT_CTRL  NU_GET_PININDEX(NU_PH, 3)
 #endif
 
-#define PWM_DEV_NAME       "pwm0"
-#define LCM_PWM_CHANNEL    (0)
+#define PWM_DEV_NAME         "pwm0"
+#define LCM_PWM_CHANNEL      (0)
 
-static void LCMLightOn(void)
+void nu_lcd_backlight_on(void)
 {
     struct rt_device_pwm *pwm_dev;
 
@@ -243,10 +327,27 @@ static void LCMLightOn(void)
     {
         rt_kprintf("Can't find %s\n", PWM_DEV_NAME);
     }
+
+    rt_pin_mode(LCM_BACKLIGHT_CTRL, PIN_MODE_OUTPUT);
+    rt_pin_write(LCM_BACKLIGHT_CTRL, PIN_HIGH);
 }
-#ifdef FINSH_USING_MSH
-    MSH_CMD_EXPORT(LCMLightOn, LCM - light on panel);
-#endif
+
+void nu_lcd_backlight_off(void)
+{
+    struct rt_device_pwm *pwm_dev;
+
+    if ((pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME)) != RT_NULL)
+    {
+        rt_pwm_disable(pwm_dev, LCM_PWM_CHANNEL);
+    }
+    else
+    {
+        rt_kprintf("Can't find %s\n", PWM_DEV_NAME);
+    }
+
+    rt_pin_mode(LCM_BACKLIGHT_CTRL, PIN_MODE_OUTPUT);
+    rt_pin_write(LCM_BACKLIGHT_CTRL, PIN_LOW);
+}
 
 int rt_hw_lcm_port(void)
 {
@@ -258,14 +359,6 @@ int rt_hw_lcm_port(void)
         rtgui_graphic_set_device(lcm_vpost);
     }
 #endif
-
-#if defined(RT_USING_PIN)
-    /* set LCM_BLEN pin mode to output */
-    rt_pin_mode(LCM_BLEN, PIN_MODE_OUTPUT);
-    rt_pin_write(LCM_BLEN, PIN_HIGH);
-#endif
-
-    LCMLightOn();
 
     return 0;
 }

@@ -10,17 +10,17 @@
 #ifndef __FINSH_H__
 #define __FINSH_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
 
-#if defined(_MSC_VER)
-    #pragma section("FSymTab$f",read)
-#endif
+#ifdef _MSC_VER
+#pragma section("FSymTab$f",read)
+#endif /* _MSC_VER */
 
 typedef long (*syscall_func)(void);
 #ifdef FINSH_USING_SYMTAB
 #ifdef __TI_COMPILER_VERSION__
-    #define __TI_FINSH_EXPORT_FUNCTION(f)  PRAGMA(DATA_SECTION(f,"FSymTab"))
-#endif
+#define __TI_FINSH_EXPORT_FUNCTION(f)  PRAGMA(DATA_SECTION(f,"FSymTab"))
+#endif /* __TI_COMPILER_VERSION__ */
 #ifdef FINSH_USING_DESCRIPTION
 #ifdef _MSC_VER
 #define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
@@ -168,7 +168,7 @@ extern struct finsh_syscall *_syscall_table_begin, *_syscall_table_end;
 /* find out system call, which should be implemented in user program */
 struct finsh_syscall *finsh_syscall_lookup(const char *name);
 
-#if !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
 void finsh_set_device(const char *device_name);
 #endif
 

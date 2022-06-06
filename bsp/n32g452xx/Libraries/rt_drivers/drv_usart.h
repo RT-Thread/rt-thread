@@ -8,8 +8,9 @@
  * 2009-01-05     Bernard      the first version
  */
 
-#ifndef __USART_H__
-#define __USART_H__
+#ifndef __DRV_USART_H__
+#define __DRV_USART_H__
 
+int rt_hw_usart_init(void);
 
-#endif
+#endif /* __DRV_USART_H__ */

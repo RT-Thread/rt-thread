@@ -19,7 +19,7 @@
 #ifdef RT_USING_SPI
 
 #if defined(BSP_USING_SPI0) || defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3)
-/* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #include "tm4c123_config.h"
 #include "spi_config.h"
 #include <string.h>

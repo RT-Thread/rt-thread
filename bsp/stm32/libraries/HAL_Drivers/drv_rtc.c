@@ -38,7 +38,7 @@ RT_WEAK void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegiste
     return;
 }
 
-static void get_rtc_timeval(struct timeval *tv)
+static rt_err_t stm32_rtc_get_timeval(struct timeval *tv)
 {
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
@@ -59,27 +59,29 @@ static void get_rtc_timeval(struct timeval *tv)
 #if defined(SOC_SERIES_STM32H7)
     tv->tv_usec = (255.0 - RTC_TimeStruct.SubSeconds * 1.0) / 256.0 * 1000.0 * 1000.0;
 #endif
+
+    return RT_EOK;
 }
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
-    struct tm p_tm = {0};
+    struct tm tm = {0};
 
-    gmtime_r(&time_stamp, &p_tm);
-    if (p_tm.tm_year < 100)
+    gmtime_r(&time_stamp, &tm);
+    if (tm.tm_year < 100)
     {
         return -RT_ERROR;
     }
 
-    RTC_TimeStruct.Seconds = p_tm.tm_sec ;
-    RTC_TimeStruct.Minutes = p_tm.tm_min ;
-    RTC_TimeStruct.Hours   = p_tm.tm_hour;
-    RTC_DateStruct.Date    = p_tm.tm_mday;
-    RTC_DateStruct.Month   = p_tm.tm_mon + 1 ;
-    RTC_DateStruct.Year    = p_tm.tm_year - 100;
-    RTC_DateStruct.WeekDay = p_tm.tm_wday + 1;
+    RTC_TimeStruct.Seconds = tm.tm_sec ;
+    RTC_TimeStruct.Minutes = tm.tm_min ;
+    RTC_TimeStruct.Hours   = tm.tm_hour;
+    RTC_DateStruct.Date    = tm.tm_mday;
+    RTC_DateStruct.Month   = tm.tm_mon + 1 ;
+    RTC_DateStruct.Year    = tm.tm_year - 100;
+    RTC_DateStruct.WeekDay = tm.tm_wday + 1;
 
     if (HAL_RTC_SetTime(&RTC_Handler, &RTC_TimeStruct, RTC_FORMAT_BIN) != HAL_OK)
     {
@@ -177,7 +179,7 @@ static rt_err_t rt_rtc_config(void)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
 
         /* set the frequency division */
 #ifdef BSP_RTC_USING_LSI
@@ -191,7 +193,10 @@ static rt_err_t rt_rtc_config(void)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+#else
+#warning "This series doesn't support yet!"
 #endif
+
         if (HAL_RTC_Init(&RTC_Handler) != HAL_OK)
         {
             return -RT_ERROR;
@@ -244,34 +249,28 @@ RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
     return RT_EOK;
 }
 
-static rt_err_t stm32_rtc_get_secs(void *args)
+static rt_err_t stm32_rtc_get_secs(time_t *sec)
 {
     struct timeval tv;
-    get_rtc_timeval(&tv);
-    *(rt_uint32_t *) args = tv.tv_sec;
-    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+
+    stm32_rtc_get_timeval(&tv);
+    *(time_t *) sec = tv.tv_sec;
+    LOG_D("RTC: get rtc_time %d", *sec);
 
     return RT_EOK;
 }
 
-static rt_err_t stm32_rtc_set_secs(void *args)
+static rt_err_t stm32_rtc_set_secs(time_t *sec)
 {
     rt_err_t result = RT_EOK;
 
-    if (set_rtc_time_stamp(*(rt_uint32_t *)args))
+    if (set_rtc_time_stamp(*sec))
     {
         result = -RT_ERROR;
     }
-    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
+    LOG_D("RTC: set rtc_time %d", *sec);
 
     return result;
-}
-
-static rt_err_t stm32_rtc_get_timeval(void *args)
-{
-    get_rtc_timeval((struct timeval *) args);
-
-    return RT_EOK;
 }
 
 static const struct rt_rtc_ops stm32_rtc_ops =

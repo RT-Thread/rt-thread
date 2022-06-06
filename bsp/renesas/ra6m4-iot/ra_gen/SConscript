@@ -1,0 +1,22 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+
+if rtconfig.PLATFORM == 'iar':
+    print("\nThe current project does not support iar build\n")
+    Return('group')
+elif rtconfig.PLATFORM == 'gcc' :
+    src = Glob('*.c')
+    CPPPATH = [cwd, ]
+elif rtconfig.PLATFORM == 'armclang':
+    if GetOption('target') != 'mdk5':
+        src = Glob('*.c')
+        CPPPATH = [cwd, ]
+
+group = DefineGroup('ra_gen', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

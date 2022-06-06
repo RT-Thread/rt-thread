@@ -169,7 +169,9 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     }
 
 #ifdef RT_SERIAL_USING_DMA
-    uart->dma_rx.last_index = 0;
+    if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
+        uart->dma_rx.last_index = 0;
+    }
 #endif
 
     if (HAL_UART_Init(&uart->handle) != HAL_OK)
@@ -918,6 +920,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     struct stm32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(flag == RT_DEVICE_FLAG_DMA_TX || flag == RT_DEVICE_FLAG_DMA_RX);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
     if (RT_DEVICE_FLAG_DMA_RX == flag)
@@ -925,7 +928,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         DMA_Handle = &uart->dma_rx.handle;
         dma_config = uart->config->dma_rx;
     }
-    else if (RT_DEVICE_FLAG_DMA_TX == flag)
+    else /* RT_DEVICE_FLAG_DMA_TX == flag */
     {
         DMA_Handle = &uart->dma_tx.handle;
         dma_config = uart->config->dma_tx;

@@ -1,6 +1,9 @@
 config ARCH_CPU_64BIT
     bool
 
+config ARCH_CPU_BIG_ENDIAN
+    bool
+
 config ARCH_ARM
     bool
 
@@ -34,6 +37,11 @@ config ARCH_ARM_CORTEX_M4
     select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_M7
+    bool
+    select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
+
+config ARCH_ARM_CORTEX_M33
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
@@ -101,10 +109,7 @@ config ARCH_MIPS
 
 config ARCH_MIPS64
     bool
-	select ARCH_CPU_64BIT
-	
-config ARCH_CPU_64BIT
-		bool
+    select ARCH_CPU_64BIT
 
 config ARCH_MIPS_XBURST
     bool

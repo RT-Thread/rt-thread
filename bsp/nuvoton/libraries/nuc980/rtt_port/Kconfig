@@ -70,6 +70,13 @@ config SOC_SERIES_NUC980
         bool "Enable Analog-to-Digital Converter(ADC)"
         select RT_USING_ADC
 
+        if BSP_USING_ADC
+            config BSP_USING_ADC_TOUCH
+            bool "Enable ADC Touching function"
+            select RT_USING_TOUCH
+            default n
+        endif
+
     menuconfig BSP_USING_TMR
         bool "Enable Timer Controller(TIMER)"
 
@@ -346,6 +353,7 @@ config SOC_SERIES_NUC980
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
+        select DFS_USING_POSIX
 
         if BSP_USING_SDH
             config BSP_USING_SDH0

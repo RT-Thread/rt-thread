@@ -7,6 +7,10 @@ config SOC_STM32L475VE
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32L475_ATK_PANDORA
+    bool
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -14,6 +18,45 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y
+
+    config BSP_USING_ARDUINO
+        bool "Support Arduino"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM7
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM2_CH4
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM4_CH3
+        select BSP_USING_PWM4_CH4
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_I2C
+        select BSP_USING_I2C1 # PC7-SDA PC6-SCL (User I2C)
+        select BSP_USING_I2C3 # ICM20608, AP3216C (On Board)
+        select BSP_USING_I2C4 # AHT10 (On Board)
+        select BSP_USING_DAC
+        select BSP_USING_DAC1
+        select BSP_USING_SPI
+        select BSP_USING_SPI2 # Wireless Interface (User SPI)
+        imply BSP_SPI2_TX_USING_DMA
+        imply BSP_SPI2_RX_USING_DMA
+        select BSP_USING_SPI3 # LCD ST7789
+        select BSP_SPI3_TX_USING_DMA
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SPI
+        imply RTDUINO_USING_USBSERIAL
+        imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_MSTIMER2
+        default n
 
     config BSP_USING_KEY
         bool "Enable onboard keys"
@@ -34,6 +77,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI3
         select BSP_SPI3_TX_USING_DMA
+        select BSP_USING_PWM
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH2
         default n
 
     config BSP_USING_LCD_SAMPLE
@@ -54,6 +100,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI_LCD
         default n
 
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            default n
+    endif
+
     config BSP_USING_SDCARD
         bool "Enable SDCARD (spi1)"
         select BSP_USING_SPI
@@ -64,7 +116,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_ICM20608
-        bool "Enable icm20608 (i2c3)"
+        bool "Enable ICM20608 (i2c3)"
         select BSP_USING_I2C
         select BSP_USING_I2C3
         select PKG_USING_SENSORS_DRIVERS
@@ -73,7 +125,7 @@ menu "Onboard Peripheral Drivers"
         default n
         
     config BSP_USING_AHT10
-        bool "Enable aht10 (i2c4)"
+        bool "Enable AHT10 (i2c4)"
         select BSP_USING_I2C
         select BSP_USING_I2C4
         select PKG_USING_SENSORS_DRIVERS
@@ -136,10 +188,9 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_WIFI
             select RT_WLAN_PROT_LWIP_PBUF_FORCE
             select RT_USING_LWIP
-            select RT_USING_LIBC
             select RT_USING_DFS
             select DFS_USING_POSIX
-            select PKG_USING_FAL
+            select RT_USING_FAL
             select PKG_USING_EASYFLASH
             select RT_USING_WIFI_6181_LIB
             select RT_USING_OTA_LIB
@@ -231,12 +282,12 @@ menu "On-chip Peripheral Drivers"
         default n
 
     menuconfig BSP_USING_SPI
-        bool "Enable SPI BUS"
+        bool "Enable SPI Bus"
         default n
         select RT_USING_SPI
         if BSP_USING_SPI
             config BSP_USING_SPI1
-                bool "Enable SPI1 BUS"
+                bool "Enable SPI1 Bus"
                 default n
 
             config BSP_SPI1_TX_USING_DMA
@@ -251,7 +302,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
             config BSP_USING_SPI2
-                bool "Enable SPI2 BUS"
+                bool "Enable SPI2 Bus"
                 default n  
                 
             config BSP_SPI2_TX_USING_DMA
@@ -266,7 +317,7 @@ menu "On-chip Peripheral Drivers"
                 default n
                 
             config BSP_USING_SPI3
-                bool "Enable SPI3 BUS"
+                bool "Enable SPI3 Bus"
                 default n
 
             config BSP_SPI3_TX_USING_DMA
@@ -282,7 +333,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     config BSP_USING_QSPI
-        bool "Enable QSPI BUS"
+        bool "Enable QSPI Bus"
         select RT_USING_QSPI
         select RT_USING_SPI
         default n
@@ -292,39 +343,52 @@ menu "On-chip Peripheral Drivers"
         default n
 
     menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS"
+        bool "Enable I2C Bus"
         default n
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C
-            menuconfig BSP_USING_I2C3
-                bool "Enable I2C3 BUS (software simulation)"
-                default y
-                if BSP_USING_I2C3
-                    comment "Notice: PC0 --> 32; PC1 --> 33" 
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 scl pin number"
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus (User I2C)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PC7 --> 39; PC6 --> 38" 
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
                         range 1 176
+                        default 38
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 1 176
+                        default 39
+                endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3 Bus (AP3216C/ICM20608/ES8388)"
+                default n
+
+                if BSP_USING_I2C3
+                    # Notice: PC0 --> 32; PC1 --> 33
+                    config BSP_I2C3_SCL_PIN
+                        int
                         default 32
                     config BSP_I2C3_SDA_PIN
-                        int "I2C3 sda pin number"
-                        range 1 176
+                        int
                         default 33
                 endif
 
-            menuconfig BSP_USING_I2C4
-                bool "Enable I2C4 BUS (AHT10)"
+            config BSP_USING_I2C4
+                bool "Enable I2C4 Bus (AHT10)"
                 default n
+
                 if BSP_USING_I2C4
-                    comment "Notice: PC1 --> 33; PD6 --> 54" 
+                    # Notice: PC1 --> 33; PD6 --> 54
                     config BSP_I2C4_SCL_PIN
-                        int "i2c4 scl pin number"
-                        range 1 176
+                        int
                         default 54
                     config BSP_I2C4_SDA_PIN
-                        int "I2C4 sda pin number"
-                        range 1 176
+                        int
                         default 33
                 endif
         endif
@@ -334,6 +398,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_HWTIMER
         if BSP_USING_TIM
+            config BSP_USING_TIM7
+                bool "Enable TIM7"
+                default n
+
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n
@@ -348,12 +416,12 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
         menuconfig BSP_USING_PWM1
-            bool "Enable timer1 output pwm"
+            bool "Enable timer1 output PWM"
             default n
             if BSP_USING_PWM1
                 config BSP_USING_PWM1_CH1
@@ -362,7 +430,7 @@ menu "On-chip Peripheral Drivers"
             endif
 
         menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output pwm"
+            bool "Enable timer2 output PWM"
             default n
             if BSP_USING_PWM2
                 config BSP_USING_PWM2_CH3
@@ -375,15 +443,23 @@ menu "On-chip Peripheral Drivers"
             endif
 
         menuconfig BSP_USING_PWM4
-            bool "Enable timer4 output pwm"
+            bool "Enable timer4 output PWM"
             default n
             if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH1
+                    bool "Enable PWM4 channel1"
+                    default n
+
                 config BSP_USING_PWM4_CH2
                     bool "Enable PWM4 channel2"
                     default n
             
                 config BSP_USING_PWM4_CH3
                     bool "Enable PWM4 channel3"
+                    default n
+
+                config BSP_USING_PWM4_CH4
+                    bool "Enable PWM4 channel4"
                     default n
             endif
         endif
@@ -454,6 +530,37 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM2)"
+        default n
+        select BSP_USING_COM2
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+        select AT_DEVICE_ESP8266_SAMPLE_BSP_TAKEOVER
+
+        if BSP_USING_AT_ESP8266
+
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart2')"
+                default "uart2"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+
+            comment "May adjust RT_SERIAL_RB_BUFSZ up to 512 if using the Serial V1 device driver"
+
+        endif
 
     config BSP_USING_NRF24L01
         bool "Enable NRF24L01"

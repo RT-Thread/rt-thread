@@ -7,9 +7,14 @@
  * Date           Author       Notes
  * 2015-01-28     Bernard      first version
  */
+
 #include <rtthread.h>
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
+#include <compiler_private.h>
+#define DBG_TAG    "dlib.syscall.lseek"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /*
  * The "__lseek" function makes the next file operation (__read or
@@ -36,6 +41,7 @@ long __lseek(int handle, long offset, int whence)
 #ifdef DFS_USING_POSIX
     return lseek(handle, offset, whence);
 #else
+    LOG_W(_WARNING_WITHOUT_FS);
     return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
 }

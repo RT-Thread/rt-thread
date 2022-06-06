@@ -7,15 +7,14 @@ group = []
 CPPPATH = [cwd]
 CPPDEFINES = []
 
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
+elif rtconfig.PLATFORM == 'iar':
+    CPPDEFINES += ['CLOCKS_PER_SEC=RT_TICK_PER_SECOND'] # forcly revert to 1 by IAR
 
-if GetDepend('RT_USING_LIBC'):
-    src += Glob('*.c')
-elif GetDepend('RT_LIBC_USING_TIME'):
-    src += ['time.c']
+src += Glob('*.c')
 
-group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:

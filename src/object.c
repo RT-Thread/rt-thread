@@ -13,6 +13,7 @@
  * 2010-10-26     yi.qiu       add module support in rt_object_allocate and rt_object_free
  * 2017-12-10     Bernard      Add object_info enum.
  * 2018-01-25     Bernard      Fix the object find issue when enable MODULE.
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to object.c
  */
 
 #include <rtthread.h>
@@ -55,6 +56,9 @@ enum rt_object_info_type
     RT_Object_Info_Timer,                              /**< The object is a timer. */
 #ifdef RT_USING_MODULE
     RT_Object_Info_Module,                             /**< The object is a module. */
+#endif
+#ifdef RT_USING_HEAP
+    RT_Object_Info_Memory,                            /**< The object is a memory. */
 #endif
     RT_Object_Info_Unknown,                            /**< The object is unknown. */
 };
@@ -104,9 +108,29 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
     /* initialize object container - module */
     {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule)},
 #endif
+#ifdef RT_USING_HEAP
+    /* initialize object container - small memory */
+    {RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory)},
+#endif
 };
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_object_attach_hook
+    #define __on_rt_object_attach_hook(obj)         __ON_HOOK_ARGS(rt_object_attach_hook, (obj))
+#endif
+#ifndef __on_rt_object_detach_hook
+    #define __on_rt_object_detach_hook(obj)         __ON_HOOK_ARGS(rt_object_detach_hook, (obj))
+#endif
+#ifndef __on_rt_object_trytake_hook
+    #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
+#endif
+#ifndef __on_rt_object_take_hook
+    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
+#endif
+#ifndef __on_rt_object_put_hook
+    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_object_attach_hook)(struct rt_object *object);
 static void (*rt_object_detach_hook)(struct rt_object *object);
 void (*rt_object_trytake_hook)(struct rt_object *object);
@@ -229,7 +253,7 @@ RTM_EXPORT(rt_object_get_information);
 int rt_object_get_length(enum rt_object_class_type type)
 {
     int count = 0;
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information = RT_NULL;
 
@@ -264,7 +288,7 @@ RTM_EXPORT(rt_object_get_length);
 int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers, int maxlen)
 {
     int index = 0;
-    rt_ubase_t level;
+    rt_base_t level;
 
     struct rt_object *object;
     struct rt_list_node *node = RT_NULL;
@@ -306,7 +330,7 @@ void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
                     const char               *name)
 {
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
@@ -346,7 +370,7 @@ void rt_object_init(struct rt_object         *object,
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_MODULE
     if (module)
@@ -362,7 +386,7 @@ void rt_object_init(struct rt_object         *object,
     }
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -373,7 +397,7 @@ void rt_object_init(struct rt_object         *object,
  */
 void rt_object_detach(rt_object_t object)
 {
-    register rt_base_t temp;
+    rt_base_t level;
 
     /* object check */
     RT_ASSERT(object != RT_NULL);
@@ -384,13 +408,13 @@ void rt_object_detach(rt_object_t object)
     object->type = 0;
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* remove from old list */
     rt_list_remove(&(object->list));
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 }
 
 #ifdef RT_USING_HEAP
@@ -406,7 +430,7 @@ void rt_object_detach(rt_object_t object)
 rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -442,7 +466,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_MODULE
     if (module)
@@ -458,7 +482,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     }
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* return object */
     return object;
@@ -471,7 +495,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
  */
 void rt_object_delete(rt_object_t object)
 {
-    register rt_base_t temp;
+    rt_base_t level;
 
     /* object check */
     RT_ASSERT(object != RT_NULL);
@@ -483,13 +507,13 @@ void rt_object_delete(rt_object_t object)
     object->type = RT_Object_Class_Null;
 
     /* lock interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* remove from old list */
     rt_list_remove(&(object->list));
 
     /* unlock interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* free the memory of object */
     RT_KERNEL_FREE(object);

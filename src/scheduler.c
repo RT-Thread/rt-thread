@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,8 +26,8 @@
  *                             add _scheduler_get_highest_priority_thread to find highest priority task
  *                             rt_schedule_insert_thread won't insert current task to ready queue
  *                             in smp version, rt_hw_context_switch_interrupt maybe switch to
- *                               new task directly
- *
+ *                             new task directly
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  */
 
 #include <rtthread.h>
@@ -47,7 +47,14 @@ struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /* RT_USING_SMP */
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_scheduler_hook
+    #define __on_rt_scheduler_hook(from, to)        __ON_HOOK_ARGS(rt_scheduler_hook, (from, to))
+#endif
+#ifndef __on_rt_scheduler_switch_hook
+    #define __on_rt_scheduler_switch_hook(tid)      __ON_HOOK_ARGS(rt_scheduler_switch_hook, (tid))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 
@@ -83,7 +90,7 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 #endif /* RT_USING_HOOK */
 
 #ifdef RT_USING_OVERFLOW_CHECK
-static void _rt_scheduler_stack_check(struct rt_thread *thread)
+static void _scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
@@ -96,7 +103,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         (rt_ubase_t)thread->sp >
         (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
     {
-        rt_ubase_t level;
+        rt_base_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
 
@@ -125,11 +132,11 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 #ifdef RT_USING_SMP
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
-    register struct rt_thread *highest_priority_thread;
-    register rt_ubase_t highest_ready_priority, local_highest_ready_priority;
+    struct rt_thread *highest_priority_thread;
+    rt_ubase_t highest_ready_priority, local_highest_ready_priority;
     struct rt_cpu* pcpu = rt_cpu_self();
 #if RT_THREAD_PRIORITY_MAX > 32
-    register rt_ubase_t number;
+    rt_ubase_t number;
 
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
@@ -161,11 +168,11 @@ static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *high
 #else
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
-    register struct rt_thread *highest_priority_thread;
-    register rt_ubase_t highest_ready_priority;
+    struct rt_thread *highest_priority_thread;
+    rt_ubase_t highest_ready_priority;
 
 #if RT_THREAD_PRIORITY_MAX > 32
-    register rt_ubase_t number;
+    rt_ubase_t number;
 
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
@@ -192,7 +199,7 @@ void rt_system_scheduler_init(void)
 #ifdef RT_USING_SMP
     int cpu;
 #endif /* RT_USING_SMP */
-    register rt_base_t offset;
+    rt_base_t offset;
 
 #ifndef RT_USING_SMP
     rt_scheduler_lock_nest = 0;
@@ -240,7 +247,7 @@ void rt_system_scheduler_init(void)
  */
 void rt_system_scheduler_start(void)
 {
-    register struct rt_thread *to_thread;
+    struct rt_thread *to_thread;
     rt_ubase_t highest_ready_priority;
 
     to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
@@ -371,7 +378,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, current_thread->name, current_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
@@ -478,7 +485,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, from_thread->name, from_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
                 if (rt_interrupt_nest == 0)
@@ -616,7 +623,7 @@ void rt_scheduler_do_irq_switch(void *context)
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
@@ -648,7 +655,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     int cpu_id;
     int bind_cpu;
     rt_uint32_t cpu_mask;
-    register rt_base_t level;
+    rt_base_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -710,12 +717,12 @@ __exit:
 #else
 void rt_schedule_insert_thread(struct rt_thread *thread)
 {
-    register rt_base_t temp;
+    rt_base_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* it's current thread, it should be RUNNING thread */
     if (thread == rt_current_thread)
@@ -741,7 +748,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
 
 __exit:
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 }
 #endif /* RT_USING_SMP */
 
@@ -755,7 +762,7 @@ __exit:
 #ifdef RT_USING_SMP
 void rt_schedule_remove_thread(struct rt_thread *thread)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -807,7 +814,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
 #else
 void rt_schedule_remove_thread(struct rt_thread *thread)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -844,7 +851,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
 #ifdef RT_USING_SMP
 void rt_enter_critical(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -863,7 +870,7 @@ void rt_enter_critical(void)
      */
 
     {
-        register rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
+        rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
         current_thread->cpus_lock_nest++;
         if (lock_nest == 0)
         {
@@ -883,7 +890,7 @@ void rt_enter_critical(void)
 #else
 void rt_enter_critical(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -906,7 +913,7 @@ RTM_EXPORT(rt_enter_critical);
 #ifdef RT_USING_SMP
 void rt_exit_critical(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -947,7 +954,7 @@ void rt_exit_critical(void)
 #else
 void rt_exit_critical(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();

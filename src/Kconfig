@@ -8,10 +8,6 @@ config RT_NAME_MAX
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
 
-config RT_USING_BIG_ENDIAN
-    bool
-    default n
-
 config RT_USING_ARCH_DATA_TYPE
     bool "Use the data types defined in ARCH_CPU"
     default n
@@ -66,7 +62,7 @@ config RT_THREAD_PRIORITY_MAX
 config RT_TICK_PER_SECOND
     int "Tick frequency, Hz"
     range 10 1000
-    default 100
+    default 1000
     help
         System's tick frequency, Hz.
 
@@ -85,21 +81,28 @@ config RT_USING_HOOK
         Enable the hook function when system running, such as idle thread hook,
         thread context switch etc.
 
+    if RT_USING_HOOK
+        config RT_HOOK_USING_FUNC_PTR
+            bool "Using function pointers as system hook"
+            default y
+    endif
+
 config RT_USING_IDLE_HOOK
     bool "Enable IDLE Task hook"
     default y if RT_USING_HOOK
 
     if RT_USING_IDLE_HOOK
-    config RT_IDLE_HOOK_LIST_SIZE
-        int "The max size of idle hook list"
-        default 4
-        range 1 16
-        help
-            The system has a hook list. This is the hook list size.
+        config RT_IDLE_HOOK_LIST_SIZE
+            int "The max size of idle hook list"
+            default 4
+            range 1 16
+            help
+                The system has a hook list. This is the hook list size.
     endif
 
 config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
+    default 1024 if ARCH_CPU_64BIT
     default 256
 
 config SYSTEM_THREAD_STACK_SIZE
@@ -121,6 +124,7 @@ if RT_USING_TIMER_SOFT
 
     config RT_TIMER_THREAD_STACK_SIZE
         int "The stack size of timer thread"
+        default 2048 if ARCH_CPU_64BIT
         default 512
 endif
 
@@ -128,27 +132,31 @@ menu "kservice optimization"
 
     config RT_KSERVICE_USING_STDLIB
         bool "Enable kservice to use standard C library"
-        default n
+        default y
+
+    if RT_KSERVICE_USING_STDLIB
+        config RT_KSERVICE_USING_STDLIB_MEMORY
+            bool "Use stdlib memory functions to replace (faster, but not safe)"
+            default n
+            help
+                e.g. use memcpy to replace rt_memcpy
+    endif
 
     config RT_KSERVICE_USING_TINY_SIZE
         bool "Enable kservice to use tiny size"
-        default n
-
-    config RT_USING_ASM_MEMCPY
-        bool
-        default n
-
-    config RT_USING_ASM_MEMSET
-        bool
         default n
 
     config RT_USING_TINY_FFS
         bool "Enable kservice to use tiny finding first bit set method"
         default n
 
-    config RT_PRINTF_LONGLONG
-        bool "Enable rt_printf-family functions to support long long format"
+    config RT_KPRINTF_USING_LONGLONG
+        bool "Enable rt_printf-family functions to support long-long format"
+        default y if ARCH_CPU_64BIT
         default n
+        help
+            Enable rt_printf()/rt_snprintf()/rt_sprintf()/rt_vsnprintf()/rt_vsprintf()
+            functions to support long-long format
 
 endmenu
 
@@ -284,36 +292,67 @@ menu "Memory Management"
         help
             Using static memory fixed partition
 
+    config RT_USING_SMALL_MEM
+        bool "Using Small Memory Algorithm"
+        default n
+        help
+            Using Small Memory Algorithm
+
+    config RT_USING_SLAB
+        bool "Using SLAB Memory Algorithm"
+        default n
+        help
+            The slab allocator of RT-Thread is a memory allocation algorithm
+             optimizedfor embedded systems based on the slab allocator
+             implemented by Matthew Dillon, founder of dragonfly BSD.
+             The original slab algorithm is an efficient kernel memory
+             allocation algorithm introduced by Jeff bonwick for
+             Solaris Operating System.
+
     menuconfig RT_USING_MEMHEAP
-        bool "Using memory heap object"
+        bool "Using memheap Memory Algorithm"
         default n
 
         if RT_USING_MEMHEAP
+            choice
+                prompt "Memheap memory allocation mode"
+                default RT_MEMHEAP_FAST_MODE
 
-            if RT_USING_MEMHEAP_AS_HEAP
-            config RT_USING_MEMHEAP_AUTO_BINDING
-                bool "Use all of memheap objects as heap"
-                default y
-            endif
+                config RT_MEMHEAP_FAST_MODE
+                    bool "fast mode"
+                    help
+                        Speed priority mode.
+                        As long as the memory block size meets the requirements, the search ends immediately.
+
+                config RT_MEMHEAP_BSET_MODE
+                    bool "best mode"
+                    help
+                        Best size first.
+                        The search does not end until the memory block of the most appropriate size is found
+            endchoice
         endif
 
     choice
-        prompt "Dynamic Memory Management"
-        default RT_USING_SMALL_MEM
+        prompt "System Heap Memory Management"
+        default RT_USING_SMALL_MEM_AS_HEAP
 
-        config RT_USING_NOHEAP
-            bool "Disable Heap"
-
-        config RT_USING_SMALL_MEM
+        config RT_USING_SMALL_MEM_AS_HEAP
             bool "Small Memory Algorithm"
+            select RT_USING_SMALL_MEM
 
-        config RT_USING_SLAB
-            bool "SLAB Algorithm for large memory"
-
-        if RT_USING_MEMHEAP
         config RT_USING_MEMHEAP_AS_HEAP
             bool "Use memheap objects as heap"
-        endif
+            select RT_USING_MEMHEAP
+
+            if RT_USING_MEMHEAP_AS_HEAP
+                config RT_USING_MEMHEAP_AUTO_BINDING
+                    bool "Use all of memheap objects as heap"
+                    default y
+            endif
+
+        config RT_USING_SLAB_AS_HEAP
+            bool "SLAB Algorithm for large memory"
+            select RT_USING_SLAB
 
         config RT_USING_USERHEAP
             bool "Use user heap"
@@ -322,10 +361,11 @@ menu "Memory Management"
                     rt_malloc(), rt_malloc_sethook()
                     rt_free(),   rt_free_sethook()
                     rt_calloc(), rt_realloc()
+                    rt_memory_info()
                     rt_system_heap_init()
 
-                And if FinSH is used at the same time, please implement list_mem()
-
+        config RT_USING_NOHEAP
+            bool "Disable Heap"
     endchoice
 
     config RT_USING_MEMTRACE
@@ -341,6 +381,12 @@ menu "Memory Management"
             And developer also can call memcheck() in each of scheduling
             to check memory block to find which thread has wrongly modified
             memory.
+
+    config RT_USING_HEAP_ISR
+        bool "Using heap in ISR"
+        default n
+        help
+            When this option is enabled, the critical zone will be protected with disable interrupt.
 
     config RT_USING_HEAP
         bool
@@ -385,7 +431,7 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40100
+    default 0x40101
     help
         RT-Thread version number
 

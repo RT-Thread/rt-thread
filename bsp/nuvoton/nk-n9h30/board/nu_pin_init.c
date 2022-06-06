@@ -115,7 +115,7 @@ static void nu_pin_vpost_init(void)
     outpw(REG_SYS_GPA_MFPL, 0x22222222);
     /* PA[8, 15] */
     outpw(REG_SYS_GPA_MFPH, 0x22222222);
-#if (LCM_USING_BPP==4)
+#if (BSP_LCD_BPP==32)
     /* PD[8, 15 ] */
     outpw(REG_SYS_GPD_MFPH, 0x22222222);
 #endif
@@ -123,9 +123,19 @@ static void nu_pin_vpost_init(void)
 
 static void nu_pin_fmi_init(void)
 {
-    /* NAND: PC[0, 14] */
-    outpw(REG_SYS_GPC_MFPL, 0x55555555);
-    outpw(REG_SYS_GPC_MFPH, 0x05555555);
+    /* select NAND function pins */
+    if (inpw(REG_SYS_PWRON) & 0x08000000)
+    {
+        /* NAND: PI[0, 14] */
+        outpw(REG_SYS_GPI_MFPL, 0x55555550);
+        outpw(REG_SYS_GPI_MFPH, 0x55555555);
+    }
+    else
+    {
+        /* NAND: PC[0, 14] */
+        outpw(REG_SYS_GPC_MFPL, 0x55555555);
+        outpw(REG_SYS_GPC_MFPH, 0x05555555);
+    }
 }
 
 static void nu_pin_usbh_init(void)

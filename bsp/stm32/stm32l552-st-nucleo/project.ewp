@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>29</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -65,7 +65,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>8.11.3.13977</state>
+          <state>8.40.2.22864</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32L475VE	ST STM32L475VE</state>
+          <state>STM32L552ZE	ST STM32L552ZE</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -111,12 +111,12 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
+          <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
-          <state>39</state>
+          <version>27</version>
+          <state>59</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -132,17 +132,17 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
-          <state>39</state>
+          <version>27</version>
+          <state>59</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>STM32L475VE	ST STM32L475VE</state>
+          <state>STM32L552ZE	ST STM32L552ZE</state>
         </option>
         <option>
           <name>FPU2</name>
           <version>0</version>
-          <state>4</state>
+          <state>6</state>
         </option>
         <option>
           <name>NrRegs</name>
@@ -155,8 +155,8 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
-          <state>39</state>
+          <version>27</version>
+          <state>59</state>
         </option>
         <option>
           <name>OGCMSISPackSelectDevice</name>
@@ -199,13 +199,22 @@
           <name>DSPExtension</name>
           <state>1</state>
         </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZoneModes</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>34</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -215,7 +224,9 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>STM32L475xx</state>
+          <state>RT_USING_DLIBC</state>
+          <state>STM32L552xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -342,20 +353,25 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
-          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
+          <state>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\CMSIS\Device\ST\STM32L5xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -468,6 +484,10 @@
         <option>
           <name>IccRTTI2</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>OICompilerExtraOption</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -689,7 +709,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>20</version>
+        <version>23</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -1001,6 +1021,30 @@
           <name>IlinkLocaleSelect</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkTrustzoneImportLibraryOut</name>
+          <state>###Unitialized###</state>
+        </option>
+        <option>
+          <name>OILinkExtraOption</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -1040,7 +1084,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>29</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1145,7 +1189,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
+          <version>27</version>
           <state>1</state>
         </option>
         <option>
@@ -1162,7 +1206,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
+          <version>27</version>
           <state>0</state>
         </option>
         <option>
@@ -1185,7 +1229,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
+          <version>27</version>
           <state>0</state>
         </option>
         <option>
@@ -1229,13 +1273,22 @@
           <name>DSPExtension</name>
           <state>0</state>
         </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZoneModes</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>34</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1244,7 +1297,10 @@
         </option>
         <option>
           <name>CCDefines</name>
-          <state>STM32L475xx</state>
+          <state />
+          <state>RT_USING_DLIBC</state>
+          <state>STM32L552xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1371,20 +1427,25 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
-          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
+          <state>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\CMSIS\Device\ST\STM32L5xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1497,6 +1558,10 @@
         <option>
           <name>IccRTTI2</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>OICompilerExtraOption</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1718,7 +1783,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>20</version>
+        <version>23</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2030,6 +2095,30 @@
           <name>IlinkLocaleSelect</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkTrustzoneImportLibraryOut</name>
+          <state>###Unitialized###</state>
+        </option>
+        <option>
+          <name>OILinkExtraOption</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -2066,15 +2155,105 @@
     </file>
   </group>
   <group>
+    <name>Compiler</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+  </group>
+  <group>
+    <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\syscall_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\trustzone.c</name>
+    </file>
+  </group>
+  <group>
+    <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
+    </file>
+  </group>
+  <group>
     <name>Drivers</name>
     <file>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\CMSIS\Device\ST\STM32L5xx\Source\Templates\iar\startup_stm32l552xx.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32l5xx_hal_msp.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32l4xx_hal_msp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Source\Templates\iar\startup_stm32l475xx.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
@@ -2087,411 +2266,126 @@
     </file>
   </group>
   <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>CORTEX-M4</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-  </group>
-  <group>
-    <name>DeviceDrivers</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\pipe.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
-    </file>
-  </group>
-  <group>
-    <name>finsh</name>
+    <name>Finsh</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Source\Templates\system_stm32l4xx.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_adc.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_adc_ex.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_can.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_comp.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_cortex.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_crc.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_crc_ex.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_cryp.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_cryp_ex.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dac.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dac_ex.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
     </file>
+  </group>
+  <group>
+    <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dcmi.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_pwr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dfsdm.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_dma_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dfsdm_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_rcc_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma2d.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_usart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_uart_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dsi.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_pwr_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_exti.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_cryp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_firewall.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_usart_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\CMSIS\Device\ST\STM32L5xx\Source\Templates\system_stm32l5xx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash_ramfunc.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_cortex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_gfxmmu.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_rcc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_hash.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_hash_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_hcd.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_comp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_i2c.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_rng.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_i2c_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_irda.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_crc_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_iwdg.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32L5xx_HAL\STM32L5xx_HAL_Driver\Src\stm32l5xx_hal_cryp_ex.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_lptim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ltdc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ltdc_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_nand.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_nor.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_opamp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_opamp_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ospi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_pcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_pcd_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_pwr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_pwr_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_qspi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rcc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rcc_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rng.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rtc_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sai.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sai_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sd_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_smartcard.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_smartcard_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_smbus.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_spi_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_swpmi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_tim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_tim_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_tsc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_uart_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_usart_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_wwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_comp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_crs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_dma2d.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_fmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_lptim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_lpuart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_opamp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_pwr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_rcc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_rng.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_sdmmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_swpmi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_tim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_usb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_utils.c</name>
-    </file>
+  </group>
+  <group>
+    <name>POSIX</name>
   </group>
 </project>

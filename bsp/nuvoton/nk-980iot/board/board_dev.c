@@ -157,18 +157,21 @@ struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM] =
 {
     [0] =
     {
-        .block_start =  0,
-        .block_end   = 23,
-        .block_total = 24,
+        /*nand0: U-boot, env, rtthread*/
+        .block_start = 0,
+        .block_end   = 63,
+        .block_total = 64,
     },
     [1] =
     {
-        .block_start = 24,
+        /*nand1: for filesystem mounting*/
+        .block_start = 64,
         .block_end   = 1023,
-        .block_total = 1000,
+        .block_total = 960,
     },
     [2] =
     {
+        /*nand2: Whole blocks size, overlay*/
         .block_start = 0,
         .block_end   = 1023,
         .block_total = 1024,
@@ -189,6 +192,12 @@ static int rt_hw_spinand_init(void)
 INIT_COMPONENT_EXPORT(rt_hw_spinand_init);
 #endif
 
+#if defined(BSP_USING_ADC_TOUCH) && defined(NU_PKG_USING_ADC_TOUCH)
+#include "adc_touch.h"
+#if (BSP_LCD_WIDTH==320) && (BSP_LCD_HEIGHT==240)
+S_CALIBRATION_MATRIX g_sCalMat = { 43, -5839, 21672848, 4193, -11, -747882, 65536 };
+#endif
+#endif
 
 #if defined(BOARD_USING_LCD_ILI9341) && defined(NU_PKG_USING_ILI9341_SPI)
 #include <lcd_ili9341.h>
@@ -197,7 +206,7 @@ INIT_COMPONENT_EXPORT(rt_hw_spinand_init);
 #endif
 int rt_hw_ili9341_port(void)
 {
-    if (rt_hw_lcd_ili9341_spi_init("spi0") != RT_EOK)
+    if (rt_hw_lcd_ili9341_spi_init("spi0", RT_NULL) != RT_EOK)
         return -1;
 
     rt_hw_lcd_ili9341_init();
