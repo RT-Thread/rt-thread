@@ -86,9 +86,6 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
 path = [cwd + '/STM32L0xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32L0xx/Include']
 
-if not GetDepend('PKG_CMSIS_CORE'):
-    path += [cwd + '/CMSIS/Include']
-
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

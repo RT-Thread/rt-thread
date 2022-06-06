@@ -55,8 +55,12 @@ const void   *data;
 
 const struct dfs_mount_tbl mount_table[] =
 {
+#if defined(PKG_USING_RAMDISK)
     { RAMDISK_UDC, "/mnt/ram_usbd", "elm", 0, RT_NULL },
-#if defined(RT_USING_DFS_UFFS)
+#endif
+#if defined(PKG_USING_DFS_YAFFS)
+    { "nand1", "/mnt/filesystem", "yaffs", 0, RT_NULL },
+#elif defined(RT_USING_DFS_UFFS)
     { "nand1", "/mnt/filesystem", "uffs", 0, RT_NULL },
 #endif
     {0},
@@ -209,6 +213,28 @@ exit_filesystem_init:
     return -result;
 }
 INIT_ENV_EXPORT(filesystem_init);
+#endif
+
+#if defined(PKG_USING_DFS_YAFFS) && defined(RT_USING_DFS_MNTTABLE)
+#include "yaffs_guts.h"
+int yaffs_dev_init(void)
+{
+    int i;
+    for (i=0; i<sizeof(mount_table)/sizeof(struct dfs_mount_tbl);i++)
+    {
+        if ( mount_table[i].filesystemtype && !rt_strcmp( mount_table[i].filesystemtype, "yaffs") )
+        {
+             struct rt_mtd_nand_device* psMtdNandDev = RT_MTD_NAND_DEVICE(rt_device_find(mount_table[i].device_name));
+             if ( psMtdNandDev )
+             {
+                  yaffs_start_up(psMtdNandDev, (const char*)mount_table[i].path);
+             }
+        }
+    }
+
+    return 0;
+}
+INIT_ENV_EXPORT(yaffs_dev_init);
 #endif
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)

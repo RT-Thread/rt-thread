@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +23,6 @@ extern "C" {
 #include "uart_config.h"
 #include "spi_config.h"
 #include "adc_config.h"
-#include "tim_config.h"
 #include "gpio_config.h"
 #include "eth_config.h"
 #include "can_config.h"
