@@ -16,5 +16,5 @@ jobs:
       - name: Check Format and License
         shell: bash
         run: |
-          pip install click chardet PyYaml
+          pip install click chardet PyYaml better_exceptions
           python tools/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'

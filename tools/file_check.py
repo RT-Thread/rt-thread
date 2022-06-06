@@ -57,25 +57,25 @@ class CheckOut:
             logging.debug("ignore file path: {}".format(ignore_file_path))
             logging.debug("file_ignore: {}".format(file_ignore))
             logging.debug("dir_ignore: {}".format(dir_ignore))
-            try:
+            # try:
                 # judge file_path in the ignore file.
-                for file in file_ignore:
-                    if file is not None:
-                        file_real_path = os.path.join(dir_name, file)
-                        if file_real_path == file_path:
-                            logging.info("ignore file path: {}".format(file_real_path))
-                            return 0
-                
-                file_dir_path = os.path.dirname(file_path)
-                for _dir in dir_ignore:
-                    if _dir is not None:
-                        dir_real_path = os.path.join(dir_name, _dir)
-                        if file_dir_path.startswith(dir_real_path):
-                            logging.info("ignore dir path: {}".format(dir_real_path))
-                            return 0
-            except Exception as e:
-                logging.error(e)
-                continue
+            for file in file_ignore:
+                if file is not None:
+                    file_real_path = os.path.join(dir_name, file)
+                    if file_real_path == file_path:
+                        logging.info("ignore file path: {}".format(file_real_path))
+                        return 0
+            
+            file_dir_path = os.path.dirname(file_path)
+            for _dir in dir_ignore:
+                if _dir is not None:
+                    dir_real_path = os.path.join(dir_name, _dir)
+                    if file_dir_path.startswith(dir_real_path):
+                        logging.info("ignore dir path: {}".format(dir_real_path))
+                        return 0
+            # except Exception as e:
+            #     logging.error(e)
+            #     continue
 
         return 1
 
@@ -225,6 +225,7 @@ class LicenseCheck:
 @click.group()
 @click.pass_context
 def cli(ctx):
+    os.environ['BETTER_EXCEPTIONS'] = '1'
     pass
 
 
