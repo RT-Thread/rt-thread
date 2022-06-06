@@ -225,7 +225,6 @@ class LicenseCheck:
 @click.group()
 @click.pass_context
 def cli(ctx):
-    os.environ['BETTER_EXCEPTIONS'] = '1'
     pass
 
 
@@ -278,4 +277,6 @@ def check(check_license, repo, branch):
 
 
 if __name__ == '__main__':
+    # os.environ['BETTER_EXCEPTIONS'] = '1'
+    os.system('export BETTER_EXCEPTIONS=1')
     cli()
