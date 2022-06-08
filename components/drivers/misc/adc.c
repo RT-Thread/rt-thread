@@ -8,6 +8,7 @@
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
  * 2022-05-11     Stanley Lwin add finsh voltage conversion command
+ * 2022-06-08     Stanley Lwin add rt_adc_find function
  */
 
 #include <rtthread.h>
@@ -162,6 +163,12 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
+rt_adc_device_t rt_adc_find(const char *name)
+{
+    RT_ASSERT(name);
+    return (rt_adc_device_t) rt_device_find(name);
+}
+
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
     rt_uint32_t value = 0;
@@ -206,7 +213,7 @@ static int adc(int argc, char **argv)
         {
             if (argc == 3)
             {
-                adc_device = (rt_adc_device_t)rt_device_find(argv[2]);
+                adc_device = rt_adc_find(argv[2]); 
                 result_str = (adc_device == RT_NULL) ? "failure" : "success";
                 rt_kprintf("probe %s %s \n", argv[2], result_str);
             }
