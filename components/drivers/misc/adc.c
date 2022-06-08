@@ -116,6 +116,12 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
     return result;
 }
 
+rt_adc_device_t rt_adc_find(const char *name)
+{
+    RT_ASSERT(name);
+    return (rt_adc_device_t) rt_device_find(name);
+}
+
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel)
 {
     rt_uint32_t value;
@@ -161,12 +167,6 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     }
 
     return result;
-}
-
-rt_adc_device_t rt_adc_find(const char *name)
-{
-    RT_ASSERT(name);
-    return (rt_adc_device_t) rt_device_find(name);
 }
 
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
