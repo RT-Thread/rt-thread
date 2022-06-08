@@ -5,8 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-04-28     CDT          first version
+ * Date           Author               Notes
+ * 2022-04-28     CDT                  first version
+ * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
  */
 
 #include "drv_can.h"
@@ -24,6 +25,11 @@
     #define FILTER_COUNT                                    (16)
     #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
     #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
+#endif
+
+#if defined (HC32F460)
+    #define FILTER_COUNT                                    (16)
+    #define CAN1_INT_SRC                                    (INT_SRC_CAN_INT)
 #endif
 
 enum
@@ -66,6 +72,7 @@ typedef struct
 
 static can_device g_can_dev_array[] =
 {
+#if defined (HC32F4A0)
 #ifdef BSP_USING_CAN1
     {
         {0},
@@ -79,6 +86,17 @@ static can_device g_can_dev_array[] =
         CAN2_INIT_PARAMS,
         .instance = CM_CAN2,
     },
+#endif
+#endif
+
+#if defined (HC32F460)
+#ifdef BSP_USING_CAN1
+    {
+        {0},
+        CAN1_INIT_PARAMS,
+        .instance = CM_CAN,
+    },
+#endif
 #endif
 };
 
@@ -350,6 +368,8 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     }
     /* Set up the DLC */
     stc_tx_frame.DLC = pmsg->len & 0x0FU;
+    /* Set up the IDE */
+    stc_tx_frame.IDE = pmsg->ide;
     /* Set up the data field */
     rt_memcpy(&stc_tx_frame.au8Data, pmsg->data, sizeof(stc_tx_frame.au8Data));
     ll_ret = CAN_FillTxFrame(p_can_dev->instance, CAN_TX_BUF_PTB, &stc_tx_frame);
@@ -380,7 +400,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
         return -RT_ERROR;
 
     /* get id */
-    if (CAN_ID_STD == ll_rx_frame.IDE)
+    if (0 == ll_rx_frame.IDE)
     {
         pmsg->ide = RT_CAN_STDID;
     }
@@ -540,6 +560,12 @@ static void _can_clock_enable(void)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN2, ENABLE);
 #endif
 #endif
+
+#if defined(HC32F460)
+#if defined(BSP_USING_CAN1)
+    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN, ENABLE);
+#endif
+#endif
 }
 
 static void _can_irq_config(void)
@@ -593,7 +619,7 @@ int rt_hw_can_init(void)
         rt_memset(g_can_dev_array[i].ll_init.pstcFilter, 0, sizeof(stc_can_filter_config_t) * FILTER_COUNT);
         g_can_dev_array[i].ll_init.pstcFilter[0].u32ID = 0U;
         g_can_dev_array[i].ll_init.pstcFilter[0].u32IDMask = 0x1FFFFFFF;
-        g_can_dev_array[i].ll_init.pstcFilter[0].u32IDType = CAN_ID_STD;
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32IDType = CAN_ID_STD_EXT;
         g_can_dev_array[i].ll_init.u16FilterSelect = CAN_FILTER1;
         g_can_dev_array[i].rt_can.config = rt_can_config;
 
