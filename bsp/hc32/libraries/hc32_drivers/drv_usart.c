@@ -545,18 +545,17 @@ static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         DMA_Init(uart_dma->Instance, uart_dma->channel, &dma_init);
 
         /* Initialize LLP */
-        static stc_dma_llp_descriptor_t llp_desc;
         llp_init.u32State   = DMA_LLP_ENABLE;
         llp_init.u32Mode    = DMA_LLP_WAIT;
-        llp_init.u32Addr    = (uint32_t)&llp_desc;
+        llp_init.u32Addr    = (uint32_t)&uart->config->llp_desc;
         DMA_LlpInit(uart_dma->Instance, uart_dma->channel, &llp_init);
 
         /* Configure LLP descriptor */
-        llp_desc.SARx  = dma_init.u32SrcAddr;
-        llp_desc.DARx  = dma_init.u32DestAddr;
-        llp_desc.DTCTLx = (dma_init.u32TransCount << DMA_DTCTL_CNT_POS) | (dma_init.u32BlockSize << DMA_DTCTL_BLKSIZE_POS);
-        llp_desc.LLPx  = (uint32_t)&llp_desc;
-        llp_desc.CHCTLx = (dma_init.u32SrcAddrInc | dma_init.u32DestAddrInc | dma_init.u32DataWidth | \
+        uart->config->llp_desc.SARx  = dma_init.u32SrcAddr;
+        uart->config->llp_desc.DARx  = dma_init.u32DestAddr;
+        uart->config->llp_desc.DTCTLx = (dma_init.u32TransCount << DMA_DTCTL_CNT_POS) | (dma_init.u32BlockSize << DMA_DTCTL_BLKSIZE_POS);
+        uart->config->llp_desc.LLPx  = (uint32_t)&uart->config->llp_desc;
+        uart->config->llp_desc.CHCTLx = (dma_init.u32SrcAddrInc | dma_init.u32DestAddrInc | dma_init.u32DataWidth | \
                            llp_init.u32State      | llp_init.u32Mode        | dma_init.u32IntEn);
 
         /* Enable DMA interrupt */
