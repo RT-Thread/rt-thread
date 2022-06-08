@@ -118,8 +118,8 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
 
 rt_adc_device_t rt_adc_find(const char *name)
 {
-    RT_ASSERT(name);
-    return (rt_adc_device_t) rt_device_find(name);
+    rt_device_t dev = rt_device_find(name);
+    return (dev->type == RT_Device_Class_ADC) ? (rt_adc_device_t) dev : RT_NULL;
 }
 
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel)
