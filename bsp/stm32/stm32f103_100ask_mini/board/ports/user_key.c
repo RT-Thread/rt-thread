@@ -38,3 +38,5 @@ static int rt_hw_user_key_init(void)
 
 INIT_COMPONENT_EXPORT(rt_hw_user_key_init);
 #endif
+
+
