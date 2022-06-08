@@ -18,7 +18,7 @@
  *                             timeout function.
  * 2021-08-15     supperthomas add the comment
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to timer.c
- * 2022-04-19     Stanley      Correct descriptions
+ * 2022-04-19     Stanley Lwin Correct descriptions
  */
 
 #include <rtthread.h>
