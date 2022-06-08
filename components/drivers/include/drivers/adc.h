@@ -41,10 +41,10 @@ typedef enum
 
 rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct rt_adc_ops *ops, const void *user_data);
 
+rt_adc_device_t rt_adc_find(const char *name);
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel);
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel);
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel);
-rt_adc_device_t rt_adc_find(const char *name);
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel);
 
 #endif /* __ADC_H__ */
