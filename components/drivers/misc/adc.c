@@ -213,7 +213,7 @@ static int adc(int argc, char **argv)
         {
             if (argc == 3)
             {
-                adc_device = rt_adc_find(argv[2]); 
+                adc_device = rt_adc_find(argv[2]);
                 result_str = (adc_device == RT_NULL) ? "failure" : "success";
                 rt_kprintf("probe %s %s \n", argv[2], result_str);
             }
