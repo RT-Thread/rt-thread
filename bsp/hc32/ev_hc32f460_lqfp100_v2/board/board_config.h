@@ -51,4 +51,18 @@
     #define USART4_TX_PIN                   (GPIO_PIN_06)
 #endif
 
+/***********  CAN configure *********/
+#if defined(BSP_USING_CAN1)
+    #define CAN1_TX_PORT                     (GPIO_PORT_B)
+    #define CAN1_TX_PIN                      (GPIO_PIN_07)
+    #define CAN1_TX_PIN_FUNC                 (GPIO_FUNC_50)
+
+    #define CAN1_RX_PORT                     (GPIO_PORT_B)
+    #define CAN1_RX_PIN                      (GPIO_PIN_06)
+    #define CAN1_RX_PIN_FUNC                 (GPIO_FUNC_51)
+
+    #define CAN_STB_PORT                     (GPIO_PORT_D)
+    #define CAN_STB_PIN                      (GPIO_PIN_15)
+#endif
+
 #endif
