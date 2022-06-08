@@ -449,7 +449,7 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 
-static struct rt_workqueue *sys_workq; /* system work queue */
+struct rt_workqueue *sys_workqueue; /* system work queue */
 
 /**
  * @brief Submit a work item to the system work queue with a delay.
@@ -466,7 +466,7 @@ static struct rt_workqueue *sys_workq; /* system work queue */
  */
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t ticks)
 {
-    return rt_workqueue_submit_work(sys_workq, work, ticks);
+    return rt_workqueue_submit_work(sys_workqueue, work, ticks);
 }
 
 /**
@@ -478,7 +478,7 @@ rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t ticks)
  */
 rt_err_t rt_work_urgent(struct rt_work *work)
 {
-    return rt_workqueue_urgent_work(sys_workq, work);
+    return rt_workqueue_urgent_work(sys_workqueue, work);
 }
 
 /**
@@ -491,17 +491,17 @@ rt_err_t rt_work_urgent(struct rt_work *work)
  */
 rt_err_t rt_work_cancel(struct rt_work *work)
 {
-    return rt_workqueue_cancel_work(sys_workq, work);
+    return rt_workqueue_cancel_work(sys_workqueue, work);
 }
 
 static int rt_work_sys_workqueue_init(void)
 {
-    if (sys_workq != RT_NULL)
+    if (sys_workqueue != RT_NULL)
         return RT_EOK;
 
-    sys_workq = rt_workqueue_create("sys workq", RT_SYSTEM_WORKQUEUE_STACKSIZE,
+    sys_workqueue = rt_workqueue_create("sys workq", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     RT_SYSTEM_WORKQUEUE_PRIORITY);
-    RT_ASSERT(sys_workq != RT_NULL);
+    RT_ASSERT(sys_workqueue != RT_NULL);
 
     return RT_EOK;
 }
