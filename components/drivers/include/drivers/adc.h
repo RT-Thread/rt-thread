@@ -8,6 +8,7 @@
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
  * 2022-05-11     Stanley Lwin add finsh voltage conversion command
+ * 2022-06-08     Stanley Lwin add rt_adc_find function
  */
 
 #ifndef __ADC_H__
@@ -43,6 +44,7 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct r
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel);
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel);
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel);
+rt_adc_device_t rt_adc_find(const char *name);
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel);
 
 #endif /* __ADC_H__ */
