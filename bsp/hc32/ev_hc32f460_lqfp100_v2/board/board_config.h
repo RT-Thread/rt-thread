@@ -29,7 +29,7 @@
 
 #if defined(BSP_USING_UART2)
     #define USART2_RX_PORT                  (GPIO_PORT_A)
-    #define USART2_RX_PIN                   (GPIO_PIN_04)
+    #define USART2_RX_PIN                   (GPIO_PIN_03)
 
     #define USART2_TX_PORT                  (GPIO_PORT_A)
     #define USART2_TX_PIN                   (GPIO_PIN_02)
