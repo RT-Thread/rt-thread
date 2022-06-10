@@ -86,3 +86,34 @@ default:
     return result;
 }
 #endif
+
+#if defined(RT_USING_ADC)
+rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
+{
+    rt_err_t result = RT_EOK;
+    stc_gpio_init_t stcGpioInit;
+
+    (void)GPIO_StructInit(&stcGpioInit);
+    stcGpioInit.u16PinAttr = PIN_ATTR_ANALOG;
+    switch ((rt_uint32_t)ADCx)
+    {
+#if defined(BSP_USING_ADC1)
+    case (rt_uint32_t)CM_ADC1:
+        (void)GPIO_Init(ADC1_CH10_PORT, ADC1_CH10_PIN, &stcGpioInit);
+        (void)GPIO_Init(ADC1_CH12_PORT, ADC1_CH12_PIN, &stcGpioInit);
+        (void)GPIO_Init(ADC1_CH13_PORT, ADC1_CH13_PIN, &stcGpioInit);
+        break;
+#endif
+#if defined(BSP_USING_ADC2)
+    case (rt_uint32_t)CM_ADC2:
+        (void)GPIO_Init(ADC2_CH7_PORT, ADC2_CH7_PIN, &stcGpioInit);
+        break;
+#endif
+    default:
+        result = -RT_ERROR;
+        break;
+    }
+
+    return result;
+}
+#endif
