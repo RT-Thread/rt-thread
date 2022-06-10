@@ -7,11 +7,11 @@ src = Glob('*.c')
 src = ['Device/FUJISTU/MB9BF50x/Source/system_mb9bf50x.c']
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['Device/FUJISTU/MB9BF50x/Source/G++/startup_mb9bf50x.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['Device/FUJISTU/MB9BF50x/Source/ARM/startup_mb9bf50x.S']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += ['Device/FUJISTU/MB9BF50x/Source/IAR/startup_mb9bf50x.S']
 
 CPPPATH = [cwd + '/Device/FUJISTU/MB9BF50x/Include']

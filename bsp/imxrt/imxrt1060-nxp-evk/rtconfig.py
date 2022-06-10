@@ -23,8 +23,8 @@ elif CROSS_TOOL == 'keil':
     # EXEC_PATH   = r'C:/Keil_v5'
     EXEC_PATH   = r'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -141,7 +141,7 @@ elif PLATFORM == 'armclang':
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     CC = 'iccarm'
     CXX = 'iccarm'
     AS = 'iasmarm'
