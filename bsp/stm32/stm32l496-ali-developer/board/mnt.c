@@ -25,7 +25,6 @@ int mnt_init(void)
 {
 #ifdef BSP_USING_ON_CHIP_FLASH
     fal_init();
-
 #define FS_PARTITION_NAME "flash"
     struct rt_device *mtd_dev;
     mtd_dev = fal_blk_device_create(FS_PARTITION_NAME);
@@ -46,11 +45,9 @@ int mnt_init(void)
             LOG_I("Failed to initialize filesystem!");
         }
     }
-#endif
-
-#endif
+#endif /* BSP_USING_ON_CHIP_FLASH_FATFS */
+#endif /* BSP_USING_ON_CHIP_FLASH */
     return 0;
 }
 INIT_ENV_EXPORT(mnt_init);
-#endif
-
+#endif /* RT_USING_DFS */
