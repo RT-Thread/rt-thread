@@ -84,7 +84,7 @@ static void _adc_internal_trigger0_set(adc_device *p_adc_dev)
     AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG1, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg0_enable);
     AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG2, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg1_enable);
 #endif
-	
+
 #if defined(HC32F460)
     switch ((rt_uint32_t)p_adc_dev->instance)
     {
@@ -131,7 +131,7 @@ static void _adc_internal_trigger1_set(adc_device *p_adc_dev)
     AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG1, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg0_enable);
     AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG2, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg1_enable);
 #endif
-	
+
 #if defined(HC32F460)
     switch ((rt_uint32_t)p_adc_dev->instance)
     {
@@ -212,7 +212,7 @@ static void _adc_clock_enable(void)
     FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC3, ENABLE);
 #endif
 #endif
-	
+
 #if defined(HC32F460)
 #if defined(BSP_USING_ADC1)
     FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC1, ENABLE);
