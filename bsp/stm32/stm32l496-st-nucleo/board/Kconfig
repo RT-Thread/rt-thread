@@ -96,6 +96,9 @@ menu "On-chip Peripheral Drivers"
         endif
 
     config BSP_USING_ON_CHIP_FLASH
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_FAL
         bool "Enable on-chip FLASH"
         default n
 

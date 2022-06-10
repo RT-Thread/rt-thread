@@ -25,7 +25,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
     src += [startup_path_prefix + '/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/GCC/startup_hc32f4a0.S']
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [startup_path_prefix + '/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/startup_hc32f4a0.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/startup_hc32f4a0.s']
 
 CPPDEFINES = ['HC32F4A0']

@@ -16,6 +16,7 @@
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
+ * 2022-06-04     Meco Man     remove strnlen
  */
 
 #ifndef __RT_THREAD_H__

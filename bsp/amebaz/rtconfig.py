@@ -18,7 +18,7 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
     EXEC_PATH 	= 'C:/work/env/tools/gnu_gcc/arm_gcc/mingw/bin'
 elif CROSS_TOOL == 'iar':
-    PLATFORM     = 'iar'
+    PLATFORM     = 'iccarm'
     EXEC_PATH    = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.0'
 else:
     print 'Please make sure your toolchains is GNU GCC!'
@@ -67,7 +67,7 @@ if PLATFORM == 'gcc':
     M_CFLAGS = CFLAGS + ' -mlong-calls  -Dsourcerygxx -O0 -fPIC '
     M_LFLAGS = DEVICE + ' -Wl,-z,max-page-size=0x4 -shared -fPIC -e main -nostdlib'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     AS = 'iasmarm'

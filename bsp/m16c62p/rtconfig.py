@@ -13,7 +13,7 @@ if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'C:/Program Files/Renesas/Hew/Tools/KPIT Cummins/GNUM16CM32C-ELF/v11.01/m32c-elf/bin'
 elif CROSS_TOOL == 'iar':
-	PLATFORM 	= 'iar'
+	PLATFORM  = 'iccarm'
 	EXEC_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
 #	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
 elif CROSS_TOOL == 'keil':
@@ -55,7 +55,7 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O srec $TARGET rtthread.mot\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccm16c'
     AS = 'am16c'

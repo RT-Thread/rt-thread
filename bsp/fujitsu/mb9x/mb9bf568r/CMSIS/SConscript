@@ -11,7 +11,7 @@ CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport']
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['DeviceSupport/arm/startup_mb9bf56xr.s']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['DeviceSupport/gcc/startup_mb9bf56xr.S']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
