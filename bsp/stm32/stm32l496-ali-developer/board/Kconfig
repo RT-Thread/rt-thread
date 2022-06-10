@@ -61,9 +61,16 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    config BSP_USING_ON_CHIP_FLASH
-        select RT_USING_FAL
+    config BSP_USING_ONCHIP_FLASH
         bool "Enable on-chip FLASH"
+        select RT_USING_FAL
+        default n
+        
+    config BSP_USING_ONCHIP_FLASH_FATFS
+        bool "Enable onchip flash with FatFS"
+        depends on BSP_USING_ONCHIP_FLASH
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
         default n
 
     menuconfig BSP_USING_SPI

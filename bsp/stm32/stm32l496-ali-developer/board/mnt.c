@@ -19,7 +19,7 @@
 
 int mnt_init(void)
 {
-#ifdef BSP_USING_ON_CHIP_FLASH
+#ifdef BSP_USING_ONCHIP_FLASH
     fal_init();
 #define FS_PARTITION_NAME "flash"
     struct rt_device *mtd_dev;
