@@ -26,6 +26,21 @@
 
 #define BKUP_REG_DATA 0xA5A5
 
+struct rtc_device_object
+{
+    rt_rtc_dev_t  rtc_dev;
+#ifdef RT_USING_ALARM
+    struct rt_rtc_wkalarm   wkalarm;
+#endif
+};
+
+#ifdef RT_USING_ALARM
+static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev);
+static int rt_rtc_alarm_init(void);
+static RTC_AlarmTypeDef Alarm_InitStruct = { 0 };
+#endif
+
+static struct rtc_device_object rtc_device;
 static RTC_HandleTypeDef RTC_Handler;
 
 RT_WEAK uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
@@ -269,8 +284,47 @@ static rt_err_t stm32_rtc_set_secs(time_t *sec)
         result = -RT_ERROR;
     }
     LOG_D("RTC: set rtc_time %d", *sec);
-
+#ifdef RT_USING_ALARM
+    rt_alarm_update(&rtc_device.rtc_dev.parent, 1);
+#endif
     return result;
+}
+
+static rt_err_t stm32_rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
+{
+#ifdef RT_USING_ALARM
+    *alarm = rtc_device.wkalarm;
+    LOG_D("GET_ALARM %d:%d:%d",rtc_device.wkalarm.tm_hour,
+        rtc_device.wkalarm.tm_min,rtc_device.wkalarm.tm_sec);
+    return RT_EOK;
+#else
+    return -RT_ERROR;
+#endif
+}
+
+static rt_err_t stm32_rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
+{
+#ifdef RT_USING_ALARM
+    LOG_D("RT_DEVICE_CTRL_RTC_SET_ALARM");
+    if (alarm != RT_NULL)
+    {
+        rtc_device.wkalarm.enable = alarm->enable;
+        rtc_device.wkalarm.tm_hour = alarm->tm_hour;
+        rtc_device.wkalarm.tm_min = alarm->tm_min;
+        rtc_device.wkalarm.tm_sec = alarm->tm_sec;
+        rtc_alarm_time_set(&rtc_device);
+    }
+    else
+    {
+        LOG_E("RT_DEVICE_CTRL_RTC_SET_ALARM error!!");
+        return -RT_ERROR;
+    }
+    LOG_D("SET_ALARM %d:%d:%d",alarm->tm_hour,
+        alarm->tm_min, alarm->tm_sec);
+    return RT_EOK;
+#else
+    return -RT_ERROR;
+#endif
 }
 
 static const struct rt_rtc_ops stm32_rtc_ops =
@@ -278,26 +332,87 @@ static const struct rt_rtc_ops stm32_rtc_ops =
     stm32_rtc_init,
     stm32_rtc_get_secs,
     stm32_rtc_set_secs,
-    RT_NULL,
-    RT_NULL,
+    stm32_rtc_get_alarm,
+    stm32_rtc_set_alarm,
     stm32_rtc_get_timeval,
     RT_NULL,
 };
 
-static rt_rtc_dev_t stm32_rtc_dev;
+#ifdef RT_USING_ALARM
+void rt_rtc_alarm_enable(void)
+{
+    HAL_RTC_SetAlarm_IT(&RTC_Handler,&Alarm_InitStruct,RTC_FORMAT_BIN);
+    HAL_RTC_GetAlarm(&RTC_Handler,&Alarm_InitStruct,RTC_ALARM_A,RTC_FORMAT_BIN);
+    LOG_D("alarm read:%d:%d:%d", Alarm_InitStruct.AlarmTime.Hours,
+        Alarm_InitStruct.AlarmTime.Minutes,
+        Alarm_InitStruct.AlarmTime.Seconds);
+    HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0x02, 0);
+    HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+}
+
+void rt_rtc_alarm_disable(void)
+{
+    HAL_RTC_DeactivateAlarm(&RTC_Handler, RTC_ALARM_A);
+    HAL_NVIC_DisableIRQ(RTC_Alarm_IRQn);
+}
+
+static int rt_rtc_alarm_init(void)
+{
+    return RT_EOK;
+}
+
+static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
+{
+    if (p_dev->wkalarm.enable)
+    {
+        Alarm_InitStruct.Alarm = RTC_ALARM_A;
+        Alarm_InitStruct.AlarmDateWeekDay = RTC_WEEKDAY_MONDAY;
+        Alarm_InitStruct.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
+        Alarm_InitStruct.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
+        Alarm_InitStruct.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_NONE;
+        Alarm_InitStruct.AlarmTime.TimeFormat = RTC_HOURFORMAT12_AM;
+        Alarm_InitStruct.AlarmTime.Hours = p_dev->wkalarm.tm_hour;
+        Alarm_InitStruct.AlarmTime.Minutes = p_dev->wkalarm.tm_min;
+        Alarm_InitStruct.AlarmTime.Seconds = p_dev->wkalarm.tm_sec;
+        LOG_D("alarm set:%d:%d:%d", Alarm_InitStruct.AlarmTime.Hours,
+            Alarm_InitStruct.AlarmTime.Minutes,
+            Alarm_InitStruct.AlarmTime.Seconds);
+        rt_rtc_alarm_enable();
+    }
+
+    return RT_EOK;
+}
+
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+{
+    //LOG_D("rtc alarm isr.\n");
+    rt_alarm_update(&rtc_device.rtc_dev.parent, 1);
+}
+
+void RTC_Alarm_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_RTC_AlarmIRQHandler(&RTC_Handler);
+    rt_interrupt_leave();
+}
+#endif
 
 static int rt_hw_rtc_init(void)
 {
     rt_err_t result;
 
-    stm32_rtc_dev.ops = &stm32_rtc_ops;
-    result = rt_hw_rtc_register(&stm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
+    rtc_device.rtc_dev.ops = &stm32_rtc_ops;
+    result = rt_hw_rtc_register(&rtc_device.rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
         return result;
     }
     LOG_D("rtc init success");
+
+#ifdef RT_USING_ALARM
+    rt_rtc_alarm_init();
+#endif
 
     return RT_EOK;
 }
