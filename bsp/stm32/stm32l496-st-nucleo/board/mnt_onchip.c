@@ -21,10 +21,14 @@ int mnt_init(void)
 {
 #ifdef BSP_USING_ON_CHIP_FLASH
     fal_init();
-#ifdef BSP_USING_ON_CHIP_FLASH_FATFS
 #define FS_PARTITION_NAME "flash"
     struct rt_device *mtd_dev;
     mtd_dev = fal_blk_device_create(FS_PARTITION_NAME);
+    if (!mtd_dev)
+    {
+        rt_kprintf("Failed to create device.\n");
+    }
+#ifdef BSP_USING_ON_CHIP_FLASH_FATFS
     if (dfs_mount(FS_PARTITION_NAME, "/", "elm", 0, 0) == 0)
     {
         rt_kprintf("Filesystem initialized!");
