@@ -14,6 +14,10 @@
 #include "fal.h"
 #include <dfs_fs.h>
 
+#define DBG_TAG    "mnt"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USING_DFS
 #include <dfs_fs.h>
 
@@ -27,19 +31,19 @@ int mnt_init(void)
     mtd_dev = fal_blk_device_create(FS_PARTITION_NAME);
     if (!mtd_dev)
     {
-        rt_kprintf("Failed to create device.\n");
+        LOG_E("Failed to create device.\n");
     }
 #ifdef BSP_USING_ON_CHIP_FLASH_FATFS
     if (dfs_mount(FS_PARTITION_NAME, "/", "elm", 0, 0) == 0)
     {
-        rt_kprintf("Filesystem initialized!");
+        LOG_I("Filesystem initialized!");
     }
     else
     {
         dfs_mkfs("elm", FS_PARTITION_NAME);
         if (dfs_mount(FS_PARTITION_NAME, "/", "elm", 0, 0) != 0)
         {
-            rt_kprintf("Failed to initialize filesystem!");
+            LOG_I("Failed to initialize filesystem!");
         }
     }
 #endif
