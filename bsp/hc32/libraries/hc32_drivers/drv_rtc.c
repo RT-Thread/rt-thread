@@ -56,7 +56,7 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     stcRtcTime.u8Second  = p_tm->tm_sec ;
     stcRtcTime.u8Minute  = p_tm->tm_min ;
     stcRtcTime.u8Hour    = p_tm->tm_hour;
-    stcRtcDate.u8Day     = p_tm->tm_mday + 1;
+    stcRtcDate.u8Day     = p_tm->tm_mday - 1;
     stcRtcDate.u8Month   = p_tm->tm_mon ;
     stcRtcDate.u8Year    = p_tm->tm_year - 100;
     stcRtcDate.u8Weekday = p_tm->tm_wday + 1;
