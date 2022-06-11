@@ -115,9 +115,7 @@ int c28x_hw_pwm_init(struct c28x_pwm *device)
     EDIS;
     IER |= 0x100;                        // Enable CPU INT
     rt_err_t result = 0;
-    device->pwm_regs = &EPwm1Regs;
-    device->name = "pwm1";
-    device->rt_pwm.ops = &rt_pwm_ops;
+
 
     return result;
 }
