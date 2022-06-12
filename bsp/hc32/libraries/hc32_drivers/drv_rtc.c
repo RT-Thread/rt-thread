@@ -45,21 +45,22 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
 {
     stc_rtc_time_t stcRtcTime = {0};
     stc_rtc_date_t stcRtcDate = {0};
-    struct tm *p_tm;
+    struct tm p_tm = {0};
 
-    p_tm = gmtime(&time_stamp);
-    if (p_tm->tm_year < 100)
+    gmtime_r(&time_stamp, &p_tm);
+
+    if (p_tm.tm_year < 100)
     {
         return -RT_ERROR;
     }
 
-    stcRtcTime.u8Second  = p_tm->tm_sec ;
-    stcRtcTime.u8Minute  = p_tm->tm_min ;
-    stcRtcTime.u8Hour    = p_tm->tm_hour;
-    stcRtcDate.u8Day     = p_tm->tm_mday - 1;
-    stcRtcDate.u8Month   = p_tm->tm_mon ;
-    stcRtcDate.u8Year    = p_tm->tm_year - 100;
-    stcRtcDate.u8Weekday = p_tm->tm_wday + 1;
+    stcRtcTime.u8Second  = p_tm.tm_sec ;
+    stcRtcTime.u8Minute  = p_tm.tm_min ;
+    stcRtcTime.u8Hour    = p_tm.tm_hour;
+    stcRtcDate.u8Day     = p_tm.tm_mday - 1;
+    stcRtcDate.u8Month   = p_tm.tm_mon ;
+    stcRtcDate.u8Year    = p_tm.tm_year - 100;
+    stcRtcDate.u8Weekday = p_tm.tm_wday + 1;
 
     if (LL_OK != RTC_SetTime(RTC_DATA_FMT_DEC, &stcRtcTime))
     {
