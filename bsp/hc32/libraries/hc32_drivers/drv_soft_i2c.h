@@ -52,8 +52,8 @@ struct hc32_i2c
 #ifdef BSP_USING_I2C2
 #define I2C2_BUS_CONFIG                                     \
     {                                                       \
-        .scl = BSP_I2C2_SCL_PIN,                            \
-        .sda = BSP_I2C2_SDA_PIN,                            \
+        .scl_pin = BSP_I2C2_SCL_PIN,                        \
+        .sda_pin = BSP_I2C2_SDA_PIN,                        \
         .bus_name = "i2c2",                                 \
     }
 #endif
@@ -61,8 +61,8 @@ struct hc32_i2c
 #ifdef BSP_USING_I2C3
 #define I2C3_BUS_CONFIG                                     \
     {                                                       \
-        .scl = BSP_I2C3_SCL_PIN,                            \
-        .sda = BSP_I2C3_SDA_PIN,                            \
+        .scl_pin = BSP_I2C3_SCL_PIN,                        \
+        .sda_pin = BSP_I2C3_SDA_PIN,                        \
         .bus_name = "i2c3",                                 \
     }
 #endif
@@ -70,8 +70,8 @@ struct hc32_i2c
 #ifdef BSP_USING_I2C4
 #define I2C4_BUS_CONFIG                                     \
     {                                                       \
-        .scl = BSP_I2C4_SCL_PIN,                            \
-        .sda = BSP_I2C4_SDA_PIN,                            \
+        .scl_pin = BSP_I2C4_SCL_PIN,                        \
+        .sda_pin = BSP_I2C4_SDA_PIN,                        \
         .bus_name = "i2c4",                                 \
     }
 #endif
@@ -79,8 +79,8 @@ struct hc32_i2c
 #ifdef BSP_USING_I2C5
 #define I2C5_BUS_CONFIG                                     \
     {                                                       \
-        .scl = BSP_I2C5_SCL_PIN,                            \
-        .sda = BSP_I2C5_SDA_PIN,                            \
+        .scl_pin = BSP_I2C5_SCL_PIN,                        \
+        .sda_pin = BSP_I2C5_SDA_PIN,                        \
         .bus_name = "i2c5",                                 \
     }
 #endif
@@ -88,8 +88,8 @@ struct hc32_i2c
 #ifdef BSP_USING_I2C6
 #define I2C6_BUS_CONFIG                                     \
     {                                                       \
-        .scl = BSP_I2C6_SCL_PIN,                            \
-        .sda = BSP_I2C6_SDA_PIN,                            \
+        .scl_pin = BSP_I2C6_SCL_PIN,                        \
+        .sda_pin = BSP_I2C6_SDA_PIN,                        \
         .bus_name = "i2c6",                                 \
     }
 #endif
