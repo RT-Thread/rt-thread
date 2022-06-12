@@ -19,5 +19,6 @@ typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned inte
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
 typedef unsigned long                   rt_uint32_t;    /**< 32bit unsigned integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
+typedef unsigned long                   rt_size_t;      /**< Type for size number */
 
 #endif

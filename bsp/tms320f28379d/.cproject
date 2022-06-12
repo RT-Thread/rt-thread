@@ -84,7 +84,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="finsh/msh.c|finsh/msh_file.c|finsh/msh_cmd.c|libraries/common/source/F2837xD_SWPrioritizedPieVect.c|libraries/headers/cmd/F2837xD_Headers_nonBIOS_cpu2.cmd|libraries/headers/cmd/F2837xD_Headers_BIOS_cpu1.cmd|libraries/headers/cmd/F2837xD_Headers_BIOS_cpu2.cmd|libraries/common/source/device.c|libraries/common/source/usb.c|libraries/common/source/usb_hal.c|libraries/common/targetConfigs|libraries/common/deprecated|libraries/common/cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="DeviceDrivers/ipc/pipe.c|finsh/msh_cmd.c|libraries/common/source/F2837xD_SWPrioritizedPieVect.c|libraries/headers/cmd/F2837xD_Headers_nonBIOS_cpu2.cmd|libraries/headers/cmd/F2837xD_Headers_BIOS_cpu1.cmd|libraries/headers/cmd/F2837xD_Headers_BIOS_cpu2.cmd|libraries/common/source/device.c|libraries/common/source/usb.c|libraries/common/source/usb_hal.c|libraries/common/targetConfigs|libraries/common/deprecated|libraries/common/cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
