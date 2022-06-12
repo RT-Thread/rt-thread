@@ -89,6 +89,41 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+	menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LRC
+
+                config BSP_RTC_USING_XTAL32
+                    bool "RTC USING XTAL32"
+
+                config BSP_RTC_USING_LRC
+                    bool "RTC USING LRC"
+            endchoice
+        endif
+		
+    menuconfig BSP_USING_I2C2
+        bool "Enable I2C2 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN 
+        if BSP_USING_I2C2
+            config BSP_I2C2_SCL_PIN
+                int "i2c2 scl pin number"
+                range 1 100
+                default 48
+            config BSP_I2C2_SDA_PIN
+                int "I2C2 sda pin number"
+                range 1 100
+                default 49
+        endif 
+		
 endmenu
 
 menu "Board extended module Drivers"
