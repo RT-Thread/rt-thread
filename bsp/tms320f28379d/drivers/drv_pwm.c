@@ -1,7 +1,7 @@
 /*
  * drv_pwm.c
  *
- *  Created on: 2022Äê6ÔÂ10ÈÕ
+ *  Created on: 2022610
  *      Author: Felix
  */
 #include "rtdevice.h"
@@ -9,6 +9,13 @@
 #include "F2837xD_device.h"
 #include "F28x_Project.h"     // Device Headerfile and Examples Include File
 #include "drv_config.h"
+
+#include "F2837xD_epwm.h"
+//for now, cpu rate is a fixed value, waiting to be modified to an auto-ajustable variable.
+#define CPU_FREQUENCY 200e6
+#define PWM_DIVISION 2
+
+#define UPDOWN 1
 enum
 {
 #ifdef BSP_USING_PWM1
@@ -58,29 +65,173 @@ struct c28x_pwm
 
 static struct c28x_pwm c28x_pwm_obj[3] ={0};
 
-struct rt_pwm_configuration_ex
+#define PHASE_SCALE 10
+struct phase_configuration
 {
+    // phase is from 0~360, scaled up to 10x, for resolution of 0.1 degree
+    rt_uint16_t phase;
+    rt_bool_t phase_enable;
+    rt_bool_t master_flag;
+};
+
+struct action_configuration{
+    // rt_uint8_t aqa_cau;
+    // rt_uint8_t aqa_cad;
+    // rt_uint8_t aqa_cbu;
+    // rt_uint8_t aqa_cbd;
+    // rt_uint8_t aqa_zro;
+    // rt_uint8_t aqa_prd;
+
+    // rt_uint8_t aqb_cau;
+    // rt_uint8_t aqb_cad;
+    // rt_uint8_t aqb_cbu;
+    // rt_uint8_t aqb_cbd;
+    // rt_uint8_t aqb_zro;
+    // rt_uint8_t aqb_prd;
+};
+
 //    TODO
 //    All of customed configuration need to be filled up
+struct rt_pwm_configuration_ex
+{
+    struct rt_pwm_configuration rt_cfg;
+    struct phase_configuration phase_cfg;
+    struct action_configuration action_cfg;
 };
 
 static rt_err_t c28x_control(struct rt_device_pwm *pwm, int cmd,void *arg);
 
-static const struct rt_pwm_ops rt_pwm_ops = {
+static const struct rt_pwm_ops rt_pwm_ops = 
+{
    .control = c28x_control
 };
 
-static rt_err_t c28x_control(struct rt_device_pwm *rt_pwm, int cmd,void *arg){
+static rt_err_t drv_pwm_set(struct EPWM_REGS *epwm,struct rt_pwm_configuration *configuration)
+{
+    // Set the configuration of PWM according to the parameter
+    rt_uint32_t prd = configuration->period/(1e9/(CPU_FREQUENCY/PWM_DIVISION));
+    if(UPDOWN)
+    {
+        // if in updown mode, prd has to be halved
+        epwm->TBPRD = prd/2;       // Set timer period
+    }else
+    {
+        epwm->TBPRD = prd;       // Set timer period
+    }
+    epwm->TBCTR = 0x0000;                  // Clear counter
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_get(struct EPWM_REGS *epwm,struct rt_pwm_configuration *configuration)
+{
+    // Retrieve the pwm configuration
+    rt_uint32_t prd = epwm->TBPRD;
+    if(UPDOWN)
+    {
+        // if in updown mode, period in configuration has to be doubled
+        configuration->period = prd*(1e9/(CPU_FREQUENCY/PWM_DIVISION))*2;
+    }else
+    {
+        configuration->period = prd*(1e9/(CPU_FREQUENCY/PWM_DIVISION));
+    }
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_enable(struct EPWM_REGS *epwm,struct rt_pwm_configuration *configuration,rt_bool_t enable)
+{
+    // TODO 
+    // Still not sure about how to stop PWM in C2000
+    if(epwm == RT_NULL || configuration == RT_NULL)
+    {
+        return RT_ERROR;
+    }
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_set_phase(struct EPWM_REGS *epwm, struct phase_configuration *phase_cfg)
+{
+    if(epwm == RT_NULL || phase_cfg == RT_NULL)
+    {
+        return RT_ERROR;
+    }
+    // remapping angle into 0~360
+    rt_uint16_t phase = phase_cfg->phase%(360*PHASE_SCALE);
+    switch (epwm->TBCTL.bit.CTRMODE)
+    {
+    // TODO 
+    // Still not sure of this configuration
+    case TB_COUNT_UPDOWN:
+        if(phase<180*PHASE_SCALE)
+        {
+            epwm->TBPHS.bit.TBPHS = epwm->TBPRD * phase / PHASE_SCALE;
+            epwm->TBCTL.bit.PHSDIR = 0;// count up
+        }
+        else
+        {
+            epwm->TBPHS.bit.TBPHS = epwm->TBPRD - epwm->TBPRD * (phase-180) / PHASE_SCALE;
+            epwm->TBCTL.bit.PHSDIR = 1;// count down
+        }
+        break;
+    case TB_COUNT_UP:
+        epwm->TBPHS.bit.TBPHS = epwm->TBPRD * phase / PHASE_SCALE;
+        epwm->TBCTL.bit.PHSDIR = 0;// count up
+        break;
+    case TB_COUNT_DOWN:
+        epwm->TBPHS.bit.TBPHS = epwm->TBPRD - epwm->TBPRD * phase / PHASE_SCALE;
+        epwm->TBCTL.bit.PHSDIR = 1;// count up
+        break;
+    default:
+        break;
+    }
+    
+    epwm->TBCTL.bit.PHSEN  = phase_cfg->phase_enable ? TB_ENABLE : TB_DISABLE;
+
+    epwm->TBCTL.bit.SYNCOSEL = phase_cfg->master_flag ? TB_CTR_ZERO : TB_SYNC_IN;
+    
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_set_action(struct EPWM_REGS *epwm, struct action_configuration *action_cfg)
+{
+    if(epwm == RT_NULL || action_cfg == RT_NULL)
+    {
+        return RT_ERROR;
+    }
+    
+    return RT_EOK;
+}
+
+
+static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
+{
+    struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
+    struct c28x_pwm *pwm = (struct c28x_pwm *)device->parent.user_data;
+
+    switch (cmd)
+    {
+    case PWM_CMD_ENABLE:
+        return drv_pwm_enable(pwm, configuration, RT_TRUE);
+    case PWM_CMD_DISABLE:
+        return drv_pwm_enable(pwm, configuration, RT_FALSE);
+    case PWM_CMD_SET:
+        return drv_pwm_set(pwm, configuration);
+    case PWM_CMD_GET:
+        return drv_pwm_get(pwm, configuration);
+    default:
+        return RT_EINVAL;
+    }
+}
+
+static rt_err_t c28x_control_ex(struct rt_device_pwm *rt_pwm, int cmd,void *arg){
     struct c28x_pwm *pwm = (struct c28x_pwm *)rt_pwm->parent.user_data;
     struct rt_pwm_configuration_ex * pwm_cfg = (struct rt_pwm_configuration_ex *) arg;
-    EALLOW;
     switch(cmd)
     {
     default:break;
     }
-    EDIS;
     return RT_EOK;
 }
+
 
 static void pwm_isr(struct rt_device_pwm *rt_pwm)
 {
