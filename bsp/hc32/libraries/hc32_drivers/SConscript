@@ -30,7 +30,6 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
 
-
 path = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

@@ -88,6 +88,19 @@ menu "On-chip Peripheral Drivers"
                 bool "using can1"
                 default n
         endif
+		
+	menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "using adc1"
+                default n
+            config BSP_USING_ADC2
+                bool "using adc2"
+                default n
+        endif
 
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
