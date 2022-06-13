@@ -14,7 +14,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <sys/time.h>
-#include <drivers/adc.h>
 
 #ifdef BSP_USING_RTC
 
@@ -32,8 +31,16 @@ static rt_err_t hc32_rtc_get_time_stamp(struct timeval *tv)
     tm_new.tm_sec  = stcRtcTime.u8Second;
     tm_new.tm_min  = stcRtcTime.u8Minute;
     tm_new.tm_hour = stcRtcTime.u8Hour;
-    tm_new.tm_mday = stcRtcDate.u8Day + 1;
-    tm_new.tm_mon  = stcRtcDate.u8Month;
+    if(stcRtcDate.u8Month == 0)
+    {
+        tm_new.tm_mday = stcRtcDate.u8Day + 1;
+        tm_new.tm_mon  = stcRtcDate.u8Month;
+    }
+    else
+    {
+        tm_new.tm_mday = stcRtcDate.u8Day ;
+        tm_new.tm_mon  = stcRtcDate.u8Month - 1;
+    }
     tm_new.tm_year = stcRtcDate.u8Year + 100;
 
     tv->tv_sec = timegm(&tm_new);
@@ -57,8 +64,8 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     stcRtcTime.u8Second  = p_tm.tm_sec ;
     stcRtcTime.u8Minute  = p_tm.tm_min ;
     stcRtcTime.u8Hour    = p_tm.tm_hour;
-    stcRtcDate.u8Day     = p_tm.tm_mday - 1;
-    stcRtcDate.u8Month   = p_tm.tm_mon ;
+    stcRtcDate.u8Day     = p_tm.tm_mday;
+    stcRtcDate.u8Month   = p_tm.tm_mon + 1;
     stcRtcDate.u8Year    = p_tm.tm_year - 100;
     stcRtcDate.u8Weekday = p_tm.tm_wday + 1;
 
