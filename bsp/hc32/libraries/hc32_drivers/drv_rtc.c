@@ -67,7 +67,7 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     stcRtcDate.u8Day     = p_tm.tm_mday;
     stcRtcDate.u8Month   = p_tm.tm_mon + 1;
     stcRtcDate.u8Year    = p_tm.tm_year - 100;
-    stcRtcDate.u8Weekday = p_tm.tm_wday + 1;
+    stcRtcDate.u8Weekday = p_tm.tm_wday;
 
     if (LL_OK != RTC_SetTime(RTC_DATA_FMT_DEC, &stcRtcTime))
     {
@@ -116,7 +116,6 @@ static rt_err_t hc32_rtc_init(void)
             stcRtcInit.u8ClockSrc = RTC_CLK_SRC_LRC;
             #endif
             stcRtcInit.u8HourFormat  = RTC_HOUR_FMT_24H;
-            stcRtcInit.u8IntPeriod    = RTC_INT_PERIOD_PER_SEC;
             (void)RTC_Init(&stcRtcInit);
             /* Startup RTC count */
             RTC_Cmd(ENABLE);
