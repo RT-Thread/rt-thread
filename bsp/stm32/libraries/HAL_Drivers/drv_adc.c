@@ -73,14 +73,13 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
 static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
 {
-    ADC_InitTypeDef *stm32_adc_handler;
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F3)
+    return 12;
+#else
+    ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
 
     RT_ASSERT(device != RT_NULL);
 
-    stm32_adc_handler = device->parent.user_data;
-#ifdef SOC_SERIES_STM32F1 || SOC_SERIES_STM32F3
-    return 12;
-#else
     switch(stm32_adc_handler->Init.Resolution)
     {
         case ADC_RESOLUTION_12B:
@@ -94,7 +93,7 @@ static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
         default:
             return 0;
     }
-#endif
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F3) */
 }
 
 static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
