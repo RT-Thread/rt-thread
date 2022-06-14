@@ -8,11 +8,10 @@
  * Date           Author               Notes
  * 2022-04-28     CDT                  first version
  * 2022-06-08     xiaoxiaolisunny      add hc32f460 series
+ * 2022-06-14     CDT                  fix a bug of internal trigger
  */
 
 #include <board.h>
-#include <drivers/adc.h>
-#include <drv_adc.h>
 #include <drv_config.h>
 
 #define DBG_TAG             "drv.adc"
@@ -128,8 +127,8 @@ static void _adc_internal_trigger1_set(adc_device *p_adc_dev)
     default:
         break;
     }
-    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG1, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg0_enable);
-    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG2, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg1_enable);
+    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG1, (en_functional_state_t)p_adc_dev->init.internal_trig1_comtrg0_enable);
+    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG2, (en_functional_state_t)p_adc_dev->init.internal_trig1_comtrg1_enable);
 #endif
 
 #if defined(HC32F460)
@@ -144,8 +143,8 @@ static void _adc_internal_trigger1_set(adc_device *p_adc_dev)
     default:
         break;
     }
-    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG1, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg0_enable);
-    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG2, (en_functional_state_t)p_adc_dev->init.internal_trig0_comtrg1_enable);
+    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG1, (en_functional_state_t)p_adc_dev->init.internal_trig1_comtrg0_enable);
+    AOS_CommonTriggerCmd(u32TriggerSel, AOS_COMM_TRIG2, (en_functional_state_t)p_adc_dev->init.internal_trig1_comtrg1_enable);
 #endif
     AOS_SetTriggerEventSrc(u32TriggerSel, p_adc_dev->init.internal_trig1_sel);
 }
