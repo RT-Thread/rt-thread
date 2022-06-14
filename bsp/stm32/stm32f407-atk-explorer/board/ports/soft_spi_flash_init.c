@@ -14,7 +14,7 @@
 #include "drv_spi.h"
 #include "drv_soft_spi.h"
 
-#if defined(BSP_USING_SOFT_SPI_FLASH)
+#ifdef BSP_USING_SOFT_SPI_FLASH
 
 static int rt_soft_spi_flash_init(void)
 {
