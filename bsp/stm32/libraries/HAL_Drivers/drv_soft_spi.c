@@ -17,7 +17,6 @@
 #define LOG_TAG             "drv.soft_spi"
 #include <drv_log.h>
 
-
 static struct stm32_soft_spi_config soft_spi_config[] =
 {
 #ifdef BSP_USING_SOFT_SPI1
@@ -62,6 +61,7 @@ static void stm32_spi_gpio_init(struct stm32_soft_spi *spi)
     rt_pin_write(cfg->sck, PIN_HIGH);
     rt_pin_write(cfg->mosi, PIN_HIGH);
 }
+
 void stm32_tog_sclk(void *data)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
@@ -74,6 +74,7 @@ void stm32_tog_sclk(void *data)
         rt_pin_write(cfg->sck, PIN_HIGH);
     }
 }
+
 void stm32_set_sclk(void *data, rt_int32_t state)
 {
     
@@ -87,6 +88,7 @@ void stm32_set_sclk(void *data, rt_int32_t state)
         rt_pin_write(cfg->sck, PIN_LOW);
     }
 }
+
 void stm32_set_mosi(void *data, rt_int32_t state)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
@@ -99,6 +101,7 @@ void stm32_set_mosi(void *data, rt_int32_t state)
         rt_pin_write(cfg->mosi, PIN_LOW);
     }
 }
+
 void stm32_set_miso(void *data, rt_int32_t state)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
@@ -111,21 +114,25 @@ void stm32_set_miso(void *data, rt_int32_t state)
         rt_pin_write(cfg->miso, PIN_LOW);
     }
 }
+
 rt_int32_t stm32_get_sclk(void *data)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
     return rt_pin_read(cfg->sck);
 }
+
 rt_int32_t stm32_get_mosi(void *data)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
     return rt_pin_read(cfg->mosi);
 }
+
 rt_int32_t stm32_get_miso(void *data)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
     return rt_pin_read(cfg->miso);
 }
+
 void stm32_dir_mosi(void *data, rt_int32_t state)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
@@ -138,6 +145,7 @@ void stm32_dir_mosi(void *data, rt_int32_t state)
         rt_pin_mode(cfg->mosi, PIN_MODE_OUTPUT);
     }
 }
+
 void stm32_dir_miso(void *data, rt_int32_t state)
 {
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
@@ -157,7 +165,7 @@ static void stm32_udelay(rt_uint32_t us)
     rt_uint32_t told, tnow, tcnt = 0;
     rt_uint32_t reload = SysTick->LOAD;
 
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    ticks = us * reload / (1000000UL / RT_TICK_PER_SECOND);
     told = SysTick->VAL;
     while (1)
     {
@@ -180,6 +188,7 @@ static void stm32_udelay(rt_uint32_t us)
         }
     }
 }
+
 static struct rt_spi_bit_ops stm32_soft_spi_ops =
     {
         .data = RT_NULL,
@@ -199,7 +208,7 @@ static struct rt_spi_bit_ops stm32_soft_spi_ops =
 static struct stm32_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
 
 /* Soft SPI initialization function */
-int rt_sfot_spi_init(void)
+int rt_soft_spi_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct stm32_soft_spi);
     rt_err_t result;
@@ -216,6 +225,6 @@ int rt_sfot_spi_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_sfot_spi_init);
+INIT_BOARD_EXPORT(rt_soft_spi_init);
 
-#endif
+#endif /* defined(RT_USING_SPI) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_PIN) */

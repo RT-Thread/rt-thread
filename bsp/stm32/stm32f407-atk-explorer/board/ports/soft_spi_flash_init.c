@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-27     SummerGift   add spi flash port file
+ * 2022-6-14      solar        first version
  */
 
 #include <rtthread.h>
@@ -30,4 +30,3 @@ static int rt_soft_spi_flash_init(void)
 }
 INIT_COMPONENT_EXPORT(rt_soft_spi_flash_init);
 #endif
-

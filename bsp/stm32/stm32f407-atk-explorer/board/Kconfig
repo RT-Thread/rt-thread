@@ -80,7 +80,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_SOFT_SPI_FLASH
-        bool "Enable soft SPI FLASH (W25Q128 soft spi2)"
+        bool "Enable soft SPI FLASH (W25Q128 sspi2)"
         select BSP_USING_SOFT_SPI
         select BSP_USING_SOFT_SPI2
         select RT_USING_SFUD

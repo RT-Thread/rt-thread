@@ -11,7 +11,6 @@
 #ifndef __DRV_SOFT_SPI__
 #define __DRV_SOFT_SPI__
 
-#include <rtthread.h>
 #include <rthw.h>
 #include <rtdevice.h>
 #include <spi-bit-ops.h>
@@ -24,6 +23,7 @@ struct stm32_soft_spi_config
     rt_uint8_t miso;
     const char *bus_name;
 };
+
 /* stm32 soft spi dirver */
 struct stm32_soft_spi
 {   
@@ -39,7 +39,7 @@ struct stm32_soft_spi
         .miso = BSP_S_SPI1_MISO_PIN,                        \
         .bus_name = "sspi1",                                \
     }
-#endif
+#endif /* BSP_USING_SOFT_SPI1 */
 #ifdef BSP_USING_SOFT_SPI2
 #define SOFT_SPI2_BUS_CONFIG                                    \
     {                                                       \
@@ -48,11 +48,9 @@ struct stm32_soft_spi
         .miso = BSP_S_SPI2_MISO_PIN,                        \
         .bus_name = "sspi2",                                \
     }
-#endif
+#endif /* BSP_USING_SOFT_SPI2 */
 
 rt_err_t rt_hw_soft_spi_device_attach(const char *bus_name, const char *device_name, const char *pin_name);
-int rt_sfot_spi_init(void);
+int rt_soft_spi_init(void);
 
-#endif
-
-
+#endif /* __DRV_SOFT_SPI__ */
