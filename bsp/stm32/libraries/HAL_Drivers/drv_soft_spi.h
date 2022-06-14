@@ -26,7 +26,7 @@ struct stm32_soft_spi_config
 
 /* stm32 soft spi dirver */
 struct stm32_soft_spi
-{   
+{
     struct rt_spi_bit_obj spi;
     struct stm32_soft_spi_config *cfg;
 };

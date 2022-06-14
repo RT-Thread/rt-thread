@@ -35,7 +35,7 @@ rt_err_t rt_hw_soft_spi_device_attach(const char *bus_name, const char *device_n
 
     rt_err_t result;
     struct rt_spi_device *spi_device;
-    
+
     /* initialize the cs pin && select the slave*/
     rt_base_t cs_pin = rt_pin_get(pin_name);
 
@@ -77,7 +77,7 @@ void stm32_tog_sclk(void *data)
 
 void stm32_set_sclk(void *data, rt_int32_t state)
 {
-    
+
     struct stm32_soft_spi_config* cfg = (struct stm32_soft_spi_config*)data;
     if (state)
     {
@@ -218,7 +218,7 @@ int rt_soft_spi_init(void)
         stm32_soft_spi_ops.data = (void *)&soft_spi_config[i];
         spi_obj[i].spi.ops = &stm32_soft_spi_ops;
         spi_obj[i].cfg = (void *)&soft_spi_config[i];
-        stm32_spi_gpio_init(&spi_obj[i]); 
+        stm32_spi_gpio_init(&spi_obj[i]);
         result = rt_spi_bit_add_bus(&spi_obj[i].spi, soft_spi_config[i].bus_name, &stm32_soft_spi_ops);
         RT_ASSERT(result == RT_EOK);
     }
