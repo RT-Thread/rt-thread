@@ -29,4 +29,4 @@ static int rt_soft_spi_flash_init(void)
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_soft_spi_flash_init);
-#endif
+#endif /* BSP_USING_SOFT_SPI_FLASH */
