@@ -12,6 +12,8 @@
  */
 
 #include <board.h>
+#include <drivers/adc.h>
+#include <drv_adc.h>
 #include <drv_config.h>
 
 #define DBG_TAG             "drv.adc"
