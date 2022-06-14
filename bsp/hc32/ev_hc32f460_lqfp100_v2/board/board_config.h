@@ -65,4 +65,22 @@
     #define CAN_STB_PIN                      (GPIO_PIN_15)
 #endif
 
+/***********  ADC configure *********/
+#if defined(BSP_USING_ADC1)
+    #define ADC1_CH10_PORT                     (GPIO_PORT_C)
+    #define ADC1_CH10_PIN                      (GPIO_PIN_00)
+
+    #define ADC1_CH12_PORT                     (GPIO_PORT_C)
+    #define ADC1_CH12_PIN                      (GPIO_PIN_02)
+
+    #define ADC1_CH13_PORT                     (GPIO_PORT_C)
+    #define ADC1_CH13_PIN                      (GPIO_PIN_03)
+#endif
+
+#if defined(BSP_USING_ADC2)
+    //ADC2 has 7 channels CH0-CH7. ADC12_IN4-ADC12_IN11 means ADC2 CH0-CH7
+    #define ADC2_CH7_PORT                     (GPIO_PORT_C)
+    #define ADC2_CH7_PIN                      (GPIO_PIN_01)
+#endif
+
 #endif

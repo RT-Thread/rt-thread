@@ -33,7 +33,6 @@ if GetDepend(['RT_USING_CAN']):
 if GetDepend(['RT_USING_RTC']):
     src += ['drv_rtc.c']
 
-
 path = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
