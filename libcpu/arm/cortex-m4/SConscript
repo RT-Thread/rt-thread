@@ -14,11 +14,11 @@ if rtconfig.PLATFORM in ['armcc', 'armclang']:
 if rtconfig.PLATFORM == 'armclang':
     src += Glob('*_rvds.S')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)

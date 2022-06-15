@@ -5,12 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-03-08     shelton      first version
+ * 2022-05-16     shelton      first version
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "board.h"
+#include "drv_common.h"
 #include "drv_gpio.h"
 
 /* defined the led2 pin: pd13 */

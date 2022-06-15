@@ -605,6 +605,8 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
             /*timer is stop*/
             *(rt_uint32_t *)arg = RT_TIMER_FLAG_DEACTIVATED;
         }
+        break;
+
     case RT_TIMER_CTRL_GET_REMAIN_TIME:
         *(rt_tick_t *)arg =  timer->timeout_tick;
         break;

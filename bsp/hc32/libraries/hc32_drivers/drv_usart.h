@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -56,6 +57,7 @@ struct hc32_uart_config
     struct hc32_uart_irq_config tx_irq;
 #ifdef RT_SERIAL_USING_DMA
     struct hc32_uart_rxto       *rx_timeout;
+    stc_dma_llp_descriptor_t    llp_desc;
     struct dma_config           *dma_rx;
     struct hc32_uart_irq_config *tc_irq;
     struct dma_config           *dma_tx;

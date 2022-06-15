@@ -307,6 +307,14 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
+double difftime(time_t time1, time_t time2)
+{
+    return (double)(time1 - time2);
+}
+RTM_EXPORT(difftime);
+
+RTM_EXPORT(strftime); /* inherent in the toolchain */
+
 /**
  * Returns the current time.
  *
@@ -486,10 +494,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 }
 RTM_EXPORT(settimeofday);
 
-/* inherent in the toolchain */
-RTM_EXPORT(difftime);
-RTM_EXPORT(strftime);
-
 #ifdef RT_USING_POSIX_DELAY
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
@@ -612,8 +616,8 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
             unit = clock_cpu_getres();
             cpu_tick = clock_cpu_gettime();
 
-            tp->tv_sec  = ((int)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
-            tp->tv_nsec = ((int)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+            tp->tv_sec  = ((long long)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+            tp->tv_nsec = ((long long)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
         }
         break;
 #endif
@@ -685,7 +689,7 @@ int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
     int nsecond, second;
-    struct timespec tp;
+    struct timespec tp = {0};
 
     RT_ASSERT(time != RT_NULL);
 

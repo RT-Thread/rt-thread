@@ -37,7 +37,11 @@ else:
 
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
+<<<<<<< HEAD
 if rtconfig.PLATFORM == 'iar':
+=======
+if rtconfig.PLATFORM in ['iccarm']:
+>>>>>>> upstream/master
     env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
     env.Replace(ARFLAGS = [''])
     env.Replace(LINKCOM = env["LINKCOM"] + ' --map rtthread.map')

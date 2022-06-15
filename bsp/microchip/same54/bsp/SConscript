@@ -35,13 +35,13 @@ src += [cwd + '/driver_init.c']
 src += [cwd + '/ethernet_phy_main.c']
 
 #add for startup script
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/gcc/system_same54.c']
     src += [cwd + '/gcc/gcc/startup_same54.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/armcc/arm_addon/armcc/' + 'system_same54.c']
     src += [cwd + '/armcc/arm_addon/armcc/arm/' + 'startup_same54.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/iar/' + 'system_same54.c']
     src += [cwd + '/iar/iar/' + 'startup_same54.c']
 
