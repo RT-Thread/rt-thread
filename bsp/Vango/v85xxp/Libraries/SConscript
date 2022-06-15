@@ -13,7 +13,7 @@ src += [cwd + '/CMSIS/Vango/V85xxP/Source/lib_cortex.c']
 src += [cwd + '/CMSIS/Vango/V85xxP/Source/lib_LoadNVR.c']
 
 #add for startup script
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/CMSIS/Vango/V85xxP/Source/GCC/startup_target.S']
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/CMSIS/Vango/V85xxP/Source/Keil5/startup_target.S']

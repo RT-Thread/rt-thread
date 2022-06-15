@@ -119,13 +119,8 @@ rt_country_code_t rt_wlan_ap_get_country(void);
  */
 rt_err_t rt_wlan_scan(void);
 struct rt_wlan_scan_result *rt_wlan_scan_sync(void);
-struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info);
-int rt_wlan_scan_get_info_num(void);
-int rt_wlan_scan_get_info(struct rt_wlan_info *info, int num);
-struct rt_wlan_scan_result *rt_wlan_scan_get_result(void);
-void rt_wlan_scan_result_clean(void);
-int rt_wlan_scan_find_cache(struct rt_wlan_info *info, struct rt_wlan_info *out_info, int num);
-rt_bool_t rt_wlan_find_best_by_cache(const char *ssid, struct rt_wlan_info *info);
+rt_err_t rt_wlan_scan_with_info(struct rt_wlan_info *info);
+
 
 /*
  * wifi auto connect interface

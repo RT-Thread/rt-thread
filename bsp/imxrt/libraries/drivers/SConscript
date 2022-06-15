@@ -32,7 +32,10 @@ if GetDepend('BSP_USING_PWM'):
 
 if GetDepend('BSP_USING_ADC'):
     src += ['drv_adc.c']
-
+    
+if GetDepend('BSP_USING_LPADC'):
+    src += ['drv_lpadc.c']
+    
 if GetDepend('BSP_USING_CAN'):
     src += ['drv_can.c']
     
@@ -75,3 +78,4 @@ path =  [cwd]
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 
 Return('group')
+

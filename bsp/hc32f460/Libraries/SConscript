@@ -19,6 +19,7 @@ HC32F460_StdPeriph_Driver/src/hc32f460_pwc.c
 HC32F460_StdPeriph_Driver/src/hc32f460_sram.c
 HC32F460_StdPeriph_Driver/src/hc32f460_utility.c
 HC32F460_StdPeriph_Driver/src/hc32f460_exint_nmi_swi.c
+HC32F460_StdPeriph_Driver/src/hc32f460_rtc.c
 """)
 
 #src += Glob('HC32F460_StdPeriph_Driver/src/*.c')
@@ -27,11 +28,11 @@ if GetDepend(['RT_USING_SERIAL']):
     src += ['HC32F460_StdPeriph_Driver/src/hc32f460_usart.c']
    
 #add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/GCC/startup_hc32f460.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/ARM/startup_hc32f460.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/HDSC/HC32F460/Source/IAR/startup_hc32f460.s']
 
 #add headfile script 

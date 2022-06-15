@@ -2182,6 +2182,9 @@
             <name>$PROJ_DIR$\..\src\nu_timer_pwm.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\src\nu_trng.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\src\nu_uart.c</name>
         </file>
         <file>

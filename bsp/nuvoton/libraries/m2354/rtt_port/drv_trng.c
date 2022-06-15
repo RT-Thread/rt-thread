@@ -7,6 +7,7 @@
 * Change Logs:
 * Date            Author           Notes
 * 2020-7-4        YCHuang12        First version
+* 2022-3-15       Wayne            Remove SW rand function
 *
 ******************************************************************************/
 
@@ -16,66 +17,34 @@
 
 #include <rtdevice.h>
 #include "NuMicro.h"
-#include <stdlib.h>
 
 #define NU_CRYPTO_TRNG_NAME "nu_TRNG"
 
+#define LOG_TAG         "TRNG"
+#define DBG_ENABLE
+#define DBG_SECTION_NAME "TRNG"
+#define DBG_LEVEL DBG_INFO
+#define DBG_COLOR
+#include <rtdbg.h>
+
 /* Private variables ------------------------------------------------------------*/
-static struct rt_mutex s_TRNG_mutex;
-static int s_i32TRNGEnable = 0;
-
-static rt_uint32_t nu_trng_run(void)
-{
-    uint32_t u32RNGValue;
-    rt_err_t result;
-
-    result = rt_mutex_take(&s_TRNG_mutex, RT_WAITING_FOREVER);
-    RT_ASSERT(result == RT_EOK);
-
-    RNG_Open();
-
-    if (RNG_Random(&u32RNGValue, 1) < 0)
-    {
-        //Failed, use software rand
-        u32RNGValue = rand();
-    }
-
-    result = rt_mutex_release(&s_TRNG_mutex);
-    RT_ASSERT(result == RT_EOK);
-
-    return u32RNGValue;
-}
-
 rt_err_t nu_trng_init(void)
 {
-    rt_err_t result;
-
-    result = rt_mutex_init(&s_TRNG_mutex, NU_CRYPTO_TRNG_NAME, RT_IPC_FLAG_PRIO);
-    RT_ASSERT(result == RT_EOK);
-
-    s_i32TRNGEnable = 1;
+    CLK_EnableModuleClock(TRNG_MODULE);
     SYS_ResetModule(TRNG_RST);
-    return RT_EOK;
-}
 
-void nu_trng_open(void)
-{
-#if defined(NU_PRNG_USE_SEED)
-    srand(NU_PRNG_SEED_VALUE);
-#else
-    srand(rt_tick_get());
-#endif
+    TRNG_Open();
+
+    return RT_EOK;
 }
 
 rt_uint32_t nu_trng_rand(struct hwcrypto_rng *ctx)
 {
-    if (!s_i32TRNGEnable)
-    {
-        /* Use software rand */
-        return (rt_uint32_t)rand();
-    }
+    uint32_t u32RNGValue;
 
-    return nu_trng_run();
+    TRNG_GenWord(&u32RNGValue);
+
+    return u32RNGValue;
 }
 
 #endif //#if (defined(BSP_USING_TRNG) && defined(RT_HWCRYPTO_USING_RNG))

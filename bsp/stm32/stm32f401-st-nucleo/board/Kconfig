@@ -19,6 +19,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM11
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
@@ -34,8 +36,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI1
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_ADAFRUIT
         imply RTDUINO_USING_SPI
+        imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_MSTIMER2
         default n
 
 endmenu
@@ -69,6 +72,16 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC1
                 bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM11
+                bool "Enable TIM11"
                 default n
         endif
 

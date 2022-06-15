@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-目前测试了两款开发板，运行都正常，由于两款开发板LED小灯引脚不同，请根据自己开发板修改GPIO引脚，目前默认使用的开发板是LUATOS_ESP32C3。已测开发板外观如下图所示：
+目前测试了两款开发板，运行都正常，由于两款开发板LED小灯引脚不同，请根据自己开发板修改GPIO引脚，目前默认使用的开发板是LUATOS_ESP32C3 `GPIO 12` (HX 开发板引脚是`GPIO 8`)。已测开发板外观如下图所示：
 
 - [LUATOS_ESP32C3](https://wiki.luatos.com/chips/esp32c3/board.html)
 
@@ -31,7 +31,7 @@
 - MCU：[esp32-c3](https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf)，主频  160MHz， 407.22 CoreMark; 2.55  CoreMark/MHz
 - 芯片内置：384KB ROM,  400KB SRAM,
 - 常用外设
-  - 红色LED：2个，D4 (IO12), D5（IO13）
+  - 红色LED：2个，LED: D4 (IO12), D5（IO13）
   - 按键：2个，K1（BOOT） K2(RST)
   - SPI FLASH: 2M 
 - 常用接口：USB UART等
@@ -44,8 +44,8 @@
 
 | **片上外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
-| GPIO              |     待支持     |  |
-| UART              |     待支持     |                                 |
+| GPIO              |     支持     |  |
+| UART              |     支持中     |                                 |
 
 ## 使用说明
 
@@ -57,9 +57,19 @@ IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一�
 
 ### IDF patch加载
 
-由于IDF使用的是FREERTOS需要修改一些文件，将`0001-add-fixed-of-rtthread.patch` 这个文件拷贝到安装的时候的IDF的代码目录，执行命令 `git apply 0001-add-fixed-of-rtthread.patch` 打上patch
+由于IDF使用的是FREERTOS需要修改一些文件，将`0001-add-the-config-of-RTTHREAD.patch` 这个文件拷贝到安装的时候的IDF的代码目录，执行命令 下面的命令可以打上patch
+
+```
+cd esp/esp-idf
+git checkout v4.4
+git am 0001-add-the-config-of-RTTHREAD.patch
+```
+
+如果不想用patch文件，我已经将代码上传到github上面，可以进入[supperthomas/esp-idf](https://github.com/supperthomas/esp-idf) 下载最新的master分支。修改之后的IDF，原来的IDF的example还是正常使用，互不干扰。
 
 #### 编译下载
+
+用VSCODE 在bsp/ESP32_C3中右击打开
 
 编译选择最下面的按钮：
 

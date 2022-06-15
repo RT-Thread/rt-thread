@@ -8,7 +8,6 @@
  * 2020-06-19     thread-liu   the first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #include <string.h>

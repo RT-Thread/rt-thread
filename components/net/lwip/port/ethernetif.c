@@ -469,13 +469,13 @@ static err_t eth_netif_device_init(struct netif *netif)
         rt_device_t device;
 
 #ifdef RT_USING_NETDEV
-    /* network interface device register */
-    netdev_add(netif);
+        /* network interface device register */
+        netdev_add(netif);
 #endif /* RT_USING_NETDEV */
 
         /* get device object */
         device = (rt_device_t) ethif;
-        if (rt_device_init(device) != RT_EOK)
+        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
         {
             return ERR_IF;
         }

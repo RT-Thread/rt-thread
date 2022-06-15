@@ -470,23 +470,14 @@ config SOC_SERIES_M2354
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
-        select DFS_USING_POSIX
+        select RT_USING_SDIO
 
         if BSP_USING_SDH
             config BSP_USING_SDH0
                 bool "Enable SDH0"
 
-            config NU_SDH_USING_PDMA
-                bool "Using PDMA"
-                select BSP_USING_PDMA
-
-            config NU_SDH_HOTPLUG
-                bool "Using HOTPLUG"
-                default y
-
-            config NU_SDH_MOUNT_ON_ROOT
-                bool "Mount on root"
-
+            config BSP_USING_SDH1
+                bool "Enable SDH1"
         endif
 
     menuconfig BSP_USING_CAN

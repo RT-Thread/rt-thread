@@ -184,14 +184,6 @@ RESET_Handler   PROC
 	ldr r0, =0x123456
 	ldr r1, =0x40080000
 	str r0, [r1]
-	
-	IMPORT sys_config
-	LDR R0, =sys_config
-	BLX R0
-	
-	IMPORT adc_config
-	LDR R0, =adc_config
-	BLX R0
 
 	IMPORT  __main
 	LDR     R0, =__main

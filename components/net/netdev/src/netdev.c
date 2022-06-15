@@ -20,7 +20,7 @@
 
 #ifdef RT_USING_SAL
 #include <sal_netdb.h>
-#include <sal.h>
+#include <sal_low_lvl.h>
 #endif /* RT_USING_SAL */
 
 #define DBG_TAG              "netdev"
@@ -1066,7 +1066,8 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
 
     struct netdev *netdev = RT_NULL;
     struct netdev_ping_resp ping_resp;
-    int index, ret = 0;
+    rt_uint32_t index;
+    int ret = 0;
 
     if (size == 0)
     {
