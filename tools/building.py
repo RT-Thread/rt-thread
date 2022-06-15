@@ -35,7 +35,7 @@ import platform
 from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
-from options import AddOptions
+from options import AddOptions, AddOptions4Module
 
 
 BuildOptions = {}
@@ -389,6 +389,8 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
 
+    AddOptions()
+
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
@@ -607,7 +609,7 @@ def DefineGroup(name, src, depend, **parameters):
             paths.append(os.path.abspath(item))
         group['LOCAL_CPPPATH'] = paths
 
-    
+
     if rtconfig.PLATFORM == 'gcc':
         if 'CFLAGS' in group:
             group['CFLAGS'] = utils.GCCC99Patch(group['CFLAGS'])
