@@ -507,6 +507,8 @@ static void hc32_uart_rx_timeout(struct rt_serial_device *serial)
     USART_FuncCmd(uart->config->Instance, (USART_RX_TIMEOUT | USART_INT_RX_TIMEOUT), ENABLE);
 }
 
+#ifdef RT_SERIAL_USING_DMA
+
 static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
     struct hc32_uart *uart;
@@ -650,6 +652,8 @@ static void hc32_uart_tc_irq_handler(struct hc32_uart *uart)
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
     }
 }
+
+#endif /* RT_SERIAL_USING_DMA */
 #endif
 
 #if defined(BSP_USING_UART1)
