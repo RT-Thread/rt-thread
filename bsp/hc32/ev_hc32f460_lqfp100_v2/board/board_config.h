@@ -61,6 +61,7 @@
     #define CAN1_RX_PIN                      (GPIO_PIN_06)
     #define CAN1_RX_PIN_FUNC                 (GPIO_FUNC_51)
 
+    #define CAN1_STB_FUNC_ENABLE
     #define CAN_STB_PORT                     (GPIO_PORT_D)
     #define CAN_STB_PIN                      (GPIO_PIN_15)
 #endif
