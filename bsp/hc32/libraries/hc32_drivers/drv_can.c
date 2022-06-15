@@ -8,6 +8,7 @@
  * Date           Author               Notes
  * 2022-04-28     CDT                  first version
  * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
+ * 2022-06-08     CDT                  fix a bug of RT_CAN_CMD_SET_FILTER
  */
 
 #include "drv_can.h"
@@ -274,7 +275,14 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 {
                     p_can_dev->ll_init.pstcFilter[i].u32ID = filter_cfg->items[i].id;
                     p_can_dev->ll_init.pstcFilter[i].u32IDMask = filter_cfg->items[i].mask;
-                    p_can_dev->ll_init.pstcFilter[i].u32IDType = filter_cfg->items[i].ide;
+                    if (filter_cfg->items[i].ide == RT_CAN_STDID)
+                    {
+                        p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_STD;
+                    }
+                    else
+                    {
+                        p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_EXT;
+                    }
                 }
             }
             (void)CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
@@ -623,7 +631,7 @@ int rt_hw_can_init(void)
         g_can_dev_array[i].ll_init.u16FilterSelect = CAN_FILTER1;
         g_can_dev_array[i].rt_can.config = rt_can_config;
 
-        /* register CAN1 device */
+        /* register CAN device */
         rt_hw_board_can_init(g_can_dev_array[i].instance);
         rt_hw_can_register(&g_can_dev_array[i].rt_can,
                            g_can_dev_array[i].init.name,
