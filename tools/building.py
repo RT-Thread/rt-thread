@@ -35,7 +35,7 @@ import platform
 from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
-from options import AddOptions, AddOptions4Module
+from options import AddOptions
 
 
 BuildOptions = {}
