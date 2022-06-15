@@ -106,7 +106,6 @@ menu "On-chip Peripheral Drivers"
         bool "Enable RTC"
         select RT_USING_RTC
         default n
-
         if BSP_USING_RTC
             choice
                 prompt "Select clock source"
