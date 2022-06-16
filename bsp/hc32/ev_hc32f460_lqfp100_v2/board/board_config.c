@@ -7,6 +7,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2022-06-16     lianghongquan     use macro definition config adc pin.
  */
 
 #include <rtdevice.h>
@@ -99,14 +100,82 @@ rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
     {
 #if defined(BSP_USING_ADC1)
     case (rt_uint32_t)CM_ADC1:
-        (void)GPIO_Init(ADC1_CH10_PORT, ADC1_CH10_PIN, &stcGpioInit);
-        (void)GPIO_Init(ADC1_CH12_PORT, ADC1_CH12_PIN, &stcGpioInit);
-        (void)GPIO_Init(ADC1_CH13_PORT, ADC1_CH13_PIN, &stcGpioInit);
+    #ifdef BSP_USING_ADC1_IN0
+        (void)GPIO_Init(ADC1_IN0_PORT, ADC1_IN0_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN1
+        (void)GPIO_Init(ADC1_IN1_PORT, ADC1_IN1_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN2
+        (void)GPIO_Init(ADC1_IN2_PORT, ADC1_IN2_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN3
+        (void)GPIO_Init(ADC1_IN3_PORT, ADC1_IN3_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN4
+        (void)GPIO_Init(ADC12_IN4_PORT, ADC12_IN4_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN5
+        (void)GPIO_Init(ADC12_IN5_PORT, ADC12_IN5_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN6
+        (void)GPIO_Init(ADC12_IN6_PORT, ADC12_IN6_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN7
+        (void)GPIO_Init(ADC12_IN7_PORT, ADC12_IN7_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN8
+        (void)GPIO_Init(ADC12_IN8_PORT, ADC12_IN8_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN9
+        (void)GPIO_Init(ADC12_IN9_PORT, ADC12_IN9_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN10
+        (void)GPIO_Init(ADC12_IN10_PORT, ADC12_IN10_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN11
+        (void)GPIO_Init(ADC12_IN11_PORT, ADC12_IN11_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN12
+        (void)GPIO_Init(ADC1_IN12_PORT, ADC1_IN12_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN13
+        (void)GPIO_Init(ADC1_IN13_PORT, ADC1_IN13_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN14
+        (void)GPIO_Init(ADC1_IN14_PORT, ADC1_IN14_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC1_IN15
+        (void)GPIO_Init(ADC1_IN15_PORT, ADC1_IN15_PIN, &stcGpioInit);
+    #endif
         break;
 #endif
 #if defined(BSP_USING_ADC2)
     case (rt_uint32_t)CM_ADC2:
-        (void)GPIO_Init(ADC2_CH7_PORT, ADC2_CH7_PIN, &stcGpioInit);
+    #ifdef BSP_USING_ADC12_IN4
+        (void)GPIO_Init(ADC12_IN4_PORT, ADC12_IN4_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN5
+        (void)GPIO_Init(ADC12_IN5_PORT, ADC12_IN5_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN6
+        (void)GPIO_Init(ADC12_IN6_PORT, ADC12_IN6_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN7
+        (void)GPIO_Init(ADC12_IN7_PORT, ADC12_IN7_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN8
+        (void)GPIO_Init(ADC12_IN8_PORT, ADC12_IN8_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN9
+        (void)GPIO_Init(ADC12_IN9_PORT, ADC12_IN9_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN10
+        (void)GPIO_Init(ADC12_IN10_PORT, ADC12_IN10_PIN, &stcGpioInit);
+    #endif
+    #ifdef BSP_USING_ADC12_IN11
+        (void)GPIO_Init(ADC12_IN11_PORT, ADC12_IN11_PIN, &stcGpioInit);
+    #endif
         break;
 #endif
     default:

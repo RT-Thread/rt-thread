@@ -7,6 +7,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2022-06-16     lianghongquan     use macro definition config adc pin.
  */
 
 
@@ -66,21 +67,54 @@
 #endif
 
 /***********  ADC configure *********/
-#if defined(BSP_USING_ADC1)
-    #define ADC1_CH10_PORT                     (GPIO_PORT_C)
-    #define ADC1_CH10_PIN                      (GPIO_PIN_00)
+#if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2)
+    #define ADC1_IN0_PORT                   (GPIO_PORT_A)
+    #define ADC1_IN0_PIN                    (GPIO_PIN_00)
 
-    #define ADC1_CH12_PORT                     (GPIO_PORT_C)
-    #define ADC1_CH12_PIN                      (GPIO_PIN_02)
+    #define ADC1_IN1_PORT                   (GPIO_PORT_A)
+    #define ADC1_IN1_PIN                    (GPIO_PIN_01)
 
-    #define ADC1_CH13_PORT                     (GPIO_PORT_C)
-    #define ADC1_CH13_PIN                      (GPIO_PIN_03)
-#endif
+    #define ADC1_IN2_PORT                   (GPIO_PORT_A)
+    #define ADC1_IN2_PIN                    (GPIO_PIN_02)
 
-#if defined(BSP_USING_ADC2)
-    //ADC2 has 7 channels CH0-CH7. ADC12_IN4-ADC12_IN11 means ADC2 CH0-CH7
-    #define ADC2_CH7_PORT                     (GPIO_PORT_C)
-    #define ADC2_CH7_PIN                      (GPIO_PIN_01)
+    #define ADC1_IN3_PORT                   (GPIO_PORT_A)
+    #define ADC1_IN3_PIN                    (GPIO_PIN_03)
+
+    #define ADC12_IN4_PORT                  (GPIO_PORT_A)
+    #define ADC12_IN4_PIN                   (GPIO_PIN_04)
+
+    #define ADC12_IN5_PORT                  (GPIO_PORT_A)
+    #define ADC12_IN5_PIN                   (GPIO_PIN_05)
+
+    #define ADC12_IN6_PORT                  (GPIO_PORT_A)
+    #define ADC12_IN6_PIN                   (GPIO_PIN_06)
+
+    #define ADC12_IN7_PORT                  (GPIO_PORT_A)
+    #define ADC12_IN7_PIN                   (GPIO_PIN_07)
+
+    #define ADC12_IN8_PORT                  (GPIO_PORT_B)
+    #define ADC12_IN8_PIN                   (GPIO_PIN_00)
+
+    #define ADC12_IN9_PORT                  (GPIO_PORT_B)
+    #define ADC12_IN9_PIN                   (GPIO_PIN_01)
+
+    #define ADC12_IN10_PORT                 (GPIO_PORT_C)
+    #define ADC12_IN10_PIN                  (GPIO_PIN_00)
+
+    #define ADC12_IN11_PORT                 (GPIO_PORT_C)
+    #define ADC12_IN11_PIN                  (GPIO_PIN_01)
+
+    #define ADC1_IN12_PORT                  (GPIO_PORT_C)
+    #define ADC1_IN12_PIN                   (GPIO_PIN_02)
+
+    #define ADC1_IN13_PORT                  (GPIO_PORT_C)
+    #define ADC1_IN13_PIN                   (GPIO_PIN_03)
+
+    #define ADC1_IN14_PORT                  (GPIO_PORT_C)
+    #define ADC1_IN14_PIN                   (GPIO_PIN_04)
+
+    #define ADC1_IN15_PORT                  (GPIO_PORT_C)
+    #define ADC1_IN15_PIN                   (GPIO_PIN_05)
 #endif
 
 #endif

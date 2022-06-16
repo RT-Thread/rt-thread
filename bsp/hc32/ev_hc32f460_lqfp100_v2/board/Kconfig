@@ -97,8 +97,75 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "using adc1"
                 default n
+
+            config BSP_USING_ADC1_IN0
+                bool "using adc1_in0"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN1
+                bool "using adc1_in1"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN2
+                bool "using adc1_in2"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN3
+                bool "using adc1_in3"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN12
+                bool "using adc1_in12"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN13
+                bool "using adc1_in13"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN14
+                bool "using adc1_in14"
+                depends on BSP_USING_ADC1
+                default n
+            config BSP_USING_ADC1_IN15
+                bool "using adc1_in15"
+                depends on BSP_USING_ADC1
+                default n
+            
             config BSP_USING_ADC2
                 bool "using adc2"
+                default n
+            
+            config BSP_USING_ADC12_IN4
+                bool "using adc12_in4"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN5
+                bool "using adc12_in5"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN6
+                bool "using adc12_in6"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN7
+                bool "using adc12_in7"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN8
+                bool "using adc12_in8"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN9
+                bool "using adc12_in9"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN10
+                bool "using adc12_in10"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
+                default n
+            config BSP_USING_ADC12_IN11
+                bool "using adc12_in11"
+                depends on BSP_USING_ADC1 || BSP_USING_ADC2
                 default n
         endif
 
