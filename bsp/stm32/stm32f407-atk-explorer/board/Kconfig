@@ -79,6 +79,14 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_SFDP
         default n
 
+    config BSP_USING_SOFT_SPI_FLASH
+        bool "Enable soft SPI FLASH (W25Q128 sspi2)"
+        select BSP_USING_SOFT_SPI
+        select BSP_USING_SOFT_SPI2
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        default n
+
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
@@ -273,6 +281,50 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
+
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable soft SPI BUS"
+        default n
+        select RT_USING_SPI
+        select RT_USING_SPI_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_SOFT_SPI
+            menuconfig BSP_USING_SOFT_SPI1
+                bool "Enable soft SPI1 BUS (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI1
+                    config BSP_S_SPI1_SCK_PIN
+                        int "soft spi1 sck pin number"
+                        range 1 176
+                        default 16
+                    config BSP_S_SPI1_MISO_PIN
+                        int "soft spi1 miso pin number"
+                        range 1 176
+                        default 18
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "soft spi1 mosi pin number"
+                        range 1 176
+                        default 91
+                endif
+            
+            menuconfig BSP_USING_SOFT_SPI2
+                bool "Enable soft SPI2 BUS (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI2
+                    config BSP_S_SPI2_SCK_PIN
+                        int "soft spi2 sck pin number"
+                        range 1 176
+                        default 19
+                    config BSP_S_SPI2_MISO_PIN
+                        int "soft spi2 miso pin number"
+                        range 1 176
+                        default 20
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "soft spi2 mosi pin number"
+                        range 1 176
+                        default 21
+                endif
+        endif
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
