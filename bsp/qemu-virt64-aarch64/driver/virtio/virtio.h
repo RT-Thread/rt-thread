@@ -43,6 +43,7 @@
 #define VIRTIO_F_RING_PACKED        34
 
 #define VIRTIO_VA2PA(vaddr)         ((rt_ubase_t)vaddr)
+#define VIRTIO_PA2VA(paddr)         ((rt_ubase_t)paddr)
 #define VIRTIO_PAGE_SHIFT           12
 #define VIRTIO_PAGE_SIZE            (1 << VIRTIO_PAGE_SHIFT)
 #define VIRTIO_PAGE_ALIGN(addr)     (RT_ALIGN(addr, VIRTIO_PAGE_SIZE))
@@ -74,6 +75,25 @@ enum
     VIRTIO_DEVICE_ID_PSTORE         = 22,   /* Pstore device */
     VIRTIO_DEVICE_ID_IOMMU          = 23,   /* IOMMU device */
     VIRTIO_DEVICE_ID_MEM            = 24,   /* Memory device */
+    /* virtio 1.2 */
+    VIRTIO_DEVICE_ID_AUDIO          = 25,   /* Audio device */
+    VIRTIO_DEVICE_ID_FS             = 26,   /* File system device */
+    VIRTIO_DEVICE_ID_PMEM           = 27,   /* PMEM device */
+    VIRTIO_DEVICE_ID_RPMB           = 28,   /* RPMB device */
+    VIRTIO_DEVICE_ID_MAC80211_HWSIM = 29,   /* Mac80211 hwsim wireless simulation device */
+    VIRTIO_DEVICE_ID_VIDEO_ENCODER  = 30,   /* Video encoder device */
+    VIRTIO_DEVICE_ID_VIDEO_DECODER  = 31,   /* Video decoder device */
+    VIRTIO_DEVICE_ID_SCMI           = 32,   /* SCMI device */
+    VIRTIO_DEVICE_ID_NITRO_SEC_MOD  = 33,   /* NitroSecureModule */
+    VIRTIO_DEVICE_ID_I2C_ADAPTER    = 34,   /* I2C adapter */
+    VIRTIO_DEVICE_ID_WATCHDOG       = 35,   /* Watchdog */
+    VIRTIO_DEVICE_ID_CAN            = 36,   /* CAN device */
+    VIRTIO_DEVICE_ID_DMABUF         = 37,   /* Virtio dmabuf */
+    VIRTIO_DEVICE_ID_PARAM_SERV     = 38,   /* Parameter Server */
+    VIRTIO_DEVICE_ID_AUDIO_POLICY   = 39,   /* Audio policy device */
+    VIRTIO_DEVICE_ID_BT             = 40,   /* Bluetooth device */
+    VIRTIO_DEVICE_ID_GPIO           = 41,   /* GPIO device */
+    VIRTIO_DEVICE_ID_RDMA           = 42,   /* RDMA device */
 
     VIRTIO_DEVICE_TYPE_SIZE
 };
@@ -101,7 +121,7 @@ typedef rt_err_t (*virtio_device_init_handler)(rt_ubase_t *mmio_base, rt_uint32_
 void virtio_reset_device(struct virtio_device *dev);
 void virtio_status_acknowledge_driver(struct virtio_device *dev);
 void virtio_status_driver_ok(struct virtio_device *dev);
-void virtio_interrupt_ack(struct virtio_device *dev, rt_uint32_t ack);
+void virtio_interrupt_ack(struct virtio_device *dev);
 
 rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, rt_size_t ring_size);
 void virtio_queue_destroy(struct virtio_device *dev, rt_uint32_t queue_index);
