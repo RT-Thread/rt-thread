@@ -229,7 +229,7 @@ RTM_EXPORT(rt_ringbuffer_get);
  *
  * @return Return the size of the ring buffer.
  */
-rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
+rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 {
     rt_size_t size;
 
@@ -260,7 +260,7 @@ rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 
     return size;
 }
-RTM_EXPORT(rt_ringbuffer_peak);
+RTM_EXPORT(rt_ringbuffer_peek);
 
 /**
  * @brief Put a byte into the ring buffer. If ring buffer is full, this operation will fail.
