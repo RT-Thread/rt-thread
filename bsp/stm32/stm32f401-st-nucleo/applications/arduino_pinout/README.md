@@ -32,10 +32,10 @@ Hardware Drivers Config --->
 | 7 (D7)          | PA8           | 是     |                                                              |
 | 8 (D8)          | PA9           | 是     |                                                              |
 | 9 (D9)          | PC7           | 是     | PWM（定时器3发生）                                           |
-| 10 (D10)        | PB6           | 是     | SPI1-CS，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
-| 11 (D11)        | PA7           | 是     | SPI1-MOSI，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
-| 12 (D12)        | PA6           | 是     | SPI1-MISO，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
-| 13 (D13)        | PA5           | 是     | SPI1-SCK，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
+| 10 (D10)        | PB6           | 是     |  |
+| 11 (D11)        | PA7           | 是     |  |
+| 12 (D12)        | PA6           | 是     |  |
+| 13 (D13)        | PA5           | 是     | |
 | 14 (D14)        | PB9           | 是     | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 | 15 (D15)        | PB8           | 是     | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 | 16 (D16)        | PC13          | 是     | Nucleo板载用户按键（左侧蓝色）                               |
@@ -61,8 +61,3 @@ Hardware Drivers Config --->
 ## 3 I2C总线
 
 STM32F401 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
-
-## 4 SPI总线
-
-STM32F401 Nucleo板的SPI总线是板上丝印的 `SCK/D13`、`MISO/D12`、`MOSI/D11`引脚，这3个引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号。
-

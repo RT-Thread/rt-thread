@@ -42,6 +42,5 @@
 #define LED_BUILTIN  D13 /* Default Built-in LED */
 
 #define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c1"
-#define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME     "timer7"
 
 #endif /* Pins_Arduino_h */
