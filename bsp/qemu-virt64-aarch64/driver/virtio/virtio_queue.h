@@ -80,6 +80,7 @@ struct virtq
     /* Helper of driver */
     rt_uint32_t used_idx;
     rt_bool_t *free;
+    rt_size_t free_count;
 };
 
 #define VIRTQ_DESC_TOTAL_SIZE(ring_size)    (sizeof(struct virtq_desc) * (ring_size))
@@ -90,5 +91,7 @@ struct virtq
 
 #define VIRTQ_AVAIL_RES_SIZE    (sizeof(rt_uint16_t))   /* used_event */
 #define VIRTQ_USED_RES_SIZE     (sizeof(rt_uint16_t))   /* avail_event */
+
+#define VIRTQ_INVALID_DESC_ID   RT_UINT16_MAX
 
 #endif /* __VIRTIO_QUEUE_H__ */
