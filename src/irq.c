@@ -107,8 +107,8 @@ void rt_interrupt_leave(void)
                                 rt_interrupt_nest));
 
     level = rt_hw_interrupt_disable();
-    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
     rt_interrupt_nest --;
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_interrupt_leave);

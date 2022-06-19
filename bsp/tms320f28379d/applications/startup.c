@@ -44,6 +44,8 @@ void assert_failed(uint16_t* file, uint32_t line)
  */
 void rtthread_startup(void)
 {
+    unsigned int test = 15;
+
     /* init board */
     rt_hw_board_init();
 
@@ -64,6 +66,9 @@ void rtthread_startup(void)
 
     /* init idle thread */
     rt_thread_idle_init();
+
+    /* rt_kprintf should use %hd for int = char*/
+    rt_kprintf("started %hd\n",test);
 
     /* start scheduler */
     rt_system_scheduler_start();

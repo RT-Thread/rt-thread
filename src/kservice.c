@@ -169,14 +169,15 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
          */
         if (LBLOCKSIZE == 4)
         {
-            buffer = (d << 8) | d;
-            buffer |= (buffer << 16);
+            *(((unsigned char *)&buffer)+0) = d;
+            *(((unsigned char *)&buffer)+1) = d;
+            *(((unsigned char *)&buffer)+2) = d;
+            *(((unsigned char *)&buffer)+3) = d;
         }
         else
         {
-            buffer = 0;
-            for (i = 0; i < LBLOCKSIZE; i ++)
-                buffer = (buffer << 8) | d;
+            *(((unsigned char *)&buffer)+0) = d;
+            *(((unsigned char *)&buffer)+1) = d;
         }
 
         while (count >= LBLOCKSIZE * 4)
