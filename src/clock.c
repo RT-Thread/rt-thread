@@ -124,6 +124,8 @@ void rt_tick_increase(void)
 
     /* check timer */
     rt_timer_check();
+	thread = rt_thread_self();
+	thread->stat &= ~RT_THREAD_STAT_SCHEDULING;
 }
 
 /**

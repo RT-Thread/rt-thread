@@ -473,7 +473,7 @@ void rt_schedule(void)
                 }
 
                 rt_schedule_remove_thread(to_thread);
-                to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
+                to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK) | RT_THREAD_STAT_SCHEDULING;
 
                 /* switch to new thread */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
@@ -493,7 +493,7 @@ void rt_schedule(void)
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
                     RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (from_thread));
-
+                    to_thread->stat &= ~RT_THREAD_STAT_SCHEDULING;
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
 
@@ -656,6 +656,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     int bind_cpu;
     rt_uint32_t cpu_mask;
     rt_base_t level;
+    rt_uint8_t thread_stat;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -670,6 +671,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     }
 
     /* READY thread, insert to ready queue */
+    thread_stat = thread->stat;
     thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
 
     cpu_id   = rt_hw_cpu_id();
@@ -683,8 +685,15 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         rt_thread_ready_priority_group |= thread->number_mask;
 
-        rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
+        if (thread_stat & RT_THREAD_STAT_SCHEDULING) {
+            rt_list_insert_after(&(rt_thread_priority_table[thread->current_priority]),
                               &(thread->tlist));
+        }
+        else {
+            rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
+                              &(thread->tlist));
+        }
+
         cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
         rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
     }
@@ -697,8 +706,17 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         pcpu->priority_group |= thread->number_mask;
 
-        rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
+        if (thread_stat & RT_THREAD_STAT_SCHEDULING)
+        {
+            rt_list_insert_after(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
                               &(thread->tlist));
+        }
+        else
+        {
+            rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
+                              &(thread->tlist));
+        }
+        
 
         if (cpu_id != bind_cpu)
         {
@@ -718,6 +736,7 @@ __exit:
 void rt_schedule_insert_thread(struct rt_thread *thread)
 {
     rt_base_t level;
+    rt_uint8_t thread_stat;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -732,10 +751,21 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     }
 
     /* READY thread, insert to ready queue */
+    thread_stat = thread->stat;
     thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
-    /* insert thread to ready list */
-    rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
+    if (thread_stat & RT_THREAD_STAT_SCHEDULING)
+    {
+        /* put thread to the original pos in ready list */
+        rt_list_insert_after(&(rt_thread_priority_table[thread->current_priority]),
                           &(thread->tlist));
+    }
+    else
+    {
+        /* insert thread to ready list */
+        rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
+                          &(thread->tlist));
+    }
+
 
     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%.*s], the priority: %d\n",
                                       RT_NAME_MAX, thread->name, thread->current_priority));
