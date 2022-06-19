@@ -4,7 +4,7 @@ import rtconfig
 cwd = GetCurrentDir()
 src	= Glob('*.c')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['startup_gcc/startup_m2sxxx.S']
     
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:

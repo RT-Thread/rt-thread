@@ -53,3 +53,6 @@ msh />
 | UART | 支持 | UART0 |
 | RTC  | 支持 | - |
 | VIRTIO BLK | 支持 | - |
+| VIRTIO NET | 支持 | - |
+| VIRTIO GPU | 支持 | 2D |
+| VIRTIO Input | 支持 | Keyboard, Mouse, Tablet |

@@ -16,6 +16,7 @@
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
+ * 2022-06-04     Meco Man     remove strnlen
  */
 
 #ifndef __RT_THREAD_H__
@@ -605,7 +606,8 @@ void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 void *rt_memmove(void *dest, const void *src, rt_size_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
 #endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
-
+char *rt_strdup(const char *s);
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 #ifndef RT_KSERVICE_USING_STDLIB
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);
@@ -630,19 +632,6 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strcmp(cs, ct)           strcmp(cs, ct)
 #define rt_strlen(src)              strlen(src)
 #endif /*RT_KSERVICE_USING_STDLIB*/
-
-char *rt_strdup(const char *s);
-
-#if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
-rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
-#else
-#define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
-#endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
-
-#ifdef __ARMCC_VERSION
-/* MDK doesn't have these APIs */
-rt_size_t strnlen(const char *s, rt_size_t maxlen);
-#endif /* __ARMCC_VERSION */
 
 void rt_show_version(void);
 

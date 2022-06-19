@@ -87,10 +87,6 @@ void SystemClock_Config(void)
 static void PeripheralClock_Config(void)
 {
 #if defined(HC32F460)
-#if defined(BSP_USING_CAN1)
-    CLK_SetCANClockSrc(CLK_CAN1, CLK_CANCLK_SYSCLK_DIV6);
-#endif
-
 #if defined(RT_USING_ADC)
     CLK_SetPeriClockSrc(CLK_PERIPHCLK_PCLK);
 #endif

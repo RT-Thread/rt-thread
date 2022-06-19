@@ -39,18 +39,21 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_I2C
-        select BSP_USING_I2C1
-        select BSP_USING_I2C3
-        select BSP_USING_I2C4
+        select BSP_USING_I2C1 # PC7-SDA PC6-SCL (User I2C)
+        select BSP_USING_I2C3 # ICM20608, AP3216C (On Board)
+        select BSP_USING_I2C4 # AHT10 (On Board)
         select BSP_USING_DAC
         select BSP_USING_DAC1
         select BSP_USING_SPI
-        select BSP_USING_SPI2
+        select BSP_USING_SPI2 # Wireless Interface (User SPI)
         imply BSP_SPI2_TX_USING_DMA
         imply BSP_SPI2_RX_USING_DMA
+        select BSP_USING_SPI3 # LCD ST7789
+        select BSP_SPI3_TX_USING_DMA
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_SPI
+        imply RTDUINO_USING_USBSERIAL
         imply RTDUINO_USING_ADAFRUIT
         imply RTDUINO_USING_MSTIMER2
         default n

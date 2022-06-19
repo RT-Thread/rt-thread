@@ -53,7 +53,7 @@ elif GetDepend('SOC_NRF51822') == True:
 	if rtconfig.PLATFORM == 'gcc':
 		src += ['./mdk/gcc_startup_nrf51.S']
 		
-	if rtconfig.PLATFORM == 'iar':
+	if rtconfig.PLATFORM == 'iccarm':
 		D_SRC += ['./mdk/iar_startup_nrf51.s']
 ```
 

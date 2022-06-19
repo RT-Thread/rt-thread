@@ -228,7 +228,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
-    elif rtconfig.PLATFORM == 'iar':
+    elif rtconfig.PLATFORM == 'iccarm':
         env['LIBPREFIX'] = ''
         env['LIBSUFFIX'] = '.a'
         env['LIBLINKPREFIX'] = ''
@@ -388,6 +388,16 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     f.close()
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
+
+    AddOption('--buildlib',
+                      dest = 'buildlib',
+                      type = 'string',
+                      help = 'building library of a component')
+    AddOption('--cleanlib',
+                      dest = 'cleanlib',
+                      action = 'store_true',
+                      default = False,
+                      help = 'clean up the library by --buildlib')
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -607,7 +617,7 @@ def DefineGroup(name, src, depend, **parameters):
             paths.append(os.path.abspath(item))
         group['LOCAL_CPPPATH'] = paths
 
-    
+
     if rtconfig.PLATFORM == 'gcc':
         if 'CFLAGS' in group:
             group['CFLAGS'] = utils.GCCC99Patch(group['CFLAGS'])
