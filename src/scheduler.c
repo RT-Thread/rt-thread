@@ -716,7 +716,6 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
             rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
                               &(thread->tlist));
         }
-        
 
         if (cpu_id != bind_cpu)
         {
