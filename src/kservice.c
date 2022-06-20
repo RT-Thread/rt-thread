@@ -53,6 +53,40 @@ RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
         "Please consider implementing rt_hw_us_delay() in another file."));
 }
 
+static const char rt_errno_strs[][] =
+{
+    "OK",
+    "ERROR",
+    "ETIMOUT",
+    "ERSFULL",
+    "ERSEPTY",
+    "ENOMEM",
+    "ENOSYS",
+    "EBUSY",
+    "EIO",
+    "EINTRPT",
+    "EINVAL",
+    "EUNKNOW"
+};
+
+/**
+ * This function return a pointer to a string that contains the
+ * message of error.
+ *
+ * @param error the errorno code
+ * @return a point to error message string
+ */
+const char *rt_strerror(rt_err_t error)
+{
+    if (error < 0)
+        error = -error;
+
+    return (error > RT_EINVAL + 1) ?
+           rt_errno_strs[RT_EINVAL + 1] :
+           rt_errno_strs[error];
+}
+RTM_EXPORT(rt_strerror);
+
 /**
  * This function gets the global errno for the current thread.
  *
@@ -982,8 +1016,13 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             }
             continue;
 
+        case 'm':
+            num = va_arg(args, rt_err_t);
+            s = rt_strerror(num);
+
         case 's':
-            s = va_arg(args, char *);
+            if ((*fmt) == 's')
+                s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
             for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
