@@ -22,8 +22,8 @@ typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned inte
 typedef unsigned long                   rt_size_t;      /**< Type for size number */
 
 /* C28X automatically disable interrupt in interrupt service routine.
- * We need to enable manually to allow for interrupt nesting, by calling
+ * We need to enable manually to allow for interrupt nesting by calling
  * this macro at the start of preemptible interrupt service routines*/
-#define C28X_ALLOW_ISR_PREEMPT() __asm(" EINT")
+#define ALLOW_ISR_PREEMPT() __asm(" CLRC INTM")
 
 #endif

@@ -49,7 +49,7 @@ interrupt void cpu_timer2_isr(void)
 {
     CpuTimer2Regs.TCR.all = 0xC000;
 
-    C28X_ALLOW_ISR_PREEMPT();
+    ALLOW_ISR_PREEMPT();
 
     /* enter interrupt */
     rt_interrupt_enter();

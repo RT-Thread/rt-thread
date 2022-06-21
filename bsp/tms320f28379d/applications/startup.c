@@ -80,7 +80,7 @@ void rtthread_startup(void)
     rt_system_scheduler_start();
 
     /* never reach here */
-    return ;
+    return;
 }
 
 int main(void)
