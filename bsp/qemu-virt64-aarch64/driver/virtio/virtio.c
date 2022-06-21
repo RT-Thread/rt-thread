@@ -72,7 +72,7 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
 
     queue = &dev->queues[queue_index];
     pages_total_size = VIRTIO_PAGE_ALIGN(
-            VIRTQ_DESC_TOTAL_SIZE(ring_size) + VIRTQ_AVAIL_TOTAL_SIZE(ring_size) + VIRTQ_USED_TOTAL_SIZE(ring_size));
+            VIRTQ_DESC_TOTAL_SIZE(ring_size) + VIRTQ_AVAIL_TOTAL_SIZE(ring_size)) + VIRTQ_USED_TOTAL_SIZE(ring_size);
 
     pages = rt_malloc_align(pages_total_size, VIRTIO_PAGE_SIZE);
 
