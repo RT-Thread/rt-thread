@@ -23,9 +23,12 @@ static rt_uint32_t cur_range[2];
 static rt_uint32_t cur_points[2];
 static rt_uint32_t cur_last_points[2];
 static rt_bool_t cur_event_sync;
+static rt_uint32_t color[2] = { 0xff0000, 0x0000ff };
 
 void tablet_event_handler(struct virtio_input_event event)
 {
+    static rt_bool_t cur_btn_down = RT_FALSE;
+
     if (event.type == EV_ABS)
     {
         if (event.code == 0)
@@ -35,6 +38,24 @@ void tablet_event_handler(struct virtio_input_event event)
         else if (event.code == 1)
         {
             cur_points[1] = (cur_max[1] * (event.value - cur_min[1]) + cur_range[1] / 2) / cur_range[1];
+        }
+    }
+    else if (event.type == EV_KEY)
+    {
+        if (event.code == BTN_LEFT)
+        {
+            if (cur_btn_down && event.value == 0)
+            {
+                color[0] ^= color[1];
+                color[1] ^= color[0];
+                color[0] ^= color[1];
+                cur_btn_down = RT_FALSE;
+                cur_event_sync = RT_TRUE;
+            }
+            else
+            {
+                cur_btn_down = RT_TRUE;
+            }
         }
     }
     else if (event.type == EV_SYN)
@@ -52,8 +73,6 @@ void graphic_thread(void *param)
     rt_device_t tablet_dev = RT_NULL;
     struct virtio_input_config tablet_config;
 
-    rt_uint32_t red = 0xff0000;
-    rt_uint32_t blue = 0x0000ff;
     rt_uint32_t white = 0xffffff;
     rt_device_t gpu_dev = RT_NULL;
     struct rt_device_rect_info rect_info;
@@ -87,15 +106,13 @@ void graphic_thread(void *param)
             cur_last_points[0] = graphic_info.width / 2;
             cur_last_points[1] = graphic_info.height / 2;
 
-            virtio_gpu_graphic_ops->draw_hline((char *)&red, 0, graphic_info.width, cur_last_points[1]);
-            virtio_gpu_graphic_ops->draw_vline((char *)&blue, cur_last_points[0], 0, graphic_info.height);
+            virtio_gpu_graphic_ops->draw_hline((char *)&color[0], 0, graphic_info.width, cur_last_points[1]);
+            virtio_gpu_graphic_ops->draw_vline((char *)&color[1], cur_last_points[0], 0, graphic_info.height);
 
             rt_device_control(device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
 
             gpu_dev = device;
         }
-
-        rt_device_close(device);
     }
 
     /* Keyboard, Mouse, Tablet */
@@ -153,8 +170,8 @@ void graphic_thread(void *param)
             cur_last_points[0] = cur_points[0];
             cur_last_points[1] = cur_points[1];
 
-            virtio_gpu_graphic_ops->draw_hline((char *)&red, 0, graphic_info.width, cur_last_points[1]);
-            virtio_gpu_graphic_ops->draw_vline((char *)&blue, cur_last_points[0], 0, graphic_info.height);
+            virtio_gpu_graphic_ops->draw_hline((char *)&color[0], 0, graphic_info.width, cur_last_points[1]);
+            virtio_gpu_graphic_ops->draw_vline((char *)&color[1], cur_last_points[0], 0, graphic_info.height);
 
             rt_device_control(gpu_dev, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
 
