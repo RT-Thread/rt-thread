@@ -60,11 +60,15 @@ rt_err_t rt_hw_board_uart_init(CM_USART_TypeDef *USARTx)
 }
 #endif
 
-#if defined(RT_USING_CAN)
+#if defined(BSP_USING_CAN)
 void CanPhyEnable(void)
 {
+#if defined(BSP_USING_CAN1)
+#ifdef CAN1_STB_FUNC_ENABLE
     GPIO_ResetPins(CAN_STB_PORT, CAN_STB_PIN);
     GPIO_OutputCmd(CAN_STB_PORT, CAN_STB_PIN, ENABLE);
+#endif
+#endif
 }
 rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
 {
