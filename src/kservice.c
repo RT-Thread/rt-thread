@@ -21,6 +21,7 @@
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
  * 2022-06-04     Meco Man     remove strnlen
+ * 2022-06-21     Yunjie       make rt_memset word independent to adapt to TI C28X (16bit addressing)
  */
 
 #include <rtthread.h>
@@ -152,7 +153,6 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    unsigned int i;
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;

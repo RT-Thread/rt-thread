@@ -181,6 +181,8 @@ static const struct rt_uart_ops c28x_uart_ops =
 //
 interrupt void sciaRxFifoIsr(void)
 {
+    C28X_ALLOW_ISR_PREEMPT();
+
     /* enter interrupt */
     rt_interrupt_enter();
 

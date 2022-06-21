@@ -9,6 +9,12 @@
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
  */
 
+/* todo:
+ * (1) ps command cause system collapse
+ * (2) to integrate scons with ccs
+ * (3) to complete the bsp like stm32
+ */
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
@@ -44,7 +50,7 @@ void assert_failed(uint16_t* file, uint32_t line)
  */
 void rtthread_startup(void)
 {
-    unsigned int test = 15;
+    unsigned int bsp_version = 1;
 
     /* init board */
     rt_hw_board_init();
@@ -67,8 +73,8 @@ void rtthread_startup(void)
     /* init idle thread */
     rt_thread_idle_init();
 
-    /* rt_kprintf should use %hd for int = char*/
-    rt_kprintf("started %hd\n",test);
+    /* rt_kprintf should use %hd since int = char*/
+    rt_kprintf("C28X rt-thread started: bsp_version=%hd\n",bsp_version);
 
     /* start scheduler */
     rt_system_scheduler_start();
