@@ -237,7 +237,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable CAN"
         default n
         select RT_USING_CAN
-        select BSP_USING_TCA9539
+        select RT_CAN_USING_HDR
         if BSP_USING_CAN
             config BSP_USING_CAN1
                 bool "using can1"

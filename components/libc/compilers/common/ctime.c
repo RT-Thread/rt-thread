@@ -173,6 +173,15 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     time_t i;
     time_t work = *timep % (SPD);
+
+    if(timep == RT_NULL || r == RT_NULL)
+    {
+        rt_set_errno(EFAULT);
+        return RT_NULL;
+    }
+
+    rt_memset(r, RT_NULL, sizeof(struct tm));
+
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
@@ -198,8 +207,8 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
         work -= 1;
     }
 
-    for (i = 11; i && (__spm[i] > work); --i)
-        ;
+    for (i = 11; i && (__spm[i] > work); --i);
+
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
 
@@ -243,6 +252,14 @@ RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
+    if(t == RT_NULL || buf == RT_NULL)
+    {
+        rt_set_errno(EFAULT);
+        return RT_NULL;
+    }
+
+    rt_memset(buf, RT_NULL, 26);
+
     /* Checking input validity */
     if ((int)rt_strlen(days) <= (t->tm_wday << 2) || (int)rt_strlen(months) <= (t->tm_mon << 2))
     {
@@ -354,7 +371,7 @@ int stime(const time_t *t)
 {
     struct timeval tv;
 
-    if (!t)
+    if (t == RT_NULL)
     {
         rt_set_errno(EFAULT);
         return -1;
@@ -377,8 +394,15 @@ time_t timegm(struct tm * const t)
 {
     time_t day;
     time_t i;
-    time_t years = (time_t)t->tm_year - 70;
+    time_t years;
 
+    if(t == RT_NULL)
+    {
+        rt_set_errno(EFAULT);
+        return (time_t)-1;
+    }
+
+    years = (time_t)t->tm_year - 70;
     if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
@@ -415,7 +439,10 @@ time_t timegm(struct tm * const t)
     }
 
     if (t->tm_year < 70)
-        return (time_t) - 1;
+    {
+        rt_set_errno(EINVAL);
+        return (time_t) -1;
+    }
 
     /* Days since 1970 is 365 * number of years + number of leap years since 1970 */
     day = years * 365 + (years + 1) / 4;
@@ -467,7 +494,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     }
     else
     {
-        rt_set_errno(EFAULT);
+        rt_set_errno(EINVAL);
         return -1;
     }
 }
@@ -549,7 +576,7 @@ int clock_getres(clockid_t clockid, struct timespec *res)
 
     if (res == RT_NULL)
     {
-        rt_set_errno(EINVAL);
+        rt_set_errno(EFAULT);
         return -1;
     }
 
@@ -568,6 +595,8 @@ int clock_getres(clockid_t clockid, struct timespec *res)
 #endif
 
     default:
+        res->tv_sec  = 0;
+        res->tv_nsec = 0;
         ret = -1;
         rt_set_errno(EINVAL);
         break;
@@ -588,7 +617,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
 
     if (tp == RT_NULL)
     {
-        rt_set_errno(EINVAL);
+        rt_set_errno(EFAULT);
         return -1;
     }
 
@@ -622,6 +651,8 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
         break;
 #endif
     default:
+        tp->tv_sec  = 0;
+        tp->tv_nsec = 0;
         rt_set_errno(EINVAL);
         ret = -1;
     }
@@ -655,7 +686,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 
     if ((clockid != CLOCK_REALTIME) || (tp == RT_NULL))
     {
-        rt_set_errno(EINVAL);
+        rt_set_errno(EFAULT);
         return -1;
     }
 

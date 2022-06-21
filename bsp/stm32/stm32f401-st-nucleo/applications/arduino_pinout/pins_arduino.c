@@ -30,10 +30,10 @@ const pin_map_t pin_map_table[]=
     {D7, GET_PIN(A,8)},
     {D8, GET_PIN(A,9)},
     {D9, GET_PIN(C,7), "pwm3", 2}, /* PWM */
-    {D10}, /* SPI1-CS */
-    {D11}, /* SPI1-MOSI */
-    {D12}, /* SPI1-MISO */
-    {D13}, /* SPI1-SCK */
+    {D10, GET_PIN(B,6)},
+    {D11, GET_PIN(A,7)},
+    {D12, GET_PIN(A,6)},
+    {D13, GET_PIN(A,5)},
     {D14}, /* I2C1-SDA */
     {D15}, /* I2C1-SCL */
     {D16, GET_PIN(C,13)}, /* user button */
