@@ -762,6 +762,7 @@ static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt
     return RT_EOK;
 }
 
+/* Example of use: Px.0 ~ Px.31, x:1,2,3,4,5 */
 static rt_base_t imxrt_pin_get(const char *name)
 {
     rt_base_t pin = 0;
