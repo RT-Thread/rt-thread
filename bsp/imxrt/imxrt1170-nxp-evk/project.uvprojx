@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-xc -std=gnu99 -mimplicit-float </MiscControls>
-              <Define>CPU_MIMXRT1176DVMAA_cm7, USE_SDRAM, __RTTHREAD__, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, __CLK_TCK=RT_TICK_PER_SECOND, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, RT_USING_ARM_LIBC</Define>
+              <Define>CPU_MIMXRT1176DVMAA_cm7, USE_SDRAM, __STDC_LIMIT_MACROS, __RTTHREAD__, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, RT_USING_ARM_LIBC</Define>
               <Undefine />
               <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1170\CMSIS\Include;..\libraries\MIMXRT1170\MIMXRT1176;..\libraries\MIMXRT1170\MIMXRT1176\drivers;..\libraries\peripherals;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\net\netdev\include;xip</IncludePath>
             </VariousControls>
@@ -582,6 +582,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
@@ -602,6 +609,20 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_parse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -752,6 +773,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_lpuart.c</FilePath>
@@ -776,16 +804,16 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+              <FilePath>..\..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
+              <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\netdev\src\netdev.c</FilePath>
+              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
             </File>
           </Files>
         </Group>

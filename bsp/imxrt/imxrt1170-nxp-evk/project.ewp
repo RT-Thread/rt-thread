@@ -220,6 +220,8 @@
                     <name>CCDefines</name>
                     <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
                     <state>RT_USING_DLIBC</state>
+                    <state>RT_USING_LIBC</state>
+                    <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
                     <state>CPU_MIMXRT1176DVMAA_cm7</state>
                     <state>XIP_BOOT_HEADER_ENABLE=1</state>
                     <state>XIP_BOOT_HEADER_DCD_ENABLE=1</state>
@@ -1201,6 +1203,9 @@
             <name>$PROJ_DIR$\board\dcd.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\libraries\drivers\drv_gpio.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
         </file>
         <file>
@@ -1210,7 +1215,13 @@
     <group>
         <name>Finsh</name>
         <file>
+            <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
@@ -1277,6 +1288,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_dcdc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_gpio.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_lpuart.c</name>

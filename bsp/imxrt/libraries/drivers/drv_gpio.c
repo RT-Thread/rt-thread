@@ -86,7 +86,7 @@ const struct pin_mask mask_tab[7] =
 
 };
 
-const rt_int8_t reg_offset[] =
+const rt_int32_t reg_offset[] =
 {
 #if defined(SOC_IMXRT1015_SERIES)
     38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 64, 65, 66, 67, 68, 69,
