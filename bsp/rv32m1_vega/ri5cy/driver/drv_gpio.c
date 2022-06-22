@@ -496,7 +496,8 @@ static const struct rt_pin_ops vega_pin_ops =
 
     vega_pin_attach_irq,
     vega_pin_detach_irq,
-    vega_pin_irq_enable
+    vega_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

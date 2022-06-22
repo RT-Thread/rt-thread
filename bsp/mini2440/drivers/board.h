@@ -1,11 +1,7 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,7 +12,6 @@
 #define __BOARD_H__
 
 #include <s3c24x0.h>
-#include <serial.h>
 
 void rt_hw_board_init(void);
 void rt_hw_sdcard_init(void);

@@ -1,0 +1,29 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config SOC_EMSK
+    bool
+    select ARCH_ARC_EM
+    select RT_USING_COMPONENTS_INIT
+    # select RT_USING_USER_MAIN
+    select RT_USING_CPU_FFS
+    default y
+
+source "$BSP_DIR/drivers/Kconfig"

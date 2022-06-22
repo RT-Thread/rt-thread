@@ -15,7 +15,7 @@ TARGET = 'build/rtthread_lpc43xx.' + rtconfig.TARGET_EXT
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-    CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -26,11 +26,11 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     print('build M0 code first')
     if sys.platform.startswith('linux'):
         import glob
-        ocwd = os.getcwdu()
+        ocwd = os.getcwd()
         os.chdir('../M0')
         res = os.system('scons')
         if res:
@@ -41,7 +41,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
         os.chdir(ocwd)
     else:
         # Assume Windows.
-        ocwd = os.getcwdu()
+        ocwd = os.getcwd()
         os.chdir('..\M0')
         os.system('scons.bat')
         os.chdir(ocwd)

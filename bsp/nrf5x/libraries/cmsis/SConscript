@@ -1,0 +1,17 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+""")
+
+# src += ['drv_common.c']
+
+path =  [cwd + '/include']
+
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = path)
+
+Return('group')

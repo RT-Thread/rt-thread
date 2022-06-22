@@ -1,0 +1,22 @@
+from building import *
+Import('rtconfig')
+
+src   = []
+cwd   = GetCurrentDir()
+path  = [cwd]
+
+# add src and include to group.
+src += Glob('tpc_worker.c')
+if GetDepend('NU_PKG_USING_TPC_ILI'):
+    src += Glob('ili.c')
+elif GetDepend('NU_PKG_USING_TPC_GT911'):
+    src += Glob('gt911.c')
+elif GetDepend('NU_PKG_USING_TPC_FT5446'):
+    src += Glob('ft5446.c')
+elif GetDepend('NU_PKG_USING_TPC_ST1663I'):
+    src += Glob('st1663i.c')
+else:
+    src = []
+
+group = DefineGroup('nu_pkgs_tpc', src, depend = [''], CPPPATH = path)
+Return('group')

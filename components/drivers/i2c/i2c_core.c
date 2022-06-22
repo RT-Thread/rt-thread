@@ -1,27 +1,36 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
  * 2012-04-25     weety         first version
+ * 2021-04-20     RiceChen      added support for bus control api
  */
 
 #include <rtdevice.h>
+
+#define DBG_TAG               "I2C"
+#ifdef RT_I2C_DEBUG
+#define DBG_LVL               DBG_LOG
+#else
+#define DBG_LVL               DBG_INFO
+#endif
+#include <rtdbg.h>
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name)
 {
     rt_err_t res = RT_EOK;
 
-    rt_mutex_init(&bus->lock, "i2c_bus_lock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&bus->lock, "i2c_bus_lock", RT_IPC_FLAG_PRIO);
 
     if (bus->timeout == 0) bus->timeout = RT_TICK_PER_SECOND;
 
     res = rt_i2c_bus_device_device_init(bus, bus_name);
 
-    i2c_dbg("I2C bus [%s] registered\n", bus_name);
+    LOG_I("I2C bus [%s] registered", bus_name);
 
     return res;
 }
@@ -32,7 +41,7 @@ struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name)
     rt_device_t dev = rt_device_find(bus_name);
     if (dev == RT_NULL || dev->type != RT_Device_Class_I2CBUS)
     {
-        i2c_dbg("I2C bus %s not exist\n", bus_name);
+        LOG_E("I2C bus %s not exist", bus_name);
 
         return RT_NULL;
     }
@@ -53,9 +62,9 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 #ifdef RT_I2C_DEBUG
         for (ret = 0; ret < num; ret++)
         {
-            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d\n", ret,
-                    (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
-                    msgs[ret].addr, msgs[ret].len);
+            LOG_D("msgs[%d] %c, addr=0x%02x, len=%d", ret,
+                  (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
+                  msgs[ret].addr, msgs[ret].len);
         }
 #endif
 
@@ -67,7 +76,27 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
     }
     else
     {
-        i2c_dbg("I2C bus operation not supported\n");
+        LOG_E("I2C bus operation not supported");
+
+        return 0;
+    }
+}
+
+rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
+                        rt_uint32_t               cmd,
+                        rt_uint32_t               arg)
+{
+    rt_err_t ret;
+
+    if(bus->ops->i2c_bus_control)
+    {
+        ret = bus->ops->i2c_bus_control(bus, cmd, arg);
+
+        return ret;
+    }
+    else
+    {
+        LOG_E("I2C bus operation not supported");
 
         return 0;
     }

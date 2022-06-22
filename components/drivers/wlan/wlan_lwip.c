@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -170,7 +170,7 @@ static void netif_set_connected(void *parameter)
             LOG_D("F:%s L:%d dhcp start run", __FUNCTION__, __LINE__);
             netifapi_netif_common(eth_dev->netif, netif_set_link_up, NULL);
 #ifdef RT_LWIP_DHCP
-            dhcp_start(eth_dev->netif);
+            netifapi_dhcp_start(eth_dev->netif);
 #endif
             rt_timer_start(&lwip_prot->timer);
         }
@@ -198,7 +198,7 @@ static void netif_set_connected(void *parameter)
 #ifdef RT_LWIP_DHCP
         {
             ip_addr_t ip_addr = { 0 };
-            dhcp_stop(eth_dev->netif);
+            netifapi_dhcp_stop(eth_dev->netif);
             netif_set_addr(eth_dev->netif, &ip_addr, &ip_addr, &ip_addr);
         }
 #endif

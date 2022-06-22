@@ -103,6 +103,11 @@ if __name__=='__main__':
     # Setting the makeimg_all.exe file path
     makeimg_all_file=wmlib_path_full + '/Tools/makeimg_all.exe'
 
+    if (platform.system() == "Linux"):
+        wm_gzip_file=wmlib_path_full + '/Tools/wm_gzip.py'
+        makeimg_file=wmlib_path_full + '/Tools/makeimg'
+        makeimg_all_file=wmlib_path_full + '/Tools/makeimg_all'
+
     # Get absolute path
     out_path = os.path.abspath(out_path).replace('\\', '/');
     bin_file = os.path.abspath(bin_file).replace('\\', '/');
@@ -149,7 +154,10 @@ if __name__=='__main__':
         print('make_SEC_param' + make_SEC_param)
         print('make_FLS_param' + make_FLS_param)
 
-    do_makeimg(wm_gzip_file, gzip_param)
+    if (platform.system() == "Linux"):
+        do_makeimg("python",wm_gzip_file + " " + gzip_param)
+    else:
+        do_makeimg(wm_gzip_file, gzip_param)
     do_makeimg(makeimg_file, make_img_param)
     do_makeimg(makeimg_file, make_GZ_param)
     do_makeimg(makeimg_file, make_SEC_param)
@@ -177,7 +185,10 @@ if __name__=='__main__':
         print('make_SEC_param' + make_SEC_param)
         print('make_FLS_param' + make_FLS_param)
 
-    do_makeimg(wm_gzip_file, gzip_param)
+    if (platform.system() == "Linux"):
+        do_makeimg("python",wm_gzip_file + " " + gzip_param)
+    else:
+        do_makeimg(wm_gzip_file, gzip_param)
     do_makeimg(makeimg_file, make_img_param)
     do_makeimg(makeimg_file, make_GZ_param)
     do_makeimg(makeimg_file, make_SEC_param)

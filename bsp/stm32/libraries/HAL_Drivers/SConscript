@@ -5,14 +5,16 @@ from building import *
 cwd = GetCurrentDir()
 
 # add the general drivers.
-src = Split("""
-""")
+src = []
 
 if GetDepend(['RT_USING_PIN']):
     src += ['drv_gpio.c']
-    
+
 if GetDepend(['RT_USING_SERIAL']):
-    src += ['drv_usart.c']
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_usart_v2.c']
+    else:
+        src += ['drv_usart.c']
 
 if GetDepend(['RT_USING_HWTIMER']):
     src += ['drv_hwtimer.c']
@@ -26,6 +28,9 @@ if GetDepend(['RT_USING_SPI']):
 if GetDepend(['RT_USING_QSPI']):
     src += ['drv_qspi.c']
 
+if GetDepend('RT_USING_SPI_BITOPS'):
+    src += ['drv_soft_spi.c']
+
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
         src += ['drv_soft_i2c.c']
@@ -35,6 +40,9 @@ if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
 
 if GetDepend(['RT_USING_ADC']):
     src += Glob('drv_adc.c')
+
+if GetDepend(['RT_USING_DAC']):
+    src += Glob('drv_dac.c')
 
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
@@ -55,6 +63,9 @@ if GetDepend('BSP_USING_LCD_MIPI'):
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
 
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32G0']):
+    src += ['drv_flash/drv_flash_g0.c']
+
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F0']):
     src += ['drv_flash/drv_flash_f0.c']
 
@@ -72,10 +83,16 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
     src += ['drv_flash/drv_flash_l4.c']
-	
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32H7']):
+    src += ['drv_flash/drv_flash_h7.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32WB']):
+    src += ['drv_flash/drv_flash_wb.c']
+
 if GetDepend('RT_USING_HWCRYPTO'):
     src += ['drv_crypto.c']
-	
+
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 
@@ -88,10 +105,16 @@ if GetDepend(['BSP_USING_USBD']):
 if GetDepend(['BSP_USING_PULSE_ENCODER']):
     src += ['drv_pulse_encoder.c']
 
+if GetDepend(['BSP_USING_USBH']):
+    src += ['drv_usbh.c']
+
 src += ['drv_common.c']
 
 path =  [cwd]
 path += [cwd + '/config']
+
+if not GetDepend('PKG_CMSIS_CORE'):
+    path += [cwd + '/CMSIS/Include']
 
 if GetDepend('BSP_USING_ON_CHIP_FLASH'):
     path += [cwd + '/drv_flash']

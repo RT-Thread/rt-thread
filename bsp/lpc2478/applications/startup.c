@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,12 +37,6 @@ void rtthread_startup(void)
 
     /* init board */
     rt_hw_board_init();
-
-    /* init tick */
-    rt_system_tick_init();
-
-    /* init kernel object */
-    rt_system_object_init();
 
     rt_show_version();
 

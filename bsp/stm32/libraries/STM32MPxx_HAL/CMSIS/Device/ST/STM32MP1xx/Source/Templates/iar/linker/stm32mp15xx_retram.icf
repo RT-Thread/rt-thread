@@ -1,0 +1,40 @@
+/*###ICF### Section handled by ICF editor, don't touch! ****/
+/*-Editor annotation file-*/
+/* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\a_v1_0.xml" */
+/*-Specials-*/
+define symbol __ICFEDIT_intvec_start__ = 0x00000000;
+/*-Memory Regions-*/
+define symbol __ICFEDIT_region_text_start__ = 0x00000000;
+define symbol __ICFEDIT_region_text_end__   = 0x00008000;
+define symbol __ICFEDIT_region_data_start__ = 0x00008000;
+define symbol __ICFEDIT_region_data_end__   = 0x00010000;
+/*-Sizes-*/
+define symbol __ICFEDIT_size_cstack__ = 0x400;
+define symbol __ICFEDIT_size_heap__   = 0x000;
+/**** End of ICF editor section. ###ICF###*/
+
+
+define memory mem with size = 4G;
+define region text_region   = mem:[from __ICFEDIT_region_text_start__   to __ICFEDIT_region_text_end__];
+define region data_region   = mem:[from __ICFEDIT_region_data_start__   to __ICFEDIT_region_data_end__];
+
+keep { section .resource_table };
+".resource_table" :  place in data_region {section .resource_table};
+
+/* Create region for OPENAMP */
+/* !!! These 4 lines can be commented if OPENAMP is not used !!!*/
+define symbol __OPENAMP_region_start__ = 0x10040000;
+define symbol __OPENAMP_region_size__   = 0x8000;
+export symbol __OPENAMP_region_start__;
+export symbol __OPENAMP_region_size__;
+
+define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
+define block HEAP      with alignment = 8, size = __ICFEDIT_size_heap__     { };
+
+initialize by copy { readwrite };
+do not initialize  { section .noinit};
+
+place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
+place in text_region   { readonly };
+place in data_region   { readwrite,
+                         block CSTACK, block HEAP};

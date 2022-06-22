@@ -1,0 +1,16 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd]
+
+if not GetDepend('BSP_USING_XPT_TOUCH_DEV'):
+    SrcRemove(src, ['drv_xpt2046.c'])
+if not GetDepend('BSP_USING_DSI_TOUCH_DEV'):
+    SrcRemove(src, ['drv_dsi_touch.c'])
+
+group = DefineGroup('drv_touch', src, depend = ['BSP_USING_TOUCH'], CPPPATH = CPPPATH)
+
+Return('group')

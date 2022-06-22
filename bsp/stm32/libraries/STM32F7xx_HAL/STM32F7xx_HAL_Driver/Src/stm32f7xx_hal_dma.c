@@ -604,7 +604,7 @@ HAL_StatusTypeDef HAL_DMA_Abort_IT(DMA_HandleTypeDef *hdma)
   * @param  hdma          pointer to a DMA_HandleTypeDef structure that contains
   *                        the configuration information for the specified DMA Stream.
   * @param  CompleteLevel Specifies the DMA level complete.
-  * @note   The polling mode is kept in this version for legacy. it is recommanded to use the IT model instead.
+  * @note   The polling mode is kept in this version for legacy. it is recommended to use the IT model instead.
   *         This model could be used for debug purpose.
   * @note   The HAL_DMA_PollForTransfer API cannot be used in circular and double buffering mode (automatic circular mode). 
   * @param  Timeout       Timeout duration.
@@ -961,7 +961,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
   * @brief  Register callbacks
   * @param  hdma                 pointer to a DMA_HandleTypeDef structure that contains
   *                               the configuration information for the specified DMA Stream.
-  * @param  CallbackID           User Callback identifer
+  * @param  CallbackID           User Callback identifier
   *                               a DMA_HandleTypeDef structure as parameter.
   * @param  pCallback            pointer to private callbacsk function which has pointer to 
   *                               a DMA_HandleTypeDef structure as parameter.
@@ -1023,7 +1023,7 @@ HAL_StatusTypeDef HAL_DMA_RegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Call
   * @brief  UnRegister callbacks
   * @param  hdma                 pointer to a DMA_HandleTypeDef structure that contains
   *                               the configuration information for the specified DMA Stream.
-  * @param  CallbackID           User Callback identifer
+  * @param  CallbackID           User Callback identifier
   *                               a HAL_DMA_CallbackIDTypeDef ENUM as parameter.
   * @retval HAL status
   */              

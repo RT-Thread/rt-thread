@@ -18,10 +18,10 @@
   * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
+  * This software component is licensed by ST under Apache License, Version 2.0,
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                        opensource.org/licenses/Apache-2.0
   *
   ******************************************************************************
   */
@@ -60,7 +60,10 @@ defined in linker script */
 	.weak	Reset_Handler
 	.type	Reset_Handler, %function
 Reset_Handler:
-  ldr   sp, =_estack    /* Atollic update: set stack pointer */
+  ldr   sp, =_estack    /* Set stack pointer */
+
+/* Call the clock system initialization function.*/
+    bl  SystemInit
 
 /* Copy the data segment initializers from flash to SRAM */
   movs	r1, #0
@@ -90,12 +93,10 @@ LoopFillZerobss:
 	cmp	r2, r3
 	bcc	FillZerobss
 
-/* Call the clock system intitialization function.*/
-    bl  SystemInit
 /* Call static constructors */
-/*    bl __libc_init_array */
+    bl __libc_init_array
 /* Call the application's entry point.*/
-    bl  entry
+	bl	entry
 
 LoopForever:
     b LoopForever

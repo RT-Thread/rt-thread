@@ -9,6 +9,6 @@ CPPPATH = [cwd]
 #remove other no use files
 #SrcRemove(src, '*.c')
 
-group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

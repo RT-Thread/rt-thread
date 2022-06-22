@@ -44,6 +44,7 @@
 
 /* Defines used for PLL range */
 #define UTILS_PLL_OUTPUT_MAX        RCC_MAX_FREQUENCY    /*!< Frequency max for PLL output, in Hz  */
+#define UTILS_PLL2_OUTPUT_MAX       RCC_MAX_FREQUENCY    /*!< Frequency max for PLL2 output, in Hz  */
 
 /* Defines used for HSE range */
 #define UTILS_HSE_FREQUENCY_MIN     RCC_HSE_MIN       /*!< Frequency min for HSE frequency, in Hz   */
@@ -126,6 +127,28 @@
 
 #define IS_LL_UTILS_PLL_FREQUENCY(__VALUE__) ((__VALUE__) <= UTILS_PLL_OUTPUT_MAX)
 
+#if defined(RCC_PLL2_SUPPORT)
+#define IS_LL_UTILS_PLL2MUL_VALUE(__VALUE__) (((__VALUE__) == LL_RCC_PLL2_MUL_8) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_9) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_10) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_11) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_12) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_13) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_14) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_16) \
+                                           || ((__VALUE__) == LL_RCC_PLL2_MUL_20))
+
+#define IS_LL_UTILS_PREDIV2_VALUE(__VALUE__) (((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_1)  || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_2)   || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_3)  || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_4)   || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_5)  || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_6)   || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_7)  || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_8)   || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_9)  || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_10)  || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_11) || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_12)  || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_13) || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_14)  || \
+                                              ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_15) || ((__VALUE__) == LL_RCC_HSE_PREDIV2_DIV_16))
+
+#define IS_LL_UTILS_PLL2_FREQUENCY(__VALUE__) ((__VALUE__) <= UTILS_PLL2_OUTPUT_MAX)
+#endif /* RCC_PLL2_SUPPORT */
 
 #define IS_LL_UTILS_HSE_BYPASS(__STATE__) (((__STATE__) == LL_UTILS_HSEBYPASS_ON) \
                                         || ((__STATE__) == LL_UTILS_HSEBYPASS_OFF))
@@ -140,9 +163,13 @@
   */
 static uint32_t    UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency,
                                                LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct);
-#if defined(FLASH_ACR_LATENCY)
-static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency);
-#endif /* FLASH_ACR_LATENCY */
+static ErrorStatus UTILS_PLL_HSE_ConfigSystemClock(uint32_t PLL_InputFrequency, uint32_t HSEBypass,
+                                                   LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,
+                                                   LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
+#if defined(RCC_PLL2_SUPPORT)
+static uint32_t    UTILS_GetPLL2OutputFrequency(uint32_t PLL2_InputFrequency,
+                                                LL_UTILS_PLLInitTypeDef *UTILS_PLL2InitStruct);
+#endif /* RCC_PLL2_SUPPORT */
 static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
 static ErrorStatus UTILS_PLL_IsBusy(void);
 /**
@@ -247,6 +274,78 @@ void LL_SetSystemCoreClock(uint32_t HCLKFrequency)
 }
 
 /**
+  * @brief  Update number of Flash wait states in line with new frequency and current
+            voltage range.
+  * @param  Frequency  SYSCLK frequency
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: Latency has been modified
+  *          - ERROR: Latency cannot be modified
+  */
+#if defined(FLASH_ACR_LATENCY)
+ErrorStatus LL_SetFlashLatency(uint32_t Frequency)
+{
+  uint32_t timeout;
+  uint32_t getlatency;
+  uint32_t latency = LL_FLASH_LATENCY_0; /* default value 0WS */
+  ErrorStatus status = SUCCESS;
+
+  /* Frequency cannot be equal to 0 */
+  if (Frequency == 0U)
+  {
+    status = ERROR;
+  }
+  else
+  {
+    if (Frequency > UTILS_LATENCY2_FREQ)
+    {
+      /* 48 < SYSCLK <= 72 => 2WS (3 CPU cycles) */
+      latency = LL_FLASH_LATENCY_2;
+    }
+    else
+    {
+      if (Frequency > UTILS_LATENCY1_FREQ)
+      {
+        /* 24 < SYSCLK <= 48 => 1WS (2 CPU cycles) */
+        latency = LL_FLASH_LATENCY_1;
+      }
+      else
+      {
+        /* else SYSCLK < 24MHz default LL_FLASH_LATENCY_0 0WS */
+        latency = LL_FLASH_LATENCY_0;
+      }
+    }
+
+    if (status != ERROR)
+    {
+      LL_FLASH_SetLatency(latency);
+
+      /* Check that the new number of wait states is taken into account to access the Flash
+         memory by reading the FLASH_ACR register */
+      timeout = 2;
+      do
+      {
+        /* Wait for Flash latency to be updated */
+        getlatency = LL_FLASH_GetLatency();
+        timeout--;
+      }
+      while ((getlatency != latency) && (timeout > 0));
+
+      if (getlatency != latency)
+      {
+        status = ERROR;
+      }
+      else
+      {
+        status = SUCCESS;
+      }
+    }
+  }
+
+  return status;
+}
+#endif /* FLASH_ACR_LATENCY */
+
+/**
   * @brief  This function configures system clock with HSI as clock source of the PLL
   * @note   The application need to ensure that PLL is disabled.
   * @note   Function is based on the following formula:
@@ -332,55 +431,92 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
                                          LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct)
 {
   ErrorStatus status = SUCCESS;
-  uint32_t pllfreq = 0U;
+  uint32_t pllfrequency = 0U;
 
   /* Check the parameters */
   assert_param(IS_LL_UTILS_HSE_FREQUENCY(HSEFrequency));
   assert_param(IS_LL_UTILS_HSE_BYPASS(HSEBypass));
+  assert_param(IS_LL_UTILS_PREDIV_VALUE(UTILS_PLLInitStruct->Prediv));
 
-  /* Check if one of the PLL is enabled */
-  if (UTILS_PLL_IsBusy() == SUCCESS)
+  /* Calculate the new PLL output frequency */
+  pllfrequency = UTILS_GetPLLOutputFrequency(HSEFrequency, UTILS_PLLInitStruct);
+
+  /* Enable HSE if not enabled */
+  status = UTILS_PLL_HSE_ConfigSystemClock(HSEFrequency, HSEBypass, UTILS_PLLInitStruct, UTILS_ClkInitStruct);
+
+  /* Check if HSE is not enabled*/
+  if (status == SUCCESS)
   {
-    assert_param(IS_LL_UTILS_PREDIV_VALUE(UTILS_PLLInitStruct->Prediv));
-
-    /* Calculate the new PLL output frequency */
-    pllfreq = UTILS_GetPLLOutputFrequency(HSEFrequency, UTILS_PLLInitStruct);
-
-    /* Enable HSE if not enabled */
-    if (LL_RCC_HSE_IsReady() != 1U)
-    {
-      /* Check if need to enable HSE bypass feature or not */
-      if (HSEBypass == LL_UTILS_HSEBYPASS_ON)
-      {
-        LL_RCC_HSE_EnableBypass();
-      }
-      else
-      {
-        LL_RCC_HSE_DisableBypass();
-      }
-
-      /* Enable HSE */
-      LL_RCC_HSE_Enable();
-      while (LL_RCC_HSE_IsReady() != 1U)
-      {
-        /* Wait for HSE ready */
-      }
-    }
-
     /* Configure PLL */
-    LL_RCC_PLL_ConfigDomain_SYS((RCC_CFGR_PLLSRC | UTILS_PLLInitStruct->Prediv), UTILS_PLLInitStruct->PLLMul);
+    LL_RCC_PLL_ConfigDomain_SYS((LL_RCC_PLLSOURCE_HSE | UTILS_PLLInitStruct->Prediv), UTILS_PLLInitStruct->PLLMul);
 
     /* Enable PLL and switch system clock to PLL */
-    status = UTILS_EnablePLLAndSwitchSystem(pllfreq, UTILS_ClkInitStruct);
-  }
-  else
-  {
-    /* Current PLL configuration cannot be modified */
-    status = ERROR;
+    status = UTILS_EnablePLLAndSwitchSystem(pllfrequency, UTILS_ClkInitStruct);
   }
 
   return status;
 }
+
+#if defined(RCC_PLL2_SUPPORT)
+/**
+  * @brief  This function configures system clock with HSE as clock source of the PLL, via PLL2
+  * @note   The application need to ensure that PLL and PLL2 are disabled.
+  * @note   Function is based on the following formula:
+  *         - PLL output frequency = ((((HSE frequency / PREDIV2) * PLL2MUL) / PREDIV) * PLLMUL)
+  *         - PREDIV, PLLMUL, PREDIV2, PLL2MUL: The application software must set correctly the
+  *                   PLL multiplication factor to not exceed @ref UTILS_PLL_OUTPUT_MAX
+  * @note   FLASH latency can be modified through this function.
+  * @param  HSEFrequency Value between Min_Data = RCC_HSE_MIN and Max_Data = RCC_HSE_MAX
+  * @param  HSEBypass This parameter can be one of the following values:
+  *         @arg @ref LL_UTILS_HSEBYPASS_ON
+  *         @arg @ref LL_UTILS_HSEBYPASS_OFF
+  * @param  UTILS_PLLInitStruct  pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
+  *                              the configuration information for the PLL.
+  * @param  UTILS_PLL2InitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
+  *                              the configuration information for the PLL2.
+  * @param  UTILS_ClkInitStruct  pointer to a @ref LL_UTILS_ClkInitTypeDef structure that contains
+  *                              the configuration information for the BUS prescalers.
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: Max frequency configuration done
+  *          - ERROR: Max frequency configuration not done
+  */
+ErrorStatus LL_PLL_ConfigSystemClock_PLL2(uint32_t HSEFrequency, uint32_t HSEBypass,
+                                          LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,
+                                          LL_UTILS_PLLInitTypeDef *UTILS_PLL2InitStruct,
+                                          LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct)
+{
+  ErrorStatus status = SUCCESS;
+  uint32_t pllfrequency = 0U;
+
+  /* Check the parameters */
+  assert_param(IS_LL_UTILS_HSE_FREQUENCY(HSEFrequency));
+  assert_param(IS_LL_UTILS_HSE_BYPASS(HSEBypass));
+  assert_param(IS_LL_UTILS_PREDIV_VALUE(UTILS_PLLInitStruct->Prediv));
+  assert_param(IS_LL_UTILS_PREDIV2_VALUE(UTILS_PLL2InitStruct->Prediv));
+
+  /* Calculate the new PLL output frequency */
+  pllfrequency = UTILS_GetPLLOutputFrequency(HSEFrequency, UTILS_PLLInitStruct);
+
+  /* Enable HSE if not enabled */
+  status = UTILS_PLL_HSE_ConfigSystemClock(HSEFrequency, HSEBypass, UTILS_PLLInitStruct, UTILS_ClkInitStruct);
+
+  /* Check if HSE is not enabled*/
+  if (status == SUCCESS)
+  {
+    /* Configure PLL */
+    LL_RCC_PLL_ConfigDomain_PLL2(UTILS_PLL2InitStruct->Prediv, UTILS_PLL2InitStruct->PLLMul);
+    LL_RCC_PLL_ConfigDomain_SYS((LL_RCC_PLLSOURCE_PLL2 | UTILS_PLLInitStruct->Prediv), UTILS_PLLInitStruct->PLLMul);
+
+    /* Calculate the new PLL output frequency */
+    pllfrequency  = UTILS_GetPLL2OutputFrequency(pllfrequency, UTILS_PLL2InitStruct);
+
+    /* Enable PLL and switch system clock to PLL */
+    status = UTILS_EnablePLLAndSwitchSystem(pllfrequency, UTILS_ClkInitStruct);
+  }
+
+  return status;
+}
+#endif /* RCC_PLL2_SUPPORT */
 
 /**
   * @}
@@ -393,56 +529,6 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
 /** @addtogroup UTILS_LL_Private_Functions
   * @{
   */
-/**
-  * @brief  Update number of Flash wait states in line with new frequency and current
-            voltage range.
-  * @param  Frequency  SYSCLK frequency
-  * @retval An ErrorStatus enumeration value:
-  *          - SUCCESS: Latency has been modified
-  *          - ERROR: Latency cannot be modified
-  */
-#if defined(FLASH_ACR_LATENCY)
-static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency)
-{
-  ErrorStatus status = SUCCESS;
-
-  uint32_t latency = LL_FLASH_LATENCY_0;  /* default value 0WS */
-
-  /* Frequency cannot be equal to 0 */
-  if (Frequency == 0U)
-  {
-    status = ERROR;
-  }
-  else
-  {
-    if (Frequency > UTILS_LATENCY2_FREQ)
-    {
-      /* 48 < SYSCLK <= 72 => 2WS (3 CPU cycles) */
-      latency = LL_FLASH_LATENCY_2;
-    }
-    else
-    {
-      if (Frequency > UTILS_LATENCY1_FREQ)
-      {
-        /* 24 < SYSCLK <= 48 => 1WS (2 CPU cycles) */
-        latency = LL_FLASH_LATENCY_1;
-      }
-      /* else SYSCLK < 24MHz default LL_FLASH_LATENCY_0 0WS */
-    }
-
-    LL_FLASH_SetLatency(latency);
-
-    /* Check that the new number of wait states is taken into account to access the Flash
-       memory by reading the FLASH_ACR register */
-    if (LL_FLASH_GetLatency() != latency)
-    {
-      status = ERROR;
-    }
-  }
-  return status;
-}
-#endif /* FLASH_ACR_LATENCY */
-
 /**
   * @brief  Function to check that PLL can be modified
   * @param  PLL_InputFrequency  PLL input frequency (in Hz)
@@ -467,6 +553,84 @@ static uint32_t UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency, LL_UTIL
 
   return pllfreq;
 }
+
+/**
+  * @brief  This function enable the HSE when it is used by PLL or PLL2
+  * @note   The application need to ensure that PLL is disabled.
+  * @param  HSEFrequency Value between Min_Data = RCC_HSE_MIN and Max_Data = RCC_HSE_MAX
+  * @param  HSEBypass This parameter can be one of the following values:
+  *         @arg @ref LL_UTILS_HSEBYPASS_ON
+  *         @arg @ref LL_UTILS_HSEBYPASS_OFF
+  * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
+  *                             the configuration information for the PLL.
+  * @param  UTILS_ClkInitStruct pointer to a @ref LL_UTILS_ClkInitTypeDef structure that contains
+  *                             the configuration information for the BUS prescalers.
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: HSE configuration done
+  *          - ERROR: HSE configuration not done
+  */
+static ErrorStatus UTILS_PLL_HSE_ConfigSystemClock(uint32_t PLL_InputFrequency, uint32_t HSEBypass,
+                                                   LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,
+                                                   LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct)
+{
+  ErrorStatus status = SUCCESS;
+
+  /* Check if one of the PLL is enabled */
+  if (UTILS_PLL_IsBusy() == SUCCESS)
+  {
+    /* Enable HSE if not enabled */
+    if (LL_RCC_HSE_IsReady() != 1U)
+    {
+      /* Check if need to enable HSE bypass feature or not */
+      if (HSEBypass == LL_UTILS_HSEBYPASS_ON)
+      {
+        LL_RCC_HSE_EnableBypass();
+      }
+      else
+      {
+        LL_RCC_HSE_DisableBypass();
+      }
+
+      /* Enable HSE */
+      LL_RCC_HSE_Enable();
+      while (LL_RCC_HSE_IsReady() != 1U)
+      {
+        /* Wait for HSE ready */
+      }
+    }
+  }
+  else
+  {
+    /* Current PLL configuration cannot be modified */
+    status = ERROR;
+  }
+
+  return status;
+}
+
+#if defined(RCC_PLL2_SUPPORT)
+/**
+  * @brief  Function to check that PLL2 can be modified
+  * @param  PLL2_InputFrequency  PLL2 input frequency (in Hz)
+  * @param  UTILS_PLL2InitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
+  *                              the configuration information for the PLL.
+  * @retval PLL2 output frequency (in Hz)
+  */
+static uint32_t UTILS_GetPLL2OutputFrequency(uint32_t PLL2_InputFrequency, LL_UTILS_PLLInitTypeDef *UTILS_PLL2InitStruct)
+{
+  uint32_t pll2freq = 0U;
+
+  /* Check the parameters */
+  assert_param(IS_LL_UTILS_PLL2MUL_VALUE(UTILS_PLL2InitStruct->PLLMul));
+  assert_param(IS_LL_UTILS_PREDIV2_VALUE(UTILS_PLL2InitStruct->Prediv));
+
+  /* Check different PLL2 parameters according to RM */
+  pll2freq = __LL_RCC_CALC_PLL2CLK_FREQ(PLL2_InputFrequency, UTILS_PLL2InitStruct->PLLMul, UTILS_PLL2InitStruct->Prediv);
+  assert_param(IS_LL_UTILS_PLL2_FREQUENCY(pll2freq));
+
+  return pll2freq;
+}
+#endif /* RCC_PLL2_SUPPORT */
 
 /**
   * @brief  Function to check that PLL can be modified
@@ -535,7 +699,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (sysclk_frequency_current < SYSCLK_Frequency)
   {
     /* Set FLASH latency to highest latency */
-    status = UTILS_SetFlashLatency(SYSCLK_Frequency);
+    status = LL_SetFlashLatency(SYSCLK_Frequency);
   }
 #endif /* FLASH_ACR_LATENCY */
 
@@ -578,7 +742,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (sysclk_frequency_current > SYSCLK_Frequency)
   {
     /* Set FLASH latency to lowest latency */
-    status = UTILS_SetFlashLatency(SYSCLK_Frequency);
+    status = LL_SetFlashLatency(SYSCLK_Frequency);
   }
 #endif /* FLASH_ACR_LATENCY */
 

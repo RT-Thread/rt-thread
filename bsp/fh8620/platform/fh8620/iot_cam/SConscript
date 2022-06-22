@@ -1,9 +1,0 @@
-from building import *
-
-cwd = GetCurrentDir()
-src = Glob('*.c')
-path = [cwd, cwd + '/..']
-
-group = DefineGroup('Platform', src, depend = ['CONFIG_BOARD_IOTCAM', 'CONFIG_CHIP_FH8620'], CPPPATH = path)
-
-Return('group')

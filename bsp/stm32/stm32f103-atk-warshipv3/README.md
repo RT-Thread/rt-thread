@@ -31,7 +31,7 @@ STM32F103战舰V3，资源丰富，接口多，功能强大，性价比高，资
 - 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口、USB SLAVE等
 - 调试接口，板载的 ST-LINK SWD 下载
 
-开发板更多详细信息请参考[正点原子] [战舰V3开发板介绍] http://www.openedv.com
+开发板更多详细信息请参考[正点原子战舰V3开发板介绍](http://www.openedv.com/thread-13912-1-1.html)
 
 ## 外设支持
 

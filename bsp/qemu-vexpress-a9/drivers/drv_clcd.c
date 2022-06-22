@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020/12/31     Bernard      Add license info
+ */
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
@@ -66,20 +75,22 @@ static rt_err_t drv_clcd_control(struct rt_device *device, int cmd, void *args)
 
             RT_ASSERT(info != RT_NULL);
             info->pixel_format  = RTGRAPHIC_PIXEL_FORMAT_RGB565;
-            // info->pixel_format  = RTGRAPHIC_PIXEL_FORMAT_ARGB888;
             info->bits_per_pixel= 16;
             info->width         = lcd->width;
             info->height        = lcd->height;
             info->framebuffer   = lcd->fb;
         }
         break;
+
+    default:
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops clcd_ops = 
+const static struct rt_device_ops clcd_ops =
 {
     drv_clcd_init,
     RT_NULL,
@@ -100,7 +111,7 @@ int drv_clcd_hw_init(void)
 
     _lcd.width  = CLCD_WIDTH;
     _lcd.height = CLCD_HEIGHT;
-    _lcd.fb     = rt_malloc (_lcd.width * _lcd.height * 2);
+    _lcd.fb     = rt_malloc(_lcd.width * _lcd.height * 2 /*RGB565 2 Bytes*/);
     if (_lcd.fb == NULL)
     {
         rt_kprintf("initialize frame buffer failed!\n");

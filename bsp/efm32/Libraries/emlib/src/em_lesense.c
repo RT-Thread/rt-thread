@@ -533,7 +533,7 @@ void LESENSE_ChannelConfig(LESENSE_ChDesc_TypeDef const *confCh,
   /* Channel specific configuration of clocks, sample mode, excitation pin mode
    * alternate excitation usage and interrupt mode on scan channel chIdx in
    * LESENSE_CHchIdx_INTERACT. */
-  LESENSE->CH[chIdx].INTERACT = ((uint32_t)confCh->exClk << 
+  LESENSE->CH[chIdx].INTERACT = ((uint32_t)confCh->exClk <<
                                  _LESENSE_CH_INTERACT_EXCLK_SHIFT) |
                                 ((uint32_t)confCh->sampleClk <<
                                  _LESENSE_CH_INTERACT_SAMPLECLK_SHIFT) |

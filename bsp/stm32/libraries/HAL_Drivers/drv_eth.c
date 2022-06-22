@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,15 +11,14 @@
  * 2019-09-03     xiaofan      optimize link change detection process
  */
 
-#include "board.h"
 #include "drv_config.h"
-#include <netif/ethernetif.h>
-#include "lwipopts.h"
 #include "drv_eth.h"
+#include <netif/ethernetif.h>
+#include <lwipopts.h>
 
 /*
 * Emac driver uses CubeMX tool to generate emac and phy's configuration,
-* the configuration files can be found in CubeMX_Config floder.
+* the configuration files can be found in CubeMX_Config folder.
 */
 
 /* debug option */
@@ -35,13 +34,16 @@ struct rt_stm32_eth
 {
     /* inherit from ethernet device */
     struct eth_device parent;
+#ifndef PHY_USING_INTERRUPT_MODE
+    rt_timer_t poll_link_timer;
+#endif
 
     /* interface address info, hw address */
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];
     /* ETH_Speed */
-    uint32_t    ETH_Speed;
+    rt_uint32_t    ETH_Speed;
     /* ETH_Duplex_Mode */
-    uint32_t    ETH_Mode;
+    rt_uint32_t    ETH_Mode;
 };
 
 static ETH_DMADescTypeDef *DMARxDscrTab, *DMATxDscrTab;
@@ -165,8 +167,14 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
     {
     case NIOCTL_GADDR:
         /* get mac address */
-        if (args) rt_memcpy(args, stm32_eth_device.dev_addr, 6);
-        else return -RT_ERROR;
+        if (args)
+        {
+            SMEMCPY(args, stm32_eth_device.dev_addr, 6);
+        }
+        else
+        {
+            return -RT_ERROR;
+        }
         break;
 
     default :
@@ -212,7 +220,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
         while ((byteslefttocopy + bufferoffset) > ETH_TX_BUF_SIZE)
         {
             /* Copy data to Tx buffer*/
-            memcpy((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset));
+            SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset));
 
             /* Point to next descriptor */
             DmaTxDesc = (ETH_DMADescTypeDef *)(DmaTxDesc->Buffer2NextDescAddr);
@@ -234,7 +242,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
         }
 
         /* Copy the remaining bytes */
-        memcpy((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
+        SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
         bufferoffset = bufferoffset + byteslefttocopy;
         framelength = framelength + byteslefttocopy;
     }
@@ -245,7 +253,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
 
     /* Prepare transmit descriptors to give to DMA */
     /* TODO Optimize data send speed*/
-    LOG_D("transmit frame lenth :%d", framelength);
+    LOG_D("transmit frame length :%d", framelength);
 
     /* wait for unlocked */
     while (EthHandle.Lock == HAL_LOCKED);
@@ -325,7 +333,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
             while ((byteslefttocopy + bufferoffset) > ETH_RX_BUF_SIZE)
             {
                 /* Copy data to pbuf */
-                memcpy((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
+                SMEMCPY((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
 
                 /* Point to next descriptor */
                 dmarxdesc = (ETH_DMADescTypeDef *)(dmarxdesc->Buffer2NextDescAddr);
@@ -336,7 +344,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
                 bufferoffset = 0;
             }
             /* Copy remaining data in pbuf */
-            memcpy((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), byteslefttocopy);
+            SMEMCPY((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), byteslefttocopy);
             bufferoffset = bufferoffset + byteslefttocopy;
         }
     }
@@ -383,7 +391,9 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
     rt_err_t result;
     result = eth_device_ready(&(stm32_eth_device.parent));
     if (result != RT_EOK)
+    {
         LOG_I("RxCpltCallback err = %d", result);
+    }
 }
 
 void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
@@ -408,11 +418,11 @@ static void phy_linkchange()
 
     if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
     {
-        rt_uint32_t SR;
+        rt_uint32_t SR = 0;
 
         phy_speed_new |= PHY_LINK;
 
-        SR = HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
+        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
         LOG_D("phy control status reg is 0x%X", SR);
 
         if (PHY_Status_SPEED_100M(SR))
@@ -426,7 +436,8 @@ static void phy_linkchange()
         }
     }
 
-    if (phy_speed != phy_speed_new) {
+    if (phy_speed != phy_speed_new)
+    {
         phy_speed = phy_speed_new;
         if (phy_speed & PHY_LINK)
         {
@@ -514,35 +525,26 @@ static void phy_monitor_thread_entry(void *parameter)
     rt_thread_mdelay(2000);
     HAL_ETH_WritePHYRegister(&EthHandle, PHY_BASIC_CONTROL_REG, PHY_AUTO_NEGOTIATION_MASK);
 
-    while (1)
-    {
-        phy_linkchange();
-
-        if (stm32_eth_device.parent.netif->flags & NETIF_FLAG_LINK_UP)
-        {
+    phy_linkchange();
 #ifdef PHY_USING_INTERRUPT_MODE
-            /* configuration intterrupt pin */
-            rt_pin_mode(PHY_INT_PIN, PIN_MODE_INPUT_PULLUP);
-            rt_pin_attach_irq(PHY_INT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_isr, (void *)"callbackargs");
-            rt_pin_irq_enable(PHY_INT_PIN, PIN_IRQ_ENABLE);
+    /* configuration intterrupt pin */
+    rt_pin_mode(PHY_INT_PIN, PIN_MODE_INPUT_PULLUP);
+    rt_pin_attach_irq(PHY_INT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_isr, (void *)"callbackargs");
+    rt_pin_irq_enable(PHY_INT_PIN, PIN_IRQ_ENABLE);
 
-            /* enable phy interrupt */
-            HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MASK_REG, PHY_INT_MASK);
+    /* enable phy interrupt */
+    HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MASK_REG, PHY_INT_MASK);
 #if defined(PHY_INTERRUPT_CTRL_REG)
-            HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_CTRL_REG, PHY_INTERRUPT_EN);
+    HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_CTRL_REG, PHY_INTERRUPT_EN);
 #endif
-            break;
-#endif
-        } /* link up. */
-        else
-        {
-            LOG_I("link down");
-            /* send link down. */
-            eth_device_linkchange(&stm32_eth_device.parent, RT_FALSE);
-        }
-
-        rt_thread_delay(RT_TICK_PER_SECOND);
+#else /* PHY_USING_INTERRUPT_MODE */
+    stm32_eth_device.poll_link_timer = rt_timer_create("phylnk", (void (*)(void*))phy_linkchange,
+                                        NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
+    if (!stm32_eth_device.poll_link_timer || rt_timer_start(stm32_eth_device.poll_link_timer) != RT_EOK)
+    {
+        LOG_E("Start link change detection timer failed");
     }
+#endif /* PHY_USING_INTERRUPT_MODE */
 }
 
 /* Register the EMAC device */

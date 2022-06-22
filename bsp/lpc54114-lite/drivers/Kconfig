@@ -35,4 +35,19 @@ menu "LPC54110 Bsp Config"
         select BSP_USING_SPI2
         default y
 
+    config BSP_USING_AUDIO
+        bool "Enable Audio(WM8904&SPH0641LU4H)"
+        select RT_USING_AUDIO
+        default n
+
+        if BSP_USING_AUDIO
+        config BSP_USING_AUDIO_REPLAY
+            bool "Enable WM8904(only replay)"
+            select BSP_USING_I2C4
+            default y
+
+        config BSP_USING_AUDIO_RECORD
+            bool "Enable SPH0641LU4H"
+            default y
+        endif
 endmenu

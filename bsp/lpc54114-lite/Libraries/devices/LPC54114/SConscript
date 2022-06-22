@@ -13,12 +13,12 @@ CPPDEFINES = []
 objs = objs + SConscript(os.path.join('drivers', 'SConscript'))
 objs = objs + SConscript(os.path.join('utilities', 'SConscript'))
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     objs = objs + SConscript(os.path.join('gcc', 'SConscript'))
     CPPDEFINES += ['__USE_CMSIS']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     objs = objs + SConscript(os.path.join('arm', 'SConscript'))
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     objs = objs + SConscript(os.path.join('iar', 'SConscript'))
 
 src = Split("""

@@ -8,6 +8,12 @@ config SOC_STM32F427II
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -63,13 +69,32 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            default n
+            select RT_USING_CAN
+            if BSP_USING_CAN
+                config BSP_USING_CAN1
+                    bool "using CAN1"
+                    default n
+                config BSP_USING_CAN2
+                    bool "using CAN2"
+                    default n
+        endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
             menuconfig BSP_USING_PWM12
-                bool "Enable timer12 output pwm"
+                bool "Enable timer12 output PWM"
                 default n
                 if BSP_USING_PWM12
                     config BSP_USING_PWM12_CH1
@@ -78,7 +103,7 @@ menu "On-chip Peripheral Drivers"
                 endif
 
             menuconfig BSP_USING_PWM4
-                bool "Enable timer4 output pwm"
+                bool "Enable timer4 output PWM"
                 default n
                 if BSP_USING_PWM4
                     config BSP_USING_PWM4_CH1
@@ -96,7 +121,7 @@ menu "On-chip Peripheral Drivers"
                 endif
 
             menuconfig BSP_USING_PWM5
-                bool "Enable timer5 output pwm"
+                bool "Enable timer5 output PWM"
                 default n
                 if BSP_USING_PWM5
                     config BSP_USING_PWM5_CH1

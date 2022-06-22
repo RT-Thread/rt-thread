@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,7 +29,7 @@
 #define RT_MEMHEAP_MINIALLOC    12
 
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_lwp_memheap_item), RT_ALIGN_SIZE)
-#define MEMITEM_SIZE(item)      ((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
+#define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 
 /*
  * The initialized memory pool will be:

@@ -498,6 +498,15 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
                                         RCC_PERIPHCLK_RNG     | RCC_PERIPHCLK_USB    | RCC_PERIPHCLK_ADC12  | RCC_PERIPHCLK_ADC345 | \
                                         RCC_PERIPHCLK_QSPI    | \
                                         RCC_PERIPHCLK_RTC;
+#elif defined(STM32G491xx) || defined(STM32G4A1xx)
+
+  PeriphClkInit->PeriphClockSelection = RCC_PERIPHCLK_USART1  | RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_USART3 | RCC_PERIPHCLK_UART4  | \
+                                        RCC_PERIPHCLK_UART5   | \
+                                        RCC_PERIPHCLK_LPUART1 | RCC_PERIPHCLK_I2C1   | RCC_PERIPHCLK_I2C2   | RCC_PERIPHCLK_I2C3   | \
+                                        RCC_PERIPHCLK_LPTIM1  | RCC_PERIPHCLK_SAI1   | RCC_PERIPHCLK_I2S    | RCC_PERIPHCLK_FDCAN  | \
+                                        RCC_PERIPHCLK_RNG     | RCC_PERIPHCLK_USB    | RCC_PERIPHCLK_ADC12  | RCC_PERIPHCLK_ADC345 | \
+                                        RCC_PERIPHCLK_QSPI    | \
+                                        RCC_PERIPHCLK_RTC;
 
 #elif defined(STM32G473xx) || defined(STM32G483xx)
 
@@ -1360,7 +1369,7 @@ void HAL_RCCEx_EnableLSCO(uint32_t LSCOSource)
   /* LSCO Pin Clock Enable */
   __LSCO_CLK_ENABLE();
 
-  /* Configue the LSCO pin in analog mode */
+  /* Configure the LSCO pin in analog mode */
   GPIO_InitStruct.Pin = LSCO_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -1442,7 +1451,7 @@ void HAL_RCCEx_DisableLSCO(void)
                 ##### Extended Clock Recovery System Control functions  #####
  ===============================================================================
     [..]
-      For devices with Clock Recovery System feature (CRS), RCC Extention HAL driver can be used as follows:
+      For devices with Clock Recovery System feature (CRS), RCC Extension HAL driver can be used as follows:
 
       (#) In System clock config, HSI48 needs to be enabled
 

@@ -1,0 +1,10 @@
+add_subdirectory(pico_test)
+
+add_subdirectory(pico_stdlib_test)
+add_subdirectory(pico_time_test)
+add_subdirectory(pico_divider_test)
+if (PICO_ON_DEVICE)
+    add_subdirectory(pico_float_test)
+    add_subdirectory(kitchen_sink)
+    add_subdirectory(hardware_pwm_test)
+endif()

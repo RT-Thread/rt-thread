@@ -1,0 +1,103 @@
+menu "Hardware Drivers Config"
+    menu "BCM Peripheral Drivers"
+        menuconfig BSP_USING_UART
+            bool "Using UART"
+            select RT_USING_SERIAL
+            default y
+
+            if BSP_USING_UART
+                config RT_USING_UART0
+                bool "Enabel UART 0"
+                default y
+
+                config RT_USING_UART1
+                    bool "Enabel UART 1"
+                    default n
+            endif
+         
+        config BSP_USING_PIN
+            bool "Using PIN"
+            select RT_USING_PIN
+            default y
+
+        menuconfig BSP_USING_SYSTIMER
+            bool "Enable SYSTIMER"
+            select RT_USING_HWTIMER
+            default n
+
+        if  BSP_USING_SYSTIMER
+            config RT_USING_SYSTIMER1
+                bool "Enable sys timer1"
+                default n
+            config RT_USING_SYSTIMER3
+                bool "Enable sys timer3"
+                default n
+        endif
+
+        menuconfig BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+        endif
+
+        menuconfig BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            default n
+        
+        if BSP_USING_SPI   
+            config BSP_USING_SPI0_BUS
+                bool "Enable SPI0 BUS"
+                default n
+            config BSP_USING_SPI0_DEVICE0
+                bool "Enable SPI0 DEVICE0"
+                select BSP_USING_SPI0_BUS
+                default n
+            config BSP_USING_SPI0_DEVICE1
+                bool "Enable SPI0 DEVICE1"
+                select BSP_USING_SPI0_BUS
+                default n
+        endif
+
+        config BSP_USING_WDT
+            bool "Enable WDT"
+            select RT_USING_WDT
+            default n
+
+        menuconfig BSP_USING_RTC
+            bool "Enable RTC"
+            select RT_USING_RTC
+            default n
+
+        if BSP_USING_RTC
+            config BSP_USING_ALARM
+                bool "Enable Alarm"
+                select RT_USING_ALARM
+                default n
+        endif
+        
+        menuconfig BSP_USING_SDIO
+            bool "Enable SDIO"
+            select RT_USING_SDIO
+            default n
+
+        if BSP_USING_SDIO
+            config BSP_USING_SDIO0
+                bool "Enable SDIO0"
+                select RT_USING_SDIO
+                default n
+        endif
+        menuconfig BSP_USING_HDMI
+            bool "Enable HDMI"
+            select BSP_USING_SPI
+            default n
+    endmenu
+endmenu

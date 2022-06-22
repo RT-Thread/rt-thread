@@ -47,7 +47,7 @@ static void delay_1ms(volatile uint32_t count)
 
 /*!
     \brief      sdram peripheral initialize
-    \param[in]  sdram_device: specifie the SDRAM device 
+    \param[in]  sdram_device: specifie the SDRAM device
     \param[out] none
     \retval     none
 */
@@ -71,7 +71,7 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     rcu_periph_clock_enable(RCU_GPIOH);
 
     /* common GPIO configuration */
-    /* SDNWE(PC0),SDNE0(PC2),SDCKE0(PC3) pin configuration */ 
+    /* SDNWE(PC0),SDNE0(PC2),SDCKE0(PC3) pin configuration */
     gpio_af_set(GPIOC, GPIO_AF_12, GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3);
     gpio_mode_set(GPIOC, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3);
     gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3);
@@ -107,11 +107,11 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
                                                                      GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
     /* A10(PG0),A11(PG1),A12(PG2),A14(PG4),A15(PG5),SDCLK(PG8),NCAS(PG15) pin configuration */
-    gpio_af_set(GPIOG, GPIO_AF_12, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | 
+    gpio_af_set(GPIOG, GPIO_AF_12, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 |
                                    GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
-    gpio_mode_set(GPIOG, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | 
+    gpio_mode_set(GPIOG, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 |
                                                          GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
-    gpio_output_options_set(GPIOG, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | 
+    gpio_output_options_set(GPIOG, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 |
                                                                      GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
 
     /* specify which SDRAM to read and write */
@@ -126,7 +126,7 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     /* LMRD: 2 clock cycles */
     sdram_timing_init_struct.load_mode_register_delay = 2;
     /* XSRD: min = 67ns */
-    sdram_timing_init_struct.exit_selfrefresh_delay = 7; 
+    sdram_timing_init_struct.exit_selfrefresh_delay = 7;
     /* RASD: min=42ns , max=120k (ns) */
     sdram_timing_init_struct.row_address_select_delay = 5;
     /* ARFD: min=60ns */
@@ -144,9 +144,9 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     sdram_init_struct.row_address_width = EXMC_SDRAM_ROW_ADDRESS_13;
     sdram_init_struct.data_width = EXMC_SDRAM_DATABUS_WIDTH_16B;
     sdram_init_struct.internal_bank_number = EXMC_SDRAM_4_INTER_BANK;
-    sdram_init_struct.cas_latency = EXMC_CAS_LATENCY_3_SDCLK; 
+    sdram_init_struct.cas_latency = EXMC_CAS_LATENCY_3_SDCLK;
     sdram_init_struct.write_protection = DISABLE;
-    sdram_init_struct.sdclock_config = EXMC_SDCLK_PERIODS_2_HCLK;  
+    sdram_init_struct.sdclock_config = EXMC_SDCLK_PERIODS_2_HCLK;
     sdram_init_struct.brust_read_switch = ENABLE;
     sdram_init_struct.pipeline_read_delay = EXMC_PIPELINE_DELAY_1_HCLK;
     sdram_init_struct.timing  = &sdram_timing_init_struct;
@@ -158,7 +158,7 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     sdram_command_init_struct.bank_select = bank_select;
     sdram_command_init_struct.auto_refresh_number = EXMC_SDRAM_AUTO_REFLESH_1_SDCLK;
     sdram_command_init_struct.mode_register_content = 0;
-    /* wait until the SDRAM controller is ready */ 
+    /* wait until the SDRAM controller is ready */
     while((exmc_flag_get(sdram_device, EXMC_SDRAM_FLAG_NREADY) != RESET) && (timeout > 0)){
         timeout--;
     }
@@ -174,7 +174,7 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     sdram_command_init_struct.auto_refresh_number = EXMC_SDRAM_AUTO_REFLESH_1_SDCLK;
     sdram_command_init_struct.mode_register_content = 0;
     /* wait until the SDRAM controller is ready */
-    timeout = SDRAM_TIMEOUT; 
+    timeout = SDRAM_TIMEOUT;
     while((exmc_flag_get(sdram_device, EXMC_SDRAM_FLAG_NREADY) != RESET) && (timeout > 0)){
         timeout--;
     }
@@ -186,8 +186,8 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     sdram_command_init_struct.bank_select = bank_select;
     sdram_command_init_struct.auto_refresh_number = EXMC_SDRAM_AUTO_REFLESH_8_SDCLK;
     sdram_command_init_struct.mode_register_content = 0;
-    /* wait until the SDRAM controller is ready */ 
-    timeout = SDRAM_TIMEOUT; 
+    /* wait until the SDRAM controller is ready */
+    timeout = SDRAM_TIMEOUT;
     while((exmc_flag_get(sdram_device, EXMC_SDRAM_FLAG_NREADY) != RESET) && (timeout > 0)){
         timeout--;
     }
@@ -207,8 +207,8 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     sdram_command_init_struct.auto_refresh_number = EXMC_SDRAM_AUTO_REFLESH_1_SDCLK;
     sdram_command_init_struct.mode_register_content = command_content;
 
-    /* wait until the SDRAM controller is ready */ 
-    timeout = SDRAM_TIMEOUT; 
+    /* wait until the SDRAM controller is ready */
+    timeout = SDRAM_TIMEOUT;
     while((exmc_flag_get(sdram_device, EXMC_SDRAM_FLAG_NREADY) != RESET) && (timeout > 0)){
         timeout--;
     }
@@ -221,8 +221,8 @@ void exmc_synchronous_dynamic_ram_init(uint32_t sdram_device)
     /* (7.81 us * SDCLK_Freq) - 20 */
     exmc_sdram_refresh_count_set(761);
 
-    /* wait until the SDRAM controller is ready */ 
-    timeout = SDRAM_TIMEOUT; 
+    /* wait until the SDRAM controller is ready */
+    timeout = SDRAM_TIMEOUT;
     while((exmc_flag_get(sdram_device, EXMC_SDRAM_FLAG_NREADY) != RESET) && (timeout > 0)){
         timeout--;
     }
@@ -258,20 +258,20 @@ void fill_buffer(uint8_t *pbuffer, uint16_t buffer_lengh, uint16_t offset)
 void sdram_writebuffer_8(uint32_t sdram_device,uint8_t* pbuffer, uint32_t writeaddr, uint32_t numbytetowrite)
 {
     uint32_t temp_addr;
-    
+
     /* Select the base address according to EXMC_Bank */
     if(sdram_device == EXMC_SDRAM_DEVICE0){
         temp_addr = SDRAM_DEVICE0_ADDR;
     }else{
         temp_addr = SDRAM_DEVICE1_ADDR;
     }
-    
+
      /* While there is data to write */
     for(; numbytetowrite != 0; numbytetowrite--) {
         /* Transfer data to the memory */
         *(uint8_t *) (temp_addr + writeaddr) = *pbuffer++;
 
-        /* Increment the address*/  
+        /* Increment the address*/
         writeaddr += 1;
     }
 }
@@ -288,19 +288,19 @@ void sdram_writebuffer_8(uint32_t sdram_device,uint8_t* pbuffer, uint32_t writea
 void sdram_readbuffer_8(uint32_t sdram_device,uint8_t* pbuffer, uint32_t readaddr, uint32_t numbytetoread)
 {
     uint32_t temp_addr;
-    
+
     /* select the base address according to EXMC_Bank */
     if(sdram_device == EXMC_SDRAM_DEVICE0){
         temp_addr = SDRAM_DEVICE0_ADDR;
     }else{
         temp_addr = SDRAM_DEVICE1_ADDR;
     }
-    
+
     /* while there is data to read */
     for(; numbytetoread != 0; numbytetoread--){
         /* read a byte from the memory */
         *pbuffer++ = *(uint8_t*) (temp_addr + readaddr);
-    
+
         /* increment the address */
         readaddr += 1;
     }

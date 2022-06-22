@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,29 +22,29 @@
  */
 void rt_hw_cpu_icache_enable()
 {
-	rt_base_t reg;
+    rt_base_t reg;
 
-	volatile int i;
-	/* flush cycle */
-	for(i = 0x10002000; i < 0x10004800; i+=16)
-	{
-		*((int *)i)=0x0;
-	}
+    volatile int i;
+    /* flush cycle */
+    for(i = 0x10002000; i < 0x10004800; i+=16)
+    {
+        *((int *)i)=0x0;
+    }
 
-	/*
-	 *	Init cache
-	 *	Non-cacheable area (everything outside RAM)
-	 *	0x0000:0000 - 0x0C00:0000
-	 */
-	NCACHBE0 = 0xC0000000;
-	NCACHBE1 = 0x00000000;
+    /*
+     *  Init cache
+     *  Non-cacheable area (everything outside RAM)
+     *  0x0000:0000 - 0x0C00:0000
+     */
+    NCACHBE0 = 0xC0000000;
+    NCACHBE1 = 0x00000000;
 
-	/*
-		Enable chache
-	*/
-	reg = SYSCFG;
-	reg |= 0x00000006; /* 8kB */
-	SYSCFG = reg;
+    /*
+        Enable chache
+    */
+    reg = SYSCFG;
+    reg |= 0x00000006; /* 8kB */
+    SYSCFG = reg;
 }
 
 /**
@@ -53,11 +53,11 @@ void rt_hw_cpu_icache_enable()
  */
 void rt_hw_cpu_icache_disable()
 {
-	rt_base_t reg;
+    rt_base_t reg;
 
-	reg = SYSCFG;
-	reg &= ~0x00000006; /* 8kB */
-	SYSCFG = reg;
+    reg = SYSCFG;
+    reg &= ~0x00000006; /* 8kB */
+    SYSCFG = reg;
 }
 
 /**
@@ -66,7 +66,7 @@ void rt_hw_cpu_icache_disable()
  */
 rt_base_t rt_hw_cpu_icache_status()
 {
-	return 0;
+    return 0;
 }
 
 /**
@@ -75,7 +75,7 @@ rt_base_t rt_hw_cpu_icache_status()
  */
 void rt_hw_cpu_dcache_enable()
 {
-	rt_hw_cpu_icache_enable();
+    rt_hw_cpu_icache_enable();
 }
 
 /**
@@ -84,7 +84,7 @@ void rt_hw_cpu_dcache_enable()
  */
 void rt_hw_cpu_dcache_disable()
 {
-	rt_hw_cpu_icache_disable();
+    rt_hw_cpu_icache_disable();
 }
 
 /**
@@ -93,14 +93,14 @@ void rt_hw_cpu_dcache_disable()
  */
 rt_base_t rt_hw_cpu_dcache_status()
 {
-	return rt_hw_cpu_icache_status();
+    return rt_hw_cpu_icache_status();
 }
 
 /**
  * this function will reset CPU
  *
  */
-void rt_hw_cpu_reset()
+RT_WEAK void rt_hw_cpu_reset()
 {
 }
 
@@ -108,11 +108,11 @@ void rt_hw_cpu_reset()
  * this function will shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+RT_WEAK void rt_hw_cpu_shutdown()
 {
-	rt_kprintf("shutdown...\n");
+    rt_kprintf("shutdown...\n");
 
-	while (1);
+    while (1);
 }
 
 /*@}*/

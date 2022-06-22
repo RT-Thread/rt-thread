@@ -1,11 +1,15 @@
 /*
- * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
  * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2015-01-07     Grissiom     init commit
  */
+
+#ifndef __VBUS_HW_H__
+#define __VBUS_HW_H__
 
 #include <rtthread.h>
 #include <board.h>
@@ -32,3 +36,5 @@ rt_inline void rt_vbus_smp_mb(void)
 {
     __DSB();
 }
+
+#endif /* __VBUS_HW_H__ */

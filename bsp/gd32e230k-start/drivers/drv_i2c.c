@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,6 +17,14 @@
 #ifdef RT_USING_I2C
 
 #include <rtdevice.h>
+
+#define DBG_TAG               "drv.I2C"
+#ifdef RT_I2C_DEBUG
+#define DBG_LVL               DBG_LOG
+#else
+#define DBG_LVL               DBG_INFO
+#endif
+#include <rtdbg.h>
 
 #ifdef RT_USING_I2C_BITOPS
 
@@ -147,7 +155,7 @@ static int gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_u
             *p_buffer = i2c_data_receive(i2c_periph);
 
             /* point to the next location where the byte read will be saved */
-            p_buffer++; 
+            p_buffer++;
 
             /* decrement the read bytes counter */
             data_byte--;
@@ -243,7 +251,7 @@ static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
         {
             if (gd32_i2c_read(gd32_i2c->i2c_periph, msg->addr, msg->buf, msg->len) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!");
                 goto out;
             }
         }
@@ -251,22 +259,22 @@ static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
         {
             if (gd32_i2c_write(gd32_i2c->i2c_periph, msg->addr, msg->buf, msg->len) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!");
                 goto out;
             }
         }
     }
-    
+
     ret = i;
 
 out:
-    i2c_dbg("send stop condition\n");
+    LOG_D("send stop condition");
 
     return ret;
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-{ 
+{
     gd32_i2c_xfer,
     RT_NULL,
     RT_NULL
@@ -303,7 +311,7 @@ int rt_hw_i2c_init(void)
 
         i2c_device.priv = (void *)&_i2c_bit_ops;
         rt_i2c_bit_add_bus(&i2c_device, I2C_BUS_NAME);
-    } 
+    }
 
 #else   /* register hardware I2C */
 

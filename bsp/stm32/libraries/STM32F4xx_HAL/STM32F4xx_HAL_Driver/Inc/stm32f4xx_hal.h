@@ -28,7 +28,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal_conf.h"
-#include <rtthread.h>
 
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
@@ -194,6 +193,18 @@ typedef enum
 #define IS_TICKFREQ(FREQ) (((FREQ) == HAL_TICK_FREQ_10HZ)  || \
                            ((FREQ) == HAL_TICK_FREQ_100HZ) || \
                            ((FREQ) == HAL_TICK_FREQ_1KHZ))
+/**
+  * @}
+  */
+
+/* Exported variables --------------------------------------------------------*/
+
+/** @addtogroup HAL_Exported_Variables
+  * @{
+  */
+extern __IO uint32_t uwTick;
+extern uint32_t uwTickPrio;
+extern HAL_TickFreqTypeDef uwTickFreq;
 /**
   * @}
   */

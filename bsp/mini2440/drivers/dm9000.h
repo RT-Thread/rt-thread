@@ -143,6 +143,6 @@
 
 #define GPCR_GEP_CNTL       (1<<0)
 
-void rt_hw_dm9000_init(void);
+int rt_hw_dm9000_init(void);
 
 #endif

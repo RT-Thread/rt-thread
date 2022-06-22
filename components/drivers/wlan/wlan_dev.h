@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,13 +37,16 @@ typedef enum
     RT_WLAN_CMD_SET_POWERSAVE,
     RT_WLAN_CMD_GET_POWERSAVE,
     RT_WLAN_CMD_CFG_PROMISC,       /* start/stop minitor */
-    RT_WLAN_CMD_CFG_FILTER,
+    RT_WLAN_CMD_CFG_FILTER,        /* start/stop frame filter */
+    RT_WLAN_CMD_CFG_MGNT_FILTER,   /* start/stop management frame filter */
     RT_WLAN_CMD_SET_CHANNEL,
     RT_WLAN_CMD_GET_CHANNEL,
     RT_WLAN_CMD_SET_COUNTRY,
     RT_WLAN_CMD_GET_COUNTRY,
     RT_WLAN_CMD_SET_MAC,
-    RT_WLAN_CMD_GET_MAC
+    RT_WLAN_CMD_GET_MAC,
+    RT_WLAN_CMD_GET_FAST_CONNECT_INFO,
+    RT_WLAN_CMD_FAST_CONNECT,
 } rt_wlan_cmd_t;
 
 typedef enum
@@ -360,6 +363,8 @@ typedef void (*rt_wlan_dev_event_handler)(struct rt_wlan_device *device, rt_wlan
 
 typedef void (*rt_wlan_pormisc_callback_t)(struct rt_wlan_device *device, void *data, int len);
 
+typedef void (*rt_wlan_mgnt_filter_callback_t)(struct rt_wlan_device *device, void *data, int len);
+
 struct rt_wlan_ssid
 {
     rt_uint8_t len;
@@ -445,6 +450,7 @@ struct rt_wlan_device
     struct rt_mutex lock;
     struct rt_wlan_dev_event_desc handler_table[RT_WLAN_DEV_EVT_MAX][RT_WLAN_DEV_EVENT_NUM];
     rt_wlan_pormisc_callback_t pormisc_callback;
+    rt_wlan_mgnt_filter_callback_t mgnt_filter_callback;
     const struct rt_wlan_dev_ops *ops;
     rt_uint32_t flags;
     struct netdev *netdev;
@@ -495,6 +501,7 @@ struct rt_wlan_dev_ops
     int (*wlan_get_powersave)(struct rt_wlan_device *wlan);
     rt_err_t (*wlan_cfg_promisc)(struct rt_wlan_device *wlan, rt_bool_t start);
     rt_err_t (*wlan_cfg_filter)(struct rt_wlan_device *wlan, struct rt_wlan_filter *filter);
+    rt_err_t (*wlan_cfg_mgnt_filter)(struct rt_wlan_device *wlan, rt_bool_t start);
     rt_err_t (*wlan_set_channel)(struct rt_wlan_device *wlan, int channel);
     int (*wlan_get_channel)(struct rt_wlan_device *wlan);
     rt_err_t (*wlan_set_country)(struct rt_wlan_device *wlan, rt_country_code_t country_code);
@@ -503,6 +510,9 @@ struct rt_wlan_dev_ops
     rt_err_t (*wlan_get_mac)(struct rt_wlan_device *wlan, rt_uint8_t mac[]);
     int (*wlan_recv)(struct rt_wlan_device *wlan, void *buff, int len);
     int (*wlan_send)(struct rt_wlan_device *wlan, void *buff, int len);
+    int (*wlan_send_raw_frame)(struct rt_wlan_device *wlan, void *buff, int len);
+    int (*wlan_get_fast_info)(void *data);
+    rt_err_t (*wlan_fast_connect)(void *data,rt_int32_t len);
 };
 
 /*
@@ -514,6 +524,7 @@ rt_err_t rt_wlan_dev_init(struct rt_wlan_device *device, rt_wlan_mode_t mode);
  * wlan device station interface
  */
 rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len);
+rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len);
 rt_err_t rt_wlan_dev_disconnect(struct rt_wlan_device *device);
 int rt_wlan_dev_get_rssi(struct rt_wlan_device *device);
 
@@ -583,7 +594,7 @@ rt_err_t rt_wlan_dev_report_data(struct rt_wlan_device *device, void *buff, int 
 /*
  * wlan device register interface
  */
-rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, 
+rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name,
     const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data);
 
 #ifdef __cplusplus

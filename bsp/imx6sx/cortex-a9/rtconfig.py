@@ -11,7 +11,7 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
     # EXEC_PATH 	= r'/opt/arm-2012.09/bin'
-    EXEC_PATH   = '/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
+    EXEC_PATH   = r'/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= 'C:/Keil'
@@ -83,7 +83,7 @@ elif PLATFORM == 'armcc':
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     AS = 'iasmarm'

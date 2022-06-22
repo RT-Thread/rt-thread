@@ -20,7 +20,7 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 if rtconfig.PLATFORM == 'armcc':
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
         CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS,
@@ -29,7 +29,7 @@ if rtconfig.PLATFORM == 'armcc':
 else:
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
         CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS,
@@ -37,8 +37,8 @@ else:
 
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
-if rtconfig.PLATFORM == 'iar':
-    env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
+if rtconfig.PLATFORM in ['iccarm']:
+    env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
     env.Replace(ARFLAGS = [''])
     env.Replace(LINKCOM = env["LINKCOM"] + ' --map rtthread.map')
 
@@ -58,8 +58,10 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs = objs + SConscript('../Libraries/drivers/SConscript')
-objs = objs + SConscript('../Libraries/LPC55S6X/SConscript')
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+
+# include cmsis
+objs.extend(SConscript(os.path.join(libraries_path_prefix, rtconfig.BSP_LIBRARY_TYPE, 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

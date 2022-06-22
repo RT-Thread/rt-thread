@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,12 +16,9 @@
 #include <rtdbg.h>
 
 /* ISR for touch interrupt */
-static void irq_callback(void *args)
+void rt_hw_touch_isr(rt_touch_t touch)
 {
-    rt_touch_t touch;
-
-    touch = (rt_touch_t)args;
-
+    RT_ASSERT(touch);
     if (touch->parent.rx_indicate == RT_NULL)
     {
         return;
@@ -35,9 +32,17 @@ static void irq_callback(void *args)
     touch->parent.rx_indicate(&touch->parent, 1);
 }
 
+#ifdef RT_TOUCH_PIN_IRQ
+static void touch_irq_callback(void *param)
+{
+    rt_hw_touch_isr((rt_touch_t)param);
+}
+#endif
+
 /* touch interrupt initialization function */
 static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 {
+#ifdef RT_TOUCH_PIN_IRQ
     if (touch->config.irq_pin.pin == RT_PIN_NONE)
     {
         return -RT_EINVAL;
@@ -47,18 +52,19 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 
     if (touch->config.irq_pin.mode == PIN_MODE_INPUT_PULLDOWN)
     {
-        rt_pin_attach_irq(touch->config.irq_pin.pin, PIN_IRQ_MODE_RISING, irq_callback, (void *)touch);
+        rt_pin_attach_irq(touch->config.irq_pin.pin, PIN_IRQ_MODE_RISING, touch_irq_callback, (void *)touch);
     }
     else if (touch->config.irq_pin.mode == PIN_MODE_INPUT_PULLUP)
     {
-        rt_pin_attach_irq(touch->config.irq_pin.pin, PIN_IRQ_MODE_FALLING, irq_callback, (void *)touch);
+        rt_pin_attach_irq(touch->config.irq_pin.pin, PIN_IRQ_MODE_FALLING, touch_irq_callback, (void *)touch);
     }
     else if (touch->config.irq_pin.mode == PIN_MODE_INPUT)
     {
-        rt_pin_attach_irq(touch->config.irq_pin.pin, PIN_IRQ_MODE_RISING_FALLING, irq_callback, (void *)touch);
+        rt_pin_attach_irq(touch->config.irq_pin.pin, PIN_IRQ_MODE_RISING_FALLING, touch_irq_callback, (void *)touch);
     }
 
     rt_pin_irq_enable(touch->config.irq_pin.pin, PIN_IRQ_ENABLE);
+#endif
 
     return RT_EOK;
 }
@@ -66,19 +72,27 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 /* touch interrupt enable */
 static void rt_touch_irq_enable(rt_touch_t touch)
 {
+#ifdef RT_TOUCH_PIN_IRQ
     if (touch->config.irq_pin.pin != RT_PIN_NONE)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_TRUE);
     }
+#else
+    touch->ops->touch_control(touch, RT_TOUCH_CTRL_ENABLE_INT, RT_NULL);
+#endif
 }
 
 /* touch interrupt disable */
 static void rt_touch_irq_disable(rt_touch_t touch)
 {
+#ifdef RT_TOUCH_PIN_IRQ
     if (touch->config.irq_pin.pin != RT_PIN_NONE)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_FALSE);
     }
+#else
+    touch->ops->touch_control(touch, RT_TOUCH_CTRL_DISABLE_INT, RT_NULL);
+#endif
 }
 
 static rt_err_t rt_touch_open(rt_device_t dev, rt_uint16_t oflag)
@@ -134,28 +148,6 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
-    case RT_TOUCH_CTRL_GET_ID:
-        if (args)
-        {
-            result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_GET_ID, args);
-        }
-        else
-        {
-            result = -RT_ERROR;
-        }
-
-        break;
-    case RT_TOUCH_CTRL_GET_INFO:
-        if (args)
-        {
-            result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_GET_INFO, args);
-        }
-        else
-        {
-            result = -RT_ERROR;
-        }
-
-        break;
     case RT_TOUCH_CTRL_SET_MODE:
         result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_SET_MODE, args);
 
@@ -196,8 +188,11 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
     case RT_TOUCH_CTRL_ENABLE_INT:
         rt_touch_irq_enable(touch);
         break;
+
+    case RT_TOUCH_CTRL_GET_ID:
+    case RT_TOUCH_CTRL_GET_INFO:
     default:
-        return -RT_ERROR;
+        return touch->ops->touch_control(touch, cmd, args);
     }
 
     return result;

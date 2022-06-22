@@ -175,18 +175,21 @@ HAL_StatusTypeDef HAL_ADCEx_Calibration_Start(ADC_HandleTypeDef* hadc)
     {
       if((HAL_GetTick() - tickstart) > ADC_CALIBRATION_TIMEOUT)
       {
-        /* Update ADC state machine to error */
-        ADC_STATE_CLR_SET(hadc->State,
-                          HAL_ADC_STATE_BUSY_INTERNAL,
-                          HAL_ADC_STATE_ERROR_INTERNAL);
-        
-        /* Process unlocked */
-        __HAL_UNLOCK(hadc);
-        
-        return HAL_ERROR;
+        /* New check to avoid false timeout detection in case of preemption */
+        if(HAL_IS_BIT_SET(hadc->Instance->CR2, ADC_CR2_RSTCAL))
+        {
+          /* Update ADC state machine to error */
+          ADC_STATE_CLR_SET(hadc->State,
+                            HAL_ADC_STATE_BUSY_INTERNAL,
+                            HAL_ADC_STATE_ERROR_INTERNAL);
+
+          /* Process unlocked */
+          __HAL_UNLOCK(hadc);
+
+          return HAL_ERROR;
+        }
       }
     }
-    
     
     /* 4. Start ADC calibration */
     SET_BIT(hadc->Instance->CR2, ADC_CR2_CAL);
@@ -198,15 +201,19 @@ HAL_StatusTypeDef HAL_ADCEx_Calibration_Start(ADC_HandleTypeDef* hadc)
     {
       if((HAL_GetTick() - tickstart) > ADC_CALIBRATION_TIMEOUT)
       {
-        /* Update ADC state machine to error */
-        ADC_STATE_CLR_SET(hadc->State,
-                          HAL_ADC_STATE_BUSY_INTERNAL,
-                          HAL_ADC_STATE_ERROR_INTERNAL);
-        
-        /* Process unlocked */
-        __HAL_UNLOCK(hadc);
-        
-        return HAL_ERROR;
+        /* New check to avoid false timeout detection in case of preemption */
+        if(HAL_IS_BIT_SET(hadc->Instance->CR2, ADC_CR2_CAL))
+        {
+          /* Update ADC state machine to error */
+          ADC_STATE_CLR_SET(hadc->State,
+                            HAL_ADC_STATE_BUSY_INTERNAL,
+                            HAL_ADC_STATE_ERROR_INTERNAL);
+
+          /* Process unlocked */
+          __HAL_UNLOCK(hadc);
+
+          return HAL_ERROR;
+        }
       }
     }
     
@@ -422,13 +429,17 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
       {
         if((Timeout == 0U) || ((HAL_GetTick() - tickstart ) > Timeout))
         {
-          /* Update ADC state machine to timeout */
-          SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
-          
-          /* Process unlocked */
-          __HAL_UNLOCK(hadc);
-          
-          return HAL_TIMEOUT;
+          /* New check to avoid false timeout detection in case of preemption */
+          if(HAL_IS_BIT_CLR(hadc->Instance->SR, ADC_FLAG_JEOC))
+          {
+            /* Update ADC state machine to timeout */
+            SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
+
+            /* Process unlocked */
+            __HAL_UNLOCK(hadc);
+
+            return HAL_TIMEOUT;
+          }
         }
       }
     }
@@ -450,13 +461,17 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
       {
         if((Timeout == 0)||((HAL_GetTick() - tickstart ) > Timeout))
         {
-          /* Update ADC state machine to timeout */
-          SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
+          /* New check to avoid false timeout detection in case of preemption */
+          if(Conversion_Timeout_CPU_cycles < Conversion_Timeout_CPU_cycles_max)
+          {
+            /* Update ADC state machine to timeout */
+            SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
 
-          /* Process unlocked */
-          __HAL_UNLOCK(hadc);
-          
-          return HAL_TIMEOUT;
+            /* Process unlocked */
+            __HAL_UNLOCK(hadc);
+
+            return HAL_TIMEOUT;
+          }
         }
       }
       Conversion_Timeout_CPU_cycles ++;
@@ -670,7 +685,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc)
 HAL_StatusTypeDef HAL_ADCEx_MultiModeStart_DMA(ADC_HandleTypeDef* hadc, uint32_t* pData, uint32_t Length)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  ADC_HandleTypeDef tmphadcSlave;
+  ADC_HandleTypeDef tmphadcSlave={0};
 
   /* Check the parameters */
   assert_param(IS_ADC_MULTIMODE_MASTER_INSTANCE(hadc->Instance));
@@ -796,15 +811,14 @@ HAL_StatusTypeDef HAL_ADCEx_MultiModeStart_DMA(ADC_HandleTypeDef* hadc, uint32_t
 HAL_StatusTypeDef HAL_ADCEx_MultiModeStop_DMA(ADC_HandleTypeDef* hadc)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  ADC_HandleTypeDef tmphadcSlave;
+  ADC_HandleTypeDef tmphadcSlave={0};
   
   /* Check the parameters */
   assert_param(IS_ADC_MULTIMODE_MASTER_INSTANCE(hadc->Instance));
   
   /* Process locked */
   __HAL_LOCK(hadc);
-  
- 
+
   /* Stop potential conversion on going, on regular and injected groups */
   /* Disable ADC master peripheral */
   tmp_hal_status = ADC_ConversionStop_Disable(hadc);
@@ -1257,7 +1271,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
 HAL_StatusTypeDef HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef* hadc, ADC_MultiModeTypeDef* multimode)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  ADC_HandleTypeDef tmphadcSlave;
+  ADC_HandleTypeDef tmphadcSlave={0};
   
   /* Check the parameters */
   assert_param(IS_ADC_MULTIMODE_MASTER_INSTANCE(hadc->Instance));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,7 +47,10 @@ struct rt_mtd_nand_device
 
     /* operations interface */
     const struct rt_mtd_nand_driver_ops *ops;
+
+    void *priv;
 };
+typedef struct rt_mtd_nand_device* rt_mtd_nand_t;
 
 struct rt_mtd_nand_driver_ops
 {

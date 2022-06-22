@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -245,16 +245,16 @@ switch_to_guest:
     ldr     r0, [r1]
     mcr     p15, 0, r0, c3, c0
 #endif
-	/* check whether there is a pending interrupt for Guest OS */
-	bl      vmm_virq_check
+    /* check whether there is a pending interrupt for Guest OS */
+    bl      vmm_virq_check
 
 #ifdef RT_VMM_USING_DOMAIN
     @ All done, restore the guest domain.
     mcr     p15, 0, r5, c3, c0
 #endif
 
-	cmp     r0, #0x0
-	beq     route_irq_to_guest
+    cmp     r0, #0x0
+    beq     route_irq_to_guest
 
     ldmfd   sp!, {r0-r12,lr}
     subs    pc, lr, #4
@@ -318,35 +318,35 @@ rt_hw_context_switch_interrupt_do:
 .endm
 
     .align  5
-    .globl	vector_swi
+    .globl  vector_swi
 vector_swi:
     push_svc_reg
     bl      rt_hw_trap_swi
     b       .
 
     .align  5
-    .globl	vector_undef
+    .globl  vector_undef
 vector_undef:
     push_svc_reg
     bl      rt_hw_trap_undef
     b       .
 
     .align  5
-    .globl	vector_pabt
+    .globl  vector_pabt
 vector_pabt:
     push_svc_reg
     bl      rt_hw_trap_pabt
     b       .
 
     .align  5
-    .globl	vector_dabt
+    .globl  vector_dabt
 vector_dabt:
     push_svc_reg
     bl      rt_hw_trap_dabt
     b       .
 
     .align  5
-    .globl	vector_resv
+    .globl  vector_resv
 vector_resv:
     push_svc_reg
     bl      rt_hw_trap_resv

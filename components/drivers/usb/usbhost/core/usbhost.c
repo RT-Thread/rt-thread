@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2011-12-12     Yi Qiu      first version
+ * 2021-02-23     Leslie Lee  provide possibility for multi usb host
  */
 #include <rtthread.h>
 #include <drivers/usb_host.h>
@@ -19,18 +20,18 @@
 /**
  * This function will initialize the usb host stack, all the usb class driver and
  * host controller driver are also be initialized here.
- * 
+ *
  * @return none.
  */
-rt_err_t rt_usb_host_init(void)
+rt_err_t rt_usb_host_init(const char *name)
 {
     ucd_t drv;
-    rt_device_t uhc;    
+    rt_device_t uhc;
 
-    uhc = rt_device_find(USB_HOST_CONTROLLER_NAME);
+    uhc = rt_device_find(name);
     if(uhc == RT_NULL)
     {
-        rt_kprintf("can't find usb host controller %s\n", USB_HOST_CONTROLLER_NAME);
+        rt_kprintf("can't find usb host controller %s\n", name);
         return -RT_ERROR;
     }
 
@@ -45,6 +46,16 @@ rt_err_t rt_usb_host_init(void)
     drv = rt_usbh_class_driver_storage();
     rt_usbh_class_driver_register(drv);
 #endif
+#ifdef RT_USBH_HID
+    /* register mass storage class driver */
+    drv = rt_usbh_class_driver_hid();
+    rt_usbh_class_driver_register(drv);
+#ifdef RT_USBH_HID_MOUSE
+    uprotocal_t protocal;
+    protocal = rt_usbh_hid_protocal_mouse();
+    rt_usbh_hid_protocal_register(protocal);
+#endif
+#endif
 
     /* register hub class driver */
     drv = rt_usbh_class_driver_hub();
@@ -55,4 +66,3 @@ rt_err_t rt_usb_host_init(void)
 
     return RT_EOK;
 }
-

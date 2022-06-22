@@ -1,0 +1,7 @@
+menu "RISC-V QEMU virt64 configs"
+
+config RISCV_S_MODE
+    bool "RT-Thread run in RISC-V S-Mode(supervisor mode)"
+    default y
+
+endmenu

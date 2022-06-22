@@ -4,6 +4,6 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = [cwd, str(Dir('#'))]
 
-group = DefineGroup('touch', src, depend = ['BSP_USING_TOUCH'], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = ['BSP_USING_TOUCH'], CPPPATH = CPPPATH)
 
 Return('group')

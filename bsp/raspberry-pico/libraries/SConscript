@@ -1,0 +1,125 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+pico-sdk/src/rp2_common/pico_stdlib/stdlib.c
+pico-sdk/src/rp2_common/hardware_gpio/gpio.c
+pico-sdk/src/rp2_common/hardware_claim/claim.c
+pico-sdk/src/rp2_common/hardware_sync/sync.c
+pico-sdk/src/rp2_common/pico_platform/platform.c
+pico-sdk/src/rp2_common/hardware_uart/uart.c
+pico-sdk/src/rp2_common/hardware_spi/spi.c
+pico-sdk/src/rp2_common/hardware_dma/dma.c
+pico-sdk/src/rp2_common/hardware_i2c/i2c.c
+pico-sdk/src/common/pico_time/time.c
+pico-sdk/src/common/pico_time/timeout_helper.c
+pico-sdk/src/rp2_common/hardware_timer/timer.c
+pico-sdk/src/common/pico_sync/sem.c
+pico-sdk/src/common/pico_sync/lock_core.c
+pico-sdk/src/common/pico_sync/mutex.c
+pico-sdk/src/common/pico_sync/critical_section.c
+pico-sdk/src/common/pico_util/datetime.c
+pico-sdk/src/common/pico_util/pheap.c
+pico-sdk/src/common/pico_util/queue.c
+pico-sdk/src/rp2_common/pico_runtime/runtime.c
+pico-sdk/src/rp2_common/hardware_clocks/clocks.c
+pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c
+pico-sdk/src/rp2_common/hardware_xosc/xosc.c
+pico-sdk/src/rp2_common/hardware_pll/pll.c
+pico-sdk/src/rp2_common/hardware_vreg/vreg.c
+pico-sdk/src/rp2_common/hardware_irq/irq.c
+pico-sdk/src/rp2_common/pico_printf/printf.c
+pico-sdk/src/rp2_common/pico_bootrom/bootrom.c
+pico-sdk/src/rp2_common/pico_double/double_init_rom.c
+pico-sdk/src/rp2_common/pico_double/double_math.c
+pico-sdk/src/rp2_common/pico_float/float_aeabi.S
+pico-sdk/src/rp2_common/pico_float/float_init_rom.c
+pico-sdk/src/rp2_common/pico_float/float_math.c
+pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c
+pico-sdk/src/rp2_common/pico_standard_link/binary_info.c
+pico-sdk/src/rp2_common/pico_stdio/stdio.c
+pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c
+pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp
+pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S
+pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S
+pico-sdk/src/rp2_common/pico_divider/divider.S
+pico-sdk/src/rp2_common/pico_double/double_aeabi.S
+pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S
+pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S
+pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S
+pico-sdk/src/rp2_common/hardware_divider/divider.S
+pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S
+pico-sdk/src/rp2_common/pico_standard_link/crt0.S
+generated/bs2_default_padded_checksummed.S
+""")
+
+path = [
+    cwd + '/pico-sdk/src/common/pico_stdlib/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_gpio/include',
+    cwd + '/pico-sdk/src/common/pico_base/include',
+    cwd + '/pico-sdk/src/boards/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_platform/include',
+    cwd + '/pico-sdk/src/rp2040/hardware_regs/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_base/include',
+    cwd + '/pico-sdk/src/rp2040/hardware_structs/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_claim/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_sync/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_uart/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_dma/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_spi/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_i2c/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_pwm/include',    
+    cwd + '/pico-sdk/src/rp2_common/hardware_divider/include',
+    cwd + '/pico-sdk/src/common/pico_time/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_timer/include',
+    cwd + '/pico-sdk/src/common/pico_sync/include',
+    cwd + '/pico-sdk/src/common/pico_util/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_runtime/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_clocks/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_resets/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_watchdog/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_xosc/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_pll/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_vreg/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_irq/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_printf/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_bootrom/include',
+    cwd + '/pico-sdk/src/common/pico_bit_ops/include',
+    cwd + '/pico-sdk/src/common/pico_divider/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_double/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_int64_ops/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_float/include',
+    cwd + '/pico-sdk/src/common/pico_binary_info/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_stdio/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_stdio_uart/include',
+    cwd + '/generated/pico_base'
+    ]
+
+CPPDEFINES = [
+    'PICO_NO_BINARY_INFO',
+    'PICO_NO_PROGRAM_INFO',
+    'PICO_BIT_OPS_PICO=1',
+    'PICO_BUILD=1',
+    # 'PICO_CMAKE_BUILD_TYPE=\\"Release\\"',
+    'PICO_COPY_TO_RAM=0',
+    'PICO_CXX_ENABLE_EXCEPTIONS=0',
+    'PICO_DIVIDER_HARDWARE=1',
+    'PICO_DOUBLE_PICO=1',
+    'PICO_FLOAT_PICO=1',
+    'PICO_INT64_OPS_PICO=1',
+    'PICO_MEM_OPS_PICO=1',
+    'PICO_NO_FLASH=0',
+    'PICO_NO_HARDWARE=0',
+    'PICO_ON_DEVICE=1',
+    'PICO_PRINTF_PICO=1',
+    'PICO_STDIO_UART=1',
+    'PICO_USE_BLOCKED_RAM=0'
+]
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

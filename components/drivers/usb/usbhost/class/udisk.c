@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -186,7 +186,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
 {
     int i = 0;
     rt_err_t ret;
-    char dname[4];
+    char dname[8];
     char sname[8];
     rt_uint8_t max_lun, *sector, sense[18], inquiry[36];
     struct dfs_partition part[MAX_PARTITION_COUNT];

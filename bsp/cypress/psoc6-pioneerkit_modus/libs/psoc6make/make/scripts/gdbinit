@@ -1,0 +1,32 @@
+# CM4 port
+target remote:3333
+
+# Open all memory
+set mem inaccessible-by-default off
+
+# Enable semihosting
+monitor arm semihosting enable
+
+# Load the executable
+# load <LOCATION OF ELF FILE>
+
+# Reset device
+monitor reset run
+
+# Halt device
+monitor halt
+
+# Reset device via dedicated reset method
+monitor psoc6 reset_halt sysresetreq
+flushregs
+mon gdb_sync
+stepi
+
+# Set temporary breakpoint at main
+tbreak main
+
+# Print registers
+monitor reg
+
+# Continue program execution
+continue

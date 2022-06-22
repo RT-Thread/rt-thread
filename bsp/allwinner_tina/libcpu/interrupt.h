@@ -1,25 +1,12 @@
 /*
- * File      : interrupt.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-02-08     RT-Thread    the first version
+ * 2020-03-2      Howard Su    Define same regsiters as an array
  */
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
@@ -74,34 +61,21 @@ struct tina_intc
     volatile rt_uint32_t base_addr_reg;    /* 0x04 */
     volatile rt_uint32_t reserved0;
     volatile rt_uint32_t nmi_ctrl_reg;     /* 0x0C */
-    volatile rt_uint32_t pend_reg0;        /* 0x10 */
-    volatile rt_uint32_t pend_reg1;        /* 0x14 */
+    volatile rt_uint32_t pend_reg[2];        /* 0x10, 0x14 */
     volatile rt_uint32_t reserved1[2];
-    volatile rt_uint32_t en_reg0;          /* 0x20 */
-    volatile rt_uint32_t en_reg1;          /* 0x24 */
+    volatile rt_uint32_t en_reg[2];          /* 0x20, 0x24 */
     volatile rt_uint32_t reserved2[2];
-    volatile rt_uint32_t mask_reg0;        /* 0x30 */
-    volatile rt_uint32_t mask_reg1;        /* 0x34 */
+    volatile rt_uint32_t mask_reg[2];        /* 0x30, 0x34 */
     volatile rt_uint32_t reserved3[2];
-    volatile rt_uint32_t resp_reg0;        /* 0x40 */
-    volatile rt_uint32_t resp_reg1;        /* 0x44 */
+    volatile rt_uint32_t resp_reg[2];        /* 0x40, 0x44 */
     volatile rt_uint32_t reserved4[2];
-    volatile rt_uint32_t ff_reg0;          /* 0x50 */
-    volatile rt_uint32_t ff_reg1;          /* 0x54 */
+    volatile rt_uint32_t ff_reg[2];          /* 0x50, 0x54 */
     volatile rt_uint32_t reserved5[2];
-    volatile rt_uint32_t prio_reg0;        /* 0x60 */
-    volatile rt_uint32_t prio_reg1;        /* 0x64 */
-    volatile rt_uint32_t prio_reg2;        /* 0x68 */
-    volatile rt_uint32_t prio_reg3;        /* 0x6C */
+    volatile rt_uint32_t prio_reg[4];        /* 0x60 - 0x6c */
 } ;
 
 typedef struct tina_intc *tina_intc_t;
 
 #define INTC ((tina_intc_t)INTC_BASE_ADDR)
-
-void rt_hw_interrupt_init(void);
-void rt_hw_interrupt_mask(int vector);
-void rt_hw_interrupt_umask(int vector);
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, const char *name);
 
 #endif /* __INTERRUPT_H__ */

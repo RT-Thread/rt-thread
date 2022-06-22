@@ -38,7 +38,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = ' -mcmodel=medany -march=rv64imafdc -mabi=lp64d'
+    DEVICE  = ' -mcmodel=medany -march=rv64imafc -mabi=lp64f -fsingle-precision-constant'
     CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
@@ -51,7 +51,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2 -Os'
 
-    CXXFLAGS = CFLAGS
+    CXXFLAGS = CFLAGS + ' -std=gnu++17 -Wno-multichar'
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

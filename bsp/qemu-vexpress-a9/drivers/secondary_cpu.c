@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,10 +26,16 @@ static void rt_hw_timer2_isr(int vector, void *param)
     timer_clear_pending(0);
 }
 
+void set_secondary_cpu_boot_address(void)
+{
+    extern void secondary_cpu_start(void);
+    uint32_t *boot_address = (uint32_t *)0x10000030;
+    *(boot_address + 1) = ~0ul;
+    *boot_address = (uint32_t )&secondary_cpu_start;
+}
+
 void rt_hw_secondary_cpu_up(void)
 {
-    extern void set_secondary_cpu_boot_address(void);
-
     set_secondary_cpu_boot_address();
     __asm__ volatile ("dsb":::"memory");
     rt_hw_ipi_send(0, 1 << 1);
@@ -44,7 +50,7 @@ void secondary_cpu_c_start(void)
     arm_gic_cpu_init(0, REALVIEW_GIC_CPU_BASE);
     arm_gic_set_cpu(0, IRQ_PBA8_TIMER0_1, 0x2);
 
-    timer_init(0, 1000);
+    timer_init(0, 10000);
     rt_hw_interrupt_install(IRQ_PBA8_TIMER0_1, rt_hw_timer2_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_PBA8_TIMER0_1);
 

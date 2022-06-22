@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-08-14     Jackistang   add comments for function interface.
  */
 #ifndef RINGBUFFER_H__
 #define RINGBUFFER_H__
@@ -71,6 +72,7 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb, const rt_uint8_t *pt
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch);
 rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb, const rt_uint8_t ch);
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb, rt_uint8_t *ptr, rt_uint16_t length);
+rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch);
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb);
 
@@ -79,6 +81,13 @@ struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t length);
 void rt_ringbuffer_destroy(struct rt_ringbuffer *rb);
 #endif
 
+/**
+ * @brief Get the buffer size of the ring buffer object.
+ *
+ * @param rb        A pointer to the ring buffer object.
+ *
+ * @return  Buffer size.
+ */
 rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 {
     RT_ASSERT(rb != RT_NULL);

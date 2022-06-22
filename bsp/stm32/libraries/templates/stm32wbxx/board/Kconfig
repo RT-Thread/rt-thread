@@ -1,0 +1,168 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32WB55RG
+    bool
+    select SOC_SERIES_STM32WB
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+            
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default n
+
+            config BSP_LPUART1_RX_USING_DMA
+                bool "Enable LPUART1 RX DMA"
+                depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
+                default n
+
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+                
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+        endif
+
+        
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default y
+                if BSP_USING_I2C1
+                    comment "Notice: PB8 --> 24; PB9 --> 25" 
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 scl pin number"
+                        range 1 143
+                        default 24
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 1 143
+                        default 25
+                endif
+
+            menuconfig BSP_USING_I2C3
+                bool "Enable I2C3 BUS (software simulation)"
+                default y
+                if BSP_USING_I2C3
+                    comment "Notice: PB13 --> 29; PAB6 -->30" 
+                    config BSP_I2C3_SCL_PIN
+                        int "i2c3 scl pin number"
+                        range 1 143
+                        default 29
+                    config BSP_I2C3_SDA_PIN
+                        int "I2C3 sda pin number"
+                        range 1 143
+                        default 30
+                endif
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+
+            config BSP_USING_TIM16
+                bool "Enable TIM16"
+                default n
+
+            config BSP_USING_TIM17
+                bool "Enable TIM17"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    source "../libraries/HAL_Drivers/Kconfig"
+      
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

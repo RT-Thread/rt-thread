@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  */
-/* @(#)clnt.h	2.1 88/07/29 4.0 RPCSRC; from 1.31 88/02/08 SMI*/
+/* @(#)clnt.h   2.1 88/07/29 4.0 RPCSRC; from 1.31 88/02/08 SMI*/
 /*
  * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
  * unrestricted use provided that this legend is included on all tape
@@ -43,7 +43,7 @@
  */
 
 #ifndef _RPC_CLNT_H
-#define _RPC_CLNT_H	1
+#define _RPC_CLNT_H 1
 
 #include <rpc/types.h>
 #include <rpc/auth.h>
@@ -55,47 +55,47 @@
  * independent) list of errors.
  */
 enum clnt_stat {
-	RPC_SUCCESS=0,			/* call succeeded */
-	/*
-	 * local errors
-	 */
-	RPC_CANTENCODEARGS=1,		/* can't encode arguments */
-	RPC_CANTDECODERES=2,		/* can't decode results */
-	RPC_CANTSEND=3,			/* failure in sending call */
-	RPC_CANTRECV=4,			/* failure in receiving result */
-	RPC_TIMEDOUT=5,			/* call timed out */
-	/*
-	 * remote errors
-	 */
-	RPC_VERSMISMATCH=6,		/* rpc versions not compatible */
-	RPC_AUTHERROR=7,		/* authentication error */
-	RPC_PROGUNAVAIL=8,		/* program not available */
-	RPC_PROGVERSMISMATCH=9,		/* program version mismatched */
-	RPC_PROCUNAVAIL=10,		/* procedure unavailable */
-	RPC_CANTDECODEARGS=11,		/* decode arguments error */
-	RPC_SYSTEMERROR=12,		/* generic "other problem" */
-	RPC_NOBROADCAST = 21,		/* Broadcasting not supported */
-	/*
-	 * callrpc & clnt_create errors
-	 */
-	RPC_UNKNOWNHOST=13,		/* unknown host name */
-	RPC_UNKNOWNPROTO=17,		/* unknown protocol */
-	RPC_UNKNOWNADDR = 19,		/* Remote address unknown */
+    RPC_SUCCESS=0,          /* call succeeded */
+    /*
+     * local errors
+     */
+    RPC_CANTENCODEARGS=1,       /* can't encode arguments */
+    RPC_CANTDECODERES=2,        /* can't decode results */
+    RPC_CANTSEND=3,         /* failure in sending call */
+    RPC_CANTRECV=4,         /* failure in receiving result */
+    RPC_TIMEDOUT=5,         /* call timed out */
+    /*
+     * remote errors
+     */
+    RPC_VERSMISMATCH=6,     /* rpc versions not compatible */
+    RPC_AUTHERROR=7,        /* authentication error */
+    RPC_PROGUNAVAIL=8,      /* program not available */
+    RPC_PROGVERSMISMATCH=9,     /* program version mismatched */
+    RPC_PROCUNAVAIL=10,     /* procedure unavailable */
+    RPC_CANTDECODEARGS=11,      /* decode arguments error */
+    RPC_SYSTEMERROR=12,     /* generic "other problem" */
+    RPC_NOBROADCAST = 21,       /* Broadcasting not supported */
+    /*
+     * callrpc & clnt_create errors
+     */
+    RPC_UNKNOWNHOST=13,     /* unknown host name */
+    RPC_UNKNOWNPROTO=17,        /* unknown protocol */
+    RPC_UNKNOWNADDR = 19,       /* Remote address unknown */
 
-	/*
-	 * rpcbind errors
-	 */
-	RPC_RPCBFAILURE=14,		/* portmapper failed in its call */
+    /*
+     * rpcbind errors
+     */
+    RPC_RPCBFAILURE=14,     /* portmapper failed in its call */
 #define RPC_PMAPFAILURE RPC_RPCBFAILURE
-	RPC_PROGNOTREGISTERED=15,	/* remote program is not registered */
-	RPC_N2AXLATEFAILURE = 22,	/* Name to addr translation failed */
-	/*
-	 * unspecified error
-	 */
-	RPC_FAILED=16,
-	RPC_INTR=18,
-	RPC_TLIERROR=20,
-	RPC_UDERROR=23,
+    RPC_PROGNOTREGISTERED=15,   /* remote program is not registered */
+    RPC_N2AXLATEFAILURE = 22,   /* Name to addr translation failed */
+    /*
+     * unspecified error
+     */
+    RPC_FAILED=16,
+    RPC_INTR=18,
+    RPC_TLIERROR=20,
+    RPC_UDERROR=23,
         /*
          * asynchronous errors
          */
@@ -110,21 +110,21 @@ enum clnt_stat {
 struct rpc_err {
   int re_status;
   union {
-    int RE_errno;		/* related system error */
-    int RE_why;	/* why the auth error occurred */
+    int RE_errno;       /* related system error */
+    int RE_why; /* why the auth error occurred */
     struct {
-      unsigned long low;		/* lowest verion supported */
-      unsigned long high;		/* highest verion supported */
+      unsigned long low;        /* lowest verion supported */
+      unsigned long high;       /* highest verion supported */
     } RE_vers;
-    struct {			/* maybe meaningful if RPC_FAILED */
+    struct {            /* maybe meaningful if RPC_FAILED */
       long s1;
       long s2;
-    } RE_lb;			/* life boot & debugging only */
+    } RE_lb;            /* life boot & debugging only */
   } ru;
-#define	re_errno	ru.RE_errno
-#define	re_why		ru.RE_why
-#define	re_vers		ru.RE_vers
-#define	re_lb		ru.RE_lb
+#define re_errno    ru.RE_errno
+#define re_why      ru.RE_why
+#define re_vers     ru.RE_vers
+#define re_lb       ru.RE_lb
 };
 
 
@@ -135,21 +135,21 @@ struct rpc_err {
  */
 typedef struct CLIENT CLIENT;
 struct CLIENT {
-  AUTH	*cl_auth;		 /* authenticator */
+  AUTH  *cl_auth;        /* authenticator */
   struct clnt_ops {
     enum clnt_stat (*cl_call) (CLIENT *, unsigned long, xdrproc_t, char*, xdrproc_t,
-			       char*, struct timeval);
-			       	/* call remote procedure */
-    void (*cl_abort) (void);	/* abort a call */
+                   char*, struct timeval);
+                    /* call remote procedure */
+    void (*cl_abort) (void);    /* abort a call */
     void (*cl_geterr) (CLIENT *, struct rpc_err *);
-				/* get specific error code */
+                /* get specific error code */
     bool_t (*cl_freeres) (CLIENT *, xdrproc_t, char*);
-				/* frees results */
+                /* frees results */
     void (*cl_destroy) (CLIENT *); /* destroy this structure */
     bool_t (*cl_control) (CLIENT *, int, char *);
-				/* the ioctl() of rpc */
+                /* the ioctl() of rpc */
   } *cl_ops;
-  char* cl_private;		/* private stuff */
+  char* cl_private;     /* private stuff */
 };
 
 
@@ -163,45 +163,45 @@ struct CLIENT {
 /*
  * enum clnt_stat
  * CLNT_CALL(rh, proc, xargs, argsp, xres, resp, timeout)
- * 	CLIENT *rh;
- *	unsigned long proc;
- *	xdrproc_t xargs;
- *	char* argsp;
- *	xdrproc_t xres;
- *	char* resp;
- *	struct timeval timeout;
+ *  CLIENT *rh;
+ *  unsigned long proc;
+ *  xdrproc_t xargs;
+ *  char* argsp;
+ *  xdrproc_t xres;
+ *  char* resp;
+ *  struct timeval timeout;
  */
-#define	CLNT_CALL(rh, proc, xargs, argsp, xres, resp, secs)	\
-	((*(rh)->cl_ops->cl_call)(rh, proc, xargs, argsp, xres, resp, secs))
-#define	clnt_call(rh, proc, xargs, argsp, xres, resp, secs)	\
-	((*(rh)->cl_ops->cl_call)(rh, proc, xargs, argsp, xres, resp, secs))
+#define CLNT_CALL(rh, proc, xargs, argsp, xres, resp, secs) \
+    ((*(rh)->cl_ops->cl_call)(rh, proc, xargs, argsp, xres, resp, secs))
+#define clnt_call(rh, proc, xargs, argsp, xres, resp, secs) \
+    ((*(rh)->cl_ops->cl_call)(rh, proc, xargs, argsp, xres, resp, secs))
 
 /*
  * void
  * CLNT_ABORT(rh);
- * 	CLIENT *rh;
+ *  CLIENT *rh;
  */
-#define	CLNT_ABORT(rh)	((*(rh)->cl_ops->cl_abort)(rh))
-#define	clnt_abort(rh)	((*(rh)->cl_ops->cl_abort)(rh))
+#define CLNT_ABORT(rh)  ((*(rh)->cl_ops->cl_abort)(rh))
+#define clnt_abort(rh)  ((*(rh)->cl_ops->cl_abort)(rh))
 
 /*
  * struct rpc_err
  * CLNT_GETERR(rh);
- * 	CLIENT *rh;
+ *  CLIENT *rh;
  */
-#define	CLNT_GETERR(rh,errp)	((*(rh)->cl_ops->cl_geterr)(rh, errp))
-#define	clnt_geterr(rh,errp)	((*(rh)->cl_ops->cl_geterr)(rh, errp))
+#define CLNT_GETERR(rh,errp)    ((*(rh)->cl_ops->cl_geterr)(rh, errp))
+#define clnt_geterr(rh,errp)    ((*(rh)->cl_ops->cl_geterr)(rh, errp))
 
 
 /*
  * bool_t
  * CLNT_FREERES(rh, xres, resp);
- * 	CLIENT *rh;
- *	xdrproc_t xres;
- *	char* resp;
+ *  CLIENT *rh;
+ *  xdrproc_t xres;
+ *  char* resp;
  */
-#define	CLNT_FREERES(rh,xres,resp) ((*(rh)->cl_ops->cl_freeres)(rh,xres,resp))
-#define	clnt_freeres(rh,xres,resp) ((*(rh)->cl_ops->cl_freeres)(rh,xres,resp))
+#define CLNT_FREERES(rh,xres,resp) ((*(rh)->cl_ops->cl_freeres)(rh,xres,resp))
+#define clnt_freeres(rh,xres,resp) ((*(rh)->cl_ops->cl_freeres)(rh,xres,resp))
 
 /*
  * bool_t
@@ -210,8 +210,8 @@ struct CLIENT {
  *      unsigned int request;
  *      char *info;
  */
-#define	CLNT_CONTROL(cl,rq,in) ((*(cl)->cl_ops->cl_control)(cl,rq,in))
-#define	clnt_control(cl,rq,in) ((*(cl)->cl_ops->cl_control)(cl,rq,in))
+#define CLNT_CONTROL(cl,rq,in) ((*(cl)->cl_ops->cl_control)(cl,rq,in))
+#define clnt_control(cl,rq,in) ((*(cl)->cl_ops->cl_control)(cl,rq,in))
 
 /*
  * control operations that apply to all transports
@@ -239,16 +239,16 @@ struct CLIENT {
 /*
  * Connectionless only control operations
  */
-#define CLSET_RETRY_TIMEOUT	4	/* set retry timeout (timeval) */
-#define CLGET_RETRY_TIMEOUT	5	/* get retry timeout (timeval) */
+#define CLSET_RETRY_TIMEOUT 4   /* set retry timeout (timeval) */
+#define CLGET_RETRY_TIMEOUT 5   /* get retry timeout (timeval) */
 
 /*
  * void
  * CLNT_DESTROY(rh);
- * 	CLIENT *rh;
+ *  CLIENT *rh;
  */
-#define	CLNT_DESTROY(rh)	((*(rh)->cl_ops->cl_destroy)(rh))
-#define	clnt_destroy(rh)	((*(rh)->cl_ops->cl_destroy)(rh))
+#define CLNT_DESTROY(rh)    ((*(rh)->cl_ops->cl_destroy)(rh))
+#define clnt_destroy(rh)    ((*(rh)->cl_ops->cl_destroy)(rh))
 
 
 /*
@@ -257,10 +257,10 @@ struct CLIENT {
  * and network administration.
  */
 
-#define RPCTEST_PROGRAM		((unsigned long)1)
-#define RPCTEST_VERSION		((unsigned long)1)
-#define RPCTEST_NULL_PROC	((unsigned long)2)
-#define RPCTEST_NULL_BATCH_PROC	((unsigned long)3)
+#define RPCTEST_PROGRAM     ((unsigned long)1)
+#define RPCTEST_VERSION     ((unsigned long)1)
+#define RPCTEST_NULL_PROC   ((unsigned long)2)
+#define RPCTEST_NULL_BATCH_PROC ((unsigned long)3)
 
 /*
  * By convention, procedure 0 takes null arguments and returns them
@@ -279,51 +279,51 @@ struct CLIENT {
  * "unix"
  * CLIENT *
  * clnt_create(host, prog, vers, prot)
- *	char *host; 	-- hostname
- *	unsigned long prog;	-- program number
- *	u_ong vers;	-- version number
- *	char *prot;	-- protocol
+ *  char *host;     -- hostname
+ *  unsigned long prog; -- program number
+ *  u_ong vers; -- version number
+ *  char *prot; -- protocol
  */
 extern CLIENT *clnt_create (const char *__host, const unsigned long __prog,
-			    const unsigned long __vers, const char *__prot)
+                const unsigned long __vers, const char *__prot)
     ;
 
 /*
  * UDP based rpc.
  * CLIENT *
  * clntudp_create(raddr, program, version, wait, sockp)
- *	struct sockaddr_in *raddr;
- *	unsigned long program;
- *	unsigned long version;
- *	struct timeval wait_resend;
- *	int *sockp;
+ *  struct sockaddr_in *raddr;
+ *  unsigned long program;
+ *  unsigned long version;
+ *  struct timeval wait_resend;
+ *  int *sockp;
  *
  * Same as above, but you specify max packet sizes.
  * CLIENT *
  * clntudp_bufcreate(raddr, program, version, wait, sockp, sendsz, recvsz)
- *	struct sockaddr_in *raddr;
- *	unsigned long program;
- *	unsigned long version;
- *	struct timeval wait_resend;
- *	int *sockp;
- *	unsigned int sendsz;
- *	unsigned int recvsz;
+ *  struct sockaddr_in *raddr;
+ *  unsigned long program;
+ *  unsigned long version;
+ *  struct timeval wait_resend;
+ *  int *sockp;
+ *  unsigned int sendsz;
+ *  unsigned int recvsz;
  */
 extern CLIENT *clntudp_create (struct sockaddr_in *__raddr, unsigned long __program,
-			       unsigned long __version, struct timeval __wait_resend,
-			       int *__sockp);
+                   unsigned long __version, struct timeval __wait_resend,
+                   int *__sockp);
 extern CLIENT *clntudp_bufcreate (struct sockaddr_in *__raddr,
-				  unsigned long __program, unsigned long __version,
-				  struct timeval __wait_resend, int *__sockp,
-				  unsigned int __sendsz, unsigned int __recvsz);
+                  unsigned long __program, unsigned long __version,
+                  struct timeval __wait_resend, int *__sockp,
+                  unsigned int __sendsz, unsigned int __recvsz);
 
 extern int callrpc (const char *__host, const unsigned long __prognum,
-		    const unsigned long __versnum, const unsigned long __procnum,
-		    const xdrproc_t __inproc, const char *__in,
-		    const xdrproc_t __outproc, char *__out);
+            const unsigned long __versnum, const unsigned long __procnum,
+            const xdrproc_t __inproc, const char *__in,
+            const xdrproc_t __outproc, char *__out);
 
-#define UDPMSGSIZE	8800	/* rpc imposed limit on udp msg size */
-#define RPCSMALLMSGSIZE	400	/* a more reasonable packet size */
+#define UDPMSGSIZE  8800    /* rpc imposed limit on udp msg size */
+#define RPCSMALLMSGSIZE 400 /* a more reasonable packet size */
 
 void clnt_perror(CLIENT *rpch, const char *s);
 

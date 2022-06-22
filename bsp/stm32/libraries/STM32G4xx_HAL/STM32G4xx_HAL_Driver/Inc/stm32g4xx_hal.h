@@ -28,7 +28,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal_conf.h"
-#include <rtthread.h>
 
 /** @addtogroup STM32G4xx_HAL_Driver
   * @{
@@ -462,7 +461,7 @@ extern "C" {
                                             ((__CONFIG__) == SYSCFG_BREAK_SRAMPARITY)    || \
                                             ((__CONFIG__) == SYSCFG_BREAK_LOCKUP))
 
-#if (CCMSRAM_SIZE == 0x00008000UL)
+#if (CCMSRAM_SIZE == 0x00008000UL) || (CCMSRAM_SIZE == 0x00004000UL)
 #define IS_SYSCFG_CCMSRAMWRP_PAGE(__PAGE__)  ((__PAGE__) > 0U)
 #elif (CCMSRAM_SIZE == 0x00002800UL)
 #define IS_SYSCFG_CCMSRAMWRP_PAGE(__PAGE__)  (((__PAGE__) > 0U) && ((__PAGE__) <= 0x000003FFU))

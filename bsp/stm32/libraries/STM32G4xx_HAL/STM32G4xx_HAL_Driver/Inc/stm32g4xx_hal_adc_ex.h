@@ -114,7 +114,7 @@ typedef struct
                                                Note: This parameter must be modified when no conversion is on going on both regular and injected groups (ADC disabled, or ADC enabled
                                                without continuous mode or external trigger that could launch a conversion). */
 
-  uint32_t InjectedOffsetSign;                /*!< Define if the offset should be substracted (negative sign) or added (positive sign) from or to the raw converted data.
+  uint32_t InjectedOffsetSign;                /*!< Define if the offset should be subtracted (negative sign) or added (positive sign) from or to the raw converted data.
                                                This parameter can be a value of @ref ADCEx_OffsetSign.
                                                Note: This parameter must be modified when no conversion is on going on both regular and injected groups (ADC disabled, or ADC enabled without continuous mode or external trigger that could launch a conversion). */
   FunctionalState InjectedOffsetSaturation;   /*!< Define if the offset should be saturated upon under or over flow.
@@ -293,7 +293,7 @@ typedef struct
 /** @defgroup ADCEx_OffsetSign ADC Extended Offset Sign
   * @{
   */
-#define ADC_OFFSET_SIGN_NEGATIVE      (0x00000000UL)          /*!< Offset sign negative, offset is substracted */
+#define ADC_OFFSET_SIGN_NEGATIVE      (0x00000000UL)          /*!< Offset sign negative, offset is subtracted */
 #define ADC_OFFSET_SIGN_POSITIVE      (ADC_OFR1_OFFSETPOS)   /*!< Offset sign positive, offset is added  */
 /**
   * @}
@@ -393,7 +393,7 @@ typedef struct
                              ADC_SMPR1_SMP6 | ADC_SMPR1_SMP5 | ADC_SMPR1_SMP4 |\
                              ADC_SMPR1_SMP3 | ADC_SMPR1_SMP2 | ADC_SMPR1_SMP1 |\
                              ADC_SMPR1_SMP0)
-#endif
+#endif /* ADC_SMPR1_SMPPLUS */
 /**
   * @}
   */
@@ -429,7 +429,7 @@ typedef struct
   *         Usage of this macro is not the Standard way of multimode
   *         configuration and can lead to have HAL ADC handles status
   *         misaligned. Usage of this macro must be limited to cases
-  *         mentionned above.
+  *         mentioned above.
   * @param __HANDLE__ ADC handle.
   * @retval None
   */
@@ -468,13 +468,21 @@ typedef struct
 #define ADC_IS_INDEPENDENT(__HANDLE__)    \
   ( ( ( ((__HANDLE__)->Instance) == ADC5) \
     )?                                    \
-    SET                                  \
-    :                                    \
-    RESET                                \
+    SET                                   \
+    :                                     \
+    RESET                                 \
+  )
+#elif defined(STM32G491xx) || defined(STM32G4A1xx)
+#define ADC_IS_INDEPENDENT(__HANDLE__)    \
+  ( ( ( ((__HANDLE__)->Instance) == ADC3) \
+    )?                                    \
+    SET                                   \
+    :                                     \
+    RESET                                 \
   )
 #elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx)
 #define ADC_IS_INDEPENDENT(__HANDLE__) (RESET)
-#endif
+#endif /* defined(STM32G474xx) || defined(STM32G484xx) || defined(STM32G473xx) || defined(STM32G483xx) */
 
 /**
   * @brief Set the selected injected Channel rank.
@@ -482,7 +490,8 @@ typedef struct
   * @param __RANKNB__ Rank number.
   * @retval None
   */
-#define ADC_JSQR_RK(__CHANNELNB__, __RANKNB__) ((((__CHANNELNB__) & ADC_CHANNEL_ID_NUMBER_MASK) >> ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) << ((__RANKNB__) & ADC_INJ_RANK_ID_JSQR_MASK))
+#define ADC_JSQR_RK(__CHANNELNB__, __RANKNB__) ((((__CHANNELNB__)\
+                                                  & ADC_CHANNEL_ID_NUMBER_MASK) >> ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) << ((__RANKNB__) & ADC_INJ_RANK_ID_JSQR_MASK))
 
 /**
   * @brief Configure ADC injected context queue
@@ -624,7 +633,7 @@ typedef struct
     :                                                                    \
     ((__HANDLE_SLAVE__)->Instance = NULL)                                \
   )
-#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx)
+#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || defined(STM32G491xx) || defined(STM32G4A1xx)
 /**
   * @brief Set handle instance of the ADC slave associated to the ADC master.
   * @param __HANDLE_MASTER__ ADC master handle.
@@ -648,9 +657,9 @@ typedef struct
   */
 #if defined(STM32G474xx) || defined(STM32G484xx) || defined(STM32G473xx) || defined(STM32G483xx)
 #define ADC_TEMPERATURE_SENSOR_INSTANCE(__HANDLE__)  ((((__HANDLE__)->Instance) == ADC1) || (((__HANDLE__)->Instance) == ADC5))
-#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx)
+#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || defined(STM32G491xx) || defined(STM32G4A1xx)
 #define ADC_TEMPERATURE_SENSOR_INSTANCE(__HANDLE__)  (((__HANDLE__)->Instance) == ADC1)
-#endif
+#endif /* defined(STM32G474xx) || defined(STM32G484xx) || defined(STM32G473xx) || defined(STM32G483xx) */
 
 /**
   * @brief Verify the ADC instance connected to the battery voltage VBAT.
@@ -661,6 +670,8 @@ typedef struct
 #define ADC_BATTERY_VOLTAGE_INSTANCE(__HANDLE__)  ((((__HANDLE__)->Instance) != ADC2) || (((__HANDLE__)->Instance) != ADC4))
 #elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx)
 #define ADC_BATTERY_VOLTAGE_INSTANCE(__HANDLE__)  (((__HANDLE__)->Instance) != ADC2)
+#elif defined(STM32G491xx) || defined(STM32G4A1xx)
+#define ADC_BATTERY_VOLTAGE_INSTANCE(__HANDLE__)  (((__HANDLE__)->Instance) == ADC1)
 #endif
 
 /**
@@ -798,7 +809,37 @@ typedef struct
                                                           ((__CHANNEL__) == ADC_CHANNEL_VOPAMP2)          || \
                                                           ((__CHANNEL__) == ADC_CHANNEL_17)               || \
                                                           ((__CHANNEL__) == ADC_CHANNEL_VOPAMP3_ADC2))))
-#endif
+#elif defined(STM32G491xx) || defined(STM32G4A1xx)
+#define IS_ADC_CHANNEL(__HANDLE__, __CHANNEL__)  (      ( ((__CHANNEL__) == ADC_CHANNEL_1)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_2)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_3)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_4)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_5)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_6)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_7)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_8)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_9)                || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_10)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_11)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_12)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_14)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_15))              || \
+                                                        ((((__HANDLE__)->Instance) == ADC1)  && \
+                                                         (((__CHANNEL__) == ADC_CHANNEL_VOPAMP1)          || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR_ADC1)  || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_VBAT)             || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_VREFINT)))        || \
+                                                        ((((__HANDLE__)->Instance) == ADC2)  && \
+                                                         (((__CHANNEL__) == ADC_CHANNEL_13)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_VOPAMP2)          || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_17)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_VOPAMP3_ADC2)))   || \
+                                                        ((((__HANDLE__)->Instance) == ADC3)  && \
+                                                         (((__CHANNEL__) == ADC_CHANNEL_VOPAMP3_ADC3)     || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_16)               || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_VOPAMP6)          || \
+                                                          ((__CHANNEL__) == ADC_CHANNEL_VREFINT))))
+#endif /* defined(STM32G474xx) || defined(STM32G484xx) || defined(STM32G473xx) || defined(STM32G483xx) */
 
 /**
   * @brief Verify the ADC channel setting in differential mode.
@@ -845,7 +886,7 @@ typedef struct
                                                          (((__CHANNEL__) == ADC_CHANNEL_12)          || \
                                                           ((__CHANNEL__) == ADC_CHANNEL_13)          || \
                                                           ((__CHANNEL__) == ADC_CHANNEL_15))) )
-#elif defined(STM32G471xx)
+#elif defined(STM32G471xx) || defined(STM32G491xx) || defined(STM32G4A1xx)
 #define IS_ADC_DIFF_CHANNEL(__HANDLE__, __CHANNEL__)  ( ( ((__CHANNEL__) == ADC_CHANNEL_1)           || \
                                                          (((__CHANNEL__) == ADC_CHANNEL_2)           || \
                                                           ((__CHANNEL__) == ADC_CHANNEL_3)           || \
@@ -949,21 +990,21 @@ typedef struct
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_HRTIM_TRG10)    || \
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_LPTIM_OUT)      || \
                                                        ((((__HANDLE__)->Instance == ADC1) || ((__HANDLE__)->Instance == ADC2)) && \
-                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1) || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC4)   || \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1)      || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC4)      || \
                                                          ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT15)))   || \
                                                        ((((__HANDLE__)->Instance == ADC3) || ((__HANDLE__)->Instance == ADC4) || ((__HANDLE__)->Instance == ADC5)) && \
-                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC2)       || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_HRTIM_TRG1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_HRTIM_TRG3)    || \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC2)      || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_HRTIM_TRG1)   || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_HRTIM_TRG3)   || \
                                                          ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT3)))    || \
                                                        ((__INJTRIG__) == ADC_INJECTED_SOFTWARE_START)          )
 #elif defined(STM32G473xx) || defined(STM32G483xx)
@@ -983,19 +1024,19 @@ typedef struct
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_TRGO2)      || \
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_LPTIM_OUT)      || \
                                                        ((((__HANDLE__)->Instance == ADC1) || ((__HANDLE__)->Instance == ADC2)) && \
-                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1) || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC4)   || \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1)      || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC4)      || \
                                                          ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT15)))   || \
                                                        ((((__HANDLE__)->Instance == ADC3) || ((__HANDLE__)->Instance == ADC4) || ((__HANDLE__)->Instance == ADC5)) && \
-                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC2)       || \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC2)      || \
                                                          ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT3)))    || \
                                                        ((__INJTRIG__) == ADC_INJECTED_SOFTWARE_START)          )
 #elif defined(STM32G471xx)
@@ -1013,17 +1054,17 @@ typedef struct
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T15_TRGO)       || \
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_LPTIM_OUT)      || \
                                                        ((((__HANDLE__)->Instance == ADC1) || ((__HANDLE__)->Instance == ADC2)) && \
-                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)    || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1) || \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1)      || \
                                                          ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT15)))   || \
                                                        ((((__HANDLE__)->Instance == ADC3)) && \
-                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)        || \
-                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)        || \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)       || \
                                                          ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT3)))    || \
                                                        ((__INJTRIG__) == ADC_INJECTED_SOFTWARE_START)          )
 #elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx)
@@ -1046,6 +1087,38 @@ typedef struct
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1)        || \
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT15)       || \
                                                        ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_LPTIM_OUT)      || \
+                                                       ((__INJTRIG__) == ADC_INJECTED_SOFTWARE_START)          )
+#elif defined(STM32G491xx) || defined(STM32G4A1xx)
+#define IS_ADC_EXTTRIGINJEC(__HANDLE__, __INJTRIG__)  (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_TRGO2)       || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC4)         || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T6_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T7_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_TRGO)        || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_TRGO2)       || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC4)         || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T15_TRGO)       || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_TRGO)       || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_TRGO2)      || \
+                                                       ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_LPTIM_OUT)      || \
+                                                       ((((__HANDLE__)->Instance == ADC1) || ((__HANDLE__)->Instance == ADC2)) && \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T2_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC1)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T3_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T16_CC1)      || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC4)      || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT15)))   || \
+                                                       (((__HANDLE__)->Instance == ADC3) && \
+                                                        (((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T1_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC3)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T4_CC4)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T8_CC2)       || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_T20_CC2)      || \
+                                                         ((__INJTRIG__) == ADC_EXTERNALTRIGINJEC_EXT_IT3)))    || \
                                                        ((__INJTRIG__) == ADC_INJECTED_SOFTWARE_START)          )
 #endif
 
@@ -1288,7 +1361,8 @@ HAL_StatusTypeDef HAL_ADCEx_RegularMultiModeStop_DMA(ADC_HandleTypeDef *hadc);
   * @{
   */
 /* Peripheral Control functions ***********************************************/
-HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc,ADC_InjectionConfTypeDef* sConfigInjected);
+HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc,
+                                                        ADC_InjectionConfTypeDef *sConfigInjected);
 #if defined(ADC_MULTIMODE_SUPPORT)
 HAL_StatusTypeDef       HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef *hadc, ADC_MultiModeTypeDef *multimode);
 #endif /* ADC_MULTIMODE_SUPPORT */

@@ -287,6 +287,9 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
 		}
 	}
 
+	/* send a notify */
+	eth_device_linkchange(&dm9000_device.parent, RT_TRUE);
+
 	/* see what we've got */
 	lnk = phy_read(17) >> 12;
 	rt_kprintf("operating at ");
@@ -588,7 +591,7 @@ void INTEINT4_7_handler(int irqno, void *param)
 	EINTPEND = eint_pend;
 }
 
-void rt_hw_dm9000_init()
+int rt_hw_dm9000_init()
 {
 	/* Set GPF7 as EINT7 */
 	GPFCON = GPFCON & (~(3 << 14)) | (2 << 14);
@@ -639,7 +642,11 @@ void rt_hw_dm9000_init()
 	/* instal interrupt */
 	rt_hw_interrupt_install(INTEINT4_7, INTEINT4_7_handler, RT_NULL, "EINT4_7");
 	rt_hw_interrupt_umask(INTEINT4_7);
+
+	return RT_EOK;
 }
+
+INIT_DEVICE_EXPORT(rt_hw_dm9000_init);
 
 void dm9000a(void)
 {

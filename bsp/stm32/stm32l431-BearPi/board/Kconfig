@@ -1,0 +1,65 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32L431RC
+    bool
+    select SOC_SERIES_STM32L4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+	menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+                
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+    source "../libraries/HAL_Drivers/Kconfig"
+    
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_SPI_LCD
+        bool "Enable LCD (spi2)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
+        default n
+endmenu
+
+endmenu

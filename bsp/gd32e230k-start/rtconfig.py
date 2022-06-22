@@ -14,11 +14,11 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = r'D:/toolchain/gnu_tools_arm_embedded/5.4_2016q3/bin'
 elif CROSS_TOOL == 'keil':
-    PLATFORM 	= 'armcc'
+    PLATFORM 	= 'armclang'
     EXEC_PATH 	= r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM 	= 'iar'
-    EXEC_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM  = 'iccarm'
+    EXEC_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -53,33 +53,41 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'armcc':
+elif PLATFORM == 'armclang':
     # toolchains
-    CC = 'armcc'
+    CC = 'armclang'
+    CXX = 'armclang'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu Cortex-M23'
-    CFLAGS = DEVICE + ' --apcs=interwork'
-    AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-gd32.map --scatter gd32_rom.sct'
+    DEVICE = ' --cpu Cortex-M23 '
+    CFLAGS = ' --target=arm-arm-none-eabi -mcpu=cortex-M23 '
+    CFLAGS += ' -mcpu=cortex-M23 '
+    CFLAGS += ' -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
+    CFLAGS += ' -gdwarf-3 -ffunction-sections '
+    AFLAGS = DEVICE + ' --apcs=interwork '
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
+    LFLAGS += ' --list rt-thread-gd32.map '
+    LFLAGS += r' --strict --scatter "gd32_rom.sct" '
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
 
-    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
-
-    EXEC_PATH += '/ARM/ARMCC/bin'
-    print(EXEC_PATH)
+    EXEC_PATH += '/ARM/ARMCLANG/bin/'
 
     if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
+        CFLAGS += ' -g -O1' # armclang recommend
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
+        
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     AS = 'iasmarm'

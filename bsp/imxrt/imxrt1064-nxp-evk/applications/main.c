@@ -18,6 +18,7 @@
 
 int main(void)
 {
+#ifndef PHY_USING_KSZ8081
     /* set LED0 pin mode to output */
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
 
@@ -28,6 +29,7 @@ int main(void)
         rt_pin_write(LED0_PIN, PIN_LOW);
         rt_thread_mdelay(500);
     }
+#endif
 }
 
 void reboot(void)

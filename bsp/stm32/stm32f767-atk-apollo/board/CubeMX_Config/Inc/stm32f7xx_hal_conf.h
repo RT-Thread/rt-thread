@@ -70,7 +70,7 @@
 /* #define HAL_SMARTCARD_MODULE_ENABLED   */
 /* #define HAL_WWDG_MODULE_ENABLED   */
 /* #define HAL_PCD_MODULE_ENABLED   */
-/* #define HAL_HCD_MODULE_ENABLED   */
+#define HAL_HCD_MODULE_ENABLED
 /* #define HAL_DFSDM_MODULE_ENABLED   */
 /* #define HAL_DSI_MODULE_ENABLED   */
 /* #define HAL_JPEG_MODULE_ENABLED   */

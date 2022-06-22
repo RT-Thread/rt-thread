@@ -1,0 +1,74 @@
+;*******************************************************************************
+;  (c) Copyright 2015 Microsemi SoC Products Group. All rights reserved.
+;  SmartFusion2 scatter file for relocating code to external RAM.
+; 
+;  SVN $Revision: 7419 $
+;  SVN $Date: 2015-05-15 16:50:21 +0100 (Fri, 15 May 2015) $
+;
+; * Some current (April 2015) dev kit memory map possibilities are
+; * --Type-------Device-----------address start---address end----size---Dbus--RAM IC-------SF2--Comment---------------
+; * --eNVM-------M2S010-----------0x60000000------0x6007FFFF-----256KB---------------------010------------------------
+; * --eNVM-------M2S090-----------0x60000000------0x6007FFFF-----512KB---------------------090------------------------
+; * --eSRAM------M2Sxxx-----------0x20000000------0x2000FFFF-----64KB----------------------xxx--All have same amount--
+; * --eSRAM------M2Sxxx-----------0x20000000------0x20013FFF-----80KB----------------------xxx--If ECC/SECDED not used
+; * --Fabric-----M2S010-----------0x30000000------0x6007FFFF-----400Kb---------------------010--note-K bits-----------
+; * --Fabric-----M2S090-----------0x30000000------0x6007FFFF-----2074Kb--------------------090--note-K bits-----------
+; * --LPDDR------STARTER-KIT------0xA0000000------0xA3FFFFFF-----64MB---16--MT46H32M16-----050------------------------
+; * --LPDDR------484-STARTER-KIT--0xA0000000------0xA3FFFFFF-----64MB---16--MT46H32M16-----010------------------------
+; * --LPDDR------SEC-EVAL-KIT-----0xA0000000------0xA3FFFFFF-----64MB---16--MT46H32M16LF---090--Security eval kit-----
+; * --DDR3-------ADevKit----------0xA0000000------0xBFFFFFFF-----1GB----32--MT41K256M8DA---150------------------------
+; * --Some older physical memory map possibilities are
+; * --Type-------location---------address start---address end----size---Dbus---RAM IC------SF2--Comment--------------
+; * --LPDDR------EVAL KIT---------0xA0000000------0xA3FFFFFF-----64MB-=-16--MT46H32M16LF---025--Eval Kit--------------
+; * --DDR3-------DevKit-----------0xA0000000------0xAFFFFFFF-----512MB--16--MT41K256M8DA---050------------------------
+;
+;  Example linker scripts use lowest practicl values so will work accross dev kits
+;  eNVM=256KB  eRAM=64KB  External memory = 64MB  
+
+FLASH_LOAD 0x60000000 0x40000
+{
+;   All code required on start-up located here before relocation has occured
+    ER_RO 0x60000000 0x40000
+    {
+        *.o (RESET, +First)
+        *(InRoot$$Sections)
+        startup_m2sxxx.o
+        system_m2sxxx.o
+        sys_config.o
+        low_level_init.o
+	sys_config_SERDESIF_?.o
+	mscc_post_hw_cfg_init.o			
+    	ecc_error_handler.o		
+    }
+    ;   MDDR_RAM 0xA0000000 0x4000000  	
+    ;   -MDDR is mapped to address space from 0 on startup
+    ;   This allows the use of cache which is restriced to this area.
+    ;   Code is copied to RAM_EXEC space on startup by boot code.
+    RAM_EXEC 0x00000000 0x00040000	
+    {
+        .ANY (+RO)
+    }
+    ;   Heap size is defined in startup_m2sxxx.s
+    ;   Heap will be added after RW data in ER_RW unless explicitly 
+    ;   allocated a meemory region in .sct file
+    ;   Stack size is defined in startup_m2sxxx.s
+    ;   Stack will be added after heap in ER_RW unless explicitly 
+    ;   allocated a memory region in .sct file as is the case below
+    STACKS 0x20000000 UNINIT
+    {
+        startup_m2sxxx.o (STACK)
+    }
+;    All internal RAM has been allocatd to the stack
+;    INTERNAL_RAM 0x20008000 0x10000
+;    {
+;        .ANY (+RW +ZI)
+;    }
+
+;    MDDR_RAM 0xA0000000 0x4000000  So use top half of this for RW data
+;    Bottom half has been assigned to R only code already
+    ER_RW 0xA2000000 0x2000000
+    {
+        .ANY (+RW +ZI)
+    }
+}
+

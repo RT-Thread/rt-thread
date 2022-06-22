@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -422,6 +422,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
         tx_fifo = (struct rt_can_tx_fifo *)can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
+        rt_sem_detach(&(tx_fifo->sem));
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
         can->can_tx = RT_NULL;
@@ -965,6 +966,5 @@ int cmd_canstat(int argc, void **argv)
     }
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_canstat, __cmd_canstat, Stat Can Device Status.);
+MSH_CMD_EXPORT_ALIAS(cmd_canstat, canstat, stat can device status);
 #endif
-

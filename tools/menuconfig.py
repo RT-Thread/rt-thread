@@ -27,6 +27,8 @@ import os
 import re
 import sys
 import shutil
+import hashlib
+import operator
 
 # make rtconfig.h from .config
 
@@ -37,7 +39,6 @@ def is_pkg_special_config(config_str):
         if config_str.startswith("PKG_") and (config_str.endswith('_PATH') or config_str.endswith('_VER')):
             return True
     return False
-
 
 def mk_rtconfig(filename):
     try:
@@ -96,6 +97,14 @@ def mk_rtconfig(filename):
     rtconfig.write('\n')
     rtconfig.write('#endif\n')
     rtconfig.close()
+
+
+def get_file_md5(file):
+    MD5 = hashlib.new('md5')
+    with open(file, 'r') as fp:
+        MD5.update(fp.read().encode('utf8'))
+        fp_md5 = MD5.hexdigest()
+        return fp_md5
 
 def config():
     mk_rtconfig('.config')
@@ -208,8 +217,27 @@ def touch_env():
         if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
             os.environ["PATH"] = os.path.join(env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
 
+# Exclude utestcases 
+def exclude_utestcases(RTT_ROOT):
+    if os.path.isfile(os.path.join(RTT_ROOT, 'examples/utest/testcases/Kconfig')):
+        return
+
+    if not os.path.isfile(os.path.join(RTT_ROOT, 'Kconfig')):
+        return
+
+    with open(os.path.join(RTT_ROOT, 'Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(RTT_ROOT, 'Kconfig'), 'w') as f:
+        for line in data:
+            if line.find('examples/utest/testcases/Kconfig') == -1:
+                f.write(line)
+
 # menuconfig for Linux
 def menuconfig(RTT_ROOT):
+
+    # Exclude utestcases 
+    exclude_utestcases(RTT_ROOT)
+
     kconfig_dir = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends')
     os.system('scons -C ' + kconfig_dir)
 
@@ -219,27 +247,30 @@ def menuconfig(RTT_ROOT):
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
-
-    if os.path.isfile(fn):
-        mtime = os.path.getmtime(fn)
-    else:
-        mtime = -1
+    fn_old = '.config.old'
 
     kconfig_cmd = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends', 'kconfig-mconf')
     os.system(kconfig_cmd + ' Kconfig')
 
     if os.path.isfile(fn):
-        mtime2 = os.path.getmtime(fn)
+        if os.path.isfile(fn_old):
+            diff_eq = operator.eq(get_file_md5(fn), get_file_md5(fn_old))
+        else:
+            diff_eq = False
     else:
-        mtime2 = -1
+        sys.exit(-1)
 
     # make rtconfig.h
-    if mtime != mtime2:
+    if diff_eq == False:
+        shutil.copyfile(fn, fn_old)
         mk_rtconfig(fn)
 
 # guiconfig for windows and linux
 def guiconfig(RTT_ROOT):
     import pyguiconfig
+
+    # Exclude utestcases 
+    exclude_utestcases(RTT_ROOT)
 
     if sys.platform != 'win32':
         touch_env()
@@ -249,22 +280,22 @@ def guiconfig(RTT_ROOT):
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
+    fn_old = '.config.old'
 
-    if os.path.isfile(fn):
-        mtime = os.path.getmtime(fn)
-    else:
-        mtime = -1
-
-    sys.argv = ['guiconfig', 'Kconfig'];
+    sys.argv = ['guiconfig', 'Kconfig']
     pyguiconfig._main()
 
     if os.path.isfile(fn):
-        mtime2 = os.path.getmtime(fn)
+        if os.path.isfile(fn_old):
+            diff_eq = operator.eq(get_file_md5(fn), get_file_md5(fn_old))
+        else:
+            diff_eq = False
     else:
-        mtime2 = -1
+        sys.exit(-1)
 
     # make rtconfig.h
-    if mtime != mtime2:
+    if diff_eq == False:
+        shutil.copyfile(fn, fn_old)
         mk_rtconfig(fn)
 
 
@@ -272,6 +303,9 @@ def guiconfig(RTT_ROOT):
 def guiconfig_silent(RTT_ROOT):
     import defconfig
 
+    # Exclude utestcases 
+    exclude_utestcases(RTT_ROOT)
+    
     if sys.platform != 'win32':
         touch_env()
 

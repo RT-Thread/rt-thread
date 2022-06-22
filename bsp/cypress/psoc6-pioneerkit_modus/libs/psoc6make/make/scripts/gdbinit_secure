@@ -1,0 +1,34 @@
+# CM4 port
+target remote:3333
+
+# Open all memory
+set mem inaccessible-by-default off
+
+# Target acquisition timeout
+set remotetimeout 15
+
+# Enable semihosting
+monitor arm semihosting enable
+
+# Load the executable
+# load <LOCATION OF ELF FILE>
+
+# Reset device
+monitor reset init
+
+# Halt device
+monitor halt
+
+# Synchronize client and server
+flushregs
+mon gdb_sync
+stepi
+
+# Set temporary breakpoint at main
+tbreak main
+
+# Print registers
+monitor reg
+
+# Continue program execution
+continue

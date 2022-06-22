@@ -5,7 +5,7 @@
 * Version : V1.00.00
 *
 * By      : prife
-* Version : V1.00.01 
+* Version : V1.00.01
 ************************************************************************************************************************
 */
 
@@ -27,6 +27,8 @@
 *  The context switch is managed by the threads.So the task stack does not have to be managed directly,
 *  although the stack stack is still used to hold an WinThreadState structure this is the only thing it
 *  will be ever hold.
+*  YieldEvent used to make sure the thread does not execute before asynchronous SuspendThread() operation
+*  actually being performed.
 *  the structure indirectly maps the task handle to a thread handle
 *********************************************************************************************************
 */
@@ -35,6 +37,7 @@ typedef struct
     void            *Param;                     //Thread param
     void            (*Entry)(void *);           //Thread entry
     void            (*Exit)(void);                      //Thread exit
+    HANDLE          YieldEvent;
     HANDLE          ThreadHandle;
     DWORD           ThreadID;
 }win_thread_t;
@@ -44,10 +47,10 @@ const DWORD MS_VC_EXCEPTION=0x406D1388;
 #pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO
 {
-	DWORD dwType; // Must be 0x1000.
-	LPCSTR szName; // Pointer to name (in user addr space).
-	DWORD dwThreadID; // Thread ID (-1=caller thread).
-	DWORD dwFlags; // Reserved for future use, must be zero.
+    DWORD dwType; // Must be 0x1000.
+    LPCSTR szName; // Pointer to name (in user addr space).
+    DWORD dwThreadID; // Thread ID (-1=caller thread).
+    DWORD dwFlags; // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 #pragma pack(pop)
 
@@ -112,19 +115,19 @@ static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam);
 static void SetThreadName(DWORD dwThreadID, char* threadName)
 {
 #if defined(_MSC_VER)
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = threadName;
-	info.dwThreadID = dwThreadID;
-	info.dwFlags = 0;
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = threadName;
+    info.dwThreadID = dwThreadID;
+    info.dwFlags = 0;
 
-	__try
-	{
-		RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-	}
+    __try
+    {
+        RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
+    }
+    __except(EXCEPTION_EXECUTE_HANDLER)
+    {
+    }
 #endif
 }
 
@@ -141,15 +144,15 @@ static void SetThreadName(DWORD dwThreadID, char* threadName)
 
 static DWORD WINAPI thread_run( LPVOID lpThreadParameter )
 {
-	rt_thread_t tid = rt_thread_self();
-	win_thread_t  *pWinThread = (win_thread_t *)lpThreadParameter;
+    rt_thread_t tid = rt_thread_self();
+    win_thread_t  *pWinThread = (win_thread_t *)lpThreadParameter;
 
-	SetThreadName(GetCurrentThreadId(), tid->name);
+    SetThreadName(GetCurrentThreadId(), tid->name);
 
-	pWinThread->Entry(pWinThread->Param);
+    pWinThread->Entry(pWinThread->Param);
 
-	pWinThread->Exit();
-	return 0;	
+    pWinThread->Exit();
+    return 0;
 }
 
 rt_uint8_t* rt_hw_stack_init(void *pEntry,void *pParam,rt_uint8_t *pStackAddr,void *pExit)
@@ -170,6 +173,11 @@ rt_uint8_t* rt_hw_stack_init(void *pEntry,void *pParam,rt_uint8_t *pStackAddr,vo
 
     pWinThread->ThreadHandle = NULL;
     pWinThread->ThreadID = 0;
+
+    pWinThread->YieldEvent = CreateEvent(NULL,
+                                         FALSE,
+                                         FALSE,
+                                         NULL);
 
     /* Create the winthread */
     pWinThread->ThreadHandle = CreateThread(NULL,
@@ -253,7 +261,7 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from,
 
     rt_interrupt_to_thread = *((rt_uint32_t *)(to));
 
-	//trigger YIELD exception(cause context switch)
+    //trigger YIELD exception(cause context switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
 } /*** rt_hw_context_switch_interrupt ***/
 
@@ -277,6 +285,19 @@ void rt_hw_context_switch(rt_uint32_t from,
     //trigger YIELD exception(cause contex switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
 
+    // make sure the event is not already signaled
+    win_thread_t *WinThread = (win_thread_t *)rt_interrupt_from_thread;
+    ResetEvent(WinThread->YieldEvent);
+
+    /*
+     * enable interrupt in advance so that scheduler can be executed.please note that interrupt
+     * maybe disable twice before.
+     */
+    rt_hw_interrupt_enable(0);
+    rt_hw_interrupt_enable(0);
+
+    // wait to suspend.
+    WaitForSingleObject(WinThread->YieldEvent, INFINITE);
 } /*** rt_hw_context_switch ***/
 
 /*
@@ -291,7 +312,7 @@ void rt_hw_context_switch(rt_uint32_t from,
 */
 void rt_hw_context_switch_to(rt_uint32_t to)
 {
-	//set to thread
+    //set to thread
     rt_interrupt_to_thread = *((rt_uint32_t *)(to));
 
     //clear from thread
@@ -578,6 +599,7 @@ void RegisterSimulateInterrupt(rt_uint32_t IntIndex,rt_uint32_t (*IntHandler)(vo
             if ((WinThreadFrom != NULL) && (WinThreadFrom->ThreadHandle != NULL))
             {
                 SuspendThread(WinThreadFrom->ThreadHandle);
+                SetEvent(WinThreadFrom->YieldEvent);
             }
 
             ResumeThread(WinThreadTo->ThreadHandle);
@@ -677,3 +699,14 @@ rt_uint32_t YieldInterruptHandle(void)
 
     return 0;
 } /*** YieldInterruptHandle ***/
+
+/* system entry */
+extern int rtthread_startup(void);
+int wmain(int argc, char* argv[])
+{
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
+}
+#pragma comment(linker, "/subsystem:console /entry:wmainCRTStartup")

@@ -1,0 +1,11 @@
+from building import *
+Import('rtconfig')
+
+src   = []
+cwd   = GetCurrentDir()
+CPPPATH = [cwd]
+group = []
+
+if rtconfig.PLATFORM in ['armcc', 'armclang', 'iccarm']:
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

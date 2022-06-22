@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
  * this function will reset CPU
  *
  */
-void rt_hw_cpu_reset()
+RT_WEAK void rt_hw_cpu_reset()
 {
 }
 
@@ -28,11 +28,11 @@ void rt_hw_cpu_reset()
  * this function will shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+RT_WEAK void rt_hw_cpu_shutdown()
 {
-	rt_kprintf("shutdown...\n");
+    rt_kprintf("shutdown...\n");
 
-	while (1);
+    while (1);
 }
 
 /*@}*/

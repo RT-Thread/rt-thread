@@ -50,12 +50,6 @@ void rtthread_startup(void)
     /* show version */
     rt_show_version();
 
-    /* init tick */
-    rt_system_tick_init();
-
-    /* init kernel object */
-    rt_system_object_init();
-
     /* init timer system */
     rt_system_timer_init();
 

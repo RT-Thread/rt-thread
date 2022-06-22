@@ -12,10 +12,6 @@ MCUX_Config/pin_mux.c
 CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
 CPPDEFINES = ['CPU_MIMXRT1052DVL6B', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1','XIP_EXTERNAL_FLASH=1']
 
-if GetDepend(['PHY_USING_KSZ8081']):
-    src += Glob('ports/phyksz8081/fsl_phy.c')
-    CPPPATH += [cwd + '/ports/phyksz8081']
-
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')

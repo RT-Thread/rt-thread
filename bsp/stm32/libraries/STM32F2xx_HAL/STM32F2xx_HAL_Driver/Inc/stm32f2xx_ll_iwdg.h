@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -45,12 +45,10 @@ extern "C" {
 /** @defgroup IWDG_LL_Private_Constants IWDG Private Constants
   * @{
   */
-
-#define LL_IWDG_KEY_RELOAD                 ((uint32_t)0x0000AAAAU)               /*!< IWDG Reload Counter Enable   */
-#define LL_IWDG_KEY_ENABLE                 ((uint32_t)0x0000CCCCU)               /*!< IWDG Peripheral Enable       */
-#define LL_IWDG_KEY_WR_ACCESS_ENABLE       ((uint32_t)0x00005555U)               /*!< IWDG KR Write Access Enable  */
-#define LL_IWDG_KEY_WR_ACCESS_DISABLE      ((uint32_t)0x00000000U)               /*!< IWDG KR Write Access Disable */
-
+#define LL_IWDG_KEY_RELOAD                 0x0000AAAAU               /*!< IWDG Reload Counter Enable   */
+#define LL_IWDG_KEY_ENABLE                 0x0000CCCCU               /*!< IWDG Peripheral Enable       */
+#define LL_IWDG_KEY_WR_ACCESS_ENABLE       0x00005555U               /*!< IWDG KR Write Access Enable  */
+#define LL_IWDG_KEY_WR_ACCESS_DISABLE      0x00000000U               /*!< IWDG KR Write Access Disable */
 /**
   * @}
   */
@@ -69,7 +67,6 @@ extern "C" {
   */
 #define LL_IWDG_SR_PVU                     IWDG_SR_PVU                           /*!< Watchdog prescaler value update */
 #define LL_IWDG_SR_RVU                     IWDG_SR_RVU                           /*!< Watchdog counter reload value update */
-
 /**
   * @}
   */
@@ -77,7 +74,7 @@ extern "C" {
 /** @defgroup IWDG_LL_EC_PRESCALER  Prescaler Divider
   * @{
   */
-#define LL_IWDG_PRESCALER_4                ((uint32_t)0x00000000U)               /*!< Divider by 4   */
+#define LL_IWDG_PRESCALER_4                0x00000000U                           /*!< Divider by 4   */
 #define LL_IWDG_PRESCALER_8                (IWDG_PR_PR_0)                        /*!< Divider by 8   */
 #define LL_IWDG_PRESCALER_16               (IWDG_PR_PR_1)                        /*!< Divider by 16  */
 #define LL_IWDG_PRESCALER_32               (IWDG_PR_PR_1 | IWDG_PR_PR_0)         /*!< Divider by 32  */
@@ -239,7 +236,6 @@ __STATIC_INLINE uint32_t LL_IWDG_GetReloadCounter(IWDG_TypeDef *IWDGx)
   return (READ_REG(IWDGx->RLR));
 }
 
-
 /**
   * @}
   */
@@ -270,9 +266,8 @@ __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_RVU(IWDG_TypeDef *IWDGx)
   return ((READ_BIT(IWDGx->SR, IWDG_SR_RVU) == (IWDG_SR_RVU)) ? 1UL : 0UL);
 }
 
-
 /**
-  * @brief  Check if all flags Prescaler, Reload & Window Value Update are reset or not
+  * @brief  Check if flags Prescaler & Reload Value Update are reset or not
   * @rmtoll SR           PVU           LL_IWDG_IsReady\n
   *         SR           RVU           LL_IWDG_IsReady
   * @param  IWDGx IWDG Instance
@@ -287,7 +282,6 @@ __STATIC_INLINE uint32_t LL_IWDG_IsReady(IWDG_TypeDef *IWDGx)
   * @}
   */
 
-
 /**
   * @}
   */
@@ -296,7 +290,7 @@ __STATIC_INLINE uint32_t LL_IWDG_IsReady(IWDG_TypeDef *IWDGx)
   * @}
   */
 
-#endif /* IWDG) */
+#endif /* IWDG */
 
 /**
   * @}

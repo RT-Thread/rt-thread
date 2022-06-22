@@ -1,0 +1,9 @@
+menu "RT-Thread MIPS CPU"
+
+    config RT_USING_FPU
+        bool "Using Float Point Unit"
+        default n
+        help
+            Using Float Point Unit in code.
+
+endmenu

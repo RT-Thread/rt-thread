@@ -1,0 +1,42 @@
+menuconfig RT_USING_SAL
+    bool "SAL: socket abstraction layer"
+    select RT_USING_NETDEV
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+
+if RT_USING_SAL
+
+    config SAL_INTERNET_CHECK
+        bool "Enable the ability that check internet status"
+        default y
+        help
+            The ability that check internet status is provided by RT-Thread.
+
+    menu "Docking with protocol stacks"
+        config SAL_USING_LWIP
+            bool "Docking with lwIP stack"
+            default n
+
+        config SAL_USING_AT
+            bool "Docking with AT commands stack"
+            default n
+
+        config SAL_USING_TLS
+            bool "Docking with MbedTLS protocol"
+            default n
+    endmenu
+
+    config SAL_USING_POSIX
+        bool
+        depends on DFS_USING_POSIX
+        default y
+        help
+            Enable BSD socket operated by file system API
+            Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+
+    config SAL_SOCKETS_NUM
+        int "the maximum number of sockets"
+        depends on !SAL_USING_POSIX
+        default 16
+
+endif

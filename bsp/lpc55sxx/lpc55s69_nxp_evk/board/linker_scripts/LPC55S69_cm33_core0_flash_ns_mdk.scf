@@ -1,0 +1,111 @@
+#!armclang --target=arm-arm-none-eabi -march=armv8-m.main -E -x c
+/*
+** ###################################################################
+**     Processors:          LPC55S69JBD100_cm33_core0
+**                          LPC55S69JET98_cm33_core0
+**
+**     Compiler:            Keil ARM C/C++ Compiler
+**     Reference manual:    LPC55xx/LPC55Sxx User manual Rev.0.2  15 Aug 2018
+**     Version:             rev. 1.0, 2018-08-22
+**     Build:               b181008
+**
+**     Abstract:
+**         Linker file for the Keil ARM C/C++ Compiler
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2018 NXP
+**     Copyright 2019-2020 Arm Limited. All rights reserved.
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+/*
+ * Original code taken from RTT project at:
+ * https://github.com/RT-Thread/rt-thread
+ * File: bsp/lpc55sxx/lpc55s69_nxp_evk/board/linker_scripts/LPC55S69_cm33_core0_flash_mdk.scf
+ * Git SHA of the original version: 64945ba882d651a14933eb4e7b3d93d10d6daae1
+ */
+
+/* USB BDT size */
+#define usb_bdt_size                   0x0
+/* Sizes */
+#if (defined(__stack_size__))
+  #define Stack_Size                   __stack_size__
+#else
+  #define Stack_Size                   0x1000
+#endif
+
+#if (defined(__heap_size__))
+  #define Heap_Size                    __heap_size__
+#else
+  #define Heap_Size                    0x1000
+#endif
+
+#define  m_interrupts_start            0x00020000
+#define  m_interrupts_size             0x00000200
+
+#define  m_text_start                  0x00020200
+#define  m_text_size                   0x00031000
+
+#define  m_core1_image_start           0x00072000
+#define  m_core1_image_size            0x00026000
+
+#if (defined(__use_shmem__))
+  #define  m_data_start                0x20033000
+  #define  m_data_size                 0x00010800
+  #define  m_rpmsg_sh_mem_start        0x20043800
+  #define  m_rpmsg_sh_mem_size         0x00000800
+#else
+  #define  m_data_start                0x20033000
+  #define  m_data_size                 0x0000cc00
+#endif
+
+#define  m_usb_sram_start              0x40100000
+#define  m_usb_sram_size               0x00004000
+
+
+LR_m_text m_interrupts_start m_interrupts_size+m_text_size {   ; load region size_region
+
+  VECTOR_ROM m_interrupts_start m_interrupts_size { ; load address = execution address
+    * (RESET,+FIRST)
+  }
+
+  ER_m_text m_text_start FIXED m_text_size { ; load address = execution address
+    * (InRoot$$Sections)
+    * (+RO)
+  }
+
+#if (defined(__use_shmem__))
+  RPMSG_SH_MEM m_rpmsg_sh_mem_start UNINIT m_rpmsg_sh_mem_size { ; Shared memory used by RPMSG
+    * (rpmsg_sh_mem_section)
+  }
+#endif
+
+  RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size { ; RW data
+    * (+RW +ZI)
+  }
+  ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
+  }
+  ARM_LIB_STACK m_data_start+m_data_size EMPTY -Stack_Size { ; Stack region growing down
+  }
+
+  RW_m_usb_bdt m_usb_sram_start UNINIT usb_bdt_size {
+    * (m_usb_bdt)
+  }
+
+  RW_m_usb_ram (m_usb_sram_start + usb_bdt_size) UNINIT (m_usb_sram_size - usb_bdt_size) {
+    * (m_usb_global)
+  }
+}
+
+LR_CORE1_IMAGE m_core1_image_start {
+  CORE1_REGION m_core1_image_start m_core1_image_size {
+    *(M0CODE)
+  }
+}

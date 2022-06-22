@@ -1,18 +1,12 @@
-/***************************************************************************//**
- * @file 	drv_emu.c
- * @brief 	EMU driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
- * Date			Author		Notes
- * 2012-02-21	onelife		Initial creation for EFM32
- ******************************************************************************/
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date         Author      Notes
+ * 2012-02-21   onelife     Initial creation for EFM32
+ */
 
 /***************************************************************************//**
  * @addtogroup efm32
@@ -27,7 +21,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 #ifdef EFM32_EMU_DEBUG
-#define emu_debug(format,args...) 			rt_kprintf(format, ##args)
+#define emu_debug(format,args...)           rt_kprintf(format, ##args)
 #else
 #define emu_debug(format,args...)
 #endif
@@ -176,7 +170,7 @@ void emu_em4_enable(void)
 
 /***************************************************************************//**
  * @brief
- *	Initialize EMU module related hardware
+ *  Initialize EMU module related hardware
  *
  * @details
  *
@@ -213,22 +207,22 @@ void efm32_emu_init(void)
             break;
         }
 
-    	/* init thread */
+        /* init thread */
         if (rt_thread_init(
             &emu_task.thread,
             "EMU",
-    		emu_task_main_loop, (void *)&emu_task,
+            emu_task_main_loop, (void *)&emu_task,
             (void *)&emu_task.stack, sizeof(emu_task.stack),
-    		RT_THREAD_PRIORITY_MAX - 2, RT_TICK_PER_SECOND) != RT_EOK)
+            RT_THREAD_PRIORITY_MAX - 2, RT_TICK_PER_SECOND) != RT_EOK)
         {
             break;
         }
 
-    	/* startup */
-    	if (rt_thread_startup(&emu_task.thread) != RT_EOK)
-    	{
+        /* startup */
+        if (rt_thread_startup(&emu_task.thread) != RT_EOK)
+        {
             break;
-    	}
+        }
     } while (0);
 
     rt_kprintf("EMU err: init failed!\n");

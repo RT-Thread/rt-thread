@@ -1,106 +1,84 @@
-# NUCLEO-F446ZE 开发板 BSP 说明
+# STM32F446-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为 NUCLEO-F446ZE 开发板的 BSP (板级支持包) 说明。
+## MCU: STM32F446ZE @180MHz, 512KB FLASH,  128KB RAM
 
-主要内容如下：
+The STM32F446xC/E devices are based on the high-performance Arm® Cortex®-M4 32-bit RISC core operating at a frequency of up to 180 MHz. The Cortex-M4 core features a floating point unit (FPU) single precision supporting all Arm® single-precision data-processing instructions and data types. It also implements a full set of DSP instructions and a memory protection unit (MPU) that enhances application security.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The STM32F446xC/E devices incorporate high-speed embedded memories (Flash memory up to 512 Kbytes, up to 128 Kbytes of SRAM), up to 4 Kbytes of backup SRAM, and an extensive range of enhanced I/Os and peripherals connected to two APB buses, two AHB buses and a 32-bit multi-AHB bus matrix.
+All devices offer three 12-bit ADCs, two DACs, a low-power RTC, twelve general-purpose 16-bit timers including two PWM timers for motor control, two general-purpose 32-bit timers.
+They also feature standard and advanced communication interfaces.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+#### KEY FEATURES
 
-## 开发板介绍
+- Core: Arm® 32-bit Cortex®-M4 CPU with FPU, Adaptive real-time accelerator (ART Accelerator) allowing 0-wait state execution from Flash memory, frequency up to 180 MHz, MPU, 225 DMIPS/1.25 DMIPS/MHz (Dhrystone 2.1), and DSP instructions
+- Memories
+  - 512 Kbytes of Flash memory
+  - 128 Kbytes of SRAM
+  - Flexible external memory controller with up to 16-bit data bus: SRAM, PSRAM, SDRAM/LPSDR SDRAM, NOR/NAND Flash memories
+  - Dual mode QuadSPI interface
+- LCD parallel interface, 8080/6800 modes
+- Clock, reset and supply management
+  - 1.7 V to 3.6 V application supply and I/Os
+  - POR, PDR, PVD and BOR
+  - 4 to 26 MHz crystal oscillator
+  - Internal 16 MHz factory-trimmed RC (1% accuracy)
+  - 32 kHz oscillator for RTC with calibration
+  - Internal 32 kHz RC with calibration
+- Low power
+  - Sleep, Stop and Standby modes
+  - VBAT supply for RTC, 20×32 bit backup registers plus optional 4 KB backup SRAM
+- 3× 12-bit, 2.4 MSPS ADC: up to 24 channels and 7.2 MSPS in triple interleaved mode
+- 2× 12-bit D/A converters
+- General-purpose DMA: 16-stream DMA controller with FIFOs and burst support
+- Up to 17 timers: 2x watchdog, 1x SysTick timer and up to twelve 16-bit and two 32-bit timers up to 180 MHz, each with up to four IC/OC/PWM or pulse counter
 
-NUCLEO-F446ZE 是 ST 公司推出的一款针对 STM32F4 系列设计的 Cortex-M4 Nucleo-144 开发板，支持 mbed，兼容 Arduino、还带有ST Zio和 ST Morpho 扩展接口，可连接微控制器的所有周边外设。
-
-开发板外观如下图所示：
-
-![board](figures/board.jpg)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32f446ZE，主频 180MHz，512KB FLASH ，128KB RAM
-- 常用外设
-  - LED：3个，LED1 (绿色，PB0),LED2（蓝色，PB7），LED3（红色，PB14）
-- 常用接口：USB 转串口
-- 调试接口，标准 ST-LINK/SWD
-
-开发板更多详细信息请参考【NUCLEO-F446ZE】 [开发板介绍](https://www.st.com/zh/evaluation-tools/nucleo-f446ze.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     |                                       |
-| UART              |     支持     | UART1                                 |
-
-## 使用说明
-
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+- Debug mode
+  - SWD and JTAG interfaces
+  - Cortex®-M4 Trace Macrocell™
+- Up to 114 I/O ports with interrupt capability
+  - Up to 111 fast I/Os up to 90 MHz
+  - Up to 112 5 V-tolerant I/Os
+- Up to 20 communication interfaces
+  - SPDIF-Rx
+  - Up to 4× I2C interfaces (SMBus/PMBus)
+  - Up to four USARTs and two UARTs (11.25 Mbit/s, ISO7816 interface, LIN, IrDA, modem control)
+  - Up to four SPIs (45 Mbits/s), three with muxed I2S for audio class accuracy via internal audio PLL or external clock
+  - 2x SAI (serial audio interface)
+  - 2× CAN (2.0B Active)
+  - SDIO interface
+  - Consumer electronics control (CEC) I/F
+- Advanced connectivity
+  - USB 2.0 full-speed device/host/OTG controller with on-chip PHY
+  - USB 2.0 high-speed/full-speed device/host/OTG controller with dedicated DMA, on-chip full-speed PHY and ULPI
+  - Dedicated USB power rail enabling on-chip PHYs operation throughout the entire MCU power supply range
+- 8- to 14-bit parallel camera interface up to 54 Mbytes/s
+- CRC calculation unit
+- RTC: subsecond accuracy, hardware calendar
+- 96-bit unique ID
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Read more
 
-#### 硬件连接
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
+| [STM32F446ZE ST Official Website](https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f4-series/stm32f446/stm32f446ze.html#documentation) |          STM32F446ZE datasheet and other resources           |
 
-使用数据线连接开发板到 PC，通过数据线对开发板供电,下载,调试。
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Maintained By
 
-> 工程默认配置使用 ST-LINK 仿真器下载程序，在通过 ST-LINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+qihengchuan8888@163.com
 
-#### 运行结果
 
-下载程序成功之后，系统会自动运行，蓝色的 LED2 以 500MS 周期闪烁。
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+## Translated By
 
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.0 build Jan  7 2019
- 2006 - 2018 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
+Meco Man @ RT-Thread Community
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
-
-1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-- 默认终端输出设备是 UART1
-
-## 联系人信息
-
-维护人:
-
--   邮箱：<qihengchuan8888@163.com>
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf

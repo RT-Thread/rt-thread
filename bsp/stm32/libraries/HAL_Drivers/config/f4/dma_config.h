@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -157,12 +157,12 @@ extern "C" {
 #define SPI1_RX_DMA_INSTANCE             DMA2_Stream0
 #define SPI1_RX_DMA_CHANNEL              DMA_CHANNEL_3
 #define SPI1_RX_DMA_IRQ                  DMA2_Stream0_IRQn
-#elif defined(BSP_SPI4_TX_USING_DMA) && !defined(SPI4_TX_DMA_INSTANCE)
-#define SPI4_DMA_TX_IRQHandler           DMA2_Stream0_IRQHandler
-#define SPI4_TX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
-#define SPI4_TX_DMA_INSTANCE             DMA2_Stream0
-#define SPI4_TX_DMA_CHANNEL              DMA_CHANNEL_4
-#define SPI4_TX_DMA_IRQ                  DMA2_Stream0_IRQn
+#elif defined(BSP_SPI4_RX_USING_DMA) && !defined(SPI4_RX_DMA_INSTANCE)
+#define SPI4_DMA_RX_IRQHandler           DMA2_Stream0_IRQHandler
+#define SPI4_RX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
+#define SPI4_RX_DMA_INSTANCE             DMA2_Stream0
+#define SPI4_RX_DMA_CHANNEL              DMA_CHANNEL_4
+#define SPI4_RX_DMA_IRQ                  DMA2_Stream0_IRQn
 #endif
 
 /* DMA2 stream1 */
@@ -208,12 +208,12 @@ extern "C" {
 #define SPI1_TX_DMA_INSTANCE             DMA2_Stream3
 #define SPI1_TX_DMA_CHANNEL              DMA_CHANNEL_3
 #define SPI1_TX_DMA_IRQ                  DMA2_Stream3_IRQn
-#elif defined(BSP_SPI4_TX_USING_DMA) && !defined(SPI4_TX_DMA_INSTANCE)
-#define SPI4_DMA_TX_IRQHandler           DMA2_Stream3_IRQHandler
-#define SPI4_TX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
-#define SPI4_TX_DMA_INSTANCE             DMA2_Stream3
-#define SPI4_TX_DMA_CHANNEL              DMA_CHANNEL_5
-#define SPI4_TX_DMA_IRQ                  DMA2_Stream3_IRQn
+#elif defined(BSP_SPI4_RX_USING_DMA) && !defined(SPI4_RX_DMA_INSTANCE)
+#define SPI4_DMA_RX_IRQHandler           DMA2_Stream3_IRQHandler
+#define SPI4_RX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
+#define SPI4_RX_DMA_INSTANCE             DMA2_Stream3
+#define SPI4_RX_DMA_CHANNEL              DMA_CHANNEL_5
+#define SPI4_RX_DMA_IRQ                  DMA2_Stream3_IRQn
 #endif
 
 /* DMA2 stream4 */
@@ -259,7 +259,7 @@ extern "C" {
 #define SPI5_TX_DMA_INSTANCE             DMA2_Stream6
 #define SPI5_TX_DMA_CHANNEL              DMA_CHANNEL_7
 #define SPI5_TX_DMA_IRQ                  DMA2_Stream6_IRQn
-#elif defined(BSP_UART6_TX_USING_DMA) && !defined(UART6_TX_DMA_INSTANCE)
+#elif defined(BSP_UART6_TX_USING_DMA) && !defined(BSP_USING_SDIO) && !defined(UART6_TX_DMA_INSTANCE)
 #define UART6_DMA_TX_IRQHandler         DMA2_Stream6_IRQHandler
 #define UART6_TX_DMA_RCC                RCC_AHB1ENR_DMA2EN
 #define UART6_TX_DMA_INSTANCE           DMA2_Stream6
@@ -274,6 +274,12 @@ extern "C" {
 #define UART1_TX_DMA_INSTANCE           DMA2_Stream7
 #define UART1_TX_DMA_CHANNEL            DMA_CHANNEL_4
 #define UART1_TX_DMA_IRQ                DMA2_Stream7_IRQn
+#elif defined(BSP_UART6_TX_USING_DMA) && !defined(UART6_TX_DMA_INSTANCE)
+#define UART6_DMA_TX_IRQHandler         DMA2_Stream7_IRQHandler
+#define UART6_TX_DMA_RCC                RCC_AHB1ENR_DMA2EN
+#define UART6_TX_DMA_INSTANCE           DMA2_Stream7
+#define UART6_TX_DMA_CHANNEL            DMA_CHANNEL_5
+#define UART6_TX_DMA_IRQ                DMA2_Stream7_IRQn
 #endif
 
 #ifdef __cplusplus

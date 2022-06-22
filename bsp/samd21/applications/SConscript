@@ -9,6 +9,6 @@ CPPPATH = [cwd, str(Dir('#'))]
 #remove other no use files
 #SrcRemove(src, '*.c')
 
-group = DefineGroup('Application', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

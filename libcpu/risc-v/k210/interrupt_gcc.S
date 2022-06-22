@@ -15,6 +15,43 @@
   .align 2
   .global trap_entry
 trap_entry:
+#ifdef ARCH_RISCV_FPU
+    addi    sp, sp, -32 * FREGBYTES
+
+    FSTORE  f0, 0 * FREGBYTES(sp)
+    FSTORE  f1, 1 * FREGBYTES(sp)
+    FSTORE  f2, 2 * FREGBYTES(sp)
+    FSTORE  f3, 3 * FREGBYTES(sp)
+    FSTORE  f4, 4 * FREGBYTES(sp)
+    FSTORE  f5, 5 * FREGBYTES(sp)
+    FSTORE  f6, 6 * FREGBYTES(sp)
+    FSTORE  f7, 7 * FREGBYTES(sp)
+    FSTORE  f8, 8 * FREGBYTES(sp)
+    FSTORE  f9, 9 * FREGBYTES(sp)
+    FSTORE  f10, 10 * FREGBYTES(sp)
+    FSTORE  f11, 11 * FREGBYTES(sp)
+    FSTORE  f12, 12 * FREGBYTES(sp)
+    FSTORE  f13, 13 * FREGBYTES(sp)
+    FSTORE  f14, 14 * FREGBYTES(sp)
+    FSTORE  f15, 15 * FREGBYTES(sp)
+    FSTORE  f16, 16 * FREGBYTES(sp)
+    FSTORE  f17, 17 * FREGBYTES(sp)
+    FSTORE  f18, 18 * FREGBYTES(sp)
+    FSTORE  f19, 19 * FREGBYTES(sp)
+    FSTORE  f20, 20 * FREGBYTES(sp)
+    FSTORE  f21, 21 * FREGBYTES(sp)
+    FSTORE  f22, 22 * FREGBYTES(sp)
+    FSTORE  f23, 23 * FREGBYTES(sp)
+    FSTORE  f24, 24 * FREGBYTES(sp)
+    FSTORE  f25, 25 * FREGBYTES(sp)
+    FSTORE  f26, 26 * FREGBYTES(sp)
+    FSTORE  f27, 27 * FREGBYTES(sp)
+    FSTORE  f28, 28 * FREGBYTES(sp)
+    FSTORE  f29, 29 * FREGBYTES(sp)
+    FSTORE  f30, 30 * FREGBYTES(sp)
+    FSTORE  f31, 31 * FREGBYTES(sp)
+
+#endif
 
     /* save thread context to thread stack */
     addi sp, sp, -32 * REGBYTES
@@ -82,7 +119,7 @@ trap_entry:
     mv  sp, s0
     mv  a0, s0
     call rt_scheduler_do_irq_switch
-    j   rt_hw_context_switch_exit
+    tail   rt_hw_context_switch_exit
 
 #else
 
@@ -106,4 +143,4 @@ trap_entry:
 #endif
 
 spurious_interrupt:
-    j rt_hw_context_switch_exit
+    tail rt_hw_context_switch_exit

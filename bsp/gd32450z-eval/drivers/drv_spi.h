@@ -1,11 +1,7 @@
 /*
- * File      : gd32f20x_40x_spi.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,7 +32,7 @@ struct gd32_spi_cs
 
 /* public function */
 rt_err_t gd32_spi_bus_register(uint32_t spi_periph,
-								//struct gd32_spi_bus * gd32_spi,
-								const char * spi_bus_name);
+                                //struct gd32_spi_bus * gd32_spi,
+                                const char * spi_bus_name);
 
 #endif // gd32F20X_40X_SPI_H_INCLUDED

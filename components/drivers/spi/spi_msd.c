@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -234,24 +234,30 @@ static rt_err_t _send_cmd(
     else if (type == response_r2)
     {
         /* initial message */
+        /* Prevent non-aligned address access, use recv_buffer to receive data */
         message.send_buf = RT_NULL;
-        message.recv_buf = response + 1;
+        message.recv_buf = recv_buffer;
         message.length = 1;
         message.cs_take = message.cs_release = 0;
 
         /* transfer message */
         device->bus->ops->xfer(device, &message);
+        response[1] = recv_buffer[0];
     }
     else if ((type == response_r3) || (type == response_r7))
     {
         /* initial message */
         message.send_buf = RT_NULL;
-        message.recv_buf = response + 1;
+        message.recv_buf = recv_buffer;
         message.length = 4;
         message.cs_take = message.cs_release = 0;
 
         /* transfer message */
         device->bus->ops->xfer(device, &message);
+        response[1] = recv_buffer[0];
+        response[2] = recv_buffer[1];
+        response[3] = recv_buffer[2];
+        response[4] = recv_buffer[3];
     }
     else
     {
@@ -429,7 +435,7 @@ static rt_err_t _write_block(struct rt_spi_device *device, const void *buffer, u
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops msd_ops = 
+const static struct rt_device_ops msd_ops =
 {
     rt_msd_init,
     rt_msd_open,
@@ -439,7 +445,7 @@ const static struct rt_device_ops msd_ops =
     rt_msd_control
 };
 
-const static struct rt_device_ops msd_sdhc_ops = 
+const static struct rt_device_ops msd_sdhc_ops =
 {
     rt_msd_init,
     rt_msd_open,
@@ -494,7 +500,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
             uint8_t send_buffer[100]; /* 100byte > 74 clock */
 
             /* initial message */
-            memset(send_buffer, DUMMY, sizeof(send_buffer));
+            rt_memset(send_buffer, DUMMY, sizeof(send_buffer));
             message.send_buf = send_buffer;
             message.recv_buf = RT_NULL;
             message.length = sizeof(send_buffer);
@@ -691,7 +697,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     uint8_t send_buffer[100];
 
                     /* initial message */
-                    memset(send_buffer, DUMMY, sizeof(send_buffer));
+                    rt_memset(send_buffer, DUMMY, sizeof(send_buffer));
                     message.send_buf = send_buffer;
                     message.recv_buf = RT_NULL;
                     message.length = sizeof(send_buffer);

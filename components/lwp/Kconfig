@@ -1,7 +1,7 @@
 config RT_USING_LWP
-    bool "Using light-weight process"
-    select RT_USING_DFS
-    select RT_USING_LIBC
+    bool "LWP: light-weight process"
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_SELECT
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A
     default n
     help

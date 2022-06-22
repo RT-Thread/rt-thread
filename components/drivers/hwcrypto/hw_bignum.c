@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -56,7 +56,7 @@ rt_err_t rt_hwcrypto_bignum_default(struct rt_hwcrypto_device *device)
 
 /**
  * @brief           Init bignum obj
- * 
+ *
  * @param n         bignum obj
  */
 void rt_hwcrypto_bignum_init(struct hw_bignum_mpi *n)
@@ -78,6 +78,7 @@ void rt_hwcrypto_bignum_free(struct hw_bignum_mpi *n)
 {
     if (n)
     {
+        rt_memset(n->p, 0xFF, n->total);
         rt_free(n->p);
         n->sign = 0;
         n->total = 0;
@@ -87,9 +88,9 @@ void rt_hwcrypto_bignum_free(struct hw_bignum_mpi *n)
 
 /**
  * @brief           Get length of bignum as an unsigned binary buffer
- * 
+ *
  * @param n         bignum obj
- * 
+ *
  * @return          binary buffer length
  */
 int rt_hwcrypto_bignum_get_len(const struct hw_bignum_mpi *n)
@@ -112,11 +113,11 @@ int rt_hwcrypto_bignum_get_len(const struct hw_bignum_mpi *n)
 
 /**
  * @brief           Export n into unsigned binary data, big endian
- * 
+ *
  * @param n         bignum obj
  * @param buf       Buffer for the binary number
  * @param len       Length of the buffer
- * 
+ *
  * @return          export bin length
  */
 int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len)
@@ -128,7 +129,7 @@ int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int 
         return 0;
     }
     rt_memset(buf, 0, len);
-    cp_len = n->total > len ? len : n->total;
+    cp_len = (int)n->total > len ? len : (int)n->total;
     for(i = cp_len, j = 0; i > 0; i--, j++)
     {
         buf[i - 1] = n->p[j];
@@ -139,14 +140,14 @@ int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int 
 
 /**
  * @brief           Import n from unsigned binary data, big endian
- * 
+ *
  * @param n         bignum obj
  * @param buf       Buffer for the binary number
  * @param len       Length of the buffer
- * 
- * @return          RT_EOK on success.
+ *
+ * @return          import length.
  */
-rt_err_t rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len)
+int rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len)
 {
     int cp_len, i, j;
     void *temp_p;
@@ -155,19 +156,21 @@ rt_err_t rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf,
     {
         return 0;
     }
-    if (n->total < len)
+    if ((int)n->total < len)
     {
         temp_p = rt_malloc(len);
         if (temp_p == RT_NULL)
         {
             return 0;
         }
-        rt_memset(temp_p, 0, len);
         rt_free(n->p);
         n->p = temp_p;
         n->total = len;
     }
-    cp_len = n->total > len ? len : n->total;
+
+    n->sign = 1;
+    rt_memset(n->p, 0, n->total);
+    cp_len = (int)n->total > len ? len : n->total;
 
     for(i = cp_len, j = 0; i > 0; i--, j++)
     {
@@ -179,11 +182,11 @@ rt_err_t rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf,
 
 /**
  * @brief           x = a + b
- * 
+ *
  * @param a         bignum obj
  * @param b         bignum obj
  * @param c         bignum obj
- * 
+ *
  * @return          RT_EOK on success.
  */
 rt_err_t rt_hwcrypto_bignum_add(struct hw_bignum_mpi *x,
@@ -206,11 +209,11 @@ rt_err_t rt_hwcrypto_bignum_add(struct hw_bignum_mpi *x,
 
 /**
  * @brief           x = a - b
- * 
+ *
  * @param a         bignum obj
  * @param b         bignum obj
  * @param c         bignum obj
- * 
+ *
  * @return          RT_EOK on success.
  */
 rt_err_t rt_hwcrypto_bignum_sub(struct hw_bignum_mpi *x,
@@ -233,11 +236,11 @@ rt_err_t rt_hwcrypto_bignum_sub(struct hw_bignum_mpi *x,
 
 /**
  * @brief           x = a * b
- * 
+ *
  * @param a         bignum obj
  * @param b         bignum obj
  * @param c         bignum obj
- * 
+ *
  * @return          RT_EOK on success.
  */
 rt_err_t rt_hwcrypto_bignum_mul(struct hw_bignum_mpi *x,
@@ -260,11 +263,11 @@ rt_err_t rt_hwcrypto_bignum_mul(struct hw_bignum_mpi *x,
 
 /**
  * @brief           x = a * b (mod c)
- * 
+ *
  * @param a         bignum obj
  * @param b         bignum obj
  * @param c         bignum obj
- * 
+ *
  * @return          RT_EOK on success.
  */
 rt_err_t rt_hwcrypto_bignum_mulmod(struct hw_bignum_mpi *x,
@@ -288,11 +291,11 @@ rt_err_t rt_hwcrypto_bignum_mulmod(struct hw_bignum_mpi *x,
 
 /**
  * @brief           x = a ^ b (mod c)
- * 
+ *
  * @param a         bignum obj
  * @param b         bignum obj
  * @param c         bignum obj
- * 
+ *
  * @return          RT_EOK on success.
  */
 rt_err_t rt_hwcrypto_bignum_exptmod(struct hw_bignum_mpi *x,

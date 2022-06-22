@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -278,7 +278,7 @@ int mtd_nand_erase_all(const char *name)
     return 0;
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 static void mtd_nand(int argc, char **argv)
 {
     /* If the number of arguments less than 2 */
@@ -295,11 +295,11 @@ help:
         rt_kprintf("         eraseall <name>            Erase all block on device <name>\n");
         return ;
     }
-    else if (!strcmp(argv[1], "id"))
+    else if (!rt_strcmp(argv[1], "id"))
     {
         mtd_nandid(argv[2]);
     }
-    else if (!strcmp(argv[1], "read"))
+    else if (!rt_strcmp(argv[1], "read"))
     {
         if (argc < 5)
         {
@@ -308,7 +308,7 @@ help:
         }
         mtd_nand_read(argv[2], atoi(argv[3]), atoi(argv[4]));
     }
-    else if (!strcmp(argv[1], "readoob"))
+    else if (!rt_strcmp(argv[1], "readoob"))
     {
         if (argc < 5)
         {
@@ -317,7 +317,7 @@ help:
         }
         mtd_nand_readoob(argv[2], atoi(argv[3]), atoi(argv[4]));
     }
-    else if (!strcmp(argv[1], "write"))
+    else if (!rt_strcmp(argv[1], "write"))
     {
         if (argc < 5)
         {
@@ -326,7 +326,7 @@ help:
         }
         mtd_nand_write(argv[2], atoi(argv[3]), atoi(argv[4]));
     }
-    else if (!strcmp(argv[1], "erase"))
+    else if (!rt_strcmp(argv[1], "erase"))
     {
         if (argc < 4)
         {
@@ -335,7 +335,7 @@ help:
         }
         mtd_nand_erase(argv[2], atoi(argv[3]));
     }
-    else if (!strcmp(argv[1], "eraseall"))
+    else if (!rt_strcmp(argv[1], "eraseall"))
     {
         mtd_nand_erase_all(argv[2]);
     }
@@ -346,16 +346,16 @@ help:
     }
 }
 MSH_CMD_EXPORT(mtd_nand, MTD nand device test function);
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
 
-#ifndef FINSH_USING_MSH_ONLY
+#ifndef RT_USING_FINSH_ONLY
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nandid, nand_id, read ID - nandid(name));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_read, nand_read, read page in nand - nand_read(name, block, page));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_readoob, nand_readoob, read spare data in nand - nand_readoob(name, block, page));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_write, nand_write, write dump data to nand - nand_write(name, block, page));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
-#endif /* FINSH_USING_MSH_ONLY */
+#endif /* RT_USING_FINSH_ONLY */
 
 #endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH) */
 

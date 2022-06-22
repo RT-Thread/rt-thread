@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,6 +26,17 @@ extern "C" {
         .cntmode = HWTIMER_CNTMODE_UP,          \
     }
 #endif /* TIM_DEV_INFO_CONFIG */
+
+#ifdef BSP_USING_TIM3
+#ifndef TIM3_CONFIG
+#define TIM3_CONFIG                                         \
+    {                                                       \
+       .tim_handle.Instance     = TIM3,                     \
+       .tim_irqn                = TIM3_IRQn,                \
+       .name                    = "timer3",                 \
+    }
+#endif /* TIM3_CONFIG */
+#endif /* BSP_USING_TIM3 */
 
 #ifdef BSP_USING_TIM11
 #ifndef TIM11_CONFIG

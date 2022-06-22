@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
+ * 2020-10-14     wangqiang    use phy device in phy monitor thread
  */
 
 #include <rtthread.h>
@@ -19,9 +20,9 @@
 
 #include "fsl_enet.h"
 #include "fsl_gpio.h"
-#include "fsl_phy.h"
 #include "fsl_cache.h"
 #include "fsl_iomuxc.h"
+#include "fsl_common.h"
 
 #ifdef RT_USING_LWIP
 
@@ -62,10 +63,10 @@ struct rt_imxrt_eth
     enet_mii_duplex_t duplex;
 };
 
-ALIGN(ENET_BUFF_ALIGNMENT) enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM] SECTION("NonCacheable");
+AT_NONCACHEABLE_SECTION_ALIGN(enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM], ENET_BUFF_ALIGNMENT);
 ALIGN(ENET_BUFF_ALIGNMENT) rt_uint8_t g_txDataBuff[ENET_TXBD_NUM][RT_ALIGN(ENET_TXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
-ALIGN(ENET_BUFF_ALIGNMENT) enet_rx_bd_struct_t g_rxBuffDescrip[ENET_RXBD_NUM] SECTION("NonCacheable");
+AT_NONCACHEABLE_SECTION_ALIGN(enet_rx_bd_struct_t g_rxBuffDescrip[ENET_RXBD_NUM], ENET_BUFF_ALIGNMENT);
 ALIGN(ENET_BUFF_ALIGNMENT) rt_uint8_t g_rxDataBuff[ENET_RXBD_NUM][RT_ALIGN(ENET_RXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
 static struct rt_imxrt_eth imxrt_eth_device;
@@ -127,11 +128,28 @@ void _enet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, 
 
 static void _enet_clk_init(void)
 {
+
+#ifdef SOC_IMXRT1170_SERIES
+    const clock_sys_pll1_config_t sysPll1Config = {
+        .pllDiv2En = true,
+    };
+    CLOCK_InitSysPll1(&sysPll1Config);
+    clock_root_config_t rootCfg = {.mux = 4, .div = 10}; /* Generate 50M root clock. */
+    CLOCK_SetRootClock(kCLOCK_Root_Enet1, &rootCfg);
+
+    /* Select syspll2pfd3, 528*18/24 = 396M */
+    CLOCK_InitPfd(kCLOCK_PllSys2, kCLOCK_Pfd3, 24);
+    rootCfg.mux = 7;
+    rootCfg.div = 2;
+    CLOCK_SetRootClock(kCLOCK_Root_Bus, &rootCfg); /* Generate 198M bus clock. */
+        IOMUXC_GPR->GPR4 |= 0x3;
+#else
     const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1};
     CLOCK_InitEnetPll(&config);
 
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
     IOMUXC_GPR->GPR1|=1<<23;
+#endif
 }
 
 static void _enet_config(void)
@@ -165,7 +183,11 @@ static void _enet_config(void)
     config.miiDuplex = imxrt_eth_device.duplex;
 
     /* Set SMI to get PHY link status. */
+#ifdef SOC_IMXRT1170_SERIES
+    sysClock = CLOCK_GetRootClockFreq(kCLOCK_Root_Bus);
+#else
     sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);
+#endif
 
     dbg_log(DBG_LOG, "deinit\n");
     ENET_Deinit(imxrt_eth_device.enet_base);
@@ -277,10 +299,10 @@ static void _ENET_ActiveSend(ENET_Type *base, uint32_t ringId)
             base->TDAR = ENET_TDAR_TDAR_MASK;
             break;
 #if FSL_FEATURE_ENET_QUEUE > 1
-        case kENET_Ring1:
+        case 1:
             base->TDAR1 = ENET_TDAR1_TDAR_MASK;
             break;
-        case kENET_Ring2:
+        case 2:
             base->TDAR2 = ENET_TDAR2_TDAR_MASK;
             break;
 #endif /* FSL_FEATURE_ENET_QUEUE > 1 */
@@ -328,7 +350,7 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
 
         pbuf_copy_partial((const struct pbuf *)data, (void *)address, length, 0);
-            
+
         /* Set data length. */
         curBuffDescrip->length = length;
 #ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
@@ -433,7 +455,7 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
                 address = (uint32_t)curBuffDescrip->buffer;
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
                 DCACHE_CleanByRange(address, handle->txBuffSizeAlign[0]);
-#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */                 
+#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
                 /* Active the transmit buffer descriptor. */
                 _ENET_ActiveSend(base, 0);
 
@@ -453,8 +475,8 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
 /* transmit packet. */
 rt_err_t rt_imxrt_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-	rt_err_t result = RT_EOK;
-	enet_handle_t * enet_handle = &imxrt_eth_device.enet_handle;
+    rt_err_t result = RT_EOK;
+    enet_handle_t * enet_handle = &imxrt_eth_device.enet_handle;
 
     RT_ASSERT(p != NULL);
     RT_ASSERT(enet_handle != RT_NULL);
@@ -536,31 +558,51 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     return NULL;
 }
 
+#ifdef BSP_USING_PHY
+static struct rt_phy_device *phy_dev = RT_NULL;
 static void phy_monitor_thread_entry(void *parameter)
 {
-    phy_speed_t speed;
-    phy_duplex_t duplex;
-    bool link = false;
+    rt_uint32_t speed;
+    rt_uint32_t duplex;
+    rt_bool_t link = RT_FALSE;
 
-    imxrt_enet_phy_reset_by_gpio();
-
-    PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+    phy_dev = (struct rt_phy_device *)rt_device_find("rtt-phy");
+    if ((RT_NULL == phy_dev) || (RT_NULL == phy_dev->ops))
+    {
+        // TODO print warning information
+        LOG_E("Can not find phy device called \"rtt-phy\"");
+        return ;
+    }
+    if (RT_NULL == phy_dev->ops->init)
+    {
+        LOG_E("phy driver error!");
+        return ;
+    }
+#ifdef SOC_IMXRT1170_SERIES
+    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetRootClockFreq(kCLOCK_Root_Bus));
+#else
+    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+#endif
+    if (PHY_STATUS_OK != status)
+    {
+        LOG_E("Phy device initialize unsuccessful!\n");
+        return ;
+    }
 
     while (1)
     {
-        bool new_link = false;
-        status_t status = PHY_GetLinkStatus(imxrt_eth_device.enet_base, PHY_ADDRESS, &new_link);
+        rt_bool_t new_link = RT_FALSE;
+        rt_phy_status status = phy_dev->ops->get_link_status(&new_link);
 
-        if ((status == kStatus_Success) && (link != new_link))
+        if ((PHY_STATUS_OK == status) && (link != new_link))
         {
             link = new_link;
 
-            if (link)   // link up
+            if (link) // link up
             {
-                PHY_GetLinkSpeedDuplex(imxrt_eth_device.enet_base,
-                                       PHY_ADDRESS, &speed, &duplex);
+                phy_dev->ops->get_link_speed_duplex(&speed, &duplex);
 
-                if (kPHY_Speed10M == speed)
+                if (PHY_SPEED_10M == speed)
                 {
                     dbg_log(DBG_LOG, "10M\n");
                 }
@@ -569,7 +611,7 @@ static void phy_monitor_thread_entry(void *parameter)
                     dbg_log(DBG_LOG, "100M\n");
                 }
 
-                if (kPHY_HalfDuplex == duplex)
+                if (PHY_HALF_DUPLEX == duplex)
                 {
                     dbg_log(DBG_LOG, "half dumplex\n");
                 }
@@ -578,8 +620,7 @@ static void phy_monitor_thread_entry(void *parameter)
                     dbg_log(DBG_LOG, "full dumplex\n");
                 }
 
-                if ((imxrt_eth_device.speed != (enet_mii_speed_t)speed)
-                        || (imxrt_eth_device.duplex != (enet_mii_duplex_t)duplex))
+                if ((imxrt_eth_device.speed != (enet_mii_speed_t)speed) || (imxrt_eth_device.duplex != (enet_mii_duplex_t)duplex))
                 {
                     imxrt_eth_device.speed = (enet_mii_speed_t)speed;
                     imxrt_eth_device.duplex = (enet_mii_duplex_t)duplex;
@@ -604,6 +645,7 @@ static void phy_monitor_thread_entry(void *parameter)
         rt_thread_delay(RT_TICK_PER_SECOND * 2);
     }
 }
+#endif
 
 static int rt_hw_imxrt_eth_init(void)
 {
@@ -656,6 +698,7 @@ static int rt_hw_imxrt_eth_init(void)
 
     /* start phy monitor */
     {
+        #ifdef BSP_USING_PHY
         rt_thread_t tid;
         tid = rt_thread_create("phy",
                                phy_monitor_thread_entry,
@@ -665,6 +708,7 @@ static int rt_hw_imxrt_eth_init(void)
                                2);
         if (tid != RT_NULL)
             rt_thread_startup(tid);
+        #endif
     }
 
     return state;
@@ -672,50 +716,47 @@ static int rt_hw_imxrt_eth_init(void)
 INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(RT_USING_PHY)
 #include <finsh.h>
 
-void phy_read(uint32_t phyReg)
+void phy_read(rt_uint32_t phy_reg)
 {
-    uint32_t data;
-    status_t status;
+    rt_uint32_t data;
 
-    status = PHY_Read(imxrt_eth_device.enet_base, PHY_ADDRESS, phyReg, &data);
-    if (kStatus_Success == status)
+    rt_phy_status status = phy_dev->ops->read(phy_reg, &data);
+    if (PHY_STATUS_OK == status)
     {
-        rt_kprintf("PHY_Read: %02X --> %08X", phyReg, data);
+        rt_kprintf("PHY_Read: %02X --> %08X", phy_reg, data);
     }
     else
     {
-        rt_kprintf("PHY_Read: %02X --> faild", phyReg);
+        rt_kprintf("PHY_Read: %02X --> faild", phy_reg);
     }
 }
 
-void phy_write(uint32_t phyReg, uint32_t data)
+void phy_write(rt_uint32_t phy_reg, rt_uint32_t data)
 {
-    status_t status;
-
-    status = PHY_Write(imxrt_eth_device.enet_base, PHY_ADDRESS, phyReg, data);
-    if (kStatus_Success == status)
+    rt_phy_status status = phy_dev->ops->write(phy_reg, data);
+    if (PHY_STATUS_OK == status)
     {
-        rt_kprintf("PHY_Write: %02X --> %08X\n", phyReg, data);
+        rt_kprintf("PHY_Write: %02X --> %08X\n", phy_reg, data);
     }
     else
     {
-        rt_kprintf("PHY_Write: %02X --> faild\n", phyReg);
+        rt_kprintf("PHY_Write: %02X --> faild\n", phy_reg);
     }
 }
 
 void phy_dump(void)
 {
-    uint32_t data;
-    status_t status;
+    rt_uint32_t data;
+    rt_phy_status status;
 
     int i;
     for (i = 0; i < 32; i++)
     {
-        status = PHY_Read(imxrt_eth_device.enet_base, PHY_ADDRESS, i, &data);
-        if (kStatus_Success != status)
+        status = phy_dev->ops->read(i, &data);
+        if (PHY_STATUS_OK != status)
         {
             rt_kprintf("phy_dump: %02X --> faild", i);
             break;
@@ -729,10 +770,11 @@ void phy_dump(void)
         {
             rt_kprintf("%02X --> %08X\n", i, data);
         }
-
     }
 }
+#endif
 
+#if defined(RT_USING_FINSH) && defined(RT_USING_LWIP)
 void enet_reg_dump(void)
 {
     ENET_Type *enet_base = imxrt_eth_device.enet_base;
@@ -774,7 +816,7 @@ void enet_reg_dump(void)
     DUMP_REG(FTRL);
     DUMP_REG(TACC);
     DUMP_REG(RACC);
-    DUMP_REG(RMON_T_DROP);
+   // DUMP_REG(RMON_T_DROP);
     DUMP_REG(RMON_T_PACKETS);
     DUMP_REG(RMON_T_BC_PKT);
     DUMP_REG(RMON_T_MC_PKT);
@@ -812,7 +854,7 @@ void enet_reg_dump(void)
     DUMP_REG(RMON_R_OVERSIZE);
     DUMP_REG(RMON_R_FRAG);
     DUMP_REG(RMON_R_JAB);
-    DUMP_REG(RMON_R_RESVD_0);
+   // DUMP_REG(RMON_R_RESVD_0);
     DUMP_REG(RMON_R_P64);
     DUMP_REG(RMON_R_P65TO127);
     DUMP_REG(RMON_R_P128TO255);

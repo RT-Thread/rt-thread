@@ -223,12 +223,12 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
         menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output pwm"
+            bool "Enable timer2 output PWM"
             default n
             if BSP_USING_PWM2
                 config BSP_USING_PWM2_CH4
@@ -250,7 +250,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             choice
@@ -269,6 +268,21 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
+
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
 
     config BSP_USING_SDIO
         bool "Enable SDIO"

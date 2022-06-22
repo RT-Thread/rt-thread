@@ -48,11 +48,14 @@ typedef struct
 {
   uint32_t BaudRate;                  /*!< This member configures the Usart communication baud rate.
                                            The baud rate is computed using the following formula:
-                                              Baud Rate Register[15:4] = ((2 * fclk_pres) / ((huart->Init.BaudRate)))[15:4]
+                                              Baud Rate Register[15:4] = ((2 * fclk_pres) /
+                                              ((huart->Init.BaudRate)))[15:4]
                                               Baud Rate Register[3]    = 0
-                                              Baud Rate Register[2:0]  =  (((2 * fclk_pres) / ((huart->Init.BaudRate)))[3:0]) >> 1
+                                              Baud Rate Register[2:0]  =  (((2 * fclk_pres) /
+                                              ((huart->Init.BaudRate)))[3:0]) >> 1
                                               where fclk_pres is the USART input clock frequency
-                                           @note  Oversampling by 8 is systematically applied to achieve high baud rates. */
+                                           @note  Oversampling by 8 is systematically applied to
+                                                  achieve high baud rates. */
 
   uint32_t WordLength;                /*!< Specifies the number of data bits transmitted or received in a frame.
                                            This parameter can be a value of @ref USARTEx_Word_Length. */
@@ -200,15 +203,16 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 /** @defgroup USART_Error_Definition   USART Error Definition
   * @{
   */
-#define HAL_USART_ERROR_NONE             ((uint32_t)0x00000000U)    /*!< No error                  */
-#define HAL_USART_ERROR_PE               ((uint32_t)0x00000001U)    /*!< Parity error              */
-#define HAL_USART_ERROR_NE               ((uint32_t)0x00000002U)    /*!< Noise error               */
-#define HAL_USART_ERROR_FE               ((uint32_t)0x00000004U)    /*!< Frame error               */
-#define HAL_USART_ERROR_ORE              ((uint32_t)0x00000008U)    /*!< Overrun error             */
-#define HAL_USART_ERROR_DMA              ((uint32_t)0x00000010U)    /*!< DMA transfer error        */
+#define HAL_USART_ERROR_NONE             (0x00000000U)    /*!< No error                  */
+#define HAL_USART_ERROR_PE               (0x00000001U)    /*!< Parity error              */
+#define HAL_USART_ERROR_NE               (0x00000002U)    /*!< Noise error               */
+#define HAL_USART_ERROR_FE               (0x00000004U)    /*!< Frame error               */
+#define HAL_USART_ERROR_ORE              (0x00000008U)    /*!< Overrun error             */
+#define HAL_USART_ERROR_DMA              (0x00000010U)    /*!< DMA transfer error        */
 #if (USE_HAL_USART_REGISTER_CALLBACKS == 1)
-#define HAL_USART_ERROR_INVALID_CALLBACK ((uint32_t)0x00000040U)    /*!< Invalid Callback error    */
+#define HAL_USART_ERROR_INVALID_CALLBACK (0x00000040U)    /*!< Invalid Callback error    */
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
+#define  HAL_USART_ERROR_RTO              (0x00000080U)    /*!< Receiver Timeout error  */
 /**
   * @}
   */
@@ -240,15 +244,6 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #define USART_MODE_RX                       USART_CR1_RE                    /*!< RX mode        */
 #define USART_MODE_TX                       USART_CR1_TE                    /*!< TX mode        */
 #define USART_MODE_TX_RX                    (USART_CR1_TE |USART_CR1_RE)    /*!< RX and TX mode */
-/**
-  * @}
-  */
-
-/** @defgroup USART_Over_Sampling USART Over Sampling
-  * @{
-  */
-#define USART_OVERSAMPLING_16               0x00000000U         /*!< Oversampling by 16 */
-#define USART_OVERSAMPLING_8                USART_CR1_OVER8     /*!< Oversampling by 8  */
 /**
   * @}
   */
@@ -308,6 +303,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #define USART_FLAG_TEACK                    USART_ISR_TEACK         /*!< USART transmit enable acknowledge flag     */
 #define USART_FLAG_BUSY                     USART_ISR_BUSY          /*!< USART busy flag                            */
 #define USART_FLAG_TXE                      USART_ISR_TXE           /*!< USART transmit data register empty         */
+#define USART_FLAG_RTOF                     USART_ISR_RTOF          /*!< USART receiver timeout flag                */
 #define USART_FLAG_TC                       USART_ISR_TC            /*!< USART transmission complete                */
 #define USART_FLAG_RXNE                     USART_ISR_RXNE          /*!< USART read data register not empty         */
 #define USART_FLAG_IDLE                     USART_ISR_IDLE          /*!< USART idle flag                            */
@@ -353,6 +349,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #define USART_CLEAR_OREF                      USART_ICR_ORECF           /*!< OverRun Error Clear Flag            */
 #define USART_CLEAR_IDLEF                     USART_ICR_IDLECF          /*!< IDLE line detected Clear Flag       */
 #define USART_CLEAR_TCF                       USART_ICR_TCCF            /*!< Transmission Complete Clear Flag    */
+#define USART_CLEAR_RTOF                      USART_ICR_RTOCF           /*!< USART receiver timeout clear flag  */
 /**
   * @}
   */
@@ -384,10 +381,10 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   */
 #if (USE_HAL_USART_REGISTER_CALLBACKS == 1)
 #define __HAL_USART_RESET_HANDLE_STATE(__HANDLE__)  do{                                            \
-                                                      (__HANDLE__)->State = HAL_USART_STATE_RESET; \
-                                                      (__HANDLE__)->MspInitCallback = NULL;        \
-                                                      (__HANDLE__)->MspDeInitCallback = NULL;      \
-                                                    } while(0U)
+                                                        (__HANDLE__)->State = HAL_USART_STATE_RESET; \
+                                                        (__HANDLE__)->MspInitCallback = NULL;        \
+                                                        (__HANDLE__)->MspDeInitCallback = NULL;      \
+                                                      } while(0U)
 #else
 #define __HAL_USART_RESET_HANDLE_STATE(__HANDLE__)  ((__HANDLE__)->State = HAL_USART_STATE_RESET)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
@@ -397,9 +394,9 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   */
 #define __HAL_USART_FLUSH_DRREGISTER(__HANDLE__)                        \
   do{                                                                   \
-      SET_BIT((__HANDLE__)->Instance->RQR, USART_RXDATA_FLUSH_REQUEST); \
-      SET_BIT((__HANDLE__)->Instance->RQR, USART_TXDATA_FLUSH_REQUEST); \
-    } while(0U)
+    SET_BIT((__HANDLE__)->Instance->RQR, USART_RXDATA_FLUSH_REQUEST); \
+    SET_BIT((__HANDLE__)->Instance->RQR, USART_TXDATA_FLUSH_REQUEST); \
+  } while(0U)
 
 /** @brief  Check whether the specified USART flag is set or not.
   * @param  __HANDLE__ specifies the USART Handle
@@ -411,6 +408,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_FLAG_TXE   Transmit data register empty flag
   *            @arg @ref USART_FLAG_TC    Transmission Complete flag
   *            @arg @ref USART_FLAG_RXNE  Receive data register not empty flag
+  *            @arg @ref USART_FLAG_RTOF  Receiver Timeout flag
   *            @arg @ref USART_FLAG_IDLE  Idle Line detection flag
   *            @arg @ref USART_FLAG_ORE   OverRun Error flag
   *            @arg @ref USART_FLAG_NE    Noise Error flag
@@ -430,6 +428,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_CLEAR_OREF     Overrun Error Clear Flag
   *            @arg @ref USART_CLEAR_IDLEF    IDLE line detected Clear Flag
   *            @arg @ref USART_CLEAR_TCF      Transmission Complete Clear Flag
+  *            @arg @ref USART_CLEAR_RTOF     Receiver Timeout clear flag
   * @retval None
   */
 #define __HAL_USART_CLEAR_FLAG(__HANDLE__, __FLAG__) ((__HANDLE__)->Instance->ICR = (__FLAG__))
@@ -478,9 +477,12 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_IT_ERR   Error interrupt(Frame error, noise error, overrun error)
   * @retval None
   */
-#define __HAL_USART_ENABLE_IT(__HANDLE__, __INTERRUPT__)   (((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 1U)? ((__HANDLE__)->Instance->CR1 |= ((uint32_t)1U << ((__INTERRUPT__) & USART_IT_MASK))): \
-                                                            ((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 2U)? ((__HANDLE__)->Instance->CR2 |= ((uint32_t)1U << ((__INTERRUPT__) & USART_IT_MASK))): \
-                                                            ((__HANDLE__)->Instance->CR3 |= ((uint32_t)1U << ((__INTERRUPT__) & USART_IT_MASK))))
+#define __HAL_USART_ENABLE_IT(__HANDLE__, __INTERRUPT__)\
+  (((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 1U)?\
+   ((__HANDLE__)->Instance->CR1 |= (1U << ((__INTERRUPT__) & USART_IT_MASK))): \
+   ((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 2U)?\
+   ((__HANDLE__)->Instance->CR2 |= (1U << ((__INTERRUPT__) & USART_IT_MASK))): \
+   ((__HANDLE__)->Instance->CR3 |= (1U << ((__INTERRUPT__) & USART_IT_MASK))))
 
 /** @brief  Disable the specified USART interrupt.
   * @param  __HANDLE__ specifies the USART Handle.
@@ -494,10 +496,12 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_IT_ERR   Error interrupt(Frame error, noise error, overrun error)
   * @retval None
   */
-#define __HAL_USART_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 1U)? ((__HANDLE__)->Instance->CR1 &= ~ ((uint32_t)1U << ((__INTERRUPT__) & USART_IT_MASK))): \
-                                                            ((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 2U)? ((__HANDLE__)->Instance->CR2 &= ~ ((uint32_t)1U << ((__INTERRUPT__) & USART_IT_MASK))): \
-                                                            ((__HANDLE__)->Instance->CR3 &= ~ ((uint32_t)1U << ((__INTERRUPT__) & USART_IT_MASK))))
-
+#define __HAL_USART_DISABLE_IT(__HANDLE__, __INTERRUPT__)\
+  (((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 1U)?\
+   ((__HANDLE__)->Instance->CR1 &= ~ (1U << ((__INTERRUPT__) & USART_IT_MASK))): \
+   ((((__INTERRUPT__) & USART_CR_MASK) >> USART_CR_POS) == 2U)?\
+   ((__HANDLE__)->Instance->CR2 &= ~ (1U << ((__INTERRUPT__) & USART_IT_MASK))): \
+   ((__HANDLE__)->Instance->CR3 &= ~ (1U << ((__INTERRUPT__) & USART_IT_MASK))))
 
 /** @brief  Check whether the specified USART interrupt has occurred or not.
   * @param  __HANDLE__ specifies the USART Handle.
@@ -513,7 +517,9 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_IT_PE    Parity Error interrupt
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_USART_GET_IT(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->ISR & ((uint32_t)0x01U << (((__INTERRUPT__) & USART_ISR_MASK)>> USART_ISR_POS))) != 0U) ? SET : RESET)
+#define __HAL_USART_GET_IT(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->ISR\
+                                                         & (0x01U << (((__INTERRUPT__) & USART_ISR_MASK)>>\
+                                                                      USART_ISR_POS))) != 0U) ? SET : RESET)
 
 /** @brief  Check whether the specified USART interrupt source is enabled or not.
   * @param  __HANDLE__ specifies the USART Handle.
@@ -529,10 +535,13 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_IT_PE    Parity Error interrupt
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_USART_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((((((uint8_t)(__INTERRUPT__)) >> 0x05U) == 0x01U) ? (__HANDLE__)->Instance->CR1 : \
-                                                                (((((uint8_t)(__INTERRUPT__)) >> 0x05U) == 0x02U) ? (__HANDLE__)->Instance->CR2 : \
-                                                                (__HANDLE__)->Instance->CR3)) & (0x01U << (((uint16_t)(__INTERRUPT__)) & USART_IT_MASK)))  != 0U) ? SET : RESET)
-
+#define __HAL_USART_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((((((uint8_t)(__INTERRUPT__)) >> 0x05U) == 0x01U) ?\
+                                                                 (__HANDLE__)->Instance->CR1 : \
+                                                                 (((((uint8_t)(__INTERRUPT__)) >> 0x05U) == 0x02U) ?\
+                                                                  (__HANDLE__)->Instance->CR2 : \
+                                                                  (__HANDLE__)->Instance->CR3)) & (0x01U <<\
+                                                                      (((uint16_t)(__INTERRUPT__)) &\
+                                                                       USART_IT_MASK)))  != 0U) ? SET : RESET)
 
 /** @brief  Clear the specified USART ISR flag, in setting the proper ICR register flag.
   * @param  __HANDLE__ specifies the USART Handle.
@@ -544,6 +553,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_CLEAR_NEF      Noise detected Clear Flag
   *            @arg @ref USART_CLEAR_OREF     Overrun Error Clear Flag
   *            @arg @ref USART_CLEAR_IDLEF    IDLE line detected Clear Flag
+  *            @arg @ref USART_CLEAR_RTOF     Receiver timeout clear flag
   *            @arg @ref USART_CLEAR_TCF      Transmission Complete Clear Flag
   * @retval None
   */
@@ -558,7 +568,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *
   * @retval None
   */
-#define __HAL_USART_SEND_REQ(__HANDLE__, __REQ__)      ((__HANDLE__)->Instance->RQR |= (__REQ__))
+#define __HAL_USART_SEND_REQ(__HANDLE__, __REQ__)      ((__HANDLE__)->Instance->RQR |= (uint16_t)(__REQ__))
 
 /** @brief  Enable the USART one bit sample method.
   * @param  __HANDLE__ specifies the USART Handle.
@@ -634,14 +644,6 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #define IS_USART_MODE(__MODE__) ((((__MODE__) & 0xFFFFFFF3U) == 0x00U) && ((__MODE__) != 0x00U))
 
 /**
-  * @brief Ensure that USART oversampling is valid.
-  * @param __SAMPLING__ USART oversampling.
-  * @retval SET (__SAMPLING__ is valid) or RESET (__SAMPLING__ is invalid)
-  */
-#define IS_USART_OVERSAMPLING(__SAMPLING__) (((__SAMPLING__) == USART_OVERSAMPLING_16) || \
-                                             ((__SAMPLING__) == USART_OVERSAMPLING_8))
-
-/**
   * @brief Ensure that USART clock state is valid.
   * @param __CLOCK__ USART clock state.
   * @retval SET (__CLOCK__ is valid) or RESET (__CLOCK__ is invalid)
@@ -703,7 +705,8 @@ void HAL_USART_MspDeInit(USART_HandleTypeDef *husart);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_USART_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID, pUSART_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID,
+                                             pUSART_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
 
@@ -718,13 +721,16 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
 /* IO operation functions *****************************************************/
 HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size, uint32_t Timeout);
 HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                            uint16_t Size, uint32_t Timeout);
 HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size);
 HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size);
-HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,  uint16_t Size);
+HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                               uint16_t Size);
 HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size);
 HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size);
-HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size);
+HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                                uint16_t Size);
 HAL_StatusTypeDef HAL_USART_DMAPause(USART_HandleTypeDef *husart);
 HAL_StatusTypeDef HAL_USART_DMAResume(USART_HandleTypeDef *husart);
 HAL_StatusTypeDef HAL_USART_DMAStop(USART_HandleTypeDef *husart);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -71,7 +71,7 @@ _vector_fiq:
 
  /*
  ***************************************
- *  Stack and Heap Definitions 
+ *  Stack and Heap Definitions
  ***************************************
  */
     .section .data
@@ -107,7 +107,7 @@ svc_stack_start:
 
 /*
  ***************************************
- * Startup Code 
+ * Startup Code
  ***************************************
  */
     .section .text
@@ -121,39 +121,15 @@ reset:
 
     /* init cpu  */
     bl  cpu_init_crit
-    
-    /* todo:copyself to link address */
-    
-    /* Copy vector to the correct address */
-    ldr r0, =system_vectors
-    mrc p15, 0, r2, c1, c0, 0
-    ands r2, r2, #(1 << 13)
-    ldreq r1, =0x00000000
-    ldrne r1, =0xffff0000
-    ldmia r0!, {r2-r8, r10}
-    stmia r1!, {r2-r8, r10}
-    ldmia r0!, {r2-r8, r10}
-    stmia r1!, {r2-r8, r10}
 
-    /* turn off the watchdog */
-    ldr r0, =0x01C20CB8
-    mov     r1, #0x0
-    str     r1, [r0]
-
-    /* mask all IRQs source */
-    ldr r1, =0xffffffff
-    ldr r0, =0x01C20430
-    str r1, [r0], #0x04
-    str r1, [r0]
-    
     /* Call low level init function */
     ldr     sp, =svc_stack_start
     ldr     r0, =rt_low_level_init
     blx     r0
-    
+
     /* init stack */
     bl stack_setup
-    
+
     /* clear bss */
     mov     r0, #0
     ldr     r1, =__bss_start
@@ -163,7 +139,7 @@ bss_clear_loop:
     cmp     r1, r2
     strlo   r0, [r1], #4
     blo     bss_clear_loop
-       
+
     /* call c++ constructors of global objects */
     /*
     ldr     r0, =__ctors_start__
@@ -202,7 +178,7 @@ cpu_init_crit:
     mcr p15, 0, r0, c1, c0, 0
 
     bx lr
- 
+
 stack_setup:
     /* Setup Stack for each mode */
     mrs     r0, cpsr
@@ -233,10 +209,10 @@ stack_setup:
     ldr     sp, =svc_stack_start
 
     bx      lr
- 
+
 /*
  ***************************************
- * exception handlers 
+ * exception handlers
  ***************************************
  */
     /* Interrupt */
@@ -262,42 +238,42 @@ vector_irq:
     subs    pc,  lr, #4
 
 rt_hw_context_switch_interrupt_do:
-    mov     r1,  #0         
+    mov     r1,  #0
     str     r1,  [r0]
 
-    mov     r1, sp          
+    mov     r1, sp
     add     sp, sp, #4*4
     ldmfd   sp!, {r4-r12,lr}
-    mrs     r0,  spsr       
-    sub     r2,  lr, #4     
+    mrs     r0,  spsr
+    sub     r2,  lr, #4
 
     msr     cpsr_c, #I_BIT|F_BIT|MODE_SVC
 
-    stmfd   sp!, {r2}       
+    stmfd   sp!, {r2}
     stmfd   sp!, {r4-r12,lr}
-    ldmfd   r1,  {r1-r4}    
-    stmfd   sp!, {r1-r4}    
-    stmfd   sp!, {r0}       
+    ldmfd   r1,  {r1-r4}
+    stmfd   sp!, {r1-r4}
+    stmfd   sp!, {r0}
 
     ldr     r4,  =rt_interrupt_from_thread
     ldr     r5,  [r4]
-    str     sp,  [r5]       
+    str     sp,  [r5]
 
     ldr     r6,  =rt_interrupt_to_thread
     ldr     r6,  [r6]
-    ldr     sp,  [r6]       
+    ldr     sp,  [r6]
 
-    ldmfd   sp!, {r4}       
+    ldmfd   sp!, {r4}
     msr     spsr_cxsf, r4
 
-    ldmfd   sp!, {r0-r12,lr,pc}^ 
+    ldmfd   sp!, {r0-r12,lr,pc}^
 
     /* Exception */
 .macro push_svc_reg
     sub     sp, sp, #17 * 4
-    stmia   sp, {r0 - r12} 
+    stmia   sp, {r0 - r12}
     mov     r0, sp
-    mrs     r6, spsr       
+    mrs     r6, spsr
     str     lr, [r0, #15*4]
     str     r6, [r0, #16*4]
     str     sp, [r0, #13*4]

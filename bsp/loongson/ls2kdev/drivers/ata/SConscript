@@ -1,0 +1,14 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_DFS_ELMFAT') == False:
+    SrcRemove(src, 'dwc_ahsata.c')
+    SrcRemove(src, 'libata.c')
+
+group = DefineGroup('Drivers', src, depend = ['PKG_USING_LWEXT4'], CPPPATH = CPPPATH)
+
+Return('group')

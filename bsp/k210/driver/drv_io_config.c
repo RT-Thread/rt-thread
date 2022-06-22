@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,12 +22,18 @@ static struct io_config
     int io_num;
     fpioa_function_t func;
     const char * func_name;
-} io_config[] = 
+} io_config[] =
 {
 #ifdef BSP_USING_LCD
     IOCONFIG(BSP_LCD_CS_PIN, FUNC_SPI0_SS0),                 /* LCD CS PIN */
     IOCONFIG(BSP_LCD_WR_PIN, FUNC_SPI0_SCLK),                /* LCD WR PIN */
-    IOCONFIG(BSP_LCD_DC_PIN, HS_GPIO(LCD_DC_PIN)),     /* LCD DC PIN */
+    IOCONFIG(BSP_LCD_DC_PIN, HS_GPIO(LCD_DC_PIN)),           /* LCD DC PIN */
+#if BSP_LCD_RST_PIN >= 0
+    IOCONFIG(BSP_LCD_RST_PIN, HS_GPIO(LCD_RST_PIN)),         /* LCD RESET PIN */
+#endif
+#if BSP_LCD_BACKLIGHT_PIN >= 0
+    IOCONFIG(BSP_LCD_BACKLIGHT_PIN, HS_GPIO(LCD_BACKLIGHT_PIN)),    /* LCD BACKLIGHT PIN */
+#endif
 #endif
 
 #ifdef BSP_USING_CAMERA
@@ -63,6 +69,18 @@ static struct io_config
 #endif
 #endif
 
+#ifdef BSP_USING_UART1
+    IOCONFIG(BSP_UART1_TXD_PIN, FUNC_UART1_TX),
+    IOCONFIG(BSP_UART1_RXD_PIN, FUNC_UART1_RX),
+#endif
+#ifdef BSP_USING_UART2
+    IOCONFIG(BSP_UART2_TXD_PIN, FUNC_UART2_TX),
+    IOCONFIG(BSP_UART2_RXD_PIN, FUNC_UART2_RX),
+#endif
+#ifdef BSP_USING_UART3
+    IOCONFIG(BSP_UART3_TXD_PIN, FUNC_UART3_TX),
+    IOCONFIG(BSP_UART3_RXD_PIN, FUNC_UART3_RX),
+#endif
 };
 
 static int print_io_config()
@@ -89,7 +107,15 @@ int io_config_init(void)
     sysctl_set_power_mode(SYSCTL_POWER_BANK0, SYSCTL_POWER_V18);
     sysctl_set_power_mode(SYSCTL_POWER_BANK1, SYSCTL_POWER_V18);
     sysctl_set_power_mode(SYSCTL_POWER_BANK2, SYSCTL_POWER_V18);
-    
+#ifdef BSP_USING_UART2
+    // for IO-27/28
+    sysctl_set_power_mode(SYSCTL_POWER_BANK4, SYSCTL_POWER_V33);
+#endif
+#if  defined(BSP_USING_UART1) || defined(BSP_USING_UART3)
+    // for IO-20~23
+    sysctl_set_power_mode(SYSCTL_POWER_BANK3, SYSCTL_POWER_V33);
+#endif
+
     for(i = 0; i < count; i++)
     {
         fpioa_set_function(io_config[i].io_num, io_config[i].func);

@@ -3,22 +3,22 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	256
+#define RT_THREAD_PRIORITY_MAX  256
 
 /* Tick per Second*/
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
-#define RT_TIMER_THREAD_STACK_SIZE	   512
+#define RT_TIMER_THREAD_STACK_SIZE     512
 
 #define RT_TIMER_THREAD_PRIO       1
  /*     Rate at which timer management task runs (Hz)            */
-#define RT_TIMER_EX_TICKS_PER_SEC   10   
+#define RT_TIMER_EX_TICKS_PER_SEC   10
 
 
 /* SECTION: RT_DEBUG */
@@ -67,7 +67,7 @@
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
@@ -102,21 +102,21 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	0
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR0 192
+#define RT_LWIP_IPADDR1 168
+#define RT_LWIP_IPADDR2 0
+#define RT_LWIP_IPADDR3 30
 
 /* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	0
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR0 192
+#define RT_LWIP_GWADDR1 168
+#define RT_LWIP_GWADDR2 0
+#define RT_LWIP_GWADDR3 1
 
 /* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR0    255
+#define RT_LWIP_MSKADDR1    255
+#define RT_LWIP_MSKADDR2    255
+#define RT_LWIP_MSKADDR3    0
 
 #endif

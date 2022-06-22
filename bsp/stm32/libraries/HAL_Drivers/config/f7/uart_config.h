@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-10-30     SummerGift   first version
  * 2019-01-05     zylx         modify dma support
  */
- 
+
 #ifndef __UART_CONFIG_H__
 #define __UART_CONFIG_H__
 
@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #if defined(BSP_USING_UART1)
-#ifndef UART1_CONFIG    
+#ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \
     {                                                               \
         .name = "uart1",                                            \
@@ -132,6 +132,29 @@ extern "C" {
     }
 #endif /* UART5_DMA_RX_CONFIG */
 #endif /* BSP_UART5_RX_USING_DMA */
+
+#if defined(BSP_USING_UART6)
+#ifndef UART6_CONFIG
+#define UART6_CONFIG                                                \
+    {                                                               \
+        .name = "uart6",                                            \
+        .Instance = USART6,                                          \
+        .irq_type = USART6_IRQn,                                     \
+    }
+#endif /* UART6_CONFIG */
+#endif /* BSP_USING_UART6 */
+
+#if defined(BSP_UART6_RX_USING_DMA)
+#ifndef UART6_DMA_RX_CONFIG
+#define UART6_DMA_RX_CONFIG                                            \
+    {                                                               \
+        .Instance = UART6_RX_DMA_INSTANCE,                         \
+        .channel = UART6_RX_DMA_CHANNEL,                           \
+        .dma_rcc = UART6_RX_DMA_RCC,                               \
+        .dma_irq = UART6_RX_DMA_IRQ,                               \
+    }
+#endif /* UART6_DMA_RX_CONFIG */
+#endif /* BSP_UART6_RX_USING_DMA */
 
 #ifdef __cplusplus
 }

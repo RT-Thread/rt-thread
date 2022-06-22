@@ -1,0 +1,47 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Common/System/system_stm32mp1xx.c
+CubeMX_Config/CM4/Src/stm32mp1xx_hal_msp.c
+''')
+
+if GetDepend(['BSP_USING_ADC']):
+    src += Glob('ports/drv_hard_i2c.c')
+    src += Glob('ports/stpmic.c')
+
+if GetDepend(['BSP_USING_DAC']):
+    src += Glob('ports/drv_hard_i2c.c')
+    src += Glob('ports/stpmic.c')
+
+if GetDepend(['BSP_USING_WWDG']):
+    src += Glob('ports/drv_wwdg.c')
+
+if GetDepend(['BSP_USING_LPTIM']):
+    src += Glob('ports/drv_lptim.c')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/CM4/Inc']
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/STM32MPxx_HAL/CMSIS/Device/ST/STM32MP1xx/Source/Templates/gcc/startup_stm32mp15xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/STM32MPxx_HAL/CMSIS/Device/ST/STM32MP1xx/Source/Templates/arm/startup_stm32mp15xx.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/STM32MPxx_HAL/CMSIS/Device/ST/STM32MP1xx/Source/Templates/iar/startup_stm32mp15xx.s']
+
+CPPDEFINES = ['CORE_CM4','NO_ATOMIC_64_SUPPORT','METAL_INTERNAL','METAL_MAX_DEVICE_REGIONS=2','VIRTIO_SLAVE_ONLY','STM32MP157Axx','__LOG_TRACE_IO_']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

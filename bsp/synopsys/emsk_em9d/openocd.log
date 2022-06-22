@@ -1,9 +1,0 @@
-Warn : deprecated option: -p/--pipe. Use '-c "gdb_port pipe; log_output openocd.log"' instead.
-adapter speed: 5000 kHz
-Error: libusb_open() failed with LIBUSB_ERROR_NOT_SUPPORTED
-Info : clock speed 5000 kHz
-Info : JTAG tap: arc-em.cpu tap/device found: 0x200044b1 (mfg: 0x258, part: 0x0004, ver: 0x2)
-Info : JTAG tap: arc-em.cpu tap/device found: 0x200044b1 (mfg: 0x258, part: 0x0004, ver: 0x2)
-target state: halted
-Info : accepting 'gdb' connection from pipe
-Info : dropped 'gdb' connection

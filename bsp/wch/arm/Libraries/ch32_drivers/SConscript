@@ -1,0 +1,75 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+""")
+
+
+if  GetDepend('SOC_ARM_SERIES_CH32F103'):
+
+    if GetDepend('RT_USING_PIN'):
+        src += ['drv_gpio_ch32f10x.c']
+
+    if GetDepend(['RT_USING_SERIAL', 'BSP_USING_UART']):
+        src += ['drv_uart_ch32f10x.c']
+
+    if GetDepend(['RT_USING_SPI', 'BSP_USING_SPI']):
+        src += ['drv_spi_ch32f10x.c']
+
+    if GetDepend(['RT_USING_I2C', 'BSP_USING_HWI2C']):
+        src += ['drv_hwi2c_ch32f10x.c']
+
+    if GetDepend(['RT_USING_RTC', 'BSP_USING_RTC']):
+        src += ['drv_rtc_ch32f10x.c']
+
+    if GetDepend(['RT_USING_WDT', 'BSP_USING_IWDT']):
+        src += ['drv_iwdt_ch32f10x.c']
+
+    if GetDepend(['RT_USING_HWTIMER', 'BSP_USING_HWTIMER']):
+        src += ['drv_hwtimer_ch32f10x.c']
+
+    if GetDepend(['RT_USING_PWM', 'BSP_USING_PWM']):
+        src += ['drv_pwm_ch32f10x.c']
+
+
+if  GetDepend('SOC_ARM_SERIES_CH32F203'):
+
+    if GetDepend('RT_USING_PIN'):
+        src += ['drv_gpio_ch32f20x.c']
+
+    if GetDepend(['RT_USING_SERIAL', 'BSP_USING_UART']):
+        src += ['drv_uart_ch32f20x.c']
+
+    if GetDepend(['RT_USING_SPI', 'BSP_USING_SPI']):
+        src += ['drv_spi_ch32f20x.c']
+
+    if GetDepend(['RT_USING_I2C', 'BSP_USING_HWI2C']):
+        src += ['drv_hwi2c_ch32f20x.c']
+
+    if GetDepend(['RT_USING_RTC', 'BSP_USING_RTC']):
+        src += ['drv_rtc_ch32f20x.c']
+
+    if GetDepend(['RT_USING_WDT', 'BSP_USING_IWDT']):
+        src += ['drv_iwdt_ch32f20x.c']
+
+    if GetDepend(['RT_USING_HWTIMER', 'BSP_USING_HWTIMER']):
+        src += ['drv_hwtimer_ch32f20x.c']
+
+    if GetDepend(['RT_USING_PWM', 'BSP_USING_PWM']):
+        src += ['drv_pwm_ch32f20x.c']
+
+    if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+        src += ['drv_flash_ch32f20x.c']
+
+src += ['drv_common.c']
+
+path =  [cwd]
+path += [cwd + '/config']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

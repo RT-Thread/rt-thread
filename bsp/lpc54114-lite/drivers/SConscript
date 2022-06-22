@@ -29,6 +29,16 @@ if GetDepend('BSP_USING_SDCARD'):
 if GetDepend('BSP_USING_SPIFLASH'):
     src = src + ['drv_spi_flash.c'] 
 
+if GetDepend('BSP_USING_AUDIO_REPLAY'):
+    src = src + ['audio/drv_sound.c']
+    src = src + ['audio/fsl_wm8904.c']
+
+if GetDepend('BSP_USING_AUDIO_RECORD'):
+    src = src + ['audio/drv_mic.c']
+
+if GetDepend('BSP_USING_AUDIO_REPLAY') or GetDepend('BSP_USING_AUDIO_RECORD'):
+    CPPPATH += [cwd+'audio']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

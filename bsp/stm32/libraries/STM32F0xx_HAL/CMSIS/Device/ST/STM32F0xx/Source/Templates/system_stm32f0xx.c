@@ -18,51 +18,17 @@
   *                                 be called whenever the core clock is changed
   *                                 during program execution.
   *
-  * 2. After each device reset the HSI (8 MHz) is used as system clock source.
-  *    Then SystemInit() function is called, in "startup_stm32f0xx.s" file, to
-  *    configure the system clock before to branch to main program.
   *
-  * 3. This file configures the system clock as follows:
-  *=============================================================================
-  *                         Supported STM32F0xx device
-  *-----------------------------------------------------------------------------
-  *        System Clock source                    | HSI
-  *-----------------------------------------------------------------------------
-  *        SYSCLK(Hz)                             | 8000000
-  *-----------------------------------------------------------------------------
-  *        HCLK(Hz)                               | 8000000
-  *-----------------------------------------------------------------------------
-  *        AHB Prescaler                          | 1
-  *-----------------------------------------------------------------------------
-  *        APB1 Prescaler                         | 1
-  *-----------------------------------------------------------------------------
-  *=============================================================================
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -129,9 +95,9 @@
       1) by calling CMSIS function SystemCoreClockUpdate()
       2) by calling HAL API function HAL_RCC_GetHCLKFreq()
       3) each time HAL_RCC_ClockConfig() is called to configure the system clock frequency
-         Note: If you use this function to configure the system clock there is no need to
-               call the 2 first functions listed above, since SystemCoreClock variable is 
-               updated automatically.
+         Note: If you use this function to configure the system clock; then there
+               is no need to call the 2 first functions listed above, since SystemCoreClock
+               variable is updated automatically.
   */
 uint32_t SystemCoreClock = 8000000;
 
@@ -155,70 +121,18 @@ const uint8_t APBPrescTable[8]  = {0, 0, 0, 0, 1, 2, 3, 4};
   */
 
 /**
-  * @brief  Setup the microcontroller system.
-  *         Initialize the default HSI clock source, vector table location and the PLL configuration is reset.
+  * @brief  Setup the microcontroller system
   * @param  None
   * @retval None
   */
 void SystemInit(void)
 {
-  /* Reset the RCC clock configuration to the default reset state ------------*/
-  /* Set HSION bit */
-  RCC->CR |= (uint32_t)0x00000001U;
-
-#if defined (STM32F051x8) || defined (STM32F058x8)
-  /* Reset SW[1:0], HPRE[3:0], PPRE[2:0], ADCPRE and MCOSEL[2:0] bits */
-  RCC->CFGR &= (uint32_t)0xF8FFB80CU;
-#else
-  /* Reset SW[1:0], HPRE[3:0], PPRE[2:0], ADCPRE, MCOSEL[2:0], MCOPRE[2:0] and PLLNODIV bits */
-  RCC->CFGR &= (uint32_t)0x08FFB80CU;
-#endif /* STM32F051x8 or STM32F058x8 */
-  
-  /* Reset HSEON, CSSON and PLLON bits */
-  RCC->CR &= (uint32_t)0xFEF6FFFFU;
-
-  /* Reset HSEBYP bit */
-  RCC->CR &= (uint32_t)0xFFFBFFFFU;
-
-  /* Reset PLLSRC, PLLXTPRE and PLLMUL[3:0] bits */
-  RCC->CFGR &= (uint32_t)0xFFC0FFFFU;
-
-  /* Reset PREDIV[3:0] bits */
-  RCC->CFGR2 &= (uint32_t)0xFFFFFFF0U;
-
-#if defined (STM32F072xB) || defined (STM32F078xx)
-  /* Reset USART2SW[1:0], USART1SW[1:0], I2C1SW, CECSW, USBSW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFFCFE2CU;
-#elif defined (STM32F071xB)
-  /* Reset USART2SW[1:0], USART1SW[1:0], I2C1SW, CECSW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFFFCEACU;
-#elif defined (STM32F091xC) || defined (STM32F098xx)
-  /* Reset USART3SW[1:0], USART2SW[1:0], USART1SW[1:0], I2C1SW, CECSW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFF0FEACU;
-#elif defined (STM32F030x6) || defined (STM32F030x8) || defined (STM32F031x6) || defined (STM32F038xx) || defined (STM32F030xC)
-  /* Reset USART1SW[1:0], I2C1SW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFFFFEECU;
-#elif defined (STM32F051x8) || defined (STM32F058xx)
-  /* Reset USART1SW[1:0], I2C1SW, CECSW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFFFFEACU;
-#elif defined (STM32F042x6) || defined (STM32F048xx)
-  /* Reset USART1SW[1:0], I2C1SW, CECSW, USBSW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFFFFE2CU;
-#elif defined (STM32F070x6) || defined (STM32F070xB)
-  /* Reset USART1SW[1:0], I2C1SW, USBSW and ADCSW bits */
-  RCC->CFGR3 &= (uint32_t)0xFFFFFE6CU;
-  /* Set default USB clock to PLLCLK, since there is no HSI48 */
-  RCC->CFGR3 |= (uint32_t)0x00000080U;  
-#else
- #warning "No target selected"
-#endif
-
-  /* Reset HSI14 bit */
-  RCC->CR2 &= (uint32_t)0xFFFFFFFEU;
-
-  /* Disable all interrupts */
-  RCC->CIR = 0x00000000U;
-
+  /* NOTE :SystemInit(): This function is called at startup just after reset and 
+                         before branch to main program. This call is made inside
+                         the "startup_stm32f0xx.s" file.
+                         User can setups the default system clock (System clock source, PLL Multiplier
+                         and Divider factors, AHB/APBx prescalers and Flash settings).
+   */
 }
 
 /**
@@ -242,14 +156,14 @@ void SystemInit(void)
   *           - If SYSCLK source is PLL, SystemCoreClock will contain the HSE_VALUE(**)
   *             or HSI_VALUE(*) multiplied/divided by the PLL factors.
   *
-  *         (*) HSI_VALUE is a constant defined in stm32f0xx_hal.h file (default value
+  *         (*) HSI_VALUE is a constant defined in stm32f0xx_hal_conf.h file (default value
   *             8 MHz) but the real value may vary depending on the variations
   *             in voltage and temperature.
   *
-  *         (**) HSE_VALUE is a constant defined in stm32f0xx_hal.h file (default value
-  *              8 MHz), user has to ensure that HSE_VALUE is same as the real
-  *              frequency of the crystal used. Otherwise, this function may
-  *              have wrong result.
+  *         (**) HSE_VALUE is a constant defined in stm32f0xx_hal_conf.h file (its value
+  *              depends on the application requirements), user has to ensure that HSE_VALUE
+  *              is same as the real frequency of the crystal used. Otherwise, this function
+  *              may have wrong result.
   *
   *         - The result of this function could be not correct when using fractional
   *           value for HSE crystal.

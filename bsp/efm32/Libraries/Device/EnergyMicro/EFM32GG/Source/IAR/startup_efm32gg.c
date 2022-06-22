@@ -39,7 +39,7 @@ extern void __iar_program_start(void);
 extern void SystemInit(void);
 
 /* Auto defined by linker */
-extern unsigned char CSTACK$$Limit; 
+extern unsigned char CSTACK$$Limit;
 
 __weak void Reset_Handler(void)
 {

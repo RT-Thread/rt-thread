@@ -331,9 +331,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>SKIP_SYSCLK_INIT, CPU_MIMXRT1052CVL5B, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
+              <Define>SKIP_SYSCLK_INIT, CPU_MIMXRT1052CVL5B, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>.;..\..\..\include;applications;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\libraries\drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\MIMXRT1050\CMSIS\Include;..\libraries\MIMXRT1050\MIMXRT1052;..\libraries\MIMXRT1050\MIMXRT1052\drivers</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1050\CMSIS\Include;..\libraries\MIMXRT1050\MIMXRT1052;..\libraries\MIMXRT1050\MIMXRT1052\drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -375,114 +375,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\cpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\memheap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Applications</GroupName>
           <Files>
             <File>
@@ -500,7 +392,378 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Compiler</GroupName>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>cputime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_flash_sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sfud_sfdp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>pin_mux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\MCUX_Config\pin_mux.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>board.c</FileName>
@@ -513,13 +776,6 @@
               <FileName>clock_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\MCUX_Config\clock_config.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pin_mux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\MCUX_Config\pin_mux.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -545,52 +801,21 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>cpu</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>dfs.c</FileName>
@@ -607,34 +832,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>poll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\poll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>select.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\select.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
@@ -642,139 +839,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>DeviceDrivers</GroupName>
-          <Files>
-            <File>
-              <FileName>cputime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_flash_sfud.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sfud.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sfud_sfdp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <GroupOption>
-            <GroupArmAds>
-              <Cads>
-                <VariousControls>
-                  <MiscControls> --c99</MiscControls>
-                  <Define> </Define>
-                  <Undefine> </Undefine>
-                  <IncludePath> </IncludePath>
-                </VariousControls>
-              </Cads>
-            </GroupArmAds>
-          </GroupOption>
-        </Group>
-        <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -791,42 +861,105 @@
               <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
-          <GroupName>libc</GroupName>
+          <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>libc.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mem_std.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+              <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stdio.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+              <FilePath>..\..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stubs.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+              <FilePath>..\..\..\src\timer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\memheap.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -841,30 +974,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_common.c</FileName>
+              <FileName>generic_list.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MIMXRT1052.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\arm\startup_MIMXRT1052.s</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\generic_list.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -883,20 +995,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_lpspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dmamux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_dmamux.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_edma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_edma.c</FilePath>
@@ -911,9 +1009,72 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_dmamux.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_xbarb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_xbarb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_lpspi_edma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_lpspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_MIMXRT1052.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\arm\startup_MIMXRT1052.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_xbara.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_xbara.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_os_abstraction_rtthread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_os_abstraction_rtthread.c</FilePath>
             </File>
           </Files>
         </Group>

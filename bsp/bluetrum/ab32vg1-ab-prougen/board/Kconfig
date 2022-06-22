@@ -1,0 +1,246 @@
+menu "Hardware Drivers Config"
+
+menuconfig SOC_AB32VG1
+    bool "SOC_AB32VG1"
+    select PKG_USING_BLUETRUM_SDK
+    default y
+
+menuconfig PKG_USING_BLUETRUM_NIMBLE
+    bool "PKG_USING_BLUETRUM_NIMBLE"
+    default n
+
+menu "Onboard Peripheral Drivers"
+
+    menuconfig BSP_USING_AUDIO
+        bool "Enable Audio Device"
+        select RT_USING_AUDIO
+        default n
+
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
+        endif
+
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD"
+        select BSP_USING_SDIO
+        default n
+
+    if BSP_USING_SDCARD
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        default 24000000
+    endif
+
+    config BSP_USING_NIMBLE
+        bool "use nimble stack(iot)"
+        select PKG_USING_BLUETRUM_NIMBLE
+        default n
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                select RT_USING_SERIAL
+                default y
+            if BSP_USING_UART0
+                config BSP_UART0_FIFO_SIZE
+                    int "BSP_UART0_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                select RT_USING_SERIAL
+                default n
+            if BSP_USING_UART1
+                config BSP_UART1_FIFO_SIZE
+                    int "BSP_UART1_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                select RT_USING_SERIAL
+                default n
+            if BSP_USING_UART2
+                config BSP_UART2_FIFO_SIZE
+                    int "BSP_UART2_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
+        endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            comment "Notice: PE3 --> 16; PE2 --> 15"
+            config BSP_I2C1_SCL_PIN
+                int "I2C1 scl pin number"
+                range 1 27
+                default 16
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 27
+                default 15
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_T3_PWM
+            bool "Enable Timer3 PWM"
+            default n
+            if BSP_USING_T3_PWM
+                config BSP_USING_T3_PWM0
+                    bool "Enable Timer3 PWM0 (PB0)(Confict with SD card)"
+                    default n
+            endif
+
+        menuconfig BSP_USING_T4_PWM
+            bool "Enable Timer4 PWM"
+            default n
+            if BSP_USING_T4_PWM
+                config BSP_USING_T4_PWM1
+                    bool "Enable Timer4 PWM1 (PA6)(Confit with uart0 rx)"
+                    default y
+            endif
+
+        menuconfig BSP_USING_T5_PWM
+            bool "Enable Timer5 PWM"
+            default y
+            if BSP_USING_T5_PWM
+                config BSP_USING_T5_PWM0
+                    bool "Enable Timer5 PWM2 (PE1)"
+                    default y
+            endif
+
+        menuconfig BSP_USING_LPWM0
+            bool "Enable LPWM0"
+            default n
+            if BSP_USING_LPWM0
+                comment "G1, G2 and G3 are mutually exclusive"
+                config BSP_USING_LPWM0_G1
+                    bool "Enable LPWM0 G1 (PE4)"
+                    default y
+            endif
+
+        menuconfig BSP_USING_LPWM1
+            bool "Enable LPWM1"
+            default n
+            if BSP_USING_LPWM1
+                comment "G1, G2 and G3 are mutually exclusive"
+                config BSP_USING_LPWM1_G3
+                    bool "Enable LPWM1 G3 (PA1)"
+                    default y
+            endif
+
+        menuconfig BSP_USING_LPWM2
+            bool "Enable LPWM2"
+            default n
+            if BSP_USING_LPWM2
+                comment "G1, G2 and G3 are mutually exclusive"
+                config BSP_USING_LPWM2_G2
+                    bool "Enable LPWM2 G2 (PE0)"
+                    default y
+                config BSP_USING_LPWM2_G3
+                    bool "Enable LPWM2 G3 (PA2)"
+                    default n
+            endif
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default y
+
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+
+            config BSP_USING_TIM3
+                bool "Enable TIM3"
+                default n
+
+            config BSP_USING_TIM4
+                bool "Enable TIM4"
+                default n
+                
+            config BSP_USING_TIM5
+                bool "Enable TIM5"
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            config RTC_USING_INTERNAL_CLK
+                bool "Using internal clock RTC"
+                default y
+            config RTC_USING_1S_INT
+                bool "Using 1 second interrupt"
+                depends on RT_USING_ALARM
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0"
+                default y
+        endif
+
+    menuconfig BSP_USING_IRRX
+        bool "Enable IRRX(HW or SW)"
+        default n
+        if BSP_USING_IRRX
+            config BSP_USING_IRRX_HW
+                bool "Enable hardware IRRX"
+                default y
+            config BSP_USING_IRRX_SW
+                bool "Enable software IRRX"
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+endmenu
+
+
+endmenu

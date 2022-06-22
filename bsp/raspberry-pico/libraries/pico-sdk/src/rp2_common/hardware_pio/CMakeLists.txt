@@ -1,0 +1,4 @@
+pico_simple_hardware_target(pio)
+
+# additional libraries
+target_link_libraries(hardware_pio INTERFACE hardware_gpio hardware_claim)

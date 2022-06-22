@@ -1,8 +1,10 @@
 from building import *
 
-cwd = GetCurrentDir()
-
 src = []
+cwd = []
+CPPDEFINES = []
+
+cwd = GetCurrentDir()
 
 if GetDepend('BSP_USING_GPIO'):
     src += ['drv_gpio.c']
@@ -30,7 +32,10 @@ if GetDepend('BSP_USING_PWM'):
 
 if GetDepend('BSP_USING_ADC'):
     src += ['drv_adc.c']
-
+    
+if GetDepend('BSP_USING_LPADC'):
+    src += ['drv_lpadc.c']
+    
 if GetDepend('BSP_USING_CAN'):
     src += ['drv_can.c']
     
@@ -42,9 +47,35 @@ if GetDepend('BSP_USING_LCD'):
 
 if GetDepend('BSP_USING_ETH'):
     src += ['drv_eth.c']
+    
+if GetDepend('BSP_USING_PHY'):
+    src += ['drv_mdio.c']
 
-path =  [cwd,cwd + '/config']
+if GetDepend('BSP_USING_AUDIO'):
+    src += ['drv_sai.c']
+    src += ['bsp_wm8960.c']
+  
+if GetDepend('BSP_USING_SDIO'):
+    src += ['drv_sdio.c'] 
+    
+if GetDepend('BSP_USING_USB_DEVICE'):
+    src += ['drv_usbd.c']
+    src += Glob('usb/device/*.c')
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+if GetDepend('BSP_USING_USB_DEVICE') or GetDepend('RT_USING_USB_HOST'):
+    src += Glob('usb/phy/*.c')
+    CPPDEFINES += ['ENDIANNESS','USE_RTOS']
+    
+if GetDepend('RT_USING_USB_HOST'):
+    src += ['drv_usbh.c']
+    src += Glob('usb/host/*.c')
+
+if GetDepend('BSP_USING_PULSE_ENCODER'):
+    src += ['drv_pulse_encoder.c']
+
+path =  [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 
 Return('group')
+

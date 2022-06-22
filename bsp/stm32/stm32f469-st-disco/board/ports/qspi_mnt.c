@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2019-04-11     ZYH          first version
  */
 #include <rtthread.h>
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include <fal.h>
 #include <dfs_fs.h>
 

@@ -1,0 +1,21 @@
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+# add for startup script 
+if rtconfig.PLATFORM in ['gcc']:
+    CPPDEFINES = ['__START=entry']
+else:
+    CPPDEFINES = []
+    
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+        
+Return('group')

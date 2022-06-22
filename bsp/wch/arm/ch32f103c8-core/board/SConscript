@@ -1,0 +1,27 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+system_ch32f10x.c
+board.c
+''')
+
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/CH32F10x_StdPeriph_Driver/CMSIS/WCH/CH32F10x/Source/ARM/startup_ch32f10x.s']
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/CH32F10x_StdPeriph_Driver/CMSIS/WCH/CH32F10x/Source/GCC/startup_ch32f10x.S']
+
+
+path =  [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+Return('group')

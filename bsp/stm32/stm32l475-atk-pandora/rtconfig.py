@@ -22,8 +22,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Dgcc'
+    CFLAGS = DEVICE + ' -Dgcc -fstack-usage -fdump-rtl-dfinish'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
@@ -73,7 +73,8 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M4.fp '
     CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict --scatter "board\linker_scripts\link.sct"'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map '
+    LFLAGS += r' --strict --scatter "board\linker_scripts\link.sct" '
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
@@ -90,11 +91,44 @@ elif PLATFORM == 'armcc':
 
 
     CXXFLAGS = CFLAGS 
+
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
+elif PLATFORM == 'armclang':
+    # toolchains
+    CC = 'armclang'
+    CXX = 'armclang'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    DEVICE = ' --cpu Cortex-M4.fp '
+    CFLAGS = ' --target=arm-arm-none-eabi -mcpu=cortex-m4 '
+    CFLAGS += ' -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 '
+    CFLAGS += ' -mfloat-abi=hard -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
+    CFLAGS += ' -gdwarf-3 -ffunction-sections '
+    AFLAGS = DEVICE + ' --apcs=interwork '
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
+    LFLAGS += ' --list rt-thread.map '
+    LFLAGS += r' --strict --scatter "board\linker_scripts\link.sct" '
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
+
+    EXEC_PATH += '/ARM/ARMCLANG/bin/'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O1' # armclang recommend
+        AFLAGS += ' -g'
+    else:
+        CFLAGS += ' -O2'
+        
+    CXXFLAGS = CFLAGS
     CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     CXX = 'iccarm'
@@ -142,3 +176,10 @@ elif PLATFORM == 'iar':
     
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

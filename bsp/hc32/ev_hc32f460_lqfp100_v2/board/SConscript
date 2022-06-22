@@ -1,0 +1,31 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+board_config.c
+''')
+
+path =  [cwd]
+path += [cwd + '/ports']
+path += [cwd + '/config']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/GCC/startup_hc32f460.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/startup_hc32f460.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/startup_hc32f460.s']
+
+CPPDEFINES = ['HC32F460']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

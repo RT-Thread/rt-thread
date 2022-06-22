@@ -1,7 +1,8 @@
 /*
  * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2013-03-30     Bernard      the first verion
@@ -10,9 +11,7 @@
 #include <rthw.h>
 #include <registers/regsuart.h>
 #include <imx_uart.h>
-
 #include <rtdevice.h>
-
 #include "serial.h"
 
 struct hw_uart_device
@@ -122,16 +121,6 @@ static const struct rt_uart_ops _uart_ops =
     uart_getc,
 };
 
-#ifdef RT_USING_UART0
-/* UART device driver structure */
-static struct hw_uart_device _uart0_device =
-{
-    HW_UART0,
-    IMX_INT_UART0
-};
-static struct rt_serial_device _serial0;
-#endif
-
 #ifdef RT_USING_UART1
 /* UART1 device driver structure */
 static struct hw_uart_device _uart1_device =
@@ -154,18 +143,6 @@ int rt_hw_uart_init(void)
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
     config.bufsz     = RT_SERIAL_RB_BUFSZ;
-
-#ifdef RT_USING_UART0
-    uart = &_uart0_device;
-
-    _serial0.ops    = &_uart_ops;
-    _serial0.config = config;
-
-    /* register UART1 device */
-    rt_hw_serial_register(&_serial0, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          uart);
-#endif
 
 #ifdef RT_USING_UART1
     uart = &_uart1_device;

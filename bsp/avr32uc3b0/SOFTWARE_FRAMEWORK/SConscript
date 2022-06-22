@@ -25,6 +25,6 @@ CPPPATH = [
     cwd + '/DRIVERS/USART',
 ]
 
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

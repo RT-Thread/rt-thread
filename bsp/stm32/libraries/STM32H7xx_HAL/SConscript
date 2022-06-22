@@ -27,7 +27,7 @@ STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sram.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c
 ''')
- 
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_usart.c']
@@ -41,9 +41,9 @@ if GetDepend(['RT_USING_SPI']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_qspi.c']
 
-if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+if GetDepend(['RT_USING_USB']):
    # src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pccard.c']
-    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.c'] 
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd_ex.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hcd.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c']
@@ -56,13 +56,17 @@ if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_lptim.c']
 
-if GetDepend(['BSP_USING_ETH']):
+if GetDepend(['BSP_USING_ETH']) or GetDepend(['BSP_USING_ETH_H750']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c']
 
 if GetDepend(['RT_USING_ADC']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc_ex.c']
+
+if GetDepend(['RT_USING_DAC']):
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dac.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dac_ex.c']
 
 if GetDepend(['RT_USING_RTC']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rtc.c']
@@ -100,12 +104,14 @@ if GetDepend(['BSP_USING_LTDC']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_ltdc.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma2d.c']
 
+if GetDepend(['BSP_USING_DCMI']):
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c']
+
 path = [cwd + '/STM32H7xx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Device/ST/STM32H7xx/Include',
-    cwd + '/CMSIS/Include']
+    cwd + '/CMSIS/Device/ST/STM32H7xx/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
-group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
 

@@ -55,8 +55,10 @@ extern "C" {
 /* - channel register offset of data output register DORx                     */
 /* - channel register offset of sample-and-hold sample time register SHSRx    */
 /* - channel register offset of sawtooth register STRx                        */
-#define DAC_CR_CH1_BITOFFSET           0U    /* Position of channel bits into registers CR, MCR, CCR, SHHR, SHRR, STMODR of channel 1 */
-#define DAC_CR_CH2_BITOFFSET           16U   /* Position of channel bits into registers CR, MCR, CCR, SHHR, SHRR, STMODR of channel 2 */
+#define DAC_CR_CH1_BITOFFSET           0UL   /* Position of channel bits into registers
+                                                CR, MCR, CCR, SHHR, SHRR, STMODR of channel 1 */
+#define DAC_CR_CH2_BITOFFSET           16UL  /* Position of channel bits into registers
+                                                CR, MCR, CCR, SHHR, SHRR, STMODR of channel 2 */
 #define DAC_CR_CHX_BITOFFSET_MASK      (DAC_CR_CH1_BITOFFSET | DAC_CR_CH2_BITOFFSET)
 
 #define DAC_SWTR_CH1                   (DAC_SWTRIGR_SWTRIG1) /* Channel bit into register SWTRIGR of channel 1. */
@@ -67,39 +69,68 @@ extern "C" {
 #define DAC_SWTRB_CH2                  (DAC_SWTRIGR_SWTRIGB2) /* Channel bit into register SWTRIGR of channel 2.*/
 #define DAC_SWTRB_CHX_MASK             (DAC_SWTRB_CH1 | DAC_SWTRB_CH2)
 
-#define DAC_REG_DHR12R1_REGOFFSET      0x00000000U             /* Register DHR12Rx channel 1 taken as reference */
-#define DAC_REG_DHR12L1_REGOFFSET      0x00100000U             /* Register offset of DHR12Lx channel 1 versus DHR12Rx channel 1 (shifted left of 20 bits) */
-#define DAC_REG_DHR8R1_REGOFFSET       0x02000000U             /* Register offset of DHR8Rx  channel 1 versus DHR12Rx channel 1 (shifted left of 24 bits) */
-#define DAC_REG_DHR12R2_REGOFFSET      0x30000000U             /* Register offset of DHR12Rx channel 2 versus DHR12Rx channel 1 (shifted left of 28 bits) */
-#define DAC_REG_DHR12L2_REGOFFSET      0x00400000U             /* Register offset of DHR12Lx channel 2 versus DHR12Rx channel 1 (shifted left of 20 bits) */
-#define DAC_REG_DHR8R2_REGOFFSET       0x05000000U             /* Register offset of DHR8Rx  channel 2 versus DHR12Rx channel 1 (shifted left of 24 bits) */
-#define DAC_REG_DHR12RX_REGOFFSET_MASK 0xF0000000U
-#define DAC_REG_DHR12LX_REGOFFSET_MASK 0x00F00000U
-#define DAC_REG_DHR8RX_REGOFFSET_MASK  0x0F000000U
-#define DAC_REG_DHRX_REGOFFSET_MASK    (DAC_REG_DHR12RX_REGOFFSET_MASK | DAC_REG_DHR12LX_REGOFFSET_MASK | DAC_REG_DHR8RX_REGOFFSET_MASK)
+#define DAC_REG_DHR12R1_REGOFFSET      0x00000000UL            /* Register DHR12Rx channel 1 taken as reference */
+#define DAC_REG_DHR12L1_REGOFFSET      0x00100000UL            /* Register offset of DHR12Lx channel 1 versus
+                                                                  DHR12Rx channel 1 (shifted left of 20 bits)   */
+#define DAC_REG_DHR8R1_REGOFFSET       0x02000000UL            /* Register offset of DHR8Rx  channel 1 versus
+                                                                  DHR12Rx channel 1 (shifted left of 24 bits)   */
 
-#define DAC_REG_DOR1_REGOFFSET         0x00000000U             /* Register DORx channel 1 taken as reference */
-#define DAC_REG_DOR2_REGOFFSET         0x00000020U             /* Register offset of DORx channel 1 versus DORx channel 2 (shifted left of 5 bits) */
+#define DAC_REG_DHR12R2_REGOFFSET      0x30000000UL            /* Register offset of DHR12Rx channel 2 versus
+                                                                  DHR12Rx channel 1 (shifted left of 28 bits)   */
+#define DAC_REG_DHR12L2_REGOFFSET      0x00400000UL            /* Register offset of DHR12Lx channel 2 versus
+                                                                  DHR12Rx channel 1 (shifted left of 20 bits)   */
+#define DAC_REG_DHR8R2_REGOFFSET       0x05000000UL            /* Register offset of DHR8Rx  channel 2 versus
+                                                                  DHR12Rx channel 1 (shifted left of 24 bits)   */
+
+#define DAC_REG_DHR12RX_REGOFFSET_MASK 0xF0000000UL
+#define DAC_REG_DHR12LX_REGOFFSET_MASK 0x00F00000UL
+#define DAC_REG_DHR8RX_REGOFFSET_MASK  0x0F000000UL
+#define DAC_REG_DHRX_REGOFFSET_MASK    (DAC_REG_DHR12RX_REGOFFSET_MASK\
+                                        | DAC_REG_DHR12LX_REGOFFSET_MASK | DAC_REG_DHR8RX_REGOFFSET_MASK)
+
+#define DAC_REG_DOR1_REGOFFSET         0x00000000UL            /* Register DORx channel 1 taken as reference */
+
+#define DAC_REG_DOR2_REGOFFSET         0x00000020UL            /* Register offset of DORx channel 1 versus
+                                                                  DORx channel 2 (shifted left of 5 bits)    */
 #define DAC_REG_DORX_REGOFFSET_MASK    (DAC_REG_DOR1_REGOFFSET | DAC_REG_DOR2_REGOFFSET)
-#define DAC_REG_SHSR1_REGOFFSET        0x00000000U             /* Register SHSRx channel 1 taken as reference */
-#define DAC_REG_SHSR2_REGOFFSET        0x00000040U             /* Register offset of SHSRx channel 1 versus SHSRx channel 2 (shifted left of 6 bits) */
+
+#define DAC_REG_SHSR1_REGOFFSET        0x00000000UL            /* Register SHSRx channel 1 taken as reference */
+#define DAC_REG_SHSR2_REGOFFSET        0x00000040UL            /* Register offset of SHSRx channel 1 versus
+                                                                  SHSRx channel 2 (shifted left of 6 bits)    */
 #define DAC_REG_SHSRX_REGOFFSET_MASK   (DAC_REG_SHSR1_REGOFFSET | DAC_REG_SHSR2_REGOFFSET)
 
-#define DAC_REG_STR1_REGOFFSET         0x00000000U             /* Register STRx channel 1 taken as reference */
-#define DAC_REG_STR2_REGOFFSET         0x00000080U             /* Register offset of STRx channel 1 versus STRx channel 2 (shifted left of 7 bits) */
+#define DAC_REG_STR1_REGOFFSET         0x00000000UL            /* Register STRx channel 1 taken as reference  */
+#define DAC_REG_STR2_REGOFFSET         0x00000080UL            /* Register offset of STRx channel 1 versus
+                                                                  STRx channel 2 (shifted left of 7 bits)     */
 #define DAC_REG_STRX_REGOFFSET_MASK   (DAC_REG_STR1_REGOFFSET | DAC_REG_STR2_REGOFFSET)
 
-#define DAC_REG_DHR_REGOFFSET_MASK_POSBIT0         0x0000000FU  /* Mask of data hold registers offset (DHR12Rx, DHR12Lx, DHR8Rx, ...) when shifted to position 0 */
-#define DAC_REG_DORX_REGOFFSET_MASK_POSBIT0        0x00000001U  /* Mask of DORx registers offset when shifted to position 0 */
-#define DAC_REG_SHSRX_REGOFFSET_MASK_POSBIT0       0x00000001U  /* Mask of SHSRx registers offset when shifted to position 0 */
-#define DAC_REG_STRX_REGOFFSET_MASK_POSBIT0        0x00000001U  /* Mask of STRx registers offset when shifted to position 0 */
+#define DAC_REG_DHR_REGOFFSET_MASK_POSBIT0         0x0000000FUL /* Mask of data hold registers offset (DHR12Rx,
+                                                                   DHR12Lx, DHR8Rx, ...) when shifted to position 0 */
+#define DAC_REG_DORX_REGOFFSET_MASK_POSBIT0        0x00000001UL /* Mask of DORx registers offset when shifted
+                                                                   to position 0                                    */
+#define DAC_REG_SHSRX_REGOFFSET_MASK_POSBIT0       0x00000001UL /* Mask of SHSRx registers offset when shifted
+                                                                   to position 0                                    */
+#define DAC_REG_STRX_REGOFFSET_MASK_POSBIT0        0x00000001UL /* Mask of STRx registers offset when shifted
+                                                                   to position 0                                    */
 
-#define DAC_REG_DHR12RX_REGOFFSET_BITOFFSET_POS           28U   /* Position of bits register offset of DHR12Rx channel 1 or 2 versus DHR12Rx channel 1 (shifted left of 28 bits) */
-#define DAC_REG_DHR12LX_REGOFFSET_BITOFFSET_POS           20U   /* Position of bits register offset of DHR12Lx channel 1 or 2 versus DHR12Rx channel 1 (shifted left of 20 bits) */
-#define DAC_REG_DHR8RX_REGOFFSET_BITOFFSET_POS            24U   /* Position of bits register offset of DHR8Rx  channel 1 or 2 versus DHR12Rx channel 1 (shifted left of 24 bits) */
-#define DAC_REG_DORX_REGOFFSET_BITOFFSET_POS               5U   /* Position of bits register offset of DORx channel 1 or 2 versus DORx channel 1 (shifted left of 5 bits) */
-#define DAC_REG_SHSRX_REGOFFSET_BITOFFSET_POS              6U   /* Position of bits register offset of SHSRx channel 1 or 2 versus SHSRx channel 1 (shifted left of 6 bits) */
-#define DAC_REG_STRX_REGOFFSET_BITOFFSET_POS               7U   /* Position of bits register offset of STRx channel 1 or 2 versus STRx channel 1 (shifted left of 7 bits) */
+#define DAC_REG_DHR12RX_REGOFFSET_BITOFFSET_POS           28UL  /* Position of bits register offset of DHR12Rx
+                                                                   channel 1 or 2 versus DHR12Rx channel 1
+                                                                   (shifted left of 28 bits)                   */
+#define DAC_REG_DHR12LX_REGOFFSET_BITOFFSET_POS           20UL  /* Position of bits register offset of DHR12Lx
+                                                                   channel 1 or 2 versus DHR12Rx channel 1
+                                                                   (shifted left of 20 bits)                   */
+#define DAC_REG_DHR8RX_REGOFFSET_BITOFFSET_POS            24UL  /* Position of bits register offset of DHR8Rx
+                                                                   channel 1 or 2 versus DHR12Rx channel 1
+                                                                   (shifted left of 24 bits)                   */
+#define DAC_REG_DORX_REGOFFSET_BITOFFSET_POS               5UL  /* Position of bits register offset of DORx
+                                                                   channel 1 or 2 versus DORx channel 1
+                                                                   (shifted left of 5 bits)                    */
+#define DAC_REG_SHSRX_REGOFFSET_BITOFFSET_POS              6UL  /* Position of bits register offset of SHSRx
+                                                                   channel 1 or 2 versus SHSRx channel 1
+                                                                   (shifted left of 6 bits)                    */
+#define DAC_REG_STRX_REGOFFSET_BITOFFSET_POS               7UL  /* Position of bits register offset of STRx
+                                                                   channel 1 or 2 versus STRx channel 1
+                                                                   (shifted left of 7 bits)                    */
 
 /* DAC registers bits positions */
 #define DAC_DHR12RD_DACC2DHR_BITOFFSET_POS                DAC_DHR12RD_DACC2DHR_Pos
@@ -107,7 +138,9 @@ extern "C" {
 #define DAC_DHR8RD_DACC2DHR_BITOFFSET_POS                 DAC_DHR8RD_DACC2DHR_Pos
 
 /* Miscellaneous data */
-#define DAC_DIGITAL_SCALE_12BITS                        4095U  /* Full-scale digital value with a resolution of 12 bits (voltage range determined by analog voltage references Vref+ and Vref-, refer to reference manual) */
+#define DAC_DIGITAL_SCALE_12BITS                  4095UL   /* Full-scale digital value with a resolution of 12
+                                                              bits (voltage range determined by analog voltage
+                                                              references Vref+ and Vref-, refer to reference manual) */
 
 /**
   * @}
@@ -126,9 +159,9 @@ extern "C" {
   * @param  __REG__ Register basis from which the offset is applied.
   * @param  __REG_OFFFSET__ Offset to be applied (unit: number of registers).
   * @retval Pointer to register address
-*/
+  */
 #define __DAC_PTR_REG_OFFSET(__REG__, __REG_OFFFSET__)                         \
-  ((uint32_t *)((uint32_t) ((uint32_t)(&(__REG__)) + ((__REG_OFFFSET__) << 2U))))
+  ((uint32_t *)((uint32_t) ((uint32_t)(&(__REG__)) + ((__REG_OFFFSET__) << 2UL))))
 
 /**
   * @}
@@ -146,48 +179,68 @@ extern "C" {
   */
 typedef struct
 {
-  uint32_t TriggerSource;               /*!< Set the conversion trigger source for the selected DAC channel: internal (SW start) or from external peripheral (timer event, external interrupt line).
+  uint32_t TriggerSource;               /*!< Set the conversion trigger source for the selected DAC channel:
+                                             internal (SW start) or from external peripheral
+                                             (timer event, external interrupt line).
                                              This parameter can be a value of @ref DAC_LL_EC_TRIGGER_SOURCE
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetTriggerSource().
-                                             @note If waveform automatic generation mode is set to sawtooth, this parameter is used as sawtooth RESET trigger */
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetTriggerSource().
+                                             @note If waveform automatic generation mode is set to sawtooth,
+                                             this parameter is used as sawtooth RESET trigger */
 
-  uint32_t TriggerSource2;              /*!< Set the conversion secondary trigger source for the selected DAC channel: internal (SW start) or from external peripheral (timer event, external interrupt line).
+  uint32_t TriggerSource2;              /*!< Set the conversion secondary trigger source for the selected DAC channel:
+                                             internal (SW start) or from external peripheral
+                                             (timer event, external interrupt line).
                                              This parameter can be a value of @ref DAC_LL_EC_TRIGGER_SOURCE
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetTriggerSource2().
-                                             @note If waveform automatic generation mode is set to sawtooth, this parameter is used as sawtooth
-                                             step trigger */
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetTriggerSource2().
+                                             @note If waveform automatic generation mode is set to sawtooth,
+                                             this parameter is used as sawtooth step trigger */
 
   uint32_t WaveAutoGeneration;          /*!< Set the waveform automatic generation mode for the selected DAC channel.
                                              This parameter can be a value of @ref DAC_LL_EC_WAVE_AUTO_GENERATION_MODE
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetWaveAutoGeneration(). */
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetWaveAutoGeneration(). */
 
   uint32_t WaveAutoGenerationConfig;    /*!< Set the waveform automatic generation mode for the selected DAC channel.
-                                             If waveform automatic generation mode is set to noise, this parameter can be a value of @ref DAC_LL_EC_WAVE_NOISE_LFSR_UNMASK_BITS
-                                             If waveform automatic generation mode is set to triangle, this parameter can be a value of @ref DAC_LL_EC_WAVE_TRIANGLE_AMPLITUDE
-                                             If waveform automatic generation mode is set to sawtooth, this parameter host the sawtooth configuration: polarity, reset data, increment data. Use __LL_DAC_FORMAT_SAWTOOTHWAVECONFIG macro to
-                                             set this parameter value.
-                                             @note If waveform automatic generation mode is disabled, this parameter is discarded.
+                                             If waveform automatic generation mode is set to noise, this parameter
+                                             can be a value of @ref DAC_LL_EC_WAVE_NOISE_LFSR_UNMASK_BITS
+                                             If waveform automatic generation mode is set to triangle,
+                                             this parameter can be a value of @ref DAC_LL_EC_WAVE_TRIANGLE_AMPLITUDE
+                                             If waveform automatic generation mode is set to sawtooth, this parameter
+                                             host the sawtooth configuration: polarity, reset data, increment data.
+                                             Use __LL_DAC_FORMAT_SAWTOOTHWAVECONFIG macro to set this parameter value.
+                                             @note If waveform automatic generation mode is disabled,
+                                              this parameter is discarded.
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetWaveNoiseLFSR(), @ref LL_DAC_SetWaveTriangleAmplitude(), @ref LL_DAC_SetWaveSawtoothPolarity(), @ref LL_DAC_SetWaveSawtoothResetData() or @ref LL_DAC_SetWaveSawtoothStepData(), depending on the wave automatic generation selected. */
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetWaveNoiseLFSR(),
+                                             @ref LL_DAC_SetWaveTriangleAmplitude(),
+                                             @ref LL_DAC_SetWaveSawtoothPolarity(),
+                                             @ref LL_DAC_SetWaveSawtoothResetData()
+                                             or @ref LL_DAC_SetWaveSawtoothStepData(),
+                                             depending on the wave automatic generation selected. */
 
   uint32_t OutputBuffer;                /*!< Set the output buffer for the selected DAC channel.
                                              This parameter can be a value of @ref DAC_LL_EC_OUTPUT_BUFFER
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetOutputBuffer(). */
-
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetOutputBuffer(). */
 
   uint32_t OutputConnection;            /*!< Set the output connection for the selected DAC channel.
                                              This parameter can be a value of @ref DAC_LL_EC_OUTPUT_CONNECTION
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetOutputConnection(). */
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetOutputConnection(). */
 
-  uint32_t OutputMode;                  /*!< Set the output mode normal or sample-and-hold for the selected DAC channel.
-                                             This parameter can be a value of @ref DAC_LL_EC_OUTPUT_MODE
+  uint32_t OutputMode;                  /*!< Set the output mode normal or sample-and-hold for the selected DAC
+                                             channel. This parameter can be a value of @ref DAC_LL_EC_OUTPUT_MODE
 
-                                             This feature can be modified afterwards using unitary function @ref LL_DAC_SetOutputMode(). */
+                                             This feature can be modified afterwards using unitary
+                                             function @ref LL_DAC_SetOutputMode(). */
 } LL_DAC_InitTypeDef;
 
 /**
@@ -217,6 +270,7 @@ typedef struct
 #define LL_DAC_FLAG_BWST2                  (DAC_SR_BWST2)     /*!< DAC channel 2 flag busy writing sample time */
 #define LL_DAC_FLAG_DAC2RDY                (DAC_SR_DAC2RDY)   /*!< DAC channel 2 flag ready */
 #define LL_DAC_FLAG_DORSTAT2               (DAC_SR_DORSTAT2)  /*!< DAC channel 2 flag output register */
+
 /**
   * @}
   */
@@ -226,7 +280,9 @@ typedef struct
   * @{
   */
 #define LL_DAC_IT_DMAUDRIE1                (DAC_CR_DMAUDRIE1) /*!< DAC channel 1 interruption DMA underrun */
+
 #define LL_DAC_IT_DMAUDRIE2                (DAC_CR_DMAUDRIE2) /*!< DAC channel 2 interruption DMA underrun */
+
 /**
   * @}
   */
@@ -241,10 +297,11 @@ typedef struct
   */
 
 /** @defgroup DAC_LL_EC_HIGH_FREQUENCY_MODE DAC high frequency interface mode
-  * @brief    High frequency interface mode defines that can be used with LL_DAC_SetHighFrequencyMode and LL_DAC_GetHighFrequencyMode
+  * @brief    High frequency interface mode defines that can be used
+  *           with LL_DAC_SetHighFrequencyMode and LL_DAC_GetHighFrequencyMode
   * @{
   */
-#define LL_DAC_HIGH_FREQ_MODE_DISABLE         0x00000000U        /*!< High frequency interface mode disabled */
+#define LL_DAC_HIGH_FREQ_MODE_DISABLE         0x00000000UL       /*!< High frequency interface mode disabled */
 #define LL_DAC_HIGH_FREQ_MODE_ABOVE_80MHZ     (DAC_MCR_HFSEL_0)  /*!< High frequency interface mode compatible to AHB>80MHz enabled */
 #define LL_DAC_HIGH_FREQ_MODE_ABOVE_160MHZ    (DAC_MCR_HFSEL_1)  /*!< High frequency interface mode compatible to AHB>160MHz enabled */
 /**
@@ -254,7 +311,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_OPERATING_MODE DAC operating mode
   * @{
   */
-#define LL_DAC_MODE_NORMAL_OPERATION       0x00000000U             /*!< DAC channel in mode normal operation */
+#define LL_DAC_MODE_NORMAL_OPERATION       0x00000000UL            /*!< DAC channel in mode normal operation */
 #define LL_DAC_MODE_CALIBRATION            (DAC_CR_CEN1)           /*!< DAC channel in mode calibration */
 /**
   * @}
@@ -263,7 +320,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_TRIGGER_SOURCE DAC trigger source
   * @{
   */
-#define LL_DAC_TRIG_SOFTWARE                  0x00000000U                                                         /*!< DAC (all) channel conversion trigger internal (SW start) */
+#define LL_DAC_TRIG_SOFTWARE                  0x00000000UL                                                        /*!< DAC (all) channel conversion trigger internal (SW start) */
 #define LL_DAC_TRIG_EXT_TIM1_TRGO             (                                                   DAC_CR_TSEL1_0) /*!< DAC3 channel conversion trigger from external peripheral: TIM1 TRGO. */
 #define LL_DAC_TRIG_EXT_TIM8_TRGO             (                                                   DAC_CR_TSEL1_0) /*!< DAC1/2/4 channel conversion trigger from external peripheral: TIM8 TRGO. Refer to device datasheet for DACx instance availability. */
 #define LL_DAC_TRIG_EXT_TIM7_TRGO             (                                  DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: TIM7 TRGO. */
@@ -274,21 +331,21 @@ typedef struct
 #define LL_DAC_TRIG_EXT_EXTI_LINE10           (                 DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: external interrupt line 10. Note: only to be used as increment (sawtooth generation) trigger */
 #define LL_DAC_TRIG_EXT_TIM6_TRGO             (                 DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: TIM6 TRGO. */
 #define LL_DAC_TRIG_EXT_TIM3_TRGO             (DAC_CR_TSEL1_3                                                   ) /*!< DAC (all) channel conversion trigger from external peripheral: TIM3 TRGO. */
-#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG1       (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG1  (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG1        (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG1 (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG2       (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG2  (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG2        (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG2 (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG3       (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG3  (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG3        (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG3 (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG4       (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                  ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG4  (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG4        (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                  ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG4 (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG5       (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG5  (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG5        (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG5 (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG6       (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG6  (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG6        (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG6 (only available for sawtooth wave generation). On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_TRGO1           (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC1&4 channel conversion trigger from external peripheral: HRTIM1 DACTRG1. Note: only to be used as update or reset (sawtooth generation) trigger. Refer to device datasheet for DACx instance availability. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define LL_DAC_TRIG_EXT_HRTIM_TRGO2           (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC2 channel conversion trigger from external peripheral: HRTIM1 DACTRG2. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported and DAC2 instance present (refer to device datasheet for supported features list and DAC2 instance availability) */
-#define LL_DAC_TRIG_EXT_HRTIM_TRGO3           (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC3 channel conversion trigger from external peripheral: HRTIM1 DACTRG3. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG1       (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG1  (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG1        (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG1 (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG2       (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG2  (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG2        (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG2 (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG3       (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG3  (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG3        (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG3 (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG4       (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                  ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG4  (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG4        (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                  ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG4 (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG5       (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG5  (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG5        (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG5 (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_STEP_TRG6       (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC STEP TRIG6  (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_RST_TRG6        (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                 ) /*!< DAC (all) channel conversion trigger from external peripheral: HRTIM DAC RESET TRIG6 (only available for sawtooth wave generation). On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_TRGO1           (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC1&4 channel conversion trigger from external peripheral: HRTIM1 DACTRG1. Note: only to be used as update or reset (sawtooth generation) trigger. Refer to device datasheet for DACx instance availability. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define LL_DAC_TRIG_EXT_HRTIM_TRGO2           (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC2 channel conversion trigger from external peripheral: HRTIM1 DACTRG2. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported and DAC2 instance present (refer to device datasheet for supported features list and DAC2 instance availability) */
+#define LL_DAC_TRIG_EXT_HRTIM_TRGO3           (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0) /*!< DAC3 channel conversion trigger from external peripheral: HRTIM1 DACTRG3. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
 /**
   * @}
   */
@@ -296,7 +353,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_WAVE_AUTO_GENERATION_MODE DAC waveform automatic generation mode
   * @{
   */
-#define LL_DAC_WAVE_AUTO_GENERATION_NONE     0x00000000U                     /*!< DAC channel wave auto generation mode disabled. */
+#define LL_DAC_WAVE_AUTO_GENERATION_NONE     0x00000000UL                    /*!< DAC channel wave auto generation mode disabled. */
 #define LL_DAC_WAVE_AUTO_GENERATION_NOISE    (               DAC_CR_WAVE1_0) /*!< DAC channel wave auto generation mode enabled, set generated noise waveform. */
 #define LL_DAC_WAVE_AUTO_GENERATION_TRIANGLE (DAC_CR_WAVE1_1               ) /*!< DAC channel wave auto generation mode enabled, set generated triangle waveform. */
 #define LL_DAC_WAVE_AUTO_GENERATION_SAWTOOTH (DAC_CR_WAVE1_1|DAC_CR_WAVE1_0) /*!< DAC channel wave auto generation mode enabled, set generated sawtooth waveform. */
@@ -307,7 +364,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_WAVE_NOISE_LFSR_UNMASK_BITS DAC wave generation - Noise LFSR unmask bits
   * @{
   */
-#define LL_DAC_NOISE_LFSR_UNMASK_BIT0      0x00000000U                                                         /*!< Noise wave generation, unmask LFSR bit0, for the selected DAC channel */
+#define LL_DAC_NOISE_LFSR_UNMASK_BIT0      0x00000000UL                                                        /*!< Noise wave generation, unmask LFSR bit0, for the selected DAC channel */
 #define LL_DAC_NOISE_LFSR_UNMASK_BITS1_0   (                                                   DAC_CR_MAMP1_0) /*!< Noise wave generation, unmask LFSR bits[1:0], for the selected DAC channel */
 #define LL_DAC_NOISE_LFSR_UNMASK_BITS2_0   (                                  DAC_CR_MAMP1_1                 ) /*!< Noise wave generation, unmask LFSR bits[2:0], for the selected DAC channel */
 #define LL_DAC_NOISE_LFSR_UNMASK_BITS3_0   (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Noise wave generation, unmask LFSR bits[3:0], for the selected DAC channel */
@@ -326,7 +383,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_WAVE_TRIANGLE_AMPLITUDE DAC wave generation - Triangle amplitude
   * @{
   */
-#define LL_DAC_TRIANGLE_AMPLITUDE_1        0x00000000U                                                         /*!< Triangle wave generation, amplitude of 1 LSB of DAC output range, for the selected DAC channel */
+#define LL_DAC_TRIANGLE_AMPLITUDE_1        0x00000000UL                                                        /*!< Triangle wave generation, amplitude of 1 LSB of DAC output range, for the selected DAC channel */
 #define LL_DAC_TRIANGLE_AMPLITUDE_3        (                                                   DAC_CR_MAMP1_0) /*!< Triangle wave generation, amplitude of 3 LSB of DAC output range, for the selected DAC channel */
 #define LL_DAC_TRIANGLE_AMPLITUDE_7        (                                  DAC_CR_MAMP1_1                 ) /*!< Triangle wave generation, amplitude of 7 LSB of DAC output range, for the selected DAC channel */
 #define LL_DAC_TRIANGLE_AMPLITUDE_15       (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Triangle wave generation, amplitude of 15 LSB of DAC output range, for the selected DAC channel */
@@ -345,7 +402,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_SAWTOOTH_POLARITY_MODE DAC wave generation - Sawtooth polarity mode
   * @{
   */
-#define LL_DAC_SAWTOOTH_POLARITY_DECREMENT          0x00000000U             /*!< Sawtooth wave generation, polarity is decrement */
+#define LL_DAC_SAWTOOTH_POLARITY_DECREMENT          0x00000000UL            /*!< Sawtooth wave generation, polarity is decrement */
 #define LL_DAC_SAWTOOTH_POLARITY_INCREMENT          (DAC_STR1_STDIR1)       /*!< Sawtooth wave generation, polarity is increment */
 /**
   * @}
@@ -354,7 +411,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_OUTPUT_MODE DAC channel output mode
   * @{
   */
-#define LL_DAC_OUTPUT_MODE_NORMAL          0x00000000U             /*!< The selected DAC channel output is on mode normal. */
+#define LL_DAC_OUTPUT_MODE_NORMAL          0x00000000UL            /*!< The selected DAC channel output is on mode normal. */
 #define LL_DAC_OUTPUT_MODE_SAMPLE_AND_HOLD (DAC_MCR_MODE1_2)       /*!< The selected DAC channel output is on mode sample-and-hold. Mode sample-and-hold requires an external capacitor, refer to description of function @ref LL_DAC_ConfigOutput() or @ref LL_DAC_SetOutputMode(). */
 /**
   * @}
@@ -363,7 +420,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_OUTPUT_BUFFER DAC channel output buffer
   * @{
   */
-#define LL_DAC_OUTPUT_BUFFER_ENABLE        0x00000000U             /*!< The selected DAC channel output is buffered: higher drive current capability, but also higher current consumption */
+#define LL_DAC_OUTPUT_BUFFER_ENABLE        0x00000000UL            /*!< The selected DAC channel output is buffered: higher drive current capability, but also higher current consumption */
 #define LL_DAC_OUTPUT_BUFFER_DISABLE       (DAC_MCR_MODE1_1)       /*!< The selected DAC channel output is not buffered: lower drive current capability, but also lower current consumption */
 /**
   * @}
@@ -372,8 +429,8 @@ typedef struct
 /** @defgroup DAC_LL_EC_OUTPUT_CONNECTION DAC channel output connection
   * @{
   */
-#define LL_DAC_OUTPUT_CONNECT_GPIO         0x00000000U             /*!< The selected DAC channel output is connected to external pin */
-#define LL_DAC_OUTPUT_CONNECT_INTERNAL     (DAC_MCR_MODE1_0)       /*!< The selected DAC channel output is connected to on-chip peripherals via internal paths. On this STM32 serie, output connection depends on output mode (normal or sample and hold) and output buffer state. Refer to comments of function @ref LL_DAC_SetOutputConnection(). */
+#define LL_DAC_OUTPUT_CONNECT_GPIO         0x00000000UL            /*!< The selected DAC channel output is connected to external pin */
+#define LL_DAC_OUTPUT_CONNECT_INTERNAL     (DAC_MCR_MODE1_0)       /*!< The selected DAC channel output is connected to on-chip peripherals via internal paths. On this STM32 series, output connection depends on output mode (normal or sample and hold) and output buffer state. Refer to comments of function @ref LL_DAC_SetOutputConnection(). */
 /**
   * @}
   */
@@ -381,7 +438,7 @@ typedef struct
 /** @defgroup DAC_LL_EC_SIGNED_FORMAT DAC channel signed format
   * @{
   */
-#define LL_DAC_SIGNED_FORMAT_DISABLE       0x00000000U             /*!< The selected DAC channel data format is not signed */
+#define LL_DAC_SIGNED_FORMAT_DISABLE       0x00000000UL            /*!< The selected DAC channel data format is not signed */
 #define LL_DAC_SIGNED_FORMAT_ENABLE        (DAC_MCR_SINFORMAT1)    /*!< The selected DAC channel data format is signed */
 /**
   * @}
@@ -390,8 +447,8 @@ typedef struct
 /** @defgroup DAC_LL_EC_RESOLUTION  DAC channel output resolution
   * @{
   */
-#define LL_DAC_RESOLUTION_12B              0x00000000U             /*!< DAC channel resolution 12 bits */
-#define LL_DAC_RESOLUTION_8B               0x00000002U             /*!< DAC channel resolution 8 bits */
+#define LL_DAC_RESOLUTION_12B              0x00000000UL            /*!< DAC channel resolution 12 bits */
+#define LL_DAC_RESOLUTION_8B               0x00000002UL            /*!< DAC channel resolution 8 bits */
 /**
   * @}
   */
@@ -429,7 +486,7 @@ typedef struct
 /* Literal set to maximum value (refer to device datasheet,                   */
 /* parameter "tWAKEUP").                                                      */
 /* Unit: us                                                                   */
-#define LL_DAC_DELAY_STARTUP_VOLTAGE_SETTLING_US             8U  /*!< Delay for DAC channel voltage settling time from DAC channel startup (transition from disable to enable) */
+#define LL_DAC_DELAY_STARTUP_VOLTAGE_SETTLING_US             8UL  /*!< Delay for DAC channel voltage settling time from DAC channel startup (transition from disable to enable) */
 
 /* Delay for DAC channel voltage settling time.                               */
 /* Note: DAC channel startup time depends on board application environment:   */
@@ -442,7 +499,7 @@ typedef struct
 /* Literal set to maximum value (refer to device datasheet,                   */
 /* parameter "tSETTLING").                                                    */
 /* Unit: us                                                                   */
-#define LL_DAC_DELAY_VOLTAGE_SETTLING_US                     3U  /*!< Delay for DAC channel voltage settling time */
+#define LL_DAC_DELAY_VOLTAGE_SETTLING_US                     3UL /*!< Delay for DAC channel voltage settling time */
 
 /**
   * @}
@@ -498,7 +555,7 @@ typedef struct
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval 1...2
   */
@@ -518,25 +575,11 @@ typedef struct
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   */
-#define __LL_DAC_DECIMAL_NB_TO_CHANNEL(__DECIMAL_NB__)                         \
-  (((__DECIMAL_NB__) == 1U)                                                    \
-    ? (                                                                        \
-       LL_DAC_CHANNEL_1                                                        \
-      )                                                                        \
-      :                                                                        \
-      (((__DECIMAL_NB__) == 2U)                                                \
-        ? (                                                                    \
-           LL_DAC_CHANNEL_2                                                    \
-          )                                                                    \
-          :                                                                    \
-          (                                                                    \
-           0U                                                                  \
-          )                                                                    \
-      )                                                                        \
-  )
+#define __LL_DAC_DECIMAL_NB_TO_CHANNEL(__DECIMAL_NB__)\
+  (((__DECIMAL_NB__) == 1UL)? (LL_DAC_CHANNEL_1  ):(((__DECIMAL_NB__) == 2UL) ? ( LL_DAC_CHANNEL_2):(0UL)))
 
 /**
   * @brief  Helper macro to define the DAC conversion data full-scale digital
@@ -550,7 +593,7 @@ typedef struct
   * @retval ADC conversion data equivalent voltage value (unit: mVolt)
   */
 #define __LL_DAC_DIGITAL_SCALE(__DAC_RESOLUTION__)                             \
-  ((0x00000FFFU) >> ((__DAC_RESOLUTION__) << 1U))
+  ((0x00000FFFUL) >> ((__DAC_RESOLUTION__) << 1UL))
 
 /**
   * @brief  Helper macro to calculate the DAC conversion data (unit: digital
@@ -561,7 +604,7 @@ typedef struct
   *         @ref LL_DAC_ConvertData12RightAligned().
   * @note   Analog reference voltage (Vref+) must be either known from
   *         user board environment or can be calculated using ADC measurement
-  *         and ADC helper macro @ref __LL_ADC_CALC_VREFANALOG_VOLTAGE().
+  *         and ADC helper macro __LL_ADC_CALC_VREFANALOG_VOLTAGE().
   * @param  __VREFANALOG_VOLTAGE__ Analog reference voltage (unit: mV)
   * @param  __DAC_VOLTAGE__ Voltage to be generated by DAC channel
   *                         (unit: mVolt).
@@ -573,9 +616,9 @@ typedef struct
 #define __LL_DAC_CALC_VOLTAGE_TO_DATA(__VREFANALOG_VOLTAGE__,\
                                       __DAC_VOLTAGE__,\
                                       __DAC_RESOLUTION__)                      \
-  ((__DAC_VOLTAGE__) * __LL_DAC_DIGITAL_SCALE(__DAC_RESOLUTION__)              \
-   / (__VREFANALOG_VOLTAGE__)                                                  \
-  )
+((__DAC_VOLTAGE__) * __LL_DAC_DIGITAL_SCALE(__DAC_RESOLUTION__)              \
+ / (__VREFANALOG_VOLTAGE__)                                                  \
+)
 
 /**
   * @brief  Helper macro to format sawtooth wave generation configuration
@@ -589,10 +632,10 @@ typedef struct
 #define __LL_DAC_FORMAT_SAWTOOTHWAVECONFIG(__POLARITY__,\
                                            __RESET_DATA__,\
                                            __STEP_DATA__)                        \
-  ( (((__STEP_DATA__) << DAC_STR1_STINCDATA1_Pos) & DAC_STR1_STINCDATA1_Msk)     \
-    | ((__POLARITY__) & DAC_STR1_STDIR1_Msk)                                    \
-    | (((__RESET_DATA__) << DAC_STR1_STRSTDATA1_Pos) & DAC_STR1_STRSTDATA1_Msk) \
-  )
+( (((__STEP_DATA__) << DAC_STR1_STINCDATA1_Pos) & DAC_STR1_STINCDATA1_Msk)     \
+  | ((__POLARITY__) & DAC_STR1_STDIR1_Msk)                                    \
+  | (((__RESET_DATA__) << DAC_STR1_STRSTDATA1_Pos) & DAC_STR1_STRSTDATA1_Msk) \
+)
 
 /**
   * @}
@@ -607,7 +650,7 @@ typedef struct
 /** @defgroup DAC_LL_Exported_Functions DAC Exported Functions
   * @{
   */
-/** @defgroup DAC_LL_EF_Configuration Configuration of DAC instance
+/** @defgroup DAC_LL_EF_Channel_Configuration Configuration of DAC instance
   * @{
   */
 /**
@@ -656,7 +699,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetHighFrequencyMode(DAC_TypeDef *DACx)
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  ChannelMode This parameter can be one of the following values:
   *         @arg @ref LL_DAC_MODE_NORMAL_OPERATION
@@ -680,7 +723,7 @@ __STATIC_INLINE void LL_DAC_SetMode(DAC_TypeDef *DACx, uint32_t DAC_Channel, uin
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_MODE_NORMAL_OPERATION
@@ -704,7 +747,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetMode(DAC_TypeDef *DACx, uint32_t DAC_Channel)
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  TrimmingValue Value between Min_Data=0x00 and Max_Data=0x1F
   * @retval None
@@ -727,7 +770,7 @@ __STATIC_INLINE void LL_DAC_SetTrimmingValue(DAC_TypeDef *DACx, uint32_t DAC_Cha
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval TrimmingValue Value between Min_Data=0x00 and Max_Data=0x1F
   */
@@ -753,7 +796,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetTrimmingValue(DAC_TypeDef *DACx, uint32_t DAC
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  TriggerSource This parameter can be one of the following values:
   *         @arg @ref LL_DAC_TRIG_SOFTWARE
@@ -776,12 +819,12 @@ __STATIC_INLINE uint32_t LL_DAC_GetTrimmingValue(DAC_TypeDef *DACx, uint32_t DAC
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO2          (4) (5)
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO3          (1) (5)
   *
-  *         (1) On this STM32 serie, parameter only available on DAC3.
-  *         (2) On this STM32 serie, parameter only available on DAC1/2/4.
-  *         (3) On this STM32 serie, parameter only available on DAC1&4.
-  *         (4) On this STM32 serie, parameter only available on DAC2.
+  *         (1) On this STM32 series, parameter only available on DAC3.
+  *         (2) On this STM32 series, parameter only available on DAC1/2/4.
+  *         (3) On this STM32 series, parameter only available on DAC1&4.
+  *         (4) On this STM32 series, parameter only available on DAC2.
   *          Refer to device datasheet for DACx instances availability.
-  *         (5) On this STM32 serie, parameter not available on all devices.
+  *         (5) On this STM32 series, parameter not available on all devices.
   *          Only available if HRTIM feature is supported (refer to device datasheet for supported features list)
   * @retval None
   */
@@ -805,7 +848,7 @@ __STATIC_INLINE void LL_DAC_SetTriggerSource(DAC_TypeDef *DACx, uint32_t DAC_Cha
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_TRIG_SOFTWARE
@@ -828,12 +871,12 @@ __STATIC_INLINE void LL_DAC_SetTriggerSource(DAC_TypeDef *DACx, uint32_t DAC_Cha
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO2          (4) (5)
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO3          (1) (5)
   *
-  *         (1) On this STM32 serie, parameter only available on DAC3.
-  *         (2) On this STM32 serie, parameter only available on DAC1/2/4.
-  *         (3) On this STM32 serie, parameter only available on DAC1&4.
-  *         (4) On this STM32 serie, parameter only available on DAC2.
+  *         (1) On this STM32 series, parameter only available on DAC3.
+  *         (2) On this STM32 series, parameter only available on DAC1/2/4.
+  *         (3) On this STM32 series, parameter only available on DAC1&4.
+  *         (4) On this STM32 series, parameter only available on DAC2.
   *          Refer to device datasheet for DACx instances availability.
-  *         (5) On this STM32 serie, parameter not available on all devices.
+  *         (5) On this STM32 series, parameter not available on all devices.
   *          Only available if HRTIM feature is supported (refer to device datasheet for supported features list)
   */
 __STATIC_INLINE uint32_t LL_DAC_GetTriggerSource(DAC_TypeDef *DACx, uint32_t DAC_Channel)
@@ -853,7 +896,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetTriggerSource(DAC_TypeDef *DACx, uint32_t DAC
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  WaveAutoGeneration This parameter can be one of the following values:
   *         @arg @ref LL_DAC_WAVE_AUTO_GENERATION_NONE
@@ -879,7 +922,7 @@ __STATIC_INLINE void LL_DAC_SetWaveAutoGeneration(DAC_TypeDef *DACx, uint32_t DA
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_WAVE_AUTO_GENERATION_NONE
@@ -909,7 +952,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveAutoGeneration(DAC_TypeDef *DACx, uint32_
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  NoiseLFSRMask This parameter can be one of the following values:
   *         @arg @ref LL_DAC_NOISE_LFSR_UNMASK_BIT0
@@ -943,7 +986,7 @@ __STATIC_INLINE void LL_DAC_SetWaveNoiseLFSR(DAC_TypeDef *DACx, uint32_t DAC_Cha
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_NOISE_LFSR_UNMASK_BIT0
@@ -981,7 +1024,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveNoiseLFSR(DAC_TypeDef *DACx, uint32_t DAC
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  TriangleAmplitude This parameter can be one of the following values:
   *         @arg @ref LL_DAC_TRIANGLE_AMPLITUDE_1
@@ -1016,7 +1059,7 @@ __STATIC_INLINE void LL_DAC_SetWaveTriangleAmplitude(DAC_TypeDef *DACx, uint32_t
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_TRIANGLE_AMPLITUDE_1
@@ -1053,7 +1096,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveTriangleAmplitude(DAC_TypeDef *DACx, uint
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  Polarity This parameter can be one of the following values:
   *         @arg @ref LL_DAC_SAWTOOTH_POLARITY_DECREMENT
@@ -1078,7 +1121,7 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothPolarity(DAC_TypeDef *DACx, uint32_t 
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_SAWTOOTH_POLARITY_DECREMENT
@@ -1105,7 +1148,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothPolarity(DAC_TypeDef *DACx, uint3
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  ResetData This parameter is the sawtooth reset value.
   *         Range is from 0 to DAC full range 4095 (0xFFF)
@@ -1129,7 +1172,7 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothResetData(DAC_TypeDef *DACx, uint32_t
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value is the sawtooth reset value.
   *         Range is from 0 to DAC full range 4095 (0xFFF)
@@ -1155,7 +1198,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothResetData(DAC_TypeDef *DACx, uint
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  StepData This parameter is the sawtooth step value.
   *         12.4 bit format, unsigned: 12 bits exponent / 4 bits mantissa
@@ -1181,7 +1224,7 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothStepData(DAC_TypeDef *DACx, uint32_t 
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value is the sawtooth step value.
   *         12.4 bit format, unsigned: 12 bits exponent / 4 bits mantissa
@@ -1209,7 +1252,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothStepData(DAC_TypeDef *DACx, uint3
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  TriggerSource This parameter can be one of the following values:
   *         @arg @ref LL_DAC_TRIG_SOFTWARE
@@ -1232,12 +1275,12 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothStepData(DAC_TypeDef *DACx, uint3
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO2          (4) (5)
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO3          (1) (5)
   *
-  *         (1) On this STM32 serie, parameter only available on DAC3.
-  *         (2) On this STM32 serie, parameter only available on DAC1/2/4.
-  *         (3) On this STM32 serie, parameter only available on DAC1&4.
-  *         (4) On this STM32 serie, parameter only available on DAC2.
+  *         (1) On this STM32 series, parameter only available on DAC3.
+  *         (2) On this STM32 series, parameter only available on DAC1/2/4.
+  *         (3) On this STM32 series, parameter only available on DAC1&4.
+  *         (4) On this STM32 series, parameter only available on DAC2.
   *          Refer to device datasheet for DACx instances availability.
-  *         (5) On this STM32 serie, parameter not available on all devices.
+  *         (5) On this STM32 series, parameter not available on all devices.
   *          Only available if HRTIM feature is supported (refer to device datasheet for supported features list)
   * @retval None
   */
@@ -1258,7 +1301,7 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothResetTriggerSource(DAC_TypeDef *DACx,
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_TRIG_SOFTWARE
@@ -1281,12 +1324,12 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothResetTriggerSource(DAC_TypeDef *DACx,
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO2          (4) (5)
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_TRGO3          (1) (5)
   *
-  *         (1) On this STM32 serie, parameter only available on DAC3.
-  *         (2) On this STM32 serie, parameter only available on DAC1/2/4.
-  *         (3) On this STM32 serie, parameter only available on DAC1&4.
-  *         (4) On this STM32 serie, parameter only available on DAC2.
+  *         (1) On this STM32 series, parameter only available on DAC3.
+  *         (2) On this STM32 series, parameter only available on DAC1/2/4.
+  *         (3) On this STM32 series, parameter only available on DAC1&4.
+  *         (4) On this STM32 series, parameter only available on DAC2.
   *          Refer to device datasheet for DACx instances availability.
-  *         (5) On this STM32 serie, parameter not available on all devices.
+  *         (5) On this STM32 series, parameter not available on all devices.
   *          Only available if HRTIM feature is supported (refer to device datasheet for supported features list)
   */
 __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothResetTriggerSource(DAC_TypeDef *DACx, uint32_t DAC_Channel)
@@ -1312,7 +1355,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothResetTriggerSource(DAC_TypeDef *D
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  TriggerSource This parameter can be one of the following values:
   *         @arg @ref LL_DAC_TRIG_SOFTWARE
@@ -1332,10 +1375,10 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothResetTriggerSource(DAC_TypeDef *D
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_STEP_TRG5      (3)
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_STEP_TRG6      (3)
   *
-  *         (1) On this STM32 serie, parameter only available on DAC3.
-  *         (2) On this STM32 serie, parameter only available on DAC1/2/4.
+  *         (1) On this STM32 series, parameter only available on DAC3.
+  *         (2) On this STM32 series, parameter only available on DAC1/2/4.
   *          Refer to device datasheet for DACx instances availability.
-  *         (3) On this STM32 serie, parameter not available on all devices.
+  *         (3) On this STM32 series, parameter not available on all devices.
   *          Only available if HRTIM feature is supported (refer to device datasheet for supported features list)
   * @retval None
   */
@@ -1356,7 +1399,7 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothStepTriggerSource(DAC_TypeDef *DACx, 
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_TRIG_SOFTWARE
@@ -1376,10 +1419,10 @@ __STATIC_INLINE void LL_DAC_SetWaveSawtoothStepTriggerSource(DAC_TypeDef *DACx, 
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_STEP_TRG5      (3)
   *         @arg @ref LL_DAC_TRIG_EXT_HRTIM_STEP_TRG6      (3)
   *
-  *         (1) On this STM32 serie, parameter only available on DAC3.
-  *         (2) On this STM32 serie, parameter only available on DAC1/2/4.
+  *         (1) On this STM32 series, parameter only available on DAC3.
+  *         (2) On this STM32 series, parameter only available on DAC1/2/4.
   *          Refer to device datasheet for DACx instances availability.
-  *         (3) On this STM32 serie, parameter not available on all devices.
+  *         (3) On this STM32 series, parameter not available on all devices.
   *          Only available if HRTIM feature is supported (refer to device datasheet for supported features list)
   */
 __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothStepTriggerSource(DAC_TypeDef *DACx, uint32_t DAC_Channel)
@@ -1402,7 +1445,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothStepTriggerSource(DAC_TypeDef *DA
   *         - @ref LL_DAC_SetOutputBuffer()
   *         - @ref LL_DAC_SetOutputMode()
   *         - @ref LL_DAC_SetOutputConnection()
-  * @note   On this STM32 serie, output connection depends on output mode
+  * @note   On this STM32 series, output connection depends on output mode
   *         (normal or sample and hold) and output buffer state.
   *         - if output connection is set to internal path and output buffer
   *           is enabled (whatever output mode):
@@ -1425,7 +1468,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetWaveSawtoothStepTriggerSource(DAC_TypeDef *DA
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  OutputMode This parameter can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_MODE_NORMAL
@@ -1462,7 +1505,7 @@ __STATIC_INLINE void LL_DAC_ConfigOutput(DAC_TypeDef *DACx, uint32_t DAC_Channel
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  OutputMode This parameter can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_MODE_NORMAL
@@ -1485,7 +1528,7 @@ __STATIC_INLINE void LL_DAC_SetOutputMode(DAC_TypeDef *DACx, uint32_t DAC_Channe
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_MODE_NORMAL
@@ -1500,7 +1543,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetOutputMode(DAC_TypeDef *DACx, uint32_t DAC_Ch
 
 /**
   * @brief  Set the output buffer for the selected DAC channel.
-  * @note   On this STM32 serie, when buffer is enabled, its offset can be
+  * @note   On this STM32 series, when buffer is enabled, its offset can be
   *         trimmed: factory calibration default values can be
   *         replaced by user trimming values, using function
   *         @ref LL_DAC_SetTrimmingValue().
@@ -1511,7 +1554,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetOutputMode(DAC_TypeDef *DACx, uint32_t DAC_Ch
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  OutputBuffer This parameter can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_BUFFER_ENABLE
@@ -1534,7 +1577,7 @@ __STATIC_INLINE void LL_DAC_SetOutputBuffer(DAC_TypeDef *DACx, uint32_t DAC_Chan
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_BUFFER_ENABLE
@@ -1549,7 +1592,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetOutputBuffer(DAC_TypeDef *DACx, uint32_t DAC_
 
 /**
   * @brief  Set the output connection for the selected DAC channel.
-  * @note   On this STM32 serie, output connection depends on output mode (normal or
+  * @note   On this STM32 series, output connection depends on output mode (normal or
   *         sample and hold) and output buffer state.
   *         - if output connection is set to internal path and output buffer
   *           is enabled (whatever output mode):
@@ -1566,7 +1609,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetOutputBuffer(DAC_TypeDef *DACx, uint32_t DAC_
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  OutputConnection This parameter can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_CONNECT_GPIO
@@ -1582,7 +1625,7 @@ __STATIC_INLINE void LL_DAC_SetOutputConnection(DAC_TypeDef *DACx, uint32_t DAC_
 
 /**
   * @brief  Get the output connection for the selected DAC channel.
-  * @note   On this STM32 serie, output connection depends on output mode (normal or
+  * @note   On this STM32 series, output connection depends on output mode (normal or
   *         sample and hold) and output buffer state.
   *         - if output connection is set to internal path and output buffer
   *           is enabled (whatever output mode):
@@ -1599,7 +1642,7 @@ __STATIC_INLINE void LL_DAC_SetOutputConnection(DAC_TypeDef *DACx, uint32_t DAC_
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_OUTPUT_CONNECT_GPIO
@@ -1626,18 +1669,17 @@ __STATIC_INLINE uint32_t LL_DAC_GetOutputConnection(DAC_TypeDef *DACx, uint32_t 
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  SampleTime Value between Min_Data=0x000 and Max_Data=0x3FF
   * @retval None
   */
 __STATIC_INLINE void LL_DAC_SetSampleAndHoldSampleTime(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t SampleTime)
 {
-  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->SHSR1, (DAC_Channel >> DAC_REG_SHSRX_REGOFFSET_BITOFFSET_POS) & DAC_REG_SHSRX_REGOFFSET_MASK_POSBIT0);
+  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->SHSR1, (DAC_Channel >> DAC_REG_SHSRX_REGOFFSET_BITOFFSET_POS)
+                                             & DAC_REG_SHSRX_REGOFFSET_MASK_POSBIT0);
 
-  MODIFY_REG(*preg,
-             DAC_SHSR1_TSAMPLE1,
-             SampleTime);
+  MODIFY_REG(*preg, DAC_SHSR1_TSAMPLE1, SampleTime);
 }
 
 /**
@@ -1650,13 +1692,14 @@ __STATIC_INLINE void LL_DAC_SetSampleAndHoldSampleTime(DAC_TypeDef *DACx, uint32
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Value between Min_Data=0x000 and Max_Data=0x3FF
   */
 __STATIC_INLINE uint32_t LL_DAC_GetSampleAndHoldSampleTime(DAC_TypeDef *DACx, uint32_t DAC_Channel)
 {
-  __IO uint32_t const *preg = __DAC_PTR_REG_OFFSET(DACx->SHSR1, (DAC_Channel >> DAC_REG_SHSRX_REGOFFSET_BITOFFSET_POS) & DAC_REG_SHSRX_REGOFFSET_MASK_POSBIT0);
+  __IO uint32_t const *preg = __DAC_PTR_REG_OFFSET(DACx->SHSR1, (DAC_Channel >> DAC_REG_SHSRX_REGOFFSET_BITOFFSET_POS)
+                                                   & DAC_REG_SHSRX_REGOFFSET_MASK_POSBIT0);
 
   return (uint32_t) READ_BIT(*preg, DAC_SHSR1_TSAMPLE1);
 }
@@ -1671,7 +1714,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetSampleAndHoldSampleTime(DAC_TypeDef *DACx, ui
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  HoldTime Value between Min_Data=0x000 and Max_Data=0x3FF
   * @retval None
@@ -1693,7 +1736,7 @@ __STATIC_INLINE void LL_DAC_SetSampleAndHoldHoldTime(DAC_TypeDef *DACx, uint32_t
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Value between Min_Data=0x000 and Max_Data=0x3FF
   */
@@ -1714,7 +1757,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetSampleAndHoldHoldTime(DAC_TypeDef *DACx, uint
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  RefreshTime Value between Min_Data=0x00 and Max_Data=0xFF
   * @retval None
@@ -1736,7 +1779,7 @@ __STATIC_INLINE void LL_DAC_SetSampleAndHoldRefreshTime(DAC_TypeDef *DACx, uint3
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Value between Min_Data=0x00 and Max_Data=0xFF
   */
@@ -1749,7 +1792,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetSampleAndHoldRefreshTime(DAC_TypeDef *DACx, u
 
 /**
   * @brief  Set the signed format for the selected DAC channel.
-  * @note   On this STM32 serie, signed format can be used to inject
+  * @note   On this STM32 series, signed format can be used to inject
   *         Q1.15, Q1.11, Q1.7 signed format data to DAC.
   *         Ex when using 12bits data format (Q1.11 is used):
   *             0x800 will output 0v level
@@ -1763,7 +1806,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetSampleAndHoldRefreshTime(DAC_TypeDef *DACx, u
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  SignedFormat This parameter can be one of the following values:
   *         @arg @ref LL_DAC_SIGNED_FORMAT_ENABLE
@@ -1786,7 +1829,7 @@ __STATIC_INLINE void LL_DAC_SetSignedFormat(DAC_TypeDef *DACx, uint32_t DAC_Chan
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_DAC_SIGNED_FORMAT_ENABLE
@@ -1818,7 +1861,7 @@ __STATIC_INLINE uint32_t LL_DAC_GetSignedFormat(DAC_TypeDef *DACx, uint32_t DAC_
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -1839,7 +1882,7 @@ __STATIC_INLINE void LL_DAC_EnableDMAReq(DAC_TypeDef *DACx, uint32_t DAC_Channel
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -1859,7 +1902,7 @@ __STATIC_INLINE void LL_DAC_DisableDMAReq(DAC_TypeDef *DACx, uint32_t DAC_Channe
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval State of bit (1 or 0).
   */
@@ -1879,7 +1922,7 @@ __STATIC_INLINE uint32_t LL_DAC_IsDMAReqEnabled(DAC_TypeDef *DACx, uint32_t DAC_
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -1898,7 +1941,7 @@ __STATIC_INLINE void LL_DAC_EnableDMADoubleDataMode(DAC_TypeDef *DACx, uint32_t 
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -1918,7 +1961,7 @@ __STATIC_INLINE void LL_DAC_DisableDMADoubleDataMode(DAC_TypeDef *DACx, uint32_t
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval State of bit (1 or 0).
   */
@@ -1942,7 +1985,8 @@ __STATIC_INLINE uint32_t LL_DAC_IsDMADoubleDataModeEnabled(DAC_TypeDef *DACx, ui
   *           LL_DMA_ConfigAddresses(DMA1,
   *                                  LL_DMA_CHANNEL_1,
   *                                  (uint32_t)&< array or variable >,
-  *                                  LL_DAC_DMA_GetRegAddr(DAC1, LL_DAC_CHANNEL_1, LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
+  *                                  LL_DAC_DMA_GetRegAddr(DAC1, LL_DAC_CHANNEL_1,
+  *                                  LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
   *                                  LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
   * @rmtoll DHR12R1  DACC1DHR       LL_DAC_DMA_GetRegAddr\n
   *         DHR12L1  DACC1DHR       LL_DAC_DMA_GetRegAddr\n
@@ -1955,7 +1999,7 @@ __STATIC_INLINE uint32_t LL_DAC_IsDMADoubleDataModeEnabled(DAC_TypeDef *DACx, ui
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  Register This parameter can be one of the following values:
   *         @arg @ref LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED
@@ -1967,8 +2011,8 @@ __STATIC_INLINE uint32_t LL_DAC_DMA_GetRegAddr(DAC_TypeDef *DACx, uint32_t DAC_C
 {
   /* Retrieve address of register DHR12Rx, DHR12Lx or DHR8Rx depending on     */
   /* DAC channel selected.                                                    */
-  return ((uint32_t)(__DAC_PTR_REG_OFFSET((DACx)->DHR12R1,
-                                          ((DAC_Channel >> (Register & 0x1FUL)) & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0))));
+  return ((uint32_t)(__DAC_PTR_REG_OFFSET((DACx)->DHR12R1, ((DAC_Channel >> (Register & 0x1FUL))
+                                                            & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0))));
 }
 /**
   * @}
@@ -1990,7 +2034,7 @@ __STATIC_INLINE uint32_t LL_DAC_DMA_GetRegAddr(DAC_TypeDef *DACx, uint32_t DAC_C
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -2009,7 +2053,7 @@ __STATIC_INLINE void LL_DAC_Enable(DAC_TypeDef *DACx, uint32_t DAC_Channel)
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -2029,7 +2073,7 @@ __STATIC_INLINE void LL_DAC_Disable(DAC_TypeDef *DACx, uint32_t DAC_Channel)
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval State of bit (1 or 0).
   */
@@ -2050,7 +2094,7 @@ __STATIC_INLINE uint32_t LL_DAC_IsEnabled(DAC_TypeDef *DACx, uint32_t DAC_Channe
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval State of bit (1 or 0).
   */
@@ -2078,7 +2122,7 @@ __STATIC_INLINE uint32_t LL_DAC_IsReady(DAC_TypeDef *DACx, uint32_t DAC_Channel)
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -2097,7 +2141,7 @@ __STATIC_INLINE void LL_DAC_EnableTrigger(DAC_TypeDef *DACx, uint32_t DAC_Channe
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -2117,7 +2161,7 @@ __STATIC_INLINE void LL_DAC_DisableTrigger(DAC_TypeDef *DACx, uint32_t DAC_Chann
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval State of bit (1 or 0).
   */
@@ -2151,7 +2195,7 @@ __STATIC_INLINE uint32_t LL_DAC_IsTriggerEnabled(DAC_TypeDef *DACx, uint32_t DAC
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -2183,7 +2227,7 @@ __STATIC_INLINE void LL_DAC_TrigSWConversion(DAC_TypeDef *DACx, uint32_t DAC_Cha
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -2204,18 +2248,17 @@ __STATIC_INLINE void LL_DAC_TrigSWConversion2(DAC_TypeDef *DACx, uint32_t DAC_Ch
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  Data Value between Min_Data=0x000 and Max_Data=0xFFF
   * @retval None
   */
 __STATIC_INLINE void LL_DAC_ConvertData12RightAligned(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t Data)
 {
-  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, (DAC_Channel >> DAC_REG_DHR12RX_REGOFFSET_BITOFFSET_POS) & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0);
+  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, (DAC_Channel >> DAC_REG_DHR12RX_REGOFFSET_BITOFFSET_POS)
+                                             & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0);
 
-  MODIFY_REG(*preg,
-             DAC_DHR12R1_DACC1DHR,
-             Data);
+  MODIFY_REG(*preg, DAC_DHR12R1_DACC1DHR, Data);
 }
 
 /**
@@ -2229,18 +2272,17 @@ __STATIC_INLINE void LL_DAC_ConvertData12RightAligned(DAC_TypeDef *DACx, uint32_
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  Data Value between Min_Data=0x000 and Max_Data=0xFFF
   * @retval None
   */
 __STATIC_INLINE void LL_DAC_ConvertData12LeftAligned(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t Data)
 {
-  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, (DAC_Channel >> DAC_REG_DHR12LX_REGOFFSET_BITOFFSET_POS) & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0);
+  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, (DAC_Channel >> DAC_REG_DHR12LX_REGOFFSET_BITOFFSET_POS)
+                                             & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0);
 
-  MODIFY_REG(*preg,
-             DAC_DHR12L1_DACC1DHR,
-             Data);
+  MODIFY_REG(*preg, DAC_DHR12L1_DACC1DHR, Data);
 }
 
 /**
@@ -2254,18 +2296,17 @@ __STATIC_INLINE void LL_DAC_ConvertData12LeftAligned(DAC_TypeDef *DACx, uint32_t
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @param  Data Value between Min_Data=0x00 and Max_Data=0xFF
   * @retval None
   */
 __STATIC_INLINE void LL_DAC_ConvertData8RightAligned(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t Data)
 {
-  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, (DAC_Channel >> DAC_REG_DHR8RX_REGOFFSET_BITOFFSET_POS) & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0);
+  __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, (DAC_Channel >> DAC_REG_DHR8RX_REGOFFSET_BITOFFSET_POS)
+                                             & DAC_REG_DHR_REGOFFSET_MASK_POSBIT0);
 
-  MODIFY_REG(*preg,
-             DAC_DHR8R1_DACC1DHR,
-             Data);
+  MODIFY_REG(*preg, DAC_DHR8R1_DACC1DHR, Data);
 }
 
 
@@ -2343,13 +2384,14 @@ __STATIC_INLINE void LL_DAC_ConvertDualData8RightAligned(DAC_TypeDef *DACx, uint
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval Value between Min_Data=0x000 and Max_Data=0xFFF
   */
 __STATIC_INLINE uint32_t LL_DAC_RetrieveOutputData(DAC_TypeDef *DACx, uint32_t DAC_Channel)
 {
-  __IO uint32_t const *preg = __DAC_PTR_REG_OFFSET(DACx->DOR1, (DAC_Channel >> DAC_REG_DORX_REGOFFSET_BITOFFSET_POS) & DAC_REG_DORX_REGOFFSET_MASK_POSBIT0);
+  __IO uint32_t const *preg = __DAC_PTR_REG_OFFSET(DACx->DOR1, (DAC_Channel >> DAC_REG_DORX_REGOFFSET_BITOFFSET_POS)
+                                                   & DAC_REG_DORX_REGOFFSET_MASK_POSBIT0);
 
   return (uint16_t) READ_BIT(*preg, DAC_DOR1_DACC1DOR);
 }
@@ -2395,7 +2437,6 @@ __STATIC_INLINE uint32_t LL_DAC_IsActiveFlag_BWST1(DAC_TypeDef *DACx)
 {
   return ((READ_BIT(DACx->SR, LL_DAC_FLAG_BWST1) == (LL_DAC_FLAG_BWST1)) ? 1UL : 0UL);
 }
-
 
 /**
   * @brief  Get DAC busy writing sample time flag for DAC channel 2
@@ -2455,7 +2496,6 @@ __STATIC_INLINE uint32_t LL_DAC_IsActiveFlag_DORSTAT2(DAC_TypeDef *DACx)
 {
   return ((READ_BIT(DACx->SR, LL_DAC_FLAG_DORSTAT2) == (LL_DAC_FLAG_DORSTAT2)) ? 1UL : 0UL);
 }
-
 
 /**
   * @brief  Get DAC underrun flag for DAC channel 1

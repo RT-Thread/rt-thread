@@ -4,7 +4,7 @@ from building import *
 # get current directory
 cwd = GetCurrentDir()
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     compiler = 'GCC'
 
 # The set of source files associated with this SConscript file.
@@ -72,6 +72,6 @@ path = [cwd + '/emlib/inc',
 
 CPPDEFINES = [rtconfig.EFM32_TYPE]
 #group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES, LINKFLAGS = linker_scripts[rtconfig.EFM32_FAMILY])
-group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -25,13 +25,14 @@
  extern "C" {
 #endif
 
-#if defined (DMA2D)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal_def.h"
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
   */
+
+#if defined (DMA2D)
 
 /** @addtogroup DMA2D DMA2D
   * @brief DMA2D HAL module driver
@@ -43,21 +44,6 @@
   * @{
   */
 #define MAX_DMA2D_LAYER  2U  /*!< DMA2D maximum number of layers */
-
-/**
-  * @brief DMA2D color Structure definition
-  */
-typedef struct
-{
-  uint32_t Blue;               /*!< Configures the blue value.
-                                    This parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF. */
-
-  uint32_t Green;              /*!< Configures the green value.
-                                    This parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF. */
-
-  uint32_t Red;                /*!< Configures the red value.
-                                    This parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF. */
-} DMA2D_ColorTypeDef;
 
 /**
   * @brief DMA2D CLUT Structure definition
@@ -522,6 +508,8 @@ HAL_StatusTypeDef HAL_DMA2D_Suspend(DMA2D_HandleTypeDef *hdma2d);
 HAL_StatusTypeDef HAL_DMA2D_Resume(DMA2D_HandleTypeDef *hdma2d);
 HAL_StatusTypeDef HAL_DMA2D_Abort(DMA2D_HandleTypeDef *hdma2d);
 HAL_StatusTypeDef HAL_DMA2D_EnableCLUT(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx);
+HAL_StatusTypeDef HAL_DMA2D_CLUTStartLoad(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef *CLUTCfg, uint32_t LayerIdx);
+HAL_StatusTypeDef HAL_DMA2D_CLUTStartLoad_IT(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef *CLUTCfg, uint32_t LayerIdx);
 HAL_StatusTypeDef HAL_DMA2D_CLUTLoad(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef CLUTCfg, uint32_t LayerIdx);
 HAL_StatusTypeDef HAL_DMA2D_CLUTLoad_IT(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef CLUTCfg, uint32_t LayerIdx);
 HAL_StatusTypeDef HAL_DMA2D_CLUTLoading_Abort(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx);
@@ -706,11 +694,11 @@ uint32_t               HAL_DMA2D_GetError(DMA2D_HandleTypeDef *hdma2d);
   * @}
   */
 
+#endif /* defined (DMA2D) */
+
 /**
   * @}
   */
-
-#endif /* DMA2D */
 
 #ifdef __cplusplus
 }

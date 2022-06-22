@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,16 +7,20 @@
  * Date           Author            Notes
  * 2012-10-27     heyuanjie87       first version.
  * 2013-05-17     aozima            initial alarm event & mutex in system init.
+ * 2020-10-15     zhangsz           add alarm flags hour minute second.
+ * 2020-11-09     zhangsz           fix alarm set when modify rtc time.
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <sys/time.h>
 
 #define RT_RTC_YEARS_MAX         137
+#ifdef RT_USING_SOFT_RTC
+#define RT_ALARM_DELAY             0
+#else
 #define RT_ALARM_DELAY             2
-#define RT_ALARM_STATE_INITED   0x02
-#define RT_ALARM_STATE_START    0x01
-#define RT_ALARM_STATE_STOP     0x00
+#endif
 
 #if (defined(RT_USING_RTC) && defined(RT_USING_ALARM))
 static struct rt_alarm_container _container;
@@ -39,10 +43,12 @@ static rt_err_t alarm_set(struct rt_alarm *alarm)
     rt_err_t ret;
 
     device = rt_device_find("rtc");
+
     if (device == RT_NULL)
     {
         return (RT_ERROR);
     }
+
     if (alarm->flag & RT_ALARM_STATE_START)
         wkalarm.enable = RT_TRUE;
     else
@@ -86,13 +92,68 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         {
         case RT_ALARM_ONESHOT:
         {
-            sec_alarm = mktime(&alarm->wktime);
-            sec_now = mktime(now);
+            sec_alarm = timegm(&alarm->wktime);
+            sec_now = timegm(now);
             if (((sec_now - sec_alarm) <= RT_ALARM_DELAY) && (sec_now >= sec_alarm))
             {
                 /* stop alarm */
                 alarm->flag &= ~RT_ALARM_STATE_START;
                 alarm_set(alarm);
+                wakeup = RT_TRUE;
+            }
+        }
+        break;
+        case RT_ALARM_SECOND:
+        {
+            alarm->wktime.tm_hour = now->tm_hour;
+            alarm->wktime.tm_min = now->tm_min;
+            alarm->wktime.tm_sec = now->tm_sec + 1;
+            if (alarm->wktime.tm_sec > 59)
+            {
+                alarm->wktime.tm_sec = 0;
+                alarm->wktime.tm_min = alarm->wktime.tm_min + 1;
+                if (alarm->wktime.tm_min > 59)
+                {
+                    alarm->wktime.tm_min = 0;
+                    alarm->wktime.tm_hour = alarm->wktime.tm_hour + 1;
+                    if (alarm->wktime.tm_hour > 23)
+                    {
+                        alarm->wktime.tm_hour = 0;
+                    }
+                }
+            }
+            wakeup = RT_TRUE;
+        }
+        break;
+        case RT_ALARM_MINUTE:
+        {
+            alarm->wktime.tm_hour = now->tm_hour;
+            if (alarm->wktime.tm_sec == now->tm_sec)
+            {
+                alarm->wktime.tm_min = now->tm_min + 1;
+                if (alarm->wktime.tm_min > 59)
+                {
+                    alarm->wktime.tm_min = 0;
+                    alarm->wktime.tm_hour = alarm->wktime.tm_hour + 1;
+                    if (alarm->wktime.tm_hour > 23)
+                    {
+                        alarm->wktime.tm_hour = 0;
+                    }
+                }
+                wakeup = RT_TRUE;
+            }
+        }
+        break;
+        case RT_ALARM_HOUR:
+        {
+            if ((alarm->wktime.tm_min == now->tm_min) &&
+                (alarm->wktime.tm_sec == now->tm_sec))
+            {
+                alarm->wktime.tm_hour = now->tm_hour + 1;
+                if (alarm->wktime.tm_hour > 23)
+                {
+                    alarm->wktime.tm_hour = 0;
+                }
                 wakeup = RT_TRUE;
             }
         }
@@ -106,11 +167,14 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         case RT_ALARM_WEEKLY:
         {
             /* alarm at wday */
-            sec_alarm += alarm->wktime.tm_wday * 24 * 3600;
-            sec_now += now->tm_wday * 24 * 3600;
+            if (alarm->wktime.tm_wday == now->tm_wday)
+            {
+                sec_alarm += alarm->wktime.tm_wday * 24 * 3600;
+                sec_now += now->tm_wday * 24 * 3600;
 
-            if (((sec_now - sec_alarm) <= RT_ALARM_DELAY) && (sec_now >= sec_alarm))
-                wakeup = RT_TRUE;
+                if (sec_now == sec_alarm)
+                    wakeup = RT_TRUE;
+            }
         }
         break;
         case RT_ALARM_MONTHLY:
@@ -137,7 +201,8 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
 
         if ((wakeup == RT_TRUE) && (alarm->callback != RT_NULL))
         {
-            timestamp = time(RT_NULL);
+            timestamp = (time_t)0;
+            get_timestamp(&timestamp);
             alarm->callback(alarm, timestamp);
         }
     }
@@ -149,7 +214,7 @@ static void alarm_update(rt_uint32_t event)
     struct rt_alarm *alarm;
     rt_int32_t sec_now, sec_alarm, sec_tmp;
     rt_int32_t sec_next = 24 * 3600, sec_prev = 0;
-    time_t timestamp;
+    time_t timestamp = (time_t)0;
     struct tm now;
     rt_list_t *next;
 
@@ -157,8 +222,8 @@ static void alarm_update(rt_uint32_t event)
     if (!rt_list_isempty(&_container.head))
     {
         /* get time of now */
-        timestamp = time(RT_NULL);
-        localtime_r(&timestamp, &now);
+        get_timestamp(&timestamp);
+        gmtime_r(&timestamp, &now);
 
         for (next = _container.head.next; next != &_container.head; next = next->next)
         {
@@ -167,8 +232,9 @@ static void alarm_update(rt_uint32_t event)
             alarm_wakeup(alarm, &now);
         }
 
-        timestamp = time(RT_NULL);
-        localtime_r(&timestamp, &now);
+        /* get time of now */
+        get_timestamp(&timestamp);
+        gmtime_r(&timestamp, &now);
         sec_now = alarm_mkdaysec(&now);
 
         for (next = _container.head.next; next != &_container.head; next = next->next)
@@ -176,8 +242,7 @@ static void alarm_update(rt_uint32_t event)
             alarm = rt_list_entry(next, struct rt_alarm, list);
             /* calculate seconds from 00:00:00 */
             sec_alarm = alarm_mkdaysec(&alarm->wktime);
-
-            if ((alarm->flag & RT_ALARM_STATE_START) && (alarm != _container.current))
+            if (alarm->flag & RT_ALARM_STATE_START)
             {
                 sec_tmp = sec_alarm - sec_now;
                 if (sec_tmp > 0)
@@ -200,6 +265,7 @@ static void alarm_update(rt_uint32_t event)
                 }
             }
         }
+
         /* enable the alarm after now first */
         if (sec_next < 24 * 3600)
         {
@@ -212,13 +278,18 @@ static void alarm_update(rt_uint32_t event)
             if (alarm_set(alm_prev) == RT_EOK)
                 _container.current = alm_prev;
         }
+        else
+        {
+            if (_container.current != RT_NULL)
+                alarm_set(_container.current);
+        }
     }
     rt_mutex_release(&_container.mutex);
 }
 
-static rt_uint32_t days_of_year_month(int tm_year, int tm_mon)
+static int days_of_year_month(int tm_year, int tm_mon)
 {
-    rt_uint32_t ret, year;
+    int ret, year;
 
     year = tm_year + 1900;
     if (tm_mon == 1)
@@ -261,13 +332,14 @@ static rt_bool_t is_valid_date(struct tm *date)
 static rt_err_t alarm_setup(rt_alarm_t alarm, struct tm *wktime)
 {
     rt_err_t ret = RT_ERROR;
-    time_t timestamp;
+    time_t timestamp = (time_t)0;
     struct tm *setup, now;
 
     setup = &alarm->wktime;
     *setup = *wktime;
-    timestamp = time(RT_NULL);
-    localtime_r(&timestamp, &now);
+    /* get time of now */
+    get_timestamp(&timestamp);
+    gmtime_r(&timestamp, &now);
 
     /* if these are a "don't care" value,we set them to now*/
     if ((setup->tm_sec > 59) || (setup->tm_sec < 0))
@@ -279,6 +351,51 @@ static rt_err_t alarm_setup(rt_alarm_t alarm, struct tm *wktime)
 
     switch (alarm->flag & 0xFF00)
     {
+    case RT_ALARM_SECOND:
+    {
+        alarm->wktime.tm_hour = now.tm_hour;
+        alarm->wktime.tm_min = now.tm_min;
+        alarm->wktime.tm_sec = now.tm_sec + 1;
+        if (alarm->wktime.tm_sec > 59)
+        {
+            alarm->wktime.tm_sec = 0;
+            alarm->wktime.tm_min = alarm->wktime.tm_min + 1;
+            if (alarm->wktime.tm_min > 59)
+            {
+                alarm->wktime.tm_min = 0;
+                alarm->wktime.tm_hour = alarm->wktime.tm_hour + 1;
+                if (alarm->wktime.tm_hour > 23)
+                {
+                    alarm->wktime.tm_hour = 0;
+                }
+            }
+        }
+    }
+    break;
+    case RT_ALARM_MINUTE:
+    {
+        alarm->wktime.tm_hour = now.tm_hour;
+        alarm->wktime.tm_min = now.tm_min + 1;
+        if (alarm->wktime.tm_min > 59)
+        {
+            alarm->wktime.tm_min = 0;
+            alarm->wktime.tm_hour = alarm->wktime.tm_hour + 1;
+            if (alarm->wktime.tm_hour > 23)
+            {
+                alarm->wktime.tm_hour = 0;
+            }
+        }
+    }
+    break;
+    case RT_ALARM_HOUR:
+    {
+        alarm->wktime.tm_hour = now.tm_hour + 1;
+        if (alarm->wktime.tm_hour > 23)
+        {
+            alarm->wktime.tm_hour = 0;
+        }
+    }
+    break;
     case RT_ALARM_DAILY:
     {
         /* do nothing but needed */
@@ -419,24 +536,28 @@ rt_err_t rt_alarm_control(rt_alarm_t alarm, int cmd, void *arg)
 rt_err_t rt_alarm_start(rt_alarm_t alarm)
 {
     rt_int32_t sec_now, sec_old, sec_new;
-    rt_err_t ret = RT_ERROR;
-    time_t timestamp;
+    rt_err_t ret = RT_EOK;
+    time_t timestamp = (time_t)0;
     struct tm now;
 
     if (alarm == RT_NULL)
-        return (ret);
+        return (RT_ERROR);
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
-    if (!(alarm->flag & RT_ALARM_STATE_INITED))
+
+    if (!(alarm->flag & RT_ALARM_STATE_START))
     {
         if (alarm_setup(alarm, &alarm->wktime) != RT_EOK)
+        {
+            ret = RT_ERROR;
             goto _exit;
-    }
-    if ((alarm->flag & 0x01) == RT_ALARM_STATE_STOP)
-    {
-        timestamp = time(RT_NULL);
-        localtime_r(&timestamp, &now);
+        }
+
+        /* get time of now */
+        get_timestamp(&timestamp);
+        gmtime_r(&timestamp, &now);
 
         alarm->flag |= RT_ALARM_STATE_START;
+
         /* set alarm */
         if (_container.current == RT_NULL)
         {
@@ -486,10 +607,10 @@ _exit:
  */
 rt_err_t rt_alarm_stop(rt_alarm_t alarm)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = RT_EOK;
 
     if (alarm == RT_NULL)
-        return (ret);
+        return (RT_ERROR);
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
     if (!(alarm->flag & RT_ALARM_STATE_START))
         goto _exit;
@@ -518,10 +639,10 @@ _exit:
  */
 rt_err_t rt_alarm_delete(rt_alarm_t alarm)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = RT_EOK;
 
     if (alarm == RT_NULL)
-        return (ret);
+        return RT_ERROR;
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
     /* stop the alarm */
     alarm->flag &= ~RT_ALARM_STATE_START;
@@ -551,9 +672,11 @@ rt_alarm_t rt_alarm_create(rt_alarm_callback_t callback, struct rt_alarm_setup *
 
     if (setup == RT_NULL)
         return (RT_NULL);
+
     alarm = rt_malloc(sizeof(struct rt_alarm));
     if (alarm == RT_NULL)
         return (RT_NULL);
+
     rt_list_init(&alarm->list);
 
     alarm->wktime = setup->wktime;
@@ -586,24 +709,82 @@ static void rt_alarmsvc_thread_init(void *param)
     }
 }
 
+struct _alarm_flag
+{
+    const char* name;
+    rt_uint32_t flag;
+};
+
+static const struct _alarm_flag _alarm_flag_tbl[] =
+{
+    {"N",        0xffff}, /* none */
+    {"O",       RT_ALARM_ONESHOT}, /* only alarm onece */
+    {"D",       RT_ALARM_DAILY}, /* alarm everyday */
+    {"W",       RT_ALARM_WEEKLY}, /* alarm weekly at Monday or Friday etc. */
+    {"Mo",      RT_ALARM_MONTHLY}, /* alarm monthly at someday */
+    {"Y",       RT_ALARM_YAERLY}, /* alarm yearly at a certain date */
+    {"H",       RT_ALARM_HOUR}, /* alarm each hour at a certain min:second */
+    {"M",       RT_ALARM_MINUTE}, /* alarm each minute at a certain second */
+    {"S",       RT_ALARM_SECOND}, /* alarm each second */
+};
+
+static rt_uint8_t _alarm_flag_tbl_size = sizeof(_alarm_flag_tbl) / sizeof(_alarm_flag_tbl[0]);
+
+static rt_uint8_t get_alarm_flag_index(rt_uint32_t alarm_flag)
+{
+    for (rt_uint8_t index = 0; index < _alarm_flag_tbl_size; index++)
+    {
+        alarm_flag &= 0xff00;
+        if (alarm_flag == _alarm_flag_tbl[index].flag)
+        {
+            return index;
+        }
+    }
+
+    return 0;
+}
+
+void rt_alarm_dump(void)
+{
+    rt_list_t *next;
+    rt_alarm_t alarm;
+
+    rt_kprintf("| hh:mm:ss | week | flag | en |\n");
+    rt_kprintf("+----------+------+------+----+\n");
+    for (next = _container.head.next; next != &_container.head; next = next->next)
+    {
+        alarm = rt_list_entry(next, struct rt_alarm, list);
+        rt_uint8_t flag_index = get_alarm_flag_index(alarm->flag);
+        rt_kprintf("| %02d:%02d:%02d |  %2d  |  %2s  | %2d |\n",
+            alarm->wktime.tm_hour, alarm->wktime.tm_min, alarm->wktime.tm_sec,
+            alarm->wktime.tm_wday, _alarm_flag_tbl[flag_index].name, alarm->flag & RT_ALARM_STATE_START);
+    }
+    rt_kprintf("+----------+------+------+----+\n");
+}
+
+MSH_CMD_EXPORT_ALIAS(rt_alarm_dump, list_alarm, list alarm info);
 
 /** \brief initialize alarm service system
  *
  * \param none
  * \return none
  */
-void rt_alarm_system_init(void)
+int rt_alarm_system_init(void)
 {
     rt_thread_t tid;
 
     rt_list_init(&_container.head);
     rt_event_init(&_container.event, "alarmsvc", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_PRIO);
 
     tid = rt_thread_create("alarmsvc",
                            rt_alarmsvc_thread_init, RT_NULL,
-                           512, 8, 1);
+                           2048, 10, 5);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
+
+    return 0;
 }
+
+INIT_PREV_EXPORT(rt_alarm_system_init);
 #endif

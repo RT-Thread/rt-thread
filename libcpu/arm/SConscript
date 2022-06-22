@@ -6,11 +6,13 @@ from building import *
 Import('rtconfig')
 
 cwd = GetCurrentDir()
+list = os.listdir(cwd)
 
 # add common code files
 group = SConscript(os.path.join('common', 'SConscript'))
 
 # cpu porting code files
-group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
+if rtconfig.CPU in list:
+    group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
 
 Return('group')

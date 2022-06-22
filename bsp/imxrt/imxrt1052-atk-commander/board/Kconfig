@@ -123,6 +123,12 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
+
+    config BSP_USING_USB_DEVICE
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
 endmenu
 
 endmenu

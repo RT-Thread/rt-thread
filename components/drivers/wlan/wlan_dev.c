@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -102,7 +102,7 @@ rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info 
     if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
             (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
     {
-        LOG_E("L:%d password or ssid is to long", __LINE__);
+        LOG_E("L:%d password or ssid is too long", __LINE__);
         return -RT_ERROR;
     }
     rt_memset(&sta_info, 0, sizeof(struct rt_sta_info));
@@ -117,6 +117,41 @@ rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info 
     sta_info.security = info->security;
 
     result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_JOIN, &sta_info);
+    return result;
+}
+
+rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_wlan_buff buff;
+
+    int len = 0;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+    if (info == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
+
+    if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
+            (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
+    {
+        LOG_E("L:%d password or ssid is too long", __LINE__);
+        return -RT_ERROR;
+    }
+
+    buff.len = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_FAST_CONNECT_INFO, buff.data);
+    if(buff.len < 0)
+    {
+        LOG_D("L:%d Can't get fast connect info", __LINE__);
+        return buff.len;
+    }
+
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_FAST_CONNECT, &buff);
+
     return result;
 }
 
@@ -150,7 +185,7 @@ rt_err_t rt_wlan_dev_ap_start(struct rt_wlan_device *device, struct rt_wlan_info
     if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
             (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
     {
-        LOG_E("L:%d password or ssid is to long", __LINE__);
+        LOG_E("L:%d password or ssid is too long", __LINE__);
         return -RT_ERROR;
     }
 
@@ -530,7 +565,7 @@ rt_err_t rt_wlan_dev_scan(struct rt_wlan_device *device, struct rt_wlan_info *in
     {
         if (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH)
         {
-            LOG_E("L:%d ssid is to long", __LINE__);
+            LOG_E("L:%d ssid is too long", __LINE__);
             return -RT_EINVAL;
         }
         rt_memcpy(&scan_info.ssid, &info->ssid, sizeof(rt_wlan_ssid_t));
@@ -574,12 +609,83 @@ rt_err_t rt_wlan_dev_report_data(struct rt_wlan_device *device, void *buff, int 
 #endif
 }
 
+rt_err_t rt_wlan_dev_enter_mgnt_filter(struct rt_wlan_device *device)
+{
+    rt_err_t result = RT_EOK;
+    int enable = 1;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_CFG_MGNT_FILTER, &enable);
+    return result;
+}
+
+rt_err_t rt_wlan_dev_exit_mgnt_filter(struct rt_wlan_device *device)
+{
+    rt_err_t result = RT_EOK;
+    int enable = 0;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_CFG_MGNT_FILTER, &enable);
+    return result;
+}
+
+rt_err_t rt_wlan_dev_set_mgnt_filter_callback(struct rt_wlan_device *device, rt_wlan_mgnt_filter_callback_t callback)
+{
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+    device->mgnt_filter_callback = callback;
+
+    return RT_EOK;
+}
+
+void rt_wlan_dev_mgnt_filter_handler(struct rt_wlan_device *device, void *data, int len)
+{
+    rt_wlan_mgnt_filter_callback_t callback;
+
+    if (device == RT_NULL)
+    {
+        return;
+    }
+
+    callback = device->mgnt_filter_callback;
+
+    if (callback != RT_NULL)
+    {
+        callback(device, data, len);
+    }
+}
+
+int rt_wlan_dev_send_raw_frame(struct rt_wlan_device *device, void *buff, int len)
+{
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+
+    if (device->ops->wlan_send_raw_frame)
+    {
+        return device->ops->wlan_send_raw_frame(device, buff, len);
+    }
+
+    return -RT_ERROR;
+}
+
 static rt_err_t _rt_wlan_dev_init(rt_device_t dev)
 {
     struct rt_wlan_device *wlan = (struct rt_wlan_device *)dev;
     rt_err_t result = RT_EOK;
 
-    rt_mutex_init(&wlan->lock, "wlan_dev", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&wlan->lock, "wlan_dev", RT_IPC_FLAG_PRIO);
 
     if (wlan->ops->wlan_init)
         result = wlan->ops->wlan_init(wlan);
@@ -716,6 +822,15 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
             err = wlan->ops->wlan_cfg_filter(wlan, filter);
         break;
     }
+    case RT_WLAN_CMD_CFG_MGNT_FILTER:
+    {
+        rt_bool_t start = *((rt_bool_t *)args);
+
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_CFG_MGNT_FILTER, "RT_WLAN_CMD_CFG_MGNT_FILTER");
+        if (wlan->ops->wlan_cfg_mgnt_filter)
+            err = wlan->ops->wlan_cfg_mgnt_filter(wlan, start);
+        break;
+    }
     case RT_WLAN_CMD_SET_CHANNEL:
     {
         int channel = *(int *)args;
@@ -768,6 +883,35 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
             err = wlan->ops->wlan_get_mac(wlan, mac);
         break;
     }
+    case RT_WLAN_CMD_GET_FAST_CONNECT_INFO:
+    {
+
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_FAST_INFO, "RT_WLAN_CMD_GET_FAST_INFO");
+        if (wlan->ops->wlan_get_fast_info)
+        {
+            err = wlan->ops->wlan_get_fast_info(args);
+        }
+        else
+        {
+            err = -RT_EEMPTY;
+        }
+        break;
+    }
+    case RT_WLAN_CMD_FAST_CONNECT:
+    {
+        struct rt_wlan_buff *buff = (struct rt_wlan_buff *)args;
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_FAST_CONNECT, "RT_WLAN_CMD_FAST_CONNECT");
+        if (wlan->ops->wlan_get_fast_info)
+        {
+            err = wlan->ops->wlan_fast_connect(buff->data,buff->len);
+        }
+        else
+        {
+            err = -RT_EEMPTY;
+        }
+        break;
+    }
+
     default:
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, -1, "UNKUOWN");
         break;

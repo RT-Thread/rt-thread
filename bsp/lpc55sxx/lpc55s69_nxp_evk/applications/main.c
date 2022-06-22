@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2019-2020, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-24     Magicoe      first version
+ * 2020-01-10     Kevin/Karl   Add PS demo
+ * 2020-09-21     supperthomas fix the main.c
  *
  */
 
@@ -16,18 +19,19 @@
 /* GPIO1_4 is Blue LED */
 #define LEDB_PIN      GET_PINS(1, 4)
 
+
 int main(void)
 {
 #if defined(__CC_ARM)
     rt_kprintf("using armcc, version: %d\n", __ARMCC_VERSION);
-#elif defined(__CLANG_ARM)
+#elif defined(__clang__)
     rt_kprintf("using armclang, version: %d\n", __ARMCC_VERSION);
 #elif defined(__ICCARM__)
     rt_kprintf("using iccarm, version: %d\n", __VER__);
 #elif defined(__GNUC__)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
-  
+
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     while (1)
     {

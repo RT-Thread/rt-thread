@@ -4,6 +4,6 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
-group = DefineGroup('camera', src, depend = ['BSP_USING_CAMERA'], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = ['BSP_USING_CAMERA'], CPPPATH = CPPPATH)
 
 Return('group')

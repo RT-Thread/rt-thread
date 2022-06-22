@@ -166,12 +166,6 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef
 /** @defgroup SMARTCARDEx_Exported_Functions_Group2 Extended Peripheral IO operation functions
   * @brief   SMARTCARD Transmit and Receive functions
   *
-@verbatim
- ===============================================================================
-                      ##### IO operation functions #####
- ===============================================================================
-    [..]
-@endverbatim
   * @{
   */
 
@@ -179,28 +173,12 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef
   * @}
   */
 
-/** @defgroup SMARTCARD_Exported_Functions_Group3 Extended Peripheral Peripheral Control functions
-  *  @brief   SMARTCARD control functions
-  *
-@verbatim
- ===============================================================================
-                      ##### Peripheral Control functions #####
- ===============================================================================
-    [..]
-@endverbatim
-  * @{
-  */
-
 
 /**
   * @}
   */
 
-/**
-  * @}
-  */
-
-/** @defgroup SMARTCARDEx_Private_Functions  SMARTCARD Extended private Functions
+/** @defgroup SMARTCARDEx_Private_Functions  SMARTCARD Extended Private Functions
   * @{
   */
 

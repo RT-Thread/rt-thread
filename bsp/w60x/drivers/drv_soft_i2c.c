@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -138,40 +138,7 @@ static rt_int32_t w60x_get_scl(void *data)
 
     return tls_gpio_read((enum tls_io_name)scl);
 }
-/**
- * The time delay function.
- *
- * @param microseconds.
- */
-static void w60x_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
 
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
 
 static const struct rt_i2c_bit_ops w60x_bit_ops_default =
 {
@@ -180,7 +147,7 @@ static const struct rt_i2c_bit_ops w60x_bit_ops_default =
     .set_scl  = w60x_set_scl,
     .get_sda  = w60x_get_sda,
     .get_scl  = w60x_get_scl,
-    .udelay   = w60x_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };
@@ -201,9 +168,9 @@ static rt_err_t w60x_i2c_bus_unlock(const struct w60x_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl, PIN_HIGH);
-            w60x_udelay(100);
+            rt_hw_us_delay(100);
             rt_pin_write(cfg->scl, PIN_LOW);
-            w60x_udelay(100);
+            rt_hw_us_delay(100);
         }
     }
     if (PIN_LOW == rt_pin_read(cfg->sda))
@@ -231,8 +198,8 @@ int rt_soft_i2c_init(void)
         w60x_i2c_bus_unlock(&soft_i2c_config[i]);
 
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
-        soft_i2c_config[i].bus_name, 
-        soft_i2c_config[i].scl, 
+        soft_i2c_config[i].bus_name,
+        soft_i2c_config[i].scl,
         soft_i2c_config[i].sda);
     }
 

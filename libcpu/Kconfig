@@ -1,6 +1,9 @@
 config ARCH_CPU_64BIT
     bool
 
+config ARCH_CPU_BIG_ENDIAN
+    bool
+
 config ARCH_ARM
     bool
 
@@ -38,6 +41,11 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
 
+config ARCH_ARM_CORTEX_M33
+    bool
+    select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
+
 config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
@@ -57,6 +65,25 @@ config ARCH_ARM_ARM11
 config ARCH_ARM_CORTEX_A
     bool
     select ARCH_ARM
+    select RT_USING_CPU_FFS
+
+    if ARCH_ARM_CORTEX_A
+        config RT_SMP_AUTO_BOOT
+            bool
+            default n
+
+        config RT_USING_GIC_V2
+            bool
+            default n
+
+        config RT_USING_GIC_V3
+            bool
+            default n
+
+        config RT_NO_USING_GIC
+            bool
+            default y if !RT_USING_GIC_V2 && !RT_USING_GIC_V3
+    endif
 
 config ARCH_ARM_CORTEX_A5
     bool
@@ -74,8 +101,15 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config ARCH_ARMV8
+    bool
+
 config ARCH_MIPS
     bool
+
+config ARCH_MIPS64
+    bool
+    select ARCH_CPU_64BIT
 
 config ARCH_MIPS_XBURST
     bool
@@ -94,6 +128,14 @@ config ARCH_RISCV
     bool
 
 config ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV_FPU_S
+    select ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV_FPU_D
+    select ARCH_RISCV_FPU
     bool
 
 config ARCH_RISCV32

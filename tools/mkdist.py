@@ -105,6 +105,18 @@ def bsp_update_sconstruct(dist_dir):
                     f.write('if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
             f.write(line)
 
+def bsp_update_kconfig_testcases(dist_dir):
+    # delete testcases in rt-thread/Kconfig
+    if not os.path.isfile(os.path.join(dist_dir, 'rt-thread/Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'rt-thread/Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(dist_dir, 'rt-thread/Kconfig'), 'w') as f:
+        for line in data:
+            if line.find('examples/utest/testcases/Kconfig') == -1:
+                f.write(line)
+
 def bsp_update_kconfig(dist_dir):
     # change RTT_ROOT in Kconfig
     if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
@@ -122,7 +134,7 @@ def bsp_update_kconfig(dist_dir):
                 line = line[0:position] + 'default "rt-thread"\n'
                 found = 0
             f.write(line)
-            
+
 def bsp_update_kconfig_library(dist_dir):
     # change RTT_ROOT in Kconfig
     if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
@@ -141,7 +153,7 @@ def bsp_update_kconfig_library(dist_dir):
                 found = 0
             f.write(line)
 
-    # change board/kconfig path 
+    # change board/kconfig path
     if not os.path.isfile(os.path.join(dist_dir, 'board/Kconfig')):
         return
 
@@ -161,10 +173,11 @@ def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
     if rttide == None:
         tgt_dict = {'mdk4':('keil', 'armcc'),
                     'mdk5':('keil', 'armcc'),
-                    'iar':('iar', 'iar'),
+                    'iar':('iar', 'iccarm'),
                     'vs':('msvc', 'cl'),
                     'vs2012':('msvc', 'cl'),
-                    'cdk':('gcc', 'gcc')}
+                    'cdk':('gcc', 'gcc'),
+                    'eclipse':('eclipse', 'gcc')}
     else:
         item = 'eclipse --project-name=' + rttide['project_name']
         tgt_dict = {item:('gcc', 'gcc')}
@@ -215,11 +228,11 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
     # do bsp special dist handle
-    if 'dist_handle' in Env:       
+    if 'dist_handle' in Env:
         print("=> start dist handle")
         dist_handle = Env['dist_handle']
-        dist_handle(BSP_ROOT)
-        
+        dist_handle(BSP_ROOT, dist_dir)
+
     # get all source files from program
     for item in program:
         walk_children(item)
@@ -307,11 +320,14 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
 
+    print('Update configuration files...')
     # change RTT_ROOT in SConstruct
     bsp_update_sconstruct(dist_dir)
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
     bsp_update_kconfig_library(dist_dir)
+    # delete testcases in Kconfig
+    bsp_update_kconfig_testcases(dist_dir)
     # update all project files
     bs_update_ide_project(dist_dir, target_path)
 
@@ -336,20 +352,11 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     print('=> %s' % os.path.basename(BSP_ROOT))
     bsp_copy_files(BSP_ROOT, dist_dir)
 
-    # copy stm32 bsp libiary files
-    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'stm32':
-        print("=> copy stm32 bsp library")
-        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-        library_dir  = os.path.join(dist_dir, 'libraries')
-        bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
-        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
-        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
-
     # do bsp special dist handle
     if 'dist_handle' in Env:
         print("=> start dist handle")
         dist_handle = Env['dist_handle']
-        dist_handle(BSP_ROOT)
+        dist_handle(BSP_ROOT, dist_dir)
 
     # copy tools directory
     print('=> components')
@@ -383,12 +390,14 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
     do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
 
+    print('Update configuration files...')
     # change RTT_ROOT in SConstruct
     bsp_update_sconstruct(dist_dir)
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
     bsp_update_kconfig_library(dist_dir)
-
+    # delete testcases in Kconfig
+    bsp_update_kconfig_testcases(dist_dir)
     # update all project files
     if rttide == None:
         bs_update_ide_project(dist_dir, target_path)

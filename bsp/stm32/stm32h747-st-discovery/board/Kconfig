@@ -1,0 +1,40 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32H747XI
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+        endif
+
+    source "../libraries/HAL_Drivers/Kconfig"
+    
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+ 
+endmenu

@@ -1,13 +1,13 @@
 /*
- * linker script for STM32F10x with GNU ld
+ * linker script for STM32F429xx with GNU ld
  * bernard.xiong 2009-10-14
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
-    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  128k /* 128K sram */
+    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 2048k /* 1024KB flash */
+    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 128K sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;

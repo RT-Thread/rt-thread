@@ -63,7 +63,7 @@
     !defined (STM32L011xx) && !defined (STM32L021xx) && \
     !defined (STM32L031xx) && !defined (STM32L041xx) && \
     !defined (STM32L051xx) && !defined (STM32L052xx) && !defined (STM32L053xx) && \
-    !defined (STM32L061xx) && !defined (STM32L062xx) && !defined (STM32L063xx) && \
+    !defined (STM32L062xx) && !defined (STM32L063xx) && \
     !defined (STM32L071xx) && !defined (STM32L072xx) && !defined (STM32L073xx) && \
     !defined (STM32L081xx) && !defined (STM32L082xx) && !defined (STM32L083xx)
   /* #define STM32L010x4 */   /*!< STM32L010K4, STM32L010F4 Devices                                                                                                                      */
@@ -77,7 +77,6 @@
   /* #define STM32L051xx */   /*!< STM32L051K8, STM32L051C6, STM32L051C8, STM32L051R6, STM32L051R8, STM32L051K6, STM32L051T6, STM32L051T8 Devices                                        */
   /* #define STM32L052xx */   /*!< STM32L052K6, STM32L052K8, STM32L052C6, STM32L052C8, STM32L052R6, STM32L052R8, STM32L052T6, STM32L052T8 Devices                                        */
   /* #define STM32L053xx */   /*!< STM32L053C6, STM32L053C8, STM32L053R6, STM32L053R8 Devices                                                                                            */
-  /* #define STM32L061xx */   /*!< */
   /* #define STM32L062xx */   /*!< STM32L062K8 Devices                                                                                                                                   */
   /* #define STM32L063xx */   /*!< STM32L063C8, STM32L063R8 Devices                                                                                                                      */
   /* #define STM32L071xx */   /*!< STM32L071V8, STM32L071K8, STM32L071VB, STM32L071RB, STM32L071CB, STM32L071KB, STM32L071VZ, STM32L071RZ, STM32L071CZ, STM32L071KZ, STM32L071C8 Devices */
@@ -105,7 +104,7 @@
   */
 #define __STM32L0xx_CMSIS_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __STM32L0xx_CMSIS_VERSION_SUB1   (0x09) /*!< [23:16] sub1 version */
-#define __STM32L0xx_CMSIS_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
+#define __STM32L0xx_CMSIS_VERSION_SUB2   (0x02) /*!< [15:8]  sub2 version */
 #define __STM32L0xx_CMSIS_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32L0xx_CMSIS_VERSION        ((__STM32L0xx_CMSIS_VERSION_MAIN     << 24)\
                                          |(__STM32L0xx_CMSIS_VERSION_SUB1 << 16)\
@@ -145,8 +144,6 @@
   #include "stm32l062xx.h"
 #elif defined(STM32L063xx)
   #include "stm32l063xx.h"
-#elif defined(STM32L061xx)
-  #include "stm32l061xx.h"
 #elif defined(STM32L071xx)
   #include "stm32l071xx.h"
 #elif defined(STM32L072xx)
@@ -210,6 +207,46 @@ typedef enum
 #define READ_REG(REG)         ((REG))
 
 #define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
+
+/* Use of interrupt control for register exclusive access */
+/* Atomic 32-bit register access macro to set one or several bits */
+#define ATOMIC_SET_BIT(REG, BIT)                             \
+  do {                                                       \
+    uint32_t primask;                                        \
+    primask = __get_PRIMASK();                               \
+    __set_PRIMASK(1);                                        \
+    SET_BIT((REG), (BIT));                                   \
+    __set_PRIMASK(primask);                                  \
+  } while(0)
+
+/* Atomic 32-bit register access macro to clear one or several bits */
+#define ATOMIC_CLEAR_BIT(REG, BIT)                           \
+  do {                                                       \
+    uint32_t primask;                                        \
+    primask = __get_PRIMASK();                               \
+    __set_PRIMASK(1);                                        \
+    CLEAR_BIT((REG), (BIT));                                 \
+    __set_PRIMASK(primask);                                  \
+  } while(0)
+
+/* Atomic 32-bit register access macro to clear and set one or several bits */
+#define ATOMIC_MODIFY_REG(REG, CLEARMSK, SETMASK)            \
+  do {                                                       \
+    uint32_t primask;                                        \
+    primask = __get_PRIMASK();                               \
+    __set_PRIMASK(1);                                        \
+    MODIFY_REG((REG), (CLEARMSK), (SETMASK));                \
+    __set_PRIMASK(primask);                                  \
+  } while(0)
+
+/* Atomic 16-bit register access macro to set one or several bits */
+#define ATOMIC_SETH_BIT(REG, BIT) ATOMIC_SET_BIT(REG, BIT)                                   \
+
+/* Atomic 16-bit register access macro to clear one or several bits */
+#define ATOMIC_CLEARH_BIT(REG, BIT) ATOMIC_CLEAR_BIT(REG, BIT)                               \
+
+/* Atomic 16-bit register access macro to clear and set one or several bits */
+#define ATOMIC_MODIFYH_REG(REG, CLEARMSK, SETMASK) ATOMIC_MODIFY_REG(REG, CLEARMSK, SETMASK) \
 
 /**
   * @}

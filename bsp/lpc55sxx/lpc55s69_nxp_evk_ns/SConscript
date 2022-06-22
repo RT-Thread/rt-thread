@@ -1,0 +1,18 @@
+# for module compiling
+import os
+from building import *
+
+cwd = GetCurrentDir() + '/../lpc55s69_nxp_evk'
+objs = []
+list = os.listdir(cwd)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(path, 'SConscript'))
+
+pkg = GetCurrentDir() + '/packages'
+if os.path.isfile(os.path.join(pkg, 'SConscript')):
+    objs = objs + SConscript(os.path.join(pkg, 'SConscript'))
+
+Return('objs')

@@ -1,0 +1,25 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "drivers/Kconfig"
+
+config SOC_SWM320
+    bool
+    select ARCH_ARM_CORTEX_M4
+    default y

@@ -1,17 +1,13 @@
 /*
- * File      : drv_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2017-06-05     tanek        first implementation.
  */
- 
+
 #include "drv_spi.h"
 
 #include <board.h>
@@ -32,7 +28,7 @@
 #ifdef DEBUG
 #define DEBUG_PRINTF(...)   rt_kprintf(__VA_ARGS__)
 #else
-#define DEBUG_PRINTF(...)   
+#define DEBUG_PRINTF(...)
 #endif
 
 /* private rt-thread spi ops function */
@@ -48,16 +44,16 @@ static struct rt_spi_ops gd32_spi_ops =
 static rt_err_t configure(struct rt_spi_device* device,
                           struct rt_spi_configuration* configuration)
 {
-    struct rt_spi_bus * spi_bus = (struct rt_spi_bus *)device->bus;	
+    struct rt_spi_bus * spi_bus = (struct rt_spi_bus *)device->bus;
     struct gd32f4_spi *f4_spi = (struct gd32f4_spi *)spi_bus->parent.user_data;
-    
+
     spi_parameter_struct spi_init_struct;
 
     uint32_t spi_periph = f4_spi->spi_periph;
 
 
-	RT_ASSERT(device != RT_NULL);
-	RT_ASSERT(configuration != RT_NULL);
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(configuration != RT_NULL);
 
     /* data_width */
     if(configuration->data_width <= 8)
@@ -129,23 +125,23 @@ static rt_err_t configure(struct rt_spi_device* device,
             spi_init_struct.prescale = SPI_PSC_256;
         }
     } /* baudrate */
-    
-    switch(configuration->mode)
+
+    switch(configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_LOW_PH_1EDGE;
         break;
     case RT_SPI_MODE_1:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_LOW_PH_2EDGE;
-        break;        
+        break;
     case RT_SPI_MODE_2:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_1EDGE;
-        break;    
+        break;
     case RT_SPI_MODE_3:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_2EDGE;
         break;
     }
-    
+
     /* MSB or LSB */
     if(configuration->mode & RT_SPI_MSB)
     {
@@ -155,18 +151,18 @@ static rt_err_t configure(struct rt_spi_device* device,
     {
         spi_init_struct.endian = SPI_ENDIAN_LSB;
     }
-    
+
     spi_init_struct.trans_mode = SPI_TRANSMODE_FULLDUPLEX;
     spi_init_struct.device_mode = SPI_MASTER;
     spi_init_struct.nss = SPI_NSS_SOFT;
-    
+
     spi_crc_off(spi_periph);
 
     /* init SPI */
     spi_init(spi_periph, &spi_init_struct);
     /* Enable SPI_MASTER */
-	spi_enable(spi_periph);
-    
+    spi_enable(spi_periph);
+
     return RT_EOK;
 };
 
@@ -178,9 +174,9 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     struct gd32_spi_cs * gd32_spi_cs = device->parent.user_data;
     uint32_t spi_periph = f4_spi->spi_periph;
 
-	RT_ASSERT(device != NULL);
-	RT_ASSERT(message != NULL);
-	
+    RT_ASSERT(device != NULL);
+    RT_ASSERT(message != NULL);
+
     /* take CS */
     if(message->cs_take)
     {
@@ -194,7 +190,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
             const rt_uint8_t * send_ptr = message->send_buf;
             rt_uint8_t * recv_ptr = message->recv_buf;
             rt_uint32_t size = message->length;
-            
+
             DEBUG_PRINTF("spi poll transfer start: %d\n", size);
 
             while(size--)
@@ -205,12 +201,12 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 {
                     data = *send_ptr++;
                 }
-                
+
                 // Todo: replace register read/write by gd32f4 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
                 // Send the byte
-				spi_i2s_data_transmit(spi_periph, data);
+                spi_i2s_data_transmit(spi_periph, data);
 
                 //Wait until a data is received
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
@@ -242,7 +238,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
                 // Send the byte
-				spi_i2s_data_transmit(spi_periph, data);
+                spi_i2s_data_transmit(spi_periph, data);
 
                 //Wait until a data is received
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
@@ -260,7 +256,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     /* release CS */
     if(message->cs_release)
     {
-		gpio_bit_set(gd32_spi_cs->GPIOx, gd32_spi_cs->GPIO_Pin);
+        gpio_bit_set(gd32_spi_cs->GPIOx, gd32_spi_cs->GPIO_Pin);
         DEBUG_PRINTF("spi release cs\n");
     }
 
@@ -274,7 +270,7 @@ static const struct gd32f4_spi spis[] = {
 #ifdef RT_USING_SPI0
     {SPI0, RCU_SPI0, &spi_bus[0]},
 #endif
-    
+
 #ifdef RT_USING_SPI1
     {SPI1, RCU_SPI1, &spi_bus[1]},
 #endif
@@ -286,11 +282,11 @@ static const struct gd32f4_spi spis[] = {
 #ifdef RT_USING_SPI3
     {SPI3, RCU_SPI3, &spi_bus[3]},
 #endif
-    
+
 #ifdef RT_USING_SPI4
     {SPI4, RCU_SPI4, &spi_bus[4]},
 #endif
-    
+
 #ifdef RT_USING_SPI5
     {SPI5, RCU_SPI5, &spi_bus[5]},
 #endif
@@ -310,9 +306,9 @@ rt_err_t gd32_spi_bus_register(uint32_t spi_periph,
                             const char * spi_bus_name)
 {
     int i;
-    
+
     RT_ASSERT(spi_bus_name != RT_NULL);
-    
+
     for (i = 0; i < ARR_LEN(spis); i++)
     {
         if (spi_periph == spis[i].spi_periph)
@@ -323,7 +319,7 @@ rt_err_t gd32_spi_bus_register(uint32_t spi_periph,
             return RT_EOK;
         }
     }
-    
+
     return RT_ERROR;
 }
 #endif

@@ -1,0 +1,58 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+    drv_common.c
+""")
+
+if GetDepend(['BSP_USING_UART']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_usart_v2.c']
+    else:
+        print("\nThe current project does not support serial-v1\n")
+        Return('group')
+
+if GetDepend(['BSP_USING_GPIO']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['BSP_USING_WDT']):
+    src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_ONCHIP_RTC']):
+    src += ['drv_rtc.c']
+
+if GetDepend(['BSP_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_I2C1'):
+        src += ['drv_soft_i2c.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend(['BSP_USING_ADC']):
+    src += ['drv_adc.c']
+
+if GetDepend(['BSP_USING_DAC']):
+    src += ['drv_dac.c']
+
+if GetDepend(['BSP_USING_ONCHIP_FLASH']):
+    src += ['drv_flash.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['drv_pwm.c']
+
+if GetDepend(['BSP_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['BSP_USING_SDHI']):
+    src += ['drv_sdhi.c']
+
+path =  [cwd]
+path += [cwd + '/config']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #include <rthw.h>
@@ -65,12 +65,6 @@ void rtthread_startup(void)
     /* show version */
     rt_show_version();
 
-    /* init tick */
-    rt_system_tick_init();
-
-    /* init kernel object */
-    rt_system_object_init();
-
     /* init timer system */
     rt_system_timer_init();
 
@@ -79,16 +73,15 @@ void rtthread_startup(void)
     /* init scheduler system */
     rt_system_scheduler_init();
 
-    /* init all device */
-    rt_device_init_all();
-
     /* init application */
     rt_application_init();
 
 #ifdef RT_USING_FINSH
     /* init finsh */
     finsh_system_init();
-    finsh_set_device( FINSH_DEVICE_NAME );
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+    finsh_set_device(FINSH_DEVICE_NAME);
+#endif
 #endif
 
     /* init timer thread */

@@ -1,7 +1,7 @@
 /*
  * File      : emac.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2014, RT-Thread Develop Team
+ * COPYRIGHT (C) 2006-2021, RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -38,7 +38,7 @@ struct rt_cme_eth
     struct eth_device parent;
 
     /* interface address info. */
-    rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
+    rt_uint8_t  dev_addr[MAX_ADDR_LEN];         /* hw address   */
 
     uint32_t    ETH_Speed;
     uint32_t    ETH_Mode;
@@ -95,8 +95,8 @@ uint32_t txTotalMemory = 0x2000;
 BOOL isRxNoBuf = FALSE;
 
 #define ETH_MAX_PACKET_SIZE    1520    /* ETH_HEADER + ETH_EXTRA + MAX_ETH_PAYLOAD + ETH_CRC */
-#define ETH_RXBUFNB        	4
-#define ETH_TXBUFNB        	2
+#define ETH_RXBUFNB         4
+#define ETH_TXBUFNB         2
 
 struct eth_rx_buffer
 {
@@ -312,8 +312,19 @@ struct pbuf *rt_cme_eth_rx(rt_device_t dev)
     ETH_RX_DESC *desc;
     uint32_t framelength;
     struct rt_cme_eth * cme_eth = (struct rt_cme_eth *)dev;
+    rt_err_t result;
 
-    rt_mutex_take(&cme_eth->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&cme_eth->lock, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        goto _exit;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        goto _exit;
+    }
 
     desc = ETH_AcquireFreeRxDesc();
     if(desc == RT_NULL)

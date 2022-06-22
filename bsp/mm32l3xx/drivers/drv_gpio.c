@@ -409,6 +409,7 @@ const static struct rt_pin_ops _mm32_pin_ops =
     mm32_pin_attach_irq,
     mm32_pin_detach_irq,
     mm32_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

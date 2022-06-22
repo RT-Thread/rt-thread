@@ -19,8 +19,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -97,7 +97,7 @@ elif PLATFORM == 'armcc':
     POST_ACTION = 'fromelf -z $TARGET'
     # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     CC = 'iccarm'
     CXX = 'iccarm'
     AS = 'iasmarm'
@@ -147,3 +147,10 @@ elif PLATFORM == 'iar':
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir

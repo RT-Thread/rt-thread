@@ -1,11 +1,7 @@
 /*
- * File      : startup.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date         Author      Notes
@@ -34,12 +30,6 @@ void rtthread_startup(void)
 
     /* show version */
     rt_show_version();
-
-    /* init tick */
-    rt_system_tick_init();
-
-    /* init kernel object */
-    rt_system_object_init();
 
     /* init timer system */
     rt_system_timer_init();
@@ -72,7 +62,9 @@ void rtthread_startup(void)
     /* init finsh */
     extern int finsh_system_init(void);
     finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device("uart0");
+#endif
 #endif
 
     rt_system_timer_thread_init();

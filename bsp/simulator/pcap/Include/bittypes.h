@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -13,7 +13,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,7 +45,7 @@ typedef signed int int8_t;
 
 #endif /* HAVE_U_INT8_T */
 
-#ifndef HAVE_U_INT16_T 
+#ifndef HAVE_U_INT16_T
 
 #if SIZEOF_SHORT == 2
 typedef unsigned short u_int16_t;
@@ -104,33 +104,33 @@ typedef unsigned short u_int64_t;
 
 #ifndef PRId64
 #ifdef _MSC_EXTENSIONS
-#define PRId64	"I64d"
+#define PRId64  "I64d"
 #else /* _MSC_EXTENSIONS */
-#define PRId64	"lld"
+#define PRId64  "lld"
 #endif /* _MSC_EXTENSIONS */
 #endif /* PRId64 */
 
 #ifndef PRIo64
 #ifdef _MSC_EXTENSIONS
-#define PRIo64	"I64o"
+#define PRIo64  "I64o"
 #else /* _MSC_EXTENSIONS */
-#define PRIo64	"llo"
+#define PRIo64  "llo"
 #endif /* _MSC_EXTENSIONS */
 #endif /* PRIo64 */
 
 #ifndef PRIx64
 #ifdef _MSC_EXTENSIONS
-#define PRIx64	"I64x"
+#define PRIx64  "I64x"
 #else /* _MSC_EXTENSIONS */
-#define PRIx64	"llx"
+#define PRIx64  "llx"
 #endif /* _MSC_EXTENSIONS */
 #endif /* PRIx64 */
 
 #ifndef PRIu64
 #ifdef _MSC_EXTENSIONS
-#define PRIu64	"I64u"
+#define PRIu64  "I64u"
 #else /* _MSC_EXTENSIONS */
-#define PRIu64	"llu"
+#define PRIu64  "llu"
 #endif /* _MSC_EXTENSIONS */
 #endif /* PRIu64 */
 

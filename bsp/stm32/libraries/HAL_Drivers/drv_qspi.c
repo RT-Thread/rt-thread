@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@
 
 struct stm32_hw_spi_cs
 {
-    uint16_t Pin;
+    uint16_t pin;
 };
 
 struct stm32_qspi_bus
@@ -52,8 +52,12 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     QSPI_HandleTypeDef QSPI_Handler_config = QSPI_BUS_CONFIG;
     qspi_bus->QSPI_Handler = QSPI_Handler_config;
 
+#if defined(SOC_SERIES_STM32MP1)
+    while (cfg->max_hz < HAL_RCC_GetACLKFreq() / (i + 1))
+#else
     while (cfg->max_hz < HAL_RCC_GetHCLKFreq() / (i + 1))
-    {
+#endif
+   {
         i++;
         if (i == 255)
         {
@@ -104,7 +108,7 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     {
         __HAL_RCC_DMA2_CLK_ENABLE();
     }
-    
+
     HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
     DMA_HandleTypeDef hdma_quadspi_config = QSPI_DMA_CONFIG;
     qspi_bus->hdma_quadspi = hdma_quadspi_config;
@@ -337,7 +341,7 @@ rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_n
     qspi_device->exit_qspi_mode = exit_qspi_mode;
     qspi_device->config.qspi_dl_width = data_line_width;
 
-    cs_pin->Pin = pin;
+    cs_pin->pin = pin;
 #ifdef BSP_QSPI_USING_SOFTCS
     rt_pin_mode(pin, PIN_MODE_OUTPUT);
     rt_pin_write(pin, 1);

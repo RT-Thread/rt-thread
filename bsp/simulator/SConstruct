@@ -37,7 +37,7 @@ if rtconfig.PLATFORM == 'cl':
     _CONSOLE
     MSVC
     ''')
-    env.Append(CCFLAGS=rtconfig.CFLAGS)
+    env.Append(CFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
     env['LIBS']=libs
     env['CPPDEFINES']=definitions
@@ -59,7 +59,7 @@ elif rtconfig.PLATFORM == 'mingw':
     DefaultEnvironment(tools=[])
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
     env['LIBS']=libs
@@ -71,7 +71,7 @@ elif rtconfig.CROSS_TOOL == 'clang-analyze':
 else:
     TARGET = 'rtthread'
     env['CC']=rtconfig.CC
-    env.Append(CCFLAGS=rtconfig.CFLAGS)
+    env.Append(CFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
     env.Append(LIBS=['winmm'])
 
@@ -86,6 +86,19 @@ def ObjRemove(objs, remove):
              objs.remove(item)
     return
 
+def ProjectRemove(group, remove):
+    global Projects
+    for item in Projects:
+        if item['name'] == group:
+            for src in item['src']:
+                if os.path.basename(str(src)) in remove:
+                    # print(type(src), os.path.basename(str(src)) )
+                    item['src'].remove(src)
+    return
+
+ObjRemove(objs, ['components.obj', 'components.o', 'components.c'])
+ProjectRemove('Kernel', ['components.obj', 'components.o', 'components.c'])
+
 # build program  -shared
 if GetDepend('RT_USING_MODULE'):
     # Remove module.c in $RTT_ROOT/src
@@ -95,7 +108,7 @@ if GetDepend('RT_USING_MODULE'):
       dest='def',
       action='store_true',
       default=False,
-      help='create rthread.def of rtthread.dll on windows')
+      help='create rtthread.def of rtthread.dll on windows')
     if GetOption('def'):
         if rtconfig.PLATFORM == 'mingw':
             env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS

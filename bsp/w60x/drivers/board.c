@@ -98,14 +98,14 @@ void disp_version_info(void)
 
 void wm_gpio_config(void)
 {
-	/* must call first */
-	wm_gpio_af_disable();
+    /* must call first */
+    wm_gpio_af_disable();
 
-	/*MASTER SPI configuratioin*/
-	wm_spi_cs_config(WM_IO_PA_02);
-	wm_spi_ck_config(WM_IO_PA_11);
-	wm_spi_di_config(WM_IO_PA_03);
-	wm_spi_do_config(WM_IO_PA_09);
+    /*MASTER SPI configuratioin*/
+    wm_spi_cs_config(WM_IO_PA_02);
+    wm_spi_ck_config(WM_IO_PA_11);
+    wm_spi_di_config(WM_IO_PA_03);
+    wm_spi_do_config(WM_IO_PA_09);
 }
 
 static int wm_infsl_init(void)
@@ -193,7 +193,7 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
@@ -213,13 +213,49 @@ void rt_hw_cpu_reset(void)
     tls_sys_reset();
 }
 
+/**
+ * The time delay function.
+ *
+ * @param microseconds.
+ */
+#include "wm_regs.h"
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
+    {
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
+    }
+}
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 /*@}*/

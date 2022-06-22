@@ -26,6 +26,6 @@ if GetDepend('RT_USING_SPI_CONTROL'):
 if GetDepend('RT_USING_EMAC'):
 	src += ['davinci_emac.c']
 
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

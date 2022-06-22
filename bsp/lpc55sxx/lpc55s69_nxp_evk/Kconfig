@@ -22,5 +22,5 @@ config SOC_LPC55S6x
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "../libraries/Kconfig"
+source "../Libraries/Kconfig"
 source "board/Kconfig"

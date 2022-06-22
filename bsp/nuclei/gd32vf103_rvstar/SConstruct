@@ -1,0 +1,90 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+AddOption('--run',
+        dest = 'run',
+        type='string',
+        nargs=1,
+        action = 'store',
+        default = "",
+        help = 'Upload or debug application using openocd')
+
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS, CCFLAGS = '',
+    CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc', LIBS = rtconfig.LIBS,
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+SDK_ROOT = os.path.abspath('./')
+
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
+else:
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+
+SDK_LIB = libraries_path_prefix
+Export('SDK_LIB')
+
+GDB = rtconfig.GDB
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT)
+
+bsp_library_type = rtconfig.NUCLEI_SDK_SOC
+rtconfig.BSP_LIBRARY_TYPE = bsp_library_type
+
+if hasattr(rtconfig, 'NUCLEI_SDK_OPENOCD_CFG'):
+    openocd_cfg = rtconfig.NUCLEI_SDK_OPENOCD_CFG.replace('\\', '/')
+else:
+    print("ERROR: Nuclei SDK package is not yet downloaded, please execute <pkgs --update> in command line first!")
+    exit(0)
+
+# include hal drivers
+hal_sconscript = os.path.join(libraries_path_prefix, bsp_library_type, 'HAL_Drivers', 'SConscript')
+
+if os.path.isfile(hal_sconscript):
+    objs.extend(SConscript(hal_sconscript))
+
+# make a building
+DoBuilding(TARGET, objs)
+
+# Run upload or debug if --run=upload or --upload=debug
+run_target = GetOption('run')
+SUPPORT_RUN_TARGETS = ["upload", "debug"]
+if run_target in SUPPORT_RUN_TARGETS:
+    if os.path.isfile(TARGET):
+        if run_target == "upload":
+            upload_cmd = '{} {} -ex "set remotetimeout 240" \
+                    -ex "target remote | openocd --pipe -f {}" \
+                    --batch -ex "monitor halt" -ex "monitor flash protect 0 0 last off" -ex "load" \
+                    -ex "monitor resume" -ex "quit"'.format(GDB, TARGET, openocd_cfg)
+            print("Upload application {} using openocd and gdb".format(TARGET))
+            print(upload_cmd)
+            os.system(upload_cmd)
+        elif run_target == "debug":
+            debug_cmd = '{} {} -ex "set remotetimeout 240" \
+                    -ex "target remote | openocd --pipe -f {}"'.format(GDB, TARGET, openocd_cfg)
+            print("Debug application {} using openocd and gdb".format(TARGET))
+            print(debug_cmd)
+            os.system(debug_cmd)
+    else:
+        print(TARGET + ' not exist, please run scons first!!')
+    exit(0)
