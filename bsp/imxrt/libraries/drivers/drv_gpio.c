@@ -799,6 +799,7 @@ static rt_base_t imxrt_pin_get(const char *name)
 
     return pin;
 }
+
 const static struct rt_pin_ops imxrt_pin_ops =
 {
     imxrt_pin_mode,
