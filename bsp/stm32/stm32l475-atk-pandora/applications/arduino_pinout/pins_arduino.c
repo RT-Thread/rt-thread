@@ -50,6 +50,9 @@ const pin_map_t pin_map_table[]=
     {D27, GET_PIN(B,6)}, /* LCD RESET */
     {D28, GET_PIN(B,4)}, /* LCD DC (data or command) */
     {D29, GET_PIN(B,7)}, /* LCD POWER */
+    {D30, GET_PIN(D,4)}, /* WIRELESS CE */
+    {D31, GET_PIN(D,3)}, /* WIRELESS IRQ */
+    {D32, GET_PIN(D,5)}, /* WIRELESS CS */
     {A0, GET_PIN(C,2), "adc1", 3}, /* ADC */
     {A1, GET_PIN(C,4), "adc1", 13}, /* ADC */
     {A2, RT_NULL, "adc1", 0}, /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */

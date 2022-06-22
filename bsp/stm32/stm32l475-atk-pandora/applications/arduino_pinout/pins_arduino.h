@@ -42,11 +42,14 @@
 #define D27  (27)
 #define D28  (28)
 #define D29  (29)
-#define A0   (30)
-#define A1   (31)
-#define A2   (32)
-#define A3   (33)
-#define DAC0 (34)
+#define D30  (30)
+#define D31  (31)
+#define D32  (32)
+#define A0   (33)
+#define A1   (34)
+#define A2   (35)
+#define A3   (36)
+#define DAC0 (37)
 
 #define F_CPU  80000000L /* CPU: 80MHz */
 #define LED_BUILTIN  D22 /* Default Built-in LED */
