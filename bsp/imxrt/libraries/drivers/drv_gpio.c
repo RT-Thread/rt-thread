@@ -21,7 +21,7 @@
 #define LOG_TAG             "drv.gpio"
 #include <drv_log.h>
 
-#define IMX_PIN_NUM(port, no) (((((port) & 0xFu) << 5) | ((no) & 0xFu)))
+#define IMX_PIN_NUM(port, no) (((((port) & 0x5u) << 5) | ((no) & 0x1Fu)))
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
