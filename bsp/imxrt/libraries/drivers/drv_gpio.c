@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-4-30     misonyo     the first version.
+ * 2022-6-22     solar       Implement api docking of rt_pin_get.
  */
 
 #include <rtthread.h>
@@ -19,6 +20,8 @@
 
 #define LOG_TAG             "drv.gpio"
 #include <drv_log.h>
+
+#define IMX_PIN_NUM(port, no) (((((port) & 0xFu) << 5) | ((no) & 0xFu)))
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
@@ -758,6 +761,43 @@ static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt
 
     return RT_EOK;
 }
+
+static rt_base_t imxrt_pin_get(const char *name)
+{
+    rt_base_t pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len;
+
+    name_len = rt_strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
+    {
+        return -RT_EINVAL;
+    }
+    if ((name[0] != 'P') || (name[2] != '.'))
+    {
+        return -RT_EINVAL;
+    }
+
+    if ((name[1] >= '1') && (name[1] <= '5'))
+    {
+        hw_port_num = (int)(name[1] - '1');
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = 3; i < name_len; i++)
+    {
+        hw_pin_num *= 10;
+        hw_pin_num += name[i] - '0';
+    }
+
+    pin = IMX_PIN_NUM(hw_port_num, hw_pin_num);
+
+    return pin;
+}
 const static struct rt_pin_ops imxrt_pin_ops =
 {
     imxrt_pin_mode,
@@ -766,7 +806,7 @@ const static struct rt_pin_ops imxrt_pin_ops =
     imxrt_pin_attach_irq,
     imxrt_pin_detach_irq,
     imxrt_pin_irq_enable,
-    RT_NULL,
+    imxrt_pin_get,
 };
 
 int rt_hw_pin_init(void)
