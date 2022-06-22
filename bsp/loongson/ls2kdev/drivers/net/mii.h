@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -172,15 +172,15 @@
 /* Which connector port. */
 #define PORT_TP             0x00
 #define PORT_AUI            0x01
-#define PORT_MII            0x02 
+#define PORT_MII            0x02
 #define PORT_FIBRE          0x03
 #define PORT_BNC            0x04
 
 /* Which transceiver to use. */
 #define XCVR_INTERNAL       0x00
 #define XCVR_EXTERNAL       0x01
-#define XCVR_DUMMY1         0x02 
-#define XCVR_DUMMY2         0x03 
+#define XCVR_DUMMY1         0x02
+#define XCVR_DUMMY2         0x03
 #define XCVR_DUMMY3         0x04
 
 #define AUTONEG_DISABLE     0x00

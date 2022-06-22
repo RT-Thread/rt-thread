@@ -49,22 +49,22 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415)
-    struct tm *p_tm;
+    struct tm now;
 
-    p_tm = gmtime(&time_stamp);
-    if (p_tm->tm_year < 100)
+    gmtime_r(&time_stamp, &now);
+    if (now.tm_year < 100)
     {
         return -RT_ERROR;
     }
 
     /* set time */
-    if(ertc_time_set(p_tm->tm_hour, p_tm->tm_min, p_tm->tm_sec, ERTC_AM) != SUCCESS)
+    if(ertc_time_set(now.tm_hour, now.tm_min, now.tm_sec, ERTC_AM) != SUCCESS)
     {
         return -RT_ERROR;
     }
 
     /* set date */
-    if(ertc_date_set(p_tm->tm_year - 100, p_tm->tm_mon + 1, p_tm->tm_mday, p_tm->tm_wday + 1) != SUCCESS)
+    if(ertc_date_set(now.tm_year - 100, now.tm_mon + 1, now.tm_mday, now.tm_wday + 1) != SUCCESS)
     {
         return -RT_ERROR;
     }
