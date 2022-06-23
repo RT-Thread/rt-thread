@@ -53,7 +53,7 @@ RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
         "Please consider implementing rt_hw_us_delay() in another file."));
 }
 
-static const char rt_errno_strs[][7] =
+static const char* rt_errno_strs[] =
 {
     "OK",
     "ERROR",
