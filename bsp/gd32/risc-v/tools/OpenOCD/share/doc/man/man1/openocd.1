@@ -1,0 +1,103 @@
+.TH "OPENOCD" "1" "November 24, 2009"
+.SH "NAME"
+openocd \- A free and open on\-chip debugging, in\-system programming and
+boundary\-scan testing tool for ARM and MIPS systems
+.SH "SYNOPSIS"
+.B openocd \fR[\fB\-fsdlcphv\fR] [\fB\-\-file\fR <filename>] [\fB\-\-search\fR <dirname>] [\fB\-\-debug\fR <debuglevel>] [\fB\-\-log_output\fR <filename>] [\fB\-\-command\fR <cmd>] [\fB\-\-pipe\fR] [\fB\-\-help\fR] [\fB\-\-version\fR]
+.SH "DESCRIPTION"
+.B OpenOCD
+is an on\-chip debugging, in\-system programming and boundary\-scan
+testing tool for various ARM and MIPS systems.
+.PP
+The debugger uses an IEEE 1149\-1 compliant JTAG TAP bus master to access
+on\-chip debug functionality available on ARM based microcontrollers or
+system-on-chip solutions. For MIPS systems the EJTAG interface is supported.
+.PP
+User interaction is realized through a telnet command line interface,
+a gdb (the GNU debugger) remote protocol server, and a simplified RPC
+connection that can be used to interface with OpenOCD's Jim Tcl engine.
+.PP
+OpenOCD supports various different types of JTAG interfaces/programmers,
+please check the \fIopenocd\fR info page for the complete list.
+.SH "OPTIONS"
+.TP
+.B "\-f, \-\-file <filename>"
+This is a shortcut for a \fB\-c "[script \fI<filename>\fB]"\fR
+command, using a search path to load the configuration file
+.IR <filename> .
+In order to specify multiple config files, you can use multiple
+.B \-\-file
+arguments. If no such \fB\-c\fR
+options are included, the first config file
+.B openocd.cfg
+in the search path will be used.
+.TP
+.B "\-s, \-\-search <dirname>"
+Add
+.I <dirname>
+to the search path used for config files and scripts.
+The search path begins with the current directory,
+then includes these additional directories before other
+components such as the standard OpenOCD script libraries.
+.TP
+.B "\-d, \-\-debug <debuglevel>"
+Set debug level. Possible values are:
+.br
+.RB "  * " 0 " (errors)"
+.br
+.RB "  * " 1 " (warnings)"
+.br
+.RB "  * " 2 " (informational messages)"
+.br
+.RB "  * " 3 " (debug messages)"
+.br
+The default level is
+.BR 2 .
+.TP
+.B "\-l, \-\-log_output <filename>"
+Redirect log output to the file
+.IR <filename> .
+Per default the log output is printed on
+.BR stderr .
+.TP
+.B "\-c, \-\-command <cmd>"
+Add the command
+.I <cmd>
+to a list of commands executed on server startup.
+Note that you will need to explicitly invoke
+.I init
+if the command requires access to a target or flash.
+.TP
+.B "\-p, \-\-pipe"
+Use pipes when talking to gdb.
+.TP
+.B "\-h, \-\-help"
+Show a help text and exit.
+.TP
+.B "\-v, \-\-version"
+Show version information and exit.
+.SH "BUGS"
+Please report any bugs on the mailing list at
+.BR openocd\-devel@lists.sourceforge.net .
+.SH "LICENCE"
+.B OpenOCD
+is covered by the GNU General Public License (GPL), version 2 or later.
+.SH "SEE ALSO"
+.BR jtag (1)
+.PP
+The full documentation for
+.B openocd
+is maintained as a Texinfo manual. If the
+.BR info
+(or
+.BR pinfo )
+and
+.BR openocd
+programs are properly installed at your site, the command
+.B info openocd
+should give you access to the complete manual.
+.SH "AUTHORS"
+Please see the file AUTHORS.
+.PP
+This manual page was written by Uwe Hermann <uwe@hermann\-uwe.de>.
+It is licensed under the terms of the GNU GPL (version 2 or later).

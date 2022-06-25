@@ -1,0 +1,54 @@
+This file includes highlights of the changes made in the
+OpenOCD  source archive release.  See the
+repository history for details about what changed, including
+bugfixes and other issues not mentioned here.
+
+JTAG Layer:
+	New STLINK V1/V2 JTAG/SWD adapter support.
+	New OSJTAG adapter support.
+	New Tincantools Flyswatter2 support.
+	Improved ULINK driver.
+	Improved RLINK driver.
+	Support for adapters based on FT232H chips.
+	New experimental driver for FTDI based adapters, using libusb-1.0 in asynchronous mode.
+
+Boundary Scan:
+
+Target Layer:
+	New Cortex-M0 support.
+	New Cortex-M4 support.
+	Improved Working area algorithm.
+	New RTOS support. Currently linux, FreeRTOS, ThreadX and eCos.
+	Connecting under reset to Cortex-Mx and MIPS chips.
+
+Flash Layer:
+	New SST39WF1601 support.
+	New EN29LV800BB support.
+	New async algorithm support for selected targets, stm32, stellaris and pic32.
+	New Atmel SAM3S, SAM3N support.
+	New ST STM32L support.
+	New Microchip PIC32MX1xx/2xx support.
+	New Freescale Kinetis K40 support.
+
+Board, Target, and Interface Configuration Scripts:
+	Support Dangerous Prototypes Bus Blaster.
+	Support ST SPEAr Family.
+	Support Gumstix Verdex boards.
+	Support TI Beaglebone.
+
+Documentation:
+	Improved HACKING info for submitting patches.
+	Fixed numerous broken links.
+
+Build and Release:
+
+For more details about what has changed since the last release,
+see the git repository history.  With gitweb, you can browse that
+in various levels of detail.
+
+For older NEWS, see the NEWS files associated with each release
+(i.e. NEWS-<version>).
+
+For more information about contributing test reports, bug fixes, or new
+features and device support, please read the new Developer Manual (or
+the BUGS and PATCHES.txt files in the source archive).

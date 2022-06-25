@@ -1,0 +1,80 @@
+The OpenOCD 0.2.0 source archive release includes numerous improvements
+that were made since the initial 0.1.0 source archive release.  Many
+contributors helped make this release a great success, and the community
+of developers and maintainers look forward to any response.
+
+In addition to the list of changes below, countless bug fixing and
+cleaning was performed across the tree.  Various TCL command parameters
+must past stricter value checks, and many more error conditions have
+been handled correctly.  These efforts helped to make the 0.2.0 release
+more stable and robust, though some changes may expose latent bugs in
+your existing configuration scripts.
+
+This release does not maintain backward compatibility in all respects,
+so some target or configuration scripts may need to be updated.  In some
+cases, you may also see warnings; resolve those, because they indicate
+commands that will be removed in the future.
+
+The following areas of OpenOCD functionality changed in this release:
+
+JTAG Layer:
+- Improves modularity: core, TCL, driver commands, and interface have
+  been separated, encapsulated, and documented for developers.  Mostly.
+- Improves JTAG TAP transition tables:
+   * Makes TAP paths variable length, rather than being fixed at 7 steps.
+   * Fixes problems with some targets that did not like longer paths.
+- Improves JTAG driver/minidriver modularity and encapsulation.
+- New drivers:
+   * Adds stub minidriver for developing new embedded JTAG interfaces.
+- Improves drivers:
+   * ft2232+ftd2xx:
+      + Adds initial high-speed device support: --enable-ftd2xx-highspeed
+      + Supports more types of FTDI-based devices.
+   * jlink:
+      + Works with more versions of the firmware (v3 and newer)
+      + Supports dynamically detects device capabilities and limits
+   * vsllink:
+      + Supports very long scan chains
+   * amtjtagaccel:
+      + Fixes broken ID code detection problems.
+
+Target Layer:
+- New devices: AVR, FA526
+- Improved support: ARM ADI, ARM11, MIPS
+- Numerous other bug fixes and improvements
+
+Flash Layer:
+- Improved drivers: mflash
+- New drivers: AT91SAM3, AVR, Davinci NAND
+
+Board, Interface, and Target Configuration Scripts:
+- Many new and improved targets and boards are now available.
+- Better separation of "board" and "target" configuration
+- Moved all TCL files to top-level "tcl" directory in the source tree
+- Installation moved from '$pkglibdir/' to '$pkgdatadir/scripts/'.
+- Site-specific files should be installed under '$pkgdatadir/site/';
+  files that exist this tree will be used in preference to default
+  distribution configurations in '$pkgdatadir/scripts/'.
+
+Documentation:
+- Updated User Guide:     http://openocd.berlios.de/doc/html/index.html
+   * Partially re-written and re-organized.
+   * Standardized presentation for all commands.
+   * Covers many drivers and commands that were previously omitted.
+   * New index for commands and drivers.
+- Added Developer Manual: http://openocd.berlios.de/doc/doxygen/index.html
+   * Now includes architecture, technical primers, style guides, and more.
+   * Available in-tree and on-line.
+
+Build and Release:
+- Increased configuration and compilation warning coverage.
+   * Use --disable-werror to work around build errors caused by warnings.
+- Use libtool to produce helper libraries as a step toward "libopenocd".
+- New processes and scripting to facilitate future source releases.
+
+For more details about what has changed since 0.1.0, see the ChangeLog
+associated with this release.
+
+For more information about contributing test reports, bug fixes, or new
+features and device support, please read the new Developer Manual (or
+the BUGS and PATCHES files in the source archive).

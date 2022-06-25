@@ -1,0 +1,155 @@
+This file includes highlights of the changes made in the OpenOCD
+source archive release.
+
+JTAG Layer:
+	* New driver for J-Link adapters based on libjaylink
+          (including support for FPGA configuration, SWO and EMUCOM)
+	* FTDI improvements to work at 30MHz clock
+	* BCM2835 native driver SWD and Raspberry Pi2 support
+	* BCM2835 is set to 4ma drive, slow slew rate
+	* ixo-usb-jtag (emulation of an Altera Bus Blaster I on
+          Cypress FX2 IC) support
+	* JTAG pass-through mode for CMSIS-DAP (including support for
+          FPGA configuration)
+	* OpenJTAG support for Cypress CY7C65215
+	* connect_assert_srst support for SWD
+	* Xilinx Virtex-II Series7 bitstream loading support
+	* Use JEP106 data to decode IDs
+	* Deprecated "ft2232" driver removed (use "ftdi" instead)
+	* GPL-incompatible FTDI D2XX library support dropped (Presto,
+          OpenJTAG and USB-Blaster I are using libftdi only now)
+	* ZY1000 support dropped (unmaintained since long)
+	* oocd_trace support dropped
+
+Boundary Scan:
+
+Target Layer:
+	* ARMv7-A, Cortex-M, Cortex-A/R important fixes and
+          improvements (allowing e.g. simultaneous debugging of A8 and
+          M3 cores, JTAG WAIT support etc.)
+	* ARM Cortex-A,R allow interrupt disable during single-step
+          (maskisr command)
+	* Semihosting support for ARMv7-A
+	* ARM Cortex-M7 support
+	* Intel Quark mcu D2000 support
+	* Freescale LS102x SAP support
+	* ThreadX RTOS support on ARM926E-JS
+	* Cortex-M RTOS stack alignment fixes
+	* FreeRTOS FPU support
+	* uC/OS-III RTOS support
+	* bridging semihosting to GDB's File-I/O support
+	* -defer-examine option added to target create command
+	* verify_image_checksum command added
+
+Flash Layer:
+	* Atmel SAM4S, SAM4N, SAM4C support
+	* Atmel SAMV, SAMS, SAME (Cortex-M7) support
+	* Atmel AT91SAMD handle reset run/halt in DSU, other fixes
+	* Atmel AT91SAML21, SAML22, SAMC20/SAMC21, SAMD09 support
+	* ST STM32F4x support
+	* ST STM32F74x/76x/77x, STM32L4 support
+	* ST STM32L0 categories 1, 2 and 5 support
+	* Kinetis K02, K21, K22, K24, K26, K63, K64, K66 support
+	* Kinetis KE, KVx, K8x families support
+	* Kinetis FlexNVM handling
+	* Kinetis flash protection, security, mass_erase improvements
+	* Infineon XMC4xxx family support
+	* Infineon XMC1000 flash driver
+	* Energy Micro EFM32 Happy Gecko support
+	* Energy Micro EFM32 debug interface lock support
+	* Analog Devices ADuCM360 support
+	* Unified Nuvoton NuMicro flash driver
+	* NIIET K1921VK01T (Cortex-M4) support
+	* Nordic Semiconductor nRF51 improvements
+	* Spansion FM4 flash (including MB9BFx64/x65, S6E2DH) driver
+	* Ambiq Micro Apollo flash driver
+	* PIC32MX new device IDs, 17x/27x flash support
+	* read_bank() and verify_bank() NOR flash internal API to
+          allow reading (and verifying) non-memory-mapped devices
+	* JTAGSPI driver to access SPI NOR flashes via a trivial
+          FPGA proxy
+	* Milandr read/verify for Info memory support
+	* Various discrete SPI NOR flashes support
+	* CFI 16-bit flash reversed endianness support
+
+Board, Target, and Interface Configuration Scripts:
+	* Digilent JTAG-HS2, JTAG-HS3 interfaces configs
+	* FTDI UM232H module as JTAG interface config
+	* 100ask's OpenJTAG interface config
+	* MBFTDI interface config
+	* XDS100v3 interface config
+	* Freescale Vybrid VF6xx target config
+	* EmCraft VF6 SOM and baseboard configs
+	* Freescale SabreSD board config
+	* Freescale VF65GS10 tower board config
+	* Pipistrello Xilinx Spartan6 LX45 FPGA board config
+	* miniSpartan6+ board config
+	* Xilinx Kintex7 Development board config
+	* Parallella-I board config
+	* Digilent Atlys and Analog Discovery board configs
+	* Numato Opsis board config
+	* Xilinx Spartan 6 FPGA "Device DNA" reading support
+	* Altera 10M50 FPGA (MAX10 family) target config
+	* Altera EPM240 CPLD (MAXII family) target config
+	* Marsohod2, Marsohod3 FPGA, Marsohod CPLD boards configs
+	* Novena's integrated FPGA board config
+	* XMOS XS1-XAU8A-10's ARM core config
+	* XMOS xCORE-XA Core Module board config
+	* Exynos5250 target config
+	* Arndale board config
+	* FM4 MB9BFxxx family configs
+	* Spansion SK-FM4-U120-9B560 board config
+	* Diolan LPC4357-DB1 board config
+	* ST STM32F469 discovery board config
+	* ST STM32F7-DISCO, STM327[4|5]6G-EVAL boards configs
+	* ST STM32L4 discovery, NUCLEO L476RG, STM32F429I-DISC1 boards
+          configs
+	* Atheros AR2313, AR2315 targets config
+	* Netgear WP102 board config
+	* La Fonera FON2200 board config
+	* Linksys WAG200G board config
+	* LPC-Link2 board config
+	* NXP LPC4370 target config
+	* Atmel SAMV, SAMS, SAME target configs
+	* Atmel SAM E70 Xplained, SAM V71 Xplained Ultra boards
+          configs
+	* Nordic nRF52 target config
+	* Nordic nRF51-DK, nRF52-DK boards configs
+	* Infineon XMC4700 Relax Kit, XMC4800 Relax EtherCAT Kit,
+          XMC4300 Relax EtherCAT Kit boards configs
+	* Renesas S7G2 target config
+	* Renesas DK-S7G2 board config
+	* Altera EP3C10 FPGA (Cyclone III family) target config
+	* TI MSP432P4xx target config
+	* Cypress PSoC 5LP target config
+	* Analog Devices ADSP-SC58x target config (Cortex-A5 core only)
+
+Server Layer:
+	* tcl_trace command for async target trace output via Tcl RPC
+
+Documentation:
+
+Build and Release:
+	* Various fixes thanks to http://coccinellery.org/
+	* libftdi is now autodetected with pkgconfig
+	* Releases should now support reproducible builds
+	* Conversion to non-recursive make, requires automake >= 1.14
+	* Udev rules modified to add uaccess tag and moved to
+          60-openocd.rules
+	* Support searching for scripts relative to the openocd binary
+          for all major architectures
+
+
+This release also contains a number of other important functional and
+cosmetic bugfixes. For more details about what has changed since the
+last release, see the git repository history:
+
+http://sourceforge.net/p/openocd/code/ci/v0.10.0/log/?path=
+
+
+For older NEWS, see the NEWS files associated with each release
+(i.e. NEWS-<version>).
+
+For more information about contributing test reports, bug fixes, or new
+features and device support, please read the new Developer Manual (or
+the BUGS and PATCHES.txt files in the source archive).
