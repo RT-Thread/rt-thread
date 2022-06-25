@@ -376,7 +376,8 @@ static void sal_unlock(void)
  */
 int sal_netdev_cleanup(struct netdev *netdev)
 {
-    int idx = 0, find_dev;
+    uint32_t idx = 0;
+    int find_dev;
 
     do
     {

@@ -120,6 +120,41 @@ rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info 
     return result;
 }
 
+rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_wlan_buff buff;
+
+    int len = 0;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+    if (info == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
+
+    if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
+            (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
+    {
+        LOG_E("L:%d password or ssid is too long", __LINE__);
+        return -RT_ERROR;
+    }
+
+    buff.len = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_FAST_CONNECT_INFO, buff.data);
+    if(buff.len < 0)
+    {
+        LOG_D("L:%d Can't get fast connect info", __LINE__);
+        return buff.len;
+    }
+
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_FAST_CONNECT, &buff);
+
+    return result;
+}
+
 rt_err_t rt_wlan_dev_disconnect(struct rt_wlan_device *device)
 {
     rt_err_t result = RT_EOK;
@@ -848,6 +883,35 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
             err = wlan->ops->wlan_get_mac(wlan, mac);
         break;
     }
+    case RT_WLAN_CMD_GET_FAST_CONNECT_INFO:
+    {
+
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_FAST_INFO, "RT_WLAN_CMD_GET_FAST_INFO");
+        if (wlan->ops->wlan_get_fast_info)
+        {
+            err = wlan->ops->wlan_get_fast_info(args);
+        }
+        else
+        {
+            err = -RT_EEMPTY;
+        }
+        break;
+    }
+    case RT_WLAN_CMD_FAST_CONNECT:
+    {
+        struct rt_wlan_buff *buff = (struct rt_wlan_buff *)args;
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_FAST_CONNECT, "RT_WLAN_CMD_FAST_CONNECT");
+        if (wlan->ops->wlan_get_fast_info)
+        {
+            err = wlan->ops->wlan_fast_connect(buff->data,buff->len);
+        }
+        else
+        {
+            err = -RT_EEMPTY;
+        }
+        break;
+    }
+
     default:
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, -1, "UNKUOWN");
         break;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -39,9 +39,9 @@ extern "C" {
 #define O_RANDOM        0x0010  /* file access is primarily random */
 
 /* extension */
-#define	O_ACCMODE		0x0003	/* mask for above modes, from 4.4BSD https://minnie.tuhs.org/cgi-bin/utree.pl?file=4.4BSD/usr/include/sys/fcntl.h */
-#define O_NONBLOCK		0x0004	/* non blocking I/O, from BSD apple https://opensource.apple.com/source/xnu/xnu-1228.0.2/bsd/sys/fcntl.h */
-#define O_DIRECTORY		0x200000 /* from Newlib */
+#define O_ACCMODE       0x0003  /* mask for above modes, from 4.4BSD https://minnie.tuhs.org/cgi-bin/utree.pl?file=4.4BSD/usr/include/sys/fcntl.h */
+#define O_NONBLOCK      0x0004  /* non blocking I/O, from BSD apple https://opensource.apple.com/source/xnu/xnu-1228.0.2/bsd/sys/fcntl.h */
+#define O_DIRECTORY     0x200000 /* from Newlib */
 
 #define F_DUPFD  0
 #define F_GETFD  1

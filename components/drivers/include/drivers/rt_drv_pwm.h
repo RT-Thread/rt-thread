@@ -12,7 +12,6 @@
 #define __DRV_PWM_H_INCLUDE__
 
 #include <rtthread.h>
-#include <rtdevice.h>
 
 #define PWM_CMD_ENABLE      (RT_DEVICE_CTRL_BASE(PWM) + 0)
 #define PWM_CMD_DISABLE     (RT_DEVICE_CTRL_BASE(PWM) + 1)
@@ -23,7 +22,7 @@
 
 struct rt_pwm_configuration
 {
-    rt_uint32_t channel; /* 0-n */
+    rt_uint32_t channel; /* 1-n or 0-n, which depends on specific MCU requirements */
     rt_uint32_t period;  /* unit:ns 1ns~4.29s:1Ghz~0.23hz */
     rt_uint32_t pulse;   /* unit:ns (pulse<=period) */
 

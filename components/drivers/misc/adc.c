@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
- * 2022-05-11      Stanley Lwin add finsh voltage conversion command
+ * 2022-05-11     Stanley Lwin add finsh voltage conversion command
  */
 
 #include <rtthread.h>
@@ -17,7 +17,6 @@
 #include <stdlib.h>
 
 #define DBG_TAG "adc"
-#define REFER_VOLTAGE 330       /*reference voltage, multiplied by 100 and reserve 2 decimal places for data accuracy*/
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
@@ -54,13 +53,22 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     {
         result = adc->ops->enabled(adc, (rt_uint32_t)args, RT_FALSE);
     }
-    else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution)
+    else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution && args)
     {
         rt_uint8_t resolution = adc->ops->get_resolution(adc);
         if(resolution != 0)
         {
             *((rt_uint8_t*)args) = resolution;
             LOG_D("resolution: %d bits", resolution);
+            result = RT_EOK;
+        }
+    }
+    else if (cmd == RT_ADC_CMD_GET_VREF && adc->ops->get_vref && args)
+    {
+        rt_int16_t value = adc->ops->get_vref(adc);
+        if(value != 0)
+        {
+            *((rt_int16_t *) args) = value;
             result = RT_EOK;
         }
     }
@@ -154,28 +162,40 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-rt_uint32_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
+rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
 {
-   rt_uint32_t value = 0, voltage = 0;
+    rt_uint32_t value = 0;
+    rt_int16_t vref = 0, voltage = 0;
+    rt_uint8_t resolution = 0;
 
     RT_ASSERT(dev);
 
-    /*read the value and convert to voltage*/
-    if (dev->ops->get_resolution != RT_NULL && dev->ops->convert != RT_NULL)
+    /*get the resolution in bits*/
+    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution) != RT_EOK)
     {
-        /*get the convert bits*/
-        rt_uint8_t resolution = dev->ops->get_resolution(dev);
-        dev->ops->convert(dev, channel, &value);
-        voltage = value * REFER_VOLTAGE / (1 << resolution);
+        goto _voltage_exit;
     }
 
+    /*get the reference voltage*/
+    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK)
+    {
+        goto _voltage_exit;
+    }
+
+    /*read the value and convert to voltage*/
+    dev->ops->convert(dev, channel, &value);
+    voltage = value * vref / (1 << resolution);
+
+_voltage_exit:
     return voltage;
 }
+
 #ifdef RT_USING_FINSH
 
 static int adc(int argc, char **argv)
 {
-    int value = 0, voltage = 0;
+    int value = 0;
+    rt_int16_t voltage = 0;
     rt_err_t result = -RT_ERROR;
     static rt_adc_device_t adc_device = RT_NULL;
     char *result_str;
@@ -246,7 +266,7 @@ static int adc(int argc, char **argv)
                 {
                     voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
-                    rt_kprintf("%s channel %d voltage is %d.%02d \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 100, voltage % 100);
+                    rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 1000, voltage % 1000);
                 }
                 else
                 {
@@ -271,6 +291,6 @@ static int adc(int argc, char **argv)
     }
     return RT_EOK;
 }
-MSH_CMD_EXPORT(adc, adc <device name> <option> <channel>);
+MSH_CMD_EXPORT(adc, adc [option]);
 
 #endif /* RT_USING_FINSH */

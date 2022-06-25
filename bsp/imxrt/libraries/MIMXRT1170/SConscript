@@ -18,7 +18,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
     src += ['MIMXRT1176/gcc/startup_MIMXRT1176_cm7.S']
 elif rtconfig.CROSS_TOOL == 'keil':
     src += ['MIMXRT1176/arm/startup_MIMXRT1176_cm7.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += ['MIMXRT1176/iar/startup_MIMXRT1176_cm7.s']
 
 if GetDepend(['BSP_USING_GPIO']):
