@@ -1016,13 +1016,8 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             }
             continue;
 
-        case 'm':
-            num = va_arg(args, rt_err_t);
-            s = rt_strerror(num);
-
         case 's':
-            if ((*fmt) == 's')
-                s = va_arg(args, char *);
+            s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
             for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
