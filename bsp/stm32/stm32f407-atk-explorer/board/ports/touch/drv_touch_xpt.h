@@ -21,8 +21,8 @@
  * after power on, please manually set the following macro definitions */
 #define BSP_XPT2046_MIN_RAW_X   100
 #define BSP_XPT2046_MIN_RAW_Y   100
-#define BSP_XPT2046_MAX_RAW_X   100
-#define BSP_XPT2046_MAX_RAW_Y   100
+#define BSP_XPT2046_MAX_RAW_X   1950
+#define BSP_XPT2046_MAX_RAW_Y   1950
 #define BSP_XPT2046_RANGE_X     320
 #define BSP_XPT2046_RANGE_Y     480
 

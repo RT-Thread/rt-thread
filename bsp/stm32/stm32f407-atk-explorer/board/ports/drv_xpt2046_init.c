@@ -83,7 +83,7 @@ void xpt2046_init_hw(void)
         rt_kprintf("xpt2046 calibration failed!\n");
         return;
     }
-#endif	
+#endif /* BSP_TOUCH_CALIBRATE == RT_TRUE */
     /* init the TFT LCD */
 	rt_device_t lcd = RT_NULL;
 

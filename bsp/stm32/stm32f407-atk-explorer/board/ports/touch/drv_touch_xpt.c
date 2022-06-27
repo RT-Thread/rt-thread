@@ -96,7 +96,7 @@ static rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
                 const uint32_t white = 0xFFFFFFFF;
                 rt_graphix_ops(lcd)->draw_hline((const char *)(&white), 0, lcd_info.width, y);
             }
-            rt_thread_mdelay(100);
+            rt_thread_mdelay(400);
             if (raw_idx >= 4)
             {
                 break;
