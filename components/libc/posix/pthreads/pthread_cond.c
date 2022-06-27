@@ -9,6 +9,7 @@
  * 2022-06-27     xiangxistu   use atomic operation to protect pthread conditional variable
  */
 
+#include <rthw.h>
 #include <pthread.h>
 #include "pthread_internal.h"
 
