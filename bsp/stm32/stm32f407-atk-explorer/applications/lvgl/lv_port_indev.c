@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -36,7 +36,7 @@ void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state)
 #ifdef BSP_USING_TOUCH_RES
     last_x = x;
     last_y = y;
-#endif /* BSP_USING_TOUCH_RES */	
+#endif /* BSP_USING_TOUCH_RES */
 }
 
 void lv_port_indev_init(void)

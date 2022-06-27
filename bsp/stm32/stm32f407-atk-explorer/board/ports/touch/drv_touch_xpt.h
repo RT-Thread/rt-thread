@@ -17,7 +17,7 @@
 
 #ifdef BSP_USING_TOUCH_RES
 
-/* Related parameters of screen calibration, if the calibration is not performed 
+/* Related parameters of screen calibration, if the calibration is not performed
  * after power on, please manually set the following macro definitions */
 #define BSP_XPT2046_MIN_RAW_X   100
 #define BSP_XPT2046_MIN_RAW_Y   100
@@ -32,7 +32,7 @@
 struct rt_xpt2046
 {
     struct rt_touch_device parent;
-    struct rt_spi_device *spi; 
+    struct rt_spi_device *spi;
     rt_uint16_t min_raw_x;
     rt_uint16_t min_raw_y;
     rt_uint16_t max_raw_x;

@@ -25,7 +25,7 @@ static rt_bool_t touch_down = RT_FALSE;
 
 #ifdef BSP_USING_TOUCH_RES
 
-/* If calibration is not required, please manually modify the contents of 
+/* If calibration is not required, please manually modify the contents of
  * the drv_touch_xpt.h file,and set BSP_TOUCH_CALIBRATE to RT_FALSE */
 #define BSP_TOUCH_CALIBRATE RT_TRUE
 
@@ -35,7 +35,7 @@ static rt_bool_t touch_down = RT_FALSE;
 
 void xpt2046_init_hw(void)
 {
-	/* Find the touch device */
+    /* Find the touch device */
     rt_device_t touch = rt_device_find(TOUCH_DEVICE_NAME);
     if (touch == RT_NULL)
     {
@@ -85,7 +85,7 @@ void xpt2046_init_hw(void)
     }
 #endif /* BSP_TOUCH_CALIBRATE == RT_TRUE */
     /* init the TFT LCD */
-	rt_device_t lcd = RT_NULL;
+    rt_device_t lcd = RT_NULL;
 
     lcd = rt_device_find("lcd");
     rt_device_init(lcd);
@@ -101,12 +101,12 @@ void xpt2046_entry(void *parameter)
         return;
     }
 #ifndef PKG_USING_LVGL
-	rt_device_t lcd = rt_device_find(TFTLCD_DEVICE_NAME);
-	if (lcd == RT_NULL)
-	{
-	   rt_kprintf("can't find display device:%s\n", TFTLCD_DEVICE_NAME);
-	   return;
-	}
+    rt_device_t lcd = rt_device_find(TFTLCD_DEVICE_NAME);
+    if (lcd == RT_NULL)
+    {
+       rt_kprintf("can't find display device:%s\n", TFTLCD_DEVICE_NAME);
+       return;
+    }
 #endif /* PKG_USING_LVGL */
     while (1)
     {
@@ -131,7 +131,7 @@ void xpt2046_entry(void *parameter)
 
 static int touch_xpt2046_init(void)
 {
-	xpt2046_init_hw();
+    xpt2046_init_hw();
     rt_thread_t tid = rt_thread_create("xpt2046", xpt2046_entry, RT_NULL, 1024, 8, 20);
     RT_ASSERT(tid != RT_NULL);
     rt_thread_startup(tid);

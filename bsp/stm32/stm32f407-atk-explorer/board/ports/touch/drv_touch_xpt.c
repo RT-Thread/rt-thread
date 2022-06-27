@@ -43,7 +43,7 @@ static rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
         LOG_E(LOG_TAG " cannot find touch device named %s", touch_name);
         return -RT_ERROR;
     }
-    
+
     /* Get TFT LCD screen information */
     struct rt_device_graphic_info lcd_info;
     rt_device_control(lcd, RTGRAPHIC_CTRL_GET_INFO, &lcd_info);
@@ -123,7 +123,7 @@ static rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
             }
         }
         rt_thread_mdelay(10);
-    }     
+    }
     rt_uint16_t min_x = (x_raw[0] + x_raw[3]) / 2;
     rt_uint16_t max_x = (x_raw[1] + x_raw[2]) / 2;
     rt_uint16_t min_y = (y_raw[0] + y_raw[1]) / 2;
@@ -145,7 +145,7 @@ static rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
     touch->parent.info.range_y = lcd_info.height;
 
     LOG_I(" Calibration result, min_x:%d, min_y:%d, max_x:%d, max_y:%d", min_x, min_y, max_x, max_y);
-    
+
     rt_device_close(lcd);
 
     return RT_EOK;
@@ -205,18 +205,18 @@ static rt_err_t xpt2046_touch_control(struct rt_touch_device *touch, int cmd, vo
 {
     rt_err_t result = RT_EOK;
     RT_ASSERT(touch != RT_NULL);
-	struct calibrate_args *cali_args;
+    struct calibrate_args *cali_args;
     switch (cmd)
     {
-	case RT_TOUCH_CALIBRATION:
-		LOG_I("Start calibrating xpt2046 touch....");
+    case RT_TOUCH_CALIBRATION:
+        LOG_I("Start calibrating xpt2046 touch....");
         cali_args = (struct calibrate_args *)arg;
         xpt2046_calibration(cali_args->lcd_name,cali_args->touch_name);
-        break;  
+        break;
     default:
         break;
     }
-	return result;
+    return result;
 }
 
 static struct rt_touch_ops xpt2046_ops =

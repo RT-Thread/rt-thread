@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1844,7 +1844,7 @@ static rt_err_t drv_lcd_init(struct rt_device *device)
     }
     else if (lcddev.id == 0X1963)
     {
-        LCD_WR_REG(0xE2);  //Set PLL with OSC = 10MHz (hardware),	Multiplier N = 35, 250MHz < VCO < 800MHz = OSC*(N+1), VCO = 300MHz
+        LCD_WR_REG(0xE2);  //Set PLL with OSC = 10MHz (hardware),   Multiplier N = 35, 250MHz < VCO < 800MHz = OSC*(N+1), VCO = 300MHz
         LCD_WR_DATA(0x1D); //参数1
         LCD_WR_DATA(0x02); //参数2 Divider M = 2, PLL = 300/(M+1) = 100MHz
         LCD_WR_DATA(0x04); //参数3 Validate M and N values
