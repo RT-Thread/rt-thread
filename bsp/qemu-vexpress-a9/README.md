@@ -1,4 +1,4 @@
-# QEMU/VExpress A9板级支持包说明
+# QEMU VExpress A9板级支持包说明
 
 ## 简介
 
