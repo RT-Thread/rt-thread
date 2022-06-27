@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-12-28     unknow       copy by STemwin
  * 2021-12-29     xiangxistu   port for lvgl <lcd_fill_array>
+ * 2022-6-26      solar        Improve the api required for resistive touch screen calibration
  */
 
 #include <board.h>
@@ -472,14 +473,69 @@ void LCD_Clear(uint32_t color)
     }
 }
 
+void LCD_DrawLine(const char *pixel, rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t y2)
+{
+    rt_uint16_t t;
+    int xerr = 0, yerr = 0, delta_x, delta_y, distance;
+    int incx, incy, uRow, uCol;
+    delta_x = x2 - x1; //计算坐标增量
+    delta_y = y2 - y1;
+    uRow = x1;
+    uCol = y1;
+
+    if (delta_x > 0)
+        incx = 1; //设置单步方向
+    else if (delta_x == 0)
+        incx = 0; //垂直线
+    else
+    {
+        incx = -1;
+        delta_x = -delta_x;
+    }
+
+    if (delta_y > 0)
+        incy = 1;
+    else if (delta_y == 0)
+        incy = 0; //水平线
+    else
+    {
+        incy = -1;
+        delta_y = -delta_y;
+    }
+
+    if (delta_x > delta_y)
+        distance = delta_x; //选取基本增量坐标轴
+    else
+        distance = delta_y;
+
+    for (t = 0; t <= distance + 1; t++) //画线输出
+    {
+        // LCD_DrawPoint(uRow, uCol); //画点
+        LCD_Fast_DrawPoint(pixel, uRow, uCol);
+        xerr += delta_x;
+        yerr += delta_y;
+
+        if (xerr > distance)
+        {
+            xerr -= distance;
+            uRow += incx;
+        }
+
+        if (yerr > distance)
+        {
+            yerr -= distance;
+            uCol += incy;
+        }
+    }
+}
 void LCD_HLine(const char *pixel, int x1, int x2, int y)
 {
-    int xsize = x2 - x1 + 1;
-    LCD_SetCursor(x1, y);
-    LCD_WriteRAM_Prepare();
-    uint16_t *p = (uint16_t *)pixel;
-    for (; xsize > 0; xsize--)
-        LCD->RAM = *p;
+    LCD_DrawLine(pixel, x1, y, x2, y);
+}
+
+void LCD_VLine(const char *pixel, int x, int y1, int y2)
+{
+    LCD_DrawLine(pixel, x, y1, x, y2);
 }
 
 void LCD_BlitLine(const char *pixel, int x, int y, rt_size_t size)
@@ -1882,7 +1938,7 @@ struct rt_device_graphic_ops fsmc_lcd_ops =
         LCD_Fast_DrawPoint,
         LCD_ReadPoint,
         LCD_HLine,
-        RT_NULL,
+        LCD_VLine,
         LCD_BlitLine,
 };
 

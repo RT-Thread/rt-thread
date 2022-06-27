@@ -47,15 +47,38 @@ menu "Onboard Peripheral Drivers"
                 bool "Enable lcd fill test"
                 default y
         endif
-
-    config BSP_USING_TOUCH
-        bool "Use LCD TOUCH"
-        select BSP_USING_I2C2
+        
+    menuconfig BSP_USING_TOUCH
+        bool "Use LCD TOUCH (Default Res)"
         default n
         if BSP_USING_TOUCH
-            config BSP_TOUCH_INT_PIN
-                int "Touch interrupt pin, PB1"
-                default 17
+            config BSP_USING_TOUCH_CAP
+                bool "Use LCD TOUCH Capacitance (i2c2)"
+                select BSP_USING_I2C2
+                default n
+                if BSP_USING_TOUCH_CAP
+                    config BSP_TOUCH_INT_PIN
+                        int "Touch interrupt pin, PB1"
+                        default 17
+                endif
+
+            config BSP_USING_TOUCH_RES
+                bool "Use LCD TOUCH Resistance (sspi1)"
+                select RT_USING_TOUCH
+                select RT_TOUCH_PIN_IRQ
+                select BSP_USING_SOFT_SPI
+                select BSP_USING_SOFT_SPI1
+                select BSP_USING_ONBOARD_LCD
+                default y
+                if BSP_USING_TOUCH_RES
+                    config BSP_XPT2046_CS_PIN
+                        string "pin name for the chip select pin"
+                        default "PC.13"
+
+                    config BSP_XPT2046_IRQ_PIN
+                        string "pin name for the irq pin"
+                        default "PB.1"
+                endif
         endif
 
     config BSP_USING_LVGL
@@ -374,7 +397,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
-        default y
+        default n
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
@@ -391,7 +414,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_I2C2
         bool "Enable LCD Touch BUS (software simulation)"
-        default y
+        default n
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN

@@ -10,7 +10,7 @@
 
 #include <rtconfig.h>
 
-#ifdef BSP_USING_TOUCH
+#ifdef BSP_USING_TOUCH_CAP
 #include "drv_touch.h"
 #include <string.h>
 

@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifdef BSP_USING_TOUCH
+#ifdef BSP_USING_TOUCH_CAP
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME  "TOUCH.ft"
