@@ -57,7 +57,7 @@
 | qemu-nographic.bat | Windows | 以不带界面的模式启动运行 |
 | qemu-nographic.sh | Linux | 同上 |
 
-### RTT-STUDIO 中运行RT-Thread
+### RT-Studio IDE下运行RT-Thread
 
 推荐使用该方式进行学习，简单易用
 
