@@ -59,7 +59,7 @@ if GetDepend(['RT_USING_SDIO']):
 if GetDepend(['RT_USING_ON_CHIP_FLASH']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_efm.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER']) or GetDepend(['BSP_USING_PWM_TMRA'])):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_tmra.c']
     
 path = [

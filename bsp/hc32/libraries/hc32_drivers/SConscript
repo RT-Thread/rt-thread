@@ -33,6 +33,9 @@ if GetDepend(['RT_USING_CAN']):
 if GetDepend(['RT_USING_RTC']):
     src += ['drv_rtc.c']
 
+if GetDepend(['RT_USING_PWM', 'BSP_USING_PWM_TMRA']):
+    src += ['drv_pwm_tmra.c']
+
 path = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
