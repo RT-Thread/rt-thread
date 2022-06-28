@@ -203,7 +203,7 @@ int ft_driver_register(void)
     /* TouchScreen FT6206 Slave I2C address is 0x54
      * 0x54 << 1 = 0x2A
      */
-    ft_driver.address = 0x2A;
+    ft_driver.address = BSP_TOUCH_ADDR;
     ft_driver.probe = ft_probe;
     ft_driver.ops = &ft_ops;
     ft_driver.user_data = RT_NULL;

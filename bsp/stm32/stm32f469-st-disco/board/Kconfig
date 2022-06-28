@@ -72,6 +72,10 @@ menu "Onboard Peripheral Drivers"
             config BSP_TOUCH_INT_PIN
                 int "Touch interrupt pin"
                 default 149
+			comment "Notice: ft6206 is 42  , ft6336G is 56"
+			config BSP_TOUCH_ADDR
+				int "Touch I2C address"
+				default 42
             config BSP_I2C_NAME
                 string "I2C Bus Name"
                 default "i2c1"
