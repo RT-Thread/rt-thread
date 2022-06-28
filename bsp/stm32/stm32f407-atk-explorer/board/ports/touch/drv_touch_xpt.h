@@ -26,9 +26,6 @@
 #define BSP_XPT2046_RANGE_X     320
 #define BSP_XPT2046_RANGE_Y     480
 
-/* cmd for Calibrate touch */
-#define RT_TOUCH_CALIBRATION (RT_DEVICE_CTRL_BASE(Touch) + 20)
-
 struct rt_xpt2046
 {
     struct rt_touch_device parent;
@@ -40,11 +37,7 @@ struct rt_xpt2046
 };
 typedef struct rt_xpt2046 *rt_xpt2046_t;
 
-struct calibrate_args
-{
-    char *lcd_name;
-    char *touch_name;
-};
+rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name);
 
 #endif /* BSP_USING_TOUCH_RES */
 

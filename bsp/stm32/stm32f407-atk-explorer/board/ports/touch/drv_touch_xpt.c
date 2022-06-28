@@ -21,7 +21,7 @@
 static const rt_uint8_t xpt2046_tx_data[21] = {0xD0, 0, 0xD0, 0, 0xD0, 0, 0xD0, 0, 0xD0, 0, 0x90, 0, 0x90, 0, 0x90, 0, 0x90, 0, 0x90, 0, 0};
 
 /* Please calibrate the resistive touch screen before use, it is best to store the calibrated data */
-static rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
+rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
 {
     /* Find the TFT LCD device */
     rt_device_t lcd = rt_device_find(lcd_name);
@@ -205,17 +205,9 @@ static rt_err_t xpt2046_touch_control(struct rt_touch_device *touch, int cmd, vo
 {
     rt_err_t result = RT_EOK;
     RT_ASSERT(touch != RT_NULL);
-    struct calibrate_args *cali_args;
-    switch (cmd)
-    {
-    case RT_TOUCH_CALIBRATION:
-        LOG_I("Start calibrating xpt2046 touch....");
-        cali_args = (struct calibrate_args *)arg;
-        xpt2046_calibration(cali_args->lcd_name,cali_args->touch_name);
-        break;
-    default:
-        break;
-    }
+
+    /* If necessary, please implement this control function yourself */
+
     return result;
 }
 
