@@ -205,23 +205,9 @@ static rt_err_t xpt2046_touch_control(struct rt_touch_device *touch, int cmd, vo
 {
     rt_err_t result = RT_EOK;
     RT_ASSERT(touch != RT_NULL);
-<<<<<<< HEAD
 
     /* If necessary, please implement this control function yourself */
 
-=======
-    struct calibrate_args *cali_args;
-    switch (cmd)
-    {
-    case RT_TOUCH_CTRL_CALIBRATE:
-        LOG_I("Start calibrating xpt2046 touch....");
-        cali_args = (struct calibrate_args *)arg;
-        xpt2046_calibration(cali_args->lcd_name,cali_args->touch_name);
-        break;
-    default:
-        break;
-    }
->>>>>>> 5cd470c3bd8b6432ca4ae723e3fbcb9eafc374cc
     return result;
 }
 
