@@ -75,7 +75,18 @@ void xpt2046_init_hw(void)
 
 #if (BSP_TOUCH_CALIBRATE == RT_TRUE)
     /* Calibrate touch */
+<<<<<<< HEAD
     xpt2046_calibration(TFTLCD_DEVICE_NAME,TOUCH_DEVICE_NAME);
+=======
+    struct calibrate_args cali_args;
+    cali_args.lcd_name = TFTLCD_DEVICE_NAME;
+    cali_args.touch_name = TOUCH_DEVICE_NAME;
+    if (rt_device_control(touch, RT_TOUCH_CTRL_CALIBRATE, (void *)&cali_args) != RT_EOK)
+    {
+        rt_kprintf("xpt2046 calibration failed!\n");
+        return;
+    }
+>>>>>>> 5cd470c3bd8b6432ca4ae723e3fbcb9eafc374cc
 #endif /* BSP_TOUCH_CALIBRATE == RT_TRUE */
 
     /* init the TFT LCD */
