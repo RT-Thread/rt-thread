@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-05-20     tyustli      the first version
+ * 2022-06-28     solar        Add calibration section for touch frame
  */
 
 #ifndef __TOUCH_H__
@@ -30,6 +31,7 @@ extern "C" {
 #define RT_TOUCH_VENDOR_UNKNOWN          (0)  /* unknown */
 #define RT_TOUCH_VENDOR_GT               (1)  /* GTxx series */
 #define RT_TOUCH_VENDOR_FT               (2)  /* FTxx series */
+#define RT_TOUCH_VENDOR_XPT              (3)  /* XPTxx series */
 
 /* Touch ic type*/
 #define  RT_TOUCH_TYPE_NONE              (0)  /* touch ic none */
@@ -48,6 +50,7 @@ extern "C" {
 #define  RT_TOUCH_CTRL_POWER_ON          (RT_DEVICE_CTRL_BASE(Touch) + 8)   /* Touch Power On */
 #define  RT_TOUCH_CTRL_POWER_OFF         (RT_DEVICE_CTRL_BASE(Touch) + 9)   /* Touch Power Off */
 #define  RT_TOUCH_CTRL_GET_STATUS        (RT_DEVICE_CTRL_BASE(Touch) + 10)  /* Get Touch Power Status */
+#define  RT_TOUCH_CTRL_CALIBRATE         (RT_DEVICE_CTRL_BASE(Touch) + 11)  /* Calibrate the touchscreen */
 
 /* Touch event */
 #define RT_TOUCH_EVENT_NONE              (0)   /* Touch none */

@@ -78,7 +78,7 @@ void xpt2046_init_hw(void)
     struct calibrate_args cali_args;
     cali_args.lcd_name = TFTLCD_DEVICE_NAME;
     cali_args.touch_name = TOUCH_DEVICE_NAME;
-    if (rt_device_control(touch, RT_TOUCH_CALIBRATION, (void *)&cali_args) != RT_EOK)
+    if (rt_device_control(touch, RT_TOUCH_CTRL_CALIBRATE, (void *)&cali_args) != RT_EOK)
     {
         rt_kprintf("xpt2046 calibration failed!\n");
         return;

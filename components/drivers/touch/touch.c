@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-05-20     tyustli      the first version
+ * 2022-06-28     solar        Add calibration section for touch frame
  */
 
 #include "touch.h"
@@ -179,6 +180,15 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
         {
             touch->info.range_y = *(rt_uint32_t *)args;
             LOG_D("set y coordinate range :%d \n", touch->info.range_x);
+        }
+
+        break;
+    case RT_TOUCH_CTRL_CALIBRATE:
+        result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_CALIBRATE, args);
+
+        if (result == RT_EOK)
+        {
+            LOG_D("calibration touch successful!\n");
         }
 
         break;

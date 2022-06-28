@@ -208,7 +208,7 @@ static rt_err_t xpt2046_touch_control(struct rt_touch_device *touch, int cmd, vo
     struct calibrate_args *cali_args;
     switch (cmd)
     {
-    case RT_TOUCH_CALIBRATION:
+    case RT_TOUCH_CTRL_CALIBRATE:
         LOG_I("Start calibrating xpt2046 touch....");
         cali_args = (struct calibrate_args *)arg;
         xpt2046_calibration(cali_args->lcd_name,cali_args->touch_name);
