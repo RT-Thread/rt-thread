@@ -28,9 +28,22 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_LVGL
         bool "Enable LVGL for LCD"
         select BSP_USING_LCD_OTM8009A
-        select BSP_USING_TOUCH
         select PKG_USING_LVGL
         default n
+        if BSP_USING_LVGL
+            choice
+                prompt "Touch Version"
+                default BSP_TOUCH_VERSION_2
+
+                config BSP_TOUCH_VERSION_1
+                    bool "Touch V1"
+                    select BSP_USING_TOUCH
+
+                config BSP_TOUCH_VERSION_2
+                    bool "Touch V2"
+                    select BSP_USING_TOUCH_V2
+            endchoice             
+        endif
 
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
@@ -71,7 +84,7 @@ menu "Onboard Peripheral Drivers"
     endif
         
     config BSP_USING_TOUCH
-        bool "Enable TOUCH"
+        bool "Enable TOUCH (ft6206)"
         select BSP_USING_I2C1
         default n
         if BSP_USING_TOUCH
@@ -82,6 +95,13 @@ menu "Onboard Peripheral Drivers"
                 string "I2C Bus Name"
                 default "i2c1"
         endif
+
+    config BSP_USING_TOUCH_V2
+        bool "Enable TOUCH V2 (ft6x36)"
+        select BSP_USING_I2C1
+        select PKG_USING_TOUCH_DRIVERS
+        select PKG_USING_FT6236
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
