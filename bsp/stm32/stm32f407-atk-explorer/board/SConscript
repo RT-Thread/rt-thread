@@ -35,8 +35,14 @@ if GetDepend(['BSP_USING_SRAM']):
 if GetDepend(['BSP_USING_ONBOARD_LCD']):
     src += Glob('ports/drv_lcd.c')
 
-if GetDepend(['BSP_USING_TOUCH']):
-    src += Glob('ports/touch/*.c')
+if GetDepend(['BSP_USING_TOUCH_CAP']):
+    src += Glob('ports/touch/drv_touch_ft.c')
+    src += Glob('ports/touch/drv_touch.c')
+    path += [cwd + '/ports/touch']
+
+if GetDepend(['BSP_USING_TOUCH_RES']):
+    src += Glob('ports/touch/drv_touch_xpt.c')
+    src += Glob('ports/touch/drv_xpt2046_init.c')
     path += [cwd + '/ports/touch']
 
 startup_path_prefix = SDK_LIB
