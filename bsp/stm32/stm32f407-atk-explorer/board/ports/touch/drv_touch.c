@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,7 @@
 
 #include <rtconfig.h>
 
-#ifdef BSP_USING_TOUCH
+#ifdef BSP_USING_TOUCH_CAP
 #include "drv_touch.h"
 #include <string.h>
 
