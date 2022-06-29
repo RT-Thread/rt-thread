@@ -18,7 +18,7 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-#ifdef BSP_USING_TOUCH_V2
+#ifdef BSP_USING_TOUCH_FT6X36
 
 #include "ft6236.h"
 
@@ -68,16 +68,7 @@ int ft6236_for_lvgl(void)
     rt_hw_ft6236_init("touch", &cfg, BSP_TOUCH_I2C_RESET_PIN);
 
     touch = rt_device_find("touch");
-
     rt_device_open(touch, RT_DEVICE_FLAG_RDONLY);
-
-    struct rt_touch_info info;
-    rt_device_control(touch, RT_TOUCH_CTRL_GET_INFO, &info);
-    LOG_I("type       :%d", info.type);
-    LOG_I("vendor     :%d", info.vendor);
-    LOG_I("point_num  :%d", info.point_num);
-    LOG_I("range_x    :%d", info.range_x);
-    LOG_I("range_y    :%d", info.range_y);
 
     ft6236_thread = rt_thread_create("touch", ft6236_thread_entry, RT_NULL, 1024, 10, 20);
     if (ft6236_thread == RT_NULL)
@@ -92,4 +83,4 @@ int ft6236_for_lvgl(void)
 }
 INIT_ENV_EXPORT(ft6236_for_lvgl);
 
-#endif /* PKG_USING_FT6236 */
+#endif /* BSP_USING_TOUCH_FT6X36 */

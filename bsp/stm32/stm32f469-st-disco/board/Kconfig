@@ -32,16 +32,16 @@ menu "Onboard Peripheral Drivers"
         default n
         if BSP_USING_LVGL
             choice
-                prompt "Touch Version"
-                default BSP_TOUCH_VERSION_2
+                prompt "Touch type"
+                default BSP_CHOICE_TOUCH_FT6X36
 
-                config BSP_TOUCH_VERSION_1
-                    bool "Touch V1"
-                    select BSP_USING_TOUCH
+                config BSP_CHOICE_TOUCH_FT6206
+                    bool "Touch ft6206"
+                    select BSP_USING_TOUCH_FT6206
 
-                config BSP_TOUCH_VERSION_2
-                    bool "Touch V2"
-                    select BSP_USING_TOUCH_V2
+                config BSP_CHOICE_TOUCH_FT6X36
+                    bool "Touch ft3x36"
+                    select BSP_USING_TOUCH_FT6X36
             endchoice             
         endif
 
@@ -83,11 +83,11 @@ menu "Onboard Peripheral Drivers"
         default 24000000
     endif
         
-    config BSP_USING_TOUCH
+    config BSP_USING_TOUCH_FT6206
         bool "Enable TOUCH (ft6206)"
         select BSP_USING_I2C1
         default n
-        if BSP_USING_TOUCH
+        if BSP_USING_TOUCH_FT6206
             config BSP_TOUCH_INT_PIN
                 int "Touch interrupt pin"
                 default 149
@@ -96,8 +96,8 @@ menu "Onboard Peripheral Drivers"
                 default "i2c1"
         endif
 
-    config BSP_USING_TOUCH_V2
-        bool "Enable TOUCH V2 (ft6x36)"
+    config BSP_USING_TOUCH_FT6X36
+        bool "Enable TOUCH (ft6x36)"
         select BSP_USING_I2C1
         select PKG_USING_TOUCH_DRIVERS
         select PKG_USING_FT6236

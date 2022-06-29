@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifdef BSP_USING_TOUCH
+#ifdef BSP_USING_TOUCH_FT6206
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME  "TOUCH.ft"
@@ -212,4 +212,4 @@ int ft_driver_register(void)
 }
 INIT_DEVICE_EXPORT(ft_driver_register);
 
-#endif
+#endif /* BSP_USING_TOUCH_FT6206 */

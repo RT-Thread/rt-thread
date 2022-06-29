@@ -10,7 +10,7 @@
 
 #include <rtconfig.h>
 
-#ifdef BSP_USING_TOUCH
+#ifdef BSP_USING_TOUCH_FT6206
 #include "drv_touch.h"
 #include <string.h>
 #ifdef PKG_USING_GUIENGINE
@@ -204,4 +204,4 @@ static int touc_bg_init(void)
 }
 INIT_COMPONENT_EXPORT(touc_bg_init);
 
-#endif /* BSP_USING_TOUCH */
+#endif /* BSP_USING_TOUCH_FT6206 */
