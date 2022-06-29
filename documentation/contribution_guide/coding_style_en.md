@@ -97,7 +97,7 @@ parameters, it should be declared as void:
 
 Please use English to comment. There shouldn't be many comments as the
 comments should describe what the code does. It should describe complicated
-algorithm, for example. Comments for statements should be placed before the
+algorithms, for example. Comments for statements should be placed before the
 statements or to the right of them. Any other locations are invalid.
 
 
