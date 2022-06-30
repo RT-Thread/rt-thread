@@ -10,7 +10,7 @@
 
 #include <rtconfig.h>
 
-#ifdef BSP_USING_TOUCH
+#ifdef BSP_USING_TOUCH_FT6206
 #include "drv_touch.h"
 #include <string.h>
 #ifdef PKG_USING_GUIENGINE
@@ -154,7 +154,7 @@ static int rt_touch_thread_init(void)
     rt_list_t *l;
     touch_drv_t current_driver;
     rt_thread_t tid = RT_NULL;
-    i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(BSP_I2C_NAME);
+    i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(BSP_TOUCH_I2C_NAME);
     RT_ASSERT(i2c_bus);
     current_driver = RT_NULL;
     if (rt_device_open((rt_device_t)i2c_bus, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
@@ -204,4 +204,4 @@ static int touc_bg_init(void)
 }
 INIT_COMPONENT_EXPORT(touc_bg_init);
 
-#endif /* BSP_USING_TOUCH */
+#endif /* BSP_USING_TOUCH_FT6206 */
