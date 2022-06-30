@@ -1,6 +1,6 @@
 # QEMU VExpress A9板级支持包说明
 
-## 简介
+## 1 简介
 
 - Versatile Express系统由ARM Ltd提供，作为CortexA9四核处理器的开发环境，硬件由uATX主板和CoreTile Express A9x4子板组成。有关该系统的详细信息，可以访问 [ARM官方页面][1] 。
 
@@ -18,7 +18,7 @@
 | 主频 | NA |
 | Memory | 128MB(0x60000000 - 0x68000000) |
 
-## 编译说明
+## 2 编译说明
 
 - 推荐使用[env工具][2]编译工程，在`bsp/qemu-vexpress-a9`目录中打开env环境，运行命令`scons -j4`
 
@@ -42,9 +42,9 @@
 
 - 如果在Linux下使用，请自行下载[GNU GCC工具链][3]。
 
-## 执行和退出
+## 3 执行和退出
 
-### 执行脚本文件说明
+### 3.1 执行脚本文件说明
 
 在这个bsp目录下已经提供了下面几个执行脚本文件，具体的说明如下表所示：
 
@@ -57,7 +57,7 @@
 | qemu-nographic.bat | Windows | 以不带界面的模式启动运行 |
 | qemu-nographic.sh | Linux | 同上 |
 
-### RT-Studio IDE下运行RT-Thread
+### 3.2 RT-Studio IDE下运行RT-Thread
 
 推荐使用该方式进行学习，简单易用
 
@@ -79,9 +79,9 @@
 
 
 
-###  Windows ENV下运行RT-Thread
+###  3.3 Windows ENV下运行RT-Thread
 
-#### 启动QEMU运行
+#### 3.3.1 启动QEMU运行
 
 - 当要运行编译好的RT-Thread时，可以在bsp目录下运行env，在env中敲入qemu.bat即可直接运行。这个执行脚本默认把串口输出到stdio（即控制台）上，所以直接执行脚本后就可以输出结果了。
 
@@ -99,7 +99,7 @@
 
 - 当然你也可以尝试使用其他两个**.bat**文件启动运行。
 
-#### 退出QEMU运行
+#### 3.3.2 退出QEMU运行
 
 在msh提示输入的状态下，按下 **CTRL+C** ，有以下提示之后，按下 **y** ，即可退出 QEMU 。
 
@@ -110,15 +110,15 @@ msh />
 msh />Terminate batch job (Y/N)? y
 ```
 
-### Windows VSCode 中运行RT-Thread
+### 3.4 Windows VSCode 中运行RT-Thread
 
 参考文档：[使用VS Code开发RT-Thread](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/application-note/setup/qemu/vscode/an0021-qemu-vscode?id=%e4%bd%bf%e7%94%a8-vs-code-%e5%bc%80%e5%8f%91-rt-thread)
 
 
 
-###  Linux下执行RT-Thread
+###  3.5 Linux下执行RT-Thread
 
-#### 安装QEMU工具包
+#### 3.5.1 安装QEMU工具包
 
 在Linux下调试启动与Windows下稍微有点点区别，由于Windows下安装了**env**工具就自带了**qemu-system-arm**，而Linux下默认是没有这个工具的，所以执行执行`./qemu.sh`会报错：
 
@@ -160,7 +160,7 @@ QEMU emulator version 4.2.1 (Debian 1:4.2-3ubuntu6.17)
 Copyright (c) 2003-2019 Fabrice Bellard and the QEMU Project developers
 ```
 
-#### 启动QEMU运行
+#### 3.5.2 启动QEMU运行
 
 由于Linux平台一般都是不带界面的服务器，所以推荐使用`qemu-nographic.sh`脚本来启动运行，参考运行示例如下：
 
@@ -212,7 +212,7 @@ msh />
 
 **注意**： 前面的错误信息可以忽略，能看到RT-Thread的启动logo输出，以及msh能正常输入输出，即可进行代码调试了。
 
-#### 退出QEMU运行
+#### 3.5.3 退出QEMU运行
 
 Linux下退出QEMU的方式与Windows下有些不一样；在msh提示输入的状态下，按下 **CTRL+A** ，再按下 **X** ，即可退出 QEMU 。
 
@@ -225,7 +225,7 @@ msh />QEMU: Terminated
 
 
 
-## 4. 支持情况
+## 4 支持情况
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
@@ -238,7 +238,7 @@ msh />QEMU: Terminated
 
 
 
-## 5. 联系人信息
+## 5 联系人信息
 
 维护人：[bernard][4]  [recan-li][5]
 
@@ -247,4 +247,3 @@ msh />QEMU: Terminated
 [3]: https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
 [4]: https://github.com/BernardXiong
 [5]: https://github.com/recan-li
-
