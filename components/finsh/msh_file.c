@@ -608,7 +608,7 @@ MSH_CMD_EXPORT_ALIAS(cmd_echo, echo, echo string to file);
 static int cmd_tail(int argc, char **argv)
 {
     int fd;
-    char c = RT_NULL;
+    char c = '\0';
     char *file_name = RT_NULL;
     rt_uint32_t total_lines = 0;
     rt_uint32_t target_line = 0;
