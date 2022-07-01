@@ -123,11 +123,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_FALSE                        0               /**< boolean fails */
 
 /* null pointer definition */
-#ifdef RT_USING_LIBC
-#define RT_NULL                         NULL            /**< null pointer */
-#else
-#define RT_NULL                         (0)             /**< null pointer */
-#endif /* RT_USING_LIBC */
+#define RT_NULL                         0
 
 /**@}*/
 
