@@ -136,7 +136,7 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
         ptd->magic = 0x0;
 
         /* clear the "ptd->tid->user_data" */
-        ptd->tid->user_data = RT_NULL;
+        ptd->tid->user_data = 0;
 
         /* free ptd */
         rt_free(ptd);
