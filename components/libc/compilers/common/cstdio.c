@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <sys/errno.h>
 
+#ifdef DFS_USING_POSIX
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
 {
     char *cur_pos, *new_lineptr;
@@ -83,3 +84,4 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream)
 {
     return getdelim(lineptr, n, '\n', stream);
 }
+#endif /* DFS_USING_POSIX */
