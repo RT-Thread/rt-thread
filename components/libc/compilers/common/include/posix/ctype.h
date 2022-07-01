@@ -17,9 +17,12 @@ extern "C" {
 
 #include <ctype.h>
 
+#if !(defined(__ICCARM__) && (__VER__ > 9000000)) /* IAR9.0 has defined */
 #ifndef isascii /* some toolchain use macro to define it */
 int isascii(int c);
 #endif
+#endif /* !(defined(__ICCARM__) && (__VER__ > 9000000)) */
+
 #ifndef toascii
 int toascii(int c);
 #endif
