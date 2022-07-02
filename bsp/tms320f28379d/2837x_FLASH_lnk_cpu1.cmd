@@ -95,7 +95,7 @@ SECTIONS
    #endif
 #endif
 
-   FSymTab : > RAMM0, PAGE = 1, ALIGN(4)
+   FSymTab : > RAMD0, PAGE = 0, ALIGN(4)
    LOAD_START(___fsymtab_start)
    LOAD_END(___fsymtab_end)
    
