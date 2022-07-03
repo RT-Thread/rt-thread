@@ -25,9 +25,6 @@ idf_component_register(SRCS "board.c" "main.c"
                     "../../../components/drivers/ipc/ringbuffer.c"
                     "../../../components/drivers/ipc/workqueue.c"
 
-
-                    "../../../components/drivers/serial/serial.c"
-
                     INCLUDE_DIRS 
                     "../../../components/drivers/include/drivers"
 
