@@ -19,6 +19,10 @@
 /* Inter-Thread communication */
 
 #define RT_USING_SEMAPHORE
+#define RT_USING_MUTEX
+#define RT_USING_EVENT
+#define RT_USING_MAILBOX
+#define RT_USING_MESSAGEQUEUE
 
 /* Memory Management */
 
@@ -29,44 +33,35 @@
 
 /* Kernel Device Object */
 
-#define RT_VER_NUM 0x40004
-
+#define RT_USING_DEVICE
+#define RT_VER_NUM 0x40101
 
 /* RT-Thread Components */
 
-/* C++ features */
-
-
-/* Command shell */
-
-
-/* Device virtual file system */
-
+#define RT_USING_COMPONENTS_INIT
 
 /* Device Drivers */
 
+#define RT_USING_DEVICE_IPC
+#define RT_USING_PIN
 
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
+
+#define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
 
 
 /* Network */
-
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
@@ -121,9 +116,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -148,18 +140,19 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define RT_USING_DEVICE
-#define RT_USING_PIN
 
-#define RT_USING_SEMAPHORE
-#define RT_USING_MUTEX
-#define RT_USING_EVENT
-#define RT_USING_MAILBOX
-#define RT_USING_MESSAGEQUEUE
+/* Hardware Drivers Config */
 
-#define RT_USING_COMPONENTS_INIT
-#define RT_DEBUG_INIT 1
+#define SOC_ESP32_C3
+#define SOC_ESPRESSIF
+#define BSP_BOARD_LUATOS_ESP32C3
 
-#define RT_USING_SERIAL
-#define BSP_USING_UART1
+/* Onboard Peripheral Drivers */
+
+#define RT_BSP_LED_PIN 12
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+
 #endif
