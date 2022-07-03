@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,6 +29,7 @@
  * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread
  *                             Provide protection for the "first layer of objects" when list_*
  * 2020-04-07     chenhui      add clear
+ * 2022-07-02     Stanley Lwin add list command
  */
 
 #include <rthw.h>
@@ -886,5 +887,64 @@ long list_device(void)
 }
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
+
+int cmd_list(int argc, char **argv)
+{
+    if(argc == 2)
+    {
+        if(strcmp(argv[1], "thread") == 0)
+        {
+            list_thread();
+        }
+        else if(strcmp(argv[1], "sem") == 0)
+        {
+            list_sem();
+        }
+        else if(strcmp(argv[1], "event") == 0)
+        {
+            list_event();
+        }
+        else if(strcmp(argv[1], "mutex") == 0)
+        {
+            list_mutex();
+        }
+        else if(strcmp(argv[1], "mailbox") == 0)
+        {
+            list_mailbox();
+        }
+        else if(strcmp(argv[1], "msgqueue") == 0)
+        {
+            list_msgqueue();
+        }
+        else if(strcmp(argv[1], "mempool") == 0)
+        {
+            list_mempool();
+        }
+        else if(strcmp(argv[1], "timer") == 0)
+        {
+            list_timer();
+        }
+        else if(strcmp(argv[1], "device") == 0)
+        {
+            list_device();
+        }
+        else
+        {
+            goto _usage;
+        }
+
+        return 0;
+    }
+
+_usage:
+    rt_kprintf("Usage: list [options]...\n");
+    rt_kprintf("[options]:thread - list thread \n\t sem - list semaphore in system \n\t event - list even in system \n\t mutex - list mutex in system");
+    rt_kprintf("\n\t mailbox - list mailbox in system \n\t msgqueue - list message queue in system \n\t mempool - list memory pool in system");
+    rt_kprintf("\n\t timer - list timer in system \n\t device - list device in system\n");
+    rt_kprintf("\nExample: list thread\n");
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_list, list, list [options]);
 
 #endif /* RT_USING_FINSH */
