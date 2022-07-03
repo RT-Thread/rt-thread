@@ -410,6 +410,9 @@ static rt_err_t drv_pwm_set_pulse(TIM_HandleTypeDef *htim, struct rt_pwm_configu
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
     }
 
+    /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
+    tim_clock /= 1000000UL;
+
     period = (__HAL_TIM_GET_AUTORELOAD(htim) + 1) * (htim->Instance->PSC + 1) * 1000UL / tim_clock;
     pulse = (unsigned long long)configuration->pulse * (__HAL_TIM_GET_AUTORELOAD(htim) + 1) / period;
 
