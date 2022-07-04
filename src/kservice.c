@@ -157,8 +157,8 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
-    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
-                                unsigned variable.  */
+    unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
+                                unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
