@@ -340,6 +340,97 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     return RT_EOK;
 }
 
+static rt_err_t drv_pwm_set_period(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
+{
+    rt_uint32_t period;
+    rt_uint64_t tim_clock, psc;
+    rt_uint32_t pclk1_doubler, pclk2_doubler;
+
+    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
+    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+#elif defined(SOC_SERIES_STM32MP1)
+    if (htim->Instance == TIM4)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+    if (0)
+#endif
+    {
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
+#endif
+    }
+    else
+    {
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+    }
+
+    /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
+    tim_clock /= 1000000UL;
+    period = (unsigned long long)configuration->period * tim_clock / 1000ULL ;
+    psc = period / MAX_PERIOD + 1;
+    period = period / psc;
+    __HAL_TIM_SET_PRESCALER(htim, psc - 1);
+
+    if (period < MIN_PERIOD)
+    {
+        period = MIN_PERIOD;
+    }
+    __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
+
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_set_pulse(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
+{
+    rt_uint32_t period, pulse;
+    rt_uint64_t tim_clock;
+    rt_uint32_t pclk1_doubler, pclk2_doubler;
+    /* Converts the channel number to the channel number of Hal library */
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
+
+    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
+    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+#elif defined(SOC_SERIES_STM32MP1)
+    if (htim->Instance == TIM4)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+    if (0)
+#endif
+    {
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
+#endif
+    }
+    else
+    {
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+    }
+
+    /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
+    tim_clock /= 1000000UL;
+
+    period = (__HAL_TIM_GET_AUTORELOAD(htim) + 1) * (htim->Instance->PSC + 1) * 1000UL / tim_clock;
+    pulse = (unsigned long long)configuration->pulse * (__HAL_TIM_GET_AUTORELOAD(htim) + 1) / period;
+
+    if (pulse < MIN_PULSE)
+    {
+        pulse = MIN_PULSE;
+    }
+    else if (pulse > period)
+    {
+        pulse = period;
+    }
+    __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
+
+    return RT_EOK;
+}
+
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
@@ -357,6 +448,10 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
         return drv_pwm_enable(htim, configuration, RT_FALSE);
     case PWM_CMD_SET:
         return drv_pwm_set(htim, configuration);
+    case PWM_CMD_SET_PERIOD:
+        return drv_pwm_set_period(htim, configuration);
+    case PWM_CMD_SET_PULSE:
+        return drv_pwm_set_pulse(htim, configuration);
     case PWM_CMD_GET:
         return drv_pwm_get(htim, configuration);
     default:
