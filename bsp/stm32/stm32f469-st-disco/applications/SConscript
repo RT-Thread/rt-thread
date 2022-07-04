@@ -8,6 +8,9 @@ main.c
 lcd_init.c
 """)
 
+if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
+    src += ['arduino_main.cpp']
+    
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
