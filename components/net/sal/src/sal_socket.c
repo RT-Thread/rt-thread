@@ -18,7 +18,7 @@
 #ifdef SAL_USING_TLS
 #include <sal_tls.h>
 #endif
-#include <sal.h>
+#include <sal_low_lvl.h>
 #include <netdev.h>
 
 #ifdef SAL_INTERNET_CHECK
@@ -376,7 +376,8 @@ static void sal_unlock(void)
  */
 int sal_netdev_cleanup(struct netdev *netdev)
 {
-    int idx = 0, find_dev;
+    uint32_t idx = 0;
+    int find_dev;
 
     do
     {

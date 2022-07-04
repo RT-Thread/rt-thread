@@ -8,7 +8,6 @@
  * 2021-10-18     Meco Man     The first version
  */
 #include <lvgl.h>
-#include <stdbool.h>
 #include <rtdevice.h>
 #include <drv_gpio.h>
 
@@ -16,6 +15,8 @@
 #define BUTTON1_PIN        GET_PIN(D, 9)
 #define BUTTON2_PIN        GET_PIN(D, 8)
 #define BUTTON_WKUP_PIN    GET_PIN(C, 13)
+
+lv_indev_t * button_indev;
 
 /*Test if `id` button is pressed or not*/
 static bool button_is_pressed(uint8_t id)
@@ -78,12 +79,11 @@ void button_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
     data->btn_id = last_btn;            /*Save the last button*/
 }
 
-
-lv_indev_t * button_indev;
-
 void lv_port_indev_init(void)
 {
     static lv_indev_drv_t indev_drv;
+    /*assign buttons to coordinates*/
+    static lv_point_t points_array[] =  {{200,35},{0,0},{70,35},{0,0}};
 
     /* Initialize the on-board buttons */
     rt_pin_mode(BUTTON0_PIN, PIN_MODE_INPUT);
@@ -97,4 +97,6 @@ void lv_port_indev_init(void)
 
     /*Register the driver in LVGL and save the created input device object*/
     button_indev = lv_indev_drv_register(&indev_drv);
+
+    lv_indev_set_button_points(button_indev, points_array);
 }

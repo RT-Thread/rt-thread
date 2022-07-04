@@ -19,6 +19,18 @@
 extern long list_thread(void);
 #endif
 
+static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
+
+/**
+ * This function set the hook, which is invoked on fault exception handling.
+ *
+ * @param exception_handle the exception handling hook function.
+ */
+void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
+{
+    rt_exception_hook = exception_handle;
+}
+
 /**
  * this function will show registers of CPU
  *
@@ -33,6 +45,13 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("fp :0x%08x ip :0x%08x\n", regs->fp, regs->ip);
     rt_kprintf("sp :0x%08x lr :0x%08x pc :0x%08x\n", regs->sp, regs->lr, regs->pc);
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
+
+        result = rt_exception_hook(regs);
+        if (result == RT_EOK) return;
+    }
 }
 
 void (*rt_trap_hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type);

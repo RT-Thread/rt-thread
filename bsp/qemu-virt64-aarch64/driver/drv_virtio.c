@@ -14,6 +14,15 @@
 #ifdef BSP_USING_VIRTIO_BLK
 #include <virtio_blk.h>
 #endif
+#ifdef BSP_USING_VIRTIO_NET
+#include <virtio_net.h>
+#endif
+#ifdef BSP_USING_VIRTIO_GPU
+#include <virtio_gpu.h>
+#endif
+#ifdef BSP_USING_VIRTIO_INPUT
+#include <virtio_input.h>
+#endif
 
 #include <board.h>
 
@@ -21,6 +30,15 @@ static virtio_device_init_handler virtio_device_init_handlers[] =
 {
 #ifdef BSP_USING_VIRTIO_BLK
     [VIRTIO_DEVICE_ID_BLOCK]    = rt_virtio_blk_init,
+#endif
+#ifdef BSP_USING_VIRTIO_NET
+    [VIRTIO_DEVICE_ID_NET]      = rt_virtio_net_init,
+#endif
+#ifdef BSP_USING_VIRTIO_GPU
+    [VIRTIO_DEVICE_ID_GPU]      = rt_virtio_gpu_init,
+#endif
+#ifdef BSP_USING_VIRTIO_INPUT
+    [VIRTIO_DEVICE_ID_INPUT]    = rt_virtio_input_init,
 #endif
 };
 

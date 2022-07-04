@@ -65,6 +65,7 @@ def GenerateCFiles(env,project):
         cm_file.write("SET(CMAKE_SYSTEM_NAME Generic)\n")
         cm_file.write("SET(CMAKE_SYSTEM_PROCESSOR " + rtconfig.CPU +")\n")
         cm_file.write("#SET(CMAKE_VERBOSE_MAKEFILE ON)\n\n")
+        cm_file.write("SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n\n")
 
         cm_file.write("SET(CMAKE_C_COMPILER \""+ CC + "\")\n")
         cm_file.write("SET(CMAKE_ASM_COMPILER \""+ AS + "\")\n")

@@ -606,7 +606,7 @@ RTM_EXPORT(rt_sem_trytake);
 rt_err_t rt_sem_release(rt_sem_t sem)
 {
     rt_base_t level;
-    register rt_bool_t need_schedule;
+    rt_bool_t need_schedule;
 
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
@@ -1442,7 +1442,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
     struct rt_list_node *n;
     struct rt_thread *thread;
     rt_base_t level;
-    register rt_base_t status;
+    rt_base_t status;
     rt_bool_t need_schedule;
 
     /* parameter check */
@@ -1570,7 +1570,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
 {
     struct rt_thread *thread;
     rt_base_t level;
-    register rt_base_t status;
+    rt_base_t status;
 
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
@@ -2230,7 +2230,14 @@ RTM_EXPORT(rt_mb_urgent);
  * @param    value is a flag that you will set for this mailbox's flag.
  *           You can set an mailbox flag, or you can set multiple flags through OR logic operations.
  *
- * @param    timeout is a timeout period (unit: an OS tick).
+ * @param    timeout is a timeout period (unit: an OS tick). If the mailbox object is not avaliable in the queue,
+ *           the thread will wait for the object in the queue up to the amount of time specified by this parameter.
+ *
+ *           NOTE:
+ *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           mailbox object is unavailable in the queue, the thread will be waiting forever.
+ *           If use macro RT_WAITING_NO to set this parameter, which means that this
+ *           function is non-blocking and will return immediately.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
@@ -2484,7 +2491,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
                     rt_uint8_t  flag)
 {
     struct rt_mq_message *head;
-    register rt_base_t temp;
+    rt_base_t temp;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -2608,7 +2615,7 @@ rt_mq_t rt_mq_create(const char *name,
 {
     struct rt_messagequeue *mq;
     struct rt_mq_message *head;
-    register rt_base_t temp;
+    rt_base_t temp;
 
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 

@@ -155,7 +155,7 @@ RA 模板工程创建完成后，需要做些修改并添加基础外设 GPIO、
 
 ### 3.4 修改 Kconfig 选项
 
-在本小节中修改 `board/Kconfig` 文件的内容有如下两点：
+在本小节中修改 `board/Kconfig` 和 `libraries/Kconfig` 文件的内容有如下两点：
 
 - 芯片型号和系列
 - BSP 上的外设支持选项
@@ -167,12 +167,22 @@ RA 模板工程创建完成后，需要做些修改并添加基础外设 GPIO、
 | SOC_R7FA6M4AF      | 芯片型号 | SOC_R7FAxxxxx      |
 | SOC_SERIES_R7FA6M4 | 芯片系列 | SOC_SERIES_R7FAxxx |
 
+添加芯片系列：
+
+![image-20220422164816261](figures\Kconfig1.png) 
+
 关于 BSP 上的外设支持选项，一个初次提交的 BSP 仅仅需要支持 GPIO 驱动和串口驱动即可，因此在配置选项中只需保留这两个驱动配置项，如下图所示：
 
 ![修改 Kconfig](./figures/Kconfig.png) 
 
 ### 3.5 修改工程构建和配置文件
-接下来需要修改用于构建工程相关的文件。
+- 添加驱动 config，根据不同芯片系列创建目录，按照支持情况对外设的配置进行修改。
+
+![image-20220422163750161](figures\drv_config.png) 
+
+​	以UART为例，添加端口的配置信息，根据不同芯片对外设的支持情况进行修改。
+
+![image-20220422164058202](figures\drv_config_uart.png) 
 
 - 修改启动文件 startup.c
 
@@ -191,7 +201,7 @@ RA 模板工程创建完成后，需要做些修改并添加基础外设 GPIO、
 
 - 修改 SRAM 大小配置
 
-![image-20220303113833249](figures/board_config.png)
+![image-20220303113833249](figures/board_config.png) 
 
 - 修改 GPIO 中断配置
 
@@ -234,7 +244,9 @@ void hal_entry(void)
 }
 ```
 
+- 修改 rtconfig.py 中的CPU参数
 
+![image-20220303165348085](figures/rtconfig_py.png) 
 
 ### 3.6 重新生成工程
 
@@ -325,9 +337,7 @@ KEEP(*(FalPartTable))
 
 ![image-20220303165348085](figures/rtconfig_py.png) 
 
-除了上图的内核类型，还有编译参数的配置需要确认。相关配置项说明可查看文档中心对于 scons 工具的介绍。[跳转链接](https://www.rt-thread.org/document/site/#/development-tools/scons/scons?id=编译器选项)
-
-
+除了上图的内核类型，还有编译参数的配置需要确认。相关配置项说明可查看文档中心对于 scons 工具的介绍。[跳转链接](https://www.rt-thread.org/document/site/#/development-tools/scons/scons?id=编译器选项)     
 
 至此，一个基础的支持 GCC 和 MDK 的 BSP 工程就创建完成了，接着就可以使用 MDK 或 scons 验证开发的工程是否可编译、可运行。
 

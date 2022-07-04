@@ -38,8 +38,9 @@
 #define A6   (23)
 #define A7   (24)
 
+#define F_CPU  48000000L /* CPU: 48MHz */
 #define LED_BUILTIN  D13 /* Default Built-in LED */
 
-#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c1"
+#define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c1"
 
 #endif /* Pins_Arduino_h */

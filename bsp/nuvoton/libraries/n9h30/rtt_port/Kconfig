@@ -180,6 +180,11 @@ config SOC_SERIES_N9H30
 
     endif
 
+    config BSP_USING_FMINAND
+        bool "Enable FMI NAND Controller"
+        select RT_USING_MTD_NAND
+        default y
+
     menuconfig BSP_USING_TMR
         bool "Enable Timer Controller(TIMER)"
 

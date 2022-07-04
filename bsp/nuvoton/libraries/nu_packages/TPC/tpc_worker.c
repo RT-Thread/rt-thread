@@ -34,7 +34,7 @@ static void tpc_entry(void *parameter)
     struct rt_touch_info info;
     rt_device_t  dev = RT_NULL;
 
-    const char *name = "ili_tpc";
+    const char *name = (const char *)parameter;
     rt_uint32_t x_range = BSP_LCD_WIDTH;
     rt_uint32_t y_range = BSP_LCD_HEIGHT;
 
@@ -87,9 +87,19 @@ static void tpc_entry(void *parameter)
                         || read_data[i].event == RT_TOUCH_EVENT_UP
                         || read_data[i].event == RT_TOUCH_EVENT_MOVE)
                 {
-                    //rt_kprintf("[%d] %d %d\n", read_data[i].event, read_data[i].x_coordinate, read_data[i].y_coordinate);
+                    rt_uint16_t  u16X, u16Y;
 
-                    nu_touch_inputevent_cb(read_data[i].x_coordinate, read_data[i].y_coordinate, read_data[i].event);
+                    u16X = read_data[i].x_coordinate;
+                    u16Y = read_data[i].y_coordinate;
+
+                    #if defined(NU_PKG_TPC_REVERSE_XY)
+                        u16X = info.range_x - u16X;
+                        u16Y = info.range_y - u16Y;
+                    #endif
+
+                    //rt_kprintf("[%d] %d %d\n", read_data[i].event, u16X, u16Y);
+
+                    nu_touch_inputevent_cb(u16X, u16Y, read_data[i].event);
                 }
             }
         }
@@ -99,12 +109,12 @@ static void tpc_entry(void *parameter)
 
 
 /* Test function */
-int tpc_sample(void)
+int tpc_sample(const char *tpc_name)
 {
     rt_thread_t  tpc_thread;
     tpc_thread = rt_thread_create("tpc",
                                   tpc_entry,
-                                  RT_NULL,
+                                  (void *)tpc_name,
                                   THREAD_STACK_SIZE,
                                   THREAD_PRIORITY,
                                   THREAD_TIMESLICE);
@@ -114,4 +124,3 @@ int tpc_sample(void)
 
     return 0;
 }
-INIT_APP_EXPORT(tpc_sample);

@@ -69,24 +69,22 @@ static rt_err_t ra_get_secs(void *args)
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-    struct tm *p_tm;
+    struct tm now;
     rtc_time_t g_current_time = {0};
-    p_tm = gmtime(&time_stamp);
-    if (p_tm->tm_year < 100)
+    gmtime_r(&time_stamp, &now);
+    if (now.tm_year < 100)
     {
         return -RT_ERROR;
     }
 
-    g_current_time.tm_sec    = p_tm->tm_sec ;
-    g_current_time.tm_min    = p_tm->tm_min ;
-    g_current_time.tm_hour   = p_tm->tm_hour;
-
-    g_current_time.tm_mday   = p_tm->tm_mday;
-    g_current_time.tm_mon    = p_tm->tm_mon;
-    g_current_time.tm_year   = p_tm->tm_year;
-
-    g_current_time.tm_wday   = p_tm->tm_wday;
-    g_current_time.tm_yday   = p_tm->tm_yday;
+    g_current_time.tm_sec    = now.tm_sec ;
+    g_current_time.tm_min    = now.tm_min ;
+    g_current_time.tm_hour   = now.tm_hour;
+    g_current_time.tm_mday   = now.tm_mday;
+    g_current_time.tm_mon    = now.tm_mon;
+    g_current_time.tm_year   = now.tm_year;
+    g_current_time.tm_wday   = now.tm_wday;
+    g_current_time.tm_yday   = now.tm_yday;
 
     if (R_RTC_CalendarTimeSet(&g_rtc_ctrl, &g_current_time) != FSP_SUCCESS)
     {
