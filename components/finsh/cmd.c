@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,6 +29,7 @@
  * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread
  *                             Provide protection for the "first layer of objects" when list_*
  * 2020-04-07     chenhui      add clear
+ * 2022-07-02     Stanley Lwin add list command
  */
 
 #include <rthw.h>
@@ -886,5 +887,108 @@ long list_device(void)
 }
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
+
+int cmd_list(int argc, char **argv)
+{
+    if(argc == 2)
+    {
+        if(strcmp(argv[1], "thread") == 0)
+        {
+            list_thread();
+        }
+        else if(strcmp(argv[1], "timer") == 0)
+        {
+            list_timer();
+        }
+#ifdef RT_USING_SEMAPHORE
+        else if(strcmp(argv[1], "sem") == 0)
+        {
+            list_sem();
+        }
+#endif /* RT_USING_SEMAPHORE */
+#ifdef RT_USING_EVENT
+        else if(strcmp(argv[1], "event") == 0)
+        {
+            list_event();
+        }
+#endif /* RT_USING_EVENT */
+#ifdef RT_USING_MUTEX
+        else if(strcmp(argv[1], "mutex") == 0)
+        {
+            list_mutex();
+        }
+#endif /* RT_USING_MUTEX */
+#ifdef RT_USING_MAILBOX
+        else if(strcmp(argv[1], "mailbox") == 0)
+        {
+            list_mailbox();
+        }
+#endif  /* RT_USING_MAILBOX */
+#ifdef RT_USING_MESSAGEQUEUE
+        else if(strcmp(argv[1], "msgqueue") == 0)
+        {
+            list_msgqueue();
+        }
+#endif /* RT_USING_MESSAGEQUEUE */
+#ifdef RT_USING_MEMPOOL
+        else if(strcmp(argv[1], "mempool") == 0)
+        {
+            list_mempool();
+        }
+#endif /* RT_USING_MEMPOOL */
+#ifdef RT_USING_DEVICE
+        else if(strcmp(argv[1], "device") == 0)
+        {
+            list_device();
+        }
+#endif /* RT_USING_DEVICE */
+#ifdef RT_USING_DFS
+        else if(strcmp(argv[1], "fd") == 0)
+        {
+            extern int list_fd(void);
+            list_fd();
+        }
+#endif /* RT_USING_DFS */
+        else
+        {
+            goto _usage;
+        }
+
+        return 0;
+    }
+
+_usage:
+    rt_kprintf("Usage: list [options]\n");
+    rt_kprintf("[options]:\n");
+    rt_kprintf("    thread - list threads\n");
+    rt_kprintf("    timer - list timers\n");
+#ifdef RT_USING_SEMAPHORE
+    rt_kprintf("    sem - list semaphores\n");
+#endif /* RT_USING_SEMAPHORE */
+#ifdef RT_USING_MUTEX
+    rt_kprintf("    mutex - list mutexs\n");
+#endif /* RT_USING_MUTEX */
+#ifdef RT_USING_EVENT
+    rt_kprintf("    event - list events\n");
+#endif /* RT_USING_EVENT */
+#ifdef RT_USING_MAILBOX
+    rt_kprintf("    mailbox - list mailboxs\n");
+#endif /* RT_USING_MAILBOX */
+#ifdef RT_USING_MESSAGEQUEUE
+    rt_kprintf("    msgqueue - list message queues\n");
+#endif /* RT_USING_MESSAGEQUEUE */
+#ifdef RT_USING_MEMPOOL
+    rt_kprintf("    mempool - list memory pools\n");
+#endif /* RT_USING_MEMPOOL */
+#ifdef RT_USING_DEVICE
+    rt_kprintf("    device - list devices\n");
+#endif /* RT_USING_DEVICE */
+#ifdef RT_USING_DFS
+    rt_kprintf("    fd - list file descriptors\n");
+#endif /* RT_USING_DFS */
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_list, list, list objects);
 
 #endif /* RT_USING_FINSH */
