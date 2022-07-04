@@ -196,6 +196,35 @@ static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_dou
 #endif
 }
 
+static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
+{
+    rt_uint32_t pclk1_doubler, pclk2_doubler;
+    rt_uint64_t tim_clock;
+
+    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
+    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+#elif defined(SOC_SERIES_STM32MP1)
+    if (htim->Instance == TIM4)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+    if (0)
+#endif
+    {
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
+#endif
+    }
+    else
+    {
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+    }
+
+    return tim_clock;
+}
+
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
 static struct rt_pwm_ops drv_ops =
 {
@@ -238,29 +267,8 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint64_t tim_clock;
-    rt_uint32_t pclk1_doubler, pclk2_doubler;
 
-    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
-
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#endif
-    {
-#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
-    }
-    else
-    {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
-    }
-
+    tim_clock = tim_clock_get(htim);
     if (__HAL_TIM_GET_CLOCKDIVISION(htim) == TIM_CLOCKDIVISION_DIV2)
     {
         tim_clock = tim_clock / 2;
@@ -282,34 +290,13 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
 {
     rt_uint32_t period, pulse;
     rt_uint64_t tim_clock, psc;
-    rt_uint32_t pclk1_doubler, pclk2_doubler;
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
-    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
-
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#endif
-    {
-#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
-    }
-    else
-    {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
-    }
-
+    tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
-    period = (unsigned long long)configuration->period * tim_clock / 1000ULL ;
+    period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL ;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
@@ -320,7 +307,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     }
     __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
 
-    pulse = (unsigned long long)configuration->pulse * tim_clock / psc / 1000ULL;
+    pulse = (rt_uint64_t)configuration->pulse * tim_clock / psc / 1000ULL;
     if (pulse < MIN_PULSE)
     {
         pulse = MIN_PULSE;
@@ -344,32 +331,11 @@ static rt_err_t drv_pwm_set_period(TIM_HandleTypeDef *htim, struct rt_pwm_config
 {
     rt_uint32_t period;
     rt_uint64_t tim_clock, psc;
-    rt_uint32_t pclk1_doubler, pclk2_doubler;
 
-    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
-
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#endif
-    {
-#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
-    }
-    else
-    {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
-    }
-
+    tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
-    period = (unsigned long long)configuration->period * tim_clock / 1000ULL ;
+    period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL ;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
@@ -387,36 +353,15 @@ static rt_err_t drv_pwm_set_pulse(TIM_HandleTypeDef *htim, struct rt_pwm_configu
 {
     rt_uint32_t period, pulse;
     rt_uint64_t tim_clock;
-    rt_uint32_t pclk1_doubler, pclk2_doubler;
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
-    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
-
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#endif
-    {
-#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
-    }
-    else
-    {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
-    }
-
+    tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
 
     period = (__HAL_TIM_GET_AUTORELOAD(htim) + 1) * (htim->Instance->PSC + 1) * 1000UL / tim_clock;
-    pulse = (unsigned long long)configuration->pulse * (__HAL_TIM_GET_AUTORELOAD(htim) + 1) / period;
+    pulse = (rt_uint64_t)configuration->pulse * (__HAL_TIM_GET_AUTORELOAD(htim) + 1) / period;
 
     if (pulse < MIN_PULSE)
     {
