@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_NETDB_H
+    bool "<netdb.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_NETDB_H
+
+    config NETDB_H_ADDRINFO
+        bool "<netdb.h> -> getaddrinfo, gai_strerror, getnameinfo, freeaddrinfo"
+        default n
+
+endif

@@ -1,0 +1,15 @@
+menuconfig RTT_POSIX_TESTCASE_LIBGEN_H
+    bool "<libgen.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_LIBGEN_H
+
+    config LIBGEN_H_BASENAME
+        bool "<libgen.h> -> basename"
+        default n
+
+    config LIBGEN_H_DIRNAME
+        bool "<libgen.h> -> dirname"
+        default n
+
+endif
