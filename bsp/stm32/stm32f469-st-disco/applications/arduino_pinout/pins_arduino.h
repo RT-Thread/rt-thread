@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2022-07-04     solar        first version
+=======
+ * 2022-04-19     Meco Man     first version
+>>>>>>> ecd32670f6fdc603a29502fb9a676f7d476504b9
  */
 
 #ifndef Pins_Arduino_h

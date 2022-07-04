@@ -47,6 +47,9 @@ const pin_map_t pin_map_table[]=
     {A3, GET_PIN(C,4), "adc1", 14}, /* ADC */
     {A4, GET_PIN(C,5), "adc1", 15}, /* ADC */
     {A5, GET_PIN(A,4), "adc1", 4}, /* ADC */
+<<<<<<< HEAD
     {A6, RT_NULL, "adc1", 17}, /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
     {A7, RT_NULL, "adc1", 16} /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
+=======
+>>>>>>> ecd32670f6fdc603a29502fb9a676f7d476504b9
 };
