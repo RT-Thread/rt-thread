@@ -330,6 +330,9 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
         pulse = period;
     }
     __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
+
+    /* If you want the PWM setting to take effect immediately,
+    please uncommon the following code, but it will cause the last PWM cycle not complete. */
     //__HAL_TIM_SET_COUNTER(htim, 0);
 
     /* Update frequency value */
