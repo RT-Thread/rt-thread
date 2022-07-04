@@ -9,12 +9,6 @@
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
  */
 
-/* todo:
- * (1) ps command cause system collapse
- * (2) to integrate scons with ccs
- * (3) to complete the bsp like stm32
- */
-
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
@@ -75,7 +69,7 @@ void rtthread_startup(void)
     rt_system_scheduler_start();
 
     /* never reach here */
-    return;
+    return ;
 }
 
 int main(void)
