@@ -21,7 +21,8 @@
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
  * 2022-06-04     Meco Man     remove strnlen
- * 2022-06-21     Yunjie       make rt_memset word independent to adapt to TI C28X (16bit addressing)
+ * 2022-06-21     Yunjie       make rt_memset word-independent to adapt to 16bit addressing
+ * 2022-07-04     Yunjie       rt_kprintf fix argument passing and sign extension for 16bit
  */
 
 #include <rtthread.h>
@@ -1078,17 +1079,17 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
 #endif /* RT_KPRINTF_USING_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
-            if (flags & SIGN) num = (rt_int32_t)num;
         }
         else if (qualifier == 'h')
-        {
-            num = (rt_uint16_t)va_arg(args, rt_int32_t);
-            if (flags & SIGN) num = (rt_int16_t)num;
+        {            
+            if (flags & SIGN)
+                num = (rt_int32_t)va_arg(args, rt_int16_t);
+            else
+                num = (rt_uint32_t)va_arg(args, rt_uint16_t);
         }
         else
         {
             num = va_arg(args, rt_uint32_t);
-            if (flags & SIGN) num = (rt_int32_t)num;
         }
 #ifdef RT_PRINTF_PRECISION
         str = print_number(str, end, num, base, field_width, precision, flags);

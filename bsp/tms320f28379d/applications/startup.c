@@ -50,8 +50,6 @@ void assert_failed(uint16_t* file, uint32_t line)
  */
 void rtthread_startup(void)
 {
-    unsigned int bsp_version = 1;
-
     /* init board */
     rt_hw_board_init();
 
@@ -72,9 +70,6 @@ void rtthread_startup(void)
 
     /* init idle thread */
     rt_thread_idle_init();
-
-    /* rt_kprintf should use %hd since int = char*/
-    rt_kprintf("C28X rt-thread started: bsp_version=%hd\n",bsp_version);
 
     /* start scheduler */
     rt_system_scheduler_start();
