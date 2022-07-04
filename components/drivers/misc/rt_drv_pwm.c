@@ -177,6 +177,40 @@ rt_err_t rt_pwm_set(struct rt_device_pwm *device, int channel, rt_uint32_t perio
     return result;
 }
 
+rt_err_t rt_pwm_set_period(struct rt_device_pwm *device, int channel, rt_uint32_t period)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_pwm_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = channel;
+    configuration.period = period;
+    result = rt_device_control(&device->parent, PWM_CMD_SET_PERIOD, &configuration);
+
+    return result;
+}
+
+rt_err_t rt_pwm_set_pulse(struct rt_device_pwm *device, int channel, rt_uint32_t pulse)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_pwm_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = channel;
+    configuration.pulse = pulse;
+    result = rt_device_control(&device->parent, PWM_CMD_SET_PULSE, &configuration);
+
+    return result;
+}
+
 rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
 {
     rt_err_t result = RT_EOK;
