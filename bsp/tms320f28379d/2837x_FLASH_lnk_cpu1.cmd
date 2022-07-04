@@ -6,7 +6,6 @@ PAGE 0 :  /* Program Memory */
           /* BEGIN is used for the "boot to Flash" bootloader mode   */
 
    BEGIN           	: origin = 0x080000, length = 0x000002
-   RAMD0           	: origin = 0x00B000, length = 0x000800
    RAMLS0          	: origin = 0x008000, length = 0x000800
    RAMLS1          	: origin = 0x008800, length = 0x000800
    RAMLS2      		: origin = 0x009000, length = 0x000800
@@ -39,6 +38,7 @@ PAGE 1 : /* Data Memory */
    RAMM1           : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
    RAMD1           : origin = 0x00B800, length = 0x000800
    RAMM0           : origin = 0x000122, length = 0x0002DE
+   RAMD0           : origin = 0x00B000, length = 0x000800
 
    RAMLS5      : origin = 0x00A800, length = 0x000800
 
@@ -95,7 +95,7 @@ SECTIONS
    #endif
 #endif
 
-   FSymTab : > RAMD0, PAGE = 0, ALIGN(4)
+   FSymTab : > RAMD0, PAGE = 1, ALIGN(4)
    LOAD_START(___fsymtab_start)
    LOAD_END(___fsymtab_end)
    
