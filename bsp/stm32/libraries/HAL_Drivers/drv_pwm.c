@@ -335,7 +335,6 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     please uncommon the following code, but it will cause the last PWM cycle not complete. */
     //__HAL_TIM_SET_COUNTER(htim, 0);
 
-    /* Update frequency value */
     //HAL_TIM_GenerateEvent(htim, TIM_EVENTSOURCE_UPDATE);
 
     return RT_EOK;
