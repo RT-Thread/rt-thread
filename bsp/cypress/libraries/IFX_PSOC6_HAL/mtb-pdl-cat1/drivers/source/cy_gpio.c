@@ -1613,7 +1613,7 @@ uint32_t Cy_GPIO_GetVtrip(GPIO_PRT_Type* base, uint32_t pinNum)
 * Position of the pin bit-field within the port register
 *
 * \param value
-* Pin voltage threshold mode. Options are detailed in 
+* Pin voltage threshold mode. Options are detailed in
 * \ref group_gpio_vtrip_auto macros
 *
 * \note
@@ -1651,7 +1651,7 @@ void Cy_GPIO_SetVtripAuto(GPIO_PRT_Type* base, uint32_t pinNum, uint32_t value)
 * Position of the pin bit-field within the port register
 *
 * \return
-* Pin voltage for automotive or not. Options are detailed in 
+* Pin voltage for automotive or not. Options are detailed in
 * \ref group_gpio_vtrip_auto macros
 *
 * \note
@@ -3424,7 +3424,7 @@ uint32_t Cy_GPIO_GetFilter(GPIO_PRT_Type* base)
 * Position of the pin bit-field within the port register
 *
 * \param value
-* I3C Pull-up mode for a pin. Options are detailed in 
+* I3C Pull-up mode for a pin. Options are detailed in
 * \ref group_gpio_i3cPullUpMode macros
 *
 * \note

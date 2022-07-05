@@ -1372,7 +1372,7 @@ static void Cy_CapSense_CSXSetSnsClkFreq(uint32_t channelIndex, cy_stc_capsense_
     {
         snsClkDivider = 1u;
     }
-    
+
     #if (CY_CAPSENSE_ENABLE == CY_CAPSENSE_MULTI_FREQUENCY_SCAN_EN)
         /* Change the divider based on the chId */
         switch (channelIndex)

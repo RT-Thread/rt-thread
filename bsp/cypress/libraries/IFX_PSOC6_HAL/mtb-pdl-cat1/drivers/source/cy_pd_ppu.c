@@ -45,7 +45,7 @@
 * Initializes the PD PPU Driver.
 *
 *  \param ppu
-*  This parameter contains PPU base pointer for which the initialization has 
+*  This parameter contains PPU base pointer for which the initialization has
 *  to be done, it will point to one of the below PPUs:
 *  MAIN_PPU
 *  CPUSS_PPU
@@ -70,7 +70,7 @@ cy_en_syspm_status_t cy_pd_ppu_init(struct ppu_v1_reg *ppu)
 * Gets the programmed power mode of the particular PPU.
 *
 *  \param ppu
-*  This parameter contains PPU base pointer for which the initialization has 
+*  This parameter contains PPU base pointer for which the initialization has
 *  to be done, it will point to one of the below PPUs.
 *  MAIN_PPU
 *  CPUSS_PPU
@@ -94,7 +94,7 @@ enum ppu_v1_mode cy_pd_ppu_get_programmed_power_mode(struct ppu_v1_reg *ppu)
 * Gets the current power mode of the particular PPU.
 *
 *  \param ppu
-*  This parameter contains PPU base pointer for which the initialization has 
+*  This parameter contains PPU base pointer for which the initialization has
 *  to be done, it will point to one of the below PPUs:
 *  MAIN_PPU
 *  CPUSS_PPU
@@ -117,7 +117,7 @@ enum ppu_v1_mode cy_pd_ppu_get_power_mode(struct ppu_v1_reg *ppu)
 * Sets the required power mode of the particular PPU.
 *
 *  \param ppu
-*  This parameter contains PPU base pointer for which the initialization has 
+*  This parameter contains PPU base pointer for which the initialization has
 *  to be done, it will point to one of the below PPUs:
 *  MAIN_PPU
 *  CPUSS_PPU
@@ -148,7 +148,7 @@ cy_en_syspm_status_t cy_pd_ppu_set_power_mode(struct ppu_v1_reg *ppu, uint32_t m
 * Resets the PD using PPU.
 *
 *  \param ppu
-*  This parameter contains PPU base pointer for which the initialization has 
+*  This parameter contains PPU base pointer for which the initialization has
 *  to be done, it will point to one of the below PPUs:
 *  MAIN_PPU
 *  CPUSS_PPU

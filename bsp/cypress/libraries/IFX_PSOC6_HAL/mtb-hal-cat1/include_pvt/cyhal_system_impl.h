@@ -2,7 +2,7 @@
 * \file cyhal_system_impl.h
 *
 * \brief
-* Provides a PSoC™ Specific interface for interacting with the Infineon power
+* Provides a PSoCâ„¢ Specific interface for interacting with the Infineon power
 * management and system clock configuration. This interface abstracts out the
 * chip specific details. If any chip specific functionality is necessary, or
 * performance is critical the low level functions can be used directly.

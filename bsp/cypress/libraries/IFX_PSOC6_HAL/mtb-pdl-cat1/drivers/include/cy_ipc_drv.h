@@ -72,7 +72,7 @@
 *
 * These transactions are handled transparently by the DRV-level API. Use the
 * PIPE, SEMA and BTSS layers of the API to implement communication in your application.
-* The data transferred is limited to a single 32-bit value in case of PIPE and SEMA and two 
+* The data transferred is limited to a single 32-bit value in case of PIPE and SEMA and two
 * 32-bit value incse of BTIPC. As implemented by
 * the PIPE API, that value is a pointer to a data structure of arbitrary size
 * and complexity.
@@ -116,7 +116,7 @@
 * can modify these files based on the requirements of your design.
 * If you use PSoC Creator as a development environment, it will not overwrite
 * your changes when you generate the application or build your code.
-* 
+*
 * BTSS provides dedicated communication channels for communication between
 * MCU and the BT SS. APIs provided handle exchange of Host Controller Interface (HCI)
 * and High Priority Controller (HPC) packets
@@ -187,13 +187,13 @@
 *
 * A Bluetooth Sub-system (BTSS) layer is a communication channel between the MCU and the BT
 * Sub-system. It uses 4 IPC channels and 2 interrupts. 2 UL channels (one for HCI and HPC each)
-* and 2 DL channels (one for HCI and HPC each). IPC interrupt 0 is used to interrupt the 
+* and 2 DL channels (one for HCI and HPC each). IPC interrupt 0 is used to interrupt the
 * BT SS and IPC interrupt 1 is used to interrupt the MCU.
 * IPC channels 0 is used for HCI UL, channel 1 is used from HCI DL,
 * IPC channels 2 is used for HPC UL, and channel 3 is used from HPC DL.
 * The IPC interrupt gets triggered for both Notify and Release channel.
 * Bluetooth stack interface layer registers a callback function for notification
-* when BT SS sends an HCI packet. It also provides APIs to read the 
+* when BT SS sends an HCI packet. It also provides APIs to read the
 * HCI packets from the BT SS. On the UL path, it supports APIs to send HCI packet
 * from MCU to BT SS.
 *
@@ -201,14 +201,14 @@
 * by packing them into the DATA0 and DATA1 IPC channel registers when payload
 * length is less than or equal to 7 bytes. In case the where the payload length
 * is greater than 7 bytes, it would use the shared memory to send/receive the packet.
-* 
+*
 * This layer support control message communication between the MCU and the BT SS
 * using the HPC channels. The HPC channel is used for power management,
 * IO configuration, access for TRNG, etc. APIs are provided to send HPC packets to the
 * BT SS. It also supports APIs to register the callback function to get notification on receiving
 * the HPC packets from the BT SS. Multiple modules running on the MCU can register
 * callback functions. Maximum number of HPC callbacks supported is decided by
-* the MAX_BT_IPC_HPC_CB macro. All the shared buffer management mechanism 
+* the MAX_BT_IPC_HPC_CB macro. All the shared buffer management mechanism
 * is built into this layer.
 * \note All the HCI APIs are intended to be called by the stack interface layer and
 * not meant to be called by the application developers.
@@ -252,7 +252,7 @@
 * Application code calls Cy_BTIPC_Init() with configuration parameters to set up BTSS IPC
 * functionality. By default, the BT IPC uses IPC channel 0,1,2 and 3.
 * Do <b>not</b> change the IPC channel.
-* 
+*
 * To change the number of callbacks supported, modify this line of code in cy_ipc_bt.h.
 *
 * \code

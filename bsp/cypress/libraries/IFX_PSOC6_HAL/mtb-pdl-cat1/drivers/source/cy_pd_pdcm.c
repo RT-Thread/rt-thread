@@ -59,7 +59,7 @@ cy_pd_pdcm_dep_t cy_pd_pdcm_get_dependency(cy_pd_pdcm_id_t host_pd,cy_pd_pdcm_id
     CY_ASSERT(CY_SYSPM_IS_PDCM_ID_VALID(host_pd));
     CY_ASSERT(CY_SYSPM_IS_PDCM_ID_VALID(dest_pd));
 
-    dep = (((_FLD2VAL(PWRMODE_PD_PD_SPT_PD_FORCE_ON, CY_PDCM_PD_SPT(host_pd)) >> ((uint32_t)dest_pd)) & CY_PD_PDCM_DEPENDENCY_MASK) | 
+    dep = (((_FLD2VAL(PWRMODE_PD_PD_SPT_PD_FORCE_ON, CY_PDCM_PD_SPT(host_pd)) >> ((uint32_t)dest_pd)) & CY_PD_PDCM_DEPENDENCY_MASK) |
             (((_FLD2VAL(PWRMODE_PD_PD_SPT_PD_CONFIG_ON, CY_PDCM_PD_SPT(host_pd)) >> ((uint32_t)dest_pd)) & CY_PD_PDCM_DEPENDENCY_MASK ) << CY_PD_PDCM_DEPENDENCY_MASK));
 
     if((dep == CY_PD_PDCM_DEPENDENCY_CONFIG1) || (dep == CY_PD_PDCM_DEPENDENCY_CONFIG2))

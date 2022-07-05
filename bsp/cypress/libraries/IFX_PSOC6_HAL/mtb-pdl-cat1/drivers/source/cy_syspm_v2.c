@@ -1652,7 +1652,7 @@ void Cy_SysPm_BackupWordReStore(uint32_t wordIndex, uint32_t *wordDstPointer, ui
 
     while(wordSize != 0UL)
     {
-    
+
         if(wordIndex < CY_SRSS_BACKUP_BREG1_START_POS)
         {
             *wordDstPointer = BACKUP_BREG_SET0[wordIndex];

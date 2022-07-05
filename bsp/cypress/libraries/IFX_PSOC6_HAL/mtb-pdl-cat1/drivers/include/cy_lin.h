@@ -378,18 +378,18 @@ typedef enum cy_en_lin_timeout_sel_type
  *****************************************************************************/
 typedef struct cy_stc_lin_config
 {
-    
+
     bool masterMode;                    /**< If TRUE, corresponding channel = master mode, If FALSE, slave mode. */
-    
+
     bool linTransceiverAutoEnable;     /**< If TRUE, corresponding LIN channel transceiver is enabled automatically,
                                          If FALSE, firmware has to handle the transceiver enable signal manually */
-    
+
     uint8_t breakFieldLength;           /**< Break field length. */
-    
+
     cy_en_lin_break_delimiter_length_t breakDelimiterLength; /**< Break delimiter length. See #cy_en_lin_break_delimiter_length_t */
-    
+
     cy_en_lin_stopbit_t stopBit;        /**< Stop bit length. See #cy_en_lin_stopbit_t. */
-    
+
     bool filterEnable;                  /**< If TRUE, lin_rx_in filter operates.
                                         Median 3 operates on the last three "lin_rx_in" values.
                                         The sequences '000', '001', '010' and '100' result in a filtered value '0'.
@@ -400,7 +400,7 @@ typedef struct cy_stc_lin_config
 /**
  *****************************************************************************
  ** \brief LIN Test configuration
- **        This testing functionality simplifies SW development, 
+ **        This testing functionality simplifies SW development,
  **        but may also be used in the field to verify correct channel functionality.
  *****************************************************************************/
 typedef struct cy_stc_lin_test_config
@@ -408,7 +408,7 @@ typedef struct cy_stc_lin_test_config
     uint8_t chidx;                        /**< Specifies the channel index of the channel to which the test applies.
                                              The test mode allows BOTH of the two connected channels to be tested. */
     bool mode;                            /**< When set FALSE, it is partial disconnect from IOSS. Used to observe messages outside of device.
-                                             When Set TRUE, it is full disconnect from IOSS. Used for device test without effecting 
+                                             When Set TRUE, it is full disconnect from IOSS. Used for device test without effecting
                                              operational LIN cluster. */
 }cy_stc_lin_test_config_t;
 
@@ -416,7 +416,7 @@ typedef struct cy_stc_lin_test_config
  *****************************************************************************
  ** \brief LIN Error CTL configuration
  **        Used only for software testing.
- **        It enables HW injected channel transmitter errors. 
+ **        It enables HW injected channel transmitter errors.
  **        The receiver should detect these errors and report these errors through activation of corresponding interrupt causes.
  *****************************************************************************/
 typedef struct cy_stc_lin_test_error_config
@@ -833,7 +833,7 @@ cy_en_lin_status_t Cy_LIN_EnOut_Disable(LIN_CH_Type* base);
  *****************************************************************************
  ** \brief  Enables LIN Testing mode.
  **
- ** This testing functionality simplifies SW development, 
+ ** This testing functionality simplifies SW development,
  ** but may also be used in the field to verify correct channel functionality.
  **
  ** \param  base [in]  Pointer to LIN instance register area.
@@ -851,7 +851,7 @@ cy_en_lin_status_t Cy_LIN_TestMode_Enable(LIN_Type* base, const cy_stc_lin_test_
  *****************************************************************************
  ** \brief  Disables LIN Testing mode.
  **
- ** This testing functionality simplifies SW development, 
+ ** This testing functionality simplifies SW development,
  ** but may also be used in the field to verify correct channel functionality.
  **
  ** \param  base [in]  Pointer to LIN instance register area.
@@ -865,7 +865,7 @@ cy_en_lin_status_t Cy_LIN_TestMode_Disable(LIN_Type* base);
  *****************************************************************************
  ** \brief  Enables LIN ERROR CTL.
  **
- ** Enables HW injected channel transmitter errors. 
+ ** Enables HW injected channel transmitter errors.
  ** The receiver should detect these errors and report these errors through activation of corresponding interrupt causes.
  **
  ** \param  base [in]  Pointer to LIN instance register area.
@@ -880,7 +880,7 @@ cy_en_lin_status_t Cy_LIN_ErrCtl_Enable(LIN_Type* base, cy_stc_lin_test_error_co
  *****************************************************************************
  ** \brief  Disables LIN ERROR CTL.
  **
- ** Disables HW injected channel transmitter errors. 
+ ** Disables HW injected channel transmitter errors.
  **
  ** \param  base [in]  Pointer to LIN instance register area.
  **

@@ -38,7 +38,7 @@ extern "C" {
  * \ingroup group_hal_impl
  * \{
  * \section group_hal_impl_pwm_interconnect Interconnect
- * In PSoC™ PWM channels can configure multiple input and output triggers
+ * In PSoCâ„¢ PWM channels can configure multiple input and output triggers
  * simultaneously. 1 or more input triggers can be configured to initiate
  * different PWM actions (e.g start, stop, reload, etc) with configurable edge
  * detection on that incoming signal. Output triggers are based on certain

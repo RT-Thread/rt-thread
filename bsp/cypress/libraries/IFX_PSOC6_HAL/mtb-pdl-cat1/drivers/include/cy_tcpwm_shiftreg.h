@@ -502,7 +502,7 @@ __STATIC_INLINE uint32_t Cy_TCPWM_ShiftReg_GetCompare1BufVal(TCPWM_Type const *b
 * Function Name: Cy_TCPWM_ShiftReg_EnableCompare0Swap
 ****************************************************************************//**
 *
-* Enables the comparison swap of compare 0 and compareBuf 0 on 
+* Enables the comparison swap of compare 0 and compareBuf 0 on
 * corresponding command or external trigger.
 *
 * \param base
@@ -527,7 +527,7 @@ __STATIC_INLINE void Cy_TCPWM_ShiftReg_EnableCompare0Swap(TCPWM_Type *base, uint
 * Function Name: Cy_TCPWM_ShiftReg_EnableCompare1Swap
 ****************************************************************************//**
 *
-* Enables the comparison swap of compare 1 and compareBuf 1 on 
+* Enables the comparison swap of compare 1 and compareBuf 1 on
 * corresponding command or external trigger.
 *
 * \param base

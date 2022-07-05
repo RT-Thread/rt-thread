@@ -67,7 +67,7 @@ cy_en_i2s_status_t Cy_I2S_Init(I2S_Type * base, cy_stc_i2s_config_t const * conf
         REG_I2S_CTL(base) = 0UL; /* Disable TX/RX sub-blocks before clock changing */
 
         /* The clock setting */
-       
+
 #if (CY_IP_MXAUDIOSS_VERSION>=2)
         REG_I2S_CLOCK_CTL(base) = _VAL2FLD(I2S_CLOCK_CTL_CLOCK_DIV, clockDiv) |
                                   _BOOL2FLD(I2S_CLOCK_CTL_CLOCK_SEL, config->extClk) |

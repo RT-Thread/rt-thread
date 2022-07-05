@@ -25,7 +25,7 @@
 /**
 * \addtogroup group_pd_pdcm             PDCM         (Power Dependency Control Matrix)
 * \{
-* PDCM driver provides APIs for controlling the Power Dependency Control Matrix 
+* PDCM driver provides APIs for controlling the Power Dependency Control Matrix
 * across Power Domains
 *
 * The functions and other declarations used in this driver are in cy_pd_pdcm.h.

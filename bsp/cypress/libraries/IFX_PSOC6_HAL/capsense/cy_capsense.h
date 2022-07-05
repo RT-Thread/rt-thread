@@ -403,8 +403,8 @@
 * </table>
 *
 * \note
-* * To select values for the Scan mode and Sensor connection method parameters (for the fifth-generation of the CAPSENSE&trade; HW) 
-* navigate to the Advanced tab in the CAPSENSE&trade; Configurator tool, and then select the General settings sub-tab. 
+* * To select values for the Scan mode and Sensor connection method parameters (for the fifth-generation of the CAPSENSE&trade; HW)
+* navigate to the Advanced tab in the CAPSENSE&trade; Configurator tool, and then select the General settings sub-tab.
 *
 * * For the forth-generation of the CAPSENSE&trade; HW, the IntDrv mode with the AMUX sensor connection type is available only.
 *

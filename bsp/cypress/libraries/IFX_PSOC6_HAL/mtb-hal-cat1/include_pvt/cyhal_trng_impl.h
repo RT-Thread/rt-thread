@@ -2,7 +2,7 @@
 * \file cyhal_trng_impl.h
 *
 * \brief
-* Provides an implementation of the ModusToolbox™ TRNG HAL API.
+* Provides an implementation of the ModusToolboxâ„¢ TRNG HAL API.
 *
 ********************************************************************************
 * \copyright

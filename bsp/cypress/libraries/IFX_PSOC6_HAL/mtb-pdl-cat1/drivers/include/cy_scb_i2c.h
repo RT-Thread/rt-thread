@@ -45,7 +45,7 @@
 * * Supports standard data rates of 100/400/1000 kbps
 * * Hardware Address Match, multiple addresses
 * * Wake from Deep Sleep on Address Match
-* 
+*
 * \note
 * I2C supports clock stretching. This occurs when a slave device is not capable
 * of processing data, it holds the SCL line by driving a '0'. The master device monitors

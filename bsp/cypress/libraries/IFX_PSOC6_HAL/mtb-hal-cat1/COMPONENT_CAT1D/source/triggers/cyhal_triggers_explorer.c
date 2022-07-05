@@ -32,12 +32,12 @@
 
 const uint16_t cyhal_sources_per_mux[7] =
 {
-    62, 3, 21, 73, 3, 65, 8, 
+    62, 3, 21, 73, 3, 65, 8,
 };
 
 const bool cyhal_is_mux_1to1[7] =
 {
-    false, false, false, false, false, false, true, 
+    false, false, false, false, false, false, true,
 };
 
 const _cyhal_trigger_source_explorer_t cyhal_mux0_sources[62] =
@@ -305,13 +305,13 @@ const _cyhal_trigger_source_explorer_t cyhal_mux6_sources[8] =
 
 const _cyhal_trigger_source_explorer_t* cyhal_mux_to_sources[7] =
 {
-    cyhal_mux0_sources, 
-    cyhal_mux1_sources, 
-    cyhal_mux2_sources, 
-    cyhal_mux3_sources, 
-    cyhal_mux4_sources, 
-    cyhal_mux5_sources, 
-    cyhal_mux6_sources, 
+    cyhal_mux0_sources,
+    cyhal_mux1_sources,
+    cyhal_mux2_sources,
+    cyhal_mux3_sources,
+    cyhal_mux4_sources,
+    cyhal_mux5_sources,
+    cyhal_mux6_sources,
 };
 
 const uint8_t cyhal_dest_to_mux[69] =

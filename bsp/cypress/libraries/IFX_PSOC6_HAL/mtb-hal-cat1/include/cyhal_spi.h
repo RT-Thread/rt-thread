@@ -83,7 +83,7 @@
 * \section subsection_spi_moreinfor More Information
 *
 * * <a href="https://github.com/infineon/mtb-example-psoc6-spi-master"><b>mtb-example-psoc6-spi-master</b></a>: This example project demonstrates
-* use of SPI (HAL) resource in PSoC® 6 MCU in Master mode to write data to an SPI slave.
+* use of SPI (HAL) resource in PSoCÂ® 6 MCU in Master mode to write data to an SPI slave.
 *
 */
 

@@ -32,9 +32,9 @@
 * API to manage PDM-PCM conversion. A PDM-PCM converter is used
 * to convert 1-bit digital audio streaming data to PCM data.
 *
-* The functions and other declarations used in this driver are in cy_pdm_pcm_v2.h. 
-* You can include cy_pdl.h (ModusToolbox only) to get access to all functions 
-* and declarations in the PDL. 
+* The functions and other declarations used in this driver are in cy_pdm_pcm_v2.h.
+* You can include cy_pdl.h (ModusToolbox only) to get access to all functions
+* and declarations in the PDL.
 *
 * Features:
 *        - Supports up to 8 PDM receivers
@@ -76,7 +76,7 @@
 * to the appropriate decimation rate, wordLen, and wordBitExtension.
 * No other parameters are necessary for this example.
 *
-* To initialize the PDM-PCM channels, call \ref Cy_PDM_PCM_Channel_Init function, providing the 
+* To initialize the PDM-PCM channels, call \ref Cy_PDM_PCM_Channel_Init function, providing the
 * filled \ref cy_stc_pdm_pcm_channel_config_t structure
 * To initialize the PDM-PCM block, call the \ref Cy_PDM_PCM_Init function, providing the
 * filled \ref cy_stc_pdm_pcm_config_v2_t structure.
@@ -273,53 +273,53 @@ typedef enum
 /******************************************************************************
  * Global type definitions
  ******************************************************************************/
- 
+
  /** PDM-PCM Test Mode configuration */
  typedef struct
  {
      uint8_t drive_delay_hi;                /**< Interface drive delay on the high phase of the PDM interface clock.
-                                             This field specifies when a PDM value is driven expressed in clk_if clock cycles. 
+                                             This field specifies when a PDM value is driven expressed in clk_if clock cycles.
                                              DRIVE_DELAY should be set in the range [0, IF_CTL.CLOCK_DIV]:
                                             "0": Drive PDM value 1 clk_if cycle after the rising edge of clk_pdm.
                                             "1": Drive PDM value 2 clk_if cycles after the rising edge of clk_pdm.
                                             ...
                                             "255": Drive PDM value 256 clk_if cycles after the rising edge of clk_pdm*/
-     uint8_t drive_delay_lo;                /**< Interface drive delay on the low phase of the PDM interface clock. 
-                                             This field specifies when a PDM value is driven expressed in clk_if clock cycles. 
+     uint8_t drive_delay_lo;                /**< Interface drive delay on the low phase of the PDM interface clock.
+                                             This field specifies when a PDM value is driven expressed in clk_if clock cycles.
                                              DRIVE_DELAY should be set in the range [0, IF_CTL.CLOCK_DIV]:
                                             "0": Drive PDM value 1 clk_if cycle after the rising edge of clk_pdm.
                                             "1": Drive PDM value 2 clk_if cycles after the rising edge of clk_pdm.
                                             ...
                                             "255": Drive PDM value 256 clk_if cycles after the rising edge of clk_pdm*/
-     uint8_t mode_hi;                        /**< Pattern generator mode on the high phase of the PDM interface clock. 
+     uint8_t mode_hi;                        /**< Pattern generator mode on the high phase of the PDM interface clock.
                                             This field specifies the type of pattern driven by the generator:
                                             "0": constant 0's
                                             "1": constant 1's
                                             "2": alternating 0's and 1's (clock pattern)
                                             "3": sine wave */
-     uint8_t mode_lo;                        /**< Pattern generator mode on the low phase of the PDM interface clock. 
+     uint8_t mode_lo;                        /**< Pattern generator mode on the low phase of the PDM interface clock.
                                             This field specifies the type of pattern driven by the generator:
                                             "0": constant 0's
                                             "1": constant 1's
                                             "2": alternating 0's and 1's (clock pattern)
                                             "3": sine wave */
      uint8_t audio_freq_div;                /**< Frequency division factor (legal range [3, 13]) to obtain audio frequency
-                                            from the PDM clock frequency. This field determines the frequency of the sine wave 
+                                            from the PDM clock frequency. This field determines the frequency of the sine wave
                                             generated by the pattern generator when MODE=3. The formula is below:
                                             Sine wave Frequency = PDM clock frequency / 2p*2^(AUDIO_FREQ_DIV) */
      bool    enable;            /**<  enable*/
-     
-     
+
+
  }cy_stc_test_config_t;
- 
+
  /** PDM-PCM fir coeff_data structure */
  typedef struct
  {
-     
+
     int16_t         coeff_data0;            /**<  filter taps coefficients data 0*/
     int16_t         coeff_data1;            /**<  filter taps coefficients data 1*/
  }cy_stc_pdm_pcm_fir_coeff_t;
- 
+
  /** PDM-PCM Channel initialization configuration */
  typedef struct
  {
@@ -329,25 +329,25 @@ typedef enum
     bool                                 signExtension;  /**< Word extension type:
                                                         - 0: extension by zero
                                                         - 1: extension by sign bits */
-                                                        
-    uint8_t                              rxFifoTriggerLevel;  /**< Fifo interrupt trigger level (in words), 
+
+    uint8_t                              rxFifoTriggerLevel;  /**< Fifo interrupt trigger level (in words),
                                                         range: 0 - 63  */
-                                                        
+
     bool                                fir0_enable;    /**< FIR 0 filter coefficient enable (does NOT effect FIR filter scaling and FIR filter decimation):
                                                          - 0: Disabled
                                                          - 1: Enabled */
 
-                                                            
+
     cy_en_pdm_pcm_ch_cic_decimcode_t     cic_decim_code; /**< CIC filter decimation. The CIC filter PCM frequency is a fraction of the PDM frequency. \ref cy_en_pdm_pcm_ch_cic_decimcode_t */
-    
+
     cy_en_pdm_pcm_ch_fir0_decimcode_t    fir0_decim_code;/**< FIR filter decimation. The FIR filter PCM frequency is a fraction of the CIC filter PCM frequency. \ref cy_en_pdm_pcm_ch_fir0_decimcode_t */
-                                                            
+
     uint8_t                                fir0_scale;        /**< FIR 0 filter PCM scaling. range 0-31 */
 
     cy_en_pdm_pcm_ch_fir1_decimcode_t    fir1_decim_code;/**< FIR filter decimation. The FIR filter PCM frequency is a fraction of the FIR0 filter PCM frequency. \ref cy_en_pdm_pcm_ch_fir1_decimcode_t */
-                                                            
+
     uint8_t                                fir1_scale;        /**< FIR 1 filter PCM scaling. range 0 to 31 */
-                                                            
+
     bool                                   dc_block_disable;  /**< Disables DC BLOCK if set to true. This is for debug only. To be used for test modes 0,1 and 2 in test config ie. if the input is constant 0's or constant 1's or alternating 0's and 1's*/
 
     cy_en_pdm_pcm_ch_dcblock_coef_t        dc_block_code;    /**< DC blocker coefficient. \ref cy_en_pdm_pcm_ch_dcblock_coef_t*/
@@ -363,23 +363,23 @@ typedef struct
     cy_en_pdm_pcm_clock_sel_t           clksel;         /**< Interface clock clk_if selection. \ref cy_en_pdm_pcm_clock_sel_t */
     cy_en_pdm_pcm_halve_rate_sel_t      halverate;      /**< Halve rate sampling. \ref cy_en_pdm_pcm_halve_rate_sel_t*/
     uint8_t                             route;          /**< Specifies what IOSS data input signal "pdm_data[]" is routed to a specific PDM receiver.
-                                                        Each PDM receiver j has a dedicated     1-bit control field: PDM receiver j uses DATA_SEL[j]. 
+                                                        Each PDM receiver j has a dedicated     1-bit control field: PDM receiver j uses DATA_SEL[j].
                                                         The 1-bit field DATA_SEL[j] specification is as follows:
                                                         '0': PDM receiver j uses data input signal "pdm_data[j]".
                                                         '1': PDM receiver j uses data input signal "pdm_data[j ^ 1]" (the lower bit of the index is inverted)*/
-    
-    
+
+
     uint8_t fir0_coeff_user_value;    /**< FIR 0 filter coefficient enable. User has to configure the coeff values. 0: Disabled. 1: Enabled*/
 
     uint8_t fir1_coeff_user_value;    /**< FIR 1 filter coefficient enable. User has to configure the coeff values. 0: Disabled. 1: Enabled*/
 
     cy_stc_pdm_pcm_fir_coeff_t             fir0_coeff[8];   /**<  The (symmetric) 30-taps finite impulse response (FIR) filter with 14-bit signed coefficients
                                                             (in the range [-8192, 8191]) are specified by FIR0_COEFF0, ..., FIR0_COEFF7.
-                                                            The FIR filter coefficients have no default values: 
+                                                            The FIR filter coefficients have no default values:
                                                             the coefficients MUST be programmed BEFORE the filter is enabled.
                                                             By Default FIR0 is disabled and is only used for 8Khz and 16 Khz sample frequencies*/
 
-    cy_stc_pdm_pcm_fir_coeff_t             fir1_coeff[14];        /**< The (symmetric) 55-taps finite impulse response (FIR) filter 
+    cy_stc_pdm_pcm_fir_coeff_t             fir1_coeff[14];        /**< The (symmetric) 55-taps finite impulse response (FIR) filter
                                                             with 14-bit signed coefficients (in the range [-8192, 8191])
                                                             are specified by FIR1_COEFF0, ..., FIR1_COEFF13.
                                                             The (default) FIR filter has built in droop correction.
@@ -450,7 +450,7 @@ typedef cy_stc_pdm_pcm_config_v2_t cy_stc_pdm_pcm_config_t;
                                 _VAL2FLD(PDM_TEST_CTL_MODE_LO, PDM_TEST_CTL_MODE_LO_DEFAULT) | \
                                 _VAL2FLD(PDM_TEST_CTL_AUDIO_FREQ_DIV, PDM_TEST_CTL_AUDIO_FREQ_DIV_DEFAULT) | \
                                 _VAL2FLD(PDM_TEST_CTL_CH_ENABLED, PDM_TEST_CTL_CH_ENABLED_DEFAULT))
-                                
+
 #define CY_PDM_PCM_CLK_CTL_DEFAULT (_VAL2FLD(PDM_CLOCK_CTL_CLOCK_DIV, PDM_CLOCK_CTL_CLOCK_DIV_DEFAULT) | \
                                 _VAL2FLD(PDM_CLOCK_CTL_CLOCK_SEL, PDM_CLOCK_CTL_CLOCK_SEL_DEFAULT) | \
                                 _VAL2FLD(PDM_CLOCK_CTL_HALVE, PDM_CLOCK_CTL_HALVE_DEFAULT))
@@ -458,11 +458,11 @@ typedef cy_stc_pdm_pcm_config_v2_t cy_stc_pdm_pcm_config_t;
 #define CY_PDM_PCM_CH_CTL_DEFAULT (_VAL2FLD(PDM_CH_CTL_WORD_SIZE, CY_PDM_PCM_CH_CTL_WORDSIZE_DEFAULT) | \
                                 _VAL2FLD(PDM_CH_CTL_WORD_SIGN_EXTEND, CY_PDM_PCM_CH_CTL_WORDSIGN_EXT_DEFAULT) | \
                                 _VAL2FLD(PDM_CH_CTL_ENABLED, CY_PDM_PCM_CH_CTL_CH_ENABLE_DEFAULT))
-                                
+
 #define CY_PDM_PCM_CH_FIR1_DEFAULT (_VAL2FLD(PDM_CH_FIR1_CTL_DECIM2, CY_PDM_PCM_CH_FIR1_DECIM_CODE_DEFAULT) | \
                                 _VAL2FLD(PDM_CH_FIR1_CTL_SCALE, CY_PDM_PCM_CH_FIR1_SCALE_DEFAULT) | \
                                 _VAL2FLD(PDM_CH_FIR1_CTL_ENABLED, CY_PDM_PCM_CH_FIR1_ENABLE_DEFAULT))
-                                
+
 #define CY_PDM_PCM_CH_DCBLOCK_DEFAULT (_VAL2FLD(PDM_CH_DC_BLOCK_CTL_CODE, CY_PDM_PCM_CH_DCBLOCK_CODE_DEFAULT) | \
                                 _VAL2FLD(PDM_CH_DC_BLOCK_CTL_ENABLED, CY_PDM_PCM_CH_DCBLOCK_ENABLE_DEFAULT))
 
@@ -476,10 +476,10 @@ typedef cy_stc_pdm_pcm_config_v2_t cy_stc_pdm_pcm_config_t;
                                                 ((clksel) == CY_PDM_PCM_SEL_PDM_DATA0)       || \
                                                 ((clksel) == CY_PDM_PCM_SEL_PDM_DATA1)    || \
                                                 ((clksel) == CY_PDM_PCM_SEL_OFF))
-                                                
+
 #define CY_PDM_PCM_IS_HALVE_RATE_SET_VALID(halverate) (((halverate) == CY_PDM_PCM_RATE_FULL)  || \
                                                        ((halverate) == CY_PDM_PCM_RATE_HALVE))
-                                                       
+
 #define CY_PDM_PCM_IS_ROUTE_VALID(route)        ((route) <= 126)
 
 #define CY_PDM_PCM_IS_CH_SET_VALID(chanselect)    (((chanselect) >= 1U) && ((chanselect) <= 255))
@@ -495,7 +495,7 @@ typedef cy_stc_pdm_pcm_config_v2_t cy_stc_pdm_pcm_config_t;
                                                 ((wordSize) == CY_PDM_PCM_WSIZE_20_BIT) || \
                                                 ((wordSize) == CY_PDM_PCM_WSIZE_24_BIT) || \
                                                 ((wordSize) == CY_PDM_PCM_WSIZE_32_BIT))
-                                                
+
 #define CY_PDM_PCM_IS_SCALE_VALID(scale)        ((scale) <= 31)
 
 #define CY_PDM_PCM_IS_ENABLE_VALID(enable)         ((enable == 0)||(enable == 1))
@@ -563,7 +563,7 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_ReadFifoSilent(PDM_Type const * base
 __STATIC_INLINE void Cy_PDM_PCM_Channel_Enable(PDM_Type * base, uint8_t channel_num)
 {
     PDM_PCM_CH_CTL(base,channel_num) |= PDM_CH_CTL_ENABLED_Msk;
-    
+
 }
 
 /******************************************************************************
@@ -579,7 +579,7 @@ __STATIC_INLINE void Cy_PDM_PCM_Channel_Enable(PDM_Type * base, uint8_t channel_
 __STATIC_INLINE void Cy_PDM_PCM_Channel_Disable(PDM_Type * base, uint8_t channel_num)
 {
     PDM_PCM_CH_CTL(base,channel_num) &= (uint32_t) ~PDM_CH_CTL_ENABLED_Msk;
-    
+
 }
 
 /******************************************************************************
@@ -669,8 +669,8 @@ __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Cic_DecimCode(PDM_Type * base, uint
 ***************************************************************************//**
 *
 * Sets  PDM-PCM FIR0 Filter Decim code and Scale.
-* The FIR filter coefficients have no default values: 
-* the coefficients MUST be programmed BEFORE the filter is enabled.    
+* The FIR filter coefficients have no default values:
+* the coefficients MUST be programmed BEFORE the filter is enabled.
 * By Default FIR0 is disabled and is only used for 8Khz and 16 Khz sample frequencies.
 * For other frequencies it is a pass through.
 *
@@ -735,8 +735,8 @@ __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_DCblock(PDM_Type * base, uint8_t ch
 * Sets one or more PDM-PCM interrupt factor bits (sets the INTR_MASK register).
 *
 * \param base The pointer to the PDM-PCM instance address
-* \param channel_num Channel number 
-* \param interrupt Interrupt bit mask 
+* \param channel_num Channel number
+* \param interrupt Interrupt bit mask
 * \ref group_pdm_pcm_macros_interrupt_masks_v2.
 *
 ******************************************************************************/
@@ -807,7 +807,7 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_GetInterruptStatus(PDM_Type const * 
 *
 * \param base The pointer to the PDM-PCM instance address
 * \param channel_num Channel number
-* \param interrupt 
+* \param interrupt
 *  The interrupt bit mask \ref group_pdm_pcm_macros_interrupt_masks_v2.
 *
 ******************************************************************************/

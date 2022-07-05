@@ -2,7 +2,7 @@
 * \file cyhal_interconnect_impl.h
 *
 * \brief
-* Implementation details for the PSoC™ 4/6 interconnect.
+* Implementation details for the PSoCâ„¢ 4/6 interconnect.
 *
 ********************************************************************************
 * \copyright

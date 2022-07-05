@@ -550,7 +550,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Ctr(CRYPTO_Type *base,
 
     return (CY_CRYPTO_SUCCESS);
 }
-                                            
+
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
 #endif /* #if (CPUSS_CRYPTO_AES == 1) */
 

@@ -41,7 +41,7 @@
 * signals. The signals are typically provided by a speed/position feedback system mounted on
 * a motor or trackball. The driver allows the user to invoke a callback function when a
 * particular event occurs.
-* The signals, typically called A and B, are positioned 90° out-of-phase, which results in a Gray
+* The signals, typically called A and B, are positioned 90Â° out-of-phase, which results in a Gray
 * code output (a sequence where only one bit changes on each count). It also allows detection of
 * direction and relative position. A third optional signal, named index, is used as a reference
 * to establish an absolute position once per rotation.

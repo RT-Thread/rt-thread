@@ -157,7 +157,7 @@ extern "C" {
 #define CY_SMIF_QE_BIT_STATUS_REG2_T1               (0x02U)                 /**< The QE bit is in status register 2 type 1.
                                                                             * It should be written as the second byte.
                                                                             */
-#define CY_SMIF_FAST_READ_4_BYTES_CMD_1S_1S_1S      (0x0CU)                 /**< The command for a 1S-1S-1S SMIF fast read with 4-byte addressing */ 
+#define CY_SMIF_FAST_READ_4_BYTES_CMD_1S_1S_1S      (0x0CU)                 /**< The command for a 1S-1S-1S SMIF fast read with 4-byte addressing */
 #define CY_SMIF_FAST_READ_4_BYTES_CMD_1S_1S_2S      (0x3CU)                 /**< The command for a 1S-1S-2S SMIF fast read with 4-byte addressing */
 #define CY_SMIF_FAST_READ_4_BYTES_CMD_1S_2S_2S      (0xBCU)                 /**< The command for a 1S-2S-2S SMIF fast read with 4-byte addressing */
 #define CY_SMIF_FAST_READ_4_BYTES_CMD_1S_1S_4S      (0x6CU)                 /**< The command for a 1S-1S-4S SMIF fast read with 4-byte addressing */
@@ -186,18 +186,18 @@ extern "C" {
 #define CY_SMIF_SFDP_ERASE_TIME_16MS                (16U)                   /**< Units of Erase Typical Time in ms */
 #define CY_SMIF_SFDP_ERASE_TIME_128MS               (128U)                  /**< Units of Erase Typical Time in ms */
 #define CY_SMIF_SFDP_ERASE_TIME_1S                  (1000U)                 /**< Units of Erase Typical Time in ms */
-            
+
 #define CY_SMIF_SFDP_CHIP_ERASE_TIME_16MS           (16U)                   /**< Units of Chip Erase Typical Time in ms */
 #define CY_SMIF_SFDP_CHIP_ERASE_TIME_256MS          (256U)                  /**< Units of Chip Erase Typical Time in ms */
 #define CY_SMIF_SFDP_CHIP_ERASE_TIME_4S             (4000U)                 /**< Units of Chip Erase Typical Time in ms */
 #define CY_SMIF_SFDP_CHIP_ERASE_TIME_64S            (64000U)                /**< Units of Chip Erase Typical Time in ms */
-            
+
 #define CY_SMIF_SFDP_PROG_TIME_8US                  (8U)                    /**< Units of Page Program Typical Time in us */
 #define CY_SMIF_SFDP_PROG_TIME_64US                 (64U)                   /**< Units of Page Program Typical Time in us */
 
 #define CY_SMIF_SFDP_PROG_TIME_DEFAULT              (100000U)               /**< Default Page Program Time in us - 100 ms */
 #define CY_SMIF_SFDP_PAGE_SIZE_DEFAULT              (256U)                  /**< Default Page size used for SFDP 1.0 devices */
-            
+
 #define CY_SMIF_SFDP_UNIT_0                         (0U)                    /**< Units of Basic Flash Parameter Table Time Parameters */
 #define CY_SMIF_SFDP_UNIT_1                         (1U)                    /**< Units of Basic Flash Parameter Table Time Parameters */
 #define CY_SMIF_SFDP_UNIT_2                         (2U)                    /**< Units of Basic Flash Parameter Table Time Parameters */
@@ -390,7 +390,7 @@ extern "C" {
 
 /** \cond INTERNAL */
 /*******************************************************************************
-* These are legacy constants and API. They are left here just 
+* These are legacy constants and API. They are left here just
 * for backward compatibility.
 * Do not use them in new designs.
 *******************************************************************************/
@@ -405,7 +405,7 @@ extern "C" {
 #define CY_SMIF_WR_DISABLE_CMD                      CY_SMIF_WRITE_DISABLE_CMD
 #define CY_SMIF_RD_STS_REG1_CMD                     CY_SMIF_READ_STATUS_REG1_CMD
 #define CY_SMIF_WR_ENABLE_CMD                       CY_SMIF_WRITE_ENABLE_CMD
-#define CY_SMIF_RD_STS_REG2_T1_CMD                  CY_SMIF_READ_STATUS_REG2_T1_CMD          
+#define CY_SMIF_RD_STS_REG2_T1_CMD                  CY_SMIF_READ_STATUS_REG2_T1_CMD
 #define CY_SMIF_WR_STS_REG2_CMD                     CY_SMIF_WRITE_STATUS_REG2_CMD
 #define CY_SMIF_RD_STS_REG2_T2_CMD                  CY_SMIF_READ_STATUS_REG2_T2_CMD
 #define CY_SMIF_QE_BIT_STS_REG2_T1                  CY_SMIF_QE_BIT_STATUS_REG2_T1
@@ -414,16 +414,16 @@ extern "C" {
 #define Cy_SMIF_Memslot_Init                        Cy_SMIF_MemInit
 #define Cy_SMIF_Memslot_DeInit                      Cy_SMIF_MemDeInit
 #define Cy_SMIF_Memslot_CmdWriteEnable              Cy_SMIF_MemCmdWriteEnable
-#define Cy_SMIF_Memslot_CmdWriteDisable             Cy_SMIF_MemCmdWriteDisable        
-#define Cy_SMIF_Memslot_IsBusy                      Cy_SMIF_MemIsBusy  
-#define Cy_SMIF_Memslot_QuadEnable                  Cy_SMIF_MemQuadEnable 
-#define Cy_SMIF_Memslot_CmdReadSts                  Cy_SMIF_MemCmdReadStatus 
+#define Cy_SMIF_Memslot_CmdWriteDisable             Cy_SMIF_MemCmdWriteDisable
+#define Cy_SMIF_Memslot_IsBusy                      Cy_SMIF_MemIsBusy
+#define Cy_SMIF_Memslot_QuadEnable                  Cy_SMIF_MemQuadEnable
+#define Cy_SMIF_Memslot_CmdReadSts                  Cy_SMIF_MemCmdReadStatus
 #define Cy_SMIF_Memslot_CmdWriteSts                 Cy_SMIF_MemCmdWriteStatus
 #define Cy_SMIF_Memslot_CmdChipErase                Cy_SMIF_MemCmdChipErase
 #define Cy_SMIF_Memslot_CmdSectorErase              Cy_SMIF_MemCmdSectorErase
 #define Cy_SMIF_Memslot_SfdpDetect                  Cy_SMIF_MemSfdpDetect
 #define Cy_SMIF_Memslot_CmdProgram                  Cy_SMIF_MemCmdProgram
-#define Cy_SMIF_Memslot_CmdRead                     Cy_SMIF_MemCmdRead 
+#define Cy_SMIF_Memslot_CmdRead                     Cy_SMIF_MemCmdRead
 
 #define PARAM_ID_MSB_OFFSET                         (0x08U)  /* The offset of Parameter ID MSB */
 #define PARAM_ID_LSB_MASK                           (0xFFUL) /* The mask of Parameter ID LSB */
@@ -532,12 +532,12 @@ typedef struct
 */
 typedef struct
 {
-    uint32_t numOfAddrBytes;                              /**< This specifies the number of address bytes used by the 
+    uint32_t numOfAddrBytes;                              /**< This specifies the number of address bytes used by the
                                                           * memory slave device, valid values 1-4 */
     uint32_t memSize;                                     /**< The memory size: For densities of 2 gigabits or less - the size in bytes;
                                                           * For densities 4 gigabits and above - bit-31 is set to 1b to define that
-                                                          * this memory is 4 gigabits and above; and other 30:0 bits define N where 
-                                                          * the density is computed as 2^N bytes. 
+                                                          * this memory is 4 gigabits and above; and other 30:0 bits define N where
+                                                          * the density is computed as 2^N bytes.
                                                           * For example, 0x80000021 corresponds to 2^30 = 1 gigabyte.
                                                           */
     cy_stc_smif_mem_cmd_t* readCmd;                       /**< This specifies the Read command */
@@ -573,7 +573,7 @@ typedef struct
 #endif
 } cy_stc_smif_mem_device_cfg_t;
 
- 
+
 /**
 *
 * This SMIF memory configuration structure is used to store the memory configuration for the memory mode of operation.
@@ -705,18 +705,18 @@ cy_en_smif_status_t Cy_SMIF_MemInitSfdpMode(SMIF_Type *base,
 
 cy_en_smif_status_t Cy_SMIF_MemIsReady(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
                                        uint32_t timeoutUs, cy_stc_smif_context_t const *context);
-cy_en_smif_status_t Cy_SMIF_MemIsQuadEnabled(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
+cy_en_smif_status_t Cy_SMIF_MemIsQuadEnabled(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
                                              bool *isQuadEnabled, cy_stc_smif_context_t const *context);
-cy_en_smif_status_t Cy_SMIF_MemEnableQuadMode(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
+cy_en_smif_status_t Cy_SMIF_MemEnableQuadMode(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
                                               uint32_t timeoutUs, cy_stc_smif_context_t const *context);
-cy_en_smif_status_t Cy_SMIF_MemRead(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
-                                    uint32_t address, uint8_t rxBuffer[], 
+cy_en_smif_status_t Cy_SMIF_MemRead(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
+                                    uint32_t address, uint8_t rxBuffer[],
                                     uint32_t length, cy_stc_smif_context_t const *context);
-cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
-                                     uint32_t address, uint8_t const txBuffer[], 
-                                     uint32_t length, cy_stc_smif_context_t const *context); 
-cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
-                                           uint32_t address, uint32_t length, 
+cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
+                                     uint32_t address, uint8_t const txBuffer[],
+                                     uint32_t length, cy_stc_smif_context_t const *context);
+cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
+                                           uint32_t address, uint32_t length,
                                            cy_stc_smif_context_t const *context);
 cy_en_smif_status_t Cy_SMIF_MemEraseChip(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
                                          cy_stc_smif_context_t const *context);

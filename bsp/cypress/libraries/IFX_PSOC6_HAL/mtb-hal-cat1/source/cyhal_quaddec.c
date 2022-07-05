@@ -320,7 +320,7 @@ cy_rslt_t cyhal_quaddec_init(cyhal_quaddec_t *obj, cyhal_gpio_t phi_a, cyhal_gpi
                     NULL, NULL, _cyhal_quaddec_get_phy_a_input_dest, &obj->tcpwm.resource);
                 _cyhal_quaddec_get_phy_a_input_dest_trig_idx++;
             } while (CY_RSLT_SUCCESS != rslt &&
-                    _cyhal_quaddec_get_phy_a_input_dest_trig_idx 
+                    _cyhal_quaddec_get_phy_a_input_dest_trig_idx
                     < _CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[obj->tcpwm.resource.block_num]);
         }
     }
@@ -354,7 +354,7 @@ cy_rslt_t cyhal_quaddec_init(cyhal_quaddec_t *obj, cyhal_gpio_t phi_a, cyhal_gpi
     if (rslt == CY_RSLT_SUCCESS)
     {
         #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) // already initialized above
-    	obj->tcpwm.inputs[phy_a_idx] = phy_a_src;;
+        obj->tcpwm.inputs[phy_a_idx] = phy_a_src;;
         rslt = cyhal_quaddec_connect_digital(obj, obj->tcpwm.inputs[phy_a_idx], CYHAL_QUADDEC_INPUT_PHI_A);
         #else
         rslt = _cyhal_quadec_pin_init(obj, phi_a, &(obj->phi_a), CYHAL_SIGNAL_TYPE_LEVEL, CYHAL_QUADDEC_INPUT_PHI_A);
