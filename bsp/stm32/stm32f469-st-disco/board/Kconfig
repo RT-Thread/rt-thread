@@ -15,6 +15,31 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_TOUCH
         default n
 
+    config BSP_USING_ARDUINO
+        bool "Support Arduino"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM3
+        select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM3_CH2
+        select BSP_USING_PWM12
+        select BSP_USING_PWM12_CH1
+        select BSP_USING_PWM12_CH2
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_MSTIMER2
+        default n
+        
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
@@ -102,6 +127,62 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH2
+                    bool "Enable PWM2 channel2"
+                    default n
+            endif
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH3
+                    bool "Enable PWM2 channel3"
+                    default n
+            endif
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output PWM"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH1
+                    bool "Enable PWM3 channel1"
+                    default n
+            endif
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
+                    default n
+            endif
+        menuconfig BSP_USING_PWM12
+            bool "Enable timer12 output PWM"
+            default n
+            if BSP_USING_PWM12
+                config BSP_USING_PWM12_CH1
+                    bool "Enable PWM12 channel1"
+                    default n
+            endif
+            if BSP_USING_PWM12
+                config BSP_USING_PWM12_CH2
+                    bool "Enable PWM12 channel2"
+                    default n
+            endif
+        endif
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
