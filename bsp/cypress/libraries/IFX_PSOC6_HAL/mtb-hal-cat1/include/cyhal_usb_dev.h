@@ -84,7 +84,7 @@
 * The following section shows how to add endpoint to the USB device and configure the endpoint using
 * \ref cyhal_usb_dev_endpoint_add. The interrupts associated with the endpoints are handled by a
 * callback function registered using \ref cyhal_usb_dev_register_endpoint_callback.
-* The endpoint can also be configured using <a href="https://www.cypress.com/ModusToolboxUSBConfig">ModusToolbox™ USB Configurator</a>
+* The endpoint can also be configured using <a href="https://www.cypress.com/ModusToolboxUSBConfig">ModusToolboxâ„¢ USB Configurator</a>
 *
 * \snippet hal_usb_dev.c snippet_cyhal_usb_dev_endpoint
 */

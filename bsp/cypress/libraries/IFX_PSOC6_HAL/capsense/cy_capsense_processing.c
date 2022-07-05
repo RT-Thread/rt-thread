@@ -709,7 +709,7 @@ uint32_t Cy_CapSense_DpProcessCsdWidgetRawCounts(
             }
         }
     }
-    
+
     #if (CY_CAPSENSE_ENABLE == CY_CAPSENSE_MULTI_FREQUENCY_SCAN_EN)
         ptrSnsCxtSns = ptrWdCfg->ptrSnsContext;
         for (snsIndex = ptrWdCfg->numSns; snsIndex-- > 0u;)
@@ -1563,7 +1563,7 @@ void Cy_CapSense_DpProcessCsxTouchpad(
 }
 #endif /* (CY_CAPSENSE_DISABLE != CY_CAPSENSE_CSX_TOUCHPAD_EN) */
 
-#if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_MULTI_FREQUENCY_SCAN_EN) 
+#if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_MULTI_FREQUENCY_SCAN_EN)
 /*******************************************************************************
 * Function Name: Cy_CapSense_RunMfsFiltering
 ****************************************************************************//**

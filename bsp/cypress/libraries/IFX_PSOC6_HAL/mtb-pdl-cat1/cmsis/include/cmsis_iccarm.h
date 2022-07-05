@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 //
 // Copyright (c) 2017-2019 IAR Systems
-// Copyright (c) 2017-2019 Arm Limited. All rights reserved. 
+// Copyright (c) 2017-2019 Arm Limited. All rights reserved.
 //
 // SPDX-License-Identifier: Apache-2.0
 //

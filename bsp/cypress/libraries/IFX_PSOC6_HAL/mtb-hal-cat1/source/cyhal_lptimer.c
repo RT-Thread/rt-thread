@@ -259,7 +259,7 @@ static uint32_t _cyhal_lptimer_set_delay_common(cyhal_lptimer_t *obj, uint32_t d
     // If neither is enabled, return Error Disabled.
     // We do not check to see if Counter0 is enabled as it is not used
     // for this IP implementation.
-    if ((Cy_MCWDT_GetEnabledStatus(obj->base, CY_MCWDT_CTR1) == 0UL) 
+    if ((Cy_MCWDT_GetEnabledStatus(obj->base, CY_MCWDT_CTR1) == 0UL)
         || (Cy_MCWDT_GetEnabledStatus(obj->base, CY_MCWDT_CTR2) == 0UL))
     {
         return CYHAL_LPTIMER_RSLT_ERR_DISABLED;
@@ -391,7 +391,7 @@ static uint32_t _cyhal_lptimer_set_delay_common(cyhal_lptimer_t *obj, uint32_t d
         // Timeout has occurred. There could have been a clock failure while waiting for the count value to update.
         cyhal_system_critical_section_exit(critical_section);
         return CYHAL_LPTIMER_RSLT_ERR_DISABLED;
-    }   
+    }
 
     uint16_t c0_match = (uint16_t)(c0_current_ticks + delay);
     // Changes can take up to 2 clk_lf cycles to propagate. If we set the match within this window of the current value,

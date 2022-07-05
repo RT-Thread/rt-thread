@@ -191,7 +191,7 @@
 *   <tr>
 *     <td>1.40</td>
 *     <td>CAT1B, CAT1C devices support.<br>
-*         Newly added API's Cy_WDT_SetClkSource() to configure the WDT clock source, Cy_WDT_GetClkSource() to get the WDT clock source configured, 
+*         Newly added API's Cy_WDT_SetClkSource() to configure the WDT clock source, Cy_WDT_GetClkSource() to get the WDT clock source configured,
 *         Cy_WDT_SetMatchBits() to configure the bit position above which the bits will be ignored for match, Cy_WDT_GetMatchBits() to get the bit position above which the bits will be ignored for match.</td>
 *     <td>Support for new devices.</td>
 *   </tr>

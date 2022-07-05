@@ -407,7 +407,7 @@ cy_en_lin_status_t Cy_LIN_SetHeader(LIN_CH_Type* base, uint8_t id)
     }
     else
     {
-        /* Calculate the Parity bits P0 & P1 
+        /* Calculate the Parity bits P0 & P1
            Parity is calculated as per the formula given
              - P[1] = ! (ID[5] ^ ID[4] ^ ID[3] ^ ID[1])
              - P[0] = (ID[4] ^ ID[2] ^ ID[1] ^ ID[0])
@@ -481,7 +481,7 @@ cy_en_lin_status_t Cy_LIN_GetInterruptMask(LIN_CH_Type* base, uint32_t *mask)
 {
     cy_en_lin_status_t ret = CY_LIN_SUCCESS;
 
-    if ((NULL == base) || 
+    if ((NULL == base) ||
         (NULL == mask))
     {
         ret = CY_LIN_BAD_PARAM;
@@ -503,7 +503,7 @@ cy_en_lin_status_t Cy_LIN_GetInterruptMaskedStatus(LIN_CH_Type* base, uint32_t *
 {
     cy_en_lin_status_t ret = CY_LIN_SUCCESS;
 
-    if ((NULL == base) || 
+    if ((NULL == base) ||
         (NULL == status))
     {
         ret = CY_LIN_BAD_PARAM;
@@ -526,7 +526,7 @@ cy_en_lin_status_t Cy_LIN_GetInterruptStatus(LIN_CH_Type* base, uint32_t *status
 
     cy_en_lin_status_t ret = CY_LIN_SUCCESS;
 
-    if ((NULL == base) || 
+    if ((NULL == base) ||
         (NULL == status))
     {
         ret = CY_LIN_BAD_PARAM;
@@ -569,7 +569,7 @@ cy_en_lin_status_t Cy_LIN_GetStatus(LIN_CH_Type* base, uint32_t *status)
 {
     cy_en_lin_status_t ret = CY_LIN_SUCCESS;
 
-    if ((NULL == base) || 
+    if ((NULL == base) ||
         (NULL == status))
     {
         ret = CY_LIN_BAD_PARAM;
@@ -671,7 +671,7 @@ cy_en_lin_status_t Cy_LIN_ErrCtl_Enable(LIN_Type* base, cy_stc_lin_test_error_co
     {
         return CY_LIN_BAD_PARAM;
     }
- 
+
     /* LIN est Error CTL setting  */
     CY_ASSERT_L3(CY_LIN_IS_TEST_CTL_CH_IDX_VALID(test_error_config->chidx));
 

@@ -5,9 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-06-29     Rbb666	   first version
+ * 2022-06-29     Rbb666       first version
  */
- 
+
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
@@ -36,7 +36,7 @@
     #define HEAP_END      (void*)&__HeapLimit
 #endif
 
-#define HEAP_END		IFX_SRAM_END
+#define HEAP_END        IFX_SRAM_END
 
 void cy_bsp_all_init(void);
 

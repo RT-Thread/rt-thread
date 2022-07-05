@@ -233,30 +233,30 @@ cy_en_adcmic_status_t Cy_ADCMic_Init(MXS40ADCMIC_Type * base, cy_stc_adcmic_conf
 
 void Cy_ADCMic_InitBiquad(MXS40ADCMIC_Type * base, cy_stc_adcmic_biquad_config_t const * biQuadConfig)
 {
-    base->AUXADC_BIQUAD0_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_0_BQ0_NUM1_COEFF, biQuadConfig->bq0_num1_coeff) | 
+    base->AUXADC_BIQUAD0_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_0_BQ0_NUM1_COEFF, biQuadConfig->bq0_num1_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_0_BQ0_NUM2_COEFF, biQuadConfig->bq0_num2_coeff);
     base->AUXADC_BIQUAD0_COEFF_1 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_1_BQ0_NUM3_COEFF, biQuadConfig->bq0_num3_coeff);
-    base->AUXADC_BIQUAD0_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_2_BQ0_DEN2_COEFF, biQuadConfig->bq0_den2_coeff) | 
+    base->AUXADC_BIQUAD0_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_2_BQ0_DEN2_COEFF, biQuadConfig->bq0_den2_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD0_COEFF_2_BQ0_DEN3_COEFF, biQuadConfig->bq0_den3_coeff);
-    base->AUXADC_BIQUAD1_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_0_BQ1_NUM1_COEFF, biQuadConfig->bq1_num1_coeff) | 
+    base->AUXADC_BIQUAD1_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_0_BQ1_NUM1_COEFF, biQuadConfig->bq1_num1_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_0_BQ1_NUM2_COEFF, biQuadConfig->bq1_num2_coeff);
     base->AUXADC_BIQUAD1_COEFF_1 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_1_BQ1_NUM3_COEFF, biQuadConfig->bq1_num3_coeff);
-    base->AUXADC_BIQUAD1_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_2_BQ1_DEN2_COEFF, biQuadConfig->bq1_den2_coeff) | 
+    base->AUXADC_BIQUAD1_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_2_BQ1_DEN2_COEFF, biQuadConfig->bq1_den2_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD1_COEFF_2_BQ1_DEN3_COEFF, biQuadConfig->bq1_den3_coeff);
-    base->AUXADC_BIQUAD2_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_0_BQ2_NUM1_COEFF, biQuadConfig->bq2_num1_coeff) | 
+    base->AUXADC_BIQUAD2_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_0_BQ2_NUM1_COEFF, biQuadConfig->bq2_num1_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_0_BQ2_NUM2_COEFF, biQuadConfig->bq2_num2_coeff);
     base->AUXADC_BIQUAD2_COEFF_1 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_1_BQ2_NUM3_COEFF, biQuadConfig->bq2_num3_coeff);
-    base->AUXADC_BIQUAD2_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_2_BQ2_DEN2_COEFF, biQuadConfig->bq2_den2_coeff) | 
+    base->AUXADC_BIQUAD2_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_2_BQ2_DEN2_COEFF, biQuadConfig->bq2_den2_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD2_COEFF_2_BQ2_DEN3_COEFF, biQuadConfig->bq2_den3_coeff);
-    base->AUXADC_BIQUAD3_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_0_BQ3_NUM1_COEFF, biQuadConfig->bq3_num1_coeff) | 
+    base->AUXADC_BIQUAD3_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_0_BQ3_NUM1_COEFF, biQuadConfig->bq3_num1_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_0_BQ3_NUM2_COEFF, biQuadConfig->bq3_num2_coeff);
     base->AUXADC_BIQUAD3_COEFF_1 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_1_BQ3_NUM3_COEFF, biQuadConfig->bq3_num3_coeff);
-    base->AUXADC_BIQUAD3_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_2_BQ3_DEN2_COEFF, biQuadConfig->bq3_den2_coeff) | 
+    base->AUXADC_BIQUAD3_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_2_BQ3_DEN2_COEFF, biQuadConfig->bq3_den2_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD3_COEFF_2_BQ3_DEN3_COEFF, biQuadConfig->bq3_den3_coeff);
-    base->AUXADC_BIQUAD4_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_0_BQ4_NUM1_COEFF, biQuadConfig->bq4_num1_coeff) | 
+    base->AUXADC_BIQUAD4_COEFF_0 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_0_BQ4_NUM1_COEFF, biQuadConfig->bq4_num1_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_0_BQ4_NUM2_COEFF, biQuadConfig->bq4_num2_coeff);
     base->AUXADC_BIQUAD4_COEFF_1 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_1_BQ4_NUM3_COEFF, biQuadConfig->bq4_num3_coeff);
-    base->AUXADC_BIQUAD4_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_2_BQ4_DEN2_COEFF, biQuadConfig->bq4_den2_coeff) | 
+    base->AUXADC_BIQUAD4_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_2_BQ4_DEN2_COEFF, biQuadConfig->bq4_den2_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_2_BQ4_DEN3_COEFF, biQuadConfig->bq4_den3_coeff);
     base->AUXADC_CTRL &= ~MXS40ADCMIC_AUXADC_CTRL_BIQUAD_BYPASS_Msk;
 }
@@ -319,13 +319,13 @@ void Cy_ADCMic_DisableInterrupt(MXS40ADCMIC_Type * base, uint32_t intrMask)
 cy_en_adcmic_status_t Cy_ADCMic_SetPgaGain(MXS40ADCMIC_Type *  base, cy_en_adcmic_pga_gain_t gain)
 {
     cy_en_adcmic_status_t retVal = CY_ADCMIC_BAD_PARAM;
-    
+
     if ((uint32_t)CY_ADCMIC_PGA_GAIN_42 >= (uint32_t)gain)
     {
         CY_REG32_CLR_SET(base->ADC_MIC_BIAS_PGA_CTRL, MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_GAIN_CTRL, gain);
         retVal = CY_ADCMIC_SUCCESS;
     }
-    
+
     return (retVal);
 }
 
@@ -352,7 +352,7 @@ cy_en_adcmic_status_t Cy_ADCMic_SelectSource(MXS40ADCMIC_Type * base, cy_en_adcm
                 base->ADC_PD_CTRL = 0UL;
                 base->ADC_CLK_CTRL = 0UL;
                 break;
-                
+
             default: /* CY_ADCMIC_DC */
                 base->ADCMIC_PAD_CTRL = 0UL;
                 base->ADC_PD_CTRL &= ~CY_ADCMIC_PD_MIC;

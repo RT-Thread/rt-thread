@@ -39,12 +39,12 @@
 * \image html passv2_diagram.png
 * \image latex passv2_diagram.png
 *
-* The Programmable Analog SubSystem (PASS) hardware block contains a set of analog 
+* The Programmable Analog SubSystem (PASS) hardware block contains a set of analog
 * subblocks such as AREF, CTB, SAR, analog routing switches and others.
-* In order to provide a firmware interface to PASS, subblocks are united into groups, 
-* which have their own drivers: SysAnalog, \ref group_ctb "CTB" and 
+* In order to provide a firmware interface to PASS, subblocks are united into groups,
+* which have their own drivers: SysAnalog, \ref group_ctb "CTB" and
 * \ref group_sar "SAR".
-* 
+*
 * \section group_sysanalog_features SysAnalog Features Description
 *
 * SysAnalog driver includes the following features:
@@ -158,8 +158,8 @@
 *   - Can work in Deep Sleep power mode.
 *   - Can be used as a clock source for the Deep Sleep Clock.
 *
-* Low Power Oscillator clocking mode is configured by 
-* cy_stc_sysanalog_deep_sleep_config_t::lpOscDsMode configuration structure item, which 
+* Low Power Oscillator clocking mode is configured by
+* cy_stc_sysanalog_deep_sleep_config_t::lpOscDsMode configuration structure item, which
 * should be passed as a parameter to \ref Cy_SysAnalog_DeepSleepInit function.
 * See \ref group_sysanalog_functions_lposc for other Low Power Oscillator control functions.
 *
@@ -176,9 +176,9 @@
 * Features:
 *   - Internal PASS_ver2 16-bit down counting timer
 *   - Can be used to trigger one or few SAR ADCs
-*   - Can be clocked from 
+*   - Can be clocked from
 *       - Peripheral Clock (CLK_PERI),
-*       - Low Frequency Clock (CLK_LF) 
+*       - Low Frequency Clock (CLK_LF)
 *       - Deep Sleep Clock
 *   - If clocked from Deep Sleep Clock, timer can be used to trigger SAR ADC scans
 *     in Deep Sleep power mode.
@@ -187,10 +187,10 @@
 * and cy_stc_sysanalog_deep_sleep_config_t::timerPeriod configuration structure items,
 * which should be passed as a parameter to \ref Cy_SysAnalog_DeepSleepInit function.
 * Also see \ref group_sysanalog_functions_timer for other Timer configuration and control functions.
-* 
+*
 * \section group_sysanalog_deepsleepinit Low Power Oscillator, Deep Sleep Clock and Timer Configuration
-* To configure Low Power Oscillator, Deep Sleep Clock and Timer blocks, 
-* call \ref Cy_SysAnalog_DeepSleepInit function and provide pointer to PASS block and pointer 
+* To configure Low Power Oscillator, Deep Sleep Clock and Timer blocks,
+* call \ref Cy_SysAnalog_DeepSleepInit function and provide pointer to PASS block and pointer
 * to the \ref cy_stc_sysanalog_deep_sleep_config_t configuration structure. In order to start
 * Low Power Oscillator and Timer, call corresponding enable functions:
 *
@@ -795,7 +795,7 @@ __STATIC_INLINE void Cy_SysAnalog_IztatSelect(cy_en_sysanalog_iztat_source_t izt
 * Function Name: Cy_SysAnalog_LpOscEnable
 ****************************************************************************//**
 *
-* Enables Low Power Oscillator in configured by \ref Cy_SysAnalog_DeepSleepInit 
+* Enables Low Power Oscillator in configured by \ref Cy_SysAnalog_DeepSleepInit
 * mode.
 *
 * \param base Pointer to the PASS register structure.
@@ -851,7 +851,7 @@ __STATIC_INLINE void Cy_SysAnalog_LpOscDisable(PASS_Type * base)
 * Function Name: Cy_SysAnalog_TimerEnable
 ****************************************************************************//**
 *
-* Enable the analog subsystem timer in configured by 
+* Enable the analog subsystem timer in configured by
 * \ref Cy_SysAnalog_DeepSleepInit mode.
 *
 * \param base Pointer to the PASS register structure.

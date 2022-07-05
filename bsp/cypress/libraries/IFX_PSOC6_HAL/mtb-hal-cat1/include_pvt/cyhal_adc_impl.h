@@ -37,7 +37,7 @@ extern "C"
  * \ingroup group_hal_impl_adc
  * \{
  * \section group_hal_impl_adc_interconnect Interconnect
- * In PSoC™ each ADC has a single input trigger which, when activated, will
+ * In PSoCâ„¢ each ADC has a single input trigger which, when activated, will
  * initiate an ADC scan. Each ADC also has an output trigger which will be
  * activated when a scan is completed.
  */

@@ -206,7 +206,7 @@ static uint8_t _cyhal_audioss_get_block_from_irqn(_cyhal_system_irq_t irqn)
     }
 }
 
-#if defined(COMPONENT_CAT2) /* PSoC™ 4 uses a PCLK */
+#if defined(COMPONENT_CAT2) /* PSoCâ„¢ 4 uses a PCLK */
 #define _CYHAL_AUDIOSS_USES_PCLK
 static const en_clk_dst_t _cyhal_audioss_clock[] =
 {
@@ -576,8 +576,8 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
 
     mclk_map_rx = (NULL != rx_pins) ? _CYHAL_UTILS_GET_RESOURCE(rx_pins->mclk, cyhal_pin_map_audioss_clk_i2s_if) : NULL;
     mclk_map_tx = (NULL != tx_pins) /* If non-null, we know the mclk pins must be the same, so can reuse the rx value */
-	          ? ((NULL != mclk_map_rx) ? mclk_map_rx : _CYHAL_UTILS_GET_RESOURCE(tx_pins->mclk, cyhal_pin_map_audioss_clk_i2s_if))
-		  : NULL;
+              ? ((NULL != mclk_map_rx) ? mclk_map_rx : _CYHAL_UTILS_GET_RESOURCE(tx_pins->mclk, cyhal_pin_map_audioss_clk_i2s_if))
+          : NULL;
 
     uint8_t mclk_rx_dm = CYHAL_PIN_MAP_DRIVE_MODE_AUDIOSS_CLK_I2S_IF;
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)

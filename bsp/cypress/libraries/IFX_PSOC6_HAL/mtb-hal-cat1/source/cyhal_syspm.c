@@ -32,7 +32,7 @@
  * \ingroup group_hal_impl
  * \{
  * \section section_hal_impl_syspm_set_system
- * 
+ *
  * The callback mode \ref CYHAL_SYSPM_AFTER_DS_WFI_TRANSITION is only applicable
  * for CAT1B devices.
  *
@@ -47,7 +47,7 @@
  * \ingroup group_hal_impl
  * \{
  * \section section_hal_impl_syspm_set_system
- * 
+ *
  * Setting the system state is unsupported on CAT2 devices. For CAT2 devices,
  * \ref CYHAL_SYSPM_RSLT_ERR_NOT_SUPPORTED will be returned in the function \ref cyhal_syspm_set_system_state.
  *

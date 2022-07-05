@@ -25,10 +25,10 @@
 /**
 * \addtogroup group_adcmic
 * \{
-* ADCMic driver is used to process analog and digital microphone signal and 
-* DC signal with the mxs40adcmic IP. This IP interfaces with Delta-Sigma modulator part 
+* ADCMic driver is used to process analog and digital microphone signal and
+* DC signal with the mxs40adcmic IP. This IP interfaces with Delta-Sigma modulator part
 * of the s40adcmic and implements CIC, decimation (FIR) and biquad filters.
-* The ADC result is read by the CPU or the DMA from the FIFO of mxs40adcmic 
+* The ADC result is read by the CPU or the DMA from the FIFO of mxs40adcmic
 * (and from CIC register for DC measurement). Instead of taking modulator data
 * from s40adcmic, mxs40adcmic can also be configured to take PDM input
 * directly from an external digital microphone.
@@ -61,7 +61,7 @@
 * \section group_adcmic_initialization Initialization and Enabling
 *
 * To configure the ADCMic subsystem call \ref Cy_ADCMic_Init.
-* Pass in a pointer to the \ref MXS40ADCMIC_Type structure for the base hardware register address and 
+* Pass in a pointer to the \ref MXS40ADCMIC_Type structure for the base hardware register address and
 * pass in the configuration structure \ref cy_stc_adcmic_config_t.
 *
 * After initialization, call \ref Cy_ADCMic_Enable to enable the block.
@@ -93,10 +93,10 @@
 *
 * \section group_adcmic_clock Clocks
 *
-* The ADCMic requires two input clocks: 
+* The ADCMic requires two input clocks:
 * - clk_sys - recommended frequency is 96MHz, usually is routed from one of the \ref group_sysclk_clk_hf
 * - clk_hf - recommended frequency is 24MHz, usually is routed from one of the \ref group_sysclk_clk_hf
-* 
+*
 * For more exact information on the ADCMic clock routing, refer to the datasheet for your device.
 *
 * The internal dividers are configured by \ref cy_stc_adcmic_config_t::clockDiv for general ADC functional and
@@ -116,7 +116,7 @@
 * The Timer can be used for two purposes:
 * - generate periodic events based on ADCMic clk_sys clock.
 * - count the CIC data update events.
-* 
+*
 * The timer period and input signal source are configured by the \ref cy_stc_adcmic_timer_trigger_config_t::period and
 * \ref cy_stc_adcmic_timer_trigger_config_t::input fields correspondingly.
 *
@@ -151,7 +151,7 @@
 *
 * \section group_adcmic_fifo FIFO Usage
 *
-* The ADCMic subsystem in MIC and PDM modes stores the audio data into the FIFO 
+* The ADCMic subsystem in MIC and PDM modes stores the audio data into the FIFO
 * It can be configured using \ref cy_stc_adcmic_fifo_config_t, and served either by ISR:
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_ISR
 * Or by DMA:

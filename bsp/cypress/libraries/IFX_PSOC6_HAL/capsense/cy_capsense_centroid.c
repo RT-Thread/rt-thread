@@ -110,13 +110,13 @@
 * bigger sum of neighboring sensors is taken for further processing. Then the position
 * is calculated using centroid algorithm with three sensors.
 *
-* At least two neighboring sensors should cross finger threshold. Then the algorithm 
+* At least two neighboring sensors should cross finger threshold. Then the algorithm
 * is able to distinguish where real touch is located (direct part of slider or
-* diplex part of slider) and corresponding position is reported. Otherwise no 
+* diplex part of slider) and corresponding position is reported. Otherwise no
 * touch is reported.
 *
 * This function does not detect two or more touches.
-* 
+*
 * \param newTouch
 * The pointer to the touch structure where found position is stored.
 *
@@ -135,7 +135,7 @@ void Cy_CapSense_DpCentroidDiplex(
     const cy_stc_capsense_sensor_context_t * ptrSnsCxt;
     const uint8_t * ptrDpxTable;
     uint32_t snsCount = ptrWdConfig->numSns;
-    
+
     uint32_t maxSum = 0u;
     uint32_t maxDiff = 0u;
     uint32_t maxIndex = CY_CAPSENSE_NO_LOCAL_MAX;
@@ -144,10 +144,10 @@ void Cy_CapSense_DpCentroidDiplex(
     int32_t denominator = 0;
     uint32_t multiplier;
     uint32_t offset;
-    
+
     threshold -= ptrWdConfig->ptrWdContext->hysteresis;
     ptrDpxTable = ptrWdConfig->ptrDiplexTable;
-    
+
     /* Find maximum signal */
     ptrSnsCxt = ptrWdConfig->ptrSnsContext;
     for (snsIndex = 0u; snsIndex < snsCount; snsIndex++)
@@ -183,7 +183,7 @@ void Cy_CapSense_DpCentroidDiplex(
             }
         }
     }
-    
+
     if ((maxIndex != CY_CAPSENSE_NO_LOCAL_MAX) && (maxSum > 0u))
     {
         multiplier = (uint32_t)ptrWdConfig->xResolution << 8u;
@@ -198,10 +198,10 @@ void Cy_CapSense_DpCentroidDiplex(
             multiplier /= (snsCount << 1u);
             offset = multiplier >> 1u;
         }
-        
+
         denominator = (int32_t)maxSum;
         denominator = ((numerator * (int32_t)multiplier) / denominator) + (((int32_t)maxIndex * (int32_t)multiplier) + (int32_t)offset);
-                    
+
         /* Round result and shift 8 bits left */
         newTouch->numPosition = CY_CAPSENSE_POSITION_ONE;
         newTouch->ptrPosition[0u].x = (uint16_t)(((uint32_t)denominator + CY_CAPSENSE_CENTROID_ROUND_VALUE) >> 8u);
@@ -224,12 +224,12 @@ void Cy_CapSense_DpCentroidDiplex(
 * Finds touch position of a Linear slider widget.
 *
 * In scope of position searching this function finds the local maximum with the
-* highest raw count. If such maximums are more than one, then the maximum with 
+* highest raw count. If such maximums are more than one, then the maximum with
 * bigger sum of neighboring sensors is taken for further processing. Then the position
 * is calculated using centroid algorithm with three sensors.
 *
 * This function does not detect two or more touches.
-* 
+*
 * \param newTouch
 * The pointer to the touch structure where the found position is stored.
 *
@@ -273,7 +273,7 @@ void Cy_CapSense_DpCentroidLinear(
             }
             ptrSnsCxt++;
         }
-        
+
         /* Find index of sensor with maximum signal */
         ptrSnsCxt = ptrWdConfig->ptrSnsContext;
         for (snsIndex = 0u; snsIndex < snsCount; snsIndex++)
@@ -295,9 +295,9 @@ void Cy_CapSense_DpCentroidLinear(
             }
             ptrSnsCxt++;
         }
-        
+
         if ((maxIndex != CY_CAPSENSE_NO_LOCAL_MAX) && (maxSum > 0u))
-        {   
+        {
             /* Calculate position */
             multiplier = (uint32_t)ptrWdConfig->xResolution << 8u;
             if (0u == (ptrWdConfig->centroidConfig & CY_CAPSENSE_CALC_METHOD_MASK))
@@ -310,9 +310,9 @@ void Cy_CapSense_DpCentroidLinear(
                 multiplier /= snsCount;
                 offset = multiplier >> 1u;
             }
-            
+
             denominator = (int32_t)maxSum;
-            denominator = ((numerator * (int32_t)multiplier) / denominator) + (((int32_t)maxIndex * (int32_t)multiplier) + (int32_t)offset);     
+            denominator = ((numerator * (int32_t)multiplier) / denominator) + (((int32_t)maxIndex * (int32_t)multiplier) + (int32_t)offset);
 
             /* Round result and shift 8 bits left */
             newTouch->numPosition = CY_CAPSENSE_POSITION_ONE;
@@ -340,12 +340,12 @@ void Cy_CapSense_DpCentroidLinear(
 * Finds touch position of a Radial slider widget.
 *
 * In scope of position searching this function finds the local maximum with the
-* highest raw count. If such maximums are more than one, then the maximum with 
+* highest raw count. If such maximums are more than one, then the maximum with
 * bigger sum of neighboring sensors is taken for further processing. Then the position
 * is calculated using centroid algorithm with three sensors.
 *
 * This function does not detect two or more touches.
-* 
+*
 * \param newTouch
 * The pointer to the touch structure where found position is stored.
 *
@@ -359,7 +359,7 @@ void Cy_CapSense_DpCentroidRadial(
 {
     uint32_t snsIndex = 0u;
     uint32_t snsCount = ptrWdConfig->numSns;
-    
+
     uint32_t diffM;
     uint32_t diffP;
     uint32_t sum = 0u;
@@ -370,7 +370,7 @@ void Cy_CapSense_DpCentroidRadial(
     int32_t numerator = 0;
     int32_t denominator = 0;
     uint32_t multiplier;
-    
+
     if (1u == (ptrWdConfig->centroidConfig & CY_CAPSENSE_CENTROID_NUMBER_MASK))
     {
         /* Find maximum signal */
@@ -383,7 +383,7 @@ void Cy_CapSense_DpCentroidRadial(
             }
             ptrSnsCxt++;
         }
-        
+
         /* Find index of sensor with maximum signal */
         ptrSnsCxt = ptrWdConfig->ptrSnsContext;
         for (snsIndex = 0u; snsIndex < snsCount; snsIndex++)
@@ -407,10 +407,10 @@ void Cy_CapSense_DpCentroidRadial(
         }
 
         if ((maxIndex != CY_CAPSENSE_NO_LOCAL_MAX) && (maxSum > 0u))
-        {   
+        {
             /* Calculate position */
             multiplier = ((uint32_t)ptrWdConfig->xResolution << 8u) / snsCount;
-            
+
             denominator = (int32_t)maxSum;
             denominator = ((numerator * (int32_t)multiplier) / denominator) + ((int32_t)maxIndex * (int32_t)multiplier);
 
@@ -443,12 +443,12 @@ void Cy_CapSense_DpCentroidRadial(
 * Finds touch position of a CSD Touchpad widget.
 *
 * In scope of position searching this function finds the local maximum with the
-* highest raw count. If such maximums are more than one, then the maximum with 
+* highest raw count. If such maximums are more than one, then the maximum with
 * bigger sum of neighboring sensors is taken for further processing. Then the position
 * is calculated using centroid algorithm with three sensors.
 *
 * This function does not detect two or more touches.
-* 
+*
 * \param newTouch
 * The pointer to the touch structure where found position is stored.
 *
@@ -505,7 +505,7 @@ void Cy_CapSense_DpCentroidTouchpad(
             }
             ptrSnsCxt++;
         }
-        
+
         /* Find index of sensor with maximum signal */
         ptrSnsCxt = ptrWdConfig->ptrSnsContext;
         for (snsIndex = 0u; snsIndex < colCount; snsIndex++)
@@ -528,9 +528,9 @@ void Cy_CapSense_DpCentroidTouchpad(
             }
             ptrSnsCxt++;
         }
-        
+
         if ((maxIndex != CY_CAPSENSE_NO_LOCAL_MAX) && (maxSum > 0u))
-        {   
+        {
             /* Calculate position */
             multiplier = (uint32_t)ptrWdConfig->xResolution << 8u;
             if (0u == (ptrWdConfig->centroidConfig & CY_CAPSENSE_CALC_METHOD_MASK))
@@ -638,11 +638,11 @@ void Cy_CapSense_DpCentroidTouchpad(
 * Function Name: Cy_CapSense_DpAdvancedCentroidTouchpad
 ****************************************************************************//**
 *
-* Finds touch position of a CSD touchpad widget using an advanced centroid 
+* Finds touch position of a CSD touchpad widget using an advanced centroid
 * algorithm.
 *
 * This function is able to detect two touch positions using a centroid algorithm
-* with matrix 5*5 of sensors and virtual sensors on the edges. 
+* with matrix 5*5 of sensors and virtual sensors on the edges.
 *
 * \param newTouch
 * The pointer to the touch structure where the found position is stored.
@@ -659,7 +659,7 @@ void Cy_CapSense_DpAdvancedCentroidTouchpad(
     const cy_stc_capsense_sensor_context_t * ptrSnsIndex = ptrWdConfig->ptrSnsContext;
     uint16_t * ptrDiffIndex = ptrWdConfig->ptrCsdTouchBuffer;
     cy_stc_capsense_advanced_centroid_config_t advCfg;
-    
+
     advCfg.fingerTh = ptrWdConfig->ptrWdContext->fingerTh;
     advCfg.penultimateTh = ptrWdConfig->advConfig.penultimateTh;
     advCfg.virtualSnsTh = ptrWdConfig->advConfig.virtualSnsTh;
@@ -670,7 +670,7 @@ void Cy_CapSense_DpAdvancedCentroidTouchpad(
     advCfg.crossCouplingTh = ptrWdConfig->advConfig.crossCouplingTh;
     advCfg.edgeCorrectionEn = 0u;
     advCfg.twoFingersEn = 0u;
-    
+
     if ((ptrWdConfig->centroidConfig & CY_CAPSENSE_CENTROID_NUMBER_MASK) > CY_CAPSENSE_POSITION_ONE)
     {
         advCfg.twoFingersEn = 1u;
@@ -683,10 +683,10 @@ void Cy_CapSense_DpAdvancedCentroidTouchpad(
     {
         ptrDiffIndex[i] = ptrSnsIndex[i].diff;
     }
-    
+
     Cy_CapSense_AdvancedCentroidGetTouchCoordinates_Lib(
-                &advCfg, 
-                ptrWdConfig->ptrCsdTouchBuffer, 
+                &advCfg,
+                ptrWdConfig->ptrCsdTouchBuffer,
                 newTouch);
 }
 #endif /* (CY_CAPSENSE_DISABLE != CY_CAPSENSE_ADVANCED_CENTROID_5X5_EN) */
@@ -699,11 +699,11 @@ void Cy_CapSense_DpAdvancedCentroidTouchpad(
 *
 * Finds up to five local maximums for CSX Touchpad.
 *
-* This function takes an array of differences of the specified widget and 
+* This function takes an array of differences of the specified widget and
 * finds up to five local maximums. The found maximums are stored in the CSX buffer
 * ptrCsxTouchBuffer \ref cy_stc_capsense_csx_touch_buffer_t.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -729,13 +729,13 @@ void Cy_CapSense_DpFindLocalMaxDd(
     {
         ptrNewPeak[rx].id = CY_CAPSENSE_CSX_TOUCHPAD_ID_UNDEFINED;
     }
-    
+
     ptrNewPeak = &ptrWdConfig->ptrCsxTouchBuffer->newPeak[0u];
     /* Go through all Rx electrodes */
     for (rx = 0u; rx <= lastRx; rx++)
     {
-        /* 
-        * Go through all Tx and RX (changed above) electrodes intersections 
+        /*
+        * Go through all Tx and RX (changed above) electrodes intersections
         * and check whether the local maximum requirement is met.
         */
         for (tx = 0u; tx <= lastTx; tx++)
@@ -744,9 +744,9 @@ void Cy_CapSense_DpFindLocalMaxDd(
             currDiff = ptrSnsCxt->diff;
             if (thresholdOff <= (uint32_t)currDiff)
             {
-                /* 
-                * Check local maximum requirement: Comparing raw count 
-                * of a local maximum candidate with raw counts of sensors 
+                /*
+                * Check local maximum requirement: Comparing raw count
+                * of a local maximum candidate with raw counts of sensors
                 * from the previous row.
                 */
                 if (rx > 0u)
@@ -776,10 +776,10 @@ void Cy_CapSense_DpFindLocalMaxDd(
                         }
                     }
                 }
-                /* 
-                * Check local maximum requirement: Comparing raw count 
-                * of a local maximum candidate with raw counts of sensors 
-                * from the next row. 
+                /*
+                * Check local maximum requirement: Comparing raw count
+                * of a local maximum candidate with raw counts of sensors
+                * from the next row.
                 */
                 if ((0u == proceed) && (rx < lastRx))
                 {
@@ -808,9 +808,9 @@ void Cy_CapSense_DpFindLocalMaxDd(
                         }
                     }
                 }
-                /* 
-                * Check local maximum requirement: Comparing raw count 
-                * of a local maximum candidate with raw counts of sensors 
+                /*
+                * Check local maximum requirement: Comparing raw count
+                * of a local maximum candidate with raw counts of sensors
                 * from the same row and the next column. */
                 if ((0u == proceed) && (tx < lastTx))
                 {
@@ -867,11 +867,11 @@ void Cy_CapSense_DpFindLocalMaxDd(
 *
 * Calculates the position for each local maximum using the 3x3 algorithm.
 *
-* This function calculates position coordinates of found local maximums. 
-* The found positions are stored in the CSX buffer ptrCsxTouchBuffer 
+* This function calculates position coordinates of found local maximums.
+* The found positions are stored in the CSX buffer ptrCsxTouchBuffer
 * \ref cy_stc_capsense_csx_touch_buffer_t.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -906,10 +906,10 @@ void Cy_CapSense_DpCalcTouchPadCentroid(
         /* Fill each row */
         for (i = 0u; i < CY_CAPSENSE_CSX_TOUCHPAD_CENTROID_LENGTH; i++)
         {
-            /* 
+            /*
             * The first  condition could be valid only when local max on the first row (0 row) of Touchpad
             * The second condition could be valid only when local max on the last row of Touchpad
-            * Then corresponding row (zero or the last) of 3x3 array is initialized to 0u 
+            * Then corresponding row (zero or the last) of 3x3 array is initialized to 0u
             */
             if (((((int32_t)ptrNewPeak->x - 1) + (int32_t)i) < 0) ||
                 ((((int32_t)ptrNewPeak->x - 1) + (int32_t)i) > (int32_t)lastRx))
@@ -923,11 +923,11 @@ void Cy_CapSense_DpCalcTouchPadCentroid(
                 /* Fill each column */
                 for (j = 0u; j < CY_CAPSENSE_CSX_TOUCHPAD_CENTROID_LENGTH; j++)
                 {
-                    /* 
-                    * The first condition could be valid only when local max 
-                    * on the first column (0 row) of Touchpad. The second 
-                    * condition could be valid only when local max on the last 
-                    * column of Touchpad. Then corresponding column (zero or 
+                    /*
+                    * The first condition could be valid only when local max
+                    * on the first column (0 row) of Touchpad. The second
+                    * condition could be valid only when local max on the last
+                    * column of Touchpad. Then corresponding column (zero or
                     * the last) of 3x3 array is initialized to 0u.
                     */
                     if (((((int32_t)ptrNewPeak->y - 1) + (int32_t)j) < 0) ||
@@ -959,7 +959,7 @@ void Cy_CapSense_DpCalcTouchPadCentroid(
         }
 
         /* The X position is calculated.
-        * The weightedSumX value depends on a finger position shifted regarding 
+        * The weightedSumX value depends on a finger position shifted regarding
         * the X electrode (ptrNewTouches.x).
         * The multiplier ptrWdConfig->xCentroidMultiplier is a short from:
         * CY_CAPSENSE_TOUCHPAD0_X_RESOLUTION * 256u) / (CY_CAPSENSE_TOUCHPAD0_NUM_RX - CONFIG))
@@ -1020,11 +1020,11 @@ void Cy_CapSense_DpCalcTouchPadCentroid(
 * - applies debounce filters.
 * - suppresses excessive touches.
 *
-* The final touch data are stored in the CSX buffer ptrCsxTouchBuffer 
-* \ref cy_stc_capsense_csx_touch_buffer_t. This function should be called 
+* The final touch data are stored in the CSX buffer ptrCsxTouchBuffer
+* \ref cy_stc_capsense_csx_touch_buffer_t. This function should be called
 * each scan cycle even when touch is not detected.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -1033,22 +1033,22 @@ void Cy_CapSense_DpTouchTracking(
                 const cy_stc_capsense_widget_config_t * ptrWdConfig)
 {
     uint32_t i;
-    
+
     const cy_stc_capsense_position_t * ptrNewPeak;
     cy_stc_capsense_position_t * ptrOldPeak;
-        
+
     uint32_t newTouchNum = ptrWdConfig->ptrCsxTouchBuffer->newPeakNumber;
     uint32_t oldTouchNum = ptrWdConfig->ptrCsxTouchHistory->oldPeakNumber;
 
     int8_t * fingerPosIndex = &ptrWdConfig->ptrCsxTouchBuffer->fingerPosIndexMap[0u];
-    
+
     if ((0u != newTouchNum) || (0u != oldTouchNum))
     {
         /* Initialize variables */
         ptrWdConfig->ptrCsxTouchBuffer->newActiveIdsMask = 0u;
         /* Getting active touch IDs from previous scan */
         ptrWdConfig->ptrCsxTouchHistory->oldActiveIdsMask = 0u;
-        
+
         ptrOldPeak = &ptrWdConfig->ptrCsxTouchHistory->oldPeak[0u];
         for (i = 0u; i < oldTouchNum; i++)
         {
@@ -1133,7 +1133,7 @@ void Cy_CapSense_DpTouchTracking(
 
             Cy_CapSense_TouchDownDebounce(ptrWdConfig);
         }
-        
+
         Cy_CapSense_SortByAge(ptrWdConfig);
         newTouchNum = ptrWdConfig->ptrCsxTouchBuffer->newPeakNumber;
 
@@ -1161,23 +1161,23 @@ void Cy_CapSense_DpTouchTracking(
 * Transfers a touch from history array into active current array.
 *
 * This function transfers touch specified by oldIndex from history touch array
-* by copying its ID, increments age and decrements debounce (if debounce > 0) 
+* by copying its ID, increments age and decrements debounce (if debounce > 0)
 * parameters into currently active touch structure
 *
-* \param newIndex 
+* \param newIndex
 * The touch index of touch array in the active touch structure.
 *
-* \param oldIndex 
+* \param oldIndex
 * The touch index of touch array in the history touch structure.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
 *******************************************************************************/
 static void Cy_CapSense_TransferTouch(
-                uint32_t newIndex, 
-                uint32_t oldIndex, 
+                uint32_t newIndex,
+                uint32_t oldIndex,
                 const cy_stc_capsense_widget_config_t * ptrWdConfig)
 {
     uint32_t touchId;
@@ -1189,7 +1189,7 @@ static void Cy_CapSense_TransferTouch(
     touchId = (uint32_t)ptrOldPeak->id & CY_CAPSENSE_CSX_TOUCHPAD_ID_MASK;
     touchAge = ((uint32_t)ptrOldPeak->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK) >> CY_CAPSENSE_CSX_TOUCHPAD_BYTE_SHIFT;
     touchDebounce = ((uint32_t)ptrOldPeak->id & CY_CAPSENSE_CSX_TOUCHPAD_DEBOUNCE_MASK) >> CY_CAPSENSE_CSX_TOUCHPAD_BYTE_SHIFT;
-    
+
     /* Increase AGE by 1 if possible */
     if (touchAge < CY_CAPSENSE_CSX_TOUCHPAD_MAX_AGE)
     {
@@ -1200,7 +1200,7 @@ static void Cy_CapSense_TransferTouch(
     {
         touchDebounce--;
     }
-    
+
     ptrNewPeak->id = (uint16_t)(touchId | (uint16_t)(touchDebounce << CY_CAPSENSE_CSX_TOUCHPAD_BYTE_SHIFT));
     ptrNewPeak->z &= (uint16_t)~CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK;
     ptrNewPeak->z |= (uint16_t)(touchAge << CY_CAPSENSE_CSX_TOUCHPAD_BYTE_SHIFT);
@@ -1223,32 +1223,32 @@ static void Cy_CapSense_TransferTouch(
 * \param newIndex
 * The touch index of touch array in the active touch structure.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
 *******************************************************************************/
 static void Cy_CapSense_NewTouch(
-                uint32_t newIndex,  
+                uint32_t newIndex,
                 const cy_stc_capsense_widget_config_t * ptrWdConfig)
 {
     uint32_t idx;
     cy_stc_capsense_position_t * ptrNewPeak = &ptrWdConfig->ptrCsxTouchBuffer->newPeak[newIndex];
-    
+
     /* Touch is not accepted */
     if (0u == (ptrNewPeak->id & CY_CAPSENSE_CSX_TOUCHPAD_ID_ON_FAIL))
     {
         /* Create a bit map of ID's currently used and previously used and search for the new lowest ID */
-        idx = Cy_CapSense_GetLowestId(ptrWdConfig->ptrCsxTouchHistory->oldActiveIdsMask | 
+        idx = Cy_CapSense_GetLowestId(ptrWdConfig->ptrCsxTouchHistory->oldActiveIdsMask |
                 ptrWdConfig->ptrCsxTouchBuffer->newActiveIdsMask);
-        
+
         /* Indicate that ID is now taken */
         ptrWdConfig->ptrCsxTouchBuffer->newActiveIdsMask |= (uint8_t)(1u << idx);
-        
+
         /* Set AGE */
         ptrNewPeak->z &= (uint16_t)~CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK;
         ptrNewPeak->z |= CY_CAPSENSE_CSX_TOUCHPAD_AGE_START;
-        
+
         /* Set ID and Debounce */
         ptrNewPeak->id = (uint16_t)idx | (uint16_t)(((uint16_t)ptrWdConfig->ptrWdContext->onDebounce - 1u) << CY_CAPSENSE_CSX_TOUCHPAD_BYTE_SHIFT);
     }
@@ -1263,10 +1263,10 @@ static void Cy_CapSense_NewTouch(
 *
 * Returns the lowest available free touch ID.
 *
-* \param idMask 
+* \param idMask
 * The mask of IDs used in active and history touch structures.
 *
-* \return   
+* \return
 * Returns the lowest available touch ID. If no ID is available,
 * CY_CAPSENSE_CSX_TOUCHPAD_ID_ABSENT is returned.
 *
@@ -1308,7 +1308,7 @@ __STATIC_INLINE uint8_t Cy_CapSense_GetLowestId(uint8_t idMask)
 * the touchdown mask is cleared. Otherwise the age of the new finger is cleared
 * (it is considered as not active).
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -1338,37 +1338,37 @@ __STATIC_INLINE void Cy_CapSense_TouchDownDebounce(
 * Function Name: Cy_CapSense_CalcDistance
 ****************************************************************************//**
 *
-* Calculates squared distance between history and active touch structures 
+* Calculates squared distance between history and active touch structures
 * pointed by the input parameters.
 *
-* \param newIndex      
+* \param newIndex
 * The index of touch in the active touch structure.
 *
-* \param oldIndex      
+* \param oldIndex
 * The index of touch in the history touch structure.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
-* \return 
+* \return
 * Returns the squared distance.
 *
 *******************************************************************************/
 static uint32_t Cy_CapSense_CalcDistance(
-                uint32_t newIndex, 
+                uint32_t newIndex,
                 uint32_t oldIndex,
                 const cy_stc_capsense_widget_config_t * ptrWdConfig)
 {
     const cy_stc_capsense_position_t * ptrNewPeak = &ptrWdConfig->ptrCsxTouchBuffer->newPeak[newIndex];
     const cy_stc_capsense_position_t * ptrOldPeak = &ptrWdConfig->ptrCsxTouchHistory->oldPeak[oldIndex];
-    
+
     int32_t xDistance = (int32_t)(ptrOldPeak->x) - (int32_t)(ptrNewPeak->x);
     int32_t yDistance = (int32_t)(ptrOldPeak->y) - (int32_t)(ptrNewPeak->y);
-    
+
     xDistance *= xDistance;
     yDistance *= yDistance;
-    
+
     return ((uint32_t)xDistance + (uint32_t)yDistance);
 }
 #endif /* (CY_CAPSENSE_DISABLE != CY_CAPSENSE_CSX_TOUCHPAD_EN) */
@@ -1379,19 +1379,19 @@ static uint32_t Cy_CapSense_CalcDistance(
 * Function Name: Cy_CapSense_Hungarian
 ****************************************************************************//**
 *
-* Executes the Hungarian method on a distance map to track motion of two 
+* Executes the Hungarian method on a distance map to track motion of two
 * touch sets (old touches vs new touches).
 *
 * This function uses the Hungarian method described in specification 001-63362.
 * There is no bound checking on the parameters. It is the calling function's
 * responsibility to ensure parameter validity.
-* The function output is a fingerPosIndexMap array stored in the CSX buffer 
+* The function output is a fingerPosIndexMap array stored in the CSX buffer
 * where associations between the previous and current touches are returned.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
-* 
+*
 *******************************************************************************/
 static void Cy_CapSense_Hungarian(
                 const cy_stc_capsense_widget_config_t * ptrWdConfig)
@@ -1402,9 +1402,9 @@ static void Cy_CapSense_Hungarian(
     * be greater than or equal to 1.
     */
     int32_t * col = &ptrBuffer->colMap[0u];
-    /* 
+    /*
     * Number of elements in row of distanceMap matrix. This value must be
-    * greater than or equal to colCount. 
+    * greater than or equal to colCount.
     */
     int32_t * row = &ptrBuffer->rowMap[0u];
     int32_t * mins = &ptrBuffer->minsMap[0u];
@@ -1418,9 +1418,9 @@ static void Cy_CapSense_Hungarian(
     * corresponds to the 2nd coordinate data set. Each element in
     * distanceMap is the square of the distance between the
     * corresponding coordinates in the 1st and 2nd data set.
-    */    
+    */
     int32_t * distance = &ptrBuffer->distanceMap[0u];
-    
+
     int32_t delta = 0;
     int32_t colValue = 0;
     int32_t markedI = 0;
@@ -1432,7 +1432,7 @@ static void Cy_CapSense_Hungarian(
 
     uint32_t rowCount = ptrBuffer->newPeakNumber;
     uint32_t colCount = ptrWdConfig->ptrCsxTouchHistory->oldPeakNumber;
-    
+
     /* Fill distance map */
     if (rowCount >= colCount)
     {
@@ -1466,7 +1466,7 @@ static void Cy_CapSense_Hungarian(
         row[i] = 0;
         markIndices[i] = -1;
     }
-    
+
     /* Go through all columns */
     for (i = (int32_t)colCount; i-- > 0;)
     {
@@ -1563,11 +1563,11 @@ static void Cy_CapSense_Hungarian(
 ****************************************************************************//**
 *
 * Sorts the new touch array by:
-* 1. age (in decrementing order) 
-* and 
+* 1. age (in decrementing order)
+* and
 * 2. id (in incrementing order) fields.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -1592,7 +1592,7 @@ __STATIC_INLINE void Cy_CapSense_SortByAge(
         {
             for (j = (newTouchNum - 1u); j > i; j--)
             {
-                /* 
+                /*
                 * Check the touch records from the last to the current.
                 * If the touch record is valid, then replace the current touch record.
                 */
@@ -1632,7 +1632,7 @@ __STATIC_INLINE void Cy_CapSense_SortByAge(
         {
             ptrNewPeakJ = &ptrWdConfig->ptrCsxTouchBuffer->newPeak[j];
             /* If next touches have higher age or lower id with the same age then swap touches */
-            if (((ptrNewPeak->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK) < (ptrNewPeakJ->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK)) || 
+            if (((ptrNewPeak->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK) < (ptrNewPeakJ->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK)) ||
                 (((ptrNewPeak->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK) == (ptrNewPeakJ->z & CY_CAPSENSE_CSX_TOUCHPAD_AGE_MASK)) && (ptrNewPeak->id > ptrNewPeakJ->id)))
             {
                 /* Swap touches */
@@ -1654,10 +1654,10 @@ __STATIC_INLINE void Cy_CapSense_SortByAge(
 *
 * Copies content from the source touch structure to the destination touch structure.
 *
-* \param destination 
+* \param destination
 * The pointer to the destination touch structure \ref cy_stc_capsense_position_t.
 *
-* \param source      
+* \param source
 * The pointer to the source touch structure \ref cy_stc_capsense_position_t.
 *
 *******************************************************************************/
@@ -1675,14 +1675,14 @@ static void Cy_CapSense_CopyTouchRecord(
 * Function Name: Cy_CapSense_DpFilterTouchRecord
 ****************************************************************************//**
 *
-* Filters position data of every valid touch if enabled and copies data into 
+* Filters position data of every valid touch if enabled and copies data into
 * public touch array.
 *
-* This function checks every touch in the new touch structure. If the touch is 
-* valid (valid id and age > 0), then touch is filtered if the filter is enabled. 
+* This function checks every touch in the new touch structure. If the touch is
+* valid (valid id and age > 0), then touch is filtered if the filter is enabled.
 * At the end, the corresponding fields are updated in the public touch structure.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -1712,8 +1712,8 @@ void Cy_CapSense_DpFilterTouchRecord(
     /* Define number of touches that should be reported */
     for (i = 0u; i < CY_CAPSENSE_MAX_CENTROIDS; i++)
     {
-        /* 
-        * Age must be higher than 0 otherwise the touch does not pass 
+        /*
+        * Age must be higher than 0 otherwise the touch does not pass
         * debounce procedure. It exists in the array for correct
         * touch tracking and debouncing.
         */
@@ -1723,19 +1723,19 @@ void Cy_CapSense_DpFilterTouchRecord(
         }
         ptrNewPeak++;
     }
-    
+
     maxTouch = (uint32_t)ptrWdConfig->centroidConfig & CY_CAPSENSE_CENTROID_NUMBER_MASK;
     if (reportedTouchNum > maxTouch)
     {
         reportedTouchNum = maxTouch;
     }
-    
+
     #if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_CSX_POSITION_FILTER_EN)
     if (0u != (ptrWdConfig->posFilterConfig & CY_CAPSENSE_POSITION_FILTERS_MASK))
     {
         filterSize = (ptrWdConfig->posFilterConfig & CY_CAPSENSE_POSITION_FILTERS_SIZE_MASK) >>
                         CY_CAPSENSE_POSITION_FILTERS_SIZE_OFFSET;
-                        
+
         /* Go through all new touches */
         ptrNewPeak = ptrWdConfig->ptrCsxTouchBuffer->newPeak;
         for (i = 0u; i < reportedTouchNum; i++)
@@ -1797,7 +1797,7 @@ void Cy_CapSense_DpFilterTouchRecord(
     for (i = 0u; i < maxTouch; i++)
     {
         ptrWdTouch->id = CY_CAPSENSE_CSX_TOUCHPAD_ID_UNDEFINED;
-    
+
         if (i < reportedTouchNum)
         {
             /* Report touch to the data structure */
@@ -1809,7 +1809,7 @@ void Cy_CapSense_DpFilterTouchRecord(
         ptrNewPeak++;
         ptrWdTouch++;
     }
-    
+
     ptrWdConfig->ptrWdContext->wdTouch.numPosition = (uint8_t)reportedTouchNum;
     if (0u == reportedTouchNum)
     {
@@ -1838,7 +1838,7 @@ void Cy_CapSense_DpFilterTouchRecord(
 * position values.
 *
 * \param ptrHistory
-* The pointer to the position structure that holds previous historical 
+* The pointer to the position structure that holds previous historical
 * position values.
 *
 *******************************************************************************/
@@ -1848,7 +1848,7 @@ void Cy_CapSense_InitPositionFilters(
                 cy_stc_capsense_position_t * ptrHistory)
 {
     cy_stc_capsense_position_t * ptrHistoryIndex = ptrHistory;
-    
+
     #if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_POS_MEDIAN_FILTER_EN)
         if (0u != (filterConfig & CY_CAPSENSE_POSITION_MED_MASK))
         {
@@ -1898,10 +1898,10 @@ void Cy_CapSense_InitPositionFilters(
 * Function Name: Cy_CapSense_RunPositionFilters
 ****************************************************************************//**
 *
-* Applies enabled filters to position specified by ptrInput argument and stores 
+* Applies enabled filters to position specified by ptrInput argument and stores
 * history into ptrHistory.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -1910,13 +1910,13 @@ void Cy_CapSense_InitPositionFilters(
 * position values.
 *
 * \param ptrHistory
-* The pointer to the position structure that holds previous historical 
+* The pointer to the position structure that holds previous historical
 * position values.
 *
 *******************************************************************************/
 void Cy_CapSense_RunPositionFilters(
                 const cy_stc_capsense_widget_config_t * ptrWdConfig,
-                cy_stc_capsense_position_t * ptrInput, 
+                cy_stc_capsense_position_t * ptrInput,
                 cy_stc_capsense_position_t * ptrHistory)
 {
     #if (CY_CAPSENSE_POS_MEDIAN_FILTER_EN || CY_CAPSENSE_POS_AVERAGE_FILTER_EN)
@@ -1996,11 +1996,11 @@ void Cy_CapSense_RunPositionFilters(
 * Function Name: Cy_CapSense_RunPositionFiltersRadial
 ****************************************************************************//**
 *
-* Applies enabled filters to position specified by the ptrInput argument and stores 
-* history into ptrHistory. Filtering considers specific widget type where 
-* the next value after maximum position is zero and vise versa. 
+* Applies enabled filters to position specified by the ptrInput argument and stores
+* history into ptrHistory. Filtering considers specific widget type where
+* the next value after maximum position is zero and vise versa.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *
@@ -2009,7 +2009,7 @@ void Cy_CapSense_RunPositionFilters(
 * position values.
 *
 * \param ptrHistory
-* The pointer to the position structure that holds previous historical 
+* The pointer to the position structure that holds previous historical
 * position values.
 *
 *******************************************************************************/
@@ -2019,15 +2019,15 @@ void Cy_CapSense_RunPositionFiltersRadial(
                 cy_stc_capsense_position_t * ptrHistory)
 {
     /*
-    * If new position crosses the zero point in one or another direction, 
-    * the position variable with the smaller value is increased by the 
-    * slider resolution. This is done for the proper filtering. For 
+    * If new position crosses the zero point in one or another direction,
+    * the position variable with the smaller value is increased by the
+    * slider resolution. This is done for the proper filtering. For
     * example, xResolution = 100, currPosition = 95, newPosition = 5.
-    * If no actions are taken, then the average filter will give a value of 
-    * 50 - which is wrong. But if the position values are adjusted as 
-    * mentioned here, we will get newPosition equal 105 and the average 
-    * will be 100. Later this filtered value will be adjusted further 
-    * to not cross the xResolution and it will end up with 0u - which 
+    * If no actions are taken, then the average filter will give a value of
+    * 50 - which is wrong. But if the position values are adjusted as
+    * mentioned here, we will get newPosition equal 105 and the average
+    * will be 100. Later this filtered value will be adjusted further
+    * to not cross the xResolution and it will end up with 0u - which
     * is correct average result for the provided example.
     */
 
@@ -2050,7 +2050,7 @@ void Cy_CapSense_RunPositionFiltersRadial(
     #if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_POS_IIR_FILTER_EN)
         uint32_t coeffIIR = (uint32_t)(filterCfg & CY_CAPSENSE_POSITION_IIR_COEFF_MASK) >> CY_CAPSENSE_POSITION_IIR_COEFF_OFFSET;
     #endif
-    
+
     #if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_POS_MEDIAN_FILTER_EN)
         if (0u != (filterCfg & CY_CAPSENSE_POSITION_MED_MASK))
         {
@@ -2060,7 +2060,7 @@ void Cy_CapSense_RunPositionFiltersRadial(
             /* Preserve the filter history without zero-cross correction */
             ptrHistoryIndex[1u].x = ptrHistoryIndex[0u].x;
             ptrHistoryIndex[0u].x = (uint16_t)xPos;
-    
+
             /* Perform zero-cross correction */
             if (z1 > (halfResolution + xPos))
             {
@@ -2116,8 +2116,8 @@ void Cy_CapSense_RunPositionFiltersRadial(
 
             /*
             * IIR filter can accumulate a delay up to a full circle and even more.
-            * This situation is not supported by the middleware. If the difference 
-            * between the new position and IIR filter history is bigger than 
+            * This situation is not supported by the middleware. If the difference
+            * between the new position and IIR filter history is bigger than
             * half of resolution, then all enabled position filters are reset.
             */
             if(temp >= halfResolution)
@@ -2160,11 +2160,11 @@ void Cy_CapSense_RunPositionFiltersRadial(
             {
                 temp = xPos - ptrHistoryIndex->x;
             }
-            
+
             /*
             * IIR filter can accumulate delay up to full circle and even more.
-            * This situation is not supported by the middleware. If the difference 
-            * between the new position and IIR filter history is bigger than 
+            * This situation is not supported by the middleware. If the difference
+            * between the new position and IIR filter history is bigger than
             * half of resolution, then all enabled position filters are reset.
             */
             if(temp >= halfResolution)
@@ -2248,7 +2248,7 @@ void Cy_CapSense_RunPositionFiltersRadial(
 * \param newTouch
 * The pointer to the touch structure.
 *
-* \param ptrWdConfig 
+* \param ptrWdConfig
 * The pointer to the widget configuration structure
 * \ref cy_stc_capsense_widget_config_t.
 *

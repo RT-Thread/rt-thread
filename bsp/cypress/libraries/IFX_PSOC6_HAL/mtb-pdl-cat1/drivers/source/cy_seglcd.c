@@ -370,7 +370,7 @@ static char_t NumToChar(uint32_t value)
 *
 * Side Effects: The block is disabled to change the settings.
 *
-* \funcusage 
+* \funcusage
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Config
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Init
 *
@@ -378,7 +378,7 @@ static char_t NumToChar(uint32_t value)
 cy_en_seglcd_status_t Cy_SegLCD_Init(LCD_Type * base, cy_stc_seglcd_config_t const * config)
 {
     cy_en_seglcd_status_t retVal = CY_SEGLCD_BAD_PARAM;
-    
+
     if (NULL != base)
     {
         CY_ASSERT_L3(CY_SEGLCD_IS_SPEED_VALID(config->speed));
@@ -394,13 +394,13 @@ cy_en_seglcd_status_t Cy_SegLCD_Init(LCD_Type * base, cy_stc_seglcd_config_t con
         uint32_t locCheck = ((CY_SEGLCD_SPEED_LOW == config->speed) && (CY_SEGLCD_REV_1(base))) ? (CY_SEGLCD_DIV_MAX_LS_VER1) : (CY_SEGLCD_DIV_MAX);
         uint32_t locSubfr = CY_SYSLIB_DIV_ROUND((CY_SYSLIB_DIV_ROUND(config->clkFreq, config->frRate * 4UL * config->comNum) - 1UL) * config->contrast, 100UL);
         uint32_t locDead = CY_SYSLIB_DIV_ROUND(CY_SYSLIB_DIV_ROUND(config->clkFreq * ((uint32_t)(100UL - (uint32_t)config->contrast)), (uint32_t)config->frRate), 100UL);
-        
+
         if ((locSubfr <= locCheck) && (locDead <= locCheck))
         {
             uint32_t locLsClk = (uint32_t)((CY_SEGLCD_REV_1(base)) ? CY_SEGLCD_LSCLK_LF : config->lsClk);
 
             Cy_SegLCD_Disable(base);
-            
+
             /* Calculate the sub-frame and dead-time dividers */
             LCD_DIVIDER(base) = _VAL2FLD(LCD_DIVIDER_SUBFR_DIV, locSubfr) |
                                 _VAL2FLD(LCD_DIVIDER_DEAD_DIV,  locDead);
@@ -417,7 +417,7 @@ cy_en_seglcd_status_t Cy_SegLCD_Init(LCD_Type * base, cy_stc_seglcd_config_t con
             retVal = CY_SEGLCD_SUCCESS;
         }
     }
-    
+
     return (retVal);
 }
 
@@ -480,7 +480,7 @@ void Cy_SegLCD_Deinit(LCD_Type * base)
 
     LCD_CONTROL(base) = 0UL;
     LCD_DIVIDER(base) = 0UL;
-    
+
     InvClrData(base, false); /* Clear the entire frame buffer to all zeroes */
 }
 
@@ -493,7 +493,7 @@ void Cy_SegLCD_Deinit(LCD_Type * base)
 *
 * \param base The base pointer to the LCD instance registers.
 *
-* \funcusage 
+* \funcusage
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Config
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Init
 *
@@ -569,7 +569,7 @@ void Cy_SegLCD_Disable(LCD_Type * base)
 ****************************************************************************//**
 *
 * Clears the frame buffer and initiates the common lines.
-* In general case it is recommended to be called after \ref Cy_SegLCD_Init 
+* In general case it is recommended to be called after \ref Cy_SegLCD_Init
 *                                           and before \ref Cy_SegLCD_Enable.
 *
 * \param base    The base pointer to the LCD instance registers.
@@ -580,7 +580,7 @@ void Cy_SegLCD_Disable(LCD_Type * base)
 *
 * \return \ref cy_en_seglcd_status_t.
 *
-* \funcusage 
+* \funcusage
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Config
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Init
 *
@@ -629,7 +629,7 @@ cy_en_seglcd_status_t Cy_SegLCD_ClrFrame(LCD_Type * base, uint32_t const * commo
 cy_en_seglcd_status_t Cy_SegLCD_InvFrame(LCD_Type * base, uint32_t const * commons)
 {
     uint32_t retVal = (uint32_t)CY_SEGLCD_BAD_PARAM;
-    
+
     if (NULL != commons)
     {
         uint32_t i;
@@ -654,7 +654,7 @@ cy_en_seglcd_status_t Cy_SegLCD_InvFrame(LCD_Type * base, uint32_t const * commo
             retVal |= (uint32_t)Cy_SegLCD_WritePixel(base, commons[i], true);
         }
     }
-    
+
     return((cy_en_seglcd_status_t)retVal);
 }
 
@@ -679,7 +679,7 @@ cy_en_seglcd_status_t Cy_SegLCD_InvFrame(LCD_Type * base, uint32_t const * commo
 cy_en_seglcd_status_t Cy_SegLCD_WritePixel(LCD_Type * base, uint32_t pixel, bool value)
 {
     cy_en_seglcd_status_t retVal = CY_SEGLCD_BAD_PIXEL;
-    
+
     if (CY_SEGLCD_IS_PIX_VALID(pixel))
     {
         /* Extract the pixel location. */
@@ -717,7 +717,7 @@ cy_en_seglcd_status_t Cy_SegLCD_WritePixel(LCD_Type * base, uint32_t pixel, bool
 bool Cy_SegLCD_ReadPixel(LCD_Type * base, uint32_t pixel)
 {
     bool retVal = false;
-    
+
     if (CY_SEGLCD_IS_PIX_VALID(pixel))
     {
         /* Get the pixel value from the frame buffer */
@@ -743,7 +743,7 @@ bool Cy_SegLCD_ReadPixel(LCD_Type * base, uint32_t pixel)
 * \param character The code of the character to display.
 *                  Should be within the font symbol codes range specified by
 *           \ref cy_stc_seglcd_font_t.first and \ref cy_stc_seglcd_font_t.last
-* \param position The position of the character/digit on display. 
+* \param position The position of the character/digit on display.
 *                 Zero is the most left character/digit of the specified
 *                 display \ref cy_stc_seglcd_disp_t.
 * \param display The pointer to the display structure \ref cy_stc_seglcd_disp_t.

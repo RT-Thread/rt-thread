@@ -47,13 +47,13 @@
 *   (e.g. one 7-segment display and one bar-graph display).
 * * TN - A twisted nematic LCD glass.
 * * STN - A super-twisted nematic LCD glass.
-* * Display - A block of the same type of symbols on an LCD glass to indicate a multi-digital 
+* * Display - A block of the same type of symbols on an LCD glass to indicate a multi-digital
 *   number or character string. There may be one or more displays on a single LCD glass.
 * * Symbol - A block of pixels on an LCD glass to indicate a single digit or character.
 * * Pixel - A basic displaying item. This can be a segment of a 7-segment symbol (thus called a "segment"),
 *   a pixel of a dot-matrix display, or a stand-alone arbitrarily-shaped display element.
 *   Each pixel has a unique set of common and segment lines within one LCD glass.
-*   The API offers pixel identifiers - the 32-bit items of the display pixel map 
+*   The API offers pixel identifiers - the 32-bit items of the display pixel map
 *   (to use in the display structure definition, see \ref cy_stc_seglcd_disp_t),
 *   created by the \ref CY_SEGLCD_PIXEL macro.
 * * Common line (Com/COM for short) - A common wire/signal from the PSoC chip to the LCD glass.
@@ -67,16 +67,16 @@
 * \section group_seglcd_solution SegLCD Solution
 * The Segment LCD Driver can be used either as a standalone library
 * to manage the MXLCD hardware or as a part of the more complex software solution
-* delivered within ModusToolbox: 
+* delivered within ModusToolbox:
 * the Device Configurator SegLCD personality and the SegLCD Configurator tools.
 *
 * The SegLCD solution provides an easy method to configure
 * an MXLCD block to drive your standard or custom LCD glass:
 * \image html seglcd_solution.png
 * The SegLCD solution includes:
-* * The SegLCD Configurator tool, which is a display configuration wizard to create and 
+* * The SegLCD Configurator tool, which is a display configuration wizard to create and
 *   configure displays and generate commons array and display structures \ref cy_stc_seglcd_disp_t.
-* * The ModusToolbox Device Configurator contains a SegLCD personality, which is an MXLCD block 
+* * The ModusToolbox Device Configurator contains a SegLCD personality, which is an MXLCD block
 *   configuration wizard. It helps to easily tune all the timing settings, operation modes,
 *   provides a flexible GPIO pin assignment capability and generates the \ref cy_stc_seglcd_config_t
 *   structure and the rest of accompanying definitions.
@@ -94,9 +94,9 @@
 *
 * Contrast vs. Frame Rate (\ref cy_stc_seglcd_config_t.contrast vs. \ref cy_stc_seglcd_config_t.frRate)\n
 * Some combinations of a frame rate and input frequency can restrict the valid contrast range
-* because of the limited dividers size (for Low Speed mode - 8 bit, and for High Speed mode - 16 bit). 
-* For small values of contrast at small frame rates, the required divider values 
-* may be beyond permissible limits of the dividers size. 
+* because of the limited dividers size (for Low Speed mode - 8 bit, and for High Speed mode - 16 bit).
+* For small values of contrast at small frame rates, the required divider values
+* may be beyond permissible limits of the dividers size.
 * For large High Speed clock frequencies, certain ratios between the contrast and frame
 * rate cannot be achieved due to the limited divider size. The \ref Cy_SegLCD_Init function
 * automatically restricts such incorrect combinations (returns \ref CY_SEGLCD_BAD_PARAM).
@@ -106,15 +106,15 @@
 * Speed Mode Switching (\ref cy_stc_seglcd_config_t.speed)\n
 * The High Speed and Low Speed generators mostly duplicate each other,
 * except that for MXLCD_ver1, the High Speed version has larger frequency dividers to generate
-* the frame and sub-frame periods. This is because the clock of the High Speed block 
-* typically has a frequency 30-100 times bigger than the 32 KHz clock fed to the Low Speed block. 
+* the frame and sub-frame periods. This is because the clock of the High Speed block
+* typically has a frequency 30-100 times bigger than the 32 KHz clock fed to the Low Speed block.
 * For MXLCD_ver2, both High Speed and Low Speed generators have similar 16-bit dividers,
 * because a possibility exists to source a Low Speed generator with a Medium Frequency clock
 * (see \ref group_sysclk_mf_funcs) that may be much higher than 32 KHz ILO:
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_MF_Clock
 * Switching between High Speed and Low Speed modes via the \ref Cy_SegLCD_Init function
 * causes the dividers to reconfigure.
-* Under possible restrictions related to certain ratios between contrast and frame rates 
+* Under possible restrictions related to certain ratios between contrast and frame rates
 * (see Contrast vs. Frame Rate section above), switching between High Speed and the Low Speed modes
 * via the \ref Cy_SegLCD_Init function may set new dividers values that don't give the same contrast value.
 *
@@ -125,7 +125,7 @@
 * More precise preferences depend on a certain set of an LCD glass, power modes, the number of terminals, desired contrast/frame rate settings, etc.
 *
 * Conventional Waveforms (\ref cy_stc_seglcd_config_t.wave)\n
-* Conventional LCD drivers apply waveforms to COM and SEG electrodes generated by switching 
+* Conventional LCD drivers apply waveforms to COM and SEG electrodes generated by switching
 * between multiple different voltages. The following terms are used to define these waveforms:
 * * Duty:  A driver operates in the 1/M-th duty when it drives M COM electrodes. Each COM electrode is effectively driven for the 1/M of the frame time.
 * * Bias:  A driver uses the 1/B-th bias when its waveforms use the voltage steps of (1/B)*VDRV.
@@ -196,7 +196,7 @@
 *
 * When the block is configured, for further work with display, a display structure is needed:
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Display
-* \note Using the SegLCD Configurator, display structures and the commons array are generated automatically into the 
+* \note Using the SegLCD Configurator, display structures and the commons array are generated automatically into the
 * GeneratedSource/cycfg_seglcd.h/.c files. All you need is just to include cycfg_seglcd.h into your application code.
 *
 * And now you can write multi-digit decimal and hexadecimal numbers and strings onto the initiated 7-segment display:
@@ -242,7 +242,7 @@
 * \snippet seglcd/snippet/SegLCD_Snpt.c snippet_Cy_SegLCD_Custom3x5_WriteNumber
 * \image html seglcd_3x5.png
 *
-* There are LCD-GPIO terminal mapping definitions for different device families 
+* There are LCD-GPIO terminal mapping definitions for different device families
 * used in the mentioned above commons and display pixel arrays:
 * \snippet seglcd/snippet/SegLCD_Snpt.h snippet_Cy_SegLCD_connectionRemapping
 *
@@ -361,7 +361,7 @@ extern "C" {
 */
 
 /** SegLCD driver error codes */
-typedef enum 
+typedef enum
 {
     CY_SEGLCD_SUCCESS   = 0x0UL,                                         /**< Returned successful */
     CY_SEGLCD_BAD_PARAM = CY_SEGLCD_ID | CY_PDL_STATUS_ERROR | 0x01UL,   /**< A bad parameter was passed (display/font pointer is NULL,
@@ -382,7 +382,7 @@ typedef enum
 } cy_en_seglcd_status_t;
 
 /** SegLCD block speed mode */
-typedef enum 
+typedef enum
 {
     CY_SEGLCD_SPEED_LOW  = 0x0UL, /**< Low Speed mode, works in Active, Sleep and DeepSleep power modes */
     CY_SEGLCD_SPEED_HIGH = 0x1UL  /**< High Speed mode, works in Active and Sleep power modes */
@@ -396,7 +396,7 @@ typedef enum
 } cy_en_seglcd_lsclk_t;
 
 /** SegLCD driving waveform type */
-typedef enum 
+typedef enum
 {
     CY_SEGLCD_TYPE_A = 0x0UL, /**< Type A - Each frame addresses each COM pin only once with a balanced (DC=0) waveform. */
     CY_SEGLCD_TYPE_B = 0x1UL  /**< Type B - Each frame addresses each COM pin twice in a sequence with a positive
@@ -405,14 +405,14 @@ typedef enum
 } cy_en_seglcd_wave_t;
 
 /** SegLCD driving mode configuration */
-typedef enum 
+typedef enum
 {
     CY_SEGLCD_PWM         = 0x0UL, /**< PWM mode. */
     CY_SEGLCD_CORRELATION = 0x1UL  /**< Digital Correlation mode. */
 } cy_en_seglcd_drive_t;
 
 /** SegLCD PWM bias selection */
-typedef enum 
+typedef enum
 {
     CY_SEGLCD_BIAS_HALF   = 0x0UL, /**< 1/2 Bias. */
     CY_SEGLCD_BIAS_THIRD  = 0x1UL, /**< 1/3 Bias. */

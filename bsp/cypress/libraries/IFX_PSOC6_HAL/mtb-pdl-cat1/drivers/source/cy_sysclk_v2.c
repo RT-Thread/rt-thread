@@ -974,7 +974,7 @@ void Cy_SysClk_ClkMfDisable(void)
 void Cy_SysClk_ClkMfSetDivider(uint32_t divider)
 {
     if (CY_SYSCLK_IS_MF_DIVIDER_VALID(divider))
-    { 
+    {
         if (!Cy_SysClk_ClkMfIsEnabled())
         {
             CY_REG32_CLR_SET(SRSS_CLK_MF_SELECT, SRSS_CLK_MF_SELECT_MFCLK_DIV, divider - 1UL);
@@ -1020,7 +1020,7 @@ cy_en_clkmf_in_sources_t Cy_SysClk_ClkMfGetSource(void)
 cy_en_sysclk_status_t Cy_SysClk_WcoEnable(uint32_t timeoutus)
 {
     cy_en_sysclk_status_t retVal = CY_SYSCLK_TIMEOUT;
-    
+
     /* Enable WCO */
 #if defined (CY_IP_MXS28SRSS)
     BACKUP_WCO_CTL |= BACKUP_WCO_CTL_WCO_EN_Msk;
@@ -1035,12 +1035,12 @@ cy_en_sysclk_status_t Cy_SysClk_WcoEnable(uint32_t timeoutus)
     {
         Cy_SysLib_DelayUs(1U);
     }
-    
+
     if (0UL != timeoutus)
     {
         retVal = CY_SYSCLK_SUCCESS;
     }
-    
+
     return (retVal);
 }
 
@@ -1539,7 +1539,7 @@ cy_en_sysclk_status_t Cy_SysClk_EcoPrescaleConfigure(uint32_t enable, uint32_t f
         {
             SRSS_CLK_ECO_PRESCALE |= SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk;
             SRSS_CLK_ECO_PRESCALE = _VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_FRAC_DIV, frac_div);
-            SRSS_CLK_ECO_PRESCALE = _VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_INT_DIV, int_div);    
+            SRSS_CLK_ECO_PRESCALE = _VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_INT_DIV, int_div);
             retVal = CY_SYSCLK_SUCCESS;
         }
     }

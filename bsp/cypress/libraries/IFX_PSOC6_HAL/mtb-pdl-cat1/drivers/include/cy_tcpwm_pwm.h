@@ -365,7 +365,7 @@ typedef struct cy_stc_tcpwm_pwm_config
                                                 _VAL2FLD(TCPWM_GRP_CNT_V2_TR_PWM_CTRL_OVERFLOW_MODE, CY_TCPWM_PWM_TR_CTRL2_SET) | \
                                                 _VAL2FLD(TCPWM_GRP_CNT_V2_TR_PWM_CTRL_UNDERFLOW_MODE, CY_TCPWM_PWM_TR_CTRL2_CLEAR) | \
                                                 _VAL2FLD(TCPWM_GRP_CNT_V2_TR_PWM_CTRL_CC1_MATCH_MODE, CY_TCPWM_PWM_TR_CTRL2_CLEAR))
-                                                
+
 #define CY_TCPWM_PWM_MODE_CNTR_ASYMM_CC0_CC1_MATCH    ((TCPWM_GRP_CNT_V2_CTRL_CC0_MATCH_UP_EN_Msk) | \
                                                        (TCPWM_GRP_CNT_V2_CTRL_CC1_MATCH_DOWN_EN_Msk))
 #endif
@@ -1026,7 +1026,7 @@ __STATIC_INLINE uint32_t Cy_TCPWM_PWM_LineOutStatus (TCPWM_Type const *base, uin
              /* Not a Valid Line output */
              CY_ASSERT_L3(false);
              break;
-    }  
+    }
 
     return status;
 }
@@ -1036,7 +1036,7 @@ __STATIC_INLINE uint32_t Cy_TCPWM_PWM_LineOutStatus (TCPWM_Type const *base, uin
 * Function Name: Cy_TCPWM_PWM_PWMDeadTime
 ****************************************************************************//**
 *
-* Writes the dead time value for PWM. This is the number of clock cycles between 
+* Writes the dead time value for PWM. This is the number of clock cycles between
 * PWM_n (line_compl) going LOW and PWM (line) going HIGH.
 *
 * \param base
@@ -1068,7 +1068,7 @@ __STATIC_INLINE void Cy_TCPWM_PWM_PWMDeadTime (TCPWM_Type const *base, uint32_t 
         result = TCPWM_GRP_CNT_DT(base, grp, cntNum);
         result &= ~(TCPWM_GRP_CNT_V2_DT_DT_LINE_OUT_L_Msk | TCPWM_GRP_CNT_V2_DT_DT_LINE_OUT_H_Msk);
 
-        TCPWM_GRP_CNT_DT(base, grp, cntNum) = result | 
+        TCPWM_GRP_CNT_DT(base, grp, cntNum) = result |
                     _VAL2FLD(TCPWM_GRP_CNT_V2_DT_DT_LINE_OUT_L, (uint8_t)(deadTime)) |
                     _VAL2FLD(TCPWM_GRP_CNT_V2_DT_DT_LINE_OUT_H, (uint8_t)(deadTime >> 8U));
 #endif
@@ -1080,7 +1080,7 @@ __STATIC_INLINE void Cy_TCPWM_PWM_PWMDeadTime (TCPWM_Type const *base, uint32_t 
 * Function Name: Cy_TCPWM_PWM_PWMDeadTimeN
 ****************************************************************************//**
 *
-* Writes the dead time value for PWM_n. This is the number of clock cycles between 
+* Writes the dead time value for PWM_n. This is the number of clock cycles between
 * PWM (line) going LOW and PWM_n (line_compl) going HIGH.
 *
 * \param base
@@ -1104,7 +1104,7 @@ __STATIC_INLINE void Cy_TCPWM_PWM_PWMDeadTimeN (TCPWM_Type const *base, uint32_t
     result = TCPWM_GRP_CNT_DT(base, grp, cntNum);
     result &= ~(TCPWM_GRP_CNT_V2_DT_DT_LINE_COMPL_OUT_Msk);
 
-    TCPWM_GRP_CNT_DT(base, grp, cntNum) = result | 
+    TCPWM_GRP_CNT_DT(base, grp, cntNum) = result |
             _VAL2FLD(TCPWM_GRP_CNT_V2_DT_DT_LINE_COMPL_OUT, (uint16_t)(deadTime));
 
 }

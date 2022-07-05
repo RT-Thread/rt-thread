@@ -5,9 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-06-29     Rbb666	   first version
+ * 2022-06-29     Rbb666       first version
  */
- 
+
 #ifndef __DRV_UART_H__
 #define __DRV_UART_H__
 

@@ -104,7 +104,7 @@
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
 *     <td rowspan="2">1.60</td>
-*     <td>Added \ref Cy_GPIO_SetVtripAuto and \ref Cy_GPIO_GetVtripAuto APIs for 
+*     <td>Added \ref Cy_GPIO_SetVtripAuto and \ref Cy_GPIO_GetVtripAuto APIs for
 *         configuring    GPIO input buffer voltage for automotive compatible or not,
 *         for CAT1C devices.</td>
 *     <td>New   APIs support for CAT1C devices.</td>

@@ -65,17 +65,17 @@ static cy_en_smif_status_t cy_smif_octalddrenable(SMIF_Type *base,
 * Note that this function performs SFDP on all the external memories whereas
 * \ref Cy_SMIF_MemSfdpDetect peforms it only on one memory that is specified
 * through the arguments. This function configures the SMIF device slot registers
-* with the configuration from \ref cy_stc_smif_mem_config_t structure which is 
+* with the configuration from \ref cy_stc_smif_mem_config_t structure which is
 * a member of the \ref cy_stc_smif_block_config_t structure. If SFDP discovery
 * is enabled in the configuration strucutre through autoDetectSfdp field,
 * this function calls \ref Cy_SMIF_MemSfdpDetect function for each memory,
 * fills the structures with the discovered parameters, and configures the
-* SMIF device slot registers accordingly. \ref Cy_SMIF_Init must have been 
+* SMIF device slot registers accordingly. \ref Cy_SMIF_Init must have been
 * called prior to calling this funciton.
 * The \ref cy_stc_smif_context_t context structure returned from \ref Cy_SMIF_Init
 * is passed as a parameter to this function.
 *
-* \note 4-byte addressing mode is set when the memory device supports 
+* \note 4-byte addressing mode is set when the memory device supports
 *       3- or 4-byte addressing mode.
 *
 * \param base
@@ -110,7 +110,7 @@ cy_en_smif_status_t Cy_SMIF_MemInit(SMIF_Type *base,
     uint32_t sfdpRes =(uint32_t)CY_SMIF_SUCCESS;
     uint32_t idx;
 
-    if ((NULL != base) && (NULL != blockConfig) && (NULL != blockConfig->memConfig) 
+    if ((NULL != base) && (NULL != blockConfig) && (NULL != blockConfig->memConfig)
         && (NULL != context) && (0U != blockConfig->memCount))
     {
         uint32_t size = blockConfig->memCount;
@@ -126,7 +126,7 @@ cy_en_smif_status_t Cy_SMIF_MemInit(SMIF_Type *base,
                 CY_ASSERT_L3(CY_SMIF_SLAVE_SEL_VALID(memCfg->slaveSelect));
                 CY_ASSERT_L3(CY_SMIF_DATA_SEL_VALID(memCfg->dataSelect));
                 CY_ASSERT_L1(NULL != memCfg->deviceCfg);
-                
+
                 device = Cy_SMIF_GetDeviceBySlot(base, memCfg->slaveSelect);
                 if (NULL != device)
                 {
@@ -159,9 +159,9 @@ cy_en_smif_status_t Cy_SMIF_MemInit(SMIF_Type *base,
                         /* Check valid parameters for XIP */
                         CY_ASSERT_L3(MEM_ADDR_VALID( memCfg->baseAddress, memCfg->memMappedSize));
                         CY_ASSERT_L3(MEM_MAPPED_SIZE_VALID( memCfg->memMappedSize));
-                        
+
                         XipRegInit(device, memCfg);
-                        
+
 #if(CY_IP_MXSMIF_VERSION>=2)
                         context->preXIPDataRate = memCfg->deviceCfg->readCmd->dataRate;
 #endif /* CY_IP_MXSMIF_VERSION */
@@ -262,9 +262,9 @@ cy_en_smif_status_t Cy_SMIF_MemCmdWriteEnable(SMIF_Type *base,
 {
     /* The memory Write Enable */
     cy_stc_smif_mem_cmd_t* writeEn = memDevice->deviceCfg->writeEnCmd;
-    
+
     cy_en_smif_status_t result = CY_SMIF_CMD_NOT_FOUND;
-    
+
     if(NULL != writeEn)
     {
 #if (CY_IP_MXSMIF_VERSION>=2)
@@ -331,7 +331,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdWriteDisable(SMIF_Type *base,
     cy_stc_smif_mem_cmd_t* writeDis = memDevice->deviceCfg->writeDisCmd;
 
     cy_en_smif_status_t result = CY_SMIF_CMD_NOT_FOUND;
-    
+
     if(NULL != writeDis)
     {
 #if (CY_IP_MXSMIF_VERSION>=2)
@@ -359,7 +359,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdWriteDisable(SMIF_Type *base,
                                           context);
 #endif
     }
-    
+
     return result;
 }
 
@@ -391,7 +391,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdWriteDisable(SMIF_Type *base,
 *       - True - The device is busy or a timeout occurs.
 *       - False - The device is not busy.
 *
-* \note Check \ref group_smif_usage_rules for any usage restriction 
+* \note Check \ref group_smif_usage_rules for any usage restriction
 *
 *******************************************************************************/
 bool Cy_SMIF_MemIsBusy(SMIF_Type *base, cy_stc_smif_mem_config_t const *memDevice,
@@ -487,7 +487,7 @@ bool Cy_SMIF_MemIsBusy(SMIF_Type *base, cy_stc_smif_mem_config_t const *memDevic
 *   - \ref CY_SMIF_BAD_PARAM
 *   - \ref CY_SMIF_CMD_NOT_FOUND
 *
-* \note Check \ref group_smif_usage_rules for any usage restriction 
+* \note Check \ref group_smif_usage_rules for any usage restriction
 *
 *******************************************************************************/
 cy_en_smif_status_t Cy_SMIF_MemQuadEnable(SMIF_Type *base,
@@ -495,7 +495,7 @@ cy_en_smif_status_t Cy_SMIF_MemQuadEnable(SMIF_Type *base,
                                     cy_stc_smif_context_t const *context)
 {
     cy_en_smif_status_t result= CY_SMIF_CMD_NOT_FOUND;
-    uint8_t statusReg[CY_SMIF_QE_BIT_STATUS_REG2_T1] = {0U};  
+    uint8_t statusReg[CY_SMIF_QE_BIT_STATUS_REG2_T1] = {0U};
     cy_stc_smif_mem_device_cfg_t* device =  memDevice->deviceCfg;
 
     /* Check that command exists */
@@ -781,7 +781,7 @@ static cy_en_smif_status_t cy_smif_octalddrenable(SMIF_Type *base,
 *       - \ref CY_SMIF_EXCEED_TIMEOUT
 *       - \ref CY_SMIF_CMD_NOT_FOUND
 *
-* \note Check \ref group_smif_usage_rules for any usage restriction 
+* \note Check \ref group_smif_usage_rules for any usage restriction
 *
 *******************************************************************************/
 cy_en_smif_status_t Cy_SMIF_MemCmdReadStatus(SMIF_Type *base,
@@ -795,7 +795,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdReadStatus(SMIF_Type *base,
     /* Read the memory status register */
     result = Cy_SMIF_TransmitCommand( base, command, CY_SMIF_WIDTH_SINGLE,
                 NULL, CY_SMIF_CMD_WITHOUT_PARAM,
-                CY_SMIF_WIDTH_NA, memDevice->slaveSelect, 
+                CY_SMIF_WIDTH_NA, memDevice->slaveSelect,
                 CY_SMIF_TX_NOT_LAST_BYTE, context);
 
     if (CY_SMIF_SUCCESS == result)
@@ -1005,7 +1005,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdSectorErase(SMIF_Type *base,
 * Function Name: Cy_SMIF_MemCmdProgram
 ****************************************************************************//**
 *
-* This function performs the Program operation. 
+* This function performs the Program operation.
 *
 * \note This function uses the  Cy_SMIF_TransmitCommand() API.
 * The Cy_SMIF_TransmitCommand() API works in the blocking mode. In the dual quad mode,
@@ -1023,11 +1023,11 @@ cy_en_smif_status_t Cy_SMIF_MemCmdSectorErase(SMIF_Type *base,
 * \param writeBuff
 * The pointer to the data to program. If this pointer is a NULL, then the
 * function does not enable the interrupt. This use case is  typically used when
-* the FIFO is handled outside the interrupt and is managed in either a 
-* polling-based code or a DMA. The user would handle the FIFO management 
-* in a DMA or a polling-based code. 
-* If the user provides a NULL pointer in this function and does not handle 
-* the FIFO transaction, this could either stall or timeout the operation 
+* the FIFO is handled outside the interrupt and is managed in either a
+* polling-based code or a DMA. The user would handle the FIFO management
+* in a DMA or a polling-based code.
+* If the user provides a NULL pointer in this function and does not handle
+* the FIFO transaction, this could either stall or timeout the operation
 * \ref Cy_SMIF_TransmitData().
 *
 * \param size
@@ -1065,7 +1065,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdProgram(SMIF_Type *base,
 
     cy_stc_smif_mem_device_cfg_t *device = memDevice->deviceCfg;
     cy_stc_smif_mem_cmd_t *cmdProg = device->programCmd;
-    
+
     if(NULL == cmdProg)
     {
         result = CY_SMIF_CMD_NOT_FOUND;
@@ -1168,13 +1168,13 @@ cy_en_smif_status_t Cy_SMIF_MemCmdProgram(SMIF_Type *base,
 * The address to read.
 *
 * \param readBuff
-* The pointer to the variable where the read data is stored. If this pointer is 
-* a NULL, then the function does not enable the interrupt. This use case is 
+* The pointer to the variable where the read data is stored. If this pointer is
+* a NULL, then the function does not enable the interrupt. This use case is
 * typically used when the FIFO is handled outside the interrupt and is managed
 * in either a  polling-based code or a DMA. The user would handle the FIFO
-* management in a DMA or a polling-based code. 
-* If the user provides a NULL pointer in this function and does not handle 
-* the FIFO transaction, this could either stall or timeout the operation 
+* management in a DMA or a polling-based code.
+* If the user provides a NULL pointer in this function and does not handle
+* the FIFO transaction, this could either stall or timeout the operation
 * \ref Cy_SMIF_TransmitData().
 *
 * \param size
@@ -1197,7 +1197,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdProgram(SMIF_Type *base,
 *       - \ref CY_SMIF_EXCEED_TIMEOUT
 *       - \ref CY_SMIF_CMD_NOT_FOUND
 *
-* \note Check \ref group_smif_usage_rules for any usage restriction 
+* \note Check \ref group_smif_usage_rules for any usage restriction
 *
 *******************************************************************************/
 cy_en_smif_status_t Cy_SMIF_MemCmdRead(SMIF_Type *base,
@@ -1225,7 +1225,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdRead(SMIF_Type *base,
     {
         slaveSelected = (0U == memDevice->dualQuadSlots)?  memDevice->slaveSelect :
                                (cy_en_smif_slave_select_t)memDevice->dualQuadSlots;
-                               
+
         result = Cy_SMIF_TransmitCommand( base, (uint8_t)cmdRead->command,
                     cmdRead->cmdWidth, addr, device->numOfAddrBytes,
                     cmdRead->addrWidth, slaveSelected, CY_SMIF_TX_NOT_LAST_BYTE,
@@ -1268,7 +1268,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdRead(SMIF_Type *base,
 * The memory device configuration.
 *
 * \param regionInfo
-* Places a hybrid region configuration structure that contains the region 
+* Places a hybrid region configuration structure that contains the region
 * specific parameters. See \ref cy_stc_smif_hybrid_region_info_t for
 * reference.
 *
@@ -1280,7 +1280,7 @@ cy_en_smif_status_t Cy_SMIF_MemCmdRead(SMIF_Type *base,
 *       - \ref CY_SMIF_NOT_HYBRID_MEM
 *       - \ref CY_SMIF_BAD_PARAM
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemLocateHybridRegion
 *
 *******************************************************************************/
@@ -1352,7 +1352,7 @@ void Cy_SMIF_SetReadyPollingDelay(uint16_t pollTimeoutUs,
 ****************************************************************************//**
 *
 * Polls the memory device to check whether it is ready to accept new commands or
-* not until either it is ready or the retries have exceeded the limit. 
+* not until either it is ready or the retries have exceeded the limit.
 * This is a blocking function, it will block the execution flow until
 * the command transmission is completed.
 *
@@ -1363,7 +1363,7 @@ void Cy_SMIF_SetReadyPollingDelay(uint16_t pollTimeoutUs,
 * The memory device configuration.
 *
 * \param timeoutUs
-*  The timeout value in microseconds to apply while polling the memory. 
+*  The timeout value in microseconds to apply while polling the memory.
 *
 * \param context
 * This is the pointer to the context structure \ref cy_stc_smif_context_t
@@ -1375,19 +1375,19 @@ void Cy_SMIF_SetReadyPollingDelay(uint16_t pollTimeoutUs,
 * \ref CY_SMIF_SUCCESS        - Memory is ready to accept new commands.
 * \ref CY_SMIF_EXCEED_TIMEOUT - Memory is busy.
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemIsReady
 *
 *******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_MemIsReady(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
+cy_en_smif_status_t Cy_SMIF_MemIsReady(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
                                        uint32_t timeoutUs, cy_stc_smif_context_t const *context)
-{ 
+{
     bool isBusy = Cy_SMIF_Memslot_IsBusy(base, (cy_stc_smif_mem_config_t* )memConfig, context);
 
     CY_ASSERT_L1(NULL != context);
 
     if (context->memReadyPollDealy > 0U)
-    {    
+    {
         if (isBusy)
         {
             uint16_t pollingDelay = (timeoutUs > context->memReadyPollDealy) ? context->memReadyPollDealy : (uint16_t)timeoutUs;
@@ -1414,20 +1414,20 @@ cy_en_smif_status_t Cy_SMIF_MemIsReady(SMIF_Type *base, cy_stc_smif_mem_config_t
             uint32_t delayMs = 0UL;
             uint32_t timeoutSlice = 0UL;
             uint16_t delayUs = 0U;
-        
+
             /* Calculate the slice of time to split the timeoutUs delay into TIMEOUT_SLICE_DIV times */
-            timeoutSlice = timeoutUs / TIMEOUT_SLICE_DIV; 
-            
+            timeoutSlice = timeoutUs / TIMEOUT_SLICE_DIV;
+
             /* Reduce the slice if needed to avoid too big idle period between checking the busy state */
             if (timeoutSlice > TIMEOUT_SLICE_MAX)
             {
                 timeoutSlice = TIMEOUT_SLICE_MAX;
             }
-            if(timeoutSlice == 0UL) 
+            if(timeoutSlice == 0UL)
             {
                 timeoutSlice = 1UL;
             }
-        
+
             do
             {
                 delayMs = timeoutSlice / 1000UL;
@@ -1446,9 +1446,9 @@ cy_en_smif_status_t Cy_SMIF_MemIsReady(SMIF_Type *base, cy_stc_smif_mem_config_t
                 }
 
                 isBusy = Cy_SMIF_Memslot_IsBusy(base, (cy_stc_smif_mem_config_t* )memConfig, context);
-        
+
                 timeoutUs = (timeoutUs > timeoutSlice) ? (timeoutUs - timeoutSlice) : 0UL;
-    
+
             } while(isBusy && (timeoutUs > 0UL));
         }
     }
@@ -1485,7 +1485,7 @@ cy_en_smif_status_t Cy_SMIF_MemIsReady(SMIF_Type *base, cy_stc_smif_mem_config_t
 *
 * \return The status of the operation. See \ref cy_en_smif_status_t.
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemIsQuadEnabled
 *
 *******************************************************************************/
@@ -1527,7 +1527,7 @@ cy_en_smif_status_t Cy_SMIF_MemIsQuadEnabled(SMIF_Type *base, cy_stc_smif_mem_co
 * The memory device configuration.
 *
 * \param timeoutUs
-*  The timeout value in microseconds to apply while polling the memory. 
+*  The timeout value in microseconds to apply while polling the memory.
 *
 * \param context
 * This is the pointer to the context structure \ref cy_stc_smif_context_t
@@ -1537,11 +1537,11 @@ cy_en_smif_status_t Cy_SMIF_MemIsQuadEnabled(SMIF_Type *base, cy_stc_smif_mem_co
 *
 * \return The status of the operation. See \ref cy_en_smif_status_t.
 *
-* \funcusage 
+* \funcusage
 * See \ref Cy_SMIF_MemIsQuadEnabled usage.
 *
 *******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_MemEnableQuadMode(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
+cy_en_smif_status_t Cy_SMIF_MemEnableQuadMode(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
                                               uint32_t timeoutUs, cy_stc_smif_context_t const *context)
 {
     cy_en_smif_status_t status;
@@ -1597,12 +1597,12 @@ cy_en_smif_status_t Cy_SMIF_MemEnableQuadMode(SMIF_Type *base, cy_stc_smif_mem_c
 *
 * \return The status of the operation. See \ref cy_en_smif_status_t.
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemRead
 *
 *******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_MemRead(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
-                                    uint32_t address, uint8_t rxBuffer[], 
+cy_en_smif_status_t Cy_SMIF_MemRead(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
+                                    uint32_t address, uint8_t rxBuffer[],
                                     uint32_t length, cy_stc_smif_context_t const *context)
 {
     cy_en_smif_status_t status = CY_SMIF_BAD_PARAM;
@@ -1718,9 +1718,9 @@ cy_en_smif_status_t Cy_SMIF_MemRead(SMIF_Type *base, cy_stc_smif_mem_config_t co
 
             if(CY_SMIF_SUCCESS != status)
             {
-                break;  
+                break;
             }
-   
+
             /* Recalculate the next rxBuffer offset */
             length -= chunk;
             address += chunk;
@@ -1768,18 +1768,18 @@ cy_en_smif_status_t Cy_SMIF_MemRead(SMIF_Type *base, cy_stc_smif_mem_config_t co
 *
 * \return The status of the operation. See \ref cy_en_smif_status_t.
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemWrite
 *
 *******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig, 
-                                     uint32_t address, uint8_t const txBuffer[], 
+cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t const *memConfig,
+                                     uint32_t address, uint8_t const txBuffer[],
                                      uint32_t length, cy_stc_smif_context_t const *context)
 {
     cy_en_smif_status_t status = CY_SMIF_BAD_PARAM;
     uint32_t offset = 0UL;
     uint32_t chunk = 0UL;
-    uint32_t pageSize; 
+    uint32_t pageSize;
     uint8_t addrArray[CY_SMIF_FOUR_BYTES_ADDR] = {0U};
     cy_stc_smif_mem_cmd_t *cmdProgram;
 
@@ -1802,12 +1802,12 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
         while (length > 0UL)
         {
             /* Get the number of bytes which can be written during one operation */
-            offset = address % pageSize; 
+            offset = address % pageSize;
             chunk = ((offset + length) < pageSize) ? length : (pageSize - offset);
 
             /* The Write Enable bit may be cleared by the memory after every successful
              * operation of write or erase operations. Therefore, must be set for
-             * every loop. 
+             * every loop.
              */
             status = Cy_SMIF_MemCmdWriteEnable(base, memConfig, context);
 
@@ -1852,7 +1852,7 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
                                                          cmdProgram->dataWidth,
                                                          context);
                 }
-                    
+
                 if(CY_SMIF_SUCCESS == status)
                 {
                     /* Check if the memory has completed the write operation. ProgramTime is in microseconds */
@@ -1862,7 +1862,7 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
 
             if(CY_SMIF_SUCCESS != status)
             {
-                break;  
+                break;
             }
 
             /* Recalculate the next rxBuffer offset */
@@ -1896,7 +1896,7 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
 * The memory device configuration.
 *
 * \param address
-* The address of the block to be erased. The address should be aligned with 
+* The address of the block to be erased. The address should be aligned with
 * the start address of the sector.
 *
 * \param length
@@ -1915,7 +1915,7 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
 * \note Memories like hybrid have sectors of different sizes. \n
 * Check the adress and length parameters before calling this function.
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemEraseSector
 *
 *******************************************************************************/
@@ -2089,7 +2089,7 @@ cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_conf
 *
 * \return The status of the operation. See \ref cy_en_smif_status_t.
 *
-* \funcusage 
+* \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemEraseChip
 *
 *******************************************************************************/
@@ -2102,7 +2102,7 @@ cy_en_smif_status_t Cy_SMIF_MemEraseChip(SMIF_Type *base, cy_stc_smif_mem_config
 
     /* The Write Enable bit may be cleared by the memory after every successful
     * operation of write/erase operations. Therefore, it must be set for
-    * every loop 
+    * every loop
     */
     status = Cy_SMIF_MemCmdWriteEnable(base, memConfig, context);
 
@@ -2110,12 +2110,12 @@ cy_en_smif_status_t Cy_SMIF_MemEraseChip(SMIF_Type *base, cy_stc_smif_mem_config
     {
         /* Send the command to erase the entire chip */
         status = Cy_SMIF_MemCmdChipErase(base, memConfig, context);
-        
+
         if(CY_SMIF_SUCCESS == status)
         {
             /* Wait until the erase operation is completed or a timeout occurs. chipEraseTime is in milliseconds */
-            status = Cy_SMIF_MemIsReady(base, memConfig, 
-                     (memConfig->deviceCfg->chipEraseTime * ONE_MILLI_IN_MICRO), context);   
+            status = Cy_SMIF_MemIsReady(base, memConfig,
+                     (memConfig->deviceCfg->chipEraseTime * ONE_MILLI_IN_MICRO), context);
         }
     }
 

@@ -30,7 +30,7 @@
 #include "cycfg_clocks.h"
 
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_CLK_DIV_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_CLK_DIV_obj =
     {
         .type = CYHAL_RSC_CLOCK,
         .block_num = CYBSP_CSD_CLK_DIV_HW,

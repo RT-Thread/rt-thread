@@ -736,7 +736,7 @@ void Cy_SAR_SetConvertMode(SAR_Type *base, cy_en_sar_sample_ctrl_trigger_mode_t 
 * This function reads the end of conversion status and clears it after.
 *
 * \note
-* \ref CY_SAR_WAIT_FOR_RESULT and \ref CY_SAR_WAIT_FOR_RESULT_INJ return modes are not recommended 
+* \ref CY_SAR_WAIT_FOR_RESULT and \ref CY_SAR_WAIT_FOR_RESULT_INJ return modes are not recommended
 * for use in RTOS environment.
 *
 * \funcusage

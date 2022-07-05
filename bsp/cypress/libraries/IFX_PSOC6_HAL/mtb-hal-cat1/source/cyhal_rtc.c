@@ -39,7 +39,7 @@
 * \ingroup group_hal_impl
 * \{
 *
-* Internally the CAT1 (PSoC™ 6) RTC only stores the year as a two digit BCD value
+* Internally the CAT1 (PSoCâ„¢ 6) RTC only stores the year as a two digit BCD value
 * (0-99); no century information is stored. On RTC initialization the HAL must,
 * as a result, assume a default century. If cyhal_rtc_write has been called
 * with a different century than the default, its value must be stored and that

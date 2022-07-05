@@ -1109,7 +1109,7 @@ cy_en_canfd_status_t Cy_CANFD_GetRxBuffer(CANFD_Type const *base, uint32_t chan,
             rxBuffer->r0_f->rtr = (cy_en_canfd_rtr_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R0_RTR, *address));
             rxBuffer->r0_f->xtd = (cy_en_canfd_xtd_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R0_XTD, *address));
             rxBuffer->r0_f->esi = (cy_en_canfd_esi_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R0_ESI, *address));
-            
+
             address++;
             rxBuffer->r1_f->rxts = _FLD2VAL(CY_CANFD_RX_BUFFER_R1_RXTS, *address);
             rxBuffer->r1_f->dlc = _FLD2VAL(CY_CANFD_RX_BUFFER_R1_DLC, *address);
@@ -1204,7 +1204,7 @@ cy_en_canfd_status_t Cy_CANFD_GetFIFOTop(CANFD_Type const *base, uint32_t chan,
             rxBuffer->r0_f->rtr = (cy_en_canfd_rtr_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R0_RTR, tmpregister));
             rxBuffer->r0_f->xtd = (cy_en_canfd_xtd_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R0_XTD, tmpregister));
             rxBuffer->r0_f->esi = (cy_en_canfd_esi_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R0_ESI, tmpregister));
-    
+
             tmpregister = *address; /* The FIFO Read pointer is post-incremented by the HW */
             rxBuffer->r1_f->rxts = _FLD2VAL(CY_CANFD_RX_BUFFER_R1_RXTS, tmpregister);
             rxBuffer->r1_f->dlc = _FLD2VAL(CY_CANFD_RX_BUFFER_R1_DLC, tmpregister);
@@ -1212,7 +1212,7 @@ cy_en_canfd_status_t Cy_CANFD_GetFIFOTop(CANFD_Type const *base, uint32_t chan,
             rxBuffer->r1_f->fdf = (cy_en_canfd_fdf_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R1_FDF, tmpregister));
             rxBuffer->r1_f->fidx = _FLD2VAL(CY_CANFD_RX_BUFFER_R1_FIDX, tmpregister);
             rxBuffer->r1_f->anmf = (cy_en_canfd_anmf_t)((uint32_t)_FLD2VAL(CY_CANFD_RX_BUFFER_R1_ANMF, tmpregister));
-    
+
             /* ID : Shifts a standard RxID to its position */
             if (rxBuffer->r0_f->xtd == CY_CANFD_XTD_STANDARD_ID)
             {
