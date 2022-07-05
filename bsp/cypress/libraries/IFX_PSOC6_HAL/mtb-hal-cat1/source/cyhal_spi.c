@@ -179,7 +179,7 @@ static cy_rslt_t _cyhal_spi_int_frequency(cyhal_spi_t *obj, uint32_t hz, uint8_t
     }
     else
     {
-        /* Slave requires such frequency: required_frequency = N / ((0.5 * desired_period) – 20 nsec - tDSI,
+        /* Slave requires such frequency: required_frequency = N / ((0.5 * desired_period) â€“ 20 nsec - tDSI,
         *   N is 3 when "Enable Input Glitch Filter" is false and 4 when true.
         *   tDSI Is external master delay which is assumed to be 16.66 nsec */
 
@@ -389,7 +389,7 @@ static cy_rslt_t _cyhal_spi_get_ssel_map_idx(cyhal_gpio_t ssel, const cyhal_reso
     };
     static const size_t ssel_s_pin_maps_sizes_bytes[] = {
     #if defined(CYHAL_PIN_MAP_DRIVE_MODE_SCB_SPI_S_SELECT0)
-        sizeof(cyhal_pin_map_scb_spi_s_select0), 
+        sizeof(cyhal_pin_map_scb_spi_s_select0),
     #endif
     #if defined(CYHAL_PIN_MAP_DRIVE_MODE_SCB_SPI_S_SELECT1)
         sizeof(cyhal_pin_map_scb_spi_s_select1),

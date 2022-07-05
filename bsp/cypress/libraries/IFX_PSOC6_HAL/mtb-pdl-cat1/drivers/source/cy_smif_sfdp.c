@@ -2128,7 +2128,7 @@ static cy_en_smif_status_t SfdpPopulateRegionInfo(SMIF_Type *base,
 
         /* Get the address length for configuration detection */
         addrCode = _FLD2VAL(CY_SMIF_SFDP_SECTOR_MAP_ADDR_BYTES, sectorMapBuff[currTableIdx + CY_SMIF_SFDP_SECTOR_MAP_ADDR_LEN_OFFSET]);
-        switch(addrCode) 
+        switch(addrCode)
         {
             case CY_SMIF_SFDP_THREE_BYTES_ADDR_CODE:
                 /* No address cycle */
@@ -2455,7 +2455,7 @@ static cy_en_smif_protocol_mode_t GetOctalDDRParams(SMIF_Type *base,
                 {
                     ValueToByteArray(device->latencyCyclesRegAddr, cfr_reg_address, 0, 4U);
                     cfr_reg_address[4] = cfr_value;
-                         
+
                     result = Cy_SMIF_MemCmdWriteRegister(base,
                                          slaveSelect,
                                          device->writeEnCmd,

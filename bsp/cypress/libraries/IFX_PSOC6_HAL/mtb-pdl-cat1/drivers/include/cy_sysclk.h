@@ -5459,7 +5459,7 @@ uint32_t Cy_SysClk_PeriphGetFrequency(cy_en_divider_types_t dividerType, uint32_
 * Function Name: Cy_SysClk_ClkSlowSetDivider
 ****************************************************************************//**
 *
-* Sets the clock divider for the slow clock. 
+* Sets the clock divider for the slow clock.
 *
 * \param divider Divider value between 0 and 255.
 * Causes integer division of (divider value + 1), or division by 1 to 256.

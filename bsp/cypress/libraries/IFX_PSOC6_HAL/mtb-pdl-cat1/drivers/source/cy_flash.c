@@ -522,7 +522,7 @@ CY_SECTION_RAMFUNC_END
             {
                 /* Wait until the IPC structure is released by another process */
             }
-            
+
             SRSS_TST_DDFT_FAST_CTL_REG  = SRSS_TST_DDFT_FAST_CTL_MASK;
             SRSS_TST_DDFT_SLOW_CTL_REG  = SRSS_TST_DDFT_SLOW_CTL_MASK;
 
@@ -537,7 +537,7 @@ CY_SECTION_RAMFUNC_END
 
             /* Release the IPC */
             REG_IPC_STRUCT_RELEASE(CY_IPC_STRUCT_PTR(CY_IPC_CHAN_DDFT)) = 0U;
-            
+
             while (0UL == _FLD2VAL(SRSS_CLK_CAL_CNT1_CAL_COUNTER_DONE, SRSS_CLK_CAL_CNT1))
             {
                 /* Wait until the counter stops counting */
@@ -577,7 +577,7 @@ CY_SECTION_RAMFUNC_END
 
             uint32_t bookmark;
             #if ((CY_CPU_CORTEX_M4) && (defined (CY_DEVICE_SECURE)))
-                bookmark = CY_PRA_REG32_GET(CY_PRA_INDX_FLASHC_FM_CTL_BOOKMARK) & 0xffffUL; 
+                bookmark = CY_PRA_REG32_GET(CY_PRA_INDX_FLASHC_FM_CTL_BOOKMARK) & 0xffffUL;
             #else
                 bookmark = FLASHC_FM_CTL_BOOKMARK & 0xffffUL;
             #endif /* ((CY_CPU_CORTEX_M4) && (defined (CY_DEVICE_SECURE))) */

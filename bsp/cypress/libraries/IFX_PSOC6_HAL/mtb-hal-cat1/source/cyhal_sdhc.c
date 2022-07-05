@@ -2879,7 +2879,7 @@ cy_rslt_t cyhal_sdio_init(cyhal_sdio_t *obj, cyhal_gpio_t cmd, cyhal_gpio_t clk,
     const cyhal_sdio_configurator_t cfg = {
         .resource = NULL,
         .host_config = &host_config,
-		.card_config = &card_config,
+        .card_config = &card_config,
         .clock = NULL,
         .gpios = {clk, cmd, { data0, data1, data2, data3 } }
     };

@@ -73,7 +73,7 @@ cy_en_tcpwm_status_t Cy_TCPWM_ShiftReg_Init(TCPWM_Type const *base, uint32_t cnt
 
         TCPWM_GRP_CNT_CC0(base, grp, cntNum) = config->compare0;
         TCPWM_GRP_CNT_CC0_BUFF(base, grp, cntNum) = config->compareBuf0;
-            
+
         TCPWM_GRP_CNT_PERIOD_BUFF(base, grp, cntNum) = config->tapsEnabled;
 
         TCPWM_GRP_CNT_TR_IN_SEL0(base, grp, cntNum) =

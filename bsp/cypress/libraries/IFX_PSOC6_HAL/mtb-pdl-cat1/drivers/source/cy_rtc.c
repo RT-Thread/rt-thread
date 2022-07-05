@@ -189,7 +189,7 @@ void   Cy_RTC_GetDateAndTime(cy_stc_rtc_config_t* dateTime)
     */
     if (dateTime->hrFormat != CY_RTC_24_HOURS)
     {
-        dateTime->hour = 
+        dateTime->hour =
         CONVERT_BCD_TO_DEC((tmpTime & CY_RTC_BACKUP_RTC_TIME_RTC_12HOUR) >> BACKUP_RTC_TIME_RTC_HOUR_Pos);
         dateTime->amPm = ((0U != (tmpTime & CY_RTC_BACKUP_RTC_TIME_RTC_PM)) ? CY_RTC_PM : CY_RTC_AM);
     }
@@ -199,7 +199,7 @@ void   Cy_RTC_GetDateAndTime(cy_stc_rtc_config_t* dateTime)
         dateTime->amPm = CY_RTC_AM;
     }
     dateTime->dayOfWeek = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_TIME_RTC_DAY, tmpTime));
-    
+
     dateTime->date  = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_DATE_RTC_DATE, tmpDate));
     dateTime->month = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_DATE_RTC_MON, tmpDate));
     dateTime->year  = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_DATE_RTC_YEAR, tmpDate));
@@ -262,7 +262,7 @@ cy_en_rtc_status_t Cy_RTC_SetAlarmDateAndTime(cy_stc_rtc_alarm_t const *alarmDat
         /* Read the current RTC year to validate alarmDateTime->date */
         Cy_RTC_SyncFromRtc();
 
-        tmpYear = 
+        tmpYear =
         CY_RTC_TWO_THOUSAND_YEARS + CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_DATE_RTC_YEAR, BACKUP_RTC_DATE));
         tmpDaysInMonth = Cy_RTC_DaysInMonth(alarmDateTime->month, tmpYear);
 
@@ -354,8 +354,8 @@ void   Cy_RTC_GetAlarmDateAndTime(cy_stc_rtc_alarm_t *alarmDateTime, cy_en_rtc_a
         */
         if (curHoursFormat != CY_RTC_24_HOURS)
         {
-            alarmDateTime->hour = 
-            CONVERT_BCD_TO_DEC((tmpAlarmTime & CY_RTC_BACKUP_RTC_TIME_RTC_12HOUR) 
+            alarmDateTime->hour =
+            CONVERT_BCD_TO_DEC((tmpAlarmTime & CY_RTC_BACKUP_RTC_TIME_RTC_12HOUR)
                                                                          >> BACKUP_ALM1_TIME_ALM_HOUR_Pos);
 
             /* In the structure, the hour value should be presented in the 24-hour mode. In
@@ -391,7 +391,7 @@ void   Cy_RTC_GetAlarmDateAndTime(cy_stc_rtc_alarm_t *alarmDateTime, cy_en_rtc_a
         alarmDateTime->dateEn  =
         ((_FLD2BOOL(BACKUP_ALM1_DATE_ALM_DATE_EN, tmpAlarmDate)) ? CY_RTC_ALARM_ENABLE : CY_RTC_ALARM_DISABLE);
 
-        alarmDateTime->month = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_ALM1_DATE_ALM_MON, tmpAlarmDate)); 
+        alarmDateTime->month = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_ALM1_DATE_ALM_MON, tmpAlarmDate));
         alarmDateTime->monthEn =
         ((_FLD2BOOL(BACKUP_ALM1_DATE_ALM_MON_EN, tmpAlarmDate)) ? CY_RTC_ALARM_ENABLE : CY_RTC_ALARM_DISABLE);
 
@@ -456,7 +456,7 @@ void   Cy_RTC_GetAlarmDateAndTime(cy_stc_rtc_alarm_t *alarmDateTime, cy_en_rtc_a
         alarmDateTime->dateEn  =
         ((_FLD2BOOL(BACKUP_ALM2_DATE_ALM_DATE_EN, tmpAlarmDate)) ? CY_RTC_ALARM_ENABLE : CY_RTC_ALARM_DISABLE);
 
-        alarmDateTime->month = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_ALM2_DATE_ALM_MON, tmpAlarmDate)); 
+        alarmDateTime->month = CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_ALM2_DATE_ALM_MON, tmpAlarmDate));
         alarmDateTime->monthEn =
         ((_FLD2BOOL(BACKUP_ALM2_DATE_ALM_MON_EN, tmpAlarmDate)) ? CY_RTC_ALARM_ENABLE : CY_RTC_ALARM_DISABLE);
 
@@ -743,7 +743,7 @@ cy_en_rtc_status_t Cy_RTC_SetHoursFormat(cy_en_rtc_hours_format_t hoursFormat)
                 *  to 12:00 AM
                 */
                 curTime =
-                (_CLR_SET_FLD32U(curTime, BACKUP_RTC_TIME_RTC_HOUR, 
+                (_CLR_SET_FLD32U(curTime, BACKUP_RTC_TIME_RTC_HOUR,
                   CONVERT_DEC_TO_BCD(CY_RTC_HOURS_PER_HALF_DAY)));
                 /* Set the AM bit */
                 curTime &= ((uint32_t) ~CY_RTC_BACKUP_RTC_TIME_RTC_PM);
@@ -762,7 +762,7 @@ cy_en_rtc_status_t Cy_RTC_SetHoursFormat(cy_en_rtc_hours_format_t hoursFormat)
         {
             /* Mask the AM/PM bit as the hour value is in [20:16] bits */
             hourValue =
-            CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_TIME_RTC_HOUR, 
+            CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_TIME_RTC_HOUR,
             (curTime & (uint32_t) ~CY_RTC_BACKUP_RTC_TIME_RTC_PM)));
             /* Add 12 hours in condition that current time is in PM period */
             if ((hourValue < CY_RTC_HOURS_PER_HALF_DAY) && (0U != (curTime & CY_RTC_BACKUP_RTC_TIME_RTC_PM)))
@@ -1620,8 +1620,8 @@ static void ConstructTimeDate(cy_stc_rtc_config_t const *timeDate, uint32_t *tim
             tmpTime &= ((uint32_t) ~CY_RTC_BACKUP_RTC_TIME_RTC_PM);
         }
         tmpTime |= BACKUP_RTC_TIME_CTRL_12HR_Msk;
-        tmpTime |= 
-        (_VAL2FLD(BACKUP_RTC_TIME_RTC_HOUR, 
+        tmpTime |=
+        (_VAL2FLD(BACKUP_RTC_TIME_RTC_HOUR,
         (CONVERT_DEC_TO_BCD(timeDate->hour) & ((uint32_t) ~CY_RTC_12HRS_PM_BIT))));
     }
     else
@@ -1715,7 +1715,7 @@ static void ConstructAlarmTimeDate(cy_stc_rtc_alarm_t const *alarmDateTime, uint
             */
             hourValue = (uint32_t) alarmDateTime->hour - CY_RTC_HOURS_PER_HALF_DAY;
             hourValue = ((0U != hourValue) ? hourValue : CY_RTC_HOURS_PER_HALF_DAY);
-            tmpAlarmTime |= 
+            tmpAlarmTime |=
             CY_RTC_BACKUP_RTC_TIME_RTC_PM | (_VAL2FLD(BACKUP_ALM1_TIME_ALM_HOUR, CONVERT_DEC_TO_BCD(hourValue)));
         }
         else if (alarmDateTime->hour < 1U)
@@ -1778,7 +1778,7 @@ static uint32_t RelativeToFixed(cy_stc_rtc_dst_format_t const *convertDst)
     /* Read the current year */
     Cy_RTC_SyncFromRtc();
 
-    currentYear = 
+    currentYear =
     CY_RTC_TWO_THOUSAND_YEARS + CONVERT_BCD_TO_DEC(_FLD2VAL(BACKUP_RTC_DATE_RTC_YEAR, BACKUP_RTC_DATE));
     currentDay  = CY_RTC_FIRST_DAY_OF_MONTH;
     currentWeek = CY_RTC_FIRST_WEEK_OF_MONTH;

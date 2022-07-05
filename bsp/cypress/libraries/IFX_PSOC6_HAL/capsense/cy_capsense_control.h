@@ -54,21 +54,21 @@ cy_capsense_status_t Cy_CapSense_Restore(cy_stc_capsense_context_t * context);
 cy_capsense_status_t Cy_CapSense_ProcessAllWidgets(
                 cy_stc_capsense_context_t * context);
 cy_capsense_status_t Cy_CapSense_ProcessWidget(
-                uint32_t widgetId, 
+                uint32_t widgetId,
                 cy_stc_capsense_context_t * context);
 
 #if ((CY_CAPSENSE_DISABLE != CY_CAPSENSE_GESTURE_EN) || \
      (CY_CAPSENSE_DISABLE != CY_CAPSENSE_BALLISTIC_MULTIPLIER_EN))
     void Cy_CapSense_IncrementGestureTimestamp(cy_stc_capsense_context_t * context);
     void Cy_CapSense_SetGestureTimestamp(
-                    uint32_t value, 
+                    uint32_t value,
                     cy_stc_capsense_context_t * context);
 #endif
 
 void Cy_CapSense_Wakeup(const cy_stc_capsense_context_t * context);
 
 cy_en_syspm_status_t Cy_CapSense_DeepSleepCallback(
-                cy_stc_syspm_callback_params_t * callbackParams, 
+                cy_stc_syspm_callback_params_t * callbackParams,
                 cy_en_syspm_callback_mode_t mode);
 
 cy_capsense_status_t Cy_CapSense_RegisterCallback(
@@ -87,13 +87,13 @@ cy_capsense_status_t Cy_CapSense_UnRegisterCallback(
 /******************************************************************************/
 
 cy_capsense_status_t Cy_CapSense_ProcessWidgetExt(
-                uint32_t widgetId, 
-                uint32_t mode, 
+                uint32_t widgetId,
+                uint32_t mode,
                 cy_stc_capsense_context_t * context);
 cy_capsense_status_t Cy_CapSense_ProcessSensorExt(
-                uint32_t widgetId, 
-                uint32_t sensorId, 
-                uint32_t mode, 
+                uint32_t widgetId,
+                uint32_t sensorId,
+                uint32_t mode,
                 const cy_stc_capsense_context_t * context);
 /** \} */
 

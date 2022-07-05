@@ -90,7 +90,7 @@ void Cy_CapSense_TuInitialize(cy_stc_capsense_context_t * context);
 * Function Name: Cy_CapSense_CheckCommandIntegrity
 ****************************************************************************//**
 *
-* \deprecated This function is obsolete and kept for backward compatibility only. 
+* \deprecated This function is obsolete and kept for backward compatibility only.
 * The Cy_CapSense_CheckTunerCmdIntegrity() function should be used instead.
 *
 * \param commandPacket

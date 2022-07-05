@@ -37,7 +37,7 @@
 * range that is supported by \ref cyhal_timer_set_frequency is: 1526 hz -
 * 100 Mhz
  * \section group_hal_impl_timer_interconnect Interconnect
- * In PSoC™ Timer channels can configure multiple input and output triggers
+ * In PSoCâ„¢ Timer channels can configure multiple input and output triggers
  * simultaneously. 1 or more input triggers can be configured to initiate
  * different Timer actions (e.g start, stop, reload, etc) with configurable
  * edge detection on that incoming signal. Output triggers are based on certain

@@ -534,7 +534,7 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
         return CYHAL_DMA_RSLT_ERR_INVALID_TRANSFER_SIZE;
 
 #if defined(CY_IP_M0S8CPUSSV3_DMAC)
-    // PSoC™ 4 devices do not support automatically disabling the channel on completion
+    // PSoCâ„¢ 4 devices do not support automatically disabling the channel on completion
     if ((cfg->action == CYHAL_DMA_TRANSFER_BURST_DISABLE) ||
         (cfg->action == CYHAL_DMA_TRANSFER_FULL_DISABLE))
     {

@@ -76,9 +76,9 @@ typedef struct
 } cy_stc_capsense_advanced_centroid_config_t;
 
 /** Declares position structure that keep information of a single touch.
-* Depending on a widget type each structure field keeps the following 
+* Depending on a widget type each structure field keeps the following
 * information:
-* 
+*
 * <table class="doxtable">
 *   <tr>
 *     <th>Structure Field</th>
@@ -128,14 +128,14 @@ typedef struct
 /** Declares touch structure used to store positions of Touchpad, Matrix buttons and Slider widgets */
 typedef struct
 {
-    cy_stc_capsense_position_t * ptrPosition;       /**< Pointer to the array containing the position information. 
+    cy_stc_capsense_position_t * ptrPosition;       /**< Pointer to the array containing the position information.
                                                          A number of elements is defined by numPosition. */
     uint8_t numPosition;                            /**< Total number of detected touches on a widget:
-                                                    *    * 0 - no touch is detected 
+                                                    *    * 0 - no touch is detected
                                                     *    * 1 - a single touch is detected
                                                     *    * 2 - two touches are detected
                                                     *    * 3 - three touches are detected
-                                                    *    * CY_CAPSENSE_POSITION_MULTIPLE - multiple touches are detected 
+                                                    *    * CY_CAPSENSE_POSITION_MULTIPLE - multiple touches are detected
                                                     *        and information in position structure should be ignored.
                                                     */
 } cy_stc_capsense_touch_t;
@@ -280,7 +280,7 @@ typedef struct
 *
 *******************************************************************************/
 void Cy_CapSense_AdaptiveFilterInitialize_Lib(
-                const cy_stc_capsense_adaptive_filter_config_t * config, 
+                const cy_stc_capsense_adaptive_filter_config_t * config,
                 cy_stc_capsense_position_t * context);
 
 /*******************************************************************************
@@ -311,8 +311,8 @@ void Cy_CapSense_AdaptiveFilterInitialize_Lib(
 *******************************************************************************/
 void Cy_CapSense_AdaptiveFilterRun_Lib(
                 const cy_stc_capsense_adaptive_filter_config_t * config,
-                cy_stc_capsense_position_t * context, 
-                uint32_t * currentX, 
+                cy_stc_capsense_position_t * context,
+                uint32_t * currentX,
                 uint32_t * currentY);
 
 /*******************************************************************************
@@ -359,7 +359,7 @@ void Cy_CapSense_AdvancedCentroidGetTouchCoordinates_Lib(
 *
 *******************************************************************************/
 void Cy_CapSense_BallisticMultiplier_Lib(
-                const cy_stc_capsense_ballistic_config_t * config, 
+                const cy_stc_capsense_ballistic_config_t * config,
                 const cy_stc_capsense_touch_t * touch,
                 cy_stc_capsense_ballistic_delta_t * displacement,
                 uint32_t timestamp,
@@ -385,9 +385,9 @@ void Cy_CapSense_BallisticMultiplier_Lib(
 *
 *******************************************************************************/
 void Cy_CapSense_AlpRun_Lib(
-                cy_stc_capsense_alp_fltr_channel_t * ptrFilterObj, 
+                cy_stc_capsense_alp_fltr_channel_t * ptrFilterObj,
                 const cy_stc_capsense_alp_fltr_config_t * ptrFilterConfig,
-                uint16_t * rawCount, 
+                uint16_t * rawCount,
                 const uint16_t * baseline);
 
 /*******************************************************************************
@@ -404,7 +404,7 @@ void Cy_CapSense_AlpRun_Lib(
 *
 *******************************************************************************/
 void Cy_CapSense_AlpInitialize_Lib(
-                cy_stc_capsense_alp_fltr_channel_t * ptrFilterObj, 
+                cy_stc_capsense_alp_fltr_channel_t * ptrFilterObj,
                 const uint16_t * rawCount);
 
 /*******************************************************************************
@@ -443,18 +443,18 @@ uint32_t Cy_CapSense_AlpGetAverage_Lib(
 * This internal function tunes the Sense Clock divider.
 *
 * Found IDAC code in Single IDAC mode is used to calculate the optimal SnsClk.
-* The SnsClk divider is set to meet the requirement that the widget 
+* The SnsClk divider is set to meet the requirement that the widget
 * clock period should be greater than or equal to:
 * Period > 2*5*R*Cp,
 * where:
 * * Cp is the maximum sensor parasitic capacitance within the widget.
-* * R is the user input value in the expression view of the customizer for a 
+* * R is the user input value in the expression view of the customizer for a
 *   series resistor.
 *
 * \param config
 * The configuration structure.
 *
-* \return 
+* \return
 * Cp in fF (10^-15)
 *
 *******************************************************************************/
@@ -467,24 +467,24 @@ uint32_t Cy_CapSense_TunePrescalers_Lib(
 *
 * Configure scanning resolution to achieve the sufficient sensitivity.
 *
-* The function searches the lowest possible resolution that produces signal 
+* The function searches the lowest possible resolution that produces signal
 * greater than 50 counts (Difference Counts) for user defined finger capacitance.
-* In addition, function calculates 75%-value of the achieved signal, that becomes 
+* In addition, function calculates 75%-value of the achieved signal, that becomes
 * candidate to finger threshold.
-*  
+*
 * Used equation to calculate signal at resolution 16-bit:
 * sigPFCmax = (2^16-1) * vRef * snsClk * fingerCap / idacCurrent
 *
-* sigPFCmax contains absolute number of difference counts that user receives as 
+* sigPFCmax contains absolute number of difference counts that user receives as
 * result of sensor scanning at corresponding resolution.
 *
-* This function requires non-zero Modulator IDAC code (if IDAC is equal to zero it 
+* This function requires non-zero Modulator IDAC code (if IDAC is equal to zero it
 * is considered as non-valid use case).
 *
 * \param config
 * The configuration structure.
 *
-* \return 
+* \return
 * Scan resolution
 *
 *******************************************************************************/
@@ -557,16 +557,16 @@ uint32_t Cy_CapSense_GetSmartSenseNumSubconversions(
 * This function comprises an algorithm of thresholds auto-tune. The thresholds
 * object contains updated thresholds after this API is called.
 *
-* \param ptrNoiseEnvelope 
+* \param ptrNoiseEnvelope
 * The pointer to the noise-envelope object in RAM.
 *
-* \param ptrThresholds    
+* \param ptrThresholds
 * The pointer to the thresholds object.
 *
-* \param sigPFC           
+* \param sigPFC
 * Signal per finger capacitance.
 *
-* \param startFlag           
+* \param startFlag
 * The flag indicates a first sensor in a widget.
 *
 *******************************************************************************/
@@ -582,13 +582,13 @@ void Cy_CapSense_UpdateThresholds_Lib(
 *
 * Initializes the noise-envelope filter.
 *
-* \param rawCount         
+* \param rawCount
 * The RawCount value for a given sensor.
 *
-* \param sigPFC           
+* \param sigPFC
 * Signal per finger capacitance.
 *
-* \param ptrNoiseEnvelope 
+* \param ptrNoiseEnvelope
 * The pointer to the noise-envelope RAM object of the sensor.
 *
 *******************************************************************************/
@@ -603,13 +603,13 @@ void Cy_CapSense_InitializeNoiseEnvelope_Lib(
 *
 * Runs the noise-envelope filter.
 *
-* \param rawCount         
+* \param rawCount
 * The RawCount value for a given sensor.
 *
-* \param sigPFC           
+* \param sigPFC
 * Signal per finger capacitance.
 *
-* \param ptrNoiseEnvelope 
+* \param ptrNoiseEnvelope
 * The pointer to the noise-envelope RAM object of the sensor.
 *
 *******************************************************************************/

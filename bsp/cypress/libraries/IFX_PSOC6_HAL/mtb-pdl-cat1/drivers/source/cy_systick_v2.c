@@ -29,7 +29,7 @@
 
 #include <stddef.h>     /* for NULL */
 #include "cy_systick.h"
-#include "cy_sysint.h" 
+#include "cy_sysint.h"
 
 static Cy_SysTick_Callback Cy_SysTick_Callbacks[CY_SYS_SYST_NUM_OF_CALLBACKS];
 static void Cy_SysTick_ServiceCallbacks(void);
@@ -161,7 +161,7 @@ cy_en_systick_clock_source_t Cy_SysTick_GetClockSource(void)
         returnValue =  (cy_en_systick_clock_source_t) ((uint32_t) _FLD2VAL(CPUSS_SYSTICK_S_CTL_CLOCK_SOURCE, CPUSS_SYSTICK_S_CTL));
 #else
         returnValue =  (cy_en_systick_clock_source_t) ((uint32_t) _FLD2VAL(CPUSS_SYSTICK_NS_CTL_CLOCK_SOURCE, CPUSS_SYSTICK_NS_CTL));
-#endif        
+#endif
 
     }
 

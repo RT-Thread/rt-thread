@@ -3081,7 +3081,7 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
             {
                 return ret;
             }
-            
+
             Cy_SysLib_DelayUs(CY_SD_HOST_NCC_MIN_US);
 
             /* Get R1 */
@@ -3129,7 +3129,7 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
                     (void)Cy_SD_Host_GetResponse(base, (uint32_t *)&response, false);
 
                     /* Check if the card is in the transition state. */
-                    if ((CY_SD_HOST_CARD_TRAN << CY_SD_HOST_CMD13_CURRENT_STATE) != 
+                    if ((CY_SD_HOST_CARD_TRAN << CY_SD_HOST_CMD13_CURRENT_STATE) !=
                         (response & CY_SD_HOST_CMD13_CURRENT_STATE_MSK))
                     {
                        ret = CY_SD_HOST_ERROR;

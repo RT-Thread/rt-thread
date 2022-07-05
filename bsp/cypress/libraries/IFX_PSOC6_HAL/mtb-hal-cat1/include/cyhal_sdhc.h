@@ -458,7 +458,7 @@ cy_rslt_t cyhal_sdhc_write(cyhal_sdhc_t *obj, uint32_t address, const uint8_t *d
  * @param[in] start_addr            Is the address of the first byte to erase
  * @param[in] length                Number of 512 byte blocks (starting at start_addr) to erase
  * @param[in] timeout_ms            Timeout value in ms for waiting/polling operations. If zero is provided
- * for this parameter the default value will be used. See implementation specific 
+ * for this parameter the default value will be used. See implementation specific
  * documentation for timeout details.
  * @return The status of the erase request
  *

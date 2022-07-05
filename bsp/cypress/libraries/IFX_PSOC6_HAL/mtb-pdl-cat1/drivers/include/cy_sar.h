@@ -25,7 +25,7 @@
 /**
 * \addtogroup group_sar
 * \{
-* This driver configures and controls the SAR ADC subsystem block, which is a 
+* This driver configures and controls the SAR ADC subsystem block, which is a
 * part of \ref group_pass_structure "PASS" hardware block.
 *
 * The functions and other declarations used in this driver are in cy_sar.h.
@@ -259,7 +259,7 @@
 * is used for converting counts to volts in the \ref Cy_SAR_CountsTo_Volts, \ref Cy_SAR_CountsTo_mVolts, and
 * \ref Cy_SAR_CountsTo_uVolts functions.
 *
-* The rest of the \ref cy_stc_sar_config_t fields starting from \ref cy_stc_sar_config_t::clock affects 
+* The rest of the \ref cy_stc_sar_config_t fields starting from \ref cy_stc_sar_config_t::clock affects
 * SAR ADC configuration only for PASS_ver2. Refer to \ref cy_stc_sar_config_t for details.
 *
 * \section group_sar_trigger_conversions Triggering Conversions
@@ -357,7 +357,7 @@
 * \section group_sar_fifo_usage FIFO Usage
 *
 * The PASS_ver2 SAR can operate in the system Deep Sleep power mode.
-* To do so the SAR should be clocked by the \ref group_sysanalog_dpslp, 
+* To do so the SAR should be clocked by the \ref group_sysanalog_dpslp,
 * triggered by the \ref group_sysanalog_timer, and use the FIFO:
 * \snippet sar/snippet/main.c SNIPPET_FIFO_ISR
 * \snippet sar/snippet/main.c SNIPPET_FIFO_OPERATE
@@ -370,7 +370,7 @@
 * a maximum frequency of 18 MHz.
 *
 * For PASS_ver2 the maximum clock frequency is 36 MHz.
-* Also, the SAR clock could be switched to the \ref group_sysanalog_dpslp to operate in 
+* Also, the SAR clock could be switched to the \ref group_sysanalog_dpslp to operate in
 * the system Deep Sleed power mode using \ref cy_stc_sar_config_t::clock.
 *
 * \snippet sar/snippet/main.c SAR_SNIPPET_CONFIGURE_CLOCK

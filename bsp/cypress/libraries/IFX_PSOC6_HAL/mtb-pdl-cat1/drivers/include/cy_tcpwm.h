@@ -1214,7 +1214,7 @@ __STATIC_INLINE void Cy_TCPWM_TriggerCapture0(TCPWM_Type *base, uint32_t cntNum)
 * Function Name: Cy_TCPWM_TriggerCapture1
 ****************************************************************************//**
 *
-* Triggers a Capture 1 in Timer Counter and QuadDec Mode. In PWM mode this acts 
+* Triggers a Capture 1 in Timer Counter and QuadDec Mode. In PWM mode this acts
 * as a second kill input.
 *
 * \param base
@@ -1429,7 +1429,7 @@ __STATIC_INLINE cy_en_tcpwm_status_t Cy_TCPWM_SetDebugFreeze (TCPWM_Type *base, 
 /** \} group_tcpwm_common */
 
 /*******************************************************************************
-* Backward compatibility macro. The following code is DEPRECATED and must 
+* Backward compatibility macro. The following code is DEPRECATED and must
 * not be used in new projects
 *******************************************************************************/
 #define CY_TCPWM_INT_ON_CC              CY_TCPWM_INT_ON_CC0

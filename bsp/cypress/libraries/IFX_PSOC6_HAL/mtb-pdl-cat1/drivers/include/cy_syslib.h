@@ -1218,12 +1218,12 @@ cy_en_syslib_status_t Cy_SysLib_ResetBackupDomain(void);
 *
 * The function returns the cause for the latest reset(s) that occurred in
 * the system. The reset causes include system faults and
-* device reset on a wakeup from Hibernate mode. For M33SYSCPUSS IP, 
+* device reset on a wakeup from Hibernate mode. For M33SYSCPUSS IP,
 * the reset causes also include an HFCLK error.
 * The return results are consolidated reset causes from reading RES_CAUSE,
 * RES_CAUSE2 and PWR_HIBERNATE token registers.
 *
-* \return The cause of a system reset. 
+* \return The cause of a system reset.
 * Return values to be checked as per the CPUSS IP of the device.
 *
 * | Name in M4CPUSS IP            | Name in M33SYSCPUSS IP       | Name in M7CPUSS IP               | Value

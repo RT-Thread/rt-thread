@@ -33,7 +33,7 @@
 * \note  PD PPU API's are used by the Syspm driver and BTSS API's, there is no
 * need to call them drirectly in Application code.
 *
-* You can use this driver to implement the platform dependent code to 
+* You can use this driver to implement the platform dependent code to
 * control power domain using PPU.
 *
 * \section group_pd_ppu_more_information More Information

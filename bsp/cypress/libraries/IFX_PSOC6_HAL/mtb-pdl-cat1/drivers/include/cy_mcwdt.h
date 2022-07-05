@@ -224,13 +224,13 @@ typedef struct
 * \note
 * This parameter is available for CAT1B devices.
 **/
-    uint16_t c0LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT. 
+    uint16_t c0LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT.
                                   Range: 0 - 65535. */
 /**
 * \note
 * This parameter is available for CAT1B devices.
 **/
-    uint16_t c1LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT. 
+    uint16_t c1LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT.
                                   Range: 0 - 65535. */
 /**
 * \note
@@ -1251,14 +1251,14 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetInterruptStatusMasked(MCWDT_STRUCT_Type con
 *
 *  \param lowerLimit
 *  The value to be written in the lower limit register
-*  The valid range is [0-65535] for c0 
+*  The valid range is [0-65535] for c0
 *  and [1-65535] for c1.
 *
 *  \note
 *  The lower limit mode is not supported by Counter 2.
 *
 *  \param waitUs
-*  The function waits for some delay in microseconds before returning, 
+*  The function waits for some delay in microseconds before returning,
 *  because the lower limit register write affects after two lf_clk cycles pass.
 * The recommended value is 93 us.
 *  \note
@@ -1306,7 +1306,7 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetLowerLimit(MCWDT_STRUCT_Type const *base, c
     uint32_t countVal = 0u;
 
     CY_ASSERT_L3(CY_MCWDT_IS_LOWER_LIMIT_VALID(counter));
-    
+
     switch (counter)
     {
         case CY_MCWDT_LOWER_LIMIT0:
@@ -1342,7 +1342,7 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetLowerLimit(MCWDT_STRUCT_Type const *base, c
 *  Set 0 - Do nothing, 1 - Assert WDT_INTx, 2 - Assert WDT Reset
 *
 *  \note
-*  This API must not be called while the counters are running. 
+*  This API must not be called while the counters are running.
 *  Prior to calling this API, the counter must be disabled.
 *  This API is available for CAT1B devices.
 *

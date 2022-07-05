@@ -29,7 +29,7 @@
 
 #include "cycfg_dmas.h"
 
-const cy_stc_dma_descriptor_config_t TxDma_Descriptor_0_config = 
+const cy_stc_dma_descriptor_config_t TxDma_Descriptor_0_config =
 {
     .retrigger = CY_DMA_RETRIG_4CYC,
     .interruptType = CY_DMA_DESCR,
@@ -50,7 +50,7 @@ const cy_stc_dma_descriptor_config_t TxDma_Descriptor_0_config =
     .yCount = 1,
     .nextDescriptor = NULL,
 };
-cy_stc_dma_descriptor_t TxDma_Descriptor_0 = 
+cy_stc_dma_descriptor_t TxDma_Descriptor_0 =
 {
     .ctl = 0UL,
     .src = 0UL,
@@ -59,7 +59,7 @@ cy_stc_dma_descriptor_t TxDma_Descriptor_0 =
     .yCtl = 0UL,
     .nextPtr = 0UL,
 };
-const cy_stc_dma_channel_config_t TxDma_channelConfig = 
+const cy_stc_dma_channel_config_t TxDma_channelConfig =
 {
     .descriptor = &TxDma_Descriptor_0,
     .preemptable = false,
@@ -67,7 +67,7 @@ const cy_stc_dma_channel_config_t TxDma_channelConfig =
     .enable = false,
     .bufferable = false,
 };
-const cy_stc_dma_crc_config_t TxDma_crcConfig = 
+const cy_stc_dma_crc_config_t TxDma_crcConfig =
 {
     .dataReverse = false,
     .dataXor = 0,
@@ -76,14 +76,14 @@ const cy_stc_dma_crc_config_t TxDma_crcConfig =
     .polynomial = 79764919,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t TxDma_obj = 
+    const cyhal_resource_inst_t TxDma_obj =
     {
         .type = CYHAL_RSC_DMA,
         .block_num = 0U,
         .channel_num = TxDma_CHANNEL,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_dma_descriptor_config_t RxDma_Descriptor_0_config = 
+const cy_stc_dma_descriptor_config_t RxDma_Descriptor_0_config =
 {
     .retrigger = CY_DMA_RETRIG_4CYC,
     .interruptType = CY_DMA_1ELEMENT,
@@ -104,7 +104,7 @@ const cy_stc_dma_descriptor_config_t RxDma_Descriptor_0_config =
     .yCount = 1,
     .nextDescriptor = &RxDma_Descriptor_1,
 };
-const cy_stc_dma_descriptor_config_t RxDma_Descriptor_1_config = 
+const cy_stc_dma_descriptor_config_t RxDma_Descriptor_1_config =
 {
     .retrigger = CY_DMA_RETRIG_4CYC,
     .interruptType = CY_DMA_DESCR,
@@ -125,7 +125,7 @@ const cy_stc_dma_descriptor_config_t RxDma_Descriptor_1_config =
     .yCount = 1,
     .nextDescriptor = &RxDma_Descriptor_0,
 };
-cy_stc_dma_descriptor_t RxDma_Descriptor_0 = 
+cy_stc_dma_descriptor_t RxDma_Descriptor_0 =
 {
     .ctl = 0UL,
     .src = 0UL,
@@ -134,7 +134,7 @@ cy_stc_dma_descriptor_t RxDma_Descriptor_0 =
     .yCtl = 0UL,
     .nextPtr = 0UL,
 };
-cy_stc_dma_descriptor_t RxDma_Descriptor_1 = 
+cy_stc_dma_descriptor_t RxDma_Descriptor_1 =
 {
     .ctl = 0UL,
     .src = 0UL,
@@ -143,7 +143,7 @@ cy_stc_dma_descriptor_t RxDma_Descriptor_1 =
     .yCtl = 0UL,
     .nextPtr = 0UL,
 };
-const cy_stc_dma_channel_config_t RxDma_channelConfig = 
+const cy_stc_dma_channel_config_t RxDma_channelConfig =
 {
     .descriptor = &RxDma_Descriptor_0,
     .preemptable = false,
@@ -151,7 +151,7 @@ const cy_stc_dma_channel_config_t RxDma_channelConfig =
     .enable = false,
     .bufferable = false,
 };
-const cy_stc_dma_crc_config_t RxDma_crcConfig = 
+const cy_stc_dma_crc_config_t RxDma_crcConfig =
 {
     .dataReverse = false,
     .dataXor = 0,
@@ -160,7 +160,7 @@ const cy_stc_dma_crc_config_t RxDma_crcConfig =
     .polynomial = 79764919,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t RxDma_obj = 
+    const cyhal_resource_inst_t RxDma_obj =
     {
         .type = CYHAL_RSC_DMA,
         .block_num = 0U,

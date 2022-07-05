@@ -42,11 +42,11 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-        endif    
+        endif
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

@@ -282,7 +282,7 @@ void Cy_SCB_WriteArrayNoCheck(CySCB_Type *base, void *buffer, uint32_t size)
     }
 #elif(CY_IP_MXSCB_VERSION>=2)
     uint32_t datawidth = Cy_SCB_Get_TxDataWidth(base);
-    
+
     if (datawidth == CY_SCB_BYTE_WIDTH)
     {
         uint8_t *buf = (uint8_t *) buffer;

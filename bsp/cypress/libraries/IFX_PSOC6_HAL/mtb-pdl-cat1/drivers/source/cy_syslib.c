@@ -225,7 +225,7 @@ void Cy_SysLib_ClearResetReason(void)
      */
     SRSS_RES_CAUSE  = 0xFFFFFFFFU;
     SRSS_RES_CAUSE2 = 0xFFFFFFFFU;
-    
+
     if(0U != _FLD2VAL(SRSS_PWR_HIBERNATE_TOKEN, SRSS_PWR_HIBERNATE))
     {
         /* Clears PWR_HIBERNATE token */
@@ -233,7 +233,7 @@ void Cy_SysLib_ClearResetReason(void)
         CY_PRA_REG32_CLR_SET(CY_PRA_INDX_SRSS_PWR_HIBERNATE, SRSS_PWR_HIBERNATE_TOKEN, 0UL);
 #else
         SRSS_PWR_HIBERNATE &= ~SRSS_PWR_HIBERNATE_TOKEN_Msk;
-#endif /* CY_CPU_CORTEX_M4 && defined (CY_DEVICE_SECURE) */       
+#endif /* CY_CPU_CORTEX_M4 && defined (CY_DEVICE_SECURE) */
     }
 }
 
@@ -421,8 +421,8 @@ uint8_t Cy_SysLib_GetDeviceRevision(void)
 #ifdef CY_IP_M4CPUSS
     return ((SFLASH_SI_REVISION_ID == 0UL) ? CY_SYSLIB_DEVICE_REV_0A : SFLASH_SI_REVISION_ID);
 #else
-    return 0; 
-#endif    
+    return 0;
+#endif
 }
 
 uint16_t Cy_SysLib_GetDevice(void)
@@ -431,7 +431,7 @@ uint16_t Cy_SysLib_GetDevice(void)
     return ((SFLASH_FAMILY_ID == 0UL) ? CY_SYSLIB_DEVICE_PSOC6ABLE2 : SFLASH_FAMILY_ID);
 #else
     return 0;
-#endif    
+#endif
 }
 
 #if  defined (CY_IP_MXS40SSRSS)

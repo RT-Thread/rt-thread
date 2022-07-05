@@ -30,8 +30,8 @@
 * \note Device Categories: CAT1B. Please refer <a href="usergroup1.html">Device Catalog</a>.
 * Configures audio TDM/I2S.
 *
-* The functions and other declarations used in this driver are in cy_tdm.h. 
-* You can include cy_pdl.h (ModusToolbox only) to get access to all functions 
+* The functions and other declarations used in this driver are in cy_tdm.h.
+* You can include cy_pdl.h (ModusToolbox only) to get access to all functions
 * and declarations in the PDL.
 *
 *
@@ -52,14 +52,14 @@
 * \section group_tdm_configuration Configuration Considerations
 *
 * To set up a TDM driver, initialize the TDM Transmitter module in accordance with a configuration structure.
-* 
-* * Each TDM/I2S (TX, RX) pair consists of a TDM/I2S transmitter and a TDM/I2S receiver. 
-* * The transmitter and receiver can function simultaneously and have dedicated clock control. 
-* * The transmitter and receiver have dedicated MMIO registers and a dedicated FIFO. 
-* * The transmitter and receiver have a dedicated FIFO interrupt and FIFO trigger. 
-* * The transmitter trigger is activated when a programmable number of PCM data slots is available in the TX FIFO. 
+*
+* * Each TDM/I2S (TX, RX) pair consists of a TDM/I2S transmitter and a TDM/I2S receiver.
+* * The transmitter and receiver can function simultaneously and have dedicated clock control.
+* * The transmitter and receiver have dedicated MMIO registers and a dedicated FIFO.
+* * The transmitter and receiver have a dedicated FIFO interrupt and FIFO trigger.
+* * The transmitter trigger is activated when a programmable number of PCM data slots is available in the TX FIFO.
 * * The receiver trigger is activated when a programmable number of PCM data words is received into the RX FIFO.
-*    
+*
 *
 * To set up TDM, provide the configuration parameters in the
 * \ref cy_stc_tdm_config_t structure.
@@ -273,21 +273,21 @@ typedef enum
 } cy_en_tdm_clock_sel_t;
 
 /** cy_en_tdm_sckpolarity_t */
-typedef enum 
+typedef enum
 {
     CY_TDM_CLK              = 0U, /**< TDM Clock is used as is. */
     CY_TDM_CLK_INVERTED     = 1U  /**< TDM Clock is inverted. */
 } cy_en_tdm_sckpolarity_t;
 
 /** cy_en_tdm_fsyncpolarity_t*/
-typedef enum 
+typedef enum
 {
     CY_TDM_SIGN             = 0U, /**< TDM Sign is used as is. */
     CY_TDM_SIGN_INVERTED    = 1U  /**< TDM Sign is inverted. */
 } cy_en_tdm_fsyncpolarity_t;
 
 /** cy_en_tdm_fsyncformat_t */
-typedef enum 
+typedef enum
 {
     CY_TDM_BIT_PERIOD       = 0U, /**< TDM Channel Synchronization is duration of a bit period. */
     CY_TDM_CH_PERIOD        = 1U  /**< TDM Channel Synchronization is duration of a channel period. */
@@ -296,14 +296,14 @@ typedef enum
 /**
 * TDM status definitions.
 */
-typedef enum 
+typedef enum
 {
     CY_TDM_SUCCESS          = 0x00UL,                                     /**< Successful. */
     CY_TDM_BAD_PARAM        = CY_TDM_ID | CY_PDL_STATUS_ERROR | 0x01UL  /**< One or more invalid parameters. */
 } cy_en_tdm_status_t;
 
 /** cy_en_tdm_source_status_t */
-typedef enum 
+typedef enum
 {
     CY_TDM_OK                = 0x00UL, /**< Successful. */
     CY_TDM_BAD               = 0x01UL  /**< Not Good    */
@@ -392,8 +392,8 @@ typedef struct
                                         CY_TDM_INTR_TX_FIFO_OVERFLOW    |\
                                         CY_TDM_INTR_TX_FIFO_UNDERFLOW   |\
                                         CY_TDM_INTR_TX_IF_UNDERFLOW)
-                                        
-                                        
+
+
 #define CY_TDM_INTR_RX_MASK            (CY_TDM_INTR_RX_FIFO_TRIGGER     |\
                                         CY_TDM_INTR_RX_FIFO_OVERFLOW    |\
                                         CY_TDM_INTR_RX_FIFO_UNDERFLOW   |\
@@ -513,7 +513,7 @@ __STATIC_INLINE void        Cy_AudioTDM_ClearRxTriggerInterruptMask( TDM_RX_STRU
 
 /** \cond INTERNAL */
 /*******************************************************************************
-* These are legacy API for I2S. 
+* These are legacy API for I2S.
 * for backward compatibility.
 * Do not use them in new designs.
 *******************************************************************************/
@@ -532,7 +532,7 @@ __STATIC_INLINE void        Cy_AudioTDM_ClearRxTriggerInterruptMask( TDM_RX_STRU
 #define Cy_AudioI2S_MuteTxFifo                          Cy_AudioTDM_MuteTxFifo
 #define Cy_AudioI2S_ActivateTx                             Cy_AudioTDM_ActivateTx
 #define Cy_AudioI2S_DeActivateTx                           Cy_AudioTDM_DeActivateTx
-#define Cy_AudioI2S_ReplayTxFifo                          Cy_AudioTDM_ReplayTxFifo   
+#define Cy_AudioI2S_ReplayTxFifo                          Cy_AudioTDM_ReplayTxFifo
 #define Cy_AudioI2S_GetNumInTxFifo                         Cy_AudioTDM_GetNumInTxFifo
 #define Cy_AudioI2S_GetTxReadPointer                      Cy_AudioTDM_GetTxReadPointer
 #define Cy_AudioI2S_GetTxWritePointer                      Cy_AudioTDM_GetTxWritePointer
@@ -541,7 +541,7 @@ __STATIC_INLINE void        Cy_AudioTDM_ClearRxTriggerInterruptMask( TDM_RX_STRU
 
 #define Cy_AudioI2S_ReadRxData                          Cy_AudioTDM_ReadRxData
 #define Cy_AudioI2S_FreezeRxFifo                          Cy_AudioTDM_FreezeRxFifo
-#define Cy_AudioI2S_UnfreezeRxFifo                         Cy_AudioTDM_UnfreezeRxFifo    
+#define Cy_AudioI2S_UnfreezeRxFifo                         Cy_AudioTDM_UnfreezeRxFifo
 #define Cy_AudioI2S_ActivateRx                          Cy_AudioTDM_ActivateRx
 #define Cy_AudioI2S_DeActivateRx                          Cy_AudioTDM_DeActivateRx
 #define Cy_AudioI2S_ReadSilentRXFifo                      Cy_AudioTDM_ReadSilentRXFifo
@@ -551,7 +551,7 @@ __STATIC_INLINE void        Cy_AudioTDM_ClearRxTriggerInterruptMask( TDM_RX_STRU
 #define Cy_AudioI2S_EnableRxTestMode                      Cy_AudioTDM_EnableRxTestMode
 #define Cy_AudioI2S_DisableRxTestMode                      Cy_AudioTDM_DisableRxTestMode
 
-#define Cy_AudioI2S_ClearTxInterrupt                      Cy_AudioTDM_ClearTxInterrupt       
+#define Cy_AudioI2S_ClearTxInterrupt                      Cy_AudioTDM_ClearTxInterrupt
 #define Cy_AudioI2S_SetTxInterrupt                         Cy_AudioTDM_SetTxInterrupt
 #define Cy_AudioI2S_GetTxInterruptMask                  Cy_AudioTDM_GetTxInterruptMask
 #define Cy_AudioI2S_SetTxInterruptMask                  Cy_AudioTDM_SetTxInterruptMask
@@ -560,7 +560,7 @@ __STATIC_INLINE void        Cy_AudioTDM_ClearRxTriggerInterruptMask( TDM_RX_STRU
 #define Cy_AudioI2S_ClearTxTriggerInterruptMask         Cy_AudioTDM_ClearTxTriggerInterruptMask
 
 #define Cy_AudioI2S_ClearRxInterrupt                      Cy_AudioTDM_ClearRxInterrupt
-#define Cy_AudioI2S_SetRxInterrupt                         Cy_AudioTDM_SetRxInterrupt     
+#define Cy_AudioI2S_SetRxInterrupt                         Cy_AudioTDM_SetRxInterrupt
 #define Cy_AudioI2S_GetRxInterruptMask                  Cy_AudioTDM_GetRxInterruptMask
 #define Cy_AudioI2S_SetRxInterruptMask                  Cy_AudioTDM_SetRxInterruptMask
 #define Cy_AudioI2S_GetRxInterruptStatusMasked          Cy_AudioTDM_GetRxInterruptStatusMasked
@@ -580,7 +580,7 @@ __STATIC_INLINE void        Cy_AudioTDM_ClearRxTriggerInterruptMask( TDM_RX_STRU
 * Function Name: Cy_AudioTDM_EnableTx
 ****************************************************************************//**
 *
-* Starts an I2S/TDM transmission. Interrupt enabling (by the 
+* Starts an I2S/TDM transmission. Interrupt enabling (by the
 * \ref Cy_AudioTDM_SetTxInterrupt) is required after this function call, in case
 * if any I2S/TDM interrupts are used in the application.
 *
@@ -601,7 +601,7 @@ __STATIC_INLINE void Cy_AudioTDM_EnableTx( TDM_TX_STRUCT_Type * base)
 * Function Name: Cy_AudioTDM_DisableTx
 ****************************************************************************//**
 *
-* Stops an I2S/TDM transmission. 
+* Stops an I2S/TDM transmission.
 *
 * \pre TX interrupt disabling (by the \ref Cy_AudioTDM_SetTxInterrupt) is required
 * prior to this function call, in case any TX I2S/TDM interrupts are used.
@@ -620,7 +620,7 @@ __STATIC_INLINE void Cy_AudioTDM_DisableTx( TDM_TX_STRUCT_Type * base)
 * Function Name: Cy_AudioTDM_EnableRx
 ****************************************************************************//**
 *
-* Starts an I2S/TDM transmission. Interrupt enabling (by the 
+* Starts an I2S/TDM transmission. Interrupt enabling (by the
 * \ref Cy_AudioTDM_SetRxInterrupt) is required after this function call, in case
 * if any I2S/TDM interrupts are used in the application.
 *
@@ -640,7 +640,7 @@ __STATIC_INLINE void Cy_AudioTDM_EnableRx( TDM_RX_STRUCT_Type * base)
 * Function Name: Cy_AudioTDM_DisableRx
 ****************************************************************************//**
 *
-* Stops an I2S/TDM transmission. 
+* Stops an I2S/TDM transmission.
 *
 * \pre TX interrupt disabling (by the \ref Cy_AudioTDM_SetRxInterrupt) is required
 * prior to this function call, in case any TX I2S/TDM interrupts are used.
@@ -713,12 +713,12 @@ __STATIC_INLINE void Cy_AudioTDM_UnfreezeTxFifo( TDM_TX_STRUCT_Type * base)
     TDM_STRUCT_TX_FIFO_CTL(base) &= ~TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_FIFO_CTL_FREEZE_Msk;
     TDM_STRUCT_TX_FIFO_CTL(base) |= _BOOL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_FIFO_CTL_FREEZE, 0U);
 }
-    
+
 /***************************************************************************/
 /* Function Name: Cy_AudioTDM_MuteTxFifo                                   */
 /***************************************************************************//**
 *
-* Mutes the TX FIFO. 
+* Mutes the TX FIFO.
 * HW uses a constant PCM data value of "0". Mute does advance the FIFO read pointer.
 *
 * \param base The pointer to the I2S/TDM instance address.
@@ -736,7 +736,7 @@ __STATIC_INLINE void Cy_AudioTDM_MuteTxFifo( TDM_TX_STRUCT_Type * base)
 /* Function Name: Cy_AudioTDM_ActivateTx                                      */
 /***************************************************************************//**
 *
-* Activate/start the TX FIFO. 
+* Activate/start the TX FIFO.
 * This will set the transmitter state to on.
 *
 * \param base The pointer to the I2S/TDM instance address.
@@ -804,7 +804,7 @@ __STATIC_INLINE uint8_t Cy_AudioTDM_GetNumInTxFifo( TDM_TX_STRUCT_Type * base)
 {
     return ((uint8_t)(TDM_STRUCT_TX_FIFO_STATUS(base) & TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_FIFO_STATUS_USED_Msk));
 }
-    
+
 /***************************************************************************/
 /* Function Name: Cy_AudioTDM_GetTxReadPointer                             */
 /***************************************************************************//**
@@ -854,7 +854,7 @@ __STATIC_INLINE uint8_t Cy_AudioTDM_GetTxWritePointer( TDM_TX_STRUCT_Type * base
 * \param base The pointer to the I2S/TDM instance address.
 *
 *******************************************************************************/
-__STATIC_INLINE void Cy_AudioTDM_EnableTxTestMode( TDM_TX_STRUCT_Type * base) 
+__STATIC_INLINE void Cy_AudioTDM_EnableTxTestMode( TDM_TX_STRUCT_Type * base)
 {
     TDM_STRUCT_TX_TEST_CTL(base) |= TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_TEST_CTL_ENABLED_Msk;
 }
@@ -863,12 +863,12 @@ __STATIC_INLINE void Cy_AudioTDM_EnableTxTestMode( TDM_TX_STRUCT_Type * base)
 /* Function Name: Cy_AudioTDM_DisableTxTestMode                            */
 /***************************************************************************//**
 *
-* Disables Test mode. 
+* Disables Test mode.
 *
 * \param base The pointer to the I2S/TDM instance address.
 *
 *******************************************************************************/
-__STATIC_INLINE void Cy_AudioTDM_DisableTxTestMode( TDM_TX_STRUCT_Type * base) 
+__STATIC_INLINE void Cy_AudioTDM_DisableTxTestMode( TDM_TX_STRUCT_Type * base)
 {
     TDM_STRUCT_TX_TEST_CTL(base) &= (uint32_t) ~TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_TEST_CTL_ENABLED_Msk;
 }
@@ -877,7 +877,7 @@ __STATIC_INLINE void Cy_AudioTDM_DisableTxTestMode( TDM_TX_STRUCT_Type * base)
 /* Function Name: Cy_AudioTDM_ReadRxData                                   */
 /***************************************************************************//**
 *
-* Read Rx data from the Rx FIFO. 
+* Read Rx data from the Rx FIFO.
 * Data (PCM sample) read from the RX FIFO. Reading removes the data from the RX FIFO.
 * Reading from an empty RX FIFO activates FIFO_UNDERFLOW interrupt.
 *
@@ -895,7 +895,7 @@ __STATIC_INLINE uint32_t Cy_AudioTDM_ReadRxData( TDM_RX_STRUCT_Type * base)
 /* Function Name: Cy_AudioTDM_FreezeRxFifo                                 */
 /***************************************************************************//**
 *
-* Freeze RX FIFO. 
+* Freeze RX FIFO.
 * HW writes from the RX FIFO have no effect: freeze will not advance the FIFO write pointer.
 * This functionality is intended for debugging purposes.
 *
@@ -1104,9 +1104,9 @@ __STATIC_INLINE void Cy_AudioTDM_ClearTxInterrupt( TDM_TX_STRUCT_Type * base, ui
 __STATIC_INLINE void Cy_AudioTDM_SetTxInterrupt( TDM_TX_STRUCT_Type * base, uint32_t interrupt)
 {
     CY_ASSERT_L2(CY_I2S_TDM_INTR_TX_MASK_VALID(interrupt));
-    
+
     TDM_STRUCT_TX_INTR_TX_SET(base) = interrupt;
-}    
+}
 
 /***************************************************************************/
 /* Function Name: Cy_AudioTDM_GetTxInterruptMask                             */
@@ -1139,7 +1139,7 @@ __STATIC_INLINE uint32_t Cy_AudioTDM_GetTxInterruptMask( TDM_TX_STRUCT_Type * ba
 __STATIC_INLINE void Cy_AudioTDM_SetTxInterruptMask( TDM_TX_STRUCT_Type * base, uint32_t interrupt)
 {
     CY_ASSERT_L2(CY_I2S_TDM_INTR_TX_MASK_VALID(interrupt));
-    
+
     TDM_STRUCT_TX_INTR_TX_MASK(base) = interrupt;
 }
 
@@ -1184,12 +1184,12 @@ __STATIC_INLINE void Cy_AudioTDM_ClearTxTriggerInterruptMask( TDM_TX_STRUCT_Type
 {
     TDM_STRUCT_TX_INTR_TX_MASK(base) &= ~TDM_TDM_STRUCT_TDM_TX_STRUCT_INTR_TX_MASK_FIFO_TRIGGER_Msk;
     TDM_STRUCT_TX_INTR_TX_MASK(base) |= _BOOL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_INTR_TX_MASK_FIFO_TRIGGER, 0U);
-}    
+}
 /***************************************************************************/
 /* Function Name: Cy_AudioTDM_ClearRxInterrupt                             */
 /***************************************************************************//**
 *
-*  Clears RX interrupt 
+*  Clears RX interrupt
 *
 * \param base The pointer to the I2S/TDM instance address.
 * \param interrupt interrupt
@@ -1205,12 +1205,12 @@ __STATIC_INLINE void Cy_AudioTDM_ClearRxInterrupt( TDM_RX_STRUCT_Type * base, ui
     (void) TDM_STRUCT_RX_INTR_RX(base);
 
 }
-    
+
 /***************************************************************************/
 /* Function Name: Cy_AudioTDM_SetRxInterrupt                               */
 /***************************************************************************//**
 *
-*  Sets RX interrupt 
+*  Sets RX interrupt
 *
 * \param base The pointer to the I2S/TDM instance address.
 * \param interrupt interrupt
@@ -1221,7 +1221,7 @@ __STATIC_INLINE void Cy_AudioTDM_ClearRxInterrupt( TDM_RX_STRUCT_Type * base, ui
 __STATIC_INLINE void Cy_AudioTDM_SetRxInterrupt( TDM_RX_STRUCT_Type * base, uint32_t interrupt)
 {
     CY_ASSERT_L2(CY_I2S_TDM_INTR_RX_MASK_VALID(interrupt));
-    
+
     TDM_STRUCT_RX_INTR_RX_SET(base) = interrupt;
 }
 
@@ -1255,10 +1255,10 @@ __STATIC_INLINE uint32_t Cy_AudioTDM_GetRxInterruptMask( TDM_RX_STRUCT_Type * ba
 __STATIC_INLINE void Cy_AudioTDM_SetRxInterruptMask( TDM_RX_STRUCT_Type * base, uint32_t interrupt)
 {
     CY_ASSERT_L2(CY_I2S_TDM_INTR_RX_MASK_VALID(interrupt));
-    
+
     TDM_STRUCT_RX_INTR_RX_MASK(base) = interrupt;
 }
-    
+
 /***************************************************************************/
 /* Function Name: Cy_AudioTDM_GetRxInterruptStatusMasked                  */
 /***************************************************************************//**

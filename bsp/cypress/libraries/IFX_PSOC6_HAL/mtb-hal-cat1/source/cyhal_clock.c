@@ -298,7 +298,7 @@ const cyhal_resource_inst_t CYHAL_CLOCK_RSC_LPECO_PRESCALER = { CYHAL_RSC_CLOCK,
 #endif
 
 /* COMPONENT_CAT1C uses a hybrid approach from what was done on CAT1A and CAT1B. Facelift CAT1C supports ClkPeri as well
-as Peripheral Clock Groups. For CAT1C, ClkPeri is used to source everything in Peripheral Clock Group 0 (HF0) and other 
+as Peripheral Clock Groups. For CAT1C, ClkPeri is used to source everything in Peripheral Clock Group 0 (HF0) and other
 Peripheral Clock Groups derive from one of the HFClks and have their own group divider. Thus we declare RSC_PERI Peri array for CAT1C */
 
 const cyhal_resource_inst_t CYHAL_CLOCK_RSC_PERI[CY_PERI_GROUP_NR] =
@@ -2236,7 +2236,7 @@ static cy_rslt_t _cyhal_clock_set_divider_pump(cyhal_clock_t *clock, uint32_t di
     Cy_SysClk_ClkPumpSetDivider(divVal);
     return CY_RSLT_SUCCESS;
 }
-#define _cyhal_clock_get_sources_pump	_cyhal_clock_get_sources_hf
+#define _cyhal_clock_get_sources_pump   _cyhal_clock_get_sources_hf
 static cy_rslt_t _cyhal_clock_set_source_pump(cyhal_clock_t *clock, const cyhal_clock_t *source)
 {
     CY_UNUSED_PARAMETER(clock);
@@ -2984,108 +2984,108 @@ const void* _cyhal_clock_get_funcs_peripheral(void) { return &FUNCS_EMPTY/*FUNCS
 
 static const cyhal_clock_funcs_t* _cyhal_clock_get_funcs_all(cyhal_clock_block_t block)
 {
-	switch (block)
-	{
-		case CYHAL_CLOCK_BLOCK_IMO:
-			return &FUNCS_IMO;
+    switch (block)
+    {
+        case CYHAL_CLOCK_BLOCK_IMO:
+            return &FUNCS_IMO;
 #if SRSS_ECO_PRESENT
-		case CYHAL_CLOCK_BLOCK_ECO:
-			return &FUNCS_ECO;
+        case CYHAL_CLOCK_BLOCK_ECO:
+            return &FUNCS_ECO;
 #endif
-		case CYHAL_CLOCK_BLOCK_EXT:
-			return &FUNCS_EXT;
+        case CYHAL_CLOCK_BLOCK_EXT:
+            return &FUNCS_EXT;
 #if SRSS_ALTHF_PRESENT
-		case CYHAL_CLOCK_BLOCK_ALTHF:
-			return &FUNCS_ALTHF;
+        case CYHAL_CLOCK_BLOCK_ALTHF:
+            return &FUNCS_ALTHF;
 #endif
 #if SRSS_ALTLF_PRESENT
-		case CYHAL_CLOCK_BLOCK_ALTLF:
-			return &FUNCS_ALTLF;
+        case CYHAL_CLOCK_BLOCK_ALTLF:
+            return &FUNCS_ALTLF;
 #endif
-		case CYHAL_CLOCK_BLOCK_ILO:
-			return &FUNCS_ILO;
+        case CYHAL_CLOCK_BLOCK_ILO:
+            return &FUNCS_ILO;
 #if _CYHAL_SRSS_PILO_PRESENT
-		case CYHAL_CLOCK_BLOCK_PILO:
-			return &FUNCS_PILO;
+        case CYHAL_CLOCK_BLOCK_PILO:
+            return &FUNCS_PILO;
 #endif
 #if SRSS_BACKUP_PRESENT
-		case CYHAL_CLOCK_BLOCK_WCO:
-			return &FUNCS_WCO;
+        case CYHAL_CLOCK_BLOCK_WCO:
+            return &FUNCS_WCO;
 #endif
 #if defined(COMPONENT_CAT1B) || (SRSS_MFO_PRESENT)
-		case CYHAL_CLOCK_BLOCK_MFO:
-			return &FUNCS_MFO;
+        case CYHAL_CLOCK_BLOCK_MFO:
+            return &FUNCS_MFO;
 #endif
-		case CYHAL_CLOCK_BLOCK_PATHMUX:
-			return &FUNCS_PATHMUX;
+        case CYHAL_CLOCK_BLOCK_PATHMUX:
+            return &FUNCS_PATHMUX;
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1C) || (SRSS_FLL_PRESENT)
-		case CYHAL_CLOCK_BLOCK_FLL:
-			return &FUNCS_FLL;
+        case CYHAL_CLOCK_BLOCK_FLL:
+            return &FUNCS_FLL;
 #endif
-		case CYHAL_CLOCK_BLOCK_LF:
-			return &FUNCS_LF;
+        case CYHAL_CLOCK_BLOCK_LF:
+            return &FUNCS_LF;
 #if defined(COMPONENT_CAT1B) || (SRSS_MFO_PRESENT)
-		case CYHAL_CLOCK_BLOCK_MF:
-			return &FUNCS_MF;
+        case CYHAL_CLOCK_BLOCK_MF:
+            return &FUNCS_MF;
 #endif
-		case CYHAL_CLOCK_BLOCK_HF:
-			return &FUNCS_HF;
-		case CYHAL_CLOCK_BLOCK_PUMP:
-			return &FUNCS_PUMP;
-		case CYHAL_CLOCK_BLOCK_BAK:
-			return &FUNCS_BAK;
-		case CYHAL_CLOCK_BLOCK_ALT_SYS_TICK:
-			return &FUNCS_ALT_SYS_TICK;
-		case CYHAL_CLOCK_BLOCK_PERI:
-			return &FUNCS_PERI;
+        case CYHAL_CLOCK_BLOCK_HF:
+            return &FUNCS_HF;
+        case CYHAL_CLOCK_BLOCK_PUMP:
+            return &FUNCS_PUMP;
+        case CYHAL_CLOCK_BLOCK_BAK:
+            return &FUNCS_BAK;
+        case CYHAL_CLOCK_BLOCK_ALT_SYS_TICK:
+            return &FUNCS_ALT_SYS_TICK;
+        case CYHAL_CLOCK_BLOCK_PERI:
+            return &FUNCS_PERI;
 #if defined(COMPONENT_CAT1A)
 #if (_CYHAL_SRSS_NUM_PLL > 0)
-		case CYHAL_CLOCK_BLOCK_PLL:
-			return &FUNCS_PLL;
+        case CYHAL_CLOCK_BLOCK_PLL:
+            return &FUNCS_PLL;
 #endif
 #endif
 #if defined(COMPONENT_CAT1C)
         case CYHAL_CLOCK_BLOCK_MEM:
             return &FUNCS_MEM;
-#endif 
+#endif
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1C)
 #if defined(COMPONENT_CAT1A)
-		case CYHAL_CLOCK_BLOCK_TIMER:
-			return &FUNCS_TIMER;
+        case CYHAL_CLOCK_BLOCK_TIMER:
+            return &FUNCS_TIMER;
 #endif
-		case CYHAL_CLOCK_BLOCK_FAST:
-			return &FUNCS_FAST;
-		case CYHAL_CLOCK_BLOCK_SLOW:
-			return &FUNCS_SLOW;
+        case CYHAL_CLOCK_BLOCK_FAST:
+            return &FUNCS_FAST;
+        case CYHAL_CLOCK_BLOCK_SLOW:
+            return &FUNCS_SLOW;
 #endif
 #if defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
 #if (_CYHAL_SRSS_NUM_PLL > 0)
-		case CYHAL_CLOCK_BLOCK_PLL200:
+        case CYHAL_CLOCK_BLOCK_PLL200:
             return &FUNCS_PLL200;
-		case CYHAL_CLOCK_BLOCK_PLL400:
-			return &FUNCS_PLL400;
+        case CYHAL_CLOCK_BLOCK_PLL400:
+            return &FUNCS_PLL400;
 #endif
-#endif 
+#endif
 #if defined(COMPONENT_CAT1B)
-		case CYHAL_CLOCK_BLOCK_IHO:
-			return &FUNCS_IHO;
+        case CYHAL_CLOCK_BLOCK_IHO:
+            return &FUNCS_IHO;
 #if SRSS_ECO_PRESENT
-		case CYHAL_CLOCK_BLOCK_ECO_PRESCALER:
-			return &FUNCS_ECO_PRESCALER;
+        case CYHAL_CLOCK_BLOCK_ECO_PRESCALER:
+            return &FUNCS_ECO_PRESCALER;
 #endif
 #if SRSS_BACKUP_S40E_LPECO_PRESENT
         case CY_SYSCLK_CLKLF_IN_LPECO_PRESCALER:
-			return &FUNCS_LPECO_PRESCALER;
+            return &FUNCS_LPECO_PRESCALER;
 #endif
 #endif
-		default:
-			return &FUNCS_PERIPHERAL;
-	}
+        default:
+            return &FUNCS_PERIPHERAL;
+    }
 }
 
 
 
-#define _CYHAL_CLOCK_CREATE(x,y)	{ .block = (CYHAL_CLOCK_BLOCK_##x), .channel = (y), .reserved = false, .funcs = &(FUNCS_##x) }
+#define _CYHAL_CLOCK_CREATE(x,y)    { .block = (CYHAL_CLOCK_BLOCK_##x), .channel = (y), .reserved = false, .funcs = &(FUNCS_##x) }
 
 const cyhal_clock_t CYHAL_CLOCK_IMO = _CYHAL_CLOCK_CREATE(IMO, 0);
 const cyhal_clock_t CYHAL_CLOCK_EXT = _CYHAL_CLOCK_CREATE(EXT, 0);

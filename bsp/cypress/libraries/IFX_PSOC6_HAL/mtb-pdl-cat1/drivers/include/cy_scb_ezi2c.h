@@ -39,7 +39,7 @@
 * master and your code. I2C devices based on the SCB hardware are compatible
 * with the I2C Standard mode, Fast mode, and Fast mode Plus specifications, as
 * defined in the I2C bus specification.
-* 
+*
 * EZI2C slave is a special implementation of the I2C that handles all communication
 * between the master and slave through ISR (interrupt service routine) and requires
 * no interaction with the main program flow from the slave side. The EZI2C should be

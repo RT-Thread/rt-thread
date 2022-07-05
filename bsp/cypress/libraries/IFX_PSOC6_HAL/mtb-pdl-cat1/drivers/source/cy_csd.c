@@ -41,14 +41,14 @@
 *
 * Acquires, locks, and configures the CSD HW block.
 *
-* If the CSD HW block is already in use by other middleware or by 
+* If the CSD HW block is already in use by other middleware or by
 * the application program, the function
 * returns the CY_CSD_LOCKED status and does not configure the CSD HW block.
-* 
+*
 * If the acquisition is successful, this function writes configuration data
-* into all CSD HW block registers (except read-only registers and SEQ_START 
-* register) at once. Because the SEQ_START register is excluded from write, 
-* use the Cy_CSD_WriteReg() function to trigger the state machine 
+* into all CSD HW block registers (except read-only registers and SEQ_START
+* register) at once. Because the SEQ_START register is excluded from write,
+* use the Cy_CSD_WriteReg() function to trigger the state machine
 * for scan or conversion.
 *
 * To capture the CSD block without its reconfiguration, use the
@@ -58,7 +58,7 @@
 * The pointer to a CSD HW block base address.
 *
 * \param config
-* The pointer to a configuration structure that contains the initial 
+* The pointer to a configuration structure that contains the initial
 * configuration.
 *
 * \param key
@@ -101,7 +101,7 @@ cy_en_csd_status_t Cy_CSD_Init(CSD_Type * base, cy_stc_csd_config_t const * conf
 * Releases the CSD HW block previously captured and locked by the caller.
 *
 * If the CSD HW block is acquired by another caller or the block is in the
-* busy state (performing scan or conversion), the de-initialization request 
+* busy state (performing scan or conversion), the de-initialization request
 * is ignored and the corresponding status is returned.
 *
 * \param base
@@ -197,10 +197,10 @@ cy_en_csd_status_t Cy_CSD_Capture(CSD_Type * base, cy_en_csd_key_t key, cy_stc_c
 ****************************************************************************//**
 *
 * Sets configuration of all CSD HW block registers at once.
-* 
-* This function writes configuration data into all CSD block registers 
-* (except read-only registers and the SEQ_START register) at once. Because the 
-* SEQ_START register is excluded from write, use the Cy_CSD_WriteReg() 
+*
+* This function writes configuration data into all CSD block registers
+* (except read-only registers and the SEQ_START register) at once. Because the
+* SEQ_START register is excluded from write, use the Cy_CSD_WriteReg()
 * function to perform triggering state machine for scan or conversion.
 *
 * \param base
@@ -278,9 +278,9 @@ cy_en_csd_status_t Cy_CSD_Configure(CSD_Type * base, const cy_stc_csd_config_t *
 * Function Name: Cy_CSD_GetVrefTrim
 ****************************************************************************//**
 *
-* Adjusts the provided reference voltage based on factory trimmed 
+* Adjusts the provided reference voltage based on factory trimmed
 * SFALSH Vref trim registers.
-* 
+*
 * This function is mainly used by CSDADC middleware only to get the most
 * accurate reference voltage possible.
 *

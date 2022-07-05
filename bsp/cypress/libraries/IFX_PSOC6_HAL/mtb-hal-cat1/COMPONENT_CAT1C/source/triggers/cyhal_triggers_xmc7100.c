@@ -32,12 +32,12 @@
 
 const uint16_t cyhal_sources_per_mux[24] =
 {
-    69, 63, 82, 7, 0, 172, 94, 50, 9, 16, 188, 124, 156, 12, 72, 22, 2, 12, 6, 72, 72, 4, 4, 16, 
+    69, 63, 82, 7, 0, 172, 94, 50, 9, 16, 188, 124, 156, 12, 72, 22, 2, 12, 6, 72, 72, 4, 4, 16,
 };
 
 const bool cyhal_is_mux_1to1[24] =
 {
-    false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, 
+    false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true,
 };
 
 const _cyhal_trigger_source_xmc7100_t cyhal_mux0_sources[69] =
@@ -1458,30 +1458,30 @@ const _cyhal_trigger_source_xmc7100_t cyhal_mux23_sources[16] =
 
 const _cyhal_trigger_source_xmc7100_t* cyhal_mux_to_sources[24] =
 {
-    cyhal_mux0_sources, 
-    cyhal_mux1_sources, 
-    cyhal_mux2_sources, 
-    cyhal_mux3_sources, 
-    NULL, 
-    cyhal_mux5_sources, 
-    cyhal_mux6_sources, 
-    cyhal_mux7_sources, 
-    cyhal_mux8_sources, 
-    cyhal_mux9_sources, 
-    cyhal_mux10_sources, 
-    cyhal_mux11_sources, 
-    cyhal_mux12_sources, 
-    cyhal_mux13_sources, 
-    cyhal_mux14_sources, 
-    cyhal_mux15_sources, 
-    cyhal_mux16_sources, 
-    cyhal_mux17_sources, 
-    cyhal_mux18_sources, 
-    cyhal_mux19_sources, 
-    cyhal_mux20_sources, 
-    cyhal_mux21_sources, 
-    cyhal_mux22_sources, 
-    cyhal_mux23_sources, 
+    cyhal_mux0_sources,
+    cyhal_mux1_sources,
+    cyhal_mux2_sources,
+    cyhal_mux3_sources,
+    NULL,
+    cyhal_mux5_sources,
+    cyhal_mux6_sources,
+    cyhal_mux7_sources,
+    cyhal_mux8_sources,
+    cyhal_mux9_sources,
+    cyhal_mux10_sources,
+    cyhal_mux11_sources,
+    cyhal_mux12_sources,
+    cyhal_mux13_sources,
+    cyhal_mux14_sources,
+    cyhal_mux15_sources,
+    cyhal_mux16_sources,
+    cyhal_mux17_sources,
+    cyhal_mux18_sources,
+    cyhal_mux19_sources,
+    cyhal_mux20_sources,
+    cyhal_mux21_sources,
+    cyhal_mux22_sources,
+    cyhal_mux23_sources,
 };
 
 const uint8_t cyhal_dest_to_mux[407] =

@@ -172,11 +172,11 @@ typedef struct
     cy_stc_capsense_gesture_position_t positionLast1;           /**< Previous position of the first touch */
     cy_stc_capsense_gesture_position_t position2;               /**< Current position of the second touch */
     cy_stc_capsense_gesture_position_t positionLast2;           /**< Previous position of the second touch */
-    
+
     uint32_t timestamp;                                         /**< Current timestamp */
     uint16_t detected;                                          /**< Detected gesture mask */
     uint16_t direction;                                         /**< Mask of direction of detected gesture */
-    
+
     cy_stc_capsense_ofrt_context_t ofrtContext;                 /**< One-finger rotate gesture context */
     cy_stc_capsense_ofsl_context_t ofslContext;                 /**< One-finger scroll gesture context */
     cy_stc_capsense_tfzm_context_t tfzmContext;                 /**< Two-finger zoom gesture context */
@@ -211,7 +211,7 @@ typedef struct
 * Initializes internal variables and states.
 *
 * \param context
-* The pointer to the gesture context structure 
+* The pointer to the gesture context structure
 * \ref cy_stc_capsense_gesture_context_t.
 *
 *******************************************************************************/
@@ -235,11 +235,11 @@ void Cy_CapSense_Gesture_ResetState(
 * The pointer to the array of positions \ref cy_stc_capsense_gesture_position_t.
 *
 * \param config
-* The pointer to the gesture configuration structure 
+* The pointer to the gesture configuration structure
 * \ref cy_stc_capsense_gesture_config_t.
 *
 * \param context
-* The pointer to the gesture context structure 
+* The pointer to the gesture context structure
 * \ref cy_stc_capsense_gesture_context_t.
 *
 *******************************************************************************/

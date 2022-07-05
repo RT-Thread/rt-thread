@@ -278,7 +278,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HPC_RelChannel(cy_stc_ipc_bt_context_t *btIpcCo
     uint32_t rel_mask;
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
     (void)buf;
-    // Fix if this is causing issue 
+    // Fix if this is causing issue
 #if 1
     if ((NULL == contextPtr) || (NULL == buf))
     {

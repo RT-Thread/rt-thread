@@ -32,12 +32,12 @@
 
 const uint16_t cyhal_sources_per_mux[21] =
 {
-    87, 87, 139, 139, 229, 256, 27, 3, 139, 127, 2, 51, 12, 14, 1, 7, 3, 8, 8, 1, 1, 
+    87, 87, 139, 139, 229, 256, 27, 3, 139, 127, 2, 51, 12, 14, 1, 7, 3, 8, 8, 1, 1,
 };
 
 const bool cyhal_is_mux_1to1[21] =
 {
-    false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, 
+    false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
 };
 
 const _cyhal_trigger_source_psoc6_04_t cyhal_mux0_sources[87] =
@@ -1467,27 +1467,27 @@ const _cyhal_trigger_source_psoc6_04_t cyhal_mux20_sources[1] =
 
 const _cyhal_trigger_source_psoc6_04_t* cyhal_mux_to_sources[21] =
 {
-    cyhal_mux0_sources, 
-    cyhal_mux1_sources, 
-    cyhal_mux2_sources, 
-    cyhal_mux3_sources, 
-    cyhal_mux4_sources, 
-    cyhal_mux5_sources, 
-    cyhal_mux6_sources, 
-    cyhal_mux7_sources, 
-    cyhal_mux8_sources, 
-    cyhal_mux9_sources, 
-    cyhal_mux10_sources, 
-    cyhal_mux11_sources, 
-    cyhal_mux12_sources, 
-    cyhal_mux13_sources, 
-    cyhal_mux14_sources, 
-    cyhal_mux15_sources, 
-    cyhal_mux16_sources, 
-    cyhal_mux17_sources, 
-    cyhal_mux18_sources, 
-    cyhal_mux19_sources, 
-    cyhal_mux20_sources, 
+    cyhal_mux0_sources,
+    cyhal_mux1_sources,
+    cyhal_mux2_sources,
+    cyhal_mux3_sources,
+    cyhal_mux4_sources,
+    cyhal_mux5_sources,
+    cyhal_mux6_sources,
+    cyhal_mux7_sources,
+    cyhal_mux8_sources,
+    cyhal_mux9_sources,
+    cyhal_mux10_sources,
+    cyhal_mux11_sources,
+    cyhal_mux12_sources,
+    cyhal_mux13_sources,
+    cyhal_mux14_sources,
+    cyhal_mux15_sources,
+    cyhal_mux16_sources,
+    cyhal_mux17_sources,
+    cyhal_mux18_sources,
+    cyhal_mux19_sources,
+    cyhal_mux20_sources,
 };
 
 const uint8_t cyhal_dest_to_mux[112] =
