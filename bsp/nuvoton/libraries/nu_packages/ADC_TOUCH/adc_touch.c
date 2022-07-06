@@ -624,10 +624,11 @@ static void nu_touch_do_calibration(rt_device_t pdev)
 static void adc_touch_entry(void *parameter)
 {
     struct rt_touch_data touch_point;
-
     rt_err_t result;
     rt_device_t pdev;
     int max_range;
+    int16_t touch_active_cnt=0;
+    BOOL    touch_active_flag = FALSE;
 
     adc_touch_sem = rt_sem_create("adc_touch_sem", 0, RT_IPC_FLAG_FIFO);
     RT_ASSERT(adc_touch_sem != RT_NULL);
@@ -640,7 +641,9 @@ static void adc_touch_entry(void *parameter)
     }
 
     if (rt_memcmp((void *)&g_sCalMat, (void *)&g_sCalZero, sizeof(S_CALIBRATION_MATRIX)) != 0)
+    {
         g_u32Calibrated = 1;
+    }
 
     nu_adc_touch_readfile();
 
@@ -677,15 +680,48 @@ static void adc_touch_entry(void *parameter)
                     || touch_point.event == RT_TOUCH_EVENT_UP
                     || touch_point.event == RT_TOUCH_EVENT_MOVE)
             {
-                nu_touch_inputevent_cb(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
-
-                rt_kprintf("x=%d y=%d event=%s%s%s\n",
-                           touch_point.x_coordinate,
-                           touch_point.y_coordinate,
-                           (touch_point.event == RT_TOUCH_EVENT_DOWN) ? "DOWN" : "",
-                           (touch_point.event == RT_TOUCH_EVENT_UP) ? "UP" : "",
-                           (touch_point.event == RT_TOUCH_EVENT_MOVE) ? "MOVE" : "");
+                if(touch_point.event == RT_TOUCH_EVENT_DOWN || touch_point.event == RT_TOUCH_EVENT_MOVE)
+                {
+                    if (touch_active_cnt < ADC_TOUCH_FILTER_VAL)
+                    {
+                        touch_active_cnt++;
+                    }
+                    else
+                    {
+                        touch_active_flag = TRUE;
+                    }
+                }
+                else
+                {
+                    if (touch_active_cnt < ADC_TOUCH_FILTER_VAL)
+                    {
+                        rt_kprintf("err touch:%d\r\n",touch_active_cnt);
+                    }
+                    touch_active_cnt = 0;
+                }
+                if(touch_active_flag)
+                {
+                    nu_touch_inputevent_cb(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
+                    rt_kprintf("x=%d y=%d event=%s%s%s\n",
+                               touch_point.x_coordinate,
+                               touch_point.y_coordinate,
+                               (touch_point.event == RT_TOUCH_EVENT_DOWN) ? "DOWN" : "",
+                               (touch_point.event == RT_TOUCH_EVENT_UP) ? "UP" : "",
+                               (touch_point.event == RT_TOUCH_EVENT_MOVE) ? "MOVE" : "");
+                }
+                if (touch_active_cnt == 0)
+                {
+                    touch_active_flag = FALSE;
+                }
             }
+        }
+        else
+        {
+            if (touch_active_cnt)
+            {
+                rt_kprintf("err touch:%d\r\n",touch_active_cnt);
+            }
+            touch_active_cnt = 0;
         }
     }
 
