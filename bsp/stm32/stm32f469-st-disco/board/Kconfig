@@ -15,6 +15,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_TOUCH
         default n
 
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            select PKG_USING_LV_MUSIC_DEMO
+            default n
+    endif
+    
     config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
@@ -39,13 +46,6 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_ADAFRUIT
         imply RTDUINO_USING_MSTIMER2
         default n
-        
-    if BSP_USING_LVGL
-        config BSP_USING_LVGL_DEMO
-            bool "Enable LVGL demo"
-            select PKG_USING_LV_MUSIC_DEMO
-            default n
-    endif
 
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
