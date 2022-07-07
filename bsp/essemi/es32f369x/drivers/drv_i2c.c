@@ -286,7 +286,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
         else
         {
             uint32_t f=((msg->flags&RT_I2C_NO_START)?0x1:0)|((msg->flags&RT_I2C_NO_STOP)?0x2:0);
-            
+
             if (_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT,f) != 0)
             {
                 LOG_E("i2c bus write failed,i2c bus stop!\n");

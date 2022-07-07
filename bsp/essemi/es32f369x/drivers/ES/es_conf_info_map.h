@@ -8,7 +8,7 @@
 
 #include <ald_gpio.h>
 
- 
+
 
 #define __ES_PIN(index, gpio, gpio_index) {index, GPIO##gpio, GPIO_PIN_##gpio_index}
 #define __ES_PIN_DEFAULT {-1, 0, 0}
