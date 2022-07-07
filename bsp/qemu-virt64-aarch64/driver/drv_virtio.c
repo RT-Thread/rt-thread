@@ -17,6 +17,9 @@
 #ifdef BSP_USING_VIRTIO_NET
 #include <virtio_net.h>
 #endif
+#ifdef BSP_USING_VIRTIO_CONSOLE
+#include <virtio_console.h>
+#endif
 #ifdef BSP_USING_VIRTIO_GPU
 #include <virtio_gpu.h>
 #endif
@@ -33,6 +36,9 @@ static virtio_device_init_handler virtio_device_init_handlers[] =
 #endif
 #ifdef BSP_USING_VIRTIO_NET
     [VIRTIO_DEVICE_ID_NET]      = rt_virtio_net_init,
+#endif
+#ifdef BSP_USING_VIRTIO_CONSOLE
+    [VIRTIO_DEVICE_ID_CONSOLE]  = rt_virtio_console_init,
 #endif
 #ifdef BSP_USING_VIRTIO_GPU
     [VIRTIO_DEVICE_ID_GPU]      = rt_virtio_gpu_init,
