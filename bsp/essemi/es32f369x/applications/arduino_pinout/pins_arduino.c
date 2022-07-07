@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-12-10     Meco Man     first version
+ * 2022-07-07     shiwa        Adapt ES32F369x
  */
 #include <Arduino.h>
 #include <board.h>
@@ -36,10 +37,6 @@ const pin_map_t pin_map_table[]=
     {D11/*, GET_PIN(B,5)*/}, /* SPI0_MOSI */
     {D12/*, GET_PIN(B,4)*/}, /* SPI0_MISO */
     {D13/*, GET_PIN(D,3)*/}, /* SPI0_SCK */
-
-    //{D11, GET_PIN(B,5),"pwm3",2}, /* PWM3 GP32C4T1 CH2 */
-    //{D12, GET_PIN(B,4),"pwm3",1}, /* PWM3 GP32C4T1 CH1 */
-    //{D13, GET_PIN(D,3)}, /* GPIO6 */
 
     {D14/*, GET_PIN(B,7)*/}, /* I2C0_SDA */
     {D15/*, GET_PIN(B,6)*/}, /* I2C0_SCL */

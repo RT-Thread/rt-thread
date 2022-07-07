@@ -1,23 +1,14 @@
 Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
-import pdb
-cwd     = os.path.join(str(Dir('#')), 'applications')
-src = Glob('*.c') + Glob('*.cpp')
-src_app = []
-src_arduino = []
-for f in src:
-    if 'arduino' in f.name:
-        src_arduino.append(f)
-    else:
-        src_app.append(f)
-        
-if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
-    src = src_app+src_arduino
-else:
-    src = src_app
 
-CPPPATH = [cwd, str(Dir('#'))]
+src = Glob('*.c')
+
+if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
+    src += ['arduino_main.cpp']
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)

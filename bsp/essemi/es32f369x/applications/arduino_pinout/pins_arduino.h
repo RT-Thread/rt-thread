@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-12-10     Meco Man     first version
+ * 2022-07-07     shiwa        Adapt ES32F369x
  */
 
 #ifndef Pins_Arduino_h
@@ -39,33 +40,19 @@
 #define D23  (23)
 #define D24  (24)
 
-#define A0   (16)
-#define A1   (17)
-#define A2   (18)
-#define A3   (19)
-#define A4   (20)
-#define A5   (21)
+#define A0   (25)
+#define A1   (26)
+#define A2   (27)
+#define A3   (28)
+#define A4   (29)
+#define A5   (30)
 
 #define F_CPU  96000000L /* CPU: 96MHz */
 
-/*
- * i2c1 - PC7-SDA PC6-SCL (User I2C)
- * i2c3 - ICM20608, AP3216C (On Board)
- * i2c4 - AHT10 (On Board)
- */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c0"
 
-/*
- * spi2 - Wireless Interface (User SPI)
- * spi3 - LCD ST7789
- */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME            "spi0"
 
-#ifndef INT8_C
-#define INT8_C(x) ((int8_t)x)
-#endif
-#ifndef UINT8_C
-#define UINT8_C(x) ((uint8_t)x)
-#endif
+#define LED_BUILTIN D16
 
 #endif /* Pins_Arduino_h */

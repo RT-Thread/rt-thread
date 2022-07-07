@@ -15,7 +15,6 @@ menu "Hardware Drivers Config"
         config BSP_USING_ARDUINO
             bool "Support Arduino"
             select PKG_USING_RTDUINO
-            select RT_USING_CPLUSPLUS
             select BSP_USING_GPIO
             select BSP_USING_UART2
             select BSP_USING_SPI0

@@ -107,9 +107,9 @@ ES32-Arduino的SPI总线是spi0总线， `SCK`、`MISO`、`MOSI`引脚是被RT-T
 
 ## 5 测试说明
 
-1. RTduino各功能测试
+在applications/arduino_pinout/examples/arduino_examples.cpp文件中，已经根据功能预设了一系列函数用于测试arduino各个功能,可根据测试需要，取消注释对应的宏定义即可启用对应的测试。如果需要测试，请将arduino_examples.cpp文件的内容覆盖到applications/arduino_main.cpp文件中
 
-在arduino_main.cpp文件中，已经根据功能预设了一系列函数用于测试arduino各个功能,可根据测试需要，取消注释对应的宏定义即可启用对应的测试
+1. RTduino各功能测试
 
 目前支持的测试如下：
 
