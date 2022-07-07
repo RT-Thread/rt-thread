@@ -19,10 +19,6 @@
 #define RT_USING_VIRTIO_VERSION 0x1
 #endif
 
-#ifndef RT_USING_VIRTIO_QUEUE_MAX_NR
-#define RT_USING_VIRTIO_QUEUE_MAX_NR 4
-#endif
-
 #include <virtio_mmio.h>
 #include <virtio_queue.h>
 
@@ -102,7 +98,9 @@ struct virtio_device
 {
     rt_uint32_t irq;
 
-    struct virtq queues[RT_USING_VIRTIO_QUEUE_MAX_NR];
+    struct virtq *queues;
+    rt_size_t queues_num;
+
     union
     {
         rt_ubase_t *mmio_base;
@@ -122,7 +120,10 @@ void virtio_reset_device(struct virtio_device *dev);
 void virtio_status_acknowledge_driver(struct virtio_device *dev);
 void virtio_status_driver_ok(struct virtio_device *dev);
 void virtio_interrupt_ack(struct virtio_device *dev);
+rt_bool_t virtio_has_feature(struct virtio_device *dev, rt_uint32_t feature_bit);
 
+rt_err_t virtio_queues_alloc(struct virtio_device *dev, rt_size_t queues_num);
+void virtio_queues_free(struct virtio_device *dev);
 rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, rt_size_t ring_size);
 void virtio_queue_destroy(struct virtio_device *dev, rt_uint32_t queue_index);
 void virtio_queue_notify(struct virtio_device *dev, rt_uint32_t queue_index);
