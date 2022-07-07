@@ -12,7 +12,6 @@
 
 #include <lcd_port.h>
 
-#ifdef BSP_USING_LVGL
 
 /* Include the package header files you are using */
 #ifdef BSP_USING_TOUCH_FT6X36
@@ -78,5 +77,3 @@ static int lv_hw_touch_init(void)
 }
 
 INIT_COMPONENT_EXPORT(lv_hw_touch_init);
-
-#endif /* BSP_USING_LVGL */
