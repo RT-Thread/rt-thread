@@ -24,12 +24,10 @@
 
 lv_indev_t * touch_indev;
 rt_device_t touch_dev;
+struct rt_touch_data *read_data;
 
 static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 {
-    struct rt_touch_data *read_data;
-    read_data = (struct rt_touch_data *)rt_calloc(1, sizeof(struct rt_touch_data));
-
     rt_device_read(touch_dev, 0, read_data, 1);
 
     if (read_data->event == RT_TOUCH_EVENT_NONE)
@@ -73,6 +71,8 @@ static int lv_hw_touch_init(void)
 
     touch_dev = rt_device_find(TOUCH_DEV_NAME);
     rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY);
+
+    read_data = (struct rt_touch_data *)rt_calloc(1, sizeof(struct rt_touch_data));
 
     return RT_EOK;
 }
