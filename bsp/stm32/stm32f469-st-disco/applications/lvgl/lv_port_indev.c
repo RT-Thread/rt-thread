@@ -9,9 +9,7 @@
  */
 #include <lvgl.h>
 #include <rtdevice.h>
-
 #include <lcd_port.h>
-
 
 /* Include the package header files you are using */
 #ifdef BSP_USING_TOUCH_FT6X36
