@@ -29,6 +29,14 @@ static void virtio_blk_rw(struct virtio_blk_device *virtio_blk_dev, rt_off_t pos
     /* Allocate 3 descriptors */
     while (virtio_alloc_desc_chain(virtio_dev, 0, 3, idx))
     {
+#ifdef RT_USING_SMP
+        rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
+#endif
+        rt_thread_yield();
+
+#ifdef RT_USING_SMP
+        level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
+#endif
     }
 
     virtio_blk_dev->info[idx[0]].status = 0xff;
@@ -150,7 +158,6 @@ static void virtio_blk_isr(int irqno, void *param)
 
         /* Done with buffer */
         virtio_blk_dev->info[id].valid = RT_FALSE;
-        rt_thread_yield();
 
         queue->used_idx++;
     }
@@ -200,12 +207,15 @@ rt_err_t rt_virtio_blk_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     /* Tell device that feature negotiation is complete and we're completely ready */
     virtio_status_driver_ok(virtio_dev);
 
+    if (virtio_queues_alloc(virtio_dev, 1) != RT_EOK)
+    {
+        goto _alloc_fail;
+    }
+
     /* Initialize queue 0 */
     if (virtio_queue_init(virtio_dev, 0, VIRTIO_BLK_QUEUE_RING_SIZE) != RT_EOK)
     {
-        rt_free(virtio_blk_dev);
-
-        return -RT_ENOMEM;
+        goto _alloc_fail;
     }
 
     virtio_blk_dev->parent.type = RT_Device_Class_Block;
@@ -217,5 +227,14 @@ rt_err_t rt_virtio_blk_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     rt_hw_interrupt_umask(irq);
 
     return rt_device_register((rt_device_t)virtio_blk_dev, dev_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE);
+
+_alloc_fail:
+
+    if (virtio_blk_dev != RT_NULL)
+    {
+        virtio_queues_free(virtio_dev);
+        rt_free(virtio_blk_dev);
+    }
+    return -RT_ENOMEM;
 }
 #endif /* BSP_USING_VIRTIO_BLK */

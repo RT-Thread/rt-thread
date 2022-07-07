@@ -29,6 +29,7 @@ struct mem_desc platform_mem_desc[] =
 {
     {0x40000000, 0x80000000, 0x40000000, NORMAL_MEM},
     {PL031_RTC_BASE, PL031_RTC_BASE + 0x1000, PL031_RTC_BASE, DEVICE_MEM},
+    {PL061_GPIO_BASE, PL061_GPIO_BASE + 0x1000, PL061_GPIO_BASE, DEVICE_MEM},
     {PL011_UART0_BASE, PL011_UART0_BASE + 0x1000, PL011_UART0_BASE, DEVICE_MEM},
     {VIRTIO_MMIO_BASE, VIRTIO_MMIO_BASE + VIRTIO_MAX_NR * VIRTIO_MMIO_SIZE, VIRTIO_MMIO_BASE, DEVICE_MEM},
 #ifdef BSP_USING_GICV2
@@ -94,6 +95,13 @@ void poweroff(void)
     arm_psci_system_off();
 }
 MSH_CMD_EXPORT(poweroff, poweroff...);
+
+void rt_hw_cpu_shutdown()
+{
+    rt_kprintf("shutdown...\n");
+
+    poweroff();
+}
 
 void reboot(void)
 {

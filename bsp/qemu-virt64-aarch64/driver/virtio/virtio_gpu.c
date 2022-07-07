@@ -74,6 +74,14 @@ static void virtio_gpu_ctrl_send_command(struct virtio_gpu_device *virtio_gpu_de
 
     while (virtio_alloc_desc_chain(virtio_dev, VIRTIO_GPU_QUEUE_CTRL, 2, idx))
     {
+#ifdef RT_USING_SMP
+        rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
+#endif
+        rt_thread_yield();
+
+#ifdef RT_USING_SMP
+        level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
+#endif
     }
 
     rt_hw_dsb();
@@ -126,7 +134,17 @@ static void virtio_gpu_cursor_send_command(struct virtio_gpu_device *virtio_gpu_
     rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
 #endif
 
-    id = virtio_alloc_desc(virtio_dev, VIRTIO_GPU_QUEUE_CURSOR);
+    while ((id = virtio_alloc_desc(virtio_dev, VIRTIO_GPU_QUEUE_CURSOR)) == VIRTQ_INVALID_DESC_ID)
+    {
+#ifdef RT_USING_SMP
+        rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
+#endif
+        rt_thread_yield();
+
+#ifdef RT_USING_SMP
+        level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
+#endif
+    }
 
     addr = &virtio_gpu_dev->info[id].cursor_cmd;
     virtio_gpu_dev->info[id].cursor_valid = RT_TRUE;
@@ -806,7 +824,6 @@ static void virtio_gpu_isr(int irqno, void *param)
         id = queue_ctrl->used->ring[queue_ctrl->used_idx % queue_ctrl->num].id;
 
         virtio_gpu_dev->info[id].ctrl_valid = RT_FALSE;
-        rt_thread_yield();
 
         queue_ctrl->used_idx++;
     }
@@ -817,7 +834,6 @@ static void virtio_gpu_isr(int irqno, void *param)
         id = queue_cursor->used->ring[queue_cursor->used_idx % queue_cursor->num].id;
 
         virtio_gpu_dev->info[id].cursor_valid = RT_FALSE;
-        rt_thread_yield();
 
         queue_cursor->used_idx++;
     }
@@ -866,6 +882,11 @@ rt_err_t rt_virtio_gpu_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
 
     virtio_status_driver_ok(virtio_dev);
 
+    if (virtio_queues_alloc(virtio_dev, 2) != RT_EOK)
+    {
+        goto _alloc_fail;
+    }
+
     if (virtio_queue_init(virtio_dev, VIRTIO_GPU_QUEUE_CTRL, VIRTIO_GPU_QUEUE_SIZE) != RT_EOK)
     {
         goto _alloc_fail;
@@ -896,6 +917,7 @@ _alloc_fail:
 
     if (virtio_gpu_dev != RT_NULL)
     {
+        virtio_queues_free(virtio_dev);
         rt_free(virtio_gpu_dev);
     }
     return -RT_ENOMEM;

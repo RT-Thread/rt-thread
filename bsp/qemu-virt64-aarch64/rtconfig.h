@@ -241,9 +241,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -276,8 +273,10 @@
 #define RT_USING_UART0
 #define BSP_USING_RTC
 #define BSP_USING_ALARM
+#define BSP_USING_PIN
 #define BSP_USING_VIRTIO_BLK
 #define BSP_USING_VIRTIO_NET
+#define BSP_USING_VIRTIO_CONSOLE
 #define BSP_USING_VIRTIO_GPU
 #define BSP_USING_VIRTIO_INPUT
 #define BSP_USING_GIC
