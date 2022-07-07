@@ -32,7 +32,7 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 
     if (read_data->event == RT_TOUCH_EVENT_NONE)
         return;
-        
+
     /* Since the origin of the LCD screen and the origin of the touch screen are
      * different, the parameters passed in here need to be simply converted. */
 #ifdef BSP_USING_TOUCH_FT6X36
