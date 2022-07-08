@@ -77,7 +77,7 @@ static int lv_hw_touch_init(void)
 {
     struct rt_touch_config cfg;
 
-    cfg.dev_name = BSP_TOUCH_I2C_BUS_NAME; 
+    cfg.dev_name = BSP_TOUCH_I2C_BUS_NAME;
 #ifdef BSP_USING_TOUCH_FT6X36
     rt_hw_ft6236_init(TOUCH_DEV_NAME, &cfg, BSP_TOUCH_I2C_RESET_PIN);
 #endif /* BSP_USING_TOUCH_FT6X36 */
@@ -91,7 +91,7 @@ static int lv_hw_touch_init(void)
         LOG_E("Can't open touch device:%s", TOUCH_DEV_NAME);
         return -RT_ERROR;
     }
-    
+
     read_data = (struct rt_touch_data *)rt_calloc(1, sizeof(struct rt_touch_data));
 
     return RT_EOK;
