@@ -85,6 +85,8 @@ menu "Onboard Peripheral Drivers"
         
     config BSP_USING_TOUCH
         bool "Enable touch screen"
+        select BSP_USING_I2C1
+        select PKG_USING_TOUCH_DRIVERS
     
     choice
         prompt "Touch IC type"
@@ -92,15 +94,11 @@ menu "Onboard Peripheral Drivers"
         default BSP_USING_TOUCH_FT6X36
 
         config BSP_USING_TOUCH_FT6206
-            bool "FT6206"
-            select BSP_USING_I2C1
-            select PKG_USING_TOUCH_DRIVERS
+            bool "FT6206"            
             select PKG_USING_FT6206
 
         config BSP_USING_TOUCH_FT6X36
             bool "FT6x36"
-            select BSP_USING_I2C1
-            select PKG_USING_TOUCH_DRIVERS
             select PKG_USING_FT6236
     endchoice  
 

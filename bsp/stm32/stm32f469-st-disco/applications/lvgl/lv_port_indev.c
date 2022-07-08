@@ -14,15 +14,15 @@
 #include <lcd_port.h>
 
 #define DBG_TAG    "LVGL.port.indev"
-#define DBG_LVL    DBG_INFO
+#define DBG_LVL    DBG_LOG
 #include <rtdbg.h>
 
-/* Import the rt_hw_xxx_init function of the package you are using */
+/* Add the include file of the package you are using */
 #ifdef BSP_USING_TOUCH_FT6X36
-extern int rt_hw_ft6236_init(const char *name, struct rt_touch_config *cfg,  rt_base_t pin);
+#include <ft6236.h>
 #endif /* BSP_USING_TOUCH_FT6X36 */
 #ifdef BSP_USING_TOUCH_FT6206
-extern int rt_hw_ft6206_init(const char *name, struct rt_touch_config *cfg);
+#include <ft6206.h>
 #endif /* BSP_USING_TOUCH_FT6206 */
 
 /* Touch chip connection information */
@@ -49,8 +49,8 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
     data->point.y = LCD_HEIGHT - read_data->x_coordinate;
 #endif /* BSP_USING_TOUCH_FT6X36 */
 #ifdef BSP_USING_TOUCH_FT6206
-    data->point.x = read_data->y_coordinate;
-    data->point.y = LCD_HEIGHT - read_data->x_coordinate;
+    data->point.x = read_data->x_coordinate;
+    data->point.y = LCD_HEIGHT - read_data->y_coordinate;
 #endif /* BSP_USING_TOUCH_FT6206 */
 
     if (read_data->event == RT_TOUCH_EVENT_DOWN)
