@@ -1,23 +1,5 @@
 /*
- *  Change Logs:
- *  Date            Author          Notes
- *  2021-04-20      liuhy          the first version
- *
- * Copyright (C) 2021 Shanghai Eastsoft Microelectronics Co., Ltd. All rights reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Licensed under the Apache License, Version 2.0 (the License); you may
- * not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an AS IS BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (C) 2021 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
  */
 
@@ -39,39 +21,40 @@ struct pin_index
 };
 
 
-#define ES_GPIO_ADC_CH0_GPIO     GPIOC
-#define ES_GPIO_ADC_CH1_GPIO     GPIOC
-#define ES_GPIO_ADC_CH2_GPIO     GPIOC
-#define ES_GPIO_ADC_CH3_GPIO     GPIOC
-#define ES_GPIO_ADC_CH4_GPIO     GPIOA
-#define ES_GPIO_ADC_CH5_GPIO     GPIOA
-#define ES_GPIO_ADC_CH6_GPIO     GPIOA
-#define ES_GPIO_ADC_CH7_GPIO     GPIOA
-#define ES_GPIO_ADC_CH8_GPIO     GPIOA
-#define ES_GPIO_ADC_CH9_GPIO     GPIOA
-#define ES_GPIO_ADC_CH10_GPIO     GPIOA
-#define ES_GPIO_ADC_CH11_GPIO     GPIOA
-#define ES_GPIO_ADC_CH12_GPIO     GPIOC
-#define ES_GPIO_ADC_CH13_GPIO     GPIOC
-#define ES_GPIO_ADC_CH14_GPIO     GPIOB
-#define ES_GPIO_ADC_CH15_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH0_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH0_PIN      GPIO_PIN_0
+#define   ES_GPIO_ADC_CH1_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH1_PIN      GPIO_PIN_1
+#define   ES_GPIO_ADC_CH2_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH2_PIN      GPIO_PIN_2
+#define   ES_GPIO_ADC_CH3_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH3_PIN      GPIO_PIN_3
+#define   ES_GPIO_ADC_CH4_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH4_PIN      GPIO_PIN_0
+#define   ES_GPIO_ADC_CH5_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH5_PIN      GPIO_PIN_1
+#define   ES_GPIO_ADC_CH6_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH6_PIN      GPIO_PIN_2
+#define   ES_GPIO_ADC_CH7_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH7_PIN      GPIO_PIN_3
+#define   ES_GPIO_ADC_CH8_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH8_PIN      GPIO_PIN_4
+#define   ES_GPIO_ADC_CH9_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH9_PIN      GPIO_PIN_5
+#define   ES_GPIO_ADC_CH10_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH10_PIN      GPIO_PIN_6
+#define   ES_GPIO_ADC_CH11_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH11_PIN      GPIO_PIN_7
+#define   ES_GPIO_ADC_CH12_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH12_PIN      GPIO_PIN_4
+#define   ES_GPIO_ADC_CH13_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH13_PIN      GPIO_PIN_5
+#define   ES_GPIO_ADC_CH14_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH14_PIN      GPIO_PIN_0
+#define   ES_GPIO_ADC_CH15_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH15_PIN      GPIO_PIN_1
 
-#define ES_GPIO_ADC_CH0_PIN      GPIO_PIN_0
-#define ES_GPIO_ADC_CH1_PIN      GPIO_PIN_1
-#define ES_GPIO_ADC_CH2_PIN      GPIO_PIN_2
-#define ES_GPIO_ADC_CH3_PIN      GPIO_PIN_3
-#define ES_GPIO_ADC_CH4_PIN      GPIO_PIN_0
-#define ES_GPIO_ADC_CH5_PIN      GPIO_PIN_1
-#define ES_GPIO_ADC_CH6_PIN      GPIO_PIN_2
-#define ES_GPIO_ADC_CH7_PIN      GPIO_PIN_3
-#define ES_GPIO_ADC_CH8_PIN      GPIO_PIN_4
-#define ES_GPIO_ADC_CH9_PIN      GPIO_PIN_5
-#define ES_GPIO_ADC_CH10_PIN      GPIO_PIN_6
-#define ES_GPIO_ADC_CH11_PIN      GPIO_PIN_7
-#define ES_GPIO_ADC_CH12_PIN      GPIO_PIN_4
-#define ES_GPIO_ADC_CH13_PIN      GPIO_PIN_5
-#define ES_GPIO_ADC_CH14_PIN      GPIO_PIN_0
-#define ES_GPIO_ADC_CH15_PIN      GPIO_PIN_1
+
 
 static const struct pin_index pins[] =
 {
@@ -264,10 +247,6 @@ static const struct pin_index pins[] =
 #define   ES_PIN_GPIO_B_9   96
 #define   ES_PIN_GPIO_E_0   97
 #define   ES_PIN_GPIO_E_1   98
-
-/* UART_TX */
-
-
 #ifndef ES_UART0_TX_GPIO_FUNC
 #define ES_UART0_TX_GPIO_FUNC GPIO_FUNC_3
 #endif
@@ -683,24 +662,24 @@ static const struct pin_index pins[] =
 #endif
 
 #ifndef ES_UART2_RX_PIN
-#ifdef ES_PIN_GPIO_E_3
-#define ES_UART2_RX_PIN ES_PIN_GPIO_E_3
+#ifdef ES_PIN_GPIO_B_4
+#define ES_UART2_RX_PIN ES_PIN_GPIO_B_4
 #endif
 #endif
 
 #ifndef ES_UART2_RX_GPIO_FUNC
-#define ES_UART2_RX_GPIO_FUNC GPIO_FUNC_5
+#define ES_UART2_RX_GPIO_FUNC GPIO_FUNC_3
 #endif
 #ifndef ES_UART2_RX_GPIO_PORT
-#define ES_UART2_RX_GPIO_PORT GPIOB
+#define ES_UART2_RX_GPIO_PORT GPIOE
 #endif
 #ifndef ES_UART2_RX_GPIO_PIN
-#define ES_UART2_RX_GPIO_PIN GPIO_PIN_4
+#define ES_UART2_RX_GPIO_PIN GPIO_PIN_3
 #endif
 
 #ifndef ES_UART2_RX_PIN
-#ifdef ES_PIN_GPIO_B_4
-#define ES_UART2_RX_PIN ES_PIN_GPIO_B_4
+#ifdef ES_PIN_GPIO_E_3
+#define ES_UART2_RX_PIN ES_PIN_GPIO_E_3
 #endif
 #endif
 
@@ -1759,22 +1738,6 @@ static const struct pin_index pins[] =
 #endif
 
 #ifndef ES_SPI0_SCK_PIN
-#ifdef ES_PIN_GPIO_D_3
-#define ES_SPI0_SCK_PIN ES_PIN_GPIO_D_3
-#endif
-#endif
-
-#ifndef ES_SPI0_SCK_GPIO_FUNC
-#define ES_SPI0_SCK_GPIO_FUNC GPIO_FUNC_4
-#endif
-#ifndef ES_SPI0_SCK_GPIO_PORT
-#define ES_SPI0_SCK_GPIO_PORT GPIOB
-#endif
-#ifndef ES_SPI0_SCK_GPIO_PIN
-#define ES_SPI0_SCK_GPIO_PIN GPIO_PIN_3
-#endif
-
-#ifndef ES_SPI0_SCK_PIN
 #ifdef ES_PIN_GPIO_B_3
 #define ES_SPI0_SCK_PIN ES_PIN_GPIO_B_3
 #endif
@@ -1793,6 +1756,22 @@ static const struct pin_index pins[] =
 #ifndef ES_SPI0_SCK_PIN
 #ifdef ES_PIN_GPIO_A_5
 #define ES_SPI0_SCK_PIN ES_PIN_GPIO_A_5
+#endif
+#endif
+
+#ifndef ES_SPI0_SCK_GPIO_FUNC
+#define ES_SPI0_SCK_GPIO_FUNC GPIO_FUNC_4
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PORT
+#define ES_SPI0_SCK_GPIO_PORT GPIOD
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PIN
+#define ES_SPI0_SCK_GPIO_PIN GPIO_PIN_3
+#endif
+
+#ifndef ES_SPI0_SCK_PIN
+#ifdef ES_PIN_GPIO_D_3
+#define ES_SPI0_SCK_PIN ES_PIN_GPIO_D_3
 #endif
 #endif
 
@@ -2971,7 +2950,8 @@ static const struct pin_index pins[] =
 
 /* GP16C2T_CH2N */
 
-
 #define   ES_RTT_APP_LED_PIN   ES_PIN_GPIO_C_6
+
+
 
 #endif

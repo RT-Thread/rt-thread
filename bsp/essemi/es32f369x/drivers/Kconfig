@@ -7,12 +7,25 @@ menu "Hardware Drivers Config"
             bool "Enable GPIO"
             select RT_USING_PIN
             default y
-
     source "drivers/ES/Kconfig"    
 
     endmenu
 
     menu "Onboard Peripheral Drivers"
+        config BSP_USING_ARDUINO
+            bool "Support Arduino"
+            select PKG_USING_RTDUINO
+            select BSP_USING_GPIO
+            select BSP_USING_UART2
+            select BSP_USING_SPI0
+            select BSP_USING_I2C0
+            select BSP_USING_ADC0
+            select BSP_USING_GP32C4T0_PWM
+            imply RTDUINO_USING_SERVO
+            imply RTDUINO_USING_WIRE
+            imply RTDUINO_USING_SPI
+            imply RTDUINO_USING_ADAFRUIT
+            default n
 
         config BSP_USING_SPI_FLASH
             bool "Enable SPI FLASH (W25Q64 spi0)"
