@@ -20,10 +20,9 @@
 /* Add the include file of the package you are using */
 #ifdef BSP_USING_TOUCH_FT6X36
 #include <ft6236.h>
-#endif /* BSP_USING_TOUCH_FT6X36 */
-#ifdef BSP_USING_TOUCH_FT6206
+#elif defined(BSP_USING_TOUCH_FT6206)
 #include <ft6206.h>
-#endif /* BSP_USING_TOUCH_FT6206 */
+#endif /* BSP_USING_TOUCH_FT6X36 */
 
 /* Touch chip connection information */
 #define BSP_TOUCH_I2C_BUS_NAME      "i2c1"
@@ -47,11 +46,10 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 #ifdef BSP_USING_TOUCH_FT6X36
     data->point.x = read_data->y_coordinate;
     data->point.y = LCD_HEIGHT - read_data->x_coordinate;
-#endif /* BSP_USING_TOUCH_FT6X36 */
-#ifdef BSP_USING_TOUCH_FT6206
+#elif defined(BSP_USING_TOUCH_FT6206)
     data->point.x = read_data->x_coordinate;
     data->point.y = LCD_HEIGHT - read_data->y_coordinate;
-#endif /* BSP_USING_TOUCH_FT6206 */
+#endif /* BSP_USING_TOUCH_FT6X36 */
 
     if (read_data->event == RT_TOUCH_EVENT_DOWN)
         data->state = LV_INDEV_STATE_PR;
@@ -80,10 +78,9 @@ static int lv_hw_touch_init(void)
     cfg.dev_name = BSP_TOUCH_I2C_BUS_NAME;
 #ifdef BSP_USING_TOUCH_FT6X36
     rt_hw_ft6236_init(TOUCH_DEV_NAME, &cfg, BSP_TOUCH_I2C_RESET_PIN);
-#endif /* BSP_USING_TOUCH_FT6X36 */
-#ifdef BSP_USING_TOUCH_FT6206
+#elif defined(BSP_USING_TOUCH_FT6206)
     rt_hw_ft6206_init(TOUCH_DEV_NAME, &cfg);
-#endif /* BSP_USING_TOUCH_FT6206 */
+#endif /* BSP_USING_TOUCH_FT6X36 */
 
     touch_dev = rt_device_find(TOUCH_DEV_NAME);
     if (rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY) != RT_EOK)
