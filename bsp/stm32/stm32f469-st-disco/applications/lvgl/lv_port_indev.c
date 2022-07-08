@@ -14,7 +14,7 @@
 #include <lcd_port.h>
 
 #define DBG_TAG    "LVGL.port.indev"
-#define DBG_LVL    DBG_LOG
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
 /* Add the include file of the package you are using */
