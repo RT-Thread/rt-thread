@@ -10,9 +10,9 @@ config SOC_IFX_PSOC6_43012
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
-        bool "Enable USB TO USART (uart1)"
+        bool "Enable USB TO USART (uart5)"
         select BSP_USING_UART
-        select BSP_USING_UART1
+        select BSP_USING_UART5
         default y
  
 endmenu
@@ -29,9 +29,12 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-            config BSP_USING_UART1
-                bool "Enable UART1"
+            config BSP_USING_UART5
+                bool "Enable UART5"
                 default y
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n             
         endif
 
     menuconfig BSP_USING_ADC
@@ -42,6 +45,58 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
+        endif
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
+    menuconfig BSP_USING_HW_I2C
+        bool "Enable Hardware I2C Bus"
+        default n
+        select RT_USING_I2C
+        select RT_USING_PIN
+        if BSP_USING_HW_I2C
+            config BSP_USING_HW_I2C1
+                bool "Enable I2C1 Bus (User I2C)"
+                default n
+                if BSP_USING_HW_I2C1
+                    comment "Notice: P6_0 --> 48; P6_1 --> 49"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 1 113
+                        default 48
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 1 113
+                        default 49
+                endif
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C Bus"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus (User I2C)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: P13_1 --> 105; P13_2 --> 106"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 1 113
+                        default 105
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 1 113
+                        default 106
+                endif
         endif
 endmenu
 

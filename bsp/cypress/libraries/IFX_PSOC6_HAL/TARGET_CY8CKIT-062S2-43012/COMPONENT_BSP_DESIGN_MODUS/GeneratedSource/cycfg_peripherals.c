@@ -26,6 +26,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 ********************************************************************************/
+#include <rtthread.h>
 
 #include "cycfg_peripherals.h"
 
@@ -34,8 +35,32 @@ cy_stc_csd_context_t cy_csd_0_context =
     .lockKey = CY_CSD_NONE_KEY,
 };
 
-
 void init_cycfg_peripherals(void)
 {
     Cy_SysClk_PeriphAssignDivider(PCLK_CSD_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+
+#ifdef BSP_USING_UART0
+    /* UART0 Device Clock*/
+    Cy_SysClk_PeriphAssignDivider(PCLK_SCB0_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+#endif
+#ifdef BSP_USING_UART1
+    /* UART1 Device Clock*/
+    Cy_SysClk_PeriphAssignDivider(PCLK_SCB1_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+#endif
+#ifdef BSP_USING_UART2
+    /* UART2 Device Clock*/
+    Cy_SysClk_PeriphAssignDivider(PCLK_SCB2_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+#endif
+#ifdef BSP_USING_UART3
+    /* UART3 Device Clock*/
+    Cy_SysClk_PeriphAssignDivider(PCLK_SCB3_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+#endif
+#ifdef BSP_USING_UART4
+    /* UART4 Device Clock*/
+    Cy_SysClk_PeriphAssignDivider(PCLK_SCB4_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+#endif
+#ifdef BSP_USING_UART5
+    /* UART5 Device Clock*/
+    Cy_SysClk_PeriphAssignDivider(PCLK_SCB5_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
+#endif
 }
