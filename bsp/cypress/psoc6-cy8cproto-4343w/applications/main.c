@@ -21,9 +21,9 @@ int main(void)
 
     for (;;)
     {
-        rt_pin_write(CYBSP_USER_LED, PIN_HIGH);
-        rt_thread_mdelay(1000);
-        rt_pin_write(CYBSP_USER_LED, PIN_LOW);
-        rt_thread_mdelay(1000);
+        rt_pin_write(LED_PIN, PIN_HIGH);
+        rt_thread_mdelay(500);
+        rt_pin_write(LED_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
     }
 }
