@@ -88,7 +88,7 @@ static int lv_hw_touch_init(void)
     touch_dev = rt_device_find(TOUCH_DEV_NAME);
     if (rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY) != RT_EOK)
     {
-        LOG_E("can't open touch device:%s", TOUCH_DEV_NAME);
+        LOG_E("Can't open touch device:%s", TOUCH_DEV_NAME);
         return -RT_ERROR;
     }
     
