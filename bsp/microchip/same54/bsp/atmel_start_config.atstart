@@ -20,8 +20,79 @@ details: null
 application:
   definition: 'Atmel:Application_Examples:0.0.1::Application:AES_Demo:'
   configuration: null
-middlewares: {}
+middlewares:
+  MACIF_PHY:
+    user_label: MACIF_PHY
+    configuration:
+      ieee8023_mii_control_autoneg_en: true
+      ieee8023_mii_control_duplex_mode: full duplex
+      ieee8023_mii_control_isolate_en: false
+      ieee8023_mii_control_loopback_en: false
+      ieee8023_mii_control_powerdown_en: false
+      ieee8023_mii_control_reg0_setting: true
+      ieee8023_mii_control_speed_lsb: 100 Mb/s
+      ieee8023_mii_phy_address: 0
+    definition: Atmel:Ethernet_PHY:0.0.1::Generic_Ethernet_PHY_Driver
+    functionality: Ethernet_PHY
+    api: Ethernet:GenericPHY:Driver
+    dependencies:
+      Communication IO: MACIF
 drivers:
+  ADC_0:
+    user_label: ADC_0
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::ADC0::driver_config_definition::ADC::HAL:Driver:ADC.Sync
+    functionality: ADC
+    api: HAL:Driver:ADC_Sync
+    configuration:
+      adc_advanced_settings: true
+      adc_arch_adjres: 0
+      adc_arch_corren: false
+      adc_arch_dbgrun: false
+      adc_arch_event_settings: false
+      adc_arch_flushei: false
+      adc_arch_flushinv: false
+      adc_arch_gaincorr: 0
+      adc_arch_leftadj: false
+      adc_arch_offcomp: false
+      adc_arch_offsetcorr: 0
+      adc_arch_ondemand: false
+      adc_arch_refcomp: false
+      adc_arch_resrdyeo: false
+      adc_arch_runstdby: false
+      adc_arch_samplen: 2
+      adc_arch_samplenum: 4 samples
+      adc_arch_seqen: 0
+      adc_arch_startei: false
+      adc_arch_startinv: false
+      adc_arch_winlt: 0
+      adc_arch_winmode: No window mode
+      adc_arch_winmoneo: false
+      adc_arch_winut: 0
+      adc_differential_mode: false
+      adc_freerunning_mode: false
+      adc_pinmux_negative: Internal ground
+      adc_pinmux_positive: ADC AIN0 pin
+      adc_prescaler: Peripheral clock divided by 2
+      adc_reference: VDDANA
+      adc_resolution: 16-bit (averaging must be enabled)
+    optional_signals:
+    - identifier: ADC_0:AIN/0
+      pad: PA02
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::ADC0.AIN.0
+      name: ADC0/AIN/0
+      label: AIN/0
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: ADC
+          input: Generic clock generator 0
+          external: false
+          external_frequency: 0
+        configuration:
+          adc_gclk_selection: Generic clock generator 0
   CRYPTOGRAPHY_0:
     user_label: CRYPTOGRAPHY_0
     definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::AES::driver_config_definition::AES::HAL:Driver:AES.Sync
@@ -591,10 +662,10 @@ drivers:
     functionality: System
     api: HAL:HPL:GCLK
     configuration:
-      $input: 120000000
-      $input_id: Digital Phase Locked Loop (DPLL0)
-      RESERVED_InputFreq: 120000000
-      RESERVED_InputFreq_id: Digital Phase Locked Loop (DPLL0)
+      $input: 12000000
+      $input_id: External Crystal Oscillator 8-48MHz (XOSC1)
+      RESERVED_InputFreq: 12000000
+      RESERVED_InputFreq_id: External Crystal Oscillator 8-48MHz (XOSC1)
       _$freq_output_Generic clock generator 0: 120000000
       _$freq_output_Generic clock generator 1: 3000000
       _$freq_output_Generic clock generator 10: 12000000
@@ -798,10 +869,10 @@ drivers:
     functionality: System
     api: HAL:HPL:OSCCTRL
     configuration:
-      $input: 40000000
-      $input_id: Generic clock generator 3
-      RESERVED_InputFreq: 40000000
-      RESERVED_InputFreq_id: Generic clock generator 3
+      $input: 32768
+      $input_id: 32kHz External Crystal Oscillator (XOSC32K)
+      RESERVED_InputFreq: 32768
+      RESERVED_InputFreq_id: 32kHz External Crystal Oscillator (XOSC32K)
       _$freq_output_Digital Frequency Locked Loop (DFLL48M): 48000000
       _$freq_output_Digital Phase Locked Loop (DPLL0): 120000000
       _$freq_output_Digital Phase Locked Loop (DPLL1): 47985664
@@ -956,11 +1027,11 @@ drivers:
       domain_group: null
   TARGET_IO:
     user_label: TARGET_IO
-    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::SERCOM2::driver_config_definition::UART::HAL:Driver:USART.Sync
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::SERCOM2::driver_config_definition::UART::HAL:Driver:USART.Async
     functionality: USART
-    api: HAL:Driver:USART_Sync
+    api: HAL:Driver:USART_Async
     configuration:
-      usart_advanced: false
+      usart_advanced: true
       usart_arch_clock_mode: USART with internal clock
       usart_arch_cloden: false
       usart_arch_dbgstop: Keep running
@@ -1002,6 +1073,46 @@ drivers:
           external_frequency: 0
         configuration:
           core_gclk_selection: Generic clock generator 0
+          slow_gclk_selection: Generic clock generator 1
+  I2C_0:
+    user_label: I2C_0
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::SERCOM7::driver_config_definition::I2C.Master.Standard~2FFast-mode::HAL:Driver:I2C.Master.Sync
+    functionality: I2C
+    api: HAL:Driver:I2C_Master_Sync
+    configuration:
+      i2c_master_advanced: true
+      i2c_master_arch_dbgstop: Keep running
+      i2c_master_arch_inactout: 20-21 SCL cycle time-out(200-210us)
+      i2c_master_arch_lowtout: true
+      i2c_master_arch_mexttoen: true
+      i2c_master_arch_runstdby: false
+      i2c_master_arch_sdahold: 300-600ns hold time
+      i2c_master_arch_sexttoen: false
+      i2c_master_arch_trise: 215
+      i2c_master_baud_rate: 100000
+    optional_signals: []
+    variant:
+      specification: SDA=0, SCL=1
+      required_signals:
+      - name: SERCOM7/PAD/0
+        pad: PD08
+        label: SDA
+      - name: SERCOM7/PAD/1
+        pad: PD09
+        label: SCL
+    clocks:
+      domain_group:
+        nodes:
+        - name: Core
+          input: Generic clock generator 3
+          external: false
+          external_frequency: 0
+        - name: Slow
+          input: Generic clock generator 1
+          external: false
+          external_frequency: 0
+        configuration:
+          core_gclk_selection: Generic clock generator 3
           slow_gclk_selection: Generic clock generator 1
   CAN_0:
     user_label: CAN_0
@@ -1067,7 +1178,145 @@ drivers:
           external_frequency: 0
         configuration:
           can_gclk_selection: Generic clock generator 3
+  MACIF:
+    user_label: MACIF
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::GMAC::driver_config_definition::GMAC::HAL:Driver:GMAC.Async
+    functionality: Ethernet_MAC
+    api: HAL:Driver:GMAC_Async
+    configuration:
+      gmac_arch_adv_cfg: true
+      gmac_arch_cltto: Clause 22 Operation
+      gmac_arch_dcfgr_ddrp: false
+      gmac_arch_dcfgr_drbs: 2
+      gmac_arch_dcfgr_esma: false
+      gmac_arch_dcfgr_espa: false
+      gmac_arch_dcfgr_fbldo: Always use INCR4 AHB bursts
+      gmac_arch_dcfgr_rxbms: 4 Kbytes
+      gmac_arch_dcfgr_txcoen: false
+      gmac_arch_dcfgr_txpbms: 4 Kbytes
+      gmac_arch_dma_cfg: true
+      gmac_arch_ipgs_fl_div: 1
+      gmac_arch_ipgs_fl_mul: 1
+      gmac_arch_mii_cfg: true
+      gmac_arch_ncfgr_caf: false
+      gmac_arch_ncfgr_clk: '64'
+      gmac_arch_ncfgr_dcpf: false
+      gmac_arch_ncfgr_df: true
+      gmac_arch_ncfgr_dnvlan: false
+      gmac_arch_ncfgr_efrhd: false
+      gmac_arch_ncfgr_ipgsen: false
+      gmac_arch_ncfgr_irxer: false
+      gmac_arch_ncfgr_irxfcs: false
+      gmac_arch_ncfgr_jframe: false
+      gmac_arch_ncfgr_lferd: false
+      gmac_arch_ncfgr_maxfs: true
+      gmac_arch_ncfgr_mtihen: false
+      gmac_arch_ncfgr_nbc: false
+      gmac_arch_ncfgr_pen: false
+      gmac_arch_ncfgr_rfcs: false
+      gmac_arch_ncfgr_rty: false
+      gmac_arch_ncfgr_rxbp: false
+      gmac_arch_ncfgr_rxbufo: 0
+      gmac_arch_ncfgr_rxcoen: false
+      gmac_arch_ncfgr_spd: true
+      gmac_arch_ncfgr_unihen: false
+      gmac_arch_ncr_bp: false
+      gmac_arch_ncr_enpbpr: false
+      gmac_arch_ncr_lbl: false
+      gmac_arch_ncr_mpe: true
+      gmac_arch_ncr_txpbpf: false
+      gmac_arch_ncr_westat: false
+      gmac_arch_rpsf_en: false
+      gmac_arch_rpsf_wm: 100
+      gmac_arch_rxdescr_num: 16
+      gmac_arch_svlan_enable: false
+      gmac_arch_svlan_type: 33024
+      gmac_arch_tpsf_en: false
+      gmac_arch_tpsf_wm: 100
+      gmac_arch_txbuf_size: 1500
+      gmac_arch_txdescr_num: 2
+      gmac_arch_ur_mii: RMII
+    optional_signals:
+    - identifier: MACIF:GMDC
+      pad: PC11
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GMDC
+      name: GMAC/GMDC
+      label: GMDC
+    - identifier: MACIF:GMDIO
+      pad: PC12
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GMDIO
+      name: GMAC/GMDIO
+      label: GMDIO
+    - identifier: MACIF:GRX/0
+      pad: PA13
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GRX.0
+      name: GMAC/GRX/0
+      label: GRX/0
+    - identifier: MACIF:GRX/1
+      pad: PA12
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GRX.1
+      name: GMAC/GRX/1
+      label: GRX/1
+    - identifier: MACIF:GRXDV
+      pad: PC20
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GRXDV
+      name: GMAC/GRXDV
+      label: GRXDV
+    - identifier: MACIF:GRXER
+      pad: PA15
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GRXER
+      name: GMAC/GRXER
+      label: GRXER
+    - identifier: MACIF:GTX/0
+      pad: PA18
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GTX.0
+      name: GMAC/GTX/0
+      label: GTX/0
+    - identifier: MACIF:GTX/1
+      pad: PA19
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GTX.1
+      name: GMAC/GTX/1
+      label: GTX/1
+    - identifier: MACIF:GTXCK
+      pad: PA14
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GTXCK
+      name: GMAC/GTXCK
+      label: GTXCK
+    - identifier: MACIF:GTXEN
+      pad: PA17
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::GMAC.GTXEN
+      name: GMAC/GTXEN
+      label: GTXEN
+    variant: null
+    clocks:
+      domain_group: null
 pads:
+  PA02:
+    name: PA02
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA02
+    mode: Analog
+    user_label: PA02
+    configuration: null
   PB12:
     name: PB12
     definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PB12
@@ -1080,11 +1329,83 @@ pads:
     mode: Peripheral IO
     user_label: PB13
     configuration: null
+  PD08:
+    name: PD08
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PD08
+    mode: I2C
+    user_label: PD08
+    configuration: null
+  PD09:
+    name: PD09
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PD09
+    mode: I2C
+    user_label: PD09
+    configuration: null
+  PC11:
+    name: PC11
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PC11
+    mode: Peripheral IO
+    user_label: PC11
+    configuration: null
+  PC12:
+    name: PC12
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PC12
+    mode: Peripheral IO
+    user_label: PC12
+    configuration: null
+  PA12:
+    name: PA12
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA12
+    mode: Peripheral IO
+    user_label: PA12
+    configuration: null
+  PA13:
+    name: PA13
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA13
+    mode: Peripheral IO
+    user_label: PA13
+    configuration: null
+  PA14:
+    name: PA14
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA14
+    mode: Peripheral IO
+    user_label: PA14
+    configuration: null
+  PA15:
+    name: PA15
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA15
+    mode: Peripheral IO
+    user_label: PA15
+    configuration: null
+  PA17:
+    name: PA17
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA17
+    mode: Peripheral IO
+    user_label: PA17
+    configuration: null
+  PA18:
+    name: PA18
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA18
+    mode: Peripheral IO
+    user_label: PA18
+    configuration: null
+  PA19:
+    name: PA19
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PA19
+    mode: Peripheral IO
+    user_label: PA19
+    configuration: null
   LED0:
     name: PC18
     definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PC18
     mode: Digital output
     user_label: LED0
+    configuration: null
+  PC20:
+    name: PC20
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PC20
+    mode: Peripheral IO
+    user_label: PC20
     configuration: null
   PB24:
     name: PB24

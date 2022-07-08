@@ -18,6 +18,7 @@ struct rt_dac_ops
     rt_err_t (*disabled)(struct rt_dac_device *device, rt_uint32_t channel);
     rt_err_t (*enabled)(struct rt_dac_device *device, rt_uint32_t channel);
     rt_err_t (*convert)(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value);
+    rt_uint8_t (*get_resolution)(struct rt_dac_device *device);
 };
 
 struct rt_dac_device
@@ -31,6 +32,7 @@ typedef enum
 {
     RT_DAC_CMD_ENABLE = RT_DEVICE_CTRL_BASE(DAC) + 0,
     RT_DAC_CMD_DISABLE = RT_DEVICE_CTRL_BASE(DAC) + 1,
+    RT_DAC_CMD_GET_RESOLUTION = RT_DEVICE_CTRL_BASE(DAC) + 2,
 } rt_dac_cmd_t;
 
 rt_err_t rt_hw_dac_register(rt_dac_device_t dac,const char *name, const struct rt_dac_ops *ops, const void *user_data);

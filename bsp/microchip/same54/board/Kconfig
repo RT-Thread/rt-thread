@@ -32,6 +32,14 @@ menu "Onboard Peripheral Drivers"
     config SAME5X_ADC0
         bool "Enable ADC0"
         default false
+
+    config SAME5X_I2C0
+        bool "Enable I2C0"
+        default false
+
+    config SAME5X_GMAC
+        bool "Enable GMAC"
+        default false
 endmenu
 
 menu "Application Demo Config"
@@ -48,5 +56,19 @@ menu "Application Demo Config"
         default true
         help
             Add ADC example task to project
+
+    config SAM_I2C_EXAMPLE
+        bool "Enable SAM I2C Example"
+        depends on SAME5X_I2C0
+        default true
+        help
+            Add I2C example task to project
+
+    config SAM_LWIP_EXAMPLE
+        bool "Enable SAM LWIP Example"
+        depends on SAME5X_GMAC
+        default false
+        help
+            Add GMAC LWIP example task to project
 
 endmenu

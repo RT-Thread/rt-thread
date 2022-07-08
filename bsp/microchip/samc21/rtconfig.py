@@ -25,8 +25,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -49,7 +49,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections -mlong-calls'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T bsp/samc21/gcc/gcc/samc21j18a_flash.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread-' + DEVICE_PART + '.map,-cref,-u,Reset_Handler -T bsp/samc21/gcc/gcc/samc21j18a_flash.ld'
 
     CPATH = ''
     LPATH = ''
@@ -63,5 +63,5 @@ if PLATFORM == 'gcc':
     CXXFLAGS = CFLAGS 
     CFLAGS += ' -std=c99'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rt-thread-' + DEVICE_PART + '.bin\n' + SIZE + ' $TARGET \n'
 

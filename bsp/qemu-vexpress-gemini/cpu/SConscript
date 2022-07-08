@@ -5,11 +5,11 @@ cwd     = GetCurrentDir()
 src	= Glob('*.c')
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
         src += Glob('*_iar.S')
-elif rtconfig.PLATFORM == 'gcc':
+elif rtconfig.PLATFORM in ['gcc']:
         src += Glob('*_gcc.S')
-elif rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
         src += Glob('*_rvds.S')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)

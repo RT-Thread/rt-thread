@@ -1834,14 +1834,14 @@ rt_err_t rt_usbd_ep0_set_stall(udevice_t device)
 {
     RT_ASSERT(device != RT_NULL);
 
-    return dcd_ep_set_stall(device->dcd, 0);
+    return dcd_ep_set_stall(device->dcd, 0x80);
 }
 
 rt_err_t rt_usbd_ep0_clear_stall(udevice_t device)
 {
     RT_ASSERT(device != RT_NULL);
 
-    return dcd_ep_clear_stall(device->dcd, 0);
+    return dcd_ep_clear_stall(device->dcd, 0x80);
 }
 
 rt_err_t rt_usbd_ep_set_stall(udevice_t device, uep_t ep)

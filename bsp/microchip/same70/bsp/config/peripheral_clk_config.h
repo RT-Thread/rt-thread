@@ -4,6 +4,24 @@
 
 // <<< Use Configuration Wizard in Context Menu >>>
 
+// <h> AFEC Clock Settings
+// <y> AFEC Clock source
+// <CONF_SRC_MCK"> Master Clock (MCK)
+// <i> This defines the clock source for the AFEC
+// <id> afec_clock_source
+#ifndef CONF_AFEC0_SRC
+#define CONF_AFEC0_SRC CONF_SRC_MCK
+#endif
+// </h>
+
+/**
+ * \def AFEC FREQUENCY
+ * \brief AFEC's Clock frequency
+ */
+#ifndef CONF_AFEC0_FREQUENCY
+#define CONF_AFEC0_FREQUENCY 150000000
+#endif
+
 /**
  * \def CONF_HCLK_FREQUENCY
  * \brief HCLK's Clock frequency
@@ -46,6 +64,24 @@
  */
 #define CONF_PCK6_FREQUENCY 1714285
 
+// <h> TWIHS Clock Settings
+// <y> TWIHS Clock source
+// <CONF_SRC_MCK"> Master Clock (MCK)
+// <i> This defines the clock source for the TWIHS
+// <id> twihs_clock_source
+#ifndef CONF_TWIHS0_SRC
+#define CONF_TWIHS0_SRC CONF_SRC_MCK
+#endif
+// </h>
+
+/**
+ * \def TWIHS FREQUENCY
+ * \brief TWIHS's Clock frequency
+ */
+#ifndef CONF_TWIHS0_FREQUENCY
+#define CONF_TWIHS0_FREQUENCY 150000000
+#endif
+
 // <h> USART Clock Settings
 // <o> USART Clock source
 
@@ -74,6 +110,24 @@
  */
 #ifndef CONF_USART1_FREQUENCY
 #define CONF_USART1_FREQUENCY 150000000
+#endif
+
+// <h> GMAC Clock Settings
+// <y> GMAC Clock source
+// <CONF_SRC_MCK"> Master Clock (MCK)
+// <i> Select the clock source for GMAC
+// <id> gmac_clock_source
+#ifndef CONF_GMAC_SRC
+#define CONF_GMAC_SRC CONF_SRC_MCK
+#endif
+// </h>
+
+/**
+ * \def GMAC FREQUENCY
+ * \brief GMAC Clock frequency
+ */
+#ifndef CONF_GMAC_FREQUENCY
+#define CONF_GMAC_FREQUENCY 150000000
 #endif
 
 // <h> MCAN Clock Settings

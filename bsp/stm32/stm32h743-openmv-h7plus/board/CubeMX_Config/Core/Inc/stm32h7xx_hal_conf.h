@@ -168,7 +168,7 @@
 #define  TICK_INT_PRIORITY            (15UL) /*!< tick interrupt priority */
 #define  USE_RTOS                     0
 #define  USE_SD_TRANSCEIVER           0U               /*!< use uSD Transceiver */
-#define  USE_SPI_CRC                  0U               /*!< use CRC in SPI */
+#define  USE_SPI_CRC	              0U               /*!< use CRC in SPI */
 
 #define  USE_HAL_ADC_REGISTER_CALLBACKS     0U /* ADC register callback disabled     */
 #define  USE_HAL_CEC_REGISTER_CALLBACKS     0U /* CEC register callback disabled     */

@@ -151,7 +151,7 @@ void sw_clearpend(void)
  */
 rt_base_t rt_hw_interrupt_disable(void)
 {
-    rt_base_t value = 0;
+    register rt_base_t value = 0;
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x1800));
     return value;
 }
@@ -188,7 +188,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 /* shutdown CPU */
 void rt_hw_cpu_shutdown(void)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();

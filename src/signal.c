@@ -91,7 +91,7 @@ static void _signal_entry(void *parameter)
  */
 static void _signal_deliver(rt_thread_t tid)
 {
-    rt_ubase_t level;
+    rt_base_t level;
 
     level = rt_hw_interrupt_disable();
 
@@ -321,7 +321,7 @@ void rt_signal_unmask(int signo)
 int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
 {
     int ret = RT_EOK;
-    rt_base_t   level;
+    rt_base_t level;
     rt_thread_t tid = rt_thread_self();
     struct siginfo_node *si_node = RT_NULL, *si_prev = RT_NULL;
 

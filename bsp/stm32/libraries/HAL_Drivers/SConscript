@@ -5,8 +5,7 @@ from building import *
 cwd = GetCurrentDir()
 
 # add the general drivers.
-src = Split("""
-""")
+src = []
 
 if GetDepend(['RT_USING_PIN']):
     src += ['drv_gpio.c']
@@ -28,6 +27,9 @@ if GetDepend(['RT_USING_SPI']):
 
 if GetDepend(['RT_USING_QSPI']):
     src += ['drv_qspi.c']
+
+if GetDepend('RT_USING_SPI_BITOPS'):
+    src += ['drv_soft_spi.c']
 
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
@@ -110,6 +112,9 @@ src += ['drv_common.c']
 
 path =  [cwd]
 path += [cwd + '/config']
+
+if not GetDepend('PKG_CMSIS_CORE'):
+    path += [cwd + '/CMSIS/Include']
 
 if GetDepend('BSP_USING_ON_CHIP_FLASH'):
     path += [cwd + '/drv_flash']

@@ -71,7 +71,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 
 #ifndef DFS_USING_POSIX
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    return 0; /* error */
+    return -1; /* error */
 #else
     /* Correct openmode from fopen to open */
     if (openmode & OPEN_PLUS)
@@ -101,7 +101,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 
     fd = open(name, mode, 0);
     if (fd < 0)
-        return 0; /* error */
+        return -1; /* error */
     else
         return fd;
 #endif /* DFS_USING_POSIX */
@@ -116,7 +116,7 @@ int _sys_close(FILEHANDLE fh)
     return close(fh);
 #else
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    return 0;
+    return 0; /* error */
 #endif /* DFS_USING_POSIX */
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -556,10 +556,24 @@ static void imxrt_dma_tx_config(struct imxrt_uart *uart)
 
 #endif
 
-uint32_t GetUartSrcFreq(void)
+uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
 {
     uint32_t freq;
-
+    uint32_t base = (uint32_t) uart_base;
+#ifdef SOC_IMXRT1170_SERIES
+    switch (base)
+    {
+    case LPUART1_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
+        break;
+    case LPUART12_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
+        break;
+    default:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
+        break;
+    }
+#else
     /* To make it simple, we assume default PLL and divider settings, and the only variable
        from application is use PLL3 source or OSC source */
     if (CLOCK_GetMux(kCLOCK_UartMux) == 0) /* PLL3 div6 80M */
@@ -570,8 +584,9 @@ uint32_t GetUartSrcFreq(void)
     {
         freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
     }
-
+#endif
     return freq;
+
 }
 
 static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -624,7 +639,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     config.enableTx = true;
     config.enableRx = true;
 
-    LPUART_Init(uart->uart_base, &config, GetUartSrcFreq());
+    LPUART_Init(uart->uart_base, &config, GetUartSrcFreq(uart->uart_base));
 
     return RT_EOK;
 }

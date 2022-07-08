@@ -37,7 +37,7 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
                               void       *buffer,
                               rt_size_t   size)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_thread_t thread;
     struct rt_audio_pipe *pipe;
     rt_size_t read_nbytes;
@@ -119,7 +119,7 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
                                const void *buffer,
                                rt_size_t   size)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_thread_t thread;
     struct rt_audio_pipe *pipe;
     rt_size_t write_nbytes;

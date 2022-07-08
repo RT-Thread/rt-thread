@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,8 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <drv_lcd.h>
+
+lv_indev_t *touch_indev;
 
 static lv_indev_state_t last_state = LV_INDEV_STATE_REL;
 static rt_int16_t last_x = 0;
@@ -27,11 +29,15 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state)
 {
     last_state = state;
+#ifdef BSP_USING_TOUCH_CAP
     last_x = LCD_W - y;
     last_y = x;
+#endif /* BSP_USING_TOUCH_CAP */
+#ifdef BSP_USING_TOUCH_RES
+    last_x = x;
+    last_y = y;
+#endif /* BSP_USING_TOUCH_RES */
 }
-
-lv_indev_t * button_indev;
 
 void lv_port_indev_init(void)
 {
@@ -42,5 +48,5 @@ void lv_port_indev_init(void)
     indev_drv.read_cb = input_read;
 
     /*Register the driver in LVGL and save the created input device object*/
-    button_indev = lv_indev_drv_register(&indev_drv);
+    touch_indev = lv_indev_drv_register(&indev_drv);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -128,11 +128,28 @@ void _enet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, 
 
 static void _enet_clk_init(void)
 {
+
+#ifdef SOC_IMXRT1170_SERIES
+    const clock_sys_pll1_config_t sysPll1Config = {
+        .pllDiv2En = true,
+    };
+    CLOCK_InitSysPll1(&sysPll1Config);
+    clock_root_config_t rootCfg = {.mux = 4, .div = 10}; /* Generate 50M root clock. */
+    CLOCK_SetRootClock(kCLOCK_Root_Enet1, &rootCfg);
+
+    /* Select syspll2pfd3, 528*18/24 = 396M */
+    CLOCK_InitPfd(kCLOCK_PllSys2, kCLOCK_Pfd3, 24);
+    rootCfg.mux = 7;
+    rootCfg.div = 2;
+    CLOCK_SetRootClock(kCLOCK_Root_Bus, &rootCfg); /* Generate 198M bus clock. */
+        IOMUXC_GPR->GPR4 |= 0x3;
+#else
     const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1};
     CLOCK_InitEnetPll(&config);
 
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
     IOMUXC_GPR->GPR1|=1<<23;
+#endif
 }
 
 static void _enet_config(void)
@@ -166,7 +183,11 @@ static void _enet_config(void)
     config.miiDuplex = imxrt_eth_device.duplex;
 
     /* Set SMI to get PHY link status. */
+#ifdef SOC_IMXRT1170_SERIES
+    sysClock = CLOCK_GetRootClockFreq(kCLOCK_Root_Bus);
+#else
     sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);
+#endif
 
     dbg_log(DBG_LOG, "deinit\n");
     ENET_Deinit(imxrt_eth_device.enet_base);
@@ -278,10 +299,10 @@ static void _ENET_ActiveSend(ENET_Type *base, uint32_t ringId)
             base->TDAR = ENET_TDAR_TDAR_MASK;
             break;
 #if FSL_FEATURE_ENET_QUEUE > 1
-        case kENET_Ring1:
+        case 1:
             base->TDAR1 = ENET_TDAR1_TDAR_MASK;
             break;
-        case kENET_Ring2:
+        case 2:
             base->TDAR2 = ENET_TDAR2_TDAR_MASK;
             break;
 #endif /* FSL_FEATURE_ENET_QUEUE > 1 */
@@ -557,7 +578,11 @@ static void phy_monitor_thread_entry(void *parameter)
         LOG_E("phy driver error!");
         return ;
     }
+#ifdef SOC_IMXRT1170_SERIES
+    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetRootClockFreq(kCLOCK_Root_Bus));
+#else
     rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+#endif
     if (PHY_STATUS_OK != status)
     {
         LOG_E("Phy device initialize unsuccessful!\n");
@@ -791,7 +816,7 @@ void enet_reg_dump(void)
     DUMP_REG(FTRL);
     DUMP_REG(TACC);
     DUMP_REG(RACC);
-    DUMP_REG(RMON_T_DROP);
+   // DUMP_REG(RMON_T_DROP);
     DUMP_REG(RMON_T_PACKETS);
     DUMP_REG(RMON_T_BC_PKT);
     DUMP_REG(RMON_T_MC_PKT);
@@ -829,7 +854,7 @@ void enet_reg_dump(void)
     DUMP_REG(RMON_R_OVERSIZE);
     DUMP_REG(RMON_R_FRAG);
     DUMP_REG(RMON_R_JAB);
-    DUMP_REG(RMON_R_RESVD_0);
+   // DUMP_REG(RMON_R_RESVD_0);
     DUMP_REG(RMON_R_P64);
     DUMP_REG(RMON_R_P65TO127);
     DUMP_REG(RMON_R_P128TO255);

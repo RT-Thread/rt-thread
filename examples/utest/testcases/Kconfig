@@ -9,7 +9,9 @@ if RT_USING_UTESTCASES
 
 source "$RTT_DIR/examples/utest/testcases/utest/Kconfig"
 source "$RTT_DIR/examples/utest/testcases/kernel/Kconfig"
+source "$RTT_DIR/examples/utest/testcases/cpp11/Kconfig"
 source "$RTT_DIR/examples/utest/testcases/drivers/serial_v2/Kconfig"
+source "$RTT_DIR/examples/utest/testcases/posix/Kconfig"
 
 endif
 

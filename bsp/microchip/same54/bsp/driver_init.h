@@ -21,19 +21,41 @@ extern "C" {
 #include <hal_io.h>
 #include <hal_sleep.h>
 
+#include <hal_adc_sync.h>
 #include <hal_aes_sync.h>
 
-#include <hal_usart_sync.h>
+#include <hal_usart_async.h>
+
+#include <hal_i2c_m_sync.h>
 #include <hal_can_async.h>
 
-extern struct aes_sync_descriptor CRYPTOGRAPHY_0;
+#include <hal_mac_async.h>
 
-extern struct usart_sync_descriptor TARGET_IO;
-extern struct can_async_descriptor  CAN_0;
+extern struct adc_sync_descriptor    ADC_0;
+extern struct aes_sync_descriptor    CRYPTOGRAPHY_0;
+extern struct usart_async_descriptor TARGET_IO;
+
+extern struct i2c_m_sync_desc      I2C_0;
+extern struct can_async_descriptor CAN_0;
+
+extern struct mac_async_descriptor MACIF;
+
+void ADC_0_PORT_init(void);
+void ADC_0_CLOCK_init(void);
+void ADC_0_init(void);
 
 void TARGET_IO_PORT_init(void);
 void TARGET_IO_CLOCK_init(void);
 void TARGET_IO_init(void);
+
+void I2C_0_CLOCK_init(void);
+void I2C_0_init(void);
+void I2C_0_PORT_init(void);
+
+void MACIF_CLOCK_init(void);
+void MACIF_init(void);
+void MACIF_PORT_init(void);
+void MACIF_example(void);
 
 /**
  * \brief Perform system initialization, initialize pins and clocks for

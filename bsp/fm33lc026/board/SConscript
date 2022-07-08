@@ -15,11 +15,11 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/FM/FM33xx/Source/Templates/gcc/startup_fm33lc0xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/FM/FM33xx/Source/Templates/ARM/startup_fm33lc0xx.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/FM/FM33xx/Source/Templates/iar/startup_fm33lc0xx.s']
 
 # FM33LC0XX

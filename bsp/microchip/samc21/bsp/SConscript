@@ -11,8 +11,10 @@ CPPDEFINES = []
 CPPDEFINES += [rtconfig.DEVICE_TYPE]
 
 # The set of source files associated with this SConscript file.
+
 src  = Glob('hal/src/*.c')
 src += Glob('hal/utils/src/*.c')
+src += Glob('hpl/adc/*.c')
 src += Glob('hpl/can/*.c')
 src += Glob('hpl/core/*.c')
 src += Glob('hpl/divas/*.c')
@@ -29,13 +31,13 @@ src += [cwd + '/atmel_start.c']
 src += [cwd + '/driver_init.c']
 
 #add for startup script
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/samc21/gcc/system_samc21.c']
     src += [cwd + '/samc21/gcc/gcc/startup_samc21.c']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/samc21/armcc/arm_addon/armcc/' + 'system_samc21.c']
     src += [cwd + '/samc21/armcc/arm_addon/armcc/arm/' + 'startup_samc21.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/samc21/iar/' + 'system_samc21.c']
     src += [cwd + '/samc21/iar/iar/' + 'startup_samc21.c']
 
@@ -45,12 +47,15 @@ path = [
     cwd + '/config',
     cwd + '/hal/include',
     cwd + '/hal/utils/include',
+    cwd + '/hpl/adc',
     cwd + '/hpl/can',
     cwd + '/hpl/core',
     cwd + '/hpl/gclk',
     cwd + '/hpl/pm',
     cwd + '/hpl/port',
     cwd + '/hri',
+    cwd + '/../board',
+    cwd + '/../../common/applications',
     cwd + '/samc21/include']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

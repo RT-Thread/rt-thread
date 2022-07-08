@@ -22,6 +22,64 @@ application:
   configuration: null
 middlewares: {}
 drivers:
+  ADC_0:
+    user_label: ADC_0
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::ADC0::driver_config_definition::ADC::HAL:Driver:ADC.Sync
+    functionality: ADC
+    api: HAL:Driver:ADC_Sync
+    configuration:
+      adc_advanced_settings: true
+      adc_arch_adjres: 0
+      adc_arch_corren: false
+      adc_arch_dbgrun: false
+      adc_arch_dualsel: BOTH
+      adc_arch_event_settings: false
+      adc_arch_flushei: false
+      adc_arch_flushinv: false
+      adc_arch_gaincorr: 0
+      adc_arch_leftadj: false
+      adc_arch_offcomp: false
+      adc_arch_offsetcorr: 0
+      adc_arch_ondemand: false
+      adc_arch_r2r: false
+      adc_arch_refcomp: false
+      adc_arch_resrdyeo: false
+      adc_arch_runstdby: false
+      adc_arch_samplen: 0
+      adc_arch_samplenum: 1 sample
+      adc_arch_seqen: 0
+      adc_arch_slaveen: false
+      adc_arch_startei: false
+      adc_arch_startinv: false
+      adc_arch_winlt: 0
+      adc_arch_winmode: No window mode
+      adc_arch_winmoneo: false
+      adc_arch_winut: 0
+      adc_differential_mode: false
+      adc_freerunning_mode: false
+      adc_pinmux_negative: I/O ground
+      adc_pinmux_positive: ADC AIN0 pin
+      adc_prescaler: Peripheral clock divided by 2
+      adc_reference: Internal bandgap reference
+      adc_resolution: 16-bit (averaging must be enabled)
+    optional_signals:
+    - identifier: ADC_0:AIN/10
+      pad: PA10
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::optional_signal_definition::ADC0.AIN.10
+      name: ADC0/AIN/10
+      label: AIN/10
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: ADC
+          input: Generic clock generator 0
+          external: false
+          external_frequency: 0
+        configuration:
+          adc_gclk_selection: Generic clock generator 0
   DMAC:
     user_label: DMAC
     definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::DMAC::driver_config_definition::DMAC::HAL:HPL:DMAC
@@ -589,13 +647,53 @@ drivers:
     variant: null
     clocks:
       domain_group: null
+  I2C_0:
+    user_label: I2C_0
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::SERCOM0::driver_config_definition::I2C.Master.Standard~2FFast-mode::HAL:Driver:I2C.Master.Sync
+    functionality: I2C
+    api: HAL:Driver:I2C_Master_Sync
+    configuration:
+      i2c_master_advanced: true
+      i2c_master_arch_dbgstop: Keep running
+      i2c_master_arch_inactout: 20-21 SCL cycle time-out(200-210us)
+      i2c_master_arch_lowtout: true
+      i2c_master_arch_mexttoen: true
+      i2c_master_arch_runstdby: false
+      i2c_master_arch_sdahold: 300-600ns hold time
+      i2c_master_arch_sexttoen: false
+      i2c_master_arch_trise: 215
+      i2c_master_baud_rate: 100000
+    optional_signals: []
+    variant:
+      specification: SDA=0, SCL=1
+      required_signals:
+      - name: SERCOM0/PAD/0
+        pad: PA08
+        label: SDA
+      - name: SERCOM0/PAD/1
+        pad: PA09
+        label: SCL
+    clocks:
+      domain_group:
+        nodes:
+        - name: Core
+          input: Generic clock generator 0
+          external: false
+          external_frequency: 0
+        - name: Slow
+          input: Generic clock generator 1
+          external: false
+          external_frequency: 0
+        configuration:
+          core_gclk_selection: Generic clock generator 0
+          slow_gclk_selection: Generic clock generator 1
   TARGET_IO:
     user_label: TARGET_IO
-    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::SERCOM4::driver_config_definition::UART::HAL:Driver:USART.Sync
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::SERCOM4::driver_config_definition::UART::HAL:Driver:USART.Async
     functionality: USART
-    api: HAL:Driver:USART_Sync
+    api: HAL:Driver:USART_Async
     configuration:
-      usart_advanced: false
+      usart_advanced: true
       usart_arch_clock_mode: USART with internal clock
       usart_arch_cloden: false
       usart_arch_dbgstop: Keep running
@@ -703,6 +801,24 @@ drivers:
         configuration:
           can_gclk_selection: Generic clock generator 0
 pads:
+  PA08:
+    name: PA08
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PA08
+    mode: I2C
+    user_label: PA08
+    configuration: null
+  PA09:
+    name: PA09
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PA09
+    mode: I2C
+    user_label: PA09
+    configuration: null
+  PA10:
+    name: PA10
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PA10
+    mode: Analog
+    user_label: PA10
+    configuration: null
   PB10:
     name: PB10
     definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PB10

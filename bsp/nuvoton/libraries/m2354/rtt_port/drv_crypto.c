@@ -7,6 +7,7 @@
 * Change Logs:
 * Date            Author         Notes
 * 2020-7-3        YCHuang12      First version
+* 2022-4-17       Wayne          Fix TRNG and PRNG selection
 *
 ******************************************************************************/
 
@@ -15,7 +16,6 @@
 #if ((defined(BSP_USING_CRYPTO) || defined(BSP_USING_TRNG) || defined(BSP_USING_CRC)) && defined(RT_USING_HWCRYPTO))
 
 #include <rtdevice.h>
-#include <rtdbg.h>
 #include <board.h>
 #include "NuMicro.h"
 #include <nu_bitutil.h>
@@ -29,6 +29,13 @@
 #endif
 
 /* Private typedef --------------------------------------------------------------*/
+#define LOG_TAG         "CRYPTO"
+#define DBG_ENABLE
+#define DBG_SECTION_NAME "CRYPTO"
+#define DBG_LEVEL DBG_INFO
+#define DBG_COLOR
+#include <rtdbg.h>
+
 typedef struct
 {
     uint8_t *pu8SHATempBuf;
@@ -57,16 +64,10 @@ static const struct rt_hwcrypto_ops nu_hwcrypto_ops =
 
 #define NU_HWCRYPTO_AES_NAME    "nu_AES"
 #define NU_HWCRYPTO_SHA_NAME    "nu_SHA"
-#if !defined(BSP_USING_TRNG)
-    #define NU_HWCRYPTO_PRNG_NAME   "nu_PRNG"
-#endif
+#define NU_HWCRYPTO_PRNG_NAME   "nu_PRNG"
 
 static struct rt_mutex s_AES_mutex;
 static struct rt_mutex s_SHA_mutex;
-
-#if !defined(BSP_USING_TRNG)
-    static struct rt_mutex s_PRNG_mutex;
-#endif
 
 static rt_err_t nu_crypto_init(void)
 {
@@ -83,12 +84,6 @@ static rt_err_t nu_crypto_init(void)
     result = rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
     SHA_ENABLE_INT(CRPT);
-#endif
-
-#if defined(RT_HWCRYPTO_USING_RNG) && !defined(BSP_USING_TRNG)
-    result = rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_PRIO);
-    RT_ASSERT(result == RT_EOK);
-    PRNG_ENABLE_INT(CRPT);
 #endif
 
     return result;
@@ -163,45 +158,32 @@ static rt_err_t nu_aes_crypt_run(
     return RT_EOK;
 }
 
-#if !defined(BSP_USING_TRNG)
-//Using PRNG instead of TRNG
-static void nu_prng_open(uint32_t u32Seed)
+static rt_err_t nu_prng_init(void)
 {
-    rt_err_t result;
+    uint32_t u32Seed;
 
-    result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
-    RT_ASSERT(result == RT_EOK);
+#if defined(NU_PRNG_USE_SEED)
+    u32Seed = NU_PRNG_SEED_VALUE;
+#else
+    u32Seed = (uint32_t)rt_tick_get();
+#endif
 
     //Open PRNG 128 bits.
     PRNG_Open(CRPT, PRNG_KEY_SIZE_128, PRNG_SEED_RELOAD, u32Seed);
 
-    result = rt_mutex_release(&s_PRNG_mutex);
-    RT_ASSERT(result == RT_EOK);
+    return RT_EOK;
 }
 
-static rt_uint32_t nu_prng_run(void)
+static rt_uint32_t nu_prng_rand(struct hwcrypto_rng *ctx)
 {
     uint32_t au32RNGValue[4];
-    rt_err_t result;
-
-    result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
-    RT_ASSERT(result == RT_EOK);
 
     PRNG_Start(CRPT);
-    while ((CRPT->PRNG_CTL & CRPT_PRNG_CTL_BUSY_Msk)) {};
-
-    /* Clear PRNG interrupt status */
-    PRNG_CLR_INT_FLAG(CRPT);
 
     PRNG_Read(CRPT, &au32RNGValue[0]);
 
-    result = rt_mutex_release(&s_PRNG_mutex);
-    RT_ASSERT(result == RT_EOK);
-
     return au32RNGValue[0] ^ au32RNGValue[1] ^ au32RNGValue[2] ^ au32RNGValue[3];
 }
-
-#endif
 
 static rt_err_t nu_aes_crypt(struct hwcrypto_symmetric *symmetric_ctx, struct hwcrypto_symmetric_info *symmetric_info)
 {
@@ -606,14 +588,6 @@ static rt_err_t nu_sha_finish(struct hwcrypto_hash *hash_ctx, rt_uint8_t *out, r
     return RT_EOK;
 }
 
-#if !defined(BSP_USING_TRNG)
-static rt_uint32_t nu_prng_rand(struct hwcrypto_rng *ctx)
-{
-    return nu_prng_run();
-}
-
-#endif
-
 static const struct hwcrypto_symmetric_ops nu_aes_ops =
 {
     .crypt = nu_aes_crypt,
@@ -624,34 +598,19 @@ static const struct hwcrypto_hash_ops nu_sha_ops =
     .update = nu_sha_update,
     .finish = nu_sha_finish,
 };
-
 #endif
 
 /* CRC operation ------------------------------------------------------------*/
 #if defined(BSP_USING_CRC)
-
 static const struct hwcrypto_crc_ops nu_crc_ops =
 {
     .update = nu_crc_update,
 };
-
 #endif
 
-/* TRNG operation ------------------------------------------------------------*/
-#if defined(BSP_USING_TRNG)
-
-static const struct hwcrypto_rng_ops nu_rng_ops =
-{
-    .update = nu_trng_rand,
-};
-
-#elif defined(BSP_USING_CRYPTO)
-
-static const struct hwcrypto_rng_ops nu_rng_ops =
-{
-    .update = nu_prng_rand,
-};
-
+#if defined(RT_HWCRYPTO_USING_RNG)
+    /* RNG operation ------------------------------------------------------------*/
+    static struct hwcrypto_rng_ops nu_rng_ops;
 #endif
 
 /* Register crypto interface ----------------------------------------------------------*/
@@ -662,7 +621,7 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
 
     switch (ctx->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
-#if defined(BSP_USING_TRNG)
+#if defined(RT_HWCRYPTO_USING_RNG)
     case HWCRYPTO_TYPE_RNG:
     {
         ctx->contex = RT_NULL;
@@ -670,9 +629,9 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
         ((struct hwcrypto_rng *)ctx)->ops = &nu_rng_ops;
         break;
     }
-#endif /* BSP_USING_TRNG */
+#endif /* RT_HWCRYPTO_USING_RNG */
 
-#if defined(BSP_USING_CRC)
+#if defined(BSP_USING_CRC) && defined(RT_HWCRYPTO_USING_CRC)
     case HWCRYPTO_TYPE_CRC:
     {
         ctx->contex = RT_NULL;
@@ -680,7 +639,7 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
         ((struct hwcrypto_crc *)ctx)->ops = &nu_crc_ops;
         break;
     }
-#endif /* BSP_USING_CRC */
+#endif /* BSP_USING_CRC && defined(RT_HWCRYPTO_USING_CRC) */
 
 #if defined(BSP_USING_CRYPTO)
     case HWCRYPTO_TYPE_AES:
@@ -704,21 +663,6 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
         ((struct hwcrypto_hash *)ctx)->ops = &nu_sha_ops;
         break;
     }
-
-#if !defined(BSP_USING_TRNG)
-    case HWCRYPTO_TYPE_RNG:
-    {
-        ctx->contex = RT_NULL;
-        ((struct hwcrypto_rng *)ctx)->ops = &nu_rng_ops;
-#if defined(NU_PRNG_USE_SEED)
-        nu_prng_open(NU_PRNG_SEED_VALUE);
-#else
-        nu_prng_open(rt_tick_get());
-#endif
-        break;
-    }
-#endif /* !BSP_USING_TRNG */
-
 #endif /* BSP_USING_CRYPTO */
 
     default:
@@ -758,17 +702,6 @@ static void nu_hwcrypto_reset(struct rt_hwcrypto_ctx *ctx)
 {
     switch (ctx->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
-#if !defined(BSP_USING_TRNG)
-    case HWCRYPTO_TYPE_RNG:
-    {
-#if defined(NU_PRNG_USE_SEED)
-        nu_prng_open(NU_PRNG_SEED_VALUE);
-#else
-        nu_prng_open(rt_tick_get());
-#endif
-        break;
-    }
-#endif /* !BSP_USING_TRNG */
 #if defined(BSP_USING_CRYPTO)
     case HWCRYPTO_TYPE_SHA1:
     case HWCRYPTO_TYPE_SHA2:
@@ -794,15 +727,14 @@ static void nu_hwcrypto_reset(struct rt_hwcrypto_ctx *ctx)
         }
         break;
     }
-
 #endif
+
     default:
         break;
     }
 }
 
 /* Init and register nu_hwcrypto_dev */
-
 int nu_hwcrypto_device_init(void)
 {
     rt_err_t result;
@@ -820,8 +752,23 @@ int nu_hwcrypto_device_init(void)
     nu_crc_init();
 #endif
 
+#if defined(RT_HWCRYPTO_USING_RNG)
 #if defined(BSP_USING_TRNG)
-    nu_trng_init();
+    result = nu_trng_init();
+    if (result == RT_EOK)
+    {
+        LOG_I("TRNG is used as default RNG.");
+        nu_rng_ops.update = nu_trng_rand;
+    }
+    else
+#endif
+    {
+        result = nu_prng_init();
+        RT_ASSERT(result == RT_EOK);
+
+        LOG_I("PRNG is used as default RNG.");
+        nu_rng_ops.update = nu_prng_rand;
+    }
 #endif
 
     /* register hwcrypto operation */
