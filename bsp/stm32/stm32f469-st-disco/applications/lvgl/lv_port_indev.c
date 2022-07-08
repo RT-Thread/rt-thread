@@ -5,19 +5,23 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-07-07     liYony       The first version
+ * 2022-07-07     liYony       The first version (FT6336)
+ * 2022-07-08     liYony       Add FT6206
  */
 #include <lvgl.h>
 #include <rtdevice.h>
+#include <touch.h>
 #include <lcd_port.h>
 
 #define DBG_TAG    "LVGL.port.indev"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-/* Include the package header files you are using */
+/* Add the include file of the package you are using */
 #ifdef BSP_USING_TOUCH_FT6X36
-#include "ft6236.h"
+#include <ft6236.h>
+#elif defined(BSP_USING_TOUCH_FT6206)
+#include <ft6206.h>
 #endif /* BSP_USING_TOUCH_FT6X36 */
 
 /* Touch chip connection information */
@@ -42,6 +46,9 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 #ifdef BSP_USING_TOUCH_FT6X36
     data->point.x = read_data->y_coordinate;
     data->point.y = LCD_HEIGHT - read_data->x_coordinate;
+#elif defined(BSP_USING_TOUCH_FT6206)
+    data->point.x = read_data->x_coordinate;
+    data->point.y = LCD_HEIGHT - read_data->y_coordinate;
 #endif /* BSP_USING_TOUCH_FT6X36 */
 
     if (read_data->event == RT_TOUCH_EVENT_DOWN)
@@ -68,9 +75,11 @@ static int lv_hw_touch_init(void)
 {
     struct rt_touch_config cfg;
 
-#ifdef BSP_USING_TOUCH_FT6X36
     cfg.dev_name = BSP_TOUCH_I2C_BUS_NAME;
+#ifdef BSP_USING_TOUCH_FT6X36
     rt_hw_ft6236_init(TOUCH_DEV_NAME, &cfg, BSP_TOUCH_I2C_RESET_PIN);
+#elif defined(BSP_USING_TOUCH_FT6206)
+    rt_hw_ft6206_init(TOUCH_DEV_NAME, &cfg);
 #endif /* BSP_USING_TOUCH_FT6X36 */
 
     touch_dev = rt_device_find(TOUCH_DEV_NAME);
