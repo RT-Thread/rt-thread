@@ -7,9 +7,6 @@ if GetDepend(['BSP_USING_TOUCH_FT6206']):
     src    += Glob('drv_touch.c')
     src    += Glob('drv_touch_ft6206.c')
 
-if GetDepend(['BSP_USING_TOUCH_FT6X36']):
-    src    += Glob('drv_touch_ft6x36.c')
-
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
