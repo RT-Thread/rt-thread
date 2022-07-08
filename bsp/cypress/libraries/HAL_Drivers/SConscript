@@ -19,11 +19,18 @@ if GetDepend(['RT_USING_SERIAL']):
         src += ['drv_uart.c']
 
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
-    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2'):
+    if GetDepend('BSP_USING_I2C1'):
         src += ['drv_soft_i2c.c']
+
+if GetDepend(['RT_USING_I2C']):
+    if GetDepend('BSP_USING_HW_I2C1'):
+        src += ['drv_i2c.c']
 
 if GetDepend(['RT_USING_ADC']):
     src += ['drv_adc.c']
+
+if GetDepend(['RT_USING_QSPI']):
+    src += ['drv_qspi.c']
 
 path =  [cwd]
 path += [cwd + '/config']
