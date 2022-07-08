@@ -70,7 +70,11 @@ static int lv_hw_touch_init(void)
 #endif /* BSP_USING_TOUCH_FT6X36 */
 
     touch_dev = rt_device_find(TOUCH_DEV_NAME);
-    rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY);
+    if (rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY) != RT_EOK)
+    {
+        rt_kprintf("can't open touch device:%s\n", TOUCH_DEV_NAME);
+        return -RT_ERROR;
+    }
 
     read_data = (struct rt_touch_data *)rt_calloc(1, sizeof(struct rt_touch_data));
 
