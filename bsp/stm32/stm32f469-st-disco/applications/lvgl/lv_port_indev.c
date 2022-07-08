@@ -13,6 +13,10 @@
 #include <touch.h>
 #include <lcd_port.h>
 
+#define DBG_TAG    "LVGL.port.indev"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 /* Import the rt_hw_xxx_init function of the package you are using */
 #ifdef BSP_USING_TOUCH_FT6X36
 extern int rt_hw_ft6236_init(const char *name, struct rt_touch_config *cfg,  rt_base_t pin);
@@ -84,7 +88,7 @@ static int lv_hw_touch_init(void)
     touch_dev = rt_device_find(TOUCH_DEV_NAME);
     if (rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY) != RT_EOK)
     {
-        rt_kprintf("can't open touch device:%s\n", TOUCH_DEV_NAME);
+        LOG_E("can't open touch device:%s", TOUCH_DEV_NAME);
         return -RT_ERROR;
     }
     
