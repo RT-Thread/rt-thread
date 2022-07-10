@@ -1,6 +1,6 @@
 # RT-Thread Introduction 
 
-As a beginner of Real-time Operating Systems (RTOS), you might be new to RT-Thread. However, with a better understanding of it overtime, you will gradually discover the charm of RT-Thread and its advantages over other RTOSs of the same type. RT-Thread is an RTOS. With over 16 years of experience accumulated, along with the rise of the Internet of Things (IoT), it is evolving into a powerful, component-rich IoT operating system.  
+As a beginner of Real-time Operating Systems (RTOS), you might be new to RT-Thread. However, with a better understanding of it over time, you will gradually discover the charm of RT-Thread and its advantages over other RTOSs of the same type. RT-Thread is an RTOS. With over 16 years of experience accumulated, along with the rise of the Internet of Things (IoT), it is evolving into a powerful, component-rich IoT operating system.  
 
 ## RT-Thread Overview 
 
@@ -16,7 +16,7 @@ The RT-Thread system is a completely open source system, the 3.1.0 version and i
 
 ## RT-Thread Frame
 
-In recent years, the concept of Internet of Things (IoT) has become widely known, and the Internet of Things market has developed rapidly. The networking of embedded devices is the trend of the times. Terminal networking has greatly increased the complexity of software, and traditional RTOS kernels can hardly meet the needs of the market. For this reason, the concept of the Internet of Things Operating System (IoT OS) came into being. **IoT operating system refers to the software platform that is based on operating system kernel (like RTOS, Linux, etc.) and includes relatively complete middleware components such as a file system, graphics library, etc. It has low overhead and high security, abides by the Communication Protocol and is capable of connecting to the cloud.** RT-Thread is an IoT OS. 
+In recent years, the concept of the Internet of Things has become widely known, and the IoT market has developed rapidly. The networking of embedded devices is the trend of the times. Terminal networking has greatly increased the complexity of software, and traditional RTOS kernels can hardly meet the needs of the market. For this reason, the concept of the Internet of Things Operating System (IoT OS) came into being. **IoT operating system refers to the software platform that is based on operating system kernel (like RTOS, Linux, etc.) and includes relatively complete middleware components such as a file system, graphics library, etc. It has low overhead and high security, abides by the Communication Protocol and is capable of connecting to the cloud.** RT-Thread is an IoT OS. 
 
 One of the main differences between RT-Thread and many other RTOSs such as FreeRTOS and uC/OS is that it is not only a real-time kernel, but also has a rich middle-tier component, as shown in the following figure.
 
