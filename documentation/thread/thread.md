@@ -81,9 +81,9 @@ struct rt_thread
 
 RT-Thread's threads have a dependent stack. When the thread is switched, the context of the current thread is stored in the stack. When the thread is about to resume operation, the context information is read from the stack and recovered.
 
-Thread stack is also used to store local variables in functions: local variables in functions are applied from the thread stack space; local variables in functions are initially allocated from registers (ARM architecture), when this function calls another function, these local variables will be placed on the stack.
+The thread stack is also used to store local variables in functions: local variables in functions are applied from the thread stack space; local variables in functions are initially allocated from registers (ARM architecture), when this function calls another function, these local variables will be placed on the stack.
 
-For the first run of thread, context can be constructed manually to set initial environment like: entry function (PC register), entry parameter (R0 register), return position (LR register), current machine operating status (CPSR register).
+For the first run of thread, the context can be constructed manually to set initial environment like: entry function (PC register), entry parameter (R0 register), return position (LR register), current machine operating status (CPSR register).
 
 The growth direction of the thread stack is closely related to the CPU architecture. Versions before RT-Thread 3.1.0 only allow the stack to grow from high address to low address. For the ARM Cortex-M architecture, the thread stack can be constructed as shown below.
 
@@ -109,7 +109,7 @@ The five states of a thread in RT-Thread are shown in the following table:
 
 The priority of the RT-Thread thread indicates the thread's priority of being scheduled. Each thread has its priority. The more important the thread, the higher priority it should be given, resulting in a higher chance of being scheduled.
 
-RT-Thread supports a maximum of 256 thread priorities (0~255). The lower the number, the higher the priority and 0 is the highest priority. In some systems with tight resources, you can choose system configurations that only support 8 or 32 priorities according to the actual situation; for the ARM Cortex-M series, 32 priorities are commonly used. The lowest priority is assigned to idle threads by default and is not used by users. In the system, when a thread with a higher priority is ready, the current thread with the lower priority will be swapped out immediately, and the high-priority thread will preempt the processor.
+RT-Thread supports a maximum of 256 thread priorities (0~255). The lower the number, the higher the priority, with 0 being the highest priority. In some systems with tight resources, you can choose system configurations that only support 8 or 32 priorities according to the actual situation; for the ARM Cortex-M series, 32 priorities are commonly used. The lowest priority is assigned to idle threads by default and is not used by users. In the system, when a thread with a higher priority is ready, the current thread with the lower priority will be swapped out immediately, and the high-priority thread will preempt the processor.
 
 #### Time Slice
 
