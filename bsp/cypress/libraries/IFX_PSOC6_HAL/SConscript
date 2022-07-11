@@ -94,9 +94,6 @@ path = [cwd + '/capsense',
         cwd + '/TARGET_CY8CKIT-062S2-43012',
         cwd + '/TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource']
 
-if rtconfig.PLATFORM == 'gcc':
-    group = DefineGroup('Libraries', src, depend=[''], CPPPATH=path)
-else:
-    group = DefineGroup('Libraries', src, depend=[''], CPPPATH=path)
+group = DefineGroup('Libraries', src, depend=[''], CPPPATH=path)
 
 Return('group')
