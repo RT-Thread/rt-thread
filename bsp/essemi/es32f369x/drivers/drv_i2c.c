@@ -306,7 +306,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    //LOG_E("send stop condition\n");
+    LOG_D("send stop condition\n");
 
     return ret;
 }
