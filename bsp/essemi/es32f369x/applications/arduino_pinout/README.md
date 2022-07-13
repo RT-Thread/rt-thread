@@ -2,7 +2,7 @@
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
-ES32F3696已经适配了RTduino，可正常使用全部功能，包含GPIO/PWM及I2C/SPI通信接口。除标准arduino uno的接口外，该开发板还额外添加了4个led和一个方向键对应的GPIO，方便使用。
+ES32F3696已经适配了[RTduino软件包](https://github.com/RTduino/RTduino)，可正常使用全部功能，包含GPIO/PWM及I2C/SPI通信接口。除标准arduino uno的接口外，该开发板还额外添加了4个led和一个方向键对应的GPIO，方便使用。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)
 
 ### 1.1 使用Keil+Env
 
@@ -128,13 +128,15 @@ ES32-Arduino的SPI总线是spi0总线， `SCK`、`MISO`、`MOSI`引脚是被RT-T
 
 2. 第三方arduino库导入测试
 
+   [DFRobot_BMI160](https://github.com/DFRobot/DFRobot_BMI160)
+
    用法：下载完毕后解压放到 packages\RTduino-latest\libraries\user目录下即可
 
    需要修改一处：这个库有一处函数重载歧义，856行需改为Wire.requestFrom(dev->id,(uint8_t)len);
 
    选择BMI160的库DFRobot_BMI160用于测试，用keil编译时存在以下问题：
-
-   1. 缺少INT8_C和UINT8_C宏定义，手动添加 
+   
+   1. 缺少INT8_C和UINT8_C宏定义，手动在pins_arduino.h或其他Arduino头文件中添加 
    
       ```c
       #ifndef INT8_C
@@ -145,16 +147,18 @@ ES32-Arduino的SPI总线是spi0总线， `SCK`、`MISO`、`MOSI`引脚是被RT-T
       #endif
       ```
 
-   2. keil的AC5不支持类变量直接初始化，目前版本的AC6编译器会报错，需要修改工程文件，删掉所有的 --cpp11 --c11 --gnu
-
-   解决以上问题后，能成功调用传感器获取加速度和重力等信息
+   2. 编译报错：Data initializer is not allowed
+   
+      如果使用AC5编译器，给arduino_main.cpp和DFRobot_BMI160.cpp添加 --cpp11 --gnu
+   
+      如果使用AC6编译器，修改工程文件，删掉所有的 --cpp11 --c11 --gnu
    
    如果用RT-Thread Studio编译，则不存在这些问题，只需修改存在歧义的问题即可直接使用
 
 ## 6 其他说明
 
 ### 1.ADC
-目前ES32的ADC返回的是原始值，需要计算转换为实际的电压值，暂时不支持分辨率调节，会出现警告信息。
+目前ES32的ADC返回的是原始值，需要计算转换为实际的电压值，暂时不支持分辨率调节，会出现警告信息，无视即可。
 ### 2.对非数字IO的管脚不要调用pinMode
 非数字IO的管脚在其他地方已经初始化了，再次调用pinMode会使他变为普通管脚且无法再重新初始化为非数字IO的功能。即对于任意管脚可以调用pinMode使它变为数字IO管脚，但这一过程不可逆，原有的预设功能将会失效
 ### 3.SPI/I2C/UART使用
