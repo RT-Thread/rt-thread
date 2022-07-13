@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-12-10     Meco Man     first version
+ * 2022-07-11     shiwa        add examples for es32f3696
  */
 
 #include <Arduino.h>
