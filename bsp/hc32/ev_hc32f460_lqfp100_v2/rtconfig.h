@@ -78,10 +78,8 @@
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_SPI
 
 /* Using USB */
 
@@ -152,9 +150,6 @@
 /* system packages */
 
 /* enhanced kernel services */
-
-
-/* POSIX extension functions */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
