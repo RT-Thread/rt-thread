@@ -424,6 +424,7 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
 int rt_hw_i2c_init(void)
 {
 #ifdef RT_USING_I2C_BITOPS
+
 	  rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
     rt_err_t result;
 
