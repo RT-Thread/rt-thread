@@ -12,7 +12,7 @@ Compared with the Linux operating system, RT-Thread is small in size, low in cos
 
 ## License Agreement
 
-The RT-Thread system is a completely open source system, the 3.1.0 version and its earlier versions follow the GPL V2 + open source license agreement. Versions from the 3.1.0 version onwards follow the Apache License 2.0 open source license agreement. The RT-Thread system can be used free of charge in commercial products and does not require opening private code up to the public.
+The RT-Thread system is a completely open source system, which follows the Apache License 2.0 open source license agreement. The RT-Thread system can be used free of charge in commercial products and does not require opening private code up to the public.
 
 ## RT-Thread Frame
 
