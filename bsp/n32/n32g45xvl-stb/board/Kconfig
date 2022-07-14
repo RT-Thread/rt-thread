@@ -75,27 +75,38 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS"
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
         default n
         select RT_USING_I2C
-        if BSP_USING_I2C		
-            config BSP_USING_I2C1
-				bool "Enable I2C1"
-                default n
-				
-			config BSP_USING_I2C2
-				bool "Enable I2C2"
-                default n
-				
-			config BSP_USING_I2C3
-				bool "Enable I2C3"
-                default n
-				
-			config BSP_USING_I2C4
-				bool "Enable I2C4"
-                default n
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 0 111
+                default 22
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 0 111
+                default 23
+        endif
+		
+	menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
 
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
         endif
 
     config BSP_USING_WDT
