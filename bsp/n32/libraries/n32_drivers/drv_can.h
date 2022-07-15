@@ -32,7 +32,7 @@
  *
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
  */
- 
+
 #ifndef __DRV_CAN_H__
 #define __DRV_CAN_H__
 
