@@ -46,6 +46,9 @@ if GetDepend(['RT_USING_RTC']):
 if GetDepend(['RT_USING_WDT']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_wwdg.c']
     src += ['n32g45x_std_periph_driver/src/n32g45x_iwdg.c']
+    
+if GetDepend(['BSP_USING_RTC']):
+    src += ['n32g45x_std_periph_driver/src/n32g45x_bkp.c']
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_sdio.c']

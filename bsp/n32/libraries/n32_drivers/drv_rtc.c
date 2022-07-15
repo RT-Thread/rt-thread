@@ -32,12 +32,9 @@
  *
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
  */
-#include <rtthread.h>
-#include <n32g45x.h>
 #include "board.h"
-#include "time.h"
-#include "rtdef.h"
-#include "rtc.h"
+#include <sys/time.h>
+#include <rtdevice.h>
 
 #ifdef BSP_USING_RTC
 
@@ -105,8 +102,8 @@ static rt_err_t rt_rtc_config(void)
     RTC_InitType  RTC_InitStructure;
 
     /* Configure the RTC data register and RTC prescaler */
-    RTC_InitStructure.RTC_AsynchPrediv = 128;
-    RTC_InitStructure.RTC_SynchPrediv  = 128;
+    RTC_InitStructure.RTC_AsynchPrediv = AsynchPrediv;
+    RTC_InitStructure.RTC_SynchPrediv  = SynchPrediv;
     RTC_InitStructure.RTC_HourFormat   = RTC_24HOUR_FORMAT;
 
     /* Check on RTC init */
