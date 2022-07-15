@@ -50,97 +50,193 @@
 #endif
 #include <rtdbg.h>
 
-#define I2CT_FLAG_TIMEOUT ((uint32_t)0x1000)
-#define I2CT_LONG_TIMEOUT ((uint32_t)(10 * I2CT_FLAG_TIMEOUT))
-
-
 
 #ifdef RT_USING_I2C_BITOPS
-
-/*user can change this*/
-#define I2C_BUS_NAME  "i2c1"
-
-/*user should change this to adapt specific board*/
-#define I2C_SCL_PIN          GPIO_PIN_8
-#define I2C_SCL_PORT         GPIOB
-#define I2C_SCL_CLK          RCC_APB2_PERIPH_GPIOB
-#define I2C_SDA_PIN          GPIO_PIN_9
-#define I2C_SDA_PORT         GPIOB
-#define I2C_SDA_CLK          RCC_APB2_PERIPH_GPIOB
-
-struct n32_i2c_bit_data
+static const struct n32_soft_i2c_config soft_i2c_config[] =
 {
-    struct
-    {
-        rt_uint32_t clk;
-        GPIO_Module* port;
-        rt_uint32_t pin;
-    }scl, sda;
+#ifdef BSP_USING_I2C1
+    I2C1_BUS_CONFIG,
+#endif
+
+#ifdef BSP_USING_I2C2
+    I2C2_BUS_CONFIG,
+#endif
+
+#ifdef BSP_USING_I2C3
+    I2C3_BUS_CONFIG,
+#endif
+
+#ifdef BSP_USING_I2C4
+    I2C4_BUS_CONFIG,
+#endif
 };
 
-static void gpio_set_sda(void *data, rt_int32_t state)
-{
-    struct n32_i2c_bit_data* bd = data;
+static struct n32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
 
+/**
+*\*\name    n32_i2c_gpio_init
+*\*\fun     Initializes the i2c pin.
+*\*\param   i2c dirver class
+*\*\return  none
+**/
+static void n32_i2c_gpio_init(struct n32_i2c *i2c)
+{
+    struct n32_soft_i2c_config* cfg = (struct n32_soft_i2c_config*)i2c->ops.data;
+
+    rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT_OD);
+    rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);
+
+    rt_pin_write(cfg->scl, PIN_HIGH);
+    rt_pin_write(cfg->sda, PIN_HIGH);
+}
+
+/**
+*\*\name    n32_set_sda
+*\*\fun     sets the sda pin.
+*\*\param   data config class
+*\*\param   state sda pin state
+*\*\return  none
+**/
+static void n32_set_sda(void *data, rt_int32_t state)
+{
+    struct n32_soft_i2c_config* cfg = (struct n32_soft_i2c_config*)data;
     if (state)
     {
-        GPIO_SetBits((GPIO_Module*)bd->sda.port, bd->sda.pin);
+        rt_pin_write(cfg->sda, PIN_HIGH);
     }
     else
     {
-        GPIO_ResetBits((GPIO_Module*)bd->sda.port, bd->sda.pin);
+        rt_pin_write(cfg->sda, PIN_LOW);
     }
 }
 
-static void gpio_set_scl(void *data, rt_int32_t state)
+/**
+*\*\name    n32_set_scl
+*\*\fun     sets the scl pin.
+*\*\param   data config class
+*\*\param   state scl pin state
+*\*\return  none
+**/
+static void n32_set_scl(void *data, rt_int32_t state)
 {
-    struct n32_i2c_bit_data* bd = data;
+    struct n32_soft_i2c_config* cfg = (struct n32_soft_i2c_config*)data;
     if (state)
     {
-        GPIO_SetBits((GPIO_Module*)bd->scl.port, bd->scl.pin);
+        rt_pin_write(cfg->scl, PIN_HIGH);
     }
     else
     {
-        GPIO_ResetBits((GPIO_Module*)bd->scl.port, bd->scl.pin);
+        rt_pin_write(cfg->scl, PIN_LOW);
     }
 }
 
-static rt_int32_t gpio_get_sda(void *data)
+/**
+*\*\name    n32_get_sda
+*\*\fun     gets the sda pin state.
+*\*\param   data config class
+*\*\return  sda pin state
+**/
+static rt_int32_t n32_get_sda(void *data)
 {
-    struct n32_i2c_bit_data* bd = data;
-
-    return GPIO_ReadInputDataBit((GPIO_Module*)bd->sda.port, bd->sda.pin);
+    struct n32_soft_i2c_config* cfg = (struct n32_soft_i2c_config*)data;
+    return rt_pin_read(cfg->sda);
 }
 
-static rt_int32_t gpio_get_scl(void *data)
+/**
+*\*\name    n32_get_scl
+*\*\fun     gets the scl pin state.
+*\*\param   data config class
+*\*\return  scl pin state
+**/
+static rt_int32_t n32_get_scl(void *data)
 {
-    struct n32_i2c_bit_data* bd = data;
-
-    return GPIO_ReadInputDataBit((GPIO_Module*)bd->scl.port, bd->scl.pin);
+    struct n32_soft_i2c_config* cfg = (struct n32_soft_i2c_config*)data;
+    return rt_pin_read(cfg->scl);
 }
 
-static void gpio_udelay(rt_uint32_t us)
+
+/**
+*\*\name    n32_udelay
+*\*\fun     The time delay function.
+*\*\param   us
+*\*\return  none
+**/
+static void n32_udelay(rt_uint32_t us)
 {
-    RCC_ClocksType* RCC_Clocks = {0};
-    RCC_GetClocksFreqValue(RCC_Clocks);
-    int i = ( RCC_Clocks->SysclkFreq / 4000000 * us);
-    while(i)
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+
+    while(1)
     {
-        i--;
+        tnow = SysTick->VAL;
+        if(tnow != told)
+        {
+            if(tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+
+            if(tcnt >= ticks)
+            {
+                break;
+            }
+        }
     }
 }
 
-static void drv_i2c_gpio_init(const struct n32_i2c_bit_data* bd)
+static const struct rt_i2c_bit_ops n32_bit_ops_default =
 {
-    RCC_EnableAPB2PeriphClk(bd->sda.clk | bd->scl.clk, ENABLE);
-    GPIOInit((GPIO_Module*)bd->sda.port, GPIO_Mode_Out_OD, GPIO_Speed_10MHz, bd->sda.pin);
-    GPIOInit((GPIO_Module*)bd->scl.port, GPIO_Mode_Out_OD, GPIO_Speed_10MHz, bd->scl.pin);
+    .data     = RT_NULL,
+    .set_sda  = n32_set_sda,
+    .set_scl  = n32_set_scl,
+    .get_sda  = n32_get_sda,
+    .get_scl  = n32_get_scl,
+    .udelay   = n32_udelay,
+    .delay_us = 1,
+    .timeout  = 100
+};
 
-    GPIO_SetBits((GPIO_Module*)bd->sda.port, bd->sda.pin);
-    GPIO_SetBits((GPIO_Module*)bd->scl.port, bd->scl.pin);
+
+/**
+*\*\name    n32_i2c_bus_unlock
+*\*\fun     If i2c is locked, this function will unlock it.
+*\*\param   cfg
+*\*\return  RT_EOK indicates successful unlock
+**/
+static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
+{
+    rt_int32_t i = 0;
+
+    if(PIN_LOW == rt_pin_read(cfg->sda))
+    {
+        while(i++ < 9)
+        {
+            rt_pin_write(cfg->scl, PIN_HIGH);
+            n32_udelay(100);
+            rt_pin_write(cfg->scl, PIN_LOW);
+            n32_udelay(100);
+        }
+    }
+
+    if(PIN_LOW == rt_pin_read(cfg->sda))
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
 }
+#endif /* RT_USING_I2C_BITOPS */
 
-#else /* use hardware i2c */
+#ifdef RT_USING_HARDWARE_I2C 
 
 static uint32_t I2CTimeout = I2CT_LONG_TIMEOUT;
 
@@ -323,40 +419,35 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
     RT_NULL
 };
 
-#endif /* RT_USING_I2C_BITOPS */
+#endif /* RT_USING_HARDWARE_I2C */
 
 int rt_hw_i2c_init(void)
 {
 #ifdef RT_USING_I2C_BITOPS
+
+	  rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
+    rt_err_t result;
+
+    for(int i = 0; i < obj_num; i++)
     {
-        static struct rt_i2c_bus_device i2c_device;
-        static const struct n32_i2c_bit_data _i2c_bdata =
-        {
-            /* SCL */
-            {    I2C_SCL_CLK, I2C_SCL_PORT, I2C_SCL_PIN},
-            /* SDA */
-            {    I2C_SDA_CLK, I2C_SDA_PORT, I2C_SDA_PIN},
-        };
+        i2c_obj[i].ops           = n32_bit_ops_default;
+        i2c_obj[i].ops.data      = (void*)&soft_i2c_config[i];
+        i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
 
-        static const struct rt_i2c_bit_ops _i2c_bit_ops =
-        {
-            (void*)&_i2c_bdata,
-            gpio_set_sda,
-            gpio_set_scl,
-            gpio_get_sda,
-            gpio_get_scl,
-            gpio_udelay,
-            1,
-            100
-        };
+        n32_i2c_gpio_init(&i2c_obj[i]);
+        result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, soft_i2c_config[i].bus_name);
 
-        drv_i2c_gpio_init(&_i2c_bdata);
+        RT_ASSERT(result == RT_EOK);
+        n32_i2c_bus_unlock(&soft_i2c_config[i]);
 
-        i2c_device.priv = (void *)&_i2c_bit_ops;
-        rt_i2c_bit_add_bus(&i2c_device, I2C_BUS_NAME);
-    } 
-
-#else   /* register hardware I2C */
+        rt_kprintf("software simulation %s init done, pin scl: %d, pin sda %d",
+                   soft_i2c_config[i].bus_name,
+                   soft_i2c_config[i].scl,
+                   soft_i2c_config[i].sda);
+    }
+#endif /* RT_USING_I2C_BITOPS */
+		
+#ifdef RT_USING_HARDWARE_I2C
 
 #ifdef BSP_USING_I2C1
 #define I2C1_SPEED  400000
@@ -475,9 +566,9 @@ int rt_hw_i2c_init(void)
     rt_i2c_bus_device_register(&i2c_bus4.parent, "i2c4");
 #endif
 
-#endif /* RT_USING_I2C_BITOPS */
+#endif /* RT_USING_HARDWARE_I2C */
 
-    return 0;
+    return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
 
