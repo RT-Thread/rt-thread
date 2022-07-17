@@ -324,10 +324,12 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
+#ifndef __ICCARM__
 double difftime(time_t time1, time_t time2)
 {
     return (double)(time1 - time2);
 }
+#endif /* __ICCARM__ */
 RTM_EXPORT(difftime);
 
 RTM_EXPORT(strftime); /* inherent in the toolchain */
