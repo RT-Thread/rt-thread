@@ -76,6 +76,13 @@ if GetDepend(['RT_USING_QSPI']):
     src += ['mtb_shared/serial-flash/cy_serial_flash_qspi.c']
     src += ['TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_qspi_memslot.c']
 
+if GetDepend(['RT_USING_PWM']):
+    src += ['mtb-hal-cat1/source/cyhal_pwm.c']
+    src += ['mtb-hal-cat1/source/cyhal_timer.c']
+    src += ['mtb-hal-cat1/source/cyhal_tcpwm_common.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_tcpwm_pwm.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_tcpwm_counter.c']
+
 if GetDepend(['RT_USING_I2C']):
     src += ['mtb-hal-cat1/source/cyhal_i2c.c']
 

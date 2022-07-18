@@ -49,6 +49,51 @@ menu "On-chip Peripheral Drivers"
                 default y                
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM0
+            bool "Enable timer0 output pwm"
+            default n
+            if BSP_USING_PWM0
+                menuconfig BSP_USING_PWM0_CH7
+                    bool "Enable PWM0 channel7"
+                    default n
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT2
+                        bool "Enable PWM0-PORT2 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT5
+                        bool "Enable PWM0-PORT5 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT7
+                        bool "Enable PWM0-PORT7 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT9
+                        bool "Enable PWM0-PORT9 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT10
+                        bool "Enable PWM0-PORT10 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT12
+                        bool "Enable PWM0-PORT12 output pwm"
+                        default n
+                    endif
+            endif
+        endif
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
