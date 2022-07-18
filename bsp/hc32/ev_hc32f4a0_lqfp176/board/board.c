@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -81,6 +82,24 @@ void SystemClock_Config(void)
     CLK_SetSysClockSrc(CLK_SYSCLK_SRC_PLL);
 }
 
+/** Peripheral Clock Configuration
+*/
+static void PeripheralClock_Config(void)
+{
+#if defined(HC32F4A0)
+#if defined(BSP_USING_CAN1)
+    CLK_SetCANClockSrc(CLK_CAN1, CLK_CANCLK_SYSCLK_DIV6);
+#endif
+#if   defined(BSP_USING_CAN2)
+    CLK_SetCANClockSrc(CLK_CAN2, CLK_CANCLK_SYSCLK_DIV6);
+#endif
+
+#if defined(RT_USING_ADC)
+    CLK_SetPeriClockSrc(CLK_PERIPHCLK_PCLK);
+#endif
+#endif
+}
+
 /*******************************************************************************
  * Function Name  : SysTick_Configuration
  * Description    : Configures the SysTick for OS tick.
@@ -116,7 +135,7 @@ void SysTick_Handler(void)
 }
 
 /**
- * This function will initial GD32 board.
+ * This function will initial HC32 board.
  */
 void rt_hw_board_init()
 {
@@ -124,6 +143,7 @@ void rt_hw_board_init()
     LL_PERIPH_WE(EXAMPLE_PERIPH_WE);
 
     SystemClock_Config();
+    PeripheralClock_Config();
     /* Configure the SysTick */
     SysTick_Configuration();
 

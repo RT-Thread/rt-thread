@@ -71,7 +71,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_PLANTOWER     (12) /* Plantower */
 #define RT_SENSOR_VENDOR_AMS           (13) /* ams AG */
 #define RT_SENSOR_VENDOR_MAXIM         (14) /* Maxim Integrated */
-
+#define RT_SENSOR_VENDOR_MELEXIS       (15) /* Melexis */
 
 /* Sensor unit types */
 

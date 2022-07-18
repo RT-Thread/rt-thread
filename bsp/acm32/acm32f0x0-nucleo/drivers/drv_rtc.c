@@ -49,21 +49,21 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
-    struct tm *p_tm;
+    struct tm now;
 
-    p_tm = gmtime(&time_stamp);
-    if (p_tm->tm_year < 100)
+    gmtime_r(&time_stamp, &now);
+    if (now.tm_year < 100)
     {
         return -RT_ERROR;
     }
 
-    RTC_TimeStruct.u8_Seconds = dec2hex(p_tm->tm_sec);
-    RTC_TimeStruct.u8_Minutes = dec2hex(p_tm->tm_min);
-    RTC_TimeStruct.u8_Hours   = dec2hex(p_tm->tm_hour);
-    RTC_DateStruct.u8_Date    = dec2hex(p_tm->tm_mday);
-    RTC_DateStruct.u8_Month   = dec2hex(p_tm->tm_mon + 1);
-    RTC_DateStruct.u8_Year    = dec2hex(p_tm->tm_year - 100);
-    RTC_DateStruct.u8_WeekDay = dec2hex(p_tm->tm_wday) + 1;
+    RTC_TimeStruct.u8_Seconds = dec2hex(now.tm_sec);
+    RTC_TimeStruct.u8_Minutes = dec2hex(now.tm_min);
+    RTC_TimeStruct.u8_Hours   = dec2hex(now.tm_hour);
+    RTC_DateStruct.u8_Date    = dec2hex(now.tm_mday);
+    RTC_DateStruct.u8_Month   = dec2hex(now.tm_mon + 1);
+    RTC_DateStruct.u8_Year    = dec2hex(now.tm_year - 100);
+    RTC_DateStruct.u8_WeekDay = dec2hex(now.tm_wday) + 1;
 
     HAL_RTC_SetTime(&RTC_TimeStruct);
     HAL_RTC_SetDate(&RTC_DateStruct);

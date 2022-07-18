@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_STRING_H
+    bool "<string.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_STRING_H
+
+    # functions, TODO
+
+endif

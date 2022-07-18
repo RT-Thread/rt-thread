@@ -1,11 +1,15 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-04-28     CDT          first version
+ * Date           Author               Notes
+ * 2022-04-28     CDT                  first version
+ * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
+ * 2022-06-08     CDT                  fix a bug of RT_CAN_CMD_SET_FILTER
+ * 2022-06-15     lianghongquan        fix bug, FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
  */
 
 #include "drv_can.h"
@@ -20,7 +24,14 @@
 #endif
 
 #if defined (HC32F4A0)
-    #define FILTER_COUNT    (16)
+    #define FILTER_COUNT                                    (16)
+    #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
+    #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
+#endif
+
+#if defined (HC32F460)
+    #define FILTER_COUNT                                    (8)
+    #define CAN1_INT_SRC                                    (INT_SRC_CAN_INT)
 #endif
 
 enum
@@ -34,69 +45,78 @@ enum
     CAN_INDEX_MAX,
 };
 
-struct hc32_baud_rate_tab
+struct can_baud_rate_tab
 {
     rt_uint32_t baud_rate;
     stc_can_bit_time_config_t ll_sbt;
 };
 
-#if defined (HC32F4A0)
-static const struct hc32_baud_rate_tab can_baud_rate_tab[] =
+static const struct can_baud_rate_tab g_baudrate_tab[] =
 {
-    {CAN1MBaud,   {2, 16, 4, 4}},
-    {CAN800kBaud, {2, 20, 5, 4}},
-    {CAN500kBaud, {4, 16, 4, 4}},
-    {CAN250kBaud, {8, 16, 4, 4}},
-    {CAN125kBaud, {16, 16, 4, 4}},
-    {CAN100kBaud, {20, 16, 4, 4}},
-    {CAN50kBaud,  {40, 16, 4, 4}},
-    {CAN20kBaud,  {100, 16, 4, 4}},
-    {CAN10kBaud,  {200, 16, 4, 4}},
+    {CAN1MBaud,   CAN_BIT_TIME_CONFIG_1M_BAUD},
+    {CAN800kBaud, CAN_BIT_TIME_CONFIG_800K_BAUD},
+    {CAN500kBaud, CAN_BIT_TIME_CONFIG_500K_BAUD},
+    {CAN250kBaud, CAN_BIT_TIME_CONFIG_250K_BAUD},
+    {CAN125kBaud, CAN_BIT_TIME_CONFIG_125K_BAUD},
+    {CAN100kBaud, CAN_BIT_TIME_CONFIG_100K_BAUD},
+    {CAN50kBaud,  CAN_BIT_TIME_CONFIG_50K_BAUD},
+    {CAN20kBaud,  CAN_BIT_TIME_CONFIG_20K_BAUD},
+    {CAN10kBaud,  CAN_BIT_TIME_CONFIG_10K_BAUD},
 };
-#endif
 
 typedef struct
 {
     struct rt_can_device rt_can;
-    struct hc32_can_init_type init;
+    struct can_dev_init_params init;
     CM_CAN_TypeDef *instance;
     stc_can_init_t ll_init;
-    stc_can_filter_config_t *p_ll_can_filter_cfg;
-} hc32_drv_can;
+} can_device;
 
-static hc32_drv_can drv_can[] =
+static can_device g_can_dev_array[] =
 {
+#if defined (HC32F4A0)
 #ifdef BSP_USING_CAN1
     {
         {0},
-        CAN1_CONFIG,
+        CAN1_INIT_PARAMS,
         .instance = CM_CAN1,
     },
 #endif
 #ifdef BSP_USING_CAN2
     {
         {0},
-        CAN2_CONFIG,
+        CAN2_INIT_PARAMS,
         .instance = CM_CAN2,
     },
 #endif
+#endif
+
+#if defined (HC32F460)
+#ifdef BSP_USING_CAN1
+    {
+        {0},
+        CAN1_INIT_PARAMS,
+        .instance = CM_CAN,
+    },
+#endif
+#endif
 };
 
-static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
+static rt_uint32_t _get_can_baud_index(rt_uint32_t baud)
 {
     rt_uint32_t len, index;
 
-    len = sizeof(can_baud_rate_tab) / sizeof(can_baud_rate_tab[0]);
+    len = sizeof(g_baudrate_tab) / sizeof(g_baudrate_tab[0]);
     for (index = 0; index < len; index++)
     {
-        if (can_baud_rate_tab[index].baud_rate == baud)
+        if (g_baudrate_tab[index].baud_rate == baud)
             return index;
     }
 
     return 0; /* default baud is CAN1MBaud */
 }
 
-static rt_uint32_t get_can_work_mode(rt_uint32_t mode)
+static rt_uint32_t _get_can_work_mode(rt_uint32_t mode)
 {
     rt_uint32_t work_mode;
     switch (mode)
@@ -124,20 +144,20 @@ static rt_uint32_t get_can_work_mode(rt_uint32_t mode)
 static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg)
 {
     rt_uint32_t baud_index;
-    hc32_drv_can *hc32_can;
+    can_device *p_can_dev;
     rt_err_t rt_ret = RT_EOK;
 
     RT_ASSERT(can);
     RT_ASSERT(cfg);
-    hc32_can = (hc32_drv_can *)rt_container_of(can, hc32_drv_can, rt_can);
-    RT_ASSERT(hc32_can);
+    p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
+    RT_ASSERT(p_can_dev);
 
-    hc32_can->ll_init.u8WorkMode = get_can_work_mode(cfg->mode);
-    baud_index = get_can_baud_index(cfg->baud_rate);
-    hc32_can->ll_init.stcBitCfg = can_baud_rate_tab[baud_index].ll_sbt;
+    p_can_dev->ll_init.u8WorkMode = _get_can_work_mode(cfg->mode);
+    baud_index = _get_can_baud_index(cfg->baud_rate);
+    p_can_dev->ll_init.stcBitCfg = g_baudrate_tab[baud_index].ll_sbt;
 
     /* init can */
-    int32_t ret = CAN_Init(hc32_can->instance, &hc32_can->ll_init);
+    int32_t ret = CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
     if (ret != LL_OK)
     {
         rt_ret = RT_EINVAL;
@@ -146,7 +166,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     return rt_ret;
 }
 
-static uint16_t get_filter_idx(struct rt_can_filter_config *filter_cfg)
+static uint16_t _get_filter_idx(struct rt_can_filter_config *filter_cfg)
 {
     uint16_t u16FilterSelected = 0;
 
@@ -179,13 +199,13 @@ static uint16_t get_filter_idx(struct rt_can_filter_config *filter_cfg)
 
 static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 {
-    hc32_drv_can *hc32_can;
+    can_device *p_can_dev;
     rt_uint32_t argval;
     struct rt_can_filter_config *filter_cfg;
 
     RT_ASSERT(can != RT_NULL);
-    hc32_can = (hc32_drv_can *)rt_container_of(can, hc32_drv_can, rt_can);
-    RT_ASSERT(hc32_can);
+    p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
+    RT_ASSERT(p_can_dev);
 
     switch (cmd)
     {
@@ -194,20 +214,20 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         switch (argval)
         {
         case RT_DEVICE_FLAG_INT_RX:
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX_BUF_WARN, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX_BUF_FULL, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX_OVERRUN, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_WARN, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_FULL, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_OVERRUN, DISABLE);
             break;
         case RT_DEVICE_FLAG_INT_TX:
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_STB_TX, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_PTB_TX, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_STB_TX, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_PTB_TX, DISABLE);
             break;
         case RT_DEVICE_CAN_INT_ERR:
-            CAN_IntCmd(hc32_can->instance, CAN_INT_ERR_INT, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_INT_ARBITR_LOST, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_INT_ERR_PASSIVE, DISABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_INT_BUS_ERR, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ERR_INT, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ARBITR_LOST, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ERR_PASSIVE, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_BUS_ERR, DISABLE);
             break;
         default:
             break;
@@ -218,20 +238,20 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         switch (argval)
         {
         case RT_DEVICE_FLAG_INT_RX:
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX_BUF_WARN, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX_BUF_FULL, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_RX_OVERRUN, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_WARN, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_FULL, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_OVERRUN, ENABLE);
             break;
         case RT_DEVICE_FLAG_INT_TX:
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_STB_TX, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_FLAG_PTB_TX, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_STB_TX, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_PTB_TX, ENABLE);
             break;
         case RT_DEVICE_CAN_INT_ERR:
-            CAN_IntCmd(hc32_can->instance, CAN_INT_ERR_INT, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_INT_ARBITR_LOST, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_INT_ERR_PASSIVE, ENABLE);
-            CAN_IntCmd(hc32_can->instance, CAN_INT_BUS_ERR, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ERR_INT, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ARBITR_LOST, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ERR_PASSIVE, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_BUS_ERR, ENABLE);
             break;
         default:
             break;
@@ -249,17 +269,30 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             RT_ASSERT(filter_cfg->count <= FILTER_COUNT);
 
             /* get default filter */
-            if (hc32_can->p_ll_can_filter_cfg)
+            if (p_can_dev->ll_init.pstcFilter)
             {
-                hc32_can->ll_init.u16FilterSelect = get_filter_idx(filter_cfg);
+                p_can_dev->ll_init.u16FilterSelect = _get_filter_idx(filter_cfg);
                 for (int i = 0; i < filter_cfg->count; i++)
                 {
-                    hc32_can->p_ll_can_filter_cfg[i].u32ID = filter_cfg->items[i].id;
-                    hc32_can->p_ll_can_filter_cfg[i].u32IDMask = filter_cfg->items[i].mask;
-                    hc32_can->p_ll_can_filter_cfg[i].u32IDType = filter_cfg->items[i].ide;
+                    p_can_dev->ll_init.pstcFilter[i].u32ID = filter_cfg->items[i].id & 0x1FFFFFFF;
+                    /* rt-thread CAN mask, 1 mean filer, 0 mean ignore. *
+                     * HDSC HC32 CAN mask, 0 mean filer, 1 mean ignore. */
+                    p_can_dev->ll_init.pstcFilter[i].u32IDMask = (~filter_cfg->items[i].mask) & 0x1FFFFFFF;
+                    switch (filter_cfg->items[i].ide)
+                    {
+                        case (RT_CAN_STDID):
+                            p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_STD;
+                            break;
+                        case (RT_CAN_EXTID):
+                            p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_EXT;
+                            break;
+                        default:
+                            p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_STD_EXT;
+                            break;
+                    }
                 }
             }
-            (void)CAN_Init(hc32_can->instance, &hc32_can->ll_init);
+            (void)CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
             break;
         }
     case RT_CAN_CMD_SET_MODE:
@@ -271,10 +304,10 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             return -RT_ERROR;
         }
-        if (argval != hc32_can->rt_can.config.mode)
+        if (argval != p_can_dev->rt_can.config.mode)
         {
-            hc32_can->rt_can.config.mode = argval;
-            _can_config(can, &hc32_can->rt_can.config);
+            p_can_dev->rt_can.config.mode = argval;
+            _can_config(can, &p_can_dev->rt_can.config);
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
@@ -291,10 +324,10 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             return -RT_ERROR;
         }
-        if (argval != hc32_can->rt_can.config.baud_rate)
+        if (argval != p_can_dev->rt_can.config.baud_rate)
         {
-            hc32_can->rt_can.config.baud_rate = argval;
-            _can_config(can, &hc32_can->rt_can.config);
+            p_can_dev->rt_can.config.baud_rate = argval;
+            _can_config(can, &p_can_dev->rt_can.config);
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
@@ -304,21 +337,21 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             return -RT_ERROR;
         }
-        if (argval != hc32_can->rt_can.config.privmode)
+        if (argval != p_can_dev->rt_can.config.privmode)
         {
-            hc32_can->rt_can.config.privmode = argval;
-            return _can_config(can, &hc32_can->rt_can.config);
+            p_can_dev->rt_can.config.privmode = argval;
+            return _can_config(can, &p_can_dev->rt_can.config);
         }
         break;
     case RT_CAN_CMD_GET_STATUS:
     {
         struct rt_can_status *rt_can_stat = (struct rt_can_status *)arg;
         stc_can_error_info_t stcErr = {0};
-        CAN_GetErrorInfo(hc32_can->instance, &stcErr);
+        CAN_GetErrorInfo(p_can_dev->instance, &stcErr);
         rt_can_stat->rcverrcnt = stcErr.u8RxErrorCount;
         rt_can_stat->snderrcnt = stcErr.u8TxErrorCount;
         rt_can_stat->lasterrtype = stcErr.u8ErrorType;
-        rt_can_stat->errcode = CAN_GetStatusValue(hc32_can->instance);
+        rt_can_stat->errcode = CAN_GetStatusValue(p_can_dev->instance);
 
     }
     break;
@@ -336,10 +369,9 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     int32_t ll_ret;
 
     RT_ASSERT(can != RT_NULL);
-    hc32_drv_can *hc32_can = (hc32_drv_can *)rt_container_of(can, hc32_drv_can, rt_can);
-    RT_ASSERT(hc32_can);
+    can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
+    RT_ASSERT(p_can_dev);
 
-    /*check select mailbox  is empty */
     stc_tx_frame.u32ID = pmsg->id;
     if (RT_CAN_DTR == pmsg->rtr)
     {
@@ -351,16 +383,18 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     }
     /* Set up the DLC */
     stc_tx_frame.DLC = pmsg->len & 0x0FU;
+    /* Set up the IDE */
+    stc_tx_frame.IDE = pmsg->ide;
     /* Set up the data field */
     rt_memcpy(&stc_tx_frame.au8Data, pmsg->data, sizeof(stc_tx_frame.au8Data));
-
-    ll_ret = CAN_FillTxFrame(hc32_can->instance, CAN_TX_BUF_PTB, &stc_tx_frame);
+    ll_ret = CAN_FillTxFrame(p_can_dev->instance, CAN_TX_BUF_PTB, &stc_tx_frame);
     if (ll_ret != LL_OK)
     {
         return RT_ERROR;
     }
     /* Request transmission */
-    CAN_StartTx(hc32_can->instance, CAN_TX_REQ_PTB);
+    CAN_StartTx(p_can_dev->instance, CAN_TX_REQ_PTB);
+
     return RT_EOK;
 }
 
@@ -371,17 +405,17 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     stc_can_rx_frame_t ll_rx_frame;
 
     RT_ASSERT(can != RT_NULL);
-    hc32_drv_can *hc32_can = (hc32_drv_can *)rt_container_of(can, hc32_drv_can, rt_can);
-    RT_ASSERT(hc32_can);
+    can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
+    RT_ASSERT(p_can_dev);
 
     pmsg = (struct rt_can_msg *) buf;
-
     /* get data */
-    ll_ret = CAN_GetRxFrame(hc32_can->instance, &ll_rx_frame);
+    ll_ret = CAN_GetRxFrame(p_can_dev->instance, &ll_rx_frame);
     if (ll_ret != LL_OK)
         return -RT_ERROR;
+
     /* get id */
-    if (CAN_ID_STD == ll_rx_frame.IDE)
+    if (0 == ll_rx_frame.IDE)
     {
         pmsg->ide = RT_CAN_STDID;
     }
@@ -416,123 +450,176 @@ static const struct rt_can_ops _can_ops =
     _can_recvmsg,
 };
 
-static void can_isr(hc32_drv_can *hc32_can)
+static void _can_isr(can_device *p_can_dev)
 {
     stc_can_error_info_t stcErr;
 
-    (void)CAN_GetErrorInfo(hc32_can->instance, &stcErr);
+    (void)CAN_GetErrorInfo(p_can_dev->instance, &stcErr);
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_BUS_OFF) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_OFF) == SET)
     {
-        DDL_Printf("BUS OFF.\r\n");
+        /* BUS OFF. */
+    }
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ERR_INT) == SET)
+    {
+        /* ERROR. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ERR_INT);
+    }
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) == SET)
+    {
+        /* BUS ERROR. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR);
+    }
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ERR_PASSIVE) == SET)
+    {
+        /* error-passive to error-active or error-active to error-passive. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ERR_PASSIVE);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_RX_BUF_OVF) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_OVF) == SET)
     {
-        DDL_Printf("RX overflow.\r\n");
-        rt_hw_can_isr(&hc32_can->rt_can, RT_CAN_EVENT_RXOF_IND);
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_RX_BUF_OVF);
+        /* RX overflow. */
+        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_RXOF_IND);
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_OVF);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_TX_BUF_FULL) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TX_BUF_FULL) == SET)
     {
-        DDL_Printf("TX buffer full.\r\n");
+        /* TX buffer full. */
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_TX_ABORTED) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED) == SET)
     {
-        DDL_Printf("TX aborted.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_TX_ABORTED);
+        /* TX aborted. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_ARBITR_LOST) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET)
     {
-        rt_hw_can_isr(&hc32_can->rt_can, RT_CAN_EVENT_TX_FAIL);
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_ARBITR_LOST);
+        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_STB_TX) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_STB_TX) == SET)
     {
-        DDL_Printf("STB transmitted.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_STB_TX);
-        rt_hw_can_isr(&hc32_can->rt_can, RT_CAN_EVENT_TX_DONE);
+        /* STB transmitted. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_STB_TX);
+        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_DONE);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_PTB_TX) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_PTB_TX) == SET)
     {
-        DDL_Printf("PTB transmitted.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_PTB_TX);
-        rt_hw_can_isr(&hc32_can->rt_can, RT_CAN_EVENT_TX_DONE);
+        /* PTB transmitted. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_PTB_TX);
+        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_DONE);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_RX) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX) == SET)
     {
-        /* Received frame can be read here. */
-        DDL_Printf("Received a frame.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_RX);
-        rt_hw_can_isr(&hc32_can->rt_can, RT_CAN_EVENT_RX_IND);
+        /* Received a frame. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX);
+        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_RX_IND);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_RX_BUF_WARN) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_WARN) == SET)
     {
-        /* Received frames can be read here. */
-        DDL_Printf("RX buffer warning.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_RX_BUF_WARN);
+        /* RX buffer warning. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_WARN);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_RX_BUF_FULL) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_FULL) == SET)
     {
-        /* Received frames can be read here. */
-        DDL_Printf("RX buffer full.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_RX_BUF_FULL);
+        /* RX buffer full. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_FULL);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_RX_OVERRUN) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_OVERRUN) == SET)
     {
-        DDL_Printf("RX buffer overrun.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_RX_OVERRUN);
+        /* RX buffer overrun. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_OVERRUN);
     }
 
-    if (CAN_GetStatus(hc32_can->instance, CAN_FLAG_TEC_REC_WARN) == SET)
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TEC_REC_WARN) == SET)
     {
-        DDL_Printf("TEC or REC reached warning limit.\r\n");
-        CAN_ClearStatus(hc32_can->instance, CAN_FLAG_TEC_REC_WARN);
+        /* TEC or REC reached warning limit. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_TEC_REC_WARN);
     }
 
-    if (CAN_TTC_GetStatus(hc32_can->instance, CAN_TTC_FLAG_TIME_TRIG) == SET)
+    if (CAN_TTC_GetStatus(p_can_dev->instance, CAN_TTC_FLAG_TIME_TRIG) == SET)
     {
-        DDL_Printf("Time trigger interrupt.\r\n");
-        CAN_TTC_ClearStatus(hc32_can->instance, CAN_TTC_FLAG_TIME_TRIG);
+        /* Time trigger interrupt. */
+        CAN_TTC_ClearStatus(p_can_dev->instance, CAN_TTC_FLAG_TIME_TRIG);
     }
 
-    if (CAN_TTC_GetStatus(hc32_can->instance, CAN_TTC_FLAG_TRIG_ERR) == SET)
+    if (CAN_TTC_GetStatus(p_can_dev->instance, CAN_TTC_FLAG_TRIG_ERR) == SET)
     {
-        DDL_Printf("Trigger error interrupt.\r\n");
+        /* Trigger error interrupt. */
     }
 
-    if (CAN_TTC_GetStatus(hc32_can->instance, CAN_TTC_FLAG_WATCH_TRIG) == SET)
+    if (CAN_TTC_GetStatus(p_can_dev->instance, CAN_TTC_FLAG_WATCH_TRIG) == SET)
     {
-        DDL_Printf("Watch trigger interrupt.\r\n");
-        CAN_TTC_ClearStatus(hc32_can->instance, CAN_TTC_FLAG_WATCH_TRIG);
+        /* Watch trigger interrupt. */
+        CAN_TTC_ClearStatus(p_can_dev->instance, CAN_TTC_FLAG_WATCH_TRIG);
     }
 }
 #if defined(BSP_USING_CAN1)
-static void can1_irq_handler(void)
+static void _can1_irq_handler(void)
 {
     rt_interrupt_enter();
-    can_isr(&drv_can[CAN1_INDEX]);
+    _can_isr(&g_can_dev_array[CAN1_INDEX]);
     rt_interrupt_leave();
 }
 #endif
 
 #if defined(BSP_USING_CAN2)
-static void can2_irq_handler(void)
+static void _can2_irq_handler(void)
 {
     rt_interrupt_enter();
-    can_isr(&drv_can[CAN2_INDEX]);
+    _can_isr(&g_can_dev_array[CAN2_INDEX]);
     rt_interrupt_leave();
 }
 #endif
+
+static void _can_clock_enable(void)
+{
+#if defined(HC32F4A0)
+#if defined(BSP_USING_CAN1)
+    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN1, ENABLE);
+#endif
+#if   defined(BSP_USING_CAN2)
+    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN2, ENABLE);
+#endif
+#endif
+
+#if defined(HC32F460)
+#if defined(BSP_USING_CAN1)
+    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN, ENABLE);
+#endif
+#endif
+}
+
+static void _can_irq_config(void)
+{
+    struct hc32_irq_config irq_config;
+#if defined(BSP_USING_CAN1)
+    irq_config.irq_num = BSP_CAN1_IRQ_NUM;
+    irq_config.int_src = CAN1_INT_SRC;
+    irq_config.irq_prio = BSP_CAN1_IRQ_PRIO;
+    /* register interrupt */
+    hc32_install_irq_handler(&irq_config,
+                             _can1_irq_handler,
+                             RT_TRUE);
+#endif
+#if defined(BSP_USING_CAN2)
+    irq_config.irq_num = BSP_CAN2_IRQ_NUM;
+    irq_config.int_src = CAN2_INT_SRC;
+    irq_config.irq_prio = BSP_CAN2_IRQ_PRIO;
+    /* register interrupt */
+    hc32_install_irq_handler(&irq_config,
+                             _can2_irq_handler,
+                             RT_TRUE);
+#endif
+}
 
 extern rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx);
 extern void CanPhyEnable(void);
@@ -545,63 +632,33 @@ int rt_hw_can_init(void)
     rt_can_config.maxhdr = FILTER_COUNT;
 #endif
 
-    struct hc32_irq_config irq_config;
-#if defined(BSP_USING_CAN1)
-    irq_config.irq_num = CAN1_INT_IRQn;
-    irq_config.int_src = CAN1_INT_SRC;
-    irq_config.irq_prio = CAN1_INT_PRIO;
-    /* register interrupt */
-    hc32_install_irq_handler(&irq_config,
-                             can1_irq_handler,
-                             RT_TRUE);
-#endif
-#if defined(BSP_USING_CAN2)
-    irq_config.irq_num = CAN2_INT_IRQn;
-    irq_config.int_src = CAN2_INT_SRC;
-    irq_config.irq_prio = CAN2_INT_PRIO;
-    /* register interrupt */
-    hc32_install_irq_handler(&irq_config,
-                             can2_irq_handler,
-                             RT_TRUE);
-#endif
-
-#if defined(HC32F4A0)
-#if defined(BSP_USING_CAN1)
-    CLK_SetCANClockSrc(CLK_CAN1, CLK_CANCLK_SYSCLK_DIV6);
-    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN1, ENABLE);
-#endif
-#if   defined(BSP_USING_CAN2)
-    CLK_SetCANClockSrc(CLK_CAN2, CLK_CANCLK_SYSCLK_DIV6);
-    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN2, ENABLE);
-#endif
-#endif
-
+    _can_irq_config();
+    _can_clock_enable();
     CanPhyEnable();
     int result = RT_EOK;
     uint32_t i = 0;
     for (; i < CAN_INDEX_MAX; i++)
     {
-        if (drv_can[i].p_ll_can_filter_cfg == RT_NULL)
+        CAN_StructInit(&g_can_dev_array[i].ll_init);
+        if (g_can_dev_array[i].ll_init.pstcFilter == RT_NULL)
         {
-            drv_can[i].p_ll_can_filter_cfg = (stc_can_filter_config_t *)rt_malloc(sizeof(stc_can_filter_config_t) * FILTER_COUNT);
+            g_can_dev_array[i].ll_init.pstcFilter = (stc_can_filter_config_t *)rt_malloc(sizeof(stc_can_filter_config_t) * FILTER_COUNT);
         }
-        RT_ASSERT((drv_can[i].p_ll_can_filter_cfg != RT_NULL));
+        RT_ASSERT((g_can_dev_array[i].ll_init.pstcFilter != RT_NULL));
 
-        rt_memset(drv_can[i].p_ll_can_filter_cfg, 0, sizeof(stc_can_filter_config_t) * FILTER_COUNT);
-        drv_can[i].p_ll_can_filter_cfg[0].u32ID = 0U;
-        drv_can[i].p_ll_can_filter_cfg[0].u32IDMask = 0x1FFFFFFF;
-        drv_can[i].p_ll_can_filter_cfg[0].u32IDType = CAN_ID_STD;
-        CAN_StructInit(&drv_can[i].ll_init);
-        drv_can[i].ll_init.pstcFilter =  &drv_can[i].p_ll_can_filter_cfg[0];
-        drv_can[i].ll_init.u16FilterSelect = CAN_FILTER1;
-        drv_can[i].rt_can.config = rt_can_config;
+        rt_memset(g_can_dev_array[i].ll_init.pstcFilter, 0, sizeof(stc_can_filter_config_t) * FILTER_COUNT);
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32ID = 0U;
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32IDMask = 0x1FFFFFFF;
+        g_can_dev_array[i].ll_init.pstcFilter[0].u32IDType = CAN_ID_STD_EXT;
+        g_can_dev_array[i].ll_init.u16FilterSelect = CAN_FILTER1;
+        g_can_dev_array[i].rt_can.config = rt_can_config;
 
-        /* register CAN1 device */
-        rt_hw_board_can_init(drv_can[i].instance);
-        rt_hw_can_register(&drv_can[i].rt_can,
-                           drv_can[i].init.name,
+        /* register CAN device */
+        rt_hw_board_can_init(g_can_dev_array[i].instance);
+        rt_hw_can_register(&g_can_dev_array[i].rt_can,
+                           g_can_dev_array[i].init.name,
                            &_can_ops,
-                           &drv_can[i]);
+                           &g_can_dev_array[i]);
     }
 
     return result;

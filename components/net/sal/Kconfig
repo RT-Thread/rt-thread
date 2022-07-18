@@ -12,27 +12,19 @@ if RT_USING_SAL
         help
             The ability that check internet status is provided by RT-Thread.
 
-    if RT_USING_LWIP || AT_USING_SOCKET
+    menu "Docking with protocol stacks"
+        config SAL_USING_LWIP
+            bool "Docking with lwIP stack"
+            default n
 
-        menu "protocol stack implement"
+        config SAL_USING_AT
+            bool "Docking with AT commands stack"
+            default n
 
-            config SAL_USING_LWIP
-                bool "Support lwIP stack"
-                default y
-                depends on RT_USING_LWIP
-
-            config SAL_USING_AT
-                bool "Support AT Commands stack"
-                default y
-                depends on AT_USING_SOCKET
-
-            config SAL_USING_TLS
-                bool "Support MbedTLS protocol"
-                default y
-                depends on PKG_USING_MBEDTLS
-        endmenu
-
-    endif
+        config SAL_USING_TLS
+            bool "Docking with MbedTLS protocol"
+            default n
+    endmenu
 
     config SAL_USING_POSIX
         bool

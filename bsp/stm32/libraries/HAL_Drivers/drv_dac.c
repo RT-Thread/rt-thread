@@ -114,7 +114,8 @@ static rt_uint8_t stm32_dac_get_resolution(struct rt_dac_device *device)
     stm32_dac_handler = device->parent.user_data;
     (void)stm32_dac_handler;
 
-    return 12; /* TODO */
+    /* Only has supported DAC_ALIGN_12B_R, so it will return 12 bits */
+    return 12;
 }
 
 static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)

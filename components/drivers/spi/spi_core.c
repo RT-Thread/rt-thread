@@ -300,7 +300,6 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
     else
     {
         rt_set_errno(-RT_EIO);
-
         return 0;
     }
 

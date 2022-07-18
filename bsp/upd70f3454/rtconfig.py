@@ -15,7 +15,7 @@ if  CROSS_TOOL == 'gcc':
     print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
-    PLATFORM 	= 'iar'
+    PLATFORM  = 'iccarm'
     EXEC_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation_0'
 elif CROSS_TOOL == 'keil':
     print('================ERROR============================')
@@ -56,7 +56,7 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O srec $TARGET rtthread.mot\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccv850'
     AS = 'av850'

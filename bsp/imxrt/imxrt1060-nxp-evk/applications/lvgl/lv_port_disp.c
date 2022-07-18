@@ -15,9 +15,9 @@
 #include <drv_log.h>
 
 #if LV_USE_NXP_SOC
-    #include "fsl_gpio.h"
-    #include "fsl_elcdif.h"
-    #include "fsl_cache.h"
+#include "fsl_gpio.h"
+#include "fsl_elcdif.h"
+#include "fsl_cache.h"
 #endif
 
 /*A static or global variable to store the buffers*/
@@ -26,15 +26,7 @@ static lv_disp_draw_buf_t disp_buf;
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
 /* Macros for panel. */
-#define LCD_WIDTH             480
-#define LCD_HEIGHT            272
 #define LCD_FB_BYTE_PER_PIXEL 2
-#define LCD_HSW 41
-#define LCD_HFP 4
-#define LCD_HBP 8
-#define LCD_VSW 10
-#define LCD_VFP 4
-#define LCD_VBP 2
 #define LCD_POL_FLAGS \
     (kELCDIF_DataEnableActiveHigh | kELCDIF_VsyncActiveLow | kELCDIF_HsyncActiveLow | kELCDIF_DriveDataOnRisingClkEdge)
 #define LCD_LCDIF_DATA_BUS kELCDIF_DataBus16Bit
@@ -203,8 +195,6 @@ void LCDIF_IRQHandler(void)
 
 void lv_port_disp_init(void)
 {
-    static lv_disp_draw_buf_t disp_buf;
-
     lv_disp_draw_buf_init(&disp_buf, s_frameBuffer[0], s_frameBuffer[1], LCD_WIDTH * LCD_HEIGHT);
 
     /*-------------------------
@@ -227,9 +217,9 @@ void lv_port_disp_init(void)
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = lcd_fb_flush;
 
-    #if LV_USE_GPU_NXP_PXP
+#if LV_USE_GPU_NXP_PXP
     disp_drv.clean_dcache_cb = DEMO_CleanInvalidateCache;
-    #endif
+#endif
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;

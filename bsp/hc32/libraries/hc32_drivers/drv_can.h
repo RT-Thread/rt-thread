@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,8 +22,8 @@ extern "C" {
 
 
 
-/* stm32 can device */
-struct hc32_can_init_type
+/* hc32 can device */
+struct can_dev_init_params
 {
     char *name;
 };

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,71 +47,7 @@ rt_err_t rt_hw_board_uart_init(CM_USART_TypeDef *USARTx)
 }
 #endif
 
-#if defined(RT_USING_PWM)
-rt_err_t rt_hw_board_pwm_init(CM_TMRA_TypeDef *TMRAx)
-{
-    rt_err_t result = RT_EOK;
-
-    switch ((rt_uint32_t)TMRAx)
-    {
-#if defined(BSP_USING_PWM1)
-    case (rt_uint32_t)CM_TMRA_1:
-#if defined(BSP_USING_PWM1_CH1)
-        GPIO_SetFunc(PWM1_CH1_PORT, PWM1_CH1_PIN, PWM1_CH1_FUNC);
-#endif
-#if defined(BSP_USING_PWM1_CH2)
-        GPIO_SetFunc(PWM1_CH2_PORT, PWM1_CH2_PIN, PWM1_CH2_FUNC);
-#endif
-        break;
-#endif
-    default:
-        result = -RT_ERROR;
-        break;
-    }
-
-    return result;
-}
-#endif
-
-#if defined(RT_USING_PULSE_ENCODER)
-rt_err_t rt_hw_board_pulse_encoder_init(CM_TMRA_TypeDef *TMRAx)
-{
-    rt_err_t result = RT_EOK;
-
-    switch ((rt_uint32_t)TMRAx)
-    {
-#if defined(BSP_USING_PULSE_ENCODER9)
-    case (rt_uint32_t)CM_TMRA_9:
-        GPIO_SetFunc(PULSE_ENCODER9_CLKA_PORT, PULSE_ENCODER9_CLKA_PIN, PULSE_ENCODER9_CLKA_FUNC);
-        GPIO_SetFunc(PULSE_ENCODER9_CLKB_PORT, PULSE_ENCODER9_CLKB_PIN, PULSE_ENCODER9_CLKB_FUNC);
-        break;
-#endif
-    default:
-        result = -RT_ERROR;
-        break;
-    }
-
-    return result;
-}
-#endif
-
 #if defined(RT_USING_ADC)
-void rt_hw_board_adc_clock_init(void)
-{
-    CLK_SetPeriClockSrc(CLK_PERIPHCLK_PCLK);
-
-    /* 1. Enable ADC peripheral clock. */
-#if defined(BSP_USING_ADC1)
-    FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC1, ENABLE);
-#endif
-#if defined(BSP_USING_ADC2)
-    FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC2, ENABLE);
-#endif
-#if defined(BSP_USING_ADC3)
-    FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_ADC3, ENABLE);
-#endif
-}
-
 rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
 {
     rt_err_t result = RT_EOK;
@@ -122,19 +59,16 @@ rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
     {
 #if defined(BSP_USING_ADC1)
     case (rt_uint32_t)CM_ADC1:
-
         (void)GPIO_Init(ADC1_CH_PORT, ADC1_CH_PIN, &stcGpioInit);
         break;
 #endif
 #if defined(BSP_USING_ADC2)
     case (rt_uint32_t)CM_ADC2:
-
         (void)GPIO_Init(ADC2_CH_PORT, ADC2_CH_PIN, &stcGpioInit);
         break;
 #endif
 #if defined(BSP_USING_ADC3)
     case (rt_uint32_t)CM_ADC3:
-
         (void)GPIO_Init(ADC3_CH_PORT, ADC3_CH_PIN, &stcGpioInit);
         break;
 #endif

@@ -944,22 +944,11 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 DWORD get_fattime(void)
 {
     DWORD fat_time = 0;
-
     time_t now;
-    struct tm *p_tm;
     struct tm tm_now;
 
-    /* get current time */
     now = time(RT_NULL);
-
-    /* lock scheduler. */
-    rt_enter_critical();
-    /* converts calendar time time into local time. */
-    p_tm = gmtime(&now);
-    /* copy the statically located variable */
-    rt_memcpy(&tm_now, p_tm, sizeof(struct tm));
-    /* unlock scheduler. */
-    rt_exit_critical();
+    gmtime_r(&now, &tm_now);
 
     fat_time = (DWORD)(tm_now.tm_year - 80) << 25 |
                (DWORD)(tm_now.tm_mon + 1)   << 21 |

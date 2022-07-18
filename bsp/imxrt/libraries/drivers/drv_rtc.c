@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <sys/time.h>
-
 #ifdef BSP_USING_RTC
 
 #define LOG_TAG             "drv.rtc"
@@ -46,18 +45,18 @@ static time_t get_timestamp(void)
 
 static int set_timestamp(time_t timestamp)
 {
-    struct tm *p_tm;
+    struct tm now;
     snvs_hp_rtc_datetime_t rtcDate = {0};
 
-    p_tm = gmtime(&timestamp);
+    gmtime_r(&timestamp, &now);
 
-    rtcDate.second = p_tm->tm_sec ;
-    rtcDate.minute = p_tm->tm_min ;
-    rtcDate.hour   = p_tm->tm_hour;
+    rtcDate.second = now.tm_sec ;
+    rtcDate.minute = now.tm_min ;
+    rtcDate.hour   = now.tm_hour;
 
-    rtcDate.day    = p_tm->tm_mday;
-    rtcDate.month  = p_tm->tm_mon  + 1;
-    rtcDate.year   = p_tm->tm_year + 1900;
+    rtcDate.day    = now.tm_mday;
+    rtcDate.month  = now.tm_mon  + 1;
+    rtcDate.year   = now.tm_year + 1900;
 
     if (SNVS_HP_RTC_SetDatetime(SNVS, &rtcDate) != kStatus_Success)
     {

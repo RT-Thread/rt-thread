@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
  * 2019-02-01     yuneizhilin  fix the stm32_adc_init function initialization issue
  * 2020-06-17     thread-liu   Porting for stm32mp1xx
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2022-05-22     Stanley Lwin Add stm32_adc_get_vref
  */
 
 #include <board.h>
@@ -72,11 +73,12 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
 static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
 {
-    ADC_HandleTypeDef *stm32_adc_handler;
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F3)
+    return 12;
+#else
+    ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
 
     RT_ASSERT(device != RT_NULL);
-
-    stm32_adc_handler = device->parent.user_data;
 
     switch(stm32_adc_handler->Init.Resolution)
     {
@@ -91,6 +93,7 @@ static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
         default:
             return 0;
     }
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F3) */
 }
 
 static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
@@ -168,6 +171,12 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
     }
 
     return stm32_channel;
+}
+
+static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
+{
+    RT_ASSERT(device);
+    return 3300;
 }
 
 static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
@@ -285,6 +294,7 @@ static const struct rt_adc_ops stm_adc_ops =
     .enabled = stm32_adc_enabled,
     .convert = stm32_adc_get_value,
     .get_resolution = stm32_adc_get_resolution,
+    .get_vref = stm32_adc_get_vref,
 };
 
 static int stm32_adc_init(void)

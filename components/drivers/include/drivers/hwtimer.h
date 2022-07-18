@@ -10,7 +10,6 @@
 #define __HWTIMER_H__
 
 #include <rtthread.h>
-#include <rtdevice.h>
 
 #ifdef __cplusplus
 extern "C" {

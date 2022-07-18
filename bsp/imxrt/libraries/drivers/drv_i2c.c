@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -322,6 +322,9 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 break;
             }
 
+            // while((LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterBusBusyFlag))
+            // {
+            // }
             if(LPI2C_MasterWaitForTxFifoAllEmpty(imxrt_i2c->I2C) != kStatus_Success)
             {
                 i = 0;

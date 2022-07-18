@@ -19,28 +19,53 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config SOC_SIMULATOR
-    bool 
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
-config RT_USING_DFS_WINSHAREDIR
-    bool "Enable shared file system between windows"
-    select RT_USING_POSIX_FS
-    default n
+menu "Peripheral Drivers"
 
-config BSP_USING_LVGL
-    bool "Enable LVGL for LCD"
-    select PKG_USING_LVGL
-    select PKG_USING_LV_MUSIC_DEMO
-    default n
+    config RT_USING_DFS_WINSHAREDIR
+        bool "Enable shared file system between Windows"
+        select RT_USING_POSIX_FS
+        default y
 
-if BSP_USING_LVGL
-    config BSP_LCD_WIDTH
-        int "LCD width"
-        default 800
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default y
 
-    config BSP_LCD_HEIGHT
-        int "LCD height"
-        default 480
-endif
+    config BSP_USING_ALARM
+        bool "Enable RTC alarm"
+        select RT_USING_ALARM
+        depends on BSP_USING_RTC
+        default n
+
+    config BSP_USING_SOCKET
+        bool "Enable BSD Socket"
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
+        default y
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            select PKG_USING_LV_MUSIC_DEMO
+            default n
+
+        config BSP_LCD_WIDTH
+            int "LCD width"
+            default 800
+
+        config BSP_LCD_HEIGHT
+            int "LCD height"
+            default 480
+    endif
+
+endmenu

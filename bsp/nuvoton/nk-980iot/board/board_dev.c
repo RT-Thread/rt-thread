@@ -157,18 +157,21 @@ struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM] =
 {
     [0] =
     {
-        .block_start =  0,
+        /*nand0: U-boot, env, rtthread*/
+        .block_start = 0,
         .block_end   = 63,
         .block_total = 64,
     },
     [1] =
     {
+        /*nand1: for filesystem mounting*/
         .block_start = 64,
         .block_end   = 1023,
-        .block_total = 1000,
+        .block_total = 960,
     },
     [2] =
     {
+        /*nand2: Whole blocks size, overlay*/
         .block_start = 0,
         .block_end   = 1023,
         .block_total = 1024,

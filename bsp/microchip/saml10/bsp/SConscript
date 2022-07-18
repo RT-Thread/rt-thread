@@ -28,13 +28,13 @@ src += [cwd + '/atmel_start.c']
 src += [cwd + '/driver_init.c']
 
 #add for startup script
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/gcc/system_saml10e16a.c']
     src += [cwd + '/gcc/gcc/startup_saml10e16a.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/gcc/system_saml10e16a.c']
     src += [cwd + '/gcc/gcc/startup_saml10e16a.c']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/iar/system_saml10e16a.c']
     src += [cwd + '/iar/iar/startup_saml10e16a.c']
 

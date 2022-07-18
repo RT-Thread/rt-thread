@@ -126,6 +126,67 @@ nrf5x
 
 
 
+## 使用RTT-STUDIO开发
+
+RTT-STUDIO V2.2.0及以上版本，支持直接导入BSP创建工程，而可以不用再依赖于基于开发版来创建工程了，这样，我们可以一直体验最新的代码了，是不是很香
+
+![image-20220609112426518](docs/images/image-20220609112426518.png)
+
+### 导入nRF5x BSP到RTT-STUDIO中
+
+1. 右击资源管理窗口，鼠标右击导入
+
+   ![image-20220609112322574](docs/images/image-20220609112322574.png)
+
+2. 选择导入BSP到工作空间，点击下一步
+
+   ![image-20220609112938212](docs/images/image-20220609112938212.png)
+
+3. 选择BSP根目录，以及填写工程名称，点击完成
+
+   ![image-20220609113142111](docs/images/image-20220609113142111.png)
+
+   ![image-20220609113203519](docs/images/image-20220609113203519.png)
+
+4. 通过观察控制台LOG，我们发现，其实当执行该操作时，背后的操作逻辑是，进入指定的BSP目录，执行下面的命令
+
+   ```
+   先进入指定BSP目录，然后执行下面的额命令
+   scons --dist-ide --project-path=D:\RT-ThreadStudio\workspace/nrf52832_test --project-name=nrf52832_test
+   ```
+
+   ![image-20220609113439251](docs/images/image-20220609113439251.png)
+
+
+
+5. 直接编译工程，发现已经编译成功
+
+   ![image-20220609113611068](docs/images/image-20220609113611068.png)
+
+6. 下载程序到开发板，点击下载按钮，发现有如下提示（我目前使用的studio版本是版本: 2.2.3，后续该问题应该可以修复掉）
+
+   ![image-20220609113726186](docs/images/image-20220609113726186.png)
+
+
+
+​		经过请教施工，解决了上面的问题，解决步骤如下
+
+​		6.1 打开导入后的工程目录，打开.settings文件夹中的projcfg.ini文件
+
+​				![image-20220609114026961](docs/images/image-20220609114026961.png)
+
+​		6.2 添加如下内容`J-Link`
+
+![image-20220609114121378](docs/images/image-20220609114121378.png)
+
+6.3 打开调试配置界面，填写设备名，设备名具体写什么，可以参考这里[链接](https://www.segger.com/supported-devices/jlink/)
+
+![image-20220609114333827](docs/images/image-20220609114333827.png)
+
+![image-20220609114533743](docs/images/image-20220609114533743.png)
+
+![image-20220609114554402](docs/images/image-20220609114554402.png)
+
 ## FAQ:
 
 #### 1. 如果烧入的时候出现如下状况：
