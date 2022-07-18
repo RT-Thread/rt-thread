@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09-03     AisinoChip   first implementation.
+ * 2022-07-08     Rbb666       first implementation.
  */
 
 #include "board.h"
