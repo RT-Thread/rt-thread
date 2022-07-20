@@ -17,8 +17,8 @@
 int main(void)
 	
 {
-		rt_pin_mode(LED1, PIN_MODE_OUTPUT);
-		rt_pin_write(LED1, PIN_HIGH);
+    rt_pin_mode(LED1, PIN_MODE_OUTPUT);
+    rt_pin_write(LED1, PIN_HIGH);
 	
     while (1)
     {
