@@ -32,10 +32,10 @@
 	PB0~PB3  | EXTI_BSEL[1:0] | EXTI[4]
 	PB4~PB7  | EXTI_BSEL[3:2] | EXTI[5]
 	PB8~PB11 | EXTI_BSEL[5:4] | EXTI[6]
-  PB12~PB15  | EXTI_BSEL[7:6] | EXTI[7]
+      PB12~PB15  | EXTI_BSEL[7:6] | EXTI[7]
 	PC0~PC3  | EXTI_CSEL[1:0] | EXTI[8]
 	PC4~PC7  | EXTI_CSEL[3:2] | EXTI[9]
-  PC8~PC11   | EXTI_CSEL[5:4] | EXTI[10]
+      PC8~PC11   | EXTI_CSEL[5:4] | EXTI[10]
 	PC12     |     -          | EXTI[11]
 	PD0~PD3  | EXTI_DSEL[1:0] | EXTI[12]
 	PD4~PD7  | EXTI_DSEL[3:2] | EXTI[13]
@@ -138,14 +138,14 @@ static void fm33_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         gpio_port = PIN_STPORT(pin);
         gpio_pin = PIN_STPIN(pin);
 				
-		if(value==PIN_LOW)
-		{
-			FL_GPIO_ResetOutputPin(gpio_port, gpio_pin);
-		}
-			else
-		{
-			FL_GPIO_SetOutputPin(gpio_port, gpio_pin);
-		}
+	if(value==PIN_LOW)
+	{
+	FL_GPIO_ResetOutputPin(gpio_port, gpio_pin);
+	}
+	else
+	{
+	FL_GPIO_SetOutputPin(gpio_port, gpio_pin);
+	}
     }
 }
 
@@ -176,7 +176,7 @@ static void fm33_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     /* Configure GPIO_InitStructure */
     GPIO_InitStruct.pin = PIN_STPIN(pin);
-		GPIO_InitStruct.outputType=FL_GPIO_OUTPUT_PUSHPULL;
+    GPIO_InitStruct.outputType=FL_GPIO_OUTPUT_PUSHPULL;
     GPIO_InitStruct.pull = FL_DISABLE;
     GPIO_InitStruct.remapPin = FL_DISABLE;
 
@@ -219,10 +219,10 @@ rt_inline rt_int32_t pin2irqindex(rt_uint32_t pin)
     rt_uint8_t irqindex;
     for(irqindex=4*PIN_PORT(pin);irqindex<=ITEM_NUM(pin_irq_map);irqindex++)
     {
-		if(pin_irq_map[irqindex].pin>=pin&&pin_irq_map[irqindex-1].pin<pin)
-		{
-			return irqindex;
-		}
+	if(pin_irq_map[irqindex].pin>=pin&&pin_irq_map[irqindex-1].pin<pin)
+	{
+		return irqindex;
+	}
     }
     return -1;
 }
@@ -314,9 +314,9 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 {
     const struct pin_irq_map* irqmap;
     rt_base_t level;
-	rt_int8_t irqindex=0;
+    rt_int8_t irqindex=0;
     FL_GPIO_InitTypeDef GPIO_InitStruct;
-	FL_EXTI_InitTypeDef extiInitStruct = {0};
+    FL_EXTI_InitTypeDef extiInitStruct = {0};
     FL_EXTI_CommonInitTypeDef  extiCommonInitStruct = {0};
 
     FL_RCC_EnableEXTIOnSleep();
@@ -430,13 +430,13 @@ void GPIO_IRQHandler(void)
 {
     rt_interrupt_enter();
     for(uint8_t extinum = 0;extinum < 16 ;++extinum)
+    {
+	if(FL_GPIO_IsActiveFlag_EXTI(GPIO, 0x1U << extinum))
 	{
-		if(FL_GPIO_IsActiveFlag_EXTI(GPIO, 0x1U << extinum))
-		{
-			FL_GPIO_ClearFlag_EXTI(GPIO, 0x1U << extinum);
-			pin_irq_hdr(extinum);
-		}
+	    FL_GPIO_ClearFlag_EXTI(GPIO, 0x1U << extinum);
+	    pin_irq_hdr(extinum);
 	}
+    }
     rt_interrupt_leave();
 }
 
