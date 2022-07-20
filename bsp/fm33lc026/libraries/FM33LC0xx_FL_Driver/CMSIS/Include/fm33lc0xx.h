@@ -25,7 +25,7 @@
  *******************************************************************************************************/
 
 
-/** @addtogroup Keil
+/** @addtogroup CMSIS
   * @{
   */
 
@@ -108,8 +108,8 @@ typedef enum {
 /* ================================================================================ */
 
 
-#include "core_cm0plus.h"                            /*!< Cortex-M0 processor and core peripherals                           */
-#include "system_fm33lc0xx.h"                        /*!< FM33LC0XX System                                                        */
+#include "core_cm0plus.h"                            /*!< Cortex-M0 processor and core peripherals             */
+#include "system_fm33lc0xx.h"                        /*!< FM33LC0XX System                                     */
 #include <stdint.h>
 
 /** @addtogroup Peripheral_registers_structures
@@ -579,6 +579,7 @@ typedef struct
   __IO uint32_t DCFG;             /*!< USB Device Config Register,                          Address offset: 0x800*/
   __IO uint32_t DCTL;             /*!< USB Device Control Register,                         Address offset: 0x804*/
   __IO uint32_t DSTS;             /*!< USB Device Status Register,                          Address offset: 0x808*/
+  __IO uint32_t RSV31;            /*!< Reserved ,                                          Address offset: 0x80C*/
   __IO uint32_t DIEPMSK;          /*!< USB Device In Endpoint Interrupt Mask Register,      Address offset: 0x810*/
   __IO uint32_t DOEPMSK;          /*!< USB Device OUT Endpoint Interrupt Mask Registe,      Address offset: 0x814*/
   __IO uint32_t DAINT;            /*!< USB Device All Endpoint Interrupt Register,          Address offset: 0x818*/
