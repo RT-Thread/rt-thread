@@ -104,6 +104,7 @@ g_pfnVectors:
     .word     CAN1_TX_IRQHandler                // 79:CAN1 TX
     .word     CAN1_RX0_IRQHandler               // 80:CAN1 RX0
     .word     CAN1_RX1_IRQHandler               // 81:CAN1 RX1
+    .word     CAN1_EWMC_IRQHandler              // 82:CAN1 EWMC 
     .word     USBFS_IRQHandler                  // 83:USBFS
     .word     DMA1_Channel5_IRQHandler          // 84:DMA1 Channel5
     .word     DMA1_Channel6_IRQHandler          // 85:DMA1 Channel6
@@ -120,10 +121,11 @@ g_pfnVectors:
     .word     TRNG_IRQHandler                   // 96:TRNG
     .word     FPU_IRQHandler                    // 97:FPU
     .word     UART6_IRQHandler                  // 98:UART6
-    .word     UART7_IRQHandler                  // 98:UART7
+    .word     UART7_IRQHandler                  // 99:UART7
     .word     SPI3_IRQHandler                   // 100:SPI3
     .word     SPI4_IRQHandler                   // 101:SPI4
     .word     SPI5_IRQHandler                   // 102:SPI5
+    .word     0                                 // 103:Reserved
     .word     TLI_IRQHandler                    // 104:TLI
     .word     TLI_ER_IRQHandler                 // 105:TLI Error
     .word     IPA_IRQHandler                    // 106:IPA
