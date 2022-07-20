@@ -228,13 +228,54 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
     } > flash
-    rti_fn : 
+    /* section information for utest */
+    UtestTcTab :
+    {
+        . = ALIGN(4);
+         __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+    }
+    /* section information for at server */
+    RtAtCmdTab :
+    {
+        . = ALIGN(4);
+         __rtatcmdtab_start = .;
+        KEEP(*(UtestTcTab))
+        __rtatcmdtab_end = .;
+    }
+    /* section information for modules */
+    RTMSymTab :
+    {
+        . = ALIGN(4);
+         __rtmsymtab_start = .;
+        KEEP(*(UtestTcTab))
+        __rtmsymtab_end = .;
+    }
+    /* section information for initial. */  
+    rti_fn :
     {
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
     } > flash
+    rti_fn :
+    {
+        . = ALIGN(4);
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        __rt_init_end = .;
+        PROVIDE(__ctors_end__ = .);
+    } > flash
+    init_array :
+    {
+        . = ALIGN(4);
+        __ctors_start__ = .;
+        KEEP(*(SORT(.init_array*)))
+        __ctors_end__ = .;
+    } > flash       
     /* setction information for finsh shell end */
 
     /* To clear multiple BSS sections,
@@ -250,7 +291,6 @@ SECTIONS
     } > flash
 
     __etext =  . ;
-
 
     .ramVectors (NOLOAD) : ALIGN(8)
     {

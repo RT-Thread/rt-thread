@@ -25,7 +25,7 @@
 
 struct pin_irq_map
 {
-    rt_uint16_t pin;
+    rt_uint16_t port;
     IRQn_Type irqno;
 };
 
