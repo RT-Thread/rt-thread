@@ -181,7 +181,7 @@ __exit:
 
 static int rt_hw_pwm_init(void)
 {
-    int i = 0;
+    int i;
     int result = RT_EOK;
 
     pwm_get_pin_number();
@@ -190,6 +190,7 @@ static int rt_hw_pwm_init(void)
     for (i = 0; i < sizeof(ifx_pwm_obj) / sizeof(ifx_pwm_obj[0]); i++)
     {
         ifx_pwm_obj[i].pwm_obj = rt_malloc(sizeof(cyhal_pwm_t));
+        RT_ASSERT(ifx_pwm_obj[i].pwm_obj != RT_NULL);
 
         /* pwm init */
         if (ifx_hw_pwm_init(&ifx_pwm_obj[i]) != RT_EOK)
@@ -213,7 +214,6 @@ static int rt_hw_pwm_init(void)
     }
 
 __exit:
-    rt_free(ifx_pwm_obj[i].pwm_obj);
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_init);

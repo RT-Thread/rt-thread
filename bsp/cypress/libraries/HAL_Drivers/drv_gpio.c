@@ -66,12 +66,13 @@ rt_inline void pin_irq_handler(int irqno)
     }
 }
 
-void gpio_exint_handler(uint16_t GPIO_Pin)
+void gpio_exint_handler(uint16_t GPIO_Port)
 {
-    pin_irq_handler(GPIO_Pin);
+    pin_irq_handler(GPIO_Port);
 }
 
-static void irq0_callback(void *callback_arg, cyhal_gpio_event_t event)
+/* interrupt callback definition*/
+static void irq_callback(void *callback_arg, cyhal_gpio_event_t event)
 {
     /* To avoid compiler warnings */
     (void) callback_arg;
@@ -80,228 +81,13 @@ static void irq0_callback(void *callback_arg, cyhal_gpio_event_t event)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    gpio_exint_handler(CYHAL_PORT_0);
+    gpio_exint_handler(*(rt_uint16_t *)callback_arg);
 
     /* leave interrupt */
     rt_interrupt_leave();
 }
 
-static void irq1_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_1);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq2_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_2);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq3_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_3);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq4_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_4);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq5_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_5);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq6_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_6);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq7_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_7);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq8_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_8);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq9_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_9);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq10_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_10);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq11_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_11);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq12_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_12);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq13_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_13);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void irq14_callback(void *callback_arg, cyhal_gpio_event_t event)
-{
-    /* To avoid compiler warnings */
-    (void) callback_arg;
-    (void) event;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    gpio_exint_handler(CYHAL_PORT_14);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-/* interrupt0 callback definition*/
-cyhal_gpio_callback_data_t irq0_cb_data =
-{
-    .callback     = irq0_callback,
-    .callback_arg = (void *)NULL
-};
+cyhal_gpio_callback_data_t irq_cb_data;
 
 static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
@@ -319,19 +105,19 @@ static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     switch (mode)
     {
     case PIN_MODE_OUTPUT:
-        cyhal_gpio_configure(gpio_pin, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG);
+        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, true);
         break;
     case PIN_MODE_INPUT:
-        cyhal_gpio_configure(gpio_pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE);
+        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);
         break;
     case PIN_MODE_INPUT_PULLUP:
-        cyhal_gpio_configure(gpio_pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_PULL_NONE);
+        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLUP, true);
         break;
     case PIN_MODE_INPUT_PULLDOWN:
-        cyhal_gpio_configure(gpio_pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_PULL_NONE);
+        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLDOWN, false);
         break;
     case PIN_MODE_OUTPUT_OD:
-        cyhal_gpio_configure(gpio_pin, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_OPENDRAINDRIVESHIGH);
+        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLUP, true);
         break;
     }
 }
@@ -349,12 +135,11 @@ static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         return;
     }
 
-    cyhal_gpio_write_internal(gpio_pin, value);
+    cyhal_gpio_write(gpio_pin, value);
 }
 
 static int ifx_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value = PIN_LOW;
     rt_uint16_t gpio_pin;
 
     if (PORT_GET(pin) < PIN_IFXPORT_MAX)
@@ -366,7 +151,7 @@ static int ifx_pin_read(rt_device_t dev, rt_base_t pin)
         return -RT_ERROR;
     }
 
-    return cyhal_gpio_read_internal(pin);
+    return cyhal_gpio_read(gpio_pin);
 }
 
 static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
@@ -375,7 +160,6 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
     rt_base_t level;
-    rt_uint8_t pin_irq_mode;
 
     if (PORT_GET(pin) < PIN_IFXPORT_MAX)
     {
@@ -415,7 +199,6 @@ static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
     rt_base_t level;
-    rt_uint8_t pin_irq_mode;
 
     if (PORT_GET(pin) < PIN_IFXPORT_MAX)
     {
@@ -475,7 +258,10 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         irqmap = &pin_irq_map[gpio_port];
 
-        cyhal_gpio_register_callback(gpio_pin, &irq0_cb_data);
+        irq_cb_data.callback = irq_callback;
+        irq_cb_data.callback_arg = (rt_uint16_t *)&pin_irq_map[gpio_port].port;
+
+        cyhal_gpio_register_callback(gpio_pin, &irq_cb_data);
 
         Cy_GPIO_ClearInterrupt(CYHAL_GET_PORTADDR(gpio_pin), CYHAL_GET_PIN(gpio_pin));
 
@@ -493,22 +279,8 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         default:
             break;
         }
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || defined(COMPONENT_CAT1D)
-        Cy_GPIO_SetInterruptEdge(CYHAL_GET_PORTADDR(gpio_pin), CYHAL_GET_PIN(gpio_pin), (uint32_t)pin_irq_mode);
-        Cy_GPIO_SetInterruptMask(CYHAL_GET_PORTADDR(gpio_pin), CYHAL_GET_PIN(gpio_pin), (uint32_t)RT_TRUE);
-#endif
-#if !defined(COMPONENT_CAT1C)
-        IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->pin));
-#endif
-        if (false == NVIC_GetEnableIRQ(irqn))
-        {
-            _cyhal_irq_register(irqn, GPIO_INTERRUPT_PRIORITY, _cyhal_gpio_irq_handler);
-            _cyhal_irq_enable(irqn);
-        }
-        else
-        {
-            _cyhal_irq_set_priority(irqn, GPIO_INTERRUPT_PRIORITY);
-        }
+
+        cyhal_gpio_enable_event(gpio_pin, pin_irq_mode, GPIO_INTERRUPT_PRIORITY, RT_TRUE);
 
         rt_hw_interrupt_enable(level);
     }
@@ -519,7 +291,7 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         Cy_GPIO_Port_Deinit(CYHAL_GET_PORTADDR(gpio_pin));
 
 #if !defined(COMPONENT_CAT1C)
-        IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->pin));
+        IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->port));
 #endif
         _cyhal_irq_disable(irqn);
 

@@ -83,6 +83,11 @@ if GetDepend(['RT_USING_PWM']):
     src += ['mtb-pdl-cat1/drivers/source/cy_tcpwm_pwm.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_tcpwm_counter.c']
 
+if GetDepend(['RT_USING_SPI']):
+    src += ['mtb-hal-cat1/source/cyhal_spi.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_scb_spi.c']
+
+
 if GetDepend(['RT_USING_I2C']):
     src += ['mtb-hal-cat1/source/cyhal_i2c.c']
 

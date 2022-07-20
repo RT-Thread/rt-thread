@@ -26,16 +26,26 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 ********************************************************************************/
+#include <rtthread.h>
 
 #include "cycfg_clocks.h"
 
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_CLK_DIV_obj =
-    {
-        .type = CYHAL_RSC_CLOCK,
-        .block_num = CYBSP_CSD_CLK_DIV_HW,
-        .channel_num = CYBSP_CSD_CLK_DIV_NUM,
-    };
+const cyhal_resource_inst_t CLK_PWM_obj =
+{
+    .type = CYHAL_RSC_CLOCK,
+    .block_num = CLK_PWM_HW,
+    .channel_num = CLK_PWM_NUM,
+};
+#endif //defined (CY_USING_HAL)
+
+#if defined (CY_USING_HAL)
+const cyhal_resource_inst_t CYBSP_CSD_CLK_DIV_obj =
+{
+    .type = CYHAL_RSC_CLOCK,
+    .block_num = CYBSP_CSD_CLK_DIV_HW,
+    .channel_num = CYBSP_CSD_CLK_DIV_NUM,
+};
 #endif //defined (CY_USING_HAL)
 
 

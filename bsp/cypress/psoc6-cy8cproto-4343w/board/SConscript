@@ -13,7 +13,14 @@ src = Split('''
 board.c
 ''')
 
+if GetDepend(['BSP_USING_SPI3_SAMPLE']):
+    src += Glob('ports/spi_sample.c')
+
+if GetDepend(['BSP_USING_RW007']):
+    src += Glob('ports/drv_rw007.c')
+
 path = [cwd]
+path += [cwd + '/port']
 
 startup_path_prefix = SDK_LIB
 
