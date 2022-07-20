@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-06-29     Rbb666       first version
  */
+
 #include "board.h"
 #include "drv_uart.h"
 

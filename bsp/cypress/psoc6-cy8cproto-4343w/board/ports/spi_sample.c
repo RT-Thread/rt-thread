@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-07-19     Rbbb666	   first version
+ * 2022-07-19     Rbbb666      first version
  */
 
 #include "board.h"
