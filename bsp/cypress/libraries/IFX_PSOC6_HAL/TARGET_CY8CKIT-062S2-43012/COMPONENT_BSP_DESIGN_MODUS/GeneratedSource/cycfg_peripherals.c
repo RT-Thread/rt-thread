@@ -51,7 +51,7 @@ void init_cycfg_peripherals(void)
     /* UART2 Device Clock*/
     Cy_SysClk_PeriphAssignDivider(PCLK_SCB2_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
 #endif
-#ifdef BSP_USING_UART3
+#if defined(BSP_USING_UART3) || defined(BSP_USING_HW_I2C3)
     /* UART3 Device Clock*/
     Cy_SysClk_PeriphAssignDivider(PCLK_SCB3_CLOCK, CY_SYSCLK_DIV_8_BIT, 0U);
 #endif
