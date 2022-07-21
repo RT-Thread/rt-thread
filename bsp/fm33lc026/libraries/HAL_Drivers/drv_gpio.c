@@ -13,10 +13,9 @@
 
 #ifdef RT_USING_PIN
 
-#define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
+#define PIN_NUM(port, no) (((((port)&0xFu) << 4) | ((no)&0xFu)))
 #define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
-#define PIN_NO(pin) ((uint8_t)((pin) & 0xFu))
-
+#define PIN_NO(pin) ((uint8_t)((pin)&0xFu))
 
 #define PIN_STPORT(pin) ((GPIO_Type *)(GPIOA_BASE + (0x40u * PIN_PORT(pin))))
 #define PIN_STPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
@@ -49,43 +48,43 @@
 */
 
 static const struct pin_irq_map pin_irq_map[] =
-{
-    {3, FL_GPIO_EXTI_LINE_0},
-    {7, FL_GPIO_EXTI_LINE_1},
-    {11, FL_GPIO_EXTI_LINE_2},
-    {15, FL_GPIO_EXTI_LINE_3},
-    {19, FL_GPIO_EXTI_LINE_4},
-    {23, FL_GPIO_EXTI_LINE_5},
-    {27, FL_GPIO_EXTI_LINE_6},
-    {31, FL_GPIO_EXTI_LINE_7},
-    {35, FL_GPIO_EXTI_LINE_8},
-    {39, FL_GPIO_EXTI_LINE_9},
-    {43, FL_GPIO_EXTI_LINE_10},
-    {44, FL_GPIO_EXTI_LINE_11},
-    {51, FL_GPIO_EXTI_LINE_12},
-    {55, FL_GPIO_EXTI_LINE_13},
-    {59, FL_GPIO_EXTI_LINE_14},
-    {60, FL_GPIO_EXTI_LINE_15},
+    {
+        {3, FL_GPIO_EXTI_LINE_0},
+        {7, FL_GPIO_EXTI_LINE_1},
+        {11, FL_GPIO_EXTI_LINE_2},
+        {15, FL_GPIO_EXTI_LINE_3},
+        {19, FL_GPIO_EXTI_LINE_4},
+        {23, FL_GPIO_EXTI_LINE_5},
+        {27, FL_GPIO_EXTI_LINE_6},
+        {31, FL_GPIO_EXTI_LINE_7},
+        {35, FL_GPIO_EXTI_LINE_8},
+        {39, FL_GPIO_EXTI_LINE_9},
+        {43, FL_GPIO_EXTI_LINE_10},
+        {44, FL_GPIO_EXTI_LINE_11},
+        {51, FL_GPIO_EXTI_LINE_12},
+        {55, FL_GPIO_EXTI_LINE_13},
+        {59, FL_GPIO_EXTI_LINE_14},
+        {60, FL_GPIO_EXTI_LINE_15},
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
-{
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
+    {
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
+        {-1, 0, RT_NULL, RT_NULL},
 };
 static uint32_t pin_irq_enable_mask = 0;
 
@@ -138,14 +137,14 @@ static void fm33_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         gpio_port = PIN_STPORT(pin);
         gpio_pin = PIN_STPIN(pin);
 
-            if(value==PIN_LOW)
-            {
-                 FL_GPIO_ResetOutputPin(gpio_port, gpio_pin);
-            }
-            else
-            {
-                FL_GPIO_SetOutputPin(gpio_port, gpio_pin);
-            }
+        if (value == PIN_LOW)
+        {
+            FL_GPIO_ResetOutputPin(gpio_port, gpio_pin);
+        }
+        else
+        {
+            FL_GPIO_SetOutputPin(gpio_port, gpio_pin);
+        }
     }
 }
 
@@ -176,7 +175,7 @@ static void fm33_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     /* Configure GPIO_InitStructure */
     GPIO_InitStruct.pin = PIN_STPIN(pin);
-    GPIO_InitStruct.outputType=FL_GPIO_OUTPUT_PUSHPULL;
+    GPIO_InitStruct.outputType = FL_GPIO_OUTPUT_PUSHPULL;
     GPIO_InitStruct.pull = FL_DISABLE;
     GPIO_InitStruct.remapPin = FL_DISABLE;
 
@@ -217,20 +216,20 @@ static void fm33_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 rt_inline rt_int32_t pin2irqindex(rt_uint32_t pin)
 {
     rt_uint8_t irqindex;
-        for(irqindex=4*PIN_PORT(pin);irqindex<=ITEM_NUM(pin_irq_map);irqindex++)
+    for (irqindex = 4 * PIN_PORT(pin); irqindex <= ITEM_NUM(pin_irq_map); irqindex++)
+    {
+        if (pin_irq_map[irqindex].pin >= pin && pin_irq_map[irqindex - 1].pin < pin)
         {
-                if(pin_irq_map[irqindex].pin>=pin&&pin_irq_map[irqindex-1].pin<pin)
-                {
-                    return irqindex;
-                }
+            return irqindex;
         }
+    }
     return -1;
 }
 
 rt_inline const struct pin_irq_map *get_pin_irq_map(rt_base_t pin)
 {
     rt_int32_t mapindex;
-        mapindex=pin2irqindex(pin);
+    mapindex = pin2irqindex(pin);
     if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
@@ -239,7 +238,7 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(rt_base_t pin)
 };
 
 static rt_err_t fm33_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+                                    rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -310,14 +309,14 @@ static rt_err_t fm33_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled)
+                                    rt_uint32_t enabled)
 {
-    const struct pin_irq_map* irqmap;
+    const struct pin_irq_map *irqmap;
     rt_base_t level;
-        rt_int8_t irqindex=0;
+    rt_int8_t irqindex = 0;
     FL_GPIO_InitTypeDef GPIO_InitStruct;
-            FL_EXTI_InitTypeDef extiInitStruct = {0};
-    FL_EXTI_CommonInitTypeDef  extiCommonInitStruct = {0};
+    FL_EXTI_InitTypeDef extiInitStruct = {0};
+    FL_EXTI_CommonInitTypeDef extiCommonInitStruct = {0};
 
     FL_RCC_EnableEXTIOnSleep();
 
@@ -331,13 +330,13 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     if (enabled == PIN_IRQ_ENABLE)
     {
-               if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
             return RT_ENOSYS;
         }
 
-                irqindex = pin2irqindex(pin);
-                irqmap = &pin_irq_map[irqindex];
+        irqindex = pin2irqindex(pin);
+        irqmap = &pin_irq_map[irqindex];
 
         level = rt_hw_interrupt_disable();
 
@@ -347,16 +346,14 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             return RT_ENOSYS;
         }
 
-
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct.pin = PIN_STPIN(pin);
         GPIO_InitStruct.mode = FL_GPIO_MODE_INPUT;
         GPIO_InitStruct.outputType = FL_GPIO_OUTPUT_PUSHPULL;
-        GPIO_InitStruct.pull       = FL_DISABLE;
-        GPIO_InitStruct.remapPin   = FL_DISABLE;
+        GPIO_InitStruct.pull = FL_DISABLE;
+        GPIO_InitStruct.remapPin = FL_DISABLE;
 
-
-        extiInitStruct.input = pin - pin_irq_map[irqindex-1].pin - 1;
+        extiInitStruct.input = pin - pin_irq_map[irqindex - 1].pin - 1;
         extiInitStruct.filter = FL_ENABLE;
 
         switch (pin_irq_hdr_tab[irqindex].mode)
@@ -372,9 +369,9 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             break;
         }
         FL_GPIO_Init(PIN_STPORT(pin), &GPIO_InitStruct);
-                FL_EXTI_Init(irqmap->irqno,&extiInitStruct);
+        FL_EXTI_Init(irqmap->irqno, &extiInitStruct);
 
-                NVIC_DisableIRQ(GPIO_IRQn);
+        NVIC_DisableIRQ(GPIO_IRQn);
         NVIC_SetPriority(GPIO_IRQn, 2);
         NVIC_EnableIRQ(GPIO_IRQn);
         pin_irq_enable_mask |= irqmap->irqno;
@@ -407,14 +404,14 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     return RT_EOK;
 }
 const static struct rt_pin_ops _fm33_pin_ops =
-{
-    fm33_pin_mode,
-    fm33_pin_write,
-    fm33_pin_read,
-    fm33_pin_attach_irq,
-    fm33_pin_dettach_irq,
-    fm33_pin_irq_enable,
-    fm33_pin_get,
+    {
+        fm33_pin_mode,
+        fm33_pin_write,
+        fm33_pin_read,
+        fm33_pin_attach_irq,
+        fm33_pin_dettach_irq,
+        fm33_pin_irq_enable,
+        fm33_pin_get,
 };
 
 rt_inline void pin_irq_hdr(int irqno)
@@ -425,22 +422,19 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-
 void GPIO_IRQHandler(void)
 {
-     rt_interrupt_enter();
-    for(uint8_t extinum = 0;extinum < 16 ;++extinum)
+    rt_interrupt_enter();
+    for (uint8_t extinum = 0; extinum < 16; ++extinum)
     {
-        if(FL_GPIO_IsActiveFlag_EXTI(GPIO, 0x1U << extinum))
+        if (FL_GPIO_IsActiveFlag_EXTI(GPIO, 0x1U << extinum))
         {
-                FL_GPIO_ClearFlag_EXTI(GPIO, 0x1U << extinum);
-                pin_irq_hdr(extinum);
+            FL_GPIO_ClearFlag_EXTI(GPIO, 0x1U << extinum);
+            pin_irq_hdr(extinum);
         }
     }
     rt_interrupt_leave();
 }
-
-
 
 int rt_hw_pin_init(void)
 {
