@@ -12,9 +12,9 @@
 #include <ipc/completion.h>
 #include <ipc/dataqueue.h>
 #ifdef RT_USING_SERIAL_V2
-#include <drivers/serial_v2.h>
+    #include <drivers/serial_v2.h>
 #else
-#include <drivers/serial.h>
+    #include <drivers/serial.h>
 #endif
 #include "ch56x_sys.h"
 #include "ch56x_uart.h"
@@ -24,7 +24,8 @@
     #error "Please define at least one UARTx"
 #endif
 
-struct serial_device {
+struct serial_device
+{
     struct rt_serial_device parent;
     volatile struct uart_registers *reg_base;
     irq_number_t irqn;
@@ -197,7 +198,7 @@ static int uart_getc(struct rt_serial_device *serial)
     volatile struct uart_registers *uxreg = serial_device->reg_base;
 
     /* UART_II_RECV_RDY is cleared by reading RBR */
-    return (uxreg->RFC > 0)? uxreg->RBR : -1;
+    return (uxreg->RFC > 0) ? uxreg->RBR : -1;
 }
 
 static const struct rt_uart_ops uart_ops =
@@ -213,6 +214,7 @@ int rt_hw_uart_init(void)
 {
     struct serial_device *devices[4];
 
+    /* Note: HCLK should be at least 8MHz for default 115200 baud to work */
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
     int n = 0;
@@ -267,7 +269,7 @@ static void _uart_isr_common(struct serial_device *serial_device)
         if (uxreg->RFC == 0)
         {
             uxreg->RBR;
-//          rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_TIMEOUT);
+            //rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_TIMEOUT);
             break;
         }
         /* pass through as if UART_II_RECV_RDY */

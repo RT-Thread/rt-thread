@@ -39,7 +39,7 @@ extern "C" {
  * R8_GPIO_INT_ENABLE:
  *    To use EXTIx function, pin should be set as input.
  *    For wakeup function, also set RB_SLP_GPIO_WAKE.
- * 
+ *
  * R8_GPIO_INT_MODE:
  * R8_GPIO_INT_POLAR:
  */
@@ -144,6 +144,8 @@ struct gpio_px_regs
     uint32_t  SMT;  // reset value for pins is 1, enable schmitt trigger
 } __packed;
 
+CHECK_STRUCT_SIZE(struct gpio_px_regs, 0x20);
+
 #define GPIO_PX_DIR_IN          0
 #define GPIO_PX_DIR_OUT         1
 
@@ -167,7 +169,7 @@ struct gpio_px_regs
  * 0x1d  R8_GPIO_INT_ENABLE: GPIO interrupt enable register
  * 0x1e  R8_GPIO_INT_MODE:   GPIO interrupt mode register
  * 0x1f  R8_GPIO_INT_POLAR:  GPIO interrupt polarity register
- * 
+ *
  * 0x40  R32_PA_DIR:  PA pin direction control
  * 0x44  R32_PA_PIN:  PA pin input status
  * 0x48  R32_PA_OUT:  PA pin output register
@@ -176,7 +178,7 @@ struct gpio_px_regs
  * 0x54  R32_PA_PD:   PA pin open drain output / input pull-down control
  * 0x58  R32_PA_DRV:  PA pin output driving capability register
  * 0x5c  R32_PA_SMT:  PA pin slow output / schmitt trigger input control
- * 
+ *
  * 0x60  R32_PB_DIR:
  * 0x64  R32_PB_PIN:
  * 0x68  R32_PB_OUT:
@@ -185,6 +187,9 @@ struct gpio_px_regs
  * 0x74  R32_PB_PD:
  * 0x78  R32_PB_DRV:
  * 0x7c  R32_PB_SMT:
+ *
+ * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
+ * Be careful for those with side effect for read.
  */
 struct gpio_registers
 {
@@ -201,6 +206,8 @@ struct gpio_registers
     struct gpio_px_regs         PA;
     struct gpio_px_regs         PB;
 } __packed;
+
+CHECK_STRUCT_SIZE(struct gpio_registers, 0x80);
 
 #ifdef __cplusplus
 }

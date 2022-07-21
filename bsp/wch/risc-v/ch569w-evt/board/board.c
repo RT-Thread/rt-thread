@@ -13,6 +13,19 @@
 #include "ch56x_pfic.h"
 #include "ch56x_uart.h"
 
+extern rt_uint32_t rt_thread_switch_interrupt_flag;
+
+/* FIXME: Use rt_interrupt_leave_hook to trigger SWI for context switch.
+ * Hopefully there's a standard riscv way instead of this clumsy patch.
+*/
+static void irq_leave_hook(void)
+{
+    if (rt_thread_switch_interrupt_flag)
+    {
+        pfic_swi_pendset();
+    }
+}
+
 /*
  * _start -> handle_reset
  * src/components.c/entry() -> rtthread_startup()
@@ -57,9 +70,11 @@ void rt_hw_board_init()
 
 #ifdef RT_USING_CONSOLE
     /* console is uart1, TXD1/RXD1 : PA8/PA7 */
-    rt_pin_mode(GET_PIN(A,8), PIN_MODE_OUTPUT);
-    rt_pin_mode(GET_PIN(A,7), PIN_MODE_INPUT_PULLUP);
+    rt_pin_mode(GET_PIN(A, 8), PIN_MODE_OUTPUT);
+    rt_pin_mode(GET_PIN(A, 7), PIN_MODE_INPUT_PULLUP);
     rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+
+    rt_interrupt_leave_sethook(irq_leave_hook);
 }

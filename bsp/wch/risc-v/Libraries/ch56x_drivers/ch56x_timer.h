@@ -27,9 +27,10 @@ union _timer_ctrl_mod
         uint8_t out_en      :1;  // B.3   : RW, timer output enable
         uint8_t out_polar   :1;  // B.4   : RW, output polarity for PWM mode
         uint8_t resv_5      :1;
-        union {
-        uint8_t pwm_repeat  :2;  // B.7-6 : RW, PWM repeat count, 1/4/8/16
-        uint8_t cap_edge    :2;  // B.7-6 : RW, capture edge mode
+        union
+        {
+            uint8_t pwm_repeat  :2;  // B.7-6 : RW, PWM repeat count, 1/4/8/16
+            uint8_t cap_edge    :2;  // B.7-6 : RW, capture edge mode
         };
     };
 };
@@ -75,7 +76,7 @@ union _timer_interrupt
         uint8_t cyc_end     :1;  // B.0
         uint8_t data_act    :1;  // B.1
         uint8_t fifo_hf     :1;  // B.2
-        uint8_t dma_end     :1;  // B.3 
+        uint8_t dma_end     :1;  // B.3
         uint8_t fifo_ov     :1;  // B.4
         uint8_t resv_5      :3;
     };
@@ -105,8 +106,11 @@ union _timer_interrupt
  * 0x14  R32_TMRx_DMA_NOW:   RW, DMA buffer current address, LSB 18 bits
  * 0x18  R32_TMRx_DMA_BEG:   RW, DMA buffer begin address, LSB 18 bits
  * 0x1c  R32_TMRx_DMA_END:   RW, DMA buffer end address (exclusive), LSB 18 bits
- * 
+ *
  * Note: DMA related registers (0x10,0x14,0x18,0x1c) are TMR1/2 only
+ *
+ * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
+ * Be careful for those with side effect for read.
  */
 struct timer_registers
 {
@@ -123,6 +127,8 @@ struct timer_registers
     uint32_t                DMA_BEG;
     uint32_t                DMA_END;
 } __packed;
+
+CHECK_STRUCT_SIZE(struct timer_registers, 0x20);
 
 #ifdef __cplusplus
 }

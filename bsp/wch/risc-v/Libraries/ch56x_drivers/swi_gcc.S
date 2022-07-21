@@ -6,27 +6,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-09-09     WCH          the first version
+ * 2022-07-15     Emuzit       adapt to ch569w-evt
  */
  
 #include "cpuport.h"
-
-    .global rt_hw_context_switch_interrupt
-rt_hw_context_switch_interrupt:
-    /* update from_thread if rt_thread_switch_interrupt_flag is 0 */
-    la      t0, rt_thread_switch_interrupt_flag
-    lw      t1, 0(t0)
-    bnez    t1, 1f
-    la      t1, rt_interrupt_from_thread
-    sw      a0, 0(t1)
-    li      t1, 1
-    sw      t1, 0(t0)
-1:
-    /* update to_thread */
-    la      t1, rt_interrupt_to_thread
-    sw      a1, 0(t1)
-    /* trigger software interrupt */
-    j       pfic_swi_pendset
-
 
     .global swi_handler
     .align  2

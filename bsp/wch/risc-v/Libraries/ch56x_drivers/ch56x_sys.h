@@ -94,16 +94,22 @@ union _sys_rst_wdog_ctrl
     struct
     {
         uint8_t software_reset  :1;  // WA/WZ, system software reset, auto clear
+#if defined(SOC_SERIES_CH569)
         uint8_t wdog_rst_en     :1;  // RWA, enable watchdog overflow to reset
         uint8_t wdog_int_en     :1;  // RWA, enable watchdog overflow interrupt
         uint8_t wdog_int_flag   :1;  // RW1, watchdog counter overflow
+#else
+        uint8_t resv_2          :3;
+#endif
         uint8_t resv_4          :4;  // RO, B.7-6 must write 01b
     };
 };
 #define RB_SOFTWARE_RESET       0x01
+#ifdef SOC_SERIES_CH569
 #define RB_WDOG_RST_EN          0x02
 #define RB_WDOG_INT_EN          0x04
 #define RB_WDOG_INT_FLAG        0x08
+#endif
 #define wdog_ctrl_wdat(v)       (0x40 | (v))
 
 union _sys_clk_pll_div
@@ -305,10 +311,10 @@ union _sys_serd_ana_cfg1
     uint16_t reg;
     struct
     {
-        uint16_t serd_pll_cfg   :8;  // RWA, reset as 0x5a
-        uint16_t serd_30m_sel   :1;  // RWA
-        uint16_t serd_dn_tst    :1;  // RWA
-        uint16_t resv_10        :6;
+        uint8_t serd_pll_cfg;        // RWA, reset as 0x5a
+        uint8_t serd_30m_sel    :1;  // RWA
+        uint8_t serd_dn_tst     :1;  // RWA
+        uint8_t resv_10         :6;
     };
 };
 #define RB_SERD_PLL_CFG         0x0ff
@@ -320,7 +326,7 @@ union _sys_serd_ana_cfg2
     uint32_t reg;
     struct
     {
-        uint32_t serd_trx_cfg   :25;  // RWA, reset as 423015h 
+        uint32_t serd_trx_cfg   :25;  // RWA, reset as 423015h
         uint32_t resv_25        :7;
     };
 };
@@ -344,6 +350,9 @@ union _sys_serd_ana_cfg2
  * 0x0f  R8_SLP_POWER_CTRL:  RWA, low power management register
  * 0x20  R16_SERD_ANA_CFG1:  RWA, SerDes PHY analog param config register 1
  * 0x24  R32_SERD_ANA_CFG2:  RWA, SerDes PHY analog param config register 2
+ *
+ * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
+ * Be careful for those with side effect for read.
  */
 struct sys_registers
 {
@@ -370,6 +379,8 @@ struct sys_registers
     union _sys_serd_ana_cfg2    SERD_ANA_CFG2;
 #endif
 } __packed;
+
+CHECK_STRUCT_SIZE(struct sys_registers, 0x28);
 
 uint32_t sys_hclk_get(void);
 int  sys_hclk_set(uint32_t freq);

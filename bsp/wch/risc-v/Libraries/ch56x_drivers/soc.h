@@ -12,12 +12,16 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <assert.h>
 
 #if !defined(SOC_CH567) && \
     !defined(SOC_CH568) && \
     !defined(SOC_SERIES_CH569)
 #define SOC_SERIES_CH569
 #endif
+
+#define CHECK_STRUCT_SIZE(s, size) \
+        static_assert(sizeof(s) == size, #s " has wrong size")
 
 #define BITS_SET(x, bits)   do x |=  bits; while(0)
 #define BITS_CLR(x, bits)   do x &= ~bits; while(0)

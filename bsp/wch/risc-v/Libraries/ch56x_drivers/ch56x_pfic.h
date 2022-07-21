@@ -31,7 +31,7 @@ extern "C" {
 #define _pfic_irqn_enable(pfic, irqn)  _pfic_ireg_bit_set(pfic, IENR, irqn)
 #define _pfic_irqn_disable(pfic, irqn) _pfic_ireg_bit_set(pfic, IRER, irqn)
 
-#if 0
+/* Note: `union _pfic_cfgr` is not used directly in the reg structure */
 union _pfic_cfgr
 {
     uint32_t reg;
@@ -49,7 +49,6 @@ union _pfic_cfgr
         uint32_t keycode    :16;    // WO, write protection keycode
     };
 };
-#endif
 #define PFIC_CFGR_KEY1      0xfa05  // for hwstkctrl & nestctrl
 #define PFIC_CFGR_KEY2      0xbcaf  // for nmi & exc set/reset
 #define PFIC_CFGR_KEY3      0xbeef  // for sysreset
@@ -134,6 +133,9 @@ union _pfic_sctlr
  * 0x304  R32_PFIC_IACTR2:      PFIC interrupt active status register (# 32-59)
  * 0x400  R32_PFIC_IPRIORx:     PFIC interrupt priority registers
  * 0xd10  R32_PFIC_SCTLR:       PFIC system control register
+ *
+ * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
+ * Be careful for those with side effect for read.
  */
 struct pfic_registers
 {
@@ -162,6 +164,8 @@ struct pfic_registers
     uint32_t              resv_500[516];
     union _pfic_sctlr     SCTLR;
 } __packed;
+
+CHECK_STRUCT_SIZE(struct pfic_registers, 0xd14);
 
 union _systick_ctlr
 {
@@ -204,6 +208,9 @@ union _systick_cntfg
  * 0x0c  R32_STK_CMPLR:  SysTick compare-reload register, Lo.32
  * 0x10  R32_STK_CMPHR:  SysTick compare-reload register, Hi.32
  * 0x14  R32_STK_CNTFG:  SysTick counter flags
+ *
+ * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
+ * Be careful for those with side effect for read.
  */
 struct systick_registers
 {
@@ -214,6 +221,8 @@ struct systick_registers
     uint32_t              CMPHR;
     union _systick_cntfg  CNTFG;
 } __packed;
+
+CHECK_STRUCT_SIZE(struct systick_registers, 0x18);
 
 rt_inline void pfic_interrupt_umask(uint8_t irqn)
 {

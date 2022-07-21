@@ -75,7 +75,7 @@ rt_inline uint8_t _wake_clk_off_irqn_bit(uint8_t irqn)
 
     switch (irqn)
     {
-    case ETH_IRQn:    bitpos = RB_SLP_CLK_ETH;  break;
+    case ETH_IRQn:    bitpos = RB_SLP_CLK_ETH;   break;
     case ECDC_IRQn:   bitpos = RB_SLP_CLK_ECDC;  break;
     default:
         bitpos = 0;
@@ -87,38 +87,46 @@ rt_inline uint8_t _wake_clk_off_irqn_bit(uint8_t irqn)
 
 /**
  * @brief   Turn on/off device clock for group clk_off0.
- * 
+ *
  * @param   bits is a bit mask to select corresponding devices.
- * 
+ *
  * @param   off is to turn off the clock (1) or trun on (0).
  */
 void sys_slp_clk_off0(uint8_t bits, int off)
 {
     volatile struct sys_registers *sys = (void *)SYS_REG_BASE;
+    rt_base_t level;
     uint8_t u8v;
 
-    sys_safe_access_enter(sys);
     u8v = sys->SLP_CLK_OFF0.reg;
-    sys->SLP_CLK_OFF0.reg = off?  (u8v | bits) : (u8v & ~bits);
+    u8v = off ? (u8v | bits) : (u8v & ~bits);
+    level = rt_hw_interrupt_disable();
+    sys_safe_access_enter(sys);
+    sys->SLP_CLK_OFF0.reg = u8v;
     sys_safe_access_leave(sys);
+    rt_hw_interrupt_enable(level);
 }
 
 /**
  * @brief   Turn on/off device clock for group clk_off1.
- * 
+ *
  * @param   bits is a bit mask to select corresponding devices.
- * 
+ *
  * @param   off is to turn off the clock (1) or trun on (0).
  */
 void sys_slp_clk_off1(uint8_t bits, int off)
 {
     volatile struct sys_registers *sys = (void *)SYS_REG_BASE;
+    rt_base_t level;
     uint8_t u8v;
 
-    sys_safe_access_enter(sys);
     u8v = sys->SLP_CLK_OFF1.reg;
-    sys->SLP_CLK_OFF1.reg = off?  (u8v | bits) : (u8v & ~bits);
+    u8v = off ? (u8v | bits) : (u8v & ~bits);
+    level = rt_hw_interrupt_disable();
+    sys_safe_access_enter(sys);
+    sys->SLP_CLK_OFF1.reg = u8v;
     sys_safe_access_leave(sys);
+    rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -126,9 +134,9 @@ void sys_slp_clk_off1(uint8_t bits, int off)
  *
  * @param   irqn is the irq number of the target device.
  *          PWMX does not have irqn, use special PWMX_OFFn number.
- * 
+ *
  * @param   off is to turn off the clock (1) or trun on (0).
- * 
+ *
  * @return  Returns if irqn-device has corresponding clk off bit :
  *          0 if device not found; otherwise bit position of off0/off1.
  */
@@ -159,10 +167,14 @@ int sys_clk_off_by_irqn(uint8_t irqn, int off)
         if (bitpos)
         {
             volatile uint8_t *cxreg = (void *)sys;
-            sys_safe_access_enter(sys);
+            rt_base_t level;
             u8v = cxreg[offset];
-            cxreg[offset] = off?  (u8v | bitpos) : (u8v & ~bitpos);
+            u8v = off ? (u8v | bitpos) : (u8v & ~bitpos);
+            level = rt_hw_interrupt_disable();
+            sys_safe_access_enter(sys);
+            cxreg[offset] = u8v;
             sys_safe_access_leave(sys);
+            rt_hw_interrupt_enable(level);
         }
     }
 
@@ -171,10 +183,10 @@ int sys_clk_off_by_irqn(uint8_t irqn, int off)
 
 /**
  * @brief   Setup HCLK frequency.
- * 
+ *
  * @param   freq is the desired hclk frequency.
  *          supported : 120/96/80/60/48/40/32/30/15/10/6/3/2 MHz
- * 
+ *
  * @return  Returns 0 if hclk is successfully set.
  */
 int sys_hclk_set(uint32_t freq)
@@ -203,12 +215,14 @@ int sys_hclk_set(uint32_t freq)
 
     if (clksel >= 0)
     {
+        rt_base_t level = rt_hw_interrupt_disable();
         sys_safe_access_enter(sys);
         sys->CLK_PLL_DIV.reg = clk_pll_div_wdat(plldiv);
         sys->CLK_CFG_CTRL.reg = clk_cfg_ctrl_wdat(clksel);
+        sys_safe_access_leave(sys);
+        rt_hw_interrupt_enable(level);
         clksel = 0;
     }
-    sys_safe_access_leave(sys);
 
     return clksel;
 }
@@ -226,10 +240,10 @@ uint32_t sys_hclk_get(void)
 
     if (sys->CLK_CFG_CTRL.sel_pll == CLK_SEL_PLL_USB_480M)
     {
-        return plldiv? 480000000 / plldiv : 30000000;
+        return plldiv ? 480000000 / plldiv : 30000000;
     }
     else
     {
-        return plldiv?  30000000 / plldiv : 2000000;
+        return plldiv ?  30000000 / plldiv : 2000000;
     }
 }

@@ -6,16 +6,21 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-07-15     Emuzit            first version
+ * 2022-07-20     Emuzit            add watchdog test
  */
 #include <rtthread.h>
 #include <rtdebug.h>
 #include <drivers/pin.h>
+#include <drivers/watchdog.h>
 #include "board.h"
+
+#define WDT_TIMEOUT     30  // in seconds
 
 static const rt_base_t gpio_int_pins[8] = GPIO_INT_PINS;
 
 /* note : PIN_IRQ_MODE_RISING_FALLING not supported */
-static const uint32_t gpint_mode[] = {
+static const uint32_t gpint_mode[] =
+{
     PIN_IRQ_MODE_RISING,
     PIN_IRQ_MODE_RISING,
     PIN_IRQ_MODE_RISING,
@@ -31,9 +36,11 @@ static struct rt_thread  *gpint_thread = RT_NULL;
 
 static rt_base_t led0, led1;
 
+static rt_device_t wdg_dev;
+
 static void gpio_int_callback(void *pin)
 {
-    led1 = (led1 == PIN_LOW)? PIN_HIGH : PIN_LOW;
+    led1 = (led1 == PIN_LOW) ? PIN_HIGH : PIN_LOW;
     rt_pin_write(LED1_PIN, led1);
 
     if (gpint_mb != RT_NULL)
@@ -50,20 +57,21 @@ static void gpio_int_thread(void *param)
         rt_err_t res;
         uint32_t pin;
 
-        /* FIXME: using rt_mb_recv under excessive gpio int would hang */
-#if 0
-        res = rt_mb_recv(gpint_mb, &pin, RT_WAITING_FOREVER);
+        /* FIXME: using rt_mb_recv under excessive gpio int would crash */
+        res = 1 | rt_mb_recv(gpint_mb, &pin, RT_WAITING_FOREVER);
         if (res == RT_EOK)
         {
             rt_kprintf("gpio_int #%d (%d)\n", pin, rt_pin_read(pin));
         }
-#endif
         rt_thread_mdelay(100);
+
+        rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
     }
 }
 
 void main(void)
 {
+    uint32_t seconds;
     rt_err_t res;
 
     int i;
@@ -81,7 +89,7 @@ void main(void)
     else
     {
         gpint_thread = rt_thread_create("pxith", gpio_int_thread, RT_NULL,
-            512, RT_MAIN_THREAD_PRIORITY, 50);
+                                        512, RT_MAIN_THREAD_PRIORITY, 50);
         if (gpint_thread == RT_NULL)
         {
             rt_kprintf("gpint thread create failed !\n");
@@ -95,7 +103,7 @@ void main(void)
                 rt_base_t pin = gpio_int_pins[i];
                 rt_pin_mode(pin, PIN_MODE_INPUT_PULLUP);
                 res = rt_pin_attach_irq(
-                    pin, gpint_mode[i], gpio_int_callback, (void *)pin);
+                          pin, gpint_mode[i], gpio_int_callback, (void *)pin);
                 if (res != RT_EOK)
                 {
                     rt_kprintf("rt_pin_attach_irq failed (%d:%d)\n", i, res);
@@ -108,6 +116,25 @@ void main(void)
         }
     }
 
+    /* test watchdog with 30s timeout, keepalive with gpio int
+    */
+    wdg_dev = rt_device_find("wdt");
+    if (!wdg_dev)
+    {
+        rt_kprintf("watchdog device not found !\n");
+    }
+    else
+    {
+        seconds = WDT_TIMEOUT;
+        if (rt_device_init(wdg_dev) != RT_EOK ||
+                rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &seconds) != RT_EOK)
+        {
+            rt_kprintf("watchdog setup failed !\n");
+        }
+    }
+
+    rt_kprintf("WDT_TIMEOUT in %d seconds, trigger gpio interrupt to keep alive.\n\n", seconds);
+
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED1_PIN, led1 = PIN_HIGH);
 
@@ -118,7 +145,7 @@ void main(void)
     {
         /* flashing LED0 every 1 second */
         rt_thread_mdelay(500);
-        led0 = (led0 == PIN_LOW)? PIN_HIGH : PIN_LOW;
+        led0 = (led0 == PIN_LOW) ? PIN_HIGH : PIN_LOW;
         rt_pin_write(LED0_PIN, led0);
     }
 }

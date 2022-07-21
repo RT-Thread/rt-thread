@@ -42,7 +42,7 @@ void pfic_swi_pendreset(void)
 
 /**
  * @brief   Write PFIC interrupt configuration register.
- * 
+ *
  * @param   key_bit is (PFIC_CFGR_KEYx + bit_position), one of the following :
  *          PFIC_CFGR_NMISET / PFIC_CFGR_NMIRESET
  *          PFIC_CFGR_EXCSET / PFIC_CFGR_EXCRESET
@@ -73,7 +73,7 @@ void pfic_cfgr_set(uint32_t key_bit)
 
 /**
  * @brief   Make SysTick ready, systick/swi irq are enabled.
- * 
+ *
  * @param   count is (HCLK/8) clocks count to generate systick irq.
  *          if 0 => calculate with current HCLK and RT_TICK_PER_SECOND
  */
@@ -86,7 +86,7 @@ void systick_init(uint32_t count)
         count = sys_hclk_get() / 8 / RT_TICK_PER_SECOND;
 
     _pfic_irqn_disable(pfic, SysTick_IRQn);
-    pfic->IPRIOR[SysTick_IRQn] = 0xf0;
+    pfic->IPRIOR[SysTick_IRQn] = 0xe0;
     pfic->IPRIOR[SWI_IRQn] = 0xf0;
     systick->CTLR.reg = 0;
     systick->CNTL  = 0;

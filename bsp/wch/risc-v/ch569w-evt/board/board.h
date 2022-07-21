@@ -24,9 +24,12 @@
 #define RAMX_END            (RAMX_BASE_ADDRESS + RAMX_SIZE * 1024)
 
 extern uint32_t _ebss, _heap_end;
+extern uint32_t _susrstack, _eusrstack;
 
 #define HEAP_BEGIN          ((void *)&_ebss)
 #define HEAP_END            ((void *)&_heap_end)
+#define SUSRSTACK           ((void *)&_susrstack)
+#define EUSRSTACK           ((void *)&_eusrstack)
 
 void rt_hw_board_init(void);
 

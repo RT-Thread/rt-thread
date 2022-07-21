@@ -216,6 +216,9 @@ union _uart_msr
  * 0x0c  R16_UARTx_DL:  Divisor Latch
  * 0x0e  R8_UARTx_DIV:  frequency pre divider
  * 0x0f  R8_UARTx_ADR:  Address Register (UART0 only)
+ *
+ * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
+ * Be careful for those with side effect for read (e.g. RBR, IIR).
  */
 struct uart_registers
 {
@@ -239,6 +242,8 @@ struct uart_registers
     uint8_t         DIV;
     uint8_t         ADR;
 } __packed;
+
+CHECK_STRUCT_SIZE(struct uart_registers, 0x10);
 
 int rt_hw_uart_init(void);
 

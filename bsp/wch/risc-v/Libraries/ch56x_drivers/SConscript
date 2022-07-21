@@ -9,6 +9,8 @@ swi_gcc.S
 
 if GetDepend('SOC_SERIES_CH569'):
     src += ['ch56x_pfic.c']
+    if GetDepend('RT_USING_WDT'):
+        src += ['ch56x_wdt.c']
 
 if GetDepend('RT_USING_TIMER'):
     src += ['ch56x_timer.c']

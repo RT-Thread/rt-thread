@@ -161,7 +161,7 @@ static int gpio_pin_read(struct rt_device *device, rt_base_t pin)
     else
         return PIN_LOW;
 
-    return (px->PIN & bitpos)? PIN_HIGH : PIN_LOW;
+    return (px->PIN & bitpos) ? PIN_HIGH : PIN_LOW;
 }
 
 static rt_base_t gpio_pin_get(const char *name)
@@ -181,7 +181,7 @@ static rt_base_t gpio_pin_get(const char *name)
             if (sz == 5)
             {
                 n = name[4] - '0';
-                pin = (0 <= n && n <= 9)? (pin * 10 + n) : 32;
+                pin = (0 <= n && n <= 9) ? (pin * 10 + n) : 32;
             }
             if (pin < 32 && (pin_ports[port].pin_mark & (1 << pin)))
             {
@@ -194,7 +194,7 @@ static rt_base_t gpio_pin_get(const char *name)
 }
 
 static rt_err_t gpio_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-         rt_uint32_t mode, void (*hdr)(void *args), void *args)
+                rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
 
@@ -267,7 +267,7 @@ static rt_err_t gpio_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t gpio_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-         rt_uint32_t enabled)
+                                    rt_uint32_t enabled)
 {
     volatile struct gpio_registers *gpio;
 
@@ -347,7 +347,8 @@ static rt_err_t gpio_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     return RT_EOK;
 }
 
-static const struct rt_pin_ops pin_ops = {
+static const struct rt_pin_ops pin_ops =
+{
     .pin_mode = gpio_pin_mode,
     .pin_write = gpio_pin_write,
     .pin_read = gpio_pin_read,
@@ -362,7 +363,6 @@ static int rt_hw_pin_init(void)
     return rt_device_pin_register("pin", &pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
-
 
 void gpio_irq_handler(void) __attribute__((interrupt()));
 void gpio_irq_handler(void)
@@ -385,7 +385,7 @@ void gpio_irq_handler(void)
         {
             if (pin_irq_hdr_table[ibit].hdr)
             {
-                pin_irq_hdr_table[ibit].hdr( pin_irq_hdr_table[ibit].args );
+                pin_irq_hdr_table[ibit].hdr(pin_irq_hdr_table[ibit].args);
             }
             /* clear interrupt */
             gpio->INT_FLAG.reg = bitpos;
