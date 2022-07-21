@@ -54,7 +54,7 @@ extern "C" {
 
 /* Configurations ------------------------------------------------------------*/
 /**
- *  @brief LSCLK source 
+ *  @brief LSCLK source
  *  @note  Comment the following line to use only LPOSC as LSCLK source, and also
  *         disable LSCLK auto switch function.
  */
@@ -63,7 +63,7 @@ extern "C" {
 #ifdef USE_LSCLK_CLOCK_SRC_XTLF
 
 /**
- *  @brief LSCLK source 
+ *  @brief LSCLK source
  *  @note  Comment the following line to disable LSCLK auto switch function.
  */
 #define USE_LSCLK_AUTO_SWITCH
@@ -72,7 +72,7 @@ extern "C" {
 
 /**
  *  @brief Open IWDT on program startup
- *  @note  Uncomment the following line to use IWDT on startup. User can modify  
+ *  @note  Uncomment the following line to use IWDT on startup. User can modify
  *         the IWDT_OVERFLOW_PERIOD to change the IDWT overflow period.
  */
 /* #define USE_IWDT_ON_STARTUP */
@@ -117,7 +117,7 @@ extern "C" {
 #define RCHF8M_TRIM         (LDT_CHECK(RCHF8M_LDT_TRIM,  0x40) & 0x7FU)
 #define RCHF16M_TRIM        (LDT_CHECK(RCHF16M_LDT_TRIM, 0x40) & 0x7FU)
 #define RCHF24M_TRIM        (LDT_CHECK(RCHF24M_LDT_TRIM, 0x40) & 0x7FU)
-    
+
 /* Default Clock Frequency Values --------------------------------------------*/
 
 #define XTHF_DEFAULT_VALUE    ((uint32_t)8000000U)  /*!< Default value of XTHF in Hz */
@@ -130,16 +130,16 @@ extern "C" {
 /*
     - [SystemCoreClock] holds the value of CPU operation clock freqency, and is initialized
         to HCLK_DEFAULT_VALUE;
-    - [XTLFClock] holds the value of external low-frequency oscillator(XTLF), 
+    - [XTLFClock] holds the value of external low-frequency oscillator(XTLF),
         and is initialized to XTLF_DEFAULT_VALUE;
     - [XTHFClock] holds the value of external high_frequency oscillator(XTHF),
         and is initialized to XTHF_DEFAULT_VALUE;
-    
-    NOTE: If users are using these two external oscillators, they should modify the 
+
+    NOTE: If users are using these two external oscillators, they should modify the
     value of XTLFClock and XTHFClock to the correct value, and call the SystemCoreClockUpdate()
-    to update the SystemCoreClock variable, otherwise those codes which rely on 
+    to update the SystemCoreClock variable, otherwise those codes which rely on
     the SystemCoreClock variable will fail to run.
- */ 
+ */
 extern uint32_t XTLFClock;        /*!< External Low-freq Osc Clock Frequency (XTLF) */
 extern uint32_t XTHFClock;        /*!< External High-freq Osc Clock Frequency (XTHF) */
 extern uint32_t SystemCoreClock;  /*!< System Clock Frequency (Core Clock) */
