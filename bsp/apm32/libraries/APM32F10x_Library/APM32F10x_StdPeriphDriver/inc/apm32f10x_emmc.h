@@ -27,7 +27,7 @@
 #define __APM32F10X_EMMC_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -276,8 +276,8 @@ typedef struct
     EMMC_WAITE_SIGNAL_T         waiteSignal;
     EMMC_EXTENDEN_MODE_T        extendedMode;
     EMMC_WRITE_BURST_T          writeBurst;
-    EMMC_NORSRAMTimingConfig_T   *readWriteTimingStruct;
-    EMMC_NORSRAMTimingConfig_T   *writeTimingStruct;
+    EMMC_NORSRAMTimingConfig_T*   readWriteTimingStruct;
+    EMMC_NORSRAMTimingConfig_T*   writeTimingStruct;
 } EMMC_NORSRAMConfig_T;
 
 /**
@@ -303,8 +303,8 @@ typedef struct
     EMMC_ECC_PAGE_SIZE_BYTE_T ECCPageSize;
     uint32_t                  TCLRSetupTime;
     uint32_t                  TARSetupTime;
-    EMMC_NAND_PCCARDTimingConfig_T *commonSpaceTimingStruct;
-    EMMC_NAND_PCCARDTimingConfig_T *attributeSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T* commonSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T* attributeSpaceTimingStruct;
 } EMMC_NANDConfig_T;
 
 /**
@@ -315,9 +315,9 @@ typedef struct
     EMMC_WAIT_FEATURE_T waitFeature;
     uint32_t            TCLRSetupTime;
     uint32_t            TARSetupTime;
-    EMMC_NAND_PCCARDTimingConfig_T *commonSpaceTimingStruct;
-    EMMC_NAND_PCCARDTimingConfig_T *attributeSpaceTimingStruct;
-    EMMC_NAND_PCCARDTimingConfig_T *IOSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T* commonSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T* attributeSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T* IOSpaceTimingStruct;
 } EMMC_PCCARDConfig_T;
 
 /**@} end of group EMMC_Structure*/
@@ -332,12 +332,12 @@ void EMMC_ResetNAND(EMMC_BANK_NAND_T bank);
 void EMMC_ResetPCCard(void);
 
 /** EMMC Configuration */
-void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T *emmcNORSRAMConfig);
-void EMMC_ConfigNAND(EMMC_NANDConfig_T *emmcNANDConfig);
-void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T *emmcPCCardConfig);
-void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T *emmcNORSRAMConfig);
-void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T *emmcNANDConfig);
-void EMMC_ConfigPCCardStructInit(EMMC_PCCARDConfig_T *emmcPCCardConfig);
+void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig);
+void EMMC_ConfigNAND(EMMC_NANDConfig_T* emmcNANDConfig);
+void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T* emmcPCCardConfig);
+void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig);
+void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T* emmcNANDConfig);
+void EMMC_ConfigPCCardStructInit(EMMC_PCCARDConfig_T* emmcPCCardConfig);
 
 /** EMMC bank control */
 void EMMC_EnableNORSRAM(EMMC_BANK1_NORSRAM_T bank);

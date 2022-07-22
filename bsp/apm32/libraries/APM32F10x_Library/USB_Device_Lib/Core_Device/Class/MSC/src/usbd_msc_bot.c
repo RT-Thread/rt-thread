@@ -126,9 +126,9 @@ static void USBD_MSC_BOT_DecodeCBW(void)
     g_BOTInfo.CSW.dDataResidue = g_BOTInfo.CBW.dDataXferLen;
 
     if ((xferCnt != MSC_BOT_CBW_LENGTH) || \
-            (g_BOTInfo.CBW.dSignature != MSC_BOT_CBW_SIGNATURE) || \
-            (g_BOTInfo.CBW.bLUN > 1) || (g_BOTInfo.CBW.bCBLen < 1) || \
-            (g_BOTInfo.CBW.bCBLen > 16))
+        (g_BOTInfo.CBW.dSignature != MSC_BOT_CBW_SIGNATURE) || \
+        (g_BOTInfo.CBW.bLUN > 1) || (g_BOTInfo.CBW.bCBLen < 1) || \
+        (g_BOTInfo.CBW.bCBLen > 16))
     {
         SCSI_PutSenseCode(g_BOTInfo.CBW.bLUN, SCSI_SKEY_ILLEGAL_REQUEST,
                           SCSI_ASC_INVALID_CDB, 0);
@@ -189,10 +189,10 @@ void USBD_MSC_BOT_TxCSW(uint8_t cswStatus)
     g_BOTInfo.CSW.bStatus = cswStatus;
     g_BOTInfo.state = BOT_STATE_IDLE;
 
-    USBD_TxData(MSC_IN_EP & 0x7f, (uint8_t *)&g_BOTInfo.CSW,
+    USBD_TxData(MSC_IN_EP & 0x7f, (uint8_t*)&g_BOTInfo.CSW,
                 MSC_BOT_CSW_LENGTH);
 
-    USBD_RxData(MSC_OUT_EP & 0x7f, (uint8_t *)&g_BOTInfo.CBW,
+    USBD_RxData(MSC_OUT_EP & 0x7f, (uint8_t*)&g_BOTInfo.CBW,
                 MSC_BOT_CBW_LENGTH);
 }
 
@@ -227,7 +227,7 @@ void USBD_MSV_BOT_ClearFeatureHandler(void)
 static void USBD_MSC_BOT_Stall(void)
 {
     if ((g_BOTInfo.CBW.bmFlags == 0) && (g_BOTInfo.CBW.dDataXferLen != 0) && \
-            (g_BOTInfo.status == BOT_STATUS_NORMAL))
+        (g_BOTInfo.status == BOT_STATUS_NORMAL))
     {
         USBD_SetEPRxStatus(MSC_OUT_EP & 0x7f, USBD_EP_STATUS_STALL);
     }

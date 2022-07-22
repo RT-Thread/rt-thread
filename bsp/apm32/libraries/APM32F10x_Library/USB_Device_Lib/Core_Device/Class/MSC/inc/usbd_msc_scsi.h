@@ -60,8 +60,7 @@ typedef enum
 /**
  * @brief   SCSI Sense
  */
-typedef struct
-{
+typedef struct {
     uint8_t sensekey;
     uint8_t ASC;
     uint8_t ASCQ;

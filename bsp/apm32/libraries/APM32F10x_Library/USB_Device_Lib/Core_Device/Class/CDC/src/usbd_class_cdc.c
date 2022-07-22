@@ -34,10 +34,10 @@ static uint8_t cmdBuf[8] = {0};
  *
  * @retval      None
  */
-void USBD_ClassHandler(USBD_DevReqData_T *reqData)
+void USBD_ClassHandler(USBD_DevReqData_T* reqData)
 {
     uint16_t length = ((uint16_t)reqData->byte.wLength[1] << 8) | \
-                      reqData->byte.wLength[0] ;
+                     reqData->byte.wLength[0] ;
 
     if (!length)
     {
@@ -55,17 +55,17 @@ void USBD_ClassHandler(USBD_DevReqData_T *reqData)
         switch (reqData->byte.bRequest)
         {
 
-        case 0x20:
-            USBD_CtrlOutData(cmdBuf, length);
-            break;
-        case 0x21:
-            USBD_CtrlInData(cmdBuf, length);
-            break;
-        case 0x22:
-            USBD_CtrlOutData(cmdBuf, length);
-            break;
-        default:
-            break;
+            case 0x20:
+                USBD_CtrlOutData(cmdBuf, length);
+                break;
+            case 0x21:
+                USBD_CtrlInData(cmdBuf, length);
+                break;
+            case 0x22:
+                USBD_CtrlOutData(cmdBuf, length);
+                break;
+            default:
+                break;
         }
     }
 }

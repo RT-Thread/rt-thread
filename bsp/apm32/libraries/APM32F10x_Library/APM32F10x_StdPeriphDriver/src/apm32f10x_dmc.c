@@ -45,10 +45,10 @@
  *
  * @retval      None
  */
-void DMC_Config(DMC_Config_T *dmcConfig)
+void DMC_Config(DMC_Config_T * dmcConfig)
 {
     DMC->SW_B.MCSW = 1;
-    while (!DMC->CTRL1_B.INIT);
+    while(!DMC->CTRL1_B.INIT);
 
     DMC->CFG_B.BAWCFG = dmcConfig->bankWidth;
     DMC->CFG_B.RAWCFG = dmcConfig->rowWidth;
@@ -60,7 +60,7 @@ void DMC_Config(DMC_Config_T *dmcConfig)
     DMC_ConfigTiming(&dmcConfig->timing);
 
     DMC->CTRL1_B.MODESET = 1;
-    while (!DMC->CTRL1_B.MODESET);
+    while(!DMC->CTRL1_B.MODESET);
 
     DMC->CTRL2_B.RDDEN = 1;
     DMC->CTRL2_B.RDDCFG = 7;
@@ -73,7 +73,7 @@ void DMC_Config(DMC_Config_T *dmcConfig)
  *
  * @retval      None
  */
-void DMC_ConfigStructInit(DMC_Config_T *dmcConfig)
+void DMC_ConfigStructInit(DMC_Config_T * dmcConfig)
 {
     dmcConfig->bankWidth   = DMC_BANK_WIDTH_2;
     dmcConfig->clkPhase    = DMC_CLK_PHASE_REVERSE;
@@ -91,7 +91,7 @@ void DMC_ConfigStructInit(DMC_Config_T *dmcConfig)
  *
  * @retval      None
  */
-void DMC_ConfigTiming(DMC_TimingConfig_T *timingConfig)
+void DMC_ConfigTiming(DMC_TimingConfig_T * timingConfig)
 {
     DMC->TIM0_B.RASMINTSEL = timingConfig->tRAS;
     DMC->TIM0_B.DTIMSEL    = timingConfig->tRCD;
@@ -116,7 +116,7 @@ void DMC_ConfigTiming(DMC_TimingConfig_T *timingConfig)
  *
  * @retval      None
  */
-void DMC_ConfigTimingStructInit(DMC_TimingConfig_T *timingConfig)
+void DMC_ConfigTimingStructInit(DMC_TimingConfig_T * timingConfig)
 {
     timingConfig->latencyCAS = DMC_CAS_LATENCY_3;
     timingConfig->tARP = DMC_AUTO_REFRESH_10;

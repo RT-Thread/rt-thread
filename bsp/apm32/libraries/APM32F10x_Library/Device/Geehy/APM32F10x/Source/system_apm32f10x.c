@@ -43,38 +43,38 @@
 #define VECT_TAB_OFFSET     0x00
 
 #ifdef SYSTEM_CLOCK_HSE
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_HSE;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_HSE;
 #elif defined SYSTEM_CLOCK_24MHz
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_24MHz;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_24MHz;
 #elif defined SYSTEM_CLOCK_36MHz
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_36MHz;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_36MHz;
 #elif defined SYSTEM_CLOCK_48MHz
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_48MHz;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_48MHz;
 #elif defined SYSTEM_CLOCK_56MHz
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_56MHz;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_56MHz;
 #elif defined SYSTEM_CLOCK_72MHz
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_72MHz;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_72MHz;
 #else
-    uint32_t SystemCoreClock         = SYSTEM_CLOCK_96MHz;
+uint32_t SystemCoreClock         = SYSTEM_CLOCK_96MHz;
 #endif
 
 
 static void SystemClockConfig(void);
 
 #ifdef SYSTEM_CLOCK_HSE
-    static void SystemClockHSE(void);
+static void SystemClockHSE(void);
 #elif defined SYSTEM_CLOCK_24MHz
-    static void SystemClock24M(void);
+static void SystemClock24M(void);
 #elif defined SYSTEM_CLOCK_36MHz
-    static void SystemClock36M(void);
+static void SystemClock36M(void);
 #elif defined SYSTEM_CLOCK_48MHz
-    static void SystemClock48M(void);
+static void SystemClock48M(void);
 #elif defined SYSTEM_CLOCK_56MHz
-    static void SystemClock56M(void);
+static void SystemClock56M(void);
 #elif defined SYSTEM_CLOCK_72MHz
-    static void SystemClock72M(void);
+static void SystemClock72M(void);
 #elif defined SYSTEM_CLOCK_96MHz
-    static void SystemClock96M(void);
+static void SystemClock96M(void);
 #endif
 
 /*!
@@ -85,7 +85,7 @@ static void SystemClockConfig(void);
  * @retval      None
  *
  */
-void SystemInit(void)
+void SystemInit (void)
 {
     /** Set HSIEN bit */
     RCM->CTRL_B.HSIEN = BIT_SET;
@@ -118,50 +118,50 @@ void SystemInit(void)
  * @retval      None
  *
  */
-void SystemCoreClockUpdate(void)
+void SystemCoreClockUpdate (void)
 {
     uint32_t sysClock, pllMull, pllSource, Prescaler;
     uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 
     sysClock = RCM->CFG_B.SCLKSELSTS;
 
-    switch (sysClock)
+    switch(sysClock)
     {
-    /** sys clock is HSI */
-    case 0:
-        SystemCoreClock = HSI_VALUE;
+        /** sys clock is HSI */
+        case 0:
+            SystemCoreClock = HSI_VALUE;
         break;
 
-    /** sys clock is HSE */
-    case 1:
-        SystemCoreClock = HSE_VALUE;
+        /** sys clock is HSE */
+        case 1:
+            SystemCoreClock = HSE_VALUE;
         break;
 
-    /** sys clock is PLL */
-    case 2:
-        pllMull = RCM->CFG_B.PLLMULCFG + 2;
-        pllSource = RCM->CFG_B.PLLSRCSEL;
+        /** sys clock is PLL */
+        case 2:
+            pllMull = RCM->CFG_B.PLLMULCFG + 2;
+            pllSource = RCM->CFG_B.PLLSRCSEL;
 
-        /** PLL entry clock source is HSE */
-        if (pllSource == BIT_SET)
-        {
-            SystemCoreClock = HSE_VALUE * pllMull;
-
-            /** HSE clock divided by 2 */
-            if (pllSource == RCM->CFG_B.PLLHSEPSC)
+            /** PLL entry clock source is HSE */
+            if(pllSource == BIT_SET)
             {
-                SystemCoreClock >>= 1;
-            }
-        }
-        /** PLL entry clock source is HSI/2 */
-        else
-        {
-            SystemCoreClock = (HSI_VALUE >> 1) * pllMull;
-        }
-        break;
+                SystemCoreClock = HSE_VALUE * pllMull;
 
-    default:
-        SystemCoreClock  = HSI_VALUE;
+                /** HSE clock divided by 2 */
+                if(pllSource == RCM->CFG_B.PLLHSEPSC)
+                {
+                    SystemCoreClock >>= 1;
+                }
+            }
+            /** PLL entry clock source is HSI/2 */
+            else
+            {
+                SystemCoreClock = (HSI_VALUE >> 1) * pllMull;
+            }
+            break;
+
+        default:
+            SystemCoreClock  = HSI_VALUE;
         break;
     }
 
@@ -209,17 +209,17 @@ static void SystemClockHSE(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -227,9 +227,9 @@ static void SystemClockHSE(void)
         FMC->CTRL1_B.WS = 0;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK */
         RCM->CFG_B.APB1PSC = 0;
 
@@ -237,7 +237,7 @@ static void SystemClockHSE(void)
         RCM->CFG_B.SCLKSEL = 1;
 
         /** Wait till HSE is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x01);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x01);
     }
 }
 
@@ -255,17 +255,17 @@ static void SystemClock24M(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -273,9 +273,9 @@ static void SystemClock24M(void)
         FMC->CTRL1_B.WS = 0;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK */
         RCM->CFG_B.APB1PSC = 0;
 
@@ -287,12 +287,12 @@ static void SystemClock24M(void)
         /** Enable PLL */
         RCM->CTRL_B.PLLEN = 1;
         /** Wait PLL Ready */
-        while (RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
+        while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
         /** Select PLL as system clock source */
         RCM->CFG_B.SCLKSEL = 2;
         /** Wait till PLL is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x02);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 
@@ -309,17 +309,17 @@ static void SystemClock36M(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -327,9 +327,9 @@ static void SystemClock36M(void)
         FMC->CTRL1_B.WS = 1;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK */
         RCM->CFG_B.APB1PSC = 0;
 
@@ -341,12 +341,12 @@ static void SystemClock36M(void)
         /** Enable PLL */
         RCM->CTRL_B.PLLEN = 1;
         /** Wait PLL Ready */
-        while (RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
+        while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
         /** Select PLL as system clock source */
         RCM->CFG_B.SCLKSEL = 2;
         /** Wait till PLL is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x02);
+        while(RCM->CFG_B.SCLKSELSTS != 0x02);
     }
 }
 
@@ -363,17 +363,17 @@ static void SystemClock48M(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -381,9 +381,9 @@ static void SystemClock48M(void)
         FMC->CTRL1_B.WS = 1;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
@@ -394,12 +394,12 @@ static void SystemClock48M(void)
         /** Enable PLL */
         RCM->CTRL_B.PLLEN = 1;
         /** Wait PLL Ready */
-        while (RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
+        while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
         /** Select PLL as system clock source */
         RCM->CFG_B.SCLKSEL = 2;
         /** Wait till PLL is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x02);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 
@@ -416,17 +416,17 @@ static void SystemClock56M(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -434,9 +434,9 @@ static void SystemClock56M(void)
         FMC->CTRL1_B.WS = 2;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
@@ -447,12 +447,12 @@ static void SystemClock56M(void)
         /** Enable PLL */
         RCM->CTRL_B.PLLEN = 1;
         /** Wait PLL Ready */
-        while (RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
+        while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
         /** Select PLL as system clock source */
         RCM->CFG_B.SCLKSEL = 2;
         /** Wait till PLL is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x02);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 
@@ -469,17 +469,17 @@ static void SystemClock72M(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -487,9 +487,9 @@ static void SystemClock72M(void)
         FMC->CTRL1_B.WS = 2;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
@@ -500,12 +500,12 @@ static void SystemClock72M(void)
         /** Enable PLL */
         RCM->CTRL_B.PLLEN = 1;
         /** Wait PLL Ready */
-        while (RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
+        while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
         /** Select PLL as system clock source */
         RCM->CFG_B.SCLKSEL = 2;
         /** Wait till PLL is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x02);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 
 }
@@ -523,17 +523,17 @@ static void SystemClock96M(void)
 {
     __IO uint32_t i;
 
-    RCM->CTRL_B.HSEEN = BIT_SET;
+    RCM->CTRL_B.HSEEN= BIT_SET;
 
-    for (i = 0; i < HSE_STARTUP_TIMEOUT; i++)
+    for(i = 0; i < HSE_STARTUP_TIMEOUT; i++)
     {
-        if (RCM->CTRL_B.HSERDYFLG)
+        if(RCM->CTRL_B.HSERDYFLG)
         {
             break;
         }
     }
 
-    if (RCM->CTRL_B.HSERDYFLG)
+    if(RCM->CTRL_B.HSERDYFLG)
     {
         /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
@@ -541,9 +541,9 @@ static void SystemClock96M(void)
         FMC->CTRL1_B.WS = 3;
 
         /** HCLK = SYSCLK */
-        RCM->CFG_B.AHBPSC = 0X00;
+        RCM->CFG_B.AHBPSC= 0X00;
         /** PCLK2 = HCLK */
-        RCM->CFG_B.APB2PSC = 0;
+        RCM->CFG_B.APB2PSC= 0;
         /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
@@ -554,12 +554,12 @@ static void SystemClock96M(void)
         /** Enable PLL */
         RCM->CTRL_B.PLLEN = 1;
         /** Wait PLL Ready */
-        while (RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
+        while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
         /** Select PLL as system clock source */
         RCM->CFG_B.SCLKSEL = 2;
         /** Wait till PLL is used as system clock source */
-        while (RCM->CFG_B.SCLKSELSTS != 0x02);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 #endif
