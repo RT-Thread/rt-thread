@@ -34,4 +34,4 @@
 #define HID_CLASS_REQ_SET_REPORT            0x09
 #define HID_CLASS_REQ_GET_REPORT            0x01
 
-void USBD_ClassHandler(USBD_DevReqData_T *reqData);
+void USBD_ClassHandler(USBD_DevReqData_T* reqData);

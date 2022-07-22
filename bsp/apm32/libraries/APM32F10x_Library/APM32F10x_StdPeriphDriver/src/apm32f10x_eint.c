@@ -60,12 +60,12 @@ void EINT_Reset(void)
  *
  * @retval       None
  */
-void EINT_Config(EINT_Config_T *eintConfig)
+void EINT_Config(EINT_Config_T* eintConfig)
 {
     uint32_t temp = 0;
     temp = (uint32_t)EINT_BASE;
 
-    if (eintConfig->lineCmd != DISABLE)
+    if(eintConfig->lineCmd != DISABLE)
     {
         EINT->IMASK &= ~eintConfig->line;
         EINT->EMASK &= ~eintConfig->line;
@@ -104,7 +104,7 @@ void EINT_Config(EINT_Config_T *eintConfig)
  *
  * @retval       None
  */
-void EINT_ConfigStructInit(EINT_Config_T *eintConfig)
+void EINT_ConfigStructInit(EINT_Config_T* eintConfig)
 {
     eintConfig->line = EINT_LINENONE;
     eintConfig->mode = EINT_MODE_INTERRUPT;
@@ -137,7 +137,7 @@ uint8_t EINT_ReadStatusFlag(EINT_LINE_T line)
 {
     uint8_t status = RESET;
 
-    if ((EINT->IPEND & line) != (uint32_t)RESET)
+    if((EINT->IPEND & line) != (uint32_t)RESET)
     {
         status = SET;
     }
@@ -176,7 +176,7 @@ uint8_t EINT_ReadIntFlag(EINT_LINE_T line)
 
     enablestatus = EINT->IMASK & line;
 
-    if ((EINT->IPEND & line) != ((uint32_t)RESET) && (enablestatus != (uint32_t)RESET))
+    if((EINT->IPEND & line) != ((uint32_t)RESET) && (enablestatus != (uint32_t)RESET))
     {
         status = SET;
     }
