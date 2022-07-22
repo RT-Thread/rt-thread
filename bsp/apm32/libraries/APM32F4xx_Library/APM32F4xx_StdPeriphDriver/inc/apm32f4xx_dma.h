@@ -391,7 +391,7 @@ void DMA_DisableDoubleBufferMode(DMA_Stream_T* stream);
 void DMA_ConfigMemoryTarget(DMA_Stream_T* stream, uint32_t memoryBaseAddr, DMA_MEMORY_T memoryTarget);
 uint32_t DMA_ReadCurrentMemoryTarget(DMA_Stream_T* stream);
 
-/* DMA Interrupts and flagsã€€*/
+/* DMA Interrupts and flags */
 uint8_t DMA_ReadCmdStatus(DMA_Stream_T* stream);
 uint32_t DMA_ReadFIFOFlag(DMA_Stream_T* stream);
 
