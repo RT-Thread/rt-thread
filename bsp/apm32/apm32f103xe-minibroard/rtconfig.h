@@ -17,11 +17,14 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice optimization */
 
+#define RT_KSERVICE_USING_STDLIB
 #define RT_DEBUG
-#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -43,8 +46,8 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40100
+#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -69,6 +72,12 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define RT_USING_DFS
+#define DFS_USING_POSIX
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define DFS_FD_MAX 16
 
 /* Device Drivers */
 
@@ -125,21 +134,8 @@
 
 /* language packages */
 
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
 
 /* multimedia packages */
-
-/* LVGL: powerful and easy-to-use embedded GUI library */
-
-
-/* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -147,35 +143,14 @@
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
-/* POSIX extension functions */
-
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
 
 /* peripheral libraries and drivers */
 
 
-/* AI packages */
-
-
 /* miscellaneous packages */
 
-/* project laboratory */
 
 /* samples: kernel and components samples */
-
-
-/* entertainment: terminal games and other interesting software packages */
 
 #define SOC_FAMILY_APM32
 #define SOC_SERIES_APM32F1

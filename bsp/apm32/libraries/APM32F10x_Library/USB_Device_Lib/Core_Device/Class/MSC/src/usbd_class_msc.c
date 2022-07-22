@@ -35,45 +35,45 @@ static uint8_t s_mscMaxLen = 0;
  *
  * @retval      None
  */
-void USBD_MSC_ClassHandler(USBD_DevReqData_T *reqData)
+void USBD_MSC_ClassHandler(USBD_DevReqData_T* reqData)
 {
     uint16_t wValue = ((uint16_t)reqData->byte.wValue[1] << 8) | \
-                      reqData->byte.wValue[0];
+                                 reqData->byte.wValue[0];
     uint16_t wLength = ((uint16_t)reqData->byte.wLength[1] << 8) | \
-                       reqData->byte.wLength[0];
+                                 reqData->byte.wLength[0];
 
     switch (reqData->byte.bRequest)
     {
-    case BOT_GET_MAX_LUN :
-        if ((wValue == 0) && (wLength == 1) && \
+        case BOT_GET_MAX_LUN :
+            if ((wValue == 0) && (wLength == 1) && \
                 (reqData->byte.bmRequestType.bit.dir == 1))
-        {
-            s_mscMaxLen = STORAGE_MAX_LUN - 1;
+            {
+                s_mscMaxLen = STORAGE_MAX_LUN - 1;
 
-            USBD_CtrlInData(&s_mscMaxLen, 1);
-        }
-        else
-        {
-            USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_STALL, USBD_EP_STATUS_STALL);
-        }
-        break;
-    case BOT_RESET :
-        if ((wValue == 0) && (wLength == 0) && \
+                USBD_CtrlInData(&s_mscMaxLen, 1);
+            }
+            else
+            {
+                USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_STALL, USBD_EP_STATUS_STALL);
+            }
+            break;
+        case BOT_RESET :
+            if ((wValue == 0) && (wLength == 0) && \
                 (reqData->byte.bmRequestType.bit.dir == 0))
-        {
-            USBD_CtrlInData(NULL, 0);
-            /** Reset */
-            USBD_MSC_BOT_Reset();
-        }
-        else
-        {
+            {
+                USBD_CtrlInData(NULL, 0);
+                /** Reset */
+                USBD_MSC_BOT_Reset();
+            }
+            else
+            {
+                USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_STALL, USBD_EP_STATUS_STALL);
+            }
+
+            break;
+
+        default:
             USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_STALL, USBD_EP_STATUS_STALL);
-        }
-
-        break;
-
-    default:
-        USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_STALL, USBD_EP_STATUS_STALL);
-        break;
+            break;
     }
 }

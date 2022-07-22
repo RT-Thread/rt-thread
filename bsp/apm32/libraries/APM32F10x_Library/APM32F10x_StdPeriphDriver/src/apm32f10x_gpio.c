@@ -46,7 +46,7 @@
  *
  * @retval    None
  */
-void GPIO_Reset(GPIO_T *port)
+void GPIO_Reset(GPIO_T* port)
 {
     RCM_APB2_PERIPH_T APB2Periph;
 
@@ -106,7 +106,7 @@ void GPIO_AFIOReset(void)
  *
  * @retval    None
  */
-void GPIO_Config(GPIO_T *port, GPIO_Config_T *gpioConfig)
+void GPIO_Config(GPIO_T* port, GPIO_Config_T* gpioConfig)
 {
     uint8_t i;
     uint32_t mode;
@@ -181,7 +181,7 @@ void GPIO_Config(GPIO_T *port, GPIO_Config_T *gpioConfig)
  *
  * @retval    None
  */
-void GPIO_ConfigStructInit(GPIO_Config_T *gpioConfig)
+void GPIO_ConfigStructInit(GPIO_Config_T* gpioConfig)
 {
     gpioConfig->pin  = GPIO_PIN_ALL;
     gpioConfig->speed = GPIO_SPEED_20MHz;
@@ -199,7 +199,7 @@ void GPIO_ConfigStructInit(GPIO_Config_T *gpioConfig)
  *
  * @retval    The input port pin value
  */
-uint8_t GPIO_ReadInputBit(GPIO_T *port, uint16_t pin)
+uint8_t GPIO_ReadInputBit(GPIO_T* port, uint16_t pin)
 {
     uint8_t ret;
 
@@ -216,7 +216,7 @@ uint8_t GPIO_ReadInputBit(GPIO_T *port, uint16_t pin)
  *
  * @retval    GPIO input data port value
  */
-uint16_t GPIO_ReadInputPort(GPIO_T *port)
+uint16_t GPIO_ReadInputPort(GPIO_T* port)
 {
     return ((uint16_t)port->IDATA);
 }
@@ -232,7 +232,7 @@ uint16_t GPIO_ReadInputPort(GPIO_T *port)
  *
  * @retval    The output port pin value
  */
-uint8_t GPIO_ReadOutputBit(GPIO_T *port, uint16_t pin)
+uint8_t GPIO_ReadOutputBit(GPIO_T* port, uint16_t pin)
 {
 
     uint8_t ret;
@@ -250,7 +250,7 @@ uint8_t GPIO_ReadOutputBit(GPIO_T *port, uint16_t pin)
  *
  * @retval    output data port value
  */
-uint16_t GPIO_ReadOutputPort(GPIO_T *port)
+uint16_t GPIO_ReadOutputPort(GPIO_T* port)
 {
     return ((uint16_t)port->ODATA);
 }
@@ -266,7 +266,7 @@ uint16_t GPIO_ReadOutputPort(GPIO_T *port)
  *
  * @retval    None
  */
-void GPIO_SetBit(GPIO_T *port, uint16_t pin)
+void GPIO_SetBit(GPIO_T* port, uint16_t pin)
 {
     port->BSC = (uint32_t)pin;
 }
@@ -282,7 +282,7 @@ void GPIO_SetBit(GPIO_T *port, uint16_t pin)
  *
  * @retval    None
  */
-void GPIO_ResetBit(GPIO_T *port, uint16_t pin)
+void GPIO_ResetBit(GPIO_T* port, uint16_t pin)
 {
     port->BC = (uint32_t)pin;
 }
@@ -304,7 +304,7 @@ void GPIO_ResetBit(GPIO_T *port, uint16_t pin)
  *
  * @retval    None
  */
-void GPIO_WriteBitValue(GPIO_T *port, uint16_t pin, uint8_t bitVal)
+void GPIO_WriteBitValue(GPIO_T* port, uint16_t pin, uint8_t bitVal)
 {
     if (bitVal != BIT_RESET)
     {
@@ -326,7 +326,7 @@ void GPIO_WriteBitValue(GPIO_T *port, uint16_t pin, uint8_t bitVal)
  *
  * @retval    None
  */
-void GPIO_WriteOutputPort(GPIO_T *port, uint16_t portValue)
+void GPIO_WriteOutputPort(GPIO_T* port, uint16_t portValue)
 {
     port->ODATA = (uint32_t)portValue;
 }
@@ -342,7 +342,7 @@ void GPIO_WriteOutputPort(GPIO_T *port, uint16_t portValue)
  *
  * @retval    None
  */
-void GPIO_ConfigPinLock(GPIO_T *port, uint16_t pin)
+void GPIO_ConfigPinLock(GPIO_T* port, uint16_t pin)
 {
     uint32_t val = 0x00010000;
 
@@ -471,7 +471,7 @@ void GPIO_ConfigPinRemap(GPIO_REMAP_T remap)
         regVal = AFIO->REMAP1;
     }
 
-    if (remap >> 8 == 0x18)
+    if(remap >> 8 == 0x18)
     {
         regVal &= 0xF0FFFFFF;
         AFIO->REMAP1 &= 0xF0FFFFFF;
@@ -514,28 +514,28 @@ void GPIO_ConfigEINTLine(GPIO_PORT_SOURCE_T portSource, GPIO_PIN_SOURCE_T pinSou
     if (pinSource <= GPIO_PIN_SOURCE_3)
     {
         shift = pinSource << 2;
-        AFIO->EINTSEL1 &= (uint32_t)~(0x0f << shift);
+        AFIO->EINTSEL1 &= (uint32_t )~(0x0f << shift);
         AFIO->EINTSEL1 |=  portSource << shift;
     }
 
     else if (pinSource <= GPIO_PIN_SOURCE_7)
     {
         shift = (pinSource - GPIO_PIN_SOURCE_4) << 2;
-        AFIO->EINTSEL2 &= (uint32_t)~(0x0f << shift);
+        AFIO->EINTSEL2 &= (uint32_t )~(0x0f << shift);
         AFIO->EINTSEL2 |=  portSource << shift;
     }
 
     else if (pinSource <= GPIO_PIN_SOURCE_11)
     {
         shift = (pinSource - GPIO_PIN_SOURCE_8) << 2;
-        AFIO->EINTSEL3 &= (uint32_t)~(0x0f << shift);
+        AFIO->EINTSEL3 &= (uint32_t )~(0x0f << shift);
         AFIO->EINTSEL3 |=  portSource << shift;
     }
 
     else if (pinSource <= GPIO_PIN_SOURCE_15)
     {
         shift = (pinSource - GPIO_PIN_SOURCE_12) << 2;
-        AFIO->EINTSEL4 &= (uint32_t)~(0x0f << shift);
+        AFIO->EINTSEL4 &= (uint32_t )~(0x0f << shift);
         AFIO->EINTSEL4 |=  portSource << shift;
     }
 }

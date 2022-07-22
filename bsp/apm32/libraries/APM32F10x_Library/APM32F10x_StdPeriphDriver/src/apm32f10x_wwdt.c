@@ -139,7 +139,7 @@ void WWDT_Enable(uint8_t counter)
  */
 uint8_t WWDT_ReadFlag(void)
 {
-    return (uint8_t)(WWDT->STS);
+    return (uint8_t) (WWDT->STS);
 }
 
 /*!

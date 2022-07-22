@@ -110,7 +110,7 @@ typedef enum
     USBD_CTRL_STATE_WAIT_STATUS_IN,
     USBD_CTRL_STATE_WAIT_STATUS_OUT,
     USBD_CTRL_STATE_STALLED,
-} USBD_CTRL_STATE_T;
+}USBD_CTRL_STATE_T;
 
 /**
  * @brief   USBD Endpoint type for USB protocol
@@ -121,7 +121,7 @@ typedef enum
     USBD_EP_TYPE_ISO,
     USBD_EP_TYPE_BULK,
     USBD_EP_TYPE_INTERRUPT
-} USBD_EP_TYPE_T;
+}USBD_EP_TYPE_T;
 
 /**
  * @brief   USB request type
@@ -135,8 +135,8 @@ typedef union
         uint8_t recipient       : 5;
         uint8_t type            : 2;
         uint8_t dir             : 1;
-    } bit;
-} USBD_REQ_TYPE_T;
+    }bit;
+}USBD_REQ_TYPE_T;
 
 /**
  * @brief   USB device request data
@@ -165,7 +165,7 @@ typedef struct
 {
     const uint8_t *pDesc;
     uint8_t size;
-} USBD_Descriptor_T;
+}USBD_Descriptor_T;
 
 /** USB standard request callback handler */
 typedef void (*USBD_StdReqHandler_T)(void);

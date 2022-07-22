@@ -74,18 +74,18 @@ static const uint8_t  s_modeSense10Data[] =
 };
 
 static uint8_t SCSI_TestUnitReady(uint8_t lun);
-static uint8_t SCSI_Inquiry(uint8_t lun, uint8_t *command);
-static uint8_t SCSI_RequestSense(uint8_t lun, uint8_t *command);
+static uint8_t SCSI_Inquiry(uint8_t lun, uint8_t* command);
+static uint8_t SCSI_RequestSense(uint8_t lun, uint8_t* command);
 
-static uint8_t SCSI_ReadFormatCapacity(uint8_t lun, uint8_t *command);
-static uint8_t SCSI_ReadCapacity10(uint8_t lun, uint8_t *command);
-static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command);
-static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command);
-static uint8_t SCSI_Verify10(uint8_t lun, uint8_t *command);
+static uint8_t SCSI_ReadFormatCapacity(uint8_t lun, uint8_t* command);
+static uint8_t SCSI_ReadCapacity10(uint8_t lun, uint8_t* command);
+static uint8_t SCSI_Read10(uint8_t lun, uint8_t* command);
+static uint8_t SCSI_Write10(uint8_t lun, uint8_t* command);
+static uint8_t SCSI_Verify10(uint8_t lun, uint8_t* command);
 
 static uint8_t SCSI_StartStopUnit(void);
-static uint8_t SCSI_ModeSense6(uint8_t lun, uint8_t *command);
-static uint8_t SCSI_ModeSense10(uint8_t lun, uint8_t *command);
+static uint8_t SCSI_ModeSense6(uint8_t lun, uint8_t* command);
+static uint8_t SCSI_ModeSense10(uint8_t lun, uint8_t* command);
 
 static uint8_t SCSI_Read(uint8_t lun);
 static uint8_t SCSI_Write(uint8_t lun);
@@ -100,60 +100,60 @@ static uint8_t SCSI_CheckAddress(uint8_t lun, uint32_t blkOffset, uint16_t blkNb
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-uint8_t SCSI_CmdHandler(uint8_t lun, uint8_t *command)
+uint8_t SCSI_CmdHandler(uint8_t lun, uint8_t* command)
 {
     uint8_t ret = SCSI_OK;
 
     switch (command[0])
     {
-    case SCSI_CMD_TEST_UNIT_READY:
-        ret = SCSI_TestUnitReady(lun);
-        break;
+        case SCSI_CMD_TEST_UNIT_READY:
+            ret = SCSI_TestUnitReady(lun);
+            break;
 
-    case SCSI_CMD_INQUIRY:
-        ret = SCSI_Inquiry(lun, command);
-        break;
+        case SCSI_CMD_INQUIRY:
+            ret = SCSI_Inquiry(lun, command);
+            break;
 
-    case SCSI_CMD_REQUEST_SENSE:
-        ret = SCSI_RequestSense(lun, command);
-        break;
+        case SCSI_CMD_REQUEST_SENSE:
+            ret = SCSI_RequestSense(lun, command);
+            break;
 
-    case SCSI_CMD_READ_FORMAT_CAPACITIES:
-        ret = SCSI_ReadFormatCapacity(lun, command);
-        break;
+        case SCSI_CMD_READ_FORMAT_CAPACITIES:
+            ret = SCSI_ReadFormatCapacity(lun, command);
+            break;
 
-    case SCSI_CMD_READ_CAPACITY_10:
-        ret = SCSI_ReadCapacity10(lun, command);
-        break;
+        case SCSI_CMD_READ_CAPACITY_10:
+            ret = SCSI_ReadCapacity10(lun, command);
+            break;
 
-    case SCSI_CMD_READ_10:
-        ret = SCSI_Read10(lun, command);
-        break;
+        case SCSI_CMD_READ_10:
+            ret = SCSI_Read10(lun, command);
+            break;
 
-    case SCSI_CMD_WRITE10:
-        ret = SCSI_Write10(lun, command);
-        break;
+        case SCSI_CMD_WRITE10:
+            ret = SCSI_Write10(lun, command);
+            break;
 
-    case SCSI_CMD_VERIFY_10:
-        ret = SCSI_Verify10(lun, command);
-        break;
-    case SCSI_CMD_ALLOW_MEDIUM_REMOVAL:
-    case SCSI_CMD_START_STOP_UNIT:
-        ret = SCSI_StartStopUnit();
-        break;
+        case SCSI_CMD_VERIFY_10:
+            ret = SCSI_Verify10(lun, command);
+            break;
+        case SCSI_CMD_ALLOW_MEDIUM_REMOVAL:
+        case SCSI_CMD_START_STOP_UNIT:
+            ret = SCSI_StartStopUnit();
+            break;
 
-    case SCSI_CMD_MODE_SENSE_6:
-        ret = SCSI_ModeSense6(lun, command);
-        break;
+        case SCSI_CMD_MODE_SENSE_6:
+            ret = SCSI_ModeSense6 (lun, command);
+            break;
 
-    case SCSI_CMD_MODE_SENSE_10:
-        ret = SCSI_ModeSense10(lun, command);
-        break;
+        case SCSI_CMD_MODE_SENSE_10:
+            ret = SCSI_ModeSense10 (lun, command);
+            break;
 
-    default:
-        SCSI_PutSenseCode(lun, SCSI_SKEY_ILLEGAL_REQUEST,
-                          SCSI_ASC_INVALID_CDB, 0);
-        ret = SCSI_FAIL;
+        default:
+            SCSI_PutSenseCode(lun, SCSI_SKEY_ILLEGAL_REQUEST,
+                                        SCSI_ASC_INVALID_CDB, 0);
+            ret = SCSI_FAIL;
     }
 
     return ret;
@@ -221,14 +221,14 @@ static uint8_t SCSI_TestUnitReady(uint8_t lun)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_Inquiry(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_Inquiry(uint8_t lun, uint8_t* command)
 {
     uint16_t i;
-    uint8_t *pInquiryData;
+    uint8_t* pInquiryData;
 
     if (command[1] & 0x01)
     {
-        pInquiryData = (uint8_t *)s_page00InquiryData;
+        pInquiryData = (uint8_t*)s_page00InquiryData;
         g_BOTInfo.dataLen = s_page00InquiryData[3] + 4;
     }
     else
@@ -255,7 +255,7 @@ static uint8_t SCSI_Inquiry(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_RequestSense(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_RequestSense(uint8_t lun, uint8_t* command)
 {
     uint8_t i = 0;
 
@@ -280,7 +280,7 @@ static uint8_t SCSI_RequestSense(uint8_t lun, uint8_t *command)
     }
 
     g_BOTInfo.dataLen = (SCSI_REQUEST_SENSE_DATA_LEN < command[4]) ? \
-                        SCSI_REQUEST_SENSE_DATA_LEN : command[4];
+                         SCSI_REQUEST_SENSE_DATA_LEN : command[4];
 
     return SCSI_OK;
 }
@@ -294,7 +294,7 @@ static uint8_t SCSI_RequestSense(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_ReadFormatCapacity(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_ReadFormatCapacity(uint8_t lun, uint8_t* command)
 {
     uint16_t i = 0;
     uint32_t blkSize;
@@ -341,12 +341,12 @@ static uint8_t SCSI_ReadFormatCapacity(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_ReadCapacity10(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_ReadCapacity10(uint8_t lun, uint8_t* command)
 {
     if (g_storageCallBack.ReadCapacity(lun, &s_blkNbr, &s_blkSize) != SCSI_OK)
     {
         SCSI_PutSenseCode(lun, SCSI_SKEY_NOT_READY,
-                          SCSI_ASC_MEDIUM_NOT_PRESENT, 0);
+                        SCSI_ASC_MEDIUM_NOT_PRESENT, 0);
 
         return SCSI_FAIL;
     }
@@ -376,7 +376,7 @@ static uint8_t SCSI_ReadCapacity10(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_Read10(uint8_t lun, uint8_t* command)
 {
     uint8_t ret = SCSI_OK;
 
@@ -385,7 +385,7 @@ static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command)
         if ((g_BOTInfo.CBW.bmFlags & 0x80) != 0x80)
         {
             SCSI_PutSenseCode(g_BOTInfo.CBW.bLUN, SCSI_SKEY_ILLEGAL_REQUEST,
-                              SCSI_ASC_INVALID_CDB, 0);
+                            SCSI_ASC_INVALID_CDB, 0);
 
             return SCSI_FAIL;
         }
@@ -393,7 +393,7 @@ static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command)
         if (g_storageCallBack.CheckReady(lun) != SCSI_OK)
         {
             SCSI_PutSenseCode(lun, SCSI_SKEY_NOT_READY,
-                              SCSI_ASC_MEDIUM_NOT_PRESENT, 0);
+                        SCSI_ASC_MEDIUM_NOT_PRESENT, 0);
 
             return SCSI_FAIL;
         }
@@ -401,9 +401,9 @@ static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command)
         s_blkAddr = ((uint32_t)command[2] << 24) | \
                     ((uint32_t)command[3] << 16) | \
                     ((uint32_t)command[4] << 8)  | \
-                    (uint32_t)command[5];
+                     (uint32_t)command[5];
 
-        s_blkLen = ((uint16_t)command[7] << 8 | (uint8_t)command[8]);
+        s_blkLen = ((uint16_t)command[7] << 8 | (uint8_t )command[8]);
 
         if (SCSI_CheckAddress(lun, s_blkAddr, s_blkLen) != SCSI_OK)
         {
@@ -417,7 +417,7 @@ static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command)
         if (g_BOTInfo.CBW.dDataXferLen != s_blkLen)
         {
             SCSI_PutSenseCode(g_BOTInfo.CBW.bLUN, SCSI_SKEY_ILLEGAL_REQUEST,
-                              SCSI_ASC_INVALID_CDB, 0);
+                            SCSI_ASC_INVALID_CDB, 0);
 
             return SCSI_FAIL;
         }
@@ -440,7 +440,7 @@ static uint8_t SCSI_Read10(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_Write10(uint8_t lun, uint8_t* command)
 {
     uint8_t ret = SCSI_OK;
     uint32_t len;
@@ -450,7 +450,7 @@ static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command)
         if (g_BOTInfo.CBW.bmFlags & 0x80)
         {
             SCSI_PutSenseCode(g_BOTInfo.CBW.bLUN, SCSI_SKEY_ILLEGAL_REQUEST,
-                              SCSI_ASC_INVALID_CDB, 0);
+                            SCSI_ASC_INVALID_CDB, 0);
 
             return SCSI_FAIL;
         }
@@ -458,7 +458,7 @@ static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command)
         if (g_storageCallBack.CheckReady(lun) != SCSI_OK)
         {
             SCSI_PutSenseCode(lun, SCSI_SKEY_NOT_READY,
-                              SCSI_ASC_MEDIUM_NOT_PRESENT, 0);
+                           SCSI_ASC_MEDIUM_NOT_PRESENT, 0);
 
             return SCSI_FAIL;
         }
@@ -474,9 +474,9 @@ static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command)
         s_blkAddr = ((uint32_t)command[2] << 24) | \
                     ((uint32_t)command[3] << 16) | \
                     ((uint32_t)command[4] << 8)  | \
-                    (uint32_t)command[5];
+                     (uint32_t)command[5];
 
-        s_blkLen = ((uint16_t)command[7] << 8 | (uint8_t)command[8]);
+        s_blkLen = ((uint16_t)command[7] << 8 | (uint8_t )command[8]);
 
         if (SCSI_CheckAddress(lun, s_blkAddr, s_blkLen) != SCSI_OK)
         {
@@ -489,7 +489,7 @@ static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command)
         if (g_BOTInfo.CBW.dDataXferLen != s_blkLen)
         {
             SCSI_PutSenseCode(g_BOTInfo.CBW.bLUN, SCSI_SKEY_ILLEGAL_REQUEST,
-                              SCSI_ASC_INVALID_CDB, 0);
+                            SCSI_ASC_INVALID_CDB, 0);
 
             return SCSI_FAIL;
         }
@@ -517,12 +517,12 @@ static uint8_t SCSI_Write10(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_Verify10(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_Verify10(uint8_t lun, uint8_t* command)
 {
     if (command[1] & 0x02)
     {
         SCSI_PutSenseCode(lun, SCSI_SKEY_ILLEGAL_REQUEST,
-                          SCSI_ASC_INVALID_FIELED_IN_COMMAND, 0);
+                      SCSI_ASC_INVALID_FIELED_IN_COMMAND, 0);
 
         return SCSI_FAIL;
     }
@@ -530,9 +530,9 @@ static uint8_t SCSI_Verify10(uint8_t lun, uint8_t *command)
     s_blkAddr = ((uint32_t)command[2] << 24) | \
                 ((uint32_t)command[3] << 16) | \
                 ((uint32_t)command[4] << 8)  | \
-                (uint32_t)command[5];
+                 (uint32_t)command[5];
 
-    s_blkLen = ((uint16_t)command[7] << 8 | (uint8_t)command[8]);
+    s_blkLen = ((uint16_t)command[7] << 8 | (uint8_t )command[8]);
 
     if (SCSI_CheckAddress(lun, s_blkAddr, s_blkLen) != SCSI_OK)
     {
@@ -566,7 +566,7 @@ static uint8_t SCSI_StartStopUnit(void)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_ModeSense6(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_ModeSense6(uint8_t lun, uint8_t* command)
 {
     for (uint16_t i = 0; i < 8; i++)
     {
@@ -587,7 +587,7 @@ static uint8_t SCSI_ModeSense6(uint8_t lun, uint8_t *command)
  *
  * @retval      SCSI_OK or SCSI_FAILL
  */
-static uint8_t SCSI_ModeSense10(uint8_t lun, uint8_t *command)
+static uint8_t SCSI_ModeSense10(uint8_t lun, uint8_t* command)
 {
     for (uint16_t i = 0; i < 8; i++)
     {
@@ -611,10 +611,10 @@ static uint8_t SCSI_Read(uint8_t lun)
     uint32_t len = USB_MIN(MSC_MEDIA_PACKET, s_blkLen);
 
     if (g_storageCallBack.ReadData(len, g_BOTInfo.data, (s_blkAddr / s_blkSize),
-                                   (len / s_blkSize)) != SCSI_OK)
+                                  (len / s_blkSize)) != SCSI_OK)
     {
         SCSI_PutSenseCode(lun, SCSI_SKEY_HARDWARE_ERROR,
-                          SCSI_ASC_UNRECOVERED_READ_ERROR, 0);
+                        SCSI_ASC_UNRECOVERED_READ_ERROR, 0);
 
         return SCSI_FAIL;
     }

@@ -46,7 +46,7 @@
  */
 uint32_t DBGMCU_ReadDEVID(void)
 {
-    return (DBGMCU->IDCODE_B.EQR);
+   return(DBGMCU->IDCODE_B.EQR);
 }
 
 /*!
@@ -58,7 +58,7 @@ uint32_t DBGMCU_ReadDEVID(void)
  */
 uint32_t DBGMCU_ReadREVID(void)
 {
-    return (DBGMCU->IDCODE_B.WVR);
+   return(DBGMCU->IDCODE_B.WVR);
 }
 
 /*!
