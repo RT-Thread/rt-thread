@@ -217,7 +217,7 @@ int rt_hw_spi_init(void)
 
         LOG_D("%s bus init done", spi_bus_obj[i].bus_name);
 
-        LOG_D("MOSI PIN:[%d], MISO PIN[%d],CLK PIN[%d]\n",
+        LOG_D("MOSI PIN:[%d], MISO PIN[%d], CLK PIN[%d]\n",
               spi_bus_obj[i].mosi_pin, spi_bus_obj[i].miso_pin,
               spi_bus_obj[i].sck_pin);
     }

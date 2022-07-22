@@ -26,17 +26,20 @@ if GetDepend(['RT_USING_I2C']):
     if GetDepend('BSP_USING_HW_I2C3') or GetDepend('BSP_USING_HW_I2C6'):
         src += ['drv_i2c.c']
 
-if GetDepend(['RT_USING_PWM']):
+if GetDepend(['BSP_USING_SDIO1']):
+    src += Glob('drv_sdio.c')
+
+if GetDepend(['BSP_USING_PWM']):
     src += ['drv_pwm.c']
 
-if GetDepend(['RT_USING_SPI']):
+if GetDepend(['BSP_USING_SPI']):
     src += ['drv_spi.c']
 
-if GetDepend(['RT_USING_ADC']):
+if GetDepend(['BSP_USING_ADC']):
     src += ['drv_adc.c']
 
-if GetDepend(['RT_USING_QSPI']):
-    src += ['drv_qspi.c']
+if GetDepend(['RT_USING_WDT']):
+    src += ['drv_wdt.c']
 
 path =  [cwd]
 path += [cwd + '/config']
