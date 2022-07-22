@@ -19,7 +19,8 @@ src = Split('''
             mtb-hal-cat1/source/cyhal_utils_psoc.c
             mtb-hal-cat1/source/cyhal_utils.c
             mtb-hal-cat1/source/cyhal_lptimer.c
-            mtb-hal-cat1/source/cyhal_irq_psoc.c            
+            mtb-hal-cat1/source/cyhal_irq_psoc.c
+            mtb-hal-cat1/include_pvt/cyhal_hw_types.h      
             mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c
             mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_124_bga.c
             mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c
@@ -67,6 +68,10 @@ if GetDepend(['RT_USING_ADC']):
     src += ['mtb-pdl-cat1/drivers/source/cy_dmac.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_sysanalog.c']
 
+if GetDepend(['RT_USING_SDIO']):
+    src += ['mtb-hal-cat1/source/cyhal_sdhc.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_sd_host.c']
+
 if GetDepend(['RT_USING_QSPI']):
     src += ['mtb-hal-cat1/source/cyhal_qspi.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_dma.c']
@@ -87,9 +92,12 @@ if GetDepend(['RT_USING_SPI']):
     src += ['mtb-hal-cat1/source/cyhal_spi.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_scb_spi.c']
 
-
 if GetDepend(['RT_USING_I2C']):
     src += ['mtb-hal-cat1/source/cyhal_i2c.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['mtb-pdl-cat1/drivers/source/cy_wdt.c']
+    src += ['mtb-hal-cat1/source/cyhal_wdt.c']
 
 path = [cwd + '/capsense',
         cwd + '/psoc6cm0p',

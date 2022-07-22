@@ -118,6 +118,18 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    config BSP_USING_SDMMC
+        bool "Enable SDMMC (sd card)"
+        default n
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        if BSP_USING_SDMMC
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1 (sd card)"
+                default n
+        endif
+
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
@@ -183,6 +195,11 @@ menu "On-chip Peripheral Drivers"
                         default 106
                 endif
         endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n        
 endmenu
 
 menu "Board extended module Drivers"
