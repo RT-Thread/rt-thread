@@ -102,7 +102,7 @@ void PMU_DisablePVD(void)
 /*!
  * @brief     Configure a voltage threshold detected by a power supply voltage detector (PVD).
  *
- * @param     level：specifies the PVD detection level
+ * @param     level£ºspecifies the PVD detection level
  *                   This parameter can be one of the following values:
  *                   @arg PMU_PVD_LEVEL_2V2 : Config PVD detection level to 2.2V
  *                   @arg PMU_PVD_LEVEL_2V3 : Config PVD detection level to 2.3V
@@ -171,9 +171,9 @@ void PMU_EnterSTOPMode(PMU_REGULATOR_T regulator, PMU_STOP_ENTRY_T entry)
     /** Set LPDSCFG bit according to regulator value */
     PMU->CTRL_B.LPDSCFG = regulator;
     /** Set Cortex System Control Register */
-    SCB->SCR |= (uint32_t)0x04;
+    SCB->SCR |= (uint32_t )0x04;
     /** Select STOP mode entry*/
-    if (entry == PMU_STOP_ENTRY_WFI)
+    if(entry == PMU_STOP_ENTRY_WFI)
     {
         /** Request Wait For Interrupt */
         __WFI();
@@ -202,7 +202,7 @@ void PMU_EnterSTANDBYMode(void)
     /** Select STANDBY mode */
     PMU->CTRL_B.PDDSCFG = BIT_SET;
     /** Set Cortex System Control Register */
-    SCB->SCR |= (uint32_t)0x04;
+    SCB->SCR |= (uint32_t )0x04;
 #if defined ( __CC_ARM   )
     __force_stores();
 #endif
@@ -214,7 +214,7 @@ void PMU_EnterSTANDBYMode(void)
 /*!
  * @brief     Read the specified PWR flag is set or not.
  *
- * @param     flag：Reads the status of specifies the flag.
+ * @param     flag£ºReads the status of specifies the flag.
  *                  This parameter can be one of the following values:
  *                    @arg PMU_FLAG_WUE : Wake Up flag
  *                    @arg PMU_FLAG_SB  : StandBy flag
@@ -226,15 +226,15 @@ uint8_t PMU_ReadStatusFlag(PMU_FLAG_T flag)
 {
     uint8_t BitStatus = BIT_RESET;
 
-    if (flag == PMU_FLAG_WUE)
+    if(flag == PMU_FLAG_WUE)
     {
         BitStatus = PMU->CSTS_B.WUEFLG;
     }
-    else if (flag == PMU_FLAG_SB)
+    else if(flag == PMU_FLAG_SB)
     {
         BitStatus = PMU->CSTS_B.SBFLG;
     }
-    else if (flag == PMU_FLAG_PVDO)
+    else if(flag == PMU_FLAG_PVDO)
     {
         BitStatus = PMU->CSTS_B.PVDOFLG;
     }
@@ -244,7 +244,7 @@ uint8_t PMU_ReadStatusFlag(PMU_FLAG_T flag)
 /*!
  * @brief     Clears the PWR's pending flags.
  *
- * @param     flag：Clears the status of specifies the flag.
+ * @param     flag£ºClears the status of specifies the flag.
  *                  This parameter can be one of the following values:
  *                    @arg PMU_FLAG_WUE : Wake Up flag
  *                    @arg PMU_FLAG_SB  : StandBy flag
@@ -253,11 +253,11 @@ uint8_t PMU_ReadStatusFlag(PMU_FLAG_T flag)
  */
 void PMU_ClearStatusFlag(PMU_FLAG_T flag)
 {
-    if (flag == PMU_FLAG_WUE)
+    if(flag == PMU_FLAG_WUE)
     {
         PMU->CTRL_B.WUFLGCLR = BIT_SET;
     }
-    else if (flag == PMU_FLAG_SB)
+    else if(flag == PMU_FLAG_SB)
     {
         PMU->CTRL_B.SBFLGCLR = BIT_SET;
     }

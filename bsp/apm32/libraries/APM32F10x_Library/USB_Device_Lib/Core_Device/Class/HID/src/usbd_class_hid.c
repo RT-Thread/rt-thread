@@ -35,29 +35,29 @@ static uint8_t s_hidProtocol;
  *
  * @retval      None
  */
-void USBD_ClassHandler(USBD_DevReqData_T *reqData)
+void USBD_ClassHandler(USBD_DevReqData_T* reqData)
 {
     switch (reqData->byte.bRequest)
     {
-    case HID_CLASS_REQ_SET_IDLE:
-        s_hidIdleState = reqData->byte.wValue[1];
-        USBD_CtrlInData(NULL, 0);
-        break;
+        case HID_CLASS_REQ_SET_IDLE:
+            s_hidIdleState = reqData->byte.wValue[1];
+            USBD_CtrlInData(NULL, 0);
+            break;
 
-    case HID_CLASS_REQ_GET_IDLE:
-        USBD_CtrlInData(&s_hidIdleState, 1);
-        break;
+        case HID_CLASS_REQ_GET_IDLE:
+            USBD_CtrlInData(&s_hidIdleState, 1);
+            break;
 
-    case HID_CLASS_REQ_SET_PROTOCOL:
-        s_hidProtocol = reqData->byte.wValue[0];
-        USBD_CtrlInData(NULL, 0);
-        break;
+        case HID_CLASS_REQ_SET_PROTOCOL:
+            s_hidProtocol = reqData->byte.wValue[0];
+            USBD_CtrlInData(NULL, 0);
+            break;
 
-    case HID_CLASS_REQ_GET_PROTOCOL:
-        USBD_CtrlInData(&s_hidProtocol, 1);
-        break;
+        case HID_CLASS_REQ_GET_PROTOCOL:
+            USBD_CtrlInData(&s_hidProtocol, 1);
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 }

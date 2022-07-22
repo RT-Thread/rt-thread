@@ -45,9 +45,9 @@
  *
  * @retval    None
  */
-void I2C_Reset(I2C_T *i2c)
+void I2C_Reset(I2C_T* i2c)
 {
-    if (i2c == I2C1)
+    if(i2c == I2C1)
     {
         RCM_EnableAPB1PeriphReset(RCM_APB1_PERIPH_I2C1);
         RCM_DisableAPB1PeriphReset(RCM_APB1_PERIPH_I2C1);
@@ -68,7 +68,7 @@ void I2C_Reset(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_Config(I2C_T *i2c, I2C_Config_T *i2cConfig)
+void I2C_Config(I2C_T* i2c, I2C_Config_T* i2cConfig)
 {
     uint16_t tmpreg = 0, freqrange = 0;
     uint32_t PCLK1 = 8000000, PCLK2 = 0;
@@ -79,15 +79,15 @@ void I2C_Config(I2C_T *i2c, I2C_Config_T *i2cConfig)
     /** I2C CTRL2 Configuration */
     RCM_ReadPCLKFreq(&PCLK1, &PCLK2);
     freqrange = PCLK1 / 1000000;
-    i2c->CTRL2_B.CLKFCFG = freqrange;
+    i2c->CTRL2_B.CLKFCFG= freqrange;
 
     /** I2C CLKCTRL Configuration */
     i2c->CTRL1_B.I2CEN = BIT_RESET;
 
-    if (i2cConfig->clockSpeed <= 100000)
+    if(i2cConfig->clockSpeed <= 100000)
     {
         result = (PCLK1 / (i2cConfig->clockSpeed << 1));
-        if (result < 0x04)
+        if(result < 0x04)
         {
             result = 0x04;
         }
@@ -97,7 +97,7 @@ void I2C_Config(I2C_T *i2c, I2C_Config_T *i2cConfig)
     /** Configure speed in fast mode */
     else
     {
-        if (i2cConfig->dutyCycle == I2C_DUTYCYCLE_2)
+        if(i2cConfig->dutyCycle == I2C_DUTYCYCLE_2)
         {
             result = (PCLK1 / (i2cConfig->clockSpeed * 3));
         }
@@ -107,7 +107,7 @@ void I2C_Config(I2C_T *i2c, I2C_Config_T *i2cConfig)
             result |= I2C_DUTYCYCLE_16_9;
         }
 
-        if ((result & 0x0FFF) == 0)
+        if((result & 0x0FFF) == 0)
         {
             result |= 0x0001;
         }
@@ -136,7 +136,7 @@ void I2C_Config(I2C_T *i2c, I2C_Config_T *i2cConfig)
  *
  * @retval    None
  */
-void I2C_ConfigStructInit(I2C_Config_T *i2cConfig)
+void I2C_ConfigStructInit(I2C_Config_T* i2cConfig)
 {
     i2cConfig->clockSpeed = 5000;
     i2cConfig->mode = I2C_MODE_I2C;
@@ -153,7 +153,7 @@ void I2C_ConfigStructInit(I2C_Config_T *i2cConfig)
  *
  * @retval    None
  */
-void I2C_Enable(I2C_T *i2c)
+void I2C_Enable(I2C_T* i2c)
 {
     i2c->CTRL1_B.I2CEN = ENABLE;
 }
@@ -165,7 +165,7 @@ void I2C_Enable(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_Disable(I2C_T *i2c)
+void I2C_Disable(I2C_T* i2c)
 {
     i2c->CTRL1_B.I2CEN = DISABLE;
 }
@@ -177,7 +177,7 @@ void I2C_Disable(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableGenerateStart(I2C_T *i2c)
+void I2C_EnableGenerateStart(I2C_T* i2c)
 {
     i2c->CTRL1_B.START = BIT_SET;
 }
@@ -189,7 +189,7 @@ void I2C_EnableGenerateStart(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableGenerateStart(I2C_T *i2c)
+void I2C_DisableGenerateStart(I2C_T* i2c)
 {
     i2c->CTRL1_B.START = BIT_RESET;
 }
@@ -201,7 +201,7 @@ void I2C_DisableGenerateStart(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableGenerateStop(I2C_T *i2c)
+void I2C_EnableGenerateStop(I2C_T* i2c)
 {
     i2c->CTRL1_B.STOP = BIT_SET;
 }
@@ -213,7 +213,7 @@ void I2C_EnableGenerateStop(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableGenerateStop(I2C_T *i2c)
+void I2C_DisableGenerateStop(I2C_T* i2c)
 {
     i2c->CTRL1_B.STOP = BIT_RESET;
 }
@@ -225,7 +225,7 @@ void I2C_DisableGenerateStop(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableAcknowledge(I2C_T *i2c)
+void I2C_EnableAcknowledge(I2C_T* i2c)
 {
     i2c->CTRL1_B.ACKEN = ENABLE;
 }
@@ -237,7 +237,7 @@ void I2C_EnableAcknowledge(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableAcknowledge(I2C_T *i2c)
+void I2C_DisableAcknowledge(I2C_T* i2c)
 {
     i2c->CTRL1_B.ACKEN = DISABLE;
 }
@@ -251,7 +251,7 @@ void I2C_DisableAcknowledge(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_ConfigOwnAddress2(I2C_T *i2c, uint8_t address)
+void I2C_ConfigOwnAddress2(I2C_T* i2c, uint8_t address)
 {
     i2c->SADDR2_B.ADDR2 = address;
 }
@@ -263,7 +263,7 @@ void I2C_ConfigOwnAddress2(I2C_T *i2c, uint8_t address)
  *
  * @retval    None
  */
-void I2C_EnableDualAddress(I2C_T *i2c)
+void I2C_EnableDualAddress(I2C_T* i2c)
 {
     i2c->SADDR2_B.ADDRNUM = ENABLE;
 }
@@ -275,7 +275,7 @@ void I2C_EnableDualAddress(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableDualAddress(I2C_T *i2c)
+void I2C_DisableDualAddress(I2C_T* i2c)
 {
     i2c->SADDR2_B.ADDRNUM = DISABLE;
 }
@@ -287,7 +287,7 @@ void I2C_DisableDualAddress(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableGeneralCall(I2C_T *i2c)
+void I2C_EnableGeneralCall(I2C_T* i2c)
 {
     i2c->CTRL1_B.SRBEN = ENABLE;
 }
@@ -299,7 +299,7 @@ void I2C_EnableGeneralCall(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableGeneralCall(I2C_T *i2c)
+void I2C_DisableGeneralCall(I2C_T* i2c)
 {
     i2c->CTRL1_B.SRBEN = DISABLE;
 }
@@ -313,7 +313,7 @@ void I2C_DisableGeneralCall(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_TxData(I2C_T *i2c, uint8_t data)
+void I2C_TxData(I2C_T* i2c, uint8_t data)
 {
     i2c->DATA_B.DATA = data;
 }
@@ -325,7 +325,7 @@ void I2C_TxData(I2C_T *i2c, uint8_t data)
  *
  * @retval    received data
  */
-uint8_t I2C_RxData(I2C_T *i2c)
+uint8_t I2C_RxData(I2C_T* i2c)
 {
     return i2c->DATA_B.DATA;
 }
@@ -343,9 +343,9 @@ uint8_t I2C_RxData(I2C_T *i2c)
  *              @arg I2C_DIRECTION_RX: Receiver mode
  * @retval    None
  */
-void I2C_Tx7BitAddress(I2C_T *i2c, uint8_t address, I2C_DIRECTION_T direction)
+void I2C_Tx7BitAddress(I2C_T* i2c, uint8_t address, I2C_DIRECTION_T direction)
 {
-    if (direction != I2C_DIRECTION_TX)
+    if(direction != I2C_DIRECTION_TX)
     {
         i2c->DATA_B.DATA = address | 0x0001;
     }
@@ -375,7 +375,7 @@ void I2C_Tx7BitAddress(I2C_T *i2c, uint8_t address, I2C_DIRECTION_T direction)
  *
  * @retval    The value of the read register
  */
-uint16_t I2C_ReadRegister(I2C_T *i2c, I2C_REGISTER_T i2cRegister)
+uint16_t I2C_ReadRegister(I2C_T* i2c, I2C_REGISTER_T i2cRegister)
 {
     switch (i2cRegister)
     {
@@ -411,7 +411,7 @@ uint16_t I2C_ReadRegister(I2C_T *i2c, I2C_REGISTER_T i2cRegister)
  *
  * @retval    None
  */
-void I2C_EnableSoftwareReset(I2C_T *i2c)
+void I2C_EnableSoftwareReset(I2C_T* i2c)
 {
     i2c->CTRL1_B.SWRST = ENABLE;
 }
@@ -423,7 +423,7 @@ void I2C_EnableSoftwareReset(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableSoftwareReset(I2C_T *i2c)
+void I2C_DisableSoftwareReset(I2C_T* i2c)
 {
     i2c->CTRL1_B.SWRST = DISABLE;
 }
@@ -437,9 +437,9 @@ void I2C_DisableSoftwareReset(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_ConfigNACKPosition(I2C_T *i2c, I2C_NACK_POSITION_T NACKPosition)
+void I2C_ConfigNACKPosition(I2C_T* i2c, I2C_NACK_POSITION_T NACKPosition)
 {
-    if (NACKPosition == I2C_NACK_POSITION_NEXT)
+    if(NACKPosition == I2C_NACK_POSITION_NEXT)
     {
         i2c->CTRL1_B.ACKPOS = BIT_SET;
     }
@@ -460,9 +460,9 @@ void I2C_ConfigNACKPosition(I2C_T *i2c, I2C_NACK_POSITION_T NACKPosition)
  *              @arg I2C_SMBUSALER_HIGH: SMBus Alert pin high
  * @retval    None
  */
-void I2C_ConfigSMBusAlert(I2C_T *i2c, I2C_SMBUSALER_T SMBusState)
+void I2C_ConfigSMBusAlert(I2C_T* i2c, I2C_SMBUSALER_T SMBusState)
 {
-    if (SMBusState == I2C_SMBUSALER_LOW)
+    if(SMBusState == I2C_SMBUSALER_LOW)
     {
         i2c->CTRL1_B.ALERTEN = BIT_SET;
     }
@@ -479,7 +479,7 @@ void I2C_ConfigSMBusAlert(I2C_T *i2c, I2C_SMBUSALER_T SMBusState)
  *
  * @retval    None
  */
-void I2C_EnablePECTransmit(I2C_T *i2c)
+void I2C_EnablePECTransmit(I2C_T* i2c)
 {
     i2c->CTRL1_B.PEC = BIT_SET;
 }
@@ -491,7 +491,7 @@ void I2C_EnablePECTransmit(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisablePECTransmit(I2C_T *i2c)
+void I2C_DisablePECTransmit(I2C_T* i2c)
 {
     i2c->CTRL1_B.PEC = BIT_RESET;
 }
@@ -507,9 +507,9 @@ void I2C_DisablePECTransmit(I2C_T *i2c)
  *              @arg I2C_PEC_POSITION_CURRENT: indicates that current byte is PEC
  * @retval    None
  */
-void I2C_ConfigPECPosition(I2C_T *i2c, I2C_PEC_POSITION_T PECPosition)
+void I2C_ConfigPECPosition(I2C_T* i2c, I2C_PEC_POSITION_T PECPosition)
 {
-    if (PECPosition == I2C_PEC_POSITION_NEXT)
+    if(PECPosition == I2C_PEC_POSITION_NEXT)
     {
         i2c->CTRL1_B.ACKPOS = BIT_SET;
     }
@@ -526,7 +526,7 @@ void I2C_ConfigPECPosition(I2C_T *i2c, I2C_PEC_POSITION_T PECPosition)
  *
  * @retval    None
  */
-void I2C_EnablePEC(I2C_T *i2c)
+void I2C_EnablePEC(I2C_T* i2c)
 {
     i2c->CTRL1_B.PECEN = BIT_SET;
 }
@@ -538,7 +538,7 @@ void I2C_EnablePEC(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisablePEC(I2C_T *i2c)
+void I2C_DisablePEC(I2C_T* i2c)
 {
     i2c->CTRL1_B.PECEN = BIT_RESET;
 }
@@ -550,7 +550,7 @@ void I2C_DisablePEC(I2C_T *i2c)
  *
  * @retval    value of PEC
  */
-uint8_t I2C_ReadPEC(I2C_T *i2c)
+uint8_t I2C_ReadPEC(I2C_T* i2c)
 {
     return i2c->STS2_B.PECVALUE;
 }
@@ -562,7 +562,7 @@ uint8_t I2C_ReadPEC(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableARP(I2C_T *i2c)
+void I2C_EnableARP(I2C_T* i2c)
 {
     i2c->CTRL1_B.ARPEN = BIT_SET;
 }
@@ -574,7 +574,7 @@ void I2C_EnableARP(I2C_T *i2c)
 *
 * @retval     None
 */
-void I2C_DisableARP(I2C_T *i2c)
+void I2C_DisableARP(I2C_T* i2c)
 {
     i2c->CTRL1_B.ARPEN = BIT_RESET;
 }
@@ -586,7 +586,7 @@ void I2C_DisableARP(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableStretchClock(I2C_T *i2c)
+void I2C_EnableStretchClock(I2C_T* i2c)
 {
     i2c->CTRL1_B.CLKSTRETCHD = BIT_RESET;
 }
@@ -598,7 +598,7 @@ void I2C_EnableStretchClock(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableStretchClock(I2C_T *i2c)
+void I2C_DisableStretchClock(I2C_T* i2c)
 {
     i2c->CTRL1_B.CLKSTRETCHD = BIT_SET;
 }
@@ -614,9 +614,9 @@ void I2C_DisableStretchClock(I2C_T *i2c)
  *              @arg I2C_DUTYCYCLE_2: I2C fast mode Tlow/Thigh = 2
  * @retval    None
  */
-void I2C_ConfigFastModeDutyCycle(I2C_T *i2c, I2C_DUTYCYCLE_T dutyCycle)
+void I2C_ConfigFastModeDutyCycle(I2C_T* i2c, I2C_DUTYCYCLE_T dutyCycle)
 {
-    if (dutyCycle == I2C_DUTYCYCLE_16_9)
+    if(dutyCycle == I2C_DUTYCYCLE_16_9)
     {
         i2c->CLKCTRL_B.FDUTYCFG = BIT_SET;
     }
@@ -633,7 +633,7 @@ void I2C_ConfigFastModeDutyCycle(I2C_T *i2c, I2C_DUTYCYCLE_T dutyCycle)
  *
  * @retval    None
  */
-void I2C_EnableDMA(I2C_T *i2c)
+void I2C_EnableDMA(I2C_T* i2c)
 {
     i2c->CTRL2_B.DMAEN = ENABLE;
 }
@@ -645,7 +645,7 @@ void I2C_EnableDMA(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableDMA(I2C_T *i2c)
+void I2C_DisableDMA(I2C_T* i2c)
 {
     i2c->CTRL2_B.DMAEN = DISABLE;
 }
@@ -657,7 +657,7 @@ void I2C_DisableDMA(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableDMALastTransfer(I2C_T *i2c)
+void I2C_EnableDMALastTransfer(I2C_T* i2c)
 {
     i2c->CTRL2_B.LTCFG = BIT_SET;
 }
@@ -669,7 +669,7 @@ void I2C_EnableDMALastTransfer(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_DisableDMALastTransfer(I2C_T *i2c)
+void I2C_DisableDMALastTransfer(I2C_T* i2c)
 {
     i2c->CTRL2_B.LTCFG = BIT_RESET;
 }
@@ -687,7 +687,7 @@ void I2C_DisableDMALastTransfer(I2C_T *i2c)
  *
  * @retval    None
  */
-void I2C_EnableInterrupt(I2C_T *i2c, uint16_t interrupt)
+void I2C_EnableInterrupt(I2C_T* i2c, uint16_t interrupt)
 {
     i2c->CTRL2 |= interrupt;
 }
@@ -705,7 +705,7 @@ void I2C_EnableInterrupt(I2C_T *i2c, uint16_t interrupt)
  *
  * @retval    None
  */
-void I2C_DisableInterrupt(I2C_T *i2c, uint16_t interrupt)
+void I2C_DisableInterrupt(I2C_T* i2c, uint16_t interrupt)
 {
     i2c->CTRL2 &= ~interrupt;
 }
@@ -736,7 +736,7 @@ void I2C_DisableInterrupt(I2C_T *i2c, uint16_t interrupt)
  *
  * @retval    Status: SUCCESS or ERROR
  */
-uint8_t  I2C_ReadEventStatus(I2C_T *i2c, I2C_EVENT_T i2cEvent)
+uint8_t  I2C_ReadEventStatus(I2C_T* i2c, I2C_EVENT_T i2cEvent)
 {
     uint32_t lastevent = 0;
     uint32_t flag1 = 0, flag2 = 0;
@@ -747,7 +747,7 @@ uint8_t  I2C_ReadEventStatus(I2C_T *i2c, I2C_EVENT_T i2cEvent)
 
     lastevent = (flag1 | flag2) & 0x00FFFFFF;
 
-    if ((lastevent & i2cEvent) == i2cEvent)
+    if((lastevent & i2cEvent) == i2cEvent)
     {
         return SUCCESS;
     }
@@ -761,7 +761,7 @@ uint8_t  I2C_ReadEventStatus(I2C_T *i2c, I2C_EVENT_T i2cEvent)
  *
  * @retval    The last event
  */
-uint32_t I2C_ReadLastEvent(I2C_T *i2c)
+uint32_t I2C_ReadLastEvent(I2C_T* i2c)
 {
     uint32_t lastevent = 0;
     uint32_t flag1 = 0, flag2 = 0;
@@ -806,7 +806,7 @@ uint32_t I2C_ReadLastEvent(I2C_T *i2c)
  *
  * @retval    Status: flag SET or RESET
  */
-uint8_t I2C_ReadStatusFlag(I2C_T *i2c, I2C_FLAG_T flag)
+uint8_t I2C_ReadStatusFlag(I2C_T* i2c, I2C_FLAG_T flag)
 {
 
     uint8_t status = 0;
@@ -914,7 +914,7 @@ uint8_t I2C_ReadStatusFlag(I2C_T *i2c, I2C_FLAG_T flag)
  *              a read operation to I2C_STS1 register (I2C_ReadStatusFlag())
  *              followed by a write operation to I2C_DATA register (I2C_TxData()).
  */
-void I2C_ClearStatusFlag(I2C_T *i2c, I2C_FLAG_T flag)
+void I2C_ClearStatusFlag(I2C_T* i2c, I2C_FLAG_T flag)
 {
     switch (flag)
     {
@@ -968,13 +968,13 @@ void I2C_ClearStatusFlag(I2C_T *i2c, I2C_FLAG_T flag)
  *
  * @retval    Status: flag SET or RESET
  */
-uint8_t I2C_ReadIntFlag(I2C_T *i2c, I2C_INT_FLAG_T flag)
+uint8_t I2C_ReadIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag)
 {
     uint32_t enablestatus = 0;
 
     enablestatus = ((flag & 0x07000000) >> 16) & (i2c->CTRL2);
     flag &= 0x00FFFFFF;
-    if (((i2c->STS1 & flag) != RESET) && enablestatus)
+    if(((i2c->STS1 & flag) != RESET) && enablestatus)
     {
         return SET;
     }
@@ -1014,7 +1014,7 @@ uint8_t I2C_ReadIntFlag(I2C_T *i2c, I2C_INT_FLAG_T flag)
  *              a read operation to I2C_STS1 register (I2C_ReadIntFlag())
  *              followed by a write operation to I2C_DATA register (I2C_TxData()).
  */
-void I2C_ClearIntFlag(I2C_T *i2c, uint32_t flag)
+void I2C_ClearIntFlag(I2C_T* i2c, uint32_t flag)
 {
     i2c->STS1 = (uint16_t)~(flag & 0x00FFFFFF);
 }

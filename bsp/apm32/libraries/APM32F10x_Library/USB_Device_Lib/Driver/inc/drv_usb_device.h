@@ -27,7 +27,7 @@
 #define __DRV_USB_DEVICE_H_
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #if defined(APM32F070xB) || defined(APM32F072x8) || defined(APM32F072xB)
@@ -81,7 +81,7 @@ typedef enum
     USBD_EP_BIT_RXSTS    = (uint32_t)(BIT12 | BIT13),
     USBD_EP_BIT_RXDTOG   = (uint32_t)(BIT14),
     USBD_EP_BIT_CTFR     = (uint32_t)(BIT15)
-} USBD_EP_BIT_T;
+}USBD_EP_BIT_T;
 
 /**
  * @brief   Endpoint id
@@ -96,7 +96,7 @@ typedef enum
     USBD_EP_5,
     USBD_EP_6,
     USBD_EP_7,
-} USBD_EP_T;
+}USBD_EP_T;
 
 /**
  * @brief   Endpoint status
@@ -107,7 +107,7 @@ typedef enum
     USBD_EP_STATUS_STALL     = ((uint32_t)1),
     USBD_EP_STATUS_NAK       = ((uint32_t)2),
     USBD_EP_STATUS_VALID     = ((uint32_t)3),
-} USBD_EP_STATUS_T;
+}USBD_EP_STATUS_T;
 
 /**
  * @brief   USBD Endpoint type for register
@@ -118,7 +118,7 @@ typedef enum
     USBD_REG_EP_TYPE_CONTROL,
     USBD_REG_EP_TYPE_ISO,
     USBD_REG_EP_TYPE_INTERRUPT
-} USBD_REG_EP_TYPE_T;
+}USBD_REG_EP_TYPE_T;
 
 /**@} end of group USBD_Enumerations*/
 

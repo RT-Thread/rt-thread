@@ -63,20 +63,20 @@ void USBD_SetupProcess(void)
 
     reqType = pReqData->byte.bmRequestType.bit.type;
 
-    if (reqType == USBD_REQ_TYPE_STANDARD)
+    if(reqType == USBD_REQ_TYPE_STANDARD)
     {
         USBD_StandardReqeust();
     }
-    else if (reqType == USBD_REQ_TYPE_CLASS)
+    else if(reqType == USBD_REQ_TYPE_CLASS)
     {
-        if (g_usbDev.classReqHandler)
+        if(g_usbDev.classReqHandler)
         {
             g_usbDev.classReqHandler(pReqData);
         }
     }
-    else if (reqType == USBD_REQ_TYPE_VENDOR)
+    else if(reqType == USBD_REQ_TYPE_VENDOR)
     {
-        if (g_usbDev.vendorReqHandler)
+        if(g_usbDev.vendorReqHandler)
         {
             g_usbDev.vendorReqHandler(pReqData);
         }
@@ -99,9 +99,9 @@ void USBD_CtrlInProcess(void)
 {
     uint32_t tmp;
 
-    if (g_usbDev.ctrlState == USBD_CTRL_STATE_DATA_IN)
+    if(g_usbDev.ctrlState == USBD_CTRL_STATE_DATA_IN)
     {
-        if (g_usbDev.inBuf[0].packNum)
+        if(g_usbDev.inBuf[0].packNum)
         {
             tmp = USB_MIN(g_usbDev.inBuf[0].bufLen, g_usbDev.inBuf[0].maxPackSize);
 
@@ -134,9 +134,9 @@ void USBD_CtrlInProcess(void)
 
         }
     }
-    else if (g_usbDev.ctrlState == USBD_CTRL_STATE_WAIT_STATUS_IN)
+    else if(g_usbDev.ctrlState == USBD_CTRL_STATE_WAIT_STATUS_IN)
     {
-        if (g_usbDev.reqData.byte.bRequest == USBD_SET_ADDRESS)
+        if(g_usbDev.reqData.byte.bRequest == USBD_SET_ADDRESS)
         {
             USBD_SetDeviceAddr(g_usbDev.reqData.byte.wValue[0]);
         }
@@ -154,9 +154,9 @@ void USBD_CtrlOutProcess(void)
 {
     uint32_t len;
 
-    if (g_usbDev.ctrlState == USBD_CTRL_STATE_DATA_OUT)
+    if(g_usbDev.ctrlState == USBD_CTRL_STATE_DATA_OUT)
     {
-        if (g_usbDev.outBuf[0].packNum)
+        if(g_usbDev.outBuf[0].packNum)
         {
             len = USB_MIN(g_usbDev.outBuf[0].bufLen, g_usbDev.outBuf[0].maxPackSize);
 
@@ -199,16 +199,16 @@ void USBD_CtrlOutProcess(void)
 void USBD_CtrlInData(uint8_t *buf, uint32_t len)
 {
     uint16_t maxPackSize = g_usbDev.inBuf[0].maxPackSize;
-    uint16_t reqLen = *(uint16_t *)g_usbDev.reqData.byte.wLength;
+    uint16_t reqLen = *(uint16_t*)g_usbDev.reqData.byte.wLength;
 
-    if (len)
+    if(len)
     {
         if ((len < reqLen) && ((len % maxPackSize) == 0))
         {
             g_usbDev.inBuf[USBD_EP_0].zeroPackFill = 1;
         }
 
-        if (len >= g_usbDev.inBuf[0].maxPackSize)
+        if(len >= g_usbDev.inBuf[0].maxPackSize)
         {
             /** Send a packet */
             USBD_WriteDataToEP(USBD_EP_0, buf, g_usbDev.inBuf[0].maxPackSize);
@@ -229,8 +229,8 @@ void USBD_CtrlInData(uint8_t *buf, uint32_t len)
             USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_VALID, USBD_EP_STATUS_NAK);
 
             g_usbDev.ctrlState = g_usbDev.reqData.byte.bmRequestType.bit.dir ? \
-                                 USBD_CTRL_STATE_DATA_IN : \
-                                 USBD_CTRL_STATE_WAIT_STATUS_IN;
+                                                     USBD_CTRL_STATE_DATA_IN : \
+                                                     USBD_CTRL_STATE_WAIT_STATUS_IN;
         }
     }
     else
@@ -239,8 +239,8 @@ void USBD_CtrlInData(uint8_t *buf, uint32_t len)
         USBD_SetEPTxStatus(USBD_EP_0, USBD_EP_STATUS_VALID);
 
         g_usbDev.ctrlState = g_usbDev.reqData.byte.bmRequestType.bit.dir ? \
-                             USBD_CTRL_STATE_DATA_IN : \
-                             USBD_CTRL_STATE_WAIT_STATUS_IN;
+                                                 USBD_CTRL_STATE_DATA_IN : \
+                                                 USBD_CTRL_STATE_WAIT_STATUS_IN;
     }
 }
 
@@ -304,7 +304,7 @@ void USBD_DataInProcess(USBD_EP_T ep)
     }
     else
     {
-        if (g_usbDev.inEpHandler)
+        if(g_usbDev.inEpHandler)
         {
             g_usbDev.inEpHandler(ep);
         }
@@ -322,23 +322,23 @@ void USBD_DataOutProcess(USBD_EP_T ep)
 {
     if (g_usbDev.outBuf[ep].packNum)
     {
-        g_usbDev.outBuf[ep].xferCnt = USBD_ReadEPRxCnt(ep);
+            g_usbDev.outBuf[ep].xferCnt = USBD_ReadEPRxCnt(ep);
 
-        if ((g_usbDev.outBuf[ep].xferCnt != 0) && (g_usbDev.outBuf[ep].pBuf != NULL))
-        {
-            USBD_ReadDataFromEP(ep, g_usbDev.outBuf[ep].pBuf, g_usbDev.outBuf[ep].xferCnt);
+            if ((g_usbDev.outBuf[ep].xferCnt != 0) && (g_usbDev.outBuf[ep].pBuf != NULL))
+            {
+                USBD_ReadDataFromEP(ep, g_usbDev.outBuf[ep].pBuf, g_usbDev.outBuf[ep].xferCnt);
 
-            g_usbDev.outBuf[ep].bufLen -= g_usbDev.outBuf[ep].xferCnt;
-            g_usbDev.outBuf[ep].pBuf += g_usbDev.outBuf[ep].xferCnt;
-            g_usbDev.outBuf[ep].packNum--;
-        }
-        if (g_usbDev.outBuf[ep].packNum)
-        {
-            USBD_SetEPRxStatus(ep, USBD_EP_STATUS_VALID);
-        }
+                g_usbDev.outBuf[ep].bufLen -= g_usbDev.outBuf[ep].xferCnt;
+                g_usbDev.outBuf[ep].pBuf += g_usbDev.outBuf[ep].xferCnt;
+                g_usbDev.outBuf[ep].packNum--;
+            }
+            if (g_usbDev.outBuf[ep].packNum)
+            {
+                USBD_SetEPRxStatus(ep, USBD_EP_STATUS_VALID);
+            }
     }
 
-    if (g_usbDev.outEpHandler && !g_usbDev.outBuf[ep].packNum)
+    if(g_usbDev.outEpHandler && !g_usbDev.outBuf[ep].packNum)
     {
         g_usbDev.outEpHandler(ep);
     }
@@ -367,7 +367,7 @@ void USBD_TxData(uint8_t ep, uint8_t *buf, uint32_t len)
 
         g_usbDev.inBuf[ep].pBuf = buf + maxPackSize;
         g_usbDev.inBuf[ep].bufLen = len - maxPackSize;
-        g_usbDev.inBuf[ep].packNum = (g_usbDev.inBuf[ep].bufLen + (maxPackSize - 1)) / maxPackSize;
+        g_usbDev.inBuf[ep].packNum =(g_usbDev.inBuf[ep].bufLen + (maxPackSize - 1)) / maxPackSize;
     }
     else
     {

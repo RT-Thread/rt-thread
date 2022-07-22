@@ -140,7 +140,7 @@ FMC_STATUS_T FMC_ErasePage(uint32_t pageAddr)
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
     status = FMC_WaitForLastOperation(0x000B0000);
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.PAGEERA = BIT_SET;
         FMC->ADDR = pageAddr;
@@ -168,7 +168,7 @@ FMC_STATUS_T FMC_EraseAllPage(void)
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
     status = FMC_WaitForLastOperation(0x000B0000);
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.MASSERA = BIT_SET;
         FMC->CTRL2_B.STA = BIT_SET;
@@ -195,12 +195,12 @@ FMC_STATUS_T FMC_EraseOptionBytes(void)
     uint16_t rdtemp = 0x00A5;
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
-    if (FMC_GetReadProtectionStatus() != RESET)
+    if(FMC_GetReadProtectionStatus() != RESET)
     {
         rdtemp = 0x00;
     }
     status = FMC_WaitForLastOperation(0x000B0000);
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->OBKEY = 0x45670123;
         FMC->OBKEY = 0xCDEF89AB;
@@ -210,18 +210,18 @@ FMC_STATUS_T FMC_EraseOptionBytes(void)
 
         status = FMC_WaitForLastOperation(0x000B0000);
 
-        if (status == FMC_STATUS_COMPLETE)
+        if(status == FMC_STATUS_COMPLETE)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
             OB->RDP = rdtemp;
             status = FMC_WaitForLastOperation(0x000B0000);
-            if (status != FMC_STATUS_TIMEOUT)
+            if(status != FMC_STATUS_TIMEOUT)
             {
                 FMC->CTRL2_B.OBP = BIT_RESET;
             }
         }
-        else if (status != FMC_STATUS_TIMEOUT)
+        else if(status != FMC_STATUS_TIMEOUT)
         {
             FMC->CTRL2_B.OBP = BIT_RESET;
         }
@@ -247,13 +247,13 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
     __IOM uint32_t temp = 0;
 
-#ifdef APM32F10X_HD
-    __set_PRIMASK(1);
-#endif
+    #ifdef APM32F10X_HD
+          __set_PRIMASK(1);
+    #endif
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.PG = BIT_SET;
 
@@ -261,11 +261,11 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
 
         status = FMC_WaitForLastOperation(0x000B0000);
 
-        if (status == FMC_STATUS_COMPLETE)
+        if(status == FMC_STATUS_COMPLETE)
         {
             temp = address + 2;
 
-            *(__IOM uint16_t *) temp = data >> 16;
+            *(__IOM uint16_t*) temp = data >> 16;
 
             status = FMC_WaitForLastOperation(0x000B0000);
             FMC->CTRL2_B.PG = BIT_RESET;
@@ -276,9 +276,9 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
         }
     }
 
-#ifdef APM32F10X_HD
-    __set_PRIMASK(0);
-#endif
+    #ifdef APM32F10X_HD
+        __set_PRIMASK(0);
+    #endif
 
     return status;
 }
@@ -300,13 +300,13 @@ FMC_STATUS_T FMC_ProgramHalfWord(uint32_t address, uint16_t data)
 {
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
-#ifdef APM32F10X_HD
-    __set_PRIMASK(1);
-#endif
+    #ifdef APM32F10X_HD
+        __set_PRIMASK(1);
+    #endif
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.PG = BIT_SET;
         *(__IOM uint16_t *)address = data;
@@ -314,9 +314,9 @@ FMC_STATUS_T FMC_ProgramHalfWord(uint32_t address, uint16_t data)
         FMC->CTRL2_B.PG = BIT_RESET;
     }
 
-#ifdef APM32F10X_HD
-    __set_PRIMASK(0);
-#endif
+    #ifdef APM32F10X_HD
+        __set_PRIMASK(0);
+    #endif
 
     return status;
 }
@@ -340,7 +340,7 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->OBKEY = 0x45670123;
         FMC->OBKEY = 0xCDEF89AB;
@@ -348,7 +348,7 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
         FMC->CTRL2_B.OBP = BIT_SET;
         *(__IOM uint16_t *)address = data;
         status = FMC_WaitForLastOperation(0x000B0000);
-        if (status == FMC_STATUS_TIMEOUT)
+        if(status == FMC_STATUS_TIMEOUT)
         {
             FMC->CTRL2_B.OBP = BIT_RESET;
         }
@@ -361,11 +361,11 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
  *
  * @param     page:the address of the pages to be write protection
  *                This parameter can be any combination of the following values:
- *                 for APM32F10X_LD ï¼š
+ *                 for APM32F10X_LD £º
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_28_31
- *                 for APM32F10X_MD ï¼š
+ *                 for APM32F10X_MD £º
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_124_127
- *                 for APM32F10X_HD ï¼š
+ *                 for APM32F10X_HD £º
  *                    @arg FLASH_WRP_PAGE_0_1 to FLASH_WRP_PAGE_60_61 or FLASH_WRP_PAGE_62_127
  *                 @arg FMC_WRP_PAGE_ALL
  *
@@ -388,34 +388,34 @@ FMC_STATUS_T FMC_EnableWriteProtection(uint32_t page)
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->OBKEY = 0x45670123;
         FMC->OBKEY = 0xCDEF89AB;
         FMC->CTRL2_B.OBP = BIT_SET;
 
-        if (WPP0_Data != 0xFF)
+        if(WPP0_Data != 0xFF)
         {
             OB->WRP0 = WPP0_Data;
             status = FMC_WaitForLastOperation(0x000B0000);
         }
-        if ((status == FMC_STATUS_COMPLETE) && (WPP1_Data != 0xFF))
+        if((status == FMC_STATUS_COMPLETE) && (WPP1_Data != 0xFF))
         {
             OB->WRP1 = WPP1_Data;
             status = FMC_WaitForLastOperation(0x000B0000);
         }
-        if ((status == FMC_STATUS_COMPLETE) && (WPP2_Data != 0xFF))
+        if((status == FMC_STATUS_COMPLETE) && (WPP2_Data != 0xFF))
         {
             OB->WRP2 = WPP2_Data;
             status = FMC_WaitForLastOperation(0x000B0000);
         }
-        if ((status == FMC_STATUS_COMPLETE) && (WPP3_Data != 0xFF))
+        if((status == FMC_STATUS_COMPLETE) && (WPP3_Data != 0xFF))
         {
             OB->WRP3 = WPP3_Data;
             status = FMC_WaitForLastOperation(0x000B0000);
         }
 
-        if (status != FMC_STATUS_TIMEOUT)
+        if(status != FMC_STATUS_TIMEOUT)
         {
             FMC->CTRL2_B.OBP = BIT_RESET;
         }
@@ -440,7 +440,7 @@ FMC_STATUS_T FMC_EnableReadOutProtection(void)
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->OBKEY = 0x45670123;
         FMC->OBKEY = 0xCDEF89AB;
@@ -450,20 +450,20 @@ FMC_STATUS_T FMC_EnableReadOutProtection(void)
 
         status = FMC_WaitForLastOperation(0x000B0000);
 
-        if (status == FMC_STATUS_COMPLETE)
+        if(status == FMC_STATUS_COMPLETE)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
-            OB->RDP = 0x00A5;
+            OB->RDP = 0x0000;
 
             status = FMC_WaitForLastOperation(0x000B0000);
 
-            if (status != FMC_STATUS_TIMEOUT)
+            if(status != FMC_STATUS_TIMEOUT)
             {
                 FMC->CTRL2_B.OBP = BIT_RESET;
             }
         }
-        else if (status != FMC_STATUS_TIMEOUT)
+        else if(status != FMC_STATUS_TIMEOUT)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
         }
@@ -488,7 +488,7 @@ FMC_STATUS_T FMC_DisableReadOutProtection(void)
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->OBKEY = 0x45670123;
         FMC->OBKEY = 0xCDEF89AB;
@@ -497,20 +497,20 @@ FMC_STATUS_T FMC_DisableReadOutProtection(void)
 
         status = FMC_WaitForLastOperation(0x000B0000);
 
-        if (status == FMC_STATUS_COMPLETE)
+        if(status == FMC_STATUS_COMPLETE)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
-            OB->RDP = 0x00;
+            OB->RDP = 0x00A5;
 
             status = FMC_WaitForLastOperation(0x000B0000);
 
-            if (status != FMC_STATUS_TIMEOUT)
+            if(status != FMC_STATUS_TIMEOUT)
             {
                 FMC->CTRL2_B.OBP = BIT_RESET;
             }
         }
-        else if (status != FMC_STATUS_TIMEOUT)
+        else if(status != FMC_STATUS_TIMEOUT)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
         }
@@ -529,7 +529,7 @@ FMC_STATUS_T FMC_DisableReadOutProtection(void)
  *                 @arg FMC_STATUS_COMPLETE
  *                 @arg FMC_STATUS_TIMEOUT
  */
-FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T *userConfig)
+FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T* userConfig)
 {
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
@@ -538,14 +538,14 @@ FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T *userConfig)
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
-    if (status == FMC_STATUS_COMPLETE)
+    if(status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.OBP = BIT_SET;
         OB->USER = (uint32_t)userConfig->iwdtSet | \
                    (uint32_t)userConfig->stopSet | \
                    (uint32_t)userConfig->stdbySet | 0xF8;
         status = FMC_WaitForLastOperation(0x000B0000);
-        if (status == FMC_STATUS_TIMEOUT)
+        if(status == FMC_STATUS_TIMEOUT)
         {
             FMC->CTRL2_B.OBP = BIT_RESET;
         }
@@ -588,7 +588,7 @@ uint8_t FMC_GetReadProtectionStatus(void)
 {
     uint8_t flagstatus = RESET;
 
-    if (FMC->OBCS_B.READPROT != RESET)
+    if(FMC->OBCS_B.READPROT != RESET)
     {
         flagstatus = SET;
     }
@@ -623,7 +623,7 @@ uint8_t FMC_ReadPrefetchBufferStatus(void)
  */
 void FMC_EnableInterrupt(FMC_INT_T interrupt)
 {
-    if (interrupt == FMC_INT_ERR)
+    if(interrupt == FMC_INT_ERR)
     {
         FMC->CTRL2_B.ERRIE = ENABLE;
     }
@@ -645,7 +645,7 @@ void FMC_EnableInterrupt(FMC_INT_T interrupt)
  */
 void FMC_DisableInterrupt(FMC_INT_T interrupt)
 {
-    if (interrupt == FMC_INT_ERR)
+    if(interrupt == FMC_INT_ERR)
     {
         FMC->CTRL2_B.ERRIE = DISABLE;
     }
@@ -670,11 +670,11 @@ void FMC_DisableInterrupt(FMC_INT_T interrupt)
  */
 uint8_t FMC_ReadStatusFlag(FMC_FLAG_T flag)
 {
-    if (flag == FMC_FLAG_OBE)
+    if(flag == FMC_FLAG_OBE)
     {
         return FMC->OBCS_B.OBE;
     }
-    else if ((FMC->STS & flag) != RESET)
+    else if((FMC->STS & flag ) != RESET)
     {
         return SET;
     }
@@ -713,15 +713,15 @@ FMC_STATUS_T  FMC_ReadStatus(void)
 {
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
-    if (FMC->STS_B.BUSYF == BIT_SET)
+    if(FMC->STS_B.BUSYF == BIT_SET)
     {
         status = FMC_STATUS_BUSY;
     }
-    else if (FMC->STS_B.PEF == BIT_SET)
+    else if(FMC->STS_B.PEF == BIT_SET)
     {
         status = FMC_STATUS_ERROR_PG;
     }
-    else if (FMC->STS_B.WPEF == BIT_SET)
+    else if(FMC->STS_B.WPEF == BIT_SET)
     {
         status = FMC_STATUS_ERROR_WRP;
     }
@@ -751,12 +751,12 @@ FMC_STATUS_T FMC_WaitForLastOperation(uint32_t timeOut)
     status = FMC_ReadStatus();
 
     /** Wait for a Flash operation to complete or a TIMEOUT to occur */
-    while ((status == FMC_STATUS_BUSY) && (timeOut != 0))
+    while((status == FMC_STATUS_BUSY) && (timeOut !=0))
     {
         status = FMC_ReadStatus();
         timeOut--;
     }
-    if (timeOut == 0x00)
+    if(timeOut == 0x00)
     {
         status = FMC_STATUS_TIMEOUT;
     }

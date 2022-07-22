@@ -27,7 +27,7 @@
 #define __APM32F10X_EINT_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -114,8 +114,8 @@ typedef struct
 
 /** Reset and configuration */
 void EINT_Reset(void);
-void EINT_Config(EINT_Config_T *eintConfig);
-void EINT_ConfigStructInit(EINT_Config_T *eintConfig);
+void EINT_Config( EINT_Config_T* eintConfig);
+void EINT_ConfigStructInit(EINT_Config_T* eintConfig);
 
 /** Interrupt and flag */
 void EINT_SelectSWInterrupt(uint32_t line);
