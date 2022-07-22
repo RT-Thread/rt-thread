@@ -39,25 +39,25 @@ static void USBD_ResumeIsrHandler(void);
  * @retval      None
  */
 #ifdef APM32F0xx_USB
-    void USB_IRQHandler(void)
+void USB_IRQHandler(void)
 
 #else //!< APM32F10x_USB
-    #if USB_SELECT == USB1
-        void USBD1_LP_CAN1_RX0_IRQHandler(void)
-    #else
-        void USB2_LP_IRQHandler(void)
-    #endif
+#if USB_SELECT == USB1
+void USBD1_LP_CAN1_RX0_IRQHandler(void)
+#else
+void USB2_LP_IRQHandler(void)
+#endif
 #endif
 {
 #if (USB_INT_SOURCE & USBD_INT_CTR)
-    if (USBD_ReadIntFlag(USBD_INT_CTR))
+    if(USBD_ReadIntFlag(USBD_INT_CTR))
     {
         USBD_LowPriorityProc();
     }
 #endif
 
 #if (USB_INT_SOURCE & USBD_INT_RST)
-    if (USBD_ReadIntFlag(USBD_INT_RST))
+    if(USBD_ReadIntFlag(USBD_INT_RST))
     {
         USBD_ClearIntFlag(USBD_INT_RST);
         USBD_ResetIsrHandler();
@@ -65,7 +65,7 @@ static void USBD_ResumeIsrHandler(void);
 #endif
 
 #if USB_INT_SOURCE & USBD_INT_PMAOU
-    if (USB_ReadIntFlag(USB_INT_PMAOU))
+    if(USB_ReadIntFlag(USB_INT_PMAOU))
     {
         USB_ClearIntFlag(USB_INT_PMAOU);
     }
@@ -73,14 +73,14 @@ static void USBD_ResumeIsrHandler(void);
 
 #if USB_INT_SOURCE & USBD_INT_ERR
 
-    if (USB_ReadIntFlag(USB_INT_ERROR))
+    if(USB_ReadIntFlag(USB_INT_ERROR))
     {
         USB_ClearIntFlag(USB_INT_ERROR);
     }
 #endif
 
 #if USB_INT_SOURCE & USBD_INT_WKUP
-    if (USBD_ReadIntFlag(USBD_INT_WKUP))
+    if(USBD_ReadIntFlag(USBD_INT_WKUP))
     {
         USBD_ResumeIsrHandler();
         USBD_ClearIntFlag(USBD_INT_WKUP);
@@ -88,7 +88,7 @@ static void USBD_ResumeIsrHandler(void);
 #endif
 
 #if USB_INT_SOURCE & USBD_INT_SUS
-    if (USBD_ReadIntFlag(USBD_INT_SUS))
+    if(USBD_ReadIntFlag(USBD_INT_SUS))
     {
         USBD_SuspendIsrHandler();
         USBD_ClearIntFlag(USBD_INT_SUS);
@@ -96,14 +96,14 @@ static void USBD_ResumeIsrHandler(void);
 #endif
 
 #if USB_INT_SOURCE & USBD_INT_SOF
-    if (USB_ReadIntFlag(USB_INT_SOF))
+    if(USB_ReadIntFlag(USB_INT_SOF))
     {
         USB_ClearIntFlag(USB_INT_SOF);
     }
 #endif
 
 #if USB_INT_SOURCE & USBD_INT_ESOF
-    if (USB_ReadIntFlag(USB_INT_ESOF))
+    if(USB_ReadIntFlag(USB_INT_ESOF))
     {
         USB_ClearIntFlag(USB_INT_ESOF);
     }
@@ -121,17 +121,17 @@ static void USBD_LowPriorityProc(void)
 {
     USBD_EP_T ep;
 
-    while (USBD_ReadIntFlag(USBD_INT_CTR))
+    while(USBD_ReadIntFlag(USBD_INT_CTR))
     {
         ep = (USBD_EP_T)USBD_ReadEP();
 
         /** Endpoint 0 */
-        if (ep == 0)
+        if(ep == 0)
         {
             USBD_SetEPTxRxStatus(USBD_EP_0, USBD_EP_STATUS_NAK, USBD_EP_STATUS_NAK);
 
             /** Control in */
-            if (USBD_ReadDir() == 0)
+            if(USBD_ReadDir() == 0)
             {
                 USBD_ResetEPTxFlag(USBD_EP_0);
                 USBD_CtrlInProcess();
@@ -139,7 +139,7 @@ static void USBD_LowPriorityProc(void)
             else
             {
                 /** Setup */
-                if (USBD_ReadEPSetup(USBD_EP_0) == SET)
+                if(USBD_ReadEPSetup(USBD_EP_0) == SET)
                 {
                     USBD_ResetEPRxFlag(USBD_EP_0);
                     USBD_SetupProcess();
@@ -210,12 +210,12 @@ static void USBD_ResetIsrHandler(void)
     epConfig.epStatus = USBD_EP_STATUS_VALID;
     USBD_OpenOutEP(&epConfig);
 
-    if (g_usbDev.resetHandler)
+    if(g_usbDev.resetHandler)
     {
         g_usbDev.resetHandler();
     }
 
-    for (i = 0; i < USB_EP_MAX_NUM; i++)
+    for(i = 0; i < USB_EP_MAX_NUM; i++)
     {
         USBD_SetEpAddr((USBD_EP_T)i, i);
     }
@@ -240,7 +240,7 @@ static void USBD_SuspendIsrHandler(void)
     uint32_t tmp;
 #endif
 
-    for (i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         bakEP[i] = (uint16_t)USBD->EP[i].EP;
     }
@@ -250,9 +250,9 @@ static void USBD_SuspendIsrHandler(void)
     USBD_SetForceReset();
     USBD_ResetForceReset();
 
-    while (USBD_ReadIntFlag(USBD_INT_RST) == RESET);
+    while(USBD_ReadIntFlag(USBD_INT_RST) == RESET);
 
-    for (i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         USBD->EP[i].EP = bakEP[i];
     }
@@ -270,7 +270,7 @@ static void USBD_SuspendIsrHandler(void)
 
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
-    if (USBD_ReadIntFlag(USBD_INT_WKUP) == RESET)
+    if(USBD_ReadIntFlag(USBD_INT_WKUP) == RESET)
     {
         __WFI();
         SCB->SCR &= (uint32_t)~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
@@ -315,20 +315,20 @@ static void USBD_HighPriorityProc(void)
 {
     USBD_EP_T ep;
 
-    while (USBD_ReadIntFlag(USBD_INT_CTR))
+    while(USBD_ReadIntFlag(USBD_INT_CTR))
     {
         USBD_ClearIntFlag(USBD_INT_CTR);
 
         ep = USBD_ReadEP();
 
-        if (USBD_ReadEPRxFlag(ep))
+        if(USBD_ReadEPRxFlag(ep))
         {
             USBD_ResetEPRxFlag(ep);
 
             g_usbDev.outEpHandler(ep);
         }
 
-        if (USBD_ReadEPTxFlag(ep))
+        if(USBD_ReadEPTxFlag(ep))
         {
             USBD_ResetEPTxFlag(ep);
 
@@ -338,9 +338,9 @@ static void USBD_HighPriorityProc(void)
 }
 
 #if USB_SELECT == USB1
-    void USBD1_HP_CAN1_TX_IRQHandler(void)
+void USBD1_HP_CAN1_TX_IRQHandler(void)
 #else
-    void USB2_HP_IRQHandler(void)
+void USB2_HP_IRQHandler(void)
 #endif
 {
     USBD_HighPriorityProc();

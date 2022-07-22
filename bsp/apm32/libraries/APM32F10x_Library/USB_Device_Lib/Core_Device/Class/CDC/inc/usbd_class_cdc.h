@@ -28,6 +28,6 @@
 
 #include "usbd_core.h"
 
-void USBD_ClassHandler(USBD_DevReqData_T *reqData);
+void USBD_ClassHandler(USBD_DevReqData_T* reqData);
 
 #endif

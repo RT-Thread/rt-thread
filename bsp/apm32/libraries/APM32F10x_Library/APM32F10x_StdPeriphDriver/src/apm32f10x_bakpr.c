@@ -128,19 +128,16 @@ void BAKPR_DisableInterrupt(void)
  */
 void BAKPR_ConfigRTCOutput(BAKPR_RTC_OUTPUT_SOURCE_T soure)
 {
-    if (soure == BAKPR_RTC_OUTPUT_SOURCE_NONE)
+    if(soure == BAKPR_RTC_OUTPUT_SOURCE_NONE)
     {
         BAKPR->CLKCAL = RESET;
-    }
-    else if (soure == BAKPR_RTC_OUTPUT_SOURCE_CALIBRATION_CLOCK)
+    } else if(soure == BAKPR_RTC_OUTPUT_SOURCE_CALIBRATION_CLOCK)
     {
         BAKPR->CLKCAL_B.CALCOEN = BIT_SET;
-    }
-    else if (soure == BAKPR_RTC_OUTPUT_SOURCE_ALARM)
+    } else if(soure == BAKPR_RTC_OUTPUT_SOURCE_ALARM)
     {
         BAKPR->CLKCAL_B.ASPOEN = BIT_SET;
-    }
-    else if (soure == BAKPR_RTC_OUTPUT_SOURCE_SECOND)
+    } else if(soure == BAKPR_RTC_OUTPUT_SOURCE_SECOND)
     {
         BAKPR->CLKCAL_B.ASPOSEL = BIT_SET;
     }

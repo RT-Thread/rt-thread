@@ -32,6 +32,6 @@
 #define BOT_GET_MAX_LUN              0xFE
 #define BOT_RESET                    0xFF
 
-void USBD_MSC_ClassHandler(USBD_DevReqData_T *reqData);
+void USBD_MSC_ClassHandler(USBD_DevReqData_T* reqData);
 
 #endif

@@ -15,13 +15,13 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM in ['armcc', 'armclang']:
+if rtconfig.CROSS_TOOL == 'keil':
     src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/arm/startup_apm32f10x_hd.s']
 
-if rtconfig.PLATFORM in ['iccarm']:
+if rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/iar/startup_apm32f10x_hd.s']
 
-if rtconfig.PLATFORM in ['gcc']:
+if rtconfig.CROSS_TOOL == 'gcc':
     src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/gcc/startup_apm32f10x_hd.s']
 
 # You can select chips from the list above

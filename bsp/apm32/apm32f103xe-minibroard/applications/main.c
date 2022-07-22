@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,8 +17,12 @@
 
 int main(void)
 {
+    uint32_t sysclock = 0;
     /* set LED2 pin mode to output */
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
+    /* Print system clock */
+    sysclock = RCM_ReadSYSCLKFreq();
+    rt_kprintf("Read: Sec = %d, Usec = 0x%08X\n", sysclock, sysclock);
 
     while (1)
     {

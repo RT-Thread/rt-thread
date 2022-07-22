@@ -223,15 +223,15 @@ static USBD_REG_EP_TYPE_T USBD_ConvertEPType(USBD_EP_TYPE_T epType)
 {
     switch (epType)
     {
-    case USBD_EP_TYPE_CONTROL :
-        return USBD_REG_EP_TYPE_CONTROL;
-    case USBD_EP_TYPE_ISO :
-        return USBD_REG_EP_TYPE_ISO;
-    case USBD_EP_TYPE_BULK :
-        return USBD_REG_EP_TYPE_BULK;
-    case USBD_EP_TYPE_INTERRUPT :
-        return USBD_REG_EP_TYPE_INTERRUPT;
-    default :
-        return USBD_REG_EP_TYPE_CONTROL;
+        case USBD_EP_TYPE_CONTROL :
+            return USBD_REG_EP_TYPE_CONTROL;
+        case USBD_EP_TYPE_ISO :
+            return USBD_REG_EP_TYPE_ISO;
+        case USBD_EP_TYPE_BULK :
+            return USBD_REG_EP_TYPE_BULK;
+        case USBD_EP_TYPE_INTERRUPT :
+            return USBD_REG_EP_TYPE_INTERRUPT;
+        default :
+            return USBD_REG_EP_TYPE_CONTROL;
     }
 }

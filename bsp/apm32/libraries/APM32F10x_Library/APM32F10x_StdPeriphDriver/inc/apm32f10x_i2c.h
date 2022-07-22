@@ -27,7 +27,7 @@
 #define __APM32F10X_I2C_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -283,59 +283,59 @@ typedef struct
 */
 
 /** I2C reset and configuration */
-void I2C_Reset(I2C_T *i2c);
-void I2C_Config(I2C_T *i2c, I2C_Config_T *i2cConfig);
-void I2C_ConfigStructInit(I2C_Config_T *i2cConfig);
-void I2C_Enable(I2C_T *i2c);
-void I2C_Disable(I2C_T *i2c);
-void I2C_EnableGenerateStart(I2C_T *i2c);
-void I2C_DisableGenerateStart(I2C_T *i2c);
-void I2C_EnableGenerateStop(I2C_T *i2c);
-void I2C_DisableGenerateStop(I2C_T *i2c);
-void I2C_EnableAcknowledge(I2C_T *i2c);
-void I2C_DisableAcknowledge(I2C_T *i2c);
-void I2C_ConfigOwnAddress2(I2C_T *i2c, uint8_t address);
-void I2C_EnableDualAddress(I2C_T *i2c);
-void I2C_DisableDualAddress(I2C_T *i2c);
-void I2C_EnableGeneralCall(I2C_T *i2c);
-void I2C_DisableGeneralCall(I2C_T *i2c);
+void I2C_Reset(I2C_T* i2c);
+void I2C_Config(I2C_T* i2c, I2C_Config_T* i2cConfig);
+void I2C_ConfigStructInit(I2C_Config_T* i2cConfig);
+void I2C_Enable(I2C_T* i2c);
+void I2C_Disable(I2C_T* i2c);
+void I2C_EnableGenerateStart(I2C_T* i2c);
+void I2C_DisableGenerateStart(I2C_T* i2c);
+void I2C_EnableGenerateStop(I2C_T* i2c);
+void I2C_DisableGenerateStop(I2C_T* i2c);
+void I2C_EnableAcknowledge(I2C_T* i2c);
+void I2C_DisableAcknowledge(I2C_T* i2c);
+void I2C_ConfigOwnAddress2(I2C_T* i2c, uint8_t address);
+void I2C_EnableDualAddress(I2C_T* i2c);
+void I2C_DisableDualAddress(I2C_T* i2c);
+void I2C_EnableGeneralCall(I2C_T* i2c);
+void I2C_DisableGeneralCall(I2C_T* i2c);
 
 /** Transmit Configuration */
-void I2C_TxData(I2C_T *i2c, uint8_t data);
-uint8_t I2C_RxData(I2C_T *i2c);
-void I2C_Tx7BitAddress(I2C_T *i2c, uint8_t address, I2C_DIRECTION_T direction);
-uint16_t I2C_ReadRegister(I2C_T *i2c, I2C_REGISTER_T i2cRegister);
-void I2C_EnableSoftwareReset(I2C_T *i2c);
-void I2C_DisableSoftwareReset(I2C_T *i2c);
-void I2C_ConfigNACKPosition(I2C_T *i2c, I2C_NACK_POSITION_T NACKPosition);
-void I2C_ConfigSMBusAlert(I2C_T *i2c, I2C_SMBUSALER_T SMBusState);
-void I2C_EnablePECTransmit(I2C_T *i2c);
-void I2C_DisablePECTransmit(I2C_T *i2c);
-void I2C_ConfigPECPosition(I2C_T *i2c, I2C_PEC_POSITION_T PECPosition);
-void I2C_EnablePEC(I2C_T *i2c);
-void I2C_DisablePEC(I2C_T *i2c);
-uint8_t I2C_ReadPEC(I2C_T *i2c);
-void I2C_EnableARP(I2C_T *i2c);
-void I2C_DisableARP(I2C_T *i2c);
-void I2C_EnableStretchClock(I2C_T *i2c);
-void I2C_DisableStretchClock(I2C_T *i2c);
-void I2C_ConfigFastModeDutyCycle(I2C_T *i2c, I2C_DUTYCYCLE_T dutyCycle);
+void I2C_TxData(I2C_T* i2c, uint8_t data);
+uint8_t I2C_RxData(I2C_T* i2c);
+void I2C_Tx7BitAddress(I2C_T* i2c, uint8_t address, I2C_DIRECTION_T direction);
+uint16_t I2C_ReadRegister(I2C_T* i2c, I2C_REGISTER_T i2cRegister);
+void I2C_EnableSoftwareReset(I2C_T* i2c);
+void I2C_DisableSoftwareReset(I2C_T* i2c);
+void I2C_ConfigNACKPosition(I2C_T* i2c, I2C_NACK_POSITION_T NACKPosition);
+void I2C_ConfigSMBusAlert(I2C_T* i2c, I2C_SMBUSALER_T SMBusState);
+void I2C_EnablePECTransmit(I2C_T* i2c);
+void I2C_DisablePECTransmit(I2C_T* i2c);
+void I2C_ConfigPECPosition(I2C_T* i2c, I2C_PEC_POSITION_T PECPosition);
+void I2C_EnablePEC(I2C_T* i2c);
+void I2C_DisablePEC(I2C_T* i2c);
+uint8_t I2C_ReadPEC(I2C_T* i2c);
+void I2C_EnableARP(I2C_T* i2c);
+void I2C_DisableARP(I2C_T* i2c);
+void I2C_EnableStretchClock(I2C_T* i2c);
+void I2C_DisableStretchClock(I2C_T* i2c);
+void I2C_ConfigFastModeDutyCycle(I2C_T* i2c, I2C_DUTYCYCLE_T dutyCycle);
 
 /** DMA */
-void I2C_EnableDMA(I2C_T *i2c);
-void I2C_DisableDMA(I2C_T *i2c);
-void I2C_EnableDMALastTransfer(I2C_T *i2c);
-void I2C_DisableDMALastTransfer(I2C_T *i2c);
+void I2C_EnableDMA(I2C_T* i2c);
+void I2C_DisableDMA(I2C_T* i2c);
+void I2C_EnableDMALastTransfer(I2C_T* i2c);
+void I2C_DisableDMALastTransfer(I2C_T* i2c);
 
 /** Interrupts and flags */
-void I2C_EnableInterrupt(I2C_T *i2c, uint16_t interrupt);
-void I2C_DisableInterrupt(I2C_T *i2c, uint16_t interrupt);
-uint8_t  I2C_ReadEventStatus(I2C_T *i2c, I2C_EVENT_T i2cEvent);
-uint32_t I2C_ReadLastEvent(I2C_T *i2c);
-uint8_t I2C_ReadStatusFlag(I2C_T *i2c, I2C_FLAG_T flag);
-void I2C_ClearStatusFlag(I2C_T *i2c, I2C_FLAG_T flag);
-uint8_t I2C_ReadIntFlag(I2C_T *i2c, I2C_INT_FLAG_T flag);
-void I2C_ClearIntFlag(I2C_T *i2c, uint32_t flag);
+void I2C_EnableInterrupt(I2C_T* i2c, uint16_t interrupt);
+void I2C_DisableInterrupt(I2C_T* i2c, uint16_t interrupt);
+uint8_t  I2C_ReadEventStatus(I2C_T* i2c, I2C_EVENT_T i2cEvent);
+uint32_t I2C_ReadLastEvent(I2C_T* i2c);
+uint8_t I2C_ReadStatusFlag(I2C_T* i2c, I2C_FLAG_T flag);
+void I2C_ClearStatusFlag(I2C_T* i2c, I2C_FLAG_T flag);
+uint8_t I2C_ReadIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag);
+void I2C_ClearIntFlag(I2C_T* i2c, uint32_t flag);
 
 /**@} end of group I2C_Fuctions*/
 /**@} end of group I2C_Driver*/

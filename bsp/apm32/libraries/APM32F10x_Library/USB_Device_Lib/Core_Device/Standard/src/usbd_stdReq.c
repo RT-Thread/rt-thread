@@ -54,57 +54,57 @@ void USBD_StandardReqeust(void)
 
     uint8_t bRequest = g_usbDev.reqData.byte.bRequest;
 
-    switch (bRequest)
+    switch(bRequest)
     {
-    case USBD_GET_CONFIGURATION:
-        result = USBD_StandardGetConfiguration();
+        case USBD_GET_CONFIGURATION:
+            result = USBD_StandardGetConfiguration();
         break;
 
-    case USBD_GET_DESCRIPTOR:
-        result = USBD_StandardGetDescriptor();
+        case USBD_GET_DESCRIPTOR:
+            result = USBD_StandardGetDescriptor();
         break;
 
-    case USBD_GET_INTERFACE:
-        result = USBD_StandardGetInterface();
+        case USBD_GET_INTERFACE:
+            result = USBD_StandardGetInterface();
         break;
 
-    case USBD_GET_STATUS:
-        result = USBD_StandardGetStatus();
+        case USBD_GET_STATUS:
+            result = USBD_StandardGetStatus();
         break;
 
-    case USBD_SET_ADDRESS:
-        result = USBD_StandardSetAddress();
+        case USBD_SET_ADDRESS:
+            result = USBD_StandardSetAddress();
         break;
 
-    case USBD_SET_CONFIGURATION:
-        result = USBD_StandardSetConfiguration();
+        case USBD_SET_CONFIGURATION:
+            result = USBD_StandardSetConfiguration();
         break;
 
-    case USBD_SET_DESCRIPTOR:
-        result = USBD_StandardSetDescriptor();
+        case USBD_SET_DESCRIPTOR:
+            result = USBD_StandardSetDescriptor();
         break;
 
-    case USBD_SET_FEATURE:
-        result = USBD_StandardSetFeature();
+        case USBD_SET_FEATURE:
+            result = USBD_StandardSetFeature();
         break;
 
-    case USBD_SET_INTERFACE:
-        result = USBD_StandardSetInterface();
+        case USBD_SET_INTERFACE:
+            result = USBD_StandardSetInterface();
 
         break;
 
-    case USBD_CLEAR_FEATURE:
-        result = USBD_StandardClearFeature();
+        case USBD_CLEAR_FEATURE:
+            result = USBD_StandardClearFeature();
         break;
 
-    default:
+        default:
 
-        break;
+            break;
     }
 
-    if (!result)
+    if(!result)
     {
-        if (g_usbDev.stdReqExceptionHandler != NULL)
+        if(g_usbDev.stdReqExceptionHandler != NULL)
         {
             g_usbDev.stdReqExceptionHandler(&g_usbDev.reqData);
         }
@@ -122,7 +122,7 @@ static uint8_t USBD_StandardGetConfiguration(void)
 {
     uint8_t recipient = g_usbDev.reqData.byte.bmRequestType.bit.recipient;
 
-    if (recipient == USBD_RECIPIENT_DEVICE)
+    if(recipient == USBD_RECIPIENT_DEVICE)
     {
         USBD_CtrlInData(&g_usbDev.curConfiguration, 1);
 
@@ -152,17 +152,17 @@ static uint8_t USBD_StandardGetDescriptor(void)
     uint8_t wValue0 = g_usbDev.reqData.byte.wValue[0];
     uint8_t wValue1 = g_usbDev.reqData.byte.wValue[1];
 
-    if (wValue1 == USBD_DESC_DEVICE)
+    if(wValue1 == USBD_DESC_DEVICE)
     {
         len = USB_MIN(*(uint16_t *)g_usbDev.reqData.byte.wLength, g_usbDev.pDeviceDesc->size);
         USBD_CtrlInData((uint8_t *)g_usbDev.pDeviceDesc->pDesc, len);
     }
-    else if (wValue1 == USBD_DESC_CONFIGURATION)
+    else if(wValue1 == USBD_DESC_CONFIGURATION)
     {
         len = USB_MIN(*(uint16_t *)g_usbDev.reqData.byte.wLength, g_usbDev.pConfigurationDesc->size);
         USBD_CtrlInData((uint8_t *)g_usbDev.pConfigurationDesc->pDesc, len);
     }
-    else if (wValue1 == USBD_DESC_STRING)
+    else if(wValue1 == USBD_DESC_STRING)
     {
         if (wValue0 < SRTING_DESC_NUM)
         {
@@ -212,14 +212,14 @@ static uint8_t USBD_StandardGetStatus(void)
 
     uint8_t status[2] = {0, 0};
 
-    if ((g_usbDev.reqData.byte.bmRequestType.bit.recipient) == USBD_RECIPIENT_DEVICE)
+    if((g_usbDev.reqData.byte.bmRequestType.bit.recipient) == USBD_RECIPIENT_DEVICE)
     {
-        if (g_usbDev.curFeature & (1 << 5))
+        if(g_usbDev.curFeature & (1 << 5))
         {
             status[0] |= 0x02;
         }
 
-        if (g_usbDev.curFeature & (1 << 6))
+        if(g_usbDev.curFeature & (1 << 6))
         {
             status[0] |= 0x01;
         }
@@ -229,26 +229,26 @@ static uint8_t USBD_StandardGetStatus(void)
 
     }
 
-    else if ((g_usbDev.reqData.byte.bmRequestType.bit.recipient) == USBD_RECIPIENT_INTERFACE)
+    else if((g_usbDev.reqData.byte.bmRequestType.bit.recipient) == USBD_RECIPIENT_INTERFACE)
     {
         USBD_CtrlInData(status, 2);
 
 
     }
 
-    else if ((g_usbDev.reqData.byte.bmRequestType.bit.recipient) == USBD_RECIPIENT_ENDPOINT)
+    else if((g_usbDev.reqData.byte.bmRequestType.bit.recipient) == USBD_RECIPIENT_ENDPOINT)
     {
 
-        if (g_usbDev.reqData.byte.wIndex[0] & 0x80)
+        if(g_usbDev.reqData.byte.wIndex[0] & 0x80)
         {
-            if (USBD_ReadEPTxStatus(g_usbDev.reqData.byte.wIndex[0] & 0x0f) == USBD_EP_STATUS_STALL)
+            if(USBD_ReadEPTxStatus(g_usbDev.reqData.byte.wIndex[0] & 0x0f) == USBD_EP_STATUS_STALL)
             {
                 status[0] |= 0x01;
             }
         }
         else
         {
-            if (USBD_ReadEPRxStatus(g_usbDev.reqData.byte.wIndex[0] & 0x0f) == USBD_EP_STATUS_STALL)
+            if(USBD_ReadEPRxStatus(g_usbDev.reqData.byte.wIndex[0] & 0x0f) == USBD_EP_STATUS_STALL)
             {
                 status[0] |= 0x01;
             }
@@ -276,8 +276,8 @@ static uint8_t USBD_StandardSetAddress(void)
 {
     USBD_DevReqData_T *reqData = &g_usbDev.reqData;
 
-    if ((reqData->byte.wValue[0] < 127) && (reqData->byte.wValue[1] == 0) &&
-            (reqData->byte.bmRequestType.bit.recipient == USBD_RECIPIENT_DEVICE))
+    if((reqData->byte.wValue[0] < 127) && (reqData->byte.wValue[1] == 0) &&
+        (reqData->byte.bmRequestType.bit.recipient == USBD_RECIPIENT_DEVICE))
     {
         USBD_CtrlInData((void *)0, 0);
 
@@ -298,8 +298,8 @@ static uint8_t USBD_StandardSetConfiguration(void)
 {
     USBD_DevReqData_T *reqData = &g_usbDev.reqData;
 
-    if ((reqData->byte.wValue[0] <= g_usbDev.configurationNum) && \
-            (reqData->byte.bmRequestType.bit.recipient == USBD_RECIPIENT_DEVICE))
+    if((reqData->byte.wValue[0] <= g_usbDev.configurationNum) && \
+       (reqData->byte.bmRequestType.bit.recipient == USBD_RECIPIENT_DEVICE))
     {
         g_usbDev.curConfiguration = reqData->byte.wValue[0];
 

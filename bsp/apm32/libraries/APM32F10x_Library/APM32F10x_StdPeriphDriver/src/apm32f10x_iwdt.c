@@ -132,7 +132,7 @@ uint8_t IWDT_ReadStatusFlag(uint16_t flag)
 {
     uint8_t bitStatus = RESET;
 
-    if ((IWDT->STS & flag) != (uint32_t)RESET)
+    if((IWDT->STS & flag) != (uint32_t)RESET)
     {
         bitStatus = SET;
     }

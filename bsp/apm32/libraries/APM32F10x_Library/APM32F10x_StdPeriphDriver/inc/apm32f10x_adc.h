@@ -27,7 +27,7 @@
 #define __APM32F10X_ADC_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -71,7 +71,7 @@ typedef enum
     ADC_EXT_TRIG_CONV_TMR2_CC2        = ((uint32_t)0x00060000),
     ADC_EXT_TRIG_CONV_TMR3_TRGO       = ((uint32_t)0x00080000),
     ADC_EXT_TRIG_CONV_TMR4_CC4        = ((uint32_t)0x000A0000),
-    ADC_EXT_TRIG_CONV_EINT9_T8_TRGO   = ((uint32_t)0x000C0000),
+    ADC_EXT_TRIG_CONV_EINT11_T8_TRGO  = ((uint32_t)0x000C0000),
     ADC_EXT_TRIG_CONV_TMR1_CC3        = ((uint32_t)0x00040000),
     ADC_EXT_TRIG_CONV_None            = ((uint32_t)0x000E0000),
 
@@ -260,80 +260,80 @@ typedef struct
 */
 
 /** ADC reset and common configuration */
-void ADC_Reset(ADC_T *adc);
-void ADC_Config(ADC_T *adc, ADC_Config_T *adcConfig);
-void ADC_ConfigStructInit(ADC_Config_T *adcConfig);
-void ADC_ConfigRegularChannel(ADC_T *adc, uint8_t channel, uint8_t rank, uint8_t sampleTime);
-void ADC_Enable(ADC_T *adc);
-void ADC_Disable(ADC_T *adc);
+void ADC_Reset(ADC_T* adc);
+void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig);
+void ADC_ConfigStructInit(ADC_Config_T* adcConfig);
+void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel,uint8_t rank, uint8_t sampleTime);
+void ADC_Enable(ADC_T* adc);
+void ADC_Disable(ADC_T* adc);
 
 /** ADC for DMA */
-void ADC_EnableDMA(ADC_T *adc);
-void ADC_DisableDMA(ADC_T *adc);
+void ADC_EnableDMA(ADC_T* adc);
+void ADC_DisableDMA(ADC_T* adc);
 
 /** ADC Calibration */
-void ADC_ResetCalibration(ADC_T *adc);
-uint8_t ADC_ReadResetCalibrationStatus(ADC_T *adc);
-void ADC_StartCalibration(ADC_T *adc);
-uint8_t ADC_ReadCalibrationStartFlag(ADC_T *adc);
+void ADC_ResetCalibration(ADC_T* adc);
+uint8_t ADC_ReadResetCalibrationStatus(ADC_T* adc);
+void ADC_StartCalibration(ADC_T* adc);
+uint8_t ADC_ReadCalibrationStartFlag(ADC_T* adc);
 
 /** ADC software start conversion */
-void ADC_EnableSoftwareStartConv(ADC_T *adc);
-void ADC_DisableSoftwareStartConv(ADC_T *adc);
-uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T *adc);
+void ADC_EnableSoftwareStartConv(ADC_T* adc);
+void ADC_DisableSoftwareStartConv(ADC_T* adc);
+uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc);
 
 /** ADC Discontinuous mode */
-void ADC_ConfigDiscMode(ADC_T *adc, uint8_t number);
-void ADC_EnableDiscMode(ADC_T *adc);
-void ADC_DisableDiscMode(ADC_T *adc);
+void ADC_ConfigDiscMode(ADC_T* adc, uint8_t number);
+void ADC_EnableDiscMode(ADC_T* adc);
+void ADC_DisableDiscMode(ADC_T* adc);
 
 /** ADC External trigger conversion */
-void ADC_EnableExternalTrigConv(ADC_T *adc);
-void ADC_DisableExternalTrigConv(ADC_T *adc);
+void ADC_EnableExternalTrigConv(ADC_T* adc);
+void ADC_DisableExternalTrigConv(ADC_T* adc);
 
 /** ADC Conversion result */
-uint16_t ADC_ReadConversionValue(ADC_T *adc);
-uint32_t ADC_ReadDualModeConversionValue(ADC_T *adc);
+uint16_t ADC_ReadConversionValue(ADC_T* adc);
+uint32_t ADC_ReadDualModeConversionValue(ADC_T* adc);
 
 /** ADC Automatic injected group */
-void ADC_EnableAutoInjectedConv(ADC_T *adc);
-void ADC_DisableAutoInjectedConv(ADC_T *adc);
-void ADC_EnableInjectedDiscMode(ADC_T *adc);
-void ADC_DisableInjectedDiscMode(ADC_T *adc);
+void ADC_EnableAutoInjectedConv(ADC_T* adc);
+void ADC_DisableAutoInjectedConv(ADC_T* adc);
+void ADC_EnableInjectedDiscMode(ADC_T* adc);
+void ADC_DisableInjectedDiscMode(ADC_T* adc);
 
 /** ADC External trigger for injected channels conversion */
-void ADC_ConfigExternalTrigInjectedConv(ADC_T *adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv);
-void ADC_EnableExternalTrigInjectedConv(ADC_T *adc);
-void ADC_DisableExternalTrigInjectedConv(ADC_T *adc);
+void ADC_ConfigExternalTrigInjectedConv(ADC_T* adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv);
+void ADC_EnableExternalTrigInjectedConv(ADC_T* adc);
+void ADC_DisableExternalTrigInjectedConv(ADC_T* adc);
 
 /** ADC Start of the injected channels conversion */
-void ADC_EnableSoftwareStartInjectedConv(ADC_T *adc);
-void ADC_DisableSoftwareStartInjectedConv(ADC_T *adc);
-uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T *adc);
+void ADC_EnableSoftwareStartInjectedConv(ADC_T* adc);
+void ADC_DisableSoftwareStartInjectedConv(ADC_T* adc);
+uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T* adc);
 
 /** ADC injected channel */
-void ADC_ConfigInjectedChannel(ADC_T *adc, uint8_t channel, uint8_t rank, uint8_t sampleTime);
-void ADC_ConfigInjectedSequencerLength(ADC_T *adc, uint8_t length);
-void ADC_ConfigInjectedOffset(ADC_T *adc, ADC_INJEC_CHANNEL_T channel, uint16_t offSet);
-uint16_t ADC_ReadInjectedConversionValue(ADC_T *adc, ADC_INJEC_CHANNEL_T channel);
+void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t sampleTime);
+void ADC_ConfigInjectedSequencerLength(ADC_T* adc, uint8_t length);
+void ADC_ConfigInjectedOffset(ADC_T* adc, ADC_INJEC_CHANNEL_T channel, uint16_t offSet);
+uint16_t ADC_ReadInjectedConversionValue(ADC_T* adc, ADC_INJEC_CHANNEL_T channel);
 
 /** ADC analog watchdog */
-void ADC_EnableAnalogWatchdog(ADC_T *adc, uint32_t analogWatchdog);
-void ADC_DisableAnalogWatchdog(ADC_T *adc);
-void ADC_ConfigAnalogWatchdogThresholds(ADC_T *adc, uint16_t highThreshold, uint16_t lowThreshold);
-void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T *adc, uint8_t channel);
+void ADC_EnableAnalogWatchdog(ADC_T* adc, uint32_t analogWatchdog);
+void ADC_DisableAnalogWatchdog(ADC_T* adc);
+void ADC_ConfigAnalogWatchdogThresholds(ADC_T* adc, uint16_t highThreshold, uint16_t lowThreshold);
+void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T* adc, uint8_t channel);
 
 /** ADC temperature sensor */
-void ADC_EnableTempSensorVrefint(ADC_T *adc);
-void ADC_DisableTempSensorVrefint(ADC_T *adc);
+void ADC_EnableTempSensorVrefint(ADC_T* adc);
+void ADC_DisableTempSensorVrefint(ADC_T* adc);
 
 /** Interrupt and flag */
-void ADC_EnableInterrupt(ADC_T *adc, uint16_t interrupt);
-void ADC_DisableInterrupt(ADC_T *adc, uint16_t interrupt);
-uint8_t ADC_ReadStatusFlag(ADC_T *adc, ADC_FLAG_T flag);
-void ADC_ClearStatusFlag(ADC_T *adc, uint8_t flag);
-uint8_t ADC_ReadIntFlag(ADC_T *adc, ADC_INT_T flag);
-void ADC_ClearIntFlag(ADC_T *adc, uint16_t flag);
+void ADC_EnableInterrupt(ADC_T* adc, uint16_t interrupt);
+void ADC_DisableInterrupt(ADC_T* adc, uint16_t interrupt);
+uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag);
+void ADC_ClearStatusFlag(ADC_T* adc, uint8_t flag);
+uint8_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_T flag);
+void ADC_ClearIntFlag(ADC_T* adc, uint16_t flag);
 
 /**@} end of group ADC_Fuctions*/
 /**@} end of group ADC_Driver*/

@@ -27,7 +27,7 @@
 #define __APM32F10X_SCI2C_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -52,7 +52,7 @@ typedef enum
     SCI2C_SPEED_STANDARD = 1,
     SCI2C_SPEED_FAST,
     SCI2C_SPEED_HIGH
-} SCI2C_SPEED_T;
+}SCI2C_SPEED_T;
 
 /**
  * @brief   Address mode
@@ -61,7 +61,7 @@ typedef enum
 {
     SCI2C_ADDR_MODE_7BIT,
     SCI2C_ADDR_MODE_10BIT
-} SCI2C_ADDR_MODE_T;
+}SCI2C_ADDR_MODE_T;
 
 /**
  * @brief   SCI2C mode enumeration
@@ -70,7 +70,7 @@ typedef enum
 {
     SCI2C_MODE_MASTER,
     SCI2C_MODE_SLAVE
-} SCI2C_MODE_T;
+}SCI2C_MODE_T;
 
 /**
  * @brief   Restart enable or disable
@@ -79,7 +79,7 @@ typedef enum
 {
     SCI2C_RESTART_DISABLE,
     SCI2C_RESTART_ENABLE
-} SCI2C_RESTART_T;
+}SCI2C_RESTART_T;
 
 /**
  * @brief   Enable or disable generate stop condition
@@ -88,7 +88,7 @@ typedef enum
 {
     SCI2C_STOP_DISABLE,
     SCI2C_STOP_ENABLE
-} SCI2C_STOP_T;
+}SCI2C_STOP_T;
 /**
  * @brief   Data direction
  */
@@ -96,7 +96,7 @@ typedef enum
 {
     SCI2C_DATA_DIR_WRITE,
     SCI2C_DATA_DIR_READ,
-} SCI2C_DATA_DIR_T;
+}SCI2C_DATA_DIR_T;
 
 /**
  * @brief   SCI2C interrupt
@@ -118,7 +118,7 @@ typedef enum
     SCI2C_INT_RSTAD     = BIT12,        //!< Restart detect interrupt
     SCI2C_INT_MOH       = BIT13,        //!< Master on hold interrupt
     SCI2C_INT_ALL       = BIT15         //!< All interrupt
-} SCI2C_INT_T;
+}SCI2C_INT_T;
 
 /**
  * @brief   Flag enumeration
@@ -135,7 +135,7 @@ typedef enum
     SCI2C_FLAG_I2CEN    = BIT8 | BIT0,  //!< I2C enable flag
     SCI2C_FLAG_SDWB     = BIT8 | BIT1,  //!< Slave disable while busy flag
     SCI2C_FLAG_SRDL     = BIT8 | BIT2   //!< Slave receive data lost flag
-} SCI2C_FLAG_T;
+}SCI2C_FLAG_T;
 
 /**
  * @brief   Tx abort source
@@ -158,7 +158,7 @@ typedef enum
     SCI2C_TAS_SRI       = BIT13,        //!< Slave read done
     SCI2C_TAS_USRARB    = BIT14,        //!< User abort
     SCI2C_TAS_FLUCNT    = BIT15         //!< Tx flush counter
-} SCI2C_TAS_T;
+}SCI2C_TAS_T;
 
 /**
  * @brief   DMA Enable
@@ -167,7 +167,7 @@ typedef enum
 {
     SCI2C_DMA_RX = BIT0,
     SCI2C_DMA_TX = BIT1,
-} SCI2C_DMA_T;
+}SCI2C_DMA_T;
 
 /**@} end of group SCI2C_Enumerations*/
 
@@ -227,7 +227,7 @@ typedef struct
     uint8_t             txFifoThreshold;  //!< Tx FIFO threshold
     SCI2C_RESTART_T     restart;          //!< Enable or disable restart
     SCI2C_ADDR_MODE_T   addrMode;         //!< Address mode. 7-bit or 10-bit mode.
-} SCI2C_Config_T;
+}SCI2C_Config_T;
 
 /**@} end of group SCI2C_Structure*/
 

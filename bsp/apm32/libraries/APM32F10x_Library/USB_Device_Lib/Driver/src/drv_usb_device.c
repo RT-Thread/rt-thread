@@ -171,7 +171,7 @@ void USBD_ToggleRx(uint8_t ep)
  */
 void USBD_ResetTxToggle(uint8_t ep)
 {
-    if (USBD->EP[ep].EP_B.TXDTOG)
+    if(USBD->EP[ep].EP_B.TXDTOG)
     {
         USBD_ToggleTx(ep);
     }
@@ -186,7 +186,7 @@ void USBD_ResetTxToggle(uint8_t ep)
  */
 void USBD_ResetRxToggle(uint8_t ep)
 {
-    if (USBD->EP[ep].EP_B.RXDTOG)
+    if(USBD->EP[ep].EP_B.RXDTOG)
     {
         USBD_ToggleRx(ep);
     }
@@ -305,11 +305,11 @@ void USBD_SetEPRxCnt(uint8_t ep, uint32_t cnt)
 
     p = USBD_ReadEPRxCntPointer(ep);
 
-    if (cnt > 62)
+    if(cnt > 62)
     {
         block = cnt >> 5;
 
-        if (!(cnt & 0x1f))
+        if(!(cnt & 0x1f))
         {
             block -= 1;
         }
@@ -320,7 +320,7 @@ void USBD_SetEPRxCnt(uint8_t ep, uint32_t cnt)
     {
         block = cnt >> 1;
 
-        if (cnt & 0x01)
+        if(cnt & 0x01)
         {
             block += 1;
         }
@@ -355,7 +355,7 @@ void USBD_WriteDataToEP(uint8_t ep, uint8_t *wBuf, uint32_t wLen)
 
     epAddr = USBD_ReadEPTxBufferPointer(ep);
 
-    for (i = 0; i < wLen; i++)
+    for(i = 0; i < wLen; i++)
     {
         tmp = *wBuf++;
         tmp = ((*wBuf++) << 8) | tmp;
@@ -388,7 +388,7 @@ void USBD_ReadDataFromEP(uint8_t ep, uint8_t *rBuf, uint32_t rLen)
 
     epAddr = USBD_ReadEPRxBufferPointer(ep);
 
-    for (i = 0; i < cnt; i++)
+    for(i = 0; i < cnt; i++)
     {
         tmp = *epAddr++;
         *rBuf++ = tmp & 0xFF;
