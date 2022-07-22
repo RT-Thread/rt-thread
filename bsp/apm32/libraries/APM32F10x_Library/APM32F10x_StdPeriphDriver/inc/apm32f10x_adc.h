@@ -32,6 +32,7 @@
 
 #include "apm32f10x.h"
 
+
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
 */
