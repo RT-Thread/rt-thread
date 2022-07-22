@@ -153,6 +153,10 @@ extern "C" {
 #include "drivers/rt_inputcapture.h"
 #endif /* RT_USING_INPUT_CAPTURE */
 
+#ifdef RT_USING_TOUCH
+#include "drivers/touch.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
