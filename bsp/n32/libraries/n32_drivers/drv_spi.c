@@ -58,11 +58,11 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
-    
+
     RCC_GetClocksFreqValue(&RCC_ClockFreq);
-    
+
     spi_periph = (SPI_Module*)device->bus->parent.user_data;
-    
+
     if(spi_periph != SPI1 && spi_periph != SPI2 && spi_periph != SPI3)
     {
         return RT_EIO;
@@ -79,7 +79,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     {
         return RT_EIO;
     }
-    
+
     {
         rt_uint32_t spi_apb_clock;
         rt_uint32_t max_hz;
@@ -133,12 +133,12 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
             SPI_InitStructure.BaudRatePres = SPI_BR_PRESCALER_256;
         }
     } /* baudrate */
-    
+
     switch(configuration->mode & RT_SPI_MODE_3)
     {
         case RT_SPI_MODE_0:
             SPI_InitStructure.CLKPOL        = SPI_CLKPOL_LOW;
-            SPI_InitStructure.CLKPHA        = SPI_CLKPHA_FIRST_EDGE;    
+            SPI_InitStructure.CLKPHA        = SPI_CLKPHA_FIRST_EDGE;
             break;
         case RT_SPI_MODE_1:
             SPI_InitStructure.CLKPOL        = SPI_CLKPOL_LOW;
@@ -153,7 +153,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
             SPI_InitStructure.CLKPHA        = SPI_CLKPHA_SECOND_EDGE;
             break;
     }
-    
+
     /* MSB or LSB */
     if(configuration->mode & RT_SPI_MSB)
     {
@@ -168,8 +168,8 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     SPI_InitStructure.SpiMode       = SPI_MODE_MASTER;
     SPI_InitStructure.CLKPHA        = SPI_CLKPHA_SECOND_EDGE;
     SPI_InitStructure.NSS           = SPI_NSS_SOFT;
-    SPI_InitStructure.CRCPoly       = 7; 
-    
+    SPI_InitStructure.CRCPoly       = 7;
+
     SPI_Init(spi_periph, &SPI_InitStructure);
 
     /*!< Enable the sFLASH_SPI  */
@@ -200,7 +200,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
             const rt_uint8_t * send_ptr = message->send_buf;
             rt_uint8_t * recv_ptr = message->recv_buf;
             rt_uint32_t size = message->length;
-            
+
             DEBUG_PRINTF("spi poll transfer start: %d\n", size);
 
             while(size--)
@@ -211,19 +211,19 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 {
                     data = *send_ptr++;
                 }
-                                
+
                 /*!< Loop while DAT register in not emplty */
                 while (SPI_I2S_GetStatus(spi_periph, SPI_I2S_TE_FLAG) == RESET);
-                
+
                 // Send the byte
                 SPI_I2S_TransmitData(spi_periph, data);
 
                 //Wait until a data is received
                 while(SPI_I2S_GetStatus(spi_periph, SPI_I2S_RNE_FLAG) == RESET);
-                
+
                 // Get the received data
                 data = SPI_I2S_ReceiveData(spi_periph);
-                
+
                 if(recv_ptr != RT_NULL)
                 {
                     *recv_ptr++ = data;
@@ -245,16 +245,16 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 {
                     data = *send_ptr++;
                 }
-                
+
                  /*!< Loop while DAT register in not emplty */
                 while (SPI_I2S_GetStatus(spi_periph, SPI_I2S_TE_FLAG) == RESET);
-                
+
                 // Send the byte
                 SPI_I2S_TransmitData(spi_periph, data);
 
                 //Wait until a data is received
                 while(RESET == SPI_I2S_GetStatus(spi_periph, SPI_I2S_RNE_FLAG));
-                
+
                 // Get the received data
                 data = SPI_I2S_ReceiveData(spi_periph);
 
@@ -285,51 +285,51 @@ static struct rt_spi_ops spi_ops =
 int rt_hw_spi_init(void)
 {
     int result = 0;
-    
+
 #ifdef BSP_USING_SPI1
     static struct rt_spi_bus spi_bus1;
     spi_bus1.parent.user_data = (void *)SPI1;
 
     result = rt_spi_bus_register(&spi_bus1, "spi1", &spi_ops);
-	
+
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_SPI1, ENABLE);    
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_SPI1, ENABLE);
     /* SPI1_SCK(PA5), SPI1_MISO(PA6) and SPI1_MOSI(PA7) GPIO pin configuration */
     GPIOInit(SPI1_SCK_GPIO_PORT, GPIO_Mode_AF_PP, GPIO_Speed_50MHz, SPI1_SCK_PIN);
     GPIOInit(SPI1_MOSI_GPIO_PORT, GPIO_Mode_AF_PP, GPIO_Speed_50MHz, SPI1_MOSI_PIN);
-    GPIOInit(SPI1_MISO_GPIO_PORT, GPIO_Mode_IN_FLOATING, GPIO_Speed_50MHz, SPI1_MISO_PIN); 
-        
+    GPIOInit(SPI1_MISO_GPIO_PORT, GPIO_Mode_IN_FLOATING, GPIO_Speed_50MHz, SPI1_MISO_PIN);
+
 #endif
 #ifdef BSP_USING_SPI2
     static struct rt_spi_bus spi_bus2;
     spi_bus2.parent.user_data = (void *)SPI2;
 
-    result = rt_spi_bus_register(&spi_bus2, "spi2", &spi_ops); 
+    result = rt_spi_bus_register(&spi_bus2, "spi2", &spi_ops);
 
-    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_SPI2, ENABLE);   
+    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_SPI2, ENABLE);
     /* SPI2_SCK(PB13), SPI2_MISO(PB14) and SPI2_MOSI(PB15) GPIO pin configuration */
     GPIOInit(SPI2_SCK_GPIO_PORT, GPIO_Mode_AF_PP, GPIO_Speed_50MHz, SPI2_SCK_PIN);
     GPIOInit(SPI2_MOSI_GPIO_PORT, GPIO_Mode_AF_PP, GPIO_Speed_50MHz, SPI2_MOSI_PIN);
-    GPIOInit(SPI2_MISO_GPIO_PORT, GPIO_Mode_IN_FLOATING, GPIO_Speed_50MHz, SPI2_MISO_PIN); 
-    
+    GPIOInit(SPI2_MISO_GPIO_PORT, GPIO_Mode_IN_FLOATING, GPIO_Speed_50MHz, SPI2_MISO_PIN);
+
 #endif
 #ifdef BSP_USING_SPI3
     static struct rt_spi_bus spi_bus3;
     spi_bus3.parent.user_data = (void *)SPI3;
 
     result = rt_spi_bus_register(&spi_bus3, "spi3", &spi_ops);
-    
-		/* Enable AFIO clock */
-		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-	
+
+        /* Enable AFIO clock */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+
     GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_SPI3, ENABLE);
-    
+
    /* SPI3_SCK(PB3), SPI3_MISO(PB4) and SPI3_MOSI(PB5) GPIO pin configuration */
     GPIOInit(SPI3_SCK_GPIO_PORT, GPIO_Mode_AF_PP, GPIO_Speed_50MHz, SPI3_SCK_PIN);
     GPIOInit(SPI3_MOSI_GPIO_PORT, GPIO_Mode_AF_PP, GPIO_Speed_50MHz, SPI3_MOSI_PIN);
-    GPIOInit(SPI3_MISO_GPIO_PORT, GPIO_Mode_IN_FLOATING, GPIO_Speed_50MHz, SPI3_MISO_PIN); 
-    
+    GPIOInit(SPI3_MISO_GPIO_PORT, GPIO_Mode_IN_FLOATING, GPIO_Speed_50MHz, SPI3_MISO_PIN);
+
 #endif
     return result;
 }

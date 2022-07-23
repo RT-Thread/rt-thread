@@ -236,7 +236,7 @@ static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
 }
 #endif /* RT_USING_I2C_BITOPS */
 
-#ifdef RT_USING_HARDWARE_I2C 
+#ifdef RT_USING_HARDWARE_I2C
 
 static uint32_t I2CTimeout = I2CT_LONG_TIMEOUT;
 
@@ -251,7 +251,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
     };
 
     I2C_ConfigAck((I2C_Module*)i2c_periph, ENABLE);
-    
+
     /** Send START condition */
     I2C_GenerateStart((I2C_Module*)i2c_periph, ENABLE);
 
@@ -265,7 +265,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
 
     /* send slave address to I2C bus */
     I2C_SendAddr7bit((I2C_Module*)i2c_periph, slave_address, I2C_DIRECTION_RECV);
-    
+
     I2CTimeout = I2CT_LONG_TIMEOUT;
     while (!I2C_CheckEvent((I2C_Module*)i2c_periph, I2C_EVT_MASTER_RXMODE_FLAG)) // EV6
     {
@@ -293,7 +293,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
             *p_buffer = I2C_RecvData((I2C_Module*)i2c_periph);
 
             /* point to the next location where the byte read will be saved */
-            p_buffer++; 
+            p_buffer++;
 
             /* decrement the read bytes counter */
             data_byte--;
@@ -402,7 +402,7 @@ static rt_size_t rt_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
             }
         }
     }
-    
+
     ret = i;
     return ret;
 
@@ -413,7 +413,7 @@ out:
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-{ 
+{
     rt_i2c_xfer,
     RT_NULL,
     RT_NULL
@@ -425,7 +425,7 @@ int rt_hw_i2c_init(void)
 {
 #ifdef RT_USING_I2C_BITOPS
 
-	  rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
+      rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
     rt_err_t result;
 
     for(int i = 0; i < obj_num; i++)
@@ -446,7 +446,7 @@ int rt_hw_i2c_init(void)
                    soft_i2c_config[i].sda);
     }
 #endif /* RT_USING_I2C_BITOPS */
-		
+
 #ifdef RT_USING_HARDWARE_I2C
 
 #ifdef BSP_USING_I2C1
@@ -459,10 +459,10 @@ int rt_hw_i2c_init(void)
     GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE);
     /* connect PB8 to I2C1_SCL, PB9 to I2C1_SDA */
     GPIOInit(GPIOB, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_8 | GPIO_PIN_9);
-    
+
     /* enable I2C clock */
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
-    
+
     I2C_DeInit(I2C1);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
     I2C_InitStructure.FmDutyCycle = I2C_FMDUTYCYCLE_2;
@@ -520,7 +520,7 @@ int rt_hw_i2c_init(void)
 
     /* connect PC0 to I2C3_SCL, PC1 to I2C3_SDA */
     GPIOInit(GPIOC, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_0 | GPIO_PIN_1);
-    
+
     I2C_DeInit(I2C3);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
     I2C_InitStructure.FmDutyCycle = I2C_FMDUTYCYCLE_2;
