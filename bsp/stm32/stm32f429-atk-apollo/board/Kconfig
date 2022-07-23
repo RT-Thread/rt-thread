@@ -56,7 +56,6 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
         default n
-        depends on !BSP_USING_UART3
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (sdio)"
