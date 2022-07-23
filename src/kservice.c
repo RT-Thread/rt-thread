@@ -157,8 +157,8 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
-    unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
-                                unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
+    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
+                                unsigned variable.  */
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
@@ -1079,17 +1079,17 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
 #endif /* RT_KPRINTF_USING_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
+            if (flags & SIGN) num = (rt_int32_t)num;
         }
         else if (qualifier == 'h')
         {            
-            if (flags & SIGN)
-                num = (rt_int32_t)va_arg(args, rt_int16_t);
-            else
-                num = (rt_uint32_t)va_arg(args, rt_uint16_t);
+            num = (rt_uint16_t)va_arg(args, int);
+            if (flags & SIGN) num = (rt_int16_t)num;
         }
         else
         {
-            num = va_arg(args, rt_uint32_t);
+            num = va_arg(args, int);
+            if (flags & SIGN) num = (rt_int32_t)num;
         }
 #ifdef RT_PRINTF_PRECISION
         str = print_number(str, end, num, base, field_width, precision, flags);
