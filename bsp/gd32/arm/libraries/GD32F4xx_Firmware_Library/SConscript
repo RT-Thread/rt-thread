@@ -45,6 +45,7 @@ if GetDepend(['RT_USING_WDT']):
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_sdio.c']
+    src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_dma.c']
 
 path = [
     cwd + '/CMSIS/GD/GD32F4xx/Include',
