@@ -51,7 +51,7 @@ static struct n32_dac_config dac_config[] =
         DAC_CHANNEL_1,
     },
 #endif
-    
+
 #ifdef BSP_USING_DAC2
     {
         "dac2",
@@ -80,32 +80,32 @@ static void n32_dac_init(struct n32_dac_config *config)
 static rt_err_t n32_dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
 {
     RT_ASSERT(device != RT_NULL);
-    
+
     DAC_Enable(channel, ENABLE);
-    
+
     return RT_EOK;
 }
 
 static rt_err_t n32_dac_disabled(struct rt_dac_device *device, rt_uint32_t channel)
-{    
+{
     RT_ASSERT(device != RT_NULL);
-    
+
     DAC_Enable(channel, DISABLE);
     return RT_EOK;
 }
 
 
 static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
-{    
-    RT_ASSERT(device != RT_NULL);    
+{
+    RT_ASSERT(device != RT_NULL);
     rt_uint16_t set_value = 0;
     set_value = (rt_uint16_t)*value;
-    
+
     if(set_value > 4096)
     {
         set_value = 4096;
     }
-    
+
     /* Start DAC Channel conversion by software */
     if(channel == DAC_CHANNEL_1)
     {
@@ -141,7 +141,7 @@ int rt_hw_dac_init(void)
         /* dac init */
         name_buf[3] = '0';
         dac_obj[i].config = &dac_config[i];
-#if defined(BSP_USING_DAC1)        
+#if defined(BSP_USING_DAC1)
         if (dac_obj[i].config->dac_periph == DAC_CHANNEL_1)
         {
             name_buf[3] = '1';
@@ -155,7 +155,7 @@ int rt_hw_dac_init(void)
         }
         GPIOInit(GPIOA, GPIO_Mode_AIN, GPIO_Speed_50MHz, GPIO_PIN_5);
 #endif
-        
+
         /* register dac device */
         for (i = 0; i < sizeof(dac_obj) / sizeof(dac_obj[0]); i++)
         {
@@ -169,7 +169,7 @@ int rt_hw_dac_init(void)
                 LOG_E("%s register failed", name_buf);
                 result = -RT_ERROR;
             }
-        }       
+        }
     }
 
     return result;
