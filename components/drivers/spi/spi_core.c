@@ -255,58 +255,56 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
                           rt_size_t             length)
 {
     rt_err_t result;
+    rt_size_t size;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
-    if (result == RT_EOK)
-    {
-        if (device->bus->owner != device)
-        {
-            /* not the same owner as current, re-configure SPI bus */
-            result = device->bus->ops->configure(device, &device->config);
-            if (result == RT_EOK)
-            {
-                /* set SPI bus owner */
-                device->bus->owner = device;
-            }
-            else
-            {
-                /* configure SPI bus failed */
-                rt_set_errno(-RT_EIO);
-                result = 0;
-                goto __exit;
-            }
-        }
-
-        /* initial message */
-        message.send_buf   = send_buf;
-        message.recv_buf   = recv_buf;
-        message.length     = length;
-        message.cs_take    = 1;
-        message.cs_release = 1;
-        message.next       = RT_NULL;
-
-        /* transfer message */
-        result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
-        {
-            rt_set_errno(-RT_EIO);
-            goto __exit;
-        }
-    }
-    else
+    if(result != RT_EOK)
     {
         rt_set_errno(-RT_EIO);
         return 0;
     }
 
+    if (device->bus->owner != device)
+    {
+        /* not the same owner as current, re-configure SPI bus */
+        result = device->bus->ops->configure(device, &device->config);
+        if (result == RT_EOK)
+        {
+            /* set SPI bus owner */
+            device->bus->owner = device;
+        }
+        else
+        {
+            /* configure SPI bus failed */
+            rt_set_errno(-RT_EIO);
+            size = 0;
+            goto __exit;
+        }
+    }
+
+    /* initial message */
+    message.send_buf   = send_buf;
+    message.recv_buf   = recv_buf;
+    message.length     = length;
+    message.cs_take    = 1;
+    message.cs_release = 1;
+    message.next       = RT_NULL;
+
+    /* transfer message */
+    size = device->bus->ops->xfer(device, &message);
+    if (size == 0)
+    {
+        rt_set_errno(-RT_EIO);
+    }
+
 __exit:
     rt_mutex_release(&(device->bus->lock));
 
-    return result;
+    return size;
 }
 
 struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
