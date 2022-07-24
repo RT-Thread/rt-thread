@@ -299,16 +299,16 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
     /* alignment size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
 
+    /* every data block must be at least MIN_SIZE_ALIGNED long */
+    if (size < MIN_SIZE_ALIGNED)
+        size = MIN_SIZE_ALIGNED;
+
     if (size > small_mem->mem_size_aligned)
     {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("no memory\n"));
 
         return RT_NULL;
     }
-
-    /* every data block must be at least MIN_SIZE_ALIGNED long */
-    if (size < MIN_SIZE_ALIGNED)
-        size = MIN_SIZE_ALIGNED;
 
     for (ptr = (rt_uint8_t *)small_mem->lfree - small_mem->heap_ptr;
          ptr <= small_mem->mem_size_aligned - size;

@@ -264,7 +264,7 @@ static rt_err_t hc32_configure(struct rt_serial_device *serial, struct serial_co
 
     /* Enable error interrupt */
     NVIC_EnableIRQ(uart->config->rxerr_irq.irq_config.irq_num);
-    USART_FuncCmd(uart->config->Instance, USART_TX | USART_RX, ENABLE);
+    USART_FuncCmd(uart->config->Instance, USART_TX | USART_RX | USART_INT_RX, ENABLE);
 
     return RT_EOK;
 }

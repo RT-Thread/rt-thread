@@ -73,12 +73,18 @@ MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
 {
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+    extern void list_memheap(void);
+    list_memheap();
+#else
     rt_size_t total = 0, used = 0, max_used = 0;
 
     rt_memory_info(&total, &used, &max_used);
-    rt_kprintf("total   : %d\n", total);
-    rt_kprintf("used    : %d\n", used);
-    rt_kprintf("maximum : %d\n", max_used);
+    rt_kprintf("total    : %d\n", total);
+    rt_kprintf("used     : %d\n", used);
+    rt_kprintf("maximum  : %d\n", max_used);
+    rt_kprintf("available: %d\n", total - used);
+#endif
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);

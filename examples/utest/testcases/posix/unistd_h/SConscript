@@ -1,0 +1,33 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+path = [cwd]
+src = []
+
+if GetDepend('RTT_POSIX_TESTCASE_UNISTD_H'):
+    src += Glob('./definitions/*.c')
+
+if GetDepend('UNISTD_H_ACCESS'):
+    src += Glob('./functions/access_tc.c')
+
+if GetDepend('UNISTD_H_CHDIR'):
+    src += Glob('./functions/chdir_tc.c')
+
+if GetDepend('UNISTD_H_FTRUNCATE'):
+    src += Glob('./functions/ftruncate_tc.c')
+
+if GetDepend('UNISTD_H_ISATTY'):
+    src += Glob('./functions/isatty_tc.c')
+
+if GetDepend('UNISTD_H_FSYNC'):
+    src += Glob('./functions/open_read_write_fsync_close_tc.c')
+
+if GetDepend('UNISTD_H_RMDIR'):
+    src += Glob('./functions/rmdir_tc.c')
+
+group = DefineGroup('rtt_posix_testcase', src, depend = ['RTT_POSIX_TESTCASE_UNISTD_H'], CPPPATH = path)
+
+Return('group')

@@ -10,17 +10,14 @@
 
 #include <Arduino.h>
 
-uint8_t led = LED_BUILTIN;
-
 void setup(void)
 {
     /* put your setup code here, to run once: */
-    pinMode(led, OUTPUT);
 }
 
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    digitalWrite(led, !digitalRead(led));
-    delay(100);
+    Serial.println("Hello Arduino!\n");
+    delay(800);
 }

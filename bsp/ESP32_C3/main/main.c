@@ -15,14 +15,13 @@
 
 int rtt_main(void)
 {
-#define BLINK_GPIO 12
-    rt_pin_mode(BLINK_GPIO, PIN_MODE_OUTPUT);
+    rt_pin_mode(RT_BSP_LED_PIN, PIN_MODE_OUTPUT);
     while (1)
     {
         printf("Hello!RT-THREAD!\r\n");
-        rt_pin_write(BLINK_GPIO, PIN_HIGH);
+        rt_pin_write(RT_BSP_LED_PIN, PIN_HIGH);
         rt_thread_mdelay(1000);
-        rt_pin_write(BLINK_GPIO, PIN_LOW);
+        rt_pin_write(RT_BSP_LED_PIN, PIN_LOW);
         rt_thread_mdelay(1000);
     }
 }

@@ -19,8 +19,6 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
-        select BSP_USING_TIM
-        select BSP_USING_TIM7
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM

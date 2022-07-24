@@ -38,15 +38,17 @@ jobs:
          - {RTT_BSP: "at91/at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ft32/ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32105r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32205r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32305r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32407v-start", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32/gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32105r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32205r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32207i-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32305r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32307e-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32407v-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}

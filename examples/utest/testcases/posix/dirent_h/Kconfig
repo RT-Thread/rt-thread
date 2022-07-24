@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_DIRENT_H
+    bool "<dirent.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_DIRENT_H
+
+    config DIRENT_H_OPENDIR_READDIR_CLOSEDIR
+    bool "<dirent.h> -> opendir, readdir, closedir"
+    default n
+
+endif

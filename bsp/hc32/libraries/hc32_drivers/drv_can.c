@@ -9,6 +9,7 @@
  * 2022-04-28     CDT                  first version
  * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
  * 2022-06-08     CDT                  fix a bug of RT_CAN_CMD_SET_FILTER
+ * 2022-06-15     lianghongquan        fix bug, FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
  */
 
 #include "drv_can.h"
@@ -29,7 +30,7 @@
 #endif
 
 #if defined (HC32F460)
-    #define FILTER_COUNT                                    (16)
+    #define FILTER_COUNT                                    (8)
     #define CAN1_INT_SRC                                    (INT_SRC_CAN_INT)
 #endif
 
@@ -213,14 +214,14 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         switch (argval)
         {
         case RT_DEVICE_FLAG_INT_RX:
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX, DISABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX_BUF_WARN, DISABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX_BUF_FULL, DISABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX_OVERRUN, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_WARN, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_FULL, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_OVERRUN, DISABLE);
             break;
         case RT_DEVICE_FLAG_INT_TX:
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_STB_TX, DISABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_PTB_TX, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_STB_TX, DISABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_PTB_TX, DISABLE);
             break;
         case RT_DEVICE_CAN_INT_ERR:
             CAN_IntCmd(p_can_dev->instance, CAN_INT_ERR_INT, DISABLE);
@@ -237,14 +238,14 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         switch (argval)
         {
         case RT_DEVICE_FLAG_INT_RX:
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX, ENABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX_BUF_WARN, ENABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX_BUF_FULL, ENABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_RX_OVERRUN, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_WARN, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_BUF_FULL, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_OVERRUN, ENABLE);
             break;
         case RT_DEVICE_FLAG_INT_TX:
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_STB_TX, ENABLE);
-            CAN_IntCmd(p_can_dev->instance, CAN_FLAG_PTB_TX, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_STB_TX, ENABLE);
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_PTB_TX, ENABLE);
             break;
         case RT_DEVICE_CAN_INT_ERR:
             CAN_IntCmd(p_can_dev->instance, CAN_INT_ERR_INT, ENABLE);
@@ -273,15 +274,21 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 p_can_dev->ll_init.u16FilterSelect = _get_filter_idx(filter_cfg);
                 for (int i = 0; i < filter_cfg->count; i++)
                 {
-                    p_can_dev->ll_init.pstcFilter[i].u32ID = filter_cfg->items[i].id;
-                    p_can_dev->ll_init.pstcFilter[i].u32IDMask = filter_cfg->items[i].mask;
-                    if (filter_cfg->items[i].ide == RT_CAN_STDID)
+                    p_can_dev->ll_init.pstcFilter[i].u32ID = filter_cfg->items[i].id & 0x1FFFFFFF;
+                    /* rt-thread CAN mask, 1 mean filer, 0 mean ignore. *
+                     * HDSC HC32 CAN mask, 0 mean filer, 1 mean ignore. */
+                    p_can_dev->ll_init.pstcFilter[i].u32IDMask = (~filter_cfg->items[i].mask) & 0x1FFFFFFF;
+                    switch (filter_cfg->items[i].ide)
                     {
-                        p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_STD;
-                    }
-                    else
-                    {
-                        p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_EXT;
+                        case (RT_CAN_STDID):
+                            p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_STD;
+                            break;
+                        case (RT_CAN_EXTID):
+                            p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_EXT;
+                            break;
+                        default:
+                            p_can_dev->ll_init.pstcFilter[i].u32IDType = CAN_ID_STD_EXT;
+                            break;
                     }
                 }
             }
@@ -452,6 +459,21 @@ static void _can_isr(can_device *p_can_dev)
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_OFF) == SET)
     {
         /* BUS OFF. */
+    }
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ERR_INT) == SET)
+    {
+        /* ERROR. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ERR_INT);
+    }
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) == SET)
+    {
+        /* BUS ERROR. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR);
+    }
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ERR_PASSIVE) == SET)
+    {
+        /* error-passive to error-active or error-active to error-passive. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ERR_PASSIVE);
     }
 
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_OVF) == SET)
