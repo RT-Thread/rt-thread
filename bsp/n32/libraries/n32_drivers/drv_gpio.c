@@ -38,7 +38,7 @@
 
 #ifdef RT_USING_PIN
 
-static const struct pin_index pins[] = 
+static const struct pin_index pins[] =
 {
 #if defined(GPIOA)
     __N32_PIN(0 ,  GPIOA, GPIO_PIN_0 ),
@@ -159,7 +159,7 @@ static const struct pin_index pins[] =
     __N32_PIN(109, GPIOG, GPIO_PIN_13),
     __N32_PIN(110, GPIOG, GPIO_PIN_14),
     __N32_PIN(111, GPIOG, GPIO_PIN_15),
-    
+
 #endif /* defined(GPIOG) */
 #endif /* defined(GPIOF) */
 #endif /* defined(GPIOE) */
@@ -186,7 +186,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_12, EXTI15_10_IRQn},
     {GPIO_PIN_13, EXTI15_10_IRQn},
     {GPIO_PIN_14, EXTI15_10_IRQn},
-    {GPIO_PIN_15, EXTI15_10_IRQn}, 
+    {GPIO_PIN_15, EXTI15_10_IRQn},
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
@@ -269,9 +269,9 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         return;
     }
-    
+
     GPIO_InitStruct(&GPIO_InitStructure);
-    
+
     /* Configure GPIO_InitStructure */
     GPIO_InitStructure.Pin = index->pin;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -350,7 +350,7 @@ rt_inline rt_int32_t port2portsource(GPIO_Module* module)
     else
     {
         return GPIOA_PORT_SOURCE;
-    }        
+    }
 }
 
 rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
@@ -472,7 +472,7 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct(&GPIO_InitStructure);
-        GPIO_InitStructure.Pin = index->pin;        
+        GPIO_InitStructure.Pin = index->pin;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
@@ -494,13 +494,13 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
         /* configure EXTI line */
         GPIO_ConfigEXTILine(port2portsource(index->gpio), irqindex);
-     
+
         /*Configure key EXTI line*/
         EXTI_InitStructure.EXTI_Line    = index->pin;
         EXTI_InitStructure.EXTI_Mode    = EXTI_Mode_Interrupt;
         EXTI_InitStructure.EXTI_LineCmd = ENABLE;
         EXTI_InitPeripheral(&EXTI_InitStructure);
-        
+
         EXTI_ClrITPendBit(index->pin);
         NVIC_SetPriority(irqmap->irqno, 5);
         NVIC_EnableIRQ(irqmap->irqno);
@@ -522,23 +522,23 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (( irqmap->pinbit>=GPIO_PIN_5 )&&( irqmap->pinbit<=GPIO_PIN_9 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9)))
-            {    
+            {
                 NVIC_DisableIRQ(irqmap->irqno);
             }
         }
         else if (( irqmap->pinbit>=GPIO_PIN_10 )&&( irqmap->pinbit<=GPIO_PIN_15 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15)))
-            {    
+            {
                 NVIC_DisableIRQ(irqmap->irqno);
             }
         }
         else
         {
             NVIC_DisableIRQ(irqmap->irqno);
-        }        
- 
-        rt_hw_interrupt_enable(level);  
+        }
+
+        rt_hw_interrupt_enable(level);
     }
     else
     {
@@ -562,15 +562,15 @@ int rt_hw_pin_init(void)
 #if defined(RCC_GPIOA_CLK_ENABLE)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
 #endif
-    
+
 #if defined(RCC_GPIOB_CLK_ENABLE)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
 #endif
-    
+
 #if defined(RCC_GPIOC_CLK_ENABLE)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
 #endif
-    
+
 #if defined(RCC_GPIOD_CLK_ENABLE)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
 #endif

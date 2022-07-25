@@ -32,7 +32,7 @@
  *
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
  */
- 
+
 #include <drv_can.h>
 #include "board.h"
 
@@ -63,10 +63,10 @@ static struct n32_can drv_can2 =
 static rt_err_t setfilter(struct n32_can *pbxcan, CAN_FilterInitType *pconfig)
 {
     CAN_FilterInitType CAN_FilterInitStruct;
-        
+
     CAN_Module* CANx;
-    CANx = pbxcan->CanHandle.Instance;   
-    
+    CANx = pbxcan->CanHandle.Instance;
+
     CAN_FilterInitStruct.Filter_Num            = pconfig->Filter_Num;
     CAN_FilterInitStruct.Filter_Mode           = pconfig->Filter_Mode;
     CAN_FilterInitStruct.Filter_Scale          = pconfig->Filter_Scale;
@@ -84,7 +84,7 @@ static rt_err_t setfilter(struct n32_can *pbxcan, CAN_FilterInitType *pconfig)
     {
         CAN2_InitFilter(&CAN_FilterInitStruct);
     }
-    
+
     return RT_EOK;
 }
 
@@ -97,12 +97,12 @@ static void bxcan_init(struct rt_can_device *can, struct can_configure *cfg)
 
     drv_can = (struct n32_can *)can->parent.user_data;
     pbxcan  = drv_can->CanHandle.Instance;
-    
+
     uint32_t bps ;
-    
+
     /* CAN register init */
     CAN_DeInit(pbxcan);
-    
+
     /* Struct init*/
     CAN_InitStruct(&CAN_InitStructure);
     switch(cfg->baud_rate)
@@ -131,14 +131,14 @@ static void bxcan_init(struct rt_can_device *can, struct can_configure *cfg)
         case CAN10kBaud:
             bps = CAN_BAUDRATE_10K;
             break;
-        
+
         default:
             bps = CAN_BAUDRATE_100K;
             break;
     }
-    
+
     CAN_InitStructure.BaudRatePrescaler = (uint32_t)(CAN_BTR_CALCULATE / bps);
-    
+
     switch (cfg->mode)
     {
         case RT_CAN_MODE_NORMAL:
@@ -153,12 +153,12 @@ static void bxcan_init(struct rt_can_device *can, struct can_configure *cfg)
         case RT_CAN_MODE_LOOPBACKANLISEN:
             CAN_InitStructure.OperatingMode = CAN_Silent_LoopBack_Mode;
             break;
-        
+
         default:
             CAN_InitStructure.OperatingMode = CAN_Normal_Mode;
             break;
     }
-    
+
     CAN_InitStructure.TTCM          = DISABLE;
     CAN_InitStructure.ABOM          = DISABLE;
     CAN_InitStructure.AWKUM         = DISABLE;
@@ -169,10 +169,10 @@ static void bxcan_init(struct rt_can_device *can, struct can_configure *cfg)
     CAN_InitStructure.RSJW          = CAN_RSJW_1tq;
     CAN_InitStructure.TBS1          = CAN_TBS1_3tq;
     CAN_InitStructure.TBS2          = CAN_TBS2_2tq;
-    
+
     /*Initializes the CAN */
     CAN_Init(pbxcan, &CAN_InitStructure);
-    
+
     /* CAN filter init */
     setfilter(drv_can, &drv_can->FilterConfig);
 
@@ -209,18 +209,18 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
 
     drv_can = (struct n32_can *)can->parent.user_data;
     pbxcan  = drv_can->CanHandle.Instance;
-    
+
     if (pbxcan == CAN1)
     {
 #ifdef BSP_USING_CAN1
-        bxcan1_hw_init();  
+        bxcan1_hw_init();
         bxcan_init(&drv_can->device, &drv_can->device.config);
 #endif
     }
     else  if (pbxcan == CAN2)
     {
 #ifdef BSP_USING_CAN2
-        bxcan2_hw_init();  
+        bxcan2_hw_init();
         bxcan_init(&drv_can->device, &drv_can->device.config);
 #endif
     }
@@ -300,7 +300,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             if (CAN1 == drv_can->CanHandle.Instance)
             {
                 CAN_NVIC_Config(CAN1_SCE_IRQn, 0, 0, DISABLE);
-                
+
             }
 #ifdef CAN2
             if (CAN2 == drv_can->CanHandle.Instance)
@@ -388,8 +388,8 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             {
                 drv_can->FilterConfig.Filter_Num = filter_cfg->items[i].hdr;
                 drv_can->FilterConfig.Filter_HighId = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                drv_can->FilterConfig.Filter_LowId = ((filter_cfg->items[i].id << 3) | 
-                                                    (filter_cfg->items[i].ide << 2) | 
+                drv_can->FilterConfig.Filter_LowId = ((filter_cfg->items[i].id << 3) |
+                                                    (filter_cfg->items[i].ide << 2) |
                                                     (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                 drv_can->FilterConfig.FilterMask_HighId = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
                 drv_can->FilterConfig.FilterMask_LowId = filter_cfg->items[i].mask & 0xFFFF;
@@ -482,7 +482,7 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
         TxMessage.StdId = pmsg->id;
         TxMessage.ExtId = 0;
     }
-    
+
     TxMessage.RTR = pmsg->rtr;
     TxMessage.IDE = pmsg->ide;
     TxMessage.DLC = pmsg->len;
@@ -490,17 +490,17 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
     {
       TxMessage.Data[i] = pmsg->data[i];
     }
-    CAN_TransmitMessage(pbxcan, &TxMessage); 
+    CAN_TransmitMessage(pbxcan, &TxMessage);
 
     return RT_EOK;
 }
 
 static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
-{    
+{
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
     int i;
 
-    pmsg->ide = (rt_uint32_t) RxMessage.IDE; 
+    pmsg->ide = (rt_uint32_t) RxMessage.IDE;
     if(RxMessage.IDE == 1)
         pmsg->id = RxMessage.ExtId;
     else
@@ -512,7 +512,7 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
     {
       pmsg->data[i] = RxMessage.Data[i];
     }
-    
+
 
      return RT_EOK;
 }
@@ -529,14 +529,14 @@ static const struct rt_can_ops canops =
 
 struct rt_can_device bxcan1;
 
-void n32_can1_irqhandler(void *param)  
-{    
+void n32_can1_irqhandler(void *param)
+{
     CAN_Module* CANx;
 
     CANx =  CAN1;
-   
+
     /* receive data interrupt */
-    if (CAN_GetIntStatus(CANx, CAN_INT_FMP0)) 
+    if (CAN_GetIntStatus(CANx, CAN_INT_FMP0))
     {
         CAN_ReceiveMessage(CANx, CAN_FIFO0, &RxMessage);
         rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_RX_IND);
@@ -544,13 +544,13 @@ void n32_can1_irqhandler(void *param)
         rt_kprintf("\r\nCan1 int RX happened!\r\n");
     }
     /* send data interrupt */
-    else if (CAN_GetFlagSTS(CANx, CAN_FLAG_RQCPM0)) 
+    else if (CAN_GetFlagSTS(CANx, CAN_FLAG_RQCPM0))
     {
        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | 0 << 8);
        CAN_ClearFlag(CANx, CAN_FLAG_RQCPM0);
     }
     /* data overflow interrupt */
-    else if (CAN_GetIntStatus(CANx, CAN_INT_FOV0)) 
+    else if (CAN_GetIntStatus(CANx, CAN_INT_FOV0))
     {
        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan1 int RX OF happened!\r\n");
@@ -563,7 +563,7 @@ void USB_HP_CAN1_TX_IRQHandler(void)
     rt_interrupt_enter();
 
     n32_can1_irqhandler(&drv_can1.device);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -574,7 +574,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
     rt_interrupt_enter();
 
     n32_can1_irqhandler(&drv_can1.device);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -583,14 +583,14 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 
 #ifdef BSP_USING_CAN2
 struct rt_can_device bxcan2;
-void n32_can2_irqhandler(void *param)  
-{  
+void n32_can2_irqhandler(void *param)
+{
     CAN_Module* CANx;
 
     CANx =  CAN2;
-   
+
     /* receive data interrupt */
-    if (CAN_GetIntStatus(CANx, CAN_INT_FMP0)) 
+    if (CAN_GetIntStatus(CANx, CAN_INT_FMP0))
     {
         CAN_ReceiveMessage(CANx, CAN_FIFO0, &RxMessage);
         rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_RX_IND);
@@ -598,18 +598,18 @@ void n32_can2_irqhandler(void *param)
         rt_kprintf("\r\nCan2 int RX happened!\r\n");
     }
     /* send data interrupt */
-    else if (CAN_GetFlagSTS(CANx, CAN_FLAG_RQCPM0)) 
+    else if (CAN_GetFlagSTS(CANx, CAN_FLAG_RQCPM0))
     {
        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | 0 << 8);
        CAN_ClearFlag(CANx, CAN_FLAG_RQCPM0);
     }
     /* data overflow interrupt */
-    else if (CAN_GetIntStatus(CANx, CAN_INT_FOV0)) 
+    else if (CAN_GetIntStatus(CANx, CAN_INT_FOV0))
     {
        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan2 int RX OF happened!\r\n");
     }
-}  
+}
 
 void CAN2_TX_IRQHandler(void)
 {
@@ -617,7 +617,7 @@ void CAN2_TX_IRQHandler(void)
     rt_interrupt_enter();
 
     n32_can2_irqhandler(&drv_can2.device);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -628,7 +628,7 @@ void CAN2_RX0_IRQHandler(void)
     rt_interrupt_enter();
 
     n32_can2_irqhandler(&drv_can2.device);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -665,7 +665,7 @@ int rt_hw_can_init(void)
     filterConf.Filter_Mode = CAN_Filter_IdMaskMode;
     filterConf.Filter_Scale = CAN_Filter_32bitScale;
     filterConf.Filter_Act = ENABLE;
-        
+
 #ifdef BSP_USING_CAN1
     filterConf.Filter_Num = 0;
 
