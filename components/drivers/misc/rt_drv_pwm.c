@@ -250,7 +250,7 @@ static int pwm(int argc, char **argv)
             }
             else
             {
-                rt_kprintf("pwm probe   <device name>               - probe pwm by name\n");
+                rt_kprintf("pwm probe <device name>                  - probe pwm by name\n");
             }
         }
         else
@@ -270,9 +270,9 @@ static int pwm(int argc, char **argv)
                 }
                 else
                 {
-                    rt_kprintf("pwm enable  <channel>                   - enable pwm channel\n");
-                    rt_kprintf("    e.g. MSH >pwm enable  1             - PWM_CH1  nomal\n");
-                    rt_kprintf("    e.g. MSH >pwm enable -1             - PWM_CH1N complememtary\n");
+                    rt_kprintf("pwm enable <channel>                     - enable pwm channel\n");
+                    rt_kprintf("    e.g. MSH >pwm enable  1              - PWM_CH1  nomal\n");
+                    rt_kprintf("    e.g. MSH >pwm enable -1              - PWM_CH1N complememtary\n");
                 }
             }
             else if(!strcmp(argv[1], "disable"))
@@ -283,7 +283,7 @@ static int pwm(int argc, char **argv)
                 }
                 else
                 {
-                    rt_kprintf("pwm disable <channel>                   - disable pwm channel\n");
+                    rt_kprintf("pwm disable <channel>                    - disable pwm channel\n");
                 }
             }
             else if(!strcmp(argv[1], "get"))
@@ -318,18 +318,18 @@ static int pwm(int argc, char **argv)
 
             else
             {
-                rt_kprintf("pwm get     <channel>                   - get pwm channel info\n");
+                rt_kprintf("pwm get <channel>                        - get pwm channel info\n");
             }
         }
     }
     else
     {
         rt_kprintf("Usage: \n");
-        rt_kprintf("pwm probe   <device name>               - probe pwm by name\n");
-        rt_kprintf("pwm enable  <channel>                   - enable pwm channel\n");
-        rt_kprintf("pwm disable <channel>                   - disable pwm channel\n");
-        rt_kprintf("pwm get     <channel>                   - get pwm channel info\n");
-        rt_kprintf("pwm set     <channel> <period> <pulse>  - set pwm channel info\n");
+        rt_kprintf("pwm probe   <device name>                - probe pwm by name\n");
+        rt_kprintf("pwm enable  <channel>                    - enable pwm channel\n");
+        rt_kprintf("pwm disable <channel>                    - disable pwm channel\n");
+        rt_kprintf("pwm get     <channel>                    - get pwm channel info\n");
+        rt_kprintf("pwm set     <channel> <period> <pulse>   - set pwm channel info\n");
 
         result = - RT_ERROR;
     }
