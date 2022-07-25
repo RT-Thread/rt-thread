@@ -130,7 +130,7 @@ void SMC_ResetPCCard(void)
  *
  * @retval    None
  */
-void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
+void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T *smcNORSRAMConfig)
 {
     if (smcNORSRAMConfig->bank == SMC_BANK1_NORSRAM_1)
     {
@@ -153,32 +153,32 @@ void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
         }
 
         SMC_Bank1->CSTIM1_B.ADDRSETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
         SMC_Bank1->CSTIM1_B.ADDRHLDCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
         SMC_Bank1->CSTIM1_B.DATASETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
         SMC_Bank1->CSTIM1_B.BUSTURNCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
         SMC_Bank1->CSTIM1_B.CLKDIVCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
+                                        smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
         SMC_Bank1->CSTIM1_B.DATALATCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
         SMC_Bank1->CSTIM1_B.ASYNCACCCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->accessMode;
+                                          smcNORSRAMConfig->readWriteTimingStruct->accessMode;
 
         if (smcNORSRAMConfig->extendedMode == SMC_EXTENDEN_MODE_ENABLE)
         {
             SMC_Bank1E->WRTTIM1_B.ADDRSETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
             SMC_Bank1E->WRTTIM1_B.ADDRHLDCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
             SMC_Bank1E->WRTTIM1_B.DATASETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
             SMC_Bank1E->WRTTIM1_B.BUSTURNCFG = \
-                smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
+                                               smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
             SMC_Bank1E->WRTTIM1_B.ASYNCACCCFG = \
-                smcNORSRAMConfig->writeTimingStruct->accessMode;
+                                                smcNORSRAMConfig->writeTimingStruct->accessMode;
         }
         else
         {
@@ -206,32 +206,32 @@ void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
         }
 
         SMC_Bank1->CSTIM2_B.ADDRSETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
         SMC_Bank1->CSTIM2_B.ADDRHLDCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
         SMC_Bank1->CSTIM2_B.DATASETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
         SMC_Bank1->CSTIM2_B.BUSTURNCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
         SMC_Bank1->CSTIM2_B.CLKDIVCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
+                                        smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
         SMC_Bank1->CSTIM2_B.DATALATCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
         SMC_Bank1->CSTIM2_B.ASYNCACCCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->accessMode;
+                                          smcNORSRAMConfig->readWriteTimingStruct->accessMode;
 
         if (smcNORSRAMConfig->extendedMode == SMC_EXTENDEN_MODE_ENABLE)
         {
             SMC_Bank1E->WRTTIM2_B.ADDRSETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
             SMC_Bank1E->WRTTIM2_B.ADDRHLDCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
             SMC_Bank1E->WRTTIM2_B.DATASETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
             SMC_Bank1E->WRTTIM2_B.BUSTURNCFG = \
-                smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
+                                               smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
             SMC_Bank1E->WRTTIM2_B.ASYNCACCCFG = \
-                smcNORSRAMConfig->writeTimingStruct->accessMode;
+                                                smcNORSRAMConfig->writeTimingStruct->accessMode;
         }
         else
         {
@@ -259,32 +259,32 @@ void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
         }
 
         SMC_Bank1->CSTIM3_B.ADDRSETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
         SMC_Bank1->CSTIM3_B.ADDRHLDCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
         SMC_Bank1->CSTIM3_B.DATASETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
         SMC_Bank1->CSTIM3_B.BUSTURNCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
         SMC_Bank1->CSTIM3_B.CLKDIVCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
+                                        smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
         SMC_Bank1->CSTIM3_B.DATALATCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
         SMC_Bank1->CSTIM3_B.ASYNCACCCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->accessMode;
+                                          smcNORSRAMConfig->readWriteTimingStruct->accessMode;
 
         if (smcNORSRAMConfig->extendedMode == SMC_EXTENDEN_MODE_ENABLE)
         {
             SMC_Bank1E->WRTTIM3_B.ADDRSETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
             SMC_Bank1E->WRTTIM3_B.ADDRHLDCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
             SMC_Bank1E->WRTTIM3_B.DATASETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
             SMC_Bank1E->WRTTIM3_B.BUSTURNCFG = \
-                smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
+                                               smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
             SMC_Bank1E->WRTTIM3_B.ASYNCACCCFG = \
-                smcNORSRAMConfig->writeTimingStruct->accessMode;
+                                                smcNORSRAMConfig->writeTimingStruct->accessMode;
         }
         else
         {
@@ -312,32 +312,32 @@ void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
         }
 
         SMC_Bank1->CSTIM4_B.ADDRSETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressSetupTime;
         SMC_Bank1->CSTIM4_B.ADDRHLDCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->addressHodeTime;
         SMC_Bank1->CSTIM4_B.DATASETCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataSetupTime;
         SMC_Bank1->CSTIM4_B.BUSTURNCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
+                                         smcNORSRAMConfig->readWriteTimingStruct->busTurnaroundTime;
         SMC_Bank1->CSTIM4_B.CLKDIVCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
+                                        smcNORSRAMConfig->readWriteTimingStruct->clockDivision;
         SMC_Bank1->CSTIM4_B.DATALATCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
+                                         smcNORSRAMConfig->readWriteTimingStruct->dataLatency;
         SMC_Bank1->CSTIM4_B.ASYNCACCCFG = \
-            smcNORSRAMConfig->readWriteTimingStruct->accessMode;
+                                          smcNORSRAMConfig->readWriteTimingStruct->accessMode;
 
         if (smcNORSRAMConfig->extendedMode == SMC_EXTENDEN_MODE_ENABLE)
         {
             SMC_Bank1E->WRTTIM4_B.ADDRSETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressSetupTime;
             SMC_Bank1E->WRTTIM4_B.ADDRHLDCFG = \
-                smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
+                                               smcNORSRAMConfig->writeTimingStruct->addressHodeTime;
             SMC_Bank1E->WRTTIM4_B.DATASETCFG = \
-                smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
+                                               smcNORSRAMConfig->writeTimingStruct->dataSetupTime;
             SMC_Bank1E->WRTTIM4_B.BUSTURNCFG = \
-                smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
+                                               smcNORSRAMConfig->writeTimingStruct->busTurnaroundTime;
             SMC_Bank1E->WRTTIM4_B.ASYNCACCCFG = \
-                smcNORSRAMConfig->writeTimingStruct->accessMode;
+                                                smcNORSRAMConfig->writeTimingStruct->accessMode;
         }
         else
         {
@@ -353,7 +353,7 @@ void SMC_ConfigNORSRAM(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
  *
  * @retval    None
  */
-void SMC_ConfigNAND(SMC_NANDConfig_T* smcNANDConfig)
+void SMC_ConfigNAND(SMC_NANDConfig_T *smcNANDConfig)
 {
     if (smcNANDConfig->bank == SMC_BANK2_NAND)
     {
@@ -366,22 +366,22 @@ void SMC_ConfigNAND(SMC_NANDConfig_T* smcNANDConfig)
         SMC_Bank2->CTRL2_B.MTYPECFG = BIT_SET;
 
         SMC_Bank2->CMSTIM2_B.SET2 = \
-            smcNANDConfig->commonSpaceTimingStruct->setupTime;
+                                    smcNANDConfig->commonSpaceTimingStruct->setupTime;
         SMC_Bank2->CMSTIM2_B.WAIT2 = \
-            smcNANDConfig->commonSpaceTimingStruct->waitSetupTime;
+                                     smcNANDConfig->commonSpaceTimingStruct->waitSetupTime;
         SMC_Bank2->CMSTIM2_B.HLD2 = \
-            smcNANDConfig->commonSpaceTimingStruct->holdSetupTime;
+                                    smcNANDConfig->commonSpaceTimingStruct->holdSetupTime;
         SMC_Bank2->CMSTIM2_B.HIZ2 = \
-            smcNANDConfig->commonSpaceTimingStruct->HiZSetupTime;
+                                    smcNANDConfig->commonSpaceTimingStruct->HiZSetupTime;
 
         SMC_Bank2->AMSTIM2_B.SET2 = \
-            smcNANDConfig->attributeSpaceTimingStruct->setupTime;
+                                    smcNANDConfig->attributeSpaceTimingStruct->setupTime;
         SMC_Bank2->AMSTIM2_B.WAIT2 = \
-            smcNANDConfig->attributeSpaceTimingStruct->waitSetupTime;
+                                     smcNANDConfig->attributeSpaceTimingStruct->waitSetupTime;
         SMC_Bank2->AMSTIM2_B.HLD2 = \
-            smcNANDConfig->attributeSpaceTimingStruct->holdSetupTime;
+                                    smcNANDConfig->attributeSpaceTimingStruct->holdSetupTime;
         SMC_Bank2->AMSTIM2_B.HIZ2 = \
-            smcNANDConfig->attributeSpaceTimingStruct->HiZSetupTime;
+                                    smcNANDConfig->attributeSpaceTimingStruct->HiZSetupTime;
     }
     else if (smcNANDConfig->bank == SMC_BANK3_NAND)
     {
@@ -394,22 +394,22 @@ void SMC_ConfigNAND(SMC_NANDConfig_T* smcNANDConfig)
         SMC_Bank3->CTRL3_B.MTYPECFG = BIT_SET;
 
         SMC_Bank3->CMSTIM3_B.SET3 = \
-            smcNANDConfig->commonSpaceTimingStruct->setupTime;
+                                    smcNANDConfig->commonSpaceTimingStruct->setupTime;
         SMC_Bank3->CMSTIM3_B.WAIT3 = \
-            smcNANDConfig->commonSpaceTimingStruct->waitSetupTime;
+                                     smcNANDConfig->commonSpaceTimingStruct->waitSetupTime;
         SMC_Bank3->CMSTIM3_B.HLD3 = \
-            smcNANDConfig->commonSpaceTimingStruct->holdSetupTime;
+                                    smcNANDConfig->commonSpaceTimingStruct->holdSetupTime;
         SMC_Bank3->CMSTIM3_B.HIZ3 = \
-            smcNANDConfig->commonSpaceTimingStruct->HiZSetupTime;
+                                    smcNANDConfig->commonSpaceTimingStruct->HiZSetupTime;
 
         SMC_Bank3->AMSTIM3_B.SET3 = \
-            smcNANDConfig->attributeSpaceTimingStruct->setupTime;
+                                    smcNANDConfig->attributeSpaceTimingStruct->setupTime;
         SMC_Bank3->AMSTIM3_B.WAIT3 = \
-            smcNANDConfig->attributeSpaceTimingStruct->waitSetupTime;
+                                     smcNANDConfig->attributeSpaceTimingStruct->waitSetupTime;
         SMC_Bank3->AMSTIM3_B.HLD3 = \
-            smcNANDConfig->attributeSpaceTimingStruct->holdSetupTime;
+                                    smcNANDConfig->attributeSpaceTimingStruct->holdSetupTime;
         SMC_Bank3->AMSTIM3_B.HIZ3 = \
-            smcNANDConfig->attributeSpaceTimingStruct->HiZSetupTime;
+                                    smcNANDConfig->attributeSpaceTimingStruct->HiZSetupTime;
     }
 }
 
@@ -420,7 +420,7 @@ void SMC_ConfigNAND(SMC_NANDConfig_T* smcNANDConfig)
  *
  * @retval    None
  */
-void SMC_ConfigPCCard(SMC_PCCARDConfig_T* smcPCCardConfig)
+void SMC_ConfigPCCard(SMC_PCCARDConfig_T *smcPCCardConfig)
 {
     SMC_Bank4->CTRL4_B.WAITFEN = smcPCCardConfig->waitFeature;
     SMC_Bank4->CTRL4_B.C2RDCFG = smcPCCardConfig->TCLRSetupTime;
@@ -428,31 +428,31 @@ void SMC_ConfigPCCard(SMC_PCCARDConfig_T* smcPCCardConfig)
     SMC_Bank4->CTRL4_B.DBWIDCFG = BIT_SET;
 
     SMC_Bank4->CMSTIM4_B.SET4 = \
-        smcPCCardConfig->commonSpaceTimingStruct->setupTime;
+                                smcPCCardConfig->commonSpaceTimingStruct->setupTime;
     SMC_Bank4->CMSTIM4_B.WAIT4 = \
-        smcPCCardConfig->commonSpaceTimingStruct->waitSetupTime;
+                                 smcPCCardConfig->commonSpaceTimingStruct->waitSetupTime;
     SMC_Bank4->CMSTIM4_B.HLD4 = \
-        smcPCCardConfig->commonSpaceTimingStruct->holdSetupTime;
+                                smcPCCardConfig->commonSpaceTimingStruct->holdSetupTime;
     SMC_Bank4->CMSTIM4_B.HIZ4 = \
-        smcPCCardConfig->commonSpaceTimingStruct->HiZSetupTime;
+                                smcPCCardConfig->commonSpaceTimingStruct->HiZSetupTime;
 
     SMC_Bank4->AMSTIM4_B.SET4 = \
-        smcPCCardConfig->attributeSpaceTimingStruct->setupTime;
+                                smcPCCardConfig->attributeSpaceTimingStruct->setupTime;
     SMC_Bank4->AMSTIM4_B.WAIT4 = \
-        smcPCCardConfig->attributeSpaceTimingStruct->waitSetupTime;
+                                 smcPCCardConfig->attributeSpaceTimingStruct->waitSetupTime;
     SMC_Bank4->AMSTIM4_B.HLD4 = \
-        smcPCCardConfig->attributeSpaceTimingStruct->holdSetupTime;
+                                smcPCCardConfig->attributeSpaceTimingStruct->holdSetupTime;
     SMC_Bank4->AMSTIM4_B.HIZ4 = \
-        smcPCCardConfig->attributeSpaceTimingStruct->HiZSetupTime;
+                                smcPCCardConfig->attributeSpaceTimingStruct->HiZSetupTime;
 
     SMC_Bank4->IOSTIM4_B.SET = \
-        smcPCCardConfig->IOSpaceTimingStruct->setupTime;
+                               smcPCCardConfig->IOSpaceTimingStruct->setupTime;
     SMC_Bank4->IOSTIM4_B.WAIT = \
-        smcPCCardConfig->IOSpaceTimingStruct->waitSetupTime;
+                                smcPCCardConfig->IOSpaceTimingStruct->waitSetupTime;
     SMC_Bank4->IOSTIM4_B.HLD = \
-        smcPCCardConfig->IOSpaceTimingStruct->holdSetupTime;
+                               smcPCCardConfig->IOSpaceTimingStruct->holdSetupTime;
     SMC_Bank4->IOSTIM4_B.HIZ = \
-        smcPCCardConfig->IOSpaceTimingStruct->HiZSetupTime;
+                               smcPCCardConfig->IOSpaceTimingStruct->HiZSetupTime;
 }
 
 /*!
@@ -462,7 +462,7 @@ void SMC_ConfigPCCard(SMC_PCCARDConfig_T* smcPCCardConfig)
  *
  * @retval    None
  */
-void SMC_ConfigNORSRAMStructInit(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
+void SMC_ConfigNORSRAMStructInit(SMC_NORSRAMConfig_T *smcNORSRAMConfig)
 {
     smcNORSRAMConfig->bank = SMC_BANK1_NORSRAM_1;
     smcNORSRAMConfig->dataAddressMux = SMC_DATA_ADDRESS_MUX_ENABLE;
@@ -500,7 +500,7 @@ void SMC_ConfigNORSRAMStructInit(SMC_NORSRAMConfig_T* smcNORSRAMConfig)
  *
  * @retval    None
  */
-void SMC_ConfigNANDStructInit(SMC_NANDConfig_T* smcNANDConfig)
+void SMC_ConfigNANDStructInit(SMC_NANDConfig_T *smcNANDConfig)
 {
     smcNANDConfig->bank = SMC_BANK2_NAND;
     smcNANDConfig->waitFeature = SMC_WAIT_FEATURE_DISABLE;
@@ -526,7 +526,7 @@ void SMC_ConfigNANDStructInit(SMC_NANDConfig_T* smcNANDConfig)
  *
  * @retval    None
  */
-void SMC_ConfigPCCardStructInit(SMC_PCCARDConfig_T* smcPCCardConfig)
+void SMC_ConfigPCCardStructInit(SMC_PCCARDConfig_T *smcPCCardConfig)
 {
     smcPCCardConfig->waitFeature = SMC_WAIT_FEATURE_DISABLE;
     smcPCCardConfig->TCLRSetupTime = 0x0;

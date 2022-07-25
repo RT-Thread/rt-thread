@@ -64,7 +64,7 @@ void DAC_Reset(void)
  *
  * @retval    None
  */
-void DAC_Config(uint32_t channel, DAC_Config_T* dacConfig)
+void DAC_Config(uint32_t channel, DAC_Config_T *dacConfig)
 {
     uint32_t temp1 = 0, temp2 = 0;
 
@@ -89,7 +89,7 @@ void DAC_Config(uint32_t channel, DAC_Config_T* dacConfig)
  *
  * @retval    None
  */
-void DAC_ConfigStructInit(DAC_Config_T* dacConfig)
+void DAC_ConfigStructInit(DAC_Config_T *dacConfig)
 {
     dacConfig->trigger = DAC_TRIGGER_NONE;
     dacConfig->waveGeneration = DAC_WAVE_GENERATION_NONE;
@@ -398,7 +398,7 @@ uint16_t DAC_ReadDataOutputValue(DAC_CHANNEL_T channel)
     temp += 0x0000002C + ((uint32_t)channel >> 2);
 
     /* Returns the DAC channel data output register value */
-    return (uint16_t) (*(__IO uint32_t*) temp);
+    return (uint16_t)(*(__IO uint32_t *) temp);
 }
 
 /*!

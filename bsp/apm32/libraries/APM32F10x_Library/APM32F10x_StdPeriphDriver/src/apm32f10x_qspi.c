@@ -73,7 +73,7 @@ void QSPI_Reset(void)
  *
  * @retval      None
  */
-void QSPI_Config(QSPI_Config_T * qspiConfig)
+void QSPI_Config(QSPI_Config_T *qspiConfig)
 {
     QSPI->CTRL1_B.CPHA = qspiConfig->clockPhase;
     QSPI->CTRL1_B.CPOL = qspiConfig->clockPolarity;
@@ -585,19 +585,19 @@ void QSPI_ClearIntFlag(uint32_t flag)
 {
     volatile uint32_t dummy = 0;
 
-    if(flag & QSPI_INT_FLAG_TFO)
+    if (flag & QSPI_INT_FLAG_TFO)
     {
         dummy = QSPI->TFOIC;
     }
-    else if(flag & QSPI_INT_FLAG_RFO)
+    else if (flag & QSPI_INT_FLAG_RFO)
     {
         dummy = QSPI->RFOIC;
     }
-    else if(flag & QSPI_INT_FLAG_RFU)
+    else if (flag & QSPI_INT_FLAG_RFU)
     {
         dummy = QSPI->RFUIC;
     }
-    else if(flag & QSPI_INT_FLAG_MST)
+    else if (flag & QSPI_INT_FLAG_MST)
     {
         dummy = QSPI->MIC;
     }

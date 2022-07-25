@@ -165,7 +165,7 @@ void FMC_ResetDataCache(void)
  */
 void FMC_Unlock(void)
 {
-  if((FMC->CTRL & FMC_CTRL_LOCK) != RESET)
+    if ((FMC->CTRL & FMC_CTRL_LOCK) != RESET)
     {
         FMC->KEY = FMC_KEY1;
         FMC->KEY = FMC_KEY2;
@@ -318,7 +318,7 @@ FMC_STATUS_T FMC_ProgramDoubleWord(uint32_t address, uint64_t data)
         FMC->CTRL &= 0xFFFFFCFF;
         FMC->CTRL |= FMC_PSIZE_DOUBLE_WORD;
         FMC->CTRL |= FMC_CTRL_PG;
-        *(__IO uint64_t*)address = data;
+        *(__IO uint64_t *)address = data;
         status = FMC_WaitForLastOperation();
         FMC->CTRL &= (~FMC_CTRL_PG);
     }
@@ -349,7 +349,7 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
         FMC->CTRL &= 0xFFFFFCFF;
         FMC->CTRL |= FMC_PSIZE_WORD;
         FMC->CTRL |= FMC_CTRL_PG;
-        *(__IO uint32_t*)address = data;
+        *(__IO uint32_t *)address = data;
         status = FMC_WaitForLastOperation();
         FMC->CTRL &= (~FMC_CTRL_PG);
     }
@@ -379,7 +379,7 @@ FMC_STATUS_T FMC_ProgramHalfWord(uint32_t address, uint16_t data)
         FMC->CTRL &= 0xFFFFFCFF;
         FMC->CTRL |= FMC_PSIZE_HALF_WORD;
         FMC->CTRL |= FMC_CTRL_PG;
-        *(__IO uint16_t*)address = data;
+        *(__IO uint16_t *)address = data;
         status = FMC_WaitForLastOperation();
         FMC->CTRL &= (~FMC_CTRL_PG);
     }
@@ -409,7 +409,7 @@ FMC_STATUS_T FMC_ProgramByte(uint32_t address, uint8_t data)
         FMC->CTRL &= 0xFFFFFCFF;
         FMC->CTRL |= FMC_PSIZE_BYTE;
         FMC->CTRL |= FMC_CTRL_PG;
-        *(__IO uint8_t*)address = data;
+        *(__IO uint8_t *)address = data;
         status = FMC_WaitForLastOperation();
         FMC->CTRL &= (~FMC_CTRL_PG);
     }
@@ -463,7 +463,7 @@ void FMC_OPT_EnableWriteProtect(FMC_OPT_WRP_T wrp)
 
     if (status == FMC_COMPLETE)
     {
-        *(__IO uint16_t*)(OPTCTRL_BYTE2_ADDRESS) &= (~(uint16_t)wrp);
+        *(__IO uint16_t *)(OPTCTRL_BYTE2_ADDRESS) &= (~(uint16_t)wrp);
     }
 }
 
@@ -485,7 +485,7 @@ void FMC_OPT_DisableWriteProtect(FMC_OPT_WRP_T wrp)
 
     if (status == FMC_COMPLETE)
     {
-        *(__IO uint16_t*)(OPTCTRL_BYTE2_ADDRESS) |= (uint16_t)wrp;
+        *(__IO uint16_t *)(OPTCTRL_BYTE2_ADDRESS) |= (uint16_t)wrp;
     }
 }
 /*!
@@ -505,7 +505,7 @@ void FMC_OPT_ConfigReadProtect(FMC_OPT_RDP_T rdp)
 
     if (status == FMC_COMPLETE)
     {
-        *(__IO uint8_t*)OPTCTRL_BYTE1_ADDRESS = rdp;
+        *(__IO uint8_t *)OPTCTRL_BYTE1_ADDRESS = rdp;
     }
 }
 
@@ -554,8 +554,8 @@ void FMC_OPT_ConfigUser(FMC_OPT_IWDT_T iwdt, FMC_OPT_STOP_T stop, FMC_OPT_STDBY_
  */
 void FMC_OPT_ConfigBrownoutReset(FMC_OPT_BOR_T bor)
 {
-    *(__IO uint8_t*)(OPTCTRL_BYTE0_ADDRESS) &= (~(FMC_OPTCTRL_BORLVL));
-    *(__IO uint8_t*)(OPTCTRL_BYTE0_ADDRESS) |= bor;
+    *(__IO uint8_t *)(OPTCTRL_BYTE0_ADDRESS) &= (~(FMC_OPTCTRL_BORLVL));
+    *(__IO uint8_t *)(OPTCTRL_BYTE0_ADDRESS) |= bor;
 }
 
 /*!
@@ -570,7 +570,7 @@ FMC_STATUS_T FMC_OPT_Launch(void)
 {
     FMC_STATUS_T status = FMC_COMPLETE;
 
-    *(__IO uint8_t*)(OPTCTRL_BYTE0_ADDRESS) |= (uint32_t)FMC_OPTCTRL_OPTSTART;
+    *(__IO uint8_t *)(OPTCTRL_BYTE0_ADDRESS) |= (uint32_t)FMC_OPTCTRL_OPTSTART;
     status = FMC_WaitForLastOperation();
 
     return status;
@@ -614,7 +614,7 @@ uint8_t FMC_OPT_ReadProtectLevel(void)
 {
     uint8_t tmp = RESET;
 
-    if ((*(__IO uint8_t*)((OPTCTRL_BYTE1_ADDRESS)) != (uint8_t)FMC_OPT_RDP_LV0))
+    if ((*(__IO uint8_t *)((OPTCTRL_BYTE1_ADDRESS)) != (uint8_t)FMC_OPT_RDP_LV0))
     {
         tmp = SET;
     }
@@ -635,7 +635,7 @@ uint8_t FMC_OPT_ReadProtectLevel(void)
  */
 uint8_t FMC_OPT_ReadBrownoutReset(void)
 {
-    return (uint8_t)(*(__IO uint8_t*)((OPTCTRL_BYTE0_ADDRESS)) & FMC_OPT_BOR_OFF);
+    return (uint8_t)(*(__IO uint8_t *)((OPTCTRL_BYTE0_ADDRESS)) & FMC_OPT_BOR_OFF);
 }
 
 /*!

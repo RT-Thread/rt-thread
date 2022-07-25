@@ -240,7 +240,7 @@ void RCM_DisableLSI(void)
  * @retval    None
  */
 void RCM_ConfigPLL1(uint32_t pllSelect, uint32_t inputDiv, uint32_t vcoMul,
-                   RCM_PLL_SYS_DIV_T sysDiv, uint32_t appDiv)
+                    RCM_PLL_SYS_DIV_T sysDiv, uint32_t appDiv)
 {
     RCM->PLL1CFG_B.PLL1CLKS = pllSelect;
     RCM->PLL1CFG_B.PLLB = inputDiv;
@@ -510,39 +510,39 @@ uint32_t RCM_ReadSYSCLKFreq(void)
 
     switch (sysClock)
     {
-        /* sys clock is HSI */
-        case RCM_SYSCLK_SEL_HSI:
-            sysClock = HSI_VALUE;
-            break;
+    /* sys clock is HSI */
+    case RCM_SYSCLK_SEL_HSI:
+        sysClock = HSI_VALUE;
+        break;
 
-        /* sys clock is HSE */
-        case RCM_SYSCLK_SEL_HSE:
-            sysClock = HSE_VALUE;
-            break;
+    /* sys clock is HSE */
+    case RCM_SYSCLK_SEL_HSE:
+        sysClock = HSE_VALUE;
+        break;
 
-        /* sys clock is PLL */
-        case RCM_SYSCLK_SEL_PLL:
-            pllMull = RCM->PLL1CFG_B.PLLB;
-            pllSource = RCM->PLL1CFG_B.PLL1CLKS;
+    /* sys clock is PLL */
+    case RCM_SYSCLK_SEL_PLL:
+        pllMull = RCM->PLL1CFG_B.PLLB;
+        pllSource = RCM->PLL1CFG_B.PLL1CLKS;
 
-            /* PLL entry clock source is HSE */
-            if (pllSource == BIT_SET)
-            {
-                /* HSE used as PLL clock source */
-                pllvco = (HSE_VALUE / pllMull) * (RCM->PLL1CFG_B.PLL1A);
-            }
-            else
-            {
-                /* HSI used as PLL clock source */
-                pllvco = (HSI_VALUE / pllMull) * (RCM->PLL1CFG_B.PLL1A);
-            }
+        /* PLL entry clock source is HSE */
+        if (pllSource == BIT_SET)
+        {
+            /* HSE used as PLL clock source */
+            pllvco = (HSE_VALUE / pllMull) * (RCM->PLL1CFG_B.PLL1A);
+        }
+        else
+        {
+            /* HSI used as PLL clock source */
+            pllvco = (HSI_VALUE / pllMull) * (RCM->PLL1CFG_B.PLL1A);
+        }
 
-            sysClock = pllvco/((RCM->PLL1CFG_B.PLL1C + 1) *2);
-            break;
+        sysClock = pllvco / ((RCM->PLL1CFG_B.PLL1C + 1) * 2);
+        break;
 
-        default:
-            sysClock  = HSI_VALUE;
-            break;
+    default:
+        sysClock  = HSI_VALUE;
+        break;
     }
 
     return sysClock;
@@ -577,7 +577,7 @@ uint32_t RCM_ReadHCLKFreq(void)
  *
  * @retval    None
  */
-void RCM_ReadPCLKFreq(uint32_t* PCLK1, uint32_t* PCLK2)
+void RCM_ReadPCLKFreq(uint32_t *PCLK1, uint32_t *PCLK2)
 {
     uint32_t hclk, divider;
     uint8_t APBPrescTable[8] = {0, 0, 0, 0, 1, 2, 3, 4};
@@ -1487,20 +1487,20 @@ uint8_t RCM_ReadStatusFlag(RCM_FLAG_T flag)
 
     switch (reg)
     {
-        case 0:
-            reg = RCM->CTRL;
-            break;
+    case 0:
+        reg = RCM->CTRL;
+        break;
 
-        case 1:
-            reg = RCM->BDCTRL;
-            break;
+    case 1:
+        reg = RCM->BDCTRL;
+        break;
 
-        case 2:
-            reg = RCM->CSTS;
-            break;
+    case 2:
+        reg = RCM->CSTS;
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     if (reg & bit)
@@ -1544,7 +1544,7 @@ void RCM_ClearStatusFlag(void)
  */
 uint8_t RCM_ReadIntFlag(RCM_INT_T flag)
 {
-    return (RCM->INT& flag) ? SET : RESET;
+    return (RCM->INT &flag) ? SET : RESET;
 }
 
 /*!

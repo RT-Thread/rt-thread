@@ -63,7 +63,7 @@
  *            ERROR: digest computation failed
  *
  */
-uint8_t HASH_ComputeMD5(uint8_t* inBuffer, uint32_t lenBuffer,
+uint8_t HASH_ComputeMD5(uint8_t *inBuffer, uint32_t lenBuffer,
                         uint8_t outBuffer[16])
 {
     HASH_Config_T hashMD5Config;
@@ -87,10 +87,10 @@ uint8_t HASH_ComputeMD5(uint8_t* inBuffer, uint32_t lenBuffer,
     HASH_ConfigLastWordValidBitsNbr(nuValidBits);
 
     /* Write the input block in the IN FIFO */
-    for (m=0; m<lenBuffer; m+=4)
+    for (m = 0; m < lenBuffer; m += 4)
     {
-        HASH_WritesInputData(*(uint32_t*)inBufferaddr);
-        inBufferaddr+=4;
+        HASH_WritesInputData(*(uint32_t *)inBufferaddr);
+        inBufferaddr += 4;
     }
 
     /* Start the HASH processor */
@@ -106,16 +106,16 @@ uint8_t HASH_ComputeMD5(uint8_t* inBuffer, uint32_t lenBuffer,
         /* Read the message digest */
         HASH_ReadDigest(&hashMD5MessageDigest);
 
-        *(uint32_t*)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[0]);
+        *(uint32_t *)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[0]);
 
-        outBufferaddr+=4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[1]);
+        outBufferaddr += 4;
+        *(uint32_t *)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[1]);
 
-        outBufferaddr+=4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[2]);
+        outBufferaddr += 4;
+        *(uint32_t *)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[2]);
 
-        outBufferaddr+=4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[3]);
+        outBufferaddr += 4;
+        *(uint32_t *)(outBufferaddr)  = __REV(hashMD5MessageDigest.Data[3]);
     }
 
     return SUCCESS;
@@ -139,7 +139,7 @@ uint8_t HASH_ComputeMD5(uint8_t* inBuffer, uint32_t lenBuffer,
  *            ERROR: digest computation failed
  *
  */
-uint8_t HMAC_ComputeMD5(uint8_t* key, uint32_t keylen, uint8_t* inBuffer,
+uint8_t HMAC_ComputeMD5(uint8_t *key, uint32_t keylen, uint8_t *inBuffer,
                         uint32_t lenBuffer, uint8_t outBuffer[16])
 {
     HASH_Config_T hmacMD5Config;
@@ -173,10 +173,10 @@ uint8_t HMAC_ComputeMD5(uint8_t* key, uint32_t keylen, uint8_t* inBuffer,
     HASH_Config(&hmacMD5Config);
     HASH_ConfigLastWordValidBitsNbr(nuValidKey);
 
-    for (m=0; m<keylen; m+=4)
+    for (m = 0; m < keylen; m += 4)
     {
-        HASH_WritesInputData(*(uint32_t*)keyaddr);
-        keyaddr+=4;
+        HASH_WritesInputData(*(uint32_t *)keyaddr);
+        keyaddr += 4;
     }
 
     /* Start the HASH processor */
@@ -193,10 +193,10 @@ uint8_t HMAC_ComputeMD5(uint8_t* key, uint32_t keylen, uint8_t* inBuffer,
         HASH_ConfigLastWordValidBitsNbr(nuValidBits);
 
         /* Write the input block in the IN FIFO */
-        for (m=0; m<lenBuffer; m+=4)
+        for (m = 0; m < lenBuffer; m += 4)
         {
-            HASH_WritesInputData(*(uint32_t*)inBufferaddr);
-            inBufferaddr+=4;
+            HASH_WritesInputData(*(uint32_t *)inBufferaddr);
+            inBufferaddr += 4;
         }
 
         /* Start the HASH processor */
@@ -212,10 +212,10 @@ uint8_t HMAC_ComputeMD5(uint8_t* key, uint32_t keylen, uint8_t* inBuffer,
             HASH_ConfigLastWordValidBitsNbr(nuValidKey);
             keyaddr = (uint32_t)key;
 
-            for (m=0; m<keylen; m+=4)
+            for (m = 0; m < keylen; m += 4)
             {
-                HASH_WritesInputData(*(uint32_t*)keyaddr);
-                keyaddr+=4;
+                HASH_WritesInputData(*(uint32_t *)keyaddr);
+                keyaddr += 4;
             }
 
             /* Start the HASH processor */
@@ -231,16 +231,16 @@ uint8_t HMAC_ComputeMD5(uint8_t* key, uint32_t keylen, uint8_t* inBuffer,
                 /* Read the message digest */
                 HASH_ReadDigest(&hmacMD5MessageDigest);
 
-                *(uint32_t*)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[0]);
+                *(uint32_t *)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[0]);
 
-                outBufferaddr+=4;
-                *(uint32_t*)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[1]);
+                outBufferaddr += 4;
+                *(uint32_t *)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[1]);
 
-                outBufferaddr+=4;
-                *(uint32_t*)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[2]);
+                outBufferaddr += 4;
+                *(uint32_t *)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[2]);
 
-                outBufferaddr+=4;
-                *(uint32_t*)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[3]);
+                outBufferaddr += 4;
+                *(uint32_t *)(outBufferaddr)  = __REV(hmacMD5MessageDigest.Data[3]);
             }
         }
     }

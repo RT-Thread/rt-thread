@@ -88,11 +88,11 @@ static rt_err_t _rtc_init(void)
 
     RTC_ClearStatusFlag(RTC_FLAG_OVR | RTC_FLAG_ALR | RTC_FLAG_SEC);
 
-    #ifdef BSP_RTC_USING_LSI
-        RTC_ConfigPrescaler(LSI_VALUE - 1);
-    #else
-        RTC_ConfigPrescaler(LSE_VALUE - 1);
-    #endif
+#ifdef BSP_RTC_USING_LSI
+    RTC_ConfigPrescaler(LSI_VALUE - 1);
+#else
+    RTC_ConfigPrescaler(LSE_VALUE - 1);
+#endif
 #elif APM32F40X
     RTC_EnableInit();
     RTC_Config_T rtcConfig;
@@ -100,7 +100,7 @@ static rt_err_t _rtc_init(void)
     RTC_Config(&rtcConfig);
 #endif
 
-    if(!rtc_init_flag)
+    if (!rtc_init_flag)
     {
         rtc_init_flag = SET;
     }
@@ -134,7 +134,7 @@ static rt_err_t _rtc_set_secs(void *args)
 {
     volatile rt_uint32_t counter = 0;
 
-    if(!rtc_init_flag)
+    if (!rtc_init_flag)
     {
         _rtc_init();
     }
@@ -177,7 +177,7 @@ static rt_err_t set_rtc_timeval(time_t time_stamp)
     RTC_DateConfig_T dateConfig;
     struct tm tm = {0};
 
-    if(!rtc_init_flag)
+    if (!rtc_init_flag)
     {
         _rtc_init();
     }
@@ -196,8 +196,8 @@ static rt_err_t set_rtc_timeval(time_t time_stamp)
     dateConfig.year    = tm.tm_year - 100;
     dateConfig.weekday = tm.tm_wday + 1;
 
-    RTC_ConfigTime(RTC_FORMAT_BIN,&timeConfig);
-    RTC_ConfigDate(RTC_FORMAT_BIN,&dateConfig);
+    RTC_ConfigTime(RTC_FORMAT_BIN, &timeConfig);
+    RTC_ConfigDate(RTC_FORMAT_BIN, &dateConfig);
 
     return RT_EOK;
 }

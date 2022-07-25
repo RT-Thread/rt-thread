@@ -64,7 +64,7 @@ void DCI_Rest(void)
  *
  * @retval    None
  */
-void DCI_Config(DCI_Config_T* dciConfig)
+void DCI_Config(DCI_Config_T *dciConfig)
 {
     DCI->CTRL_B.CMODE    = dciConfig->captureMode;
     DCI->CTRL_B.ESYNCSEL = dciConfig->synchroMode;
@@ -82,7 +82,7 @@ void DCI_Config(DCI_Config_T* dciConfig)
  *
  * @retval    None
  */
-void DCI_ConfigStructInit(DCI_Config_T* dciConfig)
+void DCI_ConfigStructInit(DCI_Config_T *dciConfig)
 {
     dciConfig->captureMode      = DCI_CAPTURE_MODE_CONTINUOUS;
     dciConfig->synchroMode      = DCI_SYNCHRO_MODE_HARDWARE;
@@ -100,7 +100,7 @@ void DCI_ConfigStructInit(DCI_Config_T* dciConfig)
  *
  * @retval      None
  */
-void DCI_ConfigCROP(DCI_CropConfig_T* cropConfig)
+void DCI_ConfigCROP(DCI_CropConfig_T *cropConfig)
 {
     DCI->CROPWSTAT_B.HOFSCNT   = (uint16_t)cropConfig->horizontalOffsetCount;
     DCI->CROPWSTAT_B.VSLINECNT = (uint16_t)cropConfig->verticalStartLine;
@@ -140,7 +140,7 @@ void DCI_DisableCROP(void)
  *
  * @retval    None
  */
-void DCI_ConfigSynchroCode(DCI_CodeConfig_T* codeConfig)
+void DCI_ConfigSynchroCode(DCI_CodeConfig_T *codeConfig)
 {
     DCI->ESYNCC_B.FSDC = (uint8_t)codeConfig->frameStartCode;
     DCI->ESYNCC_B.LSDC = (uint8_t)codeConfig->lineStartCode;
@@ -297,7 +297,7 @@ uint16_t DCI_ReadStatusFlag(DCI_FLAG_T flag)
 
     if (offset == 0x00)
     {
-        temp= DCI->RINTSTS;
+        temp = DCI->RINTSTS;
     }
     else if (offset == 0x01)
     {
@@ -307,7 +307,7 @@ uint16_t DCI_ReadStatusFlag(DCI_FLAG_T flag)
     {
         temp = DCI->STS;
     }
-    return(temp & flag) ? SET : RESET;
+    return (temp & flag) ? SET : RESET;
 }
 
 /*!

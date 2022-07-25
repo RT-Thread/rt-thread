@@ -47,7 +47,7 @@
  *
  * @retval    None
  */
-void USART_Reset(USART_T* usart)
+void USART_Reset(USART_T *usart)
 {
     if (USART1 == usart)
     {
@@ -102,7 +102,7 @@ void USART_Reset(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_Config(USART_T* usart, USART_Config_T* usartConfig)
+void USART_Config(USART_T *usart, USART_Config_T *usartConfig)
 {
     uint32_t temp, fCLK, intDiv, fractionalDiv;
 
@@ -159,7 +159,7 @@ void USART_Config(USART_T* usart, USART_Config_T* usartConfig)
  *
  * @retval    None
  */
-void USART_ConfigStructInit(USART_Config_T* usartConfig)
+void USART_ConfigStructInit(USART_Config_T *usartConfig)
 {
     usartConfig->baudRate = 9600;
     usartConfig->wordLength = USART_WORD_LEN_8B;
@@ -180,7 +180,7 @@ void USART_ConfigStructInit(USART_Config_T* usartConfig)
  *
  * @note      The usart can be USART1, USART2, USART3 and USART6
  */
-void USART_ConfigClock(USART_T* usart, USART_ClockConfig_T* clockConfig)
+void USART_ConfigClock(USART_T *usart, USART_ClockConfig_T *clockConfig)
 {
     usart->CTRL2_B.CLKEN   = clockConfig->clock;
     usart->CTRL2_B.CPHA    = clockConfig->phase;
@@ -197,7 +197,7 @@ void USART_ConfigClock(USART_T* usart, USART_ClockConfig_T* clockConfig)
  *
  * @note
  */
-void USART_ConfigClockStructInit(USART_ClockConfig_T* clockConfig)
+void USART_ConfigClockStructInit(USART_ClockConfig_T *clockConfig)
 {
     clockConfig->clock     = USART_CLKEN_DISABLE;
     clockConfig->phase     = USART_CLKPHA_1EDGE;
@@ -214,7 +214,7 @@ void USART_ConfigClockStructInit(USART_ClockConfig_T* clockConfig)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_Enable(USART_T* usart)
+void USART_Enable(USART_T *usart)
 {
     usart->CTRL1_B.UEN = BIT_SET;
 }
@@ -228,7 +228,7 @@ void USART_Enable(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_Disable(USART_T* usart)
+void USART_Disable(USART_T *usart)
 {
     usart->CTRL1_B.UEN = BIT_RESET;
 }
@@ -244,7 +244,7 @@ void USART_Disable(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_ConfigPrescaler(USART_T* usart, uint8_t div)
+void USART_ConfigPrescaler(USART_T *usart, uint8_t div)
 {
     usart->GTPSC_B.PSC = div;
 }
@@ -258,7 +258,7 @@ void USART_ConfigPrescaler(USART_T* usart, uint8_t div)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableOverSampling8(USART_T* usart)
+void USART_EnableOverSampling8(USART_T *usart)
 {
     usart->CTRL1_B.OSMCFG = BIT_SET;
 }
@@ -272,7 +272,7 @@ void USART_EnableOverSampling8(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableOverSampling8(USART_T* usart)
+void USART_DisableOverSampling8(USART_T *usart)
 {
     usart->CTRL1_B.OSMCFG = BIT_RESET;
 }
@@ -286,7 +286,7 @@ void USART_DisableOverSampling8(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableOverSampling(USART_T* usart)
+void USART_EnableOverSampling(USART_T *usart)
 {
     usart->CTRL3_B.SAMCFG = BIT_SET;
 }
@@ -300,7 +300,7 @@ void USART_EnableOverSampling(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableOverSampling(USART_T* usart)
+void USART_DisableOverSampling(USART_T *usart)
 {
     usart->CTRL3_B.SAMCFG = BIT_RESET;
 }
@@ -316,7 +316,7 @@ void USART_DisableOverSampling(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_TxData(USART_T* usart, uint16_t data)
+void USART_TxData(USART_T *usart, uint16_t data)
 {
     usart->DATA_B.DATA = data;
 }
@@ -330,7 +330,7 @@ void USART_TxData(USART_T* usart, uint16_t data)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-uint16_t USART_RxData(USART_T* usart)
+uint16_t USART_RxData(USART_T *usart)
 {
     return (uint16_t)(usart->DATA_B.DATA);
 }
@@ -346,7 +346,7 @@ uint16_t USART_RxData(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_Address(USART_T* usart, uint8_t address)
+void USART_Address(USART_T *usart, uint8_t address)
 {
     usart->CTRL2_B.ADDR = address;
 }
@@ -360,7 +360,7 @@ void USART_Address(USART_T* usart, uint8_t address)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableMuteMode(USART_T* usart)
+void USART_EnableMuteMode(USART_T *usart)
 {
     usart->CTRL1_B.RXMUTEEN = BIT_SET;
 }
@@ -374,7 +374,7 @@ void USART_EnableMuteMode(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableMuteMode(USART_T* usart)
+void USART_DisableMuteMode(USART_T *usart)
 {
     usart->CTRL1_B.RXMUTEEN = BIT_RESET;
 }
@@ -393,7 +393,7 @@ void USART_DisableMuteMode(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_ConfigWakeUp(USART_T* usart, USART_WAKEUP_T wakeup)
+void USART_ConfigWakeUp(USART_T *usart, USART_WAKEUP_T wakeup)
 {
     usart->CTRL1_B.WUPMCFG = wakeup;
 }
@@ -412,7 +412,7 @@ void USART_ConfigWakeUp(USART_T* usart, USART_WAKEUP_T wakeup)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_ConfigLINBreakDetectLength(USART_T* usart, USART_LBDL_T length)
+void USART_ConfigLINBreakDetectLength(USART_T *usart, USART_LBDL_T length)
 {
     usart->CTRL2_B.LBDLCFG = length;
 }
@@ -426,7 +426,7 @@ void USART_ConfigLINBreakDetectLength(USART_T* usart, USART_LBDL_T length)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableLIN(USART_T* usart)
+void USART_EnableLIN(USART_T *usart)
 {
     usart->CTRL2_B.LINMEN = BIT_SET;
 }
@@ -440,7 +440,7 @@ void USART_EnableLIN(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableLIN(USART_T* usart)
+void USART_DisableLIN(USART_T *usart)
 {
     usart->CTRL2_B.LINMEN = BIT_RESET;
 }
@@ -454,7 +454,7 @@ void USART_DisableLIN(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_TxBreak(USART_T* usart)
+void USART_TxBreak(USART_T *usart)
 {
     usart->CTRL1_B.TXBF = BIT_SET;
 }
@@ -468,7 +468,7 @@ void USART_TxBreak(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableHalfDuplex(USART_T* usart)
+void USART_EnableHalfDuplex(USART_T *usart)
 {
     usart->CTRL3_B.HDEN = BIT_SET;
 }
@@ -482,7 +482,7 @@ void USART_EnableHalfDuplex(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableHalfDuplex(USART_T* usart)
+void USART_DisableHalfDuplex(USART_T *usart)
 {
     usart->CTRL3_B.HDEN = BIT_RESET;
 }
@@ -498,7 +498,7 @@ void USART_DisableHalfDuplex(USART_T* usart)
  *
  * @note      The specified USART guard time is not available for UART4 and UART5
  */
-void USART_ConfigGuardTime(USART_T* usart, uint8_t guardTime)
+void USART_ConfigGuardTime(USART_T *usart, uint8_t guardTime)
 {
     usart->GTPSC_B.GRDT = guardTime;
 }
@@ -512,7 +512,7 @@ void USART_ConfigGuardTime(USART_T* usart, uint8_t guardTime)
  *
  * @note      The Smart Card mode is not available for UART4 and UART5
  */
-void USART_EnableSmartCard(USART_T* usart)
+void USART_EnableSmartCard(USART_T *usart)
 {
     usart->CTRL3_B.SCEN = BIT_SET;
 }
@@ -526,7 +526,7 @@ void USART_EnableSmartCard(USART_T* usart)
  *
  * @note      The Smart Card mode is not available for UART4 and UART5
  */
-void USART_DisableSmartCard(USART_T* usart)
+void USART_DisableSmartCard(USART_T *usart)
 {
     usart->CTRL3_B.SCEN = BIT_RESET;
 }
@@ -540,7 +540,7 @@ void USART_DisableSmartCard(USART_T* usart)
  *
  * @note      The Smart Card mode is not available for UART4 and UART5
  */
-void USART_EnableSmartCardNACK(USART_T* usart)
+void USART_EnableSmartCardNACK(USART_T *usart)
 {
     usart->CTRL3_B.SCNACKEN = BIT_SET;
 }
@@ -554,7 +554,7 @@ void USART_EnableSmartCardNACK(USART_T* usart)
  *
  * @note      The Smart Card mode is not available for UART4 and UART5
  */
-void USART_DisableSmartCardNACK(USART_T* usart)
+void USART_DisableSmartCardNACK(USART_T *usart)
 {
     usart->CTRL3_B.SCNACKEN = BIT_RESET;
 }
@@ -572,7 +572,7 @@ void USART_DisableSmartCardNACK(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_ConfigIrDA(USART_T* usart, USART_IRDALP_T IrDAMode)
+void USART_ConfigIrDA(USART_T *usart, USART_IRDALP_T IrDAMode)
 {
     usart->CTRL3_B.IRLPEN = IrDAMode;
 }
@@ -586,7 +586,7 @@ void USART_ConfigIrDA(USART_T* usart, USART_IRDALP_T IrDAMode)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableIrDA(USART_T* usart)
+void USART_EnableIrDA(USART_T *usart)
 {
     usart->CTRL3_B.IREN = BIT_SET;
 }
@@ -600,7 +600,7 @@ void USART_EnableIrDA(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableIrDA(USART_T* usart)
+void USART_DisableIrDA(USART_T *usart)
 {
     usart->CTRL3_B.IREN = BIT_RESET;
 }
@@ -620,7 +620,7 @@ void USART_DisableIrDA(USART_T* usart)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableDMA(USART_T* usart, USART_DMA_T dmaReq)
+void USART_EnableDMA(USART_T *usart, USART_DMA_T dmaReq)
 {
     usart->CTRL3_B.DMARXEN = dmaReq & 0x01;
     usart->CTRL3_B.DMATXEN = dmaReq >> 1;
@@ -641,7 +641,7 @@ void USART_EnableDMA(USART_T* usart, USART_DMA_T dmaReq)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableDMA(USART_T* usart, USART_DMA_T dmaReq)
+void USART_DisableDMA(USART_T *usart, USART_DMA_T dmaReq)
 {
     usart->CTRL3_B.DMARXEN = !(dmaReq & 0x01);
     usart->CTRL3_B.DMATXEN = !(dmaReq >> 1);
@@ -667,7 +667,7 @@ void USART_DisableDMA(USART_T* usart, USART_DMA_T dmaReq)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_EnableInterrupt(USART_T* usart, USART_INT_T interrupt)
+void USART_EnableInterrupt(USART_T *usart, USART_INT_T interrupt)
 {
     uint32_t temp;
 
@@ -709,7 +709,7 @@ void USART_EnableInterrupt(USART_T* usart, USART_INT_T interrupt)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_DisableInterrupt(USART_T* usart, USART_INT_T interrupt)
+void USART_DisableInterrupt(USART_T *usart, USART_INT_T interrupt)
 {
     uint32_t temp;
 
@@ -753,7 +753,7 @@ void USART_DisableInterrupt(USART_T* usart, USART_INT_T interrupt)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-uint8_t USART_ReadStatusFlag(USART_T* usart, USART_FLAG_T flag)
+uint8_t USART_ReadStatusFlag(USART_T *usart, USART_FLAG_T flag)
 {
     return (usart->STS & flag) ? SET : RESET;
 }
@@ -774,7 +774,7 @@ uint8_t USART_ReadStatusFlag(USART_T* usart, USART_FLAG_T flag)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_ClearStatusFlag(USART_T* usart, USART_FLAG_T flag)
+void USART_ClearStatusFlag(USART_T *usart, USART_FLAG_T flag)
 {
     usart->STS &= (uint32_t)~flag;
 }
@@ -802,7 +802,7 @@ void USART_ClearStatusFlag(USART_T* usart, USART_FLAG_T flag)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-uint8_t USART_ReadIntFlag(USART_T* usart, USART_INT_T flag)
+uint8_t USART_ReadIntFlag(USART_T *usart, USART_INT_T flag)
 {
     uint32_t itFlag, srFlag;
 
@@ -847,7 +847,7 @@ uint8_t USART_ReadIntFlag(USART_T* usart, USART_INT_T flag)
  *
  * @note      The usart can be USART1, USART2, USART3, UART4, UART5, USART6, UART7 and UART8
  */
-void USART_ClearIntFlag(USART_T* usart, USART_INT_T flag)
+void USART_ClearIntFlag(USART_T *usart, USART_INT_T flag)
 {
     uint32_t srFlag;
 

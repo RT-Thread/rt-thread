@@ -85,7 +85,7 @@ __I uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9}
 static void SystemClockConfig(void);
 
 #if defined(DATA_IN_ExtSRAM)
-static void SystemInit_ExtSRAM(void);
+    static void SystemInit_ExtSRAM(void);
 #endif /* DATA_IN_ExtSRAM */
 
 /*!
@@ -98,9 +98,9 @@ static void SystemInit_ExtSRAM(void);
 void SystemInit(void)
 {
     /* FPU settings */
-    #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
-    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  //!< set CP10 and CP11 Full Access
-    #endif
+#if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
+    SCB->CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2)); //!< set CP10 and CP11 Full Access
+#endif
     /* Reset the RCM clock configuration to the default reset state */
     /* Set HSIEN bit */
     RCM->CTRL_B.HSIEN = BIT_SET;
@@ -120,18 +120,18 @@ void SystemInit(void)
     /* Disable all interrupts */
     RCM->INT = 0x00000000;
 
-    #if defined(DATA_IN_ExtSRAM)
+#if defined(DATA_IN_ExtSRAM)
     SystemInit_ExtSRAM();
-    #endif /* DATA_IN_ExtSRAM */
+#endif /* DATA_IN_ExtSRAM */
 
     SystemClockConfig();
 
     /* Configure the Vector Table location add offset address */
-    #ifdef VECT_TAB_SRAM
+#ifdef VECT_TAB_SRAM
     SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
-    #else
+#else
     SCB->VTOR = FMC_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
-    #endif
+#endif
 }
 
 /*!
@@ -151,36 +151,36 @@ void SystemCoreClockUpdate(void)
 
     switch (sysClock)
     {
-        case 0:
-            SystemCoreClock = HSI_VALUE;
-            break;
+    case 0:
+        SystemCoreClock = HSI_VALUE;
+        break;
 
-        case 1:
-            SystemCoreClock = HSE_VALUE;
-            break;
+    case 1:
+        SystemCoreClock = HSE_VALUE;
+        break;
 
-        case 2:
-            pllClock = RCM->PLL1CFG_B.PLL1CLKS;
-            pllb = RCM->PLL1CFG_B.PLLB;
+    case 2:
+        pllClock = RCM->PLL1CFG_B.PLL1CLKS;
+        pllb = RCM->PLL1CFG_B.PLLB;
 
-            if (pllClock == 0)
-            {
-                /* HSI used as PLL clock source */
-                pllvco = (HSI_VALUE / pllb) * (RCM->PLL1CFG_B.PLL1A); //!< PLL_VCO = (HSI_VALUE / PLL_B) * PLL_A */
-            }
-            else
-            {
-                /* HSE used as PLL clock source */
-                pllvco = (HSE_VALUE / pllb) * (RCM->PLL1CFG_B.PLL1A); //!< PLL_VCO = (HSE_VALUE / PLL_B) * PLL_A */
-            }
+        if (pllClock == 0)
+        {
+            /* HSI used as PLL clock source */
+            pllvco = (HSI_VALUE / pllb) * (RCM->PLL1CFG_B.PLL1A); //!< PLL_VCO = (HSI_VALUE / PLL_B) * PLL_A */
+        }
+        else
+        {
+            /* HSE used as PLL clock source */
+            pllvco = (HSE_VALUE / pllb) * (RCM->PLL1CFG_B.PLL1A); //!< PLL_VCO = (HSE_VALUE / PLL_B) * PLL_A */
+        }
 
-            pllc = ((RCM->PLL1CFG_B.PLL1C) + 1 ) *2;
-            SystemCoreClock = pllvco/pllc;
-            break;
+        pllc = ((RCM->PLL1CFG_B.PLL1C) + 1) * 2;
+        SystemCoreClock = pllvco / pllc;
+        break;
 
-        default:
-            SystemCoreClock = HSI_VALUE;
-            break;
+    default:
+        SystemCoreClock = HSI_VALUE;
+        break;
     }
 
     /* Compute HCLK frequency */
@@ -228,7 +228,7 @@ static void SystemClockConfig(void)
         RCM->CFG_B.APB1PSC = 0x05;
 
         /* Configure the main PLL */
-        RCM->PLL1CFG = PLL_B | (PLL_A << 6) | (((PLL_C >> 1) -1) << 16) |(PLL_D << 24);
+        RCM->PLL1CFG = PLL_B | (PLL_A << 6) | (((PLL_C >> 1) - 1) << 16) | (PLL_D << 24);
         RCM->PLL1CFG_B.PLL1CLKS = 0x01;
 
         /* Enable the main PLL */

@@ -65,7 +65,7 @@ void SDIO_Reset(void)
  *
  * @retval       None
  */
-void SDIO_Config(SDIO_Config_T* sdioConfig)
+void SDIO_Config(SDIO_Config_T *sdioConfig)
 {
     uint32_t tmp = 0;
 
@@ -73,7 +73,7 @@ void SDIO_Config(SDIO_Config_T* sdioConfig)
     tmp &= 0xFFFF8100;
 
     tmp |= (sdioConfig->clockDiv  | sdioConfig->clockPowerSave | sdioConfig->clockBypass | sdioConfig->busWide |
-    sdioConfig->clockEdge | sdioConfig->hardwareFlowControl);
+            sdioConfig->clockEdge | sdioConfig->hardwareFlowControl);
 
     SDIO->CLKCTRL = tmp;
 }
@@ -85,14 +85,14 @@ void SDIO_Config(SDIO_Config_T* sdioConfig)
  *
  * @retval       None
  */
-void SDIO_ConfigStructInit(SDIO_Config_T* sdioConfig)
+void SDIO_ConfigStructInit(SDIO_Config_T *sdioConfig)
 {
-  sdioConfig->clockDiv = 0x00;
-  sdioConfig->clockEdge = SDIO_CLOCK_EDGE_RISING;
-  sdioConfig->clockBypass = SDIO_CLOCK_BYPASS_DISABLE;
-  sdioConfig->clockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-  sdioConfig->busWide = SDIO_BUS_WIDE_1B;
-  sdioConfig->hardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+    sdioConfig->clockDiv = 0x00;
+    sdioConfig->clockEdge = SDIO_CLOCK_EDGE_RISING;
+    sdioConfig->clockBypass = SDIO_CLOCK_BYPASS_DISABLE;
+    sdioConfig->clockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
+    sdioConfig->busWide = SDIO_BUS_WIDE_1B;
+    sdioConfig->hardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
 }
 
 /*!
@@ -188,7 +188,7 @@ void SDIO_TxCommand(SDIO_CmdConfig_T *cmdConfig)
     tmpreg = SDIO->CMD;
     tmpreg &= 0xFFFFF800;
     tmpreg |= (uint32_t)cmdConfig->cmdIndex | cmdConfig->response
-           | cmdConfig->wait | cmdConfig->CPSM;
+              | cmdConfig->wait | cmdConfig->CPSM;
     SDIO->CMD = tmpreg;
 }
 
@@ -200,13 +200,13 @@ void SDIO_TxCommand(SDIO_CmdConfig_T *cmdConfig)
  * @retval       None
  *
  */
-void SDIO_TxCommandStructInit(SDIO_CmdConfig_T* cmdConfig)
+void SDIO_TxCommandStructInit(SDIO_CmdConfig_T *cmdConfig)
 {
-  cmdConfig->argument = 0x00;
-  cmdConfig->cmdIndex = 0x00;
-  cmdConfig->response = SDIO_RESPONSE_NO;
-  cmdConfig->wait = SDIO_WAIT_NO;
-  cmdConfig->CPSM = SDIO_CPSM_DISABLE;
+    cmdConfig->argument = 0x00;
+    cmdConfig->cmdIndex = 0x00;
+    cmdConfig->response = SDIO_RESPONSE_NO;
+    cmdConfig->wait = SDIO_WAIT_NO;
+    cmdConfig->CPSM = SDIO_CPSM_DISABLE;
 }
 
 /*!
@@ -236,11 +236,11 @@ uint8_t SDIO_ReadCommandResponse(void)
  */
 uint32_t SDIO_ReadResponse(SDIO_RES_T res)
 {
-  __IO uint32_t tmp = 0;
+    __IO uint32_t tmp = 0;
 
-  tmp = ((uint32_t)(SDIO_BASE + 0x14)) + res;
+    tmp = ((uint32_t)(SDIO_BASE + 0x14)) + res;
 
-  return (*(__IO uint32_t *) tmp);
+    return (*(__IO uint32_t *) tmp);
 }
 
 /*!
@@ -250,7 +250,7 @@ uint32_t SDIO_ReadResponse(SDIO_RES_T res)
  *
  * @retval       None
  */
-void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
+void SDIO_ConfigData(SDIO_DataConfig_T *dataConfig)
 {
     uint32_t tmpreg = 0;
 
@@ -263,7 +263,7 @@ void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
     tmpreg &= 0xFFFFFF08;
 
     tmpreg |= (uint32_t)dataConfig->dataBlockSize | dataConfig->transferDir
-           | dataConfig->transferMode | dataConfig->DPSM;
+              | dataConfig->transferMode | dataConfig->DPSM;
 
     SDIO->DCTRL = tmpreg;
 }
@@ -275,14 +275,14 @@ void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
  *
  * @retval       None
  */
-void SDIO_ConfigDataStructInit(SDIO_DataConfig_T* dataConfig)
+void SDIO_ConfigDataStructInit(SDIO_DataConfig_T *dataConfig)
 {
-  dataConfig->dataTimeOut = 0xFFFFFFFF;
-  dataConfig->dataLength = 0x00;
-  dataConfig->dataBlockSize = SDIO_DATA_BLOCKSIZE_1B;
-  dataConfig->transferDir = SDIO_TRANSFER_DIR_TO_CARD;
-  dataConfig->transferMode = SDIO_TRANSFER_MODE_BLOCK;
-  dataConfig->DPSM = SDIO_DPSM_DISABLE;
+    dataConfig->dataTimeOut = 0xFFFFFFFF;
+    dataConfig->dataLength = 0x00;
+    dataConfig->dataBlockSize = SDIO_DATA_BLOCKSIZE_1B;
+    dataConfig->transferDir = SDIO_TRANSFER_DIR_TO_CARD;
+    dataConfig->transferMode = SDIO_TRANSFER_MODE_BLOCK;
+    dataConfig->DPSM = SDIO_DPSM_DISABLE;
 }
 
 /*!
@@ -394,7 +394,7 @@ void SDIO_DisableStartReadWait(void)
  */
 void SDIO_ConfigSDIOReadWaitMode(SDIO_READ_WAIT_MODE_T readWaitMode)
 {
-  *(__IO uint32_t *) DCTRL_RDWAIT_BB = readWaitMode;
+    *(__IO uint32_t *) DCTRL_RDWAIT_BB = readWaitMode;
 }
 /*!
  * @brief        Enables SDIO SD I/O Mode Operation
@@ -405,7 +405,7 @@ void SDIO_ConfigSDIOReadWaitMode(SDIO_READ_WAIT_MODE_T readWaitMode)
  */
 void SDIO_EnableSDIO(void)
 {
-  *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)SET;
+    *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)SET;
 }
 
 /*!
@@ -417,7 +417,7 @@ void SDIO_EnableSDIO(void)
  */
 void SDIO_DisableSDIO(void)
 {
-  *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)RESET;
+    *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)RESET;
 }
 
 /*!

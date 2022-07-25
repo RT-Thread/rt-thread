@@ -49,53 +49,53 @@
  *
  * @note   By reset, The GPIO pins are configured in input floating mode (except the JTAG pins).
  */
-void GPIO_Reset(GPIO_T* port)
+void GPIO_Reset(GPIO_T *port)
 {
     RCM_AHB1_PERIPH_T AHB1Periph;
 
     if (port == GPIOA)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOA;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOA;
     }
     else if (port == GPIOB)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOB;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOB;
     }
     else if (port == GPIOC)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOC;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOC;
     }
     else if (port == GPIOD)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOD;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOD;
     }
     else if (port == GPIOE)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOE;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOE;
     }
     else if (port == GPIOF)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOF;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOF;
     }
     else if (port == GPIOG)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOG;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOG;
     }
     else if (port == GPIOH)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOH;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOH;
     }
     else if (port == GPIOI)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOI;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOI;
     }
     else if (port == GPIOJ)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOJ;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOJ;
     }
     else if (port == GPIOK)
     {
-        AHB1Periph=RCM_AHB1_PERIPH_GPIOK;
+        AHB1Periph = RCM_AHB1_PERIPH_GPIOK;
     }
 
     RCM_EnableAHB1PeriphReset(AHB1Periph);
@@ -113,7 +113,7 @@ void GPIO_Reset(GPIO_T* port)
  *
  * @retval      None
  */
-void GPIO_Config(GPIO_T* port, GPIO_Config_T* gpioConfig)
+void GPIO_Config(GPIO_T *port, GPIO_Config_T *gpioConfig)
 {
     uint32_t i = 0x00;
     uint32_t pos = 0x00;
@@ -151,7 +151,7 @@ void GPIO_Config(GPIO_T* port, GPIO_Config_T* gpioConfig)
  *
  * @retval      None
  */
-void GPIO_ConfigStructInit(GPIO_Config_T* gpioConfig)
+void GPIO_ConfigStructInit(GPIO_Config_T *gpioConfig)
 {
     gpioConfig->pin  = GPIO_PIN_ALL;
     gpioConfig->mode = GPIO_MODE_IN;
@@ -177,7 +177,7 @@ void GPIO_ConfigStructInit(GPIO_Config_T* gpioConfig)
  *               configuration of the locked GPIO pins can no longer be config.
  *
  */
-void GPIO_ConfigPinLock(GPIO_T* port, uint16_t pin)
+void GPIO_ConfigPinLock(GPIO_T *port, uint16_t pin)
 {
     __IOM uint32_t temp = 0x00010000;
 
@@ -204,7 +204,7 @@ void GPIO_ConfigPinLock(GPIO_T* port, uint16_t pin)
  *
  * @retval The input port pin value.
  */
-uint8_t GPIO_ReadInputBit(GPIO_T* port, uint16_t pin)
+uint8_t GPIO_ReadInputBit(GPIO_T *port, uint16_t pin)
 {
     uint8_t readBit = 0x00;
 
@@ -222,7 +222,7 @@ uint8_t GPIO_ReadInputBit(GPIO_T* port, uint16_t pin)
  *
  * @retval      GPIO input data port value.
  */
-uint16_t GPIO_ReadInputPort(GPIO_T* port)
+uint16_t GPIO_ReadInputPort(GPIO_T *port)
 {
     return ((uint16_t)port->IDATA);
 }
@@ -239,7 +239,7 @@ uint16_t GPIO_ReadInputPort(GPIO_T* port)
  *
  * @retval       The output port pin value.
  */
-uint8_t GPIO_ReadOutputBit(GPIO_T* port, uint16_t pin)
+uint8_t GPIO_ReadOutputBit(GPIO_T *port, uint16_t pin)
 {
     uint8_t readBit = 0x00;
 
@@ -257,7 +257,7 @@ uint8_t GPIO_ReadOutputBit(GPIO_T* port, uint16_t pin)
  *
  * @retval       output data port value
  */
-uint16_t GPIO_ReadOutputPort(GPIO_T* port)
+uint16_t GPIO_ReadOutputPort(GPIO_T *port)
 {
     return ((uint16_t)port->ODATA);
 }
@@ -274,7 +274,7 @@ uint16_t GPIO_ReadOutputPort(GPIO_T* port)
  *
  * @retval       None
  */
-void GPIO_SetBit(GPIO_T* port, uint16_t pin)
+void GPIO_SetBit(GPIO_T *port, uint16_t pin)
 {
     port->BSCL = pin;
 }
@@ -291,7 +291,7 @@ void GPIO_SetBit(GPIO_T* port, uint16_t pin)
  *
  * @retval    None
  */
-void GPIO_ResetBit(GPIO_T* port, uint16_t pin)
+void GPIO_ResetBit(GPIO_T *port, uint16_t pin)
 {
     port->BSCH = pin;
 }
@@ -313,7 +313,7 @@ void GPIO_ResetBit(GPIO_T* port, uint16_t pin)
  *
  * @retval       None
  */
-void GPIO_WriteBitValue(GPIO_T* port, uint16_t pin, uint8_t bitVal)
+void GPIO_WriteBitValue(GPIO_T *port, uint16_t pin, uint8_t bitVal)
 {
     if (bitVal != BIT_RESET)
     {
@@ -336,7 +336,7 @@ void GPIO_WriteBitValue(GPIO_T* port, uint16_t pin, uint8_t bitVal)
  *
  * @retval       None
  */
-void GPIO_WriteOutputPort(GPIO_T* port, uint16_t portValue)
+void GPIO_WriteOutputPort(GPIO_T *port, uint16_t portValue)
 {
     port->ODATA = (uint16_t)portValue;
 }
@@ -351,7 +351,7 @@ void GPIO_WriteOutputPort(GPIO_T* port, uint16_t portValue)
  *
  * @retval      None
  */
-void GPIO_ToggleBit(GPIO_T* port, uint16_t pin)
+void GPIO_ToggleBit(GPIO_T *port, uint16_t pin)
 {
     port->ODATA ^= pin;
 }
@@ -416,12 +416,12 @@ void GPIO_ToggleBit(GPIO_T* port, uint16_t pin)
  *
  * @retval    None
  */
-void GPIO_ConfigPinAF(GPIO_T* port, GPIO_PIN_SOURCE_T gpioPinSource, GPIO_AF_T gpioAf)
+void GPIO_ConfigPinAF(GPIO_T *port, GPIO_PIN_SOURCE_T gpioPinSource, GPIO_AF_T gpioAf)
 {
     uint32_t val = 0x00;
     uint32_t val_2 = 0x00;
 
-    if (gpioPinSource >> 0x03==0)
+    if (gpioPinSource >> 0x03 == 0)
     {
         val = (uint32_t)(gpioAf) << (((uint32_t)gpioPinSource & (uint32_t)0x07) * 4);
         port->ALFL &= ~((uint32_t)0xF << (((uint32_t)gpioPinSource & (uint32_t)0x07) * 4)) ;

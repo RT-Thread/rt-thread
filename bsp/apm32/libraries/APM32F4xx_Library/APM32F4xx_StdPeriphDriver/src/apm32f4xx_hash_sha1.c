@@ -62,7 +62,7 @@
  *            ERROR: digest computation failed
  *
  */
-uint8_t HASH_ComputeSHA1(uint8_t* inBuffer, uint32_t lenBuffer,
+uint8_t HASH_ComputeSHA1(uint8_t *inBuffer, uint32_t lenBuffer,
                          uint8_t outBuffer[20])
 {
     HASH_Config_T hashSHA1Config;
@@ -72,7 +72,7 @@ uint8_t HASH_ComputeSHA1(uint8_t* inBuffer, uint32_t lenBuffer,
     uint32_t inBufferaddr  = (uint32_t)inBuffer;
     uint32_t outBufferaddr = (uint32_t)outBuffer;
 
-    nBufferBits = (lenBuffer % 4)* 8;
+    nBufferBits = (lenBuffer % 4) * 8;
 
     HASH_Reset();
 
@@ -86,7 +86,7 @@ uint8_t HASH_ComputeSHA1(uint8_t* inBuffer, uint32_t lenBuffer,
     /* Write the input block in the IN FIFO */
     for (m = 0; m < lenBuffer; m += 4)
     {
-        HASH_WritesInputData(*(uint32_t*)inBufferaddr);
+        HASH_WritesInputData(*(uint32_t *)inBufferaddr);
         inBufferaddr += 4;
     }
 
@@ -103,19 +103,19 @@ uint8_t HASH_ComputeSHA1(uint8_t* inBuffer, uint32_t lenBuffer,
         /* Read the message digest */
         HASH_ReadDigest(&hashSHA1MessageDigest);
 
-        *(uint32_t*)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[0]);
+        *(uint32_t *)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[0]);
 
         outBufferaddr += 4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[1]);
+        *(uint32_t *)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[1]);
 
         outBufferaddr += 4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[2]);
+        *(uint32_t *)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[2]);
 
         outBufferaddr += 4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[3]);
+        *(uint32_t *)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[3]);
 
         outBufferaddr += 4;
-        *(uint32_t*)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[4]);
+        *(uint32_t *)(outBufferaddr)  = __REV(hashSHA1MessageDigest.Data[4]);
     }
 
     return SUCCESS;
@@ -139,7 +139,7 @@ uint8_t HASH_ComputeSHA1(uint8_t* inBuffer, uint32_t lenBuffer,
  *            ERROR: digest computation failed
  *
  */
-uint8_t HMAC_ComputeSHA1(uint8_t* key, uint32_t lenkey, uint8_t* inBuffer,
+uint8_t HMAC_ComputeSHA1(uint8_t *key, uint32_t lenkey, uint8_t *inBuffer,
                          uint32_t lenBuffer, uint8_t outBuffer[20])
 {
     HASH_Config_T hmacSHA1Config;
@@ -174,10 +174,10 @@ uint8_t HMAC_ComputeSHA1(uint8_t* key, uint32_t lenkey, uint8_t* inBuffer,
     HASH_ConfigLastWordValidBitsNbr(nuValidKey);
 
     /* Write the key */
-    for (m=0; m<lenkey; m+=4)
+    for (m = 0; m < lenkey; m += 4)
     {
-        HASH_WritesInputData(*(uint32_t*)keyaddr);
-        keyaddr+=4;
+        HASH_WritesInputData(*(uint32_t *)keyaddr);
+        keyaddr += 4;
     }
 
     HASH_StartDigest();
@@ -191,10 +191,10 @@ uint8_t HMAC_ComputeSHA1(uint8_t* key, uint32_t lenkey, uint8_t* inBuffer,
     {
         HASH_ConfigLastWordValidBitsNbr(nBufferBits);
 
-        for (m=0; m<lenkey; m+=4)
+        for (m = 0; m < lenkey; m += 4)
         {
-            HASH_WritesInputData(*(uint32_t*)inputaddr);
-            inputaddr+=4;
+            HASH_WritesInputData(*(uint32_t *)inputaddr);
+            inputaddr += 4;
         }
 
         HASH_StartDigest();
@@ -210,10 +210,10 @@ uint8_t HMAC_ComputeSHA1(uint8_t* key, uint32_t lenkey, uint8_t* inBuffer,
             /* Write the key */
             keyaddr = (uint32_t)key;
 
-            for (m=0; m<lenkey; m+=4)
+            for (m = 0; m < lenkey; m += 4)
             {
-                HASH_WritesInputData(*(uint32_t*)keyaddr);
-                keyaddr+=4;
+                HASH_WritesInputData(*(uint32_t *)keyaddr);
+                keyaddr += 4;
             }
 
             /* Start the HASH processor */
@@ -228,19 +228,19 @@ uint8_t HMAC_ComputeSHA1(uint8_t* key, uint32_t lenkey, uint8_t* inBuffer,
             {
                 /* Read the message digest */
                 HASH_ReadDigest(&hashSHA1MessageDigest);
-                *(uint32_t*)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[0]);
+                *(uint32_t *)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[0]);
 
-                outputaddr+=4;
-                *(uint32_t*)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[1]);
+                outputaddr += 4;
+                *(uint32_t *)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[1]);
 
-                outputaddr+=4;
-                *(uint32_t*)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[2]);
+                outputaddr += 4;
+                *(uint32_t *)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[2]);
 
-                outputaddr+=4;
-                *(uint32_t*)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[3]);
+                outputaddr += 4;
+                *(uint32_t *)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[3]);
 
-                outputaddr+=4;
-                *(uint32_t*)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[4]);
+                outputaddr += 4;
+                *(uint32_t *)(outputaddr)  = __REV(hashSHA1MessageDigest.Data[4]);
             }
         }
     }
