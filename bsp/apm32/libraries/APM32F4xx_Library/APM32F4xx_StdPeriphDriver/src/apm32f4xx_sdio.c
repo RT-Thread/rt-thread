@@ -59,7 +59,7 @@ void SDIO_Reset(void)
  *
  * @retval    None
  */
-void SDIO_Config(SDIO_Config_T* sdioConfig)
+void SDIO_Config(SDIO_Config_T *sdioConfig)
 {
     SDIO->CLKCTRL_B.CLKDIV   = sdioConfig->clockDiv;
     SDIO->CLKCTRL_B.PWRSAV   = sdioConfig->clockPowerSave;
@@ -76,7 +76,7 @@ void SDIO_Config(SDIO_Config_T* sdioConfig)
  *
  * @retval    None
  */
-void SDIO_ConfigStructInit(SDIO_Config_T* sdioConfig)
+void SDIO_ConfigStructInit(SDIO_Config_T *sdioConfig)
 {
     sdioConfig->clockDiv = 0x00;
     sdioConfig->clockEdge = SDIO_CLOCK_EDGE_RISING;
@@ -170,7 +170,7 @@ void SDIO_DisableDMA(void)
  *
  * @retval    None
  */
-void SDIO_TxCommand(SDIO_CmdConfig_T* cmdConfig)
+void SDIO_TxCommand(SDIO_CmdConfig_T *cmdConfig)
 {
     uint32_t tempReg = 0;
 
@@ -179,7 +179,7 @@ void SDIO_TxCommand(SDIO_CmdConfig_T* cmdConfig)
     /* Clear CMDINDEX, WAITRES, WAITINT, WENDDATA, CPSMEN bits */
     tempReg &= ((uint32_t)0xFFFFF800);
     tempReg |= (uint32_t)(cmdConfig->cmdIndex) | (cmdConfig->response) << 6
-             | (cmdConfig->wait) << 8 | (cmdConfig->CPSM) << 10;
+               | (cmdConfig->wait) << 8 | (cmdConfig->CPSM) << 10;
     SDIO->CMD = tempReg;
 }
 
@@ -190,7 +190,7 @@ void SDIO_TxCommand(SDIO_CmdConfig_T* cmdConfig)
  *
  * @retval    None
  */
-void SDIO_TxCommandStructInit(SDIO_CmdConfig_T* cmdConfig)
+void SDIO_TxCommandStructInit(SDIO_CmdConfig_T *cmdConfig)
 {
     cmdConfig->argument = 0x00;
     cmdConfig->cmdIndex = 0x00;
@@ -229,7 +229,7 @@ uint32_t SDIO_ReadResponse(SDIO_RES_T res)
 
     tmp = ((uint32_t)(SDIO_BASE + 0x14)) + res;
 
-    return (*(__IO uint32_t*) tmp);
+    return (*(__IO uint32_t *) tmp);
 }
 
 /*!
@@ -239,7 +239,7 @@ uint32_t SDIO_ReadResponse(SDIO_RES_T res)
  *
  * @retval    None
  */
-void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
+void SDIO_ConfigData(SDIO_DataConfig_T *dataConfig)
 {
     uint32_t tempReg = 0;
 
@@ -251,7 +251,7 @@ void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
     /* Clear DTEN, DTSEL, DTDRCFG and DBSIZE bits */
     tempReg &= ((uint32_t)0xFFFFFF08);
     tempReg |= (uint32_t)(dataConfig->dataBlockSize) << 4 | (dataConfig->transferDir) << 1
-       | (dataConfig->transferMode) << 2 | (dataConfig->DPSM);
+               | (dataConfig->transferMode) << 2 | (dataConfig->DPSM);
     SDIO->DCTRL = tempReg;
 }
 
@@ -262,7 +262,7 @@ void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
  *
  * @retval    None
  */
-void SDIO_ConfigDataStructInit(SDIO_DataConfig_T* dataConfig)
+void SDIO_ConfigDataStructInit(SDIO_DataConfig_T *dataConfig)
 {
     dataConfig->dataTimeOut = 0xFFFFFFFF;
     dataConfig->dataLength = 0x00;

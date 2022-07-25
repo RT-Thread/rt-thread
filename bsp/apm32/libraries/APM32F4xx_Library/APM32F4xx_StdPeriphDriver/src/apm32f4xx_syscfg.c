@@ -118,15 +118,15 @@ void SYSCFG_ConfigEINTLine(SYSCFG_PORT_T port, SYSCFG_PIN_T pin)
     {
         SYSCFG->EINTCFG1 |= status;
     }
-    else if  ((pin >> 2) == 1)
+    else if ((pin >> 2) == 1)
     {
         SYSCFG->EINTCFG2 |= status;
     }
-    else if  ((pin >> 2) == 2)
+    else if ((pin >> 2) == 2)
     {
         SYSCFG->EINTCFG3 |= status;
     }
-    else if  ((pin >> 2) == 3)
+    else if ((pin >> 2) == 3)
     {
         SYSCFG->EINTCFG4 |= status;
     }

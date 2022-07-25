@@ -47,7 +47,7 @@
  */
 void SCI2C_Reset(SCI2C_T *i2c)
 {
-    if(i2c == I2C3)
+    if (i2c == I2C3)
     {
         RCM_EnableAPB1PeriphReset(RCM_APB1_PERIPH_I2C1);
         RCM_DisableAPB1PeriphReset(RCM_APB1_PERIPH_I2C1);
@@ -78,7 +78,7 @@ void SCI2C_Config(SCI2C_T *i2c, SCI2C_Config_T *sci2cConfig)
 
     i2c->CTRL2_B.I2CEN = BIT_RESET;
 
-    if(sci2cConfig->mode == SCI2C_MODE_MASTER)
+    if (sci2cConfig->mode == SCI2C_MODE_MASTER)
     {
         i2c->CTRL1_B.MST = BIT_SET;
         i2c->CTRL1_B.SLADIS = BIT_SET;
@@ -98,17 +98,17 @@ void SCI2C_Config(SCI2C_T *i2c, SCI2C_Config_T *sci2cConfig)
     i2c->CTRL1_B.SAM = sci2cConfig->addrMode;
     i2c->SLAADDR = sci2cConfig->slaveAddr;
 
-    if(sci2cConfig->speed == SCI2C_SPEED_STANDARD)
+    if (sci2cConfig->speed == SCI2C_SPEED_STANDARD)
     {
         i2c->SSCLC = sci2cConfig->clkLowPeriod;
         i2c->SSCHC = sci2cConfig->clkHighPeriod;
     }
-    else if(sci2cConfig->speed == SCI2C_SPEED_FAST)
+    else if (sci2cConfig->speed == SCI2C_SPEED_FAST)
     {
         i2c->FSCLC = sci2cConfig->clkLowPeriod;
         i2c->FSCHC = sci2cConfig->clkHighPeriod;
     }
-    else if(sci2cConfig->speed == SCI2C_SPEED_HIGH)
+    else if (sci2cConfig->speed == SCI2C_SPEED_HIGH)
     {
         i2c->HSCLC = sci2cConfig->clkLowPeriod;
         i2c->HSCHC = sci2cConfig->clkHighPeriod;
@@ -159,7 +159,7 @@ uint8_t SCI2C_ReadStatusFlag(SCI2C_T *i2c, SCI2C_FLAG_T flag)
 {
     uint8_t ret = RESET;
 
-    if(flag & BIT8)
+    if (flag & BIT8)
     {
         ret = i2c->STS2 & flag ? SET : RESET;
     }
@@ -228,47 +228,47 @@ void SCI2C_ClearIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
 {
     volatile uint32_t dummy = 0;
 
-    if(flag == SCI2C_INT_ALL)
+    if (flag == SCI2C_INT_ALL)
     {
         dummy = i2c->INTCLR;
     }
-    else if(flag == SCI2C_INT_RFU)
+    else if (flag == SCI2C_INT_RFU)
     {
         dummy = i2c->RFUIC;
     }
-    else if(flag == SCI2C_INT_RFO)
+    else if (flag == SCI2C_INT_RFO)
     {
         dummy = i2c->RFOIC;
     }
-    else if(flag == SCI2C_INT_TFO)
+    else if (flag == SCI2C_INT_TFO)
     {
         dummy = i2c->TFOIC;
     }
-    else if(flag == SCI2C_INT_RR)
+    else if (flag == SCI2C_INT_RR)
     {
         dummy = i2c->RRIC;
     }
-    else if(flag == SCI2C_INT_TA)
+    else if (flag == SCI2C_INT_TA)
     {
         dummy = i2c->TAIC;
     }
-    else if(flag == SCI2C_INT_RD)
+    else if (flag == SCI2C_INT_RD)
     {
         dummy = i2c->RDIC;
     }
-    else if(flag == SCI2C_INT_ACT)
+    else if (flag == SCI2C_INT_ACT)
     {
         dummy = i2c->AIC;
     }
-    else if(flag == SCI2C_INT_STPD)
+    else if (flag == SCI2C_INT_STPD)
     {
         dummy = i2c->STPDIC;
     }
-    else if(flag == SCI2C_INT_STAD)
+    else if (flag == SCI2C_INT_STAD)
     {
         dummy = i2c->STADIC;
     }
-    else if(flag == SCI2C_INT_GC)
+    else if (flag == SCI2C_INT_GC)
     {
         dummy = i2c->GCIC;
     }
@@ -731,17 +731,17 @@ void SCI2C_BlockTxCmd(SCI2C_T *i2c, uint8_t enable)
  */
 void SCI2C_ConfigClkPeriod(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint16_t highPeriod, uint16_t lowPeriod)
 {
-    if(speed == SCI2C_SPEED_STANDARD)
+    if (speed == SCI2C_SPEED_STANDARD)
     {
         i2c->SSCLC = lowPeriod;
         i2c->SSCHC = highPeriod;
     }
-    else if(speed == SCI2C_SPEED_FAST)
+    else if (speed == SCI2C_SPEED_FAST)
     {
         i2c->FSCLC = lowPeriod;
         i2c->FSCHC = highPeriod;
     }
-    else if(speed == SCI2C_SPEED_HIGH)
+    else if (speed == SCI2C_SPEED_HIGH)
     {
         i2c->HSCLC = lowPeriod;
         i2c->HSCHC = highPeriod;
@@ -895,7 +895,7 @@ void SCI2C_ConfigDMARxDataLevel(SCI2C_T *i2c, uint8_t cnt)
  */
 void SCI2C_ConfigSpikeSuppressionLimit(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint8_t limit)
 {
-    if(speed == SCI2C_SPEED_HIGH)
+    if (speed == SCI2C_SPEED_HIGH)
     {
         i2c->HSSSL = limit;
     }

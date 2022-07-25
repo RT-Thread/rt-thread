@@ -75,7 +75,7 @@ uint32_t CRC_CalculateCRC(uint32_t data)
  */
 uint32_t CRC_CalculateBlockCRC(uint32_t *buf, uint32_t bufLen)
 {
-    while(bufLen--)
+    while (bufLen--)
     {
         CRC->DATA = *buf++;
     }

@@ -240,22 +240,22 @@ static void _pwm_channel_init(GPIO_Config_T *gpio_config)
 #elif APM32F40X
 #ifdef BSP_USING_PWM3_CH1
     pwm_config[PWM3_INDEX].channel |= 1 << 0;
-    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_6,GPIO_AF_TMR3);
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_6, GPIO_AF_TMR3);
     _PWM_GPIO_INIT(C, 6);
 #endif
 #ifdef BSP_USING_PWM3_CH2
     pwm_config[PWM3_INDEX].channel |= 1 << 1;
-    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_7,GPIO_AF_TMR3);
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_7, GPIO_AF_TMR3);
     _PWM_GPIO_INIT(C, 7);
 #endif
 #ifdef BSP_USING_PWM3_CH3
     pwm_config[PWM3_INDEX].channel |= 1 << 2;
-    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_8,GPIO_AF_TMR3);
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_8, GPIO_AF_TMR3);
     _PWM_GPIO_INIT(C, 8);
 #endif
 #ifdef BSP_USING_PWM3_CH4
     pwm_config[PWM3_INDEX].channel |= 1 << 3;
-    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_9,GPIO_AF_TMR3);
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_9, GPIO_AF_TMR3);
     _PWM_GPIO_INIT(C, 9);
 #endif
 #endif

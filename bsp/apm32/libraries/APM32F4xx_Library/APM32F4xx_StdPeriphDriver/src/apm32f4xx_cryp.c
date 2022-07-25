@@ -59,7 +59,7 @@ void CRYP_Reset(void)
  *
  * @retval    None
  */
-void CRYP_Config(CRYP_Config_T* crypConfig)
+void CRYP_Config(CRYP_Config_T *crypConfig)
 {
     CRYP->CTRL_B.ALGODIRSEL = crypConfig->algoDir;
     CRYP->CTRL_B.ALGOMSEL   = crypConfig->algoMode;
@@ -79,7 +79,7 @@ void CRYP_Config(CRYP_Config_T* crypConfig)
  *
  * @retval    None
  */
-void CRYP_ConfigStructInit(CRYP_Config_T* crypConfig)
+void CRYP_ConfigStructInit(CRYP_Config_T *crypConfig)
 {
     crypConfig->algoDir  = CRYP_ALGODIR_ENCRYPT;
     crypConfig->algoMode = CRYP_ALGOMODE_TDES_ECB;
@@ -94,7 +94,7 @@ void CRYP_ConfigStructInit(CRYP_Config_T* crypConfig)
  *
  * @retval    None
  */
-void CRYP_ConfigKey(CRYP_KeyConfig_T* keyConfig)
+void CRYP_ConfigKey(CRYP_KeyConfig_T *keyConfig)
 {
     /* Key Initialisation */
     CRYP->K0L = keyConfig->key0Left;
@@ -114,7 +114,7 @@ void CRYP_ConfigKey(CRYP_KeyConfig_T* keyConfig)
  *
  * @retval    None
  */
-void CRYP_ConfigKeyStructInit(CRYP_KeyConfig_T* keyConfig)
+void CRYP_ConfigKeyStructInit(CRYP_KeyConfig_T *keyConfig)
 {
     keyConfig->key0Left  = 0;
     keyConfig->key0Right = 0;
@@ -133,7 +133,7 @@ void CRYP_ConfigKeyStructInit(CRYP_KeyConfig_T* keyConfig)
  *
  * @retval    None
  */
-void CRYP_ConfigIV(CRYP_IVConfig_T* IVConfig)
+void CRYP_ConfigIV(CRYP_IVConfig_T *IVConfig)
 {
     CRYP->IV0L = IVConfig->IV0Left;
     CRYP->IV0R = IVConfig->IV0Right;
@@ -148,7 +148,7 @@ void CRYP_ConfigIV(CRYP_IVConfig_T* IVConfig)
  *
  * @retval    None
  */
-void CRYP_ConfigIVStructInit(CRYP_IVConfig_T* IVConfig)
+void CRYP_ConfigIVStructInit(CRYP_IVConfig_T *IVConfig)
 {
     IVConfig->IV0Left  = 0;
     IVConfig->IV0Right = 0;
@@ -233,12 +233,12 @@ uint32_t CRYP_OutData(void)
  *            restoring the context, you have to enable the DMA again (if the DMA
  *            was previously used).
  */
-uint32_t CRYP_SaveContext(CRYP_Context_T* context, CRYP_KeyConfig_T* keyConfig)
+uint32_t CRYP_SaveContext(CRYP_Context_T *context, CRYP_KeyConfig_T *keyConfig)
 {
     uint32_t flag = 0;
-    uint32_t bitstatus=0;
+    uint32_t bitstatus = 0;
     uint32_t timeout = 0;
-    uint32_t status=0;
+    uint32_t status = 0;
 
     /* Stop DMA transfers on the IN FIFO */
     CRYP->DMACTRL_B.INEN = RESET;
@@ -305,7 +305,7 @@ uint32_t CRYP_SaveContext(CRYP_Context_T* context, CRYP_KeyConfig_T* keyConfig)
  *            after restoring the context, you have to enable the DMA again (if the
  *            DMA was previously used).
  */
-void CRYP_RestoreContext(CRYP_Context_T* context)
+void CRYP_RestoreContext(CRYP_Context_T *context)
 {
     /* Restore The CTRL value */
     CRYP->CTRL = context->curCTRL;
@@ -341,11 +341,11 @@ void CRYP_RestoreContext(CRYP_Context_T* context)
  */
 void CRYP_EnableDMA(CRYP_DMAREQ_T dmaReq)
 {
-    if(dmaReq == CRYP_DMAREQ_DATAIN)
+    if (dmaReq == CRYP_DMAREQ_DATAIN)
     {
         CRYP->DMACTRL_B.INEN = SET;
     }
-    else if(dmaReq == CRYP_DMAREQ_DATAOUT)
+    else if (dmaReq == CRYP_DMAREQ_DATAOUT)
     {
         CRYP->DMACTRL_B.OUTEN = SET;
     }
@@ -363,11 +363,11 @@ void CRYP_EnableDMA(CRYP_DMAREQ_T dmaReq)
  */
 void CRYP_DisableDMA(CRYP_DMAREQ_T dmaReq)
 {
-    if(dmaReq == CRYP_DMAREQ_DATAIN)
+    if (dmaReq == CRYP_DMAREQ_DATAIN)
     {
         CRYP->DMACTRL_B.INEN = RESET;
     }
-    else if(dmaReq == CRYP_DMAREQ_DATAOUT)
+    else if (dmaReq == CRYP_DMAREQ_DATAOUT)
     {
         CRYP->DMACTRL_B.OUTEN = RESET;
     }
@@ -436,13 +436,13 @@ uint8_t CRYP_ReadIntFlag(CRYP_INT_T flag)
  */
 uint8_t CRYP_ReadStatusFlag(CRYP_FLAG_T flag)
 {
-    if(flag & 0x20)
+    if (flag & 0x20)
     {
         return (CRYP->INTSTS & flag) ? SET : RESET;
     }
     else
     {
-       return (CRYP->STS & flag) ? SET : RESET;
+        return (CRYP->STS & flag) ? SET : RESET;
     }
 }
 

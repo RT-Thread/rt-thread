@@ -46,7 +46,7 @@
  *
  * @retval    None
  */
-void SPI_I2S_Reset(SPI_T* spi)
+void SPI_I2S_Reset(SPI_T *spi)
 {
     if (spi == SPI1)
     {
@@ -89,7 +89,7 @@ void SPI_I2S_Reset(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_Config(SPI_T* spi, SPI_Config_T* spiConfig)
+void SPI_Config(SPI_T *spi, SPI_Config_T *spiConfig)
 {
     spi->CTRL1_B.MSMCFG = spiConfig->mode;
     spi->CTRL1_B.ISSEL = spiConfig->mode;
@@ -118,7 +118,7 @@ void SPI_Config(SPI_T* spi, SPI_Config_T* spiConfig)
  *
  * @retval    None
  */
-void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
+void I2S_Config(SPI_T *spi, I2S_Config_T *i2sConfig)
 {
     uint16_t i2sDiv = 2, i2sOdd = 0, packetSize = 1;
     uint32_t tmp = 0;
@@ -189,7 +189,7 @@ void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
  *
  * @retval    None
  */
-void SPI_ConfigStructInit(SPI_Config_T* spiConfig)
+void SPI_ConfigStructInit(SPI_Config_T *spiConfig)
 {
     spiConfig->direction     = SPI_DIRECTION_2LINES_FULLDUPLEX;
     spiConfig->mode          = SPI_MODE_SLAVE;
@@ -209,7 +209,7 @@ void SPI_ConfigStructInit(SPI_Config_T* spiConfig)
  *
  * @retval    None
  */
-void I2S_ConfigStructInit(I2S_Config_T* i2sConfig)
+void I2S_ConfigStructInit(I2S_Config_T *i2sConfig)
 {
     i2sConfig->mode       = I2S_MODE_SLAVE_TX;
     i2sConfig->standard   = I2S_STANDARD_PHILLIPS;
@@ -226,7 +226,7 @@ void I2S_ConfigStructInit(I2S_Config_T* i2sConfig)
  *
  * @retval    None
  */
-void SPI_Enable(SPI_T* spi)
+void SPI_Enable(SPI_T *spi)
 {
     spi->CTRL1_B.SPIEN = BIT_SET;
 }
@@ -238,7 +238,7 @@ void SPI_Enable(SPI_T* spi)
 *
 * @retval    None
 */
-void SPI_Disable(SPI_T* spi)
+void SPI_Disable(SPI_T *spi)
 {
     spi->CTRL1_B.SPIEN = BIT_RESET;
 }
@@ -250,7 +250,7 @@ void SPI_Disable(SPI_T* spi)
  *
  * @retval    None
  */
-void I2S_Enable(SPI_T* spi)
+void I2S_Enable(SPI_T *spi)
 {
     spi->I2SCFG_B.I2SEN = BIT_SET;
 }
@@ -262,7 +262,7 @@ void I2S_Enable(SPI_T* spi)
  *
  * @retval    None
  */
-void I2S_Disable(SPI_T* spi)
+void I2S_Disable(SPI_T *spi)
 {
     spi->I2SCFG_B.I2SEN = BIT_RESET;
 }
@@ -279,7 +279,7 @@ void I2S_Disable(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_ConfigDataSize(SPI_T* spi, SPI_DATA_LENGTH_T length)
+void SPI_ConfigDataSize(SPI_T *spi, SPI_DATA_LENGTH_T length)
 {
     spi->CTRL1_B.DFLSEL = length;
 }
@@ -295,7 +295,7 @@ void SPI_ConfigDataSize(SPI_T* spi, SPI_DATA_LENGTH_T length)
  *                      @arg SPI_DIRECTION_TX : Selects Tx transmission direction
  * @retval    None
  */
-void SPI_ConfigBiDirectionalLine(SPI_T* spi, SPI_DIRECTION_SELECT_T direction)
+void SPI_ConfigBiDirectionalLine(SPI_T *spi, SPI_DIRECTION_SELECT_T direction)
 {
     spi->CTRL1_B.BMOEN = direction;
 }
@@ -306,7 +306,7 @@ void SPI_ConfigBiDirectionalLine(SPI_T* spi, SPI_DIRECTION_SELECT_T direction)
  *
  * @retval    None
  */
-void SPI_SetSoftwareNSS(SPI_T* spi)
+void SPI_SetSoftwareNSS(SPI_T *spi)
 {
     spi->CTRL1_B.ISSEL = BIT_SET;
 }
@@ -318,7 +318,7 @@ void SPI_SetSoftwareNSS(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_ResetSoftwareNSS(SPI_T* spi)
+void SPI_ResetSoftwareNSS(SPI_T *spi)
 {
     spi->CTRL1_B.ISSEL = BIT_RESET;
 }
@@ -330,7 +330,7 @@ void SPI_ResetSoftwareNSS(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_EnableSSOutput(SPI_T* spi)
+void SPI_EnableSSOutput(SPI_T *spi)
 {
     spi->CTRL2_B.SSOEN = BIT_SET;
 }
@@ -342,7 +342,7 @@ void SPI_EnableSSOutput(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_DisableSSOutput(SPI_T* spi)
+void SPI_DisableSSOutput(SPI_T *spi)
 {
     spi->CTRL2_B.SSOEN = BIT_RESET;
 }
@@ -354,7 +354,7 @@ void SPI_DisableSSOutput(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_EnableTIMode(SPI_T* spi)
+void SPI_EnableTIMode(SPI_T *spi)
 {
     spi->CTRL2_B.FRFCFG = BIT_SET;
 }
@@ -366,7 +366,7 @@ void SPI_EnableTIMode(SPI_T* spi)
 *
 * @retval    None
 */
-void SPI_DisableTIMode(SPI_T* spi)
+void SPI_DisableTIMode(SPI_T *spi)
 {
     spi->CTRL2_B.FRFCFG = BIT_RESET;
 }
@@ -389,7 +389,7 @@ void SPI_DisableTIMode(SPI_T* spi)
  *
  * @note   The I2S full-duplex extension only can be configured in slave mode.
  */
-void I2S_ConfigFullDuplex(SPI_T* i2sExt, I2S_Config_T* i2sConfig)
+void I2S_ConfigFullDuplex(SPI_T *i2sExt, I2S_Config_T *i2sConfig)
 {
     /** Reset I2SCFG and I2SPSC register */
     i2sExt->I2SCFG = 0;
@@ -427,7 +427,7 @@ void I2S_ConfigFullDuplex(SPI_T* i2sExt, I2S_Config_T* i2sConfig)
  *
  * @retval    None
  */
-void SPI_I2S_TxData(SPI_T* spi, uint16_t data)
+void SPI_I2S_TxData(SPI_T *spi, uint16_t data)
 {
     spi->DATA = data;
 }
@@ -441,7 +441,7 @@ void SPI_I2S_TxData(SPI_T* spi, uint16_t data)
 *
 * @retval    None
 */
-uint16_t SPI_I2S_RxData(SPI_T* spi)
+uint16_t SPI_I2S_RxData(SPI_T *spi)
 {
     return spi->DATA;
 }
@@ -453,7 +453,7 @@ uint16_t SPI_I2S_RxData(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_EnableCRC(SPI_T* spi)
+void SPI_EnableCRC(SPI_T *spi)
 {
     spi->CTRL1_B.CRCEN = BIT_SET;
 }
@@ -464,7 +464,7 @@ void SPI_EnableCRC(SPI_T* spi)
  * @param     spi: The SPIx can be 1,2,3,4,5,6.
  *
  */
-void SPI_DisableCRC(SPI_T* spi)
+void SPI_DisableCRC(SPI_T *spi)
 {
     spi->CTRL1_B.CRCEN = BIT_RESET;
 }
@@ -476,7 +476,7 @@ void SPI_DisableCRC(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_TxCRC(SPI_T* spi)
+void SPI_TxCRC(SPI_T *spi)
 {
     spi->CTRL1_B.CRCNXT = BIT_SET;
 }
@@ -488,7 +488,7 @@ void SPI_TxCRC(SPI_T* spi)
  *
  * @retval    The SPI transmit CRC register value
  */
-uint16_t SPI_ReadTxCRC(SPI_T* spi)
+uint16_t SPI_ReadTxCRC(SPI_T *spi)
 {
     return spi->TXCRC_B.TXCRC;
 }
@@ -500,7 +500,7 @@ uint16_t SPI_ReadTxCRC(SPI_T* spi)
  *
  * @retval    The SPI receive CRC register value
  */
-uint16_t SPI_ReadRxCRC(SPI_T* spi)
+uint16_t SPI_ReadRxCRC(SPI_T *spi)
 {
     return spi->RXCRC_B.RXCRC;
 }
@@ -512,7 +512,7 @@ uint16_t SPI_ReadRxCRC(SPI_T* spi)
  *
  * @retval    The SPI CRC Polynomial register value
  */
-uint16_t SPI_ReadCRCPolynomial(SPI_T* spi)
+uint16_t SPI_ReadCRCPolynomial(SPI_T *spi)
 {
     return spi->CRCPOLY_B.CRCPOLY;
 }
@@ -529,7 +529,7 @@ uint16_t SPI_ReadCRCPolynomial(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_I2S_EnableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
+void SPI_I2S_EnableDMA(SPI_T *spi, SPI_I2S_DMA_REQ_T dmaReq)
 {
     if (dmaReq == SPI_I2S_DMA_REQ_TX)
     {
@@ -553,7 +553,7 @@ void SPI_I2S_EnableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
  *
  * @retval    None
  */
-void SPI_I2S_DisableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
+void SPI_I2S_DisableDMA(SPI_T *spi, SPI_I2S_DMA_REQ_T dmaReq)
 {
     if (dmaReq == SPI_I2S_DMA_REQ_TX)
     {
@@ -578,7 +578,7 @@ void SPI_I2S_DisableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
  *
  * @retval       None
  */
-void SPI_I2S_EnableInterrupt(SPI_T* spi, uint32_t interrupt)
+void SPI_I2S_EnableInterrupt(SPI_T *spi, uint32_t interrupt)
 {
     spi->CTRL2 |= (uint32_t)(interrupt >> 8);
 }
@@ -596,7 +596,7 @@ void SPI_I2S_EnableInterrupt(SPI_T* spi, uint32_t interrupt)
  *
  * @retval    None
  */
-void SPI_I2S_DisableInterrupt(SPI_T* spi, uint32_t interrupt)
+void SPI_I2S_DisableInterrupt(SPI_T *spi, uint32_t interrupt)
 {
     spi->CTRL2 &= ~((uint32_t)(interrupt >> 8));
 }
@@ -619,7 +619,7 @@ void SPI_I2S_DisableInterrupt(SPI_T* spi, uint32_t interrupt)
  *
  * @retval     SET or RESET
  */
-uint8_t SPI_I2S_ReadStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
+uint8_t SPI_I2S_ReadStatusFlag(SPI_T *spi, SPI_FLAG_T flag)
 {
     return (spi->STS & flag) ? SET : RESET;
 }
@@ -642,7 +642,7 @@ uint8_t SPI_I2S_ReadStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
  *              a read/write operation to SPI_STS register (SPI_I2S_ReadStatusFlag())
  *              followed by a write operation to SPI_CTRL1 register (SPI_Enable()).
  */
-void SPI_I2S_ClearStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
+void SPI_I2S_ClearStatusFlag(SPI_T *spi, SPI_FLAG_T flag)
 {
     if (flag == SPI_FLAG_CRCE)
     {
@@ -666,7 +666,7 @@ void SPI_I2S_ClearStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
  *
  * @retval       SET or RESET
  */
-uint8_t SPI_I2S_ReadIntFlag(SPI_T* spi, SPI_I2S_INT_T flag)
+uint8_t SPI_I2S_ReadIntFlag(SPI_T *spi, SPI_I2S_INT_T flag)
 {
     uint32_t intEnable;
     uint32_t intStatus;
@@ -700,7 +700,7 @@ uint8_t SPI_I2S_ReadIntFlag(SPI_T* spi, SPI_I2S_INT_T flag)
  *              a read/write operation to SPI_STS register (SPI_I2S_ReadIntFlag())
  *              followed by a write operation to SPI_CTRL1 register (SPI_Enable()).
  */
-void SPI_I2S_ClearIntFlag(SPI_T* spi, SPI_I2S_INT_T flag)
+void SPI_I2S_ClearIntFlag(SPI_T *spi, SPI_I2S_INT_T flag)
 {
     if (flag == SPI_INT_CRCE)
     {

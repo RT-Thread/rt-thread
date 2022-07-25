@@ -39,10 +39,10 @@
   @{
 */
 
-static void TI1Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
-static void TI2Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
-static void TI3Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
-static void TI4Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI1Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI2Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI3Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI4Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
 
 /*!
  * @brief     Deinitializes the TMRx peripheral registers to their default reset values.
@@ -53,7 +53,7 @@ static void TI4Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @note
  */
-void TMR_Reset(TMR_T* tmr)
+void TMR_Reset(TMR_T *tmr)
 {
     if (tmr == TMR1)
     {
@@ -136,11 +136,11 @@ void TMR_Reset(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigTimeBase(TMR_T* tmr, TMR_BaseConfig_T* baseConfig)
+void TMR_ConfigTimeBase(TMR_T *tmr, TMR_BaseConfig_T *baseConfig)
 {
     if ((tmr == TMR1) || (tmr == TMR2) || \
-        (tmr == TMR3) || (tmr == TMR4) || \
-        (tmr == TMR5) || (tmr == TMR8))
+            (tmr == TMR3) || (tmr == TMR4) || \
+            (tmr == TMR5) || (tmr == TMR8))
     {
         /** Count Direction */
         tmr->CTRL1_B.CNTDIR = baseConfig->countMode & 0x01;
@@ -172,7 +172,7 @@ void TMR_ConfigTimeBase(TMR_T* tmr, TMR_BaseConfig_T* baseConfig)
  *
  * @retval    None
  */
-void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T* baseConfig)
+void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T *baseConfig)
 {
     baseConfig->countMode = TMR_COUNTER_MODE_UP;
     baseConfig->clockDivision = TMR_CLOCK_DIV_1;
@@ -195,7 +195,7 @@ void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T* baseConfig)
  *
  * @retval    None
  */
-void TMR_ConfigPrescaler(TMR_T* tmr, uint16_t psc, TMR_PSC_RELOAD_T reload)
+void TMR_ConfigPrescaler(TMR_T *tmr, uint16_t psc, TMR_PSC_RELOAD_T reload)
 {
     tmr->PSC_B.PSC = psc;
     tmr->CEG_B.UEG = reload;
@@ -216,7 +216,7 @@ void TMR_ConfigPrescaler(TMR_T* tmr, uint16_t psc, TMR_PSC_RELOAD_T reload)
  *
  * @retval    None
  */
-void TMR_ConfigCounterMode(TMR_T* tmr, TMR_COUNTER_MODE_T countMode)
+void TMR_ConfigCounterMode(TMR_T *tmr, TMR_COUNTER_MODE_T countMode)
 {
     tmr->CTRL1_B.CNTDIR = countMode & 0x01;
     tmr->CTRL1_B.CAMSEL = countMode >> 4;
@@ -231,7 +231,7 @@ void TMR_ConfigCounterMode(TMR_T* tmr, TMR_COUNTER_MODE_T countMode)
  *
  * @retval    None
  */
-void TMR_ConfigCounter(TMR_T* tmr, uint16_t counter)
+void TMR_ConfigCounter(TMR_T *tmr, uint16_t counter)
 {
     tmr->CNT = counter;
 }
@@ -245,7 +245,7 @@ void TMR_ConfigCounter(TMR_T* tmr, uint16_t counter)
  *
  * @retval    None
  */
-void TMR_ConfigAutoreload(TMR_T* tmr, uint16_t autoReload)
+void TMR_ConfigAutoreload(TMR_T *tmr, uint16_t autoReload)
 {
     tmr->AUTORLD_B.AUTORLD = autoReload;
 }
@@ -257,7 +257,7 @@ void TMR_ConfigAutoreload(TMR_T* tmr, uint16_t autoReload)
  *
  * @retval    Counter Register value.
  */
-uint16_t TMR_ReadCounter(TMR_T* tmr)
+uint16_t TMR_ReadCounter(TMR_T *tmr)
 {
     return tmr->CNT;
 }
@@ -269,7 +269,7 @@ uint16_t TMR_ReadCounter(TMR_T* tmr)
  *
  * @retval    Prescaler Register value.
  */
-uint16_t TMR_ReadPrescaler(TMR_T* tmr)
+uint16_t TMR_ReadPrescaler(TMR_T *tmr)
 {
     return tmr->PSC;
 }
@@ -281,7 +281,7 @@ uint16_t TMR_ReadPrescaler(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_EnableUpdate(TMR_T* tmr)
+void TMR_EnableUpdate(TMR_T *tmr)
 {
     /** Clear Update Disable bit */
     tmr->CTRL1_B.UD = DISABLE;
@@ -294,7 +294,7 @@ void TMR_EnableUpdate(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableUpdate(TMR_T* tmr)
+void TMR_DisableUpdate(TMR_T *tmr)
 {
     /** Set Update Disable bit */
     tmr->CTRL1_B.UD = ENABLE;
@@ -316,7 +316,7 @@ void TMR_DisableUpdate(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigUpdateRequest(TMR_T* tmr, TMR_UPDATE_SOURCE_T updateSource)
+void TMR_ConfigUpdateRequest(TMR_T *tmr, TMR_UPDATE_SOURCE_T updateSource)
 {
     tmr->CTRL1_B.URSSEL = updateSource;
 }
@@ -328,7 +328,7 @@ void TMR_ConfigUpdateRequest(TMR_T* tmr, TMR_UPDATE_SOURCE_T updateSource)
  *
  * @retval    None
  */
-void TMR_EnableAutoReload(TMR_T* tmr)
+void TMR_EnableAutoReload(TMR_T *tmr)
 {
     tmr->CTRL1_B.ARPEN = ENABLE;
 }
@@ -340,7 +340,7 @@ void TMR_EnableAutoReload(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableAutoReload(TMR_T* tmr)
+void TMR_DisableAutoReload(TMR_T *tmr)
 {
     tmr->CTRL1_B.ARPEN = DISABLE;
 }
@@ -357,7 +357,7 @@ void TMR_DisableAutoReload(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigSinglePulseMode(TMR_T* tmr, TMR_SPM_T singlePulseMode)
+void TMR_ConfigSinglePulseMode(TMR_T *tmr, TMR_SPM_T singlePulseMode)
 {
     tmr->CTRL1_B.SPMEN = singlePulseMode;
 }
@@ -375,7 +375,7 @@ void TMR_ConfigSinglePulseMode(TMR_T* tmr, TMR_SPM_T singlePulseMode)
  *
  * @retval    None
  */
-void TMR_ConfigClockDivision(TMR_T* tmr, TMR_CLOCK_DIV_T clockDivision)
+void TMR_ConfigClockDivision(TMR_T *tmr, TMR_CLOCK_DIV_T clockDivision)
 {
     tmr->CTRL1_B.CLKDIV = clockDivision;
 }
@@ -387,7 +387,7 @@ void TMR_ConfigClockDivision(TMR_T* tmr, TMR_CLOCK_DIV_T clockDivision)
  *
  * @retval    None
  */
-void TMR_Enable(TMR_T* tmr)
+void TMR_Enable(TMR_T *tmr)
 {
     tmr->CTRL1_B.CNTEN = ENABLE;
 }
@@ -399,7 +399,7 @@ void TMR_Enable(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_Disable(TMR_T* tmr)
+void TMR_Disable(TMR_T *tmr)
 {
     tmr->CTRL1_B.CNTEN = DISABLE;
 }
@@ -413,7 +413,7 @@ void TMR_Disable(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
+void TMR_ConfigOC1(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 {
     tmr->CCEN_B.CC1EN = BIT_RESET;
 
@@ -444,7 +444,7 @@ void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
+void TMR_ConfigOC2(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 {
     tmr->CCEN_B.CC2EN = BIT_RESET;
 
@@ -477,7 +477,7 @@ void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
+void TMR_ConfigOC3(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 {
     tmr->CCEN_B.CC3EN = BIT_RESET;
 
@@ -510,7 +510,7 @@ void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC4(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
+void TMR_ConfigOC4(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 {
     tmr->CCEN_B.CC4EN = BIT_RESET;
 
@@ -536,7 +536,7 @@ void TMR_ConfigOC4(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOCStructInit(TMR_OCConfig_T* OCConfig)
+void TMR_ConfigOCStructInit(TMR_OCConfig_T *OCConfig)
 {
     OCConfig->mode = TMR_OC_MODE_TMRING;
     OCConfig->outputState = TMR_OC_STATE_DISABLE;
@@ -573,7 +573,7 @@ void TMR_ConfigOCStructInit(TMR_OCConfig_T* OCConfig)
  *
  * @retval    None
  */
-void TMR_SelectOCxMode(TMR_T* tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
+void TMR_SelectOCxMode(TMR_T *tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
 {
     if (channel == TMR_CHANNEL_1)
     {
@@ -602,7 +602,7 @@ void TMR_SelectOCxMode(TMR_T* tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
  *
  * @retval    None
  */
-void TMR_ConfigCompare1(TMR_T* tmr, uint32_t compare1)
+void TMR_ConfigCompare1(TMR_T *tmr, uint32_t compare1)
 {
     tmr->CC1 = compare1;
 }
@@ -616,7 +616,7 @@ void TMR_ConfigCompare1(TMR_T* tmr, uint32_t compare1)
  *
  * @retval    None
  */
-void TMR_ConfigCompare2(TMR_T* tmr, uint32_t compare2)
+void TMR_ConfigCompare2(TMR_T *tmr, uint32_t compare2)
 {
     tmr->CC2 = compare2;
 }
@@ -630,7 +630,7 @@ void TMR_ConfigCompare2(TMR_T* tmr, uint32_t compare2)
  *
  * @retval    None
  */
-void TMR_ConfigCompare3(TMR_T* tmr, uint32_t compare3)
+void TMR_ConfigCompare3(TMR_T *tmr, uint32_t compare3)
 {
     tmr->CC3 = compare3;
 }
@@ -644,7 +644,7 @@ void TMR_ConfigCompare3(TMR_T* tmr, uint32_t compare3)
  *
  * @retval    None
  */
-void TMR_ConfigCompare4(TMR_T* tmr, uint32_t compare4)
+void TMR_ConfigCompare4(TMR_T *tmr, uint32_t compare4)
 {
     tmr->CC4 = compare4;
 }
@@ -661,7 +661,7 @@ void TMR_ConfigCompare4(TMR_T* tmr, uint32_t compare4)
  *
  * @retval    None
  */
-void TMR_ConfigForcedOC1(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC1(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM1_COMPARE_B.OC1MOD = forcesAction;
 }
@@ -678,7 +678,7 @@ void TMR_ConfigForcedOC1(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_ConfigForcedOC2(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC2(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM1_COMPARE_B.OC2MOD = forcesAction;
 }
@@ -695,7 +695,7 @@ void TMR_ConfigForcedOC2(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_ConfigForcedOC3(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC3(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM2_COMPARE_B.OC3MOD = forcesAction;
 }
@@ -712,7 +712,7 @@ void TMR_ConfigForcedOC3(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_ConfigForcedOC4(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC4(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM2_COMPARE_B.OC4MOD = forcesAction;
 }
@@ -729,7 +729,7 @@ void TMR_ConfigForcedOC4(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_ConfigOC1Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC1Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM1_COMPARE_B.OC1PEN = OCPreload;
 }
@@ -746,7 +746,7 @@ void TMR_ConfigOC1Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
  *
  * @retval    None
  */
-void TMR_ConfigOC2Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC2Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM1_COMPARE_B.OC2PEN = OCPreload;
 }
@@ -763,7 +763,7 @@ void TMR_ConfigOC2Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
  *
  * @retval    None
  */
-void TMR_ConfigOC3Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC3Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM2_COMPARE_B.OC3PEN = OCPreload;
 }
@@ -780,7 +780,7 @@ void TMR_ConfigOC3Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
  *
  * @retval    Nonee
  */
-void TMR_ConfigOC4Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC4Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM2_COMPARE_B.OC4PEN = OCPreload;
 }
@@ -797,7 +797,7 @@ void TMR_ConfigOC4Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
  *
  * @retval    None
  */
-void TMR_ConfigOC1Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC1Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM1_COMPARE_B.OC1FEN = OCFast;
 }
@@ -814,7 +814,7 @@ void TMR_ConfigOC1Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
  *
  * @retval    None
  */
-void TMR_ConfigOC2Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC2Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM1_COMPARE_B.OC2FEN = OCFast;
 }
@@ -831,7 +831,7 @@ void TMR_ConfigOC2Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
  *
  * @retval    None
  */
-void TMR_ConfigOC3Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC3Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM2_COMPARE_B.OC3FEN = OCFast;
 }
@@ -848,7 +848,7 @@ void TMR_ConfigOC3Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
  *
  * @retval    None
  */
-void TMR_ConfigOC4Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC4Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM2_COMPARE_B.OC4FEN = OCFast;
 }
@@ -865,7 +865,7 @@ void TMR_ConfigOC4Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
  *
  * @retval    None
  */
-void TMR_ClearOC1Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC1Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM1_COMPARE_B.OC1CEN = OCClear;
 }
@@ -882,7 +882,7 @@ void TMR_ClearOC1Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
  *
  * @retval    None
  */
-void TMR_ClearOC2Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC2Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM1_COMPARE_B.OC2CEN = OCClear;
 }
@@ -899,7 +899,7 @@ void TMR_ClearOC2Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
  *
  * @retval    None
  */
-void TMR_ClearOC3Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC3Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM2_COMPARE_B.OC3CEN = OCClear;
 }
@@ -916,7 +916,7 @@ void TMR_ClearOC3Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
  *
  * @retval    None
  */
-void TMR_ClearOC4Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC4Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM2_COMPARE_B.OC4CEN = OCClear;
 }
@@ -933,7 +933,7 @@ void TMR_ClearOC4Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
  *
  * @retval    None
  */
-void TMR_ConfigOC1Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC1Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC1POL = polarity;
 }
@@ -950,7 +950,7 @@ void TMR_ConfigOC1Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
  *
  * @retval    None
  */
-void TMR_ConfigOC1NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
+void TMR_ConfigOC1NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
 {
     tmr->CCEN_B.CC1NPOL = nPolarity;
 }
@@ -967,7 +967,7 @@ void TMR_ConfigOC1NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
  *
  * @retval    None
  */
-void TMR_ConfigOC2Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC2Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC2POL = polarity;
 }
@@ -984,7 +984,7 @@ void TMR_ConfigOC2Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
  *
  * @retval    None
  */
-void TMR_ConfigOC2NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
+void TMR_ConfigOC2NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
 {
     tmr->CCEN_B.CC2NPOL = nPolarity;
 }
@@ -1001,7 +1001,7 @@ void TMR_ConfigOC2NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
  *
  * @retval    None
  */
-void TMR_ConfigOC3Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC3Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC3POL = polarity;
 }
@@ -1018,7 +1018,7 @@ void TMR_ConfigOC3Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
  *
  * @retval    None
  */
-void TMR_ConfigOC3NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
+void TMR_ConfigOC3NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
 {
     tmr->CCEN_B.CC3NPOL = nPolarity;
 }
@@ -1035,7 +1035,7 @@ void TMR_ConfigOC3NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
  *
  * @retval    None
  */
-void TMR_ConfigOC4Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC4Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC4POL = polarity;
 }
@@ -1054,7 +1054,7 @@ void TMR_ConfigOC4Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
  *
  * @retval    None
  */
-void TMR_EnableCCxChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
+void TMR_EnableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
 {
     if (channel == TMR_CHANNEL_1)
     {
@@ -1088,7 +1088,7 @@ void TMR_EnableCCxChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
  *
  * @retval    None
  */
-void TMR_DisableCCxChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
+void TMR_DisableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
 {
     if (channel == TMR_CHANNEL_1)
     {
@@ -1121,7 +1121,7 @@ void TMR_DisableCCxChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
  *
  * @retval    None
  */
-void TMR_EnableCCxNChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
+void TMR_EnableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
 {
     if (channel == TMR_CHANNEL_1)
     {
@@ -1150,7 +1150,7 @@ void TMR_EnableCCxNChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
  *
  * @retval    None
  */
-void TMR_DisableCCxNChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
+void TMR_DisableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
 {
     if (channel == TMR_CHANNEL_1)
     {
@@ -1175,7 +1175,7 @@ void TMR_DisableCCxNChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
  *
  * @retval    None
  */
-void TMR_ConfigIC(TMR_T* tmr, TMR_ICConfig_T* ICConfig)
+void TMR_ConfigIC(TMR_T *tmr, TMR_ICConfig_T *ICConfig)
 {
     if (ICConfig->channel == TMR_CHANNEL_1)
     {
@@ -1206,7 +1206,7 @@ void TMR_ConfigIC(TMR_T* tmr, TMR_ICConfig_T* ICConfig)
  *
  * @retval    None
  */
-void TMR_ConfigICStructInit(TMR_ICConfig_T* ICConfig)
+void TMR_ConfigICStructInit(TMR_ICConfig_T *ICConfig)
 {
     ICConfig->channel = TMR_CHANNEL_1;
     ICConfig->polarity = TMR_IC_POLARITY_RISING;
@@ -1224,7 +1224,7 @@ void TMR_ConfigICStructInit(TMR_ICConfig_T* ICConfig)
  *
  * @retval    None
  */
-void TMR_ConfigPWM(TMR_T* tmr, TMR_ICConfig_T* PWMConfig)
+void TMR_ConfigPWM(TMR_T *tmr, TMR_ICConfig_T *PWMConfig)
 {
     uint16_t icpolarity = TMR_IC_POLARITY_RISING;
     uint16_t icselection = TMR_IC_SELECTION_DIRECT_TI;
@@ -1270,7 +1270,7 @@ void TMR_ConfigPWM(TMR_T* tmr, TMR_ICConfig_T* PWMConfig)
  *
  * @retval    Capture Compare 1 Register value.
  */
-uint32_t TMR_ReadCaputer1(TMR_T* tmr)
+uint32_t TMR_ReadCaputer1(TMR_T *tmr)
 {
     return tmr->CC1;
 }
@@ -1282,7 +1282,7 @@ uint32_t TMR_ReadCaputer1(TMR_T* tmr)
  *
  * @retval    Capture Compare 2 Register value.
  */
-uint32_t TMR_ReadCaputer2(TMR_T* tmr)
+uint32_t TMR_ReadCaputer2(TMR_T *tmr)
 {
     return tmr->CC2;
 }
@@ -1294,7 +1294,7 @@ uint32_t TMR_ReadCaputer2(TMR_T* tmr)
  *
  * @retval    Capture Compare 3 Register value.
  */
-uint32_t TMR_ReadCaputer3(TMR_T* tmr)
+uint32_t TMR_ReadCaputer3(TMR_T *tmr)
 {
     return tmr->CC3;
 }
@@ -1306,7 +1306,7 @@ uint32_t TMR_ReadCaputer3(TMR_T* tmr)
  *
  * @retval    Capture Compare 4 Register value.
  */
-uint32_t TMR_ReadCaputer4(TMR_T* tmr)
+uint32_t TMR_ReadCaputer4(TMR_T *tmr)
 {
     return tmr->CC4;
 }
@@ -1325,7 +1325,7 @@ uint32_t TMR_ReadCaputer4(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigIC1Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC1Prescaler(TMR_T *tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM1_CAPTURE_B.IC1PSC = prescaler;
 }
@@ -1343,7 +1343,7 @@ void TMR_ConfigIC1Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
  *
  * @retval    None
  */
-void TMR_ConfigIC2Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC2Prescaler(TMR_T *tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM1_CAPTURE_B.IC2PSC = prescaler;
 }
@@ -1362,7 +1362,7 @@ void TMR_ConfigIC2Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
  *
  * @retval    None
  */
-void TMR_ConfigIC3Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC3Prescaler(TMR_T *tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM2_CAPTURE_B.IC3PSC = prescaler;
 }
@@ -1381,7 +1381,7 @@ void TMR_ConfigIC3Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
  *
  * @retval    None
  */
-void TMR_ConfigIC4Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC4Prescaler(TMR_T *tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM2_CAPTURE_B.IC4PSC = prescaler;
 }
@@ -1395,7 +1395,7 @@ void TMR_ConfigIC4Prescaler(TMR_T* tmr, TMR_IC_PSC_T prescaler)
  *
  * @retval    None
  */
-void TMR_ConfigBDT(TMR_T* tmr, TMR_BDTConfig_T* BDTConfig)
+void TMR_ConfigBDT(TMR_T *tmr, TMR_BDTConfig_T *BDTConfig)
 {
     tmr->BDT = (BDTConfig->IMOS) << 10 | \
                (BDTConfig->RMOS) << 11 | \
@@ -1413,7 +1413,7 @@ void TMR_ConfigBDT(TMR_T* tmr, TMR_BDTConfig_T* BDTConfig)
  *
  * @retval    None
  */
-void TMR_ConfigBDTStructInit( TMR_BDTConfig_T* BDTConfig)
+void TMR_ConfigBDTStructInit(TMR_BDTConfig_T *BDTConfig)
 {
     BDTConfig->RMOS = TMR_RMOS_STATE_DISABLE;
     BDTConfig->IMOS = TMR_IMOS_STATE_DISABLE;
@@ -1431,7 +1431,7 @@ void TMR_ConfigBDTStructInit( TMR_BDTConfig_T* BDTConfig)
  *
  * @retval    None
  */
-void TMR_EnablePWMOutputs(TMR_T* tmr)
+void TMR_EnablePWMOutputs(TMR_T *tmr)
 {
     tmr->BDT_B.MOEN = ENABLE;
 }
@@ -1443,7 +1443,7 @@ void TMR_EnablePWMOutputs(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisablePWMOutputs(TMR_T* tmr)
+void TMR_DisablePWMOutputs(TMR_T *tmr)
 {
     tmr->BDT_B.MOEN = DISABLE;
 }
@@ -1455,7 +1455,7 @@ void TMR_DisablePWMOutputs(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_EnableSelectCOM(TMR_T* tmr)
+void TMR_EnableSelectCOM(TMR_T *tmr)
 {
     tmr->CTRL2_B.CCUSEL = ENABLE;
 }
@@ -1466,7 +1466,7 @@ void TMR_EnableSelectCOM(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableSelectCOM(TMR_T* tmr)
+void TMR_DisableSelectCOM(TMR_T *tmr)
 {
     tmr->CTRL2_B.CCUSEL = DISABLE;
 }
@@ -1478,7 +1478,7 @@ void TMR_DisableSelectCOM(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_EnableCCPreload(TMR_T* tmr)
+void TMR_EnableCCPreload(TMR_T *tmr)
 {
     tmr->CTRL2_B.CCPEN = ENABLE;
 }
@@ -1490,7 +1490,7 @@ void TMR_EnableCCPreload(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableCCPreload(TMR_T* tmr)
+void TMR_DisableCCPreload(TMR_T *tmr)
 {
     tmr->CTRL2_B.CCPEN = DISABLE;
 }
@@ -1527,7 +1527,7 @@ void TMR_DisableCCPreload(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigDMA(TMR_T* tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength)
+void TMR_ConfigDMA(TMR_T *tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength)
 {
     tmr->DCTRL = (uint32_t)baseAddress | (uint32_t)burstLength;
 }
@@ -1551,7 +1551,7 @@ void TMR_ConfigDMA(TMR_T* tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T
  *
  * @note
  */
-void TMR_EnableDMASoure(TMR_T* tmr, uint16_t dmaSource)
+void TMR_EnableDMASoure(TMR_T *tmr, uint16_t dmaSource)
 {
     tmr->DIEN |= dmaSource;
 }
@@ -1575,7 +1575,7 @@ void TMR_EnableDMASoure(TMR_T* tmr, uint16_t dmaSource)
  *
  * @note
  */
-void TMR_DisableDMASoure(TMR_T* tmr, uint16_t dmaSource)
+void TMR_DisableDMASoure(TMR_T *tmr, uint16_t dmaSource)
 {
     tmr->DIEN &= ~dmaSource;
 }
@@ -1587,7 +1587,7 @@ void TMR_DisableDMASoure(TMR_T* tmr, uint16_t dmaSource)
  *
  * @retval    None
  */
-void TMR_EnableCCDMA(TMR_T* tmr)
+void TMR_EnableCCDMA(TMR_T *tmr)
 {
     tmr->CTRL2_B.CCDSEL = ENABLE;
 }
@@ -1599,7 +1599,7 @@ void TMR_EnableCCDMA(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableCCDMA(TMR_T* tmr)
+void TMR_DisableCCDMA(TMR_T *tmr)
 {
     tmr->CTRL2_B.CCDSEL = DISABLE;
 }
@@ -1611,7 +1611,7 @@ void TMR_DisableCCDMA(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigInternalClock(TMR_T* tmr)
+void TMR_ConfigInternalClock(TMR_T *tmr)
 {
     tmr->SMCTRL_B.SMFSEL = BIT_RESET;
 }
@@ -1630,7 +1630,7 @@ void TMR_ConfigInternalClock(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigIntTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource)
+void TMR_ConfigIntTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource)
 {
     TMR_SelectInputTrigger(tmr, triggerSource);
     tmr->SMCTRL_B.SMFSEL = TMR_SLAVE_MODE_EXTERNAL1;
@@ -1656,7 +1656,7 @@ void TMR_ConfigIntTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSour
  *
  * @retval    None
  */
-void TMR_ConfigTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource,
+void TMR_ConfigTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource,
                                  TMR_IC_POLARITY_T ICpolarity, uint16_t ICfilter)
 {
     if (triggerSource == TMR_TRIGGER_SOURCE_TI2FP2)
@@ -1693,7 +1693,7 @@ void TMR_ConfigTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource,
  *
  * @retval    None
  */
-void TMR_ConfigETRClockMode1(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETRClockMode1(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
                              TMR_EXTTRG_POL_T polarity, uint16_t filter)
 {
     TMR_ConfigETR(tmr, prescaler, polarity, filter);
@@ -1723,7 +1723,7 @@ void TMR_ConfigETRClockMode1(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
  *
  * @retval    None
  */
-void TMR_ConfigETRClockMode2(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETRClockMode2(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
                              TMR_EXTTRG_POL_T polarity, uint16_t filter)
 {
     TMR_ConfigETR(tmr, prescaler, polarity, filter);
@@ -1749,7 +1749,7 @@ void TMR_ConfigETRClockMode2(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
  *
  * @retval    None
  */
-void TMR_SelectInputTrigger(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource)
+void TMR_SelectInputTrigger(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource)
 {
     tmr->SMCTRL_B.TRGSEL = triggerSource;
 }
@@ -1773,7 +1773,7 @@ void TMR_SelectInputTrigger(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource)
  *
  * @retval    None
  */
-void TMR_SelectOutputTrigger(TMR_T* tmr, TMR_TRGO_SOURCE_T TRGOSource)
+void TMR_SelectOutputTrigger(TMR_T *tmr, TMR_TRGO_SOURCE_T TRGOSource)
 {
     tmr->CTRL2_B.MMSEL = TRGOSource;
 }
@@ -1792,7 +1792,7 @@ void TMR_SelectOutputTrigger(TMR_T* tmr, TMR_TRGO_SOURCE_T TRGOSource)
  *
  * @retval    None
  */
-void TMR_SelectSlaveMode(TMR_T* tmr, TMR_SLAVE_MODE_T slaveMode)
+void TMR_SelectSlaveMode(TMR_T *tmr, TMR_SLAVE_MODE_T slaveMode)
 {
     tmr->SMCTRL_B.SMFSEL = slaveMode;
 }
@@ -1804,7 +1804,7 @@ void TMR_SelectSlaveMode(TMR_T* tmr, TMR_SLAVE_MODE_T slaveMode)
  *
  * @retval    None
  */
-void TMR_EnableMasterSlaveMode(TMR_T* tmr)
+void TMR_EnableMasterSlaveMode(TMR_T *tmr)
 {
     tmr->SMCTRL_B.MSMEN = ENABLE;
 }
@@ -1816,7 +1816,7 @@ void TMR_EnableMasterSlaveMode(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableMasterSlaveMode(TMR_T* tmr)
+void TMR_DisableMasterSlaveMode(TMR_T *tmr)
 {
     tmr->SMCTRL_B.MSMEN = DISABLE;
 }
@@ -1842,7 +1842,7 @@ void TMR_DisableMasterSlaveMode(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigETR(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETR(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
                    TMR_EXTTRG_POL_T polarity, uint16_t filter)
 {
     tmr->SMCTRL &= 0x00FF;
@@ -1874,7 +1874,7 @@ void TMR_ConfigETR(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
  *
  * @retval    None
  */
-void TMR_ConfigEncodeInterface(TMR_T* tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC_POLARITY_T IC1Polarity,
+void TMR_ConfigEncodeInterface(TMR_T *tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC_POLARITY_T IC1Polarity,
                                TMR_IC_POLARITY_T IC2Polarity)
 {
     tmr->SMCTRL_B.SMFSEL = BIT_RESET;
@@ -1898,7 +1898,7 @@ void TMR_ConfigEncodeInterface(TMR_T* tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC
  *
  * @retval    None
  */
-void TMR_EnableHallSensor(TMR_T* tmr)
+void TMR_EnableHallSensor(TMR_T *tmr)
 {
     tmr->CTRL2_B.TI1SEL = ENABLE;
 }
@@ -1910,7 +1910,7 @@ void TMR_EnableHallSensor(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableHallSensor(TMR_T* tmr)
+void TMR_DisableHallSensor(TMR_T *tmr)
 {
     tmr->CTRL2_B.TI1SEL = DISABLE;
 }
@@ -1937,7 +1937,7 @@ void TMR_DisableHallSensor(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_ConfigRemap(TMR_T* tmr, uint32_t remap)
+void TMR_ConfigRemap(TMR_T *tmr, uint32_t remap)
 {
     tmr->OPT = remap;
 }
@@ -1962,7 +1962,7 @@ void TMR_ConfigRemap(TMR_T* tmr, uint32_t remap)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-void TMR_EnableInterrupt(TMR_T* tmr, uint16_t interrupt)
+void TMR_EnableInterrupt(TMR_T *tmr, uint16_t interrupt)
 {
     tmr->DIEN |= interrupt;
 }
@@ -1987,7 +1987,7 @@ void TMR_EnableInterrupt(TMR_T* tmr, uint16_t interrupt)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-void TMR_DisableInterrupt(TMR_T* tmr, uint16_t interrupt)
+void TMR_DisableInterrupt(TMR_T *tmr, uint16_t interrupt)
 {
     tmr->DIEN &= ~interrupt;
 }
@@ -2012,7 +2012,7 @@ void TMR_DisableInterrupt(TMR_T* tmr, uint16_t interrupt)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_EVENT_UPDATE.
  */
-void TMR_GenerateEvent(TMR_T* tmr, uint16_t eventSources)
+void TMR_GenerateEvent(TMR_T *tmr, uint16_t eventSources)
 {
     tmr->CEG = eventSources;
 }
@@ -2041,7 +2041,7 @@ void TMR_GenerateEvent(TMR_T* tmr, uint16_t eventSources)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_FLAG_UPDATE.
  */
-uint16_t TMR_ReadStatusFlag(TMR_T* tmr, TMR_FLAG_T flag)
+uint16_t TMR_ReadStatusFlag(TMR_T *tmr, TMR_FLAG_T flag)
 {
     return (tmr->STS & flag) ? SET : RESET;
 }
@@ -2070,7 +2070,7 @@ uint16_t TMR_ReadStatusFlag(TMR_T* tmr, TMR_FLAG_T flag)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_FLAG_UPDATE.
  */
-void TMR_ClearStatusFlag(TMR_T* tmr, uint16_t flag)
+void TMR_ClearStatusFlag(TMR_T *tmr, uint16_t flag)
 {
     tmr->STS = ~flag;
 }
@@ -2095,9 +2095,9 @@ void TMR_ClearStatusFlag(TMR_T* tmr, uint16_t flag)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-uint16_t TMR_ReadIntFlag(TMR_T* tmr, TMR_INT_T flag)
+uint16_t TMR_ReadIntFlag(TMR_T *tmr, TMR_INT_T flag)
 {
-    if (((tmr->STS & flag) != RESET ) && ((tmr->DIEN & flag) != RESET))
+    if (((tmr->STS & flag) != RESET) && ((tmr->DIEN & flag) != RESET))
     {
         return SET;
     }
@@ -2127,7 +2127,7 @@ uint16_t TMR_ReadIntFlag(TMR_T* tmr, TMR_INT_T flag)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-void TMR_ClearIntFlag(TMR_T* tmr,  uint16_t flag)
+void TMR_ClearIntFlag(TMR_T *tmr,  uint16_t flag)
 {
     tmr->STS = ~flag;
 }
@@ -2145,7 +2145,7 @@ void TMR_ClearIntFlag(TMR_T* tmr,  uint16_t flag)
  *
  * @retval    None
  */
-static void TI1Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI1Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2157,7 +2157,7 @@ static void TI1Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
     tmr->CCM1_CAPTURE_B.IC1F = ICfilter;
 
     if ((tmr == TMR1) || (tmr == TMR8) || (tmr == TMR2) || (tmr == TMR3) ||
-        (tmr == TMR4) || (tmr == TMR5))
+            (tmr == TMR4) || (tmr == TMR5))
     {
         tmr->CCEN_B.CC1POL = BIT_RESET;
         tmr->CCEN_B.CC1EN = BIT_SET;
@@ -2189,7 +2189,7 @@ static void TI1Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  */
-static void TI2Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI2Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2201,7 +2201,7 @@ static void TI2Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
     tmr->CCM1_CAPTURE_B.IC2F = ICfilter;
 
     if ((tmr == TMR1) || (tmr == TMR8) || (tmr == TMR2) || (tmr == TMR3) ||
-        (tmr == TMR4) || (tmr == TMR5))
+            (tmr == TMR4) || (tmr == TMR5))
     {
         tmr->CCEN_B.CC2POL = BIT_RESET;
         tmr->CCEN_B.CC2EN = BIT_SET;
@@ -2233,7 +2233,7 @@ static void TI2Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  */
-static void TI3Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI3Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2245,7 +2245,7 @@ static void TI3Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
     tmr->CCM2_CAPTURE_B.IC3F = ICfilter;
 
     if ((tmr == TMR1) || (tmr == TMR8) || (tmr == TMR2) || (tmr == TMR3) ||
-        (tmr == TMR4) || (tmr == TMR5))
+            (tmr == TMR4) || (tmr == TMR5))
     {
         tmr->CCEN_B.CC3POL = BIT_RESET;
         tmr->CCEN_B.CC3EN = BIT_SET;
@@ -2277,7 +2277,7 @@ static void TI3Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  */
-static void TI4Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI4Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 

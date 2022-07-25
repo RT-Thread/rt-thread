@@ -45,19 +45,19 @@
  *
  * @retval    None
  */
-void SPI_I2S_Reset(SPI_T* spi)
+void SPI_I2S_Reset(SPI_T *spi)
 {
-    if(spi == SPI1)
+    if (spi == SPI1)
     {
         RCM_EnableAPB2PeriphReset(RCM_APB2_PERIPH_SPI1);
         RCM_DisableAPB2PeriphReset(RCM_APB2_PERIPH_SPI1);
     }
-    else if(spi == SPI2)
+    else if (spi == SPI2)
     {
         RCM_EnableAPB1PeriphReset(RCM_APB1_PERIPH_SPI2);
         RCM_DisableAPB1PeriphReset(RCM_APB1_PERIPH_SPI2);
     }
-    else if(spi == SPI3)
+    else if (spi == SPI3)
     {
         RCM_EnableAPB1PeriphReset(RCM_APB1_PERIPH_SPI3);
         RCM_DisableAPB1PeriphReset(RCM_APB1_PERIPH_SPI3);
@@ -73,13 +73,13 @@ void SPI_I2S_Reset(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_Config(SPI_T* spi, SPI_Config_T* spiConfig)
+void SPI_Config(SPI_T *spi, SPI_Config_T *spiConfig)
 {
     spi->CTRL1 &= 0x3040;
     spi->CTRL1 |= (uint16_t)((uint32_t)spiConfig->direction | spiConfig->mode |
-                   spiConfig->length | spiConfig->polarity |
-                   spiConfig->phase | spiConfig->nss |
-                   spiConfig->baudrateDiv | spiConfig->firstBit);
+                             spiConfig->length | spiConfig->polarity |
+                             spiConfig->phase | spiConfig->nss |
+                             spiConfig->baudrateDiv | spiConfig->firstBit);
     spi->CRCPOLY = spiConfig->crcPolynomial;
 }
 
@@ -92,7 +92,7 @@ void SPI_Config(SPI_T* spi, SPI_Config_T* spiConfig)
  *
  * @retval    None
  */
-void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
+void I2S_Config(SPI_T *spi, I2S_Config_T *i2sConfig)
 {
     uint16_t i2sDiv = 2, i2sOdd = 0, packetSize = 1;
     uint32_t tmp = 0;
@@ -102,14 +102,14 @@ void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
     spi->I2SCFG &= 0xF040;
     spi->I2SPSC = 0x0002;
 
-    if(i2sConfig->audioDiv == I2S_AUDIO_DIV_DEFAULT)
+    if (i2sConfig->audioDiv == I2S_AUDIO_DIV_DEFAULT)
     {
         spi->I2SPSC_B.ODDPSC = 0;
         spi->I2SPSC_B.I2SPSC = 2;
     }
     else
     {
-        if(i2sConfig->length == I2S_DATA_LENGHT_16B)
+        if (i2sConfig->length == I2S_DATA_LENGHT_16B)
         {
             packetSize = 1;
         }
@@ -120,13 +120,13 @@ void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
 
         sysClock = RCM_ReadSYSCLKFreq();
 
-        if(i2sConfig->MCLKOutput == I2S_MCLK_OUTPUT_ENABLE)
+        if (i2sConfig->MCLKOutput == I2S_MCLK_OUTPUT_ENABLE)
         {
             tmp = (uint16_t)(((((sysClock / 256) * 10) / i2sConfig ->audioDiv)) + 5);
         }
         else
         {
-            tmp = (uint16_t)(((((sysClock / (32 * packetSize)) *10 ) / i2sConfig ->audioDiv )) + 5);
+            tmp = (uint16_t)(((((sysClock / (32 * packetSize)) * 10) / i2sConfig ->audioDiv)) + 5);
         }
         tmp = tmp / 10;
 
@@ -160,7 +160,7 @@ void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
  *
  * @retval    None
  */
-void SPI_ConfigStructInit(SPI_Config_T* spiConfig)
+void SPI_ConfigStructInit(SPI_Config_T *spiConfig)
 {
     spiConfig->direction = SPI_DIRECTION_2LINES_FULLDUPLEX;
     spiConfig->mode = SPI_MODE_SLAVE;
@@ -180,7 +180,7 @@ void SPI_ConfigStructInit(SPI_Config_T* spiConfig)
  *
  * @retval    None
  */
-void I2S_ConfigStructInit(I2S_Config_T* i2sConfig)
+void I2S_ConfigStructInit(I2S_Config_T *i2sConfig)
 {
     i2sConfig->mode = I2S_MODE_SLAVE_TX;
     i2sConfig->standard = I2S_STANDARD_PHILLIPS;
@@ -196,7 +196,7 @@ void I2S_ConfigStructInit(I2S_Config_T* i2sConfig)
  *
  * @retval    None
  */
-void SPI_Enable(SPI_T* spi)
+void SPI_Enable(SPI_T *spi)
 {
     spi->CTRL1_B.SPIEN = BIT_SET;
 }
@@ -208,7 +208,7 @@ void SPI_Enable(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_Disable(SPI_T* spi)
+void SPI_Disable(SPI_T *spi)
 {
     spi->CTRL1_B.SPIEN = BIT_RESET;
 }
@@ -220,7 +220,7 @@ void SPI_Disable(SPI_T* spi)
  *
  * @retval    None
  */
-void I2S_Enable(SPI_T* spi)
+void I2S_Enable(SPI_T *spi)
 {
     spi->I2SCFG_B.I2SEN = BIT_SET;
 }
@@ -232,7 +232,7 @@ void I2S_Enable(SPI_T* spi)
  *
  * @retval    None
  */
-void I2S_Disable(SPI_T* spi)
+void I2S_Disable(SPI_T *spi)
 {
     spi->I2SCFG_B.I2SEN = BIT_RESET;
 }
@@ -248,9 +248,9 @@ void I2S_Disable(SPI_T* spi)
  *                     @arg SPI_I2S_DMA_REQ_RX: Rx buffer DMA transfer request
  * @retval    None
  */
-void SPI_I2S_EnableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
+void SPI_I2S_EnableDMA(SPI_T *spi, SPI_I2S_DMA_REQ_T dmaReq)
 {
-    if(dmaReq == SPI_I2S_DMA_REQ_TX)
+    if (dmaReq == SPI_I2S_DMA_REQ_TX)
     {
         spi->CTRL2_B.TXDEN = ENABLE;
     }
@@ -271,9 +271,9 @@ void SPI_I2S_EnableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
  *                     @arg SPI_I2S_DMA_REQ_RX: Rx buffer DMA transfer request
  * @retval    None
  */
-void SPI_I2S_DisableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
+void SPI_I2S_DisableDMA(SPI_T *spi, SPI_I2S_DMA_REQ_T dmaReq)
 {
-    if(dmaReq == SPI_I2S_DMA_REQ_TX)
+    if (dmaReq == SPI_I2S_DMA_REQ_TX)
     {
         spi->CTRL2_B.TXDEN = DISABLE;
     }
@@ -292,7 +292,7 @@ void SPI_I2S_DisableDMA(SPI_T* spi, SPI_I2S_DMA_REQ_T dmaReq)
  *
  * @retval    None
  */
-void SPI_I2S_TxData(SPI_T* spi, uint16_t data)
+void SPI_I2S_TxData(SPI_T *spi, uint16_t data)
 {
     spi->DATA = data;
 }
@@ -306,7 +306,7 @@ void SPI_I2S_TxData(SPI_T* spi, uint16_t data)
  *
  * @retval    None
  */
-uint16_t SPI_I2S_RxData(SPI_T* spi)
+uint16_t SPI_I2S_RxData(SPI_T *spi)
 {
     return spi->DATA;
 }
@@ -318,7 +318,7 @@ uint16_t SPI_I2S_RxData(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_SetSoftwareNSS(SPI_T* spi)
+void SPI_SetSoftwareNSS(SPI_T *spi)
 {
     spi->CTRL1_B.ISSEL = BIT_SET;
 }
@@ -330,7 +330,7 @@ void SPI_SetSoftwareNSS(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_ResetSoftwareNSS(SPI_T* spi)
+void SPI_ResetSoftwareNSS(SPI_T *spi)
 {
     spi->CTRL1_B.ISSEL = BIT_RESET;
 }
@@ -342,7 +342,7 @@ void SPI_ResetSoftwareNSS(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_EnableSSOutput(SPI_T* spi)
+void SPI_EnableSSOutput(SPI_T *spi)
 {
     spi->CTRL2_B.SSOEN = BIT_SET;
 }
@@ -354,7 +354,7 @@ void SPI_EnableSSOutput(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_DisableSSOutput(SPI_T* spi)
+void SPI_DisableSSOutput(SPI_T *spi)
 {
     spi->CTRL2_B.SSOEN = BIT_RESET;
 }
@@ -371,7 +371,7 @@ void SPI_DisableSSOutput(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_ConfigDataSize(SPI_T* spi, SPI_DATA_LENGTH_T length)
+void SPI_ConfigDataSize(SPI_T *spi, SPI_DATA_LENGTH_T length)
 {
     spi->CTRL1_B.DFLSEL = BIT_RESET;
     spi->CTRL1 |= length;
@@ -384,7 +384,7 @@ void SPI_ConfigDataSize(SPI_T* spi, SPI_DATA_LENGTH_T length)
  *
  * @retval    None
  */
-void SPI_TxCRC(SPI_T* spi)
+void SPI_TxCRC(SPI_T *spi)
 {
     spi->CTRL1_B.CRCNXT = BIT_SET;
 }
@@ -396,7 +396,7 @@ void SPI_TxCRC(SPI_T* spi)
  *
  * @retval    None
  */
-void SPI_EnableCRC(SPI_T* spi)
+void SPI_EnableCRC(SPI_T *spi)
 {
     spi->CTRL1_B.CRCEN = BIT_SET;
 }
@@ -407,7 +407,7 @@ void SPI_EnableCRC(SPI_T* spi)
  * @param     spi: The SPIx can be 1,2,3
  *
  */
-void SPI_DisableCRC(SPI_T* spi)
+void SPI_DisableCRC(SPI_T *spi)
 {
     spi->CTRL1_B.CRCEN = BIT_RESET;
 }
@@ -419,7 +419,7 @@ void SPI_DisableCRC(SPI_T* spi)
  *
  * @retval    The SPI transmit CRC register value
  */
-uint16_t SPI_ReadTxCRC(SPI_T* spi)
+uint16_t SPI_ReadTxCRC(SPI_T *spi)
 {
     return spi->TXCRC_B.TXCRC;
 }
@@ -431,7 +431,7 @@ uint16_t SPI_ReadTxCRC(SPI_T* spi)
  *
  * @retval    The SPI receive CRC register value
  */
-uint16_t SPI_ReadRxCRC(SPI_T* spi)
+uint16_t SPI_ReadRxCRC(SPI_T *spi)
 {
     return spi->RXCRC_B.RXCRC;
 }
@@ -443,7 +443,7 @@ uint16_t SPI_ReadRxCRC(SPI_T* spi)
  *
  * @retval    The SPI CRC Polynomial register value
  */
-uint16_t SPI_ReadCRCPolynomial(SPI_T* spi)
+uint16_t SPI_ReadCRCPolynomial(SPI_T *spi)
 {
     return spi->CRCPOLY_B.CRCPOLY;
 }
@@ -459,9 +459,9 @@ uint16_t SPI_ReadCRCPolynomial(SPI_T* spi)
  *                     @arg SPI_DIRECTION_TX: Selects Tx transmission direction
  * @retval    None
  */
-void SPI_ConfigBiDirectionalLine(SPI_T* spi, SPI_DIRECTION_SELECT_T direction)
+void SPI_ConfigBiDirectionalLine(SPI_T *spi, SPI_DIRECTION_SELECT_T direction)
 {
-    if(direction == SPI_DIRECTION_TX)
+    if (direction == SPI_DIRECTION_TX)
     {
         spi->CTRL1 |= SPI_DIRECTION_TX;
     }
@@ -483,9 +483,9 @@ void SPI_ConfigBiDirectionalLine(SPI_T* spi, SPI_DIRECTION_SELECT_T direction)
  *                     @arg SPI_I2S_INT_ERR: Error interrupt
  * @retval       None
  */
-void SPI_I2S_EnableInterrupt(SPI_T* spi, SPI_I2S_INT_T interrupt)
+void SPI_I2S_EnableInterrupt(SPI_T *spi, SPI_I2S_INT_T interrupt)
 {
-     spi->CTRL2 |= (interrupt >> 8);
+    spi->CTRL2 |= (interrupt >> 8);
 }
 
 /*!
@@ -500,9 +500,9 @@ void SPI_I2S_EnableInterrupt(SPI_T* spi, SPI_I2S_INT_T interrupt)
  *                     @arg SPI_I2S_INT_ERR: Error interrupt
  * @retval    None
  */
-void SPI_I2S_DisableInterrupt(SPI_T* spi, SPI_I2S_INT_T interrupt)
+void SPI_I2S_DisableInterrupt(SPI_T *spi, SPI_I2S_INT_T interrupt)
 {
-         spi->CTRL2 &= ~(interrupt >> 8);
+    spi->CTRL2 &= ~(interrupt >> 8);
 }
 
 /*!
@@ -523,9 +523,9 @@ void SPI_I2S_DisableInterrupt(SPI_T* spi, SPI_I2S_INT_T interrupt)
  *
  * @retval     SET or RESET
  */
-uint8_t SPI_I2S_ReadStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
+uint8_t SPI_I2S_ReadStatusFlag(SPI_T *spi, SPI_FLAG_T flag)
 {
-    if((spi->STS & flag) != RESET)
+    if ((spi->STS & flag) != RESET)
     {
         return SET;
     }
@@ -553,7 +553,7 @@ uint8_t SPI_I2S_ReadStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
  *              a read/write operation to SPI_STS register (SPI_I2S_ReadStatusFlag())
  *              followed by a write operation to SPI_CTRL1 register (SPI_Enable()).
  */
-void SPI_I2S_ClearStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
+void SPI_I2S_ClearStatusFlag(SPI_T *spi, SPI_FLAG_T flag)
 {
     spi->STS_B.CRCEFLG = BIT_RESET;
 }
@@ -574,12 +574,12 @@ void SPI_I2S_ClearStatusFlag(SPI_T* spi, SPI_FLAG_T flag)
  *
  * @retval       SET or RESET
  */
-uint8_t SPI_I2S_ReadIntFlag(SPI_T* spi, SPI_I2S_INT_T flag)
+uint8_t SPI_I2S_ReadIntFlag(SPI_T *spi, SPI_I2S_INT_T flag)
 {
     uint32_t intEnable;
     uint32_t intStatus;
 
-    intEnable = (uint32_t)(spi->CTRL2 & (flag>>8));
+    intEnable = (uint32_t)(spi->CTRL2 & (flag >> 8));
     intStatus = (uint32_t)(spi->STS & flag);
 
     if (intEnable && intStatus)
@@ -608,7 +608,7 @@ uint8_t SPI_I2S_ReadIntFlag(SPI_T* spi, SPI_I2S_INT_T flag)
  *              a read/write operation to SPI_STS register (SPI_I2S_ReadIntFlag())
  *              followed by a write operation to SPI_CTRL1 register (SPI_Enable()).
  */
-void SPI_I2S_ClearIntFlag(SPI_T* spi, SPI_I2S_INT_T flag)
+void SPI_I2S_ClearIntFlag(SPI_T *spi, SPI_I2S_INT_T flag)
 {
     spi->STS_B.CRCEFLG = BIT_RESET;
 }

@@ -55,7 +55,7 @@
  * @retval    SUCCESS or ERROR
  */
 uint8_t CRYP_DES_ECB(CRYP_MODE_T mode, uint8_t key[8], uint8_t *input,
-                                      uint32_t length, uint8_t *output)
+                     uint32_t length, uint8_t *output)
 {
     CRYP_Config_T    DEC_crypConfig;
     CRYP_KeyConfig_T DEC_keyConfig;
@@ -71,7 +71,7 @@ uint8_t CRYP_DES_ECB(CRYP_MODE_T mode, uint8_t key[8], uint8_t *input,
 
     CRYP_ConfigKeyStructInit(&DEC_keyConfig);
 
-    if(mode == CRYP_MODE_ENCRYPT)
+    if (mode == CRYP_MODE_ENCRYPT)
     {
         DEC_crypConfig.algoDir = CRYP_ALGODIR_ENCRYPT;
     }
@@ -83,25 +83,25 @@ uint8_t CRYP_DES_ECB(CRYP_MODE_T mode, uint8_t key[8], uint8_t *input,
     DEC_crypConfig.dataType = CRYP_DATATYPE_8B;
     CRYP_Config(&DEC_crypConfig);
 
-    DEC_keyConfig.key1Left = __REV(*(uint32_t*)(keyAddr));
+    DEC_keyConfig.key1Left = __REV(*(uint32_t *)(keyAddr));
     keyAddr += 0x04;
-    DEC_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+    DEC_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
     CRYP_ConfigKey(&DEC_keyConfig);
 
     CRYP_FlushFIFO();
     CRYP_Enable();
 
-    if(CRYP_ReadCmdStatus() == DISABLE)
+    if (CRYP_ReadCmdStatus() == DISABLE)
     {
         status = ERROR;
     }
     else
     {
-        for(i=0; i<length; i+=8)
+        for (i = 0; i < length; i += 8)
         {
-            CRYP_InData(*(uint32_t*)(inputAddr));
+            CRYP_InData(*(uint32_t *)(inputAddr));
             inputAddr += 0x04;
-            CRYP_InData(*(uint32_t*)(inputAddr));
+            CRYP_InData(*(uint32_t *)(inputAddr));
             inputAddr += 0x04;
 
             counter = 0;
@@ -110,17 +110,17 @@ uint8_t CRYP_DES_ECB(CRYP_MODE_T mode, uint8_t key[8], uint8_t *input,
                 flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
                 counter++;
             }
-            while((counter != 0x00010000) && (flag != RESET));
+            while ((counter != 0x00010000) && (flag != RESET));
 
-            if(flag == SET)
+            if (flag == SET)
             {
                 status = ERROR;
             }
             else
             {
-                *(uint32_t*)(outputAddr) = CRYP_OutData();
+                *(uint32_t *)(outputAddr) = CRYP_OutData();
                 outputAddr += 0x04;
-                *(uint32_t*)(outputAddr) = CRYP_OutData();
+                *(uint32_t *)(outputAddr) = CRYP_OutData();
                 outputAddr += 0x04;
             }
         }
@@ -146,7 +146,7 @@ uint8_t CRYP_DES_ECB(CRYP_MODE_T mode, uint8_t key[8], uint8_t *input,
  * @retval    None
  */
 uint8_t CRYP_DES_CBC(CRYP_MODE_T mode, uint8_t key[8],  uint8_t *input,
-                        uint8_t IV[8], uint32_t length, uint8_t *output)
+                     uint8_t IV[8], uint32_t length, uint8_t *output)
 {
     CRYP_Config_T    DEC_crypConfig;
     CRYP_KeyConfig_T DEC_keyConfig;
@@ -164,7 +164,7 @@ uint8_t CRYP_DES_CBC(CRYP_MODE_T mode, uint8_t key[8],  uint8_t *input,
 
     CRYP_ConfigKeyStructInit(&DEC_keyConfig);
 
-    if(mode == CRYP_MODE_ENCRYPT)
+    if (mode == CRYP_MODE_ENCRYPT)
     {
         DEC_crypConfig.algoDir = CRYP_ALGODIR_ENCRYPT;
     }
@@ -176,30 +176,30 @@ uint8_t CRYP_DES_CBC(CRYP_MODE_T mode, uint8_t key[8],  uint8_t *input,
     DEC_crypConfig.dataType = CRYP_DATATYPE_8B;
     CRYP_Config(&DEC_crypConfig);
 
-    DEC_keyConfig.key1Left = __REV(*(uint32_t*)(keyAddr));
+    DEC_keyConfig.key1Left = __REV(*(uint32_t *)(keyAddr));
     keyAddr += 0x04;
-    DEC_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+    DEC_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
     CRYP_ConfigKey(&DEC_keyConfig);
 
-    DEC_IVConfig.IV0Left  = __REV(*(uint32_t*)(IVAddr));
+    DEC_IVConfig.IV0Left  = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    DEC_IVConfig.IV0Right = __REV(*(uint32_t*)(IVAddr));
+    DEC_IVConfig.IV0Right = __REV(*(uint32_t *)(IVAddr));
     CRYP_ConfigIV(&DEC_IVConfig);
 
     CRYP_FlushFIFO();
     CRYP_Enable();
 
-    if(CRYP_ReadCmdStatus() == DISABLE)
+    if (CRYP_ReadCmdStatus() == DISABLE)
     {
         status = ERROR;
     }
     else
     {
-        for(i=0; i<length; i+=8)
+        for (i = 0; i < length; i += 8)
         {
-            CRYP_InData(*(uint32_t*)(inputAddr));
+            CRYP_InData(*(uint32_t *)(inputAddr));
             inputAddr += 0x04;
-            CRYP_InData(*(uint32_t*)(inputAddr));
+            CRYP_InData(*(uint32_t *)(inputAddr));
             inputAddr += 0x04;
 
             counter = 0;
@@ -208,17 +208,17 @@ uint8_t CRYP_DES_CBC(CRYP_MODE_T mode, uint8_t key[8],  uint8_t *input,
                 flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
                 counter++;
             }
-            while((counter != 0x00010000) && (flag != RESET));
+            while ((counter != 0x00010000) && (flag != RESET));
 
-            if(flag == SET)
+            if (flag == SET)
             {
                 status = ERROR;
             }
             else
             {
-                *(uint32_t*)(outputAddr) = CRYP_OutData();
+                *(uint32_t *)(outputAddr) = CRYP_OutData();
                 outputAddr += 0x04;
-                *(uint32_t*)(outputAddr) = CRYP_OutData();
+                *(uint32_t *)(outputAddr) = CRYP_OutData();
                 outputAddr += 0x04;
             }
         }

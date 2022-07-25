@@ -204,7 +204,7 @@ RTM_EXPORT(rt_data_queue_push);
  *           When the return value is RT_ETIMEOUT, it means the specified time out.
  */
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
-                           const void** data_ptr,
+                           const void **data_ptr,
                            rt_size_t *size,
                            rt_int32_t timeout)
 {
@@ -327,7 +327,7 @@ RTM_EXPORT(rt_data_queue_pop);
  *           When the return value is -RT_EEMPTY, it means the data queue is empty.
  */
 rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
-                            const void** data_ptr,
+                            const void **data_ptr,
                             rt_size_t *size)
 {
     rt_base_t level;

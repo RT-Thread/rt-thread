@@ -232,9 +232,9 @@ void PMU_EnterSTOPMode(PMU_REGULATOR_T regulator, PMU_STOP_ENTRY_T entry)
     /* Set LPDSCFG bit according to regulator value */
     PMU->CTRL_B.LPDSCFG = regulator;
     /* Set Cortex System Control Register */
-    SCB->SCR |= (uint32_t )0x04;
+    SCB->SCR |= (uint32_t)0x04;
     /* Select STOP mode entry*/
-    if(entry == PMU_STOP_ENTRY_WFI)
+    if (entry == PMU_STOP_ENTRY_WFI)
     {
         /* Request Wait For Interrupt */
         __WFI();
@@ -261,10 +261,10 @@ void PMU_EnterSTANDBYMode(void)
     /* Select STANDBY mode */
     PMU->CTRL_B.PDDSCFG = BIT_SET;
     /* Set SLEEPDEEP bit of Cortex System Control Register */
-    SCB->SCR |= (uint32_t )0x04;
-    #if defined ( __CC_ARM   )
+    SCB->SCR |= (uint32_t)0x04;
+#if defined ( __CC_ARM   )
     __force_stores();
-    #endif
+#endif
     /* Request Wait For Interrupt */
     __WFI();
 
