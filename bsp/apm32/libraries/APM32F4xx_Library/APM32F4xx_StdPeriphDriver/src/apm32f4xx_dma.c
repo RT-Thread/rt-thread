@@ -48,7 +48,7 @@
  *
  * @note      DMA2 channel only for APM32 High density devices.
  */
-void DMA_Reset(DMA_Stream_T* stream)
+void DMA_Reset(DMA_Stream_T *stream)
 {
     stream->SCFG_B.EN  =  BIT_RESET;
     stream->SCFG       =  0;
@@ -56,7 +56,7 @@ void DMA_Reset(DMA_Stream_T* stream)
     stream->PADDR      =  0;
     stream->M0ADDR     =  0;
     stream->M1ADDR     =  0;
-    stream->FCTRL      =  (uint32_t)0x00000021;
+    stream->FCTRL      = (uint32_t)0x00000021;
 
     if (stream == DMA1_Stream0)
     {
@@ -135,7 +135,7 @@ void DMA_Reset(DMA_Stream_T* stream)
  *
  * @note      DMA2 channel only for APM32 High density devices.
  */
-void DMA_Config(DMA_Stream_T* stream, DMA_Config_T* dmaConfig)
+void DMA_Config(DMA_Stream_T *stream, DMA_Config_T *dmaConfig)
 {
     stream->SCFG_B.DIRCFG = dmaConfig->dir;
     stream->SCFG_B.CIRCMEN = dmaConfig->loopMode;
@@ -163,7 +163,7 @@ void DMA_Config(DMA_Stream_T* stream, DMA_Config_T* dmaConfig)
  *
  * @retval    None
  */
-void DMA_ConfigStructInit( DMA_Config_T* dmaConfig)
+void DMA_ConfigStructInit(DMA_Config_T *dmaConfig)
 {
     dmaConfig->channel = DMA_CHANNEL_0;
     dmaConfig->peripheralBaseAddr = 0;
@@ -191,7 +191,7 @@ void DMA_ConfigStructInit( DMA_Config_T* dmaConfig)
  *
  * @note      DMA2 channel only for APM32 High density devices.
  */
-void DMA_Enable(DMA_Stream_T* stream)
+void DMA_Enable(DMA_Stream_T *stream)
 {
     stream->SCFG_B.EN = ENABLE;
 }
@@ -205,7 +205,7 @@ void DMA_Enable(DMA_Stream_T* stream)
  *
  * @note      DMA2 channel only for APM32 High density devices.
  */
-void DMA_Disable(DMA_Stream_T* stream)
+void DMA_Disable(DMA_Stream_T *stream)
 {
     stream->SCFG_B.EN = DISABLE;
 }
@@ -224,7 +224,7 @@ void DMA_Disable(DMA_Stream_T* stream)
  *
  * @note      DMA2 Stream only for APM32 High density devices.
  */
-void DMA_ConfigPeriphIncOffsetSize(DMA_Stream_T* stream, DMA_PERIOSIZE_T perioSize)
+void DMA_ConfigPeriphIncOffsetSize(DMA_Stream_T *stream, DMA_PERIOSIZE_T perioSize)
 {
     stream->SCFG_B.PERIOSIZE = perioSize;
 }
@@ -245,7 +245,7 @@ void DMA_ConfigPeriphIncOffsetSize(DMA_Stream_T* stream, DMA_PERIOSIZE_T perioSi
  *
  * @note      DMA2 Stream only for APM32 High density devices.
  */
-void DMA_ConfigFlowController(DMA_Stream_T* stream, DMA_FLOWCTRL_T flowController)
+void DMA_ConfigFlowController(DMA_Stream_T *stream, DMA_FLOWCTRL_T flowController)
 {
     stream->SCFG_B.PERFC = flowController;
 }
@@ -261,7 +261,7 @@ void DMA_ConfigFlowController(DMA_Stream_T* stream, DMA_FLOWCTRL_T flowControlle
  *
  * @note      DMA2 Stream only for APM32 High density devices.
  */
-void DMA_ConfigDataNumber(DMA_Stream_T* stream, uint16_t dataNumber)
+void DMA_ConfigDataNumber(DMA_Stream_T *stream, uint16_t dataNumber)
 {
     stream->NDATA = dataNumber;
 }
@@ -275,7 +275,7 @@ void DMA_ConfigDataNumber(DMA_Stream_T* stream, uint16_t dataNumber)
  *
  * @note      DMA2 Stream only for APM32 High density devices.
  */
-uint16_t DMA_ReadDataNumber(DMA_Stream_T* stream)
+uint16_t DMA_ReadDataNumber(DMA_Stream_T *stream)
 {
     return (uint16_t)(stream->NDATA);
 }
@@ -295,7 +295,7 @@ uint16_t DMA_ReadDataNumber(DMA_Stream_T* stream)
  *
  * @retval    None
  */
-void DMA_ConfigBufferMode(DMA_Stream_T* stream, uint32_t memory1BaseAddr, DMA_MEMORY_T currentMemory)
+void DMA_ConfigBufferMode(DMA_Stream_T *stream, uint32_t memory1BaseAddr, DMA_MEMORY_T currentMemory)
 {
     stream->SCFG_B.CTARG = currentMemory;
     stream->M1ADDR = memory1BaseAddr;
@@ -308,7 +308,7 @@ void DMA_ConfigBufferMode(DMA_Stream_T* stream, uint32_t memory1BaseAddr, DMA_ME
  *
  * @retval    None
  */
-void DMA_EnableDoubleBufferMode(DMA_Stream_T* stream)
+void DMA_EnableDoubleBufferMode(DMA_Stream_T *stream)
 {
     stream->SCFG_B.DBM = BIT_SET;
 }
@@ -320,7 +320,7 @@ void DMA_EnableDoubleBufferMode(DMA_Stream_T* stream)
  *
  * @retval    None
  */
-void DMA_DisableDoubleBufferMode(DMA_Stream_T* stream)
+void DMA_DisableDoubleBufferMode(DMA_Stream_T *stream)
 {
     stream->SCFG_B.DBM = BIT_RESET;
 }
@@ -340,7 +340,7 @@ void DMA_DisableDoubleBufferMode(DMA_Stream_T* stream)
  *
  * @retval       None
  */
-void DMA_ConfigMemoryTarget(DMA_Stream_T* stream, uint32_t memoryBaseAddr, DMA_MEMORY_T memoryTarget)
+void DMA_ConfigMemoryTarget(DMA_Stream_T *stream, uint32_t memoryBaseAddr, DMA_MEMORY_T memoryTarget)
 {
     if (memoryTarget != DMA_MEMORY_0)
     {
@@ -359,7 +359,7 @@ void DMA_ConfigMemoryTarget(DMA_Stream_T* stream, uint32_t memoryBaseAddr, DMA_M
  *
  * @retval    The memory target number: 0 for Memory0 or 1 for Memory1.
  */
-uint32_t DMA_ReadCurrentMemoryTarget(DMA_Stream_T* stream)
+uint32_t DMA_ReadCurrentMemoryTarget(DMA_Stream_T *stream)
 {
     return (uint32_t)(stream->SCFG_B.CTARG);
 }
@@ -371,7 +371,7 @@ uint32_t DMA_ReadCurrentMemoryTarget(DMA_Stream_T* stream)
  *
  * @retval     Return state of the DMAy channelx (ENABLE or DISABLE).
  */
-uint8_t DMA_ReadCmdStatus(DMA_Stream_T* stream)
+uint8_t DMA_ReadCmdStatus(DMA_Stream_T *stream)
 {
     return (uint8_t)(stream->SCFG_B.EN);
 }
@@ -389,7 +389,7 @@ uint8_t DMA_ReadCmdStatus(DMA_Stream_T* stream)
  *                  - DMA_FIFOSTATUS_EMPTY: when FIFO is empty
  *                  - DMA_FIFOSTATUS_FULL: when FIFO is full
  */
-uint32_t DMA_ReadFIFOFlag(DMA_Stream_T* stream)
+uint32_t DMA_ReadFIFOFlag(DMA_Stream_T *stream)
 {
     return (uint32_t)(stream->FCTRL_B.FSTS);
 }
@@ -410,9 +410,9 @@ uint32_t DMA_ReadFIFOFlag(DMA_Stream_T* stream)
  *
  * @retval    None
  */
-uint8_t DMA_ReadStatusFlag(DMA_Stream_T* stream, DMA_FLAG_T flag)
+uint8_t DMA_ReadStatusFlag(DMA_Stream_T *stream, DMA_FLAG_T flag)
 {
-    DMA_T* dma;
+    DMA_T *dma;
 
     if (stream < DMA2_Stream0)
     {
@@ -463,9 +463,9 @@ uint8_t DMA_ReadStatusFlag(DMA_Stream_T* stream, DMA_FLAG_T flag)
  *
  * @retval    None
  */
-void DMA_ClearStatusFlag(DMA_Stream_T* stream, uint32_t flag)
+void DMA_ClearStatusFlag(DMA_Stream_T *stream, uint32_t flag)
 {
-    DMA_T* dma;
+    DMA_T *dma;
 
     if (stream < DMA2_Stream0)
     {
@@ -500,7 +500,7 @@ void DMA_ClearStatusFlag(DMA_Stream_T* stream, uint32_t flag)
  *
  * @retval    None
  */
-void DMA_EnableInterrupt(DMA_Stream_T* stream, uint32_t interrupt)
+void DMA_EnableInterrupt(DMA_Stream_T *stream, uint32_t interrupt)
 {
     if ((interrupt & DMA_INT_FEIFLG) == DMA_INT_FEIFLG)
     {
@@ -528,7 +528,7 @@ void DMA_EnableInterrupt(DMA_Stream_T* stream, uint32_t interrupt)
  *
  * @retval    None
  */
-void DMA_DisableInterrupt(DMA_Stream_T* stream, uint32_t interrupt)
+void DMA_DisableInterrupt(DMA_Stream_T *stream, uint32_t interrupt)
 {
     if ((interrupt & DMA_INT_FEIFLG) == DMA_INT_FEIFLG)
     {
@@ -557,10 +557,10 @@ void DMA_DisableInterrupt(DMA_Stream_T* stream, uint32_t interrupt)
  *
  * @retval    None.
  */
-uint8_t DMA_ReadIntFlag(DMA_Stream_T* stream, DMA_INT_FLAG_T flag)
+uint8_t DMA_ReadIntFlag(DMA_Stream_T *stream, DMA_INT_FLAG_T flag)
 {
     uint32_t tmpreg = 0, enablestatus = 0;
-    DMA_T* dma;
+    DMA_T *dma;
 
     if (stream < DMA2_Stream0)
     {
@@ -580,7 +580,7 @@ uint8_t DMA_ReadIntFlag(DMA_Stream_T* stream, DMA_INT_FLAG_T flag)
     else
     {
         /** Get the interrupt enable position mask in SCFG register */
-        tmpreg = ((flag & 0xE000)>> 11) ;
+        tmpreg = ((flag & 0xE000) >> 11) ;
 
         /** Check the enable bit in SCFG register */
         enablestatus = (stream->SCFG & tmpreg);
@@ -624,9 +624,9 @@ uint8_t DMA_ReadIntFlag(DMA_Stream_T* stream, DMA_INT_FLAG_T flag)
  *
  * @retval    None
  */
-void DMA_ClearIntFlag(DMA_Stream_T* stream, uint32_t flag)
+void DMA_ClearIntFlag(DMA_Stream_T *stream, uint32_t flag)
 {
-    DMA_T* dma;
+    DMA_T *dma;
 
     if (stream < DMA2_Stream0)
     {

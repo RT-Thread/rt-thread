@@ -329,7 +329,7 @@ static int rt_hw_spi_init(void)
     gpio_config.speed = GPIO_SPEED_100MHz;
     gpio_config.otype = GPIO_OTYPE_PP;
     gpio_config.pupd = GPIO_PUPD_NOPULL;
-    gpio_config.pin = GPIO_PIN_3 | GPIO_PIN_4 |GPIO_PIN_5;
+    gpio_config.pin = GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
     GPIO_Config(GPIOB, &gpio_config);
     /* SPI3_NSS(PA4) */
     gpio_config.pin = GPIO_PIN_4;

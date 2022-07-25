@@ -61,7 +61,7 @@ void ADC_Reset(void)
  *
  * @retval    None
  */
-void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig)
+void ADC_Config(ADC_T *adc, ADC_Config_T *adcConfig)
 {
     adc->CTRL1_B.RESSEL = adcConfig->resolution;
     adc->CTRL1_B.SCANEN = adcConfig->scanConvMode;
@@ -81,7 +81,7 @@ void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig)
  *
  * @retval    None
  */
-void ADC_ConfigStructInit(ADC_Config_T* adcConfig)
+void ADC_ConfigStructInit(ADC_Config_T *adcConfig)
 {
     adcConfig->resolution = ADC_RESOLUTION_12BIT;
     adcConfig->scanConvMode = DISABLE;
@@ -100,7 +100,7 @@ void ADC_ConfigStructInit(ADC_Config_T* adcConfig)
  *
  * @retval    None
  */
-void ADC_CommonConfig(ADC_CommonConfig_T* adcCommonConfig)
+void ADC_CommonConfig(ADC_CommonConfig_T *adcCommonConfig)
 {
     ADC->CCTRL_B.ADCMSEL = adcCommonConfig->mode;
     ADC->CCTRL_B.ADCPRE = adcCommonConfig->prescaler;
@@ -115,7 +115,7 @@ void ADC_CommonConfig(ADC_CommonConfig_T* adcCommonConfig)
  *
  * @retval    None
  */
-void ADC_CommonConfigStructInit(ADC_CommonConfig_T* adccommonconfig)
+void ADC_CommonConfigStructInit(ADC_CommonConfig_T *adccommonconfig)
 {
     adccommonconfig->mode = ADC_MODE_INDEPENDENT;
     adccommonconfig->prescaler = ADC_PRESCALER_DIV2;
@@ -130,7 +130,7 @@ void ADC_CommonConfigStructInit(ADC_CommonConfig_T* adccommonconfig)
  *
  * @retval    None
  */
-void ADC_Enable(ADC_T* adc)
+void ADC_Enable(ADC_T *adc)
 {
     adc->CTRL2_B.ADCEN = BIT_SET;
 }
@@ -142,7 +142,7 @@ void ADC_Enable(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_Disable(ADC_T* adc)
+void ADC_Disable(ADC_T *adc)
 {
     adc->CTRL2_B.ADCEN = BIT_RESET;
 }
@@ -163,7 +163,7 @@ void ADC_Disable(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_EnableAnalogWatchdog(ADC_T* adc, ADC_ANALOG_WATCHDOG_T analogWatchdog)
+void ADC_EnableAnalogWatchdog(ADC_T *adc, ADC_ANALOG_WATCHDOG_T analogWatchdog)
 {
     adc->CTRL1_B.INJAWDEN = analogWatchdog & 0x01;
     adc->CTRL1_B.REGAWDEN = (analogWatchdog >> 1) & 0x01;
@@ -177,7 +177,7 @@ void ADC_EnableAnalogWatchdog(ADC_T* adc, ADC_ANALOG_WATCHDOG_T analogWatchdog)
  *
  * @retval    None
  */
-void ADC_DisableAnalogWatchdog(ADC_T* adc)
+void ADC_DisableAnalogWatchdog(ADC_T *adc)
 {
     adc->CTRL1_B.AWDSGLEN = BIT_RESET;
     adc->CTRL1_B.INJAWDEN = BIT_RESET;
@@ -196,7 +196,7 @@ void ADC_DisableAnalogWatchdog(ADC_T* adc)
  *                           This parameter must be a 12bit value.
  * @retval    None
  */
-void ADC_ConfigAnalogWatchdogThresholds(ADC_T* adc, uint16_t highThreshold, uint16_t lowThreshold)
+void ADC_ConfigAnalogWatchdogThresholds(ADC_T *adc, uint16_t highThreshold, uint16_t lowThreshold)
 {
     adc->AWDHT = highThreshold;
     adc->AWDLT = lowThreshold;
@@ -212,7 +212,7 @@ void ADC_ConfigAnalogWatchdogThresholds(ADC_T* adc, uint16_t highThreshold, uint
  *
  * @retval    None
  */
-void ADC_AnalogWatchdogLowThresholds(ADC_T* adc,  uint16_t lowThreshold)
+void ADC_AnalogWatchdogLowThresholds(ADC_T *adc,  uint16_t lowThreshold)
 {
     adc->AWDLT = lowThreshold;
 }
@@ -248,7 +248,7 @@ void ADC_AnalogWatchdogLowThresholds(ADC_T* adc,  uint16_t lowThreshold)
  *
  * @note       adc can be ADC1, ADC2 or ADC3.
  */
-void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T* adc, uint8_t channel)
+void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T *adc, uint8_t channel)
 {
     adc->CTRL1_B.AWDCHSEL = channel;
 }
@@ -345,7 +345,7 @@ void ADC_DisableVbat(void)
  * @retval None
  */
 
-void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
+void ADC_ConfigRegularChannel(ADC_T *adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
 {
     uint32_t temp1 = 0;
     uint32_t temp2 = 0;
@@ -405,7 +405,7 @@ void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t
  *
  * @retval    None
  */
-void ADC_SoftwareStartConv(ADC_T* adc)
+void ADC_SoftwareStartConv(ADC_T *adc)
 {
     adc->CTRL2_B.REGCHSC = BIT_SET;
 }
@@ -417,7 +417,7 @@ void ADC_SoftwareStartConv(ADC_T* adc)
  *
  * @retval    The new state of ADC software start conversion (SET or RESET).
  */
-uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc)
+uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T *adc)
 {
     return (uint8_t)adc->CTRL2_B.REGCHSC;
 }
@@ -429,7 +429,7 @@ uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_EnableEOCOnEachChannel(ADC_T* adc)
+void ADC_EnableEOCOnEachChannel(ADC_T *adc)
 {
     adc->CTRL2_B.EOCSEL = BIT_SET;
 
@@ -442,7 +442,7 @@ void ADC_EnableEOCOnEachChannel(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_DisableEOCOnEachChannel(ADC_T* adc)
+void ADC_DisableEOCOnEachChannel(ADC_T *adc)
 {
     adc->CTRL2_B.EOCSEL = BIT_RESET;
 }
@@ -454,7 +454,7 @@ void ADC_DisableEOCOnEachChannel(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_EnableContinuousMode(ADC_T* adc)
+void ADC_EnableContinuousMode(ADC_T *adc)
 {
     adc->CTRL2_B.CONTCEN = BIT_SET;
 }
@@ -466,7 +466,7 @@ void ADC_EnableContinuousMode(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_DisableContinuousMode(ADC_T* adc)
+void ADC_DisableContinuousMode(ADC_T *adc)
 {
     adc->CTRL2_B.CONTCEN = BIT_RESET;;
 }
@@ -482,7 +482,7 @@ void ADC_DisableContinuousMode(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_ConfigDiscMode(ADC_T* adc, uint8_t number)
+void ADC_ConfigDiscMode(ADC_T *adc, uint8_t number)
 {
     adc->CTRL1_B.DISCNUMCFG = number - 1;
 }
@@ -494,7 +494,7 @@ void ADC_ConfigDiscMode(ADC_T* adc, uint8_t number)
  *
  * @retval    None
  */
-void ADC_EnableDiscMode(ADC_T* adc)
+void ADC_EnableDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.REGDISCEN = BIT_SET;
 }
@@ -506,9 +506,9 @@ void ADC_EnableDiscMode(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_DisableDiscMode(ADC_T* adc)
+void ADC_DisableDiscMode(ADC_T *adc)
 {
-    adc->CTRL1_B.REGDISCEN= BIT_RESET;
+    adc->CTRL1_B.REGDISCEN = BIT_RESET;
 }
 
 /*!
@@ -518,7 +518,7 @@ void ADC_DisableDiscMode(ADC_T* adc)
  *
  * @retval    The Data conversion value.
  */
-uint16_t ADC_ReadConversionValue(ADC_T* adc)
+uint16_t ADC_ReadConversionValue(ADC_T *adc)
 {
     return (uint16_t) adc->REGDATA;
 }
@@ -548,7 +548,7 @@ uint32_t ADC_ReadMultiValue(void)
  *
  * @retval    The Data conversion value.
  */
-void ADC_EnableDMA(ADC_T* adc)
+void ADC_EnableDMA(ADC_T *adc)
 {
     adc->CTRL2_B.DMAEN = BIT_SET;
 }
@@ -560,7 +560,7 @@ void ADC_EnableDMA(ADC_T* adc)
  *
  * @retval    The Data conversion value.
  */
-void ADC_DisableDMA(ADC_T* adc)
+void ADC_DisableDMA(ADC_T *adc)
 {
     adc->CTRL2_B.DMAEN = BIT_RESET;
 }
@@ -571,7 +571,7 @@ void ADC_DisableDMA(ADC_T* adc)
  *
  * @retval    The Data conversion value.
  */
-void ADC_EnableDMARequest(ADC_T* adc)
+void ADC_EnableDMARequest(ADC_T *adc)
 {
     adc->CTRL2_B.DMADISSEL = BIT_SET;
 }
@@ -582,7 +582,7 @@ void ADC_EnableDMARequest(ADC_T* adc)
  *
  * @retval    The Data conversion value.
  */
-void ADC_DisableDMARequest(ADC_T* adc)
+void ADC_DisableDMARequest(ADC_T *adc)
 {
     adc->CTRL2_B.DMADISSEL = BIT_RESET;
 }
@@ -655,7 +655,7 @@ void ADC_DisableMultiModeDMARequest(void)
  * @retval    None
  */
 
-void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
+void ADC_ConfigInjectedChannel(ADC_T *adc, uint8_t channel, uint8_t rank, uint8_t sampleTime)
 {
     uint32_t temp1 = 0;
     uint32_t temp2 = 0;
@@ -697,7 +697,7 @@ void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_
  *
  * @retval    None
  */
-void ADC_ConfigInjectedSequencerLength(ADC_T* adc, uint8_t length)
+void ADC_ConfigInjectedSequencerLength(ADC_T *adc, uint8_t length)
 {
     adc->INJSEQ_B.INJSEQLEN = length - 1;
 }
@@ -719,24 +719,24 @@ void ADC_ConfigInjectedSequencerLength(ADC_T* adc, uint8_t length)
  *
  * @retval    None
  */
-void ADC_ConfigInjectedOffset(ADC_T* adc, ADC_INJEC_CHANNEL_T channel, uint16_t offset)
+void ADC_ConfigInjectedOffset(ADC_T *adc, ADC_INJEC_CHANNEL_T channel, uint16_t offset)
 {
     switch ((uint8_t)channel)
     {
-        case 0x01:
-            adc->INJDOF1_B.INJDOF1 = offset;
-            break;
-        case 0x02:
-            adc->INJDOF2_B.INJDOF2 = offset;
-            break;
-        case 0x03:
-            adc->INJDOF3_B.INJDOF3 = offset;
-            break;
-        case 0x04:
-            adc->INJDOF4_B.INJDOF4 = offset;
-            break;
-        default :
-            break;
+    case 0x01:
+        adc->INJDOF1_B.INJDOF1 = offset;
+        break;
+    case 0x02:
+        adc->INJDOF2_B.INJDOF2 = offset;
+        break;
+    case 0x03:
+        adc->INJDOF3_B.INJDOF3 = offset;
+        break;
+    case 0x04:
+        adc->INJDOF4_B.INJDOF4 = offset;
+        break;
+    default :
+        break;
     }
 }
 
@@ -766,7 +766,7 @@ void ADC_ConfigInjectedOffset(ADC_T* adc, ADC_INJEC_CHANNEL_T channel, uint16_t 
  *
  * @retval    None
  */
-void ADC_ConfigExternalTrigInjectedConv(ADC_T* adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv)
+void ADC_ConfigExternalTrigInjectedConv(ADC_T *adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv)
 {
     adc->CTRL2_B.INJGEXTTRGSEL = extTrigInjecConv;
 }
@@ -784,7 +784,7 @@ void ADC_ConfigExternalTrigInjectedConv(ADC_T* adc, ADC_EXT_TRIG_INJEC_CONV_T ex
  *
  * @retval    None
  */
-void ADC_ConfigExternalTrigInjectedConvEdge(ADC_T* adc, ADC_EXT_TRIG_INJEC_EDGE_T extTrigInjecConvEdge)
+void ADC_ConfigExternalTrigInjectedConvEdge(ADC_T *adc, ADC_EXT_TRIG_INJEC_EDGE_T extTrigInjecConvEdge)
 {
     adc->CTRL2_B.INJEXTTRGEN = extTrigInjecConvEdge;
 }
@@ -796,7 +796,7 @@ void ADC_ConfigExternalTrigInjectedConvEdge(ADC_T* adc, ADC_EXT_TRIG_INJEC_EDGE_
  *
  * @retval    None
  */
-void ADC_EnableSoftwareStartInjectedConv(ADC_T* adc)
+void ADC_EnableSoftwareStartInjectedConv(ADC_T *adc)
 {
     adc->CTRL2_B.INJCHSC = BIT_SET;
 }
@@ -808,7 +808,7 @@ void ADC_EnableSoftwareStartInjectedConv(ADC_T* adc)
  *
  * @retval    None
  */
-uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T* adc)
+uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T *adc)
 {
     return (uint8_t)(adc->CTRL2_B.INJCHSC);
 }
@@ -820,9 +820,9 @@ uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_EnableAutoInjectedConv(ADC_T* adc)
+void ADC_EnableAutoInjectedConv(ADC_T *adc)
 {
-    adc->CTRL1_B.INJGACEN= BIT_SET;
+    adc->CTRL1_B.INJGACEN = BIT_SET;
 }
 
 /*!
@@ -832,9 +832,9 @@ void ADC_EnableAutoInjectedConv(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_DisableAutoInjectedConv(ADC_T* adc)
+void ADC_DisableAutoInjectedConv(ADC_T *adc)
 {
-    adc->CTRL1_B.INJGACEN= BIT_RESET;
+    adc->CTRL1_B.INJGACEN = BIT_RESET;
 }
 
 /*!
@@ -844,7 +844,7 @@ void ADC_DisableAutoInjectedConv(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_EnableInjectedDiscMode(ADC_T* adc)
+void ADC_EnableInjectedDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.INJDISCEN = BIT_SET;
 }
@@ -856,7 +856,7 @@ void ADC_EnableInjectedDiscMode(ADC_T* adc)
  *
  * @retval    None
  */
-void ADC_DisableInjectedDiscMode(ADC_T* adc)
+void ADC_DisableInjectedDiscMode(ADC_T *adc)
 {
     adc->CTRL1_B.INJDISCEN = BIT_RESET;
 }
@@ -875,20 +875,20 @@ void ADC_DisableInjectedDiscMode(ADC_T* adc)
  *
  * @retval    The Data conversion value.
  */
-uint16_t ADC_ReadInjectedConversionValue(ADC_T* adc, ADC_INJEC_CHANNEL_T channel)
+uint16_t ADC_ReadInjectedConversionValue(ADC_T *adc, ADC_INJEC_CHANNEL_T channel)
 {
     switch ((uint8_t)channel)
     {
-        case 0x01:
-            return (uint16_t)adc->INJDATA1_B.INJDATA;
-        case 0x02:
-            return (uint16_t)adc->INJDATA2_B.INJDATA;
-        case 0x03:
-            return (uint16_t)adc->INJDATA3_B.INJDATA;
-        case 0x04:
-            return (uint16_t)adc->INJDATA4_B.INJDATA;
-        default :
-            return 0;
+    case 0x01:
+        return (uint16_t)adc->INJDATA1_B.INJDATA;
+    case 0x02:
+        return (uint16_t)adc->INJDATA2_B.INJDATA;
+    case 0x03:
+        return (uint16_t)adc->INJDATA3_B.INJDATA;
+    case 0x04:
+        return (uint16_t)adc->INJDATA4_B.INJDATA;
+    default :
+        return 0;
     }
 }
 
@@ -906,7 +906,7 @@ uint16_t ADC_ReadInjectedConversionValue(ADC_T* adc, ADC_INJEC_CHANNEL_T channel
  *
  * @retval    None
  */
-void ADC_EnableInterrupt(ADC_T* adc, uint32_t interrupt)
+void ADC_EnableInterrupt(ADC_T *adc, uint32_t interrupt)
 {
     adc->CTRL1 |= interrupt;
 }
@@ -925,7 +925,7 @@ void ADC_EnableInterrupt(ADC_T* adc, uint32_t interrupt)
  *
  * @retval    None
  */
-void ADC_DisableInterrupt(ADC_T* adc, uint32_t interrupt)
+void ADC_DisableInterrupt(ADC_T *adc, uint32_t interrupt)
 {
     adc->CTRL1 &= (uint32_t)~interrupt;
 }
@@ -946,7 +946,7 @@ void ADC_DisableInterrupt(ADC_T* adc, uint32_t interrupt)
  *
  * @retval    SET or RESET
  */
-uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag)
+uint8_t ADC_ReadStatusFlag(ADC_T *adc, ADC_FLAG_T flag)
 {
     return (adc->STS & flag) ? SET : RESET;
 }
@@ -967,7 +967,7 @@ uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag)
  *
  * @retval    None
  */
-void ADC_ClearStatusFlag(ADC_T* adc, uint32_t flag)
+void ADC_ClearStatusFlag(ADC_T *adc, uint32_t flag)
 {
     adc->STS = ~(uint32_t)flag;
 }
@@ -986,13 +986,13 @@ void ADC_ClearStatusFlag(ADC_T* adc, uint32_t flag)
  *
  * @retval    SET or RESET
  */
-uint16_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_FLAG_T flag)
+uint16_t ADC_ReadIntFlag(ADC_T *adc, ADC_INT_FLAG_T flag)
 {
     uint32_t itmask = 0;
     uint32_t intStatus = 0;
 
     itmask = (uint32_t)1 << (flag >> 8);
-    intStatus =adc->CTRL1 & itmask;
+    intStatus = adc->CTRL1 & itmask;
 
     if (((adc->STS & (uint32_t)(flag & 0x3F)) != (uint32_t)RESET) && intStatus)
     {
@@ -1018,7 +1018,7 @@ uint16_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_FLAG_T flag)
  *
  * @retval    None
  */
-void ADC_ClearIntFlag(ADC_T* adc, uint32_t flag)
+void ADC_ClearIntFlag(ADC_T *adc, uint32_t flag)
 {
     adc->STS = ~(uint32_t)(flag & 0x3F);
 }

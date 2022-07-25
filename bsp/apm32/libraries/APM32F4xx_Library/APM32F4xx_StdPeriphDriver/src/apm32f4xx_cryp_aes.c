@@ -56,7 +56,7 @@
  * @retval    SUCCESS or ERROR
  */
 uint8_t CRYP_AES_ECB(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
-                       uint8_t *input, uint32_t length, uint8_t  *output)
+                     uint8_t *input, uint32_t length, uint8_t  *output)
 {
     CRYP_Config_T    AES_crypConfig;
     CRYP_KeyConfig_T AES_keyConfig;
@@ -72,58 +72,58 @@ uint8_t CRYP_AES_ECB(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
 
     CRYP_ConfigKeyStructInit(&AES_keyConfig);
 
-    switch(keysize)
+    switch (keysize)
     {
-        case 128:
+    case 128:
         AES_crypConfig.keySize = CRYP_KEYSIZE_128B;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        case 192:
+    case 192:
         AES_crypConfig.keySize = CRYP_KEYSIZE_192B;
-        AES_keyConfig.key1Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        case 256:
+    case 256:
         AES_crypConfig.keySize = CRYP_KEYSIZE_256B;
-        AES_keyConfig.key0Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key0Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key0Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key0Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        default:
+    default:
         break;
     }
 
-    if(mode == CRYP_MODE_DECRYPT)
+    if (mode == CRYP_MODE_DECRYPT)
     {
         CRYP_FlushFIFO();
 
@@ -140,9 +140,9 @@ uint8_t CRYP_AES_ECB(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
             flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
             counter++;
         }
-        while((counter != 0x00010000) && (flag != RESET));
+        while ((counter != 0x00010000) && (flag != RESET));
 
-        if(flag == SET)
+        if (flag == SET)
         {
             status = ERROR;
         }
@@ -164,20 +164,20 @@ uint8_t CRYP_AES_ECB(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
     CRYP_FlushFIFO();
     CRYP_Enable();
 
-    if(CRYP_ReadCmdStatus() == DISABLE)
+    if (CRYP_ReadCmdStatus() == DISABLE)
     {
         status = ERROR;
     }
 
-    for(i=0; i<length; i+=16)
+    for (i = 0; i < length; i += 16)
     {
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
 
         counter = 0;
@@ -186,21 +186,21 @@ uint8_t CRYP_AES_ECB(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
             flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
             counter++;
         }
-        while((counter != 0x00010000) && (flag != RESET));
+        while ((counter != 0x00010000) && (flag != RESET));
 
-        if(flag == SET)
+        if (flag == SET)
         {
             status = ERROR;
         }
         else
         {
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
         }
     }
@@ -226,8 +226,8 @@ uint8_t CRYP_AES_ECB(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
  * @retval    SUCCESS or ERROR
  */
 uint8_t CRYP_AES_CBC(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
-                                       uint8_t IV[16],  uint8_t  *input,
-                                       uint32_t length, uint8_t  *output)
+                     uint8_t IV[16],  uint8_t  *input,
+                     uint32_t length, uint8_t  *output)
 {
     CRYP_Config_T    AES_crypConfig;
     CRYP_KeyConfig_T AES_keyConfig;
@@ -245,66 +245,66 @@ uint8_t CRYP_AES_CBC(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
 
     CRYP_ConfigKeyStructInit(&AES_keyConfig);
 
-    switch(keysize)
+    switch (keysize)
     {
-        case 128:
+    case 128:
         AES_crypConfig.keySize = CRYP_KEYSIZE_128B;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        case 192:
+    case 192:
         AES_crypConfig.keySize = CRYP_KEYSIZE_192B;
-        AES_keyConfig.key1Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        case 256:
+    case 256:
         AES_crypConfig.keySize = CRYP_KEYSIZE_256B;
-        AES_keyConfig.key0Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key0Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key0Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key0Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        default:
+    default:
         break;
     }
 
-    AES_IVConfig.IV0Left  = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV0Left  = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    AES_IVConfig.IV0Right = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV0Right = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    AES_IVConfig.IV1Left  = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV1Left  = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    AES_IVConfig.IV1Right = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV1Right = __REV(*(uint32_t *)(IVAddr));
 
-    if(mode == CRYP_MODE_DECRYPT)
+    if (mode == CRYP_MODE_DECRYPT)
     {
         CRYP_FlushFIFO();
 
@@ -321,9 +321,9 @@ uint8_t CRYP_AES_CBC(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
             flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
             counter++;
         }
-        while((counter != 0x00010000) && (flag != RESET));
+        while ((counter != 0x00010000) && (flag != RESET));
 
-        if(flag == SET)
+        if (flag == SET)
         {
             status = ERROR;
         }
@@ -345,20 +345,20 @@ uint8_t CRYP_AES_CBC(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
     CRYP_FlushFIFO();
     CRYP_Enable();
 
-    if(CRYP_ReadCmdStatus() == DISABLE)
+    if (CRYP_ReadCmdStatus() == DISABLE)
     {
         status = ERROR;
     }
 
-    for(i=0; i<length; i+=16)
+    for (i = 0; i < length; i += 16)
     {
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
 
         counter = 0;
@@ -367,21 +367,21 @@ uint8_t CRYP_AES_CBC(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
             flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
             counter++;
         }
-        while((counter != 0x00010000) && (flag != RESET));
+        while ((counter != 0x00010000) && (flag != RESET));
 
-        if(flag == SET)
+        if (flag == SET)
         {
             status = ERROR;
         }
         else
         {
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
         }
     }
@@ -407,8 +407,8 @@ uint8_t CRYP_AES_CBC(CRYP_MODE_T mode, uint8_t *key,    uint16_t keysize,
  * @retval    SUCCESS or ERROR
  */
 uint8_t CRYP_AES_CTR(CRYP_MODE_T mode, uint8_t  *key,   uint16_t keysize,
-                                       uint8_t  IV[16], uint8_t  *input,
-                                       uint32_t length, uint8_t  *output)
+                     uint8_t  IV[16], uint8_t  *input,
+                     uint32_t length, uint8_t  *output)
 {
     CRYP_Config_T    AES_crypConfig;
     CRYP_KeyConfig_T AES_keyConfig;
@@ -426,68 +426,68 @@ uint8_t CRYP_AES_CTR(CRYP_MODE_T mode, uint8_t  *key,   uint16_t keysize,
 
     CRYP_ConfigKeyStructInit(&AES_keyConfig);
 
-    switch(keysize)
+    switch (keysize)
     {
-        case 128:
+    case 128:
         AES_crypConfig.keySize = CRYP_KEYSIZE_128B;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        case 192:
+    case 192:
         AES_crypConfig.keySize = CRYP_KEYSIZE_192B;
-        AES_keyConfig.key1Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        case 256:
+    case 256:
         AES_crypConfig.keySize = CRYP_KEYSIZE_256B;
-        AES_keyConfig.key0Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key0Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key0Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key0Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key1Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key1Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key2Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key2Right = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Left  = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Left  = __REV(*(uint32_t *)(keyAddr));
         keyAddr += 0x04;
-        AES_keyConfig.key3Right = __REV(*(uint32_t*)(keyAddr));
+        AES_keyConfig.key3Right = __REV(*(uint32_t *)(keyAddr));
         break;
 
-        default:
+    default:
         break;
     }
 
-    AES_IVConfig.IV0Left  = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV0Left  = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    AES_IVConfig.IV0Right = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV0Right = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    AES_IVConfig.IV1Left  = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV1Left  = __REV(*(uint32_t *)(IVAddr));
     keyAddr += 0x04;
-    AES_IVConfig.IV1Right = __REV(*(uint32_t*)(IVAddr));
+    AES_IVConfig.IV1Right = __REV(*(uint32_t *)(IVAddr));
 
     CRYP_ConfigKey(&AES_keyConfig);
 
-    if(mode == CRYP_MODE_DECRYPT)
+    if (mode == CRYP_MODE_DECRYPT)
     {
         AES_crypConfig.algoDir  = CRYP_ALGODIR_DECRYPT;
     }
@@ -504,20 +504,20 @@ uint8_t CRYP_AES_CTR(CRYP_MODE_T mode, uint8_t  *key,   uint16_t keysize,
     CRYP_FlushFIFO();
     CRYP_Enable();
 
-    if(CRYP_ReadCmdStatus() == DISABLE)
+    if (CRYP_ReadCmdStatus() == DISABLE)
     {
         status = ERROR;
     }
 
-    for(i=0; i<length; i+=16)
+    for (i = 0; i < length; i += 16)
     {
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
-        CRYP_InData(*(uint32_t*)(inputAddr));
+        CRYP_InData(*(uint32_t *)(inputAddr));
         inputAddr += 0x04;
 
         counter = 0;
@@ -526,21 +526,21 @@ uint8_t CRYP_AES_CTR(CRYP_MODE_T mode, uint8_t  *key,   uint16_t keysize,
             flag = CRYP_ReadStatusFlag(CRYP_FLAG_BUSY);
             counter++;
         }
-        while((counter != 0x00010000) && (flag != RESET));
+        while ((counter != 0x00010000) && (flag != RESET));
 
-        if(flag == SET)
+        if (flag == SET)
         {
             status = ERROR;
         }
         else
         {
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
-            *(uint32_t*)(outputAddr) = CRYP_OutData();
+            *(uint32_t *)(outputAddr) = CRYP_OutData();
             outputAddr += 0x04;
         }
     }

@@ -86,11 +86,11 @@ static struct apm32_timer tmr_config[] =
     {
         "timer1",
         TMR1,
-    #ifdef APM32F10X_HD
+#ifdef APM32F10X_HD
         TMR1_UP_IRQn,
-    #elif APM32F40X
+#elif APM32F40X
         TMR1_UP_TMR10_IRQn,
-    #endif
+#endif
     },
 #endif
 #ifdef BSP_USING_TMR2
@@ -125,11 +125,11 @@ static struct apm32_timer tmr_config[] =
     {
         "timer6",
         TMR6,
-    #ifdef APM32F10X_HD
+#ifdef APM32F10X_HD
         TMR6_IRQn,
-    #elif APM32F40X
+#elif APM32F40X
         TMR6_DAC_IRQn
-    #endif
+#endif
     },
 #endif
 #ifdef BSP_USING_TMR7
@@ -143,11 +143,11 @@ static struct apm32_timer tmr_config[] =
     {
         "timer8",
         TMR8,
-    #ifdef APM32F10X_HD
+#ifdef APM32F10X_HD
         TMR8_UP_IRQn,
-    #elif APM32F40X
+#elif APM32F40X
         TMR8_UP_TMR13_IRQn,
-    #endif
+#endif
     },
 #endif
 #ifdef BSP_USING_TMR9
@@ -196,11 +196,11 @@ static struct apm32_timer tmr_config[] =
 
 static rt_uint32_t _hwtimer_clock_get(TMR_T *tmr)
 {
-    uint32_t pclk1,pclk2;
+    uint32_t pclk1, pclk2;
 
     RCM_ReadPCLKFreq(&pclk1, &pclk2);
 
-    if (tmr == TMR1 || tmr== TMR8 || tmr== TMR9 || tmr== TMR10 || tmr== TMR11)
+    if (tmr == TMR1 || tmr == TMR8 || tmr == TMR9 || tmr == TMR10 || tmr == TMR11)
     {
         return (rt_uint32_t)(pclk2 * ((RCM->CFG_B.APB2PSC != RCM_APB_DIV_1) ? 2 : 1));
     }
@@ -343,8 +343,8 @@ static rt_err_t _hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mo
     TMR_EnableInterrupt(timer_config->tmr, TMR_INT_UPDATE);
 
     if (timer_config->tmr == TMR1 || timer_config->tmr == TMR8 || timer_config->tmr == TMR2 || \
-        timer_config->tmr == TMR3 || timer_config->tmr == TMR4 || timer_config->tmr == TMR5 || \
-        timer_config->tmr == TMR9 || timer_config->tmr == TMR12)
+            timer_config->tmr == TMR3 || timer_config->tmr == TMR4 || timer_config->tmr == TMR5 || \
+            timer_config->tmr == TMR9 || timer_config->tmr == TMR12)
     {
         if (timer_config->tmr->SMCTRL_B.SMFSEL != TMR_SLAVE_MODE_TRIGGER)
         {
@@ -490,9 +490,9 @@ void TMR5_IRQHandler(void)
 
 #ifdef BSP_USING_TMR6
 #ifdef APM32F10X_HD
-void TMR6_IRQHandler(void)
+    void TMR6_IRQHandler(void)
 #elif APM32F40X
-void TMR6_DAC_IRQHandler(void)
+    void TMR6_DAC_IRQHandler(void)
 #endif
 {
     rt_interrupt_enter();

@@ -136,7 +136,7 @@ uint8_t RTC_Reset(void)
  *
  * @retval    SUCCESS or ERROR
  */
-uint8_t RTC_Config(RTC_Config_T* rtcConfig)
+uint8_t RTC_Config(RTC_Config_T *rtcConfig)
 {
     RTC_DisableWriteProtection();
 
@@ -166,7 +166,7 @@ uint8_t RTC_Config(RTC_Config_T* rtcConfig)
  *
  * @retval    None
  */
-void RTC_ConfigStructInit(RTC_Config_T* rtcConfig)
+void RTC_ConfigStructInit(RTC_Config_T *rtcConfig)
 {
     rtcConfig->format = RTC_HOURFORMAT_24;
     rtcConfig->asynchPrediv = (uint32_t)0x7F;
@@ -376,7 +376,7 @@ void RTC_DisableBypassShadow(void)
  *
  * @retval    SUCCESS or ERROR
  */
-uint8_t RTC_ConfigTime(RTC_FORMAT_T format, RTC_TimeConfig_T* timeConfig)
+uint8_t RTC_ConfigTime(RTC_FORMAT_T format, RTC_TimeConfig_T *timeConfig)
 {
     uint8_t state = ERROR;
     uint32_t temp = 0;
@@ -391,14 +391,14 @@ uint8_t RTC_ConfigTime(RTC_FORMAT_T format, RTC_TimeConfig_T* timeConfig)
     {
         temp = (((uint32_t)(timeConfig->hours) << 16) | \
                 ((uint32_t)(timeConfig->minutes) << 8) | \
-                ((uint32_t)(timeConfig->seconds))| \
+                ((uint32_t)(timeConfig->seconds)) | \
                 ((uint32_t)(timeConfig->h12) << 22));
     }
     else
     {
         temp = (uint32_t)(((uint32_t)RTC_ByteConBcd2(timeConfig->hours) << 16) | \
                           ((uint32_t)RTC_ByteConBcd2(timeConfig->minutes) << 8) | \
-                          ((uint32_t)RTC_ByteConBcd2(timeConfig->seconds))| \
+                          ((uint32_t)RTC_ByteConBcd2(timeConfig->seconds)) | \
                           (((uint32_t)(timeConfig->h12) << 22)));
     }
 
@@ -444,7 +444,7 @@ uint8_t RTC_ConfigTime(RTC_FORMAT_T format, RTC_TimeConfig_T* timeConfig)
  *
  * @retval    None
  */
-void RTC_ConfigTimeStructInit(RTC_TimeConfig_T* timeConfig)
+void RTC_ConfigTimeStructInit(RTC_TimeConfig_T *timeConfig)
 {
     timeConfig->hours = 0;
     timeConfig->minutes = 0;
@@ -465,7 +465,7 @@ void RTC_ConfigTimeStructInit(RTC_TimeConfig_T* timeConfig)
  *
  * @retval    None
  */
-void RTC_ReadTime(RTC_FORMAT_T format, RTC_TimeConfig_T* time)
+void RTC_ReadTime(RTC_FORMAT_T format, RTC_TimeConfig_T *time)
 {
     uint32_t temp = 0;
 
@@ -473,7 +473,7 @@ void RTC_ReadTime(RTC_FORMAT_T format, RTC_TimeConfig_T* time)
 
     time->h12 = (RTC_H12_T)((temp & 0x00400000) >> 22);
     time->hours   = (uint8_t)((temp & 0x003F0000) >> 16);
-    time->minutes = (uint8_t)((temp & 0x00007F00) >>8);
+    time->minutes = (uint8_t)((temp & 0x00007F00) >> 8);
     time->seconds = (uint8_t)(temp & 0x0000007F);
 
     if (format == RTC_FORMAT_BIN)
@@ -496,7 +496,7 @@ uint32_t RTC_ReadSubSecond(void)
     uint32_t temp = 0;
 
     temp = (uint32_t)(RTC->SUBSEC);
-    (void) (RTC->DATE);
+    (void)(RTC->DATE);
 
     return temp;
 }
@@ -514,7 +514,7 @@ uint32_t RTC_ReadSubSecond(void)
  *
  * @retval    None
  */
-uint8_t RTC_ConfigDate(RTC_FORMAT_T format, RTC_DateConfig_T* dateConfig)
+uint8_t RTC_ConfigDate(RTC_FORMAT_T format, RTC_DateConfig_T *dateConfig)
 {
     uint8_t state = ERROR;
     uint32_t temp = 0;
@@ -528,14 +528,14 @@ uint8_t RTC_ConfigDate(RTC_FORMAT_T format, RTC_DateConfig_T* dateConfig)
     {
         temp = (((uint32_t)(dateConfig->year) << 16) | \
                 ((uint32_t)(dateConfig->month) << 8) | \
-                ((uint32_t)(dateConfig->date))| \
+                ((uint32_t)(dateConfig->date)) | \
                 ((uint32_t)(dateConfig->weekday) << 13));
     }
     else
     {
         temp = (((uint32_t)RTC_ByteConBcd2(dateConfig->year) << 16) | \
                 ((uint32_t)RTC_ByteConBcd2(dateConfig->month) << 8) | \
-                ((uint32_t)RTC_ByteConBcd2(dateConfig->date))| \
+                ((uint32_t)RTC_ByteConBcd2(dateConfig->date)) | \
                 ((uint32_t)(dateConfig->weekday) << 13));
     }
 
@@ -579,7 +579,7 @@ uint8_t RTC_ConfigDate(RTC_FORMAT_T format, RTC_DateConfig_T* dateConfig)
  *
  * @retval    None
  */
-void RTC_ConfigDateStructInit(RTC_DateConfig_T* dateConfig)
+void RTC_ConfigDateStructInit(RTC_DateConfig_T *dateConfig)
 {
     dateConfig->weekday = RTC_WEEKDAY_MONDAY;
     dateConfig->month = RTC_MONTH_JANUARY;
@@ -600,15 +600,15 @@ void RTC_ConfigDateStructInit(RTC_DateConfig_T* dateConfig)
  *
  * @retval    None
  */
-void RTC_ReadDate(RTC_FORMAT_T format, RTC_DateConfig_T* date)
+void RTC_ReadDate(RTC_FORMAT_T format, RTC_DateConfig_T *date)
 {
     uint32_t temp = 0;
     temp = (uint32_t)((RTC->DATE) & 0x00FFFF3F);
 
     date->year  = (uint8_t)((temp & 0x00FF0000) >> 16);
-    date->month = (RTC_MONTH_T)((temp & 0x00001F00) >>8);
+    date->month = (RTC_MONTH_T)((temp & 0x00001F00) >> 8);
     date->date  = (uint8_t)(temp &  0x0000003F);
-    date->weekday =(RTC_WEEKDAY_T)((temp & 0x0000E000) >> 13);
+    date->weekday = (RTC_WEEKDAY_T)((temp & 0x0000E000) >> 13);
 
     if (format == RTC_FORMAT_BIN)
     {
@@ -637,7 +637,7 @@ void RTC_ReadDate(RTC_FORMAT_T format, RTC_DateConfig_T* date)
  *
  * @retva    None
  */
-void RTC_ConfigAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* alarmConfig)
+void RTC_ConfigAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T *alarmConfig)
 {
     uint32_t temp = 0;
 
@@ -650,7 +650,7 @@ void RTC_ConfigAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* 
     {
         temp = (((uint32_t)(alarmConfig->time.hours) << 16) | \
                 ((uint32_t)(alarmConfig->time.minutes) << 8) | \
-                ((uint32_t)alarmConfig->time.seconds)| \
+                ((uint32_t)alarmConfig->time.seconds) | \
                 ((uint32_t)(alarmConfig->time.h12) << 22) | \
                 ((uint32_t)(alarmConfig->alarmDateWeekDay) << 24) | \
                 ((uint32_t)alarmConfig->alarmDateWeekDaySel << 30) | \
@@ -660,7 +660,7 @@ void RTC_ConfigAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* 
     {
         temp = (((uint32_t)RTC_ByteConBcd2(alarmConfig->time.hours) << 16) | \
                 ((uint32_t)RTC_ByteConBcd2(alarmConfig->time.minutes) << 8) | \
-                ((uint32_t)RTC_ByteConBcd2(alarmConfig->time.seconds))| \
+                ((uint32_t)RTC_ByteConBcd2(alarmConfig->time.seconds)) | \
                 ((uint32_t)(alarmConfig->time.h12) << 22) | \
                 ((uint32_t)RTC_ByteConBcd2(alarmConfig->alarmDateWeekDay) << 24) | \
                 ((uint32_t)alarmConfig->alarmDateWeekDaySel << 30) | \
@@ -689,7 +689,7 @@ void RTC_ConfigAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* 
  *
  * @retval    None
  */
-void RTC_ConfigAlarmStructInit(RTC_AlarmConfig_T* alarmConfig)
+void RTC_ConfigAlarmStructInit(RTC_AlarmConfig_T *alarmConfig)
 {
     alarmConfig->time.hours = 0;
     alarmConfig->time.minutes = 0;
@@ -697,7 +697,7 @@ void RTC_ConfigAlarmStructInit(RTC_AlarmConfig_T* alarmConfig)
     alarmConfig->time.h12 = RTC_H12_AM;
     alarmConfig->alarmDateWeekDay = 1;
     alarmConfig->alarmDateWeekDaySel = RTC_WEEKDAY_SEL_DATE;
-    alarmConfig->alarmMask= RTC_MASK_NONE;
+    alarmConfig->alarmMask = RTC_MASK_NONE;
 }
 
 /*!
@@ -718,10 +718,10 @@ void RTC_ConfigAlarmStructInit(RTC_AlarmConfig_T* alarmConfig)
  *
  * @retval    None
  */
-void RTC_ReadAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* alarmConfig)
+void RTC_ReadAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T *alarmConfig)
 {
-    uint8_t day_d,day_u,hours_d,hours_u,minutes_d,minutes_u,seconds_d,seconds_u;
-    uint32_t day_mask,hours_mask,minutes_mask,seconds_mask;
+    uint8_t day_d, day_u, hours_d, hours_u, minutes_d, minutes_u, seconds_d, seconds_u;
+    uint32_t day_mask, hours_mask, minutes_mask, seconds_mask;
 
     if (alarm == RTC_ALARM_A)
     {
@@ -734,10 +734,10 @@ void RTC_ReadAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* al
         seconds_d = RTC->ALRMA_B.SECT << 0x04;
         seconds_u = RTC->ALRMA_B.SECU;
 
-        day_mask = RTC->ALRMA_B.DATEMEN<<8;
-        hours_mask = RTC->ALRMA_B.HRMEN<<8;
-        minutes_mask = RTC->ALRMA_B.MINMEN<<8;
-        seconds_mask = RTC->ALRMA_B.SECMEN<<7;
+        day_mask = RTC->ALRMA_B.DATEMEN << 8;
+        hours_mask = RTC->ALRMA_B.HRMEN << 8;
+        minutes_mask = RTC->ALRMA_B.MINMEN << 8;
+        seconds_mask = RTC->ALRMA_B.SECMEN << 7;
 
         alarmConfig->time.hours   = (uint8_t)(hours_d | hours_u);
         alarmConfig->time.minutes = (uint8_t)(minutes_d | minutes_u);
@@ -758,10 +758,10 @@ void RTC_ReadAlarm(RTC_FORMAT_T format, RTC_ALARM_T alarm, RTC_AlarmConfig_T* al
         seconds_d = RTC->ALRMB_B.SECT << 0x04;
         seconds_u = RTC->ALRMB_B.SECU;
 
-        day_mask = RTC->ALRMB_B.DATEMEN<<8;
-        hours_mask = RTC->ALRMB_B.HRMEN<<8;
-        minutes_mask = RTC->ALRMB_B.MINMEN<<8;
-        seconds_mask = RTC->ALRMB_B.SECMEN<<7;
+        day_mask = RTC->ALRMB_B.DATEMEN << 8;
+        hours_mask = RTC->ALRMB_B.HRMEN << 8;
+        minutes_mask = RTC->ALRMB_B.MINMEN << 8;
+        seconds_mask = RTC->ALRMB_B.SECMEN << 7;
 
         alarmConfig->time.hours   = (uint8_t)(hours_d | hours_u);
         alarmConfig->time.minutes = (uint8_t)(minutes_d | minutes_u);
@@ -1373,23 +1373,23 @@ void RTC_DisableTimeStamp(void)
  *
  * @retval    None
  */
-void RTC_ReadTimeDate(RTC_FORMAT_T format, RTC_TimeConfig_T* time, RTC_DateConfig_T* date)
+void RTC_ReadTimeDate(RTC_FORMAT_T format, RTC_TimeConfig_T *time, RTC_DateConfig_T *date)
 {
     uint32_t temptime = 0, tempdate = 0;
     temptime = (uint32_t)((RTC->TSTIME) & 0x007F7F7F);
     tempdate = (uint32_t)((RTC->TSDATE) & 0x00FFFF3F);
 
     /* Read the time in BCD format */
-    time->hours   = (uint8_t)((temptime & 0x003F0000 ) >> 16);
-    time->minutes = (uint8_t)((temptime & 0x00007F00) >>8);
+    time->hours   = (uint8_t)((temptime & 0x003F0000) >> 16);
+    time->minutes = (uint8_t)((temptime & 0x00007F00) >> 8);
     time->seconds = (uint8_t)(temptime &  0x0000007F);
     time->h12 = (RTC_H12_T)((temptime & 0x00400000) >> 22);
 
     /* Read the date in BCD format */
     date->year  =  0;
-    date->month = (RTC_MONTH_T)((tempdate & 0x00001F00) >>8);
+    date->month = (RTC_MONTH_T)((tempdate & 0x00001F00) >> 8);
     date->date  = (uint8_t)(tempdate &  0x0000003F);
-    date->weekday =(RTC_WEEKDAY_T)((tempdate & 0x0000E000) >> 13);
+    date->weekday = (RTC_WEEKDAY_T)((tempdate & 0x0000E000) >> 13);
 
     /* Binary format */
     if (format == RTC_FORMAT_BIN)
@@ -1782,7 +1782,7 @@ void RTC_DisableInterrupt(uint32_t interrupt)
  */
 uint8_t RTC_ReadStatusFlag(RTC_FLAG_T flag)
 {
-    return  (RTC->STS & flag) ? SET : RESET;
+    return (RTC->STS & flag) ? SET : RESET;
 }
 
 /*!
@@ -1877,7 +1877,7 @@ static uint8_t RTC_ByteConBcd2(uint8_t val)
         val -= 10;
     }
 
-    return  ((uint8_t)(bcdhigh << 4) | val);
+    return ((uint8_t)(bcdhigh << 4) | val);
 }
 
 /*!

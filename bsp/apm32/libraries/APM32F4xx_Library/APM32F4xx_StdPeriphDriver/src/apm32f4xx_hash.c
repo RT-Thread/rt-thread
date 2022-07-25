@@ -59,7 +59,7 @@ void HASH_Reset(void)
  *
  * @retval    None
  */
-void HASH_Config(HASH_Config_T* hashConfig)
+void HASH_Config(HASH_Config_T *hashConfig)
 {
     /* Configure the Algorithm used, algorithm mode and the datatype */
     HASH->CTRL_B.ALGSEL = RESET;
@@ -79,7 +79,7 @@ void HASH_Config(HASH_Config_T* hashConfig)
 
     /* Reset the HASH processor core, so that the HASH will be ready to compute
      the message digest of a new message */
-    HASH->CTRL_B.INITCAL=SET;
+    HASH->CTRL_B.INITCAL = SET;
 }
 
 /*!
@@ -89,7 +89,7 @@ void HASH_Config(HASH_Config_T* hashConfig)
  *
  * @retval    None
  */
-void HASH_ConfigStructInit(HASH_Config_T* hashConfig)
+void HASH_ConfigStructInit(HASH_Config_T *hashConfig)
 {
     hashConfig->algoSelect = HASH_ALGO_SELECTION_SHA1;
     hashConfig->algoMode = HASH_ALGO_MODE_HASH;
@@ -106,7 +106,7 @@ void HASH_ConfigStructInit(HASH_Config_T* hashConfig)
  */
 void HASH_ResetProceCore(void)
 {
-    HASH->CTRL_B.INITCAL=SET;
+    HASH->CTRL_B.INITCAL = SET;
 }
 
 /*!
@@ -153,7 +153,7 @@ uint8_t HASH_ReadInFIFOWordsNbr(void)
  *
  * @retval    None
  */
-void HASH_ReadDigest(HASH_MessageDigest_T* messageDigest)
+void HASH_ReadDigest(HASH_MessageDigest_T *messageDigest)
 {
     /* Read the data field */
     messageDigest->Data[0] = HASH->DIG[0];
@@ -183,7 +183,7 @@ void HASH_StartDigest(void)
  *
  * @retval    None
  */
-void HASH_ReadContext(HASH_Context_T* contextRead)
+void HASH_ReadContext(HASH_Context_T *contextRead)
 {
     uint8_t i = 0;
 
@@ -205,7 +205,7 @@ void HASH_ReadContext(HASH_Context_T* contextRead)
  *
  * @retval    None
  */
-void HASH_WriteContext(HASH_Context_T* contextWrite)
+void HASH_WriteContext(HASH_Context_T *contextWrite)
 {
     uint8_t i = 0;
 

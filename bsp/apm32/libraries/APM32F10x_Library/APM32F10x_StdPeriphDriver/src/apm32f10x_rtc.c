@@ -144,7 +144,7 @@ uint32_t RTC_ReadDivider(void)
  */
 void RTC_WaitForLastTask(void)
 {
-    while(RTC->CSTS_B.OCFLG == BIT_RESET)
+    while (RTC->CSTS_B.OCFLG == BIT_RESET)
     {
     }
 }
@@ -159,7 +159,7 @@ void RTC_WaitForLastTask(void)
 void RTC_WaitForSynchro(void)
 {
     RTC->CSTS_B.RSYNCFLG = BIT_RESET;
-    while(RTC->CSTS_B.RSYNCFLG == BIT_RESET);
+    while (RTC->CSTS_B.RSYNCFLG == BIT_RESET);
 }
 
 /*!
@@ -189,7 +189,7 @@ void RTC_EnableInterrupt(uint16_t interrupt)
  */
 void RTC_DisableInterrupt(uint16_t interrupt)
 {
-    RTC->CTRL &= (uint32_t )~interrupt;
+    RTC->CTRL &= (uint32_t)~interrupt;
 }
 
 /*!
@@ -207,7 +207,7 @@ void RTC_DisableInterrupt(uint16_t interrupt)
  */
 uint8_t RTC_ReadStatusFlag(RTC_FLAG_T flag)
 {
-    return  (RTC->CSTS & flag) ? SET : RESET;
+    return (RTC->CSTS & flag) ? SET : RESET;
 }
 
 /*!

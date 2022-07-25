@@ -67,7 +67,7 @@
  */
 void NVIC_ConfigPriorityGroup(NVIC_PRIORITY_GROUP_T priorityGroup)
 {
-   SCB->AIRCR = AIRCR_VECTKEY_MASK | priorityGroup;
+    SCB->AIRCR = AIRCR_VECTKEY_MASK | priorityGroup;
 }
 
 /*!
@@ -91,38 +91,38 @@ void NVIC_EnableIRQRequest(IRQn_Type irq, uint8_t preemptionPriority, uint8_t su
     priorityGrp = (SCB->AIRCR) & (uint32_t)0x700U;
 
     /** get pre-emption priority and subpriority */
-    switch(priorityGrp)
+    switch (priorityGrp)
     {
-        case NVIC_PRIORITY_GROUP_0:
-            tempPrePri = 0;
-            tempSubPri = 4;
-            break;
+    case NVIC_PRIORITY_GROUP_0:
+        tempPrePri = 0;
+        tempSubPri = 4;
+        break;
 
-        case NVIC_PRIORITY_GROUP_1:
-            tempPrePri = 1;
-            tempSubPri = 3;
-            break;
+    case NVIC_PRIORITY_GROUP_1:
+        tempPrePri = 1;
+        tempSubPri = 3;
+        break;
 
-        case NVIC_PRIORITY_GROUP_2:
-            tempPrePri = 2;
-            tempSubPri = 2;
-            break;
+    case NVIC_PRIORITY_GROUP_2:
+        tempPrePri = 2;
+        tempSubPri = 2;
+        break;
 
-        case NVIC_PRIORITY_GROUP_3:
-            tempPrePri = 3;
-            tempSubPri = 1;
-            break;
+    case NVIC_PRIORITY_GROUP_3:
+        tempPrePri = 3;
+        tempSubPri = 1;
+        break;
 
-        case NVIC_PRIORITY_GROUP_4:
-            tempPrePri = 4;
-            tempSubPri = 0;
-            break;
+    case NVIC_PRIORITY_GROUP_4:
+        tempPrePri = 4;
+        tempSubPri = 0;
+        break;
 
-        default:
-            NVIC_ConfigPriorityGroup(NVIC_PRIORITY_GROUP_0);
-            tempPrePri = 0;
-            tempSubPri = 4;
-            break;
+    default:
+        NVIC_ConfigPriorityGroup(NVIC_PRIORITY_GROUP_0);
+        tempPrePri = 0;
+        tempSubPri = 4;
+        break;
     }
 
     tempPrePri = 4 - tempPrePri;
