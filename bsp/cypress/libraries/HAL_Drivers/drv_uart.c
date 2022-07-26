@@ -67,7 +67,6 @@ static void uart_isr(struct rt_serial_device *serial)
     struct ifx_uart *uart = (struct ifx_uart *) serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
 
-#ifdef BSP_USING_UART5
     if ((uart->config->usart_x->INTR_RX_MASKED & SCB_INTR_RX_MASKED_NOT_EMPTY_Msk) != 0)
     {
         /* Clear UART "RX fifo not empty interrupt" */
@@ -75,7 +74,6 @@ static void uart_isr(struct rt_serial_device *serial)
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-#endif
 }
 
 #ifdef BSP_USING_UART0
@@ -162,16 +160,28 @@ void uart5_isr_callback(void)
  */
 static rt_err_t ifx_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    struct ifx_uart *uart = (struct ifx_uart *) serial->parent.user_data;
-
     RT_ASSERT(serial != RT_NULL);
+    struct ifx_uart *uart = (struct ifx_uart *) serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
 
     cy_en_scb_uart_status_t result;
 
+    const cyhal_uart_cfg_t uart_config =
+    {
+        .data_bits          = 8,
+        .stop_bits          = 1,
+        .parity             = CYHAL_UART_PARITY_NONE,
+        .rx_buffer          = NULL,
+        .rx_buffer_size     = 0
+    };
+
     /* Initialize retarget-io to use the debug UART port */
-    result = cy_retarget_io_init(uart->config->tx_pin, uart->config->rx_pin,
-                                 CY_RETARGET_IO_BAUDRATE);
+    result = cyhal_uart_init(uart->config->uart_obj, uart->config->tx_pin, uart->config->rx_pin, NC, NC, NULL, &uart_config);
+
+    if (result == CY_RSLT_SUCCESS)
+    {
+        result = cyhal_uart_set_baud(uart->config->uart_obj, cfg->baud_rate, NULL);
+    }
 
     RT_ASSERT(result != RT_ERROR);
 
@@ -229,10 +239,13 @@ static int ifx_uarths_getc(struct rt_serial_device *serial)
 {
     int ch;
     rt_uint8_t read_data;
+
     RT_ASSERT(serial != RT_NULL);
+    struct ifx_uart *uart = (struct ifx_uart *) serial->parent.user_data;
+    RT_ASSERT(uart != RT_NULL);
 
     ch = -1;
-    if (RT_EOK == cyhal_uart_getc(&cy_retarget_io_uart_obj, (uint8_t *)&read_data, 1))
+    if (RT_EOK == cyhal_uart_getc(uart->config->uart_obj, (uint8_t *)&read_data, 1))
     {
         ch = read_data & 0xff;
     }
@@ -258,15 +271,17 @@ void rt_hw_uart_init(void)
     int index;
 
     rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct ifx_uart);
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    struct serial_configure serial_config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
     for (index = 0; index < obj_num; index++)
     {
         uart_obj[index].config = &uart_config[index];
         uart_obj[index].serial.ops = &_uart_ops;
-        uart_obj[index].serial.config = config;
+        uart_obj[index].serial.config = serial_config;
 
+        uart_obj[index].config->uart_obj = rt_malloc(sizeof(cyhal_uart_t));
+        RT_ASSERT(uart_obj[index].config->uart_obj != RT_NULL);
         /* register uart device */
         result = rt_hw_serial_register(&uart_obj[index].serial,
                                        uart_obj[index].config->name,
