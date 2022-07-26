@@ -2,8 +2,8 @@
  * @file     system_fm33lc0xx.c
  * @brief    CMSIS Cortex-M0 Device Peripheral Access Layer Source File for
  *           Device FM33LC0XX
- * @version  V2.00
- * @date     15. March 2021
+ * @version  V2.0.0
+ * @date     15. Mar 2021
  *
  * @note
  *
@@ -35,170 +35,171 @@
    POSSIBILITY OF SUCH DAMAGE.
    ---------------------------------------------------------------------------*/
 
-
 #include "system_fm33lc0xx.h"
-/*----------------------------------------------------------------------------
-  DEFINES
- *----------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------
-  Define clocks
- *----------------------------------------------------------------------------*/
-/* ToDo: add here your necessary defines for device initialization
-         following is an example for different system frequencies             */
+/* Clock Variable definitions ------------------------------------------------*/
+uint32_t XTLFClock = XTLF_DEFAULT_VALUE;        /*!< External Low-freq Osc Clock Frequency (XTLF) */
+uint32_t XTHFClock = XTHF_DEFAULT_VALUE;        /*!< External High-freq Osc Clock Frequency (XTHF) */
+uint32_t SystemCoreClock = HCLK_DEFAULT_VALUE;  /*!< System Clock Frequency (Core Clock) */
 
-/*----------------------------------------------------------------------------
-  Clock Variable definitions
- *----------------------------------------------------------------------------*/
-/* ToDo: initialize SystemCoreClock with the system core clock frequency value
-         achieved after system intitialization.
-         This means system core clock frequency after call to SystemInit()    */
-uint32_t SystemCoreClock = __SYSTEM_CLOCK;  /*!< System Clock Frequency (Core Clock)*/
-
-/*----------------------------------------------------------------------------
-  Clock functions
- *----------------------------------------------------------------------------*/
+/* Clock functions -----------------------------------------------------------*/
+/**
+ *  @brief Retrieve the PLL clock frequency
+ *
+ *  @retval PLL clock frequency
+ */
 static uint32_t SystemPLLClockUpdate(void)
 {
     uint32_t clock = 0;
-    
-    // 时钟源
+
+    /* Acquire PLL clock source */
     switch ((RCC->PLLCR >> 1) & 0x1)
     {
         case 0:
-            switch ((RCC->RCHFCR >> 16) & 0xf)
+            switch ((RCC->RCHFCR >> 16) & 0xFU)
             {
-                case 1: // 16M
+                case 1: /* 16MHz */
                     clock = 16000000;
                     break;
-                
-                case 2: // 24M
+
+                case 2: /* 24MHz */
                     clock = 24000000;
                     break;
-                
-                case 0: // 8M
+
+                case 0: /* 8MHz */
                 default:
                     clock = 8000000;
                     break;
             }
             break;
-        
+
         case 1:
-            clock = XTHF_VALUE;
+            clock = XTHFClock;
             break;
     }
-    
-    // 分频
+
+    /* Acquire PLL prescaler */
     switch ((RCC->PLLCR >> 0x4) & 0x7)
     {
-        case 0: // 不分频
+        case 0: /* input divided by 1 */
             clock /= 1;
             break;
-        
-        case 1: // 2分频
-            clock /= 2; 
+
+        case 1: /* input divided by 2 */
+            clock /= 2;
             break;
-        
-        case 2: // 4分频
+
+        case 2: /* input divided by 4 */
             clock /= 4;
             break;
-        
-        case 3: // 8分频
+
+        case 3: /* input divided by 8 */
             clock /= 8;
             break;
-        
-        case 4: // 12分频
+
+        case 4: /* input divided by 12 */
             clock /= 12;
             break;
-        
-        case 5: // 16分频
+
+        case 5: /* input divided by 16 */
             clock /= 16;
             break;
-        
-        case 6: // 24分频
+
+        case 6: /* input divided by 24 */
             clock /= 24;
             break;
-        
-        case 7: // 32分频
+
+        case 7: /* input divided by 32 */
             clock /= 32;
             break;
     }
-    
-    // 倍频比
-    clock = clock * (((RCC->PLLCR >> 16) & 0x7f) + 1);
-    
-    // 输出选择
+
+    /* Acquire PLL multiplier and calculate PLL frequency */
+    clock = clock * (((RCC->PLLCR >> 16) & 0x7F) + 1);
+
+    /* Acquire PLL output channel(PLLx1 or PLLx2) */
     if ((RCC->PLLCR >> 3) & 0x1)
     {
         clock *= 2;
     }
-        
+
     return clock;
 }
- 
-void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
+
+/**
+ *  @brief Update the core clock frequency variable: SystemCoreClock
+ *
+ */
+void SystemCoreClockUpdate(void)
 {
     switch ((RCC->SYSCLKCR >> 0) & 0x7)
-    {        
-        case 1: // XTHF
-            SystemCoreClock = XTHF_VALUE;
+    {
+        case 1: /* XTHF */
+            SystemCoreClock = XTHFClock;
             break;
-        
-        case 2: // PLL
+
+        case 2: /* PLL */
             SystemCoreClock = SystemPLLClockUpdate();
             break;
-        
-        case 4: // RCMF
+
+        case 4: /* RCMF */
             switch ((RCC->RCMFCR >> 16) & 0x3)
             {
-                case 0: // 不分频
+                case 0: /* output divided by 1 */
                     SystemCoreClock = 4000000;
                     break;
-                
-                case 1: // 4分频
+
+                case 1: /* output divided by 4 */
                     SystemCoreClock = 1000000;
                     break;
-                
-                case 2: // 8分频
+
+                case 2: /* output divided by 8 */
                     SystemCoreClock = 500000;
                     break;
-                
-                case 3: // 16分频
+
+                case 3: /* output divided by 16 */
                     SystemCoreClock = 250000;
                     break;
             }
             break;
-        
-        case 5: // LSCLK
-        case 6: // LPOSC
-            SystemCoreClock = 32768;
+
+        case 5: /* LSCLK */
+            #ifdef USE_LSCLK_CLOCK_SRC_LPOSC
+                SystemCoreClock = 32000;
+            #else
+                SystemCoreClock = XTLFClock;
+            #endif
             break;
-        
-        case 7: // USBBCK
+
+        case 6: /* LPOSC */
+            SystemCoreClock = 32000;
+            break;
+
+        case 7: /* USBBCK */
             switch ((RCC->SYSCLKCR >> 3) & 0x1)
             {
-                case 0: // USBBCK 48M
+                case 0: /* USBBCK 48MHz */
                     SystemCoreClock = 48000000;
                     break;
-                
-                case 1: // USBBCK 120M 2分频
+
+                case 1: /* USBBCK 120MHz/2 */
                     SystemCoreClock = 60000000;
                     break;
             }
             break;
-        
+
         default:
             switch ((RCC->RCHFCR >> 16) & 0xf)
             {
-                case 1: // 16M
+                case 1: /* 16MHz */
                     SystemCoreClock = 16000000;
                     break;
-                
-                case 2: // 24M
+
+                case 2: /* 24MHz */
                     SystemCoreClock = 24000000;
                     break;
-                
-                case 0: // 8M
+
+                case 0: /* 8MHz */
                 default:
                     SystemCoreClock = 8000000;
                     break;
@@ -208,79 +209,94 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
 }
 
 /**
-  * @brief	NVIC_Init config NVIC
-  *
-  * @param 	NVIC_configStruct configParams
-  *
-  * @param 	IRQn Interrupt number
-  *
-  * @retval	None
-  */
-void NVIC_Init(NVIC_ConfigTypeDef  *NVIC_configStruct,IRQn_Type IRQn)
-{
-    /* Params Check */
-    if(NVIC_configStruct->preemptPriority>3)
-    {
-        NVIC_configStruct->preemptPriority = 3;
-    }
-    
-	NVIC_DisableIRQ(IRQn);
-	NVIC_SetPriority(IRQn,NVIC_configStruct->preemptPriority);
-	NVIC_EnableIRQ(IRQn);
-}
-
-/**
- * Initialize the system
- *
- * @param  none
- * @return none
- *
  * @brief  Setup the microcontroller system.
  *         Initialize the System.
  */
-void SystemInit (void)
+void SystemInit(void)
 {
+    #if !defined(MFANG) && defined(USE_LSCLK_CLOCK_SRC_XTLF)
     uint32_t temp;
-    
-    /*  */
-    RCC->PLLCR = (uint32_t)0x00000000U;
-    RCC->SYSCLKCR = (uint32_t)0x0A000000U;
-     /* PAD RCC*/
-    RCC->PCLKCR1 |=  (0x1U << 7U);
-    #ifdef USE_LSCLK_CLOCK_SRC_XTLF           
-        GPIOD->FCR |= 0x3C0000; 
-        /* XTLF*/
-        RCC->XTLFCR  = (uint32_t)(0x00000000U);
-        /* XTLF*/
-        RCC->XTLFCR  |= (uint32_t)(0x00000005U<<8);
-        for(temp = 2000;temp>0;temp--);
-        /* LSCLKXTLF*/
-        RCC->LSCLKSEL = 0xAA;
-        /* LSCXTLF*/
-        RCC->SYSCLKCR |= 0x8000000U;
-    #else
-        RCC->SYSCLKCR &= 0x7FFFFFFU;
-        RCC->LSCLKSEL = 0x55;
     #endif
-    /*PDR*/
-    RMU->PDRCR |=0x01;
-    /*BOR*/
-    RMU->BORCR &=0xFE;
-    
-    /* DEBUG IWDT WWDT */
-    DBG->CR =0x03;
-    
-    RCC->RCHFTR = RCHF24M_TRIM;
+
+    #if defined(USE_IWDT_ON_STARTUP)
+    RCC->PCLKCR1 |= 0x20U;              /* Enable IWDT Operation Clock */
+    IWDT->CR = IWDT_OVERFLOW_PERIOD;    /* Configure IWDT overflow period */
+    IWDT->SERV = 0x12345A5AU;           /* Enable IWDT */
+    #endif
+
+    /* Reset PLL & SYSCLK selection */
+    RCC->PLLCR = 0x00000000U;
+    RCC->SYSCLKCR = 0x0A000000U;
+
+    /* Enable PAD Operation Clock */
+    RCC->PCLKCR1 |= (0x1U << 7);
+
+    #ifndef MFANG   /* MFANG handles clock configurations by itself */
+    #ifdef USE_LSCLK_CLOCK_SRC_XTLF
+
+        /* XTLF IO configuration */
+        GPIOD->FCR |= 0x003C0000U;
+
+        /* Enable XTLF */
+        RCC->XTLFCR = 0x00000000U;
+        RCC->XTLFCR |= (uint32_t)(0x5U << 8);
+        for(temp = 2000U; temp > 0U; temp--);
+
+    #ifdef USE_LSCLK_AUTO_SWITCH
+
+        /* Enable LSCLK auto switch */
+        RCC->SYSCLKCR |= 0x8000000U;
+
+        /* LSCLK from XTLF */
+        RCC->LSCLKSEL = 0xAAU;
+
+    #else
+
+        /* Disable LSCLK auto switch */
+        CMU->SYSCLKCR &= 0x7FFFFFFU;
+
+        /* LSCLK from XTLF */
+        CMU->LSCLKSEL = 0xAAU;
+
+    #endif  /* USE_LSCLK_AUTO_SWITCH */
+    #else
+
+        /* Disable LSCLK auto switch */
+        RCC->SYSCLKCR &= 0x7FFFFFFU;
+
+        /* LSCLK from LPOSC */
+        RCC->LSCLKSEL = 0x55U;
+
+    #endif  /* USE_LSCLK_CLOCK_SRC_XTLF */
+    #endif  /* MFANG */
+
+    /* PDR & BOR Configuration */
+    RMU->PDRCR = 0x1U;
+    RMU->BORCR = 0xEU;
+
+    /* Disable IWDT & WWDT, enable other peripherals(e.g. timers) under Debug Mode */
+    DBG->CR = 0x3U;
+
+    /* Load clock trim value */
+    RCC->RCHFTR = RCHF8M_TRIM;
     RCC->RCMFTR = RCMF4M_TRIM;
     RCC->LPOSCTR = LPOSC_TRIM;
-    
-    GPIOD->PUEN |= 0x3 << 7;
-    
+
+    /* Enable SWD port pull up */
+    GPIOD->PUEN |= (0x3U << 7U);
+
     /* DMA Flash Channel: Flash->RAM */
-    RCC->PCLKCR2 |= 0x1 << 4;
-    DMA->CH7CR |= 0x1 << 10;
-    RCC->PCLKCR2 &= ~(0x1 << 4);
-} 
+    RCC->PCLKCR2 |= (0x1U << 4U);
+    DMA->CH7CR |= (0x1U << 10U);
+    RCC->PCLKCR2 &= ~(0x1U << 4U);
+
+    /* Update System Core Clock */
+    SystemCoreClockUpdate();
+
+    #if defined(USE_IWDT_ON_STARTUP)
+    IWDT->SERV = 0x12345A5AU; /* Feed IWDT */
+    #endif
+}
 
 
 

@@ -6,7 +6,7 @@
  * @version  V0.0.1
  * @date     14 july 2020
  *
- * @note     Generated with SVDConv V2.87e 
+ * @note     Generated with SVDConv V2.87e
  *           from CMSIS SVD File 'FM33LG0XX.SVD' Version 1.0,
  *
  * @par      ARM Limited (ARM) is supplying this software for use with Cortex-M
@@ -45,7 +45,7 @@ extern "C" {
 #define __XTLF_CLOCK                (32768)          /* Value of the EXTERNAL oscillator in Hz */
 
 /**
-  * @brief Configuration of the Cortex-M0 Processor and Core Peripherals 
+  * @brief Configuration of the Cortex-M0 Processor and Core Peripherals
   */
 #define __CM0_REV                    0x0100U /*!< Cortex-M0 Core Revision                                               */
 #define __MPU_PRESENT                1U      /*!< MPU present or not                                                    */
@@ -55,10 +55,10 @@ extern "C" {
 /* -------------------------  Interrupt Number Definition  ------------------------ */
 
 /**
- * @brief FM33LG0XX Interrupt Number Definition, according to the selected device 
- *        in @ref Library_configuration_section 
+ * @brief FM33LG0XX Interrupt Number Definition, according to the selected device
+ *        in @ref Library_configuration_section
  */
- 
+
 typedef enum {
 /******  Cortex-M0 Processor Exceptions Numbers ****************************************************************/
   Reset_IRQn                    = -15,              /*!<   1  复位向量 */
@@ -71,7 +71,7 @@ typedef enum {
 /* --------------------  FM33LG0XX specific Interrupt Numbers  --------------------*/
   WWDT_IRQn                     = 0,                /*!<   0  窗口看门狗或独立看门狗中断 */
   SVD_IRQn                      = 1,                /*!<   1  电源监测报警中断 */
-  RTCx_IRQn            		      = 2,                /*!<   2  实时时钟中断 */
+  RTCx_IRQn                       = 2,                /*!<   2  实时时钟中断 */
   FLASH_IRQn                    = 3,                /*!<   3  NVMIF中断 */
   FDET_IRQn                     = 4,                /*!<   4  XTLF或XTHF停振检测中断、系统时钟选择错误中断 */
   ADC_IRQn                      = 5,                /*!<   5  ADC转换完成中断 */
@@ -769,7 +769,7 @@ typedef struct
   __IO uint32_t TMSEL;                  /*!<  RTCA Time Mark Select,                                Address offset: 0x2C */
   __IO uint32_t ADJUST;                 /*!<  RTCA time Adjust Register,                            Address offset: 0x30 */
   __IO uint32_t ADSIGN;                 /*!<  RTCA time Adjust Sign Register,                       Address offset: 0x34 */
-  __IO uint32_t RSV1;                   /*!<  RESERVED REGISTER,                                    Address offset: 0x38 */  
+  __IO uint32_t RSV1;                   /*!<  RESERVED REGISTER,                                    Address offset: 0x38 */
   __IO uint32_t SBSCNT;                 /*!<  RTCA Sub-Second Counter,                              Address offset: 0x3C */
   __IO uint32_t CR;                     /*!<  RTCA Control Register,                                Address offset: 0x40 */
 }RTCA_Type;

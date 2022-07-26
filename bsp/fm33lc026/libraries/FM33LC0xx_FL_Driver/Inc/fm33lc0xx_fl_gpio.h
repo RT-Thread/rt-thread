@@ -6,15 +6,15 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 /* Includes -------------------------------------------------------------------------------------------*/
-#include "fm33lc0xx_fl.h"
+#include "fm33lc0xx_fl_def.h"
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
   */
@@ -289,37 +289,37 @@ typedef struct
 
 
 #define    FL_GPIO_FOUT0_SELECT_XTLF                              (0x0U << GPIO_FOUTSEL_FOUT0_Pos)
-#define    FL_GPIO_FOUT0_SELECT_RCLP                              (0x1U << GPIO_FOUTSEL_FOUT0_Pos)
+#define    FL_GPIO_FOUT0_SELECT_LPOSC                             (0x1U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_RCHF_DIV64                        (0x2U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_LSCLK                             (0x3U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_AHBCLK_DIV64                      (0x4U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_RTCTM                             (0x5U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_PLLOUTPUT_DIV64                   (0x6U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_RTCCLK64Hz                        (0x7U << GPIO_FOUTSEL_FOUT0_Pos)
-#define    FL_GPIO_FOUT0_SELECT_APBCLK_DIV64                      (0x8U << GPIO_FOUTSEL_FOUT0_Pos)
+#define    FL_GPIO_FOUT0_SELECT_APB1CLK_DIV64                     (0x8U << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_PLLOUTPUT                         (0x9U << GPIO_FOUTSEL_FOUT0_Pos)
-#define    FL_GPIO_FOUT0_SELECT_RC4M_PSC                          (0xaU << GPIO_FOUTSEL_FOUT0_Pos)
+#define    FL_GPIO_FOUT0_SELECT_RCMF_PSC                          (0xaU << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_RCHF                              (0xbU << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_XTHF_DIV64                        (0xcU << GPIO_FOUTSEL_FOUT0_Pos)
-#define    FL_GPIO_FOUT0_SELECT_ADCCLK_DIV64                      (0xdU << GPIO_FOUTSEL_FOUT0_Pos)
+#define    FL_GPIO_FOUT0_SELECT_COMP1_OUTPUT                      (0xdU << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_CLK_8K                            (0xeU << GPIO_FOUTSEL_FOUT0_Pos)
 #define    FL_GPIO_FOUT0_SELECT_ADC_CLK                           (0xfU << GPIO_FOUTSEL_FOUT0_Pos)
 
 
 #define    FL_GPIO_FOUT1_SELECT_XTLF                              (0x0U << GPIO_FOUTSEL_FOUT1_Pos)
-#define    FL_GPIO_FOUT1_SELECT_RCLP                              (0x1U << GPIO_FOUTSEL_FOUT1_Pos)
+#define    FL_GPIO_FOUT1_SELECT_LPOSC                             (0x1U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_RCHF_DIV64                        (0x2U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_LSCLK                             (0x3U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_AHBCLK_DIV64                      (0x4U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_RTCTM                             (0x5U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_PLLOUTPUT_DIV64                   (0x6U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_RTCCLK64Hz                        (0x7U << GPIO_FOUTSEL_FOUT1_Pos)
-#define    FL_GPIO_FOUT1_SELECT_APBCLK_DIV64                      (0x8U << GPIO_FOUTSEL_FOUT1_Pos)
+#define    FL_GPIO_FOUT1_SELECT_APB1CLK_DIV64                     (0x8U << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_PLLOUTPUT                         (0x9U << GPIO_FOUTSEL_FOUT1_Pos)
-#define    FL_GPIO_FOUT1_SELECT_RC4M_PSC                          (0xaU << GPIO_FOUTSEL_FOUT1_Pos)
+#define    FL_GPIO_FOUT1_SELECT_RCMF_PSC                          (0xaU << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_RCHF                              (0xbU << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_XTHF_DIV64                        (0xcU << GPIO_FOUTSEL_FOUT1_Pos)
-#define    FL_GPIO_FOUT1_SELECT_COMP1_OUTPUT                      (0xdU << GPIO_FOUTSEL_FOUT1_Pos)
+#define    FL_GPIO_FOUT1_SELECT_ADCCLK_DIV64                      (0xdU << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_CLK_8K                            (0xeU << GPIO_FOUTSEL_FOUT1_Pos)
 #define    FL_GPIO_FOUT1_SELECT_COMP2_OUTPUT                      (0xfU << GPIO_FOUTSEL_FOUT1_Pos)
 
@@ -921,7 +921,14 @@ __STATIC_INLINE uint32_t FL_GPIO_GetOutputPin(GPIO_Type *GPIOx, uint32_t pin)
   */
 __STATIC_INLINE void FL_GPIO_ToggleOutputPin(GPIO_Type *GPIOx, uint32_t pin)
 {
-    WRITE_REG(GPIOx->DO, READ_REG(GPIOx->DO) ^ pin);
+    if(pin&GPIOx->DO)
+    {
+      WRITE_REG(GPIOx->DRST, pin);
+    }
+    else
+    {
+      WRITE_REG(GPIOx->DSET, pin);
+    }
 }
 
 /**
@@ -1274,19 +1281,19 @@ __STATIC_INLINE uint32_t FL_GPIO_ReadEXTILines(GPIO_COMMON_Type *GPIOx)
   * @param    GPIOx GPIO Port
   * @param    select This parameter can be one of the following values:
   *           @arg @ref FL_GPIO_FOUT0_SELECT_XTLF
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_RCLP
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_LPOSC
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RCHF_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_LSCLK
   *           @arg @ref FL_GPIO_FOUT0_SELECT_AHBCLK_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RTCTM
   *           @arg @ref FL_GPIO_FOUT0_SELECT_PLLOUTPUT_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RTCCLK64Hz
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_APBCLK_DIV64
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_APB1CLK_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_PLLOUTPUT
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_RC4M_PSC
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_RCMF_PSC
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RCHF
   *           @arg @ref FL_GPIO_FOUT0_SELECT_XTHF_DIV64
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_ADCCLK_DIV64
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_COMP1_OUTPUT
   *           @arg @ref FL_GPIO_FOUT0_SELECT_CLK_8K
   *           @arg @ref FL_GPIO_FOUT0_SELECT_ADC_CLK
   * @retval   None
@@ -1302,19 +1309,19 @@ __STATIC_INLINE void FL_GPIO_SetFOUT0(GPIO_COMMON_Type *GPIOx, uint32_t select)
   * @param    GPIOx GPIO Port
   * @retval   Returned value can be one of the following values:
   *           @arg @ref FL_GPIO_FOUT0_SELECT_XTLF
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_RCLP
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_LPOSC
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RCHF_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_LSCLK
   *           @arg @ref FL_GPIO_FOUT0_SELECT_AHBCLK_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RTCTM
   *           @arg @ref FL_GPIO_FOUT0_SELECT_PLLOUTPUT_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RTCCLK64Hz
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_APBCLK_DIV64
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_APB1CLK_DIV64
   *           @arg @ref FL_GPIO_FOUT0_SELECT_PLLOUTPUT
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_RC4M_PSC
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_RCMF_PSC
   *           @arg @ref FL_GPIO_FOUT0_SELECT_RCHF
   *           @arg @ref FL_GPIO_FOUT0_SELECT_XTHF_DIV64
-  *           @arg @ref FL_GPIO_FOUT0_SELECT_ADCCLK_DIV64
+  *           @arg @ref FL_GPIO_FOUT0_SELECT_COMP1_OUTPUT
   *           @arg @ref FL_GPIO_FOUT0_SELECT_CLK_8K
   *           @arg @ref FL_GPIO_FOUT0_SELECT_ADC_CLK
   */
@@ -1329,19 +1336,19 @@ __STATIC_INLINE uint32_t FL_GPIO_GetFOUT0(GPIO_COMMON_Type *GPIOx)
   * @param    GPIOx GPIO Port
   * @param    select This parameter can be one of the following values:
   *           @arg @ref FL_GPIO_FOUT1_SELECT_XTLF
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_RCLP
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_LPOSC
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RCHF_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_LSCLK
   *           @arg @ref FL_GPIO_FOUT1_SELECT_AHBCLK_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RTCTM
   *           @arg @ref FL_GPIO_FOUT1_SELECT_PLLOUTPUT_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RTCCLK64Hz
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_APBCLK_DIV64
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_APB1CLK_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_PLLOUTPUT
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_RC4M_PSC
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_RCMF_PSC
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RCHF
   *           @arg @ref FL_GPIO_FOUT1_SELECT_XTHF_DIV64
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_COMP1_OUTPUT
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_ADCCLK_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_CLK_8K
   *           @arg @ref FL_GPIO_FOUT1_SELECT_COMP2_OUTPUT
   * @retval   None
@@ -1357,19 +1364,19 @@ __STATIC_INLINE void FL_GPIO_SetFOUT1(GPIO_COMMON_Type *GPIOx, uint32_t select)
   * @param    GPIOx GPIO Port
   * @retval   Returned value can be one of the following values:
   *           @arg @ref FL_GPIO_FOUT1_SELECT_XTLF
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_RCLP
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_LPOSC
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RCHF_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_LSCLK
   *           @arg @ref FL_GPIO_FOUT1_SELECT_AHBCLK_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RTCTM
   *           @arg @ref FL_GPIO_FOUT1_SELECT_PLLOUTPUT_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RTCCLK64Hz
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_APBCLK_DIV64
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_APB1CLK_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_PLLOUTPUT
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_RC4M_PSC
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_RCMF_PSC
   *           @arg @ref FL_GPIO_FOUT1_SELECT_RCHF
   *           @arg @ref FL_GPIO_FOUT1_SELECT_XTHF_DIV64
-  *           @arg @ref FL_GPIO_FOUT1_SELECT_COMP1_OUTPUT
+  *           @arg @ref FL_GPIO_FOUT1_SELECT_ADCCLK_DIV64
   *           @arg @ref FL_GPIO_FOUT1_SELECT_CLK_8K
   *           @arg @ref FL_GPIO_FOUT1_SELECT_COMP2_OUTPUT
   */
@@ -1955,5 +1962,5 @@ void FL_GPIO_ALLPIN_LPM_MODE(void);
 
 #endif /* __FM33LC0XX_FL_GPIO_H*/
 
-/*************************Py_Code_Generator Version: 0.1-0.11-0.2 @ 2020-09-23*************************/
-/*************************(C) COPYRIGHT Fudan Microelectronics **** END OF FILE*************************/
+/*************************Py_Code_Generator Version: 0.1-0.14-0.2 @ 2021-08-19*************************/
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

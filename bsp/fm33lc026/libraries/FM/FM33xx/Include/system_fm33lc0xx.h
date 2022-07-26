@@ -46,7 +46,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include "fm33lc0xx.h"
-    
+
 #define   USE_LSCLK_CLOCK_SRC_XTLF
 
 //#define   SYSCLK_SRC_RC4M
@@ -54,8 +54,8 @@ extern "C" {
 #define   SYSCLK_SRC_RCHF
 //#define   SYSCLK_SRC_PLL
 
-    
-    
+
+
 //#define   USE_PLL_CLOCK_SRC_RCHF
 //#define   USE_PLL_CLOCK_SRC_XTHF
 
@@ -77,11 +77,11 @@ extern "C" {
 
 #if !defined  (XTHF_VALUE)
     #define XTHF_VALUE    ((uint32_t)8000000U) /*!< Value of the External oscillator in Hz */
-#endif /* XTHF_VALUE */    
+#endif /* XTHF_VALUE */
 
 #if !defined  (XTLF_VALUE)
     #define XTLF_VALUE    ((uint32_t)32768U) /*!< Value of the Internal oscillator in Hz*/
-#endif /* XTLF_VALUE */         
+#endif /* XTLF_VALUE */
 
 
 #define LDT_CHECK(_N_VALUE_, _T_VALUE_)                         \
@@ -89,9 +89,9 @@ extern "C" {
                             ((~_N_VALUE_) & 0xffff)) ? _N_VALUE_ : _T_VALUE_)
 
 #define LPOSC_LDT_TRIM      (*(uint32_t *)0x1FFFFB20)   // LPOSC 常温校准值
-#define RCHF8M_LDT_TRIM     (*(uint32_t *)0x1FFFFB40)	// RC8M 常温校准值
-#define RCHF16M_LDT_TRIM 	(*(uint32_t *)0x1FFFFB3C)	// RC16M 常温校准值
-#define RCHF24M_LDT_TRIM 	(*(uint32_t *)0x1FFFFB38)	// RC24M 常温校准值
+#define RCHF8M_LDT_TRIM     (*(uint32_t *)0x1FFFFB40)   // RC8M 常温校准值
+#define RCHF16M_LDT_TRIM    (*(uint32_t *)0x1FFFFB3C)   // RC16M 常温校准值
+#define RCHF24M_LDT_TRIM    (*(uint32_t *)0x1FFFFB38)   // RC24M 常温校准值
 #define RCMF4M_LDT_TRIM     (*(uint32_t *)0x1FFFFB44)   // RCMF 常温校准值
 
 #define LPOSC_TRIM          (LDT_CHECK(LPOSC_LDT_TRIM, 0x80) & 0xff)
@@ -99,7 +99,7 @@ extern "C" {
 #define RCHF8M_TRIM         (LDT_CHECK(RCHF8M_LDT_TRIM, 0x40) & 0x7f)
 #define RCHF16M_TRIM        (LDT_CHECK(RCHF16M_LDT_TRIM, 0x40) & 0x7f)
 #define RCHF24M_TRIM        (LDT_CHECK(RCHF24M_LDT_TRIM, 0x40) & 0x7f)
-         
+
 
 #define __SYSTEM_CLOCK      (8000000)
 
@@ -111,7 +111,7 @@ typedef  struct
 {
     /* 中断抢占优先级 */
     uint32_t preemptPriority;
-    
+
 }NVIC_ConfigTypeDef;
 
 
@@ -138,13 +138,13 @@ void SystemInit (void);
 extern uint32_t SystemCoreClock;
 void SystemCoreClockUpdate (void);
 /**
-  * @brief	NVIC_Init config NVIC
+  * @brief  NVIC_Init config NVIC
   *
-  * @param 	NVIC_configStruct configParams
+  * @param  NVIC_configStruct configParams
   *
-  * @param 	IRQn Interrupt number
+  * @param  IRQn Interrupt number
   *
-  * @retval	None
+  * @retval None
   */
 void NVIC_Init(NVIC_ConfigTypeDef  *NVIC_configStruct,IRQn_Type IRQn);
 

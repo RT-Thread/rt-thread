@@ -20,11 +20,10 @@
   */
 #ifndef __FM33_ASSERT_H
 #define __FM33_ASSERT_H
-#include "fm33xx.h"
-#ifdef __cplusplus
- extern "C" {
-#endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef  USE_FULL_ASSERT
 #define assert_param(expr) do{if((expr) == 0)for(;;);}while(0)
