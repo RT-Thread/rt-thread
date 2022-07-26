@@ -6,25 +6,22 @@
   ****************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   ****************************************************************************************************
   */
+
+
 /* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_adc.h"
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33lc0xx_fl_rmu.h"
-#include "fm33lc0xx_fl_svd.h"
-#include "fm33lc0xx_fl_vref.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -34,8 +31,10 @@
   * @{
   */
 
+#ifdef FL_ADC_DRIVER_ENABLED
+
 /* Private macros ------------------------------------------------------------*/
-/** @addtogroup ADC_FL_Private_Macros
+/** @addtogroup ADC_FL_PM ADC Private Macros
   * @{
   */
 
@@ -143,10 +142,10 @@
   */
 
 /**
-  * @brief  ADC外设寄存器值为复位值
-  * @param  外设入口地址
-  * @retval 返回错误状态，可能值：
-  *         -FL_PASS 外设寄存器值恢复复位值
+  * @brief  恢复ADC公用寄存器到复位值
+  * @param  None
+  * @retval 执行结果
+  *         -FL_PASS ADC公用寄存器值恢复复位值
   *         -FL_FAIL 未成功执行
   */
 FL_ErrorStatus FL_ADC_CommonDeInit(void)
@@ -158,16 +157,11 @@ FL_ErrorStatus FL_ADC_CommonDeInit(void)
     return FL_PASS;
 }
 /**
-  * @brief  ADC共用寄存器设置以配置外设工作时钟
-  *
-  * @note   其中LL_LPTIM_OPERATION_MODE_EXTERNAL_ASYN_PAUSE_CNT 模式需要外部脉冲提供给LPTIM模块作为工作时钟，此时
-  *         LPTIM完全工作在异步模式下。
-  * @param  LPTIM  外设入口地址
-  * @param  LPTIM_InitStruct指向LL_LPTIM_TimeInitTypeDef类的结构体，它包含指定LPTIM外设的配置信息
-  *
-  * @retval ErrorStatus枚举值
+  * @brief  配置ADC公用寄存器
+  * @param  ADC_CommonInitStruct 指向 @ref FL_ADC_CommonInitTypeDef 的结构体，它包含ADC公用寄存器的配置信息
+  * @retval 执行结果
   *         -FL_FAIL 配置过程发生错误
-  *         -FL_PASS LPUART配置成功
+  *         -FL_PASS ADC公用寄存器配置成功
   */
 FL_ErrorStatus FL_ADC_CommonInit(FL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 {
@@ -186,27 +180,24 @@ FL_ErrorStatus FL_ADC_CommonInit(FL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
     return status;
 }
 /**
-  * @brief  设置 ADC_CommonInitStruct 为默认配置
-  * @param  ADC_CommonInitStruct 指向需要将值设置为默认配置的结构体 @ref LL_ADC_CommonInitTypeDef 结构体
-  *
+  * @brief  初始化 @ref FL_ADC_CommonInitTypeDef 配置结构体
+  * @param  ADC_CommonInitStruct 指向需要初始化的 @ref FL_ADC_CommonInitTypeDef 结构体
   * @retval None
   */
 void FL_ADC_CommonStructInit(FL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 {
     /*默认使用RCHF作为ADC时钟模块时钟源，预分频系数16*/
-    ADC_CommonInitStruct->clockSource               = FL_RCC_ADC_CLK_SOURCE_RCHF;
-    ADC_CommonInitStruct->clockPrescaler        = FL_RCC_ADC_PSC_DIV16;
+    ADC_CommonInitStruct->clockSource     = FL_RCC_ADC_CLK_SOURCE_RCHF;
+    ADC_CommonInitStruct->clockPrescaler  = FL_RCC_ADC_PSC_DIV16;
 }
 /**
-  * @brief  恢复对应的ADC入口地址寄存器为默认值
-  *
+  * @brief  恢复ADC外设寄存器到复位值
   * @param  ADCx  外设入口地址
-  *
-  * @retval ErrorStatus枚举值
-  *         -FL_FAIL 配置过程发生错误
-  *         -FL_PASS LPUART配置成功
+  * @retval 执行结果
+  *         -FL_PASS ADC外设寄存器值恢复复位值
+  *         -FL_FAIL 未成功执行
   */
-FL_ErrorStatus  FL_ADC_DeInit(ADC_Type *ADCx)
+FL_ErrorStatus FL_ADC_DeInit(ADC_Type *ADCx)
 {
     FL_ErrorStatus status = FL_PASS;
     /* 入口合法性检查 */
@@ -221,16 +212,14 @@ FL_ErrorStatus  FL_ADC_DeInit(ADC_Type *ADCx)
     return status;
 }
 /**
-  * @brief  初始化ADCx指定的入口地址的外设寄存器
-  *
+  * @brief  配置指定的ADC外设
   * @note   用户必须检查此函数的返回值，以确保自校准完成，否则转换结果精度无法保证，除此之外ADC使能过采样实际不会增加ADC的
   *         转换精度只会提高转换结果的稳定性（同时配置移位寄存器的情况下），同时过采样会降低转换速度。
   * @param  ADCx  外设入口地址
-  * @param  ADC_InitStruct 向一FL_ADC_InitTypeDef结构体，它包含指定ADC外设的配置信息
-  *
-  * @retval ErrorStatus枚举值
+  * @param  ADC_InitStruct 指向 @ref FL_ADC_InitTypeDef 的结构体，它包含ADC外设寄存器的配置信息
+  * @retval 执行结果
   *         -FL_FAIL 配置过程发生错误
-  *         -FL_PASS LPUART配置成功
+  *         -FL_PASS ADC外设寄存器配置成功
   */
 FL_ErrorStatus FL_ADC_Init(ADC_Type *ADCx, FL_ADC_InitTypeDef  *ADC_InitStruct)
 {
@@ -245,15 +234,15 @@ FL_ErrorStatus FL_ADC_Init(ADC_Type *ADCx, FL_ADC_InitTypeDef  *ADC_InitStruct)
     assert_param(IS_FL_ADC_OVERSAMPCOFIG(ADC_InitStruct->oversamplingMode));
     assert_param(IS_FL_ADC_OVERSAMPINGRATIO(ADC_InitStruct->overSampingMultiplier));
     assert_param(IS_FL_ADC_OVERSAMPINGSHIFT(ADC_InitStruct->oversamplingShift));
-    /* 使能a工作时钟 */
+    /* 使能ADC工作时钟 */
     FL_RCC_EnableGroup1BusClock(FL_RCC_GROUP1_BUSCLK_ANAC);
     FL_SVD_EnableADCMonitor(SVD);
     if(!FL_VREF_IsEnabled(VREF))
     {
         FL_VREF_ClearFlag_Ready(VREF);
-        FL_VREF_Enable(VREF);//置位VREF_EN寄存器，使能VREF1p2模块
+        FL_VREF_Enable(VREF);   /* 置位VREF_EN寄存器，使能VREF1p2模块 */
     }
-    FL_VREF_EnableTemperatureSensor(VREF);//置位PTAT_EN寄存器
+    FL_VREF_EnableTemperatureSensor(VREF);  /* 置位PTAT_EN寄存器 */
     while(FL_VREF_IsActiveFlag_Ready(VREF) == 0)
     {
         if(i >= 128000)
@@ -321,41 +310,38 @@ FL_ErrorStatus FL_ADC_Init(ADC_Type *ADCx, FL_ADC_InitTypeDef  *ADC_InitStruct)
     }
     return status;
 }
-
 /**
-  * @brief  设置 ADC_InitStruct 为默认配置
-  * @param  ADC_InitStruct 指向需要将值设置为默认配置的结构体 @ref FL_ADC_InitTypeDef 结构体
-  *
+  * @brief  初始化 @ref FL_ADC_InitTypeDef 配置结构体
+  * @param  ADC_InitStruct 指向需要初始化的 @ref FL_ADC_InitTypeDef 结构体
   * @retval None
   */
 void FL_ADC_StructInit(FL_ADC_InitTypeDef *ADC_InitStruct)
 {
-    ADC_InitStruct->conversionMode                  = FL_ADC_CONV_MODE_SINGLE;
-    ADC_InitStruct->autoMode                    = FL_ADC_SINGLE_CONV_MODE_AUTO;
-    ADC_InitStruct->scanDirection               = FL_ADC_SEQ_SCAN_DIR_FORWARD;
-    ADC_InitStruct->externalTrigConv            = FL_ADC_TRIGGER_EDGE_NONE;
-    ADC_InitStruct->overrunMode                 = FL_ENABLE;
-    ADC_InitStruct->waitMode                    = FL_ENABLE;
-    ADC_InitStruct->fastChannelTime             = FL_ADC_FAST_CH_SAMPLING_TIME_4_ADCCLK;
-    ADC_InitStruct->lowChannelTime                  = FL_ADC_SLOW_CH_SAMPLING_TIME_192_ADCCLK;
-    ADC_InitStruct->oversamplingMode            = FL_ENABLE;
-    ADC_InitStruct->overSampingMultiplier   = FL_ADC_OVERSAMPLING_MUL_16X;
-    ADC_InitStruct->oversamplingShift           = FL_ADC_OVERSAMPLING_SHIFT_4B;
+    ADC_InitStruct->conversionMode        = FL_ADC_CONV_MODE_SINGLE;
+    ADC_InitStruct->autoMode              = FL_ADC_SINGLE_CONV_MODE_AUTO;
+    ADC_InitStruct->scanDirection         = FL_ADC_SEQ_SCAN_DIR_FORWARD;
+    ADC_InitStruct->externalTrigConv      = FL_ADC_TRIGGER_EDGE_NONE;
+    ADC_InitStruct->overrunMode           = FL_ENABLE;
+    ADC_InitStruct->waitMode              = FL_ENABLE;
+    ADC_InitStruct->fastChannelTime       = FL_ADC_FAST_CH_SAMPLING_TIME_4_ADCCLK;
+    ADC_InitStruct->lowChannelTime        = FL_ADC_SLOW_CH_SAMPLING_TIME_192_ADCCLK;
+    ADC_InitStruct->oversamplingMode      = FL_ENABLE;
+    ADC_InitStruct->overSampingMultiplier = FL_ADC_OVERSAMPLING_MUL_16X;
+    ADC_InitStruct->oversamplingShift     = FL_ADC_OVERSAMPLING_SHIFT_4B;
 }
 
 /**
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* FL_ADC_DRIVER_ENABLED */
 
 /**
   * @}
   */
 
-/******************************************* END OF FILE *******************************************/
+/**
+  * @}
+  */
 
-
-
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

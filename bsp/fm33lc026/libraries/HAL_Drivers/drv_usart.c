@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -185,7 +185,7 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
 
     uart = rt_container_of(serial, struct _uart, serial);
-    FL_UART_WriteTXBuff(uart->config->InitTypeDef, c); //·¢ËÍÒ»¸öÊý¾Ý
+    FL_UART_WriteTXBuff(uart->config->InitTypeDef, c); //å‘é€ä¸€ä¸ªæ•°æ®
     while (FL_SET != FL_UART_IsActiveFlag_TXShiftBuffEmpty(uart->config->InitTypeDef));
     return 1;
 }
@@ -200,7 +200,7 @@ static int uart_getc(struct rt_serial_device *serial)
     ch = -1;
     if (FL_SET == FL_UART_IsActiveFlag_RXBuffFull(uart->config->InitTypeDef))
     {
-        ch = FL_UART_ReadRXBuff(uart->config->InitTypeDef);//½ÓÊÕÖÐ¶Ï±êÖ¾¿ÉÍ¨¹ý¶ÁÈ¡rxreg¼Ä´æÆ÷Çå³ý
+        ch = FL_UART_ReadRXBuff(uart->config->InitTypeDef);//æŽ¥æ”¶ä¸­æ–­æ ‡å¿—å¯é€šè¿‡è¯»å–rxregå¯„å­˜å™¨æ¸…é™¤
     }
     return ch;
 }

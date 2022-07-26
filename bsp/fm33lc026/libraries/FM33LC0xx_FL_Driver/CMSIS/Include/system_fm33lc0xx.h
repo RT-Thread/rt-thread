@@ -2,8 +2,8 @@
  * @file     system_fm33lc0xx.h
  * @brief    CMSIS Cortex-M0 Device Peripheral Access Layer Header File for
  *           Device FM33LC0XX
- * @version  V2.00
- * @date     15. March 2021
+ * @version  V2.0.0
+ * @date     15. Mar 2021
  *
  * @note
  *
@@ -35,7 +35,6 @@
    POSSIBILITY OF SUCH DAMAGE.
    ---------------------------------------------------------------------------*/
 
-
 #ifndef SYSTEM_FM33LC0XX_H
 #define SYSTEM_FM33LC0XX_H
 
@@ -43,110 +42,119 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
-#include <stdio.h>
-#include "fm33lc0xx.h"
-    
-#define   USE_LSCLK_CLOCK_SRC_XTLF
-
-//#define   SYSCLK_SRC_RC4M
-//#define   SYSCLK_SRC_XTHF
-#define   SYSCLK_SRC_RCHF
-//#define   SYSCLK_SRC_PLL
-
-    
-    
-//#define   USE_PLL_CLOCK_SRC_RCHF
-//#define   USE_PLL_CLOCK_SRC_XTHF
-
-
-#if ((!defined(SYSCLK_SRC_RC4M)) && (!defined(SYSCLK_SRC_XTHF))&&(!defined(SYSCLK_SRC_PLL))&&(!defined(SYSCLK_SRC_RCHF)))
-    #error "Must select a clock source form the SYSCLK_SRC_RC4M or SYSCLK_SRC_XTHF or SYSCLK_SRC_PLL or SYSCLK_SRC_RCHF as the master clock."
-#elif (((defined(SYSCLK_SRC_RC4M)) && ((defined(SYSCLK_SRC_XTHF))||(defined(SYSCLK_SRC_PLL))||(defined(SYSCLK_SRC_RCHF))))||\
-     ((defined(SYSCLK_SRC_XTHF)) && ((defined(SYSCLK_SRC_RC4M))||(defined(SYSCLK_SRC_PLL))||(defined(SYSCLK_SRC_RCHF))))||\
-     ((defined(SYSCLK_SRC_PLL)) && ((defined(SYSCLK_SRC_XTHF))||(defined(SYSCLK_SRC_RC4M))||(defined(SYSCLK_SRC_RCHF))))||\
-     ((defined(SYSCLK_SRC_RCHF)) && ((defined(SYSCLK_SRC_XTHF))||(defined(SYSCLK_SRC_PLL))||(defined(SYSCLK_SRC_RC4M)))))
-    #error "Only one clock source can be selected as the master clock."
-#endif
-
-#if defined(SYSCLK_SRC_PLL) && !defined(USE_PLL_CLOCK_SRC_RCHF) && !defined(USE_PLL_CLOCK_SRC_XTHF)
-    #error "You have chosen to enable the PLL, so you need to specify the clock source for the PLL.."
-#elif defined(SYSCLK_SRC_PLL) && (defined(USE_PLL_CLOCK_SRC_RCHF) && defined(USE_PLL_CLOCK_SRC_XTHF))
-    #error "Please select one of the USE_PLL_CLOCK_SRC_RCHF and USE_PLL_CLOCK_SRC_XTHF in your application"
-#endif
-
-#if !defined  (XTHF_VALUE)
-    #define XTHF_VALUE    ((uint32_t)8000000U) /*!< Value of the External oscillator in Hz */
-#endif /* XTHF_VALUE */    
-
-#if !defined  (XTLF_VALUE)
-    #define XTLF_VALUE    ((uint32_t)32768U) /*!< Value of the Internal oscillator in Hz*/
-#endif /* XTLF_VALUE */         
-
-
-#define LDT_CHECK(_N_VALUE_, _T_VALUE_)                         \
-                            ((((_N_VALUE_ >> 16) & 0xffff) ==   \
-                            ((~_N_VALUE_) & 0xffff)) ? _N_VALUE_ : _T_VALUE_)
-
-#define LPOSC_LDT_TRIM      (*(uint32_t *)0x1FFFFB20)   // LPOSC 常温校准值
-#define RCHF8M_LDT_TRIM     (*(uint32_t *)0x1FFFFB40)	// RC8M 常温校准值
-#define RCHF16M_LDT_TRIM 	(*(uint32_t *)0x1FFFFB3C)	// RC16M 常温校准值
-#define RCHF24M_LDT_TRIM 	(*(uint32_t *)0x1FFFFB38)	// RC24M 常温校准值
-#define RCMF4M_LDT_TRIM     (*(uint32_t *)0x1FFFFB44)   // RCMF 常温校准值
-
-#define LPOSC_TRIM          (LDT_CHECK(LPOSC_LDT_TRIM, 0x80) & 0xff)
-#define RCMF4M_TRIM         (LDT_CHECK(RCMF4M_LDT_TRIM, 0x40) & 0x7f)
-#define RCHF8M_TRIM         (LDT_CHECK(RCHF8M_LDT_TRIM, 0x40) & 0x7f)
-#define RCHF16M_TRIM        (LDT_CHECK(RCHF16M_LDT_TRIM, 0x40) & 0x7f)
-#define RCHF24M_TRIM        (LDT_CHECK(RCHF24M_LDT_TRIM, 0x40) & 0x7f)
-         
-
-#define __SYSTEM_CLOCK      (8000000)
-
-
 /**
-  * @brief FL NVIC Init Sturcture definition
+  * @brief CMSIS Device version number
   */
-typedef  struct
-{
-    /* 中断抢占优先级 */
-    uint32_t preemptPriority;
-    
-}NVIC_ConfigTypeDef;
+#define __FM33LC0xx_CMSIS_VERSION_MAIN      (0x02) /*!< [31:24] main version */
+#define __FM33LC0xx_CMSIS_VERSION_SUB1      (0x03) /*!< [23:16] sub1 version */
+#define __FM33LC0xx_CMSIS_VERSION_SUB2      (0x01) /*!< [15:0]  sub2 version */
+#define __FM33LC0xx_CMSIS_VERSION           ((__FM33LC0xx_CMSIS_VERSION_MAIN  << 24)\
+                                             |(__FM33LC0xx_CMSIS_VERSION_SUB1 << 16)\
+                                             |(__FM33LC0xx_CMSIS_VERSION_SUB2))
 
-
+/* Configurations ------------------------------------------------------------*/
 /**
- * Initialize the system
- *
- * @param  none
- * @return none
- *
- * @brief  Setup the microcontroller system.
- *         Initialize the System and update the SystemCoreClock variable.
+ *  @brief LSCLK source
+ *  @note  Comment the following line to use only LPOSC as LSCLK source, and also
+ *         disable LSCLK auto switch function.
  */
-void SystemInit (void);
+#define USE_LSCLK_CLOCK_SRC_XTLF
+
+#ifdef USE_LSCLK_CLOCK_SRC_XTLF
 
 /**
- * Update SystemCoreClock variable
- *
- * @param  none
- * @return none
- *
+ *  @brief LSCLK source
+ *  @note  Comment the following line to disable LSCLK auto switch function.
+ */
+#define USE_LSCLK_AUTO_SWITCH
+
+#endif  /* USE_LSCLK_CLOCK_SRC_XTLF */
+
+/**
+ *  @brief Open IWDT on program startup
+ *  @note  Uncomment the following line to use IWDT on startup. User can modify
+ *         the IWDT_OVERFLOW_PERIOD to change the IDWT overflow period.
+ */
+/* #define USE_IWDT_ON_STARTUP */
+
+#ifdef USE_IWDT_ON_STARTUP
+/*
+    Valid value of IWDT_OVERFLOW_PERIOD:
+    - 0x0: 125ms
+    - 0x1: 250ms
+    - 0x2: 500ms
+    - 0x3: 1s
+    - 0x4: 2s
+    - 0x5: 4s
+    - 0x6: 8s
+    - 0x7: 16s
+ */
+#define IWDT_OVERFLOW_PERIOD  0x7
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+#include <stdint.h>
+
+/* Device Includes -----------------------------------------------------------*/
+#include "fm33lc0xx.h"
+
+/* Trim Values ---------------------------------------------------------------*/
+/* Validate Function */
+#define LDT_CHECK(_N_VALUE_, _T_VALUE_)                         \
+                            ((((_N_VALUE_ >> 16) & 0xFFFFU) ==   \
+                            (~(_N_VALUE_) & 0xFFFFU)) ? (_N_VALUE_) : (_T_VALUE_))
+
+/* Trim Values Address */
+#define LPOSC_LDT_TRIM      (*(uint32_t *)0x1FFFFB20U)   /* LPOSC trim value */
+#define RCHF8M_LDT_TRIM     (*(uint32_t *)0x1FFFFB40U)   /* RC8M  trim value */
+#define RCHF16M_LDT_TRIM    (*(uint32_t *)0x1FFFFB3CU)   /* RC16M trim value */
+#define RCHF24M_LDT_TRIM    (*(uint32_t *)0x1FFFFB38U)   /* RC24M trim value */
+#define RCMF4M_LDT_TRIM     (*(uint32_t *)0x1FFFFB44U)   /* RCMF  trim value */
+
+/* Trim Values */
+#define LPOSC_TRIM          (LDT_CHECK(LPOSC_LDT_TRIM,   0x80) & 0xFFU)
+#define RCMF4M_TRIM         (LDT_CHECK(RCMF4M_LDT_TRIM,  0x40) & 0x7FU)
+#define RCHF8M_TRIM         (LDT_CHECK(RCHF8M_LDT_TRIM,  0x40) & 0x7FU)
+#define RCHF16M_TRIM        (LDT_CHECK(RCHF16M_LDT_TRIM, 0x40) & 0x7FU)
+#define RCHF24M_TRIM        (LDT_CHECK(RCHF24M_LDT_TRIM, 0x40) & 0x7FU)
+
+/* Default Clock Frequency Values --------------------------------------------*/
+
+#define XTHF_DEFAULT_VALUE    ((uint32_t)8000000U)  /*!< Default value of XTHF in Hz */
+#define XTLF_DEFAULT_VALUE    ((uint32_t)32768U)    /*!< Default value of XTLF in Hz */
+
+/* Default system core clock value */
+#define HCLK_DEFAULT_VALUE    ((uint32_t)8000000U)
+
+/* Exported Clock Frequency Variables --------------------------------------- */
+/*
+    - [SystemCoreClock] holds the value of CPU operation clock freqency, and is initialized
+        to HCLK_DEFAULT_VALUE;
+    - [XTLFClock] holds the value of external low-frequency oscillator(XTLF),
+        and is initialized to XTLF_DEFAULT_VALUE;
+    - [XTHFClock] holds the value of external high_frequency oscillator(XTHF),
+        and is initialized to XTHF_DEFAULT_VALUE;
+
+    NOTE: If users are using these two external oscillators, they should modify the
+    value of XTLFClock and XTHFClock to the correct value, and call the SystemCoreClockUpdate()
+    to update the SystemCoreClock variable, otherwise those codes which rely on
+    the SystemCoreClock variable will fail to run.
+ */
+extern uint32_t XTLFClock;        /*!< External Low-freq Osc Clock Frequency (XTLF) */
+extern uint32_t XTHFClock;        /*!< External High-freq Osc Clock Frequency (XTHF) */
+extern uint32_t SystemCoreClock;  /*!< System Clock Frequency (Core Clock) */
+
+/**
+ * @brief  Setup the microcontroller system.
+ *         Initialize the System.
+ */
+void SystemInit(void);
+
+/**
  * @brief  Updates the SystemCoreClock with current core Clock
  *         retrieved from cpu registers.
  */
-extern uint32_t SystemCoreClock;
-void SystemCoreClockUpdate (void);
-/**
-  * @brief	NVIC_Init config NVIC
-  *
-  * @param 	NVIC_configStruct configParams
-  *
-  * @param 	IRQn Interrupt number
-  *
-  * @retval	None
-  */
-void NVIC_Init(NVIC_ConfigTypeDef  *NVIC_configStruct,IRQn_Type IRQn);
+void SystemCoreClockUpdate(void);
 
 #ifdef __cplusplus
 }

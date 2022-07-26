@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,7 +24,7 @@ extern "C" {
         .name = "uart0",                                            \
         .InitTypeDef = UART0,                                       \
         .irq_type = UART0_IRQn,                                    \
-        .clockSrc = FL_RCC_UART0_CLK_SOURCE_APB1CLK,				\
+        .clockSrc = FL_RCC_UART0_CLK_SOURCE_APB1CLK,                \
     }
 #endif /* UART0_CONFIG */
 #endif /* BSP_USING_UART0 */
@@ -51,7 +51,7 @@ extern "C" {
     }
 #endif /* UART4_CONFIG */
 #endif /* BSP_USING_UART4 */
-    
+
 #if defined(BSP_USING_UART5)
 #ifndef UART5_CONFIG
 #define UART5_CONFIG                                                \
@@ -61,8 +61,8 @@ extern "C" {
         .irq_type = UART5_IRQn,                                    \
     }
 #endif /* UART5_CONFIG */
-#endif /* BSP_USING_UART5 */	
-	
+#endif /* BSP_USING_UART5 */
+
 #if defined(BSP_USING_LPUART0)
 #ifndef LPUART0_CONFIG
 #define LPUART0_CONFIG                                                \
@@ -73,7 +73,7 @@ extern "C" {
     }
 #endif /* LPUART0_CONFIG */
 #endif /* BSP_USING_LPUART0 */
-	
+
 #if defined(BSP_USING_LPUART1)
 #ifndef LPUART1_CONFIG
 #define LPUART1_CONFIG                                                \
