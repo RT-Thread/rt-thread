@@ -21,6 +21,8 @@
 
 struct ifx_uart_config
 {
+    cyhal_uart_t *uart_obj;
+
     const char *name;
     rt_uint32_t tx_pin;
     rt_uint32_t rx_pin;
