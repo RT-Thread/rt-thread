@@ -24,9 +24,9 @@ extern "C" {
 #ifndef PWM0_CONFIG
 #define PWM0_CONFIG                             \
     {                                           \
-       .name                    = "pwm0",       \
-       .channel                 = 0,            \
-       .gpio                    = 0,            \
+        .name                    = "pwm0",       \
+                                   .channel                 = 0,            \
+                                           .gpio                    = 0,            \
     }
 #endif /* PWM0_CONFIG */
 #endif /* BSP_USING_PWM0 */

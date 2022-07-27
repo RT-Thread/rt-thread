@@ -28,6 +28,7 @@ static int get_day_of_week(int day, int month, int year)
     int ret;
     int k = 0;
     int j = 0;
+
     if (month < CY_RTC_MARCH)
     {
         month += CY_RTC_MONTHS_PER_YEAR;
@@ -48,6 +49,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     struct tm new_time = {0};
 
     gmtime_r(&time_stamp, &tm);
+
     if (tm.tm_year < 100)
     {
         return -RT_ERROR;
@@ -120,6 +122,7 @@ static rt_err_t _rtc_set_secs(time_t *sec)
     {
         result = -RT_ERROR;
     }
+
     LOG_D("RTC: set rtc_time %d", *sec);
 
     return result;
