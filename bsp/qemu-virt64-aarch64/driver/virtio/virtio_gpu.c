@@ -84,10 +84,6 @@ static void virtio_gpu_ctrl_send_command(struct virtio_gpu_device *virtio_gpu_de
 #endif
     }
 
-    rt_hw_dsb();
-
-    virtio_gpu_dev->info[idx[0]].ctrl_valid = RT_TRUE;
-
     rt_memcpy(&virtio_gpu_dev->gpu_request, cmd, cmd_len);
 
     virtio_fill_desc(virtio_dev, VIRTIO_GPU_QUEUE_CTRL, idx[0],
@@ -97,6 +93,8 @@ static void virtio_gpu_ctrl_send_command(struct virtio_gpu_device *virtio_gpu_de
             VIRTIO_VA2PA(addr) + cmd_len, res_len, VIRTQ_DESC_F_WRITE, 0);
 
     rt_memset(ret_res, 0, res_len);
+
+    virtio_gpu_dev->info[idx[0]].ctrl_valid = RT_TRUE;
 
     virtio_submit_chain(virtio_dev, VIRTIO_GPU_QUEUE_CTRL, idx[0]);
 
