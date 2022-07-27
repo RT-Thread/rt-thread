@@ -64,7 +64,7 @@ static rt_err_t pl031_get_secs(time_t *sec)
         return RT_EOK;
     }
 
-    return RT_EINVAL;
+    return -RT_EINVAL;
 }
 
 static rt_err_t pl031_set_secs(time_t *sec)
@@ -76,7 +76,7 @@ static rt_err_t pl031_set_secs(time_t *sec)
         return RT_EOK;
     }
 
-    return RT_EINVAL;
+    return -RT_EINVAL;
 }
 
 #ifdef RT_USING_ALARM
@@ -118,7 +118,7 @@ static rt_err_t pl031_set_alarm(struct rt_rtc_wkalarm *alarm)
         return RT_EOK;
     }
 
-    return RT_EINVAL;
+    return -RT_EINVAL;
 }
 
 static rt_err_t pl031_get_alarm(struct rt_rtc_wkalarm *alarm)
@@ -130,7 +130,7 @@ static rt_err_t pl031_get_alarm(struct rt_rtc_wkalarm *alarm)
         return RT_EOK;
     }
 
-    return RT_EINVAL;
+    return -RT_EINVAL;
 }
 #endif /* RT_USING_ALARM */
 
@@ -143,7 +143,7 @@ static rt_err_t pl031_get_timeval(struct timeval *tv)
         return RT_EOK;
     }
 
-    return RT_EINVAL;
+    return -RT_EINVAL;
 }
 
 static rt_err_t pl031_set_timeval(struct timeval *tv)
@@ -155,7 +155,7 @@ static rt_err_t pl031_set_timeval(struct timeval *tv)
         return RT_EOK;
     }
 
-    return RT_EINVAL;
+    return -RT_EINVAL;
 }
 
 static const struct rt_rtc_ops rtc_ops =
