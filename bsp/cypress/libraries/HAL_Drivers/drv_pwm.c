@@ -31,47 +31,47 @@ struct ifx_pwm
 
 enum
 {
-#ifdef BSP_USING_PWM0
+    #ifdef BSP_USING_PWM0
     PWM0_INDEX,
-#endif
+    #endif
 };
 
 static struct ifx_pwm ifx_pwm_obj[] =
 {
-#ifdef BSP_USING_PWM0
+    #ifdef BSP_USING_PWM0
     PWM0_CONFIG,
-#endif
+    #endif
 };
 
 static void pwm_get_pin_number(void)
 {
-#ifdef BSP_USING_PWM0_CH7
-#ifdef BSP_USING_PWM0_PORT2
+    #ifdef BSP_USING_PWM0_CH7
+    #ifdef BSP_USING_PWM0_PORT2
     ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(2, 2);
-#endif
-#ifdef BSP_USING_PWM0_PORT5
+    #endif
+    #ifdef BSP_USING_PWM0_PORT5
     ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(5, 6);
-#endif
-#ifdef BSP_USING_PWM0_PORT7
+    #endif
+    #ifdef BSP_USING_PWM0_PORT7
     ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(7, 7);
-#endif
-#ifdef BSP_USING_PWM0_PORT9
+    #endif
+    #ifdef BSP_USING_PWM0_PORT9
     ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(9, 4);
-#endif
-#ifdef BSP_USING_PWM0_PORT10
+    #endif
+    #ifdef BSP_USING_PWM0_PORT10
     ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(10, 2);
-#endif
-#ifdef BSP_USING_PWM0_PORT12
+    #endif
+    #ifdef BSP_USING_PWM0_PORT12
     ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(12, 6);
-#endif
-#endif
+    #endif
+    #endif
 }
 
 static void pwm_get_channel(void)
 {
-#ifdef BSP_USING_PWM0_CH7
+    #ifdef BSP_USING_PWM0_CH7
     ifx_pwm_obj[PWM0_INDEX].channel = 7;
-#endif
+    #endif
 }
 
 static rt_err_t drv_pwm_enable(cyhal_pwm_t *htim, struct rt_pwm_configuration *configuration, rt_bool_t enable)
@@ -136,20 +136,26 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 
     switch (cmd)
     {
-    case PWMN_CMD_ENABLE:
-        configuration->complementary = RT_TRUE;
-    case PWM_CMD_ENABLE:
-        return drv_pwm_enable(htim, configuration, RT_TRUE);
-    case PWMN_CMD_DISABLE:
-        configuration->complementary = RT_FALSE;
-    case PWM_CMD_DISABLE:
-        return drv_pwm_enable(htim, configuration, RT_FALSE);
-    case PWM_CMD_SET:
-        return drv_pwm_set(htim, configuration);
-    case PWM_CMD_GET:
-        return drv_pwm_get(htim, configuration);
-    default:
-        return RT_EINVAL;
+        case PWMN_CMD_ENABLE:
+            configuration->complementary = RT_TRUE;
+
+        case PWM_CMD_ENABLE:
+            return drv_pwm_enable(htim, configuration, RT_TRUE);
+
+        case PWMN_CMD_DISABLE:
+            configuration->complementary = RT_FALSE;
+
+        case PWM_CMD_DISABLE:
+            return drv_pwm_enable(htim, configuration, RT_FALSE);
+
+        case PWM_CMD_SET:
+            return drv_pwm_set(htim, configuration);
+
+        case PWM_CMD_GET:
+            return drv_pwm_get(htim, configuration);
+
+        default:
+            return RT_EINVAL;
     }
 }
 
@@ -232,6 +238,7 @@ static int pwm_sample(int argc, char *argv[])
     pulse = 0;
 
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
+
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_DEV_NAME);
@@ -253,10 +260,12 @@ static int pwm_sample(int argc, char *argv[])
         {
             pulse -= 5000;
         }
+
         if (pulse >= period)
         {
             dir = 0;
         }
+
         if (0 == pulse)
         {
             dir = 1;

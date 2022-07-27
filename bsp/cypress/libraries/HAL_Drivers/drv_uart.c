@@ -17,46 +17,46 @@
 
 enum
 {
-#ifdef BSP_USING_UART0
+    #ifdef BSP_USING_UART0
     UART0_INDEX,
-#endif
-#ifdef BSP_USING_UART1
+    #endif
+    #ifdef BSP_USING_UART1
     UART1_INDEX,
-#endif
-#ifdef BSP_USING_UART2
+    #endif
+    #ifdef BSP_USING_UART2
     UART2_INDEX,
-#endif
-#ifdef BSP_USING_UART3
+    #endif
+    #ifdef BSP_USING_UART3
     UART3_INDEX,
-#endif
-#ifdef BSP_USING_UART4
+    #endif
+    #ifdef BSP_USING_UART4
     UART4_INDEX,
-#endif
-#ifdef BSP_USING_UART5
+    #endif
+    #ifdef BSP_USING_UART5
     UART5_INDEX,
-#endif
+    #endif
 };
 
 static struct ifx_uart_config uart_config[] =
 {
-#ifdef BSP_USING_UART0
+    #ifdef BSP_USING_UART0
     UART0_CONFIG,
-#endif
-#ifdef BSP_USING_UART1
+    #endif
+    #ifdef BSP_USING_UART1
     UART1_CONFIG,
-#endif
-#ifdef BSP_USING_UART2
+    #endif
+    #ifdef BSP_USING_UART2
     UART2_CONFIG,
-#endif
-#ifdef BSP_USING_UART3
+    #endif
+    #ifdef BSP_USING_UART3
     UART3_CONFIG,
-#endif
-#ifdef BSP_USING_UART4
+    #endif
+    #ifdef BSP_USING_UART4
     UART4_CONFIG,
-#endif
-#ifdef BSP_USING_UART5
+    #endif
+    #ifdef BSP_USING_UART5
     UART5_CONFIG,
-#endif
+    #endif
 };
 
 static struct ifx_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
@@ -196,20 +196,20 @@ static rt_err_t ifx_control(struct rt_serial_device *serial, int cmd, void *arg)
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_CLR_INT:
+        case RT_DEVICE_CTRL_CLR_INT:
 
-        break;
+            break;
 
-    case RT_DEVICE_CTRL_SET_INT:
-        /* Unmasking only the RX fifo not empty interrupt bit */
-        uart->config->usart_x->INTR_RX_MASK = SCB_INTR_RX_MASK_NOT_EMPTY_Msk;
+        case RT_DEVICE_CTRL_SET_INT:
+            /* Unmasking only the RX fifo not empty interrupt bit */
+            uart->config->usart_x->INTR_RX_MASK = SCB_INTR_RX_MASK_NOT_EMPTY_Msk;
 
-        /* Interrupt Settings for UART */
-        Cy_SysInt_Init(uart->config->UART_SCB_IRQ_cfg, uart->config->userIsr);
+            /* Interrupt Settings for UART */
+            Cy_SysInt_Init(uart->config->UART_SCB_IRQ_cfg, uart->config->userIsr);
 
-        /* Enable the interrupt */
-        NVIC_EnableIRQ(uart->config->intrSrc);
-        break;
+            /* Enable the interrupt */
+            NVIC_EnableIRQ(uart->config->intrSrc);
+            break;
     }
 
     return (RT_EOK);
@@ -227,6 +227,7 @@ static int ifx_uarths_putc(struct rt_serial_device *serial, char c)
         return CYHAL_SYSPM_RSLT_ERR_PM_PENDING;
 
     uint32_t count = 0;
+
     while (count == 0)
     {
         count = Cy_SCB_UART_Put(uart->config->usart_x, c);
@@ -245,6 +246,7 @@ static int ifx_uarths_getc(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     ch = -1;
+
     if (RT_EOK == cyhal_uart_getc(uart->config->uart_obj, (uint8_t *)&read_data, 1))
     {
         ch = read_data & 0xff;

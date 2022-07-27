@@ -30,9 +30,9 @@ struct ifx_adc
 
 static struct ifx_adc ifx_adc_obj[] =
 {
-#ifdef BSP_USING_ADC1
+    #ifdef BSP_USING_ADC1
     ADC1_CONFIG,
-#endif
+    #endif
 };
 
 static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
@@ -54,6 +54,7 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
     {
         /* Initialize ADC. The ADC block which can connect to pin 10[0] is selected */
         result = cyhal_adc_init(&adc_obj, VPLUS_CHANNEL_0, NULL);
+
         if (result != RT_EOK)
         {
             LOG_E("ADC initialization failed. Error: %ld\n", (long unsigned int)result);
@@ -63,6 +64,7 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
         /* Initialize a channel 0 and configure it to scan P10_0 in single ended mode. */
         result  = cyhal_adc_channel_init_diff(adc_ch, &adc_obj, VPLUS_CHANNEL_0,
                                               CYHAL_ADC_VNEG, &channel_config);
+
         if (result != RT_EOK)
         {
             LOG_E("ADC single ended channel initialization failed. Error: %ld\n", (long unsigned int)result);
@@ -71,6 +73,7 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
         /* Update ADC configuration */
         result = cyhal_adc_configure(&adc_obj, &adc_config);
+
         if (result != RT_EOK)
         {
             printf("ADC configuration update failed. Error: %ld\n", (long unsigned int)result);

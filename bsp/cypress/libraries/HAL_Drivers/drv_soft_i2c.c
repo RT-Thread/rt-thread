@@ -24,9 +24,9 @@
 
 static const struct ifx_soft_i2c_config soft_i2c_config[] =
 {
-#ifdef BSP_USING_I2C1
+    #ifdef BSP_USING_I2C1
     I2C1_BUS_CONFIG,
-#endif
+    #endif
 };
 
 static struct ifx_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
@@ -56,6 +56,7 @@ static void ifx_i2c_gpio_init(struct ifx_i2c *i2c)
 static void ifx_set_sda(void *data, rt_int32_t state)
 {
     struct ifx_soft_i2c_config *cfg = (struct ifx_soft_i2c_config *)data;
+
     if (state)
     {
         rt_pin_write(cfg->sda, PIN_HIGH);
@@ -75,6 +76,7 @@ static void ifx_set_sda(void *data, rt_int32_t state)
 static void ifx_set_scl(void *data, rt_int32_t state)
 {
     struct ifx_soft_i2c_config *cfg = (struct ifx_soft_i2c_config *)data;
+
     if (state)
     {
         rt_pin_write(cfg->scl, PIN_HIGH);
@@ -140,6 +142,7 @@ static rt_err_t ifx_i2c_bus_unlock(const struct ifx_soft_i2c_config *cfg)
             rt_hw_us_delay(100);
         }
     }
+
     if (PIN_LOW == rt_pin_read(cfg->sda))
     {
         return -RT_ERROR;

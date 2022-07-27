@@ -39,41 +39,49 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt_device, int cmd, void *arg)
     cfg = wdt_device->parent.user_data;
 
     rt_uint32_t timeout_ms = 0;
+
     switch (cmd)
     {
-    /* feed the watchdog */
-    case RT_DEVICE_CTRL_WDT_KEEPALIVE:
-        cyhal_wdt_kick(cfg->WDTx);
-        break;
-    /* set watchdog timeout */
-    case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-    {
-        timeout_ms = *((rt_uint32_t *)arg) * 1000;
+        /* feed the watchdog */
+        case RT_DEVICE_CTRL_WDT_KEEPALIVE:
+            cyhal_wdt_kick(cfg->WDTx);
+            break;
 
-        rt_uint32_t max_timeout_ms = cyhal_wdt_get_max_timeout_ms();
-        if (timeout_ms >= max_timeout_ms)
-            timeout_ms = max_timeout_ms;
+        /* set watchdog timeout */
+        case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
+        {
+            timeout_ms = *((rt_uint32_t *)arg) * 1000;
 
-        /* Initialize the WDT */
-        int result = cyhal_wdt_init(cfg->WDTx, (rt_uint32_t)timeout_ms);
-        /* WDT initialization failed. Stop program execution */
-        RT_ASSERT(result != RT_ERROR);
+            rt_uint32_t max_timeout_ms = cyhal_wdt_get_max_timeout_ms();
+
+            if (timeout_ms >= max_timeout_ms)
+                timeout_ms = max_timeout_ms;
+
+            /* Initialize the WDT */
+            int result = cyhal_wdt_init(cfg->WDTx, (rt_uint32_t)timeout_ms);
+            /* WDT initialization failed. Stop program execution */
+            RT_ASSERT(result != RT_ERROR);
+        }
+        break;
+
+        case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
+            timeout_ms = cyhal_wdt_get_timeout_ms(cfg->WDTx);
+            *(rt_uint32_t *)arg = timeout_ms / 1000;
+            break;
+
+        case RT_DEVICE_CTRL_WDT_START:
+            cyhal_wdt_start(cfg->WDTx);
+            break;
+
+        case RT_DEVICE_CTRL_WDT_STOP:
+            cyhal_wdt_stop(cfg->WDTx);
+            break;
+
+        default:
+            LOG_W("This command is not supported.");
+            return -RT_ERROR;
     }
-    break;
-    case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
-        timeout_ms = cyhal_wdt_get_timeout_ms(cfg->WDTx);
-        *(rt_uint32_t *)arg = timeout_ms / 1000;
-        break;
-    case RT_DEVICE_CTRL_WDT_START:
-        cyhal_wdt_start(cfg->WDTx);
-        break;
-    case RT_DEVICE_CTRL_WDT_STOP:
-        cyhal_wdt_stop(cfg->WDTx);
-        break;
-    default:
-        LOG_W("This command is not supported.");
-        return -RT_ERROR;
-    }
+
     return RT_EOK;
 }
 
@@ -93,6 +101,7 @@ int rt_hw_wdt_init(void)
         LOG_E("wdt device register failed.");
         return -RT_ERROR;
     }
+
     LOG_D("wdt device register success.");
     return RT_EOK;
 }

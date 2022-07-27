@@ -11,7 +11,7 @@
 #include "drv_common.h"
 
 #ifdef RT_USING_SERIAL
-#include "drv_uart.h"
+    #include "drv_uart.h"
 #endif
 
 #define DBG_TAG "drv_common"
@@ -58,6 +58,7 @@ void _Error_Handler(char *s, int num)
 {
     /* User can add his own implementation to report the HAL error return state */
     LOG_E("Error_Handler at file:%s num:%d", s, num);
+
     while (1)
     {
     }
@@ -74,10 +75,13 @@ void rt_hw_us_delay(rt_uint32_t us)
     start = SysTick->VAL;
     reload = SysTick->LOAD;
     us_tick = SystemCoreClock / 1000000UL;
-    do {
+
+    do
+    {
         now = SysTick->VAL;
         delta = start > now ? start - now : reload + start - now;
-    } while(delta < us_tick * us);
+    }
+    while(delta < us_tick * us);
 }
 
 /**
@@ -91,27 +95,27 @@ RT_WEAK void rt_hw_board_init()
     rt_hw_systick_init();
 
     /* heap initialization */
-#if defined(RT_USING_HEAP)
+    #if defined(RT_USING_HEAP)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
-#endif
+    #endif
 
     /* pin driver initialization is open by default */
-#ifdef RT_USING_PIN
+    #ifdef RT_USING_PIN
     rt_hw_pin_init();
-#endif
+    #endif
 
     /* usart driver initialization is open by default */
-#ifdef RT_USING_SERIAL
+    #ifdef RT_USING_SERIAL
     rt_hw_uart_init();
-#endif
+    #endif
 
     /* set the shell console output device */
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
+    #endif
 
     /* board underlying hardware initialization */
-#ifdef RT_USING_COMPONENTS_INIT
+    #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
-#endif
+    #endif
 }
