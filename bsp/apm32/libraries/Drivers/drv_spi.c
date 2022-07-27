@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
+ * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  */
 
 #include "drv_spi.h"
@@ -195,6 +196,7 @@ static int rt_hw_spi_init(void)
     int result = 0;
     GPIO_Config_T gpio_config;
 
+#ifdef APM32F10X_HD
 #ifdef BSP_USING_SPI1
     static struct rt_spi_bus spi_bus1;
     spi_bus1.parent.user_data = (void *)SPI1;
@@ -256,6 +258,83 @@ static int rt_hw_spi_init(void)
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = GPIO_PIN_4;
     GPIO_Config(GPIOB, &gpio_config);
+#endif
+#elif APM32F40X
+#ifdef BSP_USING_SPI1
+    static struct rt_spi_bus spi_bus1;
+    spi_bus1.parent.user_data = (void *)SPI1;
+
+    result = rt_spi_bus_register(&spi_bus1, "spi1", &_spi_ops);
+
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOA);
+    RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SPI1);
+
+    /* Config SPI1 PinAF */
+    GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_4, GPIO_AF_SPI1);
+    GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_5, GPIO_AF_SPI1);
+    GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_6, GPIO_AF_SPI1);
+    GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_7, GPIO_AF_SPI1);
+
+    /* SPI1_NSS(PA4) SPI1_SCK(PA5) SPI1_MISO(PA6) SPI1_MOSI(PA7) */
+    gpio_config.mode = GPIO_MODE_AF;
+    gpio_config.speed = GPIO_SPEED_100MHz;
+    gpio_config.otype = GPIO_OTYPE_PP;
+    gpio_config.pupd = GPIO_PUPD_NOPULL;
+    gpio_config.pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+    GPIO_Config(GPIOA, &gpio_config);
+#endif
+
+#ifdef BSP_USING_SPI2
+    static struct rt_spi_bus spi_bus2;
+    spi_bus2.parent.user_data = (void *)SPI2;
+
+    result = rt_spi_bus_register(&spi_bus2, "spi2", &_spi_ops);
+
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOB);
+    RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_SPI2);
+
+    /* Config SPI2 PinAF */
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_12, GPIO_AF_SPI2);
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_13, GPIO_AF_SPI2);
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_14, GPIO_AF_SPI2);
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_15, GPIO_AF_SPI2);
+
+    /* SPI2_NSS(PB12) SPI2_SCK(PB13) SPI2_MISO(PB14) SPI2_MOSI(PB15) */
+    gpio_config.mode = GPIO_MODE_AF;
+    gpio_config.speed = GPIO_SPEED_100MHz;
+    gpio_config.otype = GPIO_OTYPE_PP;
+    gpio_config.pupd = GPIO_PUPD_NOPULL;
+    gpio_config.pin = GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+    GPIO_Config(GPIOB, &gpio_config);
+#endif
+
+#ifdef BSP_USING_SPI3
+    static struct rt_spi_bus spi_bus3;
+    spi_bus3.parent.user_data = (void *)SPI3;
+
+    result = rt_spi_bus_register(&spi_bus3, "spi3", &_spi_ops);
+
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOA);
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOB);
+    RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_SPI3);
+
+    /* Config SPI3 PinAF */
+    GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_4, GPIO_AF_SPI3);
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_3, GPIO_AF_SPI3);
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_4, GPIO_AF_SPI3);
+    GPIO_ConfigPinAF(GPIOB, GPIO_PIN_SOURCE_5, GPIO_AF_SPI3);
+
+    /* SPI3_SCK(PB3) SPI3_MISO(PB4) SPI3_MOSI(PB5) */
+    gpio_config.mode = GPIO_MODE_AF;
+    gpio_config.speed = GPIO_SPEED_100MHz;
+    gpio_config.otype = GPIO_OTYPE_PP;
+    gpio_config.pupd = GPIO_PUPD_NOPULL;
+    gpio_config.pin = GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
+    GPIO_Config(GPIOB, &gpio_config);
+    /* SPI3_NSS(PA4) */
+    gpio_config.pin = GPIO_PIN_4;
+    GPIO_Config(GPIOA, &gpio_config);
+#endif
 #endif
     return result;
 }

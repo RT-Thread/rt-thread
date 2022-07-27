@@ -27,7 +27,7 @@
 #define __APM32F10X_IWDT_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -51,7 +51,7 @@ typedef enum
 {
     IWDT_KEYWORD_RELOAD = 0xAAAA,
     IWDT_KEYWORD_ENABLE = 0xCCCC
-} IWDT_KEYWORD_T;
+}IWDT_KEYWORD_T;
 
 /**
  * @brief    IWDT Write Access define
@@ -60,7 +60,7 @@ typedef enum
 {
     IWDT_WRITEACCESS_ENABLE  = 0x5555,
     IWDT_WRITEACCESS_DISABLE = 0x0000
-} IWDT_WRITEACCESS_T;
+}IWDT_WRITEACCESS_T;
 
 /**
  * @brief    IWDT Divider
@@ -74,7 +74,7 @@ typedef enum
     IWDT_DIVIDER_64  = 0x04,
     IWDT_DIVIDER_128 = 0x05,
     IWDT_DIVIDER_256 = 0x06
-} IWDT_DIVIDER_T;
+}IWDT_DIVIDER_T;
 
 /**
  * @brief    IWDT Flag
@@ -83,7 +83,7 @@ typedef enum
 {
     IWDT_FLAG_PSCU = BIT0,
     IWDT_FLAG_CNTU = BIT1
-} IWDT_FLAG_T;
+}IWDT_FLAG_T;
 
 /**@} end of group IWDT_Enumerations*/
 

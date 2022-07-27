@@ -51,7 +51,7 @@
 struct n32_uart
 {
     USART_Module* uart_periph;       //Todo: 3bits
-    IRQn_Type irqn;                 //Todo: 7bits    
+    IRQn_Type irqn;                 //Todo: 7bits
     uint32_t per_clk;               //Todo: 5bits
     uint32_t tx_gpio_clk;           //Todo: 5bits
     uint32_t rx_gpio_clk;           //Todo: 5bits
@@ -62,7 +62,7 @@ struct n32_uart
     GPIO_ModeType rx_af;                 //Todo: 4bits
     uint16_t rx_pin;                //Todo: 4bits
 
-    struct rt_serial_device * serial;    
+    struct rt_serial_device * serial;
     char *device_name;
 };
 
@@ -191,7 +191,7 @@ static const struct n32_uart uarts[] = {
         "usart1",
     },
 #endif
-    
+
 #ifdef BSP_USING_USART2
     {
         USART2,                                 // uart peripheral index
@@ -203,7 +203,7 @@ static const struct n32_uart uarts[] = {
         "usart2",
     },
 #endif
-    
+
 #ifdef BSP_USING_USART3
     {
         USART3,                                 // uart peripheral index
@@ -227,7 +227,7 @@ static const struct n32_uart uarts[] = {
         "uart4",
     },
 #endif
-    
+
 #ifdef BSP_USING_UART5
     {
         UART5,                                 // uart peripheral index
@@ -251,7 +251,7 @@ static const struct n32_uart uarts[] = {
         "uart6",
     },
 #endif
-    
+
 #ifdef BSP_USING_UART7
     {
         UART7,                                 // uart peripheral index
@@ -279,21 +279,21 @@ void n32_uart_gpio_init(struct n32_uart *uart, struct serial_configure *cfg)
 {
     /* enable USART clock */
     RCC_EnableAPB2PeriphClk(uart->tx_gpio_clk | uart->rx_gpio_clk | RCC_APB2_PERIPH_AFIO, ENABLE);
-    
+
     if(uart->uart_periph == USART1 || uart->uart_periph == UART6 || uart->uart_periph == UART7)
     {
         RCC_EnableAPB2PeriphClk(uart->per_clk, ENABLE);
-    }    
+    }
     else
     {
         RCC_EnableAPB1PeriphClk(uart->per_clk, ENABLE);
     }
-    
+
     /* connect port to USARTx_Tx */
     GPIOInit(uart->tx_port, uart->tx_af, GPIO_Speed_50MHz, uart->tx_pin);
     /* connect port to USARTx_Rx */
     GPIOInit(uart->tx_port, uart->rx_af, GPIO_Speed_50MHz, uart->rx_pin);
-    
+
     NVIC_SetPriority(uart->irqn, 0);
     NVIC_EnableIRQ(uart->irqn);
 }
@@ -302,14 +302,14 @@ static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_con
 {
     struct n32_uart *uart;
     USART_InitType USART_InitStructure;
-    
+
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct n32_uart *)serial->parent.user_data;
-    
+
     n32_uart_gpio_init(uart, cfg);
-    
+
     USART_InitStructure.BaudRate = cfg->baud_rate;
 
     switch (cfg->data_bits)
@@ -355,7 +355,7 @@ static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_con
         default:
             break;
     }
-    
+
     switch (cfg->flowcontrol)
     {
         case RT_SERIAL_FLOWCONTROL_NONE:
@@ -368,7 +368,7 @@ static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_con
             USART_InitStructure.HardwareFlowControl = USART_HFCTRL_NONE;
             break;
     }
-    
+
     USART_InitStructure.Mode = USART_MODE_TX | USART_MODE_RX;
 
     USART_Init(uart->uart_periph, &USART_InitStructure);
@@ -424,7 +424,7 @@ static int n32_putc(struct rt_serial_device *serial, char ch)
 
     USART_SendData(uart->uart_periph, ch);
     while((USART_GetFlagStatus(uart->uart_periph, USART_FLAG_TXDE) == RESET));
-    
+
     return 1;
 }
 
@@ -454,13 +454,13 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if (USART_GetIntStatus(uart->uart_periph, USART_INT_RXDNE) != RESET && 
+    if (USART_GetIntStatus(uart->uart_periph, USART_INT_RXDNE) != RESET &&
         USART_GetFlagStatus(uart->uart_periph, USART_FLAG_RXDNE) != RESET)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-    
-    if (USART_GetIntStatus(uart->uart_periph, USART_INT_TXDE) != RESET && 
+
+    if (USART_GetIntStatus(uart->uart_periph, USART_INT_TXDE) != RESET &&
         USART_GetFlagStatus(uart->uart_periph, USART_FLAG_TXDE) != RESET)
     {
         /* Write one byte to the transmit data register */
@@ -481,7 +481,7 @@ int rt_hw_usart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
-    
+
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &n32_uart_ops;

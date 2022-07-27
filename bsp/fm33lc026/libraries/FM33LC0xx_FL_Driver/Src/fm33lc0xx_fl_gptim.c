@@ -6,23 +6,22 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
+
+
 /* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33lc0xx_fl_rmu.h"
-#include "fm33lc0xx_fl_gptim.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -31,6 +30,8 @@
 /** @addtogroup GPTIM
   * @{
   */
+
+#ifdef FL_GPTIM_DRIVER_ENABLED
 
 /* Private macros ------------------------------------------------------------------*/
 /** @addtogroup GPTIM_FL_Private_Macros
@@ -286,7 +287,7 @@ FL_ErrorStatus FL_GPTIM_Init(GPTIM_Type *TIMx, FL_GPTIM_InitTypeDef *init)
     }
     /* 手动触发更新事件，将配置值写入 */
     FL_GPTIM_GenerateUpdateEvent(TIMx);
-    while((!FL_GPTIM_IsActiveFlag_Update(TIMx))&i)
+    while((!FL_GPTIM_IsActiveFlag_Update(TIMx))&&i)
     {
         i--;
     }
@@ -607,6 +608,8 @@ void FL_GPTIM_IC_StructInit(FL_GPTIM_IC_InitTypeDef *ic_init)
   * @}
   */
 
+#endif /* FL_GPTIM_DRIVER_ENABLED */
+
 /**
   * @}
   */
@@ -614,4 +617,4 @@ void FL_GPTIM_IC_StructInit(FL_GPTIM_IC_InitTypeDef *ic_init)
 /**
   * @}
   */
-/******************************************* END OF FILE *******************************************/
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

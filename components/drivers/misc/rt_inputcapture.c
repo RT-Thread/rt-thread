@@ -10,6 +10,10 @@
 
 #include <rtdevice.h>
 
+#define DBG_TAG "incap"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
+
 static rt_err_t rt_inputcapture_init(struct rt_device *dev)
 {
     rt_err_t ret;

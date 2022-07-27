@@ -102,7 +102,7 @@ void PMU_DisablePVD(void)
 /*!
  * @brief     Configure a voltage threshold detected by a power supply voltage detector (PVD).
  *
- * @param     level：specifies the PVD detection level
+ * @param     level£ºspecifies the PVD detection level
  *                   This parameter can be one of the following values:
  *                   @arg PMU_PVD_LEVEL_2V2 : Config PVD detection level to 2.2V
  *                   @arg PMU_PVD_LEVEL_2V3 : Config PVD detection level to 2.3V
@@ -214,7 +214,7 @@ void PMU_EnterSTANDBYMode(void)
 /*!
  * @brief     Read the specified PWR flag is set or not.
  *
- * @param     flag：Reads the status of specifies the flag.
+ * @param     flag£ºReads the status of specifies the flag.
  *                  This parameter can be one of the following values:
  *                    @arg PMU_FLAG_WUE : Wake Up flag
  *                    @arg PMU_FLAG_SB  : StandBy flag
@@ -244,7 +244,7 @@ uint8_t PMU_ReadStatusFlag(PMU_FLAG_T flag)
 /*!
  * @brief     Clears the PWR's pending flags.
  *
- * @param     flag：Clears the status of specifies the flag.
+ * @param     flag£ºClears the status of specifies the flag.
  *                  This parameter can be one of the following values:
  *                    @arg PMU_FLAG_WUE : Wake Up flag
  *                    @arg PMU_FLAG_SB  : StandBy flag

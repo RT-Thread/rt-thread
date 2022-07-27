@@ -49,21 +49,21 @@ static struct n32_adc_config adc_config[] =
         ADC1,
     },
 #endif
-    
+
 #ifdef BSP_USING_ADC2
     {
         "adc2",
         ADC2,
     },
 #endif
-    
+
 #ifdef BSP_USING_ADC3
     {
         "adc3",
         ADC3,
     },
 #endif
-    
+
 #ifdef BSP_USING_ADC4
     {
         "adc4",
@@ -85,7 +85,7 @@ static void n32_adc_init(struct n32_adc_config *config)
     ADC_InitStructure.DatAlign       = ADC_DAT_ALIGN_R;
     ADC_InitStructure.ChsNumber      = 1;
     ADC_Init((ADC_Module*)config->adc_periph, &ADC_InitStructure);
-    
+
     /* Enable ADC */
     ADC_Enable((ADC_Module*)config->adc_periph, ENABLE);
     /* Check ADC Ready */
@@ -117,9 +117,9 @@ static rt_err_t n32_adc_convert(struct rt_adc_device *device, rt_uint32_t channe
         return RT_EINVAL;
     }
     config = (struct n32_adc_config *)(device->parent.user_data);
-    
+
     ADC_ConfigRegularChannel((ADC_Module*)config->adc_periph, channel, 1, ADC_SAMP_TIME_239CYCLES5);
-    
+
     /* Start ADC Software Conversion */
     ADC_EnableSoftwareStartConv((ADC_Module*)config->adc_periph, ENABLE);
 
@@ -129,7 +129,7 @@ static rt_err_t n32_adc_convert(struct rt_adc_device *device, rt_uint32_t channe
     ADC_ClearFlag((ADC_Module*)config->adc_periph, ADC_FLAG_ENDC);
     ADC_ClearFlag((ADC_Module*)config->adc_periph, ADC_FLAG_STR);
     *value=ADC_GetDat((ADC_Module*)config->adc_periph);
-    
+
     return RT_EOK;
 }
 
@@ -149,13 +149,13 @@ int rt_hw_adc_init(void)
     /* Configure PC.00 PC.01 as analog input -------------------------*/
     GPIOInit(GPIOC, GPIO_Mode_AIN, GPIO_Speed_50MHz, GPIO_PIN_0 | GPIO_PIN_1);
 #endif /* BSP_USING_ADC1 */
-    
+
 #if defined(BSP_USING_ADC2)
     RCC_EnableAHBPeriphClk(RCC_AHB_PERIPH_ADC2, ENABLE);
     /* Configure PC.02 PC.03 as analog input -------------------------*/
     GPIOInit(GPIOC, GPIO_Mode_AIN, GPIO_Speed_50MHz, GPIO_PIN_2 | GPIO_PIN_3);
     #endif /* BSP_USING_ADC2 */
-    
+
 #if defined(BSP_USING_ADC3)
     RCC_EnableAHBPeriphClk(RCC_AHB_PERIPH_ADC3, ENABLE);
     /* Configure PD.10 PD.11 as analog input -------------------------*/
@@ -167,10 +167,10 @@ int rt_hw_adc_init(void)
     /* Configure PD.12 PD.13 as analog input -------------------------*/
     GPIOInit(GPIOD, GPIO_Mode_AIN, GPIO_Speed_50MHz, GPIO_PIN_12 | GPIO_PIN_13);
 #endif /* BSP_USING_ADC4 */
-    
+
     /* RCC_ADCHCLK_DIV16*/
     ADC_ConfigClk(ADC_CTRL3_CKMOD_AHB, RCC_ADCHCLK_DIV16);
-    
+
     for (i = 0; i < sizeof(adc_obj) / sizeof(adc_obj[0]); i++)
     {
         adc_obj[i].config = &adc_config[i];
@@ -183,6 +183,6 @@ int rt_hw_adc_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_adc_init);
 
-#endif	/* defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3) || defined(BSP_USING_ADC4) */
+#endif  /* defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3) || defined(BSP_USING_ADC4) */
 #endif /* RT_USING_ADC */
 
