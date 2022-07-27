@@ -32,7 +32,7 @@
  *
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
  */
- 
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdbg.h>
@@ -112,7 +112,7 @@ static rt_err_t n32_wdt_control(rt_watchdog_t *wdt, int cmd, void *args)
     uint16_t reload_value;
     uint32_t relv, prediv;
     static rt_tick_t last_tick = 0;
-    
+
     relv = IWDG->RELV;
     prediv = IWDG->PREDIV;
     switch (cmd)
@@ -125,12 +125,12 @@ static rt_err_t n32_wdt_control(rt_watchdog_t *wdt, int cmd, void *args)
         case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         {
             RT_ASSERT(*(uint16_t *)args != 0);
-            reload_value = *(uint16_t *)args;    
+            reload_value = *(uint16_t *)args;
             if(reload_value >  0xFFF * 32 *1000 / LsiFreq)
             {
                 LOG_W("wdg set timeout parameter too large, please less than %d ms\n", 0xFFF * 32 *1000 / LsiFreq);
                 return -RT_EINVAL;
-            }            
+            }
             /* Enable write access to IWDG_PR and IWDG_RLR registers */
             IWDG_WriteConfig(IWDG_WRITE_ENABLE);
             /* IWDG counter clock: LSI/32 */

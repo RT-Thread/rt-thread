@@ -27,7 +27,7 @@
 #define __APM32F10X_QSPI_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -52,7 +52,7 @@ typedef enum
     QSPI_FRF_STANDARD,              //!< Standard mode
     QSPI_FRF_DUAL,                  //!< Dual SPI
     QSPI_FRF_QUAD                   //!< QUAD SPI
-} QSPI_FRF_T;
+}QSPI_FRF_T;
 
 /**
  * @brief   Transmission mode
@@ -63,7 +63,7 @@ typedef enum
     QSPI_TRANS_MODE_TX,             //!< TX mode only
     QSPI_TRANS_MODE_RX,             //!< RX mode only
     QSPI_TRANS_MODE_EEPROM_READ     //!< EEPROM read mode
-} QSPI_TRANS_MODE_T;
+}QSPI_TRANS_MODE_T;
 
 /**
  * @brief   Clock polarity
@@ -72,7 +72,7 @@ typedef enum
 {
     QSPI_CLKPOL_LOW,
     QSPI_CLKPOL_HIGH
-} QSPI_CLKPOL_T;
+}QSPI_CLKPOL_T;
 
 /**
  * @brief   Clock phase
@@ -81,7 +81,7 @@ typedef enum
 {
     QSPI_CLKPHA_1EDGE,
     QSPI_CLKPHA_2EDGE
-} QSPI_CLKPHA_T;
+}QSPI_CLKPHA_T;
 
 /**
  * @brief   Data format size
@@ -117,7 +117,7 @@ typedef enum
     QSPI_DFS_30BIT,
     QSPI_DFS_31BIT,
     QSPI_DFS_32BIT
-} QSPI_DFS_T;
+}QSPI_DFS_T;
 
 /**
  * @brief   QSPI flag
@@ -130,7 +130,7 @@ typedef enum
     QSPI_FLAG_RFNE      = BIT3,     //!< RX FIFO not empty flag
     QSPI_FLAG_RFF       = BIT4,     //!< RX FIFO full flag
     QSPI_FLAG_DCE       = BIT6      //!< Data collision error
-} QSPI_FLAG_T;
+}QSPI_FLAG_T;
 
 /**
  * @brief   QSPI interrupt source
@@ -143,7 +143,7 @@ typedef enum
     QSPI_INT_RFO        = BIT3,     //!< RX FIFO overflow interrupt
     QSPI_INT_RFF        = BIT4,     //!< RX FIFO full interrupt
     QSPI_INT_MST        = BIT5      //!< Master interrupt
-} QSPI_INT_T;
+}QSPI_INT_T;
 
 /**
  * @brief   QSPI interrupt flag
@@ -156,7 +156,7 @@ typedef enum
     QSPI_INT_FLAG_RFO   = BIT3,     //!< RX FIFO overflow interrupt flag
     QSPI_INT_FLAG_RFF   = BIT4,     //!< RX FIFO full interrupt flag
     QSPI_INT_FLAG_MST   = BIT5      //!< Master interrupt flag
-} QSPI_INT_FLAG_T;
+}QSPI_INT_FLAG_T;
 
 /**
  * @brief   Reception sample edge
@@ -165,7 +165,7 @@ typedef enum
 {
     QSPI_RSE_RISING,
     QSPI_RSE_FALLING
-} QSPI_RSE_T;
+}QSPI_RSE_T;
 
 /**
  * @brief   Instruction length
@@ -176,7 +176,7 @@ typedef enum
     QSPI_INST_LEN_4BIT,
     QSPI_INST_LEN_8BIT,
     QSPI_INST_LEN_16BIT
-} QSPI_INST_LEN_T;
+}QSPI_INST_LEN_T;
 
 /**
  * @brief   QSPI address length
@@ -199,7 +199,7 @@ typedef enum
     QSPI_ADDR_LEN_52BIT,
     QSPI_ADDR_LEN_56BIT,
     QSPI_ADDR_LEN_60BIT
-} QSPI_ADDR_LEN_T;
+}QSPI_ADDR_LEN_T;
 
 /**
  * @brief   Instruction and address transmission mode
@@ -209,7 +209,7 @@ typedef enum
     QSPI_INST_ADDR_TYPE_STANDARD,
     QSPI_INST_TYPE_STANDARD,
     QSPI_INST_ADDR_TYPE_FRF
-} QSPI_INST_ADDR_TYPE_T;
+}QSPI_INST_ADDR_TYPE_T;
 
 /**
  * @brief   Slave Select Toggle
@@ -218,7 +218,7 @@ typedef enum
 {
     QSPI_SST_DISABLE,
     QSPI_SST_ENABLE
-} QSPI_SST_T;
+}QSPI_SST_T;
 
 /**@} end of group QSPI_Enumerations*/
 
@@ -269,7 +269,7 @@ typedef struct
     QSPI_CLKPOL_T    clockPolarity;     //!< Clock polarity
     QSPI_CLKPHA_T    clockPhase;        //!< Clock phase
     QSPI_DFS_T       dataFrameSize;     //!< Data frame size
-} QSPI_Config_T;
+}QSPI_Config_T;
 
 /**@} end of group QSPI_Structure*/
 

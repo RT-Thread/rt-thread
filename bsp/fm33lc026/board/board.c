@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -71,7 +71,33 @@ FL_ErrorStatus FL_UART_GPIO_Init(UART_Type *UARTx)
     return status;
 }
 
+FL_ErrorStatus FL_SPI_GPIO_Init(SPI_Type *SPIx)
+{
+    FL_ErrorStatus status = FL_FAIL;
+    FL_GPIO_InitTypeDef GPIO_InitStruct;
+    if (SPIx == SPI1)
+    {
+        GPIO_InitStruct.pin = FL_GPIO_PIN_11 | FL_GPIO_PIN_10 | FL_GPIO_PIN_9;
+        GPIO_InitStruct.mode = FL_GPIO_MODE_DIGITAL;
+        GPIO_InitStruct.outputType = FL_GPIO_OUTPUT_PUSHPULL;
+        GPIO_InitStruct.pull = FL_DISABLE;
+        GPIO_InitStruct.remapPin = FL_DISABLE;
 
+        status=FL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
+    else if (SPIx == SPI2)
+    {
+        GPIO_InitStruct.pin = FL_GPIO_PIN_8 | FL_GPIO_PIN_10 | FL_GPIO_PIN_9;
+        GPIO_InitStruct.mode = FL_GPIO_MODE_DIGITAL;
+        GPIO_InitStruct.outputType = FL_GPIO_OUTPUT_PUSHPULL;
+        GPIO_InitStruct.pull = FL_DISABLE;
+        GPIO_InitStruct.remapPin = FL_DISABLE;
+        
+        status=FL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    }
+
+    return status;
+}
 
 static void RCC_PLL_ConfigDomain_SYS(uint32_t Source, uint32_t PLL_R, uint32_t PLL_DB, uint32_t PLL_O)
 {

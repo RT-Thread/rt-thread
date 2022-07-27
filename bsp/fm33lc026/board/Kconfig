@@ -9,6 +9,11 @@ config SOC_FM33LC0XX
 
 menu "On-chip Peripheral Drivers"
 
+    menuconfig BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -29,10 +34,11 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default y
+            
         endif
-    source "../libraries/HAL_Drivers/Kconfig"
-    
+        endmenu
 endmenu
 
+   
 
-endmenu
+

@@ -42,20 +42,20 @@ uint32_t SynchPrediv, AsynchPrediv;
 
 static rt_err_t n32_rtc_get_timeval(struct timeval *tv)
 {
-	  struct tm tm_new = {0};
+      struct tm tm_new = {0};
     RTC_DateType  RTC_DateStructure;
     RTC_TimeType  RTC_TimeStructure;
 
     RTC_GetTime(RTC_FORMAT_BIN, &RTC_TimeStructure);
     RTC_GetDate(RTC_FORMAT_BIN, &RTC_DateStructure);
-		
+
     tm_new.tm_sec  = RTC_TimeStructure.Seconds;
     tm_new.tm_min  = RTC_TimeStructure.Minutes;
     tm_new.tm_hour = RTC_TimeStructure.Hours;
-		tm_new.tm_wday = RTC_DateStructure.WeekDay;
+        tm_new.tm_wday = RTC_DateStructure.WeekDay;
     tm_new.tm_mday = RTC_DateStructure.Date;
-    tm_new.tm_mon  = RTC_DateStructure.Month - 1;   
-    tm_new.tm_year = RTC_DateStructure.Year + 100;  
+    tm_new.tm_mon  = RTC_DateStructure.Month - 1;
+    tm_new.tm_year = RTC_DateStructure.Year + 100;
 
     tv->tv_sec     = timegm(&tm_new);
 
@@ -64,7 +64,7 @@ static rt_err_t n32_rtc_get_timeval(struct timeval *tv)
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-	  struct tm time = {0};
+      struct tm time = {0};
     RTC_DateType  RTC_DateStructure={0};
     RTC_TimeType  RTC_TimeStructure={0};
 
@@ -93,8 +93,8 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     }
 
     rt_kprintf("set rtc time.\n");
-		
-		return RT_EOK;
+
+        return RT_EOK;
 }
 
 static rt_err_t rt_rtc_config(void)
@@ -152,7 +152,7 @@ static rt_err_t n32_rtc_init(void)
     SynchPrediv  = 0xFF; // 32.768KHz
     AsynchPrediv = 0x7F; // value range: 0-7F
 #endif /* BSP_RTC_USING_LSI */
-    
+
     /* Enable the RTC Clock */
     RCC_EnableRtcClk(ENABLE);
     RTC_WaitForSynchro();
