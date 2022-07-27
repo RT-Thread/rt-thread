@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-29     Rbb666       first version
+ * 2022-07-26     Rbb666       Add Flash Config
  */
 
 #ifndef __BOARD_H__
@@ -20,8 +21,21 @@
 #include "cy_pdl.h"
 #include "cy_retarget_io.h"
 
-#define IFX_SRAM_SIZE       1014
-#define IFX_SRAM_END        (0x08002000 + IFX_SRAM_SIZE * 1024)
+/*FLASH CONFIG*/
+#define IFX_FLASH_START_ADRESS          ((uint32_t)0x10000000)
+#define IFX_FLASH_PAGE_SIZE             (256 * 1024)
+#define IFX_FLASH_SIZE                  (2 * 1024 * 1024)
+#define IFX_FLASH_END_ADDRESS           ((uint32_t)(IFX_FLASH_START_ADRESS + IFX_FLASH_SIZE))
+
+/*EFLASH CONFIG*/
+#define IFX_EFLASH_START_ADRESS         ((uint32_t)0x14000000)
+#define IFX_EFLASH_PAGE_SIZE            (32 * 1024)
+#define IFX_EFLASH_SIZE                 (32 * 1024)
+#define IFX_EFLASH_END_ADDRESS          ((uint32_t)(IFX_EFLASH_START_ADRESS + IFX_EFLASH_SIZE))
+
+/*SRAM CONFIG*/
+#define IFX_SRAM_SIZE                   (1014)
+#define IFX_SRAM_END                    (0x08002000 + IFX_SRAM_SIZE * 1024)
 
 #ifdef __ARMCC_VERSION
     extern int Image$$RW_IRAM1$$ZI$$Limit;

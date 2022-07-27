@@ -104,21 +104,25 @@ static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     switch (mode)
     {
-    case PIN_MODE_OUTPUT:
-        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, true);
-        break;
-    case PIN_MODE_INPUT:
-        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);
-        break;
-    case PIN_MODE_INPUT_PULLUP:
-        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLUP, true);
-        break;
-    case PIN_MODE_INPUT_PULLDOWN:
-        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLDOWN, false);
-        break;
-    case PIN_MODE_OUTPUT_OD:
-        cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLUP, true);
-        break;
+        case PIN_MODE_OUTPUT:
+            cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, true);
+            break;
+
+        case PIN_MODE_INPUT:
+            cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);
+            break;
+
+        case PIN_MODE_INPUT_PULLUP:
+            cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLUP, true);
+            break;
+
+        case PIN_MODE_INPUT_PULLDOWN:
+            cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLDOWN, false);
+            break;
+
+        case PIN_MODE_OUTPUT_OD:
+            cyhal_gpio_init(gpio_pin, CYHAL_GPIO_DIR_BIDIRECTIONAL, CYHAL_GPIO_DRIVE_PULLUP, true);
+            break;
     }
 }
 
@@ -172,6 +176,7 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
 
     level = rt_hw_interrupt_disable();
+
     if (pin_irq_handler_tab[gpio_port].pin == pin &&
             pin_irq_handler_tab[gpio_port].hdr == hdr &&
             pin_irq_handler_tab[gpio_port].mode == mode &&
@@ -180,11 +185,13 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
+
     if (pin_irq_handler_tab[gpio_port].pin != -1)
     {
         rt_hw_interrupt_enable(level);
         return RT_EBUSY;
     }
+
     pin_irq_handler_tab[gpio_port].pin = pin;
     pin_irq_handler_tab[gpio_port].hdr = hdr;
     pin_irq_handler_tab[gpio_port].mode = mode;
@@ -211,6 +218,7 @@ static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     }
 
     level = rt_hw_interrupt_disable();
+
     if (pin_irq_handler_tab[gpio_port].pin == -1)
     {
         rt_hw_interrupt_enable(level);
@@ -267,17 +275,20 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         switch (pin_irq_handler_tab[gpio_port].mode)
         {
-        case PIN_IRQ_MODE_RISING:
-            pin_irq_mode = CYHAL_GPIO_IRQ_RISE;
-            break;
-        case PIN_IRQ_MODE_FALLING:
-            pin_irq_mode = CYHAL_GPIO_IRQ_FALL;
-            break;
-        case PIN_IRQ_MODE_RISING_FALLING:
-            pin_irq_mode = CYHAL_GPIO_IRQ_BOTH;
-            break;
-        default:
-            break;
+            case PIN_IRQ_MODE_RISING:
+                pin_irq_mode = CYHAL_GPIO_IRQ_RISE;
+                break;
+
+            case PIN_IRQ_MODE_FALLING:
+                pin_irq_mode = CYHAL_GPIO_IRQ_FALL;
+                break;
+
+            case PIN_IRQ_MODE_RISING_FALLING:
+                pin_irq_mode = CYHAL_GPIO_IRQ_BOTH;
+                break;
+
+            default:
+                break;
         }
 
         cyhal_gpio_enable_event(gpio_pin, pin_irq_mode, GPIO_INTERRUPT_PRIORITY, RT_TRUE);
@@ -290,9 +301,9 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         Cy_GPIO_Port_Deinit(CYHAL_GET_PORTADDR(gpio_pin));
 
-#if !defined(COMPONENT_CAT1C)
+        #if !defined(COMPONENT_CAT1C)
         IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->port));
-#endif
+        #endif
         _cyhal_irq_disable(irqn);
 
         rt_hw_interrupt_enable(level);

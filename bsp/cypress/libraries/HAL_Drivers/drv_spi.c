@@ -32,7 +32,7 @@ struct ifx_sw_spi_cs
 
 static struct ifx_spi spi_bus_obj[] =
 {
-#ifdef BSP_USING_SPI3
+    #ifdef BSP_USING_SPI3
     {
         .bus_name = "spi3",
         .spi_bus = &spi_bus3,
@@ -40,7 +40,7 @@ static struct ifx_spi spi_bus_obj[] =
         .miso_pin = GET_PIN(6, 1),
         .mosi_pin = GET_PIN(6, 0),
     },
-#endif
+    #endif
 };
 
 /* private rt-thread spi ops function */
@@ -100,18 +100,21 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     /* MSB or LSB */
     switch (configuration->mode & RT_SPI_MODE_3)
     {
-    case RT_SPI_MODE_0:
-        spi_device->spi_obj->mode = CYHAL_SPI_MODE_00_MSB;
-        break;
-    case RT_SPI_MODE_1:
-        spi_device->spi_obj->mode = CYHAL_SPI_MODE_01_MSB;
-        break;
-    case RT_SPI_MODE_2:
-        spi_device->spi_obj->mode = CYHAL_SPI_MODE_10_MSB;
-        break;
-    case RT_SPI_MODE_3:
-        spi_device->spi_obj->mode = CYHAL_SPI_MODE_11_MSB;
-        break;
+        case RT_SPI_MODE_0:
+            spi_device->spi_obj->mode = CYHAL_SPI_MODE_00_MSB;
+            break;
+
+        case RT_SPI_MODE_1:
+            spi_device->spi_obj->mode = CYHAL_SPI_MODE_01_MSB;
+            break;
+
+        case RT_SPI_MODE_2:
+            spi_device->spi_obj->mode = CYHAL_SPI_MODE_10_MSB;
+            break;
+
+        case RT_SPI_MODE_3:
+            spi_device->spi_obj->mode = CYHAL_SPI_MODE_11_MSB;
+            break;
     }
 
     ifx_spi_init(spi_device);

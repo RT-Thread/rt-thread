@@ -20,7 +20,7 @@ if GetDepend(['BSP_USING_RW007']):
     src += Glob('ports/drv_rw007.c')
 
 path = [cwd]
-path += [cwd + '/port']
+path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 
