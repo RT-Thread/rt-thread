@@ -121,6 +121,7 @@ typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
+typedef volatile rt_base_t              rt_atomic_t;    /**< Type for atomic */
 
 /* boolean type definitions */
 #define RT_TRUE                         1               /**< boolean true  */

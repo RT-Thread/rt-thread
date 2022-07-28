@@ -137,6 +137,17 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
  */
 void rt_hw_us_delay(rt_uint32_t us);
 
+/*
+ * atomic interfaces
+ */
+void rt_atomic_add(rt_atomic_t *ptr, rt_atomic_t val);
+void rt_atomic_sub(rt_atomic_t *ptr, rt_atomic_t val);
+void rt_atomic_or(rt_atomic_t *ptr, rt_atomic_t val);
+void rt_atomic_xor(rt_atomic_t *ptr, rt_atomic_t val);
+void rt_atomic_and(rt_atomic_t *ptr, rt_atomic_t val);
+void rt_atomic_nand(rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_atomic_cas(rt_atomic_t *ptr, rt_atomic_t oldval, rt_atomic_t newval);
+
 #ifdef RT_USING_SMP
 typedef union {
     unsigned long slock;
