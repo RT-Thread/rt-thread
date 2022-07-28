@@ -15,7 +15,7 @@
 #include "drv_gpio.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.pwm"
+#define LOG_TAG "drv.pwm"
 #include <drv_log.h>
 
 struct rt_device_pwm pwm_device;
@@ -29,50 +29,36 @@ struct ifx_pwm
     rt_uint8_t gpio;
 };
 
-enum
-{
-    #ifdef BSP_USING_PWM0
-    PWM0_INDEX,
-    #endif
-};
-
 static struct ifx_pwm ifx_pwm_obj[] =
 {
-    #ifdef BSP_USING_PWM0
-    PWM0_CONFIG,
-    #endif
+#ifdef BSP_USING_PWM0_PORT13
+    PWM0_CH3_PORT13_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT2
+    PWM0_CH7_PORT2_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT5
+    PWM0_CH7_PORT5_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT7
+    PWM0_CH7_PORT7_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT9
+    PWM0_CH7_PORT9_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT10
+    PWM0_CH7_PORT10_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT12
+    PWM0_CH7_PORT12_CONFIG,
+#endif
 };
-
-static void pwm_get_pin_number(void)
-{
-    #ifdef BSP_USING_PWM0_CH7
-    #ifdef BSP_USING_PWM0_PORT2
-    ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(2, 2);
-    #endif
-    #ifdef BSP_USING_PWM0_PORT5
-    ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(5, 6);
-    #endif
-    #ifdef BSP_USING_PWM0_PORT7
-    ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(7, 7);
-    #endif
-    #ifdef BSP_USING_PWM0_PORT9
-    ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(9, 4);
-    #endif
-    #ifdef BSP_USING_PWM0_PORT10
-    ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(10, 2);
-    #endif
-    #ifdef BSP_USING_PWM0_PORT12
-    ifx_pwm_obj[PWM0_INDEX].gpio = GET_PIN(12, 6);
-    #endif
-    #endif
-}
-
-static void pwm_get_channel(void)
-{
-    #ifdef BSP_USING_PWM0_CH7
-    ifx_pwm_obj[PWM0_INDEX].channel = 7;
-    #endif
-}
 
 static rt_err_t drv_pwm_enable(cyhal_pwm_t *htim, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
@@ -83,17 +69,27 @@ static rt_err_t drv_pwm_enable(cyhal_pwm_t *htim, struct rt_pwm_configuration *c
     {
         if (!enable)
         {
-            if (channel == 7)
+            if (channel == 3)
             {
-                cyhal_pwm_stop(htim);
+                htim->tcpwm.resource.channel_num = channel;
             }
+            else if (channel == 7)
+            {
+                htim->tcpwm.resource.channel_num = channel;
+            }
+            cyhal_pwm_stop(htim);
         }
         else
         {
-            if (channel == 7)
+            if (channel == 3)
             {
-                cyhal_pwm_start(htim);
+                htim->tcpwm.resource.channel_num = channel;
             }
+            else if (channel == 7)
+            {
+                htim->tcpwm.resource.channel_num = channel;
+            }
+            cyhal_pwm_start(htim);
         }
     }
 
@@ -106,6 +102,8 @@ static rt_err_t drv_pwm_set(cyhal_pwm_t *htim, struct rt_pwm_configuration *conf
     rt_uint32_t period, pulse;
 
     tim_clock = (rt_uint32_t)(htim->tcpwm.clock_hz);
+
+    htim->tcpwm.resource.channel_num = configuration->channel;
 
     period = (unsigned long long)configuration->period / 1000ULL;
 
@@ -136,33 +134,30 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 
     switch (cmd)
     {
-        case PWMN_CMD_ENABLE:
-            configuration->complementary = RT_TRUE;
+    case PWMN_CMD_ENABLE:
+        configuration->complementary = RT_TRUE;
 
-        case PWM_CMD_ENABLE:
-            return drv_pwm_enable(htim, configuration, RT_TRUE);
+    case PWM_CMD_ENABLE:
+        return drv_pwm_enable(htim, configuration, RT_TRUE);
 
-        case PWMN_CMD_DISABLE:
-            configuration->complementary = RT_FALSE;
+    case PWMN_CMD_DISABLE:
+        configuration->complementary = RT_FALSE;
 
-        case PWM_CMD_DISABLE:
-            return drv_pwm_enable(htim, configuration, RT_FALSE);
+    case PWM_CMD_DISABLE:
+        return drv_pwm_enable(htim, configuration, RT_FALSE);
 
-        case PWM_CMD_SET:
-            return drv_pwm_set(htim, configuration);
+    case PWM_CMD_SET:
+        return drv_pwm_set(htim, configuration);
 
-        case PWM_CMD_GET:
-            return drv_pwm_get(htim, configuration);
+    case PWM_CMD_GET:
+        return drv_pwm_get(htim, configuration);
 
-        default:
-            return RT_EINVAL;
+    default:
+        return RT_EINVAL;
     }
 }
 
-static struct rt_pwm_ops drv_ops =
-{
-    drv_pwm_control
-};
+static struct rt_pwm_ops drv_ops = {drv_pwm_control};
 
 static rt_err_t ifx_hw_pwm_init(struct ifx_pwm *device)
 {
@@ -170,6 +165,16 @@ static rt_err_t ifx_hw_pwm_init(struct ifx_pwm *device)
 
     RT_ASSERT(device != RT_NULL);
 
+    /* config pwm channel */
+    if (device->channel == 0x03)
+    {
+        if (cyhal_pwm_init_adv(device->pwm_obj, device->gpio, NC, CYHAL_PWM_LEFT_ALIGN, true, 0u, false, RT_NULL) != RT_EOK)
+        {
+            LOG_E("%s channel3 config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
+    }
     /* config pwm channel */
     if (device->channel == 0x07)
     {
@@ -180,7 +185,6 @@ static rt_err_t ifx_hw_pwm_init(struct ifx_pwm *device)
             goto __exit;
         }
     }
-
 __exit:
     return result;
 }
@@ -189,9 +193,6 @@ static int rt_hw_pwm_init(void)
 {
     int i;
     int result = RT_EOK;
-
-    pwm_get_pin_number();
-    pwm_get_channel();
 
     for (i = 0; i < sizeof(ifx_pwm_obj) / sizeof(ifx_pwm_obj[0]); i++)
     {
@@ -224,8 +225,8 @@ __exit:
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
 
-#define PWM_DEV_NAME        "pwm0"
-#define PWM_DEV_CHANNEL     7
+#define PWM_DEV_NAME "pwm0"
+#define PWM_DEV_CHANNEL 7
 
 struct rt_device_pwm *pwm_dev;
 
@@ -233,7 +234,7 @@ static int pwm_sample(int argc, char *argv[])
 {
     rt_uint32_t period, pulse, dir;
 
-    period = 500000;
+    period = 1 * 1000 * 1000;
     dir = 1;
     pulse = 0;
 
@@ -248,17 +249,19 @@ static int pwm_sample(int argc, char *argv[])
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
     rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
 
+    rt_kprintf("Now PWM[%s] Channel[%d] Period[%d] Pulse[%d]\n", PWM_DEV_NAME, PWM_DEV_CHANNEL, period, pulse);
+
     while (1)
     {
         rt_thread_mdelay(50);
 
         if (dir)
         {
-            pulse += 5000;
+            pulse += 100000;
         }
         else
         {
-            pulse -= 5000;
+            pulse -= 100000;
         }
 
         if (pulse >= period)
