@@ -247,7 +247,7 @@ static int ifx_uarths_getc(struct rt_serial_device *serial)
 
     ch = -1;
 
-    if (RT_EOK == cyhal_uart_getc(uart->config->uart_obj, (uint8_t *)&read_data, 1))
+    if (RT_EOK == cyhal_uart_getc(uart->config->uart_obj, (uint8_t *)&read_data, 10))
     {
         ch = read_data & 0xff;
     }

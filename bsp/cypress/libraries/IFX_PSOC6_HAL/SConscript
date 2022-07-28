@@ -103,6 +103,20 @@ if GetDepend('BSP_USING_ON_CHIP_FLASH'):
     src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
     src += ['mtb-hal-cat1/source/cyhal_flash.c']
 
+if GetDepend(['BSP_USING_SLIDER']):
+    src += ['capsense/cy_capsense_control.c']
+    src += ['capsense/cy_capsense_sensing.c']
+    src += ['capsense/cy_capsense_sensing_v2.c']
+    src += ['capsense/cy_capsense_csx_v2.c']
+    src += ['capsense/cy_capsense_csd_v2.c']
+    src += ['capsense/cy_capsense_processing.c']
+    src += ['capsense/cy_capsense_tuner.c']
+    src += ['capsense/cy_capsense_structure.c']
+    src += ['capsense/cy_capsense_centroid.c']
+    src += ['capsense/cy_capsense_filter.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_csd.c']
+    src += ['TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_capsense.c']
+
 if GetDepend(['RT_USING_WDT']):
     src += ['mtb-pdl-cat1/drivers/source/cy_wdt.c']
     src += ['mtb-hal-cat1/source/cyhal_wdt.c']
