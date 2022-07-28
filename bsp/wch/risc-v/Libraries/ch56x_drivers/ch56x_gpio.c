@@ -11,6 +11,7 @@
 #include <rtdebug.h>
 #include <drivers/pin.h>
 #include "ch56x_gpio.h"
+#include "isr_sp.h"
 
 struct port_info
 {
@@ -373,6 +374,7 @@ void gpio_irq_handler(void)
 
     int ibit, bitpos;
 
+    isr_sp_enter();
     rt_interrupt_enter();
 
     gpio = (struct gpio_registers *)GPIO_REG_BASE;
@@ -393,4 +395,5 @@ void gpio_irq_handler(void)
     }
 
     rt_interrupt_leave();
+    isr_sp_leave();
 }

@@ -49,14 +49,14 @@ union _gpio_interrupt
     uint8_t reg;
     struct
     {
-        uint8_t pa2  :1;
-        uint8_t pa3  :1;
-        uint8_t pa4  :1;
-        uint8_t pb3  :1;
-        uint8_t pb4  :1;
-        uint8_t pb11 :1;
-        uint8_t pb12 :1;
-        uint8_t pb15 :1;
+        uint8_t pa2  : 1;
+        uint8_t pa3  : 1;
+        uint8_t pa4  : 1;
+        uint8_t pb3  : 1;
+        uint8_t pb4  : 1;
+        uint8_t pb11 : 1;
+        uint8_t pb12 : 1;
+        uint8_t pb15 : 1;
     };
 };
 
@@ -67,14 +67,14 @@ union _gpio_interrupt
     uint8_t reg;
     struct
     {
-        uint8_t pa3  :1;
-        uint8_t pa4  :1;
-        uint8_t pa6  :1;
-        uint8_t pa10 :1;
-        uint8_t pa11 :1;
-        uint8_t pa12 :1;
-        uint8_t pb4  :1;
-        uint8_t pb10 :1;
+        uint8_t pa3  : 1;
+        uint8_t pa4  : 1;
+        uint8_t pa6  : 1;
+        uint8_t pa10 : 1;
+        uint8_t pa11 : 1;
+        uint8_t pa12 : 1;
+        uint8_t pb4  : 1;
+        uint8_t pb10 : 1;
     };
 };
 #endif
@@ -97,13 +97,13 @@ union _gpio_pin_alternate
     uint8_t reg;
     struct
     {
-        uint8_t pin_mii   :1;  // RW, ETH uses RMII/RGMII (CH565W/CH569W)
-        uint8_t pin_tmr1  :1;  // RW, TMR1/PWM5/CAP1 remapping
-        uint8_t pin_tmr2  :1;  // RW, TMR2/PWM6/CAP2 remapping
-        uint8_t resv_3    :1;
-        uint8_t pin_uart0 :1;  // RW, RXD0/TXD0 remapping
-        uint8_t pin_uart1 :1;  // RW, CH567 only
-        uint8_t resv_6    :2;
+        uint8_t pin_mii   : 1;  // RW, ETH uses RMII/RGMII (CH565W/CH569W)
+        uint8_t pin_tmr1  : 1;  // RW, TMR1/PWM5/CAP1 remapping
+        uint8_t pin_tmr2  : 1;  // RW, TMR2/PWM6/CAP2 remapping
+        uint8_t resv_3    : 1;
+        uint8_t pin_uart0 : 1;  // RW, RXD0/TXD0 remapping
+        uint8_t pin_uart1 : 1;  // RW, CH567 only
+        uint8_t resv_6    : 2;
     };
 };
 #define RB_PIN_MII              0x01

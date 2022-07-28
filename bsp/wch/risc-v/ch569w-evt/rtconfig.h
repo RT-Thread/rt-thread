@@ -11,12 +11,11 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 200
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 384
 
 /* kservice optimization */
 
@@ -71,6 +70,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_HWTIMER
 #define RT_USING_PIN
 #define RT_USING_WDT
 
@@ -180,6 +180,9 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_TIMER
+#define BSP_USING_TMR0
+#define BSP_USING_TMR1
 
 /* Onboard Peripheral Drivers */
 

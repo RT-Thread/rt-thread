@@ -21,17 +21,18 @@ union _timer_ctrl_mod
     uint8_t reg;
     struct
     {
-        uint8_t mode_in     :1;  // B.0   : RW, timer mode setting
-        uint8_t all_clear   :1;  // B.1   : RW, clear FIFO/count/int-flag
-        uint8_t count_en    :1;  // B.2   : RW, enable timer module
-        uint8_t out_en      :1;  // B.3   : RW, timer output enable
-        uint8_t out_polar   :1;  // B.4   : RW, output polarity for PWM mode
-        uint8_t resv_5      :1;
-        union
-        {
-            uint8_t pwm_repeat  :2;  // B.7-6 : RW, PWM repeat count, 1/4/8/16
-            uint8_t cap_edge    :2;  // B.7-6 : RW, capture edge mode
-        };
+        uint8_t mode_in     : 1;  // B.0 : RW, timer mode setting
+        uint8_t all_clear   : 1;  // B.1 : RW, clear FIFO/count/int-flag
+        uint8_t count_en    : 1;  // B.2 : RW, enable timer module
+        uint8_t out_en      : 1;  // B.3 : RW, timer output enable
+        uint8_t out_polar   : 1;  // B.4 : RW, output polarity for PWM mode
+        uint8_t resv_5      : 1;
+        uint8_t pwm_repeat  : 2;  // B.7-6 : RW, PWM repeat count, 1/4/8/16
+    };
+    struct
+    {
+        uint8_t stuff_0     : 6;
+        uint8_t cap_edge    : 2;  // B.7-6 : RW, capture edge mode
     };
 };
 #define RB_TMR_MODE_IN      0x01
@@ -59,10 +60,10 @@ union _timer_ctrl_dma
     uint8_t reg;
     struct
     {
-        uint8_t dma_enable  :1;  // B.0 : RW, enable DMA
-        uint8_t resv_1      :1;
-        uint8_t dma_loop    :1;  // B.2 : RW, enable DMA address looping
-        uint8_t resv_3      :5;
+        uint8_t dma_enable  : 1;  // B.0 : RW, enable DMA
+        uint8_t resv_1      : 1;
+        uint8_t dma_loop    : 1;  // B.2 : RW, enable DMA address looping
+        uint8_t resv_3      : 5;
     };
 };
 #define RB_TMR_DMA_ENABLE   0x01
@@ -73,12 +74,12 @@ union _timer_interrupt
     uint8_t reg;
     struct
     {
-        uint8_t cyc_end     :1;  // B.0
-        uint8_t data_act    :1;  // B.1
-        uint8_t fifo_hf     :1;  // B.2
-        uint8_t dma_end     :1;  // B.3
-        uint8_t fifo_ov     :1;  // B.4
-        uint8_t resv_5      :3;
+        uint8_t cyc_end     : 1;  // B.0
+        uint8_t data_act    : 1;  // B.1
+        uint8_t fifo_hf     : 1;  // B.2
+        uint8_t dma_end     : 1;  // B.3
+        uint8_t fifo_ov     : 1;  // B.4
+        uint8_t resv_5      : 3;
     };
 };
 #define RB_TMR_IX_MASK      0x1f

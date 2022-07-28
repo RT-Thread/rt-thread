@@ -18,6 +18,7 @@
 #endif
 #include "ch56x_sys.h"
 #include "ch56x_uart.h"
+#include "isr_sp.h"
 
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && \
     !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3)
@@ -297,9 +298,11 @@ static void _uart_isr_common(struct serial_device *serial_device)
 void uart0_irq_handler(void) __attribute__((interrupt()));
 void uart0_irq_handler(void)
 {
+    isr_sp_enter();
     rt_interrupt_enter();
     _uart_isr_common(&serial_device_0);
     rt_interrupt_leave();
+    isr_sp_leave();
 }
 #endif
 
@@ -307,9 +310,11 @@ void uart0_irq_handler(void)
 void uart1_irq_handler(void) __attribute__((interrupt()));
 void uart1_irq_handler(void)
 {
+    isr_sp_enter();
     rt_interrupt_enter();
     _uart_isr_common(&serial_device_1);
     rt_interrupt_leave();
+    isr_sp_leave();
 }
 #endif
 
@@ -317,9 +322,11 @@ void uart1_irq_handler(void)
 void uart2_irq_handler(void) __attribute__((interrupt()));
 void uart2_irq_handler(void)
 {
+    isr_sp_enter();
     rt_interrupt_enter();
     _uart_isr_common(&serial_device_2);
     rt_interrupt_leave();
+    isr_sp_leave();
 }
 #endif
 
@@ -327,8 +334,10 @@ void uart2_irq_handler(void)
 void uart3_irq_handler(void) __attribute__((interrupt()));
 void uart3_irq_handler(void)
 {
+    isr_sp_enter();
     rt_interrupt_enter();
     _uart_isr_common(&serial_device_3);
     rt_interrupt_leave();
+    isr_sp_leave();
 }
 #endif

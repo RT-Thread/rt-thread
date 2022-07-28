@@ -37,16 +37,16 @@ union _pfic_cfgr
     uint32_t reg;
     struct
     {
-        uint32_t hwstkctrl  :1;     // RW, hw stack push/pop control (0:enable)
-        uint32_t nestctrl   :1;     // RW, nested intr enable control (0:enable)
-        uint32_t nmiset     :1;     // WO, write 1 to set NMI pending
-        uint32_t nmireset   :1;     // WO, write 1 to reset NMI pending
-        uint32_t excset     :1;     // WO, write 1 to set exception pending
-        uint32_t excreset   :1;     // WO, write 1 to reset exception pending
-        uint32_t pficreset  :1;     // WO, write 1 to reset PFIC module, auto clear
-        uint32_t sysreset   :1;     // WO, write 1 for a system reset, auto clear
-        uint32_t resv_8     :8;
-        uint32_t keycode    :16;    // WO, write protection keycode
+        uint32_t hwstkctrl  : 1;    // RW, hw stack push/pop control (0:enable)
+        uint32_t nestctrl   : 1;    // RW, nested intr enable control (0:enable)
+        uint32_t nmiset     : 1;    // WO, write 1 to set NMI pending
+        uint32_t nmireset   : 1;    // WO, write 1 to reset NMI pending
+        uint32_t excset     : 1;    // WO, write 1 to set exception pending
+        uint32_t excreset   : 1;    // WO, write 1 to reset exception pending
+        uint32_t pficreset  : 1;    // WO, write 1 to reset PFIC module, auto clear
+        uint32_t sysreset   : 1;    // WO, write 1 for a system reset, auto clear
+        uint32_t resv_8     : 8;
+        uint32_t keycode    : 16;   // WO, write protection keycode
     };
 };
 #define PFIC_CFGR_KEY1      0xfa05  // for hwstkctrl & nestctrl
@@ -73,10 +73,10 @@ union _pfic_gisr
     uint32_t reg;
     struct
     {
-        uint32_t neststa    :8;     // RO, nested interrupt state (0/1/2)
-        uint32_t gactsta    :1;     // RO, global interrupt active status
-        uint32_t gpendsta   :1;     // RO, global interrupt pending status
-        uint32_t resv_10    :22;
+        uint32_t neststa    : 8;    // RO, nested interrupt state (0/1/2)
+        uint32_t gactsta    : 1;    // RO, global interrupt active status
+        uint32_t gpendsta   : 1;    // RO, global interrupt pending status
+        uint32_t resv_10    : 22;
     };
 };
 #define PFIC_NESTSTA_NONE   0
@@ -88,8 +88,8 @@ union _pfic_fiofaddrr
     uint32_t reg;
     struct
     {
-        uint32_t offaddr    :24;    // RW
-        uint32_t irqid      :8;     // RW
+        uint32_t offaddr    : 24;   // RW
+        uint32_t irqid      : 8;    // RW
     };
 };
 
@@ -98,13 +98,13 @@ union _pfic_sctlr
     uint32_t reg;
     struct
     {
-        uint32_t resv_0     :1;
-        uint32_t sleeponexit:1;     // enter (deep) sleep mode on isr exiting
-        uint32_t sleepdeep  :1;     // RW, 0/1 for sleep/deep-sleep mode
-        uint32_t wfitowfe   :1;     // RW, treat WFI as WFE
-        uint32_t sevonpend  :1;     // RW
-        uint32_t setevent   :1;     // WO, set event for WFE
-        uint32_t resv_6     :26;
+        uint32_t resv_0         : 1;
+        uint32_t sleeponexit    : 1;  // enter (deep) sleep mode on isr exiting
+        uint32_t sleepdeep      : 1;  // RW, 0/1 for sleep/deep-sleep mode
+        uint32_t wfitowfe       : 1;  // RW, treat WFI as WFE
+        uint32_t sevonpend      : 1;  // RW
+        uint32_t setevent       : 1;  // WO, set event for WFE
+        uint32_t resv_6         : 26;
     };
 };
 
@@ -172,12 +172,12 @@ union _systick_ctlr
     uint32_t reg;
     struct
     {
-        uint32_t ste        :1;   // RW, systick enable
-        uint32_t stie       :1;   // RW, systick interrupt enable
-        uint32_t stclk      :1;   // RW, systick clock source select
-        uint32_t resv_3     :5;
-        uint32_t streload   :1;   // W1, write 1 to reload systick
-        uint32_t resv_9     :23;
+        uint32_t ste        : 1;  // RW, systick enable
+        uint32_t stie       : 1;  // RW, systick interrupt enable
+        uint32_t stclk      : 1;  // RW, systick clock source select
+        uint32_t resv_3     : 5;
+        uint32_t streload   : 1;  // W1, write 1 to reload systick
+        uint32_t resv_9     : 23;
     };
 };
 #define RB_STKCTL_STE       0x001
@@ -193,9 +193,9 @@ union _systick_cntfg
     uint32_t reg;
     struct
     {
-        uint32_t swie       :1;   // RW, software interrupt enable
-        uint32_t cntif      :1;   // RW0, counter dec to 0 (write 0 to clear)
-        uint32_t resv_2     :30;
+        uint32_t swie       : 1;  // RW, software interrupt enable
+        uint32_t cntif      : 1;  // RW0, counter dec to 0 (write 0 to clear)
+        uint32_t resv_2     : 30;
     };
 };
 #define RB_CNTFG_SWIE       0X01

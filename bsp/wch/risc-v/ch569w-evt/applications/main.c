@@ -7,14 +7,14 @@
  * Date           Author            Notes
  * 2022-07-15     Emuzit            first version
  * 2022-07-20     Emuzit            add watchdog test
+ * 2022-07-26     Emuzit            add hwtimer test
  */
 #include <rtthread.h>
 #include <rtdebug.h>
 #include <drivers/pin.h>
 #include <drivers/watchdog.h>
+#include <drivers/hwtimer.h>
 #include "board.h"
-
-#define WDT_TIMEOUT     30  // in seconds
 
 static const rt_base_t gpio_int_pins[8] = GPIO_INT_PINS;
 
@@ -38,6 +38,9 @@ static rt_base_t led0, led1;
 
 static rt_device_t wdg_dev;
 
+static struct rt_device *tmr_dev_0;
+static struct rt_device *tmr_dev_1;
+
 static void gpio_int_callback(void *pin)
 {
     led1 = (led1 == PIN_LOW) ? PIN_HIGH : PIN_LOW;
@@ -57,20 +60,38 @@ static void gpio_int_thread(void *param)
         rt_err_t res;
         uint32_t pin;
 
-        /* FIXME: using rt_mb_recv under excessive gpio int would crash */
-        res = 1 | rt_mb_recv(gpint_mb, &pin, RT_WAITING_FOREVER);
+        res = rt_mb_recv(gpint_mb, &pin, RT_WAITING_FOREVER);
         if (res == RT_EOK)
         {
             rt_kprintf("gpio_int #%d (%d)\n", pin, rt_pin_read(pin));
         }
         rt_thread_mdelay(100);
 
+#ifdef RT_USING_WDT
         rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
+#endif
     }
 }
 
+#ifdef RT_USING_HWTIMER
+static rt_err_t tmr_timeout_cb(rt_device_t dev, rt_size_t size)
+{
+    rt_tick_t tick = rt_tick_get();
+
+    int tmr = (dev == tmr_dev_1) ? 1 : 0;
+
+    rt_kprintf("hwtimer %d timeout callback fucntion @tick %d\n", tmr, tick);
+
+    return RT_EOK;
+}
+#endif
+
 void main(void)
 {
+    rt_hwtimerval_t timerval;
+    rt_hwtimer_mode_t mode;
+    rt_size_t tsize;
+
     uint32_t seconds;
     rt_err_t res;
 
@@ -78,8 +99,8 @@ void main(void)
 
     rt_kprintf("\nCH569W-R0-1v0, HCLK: %dMHz\n\n", sys_hclk_get() / 1000000);
 
-    /* enable all gpio interrupt with various mode
-     * connect LED0 to int_pin manually to trigger interrupt
+    /* Enable all gpio interrupt with various modes.
+     * LED0 or GND touching can be used to trigger pin interrupt.
     */
     gpint_mb = rt_mb_create("pximb", 8, RT_IPC_FLAG_FIFO);
     if (gpint_mb == RT_NULL)
@@ -103,7 +124,7 @@ void main(void)
                 rt_base_t pin = gpio_int_pins[i];
                 rt_pin_mode(pin, PIN_MODE_INPUT_PULLUP);
                 res = rt_pin_attach_irq(
-                          pin, gpint_mode[i], gpio_int_callback, (void *)pin);
+                      pin, gpint_mode[i], gpio_int_callback, (void *)pin);
                 if (res != RT_EOK)
                 {
                     rt_kprintf("rt_pin_attach_irq failed (%d:%d)\n", i, res);
@@ -116,24 +137,83 @@ void main(void)
         }
     }
 
-    /* test watchdog with 30s timeout, keepalive with gpio int
+#ifdef RT_USING_WDT
+    /* Test watchdog with 30s timeout, keepalive with gpio interrupt.
+     *
+     * CAVEAT: With only 8-bit WDOG_COUNT and fixed clocking at Fsys/524288,
+     * watchdog of ch56x may be quite limited with very short timeout.
     */
+    seconds = 30;
     wdg_dev = rt_device_find("wdt");
     if (!wdg_dev)
     {
         rt_kprintf("watchdog device not found !\n");
     }
+    else if (rt_device_init(wdg_dev) != RT_EOK ||
+             rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &seconds) != RT_EOK)
+    {
+        rt_kprintf("watchdog setup failed !\n");
+    }
     else
     {
-        seconds = WDT_TIMEOUT;
-        if (rt_device_init(wdg_dev) != RT_EOK ||
-                rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &seconds) != RT_EOK)
+        rt_kprintf("WDT_TIMEOUT in %d seconds, trigger gpio interrupt to keep alive.\n\n", seconds);
+    }
+#endif
+
+#ifdef RT_USING_HWTIMER
+    /* setup two timers, ONESHOT & PERIOD each
+    */
+    tmr_dev_0 = rt_device_find("timer0");
+    tmr_dev_1 = rt_device_find("timer1");
+    if (tmr_dev_0 == RT_NULL || tmr_dev_1 == RT_NULL)
+    {
+        rt_kprintf("hwtimer device(s) not found !\n");
+    }
+    else if (rt_device_open(tmr_dev_0, RT_DEVICE_OFLAG_RDWR) != RT_EOK ||
+             rt_device_open(tmr_dev_1, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
+    {
+        rt_kprintf("hwtimer device(s) open failed !\n");
+    }
+    else
+    {
+        rt_device_set_rx_indicate(tmr_dev_0, tmr_timeout_cb);
+        rt_device_set_rx_indicate(tmr_dev_1, tmr_timeout_cb);
+
+        timerval.sec = 3;
+        timerval.usec = 500000;
+        tsize = sizeof(timerval);
+        mode = HWTIMER_MODE_ONESHOT;
+        if (rt_device_control(tmr_dev_0, HWTIMER_CTRL_MODE_SET, &mode) != RT_EOK)
         {
-            rt_kprintf("watchdog setup failed !\n");
+            rt_kprintf("timer0 set mode failed !\n");
+        }
+        else if (rt_device_write(tmr_dev_0, 0, &timerval, tsize) != tsize)
+        {
+            rt_kprintf("timer0 start failed !\n");
+        }
+        else
+        {
+            rt_kprintf("timer0 started !\n");
+        }
+
+        timerval.sec = 5;
+        timerval.usec = 0;
+        tsize = sizeof(timerval);
+        mode = HWTIMER_MODE_PERIOD;
+        if (rt_device_control(tmr_dev_1, HWTIMER_CTRL_MODE_SET, &mode) != RT_EOK)
+        {
+            rt_kprintf("timer1 set mode failed !\n");
+        }
+        else if (rt_device_write(tmr_dev_1, 0, &timerval, tsize) != tsize)
+        {
+            rt_kprintf("timer1 start failed !\n");
+        }
+        else
+        {
+            rt_kprintf("timer1 started !\n");
         }
     }
-
-    rt_kprintf("WDT_TIMEOUT in %d seconds, trigger gpio interrupt to keep alive.\n\n", seconds);
+#endif
 
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED1_PIN, led1 = PIN_HIGH);

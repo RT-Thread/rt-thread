@@ -11,6 +11,7 @@
 #include <rtdebug.h>
 #include "ch56x_pfic.h"
 #include "ch56x_sys.h"
+#include "isr_sp.h"
 
 void rt_hw_interrupt_mask(int vector)
 {
@@ -105,10 +106,14 @@ void systick_handler(void)
 {
     volatile struct systick_registers *systick;
 
+    isr_sp_enter();
     rt_interrupt_enter();
+
     rt_tick_increase();
     systick = (struct systick_registers *)SysTick_REG_BASE;
     /* clear count-to-zero flag */
     systick->CNTFG.cntif = 0;
+
     rt_interrupt_leave();
+    isr_sp_leave();
 }

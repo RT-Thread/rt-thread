@@ -88,9 +88,6 @@ swi_handler:
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
 
-    /* clear software interrupt */
-    jal   pfic_swi_pendreset
-
     /* rt_thread_switch_interrupt_flag not 0 => clear & switch thread */
     la    t0, rt_thread_switch_interrupt_flag
     lw    t1, 0(t0)
@@ -113,6 +110,9 @@ swi_handler:
     csrw  mepc, t1
 
 .L_restore:
+
+    /* clear software interrupt */
+    jal   pfic_swi_pendreset
 
     LOAD  x1,   1 * REGBYTES(sp)
 

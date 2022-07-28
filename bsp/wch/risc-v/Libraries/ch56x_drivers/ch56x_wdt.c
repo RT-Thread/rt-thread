@@ -159,7 +159,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         *((uint32_t *)arg) = wdt_dev->timeout;
         break;
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-        /* CAVEAT: Setting timeout bigger than an 8-bit WDOG_COUNT can
+        /* CAVEAT: Setting timeout larger than an 8-bit WDOG_COUNT can
          * hold turns the wdog into interrupt mode, which makes wdog
          * usless if cause of death is lost global interrupt enable.
         */
@@ -215,6 +215,7 @@ void wdog_irq_handler(void)
     volatile struct sys_registers *sys;
 
     rt_interrupt_enter();
+
     sys = (struct sys_registers *)SYS_REG_BASE;
     /* FIXME: RB_WDOG_INT_FLAG seems completely not functioning at all !!
      * It's not set at WDOG_COUNT overflow, writing 1 to it does not clear
@@ -235,5 +236,6 @@ void wdog_irq_handler(void)
         sys->RST_WDOG_CTRL.reg = wdog_ctrl_wdat(u8v);
         sys_safe_access_leave(sys);
     }
+
     rt_interrupt_leave();
 }

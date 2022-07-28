@@ -20,7 +20,7 @@
 
 #define SYS_HCLK_FREQ       80000000  // 80 MHz
 
-#define RAMX_SIZE           96  // USER_MEM 00/01/1x : 32/64/96 KB
+#define RAMX_SIZE           32  // USER_MEM 00/01/1x : 32/64/96 KB
 #define RAMX_END            (RAMX_BASE_ADDRESS + RAMX_SIZE * 1024)
 
 extern uint32_t _ebss, _heap_end;

@@ -35,6 +35,7 @@ config BSP_USING_UART
 
 config BSP_USING_TIMER
     bool "using on-chip timer"
+    select RT_USING_HWTIMER
     default n
 
     if BSP_USING_TIMER

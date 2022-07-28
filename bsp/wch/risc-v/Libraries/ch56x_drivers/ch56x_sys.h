@@ -30,10 +30,10 @@ union _sys_safe_access_sig
     uint8_t reg;
     struct
     {
-        uint8_t safe_acc_mode   :2;  // RO, current safe access, 11b => RWA ok
-        uint8_t resv_2          :2;
-        uint8_t safe_acc_timer  :3;  // RO, current safe access time count
-        uint8_t resv_7          :1;
+        uint8_t safe_acc_mode   : 2;  // RO, current safe access, 11b => RWA ok
+        uint8_t resv_2          : 2;
+        uint8_t safe_acc_timer  : 3;  // RO, current safe access time count
+        uint8_t resv_7          : 1;
     };
 };
 #define RB_SAFE_ACC_MODE        0x03
@@ -47,12 +47,12 @@ union _sys_glob_rom_cfg
     uint8_t reg;
     struct
     {
-        uint8_t rom_ext_re      :1;  // RO, allow programmer to read FlashROM
-        uint8_t code_ram_we     :1;  // RWA, code SRAM writaboe
-        uint8_t rom_data_we     :1;  // RWA, FlashROM data erasable/writable
-        uint8_t rom_code_we     :1;  // RWA, FlashROM code erasable/writable
-        uint8_t rom_code_ofs    :1;  // RWA, FlashROM offset for user code
-        uint8_t resv_5          :3;
+        uint8_t rom_ext_re      : 1;  // RO, allow programmer to read FlashROM
+        uint8_t code_ram_we     : 1;  // RWA, code SRAM writaboe
+        uint8_t rom_data_we     : 1;  // RWA, FlashROM data erasable/writable
+        uint8_t rom_code_we     : 1;  // RWA, FlashROM code erasable/writable
+        uint8_t rom_code_ofs    : 1;  // RWA, FlashROM offset for user code
+        uint8_t resv_5          : 3;
     };
 };
 #define RB_ROM_EXT_RE           0x01
@@ -69,12 +69,12 @@ union _sys_rst_boot_stat
     uint8_t reg;
     struct
     {
-        uint8_t reset_flag      :2;  // RO, last reset cause
-        uint8_t cfg_reset_en    :1;  // RO, external reset pin (#RST) status
-        uint8_t cfg_boot_en     :1;  // RO, reset as 1
-        uint8_t cfg_debug_en    :1;  // RO
-        uint8_t boot_loader     :1;  // RO
-        uint8_t resv_6          :2;
+        uint8_t reset_flag      : 2;  // RO, last reset cause
+        uint8_t cfg_reset_en    : 1;  // RO, external reset pin (#RST) status
+        uint8_t cfg_boot_en     : 1;  // RO, reset as 1
+        uint8_t cfg_debug_en    : 1;  // RO
+        uint8_t boot_loader     : 1;  // RO
+        uint8_t resv_6          : 2;
     };
 };
 #define RB_RESET_FLAG           0x03
@@ -93,15 +93,15 @@ union _sys_rst_wdog_ctrl
     uint8_t reg;
     struct
     {
-        uint8_t software_reset  :1;  // WA/WZ, system software reset, auto clear
+        uint8_t software_reset  : 1;  // WA/WZ, system software reset, auto clear
 #if defined(SOC_SERIES_CH569)
-        uint8_t wdog_rst_en     :1;  // RWA, enable watchdog overflow to reset
-        uint8_t wdog_int_en     :1;  // RWA, enable watchdog overflow interrupt
-        uint8_t wdog_int_flag   :1;  // RW1, watchdog counter overflow
+        uint8_t wdog_rst_en     : 1;  // RWA, enable watchdog overflow to reset
+        uint8_t wdog_int_en     : 1;  // RWA, enable watchdog overflow interrupt
+        uint8_t wdog_int_flag   : 1;  // RW1, watchdog counter overflow
 #else
-        uint8_t resv_2          :3;
+        uint8_t resv_2          : 3;
 #endif
-        uint8_t resv_4          :4;  // RO, B.7-6 must write 01b
+        uint8_t resv_4          : 4;  // RO, B.7-6 must write 01b
     };
 };
 #define RB_SOFTWARE_RESET       0x01
@@ -117,8 +117,8 @@ union _sys_clk_pll_div
     uint8_t reg;
     struct
     {
-        uint8_t pll_div         :4;  // RWA, min 2
-        uint8_t resv_4          :4;  // RWA, B.7-6 must write 01b
+        uint8_t pll_div         : 4;  // RWA, min 2
+        uint8_t resv_4          : 4;  // RWA, B.7-6 must write 01b
     };
 };
 #define clk_pll_div_wdat(div)   (0x40 | (div))
@@ -128,9 +128,9 @@ union _sys_clk_cfg_ctrl
     uint8_t reg;
     struct
     {
-        uint8_t pll_sleep       :1;  // RWA, PLL sleep control
-        uint8_t sel_pll         :1;  // RWA, clock source select
-        uint8_t resv_6          :6;  // RWA, must write 10b
+        uint8_t pll_sleep       : 1;  // RWA, PLL sleep control
+        uint8_t sel_pll         : 1;  // RWA, clock source select
+        uint8_t resv_6          : 6;  // RWA, must write 10b
     };
 };
 #define RB_CLK_PLL_SLEEP        0x01
@@ -147,11 +147,11 @@ union _sys_clk_mod_aux
     uint8_t reg;
     struct
     {
-        uint8_t int_125m_en     :1;  // RWA, USB PHY 125MHz to ETH
-        uint8_t ext_125m_en     :1;  // RWA, external 125MHz to ETH
-        uint8_t mco_sel_msk     :2;  // RWA, MCO output select
-        uint8_t mco_en          :1;  // RWA, MCO output enable
-        uint8_t resv_5          :3;
+        uint8_t int_125m_en     : 1;  // RWA, USB PHY 125MHz to ETH
+        uint8_t ext_125m_en     : 1;  // RWA, external 125MHz to ETH
+        uint8_t mco_sel_msk     : 2;  // RWA, MCO output select
+        uint8_t mco_en          : 1;  // RWA, MCO output enable
+        uint8_t resv_5          : 3;
     };
 };
 #define RB_INT_125M_EN          0x01
@@ -170,14 +170,14 @@ union _sys_slp_clk_off0
     uint8_t reg;
     struct
     {
-        uint8_t tmr0    :1;
-        uint8_t tmr1    :1;
-        uint8_t tmr2    :1;
-        uint8_t pwmx    :1;
-        uint8_t uart0   :1;
-        uint8_t uart1   :1;
-        uint8_t uart2   :1;
-        uint8_t uart3   :1;
+        uint8_t tmr0    : 1;
+        uint8_t tmr1    : 1;
+        uint8_t tmr2    : 1;
+        uint8_t pwmx    : 1;
+        uint8_t uart0   : 1;
+        uint8_t uart1   : 1;
+        uint8_t uart2   : 1;
+        uint8_t uart3   : 1;
     };
 };
 #define RB_SLP_CLK_TMR0         0x01
@@ -199,28 +199,28 @@ union _sys_slp_clk_off1
     uint8_t reg;
     struct
     {
-        uint8_t spi0    :1;
-        uint8_t spi1    :1;
+        uint8_t spi0    : 1;
+        uint8_t spi1    : 1;
 #if defined(SOC_CH567)
-        uint8_t sdc     :1;
-        uint8_t led     :1;
-        uint8_t usb0    :1;
-        uint8_t usb1    :1;
-        uint8_t resv_6  :1;
+        uint8_t sdc     : 1;
+        uint8_t led     : 1;
+        uint8_t usb0    : 1;
+        uint8_t usb1    : 1;
+        uint8_t resv_6  : 1;
 #elif defined(SOC_CH568)
-        uint8_t sdc     :1;
-        uint8_t led     :1;
-        uint8_t resv_4  :1;
-        uint8_t usb1    :1;
-        uint8_t sata    :1;
-        uint8_t ecdc    :1;
+        uint8_t sdc     : 1;
+        uint8_t led     : 1;
+        uint8_t resv_4  : 1;
+        uint8_t usb1    : 1;
+        uint8_t sata    : 1;
+        uint8_t ecdc    : 1;
 #else
-        uint8_t emmc    :1;
-        uint8_t hspi    :1;
-        uint8_t usbhs   :1;
-        uint8_t usbss   :1;
-        uint8_t serd    :1;
-        uint8_t dvp     :1;
+        uint8_t emmc    : 1;
+        uint8_t hspi    : 1;
+        uint8_t usbhs   : 1;
+        uint8_t usbss   : 1;
+        uint8_t serd    : 1;
+        uint8_t dvp     : 1;
 #endif
     };
 };
@@ -255,26 +255,26 @@ union _sys_slp_wake_ctrl
     struct
     {
 #if defined(SOC_WCH_CH567)
-        uint8_t usb0_wake       :1;
-        uint8_t usb1_wake       :1;
-        uint8_t resv_2          :2;
-        uint8_t gpio_wake       :1;
-        uint8_t resv_5          :3;
+        uint8_t usb0_wake       : 1;
+        uint8_t usb1_wake       : 1;
+        uint8_t resv_2          : 2;
+        uint8_t gpio_wake       : 1;
+        uint8_t resv_5          : 3;
 #elif defined(SOC_WCH_CH568)
-        uint8_t resv_0          :1;
-        uint8_t usb1_wake       :1;
-        uint8_t sata_wake       :1;
-        uint8_t resv_3          :1;
-        uint8_t gpio_wake       :1;
-        uint8_t resv_5          :3;
+        uint8_t resv_0          : 1;
+        uint8_t usb1_wake       : 1;
+        uint8_t sata_wake       : 1;
+        uint8_t resv_3          : 1;
+        uint8_t gpio_wake       : 1;
+        uint8_t resv_5          : 3;
 #else
-        uint8_t usbhs_wake      :1;
-        uint8_t usbss_wake      :1;
-        uint8_t clk_eth         :1;
-        uint8_t clk_ecdc        :1;
-        uint8_t gpio_wake       :1;
-        uint8_t eth_wake        :1;
-        uint8_t resv_6          :2;
+        uint8_t usbhs_wake      : 1;
+        uint8_t usbss_wake      : 1;
+        uint8_t clk_eth         : 1;
+        uint8_t clk_ecdc        : 1;
+        uint8_t gpio_wake       : 1;
+        uint8_t eth_wake        : 1;
+        uint8_t resv_6          : 2;
 #endif
     };
 };
@@ -300,8 +300,8 @@ union _sys_slp_power_ctrl
     uint8_t reg;
     struct
     {
-        uint8_t usbhs_pwrdn     :1;  // RWA, USBHS power down (0:PWRUP)
-        uint8_t resv_2          :7;
+        uint8_t usbhs_pwrdn     : 1;  // RWA, USBHS power down (0:PWRUP)
+        uint8_t resv_2          : 7;
     };
 };
 #define RB_SLP_USBHS_PWRDN      0x01
@@ -311,10 +311,10 @@ union _sys_serd_ana_cfg1
     uint16_t reg;
     struct
     {
-        uint8_t serd_pll_cfg;        // RWA, reset as 0x5a
-        uint8_t serd_30m_sel    :1;  // RWA
-        uint8_t serd_dn_tst     :1;  // RWA
-        uint8_t resv_10         :6;
+        uint8_t serd_pll_cfg;         // RWA, reset as 0x5a
+        uint8_t serd_30m_sel    : 1;  // RWA
+        uint8_t serd_dn_tst     : 1;  // RWA
+        uint8_t resv_10         : 6;
     };
 };
 #define RB_SERD_PLL_CFG         0x0ff
@@ -326,8 +326,8 @@ union _sys_serd_ana_cfg2
     uint32_t reg;
     struct
     {
-        uint32_t serd_trx_cfg   :25;  // RWA, reset as 423015h
-        uint32_t resv_25        :7;
+        uint32_t serd_trx_cfg   : 25;  // RWA, reset as 423015h
+        uint32_t resv_25        : 7;
     };
 };
 #define RB_SERD_TRX_CFG         0x1000000
