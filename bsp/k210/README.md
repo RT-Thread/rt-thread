@@ -34,7 +34,10 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 编译 K210，需要有 RT-Thread 的代码，因为 K210 的 sdk 是以软件包方式，所以需要在 bsp/k210 下做软件包更新。注意，需要使用 latest 的 RT-Thread 源码和 Latest 的软件包，软件包在menuconfig中的配置路径如下:
 
 ```
-RT-Thread online packages ---> peripheral libraries and drivers ---> kendryte K210 SDK package for rt-thread
+RT-Thread online packages --->
+    peripheral libraries and drivers --->
+        Kendryte SDK --->
+            [*] kendryte K210 SDK
 ```
 
 最新的 k210 SDK 使用了 C++17 编写了部分代码，因此需要打开 C++ 组件，C++组件在menuconfig中的配置路径如下：
@@ -69,7 +72,7 @@ Windows下推荐使用[env工具][1]，然后在console下进入bsp/k210目录�
 
 然后执行scons编译：  
 
-    set RTT_EXEC_PATH=your_toolchains
+    set RTT_EXEC_PATH=C:\Users\xxxx\Downloads\xpack-riscv-none-embed-gcc-10.2.0-1.2\bin
     scons
 
 来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。  
