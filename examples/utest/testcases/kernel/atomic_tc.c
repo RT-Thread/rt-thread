@@ -69,7 +69,7 @@ static void test_atomic_api(void)
     rt_atomic_nand(&base, 0x0F0F);
     uassert_true(base == ATOMIC_WORD(0xFFFFFFFFFFFFF0FF, 0xFFFFF0FF));
 
-    /* rt_atomic_nand */
+    /* rt_atomic_cas */
     base = 10;
     uassert_true(rt_atomic_cas(&base, 10, 11) == 10);
     uassert_true(base == 11);
