@@ -22,7 +22,7 @@ int main(void)
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
     /* Print system clock */
     sysclock = RCM_ReadSYSCLKFreq();
-    rt_kprintf("Read: Sec = %d, Usec = 0x%08X\n", sysclock, sysclock);
+    rt_kprintf("System Clock: %d\n", sysclock);
 
     while (1)
     {
