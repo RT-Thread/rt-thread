@@ -51,6 +51,15 @@ msh />
 telnet 127.0.0.1 4321
 ```
 
+如果使用tap网卡模式，以设备tap0为例，将qemu运行脚本
+```
+-netdev user,id=net0
+```
+修改为
+```
+-netdev tap,id=net0,ifname=tap0
+```
+
 ## 4.支持情况
 
 | 驱动 | 支持情况  |  备注  |
