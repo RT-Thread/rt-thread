@@ -190,12 +190,6 @@ void rt_hw_systick_init(void)
 void rt_hw_board_init(void)
 {
     rt_hw_systick_init();
-#if defined(RT_USING_HEAP)
-    extern int __heap_start__;
-    extern int __heap_end__;
-    printf("%s:%d__heap_start__:%p,__heap_end__:%p\n",__func__,__LINE__,&__heap_start__,&__heap_end__);
-    rt_system_heap_init((void *)&__heap_start__, (void *)&__heap_end__);
-#endif
     /* Board underlying hardware initialization */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -213,9 +207,6 @@ static void rtthread_startup(void)
     /* timer system initialization */
     rt_system_timer_init();
 
-    /* scheduler system initialization */
-    rt_system_scheduler_init();
-
     /* create init_thread */
     rt_application_init();
 
@@ -228,7 +219,7 @@ static void rtthread_startup(void)
     /* start scheduler */
     rt_system_scheduler_start();
     /* init scheduler system */
-    rt_hw_pin_init();
+
     /* never reach here */
     return ;
 }
