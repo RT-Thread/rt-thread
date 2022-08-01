@@ -11,6 +11,8 @@
 #include <rtdebug.h>
 #include "ch56x_sys.h"
 
+static uint32_t hclk_freq;
+
 rt_inline uint8_t _slp_clk_off0_irqn_bit(uint8_t irqn)
 {
     uint8_t bitpos;
@@ -221,6 +223,8 @@ int sys_hclk_set(uint32_t freq)
         sys->CLK_CFG_CTRL.reg = clk_cfg_ctrl_wdat(clksel);
         sys_safe_access_leave(sys);
         rt_hw_interrupt_enable(level);
+        /* save to hclk_freq for quick report */
+        sys_hclk_calc();
         clksel = 0;
     }
 
@@ -228,11 +232,24 @@ int sys_hclk_set(uint32_t freq)
 }
 
 /**
- * @brief   Get current HCLK frequency.
+ * @brief   Get saved HCLK frequency.
+ *
+ *          Valid only if HCLK is set strickly with sys_hclk_set().
+ *          Use sys_hclk_calc() otherwise.
+ *
+ * @return  Returns saved HCLK frequency (Hz, 0 if not set yet).
+ */
+uint32_t sys_hclk_get(void)
+{
+    return hclk_freq;
+}
+
+/**
+ * @brief   Get current HCLK frequency, calculated from hw setting.
  *
  * @return  Returns current HCLK frequency (Hz).
  */
-uint32_t sys_hclk_get(void)
+uint32_t sys_hclk_calc(void)
 {
     volatile struct sys_registers *sys = (void *)SYS_REG_BASE;
 
@@ -240,10 +257,12 @@ uint32_t sys_hclk_get(void)
 
     if (sys->CLK_CFG_CTRL.sel_pll == CLK_SEL_PLL_USB_480M)
     {
-        return plldiv ? 480000000 / plldiv : 30000000;
+        hclk_freq = plldiv ? 480000000 / plldiv : 30000000;
     }
     else
     {
-        return plldiv ?  30000000 / plldiv : 2000000;
+        hclk_freq = plldiv ?  30000000 / plldiv : 2000000;
     }
+
+    return hclk_freq;
 }
