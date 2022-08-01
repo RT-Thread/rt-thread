@@ -182,7 +182,6 @@ jobs:
          - {RTT_BSP: "at32/at32f435-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f437-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pi/raspi3-32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pi/raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "hc32/ev_hc32f4a0_lqfp176", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -194,6 +193,7 @@ jobs:
          - {RTT_BSP: "qemu-virt64-aarch64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "raspberry-pi/raspi3-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "raspberry-pi/raspi4-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
+         - {RTT_BSP: "raspberry-pi/raspi-pico", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "rockchip/rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "microchip/samc21", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "microchip/same54", RTT_TOOL_CHAIN: "sourcery-arm"}
