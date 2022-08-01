@@ -59,8 +59,8 @@ config BSP_USING_SPI
 
     if BSP_USING_SPI
         config BSP_USING_SPI0
-        bool "using SPI0"
-        default n
+            bool "using SPI0"
+            default n
 
         config BSP_USING_SPI1
         bool "using SPI1"
