@@ -216,7 +216,11 @@ def ProjectInfo(env):
             CPPPATH[i] = os.path.abspath(CPPPATH[i])
 
         # remove repeat path
-        paths = [i for i in set(CPPPATH)]
+        paths = []
+        for p in CPPPATH:
+            if p not in paths:
+                paths.append(p)
+
         CPPPATH = []
         for path in paths:
             if PrefixPath(RTT_ROOT, path):
@@ -227,8 +231,6 @@ def ProjectInfo(env):
 
             else:
                 CPPPATH += ['"%s",' % path.replace('\\', '/')]
-
-        CPPPATH.sort()
 
     # process CPPDEFINES
     if len(CPPDEFINES):
