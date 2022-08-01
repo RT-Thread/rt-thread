@@ -63,8 +63,8 @@ config BSP_USING_SPI
             default n
 
         config BSP_USING_SPI1
-        bool "using SPI1"
-        default n
+            bool "using SPI1"
+            default n
     endif
 endmenu
 
