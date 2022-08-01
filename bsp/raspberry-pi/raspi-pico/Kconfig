@@ -8,7 +8,7 @@ config BSP_DIR
 config RTT_DIR
     string
     option env="RTT_ROOT"
-    default "../.."
+    default "../../.."
 
 config PKGS_DIR
     string
@@ -18,3 +18,11 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
+
+config SOC_SERIES_RP2040_PICO
+    bool
+    select ARCH_ARM_CORTEX_M0
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select PKG_USING_RASPBERRYPI_PICO_SDK
+    default y

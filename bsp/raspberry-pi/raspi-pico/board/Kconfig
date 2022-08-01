@@ -1,14 +1,5 @@
 menu "Hardware Drivers Config"
 
-
-config SOC_SERIES_RP2040_PICO
-    bool
-    select ARCH_ARM_CORTEX_M0
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    select PKG_USING_RASPBERRYPI_PICO_SDK
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_LVGL
