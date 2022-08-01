@@ -72,12 +72,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-#define RT_USING_DFS
-#define DFS_USING_POSIX
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
 
 /* Device Drivers */
 
@@ -171,7 +165,7 @@
 /* peripheral libraries and drivers */
 
 
-/* kendryte-sdk: Kendryte SDK */
+/* Kendryte SDK */
 
 
 /* AI packages */

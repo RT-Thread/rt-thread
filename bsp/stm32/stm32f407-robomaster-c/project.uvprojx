@@ -10,7 +10,7 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -184,9 +184,6 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
-            <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
-            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -340,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>RT_USING_LIBC, USE_HAL_DRIVER, STM32F407xx, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\dfs\include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -353,7 +350,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -552,31 +549,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
@@ -598,11 +570,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
