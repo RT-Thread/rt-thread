@@ -45,10 +45,29 @@ Hi, this is RT-Thread!!
 msh />
 ```
 
+Use VirtIO-Console in new terminal by:
+````
+telnet 127.0.0.1 4321
+````
+
+If use tap net mode with tap0 card, modify qemu run script config
+```
+-netdev user,id=net0
+```
+to
+```
+-netdev tap,id=net0,ifname=tap0
+```
+
 ## 4. Condition
 
 | Driver | Condition | Remark |
 | ------ | --------- | ------ |
 | UART   | Support   | UART0  |
 | RTC    | Support   | - |
+| GPIO   | Support   | - |
 | VIRTIO BLK | Support | - |
+| VIRTIO NET | Support | - |
+| VIRTIO Console | Support | - |
+| VIRTIO GPU | Support | 2D |
+| VIRTIO Input | Support | Keyboard, Mouse, Tablet |

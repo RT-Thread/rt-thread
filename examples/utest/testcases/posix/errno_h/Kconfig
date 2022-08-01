@@ -1,0 +1,3 @@
+menuconfig RTT_POSIX_TESTCASE_ERRNO_H
+    bool "<errno.h>"
+    default n

@@ -156,7 +156,7 @@ void RTC_WaitForLastTask(void)
  *
  * @retval    None
  */
-void RTC_WaitForSynchor(void)
+void RTC_WaitForSynchro(void)
 {
     RTC->CSTS_B.RSYNCFLG = BIT_RESET;
     while (RTC->CSTS_B.RSYNCFLG == BIT_RESET);

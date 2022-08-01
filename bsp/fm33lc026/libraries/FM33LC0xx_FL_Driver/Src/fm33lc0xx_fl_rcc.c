@@ -1,27 +1,25 @@
 /**
   ****************************************************************************************************
-  * @file    fm33lC0xx_fl_rcc.c
+  * @file    fm33lc0xx_fl_rcc.c
   * @author  FMSH Application Team
   * @brief   Src file of RCC FL Module
   ****************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   ****************************************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include "system_fm33lc0xx.h"
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -30,6 +28,8 @@
 /** @addtogroup RCC
   * @{
   */
+
+#ifdef FL_RCC_DRIVER_ENABLED
 
 /** @addtogroup RCC_FL_EF_Operation
   * @{
@@ -42,7 +42,7 @@
   */
 uint32_t FL_RCC_GetUSBClockFreqToSysclk(void)
 {
-    if(FL_RCC_GetUSBClockSource() == FL_RCC_USB_CLOCK_SELECT_48M)
+    if(FL_RCC_GetUSBClockOutput() == FL_RCC_USB_CLK_OUT_48M)
     {
         return 48000000;
     }
@@ -73,28 +73,32 @@ uint32_t FL_RCC_GetSystemClockFreq(void)
             break;
         /* 系统时钟源为XTHF */
         case FL_RCC_SYSTEM_CLK_SOURCE_XTHF:
-            frequency = XTHF_VALUE;
+            frequency = XTHFClock;
             break;
         /* 系统时钟源为PLL */
         case FL_RCC_SYSTEM_CLK_SOURCE_PLL:
             frequency = FL_RCC_GetPLLClockFreq();
             break;
         /* 系统时钟源为内部RCMF */
-        case FL_RCC_SYSTEM_CLK_SOURCE_RCMFPSC:
-            /* 根据RC4M的分频配置得出系统时钟 */
-            frequency = FL_RCC_GetRC4MClockFreq();
+        case FL_RCC_SYSTEM_CLK_SOURCE_RCMF_PSC:
+            /* 根据RCMF的分频配置得出系统时钟 */
+            frequency = FL_RCC_GetRCMFClockFreq();
             break;
-        /* 系统时钟源为XTLF */
-        case FL_RCC_SYSTEM_CLK_SOURCE_XTLF:
-            /* 根据外部晶振的频率得出系统时钟 */
-            frequency = XTLF_VALUE;
+        /* 系统时钟源为LSCLK */
+        case FL_RCC_SYSTEM_CLK_SOURCE_LSCLK:
+            #ifdef USE_LSCLK_CLOCK_SRC_LPOSC
+            frequency = 32000;
+            #else
+            frequency = XTLFClock;
+            #endif
             break;
+        /* 系统时钟源为USB BCK */
         case FL_RCC_SYSTEM_CLK_SOURCE_USBCLK:
-            /* USB时钟频率获取*/
+            /* USB时钟频率获取 */
             frequency = FL_RCC_GetUSBClockFreqToSysclk();
             break;
-        /* 系统时钟源为RCLP */
-        case FL_RCC_SYSTEM_CLK_SOURCE_RCLP:
+        /* 系统时钟源为LPOSC */
+        case FL_RCC_SYSTEM_CLK_SOURCE_LPOSC:
             frequency = 32000;
             break;
         default:
@@ -204,12 +208,12 @@ uint32_t FL_RCC_GetAPB2ClockFreq(void)
     return frequency;
 }
 /**
-  * @brief  获取RC4M输出时钟频率
+  * @brief  获取RCMF输出时钟频率
   *
-  * @retval RC4M输出时钟频率(Hz)
+  * @retval RCMF输出时钟频率(Hz)
   *
   */
-uint32_t FL_RCC_GetRC4MClockFreq(void)
+uint32_t FL_RCC_GetRCMFClockFreq(void)
 {
     uint32_t frequency = 0;
     switch(FL_RCC_RCMF_GetPrescaler())
@@ -276,7 +280,7 @@ uint32_t FL_RCC_GetPLLClockFreq(void)
             frequency = FL_RCC_GetRCHFClockFreq();
             break;
         case FL_RCC_PLL_CLK_SOURCE_XTHF:
-            frequency = XTHF_VALUE;
+            frequency = XTHFClock;
             break;
         default:
             frequency = FL_RCC_GetRCHFClockFreq();
@@ -320,12 +324,14 @@ uint32_t FL_RCC_GetPLLClockFreq(void)
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* FL_RCC_DRIVER_ENABLED */
 
 /**
   * @}
   */
 
-/******************************************* END OF FILE *******************************************/
+/**
+  * @}
+  */
+
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

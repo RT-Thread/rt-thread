@@ -28,12 +28,14 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART1
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART1_TX_USING_DMA
                 bool "Enable UART1 TX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART1
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_USING_UART2
@@ -42,12 +44,14 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART2_RX_USING_DMA
                 bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART2_TX_USING_DMA
                 bool "Enable UART2 TX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
                 default n
             
             config BSP_USING_UART3
@@ -56,12 +60,14 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3
+		select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART3_TX_USING_DMA
                 bool "Enable UART3 TX DMA"
-                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3
+		select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_USING_UART4
@@ -70,12 +76,14 @@ menu "On-chip Peripheral Drivers"
             
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART4
+		select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART4_TX_USING_DMA
                 bool "Enable UART4 TX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART4
+		select RT_SERIAL_USING_DMA
                 default n
         endif
 		
@@ -135,12 +143,31 @@ menu "On-chip Peripheral Drivers"
                 range 1 100
                 default 49
         endif 
-		
+
 	config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
 		
+    menuconfig BSP_USING_PWM_TMRA
+        bool "Enable timerA output PWM"
+        depends on (!BSP_USING_UART3)
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM_TMRA
+        menuconfig BSP_USING_PWM_TMRA_4
+            bool "Enable timerA-4 output PWM"
+            default n
+            if BSP_USING_PWM_TMRA_4
+                config BSP_USING_PWM_TMRA_4_CH7
+                    bool "Enable timerA-4 channel7"
+                    default n
+                config BSP_USING_PWM_TMRA_4_CH8
+                    bool "Enable timerA-4 channel8"
+                    default n
+            endif
+        endif
+        
 endmenu
 
 menu "Board extended module Drivers"

@@ -13,9 +13,10 @@
 #include <rtthread.h>
 #include <cpuport.h>
 
+#ifdef BSP_USING_VIRTIO_BLK
+
 #include <virtio_blk.h>
 
-#ifdef BSP_USING_VIRTIO_BLK
 static void virtio_blk_rw(struct virtio_blk_device *virtio_blk_dev, rt_off_t pos, void *buffer, int flags)
 {
     rt_uint16_t idx[3];
@@ -28,6 +29,14 @@ static void virtio_blk_rw(struct virtio_blk_device *virtio_blk_dev, rt_off_t pos
     /* Allocate 3 descriptors */
     while (virtio_alloc_desc_chain(virtio_dev, 0, 3, idx))
     {
+#ifdef RT_USING_SMP
+        rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
+#endif
+        rt_thread_yield();
+
+#ifdef RT_USING_SMP
+        level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
+#endif
     }
 
     virtio_blk_dev->info[idx[0]].status = 0xff;
@@ -38,18 +47,18 @@ static void virtio_blk_rw(struct virtio_blk_device *virtio_blk_dev, rt_off_t pos
 
     flags = flags == VIRTIO_BLK_T_OUT ? 0 : VIRTQ_DESC_F_WRITE;
 
-    virtio_fill_desc(virtio_dev, 0, idx[0],
+    virtio_fill_desc(virtio_dev, VIRTIO_BLK_QUEUE, idx[0],
             VIRTIO_VA2PA(&virtio_blk_dev->info[idx[0]].req), sizeof(struct virtio_blk_req), VIRTQ_DESC_F_NEXT, idx[1]);
 
-    virtio_fill_desc(virtio_dev, 0, idx[1],
+    virtio_fill_desc(virtio_dev, VIRTIO_BLK_QUEUE, idx[1],
             VIRTIO_VA2PA(buffer), VIRTIO_BLK_BUF_DATA_SIZE, flags | VIRTQ_DESC_F_NEXT, idx[2]);
 
-    virtio_fill_desc(virtio_dev, 0, idx[2],
-            VIRTIO_VA2PA(&virtio_blk_dev->info[idx[0]].status), 1, VIRTQ_DESC_F_WRITE, 0);
+    virtio_fill_desc(virtio_dev, VIRTIO_BLK_QUEUE, idx[2],
+            VIRTIO_VA2PA(&virtio_blk_dev->info[idx[0]].status), sizeof(rt_uint8_t), VIRTQ_DESC_F_WRITE, 0);
 
-    virtio_submit_chain(virtio_dev, 0, idx[0]);
+    virtio_submit_chain(virtio_dev, VIRTIO_BLK_QUEUE, idx[0]);
 
-    virtio_queue_notify(virtio_dev, 0);
+    virtio_queue_notify(virtio_dev, VIRTIO_BLK_QUEUE);
 
     /* Wait for virtio_blk_isr() to done */
     while (virtio_blk_dev->info[idx[0]].valid)
@@ -64,7 +73,7 @@ static void virtio_blk_rw(struct virtio_blk_device *virtio_blk_dev, rt_off_t pos
 #endif
     }
 
-    virtio_free_desc_chain(virtio_dev, 0, idx[0]);
+    virtio_free_desc_chain(virtio_dev, VIRTIO_BLK_QUEUE, idx[0]);
 
 #ifdef RT_USING_SMP
     rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
@@ -104,10 +113,11 @@ static rt_err_t virtio_blk_control(rt_device_t dev, int cmd, void *args)
 
             geometry->bytes_per_sector = VIRTIO_BLK_BYTES_PER_SECTOR;
             geometry->block_size = VIRTIO_BLK_BLOCK_SIZE;
-            geometry->sector_count = virtio_blk_dev->virtio_dev.mmio_config->config[0];
+            geometry->sector_count = virtio_blk_dev->config->capacity;
         }
         break;
     default:
+        status = -RT_EINVAL;
         break;
     }
 
@@ -129,27 +139,27 @@ static void virtio_blk_isr(int irqno, void *param)
     rt_uint32_t id;
     struct virtio_blk_device *virtio_blk_dev = (struct virtio_blk_device *)param;
     struct virtio_device *virtio_dev = &virtio_blk_dev->virtio_dev;
+    struct virtq *queue = &virtio_dev->queues[VIRTIO_BLK_QUEUE];
 
 #ifdef RT_USING_SMP
     rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
 #endif
 
-    virtio_interrupt_ack(virtio_dev, virtio_dev->mmio_config->interrupt_status & 0x3);
+    virtio_interrupt_ack(virtio_dev);
     rt_hw_dsb();
 
     /* The device increments disk.used->idx when it adds an entry to the used ring */
-    while (virtio_dev->queues[0].used_idx != virtio_dev->queues[0].used->idx)
+    while (queue->used_idx != queue->used->idx)
     {
         rt_hw_dsb();
-        id = virtio_dev->queues[0].used->ring[virtio_dev->queues[0].used_idx % VIRTIO_BLK_QUEUE_RING_SIZE].id;
+        id = queue->used->ring[queue->used_idx % queue->num].id;
 
         RT_ASSERT(virtio_blk_dev->info[id].status == 0);
 
         /* Done with buffer */
         virtio_blk_dev->info[id].valid = RT_FALSE;
-        rt_thread_yield();
 
-        virtio_dev->queues[0].used_idx++;
+        queue->used_idx++;
     }
 
 #ifdef RT_USING_SMP
@@ -175,6 +185,8 @@ rt_err_t rt_virtio_blk_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     virtio_dev->irq = irq;
     virtio_dev->mmio_base = mmio_base;
 
+    virtio_blk_dev->config = (struct virtio_blk_config *)virtio_dev->mmio_config->config;
+
 #ifdef RT_USING_SMP
     rt_spin_lock_init(&virtio_dev->spinlock);
 #endif
@@ -195,22 +207,34 @@ rt_err_t rt_virtio_blk_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     /* Tell device that feature negotiation is complete and we're completely ready */
     virtio_status_driver_ok(virtio_dev);
 
+    if (virtio_queues_alloc(virtio_dev, 1) != RT_EOK)
+    {
+        goto _alloc_fail;
+    }
+
     /* Initialize queue 0 */
     if (virtio_queue_init(virtio_dev, 0, VIRTIO_BLK_QUEUE_RING_SIZE) != RT_EOK)
     {
-        rt_free(virtio_blk_dev);
-
-        return -RT_ENOMEM;
+        goto _alloc_fail;
     }
 
     virtio_blk_dev->parent.type = RT_Device_Class_Block;
     virtio_blk_dev->parent.ops  = &virtio_blk_ops;
 
-    rt_snprintf(dev_name, RT_NAME_MAX, "%s%d", "virtio-blk", dev_no++);
+    rt_snprintf(dev_name, RT_NAME_MAX, "virtio-blk%d", dev_no++);
 
     rt_hw_interrupt_install(irq, virtio_blk_isr, virtio_blk_dev, dev_name);
     rt_hw_interrupt_umask(irq);
 
     return rt_device_register((rt_device_t)virtio_blk_dev, dev_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE);
+
+_alloc_fail:
+
+    if (virtio_blk_dev != RT_NULL)
+    {
+        virtio_queues_free(virtio_dev);
+        rt_free(virtio_blk_dev);
+    }
+    return -RT_ENOMEM;
 }
 #endif /* BSP_USING_VIRTIO_BLK */

@@ -27,7 +27,7 @@
 #define __SYSTEM_APM32F10X_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 extern uint32_t SystemCoreClock;

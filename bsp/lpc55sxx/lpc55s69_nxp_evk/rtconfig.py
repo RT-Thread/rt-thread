@@ -3,7 +3,7 @@ import sys
 
 # toolchains options
 ARCH='arm'
-CPU='cortex-m4'
+CPU='cortex-m33'
 CROSS_TOOL='gcc'
 BOARD_NAME = 'lpcxpresso'
 BSP_LIBRARY_TYPE = 'LPC55S6X'

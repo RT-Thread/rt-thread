@@ -18,6 +18,7 @@ config PKGS_DIR
 config SOC_LPC55S6x
     bool 
     select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_SECURE
     default y
 
 source "$RTT_DIR/Kconfig"

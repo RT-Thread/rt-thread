@@ -24,8 +24,29 @@ menu "AARCH64 qemu virt64 configs"
                 default n
         endif
 
-    menuconfig BSP_USING_VIRTIO_BLK
+    config BSP_USING_PIN
+        bool "Using PIN"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_VIRTIO_BLK
         bool "Using VirtIO BLK"
+        default y
+
+    config BSP_USING_VIRTIO_NET
+        bool "Using VirtIO NET"
+        default y
+
+    config BSP_USING_VIRTIO_CONSOLE
+        bool "Using VirtIO Console"
+        default y
+
+    config BSP_USING_VIRTIO_GPU
+        bool "Using VirtIO GPU"
+        default y
+
+    config BSP_USING_VIRTIO_INPUT
+        bool "Using VirtIO Input"
         default y
 
     config BSP_USING_GIC

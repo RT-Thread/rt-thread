@@ -101,9 +101,11 @@ const char *finsh_get_prompt(void)
     if (finsh_prompt_custom)
     {
         strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt) - 1);
-        return finsh_prompt;
     }
-    strcpy(finsh_prompt, _MSH_PROMPT);
+    else
+    {
+        strcpy(finsh_prompt, _MSH_PROMPT);
+    }
 
 #if defined(DFS_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
