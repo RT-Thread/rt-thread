@@ -150,7 +150,7 @@ def touch_env():
         home_dir = os.environ['HOME']
     else:
         home_dir = os.environ['USERPROFILE']
-    
+
     package_url = os.getenv('RTT_PACKAGE_URL') or DEFAULT_RTT_PACKAGE_URL
 
     env_dir  = os.path.join(home_dir, '.env')
@@ -223,7 +223,7 @@ def touch_env():
         if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
             os.environ["PATH"] = os.path.join(env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
 
-# Exclude utestcases 
+# Exclude utestcases
 def exclude_utestcases(RTT_ROOT):
     if os.path.isfile(os.path.join(RTT_ROOT, 'examples/utest/testcases/Kconfig')):
         return
@@ -241,7 +241,7 @@ def exclude_utestcases(RTT_ROOT):
 # menuconfig for Linux
 def menuconfig(RTT_ROOT):
 
-    # Exclude utestcases 
+    # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
 
     kconfig_dir = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends')
@@ -275,7 +275,7 @@ def menuconfig(RTT_ROOT):
 def guiconfig(RTT_ROOT):
     import pyguiconfig
 
-    # Exclude utestcases 
+    # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
 
     if sys.platform != 'win32':
@@ -309,9 +309,9 @@ def guiconfig(RTT_ROOT):
 def guiconfig_silent(RTT_ROOT):
     import defconfig
 
-    # Exclude utestcases 
+    # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
-    
+
     if sys.platform != 'win32':
         touch_env()
 
