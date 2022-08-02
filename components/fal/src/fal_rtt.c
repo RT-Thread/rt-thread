@@ -264,7 +264,7 @@ static rt_err_t mtd_nor_dev_erase(struct rt_mtd_nor_device* device, rt_off_t off
 
     ret = fal_partition_erase(part->fal_part, offset, length);
 
-    if ((rt_uint32_t)ret != length)
+    if ((rt_uint32_t)ret != length || ret < 0)
     {
         return -RT_ERROR;
     }

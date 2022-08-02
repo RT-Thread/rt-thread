@@ -446,7 +446,8 @@ static const struct rt_spi_ops stm_spi_ops =
 static int rt_hw_spi_bus_init(void)
 {
     rt_err_t result;
-    for (unsigned int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
+
+    for (rt_size_t i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].config = &spi_config[i];
         spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];

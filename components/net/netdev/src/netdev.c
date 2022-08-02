@@ -28,9 +28,9 @@
 #include <rtdbg.h>
 
 /* The list of network interface device */
-struct netdev *netdev_list;
+struct netdev *netdev_list = RT_NULL;
 /* The default network interface device */
-struct netdev *netdev_default;
+struct netdev *netdev_default = RT_NULL;
 
 /**
  * This function will register network interface device and
