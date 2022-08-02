@@ -1,0 +1,47 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+path = [cwd + '/functions']
+src = []
+
+src  += Glob('./definitions/testfrmw/*.c')
+path += [cwd + '/functions/testfrmw']
+
+if GetDepend('RTT_POSIX_TESTCASE_PTHREAD_H'):
+    src += Glob('./definitions/*.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_CREATE']):
+    src += Glob('./functions/pthread_create/pthread_create_1-2_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_JOIN']):
+    src += Glob('./functions/pthread_join/pthread_join_1-1_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_EXIT']):
+    src += Glob('./functions/pthread_exit/pthread_exit_1-1_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_COND_INIT']):
+    src += Glob('./functions/pthread_cond_init/pthread_cond_init_1-1_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_COND_DESTROY']):
+    src += Glob('./functions/pthread_cond_destroy/pthread_cond_destroy_1-1_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_COND_BROADCAST']):
+    src += Glob('./functions/pthread_cond_broadcast/pthread_cond_broadcast_1-1_tc.c')
+    src += Glob('./functions/pthread_cond_broadcast/pthread_cond_broadcast_2-1_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_COND_SIGNAL']):
+    src += Glob('./functions/pthread_cond_signal/pthread_cond_signal_2-2_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_COND_TIMEWAIT']):
+    src += Glob('./functions/pthread_cond_timedwait/pthread_cond_timedwait_1-1_tc.c')
+    src += Glob('./functions/pthread_cond_timedwait/pthread_cond_timedwait_2-1_tc.c')
+
+if GetDepend(['PTHREAD_H_PTHREAD_DETACH']):
+    src += Glob('./functions/pthread_detach/pthread_detach_4-1_tc.c')
+
+group = DefineGroup('rtt_posix_testcase', src, depend = ['RTT_POSIX_TESTCASE_PTHREAD_H'], CPPPATH = path)
+
+Return('group')

@@ -534,13 +534,17 @@ static rt_err_t swm_sdio_rxconfig(struct sdio_pkg *pkg, rt_uint32_t *buff, int s
 {
     struct rt_mmcsd_cmd *cmd = pkg->cmd;
     struct rt_mmcsd_data *data = cmd->data;
+    int offset = 0;
     for (uint32_t i = 0; i < data->blks; i++)
     {
+        offset = i* data->blksize / 4;
         while ((SDIO->IF & SDIO_IF_BUFRDRDY_Msk) == 0)
             __NOP();
         SDIO->IF = SDIO_IF_BUFRDRDY_Msk;
         for (uint32_t j = 0; j < data->blksize / 4; j++)
-            buff[j] = SDIO->DATA;
+        {
+            buff[offset + j] = SDIO->DATA;
+        }
     }
     return RT_EOK;
 }
@@ -549,13 +553,15 @@ static rt_err_t swm_sdio_txconfig(struct sdio_pkg *pkg, rt_uint32_t *buff, int s
 {
     struct rt_mmcsd_cmd *cmd = pkg->cmd;
     struct rt_mmcsd_data *data = cmd->data;
+    int offset = 0;
     for (uint32_t i = 0; i < data->blks; i++)
     {
+        offset = i* data->blksize / 4;
         while ((SDIO->IF & SDIO_IF_BUFWRRDY_Msk) == 0)
             __NOP();
         SDIO->IF = SDIO_IF_BUFWRRDY_Msk;
         for (uint32_t j = 0; j < data->blksize / 4; j++)
-            SDIO->DATA = buff[j];
+            SDIO->DATA = buff[offset + j];
     }
     return RT_EOK;
 }

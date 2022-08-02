@@ -30,9 +30,7 @@
         ;; Forward declaration of sections.
         SECTION CSTACK:DATA:NOROOT(3)
         SECTION .intvec:CODE:NOROOT(2)
-
-		EXTERN  sys_config
-		EXTERN  adc_config
+		
         EXTERN  __iar_program_start
         PUBLIC  __vector_table
 
@@ -178,12 +176,6 @@ RESET_Handler
 	ldr r0, =0x123456
 	ldr r1, =0x40080000
 	str r0, [r1]
-	
-	LDR     R0, =sys_config
-    BLX     R0
-	
-	LDR     R0, =adc_config
-    BLX     R0
 	
     LDR     R0, =__iar_program_start
     BX      R0

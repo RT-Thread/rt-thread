@@ -29,6 +29,7 @@ static struct rt_serial_device _serial;
 #include  <windows.h>
 #include  <mmsystem.h>
 #include  <conio.h>
+extern int getch(void);
 
 /*
  * Handler for OSKey Thread

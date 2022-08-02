@@ -6,15 +6,16 @@ path = [cwd + '/CMSIS/Include',cwd + '/MIMXRT1060', cwd + '/MIMXRT1060/drivers']
 src = Split('''
             MIMXRT1060/system_MIMXRT1062.c
             MIMXRT1060/drivers/fsl_common.c
+            MIMXRT1060/drivers/fsl_common_arm.c
             MIMXRT1060/drivers/fsl_clock.c
             MIMXRT1060/drivers/fsl_cache.c
             ''')
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['MIMXRT1060/gcc/startup_MIMXRT1062.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['MIMXRT1060/arm/startup_MIMXRT1062.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += ['MIMXRT1060/iar/startup_MIMXRT1062.s']
 
 if GetDepend(['BSP_USING_GPIO']):
@@ -52,6 +53,12 @@ if GetDepend(['BSP_USING_SDRAM']):
 
 if GetDepend(['BSP_USING_LCD']):
     src += ['MIMXRT1060/drivers/fsl_elcdif.c']
+
+if GetDepend(['DEMO_PANEL_RK043FN02H']):
+    src += ['MIMXRT1060/drivers/fsl_ft5406_rt.c']
+
+if GetDepend(['DEMO_PANEL_RK043FN66HS']):
+    src += ['MIMXRT1060/drivers/fsl_video_common.c', 'MIMXRT1060/drivers/fsl_gt911.c']
 
 if GetDepend(['BSP_USING_CACHE']):
     src += ['MIMXRT1060/drivers/fsl_cache.c']
@@ -99,7 +106,7 @@ src += ['MIMXRT1060/drivers/fsl_xbarb.c']
 # src += ['MIMXRT1060/drivers/fsl_os_abstraction_rtthread.c']
 # src += ['MIMXRT1060/drivers/generic_list.c']
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
 else:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)

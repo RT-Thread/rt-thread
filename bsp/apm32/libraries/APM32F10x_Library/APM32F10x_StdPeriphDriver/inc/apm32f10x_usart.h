@@ -27,7 +27,7 @@
 #define __APM32F10X_USART_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -240,64 +240,64 @@ typedef struct
 */
 
 /** USART Reset and Configuration */
-void USART_Reset(USART_T *usart);
-void USART_Config(USART_T *uart, USART_Config_T *usartConfig);
-void USART_ConfigStructInit(USART_Config_T *usartConfig);
-void USART_Address(USART_T *usart, uint8_t address);
-void USART_Enable(USART_T *usart);
-void USART_Disable(USART_T *usart);
+void USART_Reset(USART_T* usart);
+void USART_Config(USART_T* uart, USART_Config_T* usartConfig);
+void USART_ConfigStructInit(USART_Config_T* usartConfig);
+void USART_Address(USART_T* usart, uint8_t address);
+void USART_Enable(USART_T* usart);
+void USART_Disable(USART_T* usart);
 
 /** Clock communication */
-void USART_ConfigClock(USART_T *usart, USART_ClockConfig_T *clockConfig);
-void USART_ConfigClockStructInit(USART_ClockConfig_T *clockConfig);
+void USART_ConfigClock(USART_T* usart, USART_ClockConfig_T* clockConfig);
+void USART_ConfigClockStructInit(USART_ClockConfig_T* clockConfig);
 
 /** DMA mode */
-void USART_EnableDMA(USART_T *usart, USART_DMA_T dmaReq);
-void USART_DisableDMA(USART_T *usart, USART_DMA_T dmaReq);
+void USART_EnableDMA(USART_T* usart, USART_DMA_T dmaReq);
+void USART_DisableDMA(USART_T* usart, USART_DMA_T dmaReq);
 
 /** Mute mode */
-void USART_ConfigWakeUp(USART_T *usart, USART_WAKEUP_T wakeup);
-void USART_EnableMuteMode(USART_T *usart);
-void USART_DisableMuteMode(USART_T *usart);
+void USART_ConfigWakeUp(USART_T* usart, USART_WAKEUP_T wakeup);
+void USART_EnableMuteMode(USART_T* usart);
+void USART_DisableMuteMode(USART_T* usart);
 
 /** LIN mode */
-void USART_ConfigLINBreakDetectLength(USART_T *usart, USART_LBDL_T length);
-void USART_EnableLIN(USART_T *usart);
-void USART_DisableLIN(USART_T *usart);
+void USART_ConfigLINBreakDetectLength(USART_T* usart, USART_LBDL_T length);
+void USART_EnableLIN(USART_T* usart);
+void USART_DisableLIN(USART_T* usart);
 
 /** Transmit and receive */
-void USART_EnableTx(USART_T *usart);
-void USART_DisableTx(USART_T *usart);
-void USART_EnableRx(USART_T *usart);
-void USART_DisableRx(USART_T *usart);
-void USART_TxData(USART_T *usart, uint16_t data);
-uint16_t USART_RxData(USART_T *usart);
-void USART_TxBreak(USART_T *usart);
+void USART_EnableTx(USART_T* usart);
+void USART_DisableTx(USART_T* usart);
+void USART_EnableRx(USART_T* usart);
+void USART_DisableRx(USART_T* usart);
+void USART_TxData(USART_T* usart, uint16_t data);
+uint16_t USART_RxData(USART_T* usart);
+void USART_TxBreak(USART_T* usart);
 
 /** Smartcard mode */
-void USART_ConfigGuardTime(USART_T *usart, uint8_t guardTime);
-void USART_ConfigPrescaler(USART_T *usart, uint8_t div);
-void USART_EnableSmartCard(USART_T *usart);
-void USART_DisableSmartCard(USART_T *usart);
-void USART_EnableSmartCardNACK(USART_T *usart);
-void USART_DisableSmartCardNACK(USART_T *usart);
+void USART_ConfigGuardTime(USART_T* usart, uint8_t guardTime);
+void USART_ConfigPrescaler(USART_T* usart, uint8_t div);
+void USART_EnableSmartCard(USART_T* usart);
+void USART_DisableSmartCard(USART_T* usart);
+void USART_EnableSmartCardNACK(USART_T* usart);
+void USART_DisableSmartCardNACK(USART_T* usart);
 
 /** Half-duplex mode  */
-void USART_EnableHalfDuplex(USART_T *usart);
-void USART_DisableHalfDuplex(USART_T *usart);
+void USART_EnableHalfDuplex(USART_T* usart);
+void USART_DisableHalfDuplex(USART_T* usart);
 
 /** IrDA mode */
-void USART_ConfigIrDA(USART_T *usart, USART_IRDALP_T IrDAMode);
-void USART_EnableIrDA(USART_T *usart);
-void USART_DisableIrDA(USART_T *usart);
+void USART_ConfigIrDA(USART_T* usart, USART_IRDALP_T IrDAMode);
+void USART_EnableIrDA(USART_T* usart);
+void USART_DisableIrDA(USART_T* usart);
 
 /** Interrupt and flag */
-void USART_EnableInterrupt(USART_T *usart, USART_INT_T interrupt);
-void USART_DisableInterrupt(USART_T *usart, USART_INT_T interrupt);
-uint8_t USART_ReadStatusFlag(USART_T *usart, USART_FLAG_T flag);
-void USART_ClearStatusFlag(USART_T *usart, USART_FLAG_T flag);
-uint8_t USART_ReadIntFlag(USART_T *usart, USART_INT_T flag);
-void USART_ClearIntFlag(USART_T *usart, USART_INT_T flag);
+void USART_EnableInterrupt(USART_T* usart, USART_INT_T interrupt);
+void USART_DisableInterrupt(USART_T* usart, USART_INT_T interrupt);
+uint8_t USART_ReadStatusFlag(USART_T* usart, USART_FLAG_T flag);
+void USART_ClearStatusFlag(USART_T* usart, USART_FLAG_T flag);
+uint8_t USART_ReadIntFlag(USART_T* usart, USART_INT_T flag);
+void USART_ClearIntFlag(USART_T* usart, USART_INT_T flag);
 
 /**@} end of group USART_Fuctions*/
 /**@} end of group USART_Driver*/

@@ -21,11 +21,11 @@ if GetDepend(['RT_USING_SERIAL']):
     src += ['HC32L196_StdPeriph_Driver/src/hc32l196_uart.c']
 
 #add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/HDSC/HC32L196/Source/GCC/startup_hc32l19x.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32L196/Source/ARM/startup_hc32l19x.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/HDSC/HC32L196/Source/IAR/startup_hc32l19x.s']
 
 #add headfile script 

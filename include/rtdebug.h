@@ -53,7 +53,7 @@
 #endif
 
 #ifndef RT_DEBUG_DEVICE
-#define RT_DEBUG_DEVICE                0
+#define RT_DEBUG_DEVICE                1
 #endif
 
 #ifndef RT_DEBUG_INIT

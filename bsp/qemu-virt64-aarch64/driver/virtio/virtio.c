@@ -40,18 +40,56 @@ void virtio_status_driver_ok(struct virtio_device *dev)
     dev->mmio_config->status |= VIRTIO_STATUS_FEATURES_OK | VIRTIO_STATUS_DRIVER_OK;
 }
 
-void virtio_interrupt_ack(struct virtio_device *dev, rt_uint32_t ack)
+void virtio_interrupt_ack(struct virtio_device *dev)
+{
+    rt_uint32_t status;
+
+    _virtio_dev_check(dev);
+
+    status = dev->mmio_config->interrupt_status;
+
+    if (status != 0)
+    {
+        dev->mmio_config->interrupt_ack = status;
+    }
+}
+
+rt_bool_t virtio_has_feature(struct virtio_device *dev, rt_uint32_t feature_bit)
 {
     _virtio_dev_check(dev);
 
-    dev->mmio_config->interrupt_ack = ack;
+    return !!(dev->mmio_config->device_features & (1UL << feature_bit));
+}
+
+rt_err_t virtio_queues_alloc(struct virtio_device *dev, rt_size_t queues_num)
+{
+    _virtio_dev_check(dev);
+
+    dev->queues = rt_malloc(sizeof(struct virtq) * queues_num);
+
+    if (dev->queues != RT_NULL)
+    {
+        dev->queues_num = queues_num;
+
+        return RT_EOK;
+    }
+
+    return -RT_ENOMEM;
+}
+
+void virtio_queues_free(struct virtio_device *dev)
+{
+    if (dev->queues != RT_NULL)
+    {
+        dev->queues_num = 0;
+        rt_free(dev->queues);
+    }
 }
 
 rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, rt_size_t ring_size)
 {
     int i;
     void *pages;
-    rt_ubase_t pages_paddr;
     rt_size_t pages_total_size;
     struct virtq *queue;
 
@@ -65,7 +103,7 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
 
     queue = &dev->queues[queue_index];
     pages_total_size = VIRTIO_PAGE_ALIGN(
-            VIRTQ_DESC_TOTAL_SIZE(ring_size) + VIRTQ_AVAIL_TOTAL_SIZE(ring_size) + VIRTQ_USED_TOTAL_SIZE(ring_size));
+            VIRTQ_DESC_TOTAL_SIZE(ring_size) + VIRTQ_AVAIL_TOTAL_SIZE(ring_size)) + VIRTQ_USED_TOTAL_SIZE(ring_size);
 
     pages = rt_malloc_align(pages_total_size, VIRTIO_PAGE_SIZE);
 
@@ -83,17 +121,16 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
     }
 
     rt_memset(pages, 0, pages_total_size);
-    pages_paddr = VIRTIO_VA2PA(pages);
 
     dev->mmio_config->guest_page_size = VIRTIO_PAGE_SIZE;
     dev->mmio_config->queue_sel = queue_index;
     dev->mmio_config->queue_num = ring_size;
     dev->mmio_config->queue_align = VIRTIO_PAGE_SIZE;
-    dev->mmio_config->queue_pfn = pages_paddr >> VIRTIO_PAGE_SHIFT;
+    dev->mmio_config->queue_pfn = VIRTIO_VA2PA(pages) >> VIRTIO_PAGE_SHIFT;
 
     queue->num = ring_size;
-    queue->desc = (struct virtq_desc *)pages_paddr;
-    queue->avail = (struct virtq_avail *)(pages_paddr + VIRTQ_DESC_TOTAL_SIZE(ring_size));
+    queue->desc = (struct virtq_desc *)((rt_ubase_t)pages);
+    queue->avail = (struct virtq_avail *)(((rt_ubase_t)pages) + VIRTQ_DESC_TOTAL_SIZE(ring_size));
     queue->used = (struct virtq_used *)VIRTIO_PAGE_ALIGN(
             (rt_ubase_t)&queue->avail->ring[ring_size] + VIRTQ_AVAIL_RES_SIZE);
 
@@ -104,6 +141,8 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
     {
         queue->free[i] = RT_TRUE;
     }
+
+    queue->free_count = ring_size;
 
     return RT_EOK;
 }
@@ -162,27 +201,31 @@ void virtio_submit_chain(struct virtio_device *dev, rt_uint32_t queue_index, rt_
 rt_uint16_t virtio_alloc_desc(struct virtio_device *dev, rt_uint32_t queue_index)
 {
     int i;
-    rt_size_t ring_size;
     struct virtq *queue;
 
     _virtio_dev_check(dev);
 
-    RT_ASSERT(queue_index < RT_USING_VIRTIO_QUEUE_MAX_NR);
+    RT_ASSERT(queue_index < dev->queues_num);
 
     queue = &dev->queues[queue_index];
-    ring_size = queue->num;
 
-    for (i = 0; i < ring_size; ++i)
+    if (queue->free_count > 0)
     {
-        if (queue->free[i])
-        {
-            queue->free[i] = RT_FALSE;
+        rt_size_t ring_size = queue->num;
 
-            return (rt_uint16_t)i;
+        for (i = 0; i < ring_size; ++i)
+        {
+            if (queue->free[i])
+            {
+                queue->free[i] = RT_FALSE;
+                queue->free_count--;
+
+                return (rt_uint16_t)i;
+            }
         }
     }
 
-    return RT_UINT16_MAX;
+    return VIRTQ_INVALID_DESC_ID;
 }
 
 void virtio_free_desc(struct virtio_device *dev, rt_uint32_t queue_index, rt_uint16_t desc_index)
@@ -193,7 +236,7 @@ void virtio_free_desc(struct virtio_device *dev, rt_uint32_t queue_index, rt_uin
 
     queue = &dev->queues[queue_index];
 
-    RT_ASSERT(queue_index + 1 < RT_USING_VIRTIO_QUEUE_MAX_NR);
+    RT_ASSERT(queue_index < dev->queues_num);
     RT_ASSERT(!queue->free[desc_index]);
 
     queue->desc[desc_index].addr = 0;
@@ -202,6 +245,8 @@ void virtio_free_desc(struct virtio_device *dev, rt_uint32_t queue_index, rt_uin
     queue->desc[desc_index].next = 0;
 
     queue->free[desc_index] = RT_TRUE;
+
+    queue->free_count++;
 }
 
 rt_err_t virtio_alloc_desc_chain(struct virtio_device *dev, rt_uint32_t queue_index, rt_size_t count,
@@ -213,11 +258,16 @@ rt_err_t virtio_alloc_desc_chain(struct virtio_device *dev, rt_uint32_t queue_in
 
     RT_ASSERT(indexs != RT_NULL);
 
+    if (dev->queues[queue_index].free_count < count)
+    {
+        return -RT_ERROR;
+    }
+
     for (i = 0; i < count; ++i)
     {
         indexs[i] = virtio_alloc_desc(dev, queue_index);
 
-        if (indexs[i] == RT_UINT16_MAX)
+        if (indexs[i] == VIRTQ_INVALID_DESC_ID)
         {
             for (j = 0; j < i; ++j)
             {

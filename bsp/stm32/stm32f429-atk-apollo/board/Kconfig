@@ -25,6 +25,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable COM3 (uart3 pin conflict with Ethernet)"
         select BSP_USING_UART3
         default n
+        depends on !BSP_USING_ETH
 
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
@@ -49,7 +50,7 @@ menu "Onboard Peripheral Drivers"
         bool
 
     config BSP_USING_ETH
-        bool "Enable Ethernet"
+        bool "Enable Ethernet (Ethernet pin conflict with uart3)"
         select BSP_USING_I2C1
         select PKG_USING_PCF8574
         select RT_USING_LWIP
@@ -115,6 +116,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
+                depends on !BSP_USING_ETH
    
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"

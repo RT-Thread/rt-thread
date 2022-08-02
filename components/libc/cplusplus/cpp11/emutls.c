@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define COMPILE_TIME_ASSERT(x)
-
 extern int pthread_key_create(pthread_key_t *key, void (*destructor)(void *));
 extern int pthread_key_delete(pthread_key_t key);
 extern void *pthread_getspecific(pthread_key_t key);
@@ -85,13 +83,6 @@ static __inline void emutls_memalign_free(void *base)
 /* Emulated TLS objects are always allocated at run-time. */
 static __inline void *emutls_allocate_object(__emutls_control *control)
 {
-    /* Use standard C types, check with gcc's emutls.o. */
-    typedef unsigned int gcc_word __attribute__((mode(word)));
-    typedef unsigned int gcc_pointer __attribute__((mode(pointer)));
-    COMPILE_TIME_ASSERT(sizeof(size_t) == sizeof(gcc_word));
-    COMPILE_TIME_ASSERT(sizeof(uintptr_t) == sizeof(gcc_pointer));
-    COMPILE_TIME_ASSERT(sizeof(uintptr_t) == sizeof(void *));
-
     size_t size = control->size;
     size_t align = control->align;
     if (align < sizeof(void *))

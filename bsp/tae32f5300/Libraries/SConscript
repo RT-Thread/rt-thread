@@ -39,11 +39,11 @@ if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['
     src += ['TAE32F53xx_StdPeriph_Driver/src/tae32f53xx_ll_tmr.c']
 
 #add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/GCC/startup_ARMCM3.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 	src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/startup_tae32f53xx.c']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/IAR/startup_ARMCM3.s']
 
 #add headfile script 

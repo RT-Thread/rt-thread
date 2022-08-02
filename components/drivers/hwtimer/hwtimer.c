@@ -8,9 +8,12 @@
  * 2015-08-31     heyuanjie87    first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
+
+#define DBG_TAG "hwtimer"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 {
@@ -40,8 +43,8 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 
             if (timeout <= overflow)
             {
-                counter = timeout*timer->freq;
-                devi = tv_sec - (counter/(float)timer->freq)*i;
+                counter = (rt_uint32_t)(timeout * timer->freq);
+                devi = tv_sec - (counter / (float)timer->freq) * i;
                 /* Minimum calculation error */
                 if (devi > devi_min)
                 {
@@ -65,7 +68,7 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     timer->cycles = i;
     timer->reload = i;
     timer->period_sec = timeout;
-    counter = timeout*timer->freq;
+    counter = (rt_uint32_t)(timeout * timer->freq);
 
     return counter;
 }
@@ -160,12 +163,12 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
 
     if (timer->info->cntmode == HWTIMER_CNTMODE_DW)
     {
-        cnt = (timer->freq * timer->period_sec) - cnt;
+        cnt = (rt_uint32_t)(timer->freq * timer->period_sec) - cnt;
     }
 
     t = overflow * timer->period_sec + cnt/(float)timer->freq;
-    tv.sec = t;
-    tv.usec = (t - tv.sec) * 1000000;
+    tv.sec = (rt_int32_t)t;
+    tv.usec = (rt_int32_t)((t - tv.sec) * 1000000);
     size = size > sizeof(tv)? sizeof(tv) : size;
     rt_memcpy(buffer, &tv, size);
 
@@ -174,6 +177,7 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
 
 static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
+    rt_base_t level;
     rt_uint32_t t;
     rt_hwtimer_mode_t opm = HWTIMER_MODE_PERIOD;
     rt_hwtimer_t *timer;
@@ -186,7 +190,10 @@ static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const voi
         return 0;
 
     timer->ops->stop(timer);
+
+    level = rt_hw_interrupt_disable();
     timer->overflow = 0;
+    rt_hw_interrupt_enable(level);
 
     t = timeout_calc(timer, (rt_hwtimerval_t*)buffer);
     if ((timer->cycles <= 1) && (timer->mode == HWTIMER_MODE_ONESHOT))
@@ -202,6 +209,7 @@ static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const voi
 
 static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
 {
+    rt_base_t level;
     rt_err_t result = RT_EOK;
     rt_hwtimer_t *timer;
 
@@ -234,7 +242,8 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
         f = (rt_uint32_t*)args;
         if ((*f > timer->info->maxfreq) || (*f < timer->info->minfreq))
         {
-            result = -RT_ERROR;
+            LOG_W("frequency setting out of range! It will maintain at %d Hz", timer->freq);
+            result = -RT_EINVAL;
             break;
         }
 
@@ -243,7 +252,9 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
             result = timer->ops->control(timer, cmd, args);
             if (result == RT_EOK)
             {
+                level = rt_hw_interrupt_disable();
                 timer->freq = *f;
+                rt_hw_interrupt_enable(level);
             }
         }
         else
@@ -280,8 +291,9 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
             result = -RT_ERROR;
             break;
         }
-
+        level = rt_hw_interrupt_disable();
         timer->mode = *m;
+        rt_hw_interrupt_enable(level);
     }
     break;
     default:
@@ -296,7 +308,11 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
 
 void rt_device_hwtimer_isr(rt_hwtimer_t *timer)
 {
+    rt_base_t level;
+
     RT_ASSERT(timer != RT_NULL);
+
+    level = rt_hw_interrupt_disable();
 
     timer->overflow ++;
 
@@ -308,6 +324,8 @@ void rt_device_hwtimer_isr(rt_hwtimer_t *timer)
     if (timer->cycles == 0)
     {
         timer->cycles = timer->reload;
+
+        rt_hw_interrupt_enable(level);
 
         if (timer->mode == HWTIMER_MODE_ONESHOT)
         {
@@ -321,6 +339,10 @@ void rt_device_hwtimer_isr(rt_hwtimer_t *timer)
         {
             timer->parent.rx_indicate(&timer->parent, sizeof(struct rt_hwtimerval));
         }
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
     }
 }
 

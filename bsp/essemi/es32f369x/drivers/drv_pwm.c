@@ -268,7 +268,7 @@ int rt_hw_pwm_init(void)
     ald_gpio_init(ES_GP32C4T0_CH4_GPIO_PORT, ES_GP32C4T0_CH4_GPIO_PIN, &gpio_initstructure);
 #endif
 
-    ret = rt_device_pwm_register(&gp32c4t0_pwm_dev, ES_DEVICE_NAME_AD16C4T1_PWM, &es32f3_pwm_ops,
+    ret = rt_device_pwm_register(&gp32c4t0_pwm_dev, ES_DEVICE_NAME_GP32C4T0_PWM, &es32f3_pwm_ops,
                                  &gp32c4t0_timer_initstruct);
 #endif
 

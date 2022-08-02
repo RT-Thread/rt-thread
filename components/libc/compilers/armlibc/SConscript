@@ -4,9 +4,9 @@ Import('rtconfig')
 src   = Glob('*.c')
 group = []
 
-CPPDEFINES = ['RT_USING_ARM_LIBC']
+CPPDEFINES = ['RT_USING_ARM_LIBC', 'RT_USING_LIBC', '__STDC_LIMIT_MACROS']
 
-if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     group = DefineGroup('Compiler', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 Return('group')

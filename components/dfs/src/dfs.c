@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -132,7 +132,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     }
 
     /* allocate a larger FD container */
-    if (idx == fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
+    if (idx == (int)fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
     {
         int cnt, index;
         struct dfs_fd **fds;
@@ -145,7 +145,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
         if (fds == NULL) goto __exit; /* return fdt->maxfd */
 
         /* clean the new allocated fds */
-        for (index = fdt->maxfd; index < cnt; index ++)
+        for (index = (int)fdt->maxfd; index < cnt; index ++)
         {
             fds[index] = NULL;
         }
@@ -186,7 +186,7 @@ int fd_new(void)
     idx = fd_alloc(fdt, 0);
 
     /* can't find an empty fd entry */
-    if (idx == fdt->maxfd)
+    if (idx == (int)fdt->maxfd)
     {
         idx = -(1 + DFS_FD_OFFSET);
         LOG_E("DFS fd new is failed! Could not found an empty fd entry.");

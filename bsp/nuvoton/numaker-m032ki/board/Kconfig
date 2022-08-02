@@ -35,8 +35,6 @@ menu "Hardware Drivers Config"
             select NU_PKG_USING_ILI9341_SPI
             select NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
             select NU_PKG_ILI9341_HORIZONTAL
-            select PKG_USING_LVGL
-            select PKG_USING_LVGL_DEMOS
             default n
 
         if BOARD_USING_LCD_ILI9341

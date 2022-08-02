@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_SEMAPHORE_H
+    bool "<semaphore.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SEMAPHORE_H
+
+    # functions, TODO
+
+endif

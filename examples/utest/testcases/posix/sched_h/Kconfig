@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_SCHED_H
+    bool "<sched.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SCHED_H
+
+    # functions, TODO
+
+endif

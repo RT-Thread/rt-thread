@@ -1,23 +1,23 @@
                            RT-Thread Coding Style
 
-This is an developing instruction for RT-Thread developers. As an open source
-software, RT-Thread is done by the cooperation of different people. This
-document is a guide for RT-Thread developers and please obey it if you are.
-RT-Thread users could also get to know some conventions in the code through it
+This is an developing instruction for RT-Thread developers. As open source
+software, RT-Thread is created by the cooperation of different people. This
+document is a guide for RT-Thread developers. Please obey it as you develop.
+RT-Thread users should also get to know some conventions in the code through it
 and thus easier to understand the implementations of RT-Thread.
 
 
 1. Directory Naming
 
-In normal conditions, please name directories in lower-case. Directories should
+In normal conditions, please name directories in lowercase. Directories should
 have descriptive names. For example, the port of a chip should be composed of
 the name of the chip and the category of the chip. Directories under components/
-should stand for what the component does.
+should name what the component does.
 
 
 2. File Naming
 
-In normal conditions, please name files in lower-case. If the file is
+In normal conditions, please name files in lowercase. If the file is
 referencing other places, it can have the original name. To avoid naming
 collision, do not use general names or the names that are frequently used.
 
@@ -33,7 +33,7 @@ symbol like this:
     #endif
 
 The symbol should begin and end with "__" to avoid naming collision. The words
-of the file name should be connected by "_".
+of the file name should be connected by "_". (This convention is called "snake case".)
 
 
 4. Header File Comments
@@ -54,7 +54,7 @@ record like this:
 
 5. Structure Defines
 
-Please name structures in lower-case and connect words with "_". For example:
+Please name structures in lowercase and connect words with "_". For example:
 
     struct rt_list_node
     {
@@ -62,16 +62,15 @@ Please name structures in lower-case and connect words with "_". For example:
         struct rt_list_node *prev;
     };
 
-Braces should have their own lines and the members should be defines with
-indent.
+Braces should have their own lines and the members should be indented.
 
-The names of type defines such like structure types should be the structure name
+The names of type defines such as structure types should be the structure name
 plus "_t". For example:
 
     typedef struct rt_list_node rt_list_t;
 
 
-In order to be easily referenced, the types of objects in kernel is pointer. For
+In order to be easily referenced, the types of objects in the kernel are pointers. For
 example:
 
     typedef struct rt_timer* rt_timer_t;
@@ -79,7 +78,7 @@ example:
 
 6. Macros
 
-In RT-Thread, please use upper-case names for macro definitions. Words are
+In RT-Thread, please use uppercase names for macro definitions. Words are
 connected by "_". Like:
 
     #define RT_TRUE                         1
@@ -87,7 +86,7 @@ connected by "_". Like:
 
 7. Function Naming and Declaration
 
-Please name functions in lower-case and separate words with "_". API provided to
+Please name functions in lowercase. Separate words with "_". The API provided to
 upper application should be declared in header files. If the function don't have
 parameters, it should be declared as void:
 
@@ -96,10 +95,10 @@ parameters, it should be declared as void:
 
 8. Commenting
 
-Please use English to comment. There shouldn't be too much comments and the
-comments should describe what does the code do. And it should describe how the
-complicated algorithm works. Comments to statements should be placed before them
-or right of them. Anther places are illegal.
+Please use English to comment. There shouldn't be many comments as the
+comments should describe what the code does. It should describe complicated
+algorithms, for example. Comments for statements should be placed before the
+statements or to the right of them. Any other locations are invalid.
 
 
 9. Indent
@@ -112,7 +111,7 @@ other special meanings, the indent should begin right after "{":
         /* others */
     }
 
-The only one exception is switch. In switch-case statements, "case" should be
+The only one exception is switch. In case statements for switches, "case" should be
 aligned with "switch":
 
     switch (value)
@@ -121,7 +120,7 @@ aligned with "switch":
         break;
     }
 
-"case" is aligned with "switch", the following code block should be indented.
+"case" is aligned with "switch". The following code block should be indented.
 
 
 10. Braces and Spaces
@@ -134,7 +133,7 @@ instead of following other statements. Like:
         /* others */
     }
 
-When matching braces have their own lines, the reader would identify the code
+When matching braces have their own lines, the reader identifies the code
 blocks easily.
 
 There should be a space before parentheses when it's not a function call. For
@@ -151,7 +150,7 @@ example:
     }
 
 In expressions, there should be a space between most binary and ternary
-operators and the strings. No spaces around(inside) parentheses, like:
+operators and the strings. There should be no spaces around(inside) parentheses, like:
 
     if ( x <= y )
     {
@@ -161,31 +160,31 @@ operators and the strings. No spaces around(inside) parentheses, like:
 This is a bad practice.
 
 
-11. trace, log Informations
+11. trace, log Information
 
 In RT-Thread, rt_kprintf is a commonly used logging routine. In RT-Thread
 rt_kprintf is implemented as a polling, non-interrupting string output. It is
 suitable in "instant" situations such as interrupt context. The polling method
 would have influence to the timing sequence of the log output.
 
-It is not recommended to use rt_kprintf frequently. Unless you are aware of that
-it's not a big deal to run slower.
+It is not recommended to use rt_kprintf frequently. Please be aware that frequen
+use will make your code run slower.
 
-Logging should be off by default and can be turned on by a switch(e.g. a
+Logging should be off by default and can be turned on by a switch (e.g. a
 variable or a macro). When logging, it should be easy to understand and easy to
 determine where the problem is.
 
 
 12. Functions
 
-Functions in kernel should be K.I.S.S. If the function is too long, you should
-split it into smaller ones and make each of them simplified and easy to
-understand.
+Functions in kernel should be K.I.S.S. ("Keep it simple, stupid.") If the function
+is too long, you should split it into smaller ones, with each of them simplified to
+be easy to understand.
 
 
 13. Objects
 
-The kernel of RT-Thread uses object-oriented tech in C. The naming convention
+The kernel of RT-Thread uses object-oriented techniques in C. The naming convention
 is: structure names are the object names, object names + verb phrases are the
 method names of objects:
 
@@ -206,10 +205,11 @@ object.
     rt_err_t rt_timer_start(rt_timer_t timer);
     rt_err_t rt_timer_stop(rt_timer_t timer);
 
-rt_timer + verb phrase stands for the method that could be used on timer object.
+rt_timer + verb phrase stands for the method that could be used on a timer object.
 
 When creating a new object, think twice on memory allocations: whether a static
-object could be created or it could only created dynamically on heap.
+object could be created or it could only created dynamically on the heap. Allocations
+can be slower, but may be necessary in dynamic environments.
 
 14. Use astyle to format the code automatically
 parameters: --style=allman
