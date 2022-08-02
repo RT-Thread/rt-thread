@@ -32,7 +32,7 @@ if _PY2:
 else:
     import queue as Queue
 
-# Windows import 
+# Windows import
 import win32file
 import win32pipe
 import win32api
@@ -46,11 +46,11 @@ class Win32Spawn(object):
         self.queue = Queue.Queue()
         self.is_terminated = False
         self.wake_up_event = win32event.CreateEvent(None, 0, 0, None)
-        
+
         exec_dir = os.getcwd()
         comspec = os.environ.get("COMSPEC", "cmd.exe")
         cmd = comspec + ' /c ' + cmd
-        
+
         win32event.ResetEvent(self.wake_up_event)
 
         currproc = win32api.GetCurrentProcess()
@@ -83,7 +83,7 @@ class Win32Spawn(object):
         self.h_process, h_thread, dw_pid, dw_tid = win32process.CreateProcess(None, cmd, None, None, 1,
                                                                               cr_flags, env, os.path.abspath(exec_dir),
                                                                               startup_info)
- 
+
         win32api.CloseHandle(h_thread)
 
         win32file.CloseHandle(child_stdin_rd)
@@ -115,7 +115,7 @@ class Win32Spawn(object):
         else:
             # The wake_up_event must have been signalled
             return False
-    
+
     def get(self, block=True, timeout=None):
         return self.queue.get(block=block, timeout=timeout)
 
@@ -158,7 +158,7 @@ class Win32Spawn(object):
             result = self.exit_code == 0
         self.close()
         self.is_terminated = True
-        
+
         return result
 
     # This method gets called on a worker thread to read from either a stderr
@@ -180,6 +180,6 @@ class Win32Spawn(object):
     def start_pipe(self):
         def worker(pipe):
             return pipe.wait()
-        
+
         thrd = threading.Thread(target=worker, args=(self, ))
         thrd.start()
