@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -158,7 +158,8 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 #define SAL_INTERNET_MONTH_LEN 4
 #define SAL_INTERNET_DATE_LEN  16
 
-    int index, sockfd = -1, result = 0;
+    unsigned int index;
+    int sockfd = -1, result = 0;
     struct sockaddr_in server_addr;
     struct hostent *host;
     struct timeval timeout;
@@ -168,7 +169,7 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 
     const char month[][SAL_INTERNET_MONTH_LEN] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     char date[SAL_INTERNET_DATE_LEN];
-    int moth_num = 0;
+    unsigned int moth_num = 0;
 
     struct sal_proto_family *pf = (struct sal_proto_family *) netdev->sal_user_data;
     const struct sal_socket_ops *skt_ops;
