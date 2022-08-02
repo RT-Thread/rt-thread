@@ -51,6 +51,21 @@ config BSP_USING_TIMER
         bool "using TMR2"
         default n
     endif
+
+config BSP_USING_SPI
+    bool "using on-chip spi"
+    select RT_USING_SPI
+    default n
+
+    if BSP_USING_SPI
+        config BSP_USING_SPI0
+            bool "using SPI0"
+            default n
+
+        config BSP_USING_SPI1
+            bool "using SPI1"
+            default n
+    endif
 endmenu
 
 menu "Onboard Peripheral Drivers"
