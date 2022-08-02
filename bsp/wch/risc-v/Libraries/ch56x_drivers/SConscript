@@ -15,6 +15,9 @@ if GetDepend('SOC_SERIES_CH569'):
 if GetDepend('RT_USING_HWTIMER'):
     src += ['ch56x_timer.c']
 
+if GetDepend('RT_USING_SPI'):
+    src += ['ch56x_spi.c']
+
 if GetDepend('RT_USING_PIN'):
     src += ['ch56x_gpio.c']
 

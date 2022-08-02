@@ -382,6 +382,7 @@ struct sys_registers
 
 CHECK_STRUCT_SIZE(struct sys_registers, 0x28);
 
+uint32_t sys_hclk_calc(void);
 uint32_t sys_hclk_get(void);
 int  sys_hclk_set(uint32_t freq);
 int  sys_clk_off_by_irqn(uint8_t irqn, int off);

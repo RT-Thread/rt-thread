@@ -14,6 +14,10 @@
 #include "ch56x_timer.h"
 #include "isr_sp.h"
 
+#if !defined(BSP_USING_TMR0) && !defined(BSP_USING_TMR1) && !defined(BSP_USING_TMR2)
+    #error "Please define at least one TMRx"
+#endif
+
 struct hwtimer_device
 {
     struct rt_hwtimer_device parent;

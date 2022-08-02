@@ -13,10 +13,14 @@
 #include <stdint.h>
 #include "ch56x_sys.h"
 #include "ch56x_gpio.h"
+#include "ch56x_spi.h"
 
 #define LED0_PIN            GET_PIN(B, 24)
 #define LED1_PIN            GET_PIN(B, 22)
 #define LED2_PIN            GET_PIN(B, 23)
+
+#define W25Q32_CS_PIN       GET_PIN(A, 12)
+#define W25Q32_SPI_NAME     "spi00"
 
 #define SYS_HCLK_FREQ       80000000  // 80 MHz
 
