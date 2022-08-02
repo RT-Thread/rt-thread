@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1156,13 +1156,12 @@ static const struct rt_uart_ops stm32_uart_ops =
 
 int rt_hw_usart_init(void)
 {
-    rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct stm32_uart);
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
     stm32_uart_get_dma_config();
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct stm32_uart); i++)
     {
         /* init UART object */
         uart_obj[i].config = &uart_config[i];
