@@ -30,6 +30,11 @@
 
 #define MAX_ADDR_LEN 6
 
+#undef PHY_FULL_DUPLEX
+#define PHY_LINK         (1 << 0)
+#define PHY_100M         (1 << 1)
+#define PHY_FULL_DUPLEX  (1 << 2)
+
 struct rt_stm32_eth
 {
     /* inherit from ethernet device */
@@ -400,12 +405,6 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
 {
     LOG_E("eth err");
 }
-
-enum {
-    PHY_LINK        = (1 << 0),
-    PHY_100M        = (1 << 1),
-    PHY_FULL_DUPLEX = (1 << 2),
-};
 
 static void phy_linkchange()
 {
