@@ -524,6 +524,7 @@ void rt_hw_sdl_start(void)
     pthread_mutex_lock(&sdl_ok_mutex);
     pthread_cond_wait(&sdl_ok_event, &sdl_ok_mutex);
 
+    pthread_mutex_unlock(&sdl_ok_mutex);
     pthread_mutex_destroy(&sdl_ok_mutex);
     pthread_cond_destroy(&sdl_ok_event);
 #endif
