@@ -17,24 +17,15 @@
 #define EXAMPLE_LED_GPIO     GPIO9
 #define EXAMPLE_LED_GPIO_PIN (3U)
 
-volatile bool g_pinSet = false;
-
 int main(void)
 {
 
     while (1)
     {
         rt_thread_mdelay(500);
-        if (g_pinSet)
-        {
-            GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 0U);
-            g_pinSet = false;
-        }
-        else
-        {
-            GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 1U);
-            g_pinSet = true;
-        }
+        GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 0U);
+        rt_thread_mdelay(500);
+        GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 1U);
     }
 }
 
