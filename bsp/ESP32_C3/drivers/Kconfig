@@ -1,13 +1,16 @@
-menu "Hardware Drivers Config"
+
+config SOC_ESPRESSIF
+    bool 
 
 config SOC_ESP32_C3
     bool
+    select SOC_ESPRESSIF
     select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select PKG_USING_ESP_IDF
     default y
-    
-config SOC_ESPRESSIF
-    bool 
-    default y
+
+menu "Hardware Drivers Config"
 
 choice
     prompt "Select BSP board "
