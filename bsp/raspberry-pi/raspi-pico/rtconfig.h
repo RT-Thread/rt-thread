@@ -181,9 +181,9 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_SERIES_RP2040_PICO
-
 /* Onboard Peripheral Drivers */
 
+#define SOC_SERIES_RP2040
+#define BOARD_RASPBERRYPI_PICO
 
 #endif

@@ -1,3 +1,15 @@
+config SOC_SERIES_RP2040
+    bool
+    select ARCH_ARM_CORTEX_M0
+
+config BOARD_RASPBERRYPI_PICO
+    bool
+    select SOC_SERIES_RP2040
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select PKG_USING_RASPBERRYPI_PICO_SDK
+    default y
+
 menu "Hardware Drivers Config"
 
 menu "Onboard Peripheral Drivers"
