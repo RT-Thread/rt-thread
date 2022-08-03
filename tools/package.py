@@ -46,7 +46,7 @@ def BuildPackage(package):
 
     package = json.loads(package_json)
 
-    # check package name 
+    # check package name
     if 'name' not in package:
         return []
 

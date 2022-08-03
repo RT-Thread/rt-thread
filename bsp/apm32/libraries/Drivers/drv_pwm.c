@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
+ * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  */
 
 #include <board.h>
@@ -21,6 +22,7 @@
 #define MIN_PERIOD 3
 #define MIN_PULSE  2
 
+#ifdef APM32F10X_HD
 #define _PWM_GPIO_INIT(port_num, pin_num) \
 do \
 { \
@@ -30,6 +32,18 @@ do \
     gpio_config->speed = GPIO_SPEED_50MHz; \
     GPIO_Config(GPIO##port_num, gpio_config); \
 } while (0)
+#elif APM32F40X
+#define _PWM_GPIO_INIT(port_num, pin_num) \
+do \
+{ \
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIO##port_num); \
+    gpio_config->pin = GPIO_PIN_##pin_num; \
+    gpio_config->mode = GPIO_MODE_AF; \
+    gpio_config->otype = GPIO_OTYPE_PP; \
+    gpio_config->speed = GPIO_SPEED_50MHz; \
+    GPIO_Config(GPIO##port_num, gpio_config); \
+} while (0)
+#endif
 
 enum
 {
@@ -50,6 +64,24 @@ enum
 #endif
 #ifdef BSP_USING_PWM8
     PWM8_INDEX,
+#endif
+#ifdef BSP_USING_PWM9
+    PWM9_INDEX,
+#endif
+#ifdef BSP_USING_PWM10
+    PWM10_INDEX,
+#endif
+#ifdef BSP_USING_PWM11
+    PWM11_INDEX,
+#endif
+#ifdef BSP_USING_PWM12
+    PWM12_INDEX,
+#endif
+#ifdef BSP_USING_PWM13
+    PWM13_INDEX,
+#endif
+#ifdef BSP_USING_PWM14
+    PWM14_INDEX,
 #endif
 };
 
@@ -105,6 +137,48 @@ static struct apm32_pwm pwm_config[] =
         0,
     },
 #endif
+#ifdef BSP_USING_PWM9
+    {
+        "pwm9",
+        TMR9,
+        0,
+    },
+#endif
+#ifdef BSP_USING_PWM10
+    {
+        "pwm10",
+        TMR10,
+        0,
+    },
+#endif
+#ifdef BSP_USING_PWM11
+    {
+        "pwm11",
+        TMR11,
+        0,
+    },
+#endif
+#ifdef BSP_USING_PWM12
+    {
+        "pwm12",
+        TMR12,
+        0,
+    },
+#endif
+#ifdef BSP_USING_PWM13
+    {
+        "pwm13",
+        TMR13,
+        0,
+    },
+#endif
+#ifdef BSP_USING_PWM14
+    {
+        "pwm14",
+        TMR14,
+        0,
+    },
+#endif
 };
 
 static void _pwm_channel_init(GPIO_Config_T *gpio_config)
@@ -141,6 +215,8 @@ static void _pwm_channel_init(GPIO_Config_T *gpio_config)
     pwm_config[PWM2_INDEX].channel |= 1 << 3;
     _PWM_GPIO_INIT(A, 3);
 #endif
+
+#ifdef APM32F10X_HD
 #ifdef BSP_USING_PWM3_CH1
     pwm_config[PWM3_INDEX].channel |= 1 << 0;
     GPIO_ConfigPinRemap(GPIO_FULL_REMAP_TMR3);
@@ -161,6 +237,29 @@ static void _pwm_channel_init(GPIO_Config_T *gpio_config)
     GPIO_ConfigPinRemap(GPIO_FULL_REMAP_TMR3);
     _PWM_GPIO_INIT(C, 9);
 #endif
+#elif APM32F40X
+#ifdef BSP_USING_PWM3_CH1
+    pwm_config[PWM3_INDEX].channel |= 1 << 0;
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_6, GPIO_AF_TMR3);
+    _PWM_GPIO_INIT(C, 6);
+#endif
+#ifdef BSP_USING_PWM3_CH2
+    pwm_config[PWM3_INDEX].channel |= 1 << 1;
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_7, GPIO_AF_TMR3);
+    _PWM_GPIO_INIT(C, 7);
+#endif
+#ifdef BSP_USING_PWM3_CH3
+    pwm_config[PWM3_INDEX].channel |= 1 << 2;
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_8, GPIO_AF_TMR3);
+    _PWM_GPIO_INIT(C, 8);
+#endif
+#ifdef BSP_USING_PWM3_CH4
+    pwm_config[PWM3_INDEX].channel |= 1 << 3;
+    GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_9, GPIO_AF_TMR3);
+    _PWM_GPIO_INIT(C, 9);
+#endif
+#endif
+
 #ifdef BSP_USING_PWM4_CH1
     pwm_config[PWM4_INDEX].channel |= 1 << 0;
     _PWM_GPIO_INIT(B, 6);
@@ -208,6 +307,40 @@ static void _pwm_channel_init(GPIO_Config_T *gpio_config)
 #ifdef BSP_USING_PWM8_CH4
     pwm_config[PWM8_INDEX].channel |= 1 << 3;
     _PWM_GPIO_INIT(C, 9);
+#endif
+#ifdef APM32F40X
+#ifdef BSP_USING_PWM9_CH1
+    pwm_config[PWM9_INDEX].channel |= 1 << 0;
+    _PWM_GPIO_INIT(E, 5);
+#endif
+#ifdef BSP_USING_PWM9_CH2
+    pwm_config[PWM9_INDEX].channel |= 1 << 1;
+    _PWM_GPIO_INIT(E, 6);
+#endif
+#ifdef BSP_USING_PWM10_CH1
+    pwm_config[PWM10_INDEX].channel |= 1 << 0;
+    _PWM_GPIO_INIT(F, 6);
+#endif
+#ifdef BSP_USING_PWM11_CH1
+    pwm_config[PWM11_INDEX].channel |= 1 << 0;
+    _PWM_GPIO_INIT(F, 7);
+#endif
+#ifdef BSP_USING_PWM12_CH1
+    pwm_config[PWM9_INDEX].channel |= 1 << 0;
+    _PWM_GPIO_INIT(H, 6);
+#endif
+#ifdef BSP_USING_PWM12_CH2
+    pwm_config[PWM9_INDEX].channel |= 1 << 1;
+    _PWM_GPIO_INIT(H, 9);
+#endif
+#ifdef BSP_USING_PWM13_CH1
+    pwm_config[PWM10_INDEX].channel |= 1 << 0;
+    _PWM_GPIO_INIT(F, 8);
+#endif
+#ifdef BSP_USING_PWM14_CH1
+    pwm_config[PWM11_INDEX].channel |= 1 << 0;
+    _PWM_GPIO_INIT(F, 9);
+#endif
 #endif
 }
 

@@ -102,6 +102,43 @@ static uint32_t pin_irq_enable_mask = 0;
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
+static rt_base_t at32_pin_get(const char *name)
+{
+    rt_base_t pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len;
+
+    name_len = rt_strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
+    {
+        return -RT_EINVAL;
+    }
+    if ((name[0] != 'P') || (name[2] != '.'))
+    {
+        return -RT_EINVAL;
+    }
+
+    if ((name[1] >= 'A') && (name[1] <= 'Z'))
+    {
+        hw_port_num = (int)(name[1] - 'A');
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = 3; i < name_len; i++)
+    {
+        hw_pin_num *= 10;
+        hw_pin_num += name[i] - '0';
+    }
+
+    pin = PIN_NUM(hw_port_num, hw_pin_num);
+
+    return pin;
+}
+
 static void at32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     gpio_type *gpio_port;
@@ -423,7 +460,7 @@ const static struct rt_pin_ops _at32_pin_ops =
     at32_pin_attach_irq,
     at32_pin_dettach_irq,
     at32_pin_irq_enable,
-    RT_NULL,
+    at32_pin_get,
 };
 
 rt_inline void pin_irq_handler(int irqno)

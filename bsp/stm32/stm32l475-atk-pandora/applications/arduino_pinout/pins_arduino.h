@@ -38,22 +38,35 @@
 #define D23  (23)
 #define D24  (24)
 #define D25  (25)
-#define A0   (26)
-#define A1   (27)
-#define A2   (28)
-#define A3   (29)
-#define DAC0 (30)
+#define D26  (26)
+#define D27  (27)
+#define D28  (28)
+#define D29  (29)
+#define D30  (30)
+#define D31  (31)
+#define D32  (32)
+#define A0   (33)
+#define A1   (34)
+#define A2   (35)
+#define A3   (36)
+#define DAC0 (37)
 
 #define F_CPU  80000000L /* CPU: 80MHz */
 #define LED_BUILTIN  D22 /* Default Built-in LED */
 
 /*
- * i2c1 - PC7-SDA PC6-SCL(User I2C)
+ * i2c1 - PC7-SDA PC6-SCL (User I2C)
  * i2c3 - ICM20608, AP3216C (On Board)
  * i2c4 - AHT10 (On Board)
  */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c4"
+
+/*
+ * spi2 - Wireless Interface (User SPI)
+ * spi3 - LCD ST7789
+ */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME            "spi2"
+
 #define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME     "timer7"
 #define RTDUINO_SERIAL2_DEVICE_NAME             "uart2"
 

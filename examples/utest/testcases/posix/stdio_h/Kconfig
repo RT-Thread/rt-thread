@@ -1,0 +1,149 @@
+menuconfig RTT_POSIX_TESTCASE_STDIO_H
+    bool "<stdio.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_STDIO_H
+
+    config STDIO_H_CLEARERR
+        bool "<stdio.h> -> clearerr"
+        default n
+
+    config STDIO_H_FCLOSE
+        bool "<stdio.h> -> fclose"
+        default n
+
+    config STDIO_H_FDOPEN
+        bool "<stdio.h> -> fdopen"
+        default n
+
+    config STDIO_H_FEOF
+        bool "<stdio.h> -> feof"
+        default n
+
+    config STDIO_H_FERROR
+        bool "<stdio.h> -> ferror"
+        default n
+
+    config STDIO_H_FFLUSH
+        bool "<stdio.h> -> fflush"
+        default n
+
+    config STDIO_H_FGETC
+        bool "<stdio.h> -> fgetc"
+        default n
+
+    config STDIO_H_FGETS
+        bool "<stdio.h> -> fgets"
+        default n
+
+    config STDIO_H_FILENO
+        bool "<stdio.h> -> fileno"
+        default n
+
+    config STDIO_H_FOPEN
+        bool "<stdio.h> -> fopen"
+        default n
+
+    config STDIO_H_FPRINTF
+        bool "<stdio.h> -> fprintf"
+        default n
+
+    config STDIO_H_FPUTC
+        bool "<stdio.h> -> fputc"
+        default n
+
+    config STDIO_H_FPUTS
+        bool "<stdio.h> -> fputs"
+        default n
+
+    config STDIO_H_FREAD
+        bool "<stdio.h> -> fread"
+        default n
+
+    config STDIO_H_FSCANF
+        bool "<stdio.h> -> fscanf"
+        default n
+
+    config STDIO_H_FSEEK
+        bool "<stdio.h> -> fseek"
+        default n
+
+    config STDIO_H_FTELL
+        bool "<stdio.h> -> ftell"
+        default n
+
+    config STDIO_H_FWRITE
+        bool "<stdio.h> -> fwrite"
+        default n
+
+
+
+    config STDIO_H_PERROR
+        bool "<stdio.h> -> perror"
+        default n
+
+    config STDIO_H_PRINTF
+        bool "<stdio.h> -> printf"
+        default n
+
+    config STDIO_H_PUTC
+        bool "<stdio.h> -> putc"
+        default n
+
+    config STDIO_H_PUTCHAR
+        bool "<stdio.h> -> putchar"
+        default n
+
+    config STDIO_H_PUTS
+        bool "<stdio.h> -> puts"
+        default n
+
+    config STDIO_H_REMOVE
+        bool "<stdio.h> -> remove"
+        default n
+
+    config STDIO_H_RENAME
+        bool "<stdio.h> -> rename"
+        default n
+
+    config STDIO_H_REWIND
+        bool "<stdio.h> -> rewind"
+        default n
+
+    config STDIO_H_SETBUF
+        bool "<stdio.h> -> setbuf"
+        default n
+
+    config STDIO_H_SETVBUF
+        bool "<stdio.h> -> setvbuf"
+        default n
+
+    config STDIO_H_SNPRINTF
+        bool "<stdio.h> -> snprintf"
+        default n
+
+    config STDIO_H_SPRINTF
+        bool "<stdio.h> -> sprintf"
+        default n
+
+    config STDIO_H_SSCANF
+        bool "<stdio.h> -> sscanf"
+        default n
+
+    config STDIO_H_VFPRINTF
+        bool "<stdio.h> -> vfprintf"
+        default n
+
+    config STDIO_H_VPRINTF
+        bool "<stdio.h> -> vprintf"
+        default n
+
+    config STDIO_H_VSNPRINTF
+        bool "<stdio.h> -> vsnprintf"
+        default n
+
+    config STDIO_H_VSPRINTF
+        bool "<stdio.h> -> vsprintf"
+        default n
+
+endif

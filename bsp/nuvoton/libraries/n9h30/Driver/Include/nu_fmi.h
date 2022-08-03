@@ -24,6 +24,85 @@
   @{
 */
 
+
+#ifdef __cplusplus
+    #define   __I     volatile             /*!< Defines 'read only' permissions                 */
+#else
+    #define   __I     volatile const       /*!< Defines 'read only' permissions                 */
+#endif
+#define     __O     volatile             /*!< Defines 'write only' permissions                */
+#define     __IO    volatile             /*!< Defines 'read / write' permissions              */
+
+typedef struct
+{
+    __IO uint32_t FB[32];                /*!< Shared Buffer (FIFO)                                                      */
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE0[224];
+    /// @endcond //HIDDEN_SYMBOLS
+    __IO uint32_t DMACTL;                /*!< [0x0400] DMA Control and Status Register                                  */
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE1[1];
+    /// @endcond //HIDDEN_SYMBOLS
+    __IO uint32_t DMASA;                 /*!< [0x0408] DMA Transfer Starting Address Register                           */
+    __I  uint32_t DMABCNT;               /*!< [0x040c] DMA Transfer Byte Count Register                                 */
+    __IO uint32_t DMAINTEN;              /*!< [0x0410] DMA Interrupt Enable Control Register                            */
+    __IO uint32_t DMAINTSTS;             /*!< [0x0414] DMA Interrupt Status Register                                    */
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE2[250];
+    /// @endcond //HIDDEN_SYMBOLS
+    __IO uint32_t GCTL;                  /*!< [0x0800] Global Control and Status Register                               */
+    __IO uint32_t GINTEN;                /*!< [0x0804] Global Interrupt Control Register                                */
+    __I  uint32_t GINTSTS;               /*!< [0x0808] Global Interrupt Status Register                                 */
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE3[5];
+    /// @endcond //HIDDEN_SYMBOLS
+    __IO uint32_t CTL;                   /*!< [0x0820] SD Control and Status Register                                   */
+    __IO uint32_t CMDARG;                /*!< [0x0824] SD Command Argument Register                                     */
+    __IO uint32_t INTEN;                 /*!< [0x0828] SD Interrupt Control Register                                    */
+    __IO uint32_t INTSTS;                /*!< [0x082c] SD Interrupt Status Register                                     */
+    __I  uint32_t RESP0;                 /*!< [0x0830] SD Receiving Response Token Register 0                           */
+    __I  uint32_t RESP1;                 /*!< [0x0834] SD Receiving Response Token Register 1                           */
+    __IO uint32_t BLEN;                  /*!< [0x0838] SD Block Length Register                                         */
+    __IO uint32_t TOUT;                  /*!< [0x083c] SD Response/Data-in Time-out Register                            */
+    __IO uint32_t ECTL;                  /*!< [0x0840] SD Host Extend Control Register                                  */
+
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE4[24];
+    /// @endcond //HIDDEN_SYMBOLS
+    __IO uint32_t NANDCTL;               /*!< [0x08A0] NAND Flash Control Register                                      */
+    __IO uint32_t NANDTMCTL;             /*!< [0x08A4] NAND Flash Timing Control Register                               */
+    __IO uint32_t NANDINTEN;             /*!< [0x08A8] NAND Flash Interrupt Enable Register                             */
+    __IO uint32_t NANDINTSTS;            /*!< [0x08AC] NAND Flash Interrupt Status Register                             */
+    __O  uint32_t NANDCMD;               /*!< [0x08B0] NAND Flash Command Port Registe                                  */
+    __O  uint32_t NANDADDR;              /*!< [0x08B4] NAND Flash Address Port Register                                 */
+    __IO uint32_t NANDDATA;              /*!< [0x08B8] NAND Flash Data Port Registe                                     */
+    __IO uint32_t NANDRACTL;             /*!< [0x08BC] NAND Flash Redundant Area Control Register                       */
+    __IO uint32_t NANDECTL;              /*!< [0x08C0] NAND Flash Extend Control Register                               */
+    __I  uint32_t NANDECCES[4];          /*!< [0x08D0] NAND Flash ECC Error Status Register                             */
+    __IO uint32_t NANDPROTA[2];          /*!< [0x08E0] NAND Flash Protect Region End Address Register                   */
+
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE5[6];
+    /// @endcond //HIDDEN_SYMBOLS
+
+    __I  uint32_t NANDECCEA[12];         /*!< [0x0900] NAND Flash ECC Error Byte Address n Register                     */
+
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE6[12];
+    /// @endcond //HIDDEN_SYMBOLS
+
+   __I  uint32_t NANDECCED[6];           /*!< [0x0960] NAND Flash ECC Error Data Register N                             */
+
+    /// @cond HIDDEN_SYMBOLS
+    __I  uint32_t RESERVE7[34];
+    /// @endcond //HIDDEN_SYMBOLS
+
+    __IO uint32_t NANDRA[118];           /*!< [0x0A00]NAND Flash Redundant Area Word n = 0, 1..117                      */
+
+} FMI_T;
+
+#define FMI0                  ((FMI_T *)   FMI_BA)
+
 /**
     @addtogroup FMI_CONST FMI Bit Field Definition
     Constant Definitions for FMI Controller

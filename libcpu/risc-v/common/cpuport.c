@@ -138,7 +138,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  * #endif
  */
 #ifndef RT_USING_SMP
-void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+RT_WEAK void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 {
     if (rt_thread_switch_interrupt_flag == 0)
         rt_interrupt_from_thread = from;

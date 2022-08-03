@@ -27,7 +27,7 @@
 #define __APM32F10X_RCM_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -339,7 +339,7 @@ void RCM_DisableRTCCLK(void);
 /** Reads the clock frequency */
 uint32_t RCM_ReadSYSCLKFreq(void);
 uint32_t RCM_ReadHCLKFreq(void);
-void RCM_ReadPCLKFreq(uint32_t *PCLK1, uint32_t *PCLK2);
+void RCM_ReadPCLKFreq(uint32_t* PCLK1, uint32_t* PCLK2);
 uint32_t RCM_ReadADCCLKFreq(void);
 
 /** Enable or disable Periph Clock */

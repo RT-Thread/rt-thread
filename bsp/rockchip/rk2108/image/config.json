@@ -1,0 +1,8 @@
+{
+    "MAGIC": "RESC",
+    "CHIP": "RK2108",
+    "MODEL": "RT_THREAD",
+    "DESC": "RK2108 RT_THREAD",
+    "VERSION": "1.00.0000",
+    "DIGEST": "JSHASH"
+}

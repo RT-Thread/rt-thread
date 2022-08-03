@@ -12,7 +12,7 @@ CPPDEFINES = ['CORE_M4']
 
 
 # add for startup script 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['startup/gcc_startup_lpc5410x.c'] 
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['startup/keil_startup_lpc5410x.s']

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -290,14 +290,22 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
 
     if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
+    {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n",
                                     size, RT_ALIGN(size, RT_ALIGN_SIZE)));
+    }
     else
+    {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d\n", size));
+    }
 
     small_mem = (struct rt_small_mem *)m;
     /* alignment size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
+
+    /* every data block must be at least MIN_SIZE_ALIGNED long */
+    if (size < MIN_SIZE_ALIGNED)
+        size = MIN_SIZE_ALIGNED;
 
     if (size > small_mem->mem_size_aligned)
     {
@@ -305,10 +313,6 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
 
         return RT_NULL;
     }
-
-    /* every data block must be at least MIN_SIZE_ALIGNED long */
-    if (size < MIN_SIZE_ALIGNED)
-        size = MIN_SIZE_ALIGNED;
 
     for (ptr = (rt_uint8_t *)small_mem->lfree - small_mem->heap_ptr;
          ptr <= small_mem->mem_size_aligned - size;

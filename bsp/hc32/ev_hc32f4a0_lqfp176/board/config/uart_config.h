@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -451,7 +452,7 @@ extern "C" {
             .int_src   = INT_SRC_USART7_RTO,                    \
         },                                                      \
     }
-#endif /* UART6_RXTO_CONFIG */
+#endif /* UART7_RXTO_CONFIG */
 #endif /* BSP_UART7_RX_USING_DMA */
 
 #if defined(BSP_UART7_TX_USING_DMA)
@@ -462,7 +463,7 @@ extern "C" {
         {                                                       \
             .irq_num    = BSP_UART7_TX_CPLT_IRQ_NUM,            \
             .irq_prio   = BSP_UART7_TX_CPLT_IRQ_PRIO,           \
-            .int_src    = INT_SRC_USART6_TCI,                   \
+            .int_src    = INT_SRC_USART7_TCI,                   \
         },                                                      \
     }
 #endif /* UART7_TX_CPLT_CONFIG */
@@ -555,19 +556,19 @@ extern "C" {
         {                                                       \
             .irq_num    = BSP_UART10_RXERR_IRQ_NUM,             \
             .irq_prio   = BSP_UART10_RXERR_IRQ_PRIO,            \
-            .int_src    = INT_SRC_USART7_EI,                    \
+            .int_src    = INT_SRC_USART10_EI,                   \
         },                                                      \
         .rx_irq.irq_config =                                    \
         {                                                       \
             .irq_num    = BSP_UART10_RX_IRQ_NUM,                \
             .irq_prio   = BSP_UART10_RX_IRQ_PRIO,               \
-            .int_src    = INT_SRC_USART7_RI,                    \
+            .int_src    = INT_SRC_USART10_RI,                   \
         },                                                      \
         .tx_irq.irq_config =                                    \
         {                                                       \
             .irq_num    = BSP_UART10_TX_IRQ_NUM,                \
             .irq_prio   = BSP_UART10_TX_IRQ_PRIO,               \
-            .int_src    = INT_SRC_USART7_TI,                    \
+            .int_src    = INT_SRC_USART10_TI,                   \
         },                                                      \
     }
 #endif /* UART10_CONFIG */

@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_FENV_H
+    bool "<fenv.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_FENV_H
+
+# function, TODO
+
+endif

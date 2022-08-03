@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-08-20     Abbcc        first version
+ * 2020-08-20     Abbcc             first version
+ * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  */
 
 #include <board.h>
@@ -172,6 +173,7 @@ static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 
     /* Configure gpioConfigure */
+#if defined(APM32F10X_HD)
     gpioConfig.pin = PIN_APMPIN(pin);
     gpioConfig.mode = GPIO_MODE_OUT_PP;
     gpioConfig.speed = GPIO_SPEED_50MHz;
@@ -201,7 +203,43 @@ static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* output setting: od. */
         gpioConfig.mode = GPIO_MODE_OUT_OD;
     }
+#elif defined( APM32F40X)
+    gpioConfig.pin = PIN_APMPIN(pin);
+    gpioConfig.mode = GPIO_MODE_OUT;
+    gpioConfig.otype = GPIO_OTYPE_PP;
+    gpioConfig.speed = GPIO_SPEED_50MHz;
 
+    if (mode == PIN_MODE_OUTPUT)
+    {
+        /* output setting */
+        gpioConfig.mode = GPIO_MODE_OUT;
+        gpioConfig.otype = GPIO_OTYPE_PP;
+    }
+    else if (mode == PIN_MODE_INPUT)
+    {
+        /* input setting: not pull. */
+        gpioConfig.mode = GPIO_MODE_IN;
+        gpioConfig.pupd = GPIO_PUPD_NOPULL;
+    }
+    else if (mode == PIN_MODE_INPUT_PULLUP)
+    {
+        /* input setting: pull up. */
+        gpioConfig.mode = GPIO_MODE_IN;
+        gpioConfig.pupd = GPIO_PUPD_UP;
+    }
+    else if (mode == PIN_MODE_INPUT_PULLDOWN)
+    {
+        /* input setting: pull down. */
+        gpioConfig.mode = GPIO_MODE_IN;
+        gpioConfig.pupd = GPIO_PUPD_DOWN;
+    }
+    else if (mode == PIN_MODE_OUTPUT_OD)
+    {
+        /* output setting: od. */
+        gpioConfig.mode = GPIO_MODE_OUT;
+        gpioConfig.otype = GPIO_OTYPE_OD;
+    }
+#endif
     GPIO_Config(PIN_APMPORT(pin), &gpioConfig);
 }
 
@@ -335,6 +373,7 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
         gpioConfig.speed = GPIO_SPEED_50MHz;
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
+#if defined(APM32F10X_HD)
         case PIN_IRQ_MODE_RISING:
             gpioConfig.mode = GPIO_MODE_IN_PD;
             break;
@@ -344,6 +383,20 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
         case PIN_IRQ_MODE_RISING_FALLING:
             gpioConfig.mode = GPIO_MODE_IN_FLOATING;
             break;
+#elif defined( APM32F40X)
+        case PIN_IRQ_MODE_RISING:
+            gpioConfig.mode = GPIO_MODE_IN;
+            gpioConfig.pupd = GPIO_PUPD_DOWN;
+            break;
+        case PIN_IRQ_MODE_FALLING:
+            gpioConfig.mode = GPIO_MODE_IN;
+            gpioConfig.pupd = GPIO_PUPD_UP;
+            break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+            gpioConfig.mode = GPIO_MODE_IN;
+            gpioConfig.pupd = GPIO_PUPD_NOPULL;
+            break;
+#endif
         }
         GPIO_Config(PIN_APMPORT(pin), &gpioConfig);
 
@@ -543,6 +596,7 @@ void EINT15_10_IRQHandler(void)
 
 int rt_hw_pin_init(void)
 {
+#if defined(APM32F10X_HD)
 #ifdef GPIOA
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA);
 #endif
@@ -564,8 +618,42 @@ int rt_hw_pin_init(void)
 #ifdef GPIOG
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOG);
 #endif
-
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_AFIO);
+#elif defined(APM32F40X)
+#ifdef GPIOA
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOA);
+#endif
+#ifdef GPIOB
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOB);
+#endif
+#ifdef GPIOC
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOC);
+#endif
+#ifdef GPIOD
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOD);
+#endif
+#ifdef GPIOE
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOE);
+#endif
+#ifdef GPIOF
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOF);
+#endif
+#ifdef GPIOG
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOG);
+#endif
+#ifdef GPIOH
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOH);
+#endif
+#ifdef GPIOI
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOI);
+#endif
+#ifdef GPIOJ
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOJ);
+#endif
+#ifdef GPIOK
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOK);
+#endif
+#endif
 
     return rt_device_pin_register("pin", &_apm32_pin_ops, RT_NULL);
 }

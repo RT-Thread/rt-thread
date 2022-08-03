@@ -718,7 +718,7 @@ struct _alarm_flag
 static const struct _alarm_flag _alarm_flag_tbl[] =
 {
     {"N",        0xffff}, /* none */
-    {"O",       RT_ALARM_ONESHOT}, /* only alarm onece */
+    {"O",       RT_ALARM_ONESHOT}, /* only alarm once */
     {"D",       RT_ALARM_DAILY}, /* alarm everyday */
     {"W",       RT_ALARM_WEEKLY}, /* alarm weekly at Monday or Friday etc. */
     {"Mo",      RT_ALARM_MONTHLY}, /* alarm monthly at someday */

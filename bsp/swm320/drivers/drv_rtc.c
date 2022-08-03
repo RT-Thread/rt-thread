@@ -63,17 +63,16 @@ static time_t swm_get_rtc_time_stamp(void)
 static rt_err_t swm_set_rtc_time_stamp(time_t time_stamp)
 {
     RTC_DateTime set_datetime = {0};
-    struct tm *p_tm;
+    struct tm now;
 
-    p_tm = gmtime(&time_stamp);
-
-    set_datetime.Second = p_tm->tm_sec;
-    set_datetime.Minute = p_tm->tm_min;
-    set_datetime.Hour = p_tm->tm_hour;
-    set_datetime.Date = p_tm->tm_mday;
-    set_datetime.Month = p_tm->tm_mon;
-    set_datetime.Year = p_tm->tm_year;
-    // set_datetime.Day = p_tm->tm_wday;
+    gmtime_r(&time_stamp, &now);
+    set_datetime.Second = now.tm_sec;
+    set_datetime.Minute = now.tm_min;
+    set_datetime.Hour = now.tm_hour;
+    set_datetime.Date = now.tm_mday;
+    set_datetime.Month = now.tm_mon;
+    set_datetime.Year = now.tm_year;
+    // set_datetime.Day = now.tm_wday;
 
     RTC_Stop(RTC);
     while (RTC->CFGABLE == 0)
