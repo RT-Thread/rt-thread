@@ -21,8 +21,8 @@
 #include "rtthread.h"
 #include "rthw.h"
 #include "drv_gpio.h"
-
-#define rt_kprintf printf
+#include "drv_uart.h"
+#include "shell.h"
 
 #ifdef RT_USING_COMPONENTS_INIT
 /*
@@ -194,6 +194,9 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
 }
 
 static void rtthread_startup(void)
@@ -201,8 +204,6 @@ static void rtthread_startup(void)
     rt_hw_interrupt_disable();
     /* init board */
     rt_hw_board_init();
-    /* show RT-Thread version */
-    rt_show_version();
 
     /* timer system initialization */
     rt_system_timer_init();
@@ -219,7 +220,9 @@ static void rtthread_startup(void)
     /* start scheduler */
     rt_system_scheduler_start();
     /* init scheduler system */
-
+    rt_hw_pin_init();
+    rt_hw_uart_init();
+    finsh_system_init();
     /* never reach here */
     return ;
 }

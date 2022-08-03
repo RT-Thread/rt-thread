@@ -27,6 +27,21 @@ menu "Onboard Peripheral Drivers"
         default 8 if BSP_BOARD_HX_EXP32C3
         depends on BSP_USING_GPIO
 
+    config RT_BSP_UART_PORT
+        int "UART PORT SET"
+        default 0
+        depends on BSP_USING_UART
+
+    config RT_BSP_UART_TX_PIN
+        int "UART TX PIN SET"
+        default 21 if BSP_BOARD_LUATOS_ESP32C3
+        depends on BSP_USING_UART
+
+    config RT_BSP_UART_RX_PIN
+        int "UART RX PIN SET"
+        default 20 if BSP_BOARD_LUATOS_ESP32C3
+        depends on BSP_USING_UART
+
 endmenu
 
 
@@ -38,7 +53,9 @@ menu "On-chip Peripheral Drivers"
     
     config BSP_USING_UART
 		bool "Enable UART"
-        default n
+        select RT_USING_SERIAL
+        select RT_USING_SERIAL_V1
+        default y
 endmenu
 
 endmenu
