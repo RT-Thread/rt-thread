@@ -62,7 +62,6 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
-
         (*((rt_uint32_t*)arg)) = 16384 * 8192 / 50000000;
         break;
     case RT_DEVICE_CTRL_WDT_START:
@@ -75,7 +74,6 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         break;
     default:
         LOG_W("This command is not supported.");
-
         return -RT_ERROR;
     }
     return RT_EOK;
