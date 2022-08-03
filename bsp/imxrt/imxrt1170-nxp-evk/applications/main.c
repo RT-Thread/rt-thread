@@ -12,13 +12,29 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_gpio.h"
+#include "fsl_gpio.h"
+
+#define EXAMPLE_LED_GPIO     GPIO9
+#define EXAMPLE_LED_GPIO_PIN (3U)
+
+volatile bool g_pinSet = false;
 
 int main(void)
 {
+
     while (1)
     {
-      rt_kprintf("test\r\n");
-      rt_thread_mdelay(500);
+        rt_thread_mdelay(500);
+        if (g_pinSet)
+        {
+            GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 0U);
+            g_pinSet = false;
+        }
+        else
+        {
+            GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 1U);
+            g_pinSet = true;
+        }
     }
 }
 
