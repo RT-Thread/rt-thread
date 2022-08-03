@@ -68,7 +68,7 @@ void BOARD_InitPins(void) {
   };
   /* Initialize GPIO functionality on GPIO_AD_04 (pin M13) */
   GPIO_PinInit(GPIO9, 3U, &gpio9_pinM13_config);
-  
+
   /* GPIO configuration on GPIO_AD_26 (pin L14) */
   gpio_pin_config_t gpio9_pinL14_config = {
       .direction = kGPIO_DigitalOutput,
