@@ -60,7 +60,7 @@ PROJECT_BRIEF          = "An open source embedded real-time operating system"
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = D:/02_git_repo/rt-thread/documentation/doxygen/rtthread_logo.png
+PROJECT_LOGO           = ./rtthread_logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
