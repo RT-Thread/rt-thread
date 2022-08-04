@@ -167,7 +167,7 @@ cy_en_tcpwm_status_t Cy_TCPWM_PWM_Init(TCPWM_Type *base, uint32_t cntNum,  cy_st
             {
                 if (CY_TCPWM_PWM_LEFT_ALIGN == config->pwmAlignment)
                 {
-                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |= 
+                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |=
                             _VAL2FLD(TCPWM_GRP_CNT_V2_CTRL_UP_DOWN_MODE, CY_TCPWM_PWM_LEFT_ALIGN);
                     TCPWM_GRP_CNT_COUNTER(base, grp, cntNum) = CY_TCPWM_CNT_UP_INIT_VAL;
                     TCPWM_GRP_CNT_TR_PWM_CTRL(base, grp, cntNum) = (CY_TCPWM_PWM_MODE_LEFT |
@@ -175,15 +175,15 @@ cy_en_tcpwm_status_t Cy_TCPWM_PWM_Init(TCPWM_Type *base, uint32_t cntNum,  cy_st
                 }
                 else if (CY_TCPWM_PWM_RIGHT_ALIGN == config->pwmAlignment)
                 {
-                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |= 
+                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |=
                             _VAL2FLD(TCPWM_GRP_CNT_V2_CTRL_UP_DOWN_MODE, CY_TCPWM_PWM_RIGHT_ALIGN);
                     TCPWM_GRP_CNT_COUNTER(base, grp, cntNum) = config->period0;
-                    TCPWM_GRP_CNT_TR_PWM_CTRL(base, grp, cntNum) = (CY_TCPWM_PWM_MODE_RIGHT | 
+                    TCPWM_GRP_CNT_TR_PWM_CTRL(base, grp, cntNum) = (CY_TCPWM_PWM_MODE_RIGHT |
                                                                     CY_TCPWM_PWM_MODE_CC1_IGNORE);
                 }
                 else if (CY_TCPWM_PWM_ASYMMETRIC_ALIGN == config->pwmAlignment)
                 {
-                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |= 
+                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |=
                             _VAL2FLD(TCPWM_GRP_CNT_V2_CTRL_UP_DOWN_MODE, CY_TCPWM_PWM_ASYMMETRIC_ALIGN);
                     TCPWM_GRP_CNT_COUNTER(base, grp, cntNum) = CY_TCPWM_CNT_UP_DOWN_INIT_VAL;
                     TCPWM_GRP_CNT_TR_PWM_CTRL(base, grp, cntNum) = ((config->swapOverflowUnderflow ? CY_TCPWM_PWM_MODE_CNTR_OR_ASYMM_SWAPPED : CY_TCPWM_PWM_MODE_CNTR_OR_ASYMM) |
@@ -199,14 +199,14 @@ cy_en_tcpwm_status_t Cy_TCPWM_PWM_Init(TCPWM_Type *base, uint32_t cntNum,  cy_st
                 }
                 else if (TCPWM_GRP_CC1(base, grp) && (CY_TCPWM_PWM_ASYMMETRIC_CC0_CC1_ALIGN == config->pwmAlignment))
                 {
-                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |= 
+                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |=
                             _VAL2FLD(TCPWM_GRP_CNT_V2_CTRL_UP_DOWN_MODE, CY_TCPWM_PWM_LEFT_ALIGN);
                     TCPWM_GRP_CNT_COUNTER(base, grp, cntNum) = CY_TCPWM_CNT_UP_DOWN_INIT_VAL;
                     TCPWM_GRP_CNT_TR_PWM_CTRL(base, grp, cntNum) = CY_TCPWM_PWM_MODE_ASYMM_CC0_CC1;
                 }
                 else if (TCPWM_GRP_CC1(base, grp) && (CY_TCPWM_PWM_CENTER_ASYMMETRIC_CC0_CC1_ALIGN == config->pwmAlignment))
                 {
-                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |= 
+                    TCPWM_GRP_CNT_CTRL(base, grp, cntNum) |=
                             _VAL2FLD(TCPWM_GRP_CNT_V2_CTRL_UP_DOWN_MODE, CY_TCPWM_PWM_CENTER_ALIGN);
                     TCPWM_GRP_CNT_COUNTER(base, grp, cntNum) = CY_TCPWM_CNT_UP_DOWN_INIT_VAL;
                     TCPWM_GRP_CNT_TR_PWM_CTRL(base, grp, cntNum) = CY_TCPWM_PWM_MODE_CNTR_ASYMM_CC0_CC1;

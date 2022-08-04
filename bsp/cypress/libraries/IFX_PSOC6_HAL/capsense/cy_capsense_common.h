@@ -832,7 +832,7 @@ extern "C" {
 /** Return status \ref cy_capsense_status_t of CAPSENSE&trade; operation: Unable to perform calibration */
 #define CY_CAPSENSE_STATUS_CALIBRATION_CHECK_FAIL       (0x400u)
 /** Return status \ref cy_capsense_status_t of CAPSENSE&trade; operation: Sense Clock Divider
-*   is out of the valid range for the specified Clock source configuration 
+*   is out of the valid range for the specified Clock source configuration
 */
 #define CY_CAPSENSE_STATUS_BAD_CLOCK_CONFIG             (0x800u)
 /** Return status \ref cy_capsense_status_t of CAPSENSE&trade; operation: Unknown */

@@ -29,7 +29,75 @@
 
 #include "cycfg_pins.h"
 
-const cy_stc_gpio_pin_config_t CYBSP_WCO_IN_config = 
+#define CYBSP_SDHC_IO1_PORT GPIO_PRT13
+#define CYBSP_SDHC_IO1_PORT_NUM 13U
+#define CYBSP_SDHC_IO1_PIN 1U
+
+#ifndef ioss_0_port_13_pin_1_HSIOM
+    #define ioss_0_port_13_pin_1_HSIOM HSIOM_SEL_GPIO
+#endif
+#define CYBSP_SDHC_IO1_HSIOM ioss_0_port_13_pin_1_HSIOM
+
+#define CYBSP_SDHC_IO2_PORT GPIO_PRT13
+#define CYBSP_SDHC_IO2_PORT_NUM 13U
+#define CYBSP_SDHC_IO2_PIN 2U
+
+#ifndef ioss_0_port_13_pin_2_HSIOM
+    #define ioss_0_port_13_pin_2_HSIOM HSIOM_SEL_GPIO
+#endif
+#define CYBSP_SDHC_IO2_HSIOM ioss_0_port_13_pin_2_HSIOM
+
+const cy_stc_gpio_pin_config_t CYBSP_SDHC_IO1_config =
+{
+    .outVal = 1,
+    .driveMode = CY_GPIO_DM_OD_DRIVESLOW,
+    .hsiom = CYBSP_SDHC_IO1_HSIOM,
+    .intEdge = CY_GPIO_INTR_DISABLE,
+    .intMask = 0UL,
+    .vtrip = CY_GPIO_VTRIP_CMOS,
+    .slewRate = CY_GPIO_SLEW_FAST,
+    .driveSel = CY_GPIO_DRIVE_1_2,
+    .vregEn = 0UL,
+    .ibufMode = 0UL,
+    .vtripSel = 0UL,
+    .vrefSel = 0UL,
+    .vohSel = 0UL,
+};
+#if defined (CY_USING_HAL)
+    const cyhal_resource_inst_t CYBSP_SDHC_IO1_obj =
+    {
+        .type = CYHAL_RSC_GPIO,
+        .block_num = CYBSP_SDHC_IO1_PORT_NUM,
+        .channel_num = CYBSP_SDHC_IO1_PIN,
+    };
+#endif //defined (CY_USING_HAL)
+
+const cy_stc_gpio_pin_config_t CYBSP_SDHC_IO2_config =
+{
+    .outVal = 1,
+    .driveMode = CY_GPIO_DM_OD_DRIVESLOW,
+    .hsiom = CYBSP_SDHC_IO2_HSIOM,
+    .intEdge = CY_GPIO_INTR_DISABLE,
+    .intMask = 0UL,
+    .vtrip = CY_GPIO_VTRIP_CMOS,
+    .slewRate = CY_GPIO_SLEW_FAST,
+    .driveSel = CY_GPIO_DRIVE_1_2,
+    .vregEn = 0UL,
+    .ibufMode = 0UL,
+    .vtripSel = 0UL,
+    .vrefSel = 0UL,
+    .vohSel = 0UL,
+};
+#if defined (CY_USING_HAL)
+    const cyhal_resource_inst_t CYBSP_SDHC_IO2_obj =
+    {
+        .type = CYHAL_RSC_GPIO,
+        .block_num = CYBSP_SDHC_IO2_PORT_NUM,
+        .channel_num = CYBSP_SDHC_IO2_PIN,
+    };
+#endif //defined (CY_USING_HAL)
+
+const cy_stc_gpio_pin_config_t CYBSP_WCO_IN_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -46,14 +114,14 @@ const cy_stc_gpio_pin_config_t CYBSP_WCO_IN_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_WCO_IN_obj = 
+    const cyhal_resource_inst_t CYBSP_WCO_IN_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_WCO_IN_PORT_NUM,
         .channel_num = CYBSP_WCO_IN_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_WCO_OUT_config = 
+const cy_stc_gpio_pin_config_t CYBSP_WCO_OUT_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -70,14 +138,14 @@ const cy_stc_gpio_pin_config_t CYBSP_WCO_OUT_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_WCO_OUT_obj = 
+    const cyhal_resource_inst_t CYBSP_WCO_OUT_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_WCO_OUT_PORT_NUM,
         .channel_num = CYBSP_WCO_OUT_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_RX_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_RX_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -94,14 +162,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_RX_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_RX_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_RX_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_RX_PORT_NUM,
         .channel_num = CYBSP_CSD_RX_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_SWO_config = 
+const cy_stc_gpio_pin_config_t CYBSP_SWO_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_STRONG_IN_OFF,
@@ -118,14 +186,14 @@ const cy_stc_gpio_pin_config_t CYBSP_SWO_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_SWO_obj = 
+    const cyhal_resource_inst_t CYBSP_SWO_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_SWO_PORT_NUM,
         .channel_num = CYBSP_SWO_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_SWDIO_config = 
+const cy_stc_gpio_pin_config_t CYBSP_SWDIO_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_PULLUP,
@@ -142,14 +210,14 @@ const cy_stc_gpio_pin_config_t CYBSP_SWDIO_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_SWDIO_obj = 
+    const cyhal_resource_inst_t CYBSP_SWDIO_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_SWDIO_PORT_NUM,
         .channel_num = CYBSP_SWDIO_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_SWDCK_config = 
+const cy_stc_gpio_pin_config_t CYBSP_SWDCK_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_PULLDOWN,
@@ -166,14 +234,14 @@ const cy_stc_gpio_pin_config_t CYBSP_SWDCK_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_SWDCK_obj = 
+    const cyhal_resource_inst_t CYBSP_SWDCK_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_SWDCK_PORT_NUM,
         .channel_num = CYBSP_SWDCK_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CINA_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CINA_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -190,14 +258,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CINA_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CINA_obj = 
+    const cyhal_resource_inst_t CYBSP_CINA_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CINA_PORT_NUM,
         .channel_num = CYBSP_CINA_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CINB_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CINB_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -214,14 +282,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CINB_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CINB_obj = 
+    const cyhal_resource_inst_t CYBSP_CINB_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CINB_PORT_NUM,
         .channel_num = CYBSP_CINB_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CMOD_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CMOD_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -238,14 +306,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CMOD_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CMOD_obj = 
+    const cyhal_resource_inst_t CYBSP_CMOD_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CMOD_PORT_NUM,
         .channel_num = CYBSP_CMOD_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_BTN0_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_BTN0_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -262,14 +330,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_BTN0_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_BTN0_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_BTN0_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_BTN0_PORT_NUM,
         .channel_num = CYBSP_CSD_BTN0_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_BTN1_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_BTN1_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -286,14 +354,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_BTN1_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_BTN1_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_BTN1_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_BTN1_PORT_NUM,
         .channel_num = CYBSP_CSD_BTN1_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD0_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD0_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -310,14 +378,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD0_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_SLD0_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_SLD0_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_SLD0_PORT_NUM,
         .channel_num = CYBSP_CSD_SLD0_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD1_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD1_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -334,14 +402,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD1_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_SLD1_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_SLD1_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_SLD1_PORT_NUM,
         .channel_num = CYBSP_CSD_SLD1_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD2_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD2_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -358,14 +426,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD2_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_SLD2_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_SLD2_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_SLD2_PORT_NUM,
         .channel_num = CYBSP_CSD_SLD2_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD3_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD3_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -382,14 +450,14 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD3_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_SLD3_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_SLD3_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_SLD3_PORT_NUM,
         .channel_num = CYBSP_CSD_SLD3_PIN,
     };
 #endif //defined (CY_USING_HAL)
-const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD4_config = 
+const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD4_config =
 {
     .outVal = 1,
     .driveMode = CY_GPIO_DM_ANALOG,
@@ -406,11 +474,36 @@ const cy_stc_gpio_pin_config_t CYBSP_CSD_SLD4_config =
     .vohSel = 0UL,
 };
 #if defined (CY_USING_HAL)
-    const cyhal_resource_inst_t CYBSP_CSD_SLD4_obj = 
+    const cyhal_resource_inst_t CYBSP_CSD_SLD4_obj =
     {
         .type = CYHAL_RSC_GPIO,
         .block_num = CYBSP_CSD_SLD4_PORT_NUM,
         .channel_num = CYBSP_CSD_SLD4_PIN,
+    };
+#endif //defined (CY_USING_HAL)
+
+const cy_stc_gpio_pin_config_t SMART_IO_OUTPUT_PIN_config =
+{
+    .outVal = 1,
+    .driveMode = CY_GPIO_DM_STRONG_IN_OFF,
+    .hsiom = P9_1_TCPWM1_LINE_COMPL20,
+    .intEdge = CY_GPIO_INTR_DISABLE,
+    .intMask = 0UL,
+    .vtrip = CY_GPIO_VTRIP_CMOS,
+    .slewRate = CY_GPIO_SLEW_FAST,
+    .driveSel = CY_GPIO_DRIVE_1_2,
+    .vregEn = 0UL,
+    .ibufMode = 0UL,
+    .vtripSel = 0UL,
+    .vrefSel = 0UL,
+    .vohSel = 0UL,
+};
+#if defined (CY_USING_HAL)
+    const cyhal_resource_inst_t SMART_IO_OUTPUT_PIN_obj =
+    {
+        .type = CYHAL_RSC_GPIO,
+        .block_num = 9U,
+        .channel_num = 1U,
     };
 #endif //defined (CY_USING_HAL)
 

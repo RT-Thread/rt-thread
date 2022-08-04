@@ -166,7 +166,7 @@ void Cy_CapSense_DpUpdateThresholds(
                 const cy_stc_capsense_smartsense_csd_noise_envelope_t * ptrNoiseEnvelope,
                 uint32_t startFlag);
 
-#if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_MULTI_FREQUENCY_SCAN_EN) 
+#if (CY_CAPSENSE_DISABLE != CY_CAPSENSE_MULTI_FREQUENCY_SCAN_EN)
     void Cy_CapSense_RunMfsFiltering(
                     cy_stc_capsense_sensor_context_t * ptrSnsContext,
                     const cy_stc_capsense_context_t * context);

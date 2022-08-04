@@ -36,8 +36,8 @@
 * You can include cy_pdl.h to get access to all functions
 * and declarations in the PDL.
 *
-* The eFuse driver enables reading the state of any bit. 
-* - CAT1A devices does not support writing to eFuse memory. Writing an 
+* The eFuse driver enables reading the state of any bit.
+* - CAT1A devices does not support writing to eFuse memory. Writing an
 *   eFuse bit is typically done by a production programmer.
 *   Fuses are programmed via the PSoC Programmer tool that parses the hex file
 *   and extracts the necessary information; the fuse data must be located at the
@@ -208,7 +208,7 @@ extern "C" {
 *
 * \return
 * \ref cy_en_efuse_status_t
-* 
+*
 * \note
 * Supported in CAT1A and CAT1C devices.
 *
@@ -434,7 +434,7 @@ cy_en_efuse_status_t Cy_EFUSE_WriteByte(EFUSE_Type *base, uint32_t src, uint32_t
 * \param offset
 * Offset from the EFUSE base address. Must be 4-byte aligned.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note
@@ -469,7 +469,7 @@ cy_en_efuse_status_t Cy_EFUSE_WriteWord(EFUSE_Type *base, uint32_t src, uint32_t
 * \param num
 * Number of 32-bit words to be written.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note
@@ -528,7 +528,7 @@ cy_en_efuse_status_t Cy_EFUSE_ReadBit(EFUSE_Type *base, uint8_t *dst, uint32_t b
 * \param offset
 * Byte offset from the EFUSE base address.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note
@@ -556,7 +556,7 @@ cy_en_efuse_status_t Cy_EFUSE_ReadByte(EFUSE_Type *base, uint8_t *dst, uint32_t 
 * \param offset
 * Offset from the EFUSE base address. Must be 4-byte aligned.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note
@@ -587,7 +587,7 @@ cy_en_efuse_status_t Cy_EFUSE_ReadWord(EFUSE_Type *base, uint32_t *dst, uint32_t
 * \param num
 * Number of words to read.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note
@@ -612,7 +612,7 @@ cy_en_efuse_status_t Cy_EFUSE_ReadWordArray(EFUSE_Type *base, uint32_t *dst, uin
 * \param bootrow
 * 32-bit value to be written into bootrow.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note
@@ -636,7 +636,7 @@ cy_en_efuse_status_t Cy_EFUSE_WriteBootRow(EFUSE_Type *base, uint32_t bootrow);
 * \param bootrow
 * Pointer to the variable where the content of BOOTROW is read to.
 *
-* \return 
+* \return
 * The EFUSE API status \ref cy_en_efuse_status_t.
 *
 * \note

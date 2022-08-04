@@ -46,7 +46,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.1', 1, \
 * Initialize the PDM-PCM Channel
 *
 * \pre Make sure PDM-PCM is intialized before calling this function. \ref Cy_PDM_PCM_Init
-* 
+*
 * \param  base The pointer to the PDM-PCM instance address
 * \param  channel_config The pointer to a configuration structure.
 * \param  channel_num The channel number to be initialized.
@@ -64,27 +64,27 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_Channel_Init(PDM_Type * base, cy_stc_pdm_pcm_c
         CY_ASSERT_L2(CY_PDM_PCM_IS_TRIG_LEVEL(channel_config->rxFifoTriggerLevel));
         CY_ASSERT_L2(CY_PDM_PCM_IS_SCALE_VALID(channel_config->fir0_scale));
         CY_ASSERT_L2(CY_PDM_PCM_IS_SCALE_VALID(channel_config->fir1_scale));
-        
-        
+
+
         ret = CY_PDM_PCM_SUCCESS;
 
 
         PDM_PCM_RX_FIFO_CTL(base, channel_num) = _VAL2FLD(PDM_CH_RX_FIFO_CTL_TRIGGER_LEVEL, channel_config->rxFifoTriggerLevel);
 
-        
+
         PDM_PCM_CH_CTL(base, channel_num) = _VAL2FLD(PDM_CH_CTL_WORD_SIZE, channel_config->wordSize) |
                                   _BOOL2FLD(PDM_CH_CTL_WORD_SIGN_EXTEND, channel_config->signExtension) |
                                   _BOOL2FLD(PDM_CH_CTL_ENABLED, CY_PDM_PCM_ENABLE);
-                                  
+
         PDM_PCM_CH_IF_CTL(base, channel_num) = _VAL2FLD(PDM_CH_IF_CTL_SAMPLE_DELAY,      channel_config->sampledelay);
 
-        
+
         PDM_PCM_CH_CIC_CTL(base, channel_num) = ((uint32_t)channel_config->cic_decim_code);
-        
+
         PDM_PCM_CH_FIR0_CTL(base, channel_num) = _VAL2FLD(PDM_CH_FIR0_CTL_DECIM3,  channel_config->fir0_decim_code) |
                                        _VAL2FLD(PDM_CH_FIR0_CTL_SCALE,        channel_config->fir0_scale) |
                                        _VAL2FLD(PDM_CH_FIR0_CTL_ENABLED,     channel_config->fir0_enable);
-                                       
+
         PDM_PCM_CH_FIR1_CTL(base, channel_num) = _VAL2FLD(PDM_CH_FIR1_CTL_DECIM2,  channel_config->fir1_decim_code) |
                                        _VAL2FLD(PDM_CH_FIR1_CTL_SCALE,        channel_config->fir1_scale) |
                                        _VAL2FLD(PDM_CH_FIR1_CTL_ENABLED,     CY_PDM_PCM_ENABLE);
@@ -97,7 +97,7 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_Channel_Init(PDM_Type * base, cy_stc_pdm_pcm_c
         {
             PDM_PCM_CH_DC_BLOCK_CTL(base, channel_num) = _VAL2FLD(PDM_CH_DC_BLOCK_CTL_ENABLED, CY_PDM_PCM_DISABLE);
         }
-        
+
     }
     return ret;
 }
@@ -122,9 +122,9 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_Init(PDM_Type * base, cy_stc_pdm_pcm_config_v2
         CY_ASSERT_L2(CY_PDM_PCM_IS_CLK_SEL_VALID(config->clksel));
         CY_ASSERT_L2(CY_PDM_PCM_IS_HALVE_RATE_SET_VALID(config->halverate));
         CY_ASSERT_L2(CY_PDM_PCM_IS_ROUTE_VALID(config->route));
-        
+
         ret = CY_PDM_PCM_SUCCESS;
-        
+
         /* The clock setting */
         PDM_PCM_CLOCK_CTL(base) = _VAL2FLD(PDM_CLOCK_CTL_CLOCK_DIV, config->clkDiv) |
                                   _VAL2FLD(PDM_CLOCK_CTL_CLOCK_SEL, config->clksel) |
@@ -132,78 +132,78 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_Init(PDM_Type * base, cy_stc_pdm_pcm_config_v2
 
         /* PDM-PCM ROUTE setting */
         PDM_PCM_ROUTE_CTL(base) = _VAL2FLD(PDM_ROUTE_CTL_DATA_SEL,  config->route);
-        
+
         if(config->fir0_coeff_user_value != 0U)
         {
             PDM_PCM_FIR0_COEFF0(base) = _VAL2FLD(PDM_FIR0_COEFF0_DATA0, config->fir0_coeff[0].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF0_DATA1,     config->fir0_coeff[0].coeff_data1);
-            
+
             PDM_PCM_FIR0_COEFF1(base) = _VAL2FLD(PDM_FIR0_COEFF1_DATA0, config->fir0_coeff[1].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF1_DATA1,     config->fir0_coeff[1].coeff_data1);
-                                 
+
             PDM_PCM_FIR0_COEFF2(base) = _VAL2FLD(PDM_FIR0_COEFF2_DATA0, config->fir0_coeff[2].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF2_DATA1,     config->fir0_coeff[2].coeff_data1);
-            
+
             PDM_PCM_FIR0_COEFF3(base) = _VAL2FLD(PDM_FIR0_COEFF3_DATA0, config->fir0_coeff[3].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF3_DATA1,     config->fir0_coeff[3].coeff_data1);
-                                 
+
             PDM_PCM_FIR0_COEFF4(base) = _VAL2FLD(PDM_FIR0_COEFF4_DATA0, config->fir0_coeff[4].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF4_DATA1,     config->fir0_coeff[4].coeff_data1);
-            
+
             PDM_PCM_FIR0_COEFF5(base) = _VAL2FLD(PDM_FIR0_COEFF5_DATA0, config->fir0_coeff[5].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF5_DATA1,     config->fir0_coeff[5].coeff_data1);
-                                 
+
             PDM_PCM_FIR0_COEFF6(base) = _VAL2FLD(PDM_FIR0_COEFF6_DATA0, config->fir0_coeff[6].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF6_DATA1,     config->fir0_coeff[6].coeff_data1);
-            
+
             PDM_PCM_FIR0_COEFF7(base) = _VAL2FLD(PDM_FIR0_COEFF7_DATA0, config->fir0_coeff[7].coeff_data0) |
                                  _VAL2FLD(PDM_FIR0_COEFF7_DATA1,     config->fir0_coeff[7].coeff_data1);
         }
-        
+
         if(config->fir1_coeff_user_value != 0U)
         {
             PDM_PCM_FIR1_COEFF0(base) = _VAL2FLD(PDM_FIR1_COEFF0_DATA0, config->fir1_coeff[0].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF0_DATA1,     config->fir1_coeff[0].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF1(base) = _VAL2FLD(PDM_FIR1_COEFF1_DATA0, config->fir1_coeff[1].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF1_DATA1,     config->fir1_coeff[1].coeff_data1);
-                                 
+
             PDM_PCM_FIR1_COEFF2(base) = _VAL2FLD(PDM_FIR1_COEFF2_DATA0, config->fir1_coeff[2].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF2_DATA1,     config->fir1_coeff[2].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF3(base) = _VAL2FLD(PDM_FIR1_COEFF3_DATA0, config->fir1_coeff[3].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF3_DATA1,     config->fir1_coeff[3].coeff_data1);
-                                 
+
             PDM_PCM_FIR1_COEFF4(base) = _VAL2FLD(PDM_FIR1_COEFF4_DATA0, config->fir1_coeff[4].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF4_DATA1,     config->fir1_coeff[4].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF5(base) = _VAL2FLD(PDM_FIR1_COEFF5_DATA0, config->fir1_coeff[5].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF5_DATA1,     config->fir1_coeff[5].coeff_data1);
-                                 
+
             PDM_PCM_FIR1_COEFF6(base) = _VAL2FLD(PDM_FIR1_COEFF6_DATA0, config->fir1_coeff[6].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF6_DATA1,     config->fir1_coeff[6].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF7(base) = _VAL2FLD(PDM_FIR1_COEFF7_DATA0, config->fir1_coeff[7].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF7_DATA1,     config->fir1_coeff[7].coeff_data1);
-                                 
+
             PDM_PCM_FIR1_COEFF8(base) = _VAL2FLD(PDM_FIR1_COEFF8_DATA0, config->fir1_coeff[8].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF8_DATA1,     config->fir1_coeff[8].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF9(base) = _VAL2FLD(PDM_FIR1_COEFF9_DATA0, config->fir1_coeff[9].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF9_DATA1,     config->fir1_coeff[9].coeff_data1);
-                                 
+
             PDM_PCM_FIR1_COEFF10(base) = _VAL2FLD(PDM_FIR1_COEFF10_DATA0, config->fir1_coeff[10].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF10_DATA1,     config->fir1_coeff[10].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF11(base) = _VAL2FLD(PDM_FIR1_COEFF11_DATA0, config->fir1_coeff[11].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF11_DATA1,     config->fir1_coeff[11].coeff_data1);
-                                 
+
             PDM_PCM_FIR1_COEFF12(base) = _VAL2FLD(PDM_FIR1_COEFF12_DATA0, config->fir1_coeff[12].coeff_data0) |
                                  _VAL2FLD(PDM_FIR1_COEFF12_DATA1,     config->fir1_coeff[12].coeff_data1);
-            
+
             PDM_PCM_FIR1_COEFF13(base) = _VAL2FLD(PDM_FIR1_COEFF13_DATA0, config->fir1_coeff[13].coeff_data0) |
-                                 _VAL2FLD(PDM_FIR1_COEFF13_DATA1,     config->fir1_coeff[13].coeff_data1);                         
-            
+                                 _VAL2FLD(PDM_FIR1_COEFF13_DATA1,     config->fir1_coeff[13].coeff_data1);
+
         }
 
     }
@@ -236,16 +236,16 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_test_Init(PDM_Type * base, cy_stc_pdm_pcm_conf
         CY_ASSERT_L2(CY_PDM_PCM_IS_CLK_SEL_VALID(config->clksel));
         CY_ASSERT_L2(CY_PDM_PCM_IS_HALVE_RATE_SET_VALID(config->halverate));
         CY_ASSERT_L2(CY_PDM_PCM_IS_ROUTE_VALID(config->route));
-        
+
         ret = CY_PDM_PCM_SUCCESS;
-        
+
         PDM_PCM_TEST_CTL(base) = _VAL2FLD(PDM_TEST_CTL_DRIVE_DELAY_HI, test_config->drive_delay_hi) |
                              _VAL2FLD(PDM_TEST_CTL_DRIVE_DELAY_LO,     test_config->drive_delay_lo);
         PDM_PCM_TEST_CTL(base) |= _VAL2FLD(PDM_TEST_CTL_MODE_HI,            test_config->mode_hi) |
                              _VAL2FLD(PDM_TEST_CTL_MODE_LO,            test_config->mode_lo);
         PDM_PCM_TEST_CTL(base) |= _VAL2FLD(PDM_TEST_CTL_AUDIO_FREQ_DIV,     test_config->audio_freq_div) |
                              _BOOL2FLD(PDM_TEST_CTL_CH_ENABLED,        test_config->enable);
-            
+
     }
 
     return (ret);
@@ -273,7 +273,7 @@ void Cy_PDM_PCM_Channel_DeInit(PDM_Type * base, uint8_t channel_num)
     PDM_PCM_INTR_RX_MASK(base, channel_num) = 0UL; /* Disable interrupts */
     PDM_PCM_RX_FIFO_CTL(base, channel_num) = 0UL;
     PDM_PCM_CTL_CLR(base) = (1UL << channel_num);
-    
+
 }
 
 

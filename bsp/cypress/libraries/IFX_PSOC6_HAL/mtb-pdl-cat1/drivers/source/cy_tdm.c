@@ -21,7 +21,7 @@
 
 #if defined(__cplusplus)
 extern "C" {
-    
+
 #endif /* __cplusplus */
 
 
@@ -58,7 +58,7 @@ void Cy_AudioTDM_RX_DeInit( TDM_RX_STRUCT_Type * base);
 cy_en_tdm_status_t Cy_AudioTDM_Init( TDM_STRUCT_Type * base, cy_stc_tdm_config_t const * config)
 {
     cy_en_tdm_status_t ret = CY_TDM_BAD_PARAM;
-    
+
     if((NULL != base) && (NULL != config))
     {
        if(config->tx_config->enable)
@@ -117,7 +117,7 @@ cy_en_tdm_status_t Cy_AudioTDM_TX_Init( TDM_TX_STRUCT_Type * base, cy_stc_tdm_co
         ret = CY_TDM_BAD_PARAM;
         return(ret);
     }
-        
+
     /* The TX interface setting */
     TDM_STRUCT_TX_IF_CTL(base) =
         _VAL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_IF_CTL_CLOCK_DIV,         clockDiv)               |
@@ -136,14 +136,14 @@ cy_en_tdm_status_t Cy_AudioTDM_TX_Init( TDM_TX_STRUCT_Type * base, cy_stc_tdm_co
 
     /* Chanel Enable */
     TDM_STRUCT_TX_CH_CTL(base) = config->chEn;
-    /* The FIFO setting */           
+    /* The FIFO setting */
     TDM_STRUCT_TX_FIFO_CTL(base) = _VAL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_FIFO_CTL_TRIGGER_LEVEL,config->fifoTriggerLevel);
-    /* The TC Interface setting */      
+    /* The TC Interface setting */
     TDM_STRUCT_TX_CTL(base) =
         _VAL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_CTL_WORD_SIZE,    config->wordSize) |
         _VAL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_CTL_FORMAT,     config->format)     |
         _VAL2FLD(TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_CTL_MS, config->masterMode);
- 
+
     return (ret);
 }
 
@@ -162,7 +162,7 @@ cy_en_tdm_status_t Cy_AudioTDM_RX_Init( TDM_RX_STRUCT_Type * base, cy_stc_tdm_co
     CY_ASSERT_L2(CY_TDM_IS_CHANNELS_VALID(channelNum));
     CY_ASSERT_L2(CY_TDM_IS_CHANNEL_SIZE_VALID(channelSIZE));
     CY_ASSERT_L2(CY_I2S_TDM_IS_INPUT_SIGNAL_MODE_VALID(config->signalInput));
-    
+
     /* The RX interface setting */
     TDM_STRUCT_RX_IF_CTL(base) =
         _VAL2FLD(TDM_TDM_STRUCT_TDM_RX_STRUCT_RX_IF_CTL_CLOCK_DIV,         clockDiv)             |
@@ -182,9 +182,9 @@ cy_en_tdm_status_t Cy_AudioTDM_RX_Init( TDM_RX_STRUCT_Type * base, cy_stc_tdm_co
 
     /* Chanel Enable */
     TDM_STRUCT_RX_CH_CTL(base) = config->chEn;
-    /* The FIFO setting */           
+    /* The FIFO setting */
     TDM_STRUCT_RX_FIFO_CTL(base) = _VAL2FLD(TDM_TDM_STRUCT_TDM_RX_STRUCT_RX_FIFO_CTL_TRIGGER_LEVEL,config->fifoTriggerLevel);
-    /* The TC Interface setting */      
+    /* The TC Interface setting */
     TDM_STRUCT_RX_CTL(base) =
         _VAL2FLD(TDM_TDM_STRUCT_TDM_RX_STRUCT_RX_CTL_WORD_SIZE,            config->wordSize)   |
         _VAL2FLD(TDM_TDM_STRUCT_TDM_RX_STRUCT_RX_CTL_WORD_SIGN_EXTEND,    config->signExtend) |

@@ -15,8 +15,6 @@
 #include <rtdevice.h>
 #include "drv_common.h"
 
-#include "cy_retarget_io.h"
-#include "cyhal_gpio.h"
 #include "cyhal_irq_psoc.h"
 
 #define GPIO_INTERRUPT_PRIORITY (7u)
@@ -25,7 +23,7 @@
 
 struct pin_irq_map
 {
-    rt_uint16_t pin;
+    rt_uint16_t port;
     IRQn_Type irqno;
 };
 

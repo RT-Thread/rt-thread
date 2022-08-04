@@ -876,7 +876,7 @@ void Cy_Flashc_MainECCEnable(void);
 * Function Name: Cy_Flashc_MainECCDisable
 ****************************************************************************//**
 *
-* \brief Disables ECC for main flash. 
+* \brief Disables ECC for main flash.
 * ECC checking/reporting on FLASH main interface is disabled.
 * No correctable or non-correctable faults are reported by disabling ECC.
 *
@@ -984,10 +984,10 @@ cy_en_flashdrv_status_t Cy_Flash_Checksum (const cy_stc_flash_checksum_config_t 
 * Function Name: Cy_Flash_EraseSuspend
 ****************************************************************************//**
 *
-* This function suspends an ongoing erase operation. User should not read from a 
-* sector which is suspended from an erase operation. Cy_Flash_ProgramRow function 
+* This function suspends an ongoing erase operation. User should not read from a
+* sector which is suspended from an erase operation. Cy_Flash_ProgramRow function
 * will return error if invoked on suspended sector.
-* This function cannot be called on SFLASH. Reports success 
+* This function cannot be called on SFLASH. Reports success
 * or a reason for failure. Does not return until the Erase operation is complete.
 * Returns immediately and reports a CY_FLASH_DRV_IPC_BUSY error in the case when another
 * process is operating flash.
@@ -1004,7 +1004,7 @@ cy_en_flashdrv_status_t Cy_Flash_EraseSuspend(void);
 * Function Name: Cy_Flash_EraseResume
 ****************************************************************************//**
 *
-* This function calls to resume a suspended erase operation. 
+* This function calls to resume a suspended erase operation.
 * Reports success or a reason for failure.
 * Returns immediately and reports a CY_FLASH_DRV_IPC_BUSY error in the case when another
 * process is operating flash.
@@ -1070,7 +1070,7 @@ cy_en_flashdrv_status_t Cy_Flash_OperationStatus(void);
 * Function Name: Cy_Flashc_InjectECC
 ****************************************************************************//**
 *
-* This function enables ECC injection and sets the address where a parity will be injected 
+* This function enables ECC injection and sets the address where a parity will be injected
 * and the parity value.
 * Reports success or a reason for failure.
 *

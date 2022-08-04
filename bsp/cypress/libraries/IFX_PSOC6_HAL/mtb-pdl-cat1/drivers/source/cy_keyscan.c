@@ -69,7 +69,7 @@ static cy_en_ks_status_t Cy_Keyscan_Init_Context( cy_stc_keyscan_context_t* cont
  **
  ** [in]  context     Pointer to the context.
  **
- ** 
+ **
  **
  *****************************************************************************/
 static cy_en_ks_status_t Cy_Keyscan_Fq_Flush(cy_stc_keyscan_context_t* context)
@@ -96,7 +96,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_Flush(cy_stc_keyscan_context_t* context)
  **
  ** [out] numElements  Pointer to the number of elements.
  **
- ** 
+ **
  **
  *****************************************************************************/
 static cy_en_ks_status_t Cy_Keyscan_Fq_GetCurNumElements(cy_stc_keyscan_context_t* context, uint8_t *numElements)
@@ -128,7 +128,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_GetCurNumElements(cy_stc_keyscan_context_
  **                           internal storage of the FIFO. This must be <= the maximum element size
  **                           specified when the FIFO was constructed, otherwise the results are undefined.
  **
- ** 
+ **
  **
  *****************************************************************************/
 static cy_en_ks_status_t Cy_Keyscan_Fq_PutIncludeOverflowSlot(cy_stc_keyscan_context_t* context, cy_stc_key_event *element)
@@ -165,7 +165,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_PutIncludeOverflowSlot(cy_stc_keyscan_con
  ** [out]  element     pointer to the next element in the FIFO if the FIFO is not empty
  **                           NULL if the FIFO is empty.
  **
- ** 
+ **
  **
  *****************************************************************************/
 static cy_en_ks_status_t Cy_Keyscan_Fq_GetCurElmPtr(cy_stc_keyscan_context_t* context, cy_stc_key_event **current_element)
@@ -190,7 +190,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_GetCurElmPtr(cy_stc_keyscan_context_t* co
             current_element = NULL;
             status = CY_KEYSCAN_EVENT_NONE;
         }
-        
+
     }
     return status;
 }
@@ -200,7 +200,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_GetCurElmPtr(cy_stc_keyscan_context_t* co
  **
  ** [in]  context     Pointer to the context.
  **
- ** 
+ **
  **
  *****************************************************************************/
 static cy_en_ks_status_t Cy_Keyscan_Fq_RemoveCurElement(cy_stc_keyscan_context_t* context)
@@ -296,7 +296,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_MarkCurrentEventForRollBack (cy_stc_keysc
         /// back what we added in case we encounter a ghost/overflow condition
         context->savedWriteIndexForRollBack = context->writeIndex;
         context->savedNumElements = context->curNumElements;
-        
+
     }
     return status;
 }
@@ -307,7 +307,7 @@ static cy_en_ks_status_t Cy_Keyscan_Fq_MarkCurrentEventForRollBack (cy_stc_keysc
  **
  ** [in]  context     Pointer to the context.
  **
- ** 
+ **
  **
  *****************************************************************************/
 static cy_en_ks_status_t Cy_Keyscan_Fq_RollbackUptoMarkedEvents(cy_stc_keyscan_context_t* context)
@@ -403,9 +403,9 @@ static cy_en_ks_status_t  Cy_Keyscan_GetEvent(cy_stc_keyscan_context_t* context,
 
                 (void)Cy_Keyscan_Fq_RemoveCurElement(context); /* Suppress a compiler warning about unused return value */
                 }
-                
+
             }
-            
+
         }
     }
     return status;
@@ -414,7 +414,7 @@ static cy_en_ks_status_t  Cy_Keyscan_GetEvent(cy_stc_keyscan_context_t* context,
 /**
  *****************************************************************************
  ** Freeze the MIA clock. Wait until the HW accepts the command, then
- ** generate an event indicating that the MIA clock is unfrozen for anyone 
+ ** generate an event indicating that the MIA clock is unfrozen for anyone
  ** who desires to catch it.
  **
  ** [in]  context    Pointer to the context.
@@ -442,7 +442,7 @@ static cy_en_ks_status_t  Cy_Keyscan_Mia_FreezeClk(MXKEYSCAN_Type* base, cy_stc_
 
         // Notify application that clock is frozen. This allows workarounds for clock freeze related MIA
         // bugs, specifically key event loss when clock is frozen/unfrozen without reading the key event FIFO
-        // Poll the event FIFO only if the freeze didn't come from us   
+        // Poll the event FIFO only if the freeze didn't come from us
         if (!context->keyscan_pollingKeyscanHw)
         {
             // Retrieve any pending events from the HW FIFO
@@ -454,7 +454,7 @@ static cy_en_ks_status_t  Cy_Keyscan_Mia_FreezeClk(MXKEYSCAN_Type* base, cy_stc_
 /**
  *****************************************************************************
  ** Unfreeze the MIA clock. Wait until the HW accepts the command, then
- ** generate an event indicating that the MIA clock is unfrozen for anyone 
+ ** generate an event indicating that the MIA clock is unfrozen for anyone
  ** who desires to catch it.
  **
  ** [in]  context    Pointer to the context.
@@ -519,7 +519,7 @@ static cy_en_ks_status_t Cy_Keyscan_HwResetOnce(MXKEYSCAN_Type* base, cy_stc_key
             // SOme more information on why 2550 delay to be gathered.
             Cy_SysLib_DelayUs(2550U);
         }
-        
+
     }
     return status;
 }
@@ -545,7 +545,7 @@ cy_en_ks_status_t Cy_Keyscan_FlushEvents(MXKEYSCAN_Type *base, cy_stc_keyscan_co
     {
         // Freeze the MIA clock
         status = Cy_Keyscan_Mia_FreezeClk(base, context);
-        
+
         if(status == CY_KEYSCAN_SUCCESS)
         {
             // Unfreeze the MIA clock.
@@ -556,7 +556,7 @@ cy_en_ks_status_t Cy_Keyscan_FlushEvents(MXKEYSCAN_Type *base, cy_stc_keyscan_co
             // no keys currently pressed
             context->keysPressedCount = 0U;
         }
-   
+
     }
     return status;
 }
@@ -588,7 +588,7 @@ static cy_en_ks_status_t Cy_Keyscan_Init_Context( cy_stc_keyscan_context_t* cont
 
 /**
  *****************************************************************************
- ** Registers for callback 
+ ** Registers for callback
  **
  ** [in]  cbEvents    Pointer to the callback function.
  **
@@ -616,7 +616,7 @@ cy_en_ks_status_t Cy_Keyscan_Register_Callback(cy_cb_keyscan_handle_events_t cbE
  ** Register Context with the driver
  ** This Function registers for the event callback and FW FIFO buffer.
  **
- ** The Application must configure corresponding keyscan pins 
+ ** The Application must configure corresponding keyscan pins
  **      according to requirements and settings of keyscan instance.
  **
  ** [in] base       Pointer to KeyScan instance register area
@@ -636,7 +636,7 @@ cy_en_ks_status_t  Cy_Keyscan_Init(MXKEYSCAN_Type* base, const cy_stc_ks_config_
         (void)Cy_Keyscan_Init_Context(context);
         // Reset the keyscan HW to ensure we start from a known state
         status = Cy_Keyscan_DeInit(base, context);
-        
+
         if(status == CY_KEYSCAN_SUCCESS)
         {
             CY_ASSERT_L3(CY_KEYSCAN_IS_ROW_COUNT_VALID(config->noofRows));
@@ -647,7 +647,7 @@ cy_en_ks_status_t  Cy_Keyscan_Init(MXKEYSCAN_Type* base, const cy_stc_ks_config_
 
             context->keyscan_pollingKeyscanHw  = false;
             context->keysPressedCount = 0U;
-        
+
             KEYSCAN_DEBOUNCE(base) =  (_VAL2FLD(MXKEYSCAN_DEBOUNCE_MD_DEBOUNCE, config->macroDownDebCnt) | \
                                        _VAL2FLD(MXKEYSCAN_DEBOUNCE_MU_DEBOUNCE, config->macroUpDebCnt)   | \
                                        _VAL2FLD(MXKEYSCAN_DEBOUNCE_U_DEBOUNCE,  config->microDebCnt));
@@ -662,11 +662,11 @@ cy_en_ks_status_t  Cy_Keyscan_Init(MXKEYSCAN_Type* base, const cy_stc_ks_config_
                                        _VAL2FLD(MXKEYSCAN_KEYSCAN_CTL_PULL_HIGH,    MXKEYSCAN_KEYSCAN_CTL_PULL_HIGH_DEFAULT)   | \
                                        _VAL2FLD(MXKEYSCAN_KEYSCAN_CTL_KSI_DRV_HIGH, MXKEYSCAN_KEYSCAN_CTL_KSI_DRV_HIGH_DEFAULT)| \
                                        _VAL2FLD(MXKEYSCAN_KEYSCAN_CTL_KYSCLK_STAYON,config->clkStayOn));
-                                       
+
             // Configure the control register and enable the KS HW
             KEYSCAN_CTL(base)  |= _VAL2FLD(MXKEYSCAN_KEYSCAN_CTL_KS_EN, MXKEYSCAN_KEYSCAN_CTL_KS_EN_Msk);
         }
-        
+
     }
     return status;
 }
@@ -983,7 +983,7 @@ cy_en_ks_status_t Cy_Keyscan_Interrupt_Handler(MXKEYSCAN_Type *base, cy_stc_keys
     }
     return status;
 }
-    
+
 /**
  *****************************************************************************
  ** Reads from Hardware FIFO.

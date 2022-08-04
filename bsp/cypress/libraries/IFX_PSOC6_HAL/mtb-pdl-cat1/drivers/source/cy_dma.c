@@ -325,7 +325,7 @@ void Cy_DMA_Channel_DeInit(DW_Type * base, uint32_t channel)
 *
 *******************************************************************************/
 void Cy_DMA_Descriptor_SetNextDescriptor(cy_stc_dma_descriptor_t * descriptor, cy_stc_dma_descriptor_t const * nextDescriptor)
-{   
+{
     CY_ASSERT_L1(descriptor);
     switch((cy_en_dma_descriptor_type_t) _FLD2VAL(CY_DMA_CTL_TYPE, descriptor->ctl))
     {

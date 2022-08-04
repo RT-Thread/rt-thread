@@ -439,7 +439,7 @@ cy_en_capsense_bist_status_t Cy_CapSense_CheckIntegritySensorRawcount(
 * function with the CY_CAPSENSE_BIST_SNS_INTEGRITY_MASK mask.
 *
 * To detect an electrical short or fault condition with resistance
-* higher than 1500 ohm, the Cy_CapSense_MeasureCapacitanceSensor() (4th Generation) 
+* higher than 1500 ohm, the Cy_CapSense_MeasureCapacitanceSensor() (4th Generation)
 * or Cy_CapSense_MeasureCapacitanceSensorElectrode() (5th Generation) function can
 * be used as the fault condition affects the measured sensor capacitance.
 *

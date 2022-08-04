@@ -108,7 +108,7 @@ cy_en_tcpwm_status_t Cy_TCPWM_QuadDec_Init(TCPWM_Type *base, uint32_t cntNum,
                                   _VAL2FLD(TCPWM_GRP_CNT_V2_TR_IN_SEL0_RELOAD_SEL, config->indexInput) |
                                   _VAL2FLD(TCPWM_GRP_CNT_V2_TR_IN_SEL0_STOP_SEL, config->stopInput));
 
-            TCPWM_GRP_CNT_TR_IN_SEL1(base, grp, cntNum) = 
+            TCPWM_GRP_CNT_TR_IN_SEL1(base, grp, cntNum) =
                                   _VAL2FLD(TCPWM_GRP_CNT_V2_TR_IN_SEL1_START_SEL, config->phiBInput);
 
             TCPWM_GRP_CNT_CC0(base, grp, cntNum) = config->compare0;

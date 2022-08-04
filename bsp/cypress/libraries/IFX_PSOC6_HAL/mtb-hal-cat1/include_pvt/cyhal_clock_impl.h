@@ -196,7 +196,7 @@ extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_FAST[_CYHAL_SRSS_NUM_FAST];
 extern const cyhal_clock_t CYHAL_CLOCK_TIMER;
 /** Timer Clock: This clock is intended as a source for high-frequency timers, such as the Energy Profiler and CPU SysTick clock. This clock is stopped in the hibernate power mode. */
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_TIMER;
-#endif 
+#endif
 
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1C)
 /** Slow Clock: This clock is used for the CM0+ CPU, Datawire and CRYPTO components and the associated CPUSS slow infrastructure. */
@@ -266,9 +266,9 @@ extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_HF[SRSS_NUM_HFROOT];
 
 
 #if defined(PERI_PERI_PCLK_PCLK_GROUP_NR)
-#define _CYHAL_CLOCK_PERI_GROUPS 	PERI_PERI_PCLK_PCLK_GROUP_NR
+#define _CYHAL_CLOCK_PERI_GROUPS    PERI_PERI_PCLK_PCLK_GROUP_NR
 #else
-#define _CYHAL_CLOCK_PERI_GROUPS 	1
+#define _CYHAL_CLOCK_PERI_GROUPS    1
 #endif
 
 cy_rslt_t _cyhal_clock_allocate_channel(cyhal_clock_t *clock, cyhal_clock_block_t block, const void* funcs);
@@ -321,7 +321,7 @@ static inline cy_rslt_t _cyhal_clock_allocate_peri(cyhal_clock_t *clock, cyhal_c
     return _cyhal_clock_allocate_channel(clock, block, funcs);
 }
 
-#define cyhal_clock_allocate(clock, block)	_cyhal_clock_allocate(clock, block)
+#define cyhal_clock_allocate(clock, block)  _cyhal_clock_allocate(clock, block)
 
 #if defined(__cplusplus)
 }

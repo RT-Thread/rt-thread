@@ -29,7 +29,7 @@
  * \addtogroup group_hal_impl_keyscan KeyScan
  * \ingroup group_hal_impl
  * \{
- * On PSoC™ devices, the KeyScan peripheral is clocked from the shared source CLK_MF.
+ * On PSoCâ„¢ devices, the KeyScan peripheral is clocked from the shared source CLK_MF.
  * If `NULL` is passed for the `clk` argument to \ref cyhal_keyscan_init, the KeyScan
  * HAL will automatically reserve and enable CLK_MF. If the KeyScan driver needs to be
  * used in combination with another driver that also requires CLK_MF, use the Clock

@@ -38,7 +38,7 @@ extern "C" {
  * \ingroup group_hal_impl
  * \{
  * \section group_hal_impl_quaddec_interconnect Interconnect
- * In PSoC™ Quadrature Decoder channels can configure multiple input and output
+ * In PSoCâ„¢ Quadrature Decoder channels can configure multiple input and output
  * triggers simultaneously. 1 or more input triggers can be configured to
  * initiate different PWM actions (e.g start, stop, reload, etc) with
  * configurable edge detection on that incoming signal. Output triggers are

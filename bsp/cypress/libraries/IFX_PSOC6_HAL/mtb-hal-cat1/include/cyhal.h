@@ -59,7 +59,7 @@
 
 /**
 * \addtogroup group_hal HAL Drivers
-* This section documents the drivers which form the stable API of the ModusToolbox™ HAL.
+* This section documents the drivers which form the stable API of the ModusToolboxâ„¢ HAL.
 * In order to remain portable across platforms and HAL versions, applications should
 * rely only on functionality documented in this section.
 */

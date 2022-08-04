@@ -61,7 +61,7 @@ static void DiscardArrayNoCheck(CySCB_Type const *base, uint32_t size);
 * \ref cy_en_scb_spi_status_t
 *
 * \note
-* If SCB is already enabled, ensure that the SCB block is disabled 
+* If SCB is already enabled, ensure that the SCB block is disabled
 * \ref Cy_SCB_SPI_Disable before calling this function.
 *
 *******************************************************************************/
@@ -211,7 +211,7 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
 * The pointer to the SPI SCB instance.
 *
 * \note
-* Ensure that the SCB block is disabled \ref Cy_SCB_SPI_Disable 
+* Ensure that the SCB block is disabled \ref Cy_SCB_SPI_Disable
 * before calling this function.
 *
 *******************************************************************************/

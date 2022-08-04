@@ -65,11 +65,11 @@ cy_en_sysint_status_t Cy_SysInt_Init(const cy_stc_sysint_t* config, cy_israddres
     if(NULL != config)
     {
         CY_ASSERT_L3(CY_SYSINT_IS_PRIORITY_VALID(config->intrPriority));
-        
+
         NVIC_SetPriority(config->intrSrc, config->intrPriority);
 #ifdef CY_SECURE_WORLD
         if (SCB->VTOR == (uint32_t)__s_vector_table)
-#else        
+#else
         if (SCB->VTOR == (uint32_t)__ns_vector_table_rw_ptr)
 #endif
         {
@@ -80,7 +80,7 @@ cy_en_sysint_status_t Cy_SysInt_Init(const cy_stc_sysint_t* config, cy_israddres
     {
         status = CY_SYSINT_BAD_PARAM;
     }
-    
+
     return(status);
 }
 
@@ -107,7 +107,7 @@ cy_israddress Cy_SysInt_SetVector(IRQn_Type IRQn, cy_israddress userIsr)
 #endif
     else
     {
-        /* vector table is always loaded to non secure SRAM, so there is no need to return 
+        /* vector table is always loaded to non secure SRAM, so there is no need to return
         the non-secure ROM vector */
         prevIsr = NULL;
     }
@@ -119,7 +119,7 @@ cy_israddress Cy_SysInt_SetVector(IRQn_Type IRQn, cy_israddress userIsr)
 cy_israddress Cy_SysInt_GetVector(IRQn_Type IRQn)
 {
     cy_israddress currIsr;
-    
+
 #ifdef CY_SECURE_WORLD
     /* Return the SRAM ISR address only if it was moved to __ramVectors */
     if (SCB->VTOR == (uint32_t)__s_vector_table)
@@ -131,7 +131,7 @@ cy_israddress Cy_SysInt_GetVector(IRQn_Type IRQn)
     {
         currIsr = (cy_israddress)__ns_vector_table_rw_ptr[CY_INT_IRQ_BASE + (uint32_t)IRQn];
     }
-#endif    
+#endif
     else
     {
         /* vector table is always loaded to non-secure SRAM, so there is no need to return
