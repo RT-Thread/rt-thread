@@ -23,6 +23,7 @@ processor_version: 0.9.6
 
 #include "fsl_common.h"
 #include "fsl_iomuxc.h"
+#include "fsl_gpio.h"
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
@@ -57,7 +58,32 @@ BOARD_InitPins:
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           /* LPCG on: LPCG is ON. */
+  CLOCK_EnableClock(kCLOCK_Iomuxc_Lpsr);      /* LPCG on: LPCG is ON. */
 
+  /* GPIO configuration on GPIO_AD_04 (pin M13) */
+  gpio_pin_config_t gpio9_pinM13_config = {
+      .direction = kGPIO_DigitalOutput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on GPIO_AD_04 (pin M13) */
+  GPIO_PinInit(GPIO9, 3U, &gpio9_pinM13_config);
+
+  /* GPIO configuration on GPIO_AD_26 (pin L14) */
+  gpio_pin_config_t gpio9_pinL14_config = {
+      .direction = kGPIO_DigitalOutput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on GPIO_AD_04 (pin L14) */
+  GPIO_PinInit(GPIO9, 25U, &gpio9_pinL14_config);
+
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AD_04_GPIO9_IO03,           /* GPIO_AD_04 is configured as GPIO9_IO03 */
+      0U);
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AD_26_GPIO9_IO25,           /* GPIO_AD_04 is configured as GPIO9_IO03 */
+      0U);
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_24_LPUART1_TXD,          /* GPIO_AD_24 is configured as LPUART1_TXD */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */

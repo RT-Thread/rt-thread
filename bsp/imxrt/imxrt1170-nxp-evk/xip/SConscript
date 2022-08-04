@@ -8,10 +8,11 @@ if GetDepend('BSP_USING_QSPIFLASH'):
     CPPPATH = [cwd]
 
     if rtconfig.CROSS_TOOL == 'keil':
-        LINKFLAGS  = '--keep=*(.boot_hdr.ivt)'
-        LINKFLAGS += '--keep=*(.boot_hdr.boot_data)'
-        LINKFLAGS += '--keep=*(.boot_hdr.dcd_data)'
-        LINKFLAGS += '--keep=*(.boot_hdr.conf)'
+        LINKFLAGS  = ' --keep=*(.boot_hdr.ivt)'
+        LINKFLAGS += ' --keep=*(.boot_hdr.boot_data)'
+        LINKFLAGS += ' --keep=*(.boot_hdr.dcd_data)'
+        LINKFLAGS += ' --keep=*(.boot_hdr.conf)'
+        LINKFLAGS += ' --predefine="-DXIP_BOOT_HEADER_ENABLE=1"'
     else:
         LINKFLAGS = ''
 
