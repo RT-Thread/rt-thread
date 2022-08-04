@@ -46,7 +46,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_CONSOLE_DEVICE_NAME "uart5"
 #define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
@@ -78,6 +78,7 @@
 #define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 16
+#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -97,6 +98,13 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_FS
+#define RT_USING_POSIX_DEVIO
+#define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
+#define RT_USING_PTHREADS
+#define PTHREAD_NUM_MAX 8
 
 /* Interprocess Communication (IPC) */
 
@@ -198,7 +206,7 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_UART1
+#define BSP_USING_UART5
 
 /* Board extended module Drivers */
 

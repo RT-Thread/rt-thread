@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       			 Notes
+ * Date           Author                 Notes
  * 2022-07-28     rtthread qiu       first version
  */
 #ifndef __DRV__DAC_H__

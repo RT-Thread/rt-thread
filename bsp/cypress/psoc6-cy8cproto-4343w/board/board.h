@@ -19,6 +19,7 @@
 #include "cy_result.h"
 #include "cybsp_types.h"
 #include "cyhal.h"
+#include "cybsp.h"
 
 #ifdef BSP_USING_USBD
     #include "cy_usb_dev.h"
@@ -45,6 +46,7 @@
 #ifdef __ARMCC_VERSION
     extern int Image$$RW_IRAM1$$ZI$$Limit;
     #define HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+    #define HEAP_END        IFX_SRAM_END
 #elif __ICCARM__
     #pragma section="HEAP"
     #define HEAP_BEGIN    (__segment_end("HEAP"))
@@ -54,8 +56,6 @@
     #define HEAP_BEGIN    (void*)&__end__
     #define HEAP_END      (void*)&__HeapLimit
 #endif
-
-#define HEAP_END        IFX_SRAM_END
 
 void cy_bsp_all_init(void);
 
