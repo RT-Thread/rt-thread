@@ -216,7 +216,7 @@
 /* peripheral libraries and drivers */
 
 
-/* kendryte-sdk: Kendryte SDK */
+/* Kendryte SDK */
 
 #define PKG_USING_K210_SDK
 #define PKG_USING_K210_SDK_LATEST_VERSION
@@ -233,6 +233,7 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+#define SOC_K210
 #define BOARD_K210_EVB
 
 /* Hardware Drivers Config */
