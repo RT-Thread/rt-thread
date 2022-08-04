@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_NET_IF_H
+    bool "<net/if.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_NET_IF_H
+
+    config NET_IF_H_NAMEINDEX
+        bool "<net/if.h> -> if_freenameindex, if_indextoname, if_nameindex, if_nametoindex"
+        default n
+
+endif

@@ -27,7 +27,7 @@
 #define __APM32F10X_RTC_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -78,7 +78,7 @@ void RTC_ConfigPrescaler(uint32_t value);
 void RTC_ConfigAlarm(uint32_t value);
 uint32_t RTC_ReadDivider(void);
 void RTC_WaitForLastTask(void);
-void RTC_WaitForSynchor(void);
+void RTC_WaitForSynchro(void);
 
 /** Interrupts and flags */
 void RTC_EnableInterrupt(uint16_t interrupt);

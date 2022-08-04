@@ -139,7 +139,7 @@ def PrefixPath(prefix, path):
 
     if path.startswith(prefix):
         return True
-    
+
     return False
 
 def ListMap(l):
@@ -197,7 +197,7 @@ def ProjectInfo(env):
 
     # process FILES and DIRS
     if len(FILES):
-        # use absolute path 
+        # use absolute path
         for i in range(len(FILES)):
             FILES[i] = os.path.abspath(str(FILES[i]))
             DIRS.append(os.path.dirname(FILES[i]))
@@ -211,12 +211,16 @@ def ProjectInfo(env):
 
     # process CPPPATH
     if len(CPPPATH):
-        # use absolute path 
+        # use absolute path
         for i in range(len(CPPPATH)):
             CPPPATH[i] = os.path.abspath(CPPPATH[i])
 
         # remove repeat path
-        paths = [i for i in set(CPPPATH)]
+        paths = []
+        for p in CPPPATH:
+            if p not in paths:
+                paths.append(p)
+
         CPPPATH = []
         for path in paths:
             if PrefixPath(RTT_ROOT, path):
@@ -227,8 +231,6 @@ def ProjectInfo(env):
 
             else:
                 CPPPATH += ['"%s",' % path.replace('\\', '/')]
-
-        CPPPATH.sort()
 
     # process CPPDEFINES
     if len(CPPDEFINES):

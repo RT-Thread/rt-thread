@@ -6,15 +6,15 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 /* Includes -------------------------------------------------------------------------------------------*/
-#include "fm33lc0xx_fl.h"
+#include "fm33lc0xx_fl_def.h"
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
   */
@@ -1862,4 +1862,4 @@ FL_ErrorStatus FL_I2C_MasterMode_Init(I2C_Type *I2Cx, FL_I2C_MasterMode_InitType
 #endif /* __FM33LC0XX_FL_I2C_H*/
 
 /*************************Py_Code_Generator Version: 0.1-0.11-0.1 @ 2020-09-12*************************/
-/*************************(C) COPYRIGHT Fudan Microelectronics **** END OF FILE*************************/
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

@@ -6,6 +6,13 @@
  */
 
 #include "touchpad.h"
+#include <rtdevice.h>
+
+void BOARD_Delay(uint32_t ms)
+{
+    //VIDEO_DelayMs(ms);
+    rt_thread_mdelay(ms);
+}
 
 void BOARD_LPI2C_Init(LPI2C_Type *base, uint32_t clkSrc_Hz)
 {

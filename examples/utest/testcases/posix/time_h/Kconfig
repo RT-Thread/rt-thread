@@ -1,0 +1,55 @@
+menuconfig RTT_POSIX_TESTCASE_TIME_H
+    bool "<time.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_TIME_H
+
+    config TIME_H_ASCTIME
+        bool "<time.h, sys/time.h> -> asctime"
+        default n
+
+    config TIME_H_CLOCK_GETTIME
+        bool "<time.h, sys/time.h> -> clock_gettime"
+        default n
+
+    config TIME_H_CLOCK
+        bool "<time.h, sys/time.h> -> clock"
+        default n
+
+    config TIME_H_DIFFTIME
+        bool "<time.h, sys/time.h> -> difftime"
+        default n
+
+    config TIME_H_GMTIME_R
+        bool "<time.h, sys/time.h> -> gmtime_r"
+        default n
+
+    config TIME_H_GMTIME
+        bool "<time.h, sys/time.h> -> gmtime"
+        default n
+
+    config TIME_H_LOCALTIME
+        bool "<time.h, sys/time.h> -> localtime"
+        default n
+
+    config TIME_H_MKTIME
+        bool "<time.h, sys/time.h> -> mktime"
+        default n
+
+    config TIME_H_NANOSLEEP
+        bool "<time.h, sys/time.h> -> nanosleep"
+        default n
+
+    config TIME_H_STRFTIME
+        bool "<time.h, sys/time.h> -> strftime"
+        default n
+
+    config TIME_H_TIME
+        bool "<time.h, sys/time.h> -> time"
+        default n
+
+    config TIME_H_UTIMES
+        bool "<time.h, sys/time.h> -> utimes"
+        default n
+
+endif

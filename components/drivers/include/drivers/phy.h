@@ -19,52 +19,34 @@ extern "C"
 #endif
 
 /* Defines the PHY link speed. This is align with the speed for MAC. */
-enum phy_speed
-{
-    PHY_SPEED_10M = 0U, /* PHY 10M speed. */
-    PHY_SPEED_100M      /* PHY 100M speed. */
-};
+#define PHY_SPEED_10M   0U     /* PHY 10M speed. */
+#define PHY_SPEED_100M  1U     /* PHY 100M speed. */
 
 /* Defines the PHY link duplex. */
-enum phy_duplex
-{
-    PHY_HALF_DUPLEX = 0U, /* PHY half duplex. */
-    PHY_FULL_DUPLEX       /* PHY full duplex. */
-};
+#define PHY_HALF_DUPLEX 0U     /* PHY half duplex. */
+#define PHY_FULL_DUPLEX 1U     /* PHY full duplex. */
 
 /*! @brief Defines the PHY loopback mode. */
-enum phy_loop
-{
-    PHY_LOCAL_LOOP = 0U, /* PHY local loopback. */
-    PHY_REMOTE_LOOP      /* PHY remote loopback. */
-};
+#define PHY_LOCAL_LOOP  0U     /* PHY local loopback. */
+#define PHY_REMOTE_LOOP 1U     /* PHY remote loopback. */
 
+#define PHY_STATUS_OK      0U
+#define PHY_STATUS_FAIL    1U
+#define PHY_STATUS_TIMEOUT 2U
 
-struct rt_phy_msg
+typedef struct rt_phy_msg
 {
     rt_uint32_t reg;
     rt_uint32_t value;
-};
+}rt_phy_msg_t;
 
-typedef struct rt_phy_msg rt_phy_msg_t;
-
-
-struct rt_phy_device
+typedef struct rt_phy_device
 {
     struct rt_device parent;
     struct rt_mdio_bus *bus;
     rt_uint32_t addr;
     struct rt_phy_ops *ops;
-};
-
-typedef struct rt_phy_device rt_phy_t;
-
-
-enum {
-    PHY_STATUS_OK = 0,
-    PHY_STATUS_FAIL,
-    PHY_STATUS_TIMEOUT,
-};
+}rt_phy_t;
 
 typedef rt_int32_t rt_phy_status;
 

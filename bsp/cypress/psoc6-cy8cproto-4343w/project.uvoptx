@@ -128,7 +128,24 @@
           <Name>UL2CM3(-S0 -C0 -P0 ) -FN5 -FC8000 -FD08026400 -FF0CY8C6xxA_SFLASH_TOC2 -FF1CY8C6xxA_SFLASH_PKEY -FF2CY8C6xxA_SFLASH_USER -FF3CY8C6xxA_WFLASH -FF4CY8C6xxA_sect256KB -FL0400 -FL1C00 -FL2800 -FL38000 -FL4200000 -FS016007C00 -FS116005A00 -FS216000800 -FS314000000 -FS410000000 -FP0($$Device:CY8C624ABZI-S2D44$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FP1($$Device:CY8C624ABZI-S2D44$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FP2($$Device:CY8C624ABZI-S2D44$Flash\CY8C6xxA_SFLASH_USER.FLM) -FP3($$Device:CY8C624ABZI-S2D44$Flash\CY8C6xxA_WFLASH.FLM) -FP4($$Device:CY8C624ABZI-S2D44$Flash\CY8C6xxA_sect256KB.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>457</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>E:\workspace_work\rt-thread\bsp\cypress\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_usb_dev.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+      </Breakpoint>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>

@@ -46,7 +46,6 @@ menu "Peripheral Drivers"
         bool "Enable BSD Socket"
         select RT_USING_POSIX_FS
         select RT_USING_POSIX_SOCKET
-        select SAL_USING_WINSOCK
         default y
 
     config BSP_USING_LVGL

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,7 @@ int dfs_romfs_ioctl(struct dfs_fd *file, int cmd, void *args)
 rt_inline int check_dirent(struct romfs_dirent *dirent)
 {
     if ((dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR)
-        || dirent->size == ~0)
+        || dirent->size == ~0U)
         return -1;
     return 0;
 }
@@ -84,7 +84,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
         {
             if (check_dirent(&dirent[index]) != 0)
                 return NULL;
-            if (rt_strlen(dirent[index].name) == (subpath_end - subpath) &&
+            if (rt_strlen(dirent[index].name) ==  (rt_size_t)(subpath_end - subpath) &&
                     rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
             {
                 dirent_size = dirent[index].size;
@@ -295,6 +295,7 @@ static const struct dfs_file_ops _rom_fops =
     NULL,
     dfs_romfs_lseek,
     dfs_romfs_getdents,
+    NULL,
 };
 static const struct dfs_filesystem_ops _romfs =
 {

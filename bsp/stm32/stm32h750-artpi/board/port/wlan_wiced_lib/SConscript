@@ -8,7 +8,7 @@ LIBPATH = []
 src = []
 
 LIBPATH = [cwd]
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     LIBS += ['wifi_6212_armcm7_2.1.2_gcc']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     LIBS += ['libwifi_6212_armcm7_2.1.2_armcc']

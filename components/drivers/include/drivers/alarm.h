@@ -20,7 +20,7 @@
                                         to now.we also call it "don't care" value */
 
 /* alarm flags */
-#define RT_ALARM_ONESHOT       0x000 /* only alarm onece */
+#define RT_ALARM_ONESHOT       0x000 /* only alarm once */
 #define RT_ALARM_DAILY         0x100 /* alarm everyday */
 #define RT_ALARM_WEEKLY        0x200 /* alarm weekly at Monday or Friday etc. */
 #define RT_ALARM_MONTHLY       0x400 /* alarm monthly at someday */

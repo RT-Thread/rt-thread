@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
+ * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  */
 
 #include <board.h>
@@ -59,6 +60,24 @@ enum
 #ifdef BSP_USING_TMR8
     TMR8_INDEX,
 #endif
+#ifdef BSP_USING_TMR9
+    TMR9_INDEX,
+#endif
+#ifdef BSP_USING_TMR10
+    TMR10_INDEX,
+#endif
+#ifdef BSP_USING_TMR11
+    TMR11_INDEX,
+#endif
+#ifdef BSP_USING_TMR12
+    TMR12_INDEX,
+#endif
+#ifdef BSP_USING_TMR13
+    TMR13_INDEX,
+#endif
+#ifdef BSP_USING_TMR14
+    TMR14_INDEX,
+#endif
 };
 
 static struct apm32_timer tmr_config[] =
@@ -67,7 +86,11 @@ static struct apm32_timer tmr_config[] =
     {
         "timer1",
         TMR1,
+#ifdef APM32F10X_HD
         TMR1_UP_IRQn,
+#elif APM32F40X
+        TMR1_UP_TMR10_IRQn,
+#endif
     },
 #endif
 #ifdef BSP_USING_TMR2
@@ -102,7 +125,11 @@ static struct apm32_timer tmr_config[] =
     {
         "timer6",
         TMR6,
+#ifdef APM32F10X_HD
         TMR6_IRQn,
+#elif APM32F40X
+        TMR6_DAC_IRQn
+#endif
     },
 #endif
 #ifdef BSP_USING_TMR7
@@ -116,18 +143,71 @@ static struct apm32_timer tmr_config[] =
     {
         "timer8",
         TMR8,
+#ifdef APM32F10X_HD
         TMR8_UP_IRQn,
+#elif APM32F40X
+        TMR8_UP_TMR13_IRQn,
+#endif
+    },
+#endif
+#ifdef BSP_USING_TMR9
+    {
+        "timer9",
+        TMR9,
+        TMR1_BRK_TMR9_IRQn,
+    },
+#endif
+#ifdef BSP_USING_TMR10
+    {
+        "timer10",
+        TMR10,
+        TMR1_UP_TMR10_IRQn,
+    },
+#endif
+#ifdef BSP_USING_TMR11
+    {
+        "timer11",
+        TMR11,
+        TMR1_TRG_COM_TMR11_IRQn,
+    },
+#endif
+#ifdef BSP_USING_TMR12
+    {
+        "timer12",
+        TMR12,
+        TMR8_BRK_TMR12_IRQn,
+    },
+#endif
+#ifdef BSP_USING_TMR13
+    {
+        "timer13",
+        TMR13,
+        TMR8_UP_TMR13_IRQn,
+    },
+#endif
+#ifdef BSP_USING_TMR14
+    {
+        "timer14",
+        TMR14,
+        TMR8_TRG_COM_TMR14_IRQn,
     },
 #endif
 };
 
 static rt_uint32_t _hwtimer_clock_get(TMR_T *tmr)
 {
-    uint32_t pclk1;
+    uint32_t pclk1, pclk2;
 
-    RCM_ReadPCLKFreq(&pclk1, NULL);
+    RCM_ReadPCLKFreq(&pclk1, &pclk2);
 
-    return (rt_uint32_t)(pclk1 * ((RCM->CFG_B.APB1PSC != RCM_APB_DIV_1) ? 2 : 1));
+    if (tmr == TMR1 || tmr == TMR8 || tmr == TMR9 || tmr == TMR10 || tmr == TMR11)
+    {
+        return (rt_uint32_t)(pclk2 * ((RCM->CFG_B.APB2PSC != RCM_APB_DIV_1) ? 2 : 1));
+    }
+    else
+    {
+        return (rt_uint32_t)(pclk1 * ((RCM->CFG_B.APB1PSC != RCM_APB_DIV_1) ? 2 : 1));
+    }
 }
 
 static void _hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
@@ -141,15 +221,7 @@ static void _hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
     if (state)
     {
         timer_config = (struct apm32_timer *)timer->parent.user_data;
-        if (timer_config->tmr == TMR1)
-        {
-            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR1);
-        }
-        else if (timer_config->tmr == TMR8)
-        {
-            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR8);
-        }
-        else if (timer_config->tmr == TMR2)
+        if (timer_config->tmr == TMR2)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR2);
         }
@@ -173,7 +245,50 @@ static void _hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR7);
         }
-
+#ifdef APM32F10X_HD
+        else if (timer_config->tmr == TMR1)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR1);
+        }
+        else if (timer_config->tmr == TMR8)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR8);
+        }
+#endif
+#ifdef APM32F40X
+        else if (timer_config->tmr == TMR1)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR1);
+        }
+        else if (timer_config->tmr == TMR8)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR8);
+        }
+        else if (timer_config->tmr == TMR9)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR9);
+        }
+        else if (timer_config->tmr == TMR10)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR10);
+        }
+        else if (timer_config->tmr == TMR11)
+        {
+            RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR11);
+        }
+        else if (timer_config->tmr == TMR12)
+        {
+            RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR12);
+        }
+        else if (timer_config->tmr == TMR13)
+        {
+            RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR13);
+        }
+        else if (timer_config->tmr == TMR14)
+        {
+            RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR14);
+        }
+#endif
         prescaler = (uint32_t)(_hwtimer_clock_get(timer_config->tmr) / 10000) - 1;
 
         base_config.period          = 10000 - 1;
@@ -227,8 +342,9 @@ static rt_err_t _hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mo
 
     TMR_EnableInterrupt(timer_config->tmr, TMR_INT_UPDATE);
 
-    if (timer_config->tmr == TMR1 || timer_config->tmr == TMR8 || timer_config->tmr == TMR2 ||
-            timer_config->tmr == TMR3 || timer_config->tmr == TMR4  || timer_config->tmr == TMR5)
+    if (timer_config->tmr == TMR1 || timer_config->tmr == TMR8 || timer_config->tmr == TMR2 || \
+            timer_config->tmr == TMR3 || timer_config->tmr == TMR4 || timer_config->tmr == TMR5 || \
+            timer_config->tmr == TMR9 || timer_config->tmr == TMR12)
     {
         if (timer_config->tmr->SMCTRL_B.SMFSEL != TMR_SLAVE_MODE_TRIGGER)
         {
@@ -302,6 +418,7 @@ static const struct rt_hwtimer_ops _hwtimer_ops =
     .control = _hwtimer_ctrl,
 };
 
+#ifdef APM32F10X_HD
 #ifdef BSP_USING_TMR1
 void TMR1_UP_IRQHandler(void)
 {
@@ -311,6 +428,26 @@ void TMR1_UP_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+#elif APM32F40X
+#if (defined(BSP_USING_TMR1) || defined(BSP_USING_TMR10))
+void TMR1_UP_TMR10_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    if (TMR_ReadIntFlag(TMR1, TMR_INT_UPDATE))
+    {
+        rt_device_hwtimer_isr(&tmr_config[TMR1_INDEX].device);
+        TMR_ClearIntFlag(TMR1, TMR_INT_UPDATE);
+    }
+    if (TMR_ReadIntFlag(TMR10, TMR_INT_UPDATE))
+    {
+        rt_device_hwtimer_isr(&tmr_config[TMR10_INDEX].device);
+        TMR_ClearIntFlag(TMR10, TMR_INT_UPDATE);
+    }
+    rt_interrupt_leave();
+}
+#endif
+#endif
+
 #ifdef BSP_USING_TMR2
 void TMR2_IRQHandler(void)
 {
@@ -320,6 +457,7 @@ void TMR2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 #ifdef BSP_USING_TMR3
 void TMR3_IRQHandler(void)
 {
@@ -329,6 +467,7 @@ void TMR3_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 #ifdef BSP_USING_TMR4
 void TMR4_IRQHandler(void)
 {
@@ -338,6 +477,7 @@ void TMR4_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 #ifdef BSP_USING_TMR5
 void TMR5_IRQHandler(void)
 {
@@ -347,8 +487,13 @@ void TMR5_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 #ifdef BSP_USING_TMR6
-void TMR6_IRQHandler(void)
+#ifdef APM32F10X_HD
+    void TMR6_IRQHandler(void)
+#elif APM32F40X
+    void TMR6_DAC_IRQHandler(void)
+#endif
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&tmr_config[TMR6_INDEX].device);
@@ -356,6 +501,7 @@ void TMR6_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 #ifdef BSP_USING_TMR7
 void TMR7_IRQHandler(void)
 {
@@ -365,12 +511,73 @@ void TMR7_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
+#ifdef APM32F10X_HD
 #ifdef BSP_USING_TMR8
 void TMR8_UP_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&tmr_config[TMR8_INDEX].device);
     TMR_ClearIntFlag(TMR8, TMR_INT_UPDATE);
+    rt_interrupt_leave();
+}
+#endif
+#elif APM32F40X
+#if (defined(BSP_USING_TMR8) || defined(BSP_USING_TMR13))
+void TMR8_UP_TMR13_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    if (TMR_ReadIntFlag(TMR8, TMR_INT_UPDATE))
+    {
+        rt_device_hwtimer_isr(&tmr_config[TMR8_INDEX].device);
+        TMR_ClearIntFlag(TMR8, TMR_INT_UPDATE);
+    }
+    if (TMR_ReadIntFlag(TMR13, TMR_INT_UPDATE))
+    {
+        rt_device_hwtimer_isr(&tmr_config[TMR13_INDEX].device);
+        TMR_ClearIntFlag(TMR13, TMR_INT_UPDATE);
+    }
+    rt_interrupt_leave();
+}
+#endif
+#endif
+
+#ifdef BSP_USING_TMR9
+void TMR1_BRK_TMR9_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    rt_device_hwtimer_isr(&tmr_config[TMR9_INDEX].device);
+    TMR_ClearIntFlag(TMR9, TMR_INT_UPDATE);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_TMR11
+void TMR1_TRG_COM_TMR11_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    rt_device_hwtimer_isr(&tmr_config[TMR11_INDEX].device);
+    TMR_ClearIntFlag(TMR11, TMR_INT_UPDATE);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_TMR12
+void TMR8_BRK_TMR12_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    rt_device_hwtimer_isr(&tmr_config[TMR12_INDEX].device);
+    TMR_ClearIntFlag(TMR12, TMR_INT_UPDATE);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_TMR14
+void TMR8_TRG_COM_TMR14_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    rt_device_hwtimer_isr(&tmr_config[TMR14_INDEX].device);
+    TMR_ClearIntFlag(TMR14, TMR_INT_UPDATE);
     rt_interrupt_leave();
 }
 #endif

@@ -67,10 +67,10 @@ void lv_port_disp_init(void)
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
     buf1 = (void *)info.framebuffer;
-    rt_kprintf("LVGL: Use one buffers - buf1@%08x\n", buf1);
+    rt_kprintf("LVGL: Use one buffers - buf1@%08x, size: %d bytes\n", buf1, info.smem_len);
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, buf1, RT_NULL, info.width * info.height);
+    lv_disp_draw_buf_init(&disp_buf, buf1, RT_NULL, info.smem_len / (info.bits_per_pixel / 8));
 
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)

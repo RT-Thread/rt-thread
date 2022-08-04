@@ -1,0 +1,56 @@
+menu "RT-Thread rockchip common drivers"
+
+config RT_USING_RESET
+    bool "Enable reset support"
+
+config RT_USING_CACHE
+    bool "Enable cache"
+    default y
+
+config RT_USING_UNCACHE_HEAP
+    bool "Enable uncache heap"
+    select RT_USING_MEMHEAP
+    default n
+
+    if RT_USING_UNCACHE_HEAP && ARCH_ARM_CORTEX_M
+    config RT_UNCACHE_HEAP_ORDER
+        hex "For MCU uncache heap size(0x0D=16KB, 0x0E=32KB, 0x0F=64KB)"
+        range 0x0D 0x10
+        depends on RT_USING_UNCACHE_HEAP
+        default 0x0E
+        help
+            set uncache heap size, it in tail of sram
+            Examples:
+                0x0D   =>   16KB
+                0x0E   =>   32KB
+                0x0F   =>   64KB
+                0x10   =>   128KB
+    endif
+
+config RT_USING_LARGE_HEAP
+    bool "Enable large heap"
+    select RT_USING_MEMHEAP
+    default n
+
+    if RT_USING_LARGE_HEAP
+    config RT_LARGE_MALLOC_THRRESH
+        int "large heap malloc threshold"
+        default 512
+        depends on RT_USING_LARGE_HEAP
+        help
+            the memory will allocate in large heap while the allocated size over this
+
+    config RT_LARGE_HEAP_SIZE
+        int "large heap size"
+        default 524288
+        depends on RT_USING_LARGE_HEAP
+        help
+            the remaining memory must be able to accommodate this heap
+
+    endif
+
+config RT_USING_PM_RUNTIME
+    bool "Enable pm runtime"
+    default n
+
+endmenu
