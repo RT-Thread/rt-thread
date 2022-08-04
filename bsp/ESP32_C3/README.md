@@ -45,7 +45,7 @@
 | **片上外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
 | GPIO              |     支持     |  |
-| UART              |     支持中     |                                 |
+| UART              |     支持     | 使用LUATOS_ESP32C3开发板需要在UART0_TX和UART0_RX连接串口转USB芯片（如CP2102）|
 | JTAG调试          |     支持     | ESP32C3采用USB方式和PC链接的开发板可以调试                                |
 
 ## 使用说明
@@ -58,15 +58,15 @@ IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一�
 
 ### ESP-IDF 添加RT-THREAD patch 
 
-由于IDF使用的是FREERTOS，如果需要使用rt-thread就需要修改一些文件。将`0001-add-the-config-of-RTTHREAD.patch` 这个文件拷贝到IDF的代码目录下面，然后在`git bash`命令行内执行命令下面几条命令就可以打上patch
+由于IDF使用的是FREERTOS，如果需要使用rt-thread就需要修改一些文件。将`rtt.patch` 这个文件拷贝到IDF的代码目录下面，然后在`git bash`命令行内执行命令下面几条命令就可以打上patch
 
 ```
 cd esp/esp-idf
 git checkout v4.4
-git am 0001-add-the-config-of-RTTHREAD.patch
+git am rtt.patch
 ```
 
-如果不想用patch文件，已经将代码上传到github上面，可以进入[supperthomas/esp-idf](https://github.com/supperthomas/esp-idf) 下载最新的master分支代码即可。修改之后的IDF，原来的IDF的example还是正常使用，互不干扰，可以放心使用。
+如果不想用patch文件，已经将代码上传到github上面，可以进入[tangzz98/esp-idf](https://github.com/tangzz98/esp-idf/tree/freertos_wrapper) 下载最新的freertos_wrapper分支代码即可。修改之后的IDF，原来的IDF的example还是正常使用，互不干扰，可以放心使用。
 
 #### 编译下载
 
