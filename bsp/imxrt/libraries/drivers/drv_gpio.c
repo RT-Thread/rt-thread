@@ -408,7 +408,7 @@ void GPIO1_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(0, 15, GPIO1);
+    imxrt_isr(0, 16, GPIO1);
 
     rt_interrupt_leave();
 }
@@ -427,7 +427,7 @@ void GPIO2_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(32, 15, GPIO2);
+    imxrt_isr(32, 16, GPIO2);
 
     rt_interrupt_leave();
 }
@@ -446,7 +446,7 @@ void GPIO3_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(64, 15, GPIO3);
+    imxrt_isr(64, 16, GPIO3);
 
     rt_interrupt_leave();
 }
@@ -465,7 +465,7 @@ void GPIO4_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(96, 15, GPIO4);
+    imxrt_isr(96, 16, GPIO4);
 
     rt_interrupt_leave();
 }
@@ -484,7 +484,7 @@ void GPIO5_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(128, 15, GPIO5);
+    imxrt_isr(128, 16, GPIO5);
 
     rt_interrupt_leave();
 }
@@ -501,7 +501,7 @@ void GPIO6_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(160, 15, GPIO6);
+    imxrt_isr(160, 16, GPIO6);
 
     rt_interrupt_leave();
 }
@@ -510,7 +510,7 @@ void GPIO13_Combined_0_31_IRQHandler(void)
     rt_interrupt_enter();
 
     imxrt_isr(192, 0, GPIO13);
-
+    imxrt_isr(192, 16, GPIO13);
     rt_interrupt_leave();
 }
 #endif
