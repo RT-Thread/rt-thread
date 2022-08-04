@@ -489,7 +489,7 @@ static void dma_isr(struct rt_serial_device *serial)
         }
         else
         {
-            recv_len = recv_total_index - uart->dma_rx.last_index;
+            recv_len = serial->config.bufsz - uart->dma_rx.last_index + recv_total_index;
         }
         uart->dma_rx.last_index = recv_total_index;
         rt_hw_interrupt_enable(level);
