@@ -10,11 +10,11 @@ src = Split("""
 """)
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['gcc/' + 'startup_gcc.c']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['arm/' + 'startup_keil.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['iar/' + 'startup_iar.c']
 
 path = [cwd]

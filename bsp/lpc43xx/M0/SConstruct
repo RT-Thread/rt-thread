@@ -26,7 +26,7 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     import glob
     # Remove the .o for M0 left on the drivers dir.
     for i in glob.glob(GetCurrentDir() + '/../drivers/*.o'):

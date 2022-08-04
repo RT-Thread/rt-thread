@@ -23,7 +23,7 @@ AddOption('--run',
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS, CCFLAGS = '',
     CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc', LIBS = rtconfig.LIBS,
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)

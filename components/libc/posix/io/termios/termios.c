@@ -111,7 +111,6 @@ int tcdrain(int fd)
     return 0;
 }
 
-#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 void cfmakeraw(struct termios *t)
 {
     t->c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
@@ -127,4 +126,3 @@ int cfsetspeed(struct termios *tio, speed_t speed)
 {
     return cfsetospeed(tio, speed);
 }
-#endif

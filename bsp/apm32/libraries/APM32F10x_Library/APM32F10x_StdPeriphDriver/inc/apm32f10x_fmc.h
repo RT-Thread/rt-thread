@@ -27,7 +27,7 @@
 #define __APM32F10X_FMC_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -238,7 +238,7 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data);
 FMC_STATUS_T FMC_EnableWriteProtection(uint32_t page);
 FMC_STATUS_T FMC_EnableReadOutProtection(void);
 FMC_STATUS_T FMC_DisableReadOutProtection(void);
-FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T *userConfig);
+FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T* userConfig);
 uint32_t FMC_ReadUserOptionByte(void);
 uint32_t FMC_ReadOptionByteWriteProtection(void);
 uint8_t FMC_GetReadProtectionStatus(void);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,9 +13,15 @@
 #include "rtdevice.h"
 #include <drv_common.h>
 
+#ifdef BSP_USING_TOUCH_CAP
 #define LCD_W 800
 #define LCD_H 480
+#endif // BSP_USING_TOUCH_CAP
 
+#ifdef BSP_USING_TOUCH_RES
+#define LCD_W 320
+#define LCD_H 480
+#endif // BSP_USING_TOUCH_RES
 
 //LCD重要参数集
 typedef struct
@@ -49,7 +55,13 @@ typedef struct
 #define D2U_L2R  6      //从下到上,从左到右
 #define D2U_R2L  7      //从下到上,从右到左
 
-#define DFT_SCAN_DIR  L2R_U2D  //默认的扫描方向
+#ifdef BSP_USING_TOUCH_CAP
+#define DFT_SCAN_DIR  L2R_U2D  //电容触摸屏默认的扫描方向
+#endif // BSP_USING_TOUCH_CAP
+
+#ifdef BSP_USING_TOUCH_RES
+#define DFT_SCAN_DIR  D2U_L2R  //电阻触摸屏默认的扫描方向
+#endif // BSP_USING_TOUCH_RES
 
 //LCD分辨率设置
 #define SSD_HOR_RESOLUTION      800     //LCD水平分辨率

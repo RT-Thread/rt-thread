@@ -34,9 +34,9 @@ path = [
     cwd + '/StdPeriph_Driver/inc']
 
 
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['CMSIS/WCH/CH32F20x/Source/ARM/startup_ch32f20x.s']
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['CMSIS/WCH/CH32F20x/Source/GCC/startup_ch32f20x.S']
 
 group = DefineGroup('ch32f20x_lib', src, depend = [''], CPPPATH = path)

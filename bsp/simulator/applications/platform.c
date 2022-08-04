@@ -23,13 +23,13 @@ int platform_init(void)
     /* initialize sd card */
     rt_hw_sdcard_init();
 
-#if defined(RT_USING_MTD_NAND)
+#ifdef RT_USING_MTD_NAND
     rt_hw_mtd_nand_init();
-#endif
+#endif /* RT_USING_MTD_NAND */
 
-#if defined(RT_USING_MTD_NOR)
+#ifdef RT_USING_MTD_NOR
     sst25vfxx_mtd_init("nor", 0, RT_UINT32_MAX);
-#endif
+#endif /* RT_USING_MTD_NOR */
 
 #endif /* RT_USING_DFS */
 

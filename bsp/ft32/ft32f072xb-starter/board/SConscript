@@ -15,11 +15,11 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/FT32F0xx/CMSIS/FT32F0xx/source/gcc/startup_ft32f072xb.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/FT32F0xx/CMSIS/FT32F0xx/source/arm/startup_ft32f072xb.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/FT32F0xx/CMSIS/FT32F0xx/source/iar/startup_ft32f072xb.s']
 
 # FT32F072x8 || FT32F072xB

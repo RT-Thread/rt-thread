@@ -15,6 +15,7 @@
 #include "dlelf.h"
 
 #ifdef RT_USING_POSIX_FS
+#include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>

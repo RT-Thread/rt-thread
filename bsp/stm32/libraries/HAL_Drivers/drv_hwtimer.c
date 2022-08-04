@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,9 +9,11 @@
  * 2020-06-16     thread-liu   Porting for stm32mp1
  * 2020-08-25     linyongkang  Fix the timer clock frequency doubling problem
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-11-18     leizhixiong  add STM32H7 series support
  */
 
-#include <board.h>
+#include <rtdevice.h>
+
 #ifdef BSP_USING_TIM
 #include "drv_config.h"
 
@@ -215,8 +217,10 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         if (tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
+#else
+#error "This driver has not supported this series yet!"
 #endif
         {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
@@ -317,7 +321,7 @@ static void timer_stop(rt_hwtimer_t *timer)
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_ERROR;
     uint32_t pclk1_doubler, pclk2_doubler;
 
     RT_ASSERT(timer != RT_NULL);
@@ -345,7 +349,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         if (tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
 #endif
         {
@@ -361,11 +365,13 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
         /* Update frequency value */
         tim->Instance->EGR |= TIM_EVENTSOURCE_UPDATE;
+
+        result = RT_EOK;
     }
     break;
     default:
     {
-        result = -RT_ENOSYS;
+        result = -RT_EINVAL;
     }
     break;
     }
@@ -431,6 +437,16 @@ void TIM5_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
     HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM5_INDEX].tim_handle);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+#ifdef BSP_USING_TIM7
+void TIM7_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM7_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -534,6 +550,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM5_INDEX].time_device);
     }
 #endif
+#ifdef BSP_USING_TIM7
+    if (htim->Instance == TIM7)
+    {
+        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM7_INDEX].time_device);
+    }
+#endif
 #ifdef BSP_USING_TIM11
     if (htim->Instance == TIM11)
     {
@@ -581,7 +603,8 @@ static int stm32_hwtimer_init(void)
     {
         stm32_hwtimer_obj[i].time_device.info = &_info;
         stm32_hwtimer_obj[i].time_device.ops  = &_ops;
-        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device, stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
+        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device,
+            stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
         {
             LOG_D("%s register success", stm32_hwtimer_obj[i].name);
         }

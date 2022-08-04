@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
  * 2018-11-16     Ernest Chen  add finsh command and update adc function
+ * 2022-05-11     Stanley Lwin add finsh voltage conversion command
  */
 
 #include <rtthread.h>
@@ -41,20 +42,35 @@ static rt_size_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_
 
 static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result = -RT_EINVAL;
     rt_adc_device_t adc = (struct rt_adc_device *)dev;
 
-    if (adc->ops->enabled == RT_NULL)
-    {
-        return -RT_ENOSYS;
-    }
-    if (cmd == RT_ADC_CMD_ENABLE)
+    if (cmd == RT_ADC_CMD_ENABLE && adc->ops->enabled)
     {
         result = adc->ops->enabled(adc, (rt_uint32_t)args, RT_TRUE);
     }
-    else if (cmd == RT_ADC_CMD_DISABLE)
+    else if (cmd == RT_ADC_CMD_DISABLE && adc->ops->enabled)
     {
         result = adc->ops->enabled(adc, (rt_uint32_t)args, RT_FALSE);
+    }
+    else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution && args)
+    {
+        rt_uint8_t resolution = adc->ops->get_resolution(adc);
+        if(resolution != 0)
+        {
+            *((rt_uint8_t*)args) = resolution;
+            LOG_D("resolution: %d bits", resolution);
+            result = RT_EOK;
+        }
+    }
+    else if (cmd == RT_ADC_CMD_GET_VREF && adc->ops->get_vref && args)
+    {
+        rt_int16_t value = adc->ops->get_vref(adc);
+        if(value != 0)
+        {
+            *((rt_int16_t *) args) = value;
+            result = RT_EOK;
+        }
     }
 
     return result;
@@ -115,6 +131,7 @@ rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel)
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(dev);
+
     if (dev->ops->enabled != RT_NULL)
     {
         result = dev->ops->enabled(dev, channel, RT_TRUE);
@@ -132,6 +149,7 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(dev);
+
     if (dev->ops->enabled != RT_NULL)
     {
         result = dev->ops->enabled(dev, channel, RT_FALSE);
@@ -144,12 +162,41 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
+rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
+{
+    rt_uint32_t value = 0;
+    rt_int16_t vref = 0, voltage = 0;
+    rt_uint8_t resolution = 0;
+
+    RT_ASSERT(dev);
+
+    /*get the resolution in bits*/
+    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution) != RT_EOK)
+    {
+        goto _voltage_exit;
+    }
+
+    /*get the reference voltage*/
+    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK)
+    {
+        goto _voltage_exit;
+    }
+
+    /*read the value and convert to voltage*/
+    dev->ops->convert(dev, channel, &value);
+    voltage = value * vref / (1 << resolution);
+
+_voltage_exit:
+    return voltage;
+}
+
 #ifdef RT_USING_FINSH
 
 static int adc(int argc, char **argv)
 {
     int value = 0;
-    int result = RT_EOK;
+    rt_int16_t voltage = 0;
+    rt_err_t result = -RT_ERROR;
     static rt_adc_device_t adc_device = RT_NULL;
     char *result_str;
 
@@ -165,14 +212,14 @@ static int adc(int argc, char **argv)
             }
             else
             {
-                rt_kprintf("adc probe <adc_name>   - probe adc by name\n");
+                rt_kprintf("adc probe <device name>   - probe adc by name\n");
             }
         }
         else
         {
             if (adc_device == RT_NULL)
             {
-                rt_kprintf("Please using 'adc probe <adc_name>' first\n");
+                rt_kprintf("Please using 'adc probe <device name>' first\n");
                 return -RT_ERROR;
             }
             if (!strcmp(argv[1], "enable"))
@@ -213,6 +260,19 @@ static int adc(int argc, char **argv)
                     rt_kprintf("adc disable <channel>  - disable adc channel\n");
                 }
             }
+            else if (!strcmp(argv[1], "voltage"))
+            {
+                if(argc == 3)
+                {
+                    voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
+                    result_str = (result == RT_EOK) ? "success" : "failure";
+                    rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 1000, voltage % 1000);
+                }
+                else
+                {
+                    rt_kprintf("adc convert voltage <channel> \n");
+                }
+            }
             else
             {
                 rt_kprintf("Unknown command. Please enter 'adc' for help\n");
@@ -222,14 +282,15 @@ static int adc(int argc, char **argv)
     else
     {
         rt_kprintf("Usage: \n");
-        rt_kprintf("adc probe <adc_name>   - probe adc by name\n");
-        rt_kprintf("adc read <channel>     - read adc value on the channel\n");
-        rt_kprintf("adc disable <channel>  - disable adc channel\n");
-        rt_kprintf("adc enable <channel>   - enable adc channel\n");
+        rt_kprintf("adc probe <device name> - probe adc by name\n");
+        rt_kprintf("adc read <channel>      - read adc value on the channel\n");
+        rt_kprintf("adc disable <channel>   - disable adc channel\n");
+        rt_kprintf("adc enable <channel>    - enable adc channel\n");
+
         result = -RT_ERROR;
     }
     return RT_EOK;
 }
-MSH_CMD_EXPORT(adc, adc function);
+MSH_CMD_EXPORT(adc, adc [option]);
 
 #endif /* RT_USING_FINSH */

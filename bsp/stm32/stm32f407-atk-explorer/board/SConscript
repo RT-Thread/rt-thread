@@ -18,6 +18,9 @@ path += [cwd + '/ports']
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('ports/phy_reset.c')
 
+if GetDepend(['BSP_USING_SOFT_SPI_FLASH']):
+    src += Glob('ports/soft_spi_flash_init.c')
+
 if GetDepend(['BSP_USING_SPI_FLASH']):
     src += Glob('ports/spi_flash_init.c')
 
@@ -29,20 +32,26 @@ if GetDepend(['BSP_USING_FS']):
 if GetDepend(['BSP_USING_SRAM']):
     src += Glob('ports/drv_sram.c')
 
-if GetDepend(['BSP_USING_MCU_LCD']):
+if GetDepend(['BSP_USING_ONBOARD_LCD']):
     src += Glob('ports/drv_lcd.c')
 
-if GetDepend(['BSP_USING_TOUCH']):
-    src += Glob('ports/touch/*.c')
+if GetDepend(['BSP_USING_TOUCH_CAP']):
+    src += Glob('ports/touch/drv_touch_ft.c')
+    src += Glob('ports/touch/drv_touch.c')
+    path += [cwd + '/ports/touch']
+
+if GetDepend(['BSP_USING_TOUCH_RES']):
+    src += Glob('ports/touch/drv_touch_xpt.c')
+    src += Glob('ports/touch/drv_xpt2046_init.c')
     path += [cwd + '/ports/touch']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f407xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f407xx.s']
 
 CPPDEFINES = ['STM32F407xx']

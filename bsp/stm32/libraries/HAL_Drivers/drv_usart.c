@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -169,7 +169,9 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     }
 
 #ifdef RT_SERIAL_USING_DMA
-    uart->dma_rx.last_index = 0;
+    if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
+        uart->dma_rx.last_index = 0;
+    }
 #endif
 
     if (HAL_UART_Init(&uart->handle) != HAL_OK)
@@ -907,6 +909,34 @@ static void stm32_uart_get_dma_config(void)
     uart_config[UART6_INDEX].dma_tx = &uart6_dma_tx;
 #endif
 #endif
+
+#ifdef BSP_USING_UART7
+    uart_obj[UART7_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART7_RX_USING_DMA
+    uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart7_dma_rx = UART7_DMA_RX_CONFIG;
+    uart_config[UART7_INDEX].dma_rx = &uart7_dma_rx;
+#endif
+#ifdef BSP_UART7_TX_USING_DMA
+    uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart7_dma_tx = UART7_DMA_TX_CONFIG;
+    uart_config[UART7_INDEX].dma_tx = &uart7_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_UART8
+    uart_obj[UART8_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART8_RX_USING_DMA
+    uart_obj[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart8_dma_rx = UART8_DMA_RX_CONFIG;
+    uart_config[UART8_INDEX].dma_rx = &uart8_dma_rx;
+#endif
+#ifdef BSP_UART8_TX_USING_DMA
+    uart_obj[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart8_dma_tx = UART8_DMA_TX_CONFIG;
+    uart_config[UART8_INDEX].dma_tx = &uart8_dma_tx;
+#endif
+#endif
 }
 
 #ifdef RT_SERIAL_USING_DMA
@@ -1126,13 +1156,12 @@ static const struct rt_uart_ops stm32_uart_ops =
 
 int rt_hw_usart_init(void)
 {
-    rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct stm32_uart);
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
     stm32_uart_get_dma_config();
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct stm32_uart); i++)
     {
         /* init UART object */
         uart_obj[i].config = &uart_config[i];

@@ -1,0 +1,43 @@
+menuconfig RTT_POSIX_TESTCASE_PTHREAD_H
+    bool "<pthread.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_PTHREAD_H
+
+    config PTHREAD_H_PTHREAD_CREATE
+        bool "<pthread.h> -> pthread_create"
+        default n
+
+    config PTHREAD_H_PTHREAD_JOIN
+        bool "<pthread.h> -> pthread_join"
+        default n
+
+    config PTHREAD_H_PTHREAD_EXIT
+        bool "<pthread.h> -> pthread_exit"
+        default n
+
+    config PTHREAD_H_PTHREAD_COND_INIT
+        bool "<pthread.h> -> pthread_cond_init"
+        default n
+
+    config PTHREAD_H_PTHREAD_COND_DESTROY
+        bool "<pthread.h> -> pthread_cond_destroy"
+        default n
+
+    config PTHREAD_H_PTHREAD_COND_BROADCAST
+        bool "<pthread.h> -> pthread_cond_broadcast"
+        default n
+
+    config PTHREAD_H_PTHREAD_COND_SIGNAL
+        bool "<pthread.h> -> pthread_cond_signal"
+        default n
+
+    config PTHREAD_H_PTHREAD_COND_TIMEWAIT
+        bool "<pthread.h> -> pthread_cond_timedwait"
+        default n
+
+    config PTHREAD_H_PTHREAD_DETACH
+        bool "<pthread.h> -> pthread_detach"
+        default n
+
+endif

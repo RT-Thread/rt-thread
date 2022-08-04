@@ -6,23 +6,22 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
+
+
 /* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33lc0xx_fl_rmu.h"
-#include "fm33lc0xx_fl_atim.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -31,6 +30,8 @@
 /** @addtogroup ATIM
   * @{
   */
+
+#ifdef FL_ATIM_DRIVER_ENABLED
 
 /* Private macros ------------------------------------------------------------------*/
 /** @addtogroup ATIM_FL_Private_Macros
@@ -421,7 +422,7 @@ FL_ErrorStatus FL_ATIM_Init(ATIM_Type *TIMx, FL_ATIM_InitTypeDef *TIM_InitStruct
     }
     /* 手动触发更新事件，将配置值写入 */
     FL_ATIM_GenerateUpdateEvent(TIMx);
-    while((!FL_ATIM_IsActiveFlag_Update(ATIM))&i)
+    while((!FL_ATIM_IsActiveFlag_Update(ATIM))&&i)
     {
         i--;
     }
@@ -649,7 +650,7 @@ FL_ErrorStatus FL_ATIM_OC_Init(ATIM_Type *TIMx, uint32_t channel, FL_ATIM_OC_Ini
     OCConfig(TIMx, channel, TIM_OC_InitStruct);
     /* 手动触发更新事件，将配置值写入 */
     FL_ATIM_GenerateUpdateEvent(TIMx);
-    while((!FL_ATIM_IsActiveFlag_Update(ATIM))&i)
+    while((!FL_ATIM_IsActiveFlag_Update(ATIM))&&i)
     {
         i--;
     }
@@ -766,12 +767,14 @@ void FL_ATIM_BDTR_StructInit(FL_ATIM_BDTR_InitTypeDef *TIM_BDTR_InitStruct)
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* FL_ATIM_DRIVER_ENABLED */
 
 /**
   * @}
   */
 
-/******************************************* END OF FILE *******************************************/
+/**
+  * @}
+  */
+
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

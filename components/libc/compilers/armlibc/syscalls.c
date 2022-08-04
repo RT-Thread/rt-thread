@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 #include <compiler_private.h>
 #ifdef RT_USING_POSIX_STDIO
-#include "libc.h"
+    #include "libc.h"
 #endif /* RT_USING_POSIX_STDIO */
 
 #define DBG_TAG    "armlibc.syscalls"
@@ -31,9 +31,9 @@
 #include <rtdbg.h>
 
 #ifdef __clang__
-__asm(".global __use_no_semihosting\n\t");
+    __asm(".global __use_no_semihosting\n\t");
 #else
-#pragma import(__use_no_semihosting_swi)
+    #pragma import(__use_no_semihosting_swi)
 #endif
 
 /* Standard IO device handles. */
@@ -71,7 +71,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 
 #ifndef DFS_USING_POSIX
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    return 0; /* error */
+    return -1; /* error */
 #else
     /* Correct openmode from fopen to open */
     if (openmode & OPEN_PLUS)
@@ -101,7 +101,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 
     fd = open(name, mode, 0);
     if (fd < 0)
-        return 0; /* error */
+        return -1; /* error */
     else
         return fd;
 #endif /* DFS_USING_POSIX */
@@ -116,7 +116,7 @@ int _sys_close(FILEHANDLE fh)
     return close(fh);
 #else
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    return 0;
+    return 0; /* error */
 #endif /* DFS_USING_POSIX */
 }
 
@@ -285,7 +285,7 @@ RT_WEAK void _sys_exit(int return_code)
 {
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(return_code);
-    while(1);
+    while (1);
 }
 
 /**
@@ -312,7 +312,7 @@ long _sys_flen(FILEHANDLE fh)
 
 int _sys_istty(FILEHANDLE fh)
 {
-    if((STDIN <= fh) && (fh <= STDERR))
+    if ((STDIN <= fh) && (fh <= STDERR))
         return 1;
     else
         return 0;
@@ -352,7 +352,7 @@ int fgetc(FILE *f)
         return 0;
     }
 
-    if(read(STDIN_FILENO, &ch, 1) == 1)
+    if (read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
 #endif /* RT_USING_POSIX_STDIO */
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);

@@ -279,17 +279,20 @@ void at32_msp_can_init(void *instance)
     if(CAN1 == can_x)
     {
         crm_periph_clock_enable(CRM_CAN1_PERIPH_CLOCK, TRUE);
-        crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_GPIOB_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_IOMUX_PERIPH_CLOCK, TRUE);
+
         gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
         gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
         gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-        gpio_init_struct.gpio_pins = GPIO_PINS_12;
-        gpio_init(GPIOA, &gpio_init_struct);
+        gpio_init_struct.gpio_pins = GPIO_PINS_9;
+        gpio_init(GPIOB, &gpio_init_struct);
+        gpio_pin_remap_config(CAN1_GMUX_0010, TRUE);
 
         gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
         gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-        gpio_init_struct.gpio_pins = GPIO_PINS_11;
-        gpio_init(GPIOA, &gpio_init_struct);
+        gpio_init_struct.gpio_pins = GPIO_PINS_8;
+        gpio_init(GPIOB, &gpio_init_struct);
     }
 #endif
 #ifdef BSP_USING_CAN2

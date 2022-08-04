@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -155,13 +155,13 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
  */
 rt_thread_t rt_thread_defunct_dequeue(void)
 {
-    register rt_base_t lock;
+    rt_base_t level;
     rt_thread_t thread = RT_NULL;
     rt_list_t *l = &_rt_thread_defunct;
 
 #ifdef RT_USING_SMP
     /* disable interrupt */
-    lock = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
@@ -169,16 +169,16 @@ rt_thread_t rt_thread_defunct_dequeue(void)
                 tlist);
         rt_list_remove(&(thread->tlist));
     }
-    rt_hw_interrupt_enable(lock);
+    rt_hw_interrupt_enable(level);
 #else
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
                 struct rt_thread,
                 tlist);
-        lock = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
         rt_list_remove(&(thread->tlist));
-        rt_hw_interrupt_enable(lock);
+        rt_hw_interrupt_enable(level);
     }
 #endif
     return thread;
@@ -194,6 +194,7 @@ static void rt_defunct_execute(void)
     while (1)
     {
         rt_thread_t thread;
+        rt_bool_t object_is_systemobject;
         void (*cleanup)(struct rt_thread *tid);
 
 #ifdef RT_USING_MODULE
@@ -212,32 +213,38 @@ static void rt_defunct_execute(void)
             dlmodule_destroy(module);
         }
 #endif
-        /* invoke thread cleanup */
-        cleanup = thread->cleanup;
-        if (cleanup != RT_NULL)
-        {
-            cleanup(thread);
-        }
 
 #ifdef RT_USING_SIGNALS
         rt_thread_free_sig(thread);
 #endif
 
+        /* store the point of "thread->cleanup" avoid to lose */
+        cleanup = thread->cleanup;
+
         /* if it's a system object, not delete it */
-        if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
+        object_is_systemobject = rt_object_is_systemobject((rt_object_t)thread);
+        if (object_is_systemobject == RT_TRUE)
         {
             /* detach this object */
             rt_object_detach((rt_object_t)thread);
         }
-        else
+
+        /* invoke thread cleanup */
+        if (cleanup != RT_NULL)
         {
+            cleanup(thread);
+        }
+
 #ifdef RT_USING_HEAP
+        /* if need free, delete it */
+        if (object_is_systemobject == RT_FALSE)
+        {
             /* release thread's stack */
             RT_KERNEL_FREE(thread->stack_addr);
             /* delete thread object */
             rt_object_delete((rt_object_t)thread);
-#endif
         }
+#endif
     }
 }
 
@@ -344,9 +351,9 @@ void rt_thread_idle_init(void)
 rt_thread_t rt_thread_idle_gethandler(void)
 {
 #ifdef RT_USING_SMP
-    register int id = rt_hw_cpu_id();
+    int id = rt_hw_cpu_id();
 #else
-    register int id = 0;
+    int id = 0;
 #endif /* RT_USING_SMP */
 
     return (rt_thread_t)(&idle[id]);

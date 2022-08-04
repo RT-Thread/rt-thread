@@ -9,11 +9,11 @@ SrcRemove(src, 'onewire.c')
 CFLAGS = ''
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['startup/startup_gcc.c']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['startup/startup_rvmdk.S']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += ['startup/startup_ewarm.c']
     CFLAGS += ' --diag_suppress=pe177'
 

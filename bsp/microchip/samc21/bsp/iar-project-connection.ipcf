@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iarProjectConnection name="src" oneShot="false">
+    <device>
+        <name>ATSAMC21J18A</name>
+    </device>
+
+    <includePath>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\examples</path>
+        <path>$PROJ_DIR$\hal\include</path>
+        <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\adc</path>
+        <path>$PROJ_DIR$\hpl\can</path>
+        <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\divas</path>
+        <path>$PROJ_DIR$\hpl\dmac</path>
+        <path>$PROJ_DIR$\hpl\gclk</path>
+        <path>$PROJ_DIR$\hpl\mclk</path>
+        <path>$PROJ_DIR$\hpl\nvmctrl</path>
+        <path>$PROJ_DIR$\hpl\osc32kctrl</path>
+        <path>$PROJ_DIR$\hpl\oscctrl</path>
+        <path>$PROJ_DIR$\hpl\pm</path>
+        <path>$PROJ_DIR$\hpl\port</path>
+        <path>$PROJ_DIR$\hpl\sercom</path>
+        <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\CMSIS\Core\Include</path>
+        <path>$PROJ_DIR$\samc21\include</path>
+    </includePath>
+
+    <asmIncludePath>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\examples</path>
+        <path>$PROJ_DIR$\hal\include</path>
+        <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\adc</path>
+        <path>$PROJ_DIR$\hpl\can</path>
+        <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\divas</path>
+        <path>$PROJ_DIR$\hpl\dmac</path>
+        <path>$PROJ_DIR$\hpl\gclk</path>
+        <path>$PROJ_DIR$\hpl\mclk</path>
+        <path>$PROJ_DIR$\hpl\nvmctrl</path>
+        <path>$PROJ_DIR$\hpl\osc32kctrl</path>
+        <path>$PROJ_DIR$\hpl\oscctrl</path>
+        <path>$PROJ_DIR$\hpl\pm</path>
+        <path>$PROJ_DIR$\hpl\port</path>
+        <path>$PROJ_DIR$\hpl\sercom</path>
+        <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\CMSIS\Core\Include</path>
+        <path>$PROJ_DIR$\samc21\include</path>
+    </asmIncludePath>
+
+    <defines>
+        <define>__SAMC21J18A__</define>
+        <define>F_CPU=40001536</define>
+    </defines>
+
+    <asmDefines>
+        <define>__SAMC21J18A__</define>
+    </asmDefines>
+
+    <linkerFile>
+		<override>True</override>
+		<path>$PROJ_DIR$\samc21\iar\iar\samc21j18a_flash.icf</path>
+    </linkerFile>
+
+    <files>
+
+            <path>atmel_start.c</path>
+            <path>atmel_start.h</path>
+            <path>atmel_start_pins.h</path>
+            <path>driver_init.c</path>
+            <path>driver_init.h</path>
+            <path>main.c</path>
+    
+
+        <group name="CMSIS/Core/Include">
+            <path>CMSIS/Core/Include/cmsis_armcc.h</path>
+            <path>CMSIS/Core/Include/cmsis_armclang.h</path>
+            <path>CMSIS/Core/Include/cmsis_compiler.h</path>
+            <path>CMSIS/Core/Include/cmsis_gcc.h</path>
+            <path>CMSIS/Core/Include/cmsis_iccarm.h</path>
+            <path>CMSIS/Core/Include/cmsis_version.h</path>
+            <path>CMSIS/Core/Include/core_armv8mbl.h</path>
+            <path>CMSIS/Core/Include/core_armv8mml.h</path>
+            <path>CMSIS/Core/Include/core_cm0.h</path>
+            <path>CMSIS/Core/Include/core_cm0plus.h</path>
+            <path>CMSIS/Core/Include/core_cm1.h</path>
+            <path>CMSIS/Core/Include/core_cm23.h</path>
+            <path>CMSIS/Core/Include/core_cm3.h</path>
+            <path>CMSIS/Core/Include/core_cm33.h</path>
+            <path>CMSIS/Core/Include/core_cm4.h</path>
+            <path>CMSIS/Core/Include/core_cm7.h</path>
+            <path>CMSIS/Core/Include/core_sc000.h</path>
+            <path>CMSIS/Core/Include/core_sc300.h</path>
+            <path>CMSIS/Core/Include/mpu_armv7.h</path>
+            <path>CMSIS/Core/Include/mpu_armv8.h</path>
+            <path>CMSIS/Core/Include/tz_context.h</path>
+        </group>
+
+        <group name="config">
+            <path>config/hpl_adc_config.h</path>
+            <path>config/hpl_can_config.h</path>
+            <path>config/hpl_divas_config.h</path>
+            <path>config/hpl_dmac_config.h</path>
+            <path>config/hpl_gclk_config.h</path>
+            <path>config/hpl_mclk_config.h</path>
+            <path>config/hpl_nvmctrl_config.h</path>
+            <path>config/hpl_osc32kctrl_config.h</path>
+            <path>config/hpl_oscctrl_config.h</path>
+            <path>config/hpl_port_config.h</path>
+            <path>config/hpl_sercom_config.h</path>
+            <path>config/peripheral_clk_config.h</path>
+        </group>
+
+        <group name="examples">
+            <path>examples/driver_examples.c</path>
+            <path>examples/driver_examples.h</path>
+        </group>
+
+        <group name="hal/include">
+            <path>hal/include/hal_adc_sync.h</path>
+            <path>hal/include/hal_atomic.h</path>
+            <path>hal/include/hal_can_async.h</path>
+            <path>hal/include/hal_delay.h</path>
+            <path>hal/include/hal_flash.h</path>
+            <path>hal/include/hal_gpio.h</path>
+            <path>hal/include/hal_i2c_m_sync.h</path>
+            <path>hal/include/hal_init.h</path>
+            <path>hal/include/hal_io.h</path>
+            <path>hal/include/hal_sleep.h</path>
+            <path>hal/include/hal_usart_async.h</path>
+            <path>hal/include/hpl_adc_async.h</path>
+            <path>hal/include/hpl_adc_dma.h</path>
+            <path>hal/include/hpl_adc_sync.h</path>
+            <path>hal/include/hpl_can.h</path>
+            <path>hal/include/hpl_can_async.h</path>
+            <path>hal/include/hpl_core.h</path>
+            <path>hal/include/hpl_delay.h</path>
+            <path>hal/include/hpl_div.h</path>
+            <path>hal/include/hpl_dma.h</path>
+            <path>hal/include/hpl_flash.h</path>
+            <path>hal/include/hpl_gpio.h</path>
+            <path>hal/include/hpl_i2c_m_async.h</path>
+            <path>hal/include/hpl_i2c_m_sync.h</path>
+            <path>hal/include/hpl_i2c_s_async.h</path>
+            <path>hal/include/hpl_i2c_s_sync.h</path>
+            <path>hal/include/hpl_init.h</path>
+            <path>hal/include/hpl_irq.h</path>
+            <path>hal/include/hpl_missing_features.h</path>
+            <path>hal/include/hpl_reset.h</path>
+            <path>hal/include/hpl_sleep.h</path>
+            <path>hal/include/hpl_spi.h</path>
+            <path>hal/include/hpl_spi_async.h</path>
+            <path>hal/include/hpl_spi_m_async.h</path>
+            <path>hal/include/hpl_spi_m_dma.h</path>
+            <path>hal/include/hpl_spi_m_sync.h</path>
+            <path>hal/include/hpl_spi_s_async.h</path>
+            <path>hal/include/hpl_spi_s_sync.h</path>
+            <path>hal/include/hpl_spi_sync.h</path>
+            <path>hal/include/hpl_usart.h</path>
+            <path>hal/include/hpl_usart_async.h</path>
+            <path>hal/include/hpl_usart_sync.h</path>
+            <path>hal/include/hpl_user_area.h</path>
+        </group>
+
+        <group name="hal/src">
+            <path>hal/src/hal_adc_sync.c</path>
+            <path>hal/src/hal_atomic.c</path>
+            <path>hal/src/hal_can_async.c</path>
+            <path>hal/src/hal_delay.c</path>
+            <path>hal/src/hal_flash.c</path>
+            <path>hal/src/hal_gpio.c</path>
+            <path>hal/src/hal_i2c_m_sync.c</path>
+            <path>hal/src/hal_init.c</path>
+            <path>hal/src/hal_io.c</path>
+            <path>hal/src/hal_sleep.c</path>
+            <path>hal/src/hal_usart_async.c</path>
+        </group>
+
+        <group name="hal/utils/include">
+            <path>hal/utils/include/compiler.h</path>
+            <path>hal/utils/include/err_codes.h</path>
+            <path>hal/utils/include/events.h</path>
+            <path>hal/utils/include/parts.h</path>
+            <path>hal/utils/include/utils.h</path>
+            <path>hal/utils/include/utils_assert.h</path>
+            <path>hal/utils/include/utils_event.h</path>
+            <path>hal/utils/include/utils_increment_macro.h</path>
+            <path>hal/utils/include/utils_list.h</path>
+            <path>hal/utils/include/utils_repeat_macro.h</path>
+            <path>hal/utils/include/utils_ringbuffer.h</path>
+        </group>
+
+        <group name="hal/utils/src">
+            <path>hal/utils/src/utils_assert.c</path>
+            <path>hal/utils/src/utils_event.c</path>
+            <path>hal/utils/src/utils_list.c</path>
+            <path>hal/utils/src/utils_ringbuffer.c</path>
+        </group>
+
+        <group name="hpl/adc">
+            <path>hpl/adc/hpl_adc.c</path>
+            <path>hpl/adc/hpl_adc_base.h</path>
+        </group>
+
+        <group name="hpl/can">
+            <path>hpl/can/hpl_can.c</path>
+            <path>hpl/can/hpl_can_base.h</path>
+        </group>
+
+        <group name="hpl/core">
+            <path>hpl/core/hpl_core_m0plus_base.c</path>
+            <path>hpl/core/hpl_core_port.h</path>
+            <path>hpl/core/hpl_init.c</path>
+        </group>
+
+        <group name="hpl/divas">
+            <path>hpl/divas/hpl_divas.c</path>
+        </group>
+
+        <group name="hpl/dmac">
+            <path>hpl/dmac/hpl_dmac.c</path>
+        </group>
+
+        <group name="hpl/gclk">
+            <path>hpl/gclk/hpl_gclk.c</path>
+            <path>hpl/gclk/hpl_gclk_base.h</path>
+        </group>
+
+        <group name="hpl/mclk">
+            <path>hpl/mclk/hpl_mclk.c</path>
+        </group>
+
+        <group name="hpl/nvmctrl">
+            <path>hpl/nvmctrl/hpl_nvmctrl.c</path>
+        </group>
+
+        <group name="hpl/osc32kctrl">
+            <path>hpl/osc32kctrl/hpl_osc32kctrl.c</path>
+        </group>
+
+        <group name="hpl/oscctrl">
+            <path>hpl/oscctrl/hpl_oscctrl.c</path>
+        </group>
+
+        <group name="hpl/pm">
+            <path>hpl/pm/hpl_pm.c</path>
+            <path>hpl/pm/hpl_pm_base.h</path>
+        </group>
+
+        <group name="hpl/port">
+            <path>hpl/port/hpl_gpio_base.h</path>
+        </group>
+
+        <group name="hpl/sercom">
+            <path>hpl/sercom/hpl_sercom.c</path>
+        </group>
+
+        <group name="hri">
+            <path>hri/hri_ac_c21.h</path>
+            <path>hri/hri_adc_c21.h</path>
+            <path>hri/hri_c21.h</path>
+            <path>hri/hri_can_c21.h</path>
+            <path>hri/hri_ccl_c21.h</path>
+            <path>hri/hri_dac_c21.h</path>
+            <path>hri/hri_divas_c21.h</path>
+            <path>hri/hri_dmac_c21.h</path>
+            <path>hri/hri_dsu_c21.h</path>
+            <path>hri/hri_eic_c21.h</path>
+            <path>hri/hri_evsys_c21.h</path>
+            <path>hri/hri_freqm_c21.h</path>
+            <path>hri/hri_gclk_c21.h</path>
+            <path>hri/hri_hmatrixb_c21.h</path>
+            <path>hri/hri_mclk_c21.h</path>
+            <path>hri/hri_mpu_c21.h</path>
+            <path>hri/hri_mtb_c21.h</path>
+            <path>hri/hri_nvic_c21.h</path>
+            <path>hri/hri_nvmctrl_c21.h</path>
+            <path>hri/hri_osc32kctrl_c21.h</path>
+            <path>hri/hri_oscctrl_c21.h</path>
+            <path>hri/hri_pac_c21.h</path>
+            <path>hri/hri_pm_c21.h</path>
+            <path>hri/hri_port_c21.h</path>
+            <path>hri/hri_rstc_c21.h</path>
+            <path>hri/hri_rtc_c21.h</path>
+            <path>hri/hri_sdadc_c21.h</path>
+            <path>hri/hri_sercom_c21.h</path>
+            <path>hri/hri_supc_c21.h</path>
+            <path>hri/hri_systemcontrol_c21.h</path>
+            <path>hri/hri_systick_c21.h</path>
+            <path>hri/hri_tc_c21.h</path>
+            <path>hri/hri_tcc_c21.h</path>
+            <path>hri/hri_tsens_c21.h</path>
+            <path>hri/hri_wdt_c21.h</path>
+        </group>
+
+        <group name="samc21/iar">
+            <path>samc21/iar/system_samc21.c</path>
+        </group>
+
+        <group name="samc21/iar/iar">
+            <path>samc21/iar/iar/startup_samc21.c</path>
+        </group>
+
+        <group name="samc21/include">
+            <path>samc21/include/component-version.h</path>
+            <path>samc21/include/sam.h</path>
+            <path>samc21/include/sam.h</path>
+            <path>samc21/include/samc21.h</path>
+            <path>samc21/include/samc21e15a.h</path>
+            <path>samc21/include/samc21e16a.h</path>
+            <path>samc21/include/samc21e17a.h</path>
+            <path>samc21/include/samc21e18a.h</path>
+            <path>samc21/include/samc21g15a.h</path>
+            <path>samc21/include/samc21g16a.h</path>
+            <path>samc21/include/samc21g17a.h</path>
+            <path>samc21/include/samc21g18a.h</path>
+            <path>samc21/include/samc21j15a.h</path>
+            <path>samc21/include/samc21j16a.h</path>
+            <path>samc21/include/samc21j17a.h</path>
+            <path>samc21/include/samc21j17au.h</path>
+            <path>samc21/include/samc21j18a.h</path>
+            <path>samc21/include/samc21j18au.h</path>
+            <path>samc21/include/system_samc21.h</path>
+        </group>
+
+        <group name="samc21/include/component">
+            <path>samc21/include/component/ac.h</path>
+            <path>samc21/include/component/adc.h</path>
+            <path>samc21/include/component/can.h</path>
+            <path>samc21/include/component/ccl.h</path>
+            <path>samc21/include/component/dac.h</path>
+            <path>samc21/include/component/divas.h</path>
+            <path>samc21/include/component/dmac.h</path>
+            <path>samc21/include/component/dsu.h</path>
+            <path>samc21/include/component/eic.h</path>
+            <path>samc21/include/component/evsys.h</path>
+            <path>samc21/include/component/freqm.h</path>
+            <path>samc21/include/component/gclk.h</path>
+            <path>samc21/include/component/hmatrixb.h</path>
+            <path>samc21/include/component/mclk.h</path>
+            <path>samc21/include/component/mtb.h</path>
+            <path>samc21/include/component/nvmctrl.h</path>
+            <path>samc21/include/component/osc32kctrl.h</path>
+            <path>samc21/include/component/oscctrl.h</path>
+            <path>samc21/include/component/pac.h</path>
+            <path>samc21/include/component/pm.h</path>
+            <path>samc21/include/component/port.h</path>
+            <path>samc21/include/component/rstc.h</path>
+            <path>samc21/include/component/rtc.h</path>
+            <path>samc21/include/component/sdadc.h</path>
+            <path>samc21/include/component/sercom.h</path>
+            <path>samc21/include/component/supc.h</path>
+            <path>samc21/include/component/tc.h</path>
+            <path>samc21/include/component/tcc.h</path>
+            <path>samc21/include/component/tsens.h</path>
+            <path>samc21/include/component/wdt.h</path>
+        </group>
+
+        <group name="samc21/include/instance">
+            <path>samc21/include/instance/ac.h</path>
+            <path>samc21/include/instance/adc0.h</path>
+            <path>samc21/include/instance/adc1.h</path>
+            <path>samc21/include/instance/can0.h</path>
+            <path>samc21/include/instance/can1.h</path>
+            <path>samc21/include/instance/ccl.h</path>
+            <path>samc21/include/instance/dac.h</path>
+            <path>samc21/include/instance/divas.h</path>
+            <path>samc21/include/instance/dmac.h</path>
+            <path>samc21/include/instance/dsu.h</path>
+            <path>samc21/include/instance/eic.h</path>
+            <path>samc21/include/instance/evsys.h</path>
+            <path>samc21/include/instance/freqm.h</path>
+            <path>samc21/include/instance/gclk.h</path>
+            <path>samc21/include/instance/hmatrixhs.h</path>
+            <path>samc21/include/instance/mclk.h</path>
+            <path>samc21/include/instance/mtb.h</path>
+            <path>samc21/include/instance/nvmctrl.h</path>
+            <path>samc21/include/instance/osc32kctrl.h</path>
+            <path>samc21/include/instance/oscctrl.h</path>
+            <path>samc21/include/instance/pac.h</path>
+            <path>samc21/include/instance/pm.h</path>
+            <path>samc21/include/instance/port.h</path>
+            <path>samc21/include/instance/ptc.h</path>
+            <path>samc21/include/instance/rstc.h</path>
+            <path>samc21/include/instance/rtc.h</path>
+            <path>samc21/include/instance/sdadc.h</path>
+            <path>samc21/include/instance/sercom0.h</path>
+            <path>samc21/include/instance/sercom1.h</path>
+            <path>samc21/include/instance/sercom2.h</path>
+            <path>samc21/include/instance/sercom3.h</path>
+            <path>samc21/include/instance/sercom4.h</path>
+            <path>samc21/include/instance/sercom5.h</path>
+            <path>samc21/include/instance/supc.h</path>
+            <path>samc21/include/instance/tc0.h</path>
+            <path>samc21/include/instance/tc1.h</path>
+            <path>samc21/include/instance/tc2.h</path>
+            <path>samc21/include/instance/tc3.h</path>
+            <path>samc21/include/instance/tc4.h</path>
+            <path>samc21/include/instance/tcc0.h</path>
+            <path>samc21/include/instance/tcc1.h</path>
+            <path>samc21/include/instance/tcc2.h</path>
+            <path>samc21/include/instance/tsens.h</path>
+            <path>samc21/include/instance/wdt.h</path>
+        </group>
+
+        <group name="samc21/include/pio">
+            <path>samc21/include/pio/samc21e15a.h</path>
+            <path>samc21/include/pio/samc21e16a.h</path>
+            <path>samc21/include/pio/samc21e17a.h</path>
+            <path>samc21/include/pio/samc21e18a.h</path>
+            <path>samc21/include/pio/samc21g15a.h</path>
+            <path>samc21/include/pio/samc21g16a.h</path>
+            <path>samc21/include/pio/samc21g17a.h</path>
+            <path>samc21/include/pio/samc21g18a.h</path>
+            <path>samc21/include/pio/samc21j15a.h</path>
+            <path>samc21/include/pio/samc21j16a.h</path>
+            <path>samc21/include/pio/samc21j17a.h</path>
+            <path>samc21/include/pio/samc21j17au.h</path>
+            <path>samc21/include/pio/samc21j18a.h</path>
+            <path>samc21/include/pio/samc21j18au.h</path>
+        </group>
+    </files>
+</iarProjectConnection>

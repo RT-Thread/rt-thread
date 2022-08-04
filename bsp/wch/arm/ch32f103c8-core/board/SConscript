@@ -15,9 +15,9 @@ board.c
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/CH32F10x_StdPeriph_Driver/CMSIS/WCH/CH32F10x/Source/ARM/startup_ch32f10x.s']
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/CH32F10x_StdPeriph_Driver/CMSIS/WCH/CH32F10x/Source/GCC/startup_ch32f10x.S']
 
 

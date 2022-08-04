@@ -6,22 +6,22 @@
   ****************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   ****************************************************************************************************
   */
+
+
 /* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33lc0xx_fl_lptim32.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -30,6 +30,8 @@
 /** @addtogroup LPTIM32
   * @{
   */
+
+#ifdef FL_LPTIM32_DRIVER_ENABLED
 
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup LPTIM32_FL_Private_Macros
@@ -40,7 +42,7 @@
 
 #define         IS_FL_LPTIM32_OPCLK_SOURCE(__VALUE__)                   (((__VALUE__) == FL_RCC_LPTIM32_CLK_SOURCE_APB1CLK)||\
                                                                          ((__VALUE__) == FL_RCC_LPTIM32_CLK_SOURCE_LSCLK)||\
-                                                                         ((__VALUE__) == FL_RCC_LPTIM32_CLK_SOURCE_RCLP)||\
+                                                                         ((__VALUE__) == FL_RCC_LPTIM32_CLK_SOURCE_LPOSC)||\
                                                                          ((__VALUE__) == FL_RCC_LPTIM32_CLK_SOURCE_RCMF_PSC))
 
 #define         IS_FL_LPTIM32_CLK_SOURCE(__VALUE__)                     (((__VALUE__) == FL_LPTIM32_CLK_SOURCE_INTERNAL)||\
@@ -313,13 +315,14 @@ void FL_LPTIM32_OC_StructInit(FL_LPTIM32_OC_InitTypeDef *initStruct_OC)
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* FL_LPTIM32_DRIVER_ENABLED */
 
 /**
   * @}
   */
 
-/******************************************* END OF FILE *******************************************/
+/**
+  * @}
+  */
 
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

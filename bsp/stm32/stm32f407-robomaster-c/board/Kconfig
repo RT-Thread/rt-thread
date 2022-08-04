@@ -24,14 +24,141 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         if BSP_USING_UART
             config BSP_USING_UART1
-                bool "Enable UART1"
+                bool "Enable UART1 (FinSH , symbol UART2 on board)"
                 default y
 
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3 (DBUS)"
+                default n
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
         endif
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1 (2pin)"
+                default n
+            config BSP_USING_CAN2
+                bool "using CAN2 (4pin)"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            
+            menuconfig BSP_USING_PWM1
+                bool "Enable timer1 output PWM"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable PWM1 channel1"
+                        default n
+                    config BSP_USING_PWM1_CH2
+                        bool "Enable PWM1 channel2"
+                        default n
+                    config BSP_USING_PWM1_CH3
+                        bool "Enable PWM1 channel3"
+                        default n
+                    config BSP_USING_PWM1_CH4
+                        bool "Enable PWM1 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM4
+                bool "Enable timer4 output PWM"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH3
+                        bool "Enable PWM4 channel3 (buzzer)"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM8
+                bool "Enable timer8 output PWM"
+                default n
+                if BSP_USING_PWM8
+                    config BSP_USING_PWM8_CH1
+                        bool "Enable PWM8 channel1"
+                        default n
+                    config BSP_USING_PWM8_CH2
+                        bool "Enable PWM8 channel2"
+                        default n
+                    config BSP_USING_PWM8_CH3
+                        bool "Enable PWM8 channel3"
+                        default n
+                endif
+
+        endif
+        
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n  
+                        
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+                        
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                default 81
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                default 80
+        endif
+
         
     source "../libraries/HAL_Drivers/Kconfig"    
     
