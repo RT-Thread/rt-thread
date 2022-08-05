@@ -690,8 +690,12 @@ struct rt_thread
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
 
 #ifdef RT_USING_CPU_USAGE
-    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+    rt_uint64_t  duration_tick;                         /**< cpu usage tick */
 #endif /* RT_USING_CPU_USAGE */
+
+#ifdef RT_USING_PTHREADS
+    rt_ubase_t  pthread_data;                           /**< the handle of pthread data, adapt 32/64bit */
+#endif /* RT_USING_PTHREADS */
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 

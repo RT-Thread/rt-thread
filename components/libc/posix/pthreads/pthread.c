@@ -135,8 +135,8 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
         /* clean magic */
         ptd->magic = 0x0;
 
-        /* clear the "ptd->tid->user_data" */
-        ptd->tid->user_data = RT_NULL;
+        /* clear the "ptd->tid->pthread_data" */
+        ptd->tid->pthread_data = 0;
 
         /* free ptd */
         rt_free(ptd);
@@ -281,7 +281,7 @@ int pthread_create(pthread_t            *pid,
 
     /* set pthread cleanup function and ptd data */
     ptd->tid->cleanup = _pthread_cleanup;
-    ptd->tid->user_data = (rt_ubase_t)ptd;
+    ptd->tid->pthread_data = (rt_ubase_t)ptd;
 
     /* start thread */
     if (rt_thread_startup(ptd->tid) == RT_EOK)
@@ -395,7 +395,7 @@ pthread_t pthread_self (void)
     if (tid == NULL) return PTHREAD_NUM_MAX;
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
     return _pthread_data_get_pth(ptd);
@@ -478,7 +478,7 @@ void pthread_exit(void *value)
     }
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
 
     rt_enter_critical();
     /* disable cancel */
@@ -596,7 +596,7 @@ void pthread_cleanup_pop(int execute)
     if (rt_thread_self() == NULL) return;
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
     if (execute)
@@ -625,7 +625,7 @@ void pthread_cleanup_push(void (*routine)(void *), void *arg)
     if (rt_thread_self() == NULL) return;
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
     cleanup = (_pthread_cleanup_t *)rt_malloc(sizeof(_pthread_cleanup_t));
@@ -677,7 +677,7 @@ int pthread_setcancelstate(int state, int *oldstate)
     if (rt_thread_self() == NULL) return EINVAL;
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
     if ((state == PTHREAD_CANCEL_ENABLE) || (state == PTHREAD_CANCEL_DISABLE))
@@ -700,7 +700,7 @@ int pthread_setcanceltype(int type, int *oldtype)
     if (rt_thread_self() == NULL) return EINVAL;
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
     if ((type != PTHREAD_CANCEL_DEFERRED) && (type != PTHREAD_CANCEL_ASYNCHRONOUS))
@@ -722,7 +722,7 @@ void pthread_testcancel(void)
     if (rt_thread_self() == NULL) return;
 
     /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->user_data;
+    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
     if (ptd->cancelstate == PTHREAD_CANCEL_ENABLE)
