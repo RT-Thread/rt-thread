@@ -9,6 +9,7 @@
  * 2022-07-20     Emuzit            add watchdog test
  * 2022-07-26     Emuzit            add hwtimer test
  * 2022-07-30     Emuzit            add spi master test
+ * 2022-08-04     Emuzit            add pwm test
  */
 #include <rtthread.h>
 #include <rtdebug.h>
@@ -16,7 +17,10 @@
 #include <drivers/watchdog.h>
 #include <drivers/hwtimer.h>
 #include <drivers/spi.h>
+#include <drivers/rt_drv_pwm.h>
 #include "board.h"
+
+#define PWM_CYCLE_MAX   255
 
 static const rt_base_t gpio_int_pins[8] = GPIO_INT_PINS;
 
@@ -103,6 +107,10 @@ static void test_gpio_int(void)
             for (i = 0; i < 8; i++)
             {
                 rt_base_t pin = gpio_int_pins[i];
+#ifdef RT_USING_PWM
+                if (pin == PWM0_PIN || pin == PWM1_PIN)
+                    continue;
+#endif
                 rt_pin_mode(pin, PIN_MODE_INPUT_PULLUP);
                 res = rt_pin_attach_irq(
                       pin, gpint_mode[i], gpio_int_callback, (void *)pin);
@@ -238,7 +246,7 @@ static void test_spi_master(void)
 
     cfg.max_hz = 25 * 1000000;
     cfg.data_width = 8;
-    cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB | RT_SPI_CS_HIGH;
+    cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB;
 
     res = rt_spi_bus_attach_device(
           &spi_dev_w25q, W25Q32_SPI_NAME, SPI0_BUS_NAME, (void *)W25Q32_CS_PIN);
@@ -284,9 +292,76 @@ static void test_spi_master(void)
     #define test_spi_master()  do {} while(0)
 #endif
 
+#ifdef RT_USING_PWM
+static struct rt_device_pwm *pwm_dev;
+static uint32_t pwm_period;
+
+rt_err_t rt_pwm_get(struct rt_device_pwm *device,
+                    struct rt_pwm_configuration *cfg);
+
+static void pwm_tick_hook(void)
+{
+    uint32_t pulse;
+
+    if (pwm_dev)
+    {
+        /* PWM.CH3 duty cycle : 0%->100% for every ~2.5 seconds */
+        pulse = (rt_tick_get() >> 1) % (PWM_CYCLE_MAX + 1);
+        pulse = (pwm_period * pulse + PWM_CYCLE_MAX/2) / PWM_CYCLE_MAX;
+        rt_pwm_set_pulse(pwm_dev, 3, pulse);
+    }
+}
+
+static void test_pwm(void)
+{
+    struct rt_pwm_configuration cfg;
+    uint32_t pulse[4];
+    int ch;
+
+    pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEVICE_NAME);
+    if (pwm_dev == RT_NULL)
+    {
+        rt_kprintf("can't find %s device !\n", PWM_DEVICE_NAME);
+    }
+    else
+    {
+        /* for HCLK@80MHz, allowed period is 3187 ~ 812812 */
+        pwm_period = 800*1000;
+
+        pulse[0] = 100*1000;
+        pulse[1] = 400*1000;
+        pulse[2] = 600*1000;
+        pulse[3] = 0;
+
+        for (ch = 0; ch < PWM_CHANNELS; ch++)
+        {
+            rt_pwm_set(pwm_dev, ch, pwm_period, pulse[ch]);
+            rt_pwm_enable(pwm_dev, ch);
+
+            cfg.channel = ch;
+            rt_pwm_get(pwm_dev, &cfg);
+            rt_kprintf("pwm%d period set/get : %d/%d\n", ch, pwm_period, cfg.period);
+            rt_kprintf("pwm%d pulse  set/get : %d/%d\n\n", ch, pulse[ch], cfg.pulse);
+        }
+
+        /* disable PWM.CH0 after 1 second, also start changing CH3 */
+        rt_thread_mdelay(1000);
+        rt_pwm_disable(pwm_dev, 0);
+
+        /* connect PWM3 (PB.2) to LED2 for a visualized PWM effect */
+        rt_pin_mode(LED2_PIN, PIN_MODE_INPUT);
+        rt_tick_sethook(pwm_tick_hook);
+    }
+}
+#else
+    #define test_pwm()  do {} while(0)
+#endif
+
 void main(void)
 {
     uint32_t wdog_timeout = 32;
+
+    int i;
 
     rt_kprintf("\nCH569W-R0-1v0, HCLK: %dMHz\n\n", sys_hclk_get() / 1000000);
 
@@ -294,6 +369,7 @@ void main(void)
     test_watchdog(wdog_timeout);
     test_hwtimer();
     test_spi_master();
+    test_pwm();
 
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED0_PIN, led0 = PIN_LOW);

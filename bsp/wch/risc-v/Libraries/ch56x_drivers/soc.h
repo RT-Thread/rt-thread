@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
+#include <rtdef.h>
 
 #if !defined(SOC_CH567) && \
     !defined(SOC_CH568) && \
