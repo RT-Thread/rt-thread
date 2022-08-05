@@ -11,7 +11,6 @@
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pArmCC>6160000::V6.16::ARMCLANG</pArmCC>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -340,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>CY_USING_HAL, __STDC_LIMIT_MACROS, COMPONENT_CAT1A, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARM_LIBC, IFX_PSOC6_43012, __RTTHREAD__, COMPONENT_CAT1, COMPONENT_BSP_DESIGN_MODUS, CY8C624ABZI_S2D44</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\finsh;.;..\..\..\include;..\libraries\IFX_PSOC6_HAL\capsense;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\libraries\IFX_PSOC6_HAL\retarget-io;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\TARGET_CY8CKIT-062S2-43012;..\libraries\IFX_PSOC6_HAL\TARGET_CY8CKIT-062S2-43012\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\components\libc\posix\delay;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\pthreads</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\libraries\IFX_PSOC6_HAL\capsense;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\libraries\IFX_PSOC6_HAL\retarget-io;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\TARGET_CY8CKIT-062S2-43012;..\libraries\IFX_PSOC6_HAL\TARGET_CY8CKIT-062S2-43012\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -552,36 +551,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>devfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
@@ -603,11 +572,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -770,24 +734,19 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</FilePath>
             </File>
             <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
               <FileName>cyhal_utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils.c</FilePath>
             </File>
             <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
               <FileName>cy_ipc_drv.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
             </File>
             <File>
               <FileName>cyhal_hwmgr.c</FileName>
@@ -820,11 +779,6 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</FilePath>
             </File>
             <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
               <FileName>cyhal_irq_psoc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_psoc.c</FilePath>
@@ -838,6 +792,11 @@
               <FileName>cy_sysclk.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysclk.c</FilePath>
+            </File>
+            <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
             <File>
               <FileName>cyhal_syspm.c</FileName>
@@ -858,6 +817,11 @@
               <FileName>cy_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
             <File>
               <FileName>cycfg.c</FileName>
@@ -890,79 +854,19 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\lib\cy_capsense.lib</FilePath>
             </File>
             <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
               <FileName>cycfg_clocks.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\TARGET_CY8CKIT-062S2-43012\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
             </File>
             <File>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+            </File>
+            <File>
               <FileName>cy_ipc_pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_pipe.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>POSIX</GroupName>
-          <Files>
-            <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\delay\delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\io\stdio\libc.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_attr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_attr.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_barrier.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_barrier.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_cond.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_cond.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_mutex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_mutex.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_rwlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_rwlock.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_spin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_spin.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_tls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\pthread_tls.c</FilePath>
-            </File>
-            <File>
-              <FileName>sched.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\posix\pthreads\sched.c</FilePath>
             </File>
           </Files>
         </Group>
