@@ -121,6 +121,9 @@ if GetDepend(['RT_USING_WDT']):
     src += ['mtb-pdl-cat1/drivers/source/cy_wdt.c']
     src += ['mtb-hal-cat1/source/cyhal_wdt.c']
 
+if GetDepend(['RT_USING_HWTIMER']):
+    src += ['mtb-hal-cat1/source/cyhal_timer.c']    
+
 path = [cwd + '/capsense',
         cwd + '/psoc6cm0p',
         cwd + '/retarget-io',
