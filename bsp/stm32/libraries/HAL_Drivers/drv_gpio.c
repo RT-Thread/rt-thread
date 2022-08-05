@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -159,7 +159,7 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 };
 static uint32_t pin_irq_enable_mask = 0;
 
-#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
+#define ITEM_NUM(items) (sizeof(items) / sizeof((items)[0]))
 
 /* e.g. PE.7 */
 static rt_base_t stm32_pin_get(const char *name)
@@ -280,10 +280,10 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
-    rt_uint8_t i;
+    rt_int32_t i;
     for (i = 0; i < 32; i++)
     {
-        if ((0x01 << i) == bit)
+        if (((rt_uint32_t)0x01 << i) == bit)
         {
             return i;
         }
@@ -294,7 +294,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
 {
     rt_int32_t mapindex = bit2bitno(pinbit);
-    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    if (mapindex < 0 || mapindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
@@ -313,9 +313,9 @@ static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
 
     irqindex = bit2bitno(PIN_STPIN(pin));
-    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -330,7 +330,7 @@ static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -352,9 +352,9 @@ static rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     }
 
     irqindex = bit2bitno(PIN_STPIN(pin));
-    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -388,9 +388,9 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     if (enabled == PIN_IRQ_ENABLE)
     {
         irqindex = bit2bitno(PIN_STPIN(pin));
-        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -398,7 +398,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         irqmap = &pin_irq_map[irqindex];
@@ -434,7 +434,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(PIN_STPIN(pin));
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -498,7 +498,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     return RT_EOK;
 }
-const static struct rt_pin_ops _stm32_pin_ops =
+static const struct rt_pin_ops _stm32_pin_ops =
 {
     stm32_pin_mode,
     stm32_pin_write,

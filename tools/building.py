@@ -305,7 +305,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
-    if GetOption('pyconfig_silent'):    
+    if GetOption('pyconfig_silent'):
         from menuconfig import guiconfig_silent
 
         guiconfig_silent(Rtt_Root)
@@ -694,7 +694,7 @@ def PreBuilding():
         a()
 
 def GroupLibName(name, env):
-    
+
     if rtconfig.PLATFORM == 'armcc':
         return name + '_rvds'
     elif rtconfig.PLATFORM == 'gcc':
@@ -850,7 +850,7 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'eclipse':
         from eclipse import TargetEclipse
         TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
-        
+
     if GetOption('target') == 'codelite':
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)

@@ -42,15 +42,6 @@ typedef struct
     uint32_t rdes3;
 } RxDmaDesc;
 
-enum {
-    PHY_LINK        = (1 << 0),
-    PHY_10M         = (1 << 1),
-    PHY_100M        = (1 << 2),
-    PHY_1000M       = (1 << 3),
-    PHY_FULL_DUPLEX = (1 << 4),
-    PHY_HALF_DUPLEX = (1 << 5)
-};
-
 #define RTL8211E_PHY_ADDR       7           /* PHY address */
 
 #define ETH_TXBUFNB             4           /* 4 Tx buffers of size ETH_TX_BUF_SIZE */

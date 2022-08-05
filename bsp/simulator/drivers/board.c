@@ -11,6 +11,7 @@
 #include <rtthread.h>
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "board.h"
 #include "uart_console.h"

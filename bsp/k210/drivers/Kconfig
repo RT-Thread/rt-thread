@@ -1,3 +1,16 @@
+config SOC_K210
+    bool
+    select ARCH_RISCV64
+    select ARCH_RISCV_FPU_S
+    select PKG_USING_K210_SDK
+
+config BOARD_K210_EVB
+    bool
+    select SOC_K210
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 menu "Hardware Drivers Config"
 
 config BSP_USING_UART_HS
@@ -58,17 +71,17 @@ if BSP_USING_SPI1
         default n
     config BSP_SPI1_CLK_PIN
         int "spi1 clk pin number"
-        default 29
+        default 29
     config BSP_SPI1_D0_PIN
         int "spi1 d0 pin number"
-        default 30
+        default 30
     config BSP_SPI1_D1_PIN
         int "spi1 d1 pin number"
-        default 31
+        default 31
     if BSP_USING_SPI1_AS_QSPI
         config BSP_SPI1_D2_PIN
             int "spi1 d2 pin number"
-            default 32
+            default 32
         config BSP_SPI1_D3_PIN
             int "spi1 d3 pin number"
             default 33
@@ -199,4 +212,3 @@ if BSP_USING_CAMERA
 endif
 
 endmenu
-

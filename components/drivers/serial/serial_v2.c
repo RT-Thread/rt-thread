@@ -1389,7 +1389,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
         return _serial_poll_tx(dev, pos, buffer, size);
     }
 
-    if (dev->open_flag | RT_SERIAL_TX_BLOCKING)
+    if (dev->open_flag & RT_SERIAL_TX_BLOCKING)
     {
         if ((tx_fifo->rb.buffer_ptr) == RT_NULL)
         {
