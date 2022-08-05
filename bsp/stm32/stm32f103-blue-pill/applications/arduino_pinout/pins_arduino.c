@@ -42,15 +42,15 @@ const pin_map_t pin_map_table[]=
     {D19, GET_PIN(C,13)}, /* user led1 */
     {D20, GET_PIN(C,14)},
     {D21, GET_PIN(C,15)},
-	{D22}, /* UART2-TX */
+    {D22}, /* UART2-TX */
     {D23}, /* UART2-RX */
-	/* The connection of RTdunio SPI has not been completed, *
+    /* The connection of RTdunio SPI has not been completed, *
      * and it can only be used as a common GPIO at present.  */
     {D24, GET_PIN(A,5)}, /* SPI-SCK */
-	{D25, GET_PIN(A,6)}, /* SPI-MISO */
-	{D26, GET_PIN(A,7)}, /* SPI-MOSI */
-	{D27}, /* UART3-TX */
-	{D28}, /* UART3-RX */
+    {D25, GET_PIN(A,6)}, /* SPI-MISO */
+    {D26, GET_PIN(A,7)}, /* SPI-MOSI */
+    {D27}, /* UART3-TX */
+    {D28}, /* UART3-RX */
     {A0, GET_PIN(A,0), "adc1", 0}, /* ADC */
     {A1, GET_PIN(A,1), "adc1", 1}, /* ADC */
     {A2, GET_PIN(A,4), "adc1", 4}, /* ADC */
