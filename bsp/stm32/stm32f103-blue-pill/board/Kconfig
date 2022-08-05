@@ -15,6 +15,32 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
+      config BSP_USING_ARDUINO
+        bool "Support Arduino"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_UART2
+        select BSP_USING_UART3
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH1
+        select BSP_USING_PWM2_CH2
+        select BSP_USING_PWM3
+        select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM3_CH2
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_ADAFRUIT
+        imply RTDUINO_USING_MSTIMER2
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
