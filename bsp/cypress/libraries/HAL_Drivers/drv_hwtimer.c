@@ -57,18 +57,18 @@ static void timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 
     tim = (cyhal_timer_t *)timer->parent.user_data;
 
+    const cyhal_timer_cfg_t init_timer_cfg =
+        {
+            .compare_value = 0,              /* Timer compare value, not used */
+            .period = 9999,                  /* Defines the timer period */
+            .direction = CYHAL_TIMER_DIR_UP, /* Timer counts up */
+            .is_compare = false,             /* Don't use compare mode */
+            .is_continuous = true,           /* Run timer indefinitely */
+            .value = 0                       /* Initial value of counter */
+        };
+
     if (state)
     {
-        const cyhal_timer_cfg_t init_timer_cfg =
-            {
-                .compare_value = 0,              /* Timer compare value, not used */
-                .period = 9999,                  /* Defines the timer period */
-                .direction = CYHAL_TIMER_DIR_UP, /* Timer counts up */
-                .is_compare = false,             /* Don't use compare mode */
-                .is_continuous = true,           /* Run timer indefinitely */
-                .value = 0                       /* Initial value of counter */
-            };
-
         /* Initialize the timer object. Does not use input pin ('pin' is NC) and
          * does not use a pre-configured clock source ('clk' is NULL). */
         result = cyhal_timer_init(tim, NC, NULL);
@@ -180,7 +180,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
     cyhal_timer_t *tim = RT_NULL;
 
-    cy_rslt_t result = -RT_ERROR;
+    rt_err_t result = -RT_ERROR;
 
     tim = (cyhal_timer_t *)timer->parent.user_data;
 
@@ -198,7 +198,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         if (result != CY_RSLT_SUCCESS)
         {
             LOG_E("cyhal_timer_set_frequency error\r\n");
-            return result;
+            return RT_ERROR;
         }
     }
     break;
