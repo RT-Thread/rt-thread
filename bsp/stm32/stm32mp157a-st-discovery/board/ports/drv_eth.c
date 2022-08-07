@@ -22,6 +22,15 @@
 #define LOG_TAG             "drv.emac"
 #include <drv_log.h>
 
+#undef PHY_FULL_DUPLEX
+#undef PHY_HALF_DUPLEX
+#define PHY_LINK        (1 << 0)
+#define PHY_10M         (1 << 1)
+#define PHY_100M        (1 << 2)
+#define PHY_1000M       (1 << 3)
+#define PHY_FULL_DUPLEX (1 << 4)
+#define PHY_HALF_DUPLEX (1 << 5)
+
 #define MAX_ADDR_LEN 6
 rt_base_t level;
 

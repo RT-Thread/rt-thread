@@ -175,6 +175,7 @@ static void * ThreadforKeyGet(void * lpParam)
         /* Notfiy serial ISR */
         rt_hw_serial_isr(&_serial, RT_SERIAL_EVENT_RX_IND);
     }
+    return RT_NULL;
 } /*** ThreadforKeyGet ***/
 
 static rt_err_t console_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -207,10 +208,7 @@ static rt_err_t console_control(struct rt_serial_device *serial, int cmd, void *
 static int console_putc(struct rt_serial_device *serial, char c)
 {
     int level;
-    struct console_uart* uart;
-
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct console_uart *)serial->parent.user_data;
 
 #if 0 /* Enable it if you want to save the console log */
     {

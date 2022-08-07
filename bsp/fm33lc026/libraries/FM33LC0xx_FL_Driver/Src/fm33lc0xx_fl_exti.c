@@ -6,25 +6,32 @@
   ****************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   ****************************************************************************************************
   */
-/* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_exti.h"
-#include "fm33_assert.h"
 
-/** @addtogroup FM33LC0XX_FL_Driver_EXTI
+
+/* Includes ------------------------------------------------------------------*/
+#include "fm33lc0xx_fl.h"
+
+/** @addtogroup FM33LC0XX_FL_Driver
   * @{
   */
+
+/** @addtogroup EXTI
+  * @{
+  */
+
+#ifdef FL_EXTI_DRIVER_ENABLED
 
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup EXTI_FL_Private_Macros
@@ -66,7 +73,7 @@
   * @}
   */
 
-/* Private macros ------------------------------------------------------------*/
+/* Private consts ------------------------------------------------------------*/
 /** @addtogroup EXTI_FL_Private_Consts
   * @{
   */
@@ -117,9 +124,9 @@ static const pSetTrigEdgeFunc setTrigEdgeFuncs[] =
 FL_ErrorStatus FL_EXTI_CommonInit(FL_EXTI_CommonInitTypeDef *EXTI_CommonInitStruct)
 {
     assert_param(IS_EXTI_CLK_SOURCE(EXTI_CommonInitStruct->clockSource));
-    // 使能IO时钟寄存器总线时钟
+    /* 使能IO时钟寄存器总线时钟 */
     FL_RCC_EnableGroup1BusClock(FL_RCC_GROUP1_BUSCLK_PAD);
-    // 使能并配置外部中断时钟源
+    /* 使能并配置外部中断时钟源 */
     FL_RCC_EnableGroup1OperationClock(FL_RCC_GROUP1_OPCLK_EXTI);
     FL_RCC_SetEXTIClockSource(EXTI_CommonInitStruct->clockSource);
     return FL_PASS;
@@ -128,13 +135,13 @@ FL_ErrorStatus FL_EXTI_CommonInit(FL_EXTI_CommonInitTypeDef *EXTI_CommonInitStru
 /**
   * @brief  复位EXTI通用配置设置
   *
-  * @retval ErrorStatus枚举值
-  *         -FL_FAIL 发生错误
-  *         -FL_PASS EXTI通用设置复位成功
+  * @retval 执行结果
+  *         -FL_PASS 外设寄存器值恢复复位值
+  *         -FL_FAIL 未成功执行
   */
 FL_ErrorStatus FL_EXTI_CommonDeinit(void)
 {
-    // 关闭外部中断时钟源
+    /* 关闭外部中断时钟源 */
     FL_RCC_DisableGroup1OperationClock(FL_RCC_GROUP1_OPCLK_EXTI);
     return FL_PASS;
 }
@@ -164,25 +171,28 @@ FL_ErrorStatus FL_EXTI_Init(uint32_t extiLineX, FL_EXTI_InitTypeDef *EXTI_InitSt
 {
     uint8_t extiLineId;
     uint32_t tmpExtiLineX;
-    // 检查参数合法性
+    /* 检查参数合法性 */
     assert_param(IS_EXTI_ALL_INSTANCE(extiLineX));
     assert_param(IS_EXTI_INPUT_GROUP(EXTI_InitStruct->input));
     assert_param(IS_EXTI_TRIG_EDGE(EXTI_InitStruct->triggerEdge));
     assert_param(IS_EXTI_FILTER(EXTI_InitStruct->filter));
-    // 获取EXTI中断线对应id号
+    /* 获取EXTI中断线对应id号 */
     tmpExtiLineX = extiLineX;
     for(extiLineId = 0; tmpExtiLineX != FL_GPIO_EXTI_LINE_0; tmpExtiLineX >>= 1, extiLineId++);
-    // 设置中断线连接的IO
+    /* 设置中断线连接的IO */
     setExtiLineFuncs[extiLineId](GPIO, EXTI_InitStruct->input << (2 * extiLineId));
-    // 设置数字滤波
+    /* 设置数字滤波 */
     EXTI_InitStruct->filter == FL_ENABLE ? FL_GPIO_EnableDigitalFilter(GPIO, extiLineX) : FL_GPIO_DisableDigitalFilter(GPIO, extiLineX);
-    // 设置中断线触发边沿
+    /* 设置中断线触发边沿 */
     setTrigEdgeFuncs[extiLineId / 16](GPIO, extiLineX, EXTI_InitStruct->triggerEdge);
-    // 延时需要大于1个32K的周期
-    FL_DelayUs(50);
-    // 清除外部中断标志
+    /* 延时需要大于3个32K的周期 */
+        for(uint16_t i;i<1000;++i)
+        {
+            __NOP();
+        }
+    /* 清除外部中断标志 */
     FL_GPIO_ClearFlag_EXTI(GPIO, extiLineX);
-    // 清除中断挂起
+    /* 清除中断挂起 */
     NVIC_ClearPendingIRQ(GPIO_IRQn);
     return FL_PASS;
 }
@@ -198,16 +208,16 @@ FL_ErrorStatus FL_EXTI_DeInit(uint32_t extiLineX)
 {
     uint8_t extiLineId;
     uint32_t tmpExtiLineX;
-    // 检查参数合法性
+    /* 检查参数合法性 */
     assert_param(IS_EXTI_ALL_INSTANCE(extiLineX));
-    // 获取EXTI中断线对应id号
+    /* 获取EXTI中断线对应id号 */
     tmpExtiLineX = extiLineX;
     for(extiLineId = 0; tmpExtiLineX != FL_GPIO_EXTI_LINE_0; tmpExtiLineX >>= 1, extiLineId++);
-    // 清除外部中断标志
+    /* 清除外部中断标志 */
     FL_GPIO_ClearFlag_EXTI(GPIO, extiLineX);
-    // 中断线触发边沿禁止
+    /* 中断线触发边沿禁止 */
     setTrigEdgeFuncs[extiLineId / 16](GPIO, extiLineX, FL_GPIO_EXTI_TRIGGER_EDGE_DISABLE);
-    // 禁止数字滤波
+    /* 禁止数字滤波 */
     FL_GPIO_DisableDigitalFilter(GPIO, extiLineX);
     return FL_PASS;
 }
@@ -229,7 +239,14 @@ void FL_EXTI_StructInit(FL_EXTI_InitTypeDef *EXTI_InitStruct)
   * @}
   */
 
+#endif /* FL_EXTI_DRIVER_ENABLED */
+
 /**
   * @}
   */
-/*************************************************************END OF FILE************************************************************/
+
+/**
+  * @}
+  */
+
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

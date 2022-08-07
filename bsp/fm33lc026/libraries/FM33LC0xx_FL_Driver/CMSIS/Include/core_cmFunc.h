@@ -552,7 +552,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_BASEPRI(uint32_t v
 /** \brief  Set Base Priority with condition
 
     This function assigns the given value to the Base Priority register only if BASEPRI masking is disabled,
-	or the new value increases the BASEPRI priority level.
+    or the new value increases the BASEPRI priority level.
 
     \param [in]    basePri  Base Priority value to set
  */

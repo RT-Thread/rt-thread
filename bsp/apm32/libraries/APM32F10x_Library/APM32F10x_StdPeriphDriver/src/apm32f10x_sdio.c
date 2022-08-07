@@ -300,7 +300,7 @@ uint32_t SDIO_ReadDataCounter(void)
 /*!
  * @brief       Write the SDIO Data
  *
- * @param       Data：Write 32-bit data
+ * @param       Data£ºWrite 32-bit data
  *
  * @retval      None
  */

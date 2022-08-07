@@ -31,8 +31,6 @@ static rt_size_t phy_device_write(rt_device_t dev, rt_off_t pos, const void *buf
     return phy->bus->ops->write(phy->bus, phy->addr, msg->reg, &(msg->value), 4);
 }
 
-
-
 #ifdef RT_USING_DEVICE_OPS
 const static struct rt_device_ops phy_ops =
 {

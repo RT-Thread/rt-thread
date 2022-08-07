@@ -40,10 +40,10 @@ def CB_AddHeadFiles(program, elem, project_path):
     utils.source_ext = []
     utils.source_ext = ["h"]
     for item in program:
-        utils.walk_children(item)    
+        utils.walk_children(item)
     utils.source_list.sort()
     # print utils.source_list
-    
+
     for f in utils.source_list:
         path = _make_path_relative(project_path, f)
         Unit = SubElement(elem, 'Unit')
@@ -70,14 +70,14 @@ def CBProject(target, script, program):
         tree = etree.parse('template.cbp')
     else:
         tree = etree.parse(os.path.join(os.path.dirname(__file__), 'template.cbp'))
-    
+
     root = tree.getroot()
-    
+
     out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
-    
+
     ProjectFiles = []
-    
+
     # SECTION 1. add "*.c|*.h" files group
     for elem in tree.iter(tag='Project'):
         # print elem.tag, elem.attrib
@@ -88,7 +88,7 @@ def CBProject(target, script, program):
     # add h files
     CB_AddHeadFiles(program, elem, project_path)
 
-    # SECTION 2. 
+    # SECTION 2.
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
@@ -96,7 +96,7 @@ def CBProject(target, script, program):
         for path in cpp_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
             paths.add(inc) #.replace('\\', '/')
-    
+
         paths = [i for i in paths]
         paths.sort()
         # write include path, definitions
@@ -110,10 +110,10 @@ def CBProject(target, script, program):
             Add = SubElement(elem, 'Add')
             for d in macro:
                 Add.set('option', "-D"+d)
-        
+
         # write link flags
     '''
-        # write lib dependence 
+        # write lib dependence
         if 'LIBS' in building.Env:
             for elem in tree.iter(tag='Tool'):
                 if elem.attrib['Name'] == 'VCLinkerTool':
@@ -121,7 +121,7 @@ def CBProject(target, script, program):
             libs_with_extention = [i+'.lib' for i in building.Env['LIBS']]
             libs = ' '.join(libs_with_extention)
             elem.set('AdditionalDependencies', libs)
-    
+
         # write lib include path
         if 'LIBPATH' in building.Env:
             lib_path = building.Env['LIBPATH']
@@ -129,7 +129,7 @@ def CBProject(target, script, program):
             for path in lib_path:
                 inc = _make_path_relative(project_path, os.path.normpath(path))
                 paths.add(inc) #.replace('\\', '/')
-        
+
             paths = [i for i in paths]
             paths.sort()
             lib_paths = ';'.join(paths)

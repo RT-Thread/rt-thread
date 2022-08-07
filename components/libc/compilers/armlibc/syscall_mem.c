@@ -23,8 +23,8 @@
 #endif /* RT_USING_HEAP */
 
 #ifdef __CC_ARM
-/* avoid the heap and heap-using library functions supplied by arm */
-#pragma import(__use_no_heap)
+    /* avoid the heap and heap-using library functions supplied by arm */
+    #pragma import(__use_no_heap)
 #endif /* __CC_ARM */
 
 void *malloc(size_t n)

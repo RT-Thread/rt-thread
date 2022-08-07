@@ -90,5 +90,7 @@ const ve_exporter_t *ve_iter_next(ve_iterator_t *iter);
 rt_base_t ve_value_get(ve_module_t *mod, const char *identifier);
 /* check if this value exists in the module*/
 rt_bool_t ve_value_exist(ve_module_t *mod, const char *identifier);
+rt_size_t ve_value_count(ve_module_t *mod);
+const ve_exporter_t *ve_binary_search(ve_module_t *mod, const char *identifier);
 
 #endif /* _VAR_EXPORT_H__ */

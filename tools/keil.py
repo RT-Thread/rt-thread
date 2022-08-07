@@ -208,7 +208,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
 
     return group
 
-# The common part of making MDK4/5 project 
+# The common part of making MDK4/5 project
 def MDK45Project(tree, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
@@ -437,7 +437,7 @@ def ARMCC_Version():
     stdout, stderr = child.communicate()
 
     '''
-    example stdout: 
+    example stdout:
     Product: MDK Plus 5.24
     Component: ARM Compiler 5.06 update 5 (build 528)
     Tool: armcc [4d3621]

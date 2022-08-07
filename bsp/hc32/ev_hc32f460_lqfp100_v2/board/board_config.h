@@ -7,6 +7,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2022-06-16     lianghongquan     use macro definition config adc pin.
+ * 2022-06-28     lianghongquan     add PWM_TMRA pin define.
  */
 
 
@@ -82,6 +84,17 @@
     //ADC2 has 7 channels CH0-CH7. ADC12_IN4-ADC12_IN11 means ADC2 CH0-CH7
     #define ADC2_CH7_PORT                     (GPIO_PORT_C)
     #define ADC2_CH7_PIN                      (GPIO_PIN_01)
+#endif
+
+/***********  PWM_TMRA configure *********/
+#if defined(BSP_USING_PWM_TMRA_4)
+    #define PWM_TMRA_4_CH7_PORT             (GPIO_PORT_H)
+    #define PWM_TMRA_4_CH7_PIN              (GPIO_PIN_02)
+    #define PWM_TMRA_4_CH7_PIN_FUNC         (GPIO_FUNC_4)
+
+    #define PWM_TMRA_4_CH8_PORT             (GPIO_PORT_C)
+    #define PWM_TMRA_4_CH8_PIN              (GPIO_PIN_13)
+    #define PWM_TMRA_4_CH8_PIN_FUNC         (GPIO_FUNC_4)
 #endif
 
 #endif

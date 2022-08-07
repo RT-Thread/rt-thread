@@ -23,41 +23,41 @@ static rt_err_t virtio_net_tx(rt_device_t dev, struct pbuf *p)
     struct virtio_device *virtio_dev = &virtio_net_dev->virtio_dev;
     struct virtq *queue_tx = &virtio_dev->queues[VIRTIO_NET_QUEUE_TX];
 
-    while (p != RT_NULL)
-    {
 #ifdef RT_USING_SMP
-        rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
+    rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
 #endif
-        id = (queue_tx->avail->idx * 2) % queue_tx->num;
 
-        virtio_net_dev->info[id].hdr.flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
-        virtio_net_dev->info[id].hdr.gso_type = VIRTIO_NET_HDR_GSO_NONE;
-        virtio_net_dev->info[id].hdr.hdr_len = 0;
-        virtio_net_dev->info[id].hdr.gso_size = 0;
-        virtio_net_dev->info[id].hdr.csum_start = 0;
-        virtio_net_dev->info[id].hdr.csum_offset = p->tot_len + sizeof(virtio_net_dev->info[id].hdr);
+    id = (queue_tx->avail->idx * 2) % queue_tx->num;
 
-        virtio_free_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id);
-        virtio_free_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id + 1);
+    virtio_net_dev->info[id].hdr.flags = 0;
+    virtio_net_dev->info[id].hdr.gso_type = 0;
+    virtio_net_dev->info[id].hdr.hdr_len = 0;
+    virtio_net_dev->info[id].hdr.gso_size = 0;
+    virtio_net_dev->info[id].hdr.csum_start = 0;
+    virtio_net_dev->info[id].hdr.csum_offset = 0;
+    virtio_net_dev->info[id].hdr.num_buffers = 0;
 
-        virtio_fill_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id,
-                VIRTIO_VA2PA(&virtio_net_dev->info[id].hdr), VIRTIO_NET_HDR_SIZE, VIRTQ_DESC_F_NEXT, id + 1);
+    pbuf_copy_partial(p, virtio_net_dev->info[id].rx_buffer, p->tot_len, 0);
 
-        virtio_fill_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id + 1,
-                VIRTIO_VA2PA(p->payload), p->tot_len, 0, 0);
+    virtio_free_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id);
+    virtio_free_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id + 1);
 
-        virtio_submit_chain(virtio_dev, VIRTIO_NET_QUEUE_TX, id);
+    virtio_fill_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id,
+            VIRTIO_VA2PA(&virtio_net_dev->info[id].hdr), VIRTIO_NET_HDR_SIZE, VIRTQ_DESC_F_NEXT, id + 1);
 
-        virtio_queue_notify(virtio_dev, VIRTIO_NET_QUEUE_TX);
+    virtio_fill_desc(virtio_dev, VIRTIO_NET_QUEUE_TX, id + 1,
+            VIRTIO_VA2PA(virtio_net_dev->info[id].rx_buffer), p->tot_len, 0, 0);
 
-        virtio_alloc_desc(virtio_dev, VIRTIO_NET_QUEUE_TX);
-        virtio_alloc_desc(virtio_dev, VIRTIO_NET_QUEUE_TX);
+    virtio_submit_chain(virtio_dev, VIRTIO_NET_QUEUE_TX, id);
+
+    virtio_queue_notify(virtio_dev, VIRTIO_NET_QUEUE_TX);
+
+    virtio_alloc_desc(virtio_dev, VIRTIO_NET_QUEUE_TX);
+    virtio_alloc_desc(virtio_dev, VIRTIO_NET_QUEUE_TX);
 
 #ifdef RT_USING_SMP
-        rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
+    rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
 #endif
-        p = p->next;
-    }
 
     return RT_EOK;
 }
@@ -144,7 +144,7 @@ static rt_err_t virtio_net_init(rt_device_t dev)
     for (i = 0; i < queue_rx->num; ++i)
     {
         rt_uint16_t id = (i * 2) % queue_rx->num;
-        void *addr = virtio_net_dev->info[i].buffer;
+        void *addr = virtio_net_dev->info[i].tx_buffer;
 
         /* Descriptor for net_hdr */
         virtio_fill_desc(virtio_dev, VIRTIO_NET_QUEUE_RX, id,
@@ -185,7 +185,7 @@ static rt_err_t virtio_net_control(rt_device_t dev, int cmd, void *args)
             break;
         }
 
-        rt_memcpy(args, virtio_net_dev->mac, sizeof(virtio_net_dev->mac));
+        rt_memcpy(args, virtio_net_dev->config->mac, sizeof(virtio_net_dev->config->mac));
         break;
     default:
         status = -RT_EINVAL;
@@ -232,7 +232,6 @@ static void virtio_net_isr(int irqno, void *param)
 
 rt_err_t rt_virtio_net_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
 {
-    int i;
     static int dev_no = 0;
     char dev_name[RT_NAME_MAX];
     struct virtio_device *virtio_dev;
@@ -249,6 +248,8 @@ rt_err_t rt_virtio_net_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     virtio_dev->irq = irq;
     virtio_dev->mmio_base = mmio_base;
 
+    virtio_net_dev->config = (struct virtio_net_config *)virtio_dev->mmio_config->config;
+
 #ifdef RT_USING_SMP
     rt_spin_lock_init(&virtio_dev->spinlock);
 #endif
@@ -258,14 +259,7 @@ rt_err_t rt_virtio_net_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
 
     virtio_dev->mmio_config->driver_features = virtio_dev->mmio_config->device_features & ~(
             (1 << VIRTIO_NET_F_CTRL_VQ) |
-            (1 << VIRTIO_NET_F_GUEST_TSO4) |
-            (1 << VIRTIO_NET_F_GUEST_TSO6) |
-            (1 << VIRTIO_NET_F_GUEST_UFO) |
-            (1 << VIRTIO_NET_F_MRG_RXBUF) |
-            (1 << VIRTIO_F_RING_EVENT_IDX)) &
-            (1 << VIRTIO_NET_F_CSUM) &
-            (1 << VIRTIO_NET_F_GUEST_CSUM) &
-            (1 << VIRTIO_NET_F_MAC);
+            (1 << VIRTIO_F_RING_EVENT_IDX));
 
     virtio_status_driver_ok(virtio_dev);
 
@@ -283,11 +277,6 @@ rt_err_t rt_virtio_net_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     {
         virtio_queue_destroy(virtio_dev, VIRTIO_NET_QUEUE_RX);
         goto _alloc_fail;
-    }
-
-    for (i = 0; i < sizeof(virtio_net_dev->mac) / sizeof(virtio_net_dev->mac[0]); ++i)
-    {
-        virtio_net_dev->mac[i] = virtio_dev->mmio_config->config[i];
     }
 
     virtio_net_dev->parent.parent.type = RT_Device_Class_NetIf;

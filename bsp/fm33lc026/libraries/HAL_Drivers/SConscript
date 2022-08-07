@@ -8,6 +8,9 @@ cwd = GetCurrentDir()
 src = Split("""
 """)
 
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['drv_usart.c']
 
