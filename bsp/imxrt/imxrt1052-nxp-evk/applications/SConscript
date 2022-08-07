@@ -1,5 +1,6 @@
 import rtconfig
 from building import *
+import os
 
 cwd = GetCurrentDir()
 src = Glob('*.c')
