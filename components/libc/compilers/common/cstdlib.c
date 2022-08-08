@@ -21,8 +21,11 @@ void __rt_libc_exit(int status)
     if (self != RT_NULL)
     {
 #ifdef RT_USING_PTHREADS
-        extern void pthread_exit(void *value);
-        pthread_exit((void *)status);
+        if(self->pthread_data != RT_NULL)
+        {
+            extern void pthread_exit(void *value);
+            pthread_exit((void *)status);
+        }
 #else
         LOG_E("thread:%s exit:%d!", self->name, status);
         rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
