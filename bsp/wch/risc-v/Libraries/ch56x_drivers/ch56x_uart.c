@@ -261,7 +261,7 @@ int rt_hw_uart_init(void)
         if (serial->irqn == UART0_IRQn)
         {
             txd_pin = UART_TXD0_ALT;
-            Rxd_pin = UART_RXD0_ALT;
+            rxd_pin = UART_RXD0_ALT;
         }
 #endif
         rt_pin_mode(txd_pin, PIN_MODE_OUTPUT);
