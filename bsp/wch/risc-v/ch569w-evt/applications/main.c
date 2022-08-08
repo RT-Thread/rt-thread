@@ -365,8 +365,6 @@ void main(void)
 {
     uint32_t wdog_timeout = 32;
 
-    int i;
-
     rt_kprintf("\nCH569W-R0-1v0, HCLK: %dMHz\n\n", sys_hclk_get() / 1000000);
 
     test_gpio_int();
