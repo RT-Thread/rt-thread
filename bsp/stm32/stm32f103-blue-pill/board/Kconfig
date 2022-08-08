@@ -15,7 +15,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
-      config BSP_USING_ARDUINO
+    config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
@@ -25,14 +25,14 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
-        select BSP_USING_PWM1
-        select BSP_USING_PWM1_CH1
         select BSP_USING_PWM2
         select BSP_USING_PWM2_CH1
         select BSP_USING_PWM2_CH2
         select BSP_USING_PWM3
         select BSP_USING_PWM3_CH1
         select BSP_USING_PWM3_CH2
+        select BSP_USING_PWM3_CH3
+        select BSP_USING_PWM3_CH4
         select BSP_USING_I2C
         select BSP_USING_I2C1
         imply RTDUINO_USING_SERVO
@@ -105,15 +105,6 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
-        menuconfig BSP_USING_PWM1
-            bool "Enable timer1 output PWM"
-            default n
-            if BSP_USING_PWM1
-                config BSP_USING_PWM1_CH1
-                    bool "Enable PWM1 channel1"
-                    default n
-            endif
-
         menuconfig BSP_USING_PWM2
             bool "Enable timer2 output PWM"
             default n
@@ -137,6 +128,14 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_USING_PWM3_CH2
                     bool "Enable PWM3 channel2"
+                    default n
+
+                config BSP_USING_PWM3_CH3
+                    bool "Enable PWM3 channel3"
+                    default n
+
+                config BSP_USING_PWM3_CH4
+                    bool "Enable PWM3 channel4"
                     default n
             endif
         endif
@@ -163,19 +162,19 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_SPI
         if BSP_USING_SPI
-            config BSP_USING_SPI1
-                bool "Enable SPI1 BUS"
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
                 default n
 
-            config BSP_SPI1_TX_USING_DMA
-                bool "Enable SPI1 TX DMA"
-                depends on BSP_USING_SPI1
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
                 default n
                         
-            config BSP_SPI1_RX_USING_DMA
-                bool "Enable SPI1 RX DMA"
-                depends on BSP_USING_SPI1
-                select BSP_SPI1_TX_USING_DMA
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
                 default n
         endif
 
