@@ -38,12 +38,12 @@ struct cyp_hwtimer
 };
 
 static struct cyp_hwtimer cyp_hwtimer_obj[] =
-    {
+{
 #ifdef BSP_USING_TIM1
-        TIM1_CONFIG,
+		TIM1_CONFIG,
 #endif
 #ifdef BSP_USING_TIM2
-        TIM2_CONFIG,
+		TIM2_CONFIG,
 #endif
 };
 
