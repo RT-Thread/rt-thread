@@ -20,55 +20,43 @@ Hardware Drivers Config --->
 
 该BSP遵照Arduino UNO板的引脚排列方式，并扩展增加了Blue-pill自身的板载资源功能引脚。详见 `pins_arduino.c`
 
-| Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                                         |
-| --------------- | ------------- | ------ | ------------------------------------------------------------ |
-| 0 (D0)          | --            |        | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                     |
-| 1 (D1)          | --            |        | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                     |
-| 2 (D2)          | PB9           | 是     | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
-| 3 (D3)          | PB8           | 是     | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
-| 4 (D4)          | PB7           | 是     |                                                              |
-| 5 (D5)          | PB6           | 是     |                                                              |
-| 6 (D6)          | PB5           | 否     | PWM3-CH2（定时器3发生）                                       |
-| 7 (D7)          | PB4           | 是     | PWM3-CH1（定时器3发生）                                       |
-| 8 (D8)          | PB3           | 是     | PWM2-CH2（定时器2发生）                                       |
-| 9 (D9)          | PA15          | 是     | PWM2-CH1（定时器2发生）                                       | 
-| 10 (D10)        | PA12          | 是     | USB-DB，不可当做普通IO                                        |
-| 11 (D11)        | PA11          | 是     | USB-DM，不可当做普通IO                                        |
-| 12 (D12)        | PA10          | 是     | UART1-RX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO    |
-| 13 (D13)        | PA9           | 是     | UART1-RX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO    |
-| 14 (D14)        | PA8           | 是     | PWM1-CH1（定时器1发生）                                       |
-| 15 (D15)        | PB15          | 是     |                                                              |
-| 16 (D16)        | PB14          | 是     |                                                              |
-| 17 (D17)        | PB13          | 是     | PWM1-CH1N（定时器1发生）                                      |
-| 18 (D18)        | PB12          | 是     |                                                              |
-| 19 (D19)        | PC13          | 否     | 板载LED默认引脚                                               |
-| 20 (D20)        | PC14          | 否     |                                                              |
-| 21 (D21)        | PC15          | 否     |                                                              |
-| 22 (D22)        | PA2           | 否     | UART2-TX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO    |
-| 23 (D23)        | PA3           | 否     | UART2-RX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO    |
-| 24 (D24)        | PA5           | 否     | SPI-SCK， SPI功能尚未完全实现，目前仅作普通IO使用               |
-| 25 (D25)        | PA6           | 否     | SPI-MISO，SPI功能尚未完全实现，目前仅作普通IO使用               |
-| 26 (D26)        | PA7           | 否     | SPI-MOSI，SPI功能尚未完全实现，目前仅作普通IO使用               |
-| 27 (D27)        | PB10          | 是     | UART3-TX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO    |
-| 28 (D28)        | PB11          | 是     | UART3-RX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO    |
-| A0              | PA0           | 否     | ADC                                                          |
-| A1              | PA1           | 否     | ADC                                                          |
-| A2              | PA4           | 否     | ADC                                                          |
-| A3              | PB0           | 否     | ADC                                                          |
-| A4              | PB1           | 否     | ADC                                                          |
-| A5              | --            |        | 芯片内部参考电压 ADC                                          |
-| A6              | --            |        | 芯片内部温度 ADC                                              |
+| Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                           |
+| ----------- | --------- | ---- | -------------------------------------------- |
+| 0 (D0)      | PB7       | 是    |                                              |
+| 1 (D1)      | PB6       | 是    |                                              |
+| 2 (D2)      | PB5       | 否    | PWM3-CH2（定时器3发生）                             |
+| 3 (D3)      | PB4       | 是    | PWM3-CH1（定时器3发生）                             |
+| 4 (D4)      | PB3       | 是    | PWM2-CH2（定时器2发生）                             |
+| 5 (D5)      | PA15      | 是    | PWM2-CH1（定时器2发生）                             |
+| 6 (D6)      | PA8       | 是    |                                              |
+| 7 (D7)      | PB12      | 是    |                                              |
+| 8 (D8)      | PC13      | 否    |                                              |
+| 9 (D9)      | PC14      | 否    |                                              |
+| 10 (D10)    | PC15      | 否    |                                              |
+| 11 (D11)    | PA0       | 否    |                                              |
+| 12 (D12)    | PB0       | 否    | PWM3-CH3（定时器3发生）                             |
+| 13 (D13)    | PB1       | 否    | PWM3-CH4（定时器3发生）                             |
+| A0          | PA1       | 否    | ADC1-CH1                                     |
+| A1          | PA4       | 否    | ADC1-CH4                                     |
+| A2          | PA5       | 否    | ADC1-CH5                                     |
+| A3          | PA6       | 否    | ADC1-CH6                                     |
+| A4          | PA7       | 否    | ADC1-CH7                                     |
+| A5          | --        |      | 芯片内部参考电压 ADC                                 |
+| A6          | --        |      | 芯片内部温度 ADC                                   |
+| --          | PB9       | 是    | I2C-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
+| --          | PB8       | 是    | I2C-SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
+| --          | PA12      | 是    | USB-DP，被TinyUSB接管，不可当做普通IO                   |
+| --          | PA11      | 是    | USB-DM，被TinyUSB接管，不可当做普通IO                   |
+| --          | PA10      | 是    | UART1-RX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO |
+| --          | PA9       | 是    | UART1-TX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO |
+| --          | PA2       | 否    | UART2-TX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO |
+| --          | PA3       | 否    | UART2-RX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO |
+| --          | PB10      | 是    | UART3-TX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO |
+| --          | PB11      | 是    | UART3-RX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO |
+| --          | PB15      | 是    | SPI-MOSI，SPI功能尚未完全实现                         |
+| --          | PB14      | 是    | SPI-MISO，SPI功能尚未完全实现                         |
+| --          | PB13      | 是    | SPI-SCK ，SPI功能尚未完全实现                         |
 
 > 注意：
->
+> 
 > 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 4. D10引脚是PWM反相位引脚(也就是常说的互补输出引脚CHxN)。但是这里不用考虑到占空比互补问题（CHx-20%，CHxN-80%），直接正常使用即可。
-> 4. STM32的PA15引脚默认作为JTAG下载使用，但是如果采用SWD调试时，PA15(D9)可以作为普通的IO口使用，但是需要设置一些寄存器。
-
-> 参考资料
->
-> 1. 暂无
-
-## 3 I2C总线
-
-STM32F103 Blue-Pill板的I2C总线是板上丝印的 `SCL/D3` 和 `SDA/D2` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
