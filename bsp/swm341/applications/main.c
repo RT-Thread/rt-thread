@@ -433,6 +433,7 @@ MSH_CMD_EXPORT(wdt_sample, wdt sample);
 #define W25Q_FLASH_NAME "norflash0"
 
 #include "drv_spi.h"
+#ifdef RT_USING_SFUD
 #include "spi_flash_sfud.h"
 
 static int rt_hw_spi_flash_init(void)
@@ -501,110 +502,115 @@ static void spi_w25q_sample(int argc, char *argv[])
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
 
-//#include <dfs_file.h>
-//#include <unistd.h>
-//static void elmfat_sample(void)
-//{
-//    int fd, size;
-//    struct statfs elm_stat;
-//    char str[] = "elmfat mount to W25Q flash.\r\n", buf[80];
+#ifdef RT_USING_DFS_ELMFAT
+#include <dfs_file.h>
+#include <unistd.h>
+static void elmfat_sample(void)
+{
+    int fd, size;
+    struct statfs elm_stat;
+    char str[] = "elmfat mount to W25Q flash.\r\n", buf[80];
 
-//    if (dfs_mkfs("elm", W25Q_FLASH_NAME) == 0)
-//        rt_kprintf("make elmfat filesystem success.\n");
+    if (dfs_mkfs("elm", W25Q_FLASH_NAME) == 0)
+        rt_kprintf("make elmfat filesystem success.\n");
 
-//    if (dfs_mount(W25Q_FLASH_NAME, "/", "elm", 0, 0) == 0)
-//        rt_kprintf("elmfat filesystem mount success.\n");
+    if (dfs_mount(W25Q_FLASH_NAME, "/", "elm", 0, 0) == 0)
+        rt_kprintf("elmfat filesystem mount success.\n");
 
-//    if (statfs("/", &elm_stat) == 0)
-//        rt_kprintf("elmfat filesystem block size: %d, total blocks: %d, free blocks: %d.\n",
-//                   elm_stat.f_bsize, elm_stat.f_blocks, elm_stat.f_bfree);
+    if (statfs("/", &elm_stat) == 0)
+        rt_kprintf("elmfat filesystem block size: %d, total blocks: %d, free blocks: %d.\n",
+                   elm_stat.f_bsize, elm_stat.f_blocks, elm_stat.f_bfree);
 
-//    if (mkdir("/user", 0x777) == 0)
-//        rt_kprintf("make a directory: '/user'.\n");
+    if (mkdir("/user", 0x777) == 0)
+        rt_kprintf("make a directory: '/user'.\n");
 
-//    rt_kprintf("Write string '%s' to /user/test.txt.\n", str);
+    rt_kprintf("Write string '%s' to /user/test.txt.\n", str);
 
-//    fd = open("/user/test.txt", O_WRONLY | O_CREAT);
-//    if (fd >= 0)
-//    {
-//        if (write(fd, str, sizeof(str)) == sizeof(str))
-//            rt_kprintf("Write data done.\n");
+    fd = open("/user/test.txt", O_WRONLY | O_CREAT);
+    if (fd >= 0)
+    {
+        if (write(fd, str, sizeof(str)) == sizeof(str))
+            rt_kprintf("Write data done.\n");
 
-//        close(fd);
-//    }
+        close(fd);
+    }
 
-//    fd = open("/user/test.txt", O_RDONLY);
-//    if (fd >= 0)
-//    {
-//        size = read(fd, buf, sizeof(buf));
+    fd = open("/user/test.txt", O_RDONLY);
+    if (fd >= 0)
+    {
+        size = read(fd, buf, sizeof(buf));
 
-//        close(fd);
+        close(fd);
 
-//        if (size == sizeof(str))
-//            rt_kprintf("Read data from file test.txt(size: %d): %s \n", size, buf);
-//    }
-//}
-//MSH_CMD_EXPORT(elmfat_sample, elmfat sample);
+        if (size == sizeof(str))
+            rt_kprintf("Read data from file test.txt(size: %d): %s \n", size, buf);
+    }
+}
+MSH_CMD_EXPORT(elmfat_sample, elmfat sample);
+#endif
+#endif
 #endif
 
-//#ifdef RT_USING_SPI
-//#define SD_SPI_DEVICE_NAME "spi00"
-//#define SDCARD_NAME "sd0"
+#ifdef RT_USING_SPI
+#ifdef RT_USING_SPI_MSD
+#define SD_SPI_DEVICE_NAME "spi00"
+#define SDCARD_NAME "sd0"
 
-//#include "drv_spi.h"
-//#include "spi_msd.h"
-//#include <dfs_file.h>
-//#include <unistd.h>
-//static int rt_hw_spi0_tfcard(void)
-//{
-//    rt_hw_spi_device_attach("spi0", SD_SPI_DEVICE_NAME, GPION, PIN1);
-//    return msd_init(SDCARD_NAME, SD_SPI_DEVICE_NAME);
-//}
-//INIT_DEVICE_EXPORT(rt_hw_spi0_tfcard);
+#include "drv_spi.h"
+#include "spi_msd.h"
+#include <dfs_file.h>
+#include <unistd.h>
+static int rt_hw_spi0_tfcard(void)
+{
+    rt_hw_spi_device_attach("spi0", SD_SPI_DEVICE_NAME, GPION, PIN1);
+    return msd_init(SDCARD_NAME, SD_SPI_DEVICE_NAME);
+}
+INIT_DEVICE_EXPORT(rt_hw_spi0_tfcard);
 
-//static void elmfat_sample(void)
-//{
-//    int fd, size;
-//    struct statfs elm_stat;
-//    char str[] = "elmfat mount to sdcard.\r\n", buf[80];
+static void elmfat_sample(void)
+{
+    int fd, size;
+    struct statfs elm_stat;
+    char str[] = "elmfat mount to sdcard.\r\n", buf[80];
 
-//    if (dfs_mkfs("elm", SDCARD_NAME) == 0)
-//        rt_kprintf("make elmfat filesystem success.\n");
+    if (dfs_mkfs("elm", SDCARD_NAME) == 0)
+        rt_kprintf("make elmfat filesystem success.\n");
 
-//    if (dfs_mount(SDCARD_NAME, "/", "elm", 0, 0) == 0)
-//        rt_kprintf("elmfat filesystem mount success.\n");
+    if (dfs_mount(SDCARD_NAME, "/", "elm", 0, 0) == 0)
+        rt_kprintf("elmfat filesystem mount success.\n");
 
-//    if (statfs("/", &elm_stat) == 0)
-//        rt_kprintf("elmfat filesystem block size: %d, total blocks: %d, free blocks: %d.\n",
-//                   elm_stat.f_bsize, elm_stat.f_blocks, elm_stat.f_bfree);
+    if (statfs("/", &elm_stat) == 0)
+        rt_kprintf("elmfat filesystem block size: %d, total blocks: %d, free blocks: %d.\n",
+                   elm_stat.f_bsize, elm_stat.f_blocks, elm_stat.f_bfree);
 
-//    if (mkdir("/user", 0x777) == 0)
-//        rt_kprintf("make a directory: '/user'.\n");
+    if (mkdir("/user", 0x777) == 0)
+        rt_kprintf("make a directory: '/user'.\n");
 
-//    rt_kprintf("Write string '%s' to /user/test.txt.\n", str);
+    rt_kprintf("Write string '%s' to /user/test.txt.\n", str);
 
-//    fd = open("/user/test.txt", O_WRONLY | O_CREAT);
-//    if (fd >= 0)
-//    {
-//        if (write(fd, str, sizeof(str)) == sizeof(str))
-//            rt_kprintf("Write data done.\n");
+    fd = open("/user/test.txt", O_WRONLY | O_CREAT);
+    if (fd >= 0)
+    {
+        if (write(fd, str, sizeof(str)) == sizeof(str))
+            rt_kprintf("Write data done.\n");
 
-//        close(fd);
-//    }
+        close(fd);
+    }
 
-//    fd = open("/user/test.txt", O_RDONLY);
-//    if (fd >= 0)
-//    {
-//        size = read(fd, buf, sizeof(buf));
+    fd = open("/user/test.txt", O_RDONLY);
+    if (fd >= 0)
+    {
+        size = read(fd, buf, sizeof(buf));
 
-//        close(fd);
+        close(fd);
 
-//        if (size == sizeof(str))
-//            rt_kprintf("Read data from file test.txt(size: %d): %s \n", size, buf);
-//    }
-//}
-//MSH_CMD_EXPORT(elmfat_sample, elmfat sample);
-//#endif
+        if (size == sizeof(str))
+            rt_kprintf("Read data from file test.txt(size: %d): %s \n", size, buf);
+    }
+}
+MSH_CMD_EXPORT(elmfat_sample, elmfat sample);
+#endif
+#endif
 
 #ifdef RT_USING_SDIO
 #define SDCARD_NAME "sd0"
