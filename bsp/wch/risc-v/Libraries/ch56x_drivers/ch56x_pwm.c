@@ -14,7 +14,7 @@
 #include "ch56x_pwm.h"
 #include "ch56x_sys.h"
 
-#define PWM_CYCLE_MAX   255
+#define PWM_CYCLE_MAX   255     // must be 255 for 0%~100% duty cycle
 
 struct pwm_device
 {
@@ -28,6 +28,7 @@ static const uint8_t pwmx_pin[] = {PWM0_PIN, PWM1_PIN, PWM2_PIN, PWM3_PIN};
 
 /**
  * @brief   Enable or disable PWM channel output.
+ *          Make sure PWM clock is ON for writing registers.
  *
  * @param   device is pointer to the rt_device_pwm device.
  *
@@ -50,9 +51,6 @@ static void pwm_channel_enable(struct rt_device_pwm *device,
         /* set pwm_out_en to allow pwm output */
         ctrl_mod = pxreg->CTRL_MOD.reg;
         pxreg->CTRL_MOD.reg = ctrl_mod | (RB_PWM0_OUT_EN << channel);
-        /* enable PWMX clocking, if all channels are disabled previously */
-        if ((ctrl_mod & PWM_OUT_EN_MASK) == 0)
-            sys_slp_clk_off0(RB_SLP_CLK_PWMX, SYS_SLP_CLK_ON);
     }
     else
     {
@@ -62,14 +60,12 @@ static void pwm_channel_enable(struct rt_device_pwm *device,
         rt_pin_write(pwmx_pin[channel], polar ? PIN_HIGH : PIN_LOW);
         ctrl_mod &= ~(RB_PWM0_OUT_EN << channel);
         pxreg->CTRL_MOD.reg = ctrl_mod;
-        /* disable PWMX clocking, if all channels are disabled */
-        if ((ctrl_mod & PWM_OUT_EN_MASK) == 0)
-            sys_slp_clk_off0(RB_SLP_CLK_PWMX, SYS_SLP_CLK_OFF);
     }
 }
 
 /**
  * @brief   Set period of the PWM channel.
+ *          Make sure PWM clock is ON for writing registers.
  *
  * @param   device is pointer to the rt_device_pwm device.
  *
@@ -88,11 +84,11 @@ static rt_err_t pwm_channel_period(struct rt_device_pwm *device,
 
     /* All ch56x PWMX channels share the same period, channel ignored.
      *
-     * Max allowed period is when Fsys@2MHz and CLOCK_DIV is 255 :
-     *     (1 / 2MHz) * 255 * PWM_CYCLE_MAX => 32512500 ns
+     * Max allowed period is when Fsys@2MHz and CLOCK_DIV is 0 (256) :
+     *     (1 / 2MHz) * 256 * PWM_CYCLE_MAX => 32640000 ns
      * Note that `period * F_MHz` won't overflow in calculation below.
     */
-    if (period > (255 * PWM_CYCLE_MAX * 1000 / 2))
+    if (period > (256 * PWM_CYCLE_MAX * 1000 / 2))
         return -RT_EINVAL;
 
     if (period != pwm_device->period)
@@ -101,7 +97,7 @@ static rt_err_t pwm_channel_period(struct rt_device_pwm *device,
         uint32_t F_MHz = Fsys / 1000000;
         uint32_t F_mod = Fsys % 1000000;
 
-        /* period = (CLOCK_DIV / Fsys) * 10^9 * PWM_CYCLE_MAX */
+        /* period = (clock_div / Fsys) * 10^9 * PWM_CYCLE_MAX */
         clock_div = period * F_MHz + (1000 * PWM_CYCLE_MAX / 2);
         /* Fsys is mostly in integer MHz, likely to be skipped */
         if (F_mod != 0)
@@ -110,9 +106,12 @@ static rt_err_t pwm_channel_period(struct rt_device_pwm *device,
             clock_div += (uint32_t)u64v;
         }
         clock_div = clock_div / (1000 * PWM_CYCLE_MAX);
-        if (clock_div > PWM_CYCLE_MAX)
+        if (clock_div > 256)
             return -RT_EINVAL;
-        pwm_device->reg_base->CLOCK_DIV = clock_div;
+        /* CLOCK_DIV will be 0 if `clock_div` is 256 */
+        pwm_device->reg_base->CLOCK_DIV = (uint8_t)clock_div;
+        /* cycle_sel set to PWM_CYCLE_SEL_255 for 0%~100% duty cycle */
+        pwmx_device.reg_base->CTRL_CFG.cycle_sel = PWM_CYCLE_SEL_255;
         pwm_device->period = period;
     }
 
@@ -121,6 +120,7 @@ static rt_err_t pwm_channel_period(struct rt_device_pwm *device,
 
 /**
  * @brief   Set pulse duration of the PWM channel.
+ *          Make sure PWM clock is ON for writing registers.
  *
  * @param   device is pointer to the rt_device_pwm device.
  *
@@ -150,10 +150,13 @@ static rt_err_t pwm_channel_pulse(struct rt_device_pwm *device,
 
 /**
  * @brief   Set period & pulse of the PWM channel, remain disabled.
+ *          Make sure PWM clock is ON for writing registers.
  *
  * @param   device is pointer to the rt_device_pwm device.
  *
  * @param   configuration is the channel/period/pulse specification.
+ *          ch56x PWM has no complementary pin, complementary ignored.
+ *          FIXME: can we specify PWM output polarity somehow ?
  *
  * @return  RT_EOK if successful.
  */
@@ -206,10 +209,10 @@ static rt_err_t pwm_device_get(struct rt_device_pwm *device,
     uint32_t pdata;
     uint64_t u64v;
 
-    /* FIXME: what does it mean when CLOCK_DIV is 0 ? */
+    /* clock_div is actually 256 when CLOCK_DIV is 0 */
     clock_div = pxreg->CLOCK_DIV;
     if (clock_div == 0)
-        clock_div = 1;
+        clock_div = 256;
 
     u64v = clock_div;
     u64v = (u64v * 1000*1000*1000 * PWM_CYCLE_MAX + (Fsys >> 1)) / Fsys;
@@ -231,8 +234,15 @@ static rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     struct rt_pwm_configuration *configuration = arg;
     uint32_t channel = configuration->channel;
 
+    rt_err_t res = RT_EOK;
+
+    RT_ASSERT(device != RT_NULL);
+
     if (channel >= PWM_CHANNELS)
         return -RT_EINVAL;
+
+    /* PWM clock needs to be ON to write PWM registers */
+    sys_slp_clk_off0(RB_SLP_CLK_PWMX, SYS_SLP_CLK_ON);
 
     switch (cmd)
     {
@@ -251,10 +261,14 @@ static rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     case PWM_CMD_SET_PULSE:
         return pwm_channel_pulse(device, channel, configuration->pulse);
     default:
-        return -RT_EINVAL;
+        res = -RT_EINVAL;
     }
 
-    return RT_EOK;
+    /* disable PWMX clocking, if all channels are disabled */
+    if ((pwm_device->reg_base->CTRL_MOD.reg & PWM_OUT_EN_MASK) == 0)
+        sys_slp_clk_off0(RB_SLP_CLK_PWMX, SYS_SLP_CLK_OFF);
+
+    return res;
 }
 
 static struct rt_pwm_ops pwm_ops =
@@ -264,8 +278,9 @@ static struct rt_pwm_ops pwm_ops =
 
 static int rt_hw_pwm_init(void)
 {
+    /* init pwmx_device with code to save some flash space */
     pwmx_device.reg_base = (struct pwm_registers *)PWMX_REG_BASE;
-    pwmx_device.reg_base->CTRL_CFG.cycle_sel = PWM_CYCLE_SEL_255;
+    /* Note: PWM clock OFF here => PWM registers not writable */
 
     return rt_device_pwm_register(
            &pwmx_device.parent, PWM_DEVICE_NAME, &pwm_ops, RT_NULL);

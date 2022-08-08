@@ -18,6 +18,10 @@ config BSP_USING_UART
     if BSP_USING_UART
         config BSP_USING_UART0
             bool "using UART0"
+            if BSP_USING_UART0
+                config BSP_USING_UART0_PIN_ALT
+                    bool "UART0 PIN_ALTERNATE (PA5/PA6)"
+            endif
 
         config BSP_USING_UART1
             bool "using UART1"

@@ -243,6 +243,7 @@ static void test_spi_master(void)
     rt_err_t res;
 
     uint8_t buf[16];
+    int i;
 
     cfg.max_hz = 25 * 1000000;
     cfg.data_width = 8;
@@ -280,7 +281,10 @@ static void test_spi_master(void)
         msg2.length = 16;
         if (rt_spi_transfer_message(&spi_dev_w25q, &msg1) == RT_NULL)
         {
-            rt_kprintf("rt_spi_transfer_message() 16-byte-read DMA done\n\n");
+            rt_kprintf("SPI0 16-byte DMA read :");
+            for (i = 0; i < 16; i++)
+                rt_kprintf(" %02x", buf[i]);
+            rt_kprintf("\n\n");
         }
     }
     else
