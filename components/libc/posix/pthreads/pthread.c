@@ -394,7 +394,7 @@ pthread_t pthread_self (void)
     tid = rt_thread_self();
     if (tid == NULL) return PTHREAD_NUM_MAX;
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
@@ -477,7 +477,7 @@ void pthread_exit(void *value)
         return;
     }
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
 
     rt_enter_critical();
@@ -595,7 +595,7 @@ void pthread_cleanup_pop(int execute)
 
     if (rt_thread_self() == NULL) return;
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
@@ -624,7 +624,7 @@ void pthread_cleanup_push(void (*routine)(void *), void *arg)
 
     if (rt_thread_self() == NULL) return;
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
@@ -676,7 +676,7 @@ int pthread_setcancelstate(int state, int *oldstate)
 
     if (rt_thread_self() == NULL) return EINVAL;
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
@@ -699,7 +699,7 @@ int pthread_setcanceltype(int type, int *oldtype)
 
     if (rt_thread_self() == NULL) return EINVAL;
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
@@ -721,7 +721,7 @@ void pthread_testcancel(void)
 
     if (rt_thread_self() == NULL) return;
 
-    /* get pthread data from user data of thread */
+    /* get pthread data from pthread_data of thread */
     ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
     RT_ASSERT(ptd != RT_NULL);
 
