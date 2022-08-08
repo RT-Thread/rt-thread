@@ -42,3 +42,12 @@ const pin_map_t pin_map_table[]=
     {A5, RT_NULL, "adc1", 17}, /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
     {A6, RT_NULL, "adc1", 16} /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
 };
+/* 
+ * Before RTdunio is used, you can do some necessary initialization through this function
+ */
+void initVariant()
+{
+    /* JTAG-DP Disabled and SW-DP enabled */
+    __HAL_RCC_AFIO_CLK_ENABLE();
+    __HAL_AFIO_REMAP_SWJ_NOJTAG(); 
+}
