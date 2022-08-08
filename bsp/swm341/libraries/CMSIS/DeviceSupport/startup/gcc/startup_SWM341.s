@@ -5,7 +5,7 @@
 
 .global  g_pfnVectors
 .global  Default_Handler
-
+.extern  FPU_Enable
 /* start address for the initialization values of the .data section.
 defined in linker script */
 .word  _sidata
@@ -35,7 +35,7 @@ Reset_Handler:
   ldr   sp, =_estack      /* set stack pointer */
 
 /* Call the clock system initialization function.*/
-  bl  FPU_init
+  bl  FPU_Enable
 
 /* Copy the data segment initializers from flash to SRAM */
   ldr r0, =_sdata
