@@ -18,9 +18,11 @@ config BSP_USING_UART
     if BSP_USING_UART
         config BSP_USING_UART0
             bool "using UART0"
+            default n
             if BSP_USING_UART0
                 config BSP_USING_UART0_PIN_ALT
                     bool "UART0 PIN_ALTERNATE (PA5/PA6)"
+                    default n
             endif
 
         config BSP_USING_UART1
@@ -29,9 +31,11 @@ config BSP_USING_UART
 
         config BSP_USING_UART2
             bool "using UART2"
+            default n
 
         config BSP_USING_UART3
             bool "using UART3"
+            default n
     endif
 
 config BSP_USING_TIMER
@@ -42,13 +46,15 @@ config BSP_USING_TIMER
     if BSP_USING_TIMER
         config BSP_USING_TMR0
             bool "using TMR0"
-            default y
+            default n
 
         config BSP_USING_TMR1
             bool "using TMR1"
+            default n
 
         config BSP_USING_TMR2
             bool "using TMR2"
+            default n
     endif
 
 config BSP_USING_SPI
@@ -59,10 +65,11 @@ config BSP_USING_SPI
     if BSP_USING_SPI
         config BSP_USING_SPI0
             bool "using SPI0"
-            default y
+            default n
 
         config BSP_USING_SPI1
             bool "using SPI1"
+            default n
     endif
 endmenu
 
