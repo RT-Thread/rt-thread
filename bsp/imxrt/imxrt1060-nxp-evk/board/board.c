@@ -450,6 +450,9 @@ static void imxrt_lcd_pins_init(void)
         IOMUXC_GPIO_AD_B0_02_GPIO1_IO02, /* GPIO_AD_B0_02 is configured as GPIO1_IO02 */
         0U);                             /* Software Input On Field: Input Path is determined by functionality */
     IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_B0_11_GPIO1_IO11, /* GPIO_AD_B0_11 is configured as GPIO1_IO11 */
+        0U);                             /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
         IOMUXC_GPIO_B1_15_GPIO2_IO31, /* GPIO_B1_15 is configured as GPIO2_IO31 */
         0U);                          /* Software Input On Field: Input Path is determined by functionality */
     IOMUXC_SetPinMux(
@@ -514,6 +517,16 @@ static void imxrt_lcd_pins_init(void)
         0U);                          /* Software Input On Field: Input Path is determined by functionality */
     IOMUXC_SetPinConfig(
         IOMUXC_GPIO_AD_B0_02_GPIO1_IO02, /* GPIO_AD_B0_02 PAD functional properties : */
+        0x10B0u);                        /* Slew Rate Field: Slow Slew Rate
+                                                 Drive Strength Field: R0/6
+                                                 Speed Field: medium(100MHz)
+                                                 Open Drain Enable Field: Open Drain Disabled
+                                                 Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                 Pull / Keep Select Field: Keeper
+                                                 Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                 Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_B0_11_GPIO1_IO11, /* GPIO_AD_B0_11 PAD functional properties : */
         0x10B0u);                        /* Slew Rate Field: Slow Slew Rate
                                                  Drive Strength Field: R0/6
                                                  Speed Field: medium(100MHz)
