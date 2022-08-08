@@ -28,7 +28,7 @@ Hardware Drivers Config --->
 | 3 (D3)      | PB4       | 是    | PWM3-CH1（定时器3发生）                             |
 | 4 (D4)      | PB3       | 是    | PWM2-CH2（定时器2发生）                             |
 | 5 (D5)      | PA15      | 是    | PWM2-CH1（定时器2发生）                             |
-| 6 (D6)      | PA8       | 是    |                                                   |
+| 6 (D6)      | PA8       | 是    |                                              |
 | 7 (D7)      | PB12      | 是    |                                              |
 | 8 (D8)      | PC13      | 否    |                                              |
 | 9 (D9)      | PC14      | 否    |                                              |
@@ -36,13 +36,13 @@ Hardware Drivers Config --->
 | 11 (D11)    | PA0       | 否    |                                              |
 | 12 (D12)    | PB0       | 否    | PWM3-CH3（定时器3发生）                             |
 | 13 (D13)    | PB1       | 否    | PWM3-CH4（定时器3发生）                             |
-| A0          | PA1       | 否    | ADC1-CH1                                      |
-| A1          | PA4       | 否    | ADC1-CH4                                      |
-| A2          | PA5       | 否    | ADC1-CH5                                      |
-| A3          | PA6       | 否    | ADC1-CH6                                      |
-| A4          | PA7       | 否    | ADC1-CH7                                      |
-| A5          | --        |       | 芯片内部参考电压 ADC                                 |
-| A6          | --        |       | 芯片内部温度 ADC                                   |
+| A0          | PA1       | 否    | ADC1-CH1                                     |
+| A1          | PA4       | 否    | ADC1-CH4                                     |
+| A2          | PA5       | 否    | ADC1-CH5                                     |
+| A3          | PA6       | 否    | ADC1-CH6                                     |
+| A4          | PA7       | 否    | ADC1-CH7                                     |
+| A5          | --        |      | 芯片内部参考电压 ADC                                 |
+| A6          | --        |      | 芯片内部温度 ADC                                   |
 | --          | PB9       | 是    | I2C-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
 | --          | PB8       | 是    | I2C-SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
 | --          | PA12      | 是    | USB-DP，被TinyUSB接管，不可当做普通IO                   |

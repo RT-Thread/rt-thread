@@ -20,20 +20,20 @@
 */
 const pin_map_t pin_map_table[]=
 {
-    {D0}, /* RX */
-    {D1}, /* TX */
+    {D0, GET_PIN(B,7)},
+    {D1, GET_PIN(B,6)},
     {D2, GET_PIN(B,5), "pwm3", 2},/* PWM */
     {D3, GET_PIN(B,4), "pwm3", 1}, /* PWM */
     {D4, GET_PIN(B,3), "pwm2", 2}, /* PWM */
     {D5, GET_PIN(A,15), "pwm2", 1}, /* PWM */
     {D6, GET_PIN(A,8)},
     {D7, GET_PIN(B,12)},
-    {D8, GET_PIN(C,13)}, /* user led1 */
+    {D8, GET_PIN(C,13)}, /* LED_BUILTIN */
     {D9, GET_PIN(C,14)},
     {D10, GET_PIN(C,15)},
     {D11, GET_PIN(A,0)},
     {D12, GET_PIN(B,0), "pwm3", 3}, /* PWM */
-    {D13, GET_PIN(B,1), "pwm3", 4}, /* PWM */    
+    {D13, GET_PIN(B,1), "pwm3", 4}, /* PWM */
     {A0, GET_PIN(A,1), "adc1", 1}, /* ADC */
     {A1, GET_PIN(A,4), "adc1", 4}, /* ADC */
     {A2, GET_PIN(A,5), "adc1", 5}, /* ADC */
