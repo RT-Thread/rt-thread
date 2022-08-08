@@ -253,7 +253,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif /* RT_USING_CPU_USAGE */
 
 #ifdef RT_USING_PTHREADS
-    thread->pthread_data = 0;
+    thread->pthread_data = RT_NULL;
 #endif /* RT_USING_PTHREADS */
 
 #ifdef RT_USING_MODULE

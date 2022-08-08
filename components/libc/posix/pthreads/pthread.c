@@ -136,7 +136,7 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
         ptd->magic = 0x0;
 
         /* clear the "ptd->tid->pthread_data" */
-        ptd->tid->pthread_data = 0;
+        ptd->tid->pthread_data = RT_NULL;
 
         /* free ptd */
         rt_free(ptd);
@@ -281,7 +281,7 @@ int pthread_create(pthread_t            *pid,
 
     /* set pthread cleanup function and ptd data */
     ptd->tid->cleanup = _pthread_cleanup;
-    ptd->tid->pthread_data = (rt_ubase_t)ptd;
+    ptd->tid->pthread_data = (void *)ptd;
 
     /* start thread */
     if (rt_thread_startup(ptd->tid) == RT_EOK)
