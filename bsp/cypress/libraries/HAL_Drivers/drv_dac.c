@@ -81,7 +81,7 @@ static rt_err_t cyp_dac_enabled(struct rt_dac_device *device, rt_uint32_t channe
     if (result != RT_EOK)
     {
         LOG_E("Cy_CSDIDAC_Init fail = %d\n", result);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     return RT_EOK;
@@ -134,10 +134,10 @@ static rt_err_t cyp_adc_convert(struct rt_dac_device *device, rt_uint32_t channe
 }
 
 static const struct rt_dac_ops cyp_dac_ops =
-    {
-        .disabled = cyp_dac_disable,
-        .enabled = cyp_dac_enabled,
-        .convert = cyp_adc_convert,
+{
+    .disabled = cyp_dac_disable,
+    .enabled = cyp_dac_enabled,
+    .convert = cyp_adc_convert,
 };
 
 /*dac device init*/

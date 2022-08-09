@@ -17,25 +17,25 @@
 
 static const cy_stc_csdidac_pin_t CSDIDAC_csdidac_a_pin =
 {
-        .ioPcPtr = GPIO_PRT10,
-        .pin = 0u,
+    .ioPcPtr = GPIO_PRT10,
+    .pin = 0u,
 };
 static const cy_stc_csdidac_pin_t CSDIDAC_csdidac_b_pin =
 {
-        .ioPcPtr = GPIO_PRT10,
-        .pin = 0u,
+    .ioPcPtr = GPIO_PRT10,
+    .pin = 0u,
 };
 
 const cy_stc_csdidac_config_t CSDIDAC_csdidac_config =
 {
-        .base = CSD0,
-        .csdCxtPtr = &cy_csd_0_context,
-        .configA = CY_CSDIDAC_GPIO,
-        .configB = CY_CSDIDAC_GPIO,
-        .ptrPinA = (const cy_stc_csdidac_pin_t *)&CSDIDAC_csdidac_a_pin,
-        .ptrPinB = (const cy_stc_csdidac_pin_t *)&CSDIDAC_csdidac_b_pin,
-        .cpuClk = 100000000u,
-        .csdInitTime = 25u,
+    .base = CSD0,
+    .csdCxtPtr = &cy_csd_0_context,
+    .configA = CY_CSDIDAC_GPIO,
+    .configB = CY_CSDIDAC_GPIO,
+    .ptrPinA = (const cy_stc_csdidac_pin_t *)&CSDIDAC_csdidac_a_pin,
+    .ptrPinB = (const cy_stc_csdidac_pin_t *)&CSDIDAC_csdidac_b_pin,
+    .cpuClk = 100000000u,
+    .csdInitTime = 25u,
 };
 
 #ifdef BSP_USING_DAC1
