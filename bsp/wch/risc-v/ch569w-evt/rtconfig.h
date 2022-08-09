@@ -70,10 +70,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_HWTIMER
 #define RT_USING_PIN
-#define RT_USING_SPI
-#define RT_USING_WDT
 
 /* Using USB */
 
@@ -181,11 +178,6 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_TIMER
-#define BSP_USING_TMR0
-#define BSP_USING_TMR1
-#define BSP_USING_SPI
-#define BSP_USING_SPI0
 
 /* Onboard Peripheral Drivers */
 
