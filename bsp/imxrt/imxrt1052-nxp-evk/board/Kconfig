@@ -117,7 +117,7 @@ menu "Onboard Peripheral Drivers"
 	bool "Enable Ethernet"
 	select RT_USING_NETDEV
 	select RT_USING_LWIP
-		default n
+	default n
     
 
 	if BSP_USING_ETH
