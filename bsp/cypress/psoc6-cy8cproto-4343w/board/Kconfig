@@ -204,6 +204,11 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -242,7 +247,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable DAC2"
                 default n
         endif
-    
+
     menuconfig BSP_USING_TIM
         bool "Enable timer"
         default n
@@ -255,8 +260,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable TIM2"
                 default n
         endif
-        
-
 endmenu
 
 menu "Board extended module Drivers"

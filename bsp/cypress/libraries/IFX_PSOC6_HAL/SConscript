@@ -19,8 +19,7 @@ src = Split('''
             mtb-hal-cat1/source/cyhal_utils_psoc.c
             mtb-hal-cat1/source/cyhal_utils.c
             mtb-hal-cat1/source/cyhal_lptimer.c
-            mtb-hal-cat1/source/cyhal_irq_psoc.c
-            mtb-hal-cat1/include_pvt/cyhal_hw_types.h      
+            mtb-hal-cat1/source/cyhal_irq_psoc.c   
             mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c
             mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_124_bga.c
             mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c
@@ -37,8 +36,7 @@ src = Split('''
             mtb-pdl-cat1/drivers/source/cy_ipc_sema.c
             mtb-pdl-cat1/drivers/source/cy_ipc_drv.c
             mtb-pdl-cat1/drivers/source/cy_trigmux.c
-            mtb-pdl-cat1/drivers/source/cy_prot.c
-            mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_mdk.s            
+            mtb-pdl-cat1/drivers/source/cy_prot.c           
             TARGET_CY8CKIT-062S2-43012/cybsp.c
             TARGET_CY8CKIT-062S2-43012/COMPONENT_CM4/system_psoc6_cm4.c
             TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg.c
@@ -95,6 +93,16 @@ if GetDepend(['RT_USING_SPI']):
 if GetDepend(['RT_USING_I2C']):
     src += ['mtb-hal-cat1/source/cyhal_i2c.c']
 
+if GetDepend('BSP_USING_USBD'):
+    src += ['mtb_shared/usbdev/cy_usb_dev.c']
+    src += ['mtb_shared/usbdev/cy_usb_dev_hid.c']
+    src += ['mtb-hal-cat1/source/cyhal_usb_dev.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_dma.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_usbfs_dev_drv.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_usbfs_dev_drv_io.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_usbfs_dev_drv_io_dma.c']
+    src += ['TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_usbdev.c']
+
 if GetDepend('BSP_USING_RTC'):
     src += ['mtb-pdl-cat1/drivers/source/cy_rtc.c']
     src += ['mtb-hal-cat1/source/cyhal_rtc.c']
@@ -121,6 +129,9 @@ if GetDepend(['RT_USING_WDT']):
     src += ['mtb-pdl-cat1/drivers/source/cy_wdt.c']
     src += ['mtb-hal-cat1/source/cyhal_wdt.c']
 
+if GetDepend(['RT_USING_DAC']):
+    src += ['mtb_shared/csdidac/cy_csdidac.c']	
+
 if GetDepend(['RT_USING_HWTIMER']):
     src += ['mtb-hal-cat1/source/cyhal_timer.c']    
 
@@ -129,13 +140,14 @@ path = [cwd + '/capsense',
         cwd + '/retarget-io',
         cwd + '/core-lib/include',
         cwd + '/mtb_shared/serial-flash',
-        cwd + '/mtb-hal-cat1/include',
-        cwd + '/mtb-hal-cat1/include_pvt',
+        cwd + '/mtb_shared/usbdev',
+        cwd + '/mtb_shared/csdidac',
         cwd + '/mtb-pdl-cat1/cmsis/include',
         cwd + '/mtb-pdl-cat1/drivers/include',
-        cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include',
         cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include',
-        cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1B/include',
+        cwd + '/mtb-hal-cat1/include_pvt',
+        cwd + '/mtb-hal-cat1/include',
+        cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include',
         cwd + '/TARGET_CY8CKIT-062S2-43012',
         cwd + '/TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource']
 

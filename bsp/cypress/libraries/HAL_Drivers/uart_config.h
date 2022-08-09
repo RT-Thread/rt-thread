@@ -20,7 +20,7 @@ extern "C" {
 
 #ifdef BSP_USING_UART0
 /* UART0 device driver structure */
-cy_stc_sysint_t UART2_SCB_IRQ_cfg =
+cy_stc_sysint_t UART0_SCB_IRQ_cfg =
 {
     .intrSrc = (IRQn_Type) scb_0_interrupt_IRQn,
     .intrPriority = (7u),
