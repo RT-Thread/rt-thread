@@ -229,6 +229,34 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
+    
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+            config BSP_USING_DAC2
+                bool "Enable DAC2"
+                default n
+        endif
+    
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+        endif
+        
+
 endmenu
 
 menu "Board extended module Drivers"
