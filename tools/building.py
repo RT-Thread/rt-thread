@@ -880,6 +880,7 @@ def EndBuilding(target, program = None):
     Clean(target, 'cconfig.h')
     Clean(target, 'rtua.py')
     Clean(target, 'rtua.pyc')
+    Clean(target, '.sconsign.dblite')
 
     if GetOption('target'):
         GenTargetProject(program)
