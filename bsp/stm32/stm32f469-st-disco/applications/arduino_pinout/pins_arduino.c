@@ -33,7 +33,7 @@ const pin_map_t pin_map_table[]=
     {D10, GET_PIN(H,6),"pwm12", 1}, /* PWM */
     {D11, GET_PIN(B,15),"pwm12", 2}, /* PWM */
     {D12, GET_PIN(B,14)},
-    {D13, GET_PIN(D,3)},
+    {D13, GET_PIN(D,3)}, /* LED_BUILTIN */
     {D14}, /* I2C1-SDA */
     {D15}, /* I2C1-SCL */
     {D16, GET_PIN(A,0)}, /* user button */

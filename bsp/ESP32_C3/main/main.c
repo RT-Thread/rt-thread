@@ -15,10 +15,12 @@
 
 int rtt_main(void)
 {
+    /* show RT-Thread version */
+    rt_show_version();
+    rt_kprintf("Hello!RT-THREAD!\r\n");
     rt_pin_mode(RT_BSP_LED_PIN, PIN_MODE_OUTPUT);
     while (1)
     {
-        printf("Hello!RT-THREAD!\r\n");
         rt_pin_write(RT_BSP_LED_PIN, PIN_HIGH);
         rt_thread_mdelay(1000);
         rt_pin_write(RT_BSP_LED_PIN, PIN_LOW);

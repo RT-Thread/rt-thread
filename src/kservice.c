@@ -287,7 +287,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
     char *src_ptr = (char *)src;
     long *aligned_dst;
     long *aligned_src;
-    int len = count;
+    rt_ubase_t len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */

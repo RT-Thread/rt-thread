@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2021, RT-Thread Development Team
+# Copyright (c) 2006-2022, RT-Thread Development Team
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -65,7 +65,7 @@ class CheckOut:
                         if file_real_path == file_path:
                             logging.info("ignore file path: {}".format(file_real_path))
                             return 0
-                
+
                 file_dir_path = os.path.dirname(file_path)
                 for _dir in dir_ignore:
                     if _dir is not None:
@@ -168,7 +168,7 @@ class FormatCheck:
             with open(file_path, 'r', encoding = "utf-8") as f:
                 file_lines = f.readlines()
             if not self.__check_file(file_lines, file_path):
-                format_check_fail_files += 1    
+                format_check_fail_files += 1
 
         if (not encoding_check_result) or (format_check_fail_files != 0):
             logging.error("files format check fail.")
@@ -209,12 +209,12 @@ class LicenseCheck:
                         logging.warning("[{0}]: license year: {} is not true: {}, please update.".format(file_path,
                                                                                                          license_year,
                                                                                                          true_year))
-                                                                                                
+
                     else:
                         logging.info("[{0}]: license check success.".format(file_path))
                 except Exception as e:
                     logging.error(e)
-            
+
             else:
                 logging.error("[{0}]: license check fail.".format(file_path))
                 check_result = False

@@ -71,13 +71,25 @@ struct virtio_net_hdr
     rt_uint16_t gso_size;
     rt_uint16_t csum_start;
     rt_uint16_t csum_offset;
-    rt_uint16_t num_buffers;    /* Only if VIRTIO_NET_F_MRG_RXBUF */
+    rt_uint16_t num_buffers;
 } __attribute__ ((packed));
 
 #define VIRTIO_NET_MSS              1514
-/* Disable VIRTIO_NET_F_MRG_RXBUF */
-#define VIRTIO_NET_HDR_SIZE         (sizeof(struct virtio_net_hdr) - sizeof(rt_uint16_t))
+#define VIRTIO_NET_HDR_SIZE         (sizeof(struct virtio_net_hdr))
 #define VIRTIO_NET_PAYLOAD_MAX_SIZE (VIRTIO_NET_HDR_SIZE + VIRTIO_NET_MSS)
+
+struct virtio_net_config
+{
+    rt_uint8_t mac[6];
+    rt_uint16_t status;
+    rt_uint16_t max_virtqueue_pairs;
+    rt_uint16_t mtu;
+    rt_uint32_t speed;
+    rt_uint8_t duplex;
+    rt_uint8_t rss_max_key_size;
+    rt_uint16_t rss_max_indirection_table_length;
+    rt_uint32_t supported_hash_types;
+} __attribute__((packed));
 
 struct virtio_net_device
 {
@@ -85,14 +97,16 @@ struct virtio_net_device
 
     struct virtio_device virtio_dev;
 
-    rt_uint8_t mac[6];
+    struct virtio_net_config *config;
 
     struct
     {
         /* Transmit hdr */
         struct virtio_net_hdr hdr;
+        /* Transmit buffer */
+        rt_uint8_t tx_buffer[VIRTIO_NET_PAYLOAD_MAX_SIZE];
         /* Receive buffer */
-        rt_uint8_t buffer[VIRTIO_NET_PAYLOAD_MAX_SIZE];
+        rt_uint8_t rx_buffer[VIRTIO_NET_PAYLOAD_MAX_SIZE];
     } info[VIRTIO_NET_RTX_QUEUE_SIZE];
 };
 

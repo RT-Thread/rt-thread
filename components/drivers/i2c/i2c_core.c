@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -108,7 +108,7 @@ rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
                              const rt_uint8_t         *buf,
                              rt_uint32_t               count)
 {
-    rt_err_t ret;
+    rt_size_t ret;
     struct rt_i2c_msg msg;
 
     msg.addr  = addr;
@@ -127,7 +127,7 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count)
 {
-    rt_err_t ret;
+    rt_size_t ret;
     struct rt_i2c_msg msg;
     RT_ASSERT(bus != RT_NULL);
 

@@ -24,6 +24,7 @@ static rt_uint32_t cur_points[2];
 static rt_uint32_t cur_last_points[2];
 static rt_bool_t cur_event_sync;
 static rt_uint32_t color[2] = { 0xff0000, 0x0000ff };
+static rt_uint8_t cursor[VIRTIO_GPU_CURSOR_IMG_SIZE] ALIGN(VIRTIO_PAGE_SIZE);
 
 void tablet_event_handler(struct virtio_input_event event)
 {
@@ -100,6 +101,8 @@ void graphic_thread(void *param)
 
         if (graphic_info.framebuffer != RT_NULL)
         {
+            int i = 0;
+
             rt_memset(graphic_info.framebuffer, 0xff,
                     graphic_info.width * graphic_info.height * graphic_info.bits_per_pixel);
 
@@ -110,6 +113,16 @@ void graphic_thread(void *param)
             virtio_gpu_graphic_ops->draw_vline((char *)&color[1], cur_last_points[0], 0, graphic_info.height);
 
             rt_device_control(device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
+
+            while (i < sizeof(cursor) / sizeof(rt_uint32_t))
+            {
+                /* R: 0x4c G: 0xaf B: 0x50 A: 0.8 */
+                ((rt_uint32_t *)cursor)[i] = 0xcc4caf50;
+                ++i;
+            }
+
+            rt_device_control(device, VIRTIO_DEVICE_CTRL_CURSOR_SETUP, cursor);
+            rt_device_control(device, VIRTIO_DEVICE_CTRL_CURSOR_MOVE, (rt_uint32_t[]){0, 0});
 
             gpu_dev = device;
         }

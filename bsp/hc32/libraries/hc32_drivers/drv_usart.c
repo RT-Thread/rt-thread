@@ -594,6 +594,8 @@ static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     }
 }
 
+#if defined(BSP_UART1_RX_USING_DMA) || defined(BSP_UART2_RX_USING_DMA) || defined(BSP_UART3_RX_USING_DMA) || \
+    defined(BSP_UART4_RX_USING_DMA) || defined(BSP_UART6_RX_USING_DMA) || defined(BSP_UART7_RX_USING_DMA)
 static void hc32_uart_dma_rx_irq_handler(struct hc32_uart *uart)
 {
     struct rt_serial_device *serial;
@@ -638,7 +640,10 @@ static void hc32_uart_rxto_irq_handler(struct hc32_uart *uart)
     TMR0_Stop(uart->config->rx_timeout->TMR0_Instance, uart->config->rx_timeout->channel);
     USART_ClearStatus(uart->config->Instance, USART_FLAG_RX_TIMEOUT);
 }
+#endif
 
+#if defined(BSP_UART1_TX_USING_DMA) || defined(BSP_UART2_TX_USING_DMA) || defined(BSP_UART3_TX_USING_DMA) || \
+    defined(BSP_UART4_TX_USING_DMA) || defined(BSP_UART6_TX_USING_DMA) || defined(BSP_UART7_TX_USING_DMA)
 static void hc32_uart_tc_irq_handler(struct hc32_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
@@ -650,6 +655,7 @@ static void hc32_uart_tc_irq_handler(struct hc32_uart *uart)
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
     }
 }
+#endif
 #endif
 
 #if defined(BSP_USING_UART1)

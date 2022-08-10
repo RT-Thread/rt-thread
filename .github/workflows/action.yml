@@ -37,6 +37,7 @@ jobs:
          - {RTT_BSP: "at91/at91sam9g45", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91/at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "cypress/psoc6-cy8cproto-4343w", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ft32/ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
