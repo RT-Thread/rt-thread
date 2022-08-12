@@ -69,8 +69,9 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
 {
     rt_uint32_t startAddr = (rt_uint32_t)addr & (rt_uint32_t)~(L1CACHE_LINESIZE_BYTE - 1);
     rt_uint32_t size_byte = size + (rt_uint32_t)addr - startAddr;
+    rt_uint32_t clean_invalid = RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE;
 
-    if (ops & (RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE))
+    if ((ops & clean_invalid) == clean_invalid)
     {
         SCB_CleanInvalidateDCache_by_Addr((uint32_t *)startAddr, size_byte);
     }
