@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1420,7 +1420,7 @@ struct hostent *at_gethostbyname(const char *name)
     }
     else
     {
-        strncpy(ipstr, name, strlen(name));
+        strncpy(ipstr, name, sizeof(ipstr) - 1);
     }
 
 #if NETDEV_IPV4 && NETDEV_IPV6
@@ -1528,7 +1528,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
             }
             else
             {
-                strncpy(ip_str, nodename, strlen(nodename));
+                strncpy(ip_str, nodename, sizeof(ip_str) - 1);
             }
 
         #if NETDEV_IPV4 && NETDEV_IPV6
