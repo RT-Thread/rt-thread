@@ -45,7 +45,7 @@ void boot_multicore_slave(void) {
 
     /* When kicking off the CM4 core from the CM7 core */
     #if defined(__MULTICORE_MASTER_SLAVE_M4SLAVE)
-    	bootAddress = (uint32_t)(char *)&__core_m4slave_START__;
+        bootAddress = (uint32_t)(char *)&__core_m4slave_START__;
         IOMUXC_LPSR_GPR->GPR0 = IOMUXC_LPSR_GPR_GPR0_CM4_INIT_VTOR_LOW(bootAddress >> 3u);
         IOMUXC_LPSR_GPR->GPR1 = IOMUXC_LPSR_GPR_GPR1_CM4_INIT_VTOR_HIGH(bootAddress >> 16u);
 
@@ -54,7 +54,7 @@ void boot_multicore_slave(void) {
     #endif
     /* When kicking off the CM7 core from the CM4 core */
     #if defined(__MULTICORE_MASTER_SLAVE_M7SLAVE)
-    	bootAddress = (uint32_t)(char *)&__core_m7slave_START__;
+        bootAddress = (uint32_t)(char *)&__core_m7slave_START__;
         if (ANADIG_MISC->MISC_DIFPROG == 0x1170A0U)
         {
             /* Set hidden register at 0x400e404c address */
