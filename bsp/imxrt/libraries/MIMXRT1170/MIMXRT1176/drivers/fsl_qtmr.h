@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 NXP
+ * Copyright 2017-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -20,7 +20,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_QTMR_DRIVER_VERSION (MAKE_VERSION(2, 0, 2)) /*!< Version */
+#define FSL_QTMR_DRIVER_VERSION (MAKE_VERSION(2, 1, 0)) /*!< Version */
 /*@}*/
 
 /*! @brief Quad Timer primary clock source selection*/
@@ -347,6 +347,32 @@ void QTMR_ClearStatusFlags(TMR_Type *base, qtmr_channel_selection_t channel, uin
  * @param ticks Timer period in units of ticks
  */
 void QTMR_SetTimerPeriod(TMR_Type *base, qtmr_channel_selection_t channel, uint16_t ticks);
+
+/*!
+ * @brief Set compare value.
+ *
+ * This function sets the value used for comparison with the counter value.
+ *
+ * @param base     Quad Timer peripheral base address
+ * @param channel  Quad Timer channel number
+ * @param ticks    Timer period in units of ticks.
+ */
+void QTMR_SetCompareValue(TMR_Type *base, qtmr_channel_selection_t channel, uint16_t ticks);
+
+/*!
+ * @brief Set load value.
+ *
+ * This function sets the value used to initialize the counter after a counter comparison.
+ *
+ * @param base     Quad Timer peripheral base address
+ * @param channel  Quad Timer channel number
+ * @param value    Load register initialization value.
+ */
+static inline void QTMR_SetLoadValue(TMR_Type *base, qtmr_channel_selection_t channel, uint16_t value)
+{
+    base->CHANNEL[channel].LOAD &= (uint16_t)(~TMR_LOAD_LOAD_MASK);
+    base->CHANNEL[channel].LOAD = value;
+}
 
 /*!
  * @brief Reads the current timer counting value.
