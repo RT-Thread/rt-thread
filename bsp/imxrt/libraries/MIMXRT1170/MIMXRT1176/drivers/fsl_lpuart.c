@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -700,7 +700,7 @@ void LPUART_SendAddress(LPUART_Type *base, uint8_t address)
  * endcode
  *
  * param base LPUART peripheral base address.
- * param mask The interrupts to enable. Logical OR of ref _uart_interrupt_enable.
+ * param mask The interrupts to enable. Logical OR of ref _lpuart_interrupt_enable.
  */
 void LPUART_EnableInterrupts(LPUART_Type *base, uint32_t mask)
 {
@@ -727,7 +727,7 @@ void LPUART_EnableInterrupts(LPUART_Type *base, uint32_t mask)
     mask &= ~((uint32_t)kLPUART_TxFifoOverflowInterruptEnable | (uint32_t)kLPUART_RxFifoUnderflowInterruptEnable);
 #endif
 
-    /* Check int enable bits in base->CTRL */
+    /* Set int enable bits in base->CTRL */
     base->CTRL |= mask;
 }
 
@@ -851,7 +851,7 @@ uint32_t LPUART_GetStatusFlags(LPUART_Type *base)
  * can't be cleared by this function.
  * Flags that can only cleared or set by hardware are:
  *    kLPUART_TxDataRegEmptyFlag, kLPUART_TransmissionCompleteFlag, kLPUART_RxDataRegFullFlag,
- *    kLPUART_RxActiveFlag, kLPUART_NoiseErrorInRxDataRegFlag, kLPUART_ParityErrorInRxDataRegFlag,
+ *    kLPUART_RxActiveFlag, kLPUART_NoiseErrorFlag, kLPUART_ParityErrorFlag,
  *    kLPUART_TxFifoEmptyFlag,kLPUART_RxFifoEmptyFlag
  * Note: This API should be called when the Tx/Rx is idle, otherwise it takes no effects.
  *

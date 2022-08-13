@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 NXP
+ * Copyright 2019-2022 NXP
  * All rights reserved.
  *
  *
@@ -444,6 +444,85 @@ status_t LCDIFV2_GetPorterDuffConfig(lcdifv2_pd_blend_mode_t mode,
         config->alphaMode         = kLCDIFV2_AlphaPoterDuff;
 
         status = kStatus_Success;
+    }
+
+    return status;
+}
+
+/*
+ * brief Get the global alpha values for multiple layer blend.
+ *
+ * When all layers use the global alpha, the relationship blended alpha
+ * and global alpha of each layer is:
+ *
+ * Layer 7: ba7 = ga7
+ * Layer 6: ba6 = ga6 * (1-ga7)
+ * Layer 5: ba5 = ga5 * (1-ga6) * (1-ga7)
+ * Layer 4: ba4 = ga4 * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 3: ba3 = ga3 * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 2: ba2 = ga2 * (1-ga3) * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 1: ba1 = ga1 * (1-ga2) * (1-ga3) * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 0: ba0 =   1 * (1-ga1) * (1-ga2) * (1-ga3) * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ *
+ * Here baN is the blended alpha of layer N, gaN is the global alpha configured to layer N.
+ *
+ * This function calculates the global alpha based on the blended alpha. The blendedAlpha and
+ * globalAlpha are all arrays of size layerCount. The first layer is a background layer,
+ * so blendedAlpha[0] is useless, globalAlpha[0] is always 255.
+ *
+ * param blendedAlpha The desired blended alpha value, alpha range 0~255.
+ * param globalAlpha Calculated global alpha set to each layer register.
+ * param layerCount Total layer count.
+ * retval kStatus_Success Get successfully.
+ * retval kStatus_InvalidArgument The argument is invalid.
+ */
+status_t LCDIFV2_GetMultiLayerGlobalAlpha(const uint8_t blendedAlpha[], uint8_t globalAlpha[], uint8_t layerCount)
+{
+    status_t status  = kStatus_Success;
+    int16_t curLayer = (int16_t)layerCount - 1;
+    int left         = 255;
+    int tmpAlpha;
+
+    assert((layerCount > 1U) && (layerCount <= (uint8_t)LCDIFV2_LAYER_COUNT));
+
+    /*
+     * Assume the layer counter is 7, and alpha range is 0~1, define:
+     *
+     *   left_7 = 1
+     *   left_i = (1-ga_(i+1)) * ... * (1-ga7)
+     *
+     * Then:
+     *   ba_i   = ga_i * left_i
+     *   left_i = left_(i+1) - ba_i
+     *   ga_i = ba_i / left_i
+     *
+     * Now change alpha range to 0~255, then:
+     *
+     *   ga_i   = ba_i * 255 / left_i
+     *   left_i = left_(i+1) - ba_i
+     */
+
+    globalAlpha[0] = 255U;
+
+    while (curLayer > 0)
+    {
+        tmpAlpha = (int)blendedAlpha[curLayer] * 255 / left;
+        if (tmpAlpha > 255)
+        {
+            status = kStatus_InvalidArgument;
+            break;
+        }
+
+        globalAlpha[curLayer] = (uint8_t)tmpAlpha;
+        left -= (int)blendedAlpha[curLayer];
+
+        if (left <= 0)
+        {
+            status = kStatus_InvalidArgument;
+            break;
+        }
+
+        curLayer--;
     }
 
     return status;
