@@ -25,7 +25,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief FLEXSPI driver version 2.3.5. */
-#define FSL_FLEXSPI_DRIVER_VERSION (MAKE_VERSION(2, 3, 5))
+#define FSL_FLEXSPI_DRIVER_VERSION (MAKE_VERSION(2, 3, 6))
 /*@}*/
 
 #define FSL_FEATURE_FLEXSPI_AHB_BUFFER_COUNT FSL_FEATURE_FLEXSPI_AHB_BUFFER_COUNTn(0)
@@ -190,8 +190,10 @@ typedef enum _flexspi_port
 {
     kFLEXSPI_PortA1 = 0x0U, /*!< Access flash on A1 port. */
     kFLEXSPI_PortA2,        /*!< Access flash on A2 port. */
-    kFLEXSPI_PortB1,        /*!< Access flash on B1 port. */
-    kFLEXSPI_PortB2,        /*!< Access flash on B2 port. */
+#if !((defined(FSL_FEATURE_FLEXSPI_NO_SUPPORT_PORTB)) && (FSL_FEATURE_FLEXSPI_NO_SUPPORT_PORTB))
+    kFLEXSPI_PortB1, /*!< Access flash on B1 port. */
+    kFLEXSPI_PortB2, /*!< Access flash on B2 port. */
+#endif
     kFLEXSPI_PortCount
 } flexspi_port_t;
 
@@ -231,11 +233,13 @@ typedef struct _flexspi_config
     bool enableCombination; /*!< Enable/disable combining PORT A and B Data Pins
                             (SIOA[3:0] and SIOB[3:0]) to support Flash Octal mode. */
 #endif
-    bool enableDoze;             /*!< Enable/disable doze mode support. */
-    bool enableHalfSpeedAccess;  /*!< Enable/disable divide by 2 of the clock for half
-                                  speed commands. */
-    bool enableSckBDiffOpt;      /*!< Enable/disable SCKB pad use as SCKA differential clock
-                                  output, when enable, Port B flash access is not available. */
+    bool enableDoze;            /*!< Enable/disable doze mode support. */
+    bool enableHalfSpeedAccess; /*!< Enable/disable divide by 2 of the clock for half
+                                 speed commands. */
+#if !(defined(FSL_FEATURE_FLEXSPI_HAS_NO_MCR2_SCKBDIFFOPT) && FSL_FEATURE_FLEXSPI_HAS_NO_MCR2_SCKBDIFFOPT)
+    bool enableSckBDiffOpt; /*!< Enable/disable SCKB pad use as SCKA differential clock
+                             output, when enable, Port B flash access is not available. */
+#endif
     bool enableSameConfigForAll; /*!< Enable/disable same configuration for all connected devices
                                   when enabled, same configuration in FLASHA1CRx is applied to all. */
     uint16_t seqTimeoutCycle;    /*!< Timeout wait cycle for command sequence execution,
@@ -615,10 +619,12 @@ static inline void FLEXSPI_GetDataLearningPhase(FLEXSPI_Type *base, uint8_t *por
         *portAPhase = (uint8_t)((base->STS0 & FLEXSPI_STS0_DATALEARNPHASEA_MASK) >> FLEXSPI_STS0_DATALEARNPHASEA_SHIFT);
     }
 
+#if !((defined(FSL_FEATURE_FLEXSPI_HAS_NO_STS0_DATALEARNPHASEB)) && (FSL_FEATURE_FLEXSPI_HAS_NO_STS0_DATALEARNPHASEB))
     if (portBPhase != NULL)
     {
         *portBPhase = (uint8_t)((base->STS0 & FLEXSPI_STS0_DATALEARNPHASEB_MASK) >> FLEXSPI_STS0_DATALEARNPHASEB_SHIFT);
     }
+#endif
 }
 #endif
 
@@ -683,6 +689,7 @@ static inline bool FLEXSPI_GetBusIdleStatus(FLEXSPI_Type *base)
  */
 void FLEXSPI_UpdateRxSampleClock(FLEXSPI_Type *base, flexspi_read_sample_clock_t clockSource);
 
+#if !((defined(FSL_FEATURE_FLEXSPI_HAS_NO_IPCR1_IPAREN)) && (FSL_FEATURE_FLEXSPI_HAS_NO_IPCR1_IPAREN))
 /*! @brief Enables/disables the FLEXSPI IP command parallel mode.
  *
  * @param base FLEXSPI peripheral base address.
@@ -699,7 +706,9 @@ static inline void FLEXSPI_EnableIPParallelMode(FLEXSPI_Type *base, bool enable)
         base->IPCR1 &= ~FLEXSPI_IPCR1_IPAREN_MASK;
     }
 }
+#endif
 
+#if !((defined(FSL_FEATURE_FLEXSPI_HAS_NO_AHBCR_APAREN)) && (FSL_FEATURE_FLEXSPI_HAS_NO_AHBCR_APAREN))
 /*! @brief Enables/disables the FLEXSPI AHB command parallel mode.
  *
  * @param base FLEXSPI peripheral base address.
@@ -716,6 +725,7 @@ static inline void FLEXSPI_EnableAHBParallelMode(FLEXSPI_Type *base, bool enable
         base->AHBCR &= ~FLEXSPI_AHBCR_APAREN_MASK;
     }
 }
+#endif
 
 /*! @brief Updates the LUT table.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 NXP
+ * Copyright 2020-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -39,7 +39,7 @@
 
 #define PKT_CONTROL_WORD_COUNT(wc)    ((uint32_t)(wc) << 0U)
 #define PKT_CONTROL_VC(vc)            ((uint32_t)(vc) << 16U)
-#define PKT_CONTROL_HEADER_TYPE(type) ((uint32_t)(type) << 18U)
+#define PKT_CONTROL_HEADER_TYPE(ht)   ((uint32_t)(ht) << 18U)
 #define PKT_CONTROL_HS_MASK           (1UL << 24U)
 #define PKT_CONTROL_BTA_MASK          (1UL << 25U)
 #define PKT_CONTROL_BTA_ONLY_MASK     (1UL << 26U)
@@ -63,8 +63,8 @@
 
 /* Packet overhead for HSA, HFP, HBP */
 #define DSI_HSA_OVERHEAD_BYTE 10UL /* HSS + HSA header + HSA CRC. */
-#define DSI_HFP_OVERHEAD_BYTE 8UL  /* RGB data packet CRC + HFP header + HFP CRC. */
-#define DSI_HBP_OVERHEAD_BYTE 14UL /* HSE + HBP header + HBP CRC + RGB data packet header */
+#define DSI_HFP_OVERHEAD_BYTE 12UL /* RGB data packet CRC + HFP header + HFP CRC. */
+#define DSI_HBP_OVERHEAD_BYTE 10UL /* HSE + HBP header + HBP CRC + RGB data packet header */
 
 #define DSI_INT_STATUS_TRIGGER_MASK                                                                           \
     ((uint32_t)kDSI_InterruptGroup1ResetTriggerReceived | (uint32_t)kDSI_InterruptGroup1TearTriggerReceived | \
@@ -537,20 +537,10 @@ void DSI_SetDpiConfig(const MIPI_DSI_Type *base,
         dpi->HSYNC_POLARITY = 0x00U;
     }
 
-    if (kDSI_DpiNonBurstWithSyncPulse == config->videoMode)
-    {
-        dpi->HFP                   = config->hfp - DSI_HFP_OVERHEAD_BYTE;
-        dpi->HBP                   = config->hbp - DSI_HBP_OVERHEAD_BYTE;
-        dpi->HSA                   = config->hsw - DSI_HSA_OVERHEAD_BYTE;
-        dpi->PIXEL_FIFO_SEND_LEVEL = 8;
-    }
-    else
-    {
-        dpi->HFP                   = config->hfp * coff;
-        dpi->HBP                   = config->hbp * coff;
-        dpi->HSA                   = config->hsw * coff;
-        dpi->PIXEL_FIFO_SEND_LEVEL = config->pixelPayloadSize;
-    }
+    dpi->HFP                   = config->hfp * coff - DSI_HFP_OVERHEAD_BYTE;
+    dpi->HBP                   = config->hbp * coff - DSI_HBP_OVERHEAD_BYTE;
+    dpi->HSA                   = config->hsw * coff - DSI_HSA_OVERHEAD_BYTE;
+    dpi->PIXEL_FIFO_SEND_LEVEL = config->pixelPayloadSize;
 
     dpi->VBP = config->vbp;
     dpi->VFP = config->vfp;
@@ -892,7 +882,7 @@ static status_t DSI_PrepareApbTransfer(const MIPI_DSI_Type *base, dsi_transfer_t
     uint32_t intFlags1, intFlags2;
     uint32_t txDataSize;
 
-    if (xfer->rxDataSize > 2U)
+    if (xfer->rxDataSize > FSL_DSI_RX_MAX_PAYLOAD_BYTE)
     {
         return kStatus_DSI_NotSupported;
     }
@@ -1066,6 +1056,9 @@ static status_t DSI_HandleResult(const MIPI_DSI_Type *base,
                                  dsi_transfer_t *xfer)
 {
     uint32_t rxPktHeader;
+    uint16_t actualRxByteCount;
+    dsi_rx_data_type_t rxDataType;
+    bool readRxDataFromPayload;
 
     /* If hardware detect timeout. */
     if (0U != (((uint32_t)kDSI_InterruptGroup1HtxTo | (uint32_t)kDSI_InterruptGroup1LrxTo |
@@ -1092,20 +1085,56 @@ static status_t DSI_HandleResult(const MIPI_DSI_Type *base,
         if (0U != ((uint32_t)kDSI_InterruptGroup1ApbRxHeaderReceived & intFlags1))
         {
             rxPktHeader = DSI_GetRxPacketHeader(base);
+            rxDataType  = DSI_GetRxPacketType(rxPktHeader);
 
             /* If received error report. */
-            if (kDSI_RxDataAckAndErrorReport == DSI_GetRxPacketType(rxPktHeader))
+            if (kDSI_RxDataAckAndErrorReport == rxDataType)
             {
                 return kStatus_DSI_ErrorReportReceived;
             }
             else
             {
-                /* Only handle short packet, long packet is not supported currently. */
-                xfer->rxData[0] = (uint8_t)(rxPktHeader & 0xFFU);
-
-                if (2U == xfer->rxDataSize)
+                if ((kDSI_RxDataGenShortRdResponseOneByte == rxDataType) ||
+                    (kDSI_RxDataDcsShortRdResponseOneByte == rxDataType))
                 {
-                    xfer->rxData[1] = (uint8_t)((rxPktHeader >> 8U) & 0xFFU);
+                    readRxDataFromPayload = false;
+                    actualRxByteCount     = 1U;
+                }
+                else if ((kDSI_RxDataGenShortRdResponseTwoByte == rxDataType) ||
+                         (kDSI_RxDataDcsShortRdResponseTwoByte == rxDataType))
+                {
+                    readRxDataFromPayload = false;
+                    actualRxByteCount     = 2U;
+                }
+                else if ((kDSI_RxDataGenLongRdResponse == rxDataType) || (kDSI_RxDataDcsLongRdResponse == rxDataType))
+                {
+                    readRxDataFromPayload = true;
+                    actualRxByteCount     = DSI_GetRxPacketWordCount(rxPktHeader);
+                }
+                else
+                {
+                    readRxDataFromPayload = false;
+                    xfer->rxDataSize      = 0U;
+                    actualRxByteCount     = 0U;
+                }
+
+                xfer->rxDataSize = MIN(xfer->rxDataSize, actualRxByteCount);
+
+                if (xfer->rxDataSize > 0U)
+                {
+                    if (readRxDataFromPayload)
+                    {
+                        DSI_ReadApbRxPayload(base, xfer->rxData, xfer->rxDataSize);
+                    }
+                    else
+                    {
+                        xfer->rxData[0] = (uint8_t)(rxPktHeader & 0xFFU);
+
+                        if (2U == xfer->rxDataSize)
+                        {
+                            xfer->rxData[1] = (uint8_t)((rxPktHeader >> 8U) & 0xFFU);
+                        }
+                    }
                 }
 
                 return kStatus_Success;

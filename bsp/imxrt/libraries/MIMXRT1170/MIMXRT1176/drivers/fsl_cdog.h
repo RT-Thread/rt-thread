@@ -22,9 +22,11 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief Defines CDOG driver version 2.1.0.
+/*! @brief Defines CDOG driver version 2.1.1.
  *
  * Change log:
+ * - Version 2.1.1
+ *   - Remove bit CONTROL[CONTROL_CTRL]
  * - Version 2.1.0
  *   - Rename CWT to CDOG
  * - Version 2.0.2
@@ -34,7 +36,7 @@
  * - Version 2.0.0
  *   - initial version
  */
-#define FSL_CDOG_DRIVER_VERSION (MAKE_VERSION(2, 1, 0))
+#define FSL_CDOG_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
 /*@}*/
 
 typedef struct
@@ -43,7 +45,6 @@ typedef struct
     uint8_t timeout : 3;
     uint8_t miscompare : 3;
     uint8_t sequence : 3;
-    uint8_t control : 3;
     uint8_t state : 3;
     uint8_t address : 3;
     uint8_t reserved : 8;

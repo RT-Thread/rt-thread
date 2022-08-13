@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 NXP
+ * Copyright 2020-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -8,9 +8,18 @@
 #define _FSL_ENET_QOS_H_
 
 #include "fsl_common.h"
+#if defined(FSL_ETH_ENABLE_CACHE_CONTROL)
 #include "fsl_cache.h"
+#endif
 #if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
 #include "fsl_memory.h"
+#endif
+
+#if !defined(ENET_QOS)
+/* Keep reusing ENET_QOS for platforms which renames it to Ethernet Controller with TSN (EQoS-TSN) */
+#if defined(ENET_QOS_TSN)
+#define ENET_QOS ENET_QOS_TSN
+#endif
 #endif
 /*!
  * @addtogroup enet_qos_qos
@@ -24,7 +33,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief Defines the driver version. */
-#define FSL_ENET_QOS_DRIVER_VERSION (MAKE_VERSION(2, 4, 0))
+#define FSL_ENET_QOS_DRIVER_VERSION (MAKE_VERSION(2, 4, 1))
 /*@}*/
 
 /*! @name Control and status region bit masks of the receive buffer descriptor. */
@@ -1686,7 +1695,7 @@ static inline void ENET_QOS_Ptp1588PpsSetWidth(ENET_QOS_Type *base,
 {
     uint32_t *mac_pps_width;
 
-    mac_pps_width = (uint32_t *)((uint32_t)&base->MAC_PPS0_WIDTH + 0x10U * (uint32_t)instance);
+    mac_pps_width = (uint32_t *)((uintptr_t)&base->MAC_PPS0_WIDTH + 0x10U * (uint32_t)instance);
 
     *mac_pps_width = ENET_QOS_MAC_PPS0_WIDTH_PPSWIDTH0(width);
 }
@@ -1705,7 +1714,7 @@ static inline void ENET_QOS_Ptp1588PpsSetInterval(ENET_QOS_Type *base,
 {
     uint32_t *mac_pps_interval;
 
-    mac_pps_interval = (uint32_t *)((uint32_t)&base->MAC_PPS0_INTERVAL + 0x10U * (uint32_t)instance);
+    mac_pps_interval = (uint32_t *)((uintptr_t)&base->MAC_PPS0_INTERVAL + 0x10U * (uint32_t)instance);
 
     *mac_pps_interval = ENET_QOS_MAC_PPS0_INTERVAL_PPSINT0(interval);
 }
@@ -1757,6 +1766,7 @@ status_t ENET_QOS_GetRxFrame(ENET_QOS_Type *base,
                              enet_qos_handle_t *handle,
                              enet_qos_rx_frame_struct_t *rxFrame,
                              uint8_t channel);
+
 /* @} */
 
 #if defined(__cplusplus)
