@@ -69,9 +69,6 @@ void rt_hw_board_init()
 #endif
 
 #ifdef RT_USING_CONSOLE
-    /* console is uart1, TXD1/RXD1 : PA8/PA7 */
-    rt_pin_mode(GET_PIN(A, 8), PIN_MODE_OUTPUT);
-    rt_pin_mode(GET_PIN(A, 7), PIN_MODE_INPUT_PULLUP);
     rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif

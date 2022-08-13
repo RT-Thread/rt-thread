@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -314,19 +314,19 @@ void EDMA_SetChannelPreemptionConfig(DMA_Type *base, uint32_t channel, const edm
  *
  * param base eDMA peripheral base address.
  * param channel eDMA channel number.
- * param type A channel link type, which can be one of the following:
+ * param linkType A channel link type, which can be one of the following:
  *   arg kEDMA_LinkNone
  *   arg kEDMA_MinorLink
  *   arg kEDMA_MajorLink
  * param linkedChannel The linked channel number.
  * note Users should ensure that DONE flag is cleared before calling this interface, or the configuration is invalid.
  */
-void EDMA_SetChannelLink(DMA_Type *base, uint32_t channel, edma_channel_link_type_t type, uint32_t linkedChannel)
+void EDMA_SetChannelLink(DMA_Type *base, uint32_t channel, edma_channel_link_type_t linkType, uint32_t linkedChannel)
 {
     assert(channel < (uint32_t)FSL_FEATURE_EDMA_MODULE_CHANNEL);
     assert(linkedChannel < (uint32_t)FSL_FEATURE_EDMA_MODULE_CHANNEL);
 
-    EDMA_TcdSetChannelLink((edma_tcd_t *)(uint32_t)&base->TCD[channel], type, linkedChannel);
+    EDMA_TcdSetChannelLink((edma_tcd_t *)(uint32_t)&base->TCD[channel], linkType, linkedChannel);
 }
 
 /*!
@@ -458,7 +458,7 @@ void EDMA_TcdReset(edma_tcd_t *tcd)
     tcd->CITER     = 0U;
     tcd->DLAST_SGA = 0U;
     /* Enable auto disable request feature */
-    tcd->CSR   = DMA_CSR_DREQ(true);
+    tcd->CSR   = DMA_CSR_DREQ(1U);
     tcd->BITER = 0U;
 }
 
@@ -466,7 +466,7 @@ void EDMA_TcdReset(edma_tcd_t *tcd)
  * brief Configures the eDMA TCD transfer attribute.
  *
  * The TCD is a transfer control descriptor. The content of the TCD is the same as the hardware TCD registers.
- * The STCD is used in the scatter-gather mode.
+ * The TCD is used in the scatter-gather mode.
  * This function configures the TCD transfer attribute, including source address, destination address,
  * transfer size, address offset, and so on. It also configures the scatter gather feature if the
  * user supplies the next TCD address.
@@ -592,19 +592,19 @@ void EDMA_TcdSetMajorOffsetConfig(edma_tcd_t *tcd, int32_t sourceOffset, int32_t
  *
  * note Users should ensure that DONE flag is cleared before calling this interface, or the configuration is invalid.
  * param tcd Point to the TCD structure.
- * param type Channel link type, it can be one of:
+ * param linkType Channel link type, it can be one of:
  *   arg kEDMA_LinkNone
  *   arg kEDMA_MinorLink
  *   arg kEDMA_MajorLink
  * param linkedChannel The linked channel number.
  */
-void EDMA_TcdSetChannelLink(edma_tcd_t *tcd, edma_channel_link_type_t type, uint32_t linkedChannel)
+void EDMA_TcdSetChannelLink(edma_tcd_t *tcd, edma_channel_link_type_t linkType, uint32_t linkedChannel)
 {
     assert(tcd != NULL);
     assert(((uint32_t)tcd & 0x1FU) == 0U);
     assert(linkedChannel < (uint32_t)FSL_FEATURE_EDMA_MODULE_CHANNEL);
 
-    if (type == kEDMA_MinorLink) /* Minor link config */
+    if (linkType == kEDMA_MinorLink) /* Minor link config */
     {
         uint16_t tmpreg;
 
@@ -619,7 +619,7 @@ void EDMA_TcdSetChannelLink(edma_tcd_t *tcd, edma_channel_link_type_t type, uint
         tmpreg |= DMA_BITER_ELINKYES_LINKCH(linkedChannel);
         tcd->BITER = tmpreg;
     }
-    else if (type == kEDMA_MajorLink) /* Major link config */
+    else if (linkType == kEDMA_MajorLink) /* Major link config */
     {
         uint16_t tmpreg;
 
@@ -1044,7 +1044,7 @@ void EDMA_PrepareTransferConfig(edma_transfer_config_t *config,
  * param destWidth eDMA transfer destination address width(bytes).
  * param bytesEachRequest eDMA transfer bytes per channel request.
  * param transferBytes eDMA transfer bytes to be transferred.
- * param type eDMA transfer type.
+ * param transferType eDMA transfer type.
  * note The data address and the data width must be consistent. For example, if the SRC
  *       is 4 bytes, the source address must be 4 bytes aligned, or it results in
  *       source address error (SAE).
@@ -1056,13 +1056,13 @@ void EDMA_PrepareTransfer(edma_transfer_config_t *config,
                           uint32_t destWidth,
                           uint32_t bytesEachRequest,
                           uint32_t transferBytes,
-                          edma_transfer_type_t type)
+                          edma_transfer_type_t transferType)
 {
     assert(config != NULL);
 
     int16_t srcOffset = 0, destOffset = 0;
 
-    switch (type)
+    switch (transferType)
     {
         case kEDMA_MemoryToMemory:
             destOffset = (int16_t)destWidth;
@@ -1467,6 +1467,15 @@ void EDMA_HandleIRQ(edma_handle_t *handle)
             if (tcds_done < 0)
             {
                 tcds_done += handle->tcdSize;
+            }
+            /*
+             * While code run to here, it means a TCD transfer Done and a new TCD has loaded to the hardware
+             * so clear DONE here to allow submit scatter gather transfer request in the callback to avoid TCD
+             * overwritten.
+             */
+            if (transfer_done)
+            {
+                handle->base->CDNE = handle->channel;
             }
         }
         /* Advance header which points to the TCD to be loaded into the eDMA engine from memory. */

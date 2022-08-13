@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2017-2021, NXP
+ * Copyright 2017-2022, NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -285,11 +285,7 @@ void SNVS_LP_SRTC_Init(SNVS_Type *base, const snvs_lp_srtc_config_t *config)
 {
     assert(config != NULL);
 
-#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && \
-     defined(SNVS_LP_CLOCKS))
-    uint32_t instance = SNVS_LP_GetInstance(base);
-    CLOCK_EnableClock(s_snvsLpClock[instance]);
-#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    SNVS_LP_Init(base);
 
     if (config->srtcCalEnable)
     {
@@ -318,11 +314,7 @@ void SNVS_LP_SRTC_Deinit(SNVS_Type *base)
 {
     base->LPCR &= ~SNVS_LPCR_SRTC_ENV_MASK;
 
-#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && \
-     defined(SNVS_LP_CLOCKS))
-    uint32_t instance = SNVS_LP_GetInstance(base);
-    CLOCK_DisableClock(s_snvsLpClock[instance]);
-#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    SNVS_LP_Deinit(base);
 }
 
 /*!
