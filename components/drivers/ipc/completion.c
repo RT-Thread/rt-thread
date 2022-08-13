@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
  * 2021-08-18     chenyingchun add comments
+ * 2022-08-04     zjh          fix completion init flag to RT_COMPLETED.
  */
 
 #include <rthw.h>
@@ -27,7 +28,7 @@ void rt_completion_init(struct rt_completion *completion)
     RT_ASSERT(completion != RT_NULL);
 
     level = rt_hw_interrupt_disable();
-    completion->flag = RT_UNCOMPLETED;
+    completion->flag = RT_COMPLETED;
     rt_list_init(&completion->suspended_list);
     rt_hw_interrupt_enable(level);
 }
@@ -64,11 +65,12 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
     thread = rt_thread_self();
 
     level = rt_hw_interrupt_disable();
-    if (completion->flag != RT_COMPLETED)
+    if (completion->flag != RT_UNCOMPLETED)
     {
         /* only one thread can suspend on complete */
         RT_ASSERT(rt_list_isempty(&(completion->suspended_list)));
-
+		/* clean completed flag */
+		completion->flag = RT_UNCOMPLETED;
         if (timeout == 0)
         {
             result = -RT_ETIMEOUT;
@@ -106,8 +108,6 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
             level = rt_hw_interrupt_disable();
         }
     }
-    /* clean completed flag */
-    completion->flag = RT_UNCOMPLETED;
 
 __exit:
     rt_hw_interrupt_enable(level);
