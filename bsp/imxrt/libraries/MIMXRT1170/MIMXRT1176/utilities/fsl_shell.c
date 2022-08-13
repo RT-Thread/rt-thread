@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -972,7 +972,7 @@ shell_status_t SHELL_Init(shell_handle_t shellHandle, serial_handle_t serialHand
     (void)SHELL_RegisterCommand(shellContextHandle, SHELL_COMMAND(help));
     (void)SHELL_RegisterCommand(shellContextHandle, SHELL_COMMAND(exit));
     SHELL_MUTEX_CREATE();
-    (void)SHELL_Write(shellContextHandle, "\r\nCopyright  2020  NXP\r\n", strlen("\r\nCopyright  2020  NXP\r\n"));
+    (void)SHELL_Write(shellContextHandle, "\r\nCopyright  2022  NXP\r\n", strlen("\r\nCopyright  2022  NXP\r\n"));
     SHELL_PrintPrompt(shellContextHandle);
 
     return kStatus_SHELL_Success;

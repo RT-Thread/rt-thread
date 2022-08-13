@@ -22,7 +22,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_PDM_DRIVER_VERSION (MAKE_VERSION(2, 7, 0)) /*!< Version 2.7.0 */
+#define FSL_PDM_DRIVER_VERSION (MAKE_VERSION(2, 7, 1)) /*!< Version 2.7.1 */
 /*@}*/
 
 /*! @brief PDM XFER QUEUE SIZE */
@@ -812,6 +812,17 @@ static inline uint32_t PDM_ReadData(PDM_Type *base, uint32_t channel)
     return base->DATACH[channel];
 }
 #endif
+
+/*!
+ * @brief Set the PDM channel gain.
+ *
+ * Please note for different quality mode, the valid gain value is different, reference RM for detail.
+ * @param base PDM base pointer.
+ * @param channel PDM channel index.
+ * @param gain channel gain, the register gain value range is 0 - 15.
+ */
+void PDM_SetChannelGain(PDM_Type *base, uint32_t channel, pdm_df_output_gain_t gain);
+
 /*! @} */
 
 /*!
