@@ -185,6 +185,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'ses' : ('gcc', 'gcc'),
                 'cmake':('gcc', 'gcc'),
                 'cmake-armclang':('keil', 'armclang'),
+                'xmake':('gcc', 'gcc'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -227,7 +228,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
-    elif rtconfig.PLATFORM == 'iar':
+    elif rtconfig.PLATFORM == 'iccarm':
         env['LIBPREFIX'] = ''
         env['LIBSUFFIX'] = '.a'
         env['LIBLINKPREFIX'] = ''
@@ -304,7 +305,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
-    if GetOption('pyconfig_silent'):    
+    if GetOption('pyconfig_silent'):
         from menuconfig import guiconfig_silent
 
         guiconfig_silent(Rtt_Root)
@@ -387,6 +388,16 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     f.close()
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
+
+    AddOption('--buildlib',
+                      dest = 'buildlib',
+                      type = 'string',
+                      help = 'building library of a component')
+    AddOption('--cleanlib',
+                      dest = 'cleanlib',
+                      action = 'store_true',
+                      default = False,
+                      help = 'clean up the library by --buildlib')
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -606,7 +617,7 @@ def DefineGroup(name, src, depend, **parameters):
             paths.append(os.path.abspath(item))
         group['LOCAL_CPPPATH'] = paths
 
-    
+
     if rtconfig.PLATFORM == 'gcc':
         if 'CFLAGS' in group:
             group['CFLAGS'] = utils.GCCC99Patch(group['CFLAGS'])
@@ -683,7 +694,7 @@ def PreBuilding():
         a()
 
 def GroupLibName(name, env):
-    
+
     if rtconfig.PLATFORM == 'armcc':
         return name + '_rvds'
     elif rtconfig.PLATFORM == 'gcc':
@@ -839,7 +850,7 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'eclipse':
         from eclipse import TargetEclipse
         TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
-        
+
     if GetOption('target') == 'codelite':
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
@@ -847,7 +858,9 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
-
+    if GetOption('target') == 'xmake':
+        from xmake import XMakeProject
+        XMakeProject(Env, Projects)
 
 def EndBuilding(target, program = None):
 
@@ -867,6 +880,7 @@ def EndBuilding(target, program = None):
     Clean(target, 'cconfig.h')
     Clean(target, 'rtua.py')
     Clean(target, 'rtua.pyc')
+    Clean(target, '.sconsign.dblite')
 
     if GetOption('target'):
         GenTargetProject(program)

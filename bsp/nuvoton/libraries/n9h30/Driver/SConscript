@@ -14,7 +14,7 @@ if not GetDepend('BSP_USE_STDDRIVER_SOURCE'):
 			libs += ['libstddriver_keil4']
 		if GetOption('target') == 'mdk5' and os.path.isfile('./Library/libstddriver_keil.lib'):
 			libs += ['libstddriver_keil']
-	elif rtconfig.PLATFORM == 'gcc' and os.path.isfile('./Library/libstddriver_gcc.a'):
+	elif rtconfig.PLATFORM in ['gcc'] and os.path.isfile('./Library/libstddriver_gcc.a'):
 		libs += ['libstddriver_gcc']
 
 if not libs:

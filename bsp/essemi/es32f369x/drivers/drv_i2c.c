@@ -19,6 +19,7 @@
  * 2019-11-01     wangyq        update libraries
  * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
+ * 2022-07-11     shiwa         Support for RT_NO_START/RT_NO_STOP
  */
 
 #include <rthw.h>
@@ -107,6 +108,162 @@ static void _i2c_init(void)
 
 #endif
 }
+#define _I2C_NO_START 0x1
+#define _I2C_NO_STOP  0x2
+int _i2c_master_req(i2c_handle_t *hperh, uint16_t dev_addr, uint32_t timeout,uint32_t req_write)
+{
+    if (hperh->init.addr_mode == I2C_ADDR_7BIT) {
+        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
+    }
+    else {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
+    }
+
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_SADD_MSK, dev_addr << I2C_CON2_SADD_POSS);
+    if (req_write)
+        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+    else
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+
+    return OK;
+}
+int _i2c_wait_flag(i2c_handle_t *hperh, uint32_t flag, flag_status_t status, uint32_t timeout)
+{
+    uint32_t tickstart = 0;
+
+        tickstart = ald_get_tick();
+            while (I2C_GET_FLAG(hperh, flag) == status) {
+                if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
+                    hperh->error_code |= I2C_ERROR_TIMEOUT;
+                    return TIMEOUT;
+                }
+            }
+
+        return OK;
+}
+int _i2c_wait_txe(i2c_handle_t *hperh, uint32_t timeout)
+{
+    uint32_t tickstart = ald_get_tick();
+
+    while (I2C_GET_FLAG(hperh, I2C_STAT_THTH) == RESET) {
+        if (I2C_GET_IT_FLAG(hperh, I2C_IT_ARLO)) {
+            hperh->error_code |= I2C_ERROR_ARLO;
+            return ERROR;
+        }
+
+        if (I2C_GET_IT_FLAG(hperh, I2C_IT_NACK) == SET) {
+            hperh->error_code |= I2C_ERROR_AF;
+            return ERROR;
+        }
+
+        if ((timeout == 0) || ((ald_get_tick() - tickstart) > timeout)) {
+            hperh->error_code |= I2C_ERROR_TIMEOUT;
+            return ERROR;
+        }
+    }
+
+    return OK;
+}
+int _i2c_master_send(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf,
+                                 uint32_t size, uint32_t timeout,uint32_t flag)
+{
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
+
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
+    if ((flag&_I2C_NO_START)==0x0) //NOSTART==0
+    {
+        if (_i2c_wait_flag(hperh, I2C_STAT_BUSY, SET, 100) != OK)
+            return BUSY;
+        _i2c_master_req(hperh, dev_addr, timeout,1);
+    }
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
+
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
+
+    if ((flag&_I2C_NO_STOP)!=0)  //NOSTOP==1
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    else
+        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
+
+
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    if ((flag&_I2C_NO_START)==0x0) //NOSTART=0
+        SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+
+    while (size > 0) {
+        hperh->perh->TXDATA  = (*buf++);
+        size--;
+        hperh->xfer_count++;
+
+        if (_i2c_wait_txe(hperh, timeout) != OK)
+            goto ERROR;
+
+        if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
+            if (_i2c_wait_flag(hperh, I2C_STAT_TCR, RESET, 10) == OK) {
+                if (size > 0xFF) {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+                }
+                else {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+                    if ((flag&_I2C_NO_STOP)==0)
+                        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+                }
+            }
+            else {
+                goto ERROR;
+            }
+        }
+    }
+
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == SET)
+        goto SUCCESS;
+
+    //NOSTOP==1
+    if ((flag&_I2C_NO_STOP)!=0&&_i2c_wait_flag(hperh, I2C_STAT_TCR, RESET, 10) == OK)
+    {
+        goto SUCCESS;
+    }
+
+    if (_i2c_wait_flag(hperh, I2C_STAT_TC, RESET, 10) == OK) {
+        if ((flag&_I2C_NO_STOP)==0x0)      //NOSTOP==0
+            SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        goto SUCCESS;
+    }
+    else {
+        goto ERROR;
+    }
+
+ERROR:
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
+
+    return ERROR;
+
+SUCCESS:
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
+
+    return OK;
+}
 
 static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
@@ -119,6 +276,10 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
+        if (msg->buf==NULL||msg->len==0)
+        {
+            continue;
+        }
         if (msg->flags & RT_I2C_RD)
         {
             if (ald_i2c_master_recv(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
@@ -129,7 +290,12 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
         }
         else
         {
-            if (ald_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
+            uint32_t f=((msg->flags&RT_I2C_NO_START)?0x1:0)|((msg->flags&RT_I2C_NO_STOP)?0x2:0);
+            if (I2C_GET_FLAG((i2c_handle_t *)bus->priv, I2C_STAT_BUSY) == RESET)
+            {
+                f=f&(~_I2C_NO_START);
+            }
+            if (_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT,f) != 0)
             {
                 LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
@@ -140,7 +306,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    LOG_E("send stop condition\n");
+    LOG_D("send stop condition\n");
 
     return ret;
 }

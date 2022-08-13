@@ -18,7 +18,7 @@ env = Environment(tools = ['mingw'],
 	AR = rtconfig.AR, ARFLAGS = '-rc',
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
 	env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
 	env.Replace(ARFLAGS = [''])
 	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $TARGET --map project.map'])

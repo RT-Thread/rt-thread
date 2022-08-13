@@ -101,9 +101,11 @@ const char *finsh_get_prompt(void)
     if (finsh_prompt_custom)
     {
         strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt) - 1);
-        return finsh_prompt;
     }
-    strcpy(finsh_prompt, _MSH_PROMPT);
+    else
+    {
+        strcpy(finsh_prompt, _MSH_PROMPT);
+    }
 
 #if defined(DFS_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
@@ -529,7 +531,7 @@ void finsh_thread_entry(void *parameter)
                 /* copy the history command */
                 rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
-                shell->line_curpos = shell->line_position = strlen(shell->line);
+                shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
                 shell_handle_history(shell);
 #endif
                 continue;
@@ -551,7 +553,7 @@ void finsh_thread_entry(void *parameter)
 
                 rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
-                shell->line_curpos = shell->line_position = strlen(shell->line);
+                shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
                 shell_handle_history(shell);
 #endif
                 continue;
@@ -591,7 +593,7 @@ void finsh_thread_entry(void *parameter)
             /* auto complete */
             shell_auto_complete(&shell->line[0]);
             /* re-calculate position */
-            shell->line_curpos = shell->line_position = strlen(shell->line);
+            shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
 
             continue;
         }

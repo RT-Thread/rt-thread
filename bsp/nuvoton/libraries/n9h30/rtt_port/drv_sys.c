@@ -74,8 +74,9 @@ void rt_hw_interrupt_init(void)
 {
     int i;
 
-    *((volatile unsigned int *)REG_AIC_ISR)  = 0xFFFFFFFF;   // disable all interrupt channel
-    *((volatile unsigned int *)REG_AIC_ISRH) = 0xFFFFFFFF;   // disable all interrupt channel
+    outpw(REG_AIC_ISR, 0xFFFFFFFF);  // disable all interrupt channel
+    outpw(REG_AIC_ISRH, 0xFFFFFFFF); // disable all interrupt channel
+    outpw(REG_AIC_EOSCR, 1);
 
     /* init interrupt nest, and context in thread sp */
     rt_interrupt_nest               = 0;

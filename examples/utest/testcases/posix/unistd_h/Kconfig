@@ -1,0 +1,27 @@
+menuconfig RTT_POSIX_TESTCASE_UNISTD_H
+    bool "<unistd.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_UNISTD_H
+
+    config UNISTD_H_ACCESS
+        bool "<unistd.h> -> access"
+        default n
+    config UNISTD_H_CHDIR
+        bool "<unistd.h> -> chdir"
+        default n
+
+    config UNISTD_H_FTRUNCATE
+        bool "<unistd.h> -> ftruncate"
+        default n
+    config UNISTD_H_ISATTY
+        bool "<unistd.h> -> isatty"
+        default n
+
+    config UNISTD_H_FSYNC
+        bool "<unistd.h> -> fsync"
+        default n
+    config UNISTD_H_RMDIR
+        bool "<unistd.h> -> rmdir"
+        default n
+endif

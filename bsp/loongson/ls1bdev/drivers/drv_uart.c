@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -181,19 +181,19 @@ void rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART5
-		uart = &uart5;
-	
-		serial5.ops    = &ls1b_uart_ops;
-		serial5.config = config;
-	
-		rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial5, "UART5");
-	
-		/* register UART5 device */
-		rt_hw_serial_register(&serial5,
-							  "uart5",
-							  //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
-							  RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-							  uart);
+        uart = &uart5;
+
+        serial5.ops    = &ls1b_uart_ops;
+        serial5.config = config;
+
+        rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial5, "UART5");
+
+        /* register UART5 device */
+        rt_hw_serial_register(&serial5,
+                              "uart5",
+                              //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                              RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                              uart);
 #endif /* RT_USING_UART5 */
 
 

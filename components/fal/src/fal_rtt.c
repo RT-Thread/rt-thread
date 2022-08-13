@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -264,7 +264,7 @@ static rt_err_t mtd_nor_dev_erase(struct rt_mtd_nor_device* device, rt_off_t off
 
     ret = fal_partition_erase(part->fal_part, offset, length);
 
-    if (ret != length)
+    if ((rt_uint32_t)ret != length || ret < 0)
     {
         return -RT_ERROR;
     }
@@ -556,7 +556,7 @@ static void fal(uint8_t argc, char **argv) {
 #define CMD_ERASE_INDEX               3
 #define CMD_BENCH_INDEX               4
 
-    int result;
+    int result = 0;
     static const struct fal_flash_dev *flash_dev = NULL;
     static const struct fal_partition *part_dev = NULL;
     size_t i = 0, j = 0;

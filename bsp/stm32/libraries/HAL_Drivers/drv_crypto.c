@@ -395,6 +395,7 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
 #if defined(BSP_USING_RNG)
     case HWCRYPTO_TYPE_RNG:
     {
+        __HAL_RCC_RNG_CLK_ENABLE();
         RNG_HandleTypeDef *hrng = rt_calloc(1, sizeof(RNG_HandleTypeDef));
         if (RT_NULL == hrng)
         {

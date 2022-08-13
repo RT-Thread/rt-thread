@@ -31,6 +31,14 @@ static void test_thread(void)
         uassert_false(1);
     }
 
+    std::thread t2(func);
+    t2.join();
+
+    if (count != 200)
+    {
+        uassert_false(1);
+    }
+
     uassert_true(1);
 }
 

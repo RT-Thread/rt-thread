@@ -46,10 +46,29 @@ Hi, this is RT-Thread!!
 msh />
 ```
 
+如果需要使用VirtIO-Console，请在新终端使用以下命令连接控制台：
+```
+telnet 127.0.0.1 4321
+```
+
+如果使用tap网卡模式，以设备tap0为例，将qemu运行脚本
+```
+-netdev user,id=net0
+```
+修改为
+```
+-netdev tap,id=net0,ifname=tap0
+```
+
 ## 4.支持情况
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0 |
 | RTC  | 支持 | - |
+| GPIO | 支持 | - |
 | VIRTIO BLK | 支持 | - |
+| VIRTIO NET | 支持 | - |
+| VIRTIO Console | 支持 | - |
+| VIRTIO GPU | 支持 | 2D |
+| VIRTIO Input | 支持 | Keyboard, Mouse, Tablet |

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -138,14 +138,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         spi_handle->Init.CLKPolarity = SPI_POLARITY_LOW;
     }
 
-    if (cfg->mode & RT_SPI_NO_CS)
-    {
-        spi_handle->Init.NSS = SPI_NSS_HARD_OUTPUT;
-    }
-    else
-    {
-        spi_handle->Init.NSS = SPI_NSS_SOFT;
-    }
+    spi_handle->Init.NSS = SPI_NSS_SOFT;
 
     uint32_t SPI_APB_CLOCK;
 
@@ -453,7 +446,8 @@ static const struct rt_spi_ops stm_spi_ops =
 static int rt_hw_spi_bus_init(void)
 {
     rt_err_t result;
-    for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
+
+    for (rt_size_t i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].config = &spi_config[i];
         spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];

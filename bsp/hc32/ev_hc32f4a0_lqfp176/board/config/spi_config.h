@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +13,7 @@
 #define __SPI_CONFIG_H__
 
 #include <rtthread.h>
+#include "irq_config.h"
 
 #ifdef __cplusplus
 extern "C" {

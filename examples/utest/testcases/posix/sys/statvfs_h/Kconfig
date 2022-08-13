@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_SYS_STATVFS_H
+    bool "<sys/shm.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SYS_STATVFS_H
+
+    config STATVFS_H_STATVFS
+        bool "<sys/statvfs.h> -> statvfs"
+        default n
+
+endif
