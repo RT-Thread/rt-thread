@@ -73,7 +73,7 @@
 #endif
 #endif
 
-#if SDK_DEBUGCONSOLE
+#if (defined(SDK_DEBUGCONSOLE) && (SDK_DEBUGCONSOLE == DEBUGCONSOLE_REDIRECT_TO_SDK))
 #define DEBUG_CONSOLE_FUNCTION_PREFIX
 #else
 #define DEBUG_CONSOLE_FUNCTION_PREFIX static
@@ -282,7 +282,7 @@ int DbgConsole_SendDataReliable(uint8_t *ch, size_t size);
 int DbgConsole_ReadLine(uint8_t *buf, size_t size);
 int DbgConsole_ReadCharacter(uint8_t *ch);
 
-#if ((SDK_DEBUGCONSOLE == 0U) && defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING) && \
+#if ((SDK_DEBUGCONSOLE != DEBUGCONSOLE_REDIRECT_TO_SDK) && defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING) && \
      (defined(DEBUG_CONSOLE_TX_RELIABLE_ENABLE) && (DEBUG_CONSOLE_TX_RELIABLE_ENABLE > 0U)))
 DEBUG_CONSOLE_FUNCTION_PREFIX status_t DbgConsole_Flush(void);
 #endif
@@ -597,7 +597,7 @@ int DbgConsole_SendDataReliable(uint8_t *ch, size_t size)
                 sendDataLength = totalLength;
             }
 
-            sentLength = DbgConsole_SendData(&ch[size - totalLength], sendDataLength);
+            sentLength = DbgConsole_SendData(&ch[size - totalLength], (size_t)sendDataLength);
             if (sentLength > 0)
             {
                 totalLength = totalLength - (uint32_t)sentLength;
@@ -737,7 +737,7 @@ static void DbgConsole_PrintCallback(char *buf, int32_t *indicator, char dbgVal,
     {
         if (((uint32_t)*indicator + 1UL) >= (uint32_t)DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN)
         {
-            (void)DbgConsole_SendDataReliable((uint8_t *)buf, (uint32_t)(*indicator));
+            (void)DbgConsole_SendDataReliable((uint8_t *)buf, (size_t)(*indicator));
             *indicator = 0;
         }
 
@@ -757,15 +757,10 @@ static const serial_port_uart_config_t uartConfig = {.instance     = BOARD_DEBUG
                                                      .baudRate     = BOARD_DEBUG_UART_BAUDRATE,
                                                      .parityMode   = kSerialManager_UartParityDisabled,
                                                      .stopBitCount = kSerialManager_UartOneStopBit,
-#if !defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING)
-#if (defined(SERIAL_MANAGER_NON_BLOCKING_MODE) && (SERIAL_MANAGER_NON_BLOCKING_MODE > 0U))
-                                                     .mode = kSerialManager_UartBlockMode,
-#endif
-#endif
-                                                     .enableRx    = 1U,
-                                                     .enableTx    = 1U,
-                                                     .enableRxRTS = 0U,
-                                                     .enableTxCTS = 0U,
+                                                     .enableRx     = 1U,
+                                                     .enableTx     = 1U,
+                                                     .enableRxRTS  = 0U,
+                                                     .enableTxCTS  = 0U,
 #if (defined(HAL_UART_ADAPTER_FIFO) && (HAL_UART_ADAPTER_FIFO > 0u))
                                                      .txFifoWatermark = 0U,
                                                      .rxFifoWatermark = 0U
@@ -776,8 +771,8 @@ static const serial_port_uart_config_t uartConfig = {.instance     = BOARD_DEBUG
 /* See fsl_debug_console.h for documentation of this function. */
 status_t DbgConsole_Init(uint8_t instance, uint32_t baudRate, serial_port_type_t device, uint32_t clkSrcFreq)
 {
-    serial_manager_config_t serialConfig;
-    serial_manager_status_t status = kStatus_SerialManager_Success;
+    serial_manager_config_t serialConfig = {0};
+    serial_manager_status_t status       = kStatus_SerialManager_Success;
 
 #if (defined(SERIAL_USE_CONFIGURE_STRUCTURE) && (SERIAL_USE_CONFIGURE_STRUCTURE == 0U))
 #if (defined(SERIAL_PORT_TYPE_UART) && (SERIAL_PORT_TYPE_UART > 0U))
@@ -787,15 +782,10 @@ status_t DbgConsole_Init(uint8_t instance, uint32_t baudRate, serial_port_type_t
         .baudRate     = baudRate,
         .parityMode   = kSerialManager_UartParityDisabled,
         .stopBitCount = kSerialManager_UartOneStopBit,
-#if !defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING)
-#if (defined(SERIAL_MANAGER_NON_BLOCKING_MODE) && (SERIAL_MANAGER_NON_BLOCKING_MODE > 0U))
-        .mode = kSerialManager_UartBlockMode,
-#endif
-#endif
-        .enableRx    = 1,
-        .enableTx    = 1,
-        .enableRxRTS = 0U,
-        .enableTxCTS = 0U,
+        .enableRx     = 1,
+        .enableTx     = 1,
+        .enableRxRTS  = 0U,
+        .enableTxCTS  = 0U,
 #if (defined(HAL_UART_ADAPTER_FIFO) && (HAL_UART_ADAPTER_FIFO > 0u))
         .txFifoWatermark = 0U,
         .rxFifoWatermark = 0U
@@ -1004,8 +994,8 @@ status_t DbgConsole_Deinit(void)
 }
 #endif /* ((SDK_DEBUGCONSOLE == DEBUGCONSOLE_REDIRECT_TO_SDK) || defined(SDK_DEBUGCONSOLE_UART)) */
 
-#if ((SDK_DEBUGCONSOLE > 0U) ||                                                   \
-     ((SDK_DEBUGCONSOLE == 0U) && defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING) && \
+#if (((defined(SDK_DEBUGCONSOLE) && (SDK_DEBUGCONSOLE > DEBUGCONSOLE_REDIRECT_TO_TOOLCHAIN))) || \
+     ((SDK_DEBUGCONSOLE == 0U) && defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING) &&                \
       (defined(DEBUG_CONSOLE_TX_RELIABLE_ENABLE) && (DEBUG_CONSOLE_TX_RELIABLE_ENABLE > 0U))))
 DEBUG_CONSOLE_FUNCTION_PREFIX status_t DbgConsole_Flush(void)
 {
@@ -1044,7 +1034,7 @@ DEBUG_CONSOLE_FUNCTION_PREFIX status_t DbgConsole_Flush(void)
 }
 #endif
 
-#if SDK_DEBUGCONSOLE
+#if (defined(SDK_DEBUGCONSOLE) && (SDK_DEBUGCONSOLE == DEBUGCONSOLE_REDIRECT_TO_SDK))
 /* See fsl_debug_console.h for documentation of this function. */
 int DbgConsole_Printf(const char *fmt_s, ...)
 {
