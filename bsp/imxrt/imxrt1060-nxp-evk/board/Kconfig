@@ -78,7 +78,7 @@ menu "Onboard Peripheral Drivers"
         if BSP_USING_TOUCHPAD
             choice
                 prompt "Select panel"
-                default DEMO_PANEL_RK043FN02H
+                default DEMO_PANEL_RK043FN66HS
 
                 config DEMO_PANEL_RK043FN02H
                     bool "RK043FN02H-CT"
