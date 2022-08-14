@@ -192,13 +192,13 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     case RT_CAN_MODE_NORMAL:
         can_instance->config.base_init_struct.mode_selection = CAN_MODE_COMMUNICATE;
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         can_instance->config.base_init_struct.mode_selection = CAN_MODE_LISTENONLY;
         break;
     case RT_CAN_MODE_LOOPBACK:
         can_instance->config.base_init_struct.mode_selection = CAN_MODE_LOOPBACK;
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         can_instance->config.base_init_struct.mode_selection = CAN_MODE_LISTENONLY_LOOPBACK;
         break;
     }
@@ -432,9 +432,9 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-            argval != RT_CAN_MODE_LISEN &&
+            argval != RT_CAN_MODE_LISTEN &&
             argval != RT_CAN_MODE_LOOPBACK &&
-            argval != RT_CAN_MODE_LOOPBACKANLISEN)
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }

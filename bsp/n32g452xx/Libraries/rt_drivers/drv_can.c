@@ -104,13 +104,13 @@ static uint8_t get_can_mode_rtt2n32(uint8_t rtt_can_mode)
     case RT_CAN_MODE_NORMAL:
         mode = CAN_Normal_Mode;
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         mode = CAN_Silent_Mode;
         break;
     case RT_CAN_MODE_LOOPBACK:
         mode = CAN_LoopBack_Mode;
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         mode = CAN_Silent_LoopBack_Mode;
         break;
     }
@@ -413,9 +413,9 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-            argval != RT_CAN_MODE_LISEN &&
+            argval != RT_CAN_MODE_LISTEN &&
             argval != RT_CAN_MODE_LOOPBACK &&
-            argval != RT_CAN_MODE_LOOPBACKANLISEN)
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
