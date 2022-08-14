@@ -1,4 +1,4 @@
-# LPM低功耗配置说明
+# Captouch板载触摸按键配置说明
 
 ## 基础知识
 
@@ -203,4 +203,3 @@
 ![image-20220804114016844](picture/captouch_monitoring.png) 
 
 同时在按下按钮时开发板上的蓝色LED灯会常亮，抬起则熄灭。
-
