@@ -14,6 +14,7 @@
 #include "ch56x_sys.h"
 #include "ch56x_gpio.h"
 #include "ch56x_spi.h"
+#include "ch56x_pwm.h"
 
 #define LED0_PIN            GET_PIN(B, 24)
 #define LED1_PIN            GET_PIN(B, 22)

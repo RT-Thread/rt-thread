@@ -1062,7 +1062,7 @@ int StrFormatPrintf(const char *fmt, va_list ap, char *buf, printfCb cb)
         p++;
     }
 
-    return count;
+    return (int)count;
 }
 
 #if SCANF_FLOAT_ENABLE

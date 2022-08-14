@@ -897,6 +897,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
+    RT_ASSERT(serial->ops->transmit != RT_NULL);
 
     /* initialize rx/tx */
     serial->serial_rx = RT_NULL;
