@@ -6,6 +6,53 @@ config SOC_SWM341
     select RT_USING_USER_MAIN
     default y
 
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        select BSP_USING_RGB_LCD
+        select BSP_USING_GT9147
+        default n
+
+    config BSP_USING_GT9147
+        bool "Enable gt9147(use i2c0)"
+        select RT_USING_TOUCH
+        select RT_TOUCH_PIN_IRQ
+        select BSP_USING_I2C
+        select BSP_USING_I2C0
+        default n
+        if BSP_USING_GT9147
+            config GT9147_RST_PIN
+                int "GT9147 rst pin number"
+                range 0 111
+                default 39
+            config GT9147_IRQ_PIN
+                int "GT9147 irq pin number"
+                range 0 111
+                default 48
+        endif
+
+    config BSP_USING_RGB_LCD
+        bool "Enable RGB LCD"
+        select BSP_USING_SDRAM
+        default n
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        select RT_USING_MEMHEAP
+        select RT_USING_MEMHEAP_AS_HEAP
+        select RT_USING_MEMHEAP_AUTO_BINDING
+        default n
+
+        if BSP_USING_SDRAM
+            config BSP_SDRAM_SIZE
+            hex "SDRAM size"
+            default 0x800000
+        endif
+
+endmenu
+
 menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_UART
@@ -352,51 +399,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
-
-    menuconfig BSP_USING_SDRAM
-        bool "Enable SDRAM"
-        select RT_USING_MEMHEAP
-        select RT_USING_MEMHEAP_AS_HEAP
-        select RT_USING_MEMHEAP_AUTO_BINDING
-        default n
-        if BSP_USING_SDRAM
-            config BSP_SDRAM_SIZE
-            hex "SDRAM size"
-            default 0x800000
-        endif
-
-    menuconfig BSP_USING_GT9147
-        bool "Enable gt9147(use i2c0)"
-        select RT_USING_TOUCH
-        select RT_TOUCH_PIN_IRQ
-        select BSP_USING_I2C
-        select BSP_USING_I2C0
-        default n
-        if BSP_USING_GT9147
-            config GT9147_RST_PIN
-                int "GT9147 rst pin number"
-                range 0 111
-                default 39
-            config GT9147_IRQ_PIN
-                int "GT9147 irq pin number"
-                range 0 111
-                default 48
-        endif
-    menuconfig BSP_USING_RGB_LCD
-        bool "Enable RGB LCD"
-        select BSP_USING_SDRAM
-        default n
-        if BSP_USING_RGB_LCD
-            config BSP_USING_LVGL
-                bool "Enable LVGL for LCD"
-                select PKG_USING_LVGL
-                default n
-        endif
         
-endmenu
-
-menu "Onboard Peripheral Drivers"
-
 endmenu
 
 menu "Offboard Peripheral Drivers"
