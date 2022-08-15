@@ -17,16 +17,21 @@
 #define LOG_TAG             "drv.sdram"
 #include <drv_log.h>
 
-#ifdef RT_USING_MEMHEAP_AS_HEAP
+#ifdef RT_USING_MEMHEAP
 static struct rt_memheap system_heap;
 #endif
 
-int rt_hw_sdram_Init(void)
+static int rt_hw_sdram_init(void)
 {
     int result = RT_EOK;
     semc_config_t config;
     semc_sdram_config_t sdramconfig;
+    
+#if defined(SOC_IMXRT1170_SERIES)
+    rt_uint32_t clockFrq = CLOCK_GetRootClockFreq(kCLOCK_Root_Semc);
+#else
     rt_uint32_t clockFrq = CLOCK_GetFreq(kCLOCK_SemcClk);
+#endif
 
     /* Initializes the MAC configure structure to zero. */
     memset(&config, 0, sizeof(semc_config_t));
@@ -67,9 +72,9 @@ int rt_hw_sdram_Init(void)
     else
     {
         LOG_D("sdram init success, mapped at 0x%X, size is %d Kbytes.", SDRAM_BANK_ADDR, SDRAM_SIZE);
-#ifdef RT_USING_MEMHEAP_AS_HEAP
+#ifdef RT_USING_MEMHEAP
     /*
-     * If RT_USING_MEMHEAP_AS_HEAP is enabled, SDRAM is initialized to the heap.
+     * If RT_USING_MEMHEAP is enabled, SDRAM is initialized to the heap.
      * The heap start address is (base + half size), and the size is (half size - 2M).
      * The reasons are:
      *      1. Reserve the half space for SDRAM link case
@@ -82,7 +87,7 @@ int rt_hw_sdram_Init(void)
 
     return result;
 }
-INIT_BOARD_EXPORT(rt_hw_sdram_Init);
+INIT_PREV_EXPORT(rt_hw_sdram_init);
 
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH
@@ -92,7 +97,7 @@ rt_uint32_t sdram_writeBuffer[SEMC_DATALEN];
 rt_uint32_t sdram_readBuffer[SEMC_DATALEN];
 
 /* read write 32bit test */
-void sdram_test(void)
+static void sdram_test(void)
 {
     rt_uint32_t index;
     rt_uint32_t datalen = SEMC_DATALEN;
