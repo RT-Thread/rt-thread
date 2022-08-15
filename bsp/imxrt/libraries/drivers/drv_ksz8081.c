@@ -358,12 +358,10 @@ static struct rt_phy_ops phy_ops =
 static int rt_phy_ksz8081_register( void )
 {
     phy_ksz8081.ops = &phy_ops;
-    rt_hw_phy_register(&phy_ksz8081, "rtt-phy");
+    rt_hw_phy_register(&phy_ksz8081, "ksz8081");
     return 1;
 }
 
 INIT_DEVICE_EXPORT(rt_phy_ksz8081_register);
-
-
 
 #endif /* PHY_USING_KSZ8081 */
