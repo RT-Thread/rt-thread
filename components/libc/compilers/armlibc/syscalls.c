@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -226,6 +226,11 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         size = write(fh, buf, len);
         if (size >= 0)
         {
+            /*
+            fflush doesn't have a good solution in Keil-MDK,
+            so it has to sync/flush when for each writen.
+            */
+            fsync(fh);
             return len - size; /* success */
         }
         else
@@ -237,6 +242,18 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0; /* error */
 #endif /* DFS_USING_POSIX */
     }
+}
+
+/*
+ * Flush any OS buffers associated with fh, ensuring that the file
+ * is up to date on disk. Result is >=0 if OK, negative for an
+ * error.
+ * This function is deprecated. It is never called by any other library function,
+ * and you are not required to re-implement it if you are retargeting standard I/O (stdio).
+ */
+int _sys_ensure(FILEHANDLE fh)
+{
+    return fsync(fh);
 }
 
 /*
