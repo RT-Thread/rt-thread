@@ -50,7 +50,7 @@ RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
     RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file."));
+        "Please consider implementing rt_hw_us_delay() in another file.\n"));
 }
 
 static const char* rt_errno_strs[] =
@@ -287,7 +287,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
     char *src_ptr = (char *)src;
     long *aligned_dst;
     long *aligned_src;
-    int len = count;
+    rt_ubase_t len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */

@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-12-05     zylx         The first version for STM32F4xx
  * 2019-4-25      misonyo      port to IMXRT
+ * 2022-08-15     xjy198903    add sdram config for rt1170
  */
 
 #ifndef SDRAM_PORT_H__
@@ -19,10 +20,17 @@
 #define SDRAM_REGION                    kSEMC_SDRAM_CS0
 /* CS pin: kSEMC_MUXCSX0/1/2/3 */
 #define SDRAM_CS_PIN                    kSEMC_MUXCSX0
+/* size(kbyte):64MB = 2*32*1024*1KBytes */
+#if defined(SOC_IMXRT1170_SERIES)
+#define SDRAM_SIZE                      ((uint32_t)(0x10000))
+/* data width: kSEMC_PortSize8Bit,kSEMC_PortSize32Bit */
+#define SDRAM_DATA_WIDTH                kSEMC_PortSize32Bit
+#else
 /* size(kbyte):32MB = 32*1024*1KBytes */
 #define SDRAM_SIZE                      ((uint32_t)0x8000)
 /* data width: kSEMC_PortSize8Bit,kSEMC_PortSize16Bit */
 #define SDRAM_DATA_WIDTH                kSEMC_PortSize16Bit
+#endif
 /* column bit numbers: kSEMC_SdramColunm_9/10/11/12bit */
 #define SDRAM_COLUMN_BITS               kSEMC_SdramColunm_9bit
 /* cas latency clock number: kSEMC_LatencyOne/Two/Three */

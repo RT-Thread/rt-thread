@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED Blue pin: PB1 */
+/* defined the LED Blue pin: PH10 */
 #define LED_B_PIN    GET_PIN(H, 10)
 
 int main(void)

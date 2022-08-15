@@ -135,12 +135,12 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     case RT_CAN_MODE_NORMAL:
         /* default mode */
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         break;
     case RT_CAN_MODE_LOOPBACK:
         config.enableLoopBack = true;
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         break;
     }
     FLEXCAN_Init(can->base, &config, GetCanSrcFreq());

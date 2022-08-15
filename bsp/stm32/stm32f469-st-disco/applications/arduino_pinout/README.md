@@ -35,7 +35,7 @@ Hardware Drivers Config --->
 | 10 (D10)        | PH6           | 是     | PWM（定时器12发生）                                          |
 | 11 (D11)        | PB15          | 是     | PWM（定时器12发生）                                          |
 | 12 (D12)        | PB14          | 是     |                                                              |
-| 13 (D13)        | PD3           | 是     | RTduino LED                                                  |
+| 13 (D13)        | PD3           | 是     | LED_BUILTIN                                                  |
 | 14 (D14)        | PB9           | 是     | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 | 15 (D15)        | PB8           | 是     | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 | 16 (D16)        | PA0           | 是     | Discovery板载用户按键（蓝色）                                |
