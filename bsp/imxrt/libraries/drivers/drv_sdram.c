@@ -21,7 +21,7 @@
 static struct rt_memheap system_heap;
 #endif
 
-static int rt_hw_sdram_init(void)
+int rt_hw_sdram_init(void)
 {
     int result = RT_EOK;
     semc_config_t config;
@@ -104,7 +104,7 @@ static void sdram_test(void)
     rt_uint32_t *sdram = (rt_uint32_t *)SDRAM_BANK_ADDR; /* SDRAM start address. */
     bool result = true;
 
-    LOG_D("\r\n SEMC SDRAM Memory 32 bit Write Start, Start Address 0x%x, Data Length %d !\r\n", sdram, datalen);
+    LOG_D("SEMC SDRAM Memory 32 bit Write Start, Start Address 0x%x, Data Length %d !", sdram, datalen);
     /* Prepare data and write to SDRAM. */
     for (index = 0; index < datalen; index++)
     {
@@ -112,14 +112,14 @@ static void sdram_test(void)
         sdram[index] = sdram_writeBuffer[index];
     }
 
-    LOG_D("\r\n SEMC SDRAM Read 32 bit Data Start, Start Address 0x%x, Data Length %d !\r\n", sdram, datalen);
+    LOG_D("SEMC SDRAM Read 32 bit Data Start, Start Address 0x%x, Data Length %d !", sdram, datalen);
     /* Read data from the SDRAM. */
     for (index = 0; index < datalen; index++)
     {
         sdram_readBuffer[index] = sdram[index];
     }
 
-    LOG_D("\r\n SEMC SDRAM 32 bit Data Write and Read Compare Start!\r\n");
+    LOG_D("SEMC SDRAM 32 bit Data Write and Read Compare Start!");
     /* Compare the two buffers. */
     while (datalen--)
     {
@@ -132,11 +132,11 @@ static void sdram_test(void)
 
     if (!result)
     {
-        LOG_E("\r\n SEMC SDRAM 32 bit Data Write and Read Compare Failed!\r\n");
+        LOG_E("SEMC SDRAM 32 bit Data Write and Read Compare Failed!");
     }
     else
     {
-        LOG_D("\r\n SEMC SDRAM 32 bit Data Write and Read Compare Succeed!\r\n");
+        LOG_D("SEMC SDRAM 32 bit Data Write and Read Compare Succeed!");
     }
 }
 MSH_CMD_EXPORT(sdram_test, sdram test)
