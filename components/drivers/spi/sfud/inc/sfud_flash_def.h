@@ -81,6 +81,7 @@ typedef struct {
 #define SFUD_MF_ID_ATMEL                               0x1F
 #define SFUD_MF_ID_MICRON                              0x20
 #define SFUD_MF_ID_AMIC                                0x37
+#define SFUD_MF_ID_NOR_MEM                             0x52
 #define SFUD_MF_ID_SANYO                               0x62
 #define SFUD_MF_ID_INTEL                               0x89
 #define SFUD_MF_ID_ESMT                                0x8C
@@ -91,7 +92,6 @@ typedef struct {
 #define SFUD_MF_ID_GIGADEVICE                          0xC8
 #define SFUD_MF_ID_ISSI                                0xD5
 #define SFUD_MF_ID_WINBOND                             0xEF
-#define SFUD_MF_ID_NOR_MEM                             0x52
 
 /* SFUD supported manufacturer information table */
 #define SFUD_MF_TABLE                                     \

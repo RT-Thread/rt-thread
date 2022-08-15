@@ -158,10 +158,10 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         {
             /* send failed. */
             level = rt_hw_interrupt_disable();
-            rt_list_insert_after(&tx_fifo->freelist, &tx_tosnd->list);
+            rt_list_insert_before(&tx_fifo->freelist, &tx_tosnd->list);
             rt_hw_interrupt_enable(level);
             rt_sem_release(&(tx_fifo->sem));
-            continue;
+            goto err_ret;
         }
 
         can->status.sndchange = 1;
@@ -189,6 +189,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         }
         else
         {
+err_ret:
             level = rt_hw_interrupt_disable();
             can->status.dropedsndpkg++;
             rt_hw_interrupt_enable(level);
@@ -924,7 +925,7 @@ int cmd_canstat(int argc, void **argv)
             rt_kprintf(" Can't find can device %s\n", argv[1]);
             return -1;
         }
-        rt_kprintf(" Finded can device: %s...", argv[1]);
+        rt_kprintf(" Found can device: %s...", argv[1]);
 
         rt_device_control(candev, RT_CAN_CMD_GET_STATUS, &status);
         rt_kprintf("\n Receive...error..count: %010ld. Send.....error....count: %010ld.",
@@ -954,9 +955,9 @@ int cmd_canstat(int argc, void **argv)
             rt_kprintf("%s.", ErrCode[3]);
             break;
         }
-        rt_kprintf("\n Total.receive.packages: %010ld. Droped.receive.packages: %010ld.",
+        rt_kprintf("\n Total.receive.packages: %010ld. Dropped.receive.packages: %010ld.",
                    status.rcvpkg, status.dropedrcvpkg);
-        rt_kprintf("\n Total..send...packages: %010ld. Droped...send..packages: %010ld.\n",
+        rt_kprintf("\n Total..send...packages: %010ld. Dropped...send..packages: %010ld.\n",
                    status.sndpkg + status.dropedsndpkg, status.dropedsndpkg);
     }
     else

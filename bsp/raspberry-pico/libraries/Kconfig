@@ -18,7 +18,7 @@ menu "Onboard Peripheral Drivers"
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
             select PKG_USING_LV_MUSIC_DEMO
-            default n
+            default y
     endif
 endmenu         
 
