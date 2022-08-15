@@ -26,7 +26,12 @@ int rt_hw_sdram_Init(void)
     int result = RT_EOK;
     semc_config_t config;
     semc_sdram_config_t sdramconfig;
+    
+#if defined(SOC_IMXRT1170_SERIES)
+    rt_uint32_t clockFrq = CLOCK_GetRootClockFreq(kCLOCK_Root_Semc);
+#else
     rt_uint32_t clockFrq = CLOCK_GetFreq(kCLOCK_SemcClk);
+#endif
 
     /* Initializes the MAC configure structure to zero. */
     memset(&config, 0, sizeof(semc_config_t));
