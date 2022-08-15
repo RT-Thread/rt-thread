@@ -18,7 +18,7 @@ config SOC_MIMXRT1062DVL6A
     default y
 
 menu "Onboard Peripheral Drivers"
-    
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
@@ -175,7 +175,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_CACHE
         bool "Enable CACHE"
         default n
-      
+
 endmenu
 
 menu "Board extended module Drivers"
