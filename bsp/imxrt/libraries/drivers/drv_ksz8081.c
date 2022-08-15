@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -168,7 +168,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
         #endif  /* FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE */
 
         /* Set the negotiation. */
-        result = phy_ksz8081.ops->write(PHY_AUTONEG_ADVERTISE_REG, 
+        result = phy_ksz8081.ops->write(PHY_AUTONEG_ADVERTISE_REG,
                                         (PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
                                         PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK | 0x1U));
         if (PHY_STATUS_OK == result)
