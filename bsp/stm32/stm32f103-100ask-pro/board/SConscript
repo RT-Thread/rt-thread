@@ -21,11 +21,11 @@ path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xe.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xe.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/iar/startup_stm32f103xe.s']
 
 # STM32F100xB || STM32F100xE || STM32F101x6
