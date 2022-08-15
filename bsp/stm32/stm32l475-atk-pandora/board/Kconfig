@@ -103,7 +103,7 @@ menu "Onboard Peripheral Drivers"
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
-            default n
+            default y
     endif
 
     config BSP_USING_SDCARD

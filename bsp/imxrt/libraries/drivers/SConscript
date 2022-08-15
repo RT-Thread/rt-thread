@@ -50,6 +50,8 @@ if GetDepend('BSP_USING_ETH'):
     
 if GetDepend('BSP_USING_PHY'):
     src += ['drv_mdio.c']
+    if GetDepend('PHY_USING_KSZ8081'):
+        src += ['drv_ksz8081.c']
 
 if GetDepend('BSP_USING_AUDIO'):
     src += ['drv_sai.c']
