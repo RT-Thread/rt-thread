@@ -42,7 +42,10 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             LOG_E("watch dog keepalive fail.");
             ret =  -RT_ERROR;
         }
-        ret = RT_EOK;
+        else
+        {
+            ret = RT_EOK;
+        }
         break;
     /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
@@ -57,7 +60,10 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             LOG_E("wdt get timeout failed.");
             ret =  -RT_ERROR;
         }
-        ret = RT_EOK;
+        else
+        {
+            ret = RT_EOK;
+        }
         break;
     case RT_DEVICE_CTRL_WDT_START:
         if (R_WDT_Open(&g_wdt_ctrl, &g_wdt_cfg) == FSP_SUCCESS)
@@ -67,13 +73,16 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
                 LOG_E("wdt start failed.");
                 ret =  -RT_ERROR;
             }
+            else
+            {
+                ret = RT_EOK;
+            }
         }
         else
         {
             LOG_E("wdt start failed.");
             ret =  -RT_ERROR;
         }
-        ret = RT_EOK;
         break;
     default:
         LOG_W("This command is not supported.");

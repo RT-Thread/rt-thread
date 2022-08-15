@@ -59,17 +59,19 @@ static fsp_err_t validate_i2c_event(void)
 
     if(i2c_event != I2C_MASTER_EVENT_ABORTED)
     {
-        i2c_event = (i2c_master_event_t)0;  // Make sure this is always Reset before return
+        /* Make sure this is always Reset before return*/
+        i2c_event = (i2c_master_event_t)0;
         return FSP_SUCCESS;
     }
 
-    i2c_event = (i2c_master_event_t)0; // Make sure this is always Reset before return
+    /* Make sure this is always Reset before return */
+    i2c_event = (i2c_master_event_t)0;
     return FSP_ERR_TRANSFER_ABORTED;
 }
 
 static rt_size_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                 struct rt_i2c_msg msgs[],
-                                 rt_uint32_t num)
+                                struct rt_i2c_msg msgs[],
+                                rt_uint32_t num)
 {
     rt_size_t i;
     struct rt_i2c_msg *msg = msgs;
@@ -79,15 +81,14 @@ static rt_size_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
     for (i = 0; i < num; i++)
     {
-
         if (msg[i].flags & RT_I2C_NO_START)
         {
             restart = true;
         }
         if (msg[i].flags & RT_I2C_ADDR_10BIT)
         {
-            LOG_E("10Bit not support!\n");
-            return -1;
+            LOG_E("10Bit not support");
+            break;
         }
         else
         {
@@ -103,14 +104,16 @@ static rt_size_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 /* handle error */
                 if(FSP_ERR_TRANSFER_ABORTED == err)
                 {
-                    LOG_E("** POWER_CTL reg I2C read failed!!! ** \n");
+                    LOG_E("POWER_CTL reg I2C read failed");
+                    break;
                 }
             }
             /* handle error */
             else
             {
                 /* Write API returns itself is not successful */
-                LOG_E("** R_IIC_MASTER_Write API failed ** \r\n");
+                LOG_E("R_IIC_MASTER_Write API failed");
+                break;
             }
         }
         else
@@ -122,14 +125,16 @@ static rt_size_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 /* handle error */
                 if(FSP_ERR_TRANSFER_ABORTED == err)
                 {
-                    LOG_E("** POWER_CTL reg I2C write failed!!! ** \n");
+                    LOG_E("POWER_CTL reg I2C write failed");
+                    break;
                 }
             }
             /* handle error */
             else
             {
                 /* Write API returns itself is not successful */
-                LOG_E("** R_IIC_MASTER_Write API failed ** \n");
+                LOG_E("R_IIC_MASTER_Write API failed");
+                break;
             }
         }
     }
@@ -153,7 +158,7 @@ int ra_hw_i2c_init(void)
     /* handle error */
     if (FSP_SUCCESS != err)
     {
-        LOG_E("** R_IIC_MASTER_Open API failed ** \r\n");
+        LOG_E("R_IIC_MASTER_Open API failed");
         return err;
     }
     rt_i2c_bus_device_register(&prv_ra_i2c, "i2c1");
