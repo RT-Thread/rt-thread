@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-12-05     zylx         The first version for STM32F4xx
  * 2019-4-25      misonyo      port to IMXRT
- * 2022-08-15     xjy198903    add sdram config for rt1170 
+ * 2022-08-15     xjy198903    add sdram config for rt1170
  */
 
 #ifndef SDRAM_PORT_H__

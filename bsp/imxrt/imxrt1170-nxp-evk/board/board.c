@@ -1244,7 +1244,7 @@ void rt_hw_board_init()
 #ifdef BSP_USING_SDRAM
    imxrt_sdram_pins_init();
 #endif
-  
+
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
