@@ -52,6 +52,8 @@ if GetDepend('BSP_USING_PHY'):
     src += ['drv_mdio.c']
     if GetDepend('PHY_USING_KSZ8081'):
         src += ['drv_ksz8081.c']
+    if GetDepend('PHY_USING_RTL8211F'):
+        src += ['drv_rtl8211f.c']    
 
 if GetDepend('BSP_USING_AUDIO'):
     src += ['drv_sai.c']
