@@ -31,6 +31,7 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
 
 static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
+    rt_err_t ret = -RT_ERROR;
     struct st_wdt_timeout_values *wdt_value = {0};
     switch (cmd)
     {
@@ -39,19 +40,24 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         if (R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
         {
             LOG_E("watch dog keepalive fail.");
+            ret =  -RT_ERROR;
         }
+        ret = RT_EOK;
         break;
     /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         /**< set*/
+        LOG_W("Use the FSP tool to modify the configuration parameters!");
+        ret = -RT_EINVAL;
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
         wdt_value = (struct st_wdt_timeout_values *)arg;
         if (R_WDT_TimeoutGet(&g_wdt_ctrl, wdt_value) != FSP_SUCCESS)
         {
             LOG_E("wdt get timeout failed.");
-            return -RT_ERROR;
+            ret =  -RT_ERROR;
         }
+        ret = RT_EOK;
         break;
     case RT_DEVICE_CTRL_WDT_START:
         if (R_WDT_Open(&g_wdt_ctrl, &g_wdt_cfg) == FSP_SUCCESS)
@@ -59,20 +65,21 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             if (R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
             {
                 LOG_E("wdt start failed.");
-                return -RT_ERROR;
+                ret =  -RT_ERROR;
             }
         }
         else
         {
             LOG_E("wdt start failed.");
-            return -RT_ERROR;
+            ret =  -RT_ERROR;
         }
+        ret = RT_EOK;
         break;
     default:
         LOG_W("This command is not supported.");
-        return -RT_ERROR;
+        ret =  -RT_ERROR;
     }
-    return RT_EOK;
+    return ret;
 }
 
 int rt_wdt_init(void)
