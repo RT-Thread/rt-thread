@@ -416,7 +416,7 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/GD32VF103_Firmware_Library/RISCV/env_Eclipse/start.S']
     src += [startup_path_prefix + '/GD32VF103_Firmware_Library/RISCV/env_Eclipse/entry.S']
 
