@@ -78,7 +78,7 @@ void rt_hw_board_init(void)
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
 #ifdef RT_USING_HEAP
-    #if defined(__CC_ARM) || defined(__CLANG_ARM)
+    #if defined(__ARMCC_VERSION)
         rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)HEAP_END);
     #elif __ICCARM__
         rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
