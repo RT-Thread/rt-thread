@@ -16,5 +16,5 @@ if GetDepend('BSP_USING_QSPIFLASH'):
     else:
         LINKFLAGS = ''
 
-    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS) 
-    Return('group') 
+    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+    Return('group')

@@ -107,20 +107,20 @@ menu "Onboard Peripheral Drivers"
             default y
 
         if BSP_USING_PHY
-            config PHY_DEVICE_ADDRESS
-                int "Specify address of phy device"
-                default 2
-
             config PHY_USING_KSZ8081
-                bool "i.MX RT1064EVK uses ksz8081 phy"
+                bool "i.MX RT1176EVK uses ksz8081 phy"
                 default y
 
             if PHY_USING_KSZ8081
-                config PHY_RESET_PORT
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
                     int "indicate port of reset"
                     default 6
 
-                config PHY_RESET_PIN
+                config PHY_RESET_KSZ8081_PIN
                     int "indicate pin of reset"
                     default 12
 
@@ -129,10 +129,29 @@ menu "Onboard Peripheral Drivers"
                     depends on PHY_USING_KSZ8081
                     default y
             endif
+        endif
 
+        if BSP_USING_PHY
+                config PHY_USING_RTL8211F
+                    bool "i.MX RT1176EVK uses rtl8211f phy"
+                    default y
+
+                if PHY_USING_RTL8211F
+                    config PHY_RTL8211F_ADDRESS
+                    int "Specify address of phy device"
+                    default 1
+
+                    config PHY_RESET_RTL8211F_PORT
+                        int "indicate port of reset"
+                        default 11
+
+                    config PHY_RESET_RTL8211F_PIN
+                        int "indicate pin of reset"
+                        default 14
+
+                endif
         endif
     endif
-
 endmenu
 
 menu "Board extended module Drivers"
