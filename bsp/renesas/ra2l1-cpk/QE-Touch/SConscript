@@ -10,17 +10,13 @@ CPPPATH = []
 
 file = glob.glob('*.tifcfg')
 if len(file):
-    if rtconfig.PLATFORM == 'iar':
-        print("\nThe current project does not support iar build\n")
+    if rtconfig.PLATFORM in ['iccarm']:
+        print("\nThe current project does not support IAR build\n")
         Return('group')
-    elif rtconfig.PLATFORM == 'gcc':
+    elif rtconfig.PLATFORM in ['gcc', 'armclang']:
         src += ['qe_touch_config.c']
         src += ['qe_sample_rtthread.c']
-        CPPPATH = [cwd, ]
-    elif rtconfig.PLATFORM == 'armclang':
-        src += ['qe_touch_config.c']
-        src += ['qe_sample_rtthread.c']
-        CPPPATH = [cwd, ]
+        CPPPATH = [cwd]
 
     CPPDEFINES = ['QE_TOUCH_CONFIGURATION']
     group = DefineGroup('QE-Touch', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)

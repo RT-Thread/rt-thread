@@ -124,7 +124,7 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
 
-    if rtconfig.PLATFORM == 'gcc':
+    if rtconfig.PLATFORM in ['gcc']:
         contents = ''
         if not os.path.isfile('cconfig.h'):
             import gcc
@@ -287,7 +287,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     GenCconfigFile(env, BuildOptions)
 
     # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
-    if rtconfig.PLATFORM == 'gcc' and str(env['LINKFLAGS']).find('nano.specs') != -1:
+    if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
     if GetOption('genconfig'):
@@ -618,7 +618,7 @@ def DefineGroup(name, src, depend, **parameters):
         group['LOCAL_CPPPATH'] = paths
 
 
-    if rtconfig.PLATFORM == 'gcc':
+    if rtconfig.PLATFORM in ['gcc']:
         if 'CFLAGS' in group:
             group['CFLAGS'] = utils.GCCC99Patch(group['CFLAGS'])
         if 'CCFLAGS' in group:
@@ -695,9 +695,9 @@ def PreBuilding():
 
 def GroupLibName(name, env):
 
-    if rtconfig.PLATFORM == 'armcc':
+    if rtconfig.PLATFORM in ['armcc']:
         return name + '_rvds'
-    elif rtconfig.PLATFORM == 'gcc':
+    elif rtconfig.PLATFORM in ['gcc']:
         return name + '_gcc'
 
     return name
