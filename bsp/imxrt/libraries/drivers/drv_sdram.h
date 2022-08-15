@@ -14,6 +14,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-//int rt_hw_sdram_init(void);
+int rt_hw_sdram_init(void);
 
 #endif /* DRV_SDRAM_H__ */
