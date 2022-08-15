@@ -90,7 +90,7 @@ static void _workqueue_thread_entry(void *parameter)
 }
 
 static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
-        struct rt_work *work, rt_tick_t ticks)
+                                       struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
     rt_err_t err;
@@ -116,7 +116,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
 
         /* whether the workqueue is doing work */
         if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+                ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
         {
             /* resume work thread */
             rt_thread_resume(queue->work_thread);
@@ -140,7 +140,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         else
         {
             rt_timer_init(&(work->timer), "work", _delayed_work_timeout_handler,
-                        work, ticks, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+                          work, ticks, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
             work->flags |= RT_WORK_STATE_SUBMITTING;
         }
         work->workqueue = queue;
@@ -198,7 +198,7 @@ static void _delayed_work_timeout_handler(void *parameter)
     }
     /* whether the workqueue is doing work */
     if (queue->work_current == RT_NULL &&
-        ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
@@ -356,7 +356,7 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     rt_list_insert_after(&queue->work_list, &(work->list));
     /* whether the workqueue is doing work */
     if (queue->work_current == RT_NULL &&
-        ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);

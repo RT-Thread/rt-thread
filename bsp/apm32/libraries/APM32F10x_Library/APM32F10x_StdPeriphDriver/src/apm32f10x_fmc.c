@@ -361,11 +361,11 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
  *
  * @param     page:the address of the pages to be write protection
  *                This parameter can be any combination of the following values:
- *                 for APM32F10X_LD ï¼š
+ *                 for APM32F10X_LD £º
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_28_31
- *                 for APM32F10X_MD ï¼š
+ *                 for APM32F10X_MD £º
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_124_127
- *                 for APM32F10X_HD ï¼š
+ *                 for APM32F10X_HD £º
  *                    @arg FLASH_WRP_PAGE_0_1 to FLASH_WRP_PAGE_60_61 or FLASH_WRP_PAGE_62_127
  *                 @arg FMC_WRP_PAGE_ALL
  *
@@ -454,7 +454,7 @@ FMC_STATUS_T FMC_EnableReadOutProtection(void)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
-            OB->RDP = 0x00A5;
+            OB->RDP = 0x0000;
 
             status = FMC_WaitForLastOperation(0x000B0000);
 
@@ -501,7 +501,7 @@ FMC_STATUS_T FMC_DisableReadOutProtection(void)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
-            OB->RDP = 0x00;
+            OB->RDP = 0x00A5;
 
             status = FMC_WaitForLastOperation(0x000B0000);
 

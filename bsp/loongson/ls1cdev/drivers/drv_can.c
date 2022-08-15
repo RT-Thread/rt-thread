@@ -156,14 +156,14 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
     case RT_CAN_MODE_NORMAL:
         CAN_InitStructure.CAN_Mode = 0x00;
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         CAN_InitStructure.CAN_Mode = CAN_Mode_LOM;
         break;
     case RT_CAN_MODE_LOOPBACK:
         CAN_InitStructure.CAN_Mode = CAN_Mode_STM;
 
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         CAN_InitStructure.CAN_Mode = CAN_Mode_STM|CAN_Mode_LOM;
         break;
     }
@@ -272,9 +272,9 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL ||
-                argval != RT_CAN_MODE_LISEN ||
+                argval != RT_CAN_MODE_LISTEN ||
                 argval != RT_CAN_MODE_LOOPBACK ||
-                argval != RT_CAN_MODE_LOOPBACKANLISEN)
+                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return RT_ERROR;
         }

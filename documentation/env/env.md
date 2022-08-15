@@ -115,7 +115,7 @@ Enter the `pkgs` command on the Env command line to see an introduction to the c
 
 ```
 > pkgs
-usage: env.py package [-h] [--update] [--list] [--wizard] [--upgrade]
+usage: env.py package [-h] [--update] [--list] [--wizard] [--upgrade] [--force-upgrade]
                       [--printenv]
 
 optional arguments:
@@ -125,6 +125,7 @@ optional arguments:
   --list      list target packages
   --wizard    create a package with wizard
   --upgrade   update local packages list from git repo
+  --force-upgrade update local package index file from git repo forcely (will auto-fix the conflicts when git merge). 
   --printenv  print environmental variables to check
 ```
 
@@ -162,6 +163,9 @@ The three options are:
 
 - **Auto update pkgs config**：Automatic package update function: After exiting the menuconfig function, `pkgs --update` command is automatically used to download and install the package and delete the old package. This feature is used when downloading online packages.
 - **Auto create a MDK/IAR project**: After modifying the menuconfig configuration, you must re-generate the project by typing  `scons --target=xxx` . Turning on this feature will automatically regenerate the project when you exit menuconfig, without having to manually enter the scons command to regenerate the project.
+- **Use China Mainland server**: Please **cancel it** if you are NOT living in mainland China.
+- **Send usage data for improve product**: For user number statistic.
+
 
 ## Use Env in Your Project
 
@@ -220,7 +224,7 @@ The directory where the `chcp` command is located may be added to the environmen
 
 ### Q: It prompts that the git command cannot be found.
 
-  'git' is not recognized as an internal or external command, possible program or batch file.
+'git' is not recognized as an internal or external command, possible program or batch file.
 
 **A:** Git is not installed. You need to install git and add environment variables.
 
@@ -251,6 +255,6 @@ The directory where the `chcp` command is located may be added to the environmen
 2. The `pkgs --update` command is used to update the package itself. For example, if you selected json and mqtt packages in menuconfig, you did not download them when you exit menuconfig. You need to use the `pkgs --update` command, at which point Env will download the package you selected and add it to your project.
 3. The new version of Env supports the `menuconfig -s/--setting` command. If you don't want to use the `pkgs --update` command after replacing the package, configure Env after using the `menuconfig -s/--setting` command. Select each time you use menuconfig. After the package is automatically updated.
 
-### Q: Prompt “can't find file Kconfig” while using menuconfig.
+### Q: Prompt "can't find file Kconfig" while using menuconfig.
 
 **A:** The Kconfig file is missing from the current working BSP directory. Please refer *To Add menuconfig function to New Project* and *To Add menuconfig function to Old Project*.

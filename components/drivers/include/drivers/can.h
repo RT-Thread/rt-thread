@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author            Notes
  * 2015-05-14     aubrcool@qq.com   first version
  * 2015-07-06     Bernard           remove RT_CAN_USING_LED.
+ * 2022-05-08     hpmicro           add CANFD support, fixed typos
  */
 
 #ifndef CAN_H_
@@ -20,6 +21,26 @@
 #ifndef RT_CANSND_BOX_NUM
 #define RT_CANSND_BOX_NUM   1
 #endif
+
+enum CAN_DLC
+{
+    CAN_MSG_0BYTE = 0,
+    CAN_MSG_1BYTE,
+    CAN_MSG_2BYTES,
+    CAN_MSG_3BYTES,
+    CAN_MSG_4BYTES,
+    CAN_MSG_5BYTES,
+    CAN_MSG_6BYTES,
+    CAN_MSG_7BYTES,
+    CAN_MSG_8BYTES,
+    CAN_MSG_12BYTES,
+    CAN_MSG_16BYTES,
+    CAN_MSG_20BYTES,
+    CAN_MSG_24BYTES,
+    CAN_MSG_32BYTES,
+    CAN_MSG_48BYTES,
+    CAN_MSG_64BYTES,
+};
 
 enum CANBAUD
 {
@@ -35,9 +56,9 @@ enum CANBAUD
 };
 
 #define RT_CAN_MODE_NORMAL              0
-#define RT_CAN_MODE_LISEN               1
+#define RT_CAN_MODE_LISTEN              1
 #define RT_CAN_MODE_LOOPBACK            2
-#define RT_CAN_MODE_LOOPBACKANLISEN     3
+#define RT_CAN_MODE_LOOPBACKANLISTEN    3
 
 #define RT_CAN_MODE_PRIV                0x01
 #define RT_CAN_MODE_NOPRIV              0x00
@@ -96,6 +117,27 @@ struct rt_can_filter_config
     struct rt_can_filter_item *items;
 };
 
+struct rt_can_bit_timing
+{
+    rt_uint16_t prescaler;  /* Pre-scaler */
+    rt_uint16_t num_seg1;   /* Bit Timing Segment 1, in terms of Tq */
+    rt_uint16_t num_seg2;   /* Bit Timing Segment 2, in terms of Tq */
+    rt_uint8_t num_sjw;     /* Synchronization Jump Width, in terms of Tq */
+    rt_uint8_t num_sspoff;  /* Secondary Sample Point Offset, in terms of Tq */
+};
+
+/**
+ * CAN bit timing configuration list
+ * NOTE:
+ *  items[0] always for CAN2.0/CANFD Arbitration Phase
+ *  items[1] always for CANFD (if it exists)
+ */
+struct rt_can_bit_timing_config
+{
+    rt_uint32_t count;
+    struct rt_can_bit_timing *items;
+};
+
 struct can_configure
 {
     rt_uint32_t baud_rate;
@@ -107,6 +149,17 @@ struct can_configure
     rt_uint32_t ticks;
 #ifdef RT_CAN_USING_HDR
     rt_uint32_t maxhdr;
+#endif
+
+#ifdef RT_CAN_USING_CANFD
+    rt_uint32_t baud_rate_fd;       /* CANFD data bit rate*/
+    rt_uint32_t use_bit_timing: 8;  /* Use the bit timing for CAN timing configuration */
+    rt_uint32_t enable_canfd : 8;   /* Enable CAN-FD mode */
+    rt_uint32_t reserved1 : 16;
+
+    /* The below fields take effect only if use_bit_timing is non-zero */
+    struct rt_can_bit_timing can_timing;    /* CAN bit-timing /CANFD bit-timing for arbitration phase */
+    struct rt_can_bit_timing canfd_timing;  /* CANFD bit-timing for datat phase */
 #endif
 };
 
@@ -126,6 +179,9 @@ struct rt_can_ops;
 #define RT_CAN_CMD_GET_STATUS       0x17
 #define RT_CAN_CMD_SET_STATUS_IND   0x18
 #define RT_CAN_CMD_SET_BUS_HOOK     0x19
+#define RT_CAN_CMD_SET_CANFD        0x1A
+#define RT_CAN_CMD_SET_BAUD_FD      0x1B
+#define RT_CAN_CMD_SET_BITTIMING    0x1C
 
 #define RT_DEVICE_CAN_INT_ERR       0x1000
 
@@ -222,8 +278,17 @@ struct rt_can_msg
     rt_uint32_t len : 8;
     rt_uint32_t priv : 8;
     rt_int32_t hdr : 8;
+#ifdef RT_CAN_USING_CANFD
+    rt_uint32_t fd_frame : 1;
+    rt_uint32_t reserved : 7;
+#else
     rt_uint32_t reserved : 8;
+#endif
+#ifdef RT_CAN_USING_CANFD
+    rt_uint8_t data[64];
+#else
     rt_uint8_t data[8];
+#endif
 };
 typedef struct rt_can_msg *rt_can_msg_t;
 
