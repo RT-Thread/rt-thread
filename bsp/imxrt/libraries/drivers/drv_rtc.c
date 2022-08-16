@@ -25,7 +25,7 @@
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
-static time_t get_timestamp(void)
+static time_t imxrt_hp_get_timestamp(void)
 {
     struct tm tm_new = {0};
     snvs_hp_rtc_datetime_t rtcDate = {0};
@@ -43,7 +43,7 @@ static time_t get_timestamp(void)
     return timegm(&tm_new);
 }
 
-static int set_timestamp(time_t timestamp)
+static int imxrt_hp_set_timestamp(time_t timestamp)
 {
     struct tm now;
     snvs_hp_rtc_datetime_t rtcDate = {0};
@@ -109,13 +109,13 @@ static rt_err_t imxrt_hp_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
     {
-        *(uint32_t *)args = get_timestamp();
+        *(uint32_t *)args = imxrt_hp_get_timestamp();
     }
     break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        set_timestamp(*(time_t *)args);
+        imxrt_hp_set_timestamp(*(time_t *)args);
     }
     break;
 

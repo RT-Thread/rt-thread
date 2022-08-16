@@ -12,11 +12,11 @@ if GetDepend(['BSP_USING_RW007']):
 CPPPATH = [cwd]
 LOCAL_CCFLAGS = ''
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     LOCAL_CCFLAGS += ' -std=c99'
-elif rtconfig.PLATFORM == 'armcc':
+elif rtconfig.PLATFORM in ['armcc']:
     LOCAL_CCFLAGS += ' --c99'
-elif rtconfig.PLATFORM == 'armclang':
+elif rtconfig.PLATFORM in ['armclang']:
     LOCAL_CCFLAGS += ' -std=c99'
 
 group = DefineGroup('Drivers', src, depend = [], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)

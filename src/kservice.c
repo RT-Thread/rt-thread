@@ -50,7 +50,7 @@ RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
     RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file."));
+        "Please consider implementing rt_hw_us_delay() in another file.\n"));
 }
 
 static const char* rt_errno_strs[] =

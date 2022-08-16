@@ -245,7 +245,7 @@ if GetDepend(['RT_USING_USB_DEVICE']):
 if GetDepend(['RT_USING_SDCARD']):
     src += ['drv_sdcard.c']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['gcc_startup.s']
 
 CPPPATH = [cwd]

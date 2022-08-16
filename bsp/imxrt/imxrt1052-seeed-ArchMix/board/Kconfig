@@ -1,14 +1,14 @@
 menu "Hardware Drivers Config"
 
 config SOC_IMXRT1052CVL5B
-    bool 
+    bool
     select SOC_MIMXRT1050_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
-        
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
@@ -20,7 +20,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_DMA
         bool "Enable DMA"
         default n
-        
+
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -30,7 +30,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         select RT_USING_SERIAL
         default y
-        
+
         if BSP_USING_LPUART
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
