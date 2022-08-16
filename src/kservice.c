@@ -175,7 +175,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
             *(((unsigned char *)&buffer)+2) = d;
             *(((unsigned char *)&buffer)+3) = d;
         }
-        else
+        else if (LBLOCKSIZE == 2)
         {
             *(((unsigned char *)&buffer)+0) = d;
             *(((unsigned char *)&buffer)+1) = d;
@@ -1081,8 +1081,8 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             num = va_arg(args, rt_uint32_t);
         }
         else if (qualifier == 'h')
-        {            
-            /*for arm gcc, args are aligned to 32bit. 
+        {
+            /*for arm gcc, args are aligned to 32bit.
               for Ti C28x, args are aligned to 16bit.
               Therefore we use int here to adapt to both archs. */
 

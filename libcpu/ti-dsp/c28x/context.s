@@ -191,7 +191,7 @@ _reswitch2:
 
      .asmfunc
 _RTOSINT_Handler:
-	; disable interrupt to protect context switch
+    ; disable interrupt to protect context switch
     ; DINT ;this is done by hardware so not needed
 
     ; get rt_thread_switch_interrupt_flag
