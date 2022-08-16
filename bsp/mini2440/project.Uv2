@@ -12,31 +12,35 @@ Group (Finsh)
 Group (Kernel)
 Group (POSIX)
 
-File 1,1,<applications\mnt.c><mnt.c>
 File 1,1,<applications\main.c><main.c>
-File 2,1,<..\..\components\libc\compilers\armlibc\syscalls.c><syscalls.c>
+File 1,1,<applications\mnt.c><mnt.c>
 File 2,1,<..\..\components\libc\compilers\armlibc\syscall_mem.c><syscall_mem.c>
-File 2,1,<..\..\components\libc\compilers\common\stdlib.c><stdlib.c>
-File 2,1,<..\..\components\libc\compilers\common\time.c><time.c>
+File 2,1,<..\..\components\libc\compilers\armlibc\syscalls.c><syscalls.c>
+File 2,1,<..\..\components\libc\compilers\common\cctype.c><cctype.c>
+File 2,1,<..\..\components\libc\compilers\common\cstdio.c><cstdio.c>
+File 2,1,<..\..\components\libc\compilers\common\cstdlib.c><cstdlib.c>
+File 2,1,<..\..\components\libc\compilers\common\cstring.c><cstring.c>
+File 2,1,<..\..\components\libc\compilers\common\ctime.c><ctime.c>
+File 2,1,<..\..\components\libc\compilers\common\cwchar.c><cwchar.c>
+File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 3,1,<..\..\libcpu\arm\common\div0.c><div0.c>
 File 3,1,<..\..\libcpu\arm\common\showmem.c><showmem.c>
-File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
-File 3,1,<..\..\libcpu\arm\s3c24x0\trap.c><trap.c>
-File 3,1,<..\..\libcpu\arm\s3c24x0\mmu.c><mmu.c>
-File 3,1,<..\..\libcpu\arm\s3c24x0\cpu.c><cpu.c>
-File 3,1,<..\..\libcpu\arm\s3c24x0\stack.c><stack.c>
-File 3,1,<..\..\libcpu\arm\s3c24x0\interrupt.c><interrupt.c>
 File 3,2,<..\..\libcpu\arm\s3c24x0\context_rvds.S><context_rvds.S>
+File 3,1,<..\..\libcpu\arm\s3c24x0\cpu.c><cpu.c>
+File 3,1,<..\..\libcpu\arm\s3c24x0\interrupt.c><interrupt.c>
+File 3,1,<..\..\libcpu\arm\s3c24x0\mmu.c><mmu.c>
 File 3,1,<..\..\libcpu\arm\s3c24x0\rtc.c><rtc.c>
-File 3,1,<..\..\libcpu\arm\s3c24x0\system_clock.c><system_clock.c>
+File 3,1,<..\..\libcpu\arm\s3c24x0\stack.c><stack.c>
 File 3,2,<..\..\libcpu\arm\s3c24x0\start_rvds.S><start_rvds.S>
+File 3,1,<..\..\libcpu\arm\s3c24x0\system_clock.c><system_clock.c>
+File 3,1,<..\..\libcpu\arm\s3c24x0\trap.c><trap.c>
 File 4,1,<..\..\components\drivers\ipc\completion.c><completion.c>
-File 4,1,<..\..\components\drivers\ipc\ringbuffer.c><ringbuffer.c>
 File 4,1,<..\..\components\drivers\ipc\dataqueue.c><dataqueue.c>
-File 4,1,<..\..\components\drivers\ipc\workqueue.c><workqueue.c>
-File 4,1,<..\..\components\drivers\ipc\waitqueue.c><waitqueue.c>
 File 4,1,<..\..\components\drivers\ipc\pipe.c><pipe.c>
 File 4,1,<..\..\components\drivers\ipc\ringblk_buf.c><ringblk_buf.c>
+File 4,1,<..\..\components\drivers\ipc\ringbuffer.c><ringbuffer.c>
+File 4,1,<..\..\components\drivers\ipc\waitqueue.c><waitqueue.c>
+File 4,1,<..\..\components\drivers\ipc\workqueue.c><workqueue.c>
 File 4,1,<..\..\components\drivers\misc\pin.c><pin.c>
 File 4,1,<..\..\components\drivers\serial\serial.c><serial.c>
 File 5,1,<drivers\uart.c><uart.c>
@@ -45,21 +49,22 @@ File 5,1,<drivers\board.c><board.c>
 File 5,1,<drivers\led.c><led.c>
 File 6,1,<..\..\components\finsh\shell.c><shell.c>
 File 6,1,<..\..\components\finsh\msh.c><msh.c>
+File 6,1,<..\..\components\finsh\msh_parse.c><msh_parse.c>
 File 6,1,<..\..\components\finsh\cmd.c><cmd.c>
 File 7,1,<..\..\src\clock.c><clock.c>
-File 7,1,<..\..\src\scheduler.c><scheduler.c>
-File 7,1,<..\..\src\device.c><device.c>
-File 7,1,<..\..\src\thread.c><thread.c>
 File 7,1,<..\..\src\components.c><components.c>
-File 7,1,<..\..\src\timer.c><timer.c>
+File 7,1,<..\..\src\device.c><device.c>
 File 7,1,<..\..\src\idle.c><idle.c>
-File 7,1,<..\..\src\memheap.c><memheap.c>
-File 7,1,<..\..\src\kservice.c><kservice.c>
-File 7,1,<..\..\src\mempool.c><mempool.c>
-File 7,1,<..\..\src\mem.c><mem.c>
-File 7,1,<..\..\src\irq.c><irq.c>
 File 7,1,<..\..\src\ipc.c><ipc.c>
+File 7,1,<..\..\src\irq.c><irq.c>
+File 7,1,<..\..\src\kservice.c><kservice.c>
+File 7,1,<..\..\src\mem.c><mem.c>
+File 7,1,<..\..\src\memheap.c><memheap.c>
+File 7,1,<..\..\src\mempool.c><mempool.c>
 File 7,1,<..\..\src\object.c><object.c>
+File 7,1,<..\..\src\scheduler.c><scheduler.c>
+File 7,1,<..\..\src\thread.c><thread.c>
+File 7,1,<..\..\src\timer.c><timer.c>
 
 
 
@@ -120,9 +125,9 @@ Options 1,0,0  // Target 'RT-Thread Mini2440'
  RV_STAVEC ()
  ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC (--diag_suppress=870)
- ADSCDEFN (__RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND)
+ ADSCDEFN (RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND)
  ADSCUDEF ()
- ADSCINCD (..\..\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common;..\..\libcpu\arm\s3c24x0;drivers;..\..\components\libc\posix\ipc;.;applications;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\finsh)
+ ADSCINCD (..\..\components\libc\compilers\common\extension;..\..\include;..\..\libcpu\arm\s3c24x0;drivers;..\..\components\libc\compilers\common\include;..\..\components\libc\posix\ipc;.;applications;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\finsh)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()
