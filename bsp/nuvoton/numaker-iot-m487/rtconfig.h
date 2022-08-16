@@ -45,7 +45,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -76,6 +76,7 @@
 #define DFS_FILESYSTEMS_MAX 8
 #define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 32
+#define RT_USING_DFS_MNTTABLE
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -117,6 +118,12 @@
 #define RT_USING_PM
 #define PM_TICKLESS_THRESHOLD_TIME 2
 #define RT_USING_RTC
+#define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 2048
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 2048
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
 #define RT_USING_SFUD
@@ -195,7 +202,7 @@
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
 
-/* protocol stack implement */
+/* Docking with protocol stacks */
 
 #define SAL_USING_AT
 #define SAL_USING_POSIX
@@ -275,9 +282,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -288,6 +292,9 @@
 
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -301,6 +308,15 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 
 /* Hardware Drivers Config */
@@ -339,8 +355,6 @@
 #define BSP_USING_UUART0_RX_DMA
 #define BSP_USING_SDH
 #define BSP_USING_SDH0
-#define NU_SDH_USING_PDMA
-#define NU_SDH_HOTPLUG
 #define BSP_USING_SPI
 #define BSP_USING_SPI_PDMA
 #define BSP_USING_SPI0_NONE
