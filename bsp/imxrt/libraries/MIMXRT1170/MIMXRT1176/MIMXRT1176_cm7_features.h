@@ -340,9 +340,9 @@
 /* @brief Support Interrupt Coalesce */
 #define FSL_FEATURE_ENET_HAS_INTERRUPT_COALESCE (1)
 /* @brief Queue Size. */
-#define FSL_FEATURE_ENET_QUEUE (1)
+#define FSL_FEATURE_ENET_QUEUE (3)
 /* @brief Has AVB Support. */
-#define FSL_FEATURE_ENET_HAS_AVB (0)
+#define FSL_FEATURE_ENET_HAS_AVB (1)
 /* @brief Has Timer Pulse Width control. */
 #define FSL_FEATURE_ENET_HAS_TIMER_PWCONTROL (1)
 /* @brief Has Extend MDIO Support. */
