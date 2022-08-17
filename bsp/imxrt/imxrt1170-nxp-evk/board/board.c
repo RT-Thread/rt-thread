@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
  * 2022-08-15     xjy198903    add sdram pin config
+ * 2022-08-17     xjy198903    add rgmii pins
  */
 
 #include <rthw.h>
@@ -446,163 +447,194 @@ void imxrt_SDcard_pins_init(void)
 #endif
 #ifdef BSP_USING_ETH
 void imxrt_eth_pins_init(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc);           /* LPCG on: LPCG is ON. */
-  CLOCK_EnableClock(kCLOCK_Iomuxc_Lpsr);      /* LPCG on: LPCG is ON. */
+#ifdef PHY_USING_RTL8211F
+    CLOCK_EnableClock(kCLOCK_Iomuxc); /* LPCG on: LPCG is ON. */
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_12_GPIO9_IO11,           /* GPIO_AD_12 is configured as GPIO9_IO11 */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_24_LPUART1_TXD,          /* GPIO_AD_24 is configured as LPUART1_TXD */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_25_LPUART1_RXD,          /* GPIO_AD_25 is configured as LPUART1_RXD */
-      1U);                                    /* Software Input On Field: Force input path of pad GPIO_AD_25 */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_32_ENET_MDC,             /* GPIO_AD_32 is configured as ENET_MDC */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_33_ENET_MDIO,            /* GPIO_AD_33 is configured as ENET_MDIO */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_02_ENET_TX_DATA00,  /* GPIO_DISP_B2_02 is configured as ENET_TX_DATA00 */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_03_ENET_TX_DATA01,  /* GPIO_DISP_B2_03 is configured as ENET_TX_DATA01 */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_04_ENET_TX_EN,      /* GPIO_DISP_B2_04 is configured as ENET_TX_EN */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_05_ENET_REF_CLK,    /* GPIO_DISP_B2_05 is configured as ENET_REF_CLK */
-      1U);                                    /* Software Input On Field: Force input path of pad GPIO_DISP_B2_05 */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_06_ENET_RX_DATA00,  /* GPIO_DISP_B2_06 is configured as ENET_RX_DATA00 */
-      1U);                                    /* Software Input On Field: Force input path of pad GPIO_DISP_B2_06 */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_07_ENET_RX_DATA01,  /* GPIO_DISP_B2_07 is configured as ENET_RX_DATA01 */
-      1U);                                    /* Software Input On Field: Force input path of pad GPIO_DISP_B2_07 */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_08_ENET_RX_EN,      /* GPIO_DISP_B2_08 is configured as ENET_RX_EN */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_DISP_B2_09_ENET_RX_ER,      /* GPIO_DISP_B2_09 is configured as ENET_RX_ER */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_GPR->GPR4 = ((IOMUXC_GPR->GPR4 &
-    (~(IOMUXC_GPR_GPR4_ENET_REF_CLK_DIR_MASK))) /* Mask bits to zero which are setting */
-      | IOMUXC_GPR_GPR4_ENET_REF_CLK_DIR(0x01U) /* ENET_REF_CLK direction control: 0x01U */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_00_ENET_1G_RX_EN, /* GPIO_DISP_B1_00 is configured as ENET_1G_RX_EN */
+        0U);                                  /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_01_ENET_1G_RX_CLK, /* GPIO_DISP_B1_01 is configured as ENET_1G_RX_CLK */
+        0U);                                   /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_02_ENET_1G_RX_DATA00, /* GPIO_DISP_B1_02 is configured as ENET_1G_RX_DATA00 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_03_ENET_1G_RX_DATA01, /* GPIO_DISP_B1_03 is configured as ENET_1G_RX_DATA01 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_04_ENET_1G_RX_DATA02, /* GPIO_DISP_B1_04 is configured as ENET_1G_RX_DATA02 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_05_ENET_1G_RX_DATA03, /* GPIO_DISP_B1_05 is configured as ENET_1G_RX_DATA03 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_06_ENET_1G_TX_DATA03, /* GPIO_DISP_B1_06 is configured as ENET_1G_TX_DATA03 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_07_ENET_1G_TX_DATA02, /* GPIO_DISP_B1_07 is configured as ENET_1G_TX_DATA02 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_08_ENET_1G_TX_DATA01, /* GPIO_DISP_B1_08 is configured as ENET_1G_TX_DATA01 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_09_ENET_1G_TX_DATA00, /* GPIO_DISP_B1_09 is configured as ENET_1G_TX_DATA00 */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_10_ENET_1G_TX_EN, /* GPIO_DISP_B1_10 is configured as ENET_1G_TX_EN */
+        0U);                                  /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B1_11_ENET_1G_TX_CLK_IO, /* GPIO_DISP_B1_11 is configured as ENET_1G_TX_CLK_IO */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_12_GPIO_MUX5_IO13, /* GPIO_DISP_B2_12 is configured as GPIO_MUX5_IO13 */
+        0U);                                   /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_13_GPIO_MUX5_IO14, /* GPIO_DISP_B2_13 is configured as GPIO_MUX5_IO14 */
+        0U);                                   /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_EMC_B2_19_ENET_1G_MDC, /* GPIO_EMC_B2_19 is configured as ENET_1G_MDC */
+        0U);                               /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_EMC_B2_20_ENET_1G_MDIO, /* GPIO_EMC_B2_20 is configured as ENET_1G_MDIO */
+        0U);                                /* Software Input On Field: Input Path is determined by functionality */
+#else
+    CLOCK_EnableClock(kCLOCK_Iomuxc);      /* LPCG on: LPCG is ON. */
+    CLOCK_EnableClock(kCLOCK_Iomuxc_Lpsr); /* LPCG on: LPCG is ON. */
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_12_GPIO9_IO11, /* GPIO_AD_12 is configured as GPIO9_IO11 */
+        0U);                          /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_32_ENET_MDC, /* GPIO_AD_32 is configured as ENET_MDC */
+        0U);                        /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_33_ENET_MDIO, /* GPIO_AD_33 is configured as ENET_MDIO */
+        0U);                         /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_02_ENET_TX_DATA00, /* GPIO_DISP_B2_02 is configured as ENET_TX_DATA00 */
+        0U);                                   /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_03_ENET_TX_DATA01, /* GPIO_DISP_B2_03 is configured as ENET_TX_DATA01 */
+        0U);                                   /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_04_ENET_TX_EN, /* GPIO_DISP_B2_04 is configured as ENET_TX_EN */
+        0U);                               /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_05_ENET_REF_CLK, /* GPIO_DISP_B2_05 is configured as ENET_REF_CLK */
+        1U);                                 /* Software Input On Field: Force input path of pad GPIO_DISP_B2_05 */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_06_ENET_RX_DATA00, /* GPIO_DISP_B2_06 is configured as ENET_RX_DATA00 */
+        1U);                                   /* Software Input On Field: Force input path of pad GPIO_DISP_B2_06 */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_07_ENET_RX_DATA01, /* GPIO_DISP_B2_07 is configured as ENET_RX_DATA01 */
+        1U);                                   /* Software Input On Field: Force input path of pad GPIO_DISP_B2_07 */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_08_ENET_RX_EN, /* GPIO_DISP_B2_08 is configured as ENET_RX_EN */
+        0U);                               /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_09_ENET_RX_ER, /* GPIO_DISP_B2_09 is configured as ENET_RX_ER */
+        0U);                               /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_GPR->GPR4 = ((IOMUXC_GPR->GPR4 &
+                         (~(IOMUXC_GPR_GPR4_ENET_REF_CLK_DIR_MASK))) /* Mask bits to zero which are setting */
+                        | IOMUXC_GPR_GPR4_ENET_REF_CLK_DIR(0x01U)    /* ENET_REF_CLK direction control: 0x01U */
     );
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_LPSR_12_GPIO12_IO12,        /* GPIO_LPSR_12 is configured as GPIO12_IO12 */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_12_GPIO9_IO11,           /* GPIO_AD_12 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_24_LPUART1_TXD,          /* GPIO_AD_24 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_25_LPUART1_RXD,          /* GPIO_AD_25 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_02_ENET_TX_DATA00,  /* GPIO_DISP_B2_02 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_03_ENET_TX_DATA01,  /* GPIO_DISP_B2_03 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_04_ENET_TX_EN,      /* GPIO_DISP_B2_04 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_05_ENET_REF_CLK,    /* GPIO_DISP_B2_05 PAD functional properties : */
-      0x03U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_06_ENET_RX_DATA00,  /* GPIO_DISP_B2_06 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_07_ENET_RX_DATA01,  /* GPIO_DISP_B2_07 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_08_ENET_RX_EN,      /* GPIO_DISP_B2_08 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_DISP_B2_09_ENET_RX_ER,      /* GPIO_DISP_B2_09 PAD functional properties : */
-      0x06U);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high drive strength
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_LPSR_12_GPIO12_IO12,        /* GPIO_LPSR_12 PAD functional properties : */
-      0x0EU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull up
-                                                 Open Drain LPSR Field: Disabled
-                                                 Domain write protection: Both cores are allowed
-                                                 Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_LPSR_12_GPIO_MUX6_IO12, /* GPIO_LPSR_12 is configured as GPIO12_IO12 */
+        0U);                                /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_12_GPIO9_IO11, /* GPIO_AD_12 PAD functional properties : */
+        0x06U);                       /* Slew Rate Field: Slow Slew Rate
+                                         Drive Strength Field: high drive strength
+                                         Pull / Keep Select Field: Pull Enable
+                                         Pull Up / Down Config. Field: Weak pull down
+                                         Open Drain Field: Disabled
+                                         Domain write protection: Both cores are allowed
+                                         Domain write protection lock: Neither of DWP bits is locked */
+
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_02_ENET_TX_DATA00, /* GPIO_DISP_B2_02 PAD functional properties : */
+        0x02U);                                /* Slew Rate Field: Slow Slew Rate
+                                                  Drive Strength Field: high drive strength
+                                                  Pull / Keep Select Field: Pull Disable, Highz
+                                                  Pull Up / Down Config. Field: Weak pull down
+                                                  Open Drain Field: Disabled
+                                                  Domain write protection: Both cores are allowed
+                                                  Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_03_ENET_TX_DATA01, /* GPIO_DISP_B2_03 PAD functional properties : */
+        0x02U);                                /* Slew Rate Field: Slow Slew Rate
+                                                  Drive Strength Field: high drive strength
+                                                  Pull / Keep Select Field: Pull Disable, Highz
+                                                  Pull Up / Down Config. Field: Weak pull down
+                                                  Open Drain Field: Disabled
+                                                  Domain write protection: Both cores are allowed
+                                                  Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_04_ENET_TX_EN, /* GPIO_DISP_B2_04 PAD functional properties : */
+        0x02U);                            /* Slew Rate Field: Slow Slew Rate
+                                              Drive Strength Field: high drive strength
+                                              Pull / Keep Select Field: Pull Disable, Highz
+                                              Pull Up / Down Config. Field: Weak pull down
+                                              Open Drain Field: Disabled
+                                              Domain write protection: Both cores are allowed
+                                              Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_05_ENET_REF_CLK, /* GPIO_DISP_B2_05 PAD functional properties : */
+        0x03U);                              /* Slew Rate Field: Fast Slew Rate
+                                                Drive Strength Field: high drive strength
+                                                Pull / Keep Select Field: Pull Disable, Highz
+                                                Pull Up / Down Config. Field: Weak pull down
+                                                Open Drain Field: Disabled
+                                                Domain write protection: Both cores are allowed
+                                                Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_06_ENET_RX_DATA00, /* GPIO_DISP_B2_06 PAD functional properties : */
+        0x06U);                                /* Slew Rate Field: Slow Slew Rate
+                                                  Drive Strength Field: high drive strength
+                                                  Pull / Keep Select Field: Pull Enable
+                                                  Pull Up / Down Config. Field: Weak pull down
+                                                  Open Drain Field: Disabled
+                                                  Domain write protection: Both cores are allowed
+                                                  Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_07_ENET_RX_DATA01, /* GPIO_DISP_B2_07 PAD functional properties : */
+        0x06U);                                /* Slew Rate Field: Slow Slew Rate
+                                                  Drive Strength Field: high drive strength
+                                                  Pull / Keep Select Field: Pull Enable
+                                                  Pull Up / Down Config. Field: Weak pull down
+                                                  Open Drain Field: Disabled
+                                                  Domain write protection: Both cores are allowed
+                                                  Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_08_ENET_RX_EN, /* GPIO_DISP_B2_08 PAD functional properties : */
+        0x06U);                            /* Slew Rate Field: Slow Slew Rate
+                                              Drive Strength Field: high drive strength
+                                              Pull / Keep Select Field: Pull Enable
+                                              Pull Up / Down Config. Field: Weak pull down
+                                              Open Drain Field: Disabled
+                                              Domain write protection: Both cores are allowed
+                                              Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_DISP_B2_09_ENET_RX_ER, /* GPIO_DISP_B2_09 PAD functional properties : */
+        0x06U);                            /* Slew Rate Field: Slow Slew Rate
+                                              Drive Strength Field: high drive strength
+                                              Pull / Keep Select Field: Pull Enable
+                                              Pull Up / Down Config. Field: Weak pull down
+                                              Open Drain Field: Disabled
+                                              Domain write protection: Both cores are allowed
+                                              Domain write protection lock: Neither of DWP bits is locked */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_LPSR_12_GPIO_MUX6_IO12, /* GPIO_LPSR_12 PAD functional properties : */
+        0x0EU);                             /* Slew Rate Field: Slow Slew Rate
+                                               Drive Strength Field: high driver
+                                               Pull / Keep Select Field: Pull Enable
+                                               Pull Up / Down Config. Field: Weak pull up
+                                               Open Drain LPSR Field: Disabled
+                                               Domain write protection: Both cores are allowed
+                                               Domain write protection lock: Neither of DWP bits is locked */
+
+#endif
 }
 #endif
 

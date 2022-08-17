@@ -28,7 +28,12 @@
 #endif
 
 #define __IMXRT_HDR_DEFAULT                      {-1, 0, RT_NULL, RT_NULL}
-#define PIN_INVALID_CHECK(PORT_INDEX,PIN_NUM)    (PORT_INDEX > 4) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+
+#ifdef SOC_IMXRT1170_SERIES
+#define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 7) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+#else
+#define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 4) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+#endif
 
 #if defined(SOC_IMXRT1015_SERIES)
 #define MUX_BASE         0x401f8024
