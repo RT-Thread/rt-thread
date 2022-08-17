@@ -35,7 +35,7 @@ extern uint32_t ENET_GetInstance(ENET_Type *base);
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 /*! @brief Pointers to enet clocks for each instance. */
-extern clock_ip_name_t s_enetClock[FSL_FEATURE_SOC_ENET_COUNT];
+extern const clock_ip_name_t s_enetClock[FSL_FEATURE_SOC_ENET_COUNT];
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 static rt_bool_t rt_hw_mdio_init(void *bus, rt_uint32_t src_clock_hz)
