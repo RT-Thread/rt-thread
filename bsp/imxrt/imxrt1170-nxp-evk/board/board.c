@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
  * 2022-08-15     xjy198903    add sdram pin config
+ * 2022-08-17     xjy198903    add eth rgmii pin
  */
 
 #include <rthw.h>
