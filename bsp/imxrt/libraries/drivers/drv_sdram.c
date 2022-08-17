@@ -26,7 +26,7 @@ int rt_hw_sdram_init(void)
     int result = RT_EOK;
     semc_config_t config;
     semc_sdram_config_t sdramconfig;
-    
+
 #if defined(SOC_IMXRT1170_SERIES)
     rt_uint32_t clockFrq = CLOCK_GetRootClockFreq(kCLOCK_Root_Semc);
 #else
