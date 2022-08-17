@@ -253,7 +253,12 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
  */
 int _sys_ensure(FILEHANDLE fh)
 {
+#ifdef DFS_USING_POSIX
     return fsync(fh);
+#else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0; /* error */
+#endif /* DFS_USING_POSIX */
 }
 
 /*
