@@ -14,7 +14,7 @@
 #ifdef BSP_USING_ON_CHIP_FLASH
 #include "drv_flash.h"
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include "fal.h"
 #endif
 
@@ -171,7 +171,7 @@ __exit:
     return size;
 }
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 
 static int fal_flash_read(long offset, rt_uint8_t *buf, rt_uint32_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, rt_uint32_t size);
