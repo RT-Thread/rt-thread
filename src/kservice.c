@@ -21,8 +21,6 @@
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
  * 2022-06-04     Meco Man     remove strnlen
- * 2022-06-21     Yunjie       make rt_memset word-independent to adapt to 16bit addressing
- * 2022-08-11     Yunjie       rt_vsnprintf fix argument passing for 16bit, and remove redundant sign conversion
  */
 
 #include <rtthread.h>
@@ -154,11 +152,12 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
+    unsigned int i;
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
-    unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
-                                unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
+    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
+                                unsigned variable.  */
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
@@ -170,15 +169,14 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
          */
         if (LBLOCKSIZE == 4)
         {
-            *(((unsigned char *)&buffer)+0) = d;
-            *(((unsigned char *)&buffer)+1) = d;
-            *(((unsigned char *)&buffer)+2) = d;
-            *(((unsigned char *)&buffer)+3) = d;
+            buffer = (d << 8) | d;
+            buffer |= (buffer << 16);
         }
-        else if (LBLOCKSIZE == 2)
+        else
         {
-            *(((unsigned char *)&buffer)+0) = d;
-            *(((unsigned char *)&buffer)+1) = d;
+            buffer = 0;
+            for (i = 0; i < LBLOCKSIZE; i ++)
+                buffer = (buffer << 8) | d;
         }
 
         while (count >= LBLOCKSIZE * 4)
@@ -1079,21 +1077,17 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
 #endif /* RT_KPRINTF_USING_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
+            if (flags & SIGN) num = (rt_int32_t)num;
         }
         else if (qualifier == 'h')
         {
-            /*for arm gcc, args are aligned to 32bit.
-              for Ti C28x, args are aligned to 16bit.
-              Therefore we use int here to adapt to both archs. */
-
-            if (flags & SIGN)
-                num = (rt_int32_t)va_arg(args, int);
-            else
-                num = (rt_uint32_t)va_arg(args, unsigned int);
+            num = (rt_uint16_t)va_arg(args, rt_int32_t);
+            if (flags & SIGN) num = (rt_int16_t)num;
         }
         else
         {
             num = va_arg(args, rt_uint32_t);
+            if (flags & SIGN) num = (rt_int32_t)num;
         }
 #ifdef RT_PRINTF_PRECISION
         str = print_number(str, end, num, base, field_width, precision, flags);
