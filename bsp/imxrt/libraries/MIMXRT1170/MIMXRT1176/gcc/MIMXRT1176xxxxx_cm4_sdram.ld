@@ -6,14 +6,14 @@
 **
 **     Compiler:            GNU C Compiler
 **     Reference manual:    IMXRT1170RM, Rev 1, 02/2021
-**     Version:             rev. 1.0, 2020-12-29
-**     Build:               b210709
+**     Version:             rev. 1.1, 2022-04-02
+**     Build:               b220402
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2021 NXP
+**     Copyright 2016-2022 NXP
 **     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause

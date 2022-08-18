@@ -6,24 +6,22 @@
   ****************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   ****************************************************************************************************
   */
+
+
 /* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_comp.h"
-#include "fm33lc0xx_fl_rmu.h"
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33lc0xx_fl_opa.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -32,6 +30,8 @@
 /** @addtogroup COMP
   * @{
   */
+
+#ifdef FL_COMP_DRIVER_ENABLED
 
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup COMP_FL_Private_Macros
@@ -116,8 +116,8 @@ FL_ErrorStatus FL_COMP_Init(COMP_Type *COMPx, FL_COMP_InitTypeDef *initStruct)
     /* 比较器使用vref 打开vref_buf */
     if((initStruct->negativeInput == FL_COMP_INN_SOURCE_VREF) || (initStruct->negativeInput == FL_COMP_INN_SOURCE_VREF_DIV_2))
     {
-        FL_OPA_EnableVrefBuffer(OPA1);//使能
-        FL_OPA_DisableBypassVrefBuffer(OPA1);//不bypass
+        FL_OPA_EnableVrefBuffer(OPA1);  /* 使能 */
+        FL_OPA_DisableBypassVrefBuffer(OPA1);   /* 不bypass */
     }
     if(COMPx == COMP1)
     {
@@ -167,12 +167,14 @@ void FL_COMP_StructInit(FL_COMP_InitTypeDef *initStruct)
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* FL_COMP_DRIVER_ENABLED */
 
 /**
   * @}
   */
 
-/*************************************************************END OF FILE************************************************************/
+/**
+  * @}
+  */
+
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

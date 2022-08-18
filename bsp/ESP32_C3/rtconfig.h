@@ -34,16 +34,34 @@
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
+#define RT_USING_CONSOLE
+#define RT_CONSOLEBUF_SIZE 256
+#define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x40101
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
+#define RT_USING_MSH
+#define RT_USING_FINSH
+#define FINSH_USING_MSH
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
+#define FINSH_USING_SYMTAB
+#define FINSH_CMD_SIZE 80
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
+#define FINSH_ARG_MAX 10
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_PIN
+#define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 
 /* Using USB */
 
@@ -150,9 +168,13 @@
 /* Onboard Peripheral Drivers */
 
 #define RT_BSP_LED_PIN 12
+#define RT_BSP_UART_PORT 0
+#define RT_BSP_UART_TX_PIN 21
+#define RT_BSP_UART_RX_PIN 20
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+#define BSP_USING_UART
 
 #endif

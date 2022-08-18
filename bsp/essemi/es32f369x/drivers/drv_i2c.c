@@ -19,6 +19,7 @@
  * 2019-11-01     wangyq        update libraries
  * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
+ * 2022-07-11     shiwa         Support for RT_NO_START/RT_NO_STOP
  */
 
 #include <rthw.h>
@@ -275,6 +276,10 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
+        if (msg->buf==NULL||msg->len==0)
+        {
+            continue;
+        }
         if (msg->flags & RT_I2C_RD)
         {
             if (ald_i2c_master_recv(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
@@ -286,7 +291,10 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
         else
         {
             uint32_t f=((msg->flags&RT_I2C_NO_START)?0x1:0)|((msg->flags&RT_I2C_NO_STOP)?0x2:0);
-
+            if (I2C_GET_FLAG((i2c_handle_t *)bus->priv, I2C_STAT_BUSY) == RESET)
+            {
+                f=f&(~_I2C_NO_START);
+            }
             if (_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT,f) != 0)
             {
                 LOG_E("i2c bus write failed,i2c bus stop!\n");
@@ -298,7 +306,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    //LOG_E("send stop condition\n");
+    LOG_D("send stop condition\n");
 
     return ret;
 }

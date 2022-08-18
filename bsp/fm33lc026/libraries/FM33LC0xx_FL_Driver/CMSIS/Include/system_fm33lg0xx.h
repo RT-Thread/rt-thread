@@ -46,17 +46,17 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include "fm33lg0xx.h"
-            
+
 
 #if !defined  (XTHF_VALUE)
     #define XTHF_VALUE    ((uint32_t)8000000U) /*!< Value of the External oscillator in Hz */
-#endif /* XTHF_VALUE */    
+#endif /* XTHF_VALUE */
 
 #if !defined  (XTLF_VALUE)
     #define XTLF_VALUE    ((uint32_t)32768U) /*!< Value of the Internal oscillator in Hz*/
-#endif /* XTLF_VALUE */        
-    
-    
+#endif /* XTLF_VALUE */
+
+
 #define __SYSTEM_CLOCK          (8000000)
 #define DELAY_US                (__SYSTEM_CLOCK/1000000)
 #define DELAY_MS                (__SYSTEM_CLOCK/1000)
@@ -64,12 +64,12 @@ extern "C" {
 
 #define Do_DelayStart()  { \
                         uint32_t LastTick = SysTick->VAL;   do {
-                        
+
 #define While_DelayMsEnd(Count) }while(((LastTick - SysTick->VAL)&0xFFFFFF)<DELAY_MS*Count); \
                       }
-                      
+
 #define While_DelayUsEnd(Count) }while(((LastTick - SysTick->VAL)&0xFFFFFF)<DELAY_US*Count); \
-}            
+}
 
 /**
  * Initialize the system

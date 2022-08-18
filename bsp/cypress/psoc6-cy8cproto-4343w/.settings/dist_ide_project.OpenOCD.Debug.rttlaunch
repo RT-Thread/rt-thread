@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="ilg.gnumcueclipse.debug.gdbjtag.openocd.launchConfigurationType">
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doContinue" value="true"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doDebugInRam" value="false"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doFirstReset" value="false"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doGdbServerAllocateConsole" value="true"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doGdbServerAllocateTelnetConsole" value="false"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doSecondReset" value="true"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doStartGdbCLient" value="true"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.doStartGdbServer" value="true"/>
+<booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.enableSemihosting" value="true"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.firstResetType" value="init"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbClientOtherCommands" value="set mem inaccessible-by-default off&#13;&#10;set remotetimeout 15"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbClientOtherOptions" value=""/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbServerExecutable" value="${debugger_install_path}/${openocd_debugger_relative_path}openocd/bin/openocd.exe"/>
+<intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbServerGdbPortNumber" value="3333"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbServerOther" value="-s ../scripts -f interface/kitprog3.cfg -f target/psoc6_2m.cfg -c &quot;psoc6.cpu.cm4 configure -rtos auto -rtos-wipe-on-reset-halt 1&quot; -c &quot;gdb_port 3332&quot; -c &quot;psoc6 sflash_restrictions 1&quot; -c &quot;init; reset init&quot;"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbServerTclPortNumber" value="6666"/>
+<intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.gdbServerTelnetPortNumber" value="4444"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.otherInitCommands" value=""/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.otherRunCommands" value="mon psoc6 reset_halt sysresetreq&#13;&#10;flushregs&#13;&#10;mon gdb_sync&#13;&#10;stepi"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.openocd.secondResetType" value="run"/>
+<stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.svdPath" value=""/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="${workspace_loc:\dist_ide_project\Debug\rtthread.hex}"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.ipAddress" value="localhost"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.jtagDevice" value="GNU MCU OpenOCD"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadSymbols" value="true"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.pcRegister" value=""/>
+<intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.portNumber" value="3333"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setPcRegister" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="${workspace_loc:\dist_ide_project\Debug\rtthread.elf}"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value=""/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="true"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForSymbols" value="true"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useProjBinaryForImage" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useProjBinaryForSymbols" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useRemoteTarget" value="true"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="E:\software\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\ARM\GNU_Tools_for_ARM_Embedded_Processors\10.2.1\bin\arm-none-eabi-gdb.exe"/>
+<booleanAttribute key="org.eclipse.cdt.dsf.gdb.UPDATE_THREADLIST_ON_SUSPEND" value="false"/>
+<intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="0"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug/rtthread.elf"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="dist_ide_project"/>
+<booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/dist_ide_project"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="4"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING" value="GBK"/>
+<stringAttribute key="org.eclipse.dsf.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;memoryBlockExpressionList context=&quot;Context string&quot;/&gt;&#13;&#10;"/>
+<stringAttribute key="process_factory_id" value="org.eclipse.cdt.dsf.gdb.GdbProcessFactory"/>
+</launchConfiguration>

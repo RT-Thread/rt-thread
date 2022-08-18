@@ -27,7 +27,7 @@ def TargetMakefile(env):
     RTT_ROOT = os.path.abspath(env['RTT_ROOT'])
 
     match_bsp = False
-    if BSP_ROOT.startswith(RTT_ROOT): 
+    if BSP_ROOT.startswith(RTT_ROOT):
         match_bsp = True
 
     make = open('config.mk', 'w')

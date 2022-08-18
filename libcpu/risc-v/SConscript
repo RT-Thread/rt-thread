@@ -24,7 +24,7 @@ else :
 # cpu porting code files
 if  rtconfig.CPU == "e9xx" :
     group = group + SConscript(os.path.join(rtconfig.VENDOR, rtconfig.CPU, 'SConscript'))
-else :
+elif rtconfig.CPU in list:
     group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
 
 Return('group')

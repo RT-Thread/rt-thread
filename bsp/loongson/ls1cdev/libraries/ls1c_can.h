@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- * Change Logs:  (Pelican Mode) 
+ * Change Logs:  (Pelican Mode)
  * Date           Author       Notes
  * 2018-01-06     sundm75       first version
  */
@@ -54,9 +54,9 @@
 #define CAN_RTR_Remote            1
 
 #define CAN_MODE_NORMAL              0
-#define CAN_MODE_LISEN               1
+#define CAN_MODE_LISTEN               1
 #define CAN_MODE_LOOPBACK            2
-#define CAN_MODE_LOOPBACKANLISEN     3
+#define CAN_MODE_LOOPBACKANLISTEN     3
 
 /*!< CAN 控制状态寄存器 */
 /************************** CAN_MOD 寄存器位定义*******************************/
@@ -84,7 +84,7 @@
  #define  CAN_SR_TS                          ((unsigned char)0x20)         /*!< 发送状态1:  发送 0:  空闲*/
  #define  CAN_SR_ES                          ((unsigned char)0x40)         /*!< 出错状态1:出错 0: 正常 */
  #define  CAN_SR_BS                          ((unsigned char)0x80)         /*!< 总线状态1: 关闭  0: 开启  */
- 
+
 /************************** CAN_IR 中断寄存器位定义****************************/
  #define  CAN_IR_RI                          ((unsigned char)0x01)         /*!< 接收中断 */
  #define  CAN_IR_TI                          ((unsigned char)0x02)         /*!< 发送中断 */
@@ -94,7 +94,7 @@
  #define  CAN_IR_EPI                         ((unsigned char)0x20)         /*!< 错误消极中断 */
  #define  CAN_IR_ALI                         ((unsigned char)0x40)         /*!< 仲裁丢失中断 */
  #define  CAN_IR_BEI                         ((unsigned char)0x80)         /*!< 总线错误中断  */
- 
+
 /************************* CAN_IER 中断使能寄存器位定义************************/
  #define  CAN_IER_RIE                         ((unsigned char)0x01)        /*!< 接收中断使能 */
  #define  CAN_IER_TIE                         ((unsigned char)0x02)        /*!< 发送中断使能 */
@@ -104,17 +104,17 @@
  #define  CAN_IER_EPIE                        ((unsigned char)0x20)        /*!< 错误消极中断使能 */
  #define  CAN_IER_ALIE                        ((unsigned char)0x40)        /*!< 仲裁丢失中断使能 */
  #define  CAN_IER_BEIE                        ((unsigned char)0x80)        /*!< 总线错误中断使能  */
- 
-typedef enum 
+
+typedef enum
 {
-	LS1C_CAN1MBaud=0,    // 1 MBit/sec
-	LS1C_CAN800kBaud,    // 800 kBit/sec
-	LS1C_CAN500kBaud,    // 500 kBit/sec
-	LS1C_CAN250kBaud,    // 250 kBit/sec
-	LS1C_CAN125kBaud,    // 125 kBit/sec
-	LS1C_CAN100kBaud,    // 100 kBit/sec
-	LS1C_CAN50kBaud,     // 50 kBit/sec
-	LS1C_CAN40kBaud,     // 40 kBit/sec
+    LS1C_CAN1MBaud=0,    // 1 MBit/sec
+    LS1C_CAN800kBaud,    // 800 kBit/sec
+    LS1C_CAN500kBaud,    // 500 kBit/sec
+    LS1C_CAN250kBaud,    // 250 kBit/sec
+    LS1C_CAN125kBaud,    // 125 kBit/sec
+    LS1C_CAN100kBaud,    // 100 kBit/sec
+    LS1C_CAN50kBaud,     // 50 kBit/sec
+    LS1C_CAN40kBaud,     // 40 kBit/sec
 }Ls1c_CanBPS_t;
 
 typedef struct
@@ -143,12 +143,12 @@ typedef struct
 
 typedef struct
 {
-  unsigned char  CAN_Prescaler;    /* 波特率分频系数1 to 31. */  
+  unsigned char  CAN_Prescaler;    /* 波特率分频系数1 to 31. */
   unsigned char  CAN_Mode;         /*0x10:睡眠0x08:单,双滤波 0x40:正常工作0x20:只听 0x01:复位*/
   unsigned char  CAN_SJW;          /*同步跳转宽度 */
   unsigned char  CAN_BS1;          /*时间段1计数值*/
-  unsigned char  CAN_BS2;          /*时间段2计数值*/ 
-  
+  unsigned char  CAN_BS2;          /*时间段2计数值*/
+
 } CAN_InitTypeDef;
 
 typedef struct

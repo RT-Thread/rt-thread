@@ -63,7 +63,7 @@ How to add an IO interrupt?
 
 ![image-20211103200813467](figures_en/irq0.png) 
 
-3. Create stack and enter configuration. Because it needs to adapt to the naming used in the RT-Thread driver, it is necessary to modify the naming and set **name** , **channel** , **callback** to be the same label. Select the trigger method you want, and finally save the configuration to generate the configuration code.
+3. Create stack and enter configuration. Because it needs to adapt to the naming used in the RT-Thread driver, it is necessary to modify the naming and set **name** , **channel** to be the same label. Select the trigger method you want, and finally save the configuration to generate the configuration code.
 
 ![](figures_en/1635929089445.png) 
 
