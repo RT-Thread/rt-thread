@@ -5,13 +5,11 @@
 
 Hardware timers generally have two modes of operation, timer mode and counter mode. No matter which mode is operated, it works by counting the pulse signal counted by the internal counter module. Here are some important concepts of timers.
 
-**Counter mode:** Counts the external pulse.
+**Timer mode**: Counts the internal pulse. Timers are often used as timing clocks for timing detection, timing response, and timing control.
 
- **Timer mode **: Counts the internal pulse. Timers are often used as timing clocks for timing detection, timing response, and timing control.
+**Counter mode**: The counter can count up or down. The maximum count value of a 16-bit counter is 65535, and the maximum value of a 32-bit counter is 4 294 967 295.
 
-**Counter **: Counter can count up or down. The maximum count value of the 16-bit counter is 65535, and the maximum value of the 32-bit counter is 4294967295.
-
-**Counting frequency **：As for the number of counts within the counter time unit under the timer mode, since the system clock frequency is fixed, the timer time can be calculated according to the counter count value. `Timing time = count value / count frequency`. For example, if the counting frequency is 1 MHz, the counter counts once is 1 / 1000000 second. That is, every 1 microsecond counter is incremented by one (or subtract one), at this time, the maximum timing capability of the 16-bit counter is 65535 microseconds, which is 65.535 milliseconds.
+**Counting frequency**：Since the input frequency is usually fixed, the time it takes for the counter to reach its desired count number can be calculated from just the given frequency - `time = count value / count frequency`. For example, if the counting frequency is 1 MHz, the counter counts once every 1 / 1000000 seconds. That is, every 1 microsecond, the counter is incremented by one (or subtracted by one), at this time, the maximum timing capability of the 16-bit counter is 65535 microseconds, or 65.535 milliseconds.
 
 ## Access Hardware Timer Device
 
@@ -80,10 +78,10 @@ rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
 
 ### Set the Timeout Callback Function
 
-Set the timer timeout callback function by the following function, this callback function will be called when the timer expires:
+Set the timer timeout callback function with the following function - this is the function that will be called when the timer reaches its set count value:
 
 ```c
-rt_err_t rt_device_set_rx_indicate(rt_device_t dev, rt_err_t (*rx_ind)(rt_device_t dev,rt_size_t size))
+rt_err_t rt_device_set_rx_indicate(rt_device_t dev, rt_err_t (*rx_ind)(rt_device_t dev, rt_size_t size))
 ```
 
 | Parameter | **Description**               |
@@ -121,7 +119,7 @@ static int hwtimer_sample(int argc, char *argv[])
 
 ### Control the Timer Device
 
-By commanding the control word, the application can configure the hardware timer device by the following function:
+By sending control words, the application can configure the hardware timer device with the following function:
 
 ```c
 rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
@@ -146,11 +144,11 @@ The command control words available for the hardware timer device are as follows
 | HWTIMER_CTRL_INFO_GET | get timer feature information |
 | HWTIMER_CTRL_MODE_SET | set timer mode |
 
-Get the timer parameter arg,which is a pointer to the structure struct rt_hwtimer_info, to save the obtained information.
+Get the timer parameter argument, which is a pointer to the structure struct rt_hwtimer_info, to save the obtained information.
 
->Setting frequency is valid only when the timer hardware and driver support sets the counting frequency. Generally, the default frequency of the driving setting can be used.
+>Setting frequency is valid only when the timer hardware and included driver set the counting frequency. Generally, the default frequency of the driving setting can be used.
 
-When setting the timer mode, the parameter arg can take the following values：
+When setting the timer mode, the parameter argument can take the following values：
 
 ```c
 HWTIMER_MODE_ONESHOT    /* Single timing */
@@ -283,7 +281,7 @@ rt_device_read(hw_dev, 0, &timeout_s, sizeof(timeout_s));
 
 ### Close the Timer Device
 
-The timer device can be closed by the following function:
+The timer device can be closed with the following function:
 
 ```c
 rt_err_t rt_device_close(rt_device_t dev);
@@ -297,7 +295,7 @@ rt_err_t rt_device_close(rt_device_t dev);
 | -RT_ERROR  | the device has been completely shut down and cannot be closed repeatedly |
 | other error code | fail to close the device |
 
-To close the device interface and open the device interface should be used in pairs. When open a device, close the device after use , so that the device can be completely shut down, otherwise the device will remain a opening status.
+When a timer device has been used and is not necessary anymore, it should be closed, otherwise the device will remain in an open status.
 
  An example of use is shown below：
 
