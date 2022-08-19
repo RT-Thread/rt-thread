@@ -457,10 +457,6 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TXE);
         }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
-        }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
