@@ -2,9 +2,9 @@
 
 ## Introduction of Pin
 
-The pins on the chip are generally divided into four categories: power supply, clock, control, and I/O. The I/O port is further divided into General Purpose Input Output (GPIO) and function multiplex I/O (such as SPI/I2C/UART, etc.) in the usage mode.
+The pins on the chip are generally divided into four categories: power supply, clock, control, and I/O. The I/O pins are further divided into General Purpose Input Output (GPIO) and function-multiplexed I/O (such as SPI/I2C/UART, etc.) pins, referring to their usage mode.
 
-Most MCU pins have more than one function. The internal structure of different pins is different and the functions are different. The actual function of the pin can be switched through different configurations. The main features of the General Purpose Input Output (GPIO) port are as follows:
+Most MCU pins have more than one function. Their internal structure is different and their supported functionality are different. The actual function of the pin can be switched through different configurations. The main features of the General Purpose Input Output (GPIO) port are as follows:
 
 * Programmable Interrupt: The interrupt trigger mode is configurable. Generally, there are five interrupt trigger modes as shown in the following figure:
 
@@ -31,7 +31,7 @@ The application accesses the GPIO through the PIN device management interface pr
 
 ### Obtain Pin Number
 
-The pin numbers provided by RT-Thread need to be distinguished from the chip pin numbers. They are not the same concept. The pin numbers are defined by the PIN device driver and are related to the specific chip. There are two ways to obtain the pin number: use the macro definition or view the PIN driver file.
+The pin numbers provided by RT-Thread need to be distinguished from the chip pin numbers, which not the same. The pin numbers are defined by the PIN device driver and are related to the specific chip used. There are two ways to obtain the pin number: use the macro definition or view the PIN driver file.
 
 #### Use Macro Definition
 
@@ -157,7 +157,7 @@ status = rt_pin_read(BEEP_PIN_NUM);
 
 ### Bind Pin Interrupt Callback Function
 
-To use the interrupt function of the pin, you can use the following function to configure a pin to some interrupt trigger mode and bind an interrupt callback function to the corresponding pin. When the pin interrupt occurs, the callback function will be executed. :
+To use the interrupt functionality of a pin, you can use the following function to configure the pin to some interrupt trigger mode and bind an interrupt callback function to the corresponding pin. When the pin interrupt occurs, the callback function will be executed.:
 
 ```c
 rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,

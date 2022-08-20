@@ -463,6 +463,44 @@ menu "On-chip Peripheral Drivers"
         default 1
     endif
 
+    menuconfig BSP_USING_PM
+    bool "Enable PM"
+    select RT_USING_PM
+    default n
+
+    if BSP_USING_PM
+        config NRFX_RTC_ENABLED
+        int
+        default 1
+
+        choice
+            prompt "Select PM LPTIM"
+            default PM_LPTIM_USING_NRFX_RTC2_ENABLED
+
+            config PM_LPTIM_USING_NRFX_RTC1_ENABLED
+                bool "RTC1"
+
+            config PM_LPTIM_USING_NRFX_RTC2_ENABLED
+                bool "RTC2"
+        endchoice
+
+        if PM_LPTIM_USING_NRFX_RTC1_ENABLED && !PM_LPTIM_USING_NRFX_RTC2_ENABLED
+            config RTC_INSTANCE_ID
+                int
+                default 1
+            config NRFX_RTC1_ENABLED
+                int
+                default 1
+        endif
+        if !PM_LPTIM_USING_NRFX_RTC1_ENABLED && PM_LPTIM_USING_NRFX_RTC2_ENABLED
+            config RTC_INSTANCE_ID
+                int
+                default 2
+            config NRFX_RTC2_ENABLED
+                int
+                default 1
+        endif
+    endif
 endmenu
 
 choice
