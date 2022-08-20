@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -181,6 +181,8 @@ static const struct rt_uart_ops c28x_uart_ops =
 //
 interrupt void sciaRxFifoIsr(void)
 {
+    ALLOW_ISR_PREEMPT();
+
     /* enter interrupt */
     rt_interrupt_enter();
 
