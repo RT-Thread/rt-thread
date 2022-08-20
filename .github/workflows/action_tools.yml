@@ -61,12 +61,6 @@ jobs:
     - name: Project generate Tools
       if: ${{ success() }}
       run: |
-        echo "Test to generate mdk project"
-        scons --target=mdk -s -C $TEST_BSP_ROOT
-        scons --target=mdk4 -s -C $TEST_BSP_ROOT
-        scons --target=mdk5 -s -C $TEST_BSP_ROOT
-        echo "Test to generate iar project"
-        scons --target=iar -s -C $TEST_BSP_ROOT
         echo "Test to generate eclipse project"
         scons --target=eclipse -s -C $TEST_BSP_ROOT
         echo "Test to generate cmake project"
