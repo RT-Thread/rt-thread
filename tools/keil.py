@@ -453,5 +453,4 @@ def ARMCC_Version():
     version_Tool = version_Tool[:-1]
     version_str_format = '%s/%s/%s'
     version_str = version_str_format % (version_Product, version_Component, version_Tool)
-    #print('version_str:' + version_str)
     return version_str

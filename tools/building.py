@@ -784,35 +784,26 @@ def DoBuilding(target, objects):
 
 def GenTargetProject(program = None):
 
-    if GetOption('target') == 'mdk':
-        from keil import MDKProject
-        from keil import MDK4Project
-        from keil import MDK5Project
+    if GetOption('target') in ['mdk', 'mdk4', 'mdk5']:
+        from keil import MDKProject, MDK4Project, MDK5Project, ARMCC_Version
 
-        template = os.path.isfile('template.Uv2')
-        if template:
+        if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
+            MDK5Project('project.uvprojx', Projects)
+            print("Keil5 project is generating...")
+        elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
+            MDK4Project('project.uvproj', Projects)
+            print("Keil4 project is generating...")
+        elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
             MDKProject('project.Uv2', Projects)
+            print("Keil2 project is generating...")
         else:
-            template = os.path.isfile('template.uvproj')
-            if template:
-                MDK4Project('project.uvproj', Projects)
-            else:
-                template = os.path.isfile('template.uvprojx')
-                if template:
-                    MDK5Project('project.uvprojx', Projects)
-                else:
-                    print ('No template project file found.')
-
-    if GetOption('target') == 'mdk4':
-        from keil import MDK4Project
-        MDK4Project('project.uvproj', Projects)
-
-    if GetOption('target') == 'mdk5':
-        from keil import MDK5Project
-        MDK5Project('project.uvprojx', Projects)
+            print ('No template project file found.')
+            exit(1)
+        print("Keil Version: " + ARMCC_Version())
 
     if GetOption('target') == 'iar':
-        from iar import IARProject
+        from iar import IARProject, IARVersion
+        print("IAR Version: " + IARVersion())
         IARProject('project.ewp', Projects)
 
     if GetOption('target') == 'vs':
