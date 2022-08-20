@@ -15,12 +15,9 @@
 #include "n32g45x.h"
 #include "n32g45x_can.h"
 
+//#define DRV_DEBUG
 #define DBG_TAG "drv_can"
-//#define DBG_LVL DBG_INFO
-#define DBG_LVL DBG_LOG
-#define DBG_ENABLE
-#include <rtdbg.h>
-//#include <drv_log.h>
+#include <drv_log.h>
 
 struct n32g45x_baud_rate_info
 {
