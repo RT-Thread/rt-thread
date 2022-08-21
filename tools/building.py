@@ -785,7 +785,7 @@ def DoBuilding(target, objects):
 def GenTargetProject(program = None):
 
     if GetOption('target') in ['mdk', 'mdk4', 'mdk5']:
-        from keil import MDKProject, MDK4Project, MDK5Project, ARMCC_Version
+        from keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
         if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
             MDK5Project('project.uvprojx', Projects)
@@ -794,7 +794,7 @@ def GenTargetProject(program = None):
             MDK4Project('project.uvproj', Projects)
             print("Keil4 project is generating...")
         elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
-            MDKProject('project.Uv2', Projects)
+            MDK2Project('project.Uv2', Projects)
             print("Keil2 project is generating...")
         else:
             print ('No template project file found.')

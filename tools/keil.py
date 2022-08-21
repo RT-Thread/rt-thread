@@ -319,7 +319,7 @@ def MDK5Project(target, script):
         import shutil
         shutil.copy2('template.uvoptx', 'project.uvoptx')
 
-def MDKProject(target, script):
+def MDK2Project(target, script):
     template = open('template.Uv2', "r")
     lines = template.readlines()
 
