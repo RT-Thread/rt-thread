@@ -168,7 +168,18 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
         /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
-        if (LBLOCKSIZE == 4)
+        if (LBLOCKSIZE == 8)
+        {
+            *(((unsigned char *)&buffer)+0) = d;
+            *(((unsigned char *)&buffer)+1) = d;
+            *(((unsigned char *)&buffer)+2) = d;
+            *(((unsigned char *)&buffer)+3) = d;
+            *(((unsigned char *)&buffer)+4) = d;
+            *(((unsigned char *)&buffer)+5) = d;
+            *(((unsigned char *)&buffer)+6) = d;
+            *(((unsigned char *)&buffer)+7) = d;
+        }
+        else if (LBLOCKSIZE == 4)
         {
             *(((unsigned char *)&buffer)+0) = d;
             *(((unsigned char *)&buffer)+1) = d;
@@ -611,7 +622,7 @@ void rt_show_version(void)
     rt_kprintf("\n \\ | /\n");
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
-               RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__, __TIME__);
+               (rt_int32_t)RT_VERSION, (rt_int32_t)RT_SUBVERSION, (rt_int32_t)RT_REVISION, __DATE__, __TIME__);
     rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
