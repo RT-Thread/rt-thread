@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2009-09-22     Bernard      add board.h to this bsp
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
  * 2022-06-21     guyunjie     fix bugs in trap_rtosint and enable interrupt nesting
+ * 2022-08-21     yuqi         adding onboard devices initialization code
  */
 #include <rtthread.h>
 #include "board.h"
@@ -89,7 +90,9 @@ void rt_hw_board_init()
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
+#ifdef RT_USING_SERIAL
     rt_hw_sci_init();
+#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -97,6 +100,6 @@ void rt_hw_board_init()
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    /*this hook may cause problem for reasons unknown*/
+
     rt_interrupt_leave_sethook((void (*)(void))trap_rtosint);
 }
