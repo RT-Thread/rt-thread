@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,11 +7,16 @@
  * Date           Author       Notes
  * 2009-09-22     Bernard      add board.h to this bsp
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
+ * 2022-06-21     guyunjie     fix bugs in trap_rtosint and enable interrupt nesting
  */
 #include <rtthread.h>
 #include "board.h"
 #include "drv_sci.h"
 #include "F28x_Project.h"
+
+#ifndef RT_USING_SMP
+extern volatile rt_uint8_t rt_interrupt_nest;
+#endif
 
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
 
@@ -20,7 +25,20 @@ extern interrupt void RTOSINT_Handler();
 void trap_rtosint()
 {
     if(rt_thread_switch_interrupt_flag)
-        asm(" trap #16");
+    {
+        /* only do pendsv at the end of the last level of interrupt nesting,
+         * so that threads do not preempt any isrs. */
+        if(rt_interrupt_nest == 1)
+        {
+            /* rt_interrupt_leave_hook is called before rt_interrupt_nest --
+             * in rt_interrupt_leave. We need to do this manually here to indicate
+             * that all isrs have been cleared before we switch to thread. */
+            rt_interrupt_nest --;
+            asm(" trap #16");
+            /* increment rt_interrupt_nest to compensate for the previous decrement. */
+            rt_interrupt_nest ++;
+        }
+    }
 }
 
 /**
@@ -30,6 +48,9 @@ void trap_rtosint()
 interrupt void cpu_timer2_isr(void)
 {
     CpuTimer2Regs.TCR.all = 0xC000;
+
+    ALLOW_ISR_PREEMPT();
+
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -76,5 +97,6 @@ void rt_hw_board_init()
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+    /*this hook may cause problem for reasons unknown*/
     rt_interrupt_leave_sethook((void (*)(void))trap_rtosint);
 }

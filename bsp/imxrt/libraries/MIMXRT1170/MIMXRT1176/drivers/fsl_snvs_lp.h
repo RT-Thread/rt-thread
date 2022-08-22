@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2017-2021, NXP
+ * Copyright 2017-2022, NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -22,7 +22,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_SNVS_LP_DRIVER_VERSION (MAKE_VERSION(2, 4, 3)) /*!< Version 2.4.3 */
+#define FSL_SNVS_LP_DRIVER_VERSION (MAKE_VERSION(2, 4, 4)) /*!< Version 2.4.4 */
 /*@}*/
 
 /*! @brief Define of SNVS_LP Zeroizable Master Key registers */

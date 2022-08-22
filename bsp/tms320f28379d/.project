@@ -51,9 +51,9 @@
 			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/serial/serial.c</locationURI>
 		</link>
 		<link>
-			<name>DeviceDrivers/src</name>
+			<name>DeviceDrivers/ipc</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/src</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/ipc</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

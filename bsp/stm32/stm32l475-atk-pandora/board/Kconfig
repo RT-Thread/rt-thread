@@ -53,9 +53,6 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_SPI
-        imply RTDUINO_USING_USBSERIAL
-        imply RTDUINO_USING_ADAFRUIT
-        imply RTDUINO_USING_MSTIMER2
         default n
 
     config BSP_USING_KEY
@@ -103,7 +100,7 @@ menu "Onboard Peripheral Drivers"
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
-            default n
+            default y
     endif
 
     config BSP_USING_SDCARD

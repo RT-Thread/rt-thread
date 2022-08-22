@@ -15,7 +15,6 @@
 #include <rtdevice.h>
 
 #include "board.h"
-#include "cycfg_peripherals.h"
 
 #define  uart_isr_callback(name) name##_isr_callback
 

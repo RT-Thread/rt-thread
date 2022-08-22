@@ -9,7 +9,7 @@
 ; 2019-06-17     zhaoxiaowei  fix bugs of old c28x interrupt api.
 ; 2019-07-03     zhaoxiaowei  add _rt_hw_calc_csb function to support __rt_ffs.
 ; 2019-12-05     xiaolifan    add support for hardware fpu32
-;
+; 2022-06-21     guyunjie     trim pendsv (RTOSINT_Handler)
 
     .ref   _rt_interrupt_to_thread
     .ref   _rt_interrupt_from_thread
@@ -191,8 +191,8 @@ _reswitch2:
 
      .asmfunc
 _RTOSINT_Handler:
-; disable interrupt to protect context switch
-    DINT
+    ; disable interrupt to protect context switch
+    ; DINT ;this is done by hardware so not needed
 
     ; get rt_thread_switch_interrupt_flag
     MOV     AR0, #_rt_thread_switch_interrupt_flag
@@ -248,8 +248,8 @@ switch_to_thread:
     RT_CTX_RESTORE     ; pop r4 - r11 register
 
 rtosint_exit:
-    ; restore interrupt
-    EINT
+    ; do not restore interrupt here: to be restored according to the
+    ; switched-to context during IRET (automaticlly by hardware)
 
     IRET
     .endasmfunc

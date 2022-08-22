@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 NXP
+ * Copyright 2017-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -24,11 +24,15 @@
 #else
 #define SEMC_IOCR_PINMUXBITWIDTH (0x3UL)
 #endif /* FSL_FEATURE_SEMC_SUPPORT_SRAM_COUNT */
-#define SEMC_IOCR_NAND_CE                     (4UL)
-#define SEMC_IOCR_NOR_CE                      (5UL)
-#define SEMC_IOCR_NOR_CE_A8                   (2UL)
-#define SEMC_IOCR_PSRAM_CE                    (6UL)
-#define SEMC_IOCR_PSRAM_CE_A8                 (3UL)
+#define SEMC_IOCR_NAND_CE   (4UL)
+#define SEMC_IOCR_NOR_CE    (5UL)
+#define SEMC_IOCR_NOR_CE_A8 (2UL)
+#define SEMC_IOCR_PSRAM_CE  (6UL)
+#if defined(SEMC_IOCR_PINMUXBITWIDTH) && (SEMC_IOCR_PINMUXBITWIDTH == 0x4UL)
+#define SEMC_IOCR_PSRAM_CE_A8 (6UL)
+#else
+#define SEMC_IOCR_PSRAM_CE_A8 (3UL)
+#endif /* SEMC_IOCR_PINMUXBITWIDTH */
 #define SEMC_IOCR_DBI_CSX                     (7UL)
 #define SEMC_IOCR_DBI_CSX_A8                  (4UL)
 #define SEMC_NORFLASH_SRAM_ADDR_PORTWIDTHBASE (24U)
@@ -63,12 +67,11 @@ static uint32_t SEMC_GetInstance(SEMC_Type *base);
 /*!
  * @brief Covert the input memory size to internal register set value.
  *
- * @param base SEMC peripheral base address
  * @param size_kbytes SEMC memory size in unit of kbytes.
  * @param sizeConverted SEMC converted memory size to 0 ~ 0x1F.
  * @return Execution status.
  */
-static status_t SEMC_CovertMemorySize(SEMC_Type *base, uint32_t size_kbytes, uint8_t *sizeConverted);
+static status_t SEMC_CovertMemorySize(uint32_t size_kbytes, uint8_t *sizeConverted);
 
 /*!
  * @brief Covert the external timing nanosecond to internal clock cycle.
@@ -131,7 +134,7 @@ static uint32_t SEMC_GetInstance(SEMC_Type *base)
     return instance;
 }
 
-static status_t SEMC_CovertMemorySize(SEMC_Type *base, uint32_t size_kbytes, uint8_t *sizeConverted)
+static status_t SEMC_CovertMemorySize(uint32_t size_kbytes, uint8_t *sizeConverted)
 {
     assert(sizeConverted != NULL);
     uint32_t memsize;
@@ -408,7 +411,7 @@ status_t SEMC_ConfigureSDRAM(SEMC_Type *base, semc_sdram_cs_t cs, semc_sdram_con
     uint32_t iocReg = base->IOCR & (~(SEMC_IOCR_PINMUXBITWIDTH << (uint32_t)config->csxPinMux));
 
     /* Base control. */
-    result = SEMC_CovertMemorySize(base, config->memsize_kbytes, &memsize);
+    result = SEMC_CovertMemorySize(config->memsize_kbytes, &memsize);
     if (result != kStatus_Success)
     {
         return result;
@@ -541,14 +544,14 @@ status_t SEMC_ConfigureNAND(SEMC_Type *base, semc_nand_config_t *config, uint32_
     {
         base->MCR &= ~SEMC_MCR_WPOL1_MASK;
     }
-    result = SEMC_CovertMemorySize(base, config->axiMemsize_kbytes, &memsize);
+    result = SEMC_CovertMemorySize(config->axiMemsize_kbytes, &memsize);
     if (result != kStatus_Success)
     {
         return result;
     }
     base->BR[4] = (config->axiAddress & SEMC_BR_BA_MASK) | SEMC_BR_MS(memsize) | SEMC_BR_VLD_MASK;
 
-    result = SEMC_CovertMemorySize(base, config->ipgMemsize_kbytes, &memsize);
+    result = SEMC_CovertMemorySize(config->ipgMemsize_kbytes, &memsize);
     if (result != kStatus_Success)
     {
         return result;
@@ -689,7 +692,7 @@ status_t SEMC_ConfigureNOR(SEMC_Type *base, semc_nor_config_t *config, uint32_t 
     {
         base->MCR &= ~SEMC_MCR_WPOL0_MASK;
     }
-    result = SEMC_CovertMemorySize(base, config->memsize_kbytes, &memsize);
+    result = SEMC_CovertMemorySize(config->memsize_kbytes, &memsize);
     if (result != kStatus_Success)
     {
         return result;
@@ -843,7 +846,7 @@ status_t SEMC_ConfigureSRAMWithChipSelection(SEMC_Type *base,
         }
     }
     /* Base control. */
-    result = SEMC_CovertMemorySize(base, config->memsize_kbytes, &memsize);
+    result = SEMC_CovertMemorySize(config->memsize_kbytes, &memsize);
     if (result != kStatus_Success)
     {
         return result;
@@ -1076,7 +1079,7 @@ status_t SEMC_ConfigureDBI(SEMC_Type *base, semc_dbi_config_t *config, uint32_t 
     /* IOMUX setting. */
     base->IOCR = iocReg | (muxCsx << (uint32_t)config->csxPinMux);
     /* Base control. */
-    result = SEMC_CovertMemorySize(base, config->memsize_kbytes, &memsize);
+    result = SEMC_CovertMemorySize(config->memsize_kbytes, &memsize);
     if (result != kStatus_Success)
     {
         return result;
@@ -1114,7 +1117,7 @@ status_t SEMC_ConfigureDBI(SEMC_Type *base, semc_dbi_config_t *config, uint32_t 
  * brief SEMC IP command access.
  *
  * param base  SEMC peripheral base address.
- * param type  SEMC memory type. refer to "semc_mem_type_t"
+ * param memType  SEMC memory type. refer to "semc_mem_type_t"
  * param address  SEMC device address.
  * param command  SEMC IP command.
  * For NAND device, we should use the SEMC_BuildNandIPCommand to get the right nand command.
@@ -1125,7 +1128,7 @@ status_t SEMC_ConfigureDBI(SEMC_Type *base, semc_dbi_config_t *config, uint32_t 
  * param read   Data pointer for read data out.
  */
 status_t SEMC_SendIPCommand(
-    SEMC_Type *base, semc_mem_type_t type, uint32_t address, uint32_t command, uint32_t write, uint32_t *read)
+    SEMC_Type *base, semc_mem_type_t memType, uint32_t address, uint32_t command, uint32_t write, uint32_t *read)
 {
     uint32_t cmdMode;
     bool readCmd  = false;
@@ -1139,7 +1142,7 @@ status_t SEMC_SendIPCommand(
 
     /* Check command mode. */
     cmdMode = (uint32_t)command & 0x0FU;
-    switch (type)
+    switch (memType)
     {
         case kSEMC_MemType_NAND:
             readCmd = (cmdMode == (uint32_t)kSEMC_NANDCM_CommandAddressRead) ||

@@ -36,8 +36,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_ADAFRUIT
-        imply RTDUINO_USING_MSTIMER2
         default n
 
 endmenu

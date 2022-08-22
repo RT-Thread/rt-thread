@@ -61,7 +61,7 @@ if GetDepend(['BSP_USING_ETH']):
 
 if GetDepend(['BSP_USING_SDIO']):
     src += ['MIMXRT1052/drivers/fsl_usdhc.c']
-    
+
 if GetDepend(['RT_USING_AUDIO']):
     src += ['MIMXRT1052/drivers/fsl_sai.c']
     src += ['MIMXRT1052/drivers/fsl_sai_edma.c']
@@ -75,7 +75,7 @@ if GetDepend(['BSP_USING_DMA']):
     src += ['MIMXRT1052/drivers/fsl_lpuart_edma.c']
     if GetDepend(['BSP_USING_SPI']):
         src += ['MIMXRT1052/drivers/fsl_lpspi_edma.c']
-    
+
 if GetDepend(['BSP_USING_PULSE_ENCODER']):
     src += ['MIMXRT1052/drivers/fsl_enc.c']
 
