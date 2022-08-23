@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2022-08-23     liYony       first version
  */
- 
+
 #include "board.h"
 #include <stdint.h>
 #include "drv_usart.h"
@@ -51,7 +51,7 @@ void rt_hw_board_init()
 {
     /* System Tick Configuration */
     _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-	
+
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
     rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
 #endif
