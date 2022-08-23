@@ -16,8 +16,8 @@
 
 #define C28X_SRAM_END          0x00020000
 
-#define HEAP_BEGIN  0x0000E000
-#define HEAP_END    C28X_SRAM_END
+#define HEAP_BEGIN  0x008000
+#define HEAP_END    0x00A800
 
 extern void rt_hw_board_init(void);
 

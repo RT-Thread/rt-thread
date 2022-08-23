@@ -94,6 +94,12 @@ void rt_hw_board_init()
     rt_hw_sci_init();
 #endif
 
+#ifdef RT_USING_FINSH
+    /* init finsh */
+    extern int finsh_system_init(void);
+    finsh_system_init();
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
