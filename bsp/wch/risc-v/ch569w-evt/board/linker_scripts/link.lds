@@ -1,6 +1,6 @@
 ENTRY( _start )
 
-__stack_size = 2048;
+__stack_size = 1536;
 
 PROVIDE( _stack_size = __stack_size );
 
@@ -180,8 +180,10 @@ SECTIONS
 	
 	.dmadata :
     {
-        . = ALIGN(16);
         PROVIDE( _dmadata_start = .);
+    	/* first 8 bytes are reserved for USB ep0 SETUP */
+		. = . + 8;
+        . = ALIGN(16);
         *(.dmadata*)
         *(.dmadata.*)
         . = ALIGN(16);

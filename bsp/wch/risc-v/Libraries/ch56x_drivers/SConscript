@@ -12,6 +12,9 @@ if GetDepend('SOC_SERIES_CH569'):
     if GetDepend('RT_USING_WDT'):
         src += ['ch56x_wdt.c']
 
+if GetDepend('RT_USING_USB_DEVICE'):
+    src += ['ch56x_usbd.c']
+
 if GetDepend('RT_USING_PWM'):
     src += ['ch56x_pwm.c']
 
