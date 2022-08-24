@@ -45,12 +45,6 @@ int main(void)
 
 int rt_main(void)
 {
-//#ifdef RT_USING_FINSH
-//    /* init finsh */
-//    extern int finsh_system_init(void);
-//    finsh_system_init();
-//#endif
-
     while(1)
     {
 
