@@ -361,6 +361,52 @@ static void test_pwm(void)
     #define test_pwm()  do {} while(0)
 #endif
 
+#ifdef RT_USING_USB_DEVICE
+#if !defined(RT_USING_EVENT) || !defined(RT_USING_MESSAGEQUEUE)
+    #error "event flag or message queue IPC not enabled"
+#endif
+static struct rt_thread  *udvcom_thread;
+static rt_device_t vcom;
+
+static void usbd_vcom_thread(void *param)
+{
+    char ch;
+
+    while (1)
+    {
+        while (rt_device_read(vcom, 0, &ch, 1) != 1)
+            rt_thread_delay(1);
+        rt_kprintf("(%2d) %02x:%c\n", rt_device_write(vcom, 0, &ch, 1), ch, ch);
+        rt_pin_write(LED1_PIN, (ch & 1) ? PIN_LOW : PIN_HIGH);
+    }
+}
+
+static void test_usbd()
+{
+    char name[] = "vcom";
+
+    vcom = rt_device_find(name);
+    if (vcom && rt_device_open(vcom, RT_DEVICE_FLAG_INT_RX) == RT_EOK)
+    {
+        rt_kprintf("%s opened\n", name);
+
+        rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
+        rt_pin_write(LED1_PIN, PIN_LOW);
+
+        udvcom_thread = rt_thread_create("udvcom", usbd_vcom_thread, vcom,
+                                         512, 20, 50);
+        if (udvcom_thread != RT_NULL)
+            rt_thread_startup(udvcom_thread);
+        else
+            rt_kprintf("usvcom thread create failed !\n");
+
+        rt_device_write(vcom, 0, name, rt_strlen(name));
+    }
+}
+#else
+    #define test_usbd()  do {} while(0)
+#endif
+
 void main(void)
 {
     uint32_t wdog_timeout = 32;
@@ -372,6 +418,7 @@ void main(void)
     test_hwtimer();
     test_spi_master();
     test_pwm();
+    test_usbd();
 
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED0_PIN, led0 = PIN_LOW);

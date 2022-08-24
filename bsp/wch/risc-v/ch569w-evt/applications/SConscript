@@ -2,9 +2,11 @@ from building import *
 
 cwd = GetCurrentDir()
 
+app = ARGUMENTS.get('app', "main")
+
 src = Split("""
-main.c
-""")
+{}.c
+""".format(app))
 
 path = [cwd, str(Dir('#'))]
 
