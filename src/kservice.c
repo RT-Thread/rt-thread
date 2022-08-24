@@ -154,13 +154,14 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    RT_ASSERT(LBLOCKSIZE == 2 || LBLOCKSIZE == 4 || LBLOCKSIZE == 8);
-
+    unsigned int i;
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
     unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
                                 unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
+
+    RT_ASSERT(LBLOCKSIZE == 2 || LBLOCKSIZE == 4 || LBLOCKSIZE == 8);
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
@@ -170,28 +171,9 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
         /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
-        if (LBLOCKSIZE == 8)
+        for (i = 0; i < LBLOCKSIZE; i++)
         {
-            *(((unsigned char *)&buffer)+0) = d;
-            *(((unsigned char *)&buffer)+1) = d;
-            *(((unsigned char *)&buffer)+2) = d;
-            *(((unsigned char *)&buffer)+3) = d;
-            *(((unsigned char *)&buffer)+4) = d;
-            *(((unsigned char *)&buffer)+5) = d;
-            *(((unsigned char *)&buffer)+6) = d;
-            *(((unsigned char *)&buffer)+7) = d;
-        }
-        else if (LBLOCKSIZE == 4)
-        {
-            *(((unsigned char *)&buffer)+0) = d;
-            *(((unsigned char *)&buffer)+1) = d;
-            *(((unsigned char *)&buffer)+2) = d;
-            *(((unsigned char *)&buffer)+3) = d;
-        }
-        else if (LBLOCKSIZE == 2)
-        {
-            *(((unsigned char *)&buffer)+0) = d;
-            *(((unsigned char *)&buffer)+1) = d;
+            *(((unsigned char *)&buffer)+i) = d;
         }
 
         while (count >= LBLOCKSIZE * 4)
