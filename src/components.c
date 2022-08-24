@@ -196,6 +196,8 @@ void main_thread_entry(void *parameter)
     }
 #elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
     main();
+#elif defined(__TI_COMPILER_VERSION__)
+    rt_main();
 #endif
 }
 
