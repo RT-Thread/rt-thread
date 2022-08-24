@@ -207,11 +207,11 @@ typedef __gnuc_va_list              va_list;
 /* The way that TI compiler set section is different from other(at least
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
     * details. */
-#define RT_SECTION(x)
-#define RT_USED
+#define RT_SECTION(x)               __attribute__((section(x)))
+#define RT_USED                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)
-#define RT_WEAK
+#define ALIGN(n)                    __attribute__((__align(n)))
+#define RT_WEAK                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__TASKING__)
