@@ -103,3 +103,16 @@ void rt_hw_board_init()
 
     rt_interrupt_leave_sethook((void (*)(void))trap_rtosint);
 }
+
+int _args_main()
+{
+    /* _args_main is the entry point called by _c_int00. We define it
+     * here to override the one defined by the compiler in args_main.c */
+
+    extern int rtthread_startup();
+
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
+    /* never reach here*/
+    return 0;
+}

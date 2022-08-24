@@ -15,22 +15,13 @@
 #include <rtthread.h>
 #include "board.h"
 
-
 int main(void)
 {
-    extern int rtthread_startup();
+    unsigned long x=0xFFFFFFFF;
 
-    /* startup RT-Thread RTOS */
-    rtthread_startup();
-    /* never reach here*/
-    return 0;
-}
-
-int rt_main(void)
-{
-    while(1)
+    while(x)
     {
-
+        x--;
     }
 }
 
