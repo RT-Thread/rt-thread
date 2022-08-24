@@ -10,6 +10,7 @@
 ; 2019-07-03     zhaoxiaowei  add _rt_hw_calc_csb function to support __rt_ffs.
 ; 2019-12-05     xiaolifan    add support for hardware fpu32
 ; 2022-06-21     guyunjie     trim pendsv (RTOSINT_Handler)
+; 2022-08-24     guyunjie     fix bugs in context switching
 
     .ref   _rt_interrupt_to_thread
     .ref   _rt_interrupt_from_thread
@@ -89,14 +90,12 @@ RT_CTX_RESTORE  .macro
     POP     XAR3
     POP     XAR2
 
-
     MOVZ    AR0 , @SP
     SUBB    XAR0, #6
     MOVL    ACC , *XAR0
     AND     ACC, #0xFFFF << 16
     MOV     AL, IER
     MOVL   *XAR0, ACC
-
 
     POP     AR1H:AR0H
 
@@ -129,22 +128,19 @@ _rt_hw_interrupt_enable:
 
 ;
 ; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
-; r0 --> from
-; r4 --> to
+; ACC   --> from
+; SP[4] --> to
 ;
     .asmfunc
 _rt_hw_context_switch_interrupt:
-    MOVL    XAR0, #0
-    MOV     AR0, AL
+    MOVL    XAR0, ACC
     MOVL    XAR4, *-SP[4]
     ; set rt_thread_switch_interrupt_flag to 1
     MOVL    XAR5, #_rt_thread_switch_interrupt_flag
-    MOVL    XAR6, *XAR5
-    MOVL    ACC, XAR6
-    CMPB    AL, #1
-    B       _reswitch, EQ
-    MOVL     XAR6, #1
-    MOVL    *XAR5, XAR6
+    MOVL    ACC, *XAR5
+    BF      _reswitch, NEQ                     ; ACC!=0
+    MOVB    ACC, #1
+    MOVL    *XAR5, ACC
 
     MOVL    XAR5, #_rt_interrupt_from_thread   ; set rt_interrupt_from_thread
     MOVL    *XAR5, XAR0
@@ -158,22 +154,19 @@ _reswitch:
 
 ;
 ; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
-; r0 --> from
-; r4 --> to
+; ACC   --> from
+; SP[4] --> to
 ;
     .asmfunc
 _rt_hw_context_switch:
-    MOVL    XAR0, #0
-    MOV     AR0, AL
+    MOVL    XAR0, ACC
     MOVL    XAR4, *-SP[4]
     ; set rt_thread_switch_interrupt_flag to 1
     MOVL    XAR5, #_rt_thread_switch_interrupt_flag
-    MOVL    XAR6, *XAR5
-    MOVL    ACC, XAR6
-    CMPB    AL, #1
-    B       _reswitch2, EQ
-    MOVL     XAR6, #1
-    MOVL    *XAR5, XAR6
+    MOVL    ACC, *XAR5
+    BF      _reswitch2, NEQ                    ; ACC!=0
+    MOVB    ACC, #1
+    MOVL    *XAR5, ACC
 
     MOVL    XAR5, #_rt_interrupt_from_thread   ; set rt_interrupt_from_thread
     MOVL    *XAR5, XAR0
@@ -186,29 +179,50 @@ _reswitch2:
     LRETR
     .endasmfunc
 
+;
+; * void rt_hw_context_switch_to(rt_uint32 to);
+; * ACC --> to
+;
+    .asmfunc
+_rt_hw_context_switch_to:
+    ; get to thread
+    MOVL    XAR1, #_rt_interrupt_to_thread
+    MOVL    *XAR1, ACC
+
+    ; set from thread to 0
+    MOVL    XAR1, #_rt_interrupt_from_thread
+    MOVL    XAR0, #0
+    MOVL    *XAR1, XAR0
+
+    ; set interrupt flag to 1
+    MOVL    XAR1, #_rt_thread_switch_interrupt_flag
+    MOVL    XAR0, #1
+    MOVL    *XAR1, XAR0
+
+    TRAP    #16
+
+    ; never reach here!
+    .endasmfunc
+
     .asmfunc
 _RTOSINT_Handler:
     ; disable interrupt to protect context switch
     ; DINT ;this is done by hardware so not needed
 
-	; XAR1=0 will be used later
-    MOVL    XAR1, #0
-
     ; get rt_thread_switch_interrupt_flag
     MOVL    XAR0, #_rt_thread_switch_interrupt_flag
     MOVL    ACC, *XAR0
-    CMPL    ACC, XAR1
-    B       rtosint_exit, EQ         ; pendsv already handled
+    BF      rtosint_exit, EQ         ; pendsv already handled
 
     ; clear rt_thread_switch_interrupt_flag to 0
+    MOVL    XAR1, #0
     MOVL    *XAR0, XAR1
 
     MOVL    XAR0, #_rt_interrupt_from_thread
     MOVL    ACC, *XAR0
-    CMPL    ACC, XAR1
-    B       switch_to_thread, EQ    ; skip register save at the first time
+    BF      switch_to_thread, EQ     ; skip register save at the first time
 
-    RT_CTX_SAVE     ; push r4 - r11 register
+    RT_CTX_SAVE                      ; push cpu registers
 
     MOVL    ACC, *XAR0
     MOVL    XAR0, ACC
@@ -222,7 +236,7 @@ switch_to_thread:
     MOVL    ACC, *XAR1
     MOV     @SP, AL                  ; load thread stack pointer
 
-    RT_CTX_RESTORE     ; pop r4 - r11 register
+    RT_CTX_RESTORE                   ; pop cpu registers
 
 rtosint_exit:
     ; do not restore interrupt here: to be restored according to the
@@ -262,31 +276,6 @@ _rt_hw_calc_csb:
     SUBB    ACC, #30              ; ACC = ACC - 30
     ABS     ACC                   ; ACC = |ACC|
     lretr
-    .endasmfunc
-
-;
-; * void rt_hw_context_switch_to(rt_uint32 to);
-; * ACC --> to
-
-    .asmfunc
-_rt_hw_context_switch_to:
-    ; get to thread
-    MOVL    XAR1, #_rt_interrupt_to_thread
-    MOVL    *XAR1, ACC
-
-    ; set from thread to 0
-    MOVL    XAR1, #_rt_interrupt_from_thread
-    MOVL    XAR0, #0
-    MOVL    *XAR1, XAR0
-
-    ; set interrupt flag to 1
-    MOVL    XAR1, #_rt_thread_switch_interrupt_flag
-    MOVL    XAR0, #1
-    MOVL    *XAR1, XAR0
-
-    TRAP    #16
-
-    ; never reach here!
     .endasmfunc
 
 ; compatible with old version
