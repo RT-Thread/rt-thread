@@ -166,10 +166,10 @@ SECTIONS
     {
         . = ALIGN(4);
         PROVIDE( _sbss = .);
-          *(.sbss*)
+        *(.sbss*)
         *(.gnu.linkonce.sb.*)
         *(.bss*)
-         *(.gnu.linkonce.b.*)
+        *(.gnu.linkonce.b.*)
         *(COMMON*)
         . = ALIGN(4);
         PROVIDE( _ebss = .);
