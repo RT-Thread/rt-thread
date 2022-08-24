@@ -39,7 +39,6 @@
 
 RT_CTX_SAVE  .macro
 
-
     PUSH    AR1H:AR0H
     PUSH    XAR2
     PUSH    XAR3
@@ -132,8 +131,7 @@ _rt_hw_interrupt_enable:
 ; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
 ; r0 --> from
 ; r4 --> to
-
-
+;
     .asmfunc
 _rt_hw_context_switch_interrupt:
     MOVL    XAR0, #0
@@ -162,8 +160,7 @@ _reswitch:
 ; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
 ; r0 --> from
 ; r4 --> to
-
-
+;
     .asmfunc
 _rt_hw_context_switch:
     MOVL    XAR0, #0
@@ -189,61 +186,41 @@ _reswitch2:
     LRETR
     .endasmfunc
 
-     .asmfunc
+    .asmfunc
 _RTOSINT_Handler:
     ; disable interrupt to protect context switch
     ; DINT ;this is done by hardware so not needed
 
+	; XAR1=0 will be used later
+    MOVL    XAR1, #0
+
     ; get rt_thread_switch_interrupt_flag
-    MOV     AR0, #_rt_thread_switch_interrupt_flag
-    MOV     AL, *AR0
-    MOV     AR1, AL
-    CMP     AR1, #0
+    MOVL    XAR0, #_rt_thread_switch_interrupt_flag
+    MOVL    ACC, *XAR0
+    CMPL    ACC, XAR1
     B       rtosint_exit, EQ         ; pendsv already handled
 
     ; clear rt_thread_switch_interrupt_flag to 0
-    MOV     AR1, #0x00
-    MOV     *AR0, AR1
+    MOVL    *XAR0, XAR1
 
-    MOV     AR0, #_rt_interrupt_from_thread
-    MOV     AL, *AR0
-    MOV     AR1, AL
-    CMP     AR1, #0
+    MOVL    XAR0, #_rt_interrupt_from_thread
+    MOVL    ACC, *XAR0
+    CMPL    ACC, XAR1
     B       switch_to_thread, EQ    ; skip register save at the first time
-
-;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    TST     lr, #0x10           ; if(!EXC_RETURN[4])
-;    VSTMDBEQ r1!, {d8 - d15}    ; push FPU register s16~s31
-;#endif
 
     RT_CTX_SAVE     ; push r4 - r11 register
 
-;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    MOV     r4, #0x00           ; flag = 0
-
-;    TST     lr, #0x10           ; if(!EXC_RETURN[4])
-;    MOVEQ   r4, #0x01           ; flag = 1
-
-;    STMFD   r1!, {r4}           ; push flag
-;#endif
-
-    MOV     AL, *AR0
-    MOV     AR0, AL
+    MOVL    ACC, *XAR0
+    MOVL    XAR0, ACC
     MOVZ    AR1, @SP                 ; get from thread stack pointer
-    MOV     *AR0, AR1                ; update from thread stack pointer
+    MOVL    *XAR0, XAR1              ; update from thread stack pointer
 
 switch_to_thread:
-    MOV     AR1, #_rt_interrupt_to_thread
-    MOV     AL, *AR1
-    MOV     AR1, AL
-    MOV     AL, *AR1
-    MOV     AR1, AL                ; load thread stack pointer
-
-;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    LDMFD   r1!, {r3}           ; pop flag
-;#endif
-
-    MOV     @SP, AR1
+    MOVL    XAR1, #_rt_interrupt_to_thread
+    MOVL    ACC, *XAR1
+    MOVL    XAR1, ACC
+    MOVL    ACC, *XAR1
+    MOV     @SP, AL                  ; load thread stack pointer
 
     RT_CTX_RESTORE     ; pop r4 - r11 register
 
@@ -289,32 +266,25 @@ _rt_hw_calc_csb:
 
 ;
 ; * void rt_hw_context_switch_to(rt_uint32 to);
-; * r0 --> to
+; * ACC --> to
 
     .asmfunc
 _rt_hw_context_switch_to:
-    MOV     AR1, #_rt_interrupt_to_thread
-    MOV     *AR1, AL
-
-;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    ; CLEAR CONTROL.FPCA
-;    MRS     r2, CONTROL         ; read
-;    BIC     r2, #0x04           ; modify
-;    MSR     CONTROL, r2         ; write-back
-;#endif
+    ; get to thread
+    MOVL    XAR1, #_rt_interrupt_to_thread
+    MOVL    *XAR1, ACC
 
     ; set from thread to 0
-    MOV     AR1, #_rt_interrupt_from_thread
-    MOV     AR0, #0x0
-    MOV     *AR1, AR0
+    MOVL    XAR1, #_rt_interrupt_from_thread
+    MOVL    XAR0, #0
+    MOVL    *XAR1, XAR0
 
     ; set interrupt flag to 1
-    MOV     AR1, #_rt_thread_switch_interrupt_flag
-    MOV     AR0, #1
-    MOV     *AR1, AR0
+    MOVL    XAR1, #_rt_thread_switch_interrupt_flag
+    MOVL    XAR0, #1
+    MOVL    *XAR1, XAR0
 
     TRAP    #16
-
 
     ; never reach here!
     .endasmfunc
