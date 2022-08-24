@@ -49,7 +49,11 @@ SECTIONS
    .pinit           : > RAMM0,     PAGE = 0
    .switch          : > RAMM0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
-
+   .rti_fn.0.end	: > RAMD0,		PAGE = 1
+   .rti_fn.0		: > RAMD0,		PAGE = 1
+   .rti_fn.1.end	: > RAMD0,		PAGE = 1
+   .rti_fn.6.end	: > RAMD0,		PAGE = 1
+   .rti_fn.6		: > RAMD0,		PAGE = 1
    .rtos			: > RAMLS0 		PAGE = 1
    .stack           : > RAMM1,     PAGE = 1
    .ebss            : > RAMGS5_7,    PAGE = 1

@@ -210,7 +210,7 @@ typedef __gnuc_va_list              va_list;
 #define RT_SECTION(x)               __attribute__((section(x)))
 #define RT_USED                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    __attribute__((__align(n)))
+#define ALIGN(n)
 #define RT_WEAK                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
