@@ -154,6 +154,8 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
+    RT_ASSERT(LBLOCKSIZE == 2 || LBLOCKSIZE == 4 || LBLOCKSIZE == 8);
+
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
