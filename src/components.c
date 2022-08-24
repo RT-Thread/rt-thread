@@ -178,7 +178,6 @@ struct rt_thread main_thread;
  */
 void main_thread_entry(void *parameter)
 {
-    extern int rt_main(void);
 
 #ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
@@ -197,6 +196,7 @@ void main_thread_entry(void *parameter)
 #elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
     main();
 #elif defined(__TI_COMPILER_VERSION__)
+    extern int rt_main(void);
     rt_main();
 #endif
 }
