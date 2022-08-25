@@ -162,6 +162,8 @@ int entry(void)
     rtthread_startup();
     return 0;
 }
+#elif defined(__TI_COMPILER_VERSION__)
+extern int main(void);
 #endif
 
 #ifndef RT_USING_HEAP

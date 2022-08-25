@@ -17,7 +17,7 @@
 
 int main(void)
 {
-    unsigned long x=0xFFFFFFFF;
+    unsigned long x=100000000;
 
     while(x)
     {
