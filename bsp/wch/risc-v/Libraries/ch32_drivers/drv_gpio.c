@@ -334,11 +334,11 @@ static rt_err_t ch32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         GPIO_InitStruct.GPIO_Pin = PIN_STPIN(pin);
         GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-		
-		EXTI_InitStructure.EXTI_Line=PIN_STPIN(pin);
+
+        EXTI_InitStructure.EXTI_Line=PIN_STPIN(pin);
         EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
         EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-		
+
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
         case PIN_IRQ_MODE_RISING:
@@ -359,7 +359,7 @@ static rt_err_t ch32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         gpio_port_souce=PIN_PORT(pin);
 
         GPIO_EXTILineConfig(gpio_port_souce,(rt_uint8_t)irqindex);
-		
+
         EXTI_Init(&EXTI_InitStructure);
         NVIC_SetPriority(irqmap->irqno,5<<4);
         NVIC_EnableIRQ( irqmap->irqno );
@@ -377,19 +377,19 @@ static rt_err_t ch32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         level = rt_hw_interrupt_disable();
 
-        pin_irq_enable_mask &= ~irqmap->pinbit;   
+        pin_irq_enable_mask &= ~irqmap->pinbit;
 
         if (( irqmap->pinbit>=GPIO_Pin_5 )&&( irqmap->pinbit<=GPIO_Pin_9 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9)))
-            {    
+            {
                 NVIC_DisableIRQ(irqmap->irqno);
             }
         }
         else if (( irqmap->pinbit>=GPIO_Pin_10 )&&( irqmap->pinbit<=GPIO_Pin_15 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15)))
-            {    
+            {
                 NVIC_DisableIRQ(irqmap->irqno);
             }
         }
@@ -398,7 +398,7 @@ static rt_err_t ch32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             NVIC_DisableIRQ(irqmap->irqno);
         }
 
-        rt_hw_interrupt_enable(level);  
+        rt_hw_interrupt_enable(level);
     }
     else
     {
@@ -527,7 +527,7 @@ void EXTI9_5_IRQHandler(void)
 }
 
 int rt_hw_pin_init(void)
-{     
+{
 #if defined(RCC_APB2Periph_GPIOA)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE);
 #if defined(RCC_APB2Periph_GPIOB)
@@ -564,7 +564,7 @@ int rt_hw_pin_init(void)
 #endif /* defined(RCC_APB2Periph_GPIOC) */
 #endif /* defined(RCC_APB2Periph_GPIOB) */
 #endif /* defined(RCC_APB2Periph_GPIOA) */
-	
+
     return rt_device_pin_register("pin", &_ch32_pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
