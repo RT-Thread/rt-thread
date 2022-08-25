@@ -76,6 +76,10 @@ void rt_hw_board_init()
 
     InitPieVectTable();
 
+#ifdef _FLASH
+    memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (Uint32)&RamfuncsLoadSize);
+    InitFlash();
+#endif
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
     PieVectTable.RTOS_INT = &RTOSINT_Handler;
