@@ -193,10 +193,7 @@ void main_thread_entry(void *parameter)
         extern int $Super$$main(void);
         $Super$$main(); /* for ARMCC. */
     }
-#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
-    main();
-#elif defined(__TI_COMPILER_VERSION__)
-    extern int main(void);
+#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__) || defined(__TI_COMPILER_VERSION__)
     main();
 #endif
 }
