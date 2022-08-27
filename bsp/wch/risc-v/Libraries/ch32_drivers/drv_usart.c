@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09-09     WCH        the first version
+ * 2022-08-27     liYony       the first version
  */
 
 #include "board.h"
@@ -18,9 +18,8 @@
 #define LOG_TAG              "drv.uart"
 #include <drv_log.h>
 
-
 #if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4) && \
-    !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_UART7) && !defined(BSP_USING_UART8) 
+    !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_UART7) && !defined(BSP_USING_UART8)
     #error "Please define at least one BSP_USING_UARTx"
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
@@ -50,6 +49,44 @@ enum
 #endif
 #ifdef BSP_USING_UART8
     UART8_INDEX,
+#endif
+};
+
+/* If you want to use other serial ports, please follow UART1 to complete other
+  serial ports. For clock configuration,  */
+static struct ch32_uart_hw_config uart_hw_config[] =
+{
+#ifdef BSP_USING_UART1
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB2Periph_USART1|RCC_APB2Periph_GPIOA,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOA, GPIO_Pin_9, /* Tx */GPIOA, GPIO_Pin_10, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
+#endif
+#ifdef BSP_USING_UART2
+    {},
+#endif
+#ifdef BSP_USING_UART3
+    {},
+#endif
+#ifdef BSP_USING_UART4
+    {},
+#endif
+#ifdef BSP_USING_UART5
+    {},
+#endif
+#ifdef BSP_USING_UART6
+    {},
+#endif
+#ifdef BSP_USING_UART7
+    {},
+#endif
+#ifdef BSP_USING_UART8
+    {},
 #endif
 };
 
@@ -118,6 +155,8 @@ static struct ch32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] =
 static rt_err_t ch32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct ch32_uart *uart;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
@@ -168,63 +207,26 @@ static rt_err_t ch32_configure(struct rt_serial_device *serial, struct serial_co
         break;
     }
 
-    if(uart->config->Instance==USART1)
-    {
-        GPIO_InitTypeDef GPIO_InitStructure={0};
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1|RCC_APB2Periph_GPIOA, ENABLE);
+    /* UART hardware configuration, including clock and GPIO, etc. */
+    RCC_APB2PeriphClockCmd(uart->hw_config->periph_clock, ENABLE);
 
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
-        USART_Init(uart->config->Instance,&uart->Init);
-        USART_Cmd(uart->config->Instance, ENABLE);
-    }
-    if(uart->config->Instance==USART2)
+    if(uart->hw_config->remap != GPIO_Remap_NONE)
     {
-
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+        GPIO_PinRemapConfig(uart->hw_config->remap, ENABLE);
     }
-    if(uart->config->Instance==USART3)
-    {
+    GPIO_InitStructure.GPIO_Pin = uart->hw_config->tx_gpio_pin;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(uart->hw_config->tx_gpio_port, &GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = uart->hw_config->rx_gpio_pin;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(uart->hw_config->rx_gpio_port, &GPIO_InitStructure);
 
-    }
-    if(uart->config->Instance==UART4)
-    {
+    USART_Init(uart->config->Instance,&uart->Init);
+    USART_Cmd(uart->config->Instance, ENABLE);
 
-    }
-    if(uart->config->Instance==UART5)
-    {
-
-    }
-    if(uart->config->Instance==UART6)
-    {
-
-    }
-    if(uart->config->Instance==UART7)
-    {
-        GPIO_InitTypeDef GPIO_InitStructure={0};
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-        RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART7, ENABLE);
-
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-        GPIO_Init(GPIOC, &GPIO_InitStructure);
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-        GPIO_Init(GPIOC, &GPIO_InitStructure);
-        USART_Init(uart->config->Instance,&uart->Init);
-        USART_Cmd(uart->config->Instance, ENABLE);
-    }
-    if(uart->config->Instance==UART8)
-    {
-
-    }
     return RT_EOK;
 }
 
@@ -282,7 +284,6 @@ rt_size_t ch32dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_
     return RT_EOK;
 }
 
-
 static void uart_isr(struct rt_serial_device *serial)
 {
     struct ch32_uart *uart = (struct ch32_uart *) serial->parent.user_data;
@@ -302,7 +303,6 @@ static const struct rt_uart_ops ch32_uart_ops =
     ch32_getc,
     ch32dma_transmit
 };
-
 
 #ifdef BSP_USING_UART1
 void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -388,7 +388,6 @@ void UART7_IRQHandler(void)
 }
 #endif
 
-
 #ifdef BSP_USING_UART8
 void UART8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void UART8_IRQHandler(void)
@@ -411,9 +410,16 @@ int rt_hw_usart_init(void)
     {
         /* init UART object */
         uart_obj[i].config        = &uart_config[i];
+        uart_obj[i].hw_config     = &uart_hw_config[i];
         uart_obj[i].serial.ops    = &ch32_uart_ops;
         uart_obj[i].serial.config = config;
-
+        /* Hardware initialization is required, otherwise it
+        will not be registered into the device framework */
+        if(uart_obj[i].hw_config->periph_clock == 0)
+        {
+            LOG_E("You did not perform hardware initialization for %s", uart->config->name);
+            continue;
+        }
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[i].serial, uart_obj[i].config->name,
                                        RT_DEVICE_FLAG_RDWR
@@ -426,4 +432,3 @@ int rt_hw_usart_init(void)
 }
 
 #endif /* RT_USING_SERIAL */
-
