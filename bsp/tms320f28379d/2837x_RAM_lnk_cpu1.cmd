@@ -1,5 +1,4 @@
-___Heap_start = 0x00B800;
-___Heap_end = 0x00F000;
+___heap_end = 0x00F000;
 
 MEMORY
 {
@@ -14,13 +13,11 @@ PAGE 0 :
 PAGE 1 :
     RAMM1          : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
     BOOT_RSVD      : origin = 0x000002, length = 0x000120     /* Part of M0, BOOT rom will use this for stack */
-    EBSS	       : origin = 0x008000, length = 0x003000     /* RAMLS0-4, 5*0x0800   */
-    RAMD0		   : origin = 0x00B000, length = 0x000100
+    EBSS	       : origin = 0x008000, length = 0x007000     /* RAMLS0-4, 5*0x0800   */
     ECONST         : origin = 0x00F000, length = 0x004000     /* RAMGS0-2, 3*0x1000   */
     CPU2TOCPU1RAM  : origin = 0x03F800, length = 0x000400
     CPU1TOCPU2RAM  : origin = 0x03FC00, length = 0x000400
 }
-
 
 SECTIONS
 {
@@ -45,7 +42,12 @@ SECTIONS
    .rti_fn.6        : > RAMM1,     PAGE = 1
    .stack           : > RAMM1,     PAGE = 1
    .esysmem         : > RAMM1,    PAGE = 1
-   .ebss            : > EBSS,  PAGE = 1
+
+   .ebss            : > EBSS,
+				   LOAD_START(___ebss_start),
+				   LOAD_END(___ebss_end),
+				   PAGE = 1
+
    .econst          : > ECONST,  PAGE = 1
 
    /* finsh symbol table */

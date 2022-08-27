@@ -90,7 +90,7 @@ void rt_hw_board_init()
     IER |= M_INT14;
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init(&__Heap_start, &(__Heap_end));
+    rt_system_heap_init(&__ebss_end, &(__heap_end));
 #endif
 
 #ifdef RT_USING_SERIAL

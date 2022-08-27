@@ -15,8 +15,8 @@
 #include <rtthread.h>
 
 
-extern int __Heap_start;
-extern int __Heap_end;
+extern int __ebss_end;
+extern int __heap_end;
 
 extern void rt_hw_board_init(void);
 
