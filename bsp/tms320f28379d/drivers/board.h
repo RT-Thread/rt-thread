@@ -14,10 +14,9 @@
 
 #include <rtthread.h>
 
-#define C28X_SRAM_END          0x00020000
 
-#define HEAP_BEGIN  0x008000
-#define HEAP_END    0x00A800
+extern int __Heap_start;
+extern int __Heap_end;
 
 extern void rt_hw_board_init(void);
 

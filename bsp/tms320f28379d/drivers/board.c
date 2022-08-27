@@ -22,7 +22,6 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
 
 extern interrupt void RTOSINT_Handler();
-
 void trap_rtosint()
 {
     if(rt_thread_switch_interrupt_flag)
@@ -91,7 +90,7 @@ void rt_hw_board_init()
     IER |= M_INT14;
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+    rt_system_heap_init(&__Heap_start, &(__Heap_end));
 #endif
 
 #ifdef RT_USING_SERIAL
