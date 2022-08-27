@@ -1,4 +1,5 @@
-
+___Heap_start = 0x008000;
+___Heap_end = 0x00A800;
 MEMORY
 {
 PAGE 0 :  /* Program Memory */
