@@ -68,15 +68,15 @@ extern "C" {
 /**@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      5               /**< major version number */
-#define RT_SUBVERSION                   0               /**< minor version number */
-#define RT_REVISION                     0               /**< revise version number */
+#define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
+#define RT_VERSION_MINOR                0               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
 
 /* RT-Thread version */
-#define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION, RT_SUBVERSION, RT_REVISION)
+#define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH)
 
 
 /* RT-Thread basic data type definitions */

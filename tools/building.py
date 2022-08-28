@@ -968,11 +968,11 @@ def GetVersion():
     prepcessor.process_contents(contents)
     def_ns = prepcessor.cpp_namespace
 
-    version = int([ch for ch in def_ns['RT_VERSION'] if ch in '0123456789.'])
-    subversion = int([ch for ch in def_ns['RT_SUBVERSION'] if ch in '0123456789.'])
+    version = int([ch for ch in def_ns['RT_VERSION_MAJOR'] if ch in '0123456789.'])
+    subversion = int([ch for ch in def_ns['RT_VERSION_MINOR'] if ch in '0123456789.'])
 
-    if 'RT_REVISION' in def_ns:
-        revision = int([ch for ch in def_ns['RT_REVISION'] if ch in '0123456789.'])
+    if 'RT_VERSION_PATCH' in def_ns:
+        revision = int([ch for ch in def_ns['RT_VERSION_PATCH'] if ch in '0123456789.'])
         return '%d.%d.%d' % (version, subversion, revision)
 
     return '0.%d.%d' % (version, subversion)
