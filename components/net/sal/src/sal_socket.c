@@ -238,9 +238,9 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
     {
         send_data[index + 1] = netdev->hwaddr[index] + moth_num;
     }
-    send_data[9] = RT_VERSION;
-    send_data[10] = RT_SUBVERSION;
-    send_data[11] = RT_REVISION;
+    send_data[9] = RT_VERSION_MAJOR;
+    send_data[10] = RT_VERSION_MINOR;
+    send_data[11] = RT_VERSION_PATCH;
 
     skt_ops->sendto(sockfd, send_data, SAL_INTERNET_BUFF_LEN, 0,
                     (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
