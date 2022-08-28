@@ -74,7 +74,7 @@ static int rt_hw_qspi_flash_with_sfud_init(void)
 }
 INIT_COMPONENT_EXPORT(rt_hw_qspi_flash_with_sfud_init);
 
-#if defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD)
+#if defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD_FATFS)
 #include <dfs_fs.h>
 
 #define BLK_DEV_NAME  "W25Q128"
@@ -106,5 +106,5 @@ int mnt_init(void)
 }
 INIT_ENV_EXPORT(mnt_init);
 
-#endif /* defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD) */
+#endif /* defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD_FATFS) */
 #endif /* BSP_USING_QSPI_FLASH */
