@@ -233,7 +233,7 @@ Input parameters for rt_malloc_sethook()
 The hook function interface is as follows:
 
 ```c
-void hook(void *ptr, rt_size_t size)；
+void hook(void *ptr, rt_size_t size);
 ```
 
 The following table describes the input parameters for the hook function:
