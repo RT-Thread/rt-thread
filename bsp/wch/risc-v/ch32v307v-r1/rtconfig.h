@@ -173,7 +173,7 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define SOC_RISCV_FAMILY_CH32
-#define SOC_RISCV_SERIES_CH32V307
+#define SOC_RISCV_SERIES_CH32V3
 
 /* Hardware Drivers Config */
 

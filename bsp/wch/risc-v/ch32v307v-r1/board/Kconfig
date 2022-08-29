@@ -2,7 +2,7 @@ menu "Hardware Drivers Config"
 
 config SOC_CH32V307VC
     bool
-    select SOC_RISCV_SERIES_CH32V307
+    select SOC_RISCV_SERIES_CH32V3
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
