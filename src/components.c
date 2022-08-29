@@ -162,6 +162,8 @@ int entry(void)
     rtthread_startup();
     return 0;
 }
+#elif defined(__TI_COMPILER_VERSION__)
+extern int main(void);
 #endif
 
 #ifndef RT_USING_HEAP
@@ -178,7 +180,6 @@ struct rt_thread main_thread;
  */
 void main_thread_entry(void *parameter)
 {
-    extern int main(void);
 
 #ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
@@ -194,7 +195,7 @@ void main_thread_entry(void *parameter)
         extern int $Super$$main(void);
         $Super$$main(); /* for ARMCC. */
     }
-#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
+#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__) || defined(__TI_COMPILER_VERSION__)
     main();
 #endif
 }

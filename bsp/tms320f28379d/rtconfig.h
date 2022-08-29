@@ -9,7 +9,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 2
 #define RT_THREAD_PRIORITY_8
 #define RT_THREAD_PRIORITY_MAX 8
 #define RT_TICK_PER_SECOND 100
@@ -53,6 +53,9 @@
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 4
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
