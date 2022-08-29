@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-14     wangqiang    the first version
+ * 2022-08-29     xjy198903    add rt1170 support
  */
 
 #include <rtthread.h>
