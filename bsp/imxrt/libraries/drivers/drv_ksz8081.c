@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-14     wangqiang    the first version
+ * 2022-08-29     xjy198903    add rt1170 support
  */
 
 #include <rtthread.h>
@@ -71,7 +72,12 @@
 #define PHY_TIMEOUT_COUNT 0x3FFFFFFU
 
 /* defined the Reset pin, PORT and PIN config by menuconfig */
+#ifdef SOC_IMXRT1170_SERIES
+#define RESET_PIN GET_PIN(PHY_RESET_KSZ8081_PORT, PHY_RESET_KSZ8081_PIN)
+#else
 #define RESET_PIN GET_PIN(PHY_RESET_PORT, PHY_RESET_PIN)
+#endif
+
 
 /*******************************************************************************
  * Prototypes
