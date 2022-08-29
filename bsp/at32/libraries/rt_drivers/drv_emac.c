@@ -377,6 +377,7 @@ static rt_err_t rt_at32_emac_init(rt_device_t dev)
     emac_dma_descriptor_list_address_set(EMAC_DMA_TRANSMIT, dma_tx_dscr_tab, tx_buff, EMAC_NUM_TX_BUF);
 
     /* emac interrupt init */
+    emac_dma_para_init(&dma_control_para);
     emac_dma_config(&dma_control_para);
     emac_dma_interrupt_enable(EMAC_DMA_INTERRUPT_NORMAL_SUMMARY, TRUE);
     emac_dma_interrupt_enable(EMAC_DMA_INTERRUPT_RX, TRUE);
