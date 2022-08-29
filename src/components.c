@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -145,7 +145,6 @@ int $Sub$$main(void)
     return 0;
 }
 #elif defined(__ICCARM__)
-extern int main(void);
 /* __low_level_init will auto called by IAR cstartup */
 extern void __iar_data_init3(void);
 int __low_level_init(void)
@@ -194,7 +193,7 @@ void main_thread_entry(void *parameter)
         extern int $Super$$main(void);
         $Super$$main(); /* for ARMCC. */
     }
-#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
+#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__) || defined(__TI_COMPILER_VERSION__)
     main();
 #endif
 }

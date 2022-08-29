@@ -8,6 +8,7 @@
  * 2009-09-22     Bernard      add board.h to this bsp
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
  * 2022-06-21     guyunjie     fix bugs in trap_rtosint and enable interrupt nesting
+ * 2022-08-21     yuqi         adding onboard devices initialization code
  */
 #include <rtthread.h>
 #include "board.h"
@@ -21,7 +22,6 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
 
 extern interrupt void RTOSINT_Handler();
-
 void trap_rtosint()
 {
     if(rt_thread_switch_interrupt_flag)
@@ -75,6 +75,10 @@ void rt_hw_board_init()
 
     InitPieVectTable();
 
+#ifdef _FLASH
+    memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (Uint32)&RamfuncsLoadSize);
+    InitFlash();
+#endif
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
     PieVectTable.RTOS_INT = &RTOSINT_Handler;
@@ -86,10 +90,12 @@ void rt_hw_board_init()
     IER |= M_INT14;
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+    rt_system_heap_init(&__ebss_end, &(__heap_end));
 #endif
 
+#ifdef RT_USING_SERIAL
     rt_hw_sci_init();
+#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -97,6 +103,19 @@ void rt_hw_board_init()
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    /*this hook may cause problem for reasons unknown*/
+
     rt_interrupt_leave_sethook((void (*)(void))trap_rtosint);
+}
+
+int _args_main()
+{
+    /* _args_main is the entry point called by _c_int00. We define it
+     * here to override the one defined by the compiler in args_main.c */
+
+    extern int rtthread_startup();
+
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
+    /* never reach here*/
+    return 0;
 }
