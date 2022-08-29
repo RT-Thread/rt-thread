@@ -11,35 +11,40 @@ Group (Finsh)
 Group (Kernel)
 Group (POSIX)
 
-File 1,1,<applications\application.c><application.c>
 File 1,1,<applications\startup.c><startup.c>
-File 2,1,<..\..\components\libc\compilers\armlibc\syscalls.c><syscalls.c>
+File 1,1,<applications\application.c><application.c>
 File 2,1,<..\..\components\libc\compilers\armlibc\syscall_mem.c><syscall_mem.c>
-File 2,1,<..\..\components\libc\compilers\common\time.c><time.c>
-File 2,1,<..\..\components\libc\compilers\common\stdlib.c><stdlib.c>
+File 2,1,<..\..\components\libc\compilers\armlibc\syscalls.c><syscalls.c>
+File 2,1,<..\..\components\libc\compilers\common\cctype.c><cctype.c>
+File 2,1,<..\..\components\libc\compilers\common\cstdio.c><cstdio.c>
+File 2,1,<..\..\components\libc\compilers\common\cstdlib.c><cstdlib.c>
+File 2,1,<..\..\components\libc\compilers\common\cstring.c><cstring.c>
+File 2,1,<..\..\components\libc\compilers\common\ctime.c><ctime.c>
+File 2,1,<..\..\components\libc\compilers\common\cwchar.c><cwchar.c>
+File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 3,1,<..\..\libcpu\arm\common\div0.c><div0.c>
 File 3,1,<..\..\libcpu\arm\common\showmem.c><showmem.c>
-File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 3,2,<..\..\libcpu\arm\lpc214x\context_rvds.S><context_rvds.S>
-File 3,2,<..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S>
 File 3,1,<..\..\libcpu\arm\lpc214x\cpuport.c><cpuport.c>
+File 3,2,<..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S>
 File 4,1,<drivers\board.c><board.c>
 File 4,1,<drivers\serial.c><serial.c>
 File 5,1,<..\..\components\finsh\shell.c><shell.c>
 File 5,1,<..\..\components\finsh\msh.c><msh.c>
-File 6,1,<..\..\src\ipc.c><ipc.c>
-File 6,1,<..\..\src\components.c><components.c>
+File 5,1,<..\..\components\finsh\msh_parse.c><msh_parse.c>
 File 6,1,<..\..\src\clock.c><clock.c>
-File 6,1,<..\..\src\irq.c><irq.c>
-File 6,1,<..\..\src\timer.c><timer.c>
-File 6,1,<..\..\src\kservice.c><kservice.c>
-File 6,1,<..\..\src\scheduler.c><scheduler.c>
-File 6,1,<..\..\src\object.c><object.c>
+File 6,1,<..\..\src\components.c><components.c>
 File 6,1,<..\..\src\device.c><device.c>
-File 6,1,<..\..\src\thread.c><thread.c>
 File 6,1,<..\..\src\idle.c><idle.c>
+File 6,1,<..\..\src\ipc.c><ipc.c>
+File 6,1,<..\..\src\irq.c><irq.c>
+File 6,1,<..\..\src\kservice.c><kservice.c>
 File 6,1,<..\..\src\mem.c><mem.c>
 File 6,1,<..\..\src\mempool.c><mempool.c>
+File 6,1,<..\..\src\object.c><object.c>
+File 6,1,<..\..\src\scheduler.c><scheduler.c>
+File 6,1,<..\..\src\thread.c><thread.c>
+File 6,1,<..\..\src\timer.c><timer.c>
 
 
 
@@ -100,9 +105,9 @@ Options 1,0,0  // Target 'rtthread-lpc2148'
  RV_STAVEC ()
  ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
- ADSCDEFN (__RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND)
+ ADSCDEFN (RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND)
  ADSCUDEF ()
- ADSCINCD (..\..\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common;..\..\components\libc\posix\ipc;drivers;.;applications;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\libcpu\arm\lpc214x;..\..\libcpu\arm\common;..\..\components\finsh)
+ ADSCINCD (..\..\components\libc\compilers\common\extension;..\..\include;..\..\components\libc\posix\ipc;drivers;..\..\components\libc\compilers\common\include;.;applications;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\libcpu\arm\lpc214x;..\..\libcpu\arm\common;..\..\components\finsh)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()

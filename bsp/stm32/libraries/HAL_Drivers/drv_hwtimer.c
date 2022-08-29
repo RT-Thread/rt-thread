@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,9 +9,11 @@
  * 2020-06-16     thread-liu   Porting for stm32mp1
  * 2020-08-25     linyongkang  Fix the timer clock frequency doubling problem
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-11-18     leizhixiong  add STM32H7 series support
  */
 
-#include <board.h>
+#include <rtdevice.h>
+
 #ifdef BSP_USING_TIM
 #include "drv_config.h"
 
@@ -215,8 +217,10 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         if (tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
+#else
+#error "This driver has not supported this series yet!"
 #endif
         {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
@@ -345,7 +349,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         if (tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
 #endif
         {

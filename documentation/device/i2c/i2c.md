@@ -2,9 +2,9 @@
 
 ## Introduction of I2C
 
-The I2C (Inter Integrated Circuit) bus is a half-duplex, bidirectional two-wire synchronous serial bus developed by PHILIPS. The I2C bus has only two signal lines, one is the bidirectional data line SDA (serial data), and the other is the bidirectional clock line SCL (serial clock). The SPI bus has two lines for receiving data and transmitting data between the master and slave devices, while the I2C bus uses only one line for data transmission and reception.
+The I2C (Inter Integrated Circuit) bus is a half-duplex, bidirectional two-wire synchronous serial bus developed by Philips. The I2C bus has only two signal lines, one is the bidirectional data line SDA (serial data), and the other is the bidirectional clock line SCL (serial clock). Compared to the SPI bus, which has two lines for receiving data and transmitting data between the master and slave devices, the I2C bus uses only one line for data transmission and reception.
 
-Like SPI, I2C works in a master-slave manner. Unlike SPI-master-multi-slave architecture, it allows multiple master devices to exist at the same time. Each device connected to the bus has a unique address, and the master device initiates data transfer, and generates a clock signal. The slave device is addressed by the master device, and only one master device is allowed at a time. As shown below:
+Like SPI, I2C works in a master-slave manner. Unlike SPI-master-multi-slave architecture, it allows multiple master devices to exist at the same time. Each device connected to the bus has a unique address, and the master device initiates data transfer, and generates a clock signal. The slave device is addressed by the master device, and only one master device is allowed to communicate at a time. As shown below:
 
 ![I2C Bus master-slave device connection mode](figures/i2c1.png)
 
@@ -12,7 +12,7 @@ The main data transmission format of the I2C bus is shown in the following figur
 
 ![I2C Bus Data Transmission Format](figures/i2c2.png)
 
-When the bus is idle, both SDA and SCL are in a high state. When the host wants to communicate with a slave, it will send a start condition first, then send the slave address and read and write control bits, and then transfer the data (host send or receive data). The host will send a stop condition when the data transfer ends. Each byte transmitted is 8 bits, with the high bit first and the low bit last. The different terms in the data transmission process are as follows:
+When the bus is idle, both SDA and SCL are in a high state. When the host wants to communicate with a slave, it will send a start condition first, then send the slave address and read and write control bits, and then transfer the data (the host can send or receive data). The host will send a stop condition when the data transfer ends. Each byte transmitted is 8 bits, with the high bit first and the low bit last. The different terms in the data transmission process are as follows:
 
 * **Starting Condition：** When SCL is high, the host pulls SDA low, indicating that data transfer is about to begin.
 

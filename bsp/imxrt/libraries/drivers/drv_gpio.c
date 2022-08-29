@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-4-30     misonyo     the first version.
+ * 2022-6-22     solar       Implement api docking of rt_pin_get.
  */
 
 #include <rtthread.h>
@@ -20,12 +21,19 @@
 #define LOG_TAG             "drv.gpio"
 #include <drv_log.h>
 
+#define IMX_PIN_NUM(port, no) (((((port) & 0x5u) << 5) | ((no) & 0x1Fu)))
+
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
 #define __IMXRT_HDR_DEFAULT                      {-1, 0, RT_NULL, RT_NULL}
-#define PIN_INVALID_CHECK(PORT_INDEX,PIN_NUM)    (PORT_INDEX > 4) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+
+#ifdef SOC_IMXRT1170_SERIES
+#define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 7) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+#else
+#define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 4) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+#endif
 
 #if defined(SOC_IMXRT1015_SERIES)
 #define MUX_BASE         0x401f8024
@@ -86,7 +94,7 @@ const struct pin_mask mask_tab[7] =
 
 };
 
-const rt_int8_t reg_offset[] =
+const rt_int32_t reg_offset[] =
 {
 #if defined(SOC_IMXRT1015_SERIES)
     38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 64, 65, 66, 67, 68, 69,
@@ -405,7 +413,7 @@ void GPIO1_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(0, 15, GPIO1);
+    imxrt_isr(0, 16, GPIO1);
 
     rt_interrupt_leave();
 }
@@ -424,7 +432,7 @@ void GPIO2_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(32, 15, GPIO2);
+    imxrt_isr(32, 16, GPIO2);
 
     rt_interrupt_leave();
 }
@@ -443,7 +451,7 @@ void GPIO3_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(64, 15, GPIO3);
+    imxrt_isr(64, 16, GPIO3);
 
     rt_interrupt_leave();
 }
@@ -462,7 +470,7 @@ void GPIO4_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(96, 15, GPIO4);
+    imxrt_isr(96, 16, GPIO4);
 
     rt_interrupt_leave();
 }
@@ -481,7 +489,7 @@ void GPIO5_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(128, 15, GPIO5);
+    imxrt_isr(128, 16, GPIO5);
 
     rt_interrupt_leave();
 }
@@ -498,7 +506,7 @@ void GPIO6_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(160, 15, GPIO6);
+    imxrt_isr(160, 16, GPIO6);
 
     rt_interrupt_leave();
 }
@@ -507,7 +515,7 @@ void GPIO13_Combined_0_31_IRQHandler(void)
     rt_interrupt_enter();
 
     imxrt_isr(192, 0, GPIO13);
-
+    imxrt_isr(192, 16, GPIO13);
     rt_interrupt_leave();
 }
 #endif
@@ -758,6 +766,45 @@ static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt
 
     return RT_EOK;
 }
+
+/* Example of use: Px.0 ~ Px.31, x:1,2,3,4,5 */
+static rt_base_t imxrt_pin_get(const char *name)
+{
+    rt_base_t pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len;
+
+    name_len = rt_strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
+    {
+        return -RT_EINVAL;
+    }
+    if ((name[0] != 'P') || (name[2] != '.'))
+    {
+        return -RT_EINVAL;
+    }
+
+    if ((name[1] >= '1') && (name[1] <= '5'))
+    {
+        hw_port_num = (int)(name[1] - '1');
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = 3; i < name_len; i++)
+    {
+        hw_pin_num *= 10;
+        hw_pin_num += name[i] - '0';
+    }
+
+    pin = IMX_PIN_NUM(hw_port_num, hw_pin_num);
+
+    return pin;
+}
+
 const static struct rt_pin_ops imxrt_pin_ops =
 {
     imxrt_pin_mode,
@@ -766,7 +813,7 @@ const static struct rt_pin_ops imxrt_pin_ops =
     imxrt_pin_attach_irq,
     imxrt_pin_detach_irq,
     imxrt_pin_irq_enable,
-    RT_NULL,
+    imxrt_pin_get,
 };
 
 int rt_hw_pin_init(void)

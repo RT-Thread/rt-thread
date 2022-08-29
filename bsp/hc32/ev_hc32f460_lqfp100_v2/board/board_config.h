@@ -7,6 +7,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2022-06-16     lianghongquan     use macro definition config adc pin.
+ * 2022-06-28     lianghongquan     add PWM_TMRA pin define.
  */
 
 
@@ -61,8 +63,38 @@
     #define CAN1_RX_PIN                      (GPIO_PIN_06)
     #define CAN1_RX_PIN_FUNC                 (GPIO_FUNC_51)
 
+    #define CAN1_STB_FUNC_ENABLE
     #define CAN_STB_PORT                     (GPIO_PORT_D)
     #define CAN_STB_PIN                      (GPIO_PIN_15)
+#endif
+
+/***********  ADC configure *********/
+#if defined(BSP_USING_ADC1)
+    #define ADC1_CH10_PORT                     (GPIO_PORT_C)
+    #define ADC1_CH10_PIN                      (GPIO_PIN_00)
+
+    #define ADC1_CH12_PORT                     (GPIO_PORT_C)
+    #define ADC1_CH12_PIN                      (GPIO_PIN_02)
+
+    #define ADC1_CH13_PORT                     (GPIO_PORT_C)
+    #define ADC1_CH13_PIN                      (GPIO_PIN_03)
+#endif
+
+#if defined(BSP_USING_ADC2)
+    //ADC2 has 7 channels CH0-CH7. ADC12_IN4-ADC12_IN11 means ADC2 CH0-CH7
+    #define ADC2_CH7_PORT                     (GPIO_PORT_C)
+    #define ADC2_CH7_PIN                      (GPIO_PIN_01)
+#endif
+
+/***********  PWM_TMRA configure *********/
+#if defined(BSP_USING_PWM_TMRA_4)
+    #define PWM_TMRA_4_CH7_PORT             (GPIO_PORT_H)
+    #define PWM_TMRA_4_CH7_PIN              (GPIO_PIN_02)
+    #define PWM_TMRA_4_CH7_PIN_FUNC         (GPIO_FUNC_4)
+
+    #define PWM_TMRA_4_CH8_PORT             (GPIO_PORT_C)
+    #define PWM_TMRA_4_CH8_PIN              (GPIO_PIN_13)
+    #define PWM_TMRA_4_CH8_PIN_FUNC         (GPIO_FUNC_4)
 #endif
 
 #endif

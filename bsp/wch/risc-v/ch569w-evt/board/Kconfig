@@ -1,0 +1,84 @@
+menu "Hardware Drivers Config"
+
+config SOC_CH569W
+    bool
+    select SOC_FAMILY_CH56X
+    select SOC_SERIES_CH569
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+config BSP_USING_UART
+    bool "using on-chip uart"
+    select RT_USING_SERIAL
+    default y
+
+    if BSP_USING_UART
+        config BSP_USING_UART0
+            bool "using UART0"
+            default n
+            if BSP_USING_UART0
+                config BSP_USING_UART0_PIN_ALT
+                    bool "UART0 PIN_ALTERNATE (PA5/PA6)"
+                    default n
+            endif
+
+        config BSP_USING_UART1
+            bool "using UART1"
+            default y
+
+        config BSP_USING_UART2
+            bool "using UART2"
+            default n
+
+        config BSP_USING_UART3
+            bool "using UART3"
+            default n
+    endif
+
+config BSP_USING_TIMER
+    bool "using on-chip timer"
+    select RT_USING_HWTIMER
+    default n
+
+    if BSP_USING_TIMER
+        config BSP_USING_TMR0
+            bool "using TMR0"
+            default n
+
+        config BSP_USING_TMR1
+            bool "using TMR1"
+            default n
+
+        config BSP_USING_TMR2
+            bool "using TMR2"
+            default n
+    endif
+
+config BSP_USING_SPI
+    bool "using on-chip spi"
+    select RT_USING_SPI
+    default n
+
+    if BSP_USING_SPI
+        config BSP_USING_SPI0
+            bool "using SPI0"
+            default n
+
+        config BSP_USING_SPI1
+            bool "using SPI1"
+            default n
+    endif
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

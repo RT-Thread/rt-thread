@@ -204,6 +204,4 @@ def IARVersion():
         stdout = str(stdout, 'utf8') # Patch for Python 3
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
     iar_version = re.search('[\d\.]+', stdout).group(0)
-    if GetOption('verbose'):
-        print("IAR version: %s" % iar_version)
     return iar_version

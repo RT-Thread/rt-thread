@@ -2,17 +2,17 @@
 
 ## Introduction
 
-Sensor is an important part of the Internet of Things, and "Sensor to the Internet of Things" is equivalent to "eyes to humans". Without eyes, human beings can not see the vast world of flowers. The same is true for the Internet of Things.
+Sensors are an important part of the Internet of Things, and sensors in an IoT system are equivalent to the eyes of humans. Without eyes, human beings can not see and interpret the world around them. The same is true for the Internet of Things.
 
-Nowadays, with the development of Internet of Things, a large number of Sensors have been developed for developers to choose, such as Accelerometer, Magnetometer, Gyroscope, Barometer/pressure, Humidometer and so on. These sensors, manufactured by the world's leading semiconductor manufacturers, have increased market selectivity and made application development more difficult. Because different sensor manufacturers and sensors need their own unique drivers to run, so when developing applications, they need to adapt to different sensors, which naturally increases the difficulty of development. In order to reduce the difficulty of application development and increase the reusability of sensor driver, we designed a Sensor device.
+Nowadays, with the development of IoT, a large number of sensors are available for developers to choose, such as Accelerometers, Magnetometers, Gyroscopes, Barometers/pressure senosrs, Hygrometers/humidity meters and so on. However, these sensors, manufactured by the world's leading semiconductor manufacturers, have increased market selectivity and made application development more difficult. Because different sensor manufacturers and sensors need their own unique drivers to run, developers need to write a device driver for each sensor, which can be difficult and time-consuming. In order to reduce the difficulty of application development and increase the reusability of sensor driver, we designed a Sensor device.
 
-The function of Sensor device is to provide a unified operation interface for the upper layer and improve the reusability of the upper code.
+The function of the Sensor device is to provide a unified operation interface for the upper layer and improve the reusability of the upper code.
 
-### Characteristics of Sensor Device
+### Characteristics of the Sensor Device
 
-- **Interface**: Standard device interface (open/close/read/control)
-- **Work mode**: support polling, interruption, FIFO three modes
-- **Power mode**: support four modes: power failure, common, low power consumption and high power consumption
+- **Interface:** Standard device interface (open/close/read/control)
+- **Work mode:** Supports polling, interrupts, three FIFO (First In, First Out) modes
+- **Power mode:** support four modes: power failure, common, low power consumption and high power consumption
 
 ## Access Sensor Device
 
@@ -53,7 +53,7 @@ sensor_dev = rt_device_find(SENSOR_DEVICE_NAME);
 
 ### Open Sensor Device
 
-Through the device handle, the application can open and close the device. When the device is opened, it will check whether the device has been initialized or not. If it is not initialized, it will call the initialization interface initialization device by default. Open the device through the following functions:
+Through the device handle, the application can open and close the device. When the device is opened, it will check whether the device has been initialized or not. If it is not initialized, it will call the initialization interface by default. Open the device through the following functions:
 
 ```c
 rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflags);
@@ -79,7 +79,7 @@ The oflags parameter supports the following parameters：
 
 There are three modes of receiving and sending sensor data: interrupt mode, polling mode and FIFO mode. When using these three modes, **only one of them can be chosen**. If the sensor's open parameter oflags does not specify the use of interrupt mode or FIFO mode, polling mode is used by default.
 
-FIFO ,means first Input first output. FIFO transmission mode needs sensor hardware support, data is stored in hardware FIFO, read multiple data at a time, which saves CPU resources to do other operations. Very useful in low power mode
+FIFO transmission mode needs sensor hardware support, data is stored in hardware FIFO, which reads and stores multiple data simultaneously, which allows the CPU to do other operations while gathering data. This feature is very useful in low power mode.
 
 If the sensor uses FIFO receiving mode, the value of oflags is RT_DEVICE_FLAG_FIFO_RX.
 
@@ -109,7 +109,7 @@ int main(void)
 
 ### Control Sensor Device
 
-By command control word, the application program can configure the sensor device through the following functions:
+By command control words, the application program can configure the sensor device through the following functions:
 
 ```c
 rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
@@ -167,7 +167,7 @@ rt_device_control(dev, RT_SEN_CTRL_SET_RANGE, (void *)1000);
 
 #### Setting the Output Rate of Sensor Data
 
-Set the output rate to 100HZ and call the following interface.
+Set the output rate to 100Hz and call the following interface.
 
 ```c
 rt_device_control(dev, RT_SEN_CTRL_SET_ODR, (void *)100);
@@ -222,7 +222,7 @@ rt_err_t rt_device_set_rx_indicate(rt_device_t dev, rt_err_t (*rx_ind)(rt_device
 | **Return**    | ——                                            |
 | RT_EOK        | Successful setup                              |
 
-The callback function of the function is provided by the user. If the sensor is opened in interrupt mode, when the sensor receives data and interrupts, the callback function will be called, and the data size of the buffer will be placed in the `size` parameter, and the sensor device handle will be placed in the `dev` parameter for users to obtain.
+The callback function of the function is provided by the user. If the sensor is opened in interrupt mode, as the sensor receives data the callback function will be called. The data size of the buffer will be placed in the `size` parameter, and the sensor device handle will be placed in the `dev` parameter for users to obtain.
 
 Generally, receiving callback function can send a semaphore or event to inform sensor data processing thread that data arrives. The use example is as follows:
 

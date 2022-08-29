@@ -27,7 +27,7 @@
 #define __APM32F10X_WWDT_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -53,7 +53,7 @@ typedef enum
     WWDT_TIME_BASE_2 = 0x00000080,
     WWDT_TIME_BASE_4 = 0x00000100,
     WWDT_TIME_BASE_8 = 0x00000180
-} WWDT_TIME_BASE_T;
+}WWDT_TIME_BASE_T;
 
 /**@} end of group WWDT_Enumerations*/
 

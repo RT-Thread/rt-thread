@@ -43,7 +43,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_RISCV
 
 /* RT-Thread Components */
@@ -145,9 +145,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -158,6 +155,9 @@
 
 
 /* peripheral libraries and drivers */
+
+
+/* kendryte-sdk: Kendryte SDK */
 
 
 /* AI packages */
@@ -173,7 +173,7 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define SOC_RISCV_FAMILY_CH32
-#define SOC_RISCV_SERIES_CH32V103
+#define SOC_RISCV_SERIES_CH32V1
 
 /* Hardware Drivers Config */
 

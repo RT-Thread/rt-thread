@@ -27,7 +27,7 @@
 #define __APM32F10X_DMA_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -276,8 +276,8 @@ typedef struct
 
 /** Reset and configuration */
 void DMA_Reset(DMA_Channel_T *channel);
-void DMA_Config(DMA_Channel_T *channel, DMA_Config_T *dmaConfig);
-void DMA_ConfigStructInit(DMA_Config_T *dmaConfig);
+void DMA_Config(DMA_Channel_T* channel, DMA_Config_T* dmaConfig);
+void DMA_ConfigStructInit( DMA_Config_T* dmaConfig);
 void DMA_Enable(DMA_Channel_T *channel);
 void DMA_Disable(DMA_Channel_T *channel);
 

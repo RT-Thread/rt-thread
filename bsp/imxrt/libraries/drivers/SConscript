@@ -32,13 +32,13 @@ if GetDepend('BSP_USING_PWM'):
 
 if GetDepend('BSP_USING_ADC'):
     src += ['drv_adc.c']
-    
+
 if GetDepend('BSP_USING_LPADC'):
     src += ['drv_lpadc.c']
-    
+
 if GetDepend('BSP_USING_CAN'):
     src += ['drv_can.c']
-    
+
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
 
@@ -47,17 +47,21 @@ if GetDepend('BSP_USING_LCD'):
 
 if GetDepend('BSP_USING_ETH'):
     src += ['drv_eth.c']
-    
+
 if GetDepend('BSP_USING_PHY'):
     src += ['drv_mdio.c']
+    if GetDepend('PHY_USING_KSZ8081'):
+        src += ['drv_ksz8081.c']
+    if GetDepend('PHY_USING_RTL8211F'):
+        src += ['drv_rtl8211f.c']
 
 if GetDepend('BSP_USING_AUDIO'):
     src += ['drv_sai.c']
     src += ['bsp_wm8960.c']
-  
+
 if GetDepend('BSP_USING_SDIO'):
-    src += ['drv_sdio.c'] 
-    
+    src += ['drv_sdio.c']
+
 if GetDepend('BSP_USING_USB_DEVICE'):
     src += ['drv_usbd.c']
     src += Glob('usb/device/*.c')
@@ -65,7 +69,7 @@ if GetDepend('BSP_USING_USB_DEVICE'):
 if GetDepend('BSP_USING_USB_DEVICE') or GetDepend('RT_USING_USB_HOST'):
     src += Glob('usb/phy/*.c')
     CPPDEFINES += ['ENDIANNESS','USE_RTOS']
-    
+
 if GetDepend('RT_USING_USB_HOST'):
     src += ['drv_usbh.c']
     src += Glob('usb/host/*.c')

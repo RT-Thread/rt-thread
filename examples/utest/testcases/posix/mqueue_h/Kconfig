@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_MQUEUE_H
+    bool "<mqueue.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_MQUEUE_H
+
+    # functions, TODO
+
+endif

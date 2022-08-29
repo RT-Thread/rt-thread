@@ -1,0 +1,23 @@
+menuconfig RTT_POSIX_TESTCASE_SYS_STAT_H
+    bool "<sys/shm.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SYS_STAT_H
+
+    config STAT_H_CHMOD
+        bool "<sys/stat.h> -> chmod"
+        default n
+
+    config STAT_H_FCHMOD
+        bool "<sys/stat.h> -> fchmod"
+        default n
+
+    config STAT_H_FSTAT
+        bool "<sys/stat.h> -> fstat"
+        default n
+
+    config STAT_H_LSTAT
+        bool "<sys/stat.h> -> lstat"
+        default n
+
+endif

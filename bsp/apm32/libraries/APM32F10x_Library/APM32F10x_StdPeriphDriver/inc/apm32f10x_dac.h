@@ -27,7 +27,7 @@
 #define __APM32F10X_DAC_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -51,7 +51,7 @@ typedef enum
 {
     DAC_CHANNEL_1 = 0x00000000,
     DAC_CHANNEL_2 = 0x00000010
-} DAC_CHANNEL_T;
+}DAC_CHANNEL_T;
 
 /**
  * @brief    DAC trigger selection
@@ -67,7 +67,7 @@ typedef enum
     DAC_TRIGGER_TMR4_TRGO  = 0x0000002C,
     DAC_TRIGGER_EINT9      = 0x00000034,
     DAC_TRIGGER_SOFT       = 0x0000003C
-} DAC_TRIGGER_T;
+}DAC_TRIGGER_T;
 
 /**
  * @brief    DAC wave generation
@@ -77,7 +77,7 @@ typedef enum
     DAC_WAVE_GENERATION_NONE     = 0x00000000,
     DAC_WAVE_GENERATION_NOISE    = 0x00000040,
     DAC_WAVE_GENERATION_TRIANGLE = 0x00000080
-} DAC_WAVE_GENERATION_T;
+}DAC_WAVE_GENERATION_T;
 
 /**
  * @brief    DAC channelx mask/amplitude selector
@@ -109,7 +109,7 @@ typedef enum
     DAC_TRIANGLE_AMPLITUDE_1023 = 0x00000900, //!< Triangle amplitude equal to 1023
     DAC_TRIANGLE_AMPLITUDE_2047 = 0x00000A00, //!< Triangle amplitude equal to 2047
     DAC_TRIANGLE_AMPLITUDE_4095 = 0x00000B00  //!< Triangle amplitude equal to 4095
-} DAC_MASK_AMPLITUDE_SEL_T;
+}DAC_MASK_AMPLITUDE_SEL_T;
 
 /**
  * @brief    DAC output buffer
@@ -118,7 +118,7 @@ typedef enum
 {
     DAC_OUTPUT_BUFFER_ENBALE  = 0x00000000,
     DAC_OUTPUT_BUFFER_DISABLE = 0x00000002
-} DAC_OUTPUT_BUFFER_T;
+}DAC_OUTPUT_BUFFER_T;
 
 /**
  * @brief    DAC data align
@@ -128,7 +128,7 @@ typedef enum
     DAC_ALIGN_12BIT_R = 0x00000000,
     DAC_ALIGN_12BIT_L = 0x00000004,
     DAC_ALIGN_8BIT_R  = 0x00000008
-} DAC_ALIGN_T;
+}DAC_ALIGN_T;
 
 /**@} end of group DAC_Enumerations*/
 
@@ -146,7 +146,7 @@ typedef struct
     DAC_OUTPUT_BUFFER_T         outputBuffer;
     DAC_WAVE_GENERATION_T       waveGeneration;
     DAC_MASK_AMPLITUDE_SEL_T    maskAmplitudeSelect;
-} DAC_Config_T;
+}DAC_Config_T;
 
 /**@} end of group DAC_Structure*/
 
@@ -157,8 +157,8 @@ typedef struct
 
 /** DAC Reset and Configuration */
 void DAC_Reset(void);
-void DAC_Config(uint32_t channel, DAC_Config_T *dacConfig);
-void DAC_ConfigStructInit(DAC_Config_T *dacConfig);
+void DAC_Config(uint32_t channel, DAC_Config_T* dacConfig);
+void DAC_ConfigStructInit(DAC_Config_T* dacConfig);
 void DAC_Enable(DAC_CHANNEL_T channel);
 void DAC_Disable(DAC_CHANNEL_T channel);
 

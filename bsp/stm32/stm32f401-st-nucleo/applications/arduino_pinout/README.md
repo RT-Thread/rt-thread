@@ -32,10 +32,10 @@ Hardware Drivers Config --->
 | 7 (D7)          | PA8           | 是     |                                                              |
 | 8 (D8)          | PA9           | 是     |                                                              |
 | 9 (D9)          | PC7           | 是     | PWM（定时器3发生）                                           |
-| 10 (D10)        | PB6           | 是     | SPI1-CS，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
-| 11 (D11)        | PA7           | 是     | SPI1-MOSI，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
-| 12 (D12)        | PA6           | 是     | SPI1-MISO，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
-| 13 (D13)        | PA5           | 是     | SPI1-SCK，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
+| 10 (D10)        | PB6           | 是     | PWM（定时器4发生） |
+| 11 (D11)        | PA7           | 是     | PWM（定时器1发生） |
+| 12 (D12)        | PA6           | 是     |  |
+| 13 (D13)        | PA5           | 是     | |
 | 14 (D14)        | PB9           | 是     | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 | 15 (D15)        | PB8           | 是     | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
 | 16 (D16)        | PC13          | 是     | Nucleo板载用户按键（左侧蓝色）                               |
@@ -53,6 +53,7 @@ Hardware Drivers Config --->
 > 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
 > 2. USART2是Nucleo板的默认串口，理论应对接到了Arduino引脚编号的D0和D1，但是其实际用于串口通信，因此不允许当做普通IO来使用和操作。如果需要将D0、D1与STM32 USART2的引脚相连，需要手动焊接锡桥SB62、SB63。
 > 3. Nucleo板的Arduino接口中AVDD（即AREF）默认是与VDD相连的，如果需要扩展板提供外部参考电压，需要将SB57锡桥挑开。
+> 4. D11引脚是PWM反相位引脚(也就是常说的互补输出引脚CHxN)。但是这里不用考虑到占空比互补问题（CHx-20%，CHxN-80%），直接正常使用即可。
 
 > 参考资料
 >
@@ -61,8 +62,3 @@ Hardware Drivers Config --->
 ## 3 I2C总线
 
 STM32F401 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
-
-## 4 SPI总线
-
-STM32F401 Nucleo板的SPI总线是板上丝印的 `SCK/D13`、`MISO/D12`、`MOSI/D11`引脚，这3个引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号。
-

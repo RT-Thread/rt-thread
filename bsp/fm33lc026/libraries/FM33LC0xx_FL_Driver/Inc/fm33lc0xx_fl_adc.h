@@ -6,15 +6,15 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 /* Includes -------------------------------------------------------------------------------------------*/
-#include "fm33lc0xx_fl.h"
+#include "fm33lc0xx_fl_def.h"
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
   */
@@ -271,6 +271,7 @@ typedef struct
 #define    FL_ADC_INTERNAL_VREF1P2                                (0x1U << 17U)
 #define    FL_ADC_INTERNAL_OPA1                                   (0x1U << 18U)
 #define    FL_ADC_INTERNAL_OPA2                                   (0x1U << 19U)
+#define    FL_ADC_ALL_CHANNEL                                     (0xfffffU << 0U)
 
 
 
@@ -1488,6 +1489,7 @@ __STATIC_INLINE uint32_t FL_ADC_GetSamplingInterval(ADC_Type *ADCx)
   *           @arg @ref FL_ADC_INTERNAL_VREF1P2
   *           @arg @ref FL_ADC_INTERNAL_OPA1
   *           @arg @ref FL_ADC_INTERNAL_OPA2
+  *           @arg @ref FL_ADC_ALL_CHANNEL
   * @retval   None
   */
 __STATIC_INLINE void FL_ADC_EnableSequencerChannel(ADC_Type *ADCx, uint32_t channel)
@@ -1516,6 +1518,7 @@ __STATIC_INLINE void FL_ADC_EnableSequencerChannel(ADC_Type *ADCx, uint32_t chan
   *           @arg @ref FL_ADC_INTERNAL_VREF1P2
   *           @arg @ref FL_ADC_INTERNAL_OPA1
   *           @arg @ref FL_ADC_INTERNAL_OPA2
+  *           @arg @ref FL_ADC_ALL_CHANNEL
   * @retval   None
   */
 __STATIC_INLINE void FL_ADC_DisableSequencerChannel(ADC_Type *ADCx, uint32_t channel)
@@ -1616,14 +1619,14 @@ __STATIC_INLINE void FL_ADC_WriteAnalogWDGHighThreshold(ADC_Type *ADCx, uint32_t
   */
 __STATIC_INLINE uint32_t FL_ADC_ReadAnalogWDGHighThreshold(ADC_Type *ADCx)
 {
-    return (uint32_t)(READ_BIT(ADCx->HLTR, 0xfffU) >> 16U);
+    return (uint32_t)(READ_BIT(ADCx->HLTR, (0xfffU << 16U)) >> 16U);
 }
 
 /**
   * @}
   */
 
-/** @defgroup ADC_FL_EF_Init Initialization and de-initialization functions
+/** @defgroup ADC_FL_EF_Init ADC Initialization and de-initialization Functions
   * @{
   */
 FL_ErrorStatus FL_ADC_CommonDeInit(void);
@@ -1652,4 +1655,4 @@ FL_ErrorStatus FL_ADC_CommonInit(FL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 #endif /* __FM33LC0XX_FL_ADC_H*/
 
 /*************************Py_Code_Generator Version: 0.1-0.11-0.2 @ 2020-09-23*************************/
-/*************************(C) COPYRIGHT Fudan Microelectronics **** END OF FILE*************************/
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

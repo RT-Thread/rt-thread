@@ -193,8 +193,6 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define SOC_FAMILY_RENESAS
-#define SOC_SERIES_R7FA6M4
 
 /* Hardware Drivers Config */
 
@@ -204,14 +202,13 @@
 
 /* On-chip Peripheral Drivers */
 
+#define SOC_FAMILY_RENESAS
+#define SOC_SERIES_R7FA6M4
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART7
 #define BSP_UART7_RX_BUFSIZE 256
 #define BSP_UART7_TX_BUFSIZE 0
-#define BSP_USING_UART9
-#define BSP_UART9_RX_BUFSIZE 256
-#define BSP_UART9_TX_BUFSIZE 0
 
 /* Board extended module Drivers */
 

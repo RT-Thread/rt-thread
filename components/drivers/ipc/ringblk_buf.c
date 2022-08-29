@@ -126,7 +126,7 @@ static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
     return blk;
 }
 
-rt_inline void list_append(rt_rbb_t rbb, rt_slist_t* n)
+rt_inline void list_append(rt_rbb_t rbb, rt_slist_t *n)
 {
     /* append the node to the tail */
     rbb->tail->next = n;
@@ -135,15 +135,15 @@ rt_inline void list_append(rt_rbb_t rbb, rt_slist_t* n)
     rbb->tail = n;
 }
 
-rt_inline rt_slist_t *list_remove(rt_rbb_t rbb, rt_slist_t* n)
+rt_inline rt_slist_t *list_remove(rt_rbb_t rbb, rt_slist_t *n)
 {
-    rt_slist_t* l = &rbb->blk_list;
-    struct rt_slist_node* node = l;
+    rt_slist_t *l = &rbb->blk_list;
+    struct rt_slist_node *node = l;
 
     /* remove slist head */
     while (node->next && node->next != n) node = node->next;
     /* remove node */
-    if (node->next != (rt_slist_t*)0)
+    if (node->next != (rt_slist_t *)0)
     {
         node->next = node->next->next;
         n->next = RT_NULL;
@@ -441,8 +441,8 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
              * 3. the data_total_size will out of range
              */
             if (block->status != RT_RBB_BLK_PUT ||
-                last_block->buf > block->buf ||
-                data_total_size + block->size > queue_data_len)
+                    last_block->buf > block->buf ||
+                    data_total_size + block->size > queue_data_len)
             {
                 break;
             }

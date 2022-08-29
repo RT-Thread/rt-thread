@@ -231,8 +231,6 @@ static void usart_isr(struct rt_serial_device *serial)
     }
 }
 
-
-
 #if defined(BSP_USING_UART1)
 void USART1_IRQHandler(void)
 {
@@ -244,7 +242,6 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 
 #endif /* BSP_USING_UART1 */
 

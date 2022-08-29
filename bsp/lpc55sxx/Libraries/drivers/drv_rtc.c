@@ -43,18 +43,18 @@ static time_t get_timestamp(void)
 
 static int set_timestamp(time_t timestamp)
 {
-    struct tm *p_tm;
+    struct tm now;
     rtc_datetime_t rtcDate;
 
-    p_tm = gmtime(&timestamp);
+    gmtime_r(&timestamp, &now);
 
-    rtcDate.second = p_tm->tm_sec ;
-    rtcDate.minute = p_tm->tm_min ;
-    rtcDate.hour   = p_tm->tm_hour;
+    rtcDate.second = now.tm_sec ;
+    rtcDate.minute = now.tm_min ;
+    rtcDate.hour   = now.tm_hour;
 
-    rtcDate.day    = p_tm->tm_mday;
-    rtcDate.month  = p_tm->tm_mon  + 1;
-    rtcDate.year   = p_tm->tm_year + 1900;
+    rtcDate.day    = now.tm_mday;
+    rtcDate.month  = now.tm_mon  + 1;
+    rtcDate.year   = now.tm_year + 1900;
 
     /* RTC time counter has to be stopped before setting the date & time in the TSR register */
     RTC_StopTimer(RTC);

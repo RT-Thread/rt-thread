@@ -19,6 +19,10 @@
 /* Inter-Thread communication */
 
 #define RT_USING_SEMAPHORE
+#define RT_USING_MUTEX
+#define RT_USING_EVENT
+#define RT_USING_MAILBOX
+#define RT_USING_MESSAGEQUEUE
 
 /* Memory Management */
 
@@ -29,44 +33,56 @@
 
 /* Kernel Device Object */
 
-#define RT_VER_NUM 0x40004
-
+#define RT_USING_DEVICE
+#define RT_USING_CONSOLE
+#define RT_CONSOLEBUF_SIZE 256
+#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_VER_NUM 0x40101
 
 /* RT-Thread Components */
 
-/* C++ features */
-
-
-/* Command shell */
-
-
-/* Device virtual file system */
-
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
+#define RT_USING_MSH
+#define RT_USING_FINSH
+#define FINSH_USING_MSH
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
+#define FINSH_USING_SYMTAB
+#define FINSH_CMD_SIZE 80
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
+#define FINSH_ARG_MAX 10
 
 /* Device Drivers */
 
+#define RT_USING_DEVICE_IPC
+#define RT_USING_PIN
+#define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
+
+#define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
 
 
 /* Network */
-
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
@@ -121,9 +137,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -132,8 +145,15 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_FREERTOS_WRAPPER
+#define PKG_USING_FREERTOS_WRAPPER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
+
+#define PKG_USING_ESP_IDF
+#define PKG_USING_ESP_IDF_LATEST_VERSION
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -148,18 +168,23 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define RT_USING_DEVICE
-#define RT_USING_PIN
+#define SOC_ESPRESSIF
+#define SOC_ESP32_C3
 
-#define RT_USING_SEMAPHORE
-#define RT_USING_MUTEX
-#define RT_USING_EVENT
-#define RT_USING_MAILBOX
-#define RT_USING_MESSAGEQUEUE
+/* Hardware Drivers Config */
 
-#define RT_USING_COMPONENTS_INIT
-#define RT_DEBUG_INIT 1
+#define BSP_BOARD_LUATOS_ESP32C3
 
-#define RT_USING_SERIAL
-#define BSP_USING_UART1
+/* Onboard Peripheral Drivers */
+
+#define RT_BSP_LED_PIN 12
+#define RT_BSP_UART_PORT 0
+#define RT_BSP_UART_TX_PIN 21
+#define RT_BSP_UART_RX_PIN 20
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+#define BSP_USING_UART
+
 #endif

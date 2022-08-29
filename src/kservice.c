@@ -21,6 +21,7 @@
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
  * 2022-06-04     Meco Man     remove strnlen
+ * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  */
 
 #include <rtthread.h>
@@ -50,8 +51,42 @@ RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
     RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file."));
+        "Please consider implementing rt_hw_us_delay() in another file.\n"));
 }
+
+static const char* rt_errno_strs[] =
+{
+    "OK",
+    "ERROR",
+    "ETIMOUT",
+    "ERSFULL",
+    "ERSEPTY",
+    "ENOMEM",
+    "ENOSYS",
+    "EBUSY",
+    "EIO",
+    "EINTRPT",
+    "EINVAL",
+    "EUNKNOW"
+};
+
+/**
+ * This function return a pointer to a string that contains the
+ * message of error.
+ *
+ * @param error the errorno code
+ * @return a point to error message string
+ */
+const char *rt_strerror(rt_err_t error)
+{
+    if (error < 0)
+        error = -error;
+
+    return (error > RT_EINVAL + 1) ?
+           rt_errno_strs[RT_EINVAL + 1] :
+           rt_errno_strs[error];
+}
+RTM_EXPORT(rt_strerror);
 
 /**
  * This function gets the global errno for the current thread.
@@ -148,7 +183,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 
     return s;
 #else
-#define LBLOCKSIZE      (sizeof(long))
+#define LBLOCKSIZE      (sizeof(rt_ubase_t))
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
@@ -156,8 +191,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
-    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
-                                unsigned variable.  */
+    unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
+                                unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
+
+    RT_ASSERT(LBLOCKSIZE == 2 || LBLOCKSIZE == 4 || LBLOCKSIZE == 8);
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
@@ -167,16 +204,9 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
         /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
-        if (LBLOCKSIZE == 4)
+        for (i = 0; i < LBLOCKSIZE; i++)
         {
-            buffer = (d << 8) | d;
-            buffer |= (buffer << 16);
-        }
-        else
-        {
-            buffer = 0;
-            for (i = 0; i < LBLOCKSIZE; i ++)
-                buffer = (buffer << 8) | d;
+            *(((unsigned char *)&buffer)+i) = d;
         }
 
         while (count >= LBLOCKSIZE * 4)
@@ -253,7 +283,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
     char *src_ptr = (char *)src;
     long *aligned_dst;
     long *aligned_src;
-    int len = count;
+    rt_ubase_t len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */
@@ -609,7 +639,7 @@ void rt_show_version(void)
     rt_kprintf("\n \\ | /\n");
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
-               RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__, __TIME__);
+               (rt_int32_t)RT_VERSION, (rt_int32_t)RT_SUBVERSION, (rt_int32_t)RT_REVISION, __DATE__, __TIME__);
     rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
@@ -1551,6 +1581,8 @@ RT_WEAK void rt_free(void *rmem)
 
     /* call 'rt_free' hook */
     RT_OBJECT_HOOK_CALL(rt_free_hook, (rmem));
+    /* NULL check */
+    if (rmem == RT_NULL) return;
     /* Enter critical zone */
     level = _heap_lock();
     _MEM_FREE(rmem);
@@ -1672,6 +1704,8 @@ RT_WEAK void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
+    /* NULL check */
+    if (ptr == RT_NULL) return;
     real_ptr = (void *) * (rt_ubase_t *)((rt_ubase_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }

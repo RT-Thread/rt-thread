@@ -23,6 +23,11 @@
 #define PL031_RTC_SIZE      0x00001000
 #define PL031_RTC_IRQNUM    (32 + 2)
 
+/* GPIO */
+#define PL061_GPIO_BASE     0x09030000
+#define PL061_GPIO_SIZE     0x00001000
+#define PL061_GPIO_IRQNUM   (32 + 7)
+
 /* VirtIO */
 #define VIRTIO_MMIO_BASE    0x0a000000
 #define VIRTIO_MMIO_SIZE    0x00000200

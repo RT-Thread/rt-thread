@@ -54,16 +54,16 @@ static int pipe_fops_open(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-        case O_RDONLY:
-            pipe->readers ++;
-            break;
-        case O_WRONLY:
-            pipe->writers ++;
-            break;
-        case O_RDWR:
-            pipe->readers ++;
-            pipe->writers ++;
-            break;
+    case O_RDONLY:
+        pipe->readers ++;
+        break;
+    case O_WRONLY:
+        pipe->writers ++;
+        break;
+    case O_RDWR:
+        pipe->readers ++;
+        pipe->writers ++;
+        break;
     }
     device->ref_count ++;
 
@@ -95,26 +95,26 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-        case O_RDONLY:
-            pipe->readers --;
-            break;
-        case O_WRONLY:
-            pipe->writers --;
-            break;
-        case O_RDWR:
-            pipe->readers --;
-            pipe->writers --;
-            break;
+    case O_RDONLY:
+        pipe->readers --;
+        break;
+    case O_WRONLY:
+        pipe->writers --;
+        break;
+    case O_RDWR:
+        pipe->readers --;
+        pipe->writers --;
+        break;
     }
 
     if (pipe->writers == 0)
     {
-        rt_wqueue_wakeup(&(pipe->reader_queue), (void*)(POLLIN | POLLERR | POLLHUP));
+        rt_wqueue_wakeup(&(pipe->reader_queue), (void *)(POLLIN | POLLERR | POLLHUP));
     }
 
     if (pipe->readers == 0)
     {
-        rt_wqueue_wakeup(&(pipe->writer_queue), (void*)(POLLOUT | POLLERR | POLLHUP));
+        rt_wqueue_wakeup(&(pipe->writer_queue), (void *)(POLLOUT | POLLERR | POLLHUP));
     }
 
     if (device->ref_count == 1)
@@ -162,15 +162,15 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 
     switch (cmd)
     {
-        case FIONREAD:
-            *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
-            break;
-        case FIONWRITE:
-            *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
-            break;
-        default:
-            ret = -EINVAL;
-            break;
+    case FIONREAD:
+        *((int *)args) = rt_ringbuffer_data_len(pipe->fifo);
+        break;
+    case FIONWRITE:
+        *((int *)args) = rt_ringbuffer_space_len(pipe->fifo);
+        break;
+    default:
+        ret = -EINVAL;
+        break;
     }
 
     return ret;
@@ -224,14 +224,14 @@ static int pipe_fops_read(struct dfs_fd *fd, void *buf, size_t count)
             }
 
             rt_mutex_release(&pipe->lock);
-            rt_wqueue_wakeup(&(pipe->writer_queue), (void*)POLLOUT);
+            rt_wqueue_wakeup(&(pipe->writer_queue), (void *)POLLOUT);
             rt_wqueue_wait(&(pipe->reader_queue), 0, -1);
             rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
         }
     }
 
     /* wakeup writer */
-    rt_wqueue_wakeup(&(pipe->writer_queue), (void*)POLLOUT);
+    rt_wqueue_wakeup(&(pipe->writer_queue), (void *)POLLOUT);
 
 out:
     rt_mutex_release(&pipe->lock);
@@ -270,7 +270,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     if (count == 0)
         return 0;
 
-    pbuf = (uint8_t*)buf;
+    pbuf = (uint8_t *)buf;
     rt_mutex_take(&pipe->lock, -1);
 
     while (1)
@@ -305,7 +305,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
         }
 
         rt_mutex_release(&pipe->lock);
-        rt_wqueue_wakeup(&(pipe->reader_queue), (void*)POLLIN);
+        rt_wqueue_wakeup(&(pipe->reader_queue), (void *)POLLIN);
         /* pipe full, waiting on suspended write list */
         rt_wqueue_wait(&(pipe->writer_queue), 0, -1);
         rt_mutex_take(&pipe->lock, -1);
@@ -314,7 +314,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 
     if (wakeup)
     {
-        rt_wqueue_wakeup(&(pipe->reader_queue), (void*)POLLIN);
+        rt_wqueue_wakeup(&(pipe->reader_queue), (void *)POLLIN);
     }
 
 out:
@@ -492,7 +492,7 @@ static rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt
     }
     if (count == 0) return 0;
 
-    pbuf = (uint8_t*)buffer;
+    pbuf = (uint8_t *)buffer;
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     while (read_bytes < count)
@@ -534,7 +534,7 @@ static rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buf
     }
     if (count == 0) return 0;
 
-    pbuf = (uint8_t*)buffer;
+    pbuf = (uint8_t *)buffer;
     rt_mutex_take(&pipe->lock, -1);
 
     while (write_bytes < count)
@@ -628,7 +628,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
         return RT_NULL;
     }
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
-    dev->fops = (void*)&pipe_fops;
+    dev->fops = (void *)&pipe_fops;
 #endif
 
     return pipe;

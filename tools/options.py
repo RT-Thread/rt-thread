@@ -26,8 +26,8 @@ from SCons.Script import AddOption
 import platform
 
 def AddOptions():
-    ''' ===== Add options to SCons ===== '''
-    
+    ''' ===== Add generic options to SCons ===== '''
+
     AddOption('--dist',
                       dest = 'make-dist',
                       action = 'store_true',
@@ -120,4 +120,3 @@ def AddOptions():
                     action = 'store_true',
                     default = False,
                     help = 'make menuconfig for RT-Thread BSP')
-

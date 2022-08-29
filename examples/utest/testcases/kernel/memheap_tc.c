@@ -22,19 +22,19 @@
 static void memheap_test(void)
 {
     struct rt_memheap heap1;
-    rt_ubase_t ptr_start;
+    void * ptr_start;
     void *ptr[SLICE_NUM];
     int i, cnt = 0;
 
     /* init heap */
-    ptr_start = (rt_ubase_t)rt_malloc_align(HEAP_SIZE, HEAP_ALIGN);
+    ptr_start = rt_malloc_align(HEAP_SIZE, HEAP_ALIGN);
     if (ptr_start == RT_NULL)
     {
         rt_kprintf("totle size too big,can not malloc memory!");
         return;
     }
 
-    rt_memheap_init(&heap1, HEAP_NAME, (void *)ptr_start, HEAP_SIZE);
+    rt_memheap_init(&heap1, HEAP_NAME, ptr_start, HEAP_SIZE);
 
     /* test start */
     for (i = 0; i < SLICE_NUM; i++)

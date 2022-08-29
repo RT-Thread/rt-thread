@@ -37,7 +37,7 @@ def SESProject(env) :
 
     project = ProjectInfo(env)
     # print(project)
-    # return 
+    # return
 
     project_path = os.path.abspath(env['BSP_ROOT'])
     script = env['project']
@@ -64,7 +64,7 @@ def SESProject(env) :
                 CFLAGS += ' ' + group['CFLAGS']
             else:
                 CFLAGS += group['CFLAGS']
-                
+
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:
             if LINKFLAGS:

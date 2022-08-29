@@ -18,12 +18,14 @@
 #include "drv_uart.h"
 #include "encoding.h"
 #include "stack.h"
-#include "sbi.h"
 #include "riscv.h"
 #include "stack.h"
 #include "riscv_io.h"
 #include "plic.h"
 #include "interrupt.h"
+#ifdef CONFIG_RISCV_S_MODE
+#include "sbi.h"
+#endif
 
 void primary_cpu_entry(void)
 {
@@ -62,9 +64,11 @@ void rt_hw_board_init(void)
 #endif
 }
 
-void rt_hw_cpu_reset(void)
+#ifdef CONFIG_RISCV_S_MODE
+static void cmd_shutdown(void)
 {
     sbi_shutdown();
     while(1);
 }
-MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
+MSH_CMD_EXPORT_ALIAS(cmd_shutdown, shutdown, shutdown qemu-virt64);
+#endif

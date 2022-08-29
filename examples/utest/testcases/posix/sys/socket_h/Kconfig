@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_SYS_SOCKET_H
+    bool "<sys/shm.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SYS_SOCKET_H
+
+    config SOCKET_H_SELECT
+        bool "<sys/socket.h> -> socket, accept, listen...."
+        default n
+
+endif

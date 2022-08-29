@@ -455,6 +455,104 @@ static void test_delay_until(void)
     uassert_int_equal(delta, 10);
 }
 
+static rt_thread_t tidA, tidB1, tidB2;
+static uint32_t timeslice_cntA, timeslice_cntB1, timeslice_cntB2;
+
+static void test_timeslice_threadA_entry(void *parameter)
+{
+    while (1)
+    {
+        rt_thread_delay(2);
+        timeslice_cntA++;
+        if (timeslice_cntA > 10) return;
+    }
+}
+static void test_timeslice_threadB1_entry(void *parameter)
+{
+    while (1)
+    {
+        timeslice_cntB1++;
+        if (timeslice_cntA > 10) return;
+    }
+}
+static void test_timeslice_threadB2_entry(void *parameter)
+{
+    while (1)
+    {
+        timeslice_cntB2++;
+        if (timeslice_cntA > 10) return;
+    }
+}
+
+void test_timeslice(void)
+{
+    rt_err_t ret_startup = -RT_ERROR;
+    uint32_t diff;
+
+    timeslice_cntA = 0;
+    timeslice_cntB1 = 0;
+    timeslice_cntB2 = 0;
+
+    tidA = rt_thread_create("timeslice", test_timeslice_threadA_entry, RT_NULL,
+                           2048, __current_thread->current_priority + 1, 10);
+    if (!tidA)
+    {
+        LOG_E("rt_thread_create failed!");
+        return;
+    }
+
+    rt_thread_control(tidA, RT_THREAD_CTRL_BIND_CPU, (void *)1);
+    ret_startup = rt_thread_startup(tidA);
+    if (ret_startup != RT_EOK)
+    {
+        LOG_E("rt_thread_startup failed!");
+        uassert_false(1);
+        return ;
+    }
+
+    tidB1 = rt_thread_create("timeslice", test_timeslice_threadB1_entry, RT_NULL,
+                           2048, __current_thread->current_priority + 2, 2);
+    if (!tidB1)
+    {
+        LOG_E("rt_thread_create failed!");
+        return;
+    }
+
+    rt_thread_control(tidB1, RT_THREAD_CTRL_BIND_CPU, (void *)1);
+    ret_startup = rt_thread_startup(tidB1);
+    if (ret_startup != RT_EOK)
+    {
+        LOG_E("rt_thread_startup failed!");
+        uassert_false(1);
+        return ;
+    }
+
+    tidB2 = rt_thread_create("timeslice", test_timeslice_threadB2_entry, RT_NULL,
+                           2048, __current_thread->current_priority + 2, 2);
+    if (!tidB2)
+    {
+        LOG_E("rt_thread_create failed!");
+        return;
+    }
+
+    rt_thread_control(tidB2, RT_THREAD_CTRL_BIND_CPU, (void *)1);
+    ret_startup = rt_thread_startup(tidB2);
+    if (ret_startup != RT_EOK)
+    {
+        LOG_E("rt_thread_startup failed!");
+        uassert_false(1);
+        return ;
+    }
+    do{
+        rt_thread_delay(2 * 20);
+    }while(timeslice_cntA <= 10);
+
+    rt_kprintf("A:%d,B1:%d,B2:%d\n", timeslice_cntA, timeslice_cntB1, timeslice_cntB2);
+    diff = abs(timeslice_cntB1 - timeslice_cntB2);
+    uassert_true(diff * 100 / timeslice_cntB1 < 30);
+    uassert_true(timeslice_cntA == 11);
+}
+
 #ifndef RT_USING_SMP
 static volatile rt_uint32_t yield_count;
 
@@ -634,6 +732,8 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_thread_priority);
     /* delay_until */
     UTEST_UNIT_RUN(test_delay_until);
+    /* timeslice */
+    // UTEST_UNIT_RUN(test_timeslice); /* Can not running in Github Action QEMU */
 }
 
 

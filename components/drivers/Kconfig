@@ -53,6 +53,9 @@ if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
         default n
+    config RT_CAN_USING_CANFD
+        bool "Enable CANFD support"
+        default n
 endif
 
 config RT_USING_HWTIMER
@@ -79,12 +82,10 @@ config RT_USING_CPUTIME
 
 if RT_USING_CPUTIME
     config RT_USING_CPUTIME_CORTEXM
-        bool "Use DWT for CPU time"
+        bool "Support Cortex-M CPU"
         default y
-        depends on ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
-        help
-            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use
-            the cycle counter in DWT for CPU time.
+        depends on ARCH_ARM_CORTEX_M0 || ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
+        select PKG_USING_PERF_COUNTER
 endif
 
 config RT_USING_I2C

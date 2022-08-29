@@ -27,7 +27,7 @@
 #define __APM32F10X_CAN_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -302,41 +302,41 @@ typedef struct
 */
 
 /** CAN reset and configuration */
-void CAN_Reset(CAN_T *can);
-uint8_t CAN_Config(CAN_T *can, CAN_Config_T *canConfig);
-void CAN_ConfigFilter(CAN_T *can, CAN_FilterConfig_T *filterConfig);
-void CAN_ConfigStructInit(CAN_Config_T *canConfig);
-void CAN_EnableDBGFreeze(CAN_T *can);
-void CAN_DisableDBGFreeze(CAN_T *can);
-void CAN_SlaveStartBank(CAN_T *can, uint8_t bankNum);
+void CAN_Reset(CAN_T* can);
+uint8_t CAN_Config(CAN_T* can, CAN_Config_T* canConfig);
+void CAN_ConfigFilter(CAN_T* can, CAN_FilterConfig_T* filterConfig);
+void CAN_ConfigStructInit(CAN_Config_T* canConfig);
+void CAN_EnableDBGFreeze(CAN_T* can);
+void CAN_DisableDBGFreeze(CAN_T* can);
+void CAN_SlaveStartBank(CAN_T* can, uint8_t bankNum);
 
 /** CAN frames transmit */
-uint8_t CAN_TxMessage(CAN_T *can, CAN_TxMessage_T *TxMessage);
-uint8_t CAN_TxMessageStatus(CAN_T *can, CAN_TX_MAILBIX_T TxMailbox);
-void CAN_CancelTxMailbox(CAN_T *can, CAN_TX_MAILBIX_T TxMailbox);
+uint8_t CAN_TxMessage(CAN_T* can, CAN_TxMessage_T* TxMessage);
+uint8_t CAN_TxMessageStatus(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox);
+void CAN_CancelTxMailbox(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox);
 
 /** CAN frames receive */
-void CAN_RxMessage(CAN_T *can, CAN_RX_FIFO_T FIFONumber, CAN_RxMessage_T *RxMessage);
-void CAN_ReleaseFIFO(CAN_T *can, CAN_RX_FIFO_T FIFONumber);
-uint8_t CAN_PendingMessage(CAN_T *can, CAN_RX_FIFO_T FIFONumber);
+void CAN_RxMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber, CAN_RxMessage_T* RxMessage);
+void CAN_ReleaseFIFO(CAN_T* can, CAN_RX_FIFO_T FIFONumber);
+uint8_t CAN_PendingMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber);
 
 /** CAN operation modes */
-uint8_t CAN_OperatingMode(CAN_T *can, CAN_OPERATING_MODE_T operatingMode);
-uint8_t CAN_SleepMode(CAN_T *can);
-uint8_t CAN_WakeUpMode(CAN_T *can);
+uint8_t CAN_OperatingMode(CAN_T* can, CAN_OPERATING_MODE_T operatingMode);
+uint8_t CAN_SleepMode(CAN_T* can);
+uint8_t CAN_WakeUpMode(CAN_T* can);
 
 /** CAN bus error management */
-uint8_t CAN_ReadLastErrorCode(CAN_T *can);
-uint8_t CAN_ReadRxErrorCounter(CAN_T *can);
-uint8_t CAN_ReadLSBTxErrorCounter(CAN_T *can);
+uint8_t CAN_ReadLastErrorCode(CAN_T* can);
+uint8_t CAN_ReadRxErrorCounter(CAN_T* can);
+uint8_t CAN_ReadLSBTxErrorCounter(CAN_T* can);
 
 /** CAN interrupt and flag */
-void CAN_EnableInterrupt(CAN_T *can, uint32_t interrupt);
-void CAN_DisableInterrupt(CAN_T *can, uint32_t interrupt);
-uint8_t CAN_ReadStatusFlag(CAN_T *can, CAN_FLAG_T flag);
-void CAN_ClearStatusFlag(CAN_T *can, CAN_FLAG_T flag);
-uint8_t CAN_ReadIntFlag(CAN_T *can, CAN_INT_T flag);
-void CAN_ClearIntFlag(CAN_T *can, CAN_INT_T flag);
+void CAN_EnableInterrupt(CAN_T* can, uint32_t interrupt);
+void CAN_DisableInterrupt(CAN_T* can, uint32_t interrupt);
+uint8_t CAN_ReadStatusFlag(CAN_T* can, CAN_FLAG_T flag);
+void CAN_ClearStatusFlag(CAN_T* can, CAN_FLAG_T flag);
+uint8_t CAN_ReadIntFlag(CAN_T* can, CAN_INT_T flag);
+void CAN_ClearIntFlag(CAN_T* can, CAN_INT_T flag);
 
 /**@} end of group CAN_Fuctions*/
 /**@} end of group CAN_Driver*/

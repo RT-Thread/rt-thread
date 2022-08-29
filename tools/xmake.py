@@ -71,8 +71,8 @@ class XmakeProject:
         with open(template_path, "r") as f:
             data = f.read()
         data = Template(data)
-        data = data.safe_substitute(toolchain=self.toolchain, sdkdir=self.sdkdir, src_path=self.src_path, inc_path=self.inc_path, 
-                                    define=self.define, cflags=self.cflags, cxxflags=self.cxxflags, asflags=self.asflags, 
+        data = data.safe_substitute(toolchain=self.toolchain, sdkdir=self.sdkdir, src_path=self.src_path, inc_path=self.inc_path,
+                                    define=self.define, cflags=self.cflags, cxxflags=self.cxxflags, asflags=self.asflags,
                                     ldflags=self.ldflags, target="rt-thread")
         with open("xmake.lua", "w") as f:
             f.write(data)

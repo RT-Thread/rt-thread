@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
+ * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  */
 
 #include <board.h>
@@ -54,10 +55,13 @@ static rt_err_t _dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
 {
     GPIO_Config_T GPIO_ConfigStruct;
     struct apm32_dac *cfg = (struct apm32_dac *)device->parent.user_data;
-
+#ifdef APM32F10X_HD
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA);
     GPIO_ConfigStruct.mode = GPIO_MODE_ANALOG;
-
+#elif APM32F40X
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOA);
+    GPIO_ConfigStruct.mode = GPIO_MODE_AN;
+#endif
     if (channel == 1)
     {
         GPIO_ConfigStruct.pin = GPIO_PIN_4;

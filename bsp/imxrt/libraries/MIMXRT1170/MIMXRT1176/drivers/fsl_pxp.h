@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 NXP
+ * Copyright 2017-2022 NXP
  * All rights reserved.
  *
  *
@@ -42,13 +42,13 @@
  ******************************************************************************/
 
 /* PXP global LUT table is 16K. */
-#define PXP_LUT_TABLE_BYTE (16 * 1024)
+#define PXP_LUT_TABLE_BYTE (16UL * 1024UL)
 /* Intenral memory for LUT, the size is 256 bytes. */
 #define PXP_INTERNAL_RAM_LUT_BYTE (256)
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_PXP_DRIVER_VERSION (MAKE_VERSION(2, 2, 2))
+#define FSL_PXP_DRIVER_VERSION (MAKE_VERSION(2, 4, 0))
 /*@}*/
 
 /* This macto indicates whether the rotate sub module is shared by process surface and output buffer. */
@@ -58,15 +58,62 @@
 #define PXP_SHARE_ROTATE 0
 #endif
 
+/* This macto indicates whether PXP needs mux the process path. */
+#if defined(PXP_DATA_PATH_CTRL0_MUX0_SEL_MASK)
+#define PXP_USE_PATH 1
+#else
+#define PXP_USE_PATH 0
+#endif
+
+#if PXP_USE_PATH
+#define PXP_PATH(mux, sel)          (((mux) << 8U) | (sel))
+#define PXP_GET_MUX_FROM_PATH(path) ((path) >> 8U)
+#define PXP_GET_SEL_FROM_PATH(path) ((path)&0x03U)
+#endif /* PXP_USE_PATH */
+
 /*! @brief PXP interrupts to enable. */
 enum _pxp_interrupt_enable
 {
-    kPXP_CommandLoadInterruptEnable = PXP_CTRL_NEXT_IRQ_ENABLE_MASK, /*!< Interrupt to show that the command set
-                                                                         by @ref PXP_SetNextCommand has been loaded. */
-    kPXP_CompleteInterruptEnable = PXP_CTRL_IRQ_ENABLE_MASK,         /*!< PXP process completed. */
+    kPXP_CompleteInterruptEnable    = PXP_CTRL_IRQ_ENABLE_MASK,      /*!< PXP process completed. bit 1 */
+    kPXP_CommandLoadInterruptEnable = PXP_CTRL_NEXT_IRQ_ENABLE_MASK, /*!< Interrupt to show that the command set by @ref
+                                                                        PXP_SetNextCommand has been loaded. bit 2 */
 #if !(defined(FSL_FEATURE_PXP_HAS_NO_LUT) && FSL_FEATURE_PXP_HAS_NO_LUT)
-    kPXP_LutDmaLoadInterruptEnable = PXP_CTRL_LUT_DMA_IRQ_ENABLE_MASK, /*!< The LUT table has been loaded by DMA. */
+    kPXP_LutDmaLoadInterruptEnable =
+        PXP_CTRL_LUT_DMA_IRQ_ENABLE_MASK, /*!< The LUT table has been loaded by DMA. bit 3 */
 #endif
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    kPXP_CompressDoneInterruptEnable =
+        PXP_IRQ_MASK_COMPRESS_DONE_IRQ_EN_MASK >> 16U, /*!< Compress done interrupt enable. bit 15 */
+    kPXP_InputFetchCh0InterruptEnable = PXP_IRQ_MASK_FIRST_CH0_PREFETCH_IRQ_EN_MASK
+                                        << 16U, /*!< Input fetch channel 0 completed. bit 16 */
+    kPXP_InputFetchCh1InterruptEnable = PXP_IRQ_MASK_FIRST_CH1_PREFETCH_IRQ_EN_MASK
+                                        << 16U, /*!< Input fetch channel 1 completed. bit 17 */
+    kPXP_InputStoreCh0InterruptEnable = PXP_IRQ_MASK_FIRST_CH0_STORE_IRQ_EN_MASK
+                                        << 16U, /*!< Input store channel 0 completed. bit 18 */
+    kPXP_InputStoreCh1InterruptEnable = PXP_IRQ_MASK_FIRST_CH1_STORE_IRQ_EN_MASK
+                                        << 16U, /*!< Input store channel 1 completed. bit 19 */
+    kPXP_DitherFetchCh0InterruptEnable = PXP_IRQ_MASK_DITHER_CH0_PREFETCH_IRQ_EN_MASK
+                                         << 16U, /*!< Dither fetch channel 0 completed. bit 20 */
+    kPXP_DitherFetchCh1InterruptEnable = PXP_IRQ_MASK_DITHER_CH1_PREFETCH_IRQ_EN_MASK
+                                         << 16U, /*!< Dither fetch channel 1 completed. bit 21 */
+    kPXP_DitherStoreCh0InterruptEnable = PXP_IRQ_MASK_DITHER_CH0_STORE_IRQ_EN_MASK
+                                         << 16U, /*!< Dither store channle 0 completed. bit 22 */
+    kPXP_DitherStoreCh1InterruptEnable = PXP_IRQ_MASK_DITHER_CH1_STORE_IRQ_EN_MASK
+                                         << 16U, /*!< Dither store channle 1 completed. bit 23 */
+    kPXP_WfeaStoreCh0InterruptEnable = PXP_IRQ_MASK_WFE_A_CH0_STORE_IRQ_EN_MASK
+                                       << 16U, /*!< WFE-A store channel 0 completed. bit 24 */
+    kPXP_WfeaStoreCh1InterruptEnable = PXP_IRQ_MASK_WFE_A_CH1_STORE_IRQ_EN_MASK
+                                       << 16U, /*!< WFE-A store channel 1 completed. bit 25 */
+    kPXP_WfebStoreCh0InterruptEnable = PXP_IRQ_MASK_WFE_B_CH0_STORE_IRQ_EN_MASK
+                                       << 16U, /*!< WFE-B store channel 0 completed. bit 26 */
+    kPXP_WfebStoreCh1InterruptEnable = PXP_IRQ_MASK_WFE_B_CH1_STORE_IRQ_EN_MASK
+                                       << 16U, /*!< WFE-B store channel 1 completed. bit 27 */
+    kPXP_InputStoreInterruptEnable  = PXP_IRQ_MASK_FIRST_STORE_IRQ_EN_MASK << 16U, /*!< Input store completed. bit 28 */
+    kPXP_DitherStoreInterruptEnable = PXP_IRQ_MASK_DITHER_STORE_IRQ_EN_MASK
+                                      << 16U,                                    /*!< Dither store completed. bit 29 */
+    kPXP_WfeaStoreInterruptEnable = PXP_IRQ_MASK_WFE_A_STORE_IRQ_EN_MASK << 16U, /*!< WFE-A store completed. bit 30 */
+    kPXP_WfebStoreInterruptEnable = PXP_IRQ_MASK_WFE_B_STORE_IRQ_EN_MASK << 16U, /*!< WFE-B store completed. bit 31 */
+#endif                                                                           /* FSL_FEATURE_PXP_V3 */
 };
 
 /*!
@@ -76,23 +123,148 @@ enum _pxp_interrupt_enable
  */
 enum _pxp_flags
 {
-    kPXP_CommandLoadFlag = PXP_STAT_NEXT_IRQ_MASK, /*!< The command set by @ref PXP_SetNextCommand
-                                                     has been loaded, could set new command. */
-    kPXP_CompleteFlag = PXP_STAT_IRQ0_MASK,        /*!< PXP process completed. */
+    kPXP_CompleteFlag       = PXP_STAT_IRQ0_MASK,              /*!< PXP process completed. bit 0 */
+    kPXP_Axi0WriteErrorFlag = PXP_STAT_AXI_WRITE_ERROR_0_MASK, /*!< PXP encountered an AXI write error and processing
+                                                                  has been terminated. bit 1*/
+    kPXP_Axi0ReadErrorFlag = PXP_STAT_AXI_READ_ERROR_0_MASK,   /*!< PXP encountered an AXI read error and processing has
+                                                                  been terminated. bit 2 */
+    kPXP_CommandLoadFlag = PXP_STAT_NEXT_IRQ_MASK, /*!< The command set by @ref PXP_SetNextCommand has been loaded,
+                                                      could set new command. bit 3 */
 #if !(defined(FSL_FEATURE_PXP_HAS_NO_LUT) && FSL_FEATURE_PXP_HAS_NO_LUT)
-    kPXP_LutDmaLoadFlag = PXP_STAT_LUT_DMA_LOAD_DONE_IRQ_MASK, /*!< The LUT table has been loaded by DMA. */
+    kPXP_LutDmaLoadFlag = PXP_STAT_LUT_DMA_LOAD_DONE_IRQ_MASK, /*!< The LUT table has been loaded by DMA. bit 8 */
 #endif
-    kPXP_Axi0ReadErrorFlag = PXP_STAT_AXI_READ_ERROR_0_MASK,   /*!< PXP encountered an AXI read error
-                                                              and processing has been terminated. */
-    kPXP_Axi0WriteErrorFlag = PXP_STAT_AXI_WRITE_ERROR_0_MASK, /*!< PXP encountered an AXI write error
-                                                            and processing has been terminated. */
 #if defined(PXP_STAT_AXI_READ_ERROR_1_MASK)
-    kPXP_Axi1ReadErrorFlag = PXP_STAT_AXI_READ_ERROR_1_MASK,   /*!< PXP encountered an AXI read error
-                                                              and processing has been terminated. */
-    kPXP_Axi1WriteErrorFlag = PXP_STAT_AXI_WRITE_ERROR_1_MASK, /*!< PXP encountered an AXI write error
-                                                            and processing has been terminated. */
+    kPXP_Axi1WriteErrorFlag = PXP_STAT_AXI_WRITE_ERROR_1_MASK, /*!< PXP encountered an AXI write error and processing
+                                                                  has been terminated. bit 9 */
+    kPXP_Axi1ReadErrorFlag = PXP_STAT_AXI_READ_ERROR_1_MASK,   /*!< PXP encountered an AXI read error and processing has
+                                                                  been terminated. bit 10 */
 #endif
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    kPXP_CompressDoneFlag          = PXP_IRQ_COMPRESS_DONE_IRQ_MASK >> 16U, /*!< Compress done. bit 15 */
+    kPXP_InputFetchCh0CompleteFlag = PXP_IRQ_FIRST_CH0_PREFETCH_IRQ_MASK
+                                     << 16U, /*!< Input fetch channel 0 completed. bit 16 */
+    kPXP_InputFetchCh1CompleteFlag = PXP_IRQ_FIRST_CH1_PREFETCH_IRQ_MASK
+                                     << 16U, /*!< Input fetch channel 1 completed. bit 17 */
+    kPXP_InputStoreCh0CompleteFlag = PXP_IRQ_FIRST_CH0_STORE_IRQ_MASK
+                                     << 16U, /*!< Input store channel 0 completed. bit 18 */
+    kPXP_InputStoreCh1CompleteFlag = PXP_IRQ_FIRST_CH1_STORE_IRQ_MASK
+                                     << 16U, /*!< Input store channel 1 completed. bit 19 */
+    kPXP_DitherFetchCh0CompleteFlag = PXP_IRQ_DITHER_CH0_PREFETCH_IRQ_MASK
+                                      << 16U, /*!< Dither fetch channel 0 completed. bit 20 */
+    kPXP_DitherFetchCh1CompleteFlag = PXP_IRQ_DITHER_CH1_PREFETCH_IRQ_MASK
+                                      << 16U, /*!< Dither fetch channel 1 completed. bit 21 */
+    kPXP_DitherStoreCh0CompleteFlag = PXP_IRQ_DITHER_CH0_STORE_IRQ_MASK
+                                      << 16U, /*!< Dither store channel 0 completed. bit 22 */
+    kPXP_DitherStoreCh1CompleteFlag = PXP_IRQ_DITHER_CH1_STORE_IRQ_MASK
+                                      << 16U, /*!< Dither store channel 1 completed. bit 23 */
+    kPXP_WfeaStoreCh0CompleteFlag = PXP_IRQ_WFE_A_CH0_STORE_IRQ_MASK
+                                    << 16U, /*!< WFE-A store channel 0 completed. bit 24 */
+    kPXP_WfeaStoreCh1CompleteFlag = PXP_IRQ_WFE_A_CH1_STORE_IRQ_MASK
+                                    << 16U, /*!< WFE-A store channel 1 completed. bit 25 */
+    kPXP_WfebStoreCh0CompleteFlag = PXP_IRQ_WFE_B_CH0_STORE_IRQ_MASK
+                                    << 16U, /*!< WFE-B store channel 0 completed. bit 26 */
+    kPXP_WfebStoreCh1CompleteFlag = PXP_IRQ_WFE_B_CH1_STORE_IRQ_MASK
+                                    << 16U,                              /*!< WFE-B store channel 1 completed. bit 27 */
+    kPXP_InputStoreCompleteFlag  = PXP_IRQ_FIRST_STORE_IRQ_MASK << 16U,  /*!< Input store completed. bit 28 */
+    kPXP_DitherStoreCompleteFlag = PXP_IRQ_DITHER_STORE_IRQ_MASK << 16U, /*!< Dither store completed. bit 29 */
+    kPXP_WfeaStoreCompleteFlag   = PXP_IRQ_WFE_A_STORE_IRQ_MASK << 16U,  /*!< WFE-A store completed. bit 30 */
+    kPXP_WfebStoreCompleteFlag   = PXP_IRQ_WFE_B_STORE_IRQ_MASK << 16U,  /*!< WFE-B store completed. bit 31 */
+#endif                                                                   /* FSL_FEATURE_PXP_V3 */
 };
+
+#if PXP_USE_PATH
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+typedef enum _pxp_path
+{
+    kPXP_Mux0SelectProcessSurfaceEngine     = PXP_PATH(0U, 0U), /*!< MUX0 select Process Surface engine. */
+    kPXP_Mux0SelectInputFetchEngineChannel0 = PXP_PATH(0U, 1U), /*!< MUX0 select input Fetch engine channel 0. */
+    kPXP_Mux0SelectInputFetchEngineChannel1 = PXP_PATH(0U, 2U), /*!< MUX0 select input Fetch engine channel 1. */
+    kPXP_Mux0SelectNone                     = PXP_PATH(0U, 3U), /*!< MUX0 select no output. */
+    kPXP_Mux1SelectInputFetchEngineChannel0 = PXP_PATH(1U, 0U), /*!< MUX1 select input Fetch engine channel 0. */
+    kPXP_Mux1SelectRotation1Engine          = PXP_PATH(1U, 1U), /*!< MUX1 select Rotation1 engine output. */
+    kPXP_Mux1SelectNone                     = PXP_PATH(1U, 2U), /*!< MUX1 select no output. */
+    kPXP_Mux2SelectInputFetchEngineChannel1 = PXP_PATH(2U, 0U), /*!< MUX2 select input Fetch engine channel 1. */
+    kPXP_Mux2SelectRotation1Engine          = PXP_PATH(2U, 1U), /*!< MUX2 select Rotation1 engine output. */
+    kPXP_Mux2SelectNone                     = PXP_PATH(2U, 2U), /*!< MUX2 select no output. */
+    kPXP_Mux3SelectCsc1Engine               = PXP_PATH(3U, 0U), /*!< MUX3 select output of CSC1 engine. */
+    kPXP_Mux3SelectRotation1Engine          = PXP_PATH(3U, 1U), /*!< MUX3 select output of Rotation1 engine. */
+    kPXP_Mux3SelectNone                     = PXP_PATH(3U, 2U), /*!< MUX3 select no output. */
+    kPXP_Mux5SelectMux1                     = PXP_PATH(5U, 0U), /*!< MUX5 select output of MUX1. */
+    kPXP_Mux5SelectAlphaBlending1       = PXP_PATH(5U, 1U),  /*!< MUX5 select output of alpha blending / color key 1. */
+    kPXP_Mux5SelectNone                 = PXP_PATH(5U, 2U),  /*!< MUX5 select no output. */
+    kPXP_Mux6SelectAlphaBlending1       = PXP_PATH(6U, 0U),  /*!< MUX6 select output of alpha blending / color key 1. */
+    kPXP_Mux6SelectAlphaBlending0       = PXP_PATH(6U, 1U),  /*!< MUX6 select output of alpha blending / color key 0. */
+    kPXP_Mux6SelectNone                 = PXP_PATH(6U, 2U),  /*!< MUX6 select no output. */
+    kPXP_Mux7SelectMux5                 = PXP_PATH(7U, 0U),  /*!< MUX7 select output of MUX5. */
+    kPXP_Mux7SelectCsc2Engine           = PXP_PATH(7U, 1U),  /*!< MUX7 select output of CSC2 engine. */
+    kPXP_Mux7SelectNone                 = PXP_PATH(7U, 2U),  /*!< MUX7 select no output. */
+    kPXP_Mux8SelectCsc2Engine           = PXP_PATH(8U, 0U),  /*!< MUX8 select output of CSC2 engine. */
+    kPXP_Mux8SelectAlphaBlending0       = PXP_PATH(8U, 1U),  /*!< MUX8 select output of alpha blending / color key 0. */
+    kPXP_Mux8SelectNone                 = PXP_PATH(8U, 2U),  /*!< MUX8 select no output. */
+    kPXP_Mux9SelectMux7                 = PXP_PATH(9U, 0U),  /*!< MUX9 select output of MUX7. */
+    kPXP_Mux9SelectMux8                 = PXP_PATH(9U, 1U),  /*!< MUX9 select output of MUX8. */
+    kPXP_Mux9SelectNone                 = PXP_PATH(9U, 2U),  /*!< MUX9 select no output. */
+    kPXP_Mux10SelectMux7                = PXP_PATH(10U, 0U), /*!< MUX10 select output of MUX7. */
+    kPXP_Mux10SelectLut                 = PXP_PATH(10U, 1U), /*!< MUX10 select output of LUT. */
+    kPXP_Mux10SelectNone                = PXP_PATH(10U, 2U), /*!< MUX10 select no output. */
+    kPXP_Mux11SelectLut                 = PXP_PATH(11U, 0U), /*!< MUX11 select output of LUT. */
+    kPXP_Mux11SelectMux8                = PXP_PATH(11U, 1U), /*!< MUX11 select output of MUX8. */
+    kPXP_Mux11SelectNone                = PXP_PATH(11U, 2U), /*!< MUX11 select no output. */
+    kPXP_Mux12SelectMux10               = PXP_PATH(12U, 0U), /*!< MUX12 select output of MUX10. */
+    kPXP_Mux12SelectMux11               = PXP_PATH(12U, 1U), /*!< MUX12 select output of MUX11. */
+    kPXP_Mux12SelectNone                = PXP_PATH(12U, 2U), /*!< MUX12 select no output. */
+    kPXP_Mux13SelectNone                = PXP_PATH(13U, 0U), /*!< MUX13 select no output. */
+    kPXP_Mux13SelectFetchEngineChannel1 = PXP_PATH(13U, 1U), /*!< MUX13 select input Fetch engine channel 1. */
+    kPXP_Mux14SelectRotation0Engine     = PXP_PATH(14U, 0U), /*!< MUX14 select output of Rotation0 engine. */
+    kPXP_Mux14SelectMux11               = PXP_PATH(14U, 1U), /*!< MUX14 select output of MUX11. */
+    kPXP_Mux14SelectNone                = PXP_PATH(14U, 2U), /*!< MUX14 select no output. */
+    kPXP_Mux15SelectFetchEngineChannel0 = PXP_PATH(15U, 0U), /*!< MUX15 select input Fetch engine channel 0. */
+    kPXP_Mux15SelectMux10               = PXP_PATH(15U, 1U), /*!< MUX15 select output of MUX10. */
+    kPXP_Mux15SelectNone                = PXP_PATH(15U, 2U), /*!< MUX15 select no output. */
+    kPXP_Mux16SelectAluA                = PXP_PATH(16U, 0U), /*!< MUX16 select output of ALU A. */
+    kPXP_Mux16SelectOutput              = PXP_PATH(16U, 1U), /*!< MUX16 select output of legacy output. */
+    kPXP_Mux16SelectAluB                = PXP_PATH(16U, 2U), /*!< MUX16 select output of ALU B. */
+    kPXP_Mux16SelectNone                = PXP_PATH(16U, 3U), /*!< MUX16 select no output. */
+    kPXP_Mux17SelectAluA                = PXP_PATH(17U, 0U), /*!< MUX17 select output of ALU A. */
+    kPXP_Mux17SelectAluB                = PXP_PATH(17U, 1U), /*!< MUX17 select output of ALU B. */
+    kPXP_Mux17SelectNone                = PXP_PATH(17U, 2U), /*!< MUX17 select no output. */
+} pxp_path_t;
+#else
+typedef enum _pxp_path
+{
+    kPXP_Mux0SelectFetchDataArray   = PXP_PATH(0U, 0U),  /*!< MUX0 select Fetch Data Array. */
+    kPXP_Mux0SelectAlu              = PXP_PATH(0U, 1U),  /*!< MUX0 select output of ALU. */
+    kPXP_Mux0SelectNone             = PXP_PATH(0U, 2U),  /*!< MUX0 select no output. */
+    kPXP_Mux1SelectLut              = PXP_PATH(1U, 0U),  /*!< MUX1 select output of LUT. */
+    kPXP_Mux1SelectMux0             = PXP_PATH(1U, 1U),  /*!< MUX1 select output of MUX0. */
+    kPXP_Mux1SelectNone             = PXP_PATH(1U, 2U),  /*!< MUX1 select no output. */
+    kPXP_Mux3SelectRotation1Engine  = PXP_PATH(3U, 0U),  /*!< MUX3 select output of Rotation1 engine. */
+    kPXP_Mux3SelectCsc1Engine       = PXP_PATH(3U, 1U),  /*!< MUX3 select output of CSC1 engine. */
+    kPXP_Mux3SelectNone             = PXP_PATH(3U, 2U),  /*!< MUX3 select no output. */
+    kPXP_Mux8SelectCsc2Engine       = PXP_PATH(8U, 0U),  /*!< MUX8 select output of CSC2 engine. */
+    kPXP_Mux8SelectAlphaBlending0   = PXP_PATH(8U, 1U),  /*!< MUX8 select output of alpha blending / color key 0. */
+    kPXP_Mux8SelectNone             = PXP_PATH(8U, 2U),  /*!< MUX8 select no output. */
+    kPXP_Mux9SelectMux0             = PXP_PATH(9U, 0U),  /*!< MUX9 select output of MUX0. */
+    kPXP_Mux9SelectMux8             = PXP_PATH(9U, 1U),  /*!< MUX9 select output of MUX8. */
+    kPXP_Mux9SelectNone             = PXP_PATH(9U, 2U),  /*!< MUX9 select no output. */
+    kPXP_Mux11SelectLut             = PXP_PATH(11U, 0U), /*!< MUX11 select output of LUT. */
+    kPXP_Mux11SelectMux8            = PXP_PATH(11U, 1U), /*!< MUX11 select output of MUX8. */
+    kPXP_Mux11SelectNone            = PXP_PATH(11U, 2U), /*!< MUX11 select no output. */
+    kPXP_Mux12SelectRotation0Engine = PXP_PATH(12U, 0U), /*!< MUX12 select output of Rotation0 engine. */
+    kPXP_Mux12SelectMux11           = PXP_PATH(12U, 1U), /*!< MUX12 select output of MUX11. */
+    kPXP_Mux12SelectNone            = PXP_PATH(12U, 2U), /*!< MUX12 select no output. */
+    kPXP_Mux14SelectDitherEngine    = PXP_PATH(14U, 0U), /*!< MUX14 select output of Dither engine. */
+    kPXP_Mux14SelectMux12           = PXP_PATH(14U, 1U), /*!< MUX14 select output of MUX12. */
+    kPXP_Mux14SelectNone            = PXP_PATH(14U, 2U), /*!< MUX14 select no output. */
+    kPXP_Mux16SelectOutputBuffer    = PXP_PATH(16U, 0U), /*!< MUX16 select output of output buffer. */
+    kPXP_Mux16SelectStoreEngine     = PXP_PATH(16U, 1U), /*!< MUX16 select output of store engine. */
+    kPXP_Mux16SelectNone            = PXP_PATH(16U, 2U), /*!< MUX16 select no output. */
+    kPXP_Mux17SelectOutputBuffer    = PXP_PATH(17U, 0U), /*!< MUX17 select output of output buffer. */
+    kPXP_Mux17SelectStoreEngine     = PXP_PATH(17U, 1U), /*!< MUX17 select output of store engine. */
+    kPXP_Mux17SelectNone            = PXP_PATH(17U, 2U), /*!< MUX17 select no output. */
+} pxp_path_t;
+#endif /* FSL_FEATURE_PXP_V3 */
+#endif /* PXP_USE_PATH */
 
 /*! @brief PXP output flip mode. */
 typedef enum _pxp_flip_mode
@@ -272,6 +444,18 @@ typedef struct _pxp_as_blend_config
     pxp_rop_mode_t ropMode;     /*!< ROP mode, only valid when @ref alphaMode is @ref kPXP_AlphaRop. */
 } pxp_as_blend_config_t;
 
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+/*!
+ * @brief PXP secondary alpha surface blending engine configuration.
+ */
+typedef struct _pxp_as_blend_secondary_config
+{
+    bool invertAlpha;       /*!< Set true to invert the alpha. */
+    bool ropEnable;         /*!< Enable rop mode. */
+    pxp_rop_mode_t ropMode; /*!< ROP mode, only valid when ropEnable is true. */
+} pxp_as_blend_secondary_config_t;
+#endif /* FSL_FEATURE_PXP_V3 */
+
 /*! @brief PXP process block size. */
 typedef enum _pxp_block_size
 {
@@ -372,14 +556,25 @@ typedef enum _pxp_ram
     kPXP_RamDither0Lut = 0U, /*!< Dither 0 LUT memory. */
     kPXP_RamDither1Lut = 3U, /*!< Dither 1 LUT memory. */
     kPXP_RamDither2Lut = 4U, /*!< Dither 2 LUT memory. */
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    kPXP_RamDither0Err0 = 1U, /*!< Dither 0 ERR0 memory. */
+    kPXP_RamDither0Err1 = 2U, /*!< Dither 0 ERR1 memory. */
+    kPXP_RamAluA        = 5U, /*!< ALU A instr memory. */
+    kPXP_RamAluB        = 6U, /*!< ALU B instr memory. */
+    kPXP_WfeAFetch      = 7U, /*!< WFE-A fetch memory. */
+    kPXP_WfeBFetch      = 8U, /*!< WFE-B fetch memory. */
+#endif                        /* FSL_FEATURE_PXP_V3 */
 } pxp_ram_t;
 
 /*! @brief PXP dither mode. */
 enum _pxp_dither_mode
 {
-    kPXP_DitherPassThrough = 0U, /*!< Pass through, no dither. */
-    kPXP_DitherOrdered     = 3U, /*!< Ordered dither. */
-    kPXP_DitherQuantOnly   = 4U, /*!< No dithering, only quantization. */
+    kPXP_DitherPassThrough    = 0U, /*!< Pass through, no dither. */
+    kPXP_DitherFloydSteinberg = 1U, /*!< Floyd-Steinberg. For dither engine 0 only. */
+    kPXP_DitherAtkinson       = 2U, /*!< Atkinson. For dither engine 0 only. */
+    kPXP_DitherOrdered        = 3U, /*!< Ordered dither. */
+    kPXP_DitherQuantOnly      = 4U, /*!< No dithering, only quantization. */
+    kPXP_DitherSierra         = 5U, /*!< Sierra. For dither engine 0 only. */
 };
 
 /*! @brief PXP dither LUT mode. */
@@ -394,7 +589,8 @@ enum _pxp_dither_lut_mode
 /*! @brief PXP dither matrix size. */
 enum _pxp_dither_matrix_size
 {
-    kPXP_DitherMatrix8 = 1, /*!< The dither index matrix is 8x8. */
+    kPXP_DitherMatrix4 = 0, /*!< The dither index matrix is 4x4. */
+    kPXP_DitherMatrix8,     /*!< The dither index matrix is 8x8. */
     kPXP_DitherMatrix16,    /*!< The dither index matrix is 16x16. */
 };
 
@@ -529,6 +725,347 @@ typedef struct _pxp_pic_copy_config
     pxp_as_pixel_format_t pixelFormat; /*!< Buffer pixel format. */
 } pxp_pic_copy_config_t;
 
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+
+/*!
+ * @brief PXP process engine enumeration
+ */
+typedef enum _pxp_process_engine_name
+{
+    kPXP_PsAsOutEngine         = PXP_CTRL_ENABLE_PS_AS_OUT_MASK,
+    kPXP_DitherEngine          = PXP_CTRL_ENABLE_DITHER_MASK,
+    kPXP_WfeaEngine            = PXP_CTRL_ENABLE_WFE_A_MASK,
+    kPXP_WfebEngine            = PXP_CTRL_ENABLE_WFE_B_MASK,
+    kPXP_InputFetchStoreEngine = PXP_CTRL_ENABLE_INPUT_FETCH_STORE_MASK,
+    kPXP_Alpha1Engine          = PXP_CTRL_ENABLE_ALPHA_B_MASK,
+    kPXP_Csc2Engine            = PXP_CTRL_ENABLE_CSC2_MASK,
+    kPXP_LutEngine             = PXP_CTRL_ENABLE_LUT_MASK,
+    kPXP_Rotate0Engine         = PXP_CTRL_ENABLE_ROTATE0_MASK,
+    kPXP_Rotate1Engine         = PXP_CTRL_ENABLE_ROTATE1_MASK,
+} pxp_process_engine_name_t;
+
+/* Fetch engine configuration. */
+/*!
+ * @brief PXP fetch engine enumeration
+ *
+ * There are actually 4 fetch engine implemented, the others are WFE-A fetch engine and WFE-B fetch engine,
+ * whose registers are reserved from developer.
+ */
+typedef enum _pxp_fetch_engine_name
+{
+    kPXP_FetchInput,
+    kPXP_FetchDither,
+} pxp_fetch_engine_name_t;
+
+/*! @brief PXP fetch engine interface mode with the upstream store engine. */
+typedef enum _pxp_fetch_interface_mode
+{
+    kPXP_FetchModeNormal    = 0U,
+    kPXP_FetchModeHandshake = 0x1U,
+    kPXP_FetchModeBypass    = 0x2U,
+} pxp_fetch_interface_mode_t;
+
+/*! @brief PXP fetch/store engine burst length for scanline mode. */
+typedef enum _pxp_scanline_burst
+{
+    kPXP_Scanline8bytes,
+    kPXP_Scanline16bytes,
+    kPXP_Scanline32bytes,
+    kPXP_Scanline64bytes,
+} pxp_scanline_burst_t;
+
+/*! @brief PXP fetch engine block configuration. */
+typedef struct _pxp_block_format_config
+{
+    bool
+        enableblock;  /*!< Enable to use block mode instead of scanline mode. Note: 1.Make sure to enable if rotate or
+                         flip mode is enabled. 2.Block mode cannot work on 64bpp data stream where activeBits = 64. 3. If
+                         LUT processing is in the path between the fetch and store engind, block mode must be enabled. */
+    bool blockSize16; /*!< Enable to use 16*16 block, otherwise it will be 8*8 block. */
+    pxp_scanline_burst_t burstLength; /*!< When using scanline mode, configure this for burst length. */
+} pxp_block_config_t;
+
+/*!
+ * @brief PXP fetch/store engine input/output active bits configuration.
+ *
+ * Since fetch engine is 64-bit input and 32-bit output per channel, need to configure both channels to use 64-bit input
+ * mode. And expand configuration will have no effect.
+ */
+typedef enum _pxp_activeBits
+{
+    kPXP_Active8Bits  = 0x0,
+    kPXP_Active16Bits = 0x1,
+    kPXP_Active32Bits = 0x2,
+    kPXP_Active64Bits = 0x3,
+} pxp_active_bits_t;
+
+/*! @brief PXP fetch engine output word order when using 2 channels for 64-bit mode. */
+typedef enum _pxp_fetch_output_word_order
+{
+    kPXP_FetchOutputChannel1channel0 = 0x0, /*!< In 64bit mode, channel 1 output high byte. */
+    kPXP_FetchOutputChannel0channel1 = 0x1, /*!< In 64bit mode, channel 0 output high byte. */
+} pxp_fetch_output_word_order_t;
+
+/*!
+ * @brief PXP fetch engine shift component configuration.
+ *
+ * Fetch engine can divded each word into 4 components and shift them.
+ */
+typedef struct _pxp_fetch_shift_component
+{
+    uint8_t offset;
+    uint8_t width;
+} pxp_fetch_shift_component_t;
+
+/*!
+ * @brief PXP fetch engine shift configuration.
+ *
+ * Fetch engine can divded each word into 4 components and shift them.
+ * For example, to change YUV444 to YVU444, U and V positions need to be shifted: OFFSET0=8, OFFSET1=0, OFFSET2=16,
+ * OFFSET3=24, WIDTH0/1/2/3=8
+ */
+typedef struct _pxp_fetch_shift_config
+{
+    bool shiftBypass; /* Bypass the shift */
+    pxp_fetch_shift_component_t component0;
+    pxp_fetch_shift_component_t component1;
+    pxp_fetch_shift_component_t component2;
+    pxp_fetch_shift_component_t component3;
+} pxp_fetch_shift_config_t;
+
+/*! @brief PXP fetch engine input pixel format. */
+typedef enum _pxp_fetch_pixel_format
+{
+    kPXP_FetchFormatRGB565     = 0x0,
+    kPXP_FetchFormatRGB555     = 0x1,
+    kPXP_FetchFormatARGB1555   = 0x2,
+    kPXP_FetchFormatRGB444     = 0x3,
+    kPXP_FetchFormatARGB4444   = 0x4,
+    kPXP_FetchFormatYUYVorYVYU = 0x5,
+    kPXP_FetchFormatUYVYorVYUY = 0x6,
+    kPXP_FetchFormatYUV422_2P  = 0x7,
+} pxp_fetch_pixel_format_t;
+
+/*! @brief PXP fetch engine configuration for one of the channel. */
+typedef struct _pxp_fetch_engine_config
+{
+    bool channelEnable; /*!< Enable channel. */
+    /* Address configuration */
+    uint32_t inputBaseAddr0; /*!< The input base address. Used for Y plane input when pixel format is YUV422_2p. */
+    uint32_t inputBaseAddr1; /*!< Must configure this for UV plane when input pixel format is YUV422_2p. */
+    /* Size configuration */
+    uint16_t totalHeight; /*!< Total height for the actual fetch size. */
+    uint16_t totalWidth;  /*!< Total width for the actual fetch size. */
+    uint16_t pitchBytes;  /*!< Channel input pitch */
+    uint16_t
+        ulcX; /*!< X coordinate of upper left coordinate in pixels of the active surface of the total input memory */
+    uint16_t
+        ulcY; /*!< Y coordinate of upper left coordinate in pixels of the active surface of the total input memory */
+    uint16_t
+        lrcX; /*!< X coordinate of Lower right coordinate in pixels of the active surface of the total input memory */
+    uint16_t
+        lrcY; /*!< Y coordinate of Lower right coordinate in pixels of the active surface of the total input memory */
+    /* Interface configuration */
+    pxp_fetch_interface_mode_t interface; /*!< Interface mode, normal/bypass/handshake */
+    /* Pixel configuration */
+    pxp_active_bits_t activeBits;         /*!< Input active bits. */
+    pxp_fetch_pixel_format_t pixelFormat; /*!< Input pixel fetch format */
+    bool expandEnable; /*!< If enabled, input pixel will be expanded to ARGB8888, RGB888 or YUV444 of 32-bit format at
+                          the output. */
+    /* Fetch format configuration */
+    pxp_flip_mode_t flipMode;         /*!< Flip the fetched input. */
+    pxp_rotate_degree_t rotateDegree; /*!< Rotate the fetched input. */
+    pxp_block_config_t
+        fetchFormat; /*!< Block mode configuration. Make sure to enable block if rotate or flip mode is enabled. */
+    /* Output configuration. */
+    pxp_fetch_shift_config_t shiftConfig;    /*!< Shift operation configuration. */
+    pxp_fetch_output_word_order_t wordOrder; /*!< Output word order when using 2 channels for 64-bit mode. */
+} pxp_fetch_engine_config_t;
+
+/* Store engine configuration. */
+
+/*!
+ * @brief PXP store engine enumeration
+ *
+ * There are actually 4 store engine implemented, the others are WFE-A store engine and WFE-B store engine,
+ * whose registers are reserved from developer.
+ */
+typedef enum _pxp_store_engine_name
+{
+    kPXP_StoreInput,
+    kPXP_StoreDither,
+} pxp_store_engine_name_t;
+
+/*! @brief PXP store engine interface mode with the downstream fetch engine. */
+typedef enum _pxp_store_interface_mode
+{
+    kPXP_StoreModeBypass    = 0x20U,
+    kPXP_StoreModeNormal    = 0x40U,
+    kPXP_StoreModeHandshake = 0x43U,
+    kPXP_StoreModeDual      = 0x60U, /*!< Store engine outputs data directly to downstream fetch engine(Bypass) but also
+                                        storing it to memory at the same time. */
+} pxp_store_interface_mode_t;
+
+/*! @brief PXP store engine YUV output mode. */
+typedef enum _pxp_store_yuv_mode
+{
+    kPXP_StoreYUVDisable = 0U, /*!< Do not output YUV pixel format. */
+    kPXP_StoreYUVPlane1 =
+        0x1U, /*!< Use channel to output YUV422_1p pixel format, need to use shift operation to make sure each pixel
+                 component in its proper position: 64-bits of pixel data format and each 32 bits as {Y0, U0, Y1, V0}. */
+    kPXP_StoreYUVPlane2 =
+        0x2U, /*!< Use channel to output YUV422_2p pixel format, need to use shift operation to make sure each pixel
+                 component in its proper position: channel 0 {Y0,Y1}, channel 1 {U0,V0}. */
+} pxp_store_yuv_mode_t;
+
+/*! @brief Shift configuration for PXP store engine. */
+typedef struct _pxp_store_shift_config
+{
+    /* Data/Flag shift */
+    bool shiftBypass;         /*!< Bypass the data shift */
+    uint64_t *pDataShiftMask; /*!< Pointer to mask0~mask7 to mask the 64-bit of output data, data is masked first then
+                                 shifted according to width. */
+    uint8_t *pDataShiftWidth; /*!< Pointer to width0~width7. Bit 7 is for shifted direction, 0 to right. Bit0~5 is for
+                                 shift width. */
+    uint8_t *pFlagShiftMask;  /*!< Pointer to mask0~mask7 to mask the 8-bit of output flag, flag is masked first then
+                                 shifted according to width. */
+    uint8_t *pFlagShiftWidth; /*!< Pointer to width0~width7. Bit 6 is for shifted direction, 0 to right. Bit0~5 is for
+                                 shift width. */
+} pxp_store_shift_config_t;
+
+/*! @brief PXP store engine configuration for one of the channel. */
+typedef struct _pxp_store_engine_config
+{
+    bool channelEnable; /*!< Enable channel. */
+    /* Address configuration */
+    uint32_t outputBaseAddr0; /*!< The channel 0 output address if using 2 channels. If using 1 channel(must be channel
+                                 0) and YUV422_2p output format, is for Y plane address. */
+    uint32_t outputBaseAddr1; /*!< The channel 1 output address if using 2 channels. If using 1 channel(must be channel
+                                 0) and YUV422_2p output format, is for UV plane address. */
+    /* Size configuration */
+    uint16_t totalHeight; /*!< Total height for the actual store size. */
+    uint16_t totalWidth;  /*!< Total width for the actual store size. */
+    uint16_t pitchBytes;  /*!< Channel input pitch */
+    /* Interface configuration */
+    pxp_store_interface_mode_t interface; /*!< Interface mode, normal/bypass/handshake/dual. Make sure 2 channels use
+                                               the same mode if both enabled. */
+    /* pxp_store_handshake_array_t arraySize; !< If interfase mode is handshake, need to configure the array size. When
+                                              block is disabled, the scanline can only be 1. TODO no need now. */
+    /* Pixel configuration */
+    pxp_active_bits_t activeBits; /*!< Output active bits. */
+    pxp_store_yuv_mode_t yuvMode; /*!< Whether to output YUV pixel format. */
+    /* Fixed data configuration, only apply for channel 0. */
+    bool useFixedData; /*!< Whether to use fixed value for the output data. Can be used to write fixed value to specific
+                          memory location for memory initialization. */
+    uint32_t fixedData; /*!< The value of the fixed data. */
+    /* Data packing */
+    bool packInSelect; /*!< When enabled, channel 0 will select low 32 bit shift out data to pack while channel i select
+                          high 32 bit, otherwise all 64bit of data will be selected. */
+    /* Data store format */
+    pxp_block_config_t storeFormat;       /*!< The format to store data, block or otherwise. */
+    pxp_store_shift_config_t shiftConfig; /*!< Shift operation configuration. */
+} pxp_store_engine_config_t;
+
+/* Pre-dither CFA engine configuration */
+
+/*! @brief PXP pre-dither CFA engine input pixel format. */
+typedef enum _pxp_cfa_input_format
+{
+    kPXP_CfaRGB888,
+    kPXP_CfaRGB444,
+} pxp_cfa_input_format_t;
+
+/*! @brief PXP pre-dither CFA engine configuration. */
+typedef struct _pxp_cfa_config
+{
+    bool bypass;                          /*!< Bypass the CFA process */
+    pxp_cfa_input_format_t pixelInFormat; /*!< The pixel input format for CFA. */
+    uint8_t arrayWidth;                   /*!< CFA array vertical size in pixels, min 3 max 15. */
+    uint8_t arrayHeight;                  /*!< CFA array horizontal size in pixels, min 3 max 15. */
+    uint16_t totalHeight; /*!< Total height for the buffer size, make sure it is aligned with the dither fetch engine
+                             and dither engine. */
+    uint16_t totalWidth;  /*!< Total width for the buffer size, make sure it is aligned with the dither fetch engine and
+                             dither engine. */
+    uint32_t *cfaValue; /*!< Pointer to the value for the CFA array. 2-bit per component: 00-R,01-G,10-B,11-W. For a 4x4
+                           array, 32 bits are need. */
+} pxp_cfa_config_t;
+
+/* Histogram configuration and status */
+
+/*! @brief PXP histogram mask condition. */
+typedef enum _pxp_histogram_mask_condition
+{
+    kPXP_HistogramMaskEqual    = 0x0U, /*!< Value that equal to value0 will pass the mask operation. */
+    kPXP_HistogramMaskNotequal = 0x1U, /*!< Value that not equal to value0 will pass the mask operation. */
+    kPXP_HistogramMaskIn  = 0x2U, /*!< Value that within the range of value0-value1 will pass the mask operation. */
+    kPXP_HistogramMaskOut = 0x3U, /*!< Value that without the range of value0-value1 will pass the mask operation. */
+} pxp_histogram_mask_condition_t;
+
+/*! @brief PXP Histogram configuration. */
+typedef struct _pxp_histogram_config
+{
+    bool enable;            /*!< Enable histogram process. */
+    uint8_t *pParamValue;   /*!< Pointer to the 62(2+4+8+16+32) byte of param value for 2-level, 4-level.....32-level
+                               parameters. Only low 5-bit of each byte is valid. */
+    uint8_t lutValueOffset; /*!< The starting bit position of the LUT value. */
+    uint8_t lutValueWidth;  /*!< The bit width of the LUT value, should be no more than 6 bits since only 63 LUTs are
+                               supported. */
+    /* Mask configuration */
+    bool enableMask;    /*!< Enable mask operation. */
+    uint8_t maskValue0; /*!< Value 0 for the condition judgement. */
+    uint8_t maskValue1; /*!< Value 1 for the condition judgement. */
+    uint8_t maskOffset; /*!< The starting bit position of the field to be checked against mask condition. */
+    uint8_t maskWidth;  /*!< The width of the field to be checked against mask condition. */
+    pxp_histogram_mask_condition_t condition; /*!< The mask condition. */
+    /* Size configuration */
+    uint16_t totalHeight; /*!< Total height for the buffer size, make sure it is aligned with the output of legacy flow
+                             or the WFE-A/B engine. */
+    uint16_t totalWidth; /*!< Total width for the buffer size, make sure it is aligned with the output of legacy flow or
+                            the WFE-A/B engine. */
+} pxp_histogram_config_t;
+
+/*! @brief PXP Histogram mask result. */
+typedef struct _pxp_histogram_mask_result
+{
+    uint32_t pixelCount; /*!< The total count of the pixels that pass the mask(collided pixels). */
+    uint32_t minX;       /*!< The x offset of the ULC of the minimal histogram that covers all passed pixels. */
+    uint32_t minY;       /*!< The y offset of the ULC of the minimal histogram that covers all passed pixels. */
+    uint32_t maxX;       /*!< The x offset of the LRC of the minimal histogram that covers all passed pixels. */
+    uint32_t maxY;       /*!< The y offset of the LRC of the minimal histogram that covers all passed pixels. */
+    uint64_t lutlist; /*!< The 64-bit LUT list of collided pixels, if pixel of LUT17 is collided, bit17 in the list is
+                         set. */
+} pxp_histogram_mask_result_t;
+
+/*! @brief PXP Histogram operation result flags. */
+enum _pxp_histgram_flags
+{
+    kPXP_Histogram2levelMatch  = 1 << 0U, /* Bitmap pixels are fully contained within the HIST2 histogram. */
+    kPXP_Histogram4levelMatch  = 1 << 1U, /* Bitmap pixels are fully contained within the HIST4 histogram. */
+    kPXP_Histogram8levelMatch  = 1 << 2U, /* Bitmap pixels are fully contained within the HIST8 histogram. */
+    kPXP_Histogram16levelMatch = 1 << 3U, /* Bitmap pixels are fully contained within the HIST16 histogram. */
+    kPXP_Histogram32levelMatch = 1 << 4U, /* Bitmap pixels are fully contained within the HIST32 histogram. */
+};
+
+/*! @brief PXP WFE-A engine configuration. */
+typedef struct _pxp_wfea_engine_config
+{
+    uint32_t y4Addr;       /*!< Address for Y4 buffer. */
+    uint32_t y4cAddr;      /*!< Address for Y4C buffer, {Y4[3:0],3'b000,collision}, 8bpp. */
+    uint32_t wbAddr;       /*!< Address for EPDC working buffer. */
+    uint16_t updateWidth;  /*!< Width of the update area. */
+    uint16_t updateHeight; /*!< Height of the update area. */
+    uint16_t updatePitch;  /*!< Pitch of the update area. */
+    uint16_t ulcX;         /*!< X coordinate of upper left coordinate of the total input memory */
+    uint16_t ulcY;         /*!< Y coordinate of upper left coordinate of the total input memory */
+    uint16_t resX;         /*!< Horizontal resolution in pixels. */
+    uint8_t lutNum;        /*!< The EPDC LUT number for the update. */
+    bool fullUpdateEnable; /*!< Enable full update. */
+    bool alphaEnable; /*!< Enable alpha field, upd is {Y4[3:0],3'b000,alpha} format, otherwise its {Y4[3:0],4'b0000}. */
+    bool detectionOnly; /*!< Detection only, do not write working buffer. */
+} pxp_wfea_engine_config_t;
+
+#endif /* FSL_FEATURE_PXP_V3 */
+
 /*******************************************************************************
  * API
  ******************************************************************************/
@@ -658,6 +1195,39 @@ static inline void PXP_SetProcessBlockSize(PXP_Type *base, pxp_block_size_t size
     base->CTRL = (base->CTRL & ~PXP_CTRL_BLOCK_SIZE_MASK) | PXP_CTRL_BLOCK_SIZE(size);
 }
 
+#if PXP_USE_PATH
+/*!
+ * @brief Sets the path for one of the MUX
+ *
+ * @param base PXP peripheral base address.
+ * @param path the path configuration for one of the mux.
+ */
+void PXP_SetPath(PXP_Type *base, pxp_path_t path);
+#endif /* PXP_USE_PATH */
+
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+/*!
+ * @brief Enables or disables PXP engines in the process flow.
+ *
+ * @param base PXP peripheral base address.
+ * @param mask The engines to enable. Logical OR of @ref pxp_process_engine_name_t.
+ * @param enable true to enable, false to disable.
+ */
+static inline void PXP_EnableProcessEngine(PXP_Type *base, uint32_t mask, bool enable)
+{
+    mask &= 0xF3F0000UL;
+
+    if (enable)
+    {
+        base->CTRL_SET = mask;
+    }
+    else
+    {
+        base->CTRL_CLR = mask;
+    }
+}
+#endif /* FSL_FEATURE_PXP_V3 */
+
 /* @} */
 
 /*!
@@ -685,13 +1255,17 @@ static inline void PXP_SetProcessBlockSize(PXP_Type *base, pxp_block_size_t size
 static inline uint32_t PXP_GetStatusFlags(PXP_Type *base)
 {
 #if defined(PXP_STAT_AXI_READ_ERROR_1_MASK)
-    return base->STAT &
-           (PXP_STAT_NEXT_IRQ_MASK | PXP_STAT_IRQ0_MASK | PXP_STAT_AXI_READ_ERROR_0_MASK |
-            PXP_STAT_AXI_WRITE_ERROR_0_MASK | PXP_STAT_AXI_READ_ERROR_1_MASK | PXP_STAT_AXI_WRITE_ERROR_1_MASK);
+    uint32_t status = base->STAT & (PXP_STAT_NEXT_IRQ_MASK | PXP_STAT_IRQ0_MASK | PXP_STAT_AXI_READ_ERROR_0_MASK |
+                                    PXP_STAT_AXI_WRITE_ERROR_0_MASK | PXP_STAT_AXI_READ_ERROR_1_MASK |
+                                    PXP_STAT_AXI_WRITE_ERROR_1_MASK);
 #else
-    return base->STAT & (PXP_STAT_NEXT_IRQ_MASK | PXP_STAT_IRQ0_MASK | PXP_STAT_AXI_READ_ERROR_0_MASK |
-                         PXP_STAT_AXI_WRITE_ERROR_0_MASK);
+    uint32_t status = base->STAT & (PXP_STAT_NEXT_IRQ_MASK | PXP_STAT_IRQ0_MASK | PXP_STAT_AXI_READ_ERROR_0_MASK |
+                                    PXP_STAT_AXI_WRITE_ERROR_0_MASK);
 #endif
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    status |= (base->IRQ >> 16U | base->IRQ << 16U);
+#endif /* FSL_FEATURE_PXP_V3 */
+    return status;
 }
 
 /*!
@@ -705,6 +1279,10 @@ static inline uint32_t PXP_GetStatusFlags(PXP_Type *base)
 static inline void PXP_ClearStatusFlags(PXP_Type *base, uint32_t statusMask)
 {
     base->STAT_CLR = statusMask;
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    statusMask &= 0xFFFF8000UL;
+    base->IRQ_CLR = (statusMask >> 16U | statusMask << 16U);
+#endif /* FSL_FEATURE_PXP_V3 */
 }
 
 /*!
@@ -719,7 +1297,7 @@ static inline void PXP_ClearStatusFlags(PXP_Type *base, uint32_t statusMask)
 static inline uint8_t PXP_GetAxiErrorId(PXP_Type *base, uint8_t axiIndex)
 {
 #if defined(PXP_STAT_AXI_ERROR_ID_1_MASK)
-    if (0 == axiIndex)
+    if (0U == axiIndex)
     {
         return (uint8_t)((base->STAT & PXP_STAT_AXI_ERROR_ID_0_MASK) >> PXP_STAT_AXI_ERROR_ID_0_SHIFT);
     }
@@ -755,7 +1333,11 @@ static inline uint8_t PXP_GetAxiErrorId(PXP_Type *base, uint8_t axiIndex)
  */
 static inline void PXP_EnableInterrupts(PXP_Type *base, uint32_t mask)
 {
-    base->CTRL_SET = mask;
+    base->CTRL_SET = (mask & 0xEUL);
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    mask &= 0xFFFF8000UL;
+    base->IRQ_MASK_SET = (mask >> 16U | mask << 16U);
+#endif /* FSL_FEATURE_PXP_V3 */
 }
 
 /*!
@@ -769,7 +1351,11 @@ static inline void PXP_EnableInterrupts(PXP_Type *base, uint32_t mask)
  */
 static inline void PXP_DisableInterrupts(PXP_Type *base, uint32_t mask)
 {
-    base->CTRL_CLR = mask;
+    base->CTRL_CLR = (mask & 0xEUL);
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+    mask &= 0xFFFF8000UL;
+    base->IRQ_MASK_CLR = (mask >> 16U | mask << 16U);
+#endif /* FSL_FEATURE_PXP_V3 */
 }
 
 /* @} */
@@ -795,11 +1381,65 @@ void PXP_SetAlphaSurfaceBufferConfig(PXP_Type *base, const pxp_as_buffer_config_
  */
 void PXP_SetAlphaSurfaceBlendConfig(PXP_Type *base, const pxp_as_blend_config_t *config);
 
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+/*!
+ * @brief Set the alpha surface blending configuration for the secondary engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param config Pointer to the configuration structure.
+ */
+void PXP_SetAlphaSurfaceBlendSecondaryConfig(PXP_Type *base, const pxp_as_blend_secondary_config_t *config);
+
 /*!
  * @brief Set the alpha surface overlay color key.
  *
  * If a pixel in the current overlay image with a color that falls in the range
  * from the @p colorKeyLow to @p colorKeyHigh range, it will use the process surface
+ * pixel value for that location. If no PS image is present or if the PS image also
+ * matches its colorkey range, the PS background color is used.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number. 0 for alpha engine A, 1 for alpha engine B.
+ * @param colorKeyLow Color key low range.
+ * @param colorKeyHigh Color key high range.
+ *
+ * @note Colorkey operations are higher priority than alpha or ROP operations
+ */
+void PXP_SetAlphaSurfaceOverlayColorKey(PXP_Type *base, uint8_t num, uint32_t colorKeyLow, uint32_t colorKeyHigh);
+
+/*!
+ * @brief Enable or disable the alpha surface color key.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number. 0 for alpha engine A, 1 for alpha engine B.
+ * @param enable True to enable, false to disable.
+ */
+static inline void PXP_EnableAlphaSurfaceOverlayColorKey(PXP_Type *base, uint32_t num, bool enable)
+{
+    switch (num)
+    {
+        case 0:
+            base->AS_CTRL =
+                (base->AS_CTRL & ~PXP_AS_CTRL_ENABLE_COLORKEY_MASK) | PXP_AS_CTRL_ENABLE_COLORKEY((uint32_t)enable);
+            break;
+
+        case 1:
+            base->ALPHA_B_CTRL_1 = (base->ALPHA_B_CTRL_1 & ~PXP_ALPHA_B_CTRL_1_OL_CLRKEY_ENABLE_MASK) |
+                                   PXP_ALPHA_B_CTRL_1_OL_CLRKEY_ENABLE((uint32_t)enable);
+            break;
+
+        default:
+            /* Only 2 alpha process engine instances are supported. */
+            assert(false);
+            break;
+    }
+}
+#else
+/*!
+ * @brief Set the alpha surface overlay color key.
+ *
+ * If a pixel in the current overlay image with a color that falls in the range
+ * from the p colorKeyLow to p colorKeyHigh range, it will use the process surface
  * pixel value for that location. If no PS image is present or if the PS image also
  * matches its colorkey range, the PS background color is used.
  *
@@ -828,6 +1468,7 @@ static inline void PXP_EnableAlphaSurfaceOverlayColorKey(PXP_Type *base, bool en
         base->AS_CTRL &= ~PXP_AS_CTRL_ENABLE_COLORKEY_MASK;
     }
 }
+#endif /* FSL_FEATURE_PXP_V3 */
 
 /*!
  * @brief Set the alpha surface position in output buffer.
@@ -846,7 +1487,33 @@ void PXP_SetAlphaSurfacePosition(
  * @name Process surface
  * @{
  */
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+/*!
+ * @brief Set the back ground color of PS.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number. 0 for alpha engine A, 1 for alpha engine B.
+ * @param backGroundColor Pixel value of the background color.
+ */
+static inline void PXP_SetProcessSurfaceBackGroundColor(PXP_Type *base, uint8_t num, uint32_t backGroundColor)
+{
+    switch (num)
+    {
+        case 0:
+            base->PS_BACKGROUND_0 = backGroundColor;
+            break;
 
+        case 1:
+            base->PS_BACKGROUND_1 = backGroundColor;
+            break;
+
+        default:
+            /* Only 2 alpha process engine instances are supported. */
+            assert(false);
+            break;
+    }
+}
+#else
 /*!
  * @brief Set the back ground color of PS.
  *
@@ -861,6 +1528,7 @@ static inline void PXP_SetProcessSurfaceBackGroundColor(PXP_Type *base, uint32_t
     base->PS_BACKGROUND = backGroundColor;
 #endif
 }
+#endif /* FSL_FEATURE_PXP_V3 */
 
 /*!
  * @brief Set the process surface input buffer configuration.
@@ -896,6 +1564,20 @@ void PXP_SetProcessSurfaceScaler(
 void PXP_SetProcessSurfacePosition(
     PXP_Type *base, uint16_t upperLeftX, uint16_t upperLeftY, uint16_t lowerRightX, uint16_t lowerRightY);
 
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+/*!
+ * @brief Set the process surface color key.
+ *
+ * If the PS image matches colorkey range, the PS background color is output. Set
+ * @p colorKeyLow to 0xFFFFFFFF and p colorKeyHigh to 0 will disable the colorkeying.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number. 0 for alpha engine A, 1 for alpha engine B.
+ * @param colorKeyLow Color key low range.
+ * @param colorKeyHigh Color key high range.
+ */
+void PXP_SetProcessSurfaceColorKey(PXP_Type *base, uint8_t num, uint32_t colorKeyLow, uint32_t colorKeyHigh);
+#else
 /*!
  * @brief Set the process surface color key.
  *
@@ -907,6 +1589,7 @@ void PXP_SetProcessSurfacePosition(
  * @param colorKeyHigh Color key high range.
  */
 void PXP_SetProcessSurfaceColorKey(PXP_Type *base, uint32_t colorKeyLow, uint32_t colorKeyHigh);
+#endif /* FSL_FEATURE_PXP_V3 */
 
 /*!
  * @brief Set the process surface input pixel format YUV or YCbCr.
@@ -1014,35 +1697,15 @@ static inline void PXP_SetRotateConfig(PXP_Type *base,
         (base->CTRL & ~(PXP_CTRL_ROTATE_MASK | PXP_CTRL_ROT_POS_MASK | PXP_CTRL_VFLIP_MASK | PXP_CTRL_HFLIP_MASK)) |
         PXP_CTRL_ROTATE(degree) | PXP_CTRL_ROT_POS(position) | ((uint32_t)flipMode << PXP_CTRL_HFLIP_SHIFT);
 #else
-    uint32_t ctrl       = base->CTRL;
+    uint32_t ctrl = base->CTRL;
 
     if (kPXP_RotateOutputBuffer == position)
     {
-        if ((degree != kPXP_Rotate0) || (flipMode != kPXP_FlipDisable))
-        {
-            base->DATA_PATH_CTRL0 =
-                (base->DATA_PATH_CTRL0 & (~PXP_DATA_PATH_CTRL0_MUX12_SEL_MASK)) | PXP_DATA_PATH_CTRL0_MUX12_SEL(0);
-        }
-        else
-        {
-            base->DATA_PATH_CTRL0 =
-                (base->DATA_PATH_CTRL0 & (~PXP_DATA_PATH_CTRL0_MUX12_SEL_MASK)) | PXP_DATA_PATH_CTRL0_MUX12_SEL(1);
-        }
         ctrl &= ~(PXP_CTRL_HFLIP0_MASK | PXP_CTRL_VFLIP0_MASK | PXP_CTRL_ROTATE0_MASK);
         ctrl |= (PXP_CTRL_ROTATE0(degree) | ((uint32_t)flipMode << PXP_CTRL_HFLIP0_SHIFT));
     }
     else
     {
-        if ((degree != kPXP_Rotate0) || (flipMode != kPXP_FlipDisable))
-        {
-            base->DATA_PATH_CTRL0 =
-                (base->DATA_PATH_CTRL0 & (~PXP_DATA_PATH_CTRL0_MUX3_SEL_MASK)) | PXP_DATA_PATH_CTRL0_MUX3_SEL(1);
-        }
-        else
-        {
-            base->DATA_PATH_CTRL0 =
-                (base->DATA_PATH_CTRL0 & (~PXP_DATA_PATH_CTRL0_MUX3_SEL_MASK)) | PXP_DATA_PATH_CTRL0_MUX3_SEL(0);
-        }
         ctrl &= ~(PXP_CTRL_HFLIP1_MASK | PXP_CTRL_VFLIP1_MASK | PXP_CTRL_ROTATE1_MASK);
         ctrl |= (PXP_CTRL_ROTATE1(degree) | ((uint32_t)flipMode << PXP_CTRL_HFLIP1_SHIFT));
     }
@@ -1050,6 +1713,25 @@ static inline void PXP_SetRotateConfig(PXP_Type *base,
     base->CTRL = ctrl;
 #endif
 }
+
+/*!
+ * @brief Build a solid rectangle of given pixel value.
+ *
+ * @param base PXP peripheral base address.
+ * @param outFormat output pixel format.
+ * @param value The value of the pixel to be filled in the rectangle in ARGB8888 format.
+ * @param width width of the rectangle.
+ * @param height height of the rectangle.
+ * @param pitch output pitch in byte.
+ * @param outAddr address of the memory to store the rectangle.
+ */
+void PXP_BuildRect(PXP_Type *base,
+                   pxp_output_pixel_format_t outFormat,
+                   uint32_t value,
+                   uint16_t width,
+                   uint16_t height,
+                   uint16_t pitch,
+                   uint32_t outAddr);
 /* @} */
 
 /*!
@@ -1122,7 +1804,9 @@ static inline bool PXP_IsNextCommandPending(PXP_Type *base)
 static inline void PXP_CancelNextCommand(PXP_Type *base)
 {
     /* Write PXP_NEXT_ENABLED_MASK to the register NEXT_CLR to canel the command. */
-    *((volatile uint32_t *)(&(base->NEXT)) + 2U) = PXP_NEXT_ENABLED_MASK;
+    uint32_t regAddr = (uint32_t) & (base->NEXT);
+    regAddr += 8U;
+    *(uint32_t *)regAddr = PXP_NEXT_ENABLED_MASK;
 }
 
 /* @} */
@@ -1318,7 +2002,16 @@ void PXP_SetDitherFinalLutData(PXP_Type *base, const pxp_dither_final_lut_data_t
  */
 static inline void PXP_SetDitherConfig(PXP_Type *base, const pxp_dither_config_t *config)
 {
-    base->DITHER_CTRL = *((const uint32_t *)config) & 0x00FFFFFFU;
+    typedef union
+    {
+        pxp_dither_config_t _dither_config;
+        uint32_t _u32;
+    } pxp_reg_convert_t;
+
+    pxp_reg_convert_t pid;
+
+    pid._dither_config = *config;
+    base->DITHER_CTRL  = pid._u32 & 0x00FFFFFFU;
 }
 
 /*!
@@ -1344,7 +2037,18 @@ void PXP_EnableDither(PXP_Type *base, bool enable);
  * @name Porter Duff
  * @{
  */
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+/*!
+ * @brief Set the Porter Duff configuration for one of the alpha process engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ * @param config Pointer to the configuration.
+ */
+void PXP_SetPorterDuffConfig(PXP_Type *base, uint8_t num, const pxp_porter_duff_config_t *config);
+#endif /* FSL_FEATURE_PXP_V3 */
 
+#if !(defined(FSL_FEATURE_PXP_HAS_NO_PORTER_DUFF_CTRL) && FSL_FEATURE_PXP_HAS_NO_PORTER_DUFF_CTRL)
 /*!
  * @brief Set the Porter Duff configuration.
  *
@@ -1352,7 +2056,10 @@ void PXP_EnableDither(PXP_Type *base, bool enable);
  * @param config Pointer to the configuration.
  */
 void PXP_SetPorterDuffConfig(PXP_Type *base, const pxp_porter_duff_config_t *config);
+#endif /* FSL_FEATURE_PXP_HAS_NO_PORTER_DUFF_CTRL */
 
+#if (!(defined(FSL_FEATURE_PXP_HAS_NO_PORTER_DUFF_CTRL) && FSL_FEATURE_PXP_HAS_NO_PORTER_DUFF_CTRL)) || \
+    (defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3)
 /*!
  * @brief Get the Porter Duff configuration by blend mode.
  *
@@ -1368,6 +2075,9 @@ void PXP_SetPorterDuffConfig(PXP_Type *base, const pxp_porter_duff_config_t *con
  * @retval kStatus_InvalidArgument The blend mode not supported.
  */
 status_t PXP_GetPorterDuffConfig(pxp_porter_duff_blend_mode_t mode, pxp_porter_duff_config_t *config);
+
+/* @} */
+#endif /* FSL_FEATURE_PXP_V3 || FSL_FEATURE_PXP_HAS_NO_PORTER_DUFF_CTRL  */
 
 /* @} */
 
@@ -1447,7 +2157,544 @@ status_t PXP_StartPictureCopy(PXP_Type *base, const pxp_pic_copy_config_t *confi
  */
 status_t PXP_StartMemCopy(PXP_Type *base, uint32_t srcAddr, uint32_t destAddr, uint32_t size);
 
+/*!
+ * @brief Copy continous memory.
+ *
+ * @note This function resets the old PXP settings, which means the settings
+ * like rotate, flip, will be reseted to disabled status.
+ *
+ * @note Compare with @PXP_StartMemCopy, this function supports size not aligned to
+ * 512 bytes. This function returns when copy finished, upper layer doesn't need to
+ * wait @ref kPXP_CompleteFlag.
+ *
+ * @param base PXP peripheral base address.
+ * @param srcAddr Source memory address.
+ * @param destAddr Destination memory address.
+ * @param size How many bytes to copy, should be 512 byte aligned.
+ * @retval kStatus_Success Successfully started the copy process.
+ * @retval kStatus_InvalidArgument Invalid argument.
+ */
+status_t PXP_MemCopy(PXP_Type *base, uint32_t srcAddr, uint32_t destAddr, uint32_t size);
+
 /* @} */
+
+#if defined(FSL_FEATURE_PXP_V3) && FSL_FEATURE_PXP_V3
+
+/*!
+ * @name Fetch engine
+ * @{
+ */
+/*!
+ * @brief Configures one channel of some block's fetch engine.
+ *
+ * Fetch engine is 64-bit input and 32-bit output per channel
+ *
+ * @param base PXP peripheral base address.
+ * @param name which block the fetch engine belongs to.
+ * @param channel channel number.
+ * @param config pointer to the configuration structure.
+ * @retval kStatus_Success Successfully configured the engine.
+ * @retval kStatus_InvalidArgument Invalid argument.
+ */
+status_t PXP_SetFetchEngineConfig(PXP_Type *base,
+                                  pxp_fetch_engine_name_t name,
+                                  uint8_t channel,
+                                  const pxp_fetch_engine_config_t *config);
+
+/*!
+ * @brief Enables/disables the fetch engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param name which block the fetch engine belongs to.
+ * @param channel channel number.
+ * @param enable true to enable, false to disable.
+ */
+static inline void PXP_EnableFetchEngine(PXP_Type *base, pxp_fetch_engine_name_t name, uint8_t channel, bool enable)
+{
+    if (enable)
+    {
+        if (name == kPXP_FetchInput)
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->INPUT_FETCH_CTRL_CH0_SET = PXP_INPUT_FETCH_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->INPUT_FETCH_CTRL_CH1_SET = PXP_INPUT_FETCH_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+        else
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->DITHER_FETCH_CTRL_CH0_SET = PXP_DITHER_FETCH_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->DITHER_FETCH_CTRL_CH1_SET = PXP_DITHER_FETCH_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+    }
+    else
+    {
+        if (name == kPXP_FetchInput)
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->INPUT_FETCH_CTRL_CH0_CLR = PXP_INPUT_FETCH_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->INPUT_FETCH_CTRL_CH1_CLR = PXP_INPUT_FETCH_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+        else
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->DITHER_FETCH_CTRL_CH0_CLR = PXP_DITHER_FETCH_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->DITHER_FETCH_CTRL_CH1_CLR = PXP_DITHER_FETCH_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+    }
+}
+/* @} */
+
+/*!
+ * @name Store engine
+ * @{
+ */
+
+/*!
+ * @brief Configures one channel of some block's store engine.
+ *
+ * Store engine is 32-bit input and 64-bit output per channel.
+ * @note: If there is only one channel used for data input, channel 0 must be used rather than channel 1.
+ *
+ * @param base PXP peripheral base address.
+ * @param name the store engine belongs to which block.
+ * @param channel channel number.
+ * @param config pointer to the configuration structure.
+ * @retval kStatus_Success Successfully configured the engine.
+ * @retval kStatus_InvalidArgument Invalid argument.
+ */
+status_t PXP_SetStoreEngineConfig(PXP_Type *base,
+                                  pxp_store_engine_name_t name,
+                                  uint8_t channel,
+                                  const pxp_store_engine_config_t *config);
+
+/*!
+ * @brief Enables/disables the store engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param name which block the store engine belongs to.
+ * @param channel channel number.
+ * @param enable true to enable, false to disable.
+ */
+static inline void PXP_EnableStoreEngine(PXP_Type *base, pxp_store_engine_name_t name, uint8_t channel, bool enable)
+{
+    if (enable)
+    {
+        if (name == kPXP_StoreInput)
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->INPUT_STORE_CTRL_CH0_SET = PXP_INPUT_STORE_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->INPUT_STORE_CTRL_CH1_SET = PXP_INPUT_STORE_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+        else
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->DITHER_STORE_CTRL_CH0_SET = PXP_DITHER_STORE_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->DITHER_STORE_CTRL_CH1_SET = PXP_DITHER_STORE_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+    }
+    else
+    {
+        if (name == kPXP_StoreInput)
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->INPUT_STORE_CTRL_CH0_CLR = PXP_INPUT_STORE_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->INPUT_STORE_CTRL_CH1_CLR = PXP_INPUT_STORE_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+        else
+        {
+            switch (channel)
+            {
+                case 0:
+                    base->DITHER_STORE_CTRL_CH0_CLR = PXP_DITHER_STORE_CTRL_CH0_CH_EN_MASK;
+                    break;
+
+                case 1:
+                    base->DITHER_STORE_CTRL_CH1_CLR = PXP_DITHER_STORE_CTRL_CH1_CH_EN_MASK;
+                    break;
+
+                default:
+                    /* Only 2 channels are supported per fetch engine. */
+                    assert(false);
+                    break;
+            }
+        }
+    }
+}
+
+/*!
+ * @brief Combines the 2 channels of some store engine.
+ *
+ * Store engine is 32-bit input and 64-bit output per channel. If both channels of store engine's
+ * input and 8 bits flag contain valid data, then need set combine to true to support total 64-bit input.
+ *
+ * @param base PXP peripheral base address.
+ * @param name the store engine belongs to which block.
+ * @param combine true to combine the 2 channels.
+ */
+static inline void PXP_CombineStoreEngineChannel(PXP_Type *base, pxp_store_engine_name_t name, bool combine)
+{
+    if (name == kPXP_StoreInput)
+    {
+        if (combine)
+        {
+            base->INPUT_STORE_CTRL_CH0_SET = PXP_INPUT_STORE_CTRL_CH0_SET_COMBINE_2CHANNEL_MASK;
+        }
+        else
+        {
+            base->INPUT_STORE_CTRL_CH0_CLR = PXP_INPUT_STORE_CTRL_CH0_SET_COMBINE_2CHANNEL_MASK;
+        }
+    }
+    else
+    {
+        if (combine)
+        {
+            base->DITHER_STORE_CTRL_CH0_SET = PXP_DITHER_STORE_CTRL_CH0_SET_COMBINE_2CHANNEL_MASK;
+        }
+        else
+        {
+            base->DITHER_STORE_CTRL_CH0_CLR = PXP_DITHER_STORE_CTRL_CH0_SET_COMBINE_2CHANNEL_MASK;
+        }
+    }
+}
+/* @} */
+
+/*!
+ * @name Pre-dither CFA engine
+ * @{
+ */
+/*!
+ * @brief Configures the pre-dither CFA engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param config pointer to the configuration structure.
+ * @retval kStatus_Success Successfully configured the engine.
+ * @retval kStatus_InvalidArgument Invalid argument.
+ */
+status_t PXP_SetCfaConfig(PXP_Type *base, const pxp_cfa_config_t *config);
+
+/*!
+ * @brief Enables/disables the CFA block.
+ *
+ * @param base PXP peripheral base address.
+ * @param enable true to enable, false to disable.
+ */
+static inline void PXP_EnableCfa(PXP_Type *base, bool enable)
+{
+    if (enable)
+    {
+        base->CFA_CTRL_CLR = PXP_CFA_CTRL_CFA_BYPASS_MASK;
+    }
+    else
+    {
+        base->CFA_CTRL_SET = PXP_CFA_CTRL_CFA_BYPASS_MASK;
+    }
+}
+/* @} */
+
+/*!
+ * @name Histogram engine
+ * @{
+ */
+/*!
+ * @brief Configures histogram engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ * @param config pointer to the configuration structure.
+ * @retval kStatus_Success Successfully configured the engine.
+ * @retval kStatus_InvalidArgument Invalid argument.
+ */
+status_t PXP_SetHistogramConfig(PXP_Type *base, uint8_t num, const pxp_histogram_config_t *config);
+
+/*!
+ * @brief Enables/disables the histogram engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ * @param enable true to enable, false to disable.
+ */
+static inline void PXP_EnableHistogram(PXP_Type *base, uint8_t num, bool enable)
+{
+    switch (num)
+    {
+        case 0:
+            base->HIST_A_CTRL =
+                (base->HIST_A_CTRL & ~PXP_HIST_A_CTRL_ENABLE_MASK) | PXP_HIST_A_CTRL_ENABLE((uint32_t)enable);
+            break;
+
+        case 1:
+            base->HIST_B_CTRL =
+                (base->HIST_B_CTRL & ~PXP_HIST_B_CTRL_ENABLE_MASK) | PXP_HIST_B_CTRL_ENABLE((uint32_t)enable);
+            break;
+
+        default:
+            /* Only 2 instances are supported per fetch engine. */
+            assert(false);
+            break;
+    }
+}
+
+/*!
+ * @brief Gets the results of histogram mask operation.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ * @param result pointer to the result structure.
+ */
+void PXP_GetHistogramMaskResult(PXP_Type *base, uint8_t num, pxp_histogram_mask_result_t *result);
+
+/*!
+ * @brief Gets the PXP Histogram operation result
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ * @return bit map of the match result in @ref _pxp_histgram_flags ORed together
+ */
+static inline uint8_t PXP_GetHistogramMatchResult(PXP_Type *base, uint8_t num)
+{
+    uint8_t result = 0U;
+    switch (num)
+    {
+        case 0:
+            result = (uint8_t)((base->HIST_A_CTRL & PXP_HIST_A_CTRL_STATUS_MASK) >> PXP_HIST_A_CTRL_STATUS_SHIFT);
+            break;
+
+        case 1:
+            result = (uint8_t)((base->HIST_B_CTRL & PXP_HIST_B_CTRL_STATUS_MASK) >> PXP_HIST_B_CTRL_STATUS_SHIFT);
+            break;
+
+        default:
+            /* Only 2 histogram instances are supported. */
+            assert(false);
+            break;
+    }
+
+    return result;
+}
+
+/*!
+ * @brief Clears the current histogram operation result.
+ *
+ * Clears the current histogram operation result, including mask operation result and from 2-level to 32-level match
+ * result.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ */
+static inline void PXP_ClearHistogramResult(PXP_Type *base, uint8_t num)
+{
+    switch (num)
+    {
+        case 0:
+            base->HIST_A_CTRL |= PXP_HIST_A_CTRL_CLEAR_MASK;
+            break;
+
+        case 1:
+            base->HIST_B_CTRL |= PXP_HIST_B_CTRL_CLEAR_MASK;
+            break;
+
+        default:
+            /* Only 2 histogram instances are supported. */
+            assert(false);
+            break;
+    }
+}
+
+/*!
+ * @brief Gets the results of histogram mask operation.
+ *
+ * @param base PXP peripheral base address.
+ * @param num instance number.
+ * @param width the width of the updated block
+ * @param height the height of the updated block
+ */
+static inline void PXP_SetHistogramSize(PXP_Type *base, uint8_t num, uint16_t width, uint16_t height)
+{
+    switch (num)
+    {
+        case 0:
+            base->HIST_A_BUF_SIZE = ((uint32_t)height << 16U) | (uint32_t)width;
+            break;
+
+        case 1:
+            base->HIST_B_BUF_SIZE = ((uint32_t)height << 16U) | (uint32_t)width;
+            break;
+
+        default:
+            /* Only 2 histogram instances are supported. */
+            assert(false);
+            break;
+    }
+}
+/* @} */
+
+/*!
+ * @name WFE engine
+ * @{
+ */
+
+/*!
+ * @brief Initializes the WFE-A engine for waveform process.
+ *
+ * @param base PXP peripheral base address.
+ * @param ditherHandshake true to enable handshake mode with upstream dither store engine.
+ */
+void PXP_WfeaInit(PXP_Type *base, bool ditherHandshake);
+
+/*!
+ * @brief Enables/disables hanshake mode with upstream dither engine.
+ *
+ * @param base PXP peripheral base address.
+ * @param enable true to enable handshake mode with upstream dither store engine.
+ */
+static inline void PXP_WfeaEnableDitherHandshake(PXP_Type *base, bool enable)
+{
+    if (enable)
+    {
+        base->WFA_FETCH_CTRL |= PXP_WFA_FETCH_CTRL_BF1_HSK_MODE_MASK;
+    }
+    else
+    {
+        base->WFA_FETCH_CTRL &= ~PXP_WFA_FETCH_CTRL_BF1_HSK_MODE_MASK;
+    }
+}
+
+/*!
+ * @brief Configure the WFE-A engine
+ *
+ * @param base PXP peripheral base address.
+ * @param config pointer to the configuration structure.
+ */
+void PXP_SetWfeaConfig(PXP_Type *base, const pxp_wfea_engine_config_t *config);
+
+/*!
+ * @brief Sets the LUT usage status for waveform engine.
+ *
+ * If any EPDC LUT(s) has been occupied, use this API to set its usage for PXP WFE-A.
+ *
+ * @param base PXP base pointer
+ * @param lutStatus the status mask of the LUT(s) to be set, can be a single flag or several flags up to all 64 LUTs.
+ *  If user wants to set LUT17 usage, set bit 17 in the lutStatus.
+ */
+static inline void PXP_SetLutUsage(PXP_Type *base, uint64_t lutStatus)
+{
+    base->WFE_A_STG1_8X1_OUT0_0 |= (uint32_t)lutStatus;
+    base->WFE_A_STG1_8X1_OUT0_1 |= (uint32_t)(lutStatus >> 32U);
+}
+
+/*!
+ * @brief Clears the LUT usage status for waveform engine.
+ *
+ * If any EPDC LUT(s) has finished processing and is(are) free, use this API to clear its usage for PXP WFE-A.
+ *
+ * @param base PXP base pointer
+ * @param lutStatus the status mask of the LUT(s) to be cleared, can be a single flag or several flags up to all 64
+ * LUTs. If user wants to clear LUT17, set bit 17.
+ */
+static inline void PXP_ClearLutUsage(PXP_Type *base, uint64_t lutStatus)
+{
+    base->WFE_A_STG1_8X1_OUT0_0 &= ~(uint32_t)lutStatus;
+    base->WFE_A_STG1_8X1_OUT0_1 &= ~(uint32_t)(lutStatus >> 32U);
+}
+
+/*!
+ * @brief Gets the occupied LUT list.
+ *
+ * @param base PXP base pointer
+ * @return lutStatus the status mask of the LUT(s) that is(are) occupied
+ */
+static inline uint64_t PXP_GetLutUsage(PXP_Type *base)
+{
+    return ((uint64_t)base->WFE_A_STG1_8X1_OUT0_0 | (uint64_t)base->WFE_A_STG1_8X1_OUT0_1 << 32U);
+}
+
+/* @} */
+
+#endif /* FSL_FEATURE_PXP_V3 */
 
 #if defined(__cplusplus)
 }

@@ -124,7 +124,7 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
 
-    if rtconfig.PLATFORM == 'gcc':
+    if rtconfig.PLATFORM in ['gcc']:
         contents = ''
         if not os.path.isfile('cconfig.h'):
             import gcc
@@ -287,7 +287,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     GenCconfigFile(env, BuildOptions)
 
     # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
-    if rtconfig.PLATFORM == 'gcc' and str(env['LINKFLAGS']).find('nano.specs') != -1:
+    if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
     if GetOption('genconfig'):
@@ -305,7 +305,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
-    if GetOption('pyconfig_silent'):    
+    if GetOption('pyconfig_silent'):
         from menuconfig import guiconfig_silent
 
         guiconfig_silent(Rtt_Root)
@@ -388,6 +388,16 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     f.close()
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
+
+    AddOption('--buildlib',
+                      dest = 'buildlib',
+                      type = 'string',
+                      help = 'building library of a component')
+    AddOption('--cleanlib',
+                      dest = 'cleanlib',
+                      action = 'store_true',
+                      default = False,
+                      help = 'clean up the library by --buildlib')
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -607,8 +617,8 @@ def DefineGroup(name, src, depend, **parameters):
             paths.append(os.path.abspath(item))
         group['LOCAL_CPPPATH'] = paths
 
-    
-    if rtconfig.PLATFORM == 'gcc':
+
+    if rtconfig.PLATFORM in ['gcc']:
         if 'CFLAGS' in group:
             group['CFLAGS'] = utils.GCCC99Patch(group['CFLAGS'])
         if 'CCFLAGS' in group:
@@ -684,10 +694,10 @@ def PreBuilding():
         a()
 
 def GroupLibName(name, env):
-    
-    if rtconfig.PLATFORM == 'armcc':
+
+    if rtconfig.PLATFORM in ['armcc']:
         return name + '_rvds'
-    elif rtconfig.PLATFORM == 'gcc':
+    elif rtconfig.PLATFORM in ['gcc']:
         return name + '_gcc'
 
     return name
@@ -774,35 +784,26 @@ def DoBuilding(target, objects):
 
 def GenTargetProject(program = None):
 
-    if GetOption('target') == 'mdk':
-        from keil import MDKProject
-        from keil import MDK4Project
-        from keil import MDK5Project
+    if GetOption('target') in ['mdk', 'mdk4', 'mdk5']:
+        from keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
-        template = os.path.isfile('template.Uv2')
-        if template:
-            MDKProject('project.Uv2', Projects)
+        if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
+            MDK5Project('project.uvprojx', Projects)
+            print("Keil5 project is generating...")
+        elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
+            MDK4Project('project.uvproj', Projects)
+            print("Keil4 project is generating...")
+        elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
+            MDK2Project('project.Uv2', Projects)
+            print("Keil2 project is generating...")
         else:
-            template = os.path.isfile('template.uvproj')
-            if template:
-                MDK4Project('project.uvproj', Projects)
-            else:
-                template = os.path.isfile('template.uvprojx')
-                if template:
-                    MDK5Project('project.uvprojx', Projects)
-                else:
-                    print ('No template project file found.')
-
-    if GetOption('target') == 'mdk4':
-        from keil import MDK4Project
-        MDK4Project('project.uvproj', Projects)
-
-    if GetOption('target') == 'mdk5':
-        from keil import MDK5Project
-        MDK5Project('project.uvprojx', Projects)
+            print ('No template project file found.')
+            exit(1)
+        print("Keil Version: " + ARMCC_Version())
 
     if GetOption('target') == 'iar':
-        from iar import IARProject
+        from iar import IARProject, IARVersion
+        print("IAR Version: " + IARVersion())
         IARProject('project.ewp', Projects)
 
     if GetOption('target') == 'vs':
@@ -840,7 +841,7 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'eclipse':
         from eclipse import TargetEclipse
         TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
-        
+
     if GetOption('target') == 'codelite':
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
@@ -870,6 +871,7 @@ def EndBuilding(target, program = None):
     Clean(target, 'cconfig.h')
     Clean(target, 'rtua.py')
     Clean(target, 'rtua.pyc')
+    Clean(target, '.sconsign.dblite')
 
     if GetOption('target'):
         GenTargetProject(program)
