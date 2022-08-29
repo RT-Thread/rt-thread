@@ -145,7 +145,6 @@ int $Sub$$main(void)
     return 0;
 }
 #elif defined(__ICCARM__)
-extern int main(void);
 /* __low_level_init will auto called by IAR cstartup */
 extern void __iar_data_init3(void);
 int __low_level_init(void)
@@ -162,8 +161,6 @@ int entry(void)
     rtthread_startup();
     return 0;
 }
-#elif defined(__TI_COMPILER_VERSION__)
-extern int main(void);
 #endif
 
 #ifndef RT_USING_HEAP
@@ -180,6 +177,7 @@ struct rt_thread main_thread;
  */
 void main_thread_entry(void *parameter)
 {
+    extern int main(void);
 
 #ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
