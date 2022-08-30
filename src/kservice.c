@@ -882,6 +882,8 @@ static char *print_number(char *buf,
  */
 RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
+#define LBLOCKSIZE      (sizeof(rt_ubase_t))
+
 #ifdef RT_KPRINTF_USING_LONGLONG
     unsigned long long num;
 #else
@@ -899,6 +901,8 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
 #ifdef RT_PRINTF_PRECISION
     int precision;      /* min. # of digits for integers and max for a string */
 #endif /* RT_PRINTF_PRECISION */
+
+    RT_ASSERT(LBLOCKSIZE == 2 || LBLOCKSIZE == 4 || LBLOCKSIZE == 8);
 
     str = buf;
     end = buf + size;
@@ -1112,13 +1116,13 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         }
         else if (qualifier == 'h')
         {
-            if(sizeof(rt_ubase_t) == 4)       /* for normal 32bit cpus */
-            {
-                num = (rt_uint16_t)va_arg(args, rt_uint32_t);
-            }
-            else if(sizeof(rt_ubase_t) == 2)  /* for ti c28x: 16bit stack alignment */
+            if(LBLOCKSIZE == 2)  /* for ti c28x: 16bit stack alignment */
             {
                 num = (rt_uint16_t)va_arg(args, rt_uint16_t);
+            }
+            else /* for 32bit and 64bit cpus */
+            {
+                num = (rt_uint16_t)va_arg(args, rt_uint32_t);
             }
             if (flags & SIGN) num = (rt_int16_t)num;
         }
