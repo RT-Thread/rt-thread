@@ -13,6 +13,8 @@
 *.crf
 build
 Debug
+rtthread
+settings
 documentation/html
 *~
 *.o
