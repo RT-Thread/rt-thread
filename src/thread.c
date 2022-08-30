@@ -577,6 +577,9 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
