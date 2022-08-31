@@ -37,7 +37,7 @@ bool TIM_ADV_Init(TIM_ADV_Type * TIMx, TIM_ADV_Init_Type * init)
     }
     TIMx->CR1 = cr1;
     /* Check the vadility of StepFreqHz. */
-    if ( (init->StepFreqHz == 0u) || (init->StepFreqHz > init->ClockFreqHz) ) 
+    if ( (init->StepFreqHz == 0u) || (init->StepFreqHz > init->ClockFreqHz) )
     {
         return false;
     }
@@ -153,9 +153,9 @@ void TIM_ADV_EnableOutputCompare(TIM_ADV_Type * TIMx, uint32_t channel, TIM_ADV_
                 ;
 
         _TIM_ADV_WriteChannelCtrlReg(TIMx, channel, regval);
-    
+
         TIM_ADV_PutChannelValue(TIMx, channel, conf->ChannelValue);
-    
+
         switch (conf->PinPolarity)
         {
             case TIM_ADV_PinPolarity_Disable:
@@ -353,7 +353,7 @@ void TIM_ADV_EnableIdleOut(TIM_ADV_Type * TIMx, uint32_t channel, TIM_ADV_IdleOu
 {
     uint32_t cr2 = TIMx->CR2 & ~ ( ( TIM_ADV_CR2_OIS1_MASK
                                    | TIM_ADV_CR2_OIS1N_MASK
-                                   ) << ( channel << 1u ) 
+                                   ) << ( channel << 1u )
                                  );
     if ( conf->PinPolarity == TIM_ADV_PinPolarity_Rising )
     {

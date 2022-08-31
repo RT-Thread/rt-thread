@@ -4,9 +4,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #include "hal_fsmc.h"
 
-const uint32_t FSMC_BankBases[] = 
+const uint32_t FSMC_BankBases[] =
 {
     FSMC_BANK0_BASE,
     FSMC_BANK1_BASE,
@@ -67,7 +68,7 @@ void FSMC_EnableConf(FSMC_Type * FSMCx, uint32_t index)
     FSMCx->SMSKR0 = ( (FSMCx->SMSKR0 & ~FSMC_SMSKR0_REGSELECT_MASK)
                                      |  FSMC_SMSKR0_REGSELECT(index) )
                                      ;
-}    
+}
 
 void FSMC_PutData32(FSMC_Type * FSMCx, uint32_t bankn, uint32_t offset, uint32_t data)
 {

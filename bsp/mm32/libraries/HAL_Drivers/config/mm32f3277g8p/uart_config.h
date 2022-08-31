@@ -69,7 +69,7 @@ extern "C" {
     }
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
-    
+
 #if defined(BSP_USING_UART6)
 #ifndef UART6_CONFIG
 #define UART6_CONFIG                                                \
@@ -80,7 +80,7 @@ extern "C" {
     }
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
-    
+
 #if defined(BSP_USING_UART7)
 #ifndef UART7_CONFIG
 #define UART7_CONFIG                                                \
@@ -91,7 +91,7 @@ extern "C" {
     }
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
-    
+
 #if defined(BSP_USING_UART8)
 #ifndef UART8_CONFIG
 #define UART8_CONFIG                                                \

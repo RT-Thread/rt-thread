@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #ifndef __HAL_COMMON_H__
 #define __HAL_COMMON_H__
 

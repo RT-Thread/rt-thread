@@ -145,7 +145,7 @@ typedef enum
 } TIM_ADV_OutputCompareRefOut_Type;
 
 /*!
- * @brief TIM input capture active edge selection and output compare active polarity selection. 
+ * @brief TIM input capture active edge selection and output compare active polarity selection.
  * | conf                    | TIM_ADV_PinPolarity_Rising | TIM_ADV_PinPolarity_Falling |
  * | ----------------------- | -------------------------- | --------------------------- |
  * | input capture           | detects rising edge        | detects falling edge        |
@@ -416,7 +416,7 @@ typedef struct
  * | ------------ | --------------------------------------------------- |
  * | 0xxxxxxx     | DeadAreaCoef * DeadAreaStep                         |
  * | 10xxxxxx     | ( 64 +  DeadAreaCoef[5:0] ) * ( 2 * DeadAreaStep )  |
- * | 110xxxxx     | ( 32 +  DeadAreaCoef[4:0] ) * ( 8 * DeadAreaStep ） |
+ * | 110xxxxx     | ( 32 +  DeadAreaCoef[4:0] ) * ( 8 * DeadAreaStep ï¼‰ |
  * | 111xxxxx     | ( 32 +  DeadAreaCoef[4:0] ) * ( 16 * DeadAreaStep ) |
  */
 typedef struct
@@ -573,7 +573,7 @@ void TIM_ADV_ClearInterruptStatus(TIM_ADV_Type * TIMx, uint32_t status);
  * @brief Set up the output compare feature of indicated timer channel.
  *
  * If need to change the IO mode of the working channel, channel must be disabled first, then modify.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param channel Output channel instance. See to @ref TIM_ADV_CHANNEL_SELECTION.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_OutputCompareConf_Type.
@@ -594,7 +594,7 @@ void TIM_ADV_EnableOutputCompareSwitch(TIM_ADV_Type * TIMx, bool enable);
  * @brief Enable the input capture feature of indicated timer channel.
  *
  * If need to change the IO mode of the working channel, channel must be disabled first, then modify.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param channel Input channel instance. See to @ref TIM_ADV_CHANNEL_SELECTION.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_InputCaptureConf_Type.
@@ -606,7 +606,7 @@ void TIM_ADV_EnableInputCapture(TIM_ADV_Type * TIMx, uint32_t channel, TIM_ADV_I
  * @brief Get the value of the indicated timer channel.
  *
  * When capture event happens, counter value will be kept in its indicated channel.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param channel Channel instance to get the value. See to @ref TIM_ADV_CHANNEL_SELECTION.
  * @return Value of the indiacted timer channel.
@@ -617,7 +617,7 @@ uint16_t TIM_ADV_GetChannelValue(TIM_ADV_Type * TIMx, uint32_t channel);
  * @brief Put the value into the indicated timer channel.
  *
  * When in output compare, channel value would be the compared with counter value.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param channel Channel instance to put the value. See to @ref TIM_ADV_CHANNEL_SELECTION.
  * @param value The value to be set in the indicated timer channel.
@@ -638,7 +638,7 @@ void TIM_ADV_EnableDeadArea(TIM_ADV_Type * TIMx, TIM_ADV_DeadAreaConf_Type * con
  * @brief Enable the master mode of the indicated timer.
  *
  * Master mode transfer the timer signal to other timers.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_MasterModeConf_Type.
  * @return None.
@@ -649,7 +649,7 @@ void TIM_ADV_EnableMasterMode(TIM_ADV_Type * TIMx, TIM_ADV_MasterModeConf_Type *
  * @brief Enable the slave mode of the indicated timer.
  *
  * Slave mode can control the working state of counter.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_SlaveModeConf_Type.
  * @return None.
@@ -661,7 +661,7 @@ void TIM_ADV_EnableSlaveMode(TIM_ADV_Type * TIMx, TIM_ADV_SlaveModeConf_Type * c
  *
  * External trigger signal will trigger counter do addition.
  * Its div and filter along with the counter StepFreqHz will affect.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_ExtTriggerInConf_Type.
  * @return None.
@@ -699,7 +699,7 @@ void TIM_ADV_SetRepCounter(TIM_ADV_Type * TIMx, uint8_t value);
  * @brief Get the indicated TIMx Counter value.
  *
  * Real repetition's times number, meaning left repetition period times to run.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @return The current value of the counter register.
  */
@@ -707,7 +707,7 @@ uint8_t TIM_ADV_GetRepCounterValue(TIM_ADV_Type * TIMx);
 
 /*!
  * @brief Set the channel idle state output when switch off the output compare.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param channel Channel instance to set the idle state output. See to @ref TIM_ADV_CHANNEL_SELECTION.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_IdleOut_Type.
@@ -717,7 +717,7 @@ void TIM_ADV_EnableIdleOut(TIM_ADV_Type * TIMx, uint32_t channel, TIM_ADV_IdleOu
 
 /*!
  * @brief Set the lock level for protecting the timer config setting.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param lock Lock level to be set for protecting Timer set. See to @ref TIM_ADV_LockLevel_Type.
  * @return None.
@@ -726,7 +726,7 @@ void TIM_ADV_EnableLock(TIM_ADV_Type * TIMx, TIM_ADV_LockLevel_Type lock);
 
 /*!
  * @brief Set the break input of the timer.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_ADV_BreakIn_Type.
  * @return None.
@@ -735,7 +735,7 @@ void TIM_ADV_EnableBreakIn(TIM_ADV_Type * TIMx, TIM_ADV_BreakIn_Type * conf);
 
 /*!
  * @brief Set the PWM shift of the indicated channel.
- * 
+ *
  * @param TIMx TIM_ADV_Type instance.
  * @param channel Channel instance to set the pwm shift. See to @ref TIM_ADV_CHANNEL_SELECTION.
  * @param value The counter time when need pwm output shift. If val equals the channel value, disable the shift.

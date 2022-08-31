@@ -1,12 +1,12 @@
 /**
  * @file drv_spi.c
  * @author 100ask development team
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2022-06-16
- * 
+ *
  * @copyright Copyright (c) 2022 Chongqing 100ASK Technology Co., LTD
- * 
+ *
  */
 
 #include <rtthread.h>
@@ -148,7 +148,7 @@ static rt_err_t mm32_spi_init(struct mm32_spi *spi_drv, struct rt_spi_configurat
                     spi_drv->config->dma_rx->dma_rcc, \
                     spi_drv->dma.rx_buf_len, \
                     spi_drv->dma.rx_buf);
-        if(ret == -1)   
+        if(ret == -1)
         {
             LOG_D("%s init DMA failed.\r\n", spi_drv->config->bus_name);
             return RT_ERROR;
@@ -162,10 +162,10 @@ static rt_err_t mm32_spi_init(struct mm32_spi *spi_drv, struct rt_spi_configurat
                     spi_drv->config->dma_tx->Instance, \
                     spi_drv->config->dma_tx->dma_req, \
                     spi_drv->config->dma_tx->dma_irq, \
-                    spi_drv->config->dma_tx->dma_rcc, 
+                    spi_drv->config->dma_tx->dma_rcc,
                     spi_drv->dma.tx_buf_len, \
                     spi_drv->dma.tx_buf);
-        if(ret == -1)   
+        if(ret == -1)
         {
             LOG_D("%s init DMA failed.\r\n", spi_drv->config->bus_name);
             return RT_ERROR;
@@ -229,7 +229,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         already_send_length = message->length - send_length - message_length;
         send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
         recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
-        
+
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
@@ -796,23 +796,23 @@ static void mm32_get_dma_info(void)
 }
 
 #if defined(SOC_SERIES_STM32F0)
-void SPI1_DMA_RX_TX_IRQHandler(void) 
+void SPI1_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
     SPI1_DMA_TX_IRQHandler();
 #endif
-    
+
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
     SPI1_DMA_RX_IRQHandler();
 #endif
 }
 
-void SPI2_DMA_RX_TX_IRQHandler(void) 
+void SPI2_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
     SPI2_DMA_TX_IRQHandler();
 #endif
-    
+
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
     SPI2_DMA_RX_IRQHandler();
 #endif

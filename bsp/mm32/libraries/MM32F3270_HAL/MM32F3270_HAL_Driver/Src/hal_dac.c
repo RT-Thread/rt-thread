@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #include "hal_dac.h"
 
 void DAC_Init(DAC_Type * DACx, uint32_t channel, DAC_Init_Type * init)
@@ -155,7 +156,7 @@ void DAC_DoSwTrigger(DAC_Type * DACx, uint32_t channel)
 
 void DAC_DoDualChannelSwTrigger(DAC_Type * DACx)
 {
-    DACx->SWTRIGR |= DAC_SWTRIGR_SWTRIG1_MASK 
+    DACx->SWTRIGR |= DAC_SWTRIGR_SWTRIG1_MASK
                    | DAC_SWTRIGR_SWTRIG2_MASK
                    ;
 }

@@ -1,12 +1,12 @@
 /**
  * @file dma_config.h
  * @author 100ask development team
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2022-06-16
- * 
+ *
  * @copyright Copyright (c) 2022 Chongqing 100ASK Technology Co., LTD
- * 
+ *
  */
 
 #ifndef __DMA_CONFIG_H__

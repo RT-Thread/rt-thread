@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #include "hal_spi.h"
 
 void SPI_SetBaudrate(SPI_Type * SPIx, uint32_t src_clk, uint32_t baudrate)
