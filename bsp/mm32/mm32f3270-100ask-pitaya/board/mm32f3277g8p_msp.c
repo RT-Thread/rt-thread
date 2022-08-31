@@ -29,7 +29,7 @@ void UART_MspInit(UART_Type *muart)
         gpio_init.Speed = GPIO_Speed_50MHz;
         GPIO_Init(GPIOB, &gpio_init);
         GPIO_PinAFConf(GPIOB, gpio_init.Pins, GPIO_AF_7);
-        
+
         gpio_init.Pins  = GPIO_PIN_7;
         gpio_init.PinMode  = GPIO_PinMode_In_Floating;
         gpio_init.Speed = GPIO_Speed_50MHz;
@@ -46,7 +46,7 @@ void UART_MspInit(UART_Type *muart)
         gpio_init.Speed = GPIO_Speed_50MHz;
         GPIO_Init(GPIOD, &gpio_init);
         GPIO_PinAFConf(GPIOD, gpio_init.Pins, GPIO_AF_7);
-        
+
         gpio_init.Pins  = GPIO_PIN_6;
         gpio_init.PinMode  = GPIO_PinMode_In_Floating;
         gpio_init.Speed = GPIO_Speed_50MHz;
@@ -63,7 +63,7 @@ void UART_MspInit(UART_Type *muart)
         gpio_init.Speed = GPIO_Speed_50MHz;
         GPIO_Init(GPIOB, &gpio_init);
         GPIO_PinAFConf(GPIOB, gpio_init.Pins, GPIO_AF_7);
-        
+
         gpio_init.Pins  = GPIO_PIN_11;
         gpio_init.PinMode  = GPIO_PinMode_In_Floating;
         gpio_init.Speed = GPIO_Speed_50MHz;

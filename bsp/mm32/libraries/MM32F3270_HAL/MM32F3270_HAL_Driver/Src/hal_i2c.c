@@ -10,7 +10,7 @@
 /* Configure I2C speed to ordinary speed. */
 static bool I2C_CalcBandrate(I2C_Type * I2Cx, uint32_t clk, uint32_t bandrate)
 {
-    /* 
+    /*
      * SCLH = (xSHR + 12) * I2C_CLK + tSYNC1;
      * SCLL = (xSLR + 1) * I2C_CLK + tSYNC2;
      * tSYNC1 & tSYNC2 equal 0 ~ 1 clk.
@@ -41,7 +41,7 @@ bool I2C_InitMaster(I2C_Type * I2Cx, I2C_Master_Init_Type * init)
     }
 
     I2Cx->CR = I2C_CR_SPEED(1u);
-    
+
     /* Setup I2C. */
     I2Cx->CR &= ~I2C_CR_MASTER10_MASK;  /* Address format. */
     I2Cx->CR |= I2C_CR_RESTART_MASK     /* Generate restart signal. */

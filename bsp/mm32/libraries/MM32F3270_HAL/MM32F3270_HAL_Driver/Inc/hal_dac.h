@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #ifndef __HAL_DAC_H__
 #define __HAL_DAC_H__
 
@@ -62,7 +63,7 @@ typedef enum
 /*!
  * @brief DAC LFSR unmask bit selector type for adding noise wave.
  */
-typedef enum 
+typedef enum
 {
     DAC_AddNoise_LFSRUnMask_0  = 0u,  /*!< Unmask DAC channel LFSR bit0. */
     DAC_AddNoise_LFSRUnMask_1  = 1u,  /*!< Unmask DAC channel LFSR bit[1:0]. */
@@ -81,7 +82,7 @@ typedef enum
 /*!
  * @brief DAC triangle amplitude selector type for adding triangle wave.
  */
-typedef enum 
+typedef enum
 {
     DAC_AddTriangle_LFSRAmplitude_1    = 0u,  /*!< Max triangle amplitude of 1. */
     DAC_AddTriangle_LFSRAmplitude_3    = 1u,  /*!< Max triangle amplitude of 3. */
@@ -124,7 +125,7 @@ typedef struct
 
 /*!
  * @brief Initialize the DAC module.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param init Pointer to the initialization structure. See to @ref DAC_Init_Type.
@@ -136,7 +137,7 @@ void DAC_Init(DAC_Type * DACx, uint32_t channel, DAC_Init_Type * init);
  * @brief Enable the DAC module.
  *
  * The DAC module should be enabled before outputting voltage.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param enable 'true' to enable the module, 'false' to disable the module.
@@ -148,7 +149,7 @@ void DAC_Enable(DAC_Type * DACx, uint32_t channel, bool enable);
  * @brief Get the echo data from the output of the indicated DAC channel.
  *
  * The value in DAC_DORx register takes effect on the actual output of DAC.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @return The indicated DAC channel data output value.
@@ -159,7 +160,7 @@ uint32_t DAC_GetData(DAC_Type * DACx, uint32_t channel);
  * @brief Put the value into the indicated channel of the DAC module with the alignment.
  *
  * The value in DAC_DORx register takes effect on the actual output of DAC.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param value Data value to be put in indicated DAC channel for conversion.
@@ -170,9 +171,9 @@ uint32_t DAC_PutData(DAC_Type * DACx, uint32_t channel, uint32_t value, DAC_Alig
 
 /*!
  * @brief Enable the feature of generating noise wave from the DAC module.
- * 
+ *
  * If enable additional noise wave, the output value will depend on the the unmask LFSR bit and input of the indicated channel.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param init Pointer to the initialization structure. See to @ref DAC_AddNoise_Init_Type. If null, disable the wave generation.
@@ -182,10 +183,10 @@ void DAC_EnableAddNoise(DAC_Type * DACx, uint32_t channel, DAC_AddNoise_Init_Typ
 
 /*!
  * @brief Enable the feature of generating triangle wave from the DAC module.
- * 
+ *
  * Defaultedly, DAC does not generate any wave.
  * If enable additional triangle wave, the output value will depend on the the indicated amplitude and input of the indicated channel.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param init Pointer to the initialization structure. See to @ref DAC_AddTriangle_Init_Type. If null, disable the wave generation.
@@ -197,7 +198,7 @@ void DAC_EnableAddTriangle(DAC_Type * DACx, uint32_t channel, DAC_AddTriangle_In
  * @brief Enable the DMA trigger from the DAC module.
  *
  * The DMA trigger events are the same as the intertupts.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param enable 'true' to enable the DMA trigger, 'false' to disable the DMA trigger.
@@ -247,10 +248,10 @@ void DAC_PutData8bRightAlign(DAC_Type * DACx, uint32_t channel, uint32_t value);
 
 /*!
  * @brief Put the 12-bit value into indicated channel of the DAC module.
- * 
+ *
  * The low 12-bit of the setting value here will be output after 4-bit right shift.
  * If the value is 0x1ff, the output will be 0x1f.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param value Data value to be put in indicated DAC channel for conversion.
@@ -260,9 +261,9 @@ void DAC_PutData12bLeftAlign(DAC_Type * DACx, uint32_t channel, uint32_t value);
 
 /*!
  * @brief Put the current data into indicated channel of the DAC module.
- * 
+ *
  * The low 12-bit of the setting value here will output with the original value.
- * 
+ *
  * @param DACx DAC instance.
  * @param channel Indicated DAC channel. See to @ref DAC_CHANNEL_SELECTION.
  * @param value Data value to be put in indicated DAC channel for conversion.
@@ -272,10 +273,10 @@ void DAC_PutData12bRightAlign(DAC_Type * DACx, uint32_t channel, uint32_t value)
 
 /*!
  * @brief Respectively put the value into the dual channels of the DAC module 8b right aligned.
- * 
+ *
  * Simultaneously output the low 8-bit of the low 16-bit and high 16-bit of the 32-bit value seperately with a 4-bit left shift.
  * If value is 0x011f01ff, the output of each channel will be 0xff0 ( channel 1 ) and 0x1f0 ( channel 2 ).
- * 
+ *
  * @param DACx DAC instance.
  * @param value Data value to be put in DAC channel 1 and DAC channel 2 for conversion.
  * @return None.
@@ -284,10 +285,10 @@ void DAC_PutDualChannelData8bRightAlign(DAC_Type * DACx, uint32_t value);
 
 /*!
  * @brief Put the data into the dual channel of the DAC module 12b left aligned.
- * 
+ *
  * Simultaneously output the high 12-bit of the low 16-bit and high 16-bit of the 32-bit value seperately after 4-bit right shift.
  * If value is 0x011f01ff, the output of each channel will be 0x01f ( channel 1 ) and 0x011 ( channel 2 ).
- * 
+ *
  * @param DACx DAC instance.
  * @param value Data value to be put in DAC channel 1 and DAC channel 2 for conversion.
  * @return None.
@@ -296,9 +297,9 @@ void DAC_PutDualChannelData12bLeftAlign(DAC_Type * DACx, uint32_t value);
 
 /*!
  * @brief Put the data into the dual channel of the DAC module 12b right aligned.
- * 
+ *
  * Simultaneously output the low 12-bit of the low 16-bit and high 16-bit of the 32-bit value seperately.
- * 
+ *
  * @param DACx DAC instance.
  * @param value Data value to be put in DAC channel 1 and DAC channel 2 for conversion.
  * @return None.

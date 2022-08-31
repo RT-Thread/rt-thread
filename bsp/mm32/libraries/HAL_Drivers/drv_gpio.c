@@ -38,7 +38,7 @@
 
 #define PIN_STPORT_MAX __MM32_PORT_MAX
 
-#define GET_EXTI_PORT(PORT) 
+#define GET_EXTI_PORT(PORT)
 
 static const struct pin_irq_map pin_irq_map[] =
 {
@@ -323,7 +323,7 @@ static rt_err_t mm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         GPIO_InitStruct.Speed = GPIO_Speed_50MHz;
         GPIO_InitStruct.PinMode = GPIO_PinMode_In_PullUp;
         GPIO_Init(PIN_STPORT(pin), &GPIO_InitStruct);
-        
+
         SYSCFG_SetExtIntMux(SYSCFG_EXTIPort_GPIOA + (0 == (rt_uint32_t)PIN_PORT(pin)?0: PIN_PORT(pin)/GPIOB_BASE), irqmap->syscfg_extiline);
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
@@ -338,7 +338,7 @@ static rt_err_t mm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             break;
         }
         EXTI_EnableLineInterrupt(EXTI, irqmap->extiline, true);
-        
+
         NVIC_SetPriority(irqmap->irqno, NVIC_EncodePriority(4, 5, 0));
         NVIC_EnableIRQ(irqmap->irqno);
         pin_irq_enable_mask |= irqmap->pinbit;

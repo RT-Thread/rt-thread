@@ -37,7 +37,7 @@ bool TIM_16B_Init(TIM_16B_Type * TIMx, TIM_16B_Init_Type * init)
     }
     TIMx->CR1 = cr1;
     /* Check the vadility of StepFreqHz. */
-    if ( (init->StepFreqHz == 0u) || (init->StepFreqHz > init->ClockFreqHz) ) 
+    if ( (init->StepFreqHz == 0u) || (init->StepFreqHz > init->ClockFreqHz) )
     {
         return false;
     }

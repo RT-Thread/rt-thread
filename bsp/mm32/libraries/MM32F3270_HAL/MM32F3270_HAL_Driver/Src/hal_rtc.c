@@ -21,7 +21,7 @@ void RTC_Init(void)
     RCC->BDCR |= RCC_BDCR_RTCSEL(1u);
     RCC->BDCR &= ~RCC_BDCR_LSEON_MASK;
     RCC->BDCR |= RCC_BDCR_LSEON_MASK;
-    
+
     /* Clear register synchronization status. */
     RTC->CRL &= ~RTC_CRL_RSF_MASK;
 }
@@ -179,12 +179,12 @@ bool RTC_JudgeLeapYear(uint16_t years)
             }
             else
             {
-            	return false;
+                return false;
             }
         }
         else
         {
-        	return true; /* Ordinary leap year. */
+            return true; /* Ordinary leap year. */
         }
     }
     else

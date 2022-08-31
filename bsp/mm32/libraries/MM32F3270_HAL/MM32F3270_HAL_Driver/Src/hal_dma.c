@@ -11,19 +11,19 @@
 uint32_t DMA_InitChannel(DMA_Type * DMAx, uint32_t channel, DMA_Channel_Init_Type * init)
 {
     uint32_t ccr = 0u;
-    
+
     if (   (init->XferMode == DMA_XferMode_MemoryToPeriph)
         || (init->XferMode == DMA_XferMode_MemoryToPeriphBurst) )
     {
         ccr |= DMA_CCR_DIR_MASK;
     }
-    
+
     if (   (init->XferMode == DMA_XferMode_PeriphToMemoryBurst)
         || (init->XferMode == DMA_XferMode_MemoryToPeriphBurst) )
     {
         ccr |= DMA_CCR_MEM2MEM_MASK;
     }
-    
+
     if (init->ReloadMode == DMA_ReloadMode_AutoReload)
     {
         ccr |= DMA_CCR_ARE_MASK;
@@ -39,12 +39,12 @@ uint32_t DMA_InitChannel(DMA_Type * DMAx, uint32_t channel, DMA_Channel_Init_Typ
          | DMA_CCR_MSIZE(init->XferWidth)
          | DMA_CCR_PL(init->Priority)
          ;
-    
+
     DMAx->CH[channel].CCR = ccr;
     DMAx->CH[channel].CNDTR = init->XferCount;
     DMAx->CH[channel].CPAR = init->PeriphAddr;
     DMAx->CH[channel].CMAR = init->MemAddr;
-    
+
     return 0u;
 }
 

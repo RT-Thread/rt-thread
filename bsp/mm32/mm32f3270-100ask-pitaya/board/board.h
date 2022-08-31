@@ -45,7 +45,7 @@ extern int __bss_end;
 #define __USE_HSE_PLL       (1)
 #define __USE_HSI_PLL       (0)
 
-#define RCC_CFGR_SWS_Pos                     (2U)                              
+#define RCC_CFGR_SWS_Pos                     (2U)
 #define RCC_CFGR_SWS_Msk                     (0x3UL << RCC_CFGR_SWS_Pos)        /*!< 0x0000000C */
 
 #define RCC_CFGR_SWS_HSI                     0x00000000U                       /*!< HSI oscillator used as system clock */

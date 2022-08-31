@@ -1,12 +1,12 @@
 /**
  * @file drv_spi.h
  * @author 100ask development team
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2022-06-16
- * 
+ *
  * @copyright Copyright (c) 2022 Chongqing 100ASK Technology Co., LTD
- * 
+ *
  */
 
 #ifndef __DRV_SPI_H_
@@ -59,7 +59,7 @@ struct mm32_spi
         rt_uint8_t *tx_buf;
         DMA_Channel_Init_Type handle_tx;
     } dma;
-    
+
     rt_uint8_t spi_dma_flag;
     struct rt_spi_bus spi_bus;
 };

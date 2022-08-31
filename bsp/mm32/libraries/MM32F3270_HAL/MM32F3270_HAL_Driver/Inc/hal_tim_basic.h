@@ -83,7 +83,7 @@ typedef struct
 
 /*!
  * @brief Set the timer's step for indicated TIM module.
- * 
+ *
  * @param TIMx TIM_BASIC instance.
  * @param init Pointer to the initialization structure. See to @ref TIM_BASIC_Init_Type.
  * @return 'true' to set the timer's step successfully, 'false' to fail because the invalid StepFreqHz.
@@ -92,7 +92,7 @@ bool TIM_BASIC_Init(TIM_BASIC_Type * TIMx, TIM_BASIC_Init_Type * init);
 
 /*!
  * @brief Start counting.
- * 
+ *
  * @param TIMx TIM_BASIC instance.
  * @return None.
  */
@@ -100,7 +100,7 @@ void TIM_BASIC_Start(TIM_BASIC_Type * TIMx);
 
 /*!
  * @brief Stop counting immediately.
- * 
+ *
  * @param TIMx TIM_BASIC instance.
  * @return None.
  */
@@ -138,7 +138,7 @@ void TIM_BASIC_EnableDMA(TIM_BASIC_Type *TIMx, uint32_t dmas, bool enable);
  * @brief Software trigger events to call interrupts or DMAs.
  *
  * Can simultaneously trigger multiple events.
- * 
+ *
  * @param TIMx TIM_BASIC instance. See to @ref TIM_BASIC_SWTRG.
  * @param swtrgs Trigger the events to generate interrupts.
  */
