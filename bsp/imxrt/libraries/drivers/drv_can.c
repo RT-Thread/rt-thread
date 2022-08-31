@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-06-27     misonyo     the first version.
+ * 2022-08-31     xjy198903   add rt1170 support
  */
 
 #include <rtthread.h>
@@ -17,15 +18,15 @@
 #include "fsl_iomuxc.h"
 #include "fsl_flexcan.h"
 
-#define LOG_TAG    "drv.can"
+#define LOG_TAG "drv.can"
 #include <drv_log.h>
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
-    #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
+#error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
-#define RX_MB_COUNT     32
-static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
+#define RX_MB_COUNT 32
+static flexcan_frame_t frame[RX_MB_COUNT]; /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
 
 enum
@@ -35,6 +36,11 @@ enum
 #endif
 #ifdef BSP_USING_CAN2
     CAN2_INDEX,
+#endif
+#ifdef SOC_IMXRT1170_SERIES
+#ifdef BSP_USING_CAN3
+    CAN3_INDEX,
+#endif
 #endif
 };
 
@@ -48,29 +54,55 @@ struct imxrt_can
 };
 
 struct imxrt_can flexcans[] =
-{
-#ifdef BSP_USING_CAN1
     {
-        .name = "can1",
-        .base = CAN1,
-        .irqn = CAN1_IRQn,
-    },
+#ifdef BSP_USING_CAN1
+        {
+            .name = "can1",
+            .base = CAN1,
+            .irqn = CAN1_IRQn,
+        },
 #endif
 #ifdef BSP_USING_CAN2
-    {
-        .name = "can2",
-        .base = CAN2,
-        .irqn = CAN2_IRQn,
-    },
+        {
+            .name = "can2",
+            .base = CAN2,
+            .irqn = CAN2_IRQn,
+        },
+#endif
+#ifdef SOC_IMXRT1170_SERIES
+#ifdef BSP_USING_CAN3
+        {
+            .name = "can3",
+            .base = CAN3,
+            .irqn = CAN3_IRQn,
+        },
+#endif
 #endif
 };
 
-uint32_t GetCanSrcFreq(void)
+uint32_t GetCanSrcFreq(CAN_Type *can_base)
 {
     uint32_t freq;
-
+    uint32_t base = (uint32_t) can_base;
+#ifdef SOC_IMXRT1170_SERIES
+    switch (base)
+    {
+    case CAN1_BASE:
+        freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can1) / 100000U) * 100000U;
+        break;
+    case CAN2_BASE:
+        freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can2) / 100000U) * 100000U;
+        break;
+    case CAN3_BASE:
+        freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can3) / 100000U) * 100000U;
+        break;
+    default:
+        freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can3) / 100000U) * 100000U;
+        break;
+    }
+#else
     freq = (CLOCK_GetFreq(kCLOCK_Usb1PllClk) / 6) / (CLOCK_GetDiv(kCLOCK_CanDiv) + 1U);
-
+#endif
     return freq;
 }
 
@@ -128,8 +160,8 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
 
     FLEXCAN_GetDefaultConfig(&config);
     config.baudRate = cfg->baud_rate;
-    config.maxMbNum = 64;               /* all series have 64 MB */
-    config.enableIndividMask = true;    /* one filter per MB */
+    config.maxMbNum = 64;            /* all series have 64 MB */
+    config.enableIndividMask = true; /* one filter per MB */
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -143,12 +175,12 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     case RT_CAN_MODE_LOOPBACKANLISTEN:
         break;
     }
-    FLEXCAN_Init(can->base, &config, GetCanSrcFreq());
+    FLEXCAN_Init(can->base, &config, GetCanSrcFreq(can->base));
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
     /* init RX_MB_COUNT RX MB to default status */
-    mbConfig.format = kFLEXCAN_FrameFormatStandard;  /* standard ID */
-    mbConfig.type = kFLEXCAN_FrameTypeData;          /* data frame */
-    mbConfig.id = FLEXCAN_ID_STD(0);                 /* default ID is 0 */
+    mbConfig.format = kFLEXCAN_FrameFormatStandard; /* standard ID */
+    mbConfig.type = kFLEXCAN_FrameTypeData;         /* data frame */
+    mbConfig.id = FLEXCAN_ID_STD(0);                /* default ID is 0 */
     for (i = 0; i < RX_MB_COUNT; i++)
     {
         /* the used MB index from 1 to RX_MB_COUNT */
@@ -171,7 +203,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     rt_uint32_t argval, mask;
     rt_uint32_t res = RT_EOK;
     flexcan_rx_mb_config_t mbConfig;
-    struct rt_can_filter_config  *cfg;
+    struct rt_can_filter_config *cfg;
     struct rt_can_filter_item *item;
     rt_uint8_t i, count, index;
 
@@ -183,7 +215,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             mask = kFLEXCAN_RxWarningInterruptEnable;
@@ -261,7 +293,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
                     }
                 }
             }
-            else    /* use user specified hdr */
+            else /* use user specified hdr */
             {
                 if (filter_mask & (1 << item->hdr))
                 {
@@ -321,7 +353,7 @@ static int can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t 
     RT_ASSERT(buf != RT_NULL);
 
     can = (struct imxrt_can *)can_dev->parent.user_data;
-    msg = (struct rt_can_msg *) buf;
+    msg = (struct rt_can_msg *)buf;
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(msg != RT_NULL);
 
@@ -388,7 +420,7 @@ static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
     RT_ASSERT(can_dev != RT_NULL);
 
     can = (struct imxrt_can *)can_dev->parent.user_data;
-    pmsg = (struct rt_can_msg *) buf;
+    pmsg = (struct rt_can_msg *)buf;
     RT_ASSERT(can != RT_NULL);
 
     index = boxno - 1;
@@ -412,7 +444,7 @@ static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
     {
         pmsg->rtr = RT_CAN_RTR;
     }
-    pmsg->hdr = index;      /* one hdr filter per MB */
+    pmsg->hdr = index; /* one hdr filter per MB */
     pmsg->len = frame[index].length;
     pmsg->data[0] = frame[index].dataByte0;
     pmsg->data[1] = frame[index].dataByte1;
@@ -427,11 +459,11 @@ static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
 }
 
 static struct rt_can_ops imxrt_can_ops =
-{
-    .configure    = can_cfg,
-    .control      = can_control,
-    .sendmsg      = can_send,
-    .recvmsg      = can_recv,
+    {
+        .configure = can_cfg,
+        .control = can_control,
+        .sendmsg = can_send,
+        .recvmsg = can_recv,
 };
 
 int rt_hw_can_init(void)
@@ -442,10 +474,10 @@ int rt_hw_can_init(void)
 
     config.privmode = 0;
     config.ticks = 50;
-    config.sndboxnumber = 16;             /* send Mailbox count */
-    config.msgboxsz = RX_MB_COUNT;        /* RX msg buffer count */
+    config.sndboxnumber = 16;      /* send Mailbox count */
+    config.msgboxsz = RX_MB_COUNT; /* RX msg buffer count */
 #ifdef RT_CAN_USING_HDR
-    config.maxhdr = RX_MB_COUNT;          /* filter count,one filter per MB */
+    config.maxhdr = RX_MB_COUNT; /* filter count,one filter per MB */
 #endif
 
     for (i = 0; i < sizeof(flexcans) / sizeof(flexcans[0]); i++)
