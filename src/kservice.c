@@ -22,6 +22,7 @@
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
  * 2022-06-04     Meco Man     remove strnlen
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
+ * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  */
 
 #include <rtthread.h>
@@ -1111,7 +1112,7 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         }
         else if (qualifier == 'h')
         {
-            num = (rt_uint16_t)va_arg(args, rt_int32_t);
+            num = (rt_uint16_t)va_arg(args, int);
             if (flags & SIGN) num = (rt_int16_t)num;
         }
         else
