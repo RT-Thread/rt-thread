@@ -21,7 +21,7 @@ int rt_hw_uart_init(void);
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
 
 
-/* stm32 config class */
+/* mm32 config class */
 struct mm32_uart_config
 {
     const char *name;
@@ -31,7 +31,7 @@ struct mm32_uart_config
     struct dma_config *dma_tx;
 };
 
-/* stm32 uart dirver class */
+/* mm32 uart dirver class */
 struct mm32_uart
 {
     UART_Init_Type handle;
