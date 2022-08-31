@@ -236,6 +236,22 @@ static int ra_uart_getc(struct rt_serial_device *serial)
     return RT_EOK;
 }
 
+static rt_size_t ra_uart_transmit(struct rt_serial_device     *serial,
+                                  rt_uint8_t           *buf,
+                                  rt_size_t             size,
+                                  rt_uint32_t           tx_flag)
+{
+    struct ra_uart *uart;
+
+    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
+    uart = rt_container_of(serial, struct ra_uart, serial);
+
+    ra_uart_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)tx_flag);
+
+    return size;
+}
+
 #ifdef BSP_USING_UART0
 void user_uart0_callback(uart_callback_args_t *p_args)
 {
@@ -472,6 +488,7 @@ static const struct rt_uart_ops ra_uart_ops =
     .control = ra_uart_control,
     .putc = ra_uart_putc,
     .getc = ra_uart_getc,
+    .transmit = ra_uart_transmit
 };
 
 
