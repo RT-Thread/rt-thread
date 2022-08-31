@@ -19,7 +19,6 @@ extern "C" {
 #if defined(SOC_SERIES_MM32F3277)
 #include "mm32f3277g8p/dma_config.h"
 #include "mm32f3277g8p/uart_config.h"
-#include "mm32f3277g8p/spi_config.h"
 #endif
 
 #ifdef __cplusplus
