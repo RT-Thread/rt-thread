@@ -15,20 +15,20 @@
 #include <rtdevice.h>
 
 #ifndef I2C3_CONFIG
-#define I2C3_CONFIG                         \
-    {                                       \
-        .name = "i2c3",                     \
-        .scl_pin = P6_0,                    \
-        .sda_pin = P6_1,                    \
+#define I2C3_CONFIG                  \
+    {                                \
+        .name = "i2c3",              \
+        .scl_pin = BSP_I2C3_SCL_PIN, \
+        .sda_pin = BSP_I2C3_SDA_PIN, \
     }
 #endif /* I2C3_CONFIG */
 #endif
 #ifndef I2C6_CONFIG
-#define I2C6_CONFIG                         \
-    {                                       \
-        .name = "i2c6",                     \
-        .scl_pin = P13_0,                   \
-        .sda_pin = P13_1,                   \
+#define I2C6_CONFIG                  \
+    {                                \
+        .name = "i2c6",              \
+        .scl_pin = BSP_I2C6_SCL_PIN, \
+        .sda_pin = BSP_I2C6_SDA_PIN, \
     }
 #endif /* I2C6_CONFIG */
 
@@ -53,18 +53,18 @@ struct ifx_i2c
 {
     cyhal_i2c_t mI2C;
     cyhal_i2c_cfg_t mI2C_cfg;
-    struct ifx_i2c_config       *config;
-    struct rt_i2c_bus_device    i2c_bus;
+    struct ifx_i2c_config *config;
+    struct rt_i2c_bus_device i2c_bus;
 };
 
 static struct ifx_i2c_config i2c_config[] =
-{
+    {
 #ifdef BSP_USING_HW_I2C3
-    I2C3_CONFIG,
+        I2C3_CONFIG,
 #endif
 
 #ifdef BSP_USING_HW_I2C6
-    I2C6_CONFIG,
+        I2C6_CONFIG,
 #endif
 };
 
@@ -127,11 +127,10 @@ out:
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-{
-    _i2c_xfer,
-    RT_NULL,
-    RT_NULL
-};
+    {
+        _i2c_xfer,
+        RT_NULL,
+        RT_NULL};
 
 void HAL_I2C_Init(struct ifx_i2c *obj)
 {
