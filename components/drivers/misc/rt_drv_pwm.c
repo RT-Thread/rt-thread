@@ -16,10 +16,20 @@ static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
+    struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)args;
 
-    if (pwm->ops->control)
+    switch (cmd)
     {
-        result = pwm->ops->control(pwm, cmd, args);
+        case PWMN_CMD_ENABLE:
+            configuration->complementary = RT_TRUE;
+            break;
+        case PWMN_CMD_DISABLE:
+            configuration->complementary = RT_FALSE;
+            break;
+        default:
+            if(pwm->ops->control)
+                result = pwm->ops->control(pwm, cmd, args);
+            break;
     }
 
     return result;
