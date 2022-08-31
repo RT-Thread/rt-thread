@@ -53,7 +53,7 @@ CPK-RA2L1 评估板可通过灵活配置软件包和 IDE，可帮助用户对[RA
 
 > 注意：此工程需要使用 J-Flash Lite 工具烧录程序。建议使用 V7.50 及以上版本烧录工程。[J-Link 下载链接](https://www.segger.com/downloads/jlink/)
 
-- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA6M4AF，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/ra6m4.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
+- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA2L1AB，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/ra6m4.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
 
 ![image-20211011182434519](docs/picture/jflash.png) 
 
