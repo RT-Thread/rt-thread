@@ -86,6 +86,7 @@ jobs:
          - {RTT_BSP: "fujitsu/mb9x/mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "fujitsu/mb9x/mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "mm32/mm32f3270-100ask-pitaya", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf51822", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
