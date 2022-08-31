@@ -24,18 +24,18 @@ void SystemClock_Config(void)
     /* 使能总线外设时钟 */
     RCC->AHB1ENR |= (1u << 13u);    // 使能FLASH外设
     FLASH->ACR |= (4<<0);           // 设置Flash的等待周期
-    
+
     /* 使能PWR/DBG */
     RCC->APB1ENR |= (1<<28);
     PWR->CR1 &= ~(2<<14);
     PWR->CR1 |= (2<<14);    // 如果系统时钟需要达到最大频率 120MHz，需要将 VOS 设置为 2’b10 即 1.7V
-    
+
     RCC->CR &= ~((1<<16) | (1<<24) ); // 关闭HSE/PLL
-    
+
     /* 配置HSE和PLL */
     RCC->CR |= (1<<16);             // 使能HSE
     while(0 == ((RCC->CR)&(1<<17)));// 等待HSE稳定
-    
+
     RCC->PLLCFGR |= (1<<0);         // 配置PLL的时钟源HSE
     RCC->PLLCFGR &= ~(1<<1);        // 配置PLL的时钟源HSE不分频后再作为时钟输入源
     RCC->PLLCFGR &= ~(0x7F<<16);
@@ -54,7 +54,7 @@ void SystemClock_Config(void)
     RCC->CFGR |= (7<<24);           // PLL输出时钟2分频后输出到MCO
     RCC->CFGR |= (2<<0);            // 选择PLL输出用作系统时钟
     while(0 == (RCC->CFGR & (2<<2)));   // 等待PLL输出用作系统时钟稳定
-    
+
     update_systemclock();
     update_ahb_clock();
     update_apb1_clock();
@@ -65,7 +65,7 @@ static void update_systemclock(void)
 {
     uint32_t tmpreg = 0U, prediv = 0U, pllclk = 0U, pllmul = 0U;
     uint32_t sysclockfreq = HSI_VALUE;
-    
+
     tmpreg = RCC->CFGR;
     /* 获取系统时钟源 */
     switch(tmpreg & RCC_CFGR_SWS_MASK)
@@ -106,12 +106,12 @@ static void update_systemclock(void)
             prediv = (RCC->PLLCFGR>>8)&0x07;    // PLL的分频系数：PLLCFGR[10:8]
             pllmul = (RCC->PLLCFGR>>16)&0x7F;   // PLL的倍频系数: PLLCFGR[22:16]
             sysclockfreq = pllclk * (pllmul+1) / (prediv+1);
-            
+
             break;
         }
         default:break;
     }
-    
+
     SystemClockFreq = sysclockfreq;
 }
 

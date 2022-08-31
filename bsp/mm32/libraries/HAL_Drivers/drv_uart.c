@@ -218,12 +218,12 @@ static rt_err_t mm32_control(struct rt_serial_device *serial, int cmd, void *arg
 
 #ifdef RT_SERIAL_USING_DMA
     case RT_DEVICE_CTRL_CONFIG:
-        
+
         break;
 #endif
 
     case RT_DEVICE_CTRL_CLOSE:
-        
+
         break;
 
     }
@@ -338,7 +338,7 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             __HAL_UART_CLEAR_FLAG(uart->config->Instance, UART_STATUS_TX_EMPTY);
         }
-        
+
         if (__HAL_UART_GET_INT_FLAG(uart->config->Instance, UART_INT_RX_DONE) != 0)
         {
             __HAL_UART_CLEAR_INT_FLAG(uart->config->Instance, UART_INT_RX_DONE);

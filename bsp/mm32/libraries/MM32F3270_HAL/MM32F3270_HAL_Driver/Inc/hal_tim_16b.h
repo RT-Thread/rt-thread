@@ -136,13 +136,13 @@ typedef enum
 
 /*!
  * @brief TIM input capture active edge selection and output compare active polarity selection.
- * 
+ *
  * | conf           | TIM_16B_PinPolarity_Rising | TIM_16B_PinPolarity_Falling |
  * | -------------- | -------------------------- | --------------------------- |
  * | input capture  | detects rising edge        | detects falling edge        |
  * | output compare | high polarity is active    | low polarity is active      |
  * | encoder mode   | input remains              | input reverses              |
- * 
+ *
  */
 typedef enum
 {
@@ -526,7 +526,7 @@ void TIM_16B_ClearInterruptStatus(TIM_16B_Type * TIMx, uint32_t status);
  * @brief Enable the output compare feature of indicated timer channel.
  *
  * If need to change the IO mode of the working channel, channel must be disabled first, then modify.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param channel Output channel instance. See to @ref TIM_16B_CHANNEL_SELECTION.
  * @param conf Pointer to the configuration structure. See to @ref TIM_16B_OutputCompareConf_Type.
@@ -538,7 +538,7 @@ void TIM_16B_EnableOutputCompare(TIM_16B_Type * TIMx, uint32_t channel, TIM_16B_
  * @brief Enable the input capture feature of indicated timer channel.
  *
  * If need to change the IO mode of the working channel, channel must be disabled first, then modify.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param channel Input channel instance. See to @ref TIM_16B_CHANNEL_SELECTION.
  * @param conf Pointer to the configuration structure. See to @ref TIM_16B_InputCaptureConf_Type.
@@ -550,7 +550,7 @@ void TIM_16B_EnableInputCapture(TIM_16B_Type * TIMx, uint32_t channel, TIM_16B_I
  * @brief Get the value of the indicated timer channel.
  *
  * When capture event happens, counter value will be kept in its indicated channel.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param channel Channel instance to get the value. See to @ref TIM_16B_CHANNEL_SELECTION.
  * @return Value of the indiacted timer channel.
@@ -561,7 +561,7 @@ uint16_t TIM_16B_GetChannelValue(TIM_16B_Type * TIMx, uint32_t channel);
  * @brief Put the value into the indicated timer channel.
  *
  * When in output compare, channel value would be the compared with counter value.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param channel Channel instance to put the value. See to @ref TIM_16B_CHANNEL_SELECTION.
  * @param value The value to be set in the indicated timer channel.
@@ -582,7 +582,7 @@ void TIM_16B_EnableDeadArea(TIM_16B_Type * TIMx, TIM_16B_DeadAreaConf_Type * con
  * @brief Enable the master mode of the indicated timer.
  *
  * Master mode transfer the timer signal to other timers.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_16B_MasterModeConf_Type.
  * @return None.
@@ -593,7 +593,7 @@ void TIM_16B_EnableMasterMode(TIM_16B_Type * TIMx, TIM_16B_MasterModeConf_Type *
  * @brief Enable the slave mode of the indicated timer.
  *
  * Slave mode can control the working state of counter.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_16B_SlaveModeConf_Type.
  * @return None.
@@ -605,7 +605,7 @@ void TIM_16B_EnableSlaveMode(TIM_16B_Type * TIMx, TIM_16B_SlaveModeConf_Type * c
  *
  * External trigger signal will trigger counter do addition.
  * Its div and filter along with the counter StepFreqHz will affect.
- * 
+ *
  * @param TIMx TIM_16B_Type instance.
  * @param conf Pointer to the configuration structure. See to @ref TIM_16B_ExtTriggerInConf_Type.
  * @return None.

@@ -26,14 +26,14 @@
 #define IWDG_KEY_ENABLE  0xCCCC /*!< IWDG Peripheral Enable . */
 #define IWDG_KEY_RELOAD  0xAAAA /*!< IWDG Reload Counter Enable. */
 #define IWDG_KEY_UNLOCK  0x5555 /*!< IWDG KR Write Access Enable*/
- 
+
 /*!
  * @addtogroup IWDG_STATUS
  * @{
  */
 #define IWDG_STATUS_RELOAD_UPDATE     IWDG_SR_RVU_MASK           /*!< Status flag when IWDG counter reload value update, can not be cleared. */
 #define IWDG_STATUS_PRESCALER_UPDATE  IWDG_SR_PVU_MASK           /*!< Status flag when IWDG prescaler value update, can not be cleared. */
-#define IWDG_STATUS_ALMOST_TIMEOUT    IWDG_SR_IVU_MASK           /*!< Status flag when IWDG almost timeout. */    
+#define IWDG_STATUS_ALMOST_TIMEOUT    IWDG_SR_IVU_MASK           /*!< Status flag when IWDG almost timeout. */
 /*!
  * @}
  */
@@ -46,7 +46,7 @@
 /*!
  * @}
  */
- 
+
 /*!
  * @brief IWDG prescaler type.
  *
@@ -110,7 +110,7 @@ void IWDG_ClearStatus(IWDG_Type * IWDGx, uint32_t status);
 
 /*!
  * @brief Do reload IWDG counter (i.e. "feed dog").
- * 
+ *
  * @param IWDGx IWDG instance.
  * @return None.
  */

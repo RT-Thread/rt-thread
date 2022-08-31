@@ -8,12 +8,12 @@
 #include "hal_iwdg.h"
 
 void IWDG_Init(IWDG_Type * IWDGx, IWDG_Init_Type * init)
-{   
+{
     if ( NULL != init )
     {
-        IWDGx->KR = IWDG_KEY_UNLOCK;    
+        IWDGx->KR = IWDG_KEY_UNLOCK;
         IWDGx->PR = init->Prescaler;
-        
+
         IWDGx->KR = IWDG_KEY_UNLOCK;
         IWDGx->RLR = init->Relaod;
 

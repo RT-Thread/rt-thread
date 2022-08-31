@@ -141,7 +141,7 @@ void USB_EnableSuspend(USB_Type * USBx, bool enable)
     }
 
 }
-    
+
 
 void USB_SetDeviceAddr(USB_Type * USBx, uint8_t addr)
 {

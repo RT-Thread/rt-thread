@@ -135,7 +135,7 @@ RT_WEAK void rt_hw_board_init()
 
     /* System clock initialization */
     SystemClock_Config();
-    
+
     rt_hw_systick_init();
 
     /* Heap initialization */

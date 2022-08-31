@@ -29,7 +29,7 @@
  */
 #define USB_INT_RESET           USB_INTSTAT_USBRST_MASK         /*!< USB Interrupt: USB bus reset.  */
 #define USB_INT_ERROR           USB_INTSTAT_ERROR_MASK          /*!< USB Interrupt: Error happend.  */
-#define USB_INT_SOFTOK          USB_INTSTAT_SOFTOK_MASK 	    /*!< USB Interrupt: Recv a SOF_Tok. */
+#define USB_INT_SOFTOK          USB_INTSTAT_SOFTOK_MASK         /*!< USB Interrupt: Recv a SOF_Tok. */
 #define USB_INT_TOKENDONE       USB_INTSTAT_TOKDNE_MASK         /*!< USB Interrupt: Token done.     */
 #define USB_INT_SLEEP           USB_INTSTAT_SLEEP_MASK          /*!< USB Interrupt: Sleep.          */
 #define USB_INT_RESUME          USB_INTSTAT_RESUME_MASK         /*!< USB Interrupt: Resume.         */

@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+
 #include "hal_exti.h"
 
 void EXTI_EnableLineInterrupt(EXTI_Type * EXTIx, uint32_t lines, bool enable)
@@ -40,7 +41,7 @@ void EXTI_SetTriggerIn(EXTI_Type * EXTIx, uint32_t lines, EXTI_TriggerIn_Type tr
             break;
         case EXTI_TriggerIn_RisingEdge:
             EXTI->RTSR |= lines;
-            EXTIx->FTSR &= ~ lines;            
+            EXTIx->FTSR &= ~ lines;
             break;
         case EXTI_TriggerIn_FallingEdge:
             EXTI->RTSR &= ~ lines;

@@ -15,12 +15,12 @@ bool TIM_BASIC_Init(TIM_BASIC_Type * TIMx, TIM_BASIC_Init_Type * init)
               ;
 
     /* Check StepFreqHz validity. */
-    if ( (init->StepFreqHz == 0u) || (init->StepFreqHz > init->ClockFreqHz) ) 
+    if ( (init->StepFreqHz == 0u) || (init->StepFreqHz > init->ClockFreqHz) )
     {
         return false;
     }
     /* Calculate prescaler of the timer.*/
-    TIMx->PSC = init->ClockFreqHz / init->StepFreqHz - 1u; 
+    TIMx->PSC = init->ClockFreqHz / init->StepFreqHz - 1u;
     /* Set the period length. */
     TIMx->ARR = init->Period;
     return true;
