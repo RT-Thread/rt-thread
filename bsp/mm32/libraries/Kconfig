@@ -1,0 +1,7 @@
+config SOC_FAMILY_MM32
+    bool
+
+config SOC_SERIES_MM32F3277
+    bool
+    select ARCH_ARM_CORTEX_M3
+    select SOC_FAMILY_MM32
