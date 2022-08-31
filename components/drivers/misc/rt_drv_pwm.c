@@ -8,6 +8,7 @@
  * 2018-05-07     aozima       the first version
  * 2022-05-14     Stanley Lwin add pwm function
  * 2022-07-25     liYony       fix complementary outputs and add usage information in finsh
+ * 2022-08-31     liYony       Add complementary output section to framework for management
  */
 
 #include <rtdevice.h>
