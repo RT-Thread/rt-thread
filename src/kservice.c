@@ -796,7 +796,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-		if (base == 2)
+        if (base == 2)
         {
             if (buf < end)
                 *buf = '0';
@@ -1067,7 +1067,7 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         case 'b':
             base = 2;
             break;
-		case 'o':
+        case 'o':
             base = 8;
             break;
 
