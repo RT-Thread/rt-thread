@@ -666,26 +666,13 @@ rt_inline int divide(long *n, int base)
     int res;
 
     /* optimized for processor which does not support divide instructions. */
-    if (base == 10)
-    {
 #ifdef RT_KPRINTF_USING_LONGLONG
-        res = (int)(((unsigned long long)*n) % 10U);
-        *n = (long long)(((unsigned long long)*n) / 10U);
+    res = (int)(((unsigned long long)*n) % base);
+    *n = (long long)(((unsigned long long)*n) / base);
 #else
-        res = (int)(((unsigned long)*n) % 10U);
-        *n = (long)(((unsigned long)*n) / 10U);
+    res = (int)(((unsigned long)*n) % base);
+    *n = (long)(((unsigned long)*n) / base);
 #endif
-    }
-    else
-    {
-#ifdef RT_KPRINTF_USING_LONGLONG
-        res = (int)(((unsigned long long)*n) % 16U);
-        *n = (long long)(((unsigned long long)*n) / 16U);
-#else
-        res = (int)(((unsigned long)*n) % 16U);
-        *n = (long)(((unsigned long)*n) / 16U);
-#endif
-    }
 
     return res;
 }
@@ -723,9 +710,9 @@ static char *print_number(char *buf,
 {
     char c, sign;
 #ifdef RT_KPRINTF_USING_LONGLONG
-    char tmp[32];
+    char tmp[64];
 #else
-    char tmp[16];
+    char tmp[32];
 #endif /* RT_KPRINTF_USING_LONGLONG */
     int precision_bak = precision;
     const char *digits;
@@ -759,7 +746,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-        if (base == 16)
+        if (base == 2 || base == 16)
             size -= 2;
         else if (base == 8)
             size--;
@@ -809,7 +796,16 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-        if (base == 8)
+		if (base == 2)
+        {
+            if (buf < end)
+                *buf = '0';
+            ++ buf;
+            if (buf < end)
+                *buf = 'b';
+            ++ buf;
+        }
+        else if (base == 8)
         {
             if (buf < end)
                 *buf = '0';
@@ -1068,7 +1064,10 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             continue;
 
         /* integer number formats - set up the flags and "break" */
-        case 'o':
+        case 'b':
+            base = 2;
+            break;
+		case 'o':
             base = 8;
             break;
 
