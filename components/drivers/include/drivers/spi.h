@@ -228,6 +228,9 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
                                const void           *send_buf2,
                                rt_size_t             send_length2);
 
+rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                              rt_uint16_t           data);
+
 /**
  * This function transmits data to SPI device.
  *
@@ -275,29 +278,6 @@ rt_inline rt_uint8_t rt_spi_sendrecv8(struct rt_spi_device *device,
     rt_uint8_t value = 0;
 
     rt_spi_send_then_recv(device, &data, 1, &value, 1);
-
-    return value;
-}
-
-rt_inline rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
-                                        rt_uint16_t           data)
-{
-    rt_uint16_t value = 0;
-    rt_uint16_t tmp;
-
-    if (device->config.mode & RT_SPI_MSB)
-    {
-        tmp = ((data & 0xff00) >> 8) | ((data & 0x00ff) << 8);
-        data = tmp;
-    }
-
-    rt_spi_send_then_recv(device, &data, 2, &value, 2);
-
-    if (device->config.mode & RT_SPI_MSB)
-    {
-        tmp = ((value & 0xff00) >> 8) | ((value & 0x00ff) << 8);
-        value = tmp;
-    }
 
     return value;
 }
