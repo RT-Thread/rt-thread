@@ -309,6 +309,29 @@ __exit:
     return result;
 }
 
+rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                              rt_uint16_t           data)
+{
+    rt_uint16_t value = 0;
+    rt_uint16_t tmp;
+
+    if (device->config.mode & RT_SPI_MSB)
+    {
+        tmp = ((data & 0xff00) >> 8) | ((data & 0x00ff) << 8);
+        data = tmp;
+    }
+
+    rt_spi_send_then_recv(device, &data, 2, &value, 2);
+
+    if (device->config.mode & RT_SPI_MSB)
+    {
+        tmp = ((value & 0xff00) >> 8) | ((value & 0x00ff) << 8);
+        value = tmp;
+    }
+
+    return value;
+}
+
 struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
                                                struct rt_spi_message *message)
 {
