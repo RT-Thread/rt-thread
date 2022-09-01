@@ -208,7 +208,15 @@ static rt_err_t ch32_configure(struct rt_serial_device *serial, struct serial_co
     }
 
     /* UART hardware configuration, including clock and GPIO, etc. */
-    RCC_APB2PeriphClockCmd(uart->hw_config->periph_clock, ENABLE);
+    RCC_APB2PeriphClockCmd(uart->hw_config->gpio_periph_clock, ENABLE);
+    if(uart->config->Instance == USART1)
+    {
+        RCC_APB2PeriphClockCmd(uart->hw_config->uart_periph_clock, ENABLE);
+    }
+    else
+    {
+        RCC_APB1PeriphClockCmd(uart->hw_config->uart_periph_clock, ENABLE);
+    }
 
     if(uart->hw_config->remap != GPIO_Remap_NONE)
     {
@@ -415,9 +423,14 @@ int rt_hw_usart_init(void)
         uart_obj[i].serial.config = config;
         /* Hardware initialization is required, otherwise it
         will not be registered into the device framework */
-        if(uart_obj[i].hw_config->periph_clock == 0)
+        if(uart_obj[i].hw_config->gpio_periph_clock == 0)
         {
-            LOG_E("You did not perform hardware initialization for %s", uart->config->name);
+            LOG_E("You did not perform hardware initialization for %s", uart_obj[i].config->name);
+            continue;
+        }
+        if(uart_obj[i].hw_config->uart_periph_clock == 0)
+        {
+            LOG_E("You did not perform hardware initialization for %s", uart_obj[i].config->name);
             continue;
         }
         /* register UART device */
