@@ -8,6 +8,7 @@
  * 2009-01-05     Bernard      first implementation
  * 2022-08-15     xjy198903    add sdram pin config
  * 2022-08-17     xjy198903    add rgmii pins
+ * 2022-09-01     xjy198903    add can pins
  */
 
 #include <rthw.h>
@@ -1256,6 +1257,21 @@ void imxrt_sdram_pins_init(void)
 }
 #endif
 
+#ifdef BSP_USING_CAN
+void imxrt_can_pins_init(void)
+{
+#ifdef BSP_USING_CAN3
+    CLOCK_EnableClock(kCLOCK_Iomuxc_Lpsr); /* LPCG on: LPCG is ON. */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_LPSR_00_FLEXCAN3_TX, /* GPIO_LPSR_00 is configured as FLEXCAN3_TX */
+        0U);                             /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_LPSR_01_FLEXCAN3_RX, /* GPIO_LPSR_01 is configured as FLEXCAN3_RX */
+        0U);                             /* Software Input On Field: Input Path is determined by functionality */
+#endif
+}
+#endif
+
 void rt_hw_us_delay(rt_uint32_t us)
 {
 }
@@ -1295,6 +1311,10 @@ void rt_hw_board_init()
 
 #ifdef BSP_USING_ETH
     imxrt_eth_pins_init();
+#endif
+
+#ifdef BSP_USING_CAN
+    imxrt_can_pins_init();
 #endif
 }
 

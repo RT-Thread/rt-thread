@@ -85,6 +85,16 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART3 TX DMA channel (0-32)"
                         default 1
         endif
+		
+		menuconfig BSP_USING_CAN
+			bool "Enable CAN"
+			select RT_USING_CAN
+			default n
+			if BSP_USING_CAN
+				config BSP_USING_CAN3
+					bool "Enable FLEXCAN3"
+					default n
+			endif
 endmenu
 
 menu "Onboard Peripheral Drivers"
