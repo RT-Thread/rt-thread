@@ -136,7 +136,7 @@ static struct ch32_uart_hw_config uart_hw_config[] =
 #ifdef BSP_USING_UART8
     {
         /* clock configuration, please refer to ch32v30x_rcc.h */
-        RCC_APB1Periph_UART5, RCC_APB2Periph_GPIOC,
+        RCC_APB1Periph_UART8, RCC_APB2Periph_GPIOC,
         /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
         GPIOC, GPIO_Pin_4, /* Tx */GPIOC, GPIO_Pin_5, /* Rx */
         /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
