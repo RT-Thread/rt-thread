@@ -30,6 +30,10 @@ PitayaLite开发板是百问网推出的一块基于ARM Cortex-M3内核的开发
 * 常用接口：USB转串口
 * 调试接口：DAP
 
+开发板更多详细信息请参考百问网[火龙果Pitaya开发板介绍](https://item.taobao.com/item.htm?id=682573965671)。
+
+配套资料：[开发板资料下载](http://download.100ask.org/boards/MindMotion/pitaya_lite/index.html)
+
 ## 外设支持
 
 本BSP目前对外设的支持情况如下：
