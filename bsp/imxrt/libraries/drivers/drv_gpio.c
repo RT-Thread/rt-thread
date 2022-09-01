@@ -554,25 +554,25 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     case PIN_MODE_INPUT:
     {
         gpio.direction = kGPIO_DigitalInput;
-#ifndef SOC_IMXRT1170_SERIES        
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0830U;    /* Open Drain Enable */
-#endif        
+#endif
     }
     break;
 
     case PIN_MODE_INPUT_PULLDOWN:
     {
         gpio.direction = kGPIO_DigitalInput;
-#ifndef SOC_IMXRT1170_SERIES          
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x3030U;    /* 100K Ohm Pull Down */
-#endif        
+#endif
     }
     break;
 
     case PIN_MODE_INPUT_PULLUP:
     {
         gpio.direction = kGPIO_DigitalInput;
-#ifndef SOC_IMXRT1170_SERIES          
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0xB030U;    /* 100K Ohm Pull Up */
 #endif
     }
@@ -581,9 +581,9 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     case PIN_MODE_OUTPUT_OD:
     {
         gpio.direction = kGPIO_DigitalOutput;
-#ifndef SOC_IMXRT1170_SERIES           
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0830U;    /* Open Drain Enable */
-#endif        
+#endif
     }
     break;
     }
