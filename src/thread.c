@@ -701,6 +701,9 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms)
 {
     rt_tick_t tick;
 
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
     tick = rt_tick_from_millisecond(ms);
 
     return rt_thread_sleep(tick);
