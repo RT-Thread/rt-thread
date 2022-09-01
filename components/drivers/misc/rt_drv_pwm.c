@@ -8,6 +8,7 @@
  * 2018-05-07     aozima       the first version
  * 2022-05-14     Stanley Lwin add pwm function
  * 2022-07-25     liYony       fix complementary outputs and add usage information in finsh
+ * 2022-08-31     liYony       Add complementary output section to framework for management
  */
 
 #include <rtdevice.h>
@@ -16,10 +17,20 @@ static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
+    struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)args;
 
-    if (pwm->ops->control)
+    switch (cmd)
     {
-        result = pwm->ops->control(pwm, cmd, args);
+        case PWMN_CMD_ENABLE:
+            configuration->complementary = RT_TRUE;
+            break;
+        case PWMN_CMD_DISABLE:
+            configuration->complementary = RT_FALSE;
+            break;
+        default:
+            if(pwm->ops->control)
+                result = pwm->ops->control(pwm, cmd, args);
+            break;
     }
 
     return result;
@@ -136,8 +147,20 @@ rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel)
         return -RT_EIO;
     }
 
-    configuration.channel = (channel > 0) ? (channel) : (-channel);         /* Make it is positive num forever */
-    configuration.complementary = (channel > 0) ? (RT_FALSE) : (RT_TRUE);   /* If nagetive, it's complementary */
+    /* Make it is positive num forever */
+    configuration.channel = (channel > 0) ? (channel) : (-channel);
+
+    /* If channel is a positive number (0 ~ n), it means using normal output pin.
+     * If channel is a negative number (0 ~ -n), it means using complementary output pin. */
+    if(channel > 0)
+    {
+        result = rt_device_control(&device->parent, PWMN_CMD_DISABLE, &configuration);
+    }
+    else
+    {
+        result = rt_device_control(&device->parent, PWMN_CMD_ENABLE, &configuration);
+    }
+
     result = rt_device_control(&device->parent, PWM_CMD_ENABLE, &configuration);
 
     return result;
@@ -153,8 +176,20 @@ rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
         return -RT_EIO;
     }
 
-    configuration.channel = (channel > 0) ? (channel) : (-channel);         /* Make it is positive num forever */
-    configuration.complementary = (channel > 0) ? (RT_FALSE) : (RT_TRUE);   /* If nagetive, it's complementary */
+    /* Make it is positive num forever */
+    configuration.channel = (channel > 0) ? (channel) : (-channel);
+
+    /* If channel is a positive number (0 ~ n), it means using normal output pin.
+     * If channel is a negative number (0 ~ -n), it means using complementary output pin. */
+    if(channel > 0)
+    {
+        result = rt_device_control(&device->parent, PWMN_CMD_DISABLE, &configuration);
+    }
+    else
+    {
+        result = rt_device_control(&device->parent, PWMN_CMD_ENABLE, &configuration);
+    }
+
     result = rt_device_control(&device->parent, PWM_CMD_DISABLE, &configuration);
 
     return result;
