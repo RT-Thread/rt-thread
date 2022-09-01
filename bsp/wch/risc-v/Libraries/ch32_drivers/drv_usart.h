@@ -20,7 +20,8 @@
 /* ch32 hardware config class */
 struct ch32_uart_hw_config
 {
-    rt_uint32_t periph_clock;
+    rt_uint32_t uart_periph_clock;
+    rt_uint32_t gpio_periph_clock;
     GPIO_TypeDef *tx_gpio_port;
     rt_uint16_t tx_gpio_pin;
     GPIO_TypeDef *rx_gpio_port;
