@@ -59,7 +59,7 @@ static struct ch32_uart_hw_config uart_hw_config[] =
 #ifdef BSP_USING_UART1
     {
         /* clock configuration, please refer to ch32v30x_rcc.h */
-        RCC_APB2Periph_USART1|RCC_APB2Periph_GPIOA,
+        RCC_APB2Periph_USART1, RCC_APB2Periph_GPIOA,
         /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
         GPIOA, GPIO_Pin_9, /* Tx */GPIOA, GPIO_Pin_10, /* Rx */
         /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
@@ -68,25 +68,81 @@ static struct ch32_uart_hw_config uart_hw_config[] =
     },
 #endif
 #ifdef BSP_USING_UART2
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_USART2, RCC_APB2Periph_GPIOA,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOA, GPIO_Pin_2, /* Tx */GPIOA, GPIO_Pin_3, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 #ifdef BSP_USING_UART3
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_USART3, RCC_APB2Periph_GPIOB,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOB, GPIO_Pin_10, /* Tx */GPIOB, GPIO_Pin_11, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 #ifdef BSP_USING_UART4
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_UART4, RCC_APB2Periph_GPIOC,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOC, GPIO_Pin_10, /* Tx */GPIOC, GPIO_Pin_11, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 #ifdef BSP_USING_UART5
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_UART5, RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOD,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOC, GPIO_Pin_12, /* Tx */GPIOD, GPIO_Pin_2, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 #ifdef BSP_USING_UART6
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_UART6, RCC_APB2Periph_GPIOC,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOC, GPIO_Pin_0, /* Tx */GPIOC, GPIO_Pin_1, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 #ifdef BSP_USING_UART7
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_UART7, RCC_APB2Periph_GPIOC,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOC, GPIO_Pin_2, /* Tx */GPIOC, GPIO_Pin_3, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 #ifdef BSP_USING_UART8
-    {},
+    {
+        /* clock configuration, please refer to ch32v30x_rcc.h */
+        RCC_APB1Periph_UART5, RCC_APB2Periph_GPIOC,
+        /* GPIO  configuration : TX_Port,TX_Pin, RX_Port,RX_Pin */
+        GPIOC, GPIO_Pin_4, /* Tx */GPIOC, GPIO_Pin_5, /* Rx */
+        /* Whether to enable port remapping, you can refer to ch32v30x_gpio.h file,
+        for example, USART1 needs to be turned on, you can use GPIO_Remap_USART1 */
+        GPIO_Remap_NONE,
+    },
 #endif
 };
 
