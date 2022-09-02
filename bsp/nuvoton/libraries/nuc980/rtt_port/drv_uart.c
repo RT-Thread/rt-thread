@@ -803,8 +803,10 @@ static rt_err_t nu_uart_control(struct rt_serial_device *serial, int cmd, void *
         rt_hw_interrupt_mask(psNuUart->irqn);
 
 #if defined(RT_SERIAL_USING_DMA)
-        nu_pdma_channel_terminate(psNuUart->pdma_chanid_tx);
-        nu_pdma_channel_terminate(psNuUart->pdma_chanid_rx);
+        if (psNuUart->dma_flag != 0) {
+            nu_pdma_channel_terminate(psNuUart->pdma_chanid_tx);
+            nu_pdma_channel_terminate(psNuUart->pdma_chanid_rx);
+        }
 #endif
 
         /* Close UART port */
