@@ -44,7 +44,7 @@ menu "On-chip Peripheral Drivers"
             default n
 
             config BSP_USING_UART8
-            bool "Enable UART7"
+            bool "Enable UART8"
             default n
         endif
 
