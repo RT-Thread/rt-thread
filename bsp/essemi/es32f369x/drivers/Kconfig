@@ -24,7 +24,6 @@ menu "Hardware Drivers Config"
             imply RTDUINO_USING_SERVO
             imply RTDUINO_USING_WIRE
             imply RTDUINO_USING_SPI
-            imply RTDUINO_USING_ADAFRUIT
             default n
 
         config BSP_USING_SPI_FLASH

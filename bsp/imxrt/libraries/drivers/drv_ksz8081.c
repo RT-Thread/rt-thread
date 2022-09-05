@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-14     wangqiang    the first version
+ * 2022-08-29     xjy198903    add rt1170 support
  */
 
 #include <rtthread.h>
@@ -71,7 +72,12 @@
 #define PHY_TIMEOUT_COUNT 0x3FFFFFFU
 
 /* defined the Reset pin, PORT and PIN config by menuconfig */
+#ifdef SOC_IMXRT1170_SERIES
+#define RESET_PIN GET_PIN(PHY_RESET_KSZ8081_PORT, PHY_RESET_KSZ8081_PIN)
+#else
 #define RESET_PIN GET_PIN(PHY_RESET_PORT, PHY_RESET_PIN)
+#endif
+
 
 /*******************************************************************************
  * Prototypes
@@ -168,7 +174,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
         #endif  /* FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE */
 
         /* Set the negotiation. */
-        result = phy_ksz8081.ops->write(PHY_AUTONEG_ADVERTISE_REG, 
+        result = phy_ksz8081.ops->write(PHY_AUTONEG_ADVERTISE_REG,
                                         (PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
                                         PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK | 0x1U));
         if (PHY_STATUS_OK == result)

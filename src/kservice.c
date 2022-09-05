@@ -21,6 +21,8 @@
  * 2021-12-20     Meco Man     implement rt_strcpy()
  * 2022-01-07     Gabriel      add __on_rt_assert_hook
  * 2022-06-04     Meco Man     remove strnlen
+ * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
+ * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  */
 
 #include <rtthread.h>
@@ -182,7 +184,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 
     return s;
 #else
-#define LBLOCKSIZE      (sizeof(long))
+#define LBLOCKSIZE      (sizeof(rt_ubase_t))
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
@@ -190,8 +192,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
     char *m = (char *)s;
     unsigned long buffer;
     unsigned long *aligned_addr;
-    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
-                                unsigned variable.  */
+    unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
+                                unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
+
+    RT_ASSERT(LBLOCKSIZE == 2 || LBLOCKSIZE == 4 || LBLOCKSIZE == 8);
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
@@ -201,16 +205,9 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
         /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
-        if (LBLOCKSIZE == 4)
+        for (i = 0; i < LBLOCKSIZE; i++)
         {
-            buffer = (d << 8) | d;
-            buffer |= (buffer << 16);
-        }
-        else
-        {
-            buffer = 0;
-            for (i = 0; i < LBLOCKSIZE; i ++)
-                buffer = (buffer << 8) | d;
+            *(((unsigned char *)&buffer)+i) = d;
         }
 
         while (count >= LBLOCKSIZE * 4)
@@ -643,7 +640,7 @@ void rt_show_version(void)
     rt_kprintf("\n \\ | /\n");
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
-               RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__, __TIME__);
+               (rt_int32_t)RT_VERSION, (rt_int32_t)RT_SUBVERSION, (rt_int32_t)RT_REVISION, __DATE__, __TIME__);
     rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
@@ -669,26 +666,13 @@ rt_inline int divide(long *n, int base)
     int res;
 
     /* optimized for processor which does not support divide instructions. */
-    if (base == 10)
-    {
 #ifdef RT_KPRINTF_USING_LONGLONG
-        res = (int)(((unsigned long long)*n) % 10U);
-        *n = (long long)(((unsigned long long)*n) / 10U);
+    res = (int)(((unsigned long long)*n) % base);
+    *n = (long long)(((unsigned long long)*n) / base);
 #else
-        res = (int)(((unsigned long)*n) % 10U);
-        *n = (long)(((unsigned long)*n) / 10U);
+    res = (int)(((unsigned long)*n) % base);
+    *n = (long)(((unsigned long)*n) / base);
 #endif
-    }
-    else
-    {
-#ifdef RT_KPRINTF_USING_LONGLONG
-        res = (int)(((unsigned long long)*n) % 16U);
-        *n = (long long)(((unsigned long long)*n) / 16U);
-#else
-        res = (int)(((unsigned long)*n) % 16U);
-        *n = (long)(((unsigned long)*n) / 16U);
-#endif
-    }
 
     return res;
 }
@@ -726,9 +710,9 @@ static char *print_number(char *buf,
 {
     char c, sign;
 #ifdef RT_KPRINTF_USING_LONGLONG
-    char tmp[32];
+    char tmp[64];
 #else
-    char tmp[16];
+    char tmp[32];
 #endif /* RT_KPRINTF_USING_LONGLONG */
     int precision_bak = precision;
     const char *digits;
@@ -762,7 +746,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-        if (base == 16)
+        if (base == 2 || base == 16)
             size -= 2;
         else if (base == 8)
             size--;
@@ -812,7 +796,16 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-        if (base == 8)
+        if (base == 2)
+        {
+            if (buf < end)
+                *buf = '0';
+            ++ buf;
+            if (buf < end)
+                *buf = 'b';
+            ++ buf;
+        }
+        else if (base == 8)
         {
             if (buf < end)
                 *buf = '0';
@@ -1071,6 +1064,9 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             continue;
 
         /* integer number formats - set up the flags and "break" */
+        case 'b':
+            base = 2;
+            break;
         case 'o':
             base = 8;
             break;
@@ -1115,7 +1111,7 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         }
         else if (qualifier == 'h')
         {
-            num = (rt_uint16_t)va_arg(args, rt_int32_t);
+            num = (rt_uint16_t)va_arg(args, int);
             if (flags & SIGN) num = (rt_int16_t)num;
         }
         else

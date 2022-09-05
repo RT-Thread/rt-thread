@@ -46,12 +46,9 @@ TMS320F28379D 程序的编译和下载要使用的是 TI 官方提供的 Code Co
 ![import_dia](figures/import_dia.png)
 
 ### 2.2 编译工程
-使用 CCS 内置的 C 编译器可以进行工程的编译，本文使用的是 Code Composer Studio 8.1.0 和 TI v18.1.3.LTS 编译器的组合。
-
-导入工程后，在右边的 Project Explorer 列表里可以看到刚刚导入的 rt-thread 工程，右键点击，在弹出的菜单中选择 Build Project 即可开始编译。
-
-![build](figures/build.png)
-
+使用 CCS 内置的 C 编译器可以进行工程的编译。CCS 8 需要使用 TI v18.1.3.LTS 编译器。CCS 10 需要使用 TI v20.2.1.LTS 及以上版本编译器（v20.2.0.LTS及以下版本的编译器有bug编译时会出现segmentation fault）。本文使用的是 Code Composer Studio 10.1.1 和 TI v20.2.4.LTS 编译器的组合（已经配置在工程文件中）。导入工程后，在右边的 Project Explorer 列表里可以看到刚刚导入的 rt-thread 工程。本BSP提供两种编译的方式，分别用于在RAM中执行和在FLASH中执行。
+如图所示可以选择RAM和FLASH进行build。
+![](figures/build.png)
 ## 3. 烧写及执行
 
 编译完成后，可以开始下载和调试。把开发板和电脑通过 Mini-USB 线连接，使用 CCS 中的烧写功能可直接通过板载 XDS100v2 仿真器烧写并执行。
@@ -70,9 +67,9 @@ TMS320F28379D 程序的编译和下载要使用的是 TI 官方提供的 Code Co
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.1 build Feb 21 2019
- 2006 - 2019 Copyright by rt-thread team
-finsh >
+ / | \     4.1.1 build Jul  4 2022 22:33:37
+ 2006 - 2022 Copyright by RT-Thread team
+ msh >
  ```
 
 ## 4. 注意事项
@@ -96,7 +93,9 @@ finsh >
 
 ## 6. 联系人信息
 
-维护人：xuzhuoyi < xzy476386434@vip.qq.com >
+维护人：
+1. guyunjie < yunjie.gu1@gmail.com >
+2. qiyu < qiyu_sjtu@163.com >
 
 ## 7. 参考
 

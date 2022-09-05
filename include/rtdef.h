@@ -44,6 +44,7 @@
  * 2022-04-20     Meco Man     change version number to v4.1.1
  * 2022-04-21     THEWON       add macro RT_VERSION_CHECK
  * 2022-06-29     Meco Man     add RT_USING_LIBC and standard libc headers
+ * 2022-08-16     Meco Man     change version number to v5.0.0
  */
 
 #ifndef __RT_DEF_H__
@@ -67,16 +68,16 @@ extern "C" {
 /**@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      4               /**< major version number */
-#define RT_SUBVERSION                   1               /**< minor version number */
-#define RT_REVISION                     1               /**< revise version number */
+#define RT_VERSION                      5               /**< major version number */
+#define RT_SUBVERSION                   0               /**< minor version number */
+#define RT_REVISION                     0               /**< revise version number */
+
+/* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
+#define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION, RT_SUBVERSION, RT_REVISION)
 
-/* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
-#define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + \
-                                                         (minor * 100) + revise)
 
 /* RT-Thread basic data type definitions */
 #ifndef RT_USING_ARCH_DATA_TYPE
@@ -207,11 +208,11 @@ typedef __gnuc_va_list              va_list;
 /* The way that TI compiler set section is different from other(at least
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
     * details. */
-#define RT_SECTION(x)
-#define RT_USED
+#define RT_SECTION(x)               __attribute__((section(x)))
+#define RT_USED                     __attribute__((used))
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)
-#define RT_WEAK
+#define ALIGN(n)                    __attribute__((aligned(n)))
+#define RT_WEAK                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__TASKING__)

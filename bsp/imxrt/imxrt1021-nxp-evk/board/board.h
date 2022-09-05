@@ -15,7 +15,7 @@
 #include "fsl_common.h"
 #include "clock_config.h"
 #define SOC_IMXRT1020_SERIES
-#if defined(__CC_ARM) || defined (__CLANG_ARM) || defined (__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$RTT_HEAP$$ZI$$Base;
 extern int Image$$RTT_HEAP$$ZI$$Limit;
 #define HEAP_BEGIN          (&Image$$RTT_HEAP$$ZI$$Base)

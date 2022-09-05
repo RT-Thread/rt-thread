@@ -1,0 +1,33 @@
+menu "Hardware Drivers Config"
+
+config SOC_CH32V307VC
+    bool
+    select SOC_RISCV_SERIES_CH32V3
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default n
+
+        if BSP_USING_UART
+            config BSP_USING_UART1
+            bool "Enable UART1"
+            default n
+        endif
+
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

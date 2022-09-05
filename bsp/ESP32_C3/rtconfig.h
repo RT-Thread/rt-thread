@@ -42,6 +42,9 @@
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
@@ -142,8 +145,15 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_FREERTOS_WRAPPER
+#define PKG_USING_FREERTOS_WRAPPER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
+
+#define PKG_USING_ESP_IDF
+#define PKG_USING_ESP_IDF_LATEST_VERSION
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -158,11 +168,11 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+#define SOC_ESPRESSIF
+#define SOC_ESP32_C3
 
 /* Hardware Drivers Config */
 
-#define SOC_ESP32_C3
-#define SOC_ESPRESSIF
 #define BSP_BOARD_LUATOS_ESP32C3
 
 /* Onboard Peripheral Drivers */
