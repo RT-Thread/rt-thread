@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <rtthread.h>
 
+#include "ipc/completion.h"
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -91,6 +93,8 @@ struct rt_spi_bus
 
     struct rt_mutex lock;
     struct rt_spi_device *owner;
+
+    struct rt_completion cpt;
 };
 
 /**

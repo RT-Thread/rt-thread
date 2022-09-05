@@ -411,7 +411,15 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         /* For simplicity reasons, this example is just waiting till the end of the
            transfer, but application may perform other tasks while transfer operation
            is ongoing. */
-        while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+        if (spi_drv->spi_dma_flag & (SPI_USING_TX_DMA_FLAG | SPI_USING_RX_DMA_FLAG))
+        {
+            /* blocking the thread,and the other tasks can run */
+            rt_completion_wait(&spi_drv->spi_bus.cpt, RT_WAITING_FOREVER);
+        }
+        else
+        {
+            while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+        }
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
@@ -936,6 +944,24 @@ static void stm32_get_dma_info(void)
     static struct dma_config spi6_dma_tx = SPI6_TX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_tx = &spi6_dma_tx;
 #endif
+}
+
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
+    rt_completion_done(&spi_drv->spi_bus.cpt);
+}
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
+    rt_completion_done(&spi_drv->spi_bus.cpt);
+}
+
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
+    rt_completion_done(&spi_drv->spi_bus.cpt);
 }
 
 #if defined(SOC_SERIES_STM32F0)

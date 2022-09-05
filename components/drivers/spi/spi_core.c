@@ -37,6 +37,9 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     /* set bus mode */
     bus->mode = RT_SPI_BUS_MODE_SPI;
 
+    /* initialize completion object */
+    rt_completion_init(&bus->cpt);
+
     return RT_EOK;
 }
 
