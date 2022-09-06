@@ -1,0 +1,4 @@
+config SOC_HPM6000_SERIES
+    bool 
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
