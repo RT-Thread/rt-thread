@@ -25,9 +25,9 @@ void apm32_usart_init(void)
     GPIO_Config(GPIOA, &GPIO_ConfigStruct);
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_9, GPIO_AF_USART1);
 
-    GPIO_ConfigStruct.mode = GPIO_MODE_IN;
+    GPIO_ConfigStruct.mode = GPIO_MODE_AF;
     GPIO_ConfigStruct.pin = GPIO_PIN_10;
-    GPIO_ConfigStruct.pupd = GPIO_PUPD_UP;
+    GPIO_ConfigStruct.pupd = GPIO_PUPD_NOPULL;
     GPIO_ConfigStruct.speed = GPIO_SPEED_50MHz;
     GPIO_Config(GPIOA, &GPIO_ConfigStruct);
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_10, GPIO_AF_USART1);
