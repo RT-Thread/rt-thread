@@ -159,5 +159,5 @@ static int ab32_adc_init(void)
 }
 INIT_BOARD_EXPORT(ab32_adc_init);
 
-#endif
+#endif/* BSP_USING_ADC0 */
 
