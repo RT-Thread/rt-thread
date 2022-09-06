@@ -116,7 +116,6 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
     flexcan_mb_transfer_t rxXfer;
 
     can = (struct imxrt_can *)userData;
-    
     switch (status)
     {
     case kStatus_FLEXCAN_RxIdle:

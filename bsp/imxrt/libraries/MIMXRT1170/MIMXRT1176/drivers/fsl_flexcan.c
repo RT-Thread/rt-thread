@@ -3478,7 +3478,6 @@ void FLEXCAN_TransferCreateHandle(CAN_Type *base,
     /* Register Callback function. */
     handle->callback = callback;
     handle->userData = userData;
-    
     /* Save the context in global variables to support the double weak mechanism. */
     s_flexcanHandle[instance] = handle;
 
