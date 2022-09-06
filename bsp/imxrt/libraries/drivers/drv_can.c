@@ -29,6 +29,10 @@
 static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
 
+#ifdef SOC_IMXRT1170_SERIES
+#define USE_IMPROVED_TIMING_CONFIG (1U)
+#endif
+
 enum
 {
 #ifdef BSP_USING_CAN1
@@ -102,13 +106,17 @@ uint32_t GetCanSrcFreq(CAN_Type *can_base)
     return freq;
 }
 
+#ifdef SOC_IMXRT1170_SERIES
+static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint64_t result, void *userData)
+#else
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t result, void *userData)
+#endif
 {
     struct imxrt_can *can;
     flexcan_mb_transfer_t rxXfer;
 
     can = (struct imxrt_can *)userData;
-
+    
     switch (status)
     {
     case kStatus_FLEXCAN_RxIdle:
@@ -171,6 +179,22 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     case RT_CAN_MODE_LOOPBACKANLISTEN:
         break;
     }
+
+#ifdef SOC_IMXRT1170_SERIES
+    flexcan_timing_config_t timing_config;
+    memset(&timing_config, 0, sizeof(flexcan_timing_config_t));
+
+    if(FLEXCAN_CalculateImprovedTimingValues(can->base, config.baudRate, GetCanSrcFreq(can->base), &timing_config))
+    {
+        /* Update the improved timing configuration*/
+        memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
+    }
+    else
+    {
+        LOG_E("No found Improved Timing Configuration. Just used default configuration\n");
+    }
+#endif
+
     FLEXCAN_Init(can->base, &config, GetCanSrcFreq(can->base));
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
     /* init RX_MB_COUNT RX MB to default status */
