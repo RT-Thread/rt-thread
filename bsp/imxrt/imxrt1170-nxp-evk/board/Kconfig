@@ -23,6 +23,11 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n    
+
     menuconfig BSP_USING_LPUART
         bool "Enable UART"
         select RT_USING_SERIAL

@@ -1,0 +1,6 @@
+clean2:
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS)
+	-$(RM) $(OBJS) *.elf
+	-@echo ' '
+
+*.elf: $(wildcard ../board/linker_scripts/flash_xip_rtt.ld)

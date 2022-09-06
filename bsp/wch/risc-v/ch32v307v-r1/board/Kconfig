@@ -18,6 +18,34 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART1
             bool "Enable UART1"
             default n
+
+            config BSP_USING_UART2
+            bool "Enable UART2"
+            default n
+
+            config BSP_USING_UART3
+            bool "Enable UART3"
+            default n
+
+            config BSP_USING_UART4
+            bool "Enable UART4"
+            default n
+
+            config BSP_USING_UART5
+            bool "Enable UART5"
+            default n
+
+            config BSP_USING_UART6
+            bool "Enable UART6"
+            default n
+
+            config BSP_USING_UART7
+            bool "Enable UART7"
+            default n
+
+            config BSP_USING_UART8
+            bool "Enable UART8"
+            default n
         endif
 
 endmenu
