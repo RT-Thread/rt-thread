@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -145,7 +145,6 @@ int $Sub$$main(void)
     return 0;
 }
 #elif defined(__ICCARM__)
-extern int main(void);
 /* __low_level_init will auto called by IAR cstartup */
 extern void __iar_data_init3(void);
 int __low_level_init(void)
@@ -166,8 +165,8 @@ int entry(void)
 
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
-ALIGN(8)
-static rt_uint8_t main_stack[RT_MAIN_THREAD_STACK_SIZE];
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t main_thread_stack[RT_MAIN_THREAD_STACK_SIZE];
 struct rt_thread main_thread;
 #endif /* RT_USING_HEAP */
 
@@ -194,7 +193,7 @@ void main_thread_entry(void *parameter)
         extern int $Super$$main(void);
         $Super$$main(); /* for ARMCC. */
     }
-#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
+#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__) || defined(__TI_COMPILER_VERSION__)
     main();
 #endif
 }
@@ -216,7 +215,7 @@ void rt_application_init(void)
 
     tid = &main_thread;
     result = rt_thread_init(tid, "main", main_thread_entry, RT_NULL,
-                            main_stack, sizeof(main_stack), RT_MAIN_THREAD_PRIORITY, 20);
+                            main_thread_stack, sizeof(main_thread_stack), RT_MAIN_THREAD_PRIORITY, 20);
     RT_ASSERT(result == RT_EOK);
 
     /* if not define RT_USING_HEAP, using to eliminate the warning */

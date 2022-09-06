@@ -1,0 +1,15 @@
+menuconfig RTT_POSIX_TESTCASE_SYS_UIO_H
+    bool "<sys/shm.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SYS_UIO_H
+
+    config UIO_H_READV
+        bool "<sys/statvfs.h> -> readv"
+        default n
+
+    config UIO_H_WRITEV
+        bool "<sys/statvfs.h> -> writev"
+        default n
+
+endif

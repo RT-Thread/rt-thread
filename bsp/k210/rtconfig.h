@@ -23,6 +23,7 @@
 
 /* kservice optimization */
 
+#define RT_KPRINTF_USING_LONGLONG
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 #define RT_DEBUG_INIT_CONFIG
@@ -52,7 +53,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uarths"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_CPU_64BIT
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
@@ -203,9 +204,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -217,9 +215,11 @@
 
 /* peripheral libraries and drivers */
 
-#define PKG_USING_KENDRYTE_SDK
-#define PKG_USING_KENDRYTE_SDK_V057
-#define PKG_KENDRYTE_SDK_VERNUM 0x0057
+
+/* Kendryte SDK */
+
+#define PKG_USING_K210_SDK
+#define PKG_USING_K210_SDK_LATEST_VERSION
 
 /* AI packages */
 
@@ -233,6 +233,16 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
+#define SOC_K210
 #define BOARD_K210_EVB
 
 /* Hardware Drivers Config */

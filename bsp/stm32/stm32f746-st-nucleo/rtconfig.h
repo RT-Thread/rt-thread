@@ -47,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart3"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -72,13 +72,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-#define RT_USING_DFS
-#define DFS_USING_POSIX
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -110,49 +103,6 @@
 
 /* Network */
 
-#define NETDEV_USING_PING
-#define RT_USING_LWIP
-#define RT_USING_LWIP212
-#define RT_USING_LWIP_VER_NUM 0x20102
-#define RT_LWIP_MEM_ALIGNMENT 4
-#define RT_LWIP_IGMP
-#define RT_LWIP_ICMP
-#define RT_LWIP_DNS
-#define RT_LWIP_DHCP
-#define IP_SOF_BROADCAST 1
-#define IP_SOF_BROADCAST_RECV 1
-
-/* Static IPv4 Address */
-
-#define RT_LWIP_IPADDR "192.168.1.30"
-#define RT_LWIP_GWADDR "192.168.1.1"
-#define RT_LWIP_MSKADDR "255.255.255.0"
-#define RT_LWIP_UDP
-#define RT_LWIP_TCP
-#define RT_LWIP_RAW
-#define RT_MEMP_NUM_NETCONN 8
-#define RT_LWIP_PBUF_NUM 16
-#define RT_LWIP_RAW_PCB_NUM 4
-#define RT_LWIP_UDP_PCB_NUM 4
-#define RT_LWIP_TCP_PCB_NUM 4
-#define RT_LWIP_TCP_SEG_NUM 40
-#define RT_LWIP_TCP_SND_BUF 8196
-#define RT_LWIP_TCP_WND 8196
-#define RT_LWIP_TCPTHREAD_PRIORITY 10
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
-#define RT_LWIP_TCPTHREAD_STACKSIZE 1024
-#define RT_LWIP_ETHTHREAD_PRIORITY 12
-#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
-#define LWIP_NETIF_STATUS_CALLBACK 1
-#define LWIP_NETIF_LINK_CALLBACK 1
-#define SO_REUSE 1
-#define LWIP_SO_RCVTIMEO 1
-#define LWIP_SO_SNDTIMEO 1
-#define LWIP_SO_RCVBUF 1
-#define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
-#define RT_LWIP_USING_PING
 
 /* Utilities */
 
@@ -206,9 +156,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -219,6 +166,9 @@
 
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -232,6 +182,15 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F7

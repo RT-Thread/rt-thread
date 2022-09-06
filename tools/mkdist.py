@@ -173,7 +173,7 @@ def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
     if rttide == None:
         tgt_dict = {'mdk4':('keil', 'armcc'),
                     'mdk5':('keil', 'armcc'),
-                    'iar':('iar', 'iar'),
+                    'iar':('iar', 'iccarm'),
                     'vs':('msvc', 'cl'),
                     'vs2012':('msvc', 'cl'),
                     'cdk':('gcc', 'gcc'),

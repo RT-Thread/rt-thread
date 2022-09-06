@@ -48,7 +48,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define ARCH_ARM_ARM9
 
@@ -114,15 +114,12 @@
 #define RT_USING_PIN
 #define RT_USING_ADC
 #define RT_USING_PWM
+#define RT_USING_MTD_NAND
+#define RT_MTD_NAND_DEBUG
 #define RT_USING_RTC
 #define RT_USING_ALARM
 #define RT_USING_SPI
 #define RT_USING_QSPI
-#define RT_USING_SFUD
-#define RT_SFUD_USING_SFDP
-#define RT_SFUD_USING_FLASH_INFO_TABLE
-#define RT_SFUD_USING_QSPI
-#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
 #define RT_USING_AUDIO
 #define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
@@ -174,8 +171,6 @@
 /* POSIX (Portable Operating System Interface) layer */
 
 #define RT_USING_POSIX_FS
-#define RT_USING_POSIX_DEVIO
-#define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
 #define RT_USING_POSIX_SOCKET
@@ -190,7 +185,7 @@
 
 #define RT_USING_SAL
 
-/* protocol stack implement */
+/* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
@@ -302,23 +297,23 @@
 
 /* u8g2: a monochrome graphic library */
 
+#define PKG_USING_WAVPLAYER
+#define PKG_WP_USING_PLAY
+#define PKG_WP_PLAY_DEVICE "sound0"
+#define PKG_WP_USING_RECORD
+#define PKG_WP_RECORD_DEVICE "sound0"
+#define PKG_USING_WAVPLAYER_LATEST_VERSION
 
 /* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
 
-#define PKG_USING_MEM_SANDBOX
-#define PKG_USING_MEM_SANDBOX_LATEST_VERSION
 
 /* system packages */
 
 /* enhanced kernel services */
 
-
-/* POSIX extension functions */
-
-#define PKG_USING_POSIX_STRINGS
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
@@ -328,10 +323,18 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_DFS_UFFS
+#define RT_USING_DFS_UFFS
+#define RT_UFFS_ECC_MODE_3
+#define RT_UFFS_ECC_MODE 3
+#define PKG_USING_DFS_UFFS_LATEST_VERSION
 #define PKG_USING_RAMDISK
 #define PKG_USING_RAMDISK_LATEST_VERSION
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -348,23 +351,15 @@
 
 #define PKG_USING_OPTPARSE
 #define PKG_USING_OPTPARSE_LATEST_VERSION
-#define PKG_USING_VI
-#define VI_SANDBOX_SIZE_KB 20
-#define VI_MAX_LEN 4096
-#define VI_ENABLE_COLON
-#define VI_ENABLE_COLON_EXPAND
-#define VI_ENABLE_YANKMARK
-#define VI_ENABLE_SEARCH
-#define VI_ENABLE_DOT_CMD
-#define VI_ENABLE_READONLY
-#define VI_ENABLE_SETOPTS
-#define VI_ENABLE_SET
-#define VI_ENABLE_VI_ASK_TERMINAL
-#define VI_ENABLE_UNDO
-#define VI_ENABLE_UNDO_QUEUE
-#define VI_UNDO_QUEUE_MAX 256
-#define VI_ENABLE_VERBOSE_STATUS
-#define PKG_USING_VI_LATEST_VERSION
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 
 /* Hardware Drivers Config */
 
@@ -416,7 +411,9 @@
 #define BSP_USING_I2S
 #define NU_I2S_DMA_FIFO_SIZE 4096
 #define BSP_USING_QSPI
+#define BSP_USING_QSPI_PDMA
 #define BSP_USING_QSPI0
+#define BSP_USING_QSPI0_PDMA
 #define BSP_USING_CRYPTO
 #define BSP_USING_WDT
 #define BSP_USING_USBD
@@ -428,7 +425,7 @@
 #define BOARD_USING_IP101GR
 #define BOARD_USING_NAU8822
 #define BOARD_USING_STORAGE_SDCARD
-#define BOARD_USING_STORAGE_SPIFLASH
+#define BOARD_USING_STORAGE_SPINAND
 #define BOARD_USING_USB0_DEVICE_HOST
 #define BOARD_USING_USB1_HOST
 
@@ -440,5 +437,6 @@
 #define NU_PKG_USING_UTILS
 #define NU_PKG_USING_DEMO
 #define NU_PKG_USING_NAU8822
+#define NU_PKG_USING_SPINAND
 
 #endif

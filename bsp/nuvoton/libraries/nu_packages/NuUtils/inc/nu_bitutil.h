@@ -14,17 +14,15 @@
 
 #if defined(__ICCARM__)
     #include <arm_math.h>
-#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)       /* ARM Compiler 6 */
+#elif defined (__ARMCC_VERSION)
     #ifdef __has_include
-        #if __has_include("cmsis_armclang.h")
-            #include "cmsis_armclang.h"
+        #if __has_include("cmsis_compiler.h")
+            #include "cmsis_compiler.h"
         #endif
     #endif
-#elif defined(__ARMCC_VERSION)
-    #ifdef __has_include
-        #if __has_include("cmsis_armcc.h")
-            #include "cmsis_armcc.h"
-        #endif
+
+    #if !defined(__CLZ)
+        #define __CLZ     __clz
     #endif
 #endif
 

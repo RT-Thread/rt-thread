@@ -25,11 +25,11 @@ def GenerateCFiles(env,project):
     AS = os.path.join(rtconfig.EXEC_PATH, rtconfig.AS).replace('\\', "/")
     AR = os.path.join(rtconfig.EXEC_PATH, rtconfig.AR).replace('\\', "/")
     LINK = os.path.join(rtconfig.EXEC_PATH, rtconfig.LINK).replace('\\', "/")
-    if rtconfig.PLATFORM == 'gcc':
+    if rtconfig.PLATFORM in ['gcc']:
         SIZE = os.path.join(rtconfig.EXEC_PATH, rtconfig.SIZE).replace('\\', "/")
         OBJDUMP = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJDUMP).replace('\\', "/")
         OBJCOPY = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJCPY).replace('\\', "/")
-    elif rtconfig.CROSS_TOOL == 'keil':
+    elif rtconfig.PLATFORM in ['armcc', 'armclang']:
         FROMELF = os.path.join(rtconfig.EXEC_PATH, 'fromelf').replace('\\', "/")
 
     CFLAGS = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
@@ -47,11 +47,11 @@ def GenerateCFiles(env,project):
         AS += ".exe"
         AR += ".exe"
         LINK += ".exe"
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             SIZE += ".exe"
             OBJDUMP += ".exe"
             OBJCOPY += ".exe"
-        elif rtconfig.CROSS_TOOL == 'keil':
+        elif rtconfig.PLATFORM in ['armcc', 'armclang']:
             FROMELF += ".exe"
 
     if not os.path.exists(CC) or not os.path.exists(AS) or not os.path.exists(AR) or not os.path.exists(LINK):
@@ -65,6 +65,7 @@ def GenerateCFiles(env,project):
         cm_file.write("SET(CMAKE_SYSTEM_NAME Generic)\n")
         cm_file.write("SET(CMAKE_SYSTEM_PROCESSOR " + rtconfig.CPU +")\n")
         cm_file.write("#SET(CMAKE_VERBOSE_MAKEFILE ON)\n\n")
+        cm_file.write("SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n\n")
 
         cm_file.write("SET(CMAKE_C_COMPILER \""+ CC + "\")\n")
         cm_file.write("SET(CMAKE_ASM_COMPILER \""+ AS + "\")\n")
@@ -77,17 +78,17 @@ def GenerateCFiles(env,project):
             cm_file.write("SET(CMAKE_CXX_FLAGS \""+ CXXFLAGS + "\")\n")
             cm_file.write("SET(CMAKE_CXX_COMPILER_WORKS TRUE)\n\n")
 
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             cm_file.write("SET(CMAKE_OBJCOPY \""+ OBJCOPY + "\")\n")
             cm_file.write("SET(CMAKE_SIZE \""+ SIZE + "\")\n\n")
-        elif rtconfig.CROSS_TOOL == 'keil':
+        elif rtconfig.PLATFORM in ['armcc', 'armclang']:
             cm_file.write("SET(CMAKE_FROMELF \""+ FROMELF + "\")\n\n")
 
         LINKER_FLAGS = ''
         LINKER_LIBS = ''
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             LINKER_FLAGS += '-T'
-        elif rtconfig.CROSS_TOOL == 'keil':
+        elif rtconfig.PLATFORM in ['armcc', 'armclang']:
             LINKER_FLAGS += '--scatter'
             for group in project:
                 if 'LIBPATH' in group.keys():
@@ -125,7 +126,7 @@ def GenerateCFiles(env,project):
                 cm_file.write( "\t" + path.replace("\\", "/") + "\n" )
         cm_file.write(")\n\n")
 
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             cm_file.write("LINK_DIRECTORIES(\n")
             for group in project:
                 if 'LIBPATH' in group.keys():
@@ -142,7 +143,7 @@ def GenerateCFiles(env,project):
 
             cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
             cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME}.elf POST_BUILD \nCOMMAND ${CMAKE_OBJCOPY} -O binary ${CMAKE_PROJECT_NAME}.elf ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_SIZE} ${CMAKE_PROJECT_NAME}.elf)")
-        elif rtconfig.CROSS_TOOL == 'keil':
+        elif rtconfig.PLATFORM in ['armcc', 'armclang']:
             cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ${PROJECT_SOURCES})\n")
             cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD \nCOMMAND ${CMAKE_FROMELF} --bin ${CMAKE_PROJECT_NAME}.elf --output ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_FROMELF} -z ${CMAKE_PROJECT_NAME}.elf)")
 

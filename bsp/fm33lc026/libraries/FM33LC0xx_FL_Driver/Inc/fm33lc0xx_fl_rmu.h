@@ -6,15 +6,15 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 /* Includes -------------------------------------------------------------------------------------------*/
-#include "fm33lc0xx_fl.h"
+#include "fm33lc0xx_fl_def.h"
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
   */
@@ -59,7 +59,7 @@ extern "C" {
 #define    RMU_PDRCR_EN_Msk                                       (0x1U << RMU_PDRCR_EN_Pos)
 #define    RMU_PDRCR_EN                                           RMU_PDRCR_EN_Msk
 
-#define    RMU_BORCR_CFG_Pos                                      (1U)
+#define    RMU_BORCR_CFG_Pos                                      (2U)
 #define    RMU_BORCR_CFG_Msk                                      (0x3U << RMU_BORCR_CFG_Pos)
 #define    RMU_BORCR_CFG                                          RMU_BORCR_CFG_Msk
 
@@ -284,4 +284,4 @@ __STATIC_INLINE void FL_RMU_BORPowerUp_Enable(RMU_Type *RMUx)
 #endif /* __FM33LC0XX_FL_RMU_H*/
 
 /*************************Py_Code_Generator Version: 0.1-0.11-0.2 @ 2020-09-23*************************/
-/*************************(C) COPYRIGHT Fudan Microelectronics **** END OF FILE*************************/
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

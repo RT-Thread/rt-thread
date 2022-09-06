@@ -7,7 +7,7 @@ IMXRT 系列 BSP 目前支持情况如下表所示：
 | **i.MX RT1015 系列** |  |
 | 暂无 |  |
 | **i.MX RT1020系列** |  |
-|   暂无     |  |
+| imxrt1020-nxp-evk | 恩智浦 i.MX RT1020 EVK |
 | **i.MX RT1050 系列** |  |
 | imxrt1052-atk-commander | 正点原子 IMXRT 号令者 |
 | imxrt1052-fire-pro | 野火 i.MX RT1052 EVK PRO |
@@ -16,6 +16,8 @@ IMXRT 系列 BSP 目前支持情况如下表所示：
 | imxrt1060-nxp-evk | 恩智浦 i.MX RT1060 EVK |
 | **i.MX RT1064 系列** |  |
 | imxrt1064-nxp-evk | 恩智浦 i.MX RT1064 EVK |
+| **i.MX RT1170 系列** |  |
+| imxrt1170-nxp-evk | 恩智浦 i.MX RT1170 EVK |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 

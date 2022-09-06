@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,7 +37,11 @@
 #define DEFAULT_PRE                   5
 #define DEFAULT_DUTY                  50
 #define DEFAULT_FRE                   1000
+#ifdef SOC_MIMXRT1170_SERIES
+#define PWM_SRC_CLK_FREQ              CLOCK_GetRootClockFreq(kCLOCK_Root_Bus)
+#else
 #define PWM_SRC_CLK_FREQ              CLOCK_GetFreq(kCLOCK_IpgClk)
+#endif
 #define DEFAULT_COMPLEMENTARY_PAIR    kPWM_PwmA
 #define DEFAULT_POLARITY              kPWM_HighTrue
 
@@ -359,7 +363,7 @@ static rt_err_t imxrt_drv_qtmr_get(struct rt_device_pwm *device, struct rt_pwm_c
     low_count = base->CHANNEL[configuration->channel].COMP1;
     high_count = base->CHANNEL[configuration->channel].COMP2;
     clk_divider = 1 << (((base->CHANNEL[configuration->channel].CTRL & TMR_CTRL_PCS_MASK) >> TMR_CTRL_PCS_SHIFT) - 8);
-    clk_freq = CLOCK_GetFreq(kCLOCK_IpgClk) / clk_divider;
+    clk_freq = PWM_SRC_CLK_FREQ / clk_divider;
 
     configuration->period = 1000000000 / clk_freq * (high_count + low_count);
     configuration->pulse = 1000000000 / clk_freq * high_count;
@@ -374,7 +378,7 @@ static rt_err_t imxrt_drv_qtmr_set(struct rt_device_pwm *device, struct rt_pwm_c
 
     TMR_Type *base = (TMR_Type *)device->parent.user_data;
 
-    rt_size_t clk_freq = CLOCK_GetFreq(kCLOCK_IpgClk) / (1 << (((base->CHANNEL[configuration->channel].CTRL & TMR_CTRL_PCS_MASK) >> TMR_CTRL_PCS_SHIFT) - 8));
+    rt_size_t clk_freq = PWM_SRC_CLK_FREQ / (1 << (((base->CHANNEL[configuration->channel].CTRL & TMR_CTRL_PCS_MASK) >> TMR_CTRL_PCS_SHIFT) - 8));
     rt_size_t current_period_count = base->CHANNEL[configuration->channel].CMPLD1 + base->CHANNEL[configuration->channel].CMPLD2;
     rt_size_t period_count = clk_freq / (1000000000 / configuration->period);
     if (current_period_count == period_count)
@@ -429,7 +433,7 @@ static rt_err_t imxrt_drv_qtmr_init(TMR_Type *base, qtmr_channel_selection_t cha
     QTMR_GetDefaultConfig(&qtmr_config);
 
     qtmr_config.primarySource = (qtmr_primary_count_source_t)(psc + 8);
-    qtmr_clock_freq = CLOCK_GetFreq(kCLOCK_IpgClk) / (1 << psc);
+    qtmr_clock_freq = PWM_SRC_CLK_FREQ / (1 << psc);
 
     QTMR_Init(base, channel, &qtmr_config);
 

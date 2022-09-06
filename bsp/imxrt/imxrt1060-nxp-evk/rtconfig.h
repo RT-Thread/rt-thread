@@ -44,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 
 /* RT-Thread Components */
 
@@ -73,6 +73,8 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CPUTIME
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 
 /* Using USB */
@@ -146,9 +148,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -159,6 +158,9 @@
 
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -174,21 +176,33 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
+
 /* Hardware Drivers Config */
 
 #define BSP_USING_4MFLASH
 #define SOC_MIMXRT1062DVL6A
 
+/* Onboard Peripheral Drivers */
+
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+#define BSP_USING_I2C
+#define BSP_USING_I2C1
+#define HW_I2C1_BADURATE_100kHZ
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 #define BSP_USING_PXP
 #define BSP_USING_CACHE
-
-/* Onboard Peripheral Drivers */
-
 
 /* Board extended module Drivers */
 

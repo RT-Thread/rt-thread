@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -115,6 +115,8 @@ static int serial_fops_close(struct dfs_fd *fd)
 static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
     rt_device_t device;
+    int flags = (int)(rt_base_t)args;
+    int mask  = O_NONBLOCK | O_APPEND;
 
     device = (rt_device_t)fd->data;
     switch (cmd)
@@ -122,6 +124,11 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     case FIONREAD:
         break;
     case FIONWRITE:
+        break;
+    case F_SETFL:
+        flags &= mask;
+        fd->flags &= ~mask;
+        fd->flags |= flags;
         break;
     }
 
@@ -193,7 +200,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     return mask;
 }
 
-const static struct dfs_file_ops _serial_fops =
+static const struct dfs_file_ops _serial_fops =
 {
     serial_fops_open,
     serial_fops_close,
@@ -893,7 +900,7 @@ struct speed_baudrate_item
     int baudrate;
 };
 
-const static struct speed_baudrate_item _tbl[] =
+static const struct speed_baudrate_item _tbl[] =
 {
     {B2400, BAUD_RATE_2400},
     {B4800, BAUD_RATE_4800},
@@ -911,7 +918,7 @@ const static struct speed_baudrate_item _tbl[] =
 
 static speed_t _get_speed(int baudrate)
 {
-    int index;
+    size_t index;
 
     for (index = 0; index < sizeof(_tbl)/sizeof(_tbl[0]); index ++)
     {
@@ -924,7 +931,7 @@ static speed_t _get_speed(int baudrate)
 
 static int _get_baudrate(speed_t speed)
 {
-    int index;
+    size_t index;
 
     for (index = 0; index < sizeof(_tbl)/sizeof(_tbl[0]); index ++)
     {

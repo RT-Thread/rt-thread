@@ -126,7 +126,7 @@ static rt_size_t rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t
 
 static rt_err_t rtc_control(rt_device_t dev, int cmd, void *args)
 {
-    struct tm tm, *tm_ptr;
+    struct tm tmp;
     time_t *time;
     RT_ASSERT(dev != RT_NULL);
 
@@ -135,14 +135,14 @@ static rt_err_t rtc_control(rt_device_t dev, int cmd, void *args)
     {
         case RT_DEVICE_CTRL_RTC_GET_TIME:
             /* read device */
-            rt_hw_rtc_get(&tm);
-            *((rt_time_t *)args) = timegm(&tm);
+            rt_hw_rtc_get(&tmp);
+            *((rt_time_t *)args) = timegm(&tmp);
             break;
 
         case RT_DEVICE_CTRL_RTC_SET_TIME:
             /* write device */
-            tm_ptr = gmtime(time);
-            rt_hw_rtc_set(tm_ptr);
+            gmtime_r(time, &tmp);
+            rt_hw_rtc_set(&tmp);
             break;
     }
 

@@ -9,7 +9,7 @@ src = Split("""
 """)
 
 
-if  GetDepend('SOC_RISCV_SERIES_CH32V103'):
+if  GetDepend('SOC_RISCV_FAMILY_CH32'):
 
     if GetDepend('RT_USING_PIN'):
         src += ['drv_gpio.c']

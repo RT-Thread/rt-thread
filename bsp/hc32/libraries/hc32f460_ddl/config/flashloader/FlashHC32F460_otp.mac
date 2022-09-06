@@ -1,0 +1,16 @@
+setup()
+{
+  ;
+}
+
+execUserPreload()
+{
+  __message "----- Prepare hardware for Flashloader -----\n";
+  setup();
+}
+execUserFlashInit()  // Called by debugger before loading flash loader in RAM.
+{
+  __message "----- Prepare hardware for Flashloader -----\n";
+  setup();
+}
+

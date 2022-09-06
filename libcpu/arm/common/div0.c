@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  */
-void __div0 (void)
+void __div0(void)
 {
     while (1) ;
 }

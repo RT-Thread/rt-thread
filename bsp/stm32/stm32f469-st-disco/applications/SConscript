@@ -3,11 +3,11 @@ from building import *
 
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
-src     = Split("""
-main.c
-lcd_init.c
-""")
+src     = ['main.c']
 
+if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
+    src += ['arduino_main.cpp']
+    
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)

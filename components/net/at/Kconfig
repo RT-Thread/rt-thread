@@ -57,7 +57,16 @@ if RT_USING_AT
         config AT_USING_SOCKET
             bool "Enable BSD Socket API support by AT commnads"
             select RT_USING_SAL
+            select SAL_USING_AT
             default n
+
+        if AT_USING_SOCKET
+
+            config AT_USING_SOCKET_SERVER
+                bool "Enable BSD Socket API support about AT server"
+                default n
+
+        endif
 
     endif
 

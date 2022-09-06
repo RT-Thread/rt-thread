@@ -375,8 +375,8 @@ typedef struct
     __I  uint32_t RESP1;                 /*!< [0x0834] SD Receiving Response Token Register 1                           */
     __IO uint32_t BLEN;                  /*!< [0x0838] SD Block Length Register                                         */
     __IO uint32_t TOUT;                  /*!< [0x083c] SD Response/Data-in Time-out Register                            */
-
     __IO uint32_t ECTL;                  /*!< [0x0840] SD Host Extend Control Register                                  */
+
 } SDH_T;
 
 

@@ -1,0 +1,9 @@
+docs
+
+# Exclude old firmware resources that were not flexible enough for custom BSPs (Flow version 2)
+$(SEARCH_wifi-host-driver)/WiFi_Host_Driver/resources/nvram_deprecated/
+$(SEARCH_bluetooth-freertos)/firmware_deprecated/
+
+# Exclude old firmware resources that were not flexible enough for custom BSPs (Flow version 1)
+../wifi-host-driver/WiFi_Host_Driver/resources/nvram_deprecated/
+../bluetooth-freertos/firmware_deprecated/

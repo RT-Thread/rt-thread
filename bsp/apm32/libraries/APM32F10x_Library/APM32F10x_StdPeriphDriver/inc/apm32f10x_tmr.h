@@ -26,7 +26,7 @@
 #define __APM32F10X_TMR_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"
@@ -546,121 +546,121 @@ typedef struct
 */
 
 /** Reset and Configuration */
-void TMR_Reset(TMR_T *tmr);
-void TMR_ConfigTimeBase(TMR_T *tmr, TMR_BaseConfig_T *baseConfig);
-void TMR_ConfigOC1(TMR_T *tmr, TMR_OCConfig_T *OCConfig);
-void TMR_ConfigOC2(TMR_T *tmr, TMR_OCConfig_T *OCConfig);
-void TMR_ConfigOC3(TMR_T *tmr, TMR_OCConfig_T *OCConfig);
-void TMR_ConfigOC4(TMR_T *tmr, TMR_OCConfig_T *OCConfig);
-void TMR_ConfigIC(TMR_T *tmr, TMR_ICConfig_T *ICConfig);
-void TMR_ConfigBDT(TMR_T *tmr, TMR_BDTConfig_T *BDTConfig);
+void TMR_Reset(TMR_T* tmr);
+void TMR_ConfigTimeBase(TMR_T* tmr, TMR_BaseConfig_T *baseConfig);
+void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T *OCConfig);
+void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T *OCConfig);
+void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T *OCConfig);
+void TMR_ConfigOC4(TMR_T* tmr, TMR_OCConfig_T *OCConfig);
+void TMR_ConfigIC(TMR_T* tmr, TMR_ICConfig_T *ICConfig);
+void TMR_ConfigBDT(TMR_T* tmr, TMR_BDTConfig_T *BDTConfig);
 void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T *baseConfig);
 void TMR_ConfigOCStructInit(TMR_OCConfig_T *OCConfig);
 void TMR_ConfigICStructInit(TMR_ICConfig_T *ICConfig);
-void TMR_ConfigBDTStructInit(TMR_BDTConfig_T *BDTConfig);
-void TMR_ConfigSinglePulseMode(TMR_T *tmr, TMR_SPM_T singlePulseMode);
-void TMR_ConfigClockDivision(TMR_T *tmr, TMR_CLOCK_DIV_T clockDivision);
-void TMR_Enable(TMR_T *tmr);
-void TMR_Disable(TMR_T *tmr);
+void TMR_ConfigBDTStructInit( TMR_BDTConfig_T *BDTConfig);
+void TMR_ConfigSinglePulseMode(TMR_T* tmr, TMR_SPM_T singlePulseMode);
+void TMR_ConfigClockDivision(TMR_T* tmr, TMR_CLOCK_DIV_T clockDivision);
+void TMR_Enable(TMR_T* tmr);
+void TMR_Disable(TMR_T* tmr);
 
 /** PWM Configuration */
-void TMR_ConfigPWM(TMR_T *tmr, TMR_ICConfig_T *PWMConfig);
-void TMR_EnablePWMOutputs(TMR_T *tmr);
-void TMR_DisablePWMOutputs(TMR_T *tmr);
+void TMR_ConfigPWM(TMR_T* tmr, TMR_ICConfig_T *PWMConfig);
+void TMR_EnablePWMOutputs(TMR_T* tmr);
+void TMR_DisablePWMOutputs(TMR_T* tmr);
 
 /** DMA */
-void TMR_ConfigDMA(TMR_T *tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength);
-void TMR_EnableDMASoure(TMR_T *tmr, uint16_t dmaSource);
-void TMR_DisableDMASoure(TMR_T *tmr, uint16_t dmaSource);
+void TMR_ConfigDMA(TMR_T* tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength);
+void TMR_EnableDMASoure(TMR_T* tmr, uint16_t dmaSource);
+void TMR_DisableDMASoure(TMR_T* tmr, uint16_t dmaSource);
 
 /** Configuration */
-void TMR_ConfigInternalClock(TMR_T *tmr);
-void TMR_ConfigIntTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource);
-void TMR_ConfigTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource,
-                                 TMR_IC_POLARITY_T ICpolarity, uint16_t ICfilter);
-void TMR_ConfigETRClockMode1(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigInternalClock(TMR_T* tmr);
+void TMR_ConfigIntTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource);
+void TMR_ConfigTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource,
+                                TMR_IC_POLARITY_T ICpolarity, uint16_t ICfilter);
+void TMR_ConfigETRClockMode1(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
                              TMR_EXTTRG_POL_T polarity, uint16_t filter);
-void TMR_ConfigETRClockMode2(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETRClockMode2(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
                              TMR_EXTTRG_POL_T polarity, uint16_t filter);
-void TMR_ConfigETR(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETR(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
                    TMR_EXTTRG_POL_T polarity, uint16_t filter);
-void TMR_ConfigPrescaler(TMR_T *tmr, uint16_t prescaler, TMR_PSC_RELOAD_T pscReloadMode);
-void TMR_ConfigCounterMode(TMR_T *tmr, TMR_COUNTER_MODE_T countMode);
-void TMR_SelectInputTrigger(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSouce);
-void TMR_ConfigEncodeInterface(TMR_T *tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC_POLARITY_T IC1Polarity,
+void TMR_ConfigPrescaler(TMR_T* tmr, uint16_t prescaler, TMR_PSC_RELOAD_T pscReloadMode);
+void TMR_ConfigCounterMode(TMR_T* tmr, TMR_COUNTER_MODE_T countMode);
+void TMR_SelectInputTrigger(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSouce);
+void TMR_ConfigEncodeInterface(TMR_T* tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC_POLARITY_T IC1Polarity,
                                TMR_IC_POLARITY_T IC2Polarity);
-void TMR_ConfigForcedOC1(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction);
-void TMR_ConfigForcedOC2(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction);
-void TMR_ConfigForcedOC3(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction);
-void TMR_ConfigForcedOC4(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction);
-void TMR_EnableAutoReload(TMR_T *tmr);
-void TMR_DisableAutoReload(TMR_T *tmr);
-void TMR_EnableSelectCOM(TMR_T *tmr);
-void TMR_DisableSelectCOM(TMR_T *tmr);
-void TMR_EnableCCDMA(TMR_T *tmr);
-void TMR_DisableCCDMA(TMR_T *tmr);
-void TMR_EnableCCPreload(TMR_T *tmr);
-void TMR_DisableCCPreload(TMR_T *tmr);
-void TMR_ConfigOC1Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload);
-void TMR_ConfigOC2Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload);
-void TMR_ConfigOC3Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload);
-void TMR_ConfigOC4Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload);
-void TMR_ConfigOC1Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast);
-void TMR_ConfigOC2Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast);
-void TMR_ConfigOC3Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast);
-void TMR_ConfigOC4Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast);
-void TMR_ClearOC1Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear);
-void TMR_ClearOC2Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear);
-void TMR_ClearOC3Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear);
-void TMR_ClearOC4Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear);
-void TMR_ConfigOC1Polarity(TMR_T *tmr, TMR_OC_POLARITY_T OCPolarity);
-void TMR_ConfigOC1NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T OCNPolarity);
-void TMR_ConfigOC2Polarity(TMR_T *tmr, TMR_OC_POLARITY_T OCPolarity);
-void TMR_ConfigOC2NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T OCNPolarity);
-void TMR_ConfigOC3Polarity(TMR_T *tmr, TMR_OC_POLARITY_T OCPolarity);
-void TMR_ConfigOC3NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T OCNPolarity);
-void TMR_ConfigOC4Polarity(TMR_T *tmr, TMR_OC_POLARITY_T OCPolarity);
-void TMR_EnableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel);
-void TMR_DisableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel);
-void TMR_EnableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel);
-void TMR_DisableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel);
-void TMR_SelectOCxMode(TMR_T *tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T OCMode);
-void TMR_EnableUpdate(TMR_T *tmr);
-void TMR_DisableUpdate(TMR_T *tmr);
-void TMR_ConfigUpdateRequest(TMR_T *tmr, TMR_UPDATE_SOURCE_T updateSource);
-void TMR_EnableHallSensor(TMR_T *tmr);
-void TMR_DisableHallSensor(TMR_T *tmr);
-void TMR_SelectOutputTrigger(TMR_T *tmr, TMR_TRGO_SOURCE_T TRGOSource);
-void TMR_SelectSlaveMode(TMR_T *tmr, TMR_SLAVE_MODE_T slaveMode);
-void TMR_EnableMasterSlaveMode(TMR_T *tmr);
-void TMR_DisableMasterSlaveMode(TMR_T *tmr);
-void TMR_ConfigCounter(TMR_T *tmr, uint16_t counter);
-void TMR_ConfigAutoreload(TMR_T *tmr, uint16_t autoReload);
-void TMR_ConfigCompare1(TMR_T *tmr, uint16_t compare1);
-void TMR_ConfigCompare2(TMR_T *tmr, uint16_t compare2);
-void TMR_ConfigCompare3(TMR_T *tmr, uint16_t compare3);
-void TMR_ConfigCompare4(TMR_T *tmr, uint16_t compare4);
-void TMR_ConfigIC1Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler);
-void TMR_ConfigIC2Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler);
-void TMR_ConfigIC3Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler);
-void TMR_ConfigIC4Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler);
-uint16_t TMR_ReadCaputer1(TMR_T *tmr);
-uint16_t TMR_ReadCaputer2(TMR_T *tmr);
-uint16_t TMR_ReadCaputer3(TMR_T *tmr);
-uint16_t TMR_ReadCaputer4(TMR_T *tmr);
-uint16_t TMR_ReadCounter(TMR_T *tmr);
-uint16_t TMR_ReadPrescaler(TMR_T *tmr);
+void TMR_ConfigForcedOC1(TMR_T* tmr,TMR_FORCED_ACTION_T forcesAction);
+void TMR_ConfigForcedOC2(TMR_T* tmr,TMR_FORCED_ACTION_T forcesAction);
+void TMR_ConfigForcedOC3(TMR_T* tmr,TMR_FORCED_ACTION_T forcesAction);
+void TMR_ConfigForcedOC4(TMR_T* tmr,TMR_FORCED_ACTION_T forcesAction);
+void TMR_EnableAutoReload(TMR_T* tmr);
+void TMR_DisableAutoReload(TMR_T* tmr);
+void TMR_EnableSelectCOM(TMR_T* tmr);
+void TMR_DisableSelectCOM(TMR_T* tmr);
+void TMR_EnableCCDMA(TMR_T* tmr);
+void TMR_DisableCCDMA(TMR_T* tmr);
+void TMR_EnableCCPreload(TMR_T* tmr);
+void TMR_DisableCCPreload(TMR_T* tmr);
+void TMR_ConfigOC1Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload);
+void TMR_ConfigOC2Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload);
+void TMR_ConfigOC3Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload);
+void TMR_ConfigOC4Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload);
+void TMR_ConfigOC1Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast);
+void TMR_ConfigOC2Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast);
+void TMR_ConfigOC3Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast);
+void TMR_ConfigOC4Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast);
+void TMR_ClearOC1Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear);
+void TMR_ClearOC2Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear);
+void TMR_ClearOC3Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear);
+void TMR_ClearOC4Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear);
+void TMR_ConfigOC1Polarity(TMR_T* tmr, TMR_OC_POLARITY_T OCPolarity);
+void TMR_ConfigOC1NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T OCNPolarity);
+void TMR_ConfigOC2Polarity(TMR_T* tmr, TMR_OC_POLARITY_T OCPolarity);
+void TMR_ConfigOC2NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T OCNPolarity);
+void TMR_ConfigOC3Polarity(TMR_T* tmr, TMR_OC_POLARITY_T OCPolarity);
+void TMR_ConfigOC3NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T OCNPolarity);
+void TMR_ConfigOC4Polarity(TMR_T* tmr, TMR_OC_POLARITY_T OCPolarity);
+void TMR_EnableCCxChannel(TMR_T* tmr,TMR_CHANNEL_T channel);
+void TMR_DisableCCxChannel(TMR_T* tmr,TMR_CHANNEL_T channel);
+void TMR_EnableCCxNChannel(TMR_T* tmr,TMR_CHANNEL_T channel);
+void TMR_DisableCCxNChannel(TMR_T* tmr,TMR_CHANNEL_T channel);
+void TMR_SelectOCxMode(TMR_T* tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T OCMode);
+void TMR_EnableUpdate(TMR_T* tmr);
+void TMR_DisableUpdate(TMR_T* tmr);
+void TMR_ConfigUpdateRequest(TMR_T* tmr, TMR_UPDATE_SOURCE_T updateSource);
+void TMR_EnableHallSensor(TMR_T* tmr);
+void TMR_DisableHallSensor(TMR_T* tmr);
+void TMR_SelectOutputTrigger(TMR_T* tmr, TMR_TRGO_SOURCE_T TRGOSource);
+void TMR_SelectSlaveMode(TMR_T* tmr, TMR_SLAVE_MODE_T slaveMode);
+void TMR_EnableMasterSlaveMode(TMR_T* tmr);
+void TMR_DisableMasterSlaveMode(TMR_T* tmr);
+void TMR_ConfigCounter(TMR_T* tmr, uint16_t counter);
+void TMR_ConfigAutoreload(TMR_T* tmr, uint16_t autoReload);
+void TMR_ConfigCompare1(TMR_T* tmr, uint16_t compare1);
+void TMR_ConfigCompare2(TMR_T* tmr, uint16_t compare2);
+void TMR_ConfigCompare3(TMR_T* tmr, uint16_t compare3);
+void TMR_ConfigCompare4(TMR_T* tmr, uint16_t compare4);
+void TMR_ConfigIC1Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler);
+void TMR_ConfigIC2Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler);
+void TMR_ConfigIC3Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler);
+void TMR_ConfigIC4Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler);
+uint16_t TMR_ReadCaputer1(TMR_T* tmr);
+uint16_t TMR_ReadCaputer2(TMR_T* tmr);
+uint16_t TMR_ReadCaputer3(TMR_T* tmr);
+uint16_t TMR_ReadCaputer4(TMR_T* tmr);
+uint16_t TMR_ReadCounter(TMR_T* tmr);
+uint16_t TMR_ReadPrescaler(TMR_T* tmr);
 
 /** Interrupts and Event */
-void TMR_EnableInterrupt(TMR_T *tmr, uint16_t interrupt);
-void TMR_DisableInterrupt(TMR_T *tmr, uint16_t interrupt);
-void TMR_GenerateEvent(TMR_T *tmr, uint16_t eventSources);
+void TMR_EnableInterrupt(TMR_T* tmr, uint16_t interrupt);
+void TMR_DisableInterrupt(TMR_T* tmr, uint16_t interrupt);
+void TMR_GenerateEvent(TMR_T* tmr,uint16_t eventSources);
 
 /** flags */
-uint16_t TMR_ReadStatusFlag(TMR_T *tmr, TMR_FLAG_T flag);
-void TMR_ClearStatusFlag(TMR_T *tmr, uint16_t flag);
-uint16_t TMR_ReadIntFlag(TMR_T *tmr, TMR_INT_T flag);
-void TMR_ClearIntFlag(TMR_T *tmr, uint16_t flag);
+uint16_t TMR_ReadStatusFlag(TMR_T* tmr, TMR_FLAG_T flag);
+void TMR_ClearStatusFlag(TMR_T* tmr, uint16_t flag);
+uint16_t TMR_ReadIntFlag(TMR_T* tmr, TMR_INT_T flag);
+void TMR_ClearIntFlag(TMR_T* tmr, uint16_t flag);
 
 /**@} end of group TMR_Fuctions*/
 /**@} end of group TMR_Driver*/

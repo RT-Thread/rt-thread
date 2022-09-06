@@ -114,8 +114,9 @@ trap_entry:
     /* handle interrupt */
     call  rt_interrupt_enter
     csrr  a0, SRC_XCAUSE
-    csrr  a1, SRC_XEPC
-    mv    a2, s0
+    csrr  a1, SRC_XTVAL
+    csrr  a2, SRC_XEPC
+    mv    a3, s0
     call  handle_trap
     call  rt_interrupt_leave
 

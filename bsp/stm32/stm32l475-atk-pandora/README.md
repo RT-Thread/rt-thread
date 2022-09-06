@@ -23,7 +23,7 @@
 该开发板常用 **板载资源** 如下：
 
 - MCU：STM32L475VET6，主频 80MHz，512KB FLASH ，128KB RAM
-- 外部 FLASH：W25Q128（SPI，16MB）
+- 外部 FLASH：W25Q128 或 NM25Q128EVB（SPI，16MB）
 - 常用外设
   - RGB 状态指示灯：1个，（红、绿、蓝三色）
   - 按键：4个，KEY_UP（兼具唤醒功能，PC13），K0（PD10），K1（PD9），K2（PD8）

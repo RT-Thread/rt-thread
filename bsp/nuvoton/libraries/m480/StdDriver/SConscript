@@ -9,12 +9,12 @@ cpppath = [cwd + '/inc']
 libpath = [cwd + '/lib']
 
 if not GetDepend('BSP_USE_STDDRIVER_SOURCE'):
-	if rtconfig.CROSS_TOOL == 'keil':
+	if rtconfig.PLATFORM in ['armcc', 'armclang']:
 		if GetOption('target') == 'mdk5' and os.path.isfile('./lib/libstddriver_keil.lib'):
 			libs += ['libstddriver_keil']
 		elif GetOption('target') == 'mdk4' and os.path.isfile('./lib/libstddriver_keil4.lib'):
 			libs += ['libstddriver_keil4']
-	elif rtconfig.CROSS_TOOL == 'gcc' and os.path.isfile('./lib/libstddriver_gcc.a'):
+	elif rtconfig.PLATFORM in ['gcc'] and os.path.isfile('./lib/libstddriver_gcc.a'):
 		libs += ['libstddriver_gcc']
 	elif os.path.isfile('./lib/libstddriver_iar.a'):
 		libs += ['libstddriver_iar']    

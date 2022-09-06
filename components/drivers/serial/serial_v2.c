@@ -94,6 +94,8 @@ static int serial_fops_close(struct dfs_fd *fd)
 static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
     rt_device_t device;
+    int flags = (int)(rt_base_t)args;
+    int mask  = O_NONBLOCK | O_APPEND;
 
     device = (rt_device_t)fd->data;
     switch (cmd)
@@ -101,6 +103,11 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     case FIONREAD:
         break;
     case FIONWRITE:
+        break;
+    case F_SETFL:
+        flags &= mask;
+        fd->flags &= ~mask;
+        fd->flags |= flags;
         break;
     }
 
@@ -890,6 +897,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
+    RT_ASSERT(serial->ops->transmit != RT_NULL);
 
     /* initialize rx/tx */
     serial->serial_rx = RT_NULL;
@@ -1382,7 +1390,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
         return _serial_poll_tx(dev, pos, buffer, size);
     }
 
-    if (dev->open_flag | RT_SERIAL_TX_BLOCKING)
+    if (dev->open_flag & RT_SERIAL_TX_BLOCKING)
     {
         if ((tx_fifo->rb.buffer_ptr) == RT_NULL)
         {

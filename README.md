@@ -2,7 +2,7 @@
 <img src="documentation/figures/logo.png" width="60%" >
 </p>
 
-**English** | [中文](README_zh.md) |
+**English** | [中文](README_zh.md) | [Español](README_es.md) | [Deutsch](README_de.md)
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
@@ -120,11 +120,8 @@ Based on [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master
 
 ## Simulator
 
-RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details.
-
-- [Getting Started of QEMU with Env(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
-
-- [Getting Started of QEMU with Env(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
+RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details. Getting Started of QEMU with Env:
+[Windows](documentation/quick-start/quick_start_qemu/quick_start_qemu.md) | [Linux Ubuntu](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md) | [Mac OS](documentation/quick-start/quick_start_qemu/quick_start_qemu_macos.md)
 
 # License
 
@@ -148,3 +145,8 @@ RT-Thread is very grateful for the support from all community developers, and if
 
 If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
 
+## Thanks for the following contributors!
+
+<a href="https://github.com/RT-Thread/rt-thread/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=RT-Thread/rt-thread" />
+</a>

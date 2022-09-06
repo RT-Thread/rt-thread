@@ -29,11 +29,11 @@ if GetDepend(['RT_USING_WDT']):
     src += ['HC32L136_StdPeriph_Driver/src/wdt.c']
 
 #add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/HDSC/HC32L136/Source/GCC/startup_hc32l136.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32L136/Source/ARM/startup_hc32l136.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/HDSC/HC32L136/Source/IAR/startup_hc32l136.s']
 
 #add headfile script 

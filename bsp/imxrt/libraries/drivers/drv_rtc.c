@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <sys/time.h>
-
 #ifdef BSP_USING_RTC
 
 #define LOG_TAG             "drv.rtc"
@@ -26,7 +25,7 @@
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
-static time_t get_timestamp(void)
+static time_t imxrt_hp_get_timestamp(void)
 {
     struct tm tm_new = {0};
     snvs_hp_rtc_datetime_t rtcDate = {0};
@@ -44,20 +43,20 @@ static time_t get_timestamp(void)
     return timegm(&tm_new);
 }
 
-static int set_timestamp(time_t timestamp)
+static int imxrt_hp_set_timestamp(time_t timestamp)
 {
-    struct tm *p_tm;
+    struct tm now;
     snvs_hp_rtc_datetime_t rtcDate = {0};
 
-    p_tm = gmtime(&timestamp);
+    gmtime_r(&timestamp, &now);
 
-    rtcDate.second = p_tm->tm_sec ;
-    rtcDate.minute = p_tm->tm_min ;
-    rtcDate.hour   = p_tm->tm_hour;
+    rtcDate.second = now.tm_sec ;
+    rtcDate.minute = now.tm_min ;
+    rtcDate.hour   = now.tm_hour;
 
-    rtcDate.day    = p_tm->tm_mday;
-    rtcDate.month  = p_tm->tm_mon  + 1;
-    rtcDate.year   = p_tm->tm_year + 1900;
+    rtcDate.day    = now.tm_mday;
+    rtcDate.month  = now.tm_mon  + 1;
+    rtcDate.year   = now.tm_year + 1900;
 
     if (SNVS_HP_RTC_SetDatetime(SNVS, &rtcDate) != kStatus_Success)
     {
@@ -110,13 +109,13 @@ static rt_err_t imxrt_hp_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
     {
-        *(uint32_t *)args = get_timestamp();
+        *(uint32_t *)args = imxrt_hp_get_timestamp();
     }
     break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        set_timestamp(*(time_t *)args);
+        imxrt_hp_set_timestamp(*(time_t *)args);
     }
     break;
 

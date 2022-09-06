@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
+ * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  */
 
 #include "board.h"
@@ -27,6 +28,7 @@
 #define DRV_RTC_TIME_OUT      0xFFF
 
 static rt_rtc_dev_t apm32_rtc_dev;
+static rt_uint8_t rtc_init_flag = RESET;
 
 /**
  * @brief    This function will initialize the rtc on chip.
@@ -38,7 +40,12 @@ static rt_err_t _rtc_init(void)
     volatile rt_uint32_t counter = 0;
 
     /* Enable RTC Clock */
+#ifdef APM32F10X_HD
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU | RCM_APB1_PERIPH_BAKR);
+#elif APM32F40X
+    RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU);
+#endif
+
     PMU_EnableBackupAccess();
 
     /* Config RTC clock */
@@ -65,9 +72,9 @@ static rt_err_t _rtc_init(void)
 #endif
 
     RCM_EnableRTCCLK();
+    RTC_WaitForSynchro();
 
-    RTC_WaitForSynchor();
-
+#ifdef APM32F10X_HD
     counter = 0;
     while (!RTC_ReadStatusFlag(RTC_FLAG_OC))
     {
@@ -86,10 +93,21 @@ static rt_err_t _rtc_init(void)
 #else
     RTC_ConfigPrescaler(LSE_VALUE - 1);
 #endif
+#elif APM32F40X
+    RTC_EnableInit();
+    RTC_Config_T rtcConfig;
+    RTC_ConfigStructInit(&rtcConfig);
+    RTC_Config(&rtcConfig);
+#endif
 
+    if (!rtc_init_flag)
+    {
+        rtc_init_flag = SET;
+    }
     return RT_EOK;
 }
 
+#ifdef APM32F10X_HD
 /**
  * @brief    This function will initialize the rtc on chip.
  *
@@ -116,6 +134,11 @@ static rt_err_t _rtc_set_secs(void *args)
 {
     volatile rt_uint32_t counter = 0;
 
+    if (!rtc_init_flag)
+    {
+        _rtc_init();
+    }
+
     while (!RTC_ReadStatusFlag(RTC_FLAG_OC))
     {
         if (++counter > DRV_RTC_TIME_OUT)
@@ -128,7 +151,83 @@ static rt_err_t _rtc_set_secs(void *args)
 
     return RT_EOK;
 }
+#elif APM32F40X
+static void get_rtc_timeval(struct timeval *tv)
+{
+    RTC_TimeConfig_T timeConfig;
+    RTC_DateConfig_T dateConfig;
+    struct tm tm_new = {0};
 
+    RTC_ReadTime(RTC_FORMAT_BIN, &timeConfig);
+    RTC_ReadDate(RTC_FORMAT_BIN, &dateConfig);
+
+    tm_new.tm_sec  = timeConfig.seconds;
+    tm_new.tm_min  = timeConfig.minutes;
+    tm_new.tm_hour = timeConfig.hours;
+    tm_new.tm_mday = dateConfig.date;
+    tm_new.tm_mon  = dateConfig.month - 1;
+    tm_new.tm_year = dateConfig.year + 100;
+
+    tv->tv_sec = timegm(&tm_new);
+}
+
+static rt_err_t set_rtc_timeval(time_t time_stamp)
+{
+    RTC_TimeConfig_T timeConfig;
+    RTC_DateConfig_T dateConfig;
+    struct tm tm = {0};
+
+    if (!rtc_init_flag)
+    {
+        _rtc_init();
+    }
+
+    gmtime_r(&time_stamp, &tm);
+    if (tm.tm_year < 100)
+    {
+        return -RT_ERROR;
+    }
+
+    timeConfig.seconds = tm.tm_sec ;
+    timeConfig.minutes = tm.tm_min ;
+    timeConfig.hours   = tm.tm_hour;
+    dateConfig.date    = tm.tm_mday;
+    dateConfig.month   = tm.tm_mon + 1 ;
+    dateConfig.year    = tm.tm_year - 100;
+    dateConfig.weekday = tm.tm_wday + 1;
+
+    RTC_ConfigTime(RTC_FORMAT_BIN, &timeConfig);
+    RTC_ConfigDate(RTC_FORMAT_BIN, &dateConfig);
+
+    return RT_EOK;
+}
+
+/**
+ * @brief    This function will initialize the rtc on chip.
+ *
+ * @return   RT_EOK indicates successful initialize, other value indicates failed;
+ */
+static rt_err_t _rtc_get_secs(void *args)
+{
+    struct timeval tv;
+    get_rtc_timeval(&tv);
+    *(rt_uint32_t *) args = tv.tv_sec;
+
+    return RT_EOK;
+}
+
+static rt_err_t _rtc_set_secs(void *args)
+{
+    rt_err_t result = RT_EOK;
+
+    if (set_rtc_timeval(*(rt_uint32_t *)args))
+    {
+        result = -RT_ERROR;
+    }
+
+    return result;
+}
+#endif
 
 static const struct rt_rtc_ops _rtc_ops =
 {

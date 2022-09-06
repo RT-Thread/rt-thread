@@ -23,17 +23,17 @@ if GetDepend('RT_USING_GIC_V3'):
     src += ['gicv3.c']
     src += ['trap.c']
 
-if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += Glob('*_rvds.S')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)

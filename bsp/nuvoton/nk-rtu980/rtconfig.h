@@ -48,7 +48,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define ARCH_ARM_ARM9
 
@@ -190,7 +190,7 @@
 
 #define RT_USING_SAL
 
-/* protocol stack implement */
+/* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
@@ -314,9 +314,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -329,6 +326,9 @@
 #define PKG_USING_RAMDISK_LATEST_VERSION
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -345,6 +345,15 @@
 
 #define PKG_USING_OPTPARSE
 #define PKG_USING_OPTPARSE_LATEST_VERSION
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 
 /* Hardware Drivers Config */
 

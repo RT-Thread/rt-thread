@@ -8,10 +8,10 @@ src = Glob('DeviceSupport/*.c')
 CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport']
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['DeviceSupport/arm/startup_mb9bf56xr.s']
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['DeviceSupport/gcc/startup_mb9bf56xr.S']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)

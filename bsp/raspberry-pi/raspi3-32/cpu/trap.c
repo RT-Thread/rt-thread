@@ -133,7 +133,12 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 #ifdef RT_USING_CPU_FFS
 int __rt_ffs(int value)
 {
-    int num = 0;
+    if (!value)
+    {
+        return 0;
+    }
+
+    int num = 1;
 
     if ((value & 0xffff) == 0)
     {

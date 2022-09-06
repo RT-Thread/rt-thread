@@ -246,7 +246,7 @@ static int dfs_win32_close(struct dfs_fd *file)
         WINDIR *wdirp = (WINDIR*)(file->data);
         RT_ASSERT(wdirp != RT_NULL);
         if (_findclose((intptr_t)wdirp->handle) == 0) {
-            free(wdirp->start); //NOTE: here we don't use rt_free!
+            free(wdirp->start); /* NOTE: here we don't use rt_free! */
             rt_free(wdirp);
             return 0;
         }
@@ -345,7 +345,7 @@ static int dfs_win32_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint3
         d->d_type = DT_DIR;
     else
         d->d_type = DT_REG;
-    d->d_namlen = strlen(wdirp->curr);
+    d->d_namlen = (rt_uint8_t)strlen(wdirp->curr);
     strncpy(d->d_name, wdirp->curr, DFS_PATH_MAX);
     d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
     wdirp->curr += (strlen(wdirp->curr) + 1);

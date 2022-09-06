@@ -12,16 +12,15 @@
 
 #include <rtconfig.h>
 #include <rtdevice.h>
+#include "board.h"
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
-
-#include <drv_qspi.h>
-
 #if defined(RT_USING_SFUD)
     #include "spi_flash.h"
     #include "spi_flash_sfud.h"
 #endif
 
+#include "drv_qspi.h"
 
 #define W25X_REG_READSTATUS    (0x05)
 #define W25X_REG_READSTATUS2   (0x35)
@@ -150,6 +149,33 @@ static int rt_hw_spiflash_init(void)
 INIT_COMPONENT_EXPORT(rt_hw_spiflash_init);
 #endif /* BOARD_USING_STORAGE_SPIFLASH */
 
+#if defined(RT_USING_MTD_NAND) && defined(BSP_USING_FMINAND)
+struct rt_mtd_nand_device mtd_partitions[MTD_FMINAND_PARTITION_NUM] =
+{
+    [0] =
+    {
+        /*nand0: U-boot, env, rtthread*/
+        .block_start = 0,
+        .block_end   = 63,
+        .block_total = 64,
+    },
+    [1] =
+    {
+        /*nand1: for filesystem mounting*/
+        .block_start = 64,
+        .block_end   = 1023,
+        .block_total = 960,
+    },
+    [2] =
+    {
+        /*nand2: Whole blocks size, overlay*/
+        .block_start = 0,
+        .block_end   = 1023,
+        .block_total = 1024,
+    }
+};
+#endif
+
 #if defined(BOARD_USING_NAU8822) && defined(NU_PKG_USING_NAU8822)
 #include <acodec_nau8822.h>
 S_NU_NAU8822_CONFIG sCodecConfig =
@@ -173,33 +199,63 @@ int rt_hw_nau8822_port(void)
 INIT_COMPONENT_EXPORT(rt_hw_nau8822_port);
 #endif /* BOARD_USING_NAU8822 */
 
-//#if defined(BOARD_USING_GT911) && defined(PKG_USING_GT911)
-#if defined(PKG_USING_GT911)
+#if defined(NU_PKG_USING_ADC_TOUCH)
+#include "adc_touch.h"
+S_CALIBRATION_MATRIX g_sCalMat = { 13321, -53, -1069280, 96, 8461, -1863312, 65536 };
+#endif
+
+#if defined(NU_PKG_USING_TPC_GT911) && defined(BOARD_USING_GT911)
 #include "drv_gpio.h"
 #include "gt911.h"
 
-#define GT911_RST_PIN   NU_GET_PININDEX(NU_PG, 4)
-#define GT911_IRQ_PIN   NU_GET_PININDEX(NU_PG, 5)
+#define TPC_RST_PIN   NU_GET_PININDEX(NU_PG, 4)
+#define TPC_IRQ_PIN   NU_GET_PININDEX(NU_PG, 5)
 
-extern int gt911_sample(const char *name, rt_uint16_t x, rt_uint16_t y);
+extern int tpc_sample(const char *name);
 int rt_hw_gt911_port(void)
 {
     struct rt_touch_config cfg;
     rt_uint8_t rst_pin;
 
-    rst_pin = GT911_RST_PIN;
+    rst_pin = TPC_RST_PIN;
     cfg.dev_name = "i2c0";
-    cfg.irq_pin.pin = GT911_IRQ_PIN;
+    cfg.irq_pin.pin = TPC_IRQ_PIN;
     cfg.irq_pin.mode = PIN_MODE_INPUT_PULLDOWN;
     cfg.user_data = &rst_pin;
 
     rt_hw_gt911_init("gt911", &cfg);
-    gt911_sample("gt911", BSP_LCD_WIDTH, BSP_LCD_HEIGHT);
 
-    return 0;
+    return tpc_sample("gt911");
 }
 INIT_ENV_EXPORT(rt_hw_gt911_port);
-#endif /* if defined(BOARD_USING_GT911) && defined(PKG_USING_GT911) */
+#endif /* if defined(NU_PKG_USING_TPC_GT911) && defined(BOARD_USING_GT911) */
+
+#if defined(NU_PKG_USING_TPC_FT5446) && defined(BOARD_USING_FT5446)
+#include "drv_gpio.h"
+#include "ft5446.h"
+
+#define TPC_RST_PIN   NU_GET_PININDEX(NU_PG, 4)
+#define TPC_IRQ_PIN   NU_GET_PININDEX(NU_PG, 5)
+
+extern int tpc_sample(const char *name);
+int rt_hw_gt911_port(void)
+{
+    struct rt_touch_config cfg;
+    rt_uint8_t rst_pin;
+
+    rst_pin = TPC_RST_PIN;
+    cfg.dev_name = "i2c0";
+    cfg.irq_pin.pin = TPC_IRQ_PIN;
+    cfg.irq_pin.mode = PIN_MODE_INPUT;//PIN_MODE_INPUT_PULLDOWN;
+    cfg.user_data = &rst_pin;
+
+    rt_hw_ft5446_init("ft5446", &cfg);
+
+    return tpc_sample("ft5446");
+}
+INIT_ENV_EXPORT(rt_hw_gt911_port);
+#endif /* if defined(NU_PKG_USING_TPC_FT5446) && defined(BOARD_USING_FT5446) */
+
 
 #if defined(BOARD_USING_BUZZER)
 

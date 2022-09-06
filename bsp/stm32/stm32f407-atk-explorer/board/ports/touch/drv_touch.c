@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,9 +8,18 @@
  * 2018-02-08     Zhangyihong  the first version
  */
 
+#include <rtconfig.h>
+
+#ifdef BSP_USING_TOUCH_CAP
 #include "drv_touch.h"
 #include <string.h>
-#ifdef BSP_USING_TOUCH
+
+#define DBG_ENABLE
+#define DBG_SECTION_NAME  "touch"
+#define DBG_LEVEL         DBG_INFO
+#define DBG_COLOR
+#include <rtdbg.h>
+
 #ifdef PKG_USING_GUIENGINE
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
@@ -18,19 +27,13 @@
 #include <littlevgl2rtt.h>
 #elif defined(PKG_USING_LVGL)
 #include <lvgl.h>
-#include <lv_port_indev.h>
+extern void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state);
 static rt_bool_t touch_down = RT_FALSE;
-#endif
+#endif /* PKG_USING_GUIENGINE */
+
 #define BSP_TOUCH_SAMPLE_HZ    (50)
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "TOUCH"
-#define DBG_LEVEL         DBG_INFO
-#define DBG_COLOR
-#include <rtdbg.h>
-
 static rt_list_t driver_list;
-
 
 void rt_touch_drivers_register(touch_drv_t drv)
 {
@@ -44,7 +47,6 @@ static void post_down_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
 
     emouse.parent.sender = RT_NULL;
     emouse.wid = RT_NULL;
-
     emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
     emouse.button = RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_DOWN;
     emouse.x = x;
@@ -67,7 +69,6 @@ static void post_motion_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
 
     emouse.parent.sender = RT_NULL;
     emouse.wid = RT_NULL;
-
     emouse.button = RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_DOWN;
     emouse.parent.type = RTGUI_EVENT_MOUSE_MOTION;
     emouse.x = x;
@@ -79,7 +80,7 @@ static void post_motion_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
 #elif defined(PKG_USING_LVGL)
     lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
-#endif
+#endif /* PKG_USING_GUIENGINE */
 }
 
 static void post_up_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
@@ -89,7 +90,6 @@ static void post_up_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
 
     emouse.parent.sender = RT_NULL;
     emouse.wid = RT_NULL;
-
     emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
     emouse.button = RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP;
     emouse.x = x;
@@ -102,7 +102,7 @@ static void post_up_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
 #elif defined(PKG_USING_LVGL)
     touch_down = RT_FALSE;
     lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
-#endif
+#endif /* PKG_USING_GUIENGINE */
 }
 
 static void touch_thread_entry(void *parameter)
@@ -203,6 +203,5 @@ static int touc_bg_init(void)
     return 0;
 }
 INIT_APP_EXPORT(touc_bg_init);
-
 
 #endif

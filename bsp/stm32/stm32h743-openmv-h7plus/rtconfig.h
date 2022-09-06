@@ -44,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -98,7 +98,12 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_PWM
+#define RT_USING_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 512
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -197,9 +202,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -210,6 +212,9 @@
 
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -224,6 +229,15 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32H7
 
@@ -236,9 +250,24 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_QSPI
 
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_SDRAM
+#define BSP_USING_QSPI_FLASH
+#define BSP_USING_USBD
+#define BSP_USING_OV5640
+#define BSP_USING_DCMI
+#define BSP_USING_I2C
+#define BSP_USING_I2C1
+
+/* Notice: PB8 --> 24; PB9 --> 25 */
+
+#define BSP_I2C1_SCL_PIN 24
+#define BSP_I2C1_SDA_PIN 25
+#define BSP_USING_PWM
+#define BSP_USING_PWM1
+#define BSP_USING_PWM1_CH1
 
 #endif

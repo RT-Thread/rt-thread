@@ -325,9 +325,9 @@ static void ili_info_dump(ili_ts_data_t psIliTs)
     rt_kprintf("ic_mode: %d\n", psIliTs->ic_mode);
 }
 
-static rt_int16_t pre_x[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
-static rt_int16_t pre_y[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
-static rt_int16_t pre_w[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
+static rt_int16_t pre_x[ILI_MAX_TOUCH];
+static rt_int16_t pre_y[ILI_MAX_TOUCH];
+static rt_int16_t pre_w[ILI_MAX_TOUCH];
 static rt_uint8_t s_tp_dowm[ILI_MAX_TOUCH];
 
 static void ili_touch_up(void *buf, int8_t id)
@@ -381,6 +381,8 @@ static void ili_touch_down(void *buf, int8_t id, int16_t x, int16_t y, int16_t w
     pre_w[id] = w;
 }
 
+static int8_t pre_id[ILI_MAX_TOUCH];
+static rt_uint8_t pre_touch = 0;
 static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
@@ -395,8 +397,10 @@ static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_siz
     rt_uint16_t x, y;
     rt_int32_t   tip, point_id;
 
-    static rt_uint8_t pre_touch = 0;
-    static int8_t pre_id[ILI_MAX_TOUCH] = {0};
+    RT_ASSERT(touch);
+    RT_ASSERT(buf);
+    RT_ASSERT(read_num != 0);
+    RT_ASSERT(read_num <= ILI_MAX_TOUCH);
 
     error = ili_i2c_write_and_read(ts->client, NULL, 0, 0, tmpbuf, 64);
     if (error)
@@ -425,7 +429,7 @@ static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_siz
 
     if (pre_touch > touch_num)                                       /* point up */
     {
-        for (i = 0; i < pre_touch; i++)
+        for (i = 0; i < ILI_MAX_TOUCH; i++)
         {
             rt_uint8_t j;
             for (j = 0; j < touch_num; j++)                          /* this time touch num */
@@ -435,13 +439,15 @@ static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_siz
                 if (pre_id[i] == point_id)                   /* this id is not free */
                     break;
 
-                if (j >= touch_num - 1)
-                {
-                    ili_touch_up(buf, pre_id[i]);
-                }
+            }
+            if ((j == touch_num) && (pre_id[i] != -1))
+            {
+                ili_touch_up(buf, pre_id[i]);
+                pre_id[i] = -1;
             }
         }
     }
+
     if (touch_num > 0)
     {
         uint32_t range_x = touch->info.range_x;
@@ -482,6 +488,8 @@ static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_siz
     return read_num;
 
 exit_ili_read_point:
+
+    pre_touch = 0;
 
     return 0;
 }
@@ -606,6 +614,12 @@ int rt_hw_ili_tpc_init(const char *name, struct rt_touch_config *cfg)
         LOG_E("open %s device failed", cfg->dev_name);
         goto exit_rt_hw_ili_tpc_init;
     }
+
+    rt_memset(&pre_x[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
+    rt_memset(&pre_y[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
+    rt_memset(&pre_w[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
+    rt_memset(&s_tp_dowm[0], 0, ILI_MAX_TOUCH * sizeof(int16_t));
+    rt_memset(&pre_id[0], 0xff,  ILI_MAX_TOUCH * sizeof(int8_t));
 
     /* register touch device */
     rt_memcpy(&touch_device->config, cfg, sizeof(struct rt_touch_config));

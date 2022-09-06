@@ -2,13 +2,14 @@ from building import *
 import os
 
 cwd = GetCurrentDir()
-
+CPPPATH = [cwd]
 src = ['main.c']
+
+if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
+    src += ['arduino_main.cpp']
 
 if GetDepend(['PKG_USING_NRF24L01']):
     src += ['nrf24l01_init.c']
-
-CPPPATH = [cwd]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 

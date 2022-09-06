@@ -1,4 +1,4 @@
-
+___heap_end = 0x010000;
 MEMORY
 {
 PAGE 0 :  /* Program Memory */
@@ -6,16 +6,8 @@ PAGE 0 :  /* Program Memory */
           /* BEGIN is used for the "boot to Flash" bootloader mode   */
 
    BEGIN           	: origin = 0x080000, length = 0x000002
-   RAMM0           	: origin = 0x000122, length = 0x0002DE
-   RAMD0           	: origin = 0x00B000, length = 0x000800
-   RAMLS0          	: origin = 0x008000, length = 0x000800
-   RAMLS1          	: origin = 0x008800, length = 0x000800
-   RAMLS2      		: origin = 0x009000, length = 0x000800
-   RAMLS3      		: origin = 0x009800, length = 0x000800
-   RAMLS4      		: origin = 0x00A000, length = 0x000800
-   RAMGS14          : origin = 0x01A000, length = 0x001000
-   RAMGS15          : origin = 0x01B000, length = 0x001000
    RESET           	: origin = 0x3FFFC0, length = 0x000002
+   RAMGS8_15      : origin = 0x013000, length = 0x009000
    
    /* Flash sectors */
    FLASHA           : origin = 0x080002, length = 0x001FFE	/* on-chip Flash */
@@ -35,29 +27,10 @@ PAGE 0 :  /* Program Memory */
 
 PAGE 1 : /* Data Memory */
          /* Memory (RAM/FLASH) blocks can be moved to PAGE0 for program allocation */
-
    BOOT_RSVD       : origin = 0x000002, length = 0x000120     /* Part of M0, BOOT rom will use this for stack */
+   RAMM0           : origin = 0x000122, length = 0x0002DE
    RAMM1           : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
-   RAMD1           : origin = 0x00B800, length = 0x000800
-
-   RAMLS5      : origin = 0x00A800, length = 0x000800
-
-   RAMGS0      : origin = 0x00C000, length = 0x001000
-   RAMGS1      : origin = 0x00D000, length = 0x001000
-   RAMGS2      : origin = 0x00E000, length = 0x001000
-   RAMGS3      : origin = 0x00F000, length = 0x001000
-   RAMGS4      : origin = 0x010000, length = 0x001000
-   RAMGS5      : origin = 0x011000, length = 0x001000
-   RAMGS6      : origin = 0x012000, length = 0x001000
-   RAMGS7      : origin = 0x013000, length = 0x001000
-   RAMGS8      : origin = 0x014000, length = 0x001000
-   RAMGS9      : origin = 0x015000, length = 0x001000
-   RAMGS10     : origin = 0x016000, length = 0x001000
-   RAMGS11     : origin = 0x017000, length = 0x001000
-   RAMGS12     : origin = 0x018000, length = 0x001000
-   RAMGS13     : origin = 0x019000, length = 0x001000
-
-   
+   EBSS	       		: origin = 0x008000, length = 0x008000     /* RAMLS0-4, 5*0x0800   */
    CPU2TOCPU1RAM   : origin = 0x03F800, length = 0x000400
    CPU1TOCPU2RAM   : origin = 0x03FC00, length = 0x000400
 }
@@ -66,15 +39,15 @@ PAGE 1 : /* Data Memory */
 SECTIONS
 {
    /* Allocate program areas: */
-   .cinit              : > FLASHB      PAGE = 0, ALIGN(4)
-   .pinit              : > FLASHB,     PAGE = 0, ALIGN(4)
-   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE      PAGE = 0, ALIGN(4)
+   .cinit              : > FLASHF      PAGE = 0, ALIGN(4)
+   .pinit              : > FLASHF,     PAGE = 0, ALIGN(4)
+   .text               : >> FLASHE      PAGE = 0, ALIGN(4)
    codestart           : > BEGIN       PAGE = 0, ALIGN(4)
 
 #ifdef __TI_COMPILER_VERSION__
    #if __TI_COMPILER_VERSION__ >= 15009000
-    .TI.ramfunc : {} LOAD = FLASHD,
-                         RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
+    .TI.ramfunc : {} LOAD = FLASHF,
+                         RUN = RAMGS8_15,
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
                          LOAD_END(_RamfuncsLoadEnd),
@@ -83,8 +56,8 @@ SECTIONS
                          RUN_END(_RamfuncsRunEnd),
                          PAGE = 0, ALIGN(4)
    #else
-   ramfuncs            : LOAD = FLASHD,
-                         RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
+   ramfuncs            : LOAD = FLASHF,
+                         RUN = RAMGS8_15,
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
                          LOAD_END(_RamfuncsLoadEnd),
@@ -94,22 +67,33 @@ SECTIONS
                          PAGE = 0, ALIGN(4)   
    #endif
 #endif
-						 
+
+   FSymTab : > RAMM1, PAGE = 1, ALIGN(4)
+   LOAD_START(___fsymtab_start)
+   LOAD_END(___fsymtab_end)
+   .rti_fn.0.end    : > RAMM1,     PAGE = 1
+   .rti_fn.0        : > RAMM1,     PAGE = 1
+   .rti_fn.1        : > RAMM1,     PAGE = 1
+   .rti_fn.2        : > RAMM1,     PAGE = 1
+   .rti_fn.3        : > RAMM1,     PAGE = 1
+   .rti_fn.4        : > RAMM1,     PAGE = 1
+   .rti_fn.5        : > RAMM1,     PAGE = 1
+   .rti_fn.1.end    : > RAMM1,     PAGE = 1
+   .rti_fn.6.end    : > RAMM1,     PAGE = 1
+   .rti_fn.6        : > RAMM1,     PAGE = 1
    /* Allocate uninitalized data sections: */
    .stack              : > RAMM1        PAGE = 1
-   .ebss               : >> RAMLS5 | RAMGS0 | RAMGS1       PAGE = 1
-   .esysmem            : >> RAMGS2 | RAMGS3 | RAMGS4 | RAMGS5 | RAMGS6 | RAMGS7 | RAMGS8 | RAMGS9 | RAMGS10 | RAMGS11 | RAMGS12 | RAMGS13    PAGE = 1
+   .ebss            : > EBSS,
+			   LOAD_START(___ebss_start),
+			   LOAD_END(___ebss_end),
+			   PAGE = 1
+   .esysmem            : >> RAMM1     PAGE = 1
 
    /* Initalized sections go in Flash */
-   .econst             : >> FLASHF | FLASHG | FLASHH      PAGE = 0, ALIGN(4)
-   .switch             : > FLASHB      PAGE = 0, ALIGN(4)
+   .econst             : >> FLASHF      PAGE = 0, ALIGN(4)
+   .switch             : > FLASHF      PAGE = 0, ALIGN(4)
    
    .reset              : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
-
-   Filter_RegsFile     : > RAMGS0,	   PAGE = 1
-   
-   SHARERAMGS0		: > RAMGS0,		PAGE = 1
-   SHARERAMGS1		: > RAMGS1,		PAGE = 1
    
    /* The following section definitions are required when using the IPC API Drivers */ 
     GROUP : > CPU1TOCPU2RAM, PAGE = 1 

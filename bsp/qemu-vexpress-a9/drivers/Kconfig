@@ -20,10 +20,16 @@ config RT_USING_UART1
 config BSP_USING_LVGL
     bool "Enable LVGL for LCD"
     select PKG_USING_LVGL
-    select PKG_USING_LV_MUSIC_DEMO
     select BSP_DRV_CLCD
     select BSP_DRV_MOUSE
     default n
+
+if BSP_USING_LVGL
+    config BSP_USING_LVGL_DEMO
+        bool "Enable LVGL demo"
+        select PKG_USING_LV_MUSIC_DEMO
+        default y
+endif
 
 config BSP_DRV_CLCD
     bool "CLCD driver"

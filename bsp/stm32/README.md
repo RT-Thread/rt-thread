@@ -9,6 +9,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f072-st-nucleo](stm32f072-st-nucleo) | ST 官方 STM32F072-nucleo 开发板 |
 | [stm32f091-st-nucleo](stm32f091-st-nucleo) | ST 官方 STM32F091-nucleo 开发板 |
 | **F1 系列** |  |
+| [stm32f103-100ask-mini](stm32f103-100ask-mini)        | 百问网F103 Mini开发板  |
+| [stm32f103-100ask-pro](stm32f103-100ask-pro)        | 百问网F103 Pro开发板  |
 | [stm32f103-atk-nano](stm32f103-atk-nano)        | 正点原子 F103 NANO 开发板  |
 | [stm32f103-atk-warshipv3](stm32f103-atk-warshipv3)  | 正点原子 F103 战舰V3 开发板  |
 | [stm32f103-blue-pill](stm32f103-blue-pill) | STM32F103C8T6蓝色最小系统板 |
