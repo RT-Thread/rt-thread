@@ -1,0 +1,83 @@
+Import('rtconfig')
+from building import *
+
+#get current directory
+cwd = GetCurrentDir()
+
+# Update include path
+path = [ cwd + '/arch', cwd + "/drivers/inc", cwd + '/soc/ip']
+
+# The set of source files associated with this SConscript file.
+src = []
+
+src += ['drivers/src/hpm_pmp_drv.c']
+src += ['drivers/src/hpm_pllctl_drv.c']
+src += ['drivers/src/hpm_pllctlv2_drv.c']
+src += ['drivers/src/hpm_dma_drv.c']
+
+
+if GetDepend(['BSP_USING_GPIO']):
+    src += ['drivers/src/hpm_gpio_drv.c']
+
+if GetDepend(['BSP_USING_UART']):
+    src += ['drivers/src/hpm_uart_drv.c']
+
+if GetDepend(['BSP_USING_I2C']):
+    src += ['drivers/src/hpm_i2c_drv.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['drivers/src/hpm_spi_drv.c']
+
+if GetDepend(['BSP_USING_RTC']):
+    src += ['drivers/src/hpm_rtc_drv.c']
+
+if GetDepend(['BSP_USING_WDG']):
+    src += ['drivers/src/hpm_wdg_drv.c']
+
+if GetDepend(['BSP_USING_ADC']):
+	if GetDepend(['BSP_USING_ADC12']):
+    	    src += ['drivers/src/hpm_adc12_drv.c']
+	if GetDepend(['BSP_USING_ADC16']):
+    	    src += ['drivers/src/hpm_adc16_drv.c']
+
+if GetDepend(['BSP_USING_CAN']):
+    src += ['drivers/src/hpm_can_drv.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['drivers/src/hpm_enet_drv.c']
+
+if GetDepend(['BSP_USING_DMA']):
+    src += ['drivers/src/hpm_dma_drv.c']
+
+if GetDepend(['BSP_USING_SDXC']):
+    src += ['drivers/src/hpm_sdxc_drv.c']
+
+if GetDepend(['BSP_USING_LCD']):
+    src += ['drivers/src/hpm_lcdc_drv.c']
+
+if GetDepend(['BSP_USING_GPTMR']):
+    src += ['drivers/src/hpm_gptmr_drv.c']
+
+if GetDepend(['BSP_USING_DRAM']):
+    src += ['drivers/src/hpm_dram_drv.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['drivers/src/hpm_pwm_drv.c']
+
+if GetDepend(['BSP_USING_USB']):
+    src += ['drivers/src/hpm_usb_drv.c']
+
+if GetDepend(['BSP_USING_I2S']):
+    src += ['drivers/src/hpm_i2s_drv.c']
+
+if GetDepend(['BSP_USING_PDM']):
+    src += ['drivers/src/hpm_pdm_drv.c']
+    src += ['drivers/src/hpm_i2s_drv.c']
+
+if GetDepend(['BSP_USING_DAO']):
+    src += ['drivers/src/hpm_dao_drv.c']
+    src += ['drivers/src/hpm_i2s_drv.c']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return ('group')
