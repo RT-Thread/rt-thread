@@ -53,9 +53,9 @@ Hardware Drivers Config --->
 | --          | PA3       | 否    | UART2-RX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO |
 | --          | PB10      | 是    | UART3-TX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO |
 | --          | PB11      | 是    | UART3-RX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO |
-| --          | PB15      | 是    | SPI-MOSI，SPI功能尚未完全实现                         |
-| --          | PB14      | 是    | SPI-MISO，SPI功能尚未完全实现                         |
-| --          | PB13      | 是    | SPI-SCK ，SPI功能尚未完全实现                         |
+| --          | PB15      | 是    | SPI-MOSI，被RT-Thread的SPI设备框架spi2接管，不可当做普通IO   |
+| --          | PB14      | 是    | SPI-MISO，被RT-Thread的SPI设备框架spi2接管，不可当做普通IO   |
+| --          | PB13      | 是    | SPI-SCK ，被RT-Thread的SPI设备框架spi2接管，不可当做普通IO   |
 
 > 注意：
 > 
