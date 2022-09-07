@@ -1294,18 +1294,6 @@ void rt_hw_board_init()
    imxrt_sdram_pins_init();
 #endif
 
-#ifdef RT_USING_HEAP
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
-#endif
-
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_board_init();
-#endif
-
-#ifdef RT_USING_CONSOLE
-    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
-
 #ifdef BSP_USING_SDIO
     imxrt_SDcard_pins_init();
 #endif
@@ -1316,6 +1304,18 @@ void rt_hw_board_init()
 
 #ifdef BSP_USING_CAN
     imxrt_can_pins_init();
+#endif
+
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
+
+#ifdef RT_USING_CONSOLE
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
 
