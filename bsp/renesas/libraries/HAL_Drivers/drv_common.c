@@ -22,7 +22,7 @@
     #else
         #include <drv_usart.h>
     #endif
-#endif /* The current project does not support serial-v1,select serial-v2 as the default option */
+#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
