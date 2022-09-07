@@ -28,6 +28,9 @@ elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iccarm'
     EXEC_PATH   = r'{}'.format(IAR_EXEC_PATH)
 
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    
 #BUILD = 'debug'
 BUILD = 'release'
 
