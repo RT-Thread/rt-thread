@@ -59,7 +59,6 @@ static int enable_log = 1;
 #define USDHC_ENDIAN_MODE kUSDHC_EndianModeLittle
 
 #ifdef SOC_IMXRT1170_SERIES
-#define FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN 1
 #define USDHC_ADMA_TABLE_WORDS      (32U)        /* define the ADMA descriptor table length */
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
 #else
