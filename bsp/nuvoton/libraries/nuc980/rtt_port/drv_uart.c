@@ -812,7 +812,7 @@ static rt_err_t nu_uart_control(struct rt_serial_device *serial, int cmd, void *
         {
             nu_pdma_channel_terminate(psNuUart->pdma_chanid_tx);
             nu_pdma_channel_terminate(psNuUart->pdma_chanid_rx);
-        }
+		}
 #endif
 
         /* Close UART port */
