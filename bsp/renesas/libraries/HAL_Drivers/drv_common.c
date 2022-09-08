@@ -21,8 +21,9 @@
         #include <drv_usart_v2.h>
     #else
         #include <drv_usart.h>
-    #endif
-#endif /* The current project does not support serial-v1,select serial-v2 as the default option */
+		#error "The current project does not support serial-v1,and please select serial-v2 as the default option"
+    #endif  
+#endif 
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
