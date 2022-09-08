@@ -50,7 +50,7 @@
 #define RTDUINO_SERIAL3_DEVICE_NAME             "uart3"
 
 /*
- * uart2 - PB13-SCK  PB14-MISO  PB15-MOSI
+ * spi2 - PB13-SCK  PB14-MISO  PB15-MOSI
  */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME            "spi2"
 
