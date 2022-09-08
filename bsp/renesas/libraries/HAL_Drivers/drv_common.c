@@ -21,8 +21,8 @@
         #include <drv_usart_v2.h>
     #else
 	#error "Serial-v1 has been obsoleted, and please select serial-v2 as the default option"
-    #endif  
-#endif 
+    #endif
+#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
