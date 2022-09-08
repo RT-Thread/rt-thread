@@ -10,8 +10,8 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 ## 基本特性：
 
 - MCU：CH32V307VCT6，主频 144MHz，FLASH和RAM可配置
-- LED：2个，用户 LEDs， LED1（blue），LED2(red)。
-- 按键：3个，Reset， User 和 Download。
+- LED：2个，用户 LEDs， LED1（blue），LED2（blue）。
+- 按键：2个，Reset， User 。
 - USB：2个，Tpye-C。
 - 网口：1个，内置 10M PHY。
 - 板载 WCH-Link 下载调试工具。
@@ -32,11 +32,11 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 
 ### 快速上手
 
-本 BSP 为开发者提供 Scons编译配置。下面介绍如何将系统运行起来。
+本 BSP 为开发者提供 Scons 编译配置。下面介绍如何将系统运行起来。
 
 #### 1、指定RISC-V GCC编译器
 
-推荐使用RT-Thread Studio软件里面的编译器。
+推荐使用 RT-Thread Studio 软件里面的编译器。
 
 ##### 方法一：直接指定编译器路径。
 
@@ -76,7 +76,7 @@ scons
 
 #### 5、下载
 
-打开WCH RISC-V MCU ProgrammerTool下载软件，选择刚刚生成的 **rtthread.bin**  文件，进行下载。
+打开 WCH RISC-V MCU ProgrammerTool 下载软件，选择刚刚生成的 **rtthread.bin**  文件，进行下载。
 
 ![tool](./figures/tool.png)
 
