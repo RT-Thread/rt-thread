@@ -21,7 +21,7 @@
         #include <drv_usart_v2.h>
     #else
         #include <drv_usart.h>
-		/* error "The current project does not support serial-v1,and please select serial-v2 as the default option" */
+		#error "The current project does not support serial-v1,and please select serial-v2 as the default option"
     #endif  
 #endif 
 
