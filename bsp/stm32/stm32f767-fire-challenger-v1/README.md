@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 野火stm32f767-v1 开发板的 BSP (板级支持包) 说明。
+本文档为 野火 STM32F767-V1 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -22,11 +22,11 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32f767，主频 216MHz，1MB FLASH ，512KB RAM ，16K CACHE
+- MCU：STM32F767，主频 216MHz，1MB FLASH ，512KB RAM ，16K CACHE
 - 外部 RAM：型号，8MB
 - 外部 FLASH：型号，16MB
 - 常用外设
-  - LED：RGB灯
+  - LED：RGB 灯
   - 按键：2个，K1（兼具唤醒功能，PA0），K2（PC13）
 - 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口
 - 调试接口，标准 JTAG/SWD
@@ -44,7 +44,7 @@
 | QSPI Flash        |     支持     |                                                         |
 | 电位器            |     支持     | 使用 ADC1                                               |
 | 以太网            |   暂不支持   | 移植中                                                  |
-| MPU6050六轴传感器 |     支持     |                                                         |
+| MPU6050 六轴传感器 |     支持     |                                                         |
 | SDRAM             |     支持     |                                                         |
 | LCD               |     支持     | 支持 RGB 屏                                             |
 | SD卡              |     支持     |                                                         |
@@ -108,15 +108,15 @@ msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
-1. 在 bsp 下打开 env 工具。
+1. 在 bsp 下打开 ENV 工具。
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+2. 输入 `menuconfig` 命令配置工程，配置好之后保存退出。
 
-3. 输入`pkgs --update`命令更新软件包。
+3. 输入 `pkgs --update` 命令更新软件包。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
