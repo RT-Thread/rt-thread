@@ -42,14 +42,11 @@ INIT_ENV_EXPORT(mnt_init);
 #include <rtdbg.h>
 static int filesystem_mount(void)
 {
-    // static rt_uint32_t timecount = 0;
     while(rt_device_find("sd0") == RT_NULL)
     {
-        // timecount++;
         rt_thread_mdelay(1);
     }
   
-    // rt_kprintf("timecount = %u ms\n", timecount);
     int ret = dfs_mount("sd0", "/", "elm", 0, 0);
     if (ret != 0)
     {
