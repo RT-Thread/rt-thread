@@ -38,8 +38,8 @@ Hardware Drivers Config --->
 | 13 (D13)    | PB1       | 否    | PWM3-CH4，默认被RT-Thread的PWM设备框架pwm3接管    |
 | 14 (D14)    | PB9       | 是    | I2C-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管  |
 | 15 (D15)    | PB8       | 是    | I2C-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管  |
-| 16 (D16)    | PA12      | 是    | USB-DP，默认被软件包TinyUSB接管                   |
-| 17 (D17)    | PA11      | 是    | USB-DM，默认被软件包TinyUSB接管                   |
+| 16 (D16)    | PA12      | 是    | USB-DP，默认被 [TinyUSB软件包](https://github.com/RT-Thread-packages/tinyusb) 接管|
+| 17 (D17)    | PA11      | 是    | USB-DM，默认被 [TinyUSB软件包](https://github.com/RT-Thread-packages/tinyusb) 接管|
 | 18 (D18)    | PA10      | 是    | UART1-RX，默认被RT-Thread的UART设备框架uart1接管  |
 | 19 (D19)    | PA9       | 是    | UART1-TX，默认被RT-Thread的UART设备框架uart1接管  |
 | 20 (D20)    | PA2       | 否    | UART2-TX，默认被RT-Thread的UART设备框架uart2接管  |
