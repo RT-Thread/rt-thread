@@ -778,7 +778,6 @@ def DoBuilding(target, objects):
         for group in Projects:
             local_group(group, objects)
 
-        objects = sorted(objects)
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
