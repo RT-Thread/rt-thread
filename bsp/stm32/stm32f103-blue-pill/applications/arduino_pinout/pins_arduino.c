@@ -34,16 +34,16 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(A,0)},
     {D12, GET_PIN(B,0), "pwm3", 3}, /* PWM */
     {D13, GET_PIN(B,1), "pwm3", 4}, /* PWM */
-    {D14, GET_PIN(B,9), "i2c1"},    /* I2C */
-    {D15, GET_PIN(B,8), "i2c1"},    /* I2C */
-    {D16, GET_PIN(A,12), "usb"},    /* USB */
-    {D17, GET_PIN(A,11), "usb"},    /* USB */
-    {D18, GET_PIN(A,10), "uart1"},  /* UART */
-    {D19, GET_PIN(A,9), "uart1"},   /* UART */
-    {D20, GET_PIN(A,2), "uart2"},   /* UART */
-    {D21, GET_PIN(A,3), "uart2"},   /* UART */
-    {D22, GET_PIN(B,10), "uart3"},  /* UART */
-    {D23, GET_PIN(B,11), "uart3"},  /* UART */
+    {D14, GET_PIN(B,9), "i2c1"},    /* I2C (Wire) */
+    {D15, GET_PIN(B,8), "i2c1"},    /* I2C (Wire) */
+    {D16, GET_PIN(A,12), "usb"},    /* SerialUSB */
+    {D17, GET_PIN(A,11), "usb"},    /* SerialUSB */
+    {D18, GET_PIN(A,10), "uart1"},  /* Serial */
+    {D19, GET_PIN(A,9), "uart1"},   /* Serial */
+    {D20, GET_PIN(A,2), "uart2"},   /* Serial2 */
+    {D21, GET_PIN(A,3), "uart2"},   /* Serial2 */
+    {D22, GET_PIN(B,10), "uart3"},  /* Serial3 */
+    {D23, GET_PIN(B,11), "uart3"},  /* Serial3 */
     {D24, GET_PIN(B,15), "spi2"},   /* SPI */
     {D25, GET_PIN(B,14), "spi2"},   /* SPI */
     {D26, GET_PIN(B,13), "spi2"},   /* SPI */
