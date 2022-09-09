@@ -513,7 +513,7 @@ struct rt_object_information
 
 /* 1 or 3 */
 #ifndef RT_TIMER_SKIP_LIST_MASK
-#define RT_TIMER_SKIP_LIST_MASK         0x3
+#define RT_TIMER_SKIP_LIST_MASK         0x3             /**< Timer skips the list mask */
 #endif
 
 /**
