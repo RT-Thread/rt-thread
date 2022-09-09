@@ -27,11 +27,11 @@ __attribute__((section(".boot_hdr.dcd_data"), used))
 
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: DCDx V2.0
+product: DCDx v3.0
 processor: MIMXRT1176xxxxx
 package_id: MIMXRT1176DVMAA
 mcu_data: ksdk2_0
-processor_version: 0.0.0
+processor_version: 12.0.0
 output_format: c_array
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* COMMENTS BELOW ARE USED AS SETTINGS FOR DCD DATA */
@@ -40,7 +40,7 @@ const uint8_t dcd_data[] = {
     /* Tag */
     0xD2,
     /* Image Length */
-    0x05, 0x08,
+    0x05, 0x10,
     /* Version */
     0x41,
 
@@ -49,8 +49,8 @@ const uint8_t dcd_data[] = {
     /* group: 'Imported Commands' */
     /* #1.1-139, command header bytes for merged 'Write - value' command */
     0xCC, 0x04, 0x5C, 0x04,
-    /* #1.1, command: write_value, address: CCM_CLOCK_ROOT4_CONTROL, value: 0x703, size: 4 */
-    0x40, 0xCC, 0x02, 0x00, 0x00, 0x00, 0x07, 0x03,
+    /* #1.1, command: write_value, address: CCM_CLOCK_ROOT4_CONTROL, value: 0x602, size: 4 */
+    0x40, 0xCC, 0x02, 0x00, 0x00, 0x00, 0x06, 0x02,
     /* #1.2, command: write_value, address: IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_00, value: 0x00, size: 4 */
     0x40, 0x0E, 0x80, 0x10, 0x00, 0x00, 0x00, 0x00,
     /* #1.3, command: write_value, address: IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_01, value: 0x00, size: 4 */
@@ -387,13 +387,12 @@ const uint8_t dcd_data[] = {
     0xC0, 0x00, 0x04, 0x00,
     /* #24, command: nop */
     0xC0, 0x00, 0x04, 0x00,
-    /* #25.1-2, command header bytes for merged 'Write - value' command */
-    0xCC, 0x00, 0x14, 0x04,
-    /* #25.1, command: write_value, address: SEMC_INTR, value: 0x03, size: 4 */
-    0x40, 0x0D, 0x40, 0x3C, 0x00, 0x00, 0x00, 0x03,
-    /* #25.2, command: write_value, address: SEMC_SDRAMCR3, value: 0x21210409, size: 4 */
-    0x40, 0x0D, 0x40, 0x4C, 0x21, 0x21, 0x04, 0x09
-    };
+    /* #25, command: write_value, address: SEMC_INTR, value: 0x03, size: 4 */
+    0xCC, 0x00, 0x0C, 0x04, 0x40, 0x0D, 0x40, 0x3C, 0x00, 0x00, 0x00, 0x03,
+    /* #26, command: nop */
+    0xC0, 0x00, 0x04, 0x00,
+    /* #27, command: write_value, address: SEMC_SDRAMCR3, value: 0x21210409, size: 4 */
+    0xCC, 0x00, 0x0C, 0x04, 0x40, 0x0D, 0x40, 0x4C, 0x21, 0x21, 0x04, 0x09};
 /* BE CAREFUL MODIFYING THIS SETTINGS - IT IS YAML SETTINGS FOR TOOLS */
 
 #else

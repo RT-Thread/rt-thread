@@ -1,10 +1,3 @@
-/*
- * Copyright 2020-2021 NXP
- * All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 #ifndef _CLOCK_CONFIG_H_
 #define _CLOCK_CONFIG_H_
 
@@ -45,7 +38,7 @@ void BOARD_InitBootClocks(void);
 #if __CORTEX_M == 7
     #define BOARD_BOOTCLOCKRUN_CORE_CLOCK 996000000UL /*!< CM7 Core clock frequency: 996000000Hz */
 #else
-    #define BOARD_BOOTCLOCKRUN_CORE_CLOCK 392727272UL /*!< CM4 Core clock frequency: 392727272Hz */
+    #define BOARD_BOOTCLOCKRUN_CORE_CLOCK 240000000UL /*!< CM4 Core clock frequency: 240000000Hz */
 #endif
 
 /* Clock outputs (values are in Hz): */
@@ -127,7 +120,7 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKRUN_LPUART7_CLK_ROOT           24000000UL
 #define BOARD_BOOTCLOCKRUN_LPUART8_CLK_ROOT           24000000UL
 #define BOARD_BOOTCLOCKRUN_LPUART9_CLK_ROOT           24000000UL
-#define BOARD_BOOTCLOCKRUN_M4_CLK_ROOT                392727272UL
+#define BOARD_BOOTCLOCKRUN_M4_CLK_ROOT                240000000UL
 #define BOARD_BOOTCLOCKRUN_M4_SYSTICK_CLK_ROOT        24000000UL
 #define BOARD_BOOTCLOCKRUN_M7_CLK_ROOT                996000000UL
 #define BOARD_BOOTCLOCKRUN_M7_SYSTICK_CLK_ROOT        100000UL
