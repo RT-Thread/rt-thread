@@ -274,7 +274,7 @@ typedef int (*init_fn_t)(void);
     #endif
 #endif
 #else
-#define INIT_EXPORT(fn, level)
+#define INIT_EXPORT(fn, level)    /**< Function that implements automatic function calls \
 #endif
 
 /* board init routines will be called in board_init() function */
@@ -513,7 +513,7 @@ struct rt_object_information
 
 /* 1 or 3 */
 #ifndef RT_TIMER_SKIP_LIST_MASK
-#define RT_TIMER_SKIP_LIST_MASK         0x3
+#define RT_TIMER_SKIP_LIST_MASK         0x3             /**< Timer skips the list mask */
 #endif
 
 /**
