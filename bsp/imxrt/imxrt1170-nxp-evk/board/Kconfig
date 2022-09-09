@@ -26,7 +26,13 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        default n    
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n 
 
     menuconfig BSP_USING_LPUART
         bool "Enable UART"
@@ -167,6 +173,21 @@ menu "Onboard Peripheral Drivers"
                 endif
         endif
     endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"

@@ -9,6 +9,7 @@
  * 2022-08-15     xjy198903    add sdram pin config
  * 2022-08-17     xjy198903    add rgmii pins
  * 2022-09-01     xjy198903    add can pins
+ * 2022-09-07     xjy198903    add sdio pins
  */
 
 #include <rthw.h>
