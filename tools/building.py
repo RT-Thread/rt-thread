@@ -783,10 +783,6 @@ def DoBuilding(target, objects):
         objects = sorted(objects)
         objects.append(objects_in_group)
 
-        objects_in_group = sorted(objects_in_group)
-        objects = sorted(objects)
-        objects.append(objects_in_group)
-
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
