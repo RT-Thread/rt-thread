@@ -775,8 +775,13 @@ def DoBuilding(target, objects):
                             objects.remove(obj)
 
         # re-add the source files to the objects
+        objects_in_group = []
         for group in Projects:
-            local_group(group, objects)
+            local_group(group, objects_in_group)
+
+        objects_in_group = sorted(objects_in_group)
+        objects = sorted(objects)
+        objects.append(objects_in_group)
 
         program = Env.Program(target, objects)
 
