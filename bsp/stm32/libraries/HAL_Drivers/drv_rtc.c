@@ -128,7 +128,6 @@ static void rt_rtc_f1_bkp_update(void)
     RTC_DateTypeDef RTC_DateStruct = {0};
 
     HAL_PWR_EnableBkUpAccess();
-    __HAL_RCC_BKP_CLK_ENABLE();
 
     RTC_DateStruct.Year    = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR2);
     RTC_DateStruct.Month   = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR3);
@@ -232,6 +231,9 @@ static rt_err_t stm32_rtc_init(void)
 {
 #if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32WB)
     __HAL_RCC_PWR_CLK_ENABLE();
+#endif
+#ifdef SOC_SERIES_STM32F1
+    __HAL_RCC_BKP_CLK_ENABLE();
 #endif
 
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
