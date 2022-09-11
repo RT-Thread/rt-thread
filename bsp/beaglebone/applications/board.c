@@ -147,6 +147,11 @@ INIT_BOARD_EXPORT(rt_hw_timer_init);
  */
 void rt_hw_board_init(void)
 {
+    /* Heap initialization */
+#if defined(RT_USING_HEAP)
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }
