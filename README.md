@@ -125,7 +125,7 @@ RT-Thread BSP can be compiled directly and downloaded to the corresponding devel
 
 # License
 
-RT-Thread follows the Apache License 2.0 free software license. It's completely open-source,can be used in commercial applications for free, does not require the disclosure of code, and has no potential commercial risk.
+RT-Thread follows the Apache License 2.0 free software license. It's completely open-source, can be used in commercial applications for free, does not require the disclosure of code, and has no potential commercial risk.
 
 # Community
 
