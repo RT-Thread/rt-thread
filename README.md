@@ -125,13 +125,13 @@ RT-Thread BSP can be compiled directly and downloaded to the corresponding devel
 
 # License
 
-RT-Thread is an open source software and has been licensed under Apache License Version 2.0 since v3.1.1. License information and copyright information can generally be seen at the beginning of the code:
+RT-Thread follows the Apache License 2.0 free software license. It's completely open-source, can be used in commercial applications for free, does not require the disclosure of code, and has no potential commercial risk.
 
-```c
-/* Copyright (c) 2006-2018, RT-Thread Development Team
+```
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- * ...
  */
 ```
 
