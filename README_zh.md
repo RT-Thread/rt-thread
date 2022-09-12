@@ -150,15 +150,8 @@ RT-Thread视频中心提供了一系列RT-Thread相关教程及分享内容。
 
 # **许可协议**
 
-RT-Thread系统完全开源，3.1.0 及以前的版本遵循 GPL V2 + 开源许可协议。从 3.1.0 以后的版本遵循Apache License 2.0开源许可协议，可以免费在商业产品中使用，并且不需要公开私有代码。
+RT-Thread系统完全开源，遵循Apache License 2.0开源许可协议，可以免费在商业产品中使用，并且不需要公开私有代码，没有潜在商业风险。
 
-```
-/*
- * Copyright (c) 2006-2018, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-```
 
 # 社区支持
 
