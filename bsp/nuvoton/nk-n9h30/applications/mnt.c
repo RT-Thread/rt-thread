@@ -10,8 +10,6 @@
 *
 ******************************************************************************/
 
-#include "rtconfig.h"
-
 #include <rtthread.h>
 
 #define LOG_TAG         "mnt"
