@@ -398,7 +398,11 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
  */
 struct rt_object
 {
-    char       name[RT_NAME_MAX];                       /**< name of kernel object */
+#if RT_NAME_MAX == 0
+    char      *name;                                    /**< static name of kernel object */
+#else
+    char       name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
+#endif /* RT_NAME_MAX == 0 */
     rt_uint8_t type;                                    /**< type of kernel object */
     rt_uint8_t flag;                                    /**< flag of kernel object */
 
@@ -630,7 +634,11 @@ struct rt_cpu
 struct rt_thread
 {
     /* rt object */
-    char        name[RT_NAME_MAX];                      /**< the name of thread */
+#if RT_NAME_MAX == 0
+    char      *name;                                    /**< static name of kernel object */
+#else
+    char       name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
+#endif /* RT_NAME_MAX == 0 */
     rt_uint8_t  type;                                   /**< type of object */
     rt_uint8_t  flags;                                  /**< thread's flags */
 
