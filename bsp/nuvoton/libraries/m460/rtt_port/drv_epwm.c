@@ -60,7 +60,7 @@ static struct nu_epwm nu_epwm_arr [] =
 
 #if (EPWM_CNT==0)
     0
-#endif	
+#endif
 }; /* epwm nu_epwm */
 
 static rt_err_t nu_epwm_control(struct rt_device_pwm *device, int cmd, void *arg);

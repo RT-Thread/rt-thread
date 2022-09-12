@@ -86,7 +86,7 @@ static void nu_pin_adc_init(void)
 {
 #if defined(BSP_USING_ADC_TOUCH)
     GPIO_SetMode(PB, BIT4|BIT5|BIT6|BIT7, GPIO_MODE_INPUT);
-    GPIO_DISABLE_DIGITAL_PATH(PB, BIT4|BIT5|BIT6|BIT7);	
+    GPIO_DISABLE_DIGITAL_PATH(PB, BIT4|BIT5|BIT6|BIT7);
 #endif
 }
 

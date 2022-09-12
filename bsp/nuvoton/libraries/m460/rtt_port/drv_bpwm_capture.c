@@ -48,9 +48,9 @@ struct nu_bpwmcap
     uint32_t     rstidx;
     uint32_t     modid;
 
-  	float       fUsPerTick;
+    float       fUsPerTick;
 
-  	uint8_t     u8Channel;
+    uint8_t     u8Channel;
     uint8_t     u8DummyData;
     uint32_t    u32CurrentRisingCnt;
     uint32_t    u32CurrentFallingCnt;
@@ -117,39 +117,39 @@ static void nu_bpwmcap_isr(nu_bpwmcap_t psNuBpwmCapBase)
     for (i = 0; i < BPWM_CHANNEL_NUM ; i++)
     {
         nu_bpwmcap_t psNuBpwmCap = psNuBpwmCapBase + i;
-				if (psNuBpwmCap->u8DummyData < NU_DUMMY_DATA)
-				{
-						psNuBpwmCap->u8DummyData++;
-				}
-				else
-				{
-						u32Status = BPWM_GetCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
+                if (psNuBpwmCap->u8DummyData < NU_DUMMY_DATA)
+                {
+                        psNuBpwmCap->u8DummyData++;
+                }
+                else
+                {
+                        u32Status = BPWM_GetCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
 
-						switch (u32Status)
-						{
-						case NU_NO_EDGE:
-								break;
+                        switch (u32Status)
+                        {
+                        case NU_NO_EDGE:
+                                break;
 
-						case NU_RISING_EDGE:
-								BPWM_ClearCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel, BPWM_CAPTURE_INT_RISING_LATCH);
-								psNuBpwmCap->u32CurrentRisingCnt = BPWM_GET_CAPTURE_RISING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
-								rt_hw_inputcapture_isr(&psNuBpwmCap->parent, psNuBpwmCap->input_data_level);
-								break;
+                        case NU_RISING_EDGE:
+                                BPWM_ClearCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel, BPWM_CAPTURE_INT_RISING_LATCH);
+                                psNuBpwmCap->u32CurrentRisingCnt = BPWM_GET_CAPTURE_RISING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
+                                rt_hw_inputcapture_isr(&psNuBpwmCap->parent, psNuBpwmCap->input_data_level);
+                                break;
 
-						case NU_FALLING_EDGE:
-								BPWM_ClearCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel, BPWM_CAPTURE_INT_FALLING_LATCH);
-								psNuBpwmCap->u32CurrentFallingCnt = BPWM_GET_CAPTURE_FALLING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
-								rt_hw_inputcapture_isr(&psNuBpwmCap->parent, psNuBpwmCap->input_data_level);
-								break;
+                        case NU_FALLING_EDGE:
+                                BPWM_ClearCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel, BPWM_CAPTURE_INT_FALLING_LATCH);
+                                psNuBpwmCap->u32CurrentFallingCnt = BPWM_GET_CAPTURE_FALLING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
+                                rt_hw_inputcapture_isr(&psNuBpwmCap->parent, psNuBpwmCap->input_data_level);
+                                break;
 
-						default:
-								BPWM_ClearCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel, BPWM_CAPTURE_INT_RISING_LATCH | BPWM_CAPTURE_INT_FALLING_LATCH);
-								BPWM_GET_CAPTURE_RISING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
-								BPWM_GET_CAPTURE_FALLING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
+                        default:
+                                BPWM_ClearCaptureIntFlag(psNuBpwmCap->base, psNuBpwmCap->u8Channel, BPWM_CAPTURE_INT_RISING_LATCH | BPWM_CAPTURE_INT_FALLING_LATCH);
+                                BPWM_GET_CAPTURE_RISING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
+                                BPWM_GET_CAPTURE_FALLING_DATA(psNuBpwmCap->base, psNuBpwmCap->u8Channel);
 
-								break;
-						}
-				}
+                                break;
+                        }
+                }
     }
 }
 
@@ -227,12 +227,12 @@ static rt_err_t nu_bpwmcap_init(struct rt_inputcapture_device *inputcapture)
 
     psNuBpwmCap = (nu_bpwmcap_t ) inputcapture;
 
-		psNuBpwmCap->u8DummyData = 0;
-		psNuBpwmCap->u32CurrentFallingCnt = 0;
-		psNuBpwmCap->u32CurrentRisingCnt = 0;
-		psNuBpwmCap->u32LastRisingCnt = 0;
-		psNuBpwmCap->u32LastFallingCnt = 0;
-		psNuBpwmCap->parent.ops = &nu_bpwmcap_ops;
+        psNuBpwmCap->u8DummyData = 0;
+        psNuBpwmCap->u32CurrentFallingCnt = 0;
+        psNuBpwmCap->u32CurrentRisingCnt = 0;
+        psNuBpwmCap->u32LastRisingCnt = 0;
+        psNuBpwmCap->u32LastFallingCnt = 0;
+        psNuBpwmCap->parent.ops = &nu_bpwmcap_ops;
 
     if ((psNuBpwmCap->u8Channel % BPWM_CHANNEL_NUM) == 0)
     {
@@ -252,7 +252,7 @@ static rt_err_t nu_bpwmcap_open(struct rt_inputcapture_device *inputcapture)
 
     psNuBpwmCap = (nu_bpwmcap_t ) inputcapture;
 
-	    /* Set capture time as 500 nano second */
+        /* Set capture time as 500 nano second */
     psNuBpwmCap->fUsPerTick = (float)BPWM_ConfigCaptureChannel(psNuBpwmCap->base, 0, 500, 0) / 1000;
 
     /* Set counter type as up count */
@@ -305,13 +305,13 @@ static int nu_bpwm_capture_device_init(void)
     {
         nu_bpwmcap_t psNuBpwmCap = &nu_bpwmcap_arr[i];
 
-				psNuBpwmCap->u8Channel = i % BPWM_CHANNEL_NUM;
-				psNuBpwmCap->u8DummyData = 0;
-				psNuBpwmCap->u32CurrentFallingCnt = 0;
-				psNuBpwmCap->u32CurrentRisingCnt = 0;
-				psNuBpwmCap->u32LastRisingCnt = 0;
-				psNuBpwmCap->u32LastFallingCnt = 0;
-				psNuBpwmCap->parent.ops = &nu_bpwmcap_ops;
+                psNuBpwmCap->u8Channel = i % BPWM_CHANNEL_NUM;
+                psNuBpwmCap->u8DummyData = 0;
+                psNuBpwmCap->u32CurrentFallingCnt = 0;
+                psNuBpwmCap->u32CurrentRisingCnt = 0;
+                psNuBpwmCap->u32LastRisingCnt = 0;
+                psNuBpwmCap->u32LastFallingCnt = 0;
+                psNuBpwmCap->parent.ops = &nu_bpwmcap_ops;
 
         if ((psNuBpwmCap->u8Channel % BPWM_CHANNEL_NUM) == 0)
         {
@@ -320,8 +320,8 @@ static int nu_bpwm_capture_device_init(void)
             SYS_ResetModule(psNuBpwmCap->rstidx);
         }
 
-				/* register inputcapture device */
-				ret = rt_device_inputcapture_register(&psNuBpwmCap->parent, psNuBpwmCap->name, psNuBpwmCap);
+                /* register inputcapture device */
+                ret = rt_device_inputcapture_register(&psNuBpwmCap->parent, psNuBpwmCap->name, psNuBpwmCap);
         RT_ASSERT(ret == RT_EOK);
     }
 

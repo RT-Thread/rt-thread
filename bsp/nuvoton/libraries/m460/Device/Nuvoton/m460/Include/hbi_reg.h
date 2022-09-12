@@ -68,8 +68,8 @@ typedef struct
      * |        |          |1110 = 3 CK cycles.
      * |        |          |1111 = 4 CK cycles.
      * |        |          |Others = Reserved.
-     * |        |          |Note: This field must be set to the same value as “I
-     * |        |          |initial Latency in HyperRAM’s Configuration Register 0.
+     * |        |          |Note: This field must be set to the same value as
+     * |        |          |initial Latency in HyperRAM Configuration Register 0.
      * |[7:6]   |CSH       |Chip Select Hold Time After CK Falling Edge
      * |        |          |This field indicates the hold time between the last CK falling edge and chip select
      * |        |          |00 = 0.5 HCLK cycles.
@@ -84,14 +84,14 @@ typedef struct
      * |        |          |0011 = 4 HCLK cycles.
      * |        |          |...
      * |        |          |1111 = 16 HCLK cycles.
-     * |        |          |Note : This field must meet the HyperRAM device’s specification of tCSHI.
+     * |        |          |Note : This field must meet the HyperRAM device specification of tCSHI.
      * |[13:12] |BGSIZE    |Burst Group Size
      * |        |          |This field indicates the burst length on the Hyper Bus transaction
      * |        |          |00 = 128 Bytes.
      * |        |          |01 = 64 Bytes.
      * |        |          |10 = 16 Bytes.
      * |        |          |11 = 32 Bytes.
-     * |        |          |Note : This field must be set to the same value as “Burst Length” in HyperRAM’s Configuration Regsiter 0.
+     * |        |          |Note : This field must be set to the same value as burst Length in HyperRAM Configuration Regsiter 0.
      * |[14]      |ENDIAN      |Endian Condition on the Hyper Bus Data Pipe
      * |        |          |0 = Little-Endian.
      * |        |          |   Byte A = Bits[7:0] of a 16-Bit  ..........word

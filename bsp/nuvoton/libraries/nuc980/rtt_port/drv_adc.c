@@ -199,7 +199,7 @@ static void nu_adc_touch_antiglitch(ADC_T*  adc)
     int count = 10;
     do {
         rt_hw_us_delay(1000); // 1ms
-			  ADC_CLR_INT_FLAG(adc, adc->ISR);
+              ADC_CLR_INT_FLAG(adc, adc->ISR);
         if ( adc->ISR == 0 )
             break;
     } while(count-- > 0);
@@ -217,13 +217,13 @@ void nu_adc_touch_detect(rt_bool_t bStartDetect)
 
     /* Disable interrupt */
     ADC_DISABLE_INT(adc, ADC_IER_PEDEIEN_Msk | ADC_IER_MIEN_Msk);
-		nu_adc_touch_antiglitch(adc);
+        nu_adc_touch_antiglitch(adc);
 
     if (bStartDetect == RT_TRUE)
     {
         /* Switch to PenDown detection mode */
         ADC_DETECT_PD_MODE(adc);
-				nu_adc_touch_antiglitch(adc);
+                nu_adc_touch_antiglitch(adc);
 
         /* Enable interrupt */
         ADC_ENABLE_INT(adc, ADC_IER_PEDEIEN_Msk);
@@ -232,7 +232,7 @@ void nu_adc_touch_detect(rt_bool_t bStartDetect)
     {
         /* Switch to XY coordination converting mode */
         ADC_CONVERT_XY_MODE(adc);
-				nu_adc_touch_antiglitch(adc);
+                nu_adc_touch_antiglitch(adc);
 
         /* Enable interrupt */
         ADC_ENABLE_INT(adc, ADC_IER_MIEN_Msk);
@@ -241,7 +241,7 @@ void nu_adc_touch_detect(rt_bool_t bStartDetect)
     ADC_POWER_ON(adc);
 
     /* Enable interrupt */
-    rt_hw_interrupt_umask(psNuAdc->irqn);		
+    rt_hw_interrupt_umask(psNuAdc->irqn);
 }
 
 static int32_t PenDownCallback(uint32_t status, uint32_t userData)

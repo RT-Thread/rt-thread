@@ -250,12 +250,12 @@ static void nu_vpost_calculate_fps(void)
 
     if ( (u32CurrTick-u32LastTick) > (DEF_PERIOD_SEC*RT_TICK_PER_SECOND) )
     {
-			rt_kprintf("VPOST: %d FPS, URPS: %d\n", 
-							  (s_u32VSyncBlank-u32VSyncBlank)/DEF_PERIOD_SEC,
-								(s_u32UnderRun-u32UnderRun)/DEF_PERIOD_SEC);
+            rt_kprintf("VPOST: %d FPS, URPS: %d\n",
+                              (s_u32VSyncBlank-u32VSyncBlank)/DEF_PERIOD_SEC,
+                                (s_u32UnderRun-u32UnderRun)/DEF_PERIOD_SEC);
         u32LastTick = u32CurrTick;
         u32VSyncBlank = s_u32VSyncBlank;
-			  u32UnderRun = s_u32UnderRun;
+              u32UnderRun = s_u32UnderRun;
     }
 }
 
