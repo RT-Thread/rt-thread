@@ -45,6 +45,7 @@
  * 2022-04-21     THEWON       add macro RT_VERSION_CHECK
  * 2022-06-29     Meco Man     add RT_USING_LIBC and standard libc headers
  * 2022-08-16     Meco Man     change version number to v5.0.0
+ * 2022-09-12     Meco Man     define rt_ssize_t
  */
 
 #ifndef __RT_DEF_H__
@@ -55,6 +56,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
+#include <sys/types.h>
 #endif /* RT_USING_LIBC */
 
 #ifdef __cplusplus
@@ -80,6 +82,10 @@ extern "C" {
 
 
 /* RT-Thread basic data type definitions */
+typedef int                             rt_bool_t;      /**< boolean type */
+typedef signed long                     rt_base_t;      /**< Nbit CPU related date type */
+typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
+
 #ifndef RT_USING_ARCH_DATA_TYPE
 #ifdef RT_USING_LIBC
 typedef int8_t                          rt_int8_t;      /**<  8bit integer type */
@@ -91,7 +97,7 @@ typedef uint32_t                        rt_uint32_t;    /**< 32bit unsigned inte
 typedef int64_t                         rt_int64_t;     /**< 64bit integer type */
 typedef uint64_t                        rt_uint64_t;    /**< 64bit unsigned integer type */
 typedef size_t                          rt_size_t;      /**< Type for size number */
-
+typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #else
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
@@ -99,22 +105,17 @@ typedef signed   int                    rt_int32_t;     /**< 32bit integer type 
 typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
 typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned integer type */
-
 #ifdef ARCH_CPU_64BIT
 typedef signed long                     rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
-typedef unsigned long                   rt_size_t;      /**< Type for size number */
 #else
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
-typedef unsigned int                    rt_size_t;      /**< Type for size number */
 #endif /* ARCH_CPU_64BIT */
+typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
+typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #endif /* RT_USING_LIBC */
 #endif /* RT_USING_ARCH_DATA_TYPE */
-
-typedef int                             rt_bool_t;      /**< boolean type */
-typedef long                            rt_base_t;      /**< Nbit CPU related date type */
-typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
