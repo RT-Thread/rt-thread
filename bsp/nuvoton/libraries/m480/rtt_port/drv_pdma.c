@@ -228,10 +228,13 @@ static void nu_pdma_init(void)
     /* Assign first SG table address as PDMA SG table base address */
     PDMA->SCATBA = (uint32_t)&nu_pdma_sgtbl_arr[0];
 
-    /* Initializa token pool. */
+    /* Initialize token pool. */
     rt_memset(&nu_pdma_sgtbl_token[0], 0xff, sizeof(nu_pdma_sgtbl_token));
-    latest = NU_PDMA_SGTBL_POOL_SIZE / 32;
-    nu_pdma_sgtbl_token[latest] ^= ~((1 << (NU_PDMA_SGTBL_POOL_SIZE % 32)) - 1) ;
+    if (NU_PDMA_SGTBL_POOL_SIZE % 32)
+    {
+        latest = (NU_PDMA_SGTBL_POOL_SIZE) / 32;
+        nu_pdma_sgtbl_token[latest] ^= ~((1 << (NU_PDMA_SGTBL_POOL_SIZE % 32)) - 1) ;
+    }
 
     nu_pdma_inited = 1;
 }
