@@ -12,7 +12,7 @@
 #include "pins_arduino.h"
 
 /*
-    {Arduino Pin, RT-Thread Pin [, Device Name(PWM or ADC), Channel]}
+    {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
     [] means optional
     Digital pins must NOT give the device name and channel.
     Analog pins MUST give the device name and channel(ADC, PWM or DAC).
