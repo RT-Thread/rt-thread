@@ -1273,10 +1273,6 @@ void imxrt_can_pins_init(void)
 }
 #endif
 
-void rt_hw_us_delay(rt_uint32_t us)
-{
-}
-
 void rt_hw_board_init()
 {
     BOARD_ConfigMPU();
