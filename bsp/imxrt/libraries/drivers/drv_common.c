@@ -7,10 +7,11 @@
  * Date           Author       Notes
  * 2022-09-13     xjy198903    first implementation
  */
- #include <rtthread.h>
+
+#include <rtthread.h>
 #include "clock_config.h"
 
- void rt_hw_us_delay(rt_uint32_t us)
+void rt_hw_us_delay(rt_uint32_t us)
 {
     rt_uint32_t ticks;
     rt_uint32_t told, tnow, tcnt = 0;
