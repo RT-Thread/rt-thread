@@ -42,7 +42,7 @@ def GenerateCFiles(env,project):
                 cm_file.write("\tINTERFACE \"-u __rt_init_" + init_export[i] + "\"\n")
             cm_file.write(")\n")
 
-def IDFProject(env,project):
+def ESPIDFProject(env,project):
     print('Update setting files for CMakeLists.txt...')
     GenerateCFiles(env,project)
     print('Done!')

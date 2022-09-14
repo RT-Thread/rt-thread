@@ -864,8 +864,8 @@ def GenTargetProject(program = None):
         XMakeProject(Env, Projects)
 
     if GetOption('target') == 'esp-idf':
-        from esp_idf import IDFProject
-        IDFProject(Env, Projects)
+        from esp_idf import ESPIDFProject
+        ESPIDFProject(Env, Projects)
         exit(0)
 
 def EndBuilding(target, program = None):
