@@ -66,7 +66,7 @@ soncs --menuconfig
 ```
 5. Whenever RT-Thread configuration is changed with `scons --menuconfig`, a new `CMakeLists.txt` needs to be generated with the command below
 ```
-soncs --target=idf
+soncs --target=esp-idf
 ```
 6. Use `idf.py` to compile and upload the program. Refer to [Espressif official documents](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project) for reference.
 7. Once the project is successfully downloaded, the system runs automatically, the red LED will blink in 1s on cycles.

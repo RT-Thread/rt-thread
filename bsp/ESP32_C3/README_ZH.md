@@ -73,7 +73,7 @@ soncs --menuconfig
 ```
 5. 每当使用`scons --menuconfig`更改RT-Thread配置后需要重新生成`CMakeLists.txt`。
 ```
-soncs --target=idf
+soncs --target=esp-idf
 ```
 6. 使用`idf.py`命令编译，烧录。具体参考[乐鑫官网](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project)
 7. 下载程序成功之后，系统会运行，红色的 LED灯以 1S 周期闪烁。

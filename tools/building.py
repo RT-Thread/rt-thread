@@ -187,7 +187,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cmake-armclang':('keil', 'armclang'),
                 'xmake':('gcc', 'gcc'),
                 'codelite' : ('gcc', 'gcc'),
-                'idf': ('gcc', 'gcc')}
+                'esp-idf': ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
     if tgt_name:
@@ -863,7 +863,7 @@ def GenTargetProject(program = None):
         from xmake import XMakeProject
         XMakeProject(Env, Projects)
 
-    if GetOption('target') == 'idf':
+    if GetOption('target') == 'esp-idf':
         from esp_idf import IDFProject
         IDFProject(Env, Projects)
         exit(0)
