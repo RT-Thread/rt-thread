@@ -52,44 +52,35 @@
 
 ## 使用说明
 
-### 快速上手
-
-先要搭建IDE开发环境，乐鑫官方推荐使用IDF开发，这边建议使用vscode插件。
-
-IDF的搭建方法有很多种，尝试了很多种方法之后，总结了一个比较好用的方法，并且可以使用vscode跨平台安装，非常简单方便，具体方法见链接[ESP-IDF 一键式搭建环境基于VSCODE](https://blog.csdn.net/lt6210925/article/details/123699249)。 安装的时候IDF版本请选择IDF 4.4版本。如果你对官方IDF命令行的方式熟悉的话，你也可以使用命令行的方式，直接在`bsp/esp32_c3`中执行`idf.py build`即可，这边已经测试过，是可以使用的。
-
-### ESP-IDF 添加RT-THREAD patch 
-
-由于IDF使用的是FREERTOS，如果需要使用rt-thread就需要修改一些文件。将`rtt.patch` 这个文件拷贝到IDF的代码目录下面，然后在`git bash`命令行内执行命令下面几条命令就可以打上patch
-
+1. 下载ESP-IDF软件包
 ```
-cd esp/esp-idf
-git checkout v4.4
-git am rtt.patch
+pkgs --update
 ```
-
-如果不想用patch文件，已经将代码上传到github上面，可以进入[tangzz98/esp-idf](https://github.com/tangzz98/esp-idf/tree/freertos_wrapper) 下载最新的freertos_wrapper分支代码即可。修改之后的IDF，原来的IDF的example还是正常使用，互不干扰，可以放心使用。
-
-#### 编译下载
-
- 在`bsp/ESP32_C3`中右击，然后使用vscode打开工程
-
-编译选择最下面的按钮即可：
-
-![build](images/build.png)
-
-这边通常采用串口下载，需要根据你自己开发板选择对应的串口（如果有JTAG的，也可以用JTAG下载和调试）
-
-![burn](images/burn.png)
-
-#### 运行结果
-
-下载程序成功之后，系统会运行，红色的 LED灯以 1S 周期闪烁。
-感兴趣的可以通过公众号`Thomas的小火车`来联系
+2. 进入到ESP-IDF软件包路径，安装IDf工具链。此命令只需要在下载完软件包后执行一次。
+```
+cd packages/ESP-IDF-latest
+./install.sh
+# Windows环境下使用install.bat
+```
+3. 在软件包路径下设置IDF路径。每当在新的命令行编译BSP时需要执行此命令。
+```
+. export.sh
+# Windows环境下使用export.bat
+```
+4. 在BSP路径下配置RT-Thread
+```
+soncs --menuconfig
+```
+5. 每当使用`scons --menuconfig`更改RT-Thread配置后需要重新生成`CMakeLists.txt`。
+```
+soncs --target=idf
+```
+6. 使用`idf.py`命令编译，烧录。具体参考[乐鑫官网](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project)
+7. 下载程序成功之后，系统会运行，红色的 LED灯以 1S 周期闪烁。
 
 ## 注意事项
 
-- 目前RTTHREAD支持起来了，后续会需要继续完善一些其他功能，刚开始使用ESP32，欢迎小伙伴一起来讨论和贡献。
+- 目前RTTHREAD支持起来了，后续会需要继续完善一些其他功能，刚开始使用ESP32，欢迎小伙伴一起来讨论和贡献。感兴趣的可以通过公众号`Thomas的小火车`来联系
 
 ## 联系人信息
 
