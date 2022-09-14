@@ -4,7 +4,7 @@
 
 ## 1 RTduino - Arduino Ecosystem Compatibility Layer for RT-Thread
 
-STM32 Blue Pill board has support [RTduino](https://github.com/RTduino/RTduino), a.k.a Arduino Ecosystem Compatibility Layer for RT-Thread. Users can use Arduino APIs, third party libraries and programming method to program on Blue Pill board.
+STM32 Blue Pill board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on Blue Pill board.
 
 ### 1.1 How to Enable RTduino
 
