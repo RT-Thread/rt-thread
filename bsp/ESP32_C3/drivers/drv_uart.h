@@ -12,17 +12,10 @@
 #ifndef __DRV_UART_H__
 #define __DRV_UART_H__
 
-#include <rtthread.h>
-#include <rthw.h>
+#include <rtconfig.h>
 
-#ifdef RT_USING_DEVICE
-#include <rtdevice.h>
-#endif
-
-#include "driver/uart.h"
-#include "hal/uart_hal.h"
-#include "sdkconfig.h"
-
+#ifdef RT_USING_SERIAL_V1
 int rt_hw_uart_init(void);
+#endif
 
 #endif /* __DRV_UART_H__ */

@@ -12,16 +12,10 @@
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
-#include <rtthread.h>
-#include <rthw.h>
+#include <rtconfig.h>
 
-#ifdef RT_USING_DEVICE
-#include <rtdevice.h>
-#endif
-
-#include "driver/gpio.h"
-
-
+#ifdef RT_USING_PIN
 int rt_hw_pin_init(void);
+#endif
 
 #endif /* __DRV_GPIO_H__ */

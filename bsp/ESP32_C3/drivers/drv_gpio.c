@@ -9,14 +9,11 @@
  *
  */
 
-#include "drv_gpio.h"
-#include <stdio.h>
+#include <rtthread.h>
+#include <rtdevice.h>
+#include "driver/gpio.h"
+
 #ifdef RT_USING_PIN
-
-#define DBG_LEVEL   DBG_LOG
-#define LOG_TAG                "drv.gpio"
-#include <rtdbg.h>
-
 
 static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
@@ -96,6 +93,5 @@ int rt_hw_pin_init(void)
     return rt_device_pin_register("pin", &_mcu_pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
-
 
 #endif /* RT_USING_PIN */
