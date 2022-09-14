@@ -11,13 +11,13 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtthread.h>
-#include "drv_gpio.h"
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+void rt_hw_board_init(void);
 
 #ifdef __cplusplus
 }

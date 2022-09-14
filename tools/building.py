@@ -186,7 +186,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cmake':('gcc', 'gcc'),
                 'cmake-armclang':('keil', 'armclang'),
                 'xmake':('gcc', 'gcc'),
-                'codelite' : ('gcc', 'gcc')}
+                'codelite' : ('gcc', 'gcc'),
+                'esp-idf': ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
     if tgt_name:
@@ -857,9 +858,15 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
+
     if GetOption('target') == 'xmake':
         from xmake import XMakeProject
         XMakeProject(Env, Projects)
+
+    if GetOption('target') == 'esp-idf':
+        from esp_idf import ESPIDFProject
+        ESPIDFProject(Env, Projects)
+        exit(0)
 
 def EndBuilding(target, program = None):
 
