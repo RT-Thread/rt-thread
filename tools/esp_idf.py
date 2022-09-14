@@ -46,7 +46,3 @@ def IDFProject(env,project):
     print('Update setting files for CMakeLists.txt...')
     GenerateCFiles(env,project)
     print('Done!')
-
-#re.match('INIT_(BOARD|PREV|DEVICE|COMPONENT|ENV|APP)_EXPORT\(.+\)', "INIT_BOARD_EXPORT(rt_hw_pin_init)")
-#re.search('\(.+\)', "INIT_BOARD_EXPORT(rt_hw_pin_init)")
-#m.group(0)[1:-1]
