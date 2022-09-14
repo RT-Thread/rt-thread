@@ -43,37 +43,33 @@ Each peripheral supporting condition for this BSP is as follows:
 | UART                     | Support         | Using LUATOS_ESP32C3 development board requires connecting serial port to USB chip UART0_TX and UART0_RX (such as CP2102) |
 | JTAG debug               | Support         | ESP32C3 usb-linked development boards can be debugged        |
 
-## Quickly Get Started
+## Quick Start Guide
 
-First of all, we'll need to build the IDE, Espressif officially recommends the IDF. 
-When installing the IDF, please select version 4.4. If you are familiar with the official IDF command line, you can also use the command line to perform the `idf.py build` directly in the `bsp/esp32_c3`, which has been tested and proved that it's functional
-
-### ESP-IDF Adds RT-Thread patch
-
-The IDF was running the FreeRTOS, so we'll need a few modifications to get to RT-Thread. 
-Copy the `rtt.patch` file to the IDF code directory, and then execute the next few commands on the `git bash` command line to mark the patch.
-
+1. Download ESP-IDF package
 ```
-cd esp/esp-idf
-git checkout v4.4
-git am rtt.patch
+pkgs --update
 ```
-
-If you don't want to use the patch file and have uploaded the code to GitHub, you can now go to [tangzz98/esp-idf](tangzz98/esp-idf) to download the latest `freertos_wrapper` branch code. After the modification, the original IDF example is still kept in normal use, they won't interfere with each other.
-
-#### Compile and Download
-
-Right-click `bsp/ESP32_C3` and use vscode to open the project
-
-Compile and select the button at the bottom:
-
-![build](images/build.png)
-
-Here we usually use the serial port to download, you need to choose the corresponding serial port according to your own development board (if there is JTAG, you can also use JTAG to download and debug)
-
-![](images/burn.png)
-
-Once the project is successfully downloaded, the system runs automatically, the red LED will blink in 1s on cycles.
+2. Go to ESP-IDF package directory and install IDF tools. This command only needs to be run once after the package is downloaded for the first time.
+```
+cd packages/ESP-IDF-latest
+./install.sh
+# Use install.bat in Windows environment
+```
+3. Under the ESP-IDF package directory, export IDF environment variables. This commands need to be run every time when the BSP is built in a new terminal.
+```
+. export.sh
+# Use export.bat in Windows environment
+```
+4. Configure RT-Thread under the BSP directory
+```
+soncs --menuconfig
+```
+5. Whenever RT-Thread configuration is changed with `scons --menuconfig`, a new `CMakeLists.txt` needs to be generated with the command below
+```
+soncs --target=idf
+```
+6. Use `idf.py` to compile and upload the program. Refer to [Espressif official documents](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project) for reference.
+7. Once the project is successfully downloaded, the system runs automatically, the red LED will blink in 1s on cycles.
 
 ## Notes
 
