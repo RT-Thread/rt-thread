@@ -70,7 +70,7 @@ I2C总线是 `D14` 和 `D15` 引脚，这两个引脚默认是被RT-Thread I2C�
 
 ### 3.2 SPI
 
-SPI总线是 `D24` 、`D25` 和 `D26` 引脚，这三个引脚默认是被RT-Thread SPI设备框架接管的，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。此外，还要额外使用一个片选引脚(SS)，默认为 `D7`。
+SPI总线是 `D24` 、`D25` 和 `D26` 引脚，这三个引脚默认是被RT-Thread SPI设备框架接管的，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。此外，还使用到了片选引脚(SS)，默认为 `D7`。
 
 ### 3.3 USB
 
