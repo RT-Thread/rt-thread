@@ -13,10 +13,8 @@
 #include <rtdevice.h>
 #include <board.h>
 
-int rtt_main(void)
+int main(void)
 {
-    /* show RT-Thread version */
-    rt_show_version();
     rt_kprintf("Hello!RT-THREAD!\r\n");
     rt_pin_mode(RT_BSP_LED_PIN, PIN_MODE_OUTPUT);
     while (1)

@@ -9,7 +9,11 @@
  *
  */
 
-#include "drv_uart.h"
+#include <rtthread.h>
+#include <rtdevice.h>
+#include "driver/uart.h"
+#include "hal/uart_hal.h"
+#include "sdkconfig.h"
 
 #ifdef RT_USING_SERIAL_V1
 
