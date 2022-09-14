@@ -87,6 +87,7 @@ scons --target=esp-idf
 维护人:
 
 -  [supperthomas](https://github.com/supperthomas) 邮箱：<78900636@qq.com>
+-  [tangzz98](https://github.com/tangzz98) 邮箱：<tangz98@outlook.com>
 
 ## 特别感谢
 
