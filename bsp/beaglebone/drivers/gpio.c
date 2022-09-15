@@ -89,19 +89,23 @@ rt_inline void am33xx_gpio_hdr(rt_base_t base, rt_base_t int_line, void *param)
     struct am33xx_gpio_irq_param *irq_param = param;
     struct am33xx_pin_irq_hdr *irq_hdr;
     int pinNumber;
-    rt_base_t irqstatus;
+    rt_ubase_t irqstatus;
 
     irqstatus = REG32(base + GPIO_IRQSTATUS(int_line));
     REG32(base + GPIO_IRQSTATUS(int_line)) = irqstatus;
 
     for (pinNumber = 0; pinNumber < sizeof(irq_param->hdr_tab); pinNumber++)
     {
-        if (irqstatus & (1 << pinNumber))
+        if (irqstatus & 0x1)
         {
             irq_hdr = &irq_param->hdr_tab[pinNumber];
             if (irq_hdr->hdr)
                 irq_hdr->hdr(irq_hdr->args);
+            // if the last one, exit immediately
+            if (irqstatus == 0x1)
+                break;
         }
+        irqstatus >>= 1;
     }
 }
 
