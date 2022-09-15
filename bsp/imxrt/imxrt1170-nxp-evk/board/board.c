@@ -10,6 +10,7 @@
  * 2022-08-17     xjy198903    add rgmii pins
  * 2022-09-01     xjy198903    add can pins
  * 2022-09-07     xjy198903    add sdio pins
+ * 2022-09-14     xjy198903    add flexspi pins
  */
 
 #include <rthw.h>
@@ -1273,6 +1274,50 @@ void imxrt_can_pins_init(void)
 }
 #endif
 
+#ifdef BSP_USING_FLEXSPI
+void imxrt_flexspi_pins_init(void)
+{
+#ifdef BSP_USING_FLEXSPI1
+    CLOCK_EnableClock(kCLOCK_Iomuxc); /* LPCG on: LPCG is ON. */
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_00_FLEXSPI1_B_DATA03, /* GPIO_SD_B2_00 is configured as FLEXSPI1_B_DATA03 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_01_FLEXSPI1_B_DATA02, /* GPIO_SD_B2_01 is configured as FLEXSPI1_B_DATA02 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_02_FLEXSPI1_B_DATA01, /* GPIO_SD_B2_02 is configured as FLEXSPI1_B_DATA01 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_03_FLEXSPI1_B_DATA00, /* GPIO_SD_B2_03 is configured as FLEXSPI1_B_DATA00 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_05_FLEXSPI1_A_DQS, /* GPIO_SD_B2_05 is configured as FLEXSPI1_A_DQS */
+        0U);                                 /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_06_FLEXSPI1_A_SS0_B, /* GPIO_SD_B2_06 is configured as FLEXSPI1_A_SS0_B */
+        0U);                                   /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_07_FLEXSPI1_A_SCLK, /* GPIO_SD_B2_07 is configured as FLEXSPI1_A_SCLK */
+        0U);                                  /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_08_FLEXSPI1_A_DATA00, /* GPIO_SD_B2_08 is configured as FLEXSPI1_A_DATA00 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_09_FLEXSPI1_A_DATA01, /* GPIO_SD_B2_09 is configured as FLEXSPI1_A_DATA01 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_10_FLEXSPI1_A_DATA02, /* GPIO_SD_B2_10 is configured as FLEXSPI1_A_DATA02 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_SD_B2_11_FLEXSPI1_A_DATA03, /* GPIO_SD_B2_11 is configured as FLEXSPI1_A_DATA03 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+
+#endif
+}
+#endif
+
 void rt_hw_board_init()
 {
     BOARD_ConfigMPU();
@@ -1312,6 +1357,10 @@ void rt_hw_board_init()
 
 #ifdef BSP_USING_CAN
     imxrt_can_pins_init();
+#endif
+
+#ifdef BSP_USING_FLEXSPI
+    imxrt_flexspi_pins_init();
 #endif
 }
 

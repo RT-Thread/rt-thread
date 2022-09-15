@@ -32,7 +32,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDIO"
         select RT_USING_SDIO
         select RT_USING_DFS
-        default n 
+        default n
 
     menuconfig BSP_USING_LPUART
         bool "Enable UART"
@@ -106,6 +106,18 @@ menu "On-chip Peripheral Drivers"
 					bool "Enable FLEXCAN3"
 					default n
 			endif
+
+        menuconfig BSP_USING_FLEXSPI
+			bool "Enable FLEXSPI"
+			default n
+			if BSP_USING_FLEXSPI
+				config BSP_USING_FLEXSPI1
+					bool "Enable FLEXCAN1"
+					default n
+                config BSP_USING_FLEXSPI2
+					bool "Enable FLEXCAN2"
+					default n    
+			endif 
 endmenu
 
 menu "Onboard Peripheral Drivers"
