@@ -164,26 +164,26 @@ menu "Onboard Peripheral Drivers"
             endif
         endif
 
-         if BSP_USING_PHY
-                 config PHY_USING_RTL8211F
-                     bool "i.MX RT1176EVK uses rtl8211f phy"
-                     default y
+        if BSP_USING_PHY
+                config PHY_USING_RTL8211F
+                    bool "i.MX RT1176EVK uses rtl8211f phy"
+                    default y
 
-                 if PHY_USING_RTL8211F
-                     config PHY_RTL8211F_ADDRESS
-                     int "Specify address of phy device"
-                     default 1
+                if PHY_USING_RTL8211F
+                    config PHY_RTL8211F_ADDRESS
+                    int "Specify address of phy device"
+                    default 1
 
-                     config PHY_RESET_RTL8211F_PORT
-                         int "indicate port of reset"
-                         default 5
+                    config PHY_RESET_RTL8211F_PORT
+                        int "indicate port of reset"
+                        default 5
 
-                     config PHY_RESET_RTL8211F_PIN
-                         int "indicate pin of reset"
-                         default 14
+                    config PHY_RESET_RTL8211F_PIN
+                        int "indicate pin of reset"
+                        default 14
 
-                 endif
-         endif
+                endif
+        endif
     endif
 
     menuconfig BSP_USING_FS
