@@ -199,7 +199,7 @@ static rt_err_t ch32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
 #endif
         return -RT_ERROR;
     }
-    
+
     ADC_ChanConf.Rank = 1;
     ADC_ChanConf.SamplingTime = ADC_SampleTime_239Cycles5;
     ADC_RegularChannelConfig(ch32_adc_handler->Instance,ADC_ChanConf.Channel , ADC_ChanConf.Rank, ADC_ChanConf.SamplingTime );
