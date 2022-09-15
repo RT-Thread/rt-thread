@@ -14,7 +14,7 @@
 /* parameters for flexpsi peripheral */
 #define FLEXSPI1_CONTROL_BASE FLEXSPI1
 #define FLEXSPI2_CONTROL_BASE FLEXSPI2
-#define FLEXSPI_ROOT_CLK (12000000U)
+#define FLEXSPI_ROOT_CLK (80000000U) /* serial root clk: 80MHz*/
 #define FLASH_SIZE (32 * 1024) /* device size 32*1024(KB) = 32MB */
 #define ARD_SEQ_NUMBER 1       /* Sequence number for AHB read command */
 #define ARD_SEQ_INDEX 0        /* Sequence ID for AHB read command */
