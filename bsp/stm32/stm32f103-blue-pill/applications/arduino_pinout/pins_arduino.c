@@ -12,12 +12,12 @@
 #include "pins_arduino.h"
 
 /*
-    {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
-    [] means optional
-    Digital pins must NOT give the device name and channel.
-    Analog pins MUST give the device name and channel(ADC, PWM or DAC).
-    Arduino Pin must keep in sequence.
-*/
+ * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
+ * [] means optional
+ * Digital pins must NOT give the device name and channel.
+ * Analog pins MUST give the device name and channel(ADC, PWM or DAC).
+ * Arduino Pin must keep in sequence.
+ */
 const pin_map_t pin_map_table[]=
 {
     {D0, GET_PIN(B,7)},

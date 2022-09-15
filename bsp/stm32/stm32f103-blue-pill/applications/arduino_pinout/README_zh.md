@@ -18,7 +18,7 @@ Hardware Drivers Config --->
 
 ## 2 Arduino引脚排布
 
-![blue-pill-f103-pinout](blue-pill-f103-pinout.png)
+![blue-pill-f103-pinout](blue-pill-f103-pinout.jpg)
 
 | Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                                                        |
 | ----------- | --------- | ---- | ------------------------------------------------------------------------- |
