@@ -46,9 +46,9 @@ static flexspi_device_config_t deviceconfig = {
 };
 
 const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
-	/* 8bit mode */
-	[4 * ARD_SEQ_INDEX] =
-		FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0),
+    /* 8bit mode */
+    [4 * ARD_SEQ_INDEX] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0),
 };
 
 static void flexspi_clock_init(clock_root_t root, uint8_t src, uint8_t div)
