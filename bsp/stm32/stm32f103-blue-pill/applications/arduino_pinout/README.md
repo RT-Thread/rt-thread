@@ -18,7 +18,7 @@ Hardware Drivers Config --->
 
 ## 2 Arduino Pinout
 
-![blue-pill-f103-pinout](blue-pill-f103-pinout.png)
+![blue-pill-f103-pinout](blue-pill-f103-pinout.jpg)
 
 | Arduino Pin | STM32 Pin | 5V Tolerate | 备注                                                                                                          |
 | ----------- | --------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
@@ -38,8 +38,8 @@ Hardware Drivers Config --->
 | 13 (D13)    | PB1       | No          | PWM3-CH4. Token over by RT-Thread PWM device by default                                                     |
 | 14 (D14)    | PB9       | Yes         | I2C-SDA. Token over by RT-Thread I2C device by default                                                      |
 | 15 (D15)    | PB8       | Yes         | I2C-SCL. Token over by RT-Thread I2C device by default                                                      |
-| 16 (D16)    | PA12      | Yes         | USB-DP. Token over by RT-Thread [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) device by default. |
-| 17 (D17)    | PA11      | Yes         | USB-DM. Token over by RT-Thread [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) device by default. |
+| 16 (D16)    | PA12      | Yes         | USB-DP. Token over by [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) software package by default. |
+| 17 (D17)    | PA11      | Yes         | USB-DM. Token over by [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) software package by default. |
 | 18 (D18)    | PA10      | Yes         | UART1-RX. Token over by RT-Thread UART device by default                                                    |
 | 19 (D19)    | PA9       | Yes         | UART1-TX. Token over by RT-Thread UART device by default                                                    |
 | 20 (D20)    | PA2       | No          | UART2-TX. Token over by RT-Thread UART device by default                                                    |
