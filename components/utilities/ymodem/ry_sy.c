@@ -40,7 +40,6 @@ static enum rym_code _rym_recv_begin(
     char insert_0 = '\0';
     char *ret;
     rt_err_t err;
-  
     ret = strchr(cctx->fpath,insert_0);
     if(ret)
     {
