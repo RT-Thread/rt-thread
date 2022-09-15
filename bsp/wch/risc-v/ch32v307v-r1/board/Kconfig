@@ -47,6 +47,22 @@ menu "On-chip Peripheral Drivers"
             bool "Enable UART8"
             default n
         endif
+            
+            config BSP_USING_ADC
+            bool "Enable ADC"
+            select RT_USING_ADC
+            default n
+
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+            bool "Enable ADC1"
+            default n
+
+            config BSP_USING_ADC2
+            bool "Enable ADC2"
+            default n
+
+        endif
 
 endmenu
 
