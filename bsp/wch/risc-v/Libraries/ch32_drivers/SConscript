@@ -8,7 +8,6 @@ cwd = GetCurrentDir()
 src = Split("""
 """)
 
-
 if  GetDepend('SOC_RISCV_FAMILY_CH32'):
 
     if GetDepend('RT_USING_PIN'):
@@ -20,10 +19,7 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('RT_USING_ADC'):
         src += ['drv_adc.c']
 
-
-
 path =  [cwd]
-
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

@@ -1,15 +1,23 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-09-16     linshire     the first version which add from wch
+ */
+
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_adc.h"
-
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2)
 
 //#define DRV_DEBUG
 #define LOG_TAG              "drv.adc"
 #include <drv_log.h>
-
 
 static ADC_HandleTypeDef adc_config[] =
 {
@@ -57,7 +65,6 @@ static rt_int16_t ch32_adc_get_vref (struct rt_adc_device *device)
     RT_ASSERT(device);
     return 3300;
 }
-
 
 static rt_err_t ch32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
@@ -135,20 +142,20 @@ static rt_uint32_t ch32_adc_get_channel(rt_uint32_t channel)
     case 16:
         ch32_channel = ADC_Channel_16;
         break;
-#endif
+#endif /* ADC_CHANNEL_16 */
+#ifdef ADC_CHANNEL_17
     case 17:
         ch32_channel = ADC_Channel_17;
         break;
-#ifdef ADC_CHANNEL_18
+#endif /* ADC_CHANNEL_17 */
     case 18:
         ch32_channel = ADC_Channel_18;
         break;
-#endif
 #ifdef ADC_CHANNEL_19
     case 19:
         ch32_channel = ADC_Channel_19;
         break;
-#endif
+#endif /* ADC_CHANNEL_19 */
     }
 
     return ch32_channel;
