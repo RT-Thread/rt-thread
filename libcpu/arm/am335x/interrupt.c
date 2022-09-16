@@ -75,6 +75,16 @@ static void rt_hw_vector_init(void)
  */
 void rt_hw_interrupt_init(void)
 {
+    /* Reset the ARM interrupt controller */
+    INTC_SYSCONFIG(AINTC_BASE) = INTC_SYSCONFIG_SOFTRESET;
+
+    /* Wait for the reset to complete */
+    while((INTC_SYSSTATUS(AINTC_BASE)
+          & INTC_SYSSTATUS_RESETDONE) != INTC_SYSSTATUS_RESETDONE);
+
+    /* Enable any interrupt generation by setting priority threshold */
+    INTC_THRESHOLD(AINTC_BASE) = INTC_THRESHOLD_PRIORITYTHRESHOLD;
+
     /* initialize vector table */
     rt_hw_vector_init();
 
