@@ -43,8 +43,8 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x40101
+#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_VER_NUM 0x50000
 
 /* RT-Thread Components */
 
@@ -181,15 +181,21 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
+/* Arduino libraries */
 
 
-/* Network Utilities */
+/* Sensor libraries */
 
 
-/* RT-Thread Smart */
+/* Display libraries */
+
+
+/* Timing libraries */
+
+
+/* Project libraries */
 
 #define SOC_AM335X
-#define RT_USING_UART1
+#define RT_USING_UART0
 
 #endif

@@ -32,6 +32,10 @@ config SOC_AM335X
     select RT_USING_USER_MAIN
     default y
 
+config RT_USING_UART0
+    bool "Using RT_USING_UART0"
+    default n
+
 config RT_USING_UART1
     bool "Using RT_USING_UART1"
     default y
