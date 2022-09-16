@@ -27,7 +27,7 @@
 #define __APM32F10X_BAKPR_H
 
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
 
 #include "apm32f10x.h"

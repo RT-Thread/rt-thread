@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 NXP
+ * Copyright 2020-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -18,12 +18,11 @@
 
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Clocks v8.0
+product: Clocks v10.0
 processor: MIMXRT1176xxxxx
 package_id: MIMXRT1176DVMAA
 mcu_data: ksdk2_0
-processor_version: 0.8.1
-board: MIMXRT1170-EVK
+processor_version: 12.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 #include "clock_config.h"
@@ -39,8 +38,6 @@ board: MIMXRT1170-EVK
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-/* System clock frequency. */
-extern uint32_t SystemCoreClock;
 
 /*******************************************************************************
  ************************ BOARD_InitBootClocks function ************************
@@ -154,7 +151,7 @@ outputs:
 - {id: LPUART7_CLK_ROOT.outFreq, value: 24 MHz}
 - {id: LPUART8_CLK_ROOT.outFreq, value: 24 MHz}
 - {id: LPUART9_CLK_ROOT.outFreq, value: 24 MHz}
-- {id: M4_CLK_ROOT.outFreq, value: 4320/11 MHz}
+- {id: M4_CLK_ROOT.outFreq, value: 240 MHz}
 - {id: M4_SYSTICK_CLK_ROOT.outFreq, value: 24 MHz}
 - {id: M7_CLK_ROOT.outFreq, value: 996 MHz}
 - {id: M7_SYSTICK_CLK_ROOT.outFreq, value: 100 kHz}
@@ -222,7 +219,8 @@ settings:
 - {id: ANADIG_PLL_SYS_PLL3_CTRL_POWERUP_CFG, value: Enabled}
 - {id: ANADIG_PLL_SYS_PLL3_CTRL_SYS_PLL3_DIV2_CFG, value: Enabled}
 - {id: CCM.CLOCK_ROOT0.MUX.sel, value: ANADIG_PLL.ARM_PLL_CLK}
-- {id: CCM.CLOCK_ROOT1.MUX.sel, value: ANADIG_PLL.SYS_PLL3_PFD3_CLK}
+- {id: CCM.CLOCK_ROOT1.DIV.scale, value: '2', locked: true}
+- {id: CCM.CLOCK_ROOT1.MUX.sel, value: ANADIG_PLL.SYS_PLL3_CLK}
 - {id: CCM.CLOCK_ROOT2.DIV.scale, value: '2'}
 - {id: CCM.CLOCK_ROOT2.MUX.sel, value: ANADIG_PLL.SYS_PLL3_CLK}
 - {id: CCM.CLOCK_ROOT25.DIV.scale, value: '22'}
@@ -233,7 +231,7 @@ settings:
 - {id: CCM.CLOCK_ROOT3.MUX.sel, value: ANADIG_PLL.SYS_PLL3_CLK}
 - {id: CCM.CLOCK_ROOT4.DIV.scale, value: '3'}
 - {id: CCM.CLOCK_ROOT4.MUX.sel, value: ANADIG_PLL.SYS_PLL2_PFD1_CLK}
-- {id: CCM.CLOCK_ROOT6.DIV.scale, value: '4'}
+- {id: CCM.CLOCK_ROOT6.DIV.scale, value: '4', locked: true}
 - {id: CCM.CLOCK_ROOT6.MUX.sel, value: ANADIG_PLL.SYS_PLL2_CLK}
 - {id: CCM.CLOCK_ROOT68.DIV.scale, value: '2'}
 - {id: CCM.CLOCK_ROOT68.MUX.sel, value: ANADIG_PLL.PLL_VIDEO_CLK}
@@ -366,6 +364,7 @@ void BOARD_BootClockRUN(void)
     rootCfg.div = 1;
     CLOCK_SetRootClock(kCLOCK_Root_M7_Systick, &rootCfg);
 #endif
+
 #if __CORTEX_M == 4
     rootCfg.mux = kCLOCK_M4_ClockRoot_MuxOscRc48MDiv2;
     rootCfg.div = 1;
@@ -435,26 +434,22 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetRootClock(kCLOCK_Root_M7, &rootCfg);
 #endif
 
-    /* Configure M4 using SYS_PLL3_PFD3_CLK */
+    /* Configure M4 using SYS_PLL3_CLK */
 #if __CORTEX_M == 4
-    rootCfg.mux = kCLOCK_M4_ClockRoot_MuxSysPll3Pfd3;
-    rootCfg.div = 1;
+    rootCfg.mux = kCLOCK_M4_ClockRoot_MuxSysPll3Out;
+    rootCfg.div = 2;
     CLOCK_SetRootClock(kCLOCK_Root_M4, &rootCfg);
 #endif
 
     /* Configure BUS using SYS_PLL3_CLK */
-#if __CORTEX_M == 7
     rootCfg.mux = kCLOCK_BUS_ClockRoot_MuxSysPll3Out;
     rootCfg.div = 2;
     CLOCK_SetRootClock(kCLOCK_Root_Bus, &rootCfg);
-#endif
 
     /* Configure BUS_LPSR using SYS_PLL3_CLK */
-#if __CORTEX_M == 4
     rootCfg.mux = kCLOCK_BUS_LPSR_ClockRoot_MuxSysPll3Out;
     rootCfg.div = 3;
     CLOCK_SetRootClock(kCLOCK_Root_Bus_Lpsr, &rootCfg);
-#endif
 
     /* Configure SEMC using SYS_PLL2_PFD1_CLK */
 #ifndef SKIP_SEMC_INIT

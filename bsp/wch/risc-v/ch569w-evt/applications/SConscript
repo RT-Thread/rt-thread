@@ -1,0 +1,15 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+app = ARGUMENTS.get('app', "main")
+
+src = Split("""
+{}.c
+""".format(app))
+
+path = [cwd, str(Dir('#'))]
+
+group = DefineGroup('Applications', src, depend=[''], CPPPATH=path)
+
+Return('group')

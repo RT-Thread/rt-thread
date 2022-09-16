@@ -7,11 +7,11 @@ src = []
 group = []
 CPPPATH = []
 
-if rtconfig.PLATFORM == 'iar':
-    print("\nThe current project does not support iar build\n")
+if rtconfig.PLATFORM in ['iccarm']:
+    print("\nThe current project does not support IAR build\n")
     Return('group')
 
-elif rtconfig.PLATFORM == 'gcc'or 'armclang':
+elif rtconfig.PLATFORM in ['gcc', 'armclang']:
     src = Glob('*.c')
     CPPPATH = [cwd+'/fsp_cfg', cwd + '/fsp_cfg/bsp']
 

@@ -14,7 +14,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART2
         default y
 
-   config BSP_USING_ARDUINO
+    config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
@@ -22,18 +22,20 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
         select BSP_USING_PWM2
         select BSP_USING_PWM2_CH2
         select BSP_USING_PWM2_CH3
         select BSP_USING_PWM3
         select BSP_USING_PWM3_CH1
         select BSP_USING_PWM3_CH2
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_ADAFRUIT
-        imply RTDUINO_USING_MSTIMER2
         default n
 
 endmenu
@@ -86,6 +88,15 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PWM
 
         if BSP_USING_PWM
+            menuconfig BSP_USING_PWM1
+                bool "Enable timer1 output PWM"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable PWM1 channel1"
+                        default n
+                endif
+
             menuconfig BSP_USING_PWM2
                 bool "Enable timer2 output PWM"
                 default n
@@ -109,6 +120,15 @@ menu "On-chip Peripheral Drivers"
 
                     config BSP_USING_PWM3_CH2
                         bool "Enable PWM3 channel2"
+                        default n
+                endif
+            
+            menuconfig BSP_USING_PWM4
+                bool "Enable timer4 output PWM"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4 channel1"
                         default n
                 endif
         endif

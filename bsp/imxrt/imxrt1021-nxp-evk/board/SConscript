@@ -14,9 +14,9 @@ CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
 
 CPPDEFINES = ['CPU_MIMXRT1021DAG5A', 'ENDIANNESS', 'STD=C99', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL','XIP_EXTERNAL_FLASH=1', 'XIP_BOOT_HEADER_ENABLE=1']
 
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     CPPDEFINES.append('__FPU_PRESENT=1')
-    
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')

@@ -559,8 +559,8 @@ static void imxrt_dma_tx_config(struct imxrt_uart *uart)
 uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
 {
     uint32_t freq;
-    uint32_t base = (uint32_t) uart_base;
 #ifdef SOC_IMXRT1170_SERIES
+    uint32_t base = (uint32_t) uart_base;
     switch (base)
     {
     case LPUART1_BASE:

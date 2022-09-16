@@ -25,9 +25,6 @@
 #define SET_BACKLIGHT_ON    rt_pin_write(BOARD_USING_FSA506_PIN_BACKLIGHT, 1)
 #define SET_BACKLIGHT_OFF   rt_pin_write(BOARD_USING_FSA506_PIN_BACKLIGHT, 0)
 
-#define SET_DISP_ON         rt_pin_write(BOARD_USING_FSA506_PIN_DISPLAY, 1)
-#define SET_DISP_OFF        rt_pin_write(BOARD_USING_FSA506_PIN_DISPLAY, 0)
-
 //
 // Physical display size
 //
@@ -40,10 +37,10 @@
 //#endif
 
 int rt_hw_lcd_fsa506_init(void);
-void fsa506_send_cmd(rt_uint8_t cmd);
-void fsa506_send_cmd_parameter(rt_uint8_t data);
+void fsa506_send_cmd(rt_uint16_t cmd);
+void fsa506_send_cmd_parameter(rt_uint16_t data);
 void fsa506_send_cmd_done(void);
-void fsa506_write_reg(rt_uint8_t cmd, rt_uint8_t data);
+void fsa506_write_reg(rt_uint16_t cmd, rt_uint16_t data);
 void fsa506_set_column(rt_uint16_t StartCol, rt_uint16_t EndCol);
 void fsa506_set_page(rt_uint16_t StartPage, rt_uint16_t EndPage);
 void fsa506_send_pixel_data(rt_uint16_t color);

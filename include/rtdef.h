@@ -44,6 +44,7 @@
  * 2022-04-20     Meco Man     change version number to v4.1.1
  * 2022-04-21     THEWON       add macro RT_VERSION_CHECK
  * 2022-06-29     Meco Man     add RT_USING_LIBC and standard libc headers
+ * 2022-08-16     Meco Man     change version number to v5.0.0
  */
 
 #ifndef __RT_DEF_H__
@@ -67,16 +68,16 @@ extern "C" {
 /**@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      4               /**< major version number */
-#define RT_SUBVERSION                   1               /**< minor version number */
-#define RT_REVISION                     1               /**< revise version number */
-
-/* RT-Thread version */
-#define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION, RT_SUBVERSION, RT_REVISION)
+#define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
+#define RT_VERSION_MINOR                0               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
-#define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + \
-                                                         (minor * 100) + revise)
+#define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
+
+/* RT-Thread version */
+#define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH)
+
 
 /* RT-Thread basic data type definitions */
 #ifndef RT_USING_ARCH_DATA_TYPE
@@ -207,11 +208,11 @@ typedef __gnuc_va_list              va_list;
 /* The way that TI compiler set section is different from other(at least
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
     * details. */
-#define RT_SECTION(x)
-#define RT_USED
+#define RT_SECTION(x)               __attribute__((section(x)))
+#define RT_USED                     __attribute__((used))
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)
-#define RT_WEAK
+#define ALIGN(n)                    __attribute__((aligned(n)))
+#define RT_WEAK                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__TASKING__)
@@ -512,7 +513,7 @@ struct rt_object_information
 
 /* 1 or 3 */
 #ifndef RT_TIMER_SKIP_LIST_MASK
-#define RT_TIMER_SKIP_LIST_MASK         0x3
+#define RT_TIMER_SKIP_LIST_MASK         0x3             /**< Timer skips the list mask */
 #endif
 
 /**
@@ -690,8 +691,12 @@ struct rt_thread
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
 
 #ifdef RT_USING_CPU_USAGE
-    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+    rt_uint64_t  duration_tick;                         /**< cpu usage tick */
 #endif /* RT_USING_CPU_USAGE */
+
+#ifdef RT_USING_PTHREADS
+    void  *pthread_data;                                /**< the handle of pthread data, adapt 32/64bit */
+#endif /* RT_USING_PTHREADS */
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 

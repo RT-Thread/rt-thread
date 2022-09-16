@@ -17,24 +17,24 @@
   * See the Mulan PSL v1 for more details.
   *
   ****************************************************************************************************
-  */ 
+  */
 
 /** @addtogroup CMSIS
   * @{
   */
-    
+
 #ifndef __FM33xx_H
 #define __FM33xx_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif /* __cplusplus */
-   
+
 /** @addtogroup Library_configuration_section
   * @{
   */
-         
-     
+
+
 /**
   * @brief FM33 Family
   */
@@ -52,7 +52,7 @@
                                          |(__FM33x0xx_CMSIS_VERSION_SUB1 << 16)\
                                          |(__FM33x0xx_CMSIS_VERSION_SUB2 << 8 )\
                                          |(__FM33x0xx_CMSIS_VERSION_RC))
-                                             
+
 /**
   * @}
   */
@@ -105,6 +105,6 @@
 /**
   * @}
   */
-  
+
 
 /************************ (C) COPYRIGHT Fudan Microelectronics *****END OF FILE****/

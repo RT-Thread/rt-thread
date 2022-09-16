@@ -17,8 +17,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief XIP_BOARD driver version 2.0.1. */
-#define FSL_XIP_BOARD_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+/*! @brief XIP_BOARD driver version 2.0.0. */
+#define FSL_XIP_BOARD_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
 /*@}*/
 
 /*************************************

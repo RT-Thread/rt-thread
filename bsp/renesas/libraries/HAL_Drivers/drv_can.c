@@ -134,7 +134,7 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISEN &&
+                argval != RT_CAN_MODE_LISTEN &&
                 argval != RT_CAN_MODE_LOOPBACK)
         {
             return -RT_ERROR;
@@ -147,7 +147,7 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             {
             case RT_CAN_MODE_NORMAL:
                 mode_to_set = CAN_TEST_MODE_DISABLED;
-            case RT_CAN_MODE_LISEN:
+            case RT_CAN_MODE_LISTEN:
                 mode_to_set = CAN_TEST_MODE_LISTEN;
             case RT_CAN_MODE_LOOPBACK:
                 mode_to_set = CAN_TEST_MODE_LOOPBACK_INTERNAL;

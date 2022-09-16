@@ -33,3 +33,29 @@ int mnt_init(void)
 }
 INIT_ENV_EXPORT(mnt_init);
 #endif
+
+#ifdef BSP_USING_SDCARD_FATFS
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#define DBG_TAG "app.filesystem"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+static int filesystem_mount(void)
+{
+    while(rt_device_find("sd0") == RT_NULL)
+    {
+        rt_thread_mdelay(1);
+    }
+  
+    int ret = dfs_mount("sd0", "/", "elm", 0, 0);
+    if (ret != 0)
+    {
+        rt_kprintf("ret: %d\n",ret);
+        LOG_E("sd0p0 mount to '/' failed!");
+        return ret;
+    }
+
+    return RT_EOK;
+}
+INIT_APP_EXPORT(filesystem_mount);
+#endif

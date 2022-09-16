@@ -70,10 +70,10 @@ def VS_AddHeadFilesGroup(program, elem, project_path):
     utils.source_ext = []
     utils.source_ext = ["h"]
     for item in program:
-        utils.walk_children(item)    
+        utils.walk_children(item)
     utils.source_list.sort()
     # print utils.source_list
-    
+
     for f in utils.source_list:
         path = _make_path_relative(project_path, f)
         File = SubElement(elem, 'File')
@@ -85,15 +85,15 @@ def VS_AddHeadFilesGroup(program, elem, project_path):
 
 def VSProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
-    
+
     tree = etree.parse('template_vs2005.vcproj')
     root = tree.getroot()
-    
+
     out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\r\n')
-    
+
     ProjectFiles = []
-    
+
     # add "*.c" files group
     for elem in tree.iter(tag='Filter'):
         if elem.attrib['Name'] == 'Source Files':
@@ -120,7 +120,7 @@ def VSProject(target, script, program):
         if elem.attrib['Name'] == 'Header Files':
             break
     VS_AddHeadFilesGroup(program, elem, project_path)
-    
+
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
@@ -128,7 +128,7 @@ def VSProject(target, script, program):
         for path in cpp_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
             paths.add(inc) #.replace('\\', '/')
-    
+
         paths = [i for i in paths]
         paths.sort()
         cpp_path = ';'.join(paths)
@@ -153,7 +153,7 @@ def VSProject(target, script, program):
         elem.set('PreprocessorDefinitions', definitions)
     # write link flags
 
-    # write lib dependence 
+    # write lib dependence
     if 'LIBS' in building.Env:
         for elem in tree.iter(tag='Tool'):
             if elem.attrib['Name'] == 'VCLinkerTool':

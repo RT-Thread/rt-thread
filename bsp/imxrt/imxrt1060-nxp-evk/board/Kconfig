@@ -18,7 +18,7 @@ config SOC_MIMXRT1062DVL6A
     default y
 
 menu "Onboard Peripheral Drivers"
-    
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
@@ -78,7 +78,7 @@ menu "Onboard Peripheral Drivers"
         if BSP_USING_TOUCHPAD
             choice
                 prompt "Select panel"
-                default DEMO_PANEL_RK043FN02H
+                default DEMO_PANEL_RK043FN66HS
 
                 config DEMO_PANEL_RK043FN02H
                     bool "RK043FN02H-CT"
@@ -101,11 +101,7 @@ menu "Onboard Peripheral Drivers"
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
             select PKG_USING_LV_MUSIC_DEMO
-            default n
-
-        config BSP_USING_LVGL_SQUARELINE
-            bool "Support LVGL SuqareLine Studio"
-            default n
+            default y
 
         config BSP_USING_NXP_GUIGUIDER
             bool "Support NXP GUI Guider"
@@ -179,7 +175,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_CACHE
         bool "Enable CACHE"
         default n
-      
+
 endmenu
 
 menu "Board extended module Drivers"

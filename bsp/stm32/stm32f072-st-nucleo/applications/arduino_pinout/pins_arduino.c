@@ -20,8 +20,8 @@
 */
 const pin_map_t pin_map_table[]=
 {
-    {D0}, /* RX */
-    {D1}, /* TX */
+    {D0, GET_PIN(A,3), "uart2"}, /* UART2-RX */
+    {D1, GET_PIN(A,2), "uart2"}, /* UART2-TX */
     {D2, GET_PIN(A,10)},
     {D3, GET_PIN(B,3), "pwm2", 2}, /* PWM */
     {D4, GET_PIN(B,5)},
@@ -30,12 +30,12 @@ const pin_map_t pin_map_table[]=
     {D7, GET_PIN(A,8)},
     {D8, GET_PIN(A,9)},
     {D9, GET_PIN(C,7), "pwm3", 2}, /* PWM */
-    {D10, GET_PIN(B,6), "pwm16", 1}, /* PWM */
+    {D10, GET_PIN(B,6), "pwm16", -1}, /* PWM16 CH1N */
     {D11, GET_PIN(A,7), "pwm17", 1}, /* PWM */
     {D12, GET_PIN(A,6)},
     {D13, GET_PIN(A,5)},
-    {D14}, /* I2C1-SDA */
-    {D15}, /* I2C1-SCL */
+    {D14, GET_PIN(B,9), "i2c1"}, /* I2C1-SDA */
+    {D15, GET_PIN(B,8), "i2c1"}, /* I2C1-SCL */
     {D16, GET_PIN(C,13)}, /* user button */
     {A0, GET_PIN(A,0), "adc1", 0}, /* ADC */
     {A1, GET_PIN(A,1), "adc1", 1}, /* ADC */

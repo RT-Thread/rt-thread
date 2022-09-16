@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config SOC_HC32F460PE
-    bool 
+    bool
     select SOC_SERIES_HC32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -28,12 +28,14 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART1
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART1_TX_USING_DMA
                 bool "Enable UART1 TX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART1
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_USING_UART2
@@ -42,44 +44,50 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART2_RX_USING_DMA
                 bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART2_TX_USING_DMA
                 bool "Enable UART2 TX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
                 default n
-            
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART3_TX_USING_DMA
                 bool "Enable UART3 TX DMA"
-                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default n
-            
+
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART4
+                select RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART4_TX_USING_DMA
                 bool "Enable UART4 TX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART4
+                select RT_SERIAL_USING_DMA
                 default n
         endif
-		
-	menuconfig BSP_USING_CAN
+
+    menuconfig BSP_USING_CAN
         bool "Enable CAN"
         default n
         select RT_USING_CAN
@@ -88,8 +96,8 @@ menu "On-chip Peripheral Drivers"
                 bool "using can1"
                 default n
         endif
-		
-	menuconfig BSP_USING_ADC
+
+    menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
         select RT_USING_ADC
@@ -118,13 +126,13 @@ menu "On-chip Peripheral Drivers"
                     bool "RTC USING LRC"
             endchoice
         endif
-		
+
     menuconfig BSP_USING_I2C2
         bool "Enable I2C2 BUS (software simulation)"
         default n
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
-        select RT_USING_PIN 
+        select RT_USING_PIN
         if BSP_USING_I2C2
             config BSP_I2C2_SCL_PIN
                 int "i2c2 scl pin number"
@@ -134,12 +142,36 @@ menu "On-chip Peripheral Drivers"
                 int "I2C2 sda pin number"
                 range 1 100
                 default 49
-        endif 
-		
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_PWM_TMRA
+        bool "Enable timerA output PWM"
+        depends on (!BSP_USING_UART3)
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM_TMRA
+        menuconfig BSP_USING_PWM_TMRA_4
+            bool "Enable timerA-4 output PWM"
+            default n
+            if BSP_USING_PWM_TMRA_4
+                config BSP_USING_PWM_TMRA_4_CH7
+                    bool "Enable timerA-4 channel7"
+                    default n
+                config BSP_USING_PWM_TMRA_4_CH8
+                    bool "Enable timerA-4 channel8"
+                    default n
+            endif
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

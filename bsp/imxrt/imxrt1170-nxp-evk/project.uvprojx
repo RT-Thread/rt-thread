@@ -336,7 +336,7 @@
               <MiscControls>-xc -std=gnu99 -mimplicit-float </MiscControls>
               <Define>CPU_MIMXRT1176DVMAA_cm7, USE_SDRAM, __STDC_LIMIT_MACROS, __RTTHREAD__, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1170\CMSIS\Include;..\libraries\MIMXRT1170\MIMXRT1176;..\libraries\MIMXRT1170\MIMXRT1176\drivers;..\libraries\peripherals;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\net\netdev\include;xip</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1170\CMSIS\Include;..\libraries\MIMXRT1170\MIMXRT1176;..\libraries\MIMXRT1170\MIMXRT1176\drivers;..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\net\netdev\include;xip</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -370,7 +370,7 @@
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc>--keep=*(.boot_hdr.ivt)--keep=*(.boot_hdr.boot_data)--keep=*(.boot_hdr.dcd_data)--keep=*(.boot_hdr.conf)</Misc>
+            <Misc> --keep=*(.boot_hdr.ivt) --keep=*(.boot_hdr.boot_data) --keep=*(.boot_hdr.dcd_data) --keep=*(.boot_hdr.conf) --predefine="-DXIP_BOOT_HEADER_ENABLE=1"</Misc>
             <LinkerInputFile />
             <DisabledWarnings>6439,6314</DisabledWarnings>
           </LDads>
@@ -412,16 +412,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>cctype.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>cstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -724,6 +752,13 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>fsl_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>startup_MIMXRT1176_cm7.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\arm\startup_MIMXRT1176_cm7.s</FilePath>
@@ -731,51 +766,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_cache.c</FileName>
+              <FileName>system_MIMXRT1176_cm7.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7\fsl_cache.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_anatop_ai.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_anatop_ai.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_common_arm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common_arm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dcdc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_dcdc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_gpio.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\system_MIMXRT1176_cm7.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -787,16 +780,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_pmu.c</FileName>
+              <FileName>fsl_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_pmu.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_MIMXRT1176_cm7.c</FileName>
+              <FileName>fsl_anatop_ai.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\system_MIMXRT1176_cm7.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_anatop_ai.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dcdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_dcdc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7\fsl_cache.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common_arm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_clock.c</FilePath>
             </File>
           </Files>
         </Group>
