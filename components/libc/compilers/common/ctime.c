@@ -171,8 +171,8 @@ static int set_timeval(struct timeval *tv)
 
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
-    time_t i;
-    time_t work = *timep % (SPD);
+    int i;
+    int work = *timep % (SPD);
 
     if(timep == RT_NULL || r == RT_NULL)
     {
@@ -186,11 +186,11 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     work /= 60;
     r->tm_min = work % 60;
     r->tm_hour = work / 60;
-    work = *timep / (SPD);
+    work = (int)(*timep / (SPD));
     r->tm_wday = (4 + work) % 7;
     for (i = 1970;; ++i)
     {
-        time_t k = __isleap(i) ? 366 : 365;
+        int k = __isleap(i) ? 366 : 365;
         if (work >= k)
             work -= k;
         else
@@ -468,7 +468,7 @@ time_t timegm(struct tm * const t)
 
     /* day is now the number of days since 'Jan 1 1970' */
     i = 7;
-    t->tm_wday = (day + 4) % i; /* Sunday=0, Monday=1, ..., Saturday=6 */
+    t->tm_wday = (int)((day + 4) % i); /* Sunday=0, Monday=1, ..., Saturday=6 */
 
     i = 24;
     day *= i;

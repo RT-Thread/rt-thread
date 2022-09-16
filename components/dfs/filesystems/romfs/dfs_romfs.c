@@ -157,7 +157,7 @@ int dfs_romfs_read(struct dfs_fd *file, void *buf, size_t count)
 
 int dfs_romfs_lseek(struct dfs_fd *file, off_t offset)
 {
-    if (offset <= file->size)
+    if (offset >= 0 && (size_t)offset <= file->size)
     {
         file->pos = offset;
         return file->pos;
@@ -243,6 +243,7 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 {
     rt_size_t index;
+    rt_size_t len;
     const char *name;
     struct dirent *d;
     struct romfs_dirent *dirent, *sub_dirent;
@@ -261,7 +262,7 @@ int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
         return -EINVAL;
 
     index = 0;
-    for (index = 0; index < count && file->pos < file->size; index ++)
+    for (index = 0; index < count && (size_t)file->pos < file->size; index ++)
     {
         d = dirp + index;
 
@@ -274,7 +275,9 @@ int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
         else
             d->d_type = DT_REG;
 
-        d->d_namlen = rt_strlen(name);
+        len = rt_strlen(name);
+        RT_ASSERT(len <= RT_UINT8_MAX);
+        d->d_namlen = (rt_uint8_t)len;
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
         rt_strncpy(d->d_name, name, DFS_PATH_MAX);
 
