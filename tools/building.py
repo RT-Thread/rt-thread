@@ -214,6 +214,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             del os.environ['RTT_EXEC_PATH']
             utils.ReloadModule(rtconfig)
 
+    exec_path = GetOption('exec-path')
+    if exec_path:
+        os.environ['RTT_EXEC_PATH'] = exec_path
+        utils.ReloadModule(rtconfig)
+
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
         if rtconfig.PLATFORM == 'armcc' and not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
