@@ -19,6 +19,9 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('RT_USING_ADC'):
         src += ['drv_adc.c']
 
+    if GetDepend(['BSP_USING_DAC']):
+        src += ['drv_dac.c'] 
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

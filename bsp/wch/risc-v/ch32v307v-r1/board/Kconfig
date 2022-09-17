@@ -73,18 +73,18 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_DAC
         bool "Enable DAC"
-            select RT_USING_DAC
-            default n
-
+        default n
+        select RT_USING_DAC
         if BSP_USING_DAC
             config BSP_USING_DAC_CHANNEL1
                 bool "Enable DAC CHANNEL1"
+                depends on BSP_USING_DAC
                 default n
-
             config BSP_USING_DAC_CHANNEL2
                 bool "Enable DAC CHANNEL2"
-                default n
-        endif
+                depends on BSP_USING_DAC
+                default n  
+        endif 
 
 endmenu
 
