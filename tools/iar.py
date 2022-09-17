@@ -169,26 +169,26 @@ def IARProject(target, script):
 
     IARWorkspace(target)
 
+def IARPath():
+    import rtconfig
+
+    # backup environ
+    old_environ = os.environ
+    os.environ['RTT_CC'] = 'iar'
+    utils.ReloadModule(rtconfig)
+
+    # get iar path
+    path = rtconfig.EXEC_PATH
+
+    # restore environ
+    os.environ = old_environ
+    utils.ReloadModule(rtconfig)
+
+    return path
+
 def IARVersion():
     import subprocess
     import re
-
-    def IARPath():
-        import rtconfig
-
-        # backup environ
-        old_environ = os.environ
-        os.environ['RTT_CC'] = 'iar'
-        utils.ReloadModule(rtconfig)
-
-        # get iar path
-        path = rtconfig.EXEC_PATH
-
-        # restore environ
-        os.environ = old_environ
-        utils.ReloadModule(rtconfig)
-
-        return path
 
     path = IARPath()
 
