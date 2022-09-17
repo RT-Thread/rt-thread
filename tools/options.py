@@ -85,6 +85,10 @@ def AddOptions():
                       dest = 'target',
                       type = 'string',
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+    AddOption('--exec-path',
+                dest = 'exec-path',
+                type = 'string',
+                help = 'set RTT_EXEC_PATH temperately')
     AddOption('--stackanalysis',
                 dest = 'stackanalysis',
                 action = 'store_true',
