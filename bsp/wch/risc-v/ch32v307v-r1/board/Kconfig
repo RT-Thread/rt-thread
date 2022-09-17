@@ -14,38 +14,76 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
-        if BSP_USING_UART
-            config BSP_USING_UART1
-            bool "Enable UART1"
+    if BSP_USING_UART
+       config BSP_USING_UART1
+           bool "Enable UART1"
+           default n
+
+       config BSP_USING_UART2
+           bool "Enable UART2"
+           default n
+
+       config BSP_USING_UART3
+           bool "Enable UART3"
+           default n
+
+       config BSP_USING_UART4
+           bool "Enable UART4"
+           default n
+
+       config BSP_USING_UART5
+           bool "Enable UART5"
+           default n
+
+       config BSP_USING_UART6
+           bool "Enable UART6"
+           default n
+
+       config BSP_USING_UART7
+           bool "Enable UART7"
+           default n
+
+       config BSP_USING_UART8
+           bool "Enable UART8"
+           default n
+    endif
+   
+    config BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
+        if BSP_USING_ADC
+           config BSP_USING_ADC1
+               bool "Enable ADC1"
+               default n
+
+           config BSP_USING_ADC2
+               bool "Enable ADC2"
+               default n
+
+           config ADC_CHANNEL_16
+               bool "Enable ADC CHANNEL 16 (inside temperature)"
+               default n    
+
+           config ADC_CHANNEL_17
+               bool "Enable ADC CHANNEL 17 (inside Verf)"
+               default n    
+        endif
+
+    config BSP_USING_DAC
+        bool "Enable DAC"
+            select RT_USING_DAC
             default n
 
-            config BSP_USING_UART2
-            bool "Enable UART2"
-            default n
+        if BSP_USING_DAC
+            config BSP_USING_DAC_CHANNEL1
+                bool "Enable DAC CHANNEL1"
+                default n
 
-            config BSP_USING_UART3
-            bool "Enable UART3"
-            default n
-
-            config BSP_USING_UART4
-            bool "Enable UART4"
-            default n
-
-            config BSP_USING_UART5
-            bool "Enable UART5"
-            default n
-
-            config BSP_USING_UART6
-            bool "Enable UART6"
-            default n
-
-            config BSP_USING_UART7
-            bool "Enable UART7"
-            default n
-
-            config BSP_USING_UART8
-            bool "Enable UART8"
-            default n
+            config BSP_USING_DAC_CHANNEL2
+                bool "Enable DAC CHANNEL2"
+                default n
         endif
 
 endmenu
