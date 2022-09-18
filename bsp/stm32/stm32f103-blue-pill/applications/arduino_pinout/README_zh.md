@@ -54,8 +54,8 @@ Hardware Drivers Config --->
 | 29 (A2)     | PA5       | 否    | ADC1-CH5，默认被RT-Thread的ADC设备框架adc1接管                                       |
 | 30 (A3)     | PA6       | 否    | ADC1-CH6，默认被RT-Thread的ADC设备框架adc1接管                                       |
 | 31 (A4)     | PA7       | 否    | ADC1-CH7，默认被RT-Thread的ADC设备框架adc1接管                                       |
-| 32 (A5)     | --        |      | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管                                   |
-| 33 (A6)     | --        |      | 芯片内部温度 ADC                                                                |
+| 32 (A5)     | --        |      | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管                             |
+| 33 (A6)     | --        |      | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管                                 |
 
 > 注意：
 > 
