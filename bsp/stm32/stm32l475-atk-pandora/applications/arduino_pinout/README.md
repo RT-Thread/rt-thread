@@ -22,8 +22,8 @@ Hardware Drivers Config --->
 
 | Arduino引脚编号           | STM32引脚编号 | 5V容忍    | 备注                                     |
 | --------------------- | --------- | ------- | -------------------------------------- |
-| 0 (D0)                | PA10      | 是       | USART1-Rx，被RT-Thread的UART设备框架uart1接管   |
-| 1 (D1)                | PA9       | 是       | USART2-Tx，被RT-Thread的UART设备框架uart1接管   |
+| 0 (D0)                | PA10      | 是       | Serial-Rx，被RT-Thread的UART设备框架uart1接管   |
+| 1 (D1)                | PA9       | 是       | Serial-Tx，被RT-Thread的UART设备框架uart1接管   |
 | 2 (D2)                | PB9       | 是       | 普通IO                                   |
 | 3 (D3)                | PD15      | 是       | PWM（定时器4发生）                            |
 | 4 (D4)                | PA8       | 是       | 普通IO                                   |
@@ -56,8 +56,8 @@ Hardware Drivers Config --->
 | 31 (D31)              | PB15      |         | SPI2-MOSI，默认被RT-Thread的SPI设备框架spi2总线接管 |
 | 32 (D32)              | PC7       | 是       | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管  |
 | 33 (D33)              | PC6       | 是       | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管  |
-| 34 (D34)              | PA2       |         | USART2-Tx，默认被RT-Thread的UART设备框架uart2接管 |
-| 35 (D35)              | PA3       |         | USART2-Rx，默认被RT-Thread的UART设备框架uart2接管 |
+| 34 (D34)              | PA2       |         | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管 |
+| 35 (D35)              | PA3       |         | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管 |
 | A0                    | PC2       | 是（但不建议） | ADC                                    |
 | A1                    | PC4       | 是（但不建议） | ADC                                    |
 | A2                    | --        |         | 芯片内部参考电压 ADC                           |
