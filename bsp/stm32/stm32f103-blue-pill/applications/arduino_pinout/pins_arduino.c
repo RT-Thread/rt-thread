@@ -38,12 +38,12 @@ const pin_map_t pin_map_table[]=
     {D15, GET_PIN(B,8), "i2c1"},    /* I2C (Wire) */
     {D16, GET_PIN(A,12), "usb"},    /* SerialUSB */
     {D17, GET_PIN(A,11), "usb"},    /* SerialUSB */
-    {D18, GET_PIN(A,10), "uart1"},  /* Serial */
-    {D19, GET_PIN(A,9), "uart1"},   /* Serial */
-    {D20, GET_PIN(A,2), "uart2"},   /* Serial2 */
-    {D21, GET_PIN(A,3), "uart2"},   /* Serial2 */
-    {D22, GET_PIN(B,10), "uart3"},  /* Serial3 */
-    {D23, GET_PIN(B,11), "uart3"},  /* Serial3 */
+    {D18, GET_PIN(A,10), "uart1"},  /* Serial-Rx */
+    {D19, GET_PIN(A,9), "uart1"},   /* Serial-Tx */
+    {D20, GET_PIN(A,2), "uart2"},   /* Serial2-Tx */
+    {D21, GET_PIN(A,3), "uart2"},   /* Serial2-Rx */
+    {D22, GET_PIN(B,10), "uart3"},  /* Serial3-Tx */
+    {D23, GET_PIN(B,11), "uart3"},  /* Serial3-Rx */
     {D24, GET_PIN(B,15), "spi2"},   /* SPI */
     {D25, GET_PIN(B,14), "spi2"},   /* SPI */
     {D26, GET_PIN(B,13), "spi2"},   /* SPI */
