@@ -13,8 +13,10 @@
 #include <mmu.h>
 
 extern void rt_cpu_dcache_disable(void);
+extern void rt_cpu_dcache_enable(void);
 extern void rt_hw_cpu_dcache_enable(void);
 extern void rt_cpu_icache_disable(void);
+extern void rt_cpu_icache_enable(void);
 extern void rt_hw_cpu_icache_enable(void);
 extern void rt_cpu_mmu_disable(void);
 extern void rt_cpu_mmu_enable(void);
@@ -27,7 +29,11 @@ void mmu_disable_dcache()
 
 void mmu_enable_dcache()
 {
+#ifdef __ICCARM__
+    rt_cpu_dcache_enable();
+#else
     rt_hw_cpu_dcache_enable();
+#endif
 }
 
 void mmu_disable_icache()
@@ -37,7 +43,11 @@ void mmu_disable_icache()
 
 void mmu_enable_icache()
 {
+#ifdef __ICCARM__
+    rt_cpu_icache_enable();
+#else
     rt_hw_cpu_icache_enable();
+#endif
 }
 
 void mmu_disable()
@@ -145,7 +155,7 @@ static volatile unsigned int _page_table[4*1024] __attribute__((aligned(16*1024)
 void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrStart, rt_uint32_t attr)
 {
     volatile rt_uint32_t *pTT;
-    volatile int i,nSec;
+    int i,nSec;
     pTT=(rt_uint32_t *)_page_table+(vaddrStart>>20);
     nSec=(vaddrEnd>>20)-(vaddrStart>>20);
     for(i=0;i<=nSec;i++)
