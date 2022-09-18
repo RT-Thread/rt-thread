@@ -8,8 +8,10 @@
  * 2021-09-09     WCH          the first version
  * 2022-09-17     hg0720       add some operation function
  */
+
 #ifndef DRV_DAC_H__
 #define DRV_DAC_H__
+
 typedef struct
 {
     DAC_TypeDef                   *Instance;

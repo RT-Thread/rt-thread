@@ -8,6 +8,7 @@
  * 2021-09-09     WCH          the first version
  * 2022-09-17     hg0720       add some operation function
  */
+
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -18,7 +19,6 @@
 //#define DRV_DEBUG
 #define LOG_TAG              "drv.dac"
 #include <drv_log.h>
-
 
 static DAC_HandleTypeDef dac_config[] =
 {
@@ -52,7 +52,6 @@ struct ch32_dac
 };
 
 static struct ch32_dac ch32_dac_obj[sizeof(dac_config) / sizeof(dac_config[0])];
-
 
 static rt_err_t ch32_dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
 {
@@ -138,7 +137,6 @@ static rt_err_t ch32_set_dac_value(struct rt_dac_device *device, rt_uint32_t cha
 
     return RT_EOK;
 }
-
 
 static const struct rt_dac_ops ch_dac_ops =
 {
