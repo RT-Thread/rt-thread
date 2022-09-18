@@ -756,7 +756,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\am335x_DDR.icf</state>
+                    <state>$PROJ_DIR$\beaglebone_ram.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -1826,7 +1826,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\am335x_DDR.icf</state>
+                    <state>$PROJ_DIR$\beaglebone_ram.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

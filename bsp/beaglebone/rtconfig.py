@@ -96,7 +96,7 @@ elif PLATFORM == 'iccarm':
     else:
         CFLAGS += ' -Oh'
 
-    LFLAGS = ' --config "am335x_DDR.icf"'
+    LFLAGS = ' --config "beaglebone_ram.icf"'
     LFLAGS += ' --entry __iar_program_start'
 
     CXXFLAGS = CFLAGS
