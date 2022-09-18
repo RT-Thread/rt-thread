@@ -70,7 +70,7 @@
 #define SS      D28  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi2"
 
-/* uart2 - PA2-TX  PA3-RX */
+/* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"
 
 #define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME      "timer7"
