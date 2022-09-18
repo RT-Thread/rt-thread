@@ -5,15 +5,15 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-09-17     hg0720       add some operation function
  * 2021-09-09     WCH          the first version
+ * 2022-09-17     hg0720       add some operation function
  */
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_dac.h"
 
-#if defined(BSP_USING_DAC_CHANNEL1) || defined(BSP_USING_DAC_CHANNEL2)
+#if defined BSP_USING_DAC
 
 //#define DRV_DEBUG
 #define LOG_TAG              "drv.dac"
@@ -135,6 +135,7 @@ static rt_err_t ch32_set_dac_value(struct rt_dac_device *device, rt_uint32_t cha
     {
         DAC_SetChannel2Data(DAC_Align_12b_R, *value);
     }
+
     return RT_EOK;
 }
 
@@ -192,7 +193,6 @@ static int ch32_dac_init(void)
             LOG_E("%s register failed", name_buf);
             result = -RT_ERROR;
         }
-
     }
 
     return result;
@@ -200,4 +200,4 @@ static int ch32_dac_init(void)
 
 INIT_DEVICE_EXPORT(ch32_dac_init);
 
-#endif /* BSP_USING_ADC */
+#endif /* BSP_USING_DAC */
