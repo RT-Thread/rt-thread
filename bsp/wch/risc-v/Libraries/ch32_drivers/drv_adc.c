@@ -148,9 +148,11 @@ static rt_uint32_t ch32_adc_get_channel(rt_uint32_t channel)
         ch32_channel = ADC_Channel_17;
         break;
 #endif /* ADC_CHANNEL_17 */
+#ifdef ADC_CHANNEL_18
     case 18:
         ch32_channel = ADC_Channel_18;
         break;
+#endif /* ADC_CHANNEL_18 */
 #ifdef ADC_CHANNEL_19
     case 19:
         ch32_channel = ADC_Channel_19;
