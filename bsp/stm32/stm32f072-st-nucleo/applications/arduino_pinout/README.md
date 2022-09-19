@@ -22,8 +22,8 @@ Hardware Drivers Config --->
 
 | Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                     |
 | ----------- | --------- | ---- | -------------------------------------- |
-| 0 (D0)      | PA3       | 否    | 默认为串口RX引脚，不建议当做普通IO                    |
-| 1 (D1)      | PA2       | 否    | 默认为串口TX引脚，不建议当做普通IO                    |
+| 0 (D0)      | PA3       | 否    | Serial-Rx，默认被RT-Thread的UART设备框架uart2接管 |
+| 1 (D1)      | PA2       | 否    | Serial-tx，默认被RT-Thread的UART设备框架uart2接管 |
 | 2 (D2)      | PA10      | 是    |                                        |
 | 3 (D3)      | PB3       | 是    | PWM（定时器2发生）                            |
 | 4 (D4)      | PB5       | 是    |                                        |
@@ -59,6 +59,16 @@ Hardware Drivers Config --->
 > 
 > 【1】[STM32 Nucleo板官方手册](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
 
-## 3 I2C总线
+## 3 通信
+
+### 3.1 I2C总线
 
 STM32F072 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚默认是被RT-Thread I2C设备框架接管的，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
+
+### 3.2 SPI总线
+
+目前本BSP不支持使用Arduino的SPI功能。
+
+### 3.3 串口
+
+本BSP通过 `Serial.` 方法调用 `uart2` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。

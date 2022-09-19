@@ -53,10 +53,10 @@
 /* i2c1 - PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c1"
 
-/* uart2 - PA2-TX  PA3-RX */
+/* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME             "uart2"
 
-/* uart3 - PB10-TX PB11-RX */
+/* Serial3 - PB10-TX PB11-RX */
 #define RTDUINO_SERIAL3_DEVICE_NAME             "uart3"
 
 /* spi2 - PB13-SCK  PB14-MISO  PB15-MOSI */
