@@ -95,7 +95,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 Bus"
                 default n
                 if BSP_USING_I2C1
-                    comment "Notice: PC7 --> 39; PC6 --> 38" 
+                    comment "Notice: PC7 --> 39; PC6 --> 38"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 SCL pin number"
                         range 0 79
@@ -109,7 +109,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_I2C2
                 bool "Enable I2C2 Bus"
                 default n
-
                 if BSP_USING_I2C2
                     comment "Notice: PC1 --> 33; PC0 --> 32"
                     config BSP_I2C2_SCL_PIN
@@ -120,8 +119,8 @@ menu "On-chip Peripheral Drivers"
                         int "i2c2 SDA pin number"
                         range 0 79
                         default 33
-                endif 
-        endif       
+                endif
+        endif
 
 endmenu
 
