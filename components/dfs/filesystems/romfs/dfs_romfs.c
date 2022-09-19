@@ -262,7 +262,7 @@ int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
         return -EINVAL;
 
     index = 0;
-    for (index = 0; index < count && (size_t)file->pos < file->size; index ++)
+    for (index = 0; index < count && (rt_size_t)file->pos < file->size; index ++)
     {
         d = dirp + index;
 
