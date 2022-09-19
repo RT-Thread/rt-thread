@@ -13,10 +13,8 @@
 #include <mmu.h>
 
 extern void rt_cpu_dcache_disable(void);
-extern void rt_cpu_dcache_enable(void);
 extern void rt_hw_cpu_dcache_enable(void);
 extern void rt_cpu_icache_disable(void);
-extern void rt_cpu_icache_enable(void);
 extern void rt_hw_cpu_icache_enable(void);
 extern void rt_cpu_mmu_disable(void);
 extern void rt_cpu_mmu_enable(void);
@@ -29,11 +27,7 @@ void mmu_disable_dcache()
 
 void mmu_enable_dcache()
 {
-#ifdef __ICCARM__
-    rt_cpu_dcache_enable();
-#else
     rt_hw_cpu_dcache_enable();
-#endif
 }
 
 void mmu_disable_icache()
@@ -43,11 +37,7 @@ void mmu_disable_icache()
 
 void mmu_enable_icache()
 {
-#ifdef __ICCARM__
-    rt_cpu_icache_enable();
-#else
     rt_hw_cpu_icache_enable();
-#endif
 }
 
 void mmu_disable()
