@@ -202,7 +202,7 @@ int rt_hw_i2c_init(void)
         RT_ASSERT(result == RT_EOK);
         ch32_i2c_bus_unlock(&soft_i2c_config[i]);
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
-        soft_i2c_config[i].bus_name, 
+        soft_i2c_config[i].bus_name,
         soft_i2c_config[i].scl,
         soft_i2c_config[i].sda);
     }
