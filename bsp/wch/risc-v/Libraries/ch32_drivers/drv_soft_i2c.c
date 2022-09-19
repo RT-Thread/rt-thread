@@ -22,7 +22,7 @@
 /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
-static const struct ch32_soft_i2c_config soft_i2c_config[] =
+static const struct ch32_soft_i2c_config soft_i2c_config[] = 
 {
 #ifdef BSP_USING_I2C1
     I2C1_BUS_CONFIG,
