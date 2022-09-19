@@ -3,7 +3,7 @@ mainmenu "RT-Thread Configuration"
 config RTT_DIR
     string
     option env="RTT_ROOT"
-    default "../../.."
+    default "../../../.."
 
 config PKGS_DIR
     string
@@ -12,5 +12,5 @@ config PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "../libraries/Kconfig"
+source "../../libraries/Kconfig"
 source "board/Kconfig"
