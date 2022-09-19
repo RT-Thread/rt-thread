@@ -137,6 +137,8 @@ extern int32_t g_CCAP_i32ErrCode;
  */
 #define CCAP_GET_INT_STS(ccap) (ccap->INT)
 
+#define CCAP_SET_CTL(ccap, u32IntMask) (ccap->CTL |= u32IntMask)
+#define CCAP_CLR_CTL(ccap, u32IntMask) (ccap->CTL &= ~u32IntMask)
 
 void CCAP_Open(CCAP_T *ccap, uint32_t u32InFormat, uint32_t u32OutFormat);
 void CCAP_SetCroppingWindow(CCAP_T *ccap, uint32_t u32VStart, uint32_t u32HStart, uint32_t u32Height, uint32_t u32Width);
