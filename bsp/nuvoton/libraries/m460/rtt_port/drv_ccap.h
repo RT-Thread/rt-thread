@@ -29,6 +29,8 @@ typedef enum
     CCAP_CMD_STOP_CAPTURE,
     CCAP_CMD_SET_SENCLK,
     CCAP_CMD_SET_PIPES,
+    CCAP_CMD_SET_OPMODE,
+    CCAP_CMD_SET_BASEADDR,
 } ccap_cmd;
 
 typedef struct

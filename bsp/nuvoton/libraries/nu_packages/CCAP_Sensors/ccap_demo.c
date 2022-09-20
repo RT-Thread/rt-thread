@@ -13,6 +13,7 @@
 #include <rtthread.h>
 
 #include "drv_ccap.h"
+#include <dfs_posix.h>
 
 #define DBG_ENABLE
 #define DBG_LEVEL DBG_LOG
@@ -20,34 +21,51 @@
 #define DBG_COLOR
 #include <rtdbg.h>
 
-#define THREAD_NAME       "ccap_demo"
 #define THREAD_PRIORITY   5
 #define THREAD_STACK_SIZE 4096
 #define THREAD_TIMESLICE  5
 
-#define DEVNAME_LCD       "lcd"
 #define DEF_CROP_PACKET_RECT
-#define DEF_DURATION         5
+#define DEF_ENABLE_PLANAR_PIPE  0
+
+#define DEF_DURATION         10
 #if defined(BSP_USING_CCAP0) && defined(BSP_USING_CCAP1)
     #define DEF_GRID_VIEW        1
 #elif defined(BSP_USING_CCAP0) || defined(BSP_USING_CCAP1)
     #define DEF_GRID_VIEW        0
 #endif
 
-static volatile uint32_t s_u32FrameGrabbed = 0;
-static rt_sem_t  preview_sem = RT_NULL;
+typedef struct
+{
+    char *thread_name;
+    char *devname_ccap;
+    char *devname_sensor;
+    char *devname_lcd;
+} ccap_grabber_param;
+typedef ccap_grabber_param *ccap_grabber_param_t;
+
+typedef struct
+{
+    ccap_config    sCcapConfig;
+    struct rt_device_graphic_info sLcdInfo;
+    uint32_t       u32CurFBPointer;
+    uint32_t       u32FrameEnd;
+    rt_sem_t       semFrameEnd;
+} ccap_grabber_context;
+typedef ccap_grabber_context *ccap_grabber_context_t;
 
 static void nu_ccap_event_hook(void *pvData, uint32_t u32EvtMask)
 {
+    ccap_grabber_context_t psGrabberContext = (ccap_grabber_context_t)pvData;
+
     if (u32EvtMask & NU_CCAP_FRAME_END)
     {
-        s_u32FrameGrabbed++;
-        rt_sem_release(preview_sem);
+        rt_sem_release(psGrabberContext->semFrameEnd);
     }
 
     if (u32EvtMask & NU_CCAP_ADDRESS_MATCH)
     {
-        LOG_E("Address matched");
+        LOG_I("Address matched");
     }
 
     if (u32EvtMask & NU_CCAP_MEMORY_ERROR)
@@ -56,41 +74,85 @@ static void nu_ccap_event_hook(void *pvData, uint32_t u32EvtMask)
     }
 }
 
-static rt_device_t ccap_sensor_init(ccap_config *psCcapConf, const char *pcCcapDevName, const char *pcSensorDevName)
+static rt_device_t ccap_sensor_init(ccap_grabber_context_t psGrabberContext, ccap_grabber_param_t psGrabberParam)
 {
     rt_err_t ret;
     ccap_view_info_t psViewInfo;
     sensor_mode_info *psSensorModeInfo;
     rt_device_t psDevSensor = RT_NULL;
     rt_device_t psDevCcap = RT_NULL;
+    struct rt_device_graphic_info *psLcdInfo = &psGrabberContext->sLcdInfo;
+    ccap_config_t    psCcapConfig = &psGrabberContext->sCcapConfig;
 
-    psDevCcap = rt_device_find(pcCcapDevName);
+    psDevCcap = rt_device_find(psGrabberParam->devname_ccap);
     if (psDevCcap == RT_NULL)
     {
-        LOG_E("Can't find %s", pcCcapDevName);
+        LOG_E("Can't find %s", psGrabberParam->devname_ccap);
         goto exit_ccap_sensor_init;
     }
 
-    psDevSensor = rt_device_find(pcSensorDevName);
+    psDevSensor = rt_device_find(psGrabberParam->devname_sensor);
     if (psDevSensor == RT_NULL)
     {
-        LOG_E("Can't find %s", pcSensorDevName);
+        LOG_E("Can't find %s", psGrabberParam->devname_sensor);
         goto exit_ccap_sensor_init;
     }
+
+    /* Packet pipe for preview */
+    if (DEF_GRID_VIEW)
+    {
+        psCcapConfig->sPipeInfo_Packet.u32Width    = psLcdInfo->width / 2;
+        psCcapConfig->sPipeInfo_Packet.u32Height   = psLcdInfo->height / 2;
+        psCcapConfig->sPipeInfo_Packet.u32PixFmt   = (psLcdInfo->pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB565) ? CCAP_PAR_OUTFMT_RGB565 : 0;
+        psCcapConfig->u32Stride_Packet             = psLcdInfo->width;
+        if (!rt_strcmp(psGrabberParam->devname_ccap, "ccap1"))
+            psCcapConfig->sPipeInfo_Packet.pu8FarmAddr = psLcdInfo->framebuffer + (psCcapConfig->sPipeInfo_Packet.u32Width * 2);
+        else
+            psCcapConfig->sPipeInfo_Packet.pu8FarmAddr = psLcdInfo->framebuffer;
+    }
+    else
+    {
+        psCcapConfig->sPipeInfo_Packet.pu8FarmAddr = psLcdInfo->framebuffer;
+        psCcapConfig->sPipeInfo_Packet.u32Height   = psLcdInfo->height;
+        psCcapConfig->sPipeInfo_Packet.u32Width    = psLcdInfo->width;
+        psCcapConfig->sPipeInfo_Packet.u32PixFmt   = (psLcdInfo->pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB565) ? CCAP_PAR_OUTFMT_RGB565 : 0;
+        psCcapConfig->u32Stride_Packet             = psLcdInfo->width;
+    }
+
+    /* Planar pipe for encoding */
+#if DEF_ENABLE_PLANAR_PIPE
+    psCcapConfig->sPipeInfo_Planar.u32Width    = psLcdInfo->width / 2;
+    psCcapConfig->sPipeInfo_Planar.u32Height   = psLcdInfo->height / 2;
+    psCcapConfig->sPipeInfo_Planar.pu8FarmAddr = rt_malloc_align(psCcapConfig->sPipeInfo_Planar.u32Height * psCcapConfig->sPipeInfo_Planar.u32Width * 2, 32);
+    psCcapConfig->sPipeInfo_Planar.u32PixFmt   = CCAP_PAR_PLNFMT_YUV422;
+    psCcapConfig->u32Stride_Planar             = psCcapConfig->sPipeInfo_Planar.u32Width;
+
+    if (psCcapConfig->sPipeInfo_Planar.pu8FarmAddr == RT_NULL)
+    {
+        psCcapConfig->sPipeInfo_Planar.u32Height = 0;
+        psCcapConfig->sPipeInfo_Planar.u32Width  = 0;
+        psCcapConfig->sPipeInfo_Planar.u32PixFmt = 0;
+        psCcapConfig->u32Stride_Planar           = 0;
+    }
+
+    LOG_I("Planar.FarmAddr@0x%08X", psCcapConfig->sPipeInfo_Planar.pu8FarmAddr);
+    LOG_I("Planar.FarmWidth: %d", psCcapConfig->sPipeInfo_Planar.u32Width);
+    LOG_I("Planar.FarmHeight: %d", psCcapConfig->sPipeInfo_Planar.u32Height);
+#endif
 
     /* open CCAP */
     ret = rt_device_open(psDevCcap, 0);
     if (ret != RT_EOK)
     {
-        LOG_E("Can't open %s", pcCcapDevName);
+        LOG_E("Can't open %s", psGrabberParam->devname_ccap);
         goto exit_ccap_sensor_init;
     }
 
     /* Find suit mode for packet pipe */
-    if (psCcapConf->sPipeInfo_Packet.pu8FarmAddr != RT_NULL)
+    if (psCcapConfig->sPipeInfo_Packet.pu8FarmAddr != RT_NULL)
     {
         /* Check view window of packet pipe */
-        psViewInfo = &psCcapConf->sPipeInfo_Packet;
+        psViewInfo = &psCcapConfig->sPipeInfo_Packet;
 
         if ((rt_device_control(psDevSensor, CCAP_SENSOR_CMD_GET_SUIT_MODE, (void *)&psViewInfo) != RT_EOK)
                 || (psViewInfo == RT_NULL))
@@ -101,21 +163,21 @@ static rt_device_t ccap_sensor_init(ccap_config *psCcapConf, const char *pcCcapD
     }
 
     /* Find suit mode for planner pipe */
-    if (psCcapConf->sPipeInfo_Planar.pu8FarmAddr != RT_NULL)
+    if (psCcapConfig->sPipeInfo_Planar.pu8FarmAddr != RT_NULL)
     {
         int recheck = 1;
 
         if (psViewInfo != RT_NULL)
         {
-            if ((psCcapConf->sPipeInfo_Planar.u32Width <= psViewInfo->u32Width) ||
-                    (psCcapConf->sPipeInfo_Planar.u32Height <= psViewInfo->u32Height))
+            if ((psCcapConfig->sPipeInfo_Planar.u32Width <= psViewInfo->u32Width) ||
+                    (psCcapConfig->sPipeInfo_Planar.u32Height <= psViewInfo->u32Height))
                 recheck = 0;
         }
 
         if (recheck)
         {
             /* Check view window of planner pipe */
-            psViewInfo = &psCcapConf->sPipeInfo_Planar;
+            psViewInfo = &psCcapConfig->sPipeInfo_Planar;
 
             /* Find suit mode */
             if ((rt_device_control(psDevSensor, CCAP_SENSOR_CMD_GET_SUIT_MODE, (void *)&psViewInfo) != RT_EOK)
@@ -129,55 +191,65 @@ static rt_device_t ccap_sensor_init(ccap_config *psCcapConf, const char *pcCcapD
 
 #if defined(DEF_CROP_PACKET_RECT)
     /* Set cropping rectangle */
-    if (psViewInfo->u32Width >= psCcapConf->sPipeInfo_Packet.u32Width)
+    if (psViewInfo->u32Width >= psCcapConfig->sPipeInfo_Packet.u32Width)
     {
         /* sensor.width >= preview.width */
-        psCcapConf->sRectCropping.x = (psViewInfo->u32Width - psCcapConf->sPipeInfo_Packet.u32Width) / 2;
-        psCcapConf->sRectCropping.width  = psCcapConf->sPipeInfo_Packet.u32Width;
+        psCcapConfig->sRectCropping.x = (psViewInfo->u32Width - psCcapConfig->sPipeInfo_Packet.u32Width) / 2;
+        psCcapConfig->sRectCropping.width  = psCcapConfig->sPipeInfo_Packet.u32Width;
     }
     else
     {
         /* sensor.width < preview.width */
-        psCcapConf->sRectCropping.x = 0;
-        psCcapConf->sRectCropping.width  = psViewInfo->u32Width;
+        psCcapConfig->sRectCropping.x = 0;
+        psCcapConfig->sRectCropping.width  = psViewInfo->u32Width;
     }
 
-    if (psViewInfo->u32Height >= psCcapConf->sPipeInfo_Packet.u32Height)
+    if (psViewInfo->u32Height >= psCcapConfig->sPipeInfo_Packet.u32Height)
     {
         /* sensor.height >= preview.height */
-        psCcapConf->sRectCropping.y = (psViewInfo->u32Height - psCcapConf->sPipeInfo_Packet.u32Height) / 2;
-        psCcapConf->sRectCropping.height = psCcapConf->sPipeInfo_Packet.u32Height;
+        psCcapConfig->sRectCropping.y = (psViewInfo->u32Height - psCcapConfig->sPipeInfo_Packet.u32Height) / 2;
+        psCcapConfig->sRectCropping.height = psCcapConfig->sPipeInfo_Packet.u32Height;
     }
     else
     {
         /* sensor.height < preview.height */
-        psCcapConf->sRectCropping.y = 0;
-        psCcapConf->sRectCropping.height = psViewInfo->u32Height;
+        psCcapConfig->sRectCropping.y = 0;
+        psCcapConfig->sRectCropping.height = psViewInfo->u32Height;
     }
 #else
     /* Set cropping rectangle */
-    psCcapConf->sRectCropping.x      = 0;
-    psCcapConf->sRectCropping.y      = 0;
-    psCcapConf->sRectCropping.width  = psViewInfo->u32Width;
-    psCcapConf->sRectCropping.height = psViewInfo->u32Height;
+    psCcapConfig->sRectCropping.x      = 0;
+    psCcapConfig->sRectCropping.y      = 0;
+    psCcapConfig->sRectCropping.width  = psViewInfo->u32Width;
+    psCcapConfig->sRectCropping.height = psViewInfo->u32Height;
 #endif
+
+    /* ISR Hook */
+    psCcapConfig->pfnEvHndler = nu_ccap_event_hook;
+    psCcapConfig->pvData      = (void *)psGrabberContext;
 
     /* Get Suitable mode. */
     psSensorModeInfo = (sensor_mode_info *)psViewInfo;
 
     /* Feed CCAP configuration */
-    ret = rt_device_control(psDevCcap, CCAP_CMD_CONFIG, (void *)psCcapConf);
+    ret = rt_device_control(psDevCcap, CCAP_CMD_CONFIG, (void *)psCcapConfig);
     if (ret != RT_EOK)
     {
-        LOG_E("Can't feed configuration %s", pcCcapDevName);
+        LOG_E("Can't feed configuration %s", psGrabberParam->devname_ccap);
         goto fail_ccap_init;
     }
 
-    /* speed up pixel clock */
-    if (rt_device_control(psDevCcap, CCAP_CMD_SET_SENCLK, (void *)&psSensorModeInfo->u32SenClk) != RT_EOK)
     {
-        LOG_E("Can't feed setting.");
-        goto fail_ccap_init;
+        int i32SenClk = psSensorModeInfo->u32SenClk;
+        if (DEF_GRID_VIEW && DEF_ENABLE_PLANAR_PIPE)
+            i32SenClk = 45000000; /* Bandwidth limitation: Slow down sensor clock */
+
+        /* speed up pixel clock */
+        if (rt_device_control(psDevCcap, CCAP_CMD_SET_SENCLK, (void *)&i32SenClk) != RT_EOK)
+        {
+            LOG_E("Can't feed setting.");
+            goto fail_ccap_init;
+        }
     }
 
     /* Initial CCAP sensor */
@@ -197,7 +269,7 @@ static rt_device_t ccap_sensor_init(ccap_config *psCcapConf, const char *pcCcapD
     ret = rt_device_control(psDevCcap, CCAP_CMD_SET_PIPES, (void *)psViewInfo);
     if (ret != RT_EOK)
     {
-        LOG_E("Can't set pipes %s", pcCcapDevName);
+        LOG_E("Can't set pipes %s", psGrabberParam->devname_ccap);
         goto fail_ccap_init;
     }
 
@@ -229,36 +301,67 @@ static void ccap_sensor_fini(rt_device_t psDevCcap, rt_device_t psDevSensor)
         rt_device_close(psDevCcap);
 }
 
+#if DEF_ENABLE_PLANAR_PIPE
+static int ccap_save_planar_frame(char *name, rt_tick_t timestamp, const void *data, size_t size)
+{
+    int fd;
+    char szFilename[32];
+    int wrote_size = 0;
+
+    rt_snprintf(szFilename, sizeof(szFilename), "/%s-%08d.yuv", name, timestamp);
+    fd = open(szFilename, O_WRONLY | O_CREAT);
+    if (fd < 0)
+    {
+        LOG_E("Could not open %s for writing.", szFilename);
+        goto exit_ccap_save_planar_frame;
+    }
+
+    if ((wrote_size = write(fd, data, size)) != size)
+    {
+        LOG_E("Could not write to %s (%d != %d).", szFilename, wrote_size, size);
+        goto exit_ccap_save_planar_frame;
+    }
+
+    wrote_size = size;
+
+exit_ccap_save_planar_frame:
+
+    if (fd >= 0)
+        close(fd);
+
+    return wrote_size;
+}
+#endif
+
 static void ccap_grabber(void *parameter)
 {
     rt_err_t ret;
+    ccap_grabber_param_t psGrabberParam = (ccap_grabber_param_t)parameter;
+    ccap_grabber_context sGrabberContext;
 
-    rt_device_t psDevLcd;
-    struct rt_device_graphic_info sLcdInfo;
+    rt_device_t psDevCcap = RT_NULL;
+    rt_device_t psDevLcd = RT_NULL;
 
-    ccap_config sCcapConfig;
-    rt_tick_t last_tick;
+    rt_tick_t last, now;
     rt_bool_t bDrawDirect;
-    rt_bool_t i32PingPong = 0;
 
-    rt_device_t psDevCcap0 = RT_NULL;
-    rt_device_t psDevCcap1 = RT_NULL;
+    rt_memset((void *)&sGrabberContext, 0, sizeof(ccap_grabber_context));
 
-    psDevLcd = rt_device_find(DEVNAME_LCD);
+    psDevLcd = rt_device_find(psGrabberParam->devname_lcd);
     if (psDevLcd == RT_NULL)
     {
-        LOG_E("Can't find %s", DEVNAME_LCD);
+        LOG_E("Can't find %s", psGrabberParam->devname_lcd);
         goto exit_ccap_grabber;
     }
 
-    ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_GET_INFO, &sLcdInfo);
+    ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_GET_INFO, &sGrabberContext.sLcdInfo);
     if (ret != RT_EOK)
     {
-        LOG_E("Can't get LCD info %s", DEVNAME_LCD);
+        LOG_E("Can't get LCD info %s", psGrabberParam->devname_lcd);
         goto exit_ccap_grabber;
     }
 
-    if (rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)sLcdInfo.framebuffer) == RT_EOK)
+    if (rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)sGrabberContext.sLcdInfo.framebuffer) == RT_EOK)
     {
         /* Sync-type LCD panel, will draw to VRAM directly. */
         bDrawDirect = RT_TRUE;
@@ -270,98 +373,51 @@ static void ccap_grabber(void *parameter)
     }
 
     LOG_I("LCD Type: %s-type",   bDrawDirect ? "Sync" : "MPU");
-    LOG_I("LCD Width: %d",   sLcdInfo.width);
-    LOG_I("LCD Height: %d",  sLcdInfo.height);
-    LOG_I("LCD bpp:%d",   sLcdInfo.bits_per_pixel);
-    LOG_I("LCD pixel format:%d",   sLcdInfo.pixel_format);
-    LOG_I("LCD frame buffer@0x%08x",   sLcdInfo.framebuffer);
-    LOG_I("LCD frame buffer size:%d",   sLcdInfo.smem_len);
+    LOG_I("LCD Width: %d",   sGrabberContext.sLcdInfo.width);
+    LOG_I("LCD Height: %d",  sGrabberContext.sLcdInfo.height);
+    LOG_I("LCD bpp:%d",   sGrabberContext.sLcdInfo.bits_per_pixel);
+    LOG_I("LCD pixel format:%d",   sGrabberContext.sLcdInfo.pixel_format);
+    LOG_I("LCD frame buffer@0x%08x",   sGrabberContext.sLcdInfo.framebuffer);
+    LOG_I("LCD frame buffer size:%d",   sGrabberContext.sLcdInfo.smem_len);
 
-    /* Packet pipe for preview */
-    if (DEF_GRID_VIEW)
+    sGrabberContext.semFrameEnd = rt_sem_create(psGrabberParam->devname_ccap, 0, RT_IPC_FLAG_FIFO);
+    if (sGrabberContext.semFrameEnd == RT_NULL)
     {
-        sCcapConfig.sPipeInfo_Packet.pu8FarmAddr = sLcdInfo.framebuffer;
-        sCcapConfig.sPipeInfo_Packet.u32Height   = sLcdInfo.height / 2;
-        sCcapConfig.sPipeInfo_Packet.u32Width    = sLcdInfo.width / 2;
-        sCcapConfig.sPipeInfo_Packet.u32PixFmt   = (sLcdInfo.pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB565) ? CCAP_PAR_OUTFMT_RGB565 : 0;
-        sCcapConfig.u32Stride_Packet             = sLcdInfo.width;
-    }
-    else
-    {
-        sCcapConfig.sPipeInfo_Packet.pu8FarmAddr = sLcdInfo.framebuffer;
-        sCcapConfig.sPipeInfo_Packet.u32Height   = sLcdInfo.height;
-        sCcapConfig.sPipeInfo_Packet.u32Width    = sLcdInfo.width;
-        sCcapConfig.sPipeInfo_Packet.u32PixFmt   = (sLcdInfo.pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB565) ? CCAP_PAR_OUTFMT_RGB565 : 0;
-        sCcapConfig.u32Stride_Packet             = sLcdInfo.width;
+        LOG_E("Can't allocate sem resource %s", psGrabberParam->devname_ccap);
+        goto exit_ccap_grabber;
     }
 
-    /* Planar pipe for encoding */
-    sCcapConfig.sPipeInfo_Planar.pu8FarmAddr = RT_NULL;
-    sCcapConfig.sPipeInfo_Planar.u32Height   = 0;
-    sCcapConfig.sPipeInfo_Planar.u32Width    = 0;
-    sCcapConfig.sPipeInfo_Planar.u32PixFmt   = 0;
-    sCcapConfig.u32Stride_Planar             = 0;
-
-    preview_sem = rt_sem_create("cdsem", 0, RT_IPC_FLAG_FIFO);
-
-    /* ISR Hook */
-    sCcapConfig.pfnEvHndler = nu_ccap_event_hook;
-    sCcapConfig.pvData      = (void *)&sCcapConfig;
-
-    /* initial ccap0 & sensor0 */
-#if defined(BSP_USING_CCAP0)
-    psDevCcap0 = ccap_sensor_init(&sCcapConfig, "ccap0", "sensor0");
-    if (psDevCcap0 == RT_NULL)
+    /* initial ccap & sensor*/
+    psDevCcap = ccap_sensor_init(&sGrabberContext, psGrabberParam);
+    if (psDevCcap == RT_NULL)
     {
-        LOG_E("Can't init ccap and sensor");
+        LOG_E("Can't init %s and %s", psGrabberParam->devname_ccap, psGrabberParam->devname_sensor);
         goto exit_ccap_grabber;
     }
 
     /* Start to capture */
-    if (rt_device_control(psDevCcap0, CCAP_CMD_START_CAPTURE, RT_NULL) != RT_EOK)
+    if (rt_device_control(psDevCcap, CCAP_CMD_START_CAPTURE, RT_NULL) != RT_EOK)
     {
-        LOG_E("Can't start ccap0 capture.");
+        LOG_E("Can't start %s", psGrabberParam->devname_ccap);
         goto exit_ccap_grabber;
     }
-#endif
-
-    /* initial ccap1 & sensor1 */
-#if defined(BSP_USING_CCAP1)
-    if (DEF_GRID_VIEW)
-        sCcapConfig.sPipeInfo_Packet.pu8FarmAddr += (sCcapConfig.sPipeInfo_Packet.u32Width * 2);
-
-    psDevCcap1 = ccap_sensor_init(&sCcapConfig, "ccap1", "sensor1");
-    if (psDevCcap1 == RT_NULL)
-    {
-        LOG_E("Can't init ccap and sensor");
-        goto exit_ccap_grabber;
-    }
-
-#if !defined(BSP_USING_CCAP0) || defined(DEF_GRID_VIEW)
-    /* Start to capture */
-    if (rt_device_control(psDevCcap1, CCAP_CMD_START_CAPTURE, RT_NULL) != RT_EOK)
-    {
-        LOG_E("Can't start ccap1 capture.");
-        goto exit_ccap_grabber;
-    }
-    if (!DEF_GRID_VIEW)
-        i32PingPong = 1;
-#endif
-
-#endif
 
     /* open lcd */
     ret = rt_device_open(psDevLcd, 0);
     if (ret != RT_EOK)
     {
-        LOG_E("Can't open %s", DEVNAME_LCD);
+        LOG_E("Can't open %s", psGrabberParam->devname_lcd);
         goto exit_ccap_grabber;
     }
 
-    last_tick = rt_tick_get();
+    last = now = rt_tick_get();
     while (1)
     {
-        rt_sem_take(preview_sem, RT_WAITING_FOREVER);
+        if (sGrabberContext.semFrameEnd)
+        {
+            rt_sem_take(sGrabberContext.semFrameEnd, RT_WAITING_FOREVER);
+        }
+
         if (!bDrawDirect)
         {
             //MPU type
@@ -370,78 +426,77 @@ static void ccap_grabber(void *parameter)
             /* Update fullscreen region. */
             sRectInfo.x = 0;
             sRectInfo.y = 0;
-            sRectInfo.height = sLcdInfo.height;
-            sRectInfo.width = sLcdInfo.width;
+            sRectInfo.height = sGrabberContext.sLcdInfo.height;
+            sRectInfo.width = sGrabberContext.sLcdInfo.width;
 
             rt_device_control(psDevLcd, RTGRAPHIC_CTRL_RECT_UPDATE, &sRectInfo);
         }
         else
         {
-            // Sync type
+            int i32FBSize = sGrabberContext.sLcdInfo.width * sGrabberContext.sLcdInfo.height * (sGrabberContext.sLcdInfo.bits_per_pixel / 8);
+            int i32VRAMPiece = sGrabberContext.sLcdInfo.smem_len / i32FBSize;
+            ccap_config sCcapConfig = {0};
+
+            // Pan to next view by grab0
+            if (!DEF_GRID_VIEW || !rt_strcmp(psGrabberParam->thread_name, "grab0"))
+            {
+                uint32_t u32BufPtr = (uint32_t)sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
+                                     + (sGrabberContext.u32FrameEnd % i32VRAMPiece) * i32FBSize;
+                rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)u32BufPtr);
+            }
+
+            sCcapConfig.sPipeInfo_Packet.pu8FarmAddr = sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
+                    + ((sGrabberContext.u32FrameEnd + 1) % i32VRAMPiece) * i32FBSize ;
+
+#if DEF_ENABLE_PLANAR_PIPE
+            sCcapConfig.sPipeInfo_Planar.pu8FarmAddr = sGrabberContext.sCcapConfig.sPipeInfo_Planar.pu8FarmAddr;
+            sCcapConfig.sPipeInfo_Planar.u32Width = sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Width;
+            sCcapConfig.sPipeInfo_Planar.u32Height = sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Height;
+            sCcapConfig.sPipeInfo_Planar.u32PixFmt = sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32PixFmt;
+#endif
+
+            rt_device_control(psDevCcap, CCAP_CMD_SET_BASEADDR, &sCcapConfig);
+
+#if DEF_ENABLE_PLANAR_PIPE
+            {
+                int OpModeShutter = 1;
+                /* One-shot mode, trigger next frame */
+                rt_device_control(psDevCcap, CCAP_CMD_SET_OPMODE, &OpModeShutter);
+            }
+#endif
         }
 
+        sGrabberContext.u32FrameEnd++;
+
         /* FPS */
-        if ((rt_tick_get() - last_tick) >= (DEF_DURATION * 1000))
+        now = rt_tick_get();
+        if ((now - last) >= (DEF_DURATION * 1000))
         {
-            if (i32PingPong == 0)
-            {
-                if (!DEF_GRID_VIEW)
-                    LOG_I("%s: %d FPS", psDevCcap0->parent.name, (s_u32FrameGrabbed / DEF_DURATION));
-                if (!DEF_GRID_VIEW && psDevCcap0 && psDevCcap1)
-                {
-                    rt_device_control(psDevCcap0, CCAP_CMD_STOP_CAPTURE, RT_NULL);
-                    rt_device_control(psDevCcap1, CCAP_CMD_START_CAPTURE, RT_NULL);
-                }
-            }
-            else if (i32PingPong == 1)
-            {
-                if (!DEF_GRID_VIEW)
-                    LOG_I("%s: %d FPS", psDevCcap1->parent.name, (s_u32FrameGrabbed / DEF_DURATION));
-                if (!DEF_GRID_VIEW && psDevCcap0 && psDevCcap1)
-                {
-                    rt_device_control(psDevCcap1, CCAP_CMD_STOP_CAPTURE, RT_NULL);
-                    rt_device_control(psDevCcap0, CCAP_CMD_START_CAPTURE, RT_NULL);
-                }
-            }
-
-            if (DEF_GRID_VIEW)
-                LOG_I("GridView: %s+%s: %d FPS", psDevCcap0->parent.name,
-                      psDevCcap1->parent.name,
-                      (s_u32FrameGrabbed / DEF_DURATION) / 2);
-
-            /* Ping-pong rendering */
-            if (!DEF_GRID_VIEW && psDevCcap0 && psDevCcap1)
-                i32PingPong = (i32PingPong + 1) % 2;
-
-            s_u32FrameGrabbed = 0;
-            last_tick = rt_tick_get();
+#if DEF_ENABLE_PLANAR_PIPE
+            ccap_save_planar_frame(psGrabberParam->thread_name, now, (const void *)sGrabberContext.sCcapConfig.sPipeInfo_Planar.pu8FarmAddr, sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Width * sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Height * 2);
+#endif
+            LOG_I("%s: %d FPS", psGrabberParam->devname_ccap, sGrabberContext.u32FrameEnd / DEF_DURATION);
+            sGrabberContext.u32FrameEnd = 0;
+            last = now;
         }
     }
 
 exit_ccap_grabber:
 
-#if defined(BSP_USING_CCAP0)
-    ccap_sensor_fini(rt_device_find("ccap0"), rt_device_find("sensor0"));
-#endif
-
-
-#if defined(BSP_USING_CCAP1)
-    ccap_sensor_fini(rt_device_find("ccap1"), rt_device_find("sensor1"));
-#endif
-
+    ccap_sensor_fini(rt_device_find(psGrabberParam->devname_ccap), rt_device_find(psGrabberParam->devname_sensor));
     rt_device_close(psDevLcd);
 
     return;
 }
 
-int ccap_demo(void)
+static void ccap_grabber_create(ccap_grabber_param_t psGrabberParam)
 {
-    rt_thread_t  ccap_thread = rt_thread_find(THREAD_NAME);
+    rt_thread_t ccap_thread = rt_thread_find(psGrabberParam->thread_name);
     if (ccap_thread == RT_NULL)
     {
-        ccap_thread = rt_thread_create(THREAD_NAME,
+        ccap_thread = rt_thread_create(psGrabberParam->thread_name,
                                        ccap_grabber,
-                                       RT_NULL,
+                                       psGrabberParam,
                                        THREAD_STACK_SIZE,
                                        THREAD_PRIORITY,
                                        THREAD_TIMESLICE);
@@ -449,7 +504,18 @@ int ccap_demo(void)
         if (ccap_thread != RT_NULL)
             rt_thread_startup(ccap_thread);
     }
+}
 
+int ccap_demo(void)
+{
+#if defined(BSP_USING_CCAP0)
+    static ccap_grabber_param ccap0_grabber_param = {"grab0", "ccap0", "sensor0", "lcd"};
+    ccap_grabber_create(&ccap0_grabber_param);
+#endif
+#if defined(BSP_USING_CCAP1)
+    static ccap_grabber_param ccap1_grabber_param = {"grab1", "ccap1", "sensor1", "lcd"};
+    ccap_grabber_create(&ccap1_grabber_param);
+#endif
     return 0;
 }
 MSH_CMD_EXPORT(ccap_demo, camera capture demo);
