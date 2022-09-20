@@ -497,7 +497,7 @@ static rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt
 
     while (read_bytes < count)
     {
-        int len = rt_ringbuffer_get(pipe->fifo, &pbuf[read_bytes], count - read_bytes);
+        int len = rt_ringbuffer_get(pipe->fifo, &pbuf[read_bytes], (rt_uint16_t)(count - read_bytes));
         if (len <= 0) break;
 
         read_bytes += len;
@@ -539,7 +539,7 @@ static rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buf
 
     while (write_bytes < count)
     {
-        int len = rt_ringbuffer_put(pipe->fifo, &pbuf[write_bytes], count - write_bytes);
+        int len = rt_ringbuffer_put(pipe->fifo, &pbuf[write_bytes], (rt_uint16_t)(count - write_bytes));
         if (len <= 0) break;
 
         write_bytes += len;

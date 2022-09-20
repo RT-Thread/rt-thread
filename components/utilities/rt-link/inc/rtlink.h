@@ -18,21 +18,21 @@
 
 #define RT_LINK_AUTO_INIT
 
-#define RT_LINK_FLAG_ACK            0x01
-#define RT_LINK_FLAG_CRC            0x02
+#define RT_LINK_FLAG_ACK            0x01U
+#define RT_LINK_FLAG_CRC            0x02U
 
-#define RT_LINK_FRAME_HEAD          0x15
-#define RT_LINK_FRAME_HEAD_MASK     0x1F
+#define RT_LINK_FRAME_HEAD          0x15U
+#define RT_LINK_FRAME_HEAD_MASK     0x1FU
 /* The maximum number of split frames for a long package */
-#define RT_LINK_FRAMES_MAX          0x03
+#define RT_LINK_FRAMES_MAX          0x03U
 /* The length in the rt_link_frame_head structure occupies 11 bits,
 so the value range after 4-byte alignment is 0-2044.*/
-#define RT_LINK_MAX_FRAME_LENGTH    1024
+#define RT_LINK_MAX_FRAME_LENGTH    1024U
 
-#define RT_LINK_ACK_MAX             0x07
-#define RT_LINK_CRC_LENGTH          4
-#define RT_LINK_HEAD_LENGTH         4
-#define RT_LINK_EXTEND_LENGTH       4
+#define RT_LINK_ACK_MAX             0x07U
+#define RT_LINK_CRC_LENGTH          4U
+#define RT_LINK_HEAD_LENGTH         4U
+#define RT_LINK_EXTEND_LENGTH       4U
 
 #define RT_LINK_MAX_DATA_LENGTH         (RT_LINK_MAX_FRAME_LENGTH - \
                                         RT_LINK_HEAD_LENGTH - \

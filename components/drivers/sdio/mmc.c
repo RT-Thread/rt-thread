@@ -196,7 +196,7 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
   card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
   card_capacity *= card->card_blksize;
   card_capacity >>= 10; /* unit:KB */
-  card->card_capacity = card_capacity;
+  card->card_capacity = (rt_uint32_t)card_capacity;
   LOG_I("emmc card capacity %d KB.", card->card_capacity);
 
   return 0;

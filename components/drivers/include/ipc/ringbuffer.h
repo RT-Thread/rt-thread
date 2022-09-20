@@ -95,7 +95,7 @@ rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 }
 
 /** return the size of empty space in rb */
-#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - rt_ringbuffer_data_len(rb))
+#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - (rt_int16_t)rt_ringbuffer_data_len(rb))
 
 
 #ifdef __cplusplus
