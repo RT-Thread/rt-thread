@@ -231,7 +231,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
     break;
     case HWTIMER_CTRL_FREQ_SET:
     {
-        rt_uint32_t *f;
+        rt_int32_t *f;
 
         if (args == RT_NULL)
         {
@@ -239,7 +239,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
             break;
         }
 
-        f = (rt_uint32_t*)args;
+        f = (rt_int32_t*)args;
         if ((*f > timer->info->maxfreq) || (*f < timer->info->minfreq))
         {
             LOG_W("frequency setting out of range! It will maintain at %d Hz", timer->freq);

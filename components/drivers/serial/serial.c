@@ -424,7 +424,7 @@ static void rt_dma_recv_update_get_index(struct rt_serial_device *serial, rt_siz
 
     if (rx_fifo->is_full && len != 0) rx_fifo->is_full = RT_FALSE;
 
-    rx_fifo->get_index += len;
+    rx_fifo->get_index += (rt_uint16_t)len;
     if (rx_fifo->get_index >= serial->config.bufsz)
     {
         rx_fifo->get_index %= serial->config.bufsz;
@@ -445,7 +445,7 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
 
     if (rx_fifo->get_index <= rx_fifo->put_index)
     {
-        rx_fifo->put_index += len;
+        rx_fifo->put_index += (rt_uint16_t)len;
         /* beyond the fifo end */
         if (rx_fifo->put_index >= serial->config.bufsz)
         {
@@ -459,7 +459,7 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
     }
     else
     {
-        rx_fifo->put_index += len;
+        rx_fifo->put_index += (rt_uint16_t)len;
         if (rx_fifo->put_index >= rx_fifo->get_index)
         {
             /* beyond the fifo end */

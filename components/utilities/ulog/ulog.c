@@ -522,7 +522,7 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
     }
     else if (ulog.async_rb)
     {
-        rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, log_buf_size);
+        rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, (rt_uint16_t)log_buf_size);
         /* send a notice */
         rt_sem_release(&ulog.async_notice);
     }
@@ -1405,7 +1405,7 @@ void ulog_async_output(void)
         char *log = rt_malloc(log_len + 1);
         if (log)
         {
-            rt_size_t len = rt_ringbuffer_get(ulog.async_rb, (rt_uint8_t *)log, log_len);
+            rt_size_t len = rt_ringbuffer_get(ulog.async_rb, (rt_uint8_t *)log, (rt_uint16_t)log_len);
             log[log_len] = '\0';
             ulog_output_to_all_backend(LOG_LVL_DBG, "", RT_TRUE, log, len);
             rt_free(log);

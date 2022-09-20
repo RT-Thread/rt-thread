@@ -100,7 +100,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     /* Convert the timeout to milliseconds */
     if (timeout)
     {
-        msec = timeout->tv_sec * 1000 + timeout->tv_usec / 1000;
+        msec = (int)timeout->tv_sec * 1000 + (int)timeout->tv_usec / 1000;
     }
     else
     {
