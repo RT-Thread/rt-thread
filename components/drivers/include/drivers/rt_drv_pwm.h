@@ -21,13 +21,16 @@
 #define PWMN_CMD_DISABLE    (RT_DEVICE_CTRL_BASE(PWM) + 5)
 #define PWM_CMD_SET_PERIOD  (RT_DEVICE_CTRL_BASE(PWM) + 6)
 #define PWM_CMD_SET_PULSE   (RT_DEVICE_CTRL_BASE(PWM) + 7)
+#define PWM_CMD_ENABLE_IRQ  (RT_DEVICE_CTRL_BASE(PWM) + 8)
+#define PWM_CMD_DISABLE_IRQ  (RT_DEVICE_CTRL_BASE(PWM) + 9)
 
 struct rt_pwm_configuration
 {
-    rt_uint32_t channel; /* 0 ~ n or 0 ~ -n, which depends on specific MCU requirements */
+    rt_uint32_t channel; /* 1-n or 0-n, which depends on specific MCU requirements */
     rt_uint32_t period;  /* unit:ns 1ns~4.29s:1Ghz~0.23hz */
     rt_uint32_t pulse;   /* unit:ns (pulse<=period) */
-
+    rt_uint32_t dead_time;
+    rt_uint32_t phase;
     /*
      * RT_TRUE  : The channel of pwm is complememtary.
      * RT_FALSE : The channel of pwm is nomal.
