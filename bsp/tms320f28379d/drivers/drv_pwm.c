@@ -1,7 +1,7 @@
 /*
  * drv_pwm.c
  *
- *  Created on: 2022��6��10��
+ *  Created on: 2022-09-21
  *      Author: Felix
  */
 
@@ -250,7 +250,7 @@ static rt_err_t drv_pwm_enable_irq(volatile struct EPWM_REGS *epwm,rt_bool_t ena
 }
 static rt_err_t drv_pwm_enable(volatile struct EPWM_REGS *epwm,struct rt_pwm_configuration *configuration,rt_bool_t enable)
 {
-    // TODO 
+    // TODO
     // Still not sure about how to stop PWM in C2000
     if(epwm == RT_NULL || configuration == RT_NULL)
     {

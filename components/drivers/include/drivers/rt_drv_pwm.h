@@ -29,8 +29,8 @@ struct rt_pwm_configuration
     rt_uint32_t channel; /* 0 ~ n or 0 ~ -n, which depends on specific MCU requirements */
     rt_uint32_t period;  /* unit:ns 1ns~4.29s:1Ghz~0.23hz */
     rt_uint32_t pulse;   /* unit:ns (pulse<=period) */
-    rt_uint32_t dead_time;
-    rt_uint32_t phase;
+    rt_uint32_t dead_time;  /* unit:ns */
+    rt_uint32_t phase;  /*unit: degree, 0~360, which is the phase of pwm output, */
     /*
      * RT_TRUE  : The channel of pwm is complememtary.
      * RT_FALSE : The channel of pwm is nomal.
