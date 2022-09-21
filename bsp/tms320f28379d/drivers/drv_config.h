@@ -1,11 +1,8 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * drv_config.h
  *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2022-09-24     qiyu      first version
+ *  Created on: 2022Äê6ÔÂ11ÈÕ
+ *      Author: Felix
  */
 
 #ifndef DRIVERS_DRV_CONFIG_H_
