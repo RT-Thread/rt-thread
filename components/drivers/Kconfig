@@ -692,6 +692,9 @@ menu "Using USB"
                     config RT_USBH_HID_MOUSE
                     bool "Enable HID mouse protocol"
                     default n
+                    config RT_USBH_HID_KEYBOARD
+                    bool "Enable HID keyboard protocol"
+                    default n
                 endif
         endif
     config RT_USING_USB_DEVICE
