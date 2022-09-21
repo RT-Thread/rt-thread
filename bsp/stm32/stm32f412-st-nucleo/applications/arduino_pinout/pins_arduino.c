@@ -38,9 +38,9 @@ const pin_map_t pin_map_table[]=
     {D14, GET_PIN(B,9), "i2c1"},        /* I2C-xx (Wire) */
     {D15, GET_PIN(B,8), "i2c1"},        /* I2C-xx (Wire) */
     {A0, GET_PIN(A,3), "adc1", 3},      /* ADC */
-    {A1, GET_PIN(C,0), "adc1", 3},      /* ADC */
-    {A2, GET_PIN(C,3), "adc1", 3},      /* ADC */
-    {A3, GET_PIN(C,1), "adc1", 3},      /* ADC */
-    {A4, GET_PIN(C,4), "adc1", 3},      /* ADC */
-    {A5, GET_PIN(C,5), "adc1", 3},      /* ADC */
+    {A1, GET_PIN(C,0), "adc1", 10},     /* ADC */
+    {A2, GET_PIN(C,3), "adc1", 13},     /* ADC */
+    {A3, GET_PIN(C,1), "adc1", 11},     /* ADC */
+    {A4, GET_PIN(C,4), "adc1", 14},     /* ADC */
+    {A5, GET_PIN(C,5), "adc1", 15},     /* ADC */
 };
