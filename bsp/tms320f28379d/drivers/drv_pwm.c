@@ -162,23 +162,25 @@ static rt_err_t drv_pwm_set(volatile struct EPWM_REGS *epwm,struct rt_pwm_config
     //
     // Set actions
     //
-    epwm->AQCTLA.bit.CAU = AQ_SET;            // Set PWM1A on Zero
-    epwm->AQCTLA.bit.CAD = AQ_CLEAR;
+    epwm->AQCTLA.bit.CAU = AQ_CLEAR;            // Set PWM1A on Zero
+    epwm->AQCTLA.bit.CAD = AQ_SET;
 
     //
     // Active Low PWMs - Setup Deadband
     //
     epwm->DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
     if(configuration->complementary){
-        epwm->DBCTL.bit.POLSEL = DB_ACTV_LOC;
+        epwm->DBCTL.bit.POLSEL = DB_ACTV_HIC;
+        epwm->DBRED.bit.DBRED = dead_time;
+        epwm->DBFED.bit.DBFED = dead_time;
     }else{
-        epwm->DBCTL.bit.POLSEL = DB_ACTV_LO;
+        epwm->DBRED.bit.DBRED = 0;
+        epwm->DBFED.bit.DBFED = 0;
+        epwm->DBCTL.bit.POLSEL = DB_ACTV_HI;
     }
 
-    //if disable dead time, set dead_time to 0
     epwm->DBCTL.bit.IN_MODE = DBA_ALL;
-    epwm->DBRED.bit.DBRED = dead_time;
-    epwm->DBFED.bit.DBFED = dead_time;
+    //if disable dead time, set dead_time to 0
 
     epwm->ETSEL.bit.INTSEL = ET_CTR_ZERO;    // Select INT on Zero event
     epwm->ETPS.bit.INTPRD = ET_1ST;          // Generate INT on 1st event
@@ -217,7 +219,48 @@ static rt_err_t drv_pwm_get(struct EPWM_REGS *epwm,struct rt_pwm_configuration *
     configuration->pulse = comp*configuration->period/prd;
     return RT_EOK;
 }
-rt_err_t drv_pwm_phase_set(struct rt_device_pwm *device, rt_uint32_t phase)
+
+rt_err_t drv_pwm_set_period(struct rt_device_pwm *device, rt_uint32_t period)
+{
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+    struct c28x_pwm *pwm = (struct c28x_pwm *)device->parent.user_data;
+    struct EPWM_REGS *epwm = (struct EPWM_REGS *)pwm->pwm_regs;
+    rt_uint32_t prd = period/(1e9/(CPU_FREQUENCY/PWM_DIVISION))/2;
+    epwm->TBPRD = prd;                       // Set timer period
+    return RT_EOK;
+}
+
+rt_err_t drv_pwm_set_pulse(struct rt_device_pwm *device, rt_uint32_t pulse)
+{
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+    struct c28x_pwm *pwm = (struct c28x_pwm *)device->parent.user_data;
+    struct EPWM_REGS *epwm = (struct EPWM_REGS *)pwm->pwm_regs;
+    rt_uint32_t compa = pulse/(1e9/(CPU_FREQUENCY/PWM_DIVISION));
+    epwm->CMPA.bit.CMPA = compa;    //set comparator value
+    return RT_EOK;
+}
+
+rt_err_t drv_pwm_set_dead_time(struct rt_device_pwm *device, rt_uint32_t dead_time)
+{
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+    struct c28x_pwm *pwm = (struct c28x_pwm *)device->parent.user_data;
+    struct EPWM_REGS *epwm = (struct EPWM_REGS *)pwm->pwm_regs;
+    rt_uint32_t _dead_time = dead_time/(1e9/(CPU_FREQUENCY/PWM_DIVISION));
+    epwm->DBRED.bit.DBRED = _dead_time;  // rising dead time
+    epwm->DBFED.bit.DBFED = _dead_time;  // falling dead time
+    return RT_EOK;
+}
+
+rt_err_t drv_pwm_set_phase(struct rt_device_pwm *device, rt_uint32_t phase)
 {
     if (!device)
     {
@@ -288,6 +331,10 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
         return drv_pwm_set((struct EPWM_REGS *)(pwm->pwm_regs), configuration);
     case PWM_CMD_GET:
         return drv_pwm_get((struct EPWM_REGS *)(pwm->pwm_regs), configuration);
+    case PWM_CMD_SET_PERIOD:
+            return drv_pwm_set((struct EPWM_REGS *)(pwm->pwm_regs), configuration);
+    case PWM_CMD_SET_PULSE:
+            return drv_pwm_set((struct EPWM_REGS *)(pwm->pwm_regs), configuration);
     case PWM_CMD_ENABLE_IRQ:
         return drv_pwm_enable_irq((struct EPWM_REGS *)(pwm->pwm_regs), RT_TRUE);
     case PWM_CMD_DISABLE_IRQ:
@@ -450,18 +497,30 @@ static int pwm_ex(int argc, char **argv)
             {
                 if(argc == 3)
                 {
-                    result = drv_pwm_phase_set(pwm_device, atoi(argv[2]));
+                    result = drv_pwm_set_phase(pwm_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
                     rt_kprintf("%s phase is set %d \n", pwm_device->parent.parent.name, (rt_base_t)atoi(argv[2]));
                 }
             }
-            else if(!strcmp(argv[1],"irq")){
+            else if(!strcmp(argv[1], "dead_time"))
+            {
                 if(argc == 3)
                 {
-                    if(atoi(argv[2])==1){
+                    result = drv_pwm_set_dead_time(pwm_device, atoi(argv[2]));
+                    result_str = (result == RT_EOK) ? "success" : "failure";
+                    rt_kprintf("%s phase is set %d \n", pwm_device->parent.parent.name, (rt_base_t)atoi(argv[2]));
+                }
+            }
+            else if(!strcmp(argv[1],"irq"))
+            {
+                if(argc == 3)
+                {
+                    if(atoi(argv[2])==1)
+                    {
                         drv_pwm_control(pwm_device, PWM_CMD_ENABLE_IRQ, RT_NULL);
                         rt_kprintf("Interrrupt enabled\n");
-                    }else{
+                    }else
+                    {
                         drv_pwm_control(pwm_device, PWM_CMD_DISABLE_IRQ, RT_NULL);
                         rt_kprintf("Interrrupt disabled\n");
                     }
@@ -474,6 +533,7 @@ static int pwm_ex(int argc, char **argv)
         rt_kprintf("Usage: \n");
         rt_kprintf("pwm_ex probe   <device name>                - probe pwm by name\n");
         rt_kprintf("pwm_ex phase  <phase>                    - set pwm phase\n");
+        rt_kprintf("pwm_ex dead_time  <dead_time>                    - set pwm dead time\n");
         result = - RT_ERROR;
     }
 

@@ -247,6 +247,40 @@ rt_err_t rt_pwm_set_pulse(struct rt_device_pwm *device, int channel, rt_uint32_t
     return result;
 }
 
+rt_err_t rt_pwm_set_dead_time(struct rt_device_pwm *device, int channel, rt_uint32_t dead_time)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_pwm_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = (channel > 0) ? (channel) : (-channel);
+    configuration.dead_time = dead_time;
+    result = rt_device_control(&device->parent, PWM_CMD_SET_DEAD_TIME, &configuration);
+
+    return result;
+}
+
+
+rt_err_t rt_pwm_set_phase(struct rt_device_pwm *device, int channel, rt_uint32_t phase)
+{
+    rt_err_t result = RT_EOK;
+    struct rt_pwm_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = (channel > 0) ? (channel) : (-channel);
+    configuration.phase = phase;
+    result = rt_device_control(&device->parent, PWM_CMD_SET_PHASE, &configuration);
+
+    return result;
+}
 rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
 {
     rt_err_t result = RT_EOK;
