@@ -64,7 +64,7 @@ static rt_err_t rt_usbh_hid_kbd_init(void* arg)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("start usb keyboard\n"));
 
-    kbd_thread = rt_thread_create("kbd0", kbd_task, intf, 500, 8, 100);
+    kbd_thread = rt_thread_create("kbd0", kbd_task, intf, 1024, 8, 100);
     rt_thread_startup(kbd_thread);
 
     return RT_EOK;
