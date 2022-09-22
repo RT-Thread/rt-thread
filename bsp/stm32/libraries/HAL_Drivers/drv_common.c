@@ -115,11 +115,19 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   * @param  None
   * @retval None
   */
+#ifdef HAL_USE_LEGACY_ERROR
 void _Error_Handler(char *s, int num)
+#else
+void Error_Handler(void)
+#endif /* HAL_USE_LEGACY_ERROR */
 {
     /* USER CODE BEGIN Error_Handler */
     /* User can add his own implementation to report the HAL error return state */
+    #ifdef HAL_USE_LEGACY_ERROR
     LOG_E("Error_Handler at file:%s num:%d", s, num);
+    #else
+    LOG_E("stuck in Error_Handler!");
+    #endif /* HAL_USE_LEGACY_ERROR */
     while (1)
     {
     }

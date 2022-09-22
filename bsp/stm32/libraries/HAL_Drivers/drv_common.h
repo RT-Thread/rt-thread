@@ -21,11 +21,13 @@
 extern "C" {
 #endif
 
+#ifdef HAL_USE_LEGACY_ERROR
 void _Error_Handler(char *s, int num);
 
 #ifndef Error_Handler
 #define Error_Handler() _Error_Handler(__FILE__, __LINE__)
 #endif
+#endif /* HAL_USE_LEGACY_ERROR */
 
 #define DMA_NOT_AVAILABLE ((DMA_INSTANCE_TYPE *)0xFFFFFFFFU)
 
