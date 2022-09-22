@@ -39,7 +39,7 @@
 
 #define LED_BUILTIN     D13  /* Default Built-in LED */
 
-/* i2c1 : xxx-SDA xxx-SCL */
+/* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
 #endif /* Pins_Arduino_h */

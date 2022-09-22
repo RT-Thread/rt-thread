@@ -105,6 +105,17 @@ extern "C" {
 #endif /* PWM12_CONFIG */
 #endif /* BSP_USING_PWM12 */
 
+#ifdef BSP_USING_PWM14
+#ifndef PWM14_CONFIG
+#define PWM14_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM14,        \
+       .name                    = "pwm14",      \
+       .channel                 = 0             \
+    }
+#endif /* PWM12_CONFIG */
+#endif /* BSP_USING_PWM12 */
+
 #ifdef __cplusplus
 }
 #endif
