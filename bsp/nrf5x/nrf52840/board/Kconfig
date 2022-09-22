@@ -371,6 +371,11 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    config BSP_USING_SEGGER_RTT_CONSOLE
+        bool "Enable SEGGER_RTT to console"
+        select PKG_USING_SEGGER_RTT
+        default n
+
     menuconfig BSP_USING_ONCHIP_RTC
     bool "Enable RTC"
     select RT_USING_RTC
