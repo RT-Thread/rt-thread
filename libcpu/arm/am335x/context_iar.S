@@ -40,6 +40,8 @@ rt_hw_context_switch:
     STMFD   SP!, {LR}               ; push pc (lr should be pushed in place of PC)
     STMFD   SP!, {R0-R12, LR}       ; push lr & register file
     MRS     R4, CPSR
+    TST     LR, #0x01
+    ORRNE   R4, R4, #0x20           ; it's thumb code
     STMFD   SP!, {R4}               ; push cpsr
     STR     SP, [R0]                ; store sp in preempted tasks TCB
     LDR     SP, [R1]                ; get new task stack pointer
@@ -56,6 +58,8 @@ rt_hw_context_switch_to:
     LDR     SP, [R0]                ; get new task stack pointer
     LDMFD   SP!, {R4}               ; pop new task spsr
     MSR     SPSR_cxsf, R4
+    BIC     R4, R4, #0x20           ; must be ARM mode
+    MSR     CPSR_CXSF, R4
     LDMFD   SP!, {R0-R12, LR, PC}^  ; pop new task r0-r12, lr & pc
 
 /*
