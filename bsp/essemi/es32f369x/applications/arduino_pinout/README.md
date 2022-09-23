@@ -71,7 +71,7 @@ RT-Thread online packages --->
 | D7              | PE6          | 普通IO           |
 | D8              | PB8          | 普通IO           |
 | D9              | PB9          | 普通IO           |
-| D10             | PB0          | 普通IO           |
+| D10             | PB0          | SPI片选/普通IO   |
 | D11             | PB5          | SPI1_MOSI/普通IO |
 | D12             | PB4          | SPI1_MISO/普通IO |
 | D13             | PD3          | SPI1_SCK/普通IO  |
@@ -169,3 +169,7 @@ SPI必须先调用begin才能使用其他函数
 
 ### 4.RTduino编译报错 "posix/xxx.h cannot find"
 如果编译报错为 "posix/xxx.h cannot find"，请更新rt-thread到最新版本（从github仓库拉取最新的源码）
+
+## 7 参考资料
+
+- [工程师笔记 | 使用RT-Thread的Arduino兼容层开发ES32应用程序](https://mp.weixin.qq.com/s/O693pgCLl1xOGxE9O7zaHA)

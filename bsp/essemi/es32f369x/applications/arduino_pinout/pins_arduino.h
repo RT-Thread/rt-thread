@@ -5,7 +5,6 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-10     Meco Man     first version
  * 2022-07-07     shiwa        Adapt ES32F369x
  */
 
@@ -51,6 +50,7 @@
 
 #define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c0"
 
+#define SS D10
 #define RTDUINO_DEFAULT_SPI_BUS_NAME            "spi0"
 
 #define LED_BUILTIN D16
