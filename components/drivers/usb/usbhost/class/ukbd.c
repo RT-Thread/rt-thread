@@ -34,8 +34,8 @@ static rt_err_t rt_usbh_hid_kbd_callback(void* arg)
     return RT_EOK;
 }
 
-rt_thread_t kbd_thread;
-void kbd_task(void* param)
+static rt_thread_t kbd_thread;
+static void kbd_task(void* param)
 {
     struct uhintf* intf = (struct uhintf*)param;
     while (1)
