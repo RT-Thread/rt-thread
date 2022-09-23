@@ -126,8 +126,8 @@ static rt_err_t rt_usbh_hid_mouse_callback(void* arg)
     return RT_EOK;
 }
 
-rt_thread_t mouse_thread;
-void mouse_task(void* param)
+static rt_thread_t mouse_thread;
+static void mouse_task(void* param)
 {
     struct uhintf* intf = (struct uhintf*)param;
     while (1)
@@ -154,7 +154,7 @@ static rt_err_t rt_usbh_hid_mouse_init(void* arg)
 
     rt_usbh_hid_set_idle(intf, 0, 0);
 
-    mouse_thread = rt_thread_create("mouse0", mouse_task, intf, 500, 8, 100);
+    mouse_thread = rt_thread_create("mouse0", mouse_task, intf, 1024, 8, 100);
     rt_thread_startup(mouse_thread);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("start usb mouse\n"));
