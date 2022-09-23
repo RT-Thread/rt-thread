@@ -44,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40101
+#define RT_VER_NUM 0x50000
 
 /* RT-Thread Components */
 
@@ -161,7 +161,7 @@
 /* peripheral libraries and drivers */
 
 
-/* Kendryte SDK */
+/* kendryte-sdk: Kendryte SDK */
 
 
 /* AI packages */
@@ -177,19 +177,10 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
-
-
 /* Hardware Drivers Config */
 
 #define SOC_SERIES_GD32F30x
-#define SOC_GD32305R
+#define SOC_GD32303C
 
 /* Onboard Peripheral Drivers */
 
