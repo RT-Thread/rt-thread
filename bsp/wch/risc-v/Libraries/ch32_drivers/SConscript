@@ -13,7 +13,7 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('RT_USING_PIN'):
         src += ['drv_gpio.c']
 
-    if GetDepend(['RT_USING_SERIAL', 'BSP_USING_UART']):
+    if GetDepend('BSP_USING_UART'):
         src += ['drv_usart.c']
 
     if GetDepend('RT_USING_ADC'):
