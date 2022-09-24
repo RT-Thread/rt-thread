@@ -40,7 +40,7 @@
 
 #define F_CPU          48000000L  /* CPU:48MHz */
 
-#define LED_BUITIN     D13  /* Default Built-in LED */
+#define LED_BUILTIN     D13  /* Default Built-in LED */
 
 /* i2c1 - PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
