@@ -1,0 +1,235 @@
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM1
+                bool "Enable ePWM1"
+                default n
+                if BSP_USING_PWM1
+                    menuconfig BSP_PWM1_PHASE_ENABLE
+                        bool "Enable phase"
+                        default n
+                    if BSP_PWM1_PHASE_ENABLE
+                        choice
+                            prompt "Select master or slave"
+                            default BSP_PWM1_SLAVE
+                            config BSP_PWM1_MASTER
+                                bool "Master"
+                            config BSP_PWM1_SLAVE
+                                bool "Slave"
+                                select BSP_PWM1_SYNC_IN
+                        endchoice
+                        if BSP_PWM1_MASTER
+                            choice 
+                                prompt "Sync time"
+                                default BSP_PWM1_SYNC_ZERO
+                                config BSP_PWM1_SYNC_IN
+                                    bool "Receiving sync from outside"
+                                config BSP_PWM1_SYNC_ZERO
+                                    bool "Sync when counter reaches zero"
+                                config BSP_PWM1_SYNC_COMPB
+                                    bool "Sync when counter reaches compB"
+                                config BSP_PWM1_SYNC_DISABLE
+                                    bool "Disable sync"
+                            endchoice
+                            config BSP_PWM1_PHASE
+                                int
+                                default 0
+                        endif
+                        if BSP_PWM1_SLAVE
+                            config BSP_PWM1_PHASE
+                                int "Phase, 0~360"
+                                range 0,360
+                                default 0
+                                help
+                                    the phase for PWM1 module
+                            choice
+                                prompt "PWM counter direction when sync happens"
+                                default 
+                                config BSP_PWM1_PHSDIR_UP
+                                    bool "Counter goes up when syncing"
+                                config BSP_PWM1_PHSDIR_DOWN
+                                    bool "Counter goes down when syncing"
+                        endif
+                        config BSP_PWM_SYNC_TIME
+                            int
+                            default 0 if BSP_PWM1_SYNC_IN
+                            default 1 if BSP_PWM1_SYNC_ZERO
+                            default 2 if BSP_PWM1_SYNC_COMPB
+                            default 3 if BSP_PWM1_SYNC_DISABLE
+                    endif
+                    
+                    menuconfig BSP_PWM1_IT_ENABLE
+                        bool "Enable interrupt service"
+                        default n
+                        if BSP_PWM1_IT_ENABLE
+                            choice BSP_PWM1_IT_TIME
+                                prompt "Select interrupt time"
+                                config BSP_ET_DCAEVT1SOC
+                                    bool "DCAEVT1SOC"
+                                config BSP_ET_CTR_ZERO
+                                    bool "ctr == zero"
+                                config BSP_ET_CTR_PRD
+                                    bool "ctr == prd"
+                                config BSP_ET_CTR_PRDZERO
+                                    bool "ctr == prd or ctr == zero"
+                                config BSP_ET_CTRU_CMPA
+                                    bool "ctr == compa when counting up"
+                                config BSP_ET_CTRD_CMPA
+                                    bool "ctr == compa when counting down"
+                                config BSP_ET_CTRU_CMPB
+                                    bool "ctr == compb when counting up"
+                                config BSP_ET_CTRD_CMPB
+                                    bool "ctr == compb when counting down"
+                            endchoice
+
+                            config BSP_PWM1_IT_TIME_SEL
+                                int
+                                default 0 if BSP_ET_DCAEVT1SOC
+                                default 1 if BSP_ET_CTR_ZERO
+                                default 2 if BSP_ET_CTR_PRD
+                                default 3 if BSP_ET_CTR_PRDZERO
+                                default 4 if BSP_ET_CTRU_CMPA
+                                default 5 if BSP_ET_CTRD_CMPA
+                                default 6 if BSP_ET_CTRU_CMPB
+                                default 7 if BSP_ET_CTRD_CMPB
+
+                            config BSP_PWM1_IT_PRD
+                                int "Interrupt period"
+                                default 0
+                                range 0 3
+                                help
+                                    ET_DISABLE		0x0
+                                    ET_1ST			0x1
+                                    ET_2ND			0x2
+                                    ET_3RD			0x3
+                        endif
+                    config BSP_PWM1_INV
+                        bool "PWM output inverted"
+                        default n
+                    config BSP_PWM1_HSPDIV
+                        int "HSP Clock division"
+                        range 0 2
+                        default 0
+                    config BSP_PWM1_DIV
+                        int "Clock division"
+                        range 0 2
+                        default 0
+                    choice
+                        prompt "Select counter mode"
+                        config BSP_PWM1_CTR_MODE_UPDOWN
+                            bool "Up-down mode"
+                        config BSP_PWM1_CTR_MODE_UP
+                            bool "Up mode"
+                        config BSP_PWM1_CTR_MODE_DOWN
+                            bool "Down mode"
+                    endchoice
+                endif
+            menuconfig BSP_USING_PWM2
+                bool "Enable ePWM2"
+                default n
+                if BSP_USING_PWM2
+                endif
+            menuconfig BSP_USING_PWM3
+                bool "Enable ePWM1"
+                default n
+                if BSP_USING_PWM3
+
+                endif
+            menuconfig BSP_USING_PWM4
+                bool "Enable ePWM1"
+                default n
+                if BSP_USING_PWM4
+                endif
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+        endif
+
+    config BSP_USING_USBD
+        bool "Enable USB device"
+        select RT_USING_USB_DEVICE
+        default n
+        if BSP_USING_USBD
+            config BSP_USB_CONNECT_PIN
+                int "USB connect pin"
+                default 67
+
+            config BSP_USB_PULL_UP_STATUS
+                int "USB PULL UP STATUS"
+                default 0
+        endif
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

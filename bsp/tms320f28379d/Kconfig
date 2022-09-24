@@ -27,3 +27,4 @@ config SOC_TMS320F28X
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+source "board/Kconfig"
