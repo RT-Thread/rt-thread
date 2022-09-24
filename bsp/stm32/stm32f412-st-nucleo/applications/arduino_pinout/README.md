@@ -25,20 +25,23 @@ Hardware Drivers Config --->
 | 0 (D0)      | PG9       | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart3接管 |
 | 1 (D1)      | PG14      | 是    | Serial-tx，默认被RT-Thread的UART设备框架uart3接管 |
 | 2 (D2)      | PF15      | 是    |                                        |
-| 3 (D3)      | PE13      | 是    | PWM（定时器2发生）                            |
+| 3 (D3)      | PE13      | 是    | PWM（定时器1发生）                            |
 | 4 (D4)      | PF14      | 是    |                                        |
-| 5 (D5)      | PE11      | 是    | PWM（定时器3发生）                            |
-| 6 (D6)      | PE9       | 是    | PWM（定时器2发生）                            |
+| 5 (D5)      | PE11      | 是    | PWM（定时器1发生）                            |
+| 6 (D6)      | PE9       | 是    | PWM（定时器1发生）                            |
 | 7 (D7)      | PF13      | 是    |                                        |
 | 8 (D8)      | PF12      | 是    |                                        |
-| 9 (D9)      | PD15      | 是    | PWM（定时器3发生）                            |
-| 10 (D10)    | PD14      | 是    | PWM（定时器16发生）                           |
-| 11 (D11)    | PA7       | 是    | PWM（定时器17发生）                           |
+| 9 (D9)      | PD15      | 是    | PWM（定时器4发生）                            |
+| 10 (D10)    | PD14      | 是    | PWM（定时器4发生）                            |
+| 11 (D11)    | PA7       | 是    | PWM（定时器14发生）                           |
 | 12 (D12)    | PA6       | 是    |                                        |
 | 13 (D13)    | PA5       | 是    |                                        |
 | 14 (D14)    | PB9       | 是    | 默认为I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管 |
 | 15 (D15)    | PB8       | 是    | 默认为I2C1-SCL，被RT-Thread的I2C设备框架i2c1总线接管 |
-| 16 (D16)    | PC13      | 是    | Nucleo板载用户按键（左侧蓝色）                     |
+| 16 (D16)    | PC13      | 是    | 板载用户按键（左侧蓝色）                           |
+| 17 (D17)    | PB0       | 是    | 板载用户LED1 (LED_BUILTIN)                 |
+| 18 (D18)    | PB7       | 是    | 板载用户LED2                               |
+| 19 (D19)    | PB14      | 是    | 板载用户LED3                               |
 | A0          | PA3       | 是    | ADC                                    |
 | A1          | PC0       | 是    | ADC                                    |
 | A2          | PC3       | 是    | ADC                                    |
@@ -51,9 +54,7 @@ Hardware Drivers Config --->
 > 注意：
 > 
 > 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 2. USART2是Nucleo板的默认串口，理论应对接到了Arduino引脚编号的D0和D1，但是其实际用于串口通信，因此不允许当做普通IO来使用和操作。如果需要将D0、D1与STM32 USART2的引脚相连，需要手动焊接锡桥SB62、SB63。
-> 3. Nucleo板的Arduino接口中AVDD（即AREF）默认是与VDD相连的，如果需要扩展板提供外部参考电压，需要将SB57锡桥挑开。
-> 4. D10引脚是PWM反相位引脚(也就是常说的互补输出引脚CHxN)。但是这里不用考虑到占空比互补问题（CHx-20%，CHxN-80%），直接正常使用即可。
+> 2. Nucleo板的Arduino接口中AVDD（即AREF）默认是与VDD相连的，如果需要扩展板提供外部参考电压，需要将SB57锡桥挑开。
 
 > 参考资料
 > 
