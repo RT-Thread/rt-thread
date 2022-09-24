@@ -376,7 +376,7 @@ static int pwm(int argc, char **argv)
                 if(argc == 5)
                 {
                     result = rt_pwm_set(pwm_device, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
-                    rt_kprintf("pwm info set on %s at channel %d\n",pwm_device,atoi(argv[2]));
+                    rt_kprintf("pwm info set on %s at channel %d\n",pwm_device,(rt_base_t)atoi(argv[2]));
                 }
                 else
                 {
@@ -384,10 +384,35 @@ static int pwm(int argc, char **argv)
                     rt_kprintf("Usage: pwm set <channel> <period> <pulse>\n");
                 }
             }
-
+            else if(!strcmp(argv[1], "phase"))
+            {
+                if(argc == 4)
+                {
+                    result = rt_pwm_set_phase(pwm_device, atoi(argv[2]),atoi(argv[3]));
+                    result_str = (result == RT_EOK) ? "success" : "failure";
+                    rt_kprintf("%s phase is set %d \n", pwm_device->parent.parent.name, (rt_base_t)atoi(argv[3]));
+                }
+            }
+            else if(!strcmp(argv[1], "dead_time"))
+            {
+                if(argc == 4)
+                {
+                    result = rt_pwm_set_dead_time(pwm_device, atoi(argv[2]),atoi(argv[3]));
+                    result_str = (result == RT_EOK) ? "success" : "failure";
+                    rt_kprintf("%s dead_time is set %d \n", pwm_device->parent.parent.name, (rt_base_t)atoi(argv[3]));
+                }
+            }
             else
             {
-                rt_kprintf("pwm get <channel>                        - get pwm channel info\n");
+                rt_kprintf("Usage: \n");
+                rt_kprintf("pwm probe   <device name>                - probe pwm by name\n");
+                rt_kprintf("pwm enable  <channel>                    - enable pwm channel\n");
+                rt_kprintf("pwm disable <channel>                    - disable pwm channel\n");
+                rt_kprintf("pwm get     <channel>                    - get pwm channel info\n");
+                rt_kprintf("pwm set     <channel> <period> <pulse>   - set pwm channel info\n");
+                rt_kprintf("pwm phase    <channel> <phase>                    - set pwm phase\n");
+                rt_kprintf("pwm dead_time  <channel> <dead_time>                    - set pwm dead time\n");
+                result = - RT_ERROR;
             }
         }
     }
@@ -399,7 +424,8 @@ static int pwm(int argc, char **argv)
         rt_kprintf("pwm disable <channel>                    - disable pwm channel\n");
         rt_kprintf("pwm get     <channel>                    - get pwm channel info\n");
         rt_kprintf("pwm set     <channel> <period> <pulse>   - set pwm channel info\n");
-
+        rt_kprintf("pwm phase    <channel> <phase>                    - set pwm phase\n");
+        rt_kprintf("pwm dead_time  <channel> <dead_time>                    - set pwm dead time\n");
         result = - RT_ERROR;
     }
 
