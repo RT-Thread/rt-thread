@@ -113,8 +113,8 @@ extern "C" {
        .name                    = "pwm14",      \
        .channel                 = 0             \
     }
-#endif /* PWM12_CONFIG */
-#endif /* BSP_USING_PWM12 */
+#endif /* PWM14_CONFIG */
+#endif /* BSP_USING_PWM14 */
 
 #ifdef __cplusplus
 }

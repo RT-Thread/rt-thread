@@ -41,7 +41,7 @@
 #define A6        (26)
 #define A7        (27)
 
-#define F_CPU          100000000L  /* CPU:100MHz */
+#define F_CPU          96000000L  /* CPU:96MHz */
 
 #define LED_BUILTIN     D17  /* Default Built-in LED */
 
