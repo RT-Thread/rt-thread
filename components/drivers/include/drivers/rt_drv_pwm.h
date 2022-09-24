@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
+ * 2022-09-24     yuqi         add phase and dead time configuration
  */
 
 #ifndef __DRV_PWM_H_INCLUDE__

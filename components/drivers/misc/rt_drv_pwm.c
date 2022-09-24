@@ -9,6 +9,7 @@
  * 2022-05-14     Stanley Lwin add pwm function
  * 2022-07-25     liYony       fix complementary outputs and add usage information in finsh
  * 2022-08-31     liYony       Add complementary output section to framework for management
+ * 2022-09-24     qiyu         Add dead-time and phase configuration
  */
 
 #include <rtdevice.h>

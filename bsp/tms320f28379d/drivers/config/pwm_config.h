@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-09-21     Felix        created
+ * 2022-09-21     yuqi        created
  */
 
 #ifndef DRIVERS_CONFIG_PWM_CONFIG_H_

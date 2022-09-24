@@ -1,8 +1,11 @@
 /*
- * drv_pwm.c
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- *  Created on: 2022-09-21
- *      Author: Felix
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-09-24     qiyu      first version
  */
 
 #include "rtdbg.h"
