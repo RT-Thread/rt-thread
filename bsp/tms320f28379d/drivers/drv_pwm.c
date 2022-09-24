@@ -144,7 +144,7 @@ static rt_err_t drv_pwm_set(volatile struct EPWM_REGS *epwm,struct rt_pwm_config
 {
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     // Set the configuration of PWM according to the parameter
 //    TODO Unknown problem, the clock division configuration of PWM module is 1, however, the experiment result shows the division is 2
@@ -223,7 +223,7 @@ static rt_err_t drv_pwm_get(struct EPWM_REGS *epwm,struct rt_pwm_configuration *
     // Retrieve the pwm configuration
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_uint32_t prd = epwm->TBPRD;
     rt_uint32_t comp = epwm->CMPA.bit.CMPA;
@@ -244,7 +244,7 @@ static rt_err_t drv_pwm_set_period(struct EPWM_REGS *epwm, rt_uint32_t period)
 {
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_uint32_t prd = period/(1e9/(CPU_FREQUENCY/PWM_DIVISION))/2;
     epwm->TBPRD = prd;                       // Set timer period
@@ -255,7 +255,7 @@ static rt_err_t drv_pwm_set_pulse(struct EPWM_REGS *epwm, int channel, rt_uint32
 {
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_uint32_t comp = pulse/(1e9/(CPU_FREQUENCY/PWM_DIVISION));
     if(channel == CHANNEL_A){
@@ -270,7 +270,7 @@ static rt_err_t drv_pwm_set_dead_time(struct EPWM_REGS *epwm, rt_uint32_t dead_t
 {
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_uint32_t _dead_time = dead_time/(1e9/(CPU_FREQUENCY/PWM_DIVISION));
     epwm->DBRED.bit.DBRED = _dead_time;  // rising dead time
@@ -282,7 +282,7 @@ static rt_err_t drv_pwm_set_phase(struct EPWM_REGS *epwm, rt_uint32_t phase)
 {
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if(phase<180){
         epwm->TBPHS.bit.TBPHS = epwm->TBPRD * phase/180;
@@ -297,7 +297,7 @@ static rt_err_t drv_pwm_set_phase(struct EPWM_REGS *epwm, rt_uint32_t phase)
 static rt_err_t drv_pwm_enable_irq(volatile struct EPWM_REGS *epwm,rt_bool_t enable){
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if(enable == RT_TRUE){
         // Interrupt setting
@@ -313,7 +313,7 @@ static rt_err_t drv_pwm_enable(volatile struct EPWM_REGS *epwm,rt_bool_t enable)
     // Still not sure about how to stop PWM in C2000
     if(epwm == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if(enable == RT_TRUE)
     {
@@ -384,7 +384,7 @@ EPWM_ISR_DEFINE(1)
 #endif
 
 void EPWM1_Isr();
-int c28x_hw_pwm_init(struct c28x_pwm *device)
+static int c28x_hw_pwm_init(struct c28x_pwm *device)
 {
     EALLOW;
 //    Assigning ISR to PIE
