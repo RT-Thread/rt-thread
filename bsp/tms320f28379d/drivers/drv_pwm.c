@@ -120,8 +120,6 @@ static rt_err_t drv_pwm_set(volatile struct EPWM_REGS *epwm,struct rt_pwm_config
     {
         return -RT_ERROR;
     }
-
-
     /*
      * TODO Unknown problem
      * the clock division configuration of PWM module is 1
@@ -136,13 +134,8 @@ static rt_err_t drv_pwm_set(volatile struct EPWM_REGS *epwm,struct rt_pwm_config
 
     epwm->TBPRD = prd;                       /* Set timer period*/
     epwm->TBCTR = 0x0000;                     /* Clear counter*/
-    epwm->TBCTL.bit.CTRMODE = RT_CTRMODE; /* Count up*/
-    epwm->TBCTL.bit.HSPCLKDIV = TB_DIV1;       /* Clock ratio to SYSCLKOUT*/
-    epwm->TBCTL.bit.CLKDIV = TB_DIV1;
     epwm->CMPCTL.bit.SHDWAMODE = RT_SHADOW_MODE;    /* Load registers every ZERO*/
     epwm->CMPCTL.bit.SHDWBMODE = RT_SHADOW_MODE;
-    epwm->CMPCTL.bit.LOADAMODE = RT_LOAD_TIME;
-    epwm->CMPCTL.bit.LOADBMODE = RT_LOAD_TIME;
     /* Setup compare */
     if(configuration->channel == CHANNEL_A)
     {
@@ -180,9 +173,7 @@ static rt_err_t drv_pwm_set(volatile struct EPWM_REGS *epwm,struct rt_pwm_config
     epwm->DBCTL.bit.IN_MODE = DBA_ALL;
     /* if disable dead time, set dead_time to 0 */
 
-    epwm->ETSEL.bit.INTSEL = ET_CTR_ZERO;    /* Select INT on Zero event */
-    epwm->ETPS.bit.INTPRD = ET_1ST;          /* Generate INT on 1st event */
-
+#ifdef BSP_PWM1_CTR_MODE_UPDOWN
     if(phase<180)
     {
         epwm->TBPHS.bit.TBPHS = prd * phase/180;
@@ -192,6 +183,7 @@ static rt_err_t drv_pwm_set(volatile struct EPWM_REGS *epwm,struct rt_pwm_config
         epwm->TBPHS.bit.TBPHS = prd-prd * (phase-180)/180;
         epwm->TBCTL.bit.PHSDIR = 1; /* count up*/
     }
+#endif
     if(epwm == &EPwm1Regs)
     {
         epwm->TBCTL.bit.PHSEN = TB_DISABLE;        /* Disable phase loading */
@@ -382,44 +374,148 @@ void EPWM1_Isr();
 
 static int c28x_hw_pwm_init(struct c28x_pwm *device)
 {
-    EALLOW;
-    /* Assigning ISR to PIE */
-    PieVectTable.EPWM1_INT = &EPWM1_Isr;
-    /* ENABLE Interrupt */
-    EDIS;
     IER |= M_INT3;
     rt_err_t result = 0;
-
     EALLOW;
 #ifdef BSP_USING_PWM1
-    GpioCtrlRegs.GPAPUD.all |= 5<<(1-1)*4;      /* Disable pull-up on GPIO0 (EPWM1A) */
-    GpioCtrlRegs.GPAMUX1.all|= 5<<(1-1)*4;      /* Configure GPIO0 as EPWM1A */
+    GpioCtrlRegs.GPAPUD.all |= 5<<(1-1)*4;      /* Disable pull-up(EPWM1A) */
+    GpioCtrlRegs.GPAMUX1.all|= 5<<(1-1)*4;      /* Configure as EPWM1A */
     EPwm1Regs.TZCTL.bit.TZA = TZ_OFF;           /* diable A when trip zone */
     EPwm1Regs.TZCTL.bit.TZB = TZ_OFF;           /* diable B when trip zone */
+    EPwm1Regs.TBCTL.bit.CTRMODE = BSP_PWM1_CTRMODE;
+    EPwm1Regs.TBCTL.bit.HSPCLKDIV = BSP_PWM1_HSPCLKDIV;       /* Clock ratio to SYSCLKOUT*/
+    EPwm1Regs.TBCTL.bit.CLKDIV = BSP_PWM1_CLKDIV;
+    EPwm1Regs.CMPCTL.bit.LOADAMODE = BSP_PWM1_LOADAMODE;
+    EPwm1Regs.CMPCTL.bit.LOADBMODE = BSP_PWM1_LOADAMODE;
+    #ifdef BSP_PWM1_IT_ENABLE
+        EPwm1Regs.ETSEL.bit.INTEN = 1;               /* Enable INT */
+        EPwm1Regs.ETSEL.bit.INTSEL = BSP_PWM1_INTSEL;
+        EPwm1Regs.ETPS.bit.INTPRD = BSP_PWM1_INTPRD;
+        /* Assigning ISR to PIE */
+        PieVectTable.EPWM1_INT = &EPWM1_Isr;
+        /* ENABLE Interrupt */
+    #else
+        EPwm1Regs.ETSEL.bit.INTEN = 0;               /* Disable INT */
+    #endif
+    #ifdef BSP_PWM1_ADC_TRIGGER
+        EPwm1Regs.ETSEL.bit.SOCAEN    = 1;        // Enable SOC on A group
+        EPwm1Regs.ETSEL.bit.SOCASEL  = BSP_PWM1_SOCASEL;        // Select SOC from zero
+        EPwm1Regs.ETPS.bit.SOCAPRD   = BSP_PWM1_SOCAPRD;        // Generate pulse on 1st event
+    #else
+        EPwm1Regs.ETSEL.bit.SOCAEN    = 0;        // Disable SOC on A group
+    #endif
+    #ifdef BSP_PWM1_MASTER
+        EPwm1Regs.TBCTL.bit.PHSEN = TB_DISABLE;        /* Disable phase loading */
+        EPwm1Regs.TBCTL.bit.SYNCOSEL = TB_CTR_ZERO;
+    #else
+        EPwm1Regs.TBCTL.bit.PHSEN = TB_ENABLE;        /* Disable phase loading */
+        EPwm1Regs.TBCTL.bit.SYNCOSEL = TB_SYNC_IN;
+    #endif
 #endif
 #ifdef BSP_USING_PWM2
-    GpioCtrlRegs.GPAPUD.all |= 5<<(2-1)*4;      /* Disable pull-up on GPIO0 (EPWM1A) */
-    GpioCtrlRegs.GPAMUX1.all|= 5<<(2-1)*4;      /* Configure GPIO0 as EPWM1A */
+    GpioCtrlRegs.GPAPUD.all |= 5<<(2-1)*4;      /* Disable pull-up on  (EPWM2A) */
+    GpioCtrlRegs.GPAMUX1.all|= 5<<(2-1)*4;      /* Configure as EPWM2A */
     EPwm2Regs.TZCTL.bit.TZA = TZ_OFF;           /* diable A when trip zone */
     EPwm2Regs.TZCTL.bit.TZB = TZ_OFF;           /* diable B when trip zone */
+    EPwm2Regs.TBCTL.bit.CTRMODE = BSP_PWM2_CTRMODE;
+    EPwm2Regs.TBCTL.bit.HSPCLKDIV = BSP_PWM2_HSPCLKDIV;       /* Clock ratio to SYSCLKOUT*/
+    EPwm2Regs.TBCTL.bit.CLKDIV = BSP_PWM2_CLKDIV;
+    EPwm2Regs.CMPCTL.bit.LOADAMODE = BSP_PWM2_LOADAMODE;
+    EPwm2Regs.CMPCTL.bit.LOADBMODE = BSP_PWM2_LOADAMODE;
+    #ifdef BSP_PWM2_IT_ENABLE
+        EPwm2Regs.ETSEL.bit.INTEN = 1;               /* Enable INT */
+        EPwm2Regs.ETSEL.bit.INTSEL = BSP_PWM2_INTSEL;
+        EPwm2Regs.ETPS.bit.INTPRD = BSP_PWM2_INTPRD;
+        /* Assigning ISR to PIE */
+        PieVectTable.EPWM2_INT = &EPWM2_Isr;
+        /* ENABLE Interrupt */
+    #else
+        EPwm2Regs.ETSEL.bit.INTEN = 0;               /* Disable INT */
+    #endif
+    #ifdef BSP_PWM2_ADC_TRIGGER
+        EPwm2Regs.ETSEL.bit.SOCAEN    = 1;        // Enable SOC on A group
+        EPwm2Regs.ETSEL.bit.SOCASEL  = BSP_PWM2_SOCASEL;        // Select SOC from zero
+        EPwm2Regs.ETPS.bit.SOCAPRD   = BSP_PWM2_SOCAPRD;        // Generate pulse on 1st event
+    #else
+        EPwm2Regs.ETSEL.bit.SOCAEN    = 0;        // Disable SOC on A group
+    #endif
+    #ifdef BSP_PWM2_MASTER
+        EPwm2Regs.TBCTL.bit.PHSEN = TB_DISABLE;        /* Disable phase loading */
+        EPwm2Regs.TBCTL.bit.SYNCOSEL = TB_CTR_ZERO;
+    #else
+        EPwm2Regs.TBCTL.bit.PHSEN = TB_ENABLE;        /* Disable phase loading */
+        EPwm2Regs.TBCTL.bit.SYNCOSEL = TB_SYNC_IN;
+    #endif
 #endif
 #ifdef BSP_USING_PWM3
-    GpioCtrlRegs.GPAPUD.all |= 5<<(3-1)*4;      /* Disable pull-up on GPIO0 (EPWM1A) */
-    GpioCtrlRegs.GPAMUX1.all|= 5<<(3-1)*4;      /* Configure GPIO0 as EPWM1A */
+    GpioCtrlRegs.GPAPUD.all |= 5<<(3-1)*4;      /* Disable pull-up on (EPWM3A) */
+    GpioCtrlRegs.GPAMUX1.all|= 5<<(3-1)*4;      /* Configure as EPWM3A */
     EPwm3Regs.TZCTL.bit.TZA = TZ_OFF;           /* diable A when trip zone */
     EPwm3Regs.TZCTL.bit.TZB = TZ_OFF;           /* diable B when trip zone */
+    EPwm3Regs.TBCTL.bit.CTRMODE = BSP_PWM3_CTRMODE;
+    EPwm3Regs.TBCTL.bit.HSPCLKDIV = BSP_PWM3_HSPCLKDIV;       /* Clock ratio to SYSCLKOUT*/
+    EPwm3Regs.TBCTL.bit.CLKDIV = BSP_PWM3_CLKDIV;
+    EPwm3Regs.CMPCTL.bit.LOADAMODE = BSP_PWM3_LOADAMODE;
+    EPwm3Regs.CMPCTL.bit.LOADBMODE = BSP_PWM3_LOADAMODE;
+    #ifdef BSP_PWM3_IT_ENABLE
+        EPwm3Regs.ETSEL.bit.INTEN = 1;               /* Enable INT */
+        EPwm3Regs.ETSEL.bit.INTSEL = BSP_PWM3_INTSEL;
+        EPwm3Regs.ETPS.bit.INTPRD = BSP_PWM3_INTPRD;
+        /* Assigning ISR to PIE */
+        PieVectTable.EPWM3_INT = &EPWM3_Isr;
+        /* ENABLE Interrupt */
+    #else
+        EPwm3Regs.ETSEL.bit.INTEN = 0;               /* Disable INT */
+    #endif
+    #ifdef BSP_PWM3_ADC_TRIGGER
+        EPwm3Regs.ETSEL.bit.SOCAEN    = 1;        // Enable SOC on A group
+        EPwm3Regs.ETSEL.bit.SOCASEL  = BSP_PWM3_SOCASEL;        // Select SOC from zero
+        EPwm3Regs.ETPS.bit.SOCAPRD   = BSP_PWM3_SOCAPRD;        // Generate pulse on 1st event
+    #else
+        EPwm3Regs.ETSEL.bit.SOCAEN    = 0;        // Disable SOC on A group
+    #endif
+    #ifdef BSP_PWM3_MASTER
+        EPwm3Regs.TBCTL.bit.PHSEN = TB_DISABLE;        /* Disable phase loading */
+        EPwm3Regs.TBCTL.bit.SYNCOSEL = TB_CTR_ZERO;
+    #else
+        EPwm3Regs.TBCTL.bit.PHSEN = TB_ENABLE;        /* Disable phase loading */
+        EPwm3Regs.TBCTL.bit.SYNCOSEL = TB_SYNC_IN;
+    #endif
 #endif
 #ifdef BSP_USING_PWM4
-    GpioCtrlRegs.GPAPUD.all |= 5<<(4-1)*4;      /* Disable pull-up on GPIO0 (EPWM1A) */
-    GpioCtrlRegs.GPAMUX1.all|= 5<<(4-1)*4;      /* Configure GPIO0 as EPWM1A */
+    GpioCtrlRegs.GPAPUD.all |= 5<<(4-1)*4;      /* Disable pull-up on (EPWM4A) */
+    GpioCtrlRegs.GPAMUX1.all|= 5<<(4-1)*4;      /* Configure as EPWM4A */
     EPwm4Regs.TZCTL.bit.TZA = TZ_OFF;           /* diable A when trip zone */
     EPwm4Regs.TZCTL.bit.TZB = TZ_OFF;           /* diable B when trip zone */
-#endif
-#ifdef BSP_USING_PWM5
-    GpioCtrlRegs.GPAPUD.all |= 5<<(5-1)*4;      /* Disable pull-up on GPIO0 (EPWM1A) */
-    GpioCtrlRegs.GPAMUX1.all|= 5<<(5-1)*4;      /* Configure GPIO0 as EPWM1A */
-    EPwm5Regs.TZCTL.bit.TZA = TZ_OFF;           /* diable A when trip zone */
-    EPwm5Regs.TZCTL.bit.TZB = TZ_OFF;           /* diable B when trip zone */
+    EPwm4Regs.TBCTL.bit.CTRMODE = BSP_PWM4_CTRMODE;
+    EPwm4Regs.TBCTL.bit.HSPCLKDIV = BSP_PWM4_HSPCLKDIV;       /* Clock ratio to SYSCLKOUT*/
+    EPwm4Regs.TBCTL.bit.CLKDIV = BSP_PWM4_CLKDIV;
+    EPwm4Regs.CMPCTL.bit.LOADAMODE = BSP_PWM4_LOADAMODE;
+    EPwm4Regs.CMPCTL.bit.LOADBMODE = BSP_PWM4_LOADAMODE;
+    #ifdef BSP_PWM4_IT_ENABLE
+        EPwm4Regs.ETSEL.bit.INTEN = 1;               /* Enable INT */
+        EPwm4Regs.ETSEL.bit.INTSEL = BSP_PWM4_INTSEL;
+        EPwm4Regs.ETPS.bit.INTPRD = BSP_PWM4_INTPRD;
+        /* Assigning ISR to PIE */
+        PieVectTable.EPWM4_INT = &EPWM4_Isr;
+        /* ENABLE Interrupt */
+    #else
+        EPwm4Regs.ETSEL.bit.INTEN = 0;               /* Disable INT */
+    #endif
+    #ifdef BSP_PWM4_ADC_TRIGGER
+        EPwm4Regs.ETSEL.bit.SOCAEN    = 1;        // Enable SOC on A group
+        EPwm4Regs.ETSEL.bit.SOCASEL  = BSP_PWM4_SOCASEL;        // Select SOC from zero
+        EPwm4Regs.ETPS.bit.SOCAPRD   = BSP_PWM4_SOCAPRD;        // Generate pulse on 1st event
+    #else
+        EPwm4Regs.ETSEL.bit.SOCAEN    = 0;        // Disable SOC on A group
+    #endif
+    #ifdef BSP_PWM4_MASTER
+        EPwm4Regs.TBCTL.bit.PHSEN = TB_DISABLE;        /* Disable phase loading */
+        EPwm4Regs.TBCTL.bit.SYNCOSEL = TB_CTR_ZERO;
+    #else
+        EPwm4Regs.TBCTL.bit.PHSEN = TB_ENABLE;        /* Disable phase loading */
+        EPwm4Regs.TBCTL.bit.SYNCOSEL = TB_SYNC_IN;
+    #endif
 #endif
     EDIS;
 
@@ -459,18 +555,18 @@ int c28x_pwm_init(void)
     struct rt_pwm_configuration config_tmp1 =
     {
        .channel = CHANNEL_A,
-       .period = 10000,
-       .pulse = 5000,
-       .dead_time = 100,
+       .period = BSP_PWM1_INIT_PERIOD,
+       .pulse = BSP_PWM1_INIT_PULSE,
+       .dead_time = BSP_PWM1_DB,
        .phase = 0,
        .complementary = RT_TRUE
     };
     drv_pwm_set(c28x_pwm_obj[0].pwm_regs,&config_tmp1);
-    config_tmp1.phase = 180;
+    config_tmp1.phase = BSP_PWM2_PHASE;
     drv_pwm_set(c28x_pwm_obj[1].pwm_regs,&config_tmp1);
-    config_tmp1.phase = 90;
+    config_tmp1.phase = BSP_PWM3_PHASE;
     drv_pwm_set(c28x_pwm_obj[2].pwm_regs,&config_tmp1);
-    config_tmp1.phase = 270;
+    config_tmp1.phase = BSP_PWM4_PHASE;
     drv_pwm_set(c28x_pwm_obj[3].pwm_regs,&config_tmp1);
     return result;
 

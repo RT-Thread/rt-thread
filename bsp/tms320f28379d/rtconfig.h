@@ -88,6 +88,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_PWM
 
 /* Using USB */
 
@@ -197,6 +198,101 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_PWM
+#define BSP_USING_PWM1
+
+/* Basic settings for PWM1 */
+
+#define BSP_PWM1_INIT_PERIOD 10000
+#define BSP_PWM1_INIT_PULSE 1000
+
+/* Advanced Settings for PWM1 */
+
+#define BSP_PWM1_PHASE_ENABLE
+#define BSP_PWM1_MASTER
+#define BSP_PWM1_PHASE 0
+#define BSP_PWM1_IT_ENABLE
+#define BSP_PWM1_INTSEL_ET_DCAEVT1SOC
+#define BSP_PWM1_INTSEL 0
+#define BSP_PWM1_INT_ET_1ST
+#define BSP_PWM1_INTPRD 1
+#define BSP_PWM1_HSPCLKDIV2
+#define BSP_PWM1_HSPCLKDIV 1
+#define BSP_PWM1_CLKDIV2
+#define BSP_PWM1_CLKDIV 1
+#define BSP_PWM1_CTR_MODE_UPDOWN
+#define BSP_PWM1_CTRMODE 2
+#define BSP_PWM1_CC_CTR_PRD
+#define BSP_PWM1_LOADAMODE 1
+#define BSP_PWM1_DB 100
+#define BSP_PWM1_ADC_TRIGGER
+#define BSP_PWM1_SOCASEL_ET_CTR_PRD
+#define BSP_PWM1_SOCASEL 2
+#define BSP_PWM1_SOCA_ET_1ST
+#define BSP_PWM1_SOCAPRD 1
+#define BSP_USING_PWM2
+
+/* Basic settings for PWM2 */
+
+#define BSP_PWM2_INIT_PERIOD 10000
+#define BSP_PWM2_INIT_PULSE 1000
+
+/* Advanced Settings for PWM2 */
+
+#define BSP_PWM2_PHASE_ENABLE
+#define BSP_PWM2_SLAVE
+#define BSP_PWM2_PHASE 90
+#define BSP_PWM2_HSPCLKDIV1
+#define BSP_PWM2_HSPCLKDIV 0
+#define BSP_PWM2_CLKDIV1
+#define BSP_PWM2_CLKDIV 0
+#define BSP_PWM2_CTR_MODE_UPDOWN
+#define BSP_PWM2_CTRMODE 2
+#define BSP_PWM2_CC_CTR_ZERO
+#define BSP_PWM2_LOADAMODE 0
+#define BSP_PWM2_DB 100
+#define BSP_USING_PWM3
+
+/* Basic settings for PWM3 */
+
+#define BSP_PWM3_INIT_PERIOD 10000
+#define BSP_PWM3_INIT_PULSE 1000
+
+/* Advanced Settings for PWM3 */
+
+#define BSP_PWM3_PHASE_ENABLE
+#define BSP_PWM3_SLAVE
+#define BSP_PWM3_PHASE 180
+#define BSP_PWM3_HSPCLKDIV1
+#define BSP_PWM3_HSPCLKDIV 0
+#define BSP_PWM3_CLKDIV1
+#define BSP_PWM3_CLKDIV 0
+#define BSP_PWM3_CTR_MODE_UPDOWN
+#define BSP_PWM3_CTRMODE 2
+#define BSP_PWM3_CC_CTR_ZERO
+#define BSP_PWM3_LOADAMODE 0
+#define BSP_PWM3_DB 100
+#define BSP_USING_PWM4
+
+/* Basic settings for PWM4 */
+
+#define BSP_PWM4_INIT_PERIOD 10000
+#define BSP_PWM4_INIT_PULSE 1000
+
+/* Advanced Settings for PWM4 */
+
+#define BSP_PWM4_PHASE_ENABLE
+#define BSP_PWM4_SLAVE
+#define BSP_PWM4_PHASE 270
+#define BSP_PWM4_HSPCLKDIV1
+#define BSP_PWM4_HSPCLKDIV 0
+#define BSP_PWM4_CLKDIV1
+#define BSP_PWM4_CLKDIV 0
+#define BSP_PWM4_CTR_MODE_UPDOWN
+#define BSP_PWM4_CTRMODE 2
+#define BSP_PWM4_CC_CTR_ZERO
+#define BSP_PWM4_LOADAMODE 0
+#define BSP_PWM4_DB 100
 
 /* Board extended module Drivers */
 
