@@ -871,7 +871,6 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'esp-idf':
         from esp_idf import ESPIDFProject
         ESPIDFProject(Env, Projects)
-        exit(0)
 
 def EndBuilding(target, program = None):
 
@@ -895,6 +894,7 @@ def EndBuilding(target, program = None):
 
     if GetOption('target'):
         GenTargetProject(program)
+        need_exit = True
 
     BSP_ROOT = Dir('#').abspath
     if GetOption('make-dist') and program != None:
