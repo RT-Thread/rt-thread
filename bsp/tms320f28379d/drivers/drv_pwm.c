@@ -366,11 +366,23 @@ static void pwm_isr(struct rt_device_pwm *rt_pwm)
     rt_interrupt_leave();   \
 }
 
-#ifdef BSP_USING_PWM1
+#ifdef BSP_PWM1_IT_ENABLE
 EPWM_ISR_DEFINE(1)
+void EPWM1_Isr();
+#endif
+#ifdef BSP_PWM2_IT_ENABLE
+EPWM_ISR_DEFINE(2)
+void EPWM2_Isr();
+#endif
+#ifdef BSP_PWM3_IT_ENABLE
+EPWM_ISR_DEFINE(3)
+void EPWM3_Isr();
+#endif
+#ifdef BSP_PWM4_IT_ENABLE
+EPWM_ISR_DEFINE(4)
+void EPWM4_Isr();
 #endif
 
-void EPWM1_Isr();
 
 static int c28x_hw_pwm_init(struct c28x_pwm *device)
 {
