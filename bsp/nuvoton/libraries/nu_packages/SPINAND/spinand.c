@@ -69,6 +69,28 @@ const struct nu_spinand_info g_spinandflash_list[] =
 #endif
     },
 
+    {
+        /* Here, we just only define 64B for spare area, not ECC area. */
+        0xEFBA23, 2048, 64, 0x6b, 0x05, 0x01, 0x02, 0x1, 4096, 64, 0, "Winbond 512MB: 2048+128@64@4096",
+#if defined(RT_USING_DFS_UFFS)
+        {
+            /* For storing Seal-byte at 0x39. Need 15-Bytes */
+            0x04, 0x0C, 0x14, 0x0C, 0x24, 0x0C, 0x34, 0x0B, 0xFF, 0x00
+        },
+        {
+            /* No report latest ECC part in Spare-3 */
+            0xFF, 0x00
+        }
+#else
+        {
+            0x04, 0x0C, 0x14, 0x0C, 0x24, 0x0C, 0x34, 0x0C, 0xFF, 0x00
+        },
+        {
+            0x40, 0x40, 0xFF, 0x00
+        }
+#endif
+    },
+
 #if 0
     { 0xEFAA22, 2048, 64, 0x6b, 0xff, 0xff, 0xff, 0x1, 2048, 64, 0, "Winbond 256MB: 2048+64@64@1024" },
     { 0xEFAB21, 2048, 64, 0x6b, 0xff, 0xff, 0xff, 0x1, 1024, 64, 1, "Winbond 256MB: 2048+64@64@1024, MCP" },
@@ -99,7 +121,6 @@ const struct nu_spinand_info g_spinandflash_list[] =
 #endif
 };
 #define SPINAND_LIST_ELEMENT_NUM ( sizeof(g_spinandflash_list)/sizeof(struct nu_spinand_info) )
-
 
 /*
 ========================================================
@@ -637,7 +658,7 @@ static rt_err_t spinand_read_quadoutput(
     return nu_qspi_transfer_message(qspi, (struct rt_qspi_message *) &qspi_messages);
 }
 
-static rt_err_t spinand_jedecid_get(struct rt_qspi_device *qspi, uint32_t *pu32ID)
+rt_err_t spinand_jedecid_get(struct rt_qspi_device *qspi, uint32_t *pu32ID)
 {
     uint32_t u32JedecId = 0;
     uint32_t u32JedecId_real = 0;
@@ -720,6 +741,16 @@ rt_err_t spinand_flash_init(struct rt_qspi_device *qspi)
 exit_spinand_init:
 
     return -result;
+}
+
+int spinand_supported_flash_size(void)
+{
+    return SPINAND_LIST_ELEMENT_NUM;
+}
+
+nu_spinand_info_t spinand_info_get(int idx)
+{
+    return (nu_spinand_info_t)&g_spinandflash_list[idx];
 }
 
 struct spinand_ops spinand_ops_wb =

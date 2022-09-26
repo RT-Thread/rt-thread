@@ -10,3 +10,5 @@ Current supported BSP shown in below table:
 | [nk-rtu980](nk-rtu980) | Nuvoton NK-RTU980 |
 | [nk-n9h30](nk-n9h30) | Nuvoton NK-N9H30 |
 | [numaker-m032ki](numaker-m032ki) | Nuvoton NuMaker-M032KI |
+| [numaker-m467hj](numaker-m467hj) | Nuvoton NuMaker-M467HJ |
+| [numaker-iot-m467](numaker-iot-m467) | Nuvoton NuMaker-IoT-M467 |

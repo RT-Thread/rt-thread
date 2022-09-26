@@ -268,7 +268,7 @@ def MDK45Project(tree, target, script):
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
+    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
 
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
     Define.text = ', '.join(set(CPPDEFINES))
@@ -319,7 +319,7 @@ def MDK5Project(target, script):
         import shutil
         shutil.copy2('template.uvoptx', 'project.uvoptx')
 
-def MDKProject(target, script):
+def MDK2Project(target, script):
     template = open('template.Uv2', "r")
     lines = template.readlines()
 
@@ -453,5 +453,4 @@ def ARMCC_Version():
     version_Tool = version_Tool[:-1]
     version_str_format = '%s/%s/%s'
     version_str = version_str_format % (version_Product, version_Component, version_Tool)
-    #print('version_str:' + version_str)
     return version_str

@@ -8,6 +8,8 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
+#define GET_PIN(gpiox, pinNumber) (rt_base_t)(gpiox << 5 | pinNumber)
+
 int rt_hw_gpio_init(void);
 
 #endif

@@ -34,9 +34,27 @@ static rt_err_t rt_usbh_hid_kbd_callback(void* arg)
     return RT_EOK;
 }
 
+static rt_thread_t kbd_thread;
+static void kbd_task(void* param)
+{
+    struct uhintf* intf = (struct uhintf*)param;
+    while (1)
+    {
+        if (rt_usb_hcd_pipe_xfer(intf->device->hcd, ((struct uhid*)intf->user_data)->pipe_in,
+            ((struct uhid*)intf->user_data)->buffer, ((struct uhid*)intf->user_data)->pipe_in->ep.wMaxPacketSize,
+            USB_TIMEOUT_BASIC) == 0)
+        {
+            break;
+        }
+
+        rt_usbh_hid_kbd_callback(intf->user_data);
+    }
+}
+
+
 static rt_err_t rt_usbh_hid_kbd_init(void* arg)
 {
-    struct uintf* intf = (struct uintf*)arg;
+    struct uhintf* intf = (struct uhintf*)arg;
 
     RT_ASSERT(intf != RT_NULL);
 
@@ -44,7 +62,10 @@ static rt_err_t rt_usbh_hid_kbd_init(void* arg)
 
     rt_usbh_hid_set_idle(intf, 10, 0);
 
-    //RT_DEBUG_LOG(RT_DEBUG_USB, ("start usb keyboard\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("start usb keyboard\n"));
+
+    kbd_thread = rt_thread_create("kbd0", kbd_task, intf, 1024, 8, 100);
+    rt_thread_startup(kbd_thread);
 
     return RT_EOK;
 }

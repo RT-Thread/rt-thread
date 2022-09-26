@@ -17,7 +17,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_DMA
         bool "Enable DMA"
         default n
-        
+
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -27,7 +27,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         select RT_USING_SERIAL
         default y
-        
+
         if BSP_USING_LPUART
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
@@ -114,24 +114,25 @@ menu "Onboard Peripheral Drivers"
         default n
 
     menuconfig BSP_USING_ETH
-	bool "Enable Ethernet"
-	select RT_USING_NETDEV
-	default n
-    
+    bool "Enable Ethernet"
+    select RT_USING_NETDEV
+    select RT_USING_LWIP
+    default n
 
-	if BSP_USING_ETH
-		config BSP_USING_PHY
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
             select RT_USING_PHY
-			bool "Enable ethernet phy"
-			default y
+            bool "Enable ethernet phy"
+            default y
 
-	    if BSP_USING_PHY
+        if BSP_USING_PHY
             config PHY_DEVICE_ADDRESS
                 int "Specify address of phy device"
                 default 2
 
             config PHY_USING_KSZ8081
-                bool "i.MX RT1064EVK uses ksz8081 phy"
+                bool "i.MX RT1052EVK uses ksz8081 phy"
                 default y
 
             if PHY_USING_KSZ8081
@@ -142,7 +143,7 @@ menu "Onboard Peripheral Drivers"
                 config PHY_RESET_PIN
                     int "indicate pin of reset"
                     default 9
-                
+
                 config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
                     bool "Enable the PHY ksz8081 RMII50M mode"
                     depends on PHY_USING_KSZ8081
@@ -150,14 +151,14 @@ menu "Onboard Peripheral Drivers"
             endif
 
         endif
-	endif
-	
+    endif
+
     menuconfig BSP_USING_AUDIO
     bool "Enable AUDIO (WM8960)"
     select BSP_USING_I2C1
     select RT_USING_AUDIO
     default n
-        
+
     if BSP_USING_AUDIO
         config BSP_USING_AUDIO_PLAY
             bool "Enable Audio Play"
@@ -176,8 +177,8 @@ menu "Onboard Peripheral Drivers"
             config BSP_AUDIO_USING_DMA
                 bool "Enable AUDIO DMA"
                 default n
-        endif			
-    endif 	
+        endif
+    endif
 endmenu
 
 menu "Board extended module Drivers"

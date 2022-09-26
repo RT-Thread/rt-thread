@@ -9,7 +9,6 @@
  */
 
 #include "board.h"
-#include "drv_uart.h"
 
 void cy_bsp_all_init(void)
 {

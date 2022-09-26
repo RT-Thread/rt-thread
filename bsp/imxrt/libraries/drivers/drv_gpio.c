@@ -28,7 +28,12 @@
 #endif
 
 #define __IMXRT_HDR_DEFAULT                      {-1, 0, RT_NULL, RT_NULL}
-#define PIN_INVALID_CHECK(PORT_INDEX,PIN_NUM)    (PORT_INDEX > 4) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+
+#ifdef SOC_IMXRT1170_SERIES
+#define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 7) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+#else
+#define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 4) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
+#endif
 
 #if defined(SOC_IMXRT1015_SERIES)
 #define MUX_BASE         0x401f8024
@@ -408,7 +413,7 @@ void GPIO1_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(0, 15, GPIO1);
+    imxrt_isr(0, 16, GPIO1);
 
     rt_interrupt_leave();
 }
@@ -427,7 +432,7 @@ void GPIO2_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(32, 15, GPIO2);
+    imxrt_isr(32, 16, GPIO2);
 
     rt_interrupt_leave();
 }
@@ -446,7 +451,7 @@ void GPIO3_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(64, 15, GPIO3);
+    imxrt_isr(64, 16, GPIO3);
 
     rt_interrupt_leave();
 }
@@ -465,7 +470,7 @@ void GPIO4_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(96, 15, GPIO4);
+    imxrt_isr(96, 16, GPIO4);
 
     rt_interrupt_leave();
 }
@@ -484,7 +489,7 @@ void GPIO5_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(128, 15, GPIO5);
+    imxrt_isr(128, 16, GPIO5);
 
     rt_interrupt_leave();
 }
@@ -501,7 +506,7 @@ void GPIO6_Combined_16_31_IRQHandler(void)
 {
     rt_interrupt_enter();
 
-    imxrt_isr(160, 15, GPIO6);
+    imxrt_isr(160, 16, GPIO6);
 
     rt_interrupt_leave();
 }
@@ -510,15 +515,18 @@ void GPIO13_Combined_0_31_IRQHandler(void)
     rt_interrupt_enter();
 
     imxrt_isr(192, 0, GPIO13);
-
+    imxrt_isr(192, 16, GPIO13);
     rt_interrupt_leave();
 }
 #endif
 static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     gpio_pin_config_t gpio;
-    rt_uint32_t config_value = 0;
     rt_int8_t port, pin_num;
+
+#ifndef SOC_IMXRT1170_SERIES
+    rt_uint32_t config_value = 0;
+#endif
 
     port = pin >> 5;
     pin_num = pin & 31;
@@ -537,35 +545,45 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     case PIN_MODE_OUTPUT:
     {
         gpio.direction = kGPIO_DigitalOutput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0030U;    /* Drive Strength R0/6 */
+#endif
     }
     break;
 
     case PIN_MODE_INPUT:
     {
         gpio.direction = kGPIO_DigitalInput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0830U;    /* Open Drain Enable */
+#endif
     }
     break;
 
     case PIN_MODE_INPUT_PULLDOWN:
     {
         gpio.direction = kGPIO_DigitalInput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x3030U;    /* 100K Ohm Pull Down */
+#endif
     }
     break;
 
     case PIN_MODE_INPUT_PULLUP:
     {
         gpio.direction = kGPIO_DigitalInput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0xB030U;    /* 100K Ohm Pull Up */
+#endif
     }
     break;
 
     case PIN_MODE_OUTPUT_OD:
     {
         gpio.direction = kGPIO_DigitalOutput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0830U;    /* Open Drain Enable */
+#endif
     }
     break;
     }

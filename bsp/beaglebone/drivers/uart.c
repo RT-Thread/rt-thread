@@ -259,6 +259,7 @@ static void start_uart_clk(void)
 
     prcm_base = AM33XX_PRCM_REGS;
 
+#if defined(RT_USING_UART1) || defined(RT_USING_UART2) || defined(RT_USING_UART3) || defined(RT_USING_UART4) || defined(RT_USING_UART5)
     /* software forced wakeup */
     CM_PER_L4LS_CLKSTCTRL_REG(prcm_base) |= 0x2;
 
@@ -305,6 +306,26 @@ static void start_uart_clk(void)
     /* Waiting for the L4LS UART clock */
     while (!(CM_PER_L4LS_CLKSTCTRL_REG(prcm_base) & (1<<10)))
         ;
+#endif
+
+#ifdef RT_USING_UART0
+    /* software forced wakeup */
+    CM_WKUP_CLKSTCTRL_REG(prcm_base) |= 0x2;
+
+    /* Waiting for the L4_WKUP clock */
+    while (!(CM_WKUP_CLKSTCTRL_REG(prcm_base) & (1<<2)))
+        ;
+
+    /* enable uart0 */
+    CM_WKUP_UART0_CLKCTRL_REG(prcm_base) |= 0x2;
+    /* wait for uart0 clk */
+    while ((CM_WKUP_UART0_CLKCTRL_REG(prcm_base) & (0x3<<16)) != 0)
+        ;
+
+    /* Waiting for the L4_WKUP UART0 clock */
+    while (!(CM_WKUP_CLKSTCTRL_REG(prcm_base) & (1<<12)))
+        ;
+#endif
 }
 
 static void config_pinmux(void)
@@ -314,6 +335,11 @@ static void config_pinmux(void)
     ctlm_base = AM33XX_CTLM_REGS;
 
     /* make sure the pin mux is OK for uart */
+#ifdef RT_USING_UART0
+    REG32(ctlm_base + 0x800 + 0x170) = 0x20;
+    REG32(ctlm_base + 0x800 + 0x174) = 0x00;
+#endif
+
 #ifdef RT_USING_UART1
     REG32(ctlm_base + 0x800 + 0x180) = 0x20;
     REG32(ctlm_base + 0x800 + 0x184) = 0x00;

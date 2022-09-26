@@ -35,8 +35,6 @@ void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node)
 /**
  * @brief    This function will remove a node from the wait queue.
  *
- * @param    queue is a pointer to the wait queue.
- *
  * @param    node is a pointer to the node to be removed.
  */
 void rt_wqueue_remove(struct rt_wqueue_node *node)
@@ -52,7 +50,7 @@ void rt_wqueue_remove(struct rt_wqueue_node *node)
  * @brief    This function is the default wakeup function, but it doesn't do anything in actual.
  *           It always return 0, user should define their own wakeup function.
  *
- * @param    queue is a pointer to the wait queue.
+ * @param    wait is a pointer to the wait queue.
  *
  * @param    key is the wakeup condition.
  *

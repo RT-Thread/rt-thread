@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 NXP
+ * Copyright 2020-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -21,7 +21,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_MIPI_DSI_DRIVER_VERSION (MAKE_VERSION(2, 2, 1))
+#define FSL_MIPI_DSI_DRIVER_VERSION (MAKE_VERSION(2, 2, 2))
 /*@}*/
 
 /* The max APB transfer size. */
@@ -739,6 +739,9 @@ static inline uint8_t DSI_GetRxPacketVirtualChannel(uint32_t rxPktHeader)
  * Perform APB data transfer using blocking method. This function waits until all
  * data send or received, or timeout happens.
  *
+ * When using this API to read data, the actually read data count could be got
+ * from xfer->rxDataSize.
+ *
  * @param base MIPI DSI host peripheral base address.
  * @param xfer Pointer to the transfer structure.
  * @retval kStatus_Success Data transfer finished with no error.
@@ -779,6 +782,9 @@ status_t DSI_TransferCreateHandle(const MIPI_DSI_Type *base,
  *
  * Perform APB data transfer using interrupt method, when transfer finished,
  * upper layer could be informed through callback function.
+ *
+ * When using this API to read data, the actually read data count could be got
+ * from handle->xfer->rxDataSize after read finished.
  *
  * @param base MIPI DSI host peripheral base address.
  * @param handle pointer to dsi_handle_t structure which stores the transfer state.

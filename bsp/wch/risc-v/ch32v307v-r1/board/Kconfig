@@ -1,0 +1,152 @@
+menu "Hardware Drivers Config"
+
+config SOC_CH32V307VC
+    bool
+    select SOC_RISCV_SERIES_CH32V3
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default n
+
+    if BSP_USING_UART
+       config BSP_USING_UART1
+           bool "Enable UART1"
+           default n
+
+       config BSP_USING_UART2
+           bool "Enable UART2"
+           default n
+
+       config BSP_USING_UART3
+           bool "Enable UART3"
+           default n
+
+       config BSP_USING_UART4
+           bool "Enable UART4"
+           default n
+
+       config BSP_USING_UART5
+           bool "Enable UART5"
+           default n
+
+       config BSP_USING_UART6
+           bool "Enable UART6"
+           default n
+
+       config BSP_USING_UART7
+           bool "Enable UART7"
+           default n
+
+       config BSP_USING_UART8
+           bool "Enable UART8"
+           default n
+    endif
+   
+    config BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
+        if BSP_USING_ADC
+           config BSP_USING_ADC1
+               bool "Enable ADC1"
+               default n
+
+           config BSP_USING_ADC2
+               bool "Enable ADC2"
+               default n
+
+           config ADC_CHANNEL_16
+               bool "Enable ADC CHANNEL 16 (inside temperature)"
+               default n    
+
+           config ADC_CHANNEL_17
+               bool "Enable ADC CHANNEL 17 (inside Verf)"
+               default n    
+        endif
+
+    config BSP_USING_DAC
+        bool "Enable DAC"
+        select RT_USING_DAC        
+        default n
+        if BSP_USING_DAC
+            config BSP_USING_DAC_CHANNEL1
+                bool "Enable DAC CHANNEL1"
+                default n
+            config BSP_USING_DAC_CHANNEL2
+                bool "Enable DAC CHANNEL2"
+                default n  
+        endif 
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C Bus"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PC7 --> 39; PC6 --> 38"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 0 79
+                        default 38
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 0 79
+                        default 39
+                endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2 Bus"
+                default n
+                if BSP_USING_I2C2
+                    comment "Notice: PC1 --> 33; PC0 --> 32"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 SCL pin number"
+                        range 0 79
+                        default 32
+                    config BSP_I2C2_SDA_PIN
+                        int "i2c2 SDA pin number"
+                        range 0 79
+                        default 33
+                endif
+        endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

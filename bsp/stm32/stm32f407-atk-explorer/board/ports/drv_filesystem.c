@@ -11,15 +11,9 @@
  */
 
 #include <rtthread.h>
-
-#ifdef BSP_USING_FS
 #include <dfs_romfs.h>
 #include <dfs_fs.h>
 #include <dfs_file.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
 
 #if DFS_FILESYSTEMS_MAX < 4
 #error "Please define DFS_FILESYSTEMS_MAX more than 4"
@@ -46,7 +40,7 @@ static int onboard_sdcard_mount(void)
 
     return RT_EOK;
 }
-#endif
+#endif /* BSP_USING_SDCARD_FATFS */
 
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
 #include <fal.h>
@@ -83,7 +77,7 @@ static int onboard_spiflash_mount(void)
 
     return RT_EOK;
 }
-#endif
+#endif /* BSP_USING_SPI_FLASH_LITTLEFS */
 
 static const struct romfs_dirent _romfs_root[] =
 {
@@ -96,7 +90,7 @@ static const struct romfs_dirent _romfs_root[] =
 #endif
 };
 
-const struct romfs_dirent romfs_root =
+static const struct romfs_dirent romfs_root =
 {
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root, sizeof(_romfs_root) / sizeof(_romfs_root[0])
 };
@@ -118,5 +112,3 @@ static int filesystem_mount(void)
     return RT_EOK;
 }
 INIT_APP_EXPORT(filesystem_mount);
-
-#endif /* BSP_USING_FS */

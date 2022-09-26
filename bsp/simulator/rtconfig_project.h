@@ -14,6 +14,7 @@
 
 #ifdef _MSC_VER
 /* disable some warning in MSC */
+// #pragma warning(disable:4103)   /* structure packing changed by including file */
 // #pragma warning(disable:4273)   /* to ignore: warning C4273: inconsistent dll linkage */
 #endif /* _MSC_VER */
 

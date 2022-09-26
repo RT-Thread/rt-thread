@@ -1797,7 +1797,7 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
 
     /* initialize mailbox */
     mb->msg_pool   = (rt_ubase_t *)msgpool;
-    mb->size       = size;
+    mb->size       = (rt_uint16_t)size;
     mb->entry      = 0;
     mb->in_offset  = 0;
     mb->out_offset = 0;
@@ -1899,7 +1899,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
     _ipc_object_init(&(mb->parent));
 
     /* initialize mailbox */
-    mb->size     = size;
+    mb->size     = (rt_uint16_t)size;
     mb->msg_pool = (rt_ubase_t *)RT_KERNEL_MALLOC(mb->size * sizeof(rt_ubase_t));
     if (mb->msg_pool == RT_NULL)
     {
@@ -2511,7 +2511,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
 
     /* get correct message size */
     mq->msg_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
-    mq->max_msgs = pool_size / (mq->msg_size + sizeof(struct rt_mq_message));
+    mq->max_msgs = (rt_uint16_t)(pool_size / (mq->msg_size + sizeof(struct rt_mq_message)));
 
     /* initialize message list */
     mq->msg_queue_head = RT_NULL;
@@ -2636,7 +2636,7 @@ rt_mq_t rt_mq_create(const char *name,
 
     /* get correct message size */
     mq->msg_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
-    mq->max_msgs = max_msgs;
+    mq->max_msgs = (rt_uint16_t)max_msgs;
 
     /* allocate message pool */
     mq->msg_pool = RT_KERNEL_MALLOC((mq->msg_size + sizeof(struct rt_mq_message)) * mq->max_msgs);

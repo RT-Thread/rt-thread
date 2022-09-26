@@ -38,7 +38,7 @@ extern "C"
 {
 #endif
 
-CySCB_Type* const _CYHAL_SCB_BASE_ADDRESSES[_SCB_ARRAY_SIZE] =
+CySCB_Type *const _CYHAL_SCB_BASE_ADDRESSES[_SCB_ARRAY_SIZE] =
 {
 #ifdef SCB0
     SCB0,
@@ -149,73 +149,93 @@ const _cyhal_system_irq_t _CYHAL_SCB_IRQ_N[_SCB_ARRAY_SIZE] =
 /** The configuration structs for the resource in use on each SCB block */
 static void *_cyhal_scb_config_structs[_SCB_ARRAY_SIZE];
 /** The callback to use for each scb instance */
-static bool (*_cyhal_scb_config_pm_callback[_SCB_ARRAY_SIZE]) (void *obj_ptr, cyhal_syspm_callback_state_t state, cy_en_syspm_callback_mode_t pdl_mode);
+static bool (*_cyhal_scb_config_pm_callback[_SCB_ARRAY_SIZE])(void *obj_ptr, cyhal_syspm_callback_state_t state, cy_en_syspm_callback_mode_t pdl_mode);
 
 static uint8_t _cyhal_scb_get_block_from_irqn(_cyhal_system_irq_t irqn)
 {
     switch (irqn)
     {
 #if (_SCB_ARRAY_SIZE > 0)
-    case scb_0_interrupt_IRQn: return 0;
+    case scb_0_interrupt_IRQn:
+        return 0;
 #endif
 #if (_SCB_ARRAY_SIZE > 1)
-    case scb_1_interrupt_IRQn: return 1;
+    case scb_1_interrupt_IRQn:
+        return 1;
 #endif
 #if (_SCB_ARRAY_SIZE > 2)
-    case scb_2_interrupt_IRQn: return 2;
+    case scb_2_interrupt_IRQn:
+        return 2;
 #endif
 #if (_SCB_ARRAY_SIZE > 3)
 #if !defined(CY_DEVICE_PSOC6A256K)
-    case scb_3_interrupt_IRQn: return 3;
+    case scb_3_interrupt_IRQn:
+        return 3;
 #endif
 #endif
 #if (_SCB_ARRAY_SIZE > 4)
-    case scb_4_interrupt_IRQn: return 4;
+    case scb_4_interrupt_IRQn:
+        return 4;
 #endif
 #if (_SCB_ARRAY_SIZE > 5)
-    case scb_5_interrupt_IRQn: return 5;
+    case scb_5_interrupt_IRQn:
+        return 5;
 #endif
 #if (_SCB_ARRAY_SIZE > 6)
-    case scb_6_interrupt_IRQn: return 6;
+    case scb_6_interrupt_IRQn:
+        return 6;
 #endif
 #if (_SCB_ARRAY_SIZE > 7)
-    case scb_7_interrupt_IRQn: return 7;
+    case scb_7_interrupt_IRQn:
+        return 7;
 #endif
 #if (_SCB_ARRAY_SIZE > 8)
-    case scb_8_interrupt_IRQn: return 8;
+    case scb_8_interrupt_IRQn:
+        return 8;
 #endif
 #if (_SCB_ARRAY_SIZE > 9)
-    case scb_9_interrupt_IRQn: return 9;
+    case scb_9_interrupt_IRQn:
+        return 9;
 #endif
 #if (_SCB_ARRAY_SIZE > 10)
-    case scb_10_interrupt_IRQn: return 10;
+    case scb_10_interrupt_IRQn:
+        return 10;
 #endif
 #if (_SCB_ARRAY_SIZE > 11)
-    case scb_11_interrupt_IRQn: return 11;
+    case scb_11_interrupt_IRQn:
+        return 11;
 #endif
 #if (_SCB_ARRAY_SIZE > 12)
-    case scb_12_interrupt_IRQn: return 12;
+    case scb_12_interrupt_IRQn:
+        return 12;
 #endif
 #if (_SCB_ARRAY_SIZE > 13)
-    case scb_13_interrupt_IRQn: return 13;
+    case scb_13_interrupt_IRQn:
+        return 13;
 #endif
 #if (_SCB_ARRAY_SIZE > 14)
-    case scb_14_interrupt_IRQn: return 14;
+    case scb_14_interrupt_IRQn:
+        return 14;
 #endif
 #if (_SCB_ARRAY_SIZE > 15)
-    case scb_15_interrupt_IRQn: return 15;
+    case scb_15_interrupt_IRQn:
+        return 15;
 #endif
 #if (_SCB_ARRAY_SIZE > 16)
-    case scb_16_interrupt_IRQn: return 16;
+    case scb_16_interrupt_IRQn:
+        return 16;
 #endif
 #if (_SCB_ARRAY_SIZE > 17)
-    case scb_17_interrupt_IRQn: return 17;
+    case scb_17_interrupt_IRQn:
+        return 17;
 #endif
 #if (_SCB_ARRAY_SIZE > 18)
-    case scb_18_interrupt_IRQn: return 18;
+    case scb_18_interrupt_IRQn:
+        return 18;
 #endif
 #if (_SCB_ARRAY_SIZE > 19)
-    case scb_19_interrupt_IRQn: return 19;
+    case scb_19_interrupt_IRQn:
+        return 19;
 #endif
 #if (_SCB_ARRAY_SIZE > 20)
 #error "Unhandled scb count"
@@ -281,7 +301,7 @@ uint32_t _cyhal_i2c_set_peri_divider(void *obj, bool is_i2c, uint32_t freq, bool
         }
 
         if (peri_freq > 0 && _cyhal_utils_peri_pclk_assign_divider(
-            _cyhal_scb_get_clock_index(block_num), clock) == CY_SYSCLK_SUCCESS)
+                    _cyhal_scb_get_clock_index(block_num), clock) == CY_SYSCLK_SUCCESS)
         {
             cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -294,18 +314,18 @@ uint32_t _cyhal_i2c_set_peri_divider(void *obj, bool is_i2c, uint32_t freq, bool
                     status = cyhal_clock_set_enabled(clock, true, false);
             }
 
-            if(status == CY_RSLT_SUCCESS)
+            if (status == CY_RSLT_SUCCESS)
             {
                 data_rate = (is_slave)
-                    ? Cy_SCB_I2C_GetDataRate(base, cyhal_clock_get_frequency(clock))
-                    : Cy_SCB_I2C_SetDataRate(base, freq, cyhal_clock_get_frequency(clock));
+                            ? Cy_SCB_I2C_GetDataRate(base, cyhal_clock_get_frequency(clock))
+                            : Cy_SCB_I2C_SetDataRate(base, freq, cyhal_clock_get_frequency(clock));
             }
         }
     }
     return data_rate;
 }
 
-const cyhal_resource_pin_mapping_t* _cyhal_scb_find_map(cyhal_gpio_t pin, const cyhal_resource_pin_mapping_t *pin_map,
+const cyhal_resource_pin_mapping_t *_cyhal_scb_find_map(cyhal_gpio_t pin, const cyhal_resource_pin_mapping_t *pin_map,
         size_t count, const cyhal_resource_inst_t *block_res)
 {
     for (size_t i = 0; i < count; i++)
@@ -356,17 +376,17 @@ uint32_t _cyhal_scb_check_pin_affiliation(cyhal_gpio_t pin, const cyhal_resource
 
 cy_rslt_t _cyhal_scb_set_fifo_level(CySCB_Type *base, cyhal_scb_fifo_type_t type, uint16_t level)
 {
-    if(!CY_SCB_IS_TRIGGER_LEVEL_VALID(base, level))
+    if (!CY_SCB_IS_TRIGGER_LEVEL_VALID(base, level))
         return CYHAL_SCB_RSLT_ERR_BAD_ARGUMENT;
 
-    if(type == CYHAL_SCB_FIFO_RX)
+    if (type == CYHAL_SCB_FIFO_RX)
     {
         SCB_RX_FIFO_CTRL(base) &= ~SCB_RX_FIFO_CTRL_TRIGGER_LEVEL_Msk;
         SCB_RX_FIFO_CTRL(base) |= _VAL2FLD(SCB_RX_FIFO_CTRL_TRIGGER_LEVEL, level);
 
         return CY_RSLT_SUCCESS;
     }
-    else if(type == CYHAL_SCB_FIFO_TX)
+    else if (type == CYHAL_SCB_FIFO_TX)
     {
         SCB_TX_FIFO_CTRL(base) &= ~SCB_TX_FIFO_CTRL_TRIGGER_LEVEL_Msk;
         SCB_TX_FIFO_CTRL(base) |= _VAL2FLD(SCB_TX_FIFO_CTRL_TRIGGER_LEVEL, level);
@@ -384,13 +404,13 @@ cy_rslt_t _cyhal_scb_enable_output(cyhal_resource_inst_t resource, cyhal_scb_out
     // This just returns a proper cyhal_source_t. Use _cyhal_scb_set_fifo_level
     // to actually set level.
     cyhal_internal_source_t src_int;
-    if(output == CYHAL_SCB_OUTPUT_TRIGGER_RX_FIFO_LEVEL_REACHED)
+    if (output == CYHAL_SCB_OUTPUT_TRIGGER_RX_FIFO_LEVEL_REACHED)
     {
 #if defined(CY_DEVICE_PSOC6A256K)
         // 256K devices have no SCB3
         src_int = (resource.block_num < 3)
-            ? (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_RX_REQ + resource.block_num)
-            : (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_RX_REQ + resource.block_num - 1);
+                  ? (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_RX_REQ + resource.block_num)
+                  : (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_RX_REQ + resource.block_num - 1);
 #else
         src_int = (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_RX_REQ + resource.block_num);
 #endif
@@ -400,13 +420,13 @@ cy_rslt_t _cyhal_scb_enable_output(cyhal_resource_inst_t resource, cyhal_scb_out
     }
     // This just returns a proper cyhal_source_t. Use _cyhal_scb_set_fifo_level
     // to actually set level.
-    else if(output == CYHAL_SCB_OUTPUT_TRIGGER_TX_FIFO_LEVEL_REACHED)
+    else if (output == CYHAL_SCB_OUTPUT_TRIGGER_TX_FIFO_LEVEL_REACHED)
     {
 #if defined(CY_DEVICE_PSOC6A256K)
         // 256K devices have no SCB3
         src_int = (resource.block_num < 3)
-            ? (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_TX_REQ + resource.block_num)
-            : (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_TX_REQ + resource.block_num - 1);
+                  ? (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_TX_REQ + resource.block_num)
+                  : (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_TX_REQ + resource.block_num - 1);
 #else
         src_int = (cyhal_internal_source_t)(_CYHAL_TRIGGER_SCB0_TR_TX_REQ + resource.block_num);
 #endif
@@ -430,7 +450,7 @@ cy_rslt_t _cyhal_scb_disable_output(cyhal_scb_output_t output)
 #if (defined(CY_IP_MXSCB) || defined(CY_DEVICE_PSOC4AMC) || defined(CY_DEVICE_PSOC4AS3) || defined(CY_DEVICE_PSOC4AS4))
     // Noop: Use _cyhal_scb_set_fifo_level to actually set level
     if (output == CYHAL_SCB_OUTPUT_TRIGGER_RX_FIFO_LEVEL_REACHED ||
-        output == CYHAL_SCB_OUTPUT_TRIGGER_TX_FIFO_LEVEL_REACHED)
+            output == CYHAL_SCB_OUTPUT_TRIGGER_TX_FIFO_LEVEL_REACHED)
     {
         return CY_RSLT_SUCCESS;
     }
@@ -456,7 +476,7 @@ static bool _cyhal_scb_pm_callback_index(uint8_t index, cyhal_syspm_callback_sta
     return ((NULL != obj) && (callback != NULL)) ? callback(obj, state, pdl_mode) : true;
 }
 
-static bool _cyhal_scb_pm_callback_common(cyhal_syspm_callback_state_t state, cyhal_syspm_callback_mode_t mode, void* callback_arg)
+static bool _cyhal_scb_pm_callback_common(cyhal_syspm_callback_state_t state, cyhal_syspm_callback_mode_t mode, void *callback_arg)
 {
     CY_UNUSED_PARAMETER(callback_arg);
     bool allow = true;
@@ -516,15 +536,15 @@ void _cyhal_scb_update_instance_data(uint8_t block_num, void *obj, cyhal_scb_ins
     if (count == 0)
     {
         CY_ASSERT(obj == NULL);
-        #if (CYHAL_DRIVER_AVAILABLE_SYSPM)
+#if (CYHAL_DRIVER_AVAILABLE_SYSPM)
         _cyhal_syspm_unregister_peripheral_callback(&_cyhal_scb_pm_callback_data);
-        #endif
+#endif
     }
     else if (count == 1 && obj != NULL)
     {
-        #if (CYHAL_DRIVER_AVAILABLE_SYSPM)
+#if (CYHAL_DRIVER_AVAILABLE_SYSPM)
         _cyhal_syspm_register_peripheral_callback(&_cyhal_scb_pm_callback_data);
-        #endif
+#endif
     }
 }
 

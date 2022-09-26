@@ -1,12 +1,14 @@
-# STM32F103 Blue-Pill开发板的Arduino生态兼容说明
+# The Arduino Compatible of STM32 Blue Pill Board
 
-## 1 RTduino - RT-Thread的Arduino生态兼容层
+**English** | [中文](README_zh.md)
 
-STM32F103 Blue-Pill开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
+## 1 RTduino - Arduino Ecosystem Compatibility Layer for RT-Thread
 
-### 1.1 如何开启针对本BSP的Arduino生态兼容层
+STM32 Blue Pill board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on Blue Pill board.
 
-Env 工具下敲入 menuconfig 命令，或者 RT-Thread Studio IDE 下选择 RT-Thread Settings：
+### 1.1 How to Enable RTduino
+
+Please go to the [RTduino repository](https://github.com/RTduino/RTduino) to see the details.
 
 ```Kconfig
 Hardware Drivers Config --->
@@ -14,61 +16,66 @@ Hardware Drivers Config --->
         [*] Support Arduino
 ```
 
-## 2 Arduino引脚排布
+## 2 Arduino Pinout
 
-![blue-pill-f103-pinout](blue-pill-f103-pinout.png)
+![blue-pill-f103-pinout](blue-pill-f103-pinout.jpg)
 
-该BSP遵照Arduino UNO板的引脚排列方式，并扩展增加了Blue-pill自身的板载资源功能引脚。详见 `pins_arduino.c`
+| Arduino Pin         | STM32 Pin | 5V Tolerate | 备注                                                                                                          |
+| ------------------- | --------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| 0 (D0)              | PB7       | Yes         |                                                                                                             |
+| 1 (D1)              | PB6       | Yes         |                                                                                                             |
+| 2 (D2)              | PB5       | No          | PWM3-CH2. Token over by RT-Thread PWM device by default                                                     |
+| 3 (D3)              | PB4       | Yes         | PWM3-CH1. Token over by RT-Thread PWM device by default                                                     |
+| 4 (D4)              | PB3       | Yes         | PWM2-CH2. Token over by RT-Thread PWM device by default                                                     |
+| 5 (D5)              | PA15      | Yes         | PWM2-CH1. Token over by RT-Thread PWM device by default                                                     |
+| 6 (D6)              | PA8       | Yes         |                                                                                                             |
+| 7 (D7, SS)          | PB12      | Yes         | SPI chip select by default                                                                                  |
+| 8 (D8, LED_BUILTIN) | PC13      | No          | Build-in LED                                                                                                |
+| 9 (D9)              | PC14      | No          |                                                                                                             |
+| 10 (D10)            | PC15      | No          |                                                                                                             |
+| 11 (D11)            | PA0       | No          |                                                                                                             |
+| 12 (D12)            | PB0       | No          | PWM3-CH3. Token over by RT-Thread PWM device by default                                                     |
+| 13 (D13)            | PB1       | No          | PWM3-CH4. Token over by RT-Thread PWM device by default                                                     |
+| 14 (D14)            | PB9       | Yes         | I2C-SDA. Token over by RT-Thread I2C device by default                                                      |
+| 15 (D15)            | PB8       | Yes         | I2C-SCL. Token over by RT-Thread I2C device by default                                                      |
+| 16 (D16)            | PA12      | Yes         | USB-DP. Token over by [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) software package by default. |
+| 17 (D17)            | PA11      | Yes         | USB-DM. Token over by [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) software package by default. |
+| 18 (D18)            | PA10      | Yes         | Serial-Rx. Token over by RT-Thread UART device by default                                                    |
+| 19 (D19)            | PA9       | Yes         | Serial-Tx. Token over by RT-Thread UART device by default                                                    |
+| 20 (D20)            | PA2       | No          | Serial2-Tx. Token over by RT-Thread UART device by default                                                    |
+| 21 (D21)            | PA3       | No          | Serial2-Rx. Token over by RT-Thread UART device by default                                                    |
+| 22 (D22)            | PB10      | Yes         | Serial3-Tx. Token over by RT-Thread UART device by default                                                    |
+| 23 (D23)            | PB11      | Yes         | Serial3-Rx. Token over by RT-Thread UART device by default                                                    |
+| 24 (D24)            | PB15      | Yes         | SPI-MOSI. Token over by RT-Thread SPI device by default                                                     |
+| 25 (D25)            | PB14      | Yes         | SPI-MISO. Token over by RT-Thread SPI device by default                                                     |
+| 26 (D26)            | PB13      | Yes         | SPI-SCK. Token over by RT-Thread SPI device by default                                                      |
+| 27 (A0)             | PA1       | No          | ADC1-CH1. Token over by RT-Thread ADC device by default                                                     |
+| 28 (A1)             | PA4       | No          | ADC1-CH4. Token over by RT-Thread ADC device by default                                                     |
+| 29 (A2)             | PA5       | No          | ADC1-CH5. Token over by RT-Thread ADC device by default                                                     |
+| 30 (A3)             | PA6       | No          | ADC1-CH6. Token over by RT-Thread ADC device by default                                                     |
+| 31 (A4)             | PA7       | No          | ADC1-CH7. Token over by RT-Thread ADC device by default                                                     |
+| 32 (A5)             | --        |             | ADC of chip internal reference voltage. Token over by RT-Thread ADC device by default                       |
+| 33 (A6)             | --        |             | ADC of chip internal temperature. Token over by RT-Thread ADC device by default                             |
 
-| Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                                         |
-| --------------- | ------------- | ------ | ------------------------------------------------------------ |
-| 0 (D0)          | --            |        | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                     |
-| 1 (D1)          | --            |        | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                     |
-| 2 (D2)          | PB9           | 是     | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
-| 3 (D3)          | PB8           | 是     | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
-| 4 (D4)          | PB7           | 是     |                                                              |
-| 5 (D5)          | PB6           | 是     |                                                              |
-| 6 (D6)          | PB5           | 否     | PWM3-CH2（定时器3发生）                                       |
-| 7 (D7)          | PB4           | 是     | PWM3-CH1（定时器3发生）                                       |
-| 8 (D8)          | PB3           | 是     | PWM2-CH2（定时器2发生）                                       |
-| 9 (D9)          | PA15          | 是     | PWM2-CH1（定时器2发生）                                       | 
-| 10 (D10)        | PA12          | 是     | USB-DB，不可当做普通IO                                        |
-| 11 (D11)        | PA11          | 是     | USB-DM，不可当做普通IO                                        |
-| 12 (D12)        | PA10          | 是     | UART1-RX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO    |
-| 13 (D13)        | PA9           | 是     | UART1-RX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO    |
-| 14 (D14)        | PA8           | 是     | PWM1-CH1（定时器1发生）                                       |
-| 15 (D15)        | PB15          | 是     |                                                              |
-| 16 (D16)        | PB14          | 是     |                                                              |
-| 17 (D17)        | PB13          | 是     | PWM1-CH1N（定时器1发生）                                      |
-| 18 (D18)        | PB12          | 是     |                                                              |
-| 19 (D19)        | PC13          | 否     | 板载LED默认引脚                                               |
-| 20 (D20)        | PC14          | 否     |                                                              |
-| 21 (D21)        | PC15          | 否     |                                                              |
-| 22 (D22)        | PA2           | 否     | UART2-TX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO    |
-| 23 (D23)        | PA3           | 否     | UART2-RX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO    |
-| 24 (D24)        | PA5           | 否     | SPI-SCK， SPI功能尚未完全实现，目前仅作普通IO使用               |
-| 25 (D25)        | PA6           | 否     | SPI-MISO，SPI功能尚未完全实现，目前仅作普通IO使用               |
-| 26 (D26)        | PA7           | 否     | SPI-MOSI，SPI功能尚未完全实现，目前仅作普通IO使用               |
-| 27 (D27)        | PB10          | 是     | UART3-TX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO    |
-| 28 (D28)        | PB11          | 是     | UART3-RX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO    |
-| A0              | PA0           | 否     | ADC                                                          |
-| A1              | PA1           | 否     | ADC                                                          |
-| A2              | PA4           | 否     | ADC                                                          |
-| A3              | PB0           | 否     | ADC                                                          |
-| A4              | PB1           | 否     | ADC                                                          |
-| A5              | --            |        | 芯片内部参考电压 ADC                                          |
-| A6              | --            |        | 芯片内部温度 ADC                                              |
+> Note:
+> 
+> 1. If you drive the servo and call the analogWrite function at the same time, you need to select the PWM signal pins generated by different timers. Since the 4 channels of the STM32 timer need to maintain the same frequency, if the PWM generated by the same timer is used to drive the servo and analogWrite respectively , it may cause the servo to fail.
+> 2. More information about Arduino pinout, please see [pins_arduino.c](pins_arduino.c) and [pins_arduino.h](pins_arduino.h)
 
-> 注意：
->
-> 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 4. D10引脚是PWM反相位引脚(也就是常说的互补输出引脚CHxN)。但是这里不用考虑到占空比互补问题（CHx-20%，CHxN-80%），直接正常使用即可。
-> 4. STM32的PA15引脚默认作为JTAG下载使用，但是如果采用SWD调试时，PA15(D9)可以作为普通的IO口使用，但是需要设置一些寄存器。
+## 3 Communication
 
-> 参考资料
->
-> 1. 暂无
+### 3.1 I2C Bus
 
-## 3 I2C总线
+I2C bus is `D14` and `D15` pins. Users can directly include the `#include <Wire.h>`, which is the Arduino official I2C header file, to use the I2C bus.
 
-STM32F103 Blue-Pill板的I2C总线是板上丝印的 `SCL/D3` 和 `SDA/D2` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
+### 3.2 SPI Bus
+
+SPI bus is `D24`, `D25` and `D26` pins. Users can directly include the `#include <SPI.h>`, which is the Arduino official SPI header file, to use the SPI bus. In addition, chip select pin (SS) also is used, which is `D7` by default.
+
+### 3.3 USB
+
+This board supports USB virtual COM by default. See [example](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial).
+
+### 3.4 Serial
+
+This board supports to use `Serail.` method to use `uart1` device; use `Serial2.` method to use `uart2` device; use `Serial3.` method to use `uart3` device. See [example](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp).

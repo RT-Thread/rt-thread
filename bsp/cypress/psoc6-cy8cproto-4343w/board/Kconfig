@@ -204,6 +204,11 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -229,6 +234,32 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
+    
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+            config BSP_USING_DAC2
+                bool "Enable DAC2"
+                default n
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+        endif
 endmenu
 
 menu "Board extended module Drivers"
@@ -249,9 +280,18 @@ menu "Board extended module Drivers"
             select RW007_NOT_USE_EXAMPLE_DRIVERS
             
         if BSP_USING_RW007
+            comment "Notice: P5_7 --> 47; P6_2 -->50; P6_5 --> 53; P12_0 --> 96"
             config IFX_RW007_SPI_BUS_NAME
                 string "RW007 BUS NAME"
                 default "spi3"
+
+            config IFX_RW007_WIFI_SSID
+                string "Wi-Fi SSID"
+                default "realthread_VIP"
+
+            config IFX_RW007_WIFI_PASSWORD
+                string "Wi-Fi Password"
+                default "your wifi password"
 
             config IFX_RW007_CS_PIN
                 int "(INT)CS pin index"
