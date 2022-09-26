@@ -34,13 +34,23 @@ def GenerateCFiles(env,project):
             cm_file.write( "\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
-        print(init_export)
         n = len(init_export)
         if n:
             cm_file.write("target_link_libraries(${COMPONENT_LIB}\n")
             for i in range(n):
                 cm_file.write("\tINTERFACE \"-u __rt_init_" + init_export[i] + "\"\n")
             cm_file.write(")\n")
+        cm_file.close()
+
+    cm_file = open('CMakeLists.txt', 'w')
+    if cm_file:
+        cm_file.write("cmake_minimum_required(VERSION 3.16)\n")
+        cm_file.write("set(COMPONENTS esptool_py main)\n")
+        cm_file.write("include($ENV{IDF_PATH}/tools/cmake/project.cmake)\n")
+        freertos_root = os.getcwd().replace('\\', '/') + '/packages/FreeRTOS_Wrapper-latest/FreeRTOS'
+        cm_file.write("set(freertos_root " + freertos_root + ')\n')
+        cm_file.write("project(rtthread)\n")
+        cm_file.close()
 
 def ESPIDFProject(env,project):
     print('Update setting files for CMakeLists.txt...')
