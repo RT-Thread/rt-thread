@@ -57,7 +57,7 @@ Hardware Drivers Config --->
 
 > 参考资料
 > 
-> 【1】[STM32 Nucleo板官方手册](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
+> 【1】[STM32 Nucleo-64板官方手册](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
 
 ## 3 通信
 

@@ -57,7 +57,7 @@
 
 #define F_CPU          80000000L  /* CPU:80MHz */
 
-#define LED_BUITIN     D22  /* Default Built-in LED */
+#define LED_BUILTIN     D22  /* Default Built-in LED */
 
 /*
  * i2c1 - PC7-SDA PC6-SCL (User I2C)

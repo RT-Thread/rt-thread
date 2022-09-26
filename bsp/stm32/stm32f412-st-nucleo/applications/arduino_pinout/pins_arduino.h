@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-10     Meco Man     first version
+ * 2022-09-21     Meco Man     first version
  */
 
 #ifndef Pins_Arduino_h
@@ -29,20 +29,23 @@
 #define D14       (14)
 #define D15       (15)
 #define D16       (16)
-#define A0        (17)
-#define A1        (18)
-#define A2        (19)
-#define A3        (20)
-#define A4        (21)
-#define A5        (22)
-#define A6        (23)
-#define A7        (24)
+#define D17       (17)
+#define D18       (18)
+#define D19       (19)
+#define A0        (20)
+#define A1        (21)
+#define A2        (22)
+#define A3        (23)
+#define A4        (24)
+#define A5        (25)
+#define A6        (26)
+#define A7        (27)
 
-#define F_CPU          48000000L  /* CPU:48MHz */
+#define F_CPU          96000000L  /* CPU:96MHz */
 
-#define LED_BUILTIN     D13  /* Default Built-in LED */
+#define LED_BUILTIN     D17  /* Default Built-in LED */
 
-/* i2c1 - PB9-SDA PB8-SCL */
+/* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
 #endif /* Pins_Arduino_h */

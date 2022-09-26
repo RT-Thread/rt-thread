@@ -1,4 +1,4 @@
-# STM32F69 Discovery开发板的Arduino生态兼容说明
+# STM32F469 Discovery开发板的Arduino生态兼容说明
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
@@ -22,8 +22,8 @@ Hardware Drivers Config --->
 
 | Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                                         |
 | --------------- | ------------- | ------ | ------------------------------------------------------------ |
-| 0 (D0)          | --            |        | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                  |
-| 1 (D1)          | --            |        | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                  |
+| 0 (D0)          | PG9           | 是     | Serial-Rx，默认被RT-Thread的UART设备框架uart6接管              |
+| 1 (D1)          | PG14          | 是     | Serial-Tx，默认被RT-Thread的UART设备框架uart6接管              |
 | 2 (D2)          | PG13          | 是     |                                                              |
 | 3 (D3)          | PA1           | 是     | PWM（定时器2发生）                                           |
 | 4 (D4)          | PG12          | 是     |                                                              |
@@ -60,6 +60,17 @@ Hardware Drivers Config --->
 >
 > 【1】[STM32F469 Discovery官方资料](https://www.st.com/en/evaluation-tools/32f469idiscovery.html#documentation)
 
-## 3 I2C总线
+
+## 3 通信
+
+### 3.1 I2C总线
 
 STM32F469 Discovery板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
+
+### 3.2 SPI总线
+
+目前本BSP不支持使用Arduino的SPI功能。
+
+### 3.3 串口
+
+本BSP通过 `Serial.` 方法调用 `uart2` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
