@@ -37,6 +37,11 @@ SECTIONS
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
    .rti_fn.0.end    : > RAMM1,     PAGE = 1
    .rti_fn.0        : > RAMM1,     PAGE = 1
+   .rti_fn.1        : > RAMM1,     PAGE = 1
+   .rti_fn.2        : > RAMM1,     PAGE = 1
+   .rti_fn.3        : > RAMM1,     PAGE = 1
+   .rti_fn.4        : > RAMM1,     PAGE = 1
+   .rti_fn.5        : > RAMM1,     PAGE = 1
    .rti_fn.1.end    : > RAMM1,     PAGE = 1
    .rti_fn.6.end    : > RAMM1,     PAGE = 1
    .rti_fn.6        : > RAMM1,     PAGE = 1
