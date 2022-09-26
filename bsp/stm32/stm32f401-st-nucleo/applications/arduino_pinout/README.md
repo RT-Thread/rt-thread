@@ -22,8 +22,8 @@ Hardware Drivers Config --->
 
 | Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                      |
 | ----------- | --------- | ---- | --------------------------------------- |
-| 0 (D0)      | PA3       |      | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管  |
-| 1 (D1)      | PA2       |      | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管  |
+| 0 (D0)      | PA3       |      | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管 |
+| 1 (D1)      | PA2       |      | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管 |
 | 2 (D2)      | PA10      | 是    |                                         |
 | 3 (D3)      | PB3       | 是    | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管     |
 | 4 (D4)      | PB5       | 是    |                                         |
@@ -35,10 +35,10 @@ Hardware Drivers Config --->
 | 10 (D10)    | PB6       | 是    | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管     |
 | 11 (D11)    | PA7       | 是    | PWM1-CH1N，默认被RT-Thread的PWM设备框架pwm1接管    |
 | 12 (D12)    | PA6       | 是    |                                         |
-| 13 (D13)    | PA5       | 是    | 板载LED                               |
+| 13 (D13)    | PA5       | 是    | 板载LED                                   |
 | 14 (D14)    | PB9       | 是    | I2C-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管    |
 | 15 (D15)    | PB8       | 是    | I2C-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管    |
-| 16 (D16)    | PC13      | 是    | 板载用户按键（左侧蓝色）                      |
+| 16 (D16)    | PC13      | 是    | 板载用户按键（左侧蓝色）                            |
 | A0          | PA0       | 是    | ADC1-CH0，默认被RT-Thread的ADC设备框架adc1接管     |
 | A1          | PA1       | 是    | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管     |
 | A2          | PA4       | 是    | ADC1-CH4，默认被RT-Thread的ADC设备框架adc1接管     |
@@ -57,7 +57,7 @@ Hardware Drivers Config --->
 
 > 参考资料
 > 
-> 【1】[STM32 Nucleo板官方手册](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
+> 【1】[STM32 Nucleo-64板官方手册](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
 
 ## 3 通信
 

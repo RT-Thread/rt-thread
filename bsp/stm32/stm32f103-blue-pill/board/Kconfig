@@ -16,7 +16,7 @@ menu "Onboard Peripheral Drivers"
         default y
 
     config BSP_USING_ARDUINO
-        bool "Support Arduino"
+        bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_UART2
