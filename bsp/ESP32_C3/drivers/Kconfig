@@ -7,10 +7,14 @@ config SOC_ESP32_C3
     select SOC_ESPRESSIF
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select PKG_USING_ESP_IDF
+    select PKG_USING_ESP_IDF if BSP_USING_LOCAL_ESP_IDF = n
     default y
 
 menu "Hardware Drivers Config"
+
+config BSP_USING_LOCAL_ESP_IDF
+    bool "Use local ESP-IDF installation"
+    default n
 
 choice
     prompt "Select BSP board "
