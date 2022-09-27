@@ -422,10 +422,6 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 static void uart_isr(struct rt_serial_device *serial)
 {
     struct stm32_uart *uart;
-#ifdef RT_SERIAL_USING_DMA
-    rt_size_t recv_total_index, recv_len;
-    rt_base_t level;
-#endif
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);

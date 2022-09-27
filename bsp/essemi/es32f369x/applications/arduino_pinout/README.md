@@ -11,7 +11,7 @@ ES32F3696已经适配了[RTduino软件包](https://github.com/RTduino/RTduino)�
 ```Kconfig
 Hardware Drivers Config --->
     Onboard Peripheral Drivers --->
-        [*] Support Arduino
+        [*] Compatible with Arduino Ecosystem (RTduino)
 ```
 
 2. 进入RTduino配置，打开需要使用的各项配置 (SPI,I2C,Adafrui等)
