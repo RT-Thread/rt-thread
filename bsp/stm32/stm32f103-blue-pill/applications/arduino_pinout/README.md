@@ -13,7 +13,7 @@ Please go to the [RTduino repository](https://github.com/RTduino/RTduino) to see
 ```Kconfig
 Hardware Drivers Config --->
     Onboard Peripheral Drivers --->
-        [*] Support Arduino
+        [*] Compatible with Arduino Ecosystem (RTduino)
 ```
 
 ## 2 Arduino Pinout
