@@ -14,7 +14,7 @@
 #include "F2837xD_device.h"
 #include "F2837xD_sci.h"
 
-typedef long off_t;
+//typedef long off_t;
 #include "F2837xD_sci_io.h"
 
 #ifdef RT_USING_SERIAL
