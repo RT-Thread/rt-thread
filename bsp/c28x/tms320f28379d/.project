@@ -36,11 +36,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/src</locationURI>
 		</link>
 		<link>
-			<name>c28x</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/libcpu/ti-dsp/c28x</locationURI>
-		</link>
-		<link>
 			<name>finsh</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/components/finsh</locationURI>
@@ -53,12 +48,27 @@
 		<link>
 			<name>DeviceDrivers/rt_drv_pwm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/misc/rt_drv_pwm.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/misc/rt_drv_pwm.c</locationURI>
 		</link>
 		<link>
 			<name>DeviceDrivers/serial.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/serial/serial.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/serial/serial.c</locationURI>
+		</link>
+		<link>
+			<name>c28x/SConscript</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/libcpu/ti-dsp/c28x/SConscript</locationURI>
+		</link>
+		<link>
+			<name>c28x/context.s</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/libcpu/ti-dsp/c28x/context.s</locationURI>
+		</link>
+		<link>
+			<name>c28x/cpuport.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/libcpu/ti-dsp/c28x/cpuport.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
