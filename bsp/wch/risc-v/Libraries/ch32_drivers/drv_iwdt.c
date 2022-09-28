@@ -23,8 +23,8 @@ struct watchdog_device
 {
     rt_watchdog_t parent;
     IWDG_TypeDef *instance;
-    rt_uint32_t Prescaler;
-    rt_uint32_t Reload;
+    rt_uint32_t prescaler;
+    rt_uint32_t reload;
     rt_uint16_t is_start;
 };
 static struct watchdog_device watchdog_dev;
@@ -51,13 +51,13 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 #if defined(LSI_VALUE)
         if (LSI_VALUE)
         {
-            wdt_dev->Reload = (*((rt_uint32_t *)arg)) * LSI_VALUE / 256;
+            wdt_dev->reload = (*((rt_uint32_t *)arg)) * LSI_VALUE / 256;
         }
         else
         {
             LOG_E("Please define the value of LSI_VALUE!");
         }
-        if (wdt_dev->Reload > 0xFFF)
+        if (wdt_dev->reload > 0xFFF)
         {
             LOG_E("wdg set timeout parameter too large, please less than %ds", 0xFFF * 256 / LSI_VALUE);
             return -RT_EINVAL;
@@ -68,8 +68,8 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         if (wdt_dev->is_start)
         {
             IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-            IWDG_SetPrescaler(wdt_dev->Prescaler);
-            IWDG_SetReload(wdt_dev->Reload);
+            IWDG_SetPrescaler(wdt_dev->prescaler);
+            IWDG_SetReload(wdt_dev->reload);
             IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
             IWDG_Enable();
         }
@@ -78,7 +78,7 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 #if defined(LSI_VALUE)
         if (LSI_VALUE)
         {
-            (*((rt_uint32_t *)arg)) = wdt_dev->Reload * 256 / LSI_VALUE;
+            (*((rt_uint32_t *)arg)) = wdt_dev->reload * 256 / LSI_VALUE;
         }
         else
         {
@@ -90,8 +90,8 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         break;
     case RT_DEVICE_CTRL_WDT_START:
         IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-        IWDG_SetPrescaler(wdt_dev->Prescaler);
-        IWDG_SetReload(wdt_dev->Reload);
+        IWDG_SetPrescaler(wdt_dev->prescaler);
+        IWDG_SetReload(wdt_dev->reload);
         IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
         IWDG_Enable();
         wdt_dev->is_start = 1;
@@ -112,8 +112,8 @@ static struct rt_watchdog_ops watchdog_ops =
 int rt_hw_wdt_init(void)
 {
     watchdog_dev.instance = IWDG;
-    watchdog_dev.Prescaler = IWDG_Prescaler_256;
-    watchdog_dev.Reload = 0x0000FFF;
+    watchdog_dev.prescaler = IWDG_Prescaler_256;
+    watchdog_dev.reload = 0x0000FFF;
     watchdog_dev.is_start = 0;
     watchdog_dev.parent.ops = &watchdog_ops;
     /* register watchdog device */
