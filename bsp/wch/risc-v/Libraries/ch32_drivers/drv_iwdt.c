@@ -19,6 +19,10 @@
 #define LOG_TAG "drv.wdt"
 #include "drv_log.h"
 
+#ifndef LSI_VALUE
+#error "Please define the value of LSI_VALUE!"
+#endif
+
 struct watchdog_device
 {
     rt_watchdog_t parent;
@@ -48,7 +52,6 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         break;
         /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-#if defined(LSI_VALUE)
         if (LSI_VALUE)
         {
             wdt_dev->reload = (*((rt_uint32_t *)arg)) * LSI_VALUE / 256;
@@ -62,9 +65,7 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             LOG_E("wdg set timeout parameter too large, please less than %ds", 0xFFF * 256 / LSI_VALUE);
             return -RT_EINVAL;
         }
-#else
-#error "Please define the value of LSI_VALUE!"
-#endif
+
         if (wdt_dev->is_start)
         {
             IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
@@ -75,7 +76,6 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
-#if defined(LSI_VALUE)
         if (LSI_VALUE)
         {
             (*((rt_uint32_t *)arg)) = wdt_dev->reload * 256 / LSI_VALUE;
@@ -84,9 +84,6 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         {
             LOG_E("Please define the value of LSI_VALUE!");
         }
-#else
-#error "Please define the value of LSI_VALUE!"
-#endif
         break;
     case RT_DEVICE_CTRL_WDT_START:
         IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
