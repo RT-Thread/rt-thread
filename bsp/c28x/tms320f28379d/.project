@@ -286,6 +286,16 @@
 			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_config.h</locationURI>
 		</link>
 		<link>
+			<name>libraries/HAL_Drivers/drv_gpio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_gpio.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/HAL_Drivers/drv_gpio.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_gpio.h</locationURI>
+		</link>
+		<link>
 			<name>libraries/HAL_Drivers/drv_pwm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_pwm.c</locationURI>

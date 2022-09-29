@@ -59,6 +59,8 @@ interrupt void cpu_timer2_isr(void)
     rt_interrupt_leave();
 }
 
+extern interrupt void XINT1_Handler(void);
+extern interrupt void XINT2_Handler(void);
 /**
  * This function will initial TMS320F28379D board.
  */
@@ -82,12 +84,15 @@ void rt_hw_board_init()
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
     PieVectTable.RTOS_INT = &RTOSINT_Handler;
+    PieVectTable.XINT1_INT = &XINT1_Handler;
+    PieVectTable.XINT2_INT = &XINT2_Handler;
     EDIS;
 
     InitCpuTimers();
     ConfigCpuTimer(&CpuTimer2, 200, 1000000 / RT_TICK_PER_SECOND);
     CpuTimer2Regs.TCR.all = 0x4000;
     IER |= M_INT14;
+    IER |= M_INT1;
 
 #ifdef RT_USING_HEAP
     rt_system_heap_init(&__ebss_end, &(__heap_end));
