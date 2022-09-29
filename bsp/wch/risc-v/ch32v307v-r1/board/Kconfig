@@ -127,17 +127,21 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
-                prompt "Select clock source"
-                default BSP_RTC_USING_LSE
-
-                config BSP_RTC_USING_LSE
-                    bool "RTC USING LSE"
-
-                config BSP_RTC_USING_LSI
-                    bool "RTC USING LSI"
-            endchoice
+                config BSP_USING_RTC_LSI
+                        bool "using LSI clock for rtc, if not, LSE default"
+                        select LSI_VALUE
+                        default n
         endif
+
+    config LSI_VALUE
+        int
+        default 40000
+
+    config BSP_USING_IWDT
+        bool "using onchip iwdt"
+        select RT_USING_WDT
+        select LSI_VALUE
+        default n
 
 endmenu
 
