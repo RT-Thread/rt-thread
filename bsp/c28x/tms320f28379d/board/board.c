@@ -102,6 +102,10 @@ void rt_hw_board_init()
     rt_hw_sci_init();
 #endif
 
+#ifdef RT_USING_PIN
+    rt_hw_pin_init();
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
