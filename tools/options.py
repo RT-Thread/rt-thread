@@ -38,7 +38,7 @@ def AddOptions():
                       action = 'store_true',
                       default = False,
                       help = 'make distribution and strip useless files')
-    AddOption('--dist-ide',
+    AddOption('--dist-ide', '--dist-rtstudio',
                       dest = 'make-dist-ide',
                       action = 'store_true',
                       default = False,

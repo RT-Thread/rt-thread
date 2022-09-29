@@ -909,12 +909,13 @@ def EndBuilding(target, program = None):
         project_path = GetOption('project-path')
         project_name = GetOption('project-name')
 
-        if not isinstance(project_path, str) or len(project_path) == 0 :
-            project_path = os.path.join(BSP_ROOT, 'dist_ide_project')
-            print("\nwarning : --project-path not specified, use default path: {0}.".format(project_path))
         if not isinstance(project_name, str) or len(project_name) == 0:
             project_name = "dist_ide_project"
             print("\nwarning : --project-name not specified, use default project name: {0}.".format(project_name))
+
+        if not isinstance(project_path, str) or len(project_path) == 0 :
+            project_path = os.path.join(BSP_ROOT, 'rt-studio-project', project_name)
+            print("\nwarning : --project-path not specified, use default path: {0}.".format(project_path))
 
         rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
         MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
