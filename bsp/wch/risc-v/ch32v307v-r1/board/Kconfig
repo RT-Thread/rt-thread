@@ -5,7 +5,6 @@ config SOC_CH32V307VC
     select SOC_RISCV_SERIES_CH32V3
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select RT_USING_GPIO
     default y
 
 menu "On-chip Peripheral Drivers"
