@@ -236,7 +236,7 @@ int rt_hw_openamp_init(void)
     
     rt_hw_openamp_register(&dev_openamp, "openamp", 0, NULL);
     
-    if (RT_CONSOLE_DEVICE_NAME == "openamp")
+    if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "openamp") == 0)
     {
         rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
     }
