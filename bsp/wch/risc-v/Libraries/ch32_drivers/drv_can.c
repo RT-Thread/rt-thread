@@ -23,7 +23,7 @@
 #include <rtdbg.h>
 //#include <drv_log.h>
 
-//¼æÈİÀÏ°æµÄcanºê¶¨Òå
+//å…¼å®¹è€ç‰ˆçš„canå®å®šä¹‰
 #ifndef RT_CAN_MODE_LISTEN
 #define RT_CAN_MODE_LISTEN    RT_CAN_MODE_LISEN
 #endif
