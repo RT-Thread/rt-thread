@@ -16,10 +16,6 @@ extern "C"
 {
 #endif
 
-#include <board.h>
-#include <rtdevice.h>
-#include <rtthread.h>
-
 int rt_hw_can_init(void);
 
 #ifdef __cplusplus
