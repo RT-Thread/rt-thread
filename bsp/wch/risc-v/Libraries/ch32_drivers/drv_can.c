@@ -11,10 +11,10 @@
 #include "drv_can.h"
 #ifdef BSP_USING_CAN
 
-#include "stdint.h"
-#include "board.h"
+#include <stdint.h>
+#include <board.h>
 #include <rtdevice.h>
-#include <drv_can.h>
+#include "drv_can.h"
 
 #define DBG_TAG "drv_can"
 //#define DBG_LVL DBG_INFO
