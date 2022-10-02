@@ -7,21 +7,16 @@
  * Date           Author       Notes
  * 2022-06-21     chenbin      the first version
  */
-
-#include "drv_can.h"
-#ifdef BSP_USING_CAN
-
 #include <stdint.h>
 #include <board.h>
 #include <rtdevice.h>
 #include "drv_can.h"
+#ifdef BSP_USING_CAN
 
 #define DBG_TAG "drv_can"
-//#define DBG_LVL DBG_INFO
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #define DBG_ENABLE
 #include <rtdbg.h>
-//#include <drv_log.h>
 
 //兼容老版的can宏定义
 #ifndef RT_CAN_MODE_LISTEN
@@ -225,6 +220,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
 {
     struct ch32v307x_can_obj *drv_can_obj;
     rt_uint32_t baud_index;
+    int smaple = 0;
 
     RT_ASSERT(can);
     RT_ASSERT(cfg);
@@ -271,8 +267,8 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
         return -RT_ERROR;
     }
 
-    int smaple = (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1)*100 * 100 / (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1 + can_baud_rate_tab[baud_index].tbs2);
-
+    smaple = (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1)*100 * 100 ;
+    smaple = smaple / (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1 + can_baud_rate_tab[baud_index].tbs2);
     LOG_D("can[%08X] init baud:%d sjw:%d tbs1:%d tbs2:%d prescaler:%d sample:%d.%d",
             drv_can_obj->can_base,  cfg->baud_rate,
             can_baud_rate_tab[baud_index].tsjw,  can_baud_rate_tab[baud_index].tbs1, can_baud_rate_tab[baud_index].tbs2,
