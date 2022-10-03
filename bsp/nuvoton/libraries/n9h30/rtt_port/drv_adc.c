@@ -84,7 +84,7 @@ static void nu_adc_isr(int vector, void *param)
     volatile rt_int32_t isr, wkisr;
     nu_adc_t psNuAdc = (nu_adc_t)param;
     rt_int32_t irqidx;
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
 
     //rt_kprintf("[%s %d] CTL: %08x CONF:%08x IER:%08x ISR:%08x\n", __func__, __LINE__, adc->CTL, adc->CONF, adc->IER, adc->ISR);
 
@@ -142,7 +142,7 @@ static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
     nu_adc_t psNuAdc = (nu_adc_t)userData;
 
 #if defined(BSP_USING_ADC_TOUCH)
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
     static struct nu_adc_touch_data point;
     static rt_bool_t bDrop = RT_FALSE;
     static uint32_t u32LastZ0 = 0xffffu;
@@ -194,21 +194,23 @@ static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
 
 #if defined(BSP_USING_ADC_TOUCH)
 
-static void nu_adc_touch_antiglitch(ADC_T*  adc)
+static void nu_adc_touch_antiglitch(ADC_T  *adc)
 {
     int count = 10;
-    do {
+    do
+    {
         rt_hw_us_delay(1000); // 1ms
-              ADC_CLR_INT_FLAG(adc, adc->ISR);
-        if ( adc->ISR == 0 )
+        ADC_CLR_INT_FLAG(adc, adc->ISR);
+        if (adc->ISR == 0)
             break;
-    } while(count-- > 0);
+    }
+    while (count-- > 0);
 }
 
 void nu_adc_touch_detect(rt_bool_t bStartDetect)
 {
     nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
 
     /* Disable interrupt */
     rt_hw_interrupt_mask(psNuAdc->irqn);
@@ -217,13 +219,13 @@ void nu_adc_touch_detect(rt_bool_t bStartDetect)
 
     /* Disable interrupt */
     ADC_DISABLE_INT(adc, ADC_IER_PEDEIEN_Msk | ADC_IER_MIEN_Msk);
-        nu_adc_touch_antiglitch(adc);
+    nu_adc_touch_antiglitch(adc);
 
     if (bStartDetect == RT_TRUE)
     {
         /* Switch to PenDown detection mode */
         ADC_DETECT_PD_MODE(adc);
-                nu_adc_touch_antiglitch(adc);
+        nu_adc_touch_antiglitch(adc);
 
         /* Enable interrupt */
         ADC_ENABLE_INT(adc, ADC_IER_PEDEIEN_Msk);
@@ -232,7 +234,7 @@ void nu_adc_touch_detect(rt_bool_t bStartDetect)
     {
         /* Switch to XY coordination converting mode */
         ADC_CONVERT_XY_MODE(adc);
-                nu_adc_touch_antiglitch(adc);
+        nu_adc_touch_antiglitch(adc);
 
         /* Enable interrupt */
         ADC_ENABLE_INT(adc, ADC_IER_MIEN_Msk);
@@ -272,7 +274,7 @@ rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch)
 {
     nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
     nu_adc_cb sNuAdcCb;
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
 
     adc->CONF = 0x0;
 
@@ -315,7 +317,7 @@ rt_err_t nu_adc_touch_disable(void)
 static void nu_adc_touch_smpl(void *p)
 {
     nu_adc_t psNuAdc = (nu_adc_t)p;
-    if ( psNuAdc->bReset )
+    if (psNuAdc->bReset)
     {
         psNuAdc->bReset = 0;
         nu_adc_touch_detect(RT_FALSE);
@@ -330,7 +332,7 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t ret = RT_EINVAL ;
     nu_adc_t psNuAdc = (nu_adc_t)dev;
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
 
     nu_adc_cb_t psAdcCb = (nu_adc_cb_t)args;
 
@@ -473,7 +475,7 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 static rt_err_t _nu_adc_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_adc_t psNuAdc = (nu_adc_t)dev;
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
 
     /* Enable ADC engine clock */
     nu_sys_ipclk_enable(psNuAdc->clkidx);
@@ -499,7 +501,7 @@ static rt_err_t _nu_adc_open(rt_device_t dev, rt_uint16_t oflag)
 static rt_err_t _nu_adc_close(rt_device_t dev)
 {
     nu_adc_t psNuAdc = (nu_adc_t)dev;
-    ADC_T*  adc = psNuAdc->base;
+    ADC_T  *adc = psNuAdc->base;
 
     /* Disable Normal AD Conversion */
     _nu_adc_control(dev, NAC_OFF, RT_NULL);
