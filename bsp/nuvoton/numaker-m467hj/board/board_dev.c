@@ -332,7 +332,7 @@ ccap_sensor_io sIo_sensor0 =
 
 int rt_hw_sensor0_port(void)
 {
-    return  nu_ccap_sensor_create(&sIo_sensor0, (ccap_sensor_id)BOARD_USING_SENSON0_ID);
+    return  nu_ccap_sensor_create(&sIo_sensor0, (ccap_sensor_id)BOARD_USING_SENSON0_ID, "sensor0");
 }
 INIT_COMPONENT_EXPORT(rt_hw_sensor0_port);
 
