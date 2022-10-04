@@ -63,6 +63,7 @@ OPT_STUFF = 7       # For stuff pack, output could be used by dd command
 OPT_SETINFO = 8     # For set storage info for attach
 OPT_CONCAT = 9      # For convert, concatenate at the end of encrypted data file
 OPT_SHOWHDR = 10    # For convert. Instead of convert, show header content instead
+OPT_NOCRC = 11      # For pack. unpack file without crc32 check
 OPT_UNKNOWN = 0xFF  # Error
 
 
@@ -765,7 +766,7 @@ def do_pack_program(media, pack_file_name, option=OPT_NONE) -> None:
         print("Device not found")
         sys.exit(2)
 
-    pack_image = UnpackImage(pack_file_name)
+    pack_image = UnpackImage(pack_file_name, option)
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = [executor.submit(__pack_program, dev, media, pack_image, option) for dev in devices]
     success = 0
@@ -1179,10 +1180,10 @@ def do_attach(ini_file_name, option=OPT_NONE) -> None:
     print(f"Successfully get info from {success} device(s)")
 
 
-def do_unpack(pack_file_name) -> None:
+def do_unpack(pack_file_name, nocrc32) -> None:
 
     now = datetime.now()
-    pack_image = UnpackImage(pack_file_name)
+    pack_image = UnpackImage(pack_file_name, nocrc32)
     image_cnt = pack_image.img_count()
 
     try:
@@ -1681,7 +1682,8 @@ def get_option(option) -> int:
         'STUFF': OPT_STUFF,
         'SETINFO': OPT_SETINFO,
         'CONCAT': OPT_CONCAT,
-        'SHOWHDR': OPT_SHOWHDR
+        'SHOWHDR': OPT_SHOWHDR,
+        'NOCRC': OPT_NOCRC
     }.get(option, OPT_UNKNOWN)
 
 
@@ -1772,7 +1774,9 @@ def main():
             sys.exit(0)
         else:
             if option == OPT_UNPACK:
-                do_unpack(cfg_file)
+                do_unpack(cfg_file, 0)
+            elif option == OPT_NOCRC:
+                do_unpack(cfg_file, 1)
             elif option == OPT_STUFF:
                 do_stuff(cfg_file)
             else:

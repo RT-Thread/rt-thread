@@ -5,5 +5,3 @@
 
 make
 python transcode.py
-
-make -f Makefile.leave_ibr
