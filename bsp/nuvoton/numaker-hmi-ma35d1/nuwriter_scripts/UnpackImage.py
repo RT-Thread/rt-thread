@@ -8,7 +8,7 @@ import crcmod
 
 class UnpackImage:
 
-    def __init__(self, pack_file_name):
+    def __init__(self, pack_file_name, nocrc):
         self.img_list = []
         try:
             with open(pack_file_name, "rb") as pack_file:
@@ -21,11 +21,14 @@ class UnpackImage:
             print(f"{pack_file_name} marker check failed")
             sys.exit(0)
 
-        crc32_func = crcmod.predefined.mkCrcFun('crc-32')
-        checksum = crc32_func(self.pack_data[8:])
-        if checksum != int.from_bytes(self.pack_data[4:8], byteorder='little'):
-            print(f"{pack_file_name} CRC check failed")
-            sys.exit(0)
+        print("Waiting for unpack Images ...")
+        if nocrc == 0:
+            print("check pack file crc32 ...")
+            crc32_func = crcmod.predefined.mkCrcFun('crc-32')
+            checksum = crc32_func(self.pack_data[8:])
+            if checksum != int.from_bytes(self.pack_data[4:8], byteorder='little'):
+                print(f"{pack_file_name} CRC check failed")
+                sys.exit(0)
         self.image_cnt = int.from_bytes(self.pack_data[8:12], byteorder='little')
         # 1st image descriptor begins @ 0x10
         index = 0x10
