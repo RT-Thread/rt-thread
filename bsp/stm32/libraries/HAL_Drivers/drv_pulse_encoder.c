@@ -157,10 +157,12 @@ rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt
     switch (cmd)
     {
     case PULSE_ENCODER_CMD_ENABLE:
+        __HAL_TIM_ENABLE_IT(&stm32_device->tim_handler, TIM_IT_UPDATE);
         HAL_TIM_Encoder_Start(&stm32_device->tim_handler, TIM_CHANNEL_ALL);
         HAL_TIM_Encoder_Start_IT(&stm32_device->tim_handler, TIM_CHANNEL_ALL);
         break;
     case PULSE_ENCODER_CMD_DISABLE:
+        __HAL_TIM_DISABLE_IT(&stm32_device->tim_handler, TIM_IT_UPDATE);
         HAL_TIM_Encoder_Stop(&stm32_device->tim_handler, TIM_CHANNEL_ALL);
         HAL_TIM_Encoder_Stop_IT(&stm32_device->tim_handler, TIM_CHANNEL_ALL);
         break;
