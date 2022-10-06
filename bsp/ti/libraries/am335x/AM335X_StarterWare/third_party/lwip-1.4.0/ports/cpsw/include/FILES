@@ -1,0 +1,4 @@
+arch/       - Include files for architecture.
+netif/      - Include files for CPSW network interfaces.
+
+See also the FILES file in each subdirectory.

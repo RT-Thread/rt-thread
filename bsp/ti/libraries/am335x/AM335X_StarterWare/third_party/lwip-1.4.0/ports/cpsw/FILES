@@ -1,0 +1,6 @@
+include/    - Include files for CPSW ports.
+netif/      - Network interface drivers for CPSW based devices.
+perf.c      - CPSW performance monitor driver file (not used).
+sys_arch.c  - SoC architecture support file.
+
+See also the FILES file in each subdirectory.
