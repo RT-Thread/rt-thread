@@ -1,0 +1,17 @@
+import copy
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+bsp_beaglebone_path = RTT_ROOT + '/bsp/beaglebone'
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+src += [bsp_beaglebone_path + '/applications/board.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

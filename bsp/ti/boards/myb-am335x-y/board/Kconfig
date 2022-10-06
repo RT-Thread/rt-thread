@@ -1,0 +1,7 @@
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu

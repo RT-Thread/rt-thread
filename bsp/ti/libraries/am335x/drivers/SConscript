@@ -1,0 +1,18 @@
+import copy
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+bsp_beaglebone_path = RTT_ROOT + '/bsp/beaglebone'
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+# reuse beaglebone drivers
+group = group + SConscript(os.path.join(bsp_beaglebone_path, 'drivers', 'SConscript'), variant_dir='./beaglebone', duplicate=0)
+
+Return('group')

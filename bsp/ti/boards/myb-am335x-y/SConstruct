@@ -1,0 +1,37 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../../..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+	CXX= rtconfig.CXX, CXXFLAGS = rtconfig.CFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
+	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+soc_lib_name = 'am335x'
+soc_lib_path = os.path.abspath('../../libraries')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT)
+
+# include soc libraries
+objs.extend(SConscript(os.path.join(soc_lib_path, soc_lib_name, 'SConscript'), variant_dir='build/' + soc_lib_name, duplicate=0))
+
+# make a building
+DoBuilding(TARGET, objs)
