@@ -140,9 +140,15 @@ const static struct rt_pin_ops _c28x_pin_ops =
     c28x_pin_mode,
     c28x_pin_write,
     c28x_pin_read,
+#ifdef BSP_USING_XINT
     c28x_pin_attach_irq,
     c28x_pin_dettach_irq,
     c28x_pin_irq_enable,
+#else
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+#endif
     c28x_pin_get,
 };
 
@@ -151,6 +157,7 @@ int rt_hw_pin_init(void)
     return rt_device_pin_register("pin", &_c28x_pin_ops, RT_NULL);
 }
 
+#ifdef BSP_USING_XINT
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 {
     {-1, 0, RT_NULL, RT_NULL},
@@ -160,11 +167,21 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
 };
 
+static rt_int16_t pin_irq_xint_tab[] =
+{
+    BSP_XINT1_PIN,
+    BSP_XINT2_PIN,
+    BSP_XINT3_PIN,
+    BSP_XINT4_PIN,
+    BSP_XINT5_PIN
+};
 rt_inline rt_int32_t get_irq_index(rt_uint32_t pin)
 {
     int i;
-    for(i = 0 ; i < PIN_IRQ_MAX ; i++){
-        if(pin_irq_hdr_tab[i].pin == pin){
+    for(i = 0 ; i < PIN_IRQ_MAX ; i++)
+    {
+        if(pin_irq_xint_tab[i] == pin)
+        {
             return i;
         }
     }
@@ -176,9 +193,6 @@ rt_inline rt_int32_t get_irq_index(rt_uint32_t pin)
 static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                      rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
-    /*
-     * using args to get XINT channel, which has 5 channels in total for 28379
-     */
     rt_base_t level;
     rt_int32_t irqindex = -1;
 
@@ -186,8 +200,7 @@ static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     {
         return -RT_ENOSYS;
     }
-    /* convert args to channel for XINT*/
-    irqindex = (rt_base_t) args;
+    irqindex = get_irq_index(pin);
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == pin &&
         pin_irq_hdr_tab[irqindex].hdr == hdr &&
@@ -221,8 +234,10 @@ static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
         return -RT_ENOSYS;
     }
 
-    for(i = 0 ; i < PIN_IRQ_MAX ; i++){
-        if(pin_irq_hdr_tab[i].pin == pin){
+    for(i = 0 ; i < PIN_IRQ_MAX ; i++)
+    {
+        if(pin_irq_hdr_tab[i].pin == pin)
+        {
             irqindex = i;
             break;
         }
@@ -293,31 +308,40 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             pin_mode = PIN_MODE_INPUT;
             break;
         }
-        if(channel == 1){
+        if(channel == 1)
+        {
             XintRegs.XINT1CR.bit.ENABLE = 1;        // Enable XINT1
             EALLOW;
             InputXbarRegs.INPUT4SELECT = pin;       //Set XINT1 source to GPIO-pin
             EDIS;
             XintRegs.XINT1CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
-        }else if(channel == 2){
+        }
+        else if(channel == 2)
+        {
             XintRegs.XINT2CR.bit.ENABLE = 1;        // Enable XINT2
             EALLOW;
             InputXbarRegs.INPUT5SELECT = pin;       //Set XINT1 source to GPIO-pin
             EDIS;
             XintRegs.XINT2CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
-        }else if(channel == 3){
+        }
+        else if(channel == 3)
+        {
             XintRegs.XINT3CR.bit.ENABLE = 1;        // Enable XINT2
             EALLOW;
             InputXbarRegs.INPUT6SELECT = pin;       //Set XINT1 source to GPIO-pin
             EDIS;
             XintRegs.XINT3CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
-        }else if(channel == 4){
+        }
+        else if(channel == 4)
+        {
             XintRegs.XINT4CR.bit.ENABLE = 1;        // Enable XINT2
             EALLOW;
             InputXbarRegs.INPUT13SELECT = pin;       //Set XINT1 source to GPIO-pin
             EDIS;
             XintRegs.XINT4CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
-        }else if(channel == 5){
+        }
+        else if(channel == 5)
+        {
             XintRegs.XINT5CR.bit.ENABLE = 1;        // Enable XINT2
             EALLOW;
             InputXbarRegs.INPUT14SELECT = pin;       //Set XINT1 source to GPIO-pin
@@ -332,15 +356,27 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         level = rt_hw_interrupt_disable();
         channel = irqindex+1;
-        if(channel == 1){
+        /*
+         * TODO modify this simpler
+         */
+        if(channel == 1)
+        {
             XintRegs.XINT1CR.bit.ENABLE = 0;        // Disable XINT1
-        }else if(channel == 2){
+        }
+        else if(channel == 2)
+        {
             XintRegs.XINT2CR.bit.ENABLE = 0;        // Disable XINT2
-        }else if(channel == 3){
+        }
+        else if(channel == 3)
+        {
             XintRegs.XINT3CR.bit.ENABLE = 0;        // Disable XINT2
-        }else if(channel == 4){
+        }
+        else if(channel == 4)
+        {
             XintRegs.XINT4CR.bit.ENABLE = 0;        // Disable XINT2
-        }else if(channel == 5){
+        }
+        else if(channel == 5)
+        {
             XintRegs.XINT5CR.bit.ENABLE = 0;        // Disable XINT2
         }
         rt_hw_interrupt_enable(level);
@@ -355,27 +391,56 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
 void GPIO_XINT_Callback(rt_int16_t XINT_number);
 
-interrupt void XINT1_Handler(void){
+interrupt void XINT1_Handler(void)
+{
     rt_interrupt_enter();
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
     GPIO_XINT_Callback(1);
     rt_interrupt_leave();
 }
 
-interrupt void XINT2_Handler(void){
+interrupt void XINT2_Handler(void)
+{
     rt_interrupt_enter();
     GPIO_XINT_Callback(2);
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
     rt_interrupt_leave();
 }
 
-void GPIO_XINT_Callback(rt_int16_t XINT_number){
+interrupt void XINT3_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_XINT_Callback(3);
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+    rt_interrupt_leave();
+}
+
+interrupt void XINT4_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_XINT_Callback(4);
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+    rt_interrupt_leave();
+}
+
+interrupt void XINT5_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_XINT_Callback(5);
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+    rt_interrupt_leave();
+}
+
+void GPIO_XINT_Callback(rt_int16_t XINT_number)
+{
     rt_int32_t irqindex = XINT_number - 1;
-    if(pin_irq_hdr_tab[irqindex].hdr){
-        pin_irq_hdr_tab[irqindex].hdr(RT_NULL);
+    if(pin_irq_hdr_tab[irqindex].hdr)
+    {
+        pin_irq_hdr_tab[irqindex].hdr(pin_irq_hdr_tab[irqindex].args);
     }
 }
 
+#endif /* BSP_USING_XINT */
 #endif /* RT_USING_PIN */
 
 

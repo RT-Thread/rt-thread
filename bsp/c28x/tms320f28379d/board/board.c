@@ -13,6 +13,7 @@
 #include <rtthread.h>
 #include "board.h"
 #include "drv_sci.h"
+#include "drv_gpio.h"
 #include "F28x_Project.h"
 
 #ifndef RT_USING_SMP
@@ -84,8 +85,22 @@ void rt_hw_board_init()
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
     PieVectTable.RTOS_INT = &RTOSINT_Handler;
+
+#ifdef BSP_USING_XINT1
     PieVectTable.XINT1_INT = &XINT1_Handler;
+#endif
+#ifdef BSP_USING_XINT2
     PieVectTable.XINT2_INT = &XINT2_Handler;
+#endif
+#ifdef BSP_USING_XINT3
+    PieVectTable.XINT3_INT = &XINT3_Handler;
+#endif
+#ifdef BSP_USING_XINT4
+    PieVectTable.XINT4_INT = &XINT4_Handler;
+#endif
+#ifdef BSP_USING_XINT5
+    PieVectTable.XINT5_INT = &XINT5_Handler;
+#endif
     EDIS;
 
     InitCpuTimers();

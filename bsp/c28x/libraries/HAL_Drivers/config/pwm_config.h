@@ -15,10 +15,6 @@
 #include "rtthread.h"
 #include "drv_config.h"
 
-#define BSP_USING_PWM1
-#define BSP_USING_PWM2
-#define BSP_USING_PWM3
-#define BSP_USING_PWM4
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,18 +54,6 @@ extern "C" {
     }
     #endif
 #endif
-#define EPWM1_MAX_DB   0x03FF
-#define EPWM2_MAX_DB   0x03FF
-#define EPWM3_MAX_DB   0x03FF
-#define EPWM1_MIN_DB   0
-#define EPWM2_MIN_DB   0
-#define EPWM3_MIN_DB   0
-#define DB_UP          1
-#define DB_DOWN        0
-
-#define RT_HSPCLKDIV TB_DIV4
-#define RT_CLKDIV TB_DIV4
-#define RT_CTRMODE TB_COUNT_UPDOWN
 
 #define TZ_OFF  2
 #define TZ_ON   1

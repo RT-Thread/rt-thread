@@ -8,7 +8,76 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-
+    menuconfig BSP_USING_XINT
+        bool "Enable external interrupt"
+        default n
+        if BSP_USING_XINT
+            menuconfig BSP_USING_XINT1
+                bool "Enable XINT1"
+                if BSP_USING_XINT1
+                    config BSP_XINT1_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT1
+                    config BSP_XINT1_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT2
+                bool "Enable XINT2"
+                if BSP_USING_XINT2
+                    config BSP_XINT2_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT2
+                    config BSP_XINT2_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT3
+                bool "Enable XINT3"
+                if BSP_USING_XINT3
+                    config BSP_XINT3_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT3
+                    config BSP_XINT3_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT4
+                bool "Enable XINT4"
+                if BSP_USING_XINT4
+                    config BSP_XINT4_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT4
+                    config BSP_XINT4_PIN
+                        int
+                        default -1
+                endif
+                if !BSP_USING_XINT5
+                    config BSP_XINT5_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT5
+                bool "Enable XINT5"
+                if BSP_USING_XINT5
+                    config BSP_XINT5_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+        endif
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y

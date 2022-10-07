@@ -574,12 +574,12 @@ int c28x_pwm_init(void)
        .complementary = RT_TRUE
     };
     drv_pwm_set(c28x_pwm_obj[0].pwm_regs,&config_tmp1);
-    config_tmp1.phase = BSP_PWM2_PHASE;
-    drv_pwm_set(c28x_pwm_obj[1].pwm_regs,&config_tmp1);
-    config_tmp1.phase = BSP_PWM3_PHASE;
-    drv_pwm_set(c28x_pwm_obj[2].pwm_regs,&config_tmp1);
-    config_tmp1.phase = BSP_PWM4_PHASE;
-    drv_pwm_set(c28x_pwm_obj[3].pwm_regs,&config_tmp1);
+//    config_tmp1.phase = BSP_PWM2_PHASE;
+//    drv_pwm_set(c28x_pwm_obj[1].pwm_regs,&config_tmp1);
+//    config_tmp1.phase = BSP_PWM3_PHASE;
+//    drv_pwm_set(c28x_pwm_obj[2].pwm_regs,&config_tmp1);
+//    config_tmp1.phase = BSP_PWM4_PHASE;
+//    drv_pwm_set(c28x_pwm_obj[3].pwm_regs,&config_tmp1);
     return result;
 
 }
