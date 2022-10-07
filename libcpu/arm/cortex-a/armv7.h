@@ -69,4 +69,10 @@ struct rt_hw_stack
 #define E_Bit       (1<<9)
 #define J_Bit       (1<<24)
 
+#define PABT_EXCEPTION 0x1
+#define DABT_EXCEPTION 0x2
+#define UND_EXCEPTION  0x3
+#define SWI_EXCEPTION  0x4
+#define RESV_EXCEPTION 0xF
+
 #endif
