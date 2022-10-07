@@ -140,15 +140,9 @@ const static struct rt_pin_ops _c28x_pin_ops =
     c28x_pin_mode,
     c28x_pin_write,
     c28x_pin_read,
-#ifdef BSP_USING_XINT
     c28x_pin_attach_irq,
     c28x_pin_dettach_irq,
     c28x_pin_irq_enable,
-#else
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-#endif
     c28x_pin_get,
 };
 
@@ -157,7 +151,6 @@ int rt_hw_pin_init(void)
     return rt_device_pin_register("pin", &_c28x_pin_ops, RT_NULL);
 }
 
-#ifdef BSP_USING_XINT
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 {
     {-1, 0, RT_NULL, RT_NULL},
@@ -440,7 +433,6 @@ void GPIO_XINT_Callback(rt_int16_t XINT_number)
     }
 }
 
-#endif /* BSP_USING_XINT */
 #endif /* RT_USING_PIN */
 
 

@@ -17,7 +17,7 @@
 /*
  * for now, cpu rate is a fixed value, waiting to be modified to an auto-ajustable variable.
 */
-
+#ifdef BSP_USING_PWM
 rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, const struct rt_pwm_ops *ops, const void *user_data);
 
 #define CPU_FREQUENCY 200e6
@@ -584,3 +584,4 @@ int c28x_pwm_init(void)
 
 }
 INIT_DEVICE_EXPORT(c28x_pwm_init);
+#endif /* BSP_USING_PWM */

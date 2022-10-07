@@ -13,6 +13,7 @@
 #include <board.h>
 #include "rtdevice.h"
 
+#ifdef BSP_USING_PWM
 struct c28x_pwm
 {
     struct rt_device_pwm pwm_device;
@@ -21,5 +22,5 @@ struct c28x_pwm
 };
 
 int c28x_pwm_init(void);
-
+#endif /* BSP_USING_PWM */
 #endif /* DRIVERS_DRV_PWM_H_ */

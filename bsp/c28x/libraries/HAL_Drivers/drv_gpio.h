@@ -20,6 +20,22 @@ extern "C" {
 
 int rt_hw_pin_init(void);
 
+#ifndef BSP_XINT1_PIN
+#define BSP_XINT1_PIN -1
+#endif
+#ifndef BSP_XINT2_PIN
+#define BSP_XINT2_PIN -1
+#endif
+#ifndef BSP_XINT3_PIN
+#define BSP_XINT3_PIN -1
+#endif
+#ifndef BSP_XINT4_PIN
+#define BSP_XINT4_PIN -1
+#endif
+#ifndef BSP_XINT5_PIN
+#define BSP_XINT5_PIN -1
+#endif
+
 #ifdef __cplusplus
 }
 #endif
