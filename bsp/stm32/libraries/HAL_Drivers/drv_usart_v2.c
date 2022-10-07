@@ -395,48 +395,29 @@ static rt_size_t stm32_transmit(struct rt_serial_device     *serial,
 static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 {
     struct stm32_uart *uart;
-    rt_base_t level;
     rt_size_t recv_len, counter;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
-    level = rt_hw_interrupt_disable();
     recv_len = 0;
     counter = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
 
-    switch (isr_flag)
-    {
-    case UART_RX_DMA_IT_IDLE_FLAG:
-        if (counter <= uart->dma_rx.remaining_cnt)
-            recv_len = uart->dma_rx.remaining_cnt - counter;
-        else
-            recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - counter;
-        break;
-
-    case UART_RX_DMA_IT_HT_FLAG:
-        if (counter < uart->dma_rx.remaining_cnt)
-            recv_len = uart->dma_rx.remaining_cnt - counter;
-        break;
-
-    case UART_RX_DMA_IT_TC_FLAG:
-        if(counter >= uart->dma_rx.remaining_cnt)
-            recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - counter;
-
-    default:
-        break;
-    }
-
+    if (counter <= uart->dma_rx.remaining_cnt)
+        recv_len = uart->dma_rx.remaining_cnt - counter;
+    else
+        recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - counter;
     if (recv_len)
     {
+#if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+        struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
+        SCB_InvalidateDCache_by_Addr((uint32_t *)rx_fifo->buffer, serial->config.rx_bufsz);
+#endif
         uart->dma_rx.remaining_cnt = counter;
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
     }
-    rt_hw_interrupt_enable(level);
-
 }
 #endif  /* RT_SERIAL_USING_DMA */
-
 
 /**
  * Uart common interrupt process. This need add to uart ISR.
@@ -449,7 +430,7 @@ static void uart_isr(struct rt_serial_device *serial)
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
-    /* If the Read data register is not empty and the RXNE interrupt is enabled  （RDR） */
+    /* If the Read data register is not empty and the RXNE interrupt is enabled  (RDR) */
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
     {
@@ -461,7 +442,7 @@ static void uart_isr(struct rt_serial_device *serial)
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-    /* If the Transmit data register is empty and the TXE interrupt enable is enabled  （TDR）*/
+    /* If the Transmit data register is empty and the TXE interrupt enable is enabled  (TDR) */
     else if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TXE) != RESET) &&
                 (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_TXE)) != RESET)
     {
@@ -954,6 +935,27 @@ static void stm32_uart_get_config(void)
     static struct dma_config uart4_dma_tx = UART4_DMA_TX_CONFIG;
     uart_config[UART4_INDEX].dma_tx = &uart4_dma_tx;
 #endif
+
+#ifdef BSP_USING_UART5
+    uart_obj[UART5_INDEX].serial.config = config;
+    uart_obj[UART5_INDEX].uart_dma_flag = 0;
+
+    uart_obj[UART5_INDEX].serial.config.rx_bufsz = BSP_UART5_RX_BUFSIZE;
+    uart_obj[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
+
+#ifdef BSP_UART5_RX_USING_DMA
+    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart5_dma_rx = UART5_DMA_RX_CONFIG;
+    uart_config[UART5_INDEX].dma_rx = &uart5_dma_rx;
+#endif
+
+#ifdef BSP_UART5_TX_USING_DMA
+    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart5_dma_tx = UART5_DMA_TX_CONFIG;
+    uart_config[UART5_INDEX].dma_tx = &uart5_dma_tx;
+#endif
+#endif
+
 #endif
 }
 
