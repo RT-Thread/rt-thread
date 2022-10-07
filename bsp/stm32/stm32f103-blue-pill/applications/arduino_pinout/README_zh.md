@@ -13,7 +13,7 @@ Env 工具下敲入 menuconfig 命令，或者 RT-Thread Studio IDE 下选择 RT
 ```Kconfig
 Hardware Drivers Config --->
     Onboard Peripheral Drivers --->
-        [*] Support Arduino
+        [*] Compatible with Arduino Ecosystem (RTduino)
 ```
 
 ## 2 Arduino引脚排布
