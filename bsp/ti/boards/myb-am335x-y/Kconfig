@@ -28,7 +28,7 @@ source "$PKGS_DIR/Kconfig"
 
 menu "Hardware Drivers Config"
 
-source "../../libraries/Kconfig"
+source "$RTT_DIR/bsp/ti/libraries/Kconfig"
 source "board/Kconfig"
 
 endmenu

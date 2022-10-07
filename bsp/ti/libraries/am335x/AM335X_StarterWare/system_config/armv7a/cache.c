@@ -39,8 +39,8 @@
 *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 */
-#include "cache.h"
-#include "cp15.h"
+#include "armv7a/cache.h"
+#include "armv7a/cp15.h"
 
 /*****************************************************************************
 **                      INTERNAL MACRO DEFINITIONS

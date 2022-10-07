@@ -42,26 +42,32 @@
  * This file is dervied from the "ethernetif.c" skeleton Ethernet network
  * interface driver for lwIP.
  */
-#include "src/include/lwip/opt.h"
-#include "src/include/lwip/def.h"
-#include "src/include/lwip/mem.h"
-#include "src/include/lwip/pbuf.h"
-#include "src/include/lwip/sys.h"
-#include "src/include/lwip/stats.h"
-#include "src/include/lwip/snmp.h"
-#include "src/include/netif/etharp.h"
-#include "src/include/netif/ppp_oe.h"
-#include "src/include/lwip/err.h"
+#include "lwip/opt.h"
+#include "lwip/def.h"
+#include "lwip/mem.h"
+#include "lwip/pbuf.h"
+#include "lwip/sys.h"
+#include "lwip/stats.h"
+#include "lwip/snmp.h"
+#include "netif/etharp.h"
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
+#include "netif/ppp_oe.h"
+#else /* >= v2.x */
+#include "netif/ppp/pppoe.h"
+#endif
+#include "netif/ethernetif.h"
+#include "lwip/err.h"
 #include "ports/cpsw/include/netif/cpswif.h"
-#include "ports/cpsw/include/arch/cc.h"
+#include "arch/cc.h"
+#include "ports/cpsw/include/lwiplib.h"
 
 /* DriverLib Header Files required for this interface driver. */
 #include "cpsw.h"
 #include "mdio.h"
-#include "interrupt.h"
+#include "armv7a/am335x/interrupt.h"
 #include "delay.h"
 #include "phy.h" 
-#include "cache.h"
+#include "armv7a/cache.h"
 
 /* CPPI RAM size in bytes */
 #ifndef SIZE_CPPI_RAM
@@ -106,7 +112,7 @@
 #define IFNAME1                                  'n'
 
 #define MASK_LOWER_4BITS_BYTE                    (0x0F)
-#define MASK UPPER_4BITS_BYTE                    (0xF0)
+#define MASK_UPPER_4BITS_BYTE                    (0xF0)
 
 #define MASK_BROADCAST_ADDR                      (0xFF)
 #define MASK_MULTICAST_ADDR                      (0x01)
@@ -174,7 +180,7 @@ struct cpdma_tx_bd {
   
   /* helper to know which pbuf this tx bd corresponds to */
   volatile struct pbuf *pbuf;
-}cpdma_tx_bd;
+};
 
 /* RX Buffer descriptor data structure */
 struct cpdma_rx_bd {
@@ -185,7 +191,7 @@ struct cpdma_rx_bd {
 
   /* helper to know which pbuf this rx bd corresponds to */
   volatile struct pbuf *pbuf;
-}cpdma_rx_bd;
+};
 
 /**
  * Helper struct to hold the data used to operate on the receive 
@@ -203,7 +209,7 @@ struct rxch {
 
   /* The number of free bd's, which can be allocated for reception */
   volatile u32_t free_num;
-}rxch;
+};
 
 /**
  * Helper struct to hold the data used to operate on the transmit 
@@ -221,7 +227,7 @@ struct txch {
 
   /* The number of free bd's, which can be sent */
   volatile u32_t free_num;
-}txch;
+};
 
 volatile struct cpdma_tx_bd *free_head;
 
@@ -235,7 +241,7 @@ struct cpswport{
   
   /* The PHY is capable of GitaBit or Not */
   u32_t phy_gbps;
-}cpswport;
+};
 
 /** 
  * CPSW instance information 
@@ -256,7 +262,7 @@ struct cpswinst{
   /* The tx/rx channels for the interface */
   struct txch txch;
   struct rxch rxch;
-}cpswinst;
+};
 
 /* Defining set of CPSW base addresses for all the instances */
 static struct cpswinst cpsw_inst_data[MAX_CPSW_INST];
@@ -307,7 +313,7 @@ cpswif_inst_config(struct cpswportif *cpswif) {
  */
 static err_t
 cpswif_ale_entry_match_free(struct cpswinst *cpswinst) {
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS];
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS];
   s32_t idx;
 
   /* Check which ALE entry is free starting from 0th entry */
@@ -399,7 +405,7 @@ cpswif_ale_unicastentry_set(struct cpswinst *cpswinst, u32_t port_num,
                             u8_t *eth_addr) {
   volatile u32_t cnt;
   volatile s32_t idx;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   for(cnt = 0; cnt < ETHARP_HWADDR_LEN; cnt++) {
     *(((u8_t *)ale_entry) + cnt) = eth_addr[ETHARP_HWADDR_LEN - cnt -1];
@@ -431,7 +437,7 @@ cpswif_ale_multicastentry_set(struct cpswinst *cpswinst, u32_t portmask,
 {
   volatile u32_t cnt;
   volatile s32_t idx;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   idx = cpswif_ale_entry_match_free(cpswinst);
   if (idx < MAX_ALE_ENTRIES ) {
@@ -495,7 +501,7 @@ check_valid_addr(u8_t *eth_addr, u32_t addr_type) {
  */
 static err_t
 cpswif_ale_entry_match_ageable(struct cpswinst *cpswinst) {
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS];
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS];
   u32_t type;
   s32_t idx;
 
@@ -575,7 +581,7 @@ cpswif_rate_limit(struct cpswinst *cpswinst, u32_t enable, u32_t direction,
 static err_t
 cpswif_ale_entry_match_addr(struct cpswinst *cpswinst, u8_t *eth_addr,
                             u32_t vid) {
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS];
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS];
   u32_t type, cnt;
   s32_t idx;
 
@@ -614,7 +620,7 @@ cpswif_ale_entry_match_addr(struct cpswinst *cpswinst, u8_t *eth_addr,
  */
 static err_t
 cpswif_ale_entry_match_vlan(struct cpswinst *cpswinst, u32_t vid) {
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS];
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS];
   u32_t type;
   s32_t idx;
 
@@ -652,7 +658,7 @@ cpswif_ale_unicastentry_add(struct cpswinst *cpswinst, u32_t port_num,
                             u8_t *eth_addr, u32_t flags, u32_t ucast_type) {
   volatile u32_t cnt;
   volatile s32_t idx;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   idx = cpswif_ale_entry_match_addr(cpswinst, eth_addr, 0);
 
@@ -692,7 +698,7 @@ static err_t
 cpswif_ale_OUI_add(struct cpswinst *cpswinst, u8_t *eth_addr) {
   volatile u32_t cnt;
   volatile s32_t idx;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   idx = cpswif_ale_entry_match_addr(cpswinst, eth_addr, 0);
 
@@ -729,7 +735,7 @@ static err_t
 cpswif_ale_unicastentry_del(struct cpswinst *cpswinst, u32_t port_num,
                             u8_t *eth_addr) {
   volatile s32_t idx;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   *(((u8_t *)ale_entry) + ALE_UCAST_ENTRY_TYPE) = ENTRY_FREE;
 
@@ -759,7 +765,7 @@ cpswif_ale_multicastentry_add(struct cpswinst *cpswinst, u32_t portmask,
                               u8_t *eth_addr, u32_t super, u32_t mcast_st) {
   volatile s32_t idx;
   volatile u32_t cnt;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   idx = cpswif_ale_entry_match_addr(cpswinst, eth_addr, 0);
 
@@ -811,7 +817,7 @@ static err_t
 cpswif_ale_multicastentry_del(struct cpswinst *cpswinst, u32_t portmask,
                               u8_t *eth_addr) {
   volatile s32_t idx;
-  u32_t ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
+  unsigned int ale_entry[ALE_ENTRY_NUM_WORDS] = {0, 0, 0};
 
   idx = cpswif_ale_entry_match_addr(cpswinst, eth_addr, 0);
 
@@ -1542,7 +1548,7 @@ cpswif_rxbd_alloc(struct cpswinst *cpswinst) {
        * Clean the pbuf structure info. This is needed to prevent losing
        * pbuf structure info when we invalidate the pbuf on rx interrupt
        */
-      CacheDataCleanBuff((u32_t)(p), (u32_t)(SIZEOF_STRUCT_PBUF));
+      CacheDataCleanBuff((u32_t)(p), (u32_t)(LWIP_MEM_ALIGN_SIZE(sizeof(struct pbuf))));
 #endif
       curr_bd->bufptr = (u32_t)(p->payload);
       curr_bd->bufoff_len = p->len;
@@ -1605,7 +1611,8 @@ cpswif_transmit(struct netif *netif, struct pbuf *pbuf) {
   struct pbuf *q;
   struct txch *txch;
   volatile struct cpdma_tx_bd *curr_bd, *bd_to_send, *bd_end;
-  struct cpswportif *cpswif = netif->state;
+  struct eth_device *ethif = netif->state;
+  struct cpswportif *cpswif = ethif->parent.user_data;
   u32_t inst_num = cpswif->inst_num;
   struct cpswinst *cpswinst = &cpsw_inst_data[inst_num];
 
@@ -1698,7 +1705,7 @@ cpswif_transmit(struct netif *netif, struct pbuf *pbuf) {
  *                an err_t value if the packet couldn't be sent
  *
  */
-static err_t
+err_t
 cpswif_output(struct netif *netif, struct pbuf *p) {
   err_t stat;
   SYS_ARCH_DECL_PROTECT(lev);
@@ -1796,29 +1803,14 @@ cpswif_phylink_config(struct cpswportif * cpswif, u32_t slv_port_num) {
  */
 static err_t
 cpswif_port_init(struct netif *netif) {
-  struct cpswportif *cpswif = (struct cpswportif*)(netif->state);
-  u32_t temp;
+  struct eth_device *ethif = netif->state;
+  struct cpswportif *cpswif = ethif->parent.user_data;
   err_t err;
 
 #ifdef CPSW_DUAL_MAC_MODE
   struct cpswinst *cpswinst = &cpsw_inst_data[cpswif->inst_num];
   u32_t curr_port = cpswif->port_num;
 #endif
-
-  /* set MAC hardware address length */
-  netif->hwaddr_len = ETHARP_HWADDR_LEN;
-
-  /* set MAC hardware address */
-  for(temp = 0; temp < ETHARP_HWADDR_LEN; temp++) {
-    netif->hwaddr[temp] = cpswif->eth_addr[temp];
-  }
-
-  /* maximum transfer unit */
-  netif->mtu = MAX_TRANSFER_UNIT;
-
-  /* device capabilities */
-  /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
-  netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 
 #ifdef CPSW_DUAL_MAC_MODE
   /* Set the ethernet address for the port */
@@ -1839,7 +1831,9 @@ cpswif_port_init(struct netif *netif) {
 
 #else
   err = cpswif_phylink_config(cpswif, 1);
+#ifdef CPSW0_PORT_2_PHY_ADDR
   err = err & (cpswif_phylink_config(cpswif, 2));
+#endif
 
 #endif
 
@@ -1870,7 +1864,7 @@ cpswif_cpdma_init(struct cpswinst *cpswinst) {
   txch->send_tail = NULL;
 
   /* Allocate half of the CPPI RAM for TX buffer descriptors */
-  num_bd = (SIZE_CPPI_RAM >> 1) / sizeof(cpdma_tx_bd);
+  num_bd = (SIZE_CPPI_RAM >> 1) / sizeof(struct cpdma_tx_bd);
 
   /* All buffer descriptors are free to send */
   txch->free_num = num_bd;
@@ -1893,7 +1887,7 @@ cpswif_cpdma_init(struct cpswinst *cpswinst) {
                                                    (SIZE_CPPI_RAM >> 1));
 
   /* Allocate half of the CPPI RAM available for RX buffer dscriptors */
-  num_bd = (SIZE_CPPI_RAM >> 1) / sizeof(cpdma_rx_bd);
+  num_bd = (SIZE_CPPI_RAM >> 1) / sizeof(struct cpdma_rx_bd);
   rxch->free_num = num_bd;
 
   curr_rxbd = rxch->free_head;
@@ -2006,38 +2000,10 @@ cpswif_inst_init(struct cpswportif *cpswif){
 err_t
 cpswif_init(struct netif *netif)
 {
-  struct cpswportif *cpswif = (struct cpswportif*)(netif->state);
+  struct eth_device *ethif = netif->state;
+  struct cpswportif *cpswif = ethif->parent.user_data;
   static u32_t inst_init_flag = 0;
   u32_t inst_num = cpswif->inst_num;
-
-#if LWIP_NETIF_HOSTNAME
-  /* Initialize interface hostname */
-  netif->hostname = "lwip";
-#endif /* LWIP_NETIF_HOSTNAME */
-
-  /**
-   * Initialize the snmp variables and counters inside the struct netif.
-   * The last argument should be replaced with your link speed, in units
-   * of bits per second.
-   */
-  NETIF_INIT_SNMP(netif, snmp_ifType_ethernet_csmacd, 10000000);
-
-  /* let us use the interface number to identify netif */
-#ifdef CPSW_DUAL_MAC_MODE
-  netif->num = (u8_t)(((cpswif->inst_num * MAX_SLAVEPORT_PER_INST)
-                      + cpswif->port_num - 1) & 0xFF);
-#else
-  netif->num = (u8_t)(cpswif->inst_num);
-#endif
-
-  /**
-   * We directly use etharp_output() here to save a function call.
-   * You can instead declare your own function an call etharp_output()
-   * from it if you have to do some checks before sending (e.g. if link
-   * is available...)
-   */
-  netif->output = etharp_output;
-  netif->linkoutput = cpswif_output;
 
   /**
    * Initialize an instance only once. Port initialization will be
@@ -2065,12 +2031,13 @@ cpswif_init(struct netif *netif)
  * @return none
  */
 void
-cpswif_rx_inthandler(u32_t inst_num, struct netif * netif_arr) {
+cpswif_rx_inthandler(u32_t inst_num, struct netif ** netif_arr) {
   struct cpswinst *cpswinst = &cpsw_inst_data[inst_num];
   struct rxch *rxch;
   volatile struct cpdma_rx_bd *curr_bd;
   volatile struct pbuf *pbuf;
   u32_t tot_len, if_num;
+  struct netif *netif;
 
 #ifdef CPSW_DUAL_MAC_MODE
   u32_t from_port;
@@ -2109,7 +2076,7 @@ cpswif_rx_inthandler(u32_t inst_num, struct netif * netif_arr) {
      * Invalidate the cache lines of the pbuf including payload. Because
      * the memory contents got changed by DMA.
      */
-    CacheDataInvalidateBuff((u32_t)pbuf, (PBUF_LEN_MAX + SIZEOF_STRUCT_PBUF));
+    CacheDataInvalidateBuff((u32_t)pbuf, (PBUF_LEN_MAX + LWIP_MEM_ALIGN_SIZE(sizeof(struct pbuf))));
 #endif
 
     /* Update the len and tot_len fields for the pbuf in the chain */
@@ -2118,9 +2085,6 @@ cpswif_rx_inthandler(u32_t inst_num, struct netif * netif_arr) {
 
     curr_bd->flags_pktlen = CPDMA_BUF_DESC_OWNER;
 
-    /* Adjust the link statistics */
-    LINK_STATS_INC(link.recv);
-
 #ifdef CPSW_DUAL_MAC_MODE
     if_num = (inst_num * MAX_SLAVEPORT_PER_INST) + from_port - 1;
 #else
@@ -2128,10 +2092,9 @@ cpswif_rx_inthandler(u32_t inst_num, struct netif * netif_arr) {
 #endif
 
     /* Process the packet */
-    if(ethernet_input((struct pbuf *)pbuf, netif_arr + if_num) != ERR_OK) {
-      /* Adjust the link statistics */
-      LINK_STATS_INC(link.memerr);
-      LINK_STATS_INC(link.drop);
+    netif = *(netif_arr + if_num);
+    if(netif->input((struct pbuf *)pbuf, netif) != ERR_OK) {
+      pbuf_free((struct pbuf *)pbuf);
     }
 
     /* Acknowledge that this packet is processed */
@@ -2202,7 +2165,7 @@ cpswif_tx_inthandler(u32_t inst_num) {
       /* As this bd is not the end, its free now */
       txch->free_num++;
 
-      if(txch->free_num == (SIZE_CPPI_RAM >> 1) / sizeof(cpdma_tx_bd)) {
+      if(txch->free_num == (SIZE_CPPI_RAM >> 1) / sizeof(struct cpdma_tx_bd)) {
         break;
       }
     }
@@ -2224,8 +2187,6 @@ cpswif_tx_inthandler(u32_t inst_num) {
     CPSWCPDMATxCPWrite(cpswinst->cpdma_base, 0, (u32_t)curr_bd);
 
     pbuf_free((struct pbuf *)curr_bd->pbuf);
-
-    LINK_STATS_INC(link.xmit);
 
     send_head = txch->send_head;
     curr_bd = send_head;

@@ -47,7 +47,10 @@
 extern "C" {
 #endif
 void DelayTimerSetup(void);
-void delay(unsigned int milliSec);
+static inline void delay(unsigned int milliSec)
+{
+    rt_thread_mdelay(milliSec);
+}
 void StartTimer(unsigned int millisec);
 void StopTimer();
 unsigned int IsTimerElapsed(void);

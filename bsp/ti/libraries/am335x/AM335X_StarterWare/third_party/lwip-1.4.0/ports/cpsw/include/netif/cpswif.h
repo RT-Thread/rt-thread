@@ -40,7 +40,7 @@
  * Copyright (c) 2010 Texas Instruments Incorporated
  *
  */
-#include "src/include/lwip/netif.h"
+#include "lwip/netif.h"
 
 #ifndef __CPSWIF_H__
 #define __CPSWIF_H__
@@ -49,7 +49,7 @@
 /*
  * Configurations for AM335x
  */
-#ifdef am335x
+#ifdef SOC_AM335X
 #include "soc_AM335x.h"
 
 #define MAX_CPSW_INST                   1    
@@ -80,8 +80,8 @@
 #define CPSW0_PORT_2_PHY_GIGABIT        TRUE
 #endif
 
-#include "consoleUtils.h"
-#define LWIP_PRINTF                     ConsoleUtilsPrintf
+#include <rtthread.h>
+#define LWIP_PRINTF(fmt, ...)           rt_kprintf(fmt "\n", ##__VA_ARGS__)
 
 #else
 #error Unsupported EVM !!!
@@ -101,12 +101,13 @@ struct cpswportif {
   u32_t port_num;
 
   u8_t eth_addr[6];
-}cpswportif;
+};
 
 extern u32_t cpswif_netif_status(struct netif *netif);
 extern u32_t cpswif_link_status(u32_t inst_num, u32_t slv_port_num);
+extern err_t cpswif_output(struct netif * netif, struct pbuf * p);
 extern err_t cpswif_init(struct netif *netif);
-extern void cpswif_rx_inthandler(u32_t inst_num, struct netif * netif_arr); 
+extern void cpswif_rx_inthandler(u32_t inst_num, struct netif ** netif_arr);
 extern void cpswif_tx_inthandler(u32_t inst_num);
 
 #endif /* _CPSWIF_H__ */

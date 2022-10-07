@@ -1,0 +1,74 @@
+
+config RT_USING_CPSW0_PORT1
+    bool "Using CPSW0 port1
+    default n
+
+    if RT_USING_CPSW0_PORT1
+        choice
+            prompt "cpsw0_port1 phy-mode"
+            default CPSW0_PORT1_PHY_MODE_RGMII
+            help
+                Select the cpsw0_port1 phy-mode
+
+            config CPSW0_PORT1_PHY_MODE_RGMII
+                bool "rgmii"
+
+            config CPSW0_PORT1_PHY_MODE_RGMII_ID
+                bool "rgmii-id"
+        endchoice
+
+        config CPSW0_PORT_1_PHY_ADDR
+            int "cpsw0 port1 phy_addr"
+            default 0
+
+        config CPSW0_PORT_1_PHY_GIGABIT
+            int
+            default 1 if CPSW0_PORT1_PHY_MODE_RGMII || CPSW0_PORT1_PHY_MODE_RGMII_ID
+            default 0
+    endif
+
+config RT_USING_CPSW0_PORT2
+    bool "Using CPSW0 port2"
+    default n
+
+    if RT_USING_CPSW0_PORT2
+        choice
+            prompt "cpsw0_port2 phy-mode"
+            default CPSW_PORT2_PHY_MODE_RGMII
+            help
+                Select the cpsw0_port2 phy-mode
+
+            config CPSW0_PORT2_PHY_MODE_RGMII
+                bool "rgmii"
+
+            config CPSW0_PORT2_PHY_MODE_RGMII_ID
+                bool "rgmii-id"
+        endchoice
+
+        config CPSW0_PORT_2_PHY_ADDR
+            int "cpsw0 port2 phy_addr"
+            default 1
+
+        config CPSW0_PORT_2_PHY_GIGABIT
+            int
+            default 1 if CPSW0_PORT2_PHY_MODE_RGMII || CPSW0_PORT2_PHY_MODE_RGMII_ID
+            default 0
+    endif
+
+config CPSW_DUAL_MAC_MODE
+    bool "Using CPSW0 ports in Dual MAC mode"
+    select RT_USING_CPSW0_PORT1
+    select RT_USING_CPSW0_PORT2
+    default n
+
+if RT_USING_CPSW0_PORT1 || RT_USING_CPSW0_PORT2
+    config LWIP_CACHE_ENABLED
+        bool "Using lwIP with cache"
+        default n
+
+    if LWIP_CACHE_ENABLED
+        config SOC_CACHELINE_SIZE_BYTES
+            int "Number of bytes in a cache line"
+            default 64
+    endif
+endif

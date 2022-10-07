@@ -21,5 +21,9 @@ config RT_USING_UART1
     bool "Using RT_USING_UART1"
     default n
 
+if SOC_AM335X
+    source "$RTT_DIR/bsp/ti/libraries/am335x/Kconfig"
+endif
+
 endmenu
 

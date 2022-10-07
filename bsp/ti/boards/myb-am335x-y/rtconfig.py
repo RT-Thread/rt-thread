@@ -17,6 +17,8 @@ elif CROSS_TOOL == 'iar':
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+elif os.getenv('CROSS_COMPILE_PATH'):
+    EXEC_PATH = os.getenv('CROSS_COMPILE_PATH')
 
 BUILD = 'debug'
 
