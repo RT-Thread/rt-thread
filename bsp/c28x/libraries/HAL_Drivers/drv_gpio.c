@@ -22,6 +22,7 @@
 #define PIN_c28x_PIN(pin) ((rt_uint32_t)(1u << PIN_NO(pin)))
 
 #define PIN_c28x_PORT_MAX 6 /* gpioA to GPIOF in total*/
+#define PIN_IRQ_MAX 5   /* XINT1 to XINT5 in total */
 
 static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                      rt_uint32_t mode, void (*hdr)(void *args), void *args);
@@ -40,6 +41,9 @@ static rt_base_t c28x_pin_get(const char *name)
     {
         return -RT_EINVAL;
     }
+    /*
+     * PX.y
+     */
     if ((name[0] != 'P') || (name[2] != '.'))
     {
         return -RT_EINVAL;
@@ -159,7 +163,7 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 rt_inline rt_int32_t get_irq_index(rt_uint32_t pin)
 {
     int i;
-    for(i = 0 ; i < 5 ; i++){
+    for(i = 0 ; i < PIN_IRQ_MAX ; i++){
         if(pin_irq_hdr_tab[i].pin == pin){
             return i;
         }
@@ -172,7 +176,9 @@ rt_inline rt_int32_t get_irq_index(rt_uint32_t pin)
 static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                      rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
-    //using args to get XINT channel, which has 5 channels in total for 28379
+    /*
+     * using args to get XINT channel, which has 5 channels in total for 28379
+     */
     rt_base_t level;
     rt_int32_t irqindex = -1;
 
@@ -215,7 +221,7 @@ static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
         return -RT_ENOSYS;
     }
 
-    for(i = 0 ; i < 5 ; i++){
+    for(i = 0 ; i < PIN_IRQ_MAX ; i++){
         if(pin_irq_hdr_tab[i].pin == pin){
             irqindex = i;
             break;
@@ -249,13 +255,15 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     }
 
     irqindex = get_irq_index(pin);
+
+    /* irqindex+1 = channel*/
+    if (irqindex < 0 || irqindex >= PIN_IRQ_MAX)
+    {
+        return -RT_ENOSYS;
+    }
+
     if (enabled == PIN_IRQ_ENABLE)
     {
-        if (irqindex < 0 )
-        {
-            return -RT_ENOSYS;
-        }
-
         level = rt_hw_interrupt_disable();
 
         if (pin_irq_hdr_tab[irqindex].pin == -1)
@@ -265,9 +273,9 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         }
 
         /*
-         * 1.设置gpio为input
-         * 2.打开XINT的中断
-         * 3.设置XINT的即兴
+         * 1. set the edge mode of interrupt triggering
+         * 2. set the GPIO mode
+         * 3. enable XINT channel and set the input source
         */
         channel = irqindex+1;
         switch (pin_irq_hdr_tab[irqindex].mode)
@@ -300,9 +308,21 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         }else if(channel == 3){
             XintRegs.XINT3CR.bit.ENABLE = 1;        // Enable XINT2
             EALLOW;
-            InputXbarRegs.INPUT5SELECT = pin;       //Set XINT1 source to GPIO-pin
+            InputXbarRegs.INPUT6SELECT = pin;       //Set XINT1 source to GPIO-pin
             EDIS;
             XintRegs.XINT3CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
+        }else if(channel == 4){
+            XintRegs.XINT4CR.bit.ENABLE = 1;        // Enable XINT2
+            EALLOW;
+            InputXbarRegs.INPUT13SELECT = pin;       //Set XINT1 source to GPIO-pin
+            EDIS;
+            XintRegs.XINT4CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
+        }else if(channel == 5){
+            XintRegs.XINT5CR.bit.ENABLE = 1;        // Enable XINT2
+            EALLOW;
+            InputXbarRegs.INPUT14SELECT = pin;       //Set XINT1 source to GPIO-pin
+            EDIS;
+            XintRegs.XINT5CR.bit.POLARITY = edge_mode;      // Falling edge interrupt
         }
 
         c28x_pin_mode(device, pin, pin_mode);
@@ -313,11 +333,15 @@ static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         level = rt_hw_interrupt_disable();
         channel = irqindex+1;
         if(channel == 1){
-            XintRegs.XINT1CR.bit.ENABLE = 0;        // Enable XINT1
+            XintRegs.XINT1CR.bit.ENABLE = 0;        // Disable XINT1
         }else if(channel == 2){
-            XintRegs.XINT2CR.bit.ENABLE = 0;        // Enable XINT2
+            XintRegs.XINT2CR.bit.ENABLE = 0;        // Disable XINT2
         }else if(channel == 3){
-            XintRegs.XINT3CR.bit.ENABLE = 0;        // Enable XINT2
+            XintRegs.XINT3CR.bit.ENABLE = 0;        // Disable XINT2
+        }else if(channel == 4){
+            XintRegs.XINT4CR.bit.ENABLE = 0;        // Disable XINT2
+        }else if(channel == 5){
+            XintRegs.XINT5CR.bit.ENABLE = 0;        // Disable XINT2
         }
         rt_hw_interrupt_enable(level);
     }

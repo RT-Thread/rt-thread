@@ -178,6 +178,39 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
+/* Arduino libraries */
+
+
+/* Projects */
+
+
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
+
 /* Hardware Drivers Config */
 
 /* Onboard Peripheral Drivers */
