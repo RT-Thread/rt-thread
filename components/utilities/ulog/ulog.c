@@ -627,7 +627,7 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
  * @param level level
  * @param tag tag
  * @param newline has_newline
- * @param hex_buf != NULL: enable hex log mode, data buffer
+ * @param hex_buf != RT_NULL: enable hex log mode, data buffer
  * @param hex_size hex data buffer size
  * @param hex_width hex log width
  * @param hex_addr hex data address
@@ -682,7 +682,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const r
     output_lock();
 
     /* If there is a recursion, we use a simple way */
-    if ((ulog_voutput_recursion == RT_TRUE) && (hex_buf == NULL))
+    if ((ulog_voutput_recursion == RT_TRUE) && (hex_buf == RT_NULL))
     {
         rt_kprintf(format, args);
         if (newline == RT_TRUE)
@@ -695,7 +695,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const r
 
     ulog_voutput_recursion = RT_TRUE;
 
-    if (hex_buf == NULL)
+    if (hex_buf == RT_NULL)
     {
 #ifndef ULOG_USING_SYSLOG
         log_len = ulog_formater(log_buf, level, tag, newline, format, args);
@@ -751,7 +751,7 @@ void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const ch
     /* args point to the first variable parameter */
     va_start(args, format);
 
-    ulog_voutput(level, tag, newline, NULL, 0, 0, 0, format, args);
+    ulog_voutput(level, tag, newline, RT_NULL, 0, 0, 0, format, args);
 
     va_end(args);
 }
@@ -827,7 +827,7 @@ void ulog_hexdump(const char *tag, rt_size_t width, const rt_uint8_t *buf, rt_si
             len = size - i;
         else
             len = width;
-        ulog_voutput(LOG_LVL_DBG, tag, RT_TRUE, buf, len, width, i, NULL, args);
+        ulog_voutput(LOG_LVL_DBG, tag, RT_TRUE, buf, len, width, i, RT_NULL, args);
     }
 
     va_end(args);
