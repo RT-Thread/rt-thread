@@ -642,7 +642,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const r
     static rt_size_t log_len = 0;
 
     RT_ASSERT(tag);
-    RT_ASSERT((format&&!hex_buf) || (!format&&hex_buf));
+    RT_ASSERT((format && !hex_buf) || (!format && hex_buf));
 #ifndef ULOG_USING_SYSLOG
     RT_ASSERT(level <= LOG_LVL_DBG);
 #else
