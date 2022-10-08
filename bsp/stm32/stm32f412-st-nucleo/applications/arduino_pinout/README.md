@@ -18,7 +18,7 @@ Hardware Drivers Config --->
 
 ![nucleo-f412-pinout](nucleo-f412-pinout.png)
 
-该BSP遵照Arduino UNO板的引脚排列方式。详见 `pins_arduino.c`
+该BSP遵照Arduino UNO板的引脚排列方式，详见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
 | Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                     |
 | ----------- | --------- | ---- | -------------------------------------- |
@@ -73,3 +73,14 @@ I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚默�
 ### 3.3 串口
 
 本BSP通过 `Serial.` 方法调用 `uart3` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
+
+### 3.4 USB虚拟串口
+
+本BSP支持USB虚拟串口，如果需要使用，可以手动使能。详见[例程](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial)。
+
+```Kconfig
+RT-Thread online packages --->
+    Arduino libraries --->
+        [*] RTduino: Arduino Ecological Compatibility Layer
+            [*] Enable USB Serial
+```

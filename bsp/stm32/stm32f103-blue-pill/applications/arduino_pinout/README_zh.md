@@ -40,12 +40,12 @@ Hardware Drivers Config --->
 | 15 (D15)            | PB8       | 是    | I2C-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管                                      |
 | 16 (D16)            | PA12      | 是    | USB-DP，默认被 [TinyUSB软件包](https://github.com/RT-Thread-packages/tinyusb) 接管 |
 | 17 (D17)            | PA11      | 是    | USB-DM，默认被 [TinyUSB软件包](https://github.com/RT-Thread-packages/tinyusb) 接管 |
-| 18 (D18)            | PA10      | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart1接管                                     |
-| 19 (D19)            | PA9       | 是    | Serial-Tx，默认被RT-Thread的UART设备框架uart1接管                                     |
-| 20 (D20)            | PA2       | 否    | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管                                     |
-| 21 (D21)            | PA3       | 否    | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管                                     |
-| 22 (D22)            | PB10      | 是    | Serial3-Tx，默认被RT-Thread的UART设备框架uart3接管                                     |
-| 23 (D23)            | PB11      | 是    | Serial3-Rx，默认被RT-Thread的UART设备框架uart3接管                                     |
+| 18 (D18)            | PA10      | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart1接管                                    |
+| 19 (D19)            | PA9       | 是    | Serial-Tx，默认被RT-Thread的UART设备框架uart1接管                                    |
+| 20 (D20)            | PA2       | 否    | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管                                   |
+| 21 (D21)            | PA3       | 否    | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管                                   |
+| 22 (D22)            | PB10      | 是    | Serial3-Tx，默认被RT-Thread的UART设备框架uart3接管                                   |
+| 23 (D23)            | PB11      | 是    | Serial3-Rx，默认被RT-Thread的UART设备框架uart3接管                                   |
 | 24 (D24)            | PB15      | 是    | SPI-MOSI，默认被RT-Thread的SPI设备框架spi2接管                                       |
 | 25 (D25)            | PB14      | 是    | SPI-MISO，默认被RT-Thread的SPI设备框架spi2接管                                       |
 | 26 (D26)            | PB13      | 是    | SPI-SCK ，默认被RT-Thread的SPI设备框架spi2接管                                       |
@@ -60,7 +60,7 @@ Hardware Drivers Config --->
 > 注意：
 > 
 > 1. 如果同时驱动舵机和调度analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 2. 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)
+> 2. 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
 ## 3 通信
 
@@ -72,10 +72,17 @@ I2C总线是 `D14` 和 `D15` 引脚，这两个引脚默认是被RT-Thread I2C�
 
 SPI总线是 `D24` 、`D25` 和 `D26` 引脚，这三个引脚默认是被RT-Thread SPI设备框架接管的，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。此外，还使用到了片选引脚(SS)，默认为 `D7`。
 
-### 3.3 USB
-
-默认支持USB虚拟串口，详见[例程](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial)。
-
-### 3.4 串口
+### 3.3 串口
 
 默认支持通过 `Serial.` 方法调用 `uart1` 串口设备；通过 `Serial2.` 方法调用 `uart2` 串口设备；通过 `Serial3.` 方法调用 `uart3` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
+
+### 3.4 USB虚拟串口
+
+本BSP支持USB虚拟串口，如果需要使用，可以手动使能。详见[例程](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial)。
+
+```Kconfig
+RT-Thread online packages --->
+    Arduino libraries --->
+        [*] RTduino: Arduino Ecological Compatibility Layer
+            [*] Enable USB Serial
+```

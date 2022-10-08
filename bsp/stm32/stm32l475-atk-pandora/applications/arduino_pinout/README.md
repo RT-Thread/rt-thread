@@ -67,6 +67,7 @@ Hardware Drivers Config --->
 > 注意：
 > 
 > 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
+> 2. 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
 ### 2.2 板载排针的Arduino引脚排布
 
@@ -119,9 +120,16 @@ I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控�
 
 默认支持通过 `Serial.` 方法调用 `uart1` 串口设备；通过 `Serial2.` 方法调用 `uart2` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
 
-### 3.4 USB
+### 3.4 USB虚拟串口
 
-默认支持USB虚拟串口，详见[例程](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial)。
+支持USB虚拟串口，如果需要使用，可以手动使能。详见[例程](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial)。
+
+```Kconfig
+RT-Thread online packages --->
+    Arduino libraries --->
+        [*] RTduino: Arduino Ecological Compatibility Layer
+            [*] Enable USB Serial
+```
 
 ## 4 特殊功能说明
 
