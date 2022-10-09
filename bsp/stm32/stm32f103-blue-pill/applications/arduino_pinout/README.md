@@ -32,7 +32,7 @@ For more information, please see [pins_arduino.c](pins_arduino.c) and [pins_ardu
 | 5 (D5)              | PA15      | Yes         | PWM2-CH1. Token over by RT-Thread PWM device by default                                                     |
 | 6 (D6)              | PA8       | Yes         |                                                                                                             |
 | 7 (D7, SS)          | PB12      | Yes         | SPI chip select by default                                                                                  |
-| 8 (D8, LED_BUILTIN) | PC13      | No          | Build-in LED                                                                                                |
+| 8 (D8, LED_BUILTIN) | PC13      | No          | USER LED                                                                                                    |
 | 9 (D9)              | PC14      | No          |                                                                                                             |
 | 10 (D10)            | PC15      | No          |                                                                                                             |
 | 11 (D11)            | PA0       | No          |                                                                                                             |
@@ -75,7 +75,7 @@ SPI bus is `D24`, `D25` and `D26` pins. Users can directly include the `#include
 
 ### 3.3 Serial
 
-This board supports to use `Serail.` method to operate `uart1` device; use `Serial2.` method to use `uart2` device; use `Serial3.` method to use `uart3` device. See [example](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp).
+This board supports to use `Serial.` method to operate `uart1` device; use `Serial2.` method to use `uart2` device; use `Serial3.` method to use `uart3` device. See [example](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp).
 
 ### 3.4 USB Virtual Serial
 

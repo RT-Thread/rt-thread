@@ -37,7 +37,7 @@ Hardware Drivers Config --->
 | 10 (D10)    | PB6       | 是    | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管           |
 | 11 (D11)    | PA7       | 是    | PWM1-CH1N，默认被RT-Thread的PWM设备框架pwm1接管          |
 | 12 (D12)    | PA6       | 是    |                                               |
-| 13 (D13)    | PA5       | 是    | 用户LED                                         |
+| 13 (D13, )  | PA5       | 是    | 板载用户LED                                       |
 | 14 (D14)    | PB9       | 是    | I2C-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管          |
 | 15 (D15)    | PB8       | 是    | I2C-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管          |
 | 16 (D16)    | PC13      | 是    | 用户按键（左侧蓝色）                                    |

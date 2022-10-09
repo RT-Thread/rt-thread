@@ -32,7 +32,7 @@ Hardware Drivers Config --->
 | 5 (D5)              | PA15      | 是    | PWM2-CH1，默认被RT-Thread的PWM设备框架pwm2接管                                       |
 | 6 (D6)              | PA8       | 是    |                                                                           |
 | 7 (D7, SS)          | PB12      | 是    | SPI片选默认引脚                                                                 |
-| 8 (D8, LED_BUILTIN) | PC13      | 否    | 板载LED                                                                     |
+| 8 (D8, LED_BUILTIN) | PC13      | 否    | 板载用户LED                                                                   |
 | 9 (D9)              | PC14      | 否    |                                                                           |
 | 10 (D10)            | PC15      | 否    |                                                                           |
 | 11 (D11)            | PA0       | 否    |                                                                           |

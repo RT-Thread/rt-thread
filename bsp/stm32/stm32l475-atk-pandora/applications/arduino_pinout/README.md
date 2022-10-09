@@ -45,9 +45,9 @@ Hardware Drivers Config --->
 | 18 (D18)              | PD9       | 是       | KEY1                                         |
 | 19 (D19)              | PD8       | 是       | KEY2                                         |
 | 20 (D20)              | PC13      | 是       | KEY-WKUP                                     |
-| 21 (D21)              | PE7       | 是       | 红色LED                                        |
-| 22 (D22, LED_BUILTIN) | PE8       | 是       | 绿色LED，Arduino默认LED                           |
-| 23 (D23)              | PE9       | 是       | 蓝色LED，PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管    |
+| 21 (D21)              | PE7       | 是       | 用户红色LED                                      |
+| 22 (D22, LED_BUILTIN) | PE8       | 是       | 用户绿色LED                                      |
+| 23 (D23)              | PE9       | 是       | 用户蓝色LED，PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管  |
 | 24 (D24)              | PB0       | 3.6V容忍  | 红外发送                                         |
 | 25 (D25)              | PB1       | 是       | 红外接收                                         |
 | 26 (D26)              | PD4       | 是       | 无线模块 CE                                      |

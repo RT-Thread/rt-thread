@@ -37,14 +37,14 @@ This board complies with Arduino UNO pins layout. For more details, please take 
 | 10 (D10)    | PH6       | Yes         | PWM12-CH1. Token over by RT-Thread PWM device by default                                      |
 | 11 (D11)    | PB15      | Yes         | PWM12-CH2. Token over by RT-Thread PWM device by default                                      |
 | 12 (D12)    | PB14      | Yes         |                                                                                               |
-| 13 (D13)    | PD3       | Yes         | USER LED  LED_BUILTIN                                                                         |
+| 13 (D13, )  | PD3       | Yes         | USER LED1                                                                                     |
 | 14 (D14)    | PB9       | Yes         | I2C1-SDA. Token over by RT-Thread I2C device by default                                       |
 | 15 (D15)    | PB8       | Yes         | I2C1-SCL. Token over by RT-Thread I2C device by default                                       |
 | 16 (D16)    | PA0       | Yes         | USER Button                                                                                   |
-| 17（D17）     | PG6       | Yes         | USER LED1                                                                                     |
-| 18（D18）     | PD4       | Yes         | USER LED2                                                                                     |
-| 19（D19）     | PD5       | Yes         | USER LED3                                                                                     |
-| 20（D20）     | PK3       | Yes         | USER LED4                                                                                     |
+| 17（D17）     | PG6       | Yes         | USER LED2                                                                                     |
+| 18（D18）     | PD4       | Yes         | USER LED3                                                                                     |
+| 19（D19）     | PD5       | Yes         | USER LED4                                                                                     |
+| 20（D20）     | PK3       | Yes         | USER LED5                                                                                     |
 | A0          | PB1       | Yes         | ADC1-CH9. Token over by RT-Thread ADC device by default                                       |
 | A1          | PC2       | Yes         | ADC1-CH12. Token over by RT-Thread ADC device by default                                      |
 | A2          | PC3       | Yes         | ADC1-CH13. Token over by RT-Thread ADC device by default                                      |
@@ -74,7 +74,7 @@ This board doesn't support Arduino SPI header file and functions.
 
 ### 3.3 Serial
 
-This board supports to use `Serail.` method to operate `uart3` device. See [example](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp).
+This board supports to use `Serial.` method to operate `uart3` device. See [example](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp).
 
 ### 3.4 USB Virtual Serial
 
