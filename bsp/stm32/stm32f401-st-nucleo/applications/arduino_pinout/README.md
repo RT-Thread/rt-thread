@@ -19,4 +19,3 @@ Hardware Drivers Config --->
 # 2 Arduino Pinout
 
 ![nucleo-f401-pinout](nucleo-f401-pinout.png)
-

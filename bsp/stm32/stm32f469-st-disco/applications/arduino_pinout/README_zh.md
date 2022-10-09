@@ -24,10 +24,10 @@ Hardware Drivers Config --->
 
 | Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                            |
 | ----------- | --------- | ---- | --------------------------------------------- |
-| 0 (D0)      | PG9       | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart6接管        |
-| 1 (D1)      | PG14      | 是    | Serial-Tx，默认被RT-Thread的UART设备框架uart6接管        |
+| 0 (D0)      | PG9       | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart3接管        |
+| 1 (D1)      | PG14      | 是    | Serial-Tx，默认被RT-Thread的UART设备框架uart3接管        |
 | 2 (D2)      | PG13      | 是    |                                               |
-| 3 (D3)      | PA1       | 是    | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管管          |
+| 3 (D3)      | PA1       | 是    | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管           |
 | 4 (D4)      | PG12      | 是    |                                               |
 | 5 (D5)      | PA2       | 是    | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管           |
 | 6 (D6)      | PA6       | 是    | PWM3-CH1，默认被RT-Thread的PWM设备框架pwm3接管           |
@@ -37,9 +37,9 @@ Hardware Drivers Config --->
 | 10 (D10)    | PH6       | 是    | PWM12-CH1，默认被RT-Thread的PWM设备框架pwm12接管         |
 | 11 (D11)    | PB15      | 是    | PWM12-CH2，默认被RT-Thread的PWM设备框架pwm12接管         |
 | 12 (D12)    | PB14      | 是    |                                               |
-| 13 (D13)    | PD3       | 是    | LED_BUILTIN                                   |
+| 13 (D13)    | PD3       | 是    | 板载用户LED LED_BUILTIN                           |
 | 14 (D14)    | PB9       | 是    | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管           |
-| 15 (D15)    | PB8       | 是    | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管           |
+| 15 (D15)    | PB8       | 是    | I2C1-SCL，被RT-Thread的I2C设备框架i2c1总线接管           |
 | 16 (D16)    | PA0       | 是    | 板载用户按键                                        |
 | 17（D17）     | PG6       | 是    | 板载用户LED1                                      |
 | 18（D18）     | PD4       | 是    | 板载用户LED2                                      |
@@ -53,6 +53,10 @@ Hardware Drivers Config --->
 | A5          | PA4       | 是    | ADC1-CH4，默认被RT-Thread的ADC设备框架adc1接管           |
 | A6          | --        |      | 芯片内部参考电压 ADC1-CH17，默认被RT-Thread的ADC设备框架adc1接管 |
 | A7          | --        |      | 芯片内部温度 ADC1-CH16，默认被RT-Thread的ADC设备框架adc1接管   |
+
+> 注意：
+> 
+> 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
 
 > 参考资料
 > 
@@ -70,7 +74,7 @@ Hardware Drivers Config --->
 
 ### 3.3 串口
 
-本BSP通过 `Serial.` 方法调用 `uart2` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
+本BSP通过 `Serial.` 方法调用 `uart3` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
 
 ### 3.4 USB虚拟串口
 
