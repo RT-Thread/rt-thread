@@ -20,6 +20,8 @@ scons
 ```
 可以看到正常生成`rtthread.elf`与`rtthread.bin`文件。
 
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
 ## 3. 执行
 
 本工程执行环境为`qemu-system-aarch64`模拟器，工程可配置为使用`Cortex-A53/A57/A72`等芯片，GIC支持`V2/V3`版本，其中`V2`最多可配置8个处理器。

@@ -22,6 +22,8 @@ scons
 ```
 可以看到正常生成`rtthread.elf`与`rtthread.bin`文件。
 
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
 ## 3. 执行
 
 RK3568 根据不同的开发板实现有不同的 Kernel 烧写方式，推荐烧录进 SD 卡：（[官方板](https://wiki.t-firefly.com/zh_CN/ROC-RK3568-PC/hardware_doc.html)|[RADXA ROCK 3A](https://wiki.radxa.com/Rock3/install/microSD)）。
