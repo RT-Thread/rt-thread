@@ -4,19 +4,20 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define SOC_TMS320F28X
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
-#define RT_THREAD_PRIORITY_32
-#define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
+#define RT_THREAD_PRIORITY_8
+#define RT_THREAD_PRIORITY_MAX 8
+#define RT_TICK_PER_SECOND 100
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 1024
 
 /* kservice optimization */
 
@@ -35,8 +36,6 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
-#define RT_USING_MEMHEAP
-#define RT_MEMHEAP_FAST_MODE
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
@@ -45,24 +44,23 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_CONSOLE_DEVICE_NAME "scia"
 #define RT_VER_NUM 0x50000
-#define ARCH_ARM
-#define RT_USING_CPU_FFS
-#define ARCH_ARM_CORTEX_M
-#define ARCH_ARM_CORTEX_M3
+#define ARCH_TIDSP
+#define ARCH_TIDSP_C28X
+#define ARCH_CPU_STACK_GROWS_UPWARD
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
-#define RT_MAIN_THREAD_PRIORITY 10
+#define RT_MAIN_THREAD_PRIORITY 4
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
-#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_PRIORITY 4
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
@@ -77,9 +75,9 @@
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_PWM
 
 /* Using USB */
 
@@ -179,16 +177,10 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define SOC_FAMILY_STM32
-#define SOC_SERIES_STM32F1
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F103RB
-
 /* Onboard Peripheral Drivers */
-
-#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
@@ -198,5 +190,6 @@
 
 /* Board extended module Drivers */
 
+#include "rtconfig_project.h"
 
 #endif
