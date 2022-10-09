@@ -51,6 +51,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>DeviceDrivers/adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/misc/adc.c</locationURI>
+		</link>
+		<link>
 			<name>DeviceDrivers/ipc</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/ipc</locationURI>
@@ -291,6 +296,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>libraries/HAL_Drivers/drv_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_adc.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/HAL_Drivers/drv_adc.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_adc.h</locationURI>
+		</link>
+		<link>
 			<name>libraries/HAL_Drivers/drv_config.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/drv_config.h</locationURI>
@@ -334,6 +349,11 @@
 			<name>libraries/tms320f28379d/headers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>libraries/HAL_Drivers/config/adc_config.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/libraries/HAL_Drivers/config/adc_config.h</locationURI>
 		</link>
 		<link>
 			<name>libraries/HAL_Drivers/config/pwm_config.h</name>
