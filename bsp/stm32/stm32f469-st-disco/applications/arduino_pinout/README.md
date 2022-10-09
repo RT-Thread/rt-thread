@@ -54,6 +54,10 @@ This board complies with Arduino UNO pins layout. For more details, please take 
 | A6          | --        |             | On-chip internal voltage sensor. ADC1-CH17. Token over by RT-Thread ADC device by default     |
 | A7          | --        |             | On-chip internal temperature sensor. ADC1-CH16. Token over by RT-Thread ADC device by default |
 
+> Notice:
+> 
+> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timer can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
+
 > References
 > 
 > 1. [STM32F469 Discovery ST Website](https://www.st.com/en/evaluation-tools/32f469idiscovery.html#documentation)

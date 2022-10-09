@@ -20,54 +20,55 @@ Hardware Drivers Config --->
 
 ### 2.1 Arduino引脚排布统览
 
-| Arduino引脚编号           | STM32引脚编号 | 5V容忍    | 备注                                     |
-| --------------------- | --------- | ------- | -------------------------------------- |
-| 0 (D0)                | PA10      | 是       | Serial-Rx，被RT-Thread的UART设备框架uart1接管   |
-| 1 (D1)                | PA9       | 是       | Serial-Tx，被RT-Thread的UART设备框架uart1接管   |
-| 2 (D2)                | PB9       | 是       | 普通IO                                   |
-| 3 (D3)                | PD15      | 是       | PWM（定时器4发生）                            |
-| 4 (D4)                | PA8       | 是       | 普通IO                                   |
-| 5 (D5)                | PD14      | 是       | 普通IO                                   |
-| 6 (D6)                | PB11      | 是       | PWM（定时器2发生）                            |
-| 7 (D7)                | PB14      | 是       | 普通IO                                   |
-| 8 (D8)                | PB12      | 是       | 普通IO                                   |
-| 9 (D9)                | PD12      | 是       | PWM（定时器4发生）                            |
-| 10 (D10)              | PB10      | 是       | PWM（定时器2发生）                            |
-| 11 (D11)              | PB8       | 是       | PWM（定时器4发生）                            |
-| 12 (D12)              | PB15      | 是       | 普通IO                                   |
-| 13 (D13)              | PB13      | 是       | 普通IO                                   |
-| 14 (D14)              | PA1       | 是       | 振动电机-A                                 |
-| 15 (D15)              | PA0       | 是       | 振动电机-B                                 |
-| 16 (D16)              | PB2       | 是       | 蜂鸣器                                    |
-| 17 (D17)              | PD10      | 是       | KEY0                                   |
-| 18 (D18)              | PD9       | 是       | KEY1                                   |
-| 19 (D19)              | PD8       | 是       | KEY2                                   |
-| 20 (D20)              | PC13      | 是       | KEY-WKUP                               |
-| 21 (D21)              | PE7       | 是       | 红色LED                                  |
-| 22 (D22, LED_BUILTIN) | PE8       | 是       | 绿色LED，Arduino默认LED                     |
-| 23 (D23)              | PE9       | 是       | 蓝色LED，具有PWM功能（定时器1发生）                  |
-| 24 (D24)              | PB0       | 3.6V容忍  | 红外发送                                   |
-| 25 (D25)              | PB1       | 是       | 红外接收                                   |
-| 26 (D26)              | PD4       | 是       | 无线模块 CE                                |
-| 27 (D27)              | PD3       | 是       | 无线模块 中断                                |
-| 28 (D28, SS)          | PD5       | 是       | 无线模块 片选 CS                             |
-| 29 (D29)              | PB13      |         | SPI2-SCK，默认被RT-Thread的SPI设备框架spi2总线接管  |
-| 30 (D30)              | PB14      |         | SPI2-MISO，默认被RT-Thread的SPI设备框架spi2总线接管 |
-| 31 (D31)              | PB15      |         | SPI2-MOSI，默认被RT-Thread的SPI设备框架spi2总线接管 |
-| 32 (D32)              | PC7       | 是       | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管  |
-| 33 (D33)              | PC6       | 是       | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管  |
-| 34 (D34)              | PA2       |         | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管 |
-| 35 (D35)              | PA3       |         | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管 |
-| A0                    | PC2       | 是（但不建议） | ADC                                    |
-| A1                    | PC4       | 是（但不建议） | ADC                                    |
-| A2                    | --        |         | 芯片内部参考电压 ADC                           |
-| A3                    | --        |         | 芯片内部温度 ADC                             |
-| DAC0                  | PA4       | 3.6V容忍  | 真模拟输出 DAC                              |
+更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
+
+| Arduino引脚编号           | STM32引脚编号 | 5V容忍    | 备注                                           |
+| --------------------- | --------- | ------- | -------------------------------------------- |
+| 0 (D0)                | PA10      | 是       | Serial-Rx，被RT-Thread的UART设备框架uart1接管         |
+| 1 (D1)                | PA9       | 是       | Serial-Tx，被RT-Thread的UART设备框架uart1接管         |
+| 2 (D2)                | PB9       | 是       | 普通IO                                         |
+| 3 (D3)                | PD15      | 是       | PWM4-CH4，默认被RT-Thread的PWM设备框架pwm4接管          |
+| 4 (D4)                | PA8       | 是       | 普通IO                                         |
+| 5 (D5)                | PD14      | 是       | 普通IO                                         |
+| 6 (D6)                | PB11      | 是       | PWM2-CH4，默认被RT-Thread的PWM设备框架pwm2接管          |
+| 7 (D7)                | PB14      | 是       | 普通IO                                         |
+| 8 (D8)                | PB12      | 是       | 普通IO                                         |
+| 9 (D9)                | PD12      | 是       | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管          |
+| 10 (D10)              | PB10      | 是       | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管          |
+| 11 (D11)              | PB8       | 是       | PWM4-CH3，默认被RT-Thread的PWM设备框架pwm4接管          |
+| 12 (D12)              | PB15      | 是       | 普通IO                                         |
+| 13 (D13)              | PB13      | 是       | 普通IO                                         |
+| 14 (D14)              | PA1       | 是       | 振动电机-A                                       |
+| 15 (D15)              | PA0       | 是       | 振动电机-B                                       |
+| 16 (D16)              | PB2       | 是       | 蜂鸣器                                          |
+| 17 (D17)              | PD10      | 是       | KEY0                                         |
+| 18 (D18)              | PD9       | 是       | KEY1                                         |
+| 19 (D19)              | PD8       | 是       | KEY2                                         |
+| 20 (D20)              | PC13      | 是       | KEY-WKUP                                     |
+| 21 (D21)              | PE7       | 是       | 红色LED                                        |
+| 22 (D22, LED_BUILTIN) | PE8       | 是       | 绿色LED，Arduino默认LED                           |
+| 23 (D23)              | PE9       | 是       | 蓝色LED，PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管    |
+| 24 (D24)              | PB0       | 3.6V容忍  | 红外发送                                         |
+| 25 (D25)              | PB1       | 是       | 红外接收                                         |
+| 26 (D26)              | PD4       | 是       | 无线模块 CE                                      |
+| 27 (D27)              | PD3       | 是       | 无线模块 中断                                      |
+| 28 (D28, SS)          | PD5       | 是       | 无线模块 片选 CS                                   |
+| 29 (D29)              | PB13      |         | SPI2-SCK，默认被RT-Thread的SPI设备框架spi2总线接管        |
+| 30 (D30)              | PB14      |         | SPI2-MISO，默认被RT-Thread的SPI设备框架spi2总线接管       |
+| 31 (D31)              | PB15      |         | SPI2-MOSI，默认被RT-Thread的SPI设备框架spi2总线接管       |
+| 32 (D32)              | PC7       | 是       | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管        |
+| 33 (D33)              | PC6       | 是       | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管        |
+| 34 (D34)              | PA2       |         | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管      |
+| 35 (D35)              | PA3       |         | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管      |
+| A0                    | PC2       | 是（但不建议） | ADC1-CH3，默认被RT-Thread的ADC设备框架adc1接管          |
+| A1                    | PC4       | 是（但不建议） | ADC1-CH13，默认被RT-Thread的ADC设备框架adc1接管         |
+| A2                    | --        |         | 芯片内部参考电压 ADC1-CH0，默认被RT-Thread的ADC设备框架adc1接管 |
+| A3                    | --        |         | 芯片内部温度 ADC1-CH17，默认被RT-Thread的ADC设备框架adc1接管  |
+| DAC0                  | PA4       | 3.6V容忍  | 真模拟输出 DAC1-CH1，默认被RT-Thread的DAC设备框架dac1接管    |
 
 > 注意：
 > 
 > 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 2. 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
 ### 2.2 板载排针的Arduino引脚排布
 

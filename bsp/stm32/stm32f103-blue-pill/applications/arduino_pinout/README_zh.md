@@ -18,6 +18,8 @@ Hardware Drivers Config --->
 
 ## 2 Arduino引脚排布
 
+更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
+
 ![blue-pill-f103-pinout](blue-pill-f103-pinout.jpg)
 
 | Arduino引脚编号         | STM32引脚编号 | 5V容忍 | 备注                                                                        |
@@ -60,7 +62,6 @@ Hardware Drivers Config --->
 > 注意：
 > 
 > 1. 如果同时驱动舵机和调度analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 2. 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
 ## 3 通信
 
