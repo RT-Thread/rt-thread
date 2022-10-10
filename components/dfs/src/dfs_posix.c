@@ -250,7 +250,7 @@ off_t lseek(int fd, off_t offset, int whence)
     }
     if(offset != d->pos)
     {
-	    result = dfs_file_lseek(d, offset);
+        result = dfs_file_lseek(d, offset);
         if (result < 0)
         {
             fd_put(d);
