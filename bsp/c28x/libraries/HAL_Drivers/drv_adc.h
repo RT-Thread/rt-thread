@@ -12,9 +12,9 @@
 #define DRIVERS_DRV_ADC_H_
 
 #define ADC_RESOLUTION ADC_RESOLUTION_12BIT
-//#include <board.h>
 #include "rtdevice.h"
 #ifdef BSP_USING_ADC
+
 struct c28x_adc
 {
     struct rt_adc_device c28x_adc_device;

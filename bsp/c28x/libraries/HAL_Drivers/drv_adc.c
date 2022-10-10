@@ -108,15 +108,21 @@ static rt_err_t c28x_adc_get_value(struct rt_adc_device *device, rt_uint32_t cha
      * only use SOC0 for now
      */
     EALLOW;
-    c28x_adc_regs->ADCSOC0CTL.bit.CHSEL = 0;  //SOC0 will convert pin A0
+    c28x_adc_regs->ADCSOC0CTL.bit.CHSEL = channel;  /* SOC0 will convert pin A0 */
     EDIS;
-    //start conversions immediately via software, ADCA
+    /*
+     * start conversions immediately via software, ADCA
+     */
     c28x_adc_regs->ADCSOCFRC1.all = 0x0001; //SOC0
-    //wait for ADCA to complete, then acknowledge flag
+    /*
+     * wait for ADCA to complete, then acknowledge flag
+     */
     while(c28x_adc_regs->ADCINTFLG.bit.ADCINT1 == 0);
     c28x_adc_regs->ADCINTFLGCLR.bit.ADCINT1 = 1;
 
-    //store results
+    /*
+     * store results
+     */
     *value = (rt_uint32_t)c28x_adc_result_regs->ADCRESULT0;
 
     return RT_EOK;
@@ -136,7 +142,9 @@ static rt_err_t HAL_ADC_Init(volatile struct ADC_REGS *c28x_adc_handler)
     Uint16 acqps;
 
     EALLOW;
-    //write configurations
+    /*
+     * write configurations
+     */
     c28x_adc_handler->ADCCTL2.bit.PRESCALE = 6; //set ADCCLK divider to /4
     if(c28x_adc_handler == &AdcaRegs)
     {
@@ -157,15 +165,24 @@ static rt_err_t HAL_ADC_Init(volatile struct ADC_REGS *c28x_adc_handler)
     c28x_adc_handler->ADCCTL1.bit.INTPULSEPOS = 1;
     EDIS;
 
-    //determine minimum acquisition window (in SYSCLKS) based on resolution
-    if(ADC_RESOLUTION_12BIT == AdcaRegs.ADCCTL2.bit.RESOLUTION){
+    /*
+     * determine minimum acquisition window (in SYSCLKS) based on resolution
+     */
+    if(ADC_RESOLUTION_12BIT == AdcaRegs.ADCCTL2.bit.RESOLUTION)
+    {
         acqps = 14; //75ns
     }
-    else { //resolution is 16-bit
+    else
+    {
+        /*
+         * resolution is 16-bit
+         */
         acqps = 63; //320ns
     }
 
-//Select the channels to convert and end of conversion flag
+    /*
+     * Select the channels to convert and end of conversion flag
+     */
     EALLOW;
     c28x_adc_handler->ADCSOC0CTL.bit.ACQPS = acqps; //sample window is acqps + 1 SYSCLK cycles
     c28x_adc_handler->ADCINTSEL1N2.bit.INT1SEL = 0; //end of SOC0 will set INT1 flag
@@ -174,10 +191,13 @@ static rt_err_t HAL_ADC_Init(volatile struct ADC_REGS *c28x_adc_handler)
     EDIS;
     return RT_EOK;
 }
+
 static int c28x_adc_init(void)
 {
     int result = RT_EOK;
-    /* save adc name */
+    /*
+     * save adc name
+     */
     int i = 0;
     /* ADC init */
     for (i = 0; i < sizeof(c28x_adc_obj) / sizeof(c28x_adc_obj[0]); i++)

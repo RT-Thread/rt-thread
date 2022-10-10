@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2006-08-31     Bernard      first implementation
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
- * 2022-08-21     yuqi         modify the entry function
+ * 2022-08-21     qiyu         modify the entry function
  */
 
 #include <stdint.h>
