@@ -1247,7 +1247,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 struct winsize* p_winsize;
                 p_winsize = (struct winsize*)args;
 
-                if(rt_thread_self() != rt_thread_find("tshell"))
+                if(rt_thread_self() != rt_thread_find(FINSH_THREAD_NAME))
                 {
                     /* only can be used in tshell thread; otherwise, return default size */
                     p_winsize->ws_col = 80;
