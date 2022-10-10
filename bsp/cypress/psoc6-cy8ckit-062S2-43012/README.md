@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-`PSoC6 CY8CKIT-062S2-43012` 是赛普拉斯推出的一款32位双核CPU子系统（ ARM Cortex-M4 和 ARM Cortex-M0）的开发板，具有单周期乘法的150-MHz Arm Cortex-M4F CPU (浮点和存储器保护单元)，100-MHz Cortex M0+ CPU，带单周期乘法和MPU，可以充分发挥 PSoC6 双核芯片性能。
+`PSoC6 CY8CKIT-062S2-43012` 是英飞凌推出的一款32位双核CPU子系统（ ARM Cortex-M4 和 ARM Cortex-M0）的开发板，具有单周期乘法的150-MHz Arm Cortex-M4F CPU (浮点和存储器保护单元)，100-MHz Cortex M0+ CPU，带单周期乘法和MPU，可以充分发挥 PSoC6 双核芯片性能。
 
 开发板外观详细信息：[CY8CPROTO-062-4343W - Infineon Technologies](https://www.infineon.com/cms/en/product/evaluation-boards/cy8cproto-062-4343w/)
 
