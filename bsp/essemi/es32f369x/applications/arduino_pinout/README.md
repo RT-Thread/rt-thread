@@ -57,7 +57,7 @@ RT-Thread online packages --->
 
 ## 2 Arduino引脚排布
 
-该BSP遵照Arduino UNO板的引脚排列方式 ,并额外扩展了一些LED和按键
+该BSP遵照Arduino UNO板的引脚排列方式，并额外扩展了一些LED和按键，更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
 | Arduino引脚编号 | ES32引脚编号 | 备注             |
 | --------------- | ------------ | ---------------- |
