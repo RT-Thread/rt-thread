@@ -823,7 +823,7 @@ void ulog_hexdump(const char *tag, rt_size_t width, const rt_uint8_t *buf, rt_si
 
     for (i = 0; i < size; i += width, buf += width)
     {
-        if (i + size < width)
+        if (i + width > size)
             len = size - i;
         else
             len = width;
