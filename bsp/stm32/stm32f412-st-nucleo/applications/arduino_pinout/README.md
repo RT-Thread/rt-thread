@@ -22,36 +22,36 @@ Hardware Drivers Config --->
 
 This board complies with Arduino UNO pins layout. For more details, please take a look at: [pins_arduino.c](pins_arduino.c) and [pins_arduino.h](pins_arduino.h).
 
-| Arduino引脚编号           | STM32引脚编号 | 5V容忍 | 备注                                                                                            |
-| --------------------- | --------- | ---- | --------------------------------------------------------------------------------------------- |
-| 0 (D0)                | PG9       | Yes  | Serial-Rx. Token over by RT-Thread UART device by default                                     |
-| 1 (D1)                | PG14      | Yes  | Serial-Tx. Token over by RT-Thread UART device by default                                     |
-| 2 (D2)                | PF15      | Yes  |                                                                                               |
-| 3 (D3)                | PE13      | Yes  | PWM1-CH3. Token over by RT-Thread PWM device by default                                       |
-| 4 (D4)                | PF14      | Yes  |                                                                                               |
-| 5 (D5)                | PE11      | Yes  | PWM1-CH2. Token over by RT-Thread PWM device by default                                       |
-| 6 (D6)                | PE9       | Yes  | PWM1-CH1. Token over by RT-Thread PWM device by default                                       |
-| 7 (D7)                | PF13      | Yes  |                                                                                               |
-| 8 (D8)                | PF12      | Yes  |                                                                                               |
-| 9 (D9)                | PD15      | Yes  | PWM4-CH4. Token over by RT-Thread PWM device by default                                       |
-| 10 (D10)              | PD14      | Yes  | PWM4-CH3. Token over by RT-Thread PWM device by default                                       |
-| 11 (D11)              | PA7       | Yes  | PWM14-CH1. Token over by RT-Thread PWM device by default                                      |
-| 12 (D12)              | PA6       | Yes  |                                                                                               |
-| 13 (D13)              | PA5       | Yes  |                                                                                               |
-| 14 (D14)              | PB9       | Yes  | I2C1-SDA. Token over by RT-Thread I2C device by default                                       |
-| 15 (D15)              | PB8       | Yes  | I2C1-SCL. Token over by RT-Thread I2C device by default                                       |
-| 16 (D16)              | PC13      | Yes  | USER Button                                                                                   |
-| 17 (D17, LED_BUILTIN) | PB0       | Yes  | USER LED1                                                                                     |
-| 18 (D18)              | PB7       | Yes  | USER LED2                                                                                     |
-| 19 (D19)              | PB14      | Yes  | USER LED3                                                                                     |
-| A0                    | PA3       | Yes  | ADC1-CH3. Token over by RT-Thread ADC device by default                                       |
-| A1                    | PC0       | Yes  | ADC1-CH10. Token over by RT-Thread ADC device by default                                      |
-| A2                    | PC3       | Yes  | ADC1-CH13. Token over by RT-Thread ADC device by default                                      |
-| A3                    | PC1       | Yes  | ADC1-CH11. Token over by RT-Thread ADC device by default                                      |
-| A4                    | PC4       | Yes  | ADC1-CH14. Token over by RT-Thread ADC device by default                                      |
-| A5                    | PC5       | Yes  | ADC1-CH15. Token over by RT-Thread ADC device by default                                      |
-| A6                    | --        |      | On-chip internal voltage sensor. ADC1-CH17. Token over by RT-Thread ADC device by default     |
-| A7                    | --        |      | On-chip internal temperature sensor. ADC1-CH16. Token over by RT-Thread ADC device by default |
+| Arduino Pin           | STM32 Pin | 5V Tolerate | Note                                                                                          |
+| --------------------- | --------- | ----------- | --------------------------------------------------------------------------------------------- |
+| 0 (D0)                | PG9       | Yes         | Serial-Rx. Token over by RT-Thread UART device by default                                     |
+| 1 (D1)                | PG14      | Yes         | Serial-Tx. Token over by RT-Thread UART device by default                                     |
+| 2 (D2)                | PF15      | Yes         |                                                                                               |
+| 3 (D3)                | PE13      | Yes         | PWM1-CH3. Token over by RT-Thread PWM device by default                                       |
+| 4 (D4)                | PF14      | Yes         |                                                                                               |
+| 5 (D5)                | PE11      | Yes         | PWM1-CH2. Token over by RT-Thread PWM device by default                                       |
+| 6 (D6)                | PE9       | Yes         | PWM1-CH1. Token over by RT-Thread PWM device by default                                       |
+| 7 (D7)                | PF13      | Yes         |                                                                                               |
+| 8 (D8)                | PF12      | Yes         |                                                                                               |
+| 9 (D9)                | PD15      | Yes         | PWM4-CH4. Token over by RT-Thread PWM device by default                                       |
+| 10 (D10)              | PD14      | Yes         | PWM4-CH3. Token over by RT-Thread PWM device by default                                       |
+| 11 (D11)              | PA7       | Yes         | PWM14-CH1. Token over by RT-Thread PWM device by default                                      |
+| 12 (D12)              | PA6       | Yes         |                                                                                               |
+| 13 (D13)              | PA5       | Yes         |                                                                                               |
+| 14 (D14)              | PB9       | Yes         | I2C-SDA. Token over by RT-Thread I2C device by default                                        |
+| 15 (D15)              | PB8       | Yes         | I2C-SCL. Token over by RT-Thread I2C device by default                                        |
+| 16 (D16)              | PC13      | Yes         | USER Button                                                                                   |
+| 17 (D17, LED_BUILTIN) | PB0       | Yes         | USER LED1                                                                                     |
+| 18 (D18)              | PB7       | Yes         | USER LED2                                                                                     |
+| 19 (D19)              | PB14      | Yes         | USER LED3                                                                                     |
+| A0                    | PA3       | Yes         | ADC1-CH3. Token over by RT-Thread ADC device by default                                       |
+| A1                    | PC0       | Yes         | ADC1-CH10. Token over by RT-Thread ADC device by default                                      |
+| A2                    | PC3       | Yes         | ADC1-CH13. Token over by RT-Thread ADC device by default                                      |
+| A3                    | PC1       | Yes         | ADC1-CH11. Token over by RT-Thread ADC device by default                                      |
+| A4                    | PC4       | Yes         | ADC1-CH14. Token over by RT-Thread ADC device by default                                      |
+| A5                    | PC5       | Yes         | ADC1-CH15. Token over by RT-Thread ADC device by default                                      |
+| A6                    | --        |             | On-chip internal voltage sensor. ADC1-CH17. Token over by RT-Thread ADC device by default     |
+| A7                    | --        |             | On-chip internal temperature sensor. ADC1-CH16. Token over by RT-Thread ADC device by default |
 
 > Notice:
 > 
