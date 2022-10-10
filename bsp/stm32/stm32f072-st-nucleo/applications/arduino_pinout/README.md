@@ -38,8 +38,8 @@ This board complies with Arduino UNO pins layout. For more details, please take 
 | 11 (D11)              | PA7       | No          | PWM17-CH1. Token over by RT-Thread PWM device by default                                      |
 | 12 (D12)              | PA6       | No          |                                                                                               |
 | 13 (D13, LED_BUILTIN) | PA5       | No          | USER LED                                                                                      |
-| 14 (D14)              | PB9       | Yes         | I2C1-SDA. Token over by RT-Thread I2C device by default                                       |
-| 15 (D15)              | PB8       | Yes         | I2C1-SCL. Token over by RT-Thread I2C device by default                                       |
+| 14 (D14)              | PB9       | Yes         | I2C-SDA. Token over by RT-Thread I2C device by default                                        |
+| 15 (D15)              | PB8       | Yes         | I2C-SCL. Token over by RT-Thread I2C device by default                                        |
 | 16 (D16)              | PC13      | No          | USER Button                                                                                   |
 | A0                    | PA0       | No          | ADC1-CH0. Token over by RT-Thread ADC device by default                                       |
 | A1                    | PA1       | No          | ADC1-CH1. Token over by RT-Thread ADC device by default                                       |
