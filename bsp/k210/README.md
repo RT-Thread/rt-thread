@@ -72,10 +72,15 @@ Windows下推荐使用[env工具][1]，然后在console下进入bsp/k210目录�
 
 然后执行scons编译：  
 
+```
     set RTT_EXEC_PATH=C:\Users\xxxx\Downloads\xpack-riscv-none-embed-gcc-10.2.0-1.2\bin
     scons
+```
+来编译这个板级支持包。
 
-来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。  
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
+如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。  
 注：如果初次使用编译报错，可能是使用的SDK过老，使用`menuconfig`命令，在→ RT-Thread online packages → peripheral libraries 
 and drivers → the kendryte-sdk package for rt-thread中将SDK改为latest版本即可。
 ## 3. 烧写及执行

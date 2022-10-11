@@ -1,35 +1,34 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-
-# add the general drivers.
-src = Split("""
-""")
+src = []
+path =  [cwd]
 
 if  GetDepend('SOC_RISCV_FAMILY_CH32'):
 
-    if GetDepend('RT_USING_PIN'):
+    if GetDepend('BSP_USING_GPIO'):
         src += ['drv_gpio.c']
 
-    if GetDepend(['RT_USING_SERIAL', 'BSP_USING_UART']):
+    if GetDepend('BSP_USING_UART'):
         src += ['drv_usart.c']
 
-    if GetDepend('RT_USING_ADC'):
+    if GetDepend('BSP_USING_ADC'):
         src += ['drv_adc.c']
 
     if GetDepend(['BSP_USING_DAC']):
         src += ['drv_dac.c'] 
 
-    if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
-        if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2'):
-            src += ['drv_soft_i2c.c']
+    if GetDepend(['BSP_USING_I2C_BITOPS']):
+        src += ['drv_soft_i2c.c']
 
-    if GetDepend(['RT_USING_RTC', 'BSP_USING_RTC']):
+    if GetDepend('BSP_USING_RTC'):
         src += ['drv_rtc.c']
 
-path =  [cwd]
+    if GetDepend('BSP_USING_IWDT'):
+        src += ['drv_iwdt.c']
+        
+    if GetDepend('BSP_USING_CAN'):
+        src += ['drv_can.c']	
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

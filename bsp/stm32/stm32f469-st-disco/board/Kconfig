@@ -8,6 +8,12 @@ config SOC_STM32F469NI
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (uart3)"
+        select BSP_USING_UART
+        select BSP_USING_UART3
+        default y
+
     config BSP_USING_LVGL
         bool "Enable LVGL for LCD"
         select BSP_USING_LCD_OTM8009A
@@ -177,11 +183,11 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_UART
         bool "Enable UART"
         select RT_USING_SERIAL
-        default y
+        default n
         if BSP_USING_UART
             config BSP_USING_UART3
                 bool "Enable UART3"
-                default y
+                default n
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"

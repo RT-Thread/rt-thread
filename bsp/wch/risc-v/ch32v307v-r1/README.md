@@ -50,6 +50,8 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 set RTT_EXEC_PATH=D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\WCH\RISC-V-GCC-WCH\8.2.0\bin
 ```
 
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
 > 注意：如果使用第二种方法，第一种方法设置的路劲将会失效。
 
 #### 2、生成dist文件夹

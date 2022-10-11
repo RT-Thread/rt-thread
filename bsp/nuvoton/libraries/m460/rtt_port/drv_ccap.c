@@ -208,6 +208,22 @@ static rt_err_t ccap_pipe_configure(nu_ccap_t psNuCcap, ccap_view_info_t psViewI
     {
         uint32_t u32Offset = 0;
         uint32_t u32WM, u32WN, u32HM, u32HN;
+        uint32_t u32Div = 0;
+
+        if (psCcapConf->sPipeInfo_Planar.u32PixFmt  == CCAP_PAR_PLNFMT_YUV422)
+        {
+            /* U/V farm size equals Y/2 farm size */
+            u32Div = 2;
+        }
+        else if (psCcapConf->sPipeInfo_Planar.u32PixFmt  == CCAP_PAR_PLNFMT_YUV420)
+        {
+            /* U/V farm size equals Y/4 farm size */
+            u32Div = 4;
+        }
+        else
+        {
+            goto fail_ccap_pipe_configure;
+        }
 
         /* Set System Memory Planar Y Base Address Register */
         CCAP_SetPlanarYBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
@@ -217,7 +233,7 @@ static rt_err_t ccap_pipe_configure(nu_ccap_t psNuCcap, ccap_view_info_t psViewI
         /* Set System Memory Planar U Base Address Register */
         CCAP_SetPlanarUBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
 
-        u32Offset += ((psCcapConf->sPipeInfo_Planar.u32Height * psCcapConf->sPipeInfo_Planar.u32Width) / 2);
+        u32Offset += ((psCcapConf->sPipeInfo_Planar.u32Height * psCcapConf->sPipeInfo_Planar.u32Width) / u32Div);
 
         /* Set System Memory Planar V Base Address Register */
         CCAP_SetPlanarVBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
@@ -258,6 +274,10 @@ static rt_err_t ccap_pipe_configure(nu_ccap_t psNuCcap, ccap_view_info_t psViewI
               u32PipeEnabling);
 
     return RT_EOK;
+
+fail_ccap_pipe_configure:
+
+    return -RT_ERROR;
 }
 
 static rt_err_t ccap_open(rt_device_t dev, rt_uint16_t oflag)

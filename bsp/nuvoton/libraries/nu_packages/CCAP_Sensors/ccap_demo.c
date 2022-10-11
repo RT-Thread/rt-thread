@@ -124,7 +124,7 @@ static rt_device_t ccap_sensor_init(ccap_grabber_context_t psGrabberContext, cca
     psCcapConfig->sPipeInfo_Planar.u32Width    = psLcdInfo->width / 2;
     psCcapConfig->sPipeInfo_Planar.u32Height   = psLcdInfo->height / 2;
     psCcapConfig->sPipeInfo_Planar.pu8FarmAddr = rt_malloc_align(psCcapConfig->sPipeInfo_Planar.u32Height * psCcapConfig->sPipeInfo_Planar.u32Width * 2, 32);
-    psCcapConfig->sPipeInfo_Planar.u32PixFmt   = CCAP_PAR_PLNFMT_YUV422;
+    psCcapConfig->sPipeInfo_Planar.u32PixFmt   = CCAP_PAR_PLNFMT_YUV420; //CCAP_PAR_PLNFMT_YUV422;
     psCcapConfig->u32Stride_Planar             = psCcapConfig->sPipeInfo_Planar.u32Width;
 
     if (psCcapConfig->sPipeInfo_Planar.pu8FarmAddr == RT_NULL)
@@ -354,6 +354,7 @@ static void ccap_grabber(void *parameter)
         goto exit_ccap_grabber;
     }
 
+    /* Get LCD Info */
     ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_GET_INFO, &sGrabberContext.sLcdInfo);
     if (ret != RT_EOK)
     {
@@ -361,15 +362,25 @@ static void ccap_grabber(void *parameter)
         goto exit_ccap_grabber;
     }
 
+    /* Check panel type */
     if (rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)sGrabberContext.sLcdInfo.framebuffer) == RT_EOK)
     {
         /* Sync-type LCD panel, will draw to VRAM directly. */
+        int pixfmt = RTGRAPHIC_PIXEL_FORMAT_RGB565;
         bDrawDirect = RT_TRUE;
+        rt_device_control(psDevLcd, RTGRAPHIC_CTRL_SET_MODE, (void *)&pixfmt);
     }
     else
     {
         /* MPU-type LCD panel, draw to shadow RAM, then flush. */
         bDrawDirect = RT_FALSE;
+    }
+
+    ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_GET_INFO, &sGrabberContext.sLcdInfo);
+    if (ret != RT_EOK)
+    {
+        LOG_E("Can't get LCD info %s", psGrabberParam->devname_lcd);
+        goto exit_ccap_grabber;
     }
 
     LOG_I("LCD Type: %s-type",   bDrawDirect ? "Sync" : "MPU");
@@ -431,19 +442,17 @@ static void ccap_grabber(void *parameter)
 
             rt_device_control(psDevLcd, RTGRAPHIC_CTRL_RECT_UPDATE, &sRectInfo);
         }
-        else
+        else if (!DEF_GRID_VIEW)
         {
-            int i32FBSize = sGrabberContext.sLcdInfo.width * sGrabberContext.sLcdInfo.height * (sGrabberContext.sLcdInfo.bits_per_pixel / 8);
+            int i32FBSize = sGrabberContext.sLcdInfo.width * sGrabberContext.sLcdInfo.height * (sGrabberContext.sLcdInfo.bits_per_pixel >> 3);
             int i32VRAMPiece = sGrabberContext.sLcdInfo.smem_len / i32FBSize;
             ccap_config sCcapConfig = {0};
 
-            // Pan to next view by grab0
-            if (!DEF_GRID_VIEW || !rt_strcmp(psGrabberParam->thread_name, "grab0"))
-            {
-                uint32_t u32BufPtr = (uint32_t)sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
-                                     + (sGrabberContext.u32FrameEnd % i32VRAMPiece) * i32FBSize;
-                rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)u32BufPtr);
-            }
+            uint32_t u32BufPtr = (uint32_t)sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
+                                 + (sGrabberContext.u32FrameEnd % i32VRAMPiece) * i32FBSize;
+
+            /* Pan to valid frame address. */
+            rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)u32BufPtr);
 
             sCcapConfig.sPipeInfo_Packet.pu8FarmAddr = sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
                     + ((sGrabberContext.u32FrameEnd + 1) % i32VRAMPiece) * i32FBSize ;
@@ -473,7 +482,18 @@ static void ccap_grabber(void *parameter)
         if ((now - last) >= (DEF_DURATION * 1000))
         {
 #if DEF_ENABLE_PLANAR_PIPE
-            ccap_save_planar_frame(psGrabberParam->thread_name, now, (const void *)sGrabberContext.sCcapConfig.sPipeInfo_Planar.pu8FarmAddr, sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Width * sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Height * 2);
+            {
+                uint32_t u32Factor = 0;
+                if (sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32PixFmt == CCAP_PAR_PLNFMT_YUV420)
+                    u32Factor = 3;
+                else if (sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32PixFmt == CCAP_PAR_PLNFMT_YUV422)
+                    u32Factor = 4;
+
+                if (u32Factor > 0)
+                {
+                    ccap_save_planar_frame(psGrabberParam->thread_name, now, (const void *)sGrabberContext.sCcapConfig.sPipeInfo_Planar.pu8FarmAddr, sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Width * sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Height * u32Factor / 2);
+                }
+            }
 #endif
             LOG_I("%s: %d FPS", psGrabberParam->devname_ccap, sGrabberContext.u32FrameEnd / DEF_DURATION);
             sGrabberContext.u32FrameEnd = 0;
@@ -519,4 +539,4 @@ int ccap_demo(void)
     return 0;
 }
 MSH_CMD_EXPORT(ccap_demo, camera capture demo);
-INIT_APP_EXPORT(ccap_demo);
+//INIT_APP_EXPORT(ccap_demo);

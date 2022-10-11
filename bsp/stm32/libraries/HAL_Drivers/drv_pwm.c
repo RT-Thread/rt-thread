@@ -213,7 +213,9 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
     if (0)
 #endif
     {
+#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) /* don't have HAL_RCC_GetPCLK2Freq */
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
+#endif
     }
     else
     {

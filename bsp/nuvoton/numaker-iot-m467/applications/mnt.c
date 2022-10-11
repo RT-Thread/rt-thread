@@ -30,11 +30,6 @@
     #include <fal.h>
 #endif
 
-#if defined(BOARD_USING_STORAGE_SPIFLASH)
-    #define PARTITION_NAME_FILESYSTEM "filesystem"
-    #define MOUNT_POINT_SPIFLASH0 "/"
-#endif
-
 #ifdef RT_USING_DFS_MNTTABLE
 
 /*
@@ -57,8 +52,11 @@ const struct dfs_mount_tbl mount_table[] =
 };
 #endif
 
+#if defined(BOARD_USING_STORAGE_SPIFLASH)
+    #define PARTITION_NAME_FILESYSTEM "filesystem"
+    #define MOUNT_POINT_SPIFLASH0 "/"
+
 /* Recursive mkdir */
-#if defined(RT_USBH_MSTORAGE) && defined(UDISK_MOUNTPOINT)
 static int mkdir_p(const char *dir, const mode_t mode)
 {
     int ret = -1;
@@ -127,9 +125,7 @@ exit_mkdir_p:
 
     return ret;
 }
-#endif
 
-#if defined(BOARD_USING_STORAGE_SPIFLASH)
 int mnt_init_spiflash0(void)
 {
 #if defined(RT_USING_FAL)
@@ -156,13 +152,8 @@ int mnt_init_spiflash0(void)
     mkdir_p("/mnt/sd1", 0x777);
     mkdir_p("/mnt/sd1p0", 0x777);
     mkdir_p("/mnt/sd1p1", 0x777);
+    mkdir_p(UDISK_MOUNTPOINT, 0x777);
 
-#if defined(RT_USBH_MSTORAGE) && defined(UDISK_MOUNTPOINT)
-    if (mkdir_p(UDISK_MOUNTPOINT, 0) < 0)
-    {
-        rt_kprintf("Failed to create directory on %s for RT_USBH_MSTORAGE.\n", UDISK_MOUNTPOINT);
-    }
-#endif
 exit_mnt_init_spiflash0:
 
     return 0;
