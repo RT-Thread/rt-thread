@@ -18,7 +18,7 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend(['BSP_USING_DAC']):
         src += ['drv_dac.c'] 
 
-    if GetDepend(['BSP_USING_I2C_BITOPS']):
+    if GetDepend(['RT_USING_I2C_BITOPS']):
         src += ['drv_soft_i2c.c']
 
     if GetDepend('BSP_USING_RTC'):
