@@ -482,6 +482,11 @@ menu "Hardware Drivers Config"
             config RA_RW007_RST_PIN
                 hex "(HEX)RESET pin index"
                 default 0x040F
+		
+	    config BSP_USING_SEGGER_RTT_CONSOLE
+	    	bool "Enable SEGGER_RTT to console"
+		select PKG_USING_SEGGER_RTT
+		default n
         endif
 
     endmenu
