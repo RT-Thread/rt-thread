@@ -134,8 +134,7 @@ RT_WEAK void rt_hw_board_init()
 extern int rt_hw_jlink_rtt_init(void);
     rt_hw_jlink_rtt_init();
     rt_console_set_device("jlinkRtt");
-#else
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+#elif defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
