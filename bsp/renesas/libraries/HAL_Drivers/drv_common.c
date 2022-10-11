@@ -134,7 +134,7 @@ RT_WEAK void rt_hw_board_init()
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-    /* Board underlying hardware initialization */
+    /* Set the shell console output device */
 #if defined(SEGGER_RTT_ENABLE)
 extern int rt_hw_jlink_rtt_init(void);
     rt_hw_jlink_rtt_init();
@@ -142,6 +142,11 @@ extern int rt_hw_jlink_rtt_init(void);
 #else
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    /* Board underlying hardware initialization */
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
 #endif
 #endif
 
