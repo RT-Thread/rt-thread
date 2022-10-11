@@ -21,8 +21,8 @@
  */
 const pin_map_t pin_map_table[]=
 {
-    {D0, GET_PIN(G,9), "uart6"},        /* Serial-Rx */
-    {D1, GET_PIN(G,14), "uart6"},       /* Serial-Tx */
+    {D0, GET_PIN(G,9), "uart3"},        /* Serial-Rx */
+    {D1, GET_PIN(G,14), "uart3"},       /* Serial-Tx */
     {D2, GET_PIN(G,13)},
     {D3, GET_PIN(A,1), "pwm2", 2},      /* PWM */
     {D4, GET_PIN(G,12)},
