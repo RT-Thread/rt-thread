@@ -144,7 +144,7 @@ H: ON dip-switch
 
 ### **Download to DDR and Run**
 
-You can run windows batch script to download rtthread.bin into memory, then run it. The path of batch script as below,.
+You can run windows batch script to download rtthread.bin into memory, then run it. The path of batch script as below.
 
 ```bash
 <path-to-rtthread>\bsp\nuvoton\numaker-hmi-ma35d1\nuwriter_scripts\nuwriter_ddr_download_and_run.bat
@@ -156,7 +156,7 @@ You can run windows batch script to download rtthread.bin into memory, then run 
 
 ### **Burn to EMMC**
 
-You can run windows batch script to download rtthread.bin into emmc flash, then run it. The path of batch script as below,.
+You can run windows batch script to download rtthread.bin into emmc flash, then run it. The path of batch script as below.
 
 ```bash
 <path-to-rtthread>\bsp\nuvoton\numaker-hmi-ma35d1\nuwriter_scripts\nuwriter_sd_programming.bat
@@ -168,7 +168,7 @@ You can run windows batch script to download rtthread.bin into emmc flash, then 
 
 ### **Burn to Serial NAND**
 
-You can run windows batch script to download rtthread.bin into SPI-NAND flash, then run it. The path of batch script as below,.
+You can run windows batch script to download rtthread.bin into SPI-NAND flash, then run it. The path of batch script as below.
 
 ```bash
 <path-to-rtthread>\bsp\nuvoton\numaker-hmi-ma35d1\nuwriter_scripts\nuwriter_spinand_programming.bat
