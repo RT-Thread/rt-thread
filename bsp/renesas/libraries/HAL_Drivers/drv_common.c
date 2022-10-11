@@ -130,6 +130,11 @@ RT_WEAK void rt_hw_board_init()
 #endif
 
     /* Set the shell console output device */
+#if defined(SEGGER_RTT_ENABLE)
+extern int rt_hw_jlink_rtt_init(void);
+    rt_hw_jlink_rtt_init();
+    rt_console_set_device("jlinkRtt");
+#else
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
