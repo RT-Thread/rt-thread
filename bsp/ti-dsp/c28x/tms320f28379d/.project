@@ -53,27 +53,27 @@
 		<link>
 			<name>DeviceDrivers/adc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/misc/adc.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/drivers/misc/adc.c</locationURI>
 		</link>
 		<link>
 			<name>DeviceDrivers/ipc</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/ipc</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/drivers/ipc</locationURI>
 		</link>
 		<link>
 			<name>DeviceDrivers/pin.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/misc/pin.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/drivers/misc/pin.c</locationURI>
 		</link>
 		<link>
 			<name>DeviceDrivers/rt_drv_pwm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/misc/rt_drv_pwm.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/drivers/misc/rt_drv_pwm.c</locationURI>
 		</link>
 		<link>
 			<name>DeviceDrivers/serial.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/serial/serial.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/drivers/serial/serial.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/Kconfig</name>
@@ -173,17 +173,17 @@
 		<link>
 			<name>c28x/SConscript</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/libcpu/ti-dsp/c28x/SConscript</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/libcpu/ti-dsp/c28x/SConscript</locationURI>
 		</link>
 		<link>
 			<name>c28x/context.s</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/libcpu/ti-dsp/c28x/context.s</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/libcpu/ti-dsp/c28x/context.s</locationURI>
 		</link>
 		<link>
 			<name>c28x/cpuport.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/libcpu/ti-dsp/c28x/cpuport.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/libcpu/ti-dsp/c28x/cpuport.c</locationURI>
 		</link>
 		<link>
 			<name>finsh/Kconfig</name>
@@ -249,46 +249,6 @@
 			<name>libraries/tms320f28379d</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/SConscript</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/SConscript</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/completion.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/completion.c</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/dataqueue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/dataqueue.c</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/pipe.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/pipe.c</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/ringblk_buf.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/ringblk_buf.c</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/ringbuffer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/ringbuffer.c</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/waitqueue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/waitqueue.c</locationURI>
-		</link>
-		<link>
-			<name>DeviceDrivers/ipc/workqueue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/drivers/ipc/workqueue.c</locationURI>
 		</link>
 		<link>
 			<name>libraries/HAL_Drivers/config</name>
