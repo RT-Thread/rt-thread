@@ -10,8 +10,11 @@
 
 #ifndef DRIVERS_DRV_ADC_H_
 #define DRIVERS_DRV_ADC_H_
-
+#ifdef BSP_ADC_USING_12BIT
 #define ADC_RESOLUTION ADC_RESOLUTION_12BIT
+#else
+#define ADC_RESOLUTION ADC_RESOLUTION_16BIT
+#endif
 #include "rtdevice.h"
 #ifdef BSP_USING_ADC
 

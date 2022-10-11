@@ -190,6 +190,9 @@
 #define BSP_USING_UART1
 #define BSP_USING_ADC
 #define BSP_USING_ADC1
+#define BSP_ADC_USING_12BIT
+#define BSP_USING_ADC2
+#define BSP_USING_ADC3
 
 /* Board extended module Drivers */
 

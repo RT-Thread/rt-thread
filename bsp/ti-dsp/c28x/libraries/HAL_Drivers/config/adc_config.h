@@ -38,6 +38,16 @@ extern "C" {
     }
     #endif
 #endif
+#ifdef BSP_USING_ADC3
+    #ifndef ADC3_CONFIG
+    #define ADC3_CONFIG                             \
+    {                                           \
+        .name = "adc3",                         \
+        .adc_regs   = &AdccRegs,                \
+        .adc_results = &AdccResultRegs          \
+    }
+    #endif
+#endif
 #ifdef __cplusplus
 }
 #endif

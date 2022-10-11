@@ -43,7 +43,7 @@
 		<link>
 			<name>finsh</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/components/finsh</locationURI>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>libraries</name>
@@ -78,97 +78,97 @@
 		<link>
 			<name>Kernel/Kconfig</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/Kconfig</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/Kconfig</locationURI>
 		</link>
 		<link>
 			<name>Kernel/SConscript</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/SConscript</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/SConscript</locationURI>
 		</link>
 		<link>
 			<name>Kernel/clock.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/clock.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/clock.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/components.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/components.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/components.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/cpu.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/cpu.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/cpu.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/device.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/device.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/device.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/idle.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/idle.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/idle.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/ipc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/ipc.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/ipc.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/irq.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/irq.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/irq.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/kservice.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/kservice.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/kservice.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/mem.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/mem.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/mem.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/memheap.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/memheap.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/memheap.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/mempool.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/mempool.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/mempool.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/object.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/object.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/object.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/scheduler.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/scheduler.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/scheduler.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/signal.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/signal.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/signal.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/slab.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/slab.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/slab.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/thread.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/thread.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/thread.c</locationURI>
 		</link>
 		<link>
 			<name>Kernel/timer.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/timer.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/src/timer.c</locationURI>
 		</link>
 		<link>
 			<name>c28x/SConscript</name>
@@ -188,57 +188,57 @@
 		<link>
 			<name>finsh/Kconfig</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/Kconfig</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/Kconfig</locationURI>
 		</link>
 		<link>
 			<name>finsh/SConscript</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/SConscript</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/SConscript</locationURI>
 		</link>
 		<link>
 			<name>finsh/cmd.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/cmd.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/cmd.c</locationURI>
 		</link>
 		<link>
 			<name>finsh/finsh.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/finsh.h</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/finsh.h</locationURI>
 		</link>
 		<link>
 			<name>finsh/msh.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/msh.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/msh.c</locationURI>
 		</link>
 		<link>
 			<name>finsh/msh.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/msh.h</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/msh.h</locationURI>
 		</link>
 		<link>
 			<name>finsh/msh_file.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/msh_file.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/msh_file.c</locationURI>
 		</link>
 		<link>
 			<name>finsh/msh_parse.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/msh_parse.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/msh_parse.c</locationURI>
 		</link>
 		<link>
 			<name>finsh/msh_parse.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/msh_parse.h</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/msh_parse.h</locationURI>
 		</link>
 		<link>
 			<name>finsh/shell.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/shell.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/shell.c</locationURI>
 		</link>
 		<link>
 			<name>finsh/shell.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/components/finsh/shell.h</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/components/finsh/shell.h</locationURI>
 		</link>
 		<link>
 			<name>libraries/HAL_Drivers</name>
