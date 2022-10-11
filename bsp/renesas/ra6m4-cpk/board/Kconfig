@@ -443,6 +443,10 @@ menu "Hardware Drivers Config"
                     bool "Enable CAN1"
                     default n
             endif
+		menuconfig BSP_USING_SEGGER_RTT_CONSOLE
+			bool "Enable SEGGER_RTT to console"
+			select PKG_USING_SEGGER_RTT
+			default n
 
     endmenu
 
