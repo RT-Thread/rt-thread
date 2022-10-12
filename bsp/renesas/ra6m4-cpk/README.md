@@ -42,6 +42,7 @@
 | FLASH              | 支持               |                |
 | PWM                | 支持               |                |
 | CAN                | 支持               |                |
+|  SEGGER_RTT        |  支持              |  打开默认segger_rtt为console |
 | 持续更新中...      |                    |                |
 | **外接外设** | **支持情况** | **备注** |
 | WiFi 模块     | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
