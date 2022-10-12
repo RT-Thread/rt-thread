@@ -16,7 +16,7 @@
 #include <rthw.h>
 #include <drv_common.h>
 #include "drv_dma.h"
-#include "ipc/completion.h"
+#include <ipc/completion.h>
 
 #ifdef __cplusplus
 extern "C" {
