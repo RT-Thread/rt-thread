@@ -53,6 +53,9 @@ if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
         default n
+    config RT_CAN_USING_CANFD
+        bool "Enable CANFD support"
+        default n
 endif
 
 config RT_USING_HWTIMER
@@ -79,12 +82,10 @@ config RT_USING_CPUTIME
 
 if RT_USING_CPUTIME
     config RT_USING_CPUTIME_CORTEXM
-        bool "Use DWT for CPU time"
+        bool "Support Cortex-M CPU"
         default y
-        depends on ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
-        help
-            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use
-            the cycle counter in DWT for CPU time.
+        depends on ARCH_ARM_CORTEX_M0 || ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
+        select PKG_USING_PERF_COUNTER
 endif
 
 config RT_USING_I2C
@@ -228,7 +229,18 @@ config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
 
-    if RT_USING_SPI  
+    if RT_USING_SPI
+        config RT_USING_SPI_BITOPS
+            select RT_USING_PIN
+            bool "Use GPIO to simulate SPI"
+            default n
+
+        if RT_USING_SPI_BITOPS
+            config RT_SPI_BITOPS_DEBUG
+                bool "Use simulate SPI debug message"
+                default n
+        endif
+
         config RT_USING_QSPI
             bool "Enable QSPI mode"
             default n
@@ -670,16 +682,19 @@ menu "Using USB"
                 default n
                 if RT_USBH_MSTORAGE
                     config UDISK_MOUNTPOINT
-                    string "Udisk mount dir"
-                    default "/"
+                        string "Udisk mount dir"
+                        default "/"
                 endif
             config RT_USBH_HID
                 bool "Enable HID Drivers"
                 default n
                 if RT_USBH_HID
                     config RT_USBH_HID_MOUSE
-                    bool "Enable HID mouse protocol"
-                    default n
+                        bool "Enable HID mouse protocol"
+                        default n
+                    config RT_USBH_HID_KEYBOARD
+                        bool "Enable HID keyboard protocol"
+                        default n
                 endif
         endif
     config RT_USING_USB_DEVICE

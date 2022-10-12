@@ -22,8 +22,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -57,7 +57,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    CXXFLAGS = CFLAGS 
+    CXXFLAGS = CFLAGS
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
@@ -88,12 +88,12 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    CXXFLAGS = CFLAGS 
+    CXXFLAGS = CFLAGS
     CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     CXX = 'iccarm'
@@ -136,7 +136,7 @@ elif PLATFORM == 'iar':
 
     LFLAGS = ' --config "board/linker_scripts/link.icf"'
     LFLAGS += ' --entry __iar_program_start'
-    
+
     CXXFLAGS = CFLAGS
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'

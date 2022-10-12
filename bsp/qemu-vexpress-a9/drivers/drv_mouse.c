@@ -38,13 +38,14 @@
 #ifdef PKG_USING_GUIENGINE
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
+static rt_uint32_t emouse_id;
 #elif defined(PKG_USING_LITTLEVGL2RTT)
 #include <littlevgl2rtt.h>
 #elif defined(PKG_USING_LVGL)
 #include <lvgl.h>
-#include <lv_port_indev.h>
+extern void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state);
 static rt_bool_t touch_down = RT_FALSE;
-#endif
+#endif /* PKG_USING_GUIENGINE */
 
 typedef rt_uint32_t virtual_addr_t;
 
@@ -114,7 +115,6 @@ rt_inline int kmi_read(struct mouse_pl050_pdata_t * pdat, rt_uint8_t * value)
     return RT_FALSE;
 }
 
-static rt_uint32_t emouse_id;
 
 void push_event_touch_move(int x, int y)
 {

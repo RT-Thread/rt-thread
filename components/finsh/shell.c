@@ -101,9 +101,11 @@ const char *finsh_get_prompt(void)
     if (finsh_prompt_custom)
     {
         strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt) - 1);
-        return finsh_prompt;
     }
-    strcpy(finsh_prompt, _MSH_PROMPT);
+    else
+    {
+        strcpy(finsh_prompt, _MSH_PROMPT);
+    }
 
 #if defined(DFS_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
@@ -168,8 +170,17 @@ int finsh_getchar(void)
     }
 
     while (rt_device_read(device, -1, &ch, 1) != 1)
+    {
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
-
+        if (shell->device != device)
+        {
+            device = shell->device;
+            if (device == RT_NULL)
+            {
+                return -1;
+            }
+        }
+    }
     return ch;
 #endif /* RT_USING_POSIX_STDIO */
 #else
@@ -284,7 +295,7 @@ rt_uint32_t finsh_get_echo()
  */
 rt_err_t finsh_set_password(const char *password)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     rt_size_t pw_len = rt_strlen(password);
 
     if (pw_len < FINSH_PASSWORD_MIN || pw_len > FINSH_PASSWORD_MAX)
@@ -520,7 +531,7 @@ void finsh_thread_entry(void *parameter)
                 /* copy the history command */
                 rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
-                shell->line_curpos = shell->line_position = strlen(shell->line);
+                shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
                 shell_handle_history(shell);
 #endif
                 continue;
@@ -542,7 +553,7 @@ void finsh_thread_entry(void *parameter)
 
                 rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
-                shell->line_curpos = shell->line_position = strlen(shell->line);
+                shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
                 shell_handle_history(shell);
 #endif
                 continue;
@@ -582,7 +593,7 @@ void finsh_thread_entry(void *parameter)
             /* auto complete */
             shell_auto_complete(&shell->line[0]);
             /* re-calculate position */
-            shell->line_curpos = shell->line_position = strlen(shell->line);
+            shell->line_curpos = shell->line_position = (rt_uint16_t)strlen(shell->line);
 
             continue;
         }

@@ -228,7 +228,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM

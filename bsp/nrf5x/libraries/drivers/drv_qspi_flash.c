@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "board.h"
 #include "nrfx_qspi.h"
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include <fal.h>
 
 //log

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-06-27     misonyo     the first version.
+ * 2022-09-01     xjy198903   add support for imxrt1170
  */
 
 #include <rtthread.h>
@@ -28,6 +29,10 @@
 static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
 
+#ifdef SOC_IMXRT1170_SERIES
+#define USE_IMPROVED_TIMING_CONFIG (1U)
+#endif
+
 enum
 {
 #ifdef BSP_USING_CAN1
@@ -35,6 +40,9 @@ enum
 #endif
 #ifdef BSP_USING_CAN2
     CAN2_INDEX,
+#endif
+#ifdef BSP_USING_CAN3
+    CAN3_INDEX,
 #endif
 };
 
@@ -63,24 +71,51 @@ struct imxrt_can flexcans[] =
         .irqn = CAN2_IRQn,
     },
 #endif
+#ifdef BSP_USING_CAN3
+    {
+        .name = "can3",
+        .base = CAN3,
+        .irqn = CAN3_IRQn,
+    },
+#endif
 };
 
-uint32_t GetCanSrcFreq(void)
+uint32_t GetCanSrcFreq(CAN_Type *can_base)
 {
     uint32_t freq;
-
+#ifdef SOC_IMXRT1170_SERIES
+    uint32_t base = (uint32_t) can_base;
+    switch (base)
+        {
+        case CAN1_BASE:
+            freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can1) / 100000U) * 100000U;
+            break;
+        case CAN2_BASE:
+            freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can2) / 100000U) * 100000U;
+            break;
+        case CAN3_BASE:
+            freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can3) / 100000U) * 100000U;
+            break;
+        default:
+            freq = (CLOCK_GetRootClockFreq(kCLOCK_Root_Can3) / 100000U) * 100000U;
+            break;
+        }
+#else
     freq = (CLOCK_GetFreq(kCLOCK_Usb1PllClk) / 6) / (CLOCK_GetDiv(kCLOCK_CanDiv) + 1U);
-
+#endif
     return freq;
 }
 
+#ifdef SOC_IMXRT1170_SERIES
+static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint64_t result, void *userData)
+#else
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t result, void *userData)
+#endif
 {
     struct imxrt_can *can;
     flexcan_mb_transfer_t rxXfer;
 
     can = (struct imxrt_can *)userData;
-
     switch (status)
     {
     case kStatus_FLEXCAN_RxIdle:
@@ -135,15 +170,31 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     case RT_CAN_MODE_NORMAL:
         /* default mode */
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         break;
     case RT_CAN_MODE_LOOPBACK:
         config.enableLoopBack = true;
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         break;
     }
-    FLEXCAN_Init(can->base, &config, GetCanSrcFreq());
+
+#ifdef SOC_IMXRT1170_SERIES
+    flexcan_timing_config_t timing_config;
+    memset(&timing_config, 0, sizeof(flexcan_timing_config_t));
+
+    if(FLEXCAN_CalculateImprovedTimingValues(can->base, config.baudRate, GetCanSrcFreq(can->base), &timing_config))
+    {
+        /* Update the improved timing configuration*/
+        memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
+    }
+    else
+    {
+        LOG_E("No found Improved Timing Configuration. Just used default configuration\n");
+    }
+#endif
+
+    FLEXCAN_Init(can->base, &config, GetCanSrcFreq(can->base));
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
     /* init RX_MB_COUNT RX MB to default status */
     mbConfig.format = kFLEXCAN_FrameFormatStandard;  /* standard ID */

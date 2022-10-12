@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,10 @@
 #include <lvgl.h>
 #include "nu_2d.h"
 #include "mmu.h"
+
+#if (LV_USE_GPU_N9H30_GE2D && LV_VERSION_CHECK(8, 2, 0))
+    #include "lv_gpu_n9h30_ge2d.h"
+#endif
 
 #define LOG_TAG             "lvgl.disp"
 #define DBG_ENABLE
@@ -48,51 +52,10 @@ static void nu_antitearing(lv_disp_draw_buf_t *draw_buf, lv_color_t *color_p)
     }
 }
 
-static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
-{
-    void *pvDstReDraw;
-
-#if (LV_USE_GPU_N9H30_GE2D==0)
-    mmu_clean_dcache((uint32_t)color_p, disp_drv->draw_buf->size * sizeof(lv_color_t));
-#endif
-
-    /* Use PANDISPLAY */
-    rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, color_p);
-
-    /* Need to do on-/off- screen buffer synchronization. Here, we do a source-copying using GE2D engine. */
-    if (disp_drv->draw_buf->buf1 == color_p)
-        pvDstReDraw = disp_drv->draw_buf->buf2;
-    else
-        pvDstReDraw = disp_drv->draw_buf->buf1;
-
-    // Enter GE2D ->
-    ge2dInit(sizeof(lv_color_t) * 8, info.width, info.height, pvDstReDraw);
-    ge2dBitblt_SetAlphaMode(-1, 0, 0);
-    ge2dBitblt_SetDrawMode(-1, 0, 0);
-    ge2dSpriteBlt_Screen(0, 0, info.width, info.height, (void *)color_p);
-    // -> Leave GE2D
-
-#if (LV_USE_GPU_N9H30_GE2D==0)
-    mmu_invalidate_dcache((uint32_t)pvDstReDraw, disp_drv->draw_buf->size * sizeof(lv_color_t));
-#endif
-
-    nu_antitearing(disp_drv->draw_buf, color_p);
-
-    if (!u32FirstFlush)
-    {
-        /* Enable backlight at first flushing. */
-        rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
-        u32FirstFlush = 1;
-    }
-
-    lv_disp_flush_ready(disp_drv);
-}
-
 static void nu_flush_full_refresh(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-#if (LV_USE_GPU_N9H30_GE2D==0)
-    mmu_clean_dcache((uint32_t)color_p, disp_drv->draw_buf->size * sizeof(lv_color_t));
-#endif
+    if (IS_CACHEABLE_VRAM(color_p))
+        mmu_clean_dcache((uint32_t)color_p, disp_drv->draw_buf->size * sizeof(lv_color_t));
 
     /* Use PANDISPLAY without H/W copying */
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, color_p);
@@ -111,10 +74,29 @@ static void nu_flush_full_refresh(lv_disp_drv_t *disp_drv, const lv_area_t *area
 
 static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
+#if (LV_USE_GPU_N9H30_GE2D==1)
+    lv_draw_sw_blend_dsc_t blend_flush = {0};
+    lv_draw_ctx_t draw_flush = {0};
+    lv_area_t flush_area = {0, 0, info.width - 1, info.height - 1 };
+
+    blend_flush.blend_area = area;
+    blend_flush.src_buf    = color_p;
+    blend_flush.mask_buf   = NULL;
+    blend_flush.opa        = LV_OPA_MAX;
+    blend_flush.blend_mode = LV_BLEND_MODE_NORMAL;
+
+    draw_flush.buf         = info.framebuffer;
+    draw_flush.clip_area   = &flush_area;
+    draw_flush.buf_area    = &flush_area;
+
+    lv_draw_n9h30_ge2d_blend(&draw_flush, (const lv_draw_sw_blend_dsc_t *)&blend_flush);
+
+#else
     int32_t flush_area_w = lv_area_get_width(area);
     int32_t flush_area_h = lv_area_get_height(area);
 
-    //rt_kprintf("[%s %08x] %dx%d %d %d %d %d\n", __func__, color_p, flush_area_w, flush_area_h, area->x1, area->y1, area->x2, area->y2 );
+    //if ( flush_area_w&0x3 != 0 )
+    //    rt_kprintf("[%s %08x] %dx%d %d %d\n", __func__, color_p, flush_area_w, flush_area_h, area->x1, area->y1 );
 
     /* Update dirty region. */
     // Enter GE2D ->
@@ -124,6 +106,7 @@ static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t 
 
     ge2dSpriteBlt_Screen(area->x1, area->y1, flush_area_w, flush_area_h, (void *)color_p);
     // -> Leave GE2D
+#endif
 
     if (!u32FirstFlush)
     {
@@ -135,13 +118,13 @@ static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t 
     lv_disp_flush_ready(disp_drv);
 }
 
+#if LV_VERSION_EQUAL(8, 1, 0)
 static void nu_fill_cb(struct _lv_disp_drv_t *disp_drv, lv_color_t *dest_buf, lv_coord_t dest_width,
                        const lv_area_t *fill_area, lv_color_t color)
 {
     int32_t fill_area_w = lv_area_get_width(fill_area);
     int32_t fill_area_h = lv_area_get_height(fill_area);
 
-    //rt_kprintf("[%s %08x] %dx%d %d %d %d %d\n", __func__, dest_buf, fill_area_w, fill_area_h, fill_area->x1, fill_area->y1, fill_area->x2, fill_area->y2 );
 
     if (lv_area_get_size(fill_area) < 3600)
     {
@@ -156,35 +139,27 @@ static void nu_fill_cb(struct _lv_disp_drv_t *disp_drv, lv_color_t *dest_buf, lv
     }
     else
     {
-#if (LV_USE_GPU_N9H30_GE2D==0)
-        mmu_clean_invalidated_dcache((uint32_t)dest_buf, disp_drv->draw_buf->size * sizeof(lv_color_t));
-#endif
+        //rt_kprintf("[blend_fill %d %08x] %dx%d %d %d\n", lv_area_get_size(fill_area), dest_buf, fill_area_w, fill_area_h, fill_area->x1, fill_area->y1 );
+
+        if (IS_CACHEABLE_VRAM(dest_buf))
+            mmu_clean_invalidated_dcache((uint32_t)dest_buf, sizeof(lv_color_t) * (dest_width * fill_area_h + fill_area_w));
 
         /*Hardware filling*/
-        if (disp_drv->direct_mode || disp_drv->full_refresh)
-        {
-            // Enter GE2D ->
-            ge2dInit(sizeof(lv_color_t) * 8, info.width, info.height, (void *)dest_buf);
-        }
-        else
-        {
-            // Enter GE2D ->
-            ge2dInit(sizeof(lv_color_t) * 8, fill_area_w, fill_area_h, (void *)dest_buf);
-        }
+        // Enter GE2D ->
+        ge2dInit(sizeof(lv_color_t) * 8, fill_area_w, fill_area_h, (void *)dest_buf);
 
         ge2dClip_SetClip(fill_area->x1, fill_area->y1, fill_area->x2, fill_area->y2);
+
         if (sizeof(lv_color_t) == 4)
-        {
             ge2dFill_Solid(fill_area->x1, fill_area->y1, fill_area_w, fill_area_h, color.full);
-        }
         else if (sizeof(lv_color_t) == 2)
-        {
             ge2dFill_Solid_RGB565(fill_area->x1, fill_area->y1, fill_area_w, fill_area_h, color.full);
-        }
+
         ge2dClip_SetClip(-1, 0, 0, 0);
         // -> Leave GE2D
     }
 }
+#endif
 
 void nu_perf_monitor(struct _lv_disp_drv_t *disp_drv, uint32_t time, uint32_t px)
 {
@@ -227,26 +202,22 @@ void lv_port_disp_init(void)
     disp_drv.ver_res = info.height;
     u32FBSize = info.height * info.width * (info.bits_per_pixel / 8);
 
-#if (LV_USE_GPU_N9H30_GE2D==0)
+#if (LV_USE_ANTI_TEARING==1)
     disp_drv.full_refresh = 1;
-    //disp_drv.direct_mode = 1;
 #endif
 
-    if (disp_drv.full_refresh || disp_drv.direct_mode)
+    if (disp_drv.full_refresh)
     {
 #if (LV_USE_GPU_N9H30_GE2D==1)
         buf1 = (void *)info.framebuffer;  // Use Non-cacheable VRAM
 #else
-        buf1 = (void *)((uint32_t)info.framebuffer & ~0x80000000); // Use Cacheable VRAM
+        buf1 = (void *)((uint32_t)info.framebuffer & ~BIT31); // Use Cacheable VRAM
 #endif
         buf2 = (void *)((uint32_t)buf1 + u32FBSize);
         buf3_next = (void *)((uint32_t)buf2 + u32FBSize);
-        rt_kprintf("LVGL: Use triple screen-sized buffers(%s) - buf1@%08x, buf2@%08x, buf3_next@%08x\n", (disp_drv.full_refresh == 1) ? "full_refresh" : "direct_mode", buf1, buf2, buf3_next);
+        rt_kprintf("LVGL: Use triple screen-sized buffers(full_refresh) - buf1@%08x, buf2@%08x, buf3_next@%08x\n", buf1, buf2, buf3_next);
 
-        if (disp_drv.direct_mode)
-            disp_drv.flush_cb = nu_flush_direct;
-        else
-            disp_drv.flush_cb = nu_flush_full_refresh;
+        disp_drv.flush_cb = nu_flush_full_refresh;
     }
     else
     {
@@ -271,8 +242,16 @@ void lv_port_disp_init(void)
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;
 
+#if LV_VERSION_EQUAL(8, 1, 0)
     /*Fill a memory with a color (GPU only)*/
     disp_drv.gpu_fill_cb = nu_fill_cb;
+#endif
+
+#if (LV_USE_GPU_N9H30_GE2D && LV_VERSION_CHECK(8, 2, 0))
+    disp_drv.draw_ctx_init = lv_draw_n9h30_ge2d_ctx_init;
+    disp_drv.draw_ctx_deinit = lv_draw_n9h30_ge2d_ctx_init;
+    disp_drv.draw_ctx_size = sizeof(lv_draw_n9h30_ge2d_ctx_t);
+#endif
 
     /*Called after every refresh cycle to tell the rendering and flushing time + the number of flushed pixels*/
     //disp_drv.monitor_cb = nu_perf_monitor;

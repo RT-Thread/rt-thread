@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,7 @@ int dfs_romfs_ioctl(struct dfs_fd *file, int cmd, void *args)
 rt_inline int check_dirent(struct romfs_dirent *dirent)
 {
     if ((dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR)
-        || dirent->size == ~0)
+        || dirent->size == ~0U)
         return -1;
     return 0;
 }
@@ -84,7 +84,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
         {
             if (check_dirent(&dirent[index]) != 0)
                 return NULL;
-            if (rt_strlen(dirent[index].name) == (subpath_end - subpath) &&
+            if (rt_strlen(dirent[index].name) ==  (rt_size_t)(subpath_end - subpath) &&
                     rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
             {
                 dirent_size = dirent[index].size;
@@ -157,7 +157,7 @@ int dfs_romfs_read(struct dfs_fd *file, void *buf, size_t count)
 
 int dfs_romfs_lseek(struct dfs_fd *file, off_t offset)
 {
-    if (offset <= file->size)
+    if (offset >= 0 && (rt_size_t)offset <= file->size)
     {
         file->pos = offset;
         return file->pos;
@@ -243,6 +243,7 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 {
     rt_size_t index;
+    rt_size_t len;
     const char *name;
     struct dirent *d;
     struct romfs_dirent *dirent, *sub_dirent;
@@ -261,7 +262,7 @@ int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
         return -EINVAL;
 
     index = 0;
-    for (index = 0; index < count && file->pos < file->size; index ++)
+    for (index = 0; index < count && (rt_size_t)file->pos < file->size; index ++)
     {
         d = dirp + index;
 
@@ -274,7 +275,9 @@ int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
         else
             d->d_type = DT_REG;
 
-        d->d_namlen = rt_strlen(name);
+        len = rt_strlen(name);
+        RT_ASSERT(len <= RT_UINT8_MAX);
+        d->d_namlen = (rt_uint8_t)len;
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
         rt_strncpy(d->d_name, name, DFS_PATH_MAX);
 
@@ -295,6 +298,7 @@ static const struct dfs_file_ops _rom_fops =
     NULL,
     dfs_romfs_lseek,
     dfs_romfs_getdents,
+    NULL,
 };
 static const struct dfs_filesystem_ops _romfs =
 {

@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_sdio.c
+ * @file        apm32f10x_sdio.c
  *
- * @brief      This file provides all the SDIO firmware functions
+ * @brief       This file provides all the SDIO firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_sdio.h"
@@ -51,7 +65,7 @@ void SDIO_Reset(void)
  *
  * @retval       None
  */
-void SDIO_Config(SDIO_Config_T* sdioConfig)
+void SDIO_Config(SDIO_Config_T *sdioConfig)
 {
     uint32_t tmp = 0;
 
@@ -59,7 +73,7 @@ void SDIO_Config(SDIO_Config_T* sdioConfig)
     tmp &= 0xFFFF8100;
 
     tmp |= (sdioConfig->clockDiv  | sdioConfig->clockPowerSave | sdioConfig->clockBypass | sdioConfig->busWide |
-    sdioConfig->clockEdge | sdioConfig->hardwareFlowControl);
+            sdioConfig->clockEdge | sdioConfig->hardwareFlowControl);
 
     SDIO->CLKCTRL = tmp;
 }
@@ -71,14 +85,14 @@ void SDIO_Config(SDIO_Config_T* sdioConfig)
  *
  * @retval       None
  */
-void SDIO_ConfigStructInit(SDIO_Config_T* sdioConfig)
+void SDIO_ConfigStructInit(SDIO_Config_T *sdioConfig)
 {
-  sdioConfig->clockDiv = 0x00;
-  sdioConfig->clockEdge = SDIO_CLOCK_EDGE_RISING;
-  sdioConfig->clockBypass = SDIO_CLOCK_BYPASS_DISABLE;
-  sdioConfig->clockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-  sdioConfig->busWide = SDIO_BUSWIDE_1B;
-  sdioConfig->hardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+    sdioConfig->clockDiv = 0x00;
+    sdioConfig->clockEdge = SDIO_CLOCK_EDGE_RISING;
+    sdioConfig->clockBypass = SDIO_CLOCK_BYPASS_DISABLE;
+    sdioConfig->clockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
+    sdioConfig->busWide = SDIO_BUS_WIDE_1B;
+    sdioConfig->hardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
 }
 
 /*!
@@ -161,13 +175,12 @@ void SDIO_DisableDMA(void)
 /*!
  * @brief        Configs the SDIO Command and send the command
  *
- * @param        cmdConfig: pointer to a SDIO_CMDConfig_T structure
+ * @param        cmdConfig: pointer to a SDIO_CmdConfig_T structure
  *
  * @retval       None
  *
- * @note
  */
-void SDIO_TxCommand(SDIO_CMDConfig_T *cmdConfig)
+void SDIO_TxCommand(SDIO_CmdConfig_T *cmdConfig)
 {
     uint32_t tmpreg = 0;
 
@@ -175,26 +188,25 @@ void SDIO_TxCommand(SDIO_CMDConfig_T *cmdConfig)
     tmpreg = SDIO->CMD;
     tmpreg &= 0xFFFFF800;
     tmpreg |= (uint32_t)cmdConfig->cmdIndex | cmdConfig->response
-           | cmdConfig->wait | cmdConfig->CPSM;
+              | cmdConfig->wait | cmdConfig->CPSM;
     SDIO->CMD = tmpreg;
 }
 
 /*!
  * @brief        Fills each SDIO_CMD_ConfigStruct_T member with its default value
  *
- * @param        cmdConfig: pointer to a SDIO_CMDConfig_T structure
+ * @param        cmdConfig: pointer to a SDIO_CmdConfig_T structure
  *
  * @retval       None
  *
- * @note
  */
-void SDIO_TxCommandStructInit(SDIO_CMDConfig_T* cmdConfig)
+void SDIO_TxCommandStructInit(SDIO_CmdConfig_T *cmdConfig)
 {
-  cmdConfig->argument = 0x00;
-  cmdConfig->cmdIndex = 0x00;
-  cmdConfig->response = SDIO_RESPONSE_NO;
-  cmdConfig->wait = SDIO_WAIT_NO;
-  cmdConfig->CPSM = SDIO_CPSM_DISABLE;
+    cmdConfig->argument = 0x00;
+    cmdConfig->cmdIndex = 0x00;
+    cmdConfig->response = SDIO_RESPONSE_NO;
+    cmdConfig->wait = SDIO_WAIT_NO;
+    cmdConfig->CPSM = SDIO_CPSM_DISABLE;
 }
 
 /*!
@@ -204,7 +216,6 @@ void SDIO_TxCommandStructInit(SDIO_CMDConfig_T* cmdConfig)
  *
  * @retval       The command index of the last command response received
  *
- * @note
  */
 uint8_t SDIO_ReadCommandResponse(void)
 {
@@ -225,11 +236,11 @@ uint8_t SDIO_ReadCommandResponse(void)
  */
 uint32_t SDIO_ReadResponse(SDIO_RES_T res)
 {
-  __IO uint32_t tmp = 0;
+    __IO uint32_t tmp = 0;
 
-  tmp = ((uint32_t)(SDIO_BASE + 0x14)) + res;
+    tmp = ((uint32_t)(SDIO_BASE + 0x14)) + res;
 
-  return (*(__IO uint32_t *) tmp);
+    return (*(__IO uint32_t *) tmp);
 }
 
 /*!
@@ -239,7 +250,7 @@ uint32_t SDIO_ReadResponse(SDIO_RES_T res)
  *
  * @retval       None
  */
-void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
+void SDIO_ConfigData(SDIO_DataConfig_T *dataConfig)
 {
     uint32_t tmpreg = 0;
 
@@ -252,7 +263,7 @@ void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
     tmpreg &= 0xFFFFFF08;
 
     tmpreg |= (uint32_t)dataConfig->dataBlockSize | dataConfig->transferDir
-           | dataConfig->transferMode | dataConfig->DPSM;
+              | dataConfig->transferMode | dataConfig->DPSM;
 
     SDIO->DCTRL = tmpreg;
 }
@@ -264,14 +275,14 @@ void SDIO_ConfigData(SDIO_DataConfig_T* dataConfig)
  *
  * @retval       None
  */
-void SDIO_ConfigDataStructInit(SDIO_DataConfig_T* dataConfig)
+void SDIO_ConfigDataStructInit(SDIO_DataConfig_T *dataConfig)
 {
-  dataConfig->dataTimeOut = 0xFFFFFFFF;
-  dataConfig->dataLength = 0x00;
-  dataConfig->dataBlockSize = SDIO_DATA_BLOCKSIZE_1B;
-  dataConfig->transferDir = SDIO_TRANSFER_DIR_TOCARD;
-  dataConfig->transferMode = SDIO_TRANSFER_MODE_BLOCK;
-  dataConfig->DPSM = SDIO_DPSM_DISABLE;
+    dataConfig->dataTimeOut = 0xFFFFFFFF;
+    dataConfig->dataLength = 0x00;
+    dataConfig->dataBlockSize = SDIO_DATA_BLOCKSIZE_1B;
+    dataConfig->transferDir = SDIO_TRANSFER_DIR_TO_CARD;
+    dataConfig->transferMode = SDIO_TRANSFER_MODE_BLOCK;
+    dataConfig->DPSM = SDIO_DPSM_DISABLE;
 }
 
 /*!
@@ -289,7 +300,7 @@ uint32_t SDIO_ReadDataCounter(void)
 /*!
  * @brief       Write the SDIO Data
  *
- * @param       Data : Write 32-bit data
+ * @param       Data£ºWrite 32-bit data
  *
  * @retval      None
  */
@@ -380,11 +391,10 @@ void SDIO_DisableStartReadWait(void)
  *
  * @retval       None
  *
- * @note
  */
 void SDIO_ConfigSDIOReadWaitMode(SDIO_READ_WAIT_MODE_T readWaitMode)
 {
-  *(__IO uint32_t *) DCTRL_RDWAIT_BB = readWaitMode;
+    *(__IO uint32_t *) DCTRL_RDWAIT_BB = readWaitMode;
 }
 /*!
  * @brief        Enables SDIO SD I/O Mode Operation
@@ -395,7 +405,7 @@ void SDIO_ConfigSDIOReadWaitMode(SDIO_READ_WAIT_MODE_T readWaitMode)
  */
 void SDIO_EnableSDIO(void)
 {
-  *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)SET;
+    *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)SET;
 }
 
 /*!
@@ -407,7 +417,7 @@ void SDIO_EnableSDIO(void)
  */
 void SDIO_DisableSDIO(void)
 {
-  *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)RESET;
+    *(__IO uint32_t *) DCTRL_SDIOF_BB = (uint32_t)RESET;
 }
 
 /*!
@@ -612,17 +622,7 @@ void SDIO_DisableInterrupt(uint32_t interrupt)
  */
 uint8_t SDIO_ReadStatusFlag(SDIO_FLAG_T flag)
 {
-    uint8_t bitstatus = RESET;
-
-    if ((SDIO->STS & flag) != (uint32_t)RESET)
-    {
-        bitstatus = SET;
-    }
-    else
-    {
-        bitstatus = RESET;
-    }
-    return bitstatus;
+    return (SDIO->STS & flag) ? SET : RESET;
 }
 
 /*!
@@ -648,7 +648,7 @@ uint8_t SDIO_ReadStatusFlag(SDIO_FLAG_T flag)
  */
 void SDIO_ClearStatusFlag(uint32_t flag)
 {
-  SDIO->ICF = flag;
+    SDIO->ICF = flag;
 }
 
 /*!
@@ -722,7 +722,7 @@ uint8_t SDIO_ReadIntFlag(SDIO_INT_T flag)
  */
 void SDIO_ClearIntFlag(uint32_t flag)
 {
-  SDIO->ICF = flag;
+    SDIO->ICF = flag;
 }
 
 /**@} end of group SDIO_Fuctions*/

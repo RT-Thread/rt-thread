@@ -1,0 +1,63 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = []
+
+if GetDepend('BSP_USING_GPIO'):
+    src += ['drv_gpio.c']
+
+if GetDepend('BSP_USING_SPI'):
+    src += [ 'drv_spi.c']
+
+if GetDepend('BSP_USING_I2C'):
+    src += [ 'drv_i2c.c']
+
+if GetDepend('BSP_USING_RTC'):
+    src += ['drv_rtc.c']
+
+if GetDepend('BSP_USING_WDG'):
+    src += ['drv_wdt.c']
+
+if GetDepend('BSP_USING_ETH'):
+    src += ['drv_enet.c']
+
+if GetDepend('BSP_USING_SDXC'):
+    src += ['drv_sdio.c']
+
+if GetDepend('BSP_USING_PWM'):
+    src += ['drv_pwm.c']
+
+if GetDepend('BSP_USING_GPTMR'):
+    src += ['drv_hwtimer.c']
+
+if GetDepend('BSP_USING_CAN'):
+    src += ['drv_can.c']
+
+if GetDepend('BSP_USING_UART'):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_uart_v2.c']
+    else:
+        src += ['drv_uart.c']
+
+if GetDepend('BSP_USING_ADC'):
+    src += ['drv_adc.c']
+
+if GetDepend('BSP_USING_USB_HOST'):
+    src += ['drv_usb.c']
+
+if GetDepend('BSP_USING_DAO'):
+    src += ['drv_dao.c']
+
+if GetDepend('BSP_USING_PDM'):
+    src += ['drv_pdm.c']
+
+if GetDepend('BSP_USING_I2S'):
+    src += ['drv_i2s.c']
+
+
+path = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

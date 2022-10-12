@@ -72,7 +72,7 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb, const rt_uint8_t *pt
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch);
 rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb, const rt_uint8_t ch);
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb, rt_uint8_t *ptr, rt_uint16_t length);
-rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr);
+rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch);
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb);
 
@@ -95,7 +95,7 @@ rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 }
 
 /** return the size of empty space in rb */
-#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - rt_ringbuffer_data_len(rb))
+#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - (rt_int16_t)rt_ringbuffer_data_len(rb))
 
 
 #ifdef __cplusplus

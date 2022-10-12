@@ -1,15 +1,12 @@
-menu "Command shell"
-
-config RT_USING_FINSH
-    bool
-    default n
-
-config RT_USING_MSH
-    bool "msh shell"
-    select RT_USING_FINSH
+menuconfig RT_USING_MSH
+    bool "MSH: command shell"
     default y
 
 if RT_USING_MSH
+
+    config RT_USING_FINSH
+        bool
+        default y
 
     config FINSH_USING_MSH
         bool
@@ -80,5 +77,3 @@ if RT_USING_MSH
         default 10
 
 endif
-
-endmenu

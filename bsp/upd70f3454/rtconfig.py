@@ -7,7 +7,7 @@ CPU      = '70f34'
 CROSS_TOOL 	= 'iar'
 
 if os.getenv('RTT_CC'):
-	CROSS_TOOL = os.getenv('RTT_CC')
+    CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
     print('================ERROR============================')
@@ -15,8 +15,8 @@ if  CROSS_TOOL == 'gcc':
     print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
-	PLATFORM 	= 'iar'
-	EXEC_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation_0'
+    PLATFORM  = 'iccarm'
+    EXEC_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation_0'
 elif CROSS_TOOL == 'keil':
     print('================ERROR============================')
     print('Not support keil yet!')
@@ -24,7 +24,7 @@ elif CROSS_TOOL == 'keil':
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
@@ -56,7 +56,7 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O srec $TARGET rtthread.mot\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccv850'
     AS = 'av850'
@@ -105,7 +105,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --migration_preprocessor_extensions' 
     CFLAGS += ' -e' 
     CFLAGS += ' -Ol'
-	
-	EXEC_PATH = EXEC_PATH + '/v850/bin'
+
+    EXEC_PATH = EXEC_PATH + '/v850/bin'
 
     POST_ACTION = ''

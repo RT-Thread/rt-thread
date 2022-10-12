@@ -121,8 +121,8 @@ void rt_signal_wait_thread(void *parm)
     rt_signal_install(SIGUSR1, sig_handle_default);
     rt_signal_unmask(SIGUSR1);
 
-    sigemptyset(&selectset);
-    sigaddset(&selectset, SIGUSR1);
+    (void)sigemptyset(&selectset);
+    (void)sigaddset(&selectset, SIGUSR1);
 
     /* case 5:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: kill, should received. */
     if (rt_signal_wait(&selectset, &recive_si, RT_TICK_PER_SECOND) != RT_EOK)

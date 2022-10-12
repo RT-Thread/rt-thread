@@ -7,11 +7,11 @@ src = Split('''
             LPC55S6X/system_LPC55S69_cm33_core0.c
             ''')
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['LPC55S6X/gcc/startup_LPC55S69_cm33_core0.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['LPC55S6X/arm/startup_LPC55S69_cm33_core0.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += ['LPC55S6X/iar/startup_LPC55S69_cm33_core0.s']
 
 src += ['LPC55S6X/drivers/fsl_anactrl.c']
@@ -58,11 +58,11 @@ src += ['middleware/sdmmc/src/fsl_sdmmc_common.c']
 src += ['middleware/sdmmc/port/sdif/rt_thread/fsl_sdmmc_event.c']
 src += ['middleware/sdmmc/port/sdif/rt_thread/fsl_sdmmc_host.c']
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['LPC55S6X/gcc/libpower_hardabi.a']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['LPC55S6X/arm/keil_lib_power_cm33_core0.lib']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += ['LPC55S6X/iar/iar_lib_power_cm33_core0.a']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)

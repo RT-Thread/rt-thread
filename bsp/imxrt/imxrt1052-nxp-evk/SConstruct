@@ -37,7 +37,7 @@ else:
 
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
-if rtconfig.PLATFORM == 'iar':
+if rtconfig.PLATFORM in ['iccarm']:
     env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
     env.Replace(ARFLAGS = [''])
     env.Replace(LINKCOM = env["LINKCOM"] + ' --map rtthread.map')
@@ -66,9 +66,6 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, imxrt_library, 'SCons
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
-
-# include peripherals
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'peripherals', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

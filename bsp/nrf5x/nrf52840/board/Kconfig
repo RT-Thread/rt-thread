@@ -28,6 +28,11 @@ menu "Onboard Peripheral Drivers"
         bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
         default y
         depends on BSP_BOARD_PCA_10056
+        
+    config BSP_USING_SEGGER_RTT_CONSOLE
+        bool "Enable SEGGER_RTT to console"
+        select PKG_USING_SEGGER_RTT
+        default n
 
     config RT_BSP_LED_PIN
         int 
@@ -37,7 +42,7 @@ menu "Onboard Peripheral Drivers"
 
 
     menuconfig BSP_USING_QSPI_FLASH
-        select PKG_USING_FAL
+        select RT_USING_FAL
         bool "Enable QSPI FLASH(MX25R64 8MB)"
         default n
         depends on BSP_BOARD_PCA_10056
@@ -378,7 +383,7 @@ menu "On-chip Peripheral Drivers"
 
 
     config BSP_USING_ON_CHIP_FLASH
-        select PKG_USING_FAL
+        select RT_USING_FAL
         bool "Enable on-chip FLASH"
         default n
 

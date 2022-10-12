@@ -17,17 +17,18 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 
 ![board](figures/APM32F103ZE.png)
 
+- 有关开发板和芯片的详情可至极海官网查阅。[官网开发板链接 ](https://www.geehy.com/support/apm32?id=192)
 
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：APM32F103C8T6，主频 96MHz，512KB FLASH ，128KB RAM
+- MCU：APM32F103ZET6，主频 96MHz，512KB FLASH ，128KB RAM
 - 外部 RAM：无
 - 外部 FLASH：无
 - 常用外设
   - LED：2个，（黄色，PE5/PE6）
-  - 按键：2个，K1（兼具唤醒功能，PA0），K2（PC13）
-- 常用接口：RS232转串口、、USB SLAVE
+  - 按键：2个，K1（PA1），K2（PA0）
+- 常用接口：RS232转串口、USB SLAVE
 - 调试接口：标准 JTAG/SWD
 
 
@@ -36,12 +37,20 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注**                              |
+| **板载外设** | **支持情况** | **备注**                             |
 | :----------- | :----------: | :------------------------------------ |
 | RS232转串口  |     支持     | 使用 UART1/ UART2(通过跳线选择)       |
-| **片上外设** | **支持情况** | **备注**                              |
-| GPIO         |     支持     | PA0, PA1... PG15 ---> PIN: 0, 1...143 |
+| **片上外设** | **支持情况** | **备注**                             |
+| GPIO         |     支持     | PA0, PA1... PG15 ---> PIN: 0, 1...108 |
 | UART         |     支持     | UART1/2                               |
+| ADC          |     支持     | ADC1/2/3                              |
+| DAC          |     支持     | DAC1                                  |
+| RTC          |     支持     | 支持外部晶振和内部低速时钟            |
+| TMR          |     支持     | TMR1/2/3/4/5/6/7/8                    |
+| PWM          |     支持     | TMR3 ->CH1/2/3/4                      |
+| I2C          |     支持     | 软件I2C                               |
+| SPI          |     支持     | SPI1/2/3                              |
+| WDT          |     支持     | IWDT                                  |
 
 ## 使用说明
 
@@ -57,10 +66,27 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 使用数据线连接开发板到 PC，打开电源开关。
 
 #### 编译下载
+- 方式一：MDK
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+   双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
 > 工程默认配置使用 J-Link 仿真器下载程序，在通过 J-Link 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+
+- 方式二：J-Flash下载
+
+  通过ENV工具的scons指令或MDK编译出bin文件后，再使用J-Flash工具将bin文件下载至开发板即可，大致步骤如下：
+
+##### 1、建立J-Flash工程
+
+![board](figures/JFlash_Leader_01.png)
+
+##### 2、连接开发板
+
+![board](figures/JFlash_Leader_02.png)
+##### 3、将bin文件拖至工程，起始地址设为0x8000000
+![board](figures/JFlash_Leader_03.png)
+##### 4、点击下载
+![board](figures/JFlash_Leader_04.png)
 
 #### 运行结果
 
@@ -71,7 +97,7 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.4 build Aug 20 2021
+ / | \     4.1.0 build Aug 20 2021
  2006 - 2021 Copyright by rt-thread team
 msh >
 ```
@@ -82,3 +108,5 @@ msh >
 ## 联系人信息
 
 -[abbbcc ](https://gitee.com/abbbcc)
+
+-[stevetong459 ](https://github.com/stevetong459)

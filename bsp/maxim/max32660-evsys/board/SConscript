@@ -1,0 +1,28 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/MAX32660PeriphDriver/CMSIS/Device/Maxim/MAX32660/Source/GCC/startup_max32660.S']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/MAX32660PeriphDriver/CMSIS/Device/Maxim/MAX32660/Source/ARM/startup_max32660.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/MAX32660PeriphDriver/CMSIS/Device/Maxim/MAX32660/Source/ARM/startup_max32660.s']
+
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

@@ -29,12 +29,12 @@
 
 /* rtc date upper bound reaches the year of 2099. */
 #define RTC_TM_UPPER_BOUND                                              \
-{   .tm_year = CONV_TO_TM_YEAR(2099),                                   \
-    .tm_mon  = CONV_TO_TM_MON(12),                                      \
-    .tm_mday  = 31,                                                     \
-    .tm_hour  = 23,                                                     \
-    .tm_min = 59,                                                       \
-    .tm_sec  = 59,                                                      \
+{   .tm_year = CONV_TO_TM_YEAR(2038),                                   \
+    .tm_mon  = CONV_TO_TM_MON(1),                                       \
+    .tm_mday  = 19,                                                     \
+    .tm_hour  = 3,                                                      \
+    .tm_min = 14,                                                       \
+    .tm_sec  = 07,                                                      \
 }
 
 /* rtc date lower bound reaches the year of 2000. */
@@ -57,8 +57,8 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args);
     static rt_size_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 #endif
 
-static rt_err_t nu_rtc_is_date_valid(const time_t *const t);
-static void nu_rtc_init(void);
+static rt_err_t nu_rtc_is_date_valid(const time_t t);
+static rt_err_t nu_rtc_init(void);
 
 #if defined(RT_USING_ALARM)
     static void nu_rtc_alarm_reset(void);
@@ -74,7 +74,7 @@ static void nu_rtc_init(void);
 static struct rt_device device_rtc;
 
 
-static void nu_rtc_init(void)
+static rt_err_t nu_rtc_init(void)
 {
     /* hw rtc initialise */
     RTC_Open(NULL);
@@ -89,6 +89,8 @@ static void nu_rtc_init(void)
     RTC_EnableInt(RTC_INTEN_ALMIEN_Msk);
     NVIC_EnableIRQ(RTC_IRQn);
 #endif
+
+    return RT_EOK;
 }
 
 
@@ -176,7 +178,7 @@ static rt_size_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 #endif
 
 
-static rt_err_t nu_rtc_is_date_valid(const time_t *const t)
+static rt_err_t nu_rtc_is_date_valid(const time_t t)
 {
     static struct tm tm_upper = RTC_TM_UPPER_BOUND;
     static struct tm tm_lower = RTC_TM_LOWER_BOUND;
@@ -191,7 +193,7 @@ static rt_err_t nu_rtc_is_date_valid(const time_t *const t)
     }
 
     /* check the date is supported by rtc. */
-    if ((*t > t_upper) || (*t < t_lower))
+    if ((t > t_upper) || (t < t_lower))
         return -(RT_EINVAL);
 
     return RT_EOK;
@@ -201,7 +203,7 @@ static rt_err_t nu_rtc_is_date_valid(const time_t *const t)
 /* Register rt-thread device.control() entry. */
 static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
 {
-    struct tm tm_out, *tm_in;
+    struct tm tm_out, tm_in;
     time_t *time;
     S_RTC_TIME_DATA_T hw_time;
 
@@ -233,17 +235,17 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
     case RT_DEVICE_CTRL_RTC_SET_TIME:
 
         time = (time_t *) args;
-        tm_in = gmtime(time);
 
-        if (nu_rtc_is_date_valid(time) != RT_EOK)
-            return RT_ERROR;
+        if (nu_rtc_is_date_valid(*time) != RT_EOK)
+            return -(RT_ERROR);
 
-        hw_time.u32Year = CONV_FROM_TM_YEAR(tm_in->tm_year);
-        hw_time.u32Month = CONV_FROM_TM_MON(tm_in->tm_mon);
-        hw_time.u32Day = tm_in->tm_mday;
-        hw_time.u32Hour = tm_in->tm_hour;
-        hw_time.u32Minute = tm_in->tm_min;
-        hw_time.u32Second = tm_in->tm_sec;
+        gmtime_r(time, &tm_in);
+        hw_time.u32Year = CONV_FROM_TM_YEAR(tm_in.tm_year);
+        hw_time.u32Month = CONV_FROM_TM_MON(tm_in.tm_mon);
+        hw_time.u32Day = tm_in.tm_mday;
+        hw_time.u32Hour = tm_in.tm_hour;
+        hw_time.u32Minute = tm_in.tm_min;
+        hw_time.u32Second = tm_in.tm_sec;
         hw_time.u32TimeScale = RTC_CLOCK_24;
         hw_time.u32AmPm = 0;
 

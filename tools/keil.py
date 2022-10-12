@@ -137,7 +137,7 @@ def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
 
     return group
 
-def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
+def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
     # don't add an empty group
     if len(files) == 0:
         return
@@ -176,12 +176,39 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
         file_path = SubElement(file, 'FilePath')
-
         file_path.text = path # path.decode(fs_encoding)
+
+        # for local LOCAL_CFLAGS/LOCAL_CXXFLAGS/LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES
+        MiscControls_text = ' '
+        if file_type.text == '1' and 'LOCAL_CFLAGS' in group_scons:
+            MiscControls_text = MiscControls_text + group_scons['LOCAL_CFLAGS']
+        elif file_type.text == '8' and 'LOCAL_CXXFLAGS' in group_scons:
+            MiscControls_text = MiscControls_text + group_scons['LOCAL_CXXFLAGS']
+        if 'LOCAL_CCFLAGS' in group_scons:
+            MiscControls_text = MiscControls_text + group_scons['LOCAL_CCFLAGS']
+        if MiscControls_text != ' ':
+            FileOption     = SubElement(file,  'FileOption')
+            FileArmAds     = SubElement(FileOption, 'FileArmAds')
+            Cads            = SubElement(FileArmAds, 'Cads')
+            VariousControls = SubElement(Cads, 'VariousControls')
+            MiscControls    = SubElement(VariousControls, 'MiscControls')
+            MiscControls.text = MiscControls_text
+            Define          = SubElement(VariousControls, 'Define')
+            if 'LOCAL_CPPDEFINES' in group_scons:
+                Define.text     = ', '.join(set(group_scons['LOCAL_CPPDEFINES']))
+            else:
+                Define.text     = ' '
+            Undefine        = SubElement(VariousControls, 'Undefine')
+            Undefine.text   = ' '
+            IncludePath     = SubElement(VariousControls, 'IncludePath')
+            if 'LOCAL_CPPPATH' in group_scons:
+                IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in group_scons['LOCAL_CPPPATH']])
+            else:
+                IncludePath.text = ' '
 
     return group
 
-# The common part of making MDK4/5 project 
+# The common part of making MDK4/5 project
 def MDK45Project(tree, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
@@ -201,31 +228,7 @@ def MDK45Project(tree, target, script):
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
     groups.clear() # clean old groups
     for group in script:
-        group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
-
-        # for local CPPPATH/CPPDEFINES
-        if (group_tree != None) and ('LOCAL_CPPPATH' in group or 'LOCAL_CFLAGS' in group or 'LOCAL_CPPDEFINES' in group):
-            GroupOption     = SubElement(group_tree,  'GroupOption')
-            GroupArmAds     = SubElement(GroupOption, 'GroupArmAds')
-            Cads            = SubElement(GroupArmAds, 'Cads')
-            VariousControls = SubElement(Cads, 'VariousControls')
-            MiscControls    = SubElement(VariousControls, 'MiscControls')
-            if 'LOCAL_CFLAGS' in group:
-                MiscControls.text = group['LOCAL_CFLAGS']
-            else:
-                MiscControls.text = ' '
-            Define          = SubElement(VariousControls, 'Define')
-            if 'LOCAL_CPPDEFINES' in group:
-                Define.text     = ', '.join(set(group['LOCAL_CPPDEFINES']))
-            else:
-                Define.text     = ' '
-            Undefine        = SubElement(VariousControls, 'Undefine')
-            Undefine.text   = ' '
-            IncludePath     = SubElement(VariousControls, 'IncludePath')
-            if 'LOCAL_CPPPATH' in group:
-                IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in group['LOCAL_CPPPATH']])
-            else:
-                IncludePath.text = ' '
+        group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path, group)
 
         # get each include path
         if 'CPPPATH' in group and group['CPPPATH']:
@@ -265,7 +268,7 @@ def MDK45Project(tree, target, script):
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
+    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
 
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
     Define.text = ', '.join(set(CPPDEFINES))
@@ -278,6 +281,11 @@ def MDK45Project(tree, target, script):
     out.close()
 
 def MDK4Project(target, script):
+
+    if os.path.isfile('template.uvproj') is False:
+        print ('Warning: The template project file [template.uvproj] not found!')
+        return
+
     template_tree = etree.parse('template.uvproj')
 
     MDK45Project(template_tree, target, script)
@@ -294,6 +302,10 @@ def MDK4Project(target, script):
 
 def MDK5Project(target, script):
 
+    if os.path.isfile('template.uvprojx') is False:
+        print ('Warning: The template project file [template.uvprojx] not found!')
+        return
+
     template_tree = etree.parse('template.uvprojx')
 
     MDK45Project(template_tree, target, script)
@@ -307,7 +319,7 @@ def MDK5Project(target, script):
         import shutil
         shutil.copy2('template.uvoptx', 'project.uvoptx')
 
-def MDKProject(target, script):
+def MDK2Project(target, script):
     template = open('template.Uv2', "r")
     lines = template.readlines()
 
@@ -425,7 +437,7 @@ def ARMCC_Version():
     stdout, stderr = child.communicate()
 
     '''
-    example stdout: 
+    example stdout:
     Product: MDK Plus 5.24
     Component: ARM Compiler 5.06 update 5 (build 528)
     Tool: armcc [4d3621]
@@ -441,5 +453,4 @@ def ARMCC_Version():
     version_Tool = version_Tool[:-1]
     version_str_format = '%s/%s/%s'
     version_str = version_str_format % (version_Product, version_Component, version_Tool)
-    #print('version_str:' + version_str)
     return version_str

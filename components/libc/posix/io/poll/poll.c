@@ -154,7 +154,7 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
 {
     int num;
     int istimeout = 0;
-    int n;
+    nfds_t n;
     struct pollfd *pf;
     int  ret = 0;
 
@@ -168,6 +168,7 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
     {
         pf = fds;
         num = 0;
+        pt->triggered = 0;
 
         for (n = 0; n < nfds; n ++)
         {

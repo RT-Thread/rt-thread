@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2019, RT-Thread Development Team
+# Copyright (c) 2006-2022, RT-Thread Development Team
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -291,7 +291,8 @@ def HandleToolOption(tools, env, project, reset):
 
         listOptionValue = option.find('listOptionValue')
         if listOptionValue != None:
-            listOptionValue.set('value', linker_script)
+            if reset is True or IsRttEclipsePathFormat(listOptionValue.get('value')):
+                listOptionValue.set('value', linker_script)
         else:
             SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
     # scriptfile in stm32cubeIDE
@@ -319,6 +320,12 @@ def HandleToolOption(tools, env, project, reset):
         # add new libs
         if 'LIBS' in env:
             for lib in env['LIBS']:
+                lib_name = os.path.basename(str(lib))
+                if lib_name.endswith('.a'):
+                    if lib_name.startswith('lib'):
+                        lib = lib_name[3:].split('.')[0]
+                    else:
+                        lib = ':' + lib_name
                 formatedLib = ConverToRttEclipseLibFormat(lib)
                 SubElement(option, 'listOptionValue', {
                            'builtIn': 'false', 'value': formatedLib})

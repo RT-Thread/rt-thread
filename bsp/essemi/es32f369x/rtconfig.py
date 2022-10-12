@@ -15,15 +15,15 @@ CPU = 'cortex-m3'
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL  == 'gcc': # not support gcc yet
     PLATFORM    = 'gcc'
-    EXEC_PATH   = 'C:/GCC'
+    EXEC_PATH   = r'C:/GCC'
 
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
-    EXEC_PATH   = 'C:/Keil'
+    EXEC_PATH   = r'C:/Keil'
 
 elif CROSS_TOOL == 'iar': # not support iar yet
-    PLATFORM    = 'iar'
-    EXEC_PATH   = 'C:/IAR'
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/IAR'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -87,7 +87,7 @@ elif PLATFORM == 'armcc':
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     AS = 'iasmarm'

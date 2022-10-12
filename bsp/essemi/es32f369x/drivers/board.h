@@ -27,7 +27,7 @@
 
 #include <es32f36xx.h>
 #include "es_conf_info_cmu.h"
-
+#include "es_conf_info_gpio.h"
 #define ES32F3_SRAM_SIZE    0x18000
 #define ES32F3_SRAM_END     (0x20000000 + ES32F3_SRAM_SIZE)
 

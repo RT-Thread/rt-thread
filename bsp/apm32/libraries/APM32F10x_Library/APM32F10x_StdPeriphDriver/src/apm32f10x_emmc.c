@@ -1,12 +1,26 @@
 /*!
- * @file      apm32f10x_emmc.c
+ * @file        apm32f10x_emmc.c
  *
- * @brief     This file provides all the EMMC firmware functions
+ * @brief       This file provides all the EMMC firmware functions
  *
- * @version   V1.0.1
+ * @version     V1.0.2
  *
- * @date      2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_emmc.h"
@@ -39,7 +53,7 @@
 void EMMC_ResetNORSRAM(EMMC_BANK1_NORSRAM_T bank)
 {
     /** EMMC_BANK1_NORSRAM_1 */
-    if(bank == EMMC_BANK1_NORSRAM_1)
+    if (bank == EMMC_BANK1_NORSRAM_1)
     {
         EMMC_Bank1->SNCTRL_T[bank] = 0x000030DB;
     }
@@ -64,7 +78,7 @@ void EMMC_ResetNORSRAM(EMMC_BANK1_NORSRAM_T bank)
  */
 void EMMC_ResetNAND(EMMC_BANK_NAND_T bank)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         /** Set the EMMC_Bank2 registers to their reset values */
         EMMC_Bank2->CTRL2 = 0x00000018;
@@ -75,7 +89,7 @@ void EMMC_ResetNAND(EMMC_BANK_NAND_T bank)
     /** EMMC_BANK3_NAND */
     else
     {
-        /* Set the EMMC_Bank3 registers to their reset values */
+        /** Set the EMMC_Bank3 registers to their reset values */
         EMMC_Bank3->CTRL3 = 0x00000018;
         EMMC_Bank3->STSINT3 = 0x00000040;
         EMMC_Bank3->CMSTIM3 = 0xFCFCFCFC;
@@ -107,9 +121,9 @@ void EMMC_ResetPCCard(void)
  *
  * @retval    None
  */
-void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig)
+void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T *emmcNORSRAMConfig)
 {
-    /* Bank1 NOR/SRAM control register configuration */
+    /** Bank1 NOR/SRAM control register configuration */
     EMMC_Bank1->SNCTRL_T[emmcNORSRAMConfig->bank] =
         (uint32_t)emmcNORSRAMConfig->dataAddressMux |
         emmcNORSRAMConfig->memoryType |
@@ -124,12 +138,12 @@ void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig)
         emmcNORSRAMConfig->extendedMode |
         emmcNORSRAMConfig->writeBurst;
 
-    if(emmcNORSRAMConfig->memoryType == EMMC_MEMORY_TYPE_NOR)
+    if (emmcNORSRAMConfig->memoryType == EMMC_MEMORY_TYPE_NOR)
     {
         EMMC_Bank1->SNCTRL_T[emmcNORSRAMConfig->bank] |= 0x00000040;
     }
 
-    /* Bank1 NOR/SRAM timing register configuration */
+    /** Bank1 NOR/SRAM timing register configuration */
     EMMC_Bank1->SNCTRL_T[emmcNORSRAMConfig->bank + 1] =
         (uint32_t)emmcNORSRAMConfig->readWriteTimingStruct->addressSetupTime |
         (emmcNORSRAMConfig->readWriteTimingStruct->addressHodeTime << 4) |
@@ -139,8 +153,8 @@ void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig)
         (emmcNORSRAMConfig->readWriteTimingStruct->dataLatency << 24) |
         emmcNORSRAMConfig->readWriteTimingStruct->accessMode;
 
-    /* Bank1 NOR/SRAM timing register for write configuration, if extended mode is used */
-    if(emmcNORSRAMConfig->extendedMode == EMMC_EXTENDEN_MODE_ENABLE)
+    /** Bank1 NOR/SRAM timing register for write configuration, if extended mode is used */
+    if (emmcNORSRAMConfig->extendedMode == EMMC_EXTENDEN_MODE_ENABLE)
     {
         EMMC_Bank1E->WRTTIM[emmcNORSRAMConfig->bank] =
             (uint32_t)emmcNORSRAMConfig->writeTimingStruct->addressSetupTime |
@@ -163,11 +177,11 @@ void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig)
  *
  * @retval    None
  */
-void EMMC_ConfigNAND(EMMC_NANDConfig_T* emmcNANDConfig)
+void EMMC_ConfigNAND(EMMC_NANDConfig_T *emmcNANDConfig)
 {
     uint32_t tmppcr = 0x00000000, tmppmem = 0x00000000, tmppatt = 0x00000000;
 
-    /* Set the tmppcr value according to EMMC_NANDInitStruct parameters */
+    /** Set the tmppcr value according to EMMC_NANDInitStruct parameters */
     tmppcr = (uint32_t)emmcNANDConfig->waitFeature | 0x00000008 |
              emmcNANDConfig->memoryDataWidth |
              emmcNANDConfig->ECC |
@@ -175,28 +189,28 @@ void EMMC_ConfigNAND(EMMC_NANDConfig_T* emmcNANDConfig)
              (emmcNANDConfig->TCLRSetupTime << 9) |
              (emmcNANDConfig->TARSetupTime << 13);
 
-    /* Set tmppmem value according to EMMC_CommonSpaceTimingStructure parameters */
+    /** Set tmppmem value according to EMMC_CommonSpaceTimingStructure parameters */
     tmppmem = (uint32_t)emmcNANDConfig->commonSpaceTimingStruct->setupTime |
               (emmcNANDConfig->commonSpaceTimingStruct->waitSetupTime << 8) |
               (emmcNANDConfig->commonSpaceTimingStruct->holdSetupTime << 16) |
               (emmcNANDConfig->commonSpaceTimingStruct->HiZSetupTime << 24);
 
-    /* Set tmppatt value according to EMMC_AttributeSpaceTimingStructure parameters */
+    /** Set tmppatt value according to EMMC_AttributeSpaceTimingStructure parameters */
     tmppatt = (uint32_t)emmcNANDConfig->attributeSpaceTimingStruct->setupTime |
               (emmcNANDConfig->attributeSpaceTimingStruct->waitSetupTime << 8) |
               (emmcNANDConfig->attributeSpaceTimingStruct->holdSetupTime << 16) |
               (emmcNANDConfig->attributeSpaceTimingStruct->HiZSetupTime << 24);
 
-    if(emmcNANDConfig->bank == EMMC_BANK2_NAND)
+    if (emmcNANDConfig->bank == EMMC_BANK2_NAND)
     {
-        /* EMMC_BANK2_NAND registers configuration */
+        /** EMMC_BANK2_NAND registers configuration */
         EMMC_Bank2->CTRL2 = tmppcr;
         EMMC_Bank2->CMSTIM2 = tmppmem;
         EMMC_Bank2->AMSTIM2 = tmppatt;
     }
     else
     {
-        /* EMMC_BANK3_NAND registers configuration */
+        /** EMMC_BANK3_NAND registers configuration */
         EMMC_Bank3->CTRL3 = tmppcr;
         EMMC_Bank3->CMSTIM3 = tmppmem;
         EMMC_Bank3->AMSTIM3 = tmppatt;
@@ -211,30 +225,30 @@ void EMMC_ConfigNAND(EMMC_NANDConfig_T* emmcNANDConfig)
  *
  * @retval    None
  */
-void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T* emmcPCCardConfig)
+void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T *emmcPCCardConfig)
 {
-    /* Set the PCR4 register value according to EMMC_PCCARDInitStruct parameters */
+    /** Set the PCR4 register value according to EMMC_PCCARDInitStruct parameters */
     EMMC_Bank4->CTRL4 = (uint32_t)emmcPCCardConfig->waitFeature | EMMC_MEMORY_DATA_WIDTH_16BIT |
-                          (emmcPCCardConfig->TCLRSetupTime << 9) |
-                          (emmcPCCardConfig->TARSetupTime << 13);
+                        (emmcPCCardConfig->TCLRSetupTime << 9) |
+                        (emmcPCCardConfig->TARSetupTime << 13);
 
-    /* Set PMEM4 register value according to EMMC_CommonSpaceTimingStructure parameters */
+    /** Set PMEM4 register value according to EMMC_CommonSpaceTimingStructure parameters */
     EMMC_Bank4->CMSTIM4 = (uint32_t)emmcPCCardConfig->commonSpaceTimingStruct->setupTime |
-                        (emmcPCCardConfig->commonSpaceTimingStruct->waitSetupTime << 8) |
-                        (emmcPCCardConfig->commonSpaceTimingStruct->holdSetupTime << 16) |
-                        (emmcPCCardConfig->commonSpaceTimingStruct->HiZSetupTime << 24);
+                          (emmcPCCardConfig->commonSpaceTimingStruct->waitSetupTime << 8) |
+                          (emmcPCCardConfig->commonSpaceTimingStruct->holdSetupTime << 16) |
+                          (emmcPCCardConfig->commonSpaceTimingStruct->HiZSetupTime << 24);
 
-    /* Set PATT4 register value according to EMMC_AttributeSpaceTimingStructure parameters */
+    /** Set PATT4 register value according to EMMC_AttributeSpaceTimingStructure parameters */
     EMMC_Bank4->AMSTIM4 = (uint32_t)emmcPCCardConfig->attributeSpaceTimingStruct->setupTime |
-                        (emmcPCCardConfig->attributeSpaceTimingStruct->waitSetupTime << 8) |
-                        (emmcPCCardConfig->attributeSpaceTimingStruct->holdSetupTime << 16) |
-                        (emmcPCCardConfig->attributeSpaceTimingStruct->HiZSetupTime << 24);
+                          (emmcPCCardConfig->attributeSpaceTimingStruct->waitSetupTime << 8) |
+                          (emmcPCCardConfig->attributeSpaceTimingStruct->holdSetupTime << 16) |
+                          (emmcPCCardConfig->attributeSpaceTimingStruct->HiZSetupTime << 24);
 
-    /* Set PIO4 register value according to EMMC_IOSpaceTimingStructure parameters */
+    /** Set PIO4 register value according to EMMC_IOSpaceTimingStructure parameters */
     EMMC_Bank4->IOSTIM4 = (uint32_t)emmcPCCardConfig->IOSpaceTimingStruct->setupTime |
-                        (emmcPCCardConfig->IOSpaceTimingStruct->waitSetupTime << 8) |
-                        (emmcPCCardConfig->IOSpaceTimingStruct->holdSetupTime << 16) |
-                        (emmcPCCardConfig->IOSpaceTimingStruct->HiZSetupTime << 24);
+                          (emmcPCCardConfig->IOSpaceTimingStruct->waitSetupTime << 8) |
+                          (emmcPCCardConfig->IOSpaceTimingStruct->holdSetupTime << 16) |
+                          (emmcPCCardConfig->IOSpaceTimingStruct->HiZSetupTime << 24);
 }
 
 /*!
@@ -244,9 +258,9 @@ void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T* emmcPCCardConfig)
  *
  * @retval    None
  */
-void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig)
+void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T *emmcNORSRAMConfig)
 {
-    /* Reset NOR/SRAM Init structure parameters values */
+    /** Reset NOR/SRAM Init structure parameters values */
     emmcNORSRAMConfig->bank = EMMC_BANK1_NORSRAM_1;
     emmcNORSRAMConfig->dataAddressMux = EMMC_DATA_ADDRESS_MUX_ENABLE;
     emmcNORSRAMConfig->memoryType = EMMC_MEMORY_TYPE_SRAM;
@@ -284,9 +298,9 @@ void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig)
  *
  * @retval    None
  */
-void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T* emmcNANDConfig)
+void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T *emmcNANDConfig)
 {
-    /* Reset NAND Init structure parameters values */
+    /** Reset NAND Init structure parameters values */
     emmcNANDConfig->bank = EMMC_BANK2_NAND;
     emmcNANDConfig->waitFeature = EMMC_WAIT_FEATURE_DISABLE;
     emmcNANDConfig->memoryDataWidth = EMMC_MEMORY_DATA_WIDTH_8BIT;
@@ -311,9 +325,9 @@ void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T* emmcNANDConfig)
  *
  * @retval    None
  */
-void EMMC_ConfigPCCardStructInit(EMMC_PCCARDConfig_T* emmcPCCardConfig)
+void EMMC_ConfigPCCardStructInit(EMMC_PCCARDConfig_T *emmcPCCardConfig)
 {
-    /* Reset PCCARD Init structure parameters values */
+    /** Reset PCCARD Init structure parameters values */
     emmcPCCardConfig->waitFeature = EMMC_WAIT_FEATURE_DISABLE;
     emmcPCCardConfig->TCLRSetupTime = 0x0;
     emmcPCCardConfig->TARSetupTime = 0x0;
@@ -377,7 +391,7 @@ void EMMC_DisableNORSRAM(EMMC_BANK1_NORSRAM_T bank)
  */
 void EMMC_EnableNAND(EMMC_BANK_NAND_T bank)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->CTRL2_B.MBKEN = BIT_SET;
     }
@@ -399,7 +413,7 @@ void EMMC_EnableNAND(EMMC_BANK_NAND_T bank)
  */
 void EMMC_DisableNAND(EMMC_BANK_NAND_T bank)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->CTRL2_B.MBKEN = BIT_RESET;
     }
@@ -445,7 +459,7 @@ void EMMC_DisablePCCARD(void)
  */
 void EMMC_EnableNANDECC(EMMC_BANK_NAND_T bank)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->CTRL2 |= 0x00000040;
     }
@@ -465,11 +479,10 @@ void EMMC_EnableNANDECC(EMMC_BANK_NAND_T bank)
  *
  * @retval    None
  *
- * @note
  */
 void EMMC_DisableNANDECC(EMMC_BANK_NAND_T bank)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->CTRL2 &= 0x000FFFBF;
     }
@@ -493,7 +506,7 @@ uint32_t  EMMC_ReadECC(EMMC_BANK_NAND_T bank)
 {
     uint32_t eccval = 0x00000000;
 
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         eccval = EMMC_Bank2->ECCRS2;
     }
@@ -523,11 +536,11 @@ uint32_t  EMMC_ReadECC(EMMC_BANK_NAND_T bank)
  */
 void EMMC_EnableInterrupt(EMMC_BANK_NAND_T bank, uint32_t interrupt)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->STSINT2 |= interrupt;
     }
-    else if(bank == EMMC_BANK3_NAND)
+    else if (bank == EMMC_BANK3_NAND)
     {
         EMMC_Bank3->STSINT3 |= interrupt;
     }
@@ -556,11 +569,11 @@ void EMMC_EnableInterrupt(EMMC_BANK_NAND_T bank, uint32_t interrupt)
  */
 void EMMC_DisableInterrupt(EMMC_BANK_NAND_T bank, uint32_t interrupt)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->STSINT2 &= ~interrupt;
     }
-    else if(bank == EMMC_BANK3_NAND)
+    else if (bank == EMMC_BANK3_NAND)
     {
         EMMC_Bank3->STSINT3 &= ~interrupt;
     }
@@ -588,17 +601,16 @@ void EMMC_DisableInterrupt(EMMC_BANK_NAND_T bank, uint32_t interrupt)
  *
  * @retval    SET or RESET
  *
- * @note
  */
 uint8_t EMMC_ReadStatusFlag(EMMC_BANK_NAND_T bank, EMMC_FLAG_T flag)
 {
     uint32_t tmpsr = 0x00000000;
 
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         tmpsr = EMMC_Bank2->STSINT2;
     }
-    else if(bank == EMMC_BANK3_NAND)
+    else if (bank == EMMC_BANK3_NAND)
     {
         tmpsr = EMMC_Bank3->STSINT3;
     }
@@ -606,8 +618,8 @@ uint8_t EMMC_ReadStatusFlag(EMMC_BANK_NAND_T bank, EMMC_FLAG_T flag)
     {
         tmpsr = EMMC_Bank4->STSINT4;
     }
-    /* Get the flag status */
-    if((tmpsr & flag) != RESET)
+    /** Get the flag status */
+    if ((tmpsr & flag) != RESET)
     {
         return SET;
     }
@@ -636,11 +648,11 @@ uint8_t EMMC_ReadStatusFlag(EMMC_BANK_NAND_T bank, EMMC_FLAG_T flag)
  */
 void EMMC_ClearStatusFlag(EMMC_BANK_NAND_T bank, uint32_t flag)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->STSINT2 &= ~flag;
     }
-    else if(bank == EMMC_BANK3_NAND)
+    else if (bank == EMMC_BANK3_NAND)
     {
         EMMC_Bank3->STSINT3 &= ~flag;
     }
@@ -671,11 +683,11 @@ uint8_t EMMC_ReadIntFlag(EMMC_BANK_NAND_T bank, EMMC_INT_T flag)
 {
     uint32_t tmpsr = 0x0, itstatus = 0x0, itenable = 0x0;
 
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         tmpsr = EMMC_Bank2->STSINT2;
     }
-    else if(bank == EMMC_BANK3_NAND)
+    else if (bank == EMMC_BANK3_NAND)
     {
         tmpsr = EMMC_Bank3->STSINT3;
     }
@@ -687,7 +699,7 @@ uint8_t EMMC_ReadIntFlag(EMMC_BANK_NAND_T bank, EMMC_INT_T flag)
     itstatus = tmpsr & flag;
     itenable = tmpsr & (flag >> 3);
 
-    if((itstatus != RESET) && (itenable != RESET))
+    if ((itstatus != RESET) && (itenable != RESET))
     {
         return SET;
     }
@@ -716,11 +728,11 @@ uint8_t EMMC_ReadIntFlag(EMMC_BANK_NAND_T bank, EMMC_INT_T flag)
  */
 void EMMC_ClearIntFlag(EMMC_BANK_NAND_T bank, uint32_t flag)
 {
-    if(bank == EMMC_BANK2_NAND)
+    if (bank == EMMC_BANK2_NAND)
     {
         EMMC_Bank2->STSINT2 &= ~(flag >> 3);
     }
-    else if(bank == EMMC_BANK3_NAND)
+    else if (bank == EMMC_BANK3_NAND)
     {
         EMMC_Bank3->STSINT3 &= ~(flag >> 3);
     }

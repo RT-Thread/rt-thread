@@ -80,6 +80,9 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     case RT_SENSOR_CLASS_ETOH:
         LOG_I("num:%3d, EtOH:%5d.%03d ppm, timestamp:%5d", num, sensor_data->data.etoh / 1000, sensor_data->data.etoh % 1000, sensor_data->timestamp);
         break;
+    case RT_SENSOR_CLASS_BP:
+        LOG_I("num:%3d, bp.sbp:%5d mmHg, bp.dbp:%5d mmHg, timestamp:%5d", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, sensor_data->timestamp);
+        break;
     default:
         break;
     }
@@ -357,6 +360,9 @@ static void sensor(int argc, char **argv)
         case RT_SENSOR_VENDOR_MAXIM:
             rt_kprintf("vendor    :Maxim Integrated\n");
             break;
+        case RT_SENSOR_VENDOR_MELEXIS:
+            rt_kprintf("vendor    :Melexis\n");
+            break;
         }
         rt_kprintf("model     :%s\n", info.model);
         switch (info.unit)
@@ -408,6 +414,9 @@ static void sensor(int argc, char **argv)
             break;
         case RT_SENSOR_UNIT_PPB:
             rt_kprintf("unit      :ppb\n");
+            break;
+        case RT_SENSOR_UNIT_MMHG:
+            rt_kprintf("unit      :mmHg\n");
             break;
         }
         rt_kprintf("range_max :%d\n", info.range_max);

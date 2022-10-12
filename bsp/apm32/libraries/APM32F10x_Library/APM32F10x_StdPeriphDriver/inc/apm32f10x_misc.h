@@ -1,23 +1,37 @@
 /*!
- * @file       apm32f10x_misc.h
+ * @file        apm32f10x_misc.h
  *
- * @brief      This file provides all the miscellaneous firmware functions.
+ * @brief       This file provides all the miscellaneous firmware functions.
  *             Include NVIC,SystemTick and Power management.
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_MISC_H
 #define __APM32F10X_MISC_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
- extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -92,6 +106,10 @@ void NVIC_ResetystemLowPower(NVIC_LOWPOWER_T lowPowerMode);
 
 /** Systick */
 void SysTick_ConfigCLKSource(SYSTICK_CLK_SOURCE_T clkSource);
+
+/**@} end of group MISC_Fuctions*/
+/**@} end of group MISC_Driver*/
+/**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus
 }

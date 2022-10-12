@@ -14,6 +14,9 @@ Src/fm33lc0xx_fl_rcc.c
 Src/fm33lc0xx_fl_gpio.c
 """)
 
+if GetDepend(['RT_USING_PIN']):
+    src += ['Src/fm33lc0xx_fl_exti.c']
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['Src/fm33lc0xx_fl_uart.c']
     src += ['Src/fm33lc0xx_fl_lpuart.c']

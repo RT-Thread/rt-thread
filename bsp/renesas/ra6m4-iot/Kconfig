@@ -25,14 +25,5 @@ config ENV_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "$BSP_DIR/drivers/Kconfig"
-
-config SOC_FAMILY_RENESAS
-    bool
-    default y
-
-config SOC_SERIES_R7FA6M4AF
-    bool
-    select ARCH_ARM_CORTEX_M4
-    select SOC_FAMILY_RENESAS
-    default y
+source "../libraries/Kconfig"
+source "$BSP_DIR/board/Kconfig"

@@ -3,20 +3,34 @@
  *
  * @brief       This file contains all the functions prototypes for the WWDT firmware library
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_WWDT_H
 #define __APM32F10X_WWDT_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
- extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -68,7 +82,7 @@ uint8_t WWDT_ReadFlag(void);
 void WWDT_ClearFlag(void);
 
 /**@} end of group WWDT_Fuctions*/
-/**@} end of group WWDT_Driver */
+/**@} end of group WWDT_Driver*/
 /**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus

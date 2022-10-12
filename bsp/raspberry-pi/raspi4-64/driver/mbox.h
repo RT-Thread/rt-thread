@@ -161,6 +161,7 @@ enum
 #define PWM_CLK_ID                      (0x00000000a)
 
 int mbox_call(unsigned char ch, int mmu_enable);
+int bcm271x_mbox_poweroff_devices(int id);
 int bcm271x_mbox_get_touch(void);
 int bcm271x_notify_reboot(void);
 int bcm271x_notify_xhci_reset(void);

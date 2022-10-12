@@ -6,9 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
- * 2020-02-13     Meco Man     re-implement exit() and abort()
- * 2020-02-21     Meco Man     improve and beautify syscalls
- * 2020-02-24     Meco Man     fix bug of _isatty_r()
+ * 2021-02-13     Meco Man     re-implement exit() and abort()
+ * 2021-02-21     Meco Man     improve and beautify syscalls
+ * 2021-02-24     Meco Man     fix bug of _isatty_r()
  */
 
 #include <reent.h>
@@ -32,11 +32,11 @@
 #include <rtdbg.h>
 
 #ifdef RT_USING_HEAP /* Memory routine */
-void *_malloc_r (struct _reent *ptr, size_t size)
+void *_malloc_r(struct _reent *ptr, size_t size)
 {
     void* result;
 
-    result = (void*)rt_malloc (size);
+    result = (void*)rt_malloc(size);
     if (result == RT_NULL)
     {
         ptr->_errno = ENOMEM;
@@ -45,11 +45,11 @@ void *_malloc_r (struct _reent *ptr, size_t size)
     return result;
 }
 
-void *_realloc_r (struct _reent *ptr, void *old, size_t newlen)
+void *_realloc_r(struct _reent *ptr, void *old, size_t newlen)
 {
     void* result;
 
-    result = (void*)rt_realloc (old, newlen);
+    result = (void*)rt_realloc(old, newlen);
     if (result == RT_NULL)
     {
         ptr->_errno = ENOMEM;
@@ -58,11 +58,11 @@ void *_realloc_r (struct _reent *ptr, void *old, size_t newlen)
     return result;
 }
 
-void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
+void *_calloc_r(struct _reent *ptr, size_t size, size_t len)
 {
     void* result;
 
-    result = (void*)rt_calloc (size, len);
+    result = (void*)rt_calloc(size, len);
     if (result == RT_NULL)
     {
         ptr->_errno = ENOMEM;
@@ -71,14 +71,13 @@ void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
     return result;
 }
 
-void _free_r (struct _reent *ptr, void *addr)
+void _free_r(struct _reent *ptr, void *addr)
 {
-    rt_free (addr);
+    rt_free(addr);
 }
 
 #else
-void *
-_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
+void *_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 {
     LOG_E("Please enable RT_USING_HEAP");
     RT_ASSERT(0);
@@ -94,7 +93,7 @@ void __libc_init_array(void)
 
 /* Reentrant versions of system calls.  */
 #ifndef _REENT_ONLY
-int *__errno ()
+int *__errno(void)
 {
   return _rt_errno();
 }

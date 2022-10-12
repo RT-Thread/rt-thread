@@ -172,7 +172,7 @@ class Folder(object):
         #  rt_uint32_t type;
         #  const char *name;
         #  const rt_uint8_t *data;
-	    #  rt_size_t size;
+        #  rt_size_t size;
         #}
         d_li = []
         # payload base
@@ -191,7 +191,7 @@ class Folder(object):
             else:
                 assert False, 'Unkown instance:%s' % str(c)
 
-            name = bytes(c.bin_name)
+            name = bytes(c.bin_name.encode('utf-8'))
             name_addr = v_len
             v_len += len(name)
 
@@ -200,7 +200,7 @@ class Folder(object):
             # pad the data to 4 bytes boundary
             pad_len = 4
             if len(data) % pad_len != 0:
-                data += '\0' * (pad_len - len(data) % pad_len)
+                data += ('\0' * (pad_len - len(data) % pad_len)).encode('utf-8')
             v_len += len(data)
 
             d_li.append(self.bin_fmt.pack(*self.bin_item(
@@ -232,7 +232,7 @@ const struct romfs_dirent {name} = {{
 
 def get_bin_data(tree, base_addr):
     v_len = base_addr + Folder.bin_fmt.size
-    name = bytes('/\0\0\0')
+    name = bytes('/\0\0\0'.encode("utf-8"))
     name_addr = v_len
     v_len += len(name)
     data_addr = v_len

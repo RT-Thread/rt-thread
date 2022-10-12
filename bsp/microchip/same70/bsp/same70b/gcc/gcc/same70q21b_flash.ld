@@ -1,0 +1,186 @@
+/**
+ * \file
+ *
+ * \brief GCC linker script (flash) for ATSAME70Q21B
+ *
+ * Copyright (c) 2019 Microchip Technology Inc.
+ *
+ * \license_start
+ *
+ * \page License
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * \license_stop
+ *
+ */
+
+/*------------------------------------------------------------------------------
+ *      Linker script for running in internal FLASH on the ATSAME70Q21B
+ *----------------------------------------------------------------------------*/
+
+OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
+OUTPUT_ARCH(arm)
+SEARCH_DIR(.)
+
+/* Memory Spaces Definitions */
+MEMORY
+{
+    rom (rx)    : ORIGIN = 0x00400000, LENGTH = 0x00200000 /* rom, 2097152K */
+    ram (rwx)   : ORIGIN = 0x20400000, LENGTH = 0x00060000 /* ram, 393216K */
+}
+
+/* The stack size used by the application. NOTE: you need to adjust according to your application. */
+STACK_SIZE = DEFINED(STACK_SIZE) ? STACK_SIZE : DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+
+/* The heapsize used by the application. NOTE: you need to adjust according to your application. */
+HEAP_SIZE = DEFINED(HEAP_SIZE) ? HEAP_SIZE : DEFINED(__heap_size__) ? __heap_size__ : 0x0200;
+
+/* Section Definitions */
+SECTIONS
+{
+    .text :
+    {
+        . = ALIGN(4);
+        _sfixed = .;
+        KEEP(*(.vectors .vectors.*))
+        *(.text .text.* .gnu.linkonce.t.*)
+        *(.glue_7t) *(.glue_7)
+        *(.rodata .rodata* .gnu.linkonce.r.*)
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+        . = ALIGN(4);
+
+        /* section information for initial. */
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
+
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+
+
+        /* Support C constructors, and C destructors in both user code
+           and the C library. This also provides support for C++ code. */
+        . = ALIGN(4);
+        KEEP(*(.init))
+        . = ALIGN(4);
+        __preinit_array_start = .;
+        KEEP (*(.preinit_array))
+        __preinit_array_end = .;
+
+        . = ALIGN(4);
+        __init_array_start = .;
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        __init_array_end = .;
+
+        . = ALIGN(4);
+        KEEP (*crtbegin.o(.ctors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
+        KEEP (*(SORT(.ctors.*)))
+        KEEP (*crtend.o(.ctors))
+
+        . = ALIGN(4);
+        KEEP(*(.fini))
+
+        . = ALIGN(4);
+        __fini_array_start = .;
+        KEEP (*(.fini_array))
+        KEEP (*(SORT(.fini_array.*)))
+        __fini_array_end = .;
+
+        KEEP (*crtbegin.o(.dtors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
+        KEEP (*(SORT(.dtors.*)))
+        KEEP (*crtend.o(.dtors))
+
+        . = ALIGN(4);
+        _efixed = .;            /* End of text section */
+    } > rom
+
+    /* .ARM.exidx is sorted, so has to go in its own output section.  */
+    PROVIDE_HIDDEN (__exidx_start = .);
+    .ARM.exidx :
+    {
+      *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } > rom
+    PROVIDE_HIDDEN (__exidx_end = .);
+
+    . = ALIGN(4);
+    _etext = .;
+
+    .relocate : AT (_etext)
+    {
+        . = ALIGN(4);
+        _srelocate = .;
+        *(.ramfunc .ramfunc.*);
+        *(.data .data.*);
+        . = ALIGN(4);
+        _erelocate = .;
+    } > ram
+
+    /* .bss section which is used for uninitialized data */
+    .bss (NOLOAD) :
+    {
+        . = ALIGN(4);
+        _sbss = . ;
+        _szero = .;
+        *(.bss .bss.*)
+        *(COMMON)
+        . = ALIGN(4);
+        _ebss = . ;
+        _ezero = .;
+    } > ram
+
+    /* heap section */
+    .heap (NOLOAD):
+    {
+        . = ALIGN(8);
+         _sheap = .;
+        . = . + HEAP_SIZE;
+        . = ALIGN(8);
+        _eheap = .;
+    } > ram
+
+    /* stack section */
+    .stack (NOLOAD):
+    {
+        . = ALIGN(8);
+        _sstack = .;
+        . = . + STACK_SIZE;
+        . = ALIGN(8);
+        _estack = .;
+    } > ram
+
+    . = ALIGN(4);
+    _end = . ;
+    __bss_end = _end;
+    _ram_end_ = ORIGIN(ram) + LENGTH(ram) - 1 ;
+}

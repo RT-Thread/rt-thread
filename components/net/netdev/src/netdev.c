@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 
 #ifdef RT_USING_SAL
 #include <sal_netdb.h>
-#include <sal.h>
+#include <sal_low_lvl.h>
 #endif /* RT_USING_SAL */
 
 #define DBG_TAG              "netdev"
@@ -28,9 +28,9 @@
 #include <rtdbg.h>
 
 /* The list of network interface device */
-struct netdev *netdev_list;
+struct netdev *netdev_list = RT_NULL;
 /* The default network interface device */
-struct netdev *netdev_default;
+struct netdev *netdev_default = RT_NULL;
 
 /**
  * This function will register network interface device and
@@ -46,8 +46,8 @@ struct netdev *netdev_default;
 int netdev_register(struct netdev *netdev, const char *name, void *user_data)
 {
     rt_base_t level;
-    uint16_t flags_mask;
-    int index;
+    rt_uint16_t flags_mask;
+    rt_uint16_t index;
 
     RT_ASSERT(netdev);
     RT_ASSERT(name);
@@ -706,7 +706,7 @@ void netdev_low_level_set_gw(struct netdev *netdev, const ip_addr_t *gw)
  */
 void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server)
 {
-    int index;
+    unsigned int index;
 
     RT_ASSERT(dns_server);
 
@@ -1066,7 +1066,8 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
 
     struct netdev *netdev = RT_NULL;
     struct netdev_ping_resp ping_resp;
-    int index, ret = 0;
+    rt_uint32_t index;
+    int ret = 0;
 
     if (size == 0)
     {
@@ -1172,7 +1173,7 @@ MSH_CMD_EXPORT_ALIAS(netdev_ping, ping, ping network host);
 
 static void netdev_list_dns(void)
 {
-    int index = 0;
+    unsigned int index = 0;
     struct netdev *netdev = RT_NULL;
     rt_slist_t *node  = RT_NULL;
 

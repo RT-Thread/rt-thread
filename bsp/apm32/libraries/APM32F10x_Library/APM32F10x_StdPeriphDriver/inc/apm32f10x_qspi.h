@@ -3,20 +3,34 @@
  *
  * @brief       This file contains all the prototypes,enumeration and macros for the QSPI peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
- 
+
 #ifndef __APM32F10X_QSPI_H
 #define __APM32F10X_QSPI_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
- extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -48,7 +62,7 @@ typedef enum
     QSPI_TRANS_MODE_TX_RX,          //!< TX and RX mode
     QSPI_TRANS_MODE_TX,             //!< TX mode only
     QSPI_TRANS_MODE_RX,             //!< RX mode only
-    QSPI_TRANS_MODE_EEPROM_READ,    //!< EEPROM read mode
+    QSPI_TRANS_MODE_EEPROM_READ     //!< EEPROM read mode
 }QSPI_TRANS_MODE_T;
 
 /**
@@ -57,7 +71,7 @@ typedef enum
 typedef enum
 {
     QSPI_CLKPOL_LOW,
-    QSPI_CLKPOL_HIGH,
+    QSPI_CLKPOL_HIGH
 }QSPI_CLKPOL_T;
 
 /**
@@ -102,7 +116,7 @@ typedef enum
     QSPI_DFS_29BIT,
     QSPI_DFS_30BIT,
     QSPI_DFS_31BIT,
-    QSPI_DFS_32BIT,
+    QSPI_DFS_32BIT
 }QSPI_DFS_T;
 
 /**
@@ -128,7 +142,7 @@ typedef enum
     QSPI_INT_RFU        = BIT2,     //!< RX FIFO underflow interrupt
     QSPI_INT_RFO        = BIT3,     //!< RX FIFO overflow interrupt
     QSPI_INT_RFF        = BIT4,     //!< RX FIFO full interrupt
-    QSPI_INT_MST        = BIT5,     //!< Master interrupt
+    QSPI_INT_MST        = BIT5      //!< Master interrupt
 }QSPI_INT_T;
 
 /**
@@ -141,7 +155,7 @@ typedef enum
     QSPI_INT_FLAG_RFU   = BIT2,     //!< RX FIFO underflow interrupt flag
     QSPI_INT_FLAG_RFO   = BIT3,     //!< RX FIFO overflow interrupt flag
     QSPI_INT_FLAG_RFF   = BIT4,     //!< RX FIFO full interrupt flag
-    QSPI_INT_FLAG_MST   = BIT5,     //!< Master interrupt flag
+    QSPI_INT_FLAG_MST   = BIT5      //!< Master interrupt flag
 }QSPI_INT_FLAG_T;
 
 /**
@@ -161,7 +175,7 @@ typedef enum
     QSPI_INST_LEN_0,
     QSPI_INST_LEN_4BIT,
     QSPI_INST_LEN_8BIT,
-    QSPI_INST_LEN_16BIT,
+    QSPI_INST_LEN_16BIT
 }QSPI_INST_LEN_T;
 
 /**
@@ -184,7 +198,7 @@ typedef enum
     QSPI_ADDR_LEN_48BIT,
     QSPI_ADDR_LEN_52BIT,
     QSPI_ADDR_LEN_56BIT,
-    QSPI_ADDR_LEN_60BIT,
+    QSPI_ADDR_LEN_60BIT
 }QSPI_ADDR_LEN_T;
 
 /**
@@ -194,7 +208,7 @@ typedef enum
 {
     QSPI_INST_ADDR_TYPE_STANDARD,
     QSPI_INST_TYPE_STANDARD,
-    QSPI_INST_ADDR_TYPE_FRF,
+    QSPI_INST_ADDR_TYPE_FRF
 }QSPI_INST_ADDR_TYPE_T;
 
 /**
@@ -203,7 +217,7 @@ typedef enum
 typedef enum
 {
     QSPI_SST_DISABLE,
-    QSPI_SST_ENABLE,
+    QSPI_SST_ENABLE
 }QSPI_SST_T;
 
 /**@} end of group QSPI_Enumerations*/

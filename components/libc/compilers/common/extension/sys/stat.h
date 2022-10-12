@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,10 @@
 
 #include <sys/types.h>
 #include <sys/time.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define S_IFMT               00170000
 #define S_IFSOCK             0140000
@@ -79,5 +83,9 @@ int    mkfifo(const char *, mode_t);
 int    mknod(const char *, mode_t, dev_t);
 int    stat(const char *, struct stat *);
 mode_t umask(mode_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -13,6 +13,7 @@
 #include <rtthread.h>
 #include "interrupt.h"
 #include "gic.h"
+#include "gicv3.h"
 #include "armv8.h"
 #include "mmu.h"
 #include "cpuport.h"
@@ -25,25 +26,7 @@ rt_ubase_t rt_interrupt_from_thread        = 0;
 rt_ubase_t rt_interrupt_to_thread          = 0;
 rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
-const unsigned int VECTOR_BASE = 0x00;
 extern int system_vectors;
-
-#ifdef RT_USING_SMP
-#define rt_interrupt_nest rt_cpu_self()->irq_nest
-#else
-extern volatile rt_uint8_t rt_interrupt_nest;
-#endif
-
-#ifndef BSP_USING_GIC
-static void default_isr_handler(int vector, void *param)
-{
-#ifdef RT_USING_SMP
-    rt_kprintf("cpu %d unhandled irq: %d\n", rt_hw_cpu_id(), vector);
-#else
-    rt_kprintf("unhandled irq: %d\n", vector);
-#endif
-}
-#endif
 
 void rt_hw_vector_init(void)
 {
@@ -55,52 +38,24 @@ void rt_hw_vector_init(void)
  */
 void rt_hw_interrupt_init(void)
 {
-#ifndef BSP_USING_GIC
-    rt_uint32_t index;
     /* initialize vector table */
     rt_hw_vector_init();
 
     /* initialize exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
+#ifndef BSP_USING_GIC
     /* mask all of interrupts */
     IRQ_DISABLE_BASIC = 0x000000ff;
     IRQ_DISABLE1      = 0xffffffff;
     IRQ_DISABLE2      = 0xffffffff;
-    for (index = 0; index < MAX_HANDLERS; index ++)
-    {
-        isr_table[index].handler = default_isr_handler;
-        isr_table[index].param = RT_NULL;
-#ifdef RT_USING_INTERRUPT_INFO
-        rt_strncpy(isr_table[index].name, "unknown", RT_NAME_MAX);
-        isr_table[index].counter = 0;
-#endif
-    }
-
-    /* init interrupt nest, and context in thread sp */
-    rt_interrupt_nest = 0;
-    rt_interrupt_from_thread = 0;
-    rt_interrupt_to_thread = 0;
-    rt_thread_switch_interrupt_flag = 0;
 #else
-    rt_uint64_t gic_cpu_base;
-    rt_uint64_t gic_dist_base;
-    rt_uint64_t gic_irq_start;
-
-    /* initialize vector table */
-    rt_hw_vector_init();
-
-    /* initialize exceptions table */
-    rt_memset(isr_table, 0x00, sizeof(isr_table));
-
     /* initialize ARM GIC */
-    gic_dist_base = platform_get_gic_dist_base();
-    gic_cpu_base = platform_get_gic_cpu_base();
-
-    gic_irq_start = GIC_IRQ_START;
-
-    arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
-    arm_gic_cpu_init(0, gic_cpu_base);
+    arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
+    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, platform_get_gic_redist_base());
+#endif
 #endif
 }
 
@@ -395,7 +350,11 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
 #ifdef BSP_USING_GIC
+#ifdef BSP_USING_GICV2
     arm_gic_send_sgi(0, ipi_vector, cpu_mask, 0);
+#else
+    arm_gic_send_affinity_sgi(0, ipi_vector, (rt_uint64_t *)&cpu_mask, GICV3_ROUTED_TO_SPEC);
+#endif
 #else
     int i;
 
@@ -408,8 +367,9 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
             IPI_MAILBOX_SET(i) = 1 << ipi_vector;
         }
     }
-#endif
+
     __DSB();
+#endif
 }
 
 void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)

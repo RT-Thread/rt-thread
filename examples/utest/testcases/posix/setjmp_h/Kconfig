@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_SETJMP_H
+    bool "<setjmp.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SETJMP_H
+
+    # functions, TODO
+
+endif

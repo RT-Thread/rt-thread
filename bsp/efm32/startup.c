@@ -1,22 +1,16 @@
-/***************************************************************************//**
- * @file    startup.c
- * @brief   This file is part of RT-Thread RTOS
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  Bernard, onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2006-08-31   Bernard     first implementation
  * 2010-12-29   onelife     Modify for EFM32
  * 2011-12-20   onelife     Add RTGUI initialization routine
  * 2012-02-21   onelife     Add energy management initialization routine
  * 2012-05-15   onelife     Modified to compatible with CMSIS v3
- ******************************************************************************/
+ */
 
 /***************************************************************************//**
  * @addtogroup efm32

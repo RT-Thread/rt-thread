@@ -2,7 +2,7 @@
 <img src="documentation/figures/logo.png" width="60%" >
 </p>
 
-**English** | [中文](README_zh.md) |
+**English** | [中文](README_zh.md) | [Español](README_es.md) | [Deutsch](README_de.md)
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
@@ -33,7 +33,7 @@ It includes:
 
 - Components and Service Layer: Components are based on upper-level software on top of the RT-Thread kernel, such as virtual file systems, FinSH command-line interfaces, network frameworks, device frameworks, and more. Its modular design allows for high internal cohesion inside the components and low coupling between components.
 
-- [RT-Thread software package](https://packages.rt-thread.org/en/index.html): A general-purpose software component running on the RT-Thread IoT operating system platform for different application areas, consisting of description information, source code or library files. RT-Thread provides an open package platform with officially available or developer-supplied packages that provide developers with a choice of reusable packages that are an important part of the RT-Thread ecosystem. The package ecosystem is critical to the choice of an operating system because these packages are highly reusable and modular, making it easy for application developers to build the system they want in the shortest amount of time. RT-Thread supports more than 370 software packages.
+- [RT-Thread software package](https://packages.rt-thread.org/en/index.html): A general-purpose software component running on the RT-Thread IoT operating system platform for different application areas, consisting of description information, source code or library files. RT-Thread provides an open package platform with officially available or developer-supplied packages that provide developers with a choice of reusable packages that are an important part of the RT-Thread ecosystem. The package ecosystem is critical to the choice of an operating system because these packages are highly reusable and modular, making it easy for application developers to build the system they want in the shortest amount of time. RT-Thread supports 450+ software packages.
 
 ## RT-Thread Features
 
@@ -71,7 +71,7 @@ RT-Thread supports many architectures, and has covered the major architectures i
 
 - **ARM Cortex-M0/M0+**：manufacturers like ST
 - **ARM Cortex-M3**：manufacturers like ST、Winner Micro、MindMotion, ect.
-- **ARM Cortex-M4**：manufacturers like ST、Nuvton、NXP、GigaDevice、Realtek、Ambiq Micro, ect.
+- **ARM Cortex-M4**：manufacturers like ST、Nuvoton、NXP、GigaDevice、Realtek、Ambiq Micro, ect.
 - **ARM Cortex-M7**：manufacturers like ST、NXP
 - **ARM Cortex-M23**：manufacturers like GigaDevice
 - **ARM Cortex-M33**：manufacturers like ST
@@ -106,7 +106,7 @@ RT-Thread Studio IDE (a.k.a. RT-Studio) is a one-stop intergrated development en
 
 ## Env Tool
 
-[User Manual](https://www.rt-thread.io/document/site/programming-manual/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
+[User Manual](documentation/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 In the early stage, RT-Thread team also created an auxiliary tool called Env. It is an auxiliary tool with a TUI (Text-based user interface). Developers can use Env tool to configure and generate the GCC, Keil MDK, and IAR projects.
 
@@ -120,15 +120,12 @@ Based on [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master
 
 ## Simulator
 
-RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details.
-
-- [Getting Started of QEMU with Env(Windows)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu.md)
-
-- [Getting Started of QEMU with Env(Ubuntu)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu_linux.md)
+RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details. Getting Started of QEMU with Env:
+[Windows](documentation/quick-start/quick_start_qemu/quick_start_qemu.md) | [Linux Ubuntu](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md) | [Mac OS](documentation/quick-start/quick_start_qemu/quick_start_qemu_macos.md)
 
 # License
 
-RT-Thread is an open source software and has been licensed under Apache License Version 2.0 since v3.1.1. License information and copyright information can generally be seen at the beginning of the code:
+RT-Thread follows the Apache License 2.0 free software license. It's completely open-source, can be used in commercial applications for free, does not require the disclosure of code, and has no potential commercial risk. License information and copyright information can generally be seen at the beginning of the code:
 
 ```c
 /* Copyright (c) 2006-2018, RT-Thread Development Team
@@ -146,5 +143,10 @@ RT-Thread is very grateful for the support from all community developers, and if
 
 # Contribution
 
-If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/contribution_guide/contribution_guide.md).
+If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
 
+## Thanks for the following contributors!
+
+<a href="https://github.com/RT-Thread/rt-thread/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=RT-Thread/rt-thread" />
+</a>

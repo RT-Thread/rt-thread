@@ -3,19 +3,34 @@
  *
  * @brief       This file contains all the prototypes,enumeration and macros for the DMC peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
+
 #ifndef __APM32F10X_DMC_H
 #define __APM32F10X_DMC_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
- extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -132,7 +147,7 @@ typedef enum
 }DMC_PRECHARGE_T;
 
 /**
- * @brief   Last Data Next Precharge For Write Time Select 
+ * @brief   Last Data Next Precharge For Write Time Select
  */
 typedef enum
 {
@@ -219,7 +234,7 @@ typedef enum
 }DMC_MEMORY_SIZE_T;
 
 /**
- * @brief    Open Banks Of Number 
+ * @brief    Open Banks Of Number
  */
 typedef enum
 {
@@ -259,6 +274,14 @@ typedef enum
     DMC_PRECHARGE_DELAY,     //!< Delayed precharge
 }DMC_PRECHARE_T;
 
+/**
+ * @brief WRAP Burst Type
+ */
+typedef enum
+{
+    DMC_WRAPB_4,
+    DMC_WRAPB_8,
+}DMC_WRPB_T;
 
 /**@} end of group DMC_Enumerations*/
 
@@ -309,16 +332,16 @@ void DMC_Disable(void);
 void DMC_EnableInit(void);
 
 /** Global config */
-void DMC_Config(DMC_Config_T *dmcConfig);
-void DMC_ConfigStructInit(DMC_Config_T *dmcConfig);
+void DMC_Config(DMC_Config_T* dmcConfig);
+void DMC_ConfigStructInit(DMC_Config_T* dmcConfig);
 
 /** Address */
 void DMC_ConfigBankWidth(DMC_BANK_WIDTH_T bankWidth);
 void DMC_ConfigAddrWidth(DMC_ROW_WIDTH_T rowWidth, DMC_COL_WIDTH_T colWidth);
 
 /** Timing */
-void DMC_ConfigTiming(DMC_TimingConfig_T *timingConfig);
-void DMC_ConfigTimingStructInit(DMC_TimingConfig_T *timingConfig);
+void DMC_ConfigTiming(DMC_TimingConfig_T* timingConfig);
+void DMC_ConfigTimingStructInit(DMC_TimingConfig_T* timingConfig);
 void DMC_ConfigStableTimePowerup(uint16_t stableTime);
 void DMC_ConfigAutoRefreshNumDuringInit(DMC_AUTO_REFRESH_T num);
 void DMC_ConfigRefreshPeriod(uint16_t period);
@@ -326,6 +349,10 @@ void DMC_ConfigRefreshPeriod(uint16_t period);
 /** Refresh mode */
 void DMC_EixtSlefRefreshMode(void);
 void DMC_EnterSlefRefreshMode(void);
+
+/** Accelerate Module */
+void DMC_EnableAccelerateModule(void);
+void DMC_DisableAccelerateModule(void);
 
 /** Config */
 void DMC_ConfigOpenBank(DMC_BANK_NUMBER_T num);
@@ -336,6 +363,7 @@ void DMC_ConfigFullRefreshAfterSR(DMC_REFRESH_T refresh);
 void DMC_ConfigPrechargeType(DMC_PRECHARE_T precharge);
 void DMC_ConfigMemorySize(DMC_MEMORY_SIZE_T memorySize);
 void DMC_ConfigClockPhase(DMC_CLK_PHASE_T clkPhase);
+void DMC_ConfigWRAPB(DMC_WRPB_T burst);
 
 /** read flag */
 uint8_t DMC_ReadSelfRefreshStatus(void);

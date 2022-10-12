@@ -69,51 +69,83 @@ static int rti_board_end(void)
 {
     return 0;
 }
-INIT_EXPORT(rti_board_end, "1_end");
+INIT_EXPORT(rti_board_end, "1.end");
 
 static int rti_end(void)
 {
     return 0;
 }
-INIT_EXPORT(rti_end, "6_end");
+INIT_EXPORT(rti_end, "6.end");
 
-/**
- * Find next init function
- */
-static const struct rt_init_desc* rt_init_find_next(const char* lv,
-    unsigned int* begin, unsigned int* end)
+struct rt_init_tag
 {
-    const struct rt_init_desc* ptr;
-    const struct rt_init_desc* ret_ptr = RT_NULL;
+    const char *level;
+    init_fn_t fn;
+#if RT_DEBUG_INIT
+    const char *fn_name;
+#endif
+};
 
-    while (begin < end)
+static rt_size_t rt_init_num = 0;
+static struct rt_init_tag rt_init_table[2048] = { 0 };
+static rt_bool_t rt_init_flag = RT_FALSE;
+
+static int rt_init_objects_sort(void)
+{
+    rt_size_t index_i, index_j;
+    struct rt_init_tag init_temp = { 0 };
+    unsigned int *ptr_begin = (unsigned int *)&__rti_fn_begin;
+    unsigned int *ptr_end = (unsigned int *)&__rti_fn_end;
+    struct rt_init_tag *table = rt_init_table;
+    ptr_begin += (sizeof(struct rt_init_desc) / sizeof(unsigned int));
+
+    if (rt_init_flag)
+        return rt_init_num;
+
+    while (*ptr_begin == 0)
+        ptr_begin++;
+
+    do (ptr_end--);
+    while (*ptr_end == 0);
+
+    while (ptr_begin < ptr_end)
     {
-        if (*begin != 0)
+        if (*ptr_begin != 0)
         {
-            ptr = (const struct rt_init_desc*)begin;
-            if (ret_ptr != RT_NULL)
-            {
-                if (rt_strcmp(lv, ptr->level) < 0 &&
-                    rt_strcmp(ret_ptr->level, ptr->level) > 0)
-                {
-                    ret_ptr = ptr;
-                }
-            }
-            else
-            {
-                if (rt_strcmp(lv, ptr->level) < 0)
-                {
-                    ret_ptr = ptr;
-                }
-            }
-            begin += (sizeof(struct rt_init_desc) / sizeof(unsigned int));
+            table->level = ((struct rt_init_desc *)ptr_begin)->level;
+            table->fn = ((struct rt_init_desc *)ptr_begin)->fn;
+#if RT_DEBUG_INIT
+            table->fn_name = ((struct rt_init_desc *)ptr_begin)->fn_name;
+#endif
+            ptr_begin += sizeof(struct rt_init_desc) / sizeof(unsigned int);
+            table++;
+            rt_init_num += 1;
         }
         else
         {
-            begin++;
+            ptr_begin++;
         }
     }
-    return ret_ptr;
+
+    if (rt_init_num == 0) /* no need sort */
+        return rt_init_num;
+
+    /* bubble sort algorithms */
+    for (index_i = 0; index_i < (rt_init_num - 1); index_i++)
+    {
+        for (index_j = 0; index_j < ((rt_init_num - 1) - index_i); index_j++)
+        {
+            if (rt_strcmp(rt_init_table[index_j].level, rt_init_table[index_j + 1].level) > 0)
+            {
+                init_temp = rt_init_table[index_j];
+                rt_init_table[index_j] = rt_init_table[index_j + 1];
+                rt_init_table[index_j + 1] = init_temp;
+            }
+        }
+    }
+
+    rt_init_flag = RT_TRUE;
+    return rt_init_num;
 }
 
 /**
@@ -121,37 +153,30 @@ static const struct rt_init_desc* rt_init_find_next(const char* lv,
  */
 void rt_components_board_init(void)
 {
-    const struct rt_init_desc* ptr;
-    const char* lv_start = "0__rt_init_rti_start";
-    const char* lv_end = "1_end__rt_init_rti_board_end";
-    unsigned int* ptr_begin = (unsigned int*)&__rti_fn_begin;
-    unsigned int* ptr_end = (unsigned int*)&__rti_fn_end;
+    const char* lv_start = ".rti_fn.0";
+    const char* lv_end = ".rti_fn.1.end";
+    rt_size_t index_i;
     int result;
 
-    ptr_begin += (sizeof(struct rt_init_desc) / sizeof(unsigned int));
-    while (*ptr_begin == 0) ptr_begin++;
-    do ptr_end--; while (*ptr_end == 0);
+    rt_init_objects_sort();
 
-    while (1)
+    for (index_i = 0; index_i < rt_init_num; index_i++)
     {
-        ptr = rt_init_find_next(lv_start, ptr_begin, ptr_end);
-        if (ptr == RT_NULL ||
-            rt_strcmp(ptr->level, lv_end) >= 0)
+        if (rt_init_table[index_i].fn)
         {
-            break;
-        }
-        if (ptr->fn)
-        {
+            if (rt_strcmp(rt_init_table[index_i].level, lv_end) >= 0)
+            {
+                break;
+            }
 #if RT_DEBUG_INIT
-            rt_kprintf("initialize %s", ptr->fn_name);
-            result = ptr->fn();
+            rt_kprintf("initialize %s", rt_init_table[index_i].fn_name);
+            result = rt_init_table[index_i].fn();
             rt_kprintf(":%d done\n", result);
 #else
-            result = ptr->fn();
+            result = rt_init_table[index_i].fn();
 #endif
         }
-        lv_start = ptr->level;
-    };
+    }
 }
 
 /**
@@ -159,37 +184,34 @@ void rt_components_board_init(void)
  */
 void rt_components_init(void)
 {
-    const struct rt_init_desc* ptr;
-    const char* lv_start = "1_end__rt_init_rti_board_end";
-    const char* lv_end = "6_end__rt_init_rti_end";
-    unsigned int* ptr_begin = (unsigned int*)&__rti_fn_begin;
-    unsigned int* ptr_end = (unsigned int*)&__rti_fn_end;
+    const char* lv_start = ".rti_fn.1.end";
+    const char* lv_end = ".rti_fn.6.end";
     int result;
+    rt_size_t index_i;
 
-    ptr_begin += (sizeof(struct rt_init_desc) / sizeof(unsigned int));
-    while (*ptr_begin == 0) ptr_begin++;
-    do ptr_end--; while (*ptr_end == 0);
+    rt_init_objects_sort();
 
-    while (1)
+    for (index_i = 0; index_i < rt_init_num; index_i++)
     {
-        ptr = rt_init_find_next(lv_start, ptr_begin, ptr_end);
-        if (ptr == RT_NULL ||
-            rt_strcmp(ptr->level, lv_end) >= 0)
+        if (rt_init_table[index_i].fn)
         {
-            break;
-        }
-        if (ptr->fn)
-        {
+            if (rt_strcmp(rt_init_table[index_i].level, lv_start) <= 0)
+            {
+                continue;
+            }
+            if (rt_strcmp(rt_init_table[index_i].level, lv_end) >= 0)
+            {
+                break;
+            }
 #if RT_DEBUG_INIT
-            rt_kprintf("initialize %s", ptr->fn_name);
-            result = ptr->fn();
+            rt_kprintf("initialize %s", rt_init_table[index_i].fn_name);
+            result = rt_init_table[index_i].fn();
             rt_kprintf(":%d done\n", result);
 #else
-            result = ptr->fn();
+            result = rt_init_table[index_i].fn();
 #endif
         }
-        lv_start = ptr->level;
-    };
+    }
 }
 #endif   /* RT_USING_COMPONENTS_INIT */
 

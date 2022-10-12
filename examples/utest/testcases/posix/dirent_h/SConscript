@@ -1,0 +1,19 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+path = [cwd]
+src = []
+
+if GetDepend('RTT_POSIX_TESTCASE_DIRENT_H'):
+    src += Glob('./definitions/*.c')
+
+if GetDepend('DIRENT_H_OPENDIR_READDIR_CLOSEDIR'):
+    src += Glob('./functions/open_read_close_dir_tc.c')
+
+
+group = DefineGroup('rtt_posix_testcase', src, depend = ['RTT_POSIX_TESTCASE_DIRENT_H'], CPPPATH = path)
+
+Return('group')

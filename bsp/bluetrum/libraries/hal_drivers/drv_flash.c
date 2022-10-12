@@ -13,7 +13,7 @@
 
 #ifdef BSP_USING_ON_CHIP_FLASH
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include "fal.h"
 #endif
 
@@ -21,7 +21,7 @@
 #define LOG_TAG                "drv.flash"
 #include <drv_log.h>
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 
 #define AB32_FLASH_START_ADDRESS    0x00000000
 #define AB32_FLASH_SIZE             (1024 * 1024)
@@ -137,4 +137,4 @@ int fal_ops_test(void)
 MSH_CMD_EXPORT(fal_ops_test, "fal_ops_test");
 
 #endif
-#endif
+#endif/* BSP_USING_ON_CHIP_FLASH */

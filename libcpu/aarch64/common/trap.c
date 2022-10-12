@@ -148,7 +148,7 @@ void rt_hw_trap_irq(void)
     }
 #else
     void *param;
-    int ir;
+    int ir, ir_self;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
@@ -160,17 +160,20 @@ void rt_hw_trap_irq(void)
         return;
     }
 
+    /* bit 10~12 is cpuid, bit 0~9 is interrupt id */
+    ir_self = ir & 0x3ffUL;
+
     /* get interrupt service routine */
-    isr_func = isr_table[ir].handler;
+    isr_func = isr_table[ir_self].handler;
 #ifdef RT_USING_INTERRUPT_INFO
-    isr_table[ir].counter++;
+    isr_table[ir_self].counter++;
 #endif
     if (isr_func)
     {
         /* Interrupt for myself. */
-        param = isr_table[ir].param;
+        param = isr_table[ir_self].param;
         /* turn to interrupt service routine */
-        isr_func(ir, param);
+        isr_func(ir_self, param);
     }
 
     /* end of interrupt */

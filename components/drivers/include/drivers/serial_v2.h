@@ -24,6 +24,7 @@
 #define BAUD_RATE_460800                460800
 #define BAUD_RATE_921600                921600
 #define BAUD_RATE_2000000               2000000
+#define BAUD_RATE_2500000               2500000
 #define BAUD_RATE_3000000               3000000
 
 #define DATA_BITS_5                     5
@@ -80,21 +81,25 @@
 #define RT_SERIAL_RX_MINBUFSZ 64
 #define RT_SERIAL_TX_MINBUFSZ 64
 
-#define RT_SERIAL_TX_BLOCKING_BUFFER       1
-#define RT_SERIAL_TX_BLOCKING_NO_BUFFER    0
+#define RT_SERIAL_TX_BLOCKING_BUFFER    1
+#define RT_SERIAL_TX_BLOCKING_NO_BUFFER 0
+
+#define RT_SERIAL_FLOWCONTROL_CTSRTS    1
+#define RT_SERIAL_FLOWCONTROL_NONE      0
 
 /* Default config for serial_configure structure */
-#define RT_SERIAL_CONFIG_DEFAULT              \
-{                                             \
-    BAUD_RATE_115200,    /* 115200 bits/s */  \
-    DATA_BITS_8,         /* 8 databits */     \
-    STOP_BITS_1,         /* 1 stopbit */      \
-    PARITY_NONE,         /* No parity  */     \
-    BIT_ORDER_LSB,       /* LSB first sent */ \
-    NRZ_NORMAL,          /* Normal mode */    \
-    RT_SERIAL_RX_MINBUFSZ, /* rxBuf size */   \
-    RT_SERIAL_TX_MINBUFSZ, /* txBuf size */   \
-    0                                         \
+#define RT_SERIAL_CONFIG_DEFAULT                      \
+{                                                     \
+    BAUD_RATE_115200,           /* 115200 bits/s */   \
+    DATA_BITS_8,                /* 8 databits */      \
+    STOP_BITS_1,                /* 1 stopbit */       \
+    PARITY_NONE,                /* No parity  */      \
+    BIT_ORDER_LSB,              /* LSB first sent */  \
+    NRZ_NORMAL,                 /* Normal mode */     \
+    RT_SERIAL_RX_MINBUFSZ,      /* rxBuf size */      \
+    RT_SERIAL_TX_MINBUFSZ,      /* txBuf size */      \
+    RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
+    0                                                 \
 }
 
 struct serial_configure
@@ -108,7 +113,8 @@ struct serial_configure
     rt_uint32_t invert                  :1;
     rt_uint32_t rx_bufsz                :16;
     rt_uint32_t tx_bufsz                :16;
-    rt_uint32_t reserved                :6;
+    rt_uint32_t flowcontrol             :1;
+    rt_uint32_t reserved                :5;
 };
 
 /*

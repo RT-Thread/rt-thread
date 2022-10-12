@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2011-09-15     Bernard      first version
  * 2019-07-28     zdzn         add smp support
- * 2021-12-21     GuEe-GUI     set tpidr_el2 as multiprocessor id instead of mpidr_el1
+ * 2021-12-21     GuEe-GUI     set tpidr_el1 as multiprocessor id instead of mpidr_el1
  * 2021-12-28     GuEe-GUI     add spinlock for aarch64
  */
 
@@ -98,7 +98,7 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 /** shutdown CPU */
 RT_WEAK void rt_hw_cpu_shutdown()
 {
-    rt_uint32_t level;
+    register rt_int32_t level;
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();

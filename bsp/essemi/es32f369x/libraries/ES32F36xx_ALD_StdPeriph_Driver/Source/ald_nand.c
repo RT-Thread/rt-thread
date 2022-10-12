@@ -5,9 +5,12 @@
   * @brief   NAND module driver.
   *
   * @version V1.0
-  * @date    18 March 2019
+  * @date    18 Mar 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          18 Mar 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,8 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   * @verbatim
   ==============================================================================
                      ##### How to use this driver #####
@@ -54,7 +56,7 @@
   ******************************************************************************
   */
 
-#include "ald_nand.h"
+#include "ald_conf.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -305,7 +307,8 @@ ald_status_t ald_nand_read_page_8b(nand_handle_t *hperh, nand_address_t *addr, u
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = ((uint8_t)0x00);
 		}
 
-        ald_delay_us(25);  /*ÑÓÊ±25us,nand flash ÊÖ²áÖÐµÄ×î´óÖµ*/
+        /*å»¶æ—¶25us,nand flash æ‰‹å†Œä¸­çš„æœ€å¤§å€¼*/
+		ald_delay_us(25);
         
         /* Get Data into Buffer */    
 		for (; index < size; index++) {

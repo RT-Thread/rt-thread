@@ -16,8 +16,8 @@ extern const external_irq_instance_t g_external_irq0;
 extern icu_instance_ctrl_t g_external_irq0_ctrl;
 extern const external_irq_cfg_t g_external_irq0_cfg;
 
-#ifndef irq0_callback
-void irq0_callback(external_irq_callback_args_t * p_args);
+#ifndef irq_callback
+void irq_callback(external_irq_callback_args_t * p_args);
 #endif
 /** UART on SCI Instance. */
             extern const uart_instance_t      g_uart7;
@@ -27,8 +27,8 @@ void irq0_callback(external_irq_callback_args_t * p_args);
             extern const uart_cfg_t g_uart7_cfg;
             extern const sci_uart_extended_cfg_t g_uart7_cfg_extend;
 
-            #ifndef uart7_isr_cb
-            void uart7_isr_cb(uart_callback_args_t * p_args);
+            #ifndef user_uart7_callback
+            void user_uart7_callback(uart_callback_args_t * p_args);
             #endif
 void hal_entry(void);
 void g_hal_init(void);

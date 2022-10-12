@@ -6,15 +6,15 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 /* Includes -------------------------------------------------------------------------------------------*/
-#include "fm33lc0xx_fl.h"
+#include "fm33lc0xx_fl_def.h"
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
   */
@@ -223,8 +223,8 @@ extern "C" {
 #define    RCC_OPCCR2_ADCPRSC_Msk                                 (0x7U << RCC_OPCCR2_ADCPRSC_Pos)
 #define    RCC_OPCCR2_ADCPRSC                                     RCC_OPCCR2_ADCPRSC_Msk
 
-#define    RCC_OPCCR2_USBCKS_Pos                                  (23U)
-#define    RCC_OPCCR2_USBCKS_Msk                                  (0x1U << RCC_OPCCR2_USBCKS_Pos)
+#define    RCC_OPCCR2_USBCKS_Pos                                  (18U)
+#define    RCC_OPCCR2_USBCKS_Msk                                  (0x3U << RCC_OPCCR2_USBCKS_Pos)
 #define    RCC_OPCCR2_USBCKS                                      RCC_OPCCR2_USBCKS_Msk
 
 #define    RCC_OPCCR2_ADCCKS_Pos                                  (16U)
@@ -246,6 +246,38 @@ extern "C" {
 #define    RCC_LSCLKSEL_SEL_Pos                                   (0U)
 #define    RCC_LSCLKSEL_SEL_Msk                                   (0xffU << RCC_LSCLKSEL_SEL_Pos)
 #define    RCC_LSCLKSEL_SEL                                       RCC_LSCLKSEL_SEL_Msk
+
+#define    RCC_PHYCR_PHYRST_Pos                                   (4U)
+#define    RCC_PHYCR_PHYRST_Msk                                   (0x1U << RCC_PHYCR_PHYRST_Pos)
+#define    RCC_PHYCR_PHYRST                                       RCC_PHYCR_PHYRST_Msk
+
+#define    RCC_PHYCR_PD_Pos                                       (3U)
+#define    RCC_PHYCR_PD_Msk                                       (0x1U << RCC_PHYCR_PD_Pos)
+#define    RCC_PHYCR_PD                                           RCC_PHYCR_PD_Msk
+
+#define    RCC_PHYCR_PLVREADY_Pos                                 (2U)
+#define    RCC_PHYCR_PLVREADY_Msk                                 (0x1U << RCC_PHYCR_PLVREADY_Pos)
+#define    RCC_PHYCR_PLVREADY                                     RCC_PHYCR_PLVREADY_Msk
+
+#define    RCC_PHYCR_BCKPD_Pos                                    (1U)
+#define    RCC_PHYCR_BCKPD_Msk                                    (0x1U << RCC_PHYCR_BCKPD_Pos)
+#define    RCC_PHYCR_BCKPD                                        RCC_PHYCR_BCKPD_Msk
+
+#define    RCC_PHYCR_BCKRST_Pos                                   (0U)
+#define    RCC_PHYCR_BCKRST_Msk                                   (0x1U << RCC_PHYCR_BCKRST_Pos)
+#define    RCC_PHYCR_BCKRST                                       RCC_PHYCR_BCKRST_Msk
+
+#define    RCC_PHYBCKCR_CK48M_EN_Pos                              (8U)
+#define    RCC_PHYBCKCR_CK48M_EN_Msk                              (0x1U << RCC_PHYBCKCR_CK48M_EN_Pos)
+#define    RCC_PHYBCKCR_CK48M_EN                                  RCC_PHYBCKCR_CK48M_EN_Msk
+
+#define    RCC_PHYBCKCR_CLKRDY_Pos                                (7U)
+#define    RCC_PHYBCKCR_CLKRDY_Msk                                (0x1U << RCC_PHYBCKCR_CLKRDY_Pos)
+#define    RCC_PHYBCKCR_CLKRDY                                    RCC_PHYBCKCR_CLKRDY_Msk
+
+#define    RCC_PHYBCKCR_OUTCLKSEL_Pos                             (0U)
+#define    RCC_PHYBCKCR_OUTCLKSEL_Msk                             (0x1U << RCC_PHYBCKCR_OUTCLKSEL_Pos)
+#define    RCC_PHYBCKCR_OUTCLKSEL                                 RCC_PHYBCKCR_OUTCLKSEL_Msk
 
 #define    RCC_LKPCR_RST_EN_Pos                                   (1U)
 #define    RCC_LKPCR_RST_EN_Msk                                   (0x1U << RCC_LKPCR_RST_EN_Pos)
@@ -401,16 +433,16 @@ extern "C" {
 #define    FL_RCC_SYSTICK_CLK_SOURCE_SYSCLK                       (0x3U << RCC_SYSCLKCR_STCLKSEL_Pos)
 
 
-#define    FL_RCC_USB_CLOCK_SELECT_48M                            (0x0U << RCC_SYSCLKCR_BCKOSEL_Pos)
-#define    FL_RCC_USB_CLOCK_SELECT_120M                           (0x1U << RCC_SYSCLKCR_BCKOSEL_Pos)
+#define    FL_RCC_USB_CLK_OUT_48M                                 (0x0U << RCC_SYSCLKCR_BCKOSEL_Pos)
+#define    FL_RCC_USB_CLK_OUT_120M                                (0x1U << RCC_SYSCLKCR_BCKOSEL_Pos)
 
 
 #define    FL_RCC_SYSTEM_CLK_SOURCE_RCHF                          (0x0U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
 #define    FL_RCC_SYSTEM_CLK_SOURCE_XTHF                          (0x1U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
 #define    FL_RCC_SYSTEM_CLK_SOURCE_PLL                           (0x2U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
-#define    FL_RCC_SYSTEM_CLK_SOURCE_RCMFPSC                       (0x4U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
-#define    FL_RCC_SYSTEM_CLK_SOURCE_XTLF                          (0x5U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
-#define    FL_RCC_SYSTEM_CLK_SOURCE_RCLP                          (0x6U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
+#define    FL_RCC_SYSTEM_CLK_SOURCE_RCMF_PSC                      (0x4U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
+#define    FL_RCC_SYSTEM_CLK_SOURCE_LSCLK                         (0x5U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
+#define    FL_RCC_SYSTEM_CLK_SOURCE_LPOSC                         (0x6U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
 #define    FL_RCC_SYSTEM_CLK_SOURCE_USBCLK                        (0x7U << RCC_SYSCLKCR_SYSCLKSEL_Pos)
 
 
@@ -513,8 +545,9 @@ extern "C" {
 #define    FL_RCC_ADC_PSC_DIV32                                   (0x5U << RCC_OPCCR2_ADCPRSC_Pos)
 
 
-#define    FL_RCC_USB_CLK_SOURCE_XTLF                             (0x0U << RCC_OPCCR2_USBCKS_Pos)
-#define    FL_RCC_USB_CLK_SOURCE_XTHF                             (0x1U << RCC_OPCCR2_USBCKS_Pos)
+#define    FL_RCC_USB_CLK_REF_XTLF                                (0x0U << RCC_OPCCR2_USBCKS_Pos)
+#define    FL_RCC_USB_CLK_REF_XTHF                                (0x1U << RCC_OPCCR2_USBCKS_Pos)
+#define    FL_RCC_USB_CLK_REF_RCHF                                (0x2U << RCC_OPCCR2_USBCKS_Pos)
 
 
 #define    FL_RCC_ADC_CLK_SOURCE_RCMF_PSC                         (0x0U << RCC_OPCCR2_ADCCKS_Pos)
@@ -525,13 +558,13 @@ extern "C" {
 
 #define    FL_RCC_LPTIM32_CLK_SOURCE_APB1CLK                      (0x0U << RCC_OPCCR2_LPT32CKS_Pos)
 #define    FL_RCC_LPTIM32_CLK_SOURCE_LSCLK                        (0x1U << RCC_OPCCR2_LPT32CKS_Pos)
-#define    FL_RCC_LPTIM32_CLK_SOURCE_RCLP                         (0x2U << RCC_OPCCR2_LPT32CKS_Pos)
+#define    FL_RCC_LPTIM32_CLK_SOURCE_LPOSC                        (0x2U << RCC_OPCCR2_LPT32CKS_Pos)
 #define    FL_RCC_LPTIM32_CLK_SOURCE_RCMF_PSC                     (0x3U << RCC_OPCCR2_LPT32CKS_Pos)
 
 
-#define    FL_RCC_BSTIM32_CLK_SOURCE_APB1CLK                      (0x0U << RCC_OPCCR2_BT32CKS_Pos)
+#define    FL_RCC_BSTIM32_CLK_SOURCE_APB2CLK                      (0x0U << RCC_OPCCR2_BT32CKS_Pos)
 #define    FL_RCC_BSTIM32_CLK_SOURCE_LSCLK                        (0x1U << RCC_OPCCR2_BT32CKS_Pos)
-#define    FL_RCC_BSTIM32_CLK_SOURCE_RCLP                         (0x2U << RCC_OPCCR2_BT32CKS_Pos)
+#define    FL_RCC_BSTIM32_CLK_SOURCE_LPOSC                        (0x2U << RCC_OPCCR2_BT32CKS_Pos)
 #define    FL_RCC_BSTIM32_CLK_SOURCE_RCMF_PSC                     (0x3U << RCC_OPCCR2_BT32CKS_Pos)
 
 
@@ -539,8 +572,12 @@ extern "C" {
 #define    FL_RCC_AHB_MASTER_PRIORITY_CPU_FIRST                   (0x1U << RCC_AHBMCR_MPRIL_Pos)
 
 
-#define    FL_RCC_LSCLK_CLK_SOURCE_RCLP                           (0x55U << RCC_LSCLKSEL_SEL_Pos)
+#define    FL_RCC_LSCLK_CLK_SOURCE_LPOSC                          (0x55U << RCC_LSCLKSEL_SEL_Pos)
 #define    FL_RCC_LSCLK_CLK_SOURCE_XTLF                           (0xAAU << RCC_LSCLKSEL_SEL_Pos)
+
+#define    FL_RCC_USB_CLK_REF_SOURCE_SOF                          (0x0U << RCC_PHYBCKCR_OUTCLKSEL_Pos)
+#define    FL_RCC_USB_CLK_REF_SOURCE_CORECLKIN                    (0x1U << RCC_PHYBCKCR_OUTCLKSEL_Pos)
+
 
 /**
   * @}
@@ -825,25 +862,25 @@ __STATIC_INLINE uint32_t FL_RCC_GetAHBPrescaler(void)
 
 /**
   * @brief    Set USB PHY BCK Output Clock Source
-  * @rmtoll   SYSCLKCR    BCKOSEL    FL_RCC_SetUSBClockSource
-  * @param    source This parameter can be one of the following values:
-  *           @arg @ref FL_RCC_USB_CLOCK_SELECT_48M
-  *           @arg @ref FL_RCC_USB_CLOCK_SELECT_120M
+  * @rmtoll   SYSCLKCR    BCKOSEL    FL_RCC_SetUSBClockOutput
+  * @param    output This parameter can be one of the following values:
+  *           @arg @ref FL_RCC_USB_CLK_OUT_48M
+  *           @arg @ref FL_RCC_USB_CLK_OUT_120M
   * @retval   None
   */
-__STATIC_INLINE void FL_RCC_SetUSBClockSource(uint32_t source)
+__STATIC_INLINE void FL_RCC_SetUSBClockOutput(uint32_t output)
 {
-    MODIFY_REG(RCC->SYSCLKCR, RCC_SYSCLKCR_BCKOSEL_Msk, source);
+    MODIFY_REG(RCC->SYSCLKCR, RCC_SYSCLKCR_BCKOSEL_Msk, output);
 }
 
 /**
   * @brief    Get USB PHY BCK Output Clock Source Setting
-  * @rmtoll   SYSCLKCR    BCKOSEL    FL_RCC_GetUSBClockSource
+  * @rmtoll   SYSCLKCR    BCKOSEL    FL_RCC_GetUSBClockOutput
   * @retval   Returned value can be one of the following values:
-  *           @arg @ref FL_RCC_USB_CLOCK_SELECT_48M
-  *           @arg @ref FL_RCC_USB_CLOCK_SELECT_120M
+  *           @arg @ref FL_RCC_USB_CLK_OUT_48M
+  *           @arg @ref FL_RCC_USB_CLK_OUT_120M
   */
-__STATIC_INLINE uint32_t FL_RCC_GetUSBClockSource(void)
+__STATIC_INLINE uint32_t FL_RCC_GetUSBClockOutput(void)
 {
     return (uint32_t)(READ_BIT(RCC->SYSCLKCR, RCC_SYSCLKCR_BCKOSEL_Msk));
 }
@@ -855,9 +892,9 @@ __STATIC_INLINE uint32_t FL_RCC_GetUSBClockSource(void)
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCHF
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_XTHF
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_PLL
-  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCMFPSC
-  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_XTLF
-  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCMF_PSC
+  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_LSCLK
+  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_USBCLK
   * @retval   None
   */
@@ -873,9 +910,9 @@ __STATIC_INLINE void FL_RCC_SetSystemClockSource(uint32_t clock)
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCHF
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_XTHF
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_PLL
-  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCMFPSC
-  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_XTLF
-  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_RCMF_PSC
+  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_LSCLK
+  *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_SYSTEM_CLK_SOURCE_USBCLK
   */
 __STATIC_INLINE uint32_t FL_RCC_GetSystemClockSource(void)
@@ -954,7 +991,7 @@ __STATIC_INLINE void FL_RCC_RCMF_WriteTrimValue(uint32_t value)
 /**
   * @brief    Get RCMF Frequency Trim Value
   * @rmtoll   RCMFTR    TRIM    FL_RCC_RCMF_ReadTrimValue
-  * @retval   The Value of RC4M trim
+  * @retval   The Value of RCMF trim
   */
 __STATIC_INLINE uint32_t FL_RCC_RCMF_ReadTrimValue(void)
 {
@@ -1182,7 +1219,7 @@ __STATIC_INLINE void FL_RCC_LPOSC_DisableChopper(void)
 /**
   * @brief    Set LPOSC Frequency Trim Value
   * @rmtoll   LPOSCTR    TRIM    FL_RCC_LPOSC_WriteTrimValue
-  * @param    value TrimValue The value of RCLP trim
+  * @param    value TrimValue The value of LPOSC trim
   * @retval   None
   */
 __STATIC_INLINE void FL_RCC_LPOSC_WriteTrimValue(uint32_t value)
@@ -1193,7 +1230,7 @@ __STATIC_INLINE void FL_RCC_LPOSC_WriteTrimValue(uint32_t value)
 /**
   * @brief    Get LPOSC Frequency Trim Value
   * @rmtoll   LPOSCTR    TRIM    FL_RCC_LPOSC_ReadTrimValue
-  * @retval   The Value of RCLP trim
+  * @retval   The Value of LPOSC trim
   */
 __STATIC_INLINE uint32_t FL_RCC_LPOSC_ReadTrimValue(void)
 {
@@ -1275,7 +1312,7 @@ __STATIC_INLINE void FL_RCC_XTHF_WriteDriverStrength(uint32_t strength)
   */
 __STATIC_INLINE uint32_t FL_RCC_XTHF_ReadDriverStrength(void)
 {
-    return (uint32_t)(READ_BIT(RCC->XTHFCR, 0x7U) >> 8U);
+    return (uint32_t)(READ_BIT(RCC->XTHFCR, (0x7U << 8U)) >> 8U);
 }
 
 /**
@@ -1643,6 +1680,7 @@ __STATIC_INLINE void FL_RCC_EnableGroup1OperationClock(uint32_t Peripheral)
   * @brief    Enable Group2 Periph Operation Clock
   * @rmtoll   OPCCR2        FL_RCC_EnableGroup2OperationClock
   * @param    Peripheral This parameter can be one of the following values:
+  *           @arg @ref FL_RCC_GROUP2_OPCLK_USB
   *           @arg @ref FL_RCC_GROUP2_OPCLK_FLASH
   *           @arg @ref FL_RCC_GROUP2_OPCLK_RNG
   *           @arg @ref FL_RCC_GROUP2_OPCLK_ADC
@@ -1676,6 +1714,7 @@ __STATIC_INLINE void FL_RCC_DisableGroup1OperationClock(uint32_t Peripheral)
   * @brief    Disable Group2 Periph Operation Clock
   * @rmtoll   OPCCR2        FL_RCC_DisableGroup2OperationClock
   * @param    Peripheral This parameter can be one of the following values:
+  *           @arg @ref FL_RCC_GROUP2_OPCLK_USB
   *           @arg @ref FL_RCC_GROUP2_OPCLK_FLASH
   *           @arg @ref FL_RCC_GROUP2_OPCLK_RNG
   *           @arg @ref FL_RCC_GROUP2_OPCLK_ADC
@@ -1710,6 +1749,7 @@ __STATIC_INLINE uint32_t FL_RCC_IsEnabledGroup1OperationClock(uint32_t Periphera
   * @brief    Get Group2 Periph Operation Clock Enable Status
   * @rmtoll   OPCCR2        FL_RCC_IsEnabledGroup2OperationClock
   * @param    Peripheral This parameter can be one of the following values:
+  *           @arg @ref FL_RCC_GROUP2_OPCLK_USB
   *           @arg @ref FL_RCC_GROUP2_OPCLK_FLASH
   *           @arg @ref FL_RCC_GROUP2_OPCLK_RNG
   *           @arg @ref FL_RCC_GROUP2_OPCLK_ADC
@@ -1982,6 +2022,33 @@ __STATIC_INLINE uint32_t FL_RCC_GetADCPrescaler(void)
 }
 
 /**
+  * @brief    Set USB Reference Clock
+  * @rmtoll   OPCCR2    USBCKS    FL_RCC_SetUSBClockReference
+  * @param    ref This parameter can be one of the following values:
+  *           @arg @ref FL_RCC_USB_CLK_REF_XTLF
+  *           @arg @ref FL_RCC_USB_CLK_REF_XTHF
+  *           @arg @ref FL_RCC_USB_CLK_REF_RCHF
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_SetUSBClockReference(uint32_t ref)
+{
+    MODIFY_REG(RCC->OPCCR2, RCC_OPCCR2_USBCKS_Msk, ref);
+}
+
+/**
+  * @brief    Get USB Reference Clock Setting
+  * @rmtoll   OPCCR2    USBCKS    FL_RCC_GetUSBClockReference
+  * @retval   Returned value can be one of the following values:
+  *           @arg @ref FL_RCC_USB_CLK_REF_XTLF
+  *           @arg @ref FL_RCC_USB_CLK_REF_XTHF
+  *           @arg @ref FL_RCC_USB_CLK_REF_RCHF
+  */
+__STATIC_INLINE uint32_t FL_RCC_GetUSBClockReference(void)
+{
+    return (uint32_t)(READ_BIT(RCC->OPCCR2, RCC_OPCCR2_USBCKS_Msk));
+}
+
+/**
   * @brief    Set ADC Clock Source
   * @rmtoll   OPCCR2    ADCCKS    FL_RCC_SetADCClockSource
   * @param    clock This parameter can be one of the following values:
@@ -2016,7 +2083,7 @@ __STATIC_INLINE uint32_t FL_RCC_GetADCClockSource(void)
   * @param    clock This parameter can be one of the following values:
   *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_APB1CLK
   *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_LSCLK
-  *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_RCMF_PSC
   * @retval   None
   */
@@ -2031,7 +2098,7 @@ __STATIC_INLINE void FL_RCC_SetLPTIM32ClockSource(uint32_t clock)
   * @retval   Returned value can be one of the following values:
   *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_APB1CLK
   *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_LSCLK
-  *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_LPTIM32_CLK_SOURCE_RCMF_PSC
   */
 __STATIC_INLINE uint32_t FL_RCC_GetLPTIM32ClockSource(void)
@@ -2043,9 +2110,9 @@ __STATIC_INLINE uint32_t FL_RCC_GetLPTIM32ClockSource(void)
   * @brief    Set BSTIM Clock Source
   * @rmtoll   OPCCR2    BT32CKS    FL_RCC_SetBSTIM32ClockSource
   * @param    clock This parameter can be one of the following values:
-  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_APB1CLK
+  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_APB2CLK
   *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_LSCLK
-  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_RCMF_PSC
   * @retval   None
   */
@@ -2058,9 +2125,9 @@ __STATIC_INLINE void FL_RCC_SetBSTIM32ClockSource(uint32_t clock)
   * @brief    Get BSTIM Clock Source Setting
   * @rmtoll   OPCCR2    BT32CKS    FL_RCC_GetBSTIM32ClockSource
   * @retval   Returned value can be one of the following values:
-  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_APB1CLK
+  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_APB2CLK
   *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_LSCLK
-  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_BSTIM32_CLK_SOURCE_RCMF_PSC
   */
 __STATIC_INLINE uint32_t FL_RCC_GetBSTIM32ClockSource(void)
@@ -2097,13 +2164,218 @@ __STATIC_INLINE uint32_t FL_RCC_GetAHBMasterPriority(void)
   * @brief    Set LSCLK Clock Source
   * @rmtoll   LSCLKSEL    SEL    FL_RCC_SetLSCLKClockSource
   * @param    clock This parameter can be one of the following values:
-  *           @arg @ref FL_RCC_LSCLK_CLK_SOURCE_RCLP
+  *           @arg @ref FL_RCC_LSCLK_CLK_SOURCE_LPOSC
   *           @arg @ref FL_RCC_LSCLK_CLK_SOURCE_XTLF
   * @retval   None
   */
 __STATIC_INLINE void FL_RCC_SetLSCLKClockSource(uint32_t clock)
 {
     MODIFY_REG(RCC->LSCLKSEL, RCC_LSCLKSEL_SEL_Msk, clock);
+}
+
+/**
+  * @brief    Enable USB PHY Reset
+  * @rmtoll   PHYCR    PHYRST    FL_RCC_EnableUSBPHYReset
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_EnableUSBPHYReset(void)
+{
+    CLEAR_BIT(RCC->PHYCR, RCC_PHYCR_PHYRST_Msk);
+}
+
+/**
+  * @brief    Get USB PHY Enable Status
+  * @rmtoll   PHYCR    PHYRST    FL_RCC_IsEnabledUSBPHYReset
+  * @retval   State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t FL_RCC_IsEnabledUSBPHYReset(void)
+{
+    return (uint32_t)!(READ_BIT(RCC->PHYCR, RCC_PHYCR_PHYRST_Msk) == RCC_PHYCR_PHYRST_Msk);
+}
+
+/**
+  * @brief    Disable USB PHY Reset
+  * @rmtoll   PHYCR    PHYRST    FL_RCC_DisableUSBPHYReset
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_DisableUSBPHYReset(void)
+{
+    SET_BIT(RCC->PHYCR, RCC_PHYCR_PHYRST_Msk);
+}
+
+/**
+  * @brief    Enable USB PHY Power Down
+  * @rmtoll   PHYCR    PD    FL_RCC_EnableUSBPHYPowerDown
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_EnableUSBPHYPowerDown(void)
+{
+    SET_BIT(RCC->PHYCR, RCC_PHYCR_PD_Msk);
+}
+
+/**
+  * @brief    Get USB PHY Power Down Enable Status
+  * @rmtoll   PHYCR    PD    FL_RCC_IsEnabledUSBPHYPowerDown
+  * @retval   State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t FL_RCC_IsEnabledUSBPHYPowerDown(void)
+{
+    return (uint32_t)(READ_BIT(RCC->PHYCR, RCC_PHYCR_PD_Msk) == RCC_PHYCR_PD_Msk);
+}
+
+/**
+  * @brief    Disable USB PHY Power Down
+  * @rmtoll   PHYCR    PD    FL_RCC_DisableUSBPHYPowerDown
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_DisableUSBPHYPowerDown(void)
+{
+    CLEAR_BIT(RCC->PHYCR, RCC_PHYCR_PD_Msk);
+}
+
+/**
+  * @brief    Set USB PHY Power Ready Flag
+  * @rmtoll   PHYCR    PLVREADY    FL_RCC_SetUSBPHYPowerReadyFlag
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_SetUSBPHYPowerReadyFlag(void)
+{
+    SET_BIT(RCC->PHYCR, RCC_PHYCR_PLVREADY_Msk);
+}
+
+/**
+  * @brief    Reset USB PHY Power Ready Flag
+  * @rmtoll   PHYCR    PLVREADY    FL_RCC_ResetUSBPHYPowerReadyFlag
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_ResetUSBPHYPowerReadyFlag(void)
+{
+    CLEAR_BIT(RCC->PHYCR, RCC_PHYCR_PLVREADY_Msk);
+}
+
+/**
+  * @brief    Enable USB BCK
+  * @rmtoll   PHYCR    BCKPD    FL_RCC_EnableUSBBCK
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_EnableUSBBCK(void)
+{
+    CLEAR_BIT(RCC->PHYCR, RCC_PHYCR_BCKPD_Msk);
+}
+
+/**
+  * @brief    Get USB BCK Enable Status
+  * @rmtoll   PHYCR    BCKPD    FL_RCC_IsEnabledUSBBCK
+  * @retval   State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t FL_RCC_IsEnabledUSBBCK(void)
+{
+    return (uint32_t)(READ_BIT(RCC->PHYCR, RCC_PHYCR_BCKPD_Msk) == RCC_PHYCR_BCKPD_Msk);
+}
+
+/**
+  * @brief    Disable USB BCK
+  * @rmtoll   PHYCR    BCKPD    FL_RCC_DisableUSBBCK
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_DisableUSBBCK(void)
+{
+    SET_BIT(RCC->PHYCR, RCC_PHYCR_BCKPD_Msk);
+}
+
+/**
+  * @brief    Enable USB BCK Reset
+  * @rmtoll   PHYCR    BCKRST    FL_RCC_EnableUSBBCKReset
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_EnableUSBBCKReset(void)
+{
+    CLEAR_BIT(RCC->PHYCR, RCC_PHYCR_BCKRST_Msk);
+}
+
+/**
+  * @brief    Get USB BCK Reset Enable Status
+  * @rmtoll   PHYCR    BCKRST    FL_RCC_IsEnabledUSBBCKReset
+  * @retval   State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t FL_RCC_IsEnabledUSBBCKReset(void)
+{
+    return (uint32_t)!(READ_BIT(RCC->PHYCR, RCC_PHYCR_BCKRST_Msk) == RCC_PHYCR_BCKRST_Msk);
+}
+
+/**
+  * @brief    Disable USB BCK Reset
+  * @rmtoll   PHYCR    BCKRST    FL_RCC_DisableUSBBCKReset
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_DisableUSBBCKReset(void)
+{
+    SET_BIT(RCC->PHYCR, RCC_PHYCR_BCKRST_Msk);
+}
+
+/**
+  * @brief    Enable USB 48M Clock
+  * @rmtoll   PHYBCKCR    CK48M_EN    FL_RCC_EnableUSB48MClock
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_EnableUSB48MClock(void)
+{
+    SET_BIT(RCC->PHYBCKCR, RCC_PHYBCKCR_CK48M_EN_Msk);
+}
+
+/**
+  * @brief    Get USB 48M Clock  Enable Status
+  * @rmtoll   PHYBCKCR    CK48M_EN    FL_RCC_IsEnabledUSB48MClock
+  * @retval   State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t FL_RCC_IsEnabledUSB48MClock(void)
+{
+    return (uint32_t)(READ_BIT(RCC->PHYBCKCR, RCC_PHYBCKCR_CK48M_EN_Msk) == RCC_PHYBCKCR_CK48M_EN_Msk);
+}
+
+/**
+  * @brief    Disable USB 48M Clock
+  * @rmtoll   PHYBCKCR    CK48M_EN    FL_RCC_DisableUSB48MClock
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_DisableUSB48MClock(void)
+{
+    CLEAR_BIT(RCC->PHYBCKCR, RCC_PHYBCKCR_CK48M_EN_Msk);
+}
+
+/**
+  * @brief    Get USB Clock Ready Flag
+  * @rmtoll   PHYBCKCR    CLKRDY    FL_RCC_IsActiveFlag_USBClockReady
+  * @retval   State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t FL_RCC_IsActiveFlag_USBClockReady(void)
+{
+    return (uint32_t)(READ_BIT(RCC->PHYBCKCR, RCC_PHYBCKCR_CLKRDY_Msk) == RCC_PHYBCKCR_CLKRDY_Msk);
+}
+
+/**
+  * @brief    Set USB Reference Clock Source
+  * @rmtoll   PHYBCKCR    OUTCLKSEL    FL_RCC_SetUSBClockReferenceSource
+  * @param    clock This parameter can be one of the following values:
+  *           @arg @ref FL_RCC_USB_CLK_REF_SOURCE_SOF
+  *           @arg @ref FL_RCC_USB_CLK_REF_SOURCE_CORECLKIN
+  * @retval   None
+  */
+__STATIC_INLINE void FL_RCC_SetUSBClockReferenceSource(uint32_t clock)
+{
+    MODIFY_REG(RCC->PHYBCKCR, RCC_PHYBCKCR_OUTCLKSEL_Msk, clock);
+}
+
+/**
+  * @brief    Get USB Reference Clock Source
+  * @rmtoll   PHYBCKCR    OUTCLKSEL    FL_RCC_GetUSBClockReferenceSource
+  * @retval   Returned value can be one of the following values:
+  *           @arg @ref FL_RCC_USB_CLK_REF_SOURCE_SOF
+  *           @arg @ref FL_RCC_USB_CLK_REF_SOURCE_CORECLKIN
+  */
+__STATIC_INLINE uint32_t FL_RCC_GetUSBClockReferenceSource(void)
+{
+    return (uint32_t)(READ_BIT(RCC->PHYBCKCR, RCC_PHYBCKCR_OUTCLKSEL_Msk));
 }
 
 /**
@@ -2506,7 +2778,7 @@ uint32_t FL_RCC_GetAHBClockFreq(void);
 uint32_t FL_RCC_GetAPB1ClockFreq(void);
 uint32_t FL_RCC_GetAPB2ClockFreq(void);
 
-uint32_t FL_RCC_GetRC4MClockFreq(void);
+uint32_t FL_RCC_GetRCMFClockFreq(void);
 uint32_t FL_RCC_GetRCHFClockFreq(void);
 uint32_t FL_RCC_GetPLLClockFreq(void);
 
@@ -2528,5 +2800,5 @@ uint32_t FL_RCC_GetPLLClockFreq(void);
 
 #endif /* __FM33LC0XX_FL_RCC_H*/
 
-/*************************Py_Code_Generator Version: 0.1-0.11-0.2 @ 2020-09-27*************************/
-/*************************(C) COPYRIGHT Fudan Microelectronics **** END OF FILE*************************/
+/*************************Py_Code_Generator Version: 0.1-0.14-0.2 @ 2021-07-08*************************/
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

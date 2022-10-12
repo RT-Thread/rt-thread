@@ -4,7 +4,7 @@ from building import *
 # get current directory
 cwd = GetCurrentDir()
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     compiler = 'GCC'
 
 # The set of source files associated with this SConscript file.

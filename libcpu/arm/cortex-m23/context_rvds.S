@@ -190,6 +190,10 @@ rt_hw_context_switch_to    PROC
     ; enable interrupts at processor level
     CPSIE   I
 
+    ; ensure PendSV exception taken place before subsequent operation
+    DSB
+    ISB
+
     ; never reach here!
     ENDP
 

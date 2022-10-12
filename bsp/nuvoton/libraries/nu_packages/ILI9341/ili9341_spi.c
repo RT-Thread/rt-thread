@@ -17,12 +17,16 @@
 #include <rtdevice.h>
 #include <lcd_ili9341.h>
 
+#if !defined(NU_PKG_USING_ILI9341_SPI_CLK_FREQ)
+    #define NU_PKG_USING_ILI9341_SPI_CLK_FREQ   48000000
+#endif
+
 static struct rt_spi_device ili9341_spi_device;
 static struct rt_spi_configuration ili9341_cfg =
 {
     .mode = RT_SPI_MODE_0 | RT_SPI_MSB,
     .data_width = 8,
-    .max_hz = 48000000,
+    .max_hz = NU_PKG_USING_ILI9341_SPI_CLK_FREQ,
 };
 
 static void ili9341_change_datawidth(int data_width)
@@ -190,10 +194,18 @@ void ili9341_lcd_get_pixel(char *color, int x, int y)
     *(rt_uint16_t *)color = ((bgrx.S.r >> 3) << 11) | ((bgrx.S.g >> 2) << 5) | (bgrx.S.b >> 3);
 }
 
-rt_err_t rt_hw_lcd_ili9341_spi_init(const char *spibusname)
+rt_err_t rt_hw_lcd_ili9341_spi_init(const char *spibusname, void *pvUserData)
 {
-    if (rt_spi_bus_attach_device(&ili9341_spi_device, "lcd_ili9341", spibusname, RT_NULL) != RT_EOK)
+    if (rt_spi_bus_attach_device(&ili9341_spi_device, "lcd_ili9341", spibusname, pvUserData) != RT_EOK)
         return -RT_ERROR;
+
+    if (pvUserData != RT_NULL)
+    {
+        // GPIO CS pin mode to output */
+        rt_pin_mode(*((rt_base_t *)pvUserData), PIN_MODE_OUTPUT);
+    }
+
+    rt_kprintf("Preferred ili9341 spi clock frequency is %d Hz.\n", NU_PKG_USING_ILI9341_SPI_CLK_FREQ);
 
     return rt_spi_configure(&ili9341_spi_device, &ili9341_cfg);
 }

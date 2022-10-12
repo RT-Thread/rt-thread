@@ -1,7 +1,3 @@
-menuconfig BSP_SUPPORT_FPU
-    bool "Using Float"
-    default y
-
 menu "AARCH64 qemu virt64 configs"
 
     menuconfig BSP_USING_UART
@@ -28,17 +24,44 @@ menu "AARCH64 qemu virt64 configs"
                 default n
         endif
 
-    menuconfig BSP_USING_VIRTIO_BLK
+    config BSP_USING_PIN
+        bool "Using PIN"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_VIRTIO_BLK
         bool "Using VirtIO BLK"
         default y
 
-        if BSP_USING_VIRTIO_BLK
-            config RT_USING_VIRTIO_BLK0
-            bool "Enabel VirtIO BLK 0"
-            default y
-        endif
+    config BSP_USING_VIRTIO_NET
+        bool "Using VirtIO NET"
+        default y
+
+    config BSP_USING_VIRTIO_CONSOLE
+        bool "Using VirtIO Console"
+        default y
+
+    config BSP_USING_VIRTIO_GPU
+        bool "Using VirtIO GPU"
+        default y
+
+    config BSP_USING_VIRTIO_INPUT
+        bool "Using VirtIO Input"
+        default y
 
     config BSP_USING_GIC
     bool
     default y
+
+    choice
+        prompt "GIC Version"
+        default BSP_USING_GICV2
+
+        config BSP_USING_GICV2
+            bool "GICv2"
+
+        config BSP_USING_GICV3
+            bool "GICv3"
+    endchoice
+
 endmenu

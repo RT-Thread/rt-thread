@@ -4,6 +4,7 @@ cwd     = GetCurrentDir()
 src     = Split('''
 shell.c
 msh.c
+msh_parse.c
 ''')
 
 if GetDepend('MSH_USING_BUILT_IN_COMMANDS'):

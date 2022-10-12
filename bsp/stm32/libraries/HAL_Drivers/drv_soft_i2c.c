@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 
 #if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
 #error "Please define at least one BSP_USING_I2Cx"
-/* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 static const struct stm32_soft_i2c_config soft_i2c_config[] =
@@ -195,10 +195,9 @@ static rt_err_t stm32_i2c_bus_unlock(const struct stm32_soft_i2c_config *cfg)
 /* I2C initialization function */
 int rt_hw_i2c_init(void)
 {
-    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct stm32_i2c);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < sizeof(i2c_obj) / sizeof(struct stm32_i2c); i++)
     {
         i2c_obj[i].ops = stm32_bit_ops_default;
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];

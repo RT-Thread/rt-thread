@@ -44,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -56,14 +56,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -75,9 +69,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 
 /* Device Drivers */
 
@@ -93,7 +84,7 @@
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -105,21 +96,8 @@
 
 /* Socket is in the 'Network' category */
 
+
 /* Network */
-
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
@@ -149,6 +127,11 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
 
 /* multimedia packages */
 
@@ -169,9 +152,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -184,15 +164,30 @@
 /* peripheral libraries and drivers */
 
 
+/* Kendryte SDK */
+
+
 /* AI packages */
 
 
 /* miscellaneous packages */
 
+/* project laboratory */
+
+
 /* samples: kernel and components samples */
 
 
 /* entertainment: terminal games and other interesting software packages */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
@@ -200,6 +195,7 @@
 /* Hardware Drivers Config */
 
 #define SOC_STM32F407ZG
+#define BOARD_STM32F407_ATK_EXPLORER
 
 /* Onboard Peripheral Drivers */
 

@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_can.h
+ * @file        apm32f10x_can.h
  *
- * @brief      This file contains all the functions prototypes for the CAN firmware library
+ * @brief       This file contains all the functions prototypes for the CAN firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_CAN_H
 #define __APM32F10X_CAN_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -35,10 +49,10 @@ extern "C" {
  */
 typedef enum
 {
-    CAN_MODE_NORMAL          = ((uint8_t)00),  //!< normal mode
-    CAN_MODE_LOOPBACK        = ((uint8_t)01),  //!< loopback mode
-    CAN_MODE_SILENT          = ((uint8_t)02),  //!< silent mode
-    CAN_MODE_SILENT_LOOPBACK = ((uint8_t)03),  //!< loopback combined with silent mode
+    CAN_MODE_NORMAL          = ((uint8_t)0x00),  //!< normal mode
+    CAN_MODE_LOOPBACK        = ((uint8_t)0x01),  //!< loopback mode
+    CAN_MODE_SILENT          = ((uint8_t)0x02),  //!< silent mode
+    CAN_MODE_SILENT_LOOPBACK = ((uint8_t)0x03)   //!< loopback combined with silent mode
 } CAN_MODE_T;
 
 /**
@@ -46,10 +60,10 @@ typedef enum
  */
 typedef enum
 {
-    CAN_SJW_1 = ((uint8_t)00),  //!< 1 time quantum
-    CAN_SJW_2 = ((uint8_t)01),  //!< 2 time quantum
-    CAN_SJW_3 = ((uint8_t)02),  //!< 3 time quantum
-    CAN_SJW_4 = ((uint8_t)03)   //!< 4 time quantum
+    CAN_SJW_1 = ((uint8_t)0x00),  //!< 1 time quantum
+    CAN_SJW_2 = ((uint8_t)0x01),  //!< 2 time quantum
+    CAN_SJW_3 = ((uint8_t)0x02),  //!< 3 time quantum
+    CAN_SJW_4 = ((uint8_t)0x03)   //!< 4 time quantum
 } CAN_SJW_T;
 
 /**
@@ -87,7 +101,7 @@ typedef enum
     CAN_TIME_SEGMENT2_5 = (uint8_t)0x04,     //!< 5  time quanta
     CAN_TIME_SEGMENT2_6 = (uint8_t)0x05,     //!< 6  time quanta
     CAN_TIME_SEGMENT2_7 = (uint8_t)0x06,     //!< 7  time quanta
-    CAN_TIME_SEGMENT2_8 = (uint8_t)0x07,     //!< 8  time quanta
+    CAN_TIME_SEGMENT2_8 = (uint8_t)0x07      //!< 8  time quanta
 } CAN_TIME_SEGMENT2_T;
 
 /**
@@ -96,7 +110,7 @@ typedef enum
 typedef enum
 {
     CAN_FILTER_FIFO_0 = ((uint8_t)0x00),     //!< filter FIFO 0
-    CAN_FILTER_FIFO_1 = ((uint8_t)0x01),     //!< filter FIFO 1
+    CAN_FILTER_FIFO_1 = ((uint8_t)0x01)      //!< filter FIFO 1
 } CAN_FILTER_FIFO_T;
 
 /**
@@ -104,8 +118,8 @@ typedef enum
  */
 typedef enum
 {
-    CAN_FILTER_MODE_IDMASK = ((uint8_t)00),  //!< identifier/mask mode
-    CAN_FILTER_MODE_IDLIST = ((uint8_t)01)   //!< identifier list mode
+    CAN_FILTER_MODE_IDMASK = ((uint8_t)0x00),//!< identifier/mask mode
+    CAN_FILTER_MODE_IDLIST = ((uint8_t)0x01) //!< identifier list mode
 } CAN_FILTER_MODE_T;
 
 /**
@@ -114,7 +128,7 @@ typedef enum
 typedef enum
 {
     CAN_FILTER_SCALE_16BIT = ((uint8_t)0x00), //!< Two 16-bit filters
-    CAN_FILTER_SCALE_32BIT = ((uint8_t)0x01), //!< One 32-bit filter
+    CAN_FILTER_SCALE_32BIT = ((uint8_t)0x01)  //!< One 32-bit filter
 } CAN_FILTER_SCALE_T;
 
 /**
@@ -142,7 +156,7 @@ typedef enum
 {
     CAN_TX_MAILBIX_0 = ((uint8_t)0x00), //!< Tx mailbox0
     CAN_TX_MAILBIX_1 = ((uint8_t)0x01), //!< Tx mailbox1
-    CAN_TX_MAILBIX_2 = ((uint8_t)0x02), //!< Tx mailbox2
+    CAN_TX_MAILBIX_2 = ((uint8_t)0x02)  //!< Tx mailbox2
 } CAN_TX_MAILBIX_T;
 
 /**
@@ -151,7 +165,7 @@ typedef enum
 typedef enum
 {
     CAN_RX_FIFO_0 = ((uint8_t)0x00), //!< receive FIFO 0
-    CAN_RX_FIFO_1 = ((uint8_t)0x01), //!< receive FIFO 1
+    CAN_RX_FIFO_1 = ((uint8_t)0x01)  //!< receive FIFO 1
 } CAN_RX_FIFO_T;
 
 /**
@@ -159,9 +173,9 @@ typedef enum
  */
 typedef enum
 {
-    CAN_OPERATING_MODE_INIT   = ((uint8_t)00), //!< Initialization mode
-    CAN_OPERATING_MODE_NORMAL = ((uint8_t)01), //!< Normal mode
-    CAN_OPERATING_MODE_SLEEP  = ((uint8_t)02), //!< sleep mode
+    CAN_OPERATING_MODE_INIT   = ((uint8_t)0x00), //!< Initialization mode
+    CAN_OPERATING_MODE_NORMAL = ((uint8_t)0x01), //!< Normal mode
+    CAN_OPERATING_MODE_SLEEP  = ((uint8_t)0x02)  //!< sleep mode
 } CAN_OPERATING_MODE_T;
 
 /**
@@ -223,7 +237,6 @@ typedef enum
  */
 typedef struct
 {
-    uint8_t      timeTrigComMode;     //!< Enable or disable the time triggered communication mode.
     uint8_t      autoBusOffManage;    //!< Enable or disable the automatic bus-off management.
     uint8_t      autoWakeUpMode;      //!< Enable or disable the automatic wake-up mode.
     uint8_t      nonAutoRetran;       //!< Enable or disable the non-automatic retransmission mode.
@@ -249,7 +262,7 @@ typedef struct
     CAN_RTXR_T          remoteTxReq;
     uint8_t             dataLengthCode;//!< Specifies the data length code.       It can be 0 to 8.
     uint8_t             data[8];       //!< Specifies the data to be transmitted. It can be 0 to 0xFF.
-} CAN_TX_MESSAGE_T;
+} CAN_TxMessage_T;
 
 /**
  * @brief  CAN Rx message structure definition
@@ -263,7 +276,7 @@ typedef struct
     uint8_t             dataLengthCode;  //!< Specifies the data length code.       It can be 0 to 8.
     uint8_t             data[8];         //!< Specifies the data to be transmitted. It can be 0 to 0xFF.
     uint8_t             filterMatchIndex;//!< Specifies the filter match index.     It can be 0 to 0xFF.
-} CAN_RX_MESSAGE_T;
+} CAN_RxMessage_T;
 
 /**
  * @brief     CAN filter config structure definition
@@ -279,7 +292,7 @@ typedef struct
     CAN_FILTER_FIFO_T   filterFIFO;
     CAN_FILTER_MODE_T   filterMode;
     CAN_FILTER_SCALE_T  filterScale;
-} CAN_FILTER_CONFIG_T;
+} CAN_FilterConfig_T;
 
 /**@} end of group CAN_Structure*/
 
@@ -291,20 +304,19 @@ typedef struct
 /** CAN reset and configuration */
 void CAN_Reset(CAN_T* can);
 uint8_t CAN_Config(CAN_T* can, CAN_Config_T* canConfig);
-void CAN_ConfigFilter(CAN_T* can, CAN_FILTER_CONFIG_T* filterConfig);
+void CAN_ConfigFilter(CAN_T* can, CAN_FilterConfig_T* filterConfig);
 void CAN_ConfigStructInit(CAN_Config_T* canConfig);
 void CAN_EnableDBGFreeze(CAN_T* can);
 void CAN_DisableDBGFreeze(CAN_T* can);
-void CAN_EnableTTCComMode(CAN_T* can);
-void CAN_DisableTTCComMode(CAN_T* can);
+void CAN_SlaveStartBank(CAN_T* can, uint8_t bankNum);
 
 /** CAN frames transmit */
-uint8_t CAN_TxMessage(CAN_T* can, CAN_TX_MESSAGE_T* TxMessage);
+uint8_t CAN_TxMessage(CAN_T* can, CAN_TxMessage_T* TxMessage);
 uint8_t CAN_TxMessageStatus(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox);
 void CAN_CancelTxMailbox(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox);
 
 /** CAN frames receive */
-void CAN_RxMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber, CAN_RX_MESSAGE_T* RxMessage);
+void CAN_RxMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber, CAN_RxMessage_T* RxMessage);
 void CAN_ReleaseFIFO(CAN_T* can, CAN_RX_FIFO_T FIFONumber);
 uint8_t CAN_PendingMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber);
 
@@ -327,7 +339,7 @@ uint8_t CAN_ReadIntFlag(CAN_T* can, CAN_INT_T flag);
 void CAN_ClearIntFlag(CAN_T* can, CAN_INT_T flag);
 
 /**@} end of group CAN_Fuctions*/
-/**@} end of group CAN_Driver */
+/**@} end of group CAN_Driver*/
 /**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus

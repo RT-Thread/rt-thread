@@ -3,7 +3,7 @@ import sys
 
 # toolchains options
 ARCH='arm'
-CPU='cortex-m4'
+CPU='cortex-m33'
 CROSS_TOOL='gcc'
 BOARD_NAME = 'lpcxpresso'
 BSP_LIBRARY_TYPE = 'LPC55S6X'
@@ -22,7 +22,7 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
+    PLATFORM    = 'iccarm'
     EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -103,7 +103,7 @@ elif PLATFORM == 'armcc':
     POST_ACTION = 'fromelf -z $TARGET'
     # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     CC = 'iccarm'
     CXX = 'iccarm'
     AS = 'iasmarm'
@@ -158,5 +158,5 @@ def dist_handle(BSP_ROOT, dist_dir):
     cwd_path = os.getcwd()
     sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
     from sdk_dist import dist_do_building
-    dist_do_building(BSP_ROOT)
+    dist_do_building(BSP_ROOT, dist_dir)
     

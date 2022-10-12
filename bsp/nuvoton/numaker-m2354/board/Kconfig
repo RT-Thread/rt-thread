@@ -64,13 +64,15 @@ menu "Hardware Drivers Config"
         config BOARD_USING_LCD_ILI9341
             bool "LCD ILI9341 (over spi1)"
             select RT_USING_TOUCH
+            select BSP_USING_SPI1
+            select BSP_USING_EADC
+            select BSP_USING_EADC0
+            select NU_PKG_USING_ADC_TOUCH
+            select NU_PKG_USING_ADC_TOUCH_SW
             select NU_PKG_USING_ILI9341
             select NU_PKG_USING_ILI9341_SPI
             select NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
             select NU_PKG_ILI9341_HORIZONTAL
-            select BSP_USING_SPI1
-            select PKG_USING_LVGL
-            select PKG_USING_LV_MUSIC_DEMO
             default n
 
         if BOARD_USING_LCD_ILI9341

@@ -7,6 +7,8 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
+#define RT_USING_SMP
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -17,12 +19,14 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
+#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
 
 /* kservice optimization */
 
+#define RT_KPRINTF_USING_LONGLONG
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 
@@ -51,8 +55,9 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_CPU_64BIT
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -60,14 +65,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 8192
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -79,9 +78,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
@@ -108,6 +104,9 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 4096
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
@@ -118,7 +117,7 @@
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -130,22 +129,65 @@
 
 /* Socket is in the 'Network' category */
 
+
 /* Network */
 
-/* Socket abstraction layer */
+#define RT_USING_SAL
+#define SAL_INTERNET_CHECK
 
+/* Docking with protocol stacks */
 
-/* Network interface device */
+#define SAL_USING_LWIP
+#define SAL_USING_POSIX
+#define RT_USING_NETDEV
+#define NETDEV_USING_IFCONFIG
+#define NETDEV_USING_PING
+#define NETDEV_USING_NETSTAT
+#define NETDEV_USING_AUTO_DEFAULT
+#define NETDEV_IPV4 1
+#define NETDEV_IPV6 0
+#define RT_USING_LWIP
+#define RT_USING_LWIP203
+#define RT_USING_LWIP_VER_NUM 0x20003
+#define RT_LWIP_MEM_ALIGNMENT 4
+#define RT_LWIP_ICMP
+#define RT_LWIP_DNS
+#define RT_LWIP_DHCP
+#define IP_SOF_BROADCAST 1
+#define IP_SOF_BROADCAST_RECV 1
 
+/* Static IPv4 Address */
 
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
-
+#define RT_LWIP_IPADDR "192.168.1.30"
+#define RT_LWIP_GWADDR "192.168.1.1"
+#define RT_LWIP_MSKADDR "255.255.255.0"
+#define RT_LWIP_UDP
+#define RT_LWIP_TCP
+#define RT_LWIP_RAW
+#define RT_MEMP_NUM_NETCONN 8
+#define RT_LWIP_PBUF_NUM 16
+#define RT_LWIP_RAW_PCB_NUM 4
+#define RT_LWIP_UDP_PCB_NUM 4
+#define RT_LWIP_TCP_PCB_NUM 4
+#define RT_LWIP_TCP_SEG_NUM 40
+#define RT_LWIP_TCP_SND_BUF 8196
+#define RT_LWIP_TCP_WND 8196
+#define RT_LWIP_TCPTHREAD_PRIORITY 10
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
+#define RT_LWIP_ETHTHREAD_PRIORITY 12
+#define RT_LWIP_ETHTHREAD_STACKSIZE 4096
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+#define RT_LWIP_REASSEMBLY_FRAG
+#define LWIP_NETIF_STATUS_CALLBACK 1
+#define LWIP_NETIF_LINK_CALLBACK 1
+#define SO_REUSE 1
+#define LWIP_SO_RCVTIMEO 1
+#define LWIP_SO_SNDTIMEO 1
+#define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
+#define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_USING_PING
 
 /* Utilities */
 
@@ -174,6 +216,11 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
 
 /* multimedia packages */
 
@@ -194,9 +241,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -209,18 +253,31 @@
 /* peripheral libraries and drivers */
 
 
+/* Kendryte SDK */
+
+
 /* AI packages */
 
 
 /* miscellaneous packages */
+
+/* project laboratory */
 
 /* samples: kernel and components samples */
 
 
 /* entertainment: terminal games and other interesting software packages */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 #define SOC_VIRT64_AARCH64
-#define BSP_SUPPORT_FPU
 
 /* AARCH64 qemu virt64 configs */
 
@@ -228,8 +285,13 @@
 #define RT_USING_UART0
 #define BSP_USING_RTC
 #define BSP_USING_ALARM
+#define BSP_USING_PIN
 #define BSP_USING_VIRTIO_BLK
-#define RT_USING_VIRTIO_BLK0
+#define BSP_USING_VIRTIO_NET
+#define BSP_USING_VIRTIO_CONSOLE
+#define BSP_USING_VIRTIO_GPU
+#define BSP_USING_VIRTIO_INPUT
 #define BSP_USING_GIC
+#define BSP_USING_GICV2
 
 #endif

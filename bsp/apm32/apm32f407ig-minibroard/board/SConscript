@@ -1,0 +1,30 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/APM32F4xx_Library/Device/Geehy/APM32F4xx/Source/arm/startup_apm32f40x.s']
+
+if rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/APM32F4xx_Library/Device/Geehy/APM32F4xx/Source/iar/startup_apm32f40x.s']
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/APM32F4xx_Library/Device/Geehy/APM32F4xx/Source/gcc/startup_apm32f40x.s']
+
+# You can select chips from the list above
+CPPDEFINES = ['APM32F40X']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

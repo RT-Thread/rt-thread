@@ -1,0 +1,15 @@
+menuconfig RTT_POSIX_TESTCASE_LOCALE_H
+    bool "<locale.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_LOCALE_H
+
+    config LOCALE_H_SETLOCALE
+        bool "<locale.h -> setlocale>"
+        default n
+
+    config LIBGEN_H_LOCALECONV
+        bool "<locale.h -> localconv>"
+        default n
+
+endif

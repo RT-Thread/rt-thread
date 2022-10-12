@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_gpio.h
+ * @file        apm32f10x_gpio.h
  *
- * @brief      This file contains all the functions prototypes for the GPIO firmware library
+ * @brief       This file contains all the functions prototypes for the GPIO firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_GPIO_H
 #define __APM32F10X_GPIO_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
- extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -36,7 +50,7 @@
 typedef enum
 {
    GPIO_SPEED_10MHz = 1,
-   GPIO_SPEED_2MHz,
+   GPIO_SPEED_20MHz,
    GPIO_SPEED_50MHz
 }GPIO_SPEED_T;
 
@@ -214,7 +228,7 @@ typedef struct
 void GPIO_Reset(GPIO_T* port);
 void GPIO_AFIOReset(void);
 void GPIO_Config(GPIO_T* port, GPIO_Config_T* gpioConfig);
-void GPIO_StructInit(GPIO_Config_T* gpioConfig);
+void GPIO_ConfigStructInit(GPIO_Config_T* gpioConfig);
 
 /** Read */
 uint8_t GPIO_ReadInputBit(GPIO_T* port, uint16_t pin);
@@ -223,8 +237,8 @@ uint8_t GPIO_ReadOutputBit(GPIO_T* port, uint16_t pin);
 uint16_t GPIO_ReadOutputPort(GPIO_T* port);
 
 /** Write */
-void GPIO_SetBits(GPIO_T* port, uint16_t pin);
-void GPIO_ResetBits(GPIO_T* port, uint16_t pin);
+void GPIO_SetBit(GPIO_T* port, uint16_t pin);
+void GPIO_ResetBit(GPIO_T* port, uint16_t pin);
 void GPIO_WriteOutputPort(GPIO_T* port, uint16_t portValue);
 void GPIO_WriteBitValue(GPIO_T* port, uint16_t pin, uint8_t bitVal);
 
@@ -237,7 +251,7 @@ void GPIO_ConfigPinRemap(GPIO_REMAP_T remap);
 void GPIO_ConfigEINTLine(GPIO_PORT_SOURCE_T portSource, GPIO_PIN_SOURCE_T pinSource);
 
 /**@} end of group GPIO_Fuctions*/
-/**@} end of group GPIO_Driver */
+/**@} end of group GPIO_Driver*/
 /**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus

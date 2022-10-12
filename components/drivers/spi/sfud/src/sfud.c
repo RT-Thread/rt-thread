@@ -348,13 +348,17 @@ static sfud_err hardware_init(sfud_flash *flash) {
         return result;
     }
 
-    /* I found when the flash write mode is supported AAI mode. The flash all blocks is protected,
-     * so need change the flash status to unprotected before write and erase operate. */
+    /* The flash all blocks is protected,so need change the flash status to unprotected before write and erase operate. */
     if (flash->chip.write_mode & SFUD_WM_AAI) {
         result = sfud_write_status(flash, true, 0x00);
-        if (result != SFUD_SUCCESS) {
-            return result;
+    } else {
+        /* MX25L3206E */
+        if ((0xC2 == flash->chip.mf_id) && (0x20 == flash->chip.type_id) && (0x16 == flash->chip.capacity_id)) {
+            result = sfud_write_status(flash, false, 0x00);
         }
+    }
+    if (result != SFUD_SUCCESS) {
+        return result;
     }
 
     /* if the flash is large than 16MB (256Mb) then enter in 4-Byte addressing mode */

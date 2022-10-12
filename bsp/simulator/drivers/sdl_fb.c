@@ -11,10 +11,14 @@
 #ifdef _WIN32
 #include <sdl.h>
 #else
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #endif
 #include <rtdevice.h>
 #include <rtgui/driver.h>
+
+#define DBG_TAG    "sdl.fb"
+#define DBG_LVL    DBG_WARNING
+#include <rtdbg.h>
 
 #define SDL_SCREEN_WIDTH    480
 #define SDL_SCREEN_HEIGHT   320
@@ -520,6 +524,7 @@ void rt_hw_sdl_start(void)
     pthread_mutex_lock(&sdl_ok_mutex);
     pthread_cond_wait(&sdl_ok_event, &sdl_ok_mutex);
 
+    pthread_mutex_unlock(&sdl_ok_mutex);
     pthread_mutex_destroy(&sdl_ok_mutex);
     pthread_cond_destroy(&sdl_ok_event);
 #endif

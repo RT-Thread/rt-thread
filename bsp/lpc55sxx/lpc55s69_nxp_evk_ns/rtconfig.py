@@ -21,7 +21,7 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
+    PLATFORM    = 'iccarm'
     EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -46,7 +46,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/LPC55S69_cm33_core0_flash.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ../lpc55s69_nxp_evk/board/linker_scripts/LPC55S69_cm33_core0_flash.ld'
 
     CPATH = ''
     LPATH = ''
@@ -102,7 +102,7 @@ elif PLATFORM == 'armcc':
     POST_ACTION = 'fromelf -z $TARGET'
     # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     CC = 'iccarm'
     CXX = 'iccarm'
     AS = 'iasmarm'
@@ -153,9 +153,9 @@ elif PLATFORM == 'iar':
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
 
-def dist_handle(BSP_ROOT):
+def dist_handle(BSP_ROOT, dist_dir):
     cwd_path = os.getcwd()
     sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
     from sdk_dist import dist_do_building
-    dist_do_building(BSP_ROOT)
+    dist_do_building(BSP_ROOT, dist_dir)
     

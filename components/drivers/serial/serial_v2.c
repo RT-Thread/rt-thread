@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define DBG_TAG    "UART"
+#define DBG_TAG    "Serial"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
@@ -21,6 +21,11 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
+#include <dfs_file.h>
+
+#ifdef RT_USING_POSIX_TERMIOS
+#include <termios.h>
+#endif
 
 #ifdef getc
 #undef getc
@@ -89,6 +94,8 @@ static int serial_fops_close(struct dfs_fd *fd)
 static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
     rt_device_t device;
+    int flags = (int)(rt_base_t)args;
+    int mask  = O_NONBLOCK | O_APPEND;
 
     device = (rt_device_t)fd->data;
     switch (cmd)
@@ -96,6 +103,11 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     case FIONREAD:
         break;
     case FIONWRITE:
+        break;
+    case F_SETFL:
+        flags &= mask;
+        fd->flags &= ~mask;
+        fd->flags |= flags;
         break;
     }
 
@@ -242,7 +254,7 @@ static rt_size_t rt_serial_update_read_index(struct rt_ringbuffer    *rb,
 }
 
 static rt_size_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
-                                                     rt_uint16_t     write_index)
+                                                     rt_uint16_t     write_size)
 {
     rt_uint16_t size;
     RT_ASSERT(rb != RT_NULL);
@@ -250,27 +262,28 @@ static rt_size_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
     /* whether has enough space */
     size = rt_ringbuffer_space_len(rb);
 
-    /* no space */
-    if (size == 0)
-        return 0;
+    /* no space, drop some data */
+    if (size < write_size)
+    {
+        write_size = size;
+#if !defined(RT_USING_ULOG) || defined(ULOG_USING_ISR_LOG)
+        LOG_W("The serial buffer (len %d) is overflow.", rb->buffer_size);
+#endif
+    }
 
-    /* drop some data */
-    if (size < write_index)
-        write_index = size;
-
-    if (rb->buffer_size - rb->write_index > write_index)
+    if (rb->buffer_size - rb->write_index > write_size)
     {
         /* this should not cause overflow because there is enough space for
          * length of data in current mirror */
-        rb->write_index += write_index;
-        return write_index;
+        rb->write_index += write_size;
+        return write_size;
     }
 
     /* we are going into the other side of the mirror */
     rb->write_mirror = ~rb->write_mirror;
-    rb->write_index = write_index - (rb->buffer_size - rb->write_index);
+    rb->write_index = write_size - (rb->buffer_size - rb->write_index);
 
-    return write_index;
+    return write_size;
 }
 
 
@@ -451,6 +464,12 @@ static rt_size_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
     tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
     RT_ASSERT(tx_fifo != RT_NULL);
 
+    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    {
+        /* using poll tx when the scheduler not startup or in stream mode */
+        return _serial_poll_tx(dev, pos, buffer, size);
+    }
+
     /* When serial transmit in tx_blocking mode,
      * if the activated mode is RT_TRUE, it will return directly */
     if (tx_fifo->activated == RT_TRUE)  return 0;
@@ -483,21 +502,27 @@ static rt_size_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
 {
     struct rt_serial_device *serial;
     struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
+    rt_size_t length = size;
+    rt_size_t offset = 0;
 
-    RT_ASSERT(dev != RT_NULL);
     if (size == 0) return 0;
 
+    RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
     RT_ASSERT((serial != RT_NULL) && (buffer != RT_NULL));
+
     tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
     RT_ASSERT(tx_fifo != RT_NULL);
+
+    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    {
+        /* using poll tx when the scheduler not startup or in stream mode */
+        return _serial_poll_tx(dev, pos, buffer, size);
+    }
     /* When serial transmit in tx_blocking mode,
      * if the activated mode is RT_TRUE, it will return directly */
     if (tx_fifo->activated == RT_TRUE)  return 0;
-
     tx_fifo->activated = RT_TRUE;
-    rt_size_t length = size;
-    rt_size_t offset = 0;
 
     while (size)
     {
@@ -879,6 +904,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
+    RT_ASSERT(serial->ops->transmit != RT_NULL);
 
     /* initialize rx/tx */
     serial->serial_rx = RT_NULL;
@@ -977,6 +1003,98 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     return RT_EOK;
 }
 
+#ifdef RT_USING_POSIX_TERMIOS
+struct speed_baudrate_item
+{
+    speed_t speed;
+    int baudrate;
+};
+
+const static struct speed_baudrate_item _tbl[] =
+{
+    {B2400, BAUD_RATE_2400},
+    {B4800, BAUD_RATE_4800},
+    {B9600, BAUD_RATE_9600},
+    {B19200, BAUD_RATE_19200},
+    {B38400, BAUD_RATE_38400},
+    {B57600, BAUD_RATE_57600},
+    {B115200, BAUD_RATE_115200},
+    {B230400, BAUD_RATE_230400},
+    {B460800, BAUD_RATE_460800},
+    {B921600, BAUD_RATE_921600},
+    {B2000000, BAUD_RATE_2000000},
+    {B3000000, BAUD_RATE_3000000},
+};
+
+static speed_t _get_speed(int baudrate)
+{
+    int index;
+
+    for (index = 0; index < sizeof(_tbl)/sizeof(_tbl[0]); index ++)
+    {
+        if (_tbl[index].baudrate == baudrate)
+            return _tbl[index].speed;
+    }
+
+    return B0;
+}
+
+static int _get_baudrate(speed_t speed)
+{
+    int index;
+
+    for (index = 0; index < sizeof(_tbl)/sizeof(_tbl[0]); index ++)
+    {
+        if (_tbl[index].speed == speed)
+            return _tbl[index].baudrate;
+    }
+
+    return 0;
+}
+
+static void _tc_flush(struct rt_serial_device *serial, int queue)
+{
+    rt_base_t level;
+    int ch = -1;
+    struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
+    struct rt_device *device = RT_NULL;
+
+    RT_ASSERT(serial != RT_NULL);
+
+    device = &(serial->parent);
+    rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
+
+    switch(queue)
+    {
+        case TCIFLUSH:
+        case TCIOFLUSH:
+            RT_ASSERT(rx_fifo != RT_NULL);
+
+            if((device->open_flag & RT_DEVICE_FLAG_INT_RX) || (device->open_flag & RT_DEVICE_FLAG_DMA_RX))
+            {
+                RT_ASSERT(RT_NULL != rx_fifo);
+                level = rt_hw_interrupt_disable();
+                rx_fifo->rx_cpt_index = 0;
+                rt_hw_interrupt_enable(level);
+            }
+            else
+            {
+                while (1)
+                {
+                    ch = serial->ops->getc(serial);
+                    if (ch == -1) break;
+                }
+            }
+
+            break;
+
+        case TCOFLUSH:
+            break;
+    }
+
+}
+#endif /* RT_USING_POSIX_TERMIOS */
+
 /**
   * @brief Control the serial device.
   * @param dev The pointer of device driver structure
@@ -1010,19 +1128,224 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             if (args != RT_NULL)
             {
                 struct serial_configure *pconfig = (struct serial_configure *) args;
-                if (serial->parent.ref_count)
+                if (((pconfig->rx_bufsz != serial->config.rx_bufsz) || (pconfig->tx_bufsz != serial->config.tx_bufsz))
+                        && serial->parent.ref_count)
                 {
                     /*can not change buffer size*/
                     return -RT_EBUSY;
                 }
-               /* set serial configure */
+                /* set serial configure */
                 serial->config = *pconfig;
-                serial->ops->configure(serial,
-                                    (struct serial_configure *) args);
+                serial->ops->configure(serial, (struct serial_configure *) args);
             }
 
             break;
+#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_TERMIOS
+        case TCGETA:
+            {
+                struct termios *tio = (struct termios*)args;
+                if (tio == RT_NULL) return -RT_EINVAL;
 
+                tio->c_iflag = 0;
+                tio->c_oflag = 0;
+                tio->c_lflag = 0;
+
+                /* update oflag for console device */
+                if (rt_console_get_device() == dev)
+                    tio->c_oflag = OPOST | ONLCR;
+
+                /* set cflag */
+                tio->c_cflag = 0;
+                if (serial->config.data_bits == DATA_BITS_5)
+                    tio->c_cflag = CS5;
+                else if (serial->config.data_bits == DATA_BITS_6)
+                    tio->c_cflag = CS6;
+                else if (serial->config.data_bits == DATA_BITS_7)
+                    tio->c_cflag = CS7;
+                else if (serial->config.data_bits == DATA_BITS_8)
+                    tio->c_cflag = CS8;
+
+                if (serial->config.stop_bits == STOP_BITS_2)
+                    tio->c_cflag |= CSTOPB;
+
+                if (serial->config.parity == PARITY_EVEN)
+                    tio->c_cflag |= PARENB;
+                else if (serial->config.parity == PARITY_ODD)
+                    tio->c_cflag |= (PARODD | PARENB);
+
+                if (serial->config.flowcontrol == RT_SERIAL_FLOWCONTROL_CTSRTS)
+                    tio->c_cflag |= CRTSCTS;
+
+                cfsetospeed(tio, _get_speed(serial->config.baud_rate));
+            }
+            break;
+
+        case TCSETAW:
+        case TCSETAF:
+        case TCSETA:
+            {
+                int baudrate;
+                struct serial_configure config;
+
+                struct termios *tio = (struct termios*)args;
+                if (tio == RT_NULL) return -RT_EINVAL;
+
+                config = serial->config;
+
+                baudrate = _get_baudrate(cfgetospeed(tio));
+                config.baud_rate = baudrate;
+
+                switch (tio->c_cflag & CSIZE)
+                {
+                case CS5:
+                    config.data_bits = DATA_BITS_5;
+                    break;
+                case CS6:
+                    config.data_bits = DATA_BITS_6;
+                    break;
+                case CS7:
+                    config.data_bits = DATA_BITS_7;
+                    break;
+                default:
+                    config.data_bits = DATA_BITS_8;
+                    break;
+                }
+
+                if (tio->c_cflag & CSTOPB) config.stop_bits = STOP_BITS_2;
+                else config.stop_bits = STOP_BITS_1;
+
+                if (tio->c_cflag & PARENB)
+                {
+                    if (tio->c_cflag & PARODD) config.parity = PARITY_ODD;
+                    else config.parity = PARITY_EVEN;
+                }
+                else config.parity = PARITY_NONE;
+
+                if (tio->c_cflag & CRTSCTS) config.flowcontrol = RT_SERIAL_FLOWCONTROL_CTSRTS;
+                else config.flowcontrol = RT_SERIAL_FLOWCONTROL_NONE;
+
+                /* set serial configure */
+                serial->config = config;
+                serial->ops->configure(serial, &config);
+            }
+            break;
+        case TCFLSH:
+            {
+                int queue = (int)args;
+
+                _tc_flush(serial, queue);
+            }
+
+            break;
+        case TCXONC:
+            break;
+#endif /*RT_USING_POSIX_TERMIOS*/
+        case TIOCSWINSZ:
+            {
+                struct winsize* p_winsize;
+
+                p_winsize = (struct winsize*)args;
+                rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
+            }
+            break;
+        case TIOCGWINSZ:
+            {
+                struct winsize* p_winsize;
+                p_winsize = (struct winsize*)args;
+
+                if(rt_thread_self() != rt_thread_find(FINSH_THREAD_NAME))
+                {
+                    /* only can be used in tshell thread; otherwise, return default size */
+                    p_winsize->ws_col = 80;
+                    p_winsize->ws_row = 24;
+                }
+                else
+                {
+                    #include <shell.h>
+                    #define _TIO_BUFLEN 20
+                    char _tio_buf[_TIO_BUFLEN];
+                    unsigned char cnt1, cnt2, cnt3, i;
+                    char row_s[4], col_s[4];
+                    char *p;
+
+                    rt_memset(_tio_buf, 0, _TIO_BUFLEN);
+
+                    /* send the command to terminal for getting the window size of the terminal */
+                    rt_kprintf("\033[18t");
+
+                    /* waiting for the response from the terminal */
+                    i = 0;
+                    while(i < _TIO_BUFLEN)
+                    {
+                        _tio_buf[i] = finsh_getchar();
+                        if(_tio_buf[i] != 't')
+                        {
+                            i ++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    if(i == _TIO_BUFLEN)
+                    {
+                        /* buffer overloaded, and return default size */
+                        p_winsize->ws_col = 80;
+                        p_winsize->ws_row = 24;
+                        break;
+                    }
+
+                    /* interpreting data eg: "\033[8;1;15t" which means row is 1 and col is 15 (unit: size of ONE character) */
+                    rt_memset(row_s,0,4);
+                    rt_memset(col_s,0,4);
+                    cnt1 = 0;
+                    while(_tio_buf[cnt1] != ';' && cnt1 < _TIO_BUFLEN)
+                    {
+                        cnt1++;
+                    }
+                    cnt2 = ++cnt1;
+                    while(_tio_buf[cnt2] != ';' && cnt2 < _TIO_BUFLEN)
+                    {
+                        cnt2++;
+                    }
+                    p = row_s;
+                    while(cnt1 < cnt2)
+                    {
+                        *p++ = _tio_buf[cnt1++];
+                    }
+                    p = col_s;
+                    cnt2++;
+                    cnt3 = rt_strlen(_tio_buf) - 1;
+                    while(cnt2 < cnt3)
+                    {
+                        *p++ = _tio_buf[cnt2++];
+                    }
+
+                    /* load the window size date */
+                    p_winsize->ws_col = atoi(col_s);
+                    p_winsize->ws_row = atoi(row_s);
+                #undef _TIO_BUFLEN
+                }
+
+                p_winsize->ws_xpixel = 0;/* unused */
+                p_winsize->ws_ypixel = 0;/* unused */
+            }
+            break;
+        case FIONREAD:
+            {
+                rt_size_t recved = 0;
+                rt_base_t level;
+                struct rt_serial_rx_fifo * rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
+
+                level = rt_hw_interrupt_disable();
+                recved = rt_ringbuffer_data_len(&(rx_fifo->rb));
+                rt_hw_interrupt_enable(level);
+
+                *(rt_size_t *)args = recved;
+            }
+            break;
+#endif /* RT_USING_POSIX_STDIO */
         default :
             /* control device */
             ret = serial->ops->control(serial, cmd, args);
@@ -1074,7 +1397,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
         return _serial_poll_tx(dev, pos, buffer, size);
     }
 
-    if (dev->open_flag | RT_SERIAL_TX_BLOCKING)
+    if (dev->open_flag & RT_SERIAL_TX_BLOCKING)
     {
         if ((tx_fifo->rb.buffer_ptr) == RT_NULL)
         {
@@ -1161,13 +1484,18 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             struct rt_serial_rx_fifo *rx_fifo;
             rt_size_t rx_length = 0;
             rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+            rt_base_t level;
             RT_ASSERT(rx_fifo != RT_NULL);
 
             /* If the event is RT_SERIAL_EVENT_RX_IND, rx_length is equal to 0 */
             rx_length = (event & (~0xff)) >> 8;
 
             if (rx_length)
+            { /* RT_SERIAL_EVENT_RX_DMADONE MODE */
+                level = rt_hw_interrupt_disable();
                 rt_serial_update_write_index(&(rx_fifo->rb), rx_length);
+                rt_hw_interrupt_enable(level);
+            }
 
             /* Get the length of the data from the ringbuffer */
             rx_length = rt_ringbuffer_data_len(&rx_fifo->rb);

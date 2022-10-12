@@ -135,9 +135,6 @@ LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
   
-  bl sys_config
-  bl adc_config
-
   bl __libc_init_array
 
   bl main

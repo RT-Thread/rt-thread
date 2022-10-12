@@ -19,9 +19,9 @@ Enter directory `rt-thread/bsp/qemu-virt64-aarch64` and input:
 scons
 ```
 
-## 2. Execution
+## 3. Execution
 
-The project execution tool is `qemu-system-aarch64`
+The project execution tool is `qemu-system-aarch64`, the project can be configured to `Cortex-A53/A57/A72`, GIC supports `V2/V3` version, and `V2` of GIC can use 8 processors max.
 
 Download Windows platform from website:
 ```
@@ -33,7 +33,7 @@ sudo apt update
 sudo apt install qemu-system-arm
 ```
 
-Run qemu.bat or qemu.sh in terminal:
+Please fixup the exec scripts if modify the default configuration of the project. Run qemu.bat or qemu.sh in terminal:
 ```
 heap: [0x40042aa0 - 0x40142aa0]
 
@@ -45,10 +45,29 @@ Hi, this is RT-Thread!!
 msh />
 ```
 
-## 3. Condition
+Use VirtIO-Console in new terminal by:
+````
+telnet 127.0.0.1 4321
+````
+
+If use tap net mode with tap0 card, modify qemu run script config
+```
+-netdev user,id=net0
+```
+to
+```
+-netdev tap,id=net0,ifname=tap0
+```
+
+## 4. Condition
 
 | Driver | Condition | Remark |
 | ------ | --------- | ------ |
 | UART   | Support   | UART0  |
 | RTC    | Support   | - |
-| VIRTIO BLK | Support | VIRTIO BLK0 |
+| GPIO   | Support   | - |
+| VIRTIO BLK | Support | - |
+| VIRTIO NET | Support | - |
+| VIRTIO Console | Support | - |
+| VIRTIO GPU | Support | 2D |
+| VIRTIO Input | Support | Keyboard, Mouse, Tablet |

@@ -15,7 +15,7 @@
 
 开发板正面外观如下图：
 
-![image-20211011174017429](docs/picture/cpk-ra6m4.png)
+![image-20211011174017429](docs/picture/cpk-ra6m4.png) 
 
 该开发板常用 **板载资源** 如下：
 
@@ -42,6 +42,7 @@
 | FLASH              | 支持               |                |
 | PWM                | 支持               |                |
 | CAN                | 支持               |                |
+|  SEGGER_RTT        |  支持              |  打开默认segger_rtt为console |
 | 持续更新中...      |                    |                |
 | **外接外设** | **支持情况** | **备注** |
 | WiFi 模块     | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
@@ -77,13 +78,13 @@
 
 - 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA6M4AF，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/ra6m4.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
 
-![image-20211011181555421](docs/picture/jflash1.png)
+![image-20211011181555421](docs/picture/jflash1.png) 
 
-![image-20211011182047981](docs/picture/jflash2.png)
+![image-20211011182047981](docs/picture/jflash2.png) 
 
-![image-20211011182434519](docs/picture/jflash.png)
+![image-20211011182434519](docs/picture/jflash.png) 
 
-![image-20211011182949604](docs/picture/jflash3.png)
+![image-20211011182949604](docs/picture/jflash3.png) 
 
 **查看运行结果**
 
@@ -159,7 +160,7 @@ void hal_entry(void)
 2. 下载安装完成后，需要添加 CPK-RA6M4 开发板的官方板级支持包
 > 打开[ CPK-RA6M4 开发板详情页](https://www2.renesas.cn/jp/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)，在**“下载”**列表中找到 **”CPK-RA6M4板级支持包“**，点击链接即可下载
 3. 如何将 **”CPK-RA6M4板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
-4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
+4. 请查看文档：[使用 FSP 配置外设驱动](../docs/RA系列使用FSP配置外设驱动.md)，在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
 
 **ENV 配置**
 
@@ -180,7 +181,7 @@ void hal_entry(void)
 
 可按照下图操作，修改 Utilities 中的选项：
 
-![image-20211214102231248](docs/picture/readme_faq1.png)
+![image-20211214102231248](docs/picture/readme_faq1.png) 
 
 ## 联系人信息
 

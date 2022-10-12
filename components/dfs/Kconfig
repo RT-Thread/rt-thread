@@ -1,7 +1,5 @@
-menu "Device virtual file system"
-
-config RT_USING_DFS
-    bool "Using device virtual file system"
+menuconfig RT_USING_DFS
+    bool "DFS: device virtual file system"
     select RT_USING_MUTEX
     default y
     help
@@ -160,5 +158,3 @@ if RT_USING_DFS
     endif
 
 endif
-
-endmenu

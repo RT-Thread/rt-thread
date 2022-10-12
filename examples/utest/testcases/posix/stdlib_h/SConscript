@@ -1,0 +1,27 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+path = [cwd]
+src = []
+
+if GetDepend('RTT_POSIX_TESTCASE_STDLIB_H'):
+    src += Glob('./definitions/*.c')
+
+if GetDepend('STDLIB_H_ATOI'):
+    src += Glob('./functions/atoi_tc.c')
+
+if GetDepend('STDLIB_H_ATOL'):
+    src += Glob('./functions/atol_tc.c')
+
+if GetDepend('STDLIB_H_QSORT'):
+    src += Glob('./functions/qsort_tc.c')
+
+if GetDepend('STDLIB_H_STRTOL'):
+    src += Glob('./functions/strtol_tc.c')
+
+group = DefineGroup('rtt_posix_testcase', src, depend = ['RTT_POSIX_TESTCASE_STDLIB_H'], CPPPATH = path)
+
+Return('group')

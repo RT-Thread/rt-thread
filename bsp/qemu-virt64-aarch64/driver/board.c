@@ -17,6 +17,7 @@
 #include "board.h"
 #include <mmu.h>
 #include <gic.h>
+#include <gicv3.h>
 #include <psci.h>
 #include <gtimer.h>
 #include <cpuport.h>
@@ -28,9 +29,16 @@ struct mem_desc platform_mem_desc[] =
 {
     {0x40000000, 0x80000000, 0x40000000, NORMAL_MEM},
     {PL031_RTC_BASE, PL031_RTC_BASE + 0x1000, PL031_RTC_BASE, DEVICE_MEM},
+    {PL061_GPIO_BASE, PL061_GPIO_BASE + 0x1000, PL061_GPIO_BASE, DEVICE_MEM},
     {PL011_UART0_BASE, PL011_UART0_BASE + 0x1000, PL011_UART0_BASE, DEVICE_MEM},
-    {VIRTIO_MMIO_BLK0_BASE, VIRTIO_MMIO_BLK0_BASE + 0x1000, VIRTIO_MMIO_BLK0_BASE, DEVICE_MEM},
+    {VIRTIO_MMIO_BASE, VIRTIO_MMIO_BASE + VIRTIO_MAX_NR * VIRTIO_MMIO_SIZE, VIRTIO_MMIO_BASE, DEVICE_MEM},
+#ifdef BSP_USING_GICV2
     {GIC_PL390_DISTRIBUTOR_PPTR, GIC_PL390_DISTRIBUTOR_PPTR + 0x1000, GIC_PL390_DISTRIBUTOR_PPTR, DEVICE_MEM},
+#endif
+#ifdef BSP_USING_GICV3
+    {GIC_PL500_DISTRIBUTOR_PPTR, GIC_PL500_DISTRIBUTOR_PPTR + 0x1000, GIC_PL500_DISTRIBUTOR_PPTR, DEVICE_MEM},
+    {GIC_PL500_REDISTRIBUTOR_PPTR, GIC_PL500_REDISTRIBUTOR_PPTR + 0xf60000, GIC_PL500_REDISTRIBUTOR_PPTR, DEVICE_MEM},
+#endif
 };
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
@@ -58,7 +66,7 @@ void rt_hw_board_init(void)
     rt_hw_gtimer_init();
     rt_thread_idle_sethook(idle_wfi);
 
-    arm_psci_init(RT_NULL, RT_NULL);
+    arm_psci_init(PSCI_METHOD_HVC, RT_NULL, RT_NULL);
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
@@ -88,6 +96,13 @@ void poweroff(void)
 }
 MSH_CMD_EXPORT(poweroff, poweroff...);
 
+void rt_hw_cpu_shutdown()
+{
+    rt_kprintf("shutdown...\n");
+
+    poweroff();
+}
+
 void reboot(void)
 {
     arm_psci_system_reboot();
@@ -113,6 +128,9 @@ void secondary_cpu_c_start(void)
     rt_hw_spin_lock(&_cpus_lock);
 
     arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, platform_get_gic_redist_base());
+#endif
     rt_hw_vector_init();
     rt_hw_gtimer_local_enable();
     arm_gic_umask(0, IRQ_ARM_IPI_KICK);

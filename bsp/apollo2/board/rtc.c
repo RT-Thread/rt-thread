@@ -38,7 +38,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *time;
     struct tm time_temp;
-    struct tm* time_new;
+    struct tm time_new;
     am_hal_rtc_time_t hal_time;
 
     RT_ASSERT(dev != RT_NULL);
@@ -71,16 +71,16 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 
         case RT_DEVICE_CTRL_RTC_SET_TIME:
             time = (time_t *)args;
-            time_new = gmtime(time);
+            gmtime_r(time, &time_new);
 
-            hal_time.ui32Hour = time_new->tm_hour;
-            hal_time.ui32Minute = time_new->tm_min;
-            hal_time.ui32Second = time_new->tm_sec;
+            hal_time.ui32Hour = time_new.tm_hour;
+            hal_time.ui32Minute = time_new.tm_min;
+            hal_time.ui32Second = time_new.tm_sec;
             hal_time.ui32Hundredths = 00;
-            hal_time.ui32Weekday = time_new->tm_wday;
-            hal_time.ui32DayOfMonth = time_new->tm_mday;
-            hal_time.ui32Month = time_new->tm_mon + 1;
-            hal_time.ui32Year = time_new->tm_year + 1900 - 2000;
+            hal_time.ui32Weekday = time_new.tm_wday;
+            hal_time.ui32DayOfMonth = time_new.tm_mday;
+            hal_time.ui32Month = time_new.tm_mon + 1;
+            hal_time.ui32Year = time_new.tm_year + 1900 - 2000;
             hal_time.ui32Century = 0;
 
             am_hal_rtc_time_set(&hal_time);
