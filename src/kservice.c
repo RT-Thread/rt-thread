@@ -454,7 +454,7 @@ rt_int32_t rt_strcasecmp(const char *a, const char *b)
 RTM_EXPORT(rt_strcasecmp);
 
 /**
- * This function will copy string no more than n bytes.
+ * This function will copy string no more than n bytes and guarantee to NUL-terminate the result.
  *
  * @param  dst points to the address used to store the copied content.
  *
@@ -478,14 +478,13 @@ char *rt_strncpy(char *dst, const char *src, rt_size_t n)
         }
     }
 
-    /* Not enough room in dst, add NULL and traverse rest of src. */
+    /* Not enough room in dst, add NUL and traverse rest of src. */
     if (nleft == 0)
     {
         if (n != 0)
         {
-            *dst = '\0'; /* NULL-terminate dst */
+            *dst = '\0'; /* NUL-terminate dst */
         }
-        while (*src++);
     }
 
     return (dst);
