@@ -11,7 +11,7 @@
 #include <board.h>
 #include "drv_soft_i2c.h"
 
-#ifdef RT_USING_I2C
+#ifdef BSP_USING_SOFT_I2C
 
 //#define DRV_DEBUG
 #define LOG_TAG              "drv.i2c"
