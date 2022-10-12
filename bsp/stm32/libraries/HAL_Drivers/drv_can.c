@@ -776,7 +776,6 @@ void CAN1_SCE_IRQHandler(void)
     errtype = hcan->Instance->ESR;
 
     rt_interrupt_enter();
-    HAL_CAN_IRQHandler(hcan);
 
     switch ((errtype & 0x70) >> 4)
     {
@@ -788,12 +787,30 @@ void CAN1_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
         drv_can1.device.status.ackerrcnt++;
-        if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
-            rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK1))
-            rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK2))
-            rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
+        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
+        {
+            if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
+            {
+                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
+            }
+            SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
+        }
+        else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
+        {
+            if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
+            {
+                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
+            }
+            SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
+        }
+        else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
+        {
+            if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
+            {
+                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
+            }
+            SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
+        }
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -900,7 +917,6 @@ void CAN2_SCE_IRQHandler(void)
     errtype = hcan->Instance->ESR;
 
     rt_interrupt_enter();
-    HAL_CAN_IRQHandler(hcan);
 
     switch ((errtype & 0x70) >> 4)
     {
@@ -910,14 +926,32 @@ void CAN2_SCE_IRQHandler(void)
     case RT_CAN_BUS_FORMAT_ERR:
         drv_can2.device.status.formaterrcnt++;
         break;
-    case RT_CAN_BUS_ACK_ERR:
+    case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
         drv_can2.device.status.ackerrcnt++;
-        if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
-            rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK1))
-            rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK2))
-            rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
+        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
+        {
+            if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
+            {
+                rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
+            }
+            SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
+        }
+        else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
+        {
+            if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
+            {
+                rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
+            }
+            SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
+        }
+        else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
+        {
+            if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
+            {
+                rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
+            }
+            SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
+        }
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
