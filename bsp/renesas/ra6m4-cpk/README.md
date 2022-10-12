@@ -174,6 +174,14 @@ void hal_entry(void)
 3. 输入`pkgs --update`命令更新软件包。
 4. 输入`scons --target=mdk5` 命令重新生成工程。
 
+**SEGGER_RTT使用**
+
+由于瑞萨RA6M4的串口使用需要使用USB转TTL工具，使用起来十分不方便，RT-Thread提供的segger_rtt软件包可以将JLINK作为RTT 的console口来使用，用户在`RT-Thread Settings->硬件->板载设备驱动`下使能segger_rtt即可,如下
+
+![](docs/picture/readme jlink.png)
+
+选中之后就能使用jlink作为RTT的console来使用了！
+
 
 ## FAQ
 
