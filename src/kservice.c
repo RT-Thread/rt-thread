@@ -23,6 +23,7 @@
  * 2022-06-04     Meco Man     remove strnlen
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
+ * 2022-10-11     Meco Man     combine strlcpy's method into rt_strncpy to improve safety
  */
 
 #include <rtthread.h>
@@ -465,21 +466,26 @@ RTM_EXPORT(rt_strcasecmp);
  */
 char *rt_strncpy(char *dst, const char *src, rt_size_t n)
 {
-    if (n != 0)
-    {
-        char *d = dst;
-        const char *s = src;
+    rt_size_t nleft = n;
 
-        do
+    /* Copy as many bytes as will fit. */
+    if (nleft != 0)
+    {
+        while (--nleft != 0)
         {
-            if ((*d++ = *s++) == 0)
-            {
-                /* NUL pad the remaining n-1 bytes */
-                while (--n != 0)
-                    *d++ = 0;
+            if ((*dst++ = *src++) == '\0')
                 break;
-            }
-        } while (--n != 0);
+        }
+    }
+
+    /* Not enough room in dst, add NULL and traverse rest of src. */
+    if (nleft == 0)
+    {
+        if (n != 0)
+        {
+            *dst = '\0'; /* NULL-terminate dst */
+        }
+        while (*src++);
     }
 
     return (dst);
