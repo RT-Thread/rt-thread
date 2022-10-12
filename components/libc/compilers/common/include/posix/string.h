@@ -35,6 +35,8 @@ int strncasecmp(const char * s1, const char * s2, size_t n);
 char *strdup(const char *s);
 char *strndup(const char *s, size_t size);
 char *strtok_r(char *str, const char *delim, char **saveptr);
+size_t strlcpy(char *dst, const char *src, size_t dsize);
+size_t strlcat(char *dst, const char *src, size_t dsize);
 
 #ifdef __cplusplus
 }
