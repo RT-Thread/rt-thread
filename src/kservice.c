@@ -467,6 +467,7 @@ RTM_EXPORT(rt_strcasecmp);
 char *rt_strncpy(char *dst, const char *src, rt_size_t n)
 {
     rt_size_t nleft = n;
+    char *org = dst;
 
     /* Copy as many bytes as will fit. */
     if (nleft != 0)
@@ -487,7 +488,7 @@ char *rt_strncpy(char *dst, const char *src, rt_size_t n)
         }
     }
 
-    return (dst);
+    return org;
 }
 RTM_EXPORT(rt_strncpy);
 
