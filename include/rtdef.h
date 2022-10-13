@@ -984,6 +984,7 @@ enum rt_device_class_type
     RT_Device_Class_DAC,                                /**< DAC device */
     RT_Device_Class_WDT,                                /**< WDT device */
     RT_Device_Class_PWM,                                /**< PWM device */
+    RT_Device_Class_Bus,                                /**< Bus device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 

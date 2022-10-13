@@ -825,6 +825,7 @@ static char *const device_type_str[RT_Device_Class_Unknown] =
     "DAC Device",
     "WDT Device",
     "PWM Device",
+    "Bus Device",
 };
 
 long list_device(void)
