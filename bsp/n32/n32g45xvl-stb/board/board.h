@@ -38,6 +38,10 @@
 #include "n32g45x.h"
 #include "drv_gpio.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define N32_FLASH_START_ADRESS      ((uint32_t)0x08000000)
 #define N32_FLASH_SIZE              (512 * 1024)
 #define N32_FLASH_END_ADDRESS       ((uint32_t)(N32_FLASH_START_ADRESS + N32_FLASH_SIZE))
@@ -63,6 +67,9 @@ extern int __bss_end;
 
 
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __BOARD_H__ */
 
