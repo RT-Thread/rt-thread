@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-05-16     shelton      first version
+ * 2022-10-15     shelton      optimize code
  */
 
 #include "drv_common.h"
@@ -228,7 +229,6 @@ static void usart_isr(struct rt_serial_device *serial) {
 
     if (usart_flag_get(usart_instance->usart_x, USART_RDBF_FLAG) != RESET) {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-        usart_flag_clear(usart_instance->usart_x, USART_RDBF_FLAG);
     }
     else
     {
