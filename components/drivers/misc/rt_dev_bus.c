@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DBG_TAG "adc"
+#define DBG_TAG "dev_bus"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
