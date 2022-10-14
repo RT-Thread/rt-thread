@@ -458,8 +458,8 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     oc_config.OCFastMode = TIM_OCFAST_DISABLE;
     oc_config.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     oc_config.OCIdleState  = TIM_OCIDLESTATE_RESET;
-	
-	if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, channel) != HAL_OK)
+
+    if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, channel) != HAL_OK)
     {
         LOG_E("%s %d config failed", device->name, device->channel);
         result = -RT_ERROR;
