@@ -407,6 +407,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     TIM_OC_InitTypeDef oc_config = {0};
     TIM_MasterConfigTypeDef master_config = {0};
     TIM_ClockConfigTypeDef clock_config = {0};
+    rt_uint32_t channel = 0x04 * (device->channel - 1);
 
     RT_ASSERT(device != RT_NULL);
 
@@ -457,46 +458,12 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     oc_config.OCFastMode = TIM_OCFAST_DISABLE;
     oc_config.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     oc_config.OCIdleState  = TIM_OCIDLESTATE_RESET;
-
-    /* config pwm channel */
-    if (device->channel & 0x01)
+	
+	if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, channel) != HAL_OK)
     {
-        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_1) != HAL_OK)
-        {
-            LOG_E("%s channel1 config failed", device->name);
-            result = -RT_ERROR;
-            goto __exit;
-        }
-    }
-
-    if (device->channel & 0x02)
-    {
-        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_2) != HAL_OK)
-        {
-            LOG_E("%s channel2 config failed", device->name);
-            result = -RT_ERROR;
-            goto __exit;
-        }
-    }
-
-    if (device->channel & 0x04)
-    {
-        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_3) != HAL_OK)
-        {
-            LOG_E("%s channel3 config failed", device->name);
-            result = -RT_ERROR;
-            goto __exit;
-        }
-    }
-
-    if (device->channel & 0x08)
-    {
-        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_4) != HAL_OK)
-        {
-            LOG_E("%s channel4 config failed", device->name);
-            result = -RT_ERROR;
-            goto __exit;
-        }
+        LOG_E("%s %d config failed", device->name, device->channel);
+        result = -RT_ERROR;
+        goto __exit;
     }
 
     /* pwm pin configuration */
