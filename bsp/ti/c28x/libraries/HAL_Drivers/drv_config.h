@@ -12,5 +12,6 @@
 #define DRIVERS_DRV_CONFIG_H_
 
 #include "config/pwm_config.h"
+#include "config/adc_config.h"
 
 #endif /* DRIVERS_DRV_CONFIG_H_ */
