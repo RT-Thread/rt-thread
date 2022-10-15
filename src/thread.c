@@ -31,6 +31,7 @@
  * 2021-12-27     Meco Man     remove .init_priority
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to thread.c
  * 2022-01-24     THEWON       let rt_thread_sleep return thread->error when using signal
+ * 2022-10-15     Bernard      add nested mutex feature
  */
 
 #include <rthw.h>
@@ -187,9 +188,15 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
+    thread->init_priority    = priority;
     thread->current_priority = priority;
 
     thread->number_mask = 0;
+
+#ifdef RT_USING_MUTEX
+    rt_list_init(&thread->taken_object_list);
+    thread->pending_object = RT_NULL;
+#endif
 
 #ifdef RT_USING_EVENT
     thread->event_set = 0;
@@ -420,6 +427,16 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
+#ifdef RT_USING_MUTEX
+    if ((thread->pending_object) &&
+        (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
+    {
+        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
+        rt_mutex_drop_thread(mutex, thread);
+        thread->pending_object = RT_NULL;
+    }
+#endif
+
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
@@ -522,6 +539,16 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
 
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
+
+#ifdef RT_USING_MUTEX
+    if ((thread->pending_object) &&
+        (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
+    {
+        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
+        rt_mutex_drop_thread(mutex, thread);
+        thread->pending_object = RT_NULL;
+    }
+#endif
 
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
