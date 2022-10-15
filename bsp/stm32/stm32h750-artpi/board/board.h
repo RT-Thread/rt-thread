@@ -75,10 +75,6 @@ extern "C" {
 #define STM32_FLASH_SIZE               ROM_SIZE
 #define STM32_FLASH_END_ADDRESS        ROM_END
 
-#define RAM_START              (0x24000000)
-#define RAM_SIZE               (512)
-#define RAM_END                (RAM_START + RAM_SIZE * 1024)
-
 #define STM32_SRAM1_SIZE               RAM_SIZE
 #define STM32_SRAM1_START              RAM_START
 #define STM32_SRAM1_END                RAM_END
