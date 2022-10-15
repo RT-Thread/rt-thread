@@ -30,13 +30,13 @@
 
 struct rtdevice_pwm_device
 {
-  struct rt_device_pwm parent;
-  TIM_TypeDef *periph;
-  rt_uint8_t channel[4];
-  char *name;
+    struct rt_device_pwm parent;
+    TIM_TypeDef* periph;
+    rt_uint8_t channel[4];
+    char* name;
 };
 
-void ch32_tim_clock_init(TIM_TypeDef *timx)
+void ch32_tim_clock_init(TIM_TypeDef* timx)
 {
     if (timx == TIM1)
     {
@@ -56,7 +56,7 @@ void ch32_tim_clock_init(TIM_TypeDef *timx)
     }
 }
 
-rt_uint32_t ch32_tim_clock_get(TIM_TypeDef *timx)
+rt_uint32_t ch32_tim_clock_get(TIM_TypeDef* timx)
 {
     RCC_ClocksTypeDef RCC_Clocks;
     RCC_GetClocksFreq(&RCC_Clocks);
@@ -100,9 +100,9 @@ struct rt_hwtimer_info hwtimer_info4 =
 
 };
 
-struct rt_hwtimer_info *ch32_hwtimer_info_config_get(TIM_TypeDef *timx)
+struct rt_hwtimer_info* ch32_hwtimer_info_config_get(TIM_TypeDef* timx)
 {
-    struct rt_hwtimer_info *info = RT_NULL;
+    struct rt_hwtimer_info* info = RT_NULL;
 
     if (timx == TIM1)
     {
@@ -124,7 +124,7 @@ struct rt_hwtimer_info *ch32_hwtimer_info_config_get(TIM_TypeDef *timx)
     return info;
 }
 
-void ch32_pwm_io_init(TIM_TypeDef *timx, rt_uint8_t channel)
+void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -267,10 +267,10 @@ void ch32_pwm_io_init(TIM_TypeDef *timx, rt_uint8_t channel)
 }
 
 /*
-* channel = 0xFF: the channel is not use.
-*/
+ * channel = 0xFF: the channel is not use.
+ */
 struct rtdevice_pwm_device pwm_device_list[] =
-    {
+{
 #ifdef BSP_USING_TIM1_PWM
         {
             .periph = TIM1,
@@ -392,235 +392,234 @@ struct rtdevice_pwm_device pwm_device_list[] =
 #endif /* BSP_USING_TIM4_PWM */
 };
 
-static rt_err_t ch32_pwm_device_enable(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration, rt_bool_t enable)
+static rt_err_t ch32_pwm_device_enable(struct rt_device_pwm* device, struct rt_pwm_configuration* configuration, rt_bool_t enable)
 {
-  struct rtdevice_pwm_device *pwm_device;
-  rt_uint32_t channel_index;
-  rt_uint16_t ccx_state;
+    struct rtdevice_pwm_device* pwm_device;
+    rt_uint32_t channel_index;
+    rt_uint16_t ccx_state;
 
-  pwm_device = (struct rtdevice_pwm_device *)device;
-  channel_index = configuration->channel;
+    pwm_device = (struct rtdevice_pwm_device*)device;
+    channel_index = configuration->channel;
 
-  if (enable == RT_TRUE)
-  {
-    ccx_state = TIM_CCx_Enable;
-  }
-  else
-  {
-    ccx_state = TIM_CCx_Disable;
-  }
+    if (enable == RT_TRUE)
+    {
+        ccx_state = TIM_CCx_Enable;
+    }
+    else
+    {
+        ccx_state = TIM_CCx_Disable;
+    }
 
-  if (channel_index <= 4 && channel_index > 0)
-  {
-    if (pwm_device->channel[channel_index - 1] == 0xFF)
+    if (channel_index <= 4 && channel_index > 0)
+    {
+        if (pwm_device->channel[channel_index - 1] == 0xFF)
+        {
+            return RT_EINVAL;
+        }
+        TIM_CCxCmd(pwm_device->periph, pwm_device->channel[channel_index - 1], ccx_state);
+    }
+    else
     {
         return RT_EINVAL;
     }
-    TIM_CCxCmd(pwm_device->periph, pwm_device->channel[channel_index - 1], ccx_state);
-  }
-  else
-  {
-    return RT_EINVAL;
-  }
 
-  TIM_Cmd(pwm_device->periph, ENABLE);
+    TIM_Cmd(pwm_device->periph, ENABLE);
 
-  return RT_EOK;
+    return RT_EOK;
 }
 
-static rt_err_t ch32_pwm_device_get(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration)
+static rt_err_t ch32_pwm_device_get(struct rt_device_pwm* device, struct rt_pwm_configuration* configuration)
 {
-  struct rtdevice_pwm_device *pwm_device;
-  rt_uint32_t arr_counter, ccr_counter, prescaler, sample_freq;
-  rt_uint32_t channel_index;
-  rt_uint32_t tim_clock;
+    struct rtdevice_pwm_device* pwm_device;
+    rt_uint32_t arr_counter, ccr_counter, prescaler, sample_freq;
+    rt_uint32_t channel_index;
+    rt_uint32_t tim_clock;
 
-  pwm_device = (struct rtdevice_pwm_device *)device;
-  tim_clock = ch32_tim_clock_get(pwm_device->periph);
-  channel_index = configuration->channel;
-  arr_counter = pwm_device->periph->ATRLR + 1;
-  prescaler = pwm_device->periph->PSC + 1;
-  sample_freq = (tim_clock / prescaler) / arr_counter;
+    pwm_device = (struct rtdevice_pwm_device*)device;
+    tim_clock = ch32_tim_clock_get(pwm_device->periph);
+    channel_index = configuration->channel;
+    arr_counter = pwm_device->periph->ATRLR + 1;
+    prescaler = pwm_device->periph->PSC + 1;
+    sample_freq = (tim_clock / prescaler) / arr_counter;
 
-  /* unit:ns */
-  configuration->period = 1000000000 / sample_freq;
+    /* unit:ns */
+    configuration->period = 1000000000 / sample_freq;
 
-  if (channel_index == 1)
-  {
-    ccr_counter = pwm_device->periph->CH1CVR + 1;
-    configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
-  }
-  else if (channel_index == 2)
-  {
-    ccr_counter = pwm_device->periph->CH2CVR + 1;
-    configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
-  }
-  else if (channel_index == 3)
-  {
-    ccr_counter = pwm_device->periph->CH3CVR + 1;
-    configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
-  }
-  else if (channel_index == 4)
-  {
-    ccr_counter = pwm_device->periph->CH4CVR + 1;
-    configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
-  }
-  else
-  {
-      return RT_EINVAL;
-  }
-
-  return RT_EOK;
-}
-
-static rt_err_t ch32_pwm_device_set(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration)
-{
-  struct rtdevice_pwm_device *pwm_device;
-  rt_uint32_t arr_counter, ccr_counter, prescaler, sample_freq;
-  rt_uint32_t channel_index;
-  rt_uint32_t tim_clock;
-  TIM_TimeBaseInitTypeDef TIM_TimeBaseInitType;
-  TIM_OCInitTypeDef TIM_OCInitType;
-
-  pwm_device = (struct rtdevice_pwm_device *)device;
-  tim_clock = ch32_tim_clock_get(pwm_device->periph);
-  channel_index = configuration->channel;
-
-  /* change to freq, unit:Hz */
-  sample_freq = 1000000000 / configuration->period;
-
-  /* counter = (tim_clk / prescaler) / sample_freq */
-  /* normally, tim_clk is not need div, if arr_counter over 65536, need div. */
-  prescaler = 1;
-  arr_counter = (tim_clock / prescaler) / sample_freq;
-
-  if (arr_counter > MAX_COUNTER)
-  {
-    /* need div tim_clock
-    * and round up the prescaler value.
-    * (tim_clock >> 16) = tim_clock / 65536
-    */
-    if ((tim_clock >> 16) % sample_freq == 0)
-      prescaler = (tim_clock >> 16) / sample_freq;
+    if (channel_index == 1)
+    {
+        ccr_counter = pwm_device->periph->CH1CVR + 1;
+        configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
+    }
+    else if (channel_index == 2)
+    {
+        ccr_counter = pwm_device->periph->CH2CVR + 1;
+        configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
+    }
+    else if (channel_index == 3)
+    {
+        ccr_counter = pwm_device->periph->CH3CVR + 1;
+        configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
+    }
+    else if (channel_index == 4)
+    {
+        ccr_counter = pwm_device->periph->CH4CVR + 1;
+        configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
+    }
     else
-      prescaler = (tim_clock >> 16) / sample_freq + 1;
+    {
+        return RT_EINVAL;
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t ch32_pwm_device_set(struct rt_device_pwm* device, struct rt_pwm_configuration* configuration)
+{
+    struct rtdevice_pwm_device* pwm_device;
+    rt_uint32_t arr_counter, ccr_counter, prescaler, sample_freq;
+    rt_uint32_t channel_index;
+    rt_uint32_t tim_clock;
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitType;
+    TIM_OCInitTypeDef TIM_OCInitType;
+
+    pwm_device = (struct rtdevice_pwm_device*)device;
+    tim_clock = ch32_tim_clock_get(pwm_device->periph);
+    channel_index = configuration->channel;
+
+    /* change to freq, unit:Hz */
+    sample_freq = 1000000000 / configuration->period;
 
     /* counter = (tim_clk / prescaler) / sample_freq */
+    /* normally, tim_clk is not need div, if arr_counter over 65536, need div. */
+    prescaler = 1;
     arr_counter = (tim_clock / prescaler) / sample_freq;
-  }
-  /* ccr_counter = duty cycle * arr_counter */
-  ccr_counter = (configuration->pulse * 100 / configuration->period) * arr_counter / 100;
 
-  /* check arr_counter > 1, cxx_counter > 1 */
-  if (arr_counter < MIN_COUNTER)
-  {
-    arr_counter = MIN_COUNTER;
-  }
-  if (ccr_counter < MIN_PULSE)
-  {
-    ccr_counter = MIN_PULSE;
-  }
+    if (arr_counter > MAX_COUNTER)
+    {
+        /* need div tim_clock
+         * and round up the prescaler value.
+         * (tim_clock >> 16) = tim_clock / 65536
+         */
+        if ((tim_clock >> 16) % sample_freq == 0)
+            prescaler = (tim_clock >> 16) / sample_freq;
+        else
+            prescaler = (tim_clock >> 16) / sample_freq + 1;
 
-  /* TMRe base configuration */
-  TIM_TimeBaseStructInit(&TIM_TimeBaseInitType);
-  TIM_TimeBaseInitType.TIM_Period = arr_counter - 1;
-  TIM_TimeBaseInitType.TIM_Prescaler = prescaler - 1;
-  TIM_TimeBaseInitType.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseInitType.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseInit(pwm_device->periph, &TIM_TimeBaseInitType);
+        /* counter = (tim_clk / prescaler) / sample_freq */
+        arr_counter = (tim_clock / prescaler) / sample_freq;
+    }
+    /* ccr_counter = duty cycle * arr_counter */
+    ccr_counter = (configuration->pulse * 100 / configuration->period) * arr_counter / 100;
 
-  TIM_OCStructInit(&TIM_OCInitType);
-  TIM_OCInitType.TIM_OCMode = TIM_OCMode_PWM1;
-  TIM_OCInitType.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitType.TIM_Pulse = ccr_counter - 1;
-  TIM_OCInitType.TIM_OCPolarity = TIM_OCPolarity_High;
+    /* check arr_counter > 1, cxx_counter > 1 */
+    if (arr_counter < MIN_COUNTER)
+    {
+        arr_counter = MIN_COUNTER;
+    }
+    if (ccr_counter < MIN_PULSE)
+    {
+        ccr_counter = MIN_PULSE;
+    }
 
-  if (channel_index == 1)
-  {
-    TIM_OC1Init(pwm_device->periph, &TIM_OCInitType);
-    TIM_OC1PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
-  }
-  else if (channel_index == 2)
-  {
-    TIM_OC2Init(pwm_device->periph, &TIM_OCInitType);
-    TIM_OC2PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
-  }
-  else if (channel_index == 3)
-  {
-    TIM_OC3Init(pwm_device->periph, &TIM_OCInitType);
-    TIM_OC3PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
-  }
-  else if (channel_index == 4)
-  {
-    TIM_OC4Init(pwm_device->periph, &TIM_OCInitType);
-    TIM_OC4PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
-  }
-  else
-  {
-    return RT_EINVAL;
-  }
+    /* TMRe base configuration */
+    TIM_TimeBaseStructInit(&TIM_TimeBaseInitType);
+    TIM_TimeBaseInitType.TIM_Period = arr_counter - 1;
+    TIM_TimeBaseInitType.TIM_Prescaler = prescaler - 1;
+    TIM_TimeBaseInitType.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInitType.TIM_CounterMode = TIM_CounterMode_Up;
+    TIM_TimeBaseInit(pwm_device->periph, &TIM_TimeBaseInitType);
 
-  TIM_ARRPreloadConfig(pwm_device->periph, ENABLE);
-  TIM_CtrlPWMOutputs(pwm_device->periph, ENABLE);
+    TIM_OCStructInit(&TIM_OCInitType);
+    TIM_OCInitType.TIM_OCMode = TIM_OCMode_PWM1;
+    TIM_OCInitType.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitType.TIM_Pulse = ccr_counter - 1;
+    TIM_OCInitType.TIM_OCPolarity = TIM_OCPolarity_High;
 
-  return RT_EOK;
+    if (channel_index == 1)
+    {
+        TIM_OC1Init(pwm_device->periph, &TIM_OCInitType);
+        TIM_OC1PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
+    }
+    else if (channel_index == 2)
+    {
+        TIM_OC2Init(pwm_device->periph, &TIM_OCInitType);
+        TIM_OC2PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
+    }
+    else if (channel_index == 3)
+    {
+        TIM_OC3Init(pwm_device->periph, &TIM_OCInitType);
+        TIM_OC3PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
+    }
+    else if (channel_index == 4)
+    {
+        TIM_OC4Init(pwm_device->periph, &TIM_OCInitType);
+        TIM_OC4PreloadConfig(pwm_device->periph, TIM_OCPreload_Disable);
+    }
+    else
+    {
+        return RT_EINVAL;
+    }
+
+    TIM_ARRPreloadConfig(pwm_device->periph, ENABLE);
+    TIM_CtrlPWMOutputs(pwm_device->periph, ENABLE);
+
+    return RT_EOK;
 }
 
-static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
+static rt_err_t drv_pwm_control(struct rt_device_pwm* device, int cmd, void* arg)
 {
-  struct rt_pwm_configuration *configuration;
+    struct rt_pwm_configuration* configuration;
 
-  configuration = (struct rt_pwm_configuration *)arg;
+    configuration = (struct rt_pwm_configuration*)arg;
 
-  switch (cmd)
-  {
-  case PWM_CMD_ENABLE:
-    return ch32_pwm_device_enable(device, configuration, RT_TRUE);
-  case PWM_CMD_DISABLE:
-    return ch32_pwm_device_enable(device, configuration, RT_FALSE);
-  case PWM_CMD_SET:
-    return ch32_pwm_device_set(device, configuration);
-  case PWM_CMD_GET:
-    return ch32_pwm_device_get(device, configuration);
-  default:
-    return RT_EINVAL;
-  }
+    switch (cmd)
+    {
+    case PWM_CMD_ENABLE:
+        return ch32_pwm_device_enable(device, configuration, RT_TRUE);
+    case PWM_CMD_DISABLE:
+        return ch32_pwm_device_enable(device, configuration, RT_FALSE);
+    case PWM_CMD_SET:
+        return ch32_pwm_device_set(device, configuration);
+    case PWM_CMD_GET:
+        return ch32_pwm_device_get(device, configuration);
+    default:
+        return RT_EINVAL;
+    }
 }
 
 static struct rt_pwm_ops pwm_ops =
 {
-    .control = drv_pwm_control
-};
+    .control = drv_pwm_control };
 
 static int rt_hw_pwm_init(void)
 {
-  int result = RT_EOK;
-  int index = 0;
-  int channel_index;
+    int result = RT_EOK;
+    int index = 0;
+    int channel_index;
 
-  for (index = 0; index < ITEM_NUM(pwm_device_list); index++)
-  {
-    ch32_tim_clock_init(pwm_device_list[index].periph);
-    for (channel_index = 0; channel_index < sizeof(pwm_device_list[index].channel); channel_index++)
+    for (index = 0; index < ITEM_NUM(pwm_device_list); index++)
     {
-      if (pwm_device_list[index].channel[channel_index] != 0xFF)
-      {
-        ch32_pwm_io_init(pwm_device_list[index].periph, pwm_device_list[index].channel[channel_index]);
-      }
+        ch32_tim_clock_init(pwm_device_list[index].periph);
+        for (channel_index = 0; channel_index < sizeof(pwm_device_list[index].channel); channel_index++)
+        {
+            if (pwm_device_list[index].channel[channel_index] != 0xFF)
+            {
+                ch32_pwm_io_init(pwm_device_list[index].periph, pwm_device_list[index].channel[channel_index]);
+            }
+        }
+
+        if (rt_device_pwm_register(&pwm_device_list[index].parent, pwm_device_list[index].name, &pwm_ops, RT_NULL) == RT_EOK)
+        {
+            LOG_D("%s register success", pwm_device_list[index].name);
+        }
+        else
+        {
+            LOG_D("%s register failed", pwm_device_list[index].name);
+            result = -RT_ERROR;
+        }
     }
 
-    if (rt_device_pwm_register(&pwm_device_list[index].parent, pwm_device_list[index].name, &pwm_ops, RT_NULL) == RT_EOK)
-    {
-      LOG_D("%s register success", pwm_device_list[index].name);
-    }
-    else
-    {
-      LOG_D("%s register failed", pwm_device_list[index].name);
-      result = -RT_ERROR;
-    }
-  }
-
-  return result;
+    return result;
 }
 
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
