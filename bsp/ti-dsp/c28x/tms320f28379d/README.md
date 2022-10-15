@@ -80,11 +80,11 @@ TMS320F28379D 程序的编译和下载要使用的是 TI 官方提供的 Code Co
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| CPU Timer | 支持 |  |
+| CPU Timer |  |  |
 | GPIO | 支持 | |
 | SCI | 支持 | SCIA/B/C |
-| ePWM | | |
-| ADC | | |
+| ePWM | 支持| |
+| ADC |开发中| |
 | DAC | | |
 | I2C | | |
 | SPI | | |
