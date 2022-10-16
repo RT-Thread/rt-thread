@@ -771,11 +771,13 @@ struct rt_mutex
 {
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
+    rt_uint8_t           ceiling_priority;              /**< the priority ceiling of mutexe */
     rt_uint8_t           priority;                      /**< the maximal priority for pending thread */
     rt_uint8_t           hold;                          /**< numbers of thread hold the mutex */
+    rt_uint8_t           reserv;
 
     struct rt_thread    *owner;                         /**< current owner of mutex */
-    rt_list_t           taken_list;                     /**< the object list taken by thread */
+    rt_list_t            taken_list;                    /**< the object list taken by thread */
 };
 typedef struct rt_mutex *rt_mutex_t;
 #endif /* RT_USING_MUTEX */

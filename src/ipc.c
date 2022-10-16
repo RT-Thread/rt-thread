@@ -43,6 +43,7 @@
  * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
  * 2022-04-08     Stanley      Correct descriptions
  * 2022-10-15     Bernard      add nested mutex feature
+ * 2022-10-16     Bernard      add prioceiling feature in mutex
  */
 
 #include <rtthread.h>
@@ -708,6 +709,8 @@ RTM_EXPORT(rt_sem_control);
 /**@}*/
 #endif /* RT_USING_SEMAPHORE */
 
+#define RT_USING_MUTEX
+
 #ifdef RT_USING_MUTEX
 rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
 {
@@ -728,12 +731,17 @@ rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
 
 rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
 {
-    struct rt_mutex *mutex;
+    rt_list_t *node = RT_NULL;
+    struct rt_mutex *mutex = RT_NULL;
     rt_uint8_t priority = thread->init_priority;
 
-    rt_list_for_each_entry(mutex, &(thread->taken_object_list), taken_list)
+    rt_list_for_each(node, &(thread->taken_object_list))
     {
-        if (priority > mutex->priority) priority = mutex->priority;
+        mutex = rt_list_entry(node, struct rt_mutex, taken_list);
+        if (priority > mutex->priority)
+        {
+            priority = mutex->priority;
+        }
     }
 
     return priority;
@@ -830,6 +838,7 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     mutex->owner    = RT_NULL;
     mutex->priority = 0xFF;
     mutex->hold     = 0;
+    mutex->ceiling_priority = 0xFF;
     rt_list_init(&(mutex->taken_list));
 
     /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
@@ -882,6 +891,13 @@ rt_err_t rt_mutex_detach(rt_mutex_t mutex)
 RTM_EXPORT(rt_mutex_detach);
 
 /* drop a thread from the suspend list of mutex */
+
+/**
+ * @brief drop a thread from the suspend list of mutex
+ * 
+ * @param mutex is a pointer to a mutex object.
+ * @param thread is the thread should be dropped from mutex.
+ */
 void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
 {
     rt_uint8_t priority;
@@ -923,6 +939,55 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
     }
 }
 
+
+/**
+ * @brief set the prioceiling attribute of the mutex.
+ * 
+ * @param mutex is a pointer to a mutex object.
+ * @param priority is the priority should be set to mutex.
+ *
+ * @return return the old priority ceiling
+ */
+rt_uint8_t rt_mutex_setprioceiling(rt_mutex_t mutex, rt_uint8_t priority)
+{
+    rt_uint8_t ret_priority = 0xFF;
+
+    if ((mutex) && (priority < RT_THREAD_PRIORITY_MAX))
+    {
+        ret_priority = mutex->ceiling_priority;
+        mutex->ceiling_priority = priority;
+    }
+    else
+    {
+        rt_set_errno(-RT_EINVAL);
+    }
+
+    return ret_priority;
+}
+RTM_EXPORT(rt_mutex_setprioceiling);
+
+
+/**
+ * @brief set the prioceiling attribute of the mutex.
+ * 
+ * @param mutex is a pointer to a mutex object.
+ * 
+ * @return return the current priority ceiling of the mutex.
+ */
+rt_uint8_t rt_mutex_getprioceiling(rt_mutex_t mutex)
+{
+    rt_uint8_t prio = 0xFF;
+
+    if (mutex)
+    {
+        prio = mutex->ceiling_priority;
+    }
+
+    return prio;
+}
+RTM_EXPORT(rt_mutex_getprioceiling);
+
+
 #ifdef RT_USING_HEAP
 /**
  * @brief    This function will create a mutex object.
@@ -962,6 +1027,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
     mutex->owner    = RT_NULL;
     mutex->priority = 0xFF;
     mutex->hold     = 0;
+    mutex->ceiling_priority = 0xFF;
     rt_list_init(&(mutex->taken_list));
 
     /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
@@ -992,7 +1058,7 @@ RTM_EXPORT(rt_mutex_create);
  */
 rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 {
-	rt_ubase_t level;
+    rt_ubase_t level;
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -1090,8 +1156,18 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout)
             mutex->owner    = thread;
             mutex->priority = 0xff;
             mutex->hold     = 1;
-            /* insert mutex to thread's taken object list */
-            rt_list_insert_after(&thread->taken_object_list, &mutex->taken_list);
+
+            if (mutex->ceiling_priority != 0xFF)
+            {
+                /* set the priority of thread to the ceiling priority */
+                if (mutex->ceiling_priority < mutex->owner->current_priority)
+                    _thread_update_priority(mutex->owner, mutex->ceiling_priority);
+            }
+            else
+            {
+                /* insert mutex to thread's taken object list */
+                rt_list_insert_after(&thread->taken_object_list, &mutex->taken_list);
+            }
         }
         else
         {
@@ -1298,7 +1374,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         rt_list_remove(&mutex->taken_list);
 
         /* whether change the thread priority */
-        if (thread->current_priority == mutex->priority)
+        if ((mutex->ceiling_priority != 0xFF) || (thread->current_priority == mutex->priority))
         {
             rt_uint8_t priority = 0xff;
 
