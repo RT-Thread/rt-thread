@@ -138,6 +138,10 @@ menu "On-chip Peripheral Drivers"
                     config BSP_USING_PWM3_CH2
                         bool "Enable PWM3 channel2"
                         default n
+
+                    config BSP_USING_PWM3_CH4
+                        bool "Enable PWM3 channel4"
+                        default n
                 endif
             
             menuconfig BSP_USING_PWM4
@@ -170,6 +174,12 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
+    
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+        
     source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
