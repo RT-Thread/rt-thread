@@ -200,19 +200,19 @@ menu "On-chip Peripheral Drivers"
                     endchoice
 
                     if BSP_USING_TIM1_PWM
-                            config BSP_USING_TIM1_PWM_CH1
-                                bool "using TIM1 channel 1"
-                                default n
+                        config BSP_USING_TIM1_PWM_CH1
+                            bool "using TIM1 channel 1"
+                            default n
 
-                            config BSP_USING_TIM1_PWM_CH2
-                                bool "using TIM1 channel 2"
-                                default n
+                        config BSP_USING_TIM1_PWM_CH2
+                            bool "using TIM1 channel 2"
+                            default n
 
-                            config BSP_USING_TIM1_PWM_CH3
-                                bool "using TIM1 channel 3"
+                        config BSP_USING_TIM1_PWM_CH3
+                            bool "using TIM1 channel 3"
 
-                            config BSP_USING_TIM1_PWM_CH4
-                                bool "using TIM1 channel 4"
+                        config BSP_USING_TIM1_PWM_CH4
+                            bool "using TIM1 channel 4"
                     endif
 
                 endif
@@ -227,31 +227,31 @@ menu "On-chip Peripheral Drivers"
                         default BSP_USING_TIM2_HWTIMER
 
                         config BSP_USING_TIM2_HWTIMER
-                                bool "using TIM2 as hwtimer mode"
-                                select BSP_USING_HWTIMER
+                            bool "using TIM2 as hwtimer mode"
+                            select BSP_USING_HWTIMER
 
                         config BSP_USING_TIM2_PWM
-                                bool "using TIM2 as PWM mode"
-                                select BSP_USING_PWM
+                            bool "using TIM2 as PWM mode"
+                            select BSP_USING_PWM
                     endchoice
 
-                if BSP_USING_TIM2_PWM
-                    config BSP_USING_TIM2_PWM_CH1
-                        bool "using TIM2 channel 1"
-                        default n
+                    if BSP_USING_TIM2_PWM
+                        config BSP_USING_TIM2_PWM_CH1
+                            bool "using TIM2 channel 1"
+                            default n
 
-                    config BSP_USING_TIM2_PWM_CH2
-                        bool "using TIM2 channel 2"
-                        default n
+                        config BSP_USING_TIM2_PWM_CH2
+                            bool "using TIM2 channel 2"
+                            default n
 
-                    config BSP_USING_TIM2_PWM_CH3
-                        bool "using TIM2 channel 3"
+                        config BSP_USING_TIM2_PWM_CH3
+                            bool "using TIM2 channel 3"
 
-                    config BSP_USING_TIM2_PWM_CH4
-                        bool "using TIM2 channel 4"
+                        config BSP_USING_TIM2_PWM_CH4
+                            bool "using TIM2 channel 4"
+                    endif
+
                 endif
-
-            endif
 
             config BSP_USING_TIM3
                     bool "using TIM3"
@@ -271,23 +271,23 @@ menu "On-chip Peripheral Drivers"
                             select BSP_USING_PWM
                     endchoice
 
-                if BSP_USING_TIM3_PWM
-                    config BSP_USING_TIM3_PWM_CH1
-                        bool "using TIM3 channel 1"
-                        default n
+                    if BSP_USING_TIM3_PWM
+                        config BSP_USING_TIM3_PWM_CH1
+                            bool "using TIM3 channel 1"
+                            default n
 
-                    config BSP_USING_TIM3_PWM_CH2
+                        config BSP_USING_TIM3_PWM_CH2
                             bool "using TIM3 channel 2"
                             default n
 
-                    config BSP_USING_TIM3_PWM_CH3
+                        config BSP_USING_TIM3_PWM_CH3
                             bool "using TIM3 channel 3"
 
-                    config BSP_USING_TIM3_PWM_CH4
+                        config BSP_USING_TIM3_PWM_CH4
                             bool "using TIM3 channel 4"
-                endif
+                    endif
 
-            endif
+                endif
 
             config BSP_USING_TIM4
                     bool "using TIM4"
@@ -307,21 +307,21 @@ menu "On-chip Peripheral Drivers"
                             select BSP_USING_PWM
                     endchoice
 
-                        if BSP_USING_TIM4_PWM
-                            config BSP_USING_TIM4_PWM_CH1
-                                bool "using TIM4 channel 1"
-                                default n
+                    if BSP_USING_TIM4_PWM
+                        config BSP_USING_TIM4_PWM_CH1
+                            bool "using TIM4 channel 1"
+                            default n
 
-                            config BSP_USING_TIM4_PWM_CH2
-                                bool "using TIM4 channel 2"
-                                default n
+                        config BSP_USING_TIM4_PWM_CH2
+                            bool "using TIM4 channel 2"
+                            default n
 
-                            config BSP_USING_TIM4_PWM_CH3
-                                bool "using TIM4 channel 3"
+                        config BSP_USING_TIM4_PWM_CH3
+                            bool "using TIM4 channel 3"
 
-                            config BSP_USING_TIM4_PWM_CH4
-                                bool "using TIM4 channel 4"
-                        endif
+                        config BSP_USING_TIM4_PWM_CH4
+                            bool "using TIM4 channel 4"
+                    endif
 
                 endif
 
