@@ -59,7 +59,7 @@ Now both GNU and MetaWare Toolchain are supported, set the System environment va
 
 GNU:
 
-    set RTT_CC=gnu
+    set RTT_CC=gcc
 
 MetaWare:
 
