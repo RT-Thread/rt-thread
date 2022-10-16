@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-STM32H7xx Core Board 是 WeAct Studio 推出的一款基于 ARM Cortex-M7 内核的核心板，最高频率为480Mhz，具有128KB ROM（实际上为2MB）、1MB RAM，外接8MB SPI Flash和8MB QSPI Flash，所具有的按键和接口如下：
+STM32H7xx Core Board 是 WeAct Studio 推出的一款基于 ARM Cortex-M7 内核的核心板，最高频率为480Mhz，具有128KB ROM（实际上 2MB ROM 可用）、1MB RAM，外接8MB SPI Flash和8MB QSPI Flash，所具有的按键和接口如下：
 
 * 2*22 Pin 2.54mm I/O x 2
 * 4 Pin 2.54mm SW x 1
@@ -90,9 +90,9 @@ STM32H7xx Core Board 是 WeAct Studio 推出的一款基于 ARM Cortex-M7 内核
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Aug  6 2020
- 2006 - 2020 Copyright by rt-thread team
-msh >
+ / | \     5.0.0 build Oct 15 2022 16:28:21
+ 2006 - 2022 Copyright by RT-Thread team
+msh />
 ```
 ### 进阶使用
 
@@ -110,6 +110,10 @@ msh >
 
 ## 注意事项
 
+- 如果固件超过 128k ，且使用 Keil 下载请注意：
+  - 在 keil 中芯片选为 H743 ，此时会出现 2MB Flash 的下载算法，选择此下载算法下载程序
+  - 将该文件夹下 STM32H7x_2048.FLM 放到 `Keil安装目录\Keil_v5\ARM\Flash` 中，并选择此下载算法
+  - 其余方式下载代码情况类似
 - 调试串口为串口1 映射说明
 
     PB14     ------> USART1_TX

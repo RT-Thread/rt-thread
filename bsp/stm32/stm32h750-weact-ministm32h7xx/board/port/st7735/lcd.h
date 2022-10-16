@@ -18,19 +18,32 @@
 #define GREEN         	 0x07E0
 #define CYAN          	 0x7FFF
 #define YELLOW        	 0xFFE0
-#define BROWN 			 0XBC40 //×ØÉ«
-#define BRRED 			 0XFC07 //×ØºìÉ«
-#define GRAY  			 0X8430 //»ÒÉ«
-#define DARKBLUE      	 0X01CF	//ÉîÀ¶É«
-#define LIGHTBLUE      	 0X7D7C	//Ç³À¶É«
-#define GRAYBLUE       	 0X5458 //»ÒÀ¶É«
+#define BROWN 			 0XBC40 //æ£•è‰²
+#define BRRED 			 0XFC07 //æ£•çº¢è‰²
+#define GRAY  			 0X8430 //ç°è‰²
+#define DARKBLUE      	 0X01CF	//æ·±è“è‰²
+#define LIGHTBLUE      	 0X7D7C	//æµ…è“è‰²
+#define GRAYBLUE       	 0X5458 //ç°è“è‰²
+
+// lcd spi
+#define LCD_SPI_DEVICE_NAME     "spi40"
+#define LCD_PWM_DEV_NAME        "pwm1"
+#define LCD_PWM_DEV_CHANNEL     (2)
+#define LCD_PWM_DEV_TIME        (10000)//pwm frequency:100K = 10000ns
+#define MAX_BRIGHTNESS          LCD_PWM_DEV_TIME
+
+#define WR_RS_PIN               GET_PIN(E, 13)
+#define CS_PIN                  GET_PIN(E, 11)
+
+//lcd display gpio
+#define LCD_DISP_GPIO_NUM       GET_PIN(E, 10)
+
+// lcd brush color
+#define BRUSH_POINT_COLOR       WHITE
+#define BRUSH_BACK_COLOR        BLACK
 
 extern ST7735_Object_t st7735_pObj;
 extern uint32_t st7735_id;
-
-extern uint16_t POINT_COLOR;	//»­±ÊÑÕÉ«
-extern uint16_t BACK_COLOR;  //±³¾°É«
-
 
 void LCD_SetBrightness(uint32_t Brightness);
 uint32_t LCD_GetBrightness(void);
