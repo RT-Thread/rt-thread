@@ -22,19 +22,19 @@
 
 /** @addtogroup BSP
   * @{
-  */ 
+  */
 
 /** @addtogroup Components
   * @{
-  */ 
-  
+  */
+
 /** @addtogroup ST7735_REG
   * @{
   */
- 
+
 /** @addtogroup ST7735_REG_Exported_Functions
   * @{
-  */   
+  */
 
 /**
   * @brief  Read ST7735 register
@@ -87,18 +87,18 @@ int32_t st7735_recv_data(st7735_ctx_t *ctx, uint8_t *pdata, uint32_t length)
 
 /**
   * @}
-  */ 
-
-/**
-  * @}
-  */ 
-  
-/**
-  * @}
-  */ 
+  */
 
 /**
   * @}
   */
-  
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
