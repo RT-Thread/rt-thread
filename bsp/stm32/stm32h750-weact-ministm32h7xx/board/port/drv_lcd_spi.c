@@ -11,10 +11,11 @@
 #include <board.h>
 
 #ifdef BSP_USING_LCD_SPI
+#include <lcd.h>
 #include <lcd_port.h>
 #include <string.h>
 
-// #define DRV_DEBUG
+#define DRV_DEBUG
 #define LOG_TAG             "drv.lcd"
 #include <drv_log.h>
 
@@ -53,46 +54,6 @@ static rt_err_t drv_lcd_control(struct rt_device *device, int cmd, void *args)
     case RTGRAPHIC_CTRL_RECT_UPDATE:
     {
         LCD_FillRGBRect(0, 0, _lcd.lcd_info.framebuffer, _lcd.lcd_info.width, _lcd.lcd_info.height);
-        /* update */
-        // if (_lcd.cur_buf)
-        // {
-        //     /* back_buf is being used */
-        //     memcpy(_lcd.front_buf, _lcd.lcd_info.framebuffer, LCD_BUF_SIZE);
-        //     /* Configure the color frame buffer start address */
-        //     LCD_FillRGBRect(0, 0, _lcd.front_buf, _lcd.lcd_info.width, _lcd.lcd_info.height);
-        //     _lcd.cur_buf = 0;
-        // }
-        // else
-        // {
-        //     /* front_buf is being used */
-        //     memcpy(_lcd.back_buf, _lcd.lcd_info.framebuffer, LCD_BUF_SIZE);
-        //     /* Configure the color frame buffer start address */
-        //     LCD_FillRGBRect(0, 0, _lcd.back_buf, _lcd.lcd_info.width, _lcd.lcd_info.height);
-        //     _lcd.cur_buf = 1;
-        // }
-        // rt_sem_take(&_lcd.lcd_lock, RT_TICK_PER_SECOND / 20);
-
-         // /* update */
-        // if (_lcd.cur_buf)
-        // {
-        //     /* back_buf is being used */
-        //     memcpy(_lcd.front_buf, _lcd.lcd_info.framebuffer, LCD_BUF_SIZE);
-        //     /* Configure the color frame buffer start address */
-        //     LTDC_LAYER(&LtdcHandle, 0)->CFBAR &= ~(LTDC_LxCFBAR_CFBADD);
-        //     LTDC_LAYER(&LtdcHandle, 0)->CFBAR = (uint32_t)(_lcd.front_buf);
-        //     _lcd.cur_buf = 0;
-        // }
-        // else
-        // {
-        //     /* front_buf is being used */
-        //     memcpy(_lcd.back_buf, _lcd.lcd_info.framebuffer, LCD_BUF_SIZE);
-        //     /* Configure the color frame buffer start address */
-        //     LTDC_LAYER(&LtdcHandle, 0)->CFBAR &= ~(LTDC_LxCFBAR_CFBADD);
-        //     LTDC_LAYER(&LtdcHandle, 0)->CFBAR = (uint32_t)(_lcd.back_buf);
-        //     _lcd.cur_buf = 1;
-        // }
-        // rt_sem_take(&_lcd.lcd_lock, RT_TICK_PER_SECOND / 20);
-        // HAL_LTDC_Relaod(&LtdcHandle, LTDC_SRCR_VBR);
     }
     break;
 
@@ -137,32 +98,6 @@ rt_err_t stm32_lcd_init(struct drv_lcd_device *lcd)
 
     return result;
 }
-#if defined(LCD_BACKLIGHT_USING_PWM)
-void turn_on_lcd_backlight(void)
-{
-    struct rt_device_pwm *pwm_dev;
-
-    /* turn on the LCD backlight */
-    pwm_dev = (struct rt_device_pwm *)rt_device_find(LCD_PWM_DEV_NAME);
-    /* pwm frequency:100K = 10000ns */
-    rt_pwm_set(pwm_dev, LCD_PWM_DEV_CHANNEL, 10000, 5000);
-    rt_pwm_enable(pwm_dev, LCD_PWM_DEV_CHANNEL);
-}
-#elif defined(LCD_BACKLIGHT_USING_GPIO)
-void turn_on_lcd_backlight(void)
-{
-    rt_pin_mode(LCD_BL_GPIO_NUM, PIN_MODE_OUTPUT);
-    rt_pin_mode(LCD_DISP_GPIO_NUM, PIN_MODE_OUTPUT);
-
-    rt_pin_write(LCD_DISP_GPIO_NUM, PIN_HIGH);
-    rt_pin_write(LCD_BL_GPIO_NUM, PIN_HIGH);
-}
-#else
-void turn_on_lcd_backlight(void)
-{
-
-}
-#endif
 
 #ifdef RT_USING_DEVICE_OPS
 const static struct rt_device_ops lcd_ops =
@@ -234,7 +169,7 @@ int drv_lcd_hw_init(void)
     }
     else
     {
-        turn_on_lcd_backlight();
+        LCD_SetBrightness(MAX_BRIGHTNESS);
     }
 
 __exit:
