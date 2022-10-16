@@ -89,9 +89,9 @@ ST7735_LCD_Drv_t   ST7735_LCD_Driver =
 static uint32_t OrientationTab[4][2] =
 {
   {0x48U , 0xC8U}, /* Portrait orientation choice of LCD screen               */
-  {0x88U , 0x08U}, /* Portrait rotated 180° orientation choice of LCD screen  */
+  {0x88U , 0x08U}, /* Portrait rotated 180Â° orientation choice of LCD screen  */
   {0x28U , 0x68U}, /* Landscape orientation choice of LCD screen              */
-  {0xE8U , 0xA8U}  /* Landscape rotated 180° orientation choice of LCD screen */
+  {0xE8U , 0xA8U}  /* Landscape rotated 180Â° orientation choice of LCD screen */
 };
 
 static ST7735_Ctx_t ST7735Ctx;
@@ -177,16 +177,16 @@ int32_t ST7735_Init(ST7735_Object_t *pObj, uint32_t ColorCoding, uint32_t Orient
   }
   else
   {
-		/* Out of sleep mode, 0 args, delay 120ms */
+        /* Out of sleep mode, 0 args, delay 120ms */
     tmp = 0x00U;
     ret = st7735_write_reg(&pObj->Ctx, ST7735_SW_RESET, &tmp, 0);
-		(void)ST7735_IO_Delay(pObj, 120);
+        (void)ST7735_IO_Delay(pObj, 120);
 
     /* Out of sleep mode, 0 args, no delay */
     tmp = 0x00U;
     ret += st7735_write_reg(&pObj->Ctx, ST7735_SLEEP_OUT, &tmp, 1);
 
-		/* Frame rate ctrl - normal mode, 3 args:Rate = fosc/(1x2+40) * (LINE+2C+2D)*/
+        /* Frame rate ctrl - normal mode, 3 args:Rate = fosc/(1x2+40) * (LINE+2C+2D)*/
     ret += st7735_write_reg(&pObj->Ctx, ST7735_FRAME_RATE_CTRL1, &tmp, 0);
     tmp = 0x01U;
     ret += st7735_send_data(&pObj->Ctx, &tmp, 1);
@@ -384,7 +384,7 @@ int32_t ST7735_ReadID(ST7735_Object_t *pObj, uint32_t *Id)
   {
     ret = ST7735_ERROR;
   }
-	else if(st7735_read_reg(&pObj->Ctx, ST7735_READ_ID3, &tmp[2]) != ST7735_OK)
+    else if(st7735_read_reg(&pObj->Ctx, ST7735_READ_ID3, &tmp[2]) != ST7735_OK)
   {
     ret = ST7735_ERROR;
   }
@@ -392,7 +392,7 @@ int32_t ST7735_ReadID(ST7735_Object_t *pObj, uint32_t *Id)
   {
 
     *Id = ((uint32_t)tmp[2])<<0| ((uint32_t)tmp[1])<<8 | ((uint32_t)tmp[0])<<16;
-		//*Id = __rbit(*Id);
+        //*Id = __rbit(*Id);
     ret = ST7735_OK;
   }
 
@@ -501,7 +501,7 @@ int32_t ST7735_SetOrientation(ST7735_Object_t *pObj, uint32_t Orientation)
     ST7735Ctx.Width  = ST7735_HEIGHT;
     ST7735Ctx.Height = ST7735_WIDTH;
   }
-	ST7735Ctx.Orientation = Orientation;
+    ST7735Ctx.Orientation = Orientation;
 
   ret = ST7735_SetDisplayWindow(pObj, 0U, 0U, ST7735Ctx.Width, ST7735Ctx.Height);
 
@@ -545,27 +545,27 @@ int32_t ST7735_SetCursor(ST7735_Object_t *pObj, uint32_t Xpos, uint32_t Ypos)
   int32_t ret;
   uint8_t tmp;
 
-	/* Cursor calibration */
-	if(ST7735Ctx.Orientation <= ST7735_ORIENTATION_PORTRAIT_ROT180)
-	{
+    /* Cursor calibration */
+    if(ST7735Ctx.Orientation <= ST7735_ORIENTATION_PORTRAIT_ROT180)
+    {
 #if IS_BOE_PANEL
-		Xpos += 24;
-		Ypos += 0;
+        Xpos += 24;
+        Ypos += 0;
 #else
-		Xpos += 26;
-		Ypos += 1;
+        Xpos += 26;
+        Ypos += 1;
 #endif
-	}
-	else
-	{
+    }
+    else
+    {
 #if IS_BOE_PANEL
-		Xpos += 0;
-		Ypos += 24;
+        Xpos += 0;
+        Ypos += 24;
 #else
-		Xpos += 1;
-		Ypos += 26;
+        Xpos += 1;
+        Ypos += 26;
 #endif
-	}
+    }
 
   ret = st7735_write_reg(&pObj->Ctx, ST7735_CASET, &tmp, 0);
   tmp = (uint8_t)(Xpos >> 8U);
@@ -949,27 +949,27 @@ static int32_t ST7735_SetDisplayWindow(ST7735_Object_t *pObj, uint32_t Xpos, uin
   int32_t ret;
   uint8_t tmp;
 
-	/* Cursor calibration */
-	if(ST7735Ctx.Orientation <= ST7735_ORIENTATION_PORTRAIT_ROT180)
-	{
+    /* Cursor calibration */
+    if(ST7735Ctx.Orientation <= ST7735_ORIENTATION_PORTRAIT_ROT180)
+    {
 #if IS_BOE_PANEL
-		Xpos += 24;
-		Ypos += 0;
+        Xpos += 24;
+        Ypos += 0;
 #else
-		Xpos += 26;
-		Ypos += 1;
+        Xpos += 26;
+        Ypos += 1;
 #endif
-	}
-	else
-	{
+    }
+    else
+    {
 #if IS_BOE_PANEL
-		Xpos += 0;
-		Ypos += 24;
+        Xpos += 0;
+        Ypos += 24;
 #else
-		Xpos += 1;
-		Ypos += 26;
+        Xpos += 1;
+        Ypos += 26;
 #endif
-	}
+    }
 
   /* Column addr set, 4 args, no delay: XSTART = Xpos, XEND = (Xpos + Width - 1) */
   ret = st7735_write_reg(&pObj->Ctx, ST7735_CASET, &tmp, 0);

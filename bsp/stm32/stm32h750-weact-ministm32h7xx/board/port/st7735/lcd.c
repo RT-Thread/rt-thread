@@ -12,14 +12,14 @@ static int32_t lcd_senddata(uint8_t* pdata,uint32_t length);
 static int32_t lcd_recvdata(uint8_t* pdata,uint32_t length);
 
 ST7735_IO_t st7735_pIO = {
-	lcd_init,
-	RT_NULL,
-	RT_NULL,
-	lcd_writereg,
-	lcd_readreg,
-	lcd_senddata,
-	lcd_recvdata,
-	RT_NULL
+    lcd_init,
+    RT_NULL,
+    RT_NULL,
+    lcd_writereg,
+    lcd_readreg,
+    lcd_senddata,
+    lcd_recvdata,
+    RT_NULL
 };
 ST7735_Object_t st7735_pObj;
 uint32_t st7735_id;
@@ -81,63 +81,63 @@ void LCD_ShowChar(uint16_t x,uint16_t y,uint8_t num,uint8_t size,uint8_t mode)
     num=num-' ';//得到偏移后的值
     count = 0;
 
-	if(!mode) //非叠加方式
-	{
-		for(t=0;t<size;t++)
-		{
-			if(size==12)temp=asc2_1206[num][t];  //调用1206字体
-			else temp=asc2_1608[num][t];		 //调用1608字体
+    if(!mode) //非叠加方式
+    {
+        for(t=0;t<size;t++)
+        {
+            if(size==12)temp=asc2_1206[num][t];  //调用1206字体
+            else temp=asc2_1608[num][t];         //调用1608字体
 
-			for(t1=0;t1<8;t1++)
-			{
-				if(temp&0x80)
-					write[count][t/2]=(BRUSH_POINT_COLOR&0xFF)<<8|BRUSH_POINT_COLOR>>8;
-				else
-					write[count][t/2]=(BRUSH_BACK_COLOR&0xFF)<<8|BRUSH_BACK_COLOR>>8;
+            for(t1=0;t1<8;t1++)
+            {
+                if(temp&0x80)
+                    write[count][t/2]=(BRUSH_POINT_COLOR&0xFF)<<8|BRUSH_POINT_COLOR>>8;
+                else
+                    write[count][t/2]=(BRUSH_BACK_COLOR&0xFF)<<8|BRUSH_BACK_COLOR>>8;
 
-				count ++;
-				if(count >= size) count =0;
+                count ++;
+                if(count >= size) count =0;
 
-				temp<<=1;
-				y++;
-				if(y>=h){return;}//超区域了
-				if((y-y0)==size)
-				{
-					y=y0;
-					x++;
-					if(x>=w){return;}//超区域了
-					break;
-				}
-			}
-		}
-	}
-	else//叠加方式
-	{
-		for(t=0;t<size;t++)
-		{
-			if(size==12)temp=asc2_1206[num][t];  //调用1206字体
-			else temp=asc2_1608[num][t];		 //调用1608字体
-			for(t1=0;t1<8;t1++)
-			{
-				if(temp&0x80)
-					write[count][t/2]=(BRUSH_POINT_COLOR&0xFF)<<8|BRUSH_POINT_COLOR>>8;
-				count ++;
-				if(count >= size) count =0;
+                temp<<=1;
+                y++;
+                if(y>=h){return;}//超区域了
+                if((y-y0)==size)
+                {
+                    y=y0;
+                    x++;
+                    if(x>=w){return;}//超区域了
+                    break;
+                }
+            }
+        }
+    }
+    else//叠加方式
+    {
+        for(t=0;t<size;t++)
+        {
+            if(size==12)temp=asc2_1206[num][t];  //调用1206字体
+            else temp=asc2_1608[num][t];         //调用1608字体
+            for(t1=0;t1<8;t1++)
+            {
+                if(temp&0x80)
+                    write[count][t/2]=(BRUSH_POINT_COLOR&0xFF)<<8|BRUSH_POINT_COLOR>>8;
+                count ++;
+                if(count >= size) count =0;
 
-				temp<<=1;
-				y++;
-				if(y>=h){return;}//超区域了
-				if((y-y0)==size)
-				{
-					y=y0;
-					x++;
-					if(x>=w){return;}//超区域了
-					break;
-				}
-			}
-		}
-	}
-	ST7735_FillRGBRect(&st7735_pObj,x0,y0,(uint8_t *)&write,size==12?6:8,size);
+                temp<<=1;
+                y++;
+                if(y>=h){return;}//超区域了
+                if((y-y0)==size)
+                {
+                    y=y0;
+                    x++;
+                    if(x>=w){return;}//超区域了
+                    break;
+                }
+            }
+        }
+    }
+    ST7735_FillRGBRect(&st7735_pObj,x0,y0,(uint8_t *)&write,size==12?6:8,size);
 }
 
 //显示字符串
@@ -147,9 +147,9 @@ void LCD_ShowChar(uint16_t x,uint16_t y,uint8_t num,uint8_t size,uint8_t mode)
 //*p:字符串起始地址
 void LCD_ShowString(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint8_t size,uint8_t *p)
 {
-	uint8_t x0=x;
-	width+=x;
-	height+=y;
+    uint8_t x0=x;
+    width+=x;
+    height+=y;
     while((*p<='~')&&(*p>=' '))//判断是不是非法字符!
     {
         if(x>=width){x=x0;y+=size;}
@@ -167,58 +167,58 @@ void LCD_FillRGBRect(uint32_t Xpos, uint32_t Ypos, uint8_t *pData, uint32_t Widt
 
 static int32_t lcd_init(void)
 {
-	return ST7735_OK;
+    return ST7735_OK;
 }
 
 static int32_t lcd_writereg(uint8_t reg,uint8_t* pdata,uint32_t length)
 {
     int32_t result;
-	LCD_CS_RESET;
-	LCD_RS_RESET;
+    LCD_CS_RESET;
+    LCD_RS_RESET;
     result = rt_spi_send(spi_dev_lcd, &reg, 1);
-	LCD_RS_SET;
-	if(length > 0)
+    LCD_RS_SET;
+    if(length > 0)
         result += rt_spi_send(spi_dev_lcd, pdata, length);
-	LCD_CS_SET;
+    LCD_CS_SET;
     return ((result == length+1)?0:-1);
 }
 
 static int32_t lcd_readreg(uint8_t reg,uint8_t* pdata)
 {
     int32_t result;
-	LCD_CS_RESET;
-	LCD_RS_RESET;
+    LCD_CS_RESET;
+    LCD_RS_RESET;
 
-	result = rt_spi_send(spi_dev_lcd, &reg, 1);
-	LCD_RS_SET;
-	result += rt_spi_recv(spi_dev_lcd, pdata, 1);
-	LCD_CS_SET;
+    result = rt_spi_send(spi_dev_lcd, &reg, 1);
+    LCD_RS_SET;
+    result += rt_spi_recv(spi_dev_lcd, pdata, 1);
+    LCD_CS_SET;
     return ((result == 2)?0:-1);
 }
 
 static int32_t lcd_senddata(uint8_t* pdata,uint32_t length)
 {
     int32_t result;
-	LCD_CS_RESET;
-	//LCD_RS_SET;
-	result =rt_spi_send(spi_dev_lcd, pdata, length);
-	LCD_CS_SET;
+    LCD_CS_RESET;
+    //LCD_RS_SET;
+    result =rt_spi_send(spi_dev_lcd, pdata, length);
+    LCD_CS_SET;
     return ((result == length)?0:-1);
 }
 
 static int32_t lcd_recvdata(uint8_t* pdata,uint32_t length)
 {
     int32_t result;
-	LCD_CS_RESET;
-	//LCD_RS_SET;
-	result = rt_spi_recv(spi_dev_lcd, pdata, length);
-	LCD_CS_SET;
+    LCD_CS_RESET;
+    //LCD_RS_SET;
+    result = rt_spi_recv(spi_dev_lcd, pdata, length);
+    LCD_CS_SET;
     return ((result == length)?0:-1);
 }
 
 static int LCD_Init(void)
 {
-	rt_pin_mode(WR_RS_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(WR_RS_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(CS_PIN, PIN_MODE_OUTPUT);
 
     spi_dev_lcd = (struct rt_spi_device *)rt_device_find(LCD_SPI_DEVICE_NAME);
@@ -229,13 +229,13 @@ static int LCD_Init(void)
     }
 
     ST7735_RegisterBusIO(&st7735_pObj,&st7735_pIO);
-	if(ST7735_ERROR == ST7735_LCD_Driver.Init(&st7735_pObj,ST7735_FORMAT_RBG565,ST7735_ORIENTATION_LANDSCAPE_ROT180))
+    if(ST7735_ERROR == ST7735_LCD_Driver.Init(&st7735_pObj,ST7735_FORMAT_RBG565,ST7735_ORIENTATION_LANDSCAPE_ROT180))
     {
         LOG_E("st7735 init failed!");
         // return ;
     }
     ST7735_LCD_Driver.FillRect(&st7735_pObj,0,0,160,80,BLACK);
-	ST7735_LCD_Driver.ReadID(&st7735_pObj,&st7735_id);
+    ST7735_LCD_Driver.ReadID(&st7735_pObj,&st7735_id);
     ST7735_LCD_Driver.DisplayOn(&st7735_pObj);
     LOG_D("lcd id:0X%08X", st7735_id);
     LOG_D("chip id:0X%08X", HAL_GetDEVID());
@@ -263,21 +263,21 @@ INIT_COMPONENT_EXPORT(LCD_Init);
 #ifdef FINSH_USING_MSH
 static int show_logo(int argc, char **argv)
 {
-	uint8_t text[20];
+    uint8_t text[20];
 
     LCD_SetBrightness(MAX_BRIGHTNESS);
 
-	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo);
+    ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo);
     rt_thread_mdelay(1000);
 
-	ST7735_LCD_Driver.FillRect(&st7735_pObj,0,0,160,80,BLACK);
+    ST7735_LCD_Driver.FillRect(&st7735_pObj,0,0,160,80,BLACK);
 
-	sprintf((char *)&text,"WeAct Studio");
-	LCD_ShowString(4,4,160,16,16,text);
-	sprintf((char *)&text,"STM32H7xx 0x%X",HAL_GetDEVID());
-	LCD_ShowString(4,22,160,16,16,text);
-	sprintf((char *)&text,"LCD ID: 0x%X",st7735_id);
-	LCD_ShowString(4,40,160,16,16,text);
+    sprintf((char *)&text,"WeAct Studio");
+    LCD_ShowString(4,4,160,16,16,text);
+    sprintf((char *)&text,"STM32H7xx 0x%X",HAL_GetDEVID());
+    LCD_ShowString(4,22,160,16,16,text);
+    sprintf((char *)&text,"LCD ID: 0x%X",st7735_id);
+    LCD_ShowString(4,40,160,16,16,text);
     return 0;
 }
 MSH_CMD_EXPORT(show_logo, show logo);
