@@ -894,7 +894,7 @@ RTM_EXPORT(rt_mutex_detach);
 
 /**
  * @brief drop a thread from the suspend list of mutex
- * 
+ *
  * @param mutex is a pointer to a mutex object.
  * @param thread is the thread should be dropped from mutex.
  */
@@ -942,7 +942,7 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
 
 /**
  * @brief set the prioceiling attribute of the mutex.
- * 
+ *
  * @param mutex is a pointer to a mutex object.
  * @param priority is the priority should be set to mutex.
  *
@@ -969,9 +969,9 @@ RTM_EXPORT(rt_mutex_setprioceiling);
 
 /**
  * @brief set the prioceiling attribute of the mutex.
- * 
+ *
  * @param mutex is a pointer to a mutex object.
- * 
+ *
  * @return return the current priority ceiling of the mutex.
  */
 rt_uint8_t rt_mutex_getprioceiling(rt_mutex_t mutex)
