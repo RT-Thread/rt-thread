@@ -16,7 +16,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select PKG_USING_LITTLEFS
         select RT_USING_MTD_NOR
-        select PKG_USING_FAL
+        select RT_USING_FAL
         select FAL_USING_SFUD_PORT
         select RT_USING_SFUD
         select RT_SFUD_USING_SFDP
@@ -25,6 +25,7 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (W25Q64)"
         select BSP_USING_QSPI
+        select FAL_USING_SFUD_PORT
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
         default n
@@ -39,10 +40,16 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM1
         select BSP_USING_PWM1_CH2
         default n
+
         if BSP_USING_LCD_SPI
-            config LCD_BACKLIGHT_USING_PWM
-                bool "Enable back light(tim1_ch2 pwm1)"
-                default y
+            choice
+                prompt "choice back light"
+                default LCD_BACKLIGHT_USING_GPIO
+                config LCD_BACKLIGHT_USING_PWM
+                    bool "LCD_BACKLIGHT_USING_PWM(tim1_ch2 pwm1)"
+                config LCD_BACKLIGHT_USING_GPIO
+                    bool "LCD_BACKLIGHT_USING_GPIO(PE10)"
+            endchoice
         endif
 
 endmenu
@@ -88,10 +95,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI4 BUS"
                 default n
         endif
-
-    config BSP_QSPI_USING_DMA
-        bool "Enable QSPI DMA support"
-        default n
 
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
@@ -173,7 +176,7 @@ menu "On-chip Peripheral Drivers"
         select BSP_USBD_PHY_ULPI
         default n
 
-    source "libraries/HAL_Drivers/Kconfig"
+    source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
 

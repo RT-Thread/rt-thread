@@ -25,10 +25,12 @@
 #ifndef _FAL_CFG_H_
 #define _FAL_CFG_H_
 
+#ifdef RT_USING_FAL
+
 #include <rtconfig.h>
 #include <board.h>
 
-#define NOR_FLASH_DEV_NAME             "W25Q64"
+#define FLASH_SIZE_GRANULARITY_128K     (16 * 128 * 1024)
 
 /* ===================== Flash device Configuration ========================= */
 extern const struct fal_flash_dev stm32_onchip_flash_128k;
@@ -45,12 +47,14 @@ extern struct fal_flash_dev nor_flash1;
 /* ====================== Partition Configuration ========================== */
 #ifdef FAL_PART_HAS_TABLE_CFG
 /* partition table */
-#define FAL_PART_TABLE                                                                    \
-{                                                                                         \
-    {FAL_PART_MAGIC_WORD, "bootloader", "onchip_flash_128k",        0,      128*1024, 0}, \
-    {FAL_PART_MAGIC_WORD, "filesystem",  NOR_FLASH_DEV_NAME,        0,   8*1024*1024, 0}, \
-    {FAL_PART_MAGIC_WORD,    "fs_qspi",          "W25Q64_q",        0,   8*1024*1024, 0}, \
+#define FAL_PART_TABLE                                                                              \
+{                                                                                                   \
+    {FAL_PART_MAGIC_WORD, "bootloader",           "onchip_flash_128k",        0,      128*1024, 0}, \
+    {FAL_PART_MAGIC_WORD, "filesystem",  FAL_USING_NOR_FLASH_DEV_NAME,        0,   8*1024*1024, 0}, \
+    {FAL_PART_MAGIC_WORD,    "fs_qspi",                    "W25Q64_q",        0,   8*1024*1024, 0}, \
 }
 #endif /* FAL_PART_HAS_TABLE_CFG */
+
+#endif /* RT_USING_FAL */
 
 #endif /* _FAL_CFG_H_ */
