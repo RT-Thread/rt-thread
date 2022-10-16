@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,8 +26,8 @@
 
 static int rt_hw_spi_flash_with_sfud_init(void)
 {
-	rt_err_t err = RT_EOK;
-	rt_hw_spi_device_attach("spi1", "spi10", SPI_CS_GPIO, SPI_CS_PIN);
+    rt_err_t err = RT_EOK;
+    rt_hw_spi_device_attach("spi1", "spi10", SPI_CS_GPIO, SPI_CS_PIN);
 
     /* init W25Q16    , And register as a block device */
     if (RT_NULL == rt_sfud_flash_probe(FAL_USING_NOR_FLASH_DEV_NAME, "spi10"))
