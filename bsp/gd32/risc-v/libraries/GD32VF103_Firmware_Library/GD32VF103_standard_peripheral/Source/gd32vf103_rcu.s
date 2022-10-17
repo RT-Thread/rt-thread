@@ -20820,7 +20820,7 @@ rcu_clock_freq_get:
 .LASF295:
 	.string	"__GCC_ATOMIC_LLONG_LOCK_FREE 1"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF2351:
 	.string	"TIMER_CHCTL0_CH0COMSEN BIT(3)"
 .LASF902:

@@ -9208,7 +9208,7 @@ handle_trap:
 .LASF492:
 	.string	"_WIDE_ORIENT 1"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF369:
 	.string	"long"
 .LASF1641:

@@ -16764,7 +16764,7 @@ system_clock_108m_hxtal:
 .LASF1673:
 	.string	"GPIO_OCTL_OCTL6 BIT(6)"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF2681:
 	.string	"TIMER_CHCTL0_CH0COMSEN BIT(3)"
 .LASF901:

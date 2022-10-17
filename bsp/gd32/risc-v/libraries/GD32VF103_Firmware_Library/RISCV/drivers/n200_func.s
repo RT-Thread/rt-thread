@@ -25317,7 +25317,7 @@ eclic_set_negedge_trig:
 .LASF3288:
 	.string	"__scanflike(fmtarg,firstvararg) __attribute__((__format__ (__scanf__, fmtarg, firstvararg)))"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF2687:
 	.string	"TIMER_CHCTL0_CH1COMCTL BITS(12,14)"
 .LASF3271:

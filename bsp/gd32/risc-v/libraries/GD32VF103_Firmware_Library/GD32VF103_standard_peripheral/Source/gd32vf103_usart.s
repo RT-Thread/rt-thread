@@ -19640,7 +19640,7 @@ usart_interrupt_flag_clear:
 .LASF3305:
 	.string	"usart_deinit"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF2682:
 	.string	"TIMER_CHCTL0_CH0COMSEN BIT(3)"
 .LASF902:

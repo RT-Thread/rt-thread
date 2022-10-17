@@ -21940,7 +21940,7 @@ _fini:
 .LASF3288:
 	.string	"__scanflike(fmtarg,firstvararg) __attribute__((__format__ (__scanf__, fmtarg, firstvararg)))"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF3271:
 	.string	"__noinline __attribute__ ((__noinline__))"
 .LASF2681:

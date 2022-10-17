@@ -88,7 +88,7 @@
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
-/* #define RT_USING_NEWLIB */
+/* #define RT_USING_NEWLIBC */
 
 /* SECTION: a mini libc */
 

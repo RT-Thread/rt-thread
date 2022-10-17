@@ -16942,7 +16942,7 @@ exti_software_interrupt_disable:
 .LASF3229:
 	.string	"D:\\rt-thread\\bsp\\gd32\\risc-v\\libraries\\GD32VF103_Firmware_Library\\GD32VF103_standard_peripheral\\Source\\gd32vf103_exti.c"
 .LASF326:
-	.string	"RT_USING_NEWLIB 1"
+	.string	"RT_USING_NEWLIBC 1"
 .LASF2560:
 	.string	"TIMER_CHCTL0_CH0COMSEN BIT(3)"
 .LASF902:

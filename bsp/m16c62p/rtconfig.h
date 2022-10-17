@@ -76,6 +76,6 @@
 ///#define FINSH_USING_SYMTAB
 ///#define FINSH_USING_DESCRIPTION
 
-//#define RT_USING_NEWLIB
+//#define RT_USING_NEWLIBC
 
 #endif
