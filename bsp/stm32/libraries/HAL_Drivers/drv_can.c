@@ -737,10 +737,6 @@ void CAN1_TX_IRQHandler(void)
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
     }
-    else
-    {
-      rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-    }
     rt_interrupt_leave();
 }
 
@@ -811,6 +807,21 @@ void CAN1_SCE_IRQHandler(void)
             }
             SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
         }
+        else
+        {
+            if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
+            {
+                SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ0);/*Abort the send request, trigger the TX interrupt,release completion quantity*/
+            }
+            else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR1))
+            {
+                SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ1);
+            }
+            else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR2))
+            {
+                SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ2);
+            }
+        }
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -877,10 +888,6 @@ void CAN2_TX_IRQHandler(void)
         }
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
-    }
-    else
-    {
-      rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
     }
     rt_interrupt_leave();
 }
@@ -951,6 +958,21 @@ void CAN2_SCE_IRQHandler(void)
                 rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
             }
             SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
+        }
+        else
+        {
+            if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
+            {
+                SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ0);/*Abort the send request, trigger the TX interrupt,release completion quantity*/
+            }
+            else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR1))
+            {
+                SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ1);
+            }
+            else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR2))
+            {
+                SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ2);
+            }
         }
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
