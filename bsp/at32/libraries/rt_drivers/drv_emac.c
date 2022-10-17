@@ -8,6 +8,7 @@
  * 2022-05-16     shelton      first version
  * 2022-07-11     shelton      optimize code to improve network throughput
  *                             performance
+ * 2022-10-15     shelton      optimize code
  */
 
 #include "drv_emac.h"
@@ -355,6 +356,7 @@ static rt_err_t rt_at32_emac_init(rt_device_t dev)
 
     emac_control_para_init(&mac_control_para);
     mac_control_para.auto_nego = EMAC_AUTO_NEGOTIATION_ON;
+
     if(emac_phy_init(&mac_control_para) == ERROR)
     {
         LOG_E("emac hardware init failed");
@@ -376,8 +378,19 @@ static rt_err_t rt_at32_emac_init(rt_device_t dev)
     /* set emac dma tx link list */
     emac_dma_descriptor_list_address_set(EMAC_DMA_TRANSMIT, dma_tx_dscr_tab, tx_buff, EMAC_NUM_TX_BUF);
 
-    /* emac interrupt init */
+    emac_dma_para_init(&dma_control_para);
+    dma_control_para.rsf_enable = TRUE;
+    dma_control_para.tsf_enable = TRUE;
+    dma_control_para.osf_enable = TRUE;
+    dma_control_para.aab_enable = TRUE;
+    dma_control_para.usp_enable = TRUE;
+    dma_control_para.fb_enable = TRUE;
+    dma_control_para.flush_rx_disable = TRUE;
+    dma_control_para.rx_dma_pal = EMAC_DMA_PBL_32;
+    dma_control_para.tx_dma_pal = EMAC_DMA_PBL_32;
+    dma_control_para.priority_ratio = EMAC_DMA_2_RX_1_TX;
     emac_dma_config(&dma_control_para);
+    /* emac interrupt init */
     emac_dma_interrupt_enable(EMAC_DMA_INTERRUPT_NORMAL_SUMMARY, TRUE);
     emac_dma_interrupt_enable(EMAC_DMA_INTERRUPT_RX, TRUE);
     nvic_irq_enable(EMAC_IRQn, 0x07, 0);
@@ -467,6 +480,7 @@ rt_err_t rt_at32_emac_tx(rt_device_t dev, struct pbuf *p)
 #ifdef EMAC_TX_DUMP
     dump_hex(p->payload, p->tot_len);
 #endif
+
     /* prepare transmit descriptors to give to dma */
     LOG_D("transmit frame length :%d", p->tot_len);
 

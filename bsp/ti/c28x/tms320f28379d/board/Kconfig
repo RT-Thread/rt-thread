@@ -980,9 +980,51 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_ADC
         if BSP_USING_ADC
-            config BSP_USING_ADC1
+            menuconfig BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
+                if BSP_USING_ADC1
+                    choice
+                        prompt "Select resolution"
+                        default BSP_ADC_USING_12BIT
+
+                        config BSP_ADC_USING_12BIT
+                            bool "ADC Using 12 bit resolution"
+
+                        config BSP_ADC_USING_16BIT
+                            bool "ADC Using 16 bit resolution"
+                    endchoice
+                endif
+            menuconfig BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+                if BSP_USING_ADC2
+                    choice
+                        prompt "Select resolution"
+                        default BSP_ADC_USING_12BIT
+
+                        config BSP_ADC_USING_12BIT
+                            bool "ADC Using 12 bit resolution"
+
+                        config BSP_ADC_USING_16BIT
+                            bool "ADC Using 16 bit resolution"
+                    endchoice
+                endif
+            menuconfig BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+                if BSP_USING_ADC3
+                    choice
+                        prompt "Select resolution"
+                        default BSP_ADC_USING_12BIT
+
+                        config BSP_ADC_USING_12BIT
+                            bool "ADC Using 12 bit resolution"
+
+                        config BSP_ADC_USING_16BIT
+                            bool "ADC Using 16 bit resolution"
+                    endchoice
+                endif
         endif
 
     menuconfig BSP_USING_ONCHIP_RTC
