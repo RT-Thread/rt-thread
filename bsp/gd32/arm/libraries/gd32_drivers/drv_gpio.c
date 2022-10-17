@@ -50,7 +50,7 @@ static const struct pin_index pins[] =
     GD32_PIN(26, B, 10),
     GD32_PIN(27, B, 11),
     GD32_PIN(28, B, 12),
-    GD32_PIN(39, B, 13),
+    GD32_PIN(29, B, 13),
     GD32_PIN(30, B, 14),
     GD32_PIN(31, B, 15),
 #endif

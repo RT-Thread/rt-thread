@@ -116,30 +116,30 @@ static void caculate_tim_count()
 #ifdef BSP_USING_HWTIMER3
     tim3_count = count;
     count++;
-#endif    
+#endif
 #ifdef BSP_USING_HWTIMER4
     tim4_count = count;
     count++;
-#endif    
+#endif
 #ifdef BSP_USING_HWTIMER5
     tim5_count = count;
     count++;
-#endif    
+#endif
 #ifdef BSP_USING_HWTIMER6
     tim6_count = count;
     count++;
-#endif    
+#endif
 #ifdef BSP_USING_HWTIMER7
     tim7_count = count;
     count++;
-#endif    
+#endif
 #ifdef BSP_USING_HWTIMER8
     tim8_count = count;
     count++;
 #endif
 }
 
-#define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end)))) 
+#define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end))))
 #define GET_BITS(regval, start, end) (((regval) & BITS((start),(end))) >> (start))
 
 static struct n32_hwtimer hwtimer_obj[sizeof(hwtimer_config) / sizeof(hwtimer_config[0])] = {0};
@@ -154,7 +154,7 @@ static rt_err_t n32_hwtimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *
     config = (struct n32_hwtimer_config *)timer->parent.user_data;
 
     RCC_GetClocksFreqValue(&RCC_ClockFreq);
-    
+
     switch (cmd)
     {
     case HWTIMER_CTRL_FREQ_SET:
@@ -176,7 +176,7 @@ static rt_err_t n32_hwtimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *
         {
             clk = clk * 2;
         }
-        pre = (clk / * ((uint32_t *)args)) - 1;        
+        pre = (clk / * ((uint32_t *)args)) - 1;
         TIM_ConfigPrescaler(config->timer_periph, pre, TIM_PSC_RELOAD_MODE_IMMEDIATE);
         config->timer_periph->EVTGEN |= TIM_EVTGEN_UDGN;
     }
@@ -237,10 +237,10 @@ static void n32_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
         uint32_t clk;
         uint8_t clkpre;
         uint32_t pre;
-        
+
         RCC_GetClocksFreqValue(&RCC_ClockFreq);
         TIM_DeInit(config->timer_periph);
-        
+
         if (config->timer_periph != TIM1 && config->timer_periph != TIM8)
         {
             clk = RCC_ClockFreq.Pclk1Freq;
@@ -256,14 +256,14 @@ static void n32_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
             clk = clk * 2;
         }
         pre = (clk / 10000) - 1;
-        
+
         /* Time Base configuration */
         TIM_TimeBaseStructure.Prescaler = pre;
         TIM_TimeBaseStructure.CntMode   = TIM_CNT_MODE_UP;
         TIM_TimeBaseStructure.Period    = 10000 - 1;
         TIM_TimeBaseStructure.ClkDiv    = TIM_CLK_DIV1;
         TIM_TimeBaseStructure.RepetCnt  = 0;
-        
+
         if (timer->info->cntmode == HWTIMER_CNTMODE_UP)
         {
             TIM_TimeBaseStructure.CntMode   = TIM_CNT_MODE_UP;
@@ -291,12 +291,12 @@ static rt_err_t n32_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtim
     struct n32_hwtimer_config *config;
     RT_ASSERT(timer != RT_NULL);
     config = (struct n32_hwtimer_config *)timer->parent.user_data;
-    
+
     /* set tim cnt */
     TIM_SetCnt(config->timer_periph, 0);
     /* set tim arr */
     TIM_SetAutoReload(config->timer_periph, cnt - 1);
-    
+
     if (mode == HWTIMER_MODE_ONESHOT)
     {
         TIM_SelectOnePulseMode(config->timer_periph, TIM_OPMODE_SINGLE);
@@ -310,7 +310,7 @@ static rt_err_t n32_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtim
     TIM_ConfigInt(config->timer_periph, TIM_INT_UPDATE, ENABLE);
     /* TIM counter enable */
     TIM_Enable(config->timer_periph, ENABLE);
-    
+
     TIM_NVIC_Config(config->irqn, 3, 0, ENABLE);
 
     return RT_EOK;
@@ -426,7 +426,7 @@ void TIM1_UP_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 //    TIM_IRQHandler(hwtimer_obj[0].config->timer_periph);
-    
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim1_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim1_count].time_device);
     /* leave interrupt */

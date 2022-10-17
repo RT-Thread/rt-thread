@@ -33,14 +33,9 @@
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
  */
 
-#include <rthw.h>
-#include <rtthread.h>
 #include "drv_i2c.h"
-#include "board.h"
 
 #ifdef RT_USING_I2C
-
-#include <rtdevice.h>
 
 #define DBG_TAG               "drv.I2C"
 #ifdef RT_I2C_DEBUG
@@ -236,7 +231,10 @@ static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
 }
 #endif /* RT_USING_I2C_BITOPS */
 
-#ifdef RT_USING_HARDWARE_I2C 
+#ifdef RT_USING_HARDWARE_I2C
+
+#define I2CT_FLAG_TIMEOUT ((uint32_t)0x1000)
+#define I2CT_LONG_TIMEOUT ((uint32_t)(10 * I2CT_FLAG_TIMEOUT))
 
 static uint32_t I2CTimeout = I2CT_LONG_TIMEOUT;
 
@@ -251,7 +249,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
     };
 
     I2C_ConfigAck((I2C_Module*)i2c_periph, ENABLE);
-    
+
     /** Send START condition */
     I2C_GenerateStart((I2C_Module*)i2c_periph, ENABLE);
 
@@ -265,23 +263,13 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
 
     /* send slave address to I2C bus */
     I2C_SendAddr7bit((I2C_Module*)i2c_periph, slave_address, I2C_DIRECTION_RECV);
-    
+
     I2CTimeout = I2CT_LONG_TIMEOUT;
     while (!I2C_CheckEvent((I2C_Module*)i2c_periph, I2C_EVT_MASTER_RXMODE_FLAG)) // EV6
     {
         if ((I2CTimeout--) == 0)
             return 6;
     };
-
-//    /* clear the ADDSEND bit */
-//    I2C_ClrFlag((I2C_Module*)i2c_periph,I2C_FLAG_ADDRF);
-
-//    if(1 == data_byte){
-//        /* disable acknowledge */
-//        I2C_ConfigAck((I2C_Module*)i2c_periph,DISABLE);
-//        /* send a stop condition to I2C bus */
-//        I2C_GenerateStop(I2C1, ENABLE);
-//    }
 
     /* while there is data to be read */
     while(data_byte)
@@ -293,7 +281,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
             *p_buffer = I2C_RecvData((I2C_Module*)i2c_periph);
 
             /* point to the next location where the byte read will be saved */
-            p_buffer++; 
+            p_buffer++;
 
             /* decrement the read bytes counter */
             data_byte--;
@@ -402,7 +390,7 @@ static rt_size_t rt_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
             }
         }
     }
-    
+
     ret = i;
     return ret;
 
@@ -413,7 +401,7 @@ out:
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-{ 
+{
     rt_i2c_xfer,
     RT_NULL,
     RT_NULL
@@ -425,7 +413,7 @@ int rt_hw_i2c_init(void)
 {
 #ifdef RT_USING_I2C_BITOPS
 
-	  rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
     rt_err_t result;
 
     for(int i = 0; i < obj_num; i++)
@@ -446,23 +434,42 @@ int rt_hw_i2c_init(void)
                    soft_i2c_config[i].sda);
     }
 #endif /* RT_USING_I2C_BITOPS */
-		
-#ifdef RT_USING_HARDWARE_I2C
 
+#ifdef RT_USING_HARDWARE_I2C
+		
+GPIO_InitType GPIO_InitStructure;
+I2C_InitType  I2C_InitStructure;
 #ifdef BSP_USING_I2C1
 #define I2C1_SPEED  400000
 
     static struct rt_i2c_bus i2c_bus1;
-    I2C_InitType I2C_InitStructure;
-
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-    GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE);
+    
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
+		RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
+		
+		GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PB8 to I2C1_SCL, PB9 to I2C1_SDA */
-    GPIOInit(GPIOB, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_8 | GPIO_PIN_9);
-    
-    /* enable I2C clock */
+		GPIO_InitStructure.Pin        = GPIO_PIN_8 | GPIO_PIN_9;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+   
+    GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE); 
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+	  /* Enable I2C clock */
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
-    
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
+	
+	  GPIO_InitStruct(&GPIO_InitStructure);
+    /* Confige I2C1_SCL(PB8) and  I2C1_SDA(PB9) */
+		GPIO_InitStructure.Pin            = GPIO_PIN_8 | GPIO_PIN_9;
+		GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
+		GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
+		GPIO_InitStructure.GPIO_Alternate = GPIO_AF4_I2C1;
+		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);	
+#endif
+
     I2C_DeInit(I2C1);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
     I2C_InitStructure.FmDutyCycle = I2C_FMDUTYCYCLE_2;
@@ -483,14 +490,30 @@ int rt_hw_i2c_init(void)
 #define I2C2_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus2;
-    I2C_InitType I2C_InitStructure;
 
-    /* enable I2C clock */
-    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+		RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
+		
+		GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PB10 to I2C2_SCL, PB11 to I2C2_SDA */
-    GPIOInit(GPIOB, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_10 | GPIO_PIN_11);
+		GPIO_InitStructure.Pin        = GPIO_PIN_10 | GPIO_PIN_11;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+	  /* Enable I2C clock */
+    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
+	
+	  GPIO_InitStruct(&GPIO_InitStructure);
+    /* Confige I2C1_SCL(PB10) and  I2C1_SDA(PB11) */
+		GPIO_InitStructure.Pin            = GPIO_PIN_10 | GPIO_PIN_11;
+		GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
+		GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
+		GPIO_InitStructure.GPIO_Alternate = GPIO_AF6_I2C2;
+		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);	
+#endif
 
     I2C_DeInit(I2C2);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -508,19 +531,22 @@ int rt_hw_i2c_init(void)
     rt_i2c_bus_device_register(&i2c_bus2.parent, "i2c2");
 #endif
 
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
 #ifdef BSP_USING_I2C3
 #define I2C3_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus3;
-    I2C_InitType I2C_InitStructure;
-
-    /* enable I2C clock */
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C3, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-
+		
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C3, ENABLE);
+		
+		GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PC0 to I2C3_SCL, PC1 to I2C3_SDA */
-    GPIOInit(GPIOC, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_0 | GPIO_PIN_1);
-    
+		GPIO_InitStructure.Pin        = GPIO_PIN_0 | GPIO_PIN_1;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+		GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
+
     I2C_DeInit(I2C3);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
     I2C_InitStructure.FmDutyCycle = I2C_FMDUTYCYCLE_2;
@@ -541,14 +567,16 @@ int rt_hw_i2c_init(void)
 #define I2C4_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus4;
-    I2C_InitType I2C_InitStructure;
-
-    /* enable I2C clock */
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C4, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-
+		
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C4, ENABLE);
+		
+		GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PC6 to I2C4_SCL, PC7 to I2C4_SDA */
-    GPIOInit(GPIOC, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_6 | GPIO_PIN_7);
+		GPIO_InitStructure.Pin        = GPIO_PIN_6 | GPIO_PIN_7;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+		GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
 
     I2C_DeInit(I2C4);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -565,7 +593,7 @@ int rt_hw_i2c_init(void)
     i2c_bus4.i2c_periph = (rt_uint32_t)I2C4;
     rt_i2c_bus_device_register(&i2c_bus4.parent, "i2c4");
 #endif
-
+#endif
 #endif /* RT_USING_HARDWARE_I2C */
 
     return RT_EOK;

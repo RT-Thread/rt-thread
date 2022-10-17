@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -290,10 +290,14 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
 
     if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
+    {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n",
                                     size, RT_ALIGN(size, RT_ALIGN_SIZE)));
+    }
     else
+    {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d\n", size));
+    }
 
     small_mem = (struct rt_small_mem *)m;
     /* alignment size */
@@ -521,12 +525,6 @@ void rt_smem_free(void *rmem)
 
     /* Get the corresponding struct rt_small_mem_item ... */
     mem = (struct rt_small_mem_item *)((rt_uint8_t *)rmem - SIZEOF_STRUCT_MEM);
-
-    RT_DEBUG_LOG(RT_DEBUG_MEM,
-                 ("release memory 0x%x, size: %d\n",
-                  (rt_ubase_t)rmem,
-                  (rt_ubase_t)(mem->next - ((rt_uint8_t *)mem - small_mem->heap_ptr))));
-
     /* ... which has to be in a used state ... */
     small_mem = MEM_POOL(mem);
     RT_ASSERT(small_mem != RT_NULL);
@@ -536,6 +534,11 @@ void rt_smem_free(void *rmem)
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)small_mem->heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)small_mem->heap_end);
     RT_ASSERT(MEM_POOL(&small_mem->heap_ptr[mem->next]) == small_mem);
+
+    RT_DEBUG_LOG(RT_DEBUG_MEM,
+                 ("release memory 0x%x, size: %d\n",
+                  (rt_ubase_t)rmem,
+                  (rt_ubase_t)(mem->next - ((rt_uint8_t *)mem - small_mem->heap_ptr))));
 
     /* ... and is now unused. */
     mem->pool_ptr = MEM_FREED();

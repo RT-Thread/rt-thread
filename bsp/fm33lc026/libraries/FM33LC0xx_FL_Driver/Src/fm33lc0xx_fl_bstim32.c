@@ -6,23 +6,22 @@
   *******************************************************************************************************
   * @attention
   *
-  * Copyright (c) [2019] [Fudan Microelectronics]
-  * THIS SOFTWARE is licensed under the Mulan PSL v1.
-  * can use this software according to the terms and conditions of the Mulan PSL v1.
-  * You may obtain a copy of Mulan PSL v1 at:
-  * http://license.coscl.org.cn/MulanPSL
-  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
-  * PURPOSE.
-  * See the Mulan PSL v1 for more details.
+  * Copyright (c) [2021] [Fudan Microelectronics]
+  * THIS SOFTWARE is licensed under Mulan PSL v2.
+  * You can use this software according to the terms and conditions of the Mulan PSL v2.
+  * You may obtain a copy of Mulan PSL v2 at:
+  *          http://license.coscl.org.cn/MulanPSL2
+  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  * See the Mulan PSL v2 for more details.
   *
   *******************************************************************************************************
   */
+
+
 /* Includes ------------------------------------------------------------------*/
-#include "fm33lc0xx_fl_rcc.h"
-#include "fm33lc0xx_fl_rmu.h"
-#include "fm33lc0xx_fl_bstim32.h"
-#include "fm33_assert.h"
+#include "fm33lc0xx_fl.h"
 
 /** @addtogroup FM33LC0XX_FL_Driver
   * @{
@@ -31,6 +30,8 @@
 /** @addtogroup BSTIM32
   * @{
   */
+
+#ifdef FL_BSTIM32_DRIVER_ENABLED
 
 /* Private macros ------------------------------------------------------------------*/
 /** @addtogroup BSTIM32_FL_Private_Macros
@@ -42,9 +43,9 @@
 #define         IS_FL_BSTIM32_AUTORELOAD_MODE(__VALUE__)           (((__VALUE__) == FL_ENABLE)||\
                                                                     ((__VALUE__) == FL_DISABLE))
 
-#define         IS_FL_BSTIM32_CLOCK_SRC(__VALUE__)                 (((__VALUE__) == FL_RCC_BSTIM32_CLK_SOURCE_APB1CLK)||\
+#define         IS_FL_BSTIM32_CLOCK_SRC(__VALUE__)                 (((__VALUE__) == FL_RCC_BSTIM32_CLK_SOURCE_APB2CLK)||\
                                                                     ((__VALUE__) == FL_RCC_BSTIM32_CLK_SOURCE_LSCLK)||\
-                                                                    ((__VALUE__) == FL_RCC_BSTIM32_CLK_SOURCE_RCLP)||\
+                                                                    ((__VALUE__) == FL_RCC_BSTIM32_CLK_SOURCE_LPOSC)||\
                                                                     ((__VALUE__) == FL_RCC_BSTIM32_CLK_SOURCE_RCMF_PSC))
 
 /**
@@ -113,7 +114,7 @@ FL_ErrorStatus FL_BSTIM32_Init(BSTIM32_Type *BSTIM32x, FL_BSTIM32_InitTypeDef *i
     }
     /* 手动触发更新事件，将配置值写入 */
     FL_BSTIM32_GenerateUpdateEvent(BSTIM32x);
-    while((!FL_BSTIM32_IsActiveFlag_Update(BSTIM32x))&i)
+    while((!FL_BSTIM32_IsActiveFlag_Update(BSTIM32x))&&i)
     {
         i--;
     }
@@ -133,19 +134,21 @@ void FL_BSTIM32_StructInit(FL_BSTIM32_InitTypeDef *initStruct)
     initStruct->prescaler         = 0;
     initStruct->autoReload        = 0xFFFFFFFF;
     initStruct->autoReloadState   = FL_ENABLE;
-    initStruct->clockSource       = FL_RCC_BSTIM32_CLK_SOURCE_APB1CLK;
+    initStruct->clockSource       = FL_RCC_BSTIM32_CLK_SOURCE_APB2CLK;
 }
 
 /**
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* FL_BSTIM32_DRIVER_ENABLED */
 
 /**
   * @}
   */
 
-/******************************************* END OF FILE *******************************************/
+/**
+  * @}
+  */
+
+/********************** (C) COPYRIGHT Fudan Microelectronics **** END OF FILE ***********************/

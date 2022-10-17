@@ -28,11 +28,11 @@ struct nu_adc
 {
     struct rt_adc_device dev;
     char *name;
-    uint32_t OpFreqKHz;
+    ADC_T *base;
+    uint32_t bReset;
     IRQn_Type irqn;
     E_SYS_IPRST rstidx;
     E_SYS_IPCLK clkidx;
-    int chn_num;
     uint32_t chn_mask;
     rt_sem_t m_psSem;
 
@@ -71,8 +71,8 @@ int rt_hw_adc_init(void);
 static struct nu_adc g_sNuADC =
 {
     .name = "adc",
-    .OpFreqKHz = 4000,   /* 1000 <= OpFreqKHz <= 4000 */
-    .chn_num = 8,
+    .base = (ADC_T *)ADC_BA,
+    .bReset = 1,
     .irqn = IRQ_ADC,
     .rstidx = ADCRST,
     .clkidx = ADCCKEN,
@@ -81,12 +81,17 @@ static struct nu_adc g_sNuADC =
 
 static void nu_adc_isr(int vector, void *param)
 {
-    rt_int32_t isr, wkisr;
+    volatile rt_int32_t isr, wkisr;
     nu_adc_t psNuAdc = (nu_adc_t)param;
     rt_int32_t irqidx;
+    ADC_T  *adc = psNuAdc->base;
 
-    isr = inpw(REG_ADC_ISR);
-    wkisr = inpw(REG_ADC_WKISR);
+    //rt_kprintf("[%s %d] CTL: %08x CONF:%08x IER:%08x ISR:%08x\n", __func__, __LINE__, adc->CTL, adc->CONF, adc->IER, adc->ISR);
+
+    isr = adc->ISR;
+    wkisr = adc->WKISR;
+
+    adc->ISR = isr;
 
     while ((irqidx = nu_ctz(isr)) < eAdc_ISR_CNT)
     {
@@ -94,12 +99,11 @@ static void nu_adc_isr(int vector, void *param)
 
         if (psNuAdc->m_isr[irqidx].cbfunc != RT_NULL)
         {
-            //rt_kprintf("[%s] %d %x\n", __func__, irqidx, psNuAdc->m_isr[irqidx].cbfunc);
+            // rt_kprintf("[%s] %d %x\n", __func__, irqidx, psNuAdc->m_isr[irqidx].cbfunc);
             psNuAdc->m_isr[irqidx].cbfunc(isr, psNuAdc->m_isr[irqidx].private_data);
         }
 
         /* Clear sent bit */
-        outpw(REG_ADC_ISR, u32IsrBitMask);
         isr &= ~(u32IsrBitMask);
     } //while
 
@@ -112,25 +116,19 @@ static void nu_adc_isr(int vector, void *param)
             psNuAdc->m_wkisr[irqidx].cbfunc(wkisr, psNuAdc->m_wkisr[irqidx].private_data);
         }
 
-        /* Clear sent bit */
-        outpw(REG_ADC_WKISR, u32IsrBitMask);
         wkisr &= ~(u32IsrBitMask);
     } //while
 }
 
+
+#define DEF_ADC_SRC_CLOCK_DIV  (12000 / 1000)
 static rt_err_t _nu_adc_init(rt_device_t dev)
 {
-    uint32_t div;
     nu_adc_t psNuAdc = (nu_adc_t)dev;
 
-    /* ADC Engine Clock is set to freq Khz */
-    if (psNuAdc->OpFreqKHz > 4000) psNuAdc->OpFreqKHz = 4000;
-    if (psNuAdc->OpFreqKHz < 1000) psNuAdc->OpFreqKHz = 1000;
-
-    div = 12000 / psNuAdc->OpFreqKHz;
-
+    /* Set ADC Engine Clock */
     outpw(REG_CLK_DIVCTL7, inpw(REG_CLK_DIVCTL7) & ~((0x3 << 19) | (0x7 << 16) | (0xFFul << 24)));
-    outpw(REG_CLK_DIVCTL7, (0 << 19) | (0 << 16) | ((div - 1) << 24));
+    outpw(REG_CLK_DIVCTL7, (0 << 19) | (0 << 16) | ((DEF_ADC_SRC_CLOCK_DIV - 1) << 24));
 
     /* Install interrupt service routine */
     rt_hw_interrupt_install(psNuAdc->irqn, nu_adc_isr, (void *)psNuAdc, psNuAdc->name);
@@ -138,36 +136,36 @@ static rt_err_t _nu_adc_init(rt_device_t dev)
     return RT_EOK;
 }
 
+#define ADC_TOUCH_Z0_ACTIVE 20
 static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
 {
     nu_adc_t psNuAdc = (nu_adc_t)userData;
 
 #if defined(BSP_USING_ADC_TOUCH)
-
+    ADC_T  *adc = psNuAdc->base;
     static struct nu_adc_touch_data point;
     static rt_bool_t bDrop = RT_FALSE;
     static uint32_t u32LastZ0 = 0xffffu;
 
     if (psNuAdc->psRtTouch != RT_NULL)
     {
-        uint32_t value;
+        point.u32X = ADC_GET_CONVERSION_XDATA(adc);
+        point.u32Y = ADC_GET_CONVERSION_YDATA(adc);
 
-        value = inpw(REG_ADC_XYDATA);
-        point.u32X = (value & 0x0ffful);
-        point.u32Y = ((value >> 16) & 0x0ffful);
+        point.u32Z0 = ADC_GET_CONVERSION_Z1DATA(adc);
+        point.u32Z1 = ADC_GET_CONVERSION_Z2DATA(adc);
 
-        value = inpw(REG_ADC_ZDATA);
-        point.u32Z0 = (value & 0x0ffful);
-        point.u32Z1 = ((value >> 16) & 0x0ffful);
-
+        //rt_kprintf("x=%d y=%d z0=%d z1=%d\n", point.u32X, point.u32Y, point.u32Z0, point.u32Z1);
         /* Trigger next or not. */
-        if (point.u32Z0 == 0)
+        if (point.u32Z0 < ADC_TOUCH_Z0_ACTIVE)
         {
             /* Stop sampling procedure. */
             rt_timer_stop(g_sNuADC.psRtTouchMenuTimer);
 
             /* Re-start pendown detection */
             nu_adc_touch_detect(RT_TRUE);
+
+            psNuAdc->bReset = 1;
 
             bDrop = RT_TRUE;
         }
@@ -177,7 +175,7 @@ static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
         }
 
         /* Notify upper layer. */
-        if ((!bDrop || (u32LastZ0 != 0)) && rt_mq_send(psNuAdc->m_pmqTouchXYZ, (const void *)&point, sizeof(struct nu_adc_touch_data)) == RT_EOK)
+        if ((!bDrop || (u32LastZ0 > ADC_TOUCH_Z0_ACTIVE)) && rt_mq_send(psNuAdc->m_pmqTouchXYZ, (const void *)&point, sizeof(struct nu_adc_touch_data)) == RT_EOK)
         {
             rt_hw_touch_isr(psNuAdc->psRtTouch);
         }
@@ -196,29 +194,62 @@ static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
 
 #if defined(BSP_USING_ADC_TOUCH)
 
+static void nu_adc_touch_antiglitch(ADC_T  *adc)
+{
+    int count = 10;
+    do
+    {
+        rt_hw_us_delay(1000); // 1ms
+        ADC_CLR_INT_FLAG(adc, adc->ISR);
+        if (adc->ISR == 0)
+            break;
+    }
+    while (count-- > 0);
+}
+
 void nu_adc_touch_detect(rt_bool_t bStartDetect)
 {
     nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
+    ADC_T  *adc = psNuAdc->base;
 
-    if (bStartDetect)
+    /* Disable interrupt */
+    rt_hw_interrupt_mask(psNuAdc->irqn);
+
+    ADC_POWER_DOWN(adc);
+
+    /* Disable interrupt */
+    ADC_DISABLE_INT(adc, ADC_IER_PEDEIEN_Msk | ADC_IER_MIEN_Msk);
+    nu_adc_touch_antiglitch(adc);
+
+    if (bStartDetect == RT_TRUE)
     {
-        /* Start detect PenDown */
-        _nu_adc_control((rt_device_t)psNuAdc, PEPOWER_ON, RT_NULL);
+        /* Switch to PenDown detection mode */
+        ADC_DETECT_PD_MODE(adc);
+        nu_adc_touch_antiglitch(adc);
+
+        /* Enable interrupt */
+        ADC_ENABLE_INT(adc, ADC_IER_PEDEIEN_Msk);
     }
     else
     {
-        /* Stop detect PenDown */
-        _nu_adc_control((rt_device_t)psNuAdc, PEPOWER_OFF, RT_NULL);
+        /* Switch to XY coordination converting mode */
+        ADC_CONVERT_XY_MODE(adc);
+        nu_adc_touch_antiglitch(adc);
+
+        /* Enable interrupt */
+        ADC_ENABLE_INT(adc, ADC_IER_MIEN_Msk);
     }
+
+    ADC_POWER_ON(adc);
+
+    /* Enable interrupt */
+    rt_hw_interrupt_umask(psNuAdc->irqn);
 }
 
 static int32_t PenDownCallback(uint32_t status, uint32_t userData)
 {
-    nu_adc_touch_detect(RT_FALSE);
-
-    rt_timer_start(g_sNuADC.psRtTouchMenuTimer);
-
-    return 0;
+    nu_adc_t psNuAdc = (nu_adc_t)userData;
+    return rt_timer_start(psNuAdc->psRtTouchMenuTimer);
 }
 
 int32_t nu_adc_touch_read_xyz(uint32_t *bufX, uint32_t *bufY, uint32_t *bufZ0, uint32_t *bufZ1, int32_t dataCnt)
@@ -239,37 +270,26 @@ int32_t nu_adc_touch_read_xyz(uint32_t *bufX, uint32_t *bufY, uint32_t *bufZ0, u
     return i;
 }
 
-void nu_adc_touch_start_conv(void)
-{
-    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
-    _nu_adc_control((rt_device_t)psNuAdc, START_MST, RT_NULL);
-}
-
 rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch)
 {
     nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
     nu_adc_cb sNuAdcCb;
+    ADC_T  *adc = psNuAdc->base;
 
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 4);
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 5);
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 6);
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 7);
+    adc->CONF = 0x0;
 
-    outpw(REG_ADC_CONF, (inpw(REG_ADC_CONF) & ~(0xfful << 24)) | 0xfful << 24);
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 4);  //Channel number 4
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 5);  //Channel number 5
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 6);  //Channel number 6
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 7);  //Channel number 7
 
     /* Register touch device. */
     psNuAdc->psRtTouch = psRtTouch;
 
-    /* Enable TouchXY. */
-    _nu_adc_control((rt_device_t)psNuAdc, T_ON, RT_NULL);
-
-    /* Enable TouchZZ. */
-    _nu_adc_control((rt_device_t)psNuAdc, Z_ON, RT_NULL);
-
     /* Register PenDown callback. */
     sNuAdcCb.cbfunc = PenDownCallback;
-    sNuAdcCb.private_data = (rt_uint32_t)psRtTouch;
-    _nu_adc_control((rt_device_t)psNuAdc, PEDEF_ON, (void *)&sNuAdcCb);
+    sNuAdcCb.private_data = (rt_uint32_t)psNuAdc;
+    rt_memcpy(&psNuAdc->m_isr[eAdc_PEDEF], &sNuAdcCb, sizeof(nu_adc_cb));
 
     nu_adc_touch_detect(RT_TRUE);
 
@@ -286,20 +306,33 @@ rt_err_t nu_adc_touch_disable(void)
     _nu_adc_control((rt_device_t)psNuAdc, Z_OFF, RT_NULL);
     _nu_adc_control((rt_device_t)psNuAdc, PEDEF_OFF, RT_NULL);
 
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 4);
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 5);
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 6);
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 7);
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 4);  //Channel number 4
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 5);  //Channel number 5
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 6);  //Channel number 6
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 7);  //Channel number 7
 
     return RT_EOK;
 }
 
+static void nu_adc_touch_smpl(void *p)
+{
+    nu_adc_t psNuAdc = (nu_adc_t)p;
+    if (psNuAdc->bReset)
+    {
+        psNuAdc->bReset = 0;
+        nu_adc_touch_detect(RT_FALSE);
+    }
+
+    /* Start conversion */
+    ADC_START_CONV(psNuAdc->base);
+}
 #endif
 
 static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t ret = RT_EINVAL ;
     nu_adc_t psNuAdc = (nu_adc_t)dev;
+    ADC_T  *adc = psNuAdc->base;
 
     nu_adc_cb_t psAdcCb = (nu_adc_cb_t)args;
 
@@ -308,10 +341,10 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
     case START_MST:  /* Menu Start Conversion */
     {
         /* Enable interrupt */
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_MIEN);
+        ADC_ENABLE_INT(adc, ADC_IER_MIEN_Msk);
 
         /* Start conversion */
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_MST);
+        ADC_START_CONV(adc);
 
         /* Wait it done */
         ret = rt_sem_take(psNuAdc->m_psSem, RT_WAITING_FOREVER);
@@ -319,126 +352,7 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 
         /* Get data: valid data is 12-bit */
         if (args != RT_NULL)
-            *((uint32_t *)args) = inpw(REG_ADC_DATA) & 0x00000FFF;
-    }
-    break;
-
-    /* case START_MST_POLLING:  Not supported. */
-
-    case VBPOWER_ON: /* Enable ADC Internal Bandgap Power */
-    {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_VBGEN);
-    }
-    break;
-
-    case VBPOWER_OFF: /* Disable ADC Internal Bandgap Power */
-    {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_VBGEN);
-    }
-    break;
-
-    case KPPOWER_ON: /* Enable ADC Keypad Power */
-    {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_PWKPEN);
-    }
-    break;
-
-    case KPPOWER_OFF: /* Disable ADC Keypad Power */
-    {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_PWKPEN);
-    }
-    break;
-
-    case PEPOWER_ON: /* Enable Pen Power */
-    {
-        int retry = 100;
-        uint32_t treg = inpw(REG_ADC_IER);
-        outpw(REG_ADC_IER, treg & ~(ADC_IER_PEDEIEN | ADC_IER_PEUEIEN));
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_PEDEEN);
-        do
-        {
-            outpw(REG_ADC_ISR, ADC_ISR_PEDEF | ADC_ISR_PEUEF);
-            rt_thread_mdelay(1);
-            if (retry-- == 0)
-                break;
-        }
-        while (inpw(REG_ADC_ISR) & (ADC_ISR_PEDEF | ADC_ISR_PEUEF));
-        outpw(REG_ADC_IER, treg);
-    }
-    break;
-
-    case PEPOWER_OFF: /* Disable Pen Power */
-    {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_PEDEEN);
-    }
-    break;
-
-    case KPPRESS_ON:  /* Enable Keypad press event */
-    {
-        if (psAdcCb)
-        {
-            rt_memcpy(&psNuAdc->m_isr[eAdc_KPEF], psAdcCb, sizeof(nu_adc_cb));
-        }
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_KPEIEN);
-    }
-    break;
-
-    case KPPRESS_OFF: /* Disable Keypad press event */
-    {
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER & ~ADC_IER_KPEIEN));
-    }
-    break;
-
-    case KPUP_ON:  /* Enable Keypad up event */
-    {
-        if (psAdcCb)
-        {
-            rt_memcpy(&psNuAdc->m_isr[eAdc_KPUEF], psAdcCb, sizeof(nu_adc_cb));
-        }
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_KPUEIEN);
-    }
-    break;
-
-    case KPUP_OFF:  /* Disable Keypad up event */
-    {
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) & ~ADC_IER_KPUEIEN);
-    }
-    break;
-
-    case PEDEF_ON:  /* Enable Pen Down Event */
-    {
-        if (psAdcCb)
-        {
-            rt_memcpy(&psNuAdc->m_isr[eAdc_PEDEF], psAdcCb, sizeof(nu_adc_cb));
-        }
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_PEDEIEN);
-    }
-    break;
-
-    case PEDEF_OFF: /* Disable Pen Down Event */
-    {
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) & ~ADC_IER_PEDEIEN);
-    }
-    break;
-
-    case WKP_ON:  /* Enable Keypad Press Wake Up */
-    {
-        if (psAdcCb)
-        {
-            rt_memcpy(&psNuAdc->m_wkisr[eAdc_WKPEF], psAdcCb, sizeof(nu_adc_cb));
-        }
-
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_WKPEN);
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_WKPIEN);
-        //outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) | (1 << 26));
-    }
-    break;
-
-    case WKP_OFF:  /* Disable Keypad Press Wake Up */
-    {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_WKPEN);
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) & ~ADC_IER_WKPIEN);
-        //outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) & ~(1 << 26));
+            *((uint32_t *)args) = ADC_GET_CONVERSION_DATA(adc, 0);
     }
     break;
 
@@ -448,66 +362,67 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
         {
             rt_memcpy(&psNuAdc->m_wkisr[eAdc_WPEDEF], psAdcCb, sizeof(nu_adc_cb));
         }
+        adc->CTL |= ADC_CTL_WKTEN_Msk;
+        adc->IER |= ADC_IER_WKTIEN_Msk;
 
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_WKTEN);
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_WKTIEN);
-        //outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) | (1 << 26));
+        //TODO outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) | (1 << 26));
     }
     break;
 
     case WKT_OFF:  /* Disable Touch Wake Up */
     {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_WKTEN);
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) & ~ADC_IER_WKTIEN);
-        //outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) & ~(1 << 26));
+        adc->CTL &= ~ADC_CTL_WKTEN_Msk;
+        adc->IER &= ~ADC_IER_WKTIEN_Msk;
+
+        //TODO outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) & ~(1 << 26));
     }
     break;
 
     case SWITCH_5WIRE_ON:   /* Wire Mode Switch to 5-Wire */
     {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_WMSWCH);
+        adc->CTL |= ADC_CTL_WMSWCH_Msk;
     }
     break;
 
     case SWITCH_5WIRE_OFF:  /* Wire Mode Switch to 4-Wire */
     {
-        outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_WMSWCH);
+        adc->CTL &= ~ADC_CTL_WMSWCH_Msk;
     }
     break;
 
     case T_ON:   /* Enable Touch detection function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_TEN);
+        adc->CONF |= ADC_CONF_TEN_Msk;
     }
     break;
 
     case T_OFF:   /* Disable Touch detection function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_TEN);
+        adc->CONF &= ~ADC_CONF_TEN_Msk;
     }
     break;
 
     case TAVG_ON:   /* Enable Touch Mean average for X and Y function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_DISTMAVEN);
+        adc->CONF |= ADC_CONF_TMAVDIS_Msk;
     }
     break;
 
     case TAVG_OFF:   /* Disable Touch Mean average for X and Y function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_DISTMAVEN);
+        adc->CONF &= ~ADC_CONF_TMAVDIS_Msk;
     }
     break;
 
     case Z_ON:   /* Enable Press measure function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_ZEN);
+        adc->CONF |= ADC_CONF_ZEN_Msk;
     }
     break;
 
     case Z_OFF:   /* Disable Press measure function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_ZEN);
+        adc->CONF &= ~ADC_CONF_ZEN_Msk;
 #if defined(BSP_USING_ADC_TOUCH)
         rt_mq_control(psNuAdc->m_pmqTouchXYZ, RT_IPC_CMD_RESET, RT_NULL);
 #endif
@@ -516,69 +431,37 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 
     case TZAVG_ON:   /* Enable Pressure Mean average for Z1 and Z2 function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_DISZMAVEN);
+        adc->CONF |= ADC_CONF_ZMAVDIS_Msk;
     }
     break;
 
     case TZAVG_OFF:   /* Disable Pressure Mean average for Z1 and Z2 function */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_DISZMAVEN);
+        adc->CONF &= ~ADC_CONF_ZMAVDIS_Msk;
     }
     break;
 
     case NAC_ON: /* Enable Normal AD Conversion */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_NACEN | ADC_CONF_REFSEL_AVDD33);
+        adc->CONF |= (ADC_CONF_NACEN_Msk | ADC_CONF_REFSEL_AVDD33);
     }
     break;
 
     case NAC_OFF: /* Disable Normal AD Conversion */
     {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_NACEN);
-    }
-    break;
-
-    case VBAT_ON:   /* Enable Voltage Battery Conversion */
-    {
-        if (psAdcCb)
-        {
-            rt_memcpy(&psNuAdc->m_isr[eAdc_VBF], psAdcCb, sizeof(nu_adc_cb));
-        }
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_VBATEN);
-    }
-    break;
-
-    case VBAT_OFF:   /* Disable Voltage Battery */
-    {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_VBATEN);
-    }
-    break;
-
-    case KPCONV_ON:   /* Enable Keypad conversion function */
-    {
-        if (psAdcCb)
-        {
-            rt_memcpy(&psNuAdc->m_isr[eAdc_KPCF], psAdcCb, sizeof(nu_adc_cb));
-        }
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_KPCEN);
-        outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_KPEIEN);
-    }
-    break;
-
-    case KPCONV_OFF:   /* Disable Keypad conversion function */
-    {
-        outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_KPCEN);
+        adc->CONF &= ~ADC_CONF_NACEN_Msk;
     }
     break;
 
     case SWITCH_CH:
     {
         int chn = (int)args;
-        if (chn >= psNuAdc->chn_num)
+        if (chn >= ADC_CH_NUM)
         {
             return -ret;
         }
-        outpw(REG_ADC_CONF, (inpw(REG_ADC_CONF) & ~ADC_CONF_CHSEL_Msk) | (chn << ADC_CONF_CHSEL_Pos));
+        adc->CONF &= ~ADC_CONF_CHSEL_Msk;
+        adc->CONF |= (chn << ADC_CONF_CHSEL_Pos);
     }
     break;
 
@@ -592,6 +475,7 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 static rt_err_t _nu_adc_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_adc_t psNuAdc = (nu_adc_t)dev;
+    ADC_T  *adc = psNuAdc->base;
 
     /* Enable ADC engine clock */
     nu_sys_ipclk_enable(psNuAdc->clkidx);
@@ -600,10 +484,10 @@ static rt_err_t _nu_adc_open(rt_device_t dev, rt_uint16_t oflag)
     nu_sys_ip_reset(psNuAdc->rstidx);
 
     /* Enable ADC Power */
-    outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_ADEN);
+    ADC_POWER_ON(adc);
 
     /* Enable ADC to high speed mode */
-    outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) | ADC_CONF_HSPEED);
+    adc->CONF |= ADC_CONF_SPEED_Msk;
 
     /* Enable interrupt */
     rt_hw_interrupt_umask(psNuAdc->irqn);
@@ -617,6 +501,7 @@ static rt_err_t _nu_adc_open(rt_device_t dev, rt_uint16_t oflag)
 static rt_err_t _nu_adc_close(rt_device_t dev)
 {
     nu_adc_t psNuAdc = (nu_adc_t)dev;
+    ADC_T  *adc = psNuAdc->base;
 
     /* Disable Normal AD Conversion */
     _nu_adc_control(dev, NAC_OFF, RT_NULL);
@@ -625,7 +510,7 @@ static rt_err_t _nu_adc_close(rt_device_t dev)
     rt_hw_interrupt_mask(psNuAdc->irqn);
 
     /* Disable ADC Power */
-    outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) & ~ADC_CTL_ADEN);
+    ADC_POWER_DOWN(adc);
 
     /* Disable ADC engine clock */
     nu_sys_ipclk_disable(psNuAdc->clkidx);
@@ -643,9 +528,9 @@ static const struct rt_adc_ops nu_adc_ops =
 static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
     nu_adc_t psNuADC = (nu_adc_t)device;
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
-    if (channel >= psNuADC->chn_num)
+    if (channel >= ADC_CH_NUM)
         return -(RT_EINVAL);
 
     if (enabled)
@@ -673,12 +558,11 @@ static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel
 static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     rt_err_t ret = RT_EOK;
-    nu_adc_t psNuAdc = (nu_adc_t)device;
 
-    RT_ASSERT(device != RT_NULL);
-    RT_ASSERT(value != RT_NULL);
+    RT_ASSERT(device);
+    RT_ASSERT(value);
 
-    if (channel >= psNuAdc->chn_num)
+    if (channel >= ADC_CH_NUM)
     {
         ret = RT_EINVAL;
         goto exit_nu_adc_convert;
@@ -697,17 +581,6 @@ exit_nu_adc_convert:
     return (-ret) ;
 }
 
-#if defined(BSP_USING_ADC_TOUCH)
-static void nu_adc_touch_smpl(void *p)
-{
-    /* Enable interrupt */
-    outpw(REG_ADC_IER, inpw(REG_ADC_IER) | ADC_IER_MIEN);
-
-    /* Start conversion */
-    outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_MST);
-}
-#endif
-
 int rt_hw_adc_init(void)
 {
     rt_err_t result = RT_ERROR;
@@ -720,21 +593,21 @@ int rt_hw_adc_init(void)
     RT_ASSERT(result == RT_EOK);
 
     g_sNuADC.m_psSem = rt_sem_create("adc_mst_sem", 0, RT_IPC_FLAG_FIFO);
-    RT_ASSERT(g_sNuADC.m_psSem != RT_NULL);
+    RT_ASSERT(g_sNuADC.m_psSem);
 
 #if defined(BSP_USING_ADC_TOUCH)
     g_sNuADC.m_pmqTouchXYZ = rt_mq_create("ADC_TOUCH_XYZ", sizeof(struct nu_adc_touch_data), TOUCH_MQ_LENGTH, RT_IPC_FLAG_FIFO);
-    RT_ASSERT(g_sNuADC.m_pmqTouchXYZ != RT_NULL);
+    RT_ASSERT(g_sNuADC.m_pmqTouchXYZ);
 
     g_sNuADC.psRtTouchMenuTimer = rt_timer_create("TOUCH_SMPL_TIMER", nu_adc_touch_smpl, (void *)&g_sNuADC, DEF_ADC_TOUCH_SMPL_TICK, RT_TIMER_FLAG_PERIODIC);
-    RT_ASSERT(g_sNuADC.psRtTouchMenuTimer != RT_NULL);
+    RT_ASSERT(g_sNuADC.psRtTouchMenuTimer);
 #endif
 
     rt_memset(&g_sNuADC.m_isr, 0, sizeof(g_sNuADC.m_isr));
     rt_memset(&g_sNuADC.m_wkisr, 0, sizeof(g_sNuADC.m_wkisr));
 
     g_sNuADC.m_isr[eAdc_MF].cbfunc = AdcMenuStartCallback;
-    g_sNuADC.m_isr[eAdc_MF].private_data = (UINT32)&g_sNuADC;
+    g_sNuADC.m_isr[eAdc_MF].private_data = (uint32_t)&g_sNuADC;
 
     return (int)result;
 }

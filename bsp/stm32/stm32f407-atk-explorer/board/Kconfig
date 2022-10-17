@@ -91,7 +91,7 @@ menu "Onboard Peripheral Drivers"
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
-            default n
+            default y
     endif
 
     config BSP_USING_SPI_FLASH
@@ -134,40 +134,29 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
 
-    menu "Enable File System"
-        config BSP_USING_FS
-            bool
-            default n
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS
+        select RT_USING_DFS_ROMFS
+        default n
 
-        config BSP_USING_SDCARD_FATFS
-            bool "Enable SDCARD (FATFS)"
-            select BSP_USING_SDIO
-            select RT_USING_DFS
-            select RT_USING_DFS_ELMFAT
-            select RT_USING_DFS_ROMFS
-            select BSP_USING_FS
-            default n
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
 
-        config SDIO_MAX_FREQ
-            int "sdio max freq"
-            range 0 24000000
-            depends on BSP_USING_SDCARD
-            default 1000000
-
-        config BSP_USING_SPI_FLASH_LITTLEFS
-            bool "Enable SPI-FLASH (LittleFS)"
-            select RT_USING_DFS
-            select RT_USING_DFS_ROMFS
-            select RT_USING_MTD_NOR
-            select BSP_USING_SPI_FLASH
-            select BSP_USING_FS
-            select RT_USING_FAL
-            select FAL_USING_AUTO_INIT
-            select FAL_PART_HAS_TABLE_CFG
-            select PKG_USING_LITTLEFS
-            default n
-
-    endmenu
+            config BSP_USING_SPI_FLASH_LITTLEFS
+                bool "Enable SPI-FLASH (LittleFS)"
+                select RT_USING_MTD_NOR
+                select BSP_USING_SPI_FLASH
+                select RT_USING_FAL
+                select FAL_USING_AUTO_INIT
+                select FAL_PART_HAS_TABLE_CFG
+                select PKG_USING_LITTLEFS
+                default n
+        endif
 
 endmenu
 
@@ -466,6 +455,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
+
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        depends on BSP_USING_SDIO
+        default 1000000
 
     config BSP_USING_USBD
         bool "Enable USB Device"

@@ -49,7 +49,7 @@ def get_uuid():
     else:
         # python3 is no decode function
         idstr = id.get_urn()[9:] #'urn:uuid:3e5526c0-2841-11e3-a376-20cf3048bcb3'[9:]
-    
+
     return '{'+idstr+'}'
 
 def VS2012_AddGroup(parent, group_name, files, project_path):
@@ -144,7 +144,7 @@ def VS_add_HeadFiles(program, elem, project_path):
     utils.source_ext = []
     utils.source_ext = ["h"]
     for item in program:
-        utils.walk_children(item)    
+        utils.walk_children(item)
     utils.source_list.sort()
     # print utils.source_list
     ItemGroup = SubElement(elem, 'ItemGroup')
@@ -174,7 +174,7 @@ def VS_add_HeadFiles(program, elem, project_path):
 
 def VS2012Project(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
-    
+
     tree = etree.parse('template_vs2012.vcxproj')
     root = tree.getroot()
     elem = root
@@ -201,7 +201,7 @@ def VS2012Project(target, script, program):
         for path in cpp_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
             paths.add(inc) #.replace('\\', '/')
-    
+
         paths = [i for i in paths]
         paths.sort()
         cpp_path = ';'.join(paths) + ';%(AdditionalIncludeDirectories)'
@@ -243,7 +243,7 @@ def VS2012Project(target, script, program):
         for path in lib_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
             paths.add(inc)
-    
+
         paths = [i for i in paths]
         paths.sort()
         lib_paths = ';'.join(paths) + ';%(AdditionalLibraryDirectories)'

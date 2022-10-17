@@ -424,7 +424,7 @@ static struct mmcsd_blk_device * rt_mmcsd_create_blkdev(struct rt_mmcsd_card *ca
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 {
     rt_int32_t err = 0;
-    rt_uint8_t status;
+    rt_err_t status;
     rt_uint8_t *sector;
 
     err = mmcsd_set_blksize(card);

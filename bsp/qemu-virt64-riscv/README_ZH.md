@@ -28,6 +28,8 @@ scons
 ```
 可以看到正常生成`rtthread.elf`与`rtthread.bin`文件。
 
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
 ## 3. 执行
 
 本工程提供了riscv64的两种可配置运行模式,默认运行在M-Mode下。

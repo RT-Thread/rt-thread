@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -200,7 +200,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     return mask;
 }
 
-const static struct dfs_file_ops _serial_fops =
+static const struct dfs_file_ops _serial_fops =
 {
     serial_fops_open,
     serial_fops_close,
@@ -424,7 +424,7 @@ static void rt_dma_recv_update_get_index(struct rt_serial_device *serial, rt_siz
 
     if (rx_fifo->is_full && len != 0) rx_fifo->is_full = RT_FALSE;
 
-    rx_fifo->get_index += len;
+    rx_fifo->get_index += (rt_uint16_t)len;
     if (rx_fifo->get_index >= serial->config.bufsz)
     {
         rx_fifo->get_index %= serial->config.bufsz;
@@ -445,7 +445,7 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
 
     if (rx_fifo->get_index <= rx_fifo->put_index)
     {
-        rx_fifo->put_index += len;
+        rx_fifo->put_index += (rt_uint16_t)len;
         /* beyond the fifo end */
         if (rx_fifo->put_index >= serial->config.bufsz)
         {
@@ -459,7 +459,7 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
     }
     else
     {
-        rx_fifo->put_index += len;
+        rx_fifo->put_index += (rt_uint16_t)len;
         if (rx_fifo->put_index >= rx_fifo->get_index)
         {
             /* beyond the fifo end */
@@ -900,7 +900,7 @@ struct speed_baudrate_item
     int baudrate;
 };
 
-const static struct speed_baudrate_item _tbl[] =
+static const struct speed_baudrate_item _tbl[] =
 {
     {B2400, BAUD_RATE_2400},
     {B4800, BAUD_RATE_4800},
@@ -918,7 +918,7 @@ const static struct speed_baudrate_item _tbl[] =
 
 static speed_t _get_speed(int baudrate)
 {
-    int index;
+    size_t index;
 
     for (index = 0; index < sizeof(_tbl)/sizeof(_tbl[0]); index ++)
     {
@@ -931,7 +931,7 @@ static speed_t _get_speed(int baudrate)
 
 static int _get_baudrate(speed_t speed)
 {
-    int index;
+    size_t index;
 
     for (index = 0; index < sizeof(_tbl)/sizeof(_tbl[0]); index ++)
     {

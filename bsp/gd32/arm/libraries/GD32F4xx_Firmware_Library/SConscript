@@ -38,6 +38,7 @@ if GetDepend(['RT_USING_DAC']):
 
 if GetDepend(['RT_USING_RTC']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_rtc.c']
+    src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_pmu.c']
 
 if GetDepend(['RT_USING_WDT']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_wwdgt.c']
@@ -45,6 +46,7 @@ if GetDepend(['RT_USING_WDT']):
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_sdio.c']
+    src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_dma.c']
 
 path = [
     cwd + '/CMSIS/GD/GD32F4xx/Include',

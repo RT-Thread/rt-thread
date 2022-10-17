@@ -172,7 +172,7 @@ class Folder(object):
         #  rt_uint32_t type;
         #  const char *name;
         #  const rt_uint8_t *data;
-	    #  rt_size_t size;
+        #  rt_size_t size;
         #}
         d_li = []
         # payload base

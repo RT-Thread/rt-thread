@@ -1,0 +1,37 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Split("""
+ch56x_sys.c
+swi_gcc.S
+""")
+
+if GetDepend('SOC_SERIES_CH569'):
+    src += ['ch56x_pfic.c']
+    if GetDepend('RT_USING_WDT'):
+        src += ['ch56x_wdt.c']
+
+if GetDepend('RT_USING_USB_DEVICE'):
+    src += ['ch56x_usbd.c']
+
+if GetDepend('RT_USING_PWM'):
+    src += ['ch56x_pwm.c']
+
+if GetDepend('RT_USING_HWTIMER'):
+    src += ['ch56x_timer.c']
+
+if GetDepend('RT_USING_SPI'):
+    src += ['ch56x_spi.c']
+
+if GetDepend('RT_USING_PIN'):
+    src += ['ch56x_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL', 'BSP_USING_UART']):
+    src += ['ch56x_uart.c']
+
+path = [cwd]
+
+group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path)
+
+Return('group')

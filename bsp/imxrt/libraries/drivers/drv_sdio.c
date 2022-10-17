@@ -47,7 +47,9 @@ static int enable_log = 1;
 #define USDHC_READ_BURST_LEN        (8U)        /*!< number of words USDHC read in a single burst */
 #define USDHC_WRITE_BURST_LEN       (8U)        /*!< number of words USDHC write in a single burst */
 #define USDHC_DATA_TIMEOUT          (0xFU)      /*!< data timeout counter value */
-
+#define SDMMCHOST_SUPPORT_MAX_BLOCK_LENGTH     (4096U)
+#define SDMMCHOST_SUPPORT_MAX_BLOCK_COUNT      (USDHC_MAX_BLOCK_COUNT)
+      
 /* Read/write watermark level. The bigger value indicates DMA has higher read/write performance. */
 #define USDHC_READ_WATERMARK_LEVEL  (0x80U)
 #define USDHC_WRITE_WATERMARK_LEVEL (0x80U)
@@ -59,7 +61,6 @@ static int enable_log = 1;
 #define USDHC_ENDIAN_MODE kUSDHC_EndianModeLittle
 
 #ifdef SOC_IMXRT1170_SERIES
-#define FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN 1
 #define USDHC_ADMA_TABLE_WORDS      (32U)        /* define the ADMA descriptor table length */
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
 #else
@@ -93,7 +94,7 @@ struct imxrt_mmcsd
 static void _mmcsd_gpio_init(struct imxrt_mmcsd *mmcsd)
 {
 
-    CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
+//    CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
 }
 static void SDMMCHOST_ErrorRecovery(USDHC_Type *base)
 {
@@ -343,6 +344,18 @@ static void _mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
     if (usdhc_clk > IMXRT_MAX_FREQ)
         usdhc_clk = IMXRT_MAX_FREQ;
 #ifdef SOC_IMXRT1170_SERIES
+    clock_root_config_t rootCfg = {0};
+   /* SYS PLL2 528MHz. */
+   const clock_sys_pll2_config_t sysPll2Config = {
+       .ssEnable = false,
+   };
+
+   CLOCK_InitSysPll2(&sysPll2Config);
+   CLOCK_InitPfd(kCLOCK_PllSys2, kCLOCK_Pfd2, 24);
+
+   rootCfg.mux = 4;
+   rootCfg.div = 2;
+   CLOCK_SetRootClock(kCLOCK_Root_Usdhc1, &rootCfg);
     src_clk = CLOCK_GetRootClockFreq(kCLOCK_Root_Usdhc1);
 #else
     src_clk = (CLOCK_GetSysPfdFreq(kCLOCK_Pfd2) / (CLOCK_GetDiv(mmcsd->usdhc_div) + 1U));
@@ -385,7 +398,8 @@ rt_int32_t _imxrt_mci_init(void)
 {
     struct rt_mmcsd_host *host;
     struct imxrt_mmcsd *mmcsd;
-
+    uint32_t hs400Capability = 0U;
+    
     host = mmcsd_alloc_host();
     if (!host)
     {
@@ -412,11 +426,27 @@ rt_int32_t _imxrt_mci_init(void)
     host->valid_ocr = VDD_32_33 | VDD_33_34;
     host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | \
                   MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ;
+#ifdef SOC_IMXRT1170_SERIES
+#if defined FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn
+    hs400Capability = (uint32_t)FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn(mmcsd->usdhc_host.base); 
+#endif
+#if (defined(FSL_FEATURE_USDHC_HAS_HS400_MODE) && (FSL_FEATURE_USDHC_HAS_HS400_MODE))
+    if (hs400Capability != 0U)
+    {
+        host->flags |= (uint32_t)MMCSD_SUP_HIGHSPEED_HS400;
+    }
+
+#endif
+#endif
     host->max_seg_size = 65535;
     host->max_dma_segs = 2;
+#ifdef SOC_IMXRT1170_SERIES
+    host->max_blk_size = SDMMCHOST_SUPPORT_MAX_BLOCK_LENGTH;
+    host->max_blk_count = SDMMCHOST_SUPPORT_MAX_BLOCK_COUNT;
+#else
     host->max_blk_size = 512;
     host->max_blk_count = 4096;
-
+#endif
     mmcsd->host = host;
 
     _mmcsd_clk_init(mmcsd);

@@ -13,6 +13,8 @@
 *.crf
 build
 Debug
+rtthread
+settings
 documentation/html
 *~
 *.o
@@ -23,12 +25,14 @@ documentation/html
 *.a
 *.i
 *.d
+*.dfinish
+*.su
 #source insight 4 project files
 *.si4project 
 tools/kconfig-frontends/kconfig-mconf
 packages
 dist
-dist_ide_project
+rt-studio-project
 cconfig.h
 GPUCache
 
@@ -44,3 +48,4 @@ tags
 .history
 CMakeLists.txt
 cmake-build-debug
+*.mk

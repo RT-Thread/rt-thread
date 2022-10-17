@@ -112,6 +112,8 @@ amebaz 配套的驱动库以 package 形式提供，故需先下载对应的 pac
     scons
 ```
 
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
 出现下列信息即为编译成功
 
 ```bash

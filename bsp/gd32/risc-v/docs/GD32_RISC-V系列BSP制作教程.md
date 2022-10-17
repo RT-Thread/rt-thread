@@ -150,8 +150,8 @@ else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
 
-#if os.getenv('RTT_EXEC_PATH'):
-#    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 CORE = 'risc-v'
 BUILD = 'debug'
@@ -416,7 +416,7 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/GD32VF103_Firmware_Library/RISCV/env_Eclipse/start.S']
     src += [startup_path_prefix + '/GD32VF103_Firmware_Library/RISCV/env_Eclipse/entry.S']
 

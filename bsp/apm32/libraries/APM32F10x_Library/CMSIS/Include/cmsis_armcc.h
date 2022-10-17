@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file     cmsis_armcc.h
  * @brief    CMSIS compiler ARMCC (Arm Compiler 5) header file
- * @version  V5.0.4
- * @date     10. January 2018
+ * @version  V5.1.0
+ * @date     08. May 2019
  ******************************************************************************/
 /*
- * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
+ * Copyright (c) 2009-2019 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -27,78 +27,107 @@
 
 
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-    #error "Please use Arm Compiler Toolchain V4.0.677 or later!"
+  #error "Please use Arm Compiler Toolchain V4.0.677 or later!"
 #endif
 
 /* CMSIS compiler control architecture macros */
 #if ((defined (__TARGET_ARCH_6_M  ) && (__TARGET_ARCH_6_M   == 1)) || \
      (defined (__TARGET_ARCH_6S_M ) && (__TARGET_ARCH_6S_M  == 1))   )
-#define __ARM_ARCH_6M__           1
+  #define __ARM_ARCH_6M__           1
 #endif
 
 #if (defined (__TARGET_ARCH_7_M ) && (__TARGET_ARCH_7_M  == 1))
-    #define __ARM_ARCH_7M__           1
+  #define __ARM_ARCH_7M__           1
 #endif
 
 #if (defined (__TARGET_ARCH_7E_M) && (__TARGET_ARCH_7E_M == 1))
-    #define __ARM_ARCH_7EM__          1
+  #define __ARM_ARCH_7EM__          1
 #endif
 
-/* __ARM_ARCH_8M_BASE__  not applicable */
-/* __ARM_ARCH_8M_MAIN__  not applicable */
+  /* __ARM_ARCH_8M_BASE__  not applicable */
+  /* __ARM_ARCH_8M_MAIN__  not applicable */
 
+/* CMSIS compiler control DSP macros */
+#if ((defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     )
+  #define __ARM_FEATURE_DSP         1
+#endif
 
 /* CMSIS compiler specific defines */
 #ifndef   __ASM
-    #define __ASM                                  __asm
+  #define __ASM                                  __asm
 #endif
 #ifndef   __INLINE
-    #define __INLINE                               __inline
+  #define __INLINE                               __inline
 #endif
 #ifndef   __STATIC_INLINE
-    #define __STATIC_INLINE                        static __inline
+  #define __STATIC_INLINE                        static __inline
 #endif
 #ifndef   __STATIC_FORCEINLINE
-    #define __STATIC_FORCEINLINE                   static __forceinline
+  #define __STATIC_FORCEINLINE                   static __forceinline
 #endif
 #ifndef   __NO_RETURN
-    #define __NO_RETURN                            __declspec(noreturn)
+  #define __NO_RETURN                            __declspec(noreturn)
 #endif
 #ifndef   __USED
-    #define __USED                                 __attribute__((used))
+  #define __USED                                 __attribute__((used))
 #endif
 #ifndef   __WEAK
-    #define __WEAK                                 __attribute__((weak))
+  #define __WEAK                                 __attribute__((weak))
 #endif
 #ifndef   __PACKED
-    #define __PACKED                               __attribute__((packed))
+  #define __PACKED                               __attribute__((packed))
 #endif
 #ifndef   __PACKED_STRUCT
-    #define __PACKED_STRUCT                        __packed struct
+  #define __PACKED_STRUCT                        __packed struct
 #endif
 #ifndef   __PACKED_UNION
-    #define __PACKED_UNION                         __packed union
+  #define __PACKED_UNION                         __packed union
 #endif
 #ifndef   __UNALIGNED_UINT32        /* deprecated */
-    #define __UNALIGNED_UINT32(x)                  (*((__packed uint32_t *)(x)))
+  #define __UNALIGNED_UINT32(x)                  (*((__packed uint32_t *)(x)))
 #endif
 #ifndef   __UNALIGNED_UINT16_WRITE
-    #define __UNALIGNED_UINT16_WRITE(addr, val)    ((*((__packed uint16_t *)(addr))) = (val))
+  #define __UNALIGNED_UINT16_WRITE(addr, val)    ((*((__packed uint16_t *)(addr))) = (val))
 #endif
 #ifndef   __UNALIGNED_UINT16_READ
-    #define __UNALIGNED_UINT16_READ(addr)          (*((const __packed uint16_t *)(addr)))
+  #define __UNALIGNED_UINT16_READ(addr)          (*((const __packed uint16_t *)(addr)))
 #endif
 #ifndef   __UNALIGNED_UINT32_WRITE
-    #define __UNALIGNED_UINT32_WRITE(addr, val)    ((*((__packed uint32_t *)(addr))) = (val))
+  #define __UNALIGNED_UINT32_WRITE(addr, val)    ((*((__packed uint32_t *)(addr))) = (val))
 #endif
 #ifndef   __UNALIGNED_UINT32_READ
-    #define __UNALIGNED_UINT32_READ(addr)          (*((const __packed uint32_t *)(addr)))
+  #define __UNALIGNED_UINT32_READ(addr)          (*((const __packed uint32_t *)(addr)))
 #endif
 #ifndef   __ALIGNED
-    #define __ALIGNED(x)                           __attribute__((aligned(x)))
+  #define __ALIGNED(x)                           __attribute__((aligned(x)))
 #endif
 #ifndef   __RESTRICT
-    #define __RESTRICT                             __restrict
+  #define __RESTRICT                             __restrict
+#endif
+#ifndef   __COMPILER_BARRIER
+  #define __COMPILER_BARRIER()                   __memory_changed()
+#endif
+
+/* #########################  Startup and Lowlevel Init  ######################## */
+
+#ifndef __PROGRAM_START
+#define __PROGRAM_START           __main
+#endif
+
+#ifndef __INITIAL_SP
+#define __INITIAL_SP              Image$$ARM_LIB_STACK$$ZI$$Limit
+#endif
+
+#ifndef __STACK_LIMIT
+#define __STACK_LIMIT             Image$$ARM_LIB_STACK$$ZI$$Base
+#endif
+
+#ifndef __VECTOR_TABLE
+#define __VECTOR_TABLE            __Vectors
+#endif
+
+#ifndef __VECTOR_TABLE_ATTRIBUTE
+#define __VECTOR_TABLE_ATTRIBUTE  __attribute((used, section("RESET")))
 #endif
 
 /* ###########################  Core Function Access  ########################### */
@@ -129,8 +158,8 @@
  */
 __STATIC_INLINE uint32_t __get_CONTROL(void)
 {
-    register uint32_t __regControl         __ASM("control");
-    return (__regControl);
+  register uint32_t __regControl         __ASM("control");
+  return(__regControl);
 }
 
 
@@ -141,8 +170,8 @@ __STATIC_INLINE uint32_t __get_CONTROL(void)
  */
 __STATIC_INLINE void __set_CONTROL(uint32_t control)
 {
-    register uint32_t __regControl         __ASM("control");
-    __regControl = control;
+  register uint32_t __regControl         __ASM("control");
+  __regControl = control;
 }
 
 
@@ -153,8 +182,8 @@ __STATIC_INLINE void __set_CONTROL(uint32_t control)
  */
 __STATIC_INLINE uint32_t __get_IPSR(void)
 {
-    register uint32_t __regIPSR          __ASM("ipsr");
-    return (__regIPSR);
+  register uint32_t __regIPSR          __ASM("ipsr");
+  return(__regIPSR);
 }
 
 
@@ -165,8 +194,8 @@ __STATIC_INLINE uint32_t __get_IPSR(void)
  */
 __STATIC_INLINE uint32_t __get_APSR(void)
 {
-    register uint32_t __regAPSR          __ASM("apsr");
-    return (__regAPSR);
+  register uint32_t __regAPSR          __ASM("apsr");
+  return(__regAPSR);
 }
 
 
@@ -177,8 +206,8 @@ __STATIC_INLINE uint32_t __get_APSR(void)
  */
 __STATIC_INLINE uint32_t __get_xPSR(void)
 {
-    register uint32_t __regXPSR          __ASM("xpsr");
-    return (__regXPSR);
+  register uint32_t __regXPSR          __ASM("xpsr");
+  return(__regXPSR);
 }
 
 
@@ -189,8 +218,8 @@ __STATIC_INLINE uint32_t __get_xPSR(void)
  */
 __STATIC_INLINE uint32_t __get_PSP(void)
 {
-    register uint32_t __regProcessStackPointer  __ASM("psp");
-    return (__regProcessStackPointer);
+  register uint32_t __regProcessStackPointer  __ASM("psp");
+  return(__regProcessStackPointer);
 }
 
 
@@ -201,8 +230,8 @@ __STATIC_INLINE uint32_t __get_PSP(void)
  */
 __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
 {
-    register uint32_t __regProcessStackPointer  __ASM("psp");
-    __regProcessStackPointer = topOfProcStack;
+  register uint32_t __regProcessStackPointer  __ASM("psp");
+  __regProcessStackPointer = topOfProcStack;
 }
 
 
@@ -213,8 +242,8 @@ __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
  */
 __STATIC_INLINE uint32_t __get_MSP(void)
 {
-    register uint32_t __regMainStackPointer     __ASM("msp");
-    return (__regMainStackPointer);
+  register uint32_t __regMainStackPointer     __ASM("msp");
+  return(__regMainStackPointer);
 }
 
 
@@ -225,8 +254,8 @@ __STATIC_INLINE uint32_t __get_MSP(void)
  */
 __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
 {
-    register uint32_t __regMainStackPointer     __ASM("msp");
-    __regMainStackPointer = topOfMainStack;
+  register uint32_t __regMainStackPointer     __ASM("msp");
+  __regMainStackPointer = topOfMainStack;
 }
 
 
@@ -237,8 +266,8 @@ __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
  */
 __STATIC_INLINE uint32_t __get_PRIMASK(void)
 {
-    register uint32_t __regPriMask         __ASM("primask");
-    return (__regPriMask);
+  register uint32_t __regPriMask         __ASM("primask");
+  return(__regPriMask);
 }
 
 
@@ -249,8 +278,8 @@ __STATIC_INLINE uint32_t __get_PRIMASK(void)
  */
 __STATIC_INLINE void __set_PRIMASK(uint32_t priMask)
 {
-    register uint32_t __regPriMask         __ASM("primask");
-    __regPriMask = (priMask);
+  register uint32_t __regPriMask         __ASM("primask");
+  __regPriMask = (priMask);
 }
 
 
@@ -280,8 +309,8 @@ __STATIC_INLINE void __set_PRIMASK(uint32_t priMask)
  */
 __STATIC_INLINE uint32_t  __get_BASEPRI(void)
 {
-    register uint32_t __regBasePri         __ASM("basepri");
-    return (__regBasePri);
+  register uint32_t __regBasePri         __ASM("basepri");
+  return(__regBasePri);
 }
 
 
@@ -292,8 +321,8 @@ __STATIC_INLINE uint32_t  __get_BASEPRI(void)
  */
 __STATIC_INLINE void __set_BASEPRI(uint32_t basePri)
 {
-    register uint32_t __regBasePri         __ASM("basepri");
-    __regBasePri = (basePri & 0xFFU);
+  register uint32_t __regBasePri         __ASM("basepri");
+  __regBasePri = (basePri & 0xFFU);
 }
 
 
@@ -305,8 +334,8 @@ __STATIC_INLINE void __set_BASEPRI(uint32_t basePri)
  */
 __STATIC_INLINE void __set_BASEPRI_MAX(uint32_t basePri)
 {
-    register uint32_t __regBasePriMax      __ASM("basepri_max");
-    __regBasePriMax = (basePri & 0xFFU);
+  register uint32_t __regBasePriMax      __ASM("basepri_max");
+  __regBasePriMax = (basePri & 0xFFU);
 }
 
 
@@ -317,8 +346,8 @@ __STATIC_INLINE void __set_BASEPRI_MAX(uint32_t basePri)
  */
 __STATIC_INLINE uint32_t __get_FAULTMASK(void)
 {
-    register uint32_t __regFaultMask       __ASM("faultmask");
-    return (__regFaultMask);
+  register uint32_t __regFaultMask       __ASM("faultmask");
+  return(__regFaultMask);
 }
 
 
@@ -329,8 +358,8 @@ __STATIC_INLINE uint32_t __get_FAULTMASK(void)
  */
 __STATIC_INLINE void __set_FAULTMASK(uint32_t faultMask)
 {
-    register uint32_t __regFaultMask       __ASM("faultmask");
-    __regFaultMask = (faultMask & (uint32_t)1U);
+  register uint32_t __regFaultMask       __ASM("faultmask");
+  __regFaultMask = (faultMask & (uint32_t)1U);
 }
 
 #endif /* ((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__  == 1)) || \
@@ -346,10 +375,10 @@ __STATIC_INLINE uint32_t __get_FPSCR(void)
 {
 #if ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
      (defined (__FPU_USED   ) && (__FPU_USED    == 1U))     )
-    register uint32_t __regfpscr         __ASM("fpscr");
-    return (__regfpscr);
+  register uint32_t __regfpscr         __ASM("fpscr");
+  return(__regfpscr);
 #else
-    return (0U);
+   return(0U);
 #endif
 }
 
@@ -363,10 +392,10 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
 {
 #if ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
      (defined (__FPU_USED   ) && (__FPU_USED    == 1U))     )
-    register uint32_t __regfpscr         __ASM("fpscr");
-    __regfpscr = (fpscr);
+  register uint32_t __regfpscr         __ASM("fpscr");
+  __regfpscr = (fpscr);
 #else
-    (void)fpscr;
+  (void)fpscr;
 #endif
 }
 
@@ -462,8 +491,8 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
 #ifndef __NO_EMBEDDED_ASM
 __attribute__((section(".rev16_text"))) __STATIC_INLINE __ASM uint32_t __REV16(uint32_t value)
 {
-    rev16 r0, r0
-    bx lr
+  rev16 r0, r0
+  bx lr
 }
 #endif
 
@@ -477,8 +506,8 @@ __attribute__((section(".rev16_text"))) __STATIC_INLINE __ASM uint32_t __REV16(u
 #ifndef __NO_EMBEDDED_ASM
 __attribute__((section(".revsh_text"))) __STATIC_INLINE __ASM int16_t __REVSH(int16_t value)
 {
-    revsh r0, r0
-    bx lr
+  revsh r0, r0
+  bx lr
 }
 #endif
 
@@ -511,22 +540,22 @@ __attribute__((section(".revsh_text"))) __STATIC_INLINE __ASM int16_t __REVSH(in
  */
 #if ((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__  == 1)) || \
      (defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     )
-#define __RBIT                          __rbit
+  #define __RBIT                          __rbit
 #else
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
 {
-    uint32_t result;
-    uint32_t s = (4U /*sizeof(v)*/ * 8U) - 1U; /* extra shift needed at end */
+  uint32_t result;
+  uint32_t s = (4U /*sizeof(v)*/ * 8U) - 1U; /* extra shift needed at end */
 
-    result = value;                      /* r will be reversed bits of v; first get LSB of v */
-    for (value >>= 1U; value != 0U; value >>= 1U)
-    {
-        result <<= 1U;
-        result |= value & 1U;
-        s--;
-    }
-    result <<= s;                        /* shift when v's highest bits are zero */
-    return result;
+  result = value;                      /* r will be reversed bits of v; first get LSB of v */
+  for (value >>= 1U; value != 0U; value >>= 1U)
+  {
+    result <<= 1U;
+    result |= value & 1U;
+    s--;
+  }
+  result <<= s;                        /* shift when v's highest bits are zero */
+  return result;
 }
 #endif
 
@@ -550,9 +579,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \return             value of type uint8_t at (*ptr)
  */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 5060020)
-    #define __LDREXB(ptr)                                                        ((uint8_t ) __ldrex(ptr))
+  #define __LDREXB(ptr)                                                        ((uint8_t ) __ldrex(ptr))
 #else
-    #define __LDREXB(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((uint8_t ) __ldrex(ptr))  _Pragma("pop")
+  #define __LDREXB(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((uint8_t ) __ldrex(ptr))  _Pragma("pop")
 #endif
 
 
@@ -563,9 +592,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \return        value of type uint16_t at (*ptr)
  */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 5060020)
-    #define __LDREXH(ptr)                                                        ((uint16_t) __ldrex(ptr))
+  #define __LDREXH(ptr)                                                        ((uint16_t) __ldrex(ptr))
 #else
-    #define __LDREXH(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((uint16_t) __ldrex(ptr))  _Pragma("pop")
+  #define __LDREXH(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((uint16_t) __ldrex(ptr))  _Pragma("pop")
 #endif
 
 
@@ -576,9 +605,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \return        value of type uint32_t at (*ptr)
  */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 5060020)
-    #define __LDREXW(ptr)                                                        ((uint32_t ) __ldrex(ptr))
+  #define __LDREXW(ptr)                                                        ((uint32_t ) __ldrex(ptr))
 #else
-    #define __LDREXW(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((uint32_t ) __ldrex(ptr))  _Pragma("pop")
+  #define __LDREXW(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((uint32_t ) __ldrex(ptr))  _Pragma("pop")
 #endif
 
 
@@ -591,9 +620,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \return          1  Function failed
  */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 5060020)
-    #define __STREXB(value, ptr)                                                 __strex(value, ptr)
+  #define __STREXB(value, ptr)                                                 __strex(value, ptr)
 #else
-    #define __STREXB(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
+  #define __STREXB(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
 #endif
 
 
@@ -606,9 +635,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \return          1  Function failed
  */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 5060020)
-    #define __STREXH(value, ptr)                                                 __strex(value, ptr)
+  #define __STREXH(value, ptr)                                                 __strex(value, ptr)
 #else
-    #define __STREXH(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
+  #define __STREXH(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
 #endif
 
 
@@ -621,9 +650,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \return          1  Function failed
  */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 5060020)
-    #define __STREXW(value, ptr)                                                 __strex(value, ptr)
+  #define __STREXW(value, ptr)                                                 __strex(value, ptr)
 #else
-    #define __STREXW(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
+  #define __STREXW(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
 #endif
 
 
@@ -664,8 +693,8 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
 #ifndef __NO_EMBEDDED_ASM
 __attribute__((section(".rrx_text"))) __STATIC_INLINE __ASM uint32_t __RRX(uint32_t value)
 {
-    rrx r0, r0
-    bx lr
+  rrx r0, r0
+  bx lr
 }
 #endif
 
@@ -735,20 +764,20 @@ __attribute__((section(".rrx_text"))) __STATIC_INLINE __ASM uint32_t __RRX(uint3
  */
 __attribute__((always_inline)) __STATIC_INLINE int32_t __SSAT(int32_t val, uint32_t sat)
 {
-    if ((sat >= 1U) && (sat <= 32U))
+  if ((sat >= 1U) && (sat <= 32U))
+  {
+    const int32_t max = (int32_t)((1U << (sat - 1U)) - 1U);
+    const int32_t min = -1 - max ;
+    if (val > max)
     {
-        const int32_t max = (int32_t)((1U << (sat - 1U)) - 1U);
-        const int32_t min = -1 - max ;
-        if (val > max)
-        {
-            return max;
-        }
-        else if (val < min)
-        {
-            return min;
-        }
+      return max;
     }
-    return val;
+    else if (val < min)
+    {
+      return min;
+    }
+  }
+  return val;
 }
 
 /**
@@ -760,25 +789,25 @@ __attribute__((always_inline)) __STATIC_INLINE int32_t __SSAT(int32_t val, uint3
  */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __USAT(int32_t val, uint32_t sat)
 {
-    if (sat <= 31U)
+  if (sat <= 31U)
+  {
+    const uint32_t max = ((1U << sat) - 1U);
+    if (val > (int32_t)max)
     {
-        const uint32_t max = ((1U << sat) - 1U);
-        if (val > (int32_t)max)
-        {
-            return max;
-        }
-        else if (val < 0)
-        {
-            return 0U;
-        }
+      return max;
     }
-    return (uint32_t)val;
+    else if (val < 0)
+    {
+      return 0U;
+    }
+  }
+  return (uint32_t)val;
 }
 
 #endif /* ((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__  == 1)) || \
            (defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     ) */
 
-/*@}*/ /* end of group CMSIS_Core_InstructionInterface */
+/**@}*/ /* end of group CMSIS_Core_InstructionInterface */
 
 
 /* ###################  Compiler specific Intrinsics  ########################### */
@@ -859,7 +888,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __USAT(int32_t val, uint
                                                       ((int64_t)(ARG3) << 32U)     ) >> 32U))
 
 #endif /* ((defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     ) */
-/*@} end of group CMSIS_SIMD_intrinsics */
+/**@} end of group CMSIS_SIMD_intrinsics */
 
 
 #endif /* __CMSIS_ARMCC_H */

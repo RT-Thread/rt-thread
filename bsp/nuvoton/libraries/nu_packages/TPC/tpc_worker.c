@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -92,10 +92,10 @@ static void tpc_entry(void *parameter)
                     u16X = read_data[i].x_coordinate;
                     u16Y = read_data[i].y_coordinate;
 
-                    #if defined(NU_PKG_TPC_REVERSE_XY)
-                        u16X = info.range_x - u16X;
-                        u16Y = info.range_y - u16Y;
-                    #endif
+#if defined(NU_PKG_TPC_REVERSE_XY)
+                    u16X = info.range_x - u16X;
+                    u16Y = info.range_y - u16Y;
+#endif
 
                     //rt_kprintf("[%d] %d %d\n", read_data[i].event, u16X, u16Y);
 

@@ -1,0 +1,12 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+src = Split("""
+    sensor_nct7717u.c
+    """)
+
+group = DefineGroup('nu_pkgs_nct7717u', src, depend = ['NU_PKG_USING_NCT7717U'], CPPPATH = CPPPATH)
+
+Return('group')

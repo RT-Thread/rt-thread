@@ -10,6 +10,9 @@ Current supported LVGL running environment on Nuvoton's boards shown in below ta
 | numaker-m2354 | Music | Nu-TFT v1.3 | config_lvgl |
 | nk-n9h30 | Music | No | .config |
 | numaker-m032ki | Widgets | Nu-TFT v1.3 | config_lvgl |
+| numaker-m467hj | Widgets | NuMaker-TFT-LCD43 v1.0 | config_lvgl |
+| numaker-iot-m467 | Widgets | Nu-TFT v1.3 | config_lvgl |
+| numaker-hmi-ma35d1 | Widgets | No | .config |
 
 ## Download related packages
 

@@ -185,7 +185,7 @@
 
 #define RT_USING_SAL
 
-/* protocol stack implement */
+/* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
@@ -315,9 +315,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -337,6 +334,9 @@
 /* peripheral libraries and drivers */
 
 
+/* Kendryte SDK */
+
+
 /* AI packages */
 
 
@@ -351,6 +351,15 @@
 
 #define PKG_USING_OPTPARSE
 #define PKG_USING_OPTPARSE_LATEST_VERSION
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 
 /* Hardware Drivers Config */
 

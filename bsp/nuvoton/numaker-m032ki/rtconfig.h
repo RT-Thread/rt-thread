@@ -46,7 +46,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40100
+#define RT_VER_NUM 0x40101
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M0
@@ -140,7 +140,13 @@
 
 #define UTEST_SMALL_MEM_TC
 
+/* CPP11 Testcase */
+
+
 /* Utest Serial Testcase */
+
+
+/* RTT Posix Testcase */
 
 
 /* RT-Thread online packages */
@@ -189,9 +195,6 @@
 /* enhanced kernel services */
 
 
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -202,6 +205,9 @@
 
 
 /* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -215,6 +221,15 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 
 /* Hardware Drivers Config */

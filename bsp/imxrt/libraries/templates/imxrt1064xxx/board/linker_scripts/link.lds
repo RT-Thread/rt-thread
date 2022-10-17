@@ -78,7 +78,7 @@ SECTIONS
     . = ALIGN(4);
   } > m_boot_data
 
-  ivt_begin= ORIGIN(m_boot_data) + LENGTH(m_boot_data);
+  ivt_begin = ORIGIN(m_boot_data) + LENGTH(m_boot_data);
 
   .image_vertor_table : AT(ivt_begin)
   {

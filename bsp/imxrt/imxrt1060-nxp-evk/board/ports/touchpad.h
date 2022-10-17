@@ -24,6 +24,7 @@ extern "C" {
 #define BOARD_TOUCH_INT_GPIO     GPIO1
 #define BOARD_TOUCH_INT_PIN      11
 
+void BOARD_Delay(uint32_t ms);
 void BOARD_LPI2C_Init(LPI2C_Type *base, uint32_t clkSrc_Hz);
 status_t BOARD_LPI2C_Send(LPI2C_Type *base,
                           uint8_t deviceAddress,

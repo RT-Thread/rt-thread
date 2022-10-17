@@ -15,10 +15,7 @@ if rtconfig.PLATFORM in ['gcc']:
 if rtconfig.PLATFORM in ['iccarm']:
 	src = Glob('*.c') + Glob('*_iar.S')
 
-if rtconfig.PLATFORM == 'cl':
-	src = Glob('*.c')
-
-if rtconfig.PLATFORM == 'mingw':
+if rtconfig.PLATFORM in ['cl', 'mingw']:
 	src = Glob('*.c')
 
 group = DefineGroup('Platform', src, depend = [''], CPPPATH = CPPPATH)

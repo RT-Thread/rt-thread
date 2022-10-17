@@ -43,32 +43,32 @@ extern rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx);
 /*******************************************************************************
  * Local function prototypes ('static')
  ******************************************************************************/
-#if defined(BSP_USING_SPI1)
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
     static void spi1_rx_dma_irq_handle(void);
     static void spi1_tx_dma_irq_handle(void);
 #endif  /* BSP_USING_SPI1 */
 
-#if defined(BSP_USING_SPI2)
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
     static void spi2_rx_dma_irq_handle(void);
     static void spi2_tx_dma_irq_handle(void);
 #endif  /* BSP_USING_SPI2 */
 
-#if defined(BSP_USING_SPI3)
+#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_RX_USING_DMA)
     static void spi3_rx_dma_irq_handle(void);
     static void spi3_tx_dma_irq_handle(void);
 #endif  /* BSP_USING_SPI3 */
 
-#if defined(BSP_USING_SPI4)
+#if defined(BSP_USING_SPI4) && defined(BSP_SPI4_RX_USING_DMA)
     static void spi4_rx_dma_irq_handle(void);
     static void spi4_tx_dma_irq_handle(void);
 #endif  /* BSP_USING_SPI4 */
 
-#if defined(BSP_USING_SPI5)
+#if defined(BSP_USING_SPI5) && defined(BSP_SPI5_RX_USING_DMA)
     static void spi5_rx_dma_irq_handle(void);
     static void spi5_tx_dma_irq_handle(void);
 #endif  /* BSP_USING_SPI5 */
 
-#if defined(BSP_USING_SPI6)
+#if defined(BSP_USING_SPI6) && defined(BSP_SPI6_RX_USING_DMA)
     static void spi6_rx_dma_irq_handle(void);
     static void spi6_tx_dma_irq_handle(void);
 #endif  /* BSP_USING_SPI6 */
@@ -549,6 +549,8 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     return result;
 }
 
+#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI4_TX_USING_DMA) || \
+    defined(BSP_SPI4_TX_USING_DMA) || defined(BSP_SPI5_TX_USING_DMA) || defined(BSP_SPI6_TX_USING_DMA)
 /**
   * @brief  Clear DMA transfer complete flag.
   * @param  dma     specific dam witch spi used.
@@ -558,6 +560,7 @@ static void hc32_dma_irq_handle(struct dma_config *dma)
 {
     DMA_ClearTransCompleteStatus(dma->Instance, (1U << dma->channel));
 }
+#endif
 
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
 /**

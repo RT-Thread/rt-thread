@@ -253,6 +253,9 @@
 /* peripheral libraries and drivers */
 
 
+/* Kendryte SDK */
+
+
 /* AI packages */
 
 
@@ -264,6 +267,15 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 #define SOC_VIRT64_AARCH64
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2012-11-23     Bernard      Add extern "C"
  * 2020-06-13     armink       fix the 3 wires issue
+ * 2022-09-01     liYony       fix api rt_spi_sendrecv16 about MSB and LSB bug
  */
 
 #ifndef __SPI_H__
@@ -227,6 +228,9 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
                                const void           *send_buf2,
                                rt_size_t             send_length2);
 
+rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                              rt_uint16_t           data);
+
 /**
  * This function transmits data to SPI device.
  *
@@ -274,16 +278,6 @@ rt_inline rt_uint8_t rt_spi_sendrecv8(struct rt_spi_device *device,
     rt_uint8_t value = 0;
 
     rt_spi_send_then_recv(device, &data, 1, &value, 1);
-
-    return value;
-}
-
-rt_inline rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
-                                        rt_uint16_t           data)
-{
-    rt_uint16_t value = 0;
-
-    rt_spi_send_then_recv(device, &data, 2, &value, 2);
 
     return value;
 }
