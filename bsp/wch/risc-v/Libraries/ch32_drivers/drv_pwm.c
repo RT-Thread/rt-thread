@@ -589,7 +589,8 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm* device, int cmd, void* arg
 
 static struct rt_pwm_ops pwm_ops =
 {
-    .control = drv_pwm_control };
+    .control = drv_pwm_control
+};
 
 static int rt_hw_pwm_init(void)
 {
