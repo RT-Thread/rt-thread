@@ -709,8 +709,6 @@ RTM_EXPORT(rt_sem_control);
 /**@}*/
 #endif /* RT_USING_SEMAPHORE */
 
-#define RT_USING_MUTEX
-
 #ifdef RT_USING_MUTEX
 rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
 {
