@@ -15,8 +15,8 @@ elif CROSS_TOOL =='mw':
     PLATFORM 	= 'mw'
     EXEC_PATH 	= 'C:/ARC/MetaWare/arc/bin'
 
-# if os.getenv('RTT_EXEC_PATH'):
-#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
