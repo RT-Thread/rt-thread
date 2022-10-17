@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-10-01    
+ * 2022-10-01     zhs          the first version which add from wch
  */
 
 #include <board.h>
