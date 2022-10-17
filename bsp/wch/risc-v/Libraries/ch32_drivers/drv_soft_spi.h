@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-10-01   
+ * 2022-10-01     zhs          the first version which add from wch
  */
 #ifndef LIBRARIES_HAL_DRIVERS_DRV_SOFT_SPI_H_
 #define LIBRARIES_HAL_DRIVERS_DRV_SOFT_SPI_H_
