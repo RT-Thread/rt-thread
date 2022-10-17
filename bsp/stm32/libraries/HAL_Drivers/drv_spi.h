@@ -16,6 +16,7 @@
 #include <rthw.h>
 #include <drv_common.h>
 #include "drv_dma.h"
+#include <ipc/completion.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,6 +67,8 @@ struct stm32_spi
 
     rt_uint8_t spi_dma_flag;
     struct rt_spi_bus spi_bus;
+
+    struct rt_completion cpt;
 };
 
 #endif /*__DRV_SPI_H__ */
