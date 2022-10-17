@@ -272,123 +272,123 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
 struct rtdevice_pwm_device pwm_device_list[] =
 {
 #ifdef BSP_USING_TIM1_PWM
-        {
-            .periph = TIM1,
-            .name = "pwm1",
+    {
+        .periph = TIM1,
+        .name = "pwm1",
 #ifdef BSP_USING_TIM1_PWM_CH1
-            .channel[0] = TIM_Channel_1,
+        .channel[0] = TIM_Channel_1,
 #else
-            .channel[0] = 0xFF,
+        .channel[0] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM1_PWM_CH2
-            .channel[1] = TIM_Channel_2,
+        .channel[1] = TIM_Channel_2,
 #else
-            .channel[1] = 0xFF,
+        .channel[1] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM1_PWM_CH3
-            .channel[2] = TIM_Channel_3,
+        .channel[2] = TIM_Channel_3,
 #else
-            .channel[2] = 0xFF,
+        .channel[2] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM1_PWM_CH4
-            .channel[3] = TIM_Channel_4,
+        .channel[3] = TIM_Channel_4,
 #else
-            .channel[3] = 0xFF,
+        .channel[3] = 0xFF,
 #endif
-        },
+    },
 #endif /* BSP_USING_TIM1_PWM */
 
 #ifdef BSP_USING_TIM2_PWM
-        {
-            .periph = TIM2,
-            .name = "pwm2",
+    {
+        .periph = TIM2,
+        .name = "pwm2",
 #ifdef BSP_USING_TIM2_PWM_CH1
-            .channel[0] = TIM_Channel_1,
+        .channel[0] = TIM_Channel_1,
 #else
-            .channel[0] = 0xFF,
+        .channel[0] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM2_PWM_CH2
-            .channel[1] = TIM_Channel_2,
+        .channel[1] = TIM_Channel_2,
 #else
-            .channel[1] = 0xFF,
+        .channel[1] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM2_PWM_CH3
-            .channel[2] = TIM_Channel_3,
+        .channel[2] = TIM_Channel_3,
 #else
-            .channel[2] = 0xFF,
+        .channel[2] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM2_PWM_CH4
-            .channel[3] = TIM_Channel_4,
+        .channel[3] = TIM_Channel_4,
 #else
-            .channel[3] = 0xFF,
+        .channel[3] = 0xFF,
 #endif
-        },
+    },
 #endif /* BSP_USING_TIM2_PWM */
 
 #ifdef BSP_USING_TIM3_PWM
-        {
-            .periph = TIM3,
-            .name = "pwm3",
+    {
+        .periph = TIM3,
+        .name = "pwm3",
 #ifdef BSP_USING_TIM3_PWM_CH1
-            .channel[0] = TIM_Channel_1,
+        .channel[0] = TIM_Channel_1,
 #else
-            .channel[0] = 0xFF,
+        .channel[0] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM3_PWM_CH2
-            .channel[1] = TIM_Channel_2,
+        .channel[1] = TIM_Channel_2,
 #else
-            .channel[1] = 0xFF,
+        .channel[1] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM3_PWM_CH3
-            .channel[2] = TIM_Channel_3,
+        .channel[2] = TIM_Channel_3,
 #else
-            .channel[2] = 0xFF,
+        .channel[2] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM3_PWM_CH4
-            .channel[3] = TIM_Channel_4,
+        .channel[3] = TIM_Channel_4,
 #else
-            .channel[3] = 0xFF,
+        .channel[3] = 0xFF,
 #endif
-        },
+    },
 #endif /* BSP_USING_TIM3_PWM */
 
 #ifdef BSP_USING_TIM4_PWM
-        {
-            .periph = TIM4,
-            .name = "pwm4",
+    {
+        .periph = TIM4,
+        .name = "pwm4",
 #ifdef BSP_USING_TIM4_PWM_CH1
-            .channel[0] = TIM_Channel_1,
+        .channel[0] = TIM_Channel_1,
 #else
-            .channel[0] = 0xFF,
+        .channel[0] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM4_PWM_CH2
-            .channel[1] = TIM_Channel_2,
+        .channel[1] = TIM_Channel_2,
 #else
-            .channel[1] = 0xFF,
+        .channel[1] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM4_PWM_CH3
-            .channel[2] = TIM_Channel_3,
+        .channel[2] = TIM_Channel_3,
 #else
-            .channel[2] = 0xFF,
+        .channel[2] = 0xFF,
 #endif
 
 #ifdef BSP_USING_TIM4_PWM_CH4
-            .channel[3] = TIM_Channel_4,
+        .channel[3] = TIM_Channel_4,
 #else
-            .channel[3] = 0xFF,
+        .channel[3] = 0xFF,
 #endif
-        },
+    },
 #endif /* BSP_USING_TIM4_PWM */
 };
 
