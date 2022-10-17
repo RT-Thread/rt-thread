@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-10-01    
+ * 2022-10-01     zhs          the first version which add from wch
  */
 
 #include <board.h>
@@ -157,7 +157,7 @@ void ch32_dir_miso(void *data, rt_int32_t state)
     }
 }
 
-static void ch32_udelay(rt_uint32_t us) 
+static void ch32_udelay(rt_uint32_t us)
 {
     rt_uint32_t ticks;
     rt_uint32_t told, tnow, tcnt = 0;
@@ -197,8 +197,8 @@ static struct rt_spi_bit_ops ch32_soft_spi_ops =
         .get_sclk = ch32_get_sclk,
         .get_mosi = ch32_get_mosi,
         .get_miso = ch32_get_miso,
-        .dir_mosi = ch32_dir_mosi,  
-        .dir_miso = ch32_dir_miso,  
+        .dir_mosi = ch32_dir_mosi,
+        .dir_miso = ch32_dir_miso,
         .udelay = ch32_udelay,
         .delay_us = 1,
 };

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-10-01   
+ * 2022-10-01     zhs          the first version which add from wch
  */
 #ifndef LIBRARIES_HAL_DRIVERS_DRV_SOFT_SPI_H_
 #define LIBRARIES_HAL_DRIVERS_DRV_SOFT_SPI_H_
