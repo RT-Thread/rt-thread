@@ -24,4 +24,7 @@ typedef unsigned char  uint8_t;     /**<  8bit unsigned integer type */
  * this macro at the start of preemptible interrupt service routines*/
 #define ALLOW_ISR_PREEMPT() __asm(" CLRC INTM")
 
+#define RT_USING_ZERO_LATENCY
+#define ZERO_LATENCY_INT_MASK 0x0000
+
 #endif
