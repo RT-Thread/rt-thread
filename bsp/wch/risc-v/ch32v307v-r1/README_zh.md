@@ -29,53 +29,19 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 
 >本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
 
-### 3.1 快速上手
+### 3.1 使用Env编译BSP
 
-本 BSP 为开发者提供 Scons 编译配置。下面介绍如何将系统运行起来。
+本节讲解如何使用Env工具来编译BSP工程。
 
-#### 3.1.1 指定RISC-V GCC编译器
+#### 3.1.1 编译BSP
 
-推荐使用 RT-Thread Studio 软件里面的编译器。
+[下载WCH编译工具链](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/archive/refs/tags/V1.0.0.zip)，并在当前BSP根目录下打开Env工具并执行 `scons --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` 命令，在指定工具链位置的同时直接编译。编译完成之后会生成 **rtthread.bin** 文件。
 
-##### 方法一：直接指定编译器路径。
-
-![method1](./figures/method1.png)
-
-##### 方法二：通过env设置编译器路径
-
-![method2](./figures/method2.png)
-
-```shell
-set RTT_EXEC_PATH=D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\WCH\RISC-V-GCC-WCH\8.2.0\bin
-```
-
-或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
-
-> 注意：如果使用第二种方法，第一种方法设置的路劲将会失效。
-
-#### 3.1.2 生成dist文件夹
-
-```shell
-scons --dist
-```
-
-![dist](./figures/dist.png)
-
-#### 3.1.3 进入dist文件夹scons编译
-
-```shell
-scons
-```
-
-![scons](./figures/scons.png)
-
-最终会生成 **rtthread.bin** 文件。
-
-#### 3.1.4 硬件连接
+#### 3.1.2 硬件连接
 
 使用数据线连接板载 wch-link 到 PC，打开电源开关。
 
-#### 3.1.5 下载
+#### 3.1.3 下载
 
 打开 WCH RISC-V MCU ProgrammerTool 下载软件，选择刚刚生成的 **rtthread.bin**  文件，进行下载。
 
@@ -83,7 +49,7 @@ scons
 
 > 注意：这里Chip Mem 设置为224K ROM + 96K RAM。不要以参考手册为准。
 
-#### 3.1.6 运行结果
+#### 3.1.4 运行结果
 
 在终端工具里打开板载 wch-link 串口（WCHDapLink SERIAL，默认115200-8-1-N），复位设备后，在串口上可以看到 RT-Thread 的输出信息：
 
@@ -101,7 +67,7 @@ scons
 
 ![windows](./figures/windows.png)
 
-填写项目信息，Bsp 根目录为 \rt-thread\bsp\wch\risc-v\ch32v307v-r1 目录：
+填写项目信息，Bsp 根目录为 `\rt-thread\bsp\wch\risc-v\ch32v307v-r1` 目录：
 
 ![config](./figures/config.png)
 
