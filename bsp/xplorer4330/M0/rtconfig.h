@@ -114,9 +114,6 @@
 //#define FINSH_USING_MSH
 // </section>
 
-// <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIBC" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 //#define RT_USING_PTHREADS
 // </section>
