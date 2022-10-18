@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include <time.h>
 #ifdef _WIN32
-typedef __time64_t time_t;
+typedef __time32_t time_t;
 #endif /* _WIN32 */
 
 #ifdef __cplusplus
