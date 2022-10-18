@@ -53,3 +53,4 @@ rt_err_t rt_hw_soft_spi_device_attach(const char *bus_name, const char *device_n
 int rt_soft_spi_init(void);
 
 #endif /* __DRV_SOFT_SPI__ */
+
