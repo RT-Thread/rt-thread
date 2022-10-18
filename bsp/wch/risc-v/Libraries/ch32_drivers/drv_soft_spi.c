@@ -19,10 +19,10 @@
 static struct ch32_soft_spi_config soft_spi_config[] =
 {
 #ifdef BSP_USING_SOFT_SPI1
-        SOFT_SPI1_BUS_CONFIG,
+    SOFT_SPI1_BUS_CONFIG,
 #endif
 #ifdef BSP_USING_SOFT_SPI2
-        SOFT_SPI2_BUS_CONFIG,
+    SOFT_SPI2_BUS_CONFIG,
 #endif
 };
 
@@ -188,19 +188,19 @@ static void ch32_udelay(rt_uint32_t us)
 }
 
 static struct rt_spi_bit_ops ch32_soft_spi_ops =
-    {
-        .data = RT_NULL,
-        .tog_sclk = ch32_tog_sclk,
-        .set_sclk = ch32_set_sclk,
-        .set_mosi = ch32_set_mosi,
-        .set_miso = ch32_set_miso,
-        .get_sclk = ch32_get_sclk,
-        .get_mosi = ch32_get_mosi,
-        .get_miso = ch32_get_miso,
-        .dir_mosi = ch32_dir_mosi,
-        .dir_miso = ch32_dir_miso,
-        .udelay = ch32_udelay,
-        .delay_us = 1,
+{
+    .data = RT_NULL,
+    .tog_sclk = ch32_tog_sclk,
+    .set_sclk = ch32_set_sclk,
+    .set_mosi = ch32_set_mosi,
+    .set_miso = ch32_set_miso,
+    .get_sclk = ch32_get_sclk,
+    .get_mosi = ch32_get_mosi,
+    .get_miso = ch32_get_miso,
+    .dir_mosi = ch32_dir_mosi,
+    .dir_miso = ch32_dir_miso,
+    .udelay = ch32_udelay,
+    .delay_us = 1,
 };
 
 static struct ch32_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
