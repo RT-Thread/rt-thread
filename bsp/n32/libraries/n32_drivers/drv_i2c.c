@@ -436,38 +436,38 @@ int rt_hw_i2c_init(void)
 #endif /* RT_USING_I2C_BITOPS */
 
 #ifdef RT_USING_HARDWARE_I2C
-		
+
 GPIO_InitType GPIO_InitStructure;
 I2C_InitType  I2C_InitStructure;
 #ifdef BSP_USING_I2C1
 #define I2C1_SPEED  400000
 
     static struct rt_i2c_bus i2c_bus1;
-    
+
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
-		RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
-		
-		GPIO_InitStruct(&GPIO_InitStructure);
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
+
+        GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PB8 to I2C1_SCL, PB9 to I2C1_SDA */
-		GPIO_InitStructure.Pin        = GPIO_PIN_8 | GPIO_PIN_9;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
-		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
-   
-    GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE); 
+        GPIO_InitStructure.Pin        = GPIO_PIN_8 | GPIO_PIN_9;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+
+    GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
-	  /* Enable I2C clock */
+      /* Enable I2C clock */
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
-	
-	  GPIO_InitStruct(&GPIO_InitStructure);
+
+      GPIO_InitStruct(&GPIO_InitStructure);
     /* Confige I2C1_SCL(PB8) and  I2C1_SDA(PB9) */
-		GPIO_InitStructure.Pin            = GPIO_PIN_8 | GPIO_PIN_9;
-		GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
-		GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
-		GPIO_InitStructure.GPIO_Alternate = GPIO_AF4_I2C1;
-		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);	
+        GPIO_InitStructure.Pin            = GPIO_PIN_8 | GPIO_PIN_9;
+        GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
+        GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
+        GPIO_InitStructure.GPIO_Alternate = GPIO_AF4_I2C1;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
 #endif
 
     I2C_DeInit(I2C1);
@@ -493,26 +493,26 @@ I2C_InitType  I2C_InitStructure;
 
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
-		RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
-		
-		GPIO_InitStruct(&GPIO_InitStructure);
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
+
+        GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PB10 to I2C2_SCL, PB11 to I2C2_SDA */
-		GPIO_InitStructure.Pin        = GPIO_PIN_10 | GPIO_PIN_11;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
-		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+        GPIO_InitStructure.Pin        = GPIO_PIN_10 | GPIO_PIN_11;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
-	  /* Enable I2C clock */
+      /* Enable I2C clock */
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
-	
-	  GPIO_InitStruct(&GPIO_InitStructure);
+
+      GPIO_InitStruct(&GPIO_InitStructure);
     /* Confige I2C1_SCL(PB10) and  I2C1_SDA(PB11) */
-		GPIO_InitStructure.Pin            = GPIO_PIN_10 | GPIO_PIN_11;
-		GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
-		GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
-		GPIO_InitStructure.GPIO_Alternate = GPIO_AF6_I2C2;
-		GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);	
+        GPIO_InitStructure.Pin            = GPIO_PIN_10 | GPIO_PIN_11;
+        GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
+        GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
+        GPIO_InitStructure.GPIO_Alternate = GPIO_AF6_I2C2;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
 #endif
 
     I2C_DeInit(I2C2);
@@ -536,16 +536,16 @@ I2C_InitType  I2C_InitStructure;
 #define I2C3_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus3;
-		
-		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
-		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C3, ENABLE);
-		
-		GPIO_InitStruct(&GPIO_InitStructure);
+
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C3, ENABLE);
+
+        GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PC0 to I2C3_SCL, PC1 to I2C3_SDA */
-		GPIO_InitStructure.Pin        = GPIO_PIN_0 | GPIO_PIN_1;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
-		GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
+        GPIO_InitStructure.Pin        = GPIO_PIN_0 | GPIO_PIN_1;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
 
     I2C_DeInit(I2C3);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -567,16 +567,16 @@ I2C_InitType  I2C_InitStructure;
 #define I2C4_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus4;
-		
-		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
-		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C4, ENABLE);
-		
-		GPIO_InitStruct(&GPIO_InitStructure);
+
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C4, ENABLE);
+
+        GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PC6 to I2C4_SCL, PC7 to I2C4_SDA */
-		GPIO_InitStructure.Pin        = GPIO_PIN_6 | GPIO_PIN_7;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
-		GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
+        GPIO_InitStructure.Pin        = GPIO_PIN_6 | GPIO_PIN_7;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
 
     I2C_DeInit(I2C4);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;

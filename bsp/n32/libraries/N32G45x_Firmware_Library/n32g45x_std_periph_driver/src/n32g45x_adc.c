@@ -150,7 +150,7 @@
 #define DAT_ADDR ((uint32_t)0x4001244C)
 
 /* ADC STS register mask */
-#define ADC_STS_RESERVE_MASK    ((uint32_t)0x0000007F)    
+#define ADC_STS_RESERVE_MASK    ((uint32_t)0x0000007F)
 
 /**
  * @}
@@ -1420,7 +1420,7 @@ void ADC_SetConvResultBitNum(ADC_Module* ADCx, uint32_t ResultBitNum)
  */
 void ADC_AHB_Clock_Mode_Config(ADC_Module* ADCx)
 {
-    ADCx->CTRL3 &= ADC_CLOCK_AHB;  
+    ADCx->CTRL3 &= ADC_CLOCK_AHB;
 }
 
 /**
@@ -1428,8 +1428,8 @@ void ADC_AHB_Clock_Mode_Config(ADC_Module* ADCx)
  * @param ADCx where x can be 1, 2, 3 or 4 to select the ADC peripheral.
  */
 void ADC_PLL_Clock_Mode_Config(ADC_Module* ADCx)
-{   
-    ADCx->CTRL3 |= ADC_CLOCK_PLL;  
+{
+    ADCx->CTRL3 |= ADC_CLOCK_PLL;
 }
 /**
  * @brief  Configures the ADCHCLK prescaler.

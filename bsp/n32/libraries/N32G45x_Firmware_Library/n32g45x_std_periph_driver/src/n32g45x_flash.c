@@ -660,7 +660,7 @@ FLASH_STS FLASH_ReadOutProtectionL2_ENABLE(void)
     FLASH_STS status = FLASH_COMPL;
 
     usertmp = ((OBR_USER_MSK & FLASH->OBR) << 0x0E);
-  
+
     /* Get the actual read protection L1 Option Byte value */
     if (FLASH_GetReadOutProtectionSTS() == RESET)
     {
@@ -690,7 +690,7 @@ FLASH_STS FLASH_ReadOutProtectionL2_ENABLE(void)
         if (status == FLASH_COMPL)
         {
             /* Clears the FLASH's pending flags */
-            FLASH_ClearFlag(FLASH_STS_CLRFLAG); 
+            FLASH_ClearFlag(FLASH_STS_CLRFLAG);
 
             /* if the erase operation is completed, disable the OPTER Bit */
             FLASH->CTRL &= CTRL_Reset_OPTER;

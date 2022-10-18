@@ -2962,7 +2962,7 @@ FlagStatus TIM_GetCCENStatus(TIM_Module* TIMx, uint32_t TIM_CCEN)
             bitstatus = RESET;
         }
     }
-    
+
     return bitstatus;
 }
 

@@ -75,7 +75,7 @@ void rt_hw_board_init()
 
     /* Configure the SysTick */
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-    
+
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -84,7 +84,7 @@ void rt_hw_board_init()
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    
+
 #ifdef BSP_USING_SRAM
     rt_system_heap_init((void *)EXT_SRAM_BEGIN, (void *)EXT_SRAM_END);
 #else

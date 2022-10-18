@@ -828,14 +828,14 @@ typedef struct
  * @}
  */
 
-/** @defgroup ETR selection 
+/** @defgroup ETR selection
   * @{
   */
 #define TIM_ETR_Seletct_ExtGpio                 ((uint16_t)0x0000)
 #define TIM_ETR_Seletct_innerTsc                ((uint16_t)0x0100)
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup TIM_Slave_Mode
  * @{
@@ -926,11 +926,11 @@ typedef struct
 #define IsAdvancedTimCCENFlag(FLAG)                                                                                             \
     (((FLAG) == TIM_CC1EN) || ((FLAG) == TIM_CC1NEN) || ((FLAG) == TIM_CC2EN) || ((FLAG) == TIM_CC2NEN)   \
      || ((FLAG) == TIM_CC3EN) || ((FLAG) == TIM_CC3NEN)                              \
-     || ((FLAG) == TIM_CC4EN) || ((FLAG) == TIM_CC5EN) || ((FLAG) == TIM_CC6EN)   )                      
+     || ((FLAG) == TIM_CC4EN) || ((FLAG) == TIM_CC5EN) || ((FLAG) == TIM_CC6EN)   )
 #define IsGeneralTimCCENFlag(FLAG)                                                                                             \
     (((FLAG) == TIM_CC1EN) ||  ((FLAG) == TIM_CC2EN)    \
      || ((FLAG) == TIM_CC3EN)                             \
-     || ((FLAG) == TIM_CC4EN)      )               
+     || ((FLAG) == TIM_CC4EN)      )
 
 /** @addtogroup TIM_Legacy
  * @{

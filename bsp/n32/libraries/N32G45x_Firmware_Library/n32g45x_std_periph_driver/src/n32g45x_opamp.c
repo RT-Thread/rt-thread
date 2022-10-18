@@ -112,9 +112,9 @@ void OPAMP_Init(OPAMPX OPAMPx, OPAMP_InitType* OPAMP_InitStruct)
 {
     __IO uint32_t* pCs = &OPAMP->CS1 + OPAMPx;
     __IO uint32_t tmp  = *pCs;
-    
+
     SetBitMsk(tmp, OPAMP_InitStruct->Gain, OPAMP_CS_PGA_GAIN_MASK);
-    
+
     if(OPAMP_InitStruct->HighVolRangeEn==ENABLE)
         SetBitMsk(tmp, OPAMP_CS_RANGE_MASK, OPAMP_CS_RANGE_MASK);
     else
@@ -124,7 +124,7 @@ void OPAMP_Init(OPAMPX OPAMPx, OPAMP_InitType* OPAMP_InitStruct)
         SetBitMsk(tmp,OPAMP_CS_TCMEN_MASK, OPAMP_CS_TCMEN_MASK);
     else
         ClrBit(tmp,OPAMP_CS_TCMEN_MASK);
-        
+
     SetBitMsk(tmp, OPAMP_InitStruct->Mod, OPAMP_CS_MOD_MASK);
     *pCs = tmp;
 }

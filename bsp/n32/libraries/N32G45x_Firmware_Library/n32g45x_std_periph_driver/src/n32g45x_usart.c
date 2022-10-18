@@ -264,7 +264,7 @@ void USART_Init(USART_Module* USARTx, USART_InitType* USART_InitStruct)
     if((fractionaldivider >> 4) == 1){
         tmpregister = ((integerdivider / 100) + 1) << 4;
     }
-    
+
     /* Implement the fractional part in the register */
     tmpregister |= fractionaldivider & ((uint8_t)0x0F);
 
