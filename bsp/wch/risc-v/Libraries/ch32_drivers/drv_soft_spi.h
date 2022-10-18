@@ -14,7 +14,6 @@
 #include <rtdevice.h>
 #include <spi-bit-ops.h>
 
-
 /* ch32 soft spi config */
 struct ch32_soft_spi_config
 {
@@ -32,29 +31,25 @@ struct ch32_soft_spi
 };
 
 #ifdef BSP_USING_SOFT_SPI1
-#define SOFT_SPI1_BUS_CONFIG                                    \
-    {                                                       \
-        .sck = BSP_S_SPI1_SCK_PIN,                          \
-        .mosi = BSP_S_SPI1_MOSI_PIN,                        \
-        .miso = BSP_S_SPI1_MISO_PIN,                        \
-        .bus_name = "sspi1",                                \
-    }
+#define SOFT_SPI1_BUS_CONFIG                            \
+{                                                       \
+    .sck = BSP_S_SPI1_SCK_PIN,                          \
+    .mosi = BSP_S_SPI1_MOSI_PIN,                        \
+    .miso = BSP_S_SPI1_MISO_PIN,                        \
+    .bus_name = "sspi1",                                \
+}
 #endif /* BSP_USING_SOFT_SPI1 */
 #ifdef BSP_USING_SOFT_SPI2
-#define SOFT_SPI2_BUS_CONFIG                                    \
-    {                                                       \
-        .sck = BSP_S_SPI2_SCK_PIN,                          \
-        .mosi = BSP_S_SPI2_MOSI_PIN,                        \
-        .miso = BSP_S_SPI2_MISO_PIN,                        \
-        .bus_name = "sspi2",                                \
-    }
+#define SOFT_SPI2_BUS_CONFIG                            \
+{                                                       \
+    .sck = BSP_S_SPI2_SCK_PIN,                          \
+    .mosi = BSP_S_SPI2_MOSI_PIN,                        \
+    .miso = BSP_S_SPI2_MISO_PIN,                        \
+    .bus_name = "sspi2",                                \
+}
 #endif /* BSP_USING_SOFT_SPI2 */
 
 rt_err_t rt_hw_soft_spi_device_attach(const char *bus_name, const char *device_name, const char *pin_name);
 int rt_soft_spi_init(void);
 
 #endif /* __DRV_SOFT_SPI__ */
-
-
-
-
