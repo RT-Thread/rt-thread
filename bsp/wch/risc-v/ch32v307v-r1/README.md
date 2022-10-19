@@ -2,7 +2,7 @@
 
 **English** | [中文](README_zh.md)
 
-## Introduction
+## 1 Introduction
 
 CH32V307V-R1 is a RISC-V core-based development board with a maximum main frequency of 144Mhz. It delivers the best value for developers to try and get started with RISC-V architecture. 
 
@@ -29,7 +29,7 @@ By reading the Quickly Get Started section developers can quickly get their hand
 
 For more details about this board, please refer to: [CH32V307](https://www.wch.cn/products/CH32V307.html)
 
-## Compiling
+## 2 Compiling
 
 The BSP supports the RISC-V GCC development environment, here's the specific version information:
 
@@ -37,18 +37,18 @@ The BSP supports the RISC-V GCC development environment, here's the specific ver
 | ------------ | -------------------- |
 | GCC          | WCH RISC-V GCC 8.2.0 |
 
-## Quickly Get Started
+## 3 Quickly Get Started
 
-#### 3.1 Using [Env](https://www.rt-thread.io/download.html?download=Env) to compile BSP
+### 3.1 Using [Env](https://www.rt-thread.io/download.html?download=Env) to compile BSP
 
 This section is about to introduce how to use Env to compile the BSP.
 
 #### 3.1.1 Compile BSP
 
-1. [Download WCH Compile Toolchain](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/archive/refs/tags/V1.0.0.zip)
+1. [Download WCH Compile Toolchain](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/releases)
 2. [Download the Env tool latest version](https://github.com/RT-Thread/env-windows/releases)
 3. [Download the RT-Thread latest code](https://github.com/RT-Thread/rt-thread/archive/refs/heads/master.zip)
-4. Open the Env tool in the current BSP root directory and execute the `scons --exec-path=D:sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` command, compile it directly while specifying the toolchain location. 
+4. Open the Env tool in the current BSP root directory and execute the `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` command, compile it directly while specifying the toolchain location. 
 5. After compilation, the **rtthread.bin** file will be generated
 
 ![sconscompile](./figures/sconscompile.jpg)
@@ -72,11 +72,19 @@ In the terminal tool, open the onboard wch-link serial port (WCHDapLink SERIAL, 
 ![end](./figures/end.png)
 
 
-<!-- ### 3.2 Import RT-Thread Studio Project
+### 3.2 Use VSCode to edit and compile the project
+
+In the Env terminal, type command `scons --target=vsc` to generate the VSCode project. Then, type command `code .` in the Env terminal to open the VSCode.
+
+Use **VSCode terminal** to type command `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` to compile the project in VSCode.
+
+![vscode-terminal](./figures/vscode-terminal.png)
+
+<!-- ### 3.3 Import RT-Thread Studio Project
 
 **CH32V307V-R1 is pending upgrade in Studio. It's not encouraged now to use Studio to compile this BSP.**
 
-#### 3.2.1 Import
+#### 3.3.1 Import
 
 Open RT-Thread Studio and click: File-> Import:
 
@@ -93,7 +101,7 @@ Fill in the project info, the BSP root directory is \rt-thread\bsp\wch\risc-v\ch
 ![config](./figures/config.png)
 
 
-#### 3.2.2 Compilation Environment
+#### 3.3.2 Compilation Environment
 
 工程导入后进行编译环境的设置，首先点击“打开构建设置”进入设置界面：
 
@@ -114,7 +122,7 @@ Set the tool:
 
 ![toolset](./figures/toolset.png)
 
-#### 3.2.3 Compiling 
+#### 3.3.3 Compiling 
 
 The result is shown as below:
 

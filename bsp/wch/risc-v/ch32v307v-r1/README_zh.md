@@ -63,9 +63,17 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 
 ![end](./figures/end.png)
 
-### 3.2 导入 RT-Thread Studio 工程
+### 3.2 使用VSCode编译工程
 
-#### 3.2.1 导入
+在Env终端中敲入命令 `scons --target=vsc` 来生成VSCode工程. 接着敲入命令 `code .` 来打开VSCode.
+
+使用 **VSCode 终端** 敲入命令 `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` 来编译工程。
+
+![vscode-terminal](./figures/vscode-terminal.png)
+
+### 3.3 导入 RT-Thread Studio 工程
+
+#### 3.3.1 导入
 
 打开 RT-Thread Studio 后点击：文件->导入：
 
@@ -79,8 +87,7 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 
 ![config](./figures/config.png)
 
-
-#### 3.2.2 配置环境
+#### 3.3.2 配置环境
 
 工程导入后进行编译环境的设置，首先点击“打开构建设置”进入设置界面：
 
@@ -98,7 +105,7 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 
 ![toolset](./figures/toolset.png)
 
-#### 3.2.3 编译
+#### 3.3.3 编译
 
 编译结果如下：
 
