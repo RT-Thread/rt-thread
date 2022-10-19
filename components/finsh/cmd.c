@@ -408,9 +408,9 @@ long list_mutex(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s   owner  hold suspend thread priority\n", maxlen, item_title);
+    rt_kprintf("%-*.s   owner  hold priority suspend thread \n", maxlen, item_title);
     object_split(maxlen);
-    rt_kprintf(" -------- ---- -------------- --------\n");
+    rt_kprintf(" -------- ---- -------- --------------\n");
 
     do
     {
@@ -433,15 +433,30 @@ long list_mutex(void)
                 rt_hw_interrupt_enable(level);
 
                 m = (struct rt_mutex *)obj;
-                rt_kprintf("%-*.*s %-8.*s %04d %d              %d\n",
+                if (!rt_list_isempty(&m->parent.suspend_thread))
+                {
+                    rt_kprintf("%-*.*s %-8.*s %04d %8d  %04d ",
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
                            m->owner->name,
                            m->hold,
-                           rt_list_len(&m->parent.suspend_thread),
-                           m->priority);
-
+                           m->priority,
+                           rt_list_len(&m->parent.suspend_thread));
+                    show_wait_queue(&(m->parent.suspend_thread));
+                    rt_kprintf("\n");
+                }
+                else
+                {
+                    rt_kprintf("%-*.*s %-8.*s %04d %8d  %04d\n",
+                           maxlen, RT_NAME_MAX,
+                           m->parent.parent.name,
+                           RT_NAME_MAX,
+                           m->owner->name,
+                           m->hold,
+                           m->priority,
+                           rt_list_len(&m->parent.suspend_thread));
+                }
             }
         }
     }
