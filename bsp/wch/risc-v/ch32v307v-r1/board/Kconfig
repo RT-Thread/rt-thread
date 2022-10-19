@@ -131,6 +131,69 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI_BITOPS
+        select RT_USING_SPI
+        
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+		
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+		
+            config BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+                
+            if  BSP_USING_SPI3
+                config BSP_USING_SPI_FLASH
+                bool "Enable SPI Flash"
+                default n
+            endif
+            
+            config BSP_USING_SOFT_SPI1
+                bool "Enable SSPI1 Bus (User SPI)"
+                default n
+                if BSP_USING_SOFT_SPI1
+                    comment "Notice: PB9 --> 25; PB8 --> 24; PB7 --> 23" 
+                    config BSP_S_SPI1_SCK_PIN
+                        int "sspi1 SCL pin number"
+                        range 1 79
+                        default 25
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "sspi1 MISO pin number"
+                        range 1 79
+                        default 24
+                    config BSP_S_SPI1_MISO_PIN
+                        int "sspi1 MOSI pin number"
+                        range 1 79
+                        default 23    
+                endif
+                
+            config BSP_USING_SOFT_SPI2
+                bool "Enable SSPI2 Bus (soft SPI)"
+                default n
+                if BSP_USING_SOFT_SPI2
+                    comment "Notice: PE0 --> 64; PE1 --> 65; PE2 --> 66" 
+                    config BSP_S_SPI2_SCK_PIN
+                        int "sspi2 SCL pin number"
+                        range 1 79
+                        default 64
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "sspi2 MISO pin number"
+                        range 1 79
+                        default 65
+                    config BSP_S_SPI2_MISO_PIN
+                        int "sspi2 MOSI pin number"
+                        range 1 79
+                        default 66    
+                endif                 
+        endif
+
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
