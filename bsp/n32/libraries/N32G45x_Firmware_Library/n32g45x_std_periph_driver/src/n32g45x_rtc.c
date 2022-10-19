@@ -1345,7 +1345,6 @@ uint32_t RTC_GetStoreOperation(void)
  */
 void RTC_ConfigOutput(uint32_t RTC_Output, uint32_t RTC_OutputPolarity)
 {
-    __IO uint32_t temp = 0;
     /* Check the parameters */
     assert_param(IS_RTC_OUTPUT_MODE(RTC_Output));
     assert_param(IS_RTC_OUTPUT_POL(RTC_OutputPolarity));

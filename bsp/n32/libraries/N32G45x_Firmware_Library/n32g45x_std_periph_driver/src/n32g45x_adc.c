@@ -393,7 +393,7 @@ void ADC_StartCalibration(ADC_Module* ADCx)
     /* Check the parameters */
     assert_param(IsAdcModule(ADCx));
     /* Enable the selected ADC calibration process */
-    if(ADCx->CALFACT==0)
+    if (ADCx->CALFACT==0)
         ADCx->CTRL2 |= CTRL2_CAL_SET;
 }
 
@@ -418,7 +418,7 @@ FlagStatus ADC_GetCalibrationStatus(ADC_Module* ADCx)
         /* CAL bit is reset: end of calibration */
         bitstatus = RESET;
     }
-    if(ADCx->CALFACT!=0)
+    if (ADCx->CALFACT!=0)
         bitstatus = RESET;
     /* Return the CAL bit status */
     return bitstatus;
@@ -703,7 +703,7 @@ uint32_t ADC_GetDualModeConversionDat(ADC_Module* ADCx)
     /* Check the parameters */
     assert_param(IsAdcModule(ADCx));
     /* Return the dual mode conversion value */
-    if(ADCx==ADC1 | ADCx==ADC2)
+    if ((ADCx==ADC1) | (ADCx==ADC2))
         return (uint32_t)ADC1->DAT;
     else
         return (uint32_t)ADC3->DAT;
@@ -1332,7 +1332,7 @@ void ADC_InitEx(ADC_Module* ADCx, ADC_InitTypeEx* ADC_InitStructEx)
     tmpregister |= ADC_InitStructEx->ResBit;
 
     tmpregister &= (~ADC_CTRL3_CKMOD_MSK);
-        if(ADC_InitStructEx->ClkMode==ADC_CTRL3_CKMOD_PLL)
+        if (ADC_InitStructEx->ClkMode==ADC_CTRL3_CKMOD_PLL)
     tmpregister |= ADC_CTRL3_CKMOD_MSK;
 
     ADCx->CTRL3 = tmpregister;
@@ -1463,7 +1463,7 @@ void ADC_PLL_Clock_Mode_Config(ADC_Module* ADCx)
  */
 void ADC_ConfigClk(ADC_CTRL3_CKMOD ADC_ClkMode, uint32_t RCC_ADCHCLKPrescaler)
 {
-    if(ADC_ClkMode==ADC_CTRL3_CKMOD_AHB)
+    if (ADC_ClkMode==ADC_CTRL3_CKMOD_AHB)
     {
         RCC_ConfigAdcPllClk(RCC_ADCPLLCLK_DIV1, DISABLE);
         RCC_ConfigAdcHclk(RCC_ADCHCLKPrescaler);

@@ -46,8 +46,8 @@ extern "C" {
  * @{
  */
 #define VREF1P2_CTRL  (*(uint32_t*)(0x40001800+0x20))
-#define _EnVref1p2()  do{VREF1P2_CTRL|=(1<<10);}while(0);
-#define _DisVref1p2() do{VREF1P2_CTRL&=~(1<<10);}while(0);
+#define _EnVref1p2()  do{VREF1P2_CTRL|=(1<<10);}while (0);
+#define _DisVref1p2() do{VREF1P2_CTRL&=~(1<<10);}while (0);
 /** @addtogroup ADC
  * @{
  */

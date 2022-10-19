@@ -198,9 +198,9 @@ void I2C_DeInit(I2C_Module* I2Cx)
     else if (I2Cx == I2C4)
     {
         /* Enable I2C4 reset state */
-        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C3, ENABLE);
+        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C4, ENABLE);
         /* Release I2C4 from reset state */
-        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C3, DISABLE);
+        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C4, DISABLE);
     }
     else
     {

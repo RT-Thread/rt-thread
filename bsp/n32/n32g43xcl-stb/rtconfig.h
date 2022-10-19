@@ -46,7 +46,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "usart1"
-#define RT_VER_NUM 0x40101
+#define RT_VER_NUM 0x50000
 
 /* RT-Thread Components */
 
@@ -209,7 +209,6 @@
 /* Data Storage */
 
 /* Communication */
-
 
 /* Device Control */
 

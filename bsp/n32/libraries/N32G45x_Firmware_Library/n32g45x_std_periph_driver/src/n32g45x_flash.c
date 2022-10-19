@@ -412,7 +412,7 @@ FLASH_STS FLASH_ProgramWord(uint32_t Address, uint32_t Data)
     /* Check the parameters */
     assert_param(IS_FLASH_ADDRESS(Address));
 
-    if((Address & (uint32_t)0x3) != 0)
+    if ((Address & (uint32_t)0x3) != 0)
     {
         /* The programming address is not a multiple of 4 */
         status = FLASH_ERR_ADD;

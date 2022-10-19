@@ -162,5 +162,5 @@ void DVP_ResetFifo(void)
 
     DVP->CTRL |= DVP_FIFO_SOFT_RESET;
 
-    while(DVP->CTRL & DVP_FIFO_SOFT_RESET);
+    while (DVP->CTRL & DVP_FIFO_SOFT_RESET);
 }

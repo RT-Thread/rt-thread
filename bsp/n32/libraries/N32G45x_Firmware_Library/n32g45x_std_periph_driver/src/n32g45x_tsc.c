@@ -47,7 +47,7 @@ TSC_ErrorTypeDef TSC_Init(TSC_Module* TSC_Def, TSC_InitType* CtrlCfg)
     assert_param(IS_TSC_FILTER(CtrlCfg->TSC_FilterCount));
     assert_param(IS_TSC_DET_PERIOD(CtrlCfg->TSC_DetPeriod));
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
     /* waiting tsc hw for idle status.*/
@@ -56,19 +56,19 @@ TSC_ErrorTypeDef TSC_Init(TSC_Module* TSC_Def, TSC_InitType* CtrlCfg)
     {
         __TSC_HW_DISABLE();
 
-        if(++timeout > TSC_TIMEOUT)
+        if (++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
 
     /*TSC_CTRL config*/
     tempreg = 0;
-    if(CtrlCfg->TSC_DetIntEnable)
+    if (CtrlCfg->TSC_DetIntEnable)
         tempreg |= TSC_IT_DET_ENABLE;
 
-    if(CtrlCfg->TSC_GreatEnable)
+    if (CtrlCfg->TSC_GreatEnable)
         tempreg |= TSC_DET_TYPE_GREAT;
 
-    if(CtrlCfg->TSC_LessEnable)
+    if (CtrlCfg->TSC_LessEnable)
         tempreg |= TSC_DET_TYPE_LESS;
 
     tempreg |= CtrlCfg->TSC_FilterCount;
@@ -95,30 +95,30 @@ TSC_ErrorTypeDef TSC_ClockConfig(uint32_t TSC_ClkSource)
     /*Enable PWR  peripheral Clock*/
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_PWR,ENABLE);
 
-    if(TSC_CLK_SRC_LSI == TSC_ClkSource)
+    if (TSC_CLK_SRC_LSI == TSC_ClkSource)
     {
         /*enable LSI clock*/
         RCC_EnableLsi(ENABLE);
 
         /*Wait LSI stable*/
         timeout = 0;
-        while(RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET)
+        while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET)
         {
-            if(++timeout >TSC_TIMEOUT)
+            if (++timeout >TSC_TIMEOUT)
                 return TSC_ERROR_CLOCK;
         }
     }
-    else if((TSC_CLK_SRC_LSE_BYPASS==TSC_ClkSource)||(TSC_CLK_SRC_LSE==TSC_ClkSource))
+    else if ((TSC_CLK_SRC_LSE_BYPASS==TSC_ClkSource)||(TSC_CLK_SRC_LSE==TSC_ClkSource))
     {
-        if(RCC_GetFlagStatus(RCC_FLAG_LSERD)==RESET)
+        if (RCC_GetFlagStatus(RCC_FLAG_LSERD)==RESET)
         {
             // Set bit 8 of PWR_CTRL1.Open PWR DBP.
             PWR_BackupAccessEnable(ENABLE);
             RCC_ConfigLse(TSC_ClkSource);
             timeout = 0;
-            while(RCC_GetFlagStatus(RCC_FLAG_LSERD) == RESET)
+            while (RCC_GetFlagStatus(RCC_FLAG_LSERD) == RESET)
             {
-                if(++timeout >TSC_TIMEOUT)
+                if (++timeout >TSC_TIMEOUT)
                     return TSC_ERROR_CLOCK;
             }
         }
@@ -157,11 +157,11 @@ TSC_ErrorTypeDef TSC_ConfigInternalResistor(TSC_Module* TSC_Def,uint32_t Channel
     assert_param(IS_TSC_CHN(Channels));
     assert_param(IS_TSC_RESISTOR_VALUE(res));
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
     /*Check charge resistor value */
-    if(res > TSC_RESR_CHN_RESIST_125K)
+    if (res > TSC_RESR_CHN_RESIST_125K)
         return TSC_ERROR_PARAMETER;
 
     /* waiting tsc hw for idle status.*/
@@ -170,7 +170,7 @@ TSC_ErrorTypeDef TSC_ConfigInternalResistor(TSC_Module* TSC_Def,uint32_t Channel
     {
         __TSC_HW_DISABLE();
 
-        if(++timeout > TSC_TIMEOUT)
+        if (++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
 
@@ -212,11 +212,11 @@ TSC_ErrorTypeDef TSC_ConfigThreshold(  TSC_Module* TSC_Def, uint32_t Channels, u
     assert_param(IS_TSC_THRESHOLD_BASE(base));
     assert_param(IS_TSC_THRESHOLD_DELTA(delta));
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
     /*Check the base and delta value*/
-    if( (base>MAX_TSC_THRESHOLD_BASE)||(delta>MAX_TSC_THRESHOLD_DELTA))
+    if ( (base>MAX_TSC_THRESHOLD_BASE)||(delta>MAX_TSC_THRESHOLD_DELTA))
         return TSC_ERROR_PARAMETER;
 
     /* waiting tsc hw for idle status.*/
@@ -225,7 +225,7 @@ TSC_ErrorTypeDef TSC_ConfigThreshold(  TSC_Module* TSC_Def, uint32_t Channels, u
     {
         __TSC_HW_DISABLE();
 
-        if(++timeout > TSC_TIMEOUT)
+        if (++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
 
@@ -262,11 +262,11 @@ TSC_ErrorTypeDef TSC_GetChannelCfg( TSC_Module* TSC_Def, TSC_ChnCfg* ChnCfg, uin
 {
     uint32_t i,chn, *pReg;
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
     /*Check channel number*/
-    if(!(IS_TSC_CHN(Channels)))
+    if (!(IS_TSC_CHN(Channels)))
         return TSC_ERROR_PARAMETER;
 
     chn = Channels & TSC_CHNEN_CHN_SEL_MASK;
@@ -302,7 +302,7 @@ uint32_t TSC_GetStatus(TSC_Module* TSC_Def, uint32_t type)
 {
     uint32_t value = 0;
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return 0;
 
     switch (type)
@@ -347,7 +347,7 @@ TSC_ErrorTypeDef TSC_Cmd(TSC_Module* TSC_Def, uint32_t Channels, FunctionalState
 {
     uint32_t timeout;
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
     if (Cmd != DISABLE)
@@ -367,7 +367,7 @@ TSC_ErrorTypeDef TSC_Cmd(TSC_Module* TSC_Def, uint32_t Channels, FunctionalState
         {
             __TSC_HW_DISABLE();
 
-            if(++timeout > TSC_TIMEOUT)
+            if (++timeout > TSC_TIMEOUT)
                 return TSC_ERROR_HW_MODE;
         }while (__TSC_GET_HW_MODE());
 
@@ -391,7 +391,7 @@ TSC_ErrorTypeDef TSC_SW_SwtichChn(TSC_Module* TSC_Def, uint32_t Channel, TIM_Mod
 {
     uint32_t i, timeout;
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
     if ((TIMx != TIM2) && (TIMx != TIM4))
@@ -404,7 +404,7 @@ TSC_ErrorTypeDef TSC_SW_SwtichChn(TSC_Module* TSC_Def, uint32_t Channel, TIM_Mod
     {
         __TSC_HW_DISABLE();
 
-        if(++timeout > TSC_TIMEOUT)
+        if (++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
 
@@ -454,10 +454,10 @@ TSC_ErrorTypeDef TSC_SW_SwtichChn(TSC_Module* TSC_Def, uint32_t Channel, TIM_Mod
  */
 TSC_ErrorTypeDef TSC_SetAnaoCfg(TSC_Module* TSC_Def, TSC_AnaoCfg* AnaoCfg)
 {
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
-    if(AnaoCfg == 0)
+    if (AnaoCfg == 0)
         return TSC_ERROR_PARAMETER;
 
     assert_param(IS_TSC_PAD_OPTION(AnaoCfg->TSC_AnaoptrResisOption));
@@ -481,15 +481,15 @@ TSC_ErrorTypeDef TSC_SetChannelCfg(TSC_Module* TSC_Def, TSC_ChnCfg* ChnCfg, uint
 {
     TSC_ErrorTypeDef err;
 
-    if(TSC_Def != TSC)
+    if (TSC_Def != TSC)
         return TSC_ERROR_PARAMETER;
 
-    if(0 == ChnCfg)
+    if (0 == ChnCfg)
         return TSC_ERROR_PARAMETER;
 
     // Set resistance
     err = TSC_ConfigInternalResistor(TSC_Def, Channels, ChnCfg->TSC_ResisValue);
-    if(err != TSC_ERROR_OK)
+    if (err != TSC_ERROR_OK)
         return err;
 
     // Set the threshold of base and delta.

@@ -15,11 +15,11 @@ path =  [cwd]
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/N32L43x_Firmware_Library/CMSIS/device/startup/startup_n32l43x_gcc.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/N32L43x_Firmware_Library/CMSIS/device/startup/startup_n32l43x.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/N32L43x_Firmware_Library/CMSIS/device/startup/startup_n32l43x_EWARM.s']
     
 CPPDEFINES = ['N32L43X']

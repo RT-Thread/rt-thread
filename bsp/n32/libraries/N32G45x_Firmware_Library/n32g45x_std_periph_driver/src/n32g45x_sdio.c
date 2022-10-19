@@ -457,7 +457,7 @@ void SDIO_ConfigData(SDIO_DataInitType* SDIO_DataInitStruct)
     tmpregister |= (uint32_t)SDIO_DataInitStruct->DatBlkSize | SDIO_DataInitStruct->TransferDirection
                    | SDIO_DataInitStruct->TransferMode | SDIO_DataInitStruct->DPSMConfig;
 
-    if(SDIO_DataInitStruct->TransferDirection)
+    if (SDIO_DataInitStruct->TransferDirection)
     {
         tmpregister &= ~(1<<12);
     }

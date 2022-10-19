@@ -261,7 +261,7 @@ void USART_Init(USART_Module* USARTx, USART_InitType* USART_InitStruct)
     fractionaldivider = (((((integerdivider - (100 * (tmpregister >> 4))) * 16) + 50) / 100));
 
     /*Determine whether the fractional part needs to carried*/
-    if((fractionaldivider >> 4) == 1){
+    if ((fractionaldivider >> 4) == 1){
         tmpregister = ((integerdivider / 100) + 1) << 4;
     }
 

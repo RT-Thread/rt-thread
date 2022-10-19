@@ -171,10 +171,10 @@ void SystemInit(void)
     RCC->CFG &= (uint32_t)0xF700FFFF;
 
     /* Reset CFG2 register */
-    RCC->CFG2 = 0x00000000;
+    RCC->CFG2 = 0x00003800;
 
     /* Reset CFG3 register */
-    RCC->CFG3 = 0x00000000;
+    RCC->CFG3 = 0x00003840;
 
     /* Disable all interrupts and clear pending bits  */
     RCC->CLKINT = 0x009F0000;
