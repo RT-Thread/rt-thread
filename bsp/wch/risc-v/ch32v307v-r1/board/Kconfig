@@ -211,7 +211,7 @@ menu "On-chip Peripheral Drivers"
         default 40000
 
     config BSP_USING_IWDT
-        bool "using onchip iwdt"
+        bool "Enable IWDT"
         select RT_USING_WDT
         select LSI_VALUE
         default n
@@ -387,7 +387,183 @@ menu "On-chip Peripheral Drivers"
                     endif
 
                 endif
+                
+            config BSP_USING_TIM5
+                    bool "using TIM5"
+                    default n
 
+                if BSP_USING_TIM5
+                    choice
+                        prompt "using TIM5 as hwtimer or PWM mode"
+                        default BSP_USING_TIM5_HWTIMER
+
+                        config BSP_USING_TIM5_HWTIMER
+                            bool "using TIM5 as hwtimer mode"
+                            select BSP_USING_HWTIMER
+
+                        config BSP_USING_TIM5_PWM
+                            bool "using TIM5 as PWM mode"
+                            select BSP_USING_PWM
+                    endchoice
+
+                    if BSP_USING_TIM5_PWM
+                        config BSP_USING_TIM5_PWM_CH1
+                            bool "using TIM5 channel 1"
+                            default n
+
+                        config BSP_USING_TIM5_PWM_CH2
+                            bool "using TIM5 channel 2"
+                            default n
+
+                        config BSP_USING_TIM5_PWM_CH3
+                            bool "using TIM5 channel 3"
+
+                        config BSP_USING_TIM5_PWM_CH4
+                            bool "using TIM5 channel 4"
+                    endif
+
+                endif
+                
+            config BSP_USING_TIM6
+                    bool "using TIM6"
+                    default n
+
+                if BSP_USING_TIM6
+                    choice
+                        prompt "using TIM5 as hwtimer (PWM mode not supported)"
+                        default BSP_USING_TIM6_HWTIMER
+
+                        config BSP_USING_TIM6_HWTIMER
+                            bool "using TIM6 as hwtimer mode"
+                            select BSP_USING_HWTIMER
+                    endchoice
+                    
+                endif
+                
+            config BSP_USING_TIM7
+                    bool "using TIM7"
+                    default n
+
+                if BSP_USING_TIM7
+                    choice
+                        prompt "using TIM7 as hwtimer (PWM mode not supported)"
+                        default BSP_USING_TIM7_HWTIMER
+
+                        config BSP_USING_TIM7_HWTIMER
+                            bool "using TIM7 as hwtimer mode"
+                            select BSP_USING_HWTIMER
+                    endchoice
+                    
+                endif
+                
+            config BSP_USING_TIM8
+                    bool "using TIM8"
+                    default n
+
+                if BSP_USING_TIM8
+                    choice
+                        prompt "using TIM8 as hwtimer or PWM mode"
+                        default BSP_USING_TIM8_HWTIMER
+
+                        config BSP_USING_TIM8_HWTIMER
+                            bool "using TIM8 as hwtimer mode"
+                            select BSP_USING_HWTIMER
+
+                        config BSP_USING_TIM8_PWM
+                            bool "using TIM8 as PWM mode"
+                            select BSP_USING_PWM
+                    endchoice
+
+                    if BSP_USING_TIM8_PWM
+                        config BSP_USING_TIM8_PWM_CH1
+                            bool "using TIM8 channel 1"
+                            default n
+
+                        config BSP_USING_TIM8_PWM_CH2
+                            bool "using TIM8 channel 2"
+                            default n
+
+                        config BSP_USING_TIM8_PWM_CH3
+                            bool "using TIM8 channel 3"
+
+                        config BSP_USING_TIM8_PWM_CH4
+                            bool "using TIM8 channel 4"
+                    endif
+                    
+                endif
+                
+            config BSP_USING_TIM9
+                    bool "using TIM9"
+                    default n
+
+                if BSP_USING_TIM9
+                    choice
+                        prompt "using TIM9 as hwtimer or PWM mode"
+                        default BSP_USING_TIM9_HWTIMER
+
+                        config BSP_USING_TIM9_HWTIMER
+                            bool "using TIM9 as hwtimer mode"
+                            select BSP_USING_HWTIMER
+
+                        config BSP_USING_TIM9_PWM
+                            bool "using TIM9 as PWM mode"
+                            select BSP_USING_PWM
+                    endchoice
+
+                    if BSP_USING_TIM9_PWM
+                        config BSP_USING_TIM9_PWM_CH1
+                            bool "using TIM9 channel 1"
+                            default n
+
+                        config BSP_USING_TIM9_PWM_CH2
+                            bool "using TIM9 channel 2"
+                            default n
+
+                        config BSP_USING_TIM9_PWM_CH3
+                            bool "using TIM9 channel 3"
+
+                        config BSP_USING_TIM9_PWM_CH4
+                            bool "using TIM9 channel 4"
+                    endif
+                    
+                endif
+                
+            config BSP_USING_TIM10
+                    bool "using TIM10"
+                    default n
+
+                if BSP_USING_TIM10
+                    choice
+                        prompt "using TIM10 as hwtimer or PWM mode"
+                        default BSP_USING_TIM10_HWTIMER
+
+                        config BSP_USING_TIM10_HWTIMER
+                            bool "using TIM10 as hwtimer mode"
+                            select BSP_USING_HWTIMER
+
+                        config BSP_USING_TIM10_PWM
+                            bool "using TIM10 as PWM mode"
+                            select BSP_USING_PWM
+                    endchoice
+
+                    if BSP_USING_TIM10_PWM
+                        config BSP_USING_TIM10_PWM_CH1
+                            bool "using TIM8 channel 1"
+                            default n
+
+                        config BSP_USING_TIM10_PWM_CH2
+                            bool "using TIM8 channel 2"
+                            default n
+
+                        config BSP_USING_TIM10_PWM_CH3
+                            bool "using TIM8 channel 3"
+
+                        config BSP_USING_TIM10_PWM_CH4
+                            bool "using TIM8 channel 4"
+                    endif
+                    
+                endif
+                
         endif
 		
 endmenu
