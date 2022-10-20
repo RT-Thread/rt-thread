@@ -1,4 +1,4 @@
-___heap_end = 0x00F000;
+__heap_end = 0x00F000;
 
 MEMORY
 {
@@ -32,7 +32,7 @@ SECTIONS
 #endif   
    .text            : > RAMGS8_15, PAGE = 0
    .cinit           : > RAMM0,     PAGE = 0
-   .pinit           : > RAMM0,     PAGE = 0
+   .init_array      : > RAMM0,     PAGE = 0
    .switch          : > RAMM0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
    .rti_fn.0.end    : > RAMM1,     PAGE = 1
@@ -46,19 +46,17 @@ SECTIONS
    .rti_fn.6.end    : > RAMM1,     PAGE = 1
    .rti_fn.6        : > RAMM1,     PAGE = 1
    .stack           : > RAMM1,     PAGE = 1
-   .esysmem         : > RAMM1,    PAGE = 1
-
-   .ebss            : > EBSS,
-				   LOAD_START(___ebss_start),
-				   LOAD_END(___ebss_end),
-				   PAGE = 1
-
-   .econst          : > ECONST,  PAGE = 1
+   .sysmem          : > RAMM1,     PAGE = 1
+   .bss             : > EBSS,      PAGE = 1
+   .data            : > EBSS,
+				    LOAD_END(__ebss_end),
+				    PAGE = 1
+   .const           : > ECONST,  PAGE = 1
 
    /* finsh symbol table */
-   FSymTab          : > RAMM1,     PAGE = 1, ALIGN(4)
-   LOAD_START(___fsymtab_start)
-   LOAD_END(___fsymtab_end)
+   FSymTab          : > RAMM1,   PAGE = 1
+   LOAD_START(__fsymtab_start)
+   LOAD_END(__fsymtab_end)
 
    /* The following section definitions are required when using the IPC API Drivers */ 
     GROUP : > CPU1TOCPU2RAM, PAGE = 1 

@@ -22,25 +22,7 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
 
-extern interrupt void RTOSINT_Handler();
-void trap_rtosint()
-{
-    if(rt_thread_switch_interrupt_flag)
-    {
-        /* only do pendsv at the end of the last level of interrupt nesting,
-         * so that threads do not preempt any isrs. */
-        if(rt_interrupt_nest == 1)
-        {
-            /* rt_interrupt_leave_hook is called before rt_interrupt_nest --
-             * in rt_interrupt_leave. We need to do this manually here to indicate
-             * that all isrs have been cleared before we switch to thread. */
-            rt_interrupt_nest --;
-            asm(" trap #16");
-            /* increment rt_interrupt_nest to compensate for the previous decrement. */
-            rt_interrupt_nest ++;
-        }
-    }
-}
+extern interrupt void rtosint_handler();
 
 /**
  * This is the timer interrupt service routine.
@@ -50,13 +32,10 @@ interrupt void cpu_timer2_isr(void)
 {
     CpuTimer2Regs.TCR.all = 0xC000;
 
-    ALLOW_ISR_PREEMPT();
-
-    /* enter interrupt */
     rt_interrupt_enter();
 
     rt_tick_increase();
-    /* leave interrupt */
+
     rt_interrupt_leave();
 }
 
@@ -84,7 +63,7 @@ void rt_hw_board_init()
 #endif
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
-    PieVectTable.RTOS_INT = &RTOSINT_Handler;
+    PieVectTable.RTOS_INT = &rtosint_handler;
 
 #ifdef BSP_USING_XINT1
     PieVectTable.XINT1_INT = &XINT1_Handler;
@@ -127,8 +106,6 @@ void rt_hw_board_init()
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-
-    rt_interrupt_leave_sethook((void (*)(void))trap_rtosint);
 }
 
 int _args_main()

@@ -210,10 +210,18 @@ typedef __gnuc_va_list              va_list;
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
     * details. */
 #define RT_SECTION(x)               __attribute__((section(x)))
+#ifdef __TI_EABI__
+#define RT_USED                     __attribute__((retain)) __attribute__((used))
+#else
 #define RT_USED                     __attribute__((used))
+#endif
 #define PRAGMA(x)                   _Pragma(#x)
 #define ALIGN(n)                    __attribute__((aligned(n)))
+#ifdef __TI_EABI__
 #define RT_WEAK                     __attribute__((weak))
+#else
+#define RT_WEAK
+#endif
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__TASKING__)
