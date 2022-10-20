@@ -29,9 +29,9 @@ extern "C" {
 /*-------------------------- CHIP CONFIG END --------------------------*/
 
 /*-------------------------- ROM/RAM CONFIG BEGIN --------------------------*/
- #define ROM_START              ((uint32_t)0x90000000)
- #define ROM_SIZE               (16384)
- #define ROM_END                ((uint32_t)(ROM_START + ROM_SIZE * 1024))
+#define ROM_START              ((uint32_t)0x90000000)
+#define ROM_SIZE               (16384)
+#define ROM_END                ((uint32_t)(ROM_START + ROM_SIZE * 1024))
 
 #define RAM_START              (0x24000000)
 #define RAM_SIZE               (512)
