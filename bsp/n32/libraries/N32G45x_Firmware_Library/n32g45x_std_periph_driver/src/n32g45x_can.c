@@ -1173,7 +1173,7 @@ FlagStatus CAN_GetFlagSTS(CAN_Module* CANx, uint32_t CAN_FLAG)
             bitstatus = RESET;
         }
     }
-    else /* If(CAN_FLAG & CAN_FLAGS_RFF1 != (uint32_t)RESET) */
+    else /* if (CAN_FLAG & CAN_FLAGS_RFF1 != (uint32_t)RESET) */
     {
         /* Check the status of the specified CAN flag */
         if ((uint32_t)(CANx->RFF1 & (CAN_FLAG & 0x000FFFFF)) != (uint32_t)RESET)
@@ -1238,7 +1238,7 @@ void CAN_ClearFlag(CAN_Module* CANx, uint32_t CAN_FLAG)
             /* Transmit Flags */
             CANx->TSTS = (uint32_t)(flagtmp);
         }
-        else /* If((CAN_FLAG & CAN_FLAGS_MSTS)!=(uint32_t)RESET) */
+        else /* if ((CAN_FLAG & CAN_FLAGS_MSTS)!=(uint32_t)RESET) */
         {
             /* Operating mode Flags */
             CANx->MSTS = (uint32_t)(flagtmp);

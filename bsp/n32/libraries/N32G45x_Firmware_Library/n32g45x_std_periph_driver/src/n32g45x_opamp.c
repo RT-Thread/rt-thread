@@ -87,7 +87,7 @@
 /** @addtogroup OPAMP_Private_Functions
  * @{
  */
-#define SetBitMsk(reg, bit, msk) ((reg) = ((reg) & ~(msk) | (bit)))
+#define SetBitMsk(reg, bit, msk) ((reg) = (((reg) & ~(msk)) | (bit)))
 #define ClrBit(reg, bit)         ((reg) &= ~(bit))
 #define SetBit(reg, bit)         ((reg) |= (bit))
 #define GetBit(reg, bit)         ((reg) & (bit))
@@ -112,19 +112,19 @@ void OPAMP_Init(OPAMPX OPAMPx, OPAMP_InitType* OPAMP_InitStruct)
 {
     __IO uint32_t* pCs = &OPAMP->CS1 + OPAMPx;
     __IO uint32_t tmp  = *pCs;
-    
+
     SetBitMsk(tmp, OPAMP_InitStruct->Gain, OPAMP_CS_PGA_GAIN_MASK);
-    
-    if(OPAMP_InitStruct->HighVolRangeEn==ENABLE)
+
+    if (OPAMP_InitStruct->HighVolRangeEn==ENABLE)
         SetBitMsk(tmp, OPAMP_CS_RANGE_MASK, OPAMP_CS_RANGE_MASK);
     else
         ClrBit(tmp,OPAMP_CS_RANGE_MASK);
 
-    if(OPAMP_InitStruct->TimeAutoMuxEn==ENABLE)
+    if (OPAMP_InitStruct->TimeAutoMuxEn==ENABLE)
         SetBitMsk(tmp,OPAMP_CS_TCMEN_MASK, OPAMP_CS_TCMEN_MASK);
     else
         ClrBit(tmp,OPAMP_CS_TCMEN_MASK);
-        
+
     SetBitMsk(tmp, OPAMP_InitStruct->Mod, OPAMP_CS_MOD_MASK);
     *pCs = tmp;
 }

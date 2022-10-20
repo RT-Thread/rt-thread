@@ -1,46 +1,20 @@
-/*****************************************************************************
- * Copyright (c) 2019, Nations Technologies Inc.
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * All rights reserved.
- * ****************************************************************************
+ * SPDX-License-Identifier: Apache-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the disclaimer below.
- *
- * Nations' name may not be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY NATIONS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * DISCLAIMED. IN NO EVENT SHALL NATIONS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ****************************************************************************/
-
-/**
- * @file drv_hwtimer.c
- * @author Nations
- * @version v1.0.0
- *
- * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-10-19     Nations      first version
  */
 
 #include "drv_hwtimer.h"
 
 #ifdef RT_USING_HWTIMER
 
-#if defined(BSP_USING_HWTIMER1) || defined(BSP_USING_HWTIMER2) || defined(BSP_USING_HWTIMER3) \
-    || defined(BSP_USING_HWTIMER4) || defined(BSP_USING_HWTIMER5) || defined(BSP_USING_HWTIMER6) \
-    || defined(BSP_USING_HWTIMER7) || defined(BSP_USING_HWTIMER8)
-    /* this driver can be disabled at menuconfig -> Hardware Drivers Config -> On-chip Peripheral Drivers -> Enable HWTIMER */
+#if defined(BSP_USING_HWTIMER1) || defined(BSP_USING_HWTIMER2) || defined(BSP_USING_HWTIMER3) || \
+    defined(BSP_USING_HWTIMER4) || defined(BSP_USING_HWTIMER5) || defined(BSP_USING_HWTIMER6) || \
+    defined(BSP_USING_HWTIMER7) || defined(BSP_USING_HWTIMER8) || defined(BSP_USING_HWTIMER9)
 
 static struct n32_hwtimer_config hwtimer_config[] =
 {
@@ -51,6 +25,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM1_UP_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER2
     {
         "timer2",
@@ -58,6 +33,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM2_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER3
     {
         "timer3",
@@ -65,6 +41,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM3_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER4
     {
         "timer4",
@@ -72,6 +49,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM4_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER5
     {
         "timer5",
@@ -79,6 +57,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM5_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER6
     {
         "timer6",
@@ -86,6 +65,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM6_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER7
     {
         "timer7",
@@ -93,6 +73,7 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM7_IRQn,
     },
 #endif
+
 #ifdef BSP_USING_HWTIMER8
     {
         "timer8",
@@ -100,41 +81,67 @@ static struct n32_hwtimer_config hwtimer_config[] =
         TIM8_UP_IRQn,
     },
 #endif
+
+#ifdef BSP_USING_HWTIMER9
+    {
+        "timer9",
+        TIM9,
+        TIM9_IRQn,
+    },
+#endif
 };
+
 uint8_t tim1_count = 0, tim2_count = 0, tim3_count = 0, tim4_count = 0,tim5_count = 0, tim6_count = 0, tim7_count = 0, tim8_count = 0;
+#if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+uint8_t tim9_count = 0;
+#endif
+
 static void caculate_tim_count()
 {
     uint8_t count = 0;
+
 #ifdef BSP_USING_HWTIMER1
     tim1_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER2
     tim2_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER3
     tim3_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER4
     tim4_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER5
     tim5_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER6
     tim6_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER7
     tim7_count = count;
     count++;
 #endif
+
 #ifdef BSP_USING_HWTIMER8
     tim8_count = count;
+    count++;
+#endif
+
+#ifdef BSP_USING_HWTIMER9
+    tim9_count = count;
     count++;
 #endif
 }
@@ -213,9 +220,10 @@ void TIM_NVIC_Config(IRQn_Type IRQn, uint8_t PreemptionPriority, uint8_t SubPrio
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
-    NVIC_InitStructure.NVIC_IRQChannel                   = IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelCmd                = cmd;
-    if(cmd)
+    NVIC_InitStructure.NVIC_IRQChannel    = IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = cmd;
+
+    if (cmd)
     {
         NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PreemptionPriority;
         NVIC_InitStructure.NVIC_IRQChannelSubPriority        = SubPriority;
@@ -351,186 +359,196 @@ static const struct rt_hwtimer_info n32_hwtimer_info =
   */
 void TIM_IRQHandler(TIM_Module* timer_periph)
 {
-  /* Capture compare 1 event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC1) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_CC1) !=RESET)
+    /* Capture compare 1 event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC1) != RESET)
     {
-      {
-        TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC1);
-      }
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_CC1) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC1);
+        }
     }
-  }
-  /* Capture compare 2 event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC2) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_CC2) !=RESET)
+    /* Capture compare 2 event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC2) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC2);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_CC2) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC2);
+        }
     }
-  }
-  /* Capture compare 3 event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC3) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_CC3) !=RESET)
+    /* Capture compare 3 event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC3) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC3);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_CC3) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC3);
+        }
     }
-  }
-  /* Capture compare 4 event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC4) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_CC4) !=RESET)
+    /* Capture compare 4 event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_CC4) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC4);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_CC4) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_CC4);
+        }
     }
-  }
-  /* TIM Update event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_UPDATE) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_UPDATE) !=RESET)
+    /* TIM Update event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_UPDATE) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_UPDATE);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_UPDATE) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_UPDATE);
+        }
     }
-  }
-  /* TIM Break input event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_BREAK) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_BREAK) !=RESET)
+    /* TIM Break input event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_BREAK) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_BREAK);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_BREAK) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_BREAK);
+        }
     }
-  }
-  /* TIM Trigger detection event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_TRIG) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_TRIG) !=RESET)
+    /* TIM Trigger detection event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_TRIG) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_TRIG);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_TRIG) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_TRIG);
+        }
     }
-  }
-  /* TIM commutation event */
-  if(TIM_GetFlagStatus(timer_periph, TIM_FLAG_COM) != RESET)
-  {
-    if(TIM_GetIntStatus(timer_periph, TIM_INT_COM) !=RESET)
+    /* TIM commutation event */
+    if (TIM_GetFlagStatus(timer_periph, TIM_FLAG_COM) != RESET)
     {
-      TIM_ClrIntPendingBit(timer_periph, TIM_INT_COM);
+        if (TIM_GetIntStatus(timer_periph, TIM_INT_COM) !=RESET)
+        {
+            TIM_ClrIntPendingBit(timer_periph, TIM_INT_COM);
+        }
     }
-  }
 }
 
 #ifdef BSP_USING_HWTIMER1
-
 void TIM1_UP_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-//    TIM_IRQHandler(hwtimer_obj[0].config->timer_periph);
 
     TIM_ClrIntPendingBit(hwtimer_obj[tim1_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim1_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER2
-
 void TIM2_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim2_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim2_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER3
-
 void TIM3_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim3_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim3_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER4
-
 void TIM4_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim4_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim4_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER5
-
 void TIM5_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim5_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim5_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER6
-
 void TIM6_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim6_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim6_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER7
-
 void TIM7_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim7_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim7_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif
 
 #ifdef BSP_USING_HWTIMER8
-
 void TIM8_UP_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     TIM_ClrIntPendingBit(hwtimer_obj[tim8_count].config->timer_periph, TIM_INT_UPDATE);
     rt_device_hwtimer_isr(&hwtimer_obj[tim8_count].time_device);
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif
 
+#ifdef BSP_USING_HWTIMER9
+void TIM9_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    TIM_ClrIntPendingBit(hwtimer_obj[tim9_count].config->timer_periph, TIM_INT_UPDATE);
+    rt_device_hwtimer_isr(&hwtimer_obj[tim9_count].time_device);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
 #endif
 
 int rt_hwtimer_init(void)
@@ -541,26 +559,37 @@ int rt_hwtimer_init(void)
 #ifdef BSP_USING_HWTIMER1
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_TIM1, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER2
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM2, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER3
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM3, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER4
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM4, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER5
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM5, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER6
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM6, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER7
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM7, ENABLE);
 #endif
+
 #ifdef BSP_USING_HWTIMER8
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_TIM8, ENABLE);
+#endif
+
+#ifdef BSP_USING_HWTIMER9
+    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM9, ENABLE);
 #endif
 
     caculate_tim_count();
@@ -576,7 +605,6 @@ int rt_hwtimer_init(void)
     return result;
 
 }
-
 INIT_DEVICE_EXPORT(rt_hwtimer_init);
 
 #endif /* defined(BSP_USING_HWTIMERx) */

@@ -98,15 +98,10 @@ void QspiInitConfig(QSPI_InitType* QSPI_InitStruct)
     assert_param(IS_QSPI_SDCN(QSPI_InitStruct->SDCN));
 
     assert_param(IS_QSPI_ENH_CLK_STRETCH_EN(QSPI_InitStruct->ENHANCED_CLK_STRETCH_EN));
-    assert_param(IS_QSPI_ENH_XIP_MBL(QSPI_InitStruct->ENHANCED_XIP_MBL));
-    assert_param(IS_QSPI_ENH_XIP_CT_EN(QSPI_InitStruct->ENHANCED_XIP_CT_EN));
-    assert_param(IS_QSPI_ENH_XIP_INST_EN(QSPI_InitStruct->ENHANCED_XIP_INST_EN));
-    assert_param(IS_QSPI_ENH_XIP_DFS_HC(QSPI_InitStruct->ENHANCED_XIP_DFS_HC));
     assert_param(IS_QSPI_ENH_INST_DDR_EN(QSPI_InitStruct->ENHANCED_INST_DDR_EN));
     assert_param(IS_QSPI_ENH_SPI_DDR_EN(QSPI_InitStruct->ENHANCED_SPI_DDR_EN));
     assert_param(IS_QSPI_ENH_WAIT_CYCLES(QSPI_InitStruct->ENHANCED_WAIT_CYCLES));
     assert_param(IS_QSPI_ENH_INST_L(QSPI_InitStruct->ENHANCED_INST_L));
-    assert_param(IS_QSPI_ENH_MD_BIT_EN(QSPI_InitStruct->ENHANCED_MD_BIT_EN));
     assert_param(IS_QSPI_ENH_ADDR_LEN(QSPI_InitStruct->ENHANCED_ADDR_LEN));
     assert_param(IS_QSPI_ENH_TRANS_TYPE(QSPI_InitStruct->ENHANCED_TRANS_TYPE));
 
@@ -135,48 +130,47 @@ void QspiInitConfig(QSPI_InitType* QSPI_InitStruct)
     assert_param(IS_QSPI_TXFN(QSPI_InitStruct->TXFN));
     assert_param(IS_QSPI_RXFN(QSPI_InitStruct->RXFN));
     assert_param(IS_QSPI_DDR_TXDE(QSPI_InitStruct->TXDE));
-            
-    if((QSPI_InitStruct->SPI_FRF) == QSPI_CTRL0_SPI_FRF_STANDARD_FORMAT)
+
+    if ((QSPI_InitStruct->SPI_FRF) == QSPI_CTRL0_SPI_FRF_STANDARD_FORMAT)
     {
-        tmpregister = (uint32_t)(QSPI_InitStruct->SPI_FRF | QSPI_InitStruct->CFS | QSPI_InitStruct->SSTE | QSPI_InitStruct->TMOD 
+        tmpregister = (uint32_t)(QSPI_InitStruct->SPI_FRF | QSPI_InitStruct->CFS | QSPI_InitStruct->SSTE | QSPI_InitStruct->TMOD
                                 | QSPI_InitStruct->SCPOL | QSPI_InitStruct->SCPH | QSPI_InitStruct->FRF | QSPI_InitStruct->DFS);
-        QSPI->CTRL0 = tmpregister; 
-            
+        QSPI->CTRL0 = tmpregister;
+
         tmpregister = 0;
         tmpregister = (uint32_t)(QSPI_InitStruct->MWMOD | QSPI_InitStruct->MC_DIR | QSPI_InitStruct->MHS_EN);
         QSPI->MW_CTRL  = tmpregister;
-    
+
         tmpregister = 0;
         tmpregister = (uint32_t)(QSPI_InitStruct->SES | QSPI_InitStruct->SDCN);
         QSPI->RS_DELAY  = tmpregister;
     }
-    else if((QSPI_InitStruct->SPI_FRF == QSPI_CTRL0_SPI_FRF_DUAL_FORMAT) || (QSPI_InitStruct->SPI_FRF == QSPI_CTRL0_SPI_FRF_QUAD_FORMAT))
+    else if ((QSPI_InitStruct->SPI_FRF == QSPI_CTRL0_SPI_FRF_DUAL_FORMAT) || (QSPI_InitStruct->SPI_FRF == QSPI_CTRL0_SPI_FRF_QUAD_FORMAT))
     {
-        tmpregister = (uint32_t)(QSPI_InitStruct->SPI_FRF | QSPI_InitStruct->CFS | QSPI_InitStruct->SSTE | QSPI_InitStruct->TMOD 
+        tmpregister = (uint32_t)(QSPI_InitStruct->SPI_FRF | QSPI_InitStruct->CFS | QSPI_InitStruct->SSTE | QSPI_InitStruct->TMOD
                                 | QSPI_InitStruct->SCPOL | QSPI_InitStruct->SCPH | QSPI_InitStruct->FRF | QSPI_InitStruct->DFS);
         QSPI->CTRL0 = tmpregister;
-            
+
         tmpregister = 0;
         tmpregister = (uint32_t)(QSPI_InitStruct->MWMOD | QSPI_InitStruct->MC_DIR | QSPI_InitStruct->MHS_EN);
         QSPI->MW_CTRL  = tmpregister;
-    
+
         tmpregister = 0;
         tmpregister = (uint32_t)(QSPI_InitStruct->SES | QSPI_InitStruct->SDCN);
         QSPI->RS_DELAY  = tmpregister;
-            
+
         tmpregister = 0;
-        tmpregister = (uint32_t)(QSPI_InitStruct->ENHANCED_CLK_STRETCH_EN | QSPI_InitStruct->ENHANCED_XIP_MBL | QSPI_InitStruct->ENHANCED_XIP_CT_EN 
-                                | QSPI_InitStruct->ENHANCED_XIP_INST_EN | QSPI_InitStruct->ENHANCED_XIP_DFS_HC | QSPI_InitStruct->ENHANCED_INST_DDR_EN
+        tmpregister = (uint32_t)(QSPI_InitStruct->ENHANCED_CLK_STRETCH_EN | QSPI_InitStruct->ENHANCED_INST_DDR_EN
                                 | QSPI_InitStruct->ENHANCED_SPI_DDR_EN | QSPI_InitStruct->ENHANCED_WAIT_CYCLES | QSPI_InitStruct->ENHANCED_INST_L
-                                | QSPI_InitStruct->ENHANCED_MD_BIT_EN | QSPI_InitStruct->ENHANCED_ADDR_LEN | QSPI_InitStruct->ENHANCED_TRANS_TYPE);
+                                | QSPI_InitStruct->ENHANCED_ADDR_LEN | QSPI_InitStruct->ENHANCED_TRANS_TYPE);
         QSPI->ENH_CTRL0 = tmpregister;
-            
+
         tmpregister = 0;
         tmpregister = (uint32_t)(QSPI_InitStruct->XIP_MBL | QSPI_InitStruct->XIP_CT_EN | QSPI_InitStruct->XIP_INST_EN | QSPI_InitStruct->XIP_INST_DDR_EN
                                 | QSPI_InitStruct->XIP_DDR_EN | QSPI_InitStruct->XIP_DFS_HC | QSPI_InitStruct->XIP_WAIT_CYCLES | QSPI_InitStruct->XIP_MD_BITS_EN
                                 | QSPI_InitStruct->XIP_INST_L | QSPI_InitStruct->XIP_ADDR_LEN | QSPI_InitStruct->XIP_TRANS_TYPE | QSPI_InitStruct->XIP_FRF);
         QSPI->XIP_CTRL = tmpregister;
-                
+
         QSPI->XIP_MODE  = QSPI_InitStruct->XIP_MD_BITS;
         QSPI->XIP_INCR_TOC  = QSPI_InitStruct->ITOC;
         QSPI->XIP_WRAP_TOC  = QSPI_InitStruct->WTOC;
@@ -188,7 +182,7 @@ void QspiInitConfig(QSPI_InitType* QSPI_InitStruct)
     QSPI->RXFT  = QSPI_InitStruct->RXFT;
     QSPI->TXFN  = QSPI_InitStruct->TXFN;
     QSPI->RXFN  = QSPI_InitStruct->RXFN;
-    QSPI->DDR_TXDE  = QSPI_InitStruct->TXDE;        
+    QSPI->DDR_TXDE  = QSPI_InitStruct->TXDE;
 }
 /**
  * @brief  Configure single GPIO port as GPIO_Mode_AF_PP.
@@ -238,14 +232,14 @@ void QSPI_GPIO(QSPI_NSS_PORT_SEL qspi_nss_port_sel, bool IO1_Input, bool IO3_Out
         {
             QSPI_SingleGpioConfig(GPIOA, GPIO_PIN_7); // IO1
         }
-        
+
         if (IO3_Output)
         {
             GPIO_InitStructure.Pin        = GPIO_PIN_4 | GPIO_PIN_5; // IO2 and IO3
             GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
             GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
             GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
-                       
+
             GPIOC->PBSC |= GPIO_PIN_4 | GPIO_PIN_5;
         }
         else
@@ -275,14 +269,14 @@ void QSPI_GPIO(QSPI_NSS_PORT_SEL qspi_nss_port_sel, bool IO1_Input, bool IO3_Out
         {
             QSPI_SingleGpioConfig(GPIOD, GPIO_PIN_0); // IO1
         }
-        
+
         if (IO3_Output)
         {
             GPIO_InitStructure.Pin        = GPIO_PIN_1 | GPIO_PIN_2; // IO2 and IO3
             GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
             GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
             GPIO_InitPeripheral(GPIOD, &GPIO_InitStructure);
-                    
+
             GPIOD->PBSC |= GPIO_PIN_1 | GPIO_PIN_2;
         }
         else
@@ -310,14 +304,14 @@ void QSPI_GPIO(QSPI_NSS_PORT_SEL qspi_nss_port_sel, bool IO1_Input, bool IO3_Out
         {
             QSPI_SingleGpioConfig(GPIOF, GPIO_PIN_3); // IO1
         }
-        
+
         if (IO3_Output)
         {
             GPIO_InitStructure.Pin        = GPIO_PIN_4 | GPIO_PIN_5; // IO2 and IO3
             GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
             GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
             GPIO_InitPeripheral(GPIOF, &GPIO_InitStructure);
-                      
+
             GPIOF->PBSC |= GPIO_PIN_4 | GPIO_PIN_5;
         }
         else
@@ -330,31 +324,47 @@ void QSPI_GPIO(QSPI_NSS_PORT_SEL qspi_nss_port_sel, bool IO1_Input, bool IO3_Out
         break;
     }
 }
+
 /**
   * @brief Configuration of QSPI DMA.
-  * @param TxRx transmit or receive data.
+  * @param Tx transmit or receive data.
                QSPI_DMA_CTRL_TX_DMA_EN:transmit data
-               QSPI_DMA_CTRL_RX_DMA_EN:receive data
   * @param TxDataLevel dma transmit data level.
+  */
+void QSPI_Tx_DMA_CTRL_Config(uint8_t Cmd,uint8_t TxDataLevel)
+{
+    assert_param(IS_FUNCTIONAL_STATE(Cmd));
+    assert_param(IS_QSPI_DMATDL_CTRL(TxDataLevel));
+    if (Cmd)
+    {
+        QSPI->DMATDL_CTRL = TxDataLevel;
+        QSPI->DMA_CTRL   |= QSPI_DMA_CTRL_TX_DMA_EN;
+    }
+    else
+    {
+        QSPI->DMA_CTRL   &= ~QSPI_DMA_CTRL_TX_DMA_EN;
+    }
+}
+
+/**
+  * @brief Configuration of QSPI DMA.
+  * @param Rx transmit or receive data.
+               QSPI_DMA_CTRL_RX_DMA_EN:receive data
   * @param RxDataLevel dma receive data level.
   */
-void QSPI_DMA_CTRL_Config(uint8_t TxRx,uint8_t TxDataLevel,uint8_t RxDataLevel)
+void QSPI_Rx_DMA_CTRL_Config(uint8_t Cmd, uint8_t RxDataLevel)
 {
-    assert_param(IS_QSPI_DMA_CTRL(TxRx));
-    assert_param(IS_QSPI_DMATDL_CTRL(TxDataLevel));
+    assert_param(IS_FUNCTIONAL_STATE(Cmd));
     assert_param(IS_QSPI_DMARDL_CTRL(RxDataLevel));
-    
-    QSPI->DMA_CTRL  = 0x00;
-    
-    if (TxRx & QSPI_DMA_CTRL_TX_DMA_EN)
-    {
-        QSPI->DMATDL_CTRL = TxDataLevel;  
-        QSPI->DMA_CTRL   |= QSPI_DMA_CTRL_TX_DMA_EN; 
-    }
-    if (TxRx & QSPI_DMA_CTRL_RX_DMA_EN)
+
+    if (Cmd)
     {
         QSPI->DMARDL_CTRL = RxDataLevel;
         QSPI->DMA_CTRL   |= QSPI_DMA_CTRL_RX_DMA_EN;
+    }
+    else
+    {
+        QSPI->DMA_CTRL   &= ~QSPI_DMA_CTRL_RX_DMA_EN;
     }
 }
 /**
@@ -376,18 +386,19 @@ uint16_t QSPI_GetITStatus(uint16_t FLAG)
  */
 void QSPI_ClearITFLAG(uint16_t FLAG)
 {
-    volatile uint16_t tmp = 0;
-
     if (FLAG == QSPI_ISTS_TXFOIS)
-        tmp = QSPI->TXFOI_CLR;
-    if (FLAG == QSPI_ISTS_RXFOIS)
-        tmp = QSPI->RXFOI_CLR;
-    if (FLAG == QSPI_ISTS_RXFUIS)
-        tmp = QSPI->RXFUI_CLR;
-    if (FLAG == QSPI_ISTS_MMCIS)
-        tmp = QSPI->MMC_CLR;
-    if (FLAG == QSPI_ISTS)
-        tmp = QSPI->ICLR;
+        (void)QSPI->TXFOI_CLR;
+    else if (FLAG == QSPI_ISTS_RXFOIS)
+        (void)QSPI->RXFOI_CLR;
+    else if (FLAG == QSPI_ISTS_RXFUIS)
+        (void)QSPI->RXFUI_CLR;
+    else if (FLAG == QSPI_ISTS_MMCIS)
+        (void)QSPI->MMC_CLR;
+    else if (FLAG == QSPI_ISTS)
+        (void)QSPI->ICLR;
+    else
+    {
+    }
 }
 /**
  * @brief  Clear the flag of related interrupt register.
@@ -395,10 +406,11 @@ void QSPI_ClearITFLAG(uint16_t FLAG)
  */
 void QSPI_XIP_ClearITFLAG(uint16_t FLAG)
 {
-    volatile uint16_t tmp = 0;
-
     if (FLAG == QSPI_XIP_RXFOI_CLR_XRXFOIC)
-        tmp = QSPI->XIP_RXFOI_CLR;
+        (void)QSPI->XIP_RXFOI_CLR;
+    else
+    {
+    }
 }
 /**
  * @brief  Get QSPI status,busy or not.
@@ -450,16 +462,7 @@ bool GetQspiRxDataFullStatus(void)
         return 1;
     return 0;
 }
-/**
- * @brief  Check transmit error or not.
- * @return 1: Transmit error;0: No transmit error.
- */
-bool GetQspiTransmitErrorStatus(void)
-{
-    if ((QSPI->STS & 0x20) == 0x20)
-        return 1;
-    return 0;
-}
+
 /**
  * @brief  Check data conflict error or not.
  * @return 1: Data conflict error;0: No data conflict error.
@@ -512,7 +515,7 @@ void ClrFifo(void)
     while (GetQspiRxHaveDataStatus())
     {
         QspiReadWord();
-        if(++timeout >= 200)
+        if (++timeout >= 200)
         {
             break;
         }
@@ -550,7 +553,7 @@ void QspiSendAndGetWords(uint32_t* pSrcData, uint32_t* pDstData, uint32_t cnt)
 {
     uint32_t num = 0;
     uint32_t timeout = 0;
-    
+
     while (num < cnt)
     {
         QspiSendWord(*(pSrcData++));
@@ -558,7 +561,7 @@ void QspiSendAndGetWords(uint32_t* pSrcData, uint32_t* pDstData, uint32_t cnt)
     }
     while (!GetQspiRxHaveDataStatus())
     {
-        if(++timeout >= QSPI_TIME_OUT_CNT)
+        if (++timeout >= QSPI_TIME_OUT_CNT)
         {
             break;
         }
@@ -566,7 +569,7 @@ void QspiSendAndGetWords(uint32_t* pSrcData, uint32_t* pDstData, uint32_t cnt)
     timeout = 0;
     while (QSPI->RXFN < cnt)
     {
-        if(++timeout >= QSPI_TIME_OUT_CNT)
+        if (++timeout >= QSPI_TIME_OUT_CNT)
         {
             break;
         }
@@ -591,21 +594,21 @@ uint32_t QspiSendWordAndGetWords(uint32_t WrData, uint32_t* pRdData, uint8_t Las
     uint32_t    timeout1 = 0;
 
     QspiSendWord(WrData);                   //trammit
-    *pRdData = QspiReadWord();  
-    if(LastRd != 0)
+    *pRdData = QspiReadWord();
+    if (LastRd != 0)
     {
-        while(!GetQspiRxHaveDataStatus())   //wait for data
+        while (!GetQspiRxHaveDataStatus())   //wait for data
         {
-            if(++timeout1 >= QSPI_TIME_OUT_CNT)
+            if (++timeout1 >= QSPI_TIME_OUT_CNT)
             {
                 return QSPI_NULL;           //time out
             }
         }
 
-        *pRdData = QspiReadWord();          //read data 
-        return QSPI_SUCCESS;    
+        *pRdData = QspiReadWord();          //read data
+        return QSPI_SUCCESS;
     }
-    
+
     return QSPI_NULL;
 }
 

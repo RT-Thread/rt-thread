@@ -188,24 +188,24 @@ void I2C_DeInit(I2C_Module* I2Cx)
         /* Release I2C2 from reset state */
         RCC_EnableAPB1PeriphReset(RCC_APB1_PERIPH_I2C2, DISABLE);
     }
-	else if (I2Cx == I2C3)
+    else if (I2Cx == I2C3)
     {
         /* Enable I2C2 reset state */
         RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C3, ENABLE);
         /* Release I2C2 from reset state */
         RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C3, DISABLE);
     }
-	else if (I2Cx == I2C4)
+    else if (I2Cx == I2C4)
     {
         /* Enable I2C4 reset state */
-        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C3, ENABLE);
+        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C4, ENABLE);
         /* Release I2C4 from reset state */
-        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C3, DISABLE);
+        RCC_EnableAPB2PeriphReset(RCC_APB2_PERIPH_I2C4, DISABLE);
     }
-	else
-	{
-		
-	}
+    else
+    {
+
+    }
 }
 
 /**
@@ -237,7 +237,7 @@ void I2C_Init(I2C_Module* I2Cx, I2C_InitType* I2C_InitStruct)
     tmpregister &= CTRL2_CLKFREQ_RESET;
     /* Get APB1/2 frequency value */
     RCC_GetClocksFreqValue(&rcc_clocks);
-    
+
     if ((I2Cx == I2C1) || (I2Cx == I2C2))
     {
         pclk = rcc_clocks.Pclk1Freq;
@@ -249,11 +249,11 @@ void I2C_Init(I2C_Module* I2Cx, I2C_InitType* I2C_InitStruct)
 
     /* Set frequency bits depending on pclk1 value */
     freqrange = (uint16_t)(pclk / 1000000);
-	if (freqrange > 36)
+    if (freqrange > 36)
     {
         freqrange = 36;
     }
-	/* Write to I2Cx CTRL2 */
+    /* Write to I2Cx CTRL2 */
     tmpregister |= freqrange;
     I2Cx->CTRL2 = tmpregister;
 
@@ -304,7 +304,7 @@ void I2C_Init(I2C_Module* I2Cx, I2C_InitType* I2C_InitStruct)
         }
         /* Set speed value and set F/S bit for fast mode */
         tmpregister |= (uint16_t)(result | CLKCTRL_FSMODE_SET);
-        
+
         /* Set Maximum Rise Time for fast mode */
         I2Cx->TMRISE = (uint16_t)(((freqrange * (uint16_t)300) / (uint16_t)1000) + (uint16_t)1);
     }

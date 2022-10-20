@@ -27,7 +27,7 @@
 
 /**
  * @file n32g45x_dbg.h
- * @author Nations 
+ * @author Nations
  * @version v1.0.1
  *
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
