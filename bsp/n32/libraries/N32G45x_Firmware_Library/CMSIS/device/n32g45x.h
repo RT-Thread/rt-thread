@@ -1044,8 +1044,8 @@ typedef struct
     __IO uint32_t DMA_CTRL;
     __IO uint32_t DMATDL_CTRL;
     __IO uint32_t DMARDL_CTRL;
-    __IO uint32_t IDCODE;
-    __IO uint32_t RESERVED;
+    __IO uint32_t RESERVED0;
+    __IO uint32_t RESERVED1;
     __IO uint32_t DAT0;
     __IO uint32_t DAT1;
     __IO uint32_t DAT2;
@@ -7910,58 +7910,58 @@ typedef struct
 #define QSPI_CTRL0_DFS_2                            ((uint32_t)0x00000004) /*!< Bit 2 */
 #define QSPI_CTRL0_DFS_3                            ((uint32_t)0x00000008) /*!< Bit 3 */
 #define QSPI_CTRL0_DFS_4                            ((uint32_t)0x00000010) /*!< Bit 4 */
-#define QSPI_CTRL0_DFS_4_BIT                                ((uint32_t)0x00000003)
-#define QSPI_CTRL0_DFS_5_BIT                                ((uint32_t)0x00000004)
-#define QSPI_CTRL0_DFS_6_BIT                                ((uint32_t)0x00000005)
-#define QSPI_CTRL0_DFS_7_BIT                                ((uint32_t)0x00000006)
-#define QSPI_CTRL0_DFS_8_BIT                                ((uint32_t)0x00000007)
-#define QSPI_CTRL0_DFS_9_BIT                                ((uint32_t)0x00000008)
-#define QSPI_CTRL0_DFS_10_BIT                               ((uint32_t)0x00000009)
-#define QSPI_CTRL0_DFS_11_BIT                               ((uint32_t)0x0000000A)
-#define QSPI_CTRL0_DFS_12_BIT                               ((uint32_t)0x0000000B)
-#define QSPI_CTRL0_DFS_13_BIT                               ((uint32_t)0x0000000C)
-#define QSPI_CTRL0_DFS_14_BIT                               ((uint32_t)0x0000000D)
-#define QSPI_CTRL0_DFS_15_BIT                               ((uint32_t)0x0000000E)
-#define QSPI_CTRL0_DFS_16_BIT                               ((uint32_t)0x0000000F)
-#define QSPI_CTRL0_DFS_17_BIT                               ((uint32_t)0x00000010)
-#define QSPI_CTRL0_DFS_18_BIT                               ((uint32_t)0x00000011)
-#define QSPI_CTRL0_DFS_19_BIT                               ((uint32_t)0x00000012)
-#define QSPI_CTRL0_DFS_20_BIT                               ((uint32_t)0x00000013)
-#define QSPI_CTRL0_DFS_21_BIT                               ((uint32_t)0x00000014)
-#define QSPI_CTRL0_DFS_22_BIT                               ((uint32_t)0x00000015)
-#define QSPI_CTRL0_DFS_23_BIT                               ((uint32_t)0x00000016)
-#define QSPI_CTRL0_DFS_24_BIT                               ((uint32_t)0x00000017)
-#define QSPI_CTRL0_DFS_25_BIT                               ((uint32_t)0x00000018)
-#define QSPI_CTRL0_DFS_26_BIT                               ((uint32_t)0x00000019)
-#define QSPI_CTRL0_DFS_27_BIT                               ((uint32_t)0x0000001A)
-#define QSPI_CTRL0_DFS_28_BIT                               ((uint32_t)0x0000001B)
-#define QSPI_CTRL0_DFS_29_BIT                               ((uint32_t)0x0000001C)
-#define QSPI_CTRL0_DFS_30_BIT                               ((uint32_t)0x0000001D)
-#define QSPI_CTRL0_DFS_31_BIT                               ((uint32_t)0x0000001E)
-#define QSPI_CTRL0_DFS_32_BIT                               ((uint32_t)0x0000001F)
+#define QSPI_CTRL0_DFS_4_BIT                        ((uint32_t)0x00000003)
+#define QSPI_CTRL0_DFS_5_BIT                        ((uint32_t)0x00000004)
+#define QSPI_CTRL0_DFS_6_BIT                        ((uint32_t)0x00000005)
+#define QSPI_CTRL0_DFS_7_BIT                        ((uint32_t)0x00000006)
+#define QSPI_CTRL0_DFS_8_BIT                        ((uint32_t)0x00000007)
+#define QSPI_CTRL0_DFS_9_BIT                        ((uint32_t)0x00000008)
+#define QSPI_CTRL0_DFS_10_BIT                       ((uint32_t)0x00000009)
+#define QSPI_CTRL0_DFS_11_BIT                       ((uint32_t)0x0000000A)
+#define QSPI_CTRL0_DFS_12_BIT                       ((uint32_t)0x0000000B)
+#define QSPI_CTRL0_DFS_13_BIT                       ((uint32_t)0x0000000C)
+#define QSPI_CTRL0_DFS_14_BIT                       ((uint32_t)0x0000000D)
+#define QSPI_CTRL0_DFS_15_BIT                       ((uint32_t)0x0000000E)
+#define QSPI_CTRL0_DFS_16_BIT                       ((uint32_t)0x0000000F)
+#define QSPI_CTRL0_DFS_17_BIT                       ((uint32_t)0x00000010)
+#define QSPI_CTRL0_DFS_18_BIT                       ((uint32_t)0x00000011)
+#define QSPI_CTRL0_DFS_19_BIT                       ((uint32_t)0x00000012)
+#define QSPI_CTRL0_DFS_20_BIT                       ((uint32_t)0x00000013)
+#define QSPI_CTRL0_DFS_21_BIT                       ((uint32_t)0x00000014)
+#define QSPI_CTRL0_DFS_22_BIT                       ((uint32_t)0x00000015)
+#define QSPI_CTRL0_DFS_23_BIT                       ((uint32_t)0x00000016)
+#define QSPI_CTRL0_DFS_24_BIT                       ((uint32_t)0x00000017)
+#define QSPI_CTRL0_DFS_25_BIT                       ((uint32_t)0x00000018)
+#define QSPI_CTRL0_DFS_26_BIT                       ((uint32_t)0x00000019)
+#define QSPI_CTRL0_DFS_27_BIT                       ((uint32_t)0x0000001A)
+#define QSPI_CTRL0_DFS_28_BIT                       ((uint32_t)0x0000001B)
+#define QSPI_CTRL0_DFS_29_BIT                       ((uint32_t)0x0000001C)
+#define QSPI_CTRL0_DFS_30_BIT                       ((uint32_t)0x0000001D)
+#define QSPI_CTRL0_DFS_31_BIT                       ((uint32_t)0x0000001E)
+#define QSPI_CTRL0_DFS_32_BIT                       ((uint32_t)0x0000001F)
 
 #define QSPI_CTRL0_FRF                              ((uint32_t)0x000000C0) /*!< FRF[1:0] bits (Frame Format) */
 #define QSPI_CTRL0_FRF_0                            ((uint32_t)0x00000040) /*!< Bit 0 */
 #define QSPI_CTRL0_FRF_1                            ((uint32_t)0x00000080) /*!< Bit 1 */
-#define QSPI_CTRL0_FRF_MOTOROLA                             ((uint32_t)0x00000000)
-#define QSPI_CTRL0_FRF_TI                                   ((uint32_t)0x00000040)
-#define QSPI_CTRL0_FRF_MICROWIRE                            ((uint32_t)0x00000080)
+#define QSPI_CTRL0_FRF_MOTOROLA                     ((uint32_t)0x00000000)
+#define QSPI_CTRL0_FRF_TI                           ((uint32_t)0x00000040)
+#define QSPI_CTRL0_FRF_MICROWIRE                    ((uint32_t)0x00000080)
 
 #define QSPI_CTRL0_SCPH                             ((uint32_t)0x00000100) /*!< SCPH (Serial Clock Phase) */
-#define QSPI_CTRL0_SCPH_FIRST_EDGE                          ((uint32_t)0x00000000)
-#define QSPI_CTRL0_SCPH_SECOND_EDGE                         ((uint32_t)0x00000100)
+#define QSPI_CTRL0_SCPH_FIRST_EDGE                  ((uint32_t)0x00000000)
+#define QSPI_CTRL0_SCPH_SECOND_EDGE                 ((uint32_t)0x00000100)
 
 #define QSPI_CTRL0_SCPOL                            ((uint32_t)0x00000200) /*!< SCPOL(Serial Clock Polarity) */
-#define QSPI_CTRL0_SCPOL_LOW                                ((uint32_t)0x00000000)
-#define QSPI_CTRL0_SCPOL_HIGH                               ((uint32_t)0x00000200)
+#define QSPI_CTRL0_SCPOL_LOW                        ((uint32_t)0x00000000)
+#define QSPI_CTRL0_SCPOL_HIGH                       ((uint32_t)0x00000200)
 
 #define QSPI_CTRL0_TMOD                             ((uint32_t)0x00000C00) /*!< TMOD[1:0] bits (Transfer Mode) */
 #define QSPI_CTRL0_TMOD_0                           ((uint32_t)0x00000400) /*!< Bit 0 */
 #define QSPI_CTRL0_TMOD_1                           ((uint32_t)0x00000800) /*!< Bit 1 */
-#define QSPI_CTRL0_TMOD_TX_AND_RX                           ((uint32_t)0x00000000)
-#define QSPI_CTRL0_TMOD_TX_ONLY                             ((uint32_t)0x00000400)
-#define QSPI_CTRL0_TMOD_RX_ONLY                             ((uint32_t)0x00000800)
-#define QSPI_CTRL0_TMOD_EEPROM_READ                         ((uint32_t)0x00000C00)
+#define QSPI_CTRL0_TMOD_TX_AND_RX                   ((uint32_t)0x00000000)
+#define QSPI_CTRL0_TMOD_TX_ONLY                     ((uint32_t)0x00000400)
+#define QSPI_CTRL0_TMOD_RX_ONLY                     ((uint32_t)0x00000800)
+#define QSPI_CTRL0_TMOD_EEPROM_READ                 ((uint32_t)0x00000C00)
 
 #define QSPI_CTRL0_SRL_EN                           ((uint32_t)0x00002000) /*!< SRL (Shift Register Loop) */
 #define QSPI_CTRL0_SSTE_EN                          ((uint32_t)0x00004000) /*!< SSTE(Slave Select Toggle Enable) */
@@ -7971,29 +7971,29 @@ typedef struct
 #define QSPI_CTRL0_CFS_1                            ((uint32_t)0x00020000) /*!< Bit 1 */
 #define QSPI_CTRL0_CFS_2                            ((uint32_t)0x00040000) /*!< Bit 2 */
 #define QSPI_CTRL0_CFS_3                            ((uint32_t)0x00080000) /*!< Bit 3 */
-#define QSPI_CTRL0_CFS_1_BIT                                ((uint32_t)0x00000000)
-#define QSPI_CTRL0_CFS_2_BIT                                ((uint32_t)0x00010000)
-#define QSPI_CTRL0_CFS_3_BIT                                ((uint32_t)0x00020000)
-#define QSPI_CTRL0_CFS_4_BIT                                ((uint32_t)0x00030000)
-#define QSPI_CTRL0_CFS_5_BIT                                ((uint32_t)0x00040000)
-#define QSPI_CTRL0_CFS_6_BIT                                ((uint32_t)0x00050000)
-#define QSPI_CTRL0_CFS_7_BIT                                ((uint32_t)0x00060000)
-#define QSPI_CTRL0_CFS_8_BIT                                ((uint32_t)0x00070000)
-#define QSPI_CTRL0_CFS_9_BIT                                ((uint32_t)0x00080000)
-#define QSPI_CTRL0_CFS_10_BIT                               ((uint32_t)0x00090000)
-#define QSPI_CTRL0_CFS_11_BIT                               ((uint32_t)0x000A0000)
-#define QSPI_CTRL0_CFS_12_BIT                               ((uint32_t)0x000B0000)
-#define QSPI_CTRL0_CFS_13_BIT                               ((uint32_t)0x000C0000)
-#define QSPI_CTRL0_CFS_14_BIT                               ((uint32_t)0x000D0000)
-#define QSPI_CTRL0_CFS_15_BIT                               ((uint32_t)0x000E0000)
-#define QSPI_CTRL0_CFS_16_BIT                               ((uint32_t)0x000F0000)
+#define QSPI_CTRL0_CFS_1_BIT                        ((uint32_t)0x00000000)
+#define QSPI_CTRL0_CFS_2_BIT                        ((uint32_t)0x00010000)
+#define QSPI_CTRL0_CFS_3_BIT                        ((uint32_t)0x00020000)
+#define QSPI_CTRL0_CFS_4_BIT                        ((uint32_t)0x00030000)
+#define QSPI_CTRL0_CFS_5_BIT                        ((uint32_t)0x00040000)
+#define QSPI_CTRL0_CFS_6_BIT                        ((uint32_t)0x00050000)
+#define QSPI_CTRL0_CFS_7_BIT                        ((uint32_t)0x00060000)
+#define QSPI_CTRL0_CFS_8_BIT                        ((uint32_t)0x00070000)
+#define QSPI_CTRL0_CFS_9_BIT                        ((uint32_t)0x00080000)
+#define QSPI_CTRL0_CFS_10_BIT                       ((uint32_t)0x00090000)
+#define QSPI_CTRL0_CFS_11_BIT                       ((uint32_t)0x000A0000)
+#define QSPI_CTRL0_CFS_12_BIT                       ((uint32_t)0x000B0000)
+#define QSPI_CTRL0_CFS_13_BIT                       ((uint32_t)0x000C0000)
+#define QSPI_CTRL0_CFS_14_BIT                       ((uint32_t)0x000D0000)
+#define QSPI_CTRL0_CFS_15_BIT                       ((uint32_t)0x000E0000)
+#define QSPI_CTRL0_CFS_16_BIT                       ((uint32_t)0x000F0000)
 
 #define QSPI_CTRL0_SPI_FRF                          ((uint32_t)0x00C00000) /*!< SPI_FRF[1:0] bits (SPI Frame Format) */
 #define QSPI_CTRL0_SPI_FRF_0                        ((uint32_t)0x00400000) /*!< Bit 0 */
 #define QSPI_CTRL0_SPI_FRF_1                        ((uint32_t)0x00800000) /*!< Bit 1 */
-#define QSPI_CTRL0_SPI_FRF_STANDARD_FORMAT                  ((uint32_t)0x00000000)
-#define QSPI_CTRL0_SPI_FRF_DUAL_FORMAT                      ((uint32_t)0x00400000)
-#define QSPI_CTRL0_SPI_FRF_QUAD_FORMAT                      ((uint32_t)0x00800000)
+#define QSPI_CTRL0_SPI_FRF_STANDARD_FORMAT          ((uint32_t)0x00000000)
+#define QSPI_CTRL0_SPI_FRF_DUAL_FORMAT              ((uint32_t)0x00400000)
+#define QSPI_CTRL0_SPI_FRF_QUAD_FORMAT              ((uint32_t)0x00800000)
 
 /*******************  Bit definition for QSPI_CTRL1 register  *******************/
 #define QSPI_CTRL1_NDF                              ((uint32_t)0x0000FFFF) /*!< NDF[15:0] bits (Numver of Data Frames) */
@@ -8019,12 +8019,12 @@ typedef struct
 
 /*******************  Bit definition for QSPI_MW_CTRL register  *******************/
 #define QSPI_MW_CTRL_MWMOD                          ((uint32_t)0x00000001) /*!< MWMO (Microwire Transfer Mode) */
-#define QSPI_MW_CTRL_MWMOD_UNSEQUENTIAL                     ((uint32_t)0x00000000)
-#define QSPI_MW_CTRL_MWMOD_SEQUENTIAL                           ((uint32_t)0x00000001)
+#define QSPI_MW_CTRL_MWMOD_UNSEQUENTIAL             ((uint32_t)0x00000000)
+#define QSPI_MW_CTRL_MWMOD_SEQUENTIAL               ((uint32_t)0x00000001)
 
 #define QSPI_MW_CTRL_MC_DIR                         ((uint32_t)0x00000002) /*!< MC_DIR (Direction of Data when Microwire Control) */
-#define QSPI_MW_CTRL_MC_DIR_RX                              ((uint32_t)0x00000000)
-#define QSPI_MW_CTRL_MC_DIR_TX                              ((uint32_t)0x00000002)
+#define QSPI_MW_CTRL_MC_DIR_RX                      ((uint32_t)0x00000000)
+#define QSPI_MW_CTRL_MC_DIR_TX                      ((uint32_t)0x00000002)
 
 #define QSPI_MW_CTRL_MHS_EN                         ((uint32_t)0x00000004) /*!< MHS_EN (Microwire Handshaking Enable) */
 
@@ -8098,8 +8098,7 @@ typedef struct
 #define QSPI_STS_TXFE                               ((uint32_t)0x00000004) /*!< TXFE (Transmit FIFO not Empty) */
 #define QSPI_STS_RXFNE                              ((uint32_t)0x00000008) /*!< RXFNE (Receive FIFO not Empty) */
 #define QSPI_STS_RXFF                               ((uint32_t)0x00000010) /*!< RXFF (Receive FIFO not Full) */
-#define QSPI_STS_TX_ERR                             ((uint32_t)0x00000020) /*!< TX_ERR (Transmit Error) */
-#define QSPI_STS_DC_ERR                                 ((uint32_t)0x00000040) /*!< DC_ERR (Data Conflict Error) */
+#define QSPI_STS_DC_ERR                             ((uint32_t)0x00000040) /*!< DC_ERR (Data Conflict Error) */
 
 /*******************  Bit definition for QSPI_IMASK register  *******************/
 #define QSPI_IMASK                                  ((uint32_t)0x0000007F) /*!< IMASK[6:0] (Interrupt of Mask) */
@@ -8168,41 +8167,6 @@ typedef struct
 #define QSPI_DMARDL_CTRL_DMARDL_4                   ((uint32_t)0x00000010) /*!< Bit 4 */
 #define QSPI_DMARDL_CTRL_DMARDL_5                   ((uint32_t)0x00000020) /*!< Bit 5 */
 
-/*******************  Bit definition for QSPI_IDCODE register  *******************/
-#define QSPI_IDCODE                                 ((uint32_t)0x0000FFFF) /*!< IDCODE[31:0] (Identification Code) */
-#define QSPI_IDCODE_0                               ((uint32_t)0x00000001) /*!< Bit 0 */
-#define QSPI_IDCODE_1                               ((uint32_t)0x00000002) /*!< Bit 1 */
-#define QSPI_IDCODE_2                               ((uint32_t)0x00000004) /*!< Bit 2 */
-#define QSPI_IDCODE_3                               ((uint32_t)0x00000008) /*!< Bit 3 */
-#define QSPI_IDCODE_4                               ((uint32_t)0x00000010) /*!< Bit 4 */
-#define QSPI_IDCODE_5                               ((uint32_t)0x00000020) /*!< Bit 5 */
-#define QSPI_IDCODE_6                               ((uint32_t)0x00000040) /*!< Bit 6 */
-#define QSPI_IDCODE_7                               ((uint32_t)0x00000080) /*!< Bit 7 */
-#define QSPI_IDCODE_8                               ((uint32_t)0x00000100) /*!< Bit 8 */
-#define QSPI_IDCODE_9                               ((uint32_t)0x00000200) /*!< Bit 9 */
-#define QSPI_IDCODE_10                              ((uint32_t)0x00000400) /*!< Bit 10 */
-#define QSPI_IDCODE_11                              ((uint32_t)0x00000800) /*!< Bit 11 */
-#define QSPI_IDCODE_12                              ((uint32_t)0x00001000) /*!< Bit 12 */
-#define QSPI_IDCODE_13                              ((uint32_t)0x00002000) /*!< Bit 13 */
-#define QSPI_IDCODE_14                              ((uint32_t)0x00004000) /*!< Bit 14 */
-#define QSPI_IDCODE_15                              ((uint32_t)0x00008000) /*!< Bit 15 */
-#define QSPI_IDCODE_16                              ((uint32_t)0x00010000) /*!< Bit 16 */
-#define QSPI_IDCODE_17                              ((uint32_t)0x00020000) /*!< Bit 17 */
-#define QSPI_IDCODE_18                              ((uint32_t)0x00040000) /*!< Bit 18 */
-#define QSPI_IDCODE_19                              ((uint32_t)0x00080000) /*!< Bit 19 */
-#define QSPI_IDCODE_20                              ((uint32_t)0x00100000) /*!< Bit 20 */
-#define QSPI_IDCODE_21                              ((uint32_t)0x00200000) /*!< Bit 21 */
-#define QSPI_IDCODE_22                              ((uint32_t)0x00400000) /*!< Bit 22 */
-#define QSPI_IDCODE_23                              ((uint32_t)0x00800000) /*!< Bit 23 */
-#define QSPI_IDCODE_24                              ((uint32_t)0x01000000) /*!< Bit 24 */
-#define QSPI_IDCODE_25                              ((uint32_t)0x02000000) /*!< Bit 25 */
-#define QSPI_IDCODE_26                              ((uint32_t)0x04000000) /*!< Bit 26 */
-#define QSPI_IDCODE_27                              ((uint32_t)0x08000000) /*!< Bit 27 */
-#define QSPI_IDCODE_28                              ((uint32_t)0x10000000) /*!< Bit 28 */
-#define QSPI_IDCODE_29                              ((uint32_t)0x20000000) /*!< Bit 29 */
-#define QSPI_IDCODE_30                              ((uint32_t)0x40000000) /*!< Bit 30 */
-#define QSPI_IDCODE_31                              ((uint32_t)0x80000000) /*!< Bit 31 */
-
 /*******************  Bit definition for QSPI_DAT0~QSPI_DAT31 register  *******************/
 #define QSPI_DATA_ALL                               ((uint32_t)0x0000FFFF) /*!< QSPI_DAT[31:0] (DATA Register) */
 #define QSPI_DATA_0                                 ((uint32_t)0x00000001) /*!< Bit 0 */
@@ -8248,24 +8212,24 @@ typedef struct
 #define QSPI_RS_DELAY_SDCN_5                        ((uint32_t)0x00000020) /*!< Bit 5 */
 #define QSPI_RS_DELAY_SDCN_6                        ((uint32_t)0x00000040) /*!< Bit 6 */
 #define QSPI_RS_DELAY_SDCN_7                        ((uint32_t)0x00000080) /*!< Bit 7 */
-#define QSPI_RS_DELAY_SDCN_0_CYCLES                             ((uint32_t)0x00000000)
-#define QSPI_RS_DELAY_SDCN_1_CYCLES                             ((uint32_t)0x00000001)
-#define QSPI_RS_DELAY_SDCN_2_CYCLES                             ((uint32_t)0x00000002)
-#define QSPI_RS_DELAY_SDCN_3_CYCLES                             ((uint32_t)0x00000003)
-#define QSPI_RS_DELAY_SDCN_4_CYCLES                             ((uint32_t)0x00000004)
-#define QSPI_RS_DELAY_SDCN_5_CYCLES                             ((uint32_t)0x00000005)
-#define QSPI_RS_DELAY_SDCN_6_CYCLES                             ((uint32_t)0x00000006)
+#define QSPI_RS_DELAY_SDCN_0_CYCLES                 ((uint32_t)0x00000000)
+#define QSPI_RS_DELAY_SDCN_1_CYCLES                 ((uint32_t)0x00000001)
+#define QSPI_RS_DELAY_SDCN_2_CYCLES                 ((uint32_t)0x00000002)
+#define QSPI_RS_DELAY_SDCN_3_CYCLES                 ((uint32_t)0x00000003)
+#define QSPI_RS_DELAY_SDCN_4_CYCLES                 ((uint32_t)0x00000004)
+#define QSPI_RS_DELAY_SDCN_5_CYCLES                 ((uint32_t)0x00000005)
+#define QSPI_RS_DELAY_SDCN_6_CYCLES                 ((uint32_t)0x00000006)
 
-#define QSPI_RS_DELAY_SES                               ((uint32_t)0x00010000) /*!< SES (Sample Edge Select of Receive Data) */
-#define QSPI_RS_DELAY_SES_RISING_EDGE                           ((uint32_t)0x00000000)
-#define QSPI_RS_DELAY_SES_FALLING_EDGE                          ((uint32_t)0x00010000)
+#define QSPI_RS_DELAY_SES                           ((uint32_t)0x00010000) /*!< SES (Sample Edge Select of Receive Data) */
+#define QSPI_RS_DELAY_SES_RISING_EDGE               ((uint32_t)0x00000000)
+#define QSPI_RS_DELAY_SES_FALLING_EDGE              ((uint32_t)0x00010000)
 /*******************  Bit definition for QSPI_ENH_CTRL0 register  *******************/
 #define QSPI_ENH_CTRL0_TRANS_TYPE                   ((uint32_t)0x00000003) /*!< TRANS_TYPE[1:0] (Address and instruction transfer format) */
 #define QSPI_ENH_CTRL0_TRANS_TYPE_0                 ((uint32_t)0x00000001) /*!< Bit 0 */
 #define QSPI_ENH_CTRL0_TRANS_TYPE_1                 ((uint32_t)0x00000002) /*!< Bit 1 */
-#define QSPI_ENH_CTRL0_TRANS_TYPE_STANDARD              ((uint32_t)0x00000000)
-#define QSPI_ENH_CTRL0_TRANS_TYPE_ADDRESS_BY_FRF        ((uint32_t)0x00000001)
-#define QSPI_ENH_CTRL0_TRANS_TYPE_ALL_BY_FRF            ((uint32_t)0x00000002)
+#define QSPI_ENH_CTRL0_TRANS_TYPE_STANDARD          ((uint32_t)0x00000000)
+#define QSPI_ENH_CTRL0_TRANS_TYPE_ADDRESS_BY_FRF    ((uint32_t)0x00000001)
+#define QSPI_ENH_CTRL0_TRANS_TYPE_ALL_BY_FRF        ((uint32_t)0x00000002)
 
 #define QSPI_ENH_CTRL0_ADDR_LEN                     ((uint32_t)0x0000003C) /*!< ADDR_LEN[3:0] (Length of Address to transmit) */
 #define QSPI_ENH_CTRL0_ADDR_LEN_0                   ((uint32_t)0x00000004) /*!< Bit 0 */
@@ -8288,15 +8252,13 @@ typedef struct
 #define QSPI_ENH_CTRL0_ADDR_LEN_56_BIT              ((uint32_t)0x00000038)
 #define QSPI_ENH_CTRL0_ADDR_LEN_60_BIT              ((uint32_t)0x0000003C)
 
-#define QSPI_ENH_CTRL0_MD_BIT_EN                    ((uint32_t)0x00000080) /*!< MD_BIT_EN (Mode bits enable in XIP mode) */
-
 #define QSPI_ENH_CTRL0_INST_L                       ((uint32_t)0x00000300) /*!< INST_L[1:0] (Dual/Quad mode instruction length in bits) */
 #define QSPI_ENH_CTRL0_INST_L_0                     ((uint32_t)0x00000100) /*!< Bit 0 */
 #define QSPI_ENH_CTRL0_INST_L_1                     ((uint32_t)0x00000200) /*!< Bit 1 */
-#define QSPI_ENH_CTRL0_INST_L_0_LINE                        ((uint32_t)0x00000000)
-#define QSPI_ENH_CTRL0_INST_L_4_LINE                        ((uint32_t)0x00000100)
-#define QSPI_ENH_CTRL0_INST_L_8_LINE                        ((uint32_t)0x00000200)
-#define QSPI_ENH_CTRL0_INST_L_16_LINE                       ((uint32_t)0x00000300)
+#define QSPI_ENH_CTRL0_INST_L_0_LINE                ((uint32_t)0x00000000)
+#define QSPI_ENH_CTRL0_INST_L_4_LINE                ((uint32_t)0x00000100)
+#define QSPI_ENH_CTRL0_INST_L_8_LINE                ((uint32_t)0x00000200)
+#define QSPI_ENH_CTRL0_INST_L_16_LINE               ((uint32_t)0x00000300)
 
 #define QSPI_ENH_CTRL0_WAIT_CYCLES                  ((uint32_t)0x0000F800) /*!< WAIT_CYCLES[4:0] (Wait Cycles in Dual/Quad mode between control frames transmit and data reception) */
 #define QSPI_ENH_CTRL0_WAIT_CYCLES_0                ((uint32_t)0x00000800) /*!< Bit 0 */
@@ -8336,23 +8298,10 @@ typedef struct
 #define QSPI_ENH_CTRL0_WAIT_30CYCLES                ((uint32_t)0x0000F000)
 #define QSPI_ENH_CTRL0_WAIT_31CYCLES                ((uint32_t)0x0000F800)
 
-
 #define QSPI_ENH_CTRL0_SPI_DDR_EN                   ((uint32_t)0x00010000) /*!< SPI_DDR_EN (SPI DDR Enable) */
 #define QSPI_ENH_CTRL0_INST_DDR_EN                  ((uint32_t)0x00020000) /*!< INST_DDR_EN (XIP instruction enable) */
-#define QSPI_ENH_CTRL0_XIP_DFS_HC                   ((uint32_t)0x00080000) /*!< XIP_DFS_HC (Fix DFS for XIP transfers) */
-#define QSPI_ENH_CTRL0_XIP_INST_EN                  ((uint32_t)0x00100000) /*!< XIP_INST_EN (XIP instruction enable) */
-#define QSPI_ENH_CTRL0_XIP_CT_EN                    ((uint32_t)0x00200000) /*!< XIP_CT_EN (Enable Continuous Transfer in XIP mode) */
 
-#define QSPI_ENH_CTRL0_XIP_MBL                      ((uint32_t)0x0C000000) /*!< XIP_MBL[1:0] (XIP Mode bits length) */
-#define QSPI_ENH_CTRL0_XIP_MBL_0                    ((uint32_t)0x04000000) /*!< Bit 0 */
-#define QSPI_ENH_CTRL0_XIP_MBL_1                    ((uint32_t)0x08000000) /*!< Bit 1 */
-#define QSPI_ENH_CTRL0_XIP_MBL_2_BIT                            ((uint32_t)0x00000000)
-#define QSPI_ENH_CTRL0_XIP_MBL_4_BIT                            ((uint32_t)0x04000000)
-#define QSPI_ENH_CTRL0_XIP_MBL_8_BIT                            ((uint32_t)0x08000000)
-#define QSPI_ENH_CTRL0_XIP_MBL_16_BIT                           ((uint32_t)0x0C000000)
-
-
-#define QSPI_ENH_CTRL0_CLK_STRETCH_EN               ((uint32_t)0x40000000) /*!< CLK_STRETCH_EN (Enable Continuous Transfer in XIP mode) */
+#define QSPI_ENH_CTRL0_CLK_STRETCH_EN               ((uint32_t)0x40000000) /*!< CLK_STRETCH_EN (Enable clock stretch capablity in SPI tramsfers) */
 
 /*******************  Bit definition for QSPI_DDR_TXDE register  *******************/
 #define QSPI_DDR_TXDE                               ((uint32_t)0x000000FF) /*!< TXDE[7:0] (Transmit Drive Edge) */
@@ -9022,17 +8971,17 @@ typedef struct
   */
 
 #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
-    
+
 #define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
-    
+
 #define READ_BIT(REG, BIT)    ((REG) & (BIT))
-    
+
 #define CLEAR_REG(REG)        ((REG) = (0x0))
-    
+
 #define WRITE_REG(REG, VAL)   ((REG) = (VAL))
-    
+
 #define READ_REG(REG)         ((REG))
-    
+
 #define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
 /**
  * @}

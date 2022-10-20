@@ -1,131 +1,129 @@
-# ch32v307v-r1 BSP 说明
+# CH32V307V-R1 BSP Introduction
 
-## 1 开发板简介
+**English** | [中文](README_zh.md)
 
-CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主频为 144Mhz。比较适合入门学习 RISC-V 架构。
+## 1 Introduction
+
+CH32V307V-R1 is a RISC-V core-based development board with a maximum main frequency of 144Mhz. It delivers the best value for developers to try and get started with RISC-V architecture. 
+
+This document records the execution instruction of the BSP (board support package) provided by the RT-Thread community for the CH32V307V-R1 development board.
+
+The document is covered in three parts:
+
+- Board Resources Introduction
+- Compiling
+- Quickly Get Started
+
+By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. 
 
 ![board](./figures/ch32v307.jpg)
 
-**基本特性：**
+**Features**
 
-- MCU：CH32V307VCT6，主频 144MHz，FLASH和RAM可配置
-- LED：2个，用户 LEDs， LED1（blue），LED2（blue）。
-- 按键：2个，Reset， User 。
-- USB：2个，Tpye-C。
-- 网口：1个，内置 10M PHY。
-- 板载 WCH-Link 下载调试工具。
+- MCU: CH32V307VCT6, main frequency 144MHz，FLASH and RAM are available for configuration.
+- LED: 2, user LEDs, LED1(blue), LED2(blue).
+- Button: 2, Reset, User.
+- USB: 2, Tpye-C.
+- Network Port: 1, 10M PHY inside.
+- WCH-Link download debugging tools onboard.
 
-更多信息和资源请访问[互联型RISC-V单片机 CH32V307](https://www.wch.cn/products/CH32V307.html)
+For more details about this board, please refer to: [CH32V307](https://www.wch.cn/products/CH32V307.html)
 
-## 2 编译说明
+## 2 Compiling
 
-板级包支持 RISC-V GCC 开发环境，以下是具体版本信息：
+The BSP supports the RISC-V GCC development environment, here's the specific version information:
 
-| IDE/编译器 | 已测试版本           |
-| ---------- | -------------------- |
-| GCC        | WCH RISC-V GCC 8.2.0 |
+| IDE/Compiler | Version Tested       |
+| ------------ | -------------------- |
+| GCC          | WCH RISC-V GCC 8.2.0 |
 
-## 3 使用说明
+## 3 Quickly Get Started
 
->本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+### 3.1 Using [Env](https://www.rt-thread.io/download.html?download=Env) to compile BSP
 
-### 3.1 快速上手
+This section is about to introduce how to use Env to compile the BSP.
 
-本 BSP 为开发者提供 Scons 编译配置。下面介绍如何将系统运行起来。
+#### 3.1.1 Compile BSP
 
-#### 3.1.1 指定RISC-V GCC编译器
+1. [Download WCH Compile Toolchain](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/releases)
+2. [Download the Env tool latest version](https://github.com/RT-Thread/env-windows/releases)
+3. [Download the RT-Thread latest code](https://github.com/RT-Thread/rt-thread/archive/refs/heads/master.zip)
+4. Open the Env tool in the current BSP root directory and execute the `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` command, compile it directly while specifying the toolchain location. 
+5. After compilation, the **rtthread.bin** file will be generated
 
-推荐使用 RT-Thread Studio 软件里面的编译器。
+![sconscompile](./figures/sconscompile.jpg)
 
-##### 方法一：直接指定编译器路径。
+#### 3.1.2 Hardware Connection
 
-![method1](./figures/method1.png)
+Use a data cable to connect the onboard wch-link to the PC, and turn on the power switch.
 
-##### 方法二：通过env设置编译器路径
+#### 3.1.3 Download
 
-![method2](./figures/method2.png)
-
-```shell
-set RTT_EXEC_PATH=D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\WCH\RISC-V-GCC-WCH\8.2.0\bin
-```
-
-或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
-
-> 注意：如果使用第二种方法，第一种方法设置的路劲将会失效。
-
-#### 3.1.2 生成dist文件夹
-
-```shell
-scons --dist
-```
-
-![dist](./figures/dist.png)
-
-#### 3.1.3 进入dist文件夹scons编译
-
-```shell
-scons
-```
-
-![scons](./figures/scons.png)
-
-最终会生成 **rtthread.bin** 文件。
-
-#### 3.1.4 硬件连接
-
-使用数据线连接板载 wch-link 到 PC，打开电源开关。
-
-#### 3.1.5 下载
-
-打开 WCH RISC-V MCU ProgrammerTool 下载软件，选择刚刚生成的 **rtthread.bin**  文件，进行下载。
+Open the WCH RISC-V MCU ProgrammerTool, select the **rtthread.bin** file  that we just generated, and download it.
 
 ![tool](./figures/tool.png)
 
-> 注意：这里Chip Mem 设置为224K ROM + 96K RAM。不要以参考手册为准。
+> Note that Chip Mem here is set to 224K ROM + 96K RAM. 
 
-#### 3.1.6 运行结果
+#### 3.1.4 Running Result
 
-在终端工具里打开板载 wch-link 串口（WCHDapLink SERIAL，默认115200-8-1-N），复位设备后，在串口上可以看到 RT-Thread 的输出信息：
+In the terminal tool, open the onboard wch-link serial port (WCHDapLink SERIAL, default 115200-8-1-N), and after resetting the device, you can see the output information of RT-Thread on the serial port:
 
 ![end](./figures/end.png)
 
-### 3.2 导入 RT-Thread Studio 工程
 
-#### 3.2.1 导入
+### 3.2 Use VSCode to edit and compile the project
 
-打开 RT-Thread Studio 后点击：文件->导入：
+In the Env terminal, type command `scons --target=vsc` to generate the VSCode project. Then, type command `code .` in the Env terminal to open the VSCode.
+
+Use **VSCode terminal** to type command `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` to compile the project in VSCode.
+
+![vscode-terminal](./figures/vscode-terminal.png)
+
+<!-- ### 3.3 Import RT-Thread Studio Project
+
+**CH32V307V-R1 is pending upgrade in Studio. It's not encouraged now to use Studio to compile this BSP.**
+
+#### 3.3.1 Import
+
+Open RT-Thread Studio and click: File-> Import:
 
 ![import](./figures/import.png)
 
-选择“RT-Thread Bsp 到工作空间中”：
+Select "RT-Thread BSP Project into Workspace":
 
 ![windows](./figures/windows.png)
 
 填写项目信息，Bsp 根目录为 \rt-thread\bsp\wch\risc-v\ch32v307v-r1 目录：
 
+Fill in the project info, the BSP root directory is \rt-thread\bsp\wch\risc-v\ch32v307v-r1：
+
 ![config](./figures/config.png)
 
 
-#### 3.2.2 配置环境
+#### 3.3.2 Compilation Environment
 
 工程导入后进行编译环境的设置，首先点击“打开构建设置”进入设置界面：
+
+After the project is imported, set the compilation environment, click "Open Build Settings" to enter the setting interface:
 
 ![set](./figures/set.png)
 
 将编译链路径复制到 Toolchain path 中：
+Copy the compilation chain path into the Toolchain path:
 
 ![toolchain](./figures/toolchain.png)
 
-如图更改 Prefix ：
+Change Prefix: 
 
 ![prefix](./figures/prefix.png)
 
-进行工具设置：
+Set the tool:
 
 ![toolset](./figures/toolset.png)
 
-#### 3.2.3 编译
+#### 3.3.3 Compiling 
 
-编译结果如下：
+The result is shown as below:
 
-![success](./figures/success.png)
+![success](./figures/success.png -->

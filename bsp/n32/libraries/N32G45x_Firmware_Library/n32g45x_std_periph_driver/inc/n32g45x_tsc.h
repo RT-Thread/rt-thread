@@ -149,7 +149,7 @@
 /**
  * @
  */
- 
+
 /**
  * @defgroup TSC_Interrupt
  */
@@ -242,7 +242,7 @@
 /**
  * @
  */
-   
+
 /**
  * @defgroup TSC_Constant
  */
@@ -307,7 +307,7 @@
  *     @arg TSC_DET_TYPE_NONE:  Detect disable
  *     @arg TSC_DET_TYPE_LESS:  Pulse number must be greater than the threshold(basee-delta) during a sample time
  *     @arg TSC_DET_TYPE_GREAT: Pulse number must be less than the threshold(basee+delta) during a sample time
- *     @arg TSC_DET_TYPE_PERIOD:Pulse number must be greater than (basee-delta) 
+ *     @arg TSC_DET_TYPE_PERIOD:Pulse number must be greater than (basee-delta)
                                  and also be less than (basee+delta) during a sample time
  * @retval None
  */
@@ -331,7 +331,7 @@
  * @param  __OUT__  specifies where the TSC output should go
  *     @arg TSC_OUT_PIN:      TSC output to the TSC_OUT pin
  *     @arg TSC_OUT_TIM4_ETR: TSC output to TIM4 as ETR
- *     @arg TSC_OUT_TIM2_ETR: TSC output to TIM2 as ETR 
+ *     @arg TSC_OUT_TIM2_ETR: TSC output to TIM2 as ETR
  * @retval None
  */
 #define __TSC_OUT_CONFIG(__OUT__)           MODIFY_REG( TSC->CTRL,  \
