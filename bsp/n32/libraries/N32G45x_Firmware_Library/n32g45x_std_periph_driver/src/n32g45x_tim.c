@@ -1056,7 +1056,6 @@ void TIM_GenerateEvent(TIM_Module* TIMx, uint16_t TIM_EventSource)
  *          TIM_DMABASE_CNT, TIM_DMABASE_PSC, TIM_DMABASE_AR,
  *          TIM_DMABASE_REPCNT, TIM_DMABASE_CAPCMPDAT1, TIM_DMABASE_CAPCMPDAT2,
  *          TIM_DMABASE_CAPCMPDAT3, TIM_DMABASE_CAPCMPDAT4, TIM_DMABASE_BKDT,
- *          TIM_DMABASE_CAPCMPMOD3, TIM_DMABASE_CAPCMPDAT5, TIM_DMABASE_CAPCMPDAT6,
  *          TIM_DMABASE_DMACTRL.
  * @param TIM_DMABurstLength DMA Burst length.
  *   This parameter can be one value between:
@@ -2938,7 +2937,7 @@ FlagStatus TIM_GetCCENStatus(TIM_Module* TIMx, uint32_t TIM_CCEN)
     /* Check the parameters */
     assert_param(IsTimList3Module(TIMx));
 
-    if(TIMx==TIM1 || TIMx==TIM8)
+    if (TIMx==TIM1 || TIMx==TIM8)
     {
         assert_param(IsAdvancedTimCCENFlag(TIM_CCEN));
         if ((TIMx->CCEN & TIM_CCEN) != (uint32_t)RESET)
@@ -2950,7 +2949,7 @@ FlagStatus TIM_GetCCENStatus(TIM_Module* TIMx, uint32_t TIM_CCEN)
             bitstatus = RESET;
         }
     }
-    else if(TIMx==TIM2 || TIMx==TIM3 || TIMx==TIM4 || TIMx==TIM5 )
+    else if (TIMx==TIM2 || TIMx==TIM3 || TIMx==TIM4 || TIMx==TIM5 )
     {
         assert_param(IsGeneralTimCCENFlag(TIM_CCEN));
         if ((TIMx->CCEN & TIM_CCEN) != (uint32_t)RESET)
@@ -2962,7 +2961,7 @@ FlagStatus TIM_GetCCENStatus(TIM_Module* TIMx, uint32_t TIM_CCEN)
             bitstatus = RESET;
         }
     }
-    
+
     return bitstatus;
 }
 

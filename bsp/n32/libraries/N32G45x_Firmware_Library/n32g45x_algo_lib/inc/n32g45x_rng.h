@@ -50,7 +50,7 @@
 
 enum{
     RNG_OK = 0x5a5a5a5a,
-    LENError = 0x311ECF50,   //RNG generation of key length error 
+    LENError = 0x311ECF50,   //RNG generation of key length error
     ADDRNULL = 0x7A9DB86C,   // This address is empty
 };
 
@@ -61,8 +61,8 @@ enum{
  * @param[out] rand pointer to random number
  * @param[in] the wordlen of random number
  * @param[in] the seed, can be NULL
- * @return RNG_OK:get random number success; othets: get random number fail 
- * @note    
+ * @return RNG_OK:get random number success; othets: get random number fail
+ * @note
  */
 uint32_t GetPseudoRand_U32(uint32_t *rand, uint32_t wordLen,uint32_t seed[2]);
 
@@ -71,8 +71,8 @@ uint32_t GetPseudoRand_U32(uint32_t *rand, uint32_t wordLen,uint32_t seed[2]);
  * @brief Get true random number
  * @param[out] rand pointer to random number
  * @param[in] the wordlen of random number
- * @return RNG_OK:get random number success; othets: get random number fail 
- * @note    
+ * @return RNG_OK:get random number success; othets: get random number fail
+ * @note
  */
 uint32_t GetTrueRand_U32(uint32_t *rand, uint32_t wordLen);
 
@@ -81,7 +81,7 @@ uint32_t GetTrueRand_U32(uint32_t *rand, uint32_t wordLen);
  * @param[out] type pointer one byte type information represents the type of the lib, like Commercial version.\
  * @Bits 0~4 stands for Commercial (C), Security (S), Normal (N), Evaluation (E), Test (T), Bits 5~7 are reserved. e.g. 0x09 stands for CE version.
  * @param[out] customer pointer one byte customer information represents customer ID. for example, 0x00 stands for standard version, 0x01 is for Tianyu customized version...
- * @param[out] date pointer array which include three bytes date information. If the returned bytes are 18,9,13,this denotes September 13,2018 
+ * @param[out] date pointer array which include three bytes date information. If the returned bytes are 18,9,13,this denotes September 13,2018
  * @param[out] version pointer one byte version information represents develop version of the lib. e.g. 0x12 denotes version 1.2.
  * @return none
  * @1.You can recall this function to get RSA lib information
