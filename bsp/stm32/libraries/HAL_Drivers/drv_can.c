@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -767,7 +767,7 @@ static void _can_tx_isr(struct rt_can_device *can)
     CAN_HandleTypeDef *hcan;
     RT_ASSERT(can);
     hcan = &((struct stm32_can *) can->parent.user_data)->CanHandle;
-  
+
     if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
     {
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
