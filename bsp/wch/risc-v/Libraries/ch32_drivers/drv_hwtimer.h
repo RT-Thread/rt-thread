@@ -11,7 +11,8 @@
 #ifndef __DRV_HWTIMER_H__
 #define __DRV_HWTIMER_H__
 
-#include "rtthread.h"
+#include <rtthread.h>
+
 #include "ch32v30x_tim.h"
 
 #ifdef BSP_USING_HWTIMER
