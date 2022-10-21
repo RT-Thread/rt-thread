@@ -28,6 +28,13 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_SFDP
         default n
 
+    config BSP_USING_NAND1
+        bool "Enable NAND1"
+        select RT_USING_NAND1
+        select RT_USING_MTD_NAND
+        select PKG_USING_LPM
+        default n
+
     config BSP_USING_RGB
         bool "Enable RGB LED (timer3 channel2 - 4)"
         select RT_USING_PWM
