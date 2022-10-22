@@ -17,7 +17,6 @@
 #define LOG_TAG "drv.pwm"
 #include <drv_log.h>
 
-
 void ch32_tim_clock_init(TIM_TypeDef* timx)
 {
 #ifdef BSP_USING_TIM1_PWM
