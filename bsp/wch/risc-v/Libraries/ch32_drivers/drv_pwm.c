@@ -10,8 +10,6 @@
  * 2022-10-20     MXH               add the remaining timers
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include "drv_pwm.h"
 
 #ifdef BSP_USING_PWM
