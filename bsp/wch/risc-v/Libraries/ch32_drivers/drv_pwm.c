@@ -749,13 +749,13 @@ static rt_err_t ch32_pwm_device_enable(struct rt_device_pwm* device, struct rt_p
     {
         if (pwm_device->channel[channel_index - 1] == FLAG_NOT_INIT)
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         TIM_CCxCmd(pwm_device->periph, pwm_device->channel[channel_index - 1], ccx_state);
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     TIM_Cmd(pwm_device->periph, ENABLE);
@@ -802,7 +802,7 @@ static rt_err_t ch32_pwm_device_get(struct rt_device_pwm* device, struct rt_pwm_
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
@@ -892,7 +892,7 @@ static rt_err_t ch32_pwm_device_set(struct rt_device_pwm* device, struct rt_pwm_
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     TIM_ARRPreloadConfig(pwm_device->periph, ENABLE);
@@ -918,7 +918,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm* device, int cmd, void* arg
     case PWM_CMD_GET:
         return ch32_pwm_device_get(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
