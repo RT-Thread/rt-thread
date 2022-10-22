@@ -29,9 +29,9 @@ extern "C" {
 /*-------------------------- CHIP CONFIG END --------------------------*/
 
 /*-------------------------- ROM/RAM CONFIG BEGIN --------------------------*/
- #define ROM_START              ((uint32_t)0x90000000)
- #define ROM_SIZE               (16384)
- #define ROM_END                ((uint32_t)(ROM_START + ROM_SIZE * 1024))
+#define ROM_START              ((uint32_t)0x90000000)
+#define ROM_SIZE               (16384)
+#define ROM_END                ((uint32_t)(ROM_START + ROM_SIZE * 1024))
 
 #define RAM_START              (0x24000000)
 #define RAM_SIZE               (512)
@@ -74,10 +74,6 @@ extern "C" {
 #define STM32_FLASH_START_ADRESS       ROM_START
 #define STM32_FLASH_SIZE               ROM_SIZE
 #define STM32_FLASH_END_ADDRESS        ROM_END
-
-#define RAM_START              (0x24000000)
-#define RAM_SIZE               (512)
-#define RAM_END                (RAM_START + RAM_SIZE * 1024)
 
 #define STM32_SRAM1_SIZE               RAM_SIZE
 #define STM32_SRAM1_START              RAM_START
