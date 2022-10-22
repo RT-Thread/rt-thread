@@ -11,13 +11,12 @@
 #ifndef __DRV_PWM_H__
 #define __DRV_PWM_H__
 
-#include "ch32v30x_tim.h"
 #include <rtthread.h>
+#ifdef BSP_USING_PWM
+#include "ch32v30x_tim.h"
 #include <drivers/rt_drv_pwm.h>
 #include <drivers/hwtimer.h>
 #include <board.h>
-
-#ifdef BSP_USING_PWM
 
 #ifndef ITEM_NUM
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
