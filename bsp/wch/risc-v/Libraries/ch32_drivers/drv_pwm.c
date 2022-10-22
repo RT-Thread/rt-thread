@@ -88,9 +88,10 @@ rt_uint32_t ch32_tim_clock_get(TIM_TypeDef* timx)
 }
 
 /*
- * NOTE:    some pwm pins of some timers are reused,
+ * NOTE:  some pwm pins of some timers are reused,
  *          please keep caution when using pwm
- *  */
+ */
+
 void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
