@@ -36,12 +36,6 @@ struct rtdevice_pwm_device
     char* name;
 };
 
-
-
-
-
-
-
 #endif/* BSP_USING_PWM */
 
 #endif/* __DRV_PWM_H__ */
