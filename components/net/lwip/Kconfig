@@ -7,13 +7,6 @@ menuconfig RT_USING_LWIP
     default n
 
 if RT_USING_LWIP
-    config RT_USING_LWIP_LOCAL_VERSION
-        bool "Use LwIP local version only"
-        default n
-        help
-            If don't select this option, both local version and upstream
-            version can be selected. If select this option, only local version
-            can be selected.
     choice
         prompt "lwIP version"
         default RT_USING_LWIP203
