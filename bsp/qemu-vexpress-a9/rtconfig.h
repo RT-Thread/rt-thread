@@ -241,7 +241,6 @@
 
 /* IoT - internet of things */
 
-#define PKG_USING_LWIP
 
 /* Wi-Fi */
 
