@@ -3,33 +3,48 @@ menuconfig RT_USING_LWIP
     select RT_USING_DEVICE
     select RT_USING_DEVICE_IPC
     select SAL_USING_LWIP if RT_USING_SAL
-    select PKG_USING_LWIP
+    select PKG_USING_LWIP if !RT_USING_LWIP_LOCAL_VERSION
     default n
 
 if RT_USING_LWIP
+
+    config RT_USING_LWIP_LOCAL_VERSION
+        bool "Use LwIP local version only"
+        default n
+        help
+            If don't select this option, both local version and upstream
+            version can be selected. If select this option, only local version
+            can be selected.
+
     choice
         prompt "lwIP version"
-        default RT_USING_LWIP203
+        default RT_USING_LWIP212
         help
             Select the lwIP version
 
-        config RT_USING_LWIP141
-            bool "lwIP v1.4.1"
+        config RT_USING_LWIP212
+            bool "lwIP v2.1.2"
 
-        config RT_USING_LWIP203
-            bool "lwIP v2.0.3"
+        if !RT_USING_LWIP_LOCAL_VERSION
+            config RT_USING_LWIP141
+                bool "lwIP v1.4.1"
 
-        config RT_USING_LWIP213
-            bool "lwIP v2.1.3"
+            config RT_USING_LWIP203
+                bool "lwIP v2.0.3"
 
-        config RT_USING_LWIP_LATEST
-            bool "lwIP latest"
+            config RT_USING_LWIP213
+                bool "lwIP v2.1.3"
+
+            config RT_USING_LWIP_LATEST
+                bool "lwIP latest"
+        endif
     endchoice
 
     config RT_USING_LWIP_VER_NUM
         hex
         default 0x99999    if RT_USING_LWIP_LATEST
         default 0x20103    if RT_USING_LWIP213
+        default 0x20102    if RT_USING_LWIP212
         default 0x20003    if RT_USING_LWIP203
         default 0x10401    if RT_USING_LWIP141
 

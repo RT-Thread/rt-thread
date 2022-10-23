@@ -57,7 +57,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40101
+#define RT_VER_NUM 0x50000
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_A
@@ -189,8 +189,8 @@
 #define NETDEV_IPV4 1
 #define NETDEV_IPV6 0
 #define RT_USING_LWIP
-#define RT_USING_LWIP203
-#define RT_USING_LWIP_VER_NUM 0x20003
+#define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -241,6 +241,7 @@
 
 /* IoT - internet of things */
 
+#define PKG_USING_LWIP
 
 /* Wi-Fi */
 
@@ -311,14 +312,38 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
+/* Arduino libraries */
 
 
-/* Network Utilities */
+/* Projects */
 
 
-/* RT-Thread Smart */
+/* Sensors */
 
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 /* Hardware Drivers Config */
 
