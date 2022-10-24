@@ -615,12 +615,12 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     /* get hdr */
     if (hcan->Instance == CAN1)
     {
-        pmsg->hdr = (rxheader.FilterMatchIndex + 1) >> 1;
+        pmsg->hdr_index = rxheader.FilterMatchIndex;
     }
 #ifdef CAN2
     else if (hcan->Instance == CAN2)
     {
-       pmsg->hdr = (rxheader.FilterMatchIndex >> 1) + 14;
+       pmsg->hdr_index = rxheader.FilterMatchIndex;
     }
 #endif
 
