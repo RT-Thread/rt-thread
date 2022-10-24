@@ -88,7 +88,7 @@ struct rt_can_filter_item
 
 #ifdef RT_CAN_USING_HDR
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,ind,args) \
-      {(id), (ide), (rtr), (mode),(mask), -1, CAN_RX_FIFO0,(ind), (args)}/*0£ºCAN_RX_FIFO0*/
+      {(id), (ide), (rtr), (mode),(mask), -1, CAN_RX_FIFO0,(ind), (args)}/*0:CAN_RX_FIFO0*/
 #define RT_CAN_FILTER_STD_INIT(id,ind,args) \
      RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF,ind,args)
 #define RT_CAN_FILTER_EXT_INIT(id,ind,args) \
