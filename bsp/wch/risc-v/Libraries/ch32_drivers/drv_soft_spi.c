@@ -11,7 +11,7 @@
 #include <board.h>
 #include "drv_soft_spi.h"
 
-#if defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2)
+#if defined(BSP_USING_SOFT_I2C)
 
 #define LOG_TAG             "drv.soft_spi"
 #include <drv_log.h>
@@ -225,4 +225,4 @@ int rt_soft_spi_init(void)
 }
 INIT_BOARD_EXPORT(rt_soft_spi_init);
 
-#endif /* defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) */
+#endif /* defined(BSP_USING_SOFT_I2C) */
