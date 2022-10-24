@@ -401,6 +401,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->FilterConfig.FilterMaskIdLow = mask_l;
 
                 drv_can->FilterConfig.FilterMode = filter_cfg->items[i].mode;
+                drv_can->FilterConfig.FilterFIFOAssignment = filter_cfg->items[i].rxfifo;/*rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
                 /* Filter conf */
                 HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
             }
@@ -610,6 +611,10 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     {
         pmsg->rtr = RT_CAN_RTR;
     }
+#ifndef RT_CAN_USING_CANFD
+    /*get rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
+    pmsg->rxfifo = fifo;
+#endif
     /* get len */
     pmsg->len = rxheader.DLC;
     /* get hdr */
