@@ -611,10 +611,9 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     {
         pmsg->rtr = RT_CAN_RTR;
     }
-#ifndef RT_CAN_USING_CANFD
     /*get rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
     pmsg->rxfifo = fifo;
-#endif
+
     /* get len */
     pmsg->len = rxheader.DLC;
     /* get hdr */
