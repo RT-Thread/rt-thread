@@ -21,9 +21,9 @@ extern "C" {
 #ifndef PWM1_CONFIG
 #define PWM1_CONFIG                             \
     {                                           \
-       .tim_handle.Instance     = TIM1,         \   // TIM1/2/3...
-       .name                    = "pwm1",       \   // your pwm device name
-       .channel                 = 0             \   // range: 1--4
+       .tim_handle.Instance     = TIM1,         \   /* TIM1/2/3... */
+       .name                    = "pwm1",       \   /* your pwm device name */
+       .channel                 = 0             \   /* range: 1--4 */
     }
 #endif /* PWM1_CONFIG */
 #endif /* BSP_USING_PWM1 */
