@@ -569,4 +569,4 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-#endif /* RT_USING_PIN */
+#endif /* BSP_USING_GPIO */

@@ -225,4 +225,4 @@ int rt_soft_spi_init(void)
 }
 INIT_BOARD_EXPORT(rt_soft_spi_init);
 
-#endif /* defined(RT_USING_SPI) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_PIN) */
+#endif /* defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) */
