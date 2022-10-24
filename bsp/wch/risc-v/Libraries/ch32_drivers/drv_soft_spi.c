@@ -11,7 +11,7 @@
 #include <board.h>
 #include "drv_soft_spi.h"
 
-#if defined(RT_USING_SPI) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_PIN)
+#if defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2)
 
 #define LOG_TAG             "drv.soft_spi"
 #include <drv_log.h>
