@@ -98,7 +98,7 @@ menu "On-chip Peripheral Drivers"
 
         if BSP_USING_SOFT_I2C
             config BSP_USING_I2C1
-                bool "Enable I2C1 Bus"
+                bool "Enable I2C1 Bus (software simulation)"
                 default n
 
                 if BSP_USING_I2C1
@@ -115,7 +115,7 @@ menu "On-chip Peripheral Drivers"
                 endif
 
             config BSP_USING_I2C2
-                bool "Enable I2C2 Bus"
+                bool "Enable I2C2 Bus (software simulation)"
                 default n
 
                 if BSP_USING_I2C2
