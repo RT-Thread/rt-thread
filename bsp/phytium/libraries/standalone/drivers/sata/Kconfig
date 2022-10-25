@@ -1,9 +1,0 @@
-menu "FSATA Configuration"
-    config ENABLE_FSATA
-        bool
-        prompt "Use FSATA"
-        default n
-        
-endmenu
-
-

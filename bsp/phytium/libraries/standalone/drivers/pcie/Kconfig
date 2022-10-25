@@ -1,9 +1,0 @@
-
-menu "Pcie Configuration"
-    config ENABLE_F_PCIE
-        bool
-        prompt "Use F_PCIE"
-        default n
-        
-endmenu
-
