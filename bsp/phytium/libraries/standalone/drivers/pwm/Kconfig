@@ -1,0 +1,9 @@
+menu "FPWM Configuration"
+    config USE_FPWM
+        bool
+        prompt "Use FPWM"
+        default n
+        
+endmenu
+
+

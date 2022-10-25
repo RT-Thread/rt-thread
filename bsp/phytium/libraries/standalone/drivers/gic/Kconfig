@@ -1,0 +1,6 @@
+    config ENABLE_GICV3
+        bool
+        prompt "Use Generic Interrupt Controller v3"
+        default y
+
+	
