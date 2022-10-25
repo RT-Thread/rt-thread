@@ -98,7 +98,7 @@ INCLUDES=$(RTT_ROOT_DIR)/include/ \
          $(RTT_ROOT_DIR)/components/drivers/include/
 
 # Add additional defines to the build process (without a leading -D).
-DEFINES=HAVE_SIGVAL HAVE_SIGEVENT HAVE_SIGINFO RT_USING_NEWLIB
+DEFINES=HAVE_SIGVAL HAVE_SIGEVENT HAVE_SIGINFO RT_USING_NEWLIBC
 
 # Select softfp or hardfp floating point. Default is softfp.
 VFP_SELECT=hardfp
