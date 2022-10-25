@@ -1,0 +1,29 @@
+menu "Hardware Drivers"
+
+menu "On-chip Peripheral Drivers"
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select USE_SERIAL # sdk serial component
+        select ENABLE_Pl011_UART # select sdk pl011 driver
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config RT_USING_UART1
+                bool "Enable UART1"
+                default y
+            
+            config RT_USING_UART0
+                bool "Enable UART0"
+                default n
+
+        endif
+
+
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

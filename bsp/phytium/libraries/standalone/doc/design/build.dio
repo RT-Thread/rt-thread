@@ -1,0 +1,62 @@
+<mxfile host="65bd71144e">
+    <diagram id="PoK2bJbW4yWf1h1wnLvb" name="第 1 页">
+        <mxGraphModel dx="617" dy="472" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#660000;" edge="1" parent="1" source="3" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;span style=&quot;font-size: 16px&quot;&gt;选择目标平台&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=0;fontColor=#143642;strokeColor=#0F8B8D;labelBackgroundColor=none;labelBorderColor=none;fillColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="120" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#660000;" edge="1" parent="1" source="4" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;span style=&quot;font-size: 16px&quot;&gt;选择编译组件&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=0;fontColor=#143642;strokeColor=#0F8B8D;labelBackgroundColor=none;labelBorderColor=none;fillColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="210" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#660000;" edge="1" parent="1" source="5" target="6">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;span style=&quot;font-size: 16px&quot;&gt;设置编译选项&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=0;fontColor=#143642;strokeColor=#0F8B8D;labelBackgroundColor=none;labelBorderColor=none;fillColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="300" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#660000;" edge="1" parent="1" source="6" target="7">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="&lt;span style=&quot;font-size: 16px&quot;&gt;保存编译配置&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=0;fontColor=#143642;strokeColor=#0F8B8D;labelBackgroundColor=none;labelBorderColor=none;fillColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="390" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="&lt;span style=&quot;font-size: 16px&quot;&gt;完成编译构建&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=0;fontColor=#143642;strokeColor=#0F8B8D;labelBackgroundColor=none;labelBorderColor=none;fillColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="480" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <UserObject label="make config_ft2004_aarch64&lt;br&gt;将目标平台设置为FT2000/4" placeholders="1" name="Variable" id="10">
+                    <mxCell style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;rounded=0;sketch=0;fontColor=#143642;" vertex="1" parent="1">
+                        <mxGeometry x="270" y="120" width="170" height="50" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="make menuconfig&lt;br&gt;选择需要编译的驱动和组件" placeholders="1" name="Variable" id="11">
+                    <mxCell style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;rounded=0;sketch=0;fontColor=#143642;" vertex="1" parent="1">
+                        <mxGeometry x="270" y="210" width="170" height="50" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="通过menuconfig修改链接脚本设置和编译选项" placeholders="1" name="Variable" id="13">
+                    <mxCell style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;rounded=0;sketch=0;fontColor=#143642;" vertex="1" parent="1">
+                        <mxGeometry x="270" y="300" width="170" height="50" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="保存配置到sdkconfig和sdkconfig.h" placeholders="1" name="Variable" id="15">
+                    <mxCell style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;rounded=0;sketch=0;fontColor=#143642;" vertex="1" parent="1">
+                        <mxGeometry x="270" y="390" width="170" height="50" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="通过make指令编译*.bin和*.elf镜像" placeholders="1" name="Variable" id="17">
+                    <mxCell style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;rounded=0;sketch=0;fontColor=#143642;" vertex="1" parent="1">
+                        <mxGeometry x="270" y="480" width="170" height="50" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
