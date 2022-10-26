@@ -235,7 +235,7 @@ static rt_err_t drv_pwm_enable(TIM_HandleTypeDef *htim, struct rt_pwm_configurat
 {
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = configuration->channel;
-    if(channel<1 || channel >4)
+    if(channel < 1 || channel > 4)
     {
         LOG_E("pwm channel %d is invalid, failed to enable", configuration->channel);
         return -RT_ERROR;
@@ -272,7 +272,7 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
 {
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = configuration->channel;
-    if(channel<1 || channel >4)
+    if(channel < 1 || channel > 4)
     {
         LOG_E("pwm channel %d is invalid, failed to get", configuration->channel);
         return -RT_ERROR;
@@ -304,7 +304,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint64_t tim_clock, psc;
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = configuration->channel;
-    if(channel<1 || channel >4)
+    if(channel < 1 || channel > 4)
     {
         LOG_E("pwm channel %d is invalid, failed to set", configuration->channel);
         return -RT_ERROR;
@@ -373,7 +373,7 @@ static rt_err_t drv_pwm_set_pulse(TIM_HandleTypeDef *htim, struct rt_pwm_configu
     rt_uint64_t tim_clock;
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = configuration->channel;
-    if(channel<1 || channel >4)
+    if(channel < 1 || channel > 4)
     {
         LOG_E("pwm channel %d is invalid, failed to set pulse", configuration->channel);
         return -RT_ERROR;
@@ -433,7 +433,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     TIM_ClockConfigTypeDef clock_config = {0};
 
     rt_uint32_t channel = device->channel;
-    if(channel<1 || channel >4)
+    if(channel < 1 || channel > 4)
     {
         LOG_E("%s pwm channel %d is invalid, failed to init", device->name, device->channel);
         return -RT_ERROR;
