@@ -785,8 +785,6 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
             }
         }
     }
-
-    return ;
 }
 
 /**
