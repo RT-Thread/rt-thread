@@ -58,6 +58,8 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+    CXXFLAGS = CFLAGS
+
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n'
     POST_ACTION += SIZE + ' $TARGET\n'
 
