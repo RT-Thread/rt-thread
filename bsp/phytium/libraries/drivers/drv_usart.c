@@ -3,9 +3,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
+ * Email: opensource_embedded@phytium.com.cn
+ * 
  * Change Logs:
- * Date           Author       Notes
- * 2021-03-04     Carl      the first version
+ * Date        Author       Notes
+ * 2022-10-26  huanghe      first commit 
+ *
  */
 
 #include "board.h"

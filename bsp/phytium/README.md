@@ -3,13 +3,13 @@
 
 ## 简介
 
-本文档为基于RT-THREAD的Phytium系列CPU 相关BSP 说明。
+本文档为基于 RT-THREAD 的 Phytium 系列 CPU 相关 BSP 说明。
 
 本文的主要内容如下:
 
-- BSP简介
+- BSP 简介
 - 移植支持情况
-- 如何在Ubuntu/Windows 环境下使用此BSP
+- 如何在 Ubuntu/Windows 环境下使用此 BSP
 - 如何进行编译与实验
 - 维护人信息
 - 注意事项
@@ -21,7 +21,7 @@
 
 
 
-- 本BSP目前支持飞腾腾锐D系列、飞腾腾珑E系列 相关CPU,基于我方 Phytium-Standalone-SDK 进行开发。开发者能够使用
+- 本BSP目前支持飞腾腾锐D系列、飞腾腾珑E系列 相关CPU,基于 Phytium-Standalone-SDK 进行开发。开发者能够使用
 
 - 本BSP 支持Phytium系列CPU 工作在 aarch32/aarch64 两种执行状态 ，开发者能够根据自己的应用场景灵活选择CPU 工作状态。
 
@@ -45,16 +45,19 @@
 
 ### Ubuntu 环境
 
-1. 根据 [Linux x86_64 SDK安装方法](https://gitee.com/phytium_embedded/phytium-standalone-sdk/blob/release/doc/reference/usr/install_linux_x86_64.md) 中1.1  - 1.2 节中介绍，先安装sdk 编译环境
-2. 参考[RT-Thread/env](https://github.com/RT-Thread/env) 中Tutorial 在ubuntu 环境下安装env 环境
+1. 根据 [Linux x86_64 SDK安装方法](https://gitee.com/phytium_embedded/phytium-standalone-sdk/blob/release/doc/reference/usr/install_linux_x86_64.md) 中1.1  - 1.2 节中介绍，先安装 SDK 编译环境
+2. 参考[RT-Thread/env](https://github.com/RT-Thread/env) 中Tutorial 在ubuntu 环境下安装 env 环境
 3. 在编译环境下执行 ```source ~/.env/env.sh```
 4. 以aarch32 执行状态为例，```cd bsp/phytium/aarch32```
-5. ```scons --menuconfig``` 使能RT-Thread online packages > peripheral libraries and drivers>Phytium-Standalone-SDK: Phytium CPU baremetal sdk
-![](./figures/sdk_setup.png)
-5. ``` “pkgs --update``` 获取Phytium-standalone-SDK 源码
 
 
 ### Windows 环境
+
+1. 根据[Windows 10 SDK安装方法](https://gitee.com/phytium_embedded/phytium-standalone-sdk/blob/release/doc/reference/usr/install_windows.md)，安装 SDK 编译环境，编辑新建 Windows 环境变量 AARCH32_CROSS_PATH 和 AARCH64_CROSS_PATH
+2. 参考[RT-Thread/env](https://github.com/RT-Thread/env) 中Tutorial 在 Windows 环境下解压 env 压缩包
+3. 以aarch32 执行状态为例，```cd bsp/phytium/aarch32```
+4. 使用 export_project.py 导出 BSP 工程到其他目录进行开发
+5. 使用 RT-Studio 导入 BSP 工程进行开发
 
 
 ## 如何进行编译与实验
@@ -162,4 +165,7 @@ tftp> q
 ![运行结果](./figures/result.png)
 
 
+## 维护人信息
 
+- huanghe:  huanghe@phytium.com.cn
+- zhugengyu:  zhugengyu@phytium.com.cn

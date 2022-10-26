@@ -247,6 +247,8 @@
 
 /* Components Configuration */
 
+#define USE_GIC
+#define ENABLE_GICV3
 #define USE_SERIAL
 
 /* Usart Configuration */
