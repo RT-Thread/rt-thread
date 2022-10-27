@@ -79,9 +79,9 @@ Hardware Drivers Config > On-chip Peripheral Drivers
 - 完成编译之后目录下将会生成以下几个文件
 
 ```
-rtthread.bin
-rtthread.elf
-rtthread.map
+rtthread_a64.bin
+rtthread_a64.elf
+rtthread_a64.map
 ```
 
 ## 5. 打包导出工程源代码

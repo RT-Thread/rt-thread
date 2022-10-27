@@ -66,9 +66,9 @@ Hardware Drivers > On-chip Peripheral Drivers
 - 完成编译之后目录下将会生成以下几个文件
 
 ```
-rtthread.bin
-rtthread.elf
-rtthread.map
+rtthread_a32.bin
+rtthread_a32.elf
+rtthread_a32.map
 ```
 
 ## 5. 打包导出工程源代码
