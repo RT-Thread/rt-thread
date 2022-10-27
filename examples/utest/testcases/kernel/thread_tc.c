@@ -259,6 +259,7 @@ static void thread6_entry(void *parameter)
 static void test_thread_yield(void)
 {
     rt_err_t ret_startup = -RT_ERROR;
+    thread5_source = 0;
     tid5 = rt_thread_create("thread5",
                             thread5_entry,
                             RT_NULL,
