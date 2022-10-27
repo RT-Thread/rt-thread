@@ -143,7 +143,6 @@ static void FPl011StubHandler(void *args, u32 event,
 u32 FPl011SendBuffer(FPl011 *uart_p)
 {
     u32 sent_count = 0U;
-    u32 reg_value;
     u32 isbusy;
 
     isbusy = (u32)FUART_ISTRANSMITBUSY(uart_p->config.base_address);
@@ -181,7 +180,6 @@ u32 FPl011SendBuffer(FPl011 *uart_p)
 u32 FPl011Receive(FPl011 *uart_p, u8 *byte_p, u32 length)
 {
     u32 received;
-    u32 back_reg_value;
 
     FASSERT(uart_p != NULL);
     FASSERT(byte_p != NULL);

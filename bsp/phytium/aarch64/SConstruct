@@ -27,7 +27,7 @@ if IS_EXPORTED:
 else:
     BSP_ROOT = RTT_ROOT + '/bsp/phytium'
 
-TARGET = 'rtthread_a32.' + rtconfig.TARGET_EXT
+TARGET = 'rtthread_a64.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],

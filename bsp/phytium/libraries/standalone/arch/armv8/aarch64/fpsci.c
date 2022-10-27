@@ -31,7 +31,6 @@ FError PsciCpuOn(s32 cpu_id_mask, uintptr bootaddr)
 {
     FError ret ;
     u64 cluster = 0;
-    struct arm_smccc_res res;
     ret = GetCpuAffinityByMask(cpu_id_mask,&cluster);
     if(ret != ERR_SUCCESS)
     {
