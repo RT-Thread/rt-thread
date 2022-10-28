@@ -17,6 +17,12 @@
 extern "C" {
 #endif
 
+/*
+ * .tim_handle.Instance     = TIM1/2/3...,
+ * .name					= "your pwm device name",
+ * .channel					= 1/2/3/4
+ */
+
 #ifdef BSP_USING_PWM1
 #ifndef PWM1_CONFIG
 #define PWM1_CONFIG                             \
