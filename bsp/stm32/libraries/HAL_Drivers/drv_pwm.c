@@ -234,13 +234,7 @@ static struct rt_pwm_ops drv_ops =
 static rt_err_t drv_pwm_enable(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
     /* Converts the channel number to the channel number of Hal library */
-    rt_uint32_t channel = configuration->channel;
-    if(channel < 1 || channel > 4)
-    {
-        LOG_E("pwm channel %d is invalid, failed to enable", configuration->channel);
-        return -RT_ERROR;
-    }
-    channel = 0x04 * (configuration->channel - 1);
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
     if (!configuration->complementary)
     {
@@ -271,13 +265,7 @@ static rt_err_t drv_pwm_enable(TIM_HandleTypeDef *htim, struct rt_pwm_configurat
 static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
 {
     /* Converts the channel number to the channel number of Hal library */
-    rt_uint32_t channel = configuration->channel;
-    if(channel < 1 || channel > 4)
-    {
-        LOG_E("pwm channel %d is invalid, failed to get", configuration->channel);
-        return -RT_ERROR;
-    }
-    channel = 0x04 * (configuration->channel - 1);
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint64_t tim_clock;
 
     tim_clock = tim_clock_get(htim);
@@ -303,13 +291,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t period, pulse;
     rt_uint64_t tim_clock, psc;
     /* Converts the channel number to the channel number of Hal library */
-    rt_uint32_t channel = configuration->channel;
-    if(channel < 1 || channel > 4)
-    {
-        LOG_E("pwm channel %d is invalid, failed to set", configuration->channel);
-        return -RT_ERROR;
-    }
-    channel = 0x04 * (configuration->channel - 1);
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
     tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
@@ -372,13 +354,7 @@ static rt_err_t drv_pwm_set_pulse(TIM_HandleTypeDef *htim, struct rt_pwm_configu
     rt_uint32_t period, pulse;
     rt_uint64_t tim_clock;
     /* Converts the channel number to the channel number of Hal library */
-    rt_uint32_t channel = configuration->channel;
-    if(channel < 1 || channel > 4)
-    {
-        LOG_E("pwm channel %d is invalid, failed to set pulse", configuration->channel);
-        return -RT_ERROR;
-    }
-    channel = 0x04 * (configuration->channel - 1);
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
     tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
@@ -432,14 +408,6 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     TIM_MasterConfigTypeDef master_config = {0};
     TIM_ClockConfigTypeDef clock_config = {0};
 
-    rt_uint32_t channel = device->channel;
-    if(channel < 1 || channel > 4)
-    {
-        LOG_E("%s pwm channel %d is invalid, failed to init", device->name, device->channel);
-        return -RT_ERROR;
-    }
-    channel = 0x04 * (device->channel - 1);
-
     RT_ASSERT(device != RT_NULL);
 
     tim = (TIM_HandleTypeDef *)&device->tim_handle;
@@ -490,11 +458,45 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     oc_config.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     oc_config.OCIdleState  = TIM_OCIDLESTATE_RESET;
 
-    if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, channel) != HAL_OK)
+    /* config pwm channel */
+    if (device->channel & 0x01)
     {
-        LOG_E("%s %d config failed", device->name, device->channel);
-        result = -RT_ERROR;
-        goto __exit;
+        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_1) != HAL_OK)
+        {
+            LOG_E("%s channel1 config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
+    }
+
+    if (device->channel & 0x02)
+    {
+        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_2) != HAL_OK)
+        {
+            LOG_E("%s channel2 config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
+    }
+
+    if (device->channel & 0x04)
+    {
+        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_3) != HAL_OK)
+        {
+            LOG_E("%s channel3 config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
+    }
+
+    if (device->channel & 0x08)
+    {
+        if (HAL_TIM_PWM_ConfigChannel(tim, &oc_config, TIM_CHANNEL_4) != HAL_OK)
+        {
+            LOG_E("%s channel4 config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
 
     /* pwm pin configuration */
