@@ -98,7 +98,6 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     if (netdev_list == RT_NULL)
     {
         netdev_list = netdev;
-        netdev_default = netdev;
     }
     else
     {
@@ -107,6 +106,11 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     }
 
     rt_hw_interrupt_enable(level);
+
+    if (netdev_default == RT_NULL)
+    {
+        netdev_set_default(netdev_list);
+    }
 
     return RT_EOK;
 }
@@ -151,12 +155,17 @@ int netdev_unregister(struct netdev *netdev)
             }
             if (netdev_default == netdev)
             {
-                netdev_default = netdev_list;
+                netdev_default = RT_NULL;
             }
             break;
         }
     }
     rt_hw_interrupt_enable(level);
+
+    if (netdev_default == RT_NULL)
+    {
+        netdev_set_default(netdev_list);
+    }
 
     if (cur_netdev == netdev)
     {
@@ -355,13 +364,13 @@ int netdev_family_get(struct netdev *netdev)
  */
 void netdev_set_default(struct netdev *netdev)
 {
-    if (netdev)
+    if (netdev && (netdev != netdev_default))
     {
         netdev_default = netdev;
 
+        /* execture the default network interface device in the current network stack */
         if (netdev->ops->set_default)
         {
-            /* set default network interface device in the current network stack */
             netdev->ops->set_default(netdev);
         }
         LOG_D("Setting default network interface device name(%s) successfully.", netdev->name);
