@@ -13,15 +13,51 @@
  */
 
 #include <rtdevice.h>
-
-#ifdef BSP_USING_TIM
 #include "drv_config.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.hwtimer"
+#define LOG_TAG             "drv.tim"
 #include <drv_log.h>
 
-#ifdef RT_USING_HWTIMER
+/* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
+void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
+{
+    rt_uint32_t flatency = 0;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+    RT_ASSERT(pclk1_doubler != RT_NULL);
+    RT_ASSERT(pclk1_doubler != RT_NULL);
+
+    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
+
+    *pclk1_doubler = 1;
+    *pclk2_doubler = 1;
+
+#if defined(SOC_SERIES_STM32MP1)
+    if (RCC_ClkInitStruct.APB1_Div != RCC_APB1_DIV1)
+    {
+        *pclk1_doubler = 2;
+    }
+    if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
+    {
+       *pclk2_doubler = 2;
+    }
+#else
+    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
+    {
+         *pclk1_doubler = 2;
+    }
+#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0))
+    if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
+    {
+         *pclk2_doubler = 2;
+    }
+#endif
+#endif
+}
+
+#ifdef BSP_USING_TIM
+
 enum
 {
 #ifdef BSP_USING_TIM1
@@ -156,43 +192,6 @@ static struct stm32_hwtimer stm32_hwtimer_obj[] =
 #endif
 };
 
-/* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
-static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
-{
-    rt_uint32_t flatency = 0;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-    RT_ASSERT(pclk1_doubler != RT_NULL);
-    RT_ASSERT(pclk1_doubler != RT_NULL);
-
-    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
-
-    *pclk1_doubler = 1;
-    *pclk2_doubler = 1;
-
-#if defined(SOC_SERIES_STM32MP1)
-    if (RCC_ClkInitStruct.APB1_Div != RCC_APB1_DIV1)
-    {
-        *pclk1_doubler = 2;
-    }
-    if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
-    {
-       *pclk2_doubler = 2;
-    }
-#else
-    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
-    {
-         *pclk1_doubler = 2;
-    }
-#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-    if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
-    {
-         *pclk2_doubler = 2;
-    }
-#endif
-#endif
-}
-
 static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 {
     uint32_t prescaler_value = 0;
@@ -206,7 +205,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         tim = (TIM_HandleTypeDef *)timer->parent.user_data;
         tim_device = (struct stm32_hwtimer *)timer;
 
-        pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+        stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
         /* time init */
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
@@ -223,7 +222,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 #error "This driver has not supported this series yet!"
 #endif
         {
-#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0))
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler / 10000) - 1;
 #endif
         }
@@ -339,7 +338,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         /* set timer frequence */
         freq = *((rt_uint32_t *)arg);
 
-        pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+        stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
@@ -351,6 +350,8 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
+#else
+#error "This driver has not supported this series yet!"
 #endif
         {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
@@ -619,5 +620,4 @@ static int stm32_hwtimer_init(void)
 }
 INIT_BOARD_EXPORT(stm32_hwtimer_init);
 
-#endif /* RT_USING_HWTIMER */
 #endif /* BSP_USING_TIM */
