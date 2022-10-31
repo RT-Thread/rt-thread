@@ -11,7 +11,7 @@
 
 #include <board.h>
 
-#ifdef RT_USING_PWM
+#ifdef BSP_USING_PWM
 #include "drv_config.h"
 #include <drivers/rt_drv_pwm.h>
 
@@ -396,7 +396,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_GET:
         return drv_pwm_get(htim, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -685,4 +685,4 @@ __exit:
     return result;
 }
 INIT_DEVICE_EXPORT(stm32_pwm_init);
-#endif /* RT_USING_PWM */
+#endif /* BSP_USING_PWM */

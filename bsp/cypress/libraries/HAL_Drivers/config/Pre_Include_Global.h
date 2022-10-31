@@ -14,7 +14,7 @@
 #define HAVE_SIGVAL
 #define HAVE_SIGEVENT
 #define HAVE_SIGINFO
-#define RT_USING_NEWLIB
+#define RT_USING_NEWLIBC
 #define CY_USING_HAL
 #define CY_APPNAME_mtb_example_psoc6_rtthread
 #define CY_TARGET_DEVICE CY8C624ABZI_S2D44
