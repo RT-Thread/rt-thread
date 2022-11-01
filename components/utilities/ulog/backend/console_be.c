@@ -56,4 +56,32 @@ int ulog_console_backend_init(void)
 }
 INIT_PREV_EXPORT(ulog_console_backend_init);
 
+#ifdef RT_USING_MSH
+static void ulog_console_backend_filter_set(uint8_t argc, char **argv)
+{
+    if (argc < 2)
+    {
+        rt_kprintf("Usage:\n");
+        rt_kprintf("console filter [option] optino:enable or disable\n");
+        return;
+    }
+    else
+    {
+        const char *operator = argv[1];
+        if (!rt_strcmp(operator, "enable"))
+        {
+            ulog_backend_set_filter(&console,ulog_console_backend_filter);
+        }
+        else if (!rt_strcmp(operator, "disable"))
+        {
+            ulog_backend_set_filter(&console,RT_NULL);
+        }
+        else
+        {
+            rt_kprintf("Usage:\n");
+            rt_kprintf("console filter [option] optino:enable or disable\n");
+        }
+    }
+}
+MSH_CMD_EXPORT_ALIAS(ulog_console_backend_filter_set,console_filter,console filter [option] optino:enable or disable);
 #endif /* ULOG_BACKEND_USING_CONSOLE */
