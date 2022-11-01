@@ -39,7 +39,7 @@ void ulog_console_backend_output(struct ulog_backend *backend, rt_uint32_t level
 
 }
 
-RT_WEAK rt_bool_t ulog_console_backend_filter(struct ulog_backend *backend, rt_uint32_t level, const char *tag, 
+RT_WEAK rt_bool_t ulog_console_backend_filter(struct ulog_backend *backend, rt_uint32_t level, const char *tag,
                                              rt_bool_t is_raw,const char *log, rt_size_t len)
 {
   return RT_TRUE;
