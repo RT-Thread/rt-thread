@@ -541,32 +541,32 @@ int list_fd(void)
 
         if (fd && fd->fops)
         {
-            buff += rt_sprintf(buff,"%2d ", index + DFS_FD_OFFSET);
-            if (fd->type == FT_DIRECTORY)    buff += rt_sprintf(buff,"%-7.7s ", "dir");
-            else if (fd->type == FT_REGULAR) buff += rt_sprintf(buff,"%-7.7s ", "file");
-            else if (fd->type == FT_SOCKET)  buff += rt_sprintf(buff,"%-7.7s ", "socket");
-            else if (fd->type == FT_USER)    buff += rt_sprintf(buff,"%-7.7s ", "user");
-            else if (fd->type == FT_DEVICE)   buff += rt_sprintf(buff,"%-7.7s ", "device");
-            else rt_kprintf("%-8.8s ", "unknown");
-            buff += rt_sprintf(buff,"%3d ", fd->ref_count);
-            buff += rt_sprintf(buff,"%04x  ", fd->magic);
+            buff += rt_sprintf(buff, "%2d ", index + DFS_FD_OFFSET);
+            if (fd->type == FT_DIRECTORY)    buff += rt_sprintf(buff, "%-7.7s ", "dir");
+            else if (fd->type == FT_REGULAR) buff += rt_sprintf(buff, "%-7.7s ", "file");
+            else if (fd->type == FT_SOCKET)  buff += rt_sprintf(buff, "%-7.7s ", "socket");
+            else if (fd->type == FT_USER)    buff += rt_sprintf(buff, "%-7.7s ", "user");
+            else if (fd->type == FT_DEVICE)  buff += rt_sprintf(buff, "%-7.7s ", "device");
+            else buff += rt_sprintf(buff, "%-8.8s ", "unknown");
+            buff += rt_sprintf(buff, "%3d ", fd->ref_count);
+            buff += rt_sprintf(buff, "%04x  ", fd->magic);
             if (fd->fs && fd->fs->path && rt_strlen(fd->fs->path) > 1)
             {
-                buff += rt_sprintf(buff,"%s", fd->fs->path);
+                buff += rt_sprintf(buff, "%s", fd->fs->path);
             }
             if (fd->path)
             {
-                buff += rt_sprintf(buff,"%s\n", fd->path);
+                buff += rt_sprintf(buff, "%s\n", fd->path);
             }
             else
             {
-                buff += rt_sprintf(buff,"\n");
+                buff += rt_sprintf(buff, "\n");
             }
         }
     }
     rt_exit_critical();
     rt_kprintf(buff_start);
-
+    rt_free(buff_start);
     return 0;
 }
 MSH_CMD_EXPORT(list_fd, list file descriptor);
