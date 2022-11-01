@@ -84,4 +84,6 @@ static void ulog_console_backend_filter_set(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT_ALIAS(ulog_console_backend_filter_set,console_filter,console filter [option] optino:enable or disable);
+#endif
+
 #endif /* ULOG_BACKEND_USING_CONSOLE */
