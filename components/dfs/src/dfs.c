@@ -526,43 +526,46 @@ int list_fd(void)
     int index;
     struct dfs_fdtable *fd_table;
 
+    char *buff = rt_malloc(1024);
+    char *buff_start = buff;
+
     fd_table = dfs_fdtable_get();
     if (!fd_table) return -1;
 
     rt_enter_critical();
-
-    rt_kprintf("fd type    ref magic  path\n");
-    rt_kprintf("-- ------  --- ----- ------\n");
+    buff += rt_sprintf(buff, "fd type    ref magic  path\n");
+    buff += rt_sprintf(buff, "-- ------  --- ----- ------\n");
     for (index = 0; index < (int)fd_table->maxfd; index ++)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
         if (fd && fd->fops)
         {
-            rt_kprintf("%2d ", index + DFS_FD_OFFSET);
-            if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
+            buff += rt_sprintf(buff,"%2d ", index + DFS_FD_OFFSET);
+            if (fd->type == FT_DIRECTORY)    buff += rt_sprintf(buff,"%-7.7s ", "dir");
+            else if (fd->type == FT_REGULAR) buff += rt_sprintf(buff,"%-7.7s ", "file");
+            else if (fd->type == FT_SOCKET)  buff += rt_sprintf(buff,"%-7.7s ", "socket");
+            else if (fd->type == FT_USER)    buff += rt_sprintf(buff,"%-7.7s ", "user");
+            else if (fd->type == FT_DEVICE)   buff += rt_sprintf(buff,"%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%3d ", fd->ref_count);
-            rt_kprintf("%04x  ", fd->magic);
+            buff += rt_sprintf(buff,"%3d ", fd->ref_count);
+            buff += rt_sprintf(buff,"%04x  ", fd->magic);
             if (fd->fs && fd->fs->path && rt_strlen(fd->fs->path) > 1)
             {
-                rt_kprintf("%s", fd->fs->path);
+                buff += rt_sprintf(buff,"%s", fd->fs->path);
             }
             if (fd->path)
             {
-                rt_kprintf("%s\n", fd->path);
+                buff += rt_sprintf(buff,"%s\n", fd->path);
             }
             else
             {
-                rt_kprintf("\n");
+                buff += rt_sprintf(buff,"\n");
             }
         }
     }
     rt_exit_critical();
+    rt_kprintf(buff_start);
 
     return 0;
 }
