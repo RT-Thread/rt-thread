@@ -39,13 +39,19 @@ void ulog_console_backend_output(struct ulog_backend *backend, rt_uint32_t level
 
 }
 
+RT_WEAK rt_bool_t ulog_console_backend_filter(struct ulog_backend *backend, rt_uint32_t level, const char *tag, 
+                                             rt_bool_t is_raw,const char *log, rt_size_t len)
+{
+  return RT_TRUE;
+}
+
 int ulog_console_backend_init(void)
 {
     ulog_init();
     console.output = ulog_console_backend_output;
 
     ulog_backend_register(&console, "console", RT_TRUE);
-
+    ulog_backend_set_filter(&console,ulog_console_backend_filter);
     return 0;
 }
 INIT_PREV_EXPORT(ulog_console_backend_init);
