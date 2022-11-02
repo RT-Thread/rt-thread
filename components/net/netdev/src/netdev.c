@@ -31,7 +31,10 @@
 struct netdev *netdev_list = RT_NULL;
 /* The default network interface device */
 struct netdev *netdev_default = RT_NULL;
-
+#ifdef NETDEV_USING_PRIORITY
+/* The priority network interface device */
+struct netdev *netdev_priority = RT_NULL;
+#endif
 /**
  * This function will register network interface device and
  * add it to network interface device list.
@@ -98,7 +101,10 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     if (netdev_list == RT_NULL)
     {
         netdev_list = netdev;
-        netdev_default = netdev;
+        netdev_default = netdev;    
+#ifdef NETDEV_USING_PRIORITY
+        netdev_priority = netdev; 
+#endif
     }
     else
     {
@@ -367,7 +373,22 @@ void netdev_set_default(struct netdev *netdev)
         LOG_D("Setting default network interface device name(%s) successfully.", netdev->name);
     }
 }
+#ifdef NETDEV_USING_PRIORITY
+void netdev_set_priority(struct netdev *netdev)
+{
+    if (netdev)
+    {
+        netdev_priority= netdev;
 
+        if (netdev->ops->set_priority)
+        {
+            /* set priority network interface device in the current network stack */
+            netdev->ops->set_priority(netdev);
+        }
+        LOG_D("Setting priority network interface device name(%s) successfully.", netdev->name);
+    }
+}
+#endif 
 /**
  * This function will enable network interface device .
  *
@@ -740,8 +761,14 @@ void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, con
 static void netdev_auto_change_default(struct netdev *netdev)
 {
     struct netdev *new_netdev = RT_NULL;
-
-    if (rt_memcmp(netdev, netdev_default, sizeof(struct netdev)) == 0)
+#ifdef NETDEV_USING_PRIORITY
+    /* When the priority netdev is linkedup, switch the default netdev to the priority netdev */
+    /* When the priority netdev linkdown needs to switch the default netdev */
+    if (netdev_priority && netdev_is_link_up(netdev_priority) == 1) 
+    {   
+        netdev_set_default(netdev_priority); 
+    }
+    else if (netdev_priority && netdev_is_link_up(netdev_priority) == 0) 
     {
         new_netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
         if (new_netdev)
@@ -749,6 +776,27 @@ static void netdev_auto_change_default(struct netdev *netdev)
             netdev_set_default(new_netdev);
         }
     }
+#else
+    /* When the default netdev is linkup should continue to  use default netdev  */
+    /* When the default netdev is linkdown should change to  use others netdev  */
+    if (netdev_default && netdev_is_link_up(netdev_default) == 1) 
+    {
+        if(netdev_default)
+        {
+            netdev_set_default(netdev_default);
+        }
+    }
+    else if(netdev_default && netdev_is_link_up(netdev_default) == 0)  
+    {
+        new_netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
+        if (new_netdev)
+        {
+            netdev_set_default(new_netdev);
+        }
+    }
+
+#endif
+
 }
 #endif /* NETDEV_USING_AUTO_DEFAULT */
 
@@ -814,12 +862,13 @@ void netdev_low_level_set_link_status(struct netdev *netdev, rt_bool_t is_up)
 
             /* set network interface device flags to internet down */
             netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+        }
 
 #ifdef NETDEV_USING_AUTO_DEFAULT
             /* change to the first link_up network interface device automatically */
             netdev_auto_change_default(netdev);
 #endif /* NETDEV_USING_AUTO_DEFAULT */
-        }
+        
 
         /* execute link status change callback function */
         if (netdev->status_callback)
