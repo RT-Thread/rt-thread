@@ -505,6 +505,18 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
     rt_list_t *l, *n;
     struct mmcsd_blk_device *blk_dev;
 
+    if(card == RT_NULL)
+    {
+        LOG_E("card is null!");
+        return;
+    }
+
+    if(rt_list_isempty(&card->blk_devices))
+    {
+        LOG_E("card blk_devices is empty!");
+        return;
+    }
+
     for (l = (&card->blk_devices)->next, n = l->next; l != &card->blk_devices; l = n, n=n->next)
     {
         blk_dev = (struct mmcsd_blk_device *)rt_list_entry(l, struct mmcsd_blk_device, list);
