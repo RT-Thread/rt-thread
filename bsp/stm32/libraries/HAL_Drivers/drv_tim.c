@@ -40,7 +40,7 @@ void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_
     }
     if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
     {
-       *pclk2_doubler = 2;
+        *pclk2_doubler = 2;
     }
 #else
     if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
