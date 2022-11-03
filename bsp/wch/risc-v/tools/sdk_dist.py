@@ -18,6 +18,7 @@ def dist_do_building(BSP_ROOT, dist_dir):
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'ch32_drivers'), os.path.join(library_dir, 'ch32_drivers'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+
 # change RTT_ROOT in Kconfig
     if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
         return
