@@ -10,6 +10,20 @@
 
 #include <board.h>
 #include "drv_gpio.h"
+#include "drivers/pin.h"
+#include <rthw.h>
+#include <rtdevice.h>
+#include <rtthread.h>
+
+#define PIN_MODE_INPUT_AIN      0x05
+#define PIN_MODE_OUTPUT_AF_OD   0x06
+#define PIN_MODE_OUTPUT_AF_PP   0x07
+
+struct pin_irq_map
+{
+    rt_uint16_t pinbit;
+    IRQn_Type irqno;
+};
 
 #ifdef BSP_USING_GPIO
 #define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
@@ -49,7 +63,7 @@
 #endif
 
 #define PIN_STPORT_MAX __CH32_PORT_MAX
-
+/* GPIO driver */
 static const struct pin_irq_map pin_irq_map[] =
 {
     {GPIO_Pin_0, EXTI0_IRQn},
@@ -431,12 +445,21 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     pin_irq_hdr(bit2bitno(GPIO_Pin));
 }
 
+#ifdef ch32v20x_PIN_NUMBERS
+void EXTI0_IRQHandler(void) __attribute__((interrupt()));
+void EXTI1_IRQHandler(void) __attribute__((interrupt()));
+void EXTI2_IRQHandler(void) __attribute__((interrupt()));
+void EXTI3_IRQHandler(void) __attribute__((interrupt()));
+void EXTI4_IRQHandler(void) __attribute__((interrupt()));
+void EXTI9_5_IRQHandler(void) __attribute__((interrupt()));
+#elif
 void EXTI0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI9_5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 
 void EXTI0_IRQHandler(void)
 {
