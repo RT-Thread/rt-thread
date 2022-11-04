@@ -27,7 +27,22 @@ menu "On-chip Peripheral Drivers"
         bool "Enable RTC"
         select RT_USING_RTC
         default n
-
+		
+	config BSP_USING_USB
+        bool "Enable USB"
+        select RT_USING_USB_HOST
+        default n
+		
+		if BSP_USING_USB
+				config BSP_USB0_HOST
+					bool "Enable USB0"
+					default n
+				
+				config BSP_USB1_HOST
+					bool "Enable USB1"
+					default n	
+		endif
+		
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
