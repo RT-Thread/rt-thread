@@ -181,8 +181,9 @@ rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
  *
  * @param    list is a pointer to a suspended thread list of the IPC object.
  *
- * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
- *           When the return value is any other values, it means this operation failed.
+ * @return   Return the operation status.
+ *           When the return value is RT_EOK, the new ready thread have highest priority, need to schedule immediately
+ *           When the return value is RT_EBUSY, although have readied the thread but its priority is not the highest.
  *
  * @warning  This function is generally called by the following functions:
  *           rt_sem_release(),    rt_mutex_release(),    rt_mb_send_wait(),    rt_mq_send_wait(),
@@ -197,10 +198,11 @@ rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("resume thread:%s\n", thread->name));
 
-    /* resume it */
-    rt_thread_resume(thread);
+    /* resume it and schedule if necessary */
+    if(rt_thread_resume(thread) == RT_EOK)
+        return RT_EOK;
 
-    return RT_EOK;
+    return RT_EBUSY;
 }
 
 
@@ -627,8 +629,8 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     if (!rt_list_isempty(&sem->parent.suspend_thread))
     {
         /* resume the suspended thread */
-        _ipc_list_resume(&(sem->parent.suspend_thread));
-        need_schedule = RT_TRUE;
+        if(_ipc_list_resume(&(sem->parent.suspend_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
     }
     else
     {
@@ -1164,9 +1166,9 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             }
 
             /* resume thread */
-            _ipc_list_resume(&(mutex->parent.suspend_thread));
+            if(_ipc_list_resume(&(mutex->parent.suspend_thread)) != RT_EBUSY)
+                need_schedule = RT_TRUE;
 
-            need_schedule = RT_TRUE;
         }
         else
         {
@@ -1510,10 +1512,9 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
                     event->set &= ~thread->event_set;
 
                 /* resume thread, and thread list breaks out */
-                rt_thread_resume(thread);
-
-                /* need do a scheduling */
-                need_schedule = RT_TRUE;
+                if(rt_thread_resume(thread) == RT_EOK)
+                    /* need do a scheduling */
+                    need_schedule = RT_TRUE;
             }
         }
     }
@@ -1994,6 +1995,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
 {
     struct rt_thread *thread;
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     rt_uint32_t tick_delta;
 
     /* parameter check */
@@ -2103,12 +2105,14 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mb->parent.suspend_thread));
-
+        if(_ipc_list_resume(&(mb->parent.suspend_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        rt_schedule();
+        /* resume a thread, re-schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }
@@ -2164,6 +2168,7 @@ RTM_EXPORT(rt_mb_send);
 rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -2199,12 +2204,15 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mb->parent.suspend_thread));
+        if(_ipc_list_resume(&(mb->parent.suspend_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        rt_schedule();
+        /* resume a thread, re-schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }
@@ -2246,6 +2254,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     struct rt_thread *thread;
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     rt_uint32_t tick_delta;
 
     /* parameter check */
@@ -2354,14 +2363,17 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     /* resume suspended thread */
     if (!rt_list_isempty(&(mb->suspend_sender_thread)))
     {
-        _ipc_list_resume(&(mb->suspend_sender_thread));
+        if(_ipc_list_resume(&(mb->suspend_sender_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
         RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
 
-        rt_schedule();
+        /* resume a thread, re-schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }
@@ -2752,6 +2764,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
                          rt_int32_t  timeout)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
     struct rt_thread *thread;
@@ -2892,12 +2905,15 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mq->parent.suspend_thread));
+        if(_ipc_list_resume(&(mq->parent.suspend_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        rt_schedule();
+        /* resume a thread, re-schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }
@@ -2960,6 +2976,7 @@ RTM_EXPORT(rt_mq_send);
 rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     struct rt_mq_message *msg;
 
     /* parameter check */
@@ -3021,12 +3038,15 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mq->parent.suspend_thread));
+        if(_ipc_list_resume(&(mq->parent.suspend_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        rt_schedule();
+        /* resume a thread, re-schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }
@@ -3072,6 +3092,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 {
     struct rt_thread *thread;
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
 
@@ -3195,14 +3216,17 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     /* resume suspended thread */
     if (!rt_list_isempty(&(mq->suspend_sender_thread)))
     {
-        _ipc_list_resume(&(mq->suspend_sender_thread));
+        if(_ipc_list_resume(&(mq->suspend_sender_thread)) != RT_EBUSY)
+            need_schedule = RT_TRUE;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
         RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
 
-        rt_schedule();
+        /* resume a thread, re-schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
 
         return RT_EOK;
     }

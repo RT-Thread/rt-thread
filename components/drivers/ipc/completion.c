@@ -124,6 +124,7 @@ RTM_EXPORT(rt_completion_wait);
 void rt_completion_done(struct rt_completion *completion)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     RT_ASSERT(completion != RT_NULL);
 
     if (completion->flag == RT_COMPLETED)
@@ -143,11 +144,14 @@ void rt_completion_done(struct rt_completion *completion)
                                tlist);
 
         /* resume it */
-        rt_thread_resume(thread);
+        if(rt_thread_resume(thread) == RT_EOK)
+            need_schedule = RT_TRUE;
+
         rt_hw_interrupt_enable(level);
 
         /* perform a schedule */
-        rt_schedule();
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
     }
     else
     {

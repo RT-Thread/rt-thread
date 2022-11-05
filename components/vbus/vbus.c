@@ -288,8 +288,8 @@ static void _bus_out_entry(void *param)
 
 void rt_vbus_resume_out_thread(void)
 {
-    rt_thread_resume(&_bus_out_thread);
-    rt_schedule();
+    if(rt_thread_resume(&_bus_out_thread) == RT_EOK)
+        rt_schedule();
 }
 
 rt_err_t rt_vbus_post(rt_uint8_t id,

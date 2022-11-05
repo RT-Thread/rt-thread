@@ -93,6 +93,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
     rt_err_t err;
 
     level = rt_hw_interrupt_disable();
@@ -119,9 +120,14 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                 ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
         {
             /* resume work thread */
-            rt_thread_resume(queue->work_thread);
+            if(rt_thread_resume(queue->work_thread) == RT_EOK)
+                need_schedule = RT_TRUE;
+
             rt_hw_interrupt_enable(level);
-            rt_schedule();
+
+            /* perform a schedule */
+            if (need_schedule == RT_TRUE)
+                rt_schedule();
         }
         else
         {
@@ -180,6 +186,7 @@ static void _delayed_work_timeout_handler(void *parameter)
     struct rt_work *work;
     struct rt_workqueue *queue;
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
 
     work = (struct rt_work *)parameter;
     queue = work->workqueue;
@@ -201,9 +208,14 @@ static void _delayed_work_timeout_handler(void *parameter)
             ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
         /* resume work thread */
-        rt_thread_resume(queue->work_thread);
+        if(rt_thread_resume(queue->work_thread) == RT_EOK)
+            need_schedule = RT_TRUE;
+
         rt_hw_interrupt_enable(level);
-        rt_schedule();
+
+        /* perform a schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
     }
     else
     {
@@ -346,6 +358,7 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
 rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     rt_base_t level;
+    rt_bool_t need_schedule = RT_FALSE;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
@@ -359,9 +372,14 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
             ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
         /* resume work thread */
-        rt_thread_resume(queue->work_thread);
+        if(rt_thread_resume(queue->work_thread) == RT_EOK)
+            need_schedule = RT_TRUE;
+
         rt_hw_interrupt_enable(level);
-        rt_schedule();
+
+        /* perform a schedule */
+        if (need_schedule == RT_TRUE)
+            rt_schedule();
     }
     else
     {
