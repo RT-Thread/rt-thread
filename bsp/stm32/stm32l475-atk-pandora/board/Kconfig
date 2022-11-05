@@ -136,7 +136,6 @@ menu "Onboard Peripheral Drivers"
         bool "Enable ICM20608 (i2c3)"
         select BSP_USING_I2C
         select BSP_USING_I2C3
-        select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_LATEST_VERSION
         default n
@@ -145,7 +144,6 @@ menu "Onboard Peripheral Drivers"
         bool "Enable AHT10 (i2c4)"
         select BSP_USING_I2C
         select BSP_USING_I2C4
-        select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AHT10
         select PKG_USING_AHT10_LATEST_VERSION
         default n
