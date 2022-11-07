@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -g -DGUEST  -ffreestanding  -Wextra -g -mfpu=crypto-neon-fp-armv8 -mfloat-abi=softfp -march=armv8-a'
+    DEVICE = ' -g -DGUEST  -ffreestanding  -Wextra -g -mfpu=crypto-neon-fp-armv8 -mfloat-abi=softfp -march=armv8-a -fdiagnostics-color=always'
 
     # CFLAGS = DEVICE + ' -Wall'
     CFLAGS = DEVICE

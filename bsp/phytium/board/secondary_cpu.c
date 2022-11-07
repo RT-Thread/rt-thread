@@ -81,9 +81,6 @@ void rt_hw_secondary_cpu_up(void)
 #else
         __asm__ volatile("dsb" ::: "memory");
 #endif
-
-        // rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
-        // Ft_GenericTimer_UsDelay(1000000);
     }
 }
 
@@ -112,12 +109,6 @@ void secondary_cpu_c_start(void)
 #else
     rt_hw_timer_init();
 #endif
-    /* init ipi */
-// #if defined(TARGET_ARMV8_AARCH64)
-//     arm_gic_umask(0, IRQ_ARM_IPI_KICK);
-// #else
-//     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
-// #endif
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
 
     /* start scheduler */
@@ -125,19 +116,6 @@ void secondary_cpu_c_start(void)
     rt_kprintf("\rcall cpu %d on success\n", rt_hw_cpu_id());
     rt_hw_secondary_cpu_idle_exec();
     rt_system_scheduler_start();
-
-    // rt_hw_vector_init();
-    // rt_hw_spin_lock(&_cpus_lock);
-
-    // arm_gic_cpu_init(0);
-    // arm_gic_redist_init(0);
-
-    // rt_hw_timer_init();
-
-    // rt_hw_interrupt_set_priority(RT_SCHEDULE_IPI, 16);
-    // rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
-
-    // rt_system_scheduler_start();
 }
 
 void rt_hw_secondary_cpu_idle_exec(void)
