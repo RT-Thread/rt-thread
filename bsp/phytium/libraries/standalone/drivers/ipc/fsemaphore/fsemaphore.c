@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsemaphore.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
  * Description:  This files is for semaphore user api implmentation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022/5/23    init commit 
+ * 1.0   zhugengyu  2022/5/23    init commit
  */
 
 
@@ -124,13 +124,13 @@ FError FSemaCreateLocker(FSema *const instance, FSemaLocker *const locker)
 {
     FASSERT(instance && locker);
     u32 locker_idx;
-    
+
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
         FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
-    
+
     for (locker_idx = 0; locker_idx < FSEMA_NUM_OF_LOCKER; locker_idx++)
     {
         /* 分配一把未创建的锁 */
@@ -230,15 +230,15 @@ FError FSemaUnlock(FSemaLocker *const locker, u32 owner)
 
     if (locker->owner != owner)
     {
-        FSEMA_ERROR("locker is owned by 0x%x, 0x%x has no premission to unlock it !!!", 
+        FSEMA_ERROR("locker is owned by 0x%x, 0x%x has no premission to unlock it !!!",
                     locker->owner, owner);
         return FSEMA_ERR_NO_PERMISSION;
     }
 
     if (FALSE == FSemaHwGetStatus(base_addr, locker->index))
     {
-        FSEMA_INFO("locker-%d is not in locked status 0x%x!!!", 
-                    locker->index, FSemaReadReg(base_addr, FSEMA_STATE_REG_OFFSET));
+        FSEMA_INFO("locker-%d is not in locked status 0x%x!!!",
+                   locker->index, FSemaReadReg(base_addr, FSEMA_STATE_REG_OFFSET));
         return ret;
     }
 
@@ -301,12 +301,12 @@ FError FSemaDeleteLocker(FSemaLocker *const locker)
 
     if (TRUE == FSemaHwGetStatus(base_addr, locker_idx))
     {
-        FSEMA_WARN("caution, locker-%d has been taken by 0x%x !!!", 
-                    locker_idx, locker->owner);
+        FSEMA_WARN("caution, locker-%d has been taken by 0x%x !!!",
+                   locker_idx, locker->owner);
     }
 
     FASSERT_MSG((instance->locker[locker_idx] == locker), "invalid locker index %d", locker_idx);
-    
+
     FSemaWriteReg(base_addr, FSEMA_RLOCK_X_REG_OFFSET(locker->index), FSEMA_RLOCK_X_UNLOCK); /* 写0解锁信号量 */
 
     instance->locker[locker_idx] = NULL;

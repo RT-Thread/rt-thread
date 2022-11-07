@@ -1,21 +1,21 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
+ * See the Phytium Public License for more details.
+ *
  * FilePath: fwdt.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-07-15 17:05:09
- * Description:  This files is for wdt ctrl function implementation. 
- * Users can operate as a single stage watchdog or a two stages watchdog. 
- * In the single stage mode, when the timeout is reached, your system will 
+ * Description:  This files is for wdt ctrl function implementation.
+ * Users can operate as a single stage watchdog or a two stages watchdog.
+ * In the single stage mode, when the timeout is reached, your system will
  * be reset by WS1. The first signal (WS0) is ignored.
  * In the two stages mode, when the timeout is reached, the first signal (WS0)
  * will trigger panic. If the system is getting into trouble and cannot be reset
@@ -36,9 +36,9 @@
  * Note: Since this watchdog timer has two stages, and each stage is determined
  * by WOR, in the single stage mode, the timeout is (WOR * 2); in the two
  * stages mode, the timeout is WOR.
- * This driver use two stages mode, when WS0=1, it can Raise the timeout interrupt. 
- * 
- * Modify History: 
+ * This driver use two stages mode, when WS0=1, it can Raise the timeout interrupt.
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Wangxiaodong   2021/8/25   init
@@ -71,28 +71,28 @@
  */
 FError FWdtCfgInitialize(FWdtCtrl *pctrl, const FWdtConfig *input_config_p)
 {
-	FASSERT(pctrl && input_config_p);
+    FASSERT(pctrl && input_config_p);
 
-	FError ret = FWDT_SUCCESS;
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == pctrl->is_ready)
-	{
-		FWDT_WARN("device is already initialized!!!");
-	}
+    FError ret = FWDT_SUCCESS;
+    /*
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == pctrl->is_ready)
+    {
+        FWDT_WARN("device is already initialized!!!");
+    }
 
-    /*Set default values and configuration data */	
-	FWdtDeInitialize(pctrl);
+    /*Set default values and configuration data */
+    FWdtDeInitialize(pctrl);
 
-	pctrl->config = *input_config_p;
+    pctrl->config = *input_config_p;
 
-	pctrl->is_ready = FT_COMPONENT_IS_READY;
+    pctrl->is_ready = FT_COMPONENT_IS_READY;
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -103,19 +103,19 @@ FError FWdtCfgInitialize(FWdtCtrl *pctrl, const FWdtConfig *input_config_p)
  */
 void FWdtDeInitialize(FWdtCtrl *pctrl)
 {
-	FASSERT(pctrl);
+    FASSERT(pctrl);
 
-	pctrl->is_ready = 0;
-	memset(pctrl, 0, sizeof(*pctrl));
+    pctrl->is_ready = 0;
+    memset(pctrl, 0, sizeof(*pctrl));
 
-	return;
+    return;
 }
 
 /**
  * @name: FWdtSetTimeout
  * @msg: Set Timeout Value, the first time it will raise a signal, which is typically
- *  wired to an interrupt; If this watchdog remains un-refreshed, it will raise a 
- *  second signal which can be used to interrupt higher-privileged software 
+ *  wired to an interrupt; If this watchdog remains un-refreshed, it will raise a
+ *  second signal which can be used to interrupt higher-privileged software
  *  or cause a PE reset.
  * @param {WdtCtrl} *pctrl, instance of FWDT controller.
  * @param {u32} timeout, represent in seconds, this parameter must be a number between 1 and 89.
@@ -124,7 +124,7 @@ void FWdtDeInitialize(FWdtCtrl *pctrl)
 FError FWdtSetTimeout(FWdtCtrl *pctrl, u32 timeout)
 {
     FASSERT(pctrl != NULL);
-    if(pctrl->is_ready != FT_COMPONENT_IS_READY)
+    if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
         FWDT_ERROR("device is not already!!!");
         return FWDT_NOT_READY;
@@ -136,7 +136,7 @@ FError FWdtSetTimeout(FWdtCtrl *pctrl, u32 timeout)
     }
     uintptr base_addr = pctrl->config.control_base_addr;
 
-    FWDT_WRITE_REG32(base_addr, FWDT_GWDT_WOR, (u32)(FWDT_CLK*timeout));
+    FWDT_WRITE_REG32(base_addr, FWDT_GWDT_WOR, (u32)(FWDT_CLK * timeout));
 
     return FWDT_SUCCESS;
 }
@@ -153,21 +153,21 @@ u32 FWdtGetTimeleft(FWdtCtrl *pctrl)
     FASSERT(pctrl != NULL);
     u64 timeleft = 0;
     uintptr base_addr = pctrl->config.control_base_addr;
-    
+
     /* if the ws0 bit of register WCS is zero，indicates that there is one more timeout opportunity */
-    if(!(FWdtReadWCS(base_addr) & FWDT_GWDT_WCS_WS0))
+    if (!(FWdtReadWCS(base_addr) & FWDT_GWDT_WCS_WS0))
         timeleft += FWdtReadWOR(base_addr);
 
     u32 wcvh = (u32)FWdtReadWCVH(base_addr);
     u32 wcvl = (u32)FWdtReadWCVL(base_addr);
-    u64 wcv = (((u64)wcvh<<32) | wcvl);
+    u64 wcv = (((u64)wcvh << 32) | wcvl);
 
     timeleft += (wcv - GenericTimerRead());
 
     // f_printk("------wcvh=%llx, wcvl=%llx, wcv=%llx, timeleft=%llx\n", wcvh, wcvl, wcv, timeleft);
-    
+
     do_div(timeleft, FWDT_CLK);
-    
+
     return (u32)timeleft;
 }
 
@@ -180,7 +180,7 @@ u32 FWdtGetTimeleft(FWdtCtrl *pctrl)
 FError FWdtRefresh(FWdtCtrl *pctrl)
 {
     FASSERT(pctrl != NULL);
-    if(pctrl->is_ready != FT_COMPONENT_IS_READY)
+    if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
         FWDT_ERROR("device is not already!!!");
         return FWDT_NOT_READY;
@@ -199,12 +199,12 @@ FError FWdtRefresh(FWdtCtrl *pctrl)
 FError FWdtStart(FWdtCtrl *pctrl)
 {
     FASSERT(pctrl != NULL);
-    if(pctrl->is_ready != FT_COMPONENT_IS_READY)
+    if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
         FWDT_ERROR("device is not already!!!");
         return FWDT_NOT_READY;
     }
-        
+
     uintptr base_addr = pctrl->config.control_base_addr;
     FWDT_WRITE_REG32(base_addr, FWDT_GWDT_WCS, FWDT_GWDT_WCS_WDT_EN);
 
@@ -237,18 +237,18 @@ FError FWdtReadFWdtReadWIIDR(FWdtCtrl *pctrl, FWdtIdentifier *wdt_identify)
     FASSERT(pctrl != NULL);
     FASSERT(wdt_identify != NULL);
 
-    if(pctrl->is_ready != FT_COMPONENT_IS_READY)
+    if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
         FWDT_ERROR("device is not already!!!");
         return FWDT_NOT_READY;
     }
-        
+
     u32 reg_val = 0;
     uintptr base_addr = pctrl->config.refresh_base_addr;
     reg_val =  FWDT_READ_REG32(base_addr, FWDT_GWDT_W_IIDR);
 
-    wdt_identify->version = (u16)((reg_val & FWDT_VERSION_MASK)>>16);
-    wdt_identify->continuation_code = (u8)((reg_val & FWDT_CONTINUATION_CODE_MASK)>>8);
+    wdt_identify->version = (u16)((reg_val & FWDT_VERSION_MASK) >> 16);
+    wdt_identify->continuation_code = (u8)((reg_val & FWDT_CONTINUATION_CODE_MASK) >> 8);
     wdt_identify->identity_code = (u8)((reg_val & FWDT_IDENTIFY_CODE_MASK));
 
     return FWDT_SUCCESS;

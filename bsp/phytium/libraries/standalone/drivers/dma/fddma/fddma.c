@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fddma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
  * Description:  This files is for ddma interface implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Zhugengyu  2022/5/13    init commit
@@ -147,7 +147,7 @@ void FDdmaDeInitialization(FDdma *const instance)
     }
 
     memset(instance, 0, sizeof(*instance));
-    return;    
+    return;
 }
 
 /**
@@ -172,7 +172,7 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
         return FDDMA_ERR_NOT_INIT;
     }
 
-    if ((TRUE == dma_chan->is_used) || (BIT(chan_idx) & instance->bind_status))    
+    if ((TRUE == dma_chan->is_used) || (BIT(chan_idx) & instance->bind_status))
     {
         FDDMA_ERROR("chan-%d is already is use !!!", chan_idx);
         return FDDMA_ERR_CHAN_BINDED;
@@ -180,24 +180,24 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
 
     if (FDdmaIsChanRunning(base_addr, chan_idx))
     {
-        FDDMA_ERROR("chan-%d is already running !!!", chan_idx);        
+        FDDMA_ERROR("chan-%d is already running !!!", chan_idx);
         return FDDMA_ERR_CHAN_BINDED;
     }
 
     if (dma_chan_config->ddr_addr % FDDMA_DDR_ADDR_ALIGMENT)
     {
-        FDDMA_ERROR("ddr addr 0x%x must align with %d bytes", 
+        FDDMA_ERROR("ddr addr 0x%x must align with %d bytes",
                     dma_chan_config->ddr_addr, FDDMA_DDR_ADDR_ALIGMENT);
         return FDDMA_ERR_INVALID_DDR_ADDR;
     }
 
-    if ((FDDMA_MAX_TRANSFER_LEN < dma_chan_config->trans_len) || 
-        (FDDMA_MIN_TRANSFER_LEN > dma_chan_config->trans_len) ||
-        (0 != dma_chan_config->trans_len % FDDMA_MIN_TRANSFER_LEN))
+    if ((FDDMA_MAX_TRANSFER_LEN < dma_chan_config->trans_len) ||
+            (FDDMA_MIN_TRANSFER_LEN > dma_chan_config->trans_len) ||
+            (0 != dma_chan_config->trans_len % FDDMA_MIN_TRANSFER_LEN))
     {
         FDDMA_ERROR("invalid transfer size %d Bytes !!!", dma_chan_config->trans_len);
         return FDDMA_ERR_INVALID_TRANS_SIZE;
-    }   
+    }
 
     dma_chan->dma = instance;
     instance->chan[chan_idx] = dma_chan;
@@ -232,8 +232,8 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     FDdmaWriteReg(base_addr, FDDMA_CHAN_TS_OFFSET(chan_idx), dma_chan_config->trans_len); /* block size */
 
     /* set channel request direction */
-    FDdmaSetChanDirection(base_addr, chan_idx, 
-                         (FDDMA_CHAN_REQ_RX == dma_chan->config.req_mode) ? TRUE : FALSE);
+    FDdmaSetChanDirection(base_addr, chan_idx,
+                          (FDDMA_CHAN_REQ_RX == dma_chan->config.req_mode) ? TRUE : FALSE);
 
     FDDMA_INFO("chan-%d ddr @0x%x", chan_idx, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_idx));
     FDDMA_INFO("ddr addr: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_idx)));
@@ -297,13 +297,13 @@ FError FDdmaDellocateChan(FDdmaChan *const dma_chan)
     FDDMA_INFO("deallocate channel %d", chan_idx);
     memset(dma_chan, 0, sizeof(*dma_chan));
 
-    return ret;    
+    return ret;
 }
 
 /**
  * @name: FDdmaActiveChan
  * @msg: 使能指定的DDMA通道
- * @note: 调用FDdmaAllocateChan后无需调用此函数 
+ * @note: 调用FDdmaAllocateChan后无需调用此函数
  * @return {FError} 返回FDDMA_SUCCESS表示成功，返回其它表示失败
  * @param FDdmaChan *const dma_chan, DDMA通道实例
  */
@@ -371,7 +371,7 @@ static FError FDdmaReset(FDdma *const instance)
         {
             FDDMA_ERROR("disable ddma@%p channel %d failed !!!", base_addr, chan);
             break;
-        }      
+        }
     }
 
     FDdmaDumpRegisters(base_addr);

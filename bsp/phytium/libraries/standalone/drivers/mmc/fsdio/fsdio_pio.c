@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdio_pio.c
  * Date: 2022-06-01 14:21:47
  * LastEditTime: 2022-06-01 14:21:47
  * Description:  This files is for PIO transfer related function implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1   zhugengyu  2022/6/6     modify according to tech manual.
@@ -131,8 +131,8 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     cmd_data_p->success = FALSE; /* reset cmd transfer status */
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
@@ -143,8 +143,8 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     }
 
     /* for removable media, check if card exists */
-    if ((FALSE == instance_p->config.non_removable) && 
-        (FALSE == FSdioCheckIfCardExists(base_addr)))
+    if ((FALSE == instance_p->config.non_removable) &&
+            (FALSE == FSdioCheckIfCardExists(base_addr)))
     {
         FSDIO_ERROR("card not detected !!!");
         return FSDIO_ERR_NO_CARD;
@@ -157,7 +157,7 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
         return ret;
     FSDIO_CLR_BIT(base_addr, FSDIO_BUS_MODE_OFFSET, FSDIO_BUS_MODE_DE);
 
-    if (NULL != cmd_data_p->data_p) 
+    if (NULL != cmd_data_p->data_p)
     {
         /* set transfer data length and block size */
         FSdioSetTransBytes(base_addr, cmd_data_p->data_p->datalen);
@@ -166,16 +166,16 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
         if (FALSE == read) /* if need to write, write to fifo before send command */
         {
             /* invalide buffer for data to write */
-            FCacheDCacheInvalidateRange((uintptr)cmd_data_p->data_p->buf, 
-                                                cmd_data_p->data_p->datalen); 
+            FCacheDCacheInvalidateRange((uintptr)cmd_data_p->data_p->buf,
+                                        cmd_data_p->data_p->datalen);
 
-            ret = FSdioPIOWriteData(instance_p, cmd_data_p->data_p);            
+            ret = FSdioPIOWriteData(instance_p, cmd_data_p->data_p);
         }
     }
 
     if (FSDIO_SUCCESS == ret) /* send command */
     {
-        ret = FSdioTransferCmd(instance_p, cmd_data_p);        
+        ret = FSdioTransferCmd(instance_p, cmd_data_p);
     }
 
     return ret;
@@ -201,8 +201,8 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     uintptr base_addr = instance_p->config.base_addr;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
@@ -219,8 +219,9 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
         reg_val = FSdioGetRawStatus(base_addr);
         if (relax)
             relax();
-    } while (!(FSDIO_INT_CMD_BIT & reg_val) && (--delay > 0));
-    
+    }
+    while (!(FSDIO_INT_CMD_BIT & reg_val) && (--delay > 0));
+
     if (!(FSDIO_INT_CMD_BIT & reg_val) && (delay <= 0))
     {
         FSDIO_ERROR("wait cmd done timeout, raw ints: 0x%x", reg_val);
@@ -228,7 +229,7 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     }
 
     /* if need to read data, read fifo after send command */
-    if ((NULL != cmd_data_p->data_p) && (read)) 
+    if ((NULL != cmd_data_p->data_p) && (read))
     {
         FSDIO_INFO("wait for PIO data to read ...");
         delay = FSDIO_TIMEOUT;
@@ -237,13 +238,14 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
             reg_val = FSdioGetRawStatus(base_addr);
             if (relax)
                 relax();
-        } while (!(FSDIO_INT_DTO_BIT & reg_val) && (--delay > 0));
+        }
+        while (!(FSDIO_INT_DTO_BIT & reg_val) && (--delay > 0));
 
         /* clear status to ack */
         FSdioClearRawStatus(base_addr);
-        FSDIO_INFO("card cnt: 0x%x, fifo cnt: 0x%x", 
-                    FSDIO_READ_REG(base_addr, FSDIO_TRAN_CARD_CNT_OFFSET),
-                    FSDIO_READ_REG(base_addr, FSDIO_TRAN_FIFO_CNT_OFFSET));
+        FSDIO_INFO("card cnt: 0x%x, fifo cnt: 0x%x",
+                   FSDIO_READ_REG(base_addr, FSDIO_TRAN_CARD_CNT_OFFSET),
+                   FSDIO_READ_REG(base_addr, FSDIO_TRAN_FIFO_CNT_OFFSET));
 
         if (!(FSDIO_INT_DTO_BIT & reg_val) && (delay <= 0))
         {

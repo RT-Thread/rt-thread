@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac_hw.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -32,7 +32,7 @@
 1. 定义寄存器偏移
 2. 对上提供该模块寄存器操作的接口
 3. 一些简单外设提供直接操作接口
-4. 可以定义一些状态的接口，用于响应驱动状态的变化 
+4. 可以定义一些状态的接口，用于响应驱动状态的变化
 
 note: 本文件不能引用fooxx.h
 */
@@ -96,8 +96,8 @@ extern "C"
 
 /** @name FGMAC_CONF_OFFSET Register
  */
-#define FGMAC_CONF_RX_EN		       BIT(2) /* 接收器启用 */
-#define FGMAC_CONF_TX_EN		       BIT(3) /* 发送器启用 */
+#define FGMAC_CONF_RX_EN               BIT(2) /* 接收器启用 */
+#define FGMAC_CONF_TX_EN               BIT(3) /* 发送器启用 */
 #define FGMAC_CONF_DC               BIT(4) /* 延期检查 */
 #define FGMAC_CONF_BL_MASK          GENMASK(6, 5) /* 后退限制 */
 #define FGMAC_CONF_BL(x)            (FGMAC_CONF_BL_MASK & ((x) << 5))
@@ -207,7 +207,7 @@ extern "C"
 #define FGMAC_ISR_STATUS_RSIS            BIT(0) /* RGMII/SMII Interrupt Status */
 #define FGMAC_ISR_STATUS_PCSLSC          BIT(1) /* PCS 链路状态改变 */
 #define FGMAC_ISR_STATUS_PCSANC          BIT(2) /* PCS 自协商完成 */
-#define FGMAC_ISR_STATUS_PMTIS           BIT(3) 
+#define FGMAC_ISR_STATUS_PMTIS           BIT(3)
 #define FGMAC_ISR_STATUS_MMCIS           BIT(4)
 #define FGMAC_ISR_STATUS_MMCRIS          BIT(5)  /* MMC 接收中断状态 */
 #define FGMAC_ISR_STATUS_MMCTIS          BIT(6)  /* MMC 发送中断状态 */
@@ -249,18 +249,18 @@ extern "C"
 
 /** @name FGMAC_MAC_PHY_STATUS Register
  */
-#define FGMAC_RGSMIIIS_LNKMODE		BIT(0) /* 指示链路的当前操作模式 */
+#define FGMAC_RGSMIIIS_LNKMODE      BIT(0) /* 指示链路的当前操作模式 */
 #define FGMAC_RGSMIIIS_LNKMODE_HALF  (0b0 << 0)
 #define FGMAC_RGSMIIIS_LNKMODE_FULL  (0b1 << 0)
 #define FGMAC_RGSMIIIS_SPEED         GENMASK(2, 1)
 #define FGMAC_RGSMIIIS_SPEED_2_5MHZ  (0b00 << 1) /*  链路速度 2.5MHz */
 #define FGMAC_RGSMIIIS_SPEED_25MHZ   (0b01 << 1) /*  25MHz */
 #define FGMAC_RGSMIIIS_SPEED_125MHZ  (0b10 << 1) /*  125MHz */
-#define FGMAC_RGSMIIIS_LNKSTS		BIT(3)
+#define FGMAC_RGSMIIIS_LNKSTS       BIT(3)
 #define FGMAC_RGSMIIIS_LNKSTS_UP     (0b1 << 3)
 #define FGMAC_RGSMIIIS_LNKSTS_DOWN   (0b0 << 3)
 #define FGMAC_RGSMIIIS_JAB_TIMEOUT   BIT(4)
-#define FGMAC_RGSMIIIS_FALSECARDET	BIT(5)
+#define FGMAC_RGSMIIIS_FALSECARDET  BIT(5)
 
 /****************FGMAC DMA Register*******************/
 /* Bus mode register definitions */
@@ -268,7 +268,7 @@ extern "C"
  */
 #define FGMAC_DMA_BUS_SWR           BIT(0) /* 软件复位 */
 #define FGMAC_DMA_BUS_DA            BIT(1) /* 设置 8xPBL 模式 */
-#define FGMAC_DMA_BUS_DSL_MASK      GENMASK(6, 2) /* 描述符跳跃长度 */     
+#define FGMAC_DMA_BUS_DSL_MASK      GENMASK(6, 2) /* 描述符跳跃长度 */
 #define FGMAC_DMA_BUS_ATDS          BIT(7) /* 
 #define FGMAC_DMA_BUS_PBL_MASK      GENMASK(13, 8) /* 可编程突发长度 */
 #define FGMAC_DMA_BUS_PBL(x)        ((x) << 8)
@@ -303,12 +303,12 @@ enum
 
 #define FGMAC_DMA_BUS_INIT          (FGMAC_DMA_BUS_FB | FGMAC_DMA_BUS_PBL(16) | FGMAC_DMA_BUS_RPBL(16))
 
-/* 这些位控制 RxDMA 和 TxDMA 之间的加权循环仲裁中的优先级比率, 
+/* 这些位控制 RxDMA 和 TxDMA 之间的加权循环仲裁中的优先级比率,
    FGMAC_DMA_BUS_DA=1时有效 */
-#define FGMAC_DMA_BUS_PRIORXTX_41		(3 << 14) /* 4:1 */
-#define FGMAC_DMA_BUS_PRIORXTX_31		(2 << 14) /* 3:1 */
-#define FGMAC_DMA_BUS_PRIORXTX_21		(1 << 14) /* 2:1 */
-#define FGMAC_DMA_BUS_PRIORXTX_11		(0 << 14) /* 1:1 */
+#define FGMAC_DMA_BUS_PRIORXTX_41       (3 << 14) /* 4:1 */
+#define FGMAC_DMA_BUS_PRIORXTX_31       (2 << 14) /* 3:1 */
+#define FGMAC_DMA_BUS_PRIORXTX_21       (1 << 14) /* 2:1 */
+#define FGMAC_DMA_BUS_PRIORXTX_11       (0 << 14) /* 1:1 */
 
 /** @name FGMAC_DMA_TX_POLL_REQ_OFFSET Register
  */
@@ -511,8 +511,8 @@ static inline void FGmacStartDmaTrans(uintptr base_addr)
     FGMAC_SET_REG32(base_addr, FGMAC_CONF_OFFSET, (FGMAC_CONF_RX_EN | FGMAC_CONF_TX_EN)); /* enable gmac tx and rx */
 
     /* clear Tx and Rx process stopped flags */
-    FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_INTR_OFFSET, 
-                  (FGMAC_DMA_INTR_ENA_RIE | FGMAC_DMA_INTR_ENA_AIE | FGMAC_DMA_INTR_ENA_NIE));    
+    FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_INTR_OFFSET,
+                      (FGMAC_DMA_INTR_ENA_RIE | FGMAC_DMA_INTR_ENA_AIE | FGMAC_DMA_INTR_ENA_NIE));
 }
 
 static inline void FGmacStopDmaTrans(uintptr base_addr)
@@ -526,8 +526,8 @@ static inline void FGmacResmuDmaUnderflow(uintptr base_addr)
     if (FGMAC_DMA_STATUS_UNF & FGMAC_READ_REG32(base_addr, FGMAC_DMA_STATUS_OFFSET))
     {
         FGMAC_SET_REG32(base_addr, FGMAC_DMA_STATUS_OFFSET, FGMAC_DMA_STATUS_UNF);  /* clear TBUS GMAC DMA flag */
-        FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_TX_POLL_REQ_OFFSET, 0xff); /* resume DMA transmission*/               
-    }    
+        FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_TX_POLL_REQ_OFFSET, 0xff); /* resume DMA transmission*/
+    }
 }
 
 /************************** Function Prototypes ******************************/

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: ftimer_tacho_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:07
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -58,5 +58,5 @@ void FTachoGetDefConfig(u32 tacho_id, FTimerTachoConfig *config_p)
     config_p->jitter_level = 0;
     config_p->plus_num = TACHO_PERIOD;/*采样周期越长，能够检测到的单位时间脉冲越多，能够检测更小的频率*/
     config_p->clear_cnt = FALSE;
-    config_p->force_load = TRUE;    
+    config_p->force_load = TRUE;
 }

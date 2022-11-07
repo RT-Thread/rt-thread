@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fddma_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
  * Description:  This files is for ddma interrupt implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Zhugengyu  2022/5/13    init commit
@@ -71,23 +71,23 @@ static void FDdmaChanIrqHandler(FDdma *const instance, FDdmaChanIndex chan_idx)
 
     FDDMA_INFO("chan-%d irq status: 0x%x", chan_idx, status);
 
-    FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_REQ_DONE], dma_chan, 
-                            dma_chan->evt_handler_args[FDDMA_CHAN_EVT_REQ_DONE]);
+    FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_REQ_DONE], dma_chan,
+                           dma_chan->evt_handler_args[FDDMA_CHAN_EVT_REQ_DONE]);
 
     if (FDDMA_CHAN_STS_FIFO_EMPTY & status)
     {
-        FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_FIFO_EMPTY], dma_chan, 
+        FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_FIFO_EMPTY], dma_chan,
                                dma_chan->evt_handler_args[FDDMA_CHAN_EVT_FIFO_EMPTY]);
     }
 
     if (FDDMA_CHAN_STS_FIFO_FULL & status)
     {
-        FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_FIFO_FULL], dma_chan, 
+        FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_FIFO_FULL], dma_chan,
                                dma_chan->evt_handler_args[FDDMA_CHAN_EVT_FIFO_FULL]);
     }
 
     /* submit queued descriptor after processing the completed ones */
-    return; 
+    return;
 }
 
 /**
@@ -100,7 +100,7 @@ static void FDdmaChanIrqHandler(FDdma *const instance, FDdmaChanIndex chan_idx)
 void FDdmaIrqHandler(s32 vector, void *args)
 {
     FASSERT(NULL != args);
-    FDdma *const instance = (FDdma *const)args;
+    FDdma *const instance = (FDdma * const)args;
     uintptr base_addr = instance->config.base_addr;
     u32 status = FDdmaReadStatus(base_addr);
     u32 chan;
@@ -120,7 +120,7 @@ void FDdmaIrqHandler(s32 vector, void *args)
     }
 
     FDdmaEnableGlobalIrq(base_addr); /* re-enable interrupt */
-    return;   
+    return;
 }
 
 /**
@@ -137,5 +137,5 @@ void FDdmaRegisterChanEvtHandler(FDdmaChan *const dma_chan, FDdmaChanEvt evt, FD
     FASSERT(dma_chan);
     dma_chan->evt_handler[evt] = handler;
     dma_chan->evt_handler_args[evt] = handler_arg;
-    return;    
+    return;
 }

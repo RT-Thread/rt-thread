@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fusb_hid.h
  * Date: 2022-02-11 13:33:09
  * LastEditTime: 2022-02-17 17:49:20
  * Description:  This files is for definition of USB hub device function
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/9/28	init commit
+ * 1.0   Zhugengyu  2022/9/28   init commit
  */
 
 #ifndef  DRIVERS_USB_HID_H
@@ -292,22 +292,22 @@ extern "C"
 #define KEY_F(n)      (KEY_F0 + (n))
 
 /**************************** Type Definitions *******************************/
-enum 
-{ 
-    FUSB_HID_SUBCLASS_NONE = 0, 
-    FUSB_HID_SUBCLASS_BOOT = 1 
+enum
+{
+    FUSB_HID_SUBCLASS_NONE = 0,
+    FUSB_HID_SUBCLASS_BOOT = 1
 };
 
-typedef enum 
-{ 
-    FUSB_HID_PROTOCOL_BOOT = 0, 
-    FUSB_HID_PROTOCOL_REPORT = 1 
+typedef enum
+{
+    FUSB_HID_PROTOCOL_BOOT = 0,
+    FUSB_HID_PROTOCOL_REPORT = 1
 } FUsbHidProtocol;
 
-enum 
-{ 
-    FUSB_HID_BOOT_PROTOCOL_NONE = 0, 
-    FUSB_HID_BOOT_PROTOCOL_KEYBOARD =1, 
+enum
+{
+    FUSB_HID_BOOT_PROTOCOL_NONE = 0,
+    FUSB_HID_BOOT_PROTOCOL_KEYBOARD = 1,
     FUSB_HID_BOOT_PROTOCOL_MOUSE = 2
 };
 

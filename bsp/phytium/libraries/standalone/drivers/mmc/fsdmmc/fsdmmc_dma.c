@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdmmc_dma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:49:31
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -114,7 +114,7 @@ void FSdmmcSetWriteDMA(uintptr base_addr, uintptr card_addr, u32 blk_cnt, const 
     u32 dstl = LOWER_32_BITS((uintptr)card_addr);
 
     FSDMMC_INFO("mem space: 0x%x:0x%x ==> sd card: 0x%x:0x%x",
-                 srch, srcl, dsth, dstl);
+                srch, srcl, dsth, dstl);
 
     FSDMMC_INFO("write %d blks from 0x%x", blk_cnt, card_addr);
 

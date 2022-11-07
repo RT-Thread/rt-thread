@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdio_cmd.c
  * Date: 2022-06-01 14:23:59
  * LastEditTime: 2022-06-01 14:24:00
  * Description:  This files is for SDIO command related function
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1   zhugengyu  2022/6/6     modify according to tech manual.
@@ -50,31 +50,33 @@ extern FError FSdioPIOReadData(FSdio *const instance_p, FSdioData *data_p);
 /*****************************************************************************/
 FError FSdioSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg)
 {
-	u32 reg_val;
-	int retries = FSDIO_TIMEOUT;
+    u32 reg_val;
+    int retries = FSDIO_TIMEOUT;
 
-	do
-	{
-		reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
-		if (--retries <= 0)
-			break;
-	} while (FSDIO_STATUS_DATA_BUSY & reg_val);
+    do
+    {
+        reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
+        if (--retries <= 0)
+            break;
+    }
+    while (FSDIO_STATUS_DATA_BUSY & reg_val);
 
-	if (retries <= 0)
-		return FSDIO_ERR_BUSY;
+    if (retries <= 0)
+        return FSDIO_ERR_BUSY;
 
-	FSDIO_WRITE_REG(base_addr, FSDIO_CMD_ARG_OFFSET, arg);
-	FSDIO_WRITE_REG(base_addr, FSDIO_CMD_OFFSET, FSDIO_CMD_START | cmd);
+    FSDIO_WRITE_REG(base_addr, FSDIO_CMD_ARG_OFFSET, arg);
+    FSDIO_WRITE_REG(base_addr, FSDIO_CMD_OFFSET, FSDIO_CMD_START | cmd);
 
-	retries = FSDIO_TIMEOUT;
-	do
-	{
-		reg_val = FSDIO_READ_REG(base_addr, FSDIO_CMD_OFFSET);
-		if (--retries <= 0)
-			break;
-	} while (FSDIO_CMD_START & reg_val);
-	
-	return (retries <= 0) ? FSDIO_ERR_TIMEOUT : FSDIO_SUCCESS;
+    retries = FSDIO_TIMEOUT;
+    do
+    {
+        reg_val = FSDIO_READ_REG(base_addr, FSDIO_CMD_OFFSET);
+        if (--retries <= 0)
+            break;
+    }
+    while (FSDIO_CMD_START & reg_val);
+
+    return (retries <= 0) ? FSDIO_ERR_TIMEOUT : FSDIO_SUCCESS;
 }
 
 /**
@@ -139,7 +141,7 @@ FError FSdioTransferCmd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     FSDIO_DEBUG("    arg: 0x%x", cmd_data_p->cmdarg);
 
     /* enable related interrupt */
-    FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR, 
+    FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR,
                           FSDIO_INTS_CMD_MASK, TRUE);
 
     FSdioSendPrivateCmd(base_addr, raw_cmd, cmd_data_p->cmdarg);
@@ -164,8 +166,8 @@ FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data
     uintptr base_addr = instance_p->config.base_addr;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
@@ -187,8 +189,8 @@ FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data
             cmd_data_p->response[2] = FSDIO_READ_REG(base_addr, FSDIO_RESP2_OFFSET);
             cmd_data_p->response[3] = FSDIO_READ_REG(base_addr, FSDIO_RESP3_OFFSET);
             FSDIO_DEBUG("    resp: 0x%x-0x%x-0x%x-0x%x",
-                            cmd_data_p->response[0], cmd_data_p->response[1],
-                            cmd_data_p->response[2], cmd_data_p->response[3]);
+                        cmd_data_p->response[0], cmd_data_p->response[1],
+                        cmd_data_p->response[2], cmd_data_p->response[3]);
         }
         else
         {
@@ -204,5 +206,5 @@ FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data
     FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR, FSDIO_INTS_CMD_MASK | FSDIO_INTS_DATA_MASK, FALSE);
     FSdioSetInterruptMask(instance_p, FSDIO_IDMA_INTR, FSDIO_DMAC_INTS_MASK, FALSE);
 
-    return ret;        
+    return ret;
 }

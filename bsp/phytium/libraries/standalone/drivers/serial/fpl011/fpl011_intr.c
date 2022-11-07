@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpl011_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:06:30
  * Description:  This files is for uart irq functions
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -65,11 +65,11 @@ u32 FPl011GetInterruptMask(FPl011 *uart_p)
 
 
 /**
- * @name: FPl011SetInterruptMask 
+ * @name: FPl011SetInterruptMask
  * @msg:  This function sets the interrupt mask.
  * @param uart_p is a pointer to the uart instance
  * @param mask contains the interrupts to be enabled or disabled.
- *		A '1' enables an interrupt, and a '0' disables.
+ *      A '1' enables an interrupt, and a '0' disables.
  */
 void FPl011SetInterruptMask(FPl011 *uart_p, u32 mask)
 {
@@ -88,10 +88,10 @@ void FPl011SetInterruptMask(FPl011 *uart_p, u32 mask)
  * @param uart_p is a pointer to the uart instance
  * @param fun_p is the pointer to the callback function.
  * @param args is the upper layer callback reference passed back
- *		when the callback function is invoked.
+ *      when the callback function is invoked.
  * @return {*}
  */
-void FPl011SetHandler(FPl011 *uart_p, FPl011EventHandler fun_p,void *args)
+void FPl011SetHandler(FPl011 *uart_p, FPl011EventHandler fun_p, void *args)
 {
     FASSERT(uart_p != NULL);
     FASSERT(fun_p != NULL);
@@ -119,7 +119,7 @@ void FPl011InterruptHandler(s32 vector, void *param)
 
     reg_value = FUART_READREG32(uart_p->config.base_address, FPL011IMSC_OFFSET);
     reg_value &= FUART_READREG32(uart_p->config.base_address, FPL011MIS_OFFSET);
-    
+
     if ((reg_value & ((u32)FPL011MIS_RXMIS)) != (u32)0)
     {
         /* Received data interrupt */
@@ -151,7 +151,7 @@ void FPl011InterruptHandler(s32 vector, void *param)
 
     /* Clear the interrupt status. */
     FUART_WRITEREG32(uart_p->config.base_address, FPL011ICR_OFFSET,
-                       reg_value);
+                     reg_value);
 
 }
 

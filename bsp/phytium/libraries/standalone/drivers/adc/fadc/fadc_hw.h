@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fadc_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:28:45
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -35,22 +35,22 @@ extern "C"
 /* Generic ADC register definitions */
 
 /* FADC register */
-#define FADC_CTRL_REG_OFFSET				0x00
-#define FADC_INTER_REG_OFFSET				0x04
+#define FADC_CTRL_REG_OFFSET                0x00
+#define FADC_INTER_REG_OFFSET               0x04
 #define FADC_STATE_REG_OFFSET               0x08
-#define FADC_ERRCLR_REG_OFFSET			    0x0c
+#define FADC_ERRCLR_REG_OFFSET              0x0c
 #define FADC_LEVEL_REG_OFFSET(x)            (0x10+(x)*4)
-#define FADC_INTRMASK_REG_OFFSET		    0x30
-#define FADC_INTR_REG_OFFSET		        0x34
+#define FADC_INTRMASK_REG_OFFSET            0x30
+#define FADC_INTR_REG_OFFSET                0x34
 #define FADC_COV_RESULT_REG_OFFSET(x)       (0x38+(x)*4)
-#define FADC_FINISH_CNT_REG_OFFSET(x)		(0x58+(x)*4)
-#define FADC_HIS_LIMIT_REG_OFFSET(x)		(0x78+(x)*4)
+#define FADC_FINISH_CNT_REG_OFFSET(x)       (0x58+(x)*4)
+#define FADC_HIS_LIMIT_REG_OFFSET(x)        (0x78+(x)*4)
 
-#define FADC_CTRL_REG_PD_EN			        BIT(31)
-#define FADC_CTRL_REG_FIX_CHANNEL_NUM_MASK	GENMASK(18, 16)
-#define FADC_CTRL_REG_FIX_CHANNEL_NUM(x)	((x)<<16)
-#define FADC_CTRL_REG_CLK_DIV(x)			((x)<<12)
-#define FADC_CTRL_REG_CLK_DIV_MASK		    GENMASK(15, 12)
+#define FADC_CTRL_REG_PD_EN                 BIT(31)
+#define FADC_CTRL_REG_FIX_CHANNEL_NUM_MASK  GENMASK(18, 16)
+#define FADC_CTRL_REG_FIX_CHANNEL_NUM(x)    ((x)<<16)
+#define FADC_CTRL_REG_CLK_DIV(x)            ((x)<<12)
+#define FADC_CTRL_REG_CLK_DIV_MASK          GENMASK(15, 12)
 #define FADC_CTRL_REG_CHANNEL_EN(x)         BIT((x)+4)
 #define FADC_CTRL_REG_FIX_CHANNEL           BIT(3)
 #define FADC_CTRL_REG_SINGLE_CONVERT_EN     BIT(2)
@@ -65,8 +65,8 @@ extern "C"
 #define FADC_STATE_REG_COV_FINISH_STA       BIT(1)
 #define FADC_STATE_REG_CTL_BUSY_STA         BIT(0)
 
-#define FADC_LEVEL_REG_HIGH_LEVEL(x)		((x)<<16)
-#define FADC_LEVEL_REG_LOW_LEVEL(x)		    ((x)<<0)
+#define FADC_LEVEL_REG_HIGH_LEVEL(x)        ((x)<<16)
+#define FADC_LEVEL_REG_LOW_LEVEL(x)         ((x)<<0)
 
 #define FADC_INTRMASK_REG_ERR_MASK          BIT(24)
 #define FADC_INTRMASK_REG_ULIMIT_MASK(x)    BIT((x)*2+9)

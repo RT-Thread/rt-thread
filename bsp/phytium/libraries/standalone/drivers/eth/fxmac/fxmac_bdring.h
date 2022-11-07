@@ -32,34 +32,34 @@ extern "C"
 #include "fxmac_bd.h"
 #include "ftypes.h"
 
-    /**************************** Type Definitions *******************************/
+/**************************** Type Definitions *******************************/
 
-    /** This is an internal structure used to maintain the DMA list */
-    typedef struct
-    {
-        uintptr phys_base_addr; /* Physical address of 1st BD in list */
-        uintptr base_bd_addr;   /* Virtual address of 1st BD in list */
-        uintptr high_bd_addr;   /* Virtual address of last BD in the list */
-        u32 length;             /* Total size of ring in bytes */
-        u32 run_state;          /* Flag to indicate DMA is started */
-        u32 separation;         /* Number of bytes between the starting address
+/** This is an internal structure used to maintain the DMA list */
+typedef struct
+{
+    uintptr phys_base_addr; /* Physical address of 1st BD in list */
+    uintptr base_bd_addr;   /* Virtual address of 1st BD in list */
+    uintptr high_bd_addr;   /* Virtual address of last BD in the list */
+    u32 length;             /* Total size of ring in bytes */
+    u32 run_state;          /* Flag to indicate DMA is started */
+    u32 separation;         /* Number of bytes between the starting address
                                   of adjacent BDs */
-        FXmacBd *free_head;
-        /* First BD in the free group */
-        FXmacBd *pre_head; /* First BD in the pre-work group */
-        FXmacBd *hw_head;  /* First BD in the work group */
-        FXmacBd *hw_tail;  /* Last BD in the work group */
-        FXmacBd *post_head;
-        /* First BD in the post-work group */
-        FXmacBd *bda_restart;
-        /* BDA to load when channel is started */
+    FXmacBd *free_head;
+    /* First BD in the free group */
+    FXmacBd *pre_head; /* First BD in the pre-work group */
+    FXmacBd *hw_head;  /* First BD in the work group */
+    FXmacBd *hw_tail;  /* Last BD in the work group */
+    FXmacBd *post_head;
+    /* First BD in the post-work group */
+    FXmacBd *bda_restart;
+    /* BDA to load when channel is started */
 
-        volatile u32 hw_cnt; /* Number of BDs in work group */
-        u32 pre_cnt;         /* Number of BDs in pre-work group */
-        u32 free_cnt;        /* Number of allocatable BDs in the free group */
-        u32 post_cnt;        /* Number of BDs in post-work group */
-        u32 all_cnt;         /* Total Number of BDs for channel */
-    } FXmacBdRing;
+    volatile u32 hw_cnt; /* Number of BDs in work group */
+    u32 pre_cnt;         /* Number of BDs in pre-work group */
+    u32 free_cnt;        /* Number of allocatable BDs in the free group */
+    u32 post_cnt;        /* Number of BDs in post-work group */
+    u32 all_cnt;         /* Total Number of BDs for channel */
+} FXmacBdRing;
 
 /**
  * @name: FXMAC_BD_RING_NEXT
@@ -128,30 +128,30 @@ extern "C"
 #define FXMAC_BD_RING_PREV(ring_ptr, bd_ptr) \
     (((uintptr)(bd_ptr) <= (ring_ptr)->base_bd_addr) ? (FXmacBd *)(ring_ptr)->high_bd_addr : (FXmacBd *)((uintptr)(bd_ptr) - (ring_ptr)->separation))
 
-    /************************** Function Prototypes ******************************/
+/************************** Function Prototypes ******************************/
 
-    /*
-     * Scatter gather DMA related functions in FXmacbdring.c
-     */
-    FError FXmacBdRingCreate(FXmacBdRing *ring_ptr, uintptr phys_addr,
-                             uintptr virt_addr, u32 alignment, u32 bd_count);
-    FError FXmacBdRingClone(FXmacBdRing *ring_ptr, FXmacBd *src_bd_ptr,
-                            u8 direction);
-    FError FXmacBdRingAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
-                            FXmacBd **bd_set_ptr);
-    FError FXmacBdRingUnAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
-                              FXmacBd *bd_set_ptr);
-    FError FXmacBdRingToHw(FXmacBdRing *ring_ptr, u32 num_bd,
-                           FXmacBd *bd_set_ptr);
-    FError FXmacBdRingFree(FXmacBdRing *ring_ptr, u32 num_bd,
-                           FXmacBd *bd_set_ptr);
-    u32 FXmacBdRingFromHwTx(FXmacBdRing *ring_ptr, u32 bd_limit,
-                            FXmacBd **bd_set_ptr);
-    u32 FXmacBdRingFromHwRx(FXmacBdRing *ring_ptr, u32 bd_limit,
-                            FXmacBd **bd_set_ptr);
-    FError FXmacBdRingCheck(FXmacBdRing *ring_ptr, u8 direction);
+/*
+ * Scatter gather DMA related functions in FXmacbdring.c
+ */
+FError FXmacBdRingCreate(FXmacBdRing *ring_ptr, uintptr phys_addr,
+                         uintptr virt_addr, u32 alignment, u32 bd_count);
+FError FXmacBdRingClone(FXmacBdRing *ring_ptr, FXmacBd *src_bd_ptr,
+                        u8 direction);
+FError FXmacBdRingAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
+                        FXmacBd **bd_set_ptr);
+FError FXmacBdRingUnAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
+                          FXmacBd *bd_set_ptr);
+FError FXmacBdRingToHw(FXmacBdRing *ring_ptr, u32 num_bd,
+                       FXmacBd *bd_set_ptr);
+FError FXmacBdRingFree(FXmacBdRing *ring_ptr, u32 num_bd,
+                       FXmacBd *bd_set_ptr);
+u32 FXmacBdRingFromHwTx(FXmacBdRing *ring_ptr, u32 bd_limit,
+                        FXmacBd **bd_set_ptr);
+u32 FXmacBdRingFromHwRx(FXmacBdRing *ring_ptr, u32 bd_limit,
+                        FXmacBd **bd_set_ptr);
+FError FXmacBdRingCheck(FXmacBdRing *ring_ptr, u8 direction);
 
-    void FXmacBdringPtrReset(FXmacBdRing *ring_ptr, void *virt_addrloc);
+void FXmacBdringPtrReset(FXmacBdRing *ring_ptr, void *virt_addrloc);
 
 #ifdef __cplusplus
 }

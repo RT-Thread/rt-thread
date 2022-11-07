@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fi2c.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:37:04
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -38,7 +38,7 @@ extern "C"
 #include "ferror_code.h"
 #include "sdkconfig.h"
 /************************** Constant Definitions *****************************/
-#define FI2C_SUCCESS          FT_SUCCESS  
+#define FI2C_SUCCESS          FT_SUCCESS
 #define FI2C_ERR_INVAL_PARM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 1)
 #define FI2C_ERR_NOT_READY    FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 2)
 #define FI2C_ERR_TIMEOUT      FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 3)
@@ -46,16 +46,16 @@ extern "C"
 #define FI2C_ERR_INVAL_STATE  FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 5)
 
 /* add up new error code above and plust FI2C_ERR_CODE_MAX by ONE*/
-#define FI2C_ERR_CODE_MAX     FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 6)  
-#define FI2C_ERR_CODE_PREFIX  FI2C_ERR_CODE_MAX & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)  
+#define FI2C_ERR_CODE_MAX     FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 6)
+#define FI2C_ERR_CODE_PREFIX  FI2C_ERR_CODE_MAX & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)
 #define FI2C_NUM_OF_ERR_CODE  FI2C_ERR_CODE_MAX & FT_ERRCODE_TAIL_VALUE_MASK
 
 /*
  * status codes
  */
-#define STATUS_IDLE			        0x0
-#define STATUS_WRITE_IN_PROGRESS	0x1
-#define STATUS_READ_IN_PROGRESS		0x2
+#define STATUS_IDLE                 0x0
+#define STATUS_WRITE_IN_PROGRESS    0x1
+#define STATUS_READ_IN_PROGRESS     0x2
 
 enum
 {
@@ -80,11 +80,11 @@ enum
 
 enum/*slave模式回调函数事件值*/
 {
-	FI2C_EVT_SLAVE_READ_REQUESTED = 0,  /*slave收到主机读取内容的请求*/
-	FI2C_EVT_SLAVE_WRITE_REQUESTED,     /*slave收到主机发送的写请求*/
-	FI2C_EVT_SLAVE_READ_PROCESSED,      /*在Slave发送模式下，发送完数据的最后一个字节后，在规定时间内没有收到 Master 端的回应*/
-	FI2C_EVT_SLAVE_WRITE_RECEIVED,      /*Slave收到主机发送的数据，需要存下*/
-	FI2C_EVT_SLAVE_STOP,                /*I2C总线接口上是否产生了STOP。与控制器工作在Master模式还是 Slave 模式无关。*/
+    FI2C_EVT_SLAVE_READ_REQUESTED = 0,  /*slave收到主机读取内容的请求*/
+    FI2C_EVT_SLAVE_WRITE_REQUESTED,     /*slave收到主机发送的写请求*/
+    FI2C_EVT_SLAVE_READ_PROCESSED,      /*在Slave发送模式下，发送完数据的最后一个字节后，在规定时间内没有收到 Master 端的回应*/
+    FI2C_EVT_SLAVE_WRITE_RECEIVED,      /*Slave收到主机发送的数据，需要存下*/
+    FI2C_EVT_SLAVE_STOP,                /*I2C总线接口上是否产生了STOP。与控制器工作在Master模式还是 Slave 模式无关。*/
 
     FI2C_SLAVE_INTR_EVT_NUM
 }; /* slave mode evt */
@@ -99,14 +99,14 @@ typedef struct
     u32         irq_prority;  /* Device intrrupt priority */
     u32         ref_clk_hz;   /* Input reference clock frequency in Hz */
     u32         work_mode;   /* Device work mode Slave or Master */
-    u32         slave_addr;  /*Master mode Slave Address writing/reading to/from ,Slave mode set local address*/    
+    u32         slave_addr;  /*Master mode Slave Address writing/reading to/from ,Slave mode set local address*/
     boolean     use_7bit_addr;  /* Slave in-chip address offset in 7bit or 10bit */
     u32         speed_rate;  /* I2C speed rate */
 } FI2cConfig; /* Device configure setting */
 
 typedef void (*FI2cEvtHandler)(void *instance_p, void *param);
 
-typedef struct 
+typedef struct
 {
     /* data */
     const void *data_buff;
@@ -115,7 +115,7 @@ typedef struct
     u32 flag;/* CMD BIT(8), STOP BIT(9) and RESTART BIT(10) Generation */
 } FI2cFrameTX;
 
-typedef struct 
+typedef struct
 {
     /* data */
     void *data_buff;
@@ -132,7 +132,7 @@ typedef struct
     FI2cFrameRX     rxframe;
     /** only apply to master device **/
     /* Master intrrupt handler */
-    FI2cEvtHandler master_evt_handlers[FI2C_MASTER_INTR_EVT_NUM];  
+    FI2cEvtHandler master_evt_handlers[FI2C_MASTER_INTR_EVT_NUM];
 
     /** only apply to slave device **/
     /* Slave intrrupt handler */
@@ -177,7 +177,7 @@ FError FI2cMasterWritePoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
 u32 FI2cGetIntr(FI2c *instance_p);
 
 /* 设置I2C主机的中断 */
-FError FI2cMasterSetupIntr(FI2c *instance_p,u32 mask);
+FError FI2cMasterSetupIntr(FI2c *instance_p, u32 mask);
 
 /* 主机模式中断服务函数 */
 void FI2cMasterIntrHandler(s32 vector, void *param);

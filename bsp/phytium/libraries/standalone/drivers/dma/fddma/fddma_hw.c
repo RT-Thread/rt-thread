@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fddma_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
  * Description:  This files is for ddma register rw operations
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Zhugengyu  2022/5/13    init commit
@@ -93,7 +93,7 @@ void FDdmaSoftwareReset(uintptr base_addr)
     FDdmaWriteReg(base_addr, FDDMA_CTL_OFFSET, reg_val);
     FDDMA_DEBUG("ddma @%p software reset start : 0x%x", base_addr, FDdmaReadReg(base_addr, FDDMA_CTL_OFFSET));
 
-    while(--delay > 0) /* wait a while to do reset */
+    while (--delay > 0) /* wait a while to do reset */
         ;
 
     reg_val &= ~FDDMA_CTL_SRST;
@@ -183,8 +183,9 @@ FError FDdmaDisableChan(uintptr base_addr, u32 chan)
         reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
         if (delay-- <= 0)
             break;
-    } while (reg_val & FDDMA_CHAN_CTL_EN);
-    
+    }
+    while (reg_val & FDDMA_CHAN_CTL_EN);
+
     FDDMA_DEBUG("ddma @%p chan %d disabled : 0x%x", base_addr, chan, FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan)));
     return (delay > 0) ? FDDMA_SUCCESS : FDDMA_ERR_WAIT_TIMEOUT;
 }
@@ -217,7 +218,7 @@ void FDdmaClearChanIrq(uintptr base_addr, u32 chan)
 {
     FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
     /* write 1 to clear irq status of channel */
-    FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_STA_CHAN_REQ_DONE(chan));    
+    FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_STA_CHAN_REQ_DONE(chan));
 }
 
 /**
@@ -240,7 +241,7 @@ void FDdmaResetChan(uintptr base_addr, u32 chan)
     reg_val |= FDDMA_CHAN_CTL_SRST;
     FDdmaWriteReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan), reg_val);
 
-    while(--delay > 0) /* wait a while to do reset */
+    while (--delay > 0) /* wait a while to do reset */
         ;
 
     reg_val &= ~FDDMA_CHAN_CTL_SRST;
@@ -253,7 +254,7 @@ void FDdmaResetChan(uintptr base_addr, u32 chan)
  * @name: FDdmaIsChanRunning
  * @msg: 检查通道是否在工作中
  * @return {boolean} TRUE: 在工作中
- * @param {uintptr} base_addr, DDMA控制器基地址 
+ * @param {uintptr} base_addr, DDMA控制器基地址
  * @param {u32} chan, DDMA通道号
  */
 boolean FDdmaIsChanRunning(uintptr base_addr, u32 chan)
@@ -292,8 +293,8 @@ void FDdmaSetChanSelection(uintptr base_addr, u32 chan, u32 slave_id)
         reg_val &= ~FDDMA_CHAN_4_7_SEL_MASK(chan);
         reg_val |= FDDMA_CHAN_4_7_SEL(chan, slave_id);
         reg_val |= FDDMA_CHAN_4_7_SEL_EN(chan);
-        FDdmaWriteReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET, reg_val);        
-        FDDMA_DEBUG("ddma@%p set chan-%d slave id-%d, 0x%x", base_addr, chan, slave_id, FDdmaReadReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET));        
+        FDdmaWriteReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET, reg_val);
+        FDDMA_DEBUG("ddma@%p set chan-%d slave id-%d, 0x%x", base_addr, chan, slave_id, FDdmaReadReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET));
     }
 
     return;
@@ -309,9 +310,9 @@ void FDdmaSetChanSelection(uintptr base_addr, u32 chan, u32 slave_id)
  */
 void FDdmaSetChanBind(uintptr base_addr, u32 chan, boolean bind)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);    
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_BIND_OFFSET);
-    
+
     if (bind)
         reg_val |= BIT(chan);
     else
@@ -332,7 +333,7 @@ void FDdmaSetChanBind(uintptr base_addr, u32 chan, boolean bind)
  */
 void FDdmaSetChanDirection(uintptr base_addr, u32 chan, boolean is_rx)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan); 
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
     if (is_rx)
         reg_val |= FDDMA_CHAN_CTL_RX_MODE; /* device to memory */
@@ -353,8 +354,8 @@ void FDdmaSetChanDirection(uintptr base_addr, u32 chan, boolean is_rx)
 void FDdmaSetChanTimeout(uintptr base_addr, u32 chan, u32 timeout)
 {
     FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
-    u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_TIMEOUT_CNT_OFFSET(chan));    
-    
+    u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_TIMEOUT_CNT_OFFSET(chan));
+
     if (0 < timeout)
     {
         reg_val &= ~FDDMA_CHAN_TIMEOUT_CNT_MASK;

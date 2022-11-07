@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fnand_ecc.c
  * Date: 2022-05-12 14:17:42
  * LastEditTime: 2022-05-12 15:56:27
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -38,77 +38,77 @@
  * @param {u32} bytes_per_page
  * @param {u32} ecc_strength
  * @return {*}
- * @note:  
+ * @note:
  */
-u32 FNandGetEccTotalLength(u32 bytes_per_page,u32 ecc_strength)
+u32 FNandGetEccTotalLength(u32 bytes_per_page, u32 ecc_strength)
 {
     int ecc_total = 0;
-	switch (bytes_per_page)
+    switch (bytes_per_page)
     {
-        case 0x200:
-            if (ecc_strength == 8)
-                ecc_total = 0x0D;
-            else if (ecc_strength == 4)
-                ecc_total = 7;
-            else if (ecc_strength == 2)
-                ecc_total = 4;
-            else
-                ecc_total = 0;
-            break;
-        case 0x800:
-            if (ecc_strength == 8)
-                ecc_total = 0x34;
-            else if (ecc_strength == 4)
-                ecc_total = 0x1a;
-            else if (ecc_strength == 2)
-                ecc_total = 0xd;
-            else
-                ecc_total = 0;
-            break;
-        case 0x1000:
-            if (ecc_strength == 8)
-                ecc_total = 0x68;
-            else if (ecc_strength == 4)
-                ecc_total = 0x34;
-            else if (ecc_strength == 2)
-                ecc_total = 0x1a;
-            else
-                ecc_total = 0;
-            break;
-        case 0x2000:
-            if (ecc_strength == 8)
-                ecc_total = 0xD0;
-            else if (ecc_strength == 4)
-                ecc_total = 0x68;
-            else if (ecc_strength == 2)
-                ecc_total = 0x34;
-            else
-                ecc_total = 0;
-            break;
-        case 0x4000:
-            if (ecc_strength == 8)
-                ecc_total = 0x1A0;
-            if (ecc_strength == 4)
-                ecc_total = 0xD0;
-            else if (ecc_strength == 2)
-                ecc_total = 0x68;
-            else
-                ecc_total = 0;
-            break;
-        default:
+    case 0x200:
+        if (ecc_strength == 8)
+            ecc_total = 0x0D;
+        else if (ecc_strength == 4)
+            ecc_total = 7;
+        else if (ecc_strength == 2)
+            ecc_total = 4;
+        else
             ecc_total = 0;
-            break;
-	}
+        break;
+    case 0x800:
+        if (ecc_strength == 8)
+            ecc_total = 0x34;
+        else if (ecc_strength == 4)
+            ecc_total = 0x1a;
+        else if (ecc_strength == 2)
+            ecc_total = 0xd;
+        else
+            ecc_total = 0;
+        break;
+    case 0x1000:
+        if (ecc_strength == 8)
+            ecc_total = 0x68;
+        else if (ecc_strength == 4)
+            ecc_total = 0x34;
+        else if (ecc_strength == 2)
+            ecc_total = 0x1a;
+        else
+            ecc_total = 0;
+        break;
+    case 0x2000:
+        if (ecc_strength == 8)
+            ecc_total = 0xD0;
+        else if (ecc_strength == 4)
+            ecc_total = 0x68;
+        else if (ecc_strength == 2)
+            ecc_total = 0x34;
+        else
+            ecc_total = 0;
+        break;
+    case 0x4000:
+        if (ecc_strength == 8)
+            ecc_total = 0x1A0;
+        if (ecc_strength == 4)
+            ecc_total = 0xD0;
+        else if (ecc_strength == 2)
+            ecc_total = 0x68;
+        else
+            ecc_total = 0;
+        break;
+    default:
+        ecc_total = 0;
+        break;
+    }
 
-	FNAND_ECC_DEBUG_I("[%s %d]writesize: 0x%x, ecc strength: %d, ecc_total: 0x%x\n",__func__, __LINE__, bytes_per_page, ecc_strength, ecc_total);
-	return ecc_total;
+    FNAND_ECC_DEBUG_I("[%s %d]writesize: 0x%x, ecc strength: %d, ecc_total: 0x%x\n", __func__, __LINE__, bytes_per_page, ecc_strength, ecc_total);
+    return ecc_total;
 }
 
 
 /**
  * @name: FNandCorrectEcc
- * @msg:  
- * @note: 
+ * @msg:
+ * @note:
  * @return {*}
  * @param {uintptr_t} base_address
  * @param {u32} ecc_step_size   单次ecc 使用的步长大小
@@ -119,8 +119,8 @@ u32 FNandGetEccTotalLength(u32 bytes_per_page,u32 ecc_strength)
 // s32 FNandCorrectEcc(uintptr_t base_address,u32 ecc_step_size,u32 hw_ecc_steps,u8* buf ,u32 length)
 // {
 //     u32 i, j;
-// 	u32 value, tmp;
-// 	int stat = 0;
+//  u32 value, tmp;
+//  int stat = 0;
 //     if(!buf)
 //     {
 //         FNAND_ECC_DEBUG_E("page buffer is null");
@@ -128,63 +128,63 @@ u32 FNandGetEccTotalLength(u32 bytes_per_page,u32 ecc_strength)
 //     }
 
 //     /* i  */
-// 	for (i = 0; i < hw_ecc_steps; i++) 
+//  for (i = 0; i < hw_ecc_steps; i++)
 //     {
-// 		for (j = 0; j < 2; j++) {
-// 			value = FNAND_READREG(base_address, 0xB8 + 4 * (2 * i + j));
+//      for (j = 0; j < 2; j++) {
+//          value = FNAND_READREG(base_address, 0xB8 + 4 * (2 * i + j));
 //             FNAND_ECC_DEBUG_W("index:%x i is %d ,j is %d ",
-// 					 0xB8 + 4 * (2 * i + j),i,j);
+//                   0xB8 + 4 * (2 * i + j),i,j);
 //             if (value)
 //             {
-// 				FNAND_ECC_DEBUG_W("offset:%x value:0x%08x\n",
-// 					 0xB8 + 4 * (2 * i + j), value);
-// 				//phytium_nfc_data_dump2(nfc, nfc->dma_buf + (ecc_step_size * i + tmp/8)/512, 512);
-// 			}
+//              FNAND_ECC_DEBUG_W("offset:%x value:0x%08x\n",
+//                   0xB8 + 4 * (2 * i + j), value);
+//              //phytium_nfc_data_dump2(nfc, nfc->dma_buf + (ecc_step_size * i + tmp/8)/512, 512);
+//          }
 
-// 			tmp = value & 0xFFFF;
-// 			if (tmp && (tmp <= 4096)) 
+//          tmp = value & 0xFFFF;
+//          if (tmp && (tmp <= 4096))
 //             {
-// 				tmp -= 1;
-// 				FNAND_ECC_DEBUG_W( "ECC_CORRECT %x %02x\n",
-// 					 ecc_step_size * i + tmp / 8,
-// 					 buf[ecc_step_size * i + tmp / 8]);
+//              tmp -= 1;
+//              FNAND_ECC_DEBUG_W( "ECC_CORRECT %x %02x\n",
+//                   ecc_step_size * i + tmp / 8,
+//                   buf[ecc_step_size * i + tmp / 8]);
 
-// 				buf[ecc_step_size*i + tmp/8] ^= (0x01 << tmp%8);
-// 				stat++;
+//              buf[ecc_step_size*i + tmp/8] ^= (0x01 << tmp%8);
+//              stat++;
 
-// 				FNAND_ECC_DEBUG_W( "ECC_CORRECT xor %x %02x\n",
-// 					 0x01 << tmp % 8,
-// 					 buf[ecc_step_size * i + tmp / 8]);
-// 			}
+//              FNAND_ECC_DEBUG_W( "ECC_CORRECT xor %x %02x\n",
+//                   0x01 << tmp % 8,
+//                   buf[ecc_step_size * i + tmp / 8]);
+//          }
 //             else
 //             {
 //                 FNAND_ECC_DEBUG_E("ECC_CORRECT offset > 4096!\n");
 //             }
 
 //             tmp = (value >> 16) & 0xFFFF;
-// 			if (tmp && (tmp <= 4096) )
+//          if (tmp && (tmp <= 4096) )
 //             {
-// 				tmp -= 1;
-// 				FNAND_ECC_DEBUG_W( "ECC_CORRECT %x %02x\n",
-// 					 ecc_step_size * i + tmp / 8,
-// 					 buf[ecc_step_size * i + tmp / 8]);
+//              tmp -= 1;
+//              FNAND_ECC_DEBUG_W( "ECC_CORRECT %x %02x\n",
+//                   ecc_step_size * i + tmp / 8,
+//                   buf[ecc_step_size * i + tmp / 8]);
 
-// 				buf[ecc_step_size*i + tmp/8] ^= (0x01 << tmp%8);
-// 				stat++;
+//              buf[ecc_step_size*i + tmp/8] ^= (0x01 << tmp%8);
+//              stat++;
 
-// 				FNAND_ECC_DEBUG_W( "ECC_CORRECT xor %x %02x\n",
-// 					 ecc_step_size * i + tmp / 8,
-// 					 buf[ecc_step_size * i + tmp / 8]);
-// 			}
+//              FNAND_ECC_DEBUG_W( "ECC_CORRECT xor %x %02x\n",
+//                   ecc_step_size * i + tmp / 8,
+//                   buf[ecc_step_size * i + tmp / 8]);
+//          }
 //             else
 //             {
 //                 FNAND_ECC_DEBUG_E("ECC_CORRECT offset > 4096!\n");
 //             }
-// 		}
-// 	}
+//      }
+//  }
 
-// 	return stat;
-    
+//  return stat;
+
 // }
 
 // 校验offset 0xb8  + i * 0x10
@@ -195,70 +195,71 @@ u32 FNandGetEccTotalLength(u32 bytes_per_page,u32 ecc_strength)
 
 
 
-s32 FNandCorrectEcc(uintptr_t base_address,u32 ecc_step_size,u32 hw_ecc_steps,u8* buf ,u32 length)
+s32 FNandCorrectEcc(uintptr_t base_address, u32 ecc_step_size, u32 hw_ecc_steps, u8 *buf, u32 length)
 {
     u32 i, j;
-	u32 value, tmp;
-	int stat = 0;
-    if(!buf)
+    u32 value, tmp;
+    int stat = 0;
+    if (!buf)
     {
         FNAND_ECC_DEBUG_E("page buffer is null");
         return -1;
     }
 
     /* i  */
-	for (i = 0; i < hw_ecc_steps; i++) 
+    for (i = 0; i < hw_ecc_steps; i++)
     {
-		for (j = 0; j < 4; j++) {
-			// value = FNAND_READREG(base_address, 0xB8 + 4 * (2 * i + j));
-            value = FNAND_READREG(base_address, 0xB8 + 0x10 * i + 4*j);
+        for (j = 0; j < 4; j++)
+        {
+            // value = FNAND_READREG(base_address, 0xB8 + 4 * (2 * i + j));
+            value = FNAND_READREG(base_address, 0xB8 + 0x10 * i + 4 * j);
             // FNAND_ECC_DEBUG_W("index:%x i is %d ,j is %d ",
-			// 		 0xB8 + 0x10 * i + 4*j,i,j);
+            //       0xB8 + 0x10 * i + 4*j,i,j);
             if (value)
             {
-				// FNAND_ECC_DEBUG_W("offset:%x value:0x%08x\n",
-				// 	 0xB8 + 0x10 * i + 4*j, value);
-				//phytium_nfc_data_dump2(nfc, nfc->dma_buf + (ecc_step_size * i + tmp/8)/512, 512);
-			}
+                // FNAND_ECC_DEBUG_W("offset:%x value:0x%08x\n",
+                //   0xB8 + 0x10 * i + 4*j, value);
+                //phytium_nfc_data_dump2(nfc, nfc->dma_buf + (ecc_step_size * i + tmp/8)/512, 512);
+            }
 
-			tmp = value & 0xFFFF;
-			if (tmp && (tmp <= 4096)) 
+            tmp = value & 0xFFFF;
+            if (tmp && (tmp <= 4096))
             {
-				tmp -= 1;
-				FNAND_ECC_DEBUG_W( "ECC_CORRECT %x %02x\n",
-					 ecc_step_size * i + tmp / 8,
-					 buf[ecc_step_size * i + tmp / 8]);
+                tmp -= 1;
+                FNAND_ECC_DEBUG_W("ECC_CORRECT %x %02x\n",
+                                  ecc_step_size * i + tmp / 8,
+                                  buf[ecc_step_size * i + tmp / 8]);
 
-				buf[ecc_step_size*i + tmp/8] ^= (0x01 << tmp%8);
-				stat++;
+                buf[ecc_step_size * i + tmp / 8] ^= (0x01 << tmp % 8);
+                stat++;
 
-				FNAND_ECC_DEBUG_W( "ECC_CORRECT xor %x %02x\n",
-					 0x01 << tmp % 8,
-					 buf[ecc_step_size * i + tmp / 8]);
-			}
+                FNAND_ECC_DEBUG_W("ECC_CORRECT xor %x %02x\n",
+                                  0x01 << tmp % 8,
+                                  buf[ecc_step_size * i + tmp / 8]);
+            }
 
 
             tmp = (value >> 16) & 0xFFFF;
-			if (tmp && (tmp <= 4096) )
+            if (tmp && (tmp <= 4096))
             {
-				tmp -= 1;
-				FNAND_ECC_DEBUG_W( "ECC_CORRECT %x %02x\n",
-					 ecc_step_size * i + tmp / 8,
-					 buf[ecc_step_size * i + tmp / 8]);
+                tmp -= 1;
+                FNAND_ECC_DEBUG_W("ECC_CORRECT %x %02x\n",
+                                  ecc_step_size * i + tmp / 8,
+                                  buf[ecc_step_size * i + tmp / 8]);
 
-				buf[ecc_step_size*i + tmp/8] ^= (0x01 << tmp%8);
-				stat++;
+                buf[ecc_step_size * i + tmp / 8] ^= (0x01 << tmp % 8);
+                stat++;
 
-				FNAND_ECC_DEBUG_W( "ECC_CORRECT xor %x %02x\n",
-					 ecc_step_size * i + tmp / 8,
-					 buf[ecc_step_size * i + tmp / 8]);
-			}
+                FNAND_ECC_DEBUG_W("ECC_CORRECT xor %x %02x\n",
+                                  ecc_step_size * i + tmp / 8,
+                                  buf[ecc_step_size * i + tmp / 8]);
+            }
 
-		}
-	}
+        }
+    }
 
-	return stat;
-    
+    return stat;
+
 }
 
 

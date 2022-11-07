@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fdebug.h
  * Date: 2021-04-07 09:53:07
  * LastEditTime: 2022-02-17 18:04:58
  * Description:  This files is for debug functions
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -55,23 +55,23 @@ typedef enum
 
 /* select debug log level */
 #ifdef CONFIG_LOG_VERBOS
-#define LOG_LOCAL_LEVEL FT_LOG_VERBOSE
+    #define LOG_LOCAL_LEVEL FT_LOG_VERBOSE
 #endif
 
 #ifdef CONFIG_LOG_ERROR
-#define LOG_LOCAL_LEVEL FT_LOG_ERROR
+    #define LOG_LOCAL_LEVEL FT_LOG_ERROR
 #endif
 
 #ifdef CONFIG_LOG_WARN
-#define LOG_LOCAL_LEVEL FT_LOG_WARN
+    #define LOG_LOCAL_LEVEL FT_LOG_WARN
 #endif
 
 #ifdef CONFIG_LOG_INFO
-#define LOG_LOCAL_LEVEL FT_LOG_INFO
+    #define LOG_LOCAL_LEVEL FT_LOG_INFO
 #endif
 
 #ifdef CONFIG_LOG_DEBUG
-#define LOG_LOCAL_LEVEL FT_LOG_DEBUG
+    #define LOG_LOCAL_LEVEL FT_LOG_DEBUG
 #endif
 
 #define LOG_FORMAT(letter, format) LOG_COLOR_##letter " %s: " format LOG_RESET_COLOR "\r\n"
@@ -107,17 +107,17 @@ typedef enum
 
 /* do not compile log if define CONFIG_LOG_NONE */
 #ifndef CONFIG_LOG_NONE
-#define FT_DEBUG_PRINT_I(TAG, format, ...) EARLY_LOGI(TAG, format, ##__VA_ARGS__)
-#define FT_DEBUG_PRINT_E(TAG, format, ...) EARLY_LOGE(TAG, format, ##__VA_ARGS__)
-#define FT_DEBUG_PRINT_D(TAG, format, ...) EARLY_LOGD(TAG, format, ##__VA_ARGS__)
-#define FT_DEBUG_PRINT_W(TAG, format, ...) EARLY_LOGW(TAG, format, ##__VA_ARGS__)
-#define FT_DEBUG_PRINT_V(TAG, format, ...) EARLY_LOGV(TAG, format, ##__VA_ARGS__)
+    #define FT_DEBUG_PRINT_I(TAG, format, ...) EARLY_LOGI(TAG, format, ##__VA_ARGS__)
+    #define FT_DEBUG_PRINT_E(TAG, format, ...) EARLY_LOGE(TAG, format, ##__VA_ARGS__)
+    #define FT_DEBUG_PRINT_D(TAG, format, ...) EARLY_LOGD(TAG, format, ##__VA_ARGS__)
+    #define FT_DEBUG_PRINT_W(TAG, format, ...) EARLY_LOGW(TAG, format, ##__VA_ARGS__)
+    #define FT_DEBUG_PRINT_V(TAG, format, ...) EARLY_LOGV(TAG, format, ##__VA_ARGS__)
 #else
-#define FT_DEBUG_PRINT_I(TAG, format, ...)
-#define FT_DEBUG_PRINT_E(TAG, format, ...)
-#define FT_DEBUG_PRINT_D(TAG, format, ...)
-#define FT_DEBUG_PRINT_W(TAG, format, ...)
-#define FT_DEBUG_PRINT_V(TAG, format, ...)
+    #define FT_DEBUG_PRINT_I(TAG, format, ...)
+    #define FT_DEBUG_PRINT_E(TAG, format, ...)
+    #define FT_DEBUG_PRINT_D(TAG, format, ...)
+    #define FT_DEBUG_PRINT_W(TAG, format, ...)
+    #define FT_DEBUG_PRINT_V(TAG, format, ...)
 #endif
 
 #define FT_RAW_PRINTF(format, ...) PORT_KPRINTF(format, ##__VA_ARGS__)

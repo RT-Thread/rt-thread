@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fi2c_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:36:32
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -38,7 +38,7 @@
 extern "C"
 {
 #endif
-    /***************************** Include Files *********************************/
+/***************************** Include Files *********************************/
 
 #include "fparameters.h"
 #include "fio.h"
@@ -98,7 +98,7 @@ extern "C"
 #define FI2C_COMP_VERSION_OFFSET 0xf8
 #define FI2C_COMP_TYPE_OFFSET 0xfc
 
-/** @name FI2C_CON_OFFSET Register 
+/** @name FI2C_CON_OFFSET Register
  */
 #define FI2C_CON_MASTER_MODE (0x1 << 0)
 #define FI2C_CON_SLAVE_MODE (0x0 << 0)
@@ -119,7 +119,7 @@ extern "C"
 #define FI2C_CON_RESTART_EN (0x1 << 5)
 #define FI2C_CON_SLAVE_DISABLE (0x1 << 6)
 
-/** @name FI2C_TAR_OFFSET Register 
+/** @name FI2C_TAR_OFFSET Register
  */
 #define FI2C_IC_TAR_MASK GENMASK(9, 0)
 #define FI2C_GC_OR_START (0x1 << 10)
@@ -127,15 +127,15 @@ extern "C"
 #define FI2C_TAR_ADR_7BIT (0x0 << 12)
 #define FI2C_TAR_ADR_10BIT (0x1 << 12)
 
-/** @name FI2C_SAR_OFFSET Register 
+/** @name FI2C_SAR_OFFSET Register
  */
 #define FI2C_IC_SAR_MASK GENMASK(9, 0) //Slave addr when in slave mode
 
-/** @name FI2C_HS_MADDR_OFFSET Register 
+/** @name FI2C_HS_MADDR_OFFSET Register
  */
 #define FI2C_IC_HS_MAR GENMASK(2, 0) //I2C High Speed模式主机编码
 
-/** @name FI2C_DATA_CMD_OFFSET Register 
+/** @name FI2C_DATA_CMD_OFFSET Register
  */
 #define FI2C_DATA_MASK GENMASK(7, 0)
 #define FI2C_DATA_CMD_READ (0x1 << 8)
@@ -143,9 +143,9 @@ extern "C"
 #define FI2C_DATA_CMD_STOP (0x1 << 9)
 #define FI2C_DATA_CMD_RESTART (0x1 << 10)
 
-/** @name FI2C_INTR_STAT_OFFSET Register 
+/** @name FI2C_INTR_STAT_OFFSET Register
  *  @name FI2C_INTR_MASK_OFFSET Register
- *  @name FI2C_RAW_INTR_STAT_OFFSET Register  
+ *  @name FI2C_RAW_INTR_STAT_OFFSET Register
  */
 #define FI2C_INTR_RX_UNDER (0x1 << 0)   /* 接收缓冲区为空 */
 #define FI2C_INTR_RX_OVER (0x1 << 1)    /* 接收缓冲区大小达到 IC_RX_BUFFER_DEPTH ，且还继续从外部接收数据 */
@@ -164,26 +164,26 @@ extern "C"
 
 #define FI2C_INTR_MASTER_WR_MASK (FI2C_INTR_TX_EMPTY | FI2C_INTR_TX_ABRT)
 #define FI2C_INTR_MASTER_RD_MASK (FI2C_INTR_MASTER_WR_MASK | FI2C_INTR_RX_FULL)
-                                  
+
 #define FI2C_INTR_SLAVE_DEF_MASK (FI2C_INTR_RX_FULL | FI2C_INTR_STOP_DET | \
                                   FI2C_INTR_RD_REQ | FI2C_INTR_RX_DONE |   \
                                   FI2C_INTR_RX_UNDER | FI2C_INTR_TX_ABRT |\
                                   FI2C_INTR_START_DET)
 
-/** @name FI2C_RX_TL_OFFSET Register 
+/** @name FI2C_RX_TL_OFFSET Register
  */
 #define FI2C_RX_TL_MASK GENMASK(7, 0)
 
-/** @name FI2C_TX_TL_OFFSET Register 
+/** @name FI2C_TX_TL_OFFSET Register
  */
 #define FI2C_TX_TL_MASK GENMASK(7, 0)
 
-/** @name FI2C_IC_ENABLE_OFFSET Register 
+/** @name FI2C_IC_ENABLE_OFFSET Register
  */
 #define FI2C_ENABLE_CONTROLLER (0x1 << 0)
 #define FI2C_DISABLE_CONTROLLER (0x0 << 0)
 
-/** @name FI2C_STATUS_OFFSET Register 
+/** @name FI2C_STATUS_OFFSET Register
  */
 #define FI2C_STATUS_ACTIVITY (0x1 << 0)
 #define FI2C_STATUS_TFNF (0x1 << 1)
@@ -193,7 +193,7 @@ extern "C"
 #define FI2C_STATUS_MST_ACTIVITY (0x1 << 5)
 #define FI2C_STATUS_SLV_ACTIVITY (0x1 << 6)
 
-/** @name FI2C_ENABLE_OFFSET Register 
+/** @name FI2C_ENABLE_OFFSET Register
  */
 #define FI2C_IC_ENABLE (0x1 << 0)
 #define FI2C_IC_DISABLE (0x0 << 0)
@@ -225,7 +225,7 @@ enum
 {
     FI2C_STANDARD_SPEED = 0,
     FI2C_FAST_SPEED,
-    
+
     FI2C_SPEED_MODE_MAX
 };
 /***************** Macros (Inline Functions) Definitions *********************/
@@ -249,20 +249,20 @@ enum
 
 #define FI2C_READ_RAW_INTR_STAT(addr) FI2C_READ_REG32((addr), FI2C_RAW_INTR_STAT_OFFSET)
 
-    inline static u32 FI2cGetEnable(uintptr addr)
-    {
-        return FI2C_READ_REG32(addr, FI2C_ENABLE_STATUS_OFFSET);
-    }
+inline static u32 FI2cGetEnable(uintptr addr)
+{
+    return FI2C_READ_REG32(addr, FI2C_ENABLE_STATUS_OFFSET);
+}
 
-    /************************** Function Prototypes ******************************/
-    FError FI2cSetEnable(uintptr addr, boolean enable);
-    FError FI2cSetSpeed(uintptr addr, u32 speed_rate);
-    FError FI2cWaitStatus(uintptr addr, u32 stat_bit);
-    FError FI2cWaitBusBusy(uintptr addr);
-    FError FI2cSetTar(uintptr addr, u32 tar_addr);
-    FError FI2cSetSar(uintptr addr, u32 sar_addr);
-    FError FI2cFlushRxFifo(uintptr addr);
-    u32 FI2cClearIntrBits(uintptr addr, u32 *last_err_p);
+/************************** Function Prototypes ******************************/
+FError FI2cSetEnable(uintptr addr, boolean enable);
+FError FI2cSetSpeed(uintptr addr, u32 speed_rate);
+FError FI2cWaitStatus(uintptr addr, u32 stat_bit);
+FError FI2cWaitBusBusy(uintptr addr);
+FError FI2cSetTar(uintptr addr, u32 tar_addr);
+FError FI2cSetSar(uintptr addr, u32 sar_addr);
+FError FI2cFlushRxFifo(uintptr addr);
+u32 FI2cClearIntrBits(uintptr addr, u32 *last_err_p);
 
 #ifdef __cplusplus
 }

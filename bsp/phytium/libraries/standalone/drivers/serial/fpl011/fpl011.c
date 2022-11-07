@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpl011.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:07:24
  * Description:  This files is for uart functions
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -39,7 +39,7 @@ u32 FPl011SendBuffer(FPl011 *uart_p);
 u32 FPl011ReceiveBuffer(FPl011 *uart_p);
 
 static void FPl011StubHandler(void *Args, u32 Event,
-                             u32 ByteCount);
+                              u32 ByteCount);
 /*****************************************************************************/
 
 
@@ -68,8 +68,8 @@ FError FPl011CfgInitialize(FPl011 *uart_p, FPl011Config *config)
     uart_p->rxbs_error = 0;
 
     uart_p->is_ready = FT_COMPONENT_IS_READY;
-    ret = FPl011SetBaudRate(uart_p,uart_p->config.baudrate);
-    if(ret != FT_SUCCESS) 
+    ret = FPl011SetBaudRate(uart_p, uart_p->config.baudrate);
+    if (ret != FT_SUCCESS)
     {
         uart_p->is_ready = 0U;
     }
@@ -93,7 +93,7 @@ FError FPl011CfgInitialize(FPl011 *uart_p, FPl011Config *config)
         reg_value = 0;
         FUART_WRITEREG32(uart_p->config.base_address, FPL011IMSC_OFFSET, reg_value);
     }
-    
+
     return FT_SUCCESS;
 }
 
@@ -106,7 +106,7 @@ FError FPl011CfgInitialize(FPl011 *uart_p, FPl011Config *config)
  * @param uart_p is a pointer to the FPl011 instance.
  * @param byte_p  is pointer to a buffer of data to be sent.
  * @param  length  ontains the number of bytes to be sent. Any data that was already put into the
- *		transmit FIFO will be sent.
+ *      transmit FIFO will be sent.
  */
 u32 FPl011Send(FPl011 *uart_p, u8 *byte_p, u32 length)
 {
@@ -125,7 +125,7 @@ u32 FPl011Send(FPl011 *uart_p, u8 *byte_p, u32 length)
 
 
 static void FPl011StubHandler(void *args, u32 event,
-                             u32 byte_count)
+                              u32 byte_count)
 {
     (void)args;
     (void)event;
@@ -146,7 +146,7 @@ u32 FPl011SendBuffer(FPl011 *uart_p)
     u32 isbusy;
 
     isbusy = (u32)FUART_ISTRANSMITBUSY(uart_p->config.base_address);
-    while(isbusy == TRUE)
+    while (isbusy == TRUE)
     {
         isbusy = (u32)FUART_ISTRANSMITBUSY(uart_p->config.base_address);
     }
@@ -174,7 +174,7 @@ u32 FPl011SendBuffer(FPl011 *uart_p)
  * from the device and store it into the specified buffer.
  * @param  uart_p is a pointer to the FPl011 instance
  * @param  byte_p is pointer to buffer for data to be received into
- * @param  length is the number of bytes to be received. 
+ * @param  length is the number of bytes to be received.
  * @return The number of bytes received.
  */
 u32 FPl011Receive(FPl011 *uart_p, u8 *byte_p, u32 length)
@@ -202,7 +202,7 @@ u32 FPl011ReceiveBuffer(FPl011 *uart_p)
     u32 event;
     u32 event_data;
     u32 byte_value;
-    
+
     while ((received_count < uart_p->receive_buffer.remaining_bytes) && !FUART_ISRECEIVEDATA(uart_p->config.base_address))
     {
         byte_value = FUART_READREG32(uart_p->config.base_address, FPL011DR_OFFSET);

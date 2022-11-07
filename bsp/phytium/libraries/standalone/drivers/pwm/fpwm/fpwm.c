@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpwm.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -53,14 +53,15 @@ FError FPwmReset(FPwmCtrl *pctrl, u32 channel)
     uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
-	reg_val |= FPWM_TIM_CTRL_RESET;
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+    reg_val |= FPWM_TIM_CTRL_RESET;
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 
     /* Check for the reset complete*/
     do
     {
         reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
-    } while ((FPWM_TIM_CTRL_RESET & reg_val) && (0 <= --timeout));
+    }
+    while ((FPWM_TIM_CTRL_RESET & reg_val) && (0 <= --timeout));
 
     if (0 >= timeout)
     {
@@ -85,8 +86,8 @@ void FPwmEnable(FPwmCtrl *pctrl, u32 channel)
     uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
-	reg_val |= FPWM_TIM_CTRL_ENABLE;
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+    reg_val |= FPWM_TIM_CTRL_ENABLE;
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 
     pctrl->channel_ctrl_enable[channel] = TRUE;
 }
@@ -103,11 +104,11 @@ void FPwmDisable(FPwmCtrl *pctrl, u32 channel)
     FASSERT(pctrl != NULL);
     FASSERT(channel < FPWM_CHANNEL_NUM);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
-	reg_val &= (~FPWM_TIM_CTRL_ENABLE);
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+    reg_val &= (~FPWM_TIM_CTRL_ENABLE);
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 
     pctrl->channel_ctrl_enable[channel] = FALSE;
 
@@ -125,29 +126,29 @@ static void FPwmTimCtrlModeSet(FPwmCtrl *pctrl, u32 channel, FPwmTimCtrlMode mod
 {
     FASSERT(pctrl != NULL);
     FASSERT(mode < FPWM_TIM_CTRL_MODE_NUM);
-     /* check whether the state is disabled */
+    /* check whether the state is disabled */
     FASSERT(pctrl->channel_ctrl_enable[channel] == FALSE);
 
     u32 reg_val = 0;
 
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
-    
-    switch(mode)
+
+    switch (mode)
     {
-        /* modulo */
-        case FPWM_MODULO:
-            reg_val &= (~FPWM_TIM_CTRL_MODE_UD);
-            break;
-        /* up-and-down */
-        case FPWM_UP_DOWN:
-		    reg_val |= FPWM_TIM_CTRL_MODE_UD;
-            break;
-        default:
-            break;
+    /* modulo */
+    case FPWM_MODULO:
+        reg_val &= (~FPWM_TIM_CTRL_MODE_UD);
+        break;
+    /* up-and-down */
+    case FPWM_UP_DOWN:
+        reg_val |= FPWM_TIM_CTRL_MODE_UD;
+        break;
+    default:
+        break;
     }
 
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 }
 
 /**
@@ -161,13 +162,13 @@ static void FPwmTimInterruptEnable(FPwmCtrl *pctrl, u32 channel)
 {
     FASSERT(pctrl != NULL);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
     reg_val &= (~(FPWM_TIM_CTRL_OVFIF_ENABLE | FPWM_TIM_CTRL_GIE));
     reg_val |= (FPWM_TIM_CTRL_OVFIF_ENABLE | FPWM_TIM_CTRL_GIE);
-      
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 }
 
 /**
@@ -181,12 +182,12 @@ static void FPwmTimInterruptDisable(FPwmCtrl *pctrl, u32 channel)
 {
     FASSERT(pctrl != NULL);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
     reg_val &= (~(FPWM_TIM_CTRL_OVFIF_ENABLE | FPWM_TIM_CTRL_GIE));
-      
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 }
 
 /**
@@ -199,15 +200,15 @@ static void FPwmTimInterruptDisable(FPwmCtrl *pctrl, u32 channel)
  */
 static void FPwmDivSet(FPwmCtrl *pctrl, u32 channel, u16 div)
 {
-	u32 reg_val = 0;
+    u32 reg_val = 0;
     FASSERT(pctrl != NULL);
     FASSERT(div < FPWM_TIM_CTRL_DIV_MAX);
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_TIM_CTRL_OFFSET);
-	reg_val |= (FPWM_TIM_CTRL_DIV_MASK & FPWM_TIM_CTRL_DIV(div));
+    reg_val |= (FPWM_TIM_CTRL_DIV_MASK & FPWM_TIM_CTRL_DIV(div));
 
-	FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
+    FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
 }
 
 /**
@@ -222,8 +223,8 @@ static void FPwmPeriodSet(FPwmCtrl *pctrl, u32 channel, u16 pwm_period)
 {
     FASSERT(pctrl != NULL);
     u32 reg_val = 0;
-	u64 cycles = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    u64 cycles = 0;
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_PERIOD_OFFSET);
     reg_val &= (~FPWM_PERIOD_CCR_MASK);
@@ -245,21 +246,21 @@ static void FPwmDutySourceSet(FPwmCtrl *pctrl, u32 channel, FPwmDutySourceMode d
     FASSERT(pctrl != NULL);
     FASSERT(duty_source < FPWM_DUTY_SEL_MODE_NUM);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
     switch (duty_source)
     {
-        /* duty from PWM_CCR */
-        case FPWM_DUTY_CCR:
-            reg_val &= (~FPWM_CTRL_DUTY_SOURCE_FIFO);
-            break;
-        /* from FIFO */
-        case FPWM_DUTY_FIFO:
-		    reg_val |= FPWM_CTRL_DUTY_SOURCE_FIFO;
-            break;
-        default:
-            break;
+    /* duty from PWM_CCR */
+    case FPWM_DUTY_CCR:
+        reg_val &= (~FPWM_CTRL_DUTY_SOURCE_FIFO);
+        break;
+    /* from FIFO */
+    case FPWM_DUTY_FIFO:
+        reg_val |= FPWM_CTRL_DUTY_SOURCE_FIFO;
+        break;
+    default:
+        break;
     }
 
     FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
@@ -277,29 +278,29 @@ FError FPwmPulseSet(FPwmCtrl *pctrl, u32 channel, u16 pwm_ccr)
 {
     FASSERT(pctrl != NULL);
     FASSERT(channel < FPWM_CHANNEL_NUM);
-	u32 reg_val = 0;
+    u32 reg_val = 0;
     u64 cycles = 0;
     u32 state = 0;
     u16 pwm_period_ccr = 0;
 
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     /* Check the pwm_ccr < pwm_period_ccr */
     pwm_period_ccr = (u16)FPWM_READ_REG32(base_addr, FPWM_PERIOD_OFFSET);
-    if(pwm_ccr > pwm_period_ccr)
+    if (pwm_ccr > pwm_period_ccr)
     {
         FPWM_ERROR("pwm ccr is bigger than period");
         return FPWM_ERR_INVAL_PARM;
     }
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
-    
+
     /* Check the duty source */
-    if(reg_val & FPWM_CTRL_DUTY_SOURCE_FIFO)
+    if (reg_val & FPWM_CTRL_DUTY_SOURCE_FIFO)
     {
         /* Check the duty fifo is not full */
         state = FPWM_READ_REG32(base_addr, FPWM_STATE_OFFSET);
-        if(state & FPWM_STATE_FIFO_FULL)
+        if (state & FPWM_STATE_FIFO_FULL)
         {
             FPWM_ERROR("pwm state fifo full");
             return FPWM_ERR_CMD_FAILED;
@@ -311,7 +312,7 @@ FError FPwmPulseSet(FPwmCtrl *pctrl, u32 channel, u16 pwm_ccr)
     reg_val |= (pwm_ccr & FPWM_CCR_MASK);
 
     FPWM_WRITE_REG32(base_addr, FPWM_CCR_OFFSET, reg_val);
-     
+
     return FPWM_SUCCESS;
 }
 
@@ -326,13 +327,13 @@ static void FPwmCtrlModeSet(FPwmCtrl *pctrl, u32 channel)
 {
     FASSERT(pctrl != NULL);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
-    reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET); 
-        
-	reg_val |= FPWM_CTRL_MODE_OUTPUT;
-           
-	FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
+    reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
+
+    reg_val |= FPWM_CTRL_MODE_OUTPUT;
+
+    FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
 }
 
 /**
@@ -349,7 +350,7 @@ static void FPwmPolaritySet(FPwmCtrl *pctrl, u32 channel, FPwmPolarity polarity)
     FASSERT(polarity < FPWM_POLARITY_NUM);
     /* check whether the state is disabled */
     FASSERT(pctrl->channel_ctrl_enable[channel] == FALSE);
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     u32 reg_val = 0;
     reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
@@ -373,14 +374,15 @@ static FError FPwmDbReset(FPwmCtrl *pctrl)
     uintptr base_addr = pctrl->config.db_base_addr;
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_DB_CTRL_OFFSET);
-	reg_val |= FPWM_DB_CTRL_RESET;
-	FPWM_WRITE_REG32(base_addr, FPWM_DB_CTRL_OFFSET, reg_val);
+    reg_val |= FPWM_DB_CTRL_RESET;
+    FPWM_WRITE_REG32(base_addr, FPWM_DB_CTRL_OFFSET, reg_val);
 
     /* Check for the db reset complete*/
     do
     {
         reg_val = FPWM_READ_REG32(base_addr, FPWM_DB_CTRL_OFFSET);
-    } while ((FPWM_DB_CTRL_RESET & reg_val) && (0 <= --timeout));
+    }
+    while ((FPWM_DB_CTRL_RESET & reg_val) && (0 <= --timeout));
 
     if (0 >= timeout)
     {
@@ -403,12 +405,12 @@ FError FPwmDbPolaritySet(FPwmCtrl *pctrl, FPwmDbPolarity db_polarity)
     FASSERT(db_polarity < FPWM_DB_POLARITY_NUM);
     u32 reg_val = 0;
     uintptr base_addr = pctrl->config.db_base_addr;
-    
+
     reg_val = FPWM_READ_REG32(base_addr, FPWM_DB_CTRL_OFFSET);
-	reg_val &= (~FPWM_DB_CTRL_POLSEL_MASK);
-	reg_val |= FPWM_DB_CTRL_POLSEL(db_polarity);
+    reg_val &= (~FPWM_DB_CTRL_POLSEL_MASK);
+    reg_val |= FPWM_DB_CTRL_POLSEL(db_polarity);
     FPWM_WRITE_REG32(base_addr, FPWM_DB_CTRL_OFFSET, reg_val);
-    
+
     return FPWM_SUCCESS;
 }
 
@@ -417,7 +419,7 @@ FError FPwmDbPolaritySet(FPwmCtrl *pctrl, FPwmDbPolarity db_polarity)
  * @msg:  config pwm db fall cycle
  * @param {FPwmCtrl} *pctrl, instance of FPWM controller
  * @param {u16} fall_edge_delay, db fall cycle parameters
- * @return 
+ * @return
  */
 static void FPwmDbFallCycleSet(FPwmCtrl *pctrl, u16 fall_edge_delay)
 {
@@ -440,7 +442,7 @@ static void FPwmDbFallCycleSet(FPwmCtrl *pctrl, u16 fall_edge_delay)
  * @msg:  config pwm db rise cycle
  * @param {FPwmCtrl} *pctrl, instance of FPWM controller
  * @param {u16} rise_edge_delay, db rise cycle parameters
- * @return 
+ * @return
  */
 static void FPwmDbRiseCycleSet(FPwmCtrl *pctrl, u16 rise_edge_delay)
 {
@@ -451,7 +453,7 @@ static void FPwmDbRiseCycleSet(FPwmCtrl *pctrl, u16 rise_edge_delay)
     uintptr db_base_addr = pctrl->config.db_base_addr;
 
     u32 pwm_period = FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET);
-    
+
     reg_val = FPWM_READ_REG32(db_base_addr, FPWM_DB_DLY_OFFSET);
     reg_val &= (~FPWM_DB_DLY_RISE_MASK);
     reg_val |= (u32)(rise_edge_delay & FPWM_DB_DLY_RISE_MASK);
@@ -473,15 +475,15 @@ static void FPwmDbInModeSet(FPwmCtrl *pctrl, FPwmDbInMode db_in_mode)
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_DB_CTRL_OFFSET);
     switch (db_in_mode)
-    {  
-        case FPWM_DB_IN_MODE_PWM0:
-            reg_val &= (~FPWM_DB_CTRL_IN_MODE);
-            break;
-        case FPWM_DB_IN_MODE_PWM1:
-		    reg_val |= FPWM_DB_CTRL_IN_MODE;
-            break;
-        default:
-            break;
+    {
+    case FPWM_DB_IN_MODE_PWM0:
+        reg_val &= (~FPWM_DB_CTRL_IN_MODE);
+        break;
+    case FPWM_DB_IN_MODE_PWM1:
+        reg_val |= FPWM_DB_CTRL_IN_MODE;
+        break;
+    default:
+        break;
     }
 
     FPWM_WRITE_REG32(base_addr, FPWM_DB_CTRL_OFFSET, reg_val);
@@ -512,58 +514,58 @@ void FPwmInterruptEnable(FPwmCtrl *pctrl, u32 channel, FPwmIntrEventType intr_ty
     FASSERT(pctrl != NULL);
     FASSERT(channel < FPWM_CHANNEL_NUM);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
 
-    if(intr_type == FPWM_INTR_EVENT_COUNTER)
+    if (intr_type == FPWM_INTR_EVENT_COUNTER)
     {
         reg_val &= (~FPWM_CTRL_INTR_COUNTER_ENABLE);
         reg_val |= FPWM_CTRL_INTR_COUNTER_ENABLE;
     }
 
-    if(intr_type == FPWM_INTR_EVENT_FIFO_EMPTY)
+    if (intr_type == FPWM_INTR_EVENT_FIFO_EMPTY)
     {
         reg_val &= (~FPWM_CTRL_INTR_FIFO_EMPTY_ENABLE);
         reg_val |= FPWM_CTRL_INTR_FIFO_EMPTY_ENABLE;
     }
-      
-	FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
+
+    FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
 }
 
 /**
  * @name: FPwmInterruptDisable
- * @msg:  disable pwm compare output interrupt 
+ * @msg:  disable pwm compare output interrupt
  * @param {FPwmCtrl} *pctrl, instance of FPWM controller
  * @param {u32} channel, pwm module's channel, 0/1
  * @param {FPwmIntrEventType} intr_type, pwm interrupt event type
- * @return 
+ * @return
  */
 void FPwmInterruptDisable(FPwmCtrl *pctrl, u32 channel, FPwmIntrEventType intr_type)
 {
     FASSERT(pctrl != NULL);
     FASSERT(channel < FPWM_CHANNEL_NUM);
     u32 reg_val = 0;
-    uintptr base_addr = pctrl->config.pwm_base_addr+ FPWM_N(channel);
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
-    reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET); 
+    reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
 
-    if(intr_type == FPWM_INTR_EVENT_COUNTER)
+    if (intr_type == FPWM_INTR_EVENT_COUNTER)
     {
         reg_val &= (~FPWM_CTRL_INTR_COUNTER_ENABLE);
     }
 
-    if(intr_type == FPWM_INTR_EVENT_FIFO_EMPTY)
+    if (intr_type == FPWM_INTR_EVENT_FIFO_EMPTY)
     {
         reg_val &= (~FPWM_CTRL_INTR_FIFO_EMPTY_ENABLE);
     }
 
-	FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
+    FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
 }
 
 /**
  * @name: FPwmDbVariableSet
- * @msg:  set pwm db Variable config, users need call this function before 
+ * @msg:  set pwm db Variable config, users need call this function before
  *             FPwmVariableSet if you want to use deadband function.
  * @param {FPwmCtrl} *pctrl, instance of FPWM controller
  * @param {FPwmDbVariableConfig} db_cfg_p, db config parameters, include mode and cycles
@@ -573,7 +575,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
 {
     FASSERT(pctrl != NULL);
     FASSERT(db_cfg_p != NULL);
-   
+
     FError ret = FPWM_SUCCESS;
 
     ret = FPwmDbReset(pctrl);
@@ -584,7 +586,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
     }
 
     FPwmDbRiseCycleSet(pctrl, db_cfg_p->db_rise_cycle);
-    
+
     FPwmDbFallCycleSet(pctrl, db_cfg_p->db_fall_cycle);
 
     ret = FPwmDbPolaritySet(pctrl, db_cfg_p->db_polarity_sel);
@@ -598,7 +600,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
 
     FPwmDbOutModeSet(pctrl, db_cfg_p->db_out_mode);
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -616,29 +618,29 @@ FError FPwmDbVariableGet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
 
     uintptr db_base_addr = pctrl->config.db_base_addr;
 
-	u32 db_ctrl = FPWM_READ_REG32(db_base_addr, FPWM_DB_CTRL_OFFSET);
+    u32 db_ctrl = FPWM_READ_REG32(db_base_addr, FPWM_DB_CTRL_OFFSET);
     /* db input source*/
-    db_cfg_p->db_in_mode = 
-            (db_ctrl & FPWM_DB_CTRL_IN_MODE) ? FPWM_DB_IN_MODE_PWM1 : FPWM_DB_IN_MODE_PWM0;
+    db_cfg_p->db_in_mode =
+        (db_ctrl & FPWM_DB_CTRL_IN_MODE) ? FPWM_DB_IN_MODE_PWM1 : FPWM_DB_IN_MODE_PWM0;
 
     /* db polarity select*/
-    db_cfg_p->db_polarity_sel = FPWM_DB_CTRL_POLSEL_GET(db_ctrl & FPWM_DB_CTRL_POLSEL_MASK); 
+    db_cfg_p->db_polarity_sel = FPWM_DB_CTRL_POLSEL_GET(db_ctrl & FPWM_DB_CTRL_POLSEL_MASK);
     /* db output mode*/
     db_cfg_p->db_out_mode = FPWM_DB_CTRL_OUT_MODE_GET(db_ctrl & FPWM_DB_CTRL_OUT_MODE_MASK);
 
-	u32 db_dly = FPWM_READ_REG32(db_base_addr, FPWM_DB_DLY_OFFSET);
+    u32 db_dly = FPWM_READ_REG32(db_base_addr, FPWM_DB_DLY_OFFSET);
     /* db falling edge delay cycle */
     db_cfg_p->db_fall_cycle = FPWM_DB_DLY_FALL_GET(db_dly & FPWM_DB_DLY_FALL_MASK);
-	/* db rising edge delay cycle */
+    /* db rising edge delay cycle */
     db_cfg_p->db_rise_cycle = (db_dly & FPWM_DB_DLY_RISE_MASK);
-	
+
     return ret;
 
 }
 
 /**
  * @name: FPwmVariableSet
- * @msg:  set pwm channel variable configuration, users need call this function after 
+ * @msg:  set pwm channel variable configuration, users need call this function after
  *             FPwmDbVariableSet if you want to use deadband function.
  * @param {FPwmCtrl} *pctrl, instance of FPWM controller
  * @param {u32} channel, pwm module's channel, 0/1
@@ -647,7 +649,7 @@ FError FPwmDbVariableGet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
  */
 FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg_p)
 {
-	FASSERT(pctrl != NULL);
+    FASSERT(pctrl != NULL);
     FASSERT(channel < FPWM_CHANNEL_NUM);
     FASSERT(pwm_cfg_p != NULL);
     FError ret = FPWM_SUCCESS;
@@ -656,8 +658,8 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
     FPwmLsdEnable(FLSD_CONFIG_BASE, pctrl->config.instance_id);
 
     /* bit[0]:set pwm_tim_ctrl SW_RST */
-	ret = FPwmReset(pctrl, channel);
-    if(ret != FPWM_SUCCESS)
+    ret = FPwmReset(pctrl, channel);
+    if (ret != FPWM_SUCCESS)
     {
         FPWM_ERROR("FPwmVariableSet FPwmReset failed");
         return FPWM_ERR_CMD_FAILED;
@@ -682,7 +684,7 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
     FPwmCtrlModeSet(pctrl, channel);
 
     /*bit[3]:pwm control mode irq */
-    FPwmInterruptEnable(pctrl, channel, FPWM_INTR_EVENT_COUNTER );
+    FPwmInterruptEnable(pctrl, channel, FPWM_INTR_EVENT_COUNTER);
     FPwmInterruptEnable(pctrl, channel, FPWM_INTR_EVENT_FIFO_EMPTY);
 
     /*bit[4~6]:pwm ctrl polarity config CMP:0b100*/
@@ -693,7 +695,7 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
 
     /*pwm pulse set, duty */
     ret = FPwmPulseSet(pctrl, channel, pwm_cfg_p->pwm_pulse);
-    if(ret != FPWM_SUCCESS)
+    if (ret != FPWM_SUCCESS)
     {
         FPWM_ERROR("FPwmVariableSet FPwmPulseSet failed");
         return FPWM_ERR_CMD_FAILED;
@@ -721,8 +723,8 @@ FError FPwmVariableGet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
 
     u32 tim_ctrl = FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CTRL_OFFSET);
     /* tim_ctrl mode, counter mode */
-    pwm_cfg_p->tim_ctrl_mode = 
-            (tim_ctrl & FPWM_TIM_CTRL_MODE_UD)? FPWM_UP_DOWN : FPWM_MODULO;
+    pwm_cfg_p->tim_ctrl_mode =
+        (tim_ctrl & FPWM_TIM_CTRL_MODE_UD) ? FPWM_UP_DOWN : FPWM_MODULO;
     /* pwm divider */
     pwm_cfg_p->tim_ctrl_div = FPWM_TIM_CTRL_DIV_GET(tim_ctrl & FPWM_TIM_CTRL_DIV_MASK);
 
@@ -732,19 +734,19 @@ FError FPwmVariableGet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
 
     u32 pwm_ctrl = FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET);
     /* pwm mode, compare output */
-    pwm_cfg_p->pwm_mode = 
-            (pwm_ctrl & FPWM_CTRL_MODE_OUTPUT)?FPWM_OUTPUT_COMPARE:FPWM_NONE_MODE;
-    
+    pwm_cfg_p->pwm_mode =
+        (pwm_ctrl & FPWM_CTRL_MODE_OUTPUT) ? FPWM_OUTPUT_COMPARE : FPWM_NONE_MODE;
+
     /* pwm compare output polarity */
-	pwm_cfg_p->pwm_polarity = FPWM_CTRL_CMP_GET(pwm_ctrl & FPWM_CTRL_CMP_MASK);
+    pwm_cfg_p->pwm_polarity = FPWM_CTRL_CMP_GET(pwm_ctrl & FPWM_CTRL_CMP_MASK);
 
     /* pwm duty value source */
-	pwm_cfg_p->pwm_duty_source_mode = 
-            (pwm_ctrl & FPWM_CTRL_DUTY_SOURCE_FIFO)?FPWM_DUTY_FIFO:FPWM_DUTY_CCR;
+    pwm_cfg_p->pwm_duty_source_mode =
+        (pwm_ctrl & FPWM_CTRL_DUTY_SOURCE_FIFO) ? FPWM_DUTY_FIFO : FPWM_DUTY_CCR;
 
     /* pwm pulse value */
     u32 pwm_ccr = FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET);
-	pwm_cfg_p->pwm_pulse = (u16)(pwm_ccr & FPWM_CCR_MASK);
+    pwm_cfg_p->pwm_pulse = (u16)(pwm_ccr & FPWM_CCR_MASK);
 
     return ret;
 }
@@ -757,12 +759,12 @@ FError FPwmVariableGet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
  */
 void FPwmDeInitialize(FPwmCtrl *pctrl)
 {
-	FASSERT(pctrl);
+    FASSERT(pctrl);
 
-	pctrl->is_ready = 0;
-	memset(pctrl, 0, sizeof(*pctrl));
+    pctrl->is_ready = 0;
+    memset(pctrl, 0, sizeof(*pctrl));
 
-	return;
+    return;
 }
 
 /**
@@ -774,24 +776,24 @@ void FPwmDeInitialize(FPwmCtrl *pctrl)
  */
 FError FPwmCfgInitialize(FPwmCtrl *pctrl, const FPwmConfig *input_config_p)
 {
-	FASSERT(pctrl && input_config_p);
+    FASSERT(pctrl && input_config_p);
 
-	FError ret = FPWM_SUCCESS;
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == pctrl->is_ready)
-	{
-		FPWM_WARN("device is already initialized!!!");
-	}
+    FError ret = FPWM_SUCCESS;
+    /*
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == pctrl->is_ready)
+    {
+        FPWM_WARN("device is already initialized!!!");
+    }
 
-    /*Set default values and configuration data */	
-	FPwmDeInitialize(pctrl);
+    /*Set default values and configuration data */
+    FPwmDeInitialize(pctrl);
 
-	pctrl->config = *input_config_p;
+    pctrl->config = *input_config_p;
 
     ret = FPwmDbReset(pctrl);
     if (ret != FPWM_SUCCESS)
@@ -800,7 +802,7 @@ FError FPwmCfgInitialize(FPwmCtrl *pctrl, const FPwmConfig *input_config_p)
         return FPWM_ERR_CMD_FAILED;
     }
 
-	pctrl->is_ready = FT_COMPONENT_IS_READY;
+    pctrl->is_ready = FT_COMPONENT_IS_READY;
 
     return ret;
 }

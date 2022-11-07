@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe      first commit 
+ * 2022-10-26  huanghe      first commit
  * 2022-10-26  zhugengyu    support aarch64
  *
  */
@@ -19,16 +19,16 @@
 #include "phytium_cpu.h"
 
 #if defined(TARGET_ARMV8_AARCH64)
-#include "cpuport.h"
-#include "gtimer.h"
-#include "mmu.h"
+    #include "cpuport.h"
+    #include "gtimer.h"
+    #include "mmu.h"
 #endif
 
 #ifdef RT_USING_SMP
 #include <interrupt.h>
 
 #if defined(TARGET_ARMV8_AARCH64)
-#include "psci.h"
+    #include "psci.h"
 #endif
 
 #include "fpsci.h"
@@ -65,7 +65,7 @@ void rt_hw_secondary_cpu_up(void)
 {
     rt_uint32_t i;
     rt_uint32_t cpu_mask = 0;
-    
+
     rt_kprintf("rt_hw_secondary_cpu_up is processing \r\n");
     for (i = 1; i < RT_CPUS_NR; i++)
     {
@@ -76,11 +76,11 @@ void rt_hw_secondary_cpu_up(void)
         PsciCpuOn(cpu_mask, (uintptr)secondary_cpu_start);
 
 
-    #if defined(TARGET_ARMV8_AARCH64)  
+#if defined(TARGET_ARMV8_AARCH64)
         __DSB();
-    #else
+#else
         __asm__ volatile("dsb" ::: "memory");
-    #endif
+#endif
 
         // rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
         // Ft_GenericTimer_UsDelay(1000000);
@@ -142,11 +142,11 @@ void secondary_cpu_c_start(void)
 
 void rt_hw_secondary_cpu_idle_exec(void)
 {
-#if defined(TARGET_ARMV8_AARCH64)  
+#if defined(TARGET_ARMV8_AARCH64)
     __WFE();
 #else
     asm volatile("wfe" ::
-                     : "memory", "cc");
+                 : "memory", "cc");
 #endif
 }
 

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdio_dma.c
  * Date: 2022-06-01 14:21:41
  * LastEditTime: 2022-06-01 14:21:42
  * Description:  This files is for DMA related function implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1   zhugengyu  2022/6/6     modify according to tech manual.
@@ -91,7 +91,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
     FASSERT(data_p);
     FASSERT(instance_p->desc_list.first_desc);
     u32 loop;
-    u32 buf_num = data_p->datalen / data_p->blksz + 
+    u32 buf_num = data_p->datalen / data_p->blksz +
                   ((data_p->datalen % data_p->blksz) ? 1U : 0U);
     volatile FSdioIDmaDesc *cur_desc = NULL;
     uintptr buff_addr = 0U;
@@ -101,12 +101,12 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
 
     if (buf_num > instance_p->desc_list.desc_num)
     {
-        FSDIO_ERROR("descriptor is short for transfer %d < %d", 
+        FSDIO_ERROR("descriptor is short for transfer %d < %d",
                     instance_p->desc_list.desc_num, buf_num);
         return FSDIO_ERR_SHORT_BUF;
     }
 
-    memset((void *)instance_p->desc_list.first_desc, 0, 
+    memset((void *)instance_p->desc_list.first_desc, 0,
            sizeof(FSdioIDmaDesc) * instance_p->desc_list.desc_num);
 
     FSDIO_INFO("%d of descriptor in use", buf_num);
@@ -120,7 +120,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
         cur_desc->attribute = FSDIO_IDMAC_DES0_CH | FSDIO_IDMAC_DES0_OWN; /* descriptor list in chain, and set OWN bit  */
         cur_desc->attribute |= (is_first) ? FSDIO_IDMAC_DES0_FD : 0; /* is it the first entry ? */
         cur_desc->attribute |= (is_last) ? (FSDIO_IDMAC_DES0_LD | FSDIO_IDMAC_DES0_ER) : 0; /* is it the last entry ? */
-        
+
         /* set data length in transfer */
         cur_desc->non1 = 0U;
         cur_desc->len = FSDIO_IDMAC_DES2_BUF1_SIZE(data_p->blksz) | FSDIO_IDMAC_DES2_BUF2_SIZE(0U);
@@ -156,7 +156,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
 
 /**
  * @name: FSdioDMATransferData
- * @msg: 
+ * @msg:
  * @return {*}
  * @param {FSdio} *instance_p
  * @param {FSdioData} *data_p
@@ -166,7 +166,7 @@ static FError FSdioDMATransferData(FSdio *const instance_p, FSdioData *data_p)
     FASSERT(data_p);
     FError ret = FSDIO_SUCCESS;
     uintptr base_addr = instance_p->config.base_addr;
-                                 
+
     /* enable related interrupt */
     FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR, FSDIO_INTS_DATA_MASK, TRUE);
     FSdioSetInterruptMask(instance_p, FSDIO_IDMA_INTR, FSDIO_DMAC_INTS_MASK, TRUE);
@@ -177,10 +177,10 @@ static FError FSdioDMATransferData(FSdio *const instance_p, FSdioData *data_p)
         return ret;
 
     FSDIO_INFO("descriptor@%p, trans bytes: %d, block size: %d",
-                instance_p->desc_list.first_desc,
-                data_p->datalen,
-                data_p->blksz);
-    
+               instance_p->desc_list.first_desc,
+               data_p->datalen,
+               data_p->blksz);
+
     /* set transfer info to register */
     FSdioSetDescriptor(base_addr, (uintptr)(instance_p->desc_list.first_desc));
     FSdioSetTransBytes(base_addr, data_p->datalen);
@@ -206,8 +206,8 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     cmd_data_p->success = FALSE; /* reset cmd transfer status */
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
@@ -218,8 +218,8 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     }
 
     /* for removable media, check if card exists */
-    if ( (FALSE == instance_p->config.non_removable) &&
-         (FALSE == FSdioCheckIfCardExists(base_addr)))
+    if ((FALSE == instance_p->config.non_removable) &&
+            (FALSE == FSdioCheckIfCardExists(base_addr)))
     {
         FSDIO_ERROR("card not detected !!!");
         return FSDIO_ERR_NO_CARD;
@@ -228,8 +228,8 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     /* reset fifo and DMA before transfer */
     FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
     ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
-	if (FSDIO_SUCCESS != ret)
-		return ret;
+    if (FSDIO_SUCCESS != ret)
+        return ret;
 
     /* enable use of DMA */
     FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_USE_INTERNAL_DMAC);
@@ -237,8 +237,8 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 
     if (NULL != cmd_data_p->data_p) /* transfer data */
     {
-        ret = FSdioDMATransferData(instance_p, 
-                                    cmd_data_p->data_p);
+        ret = FSdioDMATransferData(instance_p,
+                                   cmd_data_p->data_p);
     }
 
     if (FSDIO_SUCCESS == ret) /* transfer command */
@@ -246,7 +246,7 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
         ret = FSdioTransferCmd(instance_p, cmd_data_p);
     }
 
-    return ret;        
+    return ret;
 }
 
 /**
@@ -268,8 +268,8 @@ FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     uintptr base_addr = instance_p->config.base_addr;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
@@ -286,8 +286,9 @@ FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
         reg_val = FSdioGetRawStatus(base_addr);
         if (relax)
             relax();
-    } while (!(FSDIO_INT_CMD_BIT & reg_val) && (--delay > 0));
-    
+    }
+    while (!(FSDIO_INT_CMD_BIT & reg_val) && (--delay > 0));
+
     if (!(FSDIO_INT_CMD_BIT & reg_val) && (delay <= 0))
     {
         FSDIO_ERROR("wait cmd done timeout, raw ints: 0x%x", reg_val);
@@ -302,7 +303,8 @@ FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
             reg_val = FSDIO_READ_REG(base_addr, FSDIO_RAW_INTS_OFFSET);
             if (relax)
                 relax();
-        } while (!(FSDIO_INT_DTO_BIT & reg_val) && (--delay > 0));
+        }
+        while (!(FSDIO_INT_DTO_BIT & reg_val) && (--delay > 0));
 
         /* clear status to ack data done */
         FSdioClearRawStatus(base_addr);
@@ -327,7 +329,7 @@ FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     {
         ret = FSdioGetCmdResponse(instance_p, cmd_data_p);
     }
-    
+
     return ret;
 }
 
@@ -346,8 +348,8 @@ FError FSdioSetIDMAList(FSdio *const instance_p, volatile FSdioIDmaDesc *desc, u
     uintptr base_addr = instance_p->config.base_addr;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 

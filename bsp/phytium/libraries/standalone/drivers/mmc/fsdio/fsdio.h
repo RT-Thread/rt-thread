@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdio.h
  * Date: 2022-05-26 16:20:52
  * LastEditTime: 2022-05-26 16:20:53
  * Description:  This files is for sdio user interface definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -82,7 +82,7 @@ typedef enum
 
 #define FSDIO_DEFAULT_BLOCK_SZ          512U
 #define FSDIO_SD_400KHZ                 400000U
-#define FSDIO_SD_25_MHZ                 25000000U  
+#define FSDIO_SD_25_MHZ                 25000000U
 #define FSDIO_SD_50_MHZ                 50000000U
 /**************************** Type Definitions *******************************/
 typedef struct _FSdio FSdio;
@@ -93,13 +93,13 @@ typedef void (*FSdioEvtHandler)(FSdio *const instance_p, void *args);
 typedef struct
 {
     u32 attribute; /* ds0 */
-#define FSDIO_IDMAC_DES0_DIC	BIT(1)/* 内部描述表不触发TI/RI中断 */
-#define FSDIO_IDMAC_DES0_LD	    BIT(2)/* 数据的最后一个描述符 */
-#define FSDIO_IDMAC_DES0_FD	    BIT(3)/* 数据的第一个描述符 */
-#define FSDIO_IDMAC_DES0_CH	    BIT(4)/* 链接下一个描述符地址 */
-#define FSDIO_IDMAC_DES0_ER	    BIT(5)/* 链表已经到达最后一个链表 */
-#define FSDIO_IDMAC_DES0_CES	BIT(30)/* RINTSTS寄存器错误汇总 */
-#define FSDIO_IDMAC_DES0_OWN	BIT(31)/* 描述符关联DMA，完成传输后该位置置0 */
+#define FSDIO_IDMAC_DES0_DIC    BIT(1)/* 内部描述表不触发TI/RI中断 */
+#define FSDIO_IDMAC_DES0_LD     BIT(2)/* 数据的最后一个描述符 */
+#define FSDIO_IDMAC_DES0_FD     BIT(3)/* 数据的第一个描述符 */
+#define FSDIO_IDMAC_DES0_CH     BIT(4)/* 链接下一个描述符地址 */
+#define FSDIO_IDMAC_DES0_ER     BIT(5)/* 链表已经到达最后一个链表 */
+#define FSDIO_IDMAC_DES0_CES    BIT(30)/* RINTSTS寄存器错误汇总 */
+#define FSDIO_IDMAC_DES0_OWN    BIT(31)/* 描述符关联DMA，完成传输后该位置置0 */
     u32 non1; /* ds1 --> unused */
     u32 len; /* ds2 bit[25:13] buffer2 size，bit[12:0] buffer1 size*/
 #define FSDIO_IDMAC_DES2_BUF1_MASK      GENMASK(12, 0)
@@ -111,7 +111,7 @@ typedef struct
     u32 addr_hi; /* ds5 Upper 32-bits of Buffer Address Pointer 1 */
     u32 desc_lo; /* ds6 Lower 32-bits of Next Descriptor Address --> buffer 2 */
     u32 desc_hi; /* ds7 Upper 32-bits of Next Descriptor Address */
-} __attribute__ ((packed)) __attribute((aligned(4))) FSdioIDmaDesc; /* SDIO DMA descriptr */
+} __attribute__((packed)) __attribute((aligned(4))) FSdioIDmaDesc;  /* SDIO DMA descriptr */
 
 typedef struct
 {
@@ -119,7 +119,7 @@ typedef struct
     u32 desc_num; /* num of descriptors in the list */
 } FSdioIDmaDescList; /* SDIO DMA descriptors list */
 
-typedef struct 
+typedef struct
 {
     u8 *buf; /* trans buffer */
     u32 blksz; /* card block size */
@@ -127,7 +127,7 @@ typedef struct
     u32 datalen; /* bytes in trans */
 } FSdioData; /* SDIO trans data */
 
-typedef struct 
+typedef struct
 {
     u32 cmdidx; /* command index */
     u32 cmdarg; /* command argument */

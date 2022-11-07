@@ -110,14 +110,14 @@ el1_mode:
 	mov      r9, #0
 	mov      r10, #0
 	mov      r11, #0
-	mov      r12, #0
+    mov      r12, #0
     mcr      p15, 0, r0, c1, c0, 0  /* reset control register */
     isb
 
     /* enable vfp, therefore f_prink workable */
     vmrs	r1, FPEXC			/* read the exception register */
-	orr	    r1,r1, #FPEXC_EN	/* set VFP enable bit, leave the others in orig state */
-	vmsr	FPEXC, r1			/* write back the exception register */
+    orr	    r1,r1, #FPEXC_EN	/* set VFP enable bit, leave the others in orig state */
+    vmsr	FPEXC, r1			/* write back the exception register */
 
     bl      system_vectors      /* jump to libcpu/arm/cortex-a/vector_gcc.S */
 

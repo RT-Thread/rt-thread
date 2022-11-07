@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: ftimer_tacho_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:36
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -30,18 +30,18 @@
 /************************** Constant Definitions *****************************/
 
 static const u32 g_intrBits[FMAX_TIMER_TACHO_EVENT] =
-    {
-        FTACHO_OVER_INTR_EN, FTACHO_UNDER_INTR_EN,
-        FTIMER_ROLLOVER_INTR_EN, FTIMER_ONCECMP_INTR_EN, FTIMER_CYCCMP_INTR_EN,
-        FTACHO_CAPTURE_INTR_EN
-    };
+{
+    FTACHO_OVER_INTR_EN, FTACHO_UNDER_INTR_EN,
+    FTIMER_ROLLOVER_INTR_EN, FTIMER_ONCECMP_INTR_EN, FTIMER_CYCCMP_INTR_EN,
+    FTACHO_CAPTURE_INTR_EN
+};
 
 static const u32 g_intrStats[FMAX_TIMER_TACHO_EVENT] =
-    {
-        FTACHO_OVER_INTR_STATUS, FTACHO_UNDER_INTR_STATUS,
-        FTIMER_ROLLOVER_INTR_STATUS, FTIMER_ONCECMP_INTR_STATUS, FTIMER_CYCCMP_INTR_STATUS,
-        FTACHO_CAPTURE_INTR_STATUS
-    };
+{
+    FTACHO_OVER_INTR_STATUS, FTACHO_UNDER_INTR_STATUS,
+    FTIMER_ROLLOVER_INTR_STATUS, FTIMER_ONCECMP_INTR_STATUS, FTIMER_CYCCMP_INTR_STATUS,
+    FTACHO_CAPTURE_INTR_STATUS
+};
 
 /************************** Function Prototypes ******************************/
 /**
@@ -65,8 +65,8 @@ u32 FTimerGetInterruptMask(FTimerTachoCtrl *instance_p)
  * @param {boolean} enable 使能或者失能
  */
 void FTimerSetInterruptMask(FTimerTachoCtrl *instance_p,
-                           FTimerTachoEventType intrType,
-                           boolean enable)
+                            FTimerTachoEventType intrType,
+                            boolean enable)
 {
     FASSERT(instance_p && intrType < FMAX_TIMER_TACHO_EVENT);
     u32 mask = FTIMER_INTR_M_READ(instance_p);
@@ -136,11 +136,11 @@ static void FTimerDefaultEvtCallback(void *param)
  * @return {void}
  * @param {FTimerTachoCtrl} *instance_p 驱动控制数据结构
  * @param {enum} intrType 中断枚举类型
- * @param {FTimerEventHandler} 
+ * @param {FTimerEventHandler}
  */
 void FTimerRegisterEvtCallback(FTimerTachoCtrl *instance_p,
-                              FTimerTachoEventType evt,
-                              FTimerEventHandler callback)
+                               FTimerTachoEventType evt,
+                               FTimerEventHandler callback)
 {
     FASSERT(instance_p && evt < FMAX_TIMER_TACHO_EVENT);
     instance_p->evt_handlers[evt] = callback;
@@ -155,7 +155,7 @@ void FTimerRegisterEvtCallback(FTimerTachoCtrl *instance_p,
 void FTimerTachoSetIntr(FTimerTachoCtrl *instance_p)
 {
     FASSERT(instance_p);
-    
+
     if (FTIMER_WORK_MODE_TIMER == instance_p->config.work_mode)
     {
         if (FTIMER_ONCE_CMP == instance_p->config.cmp_type)

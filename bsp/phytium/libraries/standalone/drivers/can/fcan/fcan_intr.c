@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fcan_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:10
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -35,8 +35,8 @@
 #define FCAN_ERROR(format, ...) FT_DEBUG_PRINT_E(FT_CAN_DEBUG_TAG, format, ##__VA_ARGS__)
 
 #define FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, event) \
-	if (instance_p->intr_event[event].handler)                 \
-		instance_p->intr_event[event].handler(instance_p->intr_event[event].param)
+    if (instance_p->intr_event[event].handler)                 \
+        instance_p->intr_event[event].handler(instance_p->intr_event[event].param)
 
 /**
  * @name: FCanRegisterInterruptHandler
@@ -53,7 +53,7 @@ void FCanRegisterInterruptHandler(FCanCtrl *instance_p, FCanIntrEventConfig *int
     FASSERT(intr_event_p->type < FCAN_INTR_EVENT_NUM);
     instance_p->intr_event[type].type = type;
     instance_p->intr_event[type].handler = intr_event_p->handler;
-	instance_p->intr_event[type].param = intr_event_p->param;
+    instance_p->intr_event[type].param = intr_event_p->param;
 }
 
 /**
@@ -84,8 +84,8 @@ void FCanIntrHandler(s32 vector, void *args)
     if (irq_status & FCAN_INTR_TEIS_MASK)
     {
         irq_status &= ~FCAN_INTR_REIS_MASK;
-        FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET, 
-                        FCAN_INTR_TEIC_MASK | FCAN_INTR_REIC_MASK);
+        FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET,
+                    FCAN_INTR_TEIC_MASK | FCAN_INTR_REIC_MASK);
         FCAN_CLEARBIT(config_p->base_address, FCAN_CTRL_OFFSET, FCAN_CTRL_XFER_MASK);
         FCAN_SETBIT(config_p->base_address, FCAN_CTRL_OFFSET, FCAN_CTRL_TXREQ_MASK);
         FCAN_SETBIT(config_p->base_address, FCAN_CTRL_OFFSET, FCAN_CTRL_XFER_MASK);
@@ -97,20 +97,20 @@ void FCanIntrHandler(s32 vector, void *args)
                       FCAN_INTR_BOIS_MASK | FCAN_INTR_PEIS_MASK | FCAN_INTR_PWIS_MASK))
     {
         FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_ERROR);
-        
-        FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET, 
-            (FCAN_INTR_EIC_MASK | FCAN_INTR_RFIC_MASK | FCAN_INTR_BOIC_MASK | 
-                FCAN_INTR_PEIC_MASK | FCAN_INTR_PWIC_MASK));
+
+        FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET,
+                    (FCAN_INTR_EIC_MASK | FCAN_INTR_RFIC_MASK | FCAN_INTR_BOIC_MASK |
+                     FCAN_INTR_PEIC_MASK | FCAN_INTR_PWIC_MASK));
 
         /* Check for rx fifo full interrupt and output error information */
-        if (irq_status & FCAN_INTR_RFIS_MASK) 
+        if (irq_status & FCAN_INTR_RFIS_MASK)
         {
             FCAN_ERROR("rx_fifo is full!!!");
             /* disable rx fifo full interrupt */
             FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_RFIE_MASK);
         }
 
-        if (irq_status & FCAN_INTR_TFIS_MASK) 
+        if (irq_status & FCAN_INTR_TFIS_MASK)
         {
             FCAN_ERROR("tx_fifo is empty!!!");
             /* disable tx fifo empty interrupt */

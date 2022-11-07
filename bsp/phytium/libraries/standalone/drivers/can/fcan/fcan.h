@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fcan.h
  * Date: 2021-04-27 15:08:44
  * LastEditTime: 2022-02-18 08:29:25
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -40,14 +40,14 @@ typedef enum
 } FCanIntrEventType;
 
 #define FCAN_SUCCESS        FT_SUCCESS /* SUCCESS */
-#define FCAN_NOT_READY      FT_MAKE_ERRCODE(ErrModBsp, ErrBspCan, 1)                              
+#define FCAN_NOT_READY      FT_MAKE_ERRCODE(ErrModBsp, ErrBspCan, 1)
 #define FCAN_FAILURE        FT_MAKE_ERRCODE(ErrModBsp, ErrBspCan, 2)   /* failed */
 #define FCAN_INVAL_PARAM    FT_MAKE_ERRCODE(ErrModBsp, ErrBspCan, 3)  /* invalid parameters */
 
 #if defined(CONFIG_FCAN_USE_CANFD)
-#define FCAN_DATA_LENGTH 64U
+    #define FCAN_DATA_LENGTH 64U
 #else
-#define FCAN_DATA_LENGTH 8U
+    #define FCAN_DATA_LENGTH 8U
 #endif
 
 /* CAN payload length and DLC definitions according to ISO 11898-1 */
@@ -132,7 +132,7 @@ typedef struct
     FCanIntrEventType type;
     FCanIntrEventHandler handler;
     void *param;
-}FCanIntrEventConfig;
+} FCanIntrEventConfig;
 
 typedef struct
 {
@@ -148,7 +148,7 @@ typedef struct
     u8 candlc;/* can frame length */
     u8 flags; /* additional flags for CAN FD */
     u8 data[FCAN_DATA_LENGTH] __attribute__((aligned(8)));
-}FCanFrame;
+} FCanFrame;
 
 typedef struct
 {
@@ -156,7 +156,7 @@ typedef struct
     uintptr base_address; /* Can base Address */
     u32 irq_num;    /* interrupt number */
     u32 irq_prority;/* interrupt priority*/
-}FCanConfig;
+} FCanConfig;
 
 typedef struct
 {
@@ -169,16 +169,16 @@ typedef struct
     u32 phase_seg2;   /* Phase buffer segment 2 in TQs */
     u32 sjw;          /* Synchronisation jump width in TQs */
     u32 brp;          /* Baudrate prescaler */
-}FCanBaudrateConfig;
+} FCanBaudrateConfig;
 
 typedef struct
 {
-    u8 xfers;/* transfer status */ 
+    u8 xfers;/* transfer status */
     u8 rs;   /* receive status */
     u8 ts;   /* transmit status */
     u8 fies; /* Current status of the controller state machine */
     u8 fras; /* Frame tagging status */
-}FCanXferStatus;
+} FCanXferStatus;
 
 typedef struct
 {
@@ -187,14 +187,14 @@ typedef struct
     u32 rx_err_cnt;
     u32 tx_fifo_cnt;
     u32 rx_fifo_cnt;
-}FCanStatus;
+} FCanStatus;
 
 typedef struct
 {
     FCanConfig config;
     u32 is_ready;  /* Device is initialized and ready */
     boolean use_canfd; /* if use canfd function */
-    
+
     FCanIntrEventConfig intr_event[FCAN_INTR_EVENT_NUM];/* event handler and parameters for interrupt */
 } FCanCtrl;
 
@@ -225,7 +225,7 @@ FError FCanRecv(FCanCtrl *instance_p, FCanFrame *frame_p);
 /* send can message by specific can instance */
 FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p);
 
-/* Enable the specific can instance */ 
+/* Enable the specific can instance */
 FError FCanEnable(FCanCtrl *instance_p, boolean enable);
 
 /* read can status, include send and receive error count */

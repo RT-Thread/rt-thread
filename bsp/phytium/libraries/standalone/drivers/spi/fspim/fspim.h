@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fspim.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:38
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3	init commit
+ * 1.0   zhugengyu  2021-12-3   init commit
  * 1.1   zhugengyu  2022-4-15   support test mode
  * 1.2   zhugengyu  2022-5-13   support spi dma
  */
@@ -42,7 +42,7 @@ extern "C"
 
 /************************** Constant Definitions *****************************/
 
-#define FSPIM_SUCCESS           FT_SUCCESS  
+#define FSPIM_SUCCESS           FT_SUCCESS
 #define FSPIM_ERR_INVAL_STATE   FT_MAKE_ERRCODE(ErrModBsp, ErrBspSpi, 0)
 #define FSPIM_ERR_NOT_READY     FT_MAKE_ERRCODE(ErrModBsp, ErrBspSpi, 1)
 #define FSPIM_ERR_INVAL_PARAM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspSpi, 2)
@@ -61,7 +61,7 @@ extern "C"
 #endif
 
 /* add up new error code above and plust FSPIM_ERR_CODE_MAX by ONE*/
-#define FSPIM_ERR_CODE_PREFIX  FSPIM_ERR_TRANS_FAIL & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)  
+#define FSPIM_ERR_CODE_PREFIX  FSPIM_ERR_TRANS_FAIL & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)
 #define FSPIM_NUM_OF_ERR_CODE  8
 
 typedef enum
@@ -93,10 +93,10 @@ typedef enum
 } FSpimTransMode;
 
 /*
-    CPOL = 0, CPHA = 0, sample at the first rising edge 
+    CPOL = 0, CPHA = 0, sample at the first rising edge
     CPOL = 1, CPHA = 1, sample at the second rising edge
-    CPOL = 1, CPHA = 0, sample at the second falling edge           
-    CPOL = 0, CPHA = 1, sample at the first falling edge    
+    CPOL = 1, CPHA = 0, sample at the second falling edge
+    CPOL = 0, CPHA = 1, sample at the first falling edge
 */
 
 typedef enum
@@ -117,7 +117,7 @@ typedef enum
     FSPIM_INTR_EVT_TX_OVERFLOW, /* 发送FIFO上溢事件 */
     FSPIM_INTR_EVT_RX_UNDERFLOW, /* 接收FIFO下溢事件 */
     FSPIM_INTR_EVT_RX_OVERFLOW, /* 接收FIFO上溢事件 */
-    
+
     FSPIM_INTR_EVT_NUM
 } FSpimIntrEvtType;
 
@@ -131,14 +131,14 @@ typedef struct
     u32                  instance_id;  /* Device instance id */
     uintptr              base_addr;    /* Device base address */
     u32                  irq_num;      /* Device intrrupt id */
-    u32                  irq_prority;  /* Device intrrupt priority */    
+    u32                  irq_prority;  /* Device intrrupt priority */
     FSpimSlaveDevice     slave_dev_id; /* Slave device id */
     u32                  max_freq_hz;  /* Clock frequency in Hz */
     FSpimTransByte       n_bytes;      /* Bytes in transfer */
     FSpimCpolType        cpol;         /* Polarity of the clock */
     FSpimCphaType        cpha;         /* Phase of the clock */
     boolean              en_test;      /* Enable test mode */
-    boolean              en_dma;       /* Enable DMA */ 
+    boolean              en_dma;       /* Enable DMA */
 } FSpimConfig;
 
 typedef void (*FSpimEvtHandler)(void *instance_p, void *param);

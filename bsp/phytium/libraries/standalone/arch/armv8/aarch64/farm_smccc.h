@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: farm_smccc.h
  * Date: 2022-02-10 14:53:41
  * LastEditTime: 2022-02-17 17:32:15
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -44,18 +44,18 @@
 #define ARM_SMCCC_FUNC_MASK 0xFFFF
 
 #define ARM_SMCCC_IS_FAST_CALL(smc_val) \
-	((smc_val) & (ARM_SMCCC_FAST_CALL << ARM_SMCCC_TYPE_SHIFT))
+    ((smc_val) & (ARM_SMCCC_FAST_CALL << ARM_SMCCC_TYPE_SHIFT))
 #define ARM_SMCCC_IS_64(smc_val) \
-	((smc_val) & (ARM_SMCCC_SMC_64 << ARM_SMCCC_CALL_CONV_SHIFT))
+    ((smc_val) & (ARM_SMCCC_SMC_64 << ARM_SMCCC_CALL_CONV_SHIFT))
 #define ARM_SMCCC_FUNC_NUM(smc_val) ((smc_val)&ARM_SMCCC_FUNC_MASK)
 #define ARM_SMCCC_OWNER_NUM(smc_val) \
-	(((smc_val) >> ARM_SMCCC_OWNER_SHIFT) & ARM_SMCCC_OWNER_MASK)
+    (((smc_val) >> ARM_SMCCC_OWNER_SHIFT) & ARM_SMCCC_OWNER_MASK)
 
 #define ARM_SMCCC_CALL_VAL(type, calling_convention, owner, func_num) \
-	(((type) << ARM_SMCCC_TYPE_SHIFT) |                               \
-	 ((calling_convention) << ARM_SMCCC_CALL_CONV_SHIFT) |            \
-	 (((owner)&ARM_SMCCC_OWNER_MASK) << ARM_SMCCC_OWNER_SHIFT) |      \
-	 ((func_num)&ARM_SMCCC_FUNC_MASK))
+    (((type) << ARM_SMCCC_TYPE_SHIFT) |                               \
+     ((calling_convention) << ARM_SMCCC_CALL_CONV_SHIFT) |            \
+     (((owner)&ARM_SMCCC_OWNER_MASK) << ARM_SMCCC_OWNER_SHIFT) |      \
+     ((func_num)&ARM_SMCCC_FUNC_MASK))
 
 #define ARM_SMCCC_OWNER_ARCH 0
 #define ARM_SMCCC_OWNER_CPU 1
@@ -79,10 +79,10 @@
  */
 struct arm_smccc_res
 {
-	unsigned long a0;
-	unsigned long a1;
-	unsigned long a2;
-	unsigned long a3;
+    unsigned long a0;
+    unsigned long a1;
+    unsigned long a2;
+    unsigned long a3;
 };
 
 /**
@@ -93,11 +93,11 @@ struct arm_smccc_res
  */
 struct arm_smccc_quirk
 {
-	int id;
-	union
-	{
-		unsigned long a6;
-	} state;
+    int id;
+    union
+    {
+        unsigned long a6;
+    } state;
 };
 
 /**
@@ -113,9 +113,9 @@ struct arm_smccc_quirk
  * quirk structure provides vendor specific behavior.
  */
 void __arm_smccc_smc(unsigned long a0, unsigned long a1,
-					 unsigned long a2, unsigned long a3, unsigned long a4,
-					 unsigned long a5, unsigned long a6, unsigned long a7,
-					 struct arm_smccc_res *res, struct arm_smccc_quirk *quirk);
+                     unsigned long a2, unsigned long a3, unsigned long a4,
+                     unsigned long a5, unsigned long a6, unsigned long a7,
+                     struct arm_smccc_res *res, struct arm_smccc_quirk *quirk);
 
 #define arm_smccc_smc(...) __arm_smccc_smc(__VA_ARGS__, NULL)
 

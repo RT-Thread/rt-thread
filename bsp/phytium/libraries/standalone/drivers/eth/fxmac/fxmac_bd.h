@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fxmac_bd.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -49,7 +49,7 @@ extern "C"
  * @msg:  Write the given Buffer Descriptor word.
  * @param    bd_ptr is the base address of the BD to write
  * @param    Offset is the word offset to be written
- * @param    data is the 32-bit value to write to the field 
+ * @param    data is the 32-bit value to write to the field
  * @return {*}
  */
 #define FXMAC_BD_WRITE(bd_ptr, Offset, data) \
@@ -186,7 +186,7 @@ extern "C"
  *         FXMAC_BD_SET_LENGTH().
  */
 
-#define FXMAC_BD_JUMBO_LENGTH_MASK 
+#define FXMAC_BD_JUMBO_LENGTH_MASK
 
 #define FXMAC_GET_RX_FRAME_SIZE(instance_p, bd_ptr)                   \
     (FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) &            \
@@ -247,7 +247,7 @@ extern "C"
 #define FXMAC_BD_CLEAR(bd_ptr)                                  \
     memset((bd_ptr), 0, sizeof(FXmacBd))
 
-    /************************** Constant Definitions *****************************/
+/************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
 #ifdef __aarch64__
@@ -260,10 +260,10 @@ extern "C"
 #define FXMAC_BD_NUM_WORDS 2U
 #endif
 
-    /**
-     * The FXMAC_Bd is the type for buffer descriptors (BDs).
-     */
-    typedef u32 FXmacBd[FXMAC_BD_NUM_WORDS];
+/**
+ * The FXMAC_Bd is the type for buffer descriptors (BDs).
+ */
+typedef u32 FXmacBd[FXMAC_BD_NUM_WORDS];
 
 #ifdef __cplusplus
 }

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe      first commit 
+ * 2022-10-26  huanghe      first commit
  *
  */
 
@@ -40,7 +40,7 @@ u32 GetCpuMaskToAffval(u32 *cpu_mask, u32 *cluster_id, u32 *target_list)
         }
         else
         {
-            *target_list = 2; 
+            *target_list = 2;
         }
         *cpu_mask &= ~0x3; /* clear all mask */
     }

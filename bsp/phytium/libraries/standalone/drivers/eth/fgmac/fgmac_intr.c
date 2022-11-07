@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac_intr.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -81,7 +81,7 @@ void FGmacInterruptHandler(s32 vector, void *param)
     if (FGMAC_DMA_STATUS_AIS & status)
     {
         FGMAC_CALL_EVT_HANDLER(instance_p, FGMAC_DMA_ERR_EVT);
-        FGMAC_SET_REG32(base_addr, FGMAC_DMA_STATUS_OFFSET, FGMAC_DMA_STATUS_CLR_ABLE);        
+        FGMAC_SET_REG32(base_addr, FGMAC_DMA_STATUS_OFFSET, FGMAC_DMA_STATUS_CLR_ABLE);
     }
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_STATUS_OFFSET, status); /* write to clear */
@@ -93,7 +93,7 @@ void FGmacInterruptHandler(s32 vector, void *param)
         /* status changed, read SGMII register to clear */
         FGMAC_READ_REG32(base_addr, FGMAC_MAC_PHY_STATUS);
     }
-	
+
     return;
 }
 

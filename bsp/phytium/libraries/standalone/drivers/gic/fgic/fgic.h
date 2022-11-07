@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgic.h
  * Date: 2022-03-28 09:30:29
  * LastEditTime: 2022-03-28 09:30:29
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -33,7 +33,7 @@
 #define FGIC_RSGI_AFF2_OFFSET 32
 #define FGIC_RSGI_AFF3_OFFSET 48
 
-#define FGIC_SUCCESS    FT_SUCCESS  
+#define FGIC_SUCCESS    FT_SUCCESS
 #define FGIC_CTLR_ERR_TYPE   FT_MAKE_ERRCODE(ErrModBsp, ErrGic, 1) /* 错误选择CTLR 寄存器 */
 #define FGIC_CTLR_ERR_NUM    FT_MAKE_ERRCODE(ErrModBsp, ErrGic, 2) /* 当前控制器不支持此中断id */
 #define FGIC_CTLR_ERR_IN_SET    FT_MAKE_ERRCODE(ErrModBsp, ErrGic, 3) /* 在设置过程中出现的异常 */
@@ -45,13 +45,13 @@ typedef enum
 {
     TRIGGER_BY_LEVEL_SENSITIVE = 0,  /* Corresponding interrupt is level-sensitive. */
     TRIGGER_BY_LEVEL_EDGE,           /* Corresponding interrupt is edge-triggered. */
-}TRIGGER_LEVEL;
+} TRIGGER_LEVEL;
 
 typedef enum
 {
-    TWO_SECURITY_STATE = 0 ,         /*  */
-    ONE_NS_SECURITY_STATE ,          /*  */
-}SECURITY_STATE;
+    TWO_SECURITY_STATE = 0,          /*  */
+    ONE_NS_SECURITY_STATE,           /*  */
+} SECURITY_STATE;
 
 /*  Interrupt Routing Mode. */
 typedef enum
@@ -63,14 +63,14 @@ typedef enum
 typedef enum
 {
     SPI_ROUTING_TO_SPECIFIC = 0,  /* spi interrupts routed to the PE specified by affinity level. */
-    SPI_ROUTING_TO_ANY = (1U<<31) /* spi interrupts routed to any PE defined as a participating node. */
-}SPI_ROUTING_MODE;
+    SPI_ROUTING_TO_ANY = (1U << 31) /* spi interrupts routed to any PE defined as a participating node. */
+} SPI_ROUTING_MODE;
 
 typedef struct
 {
     u32 instance_id; /* Id of device*/
     uintptr dis_base; /* Distributor base address      */
-    
+
 } FGicConfig;
 
 typedef struct
@@ -78,13 +78,13 @@ typedef struct
     FGicConfig config; /* Configuration data structure  */
     u32 is_ready;       /* Device is ininitialized and ready*/
     uintptr redis_base; /* Redistributor base address for each core  */
-    SECURITY_STATE security ; 
+    SECURITY_STATE security ;
     s32 max_spi_num;    /* Max value of spi priority */
 } FGic;
 
 /* Initialization */
 FGicConfig *FGicLookupConfig(u32 instance_id);
-FError FGicCfgInitialize(FGic *instance_p, const FGicConfig *input_config_p , uintptr redis_base);
+FError FGicCfgInitialize(FGic *instance_p, const FGicConfig *input_config_p, uintptr redis_base);
 void FGicDistrubutiorInit(FGic *instance_p);
 FError FGicRedistrubutiorInit(FGic *instance_p);
 void FGicCpuInterfaceInit(void);

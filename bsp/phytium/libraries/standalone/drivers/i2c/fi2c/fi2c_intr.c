@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fi2c_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:36:38
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -97,41 +97,42 @@ static void FI2cMasterIntrTxEmptyHandler(FI2c *instance_p)
     FASSERT(instance_p);
     uintptr base_addr = instance_p->config.base_addr;
     const u8 *buf_p = instance_p->txframe.data_buff;
-    
+
     u32 intr_mask;
     u32 buf_len;
     u32 reg_val;
     u32 rx_limit, tx_limit;
 
     buf_len = instance_p->txframe.tx_total_num - instance_p->txframe.tx_cnt;
-    
+
     rx_limit = FI2C_IIC_FIFO_MAX_LV - FI2C_READ_REG32(base_addr, FI2C_RXFLR_OFFSET);
     tx_limit = FI2C_IIC_FIFO_MAX_LV - FI2C_READ_REG32(base_addr, FI2C_TXFLR_OFFSET);
-    while (buf_len>0 & rx_limit > 0 & tx_limit > 0)
+    while (buf_len > 0 & rx_limit > 0 & tx_limit > 0)
     {
         if (1 == buf_len)
         {
-            if(instance_p->status == STATUS_WRITE_IN_PROGRESS)
+            if (instance_p->status == STATUS_WRITE_IN_PROGRESS)
             {
                 reg_val = (FI2C_DATA_MASK & *((u8 *)(instance_p->txframe.data_buff))) |
-                        FI2C_DATA_CMD_WRITE |
-                        FI2C_DATA_CMD_STOP;
+                          FI2C_DATA_CMD_WRITE |
+                          FI2C_DATA_CMD_STOP;
                 instance_p->txframe.data_buff++;
                 FI2C_INFO("Write Stop Singal");
             }
-            else if(instance_p->status == STATUS_READ_IN_PROGRESS)
+            else if (instance_p->status == STATUS_READ_IN_PROGRESS)
             {
                 reg_val = FI2C_DATA_CMD_READ | FI2C_DATA_CMD_STOP;
             }
         }
         else
         {
-            if(instance_p->status == STATUS_WRITE_IN_PROGRESS)
+            if (instance_p->status == STATUS_WRITE_IN_PROGRESS)
             {
                 reg_val = (FI2C_DATA_MASK & *((u8 *)(instance_p->txframe.data_buff))) |
-                        FI2C_DATA_CMD_WRITE;
+                          FI2C_DATA_CMD_WRITE;
                 instance_p->txframe.data_buff++;
-            }else if(instance_p->status == STATUS_READ_IN_PROGRESS)
+            }
+            else if (instance_p->status == STATUS_READ_IN_PROGRESS)
             {
                 reg_val = FI2C_DATA_CMD_READ;
             }
@@ -146,7 +147,7 @@ static void FI2cMasterIntrTxEmptyHandler(FI2c *instance_p)
     if (instance_p->txframe.tx_cnt == instance_p->txframe.tx_total_num)
     {
         instance_p->txframe.tx_cnt = 0;
-        if(instance_p->status == STATUS_WRITE_IN_PROGRESS)
+        if (instance_p->status == STATUS_WRITE_IN_PROGRESS)
         {
             instance_p->status = STATUS_IDLE;
         }
@@ -175,7 +176,7 @@ static void FI2cMasterIntrRxFullHandler(FI2c *instance_p)
         *((u8 *)(instance_p->rxframe.data_buff++)) = FI2C_READ_DATA(base_addr);
     }
     instance_p->rxframe.rx_cnt += emptyfifo;
-    if(instance_p->rxframe.rx_cnt >= instance_p->rxframe.rx_total_num)
+    if (instance_p->rxframe.rx_cnt >= instance_p->rxframe.rx_total_num)
     {
         instance_p->rxframe.rx_cnt = 0;
         instance_p->status = STATUS_IDLE;
@@ -267,7 +268,7 @@ u32 FI2cGetIntr(FI2c *instance_p)
         FI2C_ERROR("i2c driver not ready");
         return FI2C_ERR_NOT_READY;
     }
-    
+
     return FI2C_GET_INTRRUPT_MASK(base_addr);
 }
 /**
@@ -277,7 +278,7 @@ u32 FI2cGetIntr(FI2c *instance_p)
  * @param {FI2c} *instance_p I2C驱动实例数据
  * @param {u32} mask 需要操作的中断寄存器位
  */
-FError FI2cMasterSetupIntr(FI2c *instance_p,u32 mask)
+FError FI2cMasterSetupIntr(FI2c *instance_p, u32 mask)
 {
     FASSERT(instance_p);
     FI2cConfig *config_p = &instance_p->config;
@@ -301,14 +302,14 @@ FError FI2cMasterSetupIntr(FI2c *instance_p,u32 mask)
 
     for (evt = FI2C_EVT_MASTER_TRANS_ABORTED; evt < FI2C_MASTER_INTR_EVT_NUM; evt++)
     {
-        if(instance_p->master_evt_handlers[evt] == NULL)
+        if (instance_p->master_evt_handlers[evt] == NULL)
         {
             FI2cMasterRegisterIntrHandler(instance_p, evt, FI2cStubHandler);
-            FI2C_INFO("evt :%d.is default.\r\n",evt);
+            FI2C_INFO("evt :%d.is default.\r\n", evt);
         }
     }
     FI2C_SET_INTRRUPT_MASK(base_addr, mask);
-    
+
     return FI2C_SUCCESS;
 }
 
@@ -377,12 +378,12 @@ void FI2cSlaveIntrHandler(s32 vector, void *param)
         FI2cSlaveCallEvtHandler(instance_p, FI2C_EVT_SLAVE_STOP, &val);
     }
 
-        if (stat & FI2C_INTR_TX_ABRT) /* trans abort error */
+    if (stat & FI2C_INTR_TX_ABRT) /* trans abort error */
     {
         FI2C_ERROR("last error: 0x%x", last_err);
         FI2C_ERROR("abort source: 0x%x", FI2C_READ_REG32(base_addr, FI2C_TX_ABRT_SOURCE_OFFSET));
     }
-    
+
     return;
 }
 
@@ -431,10 +432,10 @@ FError FI2cSlaveSetupIntr(FI2c *instance_p)
 
     for (evt = FI2C_EVT_SLAVE_READ_REQUESTED; evt < FI2C_SLAVE_INTR_EVT_NUM; evt++)
     {
-        if(instance_p->slave_evt_handlers[evt] == NULL)
+        if (instance_p->slave_evt_handlers[evt] == NULL)
         {
             FI2cSlaveRegisterIntrHandler(instance_p, evt, FI2cStubHandler);
-            FI2C_INFO("evt :%d.is default.\r\n",evt);
+            FI2C_INFO("evt :%d.is default.\r\n", evt);
         }
     }
     FI2C_SET_RX_TL(instance_p->config.base_addr, 0);/* 0 表示接收缓冲区大于等于 1 时触发中断 */

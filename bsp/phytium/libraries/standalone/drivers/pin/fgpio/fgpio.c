@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgpio.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
  * Description:  This files is for GPIO user API implmentation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2022-3-1     init commit
@@ -125,7 +125,7 @@ FError FGpioPinInitialize(FGpio *const instance, FGpioPin *const pin_instance,
     if (FT_COMPONENT_IS_READY == pin_instance->is_ready)
     {
         FGPIO_ERROR("gpio pin already inited !!!");
-        return FGPIO_ERR_ALREADY_INIT;        
+        return FGPIO_ERR_ALREADY_INIT;
     }
 
     pin_instance->index = index;
@@ -150,8 +150,8 @@ void FGpioPinDeInitialize(FGpioPin *const pin)
     FASSERT(pin);
     FGpio *const instance = pin->instance;
 
-    if ((NULL == instance) || (FT_COMPONENT_IS_READY != instance->is_ready) || 
-        (FT_COMPONENT_IS_READY != pin->is_ready))
+    if ((NULL == instance) || (FT_COMPONENT_IS_READY != instance->is_ready) ||
+            (FT_COMPONENT_IS_READY != pin->is_ready))
     {
         FGPIO_ERROR("gpio instance not yet init !!!");
         return;
@@ -166,7 +166,7 @@ void FGpioPinDeInitialize(FGpioPin *const pin)
     pin->instance = NULL;
     pin->is_ready = 0U;
 
-    return;    
+    return;
 }
 
 /**
@@ -183,7 +183,7 @@ FGpioIrqSourceType FGpioGetPinIrqSourceType(FGpioPinId pin_id)
         return FGPIO_IRQ_NOT_SUPPORT;
     }
 #endif
-    
+
     if (FGPIO_PORT_A == pin_id.port)
     {
 #if defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
@@ -303,7 +303,7 @@ void FGpioSetDirection(FGpioPin *const pin, FGpioDirection dir)
 FGpioDirection FGpioGetDirection(FGpioPin *const pin)
 {
     FASSERT(pin);
-    FGpio *const instance = pin->instance;    
+    FGpio *const instance = pin->instance;
     FASSERT(instance);
     FASSERT(instance->is_ready == FT_COMPONENT_IS_READY);
 
@@ -382,7 +382,7 @@ void FGpioWriteRegVal(uintptr base_addr, const FGpioPortIndex port, const u32 re
 FError FGpioSetOutputValue(FGpioPin *const pin, const FGpioPinVal output)
 {
     FASSERT(pin);
-    FGpio *const instance = pin->instance;     
+    FGpio *const instance = pin->instance;
     FASSERT(instance);
     FASSERT_MSG(instance->is_ready == FT_COMPONENT_IS_READY, "gpio instance not yet init !!!");
 
@@ -427,7 +427,7 @@ FError FGpioSetOutputValue(FGpioPin *const pin, const FGpioPinVal output)
 FGpioPinVal FGpioGetInputValue(FGpioPin *const pin)
 {
     FASSERT(pin);
-    FGpio *const instance = pin->instance;      
+    FGpio *const instance = pin->instance;
     FASSERT(instance);
     FASSERT(instance->is_ready == FT_COMPONENT_IS_READY);
     FGpioPinId index = pin->index;

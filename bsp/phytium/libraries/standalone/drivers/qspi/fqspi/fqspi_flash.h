@@ -1,24 +1,24 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fqspi_flash.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-07-12 16:20:55
  * Description:  
- * This file is for S25FS256, GD25Q256, GD25Q64 norflash program, includes reading and writing registers and data, 
+ * This file is for S25FS256, GD25Q256, GD25Q64 norflash program, includes reading and writing registers and data,
  * Users can refer to this file to adapt chips from other manufacturers.
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1   wangxiaodong  2021.11.12  re-construct
@@ -42,7 +42,7 @@ extern "C"
 /* qspi flash support manufacturer JEDEC ID */
 #define FQSPI_FLASH_MF_ID_CYPRESS            0x01
 #define FQSPI_FLASH_MF_ID_GIGADEVICE         0xC8
-#define FQSPI_FLASH_MF_ID_BOYA               0x68 
+#define FQSPI_FLASH_MF_ID_BOYA               0x68
 
 /* qspi flash supported information table */
 #define FQSPI_FLASH_INFO_TABLE                                                              \

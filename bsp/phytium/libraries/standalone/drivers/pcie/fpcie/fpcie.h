@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpcie.h
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 08:59:37
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -49,7 +49,7 @@ extern "C"
 #include "fparameters.h"
 
 #ifdef __aarch64__
-#define CONFIG_SYS_PCI_64BIT	1
+#define CONFIG_SYS_PCI_64BIT    1
 #endif
 
 
@@ -62,15 +62,16 @@ typedef u32 pci_size_t;
 #endif
 
 typedef boolean bool;
-#define true TRUE 
+#define true TRUE
 #define false FALSE
 
 
 /* Access sizes for PCI reads and writes */
-enum pci_size_t {
-	PCI_SIZE_8,
-	PCI_SIZE_16,
-	PCI_SIZE_32,
+enum pci_size_t
+{
+    PCI_SIZE_8,
+    PCI_SIZE_16,
+    PCI_SIZE_32,
 };
 
 
@@ -85,9 +86,9 @@ enum pci_size_t {
 #define FPCIE_NOT_FOUND FT_CODE_ERR(ErrModBsp, ErrPcie, 0x7u)
 
 
-#define FPCIE_REGION_MEM		0x00000000	/* PCI memory space */
-#define FPCIE_REGION_IO		    0x00000001	/* PCI IO space */
-#define PCI_REGION_PREFETCH	    0x00000008	/* prefetchable PCI memory */
+#define FPCIE_REGION_MEM        0x00000000  /* PCI memory space */
+#define FPCIE_REGION_IO         0x00000001  /* PCI IO space */
+#define PCI_REGION_PREFETCH     0x00000008  /* prefetchable PCI memory */
 
 
 #define FPCIE_BAR_0 0
@@ -117,30 +118,30 @@ enum pci_size_t {
 #define FPCIE_HANDLER_DMARECV 2U
 #define FPCIE_HANDLER_DMASEND_ERROR 3U
 #define FPCIE_HANDLER_DMARECV_ERROR 4U
-    /*@}*/
+/*@}*/
 
-    typedef void (*FPcieIrqCallBack)(void *args);
+typedef void (*FPcieIrqCallBack)(void *args);
 
 #if defined(__aarch64__)
-    typedef u64 FPcieAddr;
-    typedef u64 FPcieSize;
-    typedef u64 FPciePhysAddr;
+typedef u64 FPcieAddr;
+typedef u64 FPcieSize;
+typedef u64 FPciePhysAddr;
 #else
-    typedef u32 FPcieAddr;
-    typedef u32 FPcieSize;
-    typedef u32 FPciePhysAddr;
+typedef u32 FPcieAddr;
+typedef u32 FPcieSize;
+typedef u32 FPciePhysAddr;
 #endif
 
 
 typedef struct
 {
-    u16 vender_id ; 
+    u16 vender_id ;
     u16 device_id ;
     u32 bus_num ;
     u32 dev_num ;
     u32 fun_num ;
     u32 class_code ;
-} FPcieSearchFunNode; 
+} FPcieSearchFunNode;
 
 
 typedef struct
@@ -150,15 +151,16 @@ typedef struct
     s32 bdf ;
 } FPcieIntxFun;
 
-struct FPcieRegion {
-    FPcieAddr bus_start;	        /* Start on the bus */
-    FPciePhysAddr phys_start;	/* Start in physical address space */
-    FPcieSize size;	            /* Size */
-    unsigned long flags;	    /* Resource flags */
+struct FPcieRegion
+{
+    FPcieAddr bus_start;            /* Start on the bus */
+    FPciePhysAddr phys_start;   /* Start in physical address space */
+    FPcieSize size;             /* Size */
+    unsigned long flags;        /* Resource flags */
     FPcieAddr bus_lower;
     u32 exist_flg;              /* exist flg */
 };
-    
+
 typedef struct
 {
     u16 vendor, device;
@@ -171,9 +173,9 @@ typedef struct
     uintptr_t ecam;  /* The Memory way */
     uintptr_t peu0_config_address;
     uintptr_t peu1_config_address;
-    
-    uintptr_t control_c0_address;		//0x29900000
-    uintptr_t control_c1_address;		//0x29910000
+
+    uintptr_t control_c0_address;       //0x29900000
+    uintptr_t control_c1_address;       //0x29910000
     uintptr_t control_c2_address;
     uintptr_t control_c3_address;
     uintptr_t control_c4_address;
@@ -182,7 +184,7 @@ typedef struct
 #ifdef FT_PCI_INTX_EOI
     uintptr_t intx_peux_stat_address[FT_PCI_INTX_SATA_NUM] ;
     uintptr_t intx_control_eux_cx_address[FT_PCI_INTX_CONTROL_NUM] ;
-#endif     
+#endif
 
     u32 io_base_addr;
     u32 io_size ;
@@ -222,18 +224,18 @@ typedef struct
     FPcieIrqCallBack fpcie_dma_tx_error_cb;
     void *dma_tx_error_args;
 
-    FPcieIntxFun inta_fun[128];		//假设最高支持128个pcie 节点
+    FPcieIntxFun inta_fun[128];     //假设最高支持128个pcie 节点
 
     FPcieIntxFun intb_fun[128];
 
     FPcieIntxFun intc_fun[128];
 
     FPcieIntxFun intd_fun[128];
-	
-	s32 scaned_bdf_array[128];
-	s32 scaned_bdf_count;
 
-	u32 is_scaned; /* Device is ininitialized and ready*/
+    s32 scaned_bdf_array[128];
+    s32 scaned_bdf_count;
+
+    u32 is_scaned; /* Device is ininitialized and ready*/
 
 } FPcie;
 
@@ -259,32 +261,33 @@ FError FPcieDmaPollDone(struct FPcieDmaDescriptor *desc, u32 wait_cnt);
 void FPcieIntxIrqHandler(s32 vector, void *args) ;
 
 FError FPcieIntxRegiterIrqHandler(FPcie *instance_p,
-                            u32 bdf,
-                            FPcieIntxFun *intx_fun_p) ;
+                                  u32 bdf,
+                                  FPcieIntxFun *intx_fun_p) ;
 
 void FPcieMiscIrqDisable(FPcie *instance_p, fsize_t peu_num) ;
 
 struct FPcieBus
 {
-	s32 ChildN[32];
-	u8	ChildCount;
+    s32 ChildN[32];
+    u8  ChildCount;
 } ;
 
-typedef enum {
-  HEADER = 0,
-  PCIE_CAP = 1,
-  PCIE_ECAP = 2
+typedef enum
+{
+    HEADER = 0,
+    PCIE_CAP = 1,
+    PCIE_ECAP = 2
 } BITFIELD_REGISTER_TYPE;
 
 
 const char *FPcieClassStr(u8 class);
 void FPcieAutoRegionAlign(struct FPcieRegion *res, pci_size_t size);
 int FPcieAutoRegionAllocate(struct FPcieRegion *res, pci_size_t size,
-		pci_addr_t *bar, bool supports_64bit);
+                            pci_addr_t *bar, bool supports_64bit);
 void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
-					 struct FPcieRegion *mem,
-					 struct FPcieRegion *prefetch, struct FPcieRegion *io,
-					 bool enum_only);
+                          struct FPcieRegion *mem,
+                          struct FPcieRegion *prefetch, struct FPcieRegion *io,
+                          bool enum_only);
 void FPcieAutoPrescanSetupBridge(FPcie *instance_p, u32 bdf, int sub_bus);
 void FPcieAutoPostscanSetupBridge(FPcie *instance_p, u32 bdf, int sub_bus);
 int FPcieHoseProbeBus(FPcie *instance_p, u32 bdf);

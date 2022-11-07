@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe      first commit 
+ * 2022-10-26  huanghe      first commit
  *
  */
 
@@ -22,7 +22,7 @@
  * @name: GetCpuMaskToAffval
  * @msg:  参考 GetCpuMaskToAffval 进行参数的重新定义 ，两个小核心定义的id 为0，1 ，两个大核的id 为 2，3
  * @return {*}
- * @note: 
+ * @note:
  * @param {u32} *cpu_mask
  * @param {u32} *cluster_id
  * @param {u32} *target_list

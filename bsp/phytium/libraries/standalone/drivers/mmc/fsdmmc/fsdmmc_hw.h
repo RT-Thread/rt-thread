@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdmmc_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:54:24
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -73,9 +73,9 @@ extern "C"
 #define FSDMMC_CMD_RESP_3_REG_OFFSET 0xe8        /*  Command response register 3 */
 #define FSDMMC_CMD_RESP_4_REG_OFFSET 0xec        /*  Command response register 4 */
 
-/** @name FSDMMC_CONTROLL_SETTING_REG_OFFSET Register 
+/** @name FSDMMC_CONTROLL_SETTING_REG_OFFSET Register
  */
-#define FSDMMC_PERMDW_MASK     GENMASK(11, 10) 
+#define FSDMMC_PERMDW_MASK     GENMASK(11, 10)
 #define FSDMMC_PERMDW(x)       (FSDMMC_PERMDW_MASK & ((x) << 10)) /* 写操作对应的大小端选择 */
 #define FSDMMC_PERMDW_LIT_END  FSDMMC_PERMDW(0x0)
 #define FSDMMC_PERMDW_BIG_END  FSDMMC_PERMDW(0x1)
@@ -87,11 +87,11 @@ extern "C"
 #define FSDMMC_PERMDR_BIG_END  FSDMMC_PERMDR(0x1)
 #define FSDMMC_PERMDR_STD_END  FSDMMC_PERMDR(0x3)
 
-/** @name FSDMMC_ARGUMENT_REG_OFFSET Register 
+/** @name FSDMMC_ARGUMENT_REG_OFFSET Register
  */
 #define FSDMMC_ARGUMENT_MASK  GENMASK(31, 0)
 
-/** @name FSDMMC_CMD_SETTING_REG_OFFSET Register 
+/** @name FSDMMC_CMD_SETTING_REG_OFFSET Register
  */
 #define FSDMMC_CMD_RESP_MASK              GENMASK(1, 0)
 #define FSDMMC_CMD_SETTING_RTS(x)         (FSDMMC_CMD_RESP_MASK & ((x) << 0))     /* 0: No response 01: Response byte length 136 10: Response byte length 48 11: Response byte length 48 */
@@ -107,25 +107,25 @@ extern "C"
 #define FSDMMC_CMD_SETTING_TRTY(x) (GENMASK(15, 14) & ((x) << 14)) /* 10： adtc 指令 ,其它： 读写操作 */
 
 
-/** @name FSDMMC_CLOCK_DIV_REG_OFFSET Register 
+/** @name FSDMMC_CLOCK_DIV_REG_OFFSET Register
  */
 #define FSDMMC_CLK_DIVIDER(clk) (GENMASK(31, 0) & ((FSDMMC_CLK_FREQ_HZ / (2 * (clk))) - 1))
 
-/** @name FSDMMC_SOFTWARE_RESET_REG_OFFSET Register 
+/** @name FSDMMC_SOFTWARE_RESET_REG_OFFSET Register
  */
 #define FSDMMC_SOFTWARE_RESET_SRST  BIT(0)  /* 控制器软复位 */
 #define FSDMMC_SOFTWARE_RESET_BDRST BIT(2) /* DMA BD 清 0 */
 #define FSDMMC_SOFTWARE_RESET_CFCLF BIT(3) /* 卡插入拔出状态触发标志清 0 */
 
-/** @name FSDMMC_TIMEOUT_CMD_REG_OFFSET Register 
+/** @name FSDMMC_TIMEOUT_CMD_REG_OFFSET Register
  */
 #define FSDMMC_TIMEOUT_CMD_MASK    GENMASK(31, 0)
 
-/** @name FSDMMC_TIMEOUT_DATA_REG_OFFSET Register 
+/** @name FSDMMC_TIMEOUT_DATA_REG_OFFSET Register
  */
 #define FSDMMC_TIMEOUT_DATA_MASK   GENMASK(31, 0)
 
-/** @name FSDMMC_NORMAL_INT_EN_REG_OFFSET Register 
+/** @name FSDMMC_NORMAL_INT_EN_REG_OFFSET Register
  */
 #define FSDMMC_NORMAL_INT_EN_ECC    BIT(0)    /* 命令完成中断使能 */
 #define FSDMMC_NORMAL_INT_EN_ECCRCE BIT(1)    /* 卡拔出中断使能 */
@@ -133,7 +133,7 @@ extern "C"
 #define FSDMCC_NORMAL_INT_ALL_BITS  (FSDMMC_NORMAL_INT_EN_ECC | FSDMMC_NORMAL_INT_EN_ECCRCE |\
                                      FSDMMC_NORMAL_INT_EN_ECIE)
 
-/** @name FSDMMC_ERROR_INT_EN_REG_OFFSET Register 
+/** @name FSDMMC_ERROR_INT_EN_REG_OFFSET Register
  */
 #define FSDMMC_ERROR_INT_EN_CNR BIT(4)   /* 命令响应错误中断 */
 #define FSDMMC_ERROR_INT_EN_CIR BIT(3)   /* 命令索引错误中断使能 */
@@ -142,7 +142,7 @@ extern "C"
 #define FSDMMC_ERROR_INT_ALL_BITS   (FSDMMC_ERROR_INT_EN_CNR | FSDMMC_ERROR_INT_EN_CIR |\
                                      FSDMMC_ERROR_INT_EN_CCRCE | FSDMMC_ERROR_INT_EN_CTE)
 
-/** @name FSDMMC_BD_ISR_EN_REG_OFFSET Register 
+/** @name FSDMMC_BD_ISR_EN_REG_OFFSET Register
  */
 #define FSDMMC_BD_ISR_EN_ETRS BIT(0)      /* DMA 传输完成中断使能 */
 #define FSDMMC_BD_ISR_EN_EDTE BIT(3)      /* 数据超时中断使能 */
@@ -158,21 +158,21 @@ extern "C"
                                 FSDMMC_BD_ISR_EN_RESPE | FSDMMC_BD_ISR_EN_EDAISE)
 
 
-/** @name FSDMMC_SD_DRV_REG_OFFSET Register 
+/** @name FSDMMC_SD_DRV_REG_OFFSET Register
  */
 #define FSDMMC_SD_DRV_MASK    GENMASK(31, 0) /* 卡驱动相位配置参数 */
 
-/** @name FSDMMC_SD_SAMP_REG_OFFSET Register 
+/** @name FSDMMC_SD_SAMP_REG_OFFSET Register
  */
 #define FSDMMC_SD_SAMP_MASK   GENMASK(31, 0) /* 卡采样相位配置参数 */
 
-/** @name FSDMMC_SD_SEN_REG_OFFSET Register 
+/** @name FSDMMC_SD_SEN_REG_OFFSET Register
  */
 #define FSDMMC_SD_SEN_REG_CREFR BIT(1)                          /* 卡拔出时自动释放 AXI 总线选择 */
 #define FSDMMC_SD_SEN_REG_CRES BIT(2)                           /* CARD 在位状态标志选择 0： 卡在位-0，不在位-1 1: 卡在位-1，不在位-0 */
 #define FSDMMC_SD_SEN_REG_DEBNCE(x) ((x << 8) & GENMASK(31, 8)) /* 去抖时钟分频参数 */
 
-/** @name FSDMMC_HDS_AXI_REG_CONF1_REG_OFFSET Register 
+/** @name FSDMMC_HDS_AXI_REG_CONF1_REG_OFFSET Register
  */
 #define FSDMMC_HDS_AXI_CONF1_AWREGION_HDS_M     GENMASK(22, 19)
 #define FSDMMC_HDS_AXI_CONF1_AWSNOOP_HDS_M      GENMASK(18, 16)
@@ -183,19 +183,19 @@ extern "C"
 #define FSDMMC_HDS_AXI_CONF1_AWBAR_HDS_M        GENMASK(3, 2)
 #define FSDMMC_HDS_AXI_CONF1_AWDOMAIN_HDS_M     GENMASK(1, 0)
 
-/** @name FSDMMC_DAT_IN_M_RX_BD_REG_OFFSET Register 
+/** @name FSDMMC_DAT_IN_M_RX_BD_REG_OFFSET Register
  */
 #define FSDMMC_DAT_IN_M_RX_BD_MASK              GENMASK(31, 0)
 
-/** @name FSDMMC_DAT_IN_M_TX_BD_REG_OFFSET Register 
+/** @name FSDMMC_DAT_IN_M_TX_BD_REG_OFFSET Register
  */
 #define FSDMMC_DAT_IN_M_TX_BD_MASK              GENMASK(31, 0)
 
-/** @name FSDMMC_BLK_CNT_REG_OFFSET Register 
+/** @name FSDMMC_BLK_CNT_REG_OFFSET Register
  */
 #define FSDMMC_BLK_CNT_MASK                     GENMASK(31, 0)
 
-/** @name FSDMMC_HDS_AXI_REG_CONF2_REG_OFFSET Register 
+/** @name FSDMMC_HDS_AXI_REG_CONF2_REG_OFFSET Register
  */
 #define FSDMMC_HDS_AXI_CONF2_SD_ARPROT          GENMASK(29, 27)
 #define FSDMMC_HDS_AXI_CONF2_SD_AWPROT          GENMASK(26, 24)
@@ -206,14 +206,14 @@ extern "C"
 #define FSDMMC_HDS_AXI_CONF2_HDA_ARCACHE_M      GENMASK(7, 4)
 #define FSDMMC_HDS_AXI_CONF2_HDA_AWCACHE_M      GENMASK(3, 0)
 
-/** @name FSDMMC_NORMAL_INT_STATUS_REG_OFFSET Register 
+/** @name FSDMMC_NORMAL_INT_STATUS_REG_OFFSET Register
  */
 #define FSDMMC_NORMAL_INT_STATUS_EI BIT(15) /* 命令错误中断 */
 #define FSDMMC_NORMAL_INT_STATUS_CR BIT(1)  /* 卡移除中断 */
 #define FSDMMC_NORMAL_INT_STATUS_CC BIT(0)  /* 命令完成中断 */
 #define FSDMMC_NORMAL_INT_STATUS_ALL_MASK (FSDMMC_NORMAL_INT_STATUS_EI | FSDMMC_NORMAL_INT_STATUS_CR | FSDMMC_NORMAL_INT_STATUS_CC)
 
-/** @name FSDMMC_ERROR_INT_STATUS_REG_OFFSET Register 
+/** @name FSDMMC_ERROR_INT_STATUS_REG_OFFSET Register
  */
 #define FSDMMC_ERROR_INT_STATUS_CNR BIT(4)   /* 命令响应错误中断 */
 #define FSDMMC_ERROR_INT_STATUS_CIR BIT(3)   /* 命令索引错误中断 */
@@ -221,7 +221,7 @@ extern "C"
 #define FSDMMC_ERROR_INT_STATUS_CTE BIT(0)   /* 命令超时错误中断 */
 #define FSDMMC_ERROR_INT_STATUS_ALL_MASK (FSDMMC_ERROR_INT_STATUS_CNR | FSDMMC_ERROR_INT_STATUS_CIR | FSDMMC_ERROR_INT_STATUS_CCRCE | FSDMMC_ERROR_INT_STATUS_CTE)
 
-/** @name FSDMMC_BD_ISR_REG_OFFSET Register 
+/** @name FSDMMC_BD_ISR_REG_OFFSET Register
  */
 #define FSDMMC_BD_ISR_REG_DAIS BIT(15)   /* DMA 错误中断*/
 #define FSDMMC_BD_ISR_REG_RESPE BIT(8)   /* 读 SD 卡操作，AXI BR 通道完成中断*/
@@ -232,11 +232,11 @@ extern "C"
 #define FSDMMC_BD_ISR_REG_DTE BIT(3)     /* 超时中断*/
 #define FSDMMC_BD_ISR_REG_TRS BIT(0)     /* DMA 传输完成中断*/
 
-/** @name FSDMMC_BD_STATUS_REG_OFFSET Register 
+/** @name FSDMMC_BD_STATUS_REG_OFFSET Register
  */
 #define FSDMMC_BD_STATUS_MASK       GENMASK(31, 0) /* BD 描述符 */
 
-/** @name FSDMMC_STATUS_REG_OFFSET Register 
+/** @name FSDMMC_STATUS_REG_OFFSET Register
  */
 #define FSDMMC_STATUS_REG_DATMAST(x) (GENMASK(30, 27) & ((x) << 27)) /* data_master 状态机 */
 #define FSDMMC_STATUS_REG_CDIF BIT(26)                               /* 卡在位标志 */
@@ -250,33 +250,33 @@ extern "C"
 #define FSDMMC_STATUS_REG_DAT_AVA BIT(6) /* DAT_AVA 当前命令状态流程运转完  */
 #define FSDMMC_STATUS_REG_CRC_VALID BIT(5)
 #define FSDMMC_STATUS_REG_CICMD BIT(0) /* RO 0x0 CMD 总线状态 */
-#define FSDMMC_STATUS_CMD_BUSY  (0x0 << 0) 
-#define FSDMMC_STATUS_CMD_READY (0x1 << 0) 
+#define FSDMMC_STATUS_CMD_BUSY  (0x0 << 0)
+#define FSDMMC_STATUS_CMD_READY (0x1 << 0)
 
-/** @name FSDMMC_BLOCK_REG_OFFSET Register 
+/** @name FSDMMC_BLOCK_REG_OFFSET Register
  */
 #define FSDMMC_BLOCK_MASK       GENMASK(31, 0)
 
-/** @name FSDMMC_CMD_RESP_1_REG_OFFSET Register 
+/** @name FSDMMC_CMD_RESP_1_REG_OFFSET Register
  */
 #define FSDMMC_CMD_RESP_1_MASK  GENMASK(31, 0)
 
-/** @name FSDMMC_CMD_RESP_2_REG_OFFSET Register 
+/** @name FSDMMC_CMD_RESP_2_REG_OFFSET Register
  */
 #define FSDMMC_CMD_RESP_2_MASK  GENMASK(31, 0)
 
-/** @name FSDMMC_CMD_RESP_3_REG_OFFSET Register 
+/** @name FSDMMC_CMD_RESP_3_REG_OFFSET Register
  */
 #define FSDMMC_CMD_RESP_3_MASK  GENMASK(31, 0)
 
-/** @name FSDMMC_CMD_RESP_4_REG_OFFSET Register 
+/** @name FSDMMC_CMD_RESP_4_REG_OFFSET Register
  */
 #define FSDMMC_CMD_RESP_4_MASK  GENMASK(31, 0)
 
 #define FSDMMC_DEFAULT_DRV            1
 #define FSDMMC_DEFAULT_SAMP           5
-#define FSDMMC_SEN_CREFR_VAL		  (0x1 << 1)
-#define FSDMMC_SEN_DEBNCE_VAL		  (0xB << 8)
+#define FSDMMC_SEN_CREFR_VAL          (0x1 << 1)
+#define FSDMMC_SEN_DEBNCE_VAL         (0xB << 8)
 #define FSDMMC_CMD_TIMEOUT            10000000  /* 1s */
 #define FSDMMC_DATA_TIMEOUT           40000000 /* 4s */
 #define FSDMMC_AXI_CONF1              0x1001

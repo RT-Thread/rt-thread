@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fmio_sinit.c
  * Date: 2022-06-20 20:33:25
  * LastEditTime: 2022-06-20 20:33:25
  * Description:  This file is for mio
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 0.1.0  liushengming  2022.06.20  init
@@ -44,10 +44,10 @@ extern FMioConfig FMioConfigTbl[MIO_INSTANCE_NUM];
  */
 const FMioConfig *FMioLookupConfig(u32 instance_id)
 {
-    FASSERT(instance_id < MIO_INSTANCE_NUM);   
+    FASSERT(instance_id < MIO_INSTANCE_NUM);
     const FMioConfig *pconfig = NULL;
     u32 index;
-    
+
     for (index = 0; index < (u32)MIO_INSTANCE_NUM; index++)
     {
         if (FMioConfigTbl[index].instance_id == instance_id)
@@ -56,5 +56,5 @@ const FMioConfig *FMioLookupConfig(u32 instance_id)
             break;
         }
     }
-    return (const FMioConfig *)pconfig;  
+    return (const FMioConfig *)pconfig;
 }

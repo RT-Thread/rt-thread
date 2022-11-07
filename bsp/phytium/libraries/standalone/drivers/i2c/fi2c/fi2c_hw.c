@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fi2c_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:36:22
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -53,21 +53,21 @@ typedef struct
 
 /************************** Variable Definitions *****************************/
 static const FI2cSpeedModeInfo I2C_SPEED_CFG[FI2C_SPEED_MODE_MAX] =
-    {
-        [FI2C_STANDARD_SPEED] = {
-            FI2C_SPEED_STANDARD_RATE,
-            4000,
-            4700,
-            1000,
-            300,
-        },
-        [FI2C_FAST_SPEED] = {
-            FI2C_SPEED_FAST_RATE,
-            1000,
-            1300,
-            300,
-            300,
-        }
+{
+    [FI2C_STANDARD_SPEED] = {
+        FI2C_SPEED_STANDARD_RATE,
+        4000,
+        4700,
+        1000,
+        300,
+    },
+    [FI2C_FAST_SPEED] = {
+        FI2C_SPEED_FAST_RATE,
+        1000,
+        1300,
+        300,
+        300,
+    }
 };
 
 /***************** Macros (Inline Functions) Definitions *********************/
@@ -99,7 +99,8 @@ FError FI2cSetEnable(uintptr addr, boolean enable)
             return FI2C_SUCCESS;
         }
 
-    } while (0 != timeout--);
+    }
+    while (0 != timeout--);
 
     FI2C_ERROR("timeout in %sabling I2C ctrl", enable ? "en" : "dis");
     return FI2C_ERR_TIMEOUT;
@@ -137,10 +138,10 @@ static FError FI2cCalcTiming(u32 bus_clk_hz, u32 spk_cnt, FI2cSpeedCfg *speed_cf
               min_t_low_cnt, min_t_high_cnt, spk_cnt);
 
     /*
-	 * Back-solve for hcnt and lcnt according to the following equations:
-	 * SCL_High_time = [(HCNT + IC_*_SPKLEN + 7) * icClk] + SCL_Fall_time
-	 * SCL_Low_time = [(LCNT + 1) * icClk] - SCL_Fall_time + SCL_Rise_time
-	 */
+     * Back-solve for hcnt and lcnt according to the following equations:
+     * SCL_High_time = [(HCNT + IC_*_SPKLEN + 7) * icClk] + SCL_Fall_time
+     * SCL_Low_time = [(LCNT + 1) * icClk] - SCL_Fall_time + SCL_Rise_time
+     */
     hcnt = min_t_high_cnt - fall_cnt - 7 - spk_cnt;
     lcnt = min_t_low_cnt - rise_cnt + fall_cnt - 1;
 
@@ -151,9 +152,9 @@ static FError FI2cCalcTiming(u32 bus_clk_hz, u32 spk_cnt, FI2cSpeedCfg *speed_cf
     }
 
     /*
-	 * Now add things back up to ensure the period is hit. If it is off,
-	 * split the difference and bias to lcnt for remainder
-	 */
+     * Now add things back up to ensure the period is hit. If it is off,
+     * split the difference and bias to lcnt for remainder
+     */
     tot = hcnt + lcnt + 7 + spk_cnt + rise_cnt + 1;
 
     if (tot < period_cnt)
@@ -273,7 +274,8 @@ FError FI2cWaitStatus(uintptr addr, u32 stat_bit)
     do
     {
         fsleep_millisec(2); /*wait 2 ms*/
-    } while (!((FI2C_READ_REG32(addr, FI2C_STATUS_OFFSET)) & stat_bit) && (FI2C_TIMEOUT > ++timeout));
+    }
+    while (!((FI2C_READ_REG32(addr, FI2C_STATUS_OFFSET)) & stat_bit) && (FI2C_TIMEOUT > ++timeout));
 
     if (FI2C_TIMEOUT <= timeout)
     {
@@ -296,7 +298,7 @@ FError FI2cWaitBusBusy(uintptr addr)
     u32 ret = FI2C_SUCCESS;
 
     if (((FI2C_READ_REG32(addr, FI2C_STATUS_OFFSET)) & FI2C_STATUS_MST_ACTIVITY) &&
-        (FI2C_SUCCESS != FI2cWaitStatus(addr, FI2C_STATUS_TFE)))
+            (FI2C_SUCCESS != FI2cWaitStatus(addr, FI2C_STATUS_TFE)))
     {
         ret = FI2C_ERR_TIMEOUT;
         FI2C_ERROR("timeout when wait i2c bus busy");
@@ -426,6 +428,6 @@ u32 FI2cClearIntrBits(uintptr addr, u32 *last_err_p)
 
     if (stat & FI2C_INTR_GEN_CALL)
         FI2C_READ_REG32(addr, FI2C_CLR_GEN_CALL_OFFSET);
-    
+
     return stat;
 }

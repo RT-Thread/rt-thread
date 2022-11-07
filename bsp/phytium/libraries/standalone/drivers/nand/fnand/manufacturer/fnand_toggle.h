@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fnand_toggle.h
  * Date: 2022-07-05 20:00:45
  * LastEditTime: 2022-07-05 20:00:45
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
  */
@@ -71,80 +71,81 @@ extern "C"
 #define TOGGLE_END_CMD_NONE 0xfff /* No End command */
 
 
-struct jedec_ecc_info {
-	u8 ecc_bits;
-	u8 codeword_size;
-	u16 bb_per_lun;
-	u16 block_endurance;
-	u8 reserved[2];
+struct jedec_ecc_info
+{
+    u8 ecc_bits;
+    u8 codeword_size;
+    u16 bb_per_lun;
+    u16 block_endurance;
+    u8 reserved[2];
 } __attribute__((packed));
 
-    struct ToggleNandGeometry
-    {
-        u8 sig[4];          /* Parameter page signature */
-        u16 revision;       /* Revision number */
-        u16 features;       /* Features supported */
-        u8 opt_cmd[3];      /* Optional commands supported */
-        u16 sec_cmd;
-        u8 num_of_param_pages;
-        u8 reserved0[18];
+struct ToggleNandGeometry
+{
+    u8 sig[4];          /* Parameter page signature */
+    u16 revision;       /* Revision number */
+    u16 features;       /* Features supported */
+    u8 opt_cmd[3];      /* Optional commands supported */
+    u16 sec_cmd;
+    u8 num_of_param_pages;
+    u8 reserved0[18];
 
-        /* manufacturer information block */
-        char manufacturer[12];  /* Device manufacturer */
-        char model[20];         /* Device model */
-        u8 jedec_id[6];         /* JEDEC manufacturer ID */
-        u8 reserved1[10];       
+    /* manufacturer information block */
+    char manufacturer[12];  /* Device manufacturer */
+    char model[20];         /* Device model */
+    u8 jedec_id[6];         /* JEDEC manufacturer ID */
+    u8 reserved1[10];
 
-        /* memory organization block */
-        u32 byte_per_page;      /* Number of data bytes per page */
-        u16 spare_bytes_per_page; /* Number of spare bytes per page */
-        u8 reserved2[6];          /*  */
-        u32 pages_per_block;      /* Number of pages per block */
-        u32 blocks_per_lun;       /* Number of blocks per logical unit */
-        u8 lun_count;             /* Number of logical unit */
-        u8 addr_cycles;
-        u8 bits_per_cell;
-        u8 programs_per_page;
-        u8 multi_plane_addr;
-        u8 multi_plane_op_attr;
-        u8 reserved3[38];
+    /* memory organization block */
+    u32 byte_per_page;      /* Number of data bytes per page */
+    u16 spare_bytes_per_page; /* Number of spare bytes per page */
+    u8 reserved2[6];          /*  */
+    u32 pages_per_block;      /* Number of pages per block */
+    u32 blocks_per_lun;       /* Number of blocks per logical unit */
+    u8 lun_count;             /* Number of logical unit */
+    u8 addr_cycles;
+    u8 bits_per_cell;
+    u8 programs_per_page;
+    u8 multi_plane_addr;
+    u8 multi_plane_op_attr;
+    u8 reserved3[38];
 
-        /* electrical parameter block */
-        u16 async_sdr_speed_grade;
-        u16 toggle_ddr_speed_grade;
-        u16 sync_ddr_speed_grade;
-        u8 async_sdr_features;
-        u8 toggle_ddr_features;
-        u8 sync_ddr_features;
-        u16 t_prog;
-        u16 t_bers;
-        u16 t_r;
-        u16 t_r_multi_plane;
-        u16 t_ccs;
-        u16 io_pin_capacitance_typ;
-        u16 input_pin_capacitance_typ;
-        u16 clk_pin_capacitance_typ;
-        u8 driver_strength_support;
-        u16 t_adl;
-        u8 reserved4[36];
+    /* electrical parameter block */
+    u16 async_sdr_speed_grade;
+    u16 toggle_ddr_speed_grade;
+    u16 sync_ddr_speed_grade;
+    u8 async_sdr_features;
+    u8 toggle_ddr_features;
+    u8 sync_ddr_features;
+    u16 t_prog;
+    u16 t_bers;
+    u16 t_r;
+    u16 t_r_multi_plane;
+    u16 t_ccs;
+    u16 io_pin_capacitance_typ;
+    u16 input_pin_capacitance_typ;
+    u16 clk_pin_capacitance_typ;
+    u8 driver_strength_support;
+    u16 t_adl;
+    u8 reserved4[36];
 
-        /* ECC and endurance block */
-        u8 guaranteed_good_blocks;
-        u16 guaranteed_block_endurance;
-        struct jedec_ecc_info ecc_info[4];
-        u8 reserved5[29];
+    /* ECC and endurance block */
+    u8 guaranteed_good_blocks;
+    u16 guaranteed_block_endurance;
+    struct jedec_ecc_info ecc_info[4];
+    u8 reserved5[29];
 
-        /* reserved */
-        u8 reserved6[148];
+    /* reserved */
+    u8 reserved6[148];
 
-        /* vendor */
-        u16 vendor_rev_num;
-        u8 reserved7[88];
+    /* vendor */
+    u16 vendor_rev_num;
+    u8 reserved7[88];
 
-        /* CRC for Parameter Page */
-        u16 crc;
+    /* CRC for Parameter Page */
+    u16 crc;
 
-    } __attribute__((__packed__));
+} __attribute__((__packed__));
 
 
 #ifdef __cplusplus

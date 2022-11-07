@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fiopad_config.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
  * Description:  This files is for io-pad function definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2021/11/5    init commit
@@ -74,10 +74,10 @@ void FIOPadSetGpioMux(u32 gpio_id, u32 pin_id)
             FPinSetFunc(FIOPAD_C29, FPIN_FUNC6);
             break;
         case 5: /* gpio 3-a-5 */
-            FPinSetFunc(FIOPAD_C27, FPIN_FUNC6); 
+            FPinSetFunc(FIOPAD_C27, FPIN_FUNC6);
             break;
         case 6: /* gpio 3-a-6 */
-            FPinSetFunc(FIOPAD_A27, FPIN_FUNC6); 
+            FPinSetFunc(FIOPAD_A27, FPIN_FUNC6);
             break;
         default:
             break;
@@ -96,101 +96,101 @@ void FIOPadSetMioMux(u32 mio_id)
     switch (mio_id)
     {
     case MIO_INSTANCE_0:
-        {
-            FPinSetFunc(FIOPAD_A37, FPIN_FUNC5); /* scl */
-            FPinSetFunc(FIOPAD_A39, FPIN_FUNC5); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_A37, FPIN_FUNC5); /* scl */
+        FPinSetFunc(FIOPAD_A39, FPIN_FUNC5); /* sda */
+    }
+    break;
     case MIO_INSTANCE_1:
-        {
-            FPinSetFunc(FIOPAD_A41, FPIN_FUNC5); /* scl */
-            FPinSetFunc(FIOPAD_C41, FPIN_FUNC5); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_A41, FPIN_FUNC5); /* scl */
+        FPinSetFunc(FIOPAD_C41, FPIN_FUNC5); /* sda */
+    }
+    break;
     case MIO_INSTANCE_2:
-        {
-            FPinSetFunc(FIOPAD_A43, FPIN_FUNC5); /* scl */
-            FPinSetFunc(FIOPAD_A45, FPIN_FUNC5); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_A43, FPIN_FUNC5); /* scl */
+        FPinSetFunc(FIOPAD_A45, FPIN_FUNC5); /* sda */
+    }
+    break;
     case MIO_INSTANCE_3:
-        {
-            FPinSetFunc(FIOPAD_BA51, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_BA49, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_BA51, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_BA49, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_4:
-        {
-            FPinSetFunc(FIOPAD_R55, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_U55, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_R55, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_U55, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_5:
-        {
-            FPinSetFunc(FIOPAD_W45, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_U53, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_W45, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_U53, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_6:
-        {
-            FPinSetFunc(FIOPAD_AA53, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_AA55, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_AA53, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_AA55, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_7:
-        {
-            FPinSetFunc(FIOPAD_A35, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_C35, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_A35, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_C35, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_8:
-        {
-            FPinSetFunc(FIOPAD_AA45, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_W45, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_AA45, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_W45, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_9:
-        {
-            FPinSetFunc(FIOPAD_AA47, FPIN_FUNC4); /* scl */
-            FPinSetFunc(FIOPAD_U45, FPIN_FUNC4); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_AA47, FPIN_FUNC4); /* scl */
+        FPinSetFunc(FIOPAD_U45, FPIN_FUNC4); /* sda */
+    }
+    break;
     case MIO_INSTANCE_10:
-        {
-            FPinSetFunc(FIOPAD_C45, FPIN_FUNC5); /* scl */
-            FPinSetFunc(FIOPAD_A47, FPIN_FUNC5); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_C45, FPIN_FUNC5); /* scl */
+        FPinSetFunc(FIOPAD_A47, FPIN_FUNC5); /* sda */
+    }
+    break;
     case MIO_INSTANCE_11:
-        {
-            FPinSetFunc(FIOPAD_N23, FPIN_FUNC3); /* scl */
-            FPinSetFunc(FIOPAD_L25, FPIN_FUNC3); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_N23, FPIN_FUNC3); /* scl */
+        FPinSetFunc(FIOPAD_L25, FPIN_FUNC3); /* sda */
+    }
+    break;
     case MIO_INSTANCE_12:
-        {
-            FPinSetFunc(FIOPAD_E37, FPIN_FUNC3); /* scl */
-            FPinSetFunc(FIOPAD_L41, FPIN_FUNC3); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_E37, FPIN_FUNC3); /* scl */
+        FPinSetFunc(FIOPAD_L41, FPIN_FUNC3); /* sda */
+    }
+    break;
     case MIO_INSTANCE_13:
-        {
-            FPinSetFunc(FIOPAD_J45, FPIN_FUNC6); /* scl */
-            FPinSetFunc(FIOPAD_N45, FPIN_FUNC6); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_J45, FPIN_FUNC6); /* scl */
+        FPinSetFunc(FIOPAD_N45, FPIN_FUNC6); /* sda */
+    }
+    break;
     case MIO_INSTANCE_14:
-        {
-            FPinSetFunc(FIOPAD_L47, FPIN_FUNC6); /* scl */
-            FPinSetFunc(FIOPAD_L45, FPIN_FUNC6); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_L47, FPIN_FUNC6); /* scl */
+        FPinSetFunc(FIOPAD_L45, FPIN_FUNC6); /* sda */
+    }
+    break;
     case MIO_INSTANCE_15:
-        {
-            FPinSetFunc(FIOPAD_N49, FPIN_FUNC6); /* scl */
-            FPinSetFunc(FIOPAD_J49, FPIN_FUNC6); /* sda */
-        }
-        break;
+    {
+        FPinSetFunc(FIOPAD_N49, FPIN_FUNC6); /* scl */
+        FPinSetFunc(FIOPAD_J49, FPIN_FUNC6); /* sda */
+    }
+    break;
     default:
         break;
     }

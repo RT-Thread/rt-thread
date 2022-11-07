@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fnand_dma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:22
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -33,14 +33,14 @@
 #include "sdkconfig.h"
 
 #ifdef CONFIG_FNAND_DMA_DEBUG_EN
-#define FNAND_DMA_DEBUG_TAG "FNAND_DMA"
-#define FNAND_DMA_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FNAND_DMA_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FNAND_DMA_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
+    #define FNAND_DMA_DEBUG_TAG "FNAND_DMA"
+    #define FNAND_DMA_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
+    #define FNAND_DMA_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
+    #define FNAND_DMA_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
 #else
-#define FNAND_DMA_DEBUG_I(format, ...) 
-#define FNAND_DMA_DEBUG_W(format, ...) 
-#define FNAND_DMA_DEBUG_E(format, ...) 
+    #define FNAND_DMA_DEBUG_I(format, ...)
+    #define FNAND_DMA_DEBUG_W(format, ...)
+    #define FNAND_DMA_DEBUG_E(format, ...)
 #endif
 
 
@@ -55,12 +55,12 @@ void FNandDmaDump(struct FNandDmaDescriptor *descriptor_p)
                       descriptor_p->addr[0], descriptor_p->addr[1], descriptor_p->addr[2], descriptor_p->addr[3], descriptor_p->addr[4]);
 
     FNAND_DMA_DEBUG_I(" csel : 0x%x  ", descriptor_p->cmd_ctrl.nfc_ctrl.csel);
-    FNAND_DMA_DEBUG_I(" dbc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.dbc); 
-    FNAND_DMA_DEBUG_I(" addr_cyc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.addr_cyc); 
-    FNAND_DMA_DEBUG_I(" nc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.nc); 
-    FNAND_DMA_DEBUG_I(" cmd_type : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type); 
-    FNAND_DMA_DEBUG_I(" dc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.dc); 
-    FNAND_DMA_DEBUG_I(" auto_rs : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.auto_rs); 
+    FNAND_DMA_DEBUG_I(" dbc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.dbc);
+    FNAND_DMA_DEBUG_I(" addr_cyc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.addr_cyc);
+    FNAND_DMA_DEBUG_I(" nc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.nc);
+    FNAND_DMA_DEBUG_I(" cmd_type : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type);
+    FNAND_DMA_DEBUG_I(" dc : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.dc);
+    FNAND_DMA_DEBUG_I(" auto_rs : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.auto_rs);
     FNAND_DMA_DEBUG_I(" ecc_en : %d  ", descriptor_p->cmd_ctrl.nfc_ctrl.ecc_en);
 
 }
@@ -87,7 +87,7 @@ static void FNandAddrCorrect(struct FNandDmaDescriptor *descriptor_p,
     for (i = addr_length - 1, j = FNAND_NFC_ADDR_MAX_LEN - 1; i >= 0; i--, j--)
     {
         descriptor_p->addr[j] = addr_p[i]; /* data shift to high array */
-        descriptor_p->addr[i] = 0; 
+        descriptor_p->addr[i] = 0;
         descriptor_p->cmd_ctrl.nfc_ctrl.addr_cyc++;
     }
 }
@@ -95,7 +95,7 @@ static void FNandAddrCorrect(struct FNandDmaDescriptor *descriptor_p,
 FError FNandDmaPack(FNandCmdFormat *cmd_format,
                     struct FNandDmaDescriptor *descriptor_p,
                     FNandDmaPackData *pack_data_p
-                    )
+                   )
 {
     u32 i;
     FASSERT(cmd_format != NULL);
@@ -119,7 +119,7 @@ FError FNandDmaPack(FNandCmdFormat *cmd_format,
     /* addr */
     FNandAddrCorrect(descriptor_p, pack_data_p->addr_p, pack_data_p->addr_length);
     descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type = cmd_format->cmd_type; /* cmd type */
-    FNAND_DMA_DEBUG_I("cmd_type is %x \r\n",descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type);
+    FNAND_DMA_DEBUG_I("cmd_type is %x \r\n", descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type);
     if (pack_data_p->contiune_dma)
     {
         descriptor_p->cmd_ctrl.nfc_ctrl.nc = 1;
@@ -144,8 +144,8 @@ FError FNandDmaPack(FNandCmdFormat *cmd_format,
         descriptor_p->cmd_ctrl.nfc_ctrl.ecc_en = 1;
 
     /* invalid descriptor and buffer */
-    FCacheDCacheInvalidateRange((intptr)descriptor_p,sizeof(struct FNandDmaDescriptor));
-    FCacheDCacheInvalidateRange((intptr)pack_data_p->addr_p,pack_data_p->addr_length);
+    FCacheDCacheInvalidateRange((intptr)descriptor_p, sizeof(struct FNandDmaDescriptor));
+    FCacheDCacheInvalidateRange((intptr)pack_data_p->addr_p, pack_data_p->addr_length);
 
     FNandDmaDump(descriptor_p);
 

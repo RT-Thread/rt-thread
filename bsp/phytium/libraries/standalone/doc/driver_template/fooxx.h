@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fooxx.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:35
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -38,7 +38,7 @@ extern "C"
 /************************** Constant Definitions *****************************/
 
 /* Configuration options */
-#define FOOXX_OPTION_XX 
+#define FOOXX_OPTION_XX
 
 /* Operational Mode */
 
@@ -53,7 +53,7 @@ typedef struct
 {
     u32     instance_id; /**< Device instance id */
     uintptr base_addr; /**< Device base address */
-} FooxxConfig; 
+} FooxxConfig;
 
 /**
  * This typedef contains driver instance data. The user is required to allocate a
@@ -84,9 +84,9 @@ const FooxxConfig *FXxxLookupConfig(u32 instance_id);
  * @msg:  Initializes a specific instance such that it is ready to be used.
  * @param {Fooxx} *instance_p is a pointer to the driver instance.
  * @param {FooxxConfig} *config_p is a reference to a structure containing information
- *		                about a specific driver.
+ *                      about a specific driver.
  * @return SUCCESS if initialization was successful
- *         ERROR 
+ *         ERROR
  */
 FError FooxxCfgInitialize(Fooxx *instance_p, const FooxxConfig *cofig_p);
 

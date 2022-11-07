@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fddma_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
  * Description:  This files is for register definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Zhugengyu  2022/5/13    init commit
@@ -56,10 +56,10 @@ extern "C"
 #define FDDMA_GCAP_OFFSET                       0x24 /* DMA通道数寄存器（只读） */
 #define FDDMA_CHAN_4_7_CFG_OFFSET               0x28 /* DMA通道4~7选择配置寄存器 */
 
-#define FDDMA_CHAN_OFFSET(chan)                 (0x40 * (chan)) 
+#define FDDMA_CHAN_OFFSET(chan)                 (0x40 * (chan))
 #define FDDMA_CHAN_DDR_UP_ADDR_OFFSET(chan)     (0x40 + FDDMA_CHAN_OFFSET(chan)) /* 内存中源/目的地址高32位 */
 #define FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan)    (0x44 + FDDMA_CHAN_OFFSET(chan)) /* 内存中源/目的地址低32位 */
-#define FDDMA_CHAN_DEV_ADDR_OFFSET(chan)        (0x48 + FDDMA_CHAN_OFFSET(chan)) /* 设备中源/目的地址32位 */    
+#define FDDMA_CHAN_DEV_ADDR_OFFSET(chan)        (0x48 + FDDMA_CHAN_OFFSET(chan)) /* 设备中源/目的地址32位 */
 #define FDDMA_CHAN_TS_OFFSET(chan)              (0x4C + FDDMA_CHAN_OFFSET(chan)) /* 需要传输的总数据字节数 */
 #define FDDMA_CHAN_CRT_UP_ADDR_OFFSET(chan)     (0x50 + FDDMA_CHAN_OFFSET(chan)) /* 当前内存需要读写数据的高32位 */
 #define FDDMA_CHAN_CRT_LOW_ADDR_OFFSET(chan)    (0x54 + FDDMA_CHAN_OFFSET(chan)) /* 当前内存需要读写数据的低32位 */
@@ -99,7 +99,7 @@ extern "C"
 
 /** @name FDDMA_CHAN_CTL_OFFSET Register
  */
-#define FDDMA_CHAN_CTL_RX_MODE                  BIT(2)  /* 1：接收外设 dma_rx_req, 0：接收外设 dma_tx_req */                     
+#define FDDMA_CHAN_CTL_RX_MODE                  BIT(2)  /* 1：接收外设 dma_rx_req, 0：接收外设 dma_tx_req */
 #define FDDMA_CHAN_CTL_SRST                     BIT(1)  /* 1: 复位通道 */
 #define FDDMA_CHAN_CTL_EN                       BIT(0)  /* 1: 使能通道 */
 

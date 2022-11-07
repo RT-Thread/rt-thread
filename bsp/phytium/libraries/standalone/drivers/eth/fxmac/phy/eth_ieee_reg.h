@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: eth_ieee_reg.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -28,11 +28,11 @@
 extern "C"
 {
 #endif
-    /***************************** Include Files *********************************/
+/***************************** Include Files *********************************/
 
 #include "ferror_code.h"
 
-    /***************** Macros (Inline Functions) Definitions *********************/
+/***************** Macros (Inline Functions) Definitions *********************/
 
 #define PHY_CONTROL_REG_OFFSET 0
 #define PHY_STATUS_REG_OFFSET 1
@@ -86,16 +86,16 @@ extern "C"
 #define PHY_SPECIFIC_STATUS_SPEED_100M (1L << 14)
 #define PHY_SPECIFIC_STATUS_SPEED_0M (0L << 14)
 
-    /************************** Constant Definitions *****************************/
+/************************** Constant Definitions *****************************/
 
-    /**************************** Type Definitions *******************************/
+/**************************** Type Definitions *******************************/
 
-    typedef FError (*EthPhyWrite)(void *instance_p, u32 phy_address, u32 phy_reg_offset, u16 phy_data);
-    typedef FError (*EthPhyRead)(void *instance_p, u32 phy_address, u32 phy_reg_offset, u16 *phy_data_p);
+typedef FError(*EthPhyWrite)(void *instance_p, u32 phy_address, u32 phy_reg_offset, u16 phy_data);
+typedef FError(*EthPhyRead)(void *instance_p, u32 phy_address, u32 phy_reg_offset, u16 *phy_data_p);
 
-    /************************** Variable Definitions *****************************/
+/************************** Variable Definitions *****************************/
 
-    /************************** Function Prototypes ******************************/
+/************************** Function Prototypes ******************************/
 
 #ifdef __cplusplus
 }

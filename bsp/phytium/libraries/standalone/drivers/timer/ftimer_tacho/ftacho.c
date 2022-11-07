@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: ftacho.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-05-20 09:08:52
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -57,7 +57,7 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
         reg_val |= FTIMER_REG_TACHO_MODE_TACHO;
         reg_val |= FTACHO_REG_CAP_IN_ENABLE;
         /* plus num of rpm calculate period */
-        FTIMER_CMPL_WRITE(instance_p, config_p->plus_num);        
+        FTIMER_CMPL_WRITE(instance_p, config_p->plus_num);
     }
     else if (FTIMER_WORK_MODE_CAPTURE == config_p->work_mode)
     {
@@ -67,12 +67,12 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
         reg_val |= FTIMER_REG_TACHO_CAPTURE_CNT_MASK & (config_p->captue_cnt << FTIMER_REG_TACHO_CAPTURE_CNT_SHIFT);
         reg_val |= FTIMER_REG_ENABLE;
     }
-    else 
+    else
     {
         FTACHO_ERROR("not support work_mode.");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
-    
+
     /* set timer bits */
     if (FTIMER_32_BITS == config_p->timer_bits)
     {
@@ -108,11 +108,11 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     {
         FTACHO_ERROR("invalid input edge.");
         return FTIMER_TACHO_ERR_INVAL_PARM;
-    }    
+    }
 
     /* set jitter level */
-    reg_val |= FTACHO_REG_ANTI_JITTER_MASK & 
-              (config_p->jitter_level << FTACHO_REG_ANTI_JITTER_SHIFT);
+    reg_val |= FTACHO_REG_ANTI_JITTER_MASK &
+               (config_p->jitter_level << FTACHO_REG_ANTI_JITTER_SHIFT);
 
     //use input config
     if (config_p != &instance_p->config)
@@ -121,7 +121,7 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
 
     FTIMER_CTRL_WRITE(instance_p, reg_val);
-    instance_p->isready = FT_COMPONENT_IS_READY; 
+    instance_p->isready = FT_COMPONENT_IS_READY;
 
     return FTIMER_TACHO_SUCCESS;
 }
@@ -133,19 +133,19 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
  * @param {FTimerTachoCtrl} *instance_p 驱动控制数据结构
  * @param {u32} *rpm 将获取到的数值写入到此地址
  */
-FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p,u32 *rpm)
+FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p, u32 *rpm)
 {
     u32 loop_cnt;
     u32 raw_dat;
 
     FASSERT(instance_p);
 
-    if(instance_p->isready != FT_COMPONENT_IS_READY || instance_p->config.work_mode != FTIMER_WORK_MODE_TACHO)
+    if (instance_p->isready != FT_COMPONENT_IS_READY || instance_p->config.work_mode != FTIMER_WORK_MODE_TACHO)
     {
         FTIMER_ERROR("device is not already or not work on TACHO_MODE!!!");
         return FTIMER_TACHO_ERR_NOT_READY;
     }
-    
+
     u32 cnt_num = FTIMER_CMPL_READ(instance_p);
 
     for (loop_cnt = 0;; loop_cnt++)
@@ -167,7 +167,7 @@ FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p,u32 *rpm)
         }
     }
 
-    raw_dat &= FTACHO_REG_RESU_MASK; 
+    raw_dat &= FTACHO_REG_RESU_MASK;
     if (0 == raw_dat)
     {
         *rpm = 0;
@@ -175,7 +175,7 @@ FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p,u32 *rpm)
     else
     {
         /* calculate rpm */
-        /* (60(second) * freq * tacho) / (2 * (cmp_l + 1)) cmp_l */    
+        /* (60(second) * freq * tacho) / (2 * (cmp_l + 1)) cmp_l */
         *rpm = (TIMER_CLK_FREQ_HZ * 60 * raw_dat) / (2 * (cnt_num + 1));
     }
 
@@ -194,7 +194,7 @@ u32 FTachoGetCaptureCnt(FTimerTachoCtrl *instance_p)
 
     FASSERT(instance_p);
 
-    if(instance_p->isready != FT_COMPONENT_IS_READY || instance_p->config.work_mode != FTIMER_WORK_MODE_CAPTURE)
+    if (instance_p->isready != FT_COMPONENT_IS_READY || instance_p->config.work_mode != FTIMER_WORK_MODE_CAPTURE)
     {
         FTIMER_ERROR("device is not already or not work on CAPTURE_MODE!!!");
         return FTIMER_TACHO_ERR_NOT_READY;
@@ -216,9 +216,9 @@ u32 FTachoGetCaptureCnt(FTimerTachoCtrl *instance_p)
 FError FTimerSwithMode(FTimerTachoCtrl *instance_p, FTimerTachoConfig *pNewConfig)
 {
     FASSERT(instance_p && pNewConfig);
-    
+
     u32 ret = FTIMER_TACHO_SUCCESS;
-    
+
     if (instance_p->config.work_mode == pNewConfig->work_mode)
     {
         return FTIMER_TACHO_SUCCESS;
@@ -290,9 +290,9 @@ void FTachoDeInit(FTimerTachoCtrl *instance_p)
 
     /* reset reg*/
     FTimerSoftwareReset(instance_p);
-    
+
     instance_p->isready = 0;
     memset(instance_p, 0, sizeof(*instance_p));
 
-	return;
+    return;
 }

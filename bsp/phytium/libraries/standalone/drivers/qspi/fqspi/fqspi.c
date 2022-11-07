@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fqspi.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-03-28 09:00:41
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1    wangxiaodong  2021.11.12  re-construct
@@ -46,28 +46,28 @@
  */
 FError FQspiCfgInitialize(FQspiCtrl *pctrl, const FQspiConfig *input_config_p)
 {
-	FASSERT(pctrl && input_config_p);
+    FASSERT(pctrl && input_config_p);
 
-	FError ret = FQSPI_SUCCESS;
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == pctrl->is_ready)
-	{
-		FQSPI_WARN("device is already initialized!!!");
-	}
+    FError ret = FQSPI_SUCCESS;
+    /*
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == pctrl->is_ready)
+    {
+        FQSPI_WARN("device is already initialized!!!");
+    }
 
-    /*Set default values and configuration data */	
-	FQspiDeInitialize(pctrl);
+    /*Set default values and configuration data */
+    FQspiDeInitialize(pctrl);
 
-	pctrl->config = *input_config_p;
+    pctrl->config = *input_config_p;
 
-	pctrl->is_ready = FT_COMPONENT_IS_READY;
+    pctrl->is_ready = FT_COMPONENT_IS_READY;
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -78,12 +78,12 @@ FError FQspiCfgInitialize(FQspiCtrl *pctrl, const FQspiConfig *input_config_p)
  */
 void FQspiDeInitialize(FQspiCtrl *pctrl)
 {
-	FASSERT(pctrl);
+    FASSERT(pctrl);
 
-	pctrl->is_ready = 0;
-	memset(pctrl, 0, sizeof(*pctrl));
+    pctrl->is_ready = 0;
+    memset(pctrl, 0, sizeof(*pctrl));
 
-	return;
+    return;
 }
 
 /**
@@ -98,7 +98,7 @@ void FQspiSetCapacityAndNum(FQspiCtrl *pctrl)
     u32 reg_val = 0;
     FQspiConfig *config_p = &pctrl->config;
     uintptr base_addr = pctrl->config.base_addr;
-    
+
     switch (config_p->capacity)
     {
     case FQSPI_FLASH_CAP_4MB:
@@ -128,10 +128,10 @@ void FQspiSetCapacityAndNum(FQspiCtrl *pctrl)
     }
 
     /* Write flash capacity and numbers information to qspi Capacity register */
-    reg_val = (FQSPI_CAP_FLASH_NUM_MASK & FQSPI_CAP_FLASH_NUM(config_p->dev_num)) | 
+    reg_val = (FQSPI_CAP_FLASH_NUM_MASK & FQSPI_CAP_FLASH_NUM(config_p->dev_num)) |
               (FQSPI_CAP_FLASH_CAP_MASK & FQSPI_CAP_FLASH_CAP(config_p->capacity));
 
-     /*write value to flash capacity register 0x00 */          
+    /*write value to flash capacity register 0x00 */
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_CAP_OFFSET, reg_val);
 
 }
@@ -159,19 +159,19 @@ FError FQspiRdCfgConfig(FQspiCtrl *pctrl)
     cmd_reg |= FQSPI_RD_CFG_LATENCY(rd_config.rd_latency);
     cmd_reg |= FQSPI_RD_CFG_MODE_BYTE(rd_config.mode_byte);
 
-    if((rd_config.mode_byte)||(rd_config.cmd_sign==0))
+    if ((rd_config.mode_byte) || (rd_config.cmd_sign == 0))
     {
         cmd_reg |= FQSPI_RD_CFG_CMD_SIGN(rd_config.cmd_sign);
-    }   
+    }
     else
     {
         FQSPI_ERROR("rd_cfg mode_byte disable !!!");
         return FQSPI_INVAL_PARAM;
     }
 
-    if((rd_config.rd_latency == FQSPI_CMD_LATENCY_ENABLE)||(rd_config.dummy==0))
+    if ((rd_config.rd_latency == FQSPI_CMD_LATENCY_ENABLE) || (rd_config.dummy == 0))
     {
-        rd_config.dummy = rd_config.dummy? rd_config.dummy:1;
+        rd_config.dummy = rd_config.dummy ? rd_config.dummy : 1;
         cmd_reg |= FQSPI_RD_CFG_DUMMY(rd_config.dummy);
     }
     else
@@ -210,7 +210,7 @@ FError FQspiWrCfgConfig(FQspiCtrl *pctrl)
     cmd_reg |= FQSPI_WR_CFG_ADDRSEL(wr_config.wr_addr_sel);
     cmd_reg |= FQSPI_WR_CFG_MODE(wr_config.wr_mode);
     cmd_reg |= FQSPI_WR_CFG_SCK_SEL(wr_config.wr_sck_sel);
-    
+
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_WR_CFG_OFFSET, cmd_reg);
 
     return ret;
@@ -248,11 +248,11 @@ FError FQspiCommandPortConfig(FQspiCtrl *pctrl)
 
     cmd_reg |= FQSPI_CMD_PORT_DATA_TRANS(cmd_port_config.data_transfer);
 
-    cmd_reg |= FQSPI_CMD_PORT_ADDR_SEL(cmd_port_config.addr_sel); 
-    
-    if((cmd_port_config.latency == FQSPI_CMD_LATENCY_ENABLE)||(cmd_port_config.dummy==0))
+    cmd_reg |= FQSPI_CMD_PORT_ADDR_SEL(cmd_port_config.addr_sel);
+
+    if ((cmd_port_config.latency == FQSPI_CMD_LATENCY_ENABLE) || (cmd_port_config.dummy == 0))
     {
-        cmd_port_config.dummy = cmd_port_config.dummy? cmd_port_config.dummy:1;
+        cmd_port_config.dummy = cmd_port_config.dummy ? cmd_port_config.dummy : 1;
         cmd_reg |= FQSPI_CMD_PORT_DUMMY(cmd_port_config.dummy);
     }
     else
@@ -267,7 +267,7 @@ FError FQspiCommandPortConfig(FQspiCtrl *pctrl)
     cmd_reg |= FQSPI_CMD_PORT_RW_NUM_MASK & FQSPI_CMD_PORT_RW_NUM(cmd_port_config.rw_num);
 
     cmd_reg |= FQSPI_CMD_PORT_CLK_SEL_MASK & FQSPI_CMD_PORT_CLK_SEL(cmd_port_config.sck_sel);
-    
+
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_CMD_PORT_OFFSET, cmd_reg);
 
     return ret;

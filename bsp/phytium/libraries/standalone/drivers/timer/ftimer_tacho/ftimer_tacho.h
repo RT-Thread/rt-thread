@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: ftimer_tacho.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:43
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -33,7 +33,7 @@ extern "C"
 #include "fdebug.h"
 #include "ferror_code.h"
 
-#define FTIMER_TACHO_SUCCESS          FT_SUCCESS  
+#define FTIMER_TACHO_SUCCESS          FT_SUCCESS
 #define FTIMER_TACHO_ERR_INVAL_PARM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspTimer, 1)
 #define FTIMER_TACHO_ERR_NOT_READY    FT_MAKE_ERRCODE(ErrModBsp, ErrBspTimer, 2)
 #define FTIMER_TACHO_ERR_INIT_FAILED  FT_MAKE_ERRCODE(ErrModBsp, ErrBspTimer, 3)
@@ -59,26 +59,26 @@ typedef enum
     FTIMER_WORK_MODE_TIMER = 0,
     FTIMER_WORK_MODE_TACHO,
     FTIMER_WORK_MODE_CAPTURE
-}FTimerTachoModeType;
+} FTimerTachoModeType;
 
 typedef enum
 {
     /*Timer count mode*/
     FTIMER_FREE_RUN = 0,
     FTIMER_RESTART
-}FTimerCntModeType;
+} FTimerCntModeType;
 
 typedef enum
 {
     FTIMER_32_BITS = 0,
     FTIMER_64_BITS
-}FTimerBitsType;
+} FTimerBitsType;
 
 typedef enum
 {
     FTIMER_ONCE_CMP = 0,
     FTIMER_CYC_CMP
-}FTimerCmpType;
+} FTimerCmpType;
 
 typedef enum
 {
@@ -88,16 +88,16 @@ typedef enum
     FTIMER_EVENT_ONCE_CMP,      /*单次定时输出事件*/
     FTIMER_EVENT_CYC_CMP,       /*重复定时输出事件*/
     FTACHO_EVENT_CAPTURE,       /*tacho输入捕获事件*/
-    
+
     FMAX_TIMER_TACHO_EVENT
-}FTimerTachoEventType;
+} FTimerTachoEventType;
 
 typedef enum
 {
     FTACHO_FALLING_EDGE = 0,    /*下降沿触发模式*/
     FTACHO_RISING_EDGE,         /*上升沿触发模式*/
     FTACHO_DOUBLE_EDGE          /*双边沿触发模式*/
-}FTachoEdgeType;
+} FTachoEdgeType;
 
 typedef enum
 {
@@ -105,9 +105,9 @@ typedef enum
     FTACHO_JITTER_LEVEL1,
     FTACHO_JITTER_LEVEL2,
     FTACHO_JITTER_LEVEL3,
-}FTachoJitterLevelType;
+} FTachoJitterLevelType;
 
-typedef struct 
+typedef struct
 {
     u32     id;        /* id of timer tacho */
     char    name[12];  /* instance name */
@@ -124,7 +124,7 @@ typedef struct
     u32     jitter_level; /* jitter level */
     u32     plus_num;  /* plus_num of period to calculate rpm */
     u32     captue_cnt; /* in capture mode, when cnt reach this val, intr asserted */
-}FTimerTachoConfig;
+} FTimerTachoConfig;
 
 typedef void (*FTimerEventHandler)(void *instance_p);
 
@@ -133,7 +133,7 @@ typedef struct
     FTimerTachoConfig     config;   /* Current active configs */
     boolean               isready;  /* Device is initialized and ready */
     FTimerEventHandler    evt_handlers[FMAX_TIMER_TACHO_EVENT];/* event handler for interrupt */
-}FTimerTachoCtrl;
+} FTimerTachoCtrl;
 
 /* Time & Tacho API */
 /*将控制器复位*/
@@ -144,8 +144,8 @@ u32 FTimerGetInterruptMask(FTimerTachoCtrl *instance_p);
 
 /*设置中断,根据不同的intrType，将对于的中断mask置位*/
 void FTimerSetInterruptMask(FTimerTachoCtrl *instance_p,
-                           FTimerTachoEventType intrType,
-                           boolean enable);
+                            FTimerTachoEventType intrType,
+                            boolean enable);
 
 /*启动timer_tacho外设,根据不同的功能，开启使能位*/
 FError FTimerStart(FTimerTachoCtrl *instance_p);
@@ -157,9 +157,9 @@ FError FTimerStop(FTimerTachoCtrl *instance_p);
 FError FTimerSwithMode(FTimerTachoCtrl *instance_p, FTimerTachoConfig *new_config_p);
 
 /* 注册中断事件处理回调函数 */
-void FTimerRegisterEvtCallback(FTimerTachoCtrl *instance_p, 
-                              FTimerTachoEventType evt, 
-                              FTimerEventHandler callback);
+void FTimerRegisterEvtCallback(FTimerTachoCtrl *instance_p,
+                               FTimerTachoEventType evt,
+                               FTimerEventHandler callback);
 
 /*打印寄存器信息*/
 FError FTimeSettingDump(const FTimerTachoCtrl *instance_p);
@@ -212,7 +212,7 @@ void FTachoSetOverLimit(FTimerTachoCtrl *instance_p, u32 overLim);
 void FTachoSetUnderLimit(FTimerTachoCtrl *instance_p, u32 underLim);
 
 /*根据预设采样周期的值，来获取风扇的转速值*/
-FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p,u32 *rpm);
+FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p, u32 *rpm);
 
 /*获取capture模式下tacho输入脉冲的个数*/
 u32 FTachoGetCaptureCnt(FTimerTachoCtrl *instance_p);

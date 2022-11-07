@@ -166,7 +166,7 @@
 #define FGIC_GICD_ISENABLER_WRITE_N_MASK(gicd_base,itnum,reg) FGIC_WRITEREG32(gicd_base , FGIC_GICD_ISENABLER_OFFSET + ((itnum >> 5)<<2), reg)
 
 /* FGIC_GICD_TYPER_OFFSET --- Provides information about what features the GIC implementation supports. */
-#define FGIC_GICD_TYPER_ITLINESNUMBER_MASK 0x1f  
+#define FGIC_GICD_TYPER_ITLINESNUMBER_MASK 0x1f
 
 
 /* FGIC_GICD_ICENABLER_OFFSET --- SPI close */

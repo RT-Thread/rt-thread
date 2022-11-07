@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fnand_timing.h
  * Date: 2022-04-28 18:53:58
  * LastEditTime: 2022-04-28 18:53:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -68,7 +68,7 @@
  * @tRP_min: RE# pulse width
  * @tRR_min: Ready to RE# low (data only)
  * @tRST_max: Device reset time, measured from the falling edge of R/B# to the
- *	      rising edge of R/B#.
+ *        rising edge of R/B#.
  * @tWB_max: WE# high to SR[6] low
  * @tWC_min: WE# cycle time
  * @tWH_min: WE# high hold time
@@ -76,45 +76,46 @@
  * @tWP_min: WE# pulse width
  * @tWW_min: WP# transition to WE# low
  */
-struct FNandSdrTimings {
-	u64 tBERS_max;
-	u32 tCCS_min;
-	u64 tPROG_max;
-	u64 tR_max;
-	u32 tALH_min;
-	u32 tADL_min;
-	u32 tALS_min;
-	u32 tAR_min;
-	u32 tCEA_max;
-	u32 tCEH_min;
-	u32 tCH_min;
-	u32 tCHZ_max;
-	u32 tCLH_min;
-	u32 tCLR_min;
-	u32 tCLS_min;
-	u32 tCOH_min;
-	u32 tCS_min;
-	u32 tDH_min;
-	u32 tDS_min;
-	u32 tFEAT_max;
-	u32 tIR_min;
-	u32 tITC_max;
-	u32 tRC_min;
-	u32 tREA_max;
-	u32 tREH_min;
-	u32 tRHOH_min;
-	u32 tRHW_min;
-	u32 tRHZ_max;
-	u32 tRLOH_min;
-	u32 tRP_min;
-	u32 tRR_min;
-	u64 tRST_max;
-	u32 tWB_max;
-	u32 tWC_min;
-	u32 tWH_min;
-	u32 tWHR_min;
-	u32 tWP_min;
-	u32 tWW_min;
+struct FNandSdrTimings
+{
+    u64 tBERS_max;
+    u32 tCCS_min;
+    u64 tPROG_max;
+    u64 tR_max;
+    u32 tALH_min;
+    u32 tADL_min;
+    u32 tALS_min;
+    u32 tAR_min;
+    u32 tCEA_max;
+    u32 tCEH_min;
+    u32 tCH_min;
+    u32 tCHZ_max;
+    u32 tCLH_min;
+    u32 tCLR_min;
+    u32 tCLS_min;
+    u32 tCOH_min;
+    u32 tCS_min;
+    u32 tDH_min;
+    u32 tDS_min;
+    u32 tFEAT_max;
+    u32 tIR_min;
+    u32 tITC_max;
+    u32 tRC_min;
+    u32 tREA_max;
+    u32 tREH_min;
+    u32 tRHOH_min;
+    u32 tRHW_min;
+    u32 tRHZ_max;
+    u32 tRLOH_min;
+    u32 tRP_min;
+    u32 tRR_min;
+    u64 tRST_max;
+    u32 tWB_max;
+    u32 tWC_min;
+    u32 tWH_min;
+    u32 tWHR_min;
+    u32 tWP_min;
+    u32 tWW_min;
 };
 
 

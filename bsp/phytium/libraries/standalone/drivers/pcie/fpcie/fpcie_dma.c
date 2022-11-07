@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpcie_dma.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 08:57:38
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -51,8 +51,8 @@
 /**
  * @name: FPcieDmaDescSet
  * @msg:  PCIE DMA descriptor group packet
- * @param {uintptr} axi_addr is memory address 
- * @param {uintptr} bar_addr is Base Address Register value 
+ * @param {uintptr} axi_addr is memory address
+ * @param {uintptr} bar_addr is Base Address Register value
  * @param {u32} length want to send byte length
  * @param {struct FPcieDmaDescriptor *}  desc Desc is the descriptor to be configured
  * @param {struct FPcieDmaDescriptor *}  next_desc is the next descriptor that needs to be sent

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe      first commit 
+ * 2022-10-26  huanghe      first commit
  *
  */
 
@@ -45,15 +45,15 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     RT_ASSERT(FPl011CfgInitialize(uart_hw, &config) == FT_SUCCESS);
     FPl011SetHandler(uart_hw, Ft_Os_Uart_Callback, serial);
 
-    FPl011SetRxFifoThreadhold(uart_hw,FPL011IFLS_RXIFLSEL_1_4);
-    FPl011SetTxFifoThreadHold(uart_hw,FPL011IFLS_TXIFLSEL_1_2);
+    FPl011SetRxFifoThreadhold(uart_hw, FPL011IFLS_RXIFLSEL_1_4);
+    FPl011SetTxFifoThreadHold(uart_hw, FPL011IFLS_TXIFLSEL_1_2);
 
     //<! 打开接收中断
     intr_mask = uart->config.isr_event_mask;
-    FPl011SetInterruptMask(uart_hw,intr_mask);
+    FPl011SetInterruptMask(uart_hw, intr_mask);
     FPl011SetOptions(uart_hw, FPL011_OPTION_UARTEN | FPL011_OPTION_RXEN | FPL011_OPTION_TXEN | FPL011_OPTION_FIFOEN);
 
-    rt_hw_interrupt_set_priority(uart_hw->config.irq_num,uart->config.isr_priority);
+    rt_hw_interrupt_set_priority(uart_hw->config.irq_num, uart->config.isr_priority);
     rt_hw_interrupt_install(uart_hw->config.irq_num, rt_hw_uart_isr, uart_hw, "uart");
     rt_hw_interrupt_umask(uart_hw->config.irq_num);
 
@@ -132,7 +132,7 @@ static int uart_putc(struct rt_serial_device *serial, char c)
 u8 FPl011RecvByteNoBlocking(u32 addr)
 {
     u32 recieved_byte;
-    
+
     while (FUART_ISRECEIVEDATA(addr))
     {
         return 0xff;
@@ -159,19 +159,19 @@ static int uart_getc(struct rt_serial_device *serial)
     }
     else
     {
-        // 
+        //
     }
 
     return ch;
 }
 
 static const struct rt_uart_ops _uart_ops =
-    {
-        uart_configure,
-        uart_control,
-        uart_putc,
-        uart_getc,
-        NULL
+{
+    uart_configure,
+    uart_control,
+    uart_putc,
+    uart_getc,
+    NULL
 };
 
 #define RT_USING_UART0
@@ -179,13 +179,13 @@ static const struct rt_uart_ops _uart_ops =
 
 
 #ifdef RT_USING_UART0
-static FPl011 Ft_Uart0;
-static struct drv_usart _RtUart0;
+    static FPl011 Ft_Uart0;
+    static struct drv_usart _RtUart0;
 #endif
 
 #ifdef RT_USING_UART1
-static FPl011 Ft_Uart1;
-static struct drv_usart _RtUart1;
+    static FPl011 Ft_Uart1;
+    static struct drv_usart _RtUart1;
 #endif
 
 int rt_hw_uart_init(void)
@@ -197,11 +197,11 @@ int rt_hw_uart_init(void)
     _RtUart0.serial.ops = &_uart_ops;
     _RtUart0.serial.config = config;
     // Ft_Uart0.config.instance_id = FUART0_ID;
-    
+
     _RtUart0.handle = &Ft_Uart0;
     _RtUart0.config.uart_instance = FUART0_ID;
-    _RtUart0.config.isr_priority = 0xd0; 
-    _RtUart0.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK|RTOS_UART_ISR_BEIM_MASK|RTOS_UART_ISR_PEIM_MASK|RTOS_UART_ISR_FEIM_MASK|RTOS_UART_ISR_RTIM_MASK|RTOS_UART_ISR_RXIM_MASK);
+    _RtUart0.config.isr_priority = 0xd0;
+    _RtUart0.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
     _RtUart0.config.uart_baudrate = 115200;
 
     rt_hw_serial_register(&_RtUart0.serial, "uart0",
@@ -217,8 +217,8 @@ int rt_hw_uart_init(void)
     _RtUart1.handle = &Ft_Uart1;
 
     _RtUart1.config.uart_instance = FUART1_ID;
-    _RtUart1.config.isr_priority = 0xd0; 
-    _RtUart1.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK|RTOS_UART_ISR_BEIM_MASK|RTOS_UART_ISR_PEIM_MASK|RTOS_UART_ISR_FEIM_MASK|RTOS_UART_ISR_RTIM_MASK|RTOS_UART_ISR_RXIM_MASK);
+    _RtUart1.config.isr_priority = 0xd0;
+    _RtUart1.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
     _RtUart1.config.uart_baudrate = 115200;
 
     rt_hw_serial_register(&_RtUart1.serial, "uart1",

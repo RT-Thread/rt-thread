@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: generic_timer.c
  * Date: 2022-02-10 14:53:41
  * LastEditTime: 2022-02-17 17:30:07
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -28,15 +28,15 @@
 #include "sdkconfig.h"
 
 #ifndef SDK_CONFIG_H__
-#warning "Please include sdkconfig.h"
+    #warning "Please include sdkconfig.h"
 #endif
 
 #ifdef CONFIG_USE_SYS_TICK
-#include "fassert.h"
-#include "finterrupt.h"
+    #include "fassert.h"
+    #include "finterrupt.h"
 
-static volatile u32 genericTick;
-static GenericTimerTickHandler usr_tick_handler = NULL;
+    static volatile u32 genericTick;
+    static GenericTimerTickHandler usr_tick_handler = NULL;
 #endif
 
 #define AARCH32_CNTP_CTL_ENABLE_MASK (1ul << 0)

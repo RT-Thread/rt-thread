@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpcie_hw.h
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 08:58:22
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -44,7 +44,7 @@ extern "C"
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
-    /* config register */
+/* config register */
 #define FPCIE_REG_MISC_INT_STATE_OFFSET 0x00000008U /* 杂散中断状态寄存器 */
 #define FPCIE_REG_MISC_INT_ENALBE_OFFSET 0x0000000CU /* 杂散中断是能寄存器 */
 #define FPCIE_REG_MSI_ENABLE_OFFSET 0x000000200U     /* MSI 中断使能寄存器 */
@@ -62,7 +62,7 @@ extern "C"
 #define FPCIE_REG_EP_C2_PREF_BASE_LIMIT_UP32_OFFSET 0x000000A54U
 #define FPCIE_REG_EP_C2_MEM_BASE_LIMIT_OFFSET 0x000000A58U
 
-    /* Controler register */
+/* Controler register */
 #define FPCIE_REG_MSI_LOW_ADDRESS_OFFSET 0x94U     /* MSI 事务的写地址低 32 位 */
 #define FPCIE_REG_MSI_HIGH_ADDRESS_OFFSET 0x98U    /* MSI 事务的写地址高 32 位 */
 #define FPCIE_REG_MSI_DATA_OFFSET 0x9CU            /* MSI 事务携带的数据信息 */
@@ -86,7 +86,7 @@ extern "C"
 #define FPCIE_REG_DMA_INT_STATUS_OFFSET 0xC0A0U    /* DMA 中断状态寄存器 */
 #define FPCIE_REG_DMA_INT_ENABLE_OFFSET 0xC0A4U    /* DMA 使能寄存器 */
 
-    /* REG_MISC_INT_STATE */
+/* REG_MISC_INT_STATE */
 #define FPCIE_MISC_STATE_C0_DMA_INT_MASK 0x1U                   /* c0 dma 中断 */
 #define FPCIE_MISC_STATE_C0_LOCAL_INT_MASK 0x2U                 /* c0 本地中断 */
 #define FPCIE_MISC_STATE_C0_POWER_STATE_CHANGE_MASK 0x4U        /* c0 电源状态变化 */
@@ -97,113 +97,113 @@ extern "C"
 #define FPCIE_MISC_STATE_C2_LOCAL_INT_MASK 0x2000U              /* c2 本地中断 */
 #define FPCIE_MISC_STATE_C2_POWER_STATE_CHANGE_MASK 0x4000U     /* c2 电源状态变化 */
 
-    /* REG_MISC_INT_ENALBE */
+/* REG_MISC_INT_ENALBE */
 #define FPCIE_MISC_ENALBE_C0_MISC_INT_EN_MASK 0x1U              /* c0 杂散中断使能 */
 #define FPCIE_MISC_ENALBE_C1_MISC_INT_EN_MASK 0x2U              /* c1 杂散中断使能 */
 #define FPCIE_MISC_ENALBE_C2_MISC_INT_EN_MASK 0x4U              /* c2 杂散中断使能 */
 
-    /* REG_MSI_ENABLE */
+/* REG_MSI_ENABLE */
 #define FPCIE_MSI_EN_MASK 0x1U                                  /* MSI 中断使能 */
 
-    /* REG_MSI_UP32_ADDR */
+/* REG_MSI_UP32_ADDR */
 #define FPCIE_MSI64_HI_ADDR_OFFSET 0xFFFFFFFFU                  /* MSI64 高位地址 */
 
-    /* REG_MSI_LOW32_ADDR */
+/* REG_MSI_LOW32_ADDR */
 #define FPCIE_MSI64_LO_ADDR_MASK 0xFFFF0000U                    /* MSI64 低位地址 */
 
-    /* REG_MSI_SPI_ENABLE */
+/* REG_MSI_SPI_ENABLE */
 #define FPCIE_MSI_DATA_MASK 0xFFFFU                             /* msi 中断的数据 */
 #define FPCIE_MSI_DEVICE_ID_MASK 0xFFFF0000U                    /* msi 中断的设备 id */
 
-    /* REG_EP_C0_PREF_BASE_LIMIT */
+/* REG_EP_C0_PREF_BASE_LIMIT */
 #define FPCIE_C0_PREF_BASE_MASK 0xfff0U                         /* 可预取存储空间基址低位 */
 #define FPCIE_C0_PREF_LIMIT_MASK 0xfff00000U                    /* 可预取存储空间上限低位 */
 
-    /* REG_EP_C0_PREF_BASE_LIMIT_UP32 */
+/* REG_EP_C0_PREF_BASE_LIMIT_UP32 */
 #define FPCIE_C0_PREF_BASE_UP32_MASK 0xFFU                      /* 可预取存储空间基址高位 */
 #define FPCIE_C0_PREF_LIMIT_UP32_MASK 0xFF00U                   /* 可预取存储空间上限高位 */
 
-    /* REG_EP_C1_PREF_BASE_LIMIT */
+/* REG_EP_C1_PREF_BASE_LIMIT */
 #define FPCIE_C1_PREF_BASE_MASK 0xfff0U                         /* 可预取存储空间基址低位 */
 #define FPCIE_C1_PREF_LIMIT_MASK 0xfff00000U                    /* 可预取存储空间上限低位 */
 
-    /* REG_EP_C1_PREF_BASE_LIMIT_UP32 */
+/* REG_EP_C1_PREF_BASE_LIMIT_UP32 */
 #define FPCIE_C1_PREF_BASE_UP32_MASK 0xFFU                      /* 可预取存储空间基址高位 */
 #define FPCIE_C1_PREF_LIMIT_UP32_MASK 0xFF00U                   /* 可预取存储空间上限高位 */
 
-    /* Controler register */
-    /* REG_MSI_LOW_ADDRESS */
+/* Controler register */
+/* REG_MSI_LOW_ADDRESS */
 #define FPCIE_CTRL_MSI_LOW_ADDR_MASK 0xFFFFFFFCU                /* MSI 事务的写地址低位 */
 
-    /* REG_MSI_HIGH_ADDRESS */
+/* REG_MSI_HIGH_ADDRESS */
 #define FPCIE_CTRL_MSI_HIGH_ADDR_MASK 0xFFFFFFFFU               /* MSI 事务的写地址高 32 位 */
 
-    /* REG_MSI_DATA */
+/* REG_MSI_DATA */
 #define FPCIE_CTRL_MESSAGE_DATA_MASK 0xffffU                    /* MSI 事务携带的数据信息 */
 
-    /* REG_OUTBOUND_R0_PATR0 */
+/* REG_OUTBOUND_R0_PATR0 */
 #define FPCIE_CTRL_OUTBOUND_R0_PATR0_R0_NUM_BITS_MASK 0x1fU     /* 配置可通过的 AXI 域地址，例如配置为 N，那么N+1 位地址可通过。 */
 #define FPCIE_CTRL_OUTBOUND_R0_PATR0_ADDR_BITS_MASK 0xffffff00U /* 控制器输出方向 region 0 转换后的地址[31:8]位 */
 
-    /* REG_OUTBOUND_R0_PATR1 */
+/* REG_OUTBOUND_R0_PATR1 */
 #define FPCIE_CTRL_OUTBOUND_R0_PATR1_ADDR_BITS_MASK 0xffffffffU /* 控制器输出方向 region 0 转换后的地址[63:32]位 */
 
-    /* REG_OUTBOUND_R0_PHDR0 */
+/* REG_OUTBOUND_R0_PHDR0 */
 #define FPCIE_CTRL_OUTBOUND_R0_PHDR0_DESCRIPTOR_MASK 0xffffffffU /* 控制器输出方向 region 0 的描述符[31:0]位 */
 
-    /* REG_OUTBOUND_R0_PHDR1 */
+/* REG_OUTBOUND_R0_PHDR1 */
 #define FPCIE_CTRL_OUTBOUND_R0_PHDR1_DESCRIPTOR_MASK 0xffffffffU /* 控制器输出方向 region 0 的描述符[63:32]位 */
 
-    /* REG_OUTBOUND_R0_PHDR2 */
+/* REG_OUTBOUND_R0_PHDR2 */
 #define FPCIE_CTRL_OUTBOUND_R0_PHDR2_DESCRIPTOR_MASK 0x1fffU     /* 控制器输出方向 region 0 的描述符[76:64]位 */
 
-    /* REG_OUTBOUND_R0_ARBA0 */
+/* REG_OUTBOUND_R0_ARBA0 */
 #define FPCIE_CTRL_OUTBOUND_R0_ARBA0_LOWER_MASK 0x3f             /* 配置AXI域匹配地址时的mask位，例如配置为M，那么 M+1 位地址在匹配时不做比较。 */
 #define FPCIE_CTRL_OUTBOUND_R0_ARBA0_ADDR_MASK 0xFFFFFFF0U       /* 控制器输出方向 region 0 转换前的地址[31:8]位 */
 
-    /* REG_OUTBOUND_R0_ARBA1 */
+/* REG_OUTBOUND_R0_ARBA1 */
 #define FPCIE_CTRL_OUTBOUND_R0_ARBA1_ADDR_MASK 0xffffffffU       /* 控制器输出方向 region 0 转换前的地址[63:32]位 */
 
-    /* REG_F0_B0_ATR_L */
+/* REG_F0_B0_ATR_L */
 #define FPCIE_CTRL_F0_B0_ATR_L_ADDR_MASK 0xffffffffU             /* 控制器 FUNC 0 BAR 0 地址转换寄存器低 32 位 */
 
-    /* REG_F0_B0_ATR_H */
+/* REG_F0_B0_ATR_H */
 #define FPCIE_CTRL_F0_B0_ATR_H_ADDR_MASK 0xffffffffU            /* 控制器 FUNC 0 BAR 0 地址转换寄存器高 32 位 */
 
-    /* REG_F0_B2_ATR_L */
+/* REG_F0_B2_ATR_L */
 #define FPCIE_CTRL_F0_B2_ATR_L_ADDR_MASK 0xffffffffU            /* 控制器 FUNC 0 BAR 2 地址转换寄存器低 32 位 */
 
-    /* REG_F0_B2_ATR_H */
+/* REG_F0_B2_ATR_H */
 #define FPCIE_CTRL_F0_B2_ATR_H_ADDR_MASK 0xffffffffU            /* 控制器 FUNC 0 BAR 2 地址转换寄存器高 32 位 */
 
-    /* REG_DMA_CH0_CTRL */
+/* REG_DMA_CH0_CTRL */
 #define FPCIE_CTRL_DMA_CH0_CTRL_GO_MASK 0x1U                    /* DMA channel 0 点火位，开始传输 */
 #define FPCIE_CTRL_DMA_CH0_CTRL_OBNOTIB_MASK 0x2U               /* 配置 DMA channel 0 是读操作还是写操作 */
 
-    /* REG_DMA_CH0_SP_L */
+/* REG_DMA_CH0_SP_L */
 #define FPCIE_CTRL_DMA_CH0_SP_L_START_MASK 0xFFFFFFFFU          /* 保存 channel 0 描述符的内存地址低 32 位 */
 
-    /* REG_DMA_CH0_SP_H */
+/* REG_DMA_CH0_SP_H */
 #define FPCIE_CTRL_DMA_CH0_SP_H_START_MASK 0xFFFFFFFFU          /* 保存 channel 0 描述符的内存地址高 32 位 */
 
-    /* REG_DMA_CH1_CTRL */
+/* REG_DMA_CH1_CTRL */
 #define FPCIE_CTRL_DMA_CH1_CTRL_GO_MASK 0x1U                    /* DMA channel 1 点火位，开始传输 */
 #define FPCIE_CTRL_DMA_CH1_CTRL_OBNOTIB_MASK 0x2U               /* 配置 DMA channel 1 是读操作还是写操作 */
 
-    /* REG_DMA_CH1_SP_L */
+/* REG_DMA_CH1_SP_L */
 #define FPCIE_CTRL_DMA_CH1_SP_L_START_MASK 0xFFFFFFFFU          /* 保存 channel 1 描述符的内存地址低 32 位 */
 
-    /* REG_DMA_CH1_SP_H */
+/* REG_DMA_CH1_SP_H */
 #define FPCIE_CTRL_DMA_CH1_SP_H_START_MASK 0xFFFFFFFFU          /* 保存 channel 1 描述符的内存地址高 32 位 */
 
-    /* REG_DMA_INT_STATUS */
+/* REG_DMA_INT_STATUS */
 #define FPCIE_CTRL_DMA_INT_STATUS_CH0_DONE_MASK 0x1U            /* channel 0 传输完成中断 */
 #define FPCIE_CTRL_DMA_INT_STATUS_CH1_DONE_MASK 0x2U            /* channel 1 传输完成中断 */
 #define FPCIE_CTRL_DMA_INT_STATUS_CH0_ERR_MASK 0x10U            /* channel 0 传输出错中断 */
 #define FPCIE_CTRL_DMA_INT_STATUS_CH1_ERR_MASK 0x20U            /* channel 1 传输出错中断 */
 #define FPCIE_CTRL_DMA_INT_STATUS_ALL_MASK (FPCIE_CTRL_DMA_INT_STATUS_CH0_DONE_MASK | FPCIE_CTRL_DMA_INT_STATUS_CH1_DONE_MASK | FPCIE_CTRL_DMA_INT_STATUS_CH0_ERR_MASK | FPCIE_CTRL_DMA_INT_STATUS_CH1_ERR_MASK)
 
-    /* REG_DMA_INT_ENABLE */
+/* REG_DMA_INT_ENABLE */
 #define FPCIE_CTRL_DMA_INT_ENABLE_CH0_DONE_MASK 0x1U            /*  使能 channel 0 传输完成后产生中断 */
 #define FPCIE_CTRL_DMA_INT_ENABLE_CH1_DONE_MASK 0x2U            /*  使能 channel 1 传输完成后产生中断 */
 #define FPCIE_CTRL_DMA_INT_ENABLE_CH0_ERR_MASK 0x10U            /*  使能 channel 0 传输出错后产生中断 */
@@ -229,7 +229,7 @@ extern "C"
 /*@}*/
 
 
-#define FPCIE_BUS(d)		(((d) >> 16) & 0xff)
+#define FPCIE_BUS(d)        (((d) >> 16) & 0xff)
 /*
  * Please note the difference in DEVFN usage in U-Boot vs Linux. U-Boot
  * uses DEVFN in bits 15-8 but Linux instead expects DEVFN in bits 7-0.
@@ -239,15 +239,15 @@ extern "C"
  * The U-Boot macro FPCIE_DEV is equivalent to the Linux FPCIE_SLOT version with
  * the remark from above (input d in bits 15-8 instead of 7-0.
  */
-#define FPCIE_DEV(d)		(((d) >> 11) & 0x1f)
-#define FPCIE_FUNC(d)		(((d) >> 8) & 0x7)
-#define FPCIE_DEVFN(d, f)		((d) << 11 | (f) << 8)
+#define FPCIE_DEV(d)        (((d) >> 11) & 0x1f)
+#define FPCIE_FUNC(d)       (((d) >> 8) & 0x7)
+#define FPCIE_DEVFN(d, f)       ((d) << 11 | (f) << 8)
 
-#define FPCIE_MASK_BUS(bdf)	((bdf) & 0xffff)
-#define FPCIE_ADD_BUS(bus, devfn)	(((bus) << 16) | (devfn))
-#define FPCIE_BDF(b, d, f)	((b) << 16 | FPCIE_DEVFN(d, f))
-#define FPCIE_VENDEV(v, d)	(((v) << 16) | (d))
-#define FPCIE_ANY_ID		(~0)
+#define FPCIE_MASK_BUS(bdf) ((bdf) & 0xffff)
+#define FPCIE_ADD_BUS(bus, devfn)   (((bus) << 16) | (devfn))
+#define FPCIE_BDF(b, d, f)  ((b) << 16 | FPCIE_DEVFN(d, f))
+#define FPCIE_VENDEV(v, d)  (((v) << 16) | (d))
+#define FPCIE_ANY_ID        (~0)
 
 /**
 *
@@ -305,18 +305,18 @@ extern "C"
 /************************** Function Prototypes ******************************/
 
 
-void FPcieEcamReadConfig8bit(uintptr ecam_addr,s32 bdf,u32 offset,u8 *value_p);
+void FPcieEcamReadConfig8bit(uintptr ecam_addr, s32 bdf, u32 offset, u8 *value_p);
 
-void FPcieEcamReadConfig16bit(uintptr ecam_addr,s32 bdf,u32 offset,u16 *value_p);
+void FPcieEcamReadConfig16bit(uintptr ecam_addr, s32 bdf, u32 offset, u16 *value_p);
 
-void FPcieEcamReadConfig32bit(uintptr ecam_addr,s32 bdf,u32 offset,u32 *value_p);
+void FPcieEcamReadConfig32bit(uintptr ecam_addr, s32 bdf, u32 offset, u32 *value_p);
 
 
-void FPcieEcamWriteConfig8bit(uintptr ecam_addr,s32 bdf,u32 offset,u8 value);
+void FPcieEcamWriteConfig8bit(uintptr ecam_addr, s32 bdf, u32 offset, u8 value);
 
-void FPcieEcamWriteConfig16bit(uintptr ecam_addr,s32 bdf,u32 offset,u16 value);
+void FPcieEcamWriteConfig16bit(uintptr ecam_addr, s32 bdf, u32 offset, u16 value);
 
-void FPcieEcamWriteConfig32bit(uintptr ecam_addr,s32 bdf,u32 offset,u32 value);
+void FPcieEcamWriteConfig32bit(uintptr ecam_addr, s32 bdf, u32 offset, u32 value);
 
 FError FPcieSkipDevice(uintptr ecam_addr, s32 bdf) ;
 

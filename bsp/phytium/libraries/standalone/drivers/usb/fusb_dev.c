@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fusb_dev.c
  * Date: 2022-02-11 13:33:11
  * LastEditTime: 2022-02-18 09:18:45
  * Description:  This files is for USB device function implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7	init commit
+ * 1.0   Zhugengyu  2022/2/7    init commit
  */
 
 #include <string.h>
@@ -36,20 +36,20 @@
 
 #define FUSB_DR_DESC FUsbGenerateReqType(FUSB_REQ_DEVICE_TO_HOST, FUSB_REQ_TYPE_STANDARD, FUSB_REQ_RECP_DEV)
 
-#define FUSB_SKIP_BYTES(desc, bytes)	((FUsbDescriptor *) ((u8 *) (desc) + (bytes)))
-#define FUSB_CONFIG_DESC_SIZE			512		/* best guess */
+#define FUSB_SKIP_BYTES(desc, bytes)    ((FUsbDescriptor *) ((u8 *) (desc) + (bytes)))
+#define FUSB_CONFIG_DESC_SIZE           512     /* best guess */
 
-static void FUsbNopDevDestory (FUsbDev *dev)
+static void FUsbNopDevDestory(FUsbDev *dev)
 {
-	FUsbNopDevInit (dev);
-	dev->address = FUSB_NO_DEV_ADDR;
-	dev->hub = FUSB_NO_HUB;
-	dev->port = FUSB_NO_PORT;
+    FUsbNopDevInit(dev);
+    dev->address = FUSB_NO_DEV_ADDR;
+    dev->hub = FUSB_NO_HUB;
+    dev->port = FUSB_NO_PORT;
 }
 
-static void FUsbNopDevPoll (FUsbDev *dev)
+static void FUsbNopDevPoll(FUsbDev *dev)
 {
-	return;
+    return;
 }
 
 /**
@@ -58,12 +58,12 @@ static void FUsbNopDevPoll (FUsbDev *dev)
  * @return {*}
  * @param {FUsbDev} *dev, USB设备实例
  */
-void FUsbNopDevInit (FUsbDev *dev)
+void FUsbNopDevInit(FUsbDev *dev)
 {
-	dev->descriptor = NULL;
-	dev->configuration = NULL;
-	dev->destroy = FUsbNopDevDestory;
-	dev->poll = FUsbNopDevPoll;
+    dev->descriptor = NULL;
+    dev->configuration = NULL;
+    dev->destroy = FUsbNopDevDestory;
+    dev->poll = FUsbNopDevPoll;
 }
 
 static inline boolean FUsbParserIsValid(const FUsbConfigParser *parser)
@@ -80,7 +80,7 @@ static FError FUsbParserDescriptor(FUsbConfigParser *parser)
     FUsbDescriptorType last_desc_type = FUSB_DESC_TYPE_NONE;
     FUsbDescriptorType desc_type;
     u8 desc_len, exp_len, alt_len;
-    FError ret = FUSB_SUCCESS;	
+    FError ret = FUSB_SUCCESS;
 
     while (FUSB_SKIP_BYTES(cur_pos, FUSB_DESCRIPTOR_HEADER_SIZE) < parser->end_pos)
     {
@@ -106,7 +106,7 @@ static FError FUsbParserDescriptor(FUsbConfigParser *parser)
             {
                 FUSB_ERROR("Configuration descriptor must be the first !!!");
                 parser->err_pos = cur_pos;
-                ret = FUSB_ERR_DESC_PARSE_ERR; 
+                ret = FUSB_ERR_DESC_PARSE_ERR;
                 goto err_handle;
             }
             exp_len = sizeof(FUsbConfigurationDescriptor);
@@ -116,19 +116,19 @@ static FError FUsbParserDescriptor(FUsbConfigParser *parser)
             {
                 FUSB_ERROR("Interface descriptor must not be the first !!!");
                 parser->err_pos = cur_pos;
-                ret = FUSB_ERR_DESC_PARSE_ERR; 
-                goto err_handle;                
+                ret = FUSB_ERR_DESC_PARSE_ERR;
+                goto err_handle;
             }
             exp_len = sizeof(FUsbInterfaceDescriptor);
             break;
         case FUSB_DESC_TYPE_ENDPOINT:
-            if ((FUSB_DESC_TYPE_NONE == last_desc_type) || 
-                (FUSB_DESC_TYPE_CONFIG == last_desc_type))
+            if ((FUSB_DESC_TYPE_NONE == last_desc_type) ||
+                    (FUSB_DESC_TYPE_CONFIG == last_desc_type))
             {
                 FUSB_ERROR("Endpoint descriptor must follow interface descriptor !!!");
                 parser->err_pos = cur_pos;
-                ret = FUSB_ERR_DESC_PARSE_ERR; 
-                goto err_handle;                 
+                ret = FUSB_ERR_DESC_PARSE_ERR;
+                goto err_handle;
             }
             break;
         default:
@@ -136,13 +136,13 @@ static FError FUsbParserDescriptor(FUsbConfigParser *parser)
             break;
         }
 
-        if (((exp_len != 0) && (desc_len != exp_len)) && 
-            ((alt_len == 0) || (desc_len != alt_len)))
+        if (((exp_len != 0) && (desc_len != exp_len)) &&
+                ((alt_len == 0) || (desc_len != alt_len)))
         {
             FUSB_ERROR("Descriptor %d invalid !!!", desc_type);
             parser->err_pos = cur_pos;
-            ret = FUSB_ERR_DESC_PARSE_ERR; 
-            goto err_handle;                 
+            ret = FUSB_ERR_DESC_PARSE_ERR;
+            goto err_handle;
         }
 
         last_desc_type = desc_type;
@@ -152,8 +152,8 @@ static FError FUsbParserDescriptor(FUsbConfigParser *parser)
     if (cur_pos != parser->end_pos)
     {
         parser->err_pos = cur_pos;
-        ret = FUSB_ERR_DESC_PARSE_ERR;   
-        goto err_handle;       
+        ret = FUSB_ERR_DESC_PARSE_ERR;
+        goto err_handle;
     }
 
 err_handle:
@@ -162,7 +162,7 @@ err_handle:
         parser->is_valid = TRUE;
     }
 
-    return ret;	
+    return ret;
 }
 
 /**
@@ -175,19 +175,19 @@ err_handle:
  */
 FError FUsbSetupConfigParser(FUsbDev *dev, const void *buf, u32 buf_len)
 {
-	FASSERT(dev && buf && (buf_len > 0));
-	const FUsbConfigurationDescriptor *config_desc;
-	FUsbConfigParser *parser = &dev->config_parser;
+    FASSERT(dev && buf && (buf_len > 0));
+    const FUsbConfigurationDescriptor *config_desc;
+    FUsbConfigParser *parser = &dev->config_parser;
 
-	memset(parser, 0, sizeof(*parser));
+    memset(parser, 0, sizeof(*parser));
 
-	parser->buf = buf;
+    parser->buf = buf;
     parser->buf_len = buf_len;
     parser->is_valid = FALSE;
     parser->end_pos = FUSB_SKIP_BYTES(parser->buf, parser->buf_len);
     parser->next_pos = parser->buf;
     parser->cur_desc = NULL;
-    parser->err_pos = parser->buf;	
+    parser->err_pos = parser->buf;
 
     if ((parser->buf_len < sizeof(u32)) || (parser->buf_len > FUSB_CONFIG_DESC_SIZE))
     {
@@ -195,23 +195,23 @@ FError FUsbSetupConfigParser(FUsbDev *dev, const void *buf, u32 buf_len)
         return FUSB_ERR_INVALID_DATA;
     }
 
-	/* input buffer must start with config desc */
+    /* input buffer must start with config desc */
     config_desc = (FUsbConfigurationDescriptor *)parser->buf;
-    if ((config_desc->bLength != sizeof(FUsbConfigurationDescriptor)) || 
-        (config_desc->bDescriptorType != FUSB_DESC_TYPE_CONFIG) ||
-        (config_desc->wTotalLength > parser->buf_len))
+    if ((config_desc->bLength != sizeof(FUsbConfigurationDescriptor)) ||
+            (config_desc->bDescriptorType != FUSB_DESC_TYPE_CONFIG) ||
+            (config_desc->wTotalLength > parser->buf_len))
     {
         FUSB_ERROR("Invalid configuration descriptor !!!");
-        return FUSB_ERR_INVALID_DATA;        
+        return FUSB_ERR_INVALID_DATA;
     }
 
-	/* adjust end position */
+    /* adjust end position */
     if (config_desc->wTotalLength < parser->buf_len)
     {
         parser->end_pos = FUSB_SKIP_BYTES(parser->buf, config_desc->wTotalLength);
-	}
+    }
 
-	return FUsbParserDescriptor(parser);
+    return FUsbParserDescriptor(parser);
 }
 
 /**
@@ -248,7 +248,7 @@ const FUsbDescriptor *FUsbGetDescriptorFromParser(FUsbConfigParser *parser, FUsb
     u8 desc_len;
     const FUsbDescriptor *desc_end;
 
-	/* travesal all descriptors */
+    /* travesal all descriptors */
     while (parser->next_pos < parser->end_pos)
     {
         desc_len = parser->next_pos->header.len;
@@ -258,8 +258,8 @@ const FUsbDescriptor *FUsbGetDescriptorFromParser(FUsbConfigParser *parser, FUsb
         if (desc_end > parser->end_pos)
             break;
 
-        if ((FUSB_DESC_TYPE_ENDPOINT == type) && 
-            (FUSB_DESC_TYPE_INTERFACE == desc_type))
+        if ((FUSB_DESC_TYPE_ENDPOINT == type) &&
+                (FUSB_DESC_TYPE_INTERFACE == desc_type))
             break; /* there is no chance to find endpoint desc after interface desc */
 
         if (type == desc_type)
@@ -291,17 +291,17 @@ const FUsbDescriptor *FUsbGetDescriptorFromParser(FUsbConfigParser *parser, FUsb
 void FUsbSetupStringParser(FUsbDev *dev)
 {
     FASSERT(dev);
-	FUsbStringParser *parser = &dev->string_parser;
+    FUsbStringParser *parser = &dev->string_parser;
 
-	if (NULL != parser->usb_str)
-	{
-		FUSB_WARN("String descriptor exists, might cause memory leakage !!!");
-	}
+    if (NULL != parser->usb_str)
+    {
+        FUSB_WARN("String descriptor exists, might cause memory leakage !!!");
+    }
 
-	parser->usb_str = NULL;
-	memset(parser->str_buf, 0, sizeof(parser->str_buf));
+    parser->usb_str = NULL;
+    memset(parser->str_buf, 0, sizeof(parser->str_buf));
 
-	return;
+    return;
 }
 
 /**
@@ -313,7 +313,7 @@ void FUsbSetupStringParser(FUsbDev *dev)
 void FUsbRevokeStringParser(FUsbDev *dev)
 {
     FASSERT(dev);
-	FUsbStringParser *parser = &dev->string_parser;
+    FUsbStringParser *parser = &dev->string_parser;
     FASSERT(dev->controller && dev->controller->usb);
     FUsb *instance = dev->controller->usb;
 
@@ -337,67 +337,67 @@ void FUsbRevokeStringParser(FUsbDev *dev)
 FError FUsbSearchStringDescriptor(FUsb *instance, FUsbDev *dev, u8 id)
 {
     FASSERT(instance && dev);
-	FUsbStringParser *parser = &dev->string_parser;
-	const FUsbStringDescriptor *usb_str = NULL;
-	u8 total_len;
+    FUsbStringParser *parser = &dev->string_parser;
+    const FUsbStringDescriptor *usb_str = NULL;
+    u8 total_len;
     u8 char_num;
-    u16 character;	
+    u16 character;
 
-	/* re-malloc usb string desc buffer with length 4 */
-	if (NULL != parser->usb_str)
-	{
-		FUSB_FREE(instance, parser->usb_str);
-		parser->usb_str = NULL;
-	}
+    /* re-malloc usb string desc buffer with length 4 */
+    if (NULL != parser->usb_str)
+    {
+        FUSB_FREE(instance, parser->usb_str);
+        parser->usb_str = NULL;
+    }
 
-	parser->usb_str = FUSB_ALLOCATE(instance, FUSB_USBSTR_MIN_LEN, FUSB_DEFAULT_ALIGN);
+    parser->usb_str = FUSB_ALLOCATE(instance, FUSB_USBSTR_MIN_LEN, FUSB_DEFAULT_ALIGN);
     if (NULL == parser->usb_str)
         return FUSB_ERR_ALLOCATE_FAIL;
 
-	/* get header of string for the full length */
-	if (FUsbGetStringDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_STRING, id, FUSB_DEFAULT_LANG_ID,
-				  	  	        parser->usb_str, FUSB_USBSTR_MIN_LEN) < 0)
-	{
-		FUSB_ERROR("Parse string descriptor failed (len: %d) !!!", FUSB_USBSTR_MIN_LEN);
-		return FUSB_ERR_DESC_PARSE_ERR;
-	}
+    /* get header of string for the full length */
+    if (FUsbGetStringDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_STRING, id, FUSB_DEFAULT_LANG_ID,
+                                parser->usb_str, FUSB_USBSTR_MIN_LEN) < 0)
+    {
+        FUSB_ERROR("Parse string descriptor failed (len: %d) !!!", FUSB_USBSTR_MIN_LEN);
+        return FUSB_ERR_DESC_PARSE_ERR;
+    }
 
-	/* check if string descriptor header is valid */
+    /* check if string descriptor header is valid */
     total_len = parser->usb_str->len;
-    if ((total_len < FUSB_DESCRIPTOR_HEADER_SIZE) || 
-        ((total_len & 1) != 0) ||
-        (parser->usb_str->type != FUSB_DESC_TYPE_STRING))
+    if ((total_len < FUSB_DESCRIPTOR_HEADER_SIZE) ||
+            ((total_len & 1) != 0) ||
+            (parser->usb_str->type != FUSB_DESC_TYPE_STRING))
     {
-		FUSB_ERROR("Get invalid string descriptor (len: %d) !!!", FUSB_USBSTR_MIN_LEN);
-		return FUSB_ERR_DESC_PARSE_ERR;
-	}
+        FUSB_ERROR("Get invalid string descriptor (len: %d) !!!", FUSB_USBSTR_MIN_LEN);
+        return FUSB_ERR_DESC_PARSE_ERR;
+    }
 
-	/* return if no need to get more */
-	if (total_len <= FUSB_USBSTR_MIN_LEN)
-		return FUSB_SUCCESS;
+    /* return if no need to get more */
+    if (total_len <= FUSB_USBSTR_MIN_LEN)
+        return FUSB_SUCCESS;
 
-	/* re-malloc usb string desc buffer with full length */
-	FASSERT(parser->usb_str);
-	FUSB_FREE(instance, parser->usb_str);
-	parser->usb_str = NULL;
+    /* re-malloc usb string desc buffer with full length */
+    FASSERT(parser->usb_str);
+    FUSB_FREE(instance, parser->usb_str);
+    parser->usb_str = NULL;
 
-	parser->usb_str = FUSB_ALLOCATE(instance, total_len, FUSB_DEFAULT_ALIGN);
+    parser->usb_str = FUSB_ALLOCATE(instance, total_len, FUSB_DEFAULT_ALIGN);
     if (NULL == parser->usb_str)
         return FUSB_ERR_ALLOCATE_FAIL;
 
-	/* get the whole string descriptor */
-	if (FUsbGetStringDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_STRING, id,  FUSB_DEFAULT_LANG_ID,
-				  	  	        parser->usb_str, total_len) < 0)
-	{
-		FUSB_ERROR("Parse string descriptor failed (len: %d)!!!", total_len);
-		return FUSB_ERR_DESC_PARSE_ERR;
-	}
-
-    if ((parser->usb_str->len < FUSB_DESCRIPTOR_HEADER_SIZE) || 
-        ((parser->usb_str->len & 1) != 0) ||
-        (parser->usb_str->type != FUSB_DESC_TYPE_STRING))
+    /* get the whole string descriptor */
+    if (FUsbGetStringDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_STRING, id,  FUSB_DEFAULT_LANG_ID,
+                                parser->usb_str, total_len) < 0)
     {
-		FUSB_ERROR("Get invalid string descriptor (len: %d) !!!", total_len);
+        FUSB_ERROR("Parse string descriptor failed (len: %d)!!!", total_len);
+        return FUSB_ERR_DESC_PARSE_ERR;
+    }
+
+    if ((parser->usb_str->len < FUSB_DESCRIPTOR_HEADER_SIZE) ||
+            ((parser->usb_str->len & 1) != 0) ||
+            (parser->usb_str->type != FUSB_DESC_TYPE_STRING))
+    {
+        FUSB_ERROR("Get invalid string descriptor (len: %d) !!!", total_len);
         return FUSB_ERR_DESC_PARSE_ERR;
     }
 
@@ -413,17 +413,17 @@ FError FUsbSearchStringDescriptor(FUsb *instance, FUsbDev *dev, u8 id)
     for (u8 i = 0; i < char_num; i++)
     {
         character = usb_str->string[i];
-		if (   character < ' '	 /* 0x20 */
-		    || character > '~') /* 0x7E */
-		{
-			character = '_';
-		}
+        if (character < ' '     /* 0x20 */
+                || character > '~') /* 0x7E */
+        {
+            character = '_';
+        }
 
         parser->str_buf[i] = (char)character;
     }
 
     parser->str_buf[char_num] = '\0';
-	return FUSB_SUCCESS;
+    return FUSB_SUCCESS;
 }
 
 /**
@@ -434,6 +434,6 @@ FError FUsbSearchStringDescriptor(FUsb *instance, FUsbDev *dev, u8 id)
  */
 const char *FUsbGetString(const FUsbDev *const dev)
 {
-	FASSERT(dev);
-	return (const char *)dev->string_parser.str_buf;
+    FASSERT(dev);
+    return (const char *)dev->string_parser.str_buf;
 }

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: ft_assert.c
  * Date: 2021-04-07 09:53:07
  * LastEditTime: 2022-02-17 18:04:28
  * Description:  This files is for assertion implmentation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2021.4       init commit
@@ -32,7 +32,7 @@
 /**************************** Type Definitions *******************************/
 typedef struct
 {
-	u32 status; /* 当前断言状态 */
+    u32 status; /* 当前断言状态 */
     FAssertCB cb; /* 断言回调函数 */
 } FAssertInfo; /* 断言实例类型 */
 
@@ -44,7 +44,7 @@ static void FAssertCallback(const char *file, s32 line, int ret);
 /************************** Variable Definitions *****************************/
 static FAssertInfo assert_info =
 {
-	.status = FASSERT_NONE,
+    .status = FASSERT_NONE,
     .cb     = FAssertCallback
 }; /* 断言实例 */
 

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: frtc.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:02:33
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Wangxiaodong   2021/11/5   init
@@ -49,7 +49,7 @@
  */
 static FError FRtcCheckDateTime(const FRtcDateTime *date_time)
 {
-    FASSERT(date_time != NULL);           
+    FASSERT(date_time != NULL);
     u8 w_hour = date_time->hour;
     u8 w_minute = date_time->minute;
     u8 w_second = date_time->second;
@@ -63,17 +63,17 @@ static FError FRtcCheckDateTime(const FRtcDateTime *date_time)
         days_of_month[w_month - 1] += 1;
 
     /* 判断月份日期是否合法 */
-    if ((w_month > 12) ||(w_month < 1) || (w_day > days_of_month[w_month-1]) || (w_day < 1))
+    if ((w_month > 12) || (w_month < 1) || (w_day > days_of_month[w_month - 1]) || (w_day < 1))
     {
         FRTC_ERROR("invalid input date: month: %d, day: %d", w_month, w_day);
         return FRTC_ERR_DATE_INVALID;
-    }           
+    }
 
     /* 判断时分秒是否合法 */
-    if ((w_hour > 23) || (w_minute > 59) || (w_second > 59))    
+    if ((w_hour > 23) || (w_minute > 59) || (w_second > 59))
     {
-        FRTC_ERROR("invalid input time: hour: %d, minute: %d, second: %d", 
-                    w_hour, w_minute, w_second);
+        FRTC_ERROR("invalid input time: hour: %d, minute: %d, second: %d",
+                   w_hour, w_minute, w_second);
         return FRTC_ERR_TIME_INVALID;
     }
 
@@ -93,9 +93,9 @@ FError FRtcSetDateTime(FRtcCtrl *pctrl, const FRtcDateTime *date_time)
 {
     FASSERT(pctrl != NULL);
     FASSERT(date_time != NULL);
-    uintptr base_addr = pctrl->config.control_base_addr; 
-	struct tm tm;
-	time_t t;
+    uintptr base_addr = pctrl->config.control_base_addr;
+    struct tm tm;
+    time_t t;
     u32 ret = 0;
 
     ret = FRtcCheckDateTime(date_time);
@@ -107,12 +107,12 @@ FError FRtcSetDateTime(FRtcCtrl *pctrl, const FRtcDateTime *date_time)
     tm.tm_sec = date_time->second;
     tm.tm_min = date_time->minute;
     tm.tm_hour = date_time->hour;
-    /* 	tm->tm_wday  */
+    /*  tm->tm_wday  */
     tm.tm_mday = date_time->mday;
     tm.tm_mon  = (date_time->month - 1);
     tm.tm_year = (date_time->year - 1900);
 
-	t = mktime(&tm);
+    t = mktime(&tm);
 
     FRTC_WRITE_AES_SEL(base_addr, FRTC_AES_SEL_COUNTER);
 
@@ -122,7 +122,7 @@ FError FRtcSetDateTime(FRtcCtrl *pctrl, const FRtcDateTime *date_time)
     /* write low 32 bit next */
     FRTC_WRITE_CLR(base_addr, t);
 
-	return FT_SUCCESS;    
+    return FT_SUCCESS;
 }
 
 /**
@@ -167,7 +167,7 @@ void FRtcReadTimeStamp(FRtcCtrl *pctrl, time_t *sec_p, time_t *msec_p)
     u32 msec = 0;
     u32 tick = 0;
 
-    uintptr base_addr = pctrl->config.control_base_addr; 
+    uintptr base_addr = pctrl->config.control_base_addr;
 
     /* tick = 1/32.768k = 0.03ms = 30us, delay more than 4 ticks */
     fsleep_microsec(FRTC_COUNTER_DELAY);
@@ -193,7 +193,7 @@ void FRtcReadTimeStamp(FRtcCtrl *pctrl, time_t *sec_p, time_t *msec_p)
     if (msec_p)
         *msec_p = msec;
 
-    return;    
+    return;
 }
 
 /**
@@ -222,10 +222,10 @@ FError FRtcCfgInitialize(FRtcCtrl *instance_p, const FRtcConfig *input_config_p)
  */
 void FRtcCfgDeInitialize(FRtcCtrl *pctrl)
 {
-	FASSERT(pctrl);
+    FASSERT(pctrl);
 
-	pctrl->is_ready = 0;
-	memset(pctrl, 0, sizeof(*pctrl));
+    pctrl->is_ready = 0;
+    memset(pctrl, 0, sizeof(*pctrl));
 
-	return;
+    return;
 }

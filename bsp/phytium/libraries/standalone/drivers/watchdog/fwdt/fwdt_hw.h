@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fwdt_hw.h
  * Date: 2021-08-25 10:27:42
  * LastEditTime: 2022-02-25 11:44:33
  * Description:  This files is for ctrl of watchdog timer functions
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   wangxiaodong 2021/8/25   init
@@ -36,22 +36,22 @@ extern "C"
 /* Watchdog register definitions */
 
 /* refresh frame */
-#define FWDT_GWDT_WRR		0x000
+#define FWDT_GWDT_WRR       0x000
 
 /* control frame */
-#define FWDT_GWDT_WCS		0x000  /* WCS register */
-#define FWDT_GWDT_WOR		0x008
-#define FWDT_GWDT_WCVL		0x010
-#define FWDT_GWDT_WCVH		0x014
+#define FWDT_GWDT_WCS       0x000  /* WCS register */
+#define FWDT_GWDT_WOR       0x008
+#define FWDT_GWDT_WCVL      0x010
+#define FWDT_GWDT_WCVH      0x014
 
 /* refresh/control frame */
-#define FWDT_GWDT_W_IIDR	0xfcc
-#define FWDT_GWDT_IDR		0xfd0
+#define FWDT_GWDT_W_IIDR    0xfcc
+#define FWDT_GWDT_IDR       0xfd0
 
 /* Watchdog Control and Status Register */
-#define FWDT_GWDT_WCS_WDT_EN	BIT(0)
-#define FWDT_GWDT_WCS_WS0	    BIT(1)
-#define FWDT_GWDT_WCS_WS1	    BIT(2)
+#define FWDT_GWDT_WCS_WDT_EN    BIT(0)
+#define FWDT_GWDT_WCS_WS0       BIT(1)
+#define FWDT_GWDT_WCS_WS1       BIT(2)
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
@@ -79,7 +79,7 @@ extern "C"
 #define FWDT_IDENTIFY_CODE_MASK     GENMASK(6, 0)
 /**
  * @name: FWdtReadWCVH
- * @msg:  Read wdt wcvh register value. wcvl and wclh register stores the comparison value of the watchdog count. 
+ * @msg:  Read wdt wcvh register value. wcvl and wclh register stores the comparison value of the watchdog count.
  *          timeout value = comparison value - sys_cnt.
  * @param {uintptr} addr, pointer to a WdtCtrl base addr.
  * @return {u32} register value
@@ -92,7 +92,7 @@ static inline u32 FWdtReadWCVH(uintptr addr)
 
 /**
  * @name: FWdtReadWCVL
- * @msg:  Read wdt wcvl register value. wcvl and wclh register stores the comparison value of the watchdog count. 
+ * @msg:  Read wdt wcvl register value. wcvl and wclh register stores the comparison value of the watchdog count.
  *          timeout value = comparison value - sys_cnt.
  * @param {uintptr} addr, pointer to a WdtCtrl base addr.
  * @return {u32} register value

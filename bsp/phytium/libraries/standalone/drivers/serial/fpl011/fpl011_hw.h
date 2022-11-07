@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpl011_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:06:10
  * Description:  This files is for definition of uart register
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -67,7 +67,7 @@ extern "C"
 #define FPL011DR_PE 0x200U /*  Parity error */
 #define FPL011DR_FE 0x100U /*  Frame error */
 #define FPL011DR_ALLE (FPL011DR_OE | FPL011DR_BE | FPL011DR_PE | FPL011DR_FE)
-#define FPL011DR_DATA 0xffU 
+#define FPL011DR_DATA 0xffU
 
 /* Receive Status Register/Error Clear RW */
 #define FPL011RSR_OE 0x8U /* overflow error  */
@@ -106,20 +106,20 @@ extern "C"
 #define FPL011LCR_H_PEN 0x02U  /*  Parity enable. */
 #define FPL011LCR_H_BRK 0x01U  /* send break  */
 
-#define FPL011LCR_H_WLEN_SHIFT	0x00000005U	/* Word length shift */
-#define FPL011LCR_H_WLEN_5_BIT	0x00000000U	/* 5 bits data */
-#define FPL011LCR_H_WLEN_6_BIT	0x00000020U	/* 6 bits data */
-#define FPL011LCR_H_WLEN_7_BIT	0x00000040U	/* 7 bits data */
-#define FPL011LCR_H_WLEN_8_BIT	0x00000060U	/* 8 bits data */
-#define FPL011LCR_H_STP_1_BIT 	0x00000000U
+#define FPL011LCR_H_WLEN_SHIFT  0x00000005U /* Word length shift */
+#define FPL011LCR_H_WLEN_5_BIT  0x00000000U /* 5 bits data */
+#define FPL011LCR_H_WLEN_6_BIT  0x00000020U /* 6 bits data */
+#define FPL011LCR_H_WLEN_7_BIT  0x00000040U /* 7 bits data */
+#define FPL011LCR_H_WLEN_8_BIT  0x00000060U /* 8 bits data */
+#define FPL011LCR_H_STP_1_BIT   0x00000000U
 
-#define FPL011LCR_H_STP_MASK  	0x00000008U	/* Stop bits mask */
-#define FPL011LCR_H_STP_SHIFT  	0x00000003U	/* Stop bits shift */
-#define FPL011LCR_H_PARITY_EVEN	0x00000004U	/* Even parity mode */
-#define FPL011LCR_H_PARITY_MASK	0x00000002U	/* Parity mask */
-#define FPL011LCR_H_PARITY_SHIFT	0x00000001U	/* Parity shift */
-#define FPL011LCR_H_PARITY_NONE	0x00000000U	/* No parity mode */
-#define FPL011LCR_H_PARITY_ODD	0x00000000U	/* Odd parity mode */
+#define FPL011LCR_H_STP_MASK    0x00000008U /* Stop bits mask */
+#define FPL011LCR_H_STP_SHIFT   0x00000003U /* Stop bits shift */
+#define FPL011LCR_H_PARITY_EVEN 0x00000004U /* Even parity mode */
+#define FPL011LCR_H_PARITY_MASK 0x00000002U /* Parity mask */
+#define FPL011LCR_H_PARITY_SHIFT    0x00000001U /* Parity shift */
+#define FPL011LCR_H_PARITY_NONE 0x00000000U /* No parity mode */
+#define FPL011LCR_H_PARITY_ODD  0x00000000U /* Odd parity mode */
 
 /* Control  RW */
 #define FPL011CR_CTSEN 0x8000U /* CTS hardware flow control enable.  */
@@ -134,22 +134,22 @@ extern "C"
 #define FPL011CR_SIRLP 0x4U    /* IrDA SIR low power mode. */
 #define FPL011CR_SIREN 0x2U    /*  SIR enable. */
 #define FPL011CR_UARTEN 0x1U   /* UART enable. */
-#define FPL011CR_MODE_NORMAL	0x00000000U	/* Normal Mode */
+#define FPL011CR_MODE_NORMAL    0x00000000U /* Normal Mode */
 
 
 /* Interrupt FIFO Level Select RW  */
-#define FPL011IFLS_RXIFLSEL_MASK	0x00000038U /* Receive interrupt FIFO level select mask */
-#define FPL011IFLS_TXIFLSEL_MASK 	0x00000007U /* Receive interrupt FIFO level select mask */
-#define FPL011IFLS_RXIFLSEL_1_8 	0x00000000U /* Receive FIFO becomes . 1/8 full */
-#define FPL011IFLS_RXIFLSEL_1_4 	0x00000008U /* Receive FIFO becomes . 1/4 full */
-#define FPL011IFLS_RXIFLSEL_1_2 	0x00000010U /* Receive FIFO becomes * . 1/2 full */
-#define FPL011IFLS_RXIFLSEL_3_4 	0x00000018U /* Receive FIFO becomes * . 3/4 full */
-#define FPL011IFLS_RXIFLSEL_7_8 	0x00000020U /* Receive FIFO becomes * . 7/8 full */
-#define FPL011IFLS_TXIFLSEL_1_8 	0x00000000U /* Transmit FIFO becomes * . 1/8 full */
-#define FPL011IFLS_TXIFLSEL_1_4 	0x00000001U /* Transmit FIFO becomes * . 1/4 full */
-#define FPL011IFLS_TXIFLSEL_1_2 	0x00000002U /* Transmit FIFO becomes * . 1/2 full */
-#define FPL011IFLS_TXIFLSEL_3_4 	0x00000003U /* Transmit FIFO becomes * . 3/4 full */
-#define FPL011IFLS_TXIFLSEL_7_8 	0x00000004U /* Transmit FIFO becomes * . 7/8 full */
+#define FPL011IFLS_RXIFLSEL_MASK    0x00000038U /* Receive interrupt FIFO level select mask */
+#define FPL011IFLS_TXIFLSEL_MASK    0x00000007U /* Receive interrupt FIFO level select mask */
+#define FPL011IFLS_RXIFLSEL_1_8     0x00000000U /* Receive FIFO becomes . 1/8 full */
+#define FPL011IFLS_RXIFLSEL_1_4     0x00000008U /* Receive FIFO becomes . 1/4 full */
+#define FPL011IFLS_RXIFLSEL_1_2     0x00000010U /* Receive FIFO becomes * . 1/2 full */
+#define FPL011IFLS_RXIFLSEL_3_4     0x00000018U /* Receive FIFO becomes * . 3/4 full */
+#define FPL011IFLS_RXIFLSEL_7_8     0x00000020U /* Receive FIFO becomes * . 7/8 full */
+#define FPL011IFLS_TXIFLSEL_1_8     0x00000000U /* Transmit FIFO becomes * . 1/8 full */
+#define FPL011IFLS_TXIFLSEL_1_4     0x00000001U /* Transmit FIFO becomes * . 1/4 full */
+#define FPL011IFLS_TXIFLSEL_1_2     0x00000002U /* Transmit FIFO becomes * . 1/2 full */
+#define FPL011IFLS_TXIFLSEL_3_4     0x00000003U /* Transmit FIFO becomes * . 3/4 full */
+#define FPL011IFLS_TXIFLSEL_7_8     0x00000004U /* Transmit FIFO becomes * . 7/8 full */
 
 /* Interrupt Mask Set/Clear  RW */
 #define FPL011IMSC_OEIM 0x400U /* Overrun error interrupt mask.  */
@@ -239,14 +239,14 @@ extern "C"
  * @name: FUART_ISTRANSMITBUSY
  * @msg:  Determine if a byte of data can be sent with the transmitter.
  * @return TRUE if the TX is busy, FALSE if a byte can be put in the
- *			FIFO.
+ *          FIFO.
  */
 #define FUART_ISTRANSMITBUSY(addr) ((FtIn32(addr + FPL011FTR_OFFSET) & (u32)FPL011FTR_BUSY) == FPL011FTR_BUSY)
 
 /************************** Function Prototypes ******************************/
 
-    void FPl011SendByte(u32 addr, u8 byte);
-    u8 FPl011RecvByte(u32 addr);
+void FPl011SendByte(u32 addr, u8 byte);
+u8 FPl011RecvByte(u32 addr);
 
 #ifdef __cplusplus
 }

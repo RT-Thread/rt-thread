@@ -1,34 +1,34 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fusb_private.h
  * Date: 2022-02-11 13:33:11
  * LastEditTime: 2022-02-18 09:21:22
  * Description:  This files is for definition of internal function interface
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7	init commit
+ * 1.0   Zhugengyu  2022/2/7    init commit
  */
 
 #pragma once
 
 /***************************** Include Files *********************************/
 #ifdef __aarch64__
-#include "faarch64.h"
+    #include "faarch64.h"
 #else
-#include "fcp15.h"
+    #include "fcp15.h"
 #endif
 
 #include "fkernel.h"
@@ -50,16 +50,16 @@
 
 /************************** Function Prototypes ******************************/
 /* 创建USB控制器实例，添加到USB实例的Hc链表中 */
-FUsbHc *FUsbAllocateHc (FUsb *instance);
+FUsbHc *FUsbAllocateHc(FUsb *instance);
 
 /* 删除USB控制器实例，从USB实例的Hc链表中删去 */
-void FUsbDetachHc (FUsbHc *controller);
+void FUsbDetachHc(FUsbHc *controller);
 
 /* 初始化USB设备 */
 FUsbDev *FUsbInitDevEntry(FUsbHc *controller, int slot_id);
 
 /* 根据USB设备速度，选择最大包长度 */
-int FUsbDecodeMaxPacketSz0 (FUsbSpeed speed, u8 bMaxPacketSize0);
+int FUsbDecodeMaxPacketSz0(FUsbSpeed speed, u8 bMaxPacketSize0);
 
 /* 据设备速度获取最大包长度 */
 int FUsbSpeedtoDefaultMaxPacketSz(FUsbSpeed speed);
@@ -86,10 +86,10 @@ const char *FUsbGetString(const FUsbDev *const dev);
 const FUsbDescriptor *FUsbGetDescriptorFromParser(FUsbConfigParser *parser, FUsbDescriptorType type);
 
 /* 默认的USB设备初始化函数 */
-void FUsbNopDevInit (FUsbDev *dev);
+void FUsbNopDevInit(FUsbDev *dev);
 
 /* 默认的USB设备初始化函数 */
-void FUsbGenericDevInit (FUsbDev *dev);
+void FUsbGenericDevInit(FUsbDev *dev);
 
 /* 打印设备描述符信息 */
 void FUsbDumpDeviceDescriptor(const FUsbDeviceDescriptor *descriptor);

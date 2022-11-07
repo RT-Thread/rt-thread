@@ -1,24 +1,24 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fqspi_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:00:41
  * Description:  
- * This file is for 
- * 
- * 
- * Modify History: 
+ * This file is for
+ *
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -41,7 +41,7 @@
  * @param {uintptr} base_addr, FQSPI controller base address
  * @param {u8} *buf, read buffer
  * @param {size_t} len, read length
- * @return 
+ * @return
  */
 void FQspiGetLdPortData(uintptr base_addr, u8 *buf, size_t len)
 {
@@ -69,36 +69,36 @@ void FQspiGetLdPortData(uintptr base_addr, u8 *buf, size_t len)
  * @param {uintptr} base_addr, FQSPI controller base address
  * @param {u8} *buf, write buffer
  * @param {size_t} len, write length
- * @return 
+ * @return
  */
 void FQspiSetLdPortData(uintptr base_addr, const u8 *buf, size_t len)
 {
     FASSERT(buf);
-    FASSERT((len < 5)&&(len));
+    FASSERT((len < 5) && (len));
     u32 reg_val = 0;
 
-	if (1 == len) 
+    if (1 == len)
     {
-		reg_val = buf[0];
-	} 
-    else if (2 == len) 
+        reg_val = buf[0];
+    }
+    else if (2 == len)
     {
-		reg_val = buf[1];
-		reg_val = (reg_val << 8) + buf[0];
-	} 
-    else if (3 == len) 
+        reg_val = buf[1];
+        reg_val = (reg_val << 8) + buf[0];
+    }
+    else if (3 == len)
     {
-		reg_val = buf[2];
-		reg_val = (reg_val << 8) + buf[1];
-		reg_val = (reg_val << 8) + buf[0];
-	} 
+        reg_val = buf[2];
+        reg_val = (reg_val << 8) + buf[1];
+        reg_val = (reg_val << 8) + buf[0];
+    }
     else
     {
-		reg_val = buf[3];
-		reg_val = (reg_val << 8) + buf[2];
-		reg_val = (reg_val << 8) + buf[1];
-		reg_val = (reg_val << 8) + buf[0];
-	}
+        reg_val = buf[3];
+        reg_val = (reg_val << 8) + buf[2];
+        reg_val = (reg_val << 8) + buf[1];
+        reg_val = (reg_val << 8) + buf[0];
+    }
 
     /*write value to low bit port register 0x1c, make command valid */
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_LD_PORT_OFFSET, reg_val);
@@ -109,7 +109,7 @@ void FQspiSetLdPortData(uintptr base_addr, const u8 *buf, size_t len)
  * @name: FQspiWriteFlush
  * @msg:  config write flush register to make wr_cfg complete program
  * @param {uintptr} base_addr, FQSPI controller base address
- * @return 
+ * @return
  */
 void FQspiWriteFlush(uintptr base_addr)
 {
@@ -144,11 +144,11 @@ void FQspiAddrPortConfig(uintptr base_addr, u32 addr)
  * @msg:  config qspi xip mode
  * @param {uintptr} base_addr, FQSPI controller base address
  * @param {u8} enable enable or disable xip mode
- * @return 
+ * @return
  */
 void FQspiXIPModeSet(uintptr base_addr, u8 enable)
 {
-    if(enable)
+    if (enable)
     {
         FQSPI_WRITE_REG32(base_addr, FQSPI_REG_MODE_OFFSET, FQSPI_QUAD_READ_MODE_ENABLE);
     }

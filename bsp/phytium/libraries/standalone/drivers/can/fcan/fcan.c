@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fcan.c
  * Date: 2021-04-29 10:21:53
  * LastEditTime: 2022-02-18 08:29:20
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -54,28 +54,28 @@ typedef struct
 
 /* 仲裁段速率默认值 */
 static const FCanBittimingConst FCanArbBitConst =
-    {
-        .tseg1_min = FCAN_ARB_TSEG1_MIN, /* Time segement 1 = prop_seg + phase_seg1 */
-        .tseg1_max = FCAN_ARB_TSEG1_MAX,
-        .tseg2_min = FCAN_ARB_TSEG2_MIN, /* Time segement 2 = phase_seg2 */
-        .tseg2_max = FCAN_ARB_TSEG2_MAX,
-        .sjw_max = FCAN_ARB_SJW_MAX, /* Synchronisation jump width */
-        .brp_min = FCAN_ARB_BRP_MIN, /* Bit-rate prescaler */
-        .brp_max = FCAN_ARB_BRP_MAX,
-        .brp_inc = FCAN_ARB_BRP_INC,
+{
+    .tseg1_min = FCAN_ARB_TSEG1_MIN, /* Time segement 1 = prop_seg + phase_seg1 */
+    .tseg1_max = FCAN_ARB_TSEG1_MAX,
+    .tseg2_min = FCAN_ARB_TSEG2_MIN, /* Time segement 2 = phase_seg2 */
+    .tseg2_max = FCAN_ARB_TSEG2_MAX,
+    .sjw_max = FCAN_ARB_SJW_MAX, /* Synchronisation jump width */
+    .brp_min = FCAN_ARB_BRP_MIN, /* Bit-rate prescaler */
+    .brp_max = FCAN_ARB_BRP_MAX,
+    .brp_inc = FCAN_ARB_BRP_INC,
 };
 
 /* 数据段速率默认值 */
 static const FCanBittimingConst FCanDataBitConst =
-    {
-        .tseg1_min = FCAN_DATA_TSEG1_MIN, /* Time segement 1 = prop_seg + phase_seg1 */
-        .tseg1_max = FCAN_DATA_TSEG1_MAX,
-        .tseg2_min = FCAN_DATA_TSEG2_MIN, /* Time segement 2 = phase_seg2 */
-        .tseg2_max = FCAN_DATA_TSEG2_MAX,
-        .sjw_max = FCAN_DATA_SJW_MAX, /* Synchronisation jump width */
-        .brp_min = FCAN_DATA_BRP_MIN, /* Bit-rate prescaler */
-        .brp_max = FCAN_DATA_BRP_MAX,
-        .brp_inc = FCAN_DATA_BRP_INC,
+{
+    .tseg1_min = FCAN_DATA_TSEG1_MIN, /* Time segement 1 = prop_seg + phase_seg1 */
+    .tseg1_max = FCAN_DATA_TSEG1_MAX,
+    .tseg2_min = FCAN_DATA_TSEG2_MIN, /* Time segement 2 = phase_seg2 */
+    .tseg2_max = FCAN_DATA_TSEG2_MAX,
+    .sjw_max = FCAN_DATA_SJW_MAX, /* Synchronisation jump width */
+    .brp_min = FCAN_DATA_BRP_MIN, /* Bit-rate prescaler */
+    .brp_max = FCAN_DATA_BRP_MAX,
+    .brp_inc = FCAN_DATA_BRP_INC,
 };
 
 /* calculate the can sample point */
@@ -120,8 +120,8 @@ static s32 FCanUpdateSamplePoint(const FCanBittimingConst *btc,
 
 /**
  * @name: FCanCalcBittiming
- * @msg:  This routine calculate Bit timing  
- * @param {structFCanBittiming} *bt_p is is a structure that contains the CAN baud rate configuration parameter , The user needs to fill in the baudrate first 
+ * @msg:  This routine calculate Bit timing
+ * @param {structFCanBittiming} *bt_p is is a structure that contains the CAN baud rate configuration parameter , The user needs to fill in the baudrate first
  * @param {u32} target_baudrate, parameters of target baudrate
  * @param {u32} target_sample_point, parameters of target sample point, 0 means the general configuration is used
  * @param {FCanSegmentType} target_segment, specifies which target is to be selected. followed by FCAN_ARB_SEGMENT or FCAN_DATA_SEGMENT
@@ -156,14 +156,14 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
         btc = &FCanArbBitConst;
     }
 
-    if(target_sample_point)
+    if (target_sample_point)
     {
         sample_point_nominal = target_sample_point;
     }
     else
     {
         if (target_baudrate > 1000000)
-        sample_point_nominal = 650;
+            sample_point_nominal = 650;
         else if (target_baudrate > 800000)
             sample_point_nominal = 750;
         else if (target_baudrate > 500000)
@@ -171,9 +171,9 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
         else
             sample_point_nominal = 875;
     }
-    
+
     for (tseg = (btc->tseg1_max + btc->tseg2_max) * 2 + 1;
-         tseg >= (btc->tseg1_min + btc->tseg2_min) * 2; tseg--)
+            tseg >= (btc->tseg1_min + btc->tseg2_min) * 2; tseg--)
     {
         tsegall = CAN_CALC_SYNC_SEG + tseg / 2;
 
@@ -199,8 +199,8 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
 
         FCanUpdateSamplePoint(btc, sample_point_nominal, tseg / 2, &tseg1, &tseg2, &sample_point_error);
 
-        FCAN_DEBUG("target_segment=%d, brp=%d, tseg=%d, tseg1=%d, tseg2=%d, sample_point_nominal=%d", 
-                        target_segment, brp, tseg, tseg1, tseg2, sample_point_nominal);
+        FCAN_DEBUG("target_segment=%d, brp=%d, tseg=%d, tseg1=%d, tseg2=%d, sample_point_nominal=%d",
+                   target_segment, brp, tseg, tseg1, tseg2, sample_point_nominal);
 
         u32 prop_seg = tseg1 / 2;
         u32 phase_seg1 = tseg1 - prop_seg;
@@ -212,8 +212,8 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
         reg_val |= (prop_seg - 1) << 2;
         reg_val |= (phase_seg1 - 1) << 5;
         reg_val |= (phase_seg2 - 1) << 8;
-        reg_val |= (sjw - 1);   
-        FCAN_DEBUG("reg_val=%#x\n", reg_val);          
+        reg_val |= (sjw - 1);
+        FCAN_DEBUG("reg_val=%#x\n", reg_val);
 
         if (sample_point_error > best_sample_point_error)
             continue;
@@ -222,7 +222,7 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
         best_baudrate_error = baudrate_error;
         best_tseg = tseg / 2;
         best_brp = brp;
-       
+
         if (baudrate_error == 0 && sample_point_error == 0)
             break;
     }
@@ -242,9 +242,9 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
 
     /* real sample point */
     FCanUpdateSamplePoint(btc, sample_point_nominal, best_tseg,
-                                             &tseg1, &tseg2, NULL);                             
+                          &tseg1, &tseg2, NULL);
     FCAN_DEBUG("tseg1=%d, tseg2=%d, sample_point_nominal=%d", tseg1, tseg2, sample_point_nominal);
-    
+
     bt->prop_seg = tseg1 / 2;
     bt->phase_seg1 = tseg1 - bt->prop_seg;
     bt->phase_seg2 = tseg2;
@@ -267,14 +267,14 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
     bt->brp = best_brp;
 
     /* real baudrate */
-    if(target_baudrate != FCAN_REF_CLOCK / (bt->brp * (CAN_CALC_SYNC_SEG + tseg1 + tseg2)))
+    if (target_baudrate != FCAN_REF_CLOCK / (bt->brp * (CAN_CALC_SYNC_SEG + tseg1 + tseg2)))
     {
         FCAN_ERROR("target baudrate calculate timing failed");
         return FCAN_FAILURE;
     }
 
-    FCAN_DEBUG("bt->prop_seg=%d, bt->phase_seg1=%d, bt->phase_seg2=%d, bt->sjw=%d, bt->brp=%d", 
-        bt->prop_seg, bt->phase_seg1, bt->phase_seg2, bt->sjw, bt->brp);
+    FCAN_DEBUG("bt->prop_seg=%d, bt->phase_seg1=%d, bt->phase_seg2=%d, bt->sjw=%d, bt->brp=%d",
+               bt->prop_seg, bt->phase_seg1, bt->phase_seg2, bt->sjw, bt->brp);
 
     return FCAN_SUCCESS;
 }
@@ -282,62 +282,62 @@ static FError FCanCalcBittiming(FCanBaudrateConfig *bt_p, u32 target_baudrate, u
 static u32 FCanGetDlcLen(u32 dlc)
 {
     u32 dlc_len = 0;
-	if (dlc == 0)
+    if (dlc == 0)
     {
-		dlc_len = 8;
-	}
+        dlc_len = 8;
+    }
 
-	switch(dlc) 
+    switch (dlc)
     {
-		case 1:
-            dlc_len = 1;
-            break;
-		case 2:
-            dlc_len = 2;
-            break;
-		case 3:
-            dlc_len = 3;
-            break;
-		case 4:
-			dlc_len = 4;
-			break;
-		case 5:
-			dlc_len = 5;
-			break;
-		case 6:
-			dlc_len = 6;
-			break;
-		case 7:
-			dlc_len = 7;
-			break;
-		case 8:
-			dlc_len = 8;
-			break;
-		case 9:
-			dlc_len = 12;
-			break;
-		case 10:
-			dlc_len = 16;
-			break;
-		case 11:
-			dlc_len = 20;
-			break;
-		case 12:
-			dlc_len = 24;
-			break;
-		case 13:
-			dlc_len = 32;
-			break;
-		case 14:
-			dlc_len = 48;
-			break;
-		case 15:
-			dlc_len = 64;
-			break;                   
-		default	:
-			dlc_len = 0;
-			break;
-	}
+    case 1:
+        dlc_len = 1;
+        break;
+    case 2:
+        dlc_len = 2;
+        break;
+    case 3:
+        dlc_len = 3;
+        break;
+    case 4:
+        dlc_len = 4;
+        break;
+    case 5:
+        dlc_len = 5;
+        break;
+    case 6:
+        dlc_len = 6;
+        break;
+    case 7:
+        dlc_len = 7;
+        break;
+    case 8:
+        dlc_len = 8;
+        break;
+    case 9:
+        dlc_len = 12;
+        break;
+    case 10:
+        dlc_len = 16;
+        break;
+    case 11:
+        dlc_len = 20;
+        break;
+    case 12:
+        dlc_len = 24;
+        break;
+    case 13:
+        dlc_len = 32;
+        break;
+    case 14:
+        dlc_len = 48;
+        break;
+    case 15:
+        dlc_len = 64;
+        break;
+    default :
+        dlc_len = 0;
+        break;
+    }
 
     return dlc_len;
 
@@ -345,42 +345,42 @@ static u32 FCanGetDlcLen(u32 dlc)
 
 static u32 FCanSetDlcLen(u32 len)
 {
-	if(len <= 8) 
+    if (len <= 8)
     {
-		return len;
-	} 
-    else if(len <= 12) 
+        return len;
+    }
+    else if (len <= 12)
     {
-		return 9;
-	} 
-    else if(len <= 16) 
+        return 9;
+    }
+    else if (len <= 16)
     {
-		return 10;
-	} 
-    else if(len <= 20) 
+        return 10;
+    }
+    else if (len <= 20)
     {
-		return 11;
-	} 
-    else if(len <= 24)
+        return 11;
+    }
+    else if (len <= 24)
     {
-		return 12;
-	} 
-    else if(len <= 32) 
+        return 12;
+    }
+    else if (len <= 32)
     {
-		return 13;
-	} 
-    else if(len <= 48) 
+        return 13;
+    }
+    else if (len <= 48)
     {
-		return 14;
-	} 
-    else if(len <= 64) 
+        return 14;
+    }
+    else if (len <= 64)
     {
-		return 15;
-	} 
-    else 
+        return 15;
+    }
+    else
     {
-		return 0;
-	}
+        return 0;
+    }
 }
 
 /**
@@ -404,7 +404,7 @@ void FCanReset(FCanCtrl *instance_p)
         FCAN_ERROR("FT can is not in configration mode\n");
         return;
     }
-   
+
     /* reset can */
     FCAN_WRITE_REG32(config_p->base_address, FCAN_CTRL_OFFSET, FCAN_CTRL_RST_MASK);
 }
@@ -417,10 +417,10 @@ void FCanReset(FCanCtrl *instance_p)
  */
 void FCanDeInitialize(FCanCtrl *instance_p)
 {
-	FASSERT(instance_p);
-	instance_p->is_ready = 0;
-	memset(instance_p, 0, sizeof(*instance_p));
-	return;
+    FASSERT(instance_p);
+    instance_p->is_ready = 0;
+    memset(instance_p, 0, sizeof(*instance_p));
+    return;
 }
 
 /**
@@ -435,24 +435,24 @@ FError FCanCfgInitialize(FCanCtrl *instance_p, const FCanConfig *input_config_p)
     FASSERT(instance_p != NULL);
     FASSERT(input_config_p != NULL);
 
-	FError ret = FCAN_SUCCESS;
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == instance_p->is_ready)
-	{
-		FCAN_WARN("device is already initialized!!!");
-	}
+    FError ret = FCAN_SUCCESS;
+    /*
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == instance_p->is_ready)
+    {
+        FCAN_WARN("device is already initialized!!!");
+    }
 
-    /*Set default values and configuration data */	
-	FCanDeInitialize(instance_p);
+    /*Set default values and configuration data */
+    FCanDeInitialize(instance_p);
 
-	instance_p->config = *input_config_p;
+    instance_p->config = *input_config_p;
 
-	instance_p->is_ready = FT_COMPONENT_IS_READY;
+    instance_p->is_ready = FT_COMPONENT_IS_READY;
 
     FCanReset(instance_p);
 
@@ -615,7 +615,7 @@ FError FCanRecv(FCanCtrl *instance_p, FCanFrame *frame_p)
 FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
 {
     u32 id, dlc;
-    
+
     int i = 0, j = 0;
     FASSERT(instance_p != NULL);
     FASSERT(instance_p->is_ready == FT_COMPONENT_IS_READY);
@@ -630,11 +630,11 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
         /* Extended CAN id format */
         id = FCAN_IDR_ID2_GET(frame_p->canid & CAN_EFF_MASK);
         id |= FCAN_IDR_ID1_GET((frame_p->canid & CAN_EFF_MASK) >>
-                (CAN_EFF_ID_BITS - CAN_SFF_ID_BITS));
+                               (CAN_EFF_ID_BITS - CAN_SFF_ID_BITS));
 
         /* The substibute remote TX request bit should be "1"
-		 * for extended frames as in the Phytium CAN datasheet
-		 */
+         * for extended frames as in the Phytium CAN datasheet
+         */
         id |= FCAN_IDR_IDE_MASK | FCAN_IDR_SRR_MASK;
         if (frame_p->canid & CAN_RTR_FLAG)
         {
@@ -648,7 +648,7 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
 
             /* enable brs-Bit Rate Switch  */
             frame_p->flags |= CANFD_BRS;
-            
+
             if (frame_p->flags & CANFD_BRS)
             {
                 dlc |= FTCANFD_ID2_BRS_MASK;
@@ -678,8 +678,8 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
             id |= FCAN_IDR_SRR_MASK;
 
         FCAN_DEBUG("instance_p->use_canfd = %d, can_send_dlc = %d \n",
-             instance_p->use_canfd, can_send_dlc);
-             
+                   instance_p->use_canfd, can_send_dlc);
+
         if (instance_p->use_canfd == TRUE)
         {
             dlc = ((can_send_dlc << FCANFD_IDR1_SDLC_SHIFT) | FTCANFD_IDR_PAD_MASK);
@@ -703,11 +703,11 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
         {
             dlc = ((can_send_dlc << FCAN_IDR_SDLC_SHIFT) | FCAN_IDR_PAD_MASK);
         }
-        
+
         id |= dlc;
         FCAN_DEBUG("can_send id = %#x\n", id);
         FCAN_WRITE_REG32(base_address, FCAN_TX_FIFO_OFFSET, be32_to_cpu(id));
-        
+
     }
 
     if (!(frame_p->canid & CAN_RTR_FLAG))
@@ -724,13 +724,13 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
         {
             FCAN_WRITE_REG32(base_address, FCAN_TX_FIFO_OFFSET, *(u32 *)(frame_p->data + j));
         }
-        
+
     }
 
     /* triggers tranmission */
     FCAN_CLEARBIT(base_address, FCAN_CTRL_OFFSET, FCAN_CTRL_XFER_MASK);
     FCAN_SETBIT(base_address, FCAN_CTRL_OFFSET, FCAN_CTRL_TXREQ_MASK | FCAN_CTRL_XFER_MASK);
-    
+
     return FCAN_SUCCESS;
 }
 
@@ -740,7 +740,7 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
  * @param {FCanCtrl} *instance_p is a pointer to the FCanCtrl instance.
  * @param {FCanBaudrateConfig} *bittiming_p, parameters of arbitration or data segment baudrate
  * @param {FCanSegmentType} target_segment, specifies which target is to be selected. followed by FCAN_ARB_SEGMENT or FCAN_DATA_SEGMENT
- * @out param: 
+ * @out param:
  * @return {*}
  */
 static FError FCanSetTiming(FCanCtrl *instance_p, FCanBaudrateConfig *bittiming_p, FCanSegmentType target_segment)
@@ -757,9 +757,9 @@ static FError FCanSetTiming(FCanCtrl *instance_p, FCanBaudrateConfig *bittiming_
     FASSERT(bittiming_p->phase_seg1 != 0);
     FASSERT(bittiming_p->phase_seg2 != 0);
 
-    FCAN_DEBUG("brp=%d, prop_seg=%d, phase_seg1=%d, phase_seg2=%d, sjw=%d", 
-                bittiming_p->brp, bittiming_p->prop_seg, bittiming_p->phase_seg1, 
-                bittiming_p->phase_seg2, bittiming_p->sjw);
+    FCAN_DEBUG("brp=%d, prop_seg=%d, phase_seg1=%d, phase_seg2=%d, sjw=%d",
+               bittiming_p->brp, bittiming_p->prop_seg, bittiming_p->phase_seg1,
+               bittiming_p->phase_seg2, bittiming_p->sjw);
 
     /* Setting Baud Rate prescalar value in BRPR Register */
     reg_val = (bittiming_p->brp - 1) << 16;
@@ -776,7 +776,7 @@ static FError FCanSetTiming(FCanCtrl *instance_p, FCanBaudrateConfig *bittiming_
 
     if (reg_val)
     {
-        if(target_segment == FCAN_DATA_SEGMENT)
+        if (target_segment == FCAN_DATA_SEGMENT)
             FCAN_WRITE_REG32(base_address, FCAN_DAT_RATE_CTRL_OFFSET, reg_val);
         else
             FCAN_WRITE_REG32(base_address, FCAN_ARB_RATE_CTRL_OFFSET, reg_val);
@@ -822,47 +822,47 @@ FError FCanBaudrateSet(FCanCtrl *instance_p, FCanBaudrateConfig *baudrate_p)
     u32 sample_point = baudrate_p->sample_point;
     if (baudrate_p->auto_calc == TRUE)
     {
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)        
-        if((segment == FCAN_ARB_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K)||(baudrate < FCAN_BAUDRATE_50K)))
+#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+        if ((segment == FCAN_ARB_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K) || (baudrate < FCAN_BAUDRATE_50K)))
         {
             FCAN_ERROR("FCanBaudrateSet FCAN_ARB_SEGMENT baudrate = %d invalid", baudrate);
             return FCAN_INVAL_PARAM;
         }
-        if((segment == FCAN_DATA_SEGMENT)&& ((baudrate > FCAN_BAUDRATE_1000K)||(baudrate < FCAN_BAUDRATE_50K)))
+        if ((segment == FCAN_DATA_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K) || (baudrate < FCAN_BAUDRATE_50K)))
         {
             FCAN_ERROR("FCanBaudrateSet FCAN_DATA_SEGMENT baudrate = %d invalid", baudrate);
             return FCAN_INVAL_PARAM;
         }
 #elif defined(CONFIG_TARGET_E2000)
-        if((segment == FCAN_ARB_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K)||(baudrate < FCAN_BAUDRATE_10K)))
+        if ((segment == FCAN_ARB_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K) || (baudrate < FCAN_BAUDRATE_10K)))
         {
             FCAN_ERROR("FCanBaudrateSet FCAN_ARB_SEGMENT baudrate = %d invalid", baudrate);
             return FCAN_INVAL_PARAM;
         }
-        if((segment == FCAN_DATA_SEGMENT)&& ((baudrate > FCAN_BAUDRATE_5000K)||(baudrate < FCAN_BAUDRATE_10K)))
+        if ((segment == FCAN_DATA_SEGMENT) && ((baudrate > FCAN_BAUDRATE_5000K) || (baudrate < FCAN_BAUDRATE_10K)))
         {
             FCAN_ERROR("FCanBaudrateSet FCAN_DATA_SEGMENT baudrate = %d invalid", baudrate);
             return FCAN_INVAL_PARAM;
         }
 #endif
     }
-    
+
     FError ret = FCAN_SUCCESS;
     FCanBaudrateConfig timing_config;
     memset(&timing_config, 0, sizeof(timing_config));
 
     /* Automatically calculate parameters based on baudrate and sample point */
-    if(baudrate_p->auto_calc == TRUE)
+    if (baudrate_p->auto_calc == TRUE)
     {
         ret = FCanCalcBittiming(&timing_config, baudrate, sample_point, segment);
-        if(ret != FCAN_SUCCESS)
+        if (ret != FCAN_SUCCESS)
         {
             FCAN_ERROR("FCanCalcBittiming %d failed", segment);
             return FCAN_FAILURE;
         }
 
         ret = FCanSetTiming(instance_p, &timing_config, segment);
-        if(ret != FCAN_SUCCESS)
+        if (ret != FCAN_SUCCESS)
         {
             FCAN_ERROR("FCanSetTiming %d failed", segment);
             return FCAN_FAILURE;
@@ -871,13 +871,13 @@ FError FCanBaudrateSet(FCanCtrl *instance_p, FCanBaudrateConfig *baudrate_p)
     else
     {
         ret = FCanSetTiming(instance_p, baudrate_p, segment);
-        if(ret != FCAN_SUCCESS)
+        if (ret != FCAN_SUCCESS)
         {
             FCAN_ERROR("FCanSetTiming failed");
             return FCAN_FAILURE;
         }
     }
-    
+
     return ret;
 }
 
@@ -894,15 +894,15 @@ FError FCanEnable(FCanCtrl *instance_p, boolean enable)
     FASSERT(instance_p->is_ready == FT_COMPONENT_IS_READY);
 
     uintptr base_addr = instance_p->config.base_address;
-    
-    if(enable == TRUE)
+
+    if (enable == TRUE)
     {
-		FCAN_SETBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_XFER_MASK);
-	}
+        FCAN_SETBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_XFER_MASK);
+    }
     else
-	{
+    {
         FCAN_CLEARBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_XFER_MASK);
-	}
+    }
     return FCAN_SUCCESS;
 }
 
@@ -930,27 +930,27 @@ FError FCanIdMaskFilterSet(FCanCtrl *instance_p, FCanIdMaskConfig *id_mask_p)
 
     switch (filter_index)
     {
-        case 0:
-            id_reg_offset = FCAN_ACC_ID0_OFFSET;
-            mask_reg_offset = FCAN_ACC_ID0_MASK_OFFSET;
-            break;
-        case 1:
-            id_reg_offset = FCAN_ACC_ID1_OFFSET;
-            mask_reg_offset = FCAN_ACC_ID1_MASK_OFFSET;
-            break;
-        case 2:
-            id_reg_offset = FCAN_ACC_ID2_OFFSET;
-            mask_reg_offset = FCAN_ACC_ID2_MASK_OFFSET;
-            break;
-        case 3:
-            id_reg_offset = FCAN_ACC_ID3_OFFSET;
-            mask_reg_offset = FCAN_ACC_ID3_MASK_OFFSET;
-            break;
-        default:
-            return FCAN_FAILURE;
+    case 0:
+        id_reg_offset = FCAN_ACC_ID0_OFFSET;
+        mask_reg_offset = FCAN_ACC_ID0_MASK_OFFSET;
+        break;
+    case 1:
+        id_reg_offset = FCAN_ACC_ID1_OFFSET;
+        mask_reg_offset = FCAN_ACC_ID1_MASK_OFFSET;
+        break;
+    case 2:
+        id_reg_offset = FCAN_ACC_ID2_OFFSET;
+        mask_reg_offset = FCAN_ACC_ID2_MASK_OFFSET;
+        break;
+    case 3:
+        id_reg_offset = FCAN_ACC_ID3_OFFSET;
+        mask_reg_offset = FCAN_ACC_ID3_MASK_OFFSET;
+        break;
+    default:
+        return FCAN_FAILURE;
     }
 
-    if(id_mask_p->type == FCAN_STANDARD_FRAME)
+    if (id_mask_p->type == FCAN_STANDARD_FRAME)
     {
         id = id_mask_p->id << FCAN_ACC_IDN_SHIFT;
         mask = id_mask_p->mask << FCAN_ACC_IDN_SHIFT;
@@ -1003,29 +1003,29 @@ FError FCanInterruptEnable(FCanCtrl *instance_p, FCanIntrEventType event_type)
 {
     FASSERT(instance_p != NULL);
     FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
-    
+
     uintptr base_addr = instance_p->config.base_address;
     u32 reg_val = 0;
     reg_val = FCAN_READ_REG32(base_addr, FCAN_INTR_OFFSET);
 
     switch (event_type)
     {
-        case FCAN_INTR_EVENT_SEND: 
-            reg_val |= FCAN_INTR_TEIE_MASK;
-            break;
+    case FCAN_INTR_EVENT_SEND:
+        reg_val |= FCAN_INTR_TEIE_MASK;
+        break;
 
-        case FCAN_INTR_EVENT_RECV:
-            reg_val |= FCAN_INTR_REIE_MASK;
-            break;
-            
-        case FCAN_INTR_EVENT_ERROR:
-            reg_val |= FCAN_INTR_EIE_MASK;
-            break;
+    case FCAN_INTR_EVENT_RECV:
+        reg_val |= FCAN_INTR_REIE_MASK;
+        break;
 
-        default:
-            break;
+    case FCAN_INTR_EVENT_ERROR:
+        reg_val |= FCAN_INTR_EIE_MASK;
+        break;
+
+    default:
+        break;
     }
-   
+
     FCAN_WRITE_REG32(base_addr, FCAN_INTR_OFFSET, reg_val);
 
     return FCAN_SUCCESS;
@@ -1043,18 +1043,18 @@ FError FCanFdEnable(FCanCtrl *instance_p, boolean enable)
     FASSERT(instance_p != NULL);
     FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
     uintptr base_addr = instance_p->config.base_address;
-    
-    if(enable == TRUE)
+
+    if (enable == TRUE)
     {
-		instance_p->use_canfd = TRUE;
-		FCAN_SETBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_FDCRC_MASK | FCAN_CTRL_IOF_MASK);
-	}
+        instance_p->use_canfd = TRUE;
+        FCAN_SETBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_FDCRC_MASK | FCAN_CTRL_IOF_MASK);
+    }
     else
-	{
-		instance_p->use_canfd = FALSE;
-		FCAN_SETBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_IOF_MASK);
+    {
+        instance_p->use_canfd = FALSE;
+        FCAN_SETBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_IOF_MASK);
         FCAN_CLEARBIT(base_addr, FCAN_CTRL_OFFSET, FCAN_CTRL_FDCRC_MASK);
-	}
-   
+    }
+
     return FCAN_SUCCESS;
 }

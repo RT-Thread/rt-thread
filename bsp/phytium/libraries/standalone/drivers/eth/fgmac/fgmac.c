@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -57,11 +57,11 @@ static FError FGmacControllerConfigure(FGmac *instance_p);
 /* 此文件主要为了完成用户对外接口，用户可以使用这些接口直接开始工作 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /*
@@ -72,9 +72,9 @@ static FError FGmacControllerConfigure(FGmac *instance_p);
  */
 void FGmacStop(FGmac *instance_p)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 reg_val;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val;
 
     /* disable dma tx and rx */
     reg_val = FGMAC_READ_REG32(base_addr, FGMAC_DMA_OP_OFFSET);
@@ -100,24 +100,24 @@ void FGmacStop(FGmac *instance_p)
  */
 FError FGmacCfgInitialize(FGmac *instance_p, const FGmacConfig *input_config_p)
 {
-	FASSERT(instance_p && input_config_p);
-    FError ret = FGMAC_SUCCESS; 
+    FASSERT(instance_p && input_config_p);
+    FError ret = FGMAC_SUCCESS;
 
-   	/* indicating device is started */
-	if (FT_COMPONENT_IS_READY == instance_p->is_ready)
-	{
-		FGMAC_WARN("device is already initialized!!!");
+    /* indicating device is started */
+    if (FT_COMPONENT_IS_READY == instance_p->is_ready)
+    {
+        FGMAC_WARN("device is already initialized!!!");
     }
 
     /* de-initialize device instance */
-	FGmacDeInitialize(instance_p);
-	instance_p->config = *input_config_p;
-   
- 
-   /*Phy Awaken*/
+    FGmacDeInitialize(instance_p);
+    instance_p->config = *input_config_p;
+
+
+    /*Phy Awaken*/
 
     ret = FGmacPhyAwaken(instance_p);
-      if (FGMAC_SUCCESS != ret)
+    if (FGMAC_SUCCESS != ret)
     {
         FGMAC_ERROR("phy awaken failed!");
         return ret;
@@ -125,25 +125,25 @@ FError FGmacCfgInitialize(FGmac *instance_p, const FGmacConfig *input_config_p)
 
 
     /* initialize the gmac controller */
-	ret = FGmacReset(instance_p); // permmit failed
-	if (FGMAC_SUCCESS != ret) 
+    ret = FGmacReset(instance_p); // permmit failed
+    if (FGMAC_SUCCESS != ret)
     {
         printf("FGmacReset failed \r\n");
     }
-		
+
 
     ret = FGmacControllerConfigure(instance_p);
-	if (FGMAC_SUCCESS != ret)
-		return ret;
+    if (FGMAC_SUCCESS != ret)
+        return ret;
 
-	/* initialize the gmac dma controller */
-	ret = FGmacDmaConfigure(instance_p);
+    /* initialize the gmac dma controller */
+    ret = FGmacDmaConfigure(instance_p);
     if (FGMAC_SUCCESS == ret)
-	{
-		instance_p->is_ready = FT_COMPONENT_IS_READY;
-	}
+    {
+        instance_p->is_ready = FT_COMPONENT_IS_READY;
+    }
 
-	return ret;	
+    return ret;
 }
 
 /**
@@ -154,13 +154,13 @@ FError FGmacCfgInitialize(FGmac *instance_p, const FGmacConfig *input_config_p)
  */
 FError FGmacDeInitialize(FGmac *instance_p)
 {
-	FASSERT(instance_p);
+    FASSERT(instance_p);
     FError ret = FGMAC_SUCCESS;
 
     instance_p->is_ready = 0;
     memset(instance_p, 0, sizeof(*instance_p));
 
-	return ret;	
+    return ret;
 }
 
 /**
@@ -171,16 +171,16 @@ FError FGmacDeInitialize(FGmac *instance_p)
  */
 static FError FGmacReset(FGmac *instance_p)
 {
-	FASSERT(instance_p);
-	FGmacMacAddr mac_addr;
-	uintptr base_addr = instance_p->config.base_addr;
-	FError ret = FGMAC_SUCCESS;
-	u32 reg_val;
-        
+    FASSERT(instance_p);
+    FGmacMacAddr mac_addr;
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FGMAC_SUCCESS;
+    u32 reg_val;
 
-	/* backup mac address before software reset */
-	memset(mac_addr, 0, sizeof(mac_addr));
-	FGmacGetMacAddr(base_addr, mac_addr);
+
+    /* backup mac address before software reset */
+    memset(mac_addr, 0, sizeof(mac_addr));
+    FGmacGetMacAddr(base_addr, mac_addr);
 
     /* disable all gmac & dma intr */
     FGmacSetInterruptMask(instance_p, FGMAC_CTRL_INTR, FGMAC_ISR_MASK_ALL_BITS);
@@ -188,19 +188,19 @@ static FError FGmacReset(FGmac *instance_p)
 
     /* stop gmac/dma tx and rx */
     FGmacStop(instance_p);
-    
-	/* do software reset per init */
-    ret = FGmacSoftwareReset(base_addr, FGMAC_RETRY_TIMES); 
 
-      
+    /* do software reset per init */
+    ret = FGmacSoftwareReset(base_addr, FGMAC_RETRY_TIMES);
+
+
     /* disable gmac & dma interrupts */
     FGmacSetInterruptMask(instance_p, FGMAC_CTRL_INTR, FGMAC_ISR_MASK_ALL_BITS);
     FGmacSetInterruptMask(instance_p, FGMAC_DMA_INTR, FGMAC_DMA_INTR_ENA_ALL_MASK);
 
     /* recover mac address after softwate reset */
-	FGmacSetMacAddr(base_addr, mac_addr);
+    FGmacSetMacAddr(base_addr, mac_addr);
 
-	return ret;// may return error
+    return ret;// may return error
 }
 
 /**
@@ -212,29 +212,29 @@ static FError FGmacReset(FGmac *instance_p)
  */
 void FGmacControllerSpeedConfig(FGmac *instance_p, u32 speed)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 reg_val = 0;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val = 0;
 
     /* MAC配置寄存器 */
     reg_val  = FGMAC_READ_REG32(base_addr, FGMAC_CONF_OFFSET);
 
     /* 设置通信速度FES=1000Mbps */
-    if(speed == FGMAC_PHY_SPEED_1000)
+    if (speed == FGMAC_PHY_SPEED_1000)
     {
         reg_val &= (~FGMAC_CONF_PORTSELECT);
         reg_val &= (~FGMAC_CONF_FES);
     }
 
     /* 设置通信速度FES=100Mbps */
-    if(speed == FGMAC_PHY_SPEED_100)
+    if (speed == FGMAC_PHY_SPEED_100)
     {
         reg_val |= FGMAC_CONF_PORTSELECT;
         reg_val |= FGMAC_CONF_FES;
     }
 
     /* 设置通信速度FES=10Mbps */
-    if(speed == FGMAC_PHY_SPEED_10)
+    if (speed == FGMAC_PHY_SPEED_10)
     {
         reg_val |= FGMAC_CONF_PORTSELECT;
         reg_val &= (~FGMAC_CONF_FES);
@@ -252,21 +252,21 @@ void FGmacControllerSpeedConfig(FGmac *instance_p, u32 speed)
  */
 void FGmacControllerDuplexConfig(FGmac *instance_p, u32 duplex)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 reg_val = 0;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val = 0;
 
     /* MAC配置寄存器 */
     reg_val  = FGMAC_READ_REG32(base_addr, FGMAC_CONF_OFFSET);
 
     /* 设置双工模式 */
-	if (duplex == FGMAC_PHY_MODE_FULLDUPLEX)
-		reg_val |= FGMAC_CONF_DUPLEX_MODE;
-	else
-		reg_val &= ~FGMAC_CONF_DUPLEX_MODE;
+    if (duplex == FGMAC_PHY_MODE_FULLDUPLEX)
+        reg_val |= FGMAC_CONF_DUPLEX_MODE;
+    else
+        reg_val &= ~FGMAC_CONF_DUPLEX_MODE;
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_CONF_OFFSET, reg_val);
-    
+
 }
 
 /**
@@ -277,11 +277,11 @@ void FGmacControllerDuplexConfig(FGmac *instance_p, u32 duplex)
  */
 static FError FGmacControllerConfigure(FGmac *instance_p)
 {
-	FASSERT(instance_p);
-	FGmacMacAddr mac_addr;
-	uintptr base_addr = instance_p->config.base_addr;
-	FError ret = FGMAC_SUCCESS;
-	u32 reg_val = 0;
+    FASSERT(instance_p);
+    FGmacMacAddr mac_addr;
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FGMAC_SUCCESS;
+    u32 reg_val = 0;
 
     /********gmac ctrl reg init*********/
     /* Set the WD bit according to ETH Watchdog value */
@@ -296,14 +296,14 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
     /* Set the DR bit according to ETH RetryTransmission value */
     /* Set the ACS bit according to ETH AutomaticPadCRCStrip value */
     /* Set the BL bit according to ETH BackOffLimit value */
-    /* Set the DC bit according to ETH DeferralCheck value */ 
+    /* Set the DC bit according to ETH DeferralCheck value */
 
     /* MAC配置寄存器 */
     reg_val  = FGMAC_READ_REG32(base_addr, FGMAC_CONF_OFFSET);
 
     /* 使能载波侦听DCRS、失能环回模式LM */
     reg_val &= ~(FGMAC_CONF_DCRS | FGMAC_CONF_LOOPBACK_MODE);
-    
+
     /* 设置帧内间隔IFG */
     reg_val |= FGMAC_CONF_IFG(0);
 
@@ -312,16 +312,16 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
     reg_val &= (~FGMAC_CONF_FES);
 
     /* 双工模式 */
-	if (instance_p->config.duplex_mode)
-		reg_val |= FGMAC_CONF_DUPLEX_MODE;
-	else
-		reg_val &= ~FGMAC_CONF_DUPLEX_MODE;
+    if (instance_p->config.duplex_mode)
+        reg_val |= FGMAC_CONF_DUPLEX_MODE;
+    else
+        reg_val &= ~FGMAC_CONF_DUPLEX_MODE;
 
     /* 使能校验和卸载IPS */
-	if (FGMAC_CHECKSUM_BY_HARDWARE == instance_p->config.cheksum_mode)
-		reg_val |= FGMAC_CONF_IPC;
-	else
-		reg_val &= ~FGMAC_CONF_IPC;
+    if (FGMAC_CHECKSUM_BY_HARDWARE == instance_p->config.cheksum_mode)
+        reg_val |= FGMAC_CONF_IPC;
+    else
+        reg_val &= ~FGMAC_CONF_IPC;
 
     /* 重发DR=1, 重发一次 */
     reg_val |= FGMAC_CONF_DISABLE_RETRY;
@@ -339,7 +339,7 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
     reg_val |= (FGMAC_CONF_CST | FGMAC_CONF_WD | FGMAC_CONF_JD | FGMAC_CONF_BE | FGMAC_CONF_DO);
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_CONF_OFFSET, reg_val);
-    
+
     /********gmac filter reg init*********/
     /* Set the RA bit according to ETH ReceiveAll value */
     /* Set the SAF and SAIF bits according to ETH SourceAddrFilter value */
@@ -352,7 +352,7 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
 
     /* MAC帧过滤寄存器 */
     reg_val  = FGMAC_READ_REG32(base_addr, FGMAC_FRAME_FILTER_OFFSET);
-    
+
     /* 全部接收RA */
     reg_val |= FGMAC_FRAME_FILTER_RA;
 
@@ -369,21 +369,21 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
     reg_val &= ~FGMAC_FRAME_FILTER_DAIF;
 
     /* 失能哈希单播PR */
-    reg_val &= ~FGMAC_FRAME_FILTER_PR;  
+    reg_val &= ~FGMAC_FRAME_FILTER_PR;
     FGMAC_WRITE_REG32(base_addr, FGMAC_FRAME_FILTER_OFFSET, reg_val);
 
-	/********hash reg*********/ 
-	FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_HIGH_OFFSET, 0x0);
-	FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_LOW_OFFSET, 0x0);
-    
+    /********hash reg*********/
+    FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_HIGH_OFFSET, 0x0);
+    FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_LOW_OFFSET, 0x0);
+
     /********gmac flow ctrl reg init*********/
-    
+
     /* Set the PT bit according to ETH PauseTime value */
     /* Set the DZPQ bit according to ETH ZeroQuantaPause value */
     /* Set the PLT bit according to ETH PauseLowThreshold value */
     /* Set the UP bit according to ETH UnicastPauseFrameDetect value */
     /* Set the RFE bit according to ETH ReceiveFlowControl value */
-    /* Set the TFE bit according to ETH TransmitFlowControl value */   
+    /* Set the TFE bit according to ETH TransmitFlowControl value */
     reg_val = FGMAC_READ_REG32(base_addr, FGMAC_FLOW_CTRL_OFFSET);
     /* 禁用自动零暂停帧生成DZPQ */
     reg_val |= FGMAC_FLOW_DZPQ;
@@ -398,24 +398,24 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
     reg_val &= ~FGMAC_FLOW_TFE;
     FGMAC_WRITE_REG32(base_addr, FGMAC_FLOW_CTRL_OFFSET, reg_val);
 
-    /********vlan tag reg*********/ 
+    /********vlan tag reg*********/
     /* Set the ETV bit according to ETH VLANTagComparison value */
-    /* Set the VL bit according to ETH VLANTagIdentifier value */  
-    /* 接收帧的 VLAN 标记标识符 VL */   
+    /* Set the VL bit according to ETH VLANTagIdentifier value */
+    /* 接收帧的 VLAN 标记标识符 VL */
     reg_val = FGMAC_VLAN_TAG_VL(0);
     /* 设置VLAN 标记比较的位数ETV  1-12bit 0-16bit */
-    reg_val &= ~FGMAC_VLAN_TAG_ETV; 
+    reg_val &= ~FGMAC_VLAN_TAG_ETV;
     FGMAC_WRITE_REG32(base_addr, FGMAC_VLAN_TAG_OFFSET, reg_val);
 
-	return ret;
+    return ret;
 }
 
 static FError FGmacDmaConfigure(FGmac *instance_p)
 {
-	FASSERT(instance_p);
-	u32 reg_val;
-	FError ret = FGMAC_SUCCESS;
-	uintptr base_addr = instance_p->config.base_addr;
+    FASSERT(instance_p);
+    u32 reg_val;
+    FError ret = FGMAC_SUCCESS;
+    uintptr base_addr = instance_p->config.base_addr;
 
     /********DMA总线模式寄存器*********/
     /* Set the AAL bit according to ETH AddressAlignedBeats value */
@@ -424,7 +424,7 @@ static FError FGmacDmaConfigure(FGmac *instance_p)
     /* Set the PBL and 4*PBL bits according to ETH TxDMABurstLength value */
     /* Set the Enhanced DMA descriptors bit according to ETH EnhancedDescriptorFormat value*/
     /* Set the DSL bit according to ETH DesciptorSkipLength value */
-    /* Set the PR and DA bits according to ETH DMAArbitration value */    
+    /* Set the PR and DA bits according to ETH DMAArbitration value */
     reg_val  = FGMAC_READ_REG32(base_addr, FGMAC_DMA_BUS_MODE_OFFSET);
     reg_val |= FGMAC_DMA_BUS_AAL;
     /* 使用单独的 PBL USP */
@@ -437,18 +437,18 @@ static FError FGmacDmaConfigure(FGmac *instance_p)
 
     /* 控制 RxDMA 和 TxDMA 之间的加权循环仲裁中的优先级比率 PR */
     reg_val |= FGMAC_DMA_BUS_PR(0);
-    
+
     /* 可编程突发长度 PBL */
     reg_val |= FGMAC_DMA_BUS_PBL(32);
 
     /* 交替描述表大小 ATDS */
     reg_val |= FGMAC_DMA_BUS_ATDS;
-    
-    
-	FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_BUS_MODE_OFFSET, reg_val);
 
-	/* dma set bus mode */
-	// FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_BUS_MODE_OFFSET, FGMAC_DMA_BUS_INIT);
+
+    FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_BUS_MODE_OFFSET, reg_val);
+
+    /* dma set bus mode */
+    // FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_BUS_MODE_OFFSET, FGMAC_DMA_BUS_INIT);
 
     /********DMA操作模式寄存器*********/
     /* Set the DT bit according to ETH DropTCPIPChecksumErrorFrame value */
@@ -459,7 +459,7 @@ static FError FGmacDmaConfigure(FGmac *instance_p)
     /* Set the FEF bit according to ETH ForwardErrorFrames value */
     /* Set the FUF bit according to ETH ForwardUndersizedGoodFrames value */
     /* Set the RTC bit according to ETH ReceiveThresholdControl value */
-    /* Set the OSF bit according to ETH SecondFrameOperate value */    
+    /* Set the OSF bit according to ETH SecondFrameOperate value */
     reg_val  = FGMAC_READ_REG32(base_addr, FGMAC_DMA_OP_OFFSET);
     reg_val &= FGMAC_DMA_OP_CLEAR_MASK;
     /* 丢弃 TCP / IP 校验和错误帧 DT */
@@ -482,15 +482,15 @@ static FError FGmacDmaConfigure(FGmac *instance_p)
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_OP_OFFSET, reg_val);
 
     /* 刷新DMA发送FIFO FTF */
-	ret = FGmacFlushTxFifo(base_addr, FGMAC_RETRY_TIMES);
+    ret = FGmacFlushTxFifo(base_addr, FGMAC_RETRY_TIMES);
 
-    if(FGMAC_SUCCESS != ret)
-	{
+    if (FGMAC_SUCCESS != ret)
+    {
         printf("FGmac Flush Failed\r\n");
-	}
+    }
 
     /* AXI 突发长度 BLEN 16,8,4 */
-    reg_val = (FGMAC_DMA_AXI_BUS_MOD_BLEN16| FGMAC_DMA_AXI_BUS_MOD_BLEN8| FGMAC_DMA_AXI_BUS_MOD_BLEN4);
+    reg_val = (FGMAC_DMA_AXI_BUS_MOD_BLEN16 | FGMAC_DMA_AXI_BUS_MOD_BLEN8 | FGMAC_DMA_AXI_BUS_MOD_BLEN4);
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_AXI_BUS_MOD_OFFSET, reg_val);
 
     return ret;

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdmmc.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:55:23
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -58,7 +58,7 @@
 /* 此文件主要为了完成用户对外接口，用户可以使用这些接口直接开始工作 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /**
@@ -71,48 +71,48 @@
  */
 FError FSdmmcCfgInitialize(FSdmmc *instance_p, const FSdmmcConfig *input_config_p)
 {
-	FASSERT(instance_p && input_config_p);
-	uintptr base_addr;
-	FError ret = FSDMMC_SUCCESS;
-
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == instance_p->is_ready)
-	{
-		FSDMMC_WARN("device is already initialized!!!");
-	}
+    FASSERT(instance_p && input_config_p);
+    uintptr base_addr;
+    FError ret = FSDMMC_SUCCESS;
 
     /*
-	* Set default values and configuration data, including setting the
-	* callback handlers to stubs  so the system will not crash should the
-	* application not assign its own callbacks.
-	 */	
-	FSdmmcDeInitialize(instance_p);
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == instance_p->is_ready)
+    {
+        FSDMMC_WARN("device is already initialized!!!");
+    }
 
-	instance_p->config = *input_config_p;
-	base_addr = instance_p->config.base_addr;
+    /*
+    * Set default values and configuration data, including setting the
+    * callback handlers to stubs  so the system will not crash should the
+    * application not assign its own callbacks.
+     */
+    FSdmmcDeInitialize(instance_p);
 
-	/* 
-	* Check if card exists 
-	*/
-	if (!FSdmmcCheckIfCardExists(base_addr))
-	{
-		FSDMMC_ERROR("storage device not found !!! 0x%x", base_addr);
-		return FSDMMC_ERR_CARD_NO_FOUND;
-	}
+    instance_p->config = *input_config_p;
+    base_addr = instance_p->config.base_addr;
 
-	/*
-	* Reset the device.
-	*/
-	ret = FSdmmcReset(base_addr);
-	if (FSDMMC_SUCCESS == ret)
-		instance_p->is_ready = FT_COMPONENT_IS_READY;
+    /*
+    * Check if card exists
+    */
+    if (!FSdmmcCheckIfCardExists(base_addr))
+    {
+        FSDMMC_ERROR("storage device not found !!! 0x%x", base_addr);
+        return FSDMMC_ERR_CARD_NO_FOUND;
+    }
 
-	return ret;
+    /*
+    * Reset the device.
+    */
+    ret = FSdmmcReset(base_addr);
+    if (FSDMMC_SUCCESS == ret)
+        instance_p->is_ready = FT_COMPONENT_IS_READY;
+
+    return ret;
 }
 
 /**
@@ -123,12 +123,12 @@ FError FSdmmcCfgInitialize(FSdmmc *instance_p, const FSdmmcConfig *input_config_
  */
 void FSdmmcDeInitialize(FSdmmc *instance_p)
 {
-	FASSERT(instance_p);
-	
-	instance_p->is_ready = 0;
-	memset(instance_p, 0, sizeof(*instance_p));
+    FASSERT(instance_p);
 
-	return;
+    instance_p->is_ready = 0;
+    memset(instance_p, 0, sizeof(*instance_p));
+
+    return;
 }
 
 /**
@@ -139,26 +139,26 @@ void FSdmmcDeInitialize(FSdmmc *instance_p)
  */
 u32 FSdmmcMakeRawCmd(FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	u32 raw_cmd = 0;
-		
-	/*
-	 * rawcmd :
-	 *   trty << 14 | opcode << 8 | cmdw << 6 | cice << 4 | crce << 3 | resp
-	 */
-	raw_cmd |= FSDMMC_CMD_SETTING_CMDI(cmd_p->cmdidx);
+    FASSERT(cmd_p);
+    u32 raw_cmd = 0;
 
-	if (cmd_p->flag & FSDMMC_CMD_FLAG_ADTC)
-		raw_cmd |= FSDMMC_CMD_SETTING_TRTY(0b10); /* adtc指令 */
+    /*
+     * rawcmd :
+     *   trty << 14 | opcode << 8 | cmdw << 6 | cice << 4 | crce << 3 | resp
+     */
+    raw_cmd |= FSDMMC_CMD_SETTING_CMDI(cmd_p->cmdidx);
 
-	if (0 == (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_RESP))
-		raw_cmd |= FSDMMC_CMD_NO_RESP;
-	else if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_LONG_RESP)
-		raw_cmd |= FSDMMC_CMD_RESP_136_BIT;
-	else
-		raw_cmd |= FSDMMC_CMD_RESP_48_BIT;
+    if (cmd_p->flag & FSDMMC_CMD_FLAG_ADTC)
+        raw_cmd |= FSDMMC_CMD_SETTING_TRTY(0b10); /* adtc指令 */
 
-	return raw_cmd;
+    if (0 == (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_RESP))
+        raw_cmd |= FSDMMC_CMD_NO_RESP;
+    else if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_LONG_RESP)
+        raw_cmd |= FSDMMC_CMD_RESP_136_BIT;
+    else
+        raw_cmd |= FSDMMC_CMD_RESP_48_BIT;
+
+    return raw_cmd;
 }
 
 /**
@@ -170,38 +170,38 @@ u32 FSdmmcMakeRawCmd(FSdmmcCmd *cmd_p)
  */
 static FError FSdmmcWaitCmdEnd(uintptr base_addr, FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	FError ret = FSDMMC_SUCCESS;
+    FASSERT(cmd_p);
+    FError ret = FSDMMC_SUCCESS;
 
-	ret = FSdmmcWaitStatus(base_addr, FSDMMC_TIMEOUT);
-	if (FSDMMC_SUCCESS != ret)
-		return ret;
+    ret = FSdmmcWaitStatus(base_addr, FSDMMC_TIMEOUT);
+    if (FSDMMC_SUCCESS != ret)
+        return ret;
 
-	if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_RESP)
-	{
-		if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_LONG_RESP)
-		{
-			cmd_p->response[0] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_1_REG_OFFSET);
-			cmd_p->response[1] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_2_REG_OFFSET);
-			cmd_p->response[2] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_3_REG_OFFSET);
-			cmd_p->response[3] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_4_REG_OFFSET);
-		}
-		else
-		{
-			cmd_p->response[0] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_1_REG_OFFSET);
-			cmd_p->response[1] = 0;
-			cmd_p->response[2] = 0;
-			cmd_p->response[3] = 0;			
-		}
-	}
+    if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_RESP)
+    {
+        if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_LONG_RESP)
+        {
+            cmd_p->response[0] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_1_REG_OFFSET);
+            cmd_p->response[1] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_2_REG_OFFSET);
+            cmd_p->response[2] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_3_REG_OFFSET);
+            cmd_p->response[3] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_4_REG_OFFSET);
+        }
+        else
+        {
+            cmd_p->response[0] = FSDMMC_READ_REG(base_addr, FSDMMC_CMD_RESP_1_REG_OFFSET);
+            cmd_p->response[1] = 0;
+            cmd_p->response[2] = 0;
+            cmd_p->response[3] = 0;
+        }
+    }
 
-	FSDMMC_INFO("get cmd resp: 0x%x:0x%x:0x%x:0x%x",
-               cmd_p->response[0],
-               cmd_p->response[1],
-               cmd_p->response[2],
-               cmd_p->response[3]);
+    FSDMMC_INFO("get cmd resp: 0x%x:0x%x:0x%x:0x%x",
+                cmd_p->response[0],
+                cmd_p->response[1],
+                cmd_p->response[2],
+                cmd_p->response[3]);
 
-	return FSDMMC_SUCCESS;
+    return FSDMMC_SUCCESS;
 }
 
 /**
@@ -213,10 +213,10 @@ static FError FSdmmcWaitCmdEnd(uintptr base_addr, FSdmmcCmd *cmd_p)
  */
 void FSdmmcSendCmd(uintptr base_addr, FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	u32 raw_cmd = FSdmmcMakeRawCmd(cmd_p);
+    FASSERT(cmd_p);
+    u32 raw_cmd = FSdmmcMakeRawCmd(cmd_p);
 
-	FSdmmcSendPrivateCmd(base_addr, raw_cmd, cmd_p->cmdarg);
+    FSdmmcSendPrivateCmd(base_addr, raw_cmd, cmd_p->cmdarg);
 }
 
 /**
@@ -228,9 +228,9 @@ void FSdmmcSendCmd(uintptr base_addr, FSdmmcCmd *cmd_p)
  */
 static FError FSdmmcTransferCmdPoll(uintptr base_addr, FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	FSdmmcSendCmd(base_addr, cmd_p);
-	return FSdmmcWaitCmdEnd(base_addr, cmd_p);
+    FASSERT(cmd_p);
+    FSdmmcSendCmd(base_addr, cmd_p);
+    return FSdmmcWaitCmdEnd(base_addr, cmd_p);
 }
 
 /**
@@ -242,13 +242,13 @@ static FError FSdmmcTransferCmdPoll(uintptr base_addr, FSdmmcCmd *cmd_p)
  */
 static void FSdmmcSendAdtcCmd(uintptr base_addr, FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	u32 raw_cmd = FSdmmcMakeRawCmd(cmd_p);
+    FASSERT(cmd_p);
+    u32 raw_cmd = FSdmmcMakeRawCmd(cmd_p);
 
-	FSdmmcClearNormalInterruptStatus(base_addr);
-	raw_cmd |= FSDMMC_CMD_SETTING_TRTY(0b10); /* adtc指令 */
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_CMD_SETTING_REG_OFFSET, raw_cmd);
-	return;
+    FSdmmcClearNormalInterruptStatus(base_addr);
+    raw_cmd |= FSDMMC_CMD_SETTING_TRTY(0b10); /* adtc指令 */
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_CMD_SETTING_REG_OFFSET, raw_cmd);
+    return;
 }
 
 /**
@@ -261,51 +261,51 @@ static void FSdmmcSendAdtcCmd(uintptr base_addr, FSdmmcCmd *cmd_p)
  */
 FError FSdmmcSendData(uintptr base_addr, boolean read, FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	FSdmmcData *dat_p = cmd_p->data_p;
+    FASSERT(cmd_p);
+    FSdmmcData *dat_p = cmd_p->data_p;
     u32 card_addr;
     u32 blk_cnt;
-	FError ret = FSDMMC_SUCCESS;
+    FError ret = FSDMMC_SUCCESS;
 
-	if ((dat_p->datalen >= FSDMMC_DMA_ADDR_ALIGN) && (dat_p->datalen % FSDMMC_DMA_ADDR_ALIGN != 0))
-	{
-		FSDMMC_ERROR("invalid size: total = %d ", dat_p->datalen);
-		return FSDMMC_ERR_INVALID_BUF;
-	}
+    if ((dat_p->datalen >= FSDMMC_DMA_ADDR_ALIGN) && (dat_p->datalen % FSDMMC_DMA_ADDR_ALIGN != 0))
+    {
+        FSDMMC_ERROR("invalid size: total = %d ", dat_p->datalen);
+        return FSDMMC_ERR_INVALID_BUF;
+    }
 
-	if (((uintptr)(dat_p->buf) % FSDMMC_DMA_ADDR_ALIGN) != 0)
-	{
-		FSDMMC_ERROR("buffer %p can not be used for DMA", dat_p->buf);
-		return FSDMMC_ERR_INVALID_BUF;
-	}
+    if (((uintptr)(dat_p->buf) % FSDMMC_DMA_ADDR_ALIGN) != 0)
+    {
+        FSDMMC_ERROR("buffer %p can not be used for DMA", dat_p->buf);
+        return FSDMMC_ERR_INVALID_BUF;
+    }
 
-	card_addr = cmd_p->cmdarg;
-	blk_cnt = dat_p->datalen / dat_p->blksz;
-	if (dat_p->datalen % dat_p->blksz)
-		blk_cnt++;
+    card_addr = cmd_p->cmdarg;
+    blk_cnt = dat_p->datalen / dat_p->blksz;
+    if (dat_p->datalen % dat_p->blksz)
+        blk_cnt++;
 
     FSDMMC_INFO("data len: %d, card addr: 0x%x, blk cnt: %d, is %s",
                 dat_p->datalen, card_addr, blk_cnt, read ? "read" : "write");
 
-	if (read)
-	{
-		if ((cmd_p->flag & FSDMMC_CMD_FLAG_ADTC) && (dat_p->blksz > dat_p->datalen))
-		{
-			FSdmmcSendAdtcCmd(base_addr, cmd_p);
-		}
-		/* read data */
-		FSdmmcSetReadDMA(base_addr, (uintptr)card_addr, blk_cnt, dat_p->buf);
-	}
-	else
-	{
-		/* invalidate write buf */
-		FCacheDCacheInvalidateRange((uintptr)dat_p->buf, dat_p->datalen);
+    if (read)
+    {
+        if ((cmd_p->flag & FSDMMC_CMD_FLAG_ADTC) && (dat_p->blksz > dat_p->datalen))
+        {
+            FSdmmcSendAdtcCmd(base_addr, cmd_p);
+        }
+        /* read data */
+        FSdmmcSetReadDMA(base_addr, (uintptr)card_addr, blk_cnt, dat_p->buf);
+    }
+    else
+    {
+        /* invalidate write buf */
+        FCacheDCacheInvalidateRange((uintptr)dat_p->buf, dat_p->datalen);
 
-		/* write data */
-		FSdmmcSetWriteDMA(base_addr, (uintptr)card_addr, blk_cnt, dat_p->buf);
-	}
+        /* write data */
+        FSdmmcSetWriteDMA(base_addr, (uintptr)card_addr, blk_cnt, dat_p->buf);
+    }
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -317,25 +317,25 @@ FError FSdmmcSendData(uintptr base_addr, boolean read, FSdmmcCmd *cmd_p)
  */
 static FError FSdmmcTransferDataPoll(uintptr base_addr, FSdmmcCmd *cmd_p)
 {
-	FASSERT(cmd_p);
-	FError ret = FSDMMC_SUCCESS;
-	FSdmmcData *dat_p = cmd_p->data_p;
-	const boolean read = (FSDMMC_CMD_FLAG_READ_DATA == (cmd_p->flag & FSDMMC_CMD_FLAG_READ_DATA));
+    FASSERT(cmd_p);
+    FError ret = FSDMMC_SUCCESS;
+    FSdmmcData *dat_p = cmd_p->data_p;
+    const boolean read = (FSDMMC_CMD_FLAG_READ_DATA == (cmd_p->flag & FSDMMC_CMD_FLAG_READ_DATA));
 
-	ret = FSdmmcSendData(base_addr, read, cmd_p);
-	if (FSDMMC_SUCCESS != ret)
-		return ret;
+    ret = FSdmmcSendData(base_addr, read, cmd_p);
+    if (FSDMMC_SUCCESS != ret)
+        return ret;
 
-	ret = FSdmmcWaitCmdEnd(base_addr, cmd_p);
-	if (FSDMMC_SUCCESS != ret)
-		return ret;
+    ret = FSdmmcWaitCmdEnd(base_addr, cmd_p);
+    if (FSDMMC_SUCCESS != ret)
+        return ret;
 
-	ret = FSdmmcWaitDMAStatus(base_addr, read, FSDMMC_TIMEOUT);
-	if (FSDMMC_SUCCESS != ret)
-		return ret;
+    ret = FSdmmcWaitDMAStatus(base_addr, read, FSDMMC_TIMEOUT);
+    if (FSDMMC_SUCCESS != ret)
+        return ret;
 
-	FCacheDCacheInvalidateRange((uintptr)dat_p->buf, dat_p->datalen);
-	return ret;
+    FCacheDCacheInvalidateRange((uintptr)dat_p->buf, dat_p->datalen);
+    return ret;
 }
 
 /**
@@ -348,42 +348,42 @@ static FError FSdmmcTransferDataPoll(uintptr base_addr, FSdmmcCmd *cmd_p)
  */
 FError FSdmmcPollTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
 {
-	FASSERT(instance_p && cmd_data_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	FError ret = FSDMMC_SUCCESS;
-	
-	if (FALSE == FSdmmcCheckIfCardExists(base_addr))
-	{
-		FSDMMC_ERROR("card not found !!! fsdio ctrl base 0x%x", base_addr);
-		return FSDMMC_ERR_CARD_NO_FOUND;		
-	}
+    FASSERT(instance_p && cmd_data_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FSDMMC_SUCCESS;
 
-	if (cmd_data_p->flag & FSDMMC_CMD_FLAG_EXP_DATA)
-	{
-		/* transfer data */
-		FSDMMC_INFO("====DATA [%d] START: buf: %p=====", cmd_data_p->cmdidx, cmd_data_p->data_p->buf);
-		ret = FSdmmcTransferDataPoll(base_addr, cmd_data_p);
-		if (FSDMMC_SUCCESS != ret)
-		{
-			FSDMMC_ERROR("trans data failed 0x%x", ret);
-			return ret;
-		}
+    if (FALSE == FSdmmcCheckIfCardExists(base_addr))
+    {
+        FSDMMC_ERROR("card not found !!! fsdio ctrl base 0x%x", base_addr);
+        return FSDMMC_ERR_CARD_NO_FOUND;
+    }
 
-		FSDMMC_INFO("====DATA [%d] END 0x%x=====", cmd_data_p->cmdidx, ret);
-	}
-	else
-	{
-		/* transfer command */
-		FSDMMC_INFO("=====CMD [%d] START=====", cmd_data_p->cmdidx);
-		ret = FSdmmcTransferCmdPoll(base_addr, cmd_data_p);
-		if (FSDMMC_SUCCESS != ret)
-		{
-			FSDMMC_ERROR("send cmd failed 0x%x", ret);
-			return ret;
-		}
+    if (cmd_data_p->flag & FSDMMC_CMD_FLAG_EXP_DATA)
+    {
+        /* transfer data */
+        FSDMMC_INFO("====DATA [%d] START: buf: %p=====", cmd_data_p->cmdidx, cmd_data_p->data_p->buf);
+        ret = FSdmmcTransferDataPoll(base_addr, cmd_data_p);
+        if (FSDMMC_SUCCESS != ret)
+        {
+            FSDMMC_ERROR("trans data failed 0x%x", ret);
+            return ret;
+        }
 
-		FSDMMC_INFO("=====CMD [%d] END: 0x%x=====", cmd_data_p->cmdidx, ret);
-	}
+        FSDMMC_INFO("====DATA [%d] END 0x%x=====", cmd_data_p->cmdidx, ret);
+    }
+    else
+    {
+        /* transfer command */
+        FSDMMC_INFO("=====CMD [%d] START=====", cmd_data_p->cmdidx);
+        ret = FSdmmcTransferCmdPoll(base_addr, cmd_data_p);
+        if (FSDMMC_SUCCESS != ret)
+        {
+            FSDMMC_ERROR("send cmd failed 0x%x", ret);
+            return ret;
+        }
 
-	return ret;
+        FSDMMC_INFO("=====CMD [%d] END: 0x%x=====", cmd_data_p->cmdidx, ret);
+    }
+
+    return ret;
 }

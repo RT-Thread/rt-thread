@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fxmac_bdring.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -98,7 +98,7 @@ static void FXmacBdSetTxWrap(uintptr bdptr);
  *        as it is specified as a power of 2.
  * @param bd_count is the number of BDs to setup in the user memory region. It
  *        is assumed the region is large enough to contain the BDs.
- * @return 
+ * @return
  *        FT_SUCCESS if initialization was successful
  *        FXMAC_ERR_INVALID_PARAM under any of the following conditions:
  *          1) Physaddr and/or Virtaddr are not aligned to the given Alignment
@@ -202,7 +202,7 @@ FError FXmacBdRingCreate(FXmacBdRing *ring_ptr, uintptr phys_addr,
  *        BD will be modified.
  * @param direction is either FXMAC_SEND or FXMAC_RECV that indicates
  *        which direction.
- * @return {*} 
+ * @return {*}
  */
 FError FXmacBdRingClone(FXmacBdRing *ring_ptr, FXmacBd *src_bd_ptr,
                         u8 direction)
@@ -263,7 +263,7 @@ FError FXmacBdRingClone(FXmacBdRing *ring_ptr, FXmacBd *src_bd_ptr,
  * @msg:  Reserve locations in the BD list. The set of returned BDs may be modified
  * in preparation for future DMA transaction(s). Once the BDs are ready to be
  * submitted to hardware, the user must call FXmacBdRingToHw() in the same
- * order which they were allocated here. 
+ * order which they were allocated here.
  * @param ring_ptr is a pointer to the BD ring instance to be worked on.
  * @param num_bd is the number of BDs to allocate
  * @param bd_set_ptr is an output parameter, it points to the first BD available
@@ -340,17 +340,17 @@ FError FXmacBdRingAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
  * </pre>
  *
  * A partial UnAlloc must include the last BD in the list that was Alloc'd.
- * 
+ *
  * @param ring_ptr is a pointer to the instance to be worked on.
  * @param num_bd is the number of BDs to allocate
  * @param bd_set_ptr is an output parameter, it points to the first BD available
  *        for modification.
- * 
+ *
  * @return
  *   - FT_SUCCESS if the BDs were unallocated.
  *   - FXMAC_ERR_GENERAL if num_bd parameter was greater that the number of BDs in
  *     the preprocessing state.
- * 
+ *
  * @return {*}
  */
 FError FXmacBdRingUnAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
@@ -384,7 +384,7 @@ FError FXmacBdRingUnAlloc(FXmacBdRing *ring_ptr, u32 num_bd,
  * FXmacBdRingAlloc(). Once this function returns, the argument BD set goes
  * under hardware control. Any changes made to these BDs after this point will
  * corrupt the BD list leading to data corruption and system instability.
- * 
+ *
  * @param ring_ptr is a pointer to the instance to be worked on.
  * @param num_bd is the number of BDs in the set.
  * @param bd_set_ptr is the first BD of the set to commit to hardware.
@@ -481,17 +481,17 @@ FError FXmacBdRingToHw(FXmacBdRing *ring_ptr, u32 num_bd,
  *
  * If hardware has only partially completed a packet spanning multiple BDs,
  * then none of the BDs for that packet will be included in the results.
- * 
+ *
  * @param ring_ptr is a pointer to the instance to be worked on.
  * @param bd_limit is the maximum number of BDs to return in the set.
  * @param bd_set_ptr is an output parameter, it points to the first BD available
- *        for examination. 
- * 
+ *        for examination.
+ *
 * @return
  *   The number of BDs processed by hardware. A value of 0 indicates that no
  *   data is available. No more than bd_limit BDs will be returned.
- * 
- * @return 
+ *
+ * @return
  *   The number of BDs processed by hardware. A value of 0 indicates that no
  *   data is available. No more than bd_limit BDs will be returned.
  */
@@ -633,12 +633,12 @@ u32 FXmacBdRingFromHwTx(FXmacBdRing *ring_ptr, u32 bd_limit,
  *
  * If hardware has only partially completed a packet spanning multiple BDs,
  * then none of the BDs for that packet will be included in the results.
- * 
+ *
  * @param ring_ptr is a pointer to the instance to be worked on.
  * @param bd_limit is the maximum number of BDs to return in the set.
  * @param bd_set_ptr is an output parameter, it points to the first BD available
  *        for examination.
- * 
+ *
  * @return
  *   The number of BDs processed by hardware. A value of 0 indicates that no
  *   data is available. No more than bd_limit BDs will be returned.
@@ -706,7 +706,7 @@ u32 FXmacBdRingFromHwRx(FXmacBdRing *ring_ptr, u32 bd_limit,
             //     {
             //         f_printk("********** error fcs data is appear ************* \r\n");
             //         FtDumpHexWord(FXMAC_BD_READ(cur_bd_ptr,0) &(0xfffffff8),bd_str&FXMAC_RXBUF_LEN_MASK);
-            //         f_printk("********** end ************* \r\n");                    
+            //         f_printk("********** end ************* \r\n");
             //     }
             // }
         }
@@ -738,13 +738,13 @@ u32 FXmacBdRingFromHwRx(FXmacBdRing *ring_ptr, u32 bd_limit,
  * @name: FXmacBdRingFree
  * @msg:  Frees a set of BDs that had been previously retrieved with
  * FXmacBdRingFromHw().
- * 
+ *
  * @param ring_ptr is a pointer to the instance to be worked on.
  * @param num_bd is the number of BDs to free.
  * @param bd_set_ptr is the head of a list of BDs returned by
  * FXmacBdRingFromHw().
- * 
- * @return 
+ *
+ * @return
  *     FT_SUCCESS if the set of BDs was freed.
  *     FXMAC_ERR_SG_LIST if this function was called out of sequence with
  *     FXmacBdRingFromHw().
@@ -787,7 +787,7 @@ FError FXmacBdRingFree(FXmacBdRing *ring_ptr, u32 num_bd,
  *   - Do the internal counters add up.
  *
  * The channel should be stopped prior to calling this function.
- * 
+ *
  * @param {FXmacBdRing} ring_ptr is a pointer to the instance to be worked on.
  * @param {u8} direction is either FXMAC_SEND or FXMAC_RECV that indicates
  *        which direction.
@@ -860,7 +860,7 @@ FError FXmacBdRingCheck(FXmacBdRing *ring_ptr, u8 direction)
 
     /* Verify internal counters add up */
     if ((ring_ptr->hw_cnt + ring_ptr->pre_cnt + ring_ptr->free_cnt +
-         ring_ptr->post_cnt) != ring_ptr->all_cnt)
+            ring_ptr->post_cnt) != ring_ptr->all_cnt)
     {
         return (FError)(FXMAC_ERR_SG_LIST);
     }
@@ -891,7 +891,8 @@ FError FXmacBdRingCheck(FXmacBdRing *ring_ptr, u8 direction)
         }
     }
     else
-    { /* FXMAC_RECV */
+    {
+        /* FXMAC_RECV */
         if ((!FXMAC_BD_IS_RX_WRAP(addr_v)) == TRUE)
         {
             return (FError)(FXMAC_ERR_SG_LIST);

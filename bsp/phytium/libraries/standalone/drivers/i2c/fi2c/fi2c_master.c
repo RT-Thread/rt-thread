@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fi2c_master.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:36:46
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -84,15 +84,15 @@ static FError FI2cMasterStartTrans(FI2c *instance_p, u32 mem_addr, u8 mem_byte_l
         if (FI2C_GET_STATUS(base_addr) & FI2C_STATUS_TFNF)
         {
             addr_len--;
-            if(addr_len != 0)
+            if (addr_len != 0)
             {
                 FI2C_WRITE_REG32(base_addr, FI2C_DATA_CMD_OFFSET,
-                             (mem_addr >> (addr_len * BITS_PER_BYTE)) & FI2C_DATA_MASK); /* word address */
+                                 (mem_addr >> (addr_len * BITS_PER_BYTE)) & FI2C_DATA_MASK); /* word address */
             }
             else
             {
                 FI2C_WRITE_REG32(base_addr, FI2C_DATA_CMD_OFFSET,
-                             ((mem_addr >> (addr_len * BITS_PER_BYTE)) & FI2C_DATA_MASK) + flag); /* word address */
+                                 ((mem_addr >> (addr_len * BITS_PER_BYTE)) & FI2C_DATA_MASK) + flag); /* word address */
             }
         }
     }
@@ -140,7 +140,7 @@ static FError FI2cMasterStopTrans(FI2c *instance_p)
  * @name: FI2cMasterReadPoll
  * @msg: I2C主机读，阻塞直到完成读操作或失败
  * @return {FError *} 返回错误码
- * @param {FI2c} *instance_p I2C驱动实例数据 
+ * @param {FI2c} *instance_p I2C驱动实例数据
  * @param {u32} mem_addr 从机的内部偏移地址
  * @param {u8} mem_byte_len, Size of internal memory address 1->8bit ~ 4->32bit
  * @param {u8} *buf_p 读目的缓冲区
@@ -183,7 +183,7 @@ FError FI2cMasterReadPoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
         while (tx_len > 0 & rx_limit > 0 & tx_limit > 0)
         {
             /* code */
-            if (tx_len==1)
+            if (tx_len == 1)
             {
 
                 reg_val = FI2C_DATA_CMD_READ | FI2C_DATA_CMD_STOP;
@@ -200,7 +200,7 @@ FError FI2cMasterReadPoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
         }
 
         u8 rx_tem = FI2C_READ_REG32(base_addr, FI2C_RXFLR_OFFSET);
-        while (rx_tem > 0 & rx_len> 0)
+        while (rx_tem > 0 & rx_len > 0)
         {
             /* code */
             if (FI2C_GET_STATUS(base_addr) & FI2C_STATUS_RFNE)
@@ -230,7 +230,7 @@ FError FI2cMasterReadPoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
  * @name: FI2cMasterWritePoll
  * @msg: I2C主机写，阻塞直到完成写操作或失败
  * @return {FError *} 返回错误码
- * @param {FI2c} *instance_p I2C驱动实例数据 
+ * @param {FI2c} *instance_p I2C驱动实例数据
  * @param {u32} mem_addr 从机的内部偏移地址
  * @param {u8} mem_byte_len, Size of internal memory address 1->8bit ~ 4->32bit
  * @param {u8} *buf_p 写源缓冲区
@@ -263,21 +263,21 @@ FError FI2cMasterWritePoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
     while (buf_idx)
     {
         tx_limit = FI2C_IIC_FIFO_MAX_LV - FI2C_READ_REG32(base_addr, FI2C_TXFLR_OFFSET);
-        while (tx_limit > 0 & buf_idx >0)
+        while (tx_limit > 0 & buf_idx > 0)
         {
             if (FI2C_GET_STATUS(base_addr) & FI2C_STATUS_TFNF)
             {
                 if (1 == buf_idx)
                 {
                     reg_val = (FI2C_DATA_MASK & *buf_p) |
-                            FI2C_DATA_CMD_WRITE |
-                            FI2C_DATA_CMD_STOP;
+                              FI2C_DATA_CMD_WRITE |
+                              FI2C_DATA_CMD_STOP;
                     FI2C_INFO("Write Stop Singal");
                 }
                 else
                 {
                     reg_val = (FI2C_DATA_MASK & *buf_p) |
-                            FI2C_DATA_CMD_WRITE;
+                              FI2C_DATA_CMD_WRITE;
                 }
                 buf_idx--;
                 tx_limit--;
@@ -304,7 +304,7 @@ FError FI2cMasterWritePoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
  * @name: FI2cMasterReadIntr
  * @msg: I2C主机读，中断完成读操作或失败
  * @return {FError *} 返回错误码
- * @param {FI2c} *instance_p I2C驱动实例数据 
+ * @param {FI2c} *instance_p I2C驱动实例数据
  * @param {u32} mem_addr 从机的内部偏移地址
  * @param {u8} mem_byte_len, Size of internal memory address 1->8bit ~ 4->32bit
  * @param {u8} *buf_p 读目的缓冲区
@@ -345,13 +345,13 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
     instance_p->txframe.tx_total_num = buf_len;
     instance_p->rxframe.rx_cnt = 0;
     FI2C_SET_RX_TL(instance_p->config.base_addr, 0);/* 0 表示接收缓冲区大于等于 1 时触发中断 */
-    ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len,FI2C_DATA_CMD_WRITE);
+    ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len, FI2C_DATA_CMD_WRITE);
     instance_p->status = STATUS_READ_IN_PROGRESS;
     if (FI2C_SUCCESS != ret)
         return ret;
     mask = FI2C_GET_INTRRUPT_MASK(instance_p->config.base_addr);
     mask |= FI2C_INTR_MASTER_RD_MASK;
-    ret = FI2cMasterSetupIntr(instance_p,mask);
+    ret = FI2cMasterSetupIntr(instance_p, mask);
     if (FI2C_SUCCESS != ret)
         return ret;
     return ret;
@@ -361,7 +361,7 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
  * @name: FI2cMasterWriteIntr
  * @msg: I2C主机写，中断写操作或失败
  * @return {FError *} 返回错误码
- * @param {FI2c} *instance_p I2C驱动实例数据 
+ * @param {FI2c} *instance_p I2C驱动实例数据
  * @param {u32} mem_addr 从机的内部偏移地址
  * @param {u8} mem_byte_len, Size of internal memory address 1->8bit ~ 4->32bit
  * @param {u8} *buf_p 写源缓冲区
@@ -372,7 +372,7 @@ FError FI2cMasterWriteIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
     FError ret = FI2C_SUCCESS;
     FASSERT(instance_p);
     u32 mask;
-    u32 trans_timeout=0;
+    u32 trans_timeout = 0;
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
         FI2C_ERROR("i2c driver not ready");
@@ -401,11 +401,11 @@ FError FI2cMasterWriteIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
     ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len, FI2C_DATA_CMD_WRITE);
     if (FI2C_SUCCESS != ret)
         return ret;
-    instance_p->status = STATUS_WRITE_IN_PROGRESS; 
+    instance_p->status = STATUS_WRITE_IN_PROGRESS;
     mask = FI2C_GET_INTRRUPT_MASK(instance_p->config.base_addr);
-    mask |= FI2C_INTR_MASTER_WR_MASK;  
-    ret = FI2cMasterSetupIntr(instance_p,mask);
+    mask |= FI2C_INTR_MASTER_WR_MASK;
+    ret = FI2cMasterSetupIntr(instance_p, mask);
     if (FI2C_SUCCESS != ret)
-        return ret; 
+        return ret;
     return ret;
 }

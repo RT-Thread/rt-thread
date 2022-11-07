@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: kernel.h
  * Date: 2022-02-10 14:53:41
  * LastEditTime: 2022-02-17 17:35:07
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -26,12 +26,12 @@
 #define KERNEL_H
 
 #ifdef __ASSEMBLY__
-#define _AC(X, Y) X
-#define _AT(T, X) X
+    #define _AC(X, Y) X
+    #define _AT(T, X) X
 #else
-#define __AC(X, Y) (X##Y)
-#define _AC(X, Y) __AC(X, Y)
-#define _AT(T, X) ((T)(X))
+    #define __AC(X, Y) (X##Y)
+    #define _AC(X, Y) __AC(X, Y)
+    #define _AT(T, X) ((T)(X))
 #endif
 
 #define _UL(x) (_AC(x, UL))
@@ -44,20 +44,20 @@
 #define ULL(x) (_ULL(x))
 
 #define min(x, y) (                    \
-	{                                  \
-		typeof(x) _min1 = (x);         \
-		typeof(y) _min2 = (y);         \
-		(void)(&_min1 == &_min2);      \
-		_min1 < _min2 ? _min1 : _min2; \
-	})
+    {                                  \
+        typeof(x) _min1 = (x);         \
+        typeof(y) _min2 = (y);         \
+        (void)(&_min1 == &_min2);      \
+        _min1 < _min2 ? _min1 : _min2; \
+    })
 
 #define max(x, y) (                    \
-	{                                  \
-		typeof(x) _max1 = (x);         \
-		typeof(y) _max2 = (y);         \
-		(void)(&_max1 == &_max2);      \
-		_max1 > _max2 ? _max1 : _max2; \
-	})
+    {                                  \
+        typeof(x) _max1 = (x);         \
+        typeof(y) _max2 = (y);         \
+        (void)(&_max1 == &_max2);      \
+        _max1 > _max2 ? _max1 : _max2; \
+    })
 
 #define min3(x, y, z) min((typeof(x))min(x, y), z)
 #define max3(x, y, z) max((typeof(x))max(x, y), z)
@@ -88,36 +88,36 @@
  * beware of side effects!
  */
 #define do_div(n, base) (                 \
-	{                                     \
-		uint32_t __base = (base);         \
-		uint32_t __rem;                   \
-		__rem = ((uint64_t)(n)) % __base; \
-		(n) = ((uint64_t)(n)) / __base;   \
-		__rem;                            \
-	})
+    {                                     \
+        uint32_t __base = (base);         \
+        uint32_t __rem;                   \
+        __rem = ((uint64_t)(n)) % __base; \
+        (n) = ((uint64_t)(n)) / __base;   \
+        __rem;                            \
+    })
 
 /* The `const' in roundup() prevents gcc-3.3 from calling __divdi3 */
 #define roundup(x, y) (                  \
-	{                                    \
-		const typeof(y) __y = y;         \
-		((x + (__y - 1)) / __y) * __y; \
-	})
+    {                                    \
+        const typeof(y) __y = y;         \
+        ((x + (__y - 1)) / __y) * __y; \
+    })
 #define rounddown(x, y) (    \
-	{                        \
-		typeof(x) __x = (x); \
-		__x - (__x % (y));   \
-	})
+    {                        \
+        typeof(x) __x = (x); \
+        __x - (__x % (y));   \
+    })
 
 #define DIV_ROUND_UP(n, d) (((n) + (d)-1) / (d))
 
 #if defined(__aarch64__)
-#define BITS_PER_LONG 64
+    #define BITS_PER_LONG 64
 #else
-#define BITS_PER_LONG 32
+    #define BITS_PER_LONG 32
 #endif
 
 #ifndef BITS_PER_LONG_LONG
-#define BITS_PER_LONG_LONG 64
+    #define BITS_PER_LONG_LONG 64
 #endif
 
 #define BIT(nr) (1ULL << (nr))
@@ -129,13 +129,13 @@
 #define BITS_PER_BYTE 8
 
 #define DIV_ROUND_DOWN_ULL(ll, d) \
-	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
-#define DIV_ROUND_UP_ULL(ll, d)		DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
+    ({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
+#define DIV_ROUND_UP_ULL(ll, d)     DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
 
 #if BITS_PER_LONG == 32
-# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
+    #define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
 #else
-# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
+    #define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
 #endif
 
 /*
@@ -144,11 +144,11 @@
  * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
  */
 #define GENMASK(h, l) \
-	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
+    (((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
 
 #define GENMASK_ULL(h, l)            \
-	(((~0ULL) - (1ULL << (l)) + 1) & \
-	 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
+    (((~0ULL) - (1ULL << (l)) + 1) & \
+     (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
 
 #define SZ_1 0x00000001
 #define SZ_2 0x00000002
@@ -212,7 +212,7 @@
 #define IS_ALIGNED(x, a) (((x) & ((typeof(x))(a)-1)) == 0)
 
 #ifndef __aligned
-#define __aligned(x) __attribute__((__aligned__(x)))
+    #define __aligned(x) __attribute__((__aligned__(x)))
 #endif
 
 /**
@@ -223,7 +223,7 @@
     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
 
 #ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+    #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 #endif
 
 /* set 32-bit register [a:b] as x, where a is high bit, b is low bit, x is setting/getting value */
@@ -231,7 +231,7 @@
 #define SET_REG32_BITS(x, a, b)                  (u32)((((u32)(x)) << b) & GENMASK(a, b))
 
 /* Integer alignment down */
-#define PALIGN_DOWN(x,align) 	(x & ~(align-1))
+#define PALIGN_DOWN(x,align)    (x & ~(align-1))
 /* Integer alignment up */
-#define PALIGN_UP(x,align) 		((x + (align-1)) & ~(align-1))
+#define PALIGN_UP(x,align)      ((x + (align-1)) & ~(align-1))
 #endif

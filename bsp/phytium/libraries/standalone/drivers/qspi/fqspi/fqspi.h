@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fqspi.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:00:55
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1    wangxiaodong  2021.11.12  re-construct
@@ -36,7 +36,7 @@ extern "C"
 #include "fdebug.h"
 #include "fparameters.h"
 
-#define FQSPI_SUCCESS      FT_SUCCESS  
+#define FQSPI_SUCCESS      FT_SUCCESS
 #define FQSPI_INVAL_PARAM  FT_MAKE_ERRCODE(ErrModBsp, ErrBspQSpi, 1)
 #define FQSPI_NOT_READY    FT_MAKE_ERRCODE(ErrModBsp, ErrBspQSpi, 2)
 #define FQSPI_NOT_ALLIGN   FT_MAKE_ERRCODE(ErrModBsp, ErrBspQSpi, 3)
@@ -53,7 +53,7 @@ typedef enum
     FQSPI_TRANSFER_1_4_4 = 0x4,
     FQSPI_TRANSFER_2_2_2 = 0x5,
     FQSPI_TRANSFER_4_4_4 = 0x6
-}FQspiTransferMode;
+} FQspiTransferMode;
 
 /* FQSPI Flash Capcity type */
 typedef enum
@@ -77,56 +77,56 @@ typedef enum
     FQSPI_SCK_DIV_16 = 0x4,
     FQSPI_SCK_DIV_32 = 0x5,
     FQSPI_SCK_DIV_64 = 0x6
-}FQspiSckDivType;
+} FQspiSckDivType;
 
 /* FQSPI Address type */
 typedef enum
 {
     FQSPI_ADDR_SEL_3 = 0x0,
     FQSPI_ADDR_SEL_4 = 0x1
-}FQspiAddrType;
+} FQspiAddrType;
 
 /* Specifies if the Instruction need transfer address */
 typedef enum
 {
     FQSPI_CMD_ADDR_DISABLE = 0x0,
     FQSPI_CMD_ADDR_ENABLE = 0x1
-}FQspiCmdAddrType;
+} FQspiCmdAddrType;
 
 /* Specifies if the Instruction have latency */
 typedef enum
 {
     FQSPI_CMD_LATENCY_DISABLE = 0x0,
     FQSPI_CMD_LATENCY_ENABLE = 0x1
-}FQspiCmdLatencyType;
+} FQspiCmdLatencyType;
 
 /* Specifies if the Instruction need transfer data */
 typedef enum
 {
     FQSPI_CMD_DATA_DISABLE = 0x0,
     FQSPI_CMD_DATA_ENABLE = 0x1
-}FQspiCmdDataType;
+} FQspiCmdDataType;
 
 /* Specifies if the Instruction use buffer */
 typedef enum
 {
     FQSPI_USE_BUFFER_DISABLE = 0x0,
     FQSPI_USE_BUFFER_ENABLE = 0x1
-}FQspiUseBufferType;
+} FQspiUseBufferType;
 
 /* Specifies if the Instruction need some execution time */
 typedef enum
 {
     FQSPI_WAIT_DISABLE = 0x0,
     FQSPI_WAIT_ENABLE = 0x1
-}FQspiWaitType;
+} FQspiWaitType;
 
 
 typedef enum
 {
     FQSPI_XIP_EXIT = 0x0,
     FQSPI_XIP_ENTER = 0x1
-}FQspiXIPState;
+} FQspiXIPState;
 
 typedef struct
 {
@@ -148,10 +148,10 @@ typedef struct
     u8 rd_latency : 1;    /* Specifies if the Instruction need read latency*/
     u8 mode_byte : 1;   /* Specifies if the Instruction need modifier*/
     u8 cmd_sign : 8;    /* Specifies the Instruction modifier*/
-    u8 dummy : 5;        /* Specifies the Number of Dummy Cycles.*/      
+    u8 dummy : 5;        /* Specifies the Number of Dummy Cycles.*/
     u8 d_buffer : 1;    /* Specifies if the Instruction use buffer to read data*/
     u8 rd_sck_sel : 3;     /* Specifies the pclk division .*/
-}FQspiRdCfgDef;
+} FQspiRdCfgDef;
 
 /* wr_cfg register */
 typedef struct
@@ -164,7 +164,7 @@ typedef struct
     u8 wr_addr_sel : 1;/* Specifies the Instruction addr mode 3 byte addr or 4 byte addr*/
     u8 wr_mode : 1;   /* Specifies if the Instruction need modifier*/
     u8 wr_sck_sel : 3; /* Specifies the pclk division .*/
-}FQspiWrCfgDef;
+} FQspiWrCfgDef;
 
 /* cmd_port register */
 typedef struct
@@ -183,14 +183,14 @@ typedef struct
     u8 p_buffer : 1;    /* Specifies if the Instruction use buffer to read data*/
     u8 rw_num : 3;        /* Specifies the read or write bytes number.*/
     u8 sck_sel : 3;        /* Specifies the pclk division .*/
-}FQspiCommandPortDef;
+} FQspiCommandPortDef;
 
 typedef struct
 {
     u8 cs_hold;  /* Specifies the cs valid hold time */
     u8 cs_setup;   /* Specifies the cs valid setup time */
     u16 cs_delay; /* Specifies the cs delay time */
-}FQspiCsTimingCfgDef;
+} FQspiCsTimingCfgDef;
 
 typedef struct
 {

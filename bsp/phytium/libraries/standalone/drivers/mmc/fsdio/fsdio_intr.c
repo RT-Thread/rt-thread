@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdio_intr.c
  * Date: 2022-06-01 15:08:58
  * LastEditTime: 2022-06-01 15:08:58
  * Description:  This files is for SDIO interrupt related function implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.1   zhugengyu  2022/6/6     modify according to tech manual.
@@ -49,11 +49,11 @@
     }
 
 static const u32 cmd_err_ints_mask = FSDIO_INT_RTO_BIT | FSDIO_INT_RCRC_BIT | FSDIO_INT_RE_BIT |
-				                     FSDIO_INT_DCRC_BIT | FSDIO_INT_DRTO_BIT |
-				                     FSDIO_INT_SBE_BCI_BIT | FSDIO_INT_HLE_BIT;
+                                     FSDIO_INT_DCRC_BIT | FSDIO_INT_DRTO_BIT |
+                                     FSDIO_INT_SBE_BCI_BIT | FSDIO_INT_HLE_BIT;
 
 static const u32 dmac_err_ints_mask = FSDIO_DMAC_INT_ENA_FBE | FSDIO_DMAC_INT_ENA_DU |
-				                      FSDIO_DMAC_INT_ENA_AIS;
+                                      FSDIO_DMAC_INT_ENA_AIS;
 /************************** Function Prototypes ******************************/
 
 /*****************************************************************************/
@@ -72,8 +72,8 @@ u32 FSdioGetInterruptMask(FSdio *const instance_p, FSdioIntrType type)
     u32 mask = 0U;
 
     if (0 == instance_p->config.base_addr)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return mask;
     }
 
@@ -86,7 +86,7 @@ u32 FSdioGetInterruptMask(FSdio *const instance_p, FSdioIntrType type)
         mask = FSDIO_READ_REG(base_addr, FSDIO_DMAC_INT_EN_OFFSET);
     }
 
-    return mask;   
+    return mask;
 }
 
 /**
@@ -105,10 +105,10 @@ void FSdioSetInterruptMask(FSdio *const instance_p, FSdioIntrType type, u32 set_
     u32 mask = 0U;
 
     if (0 == instance_p->config.base_addr)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return;
-    }    
+    }
 
     mask = FSdioGetInterruptMask(instance_p, type);
 
@@ -143,7 +143,7 @@ void FSdioSetInterruptMask(FSdio *const instance_p, FSdioIntrType type, u32 set_
 void FSdioInterruptHandler(s32 vector, void *param)
 {
     FASSERT(param);
-    FSdio *const instance_p = (FSdio *const)param;
+    FSdio *const instance_p = (FSdio * const)param;
     uintptr base_addr = instance_p->config.base_addr;
     u32 events, event_mask, dmac_events, dmac_evt_mask;
 
@@ -152,8 +152,8 @@ void FSdioInterruptHandler(s32 vector, void *param)
     event_mask = FSDIO_READ_REG(base_addr, FSDIO_INT_MASK_OFFSET);
     dmac_evt_mask = FSDIO_READ_REG(base_addr, FSDIO_DMAC_INT_EN_OFFSET);
 
-    if (!(events & FSDIO_INT_ALL_BITS) && 
-        !(dmac_events & FSDIO_DMAC_STATUS_ALL_BITS))
+    if (!(events & FSDIO_INT_ALL_BITS) &&
+            !(dmac_events & FSDIO_DMAC_STATUS_ALL_BITS))
     {
         FSDIO_DEBUG("irq exit with no action");
         return; /* no interrupt status */
@@ -166,8 +166,8 @@ void FSdioInterruptHandler(s32 vector, void *param)
     FSDIO_WRITE_REG(base_addr, FSDIO_RAW_INTS_OFFSET, events);
     FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET, dmac_events);
 
-    if (((events & event_mask) == 0) && 
-        ((dmac_events & dmac_evt_mask == 0)))
+    if (((events & event_mask) == 0) &&
+            ((dmac_events & dmac_evt_mask == 0)))
     {
         return; /* no need to handle interrupt */
     }
@@ -199,8 +199,8 @@ void FSdioInterruptHandler(s32 vector, void *param)
     /* handle error state */
     if ((dmac_events & dmac_err_ints_mask) || (events & cmd_err_ints_mask))
     {
-        FSDIO_ERROR("ERR:events:0x%x,mask:0x%x,dmac_evts:0x%x,dmac_mask:0x%x", 
-                  events, event_mask, dmac_events, dmac_evt_mask);
+        FSDIO_ERROR("ERR:events:0x%x,mask:0x%x,dmac_evts:0x%x,dmac_mask:0x%x",
+                    events, event_mask, dmac_events, dmac_evt_mask);
         FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_ERR_OCCURE);
     }
 

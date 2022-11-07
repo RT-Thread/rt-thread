@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgdma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:35
  * Description:  This files is for gdma user api implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2021-11-5    init commit
@@ -65,7 +65,7 @@ typedef enum
 {
     FGDMA_OPER_NONE_PRIORITY_POLL = -1, /* Priority = -1 表示读写请求仲裁模式为Poll */
     FGDMA_OPER_PRIORITY0 = 0, /* Priority >= 0 表示读写请求仲裁模式为Qos */
-    FGDMA_OPER_PRIORITY1 = 1, 
+    FGDMA_OPER_PRIORITY1 = 1,
     FGDMA_OPER_PRIORITY2 = 2,
     FGDMA_OPER_PRIORITY3 = 3,
     FGDMA_OPER_PRIORITY4 = 4,
@@ -97,7 +97,7 @@ typedef enum
     FGDMA_BURST_SIZE_16_BYTE = 4
 } FGdmaBurstSize; /* 支持的读写请求size大小 */
 
-#define FGDMA_GET_BURST_SIZE(brust_align)	(1U << brust_align)
+#define FGDMA_GET_BURST_SIZE(brust_align)   (1U << brust_align)
 
 typedef enum
 {
@@ -162,9 +162,9 @@ typedef struct
     FGdmaOperMode       trans_mode; /* DMA通道的操作模式，直接模式或者BDL模式 */
     /* Direct模式有效 */
     FGdmaBurstSize      rd_align; /* DMA读请求的Burst对齐方式 */
-    FGdmaBurstSize      wr_align; /* DMA写请求的Burst对齐方式 */    
+    FGdmaBurstSize      wr_align; /* DMA写请求的Burst对齐方式 */
     /* BDL模式有效 */
-    boolean             roll_back; /* 循环模式，TRUE: 当前BDL列表完成后，从第一个BDL项从新开始传输 */ 
+    boolean             roll_back; /* 循环模式，TRUE: 当前BDL列表完成后，从第一个BDL项从新开始传输 */
     FGdmaBdlDesc        *descs;
     u32                 total_desc_num;
     u32                 valid_desc_num;
@@ -227,7 +227,7 @@ FError FGdmaCfgInitialize(FGdma *const instance_p, const FGdmaConfig *config_p);
 void FGdmaDeInitialize(FGdma *const instance_p);
 
 /* 分配指定GDMA通道 */
-FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const chan_p, 
+FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const chan_p,
                          const FGdmaChanConfig *config_p);
 
 /* 释放GDMA通道 */
@@ -252,7 +252,7 @@ FError FGdmaStop(FGdma *const instance_p);
 void FGdmaIrqHandler(s32 vector, void *args);
 
 /* 注册GDMA通道事件回调函数 */
-void FGdmaChanRegisterEvtHandler(FGdmaChan *const chan_p, FGdmaChanEvtType evt, 
+void FGdmaChanRegisterEvtHandler(FGdmaChan *const chan_p, FGdmaChanEvtType evt,
                                  FGdmaChanEvtHandler handler, void *handler_arg);
 
 /* 打印当前的GDMA寄存器值, DEBUG模式下有效 */

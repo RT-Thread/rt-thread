@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -40,7 +40,7 @@ extern "C"
 #define FGMAC_PHY_MAX_NUM                         32U
 
 /************************** Constant Definitions *****************************/
-#define FGMAC_SUCCESS               FT_SUCCESS  
+#define FGMAC_SUCCESS               FT_SUCCESS
 #define FGMAC_ERR_TIMEOUT           FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 1)
 #define FGMAC_ERR_INVALID_DMA_MEM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 2)
 #define FGMAC_ERR_NOT_READY         FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 3)
@@ -51,7 +51,7 @@ extern "C"
 #define FGMAC_ERR_PHY_AUTO_FAILED   FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 8)
 
 
-#define FGMAC_ERR_CODE_PREFIX  FGMAC_ERR_TIMEOUT & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)  
+#define FGMAC_ERR_CODE_PREFIX  FGMAC_ERR_TIMEOUT & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)
 #define FGMAC_NUM_OF_ERR_CODE  5
 
 /********发送描述符********/
@@ -144,7 +144,7 @@ enum
 
 /**
  * This typedef contains configuration information for the device.
- */ 
+ */
 typedef struct
 {
     u32     instance_id;  /* device instance id */
@@ -152,12 +152,12 @@ typedef struct
     u32     irq_num;      /* irq num */
     u32     irq_prority;  /* device intrrupt priority */
     u32     cheksum_mode; /* hardware or software checksum */
-    u32     duplex_mode;         /* selects the MAC duplex mode: Half-Duplex or Full-Duplex mode */    
+    u32     duplex_mode;         /* selects the MAC duplex mode: Half-Duplex or Full-Duplex mode */
     u32     max_packet_size;  /* max num of bytes in frame transfer */
     u32     mdc_clk_hz;          /* MDC clock access PHY. [1.0MHz ~2.5MHz] */
     boolean en_auto_negtiation;  /* auto-negotiation or not */
     u32     speed;               /* sets the Ethernet speed: 10/100/1000 Mbps. */
-  
+
 } FGmacConfig; /* FGMAC 驱动配置数据 */
 
 /**
@@ -214,7 +214,7 @@ FError FGmacCfgInitialize(FGmac *instance_p, const FGmacConfig *cofig_p);
 FError FGmacDeInitialize(FGmac *instance_p);
 
 /* 配置FGMAC的发送DMA描述符和缓冲区 */
-FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tbl, 
+FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tbl,
                             u8 *tx_buf, const fsize_t tx_pre_buf_len, const fsize_t tx_buf_num);
 
 /* 配置FGMAC的接收DMA描述符和缓冲区 */

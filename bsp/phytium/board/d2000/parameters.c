@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe      first commit 
+ * 2022-10-26  huanghe      first commit
  *
  */
 
@@ -20,11 +20,11 @@
 
 /**
  * @name: GetCpuMaskToAffval
- * @msg:  Convert information in cpu_mask to cluster_ID and target_list  
+ * @msg:  Convert information in cpu_mask to cluster_ID and target_list
  * @param {u32} *cpu_mask is each bit of cpu_mask represents a selected CPU, for example, 0x3 represents core0 and CORE1 .
  * @param {u32} *cluster_id is information about the cluster in which core resides ,format is
  * |--------[bit31-24]-------[bit23-16]-------------[bit15-8]-----------[bit7-0]
- * |--------Affinity level3-----Affinity level2-----Affinity level1-----Affinity level0   
+ * |--------Affinity level3-----Affinity level2-----Affinity level1-----Affinity level0
  * @param {u32} *target_list  is core mask in cluster
  * @return {u32} 0 indicates that the conversion was not successful , 1 indicates that the conversion was successful
  */
@@ -71,7 +71,7 @@ u32 GetCpuMaskToAffval(u32 *cpu_mask, u32 *cluster_id, u32 *target_list)
         }
         *cpu_mask &= ~0xc;
     }
-    else if(*cpu_mask & 0x30)
+    else if (*cpu_mask & 0x30)
     {
         *cluster_id = 0x200;
         if ((*cpu_mask & 0x30) == 0x30)
@@ -88,7 +88,7 @@ u32 GetCpuMaskToAffval(u32 *cpu_mask, u32 *cluster_id, u32 *target_list)
         }
         *cpu_mask &= ~0x30;
     }
-    else if(*cpu_mask & 0xc0)
+    else if (*cpu_mask & 0xc0)
     {
         *cluster_id = 0x300;
         if ((*cpu_mask & 0xc0) == 0xc0)

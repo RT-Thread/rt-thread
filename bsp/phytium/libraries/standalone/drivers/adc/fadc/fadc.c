@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fadc.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:28:45
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -45,7 +45,7 @@
 
 /**
  * @name: FAdcPowerDownControl
- * @msg: Set power down signal  
+ * @msg: Set power down signal
  * @param {FAdcCtrl} *pctrl, pointer to a FAdcCtrl structure that contains
  *                the configuration information for the specified adc module.
  * @param {u8} power_state, this parameter must be enable or disable.
@@ -53,22 +53,22 @@
  */
 static FError FAdcPowerDownControl(FAdcCtrl *pctrl, u8 power_state)
 {
-    
+
     FASSERT(pctrl != NULL);
     FASSERT(FT_COMPONENT_IS_READY == pctrl->is_ready);
     u32 reg_val = 0;
     uintptr base_addr = pctrl->config.base_addr;
     reg_val = FADC_READ_REG32(base_addr, FADC_CTRL_REG_OFFSET);
-    if(power_state == FADC_CTRL_PD_ENABLE)
-    {  
-	    reg_val |= FADC_CTRL_REG_PD_EN;
+    if (power_state == FADC_CTRL_PD_ENABLE)
+    {
+        reg_val |= FADC_CTRL_REG_PD_EN;
     }
     else
     {
         reg_val &= ~(FADC_CTRL_REG_PD_EN);
     }
 
-	FADC_WRITE_REG32(base_addr, FADC_CTRL_REG_OFFSET, reg_val);
+    FADC_WRITE_REG32(base_addr, FADC_CTRL_REG_OFFSET, reg_val);
 
     return FADC_SUCCESS;
 }
@@ -91,9 +91,9 @@ void FAdcChannelEnable(FAdcCtrl *pctrl, FAdcChannel channel, boolean state)
     uintptr base_addr = pctrl->config.base_addr;
     reg_val = FADC_READ_REG32(base_addr, FADC_CTRL_REG_OFFSET);
 
-    if(state == TRUE)
+    if (state == TRUE)
     {
-        if(reg_val & FADC_CTRL_REG_FIX_CHANNEL)
+        if (reg_val & FADC_CTRL_REG_FIX_CHANNEL)
         {
             reg_val &= ~(FADC_CTRL_REG_FIX_CHANNEL_NUM_MASK);
             reg_val |= FADC_CTRL_REG_FIX_CHANNEL_NUM(channel);
@@ -106,17 +106,17 @@ void FAdcChannelEnable(FAdcCtrl *pctrl, FAdcChannel channel, boolean state)
     else
     {
         /* fix channel mode, disable means stop convert */
-        if(reg_val & FADC_CTRL_REG_FIX_CHANNEL)
+        if (reg_val & FADC_CTRL_REG_FIX_CHANNEL)
         {
             reg_val &= ~(FADC_CTRL_REG_SOC_EN);
-            
+
         }
         else
         {
             reg_val &= ~(FADC_CTRL_REG_CHANNEL_EN(channel));
         }
     }
-    
+
 
     FADC_WRITE_REG32(base_addr, FADC_CTRL_REG_OFFSET, reg_val);
 
@@ -125,7 +125,7 @@ void FAdcChannelEnable(FAdcCtrl *pctrl, FAdcChannel channel, boolean state)
 /**
  * @name: FAdcChannelThresholdSet
  * @msg: Set adc channel high_threshold and low_threshold.
- * you need use this function after FAdcConvertSet. If you want to use this function to 
+ * you need use this function after FAdcConvertSet. If you want to use this function to
  * add other channel enable when the adc conversion is started, you need to restart the
  * adc convert start signal(adc_soc_en) after use to make the operation valid.
  * @param {FAdcCtrl} *pctrl, pointer to a FAdcCtrl structure that contains
@@ -145,11 +145,11 @@ FError FAdcChannelThresholdSet(FAdcCtrl *pctrl, FAdcChannel channel, FAdcThresho
 
     FASSERT(high_threshold < FADC_MAX_THRESHOLD);
     FASSERT(low_threshold < high_threshold);
-    
+
     uintptr base_addr = pctrl->config.base_addr;
 
-    u32 threshold = (FADC_LEVEL_REG_HIGH_LEVEL(high_threshold))|
-                        (FADC_LEVEL_REG_LOW_LEVEL(low_threshold));
+    u32 threshold = (FADC_LEVEL_REG_HIGH_LEVEL(high_threshold)) |
+                    (FADC_LEVEL_REG_LOW_LEVEL(low_threshold));
     FADC_WRITE_REG32(base_addr, (FADC_LEVEL_REG_OFFSET(channel)), threshold);
 
     return FADC_SUCCESS;
@@ -176,18 +176,18 @@ FError FAdcConvertSet(FAdcCtrl *pctrl, FAdcConvertConfig *convert_config)
     /* clk_div config */
     u32 clk_div = convert_config->clk_div;
     FASSERT(clk_div < FADC_MAX_CLOCK_PRESC);
-    if(clk_div%2 == 1)
+    if (clk_div % 2 == 1)
     {
         FADC_ERROR("clk_div is not even.");
         return FADC_ERR_INVAL_PARM;
     }
     reg_val &= (~FADC_CTRL_REG_CLK_DIV_MASK);
-	reg_val |= FADC_CTRL_REG_CLK_DIV(clk_div);
+    reg_val |= FADC_CTRL_REG_CLK_DIV(clk_div);
 
     /* config convert mode */
     FAdcConvertMode convert_mode = convert_config->convert_mode;
     FASSERT(convert_mode < FADC_CONVERT_MODE_NUM);
-    if(convert_mode == FADC_SINGLE_CONVERT)
+    if (convert_mode == FADC_SINGLE_CONVERT)
     {
         reg_val |= FADC_CTRL_REG_SINGLE_CONVERT;
     }
@@ -199,8 +199,8 @@ FError FAdcConvertSet(FAdcCtrl *pctrl, FAdcConvertConfig *convert_config)
     /* config channel mode */
     FAdcChannelMode channel_mode = convert_config->channel_mode;
     FASSERT(channel_mode < FADC_CHANNEL_MODE_NUM);
-    
-    if(channel_mode == FADC_FIXED_CHANNEL)
+
+    if (channel_mode == FADC_FIXED_CHANNEL)
     {
         reg_val |= FADC_CTRL_REG_FIX_CHANNEL;
     }
@@ -212,7 +212,7 @@ FError FAdcConvertSet(FAdcCtrl *pctrl, FAdcConvertConfig *convert_config)
 
     /* config time interval between two converts */
     FADC_WRITE_REG32(base_addr, FADC_INTER_REG_OFFSET, convert_config->convert_interval);
-    
+
     return FADC_SUCCESS;
 }
 
@@ -230,32 +230,32 @@ FError FAdcInterruptEnable(FAdcCtrl *pctrl, FAdcChannel channel, FAdcIntrEventTy
 {
     FASSERT(pctrl != NULL);
     FASSERT(FT_COMPONENT_IS_READY == pctrl->is_ready);
-    
+
     uintptr base_addr = pctrl->config.base_addr;
     u32 reg_val = 0;
     reg_val = FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET);
     switch (event_type)
     {
-        case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
-            reg_val &= ~(FADC_INTRMASK_REG_COVFIN_MASK(channel));
-            break;
+    case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
+        reg_val &= ~(FADC_INTRMASK_REG_COVFIN_MASK(channel));
+        break;
 
-        case FADC_INTR_EVENT_DLIMIT:
-            reg_val &= ~(FADC_INTRMASK_REG_DLIMIT_MASK(channel));
-            break;
-            
-        case FADC_INTR_EVENT_ULIMIT:
-            reg_val &= ~(FADC_INTRMASK_REG_ULIMIT_MASK(channel));
-            break;
-        
-        case FADC_INTR_EVENT_ERROR:
-            reg_val &= ~(FADC_INTRMASK_REG_ERR_MASK);
-            break;
-        
-        default:
-            break;
+    case FADC_INTR_EVENT_DLIMIT:
+        reg_val &= ~(FADC_INTRMASK_REG_DLIMIT_MASK(channel));
+        break;
+
+    case FADC_INTR_EVENT_ULIMIT:
+        reg_val &= ~(FADC_INTRMASK_REG_ULIMIT_MASK(channel));
+        break;
+
+    case FADC_INTR_EVENT_ERROR:
+        reg_val &= ~(FADC_INTRMASK_REG_ERR_MASK);
+        break;
+
+    default:
+        break;
     }
-   
+
     FADC_WRITE_REG32(base_addr, FADC_INTRMASK_REG_OFFSET, reg_val);
 
     return FADC_SUCCESS;
@@ -275,32 +275,32 @@ FError FAdcInterruptDisable(FAdcCtrl *pctrl, FAdcChannel channel, FAdcIntrEventT
     FASSERT(pctrl != NULL);
     FASSERT(FT_COMPONENT_IS_READY == pctrl->is_ready);
     FASSERT(channel < FADC_CHANNEL_NUM);
-    
+
     uintptr base_addr = pctrl->config.base_addr;
     u32 reg_val = 0;
     reg_val = FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET);
     switch (event_type)
     {
-        case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
-            reg_val |= (FADC_INTRMASK_REG_COVFIN_MASK(channel));
-            break;
+    case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
+        reg_val |= (FADC_INTRMASK_REG_COVFIN_MASK(channel));
+        break;
 
-        case FADC_INTR_EVENT_DLIMIT:
-            reg_val |= (FADC_INTRMASK_REG_DLIMIT_MASK(channel));
-            break;
-            
-        case FADC_INTR_EVENT_ULIMIT:
-            reg_val |= (FADC_INTRMASK_REG_ULIMIT_MASK(channel));
-            break;
-        
-        case FADC_INTR_EVENT_ERROR:
-            reg_val |= (FADC_INTRMASK_REG_ERR_MASK);
-            break;
-        
-        default:
-            break;
+    case FADC_INTR_EVENT_DLIMIT:
+        reg_val |= (FADC_INTRMASK_REG_DLIMIT_MASK(channel));
+        break;
+
+    case FADC_INTR_EVENT_ULIMIT:
+        reg_val |= (FADC_INTRMASK_REG_ULIMIT_MASK(channel));
+        break;
+
+    case FADC_INTR_EVENT_ERROR:
+        reg_val |= (FADC_INTRMASK_REG_ERR_MASK);
+        break;
+
+    default:
+        break;
     }
-   
+
     FADC_WRITE_REG32(base_addr, FADC_INTRMASK_REG_OFFSET, reg_val);
 
     return FADC_SUCCESS;
@@ -311,7 +311,7 @@ FError FAdcInterruptDisable(FAdcCtrl *pctrl, FAdcChannel channel, FAdcIntrEventT
  * @msg: Start adc convert.
  * @param {FAdcCtrl} *pctrl, pointer to a FAdcCtrl structure that contains
  *                the configuration information for the specified adc module.
- * @return 
+ * @return
  */
 void FAdcConvertStart(FAdcCtrl *pctrl)
 {
@@ -330,7 +330,7 @@ void FAdcConvertStart(FAdcCtrl *pctrl)
  * @msg: Stop adc convert.
  * @param {FAdcCtrl} *pctrl, pointer to a FAdcCtrl structure that contains
  *                the configuration information for the specified adc module.
- * @return 
+ * @return
  */
 void FAdcConvertStop(FAdcCtrl *pctrl)
 {
@@ -356,12 +356,12 @@ FError FAdcVariableConfig(FAdcCtrl *pctrl, FAdcConvertConfig *convert_config)
 {
     FASSERT(pctrl != NULL);
     FASSERT(convert_config != NULL);
-  
+
     FError ret = FADC_SUCCESS;
 
     /* disable power down signal */
     ret = FAdcPowerDownControl(pctrl, FADC_CTRL_PD_DISABLE);
-    if(ret != FADC_SUCCESS)
+    if (ret != FADC_SUCCESS)
     {
         FADC_ERROR("FAdcPowerDownControl failed.");
         return FADC_ERR_CMD_FAILED;
@@ -369,7 +369,7 @@ FError FAdcVariableConfig(FAdcCtrl *pctrl, FAdcConvertConfig *convert_config)
 
     /* set time interval between two converts */
     ret = FAdcConvertSet(pctrl, convert_config);
-    if(ret != FADC_SUCCESS)
+    if (ret != FADC_SUCCESS)
     {
         FADC_ERROR("FAdcConvertSet failed.");
         return FADC_ERR_CMD_FAILED;
@@ -417,15 +417,16 @@ FError FAdcReadConvertResult(FAdcCtrl *pctrl, FAdcChannel channel, u16 *val)
 
     u32 reg_val = FADC_READ_REG32(base_addr, FADC_CTRL_REG_OFFSET);
     /* single conversion */
-    if(reg_val & FADC_CTRL_REG_SINGLE_CONVERT)
+    if (reg_val & FADC_CTRL_REG_SINGLE_CONVERT)
     {
         FAdcSingleConvertEnable(pctrl);
     }
-        
+
     do
     {
         fsleep_millisec(10);
-    } while ((!pctrl->convert_complete[channel]) && (0 <= --timeout));
+    }
+    while ((!pctrl->convert_complete[channel]) && (0 <= --timeout));
 
     if (0 >= timeout)
     {
@@ -473,9 +474,9 @@ FError FAdcReadHisLimit(FAdcCtrl *pctrl, FAdcChannel channel, u16 *u_his_limit, 
 {
     FASSERT(pctrl != NULL);
     FASSERT(FT_COMPONENT_IS_READY == pctrl->is_ready);
-    u32 reg_val = 0; 
+    u32 reg_val = 0;
     uintptr base_addr = pctrl->config.base_addr;
-    
+
     reg_val = FADC_READ_REG32(base_addr, FADC_HIS_LIMIT_REG_OFFSET(channel));
 
     *u_his_limit = (reg_val & FADC_HIS_LIMIT_REG_UMASK) >> 16;
@@ -492,12 +493,12 @@ FError FAdcReadHisLimit(FAdcCtrl *pctrl, FAdcChannel channel, u16 *u_his_limit, 
  */
 void FAdcDeInitialize(FAdcCtrl *pctrl)
 {
-	FASSERT(pctrl);
+    FASSERT(pctrl);
 
-	pctrl->is_ready = 0;
-	memset(pctrl, 0, sizeof(*pctrl));
+    pctrl->is_ready = 0;
+    memset(pctrl, 0, sizeof(*pctrl));
 
-	return;
+    return;
 }
 
 /**
@@ -509,26 +510,26 @@ void FAdcDeInitialize(FAdcCtrl *pctrl)
  */
 FError FAdcCfgInitialize(FAdcCtrl *pctrl, const FAdcConfig *input_config_p)
 {
-	FASSERT(pctrl && input_config_p);
+    FASSERT(pctrl && input_config_p);
 
-	FError ret = FADC_SUCCESS;
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == pctrl->is_ready)
-	{
-		FADC_WARN("device is already initialized!!!");
-	}
+    FError ret = FADC_SUCCESS;
+    /*
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == pctrl->is_ready)
+    {
+        FADC_WARN("device is already initialized!!!");
+    }
 
-    /*Set default values and configuration data */	
-	FAdcDeInitialize(pctrl);
+    /*Set default values and configuration data */
+    FAdcDeInitialize(pctrl);
 
-	pctrl->config = *input_config_p;
+    pctrl->config = *input_config_p;
 
-	pctrl->is_ready = FT_COMPONENT_IS_READY;
+    pctrl->is_ready = FT_COMPONENT_IS_READY;
 
-	return ret;
+    return ret;
 }

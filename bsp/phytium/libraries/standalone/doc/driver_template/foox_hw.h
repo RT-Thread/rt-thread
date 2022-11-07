@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: foox_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -33,7 +33,7 @@
 1. 定义寄存器偏移
 2. 对上提供该模块寄存器操作的接口
 3. 一些简单外设提供直接操作接口
-4. 可以定义一些状态的接口，用于响应驱动状态的变化 
+4. 可以定义一些状态的接口，用于响应驱动状态的变化
 
 note: 本文件不能引用fooxx.h
 */
@@ -63,7 +63,7 @@ extern "C"
 
 #define FOOXX_XX_OFFSET
 
-/** @name FOOXX_XX_OFFSET Register 
+/** @name FOOXX_XX_OFFSET Register
  */
 
 #define FOOXX_XX_STATE
@@ -74,7 +74,7 @@ extern "C"
 
 
 /************************** Function Prototypes ******************************/
-void FooxHwWrite(uintptr base,char byte);
+void FooxHwWrite(uintptr base, char byte);
 
 char FooxHwRead(uintptr base);
 

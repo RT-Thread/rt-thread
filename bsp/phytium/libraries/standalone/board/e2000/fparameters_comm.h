@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fparameters_comm.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-17 18:01:11
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -97,17 +97,17 @@ extern "C"
 
 /* platform ahci host */
 #define PLAT_AHCI_HOST_MAX_COUNT 5
-#define AHCI_BASE_0		0
-#define AHCI_BASE_1		0
-#define AHCI_BASE_2		0
-#define AHCI_BASE_3		0
-#define AHCI_BASE_4		0
+#define AHCI_BASE_0     0
+#define AHCI_BASE_1     0
+#define AHCI_BASE_2     0
+#define AHCI_BASE_3     0
+#define AHCI_BASE_4     0
 
-#define AHCI_IRQ_0		0
-#define AHCI_IRQ_1		0
-#define AHCI_IRQ_2		0
-#define AHCI_IRQ_3		0
-#define AHCI_IRQ_4		0
+#define AHCI_IRQ_0      0
+#define AHCI_IRQ_1      0
+#define AHCI_IRQ_2      0
+#define AHCI_IRQ_3      0
+#define AHCI_IRQ_4      0
 
 /* sata controller */
 #define FSATA0_BASEADDR 0x31A40000U
@@ -311,7 +311,7 @@ typedef enum
     FQSPI_CS_2 = 2,
     FQSPI_CS_3 = 3,
     FQSPI_CS_NUM
-}FQspiChipCS;
+} FQspiChipCS;
 
 #endif
 
@@ -355,8 +355,8 @@ typedef enum
 /* GDMA */
 #define FGDMA0_ID           0U
 #define FGDMA0_BASE_ADDR    0x32B34000U
-#define FGDMA0_IRQ_NUM      266U 
- 
+#define FGDMA0_IRQ_NUM      266U
+
 #define FGDMA_INSTANCE_NUM  1U
 
 /* CANFD */
@@ -431,18 +431,18 @@ typedef enum
 #endif
 
 #if !defined(__ASSEMBLER__)
-    /*I2C0 -> PMBUS0
-    * I2C1 -> PMBUS1
-    * I2C2 -> SMBUS0
-    */
-    typedef enum
-    {
-        I2C_INSTANCE_0 = 0,
-        I2C_INSTANCE_1,
-        I2C_INSTANCE_2,
+/*I2C0 -> PMBUS0
+* I2C1 -> PMBUS1
+* I2C2 -> SMBUS0
+*/
+typedef enum
+{
+    I2C_INSTANCE_0 = 0,
+    I2C_INSTANCE_1,
+    I2C_INSTANCE_2,
 
-        I2C_INSTANCE_NUM
-    } I2cInstance;
+    I2C_INSTANCE_NUM
+} I2cInstance;
 #endif
 
 #define I2C_0_BASEADDR 0x28011000
@@ -576,7 +576,7 @@ typedef enum
 
 #define FPWM_CONTROL_BASE 0x2804A000U
 
-#define FPWM_CLK 50000000U /* 50MHz */  
+#define FPWM_CLK 50000000U /* 50MHz */
 
 #define FPWM0_INTR_IRQ 205U
 #define FPWM1_INTR_IRQ 206U

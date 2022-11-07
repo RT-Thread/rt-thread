@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdmmc_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:54:02
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -61,8 +61,9 @@ FError FSdmmcSoftwareReset(uintptr base_addr, int retries)
     do
     {
         reg_val = FSDMMC_READ_REG(base_addr, FSDMMC_STATUS_REG_OFFSET);
-    } while (!(reg_val & FSDMMC_STATUS_IDIE) && 
-              (retries-- > 0));
+    }
+    while (!(reg_val & FSDMMC_STATUS_IDIE) &&
+            (retries-- > 0));
 
     if (!(reg_val & FSDMMC_STATUS_IDIE) && (retries <= 0))
     {
@@ -125,15 +126,15 @@ static const char *FSdmmcGetRespTypeStr(u32 hw_cmd)
 void FSdmmcSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg)
 {
     /* 清空状态寄存器 */
-	FSdmmcClearNormalInterruptStatus(base_addr);
-	FSdmmcClearErrorInterruptStatus(base_addr);
-	FSdmmcClearBDInterruptStatus(base_addr);
+    FSdmmcClearNormalInterruptStatus(base_addr);
+    FSdmmcClearErrorInterruptStatus(base_addr);
+    FSdmmcClearBDInterruptStatus(base_addr);
 
-	/* 设置命令 */
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_CMD_SETTING_REG_OFFSET, cmd);
+    /* 设置命令 */
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_CMD_SETTING_REG_OFFSET, cmd);
 
-	/* 设置参数，同时触发发送命令 */
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_ARGUMENT_REG_OFFSET, FSDMMC_ARGUMENT_MASK & arg);
+    /* 设置参数，同时触发发送命令 */
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_ARGUMENT_REG_OFFSET, FSDMMC_ARGUMENT_MASK & arg);
 
     FSDMMC_INFO("CMD: 0x%08x ", FSDMMC_READ_REG(base_addr, FSDMMC_CMD_SETTING_REG_OFFSET));
     FSDMMC_INFO("ARG: 0x%08x",  FSDMMC_READ_REG(base_addr, FSDMMC_ARGUMENT_REG_OFFSET));
@@ -148,29 +149,29 @@ void FSdmmcSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg)
  */
 FError FSdmmcReset(uintptr base_addr)
 {
-	u32 reg_val;
-	FError ret = FSDMMC_SUCCESS;
+    u32 reg_val;
+    FError ret = FSDMMC_SUCCESS;
 
-	ret = FSdmmcSoftwareReset(base_addr, FSDMMC_TIMEOUT);
-	if (FSDMMC_SUCCESS != ret)
-		return ret;
+    ret = FSdmmcSoftwareReset(base_addr, FSDMMC_TIMEOUT);
+    if (FSDMMC_SUCCESS != ret)
+        return ret;
 
-	/* set card detection */
+    /* set card detection */
     FSDMMC_WRITE_REG(base_addr, FSDMMC_SD_SEN_REG_OFFSET, 0x0);
     reg_val = FSDMMC_SEN_CREFR_VAL | FSDMMC_SEN_DEBNCE_VAL;
     FSDMMC_WRITE_REG(base_addr, FSDMMC_SD_SEN_REG_OFFSET, reg_val);
 
     /* configure cmd data timeout */
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_TIMEOUT_CMD_REG_OFFSET, FSDMMC_CMD_TIMEOUT);
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_TIMEOUT_DATA_REG_OFFSET, FSDMMC_DATA_TIMEOUT);
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_TIMEOUT_CMD_REG_OFFSET, FSDMMC_CMD_TIMEOUT);
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_TIMEOUT_DATA_REG_OFFSET, FSDMMC_DATA_TIMEOUT);
 
-	/* handle DMA cache */
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_HDS_AXI_REG_CONF1_REG_OFFSET, FSDMMC_AXI_CONF1);
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_HDS_AXI_REG_CONF2_REG_OFFSET, FSDMMC_AXI_CONF2);
+    /* handle DMA cache */
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_HDS_AXI_REG_CONF1_REG_OFFSET, FSDMMC_AXI_CONF1);
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_HDS_AXI_REG_CONF2_REG_OFFSET, FSDMMC_AXI_CONF2);
 
-	/* set ending */
-	reg_val = FSDMMC_PERMDW_STD_END | FSDMMC_PERMDR_STD_END;
-	FSDMMC_WRITE_REG(base_addr, FSDMMC_CONTROLL_SETTING_REG_OFFSET, reg_val);
+    /* set ending */
+    reg_val = FSDMMC_PERMDW_STD_END | FSDMMC_PERMDR_STD_END;
+    FSDMMC_WRITE_REG(base_addr, FSDMMC_CONTROLL_SETTING_REG_OFFSET, reg_val);
 
     /* disable interrupt */
     FSDMMC_WRITE_REG(base_addr, FSDMMC_NORMAL_INT_EN_REG_OFFSET, 0x0);
@@ -201,7 +202,8 @@ FError FSdmmcWaitStatus(uintptr base_addr, int retries)
     do
     {
         status = status_mask & FSDMMC_READ_REG(base_addr, FSDMMC_NORMAL_INT_STATUS_REG_OFFSET);
-    } while ((!status) && (retries-- > 0));
+    }
+    while ((!status) && (retries-- > 0));
 
     if (FSDMMC_NORMAL_INT_STATUS_EI & status)
     {
@@ -228,16 +230,17 @@ FError FSdmmcWaitStatus(uintptr base_addr, int retries)
  */
 FError FSdmmcWaitDMAStatus(uintptr base_addr, boolean read, int retries)
 {
-    const u32 status_mask = read ? 
-                           (FSDMMC_BD_ISR_REG_RESPE | FSDMMC_BD_ISR_REG_DAIS) : /* 等待DMA传输完成或者发生错误 */
-                           (FSDMMC_BD_ISR_REG_TRS | FSDMMC_BD_ISR_REG_DAIS); /* 等待DMA传输完成或者发生错误 */
-    u32 status; 
+    const u32 status_mask = read ?
+                            (FSDMMC_BD_ISR_REG_RESPE | FSDMMC_BD_ISR_REG_DAIS) : /* 等待DMA传输完成或者发生错误 */
+                            (FSDMMC_BD_ISR_REG_TRS | FSDMMC_BD_ISR_REG_DAIS); /* 等待DMA传输完成或者发生错误 */
+    u32 status;
 
     /* 等待DMA传输完成或者发生错误 */
     do
     {
         status = status_mask & FSDMMC_READ_REG(base_addr, FSDMMC_BD_ISR_REG_OFFSET);
-    } while ((!status) && (retries-- > 0));
+    }
+    while ((!status) && (retries-- > 0));
 
     if (status & FSDMMC_BD_ISR_REG_DAIS)
     {

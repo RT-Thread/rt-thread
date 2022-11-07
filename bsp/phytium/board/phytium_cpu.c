@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe      first commit 
+ * 2022-10-26  huanghe      first commit
  *
  */
 
@@ -23,7 +23,7 @@
 int phytium_cpu_id_mapping(int cpu_id)
 {
 #if defined(TARGET_E2000Q)
-    switch(cpu_id)
+    switch (cpu_id)
     {
     case 0:
         return 2;
@@ -40,7 +40,7 @@ int phytium_cpu_id_mapping(int cpu_id)
     }
 #else
     return (int)cpu_id;
-#endif    
+#endif
 }
 
 #if defined(TARGET_ARMV8_AARCH64)
@@ -55,7 +55,7 @@ int phytium_cpu_id(void)
     {
         RT_ASSERT(0);
     }
-   return phytium_cpu_id_mapping(cpu_id);  
+    return phytium_cpu_id_mapping(cpu_id);
 };
 
 #else
@@ -71,7 +71,7 @@ int rt_hw_cpu_id(void)
         RT_ASSERT(0);
     }
 
-    return phytium_cpu_id_mapping(cpu_id);  
+    return phytium_cpu_id_mapping(cpu_id);
 };
 
 

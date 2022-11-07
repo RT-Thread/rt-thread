@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpwm_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -58,65 +58,65 @@ extern "C"
 #define FPWM_CCR_OFFSET          0x14
 
 #define FPWM_MODE_CHANNEL       2
-#define FPWM_N(x)		        ((FPWM_OFFSET)*(x))
+#define FPWM_N(x)               ((FPWM_OFFSET)*(x))
 
 #define FPWM_RESET_TIMEOUT      10
 
 #define NSEC_PER_SEC            (1000000000ULL)
 
 /* pwm db_ctrl field */
-#define FPWM_DB_CTRL_RESET	        BIT(0)
+#define FPWM_DB_CTRL_RESET          BIT(0)
 #define FPWM_DB_CTRL_IN_MODE        BIT(1)
 #define FPWM_DB_CTRL_POLSEL(data)   ((data) << 2)
 #define FPWM_DB_CTRL_POLSEL_MASK    GENMASK(3, 2)
-#define FPWM_DB_CTRL_POLSEL_GET(data)   ((data) >> 2)    
+#define FPWM_DB_CTRL_POLSEL_GET(data)   ((data) >> 2)
 #define FPWM_DB_CTRL_OUT_MODE(data) ((data) << 4)
 #define FPWM_DB_CTRL_OUT_MODE_MASK  GENMASK(5, 4)
 #define FPWM_DB_CTRL_OUT_MODE_GET(data) ((data) >> 4)
 
 /* pwm db_ctrl field */
 #define FPWM_DB_DLY_MAX   1024
-#define FPWM_DB_DLY_RISE_MASK	    GENMASK(9, 0)
-#define FPWM_DB_DLY_FALL_MASK	    GENMASK(19, 10)
+#define FPWM_DB_DLY_RISE_MASK       GENMASK(9, 0)
+#define FPWM_DB_DLY_FALL_MASK       GENMASK(19, 10)
 #define FPWM_DB_DLY_FALL(data)      ((data) << 10)
 #define FPWM_DB_DLY_FALL_GET(data)  ((data) >> 10)
 
 /* pwm tim_ctrl field */
 #define FPWM_TIM_CTRL_DIV_MAX   4096
 
-#define FPWM_TIM_CTRL_RESET	        BIT(0)
-#define FPWM_TIM_CTRL_ENABLE	    BIT(1)
-#define FPWM_TIM_CTRL_MODE_UD	    BIT(2) /* mode, modulo or up-and-down */
-#define FPWM_TIM_CTRL_OVFIF_ENABLE	BIT(4) /* counter-overflow intr enable */
-#define FPWM_TIM_CTRL_GIE	        BIT(5) /* overall intr enable */
+#define FPWM_TIM_CTRL_RESET         BIT(0)
+#define FPWM_TIM_CTRL_ENABLE        BIT(1)
+#define FPWM_TIM_CTRL_MODE_UD       BIT(2) /* mode, modulo or up-and-down */
+#define FPWM_TIM_CTRL_OVFIF_ENABLE  BIT(4) /* counter-overflow intr enable */
+#define FPWM_TIM_CTRL_GIE           BIT(5) /* overall intr enable */
 #define FPWM_TIM_CTRL_DIV(data)     ((data) << 16)
-#define FPWM_TIM_CTRL_DIV_MASK	    GENMASK(27, 16)
+#define FPWM_TIM_CTRL_DIV_MASK      GENMASK(27, 16)
 #define FPWM_TIM_CTRL_DIV_GET(data) ((data) >> 16)
 
 /* pwm_state field */
-#define FPWM_STATE_COUNTER_CLEAR	BIT(0)
+#define FPWM_STATE_COUNTER_CLEAR    BIT(0)
 #define FPWM_STATE_OVFIF_COUNTER    BIT(1)
-#define FPWM_STATE_FIFO_EMPTY	    BIT(2)
-#define FPWM_STATE_FIFO_FULL	    BIT(3)
+#define FPWM_STATE_FIFO_EMPTY       BIT(2)
+#define FPWM_STATE_FIFO_FULL        BIT(3)
 
 /* pwm_period field */
-#define FPWM_PERIOD_CCR_MASK	    GENMASK(15, 0)
+#define FPWM_PERIOD_CCR_MASK        GENMASK(15, 0)
 
 /* pwm_ctrl field */
 #define FPWM_CTRL_MODE_OUTPUT               BIT(2)
-#define FPWM_CTRL_INTR_COUNTER_ENABLE	    BIT(3)
+#define FPWM_CTRL_INTR_COUNTER_ENABLE       BIT(3)
 #define FPWM_CTRL_CMP(data)                 ((data) << 4)
-#define FPWM_CTRL_CMP_MASK	                GENMASK(6, 4)
+#define FPWM_CTRL_CMP_MASK                  GENMASK(6, 4)
 #define FPWM_CTRL_CMP_GET(data)             ((data) >> 4)
-#define FPWM_CTRL_DUTY_SOURCE_FIFO	        BIT(8)
-#define FPWM_CTRL_INTR_FIFO_EMPTY_ENABLE	BIT(9)
+#define FPWM_CTRL_DUTY_SOURCE_FIFO          BIT(8)
+#define FPWM_CTRL_INTR_FIFO_EMPTY_ENABLE    BIT(9)
 
 /* pwm_ccr field */
-#define FPWM_CCR_MASK	        GENMASK(15, 0)
+#define FPWM_CCR_MASK           GENMASK(15, 0)
 
 /* pwm lsd cfg, lsd pwm sync control */
 #define FLSD_MIO_PWM_SYN_OFFSET 0x20
-#define FLSD_MIO_PWM_SYN_MASK	GENMASK(7, 0)
+#define FLSD_MIO_PWM_SYN_MASK   GENMASK(7, 0)
 
 /***************** Macros (Inline Functions) Definitions *********************/
 

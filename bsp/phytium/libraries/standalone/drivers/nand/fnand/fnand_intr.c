@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fnand_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:46
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -39,9 +39,9 @@
  * @name: FNandIsrEnable
  * @msg:  Enable the corresponding interrupt based on the interrupt mask
  * @return {*}
- * @note: 
+ * @note:
  * @param {FNand} *instance_p is the pointer to the FNand instance
- * @param {u32} int_mask is interrupt mask 
+ * @param {u32} int_mask is interrupt mask
  */
 void FNandIsrEnable(FNand *instance_p, u32 int_mask)
 {
@@ -57,7 +57,7 @@ void FNandIsrEnable(FNand *instance_p, u32 int_mask)
 /**
  * @name: FNandIrqDisable
  * @msg:  Disable the corresponding interrupt based on the interrupt mask
- * @note: 
+ * @note:
  * @param {FNand} *instance_p is the pointer to the FNand instance
  * @param {u32} int_mask is interrupt mask
  * @return {*}
@@ -77,13 +77,13 @@ void FNandIrqDisable(FNand *instance_p, u32 int_mask)
 /**
  * @name: FNandSetIsrHandler
  * @msg:  Initializes isr event callback function
- * @note: 
+ * @note:
  * @param {FNand} *instance_p is the pointer to the FNand instance.
  * @param {FnandIrqEventHandler} event_p is callback function used to respond to the interrupt event
  * @param {void} *irq_args  is the arguments of event callback
  * @return {*}
  */
-void FNandSetIsrHandler(FNand *instance_p,FnandIrqEventHandler event_p,void *irq_args )
+void FNandSetIsrHandler(FNand *instance_p, FnandIrqEventHandler event_p, void *irq_args)
 {
     FASSERT(instance_p != NULL);
     FASSERT(instance_p->is_ready == FT_COMPONENT_IS_READY);
@@ -95,9 +95,9 @@ void FNandSetIsrHandler(FNand *instance_p,FnandIrqEventHandler event_p,void *irq
 /**
  * @name: FNandIrqHandler
  * @msg:  Nand driver isr handler
- * @note: 
+ * @note:
  * @param {s32} vector is interrupt number
- * @param {void} *param is argument 
+ * @param {void} *param is argument
  * @return {*}
  */
 void FNandIrqHandler(s32 vector, void *param)
@@ -124,80 +124,80 @@ void FNandIrqHandler(s32 vector, void *param)
     FNAND_WRITEREG(config_p->base_address, 0xfd0, 0);
     FNAND_WRITEREG(config_p->base_address, FNAND_INTR_OFFSET, status);
 
-    if(instance_p->irq_event_fun_p)
+    if (instance_p->irq_event_fun_p)
     {
-        if(status & FNAND_INTR_BUSY_MASK)
+        if (status & FNAND_INTR_BUSY_MASK)
         {
 
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_BUSY_EVENT);
         }
 
-        if(status & FNAND_INTR_DMA_BUSY_MASK)
+        if (status & FNAND_INTR_DMA_BUSY_MASK)
         {
 
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_DMA_BUSY_EVENT);
         }
 
-        if(status & FNAND_INTR_DMA_PGFINISH_MASK)
+        if (status & FNAND_INTR_DMA_PGFINISH_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_DMA_PGFINISH_EVENT);
         }
 
-        if(status & FNAND_INTR_DMA_FINISH_MASK)
+        if (status & FNAND_INTR_DMA_FINISH_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_DMA_FINISH_EVENT);
         }
 
-        if(status & FNAND_INTR_FIFO_EMP_MASK)
+        if (status & FNAND_INTR_FIFO_EMP_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_FIFO_EMP_EVENT);
         }
 
-        if(status & FNAND_INTR_FIFO_FULL_MASK)
+        if (status & FNAND_INTR_FIFO_FULL_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_FIFO_FULL_EVENT);
         }
 
-        if(status & FNAND_INTR_FIFO_TIMEOUT_MASK)
+        if (status & FNAND_INTR_FIFO_TIMEOUT_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_FIFO_TIMEOUT_EVENT);
         }
 
-        if(status & FNAND_INTR_CMD_FINISH_MASK)
+        if (status & FNAND_INTR_CMD_FINISH_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_CMD_FINISH_EVENT);
         }
 
-        if(status & FNAND_INTR_PGFINISH_MASK)
+        if (status & FNAND_INTR_PGFINISH_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_PGFINISH_EVENT);
         }
 
-        if(status & FNAND_INTR_RE_MASK)
+        if (status & FNAND_INTR_RE_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_RE_EVENT);
         }
 
-        if(status & FNAND_INTR_DQS_MASK)
+        if (status & FNAND_INTR_DQS_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_DQS_EVENT);
         }
 
-        if(status & FNAND_INTR_RB_MASK)
+        if (status & FNAND_INTR_RB_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_RB_EVENT);
         }
 
-        if(status & FNAND_INTR_ECC_FINISH_MASK)
+        if (status & FNAND_INTR_ECC_FINISH_MASK)
         {
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_ECC_FINISH_EVENT);
         }
 
-        if(status & FNAND_INTR_ECC_ERR_MASK)
+        if (status & FNAND_INTR_ECC_ERR_MASK)
         {
             FNAND_WRITEREG(config_p->base_address, FNAND_ERROR_CLEAR_OFFSET, FNAND_ERROR_CLEAR_ECC_ERR_CLR_MASK);
             FNAND_WRITEREG(config_p->base_address, FNAND_FIFO_FREE_OFFSET, FNAND_FIFO_FREE_MASK);
             instance_p->irq_event_fun_p(instance_p->irq_args, FNAND_IRQ_ECC_ERR_EVENT);
         }
-    }    
+    }
 }

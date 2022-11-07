@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac_ar803x.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -44,15 +44,15 @@ extern "C"
 #define FGMAC_AR803X_PHY_ID2             0x4D
 
 /* address and data port */
-#define FGMAC_AR803X_DEBUG_ADDR			0x1DU
-#define FGMAC_AR803X_DEBUG_DATA			0x1EU
+#define FGMAC_AR803X_DEBUG_ADDR         0x1DU
+#define FGMAC_AR803X_DEBUG_DATA         0x1EU
 
 /* debug register offset */
 #define FGMAC_AR803X_DEBUG_HIB_CTRL_REG  0xBU
 #define FGMAC_AR803X_RX_CLOCK_CTRL_REG   0x0U
 #define FGMAC_AR803X_TX_CLOCK_CTRL_REG   0x5U
 
-#define FGMAC_AR803X_DEBUG_DATA_MASK	GENMASK(5, 0)
+#define FGMAC_AR803X_DEBUG_DATA_MASK    GENMASK(5, 0)
 
 /* rx clock delay setting */
 #define FGMAC_RX_CLOCK_ENABLE   1

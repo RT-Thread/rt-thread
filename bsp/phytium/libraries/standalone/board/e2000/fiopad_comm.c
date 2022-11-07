@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fiopad_comm.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
  * Description:  This files is for io-pad function definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2021/11/5    init commit
@@ -49,12 +49,12 @@
 #define FIOPAD_X_REG0_PULL_SET(x)      SET_REG32_BITS((x), 9, 8)
 
 #define FIOPAD_X_REG0_DRIVE_MASK       GENMASK(7, 4)    /* 驱动能力配置 */
-#define FIOPAD_X_REG0_DRIVE_GET(x)     GET_REG32_BITS((x), 7, 4)  
-#define FIOPAD_X_REG0_DRIVE_SET(x)     SET_REG32_BITS((x), 7, 4)  
+#define FIOPAD_X_REG0_DRIVE_GET(x)     GET_REG32_BITS((x), 7, 4)
+#define FIOPAD_X_REG0_DRIVE_SET(x)     SET_REG32_BITS((x), 7, 4)
 
 #define FIOPAD_X_REG0_FUNC_MASK        GENMASK(2, 0)   /* 引脚复用配置 */
-#define FIOPAD_X_REG0_FUNC_GET(x)      GET_REG32_BITS((x), 2, 0)  
-#define FIOPAD_X_REG0_FUNC_SET(x)      SET_REG32_BITS((x), 2, 0)  
+#define FIOPAD_X_REG0_FUNC_GET(x)      GET_REG32_BITS((x), 2, 0)
+#define FIOPAD_X_REG0_FUNC_SET(x)      SET_REG32_BITS((x), 2, 0)
 
 /** @name X_reg1 Register
  */
@@ -144,7 +144,7 @@ void FPinSetFunc(const FPinIndex pin, FPinFunc func)
 
     if (reg_val != test_val)
     {
-        FIOPAD_ERROR("ERROR: FIOPad write is failed ,pin is %x\n, 0x%x != 0x%x", 
+        FIOPAD_ERROR("ERROR: FIOPad write is failed ,pin is %x\n, 0x%x != 0x%x",
                      pin.reg_off, reg_val, test_val);
     }
 
@@ -223,7 +223,7 @@ void FPinSetConfig(const FPinIndex pin, FPinFunc func, FPinPull pull, FPinDrive 
     reg_val |= FIOPAD_X_REG0_DRIVE_SET(drive);
 
     FIOPadWrite(pin, reg_val);
-    return;       
+    return;
 }
 
 /**
@@ -253,10 +253,10 @@ void FPinSetPull(const FPinIndex pin, FPinPull pull)
     FIOPAD_ASSERT_REG0_OFF(pin);
     FIOPAD_ASSERT_PULL(pull);
 
-    u32 reg_val = FIOPadRead(pin);   
+    u32 reg_val = FIOPadRead(pin);
 
     reg_val &= ~FIOPAD_X_REG0_PULL_MASK;
-    reg_val |= FIOPAD_X_REG0_PULL_SET(pull); 
+    reg_val |= FIOPAD_X_REG0_PULL_SET(pull);
 
     FIOPadWrite(pin, reg_val);
     return;
@@ -288,7 +288,7 @@ FPinDelay FPinGetDelay(const FPinIndex pin, FPinDelayDir dir, FPinDelayType type
         }
         else
         {
-            FASSERT(0);            
+            FASSERT(0);
         }
     }
     else if (FPIN_INPUT_DELAY == dir)
@@ -303,7 +303,7 @@ FPinDelay FPinGetDelay(const FPinIndex pin, FPinDelayDir dir, FPinDelayType type
         }
         else
         {
-            FASSERT(0);            
+            FASSERT(0);
         }
     }
     else
@@ -379,7 +379,7 @@ void FPinSetDelay(const FPinIndex pin, FPinDelayDir dir, FPinDelayType type, FPi
         }
         else
         {
-            FASSERT(0);            
+            FASSERT(0);
         }
     }
     else if (FPIN_INPUT_DELAY == dir)
@@ -396,14 +396,14 @@ void FPinSetDelay(const FPinIndex pin, FPinDelayDir dir, FPinDelayType type, FPi
         }
         else
         {
-            FASSERT(0);            
+            FASSERT(0);
         }
     }
     else
     {
         FASSERT(0);
     }
-    
+
     FIOPadWrite(pin, reg_val);
     return;
 }
@@ -441,7 +441,7 @@ void FPinSetDelayEn(const FPinIndex pin, FPinDelayDir dir, boolean enable)
     }
 
     FIOPadWrite(pin, reg_val);
-    return;    
+    return;
 }
 
 
@@ -451,16 +451,16 @@ void FPinSetDelayEn(const FPinIndex pin, FPinDelayDir dir, boolean enable)
  * @return {NONE}
  * @param {FPinIndex} pin, IO pin index
  * @param {FPinDelayIOType} in_out_type, Select the input and output types ，
- * @param {FPinDelay} roungh_delay, delay rough setting 
- * @param {FPinDelay} delicate_delay, delay delicate setting 
+ * @param {FPinDelay} roungh_delay, delay rough setting
+ * @param {FPinDelay} delicate_delay, delay delicate setting
  * @param {boolean} enable, enable delay
  */
-void FPinSetDelayConfig(const FPinIndex pin,FPinDelayIOType in_out_type, FPinDelay roungh_delay, FPinDelay delicate_delay,boolean enable)
+void FPinSetDelayConfig(const FPinIndex pin, FPinDelayIOType in_out_type, FPinDelay roungh_delay, FPinDelay delicate_delay, boolean enable)
 {
     FIOPAD_ASSERT_REG1_OFF(pin);
     u32 reg_val = FIOPadRead(pin);
 
-    if(in_out_type == FPIN_DELAY_IN_TYPE)
+    if (in_out_type == FPIN_DELAY_IN_TYPE)
     {
         reg_val = FIOPadRead(pin);
 
@@ -490,7 +490,7 @@ void FPinSetDelayConfig(const FPinIndex pin,FPinDelayIOType in_out_type, FPinDel
 
         /* update rough output delay */
         reg_val &= ~FIOPAD_X_REG1_OUT_DELAY_ROUGH_MASK;
-        reg_val |= FIOPAD_X_REG1_OUT_DELAY_ROUGH_SET(roungh_delay);    
+        reg_val |= FIOPAD_X_REG1_OUT_DELAY_ROUGH_SET(roungh_delay);
 
         /* enable output delay */
         if (enable)
@@ -504,12 +504,12 @@ void FPinSetDelayConfig(const FPinIndex pin,FPinDelayIOType in_out_type, FPinDel
     }
 
     FIOPadWrite(pin, reg_val);
-    return;    
+    return;
 }
 
 /**
  * @name: FPinGetDelayConfig
- * @msg: Get current common IO pin delay config 
+ * @msg: Get current common IO pin delay config
  * @return {NONE}
  * @param {FPinIndex} pin, IO pin index
  * @param {FPinDelay} *in_roungh_delay, input delay rough setting (输入粗调)
@@ -517,7 +517,7 @@ void FPinSetDelayConfig(const FPinIndex pin,FPinDelayIOType in_out_type, FPinDel
  * @param {FPinDelay} *out_roungh_delay, output delay rough setting (输出粗调)
  * @param {FPinDelay} *out_delicate_delay, output delay delicate setting (输出精调)
  */
-void FPinGetDelayConfig(const FPinIndex pin, FPinDelay *in_roungh_delay, FPinDelay *in_delicate_delay, 
+void FPinGetDelayConfig(const FPinIndex pin, FPinDelay *in_roungh_delay, FPinDelay *in_delicate_delay,
                         FPinDelay *out_roungh_delay, FPinDelay *out_delicate_delay)
 {
     FIOPAD_ASSERT_REG1_OFF(pin);
@@ -525,7 +525,7 @@ void FPinGetDelayConfig(const FPinIndex pin, FPinDelay *in_roungh_delay, FPinDel
 
     if (out_delicate_delay)
     {
-        *out_delicate_delay = FIOPAD_X_REG1_OUT_DELAY_DELICATE_GET(reg_val); 
+        *out_delicate_delay = FIOPAD_X_REG1_OUT_DELAY_DELICATE_GET(reg_val);
     }
 
     if (out_roungh_delay)
@@ -563,10 +563,10 @@ void FIOPadDumpPadFunc(void)
     for (off = beg_off; off <= end_off; off += 4U)
     {
         pin.reg_off = off;
-        FIOPAD_DEBUG("  [0x%x] func: %d, ds: %d, pull: %s ", 
-                    pin.reg_off, 
-                    FPinGetFunc(pin), 
-                    FPinGetDrive(pin), 
-                    pull_state[FPinGetPull(pin)]);
+        FIOPAD_DEBUG("  [0x%x] func: %d, ds: %d, pull: %s ",
+                     pin.reg_off,
+                     FPinGetFunc(pin),
+                     FPinGetDrive(pin),
+                     pull_state[FPinGetPull(pin)]);
     }
 }

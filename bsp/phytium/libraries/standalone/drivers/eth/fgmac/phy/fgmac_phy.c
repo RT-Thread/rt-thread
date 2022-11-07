@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac_phy.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:53
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -60,11 +60,11 @@
 /* 此文件主要为了完成用户对外接口，用户可以使用这些接口直接开始工作 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /**
@@ -86,8 +86,9 @@ static FError FGmacWaitPhyAutoNegotiationEnd(FGmac *instance_p, u32 phy_address)
         if (FGMAC_SUCCESS != ret)
             break;
         fsleep_millisec(20);
-    } while ((FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE != (FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE & reg_val)) &&
-             (0 < --timeout));
+    }
+    while ((FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE != (FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE & reg_val)) &&
+            (0 < --timeout));
 
     if (FGMAC_SUCCESS != ret)
         return ret;
@@ -125,7 +126,8 @@ static FError FGmacPhyAutoNegotiation(FGmac *instance_p, u32 phy_address)
             break;
         fsleep_millisec(20);
 
-    } while (!(reg_val & FGMAC_PHY_MII_SR_LSTATUS) && (0 <= --timeout));
+    }
+    while (!(reg_val & FGMAC_PHY_MII_SR_LSTATUS) && (0 <= --timeout));
 
     if (0 >= timeout)
     {
@@ -184,23 +186,23 @@ static FError FGmacPhyNoneNegotiation(FGmac *instance_p, u32 phy_address)
         control_reg &= ~(FGMAC_PHY_MII_CR_DUPLEX_MODE);
 
     /* 设置速度bit6|bit13, 10b-1000M, 01b-100M, 00b-10M */
-    switch(instance_p->config.speed)
+    switch (instance_p->config.speed)
     {
-        case FGMAC_PHY_SPEED_1000:
-            control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_MSB;
-            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
-            break;
-        case FGMAC_PHY_SPEED_100:
-            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
-            control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_LSB;
-            break;
-        case FGMAC_PHY_SPEED_10:
-            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
-            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
-            break;
-        default:
-            FASSERT(0);
-            break;
+    case FGMAC_PHY_SPEED_1000:
+        control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_MSB;
+        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
+        break;
+    case FGMAC_PHY_SPEED_100:
+        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
+        control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_LSB;
+        break;
+    case FGMAC_PHY_SPEED_10:
+        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
+        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
+        break;
+    default:
+        FASSERT(0);
+        break;
     }
 
     /* disable auto-negotiation */
@@ -289,7 +291,7 @@ FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u16 *phy
  * @param {FGmac} *instance_p, instance of FGmac controller
  * @return err code information, FGMAC_SUCCESS indicates success，others indicates failed
  */
- FError FGmacPhyDetect(FGmac *instance_p)
+FError FGmacPhyDetect(FGmac *instance_p)
 {
     u32 phy_addr = 0;
     u16 phy_reg = 0, phy_id1_reg, phy_id2_reg;
@@ -309,17 +311,17 @@ FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u16 *phy
         {
             ret = FGmacReadPhyReg(instance_p, phy_addr, FGMAC_PHY_MII_PHYSID1_REG, &phy_id1_reg);
             ret |= FGmacReadPhyReg(instance_p, phy_addr, FGMAC_PHY_MII_PHYSID2_REG, &phy_id2_reg);
-            
+
             if ((ret == FGMAC_SUCCESS) && (phy_id1_reg != 0xffff) && (phy_id2_reg != 0xffff))
             {
                 /* assign the max valid phy address to instance_p->phy_addr */
                 instance_p->phy_addr = phy_addr;
-                instance_p->phy_valid_mask |= (1<<phy_addr);
-                instance_p->phy_id1=phy_id1_reg;
-        
+                instance_p->phy_valid_mask |= (1 << phy_addr);
+                instance_p->phy_id1 = phy_id1_reg;
+
                 FGMAC_INFO("phy_addr: [%d], phy_valid_mask: 0x%x, phy id: [0x%08x][0x%08x], phy_reg:0x%x",
-                        phy_addr, instance_p->phy_valid_mask, phy_id1_reg, phy_id2_reg, phy_reg);
-                
+                           phy_addr, instance_p->phy_valid_mask, phy_id1_reg, phy_id2_reg, phy_reg);
+
                 return ret;
             }
         }
@@ -329,7 +331,7 @@ FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u16 *phy
         }
     }
 
-    if(invalid_count == FGMAC_PHY_MAX_NUM)
+    if (invalid_count == FGMAC_PHY_MAX_NUM)
     {
         FGMAC_ERROR("phy detect failed, phy address is not found!");
         return FGMAC_ERR_PHY_IS_NOT_FOUND;
@@ -378,20 +380,20 @@ static FError FGmacGetPhySpecialStatus(FGmac *instance_p, u32 phy_address)
 
     switch (phy_special_status & FGMAC_PHY_SPECIFIC_STATUS_SPEED_MASK)
     {
-        case FGMAC_PHY_SPECIFIC_STATUS_SPEED_1000M:
-            instance_p->config.speed = FGMAC_PHY_SPEED_1000;
-            break;
-        case FGMAC_PHY_SPECIFIC_STATUS_SPEED_100M:
-            instance_p->config.speed = FGMAC_PHY_SPEED_100;
-            break;
-        case FGMAC_PHY_SPECIFIC_STATUS_SPEED_10M:
-            instance_p->config.speed = FGMAC_PHY_SPEED_10;
-            break;
-        default:
-            break;
+    case FGMAC_PHY_SPECIFIC_STATUS_SPEED_1000M:
+        instance_p->config.speed = FGMAC_PHY_SPEED_1000;
+        break;
+    case FGMAC_PHY_SPECIFIC_STATUS_SPEED_100M:
+        instance_p->config.speed = FGMAC_PHY_SPEED_100;
+        break;
+    case FGMAC_PHY_SPECIFIC_STATUS_SPEED_10M:
+        instance_p->config.speed = FGMAC_PHY_SPEED_10;
+        break;
+    default:
+        break;
     }
 
-    if(phy_special_status & FGMAC_PHY_SPECIFIC_STATUS_DUPLEX_MASK)
+    if (phy_special_status & FGMAC_PHY_SPECIFIC_STATUS_DUPLEX_MASK)
         instance_p->config.duplex_mode = FGMAC_PHY_MODE_FULLDUPLEX;
     else
         instance_p->config.duplex_mode = FGMAC_PHY_MODE_HALFDUPLEX;
@@ -411,7 +413,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
     uintptr base_addr = instance_p->config.base_addr;
     FError ret = FGMAC_SUCCESS;
     u32 phy_addr;
-    
+
     /* detect phy address, and assigned the minimum valid address to phy_addr */
     ret = FGmacPhyDetect(instance_p);
     if (FGMAC_SUCCESS != ret)
@@ -423,7 +425,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
     for (phy_addr = 0; phy_addr <= instance_p->phy_addr; phy_addr++)
     {
         /* 计算出当前位置 */
-        if (instance_p->phy_valid_mask & (1<<phy_addr))
+        if (instance_p->phy_valid_mask & (1 << phy_addr))
         {
             /* set phy power down and set phy Normal operation  */
             FGmacPhyReset(instance_p, phy_addr);
@@ -448,7 +450,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
                     return ret;
                 }
             }
-            
+
             /* read phy special status register to get speed and duplex mode */
             ret = FGmacGetPhySpecialStatus(instance_p, phy_addr);
             if (FGMAC_SUCCESS != ret)
@@ -479,7 +481,7 @@ FError FGmacPhyCfgDeInitialize(FGmac *instance_p)
     for (phy_addr = 0; phy_addr <= instance_p->phy_addr; phy_addr++)
     {
         /* 计算出当前位置 */
-        if (instance_p->phy_valid_mask & (1<<phy_addr))
+        if (instance_p->phy_valid_mask & (1 << phy_addr))
         {
             /* set phy power down and set phy Normal operation  */
             FGmacPhyReset(instance_p, phy_addr);
@@ -494,27 +496,27 @@ FError FGmacPhyCfgDeInitialize(FGmac *instance_p)
  * @param {FGmac} *instance_p, instance of FGmac controller
  * @return err code information, FGMAC_SUCCESS indicates success，others indicates failed
  */
-FError  FGmacPhyAwaken(FGmac *instance_p)  
-{   
+FError  FGmacPhyAwaken(FGmac *instance_p)
+{
 
     FError ret = FGMAC_SUCCESS;
-    
-#ifdef  CONFIG_FGMAC_PHY_AR803X     
+
+#ifdef  CONFIG_FGMAC_PHY_AR803X
     ret = FGmacPhyDetect(instance_p);
     if (FGMAC_SUCCESS != ret)
     {
         FGMAC_ERROR("phy detect failed!");
         return ret;
     }
-   
+
     u16 phy_id1;
-    phy_id1=instance_p->phy_id1;
+    phy_id1 = instance_p->phy_id1;
 
-    if(phy_id1 == FGMAC_AR803X_PHY_ID1) 
-    {   
+    if (phy_id1 == FGMAC_AR803X_PHY_ID1)
+    {
 
-        ret=FGmacAr803xDisableHibernate(instance_p);
-        
+        ret = FGmacAr803xDisableHibernate(instance_p);
+
     }
 #endif
     return ret;

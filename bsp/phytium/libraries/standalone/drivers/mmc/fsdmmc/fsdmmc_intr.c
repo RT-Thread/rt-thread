@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdmmc_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:54:53
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -122,7 +122,7 @@ void FSdmmcSetInterruptMask(uintptr base_addr, u32 intr_type, u32 mask, boolean 
         break;
     }
 
-    return;    
+    return;
 }
 
 /**
@@ -260,7 +260,7 @@ void FSdmmcErrInterrupHandler(s32 vector, void *param)
     }
 
     /* clear command error status */
-    FSdmmcClearErrorInterruptStatus(base_addr);  
+    FSdmmcClearErrorInterruptStatus(base_addr);
 }
 
 /**
@@ -289,29 +289,29 @@ void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHa
  */
 FError FSdmmcInterruptTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
 {
-	FASSERT(instance_p && cmd_data_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	FError ret = FSDMMC_SUCCESS;
-	
-	if (FALSE == FSdmmcCheckIfCardExists(base_addr))
-	{
-		FSDMMC_ERROR("card not found !!! fsdio ctrl base 0x%x", base_addr);
-		return FSDMMC_ERR_CARD_NO_FOUND;		
-	}
+    FASSERT(instance_p && cmd_data_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FSDMMC_SUCCESS;
+
+    if (FALSE == FSdmmcCheckIfCardExists(base_addr))
+    {
+        FSDMMC_ERROR("card not found !!! fsdio ctrl base 0x%x", base_addr);
+        return FSDMMC_ERR_CARD_NO_FOUND;
+    }
 
     if (cmd_data_p->flag & FSDMMC_CMD_FLAG_EXP_DATA)
     {
-		/* transfer data */
-		FSDMMC_INFO("====DATA [%d] START: buf: %p=====", cmd_data_p->cmdidx, cmd_data_p->data_p);
-        ret = FSdmmcSendData(base_addr,  
-                            (FSDMMC_CMD_FLAG_READ_DATA == (cmd_data_p->flag & FSDMMC_CMD_FLAG_READ_DATA)),
-                            cmd_data_p);             
+        /* transfer data */
+        FSDMMC_INFO("====DATA [%d] START: buf: %p=====", cmd_data_p->cmdidx, cmd_data_p->data_p);
+        ret = FSdmmcSendData(base_addr,
+                             (FSDMMC_CMD_FLAG_READ_DATA == (cmd_data_p->flag & FSDMMC_CMD_FLAG_READ_DATA)),
+                             cmd_data_p);
     }
     else
     {
-		/* transfer command */
-		FSDMMC_INFO("=====CMD [%d] START=====", cmd_data_p->cmdidx);
-        FSdmmcSendCmd(base_addr, cmd_data_p);       
+        /* transfer command */
+        FSDMMC_INFO("=====CMD [%d] START=====", cmd_data_p->cmdidx);
+        FSdmmcSendCmd(base_addr, cmd_data_p);
     }
 
     return ret;

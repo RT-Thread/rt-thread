@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: frtc.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:02:51
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Wangxiaodong 2021/8/26   init
@@ -37,30 +37,30 @@ extern "C"
 
 typedef struct
 {
-	uintptr control_base_addr; /* rtc控制寄存器基地址 */
-	const char *instance_name; /* instance name */
-} FRtcConfig;				   /* rtc配置 */
+    uintptr control_base_addr; /* rtc控制寄存器基地址 */
+    const char *instance_name; /* instance name */
+} FRtcConfig;                  /* rtc配置 */
 
 typedef struct
 {
-	FRtcConfig config; 	/* rtc配置 */
-	u32 is_ready;		/* rtc初始化完成标志 */
+    FRtcConfig config;  /* rtc配置 */
+    u32 is_ready;       /* rtc初始化完成标志 */
 } FRtcCtrl;
 
 typedef struct
 {
-	u16 year;  /*Specifies the RTC Date Year.
-				This parameter must be a number between Min_Data = 2000 and Max_Data = 2099 */
-	u8 month;  /*Specifies the RTC Date Month.
-				This parameter must be a number between Min_Data = 1 and Max_Data = 12 */
-	u8 mday;   /*Specifies the RTC day of Month.
-				This parameter must be a number between Min_Data = 1 and Max_Data = 31 */
-	u8 hour;   /*Specifies the RTC Time Hour.
-				This parameter must be a number between Min_Data = 0 and Max_Data = 23 */
-	u8 minute; /*Specifies the RTC Time Minute.
-				This parameter must be a number between Min_Data = 0 and Max_Data = 59 */
-	u8 second; /*Specifies the RTC Time Second.
-				This parameter must be a number between Min_Data = 0 and Max_Data = 59 */
+    u16 year;  /*Specifies the RTC Date Year.
+                This parameter must be a number between Min_Data = 2000 and Max_Data = 2099 */
+    u8 month;  /*Specifies the RTC Date Month.
+                This parameter must be a number between Min_Data = 1 and Max_Data = 12 */
+    u8 mday;   /*Specifies the RTC day of Month.
+                This parameter must be a number between Min_Data = 1 and Max_Data = 31 */
+    u8 hour;   /*Specifies the RTC Time Hour.
+                This parameter must be a number between Min_Data = 0 and Max_Data = 23 */
+    u8 minute; /*Specifies the RTC Time Minute.
+                This parameter must be a number between Min_Data = 0 and Max_Data = 59 */
+    u8 second; /*Specifies the RTC Time Second.
+                This parameter must be a number between Min_Data = 0 and Max_Data = 59 */
 } FRtcDateTime;
 
 #define FRTC_SUCCESS FT_SUCCESS

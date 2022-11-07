@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdmmc.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:55:57
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -37,7 +37,7 @@ extern "C"
 #include "fkernel.h"
 
 /************************** Constant Definitions *****************************/
-#define FSDMMC_SUCCESS           FT_SUCCESS  
+#define FSDMMC_SUCCESS           FT_SUCCESS
 #define FSDMMC_ERR_NOT_READY     FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 1)
 #define FSDMMC_ERR_TIMEOUT       FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 2)
 #define FSDMMC_ERR_CMD_FAILED    FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 3)
@@ -52,7 +52,7 @@ enum
     FSDMMC_CMD_INTR,
     FSDMMC_ERROR_INTR,
 
-    FSDMMC_INTR_NUM  
+    FSDMMC_INTR_NUM
 }; /* 中断类型 */
 
 enum
@@ -71,7 +71,7 @@ enum
 /**
  * This typedef contains data information for the device.
  */
-typedef struct 
+typedef struct
 {
     u8 *buf;
     u32 blksz;
@@ -82,7 +82,7 @@ typedef struct
 /**
  * This typedef contains command information for the device.
  */
-typedef struct 
+typedef struct
 {
     u32 cmdidx;
     u32 cmdarg;

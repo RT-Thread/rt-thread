@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fxmac_options.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -28,9 +28,9 @@
 
 /**
  * @name: FXmacSetMacAddress
- * 
+ *
  * @msg: Set the MAC address for this driver/device.  The address is a 48-bit value.
- * The device must be stopped before calling this function. 
+ * The device must be stopped before calling this function.
  *
  * @param {FXmac *}: instance_p is a pointer to the instance to be worked on.
  * @param address_ptr is a pointer to a 6-byte MAC address.
@@ -69,7 +69,7 @@ FError FXmacSetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index)
 
         /* There are reserved bits in TOP so don't affect them */
         mac_addr = FXMAC_READREG32(instance_p->config.base_address,
-                                  ((u32)FXMAC_GEM_SA1T + ((u32)index_loc * (u32)8)));
+                                   ((u32)FXMAC_GEM_SA1T + ((u32)index_loc * (u32)8)));
 
         mac_addr &= (u32)(~FXMAC_GEM_SAB_MASK);
 
@@ -87,7 +87,7 @@ FError FXmacSetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index)
 
 /**
  * @name: FXmacGetMacAddress
- * @msg:  Set the MAC address according to index 
+ * @msg:  Set the MAC address according to index
  * @param {FXmac} *mac is a pointer to the instance to be worked on.
  * @param {void} *address_ptr is an output parameter, and is a pointer to a buffer into
  *        which the current MAC address will be copied.
@@ -637,7 +637,7 @@ FError FXmacPhyWrite(FXmac *instance_p, u32 phy_address,
     /* Make sure no other PHY operation is currently in progress */
     if ((!(FXMAC_READREG32(instance_p->config.base_address,
                            FXMAC_NWSR_OFFSET) &
-           FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
+            FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
     {
         status = (FError)(FXMAC_ERR_PHY_BUSY);
     }
@@ -657,7 +657,8 @@ FError FXmacPhyWrite(FXmac *instance_p, u32 phy_address,
             ipisr = FXMAC_READREG32(instance_p->config.base_address,
                                     FXMAC_NWSR_OFFSET);
             ip_write_temp = ipisr;
-        } while ((ip_write_temp & FXMAC_NWSR_MDIOIDLE_MASK) == 0x00000000U);
+        }
+        while ((ip_write_temp & FXMAC_NWSR_MDIOIDLE_MASK) == 0x00000000U);
 
         status = (FError)(FT_SUCCESS);
     }
@@ -712,7 +713,7 @@ FError FXmacPhyRead(FXmac *instance_p, u32 phy_address,
     /* Make sure no other PHY operation is currently in progress */
     if ((!(FXMAC_READREG32(instance_p->config.base_address,
                            FXMAC_NWSR_OFFSET) &
-           FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
+            FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
     {
         status = (FError)(FXMAC_ERR_PHY_BUSY);
     }
@@ -732,7 +733,8 @@ FError FXmacPhyRead(FXmac *instance_p, u32 phy_address,
             ipisr = FXMAC_READREG32(instance_p->config.base_address,
                                     FXMAC_NWSR_OFFSET);
             IpReadTemp = ipisr;
-        } while ((IpReadTemp & FXMAC_NWSR_MDIOIDLE_MASK) == 0x00000000U);
+        }
+        while ((IpReadTemp & FXMAC_NWSR_MDIOIDLE_MASK) == 0x00000000U);
 
         /* Read data */
         *phydat_aptr = (u16)FXMAC_READREG32(instance_p->config.base_address,

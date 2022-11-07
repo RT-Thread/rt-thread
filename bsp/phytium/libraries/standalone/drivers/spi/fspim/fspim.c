@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fspim.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:32
  * Description:  This files is for spim api implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3	init commit
+ * 1.0   zhugengyu  2021-12-3   init commit
  * 1.1   zhugengyu  2022-4-15   support test mode
  * 1.2   zhugengyu  2022-5-13   support spi dma
  */
@@ -52,14 +52,14 @@ FError FSpimReset(FSpim *instance_p);
 /************************** Variable Definitions *****************************/
 static const char *FSPIM_ERROR_CODE_MSG[FSPIM_NUM_OF_ERR_CODE] =
 {
-	"FSPIM_SUCCESS : fspim success",
-	"FSPIM_ERR_INVAL_STATE : fspim invalid state",
-	"FSPIM_ERR_NOT_READY : fspim driver not ready",
-	"FSPIM_ERR_INVAL_PARAM : fspim invalid input parameters",
-	"FSPIM_ERR_BUS_BUSY : fspim bus is busy",
-	"FSPIM_ERR_NOT_SUPPORT : fspim not support operation",
-	"FSPIM_ERR_TIMEOUT : fspim wait timeout",
-	"FSPIM_ERR_TRANS_FAIL : fspim data transfer failed",
+    "FSPIM_SUCCESS : fspim success",
+    "FSPIM_ERR_INVAL_STATE : fspim invalid state",
+    "FSPIM_ERR_NOT_READY : fspim driver not ready",
+    "FSPIM_ERR_INVAL_PARAM : fspim invalid input parameters",
+    "FSPIM_ERR_BUS_BUSY : fspim bus is busy",
+    "FSPIM_ERR_NOT_SUPPORT : fspim not support operation",
+    "FSPIM_ERR_TIMEOUT : fspim wait timeout",
+    "FSPIM_ERR_TRANS_FAIL : fspim data transfer failed",
 };
 
 
@@ -68,7 +68,7 @@ static const char *FSPIM_ERROR_CODE_MSG[FSPIM_NUM_OF_ERR_CODE] =
 /* 此文件主要为了完成用户对外接口，用户可以使用这些接口直接开始工作 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /*
@@ -80,39 +80,39 @@ static const char *FSPIM_ERROR_CODE_MSG[FSPIM_NUM_OF_ERR_CODE] =
  */
 FError FSpimCfgInitialize(FSpim *instance_p, const FSpimConfig *input_config_p)
 {
-	FASSERT(instance_p && input_config_p);
-	uintptr base_addr = instance_p->config.base_addr;
+    FASSERT(instance_p && input_config_p);
+    uintptr base_addr = instance_p->config.base_addr;
 
-	FError ret = FSPIM_SUCCESS;
-	/*
-	* If the device is started, disallow the initialize and return a Status
-	* indicating it is started.  This allows the user to de-initialize the device
-	* and reinitialize, but prevents a user from inadvertently
-	* initializing.
-	*/
-	if (FT_COMPONENT_IS_READY == instance_p->is_ready)
-	{
-		FSPIM_WARN("device is already initialized!!!");
-	}
+    FError ret = FSPIM_SUCCESS;
+    /*
+    * If the device is started, disallow the initialize and return a Status
+    * indicating it is started.  This allows the user to de-initialize the device
+    * and reinitialize, but prevents a user from inadvertently
+    * initializing.
+    */
+    if (FT_COMPONENT_IS_READY == instance_p->is_ready)
+    {
+        FSPIM_WARN("device is already initialized!!!");
+    }
 
     /*
-	* Set default values and configuration data, including setting the
-	* callback handlers to stubs  so the system will not crash should the
-	* application not assign its own callbacks.
-	 */	
-	FSpimDeInitialize(instance_p);
-	instance_p->config = *input_config_p;
+    * Set default values and configuration data, including setting the
+    * callback handlers to stubs  so the system will not crash should the
+    * application not assign its own callbacks.
+     */
+    FSpimDeInitialize(instance_p);
+    instance_p->config = *input_config_p;
 
-	/*
-	* Reset the device.
-	*/
-	ret = FSpimReset(instance_p);
-	if (FSPIM_SUCCESS == ret)
-	{
-		instance_p->is_ready = FT_COMPONENT_IS_READY;
-	}
+    /*
+    * Reset the device.
+    */
+    ret = FSpimReset(instance_p);
+    if (FSPIM_SUCCESS == ret)
+    {
+        instance_p->is_ready = FT_COMPONENT_IS_READY;
+    }
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -123,12 +123,12 @@ FError FSpimCfgInitialize(FSpim *instance_p, const FSpimConfig *input_config_p)
  */
 void FSpimDeInitialize(FSpim *instance_p)
 {
-	FASSERT(instance_p);
+    FASSERT(instance_p);
 
-	instance_p->is_ready = 0;
-	memset(instance_p, 0, sizeof(*instance_p));
+    instance_p->is_ready = 0;
+    memset(instance_p, 0, sizeof(*instance_p));
 
-	return;
+    return;
 }
 
 /**
@@ -139,96 +139,96 @@ void FSpimDeInitialize(FSpim *instance_p)
  */
 FError FSpimReset(FSpim *instance_p)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	FError ret = FSPIM_SUCCESS;
-	u32 reg_val;
-	u32 fifo;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FSPIM_SUCCESS;
+    u32 reg_val;
+    u32 fifo;
 
-	/* 禁用SPI控制器 */
-	FSpimSetEnable(base_addr, FALSE);
+    /* 禁用SPI控制器 */
+    FSpimSetEnable(base_addr, FALSE);
 
-	/* 选择数据长度和帧格式 */
-	reg_val = FSPIM_CTRL_R0_DFS(FSPIM_DEFAULT_DFS) |
-			  FSPIM_CTRL_R0_FRF(FSPIM_DEFAULT_FRF) | 
-			  FSPIM_CTRL_R0_CFS(FSPIM_DEFAULT_CFS);
-	
-	if (instance_p->config.en_test)
-	{
-		reg_val |= FSPIM_CTRL_R0_SLV_SRL(FSPIM_SRL_TEST); /* 设置测试模式，TX Fifo和RX Fifo内部短接 */
-	}
-	else
-	{
-		reg_val |= FSPIM_CTRL_R0_SLV_SRL(FSPIM_SRL_NORAML); /* 设置为正常模式 */
-	}
+    /* 选择数据长度和帧格式 */
+    reg_val = FSPIM_CTRL_R0_DFS(FSPIM_DEFAULT_DFS) |
+              FSPIM_CTRL_R0_FRF(FSPIM_DEFAULT_FRF) |
+              FSPIM_CTRL_R0_CFS(FSPIM_DEFAULT_CFS);
 
-	FSpimSetCtrlR0(base_addr, reg_val);
+    if (instance_p->config.en_test)
+    {
+        reg_val |= FSPIM_CTRL_R0_SLV_SRL(FSPIM_SRL_TEST); /* 设置测试模式，TX Fifo和RX Fifo内部短接 */
+    }
+    else
+    {
+        reg_val |= FSPIM_CTRL_R0_SLV_SRL(FSPIM_SRL_NORAML); /* 设置为正常模式 */
+    }
 
-	/* 选择串行时钟极性和相位 */
-	FSpimSetCpha(base_addr, instance_p->config.cpha);
-	FSpimSetCpol(base_addr, instance_p->config.cpol);
+    FSpimSetCtrlR0(base_addr, reg_val);
 
-	/* 设置传输模式 */
-	FSpimSetTransMode(base_addr, FSPIM_TRANS_MODE_RX_TX);
+    /* 选择串行时钟极性和相位 */
+    FSpimSetCpha(base_addr, instance_p->config.cpha);
+    FSpimSetCpol(base_addr, instance_p->config.cpol);
 
-	/* 禁用slave */
-	FSpimSetSlaveEnable(base_addr, FALSE);
+    /* 设置传输模式 */
+    FSpimSetTransMode(base_addr, FSPIM_TRANS_MODE_RX_TX);
 
-	/* 禁用SPI 中断，设置slave设备 */
-	FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
-	FSpimSelSlaveDev(base_addr, instance_p->config.slave_dev_id);
+    /* 禁用slave */
+    FSpimSetSlaveEnable(base_addr, FALSE);
 
-	/* 获取SPI RX/TX FIFO 深度 */
-	if (0 == instance_p->tx_fifo_len)
-	{
-		fifo = FSpimGetTxFifoDepth(base_addr);
-		instance_p->tx_fifo_len = ((fifo == 1) ? 0 : fifo);
-		FSPIM_INFO("fifo depth %d tx_fifo_len %d", fifo, instance_p->tx_fifo_len);
-	}
+    /* 禁用SPI 中断，设置slave设备 */
+    FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
+    FSpimSelSlaveDev(base_addr, instance_p->config.slave_dev_id);
 
-	if (0 == instance_p->rx_fifo_len)
-	{
-		fifo = FSpimGetRxFifoDepth(base_addr);
-		instance_p->rx_fifo_len = ((fifo == 1) ? 0 : fifo);
-		FSPIM_INFO("fifo depth %d tx_fifo_len %d", fifo, instance_p->tx_fifo_len);
-	}
+    /* 获取SPI RX/TX FIFO 深度 */
+    if (0 == instance_p->tx_fifo_len)
+    {
+        fifo = FSpimGetTxFifoDepth(base_addr);
+        instance_p->tx_fifo_len = ((fifo == 1) ? 0 : fifo);
+        FSPIM_INFO("fifo depth %d tx_fifo_len %d", fifo, instance_p->tx_fifo_len);
+    }
 
-	FSPIM_WRITE_REG32(base_addr, FSPIM_DMA_CR_OFFSET, 0x0); /* disable ddma */
+    if (0 == instance_p->rx_fifo_len)
+    {
+        fifo = FSpimGetRxFifoDepth(base_addr);
+        instance_p->rx_fifo_len = ((fifo == 1) ? 0 : fifo);
+        FSPIM_INFO("fifo depth %d tx_fifo_len %d", fifo, instance_p->tx_fifo_len);
+    }
 
-	if (instance_p->config.en_dma)
-	{
-		/* recv data in continuous way */
-		FSpimSetCtrlR1(base_addr, FSPIM_CTRL_R1_NDF_64KB);
+    FSPIM_WRITE_REG32(base_addr, FSPIM_DMA_CR_OFFSET, 0x0); /* disable ddma */
 
-		/* setup fifo threshold */
-		FSpimSetRxFifoThreshold(base_addr, instance_p->rx_fifo_len);
-		FSpimSetTxFifoThreshold(base_addr, instance_p->tx_fifo_len);
+    if (instance_p->config.en_dma)
+    {
+        /* recv data in continuous way */
+        FSpimSetCtrlR1(base_addr, FSPIM_CTRL_R1_NDF_64KB);
 
-		/* setup fifo DMA level to trigger interrupt */
-		FSpimSetRxDMALevel(base_addr, FSPIM_RX_DMA_LEVEL);
-		FSpimSetTxDMALevel(base_addr, FSPIM_TX_DMA_LEVEL);
-	}
-	else
-	{
-		FSpimSetCtrlR1(base_addr, 0);
+        /* setup fifo threshold */
+        FSpimSetRxFifoThreshold(base_addr, instance_p->rx_fifo_len);
+        FSpimSetTxFifoThreshold(base_addr, instance_p->tx_fifo_len);
 
-		FSpimSetRxFifoThreshold(base_addr, 0);
-		FSpimSetTxFifoThreshold(base_addr, 0);
-		FSpimSetRxDMALevel(base_addr, 0);
-		FSpimSetTxDMALevel(base_addr, 0);		
-	}
+        /* setup fifo DMA level to trigger interrupt */
+        FSpimSetRxDMALevel(base_addr, FSPIM_RX_DMA_LEVEL);
+        FSpimSetTxDMALevel(base_addr, FSPIM_TX_DMA_LEVEL);
+    }
+    else
+    {
+        FSpimSetCtrlR1(base_addr, 0);
+
+        FSpimSetRxFifoThreshold(base_addr, 0);
+        FSpimSetTxFifoThreshold(base_addr, 0);
+        FSpimSetRxDMALevel(base_addr, 0);
+        FSpimSetTxDMALevel(base_addr, 0);
+    }
 
 
-	ret = FSpimSetSpeed(base_addr, instance_p->config.max_freq_hz);
-	if (FSPIM_SUCCESS != ret)
-		return ret;
+    ret = FSpimSetSpeed(base_addr, instance_p->config.max_freq_hz);
+    if (FSPIM_SUCCESS != ret)
+        return ret;
 
-	FSPIM_WRITE_REG32(base_addr, FSPIM_RX_SAMPLE_DLY_OFFSET, FSPIM_DEFAULT_RSD);
+    FSPIM_WRITE_REG32(base_addr, FSPIM_RX_SAMPLE_DLY_OFFSET, FSPIM_DEFAULT_RSD);
 
-	/* 使能SPI控制器 */
-	FSpimSetEnable(base_addr, TRUE);
+    /* 使能SPI控制器 */
+    FSpimSetEnable(base_addr, TRUE);
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -239,23 +239,23 @@ FError FSpimReset(FSpim *instance_p)
  */
 static fsize_t FSpimGetTxRound(FSpim *instance_p)
 {
-	fsize_t data_width = instance_p->config.n_bytes;
-	uintptr base_addr = instance_p->config.base_addr;
-	fsize_t tx_left_round, tx_fifo_room, rx_tx_gap;
+    fsize_t data_width = instance_p->config.n_bytes;
+    uintptr base_addr = instance_p->config.base_addr;
+    fsize_t tx_left_round, tx_fifo_room, rx_tx_gap;
 
-	tx_left_round = (fsize_t)(instance_p->tx_buff_end - instance_p->tx_buff) / data_width;
-	tx_fifo_room = instance_p->tx_fifo_len - 
-					FSpimGetTxFifoLevel(base_addr);
-	rx_tx_gap = ((fsize_t)(instance_p->rx_buff_end - instance_p->rx_buff) - 
-					(fsize_t)(instance_p->tx_buff_end - instance_p->tx_buff)) / data_width;
+    tx_left_round = (fsize_t)(instance_p->tx_buff_end - instance_p->tx_buff) / data_width;
+    tx_fifo_room = instance_p->tx_fifo_len -
+                   FSpimGetTxFifoLevel(base_addr);
+    rx_tx_gap = ((fsize_t)(instance_p->rx_buff_end - instance_p->rx_buff) -
+                 (fsize_t)(instance_p->tx_buff_end - instance_p->tx_buff)) / data_width;
 
-	FSPIM_DEBUG("tx_left_round: %d, tx_fifo_room: %d, gap: %d", 
-				tx_left_round,
-				tx_fifo_room,
-				((fsize_t)(instance_p->tx_fifo_len) - rx_tx_gap));
-	return min3(tx_left_round, 
-				tx_fifo_room, 
-				((fsize_t)(instance_p->tx_fifo_len) - rx_tx_gap));
+    FSPIM_DEBUG("tx_left_round: %d, tx_fifo_room: %d, gap: %d",
+                tx_left_round,
+                tx_fifo_room,
+                ((fsize_t)(instance_p->tx_fifo_len) - rx_tx_gap));
+    return min3(tx_left_round,
+                tx_fifo_room,
+                ((fsize_t)(instance_p->tx_fifo_len) - rx_tx_gap));
 }
 
 /**
@@ -266,42 +266,42 @@ static fsize_t FSpimGetTxRound(FSpim *instance_p)
  */
 void FSpimFifoTx(FSpim *instance_p)
 {
-	FASSERT(instance_p);
-	fsize_t tx_round = FSpimGetTxRound(instance_p);
-	FSPIM_DEBUG("tx round: %d", tx_round);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 data_width = instance_p->config.n_bytes;
-	u16 data = 0xff;
+    FASSERT(instance_p);
+    fsize_t tx_round = FSpimGetTxRound(instance_p);
+    FSPIM_DEBUG("tx round: %d", tx_round);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 data_width = instance_p->config.n_bytes;
+    u16 data = 0xff;
 
-	while (tx_round)
-	{
-		if (instance_p->tx_buff_end - instance_p->length)
-		{
-			if (FSPIM_1_BYTE == data_width)
-			{
-				/*
-				* Data Transfer Width is Byte (8 bit).
-				*/			
-				data = *(u8 *)(instance_p->tx_buff);
-			}
-			else if (FSPIM_2_BYTE == data_width)
-			{
-				/*
-				* Data Transfer Width is Half Word (16 bit).
-				*/
-				data = *(u16 *)(instance_p->tx_buff);
-			}
-			else
-			{
-				FASSERT(0);
-			}			
-		}
+    while (tx_round)
+    {
+        if (instance_p->tx_buff_end - instance_p->length)
+        {
+            if (FSPIM_1_BYTE == data_width)
+            {
+                /*
+                * Data Transfer Width is Byte (8 bit).
+                */
+                data = *(u8 *)(instance_p->tx_buff);
+            }
+            else if (FSPIM_2_BYTE == data_width)
+            {
+                /*
+                * Data Transfer Width is Half Word (16 bit).
+                */
+                data = *(u16 *)(instance_p->tx_buff);
+            }
+            else
+            {
+                FASSERT(0);
+            }
+        }
 
-		FSpimWriteData(base_addr, data);
-		FSPIM_DEBUG("  send 0x%x", data);
-		instance_p->tx_buff += data_width;
-		tx_round--;
-	}
+        FSpimWriteData(base_addr, data);
+        FSPIM_DEBUG("  send 0x%x", data);
+        instance_p->tx_buff += data_width;
+        tx_round--;
+    }
 }
 
 /**
@@ -312,13 +312,13 @@ void FSpimFifoTx(FSpim *instance_p)
  */
 static fsize_t FSpimGetRxRound(FSpim *instance_p)
 {
-	fsize_t data_width = instance_p->config.n_bytes;
-	uintptr base_addr = instance_p->config.base_addr;
+    fsize_t data_width = instance_p->config.n_bytes;
+    uintptr base_addr = instance_p->config.base_addr;
 
-	fsize_t rx_left_round = (fsize_t)(instance_p->rx_buff_end - instance_p->rx_buff) / data_width;
-	
-	FSPIM_DEBUG("left round %d, rx level %d", rx_left_round, FSpimGetRxFifoLevel(base_addr));
-	return min(rx_left_round, (fsize_t)FSpimGetRxFifoLevel(base_addr));
+    fsize_t rx_left_round = (fsize_t)(instance_p->rx_buff_end - instance_p->rx_buff) / data_width;
+
+    FSPIM_DEBUG("left round %d, rx level %d", rx_left_round, FSpimGetRxFifoLevel(base_addr));
+    return min(rx_left_round, (fsize_t)FSpimGetRxFifoLevel(base_addr));
 }
 
 /**
@@ -329,46 +329,46 @@ static fsize_t FSpimGetRxRound(FSpim *instance_p)
  */
 void FSpimFifoRx(FSpim *instance_p)
 {
-	FASSERT(instance_p);
-	fsize_t rx_round = FSpimGetRxRound(instance_p);
-	FSPIM_DEBUG("rx round: %d", rx_round);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 data_width = instance_p->config.n_bytes;
-	u16 data;
+    FASSERT(instance_p);
+    fsize_t rx_round = FSpimGetRxRound(instance_p);
+    FSPIM_DEBUG("rx round: %d", rx_round);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 data_width = instance_p->config.n_bytes;
+    u16 data;
 
-	while (rx_round)
-	{
-		data = FSpimReadData(base_addr);
-		if ((fsize_t)(instance_p->rx_buff_end - instance_p->length))
-		{
-			if (FSPIM_1_BYTE == data_width)
-			{
-				/*
-				* Data Transfer Width is Byte (8 bit).
-				*/
-				*(u8 *)(instance_p->rx_buff) = (u8)data;
-				FSPIM_DEBUG("  recv 0x%x", *(u8 *)(instance_p->rx_buff));
-			}
-			else if (FSPIM_2_BYTE == data_width)
-			{
-				/*
-				* Data Transfer Width is Half Word (16 bit).
-				*/
-				*(u16 *)(instance_p->rx_buff) = (u16)data;
-				FSPIM_DEBUG("  recv 0x%x", *(u16 *)(instance_p->rx_buff));
-			}
-			else
-			{
-				FASSERT(0);
-			}
+    while (rx_round)
+    {
+        data = FSpimReadData(base_addr);
+        if ((fsize_t)(instance_p->rx_buff_end - instance_p->length))
+        {
+            if (FSPIM_1_BYTE == data_width)
+            {
+                /*
+                * Data Transfer Width is Byte (8 bit).
+                */
+                *(u8 *)(instance_p->rx_buff) = (u8)data;
+                FSPIM_DEBUG("  recv 0x%x", *(u8 *)(instance_p->rx_buff));
+            }
+            else if (FSPIM_2_BYTE == data_width)
+            {
+                /*
+                * Data Transfer Width is Half Word (16 bit).
+                */
+                *(u16 *)(instance_p->rx_buff) = (u16)data;
+                FSPIM_DEBUG("  recv 0x%x", *(u16 *)(instance_p->rx_buff));
+            }
+            else
+            {
+                FASSERT(0);
+            }
 
-		}
+        }
 
-		instance_p->rx_buff += data_width;
-		rx_round--;
-	}
+        instance_p->rx_buff += data_width;
+        rx_round--;
+    }
 
-	return;
+    return;
 }
 
 /**
@@ -379,66 +379,67 @@ void FSpimFifoRx(FSpim *instance_p)
  * @param {void} *tx_buf 写缓冲区，可以为空，为空时表示只关注读数据，此时驱动会发送0xff读数据
  * @param {void} *rx_buf 读缓冲区, 可以为空，为空时表示值关注写数据，此时SPI总线上返回的数据会被抛弃
  * @param {fsize_t} len 进行传输的长度，如果tx_buf或者rx_buf不为空，则两个buf的长度必须为len
-	- 使用此函数前需要确保FSPIM驱动初始化成功
-	- 从函数不会使用中断，会按照TX FIFO的深度进行传输，每次发送填满TX FIFO后触发发送/接收动作
+    - 使用此函数前需要确保FSPIM驱动初始化成功
+    - 从函数不会使用中断，会按照TX FIFO的深度进行传输，每次发送填满TX FIFO后触发发送/接收动作
  */
 FError FSpimTransferPollFifo(FSpim *instance_p, const void *tx_buf, void *rx_buf, fsize_t len)
 {
-	FASSERT(instance_p);
-	u32 reg_val;
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 data_width = instance_p->config.n_bytes;
-	u32 tx_level;
-	FError ret = FSPIM_SUCCESS;
+    FASSERT(instance_p);
+    u32 reg_val;
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 data_width = instance_p->config.n_bytes;
+    u32 tx_level;
+    FError ret = FSPIM_SUCCESS;
 
-	if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSPIM_ERROR("device is already initialized!!!");
-		return FSPIM_ERR_NOT_READY;
-	}
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FSPIM_ERROR("device is already initialized!!!");
+        return FSPIM_ERR_NOT_READY;
+    }
 
-	FSpimSetEnable(base_addr, FALSE);
+    FSpimSetEnable(base_addr, FALSE);
 
-	reg_val = FSpimGetCtrlR0(base_addr);
+    reg_val = FSpimGetCtrlR0(base_addr);
 
-	reg_val &= ~FSPIM_CTRL_R0_DFS_MASK;
-	reg_val |= FSPIM_CTRL_R0_DFS((data_width << 3) - 1);
+    reg_val &= ~FSPIM_CTRL_R0_DFS_MASK;
+    reg_val |= FSPIM_CTRL_R0_DFS((data_width << 3) - 1);
 
-	reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
-	if (tx_buf && rx_buf)
-		reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
+    if (tx_buf && rx_buf)
+        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
     else if (rx_buf)
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
     else
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
 
-	FSpimSetCtrlR0(base_addr, reg_val);
+    FSpimSetCtrlR0(base_addr, reg_val);
 
-	FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
+    FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
 
-	instance_p->length = len;
-	instance_p->tx_buff = tx_buf;
-	instance_p->tx_buff_end = tx_buf + len;
-	instance_p->rx_buff = rx_buf;
-	instance_p->rx_buff_end = rx_buf + len;
-	FSPIM_DEBUG("tx buff@%p-%d, rx buff@%p-%d", 
-				instance_p->tx_buff, len, 
-				instance_p->rx_buff, len);
+    instance_p->length = len;
+    instance_p->tx_buff = tx_buf;
+    instance_p->tx_buff_end = tx_buf + len;
+    instance_p->rx_buff = rx_buf;
+    instance_p->rx_buff_end = rx_buf + len;
+    FSPIM_DEBUG("tx buff@%p-%d, rx buff@%p-%d",
+                instance_p->tx_buff, len,
+                instance_p->rx_buff, len);
 
-	FSpimSetEnable(base_addr, TRUE);
-	
-	do
-	{
-		FSpimFifoTx(instance_p);
-		FSpimFifoRx(instance_p);
-	} while (instance_p->rx_buff_end > instance_p->rx_buff);
+    FSpimSetEnable(base_addr, TRUE);
 
-	return ret;
+    do
+    {
+        FSpimFifoTx(instance_p);
+        FSpimFifoRx(instance_p);
+    }
+    while (instance_p->rx_buff_end > instance_p->rx_buff);
+
+    return ret;
 }
 
 /**
  * @name: FSpimTransferByInterrupt
- * @msg: 先发送后接收数据 (中断处理)，利用Fifo进行处理 
+ * @msg: 先发送后接收数据 (中断处理)，利用Fifo进行处理
  * @return {FError} FSPIM_SUCCESS表示处理成功，其它返回值表示处理失败
  * @param {FSpim} *instance_p 驱动控制数据
  * @param {void} *tx_buf 写缓冲区
@@ -447,51 +448,51 @@ FError FSpimTransferPollFifo(FSpim *instance_p, const void *tx_buf, void *rx_buf
  */
 FError FSpimTransferByInterrupt(FSpim *instance_p, const void *tx_buf, void *rx_buf, fsize_t len)
 {
-	FASSERT(instance_p);
-	u32 reg_val;
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 data_width = instance_p->config.n_bytes;
-	u32 tx_level;
+    FASSERT(instance_p);
+    u32 reg_val;
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 data_width = instance_p->config.n_bytes;
+    u32 tx_level;
 
-	if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSPIM_ERROR("device is already initialized!!!");
-		return FSPIM_ERR_NOT_READY;
-	}
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FSPIM_ERROR("device is already initialized!!!");
+        return FSPIM_ERR_NOT_READY;
+    }
 
-	FSpimSetEnable(base_addr, FALSE);
+    FSpimSetEnable(base_addr, FALSE);
 
-	reg_val = FSpimGetCtrlR0(base_addr);
+    reg_val = FSpimGetCtrlR0(base_addr);
 
-	reg_val &= ~FSPIM_CTRL_R0_DFS_MASK;
-	reg_val |= FSPIM_CTRL_R0_DFS((data_width << 3) - 1);
+    reg_val &= ~FSPIM_CTRL_R0_DFS_MASK;
+    reg_val |= FSPIM_CTRL_R0_DFS((data_width << 3) - 1);
 
-	reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
-	if (tx_buf && rx_buf)
-		reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
+    if (tx_buf && rx_buf)
+        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
     else if (rx_buf)
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
     else
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
 
-	FSpimSetCtrlR0(base_addr, reg_val);
+    FSpimSetCtrlR0(base_addr, reg_val);
 
-	FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
+    FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
 
-	instance_p->length = len;
-	instance_p->tx_buff = tx_buf;
-	instance_p->tx_buff_end = instance_p->tx_buff + len;
-	instance_p->rx_buff = rx_buf;
-	instance_p->rx_buff_end = instance_p->rx_buff + len;
+    instance_p->length = len;
+    instance_p->tx_buff = tx_buf;
+    instance_p->tx_buff_end = instance_p->tx_buff + len;
+    instance_p->rx_buff = rx_buf;
+    instance_p->rx_buff_end = instance_p->rx_buff + len;
 
-	/* 设置中断触发的时机，fifo填满一半，或者所有的数据填完 */
-	tx_level = min(instance_p->tx_fifo_len / 2, instance_p->length / data_width);
-	FSpimSetTxFifoThreshold(base_addr, tx_level);
-	FSpimUmaskIrq(base_addr, FSPIM_IMR_TXEIS | FSPIM_IMR_TXOIS | FSPIM_IMR_RXUIS | FSPIM_IMR_RXOIS);
+    /* 设置中断触发的时机，fifo填满一半，或者所有的数据填完 */
+    tx_level = min(instance_p->tx_fifo_len / 2, instance_p->length / data_width);
+    FSpimSetTxFifoThreshold(base_addr, tx_level);
+    FSpimUmaskIrq(base_addr, FSPIM_IMR_TXEIS | FSPIM_IMR_TXOIS | FSPIM_IMR_RXUIS | FSPIM_IMR_RXOIS);
 
-	FSpimSetEnable(base_addr, TRUE);
+    FSpimSetEnable(base_addr, TRUE);
 
-	return FSPIM_SUCCESS;
+    return FSPIM_SUCCESS;
 }
 
 #ifdef FSPIM_VERSION_2 /* E2000 */
@@ -506,91 +507,91 @@ FError FSpimTransferByInterrupt(FSpim *instance_p, const void *tx_buf, void *rx_
  */
 FError FSpimTransferDMA(FSpim *instance_p, boolean tx, boolean rx)
 {
-	FASSERT(instance_p);
-	u32 reg_val;
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 data_width = instance_p->config.n_bytes;
+    FASSERT(instance_p);
+    u32 reg_val;
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 data_width = instance_p->config.n_bytes;
 
-	if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSPIM_ERROR("device is not yet initialized!!!");
-		return FSPIM_ERR_NOT_READY;
-	}
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FSPIM_ERROR("device is not yet initialized!!!");
+        return FSPIM_ERR_NOT_READY;
+    }
 
-	FSpimSetEnable(base_addr, FALSE);
+    FSpimSetEnable(base_addr, FALSE);
 
-	/* set up spim transfer mode */
-	reg_val = FSpimGetCtrlR0(base_addr);
-	reg_val &= ~FSPIM_CTRL_R0_DFS_MASK;
-	reg_val |= FSPIM_CTRL_R0_DFS((data_width << 3) - 1);
+    /* set up spim transfer mode */
+    reg_val = FSpimGetCtrlR0(base_addr);
+    reg_val &= ~FSPIM_CTRL_R0_DFS_MASK;
+    reg_val |= FSPIM_CTRL_R0_DFS((data_width << 3) - 1);
 
-	reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
-	if (tx && rx)
-		reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
+    if (tx && rx)
+        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
     else if (rx)
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
     else
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
 
-	FSpimSetCtrlR0(base_addr, reg_val);
+    FSpimSetCtrlR0(base_addr, reg_val);
 
-	FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS); /* mask all interrupts */
+    FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS); /* mask all interrupts */
 
-	FSpimSetEnable(base_addr, TRUE);
+    FSpimSetEnable(base_addr, TRUE);
 
-	/* enable DMA tx / rx */
-	reg_val = FSPIM_READ_REG32(base_addr, FSPIM_DMA_CR_OFFSET);
-	if (tx)
-		reg_val |= FSPIM_DMA_CR_TDMAE;
-	else
-		reg_val &= ~FSPIM_DMA_CR_TDMAE;
+    /* enable DMA tx / rx */
+    reg_val = FSPIM_READ_REG32(base_addr, FSPIM_DMA_CR_OFFSET);
+    if (tx)
+        reg_val |= FSPIM_DMA_CR_TDMAE;
+    else
+        reg_val &= ~FSPIM_DMA_CR_TDMAE;
 
-	if (rx)
-		reg_val |= FSPIM_DMA_CR_RDMAE;
-	else
-		reg_val &= ~FSPIM_DMA_CR_RDMAE;
-	FSPIM_WRITE_REG32(base_addr, FSPIM_DMA_CR_OFFSET, reg_val);
+    if (rx)
+        reg_val |= FSPIM_DMA_CR_RDMAE;
+    else
+        reg_val &= ~FSPIM_DMA_CR_RDMAE;
+    FSPIM_WRITE_REG32(base_addr, FSPIM_DMA_CR_OFFSET, reg_val);
 
-	FSpimSelSlaveDev(base_addr, instance_p->config.slave_dev_id);
+    FSpimSelSlaveDev(base_addr, instance_p->config.slave_dev_id);
 
-	return FSPIM_SUCCESS;
+    return FSPIM_SUCCESS;
 }
 
 /**
  * @name: FSpimSetChipSelection
- * @msg: 设置片选信号 
+ * @msg: 设置片选信号
  * @return {NONE}
  * @param {FSpim} *instance_p, 驱动控制数据
  * @param {boolean} on, TRUE: 片选打开, FALSE: 片选关闭
  */
 void FSpimSetChipSelection(FSpim *instance_p, boolean on)
 {
-	FASSERT(instance_p);
-	u32 reg_val;
-	FSpimSlaveDevice cs_n = instance_p->config.slave_dev_id;
-	uintptr base_addr = instance_p->config.base_addr;
-	if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSPIM_ERROR("device is not yet initialized!!!");
-		return;
-	}
+    FASSERT(instance_p);
+    u32 reg_val;
+    FSpimSlaveDevice cs_n = instance_p->config.slave_dev_id;
+    uintptr base_addr = instance_p->config.base_addr;
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FSPIM_ERROR("device is not yet initialized!!!");
+        return;
+    }
 
-	reg_val = FSPIM_READ_REG32(base_addr, FSPIM_CS_OFFSET);
+    reg_val = FSPIM_READ_REG32(base_addr, FSPIM_CS_OFFSET);
 
-	if (on)
-	{
-		reg_val |= FSPIM_CHIP_SEL_EN((u32)cs_n);
-		reg_val |= FSPIM_CHIP_SEL((u32)cs_n);
-	}
-	else
-	{
-		reg_val &= ~FSPIM_CHIP_SEL_EN((u32)cs_n);
-		reg_val &= ~FSPIM_CHIP_SEL((u32)cs_n);
-	}
+    if (on)
+    {
+        reg_val |= FSPIM_CHIP_SEL_EN((u32)cs_n);
+        reg_val |= FSPIM_CHIP_SEL((u32)cs_n);
+    }
+    else
+    {
+        reg_val &= ~FSPIM_CHIP_SEL_EN((u32)cs_n);
+        reg_val &= ~FSPIM_CHIP_SEL((u32)cs_n);
+    }
 
-	FSPIM_WRITE_REG32(base_addr, FSPIM_CS_OFFSET, reg_val);
+    FSPIM_WRITE_REG32(base_addr, FSPIM_CS_OFFSET, reg_val);
 
-	return;
+    return;
 }
 #endif
 
@@ -602,18 +603,18 @@ void FSpimSetChipSelection(FSpim *instance_p, boolean on)
  */
 const char *FSpimErrorToMessage(FError error)
 {
-	const char *msg = NULL;
-	if (FSPIM_SUCCESS != error && (FSPIM_ERR_CODE_PREFIX != error & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)) )
-	{
-		/* if input error do not belong to this module */
-		return msg;
-	}
-	u32 index = error & FT_ERRCODE_TAIL_VALUE_MASK;
+    const char *msg = NULL;
+    if (FSPIM_SUCCESS != error && (FSPIM_ERR_CODE_PREFIX != error & (FT_ERRCODE_SYS_MODULE_MASK | FT_ERRCODE_SUB_MODULE_MASK)))
+    {
+        /* if input error do not belong to this module */
+        return msg;
+    }
+    u32 index = error & FT_ERRCODE_TAIL_VALUE_MASK;
 
-	if (index < FSPIM_NUM_OF_ERR_CODE)
-	{
-		msg = FSPIM_ERROR_CODE_MSG[index];
-	}
+    if (index < FSPIM_NUM_OF_ERR_CODE)
+    {
+        msg = FSPIM_ERROR_CODE_MSG[index];
+    }
 
-	return msg;
+    return msg;
 }

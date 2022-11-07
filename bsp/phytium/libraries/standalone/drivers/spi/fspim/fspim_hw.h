@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fspim_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:05
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3	init commit
+ * 1.0   zhugengyu  2021-12-3   init commit
  * 1.1   zhugengyu  2022-4-15   support test mode
  * 1.2   zhugengyu  2022-5-13   support spi dma
  */
@@ -71,7 +71,7 @@ extern "C"
 #define FSPIM_IDR_OFFSET 0x58           /* Identification register */
 #define FSPIM_DR_OFFSET 0x60            /* Data register */
 #define FSPIM_RX_SAMPLE_DLY_OFFSET 0xfc /* RX Data delay register */
-#define FSPIM_CS_OFFSET 0x100           /* Chip selection register */           
+#define FSPIM_CS_OFFSET 0x100           /* Chip selection register */
 
 /** @name FSPIM_CTRL_R0_OFFSET Register
  */
@@ -93,7 +93,7 @@ enum
     FSPIM_SCPOL_INACTIVE_LOW = 0,
     FSPIM_SCPOL_INACTIVE_HIGH = 1
 };
-#define FSPIM_CTRL_R0_TMOD_MASK      GENMASK(9, 8)     
+#define FSPIM_CTRL_R0_TMOD_MASK      GENMASK(9, 8)
 #define FSPIM_CTRL_R0_TMOD(x)        (FSPIM_CTRL_R0_TMOD_MASK & ((x) << 8)) /* 传输模式控制位 */
 #define FSPIM_CTRL_R0_TMOD_SHIFT     8
 enum
@@ -121,8 +121,8 @@ enum
 /** @name FSPIM_CTRL_R1_OFFSET Register
  */
 /* FSPIM_TMOD_RX_ONLY 或 FSPIM_TMOD_RD_EEPROM 该字段设置为 SPI 连续接收的数据量 */
-#define FSPIM_CTRL_R1_NDF(x)         (GENMASK(15, 0) & ((x) << 0)) 
-#define FSPIM_CTRL_R1_NDF_64KB       0b11      
+#define FSPIM_CTRL_R1_NDF(x)         (GENMASK(15, 0) & ((x) << 0))
+#define FSPIM_CTRL_R1_NDF_64KB       0b11
 
 /** @name FSPIM_SSIENR_OFFSET Register
  */
@@ -167,7 +167,7 @@ enum
 #define FSPIM_BAUD_R_SCKDV(x)        (GENMASK(15, 0) & ((x) << 0)) /* SCKDV 为 2 ~ 65534 之间的任何偶数值 */
 #define FSPIM_BAUD_R_SCKDV_MIN       2
 #define FSPIM_BAUD_R_SCKDV_MAX       65534
-#define FSPIM_BAUD_R_SCKDV_IS_VALID(x)  (0 == (x) % 2)  
+#define FSPIM_BAUD_R_SCKDV_IS_VALID(x)  (0 == (x) % 2)
 
 /** @name FSPIM_TXFTL_R_OFFSET Register
  */
@@ -496,7 +496,7 @@ static inline void FSpimUmaskIrq(uintptr base_addr, u32 mask)
 {
     u32 curr_mask;
     curr_mask = FSPIM_READ_REG32(base_addr, FSPIM_IMR_OFFSET) | mask; /* = 1 中断活动 */
-    FSPIM_WRITE_REG32(base_addr, FSPIM_IMR_OFFSET, curr_mask);    
+    FSPIM_WRITE_REG32(base_addr, FSPIM_IMR_OFFSET, curr_mask);
 }
 
 

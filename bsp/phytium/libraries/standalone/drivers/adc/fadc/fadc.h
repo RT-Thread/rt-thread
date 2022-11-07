@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fadc.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:10
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -36,7 +36,7 @@ extern "C"
 #include "fparameters.h"
 
 
-#define FADC_SUCCESS                FT_SUCCESS  
+#define FADC_SUCCESS                FT_SUCCESS
 #define FADC_ERR_INVAL_PARM         FT_MAKE_ERRCODE(ErrModBsp, ErrBspAdc, 1)
 #define FADC_ERR_NOT_READY          FT_MAKE_ERRCODE(ErrModBsp, ErrBspAdc, 2)
 #define FADC_ERR_TIMEOUT            FT_MAKE_ERRCODE(ErrModBsp, ErrBspAdc, 3)
@@ -67,9 +67,9 @@ typedef enum
 {
     FADC_CONTINUOUS_CONVERT = 0,/* continuous conversion*/
     FADC_SINGLE_CONVERT = 1,    /* single conversion*/
-    
+
     FADC_CONVERT_MODE_NUM
-    
+
 } FAdcConvertMode;
 
 /* adc channel mode */
@@ -77,7 +77,7 @@ typedef enum
 {
     FADC_MULTI_CHANNEL = 0, /* multi channel conversion*/
     FADC_FIXED_CHANNEL = 1, /* fixed channel conversion*/
-    
+
     FADC_CHANNEL_MODE_NUM
 } FAdcChannelMode;
 
@@ -90,7 +90,7 @@ typedef struct
     u32 irq_prority;/* adc interrupt priority*/
     const char *instance_name;/* instance name */
 
-} FAdcConfig; 
+} FAdcConfig;
 
 typedef struct
 {
@@ -106,7 +106,7 @@ typedef struct
 {
     u16 high_threshold; /*!< Configures the ADC analog high threshold value.
                                            This parameter must be a 10-bit value. */
-    u16 low_threshold;  /*!< Configures the ADC analog low threshold value. 
+    u16 low_threshold;  /*!< Configures the ADC analog low threshold value.
                                             This parameter must be a 10-bit value. */
 } FAdcThresholdConfig;
 
@@ -121,8 +121,8 @@ typedef struct
     boolean convert_complete[FADC_CHANNEL_NUM]; /*!< Specifies whether the conversion is complete> */
     FAdcIntrEventHandler event_handler[FADC_INTR_EVENT_NUM];  /* event handler for interrupt */
     void *event_param[FADC_INTR_EVENT_NUM];   /* parameters of event handler */
-  
-}FAdcCtrl;
+
+} FAdcCtrl;
 
 /* get default configuration of specific adc id */
 const FAdcConfig *FAdcLookupConfig(FAdcInstance instance_id);
@@ -169,8 +169,8 @@ FError FAdcReadHisLimit(FAdcCtrl *pctrl, FAdcChannel channel, u16 *u_his_limit, 
 void FAdcIntrHandler(s32 vector, void *args);
 
 /* register FAdc interrupt handler function */
-void FAdcRegisterInterruptHandler(FAdcCtrl *instance_p, FAdcIntrEventType event_type, 
-                                    FAdcIntrEventHandler handler, void *param);
+void FAdcRegisterInterruptHandler(FAdcCtrl *instance_p, FAdcIntrEventType event_type,
+                                  FAdcIntrEventHandler handler, void *param);
 
 #ifdef __cplusplus
 }

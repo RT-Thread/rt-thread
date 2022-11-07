@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpl011.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:07:38
  * Description:  This files is for uart functions
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -60,8 +60,8 @@ extern "C"
 #define FPL011_OPTION_RXDMAEN 0x400U
 
 /* Channel Operational Mode */
-#define FPL011_OPER_MODE_NORMAL  	(u8)0x00U       /* Normal Mode */
-#define FPL011_OPER_MODE_LOCAL_LOOP	(u8)0x01U   /* Local Loop back Mode */
+#define FPL011_OPER_MODE_NORMAL     (u8)0x00U       /* Normal Mode */
+#define FPL011_OPER_MODE_LOCAL_LOOP (u8)0x01U   /* Local Loop back Mode */
 
 
 /* Data format values */
@@ -70,17 +70,17 @@ extern "C"
 #define FPL011_FORMAT_WORDLENGTH_6BIT 0x1
 #define FPL011_FORMAT_WORDLENGTH_5BIT 0x0
 
-#define FPL011_FORMAT_NO_PARITY  	0U	/* No parity */
-#define FPL011_FORMAT_EN_PARITY	    1U	/* Enable parity */
-#define FPL011_FORMAT_EVEN_PARITY	2U	/* Even parity */
-#define FPL011_FORMAT_ODD_PARITY 	0U	/* Odd parity */
-#define FPL011_FORMAT_EN_STICK_PARITY	4U	/* Stick parity */
-#define FPL011_FORMAT_NO_STICK_PARITY	0U	/* Stick parity */
+#define FPL011_FORMAT_NO_PARITY     0U  /* No parity */
+#define FPL011_FORMAT_EN_PARITY     1U  /* Enable parity */
+#define FPL011_FORMAT_EVEN_PARITY   2U  /* Even parity */
+#define FPL011_FORMAT_ODD_PARITY    0U  /* Odd parity */
+#define FPL011_FORMAT_EN_STICK_PARITY   4U  /* Stick parity */
+#define FPL011_FORMAT_NO_STICK_PARITY   0U  /* Stick parity */
 
-#define FPL011_FORMAT_PARITY_MASK	7U	/* Format parity mask */
+#define FPL011_FORMAT_PARITY_MASK   7U  /* Format parity mask */
 
-#define FPL011_FORMAT_EVEN_PARITY_SHIFT	1U /* Even parity shift */
-#define FPL011_FORMAT_EN_STICK_PARITY_SHIFT	5U /* Stick parity shift */
+#define FPL011_FORMAT_EVEN_PARITY_SHIFT 1U /* Even parity shift */
+#define FPL011_FORMAT_EN_STICK_PARITY_SHIFT 5U /* Stick parity shift */
 
 #define FPL011_FORMAT_2_STOP_BIT 1U
 #define FPL011_FORMAT_1_STOP_BIT 0U
@@ -133,7 +133,7 @@ typedef struct
 {
     FPl011Config config; /* Configuration data structure  */
     u32 is_ready;       /* Device is ininitialized and ready*/
-    
+
     FPl011Buffer send_buffer;
     FPl011Buffer receive_buffer;
 
@@ -162,8 +162,8 @@ void FPl011SetOptions(FPl011 *uart_p, u32 options);
 void FPl011SetSpecificOptions(FPl011 *uart_p, u32 options);
 void FPl011ClearSpecificOptions(FPl011 *uart_p, u32 options);
 FError FPl011SetBaudRate(FPl011 *uart_p, u32 baudrate) ;
-void FPl011GetDataFormat(FPl011 *uart_p,FPl011Format *format_p) ;
-FError FPl011SetDataFormat(FPl011 *uart_p,FPl011Format *format_p) ;
+void FPl011GetDataFormat(FPl011 *uart_p, FPl011Format *format_p) ;
+FError FPl011SetDataFormat(FPl011 *uart_p, FPl011Format *format_p) ;
 void FPl011SetTxFifoThreadHold(FPl011 *uart_p, u8 trigger_level) ;
 void FPl011SetRxFifoThreadhold(FPl011 *uart_p, u8 trigger_level) ;
 

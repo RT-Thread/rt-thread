@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsdio.c
  * Date: 2022-05-26 16:27:54
  * LastEditTime: 2022-05-26 16:27:54
  * Description:  This files is for SDIO user function implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2021/12/2    init
@@ -62,22 +62,22 @@ static FError FSdioUpdateExternalClk(uintptr base_addr, u32 uhs_reg_val);
  */
 FError FSdioCfgInitialize(FSdio *const instance_p, const FSdioConfig *input_config_p)
 {
-	FASSERT(instance_p && input_config_p);
-	FError ret = FSDIO_SUCCESS;
+    FASSERT(instance_p && input_config_p);
+    FError ret = FSDIO_SUCCESS;
 
-	if (FT_COMPONENT_IS_READY == instance_p->is_ready)
-	{
-		FSDIO_WARN("device is already initialized!!!");
-	}
+    if (FT_COMPONENT_IS_READY == instance_p->is_ready)
+    {
+        FSDIO_WARN("device is already initialized!!!");
+    }
 
     if (&instance_p->config != input_config_p)
-	    instance_p->config = *input_config_p;
+        instance_p->config = *input_config_p;
 
     ret = FSdioReset(instance_p); /* reset the device */
 
-	if (FSDIO_SUCCESS == ret)
-	{
-		instance_p->is_ready = FT_COMPONENT_IS_READY;
+    if (FSDIO_SUCCESS == ret)
+    {
+        instance_p->is_ready = FT_COMPONENT_IS_READY;
         FSDIO_INFO("device initialize success !!!");
     }
 
@@ -92,7 +92,7 @@ FError FSdioCfgInitialize(FSdio *const instance_p, const FSdioConfig *input_conf
  */
 void FSdioDeInitialize(FSdio *const instance_p)
 {
-	FASSERT(instance_p);
+    FASSERT(instance_p);
     uintptr base_addr = instance_p->config.base_addr;
 
     FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR, FSDIO_INT_ALL_BITS, FALSE); /* 关闭控制器中断位 */
@@ -118,8 +118,8 @@ void FSdioDeInitialize(FSdio *const instance_p)
  */
 FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
     u32 reg_val;
     u32 div = 0xff, drv = 0, sample = 0;
     u32 first_uhs_div, tmp_ext_reg, div_reg;
@@ -161,16 +161,16 @@ FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
     /* experimental clk divide setting -- 1st stage clock */
     first_uhs_div = 1 + FSDIO_UHS_CLK_DIV_GET(tmp_ext_reg);
     div = FSDIO_CLK_RATE_HZ / (2 * first_uhs_div * input_clk_hz);
-    if (div > 2) 
+    if (div > 2)
     {
         sample = div / 2 + 1;
-        drv = sample - 1;       
-    } 
-    else if (div == 2) 
+        drv = sample - 1;
+    }
+    else if (div == 2)
     {
         drv = 0;
         sample = 1;
-    }    
+    }
 
     div_reg = FSDIO_CLK_DIV(sample, drv, div);
     FSDIO_WRITE_REG(base_addr, FSDIO_CLKDIV_OFFSET, div_reg);
@@ -178,7 +178,7 @@ FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
     FSDIO_INFO("UHS_REG_EXT: %x, CLKDIV: %x",
                FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET),
                FSDIO_READ_REG(base_addr, FSDIO_CLKDIV_OFFSET));
-   
+
     FSDIO_INFO("UHS_REG_EXT ext: 0x%x, CLKDIV: 0x%x",
                FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET),
                FSDIO_READ_REG(base_addr, FSDIO_CLKDIV_OFFSET));
@@ -208,8 +208,9 @@ static FError FSdioWaitClkReady(uintptr base_addr, int retries)
     do
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_GPIO_OFFSET);
-    } while (!(reg_val & FSDIO_CLK_READY) && (retries-- > 0));
-    
+    }
+    while (!(reg_val & FSDIO_CLK_READY) && (retries-- > 0));
+
     if (!(reg_val & FSDIO_CLK_READY) && (retries <= 0))
     {
         FSDIO_ERROR("wait clk ready timeout !!! status: 0x%x",
@@ -230,16 +231,17 @@ static FError FSdioWaitClkReady(uintptr base_addr, int retries)
 static FError FSdioUpdateExternalClk(uintptr base_addr, u32 uhs_reg_val)
 {
     u32 reg_val;
-	int retries = FSDIO_TIMEOUT;
-	FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET, 0U);
-	FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET, uhs_reg_val);
+    int retries = FSDIO_TIMEOUT;
+    FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET, 0U);
+    FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET, uhs_reg_val);
 
     do
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_GPIO_OFFSET);
-		if (--retries <= 0)
-			break;
-    } while (!(reg_val & FSDIO_CLK_READY));
+        if (--retries <= 0)
+            break;
+    }
+    while (!(reg_val & FSDIO_CLK_READY));
 
     return (retries <= 0) ? FSDIO_ERR_TIMEOUT : FSDIO_SUCCESS;
 }
@@ -253,21 +255,22 @@ static FError FSdioUpdateExternalClk(uintptr base_addr, u32 uhs_reg_val)
  */
 FError FSdioResetCtrl(uintptr base_addr, u32 reset_bits)
 {
-	u32 reg_val;
-	int retries = FSDIO_TIMEOUT;
-	FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, reset_bits);
+    u32 reg_val;
+    int retries = FSDIO_TIMEOUT;
+    FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, reset_bits);
 
-	do
-	{
-		reg_val = FSDIO_READ_REG(base_addr, FSDIO_CNTRL_OFFSET);
-		if (--retries <= 0)
-			break;
-	} while (reset_bits & reg_val);
+    do
+    {
+        reg_val = FSDIO_READ_REG(base_addr, FSDIO_CNTRL_OFFSET);
+        if (--retries <= 0)
+            break;
+    }
+    while (reset_bits & reg_val);
 
-	if (retries <= 0)
-		return FSDIO_ERR_TIMEOUT;
+    if (retries <= 0)
+        return FSDIO_ERR_TIMEOUT;
 
-	return FSDIO_SUCCESS;
+    return FSDIO_SUCCESS;
 }
 
 /**
@@ -288,7 +291,8 @@ FError FSdioResetBusyCard(uintptr base_addr)
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
         if (--retries <= 0)
             break;
-    } while (reg_val & FSDIO_STATUS_DATA_BUSY);
+    }
+    while (reg_val & FSDIO_STATUS_DATA_BUSY);
 
     return (retries <= 0) ? FSDIO_ERR_BUSY : FSDIO_SUCCESS;
 }
@@ -312,7 +316,8 @@ FError FSdioRestartClk(uintptr base_addr)
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_CMD_OFFSET);
         if (--retries <= 0)
             break;
-    } while (reg_val & FSDIO_CMD_START);
+    }
+    while (reg_val & FSDIO_CMD_START);
 
     if (retries <= 0)
         return FSDIO_ERR_TIMEOUT;
@@ -344,21 +349,21 @@ FError FSdioRestartClk(uintptr base_addr)
  */
 static FError FSdioReset(FSdio *const instance_p)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 reg_val;
-	FError ret = FSDIO_SUCCESS;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val;
+    FError ret = FSDIO_SUCCESS;
 
     /* set creg_nand_mmcsd DMA path */
     FSDIO_INFO("Prev LSD CFG: 0x%x", FtIn32(FLSD_CONFIG_BASE + FLSD_NAND_MMCSD_HADDR));
     FtOut32(FLSD_CONFIG_BASE + FLSD_NAND_MMCSD_HADDR, 0x0U);
     FSDIO_INFO("Curr LSD CFG: 0x%x", FtIn32(FLSD_CONFIG_BASE + FLSD_NAND_MMCSD_HADDR));
 
-	/* set fifo */
+    /* set fifo */
     reg_val = FSDIO_FIFOTH(FSDIO_FIFOTH_DMA_TRANS_8, FSDIO_RX_WMARK, FSDIO_TX_WMARK);
     FSDIO_WRITE_REG(base_addr, FSDIO_FIFOTH_OFFSET, reg_val);
 
-	/* set card threshold */
+    /* set card threshold */
     reg_val = FSDIO_CARD_THRCTL_THRESHOLD(FSDIO_FIFO_DEPTH_8) | FSDIO_CARD_THRCTL_CARDRD;
     FSDIO_WRITE_REG(base_addr, FSDIO_CARD_THRCTL_OFFSET, reg_val);
 
@@ -369,63 +374,63 @@ static FError FSdioReset(FSdio *const instance_p)
     reg_val = FSDIO_UHS_REG(0U, 0U, 0x5U) | FSDIO_UHS_EXT_CLK_ENA;
     FASSERT_MSG(0x502 == reg_val, "invalid uhs config");
     ret = FSdioUpdateExternalClk(base_addr, reg_val);
-	if (FSDIO_SUCCESS != ret)
+    if (FSDIO_SUCCESS != ret)
     {
         FSDIO_ERROR("update extern clock failed !!!");
-		return ret;
+        return ret;
     }
 
     /* power on */
-	FSdioSetPower(base_addr, TRUE);
-	FSdioSetClock(base_addr, TRUE);
+    FSdioSetPower(base_addr, TRUE);
+    FSdioSetClock(base_addr, TRUE);
     FSdioSetExtClock(base_addr, TRUE);
 
-	/* set voltage as 3.3v */
+    /* set voltage as 3.3v */
     if (FSDIO_SD_1_8V_VOLTAGE == instance_p->config.voltage)
         FSdioSetVoltage1_8V(base_addr, TRUE);
     else
         FSdioSetVoltage1_8V(base_addr, FALSE);
 
-	/* reset controller and card */
-	ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
-	if (FSDIO_SUCCESS != ret)
+    /* reset controller and card */
+    ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
+    if (FSDIO_SUCCESS != ret)
     {
         FSDIO_ERROR("reset controller failed !!!");
-		return ret;
+        return ret;
     }
 
     /* send private command to update clock */
     ret = FSdioSendPrivateCmd(base_addr, FSDIO_CMD_UPD_CLK, 0U);
-	if (FSDIO_SUCCESS != ret)
+    if (FSDIO_SUCCESS != ret)
     {
         FSDIO_ERROR("update clock failed !!!");
-		return ret;
+        return ret;
     }
 
     /* reset card for no-removeable media, e.g. eMMC */
     if (TRUE == instance_p->config.non_removable)
-		FSDIO_SET_BIT(base_addr, FSDIO_CARD_RESET_OFFSET, FSDIO_CARD_RESET_ENABLE);
-	else
-		FSDIO_CLR_BIT(base_addr, FSDIO_CARD_RESET_OFFSET, FSDIO_CARD_RESET_ENABLE);
+        FSDIO_SET_BIT(base_addr, FSDIO_CARD_RESET_OFFSET, FSDIO_CARD_RESET_ENABLE);
+    else
+        FSDIO_CLR_BIT(base_addr, FSDIO_CARD_RESET_OFFSET, FSDIO_CARD_RESET_ENABLE);
 
-	/* clear interrupt status */
-	FSDIO_WRITE_REG(base_addr, FSDIO_INT_MASK_OFFSET, 0U);
-	reg_val = FSDIO_READ_REG(base_addr, FSDIO_RAW_INTS_OFFSET);
-	FSDIO_WRITE_REG(base_addr, FSDIO_RAW_INTS_OFFSET, reg_val);
+    /* clear interrupt status */
+    FSDIO_WRITE_REG(base_addr, FSDIO_INT_MASK_OFFSET, 0U);
+    reg_val = FSDIO_READ_REG(base_addr, FSDIO_RAW_INTS_OFFSET);
+    FSDIO_WRITE_REG(base_addr, FSDIO_RAW_INTS_OFFSET, reg_val);
 
-	FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_INT_EN_OFFSET, 0U);
-	reg_val = FSDIO_READ_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET);
-	FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET, reg_val);        
+    FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_INT_EN_OFFSET, 0U);
+    reg_val = FSDIO_READ_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET);
+    FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET, reg_val);
 
-	/* enable card detect interrupt */
-	if (FALSE == instance_p->config.non_removable)
-		FSDIO_SET_BIT(base_addr, FSDIO_INT_MASK_OFFSET, FSDIO_INT_CD_BIT);
+    /* enable card detect interrupt */
+    if (FALSE == instance_p->config.non_removable)
+        FSDIO_SET_BIT(base_addr, FSDIO_INT_MASK_OFFSET, FSDIO_INT_CD_BIT);
 
-	/* enable controller and internal DMA */
-	FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_INT_ENABLE | FSDIO_CNTRL_USE_INTERNAL_DMAC);
+    /* enable controller and internal DMA */
+    FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_INT_ENABLE | FSDIO_CNTRL_USE_INTERNAL_DMAC);
 
     /* set data and resp timeout */
-    FSDIO_WRITE_REG(base_addr, FSDIO_TMOUT_OFFSET, 
+    FSDIO_WRITE_REG(base_addr, FSDIO_TMOUT_OFFSET,
                     FSDIO_TIMEOUT_DATA(FSDIO_MAX_DATA_TIMEOUT, FSDIO_MAX_RESP_TIMEOUT));
 
     /* reset descriptors and dma */
@@ -444,31 +449,31 @@ static FError FSdioReset(FSdio *const instance_p)
  */
 FError FSdioRestart(FSdio *const instance_p)
 {
-	FASSERT(instance_p);
-	uintptr base_addr = instance_p->config.base_addr;
-	u32 reg_val;
-	FError ret = FSDIO_SUCCESS;
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val;
+    FError ret = FSDIO_SUCCESS;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FSDIO_ERROR("device is not yet initialized!!!");
+    {
+        FSDIO_ERROR("device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
-	/* reset controller */
-	ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET);
-	if (FSDIO_SUCCESS != ret)
-		return ret;
+    /* reset controller */
+    ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET);
+    if (FSDIO_SUCCESS != ret)
+        return ret;
 
     /* reset controller if in busy state */
     ret = FSdioResetBusyCard(base_addr);
-	if (FSDIO_SUCCESS != ret)
-		return ret;
+    if (FSDIO_SUCCESS != ret)
+        return ret;
 
     /* reset clock */
     ret = FSdioRestartClk(base_addr);
-	if (FSDIO_SUCCESS != ret)
-		return ret;
+    if (FSDIO_SUCCESS != ret)
+        return ret;
 
     /* reset internal DMA */
     FSdioResetIDMA(base_addr);

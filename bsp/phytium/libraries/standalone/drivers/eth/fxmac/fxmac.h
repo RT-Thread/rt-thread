@@ -46,76 +46,76 @@ extern "C"
 #define FXMAC_PHY_AUTO_AUTONEGOTIATION_FAILED FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 0x8u)
 #define FXMAC_ERR_MAC_IS_PROCESSING FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 0x9u)
 
-    /** @name Configuration options
-     *
-     * Device configuration options. See the FXMAC_SetOptions(),
-     * FXMACClearOptions() and FXMAC_GetOptions() for information on how to
-     * use options.
-     *
-     * The default state of the options are noted and are what the device and
-     * driver will be set to after calling FXMAC_Reset() or
-     * FXMAC_Initialize().
-     *
-     * @{
-     */
+/** @name Configuration options
+ *
+ * Device configuration options. See the FXMAC_SetOptions(),
+ * FXMACClearOptions() and FXMAC_GetOptions() for information on how to
+ * use options.
+ *
+ * The default state of the options are noted and are what the device and
+ * driver will be set to after calling FXMAC_Reset() or
+ * FXMAC_Initialize().
+ *
+ * @{
+ */
 
 #define FXMAC_PROMISC_OPTION 0x00000001U
-    /* Accept all incoming packets.
-     *   This option defaults to disabled (cleared) */
+/* Accept all incoming packets.
+ *   This option defaults to disabled (cleared) */
 
 #define FXMAC_FRAME1536_OPTION 0x00000002U
-    /* Frame larger than 1516 support for Tx & Rx.x
-     *   This option defaults to disabled (cleared) */
+/* Frame larger than 1516 support for Tx & Rx.x
+ *   This option defaults to disabled (cleared) */
 
 #define FXMAC_VLAN_OPTION 0x00000004U
-    /* VLAN Rx & Tx frame support.
-     *   This option defaults to disabled (cleared) */
+/* VLAN Rx & Tx frame support.
+ *   This option defaults to disabled (cleared) */
 
 #define FXMAC_FLOW_CONTROL_OPTION 0x00000010U
-    /* Enable recognition of flow control frames on Rx
-     *   This option defaults to enabled (set) */
+/* Enable recognition of flow control frames on Rx
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_FCS_STRIP_OPTION 0x00000020U
-    /* Strip FCS and PAD from incoming frames. Note: PAD from VLAN frames is not
-     *   stripped.
-     *   This option defaults to enabled (set) */
+/* Strip FCS and PAD from incoming frames. Note: PAD from VLAN frames is not
+ *   stripped.
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_FCS_INSERT_OPTION 0x00000040U
-    /* Generate FCS field and add PAD automatically for outgoing frames.
-     *   This option defaults to disabled (cleared) */
+/* Generate FCS field and add PAD automatically for outgoing frames.
+ *   This option defaults to disabled (cleared) */
 
 #define FXMAC_LENTYPE_ERR_OPTION 0x00000080U
-    /* Enable Length/Type error checking for incoming frames. When this option is
-     *   set, the MAC will filter frames that have a mismatched type/length field
-     *   and if FXMAC_REPORT_RXERR_OPTION is set, the user is notified when these
-     *   types of frames are encountered. When this option is cleared, the MAC will
-     *   allow these types of frames to be received.
-     *
-     *   This option defaults to disabled (cleared) */
+/* Enable Length/Type error checking for incoming frames. When this option is
+ *   set, the MAC will filter frames that have a mismatched type/length field
+ *   and if FXMAC_REPORT_RXERR_OPTION is set, the user is notified when these
+ *   types of frames are encountered. When this option is cleared, the MAC will
+ *   allow these types of frames to be received.
+ *
+ *   This option defaults to disabled (cleared) */
 
 #define FXMAC_TRANSMITTER_ENABLE_OPTION 0x00000100U
-    /* Enable the transmitter.
-     *   This option defaults to enabled (set) */
+/* Enable the transmitter.
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_RECEIVER_ENABLE_OPTION 0x00000200U
-    /* Enable the receiver
-     *   This option defaults to enabled (set) */
+/* Enable the receiver
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_BROADCAST_OPTION 0x00000400U
-    /* Allow reception of the broadcast address
-     *   This option defaults to enabled (set) */
+/* Allow reception of the broadcast address
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_MULTICAST_OPTION 0x00000800U
-    /* Allows reception of multicast addresses programmed into hash
-     *   This option defaults to disabled (clear) */
+/* Allows reception of multicast addresses programmed into hash
+ *   This option defaults to disabled (clear) */
 
 #define FXMAC_RX_CHKSUM_ENABLE_OPTION 0x00001000U
-    /* Enable the RX checksum offload
-     *   This option defaults to enabled (set) */
+/* Enable the RX checksum offload
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_TX_CHKSUM_ENABLE_OPTION 0x00002000U
-    /* Enable the TX checksum offload
-     *   This option defaults to enabled (set) */
+/* Enable the TX checksum offload
+ *   This option defaults to enabled (set) */
 
 #define FXMAC_JUMBO_ENABLE_OPTION 0x00004000U
 #define FXMAC_SGMII_ENABLE_OPTION 0x00008000U
@@ -137,12 +137,12 @@ extern "C"
      (u32)FXMAC_RX_CHKSUM_ENABLE_OPTION |   \
      (u32)FXMAC_TX_CHKSUM_ENABLE_OPTION)
 
-    typedef enum
-    {
-        FXMAC_LINKDOWN = 0,
-        FXMAC_LINKUP = 1,
-        FXMAC_NEGOTIATING = 2
-    } FXmacLinkStatus;
+typedef enum
+{
+    FXMAC_LINKDOWN = 0,
+    FXMAC_LINKUP = 1,
+    FXMAC_NEGOTIATING = 2
+} FXmacLinkStatus;
 
 /* The next few constants help upper layers determine the size of memory
  * pools used for Ethernet buffers and descriptor lists.
@@ -216,114 +216,114 @@ extern "C"
                                       FXMAC_NWCTRL_OFFSET) |             \
                       FXMAC_NWCTRL_STARTTX_MASK))
 
-    typedef void (*FXmacIrqHandler)(void *args);
-    typedef void (*FXmacErrorIrqHandler)(void *args, u32 direction, u32 error_word);
-    /* Interface Mode definitions */
-    typedef enum
-    {
-        FXMAC_PHY_INTERFACE_MODE_SGMII,
-        FXMAC_PHY_INTERFACE_MODE_RMII,
-        FXMAC_PHY_INTERFACE_MODE_RGMII,
-        FXMAC_PHY_INTERFACE_MODE_XGMII,
-        FXMAC_PHY_INTERFACE_MODE_USXGMII,
-    } FXmacPhyInterface;
+typedef void (*FXmacIrqHandler)(void *args);
+typedef void (*FXmacErrorIrqHandler)(void *args, u32 direction, u32 error_word);
+/* Interface Mode definitions */
+typedef enum
+{
+    FXMAC_PHY_INTERFACE_MODE_SGMII,
+    FXMAC_PHY_INTERFACE_MODE_RMII,
+    FXMAC_PHY_INTERFACE_MODE_RGMII,
+    FXMAC_PHY_INTERFACE_MODE_XGMII,
+    FXMAC_PHY_INTERFACE_MODE_USXGMII,
+} FXmacPhyInterface;
 
-    typedef struct
-    {
-        u32 instance_id; /* Id of device*/
-        volatile uintptr_t base_address;
-        volatile uintptr_t extral_mode_base;
-        volatile uintptr_t extral_loopback_base;
-        FXmacPhyInterface interface;
-        u32 speed;    /* FXMAC_SPEED_XXX */
-        u32 duplex;   /* 1 is full-duplex , 0 is half-duplex */
-        u32 auto_neg; /* Enable auto-negotiation - when set active high, autonegotiation operation is enabled. */
-        u32 pclk_hz;
-        u32 max_queue_num; /* Number of Xmac Controller Queues  */
-        u32 tx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
-        u32 rx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
-        u32 hotplug_irq_num;
-        u32 dma_brust_length; /*  burst length */
-        u32 network_default_config;
-        u32 queue_irq_num[FT_XMAC_QUEUE_MAX_NUM]; /* mac0 8个 ，其他的 4个 */
-    } FXmacConfig;
+typedef struct
+{
+    u32 instance_id; /* Id of device*/
+    volatile uintptr_t base_address;
+    volatile uintptr_t extral_mode_base;
+    volatile uintptr_t extral_loopback_base;
+    FXmacPhyInterface interface;
+    u32 speed;    /* FXMAC_SPEED_XXX */
+    u32 duplex;   /* 1 is full-duplex , 0 is half-duplex */
+    u32 auto_neg; /* Enable auto-negotiation - when set active high, autonegotiation operation is enabled. */
+    u32 pclk_hz;
+    u32 max_queue_num; /* Number of Xmac Controller Queues  */
+    u32 tx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
+    u32 rx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
+    u32 hotplug_irq_num;
+    u32 dma_brust_length; /*  burst length */
+    u32 network_default_config;
+    u32 queue_irq_num[FT_XMAC_QUEUE_MAX_NUM]; /* mac0 8个 ，其他的 4个 */
+} FXmacConfig;
 
-    typedef struct
-    {
-        u32 queue_id;
-        FXmacBdRing bdring;
-    } FXmacQueue;
+typedef struct
+{
+    u32 queue_id;
+    FXmacBdRing bdring;
+} FXmacQueue;
 
-    typedef struct
-    {
-        FXmacConfig config;
-        u32 is_ready; /* Device is ininitialized and ready*/
-        u32 is_started;
-        u32 link_status; /* indicates link status ,FXMAC_LINKUP is link up ,FXMAC_LINKDOWN is link down,FXMAC_NEGOTIATING is need to negotiating*/
-        u32 options;
+typedef struct
+{
+    FXmacConfig config;
+    u32 is_ready; /* Device is ininitialized and ready*/
+    u32 is_started;
+    u32 link_status; /* indicates link status ,FXMAC_LINKUP is link up ,FXMAC_LINKDOWN is link down,FXMAC_NEGOTIATING is need to negotiating*/
+    u32 options;
 
-        FXmacQueue tx_bd_queue; /* Transmit Queue */
-        FXmacQueue rx_bd_queue; /* Receive Queue */
+    FXmacQueue tx_bd_queue; /* Transmit Queue */
+    FXmacQueue rx_bd_queue; /* Receive Queue */
 
-        FXmacIrqHandler send_irq_handler;
-        void *send_args;
+    FXmacIrqHandler send_irq_handler;
+    void *send_args;
 
-        FXmacIrqHandler recv_irq_handler;
-        void *recv_args;
+    FXmacIrqHandler recv_irq_handler;
+    void *recv_args;
 
-        FXmacErrorIrqHandler error_irq_handler;
-        void *error_args;
+    FXmacErrorIrqHandler error_irq_handler;
+    void *error_args;
 
-        FXmacIrqHandler link_change_handler;
-        void *link_change_args;
+    FXmacIrqHandler link_change_handler;
+    void *link_change_args;
 
-        FXmacIrqHandler restart_handler;
-        void *restart_args;
+    FXmacIrqHandler restart_handler;
+    void *restart_args;
 
-        u32 moudle_id; /* Module identification number */
-        u32 max_mtu_size;
-        u32 max_frame_size;
+    u32 moudle_id; /* Module identification number */
+    u32 max_mtu_size;
+    u32 max_frame_size;
 
-        u32 phy_address;   /* phy address */
-        u32 rxbuf_mask;    /* 1000,100,10 */
+    u32 phy_address;   /* phy address */
+    u32 rxbuf_mask;    /* 1000,100,10 */
 
-    } FXmac;
+} FXmac;
 
-    /* fxmac_sinit.c */
-    const FXmacConfig *FXmacLookupConfig(u32 instance_id);
+/* fxmac_sinit.c */
+const FXmacConfig *FXmacLookupConfig(u32 instance_id);
 
-    /* fgmac.c */
-    FError FXmacCfgInitialize(FXmac *instance_p, const FXmacConfig *config_p);
+/* fgmac.c */
+FError FXmacCfgInitialize(FXmac *instance_p, const FXmacConfig *config_p);
 
-    void FXmacInitInterface(FXmac *instance_p);
+void FXmacInitInterface(FXmac *instance_p);
 
-    void FXmacGetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index);
-    FError FXmacSetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index);
+void FXmacGetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index);
+FError FXmacSetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index);
 
-    FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num);
-    FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num);
+FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num);
+FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num);
 
-    void FXmacStart(FXmac *instance_p);
-    void FXmacStop(FXmac *instance_p);
-    void FXmacSetQueuePtr(FXmac *instance_p, uintptr QPtr, u8 QueueNum,
-                          u32 direction);
+void FXmacStart(FXmac *instance_p);
+void FXmacStop(FXmac *instance_p);
+void FXmacSetQueuePtr(FXmac *instance_p, uintptr QPtr, u8 QueueNum,
+                      u32 direction);
 
-    /* phy interface */
-    FError FXmacPhyWrite(FXmac *instance_p, u32 phy_address,
-                         u32 register_num, u16 phy_data);
+/* phy interface */
+FError FXmacPhyWrite(FXmac *instance_p, u32 phy_address,
+                     u32 register_num, u16 phy_data);
 
-    FError FXmacPhyRead(FXmac *instance_p, u32 phy_address,
-                        u32 register_num, u16 *phydat_aptr);
+FError FXmacPhyRead(FXmac *instance_p, u32 phy_address,
+                    u32 register_num, u16 *phydat_aptr);
 
-    FError FXmacPhyInit(FXmac *instance_p, u32 speed,u32 duplex_mode, u32 autonegotiation_en);
+FError FXmacPhyInit(FXmac *instance_p, u32 speed, u32 duplex_mode, u32 autonegotiation_en);
 
-    void FXmacSelectClk(FXmac *instance_p);
+void FXmacSelectClk(FXmac *instance_p);
 
-    FError FXmacSetHandler(FXmac *instance_p, u32 handler_type, void *func_pointer, void *call_back_ref);
-    /* interrupt */
-    void FXmacIntrHandler(s32 vector, void *args);
+FError FXmacSetHandler(FXmac *instance_p, u32 handler_type, void *func_pointer, void *call_back_ref);
+/* interrupt */
+void FXmacIntrHandler(s32 vector, void *args);
 
-    void FXmacClearHash(FXmac *instance_p);
+void FXmacClearHash(FXmac *instance_p);
 
 #ifdef __cplusplus
 }

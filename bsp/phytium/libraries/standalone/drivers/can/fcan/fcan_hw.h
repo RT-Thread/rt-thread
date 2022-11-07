@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fcan_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:05
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -90,13 +90,13 @@
 #define FCAN_INTR_REIC_MASK     BIT(21) /* RX frame end interrupt clear*/
 #define FCAN_INTR_TEIC_MASK     BIT(22) /* TX frame end interrupt clear*/
 #define FCAN_INTR_EIC_MASK      BIT(23)  /* Error interrupt clear*/
-#define FCAN_INTR_BORIS_MASK    BIT(24)  
-#define FCAN_INTR_PWRIS_MASK    BIT(25)  
-#define FCAN_INTR_PERIS_MASK    BIT(26)  
-#define FCAN_INTR_RFRIS_MASK    BIT(27)  
-#define FCAN_INTR_TFRIS_MASK    BIT(28)  
-#define FCAN_INTR_RERIS_MASK    BIT(29)  
-#define FCAN_INTR_TERIS_MASK    BIT(30)  
+#define FCAN_INTR_BORIS_MASK    BIT(24)
+#define FCAN_INTR_PWRIS_MASK    BIT(25)
+#define FCAN_INTR_PERIS_MASK    BIT(26)
+#define FCAN_INTR_RFRIS_MASK    BIT(27)
+#define FCAN_INTR_TFRIS_MASK    BIT(28)
+#define FCAN_INTR_RERIS_MASK    BIT(29)
+#define FCAN_INTR_TERIS_MASK    BIT(30)
 #define FCAN_INTR_ERIS_MASK     BIT(31)
 
 /* FCAN_DAT_RATE_CTRL mask */
@@ -107,29 +107,29 @@
 #define FCAN_ACC_ID_REG_NUM         4
 
 /* FCAN_XFER_STS mask */
-#define FCAN_XFER_STS_XFERS_GET(x)     GET_REG32_BITS((x), 10, 10)  
+#define FCAN_XFER_STS_XFERS_GET(x)     GET_REG32_BITS((x), 10, 10)
 #define FCAN_XFER_STS_RS_GET(x)        GET_REG32_BITS((x), 9, 9)
-#define FCAN_XFER_STS_TS_GET(x)        GET_REG32_BITS((x), 8, 8)  
-#define FCAN_XFER_STS_FIES_GET(x)      GET_REG32_BITS((x), 7, 3) 
-#define FCAN_XFER_STS_FRAS_GET(x)      GET_REG32_BITS((x), 2, 0) 
+#define FCAN_XFER_STS_TS_GET(x)        GET_REG32_BITS((x), 8, 8)
+#define FCAN_XFER_STS_FIES_GET(x)      GET_REG32_BITS((x), 7, 3)
+#define FCAN_XFER_STS_FRAS_GET(x)      GET_REG32_BITS((x), 2, 0)
 
 /* FCAN_ERR_CNT_OFFSET mask */
 #define FCAN_ERR_CNT_RFN_MASK       GENMASK(8, 0)    /*Receive error counter*/
-#define FCAN_ERR_CNT_RFN_GET(x)     GET_REG32_BITS((x), 8, 0)  
-#define FCAN_ERR_CNT_RFN_SET(x)     SET_REG32_BITS((x), 8, 0)  
+#define FCAN_ERR_CNT_RFN_GET(x)     GET_REG32_BITS((x), 8, 0)
+#define FCAN_ERR_CNT_RFN_SET(x)     SET_REG32_BITS((x), 8, 0)
 
 #define FCAN_ERR_CNT_TFN_MASK       GENMASK(24, 16)    /*Transmit error counter*/
-#define FCAN_ERR_CNT_TFN_GET(x)     GET_REG32_BITS((x), 24, 16)  
-#define FCAN_ERR_CNT_TFN_SET(x)     SET_REG32_BITS((x), 24, 16)  
+#define FCAN_ERR_CNT_TFN_GET(x)     GET_REG32_BITS((x), 24, 16)
+#define FCAN_ERR_CNT_TFN_SET(x)     SET_REG32_BITS((x), 24, 16)
 
 /* FCAN_FIFO_CNT_OFFSET mask */
 #define FCAN_FIFO_CNT_RFN_MASK       GENMASK(6, 0)    /*Receive FIFO valid data number*/
-#define FCAN_FIFO_CNT_RFN_GET(x)     GET_REG32_BITS((x), 6, 0)  
-#define FCAN_FIFO_CNT_RFN_SET(x)     SET_REG32_BITS((x), 6, 0)  
+#define FCAN_FIFO_CNT_RFN_GET(x)     GET_REG32_BITS((x), 6, 0)
+#define FCAN_FIFO_CNT_RFN_SET(x)     SET_REG32_BITS((x), 6, 0)
 
 #define FCAN_FIFO_CNT_TFN_MASK       GENMASK(6, 0)    /*Transmit FIFO valid data number*/
-#define FCAN_FIFO_CNT_TFN_GET(x)     GET_REG32_BITS((x), 22, 16)  
-#define FCAN_FIFO_CNT_TFN_SET(x)     SET_REG32_BITS((x), 22, 16)  
+#define FCAN_FIFO_CNT_TFN_GET(x)     GET_REG32_BITS((x), 22, 16)
+#define FCAN_FIFO_CNT_TFN_SET(x)     SET_REG32_BITS((x), 22, 16)
 
 #define FCAN_IDR_ID1_SHIFT          21 /* Standard Messg Identifier */
 #define FCAN_IDR_SDLC_SHIFT         14
@@ -168,43 +168,43 @@
 /* Can timming */
 #if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
 
-#define FCAN_ARB_TSEG1_MIN  1
-#define FCAN_ARB_TSEG1_MAX  16
-#define FCAN_ARB_TSEG2_MIN  1
-#define FCAN_ARB_TSEG2_MAX  8
-#define FCAN_ARB_SJW_MAX    4
-#define FCAN_ARB_BRP_MIN    1
-#define FCAN_ARB_BRP_MAX    512
-#define FCAN_ARB_BRP_INC    1
+    #define FCAN_ARB_TSEG1_MIN  1
+    #define FCAN_ARB_TSEG1_MAX  16
+    #define FCAN_ARB_TSEG2_MIN  1
+    #define FCAN_ARB_TSEG2_MAX  8
+    #define FCAN_ARB_SJW_MAX    4
+    #define FCAN_ARB_BRP_MIN    1
+    #define FCAN_ARB_BRP_MAX    512
+    #define FCAN_ARB_BRP_INC    1
 
-#define FCAN_DATA_TSEG1_MIN 1
-#define FCAN_DATA_TSEG1_MAX 16
-#define FCAN_DATA_TSEG2_MIN 1
-#define FCAN_DATA_TSEG2_MAX 8
-#define FCAN_DATA_SJW_MAX   4
-#define FCAN_DATA_BRP_MIN   1
-#define FCAN_DATA_BRP_MAX   512
-#define FCAN_DATA_BRP_INC   1
+    #define FCAN_DATA_TSEG1_MIN 1
+    #define FCAN_DATA_TSEG1_MAX 16
+    #define FCAN_DATA_TSEG2_MIN 1
+    #define FCAN_DATA_TSEG2_MAX 8
+    #define FCAN_DATA_SJW_MAX   4
+    #define FCAN_DATA_BRP_MIN   1
+    #define FCAN_DATA_BRP_MAX   512
+    #define FCAN_DATA_BRP_INC   1
 
 #elif defined(CONFIG_TARGET_E2000)
 
-#define FCAN_ARB_TSEG1_MIN  1
-#define FCAN_ARB_TSEG1_MAX  16
-#define FCAN_ARB_TSEG2_MIN  1
-#define FCAN_ARB_TSEG2_MAX  8
-#define FCAN_ARB_SJW_MAX    4
-#define FCAN_ARB_BRP_MIN    1
-#define FCAN_ARB_BRP_MAX    8192
-#define FCAN_ARB_BRP_INC    1
+    #define FCAN_ARB_TSEG1_MIN  1
+    #define FCAN_ARB_TSEG1_MAX  16
+    #define FCAN_ARB_TSEG2_MIN  1
+    #define FCAN_ARB_TSEG2_MAX  8
+    #define FCAN_ARB_SJW_MAX    4
+    #define FCAN_ARB_BRP_MIN    1
+    #define FCAN_ARB_BRP_MAX    8192
+    #define FCAN_ARB_BRP_INC    1
 
-#define FCAN_DATA_TSEG1_MIN 1
-#define FCAN_DATA_TSEG1_MAX 16
-#define FCAN_DATA_TSEG2_MIN 1
-#define FCAN_DATA_TSEG2_MAX 8
-#define FCAN_DATA_SJW_MAX   4
-#define FCAN_DATA_BRP_MIN   1
-#define FCAN_DATA_BRP_MAX   8192
-#define FCAN_DATA_BRP_INC   1
+    #define FCAN_DATA_TSEG1_MIN 1
+    #define FCAN_DATA_TSEG1_MAX 16
+    #define FCAN_DATA_TSEG2_MIN 1
+    #define FCAN_DATA_TSEG2_MAX 8
+    #define FCAN_DATA_SJW_MAX   4
+    #define FCAN_DATA_BRP_MIN   1
+    #define FCAN_DATA_BRP_MAX   8192
+    #define FCAN_DATA_BRP_INC   1
 
 #endif
 

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: ftimer.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:49
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -39,7 +39,7 @@ FError FTimerSoftwareReset(FTimerTachoCtrl *instance_p)
 {
     FASSERT(instance_p);
 
-    if(instance_p->isready != FT_COMPONENT_IS_READY)
+    if (instance_p->isready != FT_COMPONENT_IS_READY)
     {
         FTIMER_ERROR("device is not already!!!");
         return FTIMER_TACHO_ERR_NOT_READY;
@@ -54,7 +54,8 @@ FError FTimerSoftwareReset(FTimerTachoCtrl *instance_p)
     {
         reg_val = FTIMER_CTRL_READ(instance_p);
         Timeout++;
-    } while ((reg_val & FTIMER_REG_TACHO_RESET) && (Timeout < FTIMER_TIMEOUT));
+    }
+    while ((reg_val & FTIMER_REG_TACHO_RESET) && (Timeout < FTIMER_TIMEOUT));
 
     if (Timeout >= FTIMER_TIMEOUT)
     {
@@ -89,7 +90,7 @@ FError FTimerStart(FTimerTachoCtrl *instance_p)
     }
 
     FTIMER_CTRL_WRITE(instance_p, reg_val);
-    
+
     return FTIMER_TACHO_SUCCESS;
 }
 
@@ -137,7 +138,7 @@ static FError TimerSwithBits(FTimerTachoCtrl *instance_p)
     FASSERT(FT_COMPONENT_IS_READY == instance_p->isready);
 
     reg_val = FTIMER_CTRL_READ(instance_p);
-    
+
     if (FTIMER_32_BITS == instance_p->config.timer_bits)
     {
         reg_val &= (~FTIMER_REG_CNT_SERIES_64BIT);
@@ -183,7 +184,7 @@ static void TimerForceLoad(FTimerTachoCtrl *instance_p)
  * @msg: 设置32位计数模式下，计数器的compare的值，达到此值，如果开启中断，则开启中断
  * @return {FError} 驱动初始化的错误码信息，FTIMER_TACHO_SUCCESS 表示初始化成功，其它返回值表示初始化失败
  * @param {FTimerTachoCtrl} *instance_p 驱动控制数据结构
- * @param {u32}NewCmpL 
+ * @param {u32}NewCmpL
  */
 FError FTimerSetPeriod32(FTimerTachoCtrl *instance_p, u32 new_cmp_l)
 {
@@ -216,7 +217,7 @@ FError FTimerSetPeriod64(FTimerTachoCtrl *instance_p, u64 ticks)
     FASSERT(instance_p);
 
     FASSERT(FT_COMPONENT_IS_READY == instance_p->isready);
-    
+
     if (FTIMER_32_BITS == instance_p->config.timer_bits)
     {
         return FTIMER_TACHO_ERR_INVAL_PARM;
@@ -253,10 +254,10 @@ inline FError FTimerSetStartVal(FTimerTachoCtrl *instance_p, u32 cnt)
     }
 
     FTIMER_STAR_WRITE(instance_p, cnt);
-    /* set force_load=1，invalid previous cmp val, 
+    /* set force_load=1，invalid previous cmp val,
        otherwise the previous cmp val still work */
     TimerForceLoad(instance_p);
-    
+
     FTIMER_INFO("set start val 0x%x", FTIMER_STAR_READ(instance_p));
 
     return ret;
@@ -290,7 +291,7 @@ inline u64 FTimerGetCurCnt64(FTimerTachoCtrl *instance_p)
     FASSERT(instance_p);
 
     FASSERT(FT_COMPONENT_IS_READY == instance_p->isready);
-    
+
     /* must read lower 32 bits first */
     cnt |= (u64)FTIMER_CNTL_READ(instance_p);
     cnt |= (u64)(((u64)FTIMER_CNTU_READ(instance_p)) << 32);
@@ -312,7 +313,7 @@ FError FTimerInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     u32 Ret = FTIMER_TACHO_SUCCESS;
 
     if ((FTIMER_ONCE_CMP == config_p->cmp_type) &&
-        (FTIMER_FREE_RUN != config_p->timer_mode))
+            (FTIMER_FREE_RUN != config_p->timer_mode))
     {
         FTIMER_ERROR("time mode shall be free-run when use once timer!!");
         return FTIMER_TACHO_ERR_INVAL_PARM;
@@ -406,11 +407,11 @@ void FTimerDeInit(FTimerTachoCtrl *instance_p)
     FTimerStop(instance_p);
     /* reset reg*/
     FTimerSoftwareReset(instance_p);
-    
+
     instance_p->isready = 0;
     memset(instance_p, 0, sizeof(*instance_p));
 
-	return;
+    return;
 }
 
 /**
@@ -424,7 +425,7 @@ FError FTimeSettingDump(const FTimerTachoCtrl *instance_p)
     FASSERT(instance_p);
     u32 CtrlReg = FTIMER_CTRL_READ(instance_p);
     boolean is64Bit = ((CtrlReg & FTIMER_REG_CNT_SERIES_64BIT) != 0);
-    
+
     FASSERT(FT_COMPONENT_IS_READY == instance_p->isready);
 
     printf("ctrl: \r\n");

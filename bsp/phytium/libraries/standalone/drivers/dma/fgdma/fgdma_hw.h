@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgdma_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2021-11-5    init commit
@@ -70,7 +70,7 @@ extern "C"
 #define FGDMA_CHX_AR_CFG_OFFSET(x)      (0x60 + FGDMA_CHX_OFFSET(x)) /* 控制 AXI AR 通道配置寄存器 */
 #define FGDMA_CHX_SECRSP_OFFSET(x)      (0x64 + FGDMA_CHX_OFFSET(x)) /* 通道 Response 安全控制寄存器 */
 
-/** @name FGDMA_CTL_OFFSET Register 
+/** @name FGDMA_CTL_OFFSET Register
  */
 #define FGDMA_CTL_OT_MASK               GENMASK(11, 8)
 #define FGDMA_CTL_OT_SET(ot)            SET_REG32_BITS(ot, 11, 8) /* dma 传输outstanding 控制，实际数量为该寄存器值+1 */
@@ -79,32 +79,32 @@ extern "C"
 #define FGDMA_CTL_SOFT_RESET            BIT(1) /* dma 软件复位信号，1表示进行复位，写0退出 */
 #define FGDMA_CTL_ENABLE                BIT(0) /* dma 使能信号，1表示使能，写0表示disable */
 
-/** @name FGDMA_INTR_STATE_OFFSET Register 
+/** @name FGDMA_INTR_STATE_OFFSET Register
  */
 #define FGDMA_CHX_INTR_STATE(x)         BIT(x) /* channel-x 中断状态标志位 */
 
-/** @name FGDMA_INTR_CTRL_OFFSET Register 
+/** @name FGDMA_INTR_CTRL_OFFSET Register
  */
 #define FGDMA_CHX_INTR_MASK(x)          BIT(x)  /* channel-x 中断使能控制，1 表示使能，0 表示不使能 */
 #define FGDMA_CHX_INTR_GLOBAL_MASK      BIT(31) /* 全局中断输出 mask 控制信号，1表示允许中断输出，0 表示不允许 */
 
-/** @name FGDMA_LP_OFFSET Register 
+/** @name FGDMA_LP_OFFSET Register
  */
 #define FGDMA_CHX_LP_CTL(x)             BIT(x)  /* channel-x 时钟开启和关断，1 表示关断，默认开启 */
 
-/** @name FGDMA_QOS_CFG_OFFSET Register 
+/** @name FGDMA_QOS_CFG_OFFSET Register
  */
 #define FGDMA_QOS_CFG_ARGOS_MASK        GENMASK(7, 4)
 #define FGDMA_QOS_CFG_ARGOS_SET(qos)    SET_REG32_BITS((qos), 7, 4) /* 读请求的 QoS 配置 */
 #define FGDMA_QOS_CFG_AWQOS_MASK        GENMASK(3, 0)
 #define FGDMA_QOS_CFG_AWQOS_SET(qos)    SET_REG32_BITS((qos), 3, 0) /* 写请求的 QoS 配置 */
 
-/** @name FGDMA_CHX_CTL_OFFSET Register 
+/** @name FGDMA_CHX_CTL_OFFSET Register
  */
 #define FGDMA_CHX_CTL_SOFT_RESET        BIT(4) /* 软复位信号，1 表示进行软复位，写 0 退出 */
 #define FGDMA_CHX_CTL_ENABLE            BIT(0) /* 使能控制信号，1 表示使能该通道，0 表示不使能 */
 
-/** @name FGDMA_CHX_MODE_OFFSET Register 
+/** @name FGDMA_CHX_MODE_OFFSET Register
  */
 #define FGDMA_CHX_MODE_RD_QOS_MASK          GENMASK(23, 20)
 #define FGDMA_CHX_MODE_RD_QOS_SET(qos)      SET_REG32_BITS((qos), 23, 20) /* CHX 读请求 Qos 配置 */
@@ -114,7 +114,7 @@ extern "C"
 
 #define FGDMA_CHX_MODE_WR_QOS_MASK          GENMASK(15, 12)
 #define FGDMA_CHX_MODE_WR_QOS_SET(qos)      SET_REG32_BITS((qos), 15, 12) /* CHX 写请求 Qos 配置 */
-#define FGDMA_CHX_MODE_WR_QOS_GET(qos)      GET_REG32_BITS((qos), 15, 12) 
+#define FGDMA_CHX_MODE_WR_QOS_GET(qos)      GET_REG32_BITS((qos), 15, 12)
 /* 是否用 cx_wr_qos 中的值替换该通道写请求的 QoS：1 表示替换, 0 不替换 */
 #define FGDMA_CHX_MODE_WR_QOS_EN            BIT(8)
 
@@ -122,14 +122,14 @@ extern "C"
 #define FGDMA_CHX_MODE_BDL_ROLL_EN          BIT(4)
 #define FGDMA_CHX_MODE_BDL_EN               BIT(0)  /* 配置当前采用direct 或者BDL 链表模式, 0 采用Direct 模式, 1 采用BDL 模式 */
 
-/** @name FGDMA_CHX_INT_CTRL_OFFSET Register 
+/** @name FGDMA_CHX_INT_CTRL_OFFSET Register
  */
 #define FGDMA_CHX_INT_CTRL_TRANS_END_ENABLE     BIT(3)  /* CHX 所以数据传输完成中断输出控制，1表示允许输出，0表示不允许 */
 #define FGDMA_CHX_INT_CTRL_BDL_END_ENABLE       BIT(2)  /* CHX bdl 条目数据传输完成中断输出控制，1表示允许输出，0表示不允许  */
 #define FGDMA_CHX_INT_CTRL_FIFO_FULL_ENABLE     BIT(1)  /* CHX ARM满中断 1表示允许输出，0表示不允许 */
 #define FGDMA_CHX_INT_CTRL_FIFO_EMPTY_ENABLE    BIT(0)  /* CHX ARM空中断 1表示允许输出，0表示不允许 */
 
-/** @name FGDMA_CHX_INT_STATE_OFFSET Register 
+/** @name FGDMA_CHX_INT_STATE_OFFSET Register
  */
 #define FGDMA_CHX_INT_STATE_BUSY                BIT(4)  /* CHX 处于数据传输中，写1 清0 */
 #define FGDMA_CHX_INT_STATE_TRANS_END           BIT(3)  /* CHX 处于传输完成状态，direct 模式时，表示所有数据传输完成，BDL 模式表示当前所有BDL条目传输完成： 写1清0 */
@@ -138,31 +138,31 @@ extern "C"
 #define FGDMA_CHX_INT_STATE_FIFO_EMPTY          BIT(0)  /* CHX FIFO 空状态，写1清0 */
 #define FGDMA_CHX_INT_STATE_ALL                 GENMASK(4, 0)
 
-/** @name FGDMA_CHX_LVI_OFFSET Register 
+/** @name FGDMA_CHX_LVI_OFFSET Register
  */
 #define FGDMA_CHX_LVI_SET(lvi)        SET_REG32_BITS((lvi - 1), 31, 0) /* CHX last vaild index, 即链表末模式下BDL有效条目，实际有效条目=该寄存器值+1 */
 
-/** @name FGDMA_CHX_TS_OFFSET Register 
+/** @name FGDMA_CHX_TS_OFFSET Register
  */
 #define FGDMA_CHX_TS_SET(ts)          SET_REG32_BITS((ts), 31, 0) /* CHX 在direct 模式下操作的的总Byte数量 */
 
-/** @name FGDMA_CHX_UPSADDR_OFFSET Register 
+/** @name FGDMA_CHX_UPSADDR_OFFSET Register
  */
 #define FGDMA_CHX_UPSADDR_SET(addr)   SET_REG32_BITS((addr), 31, 0) /* CHX 源地址高32bits */
 
-/** @name FGDMA_CHX_LWSADDR_OFFSET Register 
+/** @name FGDMA_CHX_LWSADDR_OFFSET Register
  */
 #define FGDMA_CHX_LWSADDR_SET(addr)   SET_REG32_BITS((addr), 31, 0) /* CHX 源地址低32bits */
 
-/** @name FGDMA_CHX_UPDADDR_OFFSET Register 
+/** @name FGDMA_CHX_UPDADDR_OFFSET Register
  */
 #define FGDMA_CHX_UPDADDR_SET(addr)   SET_REG32_BITS((addr), 31, 0) /* CHX 目标地址高32bits */
 
-/** @name FGDMA_CHX_LWDADDR_OFFSET Register 
+/** @name FGDMA_CHX_LWDADDR_OFFSET Register
  */
 #define FGDMA_CHX_LWDADDR_SET(addr)   SET_REG32_BITS((addr), 31, 0) /* CHX 目标地址低32bits */
 
-/** @name FGDMA_CHX_XFER_CFG_OFFSET Register 
+/** @name FGDMA_CHX_XFER_CFG_OFFSET Register
  */
 #define FGDMA_CHX_XFER_CFG_AR_LEN_SET(len)      SET_REG32_BITS((len), 31, 24) /* CHX 读请求Burst length 大小 */
 #define FGDMA_CHX_XFER_CFG_AR_SIZE_SET(size)    SET_REG32_BITS((size), 22, 20) /* CHX 读请求Size 大小 ， 支持 1、2、8、16 Byte */
@@ -176,23 +176,23 @@ extern "C"
 
 #define FGDMA_MAX_BURST_LEN             8U
 
-/** @name FGDMA_CHX_LCP_OFFSET Register 
+/** @name FGDMA_CHX_LCP_OFFSET Register
  */
 #define FGDMA_CHX_LCP_GET(reg_val)   GET_REG32_BITS((reg_val), 31, 0) /* 当前操作了多少个 BDL 列表 */
 
-/** @name FGDMA_CHX_SECCTL_OFFSET Register 
+/** @name FGDMA_CHX_SECCTL_OFFSET Register
  */
 #define FGDMA_CHX_SECCTL_SET(val)    GET_REG32_BITS((val), 31, 0) /* CHX 安全控制寄存器，仅安全状态可访问 */
 
-/** @name FGDMA_CHX_SEC_ATST_OFFSET Register 
+/** @name FGDMA_CHX_SEC_ATST_OFFSET Register
  */
 #define FGDMA_CHX_SEC_ATST_SET(val)  SET_REG32_BITS((val), 31, 0)
 
-/** @name FGDMA_CHX_NSID_STRMID_OFFSET Register 
+/** @name FGDMA_CHX_NSID_STRMID_OFFSET Register
  */
 #define FGDMA_CHX_NSID_STRMID_SET(val)  SET_REG32_BITS((val), 31, 0)
 
-/** @name FGDMA_CHX_AW_CFG_OFFSET Register 
+/** @name FGDMA_CHX_AW_CFG_OFFSET Register
  */
 #define FGDMA_CHX_AW_CFG_AWCACHE_SET(val)        SET_REG32_BITS((val), 3, 0)  /* CHX dma arcache */
 #define FGDMA_CHX_AW_CFG_AWREGION_MASK_SET(val)  SET_REG32_BITS((val), 7, 4) /* CHX dma arregion */
@@ -201,7 +201,7 @@ extern "C"
 #define FGDMA_CHX_AW_CFG_AWSNOOP_SET(val)        SET_REG32_BITS((val), 18, 16)
 #define FGDMA_CHX_AW_CFG_AWBAR_SET(val)          SET_REG32_BITS((val), 21, 20)
 
-/** @name FGDMA_CHX_AR_CFG_OFFSET Register 
+/** @name FGDMA_CHX_AR_CFG_OFFSET Register
  */
 #define FGDMA_CHX_AR_CFG_AWCACHE_SET(val)        SET_REG32_BITS((val), 3, 0)  /* CHX dma arcache */
 #define FGDMA_CHX_AR_CFG_AWREGION_MASK_SET(val)  SET_REG32_BITS((val), 7, 4) /* CHX dma arregion */
@@ -210,7 +210,7 @@ extern "C"
 #define FGDMA_CHX_AR_CFG_AWSNOOP_SET(val)        SET_REG32_BITS((val), 19, 16)
 #define FGDMA_CHX_AR_CFG_AWBAR_SET(val)          SET_REG32_BITS((val), 21, 20)
 
-/** @name FGDMA_CHX_SECRSP_OFFSET Register 
+/** @name FGDMA_CHX_SECRSP_OFFSET Register
  */
 #define FGDMA_CHX_SECRSP                         BIT(0) /* response 安全控制位 */
 

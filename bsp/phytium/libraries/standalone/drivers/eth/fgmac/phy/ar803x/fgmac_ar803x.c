@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac_ar803x.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -58,7 +58,7 @@ extern FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u
 /* 此文件主要为了完成用户对外接口，用户可以使用这些接口直接开始工作 */
 
 /* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置 
+   - 同时包含必要的OPTION方法，方便用户进行配置
    - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 
@@ -73,28 +73,28 @@ extern FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u
  */
 static FError FGmacAr803xDebugRegRead(FGmac *instance_p, u32 phy_address, u16 debug_reg, u16 *reg_data_p)
 {
-	FASSERT(instance_p && reg_data_p);
-	FError ret = FGMAC_SUCCESS;
+    FASSERT(instance_p && reg_data_p);
+    FError ret = FGMAC_SUCCESS;
 
-	ret = FGmacWritePhyReg(instance_p,phy_address, FGMAC_AR803X_DEBUG_ADDR, debug_reg & FGMAC_AR803X_DEBUG_DATA_MASK);
+    ret = FGmacWritePhyReg(instance_p, phy_address, FGMAC_AR803X_DEBUG_ADDR, debug_reg & FGMAC_AR803X_DEBUG_DATA_MASK);
     if (FGMAC_SUCCESS != ret)
         return ret;
 
-	ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_AR803X_DEBUG_DATA, reg_data_p);
-	return ret;
+    ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_AR803X_DEBUG_DATA, reg_data_p);
+    return ret;
 }
 
 static FError FGmacAr803xMaskReg(FGmac *instance_p, u32 phy_address, u16 reg, u32 clear, u32 set)
 {
-	FASSERT(instance_p);
-	FError ret = FGMAC_SUCCESS;
-	u16 val = 0;
+    FASSERT(instance_p);
+    FError ret = FGMAC_SUCCESS;
+    u16 val = 0;
 
-	ret = FGmacReadPhyReg(instance_p, phy_address, reg, &val);
+    ret = FGmacReadPhyReg(instance_p, phy_address, reg, &val);
     if (FGMAC_SUCCESS != ret)
         return ret;
 
-	val &= ~clear;
+    val &= ~clear;
     val |= set;
 
     ret = FGmacWritePhyReg(instance_p, phy_address, FGMAC_AR803X_DEBUG_DATA, val);
@@ -113,15 +113,15 @@ FError FGmacAr803xDisableHibernate(FGmac *instance_p)
     u32 ret = FGMAC_SUCCESS;
     u16 reg_val = 0;
 
-    ret = FGmacAr803xDebugRegRead(instance_p,instance_p->phy_addr,FGMAC_AR803X_DEBUG_HIB_CTRL_REG, &reg_val);
+    ret = FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_HIB_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
         return ret;
 
     reg_val &= ~FGMAC_AR803X_PS_HIB_EN;
-    ret = FGmacWritePhyReg(instance_p,instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
+    ret = FGmacWritePhyReg(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
 
     reg_val = 0;
-    FGmacAr803xDebugRegRead(instance_p,instance_p->phy_addr, FGMAC_AR803X_DEBUG_HIB_CTRL_REG, &reg_val);
+    FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_HIB_CTRL_REG, &reg_val);
     FGMAC_INFO("debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
 
     return ret;
@@ -134,17 +134,17 @@ FError FGmacAr803xDisableHibernate(FGmac *instance_p)
  * @param {u32} enable_setting, 1-enable, else disable
  * @return err code information, FGMAC_SUCCESS indicates success，others indicates failed
  */
-FError FFmacAr803xRxClockDelayControl(FGmac *instance_p ,u32 enable_setting)
+FError FFmacAr803xRxClockDelayControl(FGmac *instance_p, u32 enable_setting)
 {
     FASSERT(instance_p);
     u32 ret = FGMAC_SUCCESS;
     u16 reg_val = 0;
 
-    ret = FGmacAr803xDebugRegRead(instance_p,instance_p->phy_addr, FGMAC_AR803X_RX_CLOCK_CTRL_REG, &reg_val);
+    ret = FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_RX_CLOCK_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
         return ret;
 
-    if(enable_setting == FGMAC_RX_CLOCK_ENABLE)
+    if (enable_setting == FGMAC_RX_CLOCK_ENABLE)
     {
         reg_val |= FGMAC_AR803X_RX_CLOCK_DELAY;
     }
@@ -152,11 +152,11 @@ FError FFmacAr803xRxClockDelayControl(FGmac *instance_p ,u32 enable_setting)
     {
         reg_val &= ~FGMAC_AR803X_RX_CLOCK_DELAY;
     }
-    
-    ret = FGmacWritePhyReg(instance_p,instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
+
+    ret = FGmacWritePhyReg(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
 
     reg_val = 0;
-    FGmacAr803xDebugRegRead(instance_p,instance_p->phy_addr, FGMAC_AR803X_RX_CLOCK_CTRL_REG, &reg_val);
+    FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_RX_CLOCK_CTRL_REG, &reg_val);
     FGMAC_INFO("debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
 
     return ret;
@@ -169,17 +169,17 @@ FError FFmacAr803xRxClockDelayControl(FGmac *instance_p ,u32 enable_setting)
  * @param {u32} enable_setting, 1-enable, else disable
  * @return err code information, FGMAC_SUCCESS indicates success，others indicates failed
  */
-FError FFmacAr803xTxClockDelayControl(FGmac *instance_p ,u32 enable_setting)
+FError FFmacAr803xTxClockDelayControl(FGmac *instance_p, u32 enable_setting)
 {
     FASSERT(instance_p);
     u32 ret = FGMAC_SUCCESS;
     u16 reg_val = 0;
 
-    ret = FGmacAr803xDebugRegRead(instance_p,instance_p->phy_addr, FGMAC_AR803X_TX_CLOCK_CTRL_REG, &reg_val);
+    ret = FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_TX_CLOCK_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
         return ret;
 
-    if(enable_setting == FGMAC_TX_CLOCK_ENABLE)
+    if (enable_setting == FGMAC_TX_CLOCK_ENABLE)
     {
         reg_val |= FGMAC_AR803X_TX_CLOCK_DELAY;
     }
@@ -187,11 +187,11 @@ FError FFmacAr803xTxClockDelayControl(FGmac *instance_p ,u32 enable_setting)
     {
         reg_val &= ~FGMAC_AR803X_TX_CLOCK_DELAY;
     }
-    
-    ret = FGmacWritePhyReg(instance_p,instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
+
+    ret = FGmacWritePhyReg(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
 
     reg_val = 0;
-    FGmacAr803xDebugRegRead(instance_p,instance_p->phy_addr, FGMAC_AR803X_TX_CLOCK_CTRL_REG, &reg_val);
+    FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_TX_CLOCK_CTRL_REG, &reg_val);
     FGMAC_INFO("debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
 
     return ret;

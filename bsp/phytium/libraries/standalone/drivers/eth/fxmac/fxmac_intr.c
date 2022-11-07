@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fxmac_intr.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -39,7 +39,7 @@
 /**
  * @name: FXmacSetHandler
  * @msg:  Install an asynchronous handler function for the given handler_type:
- * 
+ *
  * @param instance_p is a pointer to the instance to be worked on.
  * @param handler_type indicates what interrupt handler type is.
  *        FXMAC_HANDLER_DMASEND, FXMAC_HANDLER_DMARECV and
@@ -133,30 +133,30 @@ void FXmacIntrHandler(s32 vector, void *args)
                                  FXMAC_TXSR_OFFSET,
                                  ((u32)FXMAC_TXSR_TXCOMPL_MASK |
                                   (u32)FXMAC_TXSR_USEDREAD_MASK));
-                
+
                 if (instance_p->send_irq_handler)
                 {
                     /* code */
                     instance_p->send_irq_handler(instance_p->send_args);
                 }
-                
+
                 /* add */
                 FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXCOMPL_MASK);
             }
 
             /* Transmit error conditions interrupt */
             if (((reg_isr & FXMAC_IXR_TX_ERR_MASK) != 0x00000000U) &&
-                (!(reg_isr & FXMAC_IXR_TXCOMPL_MASK) != 0x00000000U))
+                    (!(reg_isr & FXMAC_IXR_TXCOMPL_MASK) != 0x00000000U))
             {
                 /* Clear TX status register */
                 reg_temp = FXMAC_READREG32(instance_p->config.base_address, FXMAC_TXSR_OFFSET);
                 FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_TXSR_OFFSET, reg_temp);
-                if(instance_p->error_irq_handler)
+                if (instance_p->error_irq_handler)
                 {
                     instance_p->error_irq_handler(instance_p->error_args, FXMAC_SEND, reg_temp);
                 }
                 /* add */
-                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TX_ERR_MASK);                              
+                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TX_ERR_MASK);
             }
 
             /* add restart */
@@ -164,8 +164,8 @@ void FXmacIntrHandler(s32 vector, void *args)
             {
                 /* add */
                 FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXUSED_MASK);
-                
-                if(instance_p->restart_handler)
+
+                if (instance_p->restart_handler)
                 {
                     instance_p->restart_handler(instance_p->restart_args);
                 }
@@ -203,7 +203,7 @@ void FXmacIntrHandler(s32 vector, void *args)
 
             /* Transmit Q1 error conditions interrupt */
             if (((reg_isr & FXMAC_INTQ1SR_TXERR_MASK) != 0x00000000U) &&
-                ((reg_isr & FXMAC_INTQ1SR_TXCOMPL_MASK) != 0x00000000U))
+                    ((reg_isr & FXMAC_INTQ1SR_TXCOMPL_MASK) != 0x00000000U))
             {
                 /* Clear Interrupt Q1 status register */
                 FXMAC_WRITEREG32(instance_p->config.base_address,
@@ -252,7 +252,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                 if ((reg_isr & FXMAC_IXR_RXUSED_MASK) != 0x00000000U)
                 {
                     reg_ctrl = FXMAC_READREG32(instance_p->config.base_address,
-                                        FXMAC_NWCTRL_OFFSET);
+                                               FXMAC_NWCTRL_OFFSET);
                     reg_ctrl |= (u32)FXMAC_NWCTRL_FLUSH_DPRAM_MASK;
 
                     /* add  */
@@ -260,21 +260,21 @@ void FXmacIntrHandler(s32 vector, void *args)
                     FXMAC_WRITEREG32(instance_p->config.base_address,
                                      FXMAC_NWCTRL_OFFSET, reg_ctrl);
 
-                     /* add  */
+                    /* add  */
                     reg_ctrl |= (u32)FXMAC_NWCTRL_RXEN_MASK;
                     FXMAC_WRITEREG32(instance_p->config.base_address,
-                                     FXMAC_NWCTRL_OFFSET, reg_ctrl);             
+                                     FXMAC_NWCTRL_OFFSET, reg_ctrl);
                 }
 
                 /* add */
                 if ((reg_isr & FXMAC_IXR_RXOVR_MASK) != 0x00000000U)
-                { 
+                {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXOVR_MASK);
                 }
 
                 /* add */
                 if ((reg_isr & FXMAC_IXR_HRESPNOK_MASK) != 0x00000000U)
-                { 
+                {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_HRESPNOK_MASK);
                 }
 
@@ -354,7 +354,7 @@ void FXmacIntrHandler(s32 vector, void *args)
 
 /**
  * @name: FXmacQueueIrqDisable
- * @msg:  Disable queue irq 
+ * @msg:  Disable queue irq
  * @param {FXmac} *instance_p a pointer to the instance to be worked on.
  * @param {u32} queue_num queue number
  * @param {u32} mask is interrupt disable value mask
@@ -379,7 +379,7 @@ void FXmacQueueIrqDisable(FXmac *instance_p, u32 queue_num, u32 mask)
 
 /**
  * @name: FXmacQueueIrqEnable
- * @msg:  Enable queue irq 
+ * @msg:  Enable queue irq
  * @param {FXmac} *instance_p a pointer to the instance to be worked on.
  * @param {u32} queue_num is queue number
  * @param {u32} mask is interrupt Enable value mask

@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgdma_intr.c
  * Date: 2022-05-16 17:01:48
  * LastEditTime: 2022-05-16 17:01:49
  * Description:  This files is for interrupt api implmentation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2021-11-5    init commit
@@ -69,32 +69,32 @@ static void FGdmaChanIrqHandler(FGdmaChan *const chan_p)
 
     if (FGDMA_CHX_INT_STATE_BUSY & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_BUSY], 
+        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_BUSY],
                                chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_BUSY]);
     }
 
     if (FGDMA_CHX_INT_STATE_TRANS_END & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_TRANS_END], 
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_TRANS_END]);        
+        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_TRANS_END],
+                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_TRANS_END]);
     }
 
     if (FGDMA_CHX_INT_STATE_BDL_END & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_BDL_END], 
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_BDL_END]);             
+        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_BDL_END],
+                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_BDL_END]);
     }
 
     if (FGDMA_CHX_INT_STATE_FIFO_FULL & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_FULL], 
+        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_FULL],
                                chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_FULL]);
     }
 
     if (FGDMA_CHX_INT_STATE_FIFO_EMPTY & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_EMPTY], 
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_EMPTY]);                        
+        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_EMPTY],
+                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_EMPTY]);
     }
 
     FGdmaClearChanStatus(base_addr, chan_p->config.chan_id, chan_status);
@@ -111,7 +111,7 @@ static void FGdmaChanIrqHandler(FGdmaChan *const chan_p)
 void FGdmaIrqHandler(s32 vector, void *args)
 {
     FASSERT(args);
-    FGdma *const instance_p = (FGdma *const)args;
+    FGdma *const instance_p = (FGdma * const)args;
     FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
     uintptr base_addr = instance_p->config.base_addr;
     u32 chan_id;
@@ -143,7 +143,7 @@ void FGdmaIrqHandler(s32 vector, void *args)
  * @param {FGdmaChanEvtHandler} handler, 事件回调函数
  * @param {void} *handler_arg, 事件回调函数输入参数
  */
-void FGdmaChanRegisterEvtHandler(FGdmaChan *const chan_p, FGdmaChanEvtType evt, 
+void FGdmaChanRegisterEvtHandler(FGdmaChan *const chan_p, FGdmaChanEvtType evt,
                                  FGdmaChanEvtHandler handler, void *handler_arg)
 {
     FASSERT(chan_p);

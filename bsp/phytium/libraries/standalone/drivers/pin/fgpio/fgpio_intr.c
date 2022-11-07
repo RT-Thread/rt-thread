@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgpio_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
  * Description:  This files is for GPIO interrupt function implementation
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2022-3-1     init commit
@@ -63,12 +63,12 @@ void FGpioGetInterruptMask(FGpio *const instance, u32 *mask, u32 *enabled)
 
     if (NULL != mask)
     {
-        *mask = FGpioReadReg32(base_addr, FGPIO_INTMASK_OFFSET);        
+        *mask = FGpioReadReg32(base_addr, FGPIO_INTMASK_OFFSET);
     }
 
     if (NULL != enabled)
     {
-        *enabled = FGpioReadReg32(base_addr, FGPIO_INTEN_OFFSET); 
+        *enabled = FGpioReadReg32(base_addr, FGPIO_INTEN_OFFSET);
     }
 
     return;
@@ -163,7 +163,7 @@ void FGpioGetInterruptType(FGpio *const instance, u32 *levels, u32 *polarity)
 void FGpioSetInterruptType(FGpioPin *const pin, const FGpioIrqType type)
 {
     FASSERT(pin);
-    FGpio *const instance = pin->instance;    
+    FGpio *const instance = pin->instance;
     FASSERT(instance);
     FASSERT(instance->is_ready == FT_COMPONENT_IS_READY);
     uintptr base_addr = instance->config.base_addr;
@@ -185,7 +185,7 @@ void FGpioSetInterruptType(FGpioPin *const pin, const FGpioIrqType type)
     {
     case FGPIO_IRQ_TYPE_EDGE_FALLING:
         level |= BIT(index.pin); /* 边沿敏感型 */
-        polarity &= ~BIT(index.pin); /* 下降沿或低电平 */        
+        polarity &= ~BIT(index.pin); /* 下降沿或低电平 */
         break;
     case FGPIO_IRQ_TYPE_EDGE_RISING:
         level |= BIT(index.pin); /* 边沿敏感型 */
@@ -193,7 +193,7 @@ void FGpioSetInterruptType(FGpioPin *const pin, const FGpioIrqType type)
         break;
     case FGPIO_IRQ_TYPE_LEVEL_LOW:
         level &= ~BIT(index.pin); /* 电平敏感型 */
-        polarity &= ~BIT(index.pin); /* 下降沿或低电平 */ 
+        polarity &= ~BIT(index.pin); /* 下降沿或低电平 */
         break;
     case FGPIO_IRQ_TYPE_LEVEL_HIGH:
         level &= ~BIT(index.pin); /* 电平敏感型 */
@@ -219,7 +219,7 @@ void FGpioSetInterruptType(FGpioPin *const pin, const FGpioIrqType type)
  */
 void FGpioInterruptHandler(s32 vector, void *param)
 {
-    FGpio *const instance = (FGpio *const)param;
+    FGpio *const instance = (FGpio * const)param;
     FGpioPin *pin = NULL;
     FASSERT(instance);
     int loop;
@@ -243,7 +243,7 @@ void FGpioInterruptHandler(s32 vector, void *param)
             if (pin->irq_cb)
             {
                 pin->irq_cb(0U, pin->irq_cb_params);
-                
+
                 /* disable pin interrupt after triggered */
                 if (TRUE == pin->irq_one_time)
                 {
@@ -252,9 +252,9 @@ void FGpioInterruptHandler(s32 vector, void *param)
             }
             else
             {
-                FGPIO_WARN("no irq handler callback for GPIO-%d-A-%d", 
-                            instance->config.instance_id,
-                            loop);
+                FGPIO_WARN("no irq handler callback for GPIO-%d-A-%d",
+                           instance->config.instance_id,
+                           loop);
             }
         }
     }
@@ -274,7 +274,7 @@ void FGpioInterruptHandler(s32 vector, void *param)
  */
 void FGpioPinInterruptHandler(s32 vector, void *param)
 {
-    FGpioPin *const pin = (FGpioPin *const)param;
+    FGpioPin *const pin = (FGpioPin * const)param;
     FASSERT(pin);
     FGpio *const instance = pin->instance;
     FASSERT(instance);
@@ -287,7 +287,7 @@ void FGpioPinInterruptHandler(s32 vector, void *param)
     if (pin->irq_cb)
     {
         pin->irq_cb(0U, pin->irq_cb_params);
-        
+
         /* disable pin interrupt after triggered */
         if (TRUE == pin->irq_one_time)
         {
@@ -296,15 +296,15 @@ void FGpioPinInterruptHandler(s32 vector, void *param)
     }
     else
     {
-        FGPIO_WARN("no irq handler callback for GPIO-%d-A-%d", 
-                    pin->index.ctrl,
-                    pin->index.pin);
+        FGPIO_WARN("no irq handler callback for GPIO-%d-A-%d",
+                   pin->index.ctrl,
+                   pin->index.pin);
     }
 
 
     /* clear interrupt status */
     FGpioWriteReg32(base_addr, FGPIO_PORTA_EOI_OFFSET, status);
-    return;    
+    return;
 }
 #endif
 

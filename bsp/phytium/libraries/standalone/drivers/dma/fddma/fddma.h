@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fddma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
  * Description:  This files is for ddma interface definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   Zhugengyu  2022/5/13    init commit
@@ -64,7 +64,7 @@ typedef enum
     FDDMA_NUM_OF_CHAN_EVT
 } FDdmaChanEvt; /* DDMA channel interrupt event */
 
-#define FDDMA_SUCCESS                   FT_SUCCESS  
+#define FDDMA_SUCCESS                   FT_SUCCESS
 #define FDDMA_ERR_NOT_INIT              FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 0)
 #define FDDMA_ERR_CHAN_BINDED           FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 1)
 #define FDDMA_ERR_CHAN_RUNNING          FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 2)
@@ -154,8 +154,8 @@ void FDdmaIrqHandler(s32 vector, void *args);
 
 /* 注册DDMA通道中断响应事件函数 */
 void FDdmaRegisterChanEvtHandler(FDdmaChan *const dma_chan,
-                                 FDdmaChanEvt evt, 
-                                 FDdmaChanEvtHandler handler, 
+                                 FDdmaChanEvt evt,
+                                 FDdmaChanEvtHandler handler,
                                  void *handler_arg);
 /* DDMA控制器寄存器自检测试 */
 void FDdmaDumpRegisters(uintptr base_addr);

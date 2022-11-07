@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fadc_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:28:45
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -33,8 +33,8 @@
 #define FADC_ERROR(format, ...)     FT_DEBUG_PRINT_E(FADC_DEBUG_TAG, format, ##__VA_ARGS__)
 
 #define FADC_CALL_INTR_EVENT_HANDLDER(instance_p, event) \
-	if (instance_p->event_handler[event])                 \
-		instance_p->event_handler[event](instance_p->event_param[event])
+    if (instance_p->event_handler[event])                 \
+        instance_p->event_handler[event](instance_p->event_param[event])
 
 /**
  * @name: FAdcRegisterInterruptHandler
@@ -45,13 +45,13 @@
  * @param {void} *param, contains a pointer to the driver instance
  * @return {*}
  */
-void FAdcRegisterInterruptHandler(FAdcCtrl *instance_p, FAdcIntrEventType event_type, 
-                                    FAdcIntrEventHandler handler, void *param)
+void FAdcRegisterInterruptHandler(FAdcCtrl *instance_p, FAdcIntrEventType event_type,
+                                  FAdcIntrEventHandler handler, void *param)
 {
     FASSERT(instance_p);
     FASSERT(event_type < FADC_INTR_EVENT_NUM);
     instance_p->event_handler[event_type] = handler;
-	instance_p->event_param[event_type] = param;
+    instance_p->event_param[event_type] = param;
 }
 
 /**
@@ -74,25 +74,25 @@ void FAdcIntrHandler(s32 vector, void *args)
 
     status = FADC_READ_REG32(base_addr, FADC_INTR_REG_OFFSET);
     /* channel convert complete irq mask */
-	intrmask = FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET);
+    intrmask = FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET);
 
     /* adc error interrupt */
-    if(status & FADC_INTR_REG_ERR) 
+    if (status & FADC_INTR_REG_ERR)
     {
         /* clear error interrupt status */
         FADC_SETBIT(base_addr, FADC_INTR_REG_OFFSET, FADC_INTR_REG_ERR);
 
         /* write error clear register, adc_errclr_reg=0 */
-		FADC_WRITE_REG32(base_addr, FADC_ERRCLR_REG_OFFSET, 0);
-        
+        FADC_WRITE_REG32(base_addr, FADC_ERRCLR_REG_OFFSET, 0);
+
         FADC_CALL_INTR_EVENT_HANDLDER(pctrl, FADC_INTR_EVENT_ERROR);
     }
-    
-    if(status & FADC_INTR_REG_LIMIT_MASK)
+
+    if (status & FADC_INTR_REG_LIMIT_MASK)
     {
-        for (channel = 0; channel < FADC_CHANNEL_NUM; channel++) 
+        for (channel = 0; channel < FADC_CHANNEL_NUM; channel++)
         {
-            if(status & FADC_INTR_REG_DLIMIT(channel))
+            if (status & FADC_INTR_REG_DLIMIT(channel))
             {
                 /* clear dlimit interrupt status */
                 FADC_SETBIT(base_addr, FADC_INTR_REG_OFFSET, FADC_INTR_REG_DLIMIT(channel));
@@ -104,23 +104,23 @@ void FAdcIntrHandler(s32 vector, void *args)
                 FADC_SETBIT(base_addr, FADC_INTR_REG_OFFSET, FADC_INTR_REG_ULIMIT(channel));
                 FADC_CALL_INTR_EVENT_HANDLDER(pctrl, FADC_INTR_EVENT_ULIMIT);
             }
-		}
+        }
     }
 
     /* 有中断转换完成的情况下，根据adc_intr_reg寄存器的通道转换完成中断标志位bit0~7，读取转换结果 */
-    if(status & FADC_INTR_REG_COVFIN_MASK)
+    if (status & FADC_INTR_REG_COVFIN_MASK)
     {
-        for (channel = 0; channel < FADC_CHANNEL_NUM; channel++) 
+        for (channel = 0; channel < FADC_CHANNEL_NUM; channel++)
         {
-            if (status & FADC_INTR_REG_COVFIN(channel)) 
+            if (status & FADC_INTR_REG_COVFIN(channel))
             {
                 pctrl->value[channel] = FADC_READ_REG32(base_addr, FADC_COV_RESULT_REG_OFFSET(channel)) & FADC_COV_RESULT_REG_MASK;
                 FADC_CONVERT_COMPLETE(pctrl->convert_complete[channel]);
                 /* clear convert finish interrupt status */
-                FADC_SETBIT(base_addr,	FADC_INTR_REG_OFFSET, FADC_INTR_REG_COVFIN(channel));
+                FADC_SETBIT(base_addr,  FADC_INTR_REG_OFFSET, FADC_INTR_REG_COVFIN(channel));
             }
-		}
-        
+        }
+
         FADC_CALL_INTR_EVENT_HANDLDER(pctrl, FADC_INTR_EVENT_COVFIN);
     }
     else

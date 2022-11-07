@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fmio.h
  * Date: 2022-06-21 15:40:06
  * LastEditTime: 2022-06-21 15:40:06
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -36,7 +36,7 @@ extern "C"
 #include "fassert.h"
 
 /************************** Constant Definitions *****************************/
-#define FMIO_SUCCESS          FT_SUCCESS  
+#define FMIO_SUCCESS          FT_SUCCESS
 #define FMIO_ERR_INVAL_PARM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspMio, 1)
 #define FMIO_ERR_NOT_READY    FT_MAKE_ERRCODE(ErrModBsp, ErrBspMio, 2)
 #define FMIO_ERR_TIMEOUT      FT_MAKE_ERRCODE(ErrModBsp, ErrBspMio, 3)
@@ -57,7 +57,7 @@ typedef struct
 {
     FMioConfig config;  /* mio config */
     u32 is_ready;   /* mio initialize the complete flag */
-}FMioCtrl;
+} FMioCtrl;
 
 /************************** Function Prototypes ******************************/
 /*获取MIO的配置信息*/
@@ -70,10 +70,10 @@ FError FMioFuncInit(FMioCtrl *instance_p, u32 mio_type);
 FError FMioFuncDeinit(FMioCtrl *instance_p);
 
 /*获取功能配置的基地址*/
-uintptr FMioFuncGetAddress(FMioCtrl *instance_p,u32 mio_type);
+uintptr FMioFuncGetAddress(FMioCtrl *instance_p, u32 mio_type);
 
 /*获取功能的中断号*/
-u32 FMioFuncGetIrqNum(FMioCtrl *instance_p,u32 mio_type);
+u32 FMioFuncGetIrqNum(FMioCtrl *instance_p, u32 mio_type);
 
 #ifdef __cplusplus
 }

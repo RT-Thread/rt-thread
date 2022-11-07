@@ -61,7 +61,7 @@ extern "C"
 #define FSDIO_RESP3_OFFSET          0x3CU          /* the response reg3 */
 #define FSDIO_MASKED_INTS_OFFSET    0x40U          /* the masked interrupt status reg */
 #define FSDIO_RAW_INTS_OFFSET       0x44U          /* the raw interrupt status reg */
-#define FSDIO_STATUS_OFFSET         0x48U          /* the status reg	*/
+#define FSDIO_STATUS_OFFSET         0x48U          /* the status reg    */
 #define FSDIO_FIFOTH_OFFSET         0x4CU          /* the FIFO threshold watermark reg */
 #define FSDIO_CARD_DETECT_OFFSET    0x50U          /* the card detect reg */
 #define FSDIO_CARD_WRTPRT_OFFSET    0x54U          /* the card write protect reg */
@@ -164,10 +164,10 @@ extern "C"
 
 #define FSDIO_INT_ALL_BITS GENMASK(16, 0)
 #define FSDIO_INTS_CMD_MASK (FSDIO_INT_RE_BIT | FSDIO_INT_CMD_BIT | FSDIO_INT_RCRC_BIT | \
-				            FSDIO_INT_RTO_BIT | FSDIO_INT_HTO_BIT | FSDIO_INT_HLE_BIT)
+                            FSDIO_INT_RTO_BIT | FSDIO_INT_HTO_BIT | FSDIO_INT_HLE_BIT)
 
 #define FSDIO_INTS_DATA_MASK (FSDIO_INT_DTO_BIT | FSDIO_INT_DCRC_BIT | FSDIO_INT_DRTO_BIT | \
-				             FSDIO_INT_SBE_BCI_BIT)
+                             FSDIO_INT_SBE_BCI_BIT)
 
 /** @name FSDIO_CMD_OFFSET Register
  */
@@ -298,7 +298,7 @@ enum
 #define FSDIO_DMAC_INT_ENA_ALL GENMASK(9, 0)
 
 #define FSDIO_DMAC_INTS_MASK    (FSDIO_DMAC_INT_ENA_FBE | FSDIO_DMAC_INT_ENA_DU | \
-				                 FSDIO_DMAC_INT_ENA_NIS | FSDIO_DMAC_INT_ENA_AIS)
+                                 FSDIO_DMAC_INT_ENA_NIS | FSDIO_DMAC_INT_ENA_AIS)
 
 /** @name FSDIO_CARD_THRCTL_OFFSET Register
  */
@@ -329,9 +329,9 @@ enum
 #define FSDIO_UHS_EXT_CLK_MUX BIT(31)
 
 /* FSDIO_UHS_REG_EXT_OFFSET 和 FSDIO_CLKDIV_OFFSET 两个寄存器配合完成卡时钟和驱动采样相位调整
-    UHS_REG_EXT 配置一级分频，CLK_DIV 决定CARD工作时钟频率, DRV 和 SAMP 分别控制驱动相位和采样相位粗调 
+    UHS_REG_EXT 配置一级分频，CLK_DIV 决定CARD工作时钟频率, DRV 和 SAMP 分别控制驱动相位和采样相位粗调
         分配系数 = bit [14 : 8] + 1
-    CLKDIV 配置二级分频, DIVIDER , DRV 和 SAMP 分别控制驱动相位和采样相位精调     
+    CLKDIV 配置二级分频, DIVIDER , DRV 和 SAMP 分别控制驱动相位和采样相位精调
         分配系数 = bit [7: 0] * 2
 */
 #define FSDIO_UHS_REG(drv_phase, samp_phase, clk_div) \
@@ -381,7 +381,7 @@ static inline void FSdioSetClock(uintptr base_addr, boolean enable)
         reg_val |= FSDIO_CLKENA_CCLK_ENABLE;
     else
         reg_val &= ~FSDIO_CLKENA_CCLK_ENABLE;
-    FSDIO_WRITE_REG(base_addr, FSDIO_CLKENA_OFFSET, reg_val);    
+    FSDIO_WRITE_REG(base_addr, FSDIO_CLKENA_OFFSET, reg_val);
 }
 
 static inline void FSdioSetPower(uintptr base_addr, boolean enable)
@@ -603,7 +603,7 @@ static inline void FSdioSetDDRMode(uintptr base_addr, boolean enable)
     FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_OFFSET, uhs_val);
     FSDIO_WRITE_REG(base_addr, FSDIO_EMMC_DDR_REG_OFFSET, emmc_val);
 
-    return;    
+    return;
 }
 
 /**
@@ -615,7 +615,7 @@ static inline void FSdioSetDDRMode(uintptr base_addr, boolean enable)
 static inline boolean FSdioCheckIfCardExists(uintptr base_addr)
 {
     return (FSDIO_READ_REG(base_addr, FSDIO_CARD_DETECT_OFFSET) & FSDIO_CARD_DETECTED) ?
-            FALSE : TRUE;
+           FALSE : TRUE;
 }
 
 #ifdef __cplusplus

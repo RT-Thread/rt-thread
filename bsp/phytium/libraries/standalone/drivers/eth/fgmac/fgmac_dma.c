@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgmac_dma.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -33,9 +33,9 @@
 
 /************************** Constant Definitions *****************************/
 #if defined(__aarch64__)
-#define  FGMAC_DMA_IS_64_BIT_MEMORY(addr)  (GENMASK_ULL(63, 32) & (uintptr)(addr))
+    #define  FGMAC_DMA_IS_64_BIT_MEMORY(addr)  (GENMASK_ULL(63, 32) & (uintptr)(addr))
 #else
-#define  FGMAC_DMA_IS_64_BIT_MEMORY(addr)  (FALSE)
+    #define  FGMAC_DMA_IS_64_BIT_MEMORY(addr)  (FALSE)
 #endif
 
 /**************************** Type Definitions *******************************/
@@ -62,7 +62,7 @@
  * @return  {FError} RX DMA初始化的错误码信息，FGMAC_SUCCESS 表示RX DMA初始化成功，其它返回值表示RX DMA初始化失败
  * @note 传入的rx_desc_tbl和rx_buf必须为32位空间地址
  */
-FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tbl, 
+FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tbl,
                             u8 *rx_buf, const fsize_t rx_pre_buf_len, const fsize_t rx_buf_num)
 {
     FASSERT(instance_p && rx_desc_tbl && rx_buf);
@@ -73,11 +73,11 @@ FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tb
     void *desc_end = (void *)(rx_desc_tbl + rx_buf_num * sizeof(FGmacDmaDesc));
     void *buf_end = (void *)(rx_buf + rx_buf_num * rx_pre_buf_len);
 
-    /* check if end address of descriptor or buffer is in 64 bit memory, 
+    /* check if end address of descriptor or buffer is in 64 bit memory,
         if TRUE, return error because DMA register can only hold 32 bit memory address */
     if ((FGMAC_DMA_IS_64_BIT_MEMORY(desc_end)) || (FGMAC_DMA_IS_64_BIT_MEMORY(buf_end)))
     {
-        FGMAC_ERROR("invalid rx descriptor memory %p or rx dma buf memory %p", 
+        FGMAC_ERROR("invalid rx descriptor memory %p or rx dma buf memory %p",
                     desc_end, buf_end);
         return FGMAC_ERR_INVALID_DMA_MEM;
     }
@@ -103,7 +103,7 @@ FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tb
         if ((rx_buf_num - 1) == i)
         {
             cur_rx_desc->ctrl |= FGMAC_DMA_RDES1_END_RING;
-        }        
+        }
     }
 
     /* flush descriptor */
@@ -125,7 +125,7 @@ FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tb
  * @return  {FError} TX DMA初始化的错误码信息，FGMAC_SUCCESS 表示TX DMA初始化成功，其它返回值表示TX DMA初始化失败
  * @note 传入的tx_desc_tbl和tx_buf必须为32位空间地址
  */
-FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tbl, 
+FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tbl,
                             u8 *tx_buf, const fsize_t tx_pre_buf_len, const fsize_t tx_buf_num)
 {
     FASSERT(instance_p && tx_desc_tbl && tx_buf);
@@ -136,11 +136,11 @@ FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tb
     void *desc_end = (void *)(tx_desc_tbl + tx_buf_num * sizeof(FGmacDmaDesc));
     void *buf_end = (void *)(tx_buf + tx_buf_num * tx_pre_buf_len);
 
-    /* check if end address of descriptor or buffer is in 64 bit memory, 
+    /* check if end address of descriptor or buffer is in 64 bit memory,
         if TRUE, return error because DMA register can only hold 32 bit memory address */
     if ((FGMAC_DMA_IS_64_BIT_MEMORY(desc_end)) || (FGMAC_DMA_IS_64_BIT_MEMORY(buf_end)))
     {
-        FGMAC_ERROR("invalid rx descriptor memory %p or rx dma buf memory %p", 
+        FGMAC_ERROR("invalid rx descriptor memory %p or rx dma buf memory %p",
                     desc_end, buf_end);
         return FGMAC_ERR_INVALID_DMA_MEM;
     }
@@ -160,7 +160,7 @@ FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tb
         cur_tx_desc = tx_desc_tbl + i;
         FCacheDCacheInvalidateRange((uintptr)&tx_buf[i * tx_pre_buf_len], tx_pre_buf_len);
         cur_tx_desc->buf_addr = (u32)((uintptr)&tx_buf[i * tx_pre_buf_len]);
-        cur_tx_desc->status  = 0;    
+        cur_tx_desc->status  = 0;
     }
 
     /* flush descriptor */
@@ -168,7 +168,7 @@ FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tb
     FCacheDCacheInvalidateRange((uintptr)instance_p->tx_desc, tx_buf_num * sizeof(FGmacDmaDesc));
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_TX_LIST_BASE_OFFSET, (u32)(uintptr)tx_desc_tbl);
-    return FGMAC_SUCCESS;    
+    return FGMAC_SUCCESS;
 }
 
 /**
@@ -181,11 +181,11 @@ FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tb
 FError FGmacStartTrans(FGmac *instance_p)
 {
     FASSERT(instance_p);
-	if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FGMAC_ERROR("device is already initialized!!!");
-		return FGMAC_ERR_NOT_READY;
-	}
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FGMAC_ERROR("device is already initialized!!!");
+        return FGMAC_ERR_NOT_READY;
+    }
 
     FGmacStartDmaTrans(instance_p->config.base_addr);
     return FGMAC_SUCCESS;
@@ -201,11 +201,11 @@ FError FGmacStartTrans(FGmac *instance_p)
 FError FGmacStopTrans(FGmac *instance_p)
 {
     FASSERT(instance_p);
-	if (FT_COMPONENT_IS_READY != instance_p->is_ready)
-	{
-		FGMAC_ERROR("device is already initialized!!!");
-		return FGMAC_ERR_NOT_READY;
-	}
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FGMAC_ERROR("device is already initialized!!!");
+        return FGMAC_ERR_NOT_READY;
+    }
 
     FGmacStopDmaTrans(instance_p->config.base_addr);
     return FGMAC_SUCCESS;
@@ -226,8 +226,8 @@ FError FGmacRecvFrame(FGmac *instance_p)
     u32 desc_cnt = 0;
     u32 flag = (FGMAC_DMA_RDES0_FIRST_DESCRIPTOR | FGMAC_DMA_RDES0_LAST_DESCRIPTOR);
 
-    while ((0 == (FGMAC_DMA_RDES0_OWN & cur_rx_desc->status)) && 
-           (desc_cnt < rx_ring->desc_max_num))
+    while ((0 == (FGMAC_DMA_RDES0_OWN & cur_rx_desc->status)) &&
+            (desc_cnt < rx_ring->desc_max_num))
     {
         desc_cnt++;
 
@@ -250,7 +250,7 @@ FError FGmacRecvFrame(FGmac *instance_p)
         }
     }
 
-    return FGMAC_ERR_TRANS_FAILED; 
+    return FGMAC_ERR_TRANS_FAILED;
 }
 
 /**
@@ -294,7 +294,7 @@ FError FGmacSendFrame(FGmac *instance_p, u32 frame_len)
 
         /* Set LAST and FIRST segment */
         tx_desc->ctrl |= (FGMAC_DMA_TDES1_FIRST_SEGMENT | FGMAC_DMA_TDES1_LAST_SEGMENT);
-        
+
         /* Set frame size */
         tx_desc->ctrl &= ~(FGMAC_DMA_TDES1_BUFFER1_SIZE_MASK);
         tx_desc->ctrl |= (frame_len & FGMAC_DMA_TDES1_BUFFER1_SIZE_MASK);
@@ -302,14 +302,14 @@ FError FGmacSendFrame(FGmac *instance_p, u32 frame_len)
         /* Set Own bit of the Tx descriptor Status: gives the buffer back to ETHERNET DMA */
         tx_desc->status |= FGMAC_DMA_TDES0_OWN;
         FGMAC_DMA_INC_DESC(tx_ring->desc_idx, tx_ring->desc_max_num);
-        
+
     }
     else
     {
         for (i = 0U; i < buf_cnt; i++)
         {
             tx_desc = &instance_p->tx_desc[tx_ring->desc_idx];
-            
+
             /* Clear FIRST and LAST segment bits */
             tx_desc->ctrl &= ~(FGMAC_DMA_TDES1_FIRST_SEGMENT | FGMAC_DMA_TDES1_LAST_SEGMENT);
 
@@ -330,7 +330,7 @@ FError FGmacSendFrame(FGmac *instance_p, u32 frame_len)
                 tx_desc->ctrl &= ~(FGMAC_DMA_TDES1_BUFFER1_SIZE_MASK);
                 tx_desc->ctrl |= (size & FGMAC_DMA_TDES1_BUFFER1_SIZE_MASK);
             }
-           
+
             /* Set Own bit of the Tx descriptor Status: gives the buffer back to ETHERNET DMA */
             tx_desc->status |= FGMAC_DMA_TDES0_OWN;
             FGMAC_DMA_INC_DESC(tx_ring->desc_idx, tx_ring->desc_max_num);
@@ -338,5 +338,5 @@ FError FGmacSendFrame(FGmac *instance_p, u32 frame_len)
     }
 
     FGmacResumeDmaSend(instance_p->config.base_addr);
-    return ret;   
+    return ret;
 }

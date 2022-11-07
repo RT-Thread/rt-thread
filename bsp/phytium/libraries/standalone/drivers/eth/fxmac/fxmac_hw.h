@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fxmac_hw.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -46,7 +46,7 @@ extern "C"
 
 #define FXMAC_MAX_HASH_BITS 64U /* Maximum value for hash bits. 2**6 */
 
-    /************************** Constant Definitions *****************************/
+/************************** Constant Definitions *****************************/
 
 #define FXMAC_MAX_MAC_ADDR 4U /* Maxmum number of mac address \
                                      supported */
@@ -361,7 +361,7 @@ extern "C"
 #define FXMAC_NWCTRL_RXEN_MASK BIT(2)    /* Enable receive */
 #define FXMAC_NWCTRL_LOOPEN_MASK BIT(1)  /* local loopback */
 
-    /* External address match enable */
+/* External address match enable */
 
 #define FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK BIT(27) /* SGMII mode enable */
 
@@ -523,7 +523,7 @@ extern "C"
 #define FXMAC_DMACR_INCR8_AHB_AXI_BURST BIT(3)  /* 8 bytes AHB_AXI bursts */
 #define FXMAC_DMACR_INCR16_AHB_AXI_BURST BIT(4) /* 16 bytes AHB_AXI bursts */
 
-    /* This register indicates module identification number and module revision. */
+/* This register indicates module identification number and module revision. */
 
 #define FXMAC_REVISION_MODULE_MASK GENMASK(15, 0) /* Module revision */
 #define FXMAC_IDENTIFICATION_MASK GENMASK(27, 16) /* Module identification number */
@@ -592,7 +592,7 @@ extern "C"
 
 #define FXMAC_QUEUE_REGISTER_OFFSET(base_addr, queue_id) ((u32)base_addr + (queue_id - 1) * 4)
 
-    /* Design Configuration Register 1 - The GEM has many parameterisation options to configure the IP during compilation stage. */
+/* Design Configuration Register 1 - The GEM has many parameterisation options to configure the IP during compilation stage. */
 
 #define FXMAC_DESIGNCFG_DEBUG1_BUS_WIDTH_MASK GENMASK(27, 25)
 
@@ -614,7 +614,7 @@ extern "C"
 #define FXMAC_GEM_SAB_MASK GENMASK(15, 0) /* Address bits[47:32] \
                                                bit[31:0] are in BOTTOM */
 
-    /* USXGMII control register */
+/* USXGMII control register */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_100M (0x0 << 14) /* 100M operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_1G (0x1 << 14)   /* 1G operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_2_5G (0x2 << 14) /* 2.5G operation */
@@ -625,7 +625,7 @@ extern "C"
 #define FXMAC_GEM_USX_TX_DATAPATH_EN BIT(1)         /* TX Datapath Enable. */
 #define FXMAC_GEM_USX_SIGNAL_OK BIT(0)              /* Enable the USXGMII/BASE-R receive PCS. */
 
-    /*  All PCS registers */
+/*  All PCS registers */
 
 #define FXMAC_PCS_CONTROL_ENABLE_AUTO_NEG BIT(12) /* Enable auto-negotiation - when set active high, autonegotiation operation is enabled.  */
 
@@ -636,13 +636,13 @@ extern "C"
 
 /* FXMAC_PCS_AN_LP_OFFSET */
 
-#define FXMAC_PCS_AN_LP_SPEED_OFFSET   10 
+#define FXMAC_PCS_AN_LP_SPEED_OFFSET   10
 #define FXMAC_PCS_AN_LP_SPEED    (0x3U << FXMAC_PCS_AN_LP_SPEED_OFFSET) /* SGMII 11 : Reserved 10 : 1000 Mbps 01 : 100Mbps 00 : 10 Mbps */
 #define FXMAC_PCS_AN_LP_DUPLEX_OFFSET  12
 #define FXMAC_PCS_AN_LP_DUPLEX   (0x3U << FXMAC_PCS_AN_LP_DUPLEX_OFFSET) /* SGMII Bit 13: Reserved. read as 0. Bit 12 : 0 : half-duplex. 1: Full Duplex." */
-#define FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS (1U<<15) /* In sgmii mode, 0 is link down . 1 is link up */  
+#define FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS (1U<<15) /* In sgmii mode, 0 is link down . 1 is link up */
 
-    /***************** Macros (Inline Functions) Definitions *********************/
+/***************** Macros (Inline Functions) Definitions *********************/
 
 #define FXMAC_READREG32(addr, reg_offset) FtIn32(addr + (u32)reg_offset)
 #define FXMAC_WRITEREG32(addr, reg_offset, reg_value) FtOut32(addr + (u32)reg_offset, (u32)reg_value)

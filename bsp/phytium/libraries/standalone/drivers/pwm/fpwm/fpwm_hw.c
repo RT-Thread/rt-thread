@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpwm_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for 
- * 
- * Modify History: 
+ * Description:  This files is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -69,35 +69,35 @@ void FPwmLsdDisable(uintptr lsd_addr, u8 pwm_id)
  * @name: FPwmDump
  * @msg:  dump some pwm registers value.
  * @param {FPwmCtrl} *pctrl, instance of FPWM controller
- * @return 
+ * @return
  */
 void FPwmDump(uintptr base_addr)
 {
     uintptr db_base_addr = base_addr;
     uintptr pwm_base_addr = base_addr + FPWM_OFFSET;
 
-	printf("Off[0x%x]: FPWM_DB_CTRL_OFFSET  = 0x%08x\r\n", db_base_addr+FPWM_DB_CTRL_OFFSET, FPWM_READ_REG32(db_base_addr, FPWM_DB_CTRL_OFFSET));
-	printf("Off[0x%x]: FPWM_DB_DLY_OFFSET   = 0x%08x\r\n", db_base_addr+FPWM_DB_DLY_OFFSET, FPWM_READ_REG32(db_base_addr, FPWM_DB_DLY_OFFSET));
+    printf("Off[0x%x]: FPWM_DB_CTRL_OFFSET  = 0x%08x\r\n", db_base_addr + FPWM_DB_CTRL_OFFSET, FPWM_READ_REG32(db_base_addr, FPWM_DB_CTRL_OFFSET));
+    printf("Off[0x%x]: FPWM_DB_DLY_OFFSET   = 0x%08x\r\n", db_base_addr + FPWM_DB_DLY_OFFSET, FPWM_READ_REG32(db_base_addr, FPWM_DB_DLY_OFFSET));
     printf("\r\n");
-	printf("Off[0x%x]: FPWM_TIM_CNT_OFFSET    = 0x%08x\r\n", pwm_base_addr+FPWM_TIM_CNT_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CNT_OFFSET));
-	printf("Off[0x%x]: FPWM_TIM_CTRL_OFFSET   = 0x%08x\r\n", pwm_base_addr+FPWM_TIM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CTRL_OFFSET));
-	printf("Off[0x%x]: FPWM_STATE_OFFSET    = 0x%08x\r\n", pwm_base_addr+FPWM_STATE_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_STATE_OFFSET));
-	printf("Off[0x%x]: FPWM_PERIOD_OFFSET = 0x%08x\r\n", pwm_base_addr+FPWM_PERIOD_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET));
-	printf("Off[0x%x]: FPWM_CTRL_OFFSET = 0x%08x\r\n", pwm_base_addr+FPWM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET));
-	printf("Off[0x%x]: FPWM_CCR_OFFSET  = 0x%08x\r\n", pwm_base_addr+FPWM_CCR_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET));
-	
+    printf("Off[0x%x]: FPWM_TIM_CNT_OFFSET    = 0x%08x\r\n", pwm_base_addr + FPWM_TIM_CNT_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CNT_OFFSET));
+    printf("Off[0x%x]: FPWM_TIM_CTRL_OFFSET   = 0x%08x\r\n", pwm_base_addr + FPWM_TIM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CTRL_OFFSET));
+    printf("Off[0x%x]: FPWM_STATE_OFFSET    = 0x%08x\r\n", pwm_base_addr + FPWM_STATE_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_STATE_OFFSET));
+    printf("Off[0x%x]: FPWM_PERIOD_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_PERIOD_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET));
+    printf("Off[0x%x]: FPWM_CTRL_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET));
+    printf("Off[0x%x]: FPWM_CCR_OFFSET  = 0x%08x\r\n", pwm_base_addr + FPWM_CCR_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET));
+
     pwm_base_addr = pwm_base_addr + FPWM_OFFSET;
     printf("\r\n");
-	printf("Off[0x%x]: FPWM_TIM_CNT_OFFSET    = 0x%08x\r\n", pwm_base_addr+FPWM_TIM_CNT_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CNT_OFFSET));
-	printf("Off[0x%x]: FPWM_TIM_CTRL_OFFSET   = 0x%08x\r\n", pwm_base_addr+FPWM_TIM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CTRL_OFFSET));
-	printf("Off[0x%x]: FPWM_STATE_OFFSET    = 0x%08x\r\n", pwm_base_addr+FPWM_STATE_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_STATE_OFFSET));
-	printf("Off[0x%x]: FPWM_PERIOD_OFFSET = 0x%08x\r\n", pwm_base_addr+FPWM_PERIOD_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET));
-	printf("Off[0x%x]: FPWM_CTRL_OFFSET = 0x%08x\r\n", pwm_base_addr+FPWM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET));
-	printf("Off[0x%x]: FPWM_CCR_OFFSET  = 0x%08x\r\n", pwm_base_addr+FPWM_CCR_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET));
-	
+    printf("Off[0x%x]: FPWM_TIM_CNT_OFFSET    = 0x%08x\r\n", pwm_base_addr + FPWM_TIM_CNT_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CNT_OFFSET));
+    printf("Off[0x%x]: FPWM_TIM_CTRL_OFFSET   = 0x%08x\r\n", pwm_base_addr + FPWM_TIM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_TIM_CTRL_OFFSET));
+    printf("Off[0x%x]: FPWM_STATE_OFFSET    = 0x%08x\r\n", pwm_base_addr + FPWM_STATE_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_STATE_OFFSET));
+    printf("Off[0x%x]: FPWM_PERIOD_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_PERIOD_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET));
+    printf("Off[0x%x]: FPWM_CTRL_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET));
+    printf("Off[0x%x]: FPWM_CCR_OFFSET  = 0x%08x\r\n", pwm_base_addr + FPWM_CCR_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET));
 
-    printf("Off[0x%x]: FPWM_LSD_OFFSET  = 0x%08x\r\n", FLSD_CONFIG_BASE+FLSD_MIO_PWM_SYN_OFFSET, FPWM_READ_REG32(FLSD_CONFIG_BASE, FLSD_MIO_PWM_SYN_OFFSET));
+
+    printf("Off[0x%x]: FPWM_LSD_OFFSET  = 0x%08x\r\n", FLSD_CONFIG_BASE + FLSD_MIO_PWM_SYN_OFFSET, FPWM_READ_REG32(FLSD_CONFIG_BASE, FLSD_MIO_PWM_SYN_OFFSET));
 
     printf("\r\n");
-   
+
 }

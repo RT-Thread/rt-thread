@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe       first commit 
+ * 2022-10-26  huanghe       first commit
  *
  */
 
@@ -19,7 +19,8 @@
 #ifdef RT_USING_SMP
 
 struct rt_thread test_core[RT_CPUS_NR];
-static char *core_thread_name[8] = {
+static char *core_thread_name[8] =
+{
     "core0_test",
     "core1_test",
     "core2_test",
@@ -27,7 +28,8 @@ static char *core_thread_name[8] = {
     "core4_test",
     "core5_test",
     "core6_test",
-    "core7_test"};
+    "core7_test"
+};
 static rt_uint8_t core_stack[RT_CPUS_NR][1024];
 
 static void demo_core_thread(void *parameter)

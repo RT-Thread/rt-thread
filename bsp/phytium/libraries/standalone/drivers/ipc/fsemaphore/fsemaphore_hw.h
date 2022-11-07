@@ -1,25 +1,25 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fsemaphore_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
  * Description:  This files is for semaphore register definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022/5/23    init commit 
+ * 1.0   zhugengyu  2022/5/23    init commit
  */
 
 
@@ -47,27 +47,27 @@ extern "C"
 #define FSEMA_RST_REG_OFFSET             0x0U /* 写 1 复位所有信号量 */
 #define FSEMA_IND_RST_REG_OFFSET         0x4U /* 写信号量独热码为 1，复位对应信号量 */
 #define FSEMA_STATE_REG_OFFSET           0x8U /* 信号量 0 ~ 31的状态 */
-#define FSEMA_RLOCK_X_REG_OFFSET(x)      (0x10U + (x) * 4)  /* 信号量 X 读锁定寄存器 */     
+#define FSEMA_RLOCK_X_REG_OFFSET(x)      (0x10U + (x) * 4)  /* 信号量 X 读锁定寄存器 */
 
-/** @name FSEMA_RST_REG_OFFSET Register 
+/** @name FSEMA_RST_REG_OFFSET Register
  */
-#define FSEMA_RST_ALL                   BIT(0) /* 写 1 复位所有信号量 */        
+#define FSEMA_RST_ALL                   BIT(0) /* 写 1 复位所有信号量 */
 
-/** @name FSEMA_IND_RST_REG_OFFSET Register 
+/** @name FSEMA_IND_RST_REG_OFFSET Register
  */
 #define FSEMA_IND_RSET(locker_idx)      BIT(locker_idx) /* 写信号量独热码为 1，复位对应信号量 */
 
-/** @name FSEMA_STATE_REG_OFFSET Register 
+/** @name FSEMA_STATE_REG_OFFSET Register
  */
 #define FSEMA_LOCKER_STATE(locker_idx)  BIT(locker_idx) /* 状态:0 表示解锁，1 表示锁定 */
 
-/** @name FSEMA_RLOCK_X_REG_OFFSET Register 
+/** @name FSEMA_RLOCK_X_REG_OFFSET Register
  */
 #define FSEMA_RLOCK_X_UNLOCK               0  /* 写 0：信号量被解锁 */
 /* 读返回 0：信号量当前未被锁定，读后被锁定
    读返回 1：信号量当前已经被锁定，锁定失败 */
-#define FSEMA_RLOCK_X_IS_LOCKED         1 
-#define FSEMA_RLOCK_X_TAKE_LOCKER       0 
+#define FSEMA_RLOCK_X_IS_LOCKED         1
+#define FSEMA_RLOCK_X_TAKE_LOCKER       0
 
 #define FSEMA_MIN_LOCKER_IDX            0
 #define FSEMA_MAX_LOCKER_IDX            31

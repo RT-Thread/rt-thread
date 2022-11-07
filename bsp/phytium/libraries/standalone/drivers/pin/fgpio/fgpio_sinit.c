@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fgpio_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
  * Description:  This files is for GPIO static variables
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu  2022-3-1     init commit
@@ -39,9 +39,9 @@
 
 /************************** Variable Definitions *****************************/
 #if defined(FGPIO_VERSION_1) /* FT2000-4, D2000 */
-extern const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
+    extern const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
 #elif defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
-extern FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
+    extern FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
 #endif
 
 /*****************************************************************************/
@@ -67,7 +67,7 @@ const FGpioConfig *FGpioLookupConfig(u32 instance_id)
         }
     }
 
-    return ptr;    
+    return ptr;
 }
 #elif defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
 /**
@@ -125,7 +125,7 @@ const FGpioConfig *FGpioLookupConfig(u32 instance_id)
 {
     const FGpioConfig *ptr = NULL;
     u32 index;
-    static boolean irq_num_set = FALSE; 
+    static boolean irq_num_set = FALSE;
 
     if (FALSE == irq_num_set) /* set irq num in the first time */
     {

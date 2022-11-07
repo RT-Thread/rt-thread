@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fpinctrl.h
  * Date: 2022-03-28 14:16:09
  * LastEditTime: 2022-03-28 14:16:10
  * Description:  This files is for IO pin ctrl API definition
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu   2022/3/28   init commit
@@ -119,7 +119,7 @@ typedef enum
     FPIN_NUM_OF_DELAY_TYPE
 } FPinDelayType; /* 引脚延时配置类型 */
 
-typedef enum 
+typedef enum
 {
     FPIN_DELAY_NONE = 0,
     FPIN_DELAY_1,
@@ -137,7 +137,7 @@ typedef enum
 {
     FPIN_DELAY_IN_TYPE = 0,     /*  input delay */
     FPIN_DELAY_OUT_TYPE = 1,    /* output delay */
-}FPinDelayIOType;
+} FPinDelayIOType;
 
 typedef struct
 {
@@ -198,10 +198,10 @@ void FPinSetDelay(const FPinIndex pin, FPinDelayDir dir, FPinDelayType type, FPi
 void FPinSetDelayEn(const FPinIndex pin, FPinDelayDir dir, boolean enable);
 
 /* Update and enable common IO pin delay config */
-void FPinSetDelayConfig(const FPinIndex pin,FPinDelayIOType in_out_type, FPinDelay roungh_delay, FPinDelay delicate_delay,boolean enable);
+void FPinSetDelayConfig(const FPinIndex pin, FPinDelayIOType in_out_type, FPinDelay roungh_delay, FPinDelay delicate_delay, boolean enable);
 
 /* Get current common IO pin delay config */
-void FPinGetDelayConfig(const FPinIndex pin, FPinDelay *in_roungh_delay, FPinDelay *in_delicate_delay, 
+void FPinGetDelayConfig(const FPinIndex pin, FPinDelay *in_roungh_delay, FPinDelay *in_delicate_delay,
                         FPinDelay *out_roungh_delay, FPinDelay *out_delicate_delay);
 
 #ifdef __cplusplus

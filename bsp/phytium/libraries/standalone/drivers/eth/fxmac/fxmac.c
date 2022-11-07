@@ -1,22 +1,22 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * FilePath: fxmac.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for 
- * 
- * Modify History: 
+ * Description:  This file is for
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
@@ -46,13 +46,13 @@ extern FError FXmacSetTypeIdCheck(FXmac *instance_p, u32 id_check, u8 index);
  * @param {u32} speed interface speed
  * @return {*}
  */
-void FXmacSelectClk(FXmac *instance_p )
+void FXmacSelectClk(FXmac *instance_p)
 {
     u32 reg_value;
     s32 set_speed = 0;
     u32 speed = instance_p->config.speed;
     FASSERT(instance_p != NULL);
-    FASSERT((speed == FXMAC_SPEED_10) ||(speed == FXMAC_SPEED_100) || (speed == FXMAC_SPEED_1000) || (speed == FXMAC_SPEED_2500) || (speed == FXMAC_SPEED_10000));
+    FASSERT((speed == FXMAC_SPEED_10) || (speed == FXMAC_SPEED_100) || (speed == FXMAC_SPEED_1000) || (speed == FXMAC_SPEED_2500) || (speed == FXMAC_SPEED_10000));
 
     if ((instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_USXGMII) || (instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_XGMII))
     {
@@ -175,27 +175,27 @@ void FXmacSelectClk(FXmac *instance_p )
     }
 
 
-    switch(speed)
+    switch (speed)
     {
-        case FXMAC_SPEED_25000:
-            set_speed = 2;
+    case FXMAC_SPEED_25000:
+        set_speed = 2;
         break;
-        case FXMAC_SPEED_10000:
-            set_speed = 4;
+    case FXMAC_SPEED_10000:
+        set_speed = 4;
         break;
-        case FXMAC_SPEED_5000:
-            set_speed = 3;
+    case FXMAC_SPEED_5000:
+        set_speed = 3;
         break;
-        case FXMAC_SPEED_2500:
-            set_speed = 2;
+    case FXMAC_SPEED_2500:
+        set_speed = 2;
         break;
-        case FXMAC_SPEED_1000:
-            set_speed = 1;
+    case FXMAC_SPEED_1000:
+        set_speed = 1;
         break;
-        default:
-            set_speed = 0;
+    default:
+        set_speed = 0;
         break;
-        }
+    }
     /*GEM_HSMAC(0x0050) provide rate to the external*/
     reg_value = FXMAC_READREG32(instance_p->config.base_address, FXMAC_GEM_HSMAC);
     reg_value &= ~FXMAC_GEM_HSMACSPEED_MASK;
@@ -283,10 +283,10 @@ void FXmacStart(FXmac *instance_p)
     /* Enable receiver if not already enabled */
     if ((instance_p->config.network_default_config & FXMAC_RECEIVER_ENABLE_OPTION) != 0x00000000U)
     {
-        
+
         reg_val = FXMAC_READREG32(instance_p->config.base_address,
                                   FXMAC_NWCTRL_OFFSET);
-        FXMAC_PRINT_I("endable receiver 0x%x \r\n ",reg_val);
+        FXMAC_PRINT_I("endable receiver 0x%x \r\n ", reg_val);
         if ((!(reg_val & FXMAC_NWCTRL_RXEN_MASK)) == TRUE)
         {
             FXMAC_WRITEREG32(instance_p->config.base_address,
@@ -294,12 +294,12 @@ void FXmacStart(FXmac *instance_p)
                              reg_val | (u32)FXMAC_NWCTRL_RXEN_MASK);
         }
     }
-    FXMAC_PRINT_I("FXMAC_NWCTRL_OFFSET is 0x%x \r\n",FXMAC_READREG32(instance_p->config.base_address,
-                                  FXMAC_NWCTRL_OFFSET));
-    
+    FXMAC_PRINT_I("FXMAC_NWCTRL_OFFSET is 0x%x \r\n", FXMAC_READREG32(instance_p->config.base_address,
+                  FXMAC_NWCTRL_OFFSET));
+
     /* Enable TX and RX interrupt */
-    FXMAC_INT_ENABLE(instance_p, FXMAC_IXR_LINKCHANGE_MASK|FXMAC_IXR_TX_ERR_MASK | FXMAC_IXR_RX_ERR_MASK | FXMAC_IXR_RXCOMPL_MASK | FXMAC_IXR_TXCOMPL_MASK); 
-    
+    FXMAC_INT_ENABLE(instance_p, FXMAC_IXR_LINKCHANGE_MASK | FXMAC_IXR_TX_ERR_MASK | FXMAC_IXR_RX_ERR_MASK | FXMAC_IXR_RXCOMPL_MASK | FXMAC_IXR_TXCOMPL_MASK);
+
     /* Mark as started */
     instance_p->is_started = FT_COMPONENT_IS_STARTED;
 
@@ -341,7 +341,7 @@ void FXmacStop(FXmac *instance_p)
     /* Disable all interrupts */
     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_IDR_OFFSET,
                      FXMAC_IXR_ALL_MASK);
-    
+
 
 
     /* Disable the receiver & transmitter */
@@ -415,7 +415,7 @@ static u32 FXmacDmaWidth(FXmac *instance_p)
     }
 
     read_regs = FXMAC_READREG32(config_p->base_address, FXMAC_DESIGNCFG_DEBUG1_OFFSET);
-    
+
     switch ((read_regs & FXMAC_DESIGNCFG_DEBUG1_BUS_WIDTH_MASK) >> 25)
     {
     case 4:
@@ -530,7 +530,7 @@ static void FXmacReset(FXmac *instance_p)
 {
     u32 reg_val, write_reg = 0;
     u8 i;
-    s8 mac_addr[6] = {0x0,0x0,0x0,0x0,0x0,0x0};
+    s8 mac_addr[6] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
     u32 rx_buf_num;
 
     FASSERT(instance_p != NULL);
@@ -539,12 +539,12 @@ static void FXmacReset(FXmac *instance_p)
     FXmacStop(instance_p);
 
     instance_p->moudle_id = (FXMAC_READREG32(instance_p->config.base_address, FXMAC_REVISION_REG_OFFSET) & FXMAC_IDENTIFICATION_MASK) >> 16;
-    FXMAC_PRINT_I("instance_p->moudle_id is %d \r\n",instance_p->moudle_id);
+    FXMAC_PRINT_I("instance_p->moudle_id is %d \r\n", instance_p->moudle_id);
     instance_p->max_mtu_size = FXMAC_MTU;
     instance_p->max_frame_size = FXMAC_MTU + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE;
 
     FXMAC_WRITEREG32(instance_p->config.base_address,
-                     FXMAC_NWCTRL_OFFSET, 
+                     FXMAC_NWCTRL_OFFSET,
                      ((FXMAC_NWCTRL_STATCLR_MASK) & (u32)(~FXMAC_NWCTRL_LOOPEN_MASK)) | FXMAC_NWCTRL_MDEN_MASK);
 
     write_reg = FXmacClkDivGet(instance_p); /* mdio clock division */
@@ -554,7 +554,7 @@ static void FXmacReset(FXmac *instance_p)
 
     FXmacDmaReset(instance_p);
 
-     /* This register, when read provides details of the status of the receive path. */
+    /* This register, when read provides details of the status of the receive path. */
     FXMAC_WRITEREG32(instance_p->config.base_address,
                      FXMAC_RXSR_OFFSET, FXMAC_SR_ALL_MASK);
 
@@ -571,18 +571,18 @@ static void FXmacReset(FXmac *instance_p)
                      FXMAC_TXSR_OFFSET, FXMAC_SR_ALL_MASK);
 
     FXmacClearHash(instance_p);
-    
+
     /* set default mac address */
     for (i = 0U; i < 4U; i++)
     {
         (void)FXmacSetMacAddress(instance_p, mac_addr, i);
         (void)FXmacGetMacAddress(instance_p, mac_addr, i);
-        (void)FXmacSetTypeIdCheck(instance_p, 0x00000000U, i); 
+        (void)FXmacSetTypeIdCheck(instance_p, 0x00000000U, i);
     }
 
     /* clear all counters */
     for (i = 0U; i < (u8)((FXMAC_LAST_OFFSET - FXMAC_OCTTXL_OFFSET) / 4U);
-         i++)
+            i++)
     {
         (void)FXMAC_READREG32(instance_p->config.base_address,
                               FXMAC_OCTTXL_OFFSET + (u32)(((u32)i) * ((u32)4)));
@@ -600,7 +600,7 @@ static void FXmacReset(FXmac *instance_p)
 /**
  * @name: FXmacInitInterface
  * @msg:  Initialize the MAC controller configuration based on the PHY interface type
- * @note: 
+ * @note:
  * @param {FXmac} *instance_p is a pointer to the instance to be worked on.
  */
 void FXmacInitInterface(FXmac *instance_p)
@@ -667,7 +667,7 @@ void FXmacInitInterface(FXmac *instance_p)
         config |= FXMAC_NWCFG_PCSSEL_MASK | FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK;
 
         config &= ~(FXMAC_NWCFG_100_MASK | FXMAC_NWCFG_FDEN_MASK);
-        
+
         if (instance_p->moudle_id >= 2)
         {
             config &= ~FXMAC_NWCFG_1000_MASK;
@@ -688,7 +688,7 @@ void FXmacInitInterface(FXmac *instance_p)
         }
 
         FXMAC_WRITEREG32(config_p->base_address, FXMAC_NWCFG_OFFSET, config);
-        
+
         if (config_p->speed == FXMAC_SPEED_2500)
         {
             control = FXMAC_READREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET);
@@ -738,7 +738,7 @@ void FXmacInitInterface(FXmac *instance_p)
             config |= FXMAC_NWCFG_1000_MASK;
         }
 
-        if(config_p->duplex)
+        if (config_p->duplex)
         {
             config |= FXMAC_NWCFG_FDEN_MASK;
         }
@@ -754,13 +754,13 @@ void FXmacInitInterface(FXmac *instance_p)
 
 static void FXmacIrqStubHandler(void)
 {
-    FASSERT_MSG(0,"Please register the interrupt callback function");
+    FASSERT_MSG(0, "Please register the interrupt callback function");
 }
 
 /**
- * @name: FXmacCfgInitialize 
+ * @name: FXmacCfgInitialize
  * @msg:  Initialize a specific fxmac instance/driver.
- * @note: 
+ * @note:
  * @param {FXmac} *instance_p  is a pointer to the instance to be worked on.
  * @param {FXmacConfig} *config_p is the device configuration structure containing required
 *        hardware build data.
@@ -771,7 +771,7 @@ FError FXmacCfgInitialize(FXmac *instance_p, const FXmacConfig *config_p)
     /* Verify arguments */
     FASSERT(instance_p != NULL);
     FASSERT(config_p != NULL);
-    
+
     instance_p->config = *config_p;
     instance_p->link_status = FXMAC_LINKDOWN;
     /* Reset the hardware and set default options */
@@ -792,7 +792,7 @@ FError FXmacCfgInitialize(FXmac *instance_p, const FXmacConfig *config_p)
 
     instance_p->restart_handler = (FXmacIrqHandler)FXmacIrqStubHandler;
     instance_p->restart_args = NULL;
-    
+
     return FT_SUCCESS;
 }
 
@@ -800,10 +800,10 @@ FError FXmacCfgInitialize(FXmac *instance_p, const FXmacConfig *config_p)
 /**
  * This function sets the start address of the transmit/receive buffer queue.
  *
- * @param	instance_p is a pointer to the instance to be worked on.
- * @param	queue_p is the address of the Queue to be written
- * @param	queue_num is the Buffer Queue Index
- * @param	direction indicates Transmit/Receive
+ * @param   instance_p is a pointer to the instance to be worked on.
+ * @param   queue_p is the address of the Queue to be written
+ * @param   queue_num is the Buffer Queue Index
+ * @param   direction indicates Transmit/Receive
  *
  * @note
  * The buffer queue addresses has to be set before starting the transfer, so
