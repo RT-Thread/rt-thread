@@ -9,7 +9,7 @@
  * 2020-02-22     luhuadong    support custom commands
  */
 
-#include "sensor.h"
+#include <drivers/sensor.h>
 
 #define DBG_TAG  "sensor"
 #define DBG_LVL DBG_INFO
