@@ -238,8 +238,8 @@ struct rt_sensor_data
 
 struct rt_sensor_ops
 {
-    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
-    rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
+    rt_size_t (*fetch_data)(rt_sensor_t sensor, void *buf, rt_size_t len);
+    rt_err_t (*control)(rt_sensor_t sensor, int cmd, void *arg);
 };
 
 int rt_hw_sensor_register(rt_sensor_t sensor,
