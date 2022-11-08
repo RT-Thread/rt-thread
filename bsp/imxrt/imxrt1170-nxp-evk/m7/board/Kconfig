@@ -112,10 +112,10 @@ menu "On-chip Peripheral Drivers"
 			default n
 			if BSP_USING_FLEXSPI
 				config BSP_USING_FLEXSPI1
-					bool "Enable FLEXCAN1"
+					bool "Enable FLEXSPI1"
 					default n
                 config BSP_USING_FLEXSPI2
-					bool "Enable FLEXCAN2"
+					bool "Enable FLEXSPI2"
 					default n    
 			endif 
 endmenu
