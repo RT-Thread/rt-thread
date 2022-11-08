@@ -35,13 +35,13 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_SDIO
-			config CODE_STORED_ON_SDCARD
-				bool "Enable Code STORED On SDCARD"
-				default n
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
                 help 
-					"SD CARD work as boot devive"				
-		endif
-        
+                    "SD CARD work as boot devive"				
+        endif
+
     menuconfig BSP_USING_LPUART
         bool "Enable UART"
         select RT_USING_SERIAL
