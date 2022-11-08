@@ -51,11 +51,11 @@ static int filesystem_mount(void)
     if (ret != 0)
     {
         rt_kprintf("ret: %d\n",ret);
-        LOG_E("sd0p0 mount to '/' failed!");
+        LOG_E("sd0 mount to '/' failed!");
         return ret;
     }
 
     return RT_EOK;
 }
-INIT_APP_EXPORT(filesystem_mount);
+INIT_ENV_EXPORT(filesystem_mount);
 #endif
