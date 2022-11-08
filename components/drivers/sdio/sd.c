@@ -403,7 +403,7 @@ rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        mmcsd_delay_ms(10); //delay 10ms
+        rt_thread_mdelay(10); //delay 10ms
     }
 
     if (rocr && !controller_is_spi(host))
