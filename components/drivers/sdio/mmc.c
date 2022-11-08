@@ -355,7 +355,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     bus_width = bus_widths[idx];
     for(trys = 0; trys < 5; trys++){
         mmcsd_set_bus_width(host, bus_width);
-        mmcsd_delay_ms(10);
+        rt_thread_mdelay(10);
         err = mmc_compare_ext_csds(card, ext_csd, bus_width);
         if(!err)
             break;
@@ -421,7 +421,7 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
 
       err = -RT_ETIMEOUT;
 
-      mmcsd_delay_ms(10); //delay 10ms
+      rt_thread_mdelay(10); //delay 10ms
     }
 
   if (rocr && !controller_is_spi(host))
