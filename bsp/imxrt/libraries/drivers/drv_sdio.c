@@ -91,11 +91,14 @@ struct imxrt_mmcsd
     uint32_t *usdhc_adma2_table;
 };
 
+#ifndef CODE_STORED_ON_SDCARD
 static void _mmcsd_gpio_init(struct imxrt_mmcsd *mmcsd)
 {
 
 //    CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
 }
+#endif
+
 static void SDMMCHOST_ErrorRecovery(USDHC_Type *base)
 {
     uint32_t status = 0U;
@@ -115,6 +118,7 @@ static void SDMMCHOST_ErrorRecovery(USDHC_Type *base)
     }
 }
 
+#ifndef CODE_STORED_ON_SDCARD
 static void _mmcsd_host_init(struct imxrt_mmcsd *mmcsd)
 {
     usdhc_host_t *usdhc_host = &mmcsd->usdhc_host;
@@ -143,6 +147,7 @@ static void _mmcsd_isr_init(struct imxrt_mmcsd *mmcsd)
 {
     //NVIC_SetPriority(USDHC1_IRQn, 5U);
 }
+#endif
 
 static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
@@ -449,10 +454,12 @@ rt_int32_t _imxrt_mci_init(void)
 #endif
     mmcsd->host = host;
 
+#ifndef CODE_STORED_ON_SDCARD
     _mmcsd_clk_init(mmcsd);
     _mmcsd_isr_init(mmcsd);
     _mmcsd_gpio_init(mmcsd);
     _mmcsd_host_init(mmcsd);
+#endif
 
     host->private_data = mmcsd;
 
