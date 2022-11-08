@@ -69,7 +69,6 @@ enum CANBAUD
 #define CAN_RX_FIFO0                (0x00000000U)  /*!< CAN receive FIFO 0 */
 #define CAN_RX_FIFO1                (0x00000001U)  /*!< CAN receive FIFO 1 */
 
-#define hdr_bank hdr/*Retain compatibility with older versions*/
 struct rt_can_filter_item
 {
     rt_uint32_t id  : 29;
@@ -279,7 +278,6 @@ typedef struct rt_can_device *rt_can_t;
 
 typedef struct rt_can_status *rt_can_status_t;
 
-#define hdr_index hdr/*Retain compatibility with older versions*/
 struct rt_can_msg
 {
     rt_uint32_t id  : 29;

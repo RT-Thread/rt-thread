@@ -212,7 +212,7 @@ int ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
     msg_rt->rsv = RT_NULL;
     msg_rt->len = msg_ra->data_length_code;
     msg_rt->priv = boxno;
-    msg_rt->hdr = RT_NULL;
+    msg_rt->hdr_index = RT_NULL;
     memcpy(msg_rt->data, msg_ra->data, msg_ra->data_length_code);
     return sizeof(struct rt_can_msg);
 }

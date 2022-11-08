@@ -299,8 +299,8 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
                 mbConfig.type = kFLEXCAN_FrameTypeData;
             }
 
-            /* user does not specify hdr index,set hdr from RX MB 1 */
-            if (item->hdr == -1)
+            /* user does not specify hdr index,set hdr_bank from RX MB 1 */
+            if (item->hdr_bank == -1)
             {
 
                 for (i = 0; i < 32; i++)
@@ -312,17 +312,17 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
                     }
                 }
             }
-            else    /* use user specified hdr */
+            else    /* use user specified hdr_bank */
             {
-                if (filter_mask & (1 << item->hdr))
+                if (filter_mask & (1 << item->hdr_bank))
                 {
                     res = RT_ERROR;
-                    LOG_E("%s hdr%d filter already set!\n", can->name, item->hdr);
+                    LOG_E("%s hdr%d filter already set!\n", can->name, item->hdr_bank);
                     break;
                 }
                 else
                 {
-                    index = item->hdr;
+                    index = item->hdr_bank;
                 }
             }
 
@@ -463,7 +463,7 @@ static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
     {
         pmsg->rtr = RT_CAN_RTR;
     }
-    pmsg->hdr = index;      /* one hdr filter per MB */
+    pmsg->hdr_index = index;      /* one hdr filter per MB */
     pmsg->len = frame[index].length;
     pmsg->data[0] = frame[index].dataByte0;
     pmsg->data[1] = frame[index].dataByte1;

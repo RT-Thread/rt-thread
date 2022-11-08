@@ -398,7 +398,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
                 RT_ASSERT(filter->count <= CAN_FILTER_NUM_MAX);
                 for (uint32_t i=0; i<filter->count; i++)
                 {
-                    drv_can->filter_list[i].index = (filter->items[i].hdr == -1) ? i : filter->items[i].hdr;
+                    drv_can->filter_list[i].index = (filter->items[i].hdr_bank == -1) ? i : filter->items[i].hdr_bank;
                     drv_can->filter_list[i].enable = (filter->actived != 0U) ? true : false;
                     drv_can->filter_list[i].code = filter->items[i].id;
                     drv_can->filter_list[i].id_mode = (filter->items[i].ide != 0U) ? can_filter_id_mode_extended_frames : can_filter_id_mode_standard_frames;
