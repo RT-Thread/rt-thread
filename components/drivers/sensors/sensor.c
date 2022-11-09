@@ -123,7 +123,7 @@ static rt_err_t _sensor_irq_init(rt_sensor_t sensor)
 }
 
 /* sensor local ops */
-static rt_ssize_t _local_fetch_data(rt_sensor_t sensor, void *buf, rt_size_t len)
+static rt_ssize_t _local_fetch_data(rt_sensor_t sensor, rt_sensor_data_t buf, rt_size_t len)
 {
     LOG_D("Undefined fetch_data");
     return -RT_EINVAL;
@@ -250,7 +250,7 @@ static rt_err_t _sensor_close(rt_device_t dev)
         /* Free memory for the sensor buffer */
         for (i = 0; i < sensor->module->sen_num; i ++)
         {
-            if (sensor->module->sen[i]->data_buf != RT_NULL)
+            if (sensor->module->sen[i]->data_buf)
             {
                 rt_free(sensor->module->sen[i]->data_buf);
                 sensor->module->sen[i]->data_buf = RT_NULL;
@@ -307,8 +307,8 @@ static rt_size_t _sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_
     }
     else
     {
-        /* If the buffer is empty read the data */
-        if (sensor->ops->fetch_data !=  RT_NULL)
+        /* If the buffer is empty, read the data */
+        if (sensor->ops->fetch_data)
         {
             result = sensor->ops->fetch_data(sensor, buf, len);
         }
