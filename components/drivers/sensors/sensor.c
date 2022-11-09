@@ -123,15 +123,15 @@ static rt_err_t _sensor_irq_init(rt_sensor_t sensor)
 }
 
 /* sensor local ops */
-static rt_size_t _local_fetch_data(rt_sensor_t sensor, void *buf, rt_size_t len)
+static rt_ssize_t _local_fetch_data(rt_sensor_t sensor, void *buf, rt_size_t len)
 {
     LOG_D("Undefined fetch_data");
-    return 0;
+    return -RT_EINVAL;
 }
 static rt_err_t _local_control(rt_sensor_t sensor, int cmd, void *arg)
 {
     LOG_D("Undefined control");
-    return RT_ERROR;
+    return -RT_EINVAL;
 }
 static struct rt_sensor_ops local_ops =
 {
