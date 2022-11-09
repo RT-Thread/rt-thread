@@ -269,7 +269,7 @@ extern "C"
 #define FGMAC_DMA_BUS_SWR           BIT(0) /* 软件复位 */
 #define FGMAC_DMA_BUS_DA            BIT(1) /* 设置 8xPBL 模式 */
 #define FGMAC_DMA_BUS_DSL_MASK      GENMASK(6, 2) /* 描述符跳跃长度 */
-#define FGMAC_DMA_BUS_ATDS          BIT(7) /* 
+#define FGMAC_DMA_BUS_ATDS          BIT(7)
 #define FGMAC_DMA_BUS_PBL_MASK      GENMASK(13, 8) /* 可编程突发长度 */
 #define FGMAC_DMA_BUS_PBL(x)        ((x) << 8)
 enum
