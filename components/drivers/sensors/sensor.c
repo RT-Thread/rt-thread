@@ -19,28 +19,28 @@
 
 static char *const sensor_name_str[] =
 {
-    "none",
-    "acce_",     /* Accelerometer     */
-    "gyro_",     /* Gyroscope         */
-    "mag_",      /* Magnetometer      */
-    "temp_",     /* Temperature       */
-    "humi_",     /* Relative Humidity */
-    "baro_",     /* Barometer         */
-    "li_",       /* Ambient light     */
-    "pr_",       /* Proximity         */
-    "hr_",       /* Heart Rate        */
-    "tvoc_",     /* TVOC Level        */
-    "noi_",      /* Noise Loudness    */
-    "step_",     /* Step sensor       */
-    "forc_",     /* Force sensor      */
-    "dust_",     /* Dust sensor       */
-    "eco2_",     /* eCO2 sensor       */
-    "gnss_",     /* GPS/GNSS sensor   */
-    "tof_",      /* TOF sensor        */
-    "spo2_",     /* SpO2 sensor       */
-    "iaq_",      /* IAQ sensor        */
-    "etoh_",     /* EtOH sensor       */
-    "bp_"        /* Blood Pressure    */
+    "None",
+    "ac-",       /* Accelerometer     */
+    "gy-",       /* Gyroscope         */
+    "ma-",       /* Magnetometer      */
+    "tm-",       /* Temperature       */
+    "hm-",       /* Relative Humidity */
+    "br-",       /* Barometer         */
+    "li-",       /* Ambient light     */
+    "pr-",       /* Proximity         */
+    "hr-",       /* Heart Rate        */
+    "tv-",       /* TVOC Level        */
+    "ni-",       /* Noise Loudness    */
+    "st-",       /* Step sensor       */
+    "fr-",       /* Force sensor      */
+    "du-",       /* Dust sensor       */
+    "ec-",       /* eCO2 sensor       */
+    "gn-",       /* GPS/GNSS sensor   */
+    "tf-",       /* TOF sensor        */
+    "sp-",       /* SpO2 sensor       */
+    "ia-",       /* IAQ sensor        */
+    "et-",       /* EtOH sensor       */
+    "bp-"        /* Blood Pressure    */
 };
 
 /* sensor interrupt handler function */
@@ -480,12 +480,12 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
     result = rt_device_register(device, device_name, flag | RT_DEVICE_FLAG_STANDALONE);
     if (result != RT_EOK)
     {
-        LOG_E("rt_sensor[%s] register err code: %d", device_name, result);
+        LOG_E("sensor[%s] register err code: %d", device_name, result);
         rt_free(device_name);
         return result;
     }
 
-    LOG_I("rt_sensor[%s] init success", device_name);
+    LOG_I("sensor[%s] init success", device_name);
     rt_free(device_name);
     return RT_EOK;
 }
