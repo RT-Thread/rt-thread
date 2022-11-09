@@ -44,6 +44,17 @@ jobs:
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "cypress/psoc6-cy8ckit-062S2-43012", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ft32/ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32105r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -153,6 +164,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32h747-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32h750-armfly-h7-tool", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32h750-artpi", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32h750-weact-ministm32h7xx", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r5-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r9-st-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r9-st-sensortile-box", RTT_TOOL_CHAIN: "sourcery-arm"}

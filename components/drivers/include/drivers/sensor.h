@@ -160,6 +160,7 @@ struct rt_sensor_config
 };
 
 typedef struct rt_sensor_device *rt_sensor_t;
+typedef struct rt_sensor_data   *rt_sensor_data_t;
 
 struct rt_sensor_device
 {
@@ -168,7 +169,7 @@ struct rt_sensor_device
     struct rt_sensor_info        info;      /* The sensor info data */
     struct rt_sensor_config      config;    /* The sensor config data */
 
-    void                        *data_buf;  /* The buf of the data received */
+    rt_sensor_data_t             data_buf;  /* The buf of the data received */
     rt_size_t                    data_len;  /* The size of the data received */
 
     const struct rt_sensor_ops  *ops;       /* The sensor ops */
@@ -238,8 +239,8 @@ struct rt_sensor_data
 
 struct rt_sensor_ops
 {
-    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
-    rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
+    rt_ssize_t (*fetch_data)(rt_sensor_t sensor, rt_sensor_data_t buf, rt_size_t len);
+    rt_err_t (*control)(rt_sensor_t sensor, int cmd, void *arg);
 };
 
 int rt_hw_sensor_register(rt_sensor_t sensor,

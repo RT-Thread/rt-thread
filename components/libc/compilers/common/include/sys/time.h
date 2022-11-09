@@ -24,6 +24,9 @@ typedef __time64_t time_t;
 extern "C" {
 #endif
 
+#undef CLOCKS_PER_SEC
+#define CLOCKS_PER_SEC RT_TICK_PER_SECOND
+
 /* timezone */
 #define DST_NONE    0   /* not on dst */
 #define DST_USA     1   /* USA style dst */

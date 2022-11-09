@@ -78,7 +78,7 @@ volatile rt_uint8_t rt_interrupt_nest = 0;
  *
  * @see rt_interrupt_leave
  */
-void rt_interrupt_enter(void)
+RT_WEAK void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
@@ -100,7 +100,7 @@ RTM_EXPORT(rt_interrupt_enter);
  *
  * @see rt_interrupt_enter
  */
-void rt_interrupt_leave(void)
+RT_WEAK void rt_interrupt_leave(void)
 {
     rt_base_t level;
 

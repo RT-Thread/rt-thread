@@ -9,7 +9,7 @@
  * 2020-02-22     luhuadong    support custom commands
  */
 
-#include "sensor.h"
+#include <drivers/sensor.h>
 
 #define DBG_TAG  "sensor"
 #define DBG_LVL DBG_INFO
@@ -19,35 +19,32 @@
 
 static char *const sensor_name_str[] =
 {
-    "none",
-    "acce_",     /* Accelerometer     */
-    "gyro_",     /* Gyroscope         */
-    "mag_",      /* Magnetometer      */
-    "temp_",     /* Temperature       */
-    "humi_",     /* Relative Humidity */
-    "baro_",     /* Barometer         */
-    "li_",       /* Ambient light     */
-    "pr_",       /* Proximity         */
-    "hr_",       /* Heart Rate        */
-    "tvoc_",     /* TVOC Level        */
-    "noi_",      /* Noise Loudness    */
-    "step_",     /* Step sensor       */
-    "forc_",     /* Force sensor      */
-    "dust_",     /* Dust sensor       */
-    "eco2_",     /* eCO2 sensor       */
-    "gnss_",     /* GPS/GNSS sensor   */
-    "tof_",      /* TOF sensor        */
-    "spo2_",     /* SpO2 sensor       */
-    "iaq_",      /* IAQ sensor        */
-    "etoh_",     /* EtOH sensor       */
-    "bp_"        /* Blood Pressure    */
+    "None",
+    "ac-",       /* Accelerometer     */
+    "gy-",       /* Gyroscope         */
+    "ma-",       /* Magnetometer      */
+    "tm-",       /* Temperature       */
+    "hm-",       /* Relative Humidity */
+    "br-",       /* Barometer         */
+    "li-",       /* Ambient light     */
+    "pr-",       /* Proximity         */
+    "hr-",       /* Heart Rate        */
+    "tv-",       /* TVOC Level        */
+    "ni-",       /* Noise Loudness    */
+    "st-",       /* Step sensor       */
+    "fr-",       /* Force sensor      */
+    "du-",       /* Dust sensor       */
+    "ec-",       /* eCO2 sensor       */
+    "gn-",       /* GPS/GNSS sensor   */
+    "tf-",       /* TOF sensor        */
+    "sp-",       /* SpO2 sensor       */
+    "ia-",       /* IAQ sensor        */
+    "et-",       /* EtOH sensor       */
+    "bp-"        /* Blood Pressure    */
 };
 
-/* Sensor interrupt correlation function */
-/*
- * Sensor interrupt handler function
- */
-void rt_sensor_cb(rt_sensor_t sen)
+/* sensor interrupt handler function */
+static void _sensor_cb(rt_sensor_t sen)
 {
     if (sen->parent.rx_indicate == RT_NULL)
     {
@@ -76,7 +73,7 @@ void rt_sensor_cb(rt_sensor_t sen)
 }
 
 /* ISR for sensor interrupt */
-static void irq_callback(void *args)
+static void _irq_callback(void *args)
 {
     rt_sensor_t sensor = (rt_sensor_t)args;
     rt_uint8_t i;
@@ -86,17 +83,17 @@ static void irq_callback(void *args)
         /* Invoke a callback for all sensors in the module */
         for (i = 0; i < sensor->module->sen_num; i++)
         {
-            rt_sensor_cb(sensor->module->sen[i]);
+            _sensor_cb(sensor->module->sen[i]);
         }
     }
     else
     {
-        rt_sensor_cb(sensor);
+        _sensor_cb(sensor);
     }
 }
 
 /* Sensor interrupt initialization function */
-static rt_err_t rt_sensor_irq_init(rt_sensor_t sensor)
+static rt_err_t _sensor_irq_init(rt_sensor_t sensor)
 {
     if (sensor->config.irq_pin.pin == RT_PIN_NONE)
     {
@@ -107,15 +104,15 @@ static rt_err_t rt_sensor_irq_init(rt_sensor_t sensor)
 
     if (sensor->config.irq_pin.mode == PIN_MODE_INPUT_PULLDOWN)
     {
-        rt_pin_attach_irq(sensor->config.irq_pin.pin, PIN_IRQ_MODE_RISING, irq_callback, (void *)sensor);
+        rt_pin_attach_irq(sensor->config.irq_pin.pin, PIN_IRQ_MODE_RISING, _irq_callback, (void *)sensor);
     }
     else if (sensor->config.irq_pin.mode == PIN_MODE_INPUT_PULLUP)
     {
-        rt_pin_attach_irq(sensor->config.irq_pin.pin, PIN_IRQ_MODE_FALLING, irq_callback, (void *)sensor);
+        rt_pin_attach_irq(sensor->config.irq_pin.pin, PIN_IRQ_MODE_FALLING, _irq_callback, (void *)sensor);
     }
     else if (sensor->config.irq_pin.mode == PIN_MODE_INPUT)
     {
-        rt_pin_attach_irq(sensor->config.irq_pin.pin, PIN_IRQ_MODE_RISING_FALLING, irq_callback, (void *)sensor);
+        rt_pin_attach_irq(sensor->config.irq_pin.pin, PIN_IRQ_MODE_RISING_FALLING, _irq_callback, (void *)sensor);
     }
 
     rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_TRUE);
@@ -125,31 +122,30 @@ static rt_err_t rt_sensor_irq_init(rt_sensor_t sensor)
     return 0;
 }
 
-// local rt_sensor_ops
-
-static rt_size_t local_fetch_data(struct rt_sensor_device *sensor, void *buf, rt_size_t len)
+/* sensor local ops */
+static rt_ssize_t _local_fetch_data(rt_sensor_t sensor, rt_sensor_data_t buf, rt_size_t len)
 {
     LOG_D("Undefined fetch_data");
-    return 0;
+    return -RT_EINVAL;
 }
-static rt_err_t local_control(struct rt_sensor_device *sensor, int cmd, void *arg)
+static rt_err_t _local_control(rt_sensor_t sensor, int cmd, void *arg)
 {
     LOG_D("Undefined control");
-    return RT_ERROR;
+    return -RT_EINVAL;
 }
 static struct rt_sensor_ops local_ops =
 {
-    .fetch_data = local_fetch_data,
-    .control = local_control
+    .fetch_data = _local_fetch_data,
+    .control = _local_control
 };
 
 /* RT-Thread Device Interface */
-static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t _sensor_open(rt_device_t dev, rt_uint16_t oflag)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     RT_ASSERT(dev != RT_NULL);
     rt_err_t res = RT_EOK;
-    rt_err_t (*local_ctrl)(struct rt_sensor_device * sensor, int cmd, void *arg) =  local_control;
+    rt_err_t (*local_ctrl)(rt_sensor_t sensor, int cmd, void *arg) =  _local_control;
 
     if (sensor->module)
     {
@@ -184,7 +180,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
         if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT) == RT_EOK)
         {
             /* Initialization sensor interrupt */
-            rt_sensor_irq_init(sensor);
+            _sensor_irq_init(sensor);
             sensor->config.mode = RT_SENSOR_MODE_INT;
         }
     }
@@ -194,7 +190,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
         if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)
         {
             /* Initialization sensor interrupt */
-            rt_sensor_irq_init(sensor);
+            _sensor_irq_init(sensor);
             sensor->config.mode = RT_SENSOR_MODE_FIFO;
         }
     }
@@ -220,11 +216,11 @@ __exit:
     return res;
 }
 
-static rt_err_t rt_sensor_close(rt_device_t dev)
+static rt_err_t _sensor_close(rt_device_t dev)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     int i;
-    rt_err_t (*local_ctrl)(struct rt_sensor_device * sensor, int cmd, void *arg) = local_control;
+    rt_err_t (*local_ctrl)(rt_sensor_t sensor, int cmd, void *arg) = _local_control;
 
     RT_ASSERT(dev != RT_NULL);
 
@@ -254,7 +250,7 @@ static rt_err_t rt_sensor_close(rt_device_t dev)
         /* Free memory for the sensor buffer */
         for (i = 0; i < sensor->module->sen_num; i ++)
         {
-            if (sensor->module->sen[i]->data_buf != RT_NULL)
+            if (sensor->module->sen[i]->data_buf)
             {
                 rt_free(sensor->module->sen[i]->data_buf);
                 sensor->module->sen[i]->data_buf = RT_NULL;
@@ -279,7 +275,7 @@ __exit:
     return RT_EOK;
 }
 
-static rt_size_t rt_sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t len)
+static rt_size_t _sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t len)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     rt_size_t result = 0;
@@ -311,8 +307,8 @@ static rt_size_t rt_sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_siz
     }
     else
     {
-        /* If the buffer is empty read the data */
-        if (sensor->ops->fetch_data !=  RT_NULL)
+        /* If the buffer is empty, read the data */
+        if (sensor->ops->fetch_data)
         {
             result = sensor->ops->fetch_data(sensor, buf, len);
         }
@@ -326,12 +322,12 @@ static rt_size_t rt_sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_siz
     return result;
 }
 
-static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t _sensor_control(rt_device_t dev, int cmd, void *args)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     rt_err_t result = RT_EOK;
     RT_ASSERT(dev != RT_NULL);
-    rt_err_t (*local_ctrl)(struct rt_sensor_device * sensor, int cmd, void *arg) = local_control;
+    rt_err_t (*local_ctrl)(rt_sensor_t sensor, int cmd, void *arg) = _local_control;
 
     if (sensor->module)
     {
@@ -413,11 +409,11 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
 const static struct rt_device_ops rt_sensor_ops =
 {
     RT_NULL,
-    rt_sensor_open,
-    rt_sensor_close,
-    rt_sensor_read,
+    _sensor_open,
+    _sensor_close,
+    _sensor_read,
     RT_NULL,
-    rt_sensor_control
+    _sensor_control
 };
 #endif
 
@@ -470,11 +466,11 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
     device->ops         = &rt_sensor_ops;
 #else
     device->init        = RT_NULL;
-    device->open        = rt_sensor_open;
-    device->close       = rt_sensor_close;
-    device->read        = rt_sensor_read;
+    device->open        = _sensor_open;
+    device->close       = _sensor_close;
+    device->read        = _sensor_read;
     device->write       = RT_NULL;
-    device->control     = rt_sensor_control;
+    device->control     = _sensor_control;
 #endif
     device->type        = RT_Device_Class_Sensor;
     device->rx_indicate = RT_NULL;
@@ -484,12 +480,12 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
     result = rt_device_register(device, device_name, flag | RT_DEVICE_FLAG_STANDALONE);
     if (result != RT_EOK)
     {
-        LOG_E("rt_sensor[%s] register err code: %d", device_name, result);
+        LOG_E("sensor[%s] register err code: %d", device_name, result);
         rt_free(device_name);
         return result;
     }
 
-    LOG_I("rt_sensor[%s] init success", device_name);
+    LOG_I("sensor[%s] init success", device_name);
     rt_free(device_name);
     return RT_EOK;
 }

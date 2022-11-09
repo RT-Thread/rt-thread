@@ -11,8 +11,9 @@
 
 #include <board.h>
 
-#ifdef RT_USING_PWM
+#ifdef BSP_USING_PWM
 #include "drv_config.h"
+#include "drv_tim.h"
 #include <drivers/rt_drv_pwm.h>
 
 //#define DRV_DEBUG
@@ -159,58 +160,23 @@ static struct stm32_pwm stm32_pwm_obj[] =
 #endif
 };
 
-/* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
-static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
-{
-    uint32_t flatency = 0;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-    RT_ASSERT(pclk1_doubler != RT_NULL);
-    RT_ASSERT(pclk1_doubler != RT_NULL);
-
-    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
-
-    *pclk1_doubler = 1;
-    *pclk2_doubler = 1;
-
-#if defined(SOC_SERIES_STM32MP1)
-    if (RCC_ClkInitStruct.APB1_Div != RCC_APB1_DIV1)
-    {
-        *pclk1_doubler = 2;
-    }
-    if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
-    {
-        *pclk2_doubler = 2;
-    }
-#else
-    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
-    {
-        *pclk1_doubler = 2;
-    }
-#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0))
-    if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
-    {
-        *pclk2_doubler = 2;
-    }
-#endif
-#endif
-}
-
 static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
 {
     rt_uint32_t pclk1_doubler, pclk2_doubler;
     rt_uint64_t tim_clock;
 
-    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+    stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
+#elif defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
     if (htim->Instance == TIM4)
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     if (0)
+#else
+#error "This driver has not supported this series yet!"
 #endif
     {
 #if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) /* don't have HAL_RCC_GetPCLK2Freq */
@@ -396,7 +362,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_GET:
         return drv_pwm_get(htim, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -685,4 +651,4 @@ __exit:
     return result;
 }
 INIT_DEVICE_EXPORT(stm32_pwm_init);
-#endif /* RT_USING_PWM */
+#endif /* BSP_USING_PWM */

@@ -34,6 +34,14 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+        if BSP_USING_SDIO
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
+                help 
+                    "SD CARD work as boot devive"				
+        endif
+
     menuconfig BSP_USING_LPUART
         bool "Enable UART"
         select RT_USING_SERIAL
@@ -112,10 +120,10 @@ menu "On-chip Peripheral Drivers"
 			default n
 			if BSP_USING_FLEXSPI
 				config BSP_USING_FLEXSPI1
-					bool "Enable FLEXCAN1"
+					bool "Enable FLEXSPI1"
 					default n
                 config BSP_USING_FLEXSPI2
-					bool "Enable FLEXCAN2"
+					bool "Enable FLEXSPI2"
 					default n    
 			endif 
 endmenu

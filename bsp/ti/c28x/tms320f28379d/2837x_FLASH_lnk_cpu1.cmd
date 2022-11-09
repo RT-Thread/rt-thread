@@ -1,4 +1,4 @@
-___heap_end = 0x010000;
+__heap_end = 0x010000;
 MEMORY
 {
 PAGE 0 :  /* Program Memory */
@@ -7,7 +7,7 @@ PAGE 0 :  /* Program Memory */
 
    BEGIN           	: origin = 0x080000, length = 0x000002
    RESET           	: origin = 0x3FFFC0, length = 0x000002
-   RAMGS8_15      : origin = 0x013000, length = 0x009000
+   RAMGS8_15        : origin = 0x013000, length = 0x009000
    
    /* Flash sectors */
    FLASHA           : origin = 0x080002, length = 0x001FFE	/* on-chip Flash */
@@ -30,7 +30,7 @@ PAGE 1 : /* Data Memory */
    BOOT_RSVD       : origin = 0x000002, length = 0x000120     /* Part of M0, BOOT rom will use this for stack */
    RAMM0           : origin = 0x000122, length = 0x0002DE
    RAMM1           : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
-   EBSS	       		: origin = 0x008000, length = 0x008000     /* RAMLS0-4, 5*0x0800   */
+   EBSS	       	   : origin = 0x008000, length = 0x008000     /* RAMLS0-4, 5*0x0800   */
    CPU2TOCPU1RAM   : origin = 0x03F800, length = 0x000400
    CPU1TOCPU2RAM   : origin = 0x03FC00, length = 0x000400
 }
@@ -40,37 +40,37 @@ SECTIONS
 {
    /* Allocate program areas: */
    .cinit              : > FLASHF      PAGE = 0, ALIGN(4)
-   .pinit              : > FLASHF,     PAGE = 0, ALIGN(4)
-   .text               : >> FLASHE      PAGE = 0, ALIGN(4)
+   .init_array         : > FLASHF,     PAGE = 0, ALIGN(4)
+   .text               : > FLASHE      PAGE = 0, ALIGN(4)
    codestart           : > BEGIN       PAGE = 0, ALIGN(4)
 
 #ifdef __TI_COMPILER_VERSION__
    #if __TI_COMPILER_VERSION__ >= 15009000
     .TI.ramfunc : {} LOAD = FLASHF,
                          RUN = RAMGS8_15,
-                         LOAD_START(_RamfuncsLoadStart),
-                         LOAD_SIZE(_RamfuncsLoadSize),
-                         LOAD_END(_RamfuncsLoadEnd),
-                         RUN_START(_RamfuncsRunStart),
-                         RUN_SIZE(_RamfuncsRunSize),
-                         RUN_END(_RamfuncsRunEnd),
+                         LOAD_START(RamfuncsLoadStart),
+                         LOAD_SIZE(RamfuncsLoadSize),
+                         LOAD_END(RamfuncsLoadEnd),
+                         RUN_START(RamfuncsRunStart),
+                         RUN_SIZE(RamfuncsRunSize),
+                         RUN_END(RamfuncsRunEnd),
                          PAGE = 0, ALIGN(4)
    #else
    ramfuncs            : LOAD = FLASHF,
                          RUN = RAMGS8_15,
-                         LOAD_START(_RamfuncsLoadStart),
-                         LOAD_SIZE(_RamfuncsLoadSize),
-                         LOAD_END(_RamfuncsLoadEnd),
-                         RUN_START(_RamfuncsRunStart),
-                         RUN_SIZE(_RamfuncsRunSize),
-                         RUN_END(_RamfuncsRunEnd),
+                         LOAD_START(RamfuncsLoadStart),
+                         LOAD_SIZE(RamfuncsLoadSize),
+                         LOAD_END(RamfuncsLoadEnd),
+                         RUN_START(RamfuncsRunStart),
+                         RUN_SIZE(RamfuncsRunSize),
+                         RUN_END(RamfuncsRunEnd),
                          PAGE = 0, ALIGN(4)   
    #endif
 #endif
 
-   FSymTab : > RAMM1, PAGE = 1, ALIGN(4)
-   LOAD_START(___fsymtab_start)
-   LOAD_END(___fsymtab_end)
+   FSymTab          : > RAMM1,     PAGE = 1
+               LOAD_START(__fsymtab_start)
+               LOAD_END(__fsymtab_end)
    .rti_fn.0.end    : > RAMM1,     PAGE = 1
    .rti_fn.0        : > RAMM1,     PAGE = 1
    .rti_fn.1        : > RAMM1,     PAGE = 1
@@ -81,19 +81,19 @@ SECTIONS
    .rti_fn.1.end    : > RAMM1,     PAGE = 1
    .rti_fn.6.end    : > RAMM1,     PAGE = 1
    .rti_fn.6        : > RAMM1,     PAGE = 1
+
    /* Allocate uninitalized data sections: */
-   .stack              : > RAMM1        PAGE = 1
-   .ebss            : > EBSS,
-			   LOAD_START(___ebss_start),
-			   LOAD_END(___ebss_end),
-			   PAGE = 1
-   .esysmem            : >> RAMM1     PAGE = 1
+   .stack           : > RAMM1      PAGE = 1
+   .sysmem          : > RAMM1      PAGE = 1
+   .bss             : > EBSS,	   PAGE = 1
+   .data            : > EBSS,
+				    LOAD_END(__ebss_end),
+				    PAGE = 1
 
    /* Initalized sections go in Flash */
-   .econst             : >> FLASHF      PAGE = 0, ALIGN(4)
+   .const              : > FLASHF      PAGE = 0, ALIGN(4)
    .switch             : > FLASHF      PAGE = 0, ALIGN(4)
-   
-   .reset              : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
+   .reset              : > RESET,      PAGE = 0, TYPE = DSECT /* not used, */
    
    /* The following section definitions are required when using the IPC API Drivers */ 
     GROUP : > CPU1TOCPU2RAM, PAGE = 1 
