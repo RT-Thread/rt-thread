@@ -1,0 +1,10 @@
+
+menu "FWDT Configuration"
+    config USE_FWDT
+        bool
+        prompt "Use FWDT"
+        default n
+        
+endmenu
+
+

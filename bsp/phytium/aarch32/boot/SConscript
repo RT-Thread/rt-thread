@@ -1,0 +1,10 @@
+from building import *
+
+cwd  = GetCurrentDir()
+src  = Glob('*.S') + Glob('*.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('AARCH32-BOOT', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

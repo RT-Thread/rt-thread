@@ -1,0 +1,9 @@
+menu "FRTC Configuration"
+    config ENABLE_FRTC
+        bool
+        prompt "Use FRTC"
+        default n
+        
+endmenu
+
+
