@@ -529,7 +529,7 @@ int list_fd(void)
     fd_table = dfs_fdtable_get();
     if (!fd_table) return -1;
 
-    rt_enter_critical();
+    dfs_lock();
 
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
@@ -562,7 +562,7 @@ int list_fd(void)
             }
         }
     }
-    rt_exit_critical();
+    dfs_unlock();
 
     return 0;
 }
