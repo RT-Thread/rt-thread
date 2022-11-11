@@ -4,6 +4,9 @@ menu "Onboard Peripheral Drivers"
 endmenu
 
 menu "On-chip Peripheral Drivers"
+    config BSP_USING_FLASH
+        bool "Using FLASH as CMD, default RAM"
+        default n
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -95,7 +98,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_PWM
             menuconfig BSP_USING_PWM1
                 bool "Enable ePWM1"
-                default n
+                default y
                 if BSP_USING_PWM1
                     menu "Basic settings for PWM1"
                         config BSP_PWM1_INIT_PERIOD
