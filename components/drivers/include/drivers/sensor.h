@@ -144,9 +144,9 @@ struct rt_sensor_info
 
 struct rt_sensor_intf
 {
-    char                       *dev_name;   /* The name of the communication device */
-    rt_uint8_t                  type;       /* Communication interface type */
-    void                       *user_data;  /* Private data for the sensor. ex. i2c addr,spi cs,control I/O */
+    char          *dev_name;                /* The name of the communication device */
+    rt_uint8_t     type;                    /* Communication interface type */
+    void          *arg;                     /* Interface argument for the sensor. ex. i2c addr,spi cs,control I/O */
 };
 
 struct rt_sensor_config

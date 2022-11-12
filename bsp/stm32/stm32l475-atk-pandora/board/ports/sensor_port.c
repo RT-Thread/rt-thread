@@ -19,7 +19,7 @@ int sensor_init(void)
 
     cfg.intf.type = RT_SENSOR_INTF_I2C;
     cfg.intf.dev_name = "i2c3";
-    cfg.intf.user_data = (void *)MPU6XXX_ADDR_DEFAULT;
+    cfg.intf.arg = (void *)MPU6XXX_ADDR_DEFAULT;
     cfg.irq_pin.pin  = RT_PIN_NONE;
 
     rt_hw_mpu6xxx_init("icm", &cfg);
@@ -40,7 +40,7 @@ int rt_hw_aht10_port(void)
     struct rt_sensor_config cfg;
 
     cfg.intf.dev_name  = AHT10_I2C_BUS;
-    cfg.intf.user_data = (void *)AHT10_I2C_ADDR;
+    cfg.intf.arg = (void *)AHT10_I2C_ADDR;
 
     rt_hw_aht10_init("aht10", &cfg);
 
