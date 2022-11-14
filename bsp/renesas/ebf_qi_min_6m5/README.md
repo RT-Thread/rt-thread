@@ -54,7 +54,7 @@
 
 **硬件连接**
 
-使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART7：P613(TXD)、P614(RXD)。
+使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART7：P512(TXD)、P511(RXD)。
 
 **编译下载**
 
