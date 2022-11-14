@@ -24,14 +24,12 @@ const pin_map_t pin_map_table[]=
     {D0, GET_PIN(A,3), "uart2"},        /* Serial-RX */
     {D1, GET_PIN(A,2), "uart2"},        /* Serial-TX */
     {D2, GET_PIN(A,10), "pwm1", 3},     /* PWM */
-    {D3, GET_PIN(B,3), "uart1"},        /* Serial-RX */
     {D4, GET_PIN(B,5)},
     {D5, GET_PIN(B,4)},
     {D6, GET_PIN(B,10)},
     {D7, GET_PIN(A,8), "PWM1", 1},
     {D8, GET_PIN(A,9), "pwm1", 2},      /* PWM */
     {D9, GET_PIN(C,7)},
-    {D10, GET_PIN(B,6), "uart1"},       /* Serial-TX */
     {D11, GET_PIN(A,7), "pwm1", -1},    /* PWM */
     {D12, GET_PIN(A,6)},
     {D13, GET_PIN(A,5)},                /* LED_BUILTIN */
