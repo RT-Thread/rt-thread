@@ -1,0 +1,22 @@
+config BSP_USING_ARDUINO
+    bool "Compatible with Arduino Ecosystem (RTduino)"
+    select PKG_USING_RTDUINO
+    select BSP_USING_STLINK_TO_USART
+    select BSP_USING_GPIO
+    select BSP_USING_ADC
+    select BSP_USING_ADC1
+    select BSP_USING_PWM
+    select BSP_USING_PWM1
+    select BSP_USING_PWM4
+    select BSP_USING_PWM4_CH4
+    select BSP_USING_PWM4_CH3
+    select BSP_USING_PWM4_CH2
+    select BSP_USING_PWM4_CH1
+    select BSP_USING_PWM1_CH3
+    select BSP_USING_PWM1_CH2
+    select BSP_USING_PWM1_CH1
+    select BSP_USING_SPI
+    select BSP_USING_SPI1
+    imply RTDUINO_USING_SERVO
+    imply RTDUINO_USING_SPI
+    default n
