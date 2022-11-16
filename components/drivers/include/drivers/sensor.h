@@ -190,22 +190,22 @@ struct rt_sensor_module
 /* 3-axis Data Type */
 struct sensor_3_axis
 {
-    rt_int32_t x;
-    rt_int32_t y;
-    rt_int32_t z;
+    float x;
+    float y;
+    float z;
 };
 
 /* Blood Pressure Data Type */
 struct sensor_bp
 {
-    rt_int32_t sbp; /* SBP : systolic pressure */
-    rt_int32_t dbp; /* DBP : diastolic pressure */
+    float sbp; /* SBP : systolic pressure */
+    float dbp; /* DBP : diastolic pressure */
 };
 
 struct coordinates
 {
-    double longitude;
-    double latitude;
+    float longitude;
+    float latitude;
 };
 
 struct rt_sensor_data
@@ -218,22 +218,22 @@ struct rt_sensor_data
         struct sensor_3_axis gyro;          /* Gyroscope.           unit: mdps        */
         struct sensor_3_axis mag;           /* Magnetometer.        unit: mGauss      */
         struct coordinates   coord;         /* Coordinates          unit: degrees     */
-        rt_int32_t           temp;          /* Temperature.         unit: dCelsius    */
-        rt_int32_t           humi;          /* Relative humidity.   unit: permillage  */
-        rt_int32_t           baro;          /* Pressure.            unit: pascal (Pa) */
-        rt_int32_t           light;         /* Light.               unit: lux         */
-        rt_int32_t           proximity;     /* Distance.            unit: centimeters */
-        rt_int32_t           hr;            /* Heart rate.          unit: bpm         */
-        rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
-        rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
-        rt_uint32_t          step;          /* Step sensor.         unit: 1           */
-        rt_int32_t           force;         /* Force sensor.        unit: mN          */
-        rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
-        rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
-        rt_uint32_t          spo2;          /* SpO2 sensor.         unit: permillage  */
-        rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1 */
-        rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm */
         struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
+        float                temp;          /* Temperature.         unit: dCelsius    */
+        float                humi;          /* Relative humidity.   unit: permillage  */
+        float                baro;          /* Pressure.            unit: pascal (Pa) */
+        float                light;         /* Light.               unit: lux         */
+        float                proximity;     /* Distance.            unit: centimeters */
+        float                hr;            /* Heart rate.          unit: bpm         */
+        float                tvoc;          /* TVOC.                unit: permillage  */
+        float                noise;         /* Noise Loudness.      unit: HZ          */
+        float                step;          /* Step sensor.         unit: 1           */
+        float                force;         /* Force sensor.        unit: mN          */
+        float                dust;          /* Dust sensor.         unit: ug/m3       */
+        float                eco2;          /* eCO2 sensor.         unit: ppm         */
+        float                spo2;          /* SpO2 sensor.         unit: permillage  */
+        float                iaq;           /* IAQ sensor.          unit: 1           */
+        float                etoh;          /* EtOH sensor.         unit: ppm         */
     } data;
 };
 
