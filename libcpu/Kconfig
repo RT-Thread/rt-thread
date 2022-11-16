@@ -1,6 +1,10 @@
 config ARCH_CPU_64BIT
     bool
 
+config RT_USING_CACHE
+    bool
+    default n
+
 config ARCH_CPU_BIG_ENDIAN
     bool
 
@@ -33,6 +37,7 @@ config ARCH_ARM_CORTEX_M3
 config ARCH_ARM_MPU
     bool
     depends on ARCH_ARM
+    select ARCH_MM_MPU
 
 config ARCH_ARM_CORTEX_M4
     bool
