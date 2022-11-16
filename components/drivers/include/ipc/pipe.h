@@ -20,16 +20,18 @@ struct rt_pipe_device
 {
     struct rt_device parent;
     rt_bool_t is_named;
+#ifdef RT_USING_POSIX_DEVIO
+    int pipeno; /* for unamed pipe */
+#endif
 
     /* ring buffer in pipe device */
     struct rt_ringbuffer *fifo;
     rt_uint16_t bufsz;
 
-    rt_uint8_t readers;
-    rt_uint8_t writers;
-
     rt_wqueue_t reader_queue;
     rt_wqueue_t writer_queue;
+    int writer;
+    int reader;
 
     struct rt_mutex lock;
 };

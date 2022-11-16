@@ -18,11 +18,21 @@
 #include "drv_timer.h"
 
 #include <mmu.h>
+#ifdef RT_USING_USERSPACE
+#include <page.h>
+#include <lwp_arch.h>
+#endif
 
+#ifdef RT_USING_USERSPACE
+struct mem_desc platform_mem_desc[] = {
+    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x0fffffff, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM}
+};
+#else
 struct mem_desc platform_mem_desc[] = {
     {0x10000000, 0x50000000, 0x10000000, DEVICE_MEM},
-    {0x60000000, 0xe0000000, 0x60000000, NORMAL_MEM}
+    {0x60000000, 0x70000000, 0x60000000, NORMAL_MEM}
 };
+#endif
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
 
@@ -36,12 +46,37 @@ void idle_wfi(void)
 }
 
 /**
- * This function will initialize beaglebone board
+ * This function will initialize board
  */
+
+rt_mmu_info mmu_info;
+
+extern size_t MMUTable[];
+
+#ifdef RT_USING_USERSPACE
+rt_region_t init_page_region = {
+    (uint32_t)PAGE_START,
+    (uint32_t)PAGE_END,
+};
+#endif
+
 void rt_hw_board_init(void)
 {
+#ifdef RT_USING_USERSPACE
+    rt_hw_mmu_map_init(&mmu_info, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
+
+    rt_page_init(init_page_region);
+    rt_hw_mmu_ioremap_init(&mmu_info, (void*)0xf0000000, 0x10000000);
+
+    arch_kuser_init(&mmu_info, (void*)0xffff0000);
+#else
+    rt_hw_mmu_map_init(&mmu_info, (void*)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_ioremap_init(&mmu_info, (void*)0x80000000, 0x10000000);
+#endif
+
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
+
     /* initialize system heap */
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
