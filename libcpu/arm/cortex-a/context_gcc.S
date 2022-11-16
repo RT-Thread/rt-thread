@@ -45,7 +45,20 @@ rt_hw_context_switch_to:
 #ifdef RT_USING_SMP
     mov     r0, r1
     bl      rt_cpus_lock_status_restore
+#ifdef RT_USING_USERSPACE
+    bl      rt_thread_self
+    bl      lwp_user_setting_restore
+#endif
+#else
+#ifdef RT_USING_USERSPACE
+    bl      rt_thread_self
+    mov     r4, r0
+    bl      lwp_mmu_switch
+    mov     r0, r4
+    bl      lwp_user_setting_restore
+#endif
 #endif /*RT_USING_SMP*/
+
     b       rt_hw_context_switch_exit
 
 .section .bss.share.isr
@@ -95,7 +108,20 @@ rt_hw_context_switch:
 #ifdef RT_USING_SMP
     mov     r0, r2
     bl      rt_cpus_lock_status_restore
+#ifdef RT_USING_USERSPACE
+    bl      rt_thread_self
+    bl      lwp_user_setting_restore
+#endif
+#else
+#ifdef RT_USING_USERSPACE
+    bl      rt_thread_self
+    mov     r4, r0
+    bl      lwp_mmu_switch
+    mov     r0, r4
+    bl      lwp_user_setting_restore
+#endif
 #endif /*RT_USING_SMP*/
+
     b       rt_hw_context_switch_exit
 
 /*
@@ -123,28 +149,69 @@ rt_hw_context_switch_interrupt:
      * r2 :addr of to_thread's sp
      * r3 :to_thread's tcb
      */
-
+#ifdef RT_USING_LWP
+    push {r0 - r3, lr}
+#ifdef RT_USING_USERSPACE
+    bl rt_thread_self
+    bl lwp_user_setting_save
+#endif
+    pop {r0 - r3, lr}
+#endif
     str     r0, [r1]
 
     ldr     sp, [r2]
     mov     r0, r3
+#ifdef RT_USING_USERSPACE
+    mov     r4, r0
+#endif
     bl      rt_cpus_lock_status_restore
-
+#ifdef RT_USING_USERSPACE
+    mov     r0, r4
+    bl      lwp_user_setting_restore
+#endif
     b       rt_hw_context_switch_exit
 
 #else /*RT_USING_SMP*/
-    ldr r2, =rt_thread_switch_interrupt_flag
-    ldr r3, [r2]
+    /* r0 :addr of from_thread's sp
+     * r1 :addr of to_thread's sp
+     * r2 :from_thread's tcb
+     * r3 :to_thread's tcb
+     */
+#ifdef RT_USING_LWP
+    /* now to_thread(r3) not used */
+    ldr ip, =rt_thread_switch_interrupt_flag
+    ldr r3, [ip]
     cmp r3, #1
     beq _reswitch
-    ldr ip, =rt_interrupt_from_thread   @ set rt_interrupt_from_thread
+    ldr r3, =rt_interrupt_from_thread   @ set rt_interrupt_from_thread
+    str r0, [r3]
     mov r3, #1              @ set rt_thread_switch_interrupt_flag to 1
-    str r0, [ip]
-    str r3, [r2]
+    str r3, [ip]
+#ifdef RT_USING_USERSPACE
+    push {r1, lr}
+    mov r0, r2
+    bl lwp_user_setting_save
+    pop {r1, lr}
+#endif
 _reswitch:
-    ldr r2, =rt_interrupt_to_thread     @ set rt_interrupt_to_thread
-    str r1, [r2]
+    ldr ip, =rt_interrupt_to_thread     @ set rt_interrupt_to_thread
+    str r1, [ip]
     bx  lr
+#else
+    /* now from_thread(r2) to_thread(r3) not used */
+    ldr ip, =rt_thread_switch_interrupt_flag
+    ldr r3, [ip]
+    cmp r3, #1
+    beq _reswitch
+    ldr r3, =rt_interrupt_from_thread   @ set rt_interrupt_from_thread
+    str r0, [r3]
+    mov r3, #1              @ set rt_thread_switch_interrupt_flag to 1
+    str r3, [ip]
+_reswitch:
+    ldr ip, =rt_interrupt_to_thread     @ set rt_interrupt_to_thread
+    str r1, [ip]
+    bx  lr
+#endif
 #endif /*RT_USING_SMP*/
 
 .global rt_hw_context_switch_exit
@@ -178,5 +245,21 @@ rt_hw_context_switch_exit:
 #endif
     ldmfd   sp!, {r1}
     msr     spsr_cxsf, r1        /* original mode */
+
+#ifdef RT_USING_LWP
+    and r1, #0x1f
+    cmp r1, #0x10
+    bne 1f
+    ldmfd   sp!, {r0-r12,lr}
+    ldmfd   sp!, {lr}
+    b arch_ret_to_user
+1:
+#endif
     ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */
 
+#ifdef RT_USING_FPU
+.global set_fpexc
+set_fpexc:
+    vmsr fpexc, r0
+    bx lr
+#endif

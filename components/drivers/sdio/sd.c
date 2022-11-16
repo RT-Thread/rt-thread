@@ -119,6 +119,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
 
         card->card_blksize = 512;
         card->card_capacity = (csd->c_size + 1) * 512;  /* unit:KB */
+        card->card_sec_cnt = card->card_capacity * 2;
         card->tacc_clks = 0;
         card->tacc_ns = 0;
         card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];

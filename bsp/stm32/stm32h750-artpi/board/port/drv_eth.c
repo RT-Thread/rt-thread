@@ -18,7 +18,7 @@
 #include "board.h"
 #include "drv_config.h"
 
-#ifdef BSP_USING_ETH_ARTPI
+#ifdef BSP_USING_ETH_H750
 
 #include <netif/ethernetif.h>
 #include "lwipopts.h"

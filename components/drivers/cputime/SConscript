@@ -9,6 +9,9 @@ cputime.c
 if GetDepend('RT_USING_CPUTIME_CORTEXM'):
     src += ['cputime_cortexm.c']
 
+if GetDepend('RT_USING_CPUTIME_RISCV'):
+    src += ['cputime_riscv.c']
+
 group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_CPUTIME'], CPPPATH = CPPPATH)
 
 Return('group')
