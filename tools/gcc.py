@@ -86,10 +86,22 @@ def GetNewLibVersion(rtconfig):
             f.close()
     return version
 
+def CheckMUSLLibc(rtconfig):
+
+    prefix = rtconfig.PREFIX
+
+    if prefix.find('musl') != -1:
+        return True
+
+
+
+    return False
+
 def GCCResult(rtconfig, str):
     import subprocess
 
     result = ''
+    use_musl = CheckMUSLLibc(rtconfig)
 
     def checkAndGetResult(pattern, string):
         if re.search(pattern, string):
@@ -135,6 +147,8 @@ def GCCResult(rtconfig, str):
                 have_sigaction = 1
             if re.search('struct[ \t]+sigevent', line):
                 have_sigevent = 1
+            if re.search('struct[ \t]+sigaltstack', line):
+                have_sigaltstack = 1
             if re.search('siginfo_t', line):
                 have_siginfo = 1
             if re.search('union[ \t]+sigval', line):
@@ -149,16 +163,21 @@ def GCCResult(rtconfig, str):
             if re.findall('pthread_create', line):
                 posix_thread = 1
 
+        if use_musl:
+            result += '#define HAVE_SYS_SELECT_H 1\n\n'
+
         if have_fdset:
             result += '#define HAVE_FDSET 1\n'
 
-        if have_sigaction:
+        if have_sigaction or use_musl:
             result += '#define HAVE_SIGACTION 1\n'
-        if have_sigevent:
+        if have_sigevent or use_musl:
             result += '#define HAVE_SIGEVENT 1\n'
-        if have_siginfo:
+        if have_sigaltstack or use_musl:
+            result += '#define HAVE_SIGALTSTACK 1\n'
+        if have_siginfo or use_musl:
             result += '#define HAVE_SIGINFO 1\n'
-        if have_sigval:
+        if have_sigval or use_musl:
             result += '#define HAVE_SIGVAL 1\n'
 
         if version:

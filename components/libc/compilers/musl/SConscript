@@ -1,0 +1,28 @@
+import os
+from building import *
+from gcc import *
+Import('rtconfig')
+
+src = []
+cwd = GetCurrentDir()
+group = []
+LIBS = []
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM in ['gcc'] and CheckMUSLLibc(rtconfig):
+        LIBS       = ['c', 'gcc']
+        src += Glob('*.c')
+
+        CPPDEFINES = ['RT_USING_MUSL', 'RT_USING_LIBC', 'HAVE_CCONFIG_H', '__STDC_ISO_10646__=201206L', '_STDC_PREDEF_H']
+        AddDepend(['RT_USING_MUSL', 'RT_USING_LIBC'])
+        LINKFLAGS = ' --specs=kernel.specs'
+        group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS, 
+            CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+
+list = os.listdir(cwd)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        group = group + SConscript(os.path.join(d, 'SConscript'))
+
+Return('group')
