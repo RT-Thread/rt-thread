@@ -322,8 +322,12 @@ config RT_USING_SENSOR
 
 if RT_USING_SENSOR
     config RT_USING_SENSOR_CMD
-        bool "Using Sensor cmd"
+        bool "Enable sensor commands"
         default y
+
+    config RT_USING_SENSOR_DOUBLE_FLOAT
+        bool "Using double floating as sensor data type"
+        default n
 endif
 
 config RT_USING_TOUCH
