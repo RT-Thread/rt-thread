@@ -266,7 +266,7 @@ usb_status_t USB_HostInit(uint8_t controllerId, usb_host_handle *hostHandle, hos
     {
         return kStatus_USB_Error;
     }
-    
+
 
     /* HOST instance init*/
     hostInstance->controllerId   = controllerId;
@@ -291,7 +291,7 @@ usb_status_t USB_HostInit(uint8_t controllerId, usb_host_handle *hostHandle, hos
         transferPrev->next = &hostInstance->transferList[i];
         transferPrev       = transferPrev->next;
     }
-    
+
     /* controller create, the callbackFn is initialized in USB_HostGetControllerInterface */
     status =
         hostInstance->controllerTable->controllerCreate(controllerId, hostInstance, &(hostInstance->controllerHandle));
@@ -700,7 +700,7 @@ usb_status_t USB_HostHelperParseAlternateSetting(usb_host_interface_handle inter
 
     /* parse configuration descriptor */
 #ifdef SOC_IMXRT1170_SERIES
-    temp = (void *)((usb_host_interface_t *)interfaceHandle)->interfaceExtension;    
+    temp = (void *)((usb_host_interface_t *)interfaceHandle)->interfaceExtension;
 #else
     temp = (void *)((usb_host_interface_t *)interfaceHandle)->interfaceDesc;
 #endif
@@ -711,7 +711,7 @@ usb_status_t USB_HostHelperParseAlternateSetting(usb_host_interface_handle inter
 #if !defined(SOC_IMXRT1170_SERIES)
     unionDes = (usb_descriptor_union_t *)((uint32_t)unionDes + unionDes->common.bLength);
 #endif
-    
+
     /* search for the alternate setting interface descriptor */
     while ((uint32_t)unionDes < endPosition)
     {
