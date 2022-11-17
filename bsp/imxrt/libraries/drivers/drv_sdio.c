@@ -174,7 +174,7 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 
     data = cmd->data;
 
-    memset(&dmaConfig, 0, sizeof(usdhc_adma_config_t));
+    rt_memset(&dmaConfig, 0, sizeof(usdhc_adma_config_t));
     /* config adma */
     dmaConfig.dmaMode = USDHC_DMA_MODE;
 #if !(defined(FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN) && FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN)
