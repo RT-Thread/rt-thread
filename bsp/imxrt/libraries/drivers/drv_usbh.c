@@ -104,7 +104,7 @@ static void USB_HostClockInit(usb_controller_index_t controller_id)
     usb_phy_config_struct_t phyConfig = {
         BOARD_USB_PHY_D_CAL, BOARD_USB_PHY_TXCAL45DP, BOARD_USB_PHY_TXCAL45DM,
     };
-    
+
     usbClockFreq = 24000000;
 
     if (controller_id == kUSB_ControllerEhci0)

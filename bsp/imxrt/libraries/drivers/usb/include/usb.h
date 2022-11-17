@@ -61,7 +61,7 @@
 #define USB_STACK_COMPONENT_VERSION \
     MAKE_VERSION(USB_STACK_VERSION_MAJOR, USB_STACK_VERSION_MINOR, USB_STACK_VERSION_BUGFIX)
 #endif
-      
+
 /*! @brief USB error code */
 typedef enum _usb_status
 {
@@ -90,7 +90,7 @@ typedef enum _usb_status
     kStatus_USB_DataOverRun, /*!< The amount of data returned by the endpoint exceeded
                                   either the size of the maximum data packet allowed
                                   from the endpoint or the remaining buffer size. */
-#endif    
+#endif
 } usb_status_t;
 
 /*! @brief USB host handle type define */

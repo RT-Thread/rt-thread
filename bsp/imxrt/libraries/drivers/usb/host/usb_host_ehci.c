@@ -1097,7 +1097,7 @@ static void USB_HostBandwidthHsHostComputeCurrentFsls(usb_host_ehci_instance_t *
     usb_host_ehci_pipe_t *ehciPipePointer;
     uint8_t index;
 #ifdef SOC_IMXRT1170_SERIES
-    uint32_t deviceInfo = 0;    
+    uint32_t deviceInfo = 0;
 #else
     uint32_t deviceInfo;
 #endif
@@ -1173,7 +1173,7 @@ static void USB_HostBandwidthHsHostComputeCurrentHsAll(usb_host_ehci_instance_t 
     usb_host_ehci_pipe_t *ehciPipePointer;
     uint16_t index;
 #ifdef SOC_IMXRT1170_SERIES
-    uint32_t deviceInfo = 0U;    
+    uint32_t deviceInfo = 0U;
 #else
     uint32_t deviceInfo;
 #endif
@@ -3451,7 +3451,7 @@ static usb_status_t USB_HostEhciStartIP(usb_host_ehci_instance_t *ehciInstance)
     }
 #ifdef SOC_IMXRT1170_SERIES
     /* no interrupt threshold */
-    ehciInstance->ehciIpBase->USBCMD &= ~USBHS_USBCMD_ITC_MASK;    
+    ehciInstance->ehciIpBase->USBCMD &= ~USBHS_USBCMD_ITC_MASK;
 #endif
     /* start the controller */
     ehciInstance->ehciIpBase->USBCMD |= USBHS_USBCMD_RS_MASK;
@@ -3665,7 +3665,7 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
     usb_host_ehci_iso_t *isoPointer;
     uint32_t dataLength;
 #ifdef SOC_IMXRT1170_SERIES
-    uint32_t speed = 0U;    
+    uint32_t speed = 0U;
 #else
     uint32_t speed;
 #endif
@@ -3794,7 +3794,7 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
                                     /* no action */
                                 }
                                 vltQtdPointer = (volatile usb_host_ehci_qtd_t *)vltQtdPointer->nextQtdPointer;
-                            } while (true);                          
+                            } while (true);
 #else
                             while ((vltQtdPointer != NULL) &&
                                    (0U == (transferResults & EHCI_HOST_QTD_IOC_MASK))) /* find the IOC qtd */
@@ -4025,7 +4025,7 @@ void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
 #ifdef SOC_IMXRT1170_SERIES
 #if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
             USB_EhcihostPhyDisconnectDetectCmd(ehciInstance->controllerId, 0);
-#endif            
+#endif
 #else
             USB_EhcihostPhyDisconnectDetectCmd(ehciInstance->controllerId, 0);
 #endif
@@ -4192,28 +4192,28 @@ static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
 #if (defined(FSL_FEATURE_USBPHY_28FDSOI) && (FSL_FEATURE_USBPHY_28FDSOI > 0U))
                     ehciInstance->registerPhyBase->USB1_VBUS_DETECT_SET |=
                         USBPHY_USB1_VBUS_DETECT_VBUSVALID_TO_SESSVALID_MASK;
-#endif                    
+#endif
 #endif
                     ehciInstance->ehciIpBase->PORTSC1 |= USBHS_PORTSC1_PHCD_MASK;
 
 #ifdef SOC_IMXRT1170_SERIES
-#if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))                    
+#if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
                     ehciInstance->registerPhyBase->PWD = 0xFFFFFFFFU;
 
                     while (0U != (ehciInstance->registerPhyBase->CTRL & (USBPHY_CTRL_UTMI_SUSPENDM_MASK)))
                     {
                         __NOP();
                     }
-#endif              
+#endif
 #else
                     ehciInstance->registerPhyBase->PWD = 0xFFFFFFFFU;
 
                     while (0U != (ehciInstance->registerPhyBase->CTRL & (USBPHY_CTRL_UTMI_SUSPENDM_MASK)))
                     {
                         __NOP();
-                    }                    
+                    }
 #endif
-                    
+
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
                     ehciInstance->registerNcBase->USB_OTGn_CTRL |= USBNC_USB_OTGn_CTRL_WKUP_ID_EN_MASK |
                                                                    USBNC_USB_OTGn_CTRL_WKUP_VBUS_EN_MASK |
@@ -4224,7 +4224,7 @@ static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
 #if (defined(FSL_FEATURE_USB_ATLANTIC_EHCI_SUPPORT) && (FSL_FEATURE_USB_ATLANTIC_EHCI_SUPPORT > 0U))
 #else
                     ehciInstance->ehciIpBase->USBGENCTRL = USBHS_USBGENCTRL_WU_IE_MASK;
-#endif                    
+#endif
 #else
                     ehciInstance->ehciIpBase->USBGENCTRL = USBHS_USBGENCTRL_WU_IE_MASK;
 #endif
@@ -4232,7 +4232,7 @@ static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
 #ifdef
 #if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
                     ehciInstance->registerPhyBase->CTRL |= USBPHY_CTRL_CLKGATE_MASK;
-#endif                    
+#endif
 #else
                     ehciInstance->registerPhyBase->CTRL |= USBPHY_CTRL_CLKGATE_MASK;
 #endif
@@ -4309,11 +4309,11 @@ usb_status_t USB_HostEhciCreate(uint8_t controllerId,
 #ifdef SOC_IMXRT1170_SERIES
 #if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
     ehciInstance->registerPhyBase = (USBPHY_Type *)USB_EhciPhyGetBase(controllerId);
-#endif    
+#endif
 #else
     ehciInstance->registerPhyBase = (USBPHY_Type *)USB_EhciPhyGetBase(controllerId);
 #endif
-    
+
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
     ehciInstance->registerNcBase = (USBNC_Type *)USB_EhciNCGetBase(controllerId);
 #endif
@@ -5084,7 +5084,7 @@ void USB_HostEhciIsrFunction(void *hostHandle)
                 ehciInstance->ehciIpBase->USBCMD |= (USBHS_USBCMD_RS_MASK);
                 ehciInstance->busSuspendStatus = kBus_EhciStartResume;
             }
-#endif            
+#endif
 #endif
             (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_PORT_CHANGE);
         }

@@ -107,7 +107,7 @@ typedef struct _usb_host_process_descriptor_param
                                   device */
 #ifdef SOC_IMXRT1170_SERIES
     uint16_t languageId;        /*!< It specifies the language ID for string descriptors or is reset to zero for other
-                                  descriptors */    
+                                  descriptors */
 #else
     uint8_t languageId;        /*!< It specifies the language ID for string descriptors or is reset to zero for other
                                   descriptors */

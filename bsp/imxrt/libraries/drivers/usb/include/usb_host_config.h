@@ -103,7 +103,7 @@
 #define USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE (0U)
 #endif
 /*! @brief if 1, enable usb compliance test codes; if 0, disable usb compliance test codes. */
-#ifdef SOC_IMXRT1170_SERIES      
+#ifdef SOC_IMXRT1170_SERIES
 #ifndef USB_HOST_CONFIG_COMPLIANCE_TEST
 #define USB_HOST_CONFIG_COMPLIANCE_TEST (0U)
 #endif
@@ -165,7 +165,7 @@
 /*!
  * @brief ohci GTD max count.
  */
-#define USB_HOST_CONFIG_OHCI_MAX_GTD (16U)      
+#define USB_HOST_CONFIG_OHCI_MAX_GTD (16U)
 #else
 /*!
  * @brief ohci ED max count.
@@ -177,7 +177,7 @@
  */
 #define USB_HOST_CONFIG_OHCI_MAX_GTD (8U)
 #endif
-      
+
 /*!
  * @brief ohci ITD max count.
  */
