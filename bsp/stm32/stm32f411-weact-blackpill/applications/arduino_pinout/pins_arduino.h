@@ -44,13 +44,18 @@
 #define A5        (29)
 #define A6        (30)
 #define A7        (31)
+#define A8        (32)
+#define A9        (33)
 
 #define F_CPU          60000000L  /* CPU:60MHz */
 
 #define LED_BUILTIN     D0  /* Default Built-in LED */
 
-/* spi1 : xxx-SCK  xxx-MISO  xxx-MOSI */
+/* spi1 : SPI1-SCK  SPI1-MISO  SPI1-MOSI */
 #define SS      D14  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
+
+/* i2c1 : PC14-SDA PC15-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
 #endif /* Pins_Arduino_h */
