@@ -33,7 +33,7 @@ static time_t imxrt_hp_get_timestamp(void)
     snvs_lp_srtc_datetime_t srtcDate = {0};
 
     SNVS_LP_SRTC_GetDatetime(SNVS, &srtcDate);
-    SNVS_HP_RTC_TimeSynchronize(SNVS); 
+    SNVS_HP_RTC_TimeSynchronize(SNVS);
     SNVS_HP_RTC_GetDatetime(SNVS, &rtcDate);
 
     tm_new.tm_sec  = rtcDate.second;
@@ -69,7 +69,7 @@ static int imxrt_hp_set_timestamp(time_t timestamp)
         return -RT_ERROR;
     }
 
-    SNVS_HP_RTC_TimeSynchronize(SNVS); 
+    SNVS_HP_RTC_TimeSynchronize(SNVS);
 
     return RT_EOK;
 }
@@ -77,7 +77,7 @@ static int imxrt_hp_set_timestamp(time_t timestamp)
 static rt_err_t imxrt_hp_rtc_init(rt_device_t dev)
 {
     snvs_hp_rtc_config_t snvsRtcConfig;
-    snvs_lp_srtc_config_t snvsSrtcConfig;    
+    snvs_lp_srtc_config_t snvsSrtcConfig;
 
     /* Init SNVS_HP */
     SNVS_HP_RTC_GetDefaultConfig(&snvsRtcConfig);
@@ -105,12 +105,12 @@ static rt_err_t imxrt_hp_rtc_close(rt_device_t dev)
 
 static rt_size_t imxrt_hp_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-    return RT_EOK;
+    return -RT_EINVAL;
 }
 
 static rt_size_t imxrt_hp_rtc_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-    return RT_EOK;
+    return -RT_EINVAL;
 }
 
 static rt_err_t imxrt_hp_rtc_control(rt_device_t dev, int cmd, void *args)
@@ -132,7 +132,7 @@ static rt_err_t imxrt_hp_rtc_control(rt_device_t dev, int cmd, void *args)
     break;
 
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
@@ -179,7 +179,6 @@ static int rtc_sample(int argc, char *argv[])
     time_t now;
     rt_device_t device = RT_NULL;
 
-    /*寻找设备*/
     device = rt_device_find(RTC_NAME);
     if (!device)
     {
@@ -187,14 +186,12 @@ static int rtc_sample(int argc, char *argv[])
       return RT_ERROR;
     }
 
-    /*初始化RTC设备*/
     if(rt_device_open(device, 0) != RT_EOK)
     {
       LOG_E("open %s failed!", RTC_NAME);
-      return RT_ERROR;
+      return -RT_ERROR;
     }
 
-    /* 设置日期 */
     ret = set_date(2018, 12, 3);
     if (ret != RT_EOK)
     {
@@ -202,7 +199,6 @@ static int rtc_sample(int argc, char *argv[])
         return ret;
     }
 
-    /* 设置时间 */
     ret = set_time(11, 15, 50);
     if (ret != RT_EOK)
     {
@@ -210,16 +206,12 @@ static int rtc_sample(int argc, char *argv[])
         return ret;
     }
 
-    /* 延时3秒 */
-    rt_thread_mdelay(3000);
+    rt_thread_mdelay(1000);
 
-    /* 获取时间 */
     now = time(RT_NULL);
     rt_kprintf("%s\n", ctime(&now));
 
     return ret;
 }
-/* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(rtc_sample, rtc sample);
-
 #endif /* BSP_USING_RTC */

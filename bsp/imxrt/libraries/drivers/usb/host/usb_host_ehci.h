@@ -312,7 +312,7 @@ typedef struct _usb_host_ehci_instance
 #ifdef SOC_IMXRT1170_SERIES
 #if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
     USBPHY_Type *registerPhyBase; /*!< The base address of the PHY register */
-#endif    
+#endif
 #else
     USBPHY_Type *registerPhyBase; /*!< The base address of the PHY register */
 #endif

@@ -80,7 +80,7 @@ static int rt_hw_imxrt_flexspi_init(void)
     config.ahbConfig.enableAHBBufferable = true;
     config.ahbConfig.enableReadAddressOpt = true;
     config.ahbConfig.enableAHBCachable = true;
-    config.ahbConfig.enableClearAHBBufferOpt	= true;
+    config.ahbConfig.enableClearAHBBufferOpt    = true;
     config.rxSampleClock = FLEXSPI_RX_SAMPLE_CLOCK;
     if(COMBINATION_MODE)
     {
@@ -125,7 +125,7 @@ static void flexspi_test(void)
     LOG_D("FLEXSPI Memory 32 bit Write End\n");
 
     memset(recv_buf, 0, sizeof(recv_buf));
-    
+
     LOG_D("FLEXSPI Memory 32 bit Read Start\n");
     recv_buf[2] = *(flexspi + 11);
     recv_buf[3] = *(flexspi + 15);
