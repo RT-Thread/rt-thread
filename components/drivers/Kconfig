@@ -515,6 +515,11 @@ if RT_USING_INPUT_CAPTURE
         default 100
 endif
 
+config RT_USING_DEV_BUS
+    bool "Using Device Bus device drivers"
+    default y if RT_USING_LWP
+    default n if !RT_USING_LWP
+
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
     default n
