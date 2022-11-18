@@ -323,6 +323,7 @@ config RT_USING_SENSOR
 if RT_USING_SENSOR
     config RT_USING_SENSOR_CMD
         bool "Enable sensor commands"
+        select PKG_USING_RT_VSNPRINTF_FULL
         default y
 
     config RT_USING_SENSOR_DOUBLE_FLOAT
