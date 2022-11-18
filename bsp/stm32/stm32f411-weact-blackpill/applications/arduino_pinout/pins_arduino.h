@@ -58,4 +58,7 @@
 /* i2c1 : PC14-SDA PC15-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
+/* Serial2 - PA2-TX  PA3-RX */
+#define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"
+
 #endif /* Pins_Arduino_h */

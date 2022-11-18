@@ -16,7 +16,8 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_ARDUINO
     bool "Compatible with Arduino Ecosystem (RTduino)"
     select PKG_USING_RTDUINO
-    select BSP_USING_STLINK_TO_USART
+    select BSP_USING_USART1
+    select BSP_USING_USART2
     select BSP_USING_GPIO
     select BSP_USING_ADC
     select BSP_USING_ADC1
@@ -66,17 +67,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-
-            if !BSP_USING_USBD
-                config BSP_USING_UART6
-                    bool "Enable UART6"
-                    default n
-
-                config BSP_UART6_RX_USING_DMA
-                    bool "Enable UART6 RX DMA"
-                    depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                    default n
-            endif
         endif
 
     menuconfig BSP_USING_ADC
@@ -105,6 +95,50 @@ menu "On-chip Peripheral Drivers"
                 int "I2C1 sda pin number"
                 range 0 48
                 default 47
+        endif
+
+     menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM1
+            bool "Enable timer1 output PWM"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1_CH1
+                    bool "Enable PWM1 channel1"
+                    default n
+
+                config BSP_USING_PWM1_CH2
+                    bool "Enable PWM1 channel2"
+                    default n
+                
+                config BSP_USING_PWM1_CH3
+                    bool "Enable PWM1 channel3"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM4
+            bool "Enable timer4 output PWM"
+            default n
+            if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH1
+                    bool "Enable PWM4 channel1"
+                    default n
+
+                config BSP_USING_PWM4_CH2
+                    bool "Enable PWM4 channel2"
+                    default n
+
+                config BSP_USING_PWM4_CH3
+                    bool "Enable PWM4 channel3"
+                    default n
+
+                config BSP_USING_PWM4_CH4
+                    bool "Enable PWM4 channel4"
+                    default n
+            endif
         endif
 
     menuconfig BSP_USING_SPI
