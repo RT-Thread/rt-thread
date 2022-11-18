@@ -14,11 +14,10 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 #include <stdint.h>
 #include <sys/types.h>
-
 
 /* sigev_notify values
    NOTE: P1003.1c/D10, p. 34 adds SIGEV_THREAD.  */
@@ -54,7 +53,6 @@ struct siginfo
 {
     uint16_t si_signo;
     uint16_t si_code;
-
     union sigval si_value;
 };
 typedef struct siginfo siginfo_t;
@@ -216,17 +214,16 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGUSR2 31  /* user defined signal 2 */
 #define NSIG    32      /* signal 0 implied */
 
-#ifndef _SIGNAL_H_
+#if defined(RT_USING_NEWLIBC)
 /* Some applications take advantage of the fact that <sys/signal.h>
  * and <signal.h> are equivalent in glibc.  Allow for that here.  */
 #include <signal.h>
-#endif
-
-#endif
+#endif /* defined(RT_USING_NEWLIBC) */
+#endif /* __ARMCC_VERSION */
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif
+#endif /* __SYS_SIGNAL_H__ */
 
