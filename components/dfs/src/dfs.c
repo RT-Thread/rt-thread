@@ -520,7 +520,6 @@ struct dfs_fdtable *dfs_fdtable_get(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 int list_fd(void)
 {
     int index;
@@ -566,7 +565,6 @@ int list_fd(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_fd, list file descriptor);
-#endif
-/*@}*/
+#endif /* RT_USING_FINSH */
 
+/*@}*/
