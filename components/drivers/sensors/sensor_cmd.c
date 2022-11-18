@@ -26,64 +26,65 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     switch (sensor->info.type)
     {
     case RT_SENSOR_CLASS_ACCE:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mg, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
+        LOG_I("num:%d, x:%f, y:%f, z:%f mg, timestamp:%u", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GYRO:
-        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d dps, timestamp:%5d", num, sensor_data->data.gyro.x / 1000, sensor_data->data.gyro.y / 1000, sensor_data->data.gyro.z / 1000, sensor_data->timestamp);
+        LOG_I("num:%d, x:%f, y:%f, z:%f dps, timestamp:%u", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_MAG:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mGauss, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
+        LOG_I("num:%d, x:%f, y:%f, z:%f mGauss, timestamp:%u", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GNSS:
-        LOG_I("num:%3d, lon:%5d, lat:%5d, timestamp:%5d", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, sensor_data->timestamp);
+        LOG_I("num:%d, lon:%f, lat:%f, timestamp:%u", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_TEMP:
-        LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, (rt_uint32_t)sensor_data->data.temp % 10, sensor_data->timestamp);
+        LOG_I("num:%d, temp:%f C, timestamp:%u", num, sensor_data->data.temp, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
-        LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
+        LOG_I("num:%d, humi:%f%%, timestamp:%u", num, sensor_data->data.humi, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BARO:
-        LOG_I("num:%3d, press:%5d pa, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
+        LOG_I("num:%d, press:%f pa, timestamp:%u", num, sensor_data->data.baro, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_LIGHT:
-        LOG_I("num:%3d, light:%5d lux, timestamp:%5d", num, sensor_data->data.light, sensor_data->timestamp);
+        LOG_I("num:%d, light:%f lux, timestamp:%u", num, sensor_data->data.light, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_PROXIMITY:
     case RT_SENSOR_CLASS_TOF:
-        LOG_I("num:%3d, distance:%5d, timestamp:%5d", num, sensor_data->data.proximity, sensor_data->timestamp);
+        LOG_I("num:%d, distance:%f, timestamp:%u", num, sensor_data->data.proximity, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HR:
-        LOG_I("num:%3d, heart rate:%5d bpm, timestamp:%5d", num, sensor_data->data.hr, sensor_data->timestamp);
+        LOG_I("num:%d, heart rate:%f bpm, timestamp:%u", num, sensor_data->data.hr, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_TVOC:
-        LOG_I("num:%3d, tvoc:%5d ppb, timestamp:%5d", num, sensor_data->data.tvoc, sensor_data->timestamp);
+        LOG_I("num:%d, tvoc:%f ppb, timestamp:%u", num, sensor_data->data.tvoc, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_NOISE:
-        LOG_I("num:%3d, noise:%5d, timestamp:%5d", num, sensor_data->data.noise, sensor_data->timestamp);
+        LOG_I("num:%d, noise:%f, timestamp:%u", num, sensor_data->data.noise, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_STEP:
-        LOG_I("num:%3d, step:%5d, timestamp:%5d", num, sensor_data->data.step, sensor_data->timestamp);
+        LOG_I("num:%d, step:%f, timestamp:%u", num, sensor_data->data.step, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_FORCE:
-        LOG_I("num:%3d, force:%5d, timestamp:%5d", num, sensor_data->data.force, sensor_data->timestamp);
+        LOG_I("num:%d, force:%f, timestamp:%u", num, sensor_data->data.force, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_DUST:
-        LOG_I("num:%3d, dust:%5d ug/m3, timestamp:%5d", num, sensor_data->data.dust, sensor_data->timestamp);
+        LOG_I("num:%d, dust:%f ug/m3, timestamp:%u", num, sensor_data->data.dust, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_ECO2:
-        LOG_I("num:%3d, eco2:%5d ppm, timestamp:%5d", num, sensor_data->data.eco2, sensor_data->timestamp);
+        LOG_I("num:%d, eco2:%f ppm, timestamp:%u", num, sensor_data->data.eco2, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_IAQ:
-        LOG_I("num:%3d, IAQ:%5d.%d , timestamp:%5d", num, sensor_data->data.iaq / 10, sensor_data->data.iaq % 10, sensor_data->timestamp);
+        LOG_I("num:%d, IAQ:%f, timestamp:%u", num, sensor_data->data.iaq, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_ETOH:
-        LOG_I("num:%3d, EtOH:%5d.%03d ppm, timestamp:%5d", num, sensor_data->data.etoh / 1000, sensor_data->data.etoh % 1000, sensor_data->timestamp);
+        LOG_I("num:%d, EtOH:%f ppm, timestamp:%u", num, sensor_data->data.etoh, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BP:
-        LOG_I("num:%3d, bp.sbp:%5d mmHg, bp.dbp:%5d mmHg, timestamp:%5d", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, sensor_data->timestamp);
+        LOG_I("num:%d, bp.sbp:%f mmHg, bp.dbp:%f mmHg, timestamp:%u", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, sensor_data->timestamp);
         break;
     default:
+        LOG_E("Unknown type of sensor!");
         break;
     }
 }
@@ -296,12 +297,11 @@ static void sensor(int argc, char **argv)
         rt_kprintf("sensor  [OPTION] [PARAM]\n");
         rt_kprintf("         probe <dev_name>      Probe sensor by given name\n");
         rt_kprintf("         info                  Get sensor info\n");
-        rt_kprintf("         sr <var>              Set range to var\n");
-        rt_kprintf("         sm <var>              Set work mode to var\n");
-        rt_kprintf("         sp <var>              Set power mode to var\n");
-        rt_kprintf("         sodr <var>            Set output date rate to var\n");
-        rt_kprintf("         read [num]            Read [num] times sensor\n");
-        rt_kprintf("                               num default 5\n");
+        rt_kprintf("         range <var>           Set range to var\n");
+        rt_kprintf("         mode <var>            Set work mode to var\n");
+        rt_kprintf("         power <var>           Set power mode to var\n");
+        rt_kprintf("         rate <var>            Set output date rate to var\n");
+        rt_kprintf("         read [num]            Read [num] times sensor (default 5)\n");
         return ;
     }
     else if (!strcmp(argv[1], "info"))
@@ -460,44 +460,45 @@ static void sensor(int argc, char **argv)
         if (!strcmp(argv[1], "probe"))
         {
             rt_uint8_t reg = 0xFF;
-            if (dev)
-            {
-                rt_device_close(dev);
-            }
+            rt_device_t new_dev;
 
-            dev = rt_device_find(argv[2]);
-            if (dev == RT_NULL)
+            new_dev = rt_device_find(argv[2]);
+            if (new_dev == RT_NULL)
             {
                 LOG_E("Can't find device:%s", argv[2]);
                 return;
             }
-            if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+            if (rt_device_open(new_dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
             {
                 LOG_E("open device failed!");
                 return;
             }
-            rt_device_control(dev, RT_SENSOR_CTRL_GET_ID, &reg);
+            rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg);
             LOG_I("device id: 0x%x!", reg);
-
+            if (dev)
+            {
+                rt_device_close(dev);
+            }
+            dev = new_dev;
         }
         else if (dev == RT_NULL)
         {
             LOG_W("Please probe sensor first!");
             return ;
         }
-        else if (!strcmp(argv[1], "sr"))
+        else if (!strcmp(argv[1], "range"))
         {
             rt_device_control(dev, RT_SENSOR_CTRL_SET_RANGE, (void *)atoi(argv[2]));
         }
-        else if (!strcmp(argv[1], "sm"))
+        else if (!strcmp(argv[1], "mode"))
         {
             rt_device_control(dev, RT_SENSOR_CTRL_SET_MODE, (void *)atoi(argv[2]));
         }
-        else if (!strcmp(argv[1], "sp"))
+        else if (!strcmp(argv[1], "power"))
         {
             rt_device_control(dev, RT_SENSOR_CTRL_SET_POWER, (void *)atoi(argv[2]));
         }
-        else if (!strcmp(argv[1], "sodr"))
+        else if (!strcmp(argv[1], "rate"))
         {
             rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)atoi(argv[2]));
         }
