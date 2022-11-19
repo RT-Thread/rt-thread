@@ -103,8 +103,6 @@ menu "Onboard Peripheral Drivers"
             default y
     endif
 
-
-
     menuconfig BSP_USING_FS
         bool "Enable File System"
         select RT_USING_DFS
@@ -145,7 +143,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C
         select BSP_USING_I2C4
         select PKG_USING_AHT10
-        select PKG_USING_AHT10_LATEST_VERSION
+        select AHT10_USING_SENSOR_DEVICE
         default n
 
     menuconfig BSP_USING_AUDIO
