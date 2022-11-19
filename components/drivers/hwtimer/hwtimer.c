@@ -296,25 +296,13 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
         rt_hw_interrupt_enable(level);
     }
     break;
-    case RT_DEVICE_CTRL_SET_INT_PRIORITY:
-    {
-        if (args == RT_NULL)
-        {
-            result = -RT_EEMPTY;
-            break;
-        }
-
-        if (timer->ops->control != RT_NULL)
-        {
-            result = timer->ops->control(timer, cmd, args);
-        }
-        else
-        {
-            result = -RT_ENOSYS;
-        }
-    }
-    break;
     default:
+    /* control device */
+    if (timer->ops->control != RT_NULL)
+    {
+        result = timer->ops->control(timer, cmd, args);
+    }
+    else
     {
         result = -RT_ENOSYS;
     }
