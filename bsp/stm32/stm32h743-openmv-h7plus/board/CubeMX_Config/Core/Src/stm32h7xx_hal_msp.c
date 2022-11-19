@@ -21,9 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-#ifdef __RTTHREAD__
-#include "drv_common.h"
-#endif
+#include <drv_common.h>
 /* USER CODE END Includes */
 extern DMA_HandleTypeDef hdma_dcmi;
 
