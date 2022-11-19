@@ -370,6 +370,14 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         result = RT_EOK;
     }
     break;
+    case RT_DEVICE_CTRL_SET_INT_PRIORITY:
+    {
+        struct stm32_hwtimer *tim_device = RT_NULL;
+        tim_device = (struct stm32_hwtimer *)timer;
+        rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
+        HAL_NVIC_SetPriority(tim_device->tim_irqn,ctrl_arg, 0);
+    }
+    break;
     default:
     {
         result = -RT_EINVAL;
