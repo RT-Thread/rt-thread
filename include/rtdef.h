@@ -1041,7 +1041,8 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */
 #define RT_DEVICE_CTRL_GET_INT          0x12            /**< get interrupt status */
-
+#define RT_DEVICE_CTRL_SET_INT_PRIORITY 0x13            /**< set interrupt Priority*/
+#define RT_DEVICE_CTRL_GET_INT_PRIORITY 0x14            /**< get interrupt Priority*/
 /**
  * device control
  */

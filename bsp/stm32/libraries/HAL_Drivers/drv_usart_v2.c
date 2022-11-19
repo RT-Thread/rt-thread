@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -291,7 +291,9 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
             RT_ASSERT(0)
         }
         break;
-
+    case RT_DEVICE_CTRL_SET_INT_PRIORITY:
+        HAL_NVIC_SetPriority(uart->config->irq_type,ctrl_arg, 0);
+        break;
     }
     return RT_EOK;
 }
