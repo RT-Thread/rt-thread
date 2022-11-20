@@ -113,8 +113,6 @@ menu "On-chip Peripheral Drivers"
                 range 0 80
                 default 25
         endif
-
-    source "../libraries/HAL_Drivers/Kconfig"     
     
 endmenu
 
