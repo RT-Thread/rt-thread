@@ -1,0 +1,31 @@
+import os
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+path = [cwd]
+
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+# add uart drivers.
+if GetDepend('RT_USING_SERIAL'):
+    src += ['drv_usart.c']
+    
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3'):
+        src += ['drv_soft_i2c.c']
+
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
+CPPDEFINES = ['GD32F427']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
