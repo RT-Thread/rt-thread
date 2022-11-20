@@ -17,10 +17,9 @@ if rtconfig.PLATFORM in ['gcc']:
     print('Newlib version:' + GetNewLibVersion(rtconfig))
 
     # identify this is Newlib, and only enable POSIX.1-1990
-    CPPDEFINES = ['RT_USING_NEWLIB', 'RT_USING_LIBC', '_POSIX_C_SOURCE=1']
-
+    CPPDEFINES = ['RT_USING_NEWLIBC', 'RT_USING_LIBC', '_POSIX_C_SOURCE=1']
+    AddDepend(['RT_USING_NEWLIBC', 'RT_USING_LIBC'])
     group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
-
 
 list = os.listdir(cwd)
 for d in list:

@@ -8,6 +8,10 @@ menu "Hardware Drivers Config"
         default y
 
     menu "Onboard Peripheral Drivers"
+	config BSP_USING_SEGGER_RTT_CONSOLE
+            bool "Enable SEGGER-RTT for console"
+            select PKG_USING_SEGGER_RTT
+            default n
 
     endmenu
 

@@ -17,7 +17,7 @@
 #include <rtdevice.h>
 #include "board.h"
 
-#ifdef RT_USING_SPI
+#ifdef BSP_USING_SPI
 
 #if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6)
 
@@ -411,7 +411,15 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         /* For simplicity reasons, this example is just waiting till the end of the
            transfer, but application may perform other tasks while transfer operation
            is ongoing. */
-        while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+        if (spi_drv->spi_dma_flag & (SPI_USING_TX_DMA_FLAG | SPI_USING_RX_DMA_FLAG))
+        {
+            /* blocking the thread,and the other tasks can run */
+            rt_completion_wait(&spi_drv->cpt, RT_WAITING_FOREVER);
+        }
+        else
+        {
+            while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+        }
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
@@ -536,6 +544,9 @@ static int rt_hw_spi_bus_init(void)
                 UNUSED(tmpreg); /* To avoid compiler warnings */
             }
         }
+
+        /* initialize completion object */
+        rt_completion_init(&spi_bus_obj[i].cpt);
 
         result = rt_spi_bus_register(&spi_bus_obj[i].spi_bus, spi_config[i].bus_name, &stm_spi_ops);
         RT_ASSERT(result == RT_EOK);
@@ -938,6 +949,24 @@ static void stm32_get_dma_info(void)
 #endif
 }
 
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
+    rt_completion_done(&spi_drv->cpt);
+}
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
+    rt_completion_done(&spi_drv->cpt);
+}
+
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
+    rt_completion_done(&spi_drv->cpt);
+}
+
 #if defined(SOC_SERIES_STM32F0)
 void SPI1_DMA_RX_TX_IRQHandler(void)
 {
@@ -970,4 +999,4 @@ int rt_hw_spi_init(void)
 INIT_BOARD_EXPORT(rt_hw_spi_init);
 
 #endif /* BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4 || BSP_USING_SPI5 */
-#endif /* RT_USING_SPI */
+#endif /* BSP_USING_SPI */

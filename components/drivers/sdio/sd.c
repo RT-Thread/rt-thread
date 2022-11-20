@@ -284,8 +284,7 @@ rt_err_t mmcsd_send_app_cmd(struct rt_mmcsd_host *host,
                             int                   retry)
 {
     struct rt_mmcsd_req req;
-
-    rt_uint32_t i;
+    int i;
     rt_err_t err;
 
     err = -RT_ERROR;
@@ -294,7 +293,7 @@ rt_err_t mmcsd_send_app_cmd(struct rt_mmcsd_host *host,
      * We have to resend MMC_APP_CMD for each attempt so
      * we cannot use the retries field in mmc_command.
      */
-    for (i = 0;i <= retry;i++)
+    for (i = 0; i <= retry; i++)
     {
         rt_memset(&req, 0, sizeof(struct rt_mmcsd_req));
 
@@ -404,7 +403,7 @@ rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        mmcsd_delay_ms(10); //delay 10ms
+        rt_thread_mdelay(10); //delay 10ms
     }
 
     if (rocr && !controller_is_spi(host))

@@ -1,0 +1,10 @@
+
+menu "ADC Configuration"
+    config USE_FADC
+        bool
+        prompt "Use FADC"
+        default n
+        
+endmenu
+
+

@@ -1,46 +1,16 @@
-/*****************************************************************************
- * Copyright (c) 2019, Nations Technologies Inc.
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * All rights reserved.
- * ****************************************************************************
+ * SPDX-License-Identifier: Apache-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the disclaimer below.
- *
- * Nations' name may not be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY NATIONS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * DISCLAIMED. IN NO EVENT SHALL NATIONS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ****************************************************************************/
-
-/**
- * @file drv_i2c.c
- * @author Nations
- * @version v1.0.0
- *
- * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-10-19     Nations      first version
  */
 
-#include <rthw.h>
-#include <rtthread.h>
 #include "drv_i2c.h"
-#include "board.h"
 
 #ifdef RT_USING_I2C
-
-#include <rtdevice.h>
 
 #define DBG_TAG               "drv.I2C"
 #ifdef RT_I2C_DEBUG
@@ -170,12 +140,12 @@ static void n32_udelay(rt_uint32_t us)
     ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
     told = SysTick->VAL;
 
-    while(1)
+    while (1)
     {
         tnow = SysTick->VAL;
-        if(tnow != told)
+        if (tnow != told)
         {
-            if(tnow < told)
+            if (tnow < told)
             {
                 tcnt += told - tnow;
             }
@@ -185,7 +155,7 @@ static void n32_udelay(rt_uint32_t us)
             }
             told = tnow;
 
-            if(tcnt >= ticks)
+            if (tcnt >= ticks)
             {
                 break;
             }
@@ -216,9 +186,9 @@ static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
 {
     rt_int32_t i = 0;
 
-    if(PIN_LOW == rt_pin_read(cfg->sda))
+    if (PIN_LOW == rt_pin_read(cfg->sda))
     {
-        while(i++ < 9)
+        while (i++ < 9)
         {
             rt_pin_write(cfg->scl, PIN_HIGH);
             n32_udelay(100);
@@ -227,7 +197,7 @@ static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
         }
     }
 
-    if(PIN_LOW == rt_pin_read(cfg->sda))
+    if (PIN_LOW == rt_pin_read(cfg->sda))
     {
         return -RT_ERROR;
     }
@@ -238,13 +208,16 @@ static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
 
 #ifdef RT_USING_HARDWARE_I2C
 
+#define I2CT_FLAG_TIMEOUT ((uint32_t)0x1000)
+#define I2CT_LONG_TIMEOUT ((uint32_t)(10 * I2CT_FLAG_TIMEOUT))
+
 static uint32_t I2CTimeout = I2CT_LONG_TIMEOUT;
 
 static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uint8_t* p_buffer, rt_uint16_t data_byte)
 {
     I2CTimeout = I2CT_LONG_TIMEOUT;
     /* wait until I2C bus is idle */
-    while(I2C_GetFlag((I2C_Module*)i2c_periph, I2C_FLAG_BUSY))
+    while (I2C_GetFlag((I2C_Module*)i2c_periph, I2C_FLAG_BUSY))
     {
         if ((I2CTimeout--) == 0)
             return 9;
@@ -273,21 +246,11 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
             return 6;
     };
 
-//    /* clear the ADDSEND bit */
-//    I2C_ClrFlag((I2C_Module*)i2c_periph,I2C_FLAG_ADDRF);
-
-//    if(1 == data_byte){
-//        /* disable acknowledge */
-//        I2C_ConfigAck((I2C_Module*)i2c_periph,DISABLE);
-//        /* send a stop condition to I2C bus */
-//        I2C_GenerateStop(I2C1, ENABLE);
-//    }
-
     /* while there is data to be read */
-    while(data_byte)
+    while (data_byte)
     {
         /* wait until the RBNE bit is set and clear it */
-        if(I2C_GetFlag((I2C_Module*)i2c_periph, I2C_FLAG_RXDATNE))
+        if (I2C_GetFlag((I2C_Module*)i2c_periph, I2C_FLAG_RXDATNE))
         {
             /* read a byte*/
             *p_buffer = I2C_RecvData((I2C_Module*)i2c_periph);
@@ -297,7 +260,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
 
             /* decrement the read bytes counter */
             data_byte--;
-            if(1 == data_byte)
+            if (1 == data_byte)
             {
                 /* disable acknowledge */
                 I2C_ConfigAck((I2C_Module*)i2c_periph, DISABLE);
@@ -308,7 +271,7 @@ static int rt_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_uin
     }
 
     /* wait until the stop condition is finished */
-    while(I2C_GetFlag((I2C_Module*)i2c_periph, I2C_FLAG_STOPF))
+    while (I2C_GetFlag((I2C_Module*)i2c_periph, I2C_FLAG_STOPF))
     {
         if ((I2CTimeout--) == 0)
             return 7;
@@ -349,7 +312,7 @@ static int rt_i2c_write(rt_uint32_t i2c_periph, uint16_t slave_address, uint8_t*
             return 6;
     };
 
-    // send data
+    /* send data */
     while (data_byte-- > 0)
     {
         I2C_SendData((I2C_Module*)i2c_periph, *sendBufferPtr++);
@@ -425,7 +388,7 @@ int rt_hw_i2c_init(void)
 {
 #ifdef RT_USING_I2C_BITOPS
 
-      rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct n32_i2c);
     rt_err_t result;
 
     for(int i = 0; i < obj_num; i++)
@@ -449,19 +412,38 @@ int rt_hw_i2c_init(void)
 
 #ifdef RT_USING_HARDWARE_I2C
 
+    GPIO_InitType GPIO_InitStructure;
+    I2C_InitType  I2C_InitStructure;
 #ifdef BSP_USING_I2C1
 #define I2C1_SPEED  400000
 
     static struct rt_i2c_bus i2c_bus1;
-    I2C_InitType I2C_InitStructure;
 
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-    GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE);
-    /* connect PB8 to I2C1_SCL, PB9 to I2C1_SDA */
-    GPIOInit(GPIOB, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_8 | GPIO_PIN_9);
-
-    /* enable I2C clock */
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
+
+    GPIO_InitStruct(&GPIO_InitStructure);
+    /* connect PB8 to I2C1_SCL, PB9 to I2C1_SDA */
+    GPIO_InitStructure.Pin        = GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+
+    GPIO_ConfigPinRemap(GPIO_RMP_I2C1, ENABLE);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    /* Enable I2C clock */
+    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C1, ENABLE);
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
+
+    GPIO_InitStruct(&GPIO_InitStructure);
+    /* Confige I2C1_SCL(PB8) and  I2C1_SDA(PB9) */
+    GPIO_InitStructure.Pin            = GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
+    GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
+    GPIO_InitStructure.GPIO_Alternate = GPIO_AF4_I2C1;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+#endif
 
     I2C_DeInit(I2C1);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -483,14 +465,30 @@ int rt_hw_i2c_init(void)
 #define I2C2_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus2;
-    I2C_InitType I2C_InitStructure;
 
-    /* enable I2C clock */
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 
+    GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PB10 to I2C2_SCL, PB11 to I2C2_SDA */
-    GPIOInit(GPIOB, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_10 | GPIO_PIN_11);
+    GPIO_InitStructure.Pin        = GPIO_PIN_10 | GPIO_PIN_11;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    /* Enable I2C clock */
+    RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_I2C2, ENABLE);
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_AFIO, ENABLE);
+
+    GPIO_InitStruct(&GPIO_InitStructure);
+    /* Confige I2C1_SCL(PB10) and  I2C1_SDA(PB11) */
+    GPIO_InitStructure.Pin            = GPIO_PIN_10 | GPIO_PIN_11;
+    GPIO_InitStructure.GPIO_Mode      = GPIO_Mode_AF_OD;
+    GPIO_InitStructure.GPIO_Pull      = GPIO_Pull_Up;
+    GPIO_InitStructure.GPIO_Alternate = GPIO_AF6_I2C2;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+#endif
 
     I2C_DeInit(I2C2);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -508,18 +506,21 @@ int rt_hw_i2c_init(void)
     rt_i2c_bus_device_register(&i2c_bus2.parent, "i2c2");
 #endif
 
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
 #ifdef BSP_USING_I2C3
 #define I2C3_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus3;
-    I2C_InitType I2C_InitStructure;
 
-    /* enable I2C clock */
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C3, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 
+    GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PC0 to I2C3_SCL, PC1 to I2C3_SDA */
-    GPIOInit(GPIOC, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_0 | GPIO_PIN_1);
+    GPIO_InitStructure.Pin        = GPIO_PIN_0 | GPIO_PIN_1;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+    GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
 
     I2C_DeInit(I2C3);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -541,14 +542,16 @@ int rt_hw_i2c_init(void)
 #define I2C4_SPEED  100000
 
     static struct rt_i2c_bus i2c_bus4;
-    I2C_InitType I2C_InitStructure;
 
-    /* enable I2C clock */
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_I2C4, ENABLE);
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 
+    GPIO_InitStruct(&GPIO_InitStructure);
     /* connect PC6 to I2C4_SCL, PC7 to I2C4_SDA */
-    GPIOInit(GPIOC, GPIO_Mode_AF_OD, GPIO_Speed_50MHz, GPIO_PIN_6 | GPIO_PIN_7);
+    GPIO_InitStructure.Pin        = GPIO_PIN_6 | GPIO_PIN_7;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+    GPIO_InitPeripheral(GPIOC, &GPIO_InitStructure);
 
     I2C_DeInit(I2C4);
     I2C_InitStructure.BusMode     = I2C_BUSMODE_I2C;
@@ -565,7 +568,7 @@ int rt_hw_i2c_init(void)
     i2c_bus4.i2c_periph = (rt_uint32_t)I2C4;
     rt_i2c_bus_device_register(&i2c_bus4.parent, "i2c4");
 #endif
-
+#endif
 #endif /* RT_USING_HARDWARE_I2C */
 
     return RT_EOK;

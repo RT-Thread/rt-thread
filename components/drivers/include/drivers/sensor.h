@@ -30,7 +30,6 @@ extern "C" {
 #define  RT_SENSOR_MODULE_MAX          (3)       /* The maximum number of members of a sensor module */
 
 /* Sensor types */
-
 #define RT_SENSOR_CLASS_NONE           (0)
 #define RT_SENSOR_CLASS_ACCE           (1)  /* Accelerometer     */
 #define RT_SENSOR_CLASS_GYRO           (2)  /* Gyroscope         */
@@ -55,7 +54,6 @@ extern "C" {
 #define RT_SENSOR_CLASS_BP             (21) /* Blood Pressure    */
 
 /* Sensor vendor types */
-
 #define RT_SENSOR_VENDOR_UNKNOWN       (0)
 #define RT_SENSOR_VENDOR_STM           (1)  /* STMicroelectronics */
 #define RT_SENSOR_VENDOR_BOSCH         (2)  /* Bosch */
@@ -74,7 +72,6 @@ extern "C" {
 #define RT_SENSOR_VENDOR_MELEXIS       (15) /* Melexis */
 
 /* Sensor unit types */
-
 #define  RT_SENSOR_UNIT_NONE           (0)
 #define  RT_SENSOR_UNIT_MG             (1)  /* Accelerometer           unit: mG         */
 #define  RT_SENSOR_UNIT_MDPS           (2)  /* Gyroscope               unit: mdps       */
@@ -95,15 +92,14 @@ extern "C" {
 #define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
 #define  RT_SENSOR_UNIT_MGM3           (18) /* Concentration           unit: mg/m3      */
 #define  RT_SENSOR_UNIT_MMHG           (19) /* Blood Pressure          unit: mmHg       */
-/* Sensor communication interface types */
 
+/* Sensor communication interface types */
 #define  RT_SENSOR_INTF_I2C            (1 << 0)
 #define  RT_SENSOR_INTF_SPI            (1 << 1)
 #define  RT_SENSOR_INTF_UART           (1 << 2)
 #define  RT_SENSOR_INTF_ONEWIRE        (1 << 3)
 
 /* Sensor power mode types */
-
 #define  RT_SENSOR_POWER_NONE          (0)
 #define  RT_SENSOR_POWER_DOWN          (1)  /* power down mode   */
 #define  RT_SENSOR_POWER_NORMAL        (2)  /* normal-power mode */
@@ -111,14 +107,12 @@ extern "C" {
 #define  RT_SENSOR_POWER_HIGH          (4)  /* high-power mode   */
 
 /* Sensor work mode types */
-
 #define  RT_SENSOR_MODE_NONE           (0)
 #define  RT_SENSOR_MODE_POLLING        (1)  /* One shot only read a data */
 #define  RT_SENSOR_MODE_INT            (2)  /* TODO: One shot interrupt only read a data */
 #define  RT_SENSOR_MODE_FIFO           (3)  /* TODO: One shot interrupt read all fifo data */
 
 /* Sensor control cmd types */
-
 #define  RT_SENSOR_CTRL_GET_ID         (RT_DEVICE_CTRL_BASE(Sensor) + 0)  /* Get device id */
 #define  RT_SENSOR_CTRL_GET_INFO       (RT_DEVICE_CTRL_BASE(Sensor) + 1)  /* Get sensor info */
 #define  RT_SENSOR_CTRL_SET_RANGE      (RT_DEVICE_CTRL_BASE(Sensor) + 2)  /* Set the measure range of sensor. unit is info of sensor */
@@ -128,6 +122,13 @@ extern "C" {
 #define  RT_SENSOR_CTRL_SELF_TEST      (RT_DEVICE_CTRL_BASE(Sensor) + 6)  /* Take a self test */
 
 #define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
+
+/* sensor floating data type */
+#ifdef RT_USING_SENSOR_DOUBLE_FLOAT
+typedef double rt_sensor_float_t;
+#else
+typedef float rt_sensor_float_t;
+#endif /* RT_USING_SENSOR_DOUBLE_FLOAT */
 
 struct rt_sensor_info
 {
@@ -144,9 +145,9 @@ struct rt_sensor_info
 
 struct rt_sensor_intf
 {
-    char                       *dev_name;   /* The name of the communication device */
-    rt_uint8_t                  type;       /* Communication interface type */
-    void                       *user_data;  /* Private data for the sensor. ex. i2c addr,spi cs,control I/O */
+    char          *dev_name;                /* The name of the communication device */
+    rt_uint8_t     type;                    /* Communication interface type */
+    void          *arg;                     /* Interface argument for the sensor. ex. i2c addr,spi cs,control I/O */
 };
 
 struct rt_sensor_config
@@ -160,6 +161,7 @@ struct rt_sensor_config
 };
 
 typedef struct rt_sensor_device *rt_sensor_t;
+typedef struct rt_sensor_data   *rt_sensor_data_t;
 
 struct rt_sensor_device
 {
@@ -168,7 +170,7 @@ struct rt_sensor_device
     struct rt_sensor_info        info;      /* The sensor info data */
     struct rt_sensor_config      config;    /* The sensor config data */
 
-    void                        *data_buf;  /* The buf of the data received */
+    rt_sensor_data_t             data_buf;  /* The buf of the data received */
     rt_size_t                    data_len;  /* The size of the data received */
 
     const struct rt_sensor_ops  *ops;       /* The sensor ops */
@@ -189,22 +191,22 @@ struct rt_sensor_module
 /* 3-axis Data Type */
 struct sensor_3_axis
 {
-    rt_int32_t x;
-    rt_int32_t y;
-    rt_int32_t z;
+    rt_sensor_float_t x;
+    rt_sensor_float_t y;
+    rt_sensor_float_t z;
 };
 
 /* Blood Pressure Data Type */
 struct sensor_bp
 {
-    rt_int32_t sbp; /* SBP : systolic pressure */
-    rt_int32_t dbp; /* DBP : diastolic pressure */
+    rt_sensor_float_t sbp; /* SBP : systolic pressure */
+    rt_sensor_float_t dbp; /* DBP : diastolic pressure */
 };
 
 struct coordinates
 {
-    double longitude;
-    double latitude;
+    rt_sensor_float_t longitude;
+    rt_sensor_float_t latitude;
 };
 
 struct rt_sensor_data
@@ -217,35 +219,35 @@ struct rt_sensor_data
         struct sensor_3_axis gyro;          /* Gyroscope.           unit: mdps        */
         struct sensor_3_axis mag;           /* Magnetometer.        unit: mGauss      */
         struct coordinates   coord;         /* Coordinates          unit: degrees     */
-        rt_int32_t           temp;          /* Temperature.         unit: dCelsius    */
-        rt_int32_t           humi;          /* Relative humidity.   unit: permillage  */
-        rt_int32_t           baro;          /* Pressure.            unit: pascal (Pa) */
-        rt_int32_t           light;         /* Light.               unit: lux         */
-        rt_int32_t           proximity;     /* Distance.            unit: centimeters */
-        rt_int32_t           hr;            /* Heart rate.          unit: bpm         */
-        rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
-        rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
-        rt_uint32_t          step;          /* Step sensor.         unit: 1           */
-        rt_int32_t           force;         /* Force sensor.        unit: mN          */
-        rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
-        rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
-        rt_uint32_t          spo2;          /* SpO2 sensor.         unit: permillage  */
-        rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1 */
-        rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm */
         struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
+        rt_sensor_float_t    temp;          /* Temperature.         unit: dCelsius    */
+        rt_sensor_float_t    humi;          /* Relative humidity.   unit: permillage  */
+        rt_sensor_float_t    baro;          /* Pressure.            unit: pascal (Pa) */
+        rt_sensor_float_t    light;         /* Light.               unit: lux         */
+        rt_sensor_float_t    proximity;     /* Distance.            unit: centimeters */
+        rt_sensor_float_t    hr;            /* Heart rate.          unit: bpm         */
+        rt_sensor_float_t    tvoc;          /* TVOC.                unit: permillage  */
+        rt_sensor_float_t    noise;         /* Noise Loudness.      unit: HZ          */
+        rt_sensor_float_t    step;          /* Step sensor.         unit: 1           */
+        rt_sensor_float_t    force;         /* Force sensor.        unit: mN          */
+        rt_sensor_float_t    dust;          /* Dust sensor.         unit: ug/m3       */
+        rt_sensor_float_t    eco2;          /* eCO2 sensor.         unit: ppm         */
+        rt_sensor_float_t    spo2;          /* SpO2 sensor.         unit: permillage  */
+        rt_sensor_float_t    iaq;           /* IAQ sensor.          unit: 1           */
+        rt_sensor_float_t    etoh;          /* EtOH sensor.         unit: ppm         */
     } data;
 };
 
 struct rt_sensor_ops
 {
-    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
-    rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
+    rt_ssize_t (*fetch_data)(rt_sensor_t sensor, rt_sensor_data_t buf, rt_size_t len);
+    rt_err_t (*control)(rt_sensor_t sensor, int cmd, void *arg);
 };
 
-int rt_hw_sensor_register(rt_sensor_t sensor,
-                          const char              *name,
-                          rt_uint32_t              flag,
-                          void                    *data);
+int rt_hw_sensor_register(rt_sensor_t     sensor,
+                          const char     *name,
+                          rt_uint32_t     flag,
+                          void           *data);
 
 #ifdef __cplusplus
 }

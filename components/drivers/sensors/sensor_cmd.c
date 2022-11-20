@@ -10,7 +10,7 @@
  * 2020-02-22     luhuadong      Add vendor info and sensor types for cmd
  */
 
-#include "sensor.h"
+#include <drivers/sensor.h>
 
 #define DBG_TAG  "sensor.cmd"
 #define DBG_LVL DBG_INFO

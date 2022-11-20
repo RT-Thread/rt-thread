@@ -103,6 +103,9 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_RTC_USING_LSE
                     bool "RTC USING LSE"
+					
+				config BSP_RTC_USING_HSE
+                    bool "RTC USING HSE"
 
                 config BSP_RTC_USING_LSI
                     bool "RTC USING LSI"

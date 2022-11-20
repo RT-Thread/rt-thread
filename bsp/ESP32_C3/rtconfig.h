@@ -12,6 +12,9 @@
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice optimization */
 
@@ -37,7 +40,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x40101
+#define RT_VER_NUM 0x50000
 
 /* RT-Thread Components */
 
@@ -62,9 +65,10 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_USING_PIN
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_PIN
 
 /* Using USB */
 
@@ -167,6 +171,38 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
+
+
+/* Arduino libraries */
+
+
+/* Projects */
+
+
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+/* Device Control */
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 #define SOC_ESPRESSIF
 #define SOC_ESP32_C3

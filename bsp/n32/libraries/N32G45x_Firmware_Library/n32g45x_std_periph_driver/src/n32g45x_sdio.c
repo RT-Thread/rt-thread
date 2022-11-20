@@ -456,15 +456,15 @@ void SDIO_ConfigData(SDIO_DataInitType* SDIO_DataInitStruct)
     /* Set DBCKSIZE bits according to DatBlkSize value */
     tmpregister |= (uint32_t)SDIO_DataInitStruct->DatBlkSize | SDIO_DataInitStruct->TransferDirection
                    | SDIO_DataInitStruct->TransferMode | SDIO_DataInitStruct->DPSMConfig;
-                   
-    if(SDIO_DataInitStruct->TransferDirection)
+
+    if (SDIO_DataInitStruct->TransferDirection)
     {
         tmpregister &= ~(1<<12);
     }
     else
     {
         tmpregister |= 1<<12;
-    }              
+    }
 
     /* Write to SDIO DATCTRL */
     SDIO->DATCTRL = tmpregister;

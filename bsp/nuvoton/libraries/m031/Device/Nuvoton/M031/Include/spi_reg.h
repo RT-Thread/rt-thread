@@ -488,7 +488,11 @@ typedef struct
     __O  uint32_t TX;                    /*!< [0x0020] SPI Data Transmit Register                                       */
     __I  uint32_t RESERVE1[3];
     __I  uint32_t RX;                    /*!< [0x0030] SPI Data Receive Register                                        */
-    __I  uint32_t RESERVE2[11];
+    __I  uint32_t RESERVE2[5];           /*!< [0x0034] Reserved                                                         */
+    __IO uint32_t INTERNAL;              /*!< [0x0048] SPI Internal Control Register                                    */
+    __I  uint32_t RESERVE3;              /*!< [0x004C] Reserved                                                         */
+    __I  uint32_t VER_NUM;               /*!< [0x0050] SPI Version Number Register                                      */
+    __I  uint32_t RESERVE4[3];           /*!< [0x0054] Reserved                                                         */
     __IO uint32_t I2SCTL;                /*!< [0x0060] I2S Control Register                                             */
     __IO uint32_t I2SCLK;                /*!< [0x0064] I2S Clock Divider Control Register                               */
     __IO uint32_t I2SSTS;                /*!< [0x0068] I2S Status Register                                              */

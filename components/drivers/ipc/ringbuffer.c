@@ -192,7 +192,7 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
 
     /* less data */
     if (size < length)
-        length = size;
+        length = (rt_uint16_t)size;
 
     if (rb->buffer_size - rb->read_index > length)
     {
@@ -248,7 +248,7 @@ rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 
     if ((rt_size_t)(rb->buffer_size - rb->read_index) > size)
     {
-        rb->read_index += size;
+        rb->read_index += (rt_uint16_t)size;
         return size;
     }
 

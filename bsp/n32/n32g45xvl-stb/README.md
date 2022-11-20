@@ -40,7 +40,7 @@ N32G45XVL-STB 板级包支持MDK5开发环境和GCC编译器，以下是具体�
 | --------- | --------  | ------------------------   |
 | UART      | 支持      | USART1/2/3, UART4/5/6/7    |
 | GPIO      | 支持      | PA0, PA1... PK15 ---> PIN: 0, 1...79 |
-| I2C       | 支持      | I2C1/2/3/4                 |
+| I2C       | 支持      | 软件I2C                    |
 | SPI       | 支持      | SPI1/2/3                   |
 | ADC       | 支持      | ADC1/2/3/4                 |
 | CAN       | 支持      | CAN1/2                     |
@@ -54,33 +54,60 @@ N32G45XVL-STB 板级包支持MDK5开发环境和GCC编译器，以下是具体�
 | ---- | -------------- |
 | PA9  | USART1_TX      |
 | PA10 | USART1_RX      |
+
 | PA2  | USART2_TX      |
 | PA3  | USART2_RX      |
+
 | PB10 | USART3_TX      |
 | PB11 | USART3_RX      |
-| PC10 | USART4_TX      |
-| PC11 | USART4_RX      |
-| PC10 | USART5_TX      |
-| PD2  | USART5_RX      |
-| PE2  | USART6_TX      |
-| PE3  | USART6_RX      |
-| PC4  | USART7_TX      |
-| PC5  | USART7_RX      |
+
+| PA13 | UART4_TX       |
+| PA14 | UART4_RX       |
+
+| PB13 | UART5_TX       |
+| PB14 | UART5_RX       |
+
+| PB0  | UART6_TX       |
+| PB1  | UART6_RX       |
+
+| PC2  | UART7_TX       |
+| PC3  | UART7_RX       |
+
 | PA4  | SPI1_NSS       |
 | PA5  | SPI1_SCK       |
 | PA6  | SPI1_MISO      |
 | PA7  | SPI1_MOSI      |
+
 | PB12 | SPI2_NSS       |
 | PB13 | SPI2_SCK       |
 | PB14 | SPI2_MISO      |
 | PB15 | SPI2_MOSI      |
-| PB6  | I2C1_SCL       |
-| PB7  | I2C1_SDA       |
 
-| PC0  | ADC1/2_IN10    |
-| PC1  | ADC1/2_IN11    |
-| PC2  | ADC1/2_IN12    |
-| PC3  | ADC1/2_IN13    |
+| PA15 | SPI3_NSS       |
+| PB3  | SPI3_SCK       |
+| PB4  | SPI3_MISO      |
+| PB5  | SPI3_MOSI      |
+
+| PA1  | ADC1_IN02      |
+| PA3  | ADC1_IN04      |
+
+| PA4  | ADC2_IN01      |
+| PA5  | ADC2_IN02      |
+
+| PB11 | ADC3_IN01      |
+| PB13 | ADC3_IN05      |
+
+| PB14 | ADC4_IN04       |
+| PB15 | ADC4_IN05       |
+
+| PA4  | DAC1           |
+| PA5  | DAC2           |
+
+| PB8  | CAN1_RX        |
+| PB9  | CAN1_TX        |
+
+| PB12 | CAN2_RX        |
+| PB13 | CAN2_TX        |
 
 ## 使用说明
 
@@ -104,7 +131,7 @@ N32G45XVL-STB 板级包支持MDK5开发环境和GCC编译器，以下是具体�
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，在串口上可以看到 RT-Thread 的输出信息:
 
-```bash
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.1.1 build Apr 24 2022 17:24:22
@@ -120,5 +147,4 @@ msh >
 
 维护人:
 
-- [LinYuanbo](https://github.com/Lim-LinYuanbo)
-- [breo.com](https://github.com/breo-shenzhen)
+- [WangQian](https://github.com/NationsHuanghanbin)

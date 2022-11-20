@@ -5,7 +5,6 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-10     Meco Man     first version
  * 2022-07-07     shiwa        Adapt ES32F369x
  */
 #include <Arduino.h>
@@ -14,7 +13,7 @@
 #include "pins_arduino.h"
 
 /*
-    {Arduino Pin, RT-Thread Pin [, Device Name(PWM or ADC), Channel]}
+    {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
     [] means optional
     Digital pins must NOT give the device name and channel.
     Analog pins MUST give the device name and channel(ADC, PWM or DAC).
@@ -22,8 +21,8 @@
 */
 const pin_map_t pin_map_table[]=
 {
-    {D0/*, GET_PIN(E,3)*/}, /* UART2_RX */
-    {D1/*, GET_PIN(E,2)*/}, /* UART2_TX */
+    {D0, GET_PIN(E,3), "uart2"}, /* UART2-RX */
+    {D1, GET_PIN(E,2), "uart2"}, /* UART2-TX */
     {D2, GET_PIN(E,4)}, /* GPIO0 */
     {D3, GET_PIN(A,2),"pwm2",3}, /* PWM2 GP32C4T0 CH3 */
     {D4, GET_PIN(E,5)}, /* GPIO1 */
@@ -33,13 +32,13 @@ const pin_map_t pin_map_table[]=
 
     {D8, GET_PIN(B,8)}, /* GPIO3 */
     {D9, GET_PIN(B,9)}, /* GPIO4 */
-    {D10, GET_PIN(B,0)}, /* GPIO5 */
-    {D11/*, GET_PIN(B,5)*/}, /* SPI0_MOSI */
-    {D12/*, GET_PIN(B,4)*/}, /* SPI0_MISO */
-    {D13/*, GET_PIN(D,3)*/}, /* SPI0_SCK */
+    {D10, GET_PIN(B,0)}, /* GPIO5, SS */
+    {D11, GET_PIN(B,5), "spi0"}, /* SPI0-MOSI */
+    {D12, GET_PIN(B,4), "spi0"}, /* SPI0-MISO */
+    {D13, GET_PIN(D,3), "spi0"}, /* SPI0-SCK */
 
-    {D14/*, GET_PIN(B,7)*/}, /* I2C0_SDA */
-    {D15/*, GET_PIN(B,6)*/}, /* I2C0_SCL */
+    {D14, GET_PIN(B,7), "i2c0"}, /* I2C0-SDA */
+    {D15, GET_PIN(B,6), "i2c0"}, /* I2C0-SCL */
 
     {D16, GET_PIN(C,8)}, /* LED4 */
     {D17, GET_PIN(C,12)}, /* LED5 */

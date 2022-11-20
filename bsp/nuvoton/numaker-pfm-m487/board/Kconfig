@@ -98,7 +98,6 @@ menu "Hardware Drivers Config"
 
             config BOARD_USING_MPU6500
                 bool "MPU6500 6-axis sensor(over i2c2)"
-                select PKG_USING_SENSORS_DRIVERS
                 select PKG_USING_MPU6XXX
                 select PKG_USING_MPU6XXX_LATEST_VERSION
                 select PKG_USING_MPU6XXX_ACCE

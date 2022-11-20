@@ -27,6 +27,9 @@ on:
       - '**/*.h'
       - '**/*.cpp'
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   test:
     runs-on: ubuntu-latest

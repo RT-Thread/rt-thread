@@ -302,7 +302,7 @@ void rt_hw_board_init()
 
 static void rt_hw_timer_isr(int vector, void *param)
 {
-    timer_int_clear(BOARD_OS_TIMER_ID);
+    arc_timer_int_clear(BOARD_OS_TIMER_ID);
     rt_tick_increase();
 }
 
@@ -312,8 +312,8 @@ int rt_hw_timer_init(void)
     unsigned int cyc = BOARD_CPU_CLOCK / RT_TICK_PER_SECOND;
 
     int_disable(BOARD_OS_TIMER_INTNO); /* disable os timer interrupt */
-    timer_stop(BOARD_OS_TIMER_ID);
-    timer_start(BOARD_OS_TIMER_ID, TIMER_CTRL_IE | TIMER_CTRL_NH, cyc);
+    arc_timer_stop(BOARD_OS_TIMER_ID);
+    arc_timer_start(BOARD_OS_TIMER_ID, TIMER_CTRL_IE | TIMER_CTRL_NH, cyc);
 
     int_handler_install(BOARD_OS_TIMER_INTNO, (INT_HANDLER_T)rt_hw_timer_isr);
     int_pri_set(BOARD_OS_TIMER_INTNO, INT_PRI_MIN + 1); /* currently, firq(INT_PRI_MIN) not supported*/

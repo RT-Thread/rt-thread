@@ -331,7 +331,9 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
+#ifdef RT_DEBUG
     struct rt_list_node *node = RT_NULL;
+#endif
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -341,6 +343,7 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
+#ifdef RT_DEBUG
     /* check object type to avoid re-initialization */
 
     /* enter critical */
@@ -353,19 +356,18 @@ void rt_object_init(struct rt_object         *object,
         struct rt_object *obj;
 
         obj = rt_list_entry(node, struct rt_object, list);
-        if (obj) /* skip warning when disable debug */
-        {
-            RT_ASSERT(obj != object);
-        }
+        RT_ASSERT(obj != object);
     }
     /* leave critical */
     rt_exit_critical();
+#endif
 
     /* initialize object's parameters */
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
     /* copy name */
-    rt_strncpy(object->name, name, RT_NAME_MAX);
+    rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+    object->name[RT_NAME_MAX - 1] = '\0';
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 

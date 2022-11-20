@@ -181,12 +181,12 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
 
 #ifdef SOC_IMXRT1170_SERIES
     flexcan_timing_config_t timing_config;
-    memset(&timing_config, 0, sizeof(flexcan_timing_config_t));
+    rt_memset(&timing_config, 0, sizeof(flexcan_timing_config_t));
 
     if(FLEXCAN_CalculateImprovedTimingValues(can->base, config.baudRate, GetCanSrcFreq(can->base), &timing_config))
     {
         /* Update the improved timing configuration*/
-        memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
+        rt_memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
     }
     else
     {

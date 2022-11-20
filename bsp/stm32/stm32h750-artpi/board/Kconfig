@@ -45,7 +45,6 @@ menu "Board extended module"
                 select RT_USING_I2C_BITOPS
                 select BSP_USING_I2C
                 select BSP_USING_I2C2
-                select PKG_USING_TOUCH_DRIVERS
                 select PKG_USING_FT6236
                 bool "Enable Touch"
                 default y

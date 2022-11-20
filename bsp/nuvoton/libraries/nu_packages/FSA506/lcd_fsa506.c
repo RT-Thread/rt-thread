@@ -38,35 +38,35 @@ static struct rt_device_graphic_info g_FSA506Info =
 
 static rt_err_t fsa506_pin_init(void)
 {
-    rt_pin_mode(BOARD_USING_FSA506_PIN_DC, PIN_MODE_OUTPUT);
-    rt_pin_mode(BOARD_USING_FSA506_PIN_RESET, PIN_MODE_OUTPUT);
+    SET_BACKLIGHT_OFF;
     rt_pin_mode(BOARD_USING_FSA506_PIN_BACKLIGHT, PIN_MODE_OUTPUT);
-    rt_pin_mode(BOARD_USING_FSA506_PIN_DISPLAY, PIN_MODE_OUTPUT);
 
     CLR_RS;
     CLR_RST;
-    SET_BACKLIGHT_OFF;
-    SET_DISP_OFF;
+    rt_pin_mode(BOARD_USING_FSA506_PIN_DC, PIN_MODE_OUTPUT);
+    rt_pin_mode(BOARD_USING_FSA506_PIN_RESET, PIN_MODE_OUTPUT);
 
     return RT_EOK;
 }
 
 static rt_err_t fsa506_lcd_init(rt_device_t dev)
 {
+    SET_BACKLIGHT_OFF;
+
     /* Hardware reset */
     CLR_RST;
     fsa506_delay_ms(100);    // Delay 100ms
 
     SET_RST;
-    fsa506_delay_ms(100);    // Delay 100ms
+    fsa506_delay_ms(500);    // Delay 500ms
 
-    fsa506_write_reg(0x40, 0x12); // Underspece
-    fsa506_write_reg(0x41, 0x05);   // Underspece
-    fsa506_write_reg(0x42, 0x06);   // Underspece
+    fsa506_write_reg(0x40, 0x12);   // [5]:PLL control 20~100MHz [2:1]:Output Driving 8mA, [0]:Output slew Fast
+    fsa506_write_reg(0x41, 0x05);   // PLL Programmable pre-divider: 5
+    fsa506_write_reg(0x42, 0x06);   // PLL Programmable loop divider: 6
 
     /* Set the panel X size */
-    fsa506_write_reg(0x08, (uint8_t)(XSIZE_PHYS >> 8)); //Set the panel X size H[1.0]
-    fsa506_write_reg(0x09, (uint8_t)(XSIZE_PHYS));    //Set the panel X size L[7:0]
+    fsa506_write_reg(0x08, (XSIZE_PHYS >> 8)); //Set the panel X size H[1.0]
+    fsa506_write_reg(0x09, (XSIZE_PHYS));    //Set the panel X size L[7:0]
 
     /* Memory write start address */
     fsa506_write_reg(0x0a, 0x00); //[17:16] bits of memory write start address
@@ -80,25 +80,25 @@ static rt_err_t fsa506_lcd_init(rt_device_t dev)
     /* For TFT output timing adjust */
     fsa506_write_reg(0x12, 0x00);                      //Hsync start position H-Byte
     fsa506_write_reg(0x13, 0x00);                      //Hsync start position L-Byte
-    fsa506_write_reg(0x14, (uint8_t)(41 >> 8));        //Hsync pulse width H-Byte
-    fsa506_write_reg(0x15, (uint8_t)(41));             //Hsync pulse width L-Byte
+    fsa506_write_reg(0x14, (41 >> 8));        //Hsync pulse width H-Byte
+    fsa506_write_reg(0x15, (41));             //Hsync pulse width L-Byte
 
-    fsa506_write_reg(0x16, (uint8_t)(43 >> 8));        //DE pulse start position H-Byte
-    fsa506_write_reg(0x17, (uint8_t)(43));             //DE pulse start position L-Byte
-    fsa506_write_reg(0x18, (uint8_t)(XSIZE_PHYS >> 8)); //DE pulse width H-Byte
-    fsa506_write_reg(0x19, (uint8_t)(XSIZE_PHYS));     //DE pulse width L-Byte
-    fsa506_write_reg(0x1a, (uint8_t)(525 >> 8));       //Hsync total clocks H-Byte
-    fsa506_write_reg(0x1b, (uint8_t)(525));            //Hsync total clocks H-Byte
+    fsa506_write_reg(0x16, (43 >> 8));        //DE pulse start position H-Byte
+    fsa506_write_reg(0x17, (43));             //DE pulse start position L-Byte
+    fsa506_write_reg(0x18, (XSIZE_PHYS >> 8)); //DE pulse width H-Byte
+    fsa506_write_reg(0x19, (XSIZE_PHYS));     //DE pulse width L-Byte
+    fsa506_write_reg(0x1a, (525 >> 8));       //Hsync total clocks H-Byte
+    fsa506_write_reg(0x1b, (525));            //Hsync total clocks H-Byte
     fsa506_write_reg(0x1c, 0x00);                      //Vsync start position H-Byte
     fsa506_write_reg(0x1d, 0x00);                      //Vsync start position L-Byte
-    fsa506_write_reg(0x1e, (uint8_t)(10 >> 8));        //Vsync pulse width H-Byte
-    fsa506_write_reg(0x1f, (uint8_t)(10));             //Vsync pulse width L-Byte
-    fsa506_write_reg(0x20, (uint8_t)(12 >> 8));        //Vertical DE pulse start position H-Byte
-    fsa506_write_reg(0x21, (uint8_t)(12));             //Vertical DE pulse start position L-Byte
-    fsa506_write_reg(0x22, (uint8_t)(YSIZE_PHYS >> 8)); //Vertical Active width H-Byte
-    fsa506_write_reg(0x23, (uint8_t)(YSIZE_PHYS));     //Vertical Active width H-Byte
-    fsa506_write_reg(0x24, (uint8_t)(286 >> 8));       //Vertical total width H-Byte
-    fsa506_write_reg(0x25, (uint8_t)(286));            //Vertical total width L-Byte
+    fsa506_write_reg(0x1e, (10 >> 8));        //Vsync pulse width H-Byte
+    fsa506_write_reg(0x1f, (10));             //Vsync pulse width L-Byte
+    fsa506_write_reg(0x20, (12 >> 8));        //Vertical DE pulse start position H-Byte
+    fsa506_write_reg(0x21, (12));             //Vertical DE pulse start position L-Byte
+    fsa506_write_reg(0x22, (YSIZE_PHYS >> 8)); //Vertical Active width H-Byte
+    fsa506_write_reg(0x23, (YSIZE_PHYS));     //Vertical Active width H-Byte
+    fsa506_write_reg(0x24, (286 >> 8));       //Vertical total width H-Byte
+    fsa506_write_reg(0x25, (286));            //Vertical total width L-Byte
 
     fsa506_write_reg(0x26, 0x00);                      //Memory read start address
     fsa506_write_reg(0x27, 0x00);                      //Memory read start address
@@ -117,14 +117,12 @@ static rt_err_t fsa506_lcd_init(rt_device_t dev)
     fsa506_write_reg(0x31, 0x00);                        //_L byte H-Offset[7:0]
     fsa506_write_reg(0x32, 0x00);                        //_H byte V-Offset[3:0]
     fsa506_write_reg(0x33, 0x00);                        //_L byte V-Offset[7:0]
-    fsa506_write_reg(0x34, (uint8_t)(XSIZE_PHYS >> 8));  //H byte H-def[3:0]
-    fsa506_write_reg(0x35, (uint8_t)(XSIZE_PHYS));       //_L byte H-def[7:0]
-    fsa506_write_reg(0x36, (uint8_t)((2 * YSIZE_PHYS) >> 8)); //[3:0] MSB of image vertical physical resolution in memory
-    fsa506_write_reg(0x37, (uint8_t)(2 * YSIZE_PHYS));   //[7:0] LSB of image vertical physical resolution in memory
+    fsa506_write_reg(0x34, (XSIZE_PHYS >> 8));  //H byte H-def[3:0]
+    fsa506_write_reg(0x35, (XSIZE_PHYS));       //_L byte H-def[7:0]
+    fsa506_write_reg(0x36, ((2 * YSIZE_PHYS) >> 8)); //[3:0] MSB of image vertical physical resolution in memory
+    fsa506_write_reg(0x37, (2 * YSIZE_PHYS));   //[7:0] LSB of image vertical physical resolution in memory
 
     fsa506_fillscreen(0);
-
-    SET_DISP_ON;
 
     SET_BACKLIGHT_ON;
 
@@ -263,7 +261,7 @@ static rt_err_t fsa506_lcd_control(rt_device_t dev, int cmd, void *args)
     break;
 
     default:
-        break;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

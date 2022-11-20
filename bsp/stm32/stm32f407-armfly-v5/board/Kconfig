@@ -33,7 +33,6 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_MPU6050
         bool "Enable MPU6050(i2c2)"
         select BSP_USING_I2C2
-        select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_SAMPLE
         select PKG_USING_MPU6XXX_LATEST_VERSION

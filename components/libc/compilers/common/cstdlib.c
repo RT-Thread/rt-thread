@@ -84,9 +84,9 @@ char *ltoa(long value, char *string, int radix)
         i = v % radix;
         v = v / radix;
         if (i < 10)
-            *tp++ = i+'0';
+            *tp++ = (char)(i+'0');
         else
-            *tp++ = i + 'a' - 10;
+            *tp++ = (char)(i + 'a' - 10);
     }
 
     sp = string;
@@ -129,9 +129,9 @@ char *ultoa(unsigned long value, char *string, int radix)
         i = v % radix;
         v = v / radix;
         if (i < 10)
-            *tp++ = i+'0';
+            *tp++ = (char)(i+'0');
         else
-            *tp++ = i + 'a' - 10;
+            *tp++ = (char)(i + 'a' - 10);
     }
 
     sp = string;

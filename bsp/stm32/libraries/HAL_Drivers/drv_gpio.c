@@ -15,7 +15,7 @@
 #include <board.h>
 #include "drv_gpio.h"
 
-#ifdef RT_USING_PIN
+#ifdef BSP_USING_GPIO
 
 #define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
 #define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
@@ -794,4 +794,4 @@ int rt_hw_pin_init(void)
     return rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
 }
 
-#endif /* RT_USING_PIN */
+#endif /* BSP_USING_GPIO */
