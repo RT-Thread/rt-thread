@@ -6,5 +6,15 @@
         "**/build" : true,
         "**/*.pyc" : true
     },
-    "editor.renderWhitespace": "all"
+    "editor.renderWhitespace": "all",
+    "files.associations": {
+        "board.h": "c",
+        "vexpress_a9.h": "c",
+        "realview.h": "c",
+        "signal.h": "c",
+        "cconfig.h": "c",
+        "rtdef.h": "c",
+        "rtservice.h": "c",
+        "alltypes.h": "c"
+    }
 }

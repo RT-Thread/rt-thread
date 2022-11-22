@@ -431,8 +431,10 @@ int rt_hw_keyboard_init(void)
     rt_uint8_t value;
     rt_uint32_t id;
     struct keyboard_pl050_pdata_t *pdat;
-    virtual_addr_t virt = (virtual_addr_t)KEYBOARD_ADDRESS;
+    virtual_addr_t virt;
     int irq = KEYBOARD_IRQ_NUM;
+
+    virt = (virtual_addr_t)rt_ioremap((void*)KEYBOARD_ADDRESS, 0x1000);
 
     id = (((read32(virt + 0xfec) & 0xff) << 24) |
                 ((read32(virt + 0xfe8) & 0xff) << 16) |

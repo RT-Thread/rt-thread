@@ -2,7 +2,8 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 SECTIONS
 {
-    . = 0x60010000;
+    /*. = 0x60010000; */
+    . = 0xc0010000;
 
     __text_start = .;
     .text :
@@ -47,9 +48,12 @@ SECTIONS
     } =0
     __text_end = .;
 
-    __exidx_start = .;
-    .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
-    __exidx_end = .;
+    .ARM.exidx   :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    }
 
     __rodata_start = .;
     .rodata   : { *(.rodata) *(.rodata.*) }

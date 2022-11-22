@@ -28,7 +28,7 @@
                     "text": "file rtthread.elf"
                 },
                 {
-                    "text": "break application_start"
+                    "text": "break entry"
                 }
             ],
             "customLaunchSetupCommands": [],
@@ -74,7 +74,7 @@
                     "text": "file rtthread.elf"
                 },
                 {
-                    "text": "break main"
+                    "text": "break entry"
                 }
             ],
             "customLaunchSetupCommands": [],
