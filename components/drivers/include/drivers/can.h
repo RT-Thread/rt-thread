@@ -63,6 +63,12 @@ enum CANBAUD
 #define RT_CAN_MODE_PRIV                0x01
 #define RT_CAN_MODE_NOPRIV              0x00
 
+/** @defgroup CAN_receive_FIFO_number CAN Receive FIFO Number
+  * @{
+  */
+#define CAN_RX_FIFO0                (0x00000000U)  /*!< CAN receive FIFO 0 */
+#define CAN_RX_FIFO1                (0x00000001U)  /*!< CAN receive FIFO 1 */
+
 struct rt_can_filter_item
 {
     rt_uint32_t id  : 29;
@@ -70,16 +76,18 @@ struct rt_can_filter_item
     rt_uint32_t rtr : 1;
     rt_uint32_t mode : 1;
     rt_uint32_t mask;
-    rt_int32_t hdr;
+    rt_int32_t  hdr_bank;/*Should be defined as:rx.FilterBank,which should be changed to rt_int32_t hdr_bank*/
+    rt_uint32_t rxfifo;/*Add a configuration item that CAN_RX_FIFO0/CAN_RX_FIFO1*/
 #ifdef RT_CAN_USING_HDR
     rt_err_t (*ind)(rt_device_t dev, void *args , rt_int32_t hdr, rt_size_t size);
     void *args;
 #endif /*RT_CAN_USING_HDR*/
 };
 
+
 #ifdef RT_CAN_USING_HDR
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,ind,args) \
-     {(id), (ide), (rtr), (mode), (mask), -1, (ind), (args)}
+      {(id), (ide), (rtr), (mode),(mask), -1, CAN_RX_FIFO0,(ind), (args)}/*0:CAN_RX_FIFO0*/
 #define RT_CAN_FILTER_STD_INIT(id,ind,args) \
      RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF,ind,args)
 #define RT_CAN_FILTER_EXT_INIT(id,ind,args) \
@@ -95,7 +103,7 @@ struct rt_can_filter_item
 #else
 
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask) \
-     {(id), (ide), (rtr), (mode), (mask), -1, }
+      {(id), (ide), (rtr), (mode), (mask), -1, CAN_RX_FIFO0 }/*0:CAN_RX_FIFO0*/
 #define RT_CAN_FILTER_STD_INIT(id) \
      RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF)
 #define RT_CAN_FILTER_EXT_INIT(id) \
@@ -269,6 +277,7 @@ typedef struct rt_can_device *rt_can_t;
 #define RT_CAN_RTR   1
 
 typedef struct rt_can_status *rt_can_status_t;
+
 struct rt_can_msg
 {
     rt_uint32_t id  : 29;
@@ -277,12 +286,14 @@ struct rt_can_msg
     rt_uint32_t rsv : 1;
     rt_uint32_t len : 8;
     rt_uint32_t priv : 8;
-    rt_int32_t hdr : 8;
+    rt_int32_t hdr_index : 8;/*Should be defined as:rx.FilterMatchIndex,which should be changed to rt_int32_t hdr_index : 8*/
 #ifdef RT_CAN_USING_CANFD
     rt_uint32_t fd_frame : 1;
-    rt_uint32_t reserved : 7;
+    rt_uint32_t rxfifo : 2;/*Redefined to return :CAN RX FIFO0/CAN RX FIFO1*/
+    rt_uint32_t reserved : 5;
 #else
-    rt_uint32_t reserved : 8;
+    rt_uint32_t rxfifo : 2;/*Redefined to return :CAN RX FIFO0/CAN RX FIFO1*/
+    rt_uint32_t reserved : 6;
 #endif
 #ifdef RT_CAN_USING_CANFD
     rt_uint8_t data[64];

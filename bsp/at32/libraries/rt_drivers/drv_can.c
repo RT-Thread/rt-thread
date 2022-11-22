@@ -368,13 +368,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-                if (filter_cfg->items[i].hdr == -1)
+                if (filter_cfg->items[i].hdr_bank == -1)
                 {
                     can_instance->config.filter_init_struct.filter_number = i;
                 }
                 else
                 {
-                    can_instance->config.filter_init_struct.filter_number = filter_cfg->items[i].hdr;
+                    can_instance->config.filter_init_struct.filter_number = filter_cfg->items[i].hdr_bank;
                 }
                  /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
@@ -597,7 +597,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
         pmsg->ide = rx_message.extended_id;
 
     pmsg->rtr = rx_message.frame_type;
-    pmsg->hdr = rx_message.filter_index;
+    pmsg->hdr_index = rx_message.filter_index;
 
     return RT_EOK;
 }
