@@ -13,8 +13,8 @@
 #include <dfs.h>
 #include <dfs_fs.h>
 #include <tty.h>
-#if defined(RT_USING_POSIX)
-#include <posix_termios.h>
+#if defined(RT_USING_POSIX_TERMIOS)
+#include <termios.h>
 #endif
 struct tty_struct;
 

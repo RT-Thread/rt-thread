@@ -13,7 +13,7 @@
 
 #include "lwp.h"
 #include "lwp_arch.h"
-#include "signal.h"
+#include "sys/signal.h"
 
 rt_inline void lwp_sigaddset(lwp_sigset_t *set, int _sig)
 {

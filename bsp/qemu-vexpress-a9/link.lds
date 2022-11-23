@@ -72,8 +72,8 @@ SECTIONS
     .dtors :
     {
         PROVIDE(__dtors_start__ = .);
-        KEEP(*(SORT(.dtors.*)))
-        KEEP(*(.dtors))
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
         PROVIDE(__dtors_end__ = .);
     }
 

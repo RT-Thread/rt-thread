@@ -22,10 +22,16 @@
 #include <lwp_arch.h>
 #endif
 
+#include <fcntl.h>
+
 #ifdef RT_USING_DFS
-#include <dfs_poll.h>
-#include <dfs_posix.h>
-#include <dfs_select.h>
+#include <poll.h>
+#include <sys/select.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
 #endif
 
 #include "syscall_data.h"
@@ -59,7 +65,7 @@
 
 #include <tty.h>
 #include "lwp_ipc_internal.h"
-#include <pthread.h>
+// #include <pthread.h>
 #ifndef GRND_NONBLOCK
 #define GRND_NONBLOCK	0x0001
 #endif /* GRND_NONBLOCK */
@@ -3992,7 +3998,7 @@ int sys_getrandom(void *buf, size_t buflen, unsigned int flags)
 #endif
     return ret;
 }
-
+#include <sched.h>
 int sys_setaffinity(pid_t pid, size_t size, void *set)
 {
     if (!lwp_user_accessable(set, sizeof(cpu_set_t)))

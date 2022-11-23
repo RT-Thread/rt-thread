@@ -15,9 +15,13 @@
 #ifdef RT_USING_LWP
 #include <lwp.h>
 #endif
-#if defined(RT_USING_POSIX)
-#include <dfs_poll.h>
-#include <posix_termios.h>
+#if defined(RT_USING_POSIX_TERMIOS)
+#include <poll.h>
+#include <termios.h>
+#endif
+
+#ifndef ENOIOCTLCMD
+#define ENOIOCTLCMD     (515) /* No ioctl command */
 #endif
 
 #define current lwp_self()
@@ -146,8 +150,8 @@ struct tty_struct
 
     struct tty_struct *other_struct; //for pty
 
-    struct winsize winsize;
     struct termios init_termios;
+    struct winsize winsize;
 #ifdef RT_USING_SMP
     struct rt_spinlock spinlock;
 #else

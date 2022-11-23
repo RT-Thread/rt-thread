@@ -13,8 +13,12 @@
 
 #include <stdint.h>
 #include <rtthread.h>
-#include <dfs_posix.h>
-#include <dfs_poll.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
+#include <poll.h>
 #include <sys/time.h>
 #include <sys/types.h>
 
