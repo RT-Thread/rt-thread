@@ -133,7 +133,7 @@ static void _thread_timeout(void *parameter)
 
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
+    RT_ASSERT((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     /* disable interrupt */
