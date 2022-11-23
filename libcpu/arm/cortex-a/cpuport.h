@@ -82,17 +82,17 @@ typedef union {
 
 rt_inline void rt_hw_isb(void)
 {
-    asm volatile ("isb":::"memory");
+    __asm volatile ("isb":::"memory");
 }
 
 rt_inline void rt_hw_dmb(void)
 {
-    asm volatile ("dmb":::"memory");
+    __asm volatile ("dmb":::"memory");
 }
 
 rt_inline void rt_hw_dsb(void)
 {
-    asm volatile ("dsb":::"memory");
+    __asm volatile ("dsb":::"memory");
 }
 
 #endif  /*CPUPORT_H__*/

@@ -11,7 +11,12 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <dfs_posix.h>
+
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
 
 #include "lwp.h"
 #include "lwp_pid.h"

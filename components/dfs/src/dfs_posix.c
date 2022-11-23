@@ -734,7 +734,7 @@ RTM_EXPORT(telldir);
  * @param d the directory stream.
  * @param offset the offset in directory stream.
  */
-void seekdir(DIR *d, off_t offset)
+void seekdir(DIR *d, long offset)
 {
     struct dfs_fd *fd;
 

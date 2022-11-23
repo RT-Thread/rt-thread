@@ -594,7 +594,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
     pipe->is_named = RT_TRUE; /* initialize as a named pipe */
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
     pipe->pipeno = -1;
 #endif
     rt_mutex_init(&pipe->lock, name, RT_IPC_FLAG_FIFO);
@@ -625,7 +625,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     if (rt_device_register(&pipe->parent, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE) != 0)
     {
         rt_mutex_detach(&pipe->lock);
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
         resource_id_put(&id_mgr, pipe->pipeno);
 #endif
         rt_free(pipe);
@@ -664,7 +664,7 @@ int rt_pipe_delete(const char *name)
             pipe = (rt_pipe_t *)device;
 
             rt_mutex_detach(&pipe->lock);
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
             resource_id_put(&id_mgr, pipe->pipeno);
 #endif
             rt_device_unregister(device);

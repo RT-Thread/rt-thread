@@ -11,9 +11,10 @@
 #include <ctype.h>
 #include <tty.h>
 #include <lwp.h>
-#if defined(RT_USING_POSIX)
-#include <posix_termios.h>
+#if defined(RT_USING_POSIX_TERMIOS)
+#include <termios.h>
 #endif
+#include <sys/errno.h>
 
 #define DBG_TAG               "N_TTY"
 #ifdef RT_TTY_DEBUG

@@ -13,7 +13,7 @@
 #ifdef RT_USING_USERSPACE
 #include <lwp_user_mm.h>
 #endif
-#include "clock_time.h"
+#include <sys/time.h>
 
 #define PMUTEX_NORMAL     0 /* Unable to recursion */
 #define PMUTEX_RECURSIVE  1 /* Can be recursion */
@@ -201,9 +201,10 @@ static int _pthread_mutex_init(void *umutex)
         }
         else
         {
-            pmutex->lock.kmutex->value = 1;
+            // pmutex->lock.kmutex->value = 1;
             pmutex->lock.kmutex->owner = RT_NULL;
-            pmutex->lock.kmutex->original_priority = 0xFF;
+            pmutex->lock.kmutex->ceiling_priority = 0xFF;
+            pmutex->lock.kmutex->priority = 0xFF;
             pmutex->lock.kmutex->hold  = 0;
         }
         rt_hw_interrupt_enable(level);
@@ -229,7 +230,7 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
             rt_set_errno(EINVAL);
             return -EINVAL;
         }
-        time = clock_time_to_tick(timeout);
+        time = rt_timespec_to_tick(timeout);
     }
 
     lock_ret = rt_mutex_take_interruptible(&_pmutex_lock, RT_WAITING_FOREVER);
