@@ -12,7 +12,7 @@
 #ifndef __SYS_SELECT_H__
 #define __SYS_SELECT_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 #include <sys/types.h>
 #include <sys/time.h>
 
