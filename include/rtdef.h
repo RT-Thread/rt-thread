@@ -1158,6 +1158,7 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_SET_INT          0x06            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x07            /**< clear interrupt */
 #define RT_DEVICE_CTRL_GET_INT          0x08            /**< get interrupt status */
+#define RT_DEVICE_CTRL_CONSOLE_OFLAG    0x09            /**< get console open flag */
 #define RT_DEVICE_CTRL_MASK             0x1f            /**< mask for contrl commands */
 
 /**
@@ -1168,8 +1169,6 @@ enum rt_device_class_type
 /**
  * special device commands
  */
-/* console device */
-#define RT_DEVICE_CTRL_CONSOLE_OFLAG    (RT_DEVICE_CTRL_BASE(Char) + 1)             /**< get console open flag */
 /* character device */
 #define RT_DEVICE_CTRL_CHAR_STREAM      (RT_DEVICE_CTRL_BASE(Char) + 1)             /**< stream mode on char device */
 /* block device */

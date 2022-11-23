@@ -889,6 +889,8 @@ static rt_err_t rt_serial_tx_disable(struct rt_device        *dev,
     rt_free(tx_fifo);
     serial->serial_tx = RT_NULL;
 
+    rt_memset(&serial->rx_notify, 0, sizeof(struct rt_device_notify));
+
     return RT_EOK;
 }
 
@@ -1138,7 +1140,19 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 serial->config = *pconfig;
                 serial->ops->configure(serial, (struct serial_configure *) args);
             }
+            break;
+        case RT_DEVICE_CTRL_NOTIFY_SET:
+            if (args)
+            {
+                rt_memcpy(&serial->rx_notify, args, sizeof(struct rt_device_notify));
+            }
+            break;
 
+        case RT_DEVICE_CTRL_CONSOLE_OFLAG:
+            if (args)
+            {
+                *(rt_uint16_t*)args = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM;
+            }
             break;
 #ifdef RT_USING_POSIX_STDIO
 #ifdef RT_USING_POSIX_TERMIOS
@@ -1512,6 +1526,11 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             /* Trigger the receiving completion callback */
             if (serial->parent.rx_indicate != RT_NULL)
                 serial->parent.rx_indicate(&(serial->parent), rx_length);
+
+            if (serial->rx_notify.notify)
+            {
+                serial->rx_notify.notify(serial->rx_notify.dev);
+            }
             break;
         }
 
