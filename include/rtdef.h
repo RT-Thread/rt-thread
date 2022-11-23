@@ -550,8 +550,9 @@ typedef struct rt_timer *rt_timer_t;
 #ifdef RT_USING_SIGNALS
 #include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
-typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
+typedef void (*rt_sighandler_t)(int signo);
+
 
 #define RT_SIG_MAX          32
 #endif /* RT_USING_SIGNALS */
