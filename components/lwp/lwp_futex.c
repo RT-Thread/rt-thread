@@ -13,7 +13,7 @@
 #ifdef RT_USING_USERSPACE
 #include <lwp_user_mm.h>
 #endif
-#include "clock_time.h"
+#include "sys/time.h"
 
 struct rt_futex
 {
@@ -124,7 +124,7 @@ int futex_wait(struct rt_futex *futex, int value, const struct timespec *timeout
         /* with timeout */
         if (timeout)
         {
-            rt_int32_t time = clock_time_to_tick(timeout);
+            rt_int32_t time = rt_timespec_to_tick(timeout);
 
             /* start the timer of thread */
             rt_timer_control(&(thread->thread_timer),

@@ -14,7 +14,13 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
+
 #include <lwp_elf.h>
 
 #ifndef RT_USING_DFS
@@ -34,6 +40,16 @@
 #include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 #endif /* end of RT_USING_USERSPACE */
+
+
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0x200000
+#endif
+
+#ifndef O_BINARY
+#define O_BINARY 0x10000
+#endif
+
 
 static const char elf_magic[] = {0x7f, 'E', 'L', 'F'};
 #ifdef DFS_USING_WORKDIR

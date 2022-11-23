@@ -15,7 +15,7 @@
 #include "lwp_ipc_internal.h"
 
 #include <dfs_file.h>
-#include <dfs_poll.h>
+#include <poll.h>
 
 /**
  * the IPC channel states

@@ -153,6 +153,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maximum number of mailbox .entry */
 #define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maximum number of message queue .entry */
 
+/* Common Utilities */
+
+#define _RT_STRINGIFY(x...)	#x
+#define RT_STRINGIFY(x...) _RT_STRINGIFY(x)
+
 #define RT_UNUSED(x)                   ((void)x)
 
 /* Compiler Related Definitions */
