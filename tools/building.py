@@ -124,27 +124,28 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
 
-    if rtconfig.PLATFORM in ['gcc']:
-        contents = ''
-        if not os.path.isfile('cconfig.h'):
-            import gcc
-            gcc.GenerateGCCConfig(rtconfig)
+    # if rtconfig.PLATFORM in ['gcc']:
+    #     contents = ''
+    #     if not os.path.isfile('cconfig.h'):
+    #         import gcc
+    #         gcc.GenerateGCCConfig(rtconfig)
 
-        # try again
-        if os.path.isfile('cconfig.h'):
-            f = open('cconfig.h', 'r')
-            if f:
-                contents = f.read()
-                f.close()
+    #     # try again
+    #     if os.path.isfile('cconfig.h'):
+    #         f = open('cconfig.h', 'r')
+    #         if f:
+    #             contents = f.read()
+    #             f.close()
 
-                prep = PatchedPreProcessor()
-                prep.process_contents(contents)
-                options = prep.cpp_namespace
+    #             prep = PatchedPreProcessor()
+    #             prep.process_contents(contents)
+    #             options = prep.cpp_namespace
 
-                BuildOptions.update(options)
+    #             BuildOptions.update(options)
 
-                # add HAVE_CCONFIG_H definition
-                env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    #             # add HAVE_CCONFIG_H definition
+    #             env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    pass
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 

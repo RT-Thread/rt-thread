@@ -291,5 +291,3 @@ def ReloadModule(module):
         importlib.reload(module)
     else:
         reload(module)
-
-    return
