@@ -70,7 +70,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     rt_uint16_t flags = 0;
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
     switch (fd->flags & O_ACCMODE)
@@ -104,7 +104,7 @@ static int serial_fops_close(struct dfs_fd *fd)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->fnode->data;
 
     rt_device_set_rx_indicate(device, RT_NULL);
     rt_device_close(device);
@@ -118,7 +118,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     int flags = (int)(rt_base_t)args;
     int mask  = O_NONBLOCK | O_APPEND;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->fnode->data;
     switch (cmd)
     {
     case FIONREAD:
@@ -139,12 +139,13 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
+    int wait_ret;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->fnode->data;
 
     do
     {
-        size = rt_device_read(device, -1, buf, count);
+        size = rt_device_read(device, -1,  buf, count);
         if (size <= 0)
         {
             if (fd->flags & O_NONBLOCK)
@@ -153,10 +154,18 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
                 break;
             }
 
-            rt_wqueue_wait(&(device->wait_queue), 0, RT_WAITING_FOREVER);
+            wait_ret = rt_wqueue_wait_interruptible(&(device->wait_queue), 0, RT_WAITING_FOREVER);
+            if (wait_ret != RT_EOK)
+            {
+                break;
+            }
         }
     }while (size <= 0);
 
+    if (size < 0)
+    {
+        size = 0;
+    }
     return size;
 }
 
@@ -164,7 +173,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->fnode->data;
     return rt_device_write(device, -1, buf, count);
 }
 
@@ -175,7 +184,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     rt_device_t device;
     struct rt_serial_device *serial;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
     serial = (struct rt_serial_device *)device;
