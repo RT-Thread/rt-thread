@@ -39,7 +39,7 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA6M5 */
 
-#ifdef SOC_SERIES_R7FA6M5
+#if (defined(SOC_SERIES_R7FA6M3)) || (defined(SOC_SERIES_R7FA6M4))
 #include "ra6m4/uart_config.h"
 
 #ifdef BSP_USING_ADC

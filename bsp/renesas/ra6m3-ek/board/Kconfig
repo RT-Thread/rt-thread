@@ -1,0 +1,77 @@
+menu "Hardware Drivers Config"
+
+    config SOC_R7FA6M4AF
+        bool
+        select SOC_SERIES_R7FA6M3
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        default y
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "On-chip Peripheral Drivers"
+
+        source "../libraries/HAL_Drivers/Kconfig"
+
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            default y
+            select RT_USING_SERIAL
+            select RT_USING_SERIAL_V2
+            if BSP_USING_UART
+
+                menuconfig BSP_USING_UART7
+                    bool "Enable UART7"
+                    default n
+                    if BSP_USING_UART7
+                        config BSP_UART7_RX_USING_DMA
+                            bool "Enable UART7 RX DMA"
+                            depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART7_TX_USING_DMA
+                            bool "Enable UART7 TX DMA"
+                            depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART7_RX_BUFSIZE
+                            int "Set UART7 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART7_TX_BUFSIZE
+                            int "Set UART7 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+            endif
+
+        config BSP_USING_LCD
+            bool "Enable LCD"
+            select BSP_USING_GPIO
+            select BSP_USING_LCD
+            default n
+
+        config BSP_USING_LVGL
+            bool "Enable LVGL for LCD"
+            select PKG_USING_LVGL
+            select BSP_USING_TOUCH
+            default n
+
+        if BSP_USING_LVGL
+            config BSP_USING_LVGL_DEMO
+                bool "Enable LVGL demo"
+                select PKG_USING_LV_MUSIC_DEMO
+                default y
+        endif
+
+    endmenu
+
+    menu "Board extended module Drivers"
+
+    endmenu
+endmenu
