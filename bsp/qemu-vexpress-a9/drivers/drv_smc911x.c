@@ -39,15 +39,6 @@ struct eth_device_smc911x
 };
 static struct eth_device_smc911x _emac;
 
-int udelay(int value)
-{
-    return 0;
-}
-
-int mdelay(int value)
-{
-    return 0;
-}
 
 #if defined (CONFIG_SMC911X_32_BIT)
 rt_inline uint32_t smc911x_reg_read(struct eth_device_smc911x *dev, uint32_t offset)

@@ -59,7 +59,7 @@
 #include <netdev.h>
 
 #include <sal_netdb.h>
-#include <sal.h>
+#include <sal_socket.h>
 #include <sys/socket.h>
 #endif /* RT_USING_SAL */
 
