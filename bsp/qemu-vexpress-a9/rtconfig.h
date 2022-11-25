@@ -66,7 +66,6 @@
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V2
 #define ARCH_ARM_CORTEX_A9
-#define RT_BACKTRACE_FUNCTION_NAME
 
 /* RT-Thread Components */
 
@@ -90,7 +89,7 @@
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 6
+#define DFS_FILESYSTEMS_MAX 8
 #define DFS_FILESYSTEM_TYPES_MAX 8
 #define DFS_FD_MAX 32
 #define RT_USING_DFS_ELMFAT
@@ -131,7 +130,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 256
 #define RT_USING_TTY
-#define RT_TTY_DEBUG
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
