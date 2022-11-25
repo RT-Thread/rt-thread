@@ -48,7 +48,6 @@
 #ifndef _MACHINE_SBI_H_
 #define _MACHINE_SBI_H_
 
-#include <stdint.h>
 #include <rtdef.h>
 
 /* SBI Specification Version */
@@ -233,7 +232,6 @@ sbi_console_getchar(void)
 static __inline void
 sbi_shutdown(void)
 {
-
     (void)SBI_CALL0(SBI_SHUTDOWN, 0);
 }
 

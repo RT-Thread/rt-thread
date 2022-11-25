@@ -12,14 +12,8 @@
 
 static inline uint32_t  __raw_hartid(void)
 {
-#ifdef RISCV_S_MODE
     extern int boot_hartid;
     return boot_hartid;
-#else
-    uint32_t x;
-    asm volatile("csrr %0, mhartid" : "=r" (x) );
-    return x;
-#endif
 }
 
 static inline void __raw_writeb(rt_uint8_t val, volatile void *addr)

@@ -40,8 +40,8 @@
 #include <rtthread.h>
 
 /* SBI Implementation-Specific Definitions */
-#define OPENSBI_VERSION_MAJOR_OFFSET    16
-#define OPENSBI_VERSION_MINOR_MASK  0xFFFF
+#define OPENSBI_VERSION_MAJOR_OFFSET 16
+#define OPENSBI_VERSION_MINOR_MASK 0xFFFF
 
 unsigned long sbi_spec_version;
 unsigned long sbi_impl_id;
@@ -69,11 +69,10 @@ sbi_get_impl_version(void)
     return (SBI_CALL0(SBI_EXT_ID_BASE, SBI_BASE_GET_IMPL_VERSION));
 }
 
-void
-sbi_print_version(void)
+void sbi_print_version(void)
 {
-    int major;
-    int minor;
+    u_int major;
+    u_int minor;
 
     /* For legacy SBI implementations. */
     if (sbi_spec_version == 0)
@@ -116,8 +115,7 @@ sbi_print_version(void)
     rt_kprintf("SBI Specification Version: %u.%u\n", major, minor);
 }
 
-void
-sbi_set_timer(uint64_t val)
+void sbi_set_timer(uint64_t val)
 {
     struct sbi_ret ret;
 
@@ -133,8 +131,7 @@ sbi_set_timer(uint64_t val)
     }
 }
 
-void
-sbi_send_ipi(const unsigned long *hart_mask)
+void sbi_send_ipi(const unsigned long *hart_mask)
 {
     struct sbi_ret ret;
 
@@ -151,8 +148,7 @@ sbi_send_ipi(const unsigned long *hart_mask)
     }
 }
 
-void
-sbi_remote_fence_i(const unsigned long *hart_mask)
+void sbi_remote_fence_i(const unsigned long *hart_mask)
 {
     struct sbi_ret ret;
 
@@ -169,8 +165,7 @@ sbi_remote_fence_i(const unsigned long *hart_mask)
     }
 }
 
-void
-sbi_remote_sfence_vma(const unsigned long *hart_mask, unsigned long start, unsigned long size)
+void sbi_remote_sfence_vma(const unsigned long *hart_mask, unsigned long start, unsigned long size)
 {
     struct sbi_ret ret;
 
@@ -188,9 +183,8 @@ sbi_remote_sfence_vma(const unsigned long *hart_mask, unsigned long start, unsig
     }
 }
 
-void
-sbi_remote_sfence_vma_asid(const unsigned long *hart_mask, unsigned long start, unsigned long size,
-                           unsigned long asid)
+void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask, unsigned long start, unsigned long size,
+                                unsigned long asid)
 {
     struct sbi_ret ret;
 
@@ -208,8 +202,7 @@ sbi_remote_sfence_vma_asid(const unsigned long *hart_mask, unsigned long start, 
     }
 }
 
-int
-sbi_hsm_hart_start(unsigned long hart, unsigned long start_addr, unsigned long priv)
+int sbi_hsm_hart_start(unsigned long hart, unsigned long start_addr, unsigned long priv)
 {
     struct sbi_ret ret;
 
@@ -217,14 +210,12 @@ sbi_hsm_hart_start(unsigned long hart, unsigned long start_addr, unsigned long p
     return (ret.error != 0 ? (int)ret.error : 0);
 }
 
-void
-sbi_hsm_hart_stop(void)
+void sbi_hsm_hart_stop(void)
 {
     (void)SBI_CALL0(SBI_EXT_ID_HSM, SBI_HSM_HART_STOP);
 }
 
-int
-sbi_hsm_hart_status(unsigned long hart)
+int sbi_hsm_hart_status(unsigned long hart)
 {
     struct sbi_ret ret;
 
@@ -233,8 +224,7 @@ sbi_hsm_hart_status(unsigned long hart)
     return (ret.error != 0 ? (int)ret.error : (int)ret.value);
 }
 
-void
-sbi_init(void)
+void sbi_init(void)
 {
     struct sbi_ret sret;
 
@@ -262,4 +252,12 @@ sbi_init(void)
         has_ipi_extension = true;
     if (sbi_probe_extension(SBI_EXT_ID_RFNC) != 0)
         has_rfnc_extension = true;
+}
+
+void rt_hw_console_output(const char *str)
+{
+    while (*str)
+    {
+        sbi_console_putchar(*str++);
+    }
 }

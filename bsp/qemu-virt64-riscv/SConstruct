@@ -12,7 +12,7 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
     CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
@@ -31,11 +31,7 @@ stack_size = 4096
 
 stack_lds = open('link_stacksize.lds', 'w')
 if GetDepend('__STACKSIZE__'): stack_size = GetDepend('__STACKSIZE__')
-stack_lds.write('__STACKSIZE__ = %d;\r\n' % stack_size)
-if GetDepend('RISCV_S_MODE'):  start_addr = int(0x80200000) 
-else: start_addr = int(0x80000000)
-stack_lds.write('__START_ADDR__ = 0x%x;' % start_addr)
-
+stack_lds.write('__STACKSIZE__ = %d;' % stack_size)
 stack_lds.close()
 
 # make a building

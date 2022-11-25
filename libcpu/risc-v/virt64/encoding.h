@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 // See LICENSE for license details.
 
 #ifndef RISCV_CSR_ENCODING_H
@@ -15,6 +23,7 @@
 #define MSTATUS_HPP         0x00000600
 #define MSTATUS_MPP         0x00001800
 #define MSTATUS_FS          0x00006000
+#define MSTATUS_VS          0x00000600
 #define MSTATUS_XS          0x00018000
 #define MSTATUS_MPRV        0x00020000
 #define MSTATUS_PUM         0x00040000
@@ -28,9 +37,16 @@
 #define SSTATUS_UPIE        0x00000010
 #define SSTATUS_SPIE        0x00000020
 #define SSTATUS_SPP         0x00000100
-#define SSTATUS_FS          0x00006000
+#define SSTATUS_FS          0x00006000 /* Floating-point Status */
+#define SSTATUS_FS_INITIAL  0x00002000
+#define SSTATUS_FS_CLEAN    0x00004000
+#define SSTATUS_FS_DIRTY    0x00006000
+#define SSTATUS_VS          0x00000600 /* Vector Status */
+#define SSTATUS_VS_INITIAL  0x00000200
+#define SSTATUS_VS_CLEAN    0x00000400
+#define SSTATUS_VS_DIRTY    0x00000600
 #define SSTATUS_XS          0x00018000
-#define SSTATUS_PUM         0x00040000
+#define SSTATUS_SUM         0x00040000
 #define SSTATUS32_SD        0x80000000
 #define SSTATUS64_SD        0x8000000000000000
 
@@ -103,6 +119,18 @@
 #define SIP_STIP    MIP_STIP /* timer interrupt */
 #define SIP_SEIP    MIP_SEIP /* ext interrupt */
 
+#define SIE_SSIE            (1 << IRQ_S_SOFT)
+#define SIE_STIE            (1 << IRQ_S_TIMER)
+#define SIE_SEIE            (1 << IRQ_S_EXT)
+
+#define RISCV_XLEN    64
+
+#define SCAUSE_INTERRUPT    (1UL << (RISCV_XLEN - 1))
+
+#define SCAUSE_S_SOFTWARE_INTR  1
+#define SCAUSE_S_TIMER_INTR     5
+#define SCAUSE_S_EXTERNAL_INTR  9
+
 #define PRV_U 0
 #define PRV_S 1
 #define PRV_H 2
@@ -164,7 +192,7 @@
 #define RISCV_PGSHIFT 12
 #define RISCV_PGSIZE (1 << RISCV_PGSHIFT)
 
-#ifndef __ASSEMBLER__
+#ifndef __ASSEMBLY__
 
 #ifdef __GNUC__
 
@@ -205,7 +233,7 @@
 
 #endif /* end of __GNUC__ */
 
-#endif /* end of __ASSEMBLER__ */
+#endif /* end of __ASSEMBLY__ */
 
 #endif /* end of __riscv */
 
