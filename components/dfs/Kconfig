@@ -152,7 +152,7 @@ if RT_USING_DFS
         default n
 
     config RT_USING_DFS_TMPFS
-        bool "Enable tmp file system"
+        bool "Enable TMP file system"
         default n
 
     config RT_USING_DFS_NFS

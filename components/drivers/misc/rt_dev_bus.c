@@ -18,7 +18,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#if defined(RT_USING_POSIX)
+#if defined(RT_USING_POSIX_DEVIO)
 #include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
@@ -62,7 +62,7 @@ rt_device_t rt_device_bus_create(char *name, int attach_size)
         rt_kprintf("dev bus [%s] register failed!, ret=%d\n", name, result);
         return RT_NULL;
     }
-#if defined(RT_USING_POSIX)
+#if defined(RT_USING_POSIX_DEVIO)
     dev->fops = &bus_fops;
 #endif
 

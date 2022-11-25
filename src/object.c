@@ -614,7 +614,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     rt_list_for_each(node, &(information->object_list))
     {
         object = rt_list_entry(node, struct rt_object, list);
-        if (rt_strncmp(object->name, name, RT_NAME_MAX - 1) == 0)
+        if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
         {
             /* leave critical */
             rt_exit_critical();

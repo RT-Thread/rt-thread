@@ -21,27 +21,28 @@ int mnt_init(void)
 {
     rt_thread_delay(RT_TICK_PER_SECOND);
 
-    if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+    if (dfs_mount("sd", "/", "elm", 0, 0) == 0)
     {
         LOG_I("file system initialization done!\n");
         return 0;
     }
     else
     {
-        LOG_W("[sd0] File System on SD ('sd0') initialization failed!");
-        LOG_W("[sd0] Try to format and re-mount...");
-        if (dfs_mkfs("elm", "sd0") == 0)
+        LOG_W("[sd] File System on SD ('sd') initialization failed!");
+        LOG_W("[sd] Try to format and re-mount...");
+        if (dfs_mkfs("elm", "sd") == 0)
         {
-            if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+            if (dfs_mount("sd", "/", "elm", 0, 0) == 0)
             {
-                LOG_I("[sd0] File System on SD ('sd0') initialized!");
+                LOG_I("[sd] File System on SD ('sd') initialized!");
                 return 0;
             }
         }
 
-        LOG_E("[sd0] File System on SD ('sd0') initialization failed!");
+        LOG_E("[sd] File System on SD ('sd') initialization failed!");
         return -1;
     }
+
 }
 INIT_ENV_EXPORT(mnt_init);
 #endif
