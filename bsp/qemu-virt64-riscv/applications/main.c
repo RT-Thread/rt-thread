@@ -1,11 +1,10 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-05-20     bigmagic     first version
  */
 
 #include <rtthread.h>
@@ -15,7 +14,7 @@
 
 int main(void)
 {
-    printf("Hello RISC-V!\n");
+    printf("Hello RISC-V\n");
 
     return 0;
 }

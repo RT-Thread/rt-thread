@@ -1,142 +1,47 @@
-# QEMU/RISCV64 VIRT BSP Introduction
+# RT-Smart QEMU SYSTEM RISC-V RV64 BSP
 
-[中文页](README_ZH.md) | English
+English | [中文](./README_ch.md)
 
-RISC-V is a free and open ISA enabling a new era of processor innovation through open standard collaboration. This project ported RT-Thread on QEMU RISCV64 VIRT machine.
+## 1. Introduction
 
-## 1. Compiling
+QEMU can emulate both 32-bit and 64-bit RISC-V CPUs. Use the qemu-system-riscv64 executable to simulate a 64-bit RISC-V machine, qemu-system-riscv32 executable to simulate a 32-bit RISC-V machine.
 
-Download the cross compiler tool chain, it is recommended to use the sifive tool chain.
+QEMU has generally good support for RISC-V guests. It has support for several different machines. The reason we support so many is that RISC-V hardware is much more widely varying than x86 hardware. RISC-V CPUs are generally built into “system-on-chip” (SoC) designs created by many different companies with different devices, and these SoCs are then built into machines which can vary still further even if they use the same SoC.
 
-```
-https://www.sifive.com/software
-```
+For most boards the CPU type is fixed (matching what the hardware has), so typically you don’t need to specify the CPU type by hand, except for special cases like the virt board.
 
-Select the fitting platform, we recommend Ubuntu. 
+## 2. Building
 
-Unzip the tool chain to the specified directory.
+It's tedious to properly build a kernel since each RISC-V toolchain is specified to one RISC-V ISA. So you have to use different toolchain for different RISC-V ISAs.
+Here we focus on 2 types of ISA: `rv64imafdcv` and `rv64imac`.
 
-```
-export RTT_EXEC_PATH=~/gcc/bin
-```
+If you are not sure what kinds of ISA you need, then `rv64imac` should satisfied your case most time. Given a riscv toolchain, you can check the ISA it supports like this:
 
-Enter `rt-thread/bsp/qemu-virt64-riscv` directory and input
-
-```
-scons
-```
-
- `rtthread.elf` and `rtthread .bin` files are generated. 
-
-## 2. Execution
-
-The project provides two configurable operating modes for riscv64, defaults to run under M-Mode.
-
-***M-Mode***
-
-Firstly, install the `qemu-system-riscv64`.
-
-```
-sudo apt install qemu-system-misc
+```bash
+root@a9025fd90fd4:/home/rtthread-smart# riscv64-unknown-linux-musl-gcc -v
+Using built-in specs.
+COLLECT_GCC=riscv64-unknown-linux-musl-gcc
+COLLECT_LTO_WRAPPER=/home/rtthread-smart/tools/gnu_gcc/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/../libexec/gcc/riscv64-unknown-linux-musl/10.1.0/lto-wrapper
+Target: riscv64-unknown-linux-musl
+Configured with: /builds/alliance/risc-v-toolchain/riscv-gcc/configure --target=riscv64-unknown-linux-musl --prefix=/builds/alliance/risc-v-toolchain/install-native/ --with-sysroot=/builds/alliance/risc-v-toolchain/install-native//riscv64-unknown-linux-musl --with-system-zlib --enable-shared --enable-tls --enable-languages=c,c++ --disable-libmudflap --disable-libssp --disable-libquadmath --disable-libsanitizer --disable-nls --disable-bootstrap --src=/builds/alliance/risc-v-toolchain/riscv-gcc --disable-multilib --with-abi=lp64 --with-arch=rv64imac --with-tune=rocket 'CFLAGS_FOR_TARGET=-O2   -mcmodel=medany -march=rv64imac -mabi=lp64 -D __riscv_soft_float' 'CXXFLAGS_FOR_TARGET=-O2   -mcmodel=medany -march=rv64imac -mabi=lp64 -D __riscv_soft_float'
+Thread model: posix
+Supported LTO compression algorithms: zlib
+gcc version 10.1.0 (GCC) 
 ```
 
-Then enter
+The `-march=***` is what you are looking for. And the `-mabi=***` is also an important message to configure compiling script.
 
-```
-./qemu-nographic.sh
-```
+Steps to build kernel:
 
-You'll see Project start running
+1. in `$RTT_ROOT/bsp/qemu-virt64-riscv/rtconfig.py:40`, make sure `-march=***` and `-mabi=***` is identical to your toolchain
+1. if your -march contains characters v/d/f, then: configure kernel by typing `scons --menuconfig` and select `Using RISC-V Vector Extension` / `Enable FPU`
+1. `scons`
 
-```
-heap: [0x80035804 - 0x86435804]
+## 3. Execution
 
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.4 build May 21 2021
- 2006 - 2021 Copyright by rt-thread team
-Hello RISC-V!
-msh />
-```
+It's recommended to clone the latest QEMU release and build it locally.
+Make sure QEMU is ready by typing `qemu-system-riscv64 --version` in your shell.
 
-***S-Mode***
+Using `qemu-nographic.sh` or `qemu-nographic.bat` to start simulation.
 
-When running in S-Mode, configuration is via menuconfig
-
-```
-scons --menuconfig
-```
-
-Select:
-
-```
-RISCV qemu virt64 configs  ---> 
-    [*] RT-Thread run in riscv smode
-```
-
-Save it and compile `scons`.
-
-To get RT-Thread running in S-Mode, enable the opensbi, and then start up the RT-Thread through opensbi.
-
-Compile qemu or downloaded premiere-version qemu that built-in opensbi, then executing `./qemu-nographic-smode.sh` can get it successfully running.  
-
-The qemu installed with `sudo apt install qemu-system-misc` is an ordinary-version and may compile the opensbi on its own.
-
-```
-git clone git@github.com:riscv/opensbi.git
-cd opensbi
-make PLATFORM=generic CROSS_COMPILE=~/gcc/bin/riscv64-unknown-elf-
-```
-
-`/build/platform/generic/firmware/fw_jump.elf` file is generated. 
-
-Enter the following command to run:
-
-```
-qemu-system-riscv64 -nographic -machine virt -m 256M -kernel rtthread.bin -bios ~/opensbi/build/platform/generic/firmware/fw_jump.elf
-```
-
-Result is shown as follows: 
-
-```
-OpenSBI v0.9
-   ____                    _____ ____ _____
-  / __ \                  / ____|  _ \_   _|
- | |  | |_ __   ___ _ __ | (___ | |_) || |
- | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
- | |__| | |_) |  __/ | | |____) | |_) || |_
-  \____/| .__/ \___|_| |_|_____/|____/_____|
-        | |
-        |_|
-
-Platform Name             : riscv-virtio,qemu
-Platform Features         : timer,mfdeleg
-.
-.
-.
-Boot HART ISA             : rv64imafdcsu
-Boot HART Features        : scounteren,mcounteren
-Boot HART PMP Count       : 16
-Boot HART PMP Granularity : 4
-Boot HART PMP Address Bits: 54
-Boot HART MHPM Count      : 0
-Boot HART MHPM Count      : 0
-Boot HART MIDELEG         : 0x0000000000000222
-Boot HART MEDELEG         : 0x000000000000b109
-heap: [0x80235a58 - 0x86635a58]
-
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.4 build May 21 2021
- 2006 - 2021 Copyright by rt-thread team
-Hello RISC-V!
-msh />
-```
-
-## 3. Condition
-
-| Driver | Condition | Remark |
-| ------ | --------- | ------ |
-| UART   | Support   | UART0  |
-| PLIC   | Support   | -      |
-| CLIC   | Support   | -      |
+> if your -march contains characters v, using qemu-v-nographic.*

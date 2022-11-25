@@ -7,11 +7,16 @@
  * Date           Author       Notes
  * 2021-05-20     bigmagic     first version
  */
+#include <rthw.h>
 #include <rtthread.h>
 #include <stdint.h>
 #include "plic.h"
 #include <riscv_io.h>
 #include "encoding.h"
+
+#include <riscv.h>
+#include <string.h>
+#include <stdlib.h>
 
 /*
 * Each PLIC interrupt source can be assigned a priority by writing
@@ -96,4 +101,34 @@ void plic_complete(int irq)
 {
     int hart = __raw_hartid();
     *(uint32_t*)PLIC_COMPLETE(hart) = irq;
+}
+
+void plic_set_ie(rt_uint32_t word_index, rt_uint32_t val)
+{
+    volatile void *plic_ie = (void *)(rt_size_t)(PLIC_BASE_ADDR + PLIC_ENABLE_BASE + word_index * 4);
+    writel(val, plic_ie);
+}
+
+void plic_init()
+{
+    int i;
+
+    plic_set_threshold(0);
+
+    for(i = 0;i < 128;i++)
+    {
+        plic_set_priority(i,7);
+    }
+
+    plic_set_ie(0,0xffffffff);
+    plic_set_ie(1,0xffffffff);
+    plic_set_ie(2,0xffffffff);
+    plic_set_ie(3,0xffffffff);
+
+    rt_uint64_t addr;
+
+    for(addr = 0xC001000;addr <= 0xC1F1F80;addr += 4)
+    {
+        *((rt_uint32_t *)addr) = 0xffffffff;
+    }
 }
