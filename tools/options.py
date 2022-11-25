@@ -51,7 +51,7 @@ def AddOptions():
     AddOption('--project-name',
                       dest = 'project-name',
                       type = 'string',
-                      default = None,
+                      default = "project",
                       help = 'set project name')
     AddOption('--reset-project-config',
                       dest = 'reset-project-config',
