@@ -104,7 +104,7 @@ int msh_exec_script(const char *cmd_line, int size)
         int length;
 
         line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
-        if (line_buf == RT_NULL)
+        if (line_buf == RT_NULL) 
         {
             close(fd);
             return -RT_ENOMEM;
