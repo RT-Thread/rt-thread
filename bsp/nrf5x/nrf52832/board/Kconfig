@@ -229,7 +229,7 @@ menu "On-chip Peripheral Drivers"
             default 1
             config BSP_USING_I2C0
                 bool "Enable I2C0 bus"
-                default n
+                default y
             if BSP_USING_I2C0
                 config NRFX_TWIM0_ENABLED
                 int 
