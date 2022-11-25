@@ -76,6 +76,13 @@ int dfs_init(void)
     working_directory[0] = '/';
 #endif
 
+#ifdef RT_USING_DFS_TMPFS
+    {
+        extern int dfs_tmpfs_init(void);
+        dfs_tmpfs_init();
+    }
+#endif
+
 #ifdef RT_USING_DFS_DEVFS
     {
         extern int devfs_init(void);
