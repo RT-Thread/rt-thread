@@ -223,6 +223,17 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
 
+    # some env variables have loaded in SConsctruct Environment() before re-load rtconfig.py;
+    # after update rtconfig.py's variables, those env variables need to synchronize
+    if exec_prefix:
+        env['CC'] = rtconfig.CC
+        env['CXX'] = rtconfig.CXX
+        env['AS'] = rtconfig.AS
+        env['AR'] = rtconfig.AR
+        env['LINK'] = rtconfig.LINK
+    if exec_path:
+        env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
         if rtconfig.PLATFORM == 'armcc' and not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):

@@ -34,7 +34,6 @@ EXEC_PATH   = os.getenv('RTT_EXEC_PATH') or r'/usr/bin'
 BUILD       = 'debug'
 
 if PLATFORM == 'gcc':
-    # toolchains
     PREFIX  = os.getenv('RTT_EXEC_PREFIX') or 'arm-none-eabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
@@ -73,5 +72,4 @@ if PLATFORM == 'gcc':
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
     DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
-                  SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

@@ -88,11 +88,11 @@ def AddOptions():
     AddOption('--exec-prefix',
                 dest = 'exec-prefix',
                 type = 'string',
-                help = 'set RTT_EXEC_PREFIX currently')
+                help = 'set RTT_EXEC_PREFIX temperately')
     AddOption('--exec-path',
                 dest = 'exec-path',
                 type = 'string',
-                help = 'set RTT_EXEC_PATH currently')
+                help = 'set RTT_EXEC_PATH temperately')
     AddOption('--stackanalysis',
                 dest = 'stackanalysis',
                 action = 'store_true',
