@@ -65,7 +65,7 @@
 
 #include <tty.h>
 #include "lwp_ipc_internal.h"
-// #include <pthread.h>
+#include <sched.h>
 #ifndef GRND_NONBLOCK
 #define GRND_NONBLOCK	0x0001
 #endif /* GRND_NONBLOCK */
@@ -915,63 +915,28 @@ int sys_unlink(const char *pathname)
 /* syscall: "nanosleep" ret: "int" args: "const struct timespec *" "struct timespec *" */
 int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
-    rt_tick_t tick;
+    int ret = 0;
+    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
+        return -EFAULT;
+
 #ifdef RT_USING_USERSPACE
     struct timespec rqtp_k;
     struct timespec rmtp_k;
-
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
-
-    if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
-    {
-        return -EFAULT;
-    }
-
+    
     lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
-
-    tick = rqtp_k.tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp_k.tv_nsec * RT_TICK_PER_SECOND) / 1000000000;
-    rt_thread_delay(tick);
-
-    if (rmtp)
-    {
-        if (!lwp_user_accessable((void *)rmtp, sizeof *rmtp))
-        {
-            return -EFAULT;
-        }
-
-        tick = rt_tick_get() - tick;
-        /* get the passed time */
-        rmtp_k.tv_sec = tick / RT_TICK_PER_SECOND;
-        rmtp_k.tv_nsec = (tick % RT_TICK_PER_SECOND) * (1000000000 / RT_TICK_PER_SECOND);
-
+    ret = nanosleep(&rqtp_k, &rmtp_k);
+    if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
-    }
 #else
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
-
-    if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
-    {
-        return -EFAULT;
-    }
-
-    tick = rqtp->tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp->tv_nsec * RT_TICK_PER_SECOND) / 1000000000;
-    rt_thread_delay(tick);
-
     if (rmtp)
     {
         if (!lwp_user_accessable((void *)rmtp, sizeof *rmtp))
-        {
             return -EFAULT;
-        }
-
-        tick = rt_tick_get() - tick;
-        /* get the passed time */
-        rmtp->tv_sec = tick / RT_TICK_PER_SECOND;
-        rmtp->tv_nsec = (tick % RT_TICK_PER_SECOND) * (1000000000 / RT_TICK_PER_SECOND);
+        ret = nanosleep(rqtp, rmtp);
     }
 #endif
-
-    return 0;
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 /* syscall: "gettimeofday" ret: "int" args: "struct timeval *" "struct timezone *" */
@@ -1272,38 +1237,79 @@ static void timer_timeout_callback(void *parameter)
     rt_sem_release(sem);
 }
 
-rt_timer_t sys_timer_create(const char *name,
-        void *data,
-        rt_tick_t   time,
-        rt_uint8_t  flag)
+rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
 {
-    rt_timer_t timer = rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
-    if (lwp_user_object_add(lwp_self(), (rt_object_t)timer) != 0)
+    int ret = 0;
+#ifdef RT_USING_USERSPACE
+    struct sigevent sevp_k;
+    timer_t timerid_k;
+    struct sigevent evp_default;
+    if (sevp == NULL)
     {
-        rt_timer_delete(timer);
-        timer = NULL;
+        sevp_k.sigev_notify = SIGEV_SIGNAL;
+        sevp_k.sigev_signo = SIGALRM;
+        sevp = &sevp_k;
     }
-    return timer;
+    else
+        lwp_get_from_user(&sevp_k, (void *)sevp, sizeof sevp_k);
+    lwp_get_from_user(&timerid_k, (void *)timerid, sizeof timerid_k);
+    ret = timer_create(clockid, &sevp_k, &timerid_k);
+    if (ret != -RT_ERROR){
+        lwp_put_to_user(sevp, (void *)&sevp_k, sizeof sevp_k);
+        lwp_put_to_user(timerid, (void *)&timerid_k, sizeof timerid_k);
+    }
+#else
+    ret = timer_create(clockid, sevp, timerid);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_delete(rt_timer_t timer)
+rt_err_t sys_timer_delete(timer_t timerid)
 {
-    return lwp_user_object_delete(lwp_self(), (rt_object_t)timer);
+    int ret = timer_delete(timerid);
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_start(rt_timer_t timer)
+rt_err_t sys_timer_settime(timer_t timerid, int flags,
+                           const struct itimerspec *restrict new_value,
+                           struct itimerspec *restrict old_value)
 {
-    return rt_timer_start(timer);
+    int ret = 0;
+#ifdef RT_USING_USERSPACE
+    struct itimerspec new_value_k;
+    struct itimerspec old_value_k;
+
+    lwp_get_from_user(&new_value_k, (void *)new_value, sizeof new_value_k);
+    lwp_get_from_user(&old_value_k, (void *)timerid, sizeof old_value_k);
+    ret = timer_settime(timerid, flags, &new_value_k, &old_value_k);
+    lwp_put_to_user(old_value, (void *)&old_value_k, sizeof old_value_k);
+
+#else
+    ret = timer_settime(timerid, flags, new_value, old_value);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_stop(rt_timer_t timer)
+rt_err_t sys_timer_gettime(timer_t timerid, struct itimerspec *curr_value)
 {
-    return rt_timer_stop(timer);
+    int ret = 0;
+#ifdef RT_USING_USERSPACE
+
+    struct itimerspec curr_value_k;
+    lwp_get_from_user(&curr_value_k, (void *)curr_value, sizeof curr_value_k);
+    ret = timer_gettime(timerid, &curr_value_k);
+    lwp_put_to_user(curr_value, (void *)&curr_value_k, sizeof curr_value_k);
+#else
+    ret = timer_gettime(timerid, curr_value);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_control(rt_timer_t timer, int cmd, void *arg)
+rt_err_t sys_timer_getoverrun(timer_t timerid)
 {
-    return rt_timer_control(timer, cmd, arg);
+    int ret = 0;
+    ret = timer_getoverrun(timerid);
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 rt_thread_t sys_thread_create(void *arg[])
@@ -1620,7 +1626,7 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
         dfs_fd_unlock();
         return 0;
     }
-    return -1;
+    return -RT_ERROR;
 }
 
 int _sys_fork(void)
@@ -1889,7 +1895,7 @@ static char *_load_script(const char *filename, struct lwp_args_info *args)
 {
     void *page = NULL;
     char *new_page;
-    int fd = -1;
+    int fd = -RT_ERROR;
     int len;
     char interp[INTERP_BUF_SIZE];
     char *cp;
@@ -3819,6 +3825,32 @@ int sys_clock_gettime(clockid_t clk, struct timespec *ts)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
+int sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, struct timespec *rmtp)
+{
+    int ret = 0;
+    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
+        return -EFAULT;
+
+#ifdef RT_USING_USERSPACE
+    struct timespec rqtp_k;
+    struct timespec rmtp_k;
+
+    lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
+    ret = clock_nanosleep(clk, flags, &rqtp_k, &rmtp_k);
+    if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
+        lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
+#else
+    if (rmtp)
+    {
+        if (!lwp_user_accessable((void *)rmtp, sizeof *rmtp))
+            return -EFAULT;
+        ret = clock_nanosleep(clk, flags, rqtp, rmtp);
+    }
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 int sys_clock_getres(clockid_t clk, struct timespec *ts)
 {
     int ret = 0;
@@ -3998,7 +4030,6 @@ int sys_getrandom(void *buf, size_t buflen, unsigned int flags)
 #endif
     return ret;
 }
-#include <sched.h>
 int sys_setaffinity(pid_t pid, size_t size, void *set)
 {
     if (!lwp_user_accessable(set, sizeof(cpu_set_t)))
@@ -4270,9 +4301,9 @@ const static void* func_table[] =
 
     SYSCALL_SIGN(sys_timer_create),
     SYSCALL_SIGN(sys_timer_delete),
-    SYSCALL_SIGN(sys_timer_start),
-    SYSCALL_SIGN(sys_timer_stop),
-    SYSCALL_SIGN(sys_timer_control),  /* 115 */
+    SYSCALL_SIGN(sys_timer_settime),
+    SYSCALL_SIGN(sys_timer_gettime),
+    SYSCALL_SIGN(sys_timer_getoverrun),  /* 115 */
     SYSCALL_SIGN(sys_getcwd),
     SYSCALL_SIGN(sys_chdir),
     SYSCALL_SIGN(sys_unlink),
@@ -4317,7 +4348,8 @@ const static void* func_table[] =
     SYSCALL_SIGN(sys_sched_setscheduler),
     SYSCALL_SIGN(sys_sched_getscheduler),
     SYSCALL_SIGN(sys_setaffinity),
-    SYSCALL_SIGN(sys_fsync)
+    SYSCALL_SIGN(sys_fsync),
+    SYSCALL_SIGN(sys_clock_nanosleep),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

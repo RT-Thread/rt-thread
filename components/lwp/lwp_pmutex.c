@@ -201,11 +201,10 @@ static int _pthread_mutex_init(void *umutex)
         }
         else
         {
-            // pmutex->lock.kmutex->value = 1;
-            pmutex->lock.kmutex->owner = RT_NULL;
-            pmutex->lock.kmutex->ceiling_priority = 0xFF;
+            pmutex->lock.kmutex->owner    = RT_NULL;
             pmutex->lock.kmutex->priority = 0xFF;
-            pmutex->lock.kmutex->hold  = 0;
+            pmutex->lock.kmutex->hold     = 0;
+            pmutex->lock.kmutex->ceiling_priority = 0xFF;
         }
         rt_hw_interrupt_enable(level);
     }
@@ -316,8 +315,8 @@ static int _pthread_mutex_unlock(void *umutex)
     if (pmutex == RT_NULL)
     {
         rt_mutex_release(&_pmutex_lock);
-        rt_set_errno(EINVAL);
-        return -EINVAL;
+        rt_set_errno(EPERM);
+        return -EPERM;//unlock static mutex of unlock state
     }
 
     rt_mutex_release(&_pmutex_lock);
@@ -325,7 +324,15 @@ static int _pthread_mutex_unlock(void *umutex)
     switch (pmutex->type)
     {
     case PMUTEX_NORMAL:
-        lock_ret = rt_sem_release(pmutex->lock.ksem);
+        if(pmutex->lock.ksem->value >=1)
+        {
+            rt_set_errno(EPERM);
+            return -EPERM;//unlock dynamic mutex of unlock state
+        }
+        else
+        {
+            lock_ret = rt_sem_release(pmutex->lock.ksem);
+        }
         break;
     case PMUTEX_RECURSIVE:
     case PMUTEX_ERRORCHECK:

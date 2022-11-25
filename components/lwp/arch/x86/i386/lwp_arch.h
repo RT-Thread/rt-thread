@@ -37,7 +37,7 @@ void lwp_signal_do_return(rt_hw_stack_frame_t *frame);
         
 rt_inline unsigned long rt_hw_ffz(unsigned long x)
 {
-    return __builtin_ffs(~x) - 1;
+    return __builtin_ffsl(~x) - 1;
 }
 
 #ifdef __cplusplus
