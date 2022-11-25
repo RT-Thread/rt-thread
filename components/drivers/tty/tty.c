@@ -15,8 +15,8 @@
 #include <tty.h>
 #include <tty_ldisc.h>
 
-#if defined(RT_USING_POSIX)
-#include <posix_termios.h>
+#if defined(RT_USING_POSIX_DEVIO)
+#include <termios.h>
 #endif
 
 #define DBG_TAG               "TTY"

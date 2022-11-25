@@ -265,7 +265,7 @@ static int pts_register(struct tty_struct *ptm_drv, struct tty_struct *pts_drv, 
         goto _exit;
     }
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     /* set fops */
     tty_set_fops(&pts_fops);
     device->fops = &pts_fops;
@@ -332,7 +332,7 @@ static int ptmx_register(void)
         goto _exit;
     }
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     /* set fops */
     tty_set_fops(&ptmx_fops);
     ptmx_fops.open = ptmx_open;

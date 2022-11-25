@@ -8,7 +8,7 @@
 #ifdef RT_USING_FDT
 #include <dtb_node.h>
 #endif
-#if defined(RT_USING_POSIX)
+#if defined(RT_USING_POSIX_DEVIO)
 #include <rtdevice.h> /* for wqueue_init */
 #endif
 
