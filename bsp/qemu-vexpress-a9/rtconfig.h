@@ -110,7 +110,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
-#define RT_USING_DFS_RAMFS
+#define RT_USING_DFS_TMPFS
 #define RT_USING_LWP
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
@@ -310,6 +310,15 @@
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 
 /* Hardware Drivers Config */
 

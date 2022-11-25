@@ -85,6 +85,13 @@ int dfs_init(void)
 
         dfs_mount(NULL, "/dev", "devfs", 0, 0);
     }
+#if defined(RT_USING_DEV_BUS) && defined(RT_USING_DFS_TMPFS)
+    mkdir("/dev/shm", 0x777);
+    if (dfs_mount(RT_NULL, "/dev/shm", "tmp", 0, 0) != 0)
+    {
+        rt_kprintf("Dir /dev/shm mount failed!\n");
+    }
+#endif
 #endif
 
     init_ok = RT_TRUE;
