@@ -589,7 +589,7 @@ int dfs_elm_flush(struct dfs_fd *file)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_lseek(struct dfs_fd *file, rt_off_t offset)
+int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
 {
     FRESULT result = FR_OK;
     if (file->fnode->type == FT_REGULAR)
