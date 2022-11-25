@@ -287,7 +287,7 @@ rt_err_t console_register(const char *name, struct rt_device *iodev)
         goto exit;
     }
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     /* set fops */
     console_set_fops(&con_fops);
     device->fops = &con_fops;

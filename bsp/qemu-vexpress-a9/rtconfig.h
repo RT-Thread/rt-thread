@@ -7,19 +7,17 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_USING_SMART
 #define RT_ALIGN_SIZE 4
-#define RT_THREAD_PRIORITY_32
-#define RT_THREAD_PRIORITY_MAX 32
+#define RT_THREAD_PRIORITY_256
+#define RT_THREAD_PRIORITY_MAX 256
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 1024
-#define SYSTEM_THREAD_STACK_SIZE 1024
+#define IDLE_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
@@ -42,7 +40,6 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
-#define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -65,11 +62,11 @@
 #define ARCH_ARM_MMU
 #define RT_USING_USERSPACE
 #define KERNEL_VADDR_START 0xc0000000
-#define PV_OFFSET 0
-#define RT_IOREMAP_LATE
+#define PV_OFFSET 0xa0000000
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V2
 #define ARCH_ARM_CORTEX_A9
+#define RT_BACKTRACE_FUNCTION_NAME
 
 /* RT-Thread Components */
 
@@ -84,16 +81,16 @@
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_USING_HISTORY
-#define FINSH_HISTORY_LINES 5
+#define FINSH_HISTORY_LINES 10
 #define FINSH_USING_SYMTAB
-#define FINSH_CMD_SIZE 80
+#define FINSH_CMD_SIZE 256
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEMS_MAX 6
 #define DFS_FILESYSTEM_TYPES_MAX 8
 #define DFS_FD_MAX 32
 #define RT_USING_DFS_ELMFAT
@@ -126,17 +123,21 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 64
+#define RT_SERIAL_RB_BUFSZ 256
 #define RT_USING_TTY
+#define RT_TTY_DEBUG
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_NULL
+#define RT_USING_ZERO
+#define RT_USING_RANDOM
 #define RT_USING_MTD_NOR
 #define RT_USING_MTD_NAND
 #define RT_MTD_NAND_DEBUG
@@ -185,7 +186,6 @@
 
 /* Socket is in the 'Network' category */
 
-#define RT_USING_CPLUSPLUS
 
 /* Network */
 
@@ -310,15 +310,6 @@
 
 
 /* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
-
 
 /* Hardware Drivers Config */
 

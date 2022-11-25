@@ -144,10 +144,10 @@ int libc_stdio_set_console(const char* device_name, int mode)
     {
         int fd = fileno(std_console);
 
-        // /* set fd (0, 1, 2) */
-        // sys_dup2(fd, 0);
-        // sys_dup2(fd, 1);
-        // sys_dup2(fd, 2);
+        /* set fd (0, 1, 2) */
+        sys_dup2(fd, 0);
+        sys_dup2(fd, 1);
+        sys_dup2(fd, 2);
         return fd;
     }
 
