@@ -122,6 +122,13 @@ secondary_loop:
     b secondary_loop
 
 normal_setup:
+
+    /* enable I cache + branch prediction */
+    mrc p15, 0, r0, c1, c0, 0
+    orr     r0, r0, #(1<<12)
+    orr     r0, r0, #(1<<11)
+    mcr p15, 0, r0, c1, c0, 0
+
     /* setup stack */
     bl      stack_setup
 
@@ -142,10 +149,6 @@ bss_loop:
     mcr p15, 0, r1, c1, c0, 1 //enable smp
 #endif
 
-    /* enable branch prediction */
-    mrc p15, 0, r0, c1, c0, 0
-    orr     r0, r0, #(1<<11)
-    mcr p15, 0, r0, c1, c0, 0
 
     /* initialize the mmu table and enable mmu */
     ldr r0, =platform_mem_desc
