@@ -92,8 +92,6 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_LIBC" description="Using C library" default="true" />
-// #define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 // #define RT_USING_PTHREADS
 // </section>
@@ -158,7 +156,7 @@
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
 #define RT_USING_LWIP
-#define RT_USING_LWIP203
+#define RT_USING_LWIP212
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />

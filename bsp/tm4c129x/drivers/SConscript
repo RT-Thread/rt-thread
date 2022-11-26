@@ -1,11 +1,14 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = []
 
-# remove no need file.
-if GetDepend('RT_USING_LWIP') == False:
-	SrcRemove(src, 'drv_emac.c')
+
+if GetDepend('RT_USING_SERIAL'):
+    src += ['drv_uart.c']
+
+if GetDepend('RT_USING_LWIP'):
+    src += ['drv_eth.c']
 
 CPPPATH = [cwd]
 

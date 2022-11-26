@@ -168,8 +168,8 @@
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
 //#define RT_USING_LWIP
-// <bool name="RT_USING_LWIP141" description="Using lwIP 1.4.1 version" default="true" />
-#define RT_USING_LWIP141
+// <bool name="RT_USING_LWIP212" description="Using lwIP 2.1.2 version" default="true" />
+#define RT_USING_LWIP212
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />

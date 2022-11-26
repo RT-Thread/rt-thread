@@ -75,9 +75,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
-#define RT_USING_LIBC
 #define RT_USING_DFS
-#define RT_USING_POSIX
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
@@ -91,7 +89,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
-#define RT_USING_LWIP
+/* #define RT_USING_LWIP */
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
@@ -146,5 +144,5 @@
 /* the size of each pbuf in the pbuf pool. */
 #define RT_LWIP_PBUF_POOL_BUFSIZE		1500
 
-#define RT_USING_LWIP141
+#define RT_USING_LWIP212
 #endif
