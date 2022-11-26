@@ -17,7 +17,7 @@
 #include <rtdevice.h>
 #include "board.h"
 
-#ifdef BSP_USING_SPI 
+#ifdef BSP_USING_SPI
 
 #include "drv_spi.h"
 #include <string.h>
