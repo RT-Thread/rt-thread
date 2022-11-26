@@ -224,7 +224,7 @@ static rt_err_t SPI_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t se
     uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
-        recv_buf[i] = SPIx_ReadWriteByte(Instance, 0xFF);  /*·¢ËÍÊý¾ÝÎª0xff ´ËÊ±ÏÔÊ¾Îª²»·¢ËÍ*/
+        recv_buf[i] = SPIx_ReadWriteByte(Instance, 0xFF);  /*å‘é€æ•°æ®ä¸º0xff æ­¤æ—¶æ˜¾ç¤ºä¸ºä¸å‘é€*/
     }
     return RT_EOK;
 }
