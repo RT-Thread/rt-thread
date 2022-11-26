@@ -17,7 +17,7 @@
 #include <rtdevice.h>
 #include "board.h"
 
-#if defined(BSP_USING_SPI) && (defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3)) 
+#ifdef BSP_USING_SPI 
 
 #include "drv_spi.h"
 #include <string.h>
@@ -536,4 +536,4 @@ int rt_hw_spi_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_spi_init);
 
-#endif /* defined(BSP_USING_SPI) && (defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3))  */
+#endif /* BSP_USING_SPI  */
