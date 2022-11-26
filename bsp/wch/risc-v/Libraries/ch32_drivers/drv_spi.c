@@ -70,10 +70,10 @@ static struct ch32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] =
 
 static rt_uint32_t ch32_spi_clock_get(SPI_TypeDef *spix);
 static void ch32_spi_clock_and_io_init(SPI_TypeDef *spix);
-static rt_uint8_t SPIx_ReadWriteByte(SPI_TypeDef *Instance, rt_uint8_t TxData);
-static rt_err_t SPI_TransmitReceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length);
-static rt_err_t SPI_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length);
-static rt_err_t SPI_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length);
+static rt_uint8_t spix_ReadWriteByte(SPI_TypeDef *Instance, rt_uint8_t TxData);
+static rt_err_t spi_TransmitReceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length);
+static rt_err_t spi_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length);
+static rt_err_t spi_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length);
 
 static void ch32_spi_clock_and_io_init(SPI_TypeDef *spix)
 {
@@ -171,7 +171,7 @@ static rt_uint32_t ch32_spi_clock_get(SPI_TypeDef *spix)
 /*
  *spix read write byte
  * */
-static rt_uint8_t SPIx_ReadWriteByte(SPI_TypeDef *Instance, rt_uint8_t TxData)
+static rt_uint8_t spix_ReadWriteByte(SPI_TypeDef *Instance, rt_uint8_t TxData)
 {
     uint8_t i=0;
     while (SPI_I2S_GetFlagStatus(Instance, SPI_I2S_FLAG_TXE) == RESET)
@@ -193,12 +193,12 @@ static rt_uint8_t SPIx_ReadWriteByte(SPI_TypeDef *Instance, rt_uint8_t TxData)
 /*
  *spi transmit and receive
  * */
-static rt_err_t SPI_TransmitReceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length)
+static rt_err_t spi_TransmitReceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length)
 {
     uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
-        recv_buf[i] = SPIx_ReadWriteByte(Instance, send_buf[i]);
+        recv_buf[i] = spix_ReadWriteByte(Instance, send_buf[i]);
     }
     return RT_EOK;
 }
@@ -206,12 +206,12 @@ static rt_err_t SPI_TransmitReceive(SPI_TypeDef *Instance, uint8_t *send_buf, ui
 /*
  *spi transmit
  * */
-static rt_err_t SPI_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length)
+static rt_err_t spi_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length)
 {
     uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
-        SPIx_ReadWriteByte(Instance, send_buf[i]);
+        spix_ReadWriteByte(Instance, send_buf[i]);
     }
     return RT_EOK;
 }
@@ -219,12 +219,12 @@ static rt_err_t SPI_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t 
 /*
  *spi  receive
  * */
-static rt_err_t SPI_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length)
+static rt_err_t spi_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length)
 {
     uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
-        recv_buf[i] = SPIx_ReadWriteByte(Instance, 0xFF);  /*发送数据为0xff 此时显示为不发送*/
+        recv_buf[i] = spix_ReadWriteByte(Instance, 0xFF);  /*发送数据为0xff 此时显示为不发送*/
     }
     return RT_EOK;
 }
@@ -421,12 +421,12 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
          /* start once data exchange */
         if (message->send_buf && message->recv_buf)
         {
-            state = SPI_TransmitReceive(spi_handle->Instance, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length);
+            state = spi_TransmitReceive(spi_handle->Instance, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length);
         }
         else if (message->send_buf)
         {
 
-            state = SPI_Transmit(spi_handle->Instance, (uint8_t *)send_buf, send_length);
+            state = spi_Transmit(spi_handle->Instance, (uint8_t *)send_buf, send_length);
             if (message->cs_release && (device->config.mode & RT_SPI_3WIRE))
             {
                 /* release the CS by disable SPI when using 3 wires SPI */
@@ -438,7 +438,7 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
             memset((uint8_t *)recv_buf, 0xff, send_length);
             /* clear the old error flag */
             SPI_I2S_ClearFlag(spi_handle->Instance, SPI_I2S_FLAG_OVR);
-            state = SPI_Receive(spi_handle->Instance, (uint8_t *)recv_buf, send_length);
+            state = spi_Receive(spi_handle->Instance, (uint8_t *)recv_buf, send_length);
         }
 
         if (state != RT_EOK)

@@ -179,7 +179,6 @@ menu "On-chip Peripheral Drivers"
                         default 23    
                 endif
         
-
             config BSP_USING_SOFT_SPI2
                 bool "Enable SSPI2 Bus (soft SPI)"
                 default n

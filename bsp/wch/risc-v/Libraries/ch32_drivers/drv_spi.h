@@ -12,7 +12,7 @@
 #define __DRV_SPI_H__
 
 #include <rtthread.h>
-#include "rtdevice.h"
+#include <rtdevice.h>
 #include <rthw.h>
 
 #include "ch32v30x_rcc.h"
