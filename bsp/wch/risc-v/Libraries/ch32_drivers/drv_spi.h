@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   first version
+ * 2022-11-26     zhaohaisheng copy from sch and do some change
  */
 
 #ifndef __DRV_SPI_H__

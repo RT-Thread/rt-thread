@@ -5,12 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   first version
- * 2018-12-11     greedyhao    Porting for stm32f7xx
- * 2019-01-03     zylx         modify DMA initialization and spixfer function
- * 2020-01-15     whj4674672   Porting for stm32h7xx
- * 2020-06-18     thread-liu   Porting for stm32mp1xx
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2022-11-26     zhaohaisheng copy from sch and do some change
  */
 
 #include <rtthread.h>
