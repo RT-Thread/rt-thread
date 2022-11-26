@@ -20,13 +20,13 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* ifdef __cplusplus */
 
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, uint16_t cs_gpio_pin);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* ifdef __cplusplus */
 
 struct ch32_hw_spi_cs
 {

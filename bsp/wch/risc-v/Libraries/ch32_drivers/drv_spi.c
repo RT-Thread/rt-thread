@@ -66,8 +66,6 @@ static struct ch32_spi_config spi_config[] =
 #endif
 };
 
-
-
 static struct ch32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] = {0};
 
 static rt_uint32_t ch32_spi_clock_get(SPI_TypeDef *spix);
@@ -76,7 +74,6 @@ static rt_uint8_t SPIx_ReadWriteByte(SPI_TypeDef *Instance, rt_uint8_t TxData);
 static rt_err_t SPI_TransmitReceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length);
 static rt_err_t SPI_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length);
 static rt_err_t SPI_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length);
-
 
 static void ch32_spi_clock_and_io_init(SPI_TypeDef *spix)
 {
@@ -219,7 +216,6 @@ static rt_err_t SPI_Transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t 
     return RT_EOK;
 }
 
-
 /*
  *spi  receive
  * */
@@ -233,10 +229,8 @@ static rt_err_t SPI_Receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t se
     return RT_EOK;
 }
 
-
 static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configuration *cfg)
 {
-
     RT_ASSERT(spi_drv != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
@@ -358,7 +352,6 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
     return RT_EOK;
 }
 
-
 static rt_err_t spi_configure(struct rt_spi_device *device,
                               struct rt_spi_configuration *configuration)
 {
@@ -369,7 +362,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
 
     return ch32_spi_init(spi_drv, configuration);
 }
-
 
 static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
