@@ -85,7 +85,7 @@
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
-//#define RT_USING_NEWLIB
+//#define RT_USING_NEWLIBC
 //#define RT_USING_PTHREADS
 
 /* SECTION: C++ support */
@@ -232,7 +232,7 @@
  * Note on FTK:
  *
  * FTK depends :
- * #define RT_USING_NEWLIB
+ * #define RT_USING_NEWLIBC
  * #define DFS_USING_WORKDIR
  *
  * And the maximal length must great than 64

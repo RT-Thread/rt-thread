@@ -324,7 +324,7 @@ menu "Memory Management"
                         Speed priority mode.
                         As long as the memory block size meets the requirements, the search ends immediately.
 
-                config RT_MEMHEAP_BSET_MODE
+                config RT_MEMHEAP_BEST_MODE
                     bool "best mode"
                     help
                         Best size first.

@@ -27,4 +27,4 @@ As part of this pull request, I've considered the following:
 - [ ] All modifications to BSP are justified and do not affect other components or BSPs.
 - [ ] I've commented appropriately where code is tricky.
 - [ ] Code in this PR is of high quality.
-- [ ] This PR complies with [RT-Thread code specification](../documentation/contribution_guide/coding_style_en.txt)
+- [ ] This PR complies with [RT-Thread code specification](https://gitee.com/rtthread/rt-thread/blob/master/documentation/contribution_guide/coding_style_en.md)

@@ -126,7 +126,7 @@ static void BOARD_ConfigMPU(void)
 
     /* Region 0 setting: Instruction access disabled, No data access permission. */
     MPU->RBAR = ARM_MPU_RBAR(0, 0x00000000U);
-    MPU->RASR = ARM_MPU_RASR(1, ARM_MPU_AP_NONE, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_4GB);
+    MPU->RASR = ARM_MPU_RASR(1, ARM_MPU_AP_NONE, 0, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_4GB);
 
     /* Region 1 setting: Memory with Device type, not shareable, non-cacheable. */
     MPU->RBAR = ARM_MPU_RBAR(1, 0x80000000U);
@@ -148,6 +148,15 @@ static void BOARD_ConfigMPU(void)
     MPU->RBAR = ARM_MPU_RBAR(5, 0x20000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_256KB);
 
+#if defined(CACHE_MODE_WRITE_THROUGH) && CACHE_MODE_WRITE_THROUGH
+    /* Region 6 setting: Memory with Normal type, not shareable, write through */
+    MPU->RBAR = ARM_MPU_RBAR(6, 0x20200000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 0, 0, ARM_MPU_REGION_SIZE_1MB);
+
+    /* Region 7 setting: Memory with Normal type, not shareable, write trough */
+    MPU->RBAR = ARM_MPU_RBAR(7, 0x20300000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 0, 0, ARM_MPU_REGION_SIZE_512KB);
+#else
     /* Region 6 setting: Memory with Normal type, not shareable, outer/inner write back */
     MPU->RBAR = ARM_MPU_RBAR(6, 0x20200000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_1MB);
@@ -155,6 +164,7 @@ static void BOARD_ConfigMPU(void)
     /* Region 7 setting: Memory with Normal type, not shareable, outer/inner write back */
     MPU->RBAR = ARM_MPU_RBAR(7, 0x20300000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_512KB);
+#endif
 
 #if defined(XIP_EXTERNAL_FLASH) && (XIP_EXTERNAL_FLASH == 1)
     /* Region 8 setting: Memory with Normal type, not shareable, outer/inner write back. */
@@ -163,9 +173,15 @@ static void BOARD_ConfigMPU(void)
 #endif
 
 #ifdef USE_SDRAM
+#if defined(CACHE_MODE_WRITE_THROUGH) && CACHE_MODE_WRITE_THROUGH
+    /* Region 9 setting: Memory with Normal type, not shareable, write trough */
+    MPU->RBAR = ARM_MPU_RBAR(9, 0x80000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 0, 0, ARM_MPU_REGION_SIZE_64MB);
+#else
     /* Region 9 setting: Memory with Normal type, not shareable, outer/inner write back */
     MPU->RBAR = ARM_MPU_RBAR(9, 0x80000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_64MB);
+#endif
 #endif
 
     while ((size >> i) > 0x1U)

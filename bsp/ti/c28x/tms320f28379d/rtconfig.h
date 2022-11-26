@@ -13,8 +13,6 @@
 #define RT_THREAD_PRIORITY_8
 #define RT_THREAD_PRIORITY_MAX 8
 #define RT_TICK_PER_SECOND 100
-#define RT_USING_HOOK
-#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
@@ -75,6 +73,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 #define RT_USING_ADC
@@ -188,11 +187,25 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_ADC
-#define BSP_USING_ADC1
-#define BSP_ADC_USING_12BIT
-#define BSP_USING_ADC2
-#define BSP_USING_ADC3
+#define BSP_USING_PWM
+#define BSP_USING_PWM1
+
+/* Basic settings for PWM1 */
+
+#define BSP_PWM1_INIT_PERIOD 10000
+#define BSP_PWM1_INIT_PULSE 1000
+
+/* Advanced Settings for PWM1 */
+
+#define BSP_PWM1_HSPCLKDIV1
+#define BSP_PWM1_HSPCLKDIV 0
+#define BSP_PWM1_CLKDIV1
+#define BSP_PWM1_CLKDIV 0
+#define BSP_PWM1_CTR_MODE_UPDOWN
+#define BSP_PWM1_CTRMODE 2
+#define BSP_PWM1_CC_CTR_ZERO
+#define BSP_PWM1_LOADAMODE 0
+#define BSP_PWM1_DB 100
 
 /* Board extended module Drivers */
 

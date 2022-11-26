@@ -14,11 +14,10 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 #include <stdint.h>
 #include <sys/types.h>
-
 
 /* sigev_notify values
    NOTE: P1003.1c/D10, p. 34 adds SIGEV_THREAD.  */
@@ -54,7 +53,6 @@ struct siginfo
 {
     uint16_t si_signo;
     uint16_t si_code;
-
     union sigval si_value;
 };
 typedef struct siginfo siginfo_t;
@@ -141,8 +139,6 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGRTMAX    31
 #define NSIG        32
 
-#include <signal.h>
-
 #elif defined(__IAR_SYSTEMS_ICC__)
 #define SIGHUP       1
 #define SIGINT       2
@@ -176,8 +172,6 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGRTMIN    27
 #define SIGRTMAX    31
 #define NSIG        32
-
-#include <signal.h>
 
 #elif defined(__GNUC__)
 #define SIGHUP  1   /* hangup */
@@ -215,18 +209,29 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGUSR1 30  /* user defined signal 1 */
 #define SIGUSR2 31  /* user defined signal 2 */
 #define NSIG    32      /* signal 0 implied */
+#endif /* __ARMCC_VERSION */
 
-#ifndef _SIGNAL_H_
+#ifndef RT_USING_MUSLLIBC
 /* Some applications take advantage of the fact that <sys/signal.h>
  * and <signal.h> are equivalent in glibc.  Allow for that here.  */
 #include <signal.h>
+#endif /* RT_USING_MUSLLIBC */
+
+#ifndef SIG_ERR
+#define SIG_ERR  ((void (*)(int))-1)
 #endif
 
+#ifndef SIG_DFL
+#define SIG_DFL  ((void (*)(int)) 0)
+#endif
+
+#ifndef SIG_IGN
+#define SIG_IGN  ((void (*)(int)) 1)
 #endif
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif
+#endif /* __SYS_SIGNAL_H__ */
 

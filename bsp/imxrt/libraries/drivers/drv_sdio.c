@@ -49,7 +49,7 @@ static int enable_log = 1;
 #define USDHC_DATA_TIMEOUT          (0xFU)      /*!< data timeout counter value */
 #define SDMMCHOST_SUPPORT_MAX_BLOCK_LENGTH     (4096U)
 #define SDMMCHOST_SUPPORT_MAX_BLOCK_COUNT      (USDHC_MAX_BLOCK_COUNT)
-      
+
 /* Read/write watermark level. The bigger value indicates DMA has higher read/write performance. */
 #define USDHC_READ_WATERMARK_LEVEL  (0x80U)
 #define USDHC_WRITE_WATERMARK_LEVEL (0x80U)
@@ -91,11 +91,14 @@ struct imxrt_mmcsd
     uint32_t *usdhc_adma2_table;
 };
 
+#ifndef CODE_STORED_ON_SDCARD
 static void _mmcsd_gpio_init(struct imxrt_mmcsd *mmcsd)
 {
 
 //    CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
 }
+#endif
+
 static void SDMMCHOST_ErrorRecovery(USDHC_Type *base)
 {
     uint32_t status = 0U;
@@ -115,6 +118,7 @@ static void SDMMCHOST_ErrorRecovery(USDHC_Type *base)
     }
 }
 
+#ifndef CODE_STORED_ON_SDCARD
 static void _mmcsd_host_init(struct imxrt_mmcsd *mmcsd)
 {
     usdhc_host_t *usdhc_host = &mmcsd->usdhc_host;
@@ -143,6 +147,7 @@ static void _mmcsd_isr_init(struct imxrt_mmcsd *mmcsd)
 {
     //NVIC_SetPriority(USDHC1_IRQn, 5U);
 }
+#endif
 
 static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
@@ -169,7 +174,7 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 
     data = cmd->data;
 
-    memset(&dmaConfig, 0, sizeof(usdhc_adma_config_t));
+    rt_memset(&dmaConfig, 0, sizeof(usdhc_adma_config_t));
     /* config adma */
     dmaConfig.dmaMode = USDHC_DMA_MODE;
 #if !(defined(FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN) && FSL_FEATURE_USDHC_HAS_NO_RW_BURST_LEN)
@@ -399,7 +404,7 @@ rt_int32_t _imxrt_mci_init(void)
     struct rt_mmcsd_host *host;
     struct imxrt_mmcsd *mmcsd;
     uint32_t hs400Capability = 0U;
-    
+
     host = mmcsd_alloc_host();
     if (!host)
     {
@@ -428,7 +433,7 @@ rt_int32_t _imxrt_mci_init(void)
                   MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ;
 #ifdef SOC_IMXRT1170_SERIES
 #if defined FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn
-    hs400Capability = (uint32_t)FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn(mmcsd->usdhc_host.base); 
+    hs400Capability = (uint32_t)FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn(mmcsd->usdhc_host.base);
 #endif
 #if (defined(FSL_FEATURE_USDHC_HAS_HS400_MODE) && (FSL_FEATURE_USDHC_HAS_HS400_MODE))
     if (hs400Capability != 0U)
@@ -449,10 +454,12 @@ rt_int32_t _imxrt_mci_init(void)
 #endif
     mmcsd->host = host;
 
+#ifndef CODE_STORED_ON_SDCARD
     _mmcsd_clk_init(mmcsd);
     _mmcsd_isr_init(mmcsd);
     _mmcsd_gpio_init(mmcsd);
     _mmcsd_host_init(mmcsd);
+#endif
 
     host->private_data = mmcsd;
 

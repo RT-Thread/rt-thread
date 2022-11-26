@@ -172,22 +172,22 @@ static uint16_t _get_filter_idx(struct rt_can_filter_config *filter_cfg)
 
     for (int i = 0; i < filter_cfg->count; i++)
     {
-        if (filter_cfg->items[i].hdr != -1)
+        if (filter_cfg->items[i].hdr_bank != -1)
         {
-            u16FilterSelected |= 1 << filter_cfg->items[i].hdr;
+            u16FilterSelected |= 1 << filter_cfg->items[i].hdr_bank;
         }
     }
 
     for (int i = 0; i < filter_cfg->count; i++)
     {
-        if (filter_cfg->items[i].hdr == -1)
+        if (filter_cfg->items[i].hdr_bank == -1)
         {
             for (int j = 0; j < FILTER_COUNT; j++)
             {
                 if ((u16FilterSelected & 1 << j) == 0)
                 {
-                    filter_cfg->items[i].hdr = j;
-                    u16FilterSelected |= 1 << filter_cfg->items[i].hdr;
+                    filter_cfg->items[i].hdr_bank = j;
+                    u16FilterSelected |= 1 << filter_cfg->items[i].hdr_bank;
                     break;
                 }
             }
@@ -435,8 +435,8 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     }
     /* get len */
     pmsg->len = ll_rx_frame.DLC;
-    /* get hdr */
-    pmsg->hdr = 0;
+    /* get hdr_index */
+    pmsg->hdr_index = 0;
     rt_memcpy(pmsg->data, &ll_rx_frame.au8Data, ll_rx_frame.DLC);
 
     return RT_EOK;

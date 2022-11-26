@@ -110,7 +110,7 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
     if (!controller_is_spi(host))
     {
         mmcsd_set_chip_select(host, MMCSD_CS_HIGH);
-        mmcsd_delay_ms(1);
+        rt_thread_mdelay(1);
     }
 
     rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
@@ -121,12 +121,12 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
 
     err = mmcsd_send_cmd(host, &cmd, 0);
 
-    mmcsd_delay_ms(1);
+    rt_thread_mdelay(1);
 
     if (!controller_is_spi(host))
     {
         mmcsd_set_chip_select(host, MMCSD_CS_IGNORE);
-        mmcsd_delay_ms(1);
+        rt_thread_mdelay(1);
     }
 
     return err;
@@ -564,7 +564,7 @@ static void mmcsd_power_up(struct rt_mmcsd_host *host)
      * This delay should be sufficient to allow the power supply
      * to reach the minimum voltage.
      */
-    mmcsd_delay_ms(10);
+    rt_thread_mdelay(10);
 
     host->io_cfg.clock = host->freq_min;
     host->io_cfg.power_mode = MMCSD_POWER_ON;
@@ -574,7 +574,7 @@ static void mmcsd_power_up(struct rt_mmcsd_host *host)
      * This delay must be at least 74 clock sizes, or 1 ms, or the
      * time required to reach a stable voltage.
      */
-    mmcsd_delay_ms(10);
+    rt_thread_mdelay(10);
 }
 
 static void mmcsd_power_off(struct rt_mmcsd_host *host)

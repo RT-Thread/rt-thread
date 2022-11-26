@@ -690,7 +690,7 @@ void rt_memheap_free(void *ptr)
     if (insert_header)
     {
         struct rt_memheap_item *n = heap->free_list->next_free;;
-#if defined(RT_MEMHEAP_BSET_MODE)
+#if defined(RT_MEMHEAP_BEST_MODE)
         rt_size_t blk_size = MEMITEM_SIZE(header_ptr);
         for (;n != heap->free_list; n = n->next_free)
         {

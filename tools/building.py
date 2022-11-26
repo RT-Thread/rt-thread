@@ -467,7 +467,17 @@ def GetLocalDepend(options, depend):
     return building
 
 def AddDepend(option):
-    BuildOptions[option] = 1
+    if isinstance(option, str):
+        BuildOptions[option] = 1
+    elif isinstance(option, list):
+        for obj in option:
+            if isinstance(obj, str):
+                BuildOptions[obj] = 1
+            else:
+                print('AddDepend arguements are illegal!')
+    else:
+        print('AddDepend arguements are illegal!')
+
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']

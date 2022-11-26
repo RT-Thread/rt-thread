@@ -1155,7 +1155,7 @@ int netdev_ping(int argc, char **argv)
 {
     if (argc == 1)
     {
-        rt_kprintf("Please input: ping [netdev name] <host address>\n");
+        rt_kprintf("Please input: ping <host address> [netdev name]\n");
     }
     else if (argc == 2)
     {
