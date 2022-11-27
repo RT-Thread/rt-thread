@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -26,8 +26,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief I2S DMA driver version 2.1.0. */
-#define FSL_I2S_DMA_DRIVER_VERSION (MAKE_VERSION(2, 1, 0))
+/*! @brief I2S DMA driver version 2.3.1. */
+#define FSL_I2S_DMA_DRIVER_VERSION (MAKE_VERSION(2, 3, 1))
 /*@}*/
 
 /*! @brief Members not to be accessed / modified outside of the driver. */
@@ -56,6 +56,9 @@ struct _i2s_dma_handle
     volatile i2s_transfer_t i2sQueue[I2S_NUM_BUFFERS]; /*!< Transfer queue storing transfer buffers */
     volatile uint8_t queueUser;                        /*!< Queue index where user's next transfer will be stored */
     volatile uint8_t queueDriver;                      /*!< Queue index of buffer actually used by the driver */
+
+    dma_descriptor_t *i2sLoopDMADescriptor; /*!< descriptor pool pointer */
+    size_t i2sLoopDMADescriptorNum;         /*!< number of descriptor in descriptors pool */
 };
 
 /*******************************************************************************
@@ -150,6 +153,76 @@ status_t I2S_RxTransferReceiveDMA(I2S_Type *base, i2s_dma_handle_t *handle, i2s_
  * @param tcds
  */
 void I2S_DMACallback(dma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds);
+
+/*!
+ * @brief Install DMA descriptor memory for loop transfer only.
+ *
+ * This function used to register DMA descriptor memory for the i2s loop dma transfer.
+ *
+ * It must be callbed before I2S_TransferSendLoopDMA/I2S_TransferReceiveLoopDMA and after
+ * I2S_RxTransferCreateHandleDMA/I2S_TxTransferCreateHandleDMA.
+ *
+ * User should be take care about the address of DMA descriptor pool which required align with 16BYTE at least.
+ *
+ * @param handle Pointer to i2s DMA transfer handle.
+ * @param dmaDescriptorAddr DMA descriptor start address.
+ * @param dmaDescriptorNum DMA descriptor number.
+ */
+void I2S_TransferInstallLoopDMADescriptorMemory(i2s_dma_handle_t *handle,
+                                                void *dmaDescriptorAddr,
+                                                size_t dmaDescriptorNum);
+
+/*!
+ * @brief Send link transfer data using DMA.
+ *
+ * This function receives data using DMA. This is a non-blocking function, which returns
+ * right away. When all data is received, the receive callback function is called.
+ *
+ * This function support loop transfer, such as A->B->...->A, the loop transfer chain
+ * will be converted into a chain of descriptor and submit to dma.
+ * Application must be aware of that the more counts of the loop transfer, then more DMA descriptor memory required,
+ * user can use function I2S_InstallDMADescriptorMemory to register the dma descriptor memory.
+ *
+ * As the DMA support maximum 1024 transfer count, so application must be aware of that this transfer function support
+ * maximum 1024 samples in each transfer, otherwise assert error or error status will be returned. Once the loop
+ * transfer start, application can use function I2S_TransferAbortDMA to stop the loop transfer.
+ *
+ * @param base I2S peripheral base address.
+ * @param handle Pointer to usart_dma_handle_t structure.
+ * @param xfer I2S DMA transfer structure. See #i2s_transfer_t.
+ * @param loopTransferCount loop count
+ * @retval kStatus_Success
+ */
+status_t I2S_TransferSendLoopDMA(I2S_Type *base,
+                                 i2s_dma_handle_t *handle,
+                                 i2s_transfer_t *xfer,
+                                 uint32_t loopTransferCount);
+
+/*!
+ * @brief Receive link transfer data using DMA.
+ *
+ * This function receives data using DMA. This is a non-blocking function, which returns
+ * right away. When all data is received, the receive callback function is called.
+ *
+ * This function support loop transfer, such as A->B->...->A, the loop transfer chain
+ * will be converted into a chain of descriptor and submit to dma.
+ * Application must be aware of that the more counts of the loop transfer, then more DMA descriptor memory required,
+ * user can use function I2S_InstallDMADescriptorMemory to register the dma descriptor memory.
+ *
+ * As the DMA support maximum 1024 transfer count, so application must be aware of that this transfer function support
+ * maximum 1024 samples in each transfer, otherwise assert error or error status will be returned. Once the loop
+ * transfer start, application can use function I2S_TransferAbortDMA to stop the loop transfer.
+ *
+ * @param base I2S peripheral base address.
+ * @param handle Pointer to usart_dma_handle_t structure.
+ * @param xfer I2S DMA transfer structure. See #i2s_transfer_t.
+ * @param loopTransferCount loop count
+ * @retval kStatus_Success
+ */
+status_t I2S_TransferReceiveLoopDMA(I2S_Type *base,
+                                    i2s_dma_handle_t *handle,
+                                    i2s_transfer_t *xfer,
+                                    uint32_t loopTransferCount);
 
 /*! @} */
 

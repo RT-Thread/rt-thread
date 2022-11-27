@@ -42,8 +42,8 @@
 void RESET_SetPeripheralReset(reset_ip_name_t peripheral)
 {
     const uint32_t regIndex = ((uint32_t)peripheral & 0xFFFF0000u) >> 16;
-    const uint32_t bitPos = ((uint32_t)peripheral & 0x0000FFFFu);
-    const uint32_t bitMask = 1u << bitPos;
+    const uint32_t bitPos   = ((uint32_t)peripheral & 0x0000FFFFu);
+    const uint32_t bitMask  = 1UL << bitPos;
 
     assert(bitPos < 32u);
 
@@ -67,8 +67,8 @@ void RESET_SetPeripheralReset(reset_ip_name_t peripheral)
 void RESET_ClearPeripheralReset(reset_ip_name_t peripheral)
 {
     const uint32_t regIndex = ((uint32_t)peripheral & 0xFFFF0000u) >> 16;
-    const uint32_t bitPos = ((uint32_t)peripheral & 0x0000FFFFu);
-    const uint32_t bitMask = 1u << bitPos;
+    const uint32_t bitPos   = ((uint32_t)peripheral & 0x0000FFFFu);
+    const uint32_t bitMask  = 1UL << bitPos;
 
     assert(bitPos < 32u);
 

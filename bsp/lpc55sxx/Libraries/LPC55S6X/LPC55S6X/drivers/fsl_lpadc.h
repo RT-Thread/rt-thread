@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -23,8 +23,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief LPADC driver version 2.1.1. */
-#define FSL_LPADC_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
+/*! @brief LPADC driver version 2.5.1. */
+#define FSL_LPADC_DRIVER_VERSION (MAKE_VERSION(2, 5, 1))
 /*@}*/
 
 /*!
@@ -70,6 +70,42 @@ enum _lpadc_interrupt_enable
                                                                          requests when FOF1 flag is asserted. */
     kLPADC_FIFO1WatermarkInterruptEnable = ADC_IE_FWMIE1_MASK,      /*!< Configures ADC to generate watermark interrupt
                                                                          requests when RDY1 flag is asserted. */
+#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT)
+    kLPADC_TriggerExceptionInterruptEnable = ADC_IE_TEXC_IE_MASK, /*!< Configures ADC to generate trigger exception
+                                                                      interrupt. */
+    kLPADC_Trigger0CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 0UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 0 completion. */
+    kLPADC_Trigger1CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 1UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 1 completion. */
+    kLPADC_Trigger2CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 2UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 2 completion. */
+    kLPADC_Trigger3CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 3UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 3 completion. */
+    kLPADC_Trigger4CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 4UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 4 completion. */
+    kLPADC_Trigger5CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 5UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 5 completion. */
+    kLPADC_Trigger6CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 6UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 6 completion. */
+    kLPADC_Trigger7CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 7UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 7 completion. */
+    kLPADC_Trigger8CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 8UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 8 completion. */
+    kLPADC_Trigger9CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 9UL),   /*!< Configures ADC to generate interrupt
+                                                                                when trigger 9 completion. */
+    kLPADC_Trigger10CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 10UL), /*!< Configures ADC to generate interrupt
+                                                                              when trigger 10 completion. */
+    kLPADC_Trigger11CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 11UL), /*!< Configures ADC to generate interrupt
+                                                                              when trigger 11 completion. */
+    kLPADC_Trigger12CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 12UL), /*!< Configures ADC to generate interrupt
+                                                                              when trigger 12 completion. */
+    kLPADC_Trigger13CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 13UL), /*!< Configures ADC to generate interrupt
+                                                                              when trigger 13 completion. */
+    kLPADC_Trigger14CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 14UL), /*!< Configures ADC to generate interrupt
+                                                                              when trigger 14 completion. */
+    kLPADC_Trigger15CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 15UL), /*!< Configures ADC to generate interrupt
+                                                                              when trigger 15 completion. */
+#endif                                                                        /* FSL_FEATURE_LPADC_HAS_TSTAT */
 };
 #else
 /*!
@@ -95,6 +131,64 @@ enum _lpadc_interrupt_enable
 };
 #endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
 
+#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT)
+/*!
+ * @brief The enumerator of lpadc trigger status flags, including interrupted flags and completed flags.
+ */
+enum _lpadc_trigger_status_flags
+{
+    kLPADC_Trigger0InterruptedFlag  = 1UL << 0UL,  /*!< Trigger 0 is interrupted by a high priority exception. */
+    kLPADC_Trigger1InterruptedFlag  = 1UL << 1UL,  /*!< Trigger 1 is interrupted by a high priority exception. */
+    kLPADC_Trigger2InterruptedFlag  = 1UL << 2UL,  /*!< Trigger 2 is interrupted by a high priority exception. */
+    kLPADC_Trigger3InterruptedFlag  = 1UL << 3UL,  /*!< Trigger 3 is interrupted by a high priority exception. */
+    kLPADC_Trigger4InterruptedFlag  = 1UL << 4UL,  /*!< Trigger 4 is interrupted by a high priority exception. */
+    kLPADC_Trigger5InterruptedFlag  = 1UL << 5UL,  /*!< Trigger 5 is interrupted by a high priority exception. */
+    kLPADC_Trigger6InterruptedFlag  = 1UL << 6UL,  /*!< Trigger 6 is interrupted by a high priority exception. */
+    kLPADC_Trigger7InterruptedFlag  = 1UL << 7UL,  /*!< Trigger 7 is interrupted by a high priority exception. */
+    kLPADC_Trigger8InterruptedFlag  = 1UL << 8UL,  /*!< Trigger 8 is interrupted by a high priority exception. */
+    kLPADC_Trigger9InterruptedFlag  = 1UL << 9UL,  /*!< Trigger 9 is interrupted by a high priority exception. */
+    kLPADC_Trigger10InterruptedFlag = 1UL << 10UL, /*!< Trigger 10 is interrupted by a high priority exception. */
+    kLPADC_Trigger11InterruptedFlag = 1UL << 11UL, /*!< Trigger 11 is interrupted by a high priority exception. */
+    kLPADC_Trigger12InterruptedFlag = 1UL << 12UL, /*!< Trigger 12 is interrupted by a high priority exception. */
+    kLPADC_Trigger13InterruptedFlag = 1UL << 13UL, /*!< Trigger 13 is interrupted by a high priority exception. */
+    kLPADC_Trigger14InterruptedFlag = 1UL << 14UL, /*!< Trigger 14 is interrupted by a high priority exception. */
+    kLPADC_Trigger15InterruptedFlag = 1UL << 15UL, /*!< Trigger 15 is interrupted by a high priority exception. */
+
+    kLPADC_Trigger0CompletedFlag = 1UL << 16UL,  /*!< Trigger 0 is completed and
+                                                     trigger 0 has enabled completion interrupts. */
+    kLPADC_Trigger1CompletedFlag = 1UL << 17UL,  /*!< Trigger 1 is completed and
+                                                     trigger 1 has enabled completion interrupts. */
+    kLPADC_Trigger2CompletedFlag = 1UL << 18UL,  /*!< Trigger 2 is completed and
+                                                     trigger 2 has enabled completion interrupts. */
+    kLPADC_Trigger3CompletedFlag = 1UL << 19UL,  /*!< Trigger 3 is completed and
+                                                     trigger 3 has enabled completion interrupts. */
+    kLPADC_Trigger4CompletedFlag = 1UL << 20UL,  /*!< Trigger 4 is completed and
+                                                     trigger 4 has enabled completion interrupts. */
+    kLPADC_Trigger5CompletedFlag = 1UL << 21UL,  /*!< Trigger 5 is completed and
+                                                     trigger 5 has enabled completion interrupts. */
+    kLPADC_Trigger6CompletedFlag = 1UL << 22UL,  /*!< Trigger 6 is completed and
+                                                     trigger 6 has enabled completion interrupts. */
+    kLPADC_Trigger7CompletedFlag = 1UL << 23UL,  /*!< Trigger 7 is completed and
+                                                     trigger 7 has enabled completion interrupts. */
+    kLPADC_Trigger8CompletedFlag = 1UL << 24UL,  /*!< Trigger 8 is completed and
+                                                     trigger 8 has enabled completion interrupts. */
+    kLPADC_Trigger9CompletedFlag = 1UL << 25UL,  /*!< Trigger 9 is completed and
+                                                     trigger 9 has enabled completion interrupts. */
+    kLPADC_Trigger10CompletedFlag = 1UL << 26UL, /*!< Trigger 10 is completed and
+                                                    trigger 10 has enabled completion interrupts. */
+    kLPADC_Trigger11CompletedFlag = 1UL << 27UL, /*!< Trigger 11 is completed and
+                                                    trigger 11 has enabled completion interrupts. */
+    kLPADC_Trigger12CompletedFlag = 1UL << 28UL, /*!< Trigger 12 is completed and
+                                                    trigger 12 has enabled completion interrupts. */
+    kLPADC_Trigger13CompletedFlag = 1UL << 29UL, /*!< Trigger 13 is completed and
+                                                    trigger 13 has enabled completion interrupts. */
+    kLPADC_Trigger14CompletedFlag = 1UL << 30UL, /*!< Trigger 14 is completed and
+                                                    trigger 14 has enabled completion interrupts. */
+    kLPADC_Trigger15CompletedFlag = 1UL << 31UL, /*!< Trigger 15 is completed and
+                                                    trigger 15 has enabled completion interrupts. */
+};
+#endif /* FSL_FEATURE_LPADC_HAS_TSTAT */
+
 /*!
  * @brief Define enumeration of sample scale mode.
  *
@@ -119,8 +213,8 @@ typedef enum _lpadc_sample_channel_mode
     kLPADC_SampleChannelSingleEndSideA = 0U, /*!< Single end mode, using side A. */
     kLPADC_SampleChannelSingleEndSideB = 1U, /*!< Single end mode, using side B. */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_DIFF) && FSL_FEATURE_LPADC_HAS_CMDL_DIFF
-    kLPADC_SampleChannelDiffBothSideAB = 2U, /*!< Differential mode, using A as plus side and B as minue side. */
-    kLPADC_SampleChannelDiffBothSideBA = 3U, /*!< Differential mode, using B as plus side and A as minue side. */
+    kLPADC_SampleChannelDiffBothSideAB = 2U, /*!< Differential mode, using A as plus side and B as minus side. */
+    kLPADC_SampleChannelDiffBothSideBA = 3U, /*!< Differential mode, using B as plus side and A as minus side. */
 #elif defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE
     kLPADC_SampleChannelDiffBothSide = 2U, /*!< Differential mode, using A and B. */
     kLPADC_SampleChannelDualSingleEndBothSide =
@@ -179,11 +273,12 @@ typedef enum _lpadc_hardware_compare_mode
     kLPADC_HardwareCompareRepeatUntilTrue = 3U, /*!< Compare enabled. Repeat channel acquisition until true. */
 } lpadc_hardware_compare_mode_t;
 
+#if defined(FSL_FEATURE_LPADC_HAS_CMDL_MODE) && FSL_FEATURE_LPADC_HAS_CMDL_MODE
 /*!
  * @brief Define enumeration of conversion resolution mode.
  *
  * Configure the resolution bit in specific conversion type. For detailed resolution accuracy, see to
- * #_lpadc_sample_channel_mode
+ * #lpadc_sample_channel_mode_t
  */
 typedef enum _lpadc_conversion_resolution_mode
 {
@@ -192,6 +287,7 @@ typedef enum _lpadc_conversion_resolution_mode
     kLPADC_ConversionResolutionHigh = 1U,     /*!< High resolution. Single-ended 16-bit conversion; Differential 16-bit
                                                    conversion with 2’s complement output. */
 } lpadc_conversion_resolution_mode_t;
+#endif /* FSL_FEATURE_LPADC_HAS_CMDL_MODE */
 
 #if defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS
 /*!
@@ -260,7 +356,7 @@ typedef enum _lpadc_trigger_priority_policy
 } lpadc_trigger_priority_policy_t;
 
 /*!
- * @beief LPADC global configuration.
+ * @brief LPADC global configuration.
  *
  * This structure would used to keep the settings for initialization.
  */
@@ -291,8 +387,8 @@ typedef struct
     lpadc_reference_voltage_source_t referenceVoltageSource; /*!< Selects the voltage reference high used for
                                                                   conversions.*/
     lpadc_power_level_mode_t powerLevelMode;                 /*!< Power Configuration Selection. */
-    lpadc_trigger_priority_policy_t triggerPrioirtyPolicy; /*!< Control how higher priority triggers are handled, see to
-                                                                #lpadc_trigger_priority_policy_mode_t. */
+    lpadc_trigger_priority_policy_t triggerPriorityPolicy; /*!< Control how higher priority triggers are handled, see to
+                                                                lpadc_trigger_priority_policy_t. */
     bool enableConvPause; /*!< Enables the ADC pausing function. When enabled, a programmable delay is inserted during
                                command execution sequencing between LOOP iterations, between commands in a sequence, and
                                between conversions when command is executing in "Compare Until True" configuration. */
@@ -341,8 +437,8 @@ typedef struct
     uint32_t hardwareCompareValueHigh; /*!< Compare Value High. The available value range is in 16-bit. */
     uint32_t hardwareCompareValueLow;  /*!< Compare Value Low. The available value range is in 16-bit. */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_MODE) && FSL_FEATURE_LPADC_HAS_CMDL_MODE
-    lpadc_conversion_resolution_mode_t conversionResoultuionMode; /*!< Conversion resolution mode. */
-#endif                                                            /* FSL_FEATURE_LPADC_HAS_CMDL_MODE */
+    lpadc_conversion_resolution_mode_t conversionResolutionMode; /*!< Conversion resolution mode. */
+#endif                                                           /* FSL_FEATURE_LPADC_HAS_CMDL_MODE */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDH_WAIT_TRIG) && FSL_FEATURE_LPADC_HAS_CMDH_WAIT_TRIG
     bool enableWaitTrigger; /*!< Wait for trigger assertion before execution: when disabled, this command will be
                                  automatically executed; when enabled, the active trigger must be asserted again before
@@ -413,7 +509,7 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config);
  *   config->powerUpDelay            = 0x80;
  *   config->referenceVoltageSource  = kLPADC_ReferenceVoltageAlt1;
  *   config->powerLevelMode          = kLPADC_PowerLevelAlt1;
- *   config->triggerPrioirtyPolicy   = kLPADC_TriggerPriorityPreemptImmediately;
+ *   config->triggerPriorityPolicy   = kLPADC_TriggerPriorityPreemptImmediately;
  *   config->enableConvPause         = false;
  *   config->convPauseDelay          = 0U;
  *   config->FIFOWatermark           = 0U;
@@ -523,6 +619,32 @@ static inline void LPADC_ClearStatusFlags(ADC_Type *base, uint32_t mask)
     base->STAT = mask;
 }
 
+#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT)
+/*!
+ * @brief Get trigger status flags to indicate which trigger sequences have been completed or interrupted by a high
+ * priority trigger exception.
+ *
+ * @param base LPADC peripheral base address.
+ * @return The OR'ed value of @ref _lpadc_trigger_status_flags.
+ */
+static inline uint32_t LPADC_GetTriggerStatusFlags(ADC_Type *base)
+{
+    return base->TSTAT;
+}
+
+/*!
+ * @brief Clear trigger status flags.
+ *
+ * @param base LPADC peripheral base address.
+ * @param mask The mask of trigger status flags to be cleared, should be the
+ *              OR'ed value of @ref _lpadc_trigger_status_flags.
+ */
+static inline void LPADC_ClearTriggerStatusFlags(ADC_Type *base, uint32_t mask)
+{
+    base->TSTAT = mask;
+}
+#endif /* FSL_FEATURE_LPADC_HAS_TSTAT */
+
 /* @} */
 
 /*!
@@ -534,7 +656,7 @@ static inline void LPADC_ClearStatusFlags(ADC_Type *base, uint32_t mask)
  * @brief Enable interrupts.
  *
  * @param base LPADC peripheral base address.
- * @mask Mask value for interrupt events. See to #_lpadc_interrupt_enable.
+ * @param mask Mask value for interrupt events. See to #_lpadc_interrupt_enable.
  */
 static inline void LPADC_EnableInterrupts(ADC_Type *base, uint32_t mask)
 {
@@ -728,7 +850,7 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
  *   config->hardwareCompareMode        = kLPADC_HardwareCompareDisabled;
  *   config->hardwareCompareValueHigh   = 0U;
  *   config->hardwareCompareValueLow    = 0U;
- *   config->conversionResoultuionMode  = kLPADC_ConversionResolutionStandard;
+ *   config->conversionResolutionMode  = kLPADC_ConversionResolutionStandard;
  *   config->enableWaitTrigger          = false;
  * @endcode
  * @param config Pointer to configuration structure.
@@ -746,7 +868,7 @@ void LPADC_GetDefaultConvCommandConfig(lpadc_conv_command_config_t *config);
  * OFSTRIM field. The OFSTRIM field is used in normal operation for offset correction.
  *
  * @param base LPADC peripheral base address.
- * @bool enable switcher to the calibration function.
+ * @param enable switcher to the calibration function.
  */
 void LPADC_EnableCalibration(ADC_Type *base, bool enable);
 #if defined(FSL_FEATURE_LPADC_HAS_OFSTRIM) && FSL_FEATURE_LPADC_HAS_OFSTRIM
@@ -800,7 +922,7 @@ static inline void LPADC_SetOffsetValue(ADC_Type *base, uint32_t valueA, uint32_
  * @brief Enable the offset calibration function.
  *
  * @param base LPADC peripheral base address.
- * @bool enable switcher to the calibration function.
+ * @param enable switcher to the calibration function.
  */
 static inline void LPADC_EnableOffsetCalibration(ADC_Type *base, bool enable)
 {
@@ -830,6 +952,7 @@ void LPADC_DoOffsetCalibration(ADC_Type *base);
 void LPADC_DoAutoCalibration(ADC_Type *base);
 #endif /* FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ */
 #endif /* FSL_FEATURE_LPADC_HAS_CTRL_CALOFS */
+
 /* @} */
 
 #if defined(__cplusplus)

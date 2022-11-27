@@ -1,9 +1,9 @@
 /*
- * Copyright 2018 NXP
-* All rights reserved.
-*
-* SPDX-License-Identifier: BSD-3-Clause
-*/
+ * Copyright 2018-2020 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #ifndef __FSL_CMP_H_
 #define __FSL_CMP_H_
@@ -20,61 +20,79 @@
  *****************************************************************************/
 /*! @name Driver version */
 /*@{*/
-/*! @brief Driver version 2.0.0. */
-#define FSL_CMP_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 0U))
+/*! @brief Driver version 2.2.1. */
+#define FSL_CMP_DRIVER_VERSION (MAKE_VERSION(2U, 2U, 1U))
 /*@}*/
 
-/*! @brief VREF select */
-enum _cmp_vref_select
+/*! @brief CMP input mux for positive and negative sides. */
+enum _cmp_input_mux
 {
-    KCMP_VREFSelectVDDA = 1U,         /*!< Select VDDA as VREF*/
-    KCMP_VREFSelectInternalVREF = 0U, /*!< select internal VREF as VREF*/
+    kCMP_InputVREF = 0U, /*!< Cmp input from VREF. */
+    kCMP_Input1    = 1U, /*!< Cmp input source 1. */
+    kCMP_Input2    = 2U, /*!< Cmp input source 2. */
+    kCMP_Input3    = 3U, /*!< Cmp input source 3. */
+    kCMP_Input4    = 4U, /*!< Cmp input source 4. */
+    kCMP_Input5    = 5U, /*!< Cmp input source 5. */
 };
 
-/*! @brief cmp interrupt type */
-typedef enum _cmp_interrupt_type
+/*! @brief CMP interrupt type. */
+enum _cmp_interrupt_type
 {
-    kCMP_EdgeDisable = 0U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT,       /*!< disable edge sensitive */
-    kCMP_EdgeRising = 2U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT,        /*!< Edge sensitive, falling edge */
-    kCMP_EdgeFalling = 4U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT,       /*!< Edge sensitive, rising edge */
-    kCMP_EdgeRisingFalling = 6U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT, /*!< Edge sensitive, rising and falling edge */
+    kCMP_EdgeDisable       = 0U, /*!< Disable edge interupt. */
+    kCMP_EdgeRising        = 2U, /*!< Interrupt on falling edge. */
+    kCMP_EdgeFalling       = 4U, /*!< Interrupt on rising edge. */
+    kCMP_EdgeRisingFalling = 6U, /*!< Interrupt on both rising and falling edges. */
 
-    kCMP_LevelDisable = 1U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT,  /*!< disable level sensitive */
-    kCMP_LevelHigh = 3U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT,     /*!< Level sensitive, high level */
-    kCMP_LevelLow = 5U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT,      /*!< Level sensitive, low level */
-    kCMP_LevelDisable1 = 7U << SYSCON_COMP_INT_CTRL_INT_CTRL_SHIFT, /*!< disable level sensitive */
-} cmp_interrupt_type_t;
+    kCMP_LevelDisable = 1U, /*!< Disable level interupt. */
+    kCMP_LevelHigh    = 3U, /*!< Interrupt on high level. */
+    kCMP_LevelLow     = 5U, /*!< Interrupt on low level. */
+};
 
-/*! @brief cmp Pmux input source */
-typedef enum _cmp_pmux_input
+/*! @brief CMP Voltage Reference source. */
+typedef enum _cmp_vref_source
 {
-    kCMP_PInputVREF = 0U << PMC_COMP_PMUX_SHIFT,  /*!< Cmp Pmux input from VREF */
-    kCMP_PInputP0_0 = 1U << PMC_COMP_PMUX_SHIFT,  /*!< Cmp Pmux input from P0_0 */
-    kCMP_PInputP0_9 = 2U << PMC_COMP_PMUX_SHIFT,  /*!< Cmp Pmux input from P0_9 */
-    kCMP_PInputP0_18 = 3U << PMC_COMP_PMUX_SHIFT, /*!< Cmp Pmux input from P0_18 */
-    kCMP_PInputP1_14 = 4U << PMC_COMP_PMUX_SHIFT, /*!< Cmp Pmux input from P1_14 */
-    kCMP_PInputP2_23 = 5U << PMC_COMP_PMUX_SHIFT, /*!< Cmp Pmux input from P2_23 */
-} cmp_pmux_input_t;
+    KCMP_VREFSourceVDDA         = 1U, /*!< Select VDDA as VREF. */
+    KCMP_VREFSourceInternalVREF = 0U, /*!< Select internal VREF as VREF. */
+} cmp_vref_source_t;
 
-/*! @brief cmp Nmux input source */
-typedef enum _cmp_nmux_input
+typedef struct _cmp_vref_config
 {
-    kCMP_NInputVREF = 0U << PMC_COMP_NMUX_SHIFT,  /*!< Cmp Nmux input from VREF */
-    kCMP_NInputP0_0 = 1U << PMC_COMP_NMUX_SHIFT,  /*!< Cmp Nmux input from P0_0 */
-    kCMP_NInputP0_9 = 2U << PMC_COMP_NMUX_SHIFT,  /*!< Cmp Nmux input from P0_9 */
-    kCMP_NInputP0_18 = 3U << PMC_COMP_NMUX_SHIFT, /*!< Cmp Nmux input from P0_18 */
-    kCMP_NInputP1_14 = 4U << PMC_COMP_NMUX_SHIFT, /*!< Cmp Nmux input from P1_14 */
-    kCMP_NInputP2_23 = 5U << PMC_COMP_NMUX_SHIFT, /*!< Cmp Nmux input from P2_23 */
-} cmp_nmux_input_t;
+    cmp_vref_source_t vrefSource; /*!< Reference voltage source. */
+    uint8_t vrefValue; /*!< Reference voltage step. Available range is 0-31. Per step equals to VREFINPUT/31. */
+} cmp_vref_config_t;
 
-/*! @brief cmp configurataions */
+/*! @brief CMP Filter sample mode. */
+typedef enum _cmp_filtercgf_samplemode
+{
+    kCMP_FilterSampleMode0 = 0U, /*!< Bypass mode. Filtering is disabled. */
+    kCMP_FilterSampleMode1 = 1U, /*!< Filter 1 clock period. */
+    kCMP_FilterSampleMode2 = 2U, /*!< Filter 2 clock period. */
+    kCMP_FilterSampleMode3 = 3U  /*!< Filter 3 clock period. */
+} cmp_filtercgf_samplemode_t;
+
+/*! @brief CMP Filter clock divider. */
+typedef enum _cmp_filtercgf_clkdiv
+{
+    kCMP_FilterClockDivide1  = 0U, /*!< Filter clock period duration equals 1 analog comparator clock period. */
+    kCMP_FilterClockDivide2  = 1U, /*!< Filter clock period duration equals 2 analog comparator clock period. */
+    kCMP_FilterClockDivide4  = 2U, /*!< Filter clock period duration equals 4 analog comparator clock period. */
+    kCMP_FilterClockDivide8  = 3U, /*!< Filter clock period duration equals 8 analog comparator clock period. */
+    kCMP_FilterClockDivide16 = 4U, /*!< Filter clock period duration equals 16 analog comparator clock period. */
+    kCMP_FilterClockDivide32 = 5U, /*!< Filter clock period duration equals 32 analog comparator clock period. */
+    kCMP_FilterClockDivide64 = 6U  /*!< Filter clock period duration equals 64 analog comparator clock period. */
+} cmp_filtercgf_clkdiv_t;
+
+/*! @brief CMP configuration structure. */
 typedef struct _cmp_config
 {
-    bool enHysteris;            /*!< low hysteresis */
-    bool enLowPower;            /*!<low power mode*/
-    cmp_nmux_input_t nmuxInput; /*!<Nmux input select*/
-    cmp_pmux_input_t pmuxInput; /*!<Pmux input select*/
+    bool enableHysteresis;                     /*!< Enable hysteresis. */
+    bool enableLowPower;                       /*!< Enable low power mode. */
+    cmp_filtercgf_clkdiv_t filterClockDivider; /* Filter clock divider. Filter clock equals the Analog Comparator clock
+                                                  divided by 2^FILTERCGF_CLKDIV. */
+    cmp_filtercgf_samplemode_t
+        filterSampleMode; /* Filter sample mode. Control the filtering of the Analog Comparator output. */
 } cmp_config_t;
+
 /*************************************************************************************************
  * API
  ************************************************************************************************/
@@ -83,142 +101,96 @@ extern "C" {
 #endif
 
 /*!
- * @name Cmp Initialization and deinitialization
+ * @name Initialization and deinitialization
  * @{
  */
 
 /*!
- * @brief CMP intialization.
- * Note: The cmp initial function not responsible for cmp power, application shall handle it.
+ * @brief CMP initialization.
  *
- * @param config init configurations.
+ * This function enables the CMP module and do necessary settings.
+ *
+ * @param config Pointer to the configuration structure.
  */
-void CMP_Init(cmp_config_t *config);
+void CMP_Init(const cmp_config_t *config);
 
 /*!
- * @brief CMP deintialization.
- * Note: The cmp deinit function not responsible for cmp power, application shall handle it.
+ * @brief CMP deinitialization.
  *
+ * This function gates the clock for CMP module.
  */
 void CMP_Deinit(void);
 
+/*!
+ * @brief Initializes the CMP user configuration structure.
+ *
+ * This function initializes the user configuration structure to these default values.
+ * @code
+ *   config->enableHysteresis    = true;
+ *   config->enableLowPower      = true;
+ *   config->filterClockDivider  = kCMP_FilterClockDivide1;
+ *   config->filterSampleMode    = kCMP_FilterSampleMode0;
+ * @endcode
+ * @param config Pointer to the configuration structure.
+ */
+void CMP_GetDefaultConfig(cmp_config_t *config);
+
 /* @} */
 
 /*!
- * @name cmp functionality
+ * @name Compare Interface
  * @{
  */
 
-/*!
- * @brief select input source for pmux.
+/*
+ * @brief Set the input channels for the comparator.
  *
- * @param pmux_select_source reference cmp_pmux_input_t above.
+ * @param positiveChannel Positive side input channel number. See "_cmp_input_mux".
+ * @param negativeChannel Negative side input channel number. See "_cmp_input_mux".
  */
-static inline void CMP_PmuxSelect(cmp_pmux_input_t pmux_select_source)
+static inline void CMP_SetInputChannels(uint8_t positiveChannel, uint8_t negativeChannel)
 {
-    PMC->COMP &= ~PMC_COMP_PMUX_MASK;
-    PMC->COMP |= pmux_select_source;
+    PMC->COMP &= ~(PMC_COMP_PMUX_MASK | PMC_COMP_NMUX_MASK);
+    PMC->COMP |= (PMC_COMP_PMUX(positiveChannel) | PMC_COMP_NMUX(negativeChannel));
 }
 
 /*!
- * @brief select input source for nmux.
+ * @brief Configures the VREFINPUT.
  *
- * @param nmux_select_source reference cmp_nmux_input_t above.
+ * @param config Pointer to the configuration structure.
  */
-static inline void CMP_NmuxSelect(cmp_nmux_input_t nmux_select_source)
-{
-    PMC->COMP &= ~PMC_COMP_NMUX_MASK;
-    PMC->COMP |= nmux_select_source;
-}
+void CMP_SetVREF(const cmp_vref_config_t *config);
 
 /*!
- * @brief switch cmp work mode.
+ * @brief Get CMP compare output.
  *
- * @param enable true is enter low power mode, false is enter fast mode
+ * @return The output result. true: voltage on positive side is greater than negative side.
+ *                            false: voltage on positive side is lower than negative side.
  */
-static inline void CMP_EnableLowePowerMode(bool enable)
+static inline bool CMP_GetOutput(void)
 {
-    if (enable)
-    {
-        PMC->COMP |= PMC_COMP_LOWPOWER_MASK;
-    }
-    else
-    {
-        PMC->COMP &= ~PMC_COMP_LOWPOWER_MASK;
-    }
-}
-
-/*!
- * @brief Control reference voltage step, per steps of (VREFINPUT/31).
- *
- * @param step reference voltage step, per steps of (VREFINPUT/31).
- */
-static inline void CMP_SetRefStep(uint32_t step)
-{
-    PMC->COMP |= step << PMC_COMP_VREF_SHIFT;
-}
-
-/*!
- * @brief cmp enable hysteresis.
- *
- */
-static inline void CMP_EnableHysteresis(bool enable)
-{
-    if (enable)
-    {
-        PMC->COMP |= PMC_COMP_HYST_MASK;
-    }
-    else
-    {
-        PMC->COMP &= ~PMC_COMP_HYST_MASK;
-    }
-}
-
-/*!
- * @brief VREF select between internal VREF and VDDA (for the resistive ladder).
- *
- * @param select 1 is Select VDDA, 0 is Select internal VREF.
- */
-static inline void CMP_VREFSelect(uint32_t select)
-{
-    if (select)
-    {
-        PMC->COMP |= PMC_COMP_VREFINPUT_MASK;
-    }
-    else
-    {
-        PMC->COMP &= ~PMC_COMP_VREFINPUT_MASK;
-    }
-}
-
-/*!
- * @brief comparator analog output.
- *
- * @return 1 indicates p is greater than n, 0 indicates n is greater than p.
- */
-static inline uint32_t CMP_GetOutput(void)
-{
-    return (SYSCON->COMP_INT_STATUS & SYSCON_COMP_INT_STATUS_VAL_MASK) ? 1 : 0;
+    return SYSCON_COMP_INT_STATUS_VAL_MASK == (SYSCON->COMP_INT_STATUS & SYSCON_COMP_INT_STATUS_VAL_MASK);
 }
 
 /* @} */
 
 /*!
- * @name cmp interrupt
+ * @name Interrupt Interface
  * @{
  */
 
 /*!
- * @brief cmp enable interrupt.
+ * @brief CMP enable interrupt.
  *
+ * @param type CMP interrupt type. See "_cmp_interrupt_type".
  */
-static inline void CMP_EnableInterrupt(void)
+static inline void CMP_EnableInterrupt(uint32_t type)
 {
-    SYSCON->COMP_INT_CTRL |= SYSCON_COMP_INT_CTRL_INT_ENABLE_MASK;
+    SYSCON->COMP_INT_CTRL |= (SYSCON_COMP_INT_CTRL_INT_CTRL(type) | SYSCON_COMP_INT_CTRL_INT_ENABLE_MASK);
 }
 
 /*!
- * @brief cmp disable interrupt.
+ * @brief CMP disable interrupt.
  *
  */
 static inline void CMP_DisableInterrupt(void)
@@ -227,61 +199,87 @@ static inline void CMP_DisableInterrupt(void)
 }
 
 /*!
- * @brief Select which Analog comparator output (filtered or un-filtered) is used for interrupt detection.
- *
- * @param enable true is Select Analog Comparator raw output (unfiltered) as input for interrupt detection.
- *               false is Select Analog Comparator filtered output as input for interrupt detection.
- */
-static inline void CMP_InterruptSourceSelect(bool enable)
-{
-    if (enable)
-    {
-        SYSCON->COMP_INT_CTRL |= SYSCON_COMP_INT_CTRL_INT_SOURCE_MASK;
-    }
-    else
-    {
-        SYSCON->COMP_INT_CTRL &= ~SYSCON_COMP_INT_CTRL_INT_SOURCE_MASK;
-    }
-}
-
-/*!
- * @brief cmp get status.
- *
- * @return true is interrupt pending, false is no interrupt pending.
- */
-static inline bool CMP_GetStatus(void)
-{
-    return (SYSCON->COMP_INT_STATUS & SYSCON_COMP_INT_STATUS_STATUS_MASK) ? true : false;
-}
-
-/*!
- * @brief cmp clear interrupt status.
+ * @brief CMP clear interrupt.
  *
  */
-static inline void CMP_ClearStatus(void)
+static inline void CMP_ClearInterrupt(void)
 {
     SYSCON->COMP_INT_CTRL |= SYSCON_COMP_INT_CTRL_INT_CLEAR_MASK;
 }
 
 /*!
- * @brief Comparator interrupt type select.
+ * @brief Select which Analog comparator output (filtered or un-filtered) is used for interrupt detection.
  *
- * @param type reference cmp_interrupt_type_t.
+ * @param enable false: Select Analog Comparator raw output (unfiltered) as input for interrupt detection.
+ *               true: Select Analog Comparator filtered output as input for interrupt detection.
+ *
+ * @note: When CMP is configured as the wakeup source in power down mode, this function must use the raw output as the
+ *        interupt source, that is, call this function and set parameter enable to false.
  */
-static inline void CMP_InterruptTypeSelect(cmp_interrupt_type_t cmp_interrupt_type)
+static inline void CMP_EnableFilteredInterruptSource(bool enable)
 {
-    SYSCON->COMP_INT_CTRL &= ~SYSCON_COMP_INT_CTRL_INT_CTRL_MASK;
-    SYSCON->COMP_INT_CTRL |= cmp_interrupt_type;
+    if (enable)
+    {
+        SYSCON->COMP_INT_CTRL &= ~SYSCON_COMP_INT_CTRL_INT_SOURCE_MASK;
+    }
+    else
+    {
+        SYSCON->COMP_INT_CTRL |= SYSCON_COMP_INT_CTRL_INT_SOURCE_MASK;
+    }
+}
+/* @} */
+
+/*!
+ * @name Status Interface
+ * @{
+ */
+
+/*!
+ * @brief Get CMP interrupt status before interupt enable.
+ *
+ * @return Interrupt status. true: interrupt pending,
+ *                           false: no interrupt pending.
+ */
+static inline bool CMP_GetPreviousInterruptStatus(void)
+{
+    return SYSCON_COMP_INT_STATUS_STATUS_MASK == (SYSCON->COMP_INT_STATUS & SYSCON_COMP_INT_STATUS_STATUS_MASK);
 }
 
 /*!
- * @brief cmp get interrupt status.
+ * @brief Get CMP interrupt status after interupt enable.
  *
- * @return true is interrupt pending, false is no interrupt pending.
+ * @return Interrupt status. true: interrupt pending,
+ *                           false: no interrupt pending.
  */
 static inline bool CMP_GetInterruptStatus(void)
 {
-    return (SYSCON->COMP_INT_STATUS & SYSCON_COMP_INT_STATUS_INT_STATUS_MASK) ? true : false;
+    return SYSCON_COMP_INT_STATUS_INT_STATUS_MASK == (SYSCON->COMP_INT_STATUS & SYSCON_COMP_INT_STATUS_INT_STATUS_MASK);
+}
+/* @} */
+
+/*!
+ * @name Filter Interface
+ * @{
+ */
+
+/*!
+ * @brief CMP Filter Sample Config.
+ *
+ * This function allows the users to configure the sampling mode and clock divider of the CMP Filter.
+ *
+ * @param filterSampleMode   CMP Select filter sample mode
+ * @param filterClockDivider CMP Set fileter clock divider
+ */
+static inline void CMP_FilterSampleConfig(cmp_filtercgf_samplemode_t filterSampleMode,
+                                          cmp_filtercgf_clkdiv_t filterClockDivider)
+{
+    uint32_t comp = PMC->COMP;
+
+    comp &= ~(PMC_COMP_FILTERCGF_CLKDIV_MASK | PMC_COMP_FILTERCGF_SAMPLEMODE_MASK);
+    comp |= (((uint32_t)filterClockDivider << PMC_COMP_FILTERCGF_CLKDIV_SHIFT) |
+             ((uint32_t)filterSampleMode << PMC_COMP_FILTERCGF_SAMPLEMODE_SHIFT));
+
+    PMC->COMP = comp;
 }
 /* @} */
 
