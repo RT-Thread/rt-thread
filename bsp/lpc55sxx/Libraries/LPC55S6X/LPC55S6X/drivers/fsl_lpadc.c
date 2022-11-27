@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -69,7 +69,7 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config)
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Enable the clock for LPADC instance. */
-    CLOCK_EnableClock(s_lpadcClocks[LPADC_GetInstance(base)]);
+    (void)CLOCK_EnableClock(s_lpadcClocks[LPADC_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
     /* Reset the module. */
@@ -119,7 +119,7 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config)
     tmp32 |= ADC_CFG_PUDLY(config->powerUpDelay)                /* Power up delay. */
              | ADC_CFG_REFSEL(config->referenceVoltageSource)   /* Reference voltage. */
              | ADC_CFG_PWRSEL(config->powerLevelMode)           /* Power configuration. */
-             | ADC_CFG_TPRICTRL(config->triggerPrioirtyPolicy); /* Trigger priority policy. */
+             | ADC_CFG_TPRICTRL(config->triggerPriorityPolicy); /* Trigger priority policy. */
     base->CFG = tmp32;
 
     /* ADCx_PAUSE. */
@@ -157,7 +157,7 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config)
  *   config->powerUpDelay            = 0x80;
  *   config->referenceVoltageSource  = kLPADC_ReferenceVoltageAlt1;
  *   config->powerLevelMode          = kLPADC_PowerLevelAlt1;
- *   config->triggerPrioirtyPolicy   = kLPADC_TriggerPriorityPreemptImmediately;
+ *   config->triggerPriorityPolicy   = kLPADC_TriggerPriorityPreemptImmediately;
  *   config->enableConvPause         = false;
  *   config->convPauseDelay          = 0U;
  *   config->FIFO0Watermark          = 0U;
@@ -169,7 +169,7 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config)
 void LPADC_GetDefaultConfig(lpadc_config_t *config)
 {
     /* Initializes the configure structure to zero. */
-    memset(config, 0, sizeof(*config));
+    (void)memset(config, 0, sizeof(*config));
 
 #if defined(FSL_FEATURE_LPADC_HAS_CFG_ADCKEN) && FSL_FEATURE_LPADC_HAS_CFG_ADCKEN
     config->enableInternalClock = false;
@@ -186,7 +186,7 @@ void LPADC_GetDefaultConfig(lpadc_config_t *config)
     config->powerUpDelay            = 0x80;
     config->referenceVoltageSource  = kLPADC_ReferenceVoltageAlt1;
     config->powerLevelMode          = kLPADC_PowerLevelAlt1;
-    config->triggerPrioirtyPolicy   = kLPADC_TriggerPriorityPreemptImmediately;
+    config->triggerPriorityPolicy   = kLPADC_TriggerPriorityPreemptImmediately;
     config->enableConvPause         = false;
     config->convPauseDelay          = 0U;
 #if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2))
@@ -209,7 +209,7 @@ void LPADC_Deinit(ADC_Type *base)
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Gate the clock. */
-    CLOCK_DisableClock(s_lpadcClocks[LPADC_GetInstance(base)]);
+    (void)CLOCK_DisableClock(s_lpadcClocks[LPADC_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 }
 
@@ -294,7 +294,10 @@ void LPADC_SetConvTriggerConfig(ADC_Type *base, uint32_t triggerId, const lpadc_
             | ADC_TCTRL_TDLY(config->delayPower)    /* Trigger delay select. */
             | ADC_TCTRL_TPRI(config->priority)      /* Trigger priority setting. */
 #if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2))
-            | ADC_TCTRL_FIFO_SEL_A(config->channelAFIFOSelect) | ADC_TCTRL_FIFO_SEL_B(config->channelBFIFOSelect)
+            | ADC_TCTRL_FIFO_SEL_A(config->channelAFIFOSelect)
+#if !(defined(FSL_FEATURE_LPADC_HAS_NO_TCTRL_FIFO_SEL_B) && FSL_FEATURE_LPADC_HAS_NO_TCTRL_FIFO_SEL_B)
+            | ADC_TCTRL_FIFO_SEL_B(config->channelBFIFOSelect)
+#endif /* FSL_FEATURE_LPADC_HAS_NO_TCTRL_FIFO_SEL_B  */
 #endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
         ;
     if (config->enableHardwareTrigger)
@@ -324,12 +327,12 @@ void LPADC_GetDefaultConvTriggerConfig(lpadc_conv_trigger_config_t *config)
     assert(config != NULL); /* Check if the input pointer is available. */
 
     /* Initializes the configure structure to zero. */
-    memset(config, 0, sizeof(*config));
+    (void)memset(config, 0, sizeof(*config));
 
     config->targetCommandId = 0U;
     config->delayPower      = 0U;
     config->priority        = 0U;
-#if defined(FSL_FEATURE_LPADC_FIFO_COUNT) && FSL_FEATURE_LPADC_FIFO_COUNT
+#if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2))
     config->channelAFIFOSelect = 0U;
     config->channelBFIFOSelect = 0U;
 #endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
@@ -378,7 +381,7 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
     }
 #endif /* FSL_FEATURE_LPADC_HAS_CMDL_CTYPE */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_MODE) && FSL_FEATURE_LPADC_HAS_CMDL_MODE
-    tmp32 |= ADC_CMDL_MODE(config->conversionResoultuionMode);
+    tmp32 |= ADC_CMDL_MODE(config->conversionResolutionMode);
 #endif /* FSL_FEATURE_LPADC_HAS_CMDL_MODE */
     base->CMD[commandId].CMDL = tmp32;
 
@@ -433,7 +436,7 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
  *   config->hardwareCompareMode        = kLPADC_HardwareCompareDisabled;
  *   config->hardwareCompareValueHigh   = 0U;
  *   config->hardwareCompareValueLow    = 0U;
- *   config->conversionResoultuionMode  = kLPADC_ConversionResolutionStandard;
+ *   config->conversionResolutionMode  = kLPADC_ConversionResolutionStandard;
  *   config->enableWaitTrigger          = false;
  * endcode
  * param config Pointer to configuration structure.
@@ -443,7 +446,7 @@ void LPADC_GetDefaultConvCommandConfig(lpadc_conv_command_config_t *config)
     assert(config != NULL); /* Check if the input pointer is available. */
 
     /* Initializes the configure structure to zero. */
-    memset(config, 0, sizeof(*config));
+    (void)memset(config, 0, sizeof(*config));
 
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_CSCALE) && FSL_FEATURE_LPADC_HAS_CMDL_CSCALE
     config->sampleScaleMode = kLPADC_SampleFullScale;
@@ -459,7 +462,7 @@ void LPADC_GetDefaultConvCommandConfig(lpadc_conv_command_config_t *config)
     config->hardwareCompareValueHigh   = 0U; /* No used. */
     config->hardwareCompareValueLow    = 0U; /* No used. */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_MODE) && FSL_FEATURE_LPADC_HAS_CMDL_MODE
-    config->conversionResoultuionMode = kLPADC_ConversionResolutionStandard;
+    config->conversionResolutionMode = kLPADC_ConversionResolutionStandard;
 #endif /* FSL_FEATURE_LPADC_HAS_CMDL_MODE */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDH_WAIT_TRIG) && FSL_FEATURE_LPADC_HAS_CMDH_WAIT_TRIG
     config->enableWaitTrigger = false;
@@ -477,7 +480,7 @@ void LPADC_GetDefaultConvCommandConfig(lpadc_conv_command_config_t *config)
  * OFSTRIM field. The OFSTRIM field is used in normal operation for offset correction.
  *
  * param base LPADC peripheral base address.
- * bool enable switcher to the calibration function.
+ * param enable switcher to the calibration function.
  */
 void LPADC_EnableCalibration(ADC_Type *base, bool enable)
 {
@@ -539,7 +542,7 @@ void LPADC_DoAutoCalibration(ADC_Type *base)
     {
     }
     /* The valid bits of data are bits 14:3 in the RESFIFO register. */
-    LPADC_SetOffsetValue(base, (mLpadcResultConfigStruct.convValue) >> 3U);
+    LPADC_SetOffsetValue(base, (uint32_t)(mLpadcResultConfigStruct.convValue) >> 3UL);
     /* Disable the calibration function. */
     LPADC_EnableCalibration(base, false);
 

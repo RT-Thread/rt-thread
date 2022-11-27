@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -17,18 +17,18 @@
 #define FSL_COMPONENT_ID "platform.drivers.lpc_rtc"
 #endif
 
-#define SECONDS_IN_A_DAY (86400U)
-#define SECONDS_IN_A_HOUR (3600U)
+#define SECONDS_IN_A_DAY    (86400U)
+#define SECONDS_IN_A_HOUR   (3600U)
 #define SECONDS_IN_A_MINUTE (60U)
-#define DAYS_IN_A_YEAR (365U)
-#define YEAR_RANGE_START (1970U)
-#define YEAR_RANGE_END (2099U)
+#define DAYS_IN_A_YEAR      (365U)
+#define YEAR_RANGE_START    (1970U)
+#define YEAR_RANGE_END      (2099U)
 
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
 /*!
- * @brief Checks whether the date and time passed in is valid
+ * @brief Check whether the date and time passed in is valid
  *
  * @param datetime Pointer to structure where the date and time details are stored
  *
@@ -37,7 +37,7 @@
 static bool RTC_CheckDatetimeFormat(const rtc_datetime_t *datetime);
 
 /*!
- * @brief Converts time data from datetime to seconds
+ * @brief Convert time data from datetime to seconds
  *
  * @param datetime Pointer to datetime structure where the date and time details are stored
  *
@@ -46,7 +46,7 @@ static bool RTC_CheckDatetimeFormat(const rtc_datetime_t *datetime);
 static uint32_t RTC_ConvertDatetimeToSeconds(const rtc_datetime_t *datetime);
 
 /*!
- * @brief Converts time data from seconds to a datetime structure
+ * @brief Convert time data from seconds to a datetime structure
  *
  * @param seconds  Seconds value that needs to be converted to datetime format
  * @param datetime Pointer to the datetime structure where the result of the conversion is stored
@@ -74,7 +74,7 @@ static bool RTC_CheckDatetimeFormat(const rtc_datetime_t *datetime)
     }
 
     /* Adjust the days in February for a leap year */
-    if ((((datetime->year & 3U) == 0) && (datetime->year % 100 != 0)) || (datetime->year % 400 == 0))
+    if ((((datetime->year & 3U) == 0U) && (datetime->year % 100U != 0U)) || (datetime->year % 400U == 0U))
     {
         daysPerMonth[2] = 29U;
     }
@@ -98,16 +98,16 @@ static uint32_t RTC_ConvertDatetimeToSeconds(const rtc_datetime_t *datetime)
     uint32_t seconds;
 
     /* Compute number of days from 1970 till given year*/
-    seconds = (datetime->year - 1970U) * DAYS_IN_A_YEAR;
+    seconds = ((uint32_t)datetime->year - 1970U) * DAYS_IN_A_YEAR;
     /* Add leap year days */
-    seconds += ((datetime->year / 4) - (1970U / 4));
+    seconds += (((uint32_t)datetime->year / 4U) - (1970U / 4U));
     /* Add number of days till given month*/
     seconds += monthDays[datetime->month];
     /* Add days in given month. We subtract the current day as it is
      * represented in the hours, minutes and seconds field*/
-    seconds += (datetime->day - 1);
+    seconds += ((uint32_t)datetime->day - 1U);
     /* For leap year if month less than or equal to Febraury, decrement day counter*/
-    if ((!(datetime->year & 3U)) && (datetime->month <= 2U))
+    if (((datetime->year & 3U) == 0x00U) && (datetime->month <= 2U))
     {
         seconds--;
     }
@@ -122,9 +122,10 @@ static void RTC_ConvertSecondsToDatetime(uint32_t seconds, rtc_datetime_t *datet
 {
     assert(datetime);
 
-    uint32_t x;
-    uint32_t secondsRemaining, days;
+    uint8_t i;
     uint16_t daysInYear;
+    uint32_t secondsRemaining;
+    uint32_t days;
     /* Table of days in a month for a non leap year. First entry in the table is not used,
      * valid months start from 1
      */
@@ -136,16 +137,16 @@ static void RTC_ConvertSecondsToDatetime(uint32_t seconds, rtc_datetime_t *datet
     /* Calcuate the number of days, we add 1 for the current day which is represented in the
      * hours and seconds field
      */
-    days = secondsRemaining / SECONDS_IN_A_DAY + 1;
+    days = secondsRemaining / SECONDS_IN_A_DAY + 1U;
 
     /* Update seconds left*/
     secondsRemaining = secondsRemaining % SECONDS_IN_A_DAY;
 
     /* Calculate the datetime hour, minute and second fields */
-    datetime->hour   = secondsRemaining / SECONDS_IN_A_HOUR;
+    datetime->hour   = (uint8_t)(secondsRemaining / SECONDS_IN_A_HOUR);
     secondsRemaining = secondsRemaining % SECONDS_IN_A_HOUR;
-    datetime->minute = secondsRemaining / 60U;
-    datetime->second = secondsRemaining % SECONDS_IN_A_MINUTE;
+    datetime->minute = (uint8_t)(secondsRemaining / 60U);
+    datetime->second = (uint8_t)(secondsRemaining % SECONDS_IN_A_MINUTE);
 
     /* Calculate year */
     daysInYear     = DAYS_IN_A_YEAR;
@@ -157,40 +158,40 @@ static void RTC_ConvertSecondsToDatetime(uint32_t seconds, rtc_datetime_t *datet
         datetime->year++;
 
         /* Adjust the number of days for a leap year */
-        if (datetime->year & 3U)
+        if ((datetime->year & 3U) != 0x00U)
         {
             daysInYear = DAYS_IN_A_YEAR;
         }
         else
         {
-            daysInYear = DAYS_IN_A_YEAR + 1;
+            daysInYear = DAYS_IN_A_YEAR + 1U;
         }
     }
 
     /* Adjust the days in February for a leap year */
-    if (!(datetime->year & 3U))
+    if ((datetime->year & 3U) == 0x00U)
     {
         daysPerMonth[2] = 29U;
     }
 
-    for (x = 1U; x <= 12U; x++)
+    for (i = 1U; i <= 12U; i++)
     {
-        if (days <= daysPerMonth[x])
+        if (days <= daysPerMonth[i])
         {
-            datetime->month = x;
+            datetime->month = i;
             break;
         }
         else
         {
-            days -= daysPerMonth[x];
+            days -= daysPerMonth[i];
         }
     }
 
-    datetime->day = days;
+    datetime->day = (uint8_t)days;
 }
 
 /*!
- * brief Ungates the RTC clock and enables the RTC oscillator.
+ * brief Ungate the RTC clock and enables the RTC oscillator.
  *
  * note This API should be called at the beginning of the application using the RTC driver.
  *
@@ -216,7 +217,7 @@ void RTC_Init(RTC_Type *base)
 }
 
 /*!
- * brief Sets the RTC date and time according to the given time structure.
+ * brief Set the RTC date and time according to the given time structure.
  *
  * The RTC counter must be stopped prior to calling this function as writes to the RTC
  * seconds register will fail if the RTC counter is running.
@@ -255,12 +256,12 @@ void RTC_GetDatetime(RTC_Type *base, rtc_datetime_t *datetime)
 
     uint32_t seconds = 0;
 
-    seconds = base->COUNT;
+    seconds = RTC_GetSecondsTimerCount(base);
     RTC_ConvertSecondsToDatetime(seconds, datetime);
 }
 
 /*!
- * brief Sets the RTC alarm time
+ * brief Set the RTC alarm time
  *
  * The function checks whether the specified alarm time is greater than the present
  * time. If not, the function does not set the alarm and returns an error.
@@ -274,7 +275,7 @@ void RTC_GetDatetime(RTC_Type *base, rtc_datetime_t *datetime)
  */
 status_t RTC_SetAlarm(RTC_Type *base, const rtc_datetime_t *alarmTime)
 {
-    assert(alarmTime);
+    assert(alarmTime != NULL);
 
     uint32_t alarmSeconds = 0;
     uint32_t currSeconds  = 0;
@@ -288,7 +289,7 @@ status_t RTC_SetAlarm(RTC_Type *base, const rtc_datetime_t *alarmTime)
     alarmSeconds = RTC_ConvertDatetimeToSeconds(alarmTime);
 
     /* Get the current time */
-    currSeconds = base->COUNT;
+    currSeconds = RTC_GetSecondsTimerCount(base);
 
     /* Return error if the alarm time has passed */
     if (alarmSeconds < currSeconds)
@@ -303,7 +304,7 @@ status_t RTC_SetAlarm(RTC_Type *base, const rtc_datetime_t *alarmTime)
 }
 
 /*!
- * brief Returns the RTC alarm time.
+ * brief Return the RTC alarm time.
  *
  * param base     RTC peripheral base address
  * param datetime Pointer to structure where the alarm date and time details are stored.

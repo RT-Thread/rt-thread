@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NXP
+ * Copyright 2018-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -26,7 +26,7 @@
  * @{
  */
 /*! @brief Flash IFR driver version for SDK*/
-#define FSL_FLASH_IFR_DRIVER_VERSION (MAKE_VERSION(2, 0, 0)) /*!< Version 2.0.0. */
+#define FSL_FLASH_IFR_DRIVER_VERSION (MAKE_VERSION(2, 1, 0)) /*!< Version 2.1.0. */
 /*@}*/
 
 /*! @brief Alignment(down) utility. */
@@ -39,10 +39,11 @@
 #define ALIGN_UP(x, a) (-((int32_t)((uint32_t)(-((int32_t)(x))) & (uint32_t)(-((int32_t)(a))))))
 #endif
 
-#define FLASH_FFR_MAX_PAGE_SIZE (512u)
+#define FLASH_FFR_MAX_PAGE_SIZE    (512u)
 #define FLASH_FFR_HASH_DIGEST_SIZE (32u)
-#define FLASH_FFR_IV_CODE_SIZE (52u)
+#define FLASH_FFR_IV_CODE_SIZE     (52u)
 
+/*! @brief flash ffr page offset. */
 enum _flash_ffr_page_offset
 {
     kFfrPageOffset_CFPA         = 0, /*!< Customer In-Field programmed area*/
@@ -61,6 +62,7 @@ enum _flash_ffr_page_offset
     kFfrPageOffset_NMPA_End    = 16, /*!< Reserved (Part of NMPA)*/
 };
 
+/*! @brief flash ffr page number. */
 enum _flash_ffr_page_num
 {
     kFfrPageNum_CFPA = 3,  /*!< Customer In-Field programmed area*/
@@ -112,14 +114,14 @@ typedef struct _cfpa_cfg_info
     uint8_t sha256[32];                       /*!< [0x1e0-0x1ff] */
 } cfpa_cfg_info_t;
 
-#define FFR_BOOTCFG_BOOTSPEED_MASK (0x18U)
+#define FFR_BOOTCFG_BOOTSPEED_MASK  (0x18U)
 #define FFR_BOOTCFG_BOOTSPEED_SHIFT (7U)
 #define FFR_BOOTCFG_BOOTSPEED_48MHZ (0x0U)
 #define FFR_BOOTCFG_BOOTSPEED_96MHZ (0x1U)
 
-#define FFR_USBID_VENDORID_MASK (0xFFFFU)
-#define FFR_USBID_VENDORID_SHIFT (0U)
-#define FFR_USBID_PRODUCTID_MASK (0xFFFF0000U)
+#define FFR_USBID_VENDORID_MASK   (0xFFFFU)
+#define FFR_USBID_VENDORID_SHIFT  (0U)
+#define FFR_USBID_PRODUCTID_MASK  (0xFFFF0000U)
 #define FFR_USBID_PRODUCTID_SHIFT (16U)
 
 typedef struct _cmpa_cfg_info
@@ -150,16 +152,16 @@ typedef struct _cmpa_key_store_header
     uint8_t reserved[4];
 } cmpa_key_store_header_t;
 
-#define FFR_SYSTEM_SPEED_CODE_MASK (0x3U)
-#define FFR_SYSTEM_SPEED_CODE_SHIFT (0U)
-#define FFR_SYSTEM_SPEED_CODE_FRO12MHZ_12MHZ (0x0U)
+#define FFR_SYSTEM_SPEED_CODE_MASK             (0x3U)
+#define FFR_SYSTEM_SPEED_CODE_SHIFT            (0U)
+#define FFR_SYSTEM_SPEED_CODE_FRO12MHZ_12MHZ   (0x0U)
 #define FFR_SYSTEM_SPEED_CODE_FROHF96MHZ_24MHZ (0x1U)
 #define FFR_SYSTEM_SPEED_CODE_FROHF96MHZ_48MHZ (0x2U)
 #define FFR_SYSTEM_SPEED_CODE_FROHF96MHZ_96MHZ (0x3U)
 
-#define FFR_PERIPHERALCFG_PERI_MASK (0x7FFFFFFFU)
-#define FFR_PERIPHERALCFG_PERI_SHIFT (0U)
-#define FFR_PERIPHERALCFG_COREEN_MASK (0x10000000U)
+#define FFR_PERIPHERALCFG_PERI_MASK    (0x7FFFFFFFU)
+#define FFR_PERIPHERALCFG_PERI_SHIFT   (0U)
+#define FFR_PERIPHERALCFG_COREEN_MASK  (0x10000000U)
 #define FFR_PERIPHERALCFG_COREEN_SHIFT (31U)
 
 typedef struct _nmpa_cfg_info
@@ -226,36 +228,161 @@ typedef enum _ffr_bank_type
 extern "C" {
 #endif
 
-/*! Generic APIs for FFR */
-status_t FFR_Init(flash_config_t *config);
-status_t FFR_Deinit(flash_config_t *config);
+/*!
+ * @name FFR APIs
+ * @{
+ */
 
-/*! APIs to access CFPA pages */
-status_t FFR_CustomerPagesInit(flash_config_t *config);
+/*!
+ * @brief Initializes the global FFR properties structure members.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ *
+ * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
+ */
+status_t FFR_Init(flash_config_t *config);
+
+/*!
+ * @brief Enable firewall for all flash banks.
+ *
+ * CFPA, CMPA, and NMPA flash areas region will be locked, After this function executed;
+ * Unless the board is reset again.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ *
+ * @retval #kStatus_FLASH_Success An invalid argument is provided.
+ * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
+ */
+status_t FFR_Lock_All(flash_config_t *config);
+
+/*!
+ * @brief APIs to access CFPA pages
+ *
+ * This routine will erase CFPA and program the CFPA page with passed data.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ * @param page_data A pointer to the source buffer of data that is to be programmed
+ *        into the CFPA.
+ * @param valid_len The length, given in bytes, to be programmed.
+ *
+ * @retval #kStatus_FLASH_Success The desire page-data were programed successfully into CFPA.
+ * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
+ * @retval kStatus_FTFx_AddressError Address is out of range.
+ * @retval #kStatus_FLASH_FfrBankIsLocked The CFPA was locked.
+ * @retval #kStatus_FLASH_OutOfDateCfpaPage It is not newest CFPA page.
+ */
 status_t FFR_InfieldPageWrite(flash_config_t *config, uint8_t *page_data, uint32_t valid_len);
-/*! Read data stored in 'Customer In-field Page'. */
+
+/*!
+ * @brief APIs to access CFPA pages
+ *
+ * Generic read function, used by customer to read data stored in 'Customer In-field Page'.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ * @param pData A pointer to the dest buffer of data that is to be read from 'Customer In-field Page'.
+ * @param offset An offset from the 'Customer In-field Page' start address.
+ * @param len The length, given in bytes, to be read.
+ *
+ * @retval #kStatus_FLASH_Success Get data from 'Customer In-field Page'.
+ * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
+ * @retval kStatus_FTFx_AddressError Address is out of range.
+ * @retval #kStatus_FLASH_CommandFailure access error.
+ */
 status_t FFR_GetCustomerInfieldData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len);
 
-/*! APIs to access CMPA pages */
-bool FFR_IsCmpaCfgPageUpdateInProgress(flash_config_t *config);
-status_t FFR_RecoverCmpaCfgPage(flash_config_t *config);
-status_t FFR_ProcessCmpaCfgPageUpdate(flash_config_t *config, cmpa_prog_process_t option);
+/*!
+ * @brief APIs to access CMPA pages
+ *
+ * This routine will erase "customer factory page" and program the page with passed data.
+ * If 'seal_part' parameter is TRUE then the routine will compute SHA256 hash of
+ * the page contents and then programs the pages.
+ * 1.During development customer code uses this API with 'seal_part' set to FALSE.
+ * 2.During manufacturing this parameter should be set to TRUE to seal the part
+ * from further modifications
+ * 3.This routine checks if the page is sealed or not. A page is said to be sealed if
+ * the SHA256 value in the page has non-zero value. On boot ROM locks the firewall for
+ * the region if hash is programmed anyways. So, write/erase commands will fail eventually.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ * @param page_data A pointer to the source buffer of data that is to be programmed
+ *        into the "customer factory page".
+ * @param seal_part Set fasle for During development customer code.
+ *
+ * @retval #kStatus_FLASH_Success The desire page-data were programed successfully into CMPA.
+ * @retval #kStatus_FLASH_InvalidArgument Parameter is not aligned with the specified baseline.
+ * @retval kStatus_FTFx_AddressError Address is out of range.
+ * @retval #kStatus_FLASH_CommandFailure access error.
+ */
 status_t FFR_CustFactoryPageWrite(flash_config_t *config, uint8_t *page_data, bool seal_part);
-/*! Read data stored in 'Customer Factory CFG Page'. */
+
+/*!
+ * @brief APIs to access CMPA page
+ *
+ * Read data stored in 'Customer Factory CFG Page'.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ * @param pData A pointer to the dest buffer of data that is to be read
+ *            from the Customer Factory CFG Page.
+ * @param offset Address offset relative to the CMPA area.
+ * @param len The length, given in bytes to be read.
+ *
+ * @retval #kStatus_FLASH_Success Get data from 'Customer Factory CFG Page'.
+ * @retval #kStatus_FLASH_InvalidArgument Parameter is not aligned with the specified baseline.
+ * @retval kStatus_FTFx_AddressError Address is out of range.
+ * @retval #kStatus_FLASH_CommandFailure access error.
+ */
 status_t FFR_GetCustomerData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len);
+
+/*!
+ * @brief APIs to access CMPA page
+ *
+ * 1.SW should use this API routine to get the UUID of the chip.
+ * 2.Calling routine should pass a pointer to buffer which can hold 128-bit value.
+ */
+status_t FFR_GetUUID(flash_config_t *config, uint8_t *uuid);
+
+/*!
+ * @brief This routine writes the 3 pages allocated for Key store data,
+ *
+ * 1.Used during manufacturing. Should write pages when 'customer factory page' is not in sealed state.
+ * 2.Optional routines to set individual data members (activation code, key codes etc) to construct
+ * the key store structure in RAM before committing it to IFR/FFR.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ * @param pKeyStore A Pointer to the 3 pages allocated for Key store data.
+ *        that will be written to 'customer factory page'.
+ *
+ * @retval #kStatus_FLASH_Success The key were programed successfully into FFR.
+ * @retval #kStatus_FLASH_InvalidArgument Parameter is not aligned with the specified baseline.
+ * @retval kStatus_FTFx_AddressError Address is out of range.
+ * @retval #kStatus_FLASH_CommandFailure access error.
+ */
 status_t FFR_KeystoreWrite(flash_config_t *config, ffr_key_store_t *pKeyStore);
+
+/*!
+ * @brief Get/Read Key store code routines
+ *
+ * 1. Calling code should pass buffer pointer which can hold activation code 1192 bytes.
+ * 2. Check if flash aperture is small or regular and read the data appropriately.
+ */
 status_t FFR_KeystoreGetAC(flash_config_t *config, uint8_t *pActivationCode);
+
+/*!
+ * @brief Get/Read Key store code routines
+ *
+ * 1. Calling code should pass buffer pointer which can hold key code 52 bytes.
+ * 2. Check if flash aperture is small or regular and read the data appropriately.
+ * 3. keyIndex specifies which key code is read.
+ */
 status_t FFR_KeystoreGetKC(flash_config_t *config, uint8_t *pKeyCode, ffr_key_type_t keyIndex);
 
-/*! APIs to access NMPA pages */
-status_t FFR_NxpAreaCheckIntegrity(flash_config_t *config);
-status_t FFR_GetRompatchData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len);
-/*! Read data stored in 'NXP Manufacuring Programmed CFG Page'. */
-status_t FFR_GetManufactureData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len);
-status_t FFR_GetUUID(flash_config_t *config, uint8_t *uuid);
+/*@}*/
 
 #ifdef __cplusplus
 }
 #endif
+
+/*@}*/
 
 #endif /*! __FSL_FLASH_FFR_H_ */

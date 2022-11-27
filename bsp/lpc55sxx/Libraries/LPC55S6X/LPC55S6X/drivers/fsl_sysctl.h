@@ -1,5 +1,5 @@
 /*
- * Copyright  2018 NXP
+ * Copyright  2019 NXP
  * All rights reserved.
  *
  *
@@ -29,7 +29,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief Group sysctl driver version for SDK */
-#define FSL_SYSCTL_DRIVER_VERSION (MAKE_VERSION(2, 0, 2)) /*!< Version 2.0.2. */
+#define FSL_SYSCTL_DRIVER_VERSION (MAKE_VERSION(2, 0, 5)) /*!< Version 2.0.5. */
 /*@}*/
 
 /*! @brief SYSCTL share set*/
@@ -63,22 +63,22 @@ enum _sysctl_share_src
 /*! @brief SYSCTL shared data out mask */
 enum _sysctl_dataout_mask
 {
-    kSYSCTL_Flexcomm0DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC0DATAOUTEN_MASK, /*!< share set 0 */
-    kSYSCTL_Flexcomm1DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC1DATAOUTEN_MASK, /*!< share set 1 */
-    kSYSCTL_Flexcomm2DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_F20DATAOUTEN_MASK, /*!< share set 2 */
-    kSYSCTL_Flexcomm4DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC4DATAOUTEN_MASK, /*!< share set 4 */
-    kSYSCTL_Flexcomm5DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC5DATAOUTEN_MASK, /*!< share set 5 */
-    kSYSCTL_Flexcomm6DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC6DATAOUTEN_MASK, /*!< share set 6 */
-    kSYSCTL_Flexcomm7DataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC7DATAOUTEN_MASK, /*!< share set 7 */
+    kSYSCTL_Flexcomm0DataOut = SYSCTL_SHAREDCTRLSET_FC0DATAOUTEN_MASK, /*!< share set 0 */
+    kSYSCTL_Flexcomm1DataOut = SYSCTL_SHAREDCTRLSET_FC1DATAOUTEN_MASK, /*!< share set 1 */
+    kSYSCTL_Flexcomm2DataOut = SYSCTL_SHAREDCTRLSET_FC2DATAOUTEN_MASK, /*!< share set 2 */
+    kSYSCTL_Flexcomm4DataOut = SYSCTL_SHAREDCTRLSET_FC4DATAOUTEN_MASK, /*!< share set 4 */
+    kSYSCTL_Flexcomm5DataOut = SYSCTL_SHAREDCTRLSET_FC5DATAOUTEN_MASK, /*!< share set 5 */
+    kSYSCTL_Flexcomm6DataOut = SYSCTL_SHAREDCTRLSET_FC6DATAOUTEN_MASK, /*!< share set 6 */
+    kSYSCTL_Flexcomm7DataOut = SYSCTL_SHAREDCTRLSET_FC7DATAOUTEN_MASK, /*!< share set 7 */
 };
 
 /*! @brief SYSCTL flexcomm signal */
 typedef enum _sysctl_sharedctrlset_signal
 {
-    kSYSCTL_SharedCtrlSignalSCK     = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDSCKSEL_SHIFT,  /*!< SCK signal */
-    kSYSCTL_SharedCtrlSignalWS      = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDWSSEL_SHIFT,   /*!< WS signal */
-    kSYSCTL_SharedCtrlSignalDataIn  = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDDATASEL_SHIFT, /*!< Data in signal */
-    kSYSCTL_SharedCtrlSignalDataOut = SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC0DATAOUTEN_SHIFT,  /*!< Data out signal */
+    kSYSCTL_SharedCtrlSignalSCK     = SYSCTL_SHAREDCTRLSET_SHAREDSCKSEL_SHIFT,  /*!< SCK signal */
+    kSYSCTL_SharedCtrlSignalWS      = SYSCTL_SHAREDCTRLSET_SHAREDWSSEL_SHIFT,   /*!< WS signal */
+    kSYSCTL_SharedCtrlSignalDataIn  = SYSCTL_SHAREDCTRLSET_SHAREDDATASEL_SHIFT, /*!< Data in signal */
+    kSYSCTL_SharedCtrlSignalDataOut = SYSCTL_SHAREDCTRLSET_FC0DATAOUTEN_SHIFT,  /*!< Data out signal */
 } sysctl_sharedctrlset_signal_t;
 /*******************************************************************************
  * API
@@ -138,7 +138,7 @@ void SYSCTL_SetFlexcommShareSet(SYSCTL_Type *base,
  * @param base Base address of the SYSCTL peripheral
  * @param flexCommIndex index of flexcomm,reference _sysctl_share_src
  * @param signal FCCTRLSEL signal shift
- * @param setIndex share set for sck, reference _sysctl_share_set_index
+ * @param set share set for sck, reference _sysctl_share_set_index
  *
  */
 void SYSCTL_SetShareSet(SYSCTL_Type *base, uint32_t flexCommIndex, sysctl_fcctrlsel_signal_t signal, uint32_t set);
@@ -166,7 +166,8 @@ void SYSCTL_SetShareSetSrc(SYSCTL_Type *base,
  *
  * @param base Base address of the SYSCTL peripheral
  * @param setIndex index of share set, reference _sysctl_share_set_index
- * @param sckShareSrc sck source fro this share set,reference _sysctl_share_src
+ * @param signal FCCTRLSEL signal shift
+ * @param shareSrc sck source fro this share set,reference _sysctl_share_src
  *
  */
 void SYSCTL_SetShareSignalSrc(SYSCTL_Type *base,

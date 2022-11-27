@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NXP
+ * Copyright 2018-2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -30,15 +30,15 @@
 #endif
 
 /*! @brief Flash driver version for SDK*/
-#define FSL_FLASH_DRIVER_VERSION (MAKE_VERSION(2, 0, 0)) /*!< Version 2.0.0. */
+#define FSL_FLASH_DRIVER_VERSION (MAKE_VERSION(2, 1, 4)) /*!< Version 2.1.4. */
 
 /*! @brief Flash driver version for ROM*/
 enum _flash_driver_version_constants
 {
     kFLASH_DriverVersionName   = 'F', /*!< Flash driver version name.*/
     kFLASH_DriverVersionMajor  = 2,   /*!< Major flash driver version.*/
-    kFLASH_DriverVersionMinor  = 0,   /*!< Minor flash driver version.*/
-    kFLASH_DriverVersionBugfix = 0    /*!< Bugfix for flash driver version.*/
+    kFLASH_DriverVersionMinor  = 1,   /*!< Minor flash driver version.*/
+    kFLASH_DriverVersionBugfix = 3    /*!< Bugfix for flash driver version.*/
 };
 
 /*@}*/
@@ -61,13 +61,13 @@ enum _flash_driver_version_constants
  */
 /*! @brief Flash driver status group. */
 #if defined(kStatusGroup_FlashDriver)
-#define kStatusGroupGeneric kStatusGroup_Generic
+#define kStatusGroupGeneric     kStatusGroup_Generic
 #define kStatusGroupFlashDriver kStatusGroup_FlashDriver
 #elif defined(kStatusGroup_FLASHIAP)
-#define kStatusGroupGeneric kStatusGroup_Generic
+#define kStatusGroupGeneric     kStatusGroup_Generic
 #define kStatusGroupFlashDriver kStatusGroup_FLASH
 #else
-#define kStatusGroupGeneric 0
+#define kStatusGroupGeneric     0
 #define kStatusGroupFlashDriver 1
 #endif
 
@@ -350,12 +350,14 @@ status_t FLASH_Init(flash_config_t *config);
  *
  * @param config The pointer to the storage for the driver runtime state.
  * @param start The start address of the desired flash memory to be erased.
- *              The start address does not need to be sector-aligned.
+ *              The start address need to be 512bytes-aligned.
  * @param lengthInBytes The length, given in bytes (not words or long-words)
- *                      to be erased. Must be word-aligned.
+ *                      to be erased. Must be 512bytes-aligned.
  * @param key The value used to validate all flash erase APIs.
  *
- * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_Success API was executed successfully;
+ *         the appropriate number of flash sectors based on the desired
+ *         start address and length were erased successfully.
  * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
  * @retval #kStatus_FLASH_AlignmentError The parameter is not aligned with the specified baseline.
  * @retval #kStatus_FLASH_AddressError The address is out of range.
@@ -381,13 +383,14 @@ status_t FLASH_Erase(flash_config_t *config, uint32_t start, uint32_t lengthInBy
  *
  * @param config A pointer to the storage for the driver runtime state.
  * @param start The start address of the desired flash memory to be programmed. Must be
- *              word-aligned.
+ *              512bytes-aligned.
  * @param src A pointer to the source buffer of data that is to be programmed
  *            into the flash.
  * @param lengthInBytes The length, given in bytes (not words or long-words),
- *                      to be programmed. Must be word-aligned.
+ *                      to be programmed. Must be 512bytes-aligned.
  *
- * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_Success API was executed successfully; the desired data were programed successfully
+ *         into flash based on desired start address and length.
  * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
  * @retval #kStatus_FLASH_AlignmentError Parameter is not aligned with the specified baseline.
  * @retval #kStatus_FLASH_AddressError Address is out of range.
@@ -400,6 +403,31 @@ status_t FLASH_Erase(flash_config_t *config, uint32_t start, uint32_t lengthInBy
 status_t FLASH_Program(flash_config_t *config, uint32_t start, uint8_t *src, uint32_t lengthInBytes);
 
 /*@}*/
+
+/*!
+ * @brief Reads flash at locations passed in through parameters.
+ *
+ * This function read the flash memory from a given flash area as determined
+ * by the start address and the length.
+ *
+ * @param config A pointer to the storage for the driver runtime state.
+ * @param start The start address of the desired flash memory to be read.
+ * @param dest A pointer to the dest buffer of data that is to be read
+ *            from the flash.
+ * @param lengthInBytes The length, given in bytes (not words or long-words),
+ *                      to be read.
+ *
+ * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
+ * @retval #kStatus_FLASH_AlignmentError Parameter is not aligned with the specified baseline.
+ * @retval #kStatus_FLASH_AddressError Address is out of range.
+ * @retval #kStatus_FLASH_AccessError Invalid instruction codes and out-of bounds addresses.
+ * @retval #kStatus_FLASH_CommandFailure Run-time error during the command execution.
+ * @retval #kStatus_FLASH_CommandFailure Run-time error during the command execution.
+ * @retval #kStatus_FLASH_CommandNotSupported Flash API is not supported.
+ * @retval #kStatus_FLASH_EccError A correctable or uncorrectable error during command execution.
+ */
+status_t FLASH_Read(flash_config_t *config, uint32_t start, uint8_t *dest, uint32_t lengthInBytes);
 
 /*!
  * @name Verification
@@ -415,12 +443,11 @@ status_t FLASH_Program(flash_config_t *config, uint32_t start, uint8_t *src, uin
  *
  * @param config A pointer to the storage for the driver runtime state.
  * @param start The start address of the desired flash memory to be verified.
- *        The start address does not need to be sector-aligned but must be word-aligned.
+ *        The start address need to be 512bytes-aligned.
  * @param lengthInBytes The length, given in bytes (not words or long-words),
- *        to be verified. Must be word-aligned.
- * @param margin Read margin choice.
+ *        to be verified. Must be 512bytes-aligned.
  *
- * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_Success API was executed successfully; the specified FLASH region has been erased.
  * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
  * @retval #kStatus_FLASH_AlignmentError Parameter is not aligned with specified baseline.
  * @retval #kStatus_FLASH_AddressError Address is out of range.
@@ -440,18 +467,19 @@ status_t FLASH_VerifyErase(flash_config_t *config, uint32_t start, uint32_t leng
  * flash area as determined by the start address and length.
  *
  * @param config A pointer to the storage for the driver runtime state.
- * @param start The start address of the desired flash memory to be verified. Must be word-aligned.
+ * @param start The start address of the desired flash memory to be verified. need be 512bytes-aligned.
  * @param lengthInBytes The length, given in bytes (not words or long-words),
- *        to be verified. Must be word-aligned.
+ *        to be verified. need be 512bytes-aligned.
  * @param expectedData A pointer to the expected data that is to be
  *        verified against.
- * @param margin Read margin choice.
  * @param failedAddress A pointer to the returned failing address.
  * @param failedData A pointer to the returned failing data.  Some derivatives do
  *        not include failed data as part of the FCCOBx registers.  In this
  *        case, zeros are returned upon failure.
  *
- * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_Success API was executed successfully;
+ *         the desired data have been successfully programed into specified FLASH region.
+ *
  * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
  * @retval #kStatus_FLASH_AlignmentError Parameter is not aligned with specified baseline.
  * @retval #kStatus_FLASH_AddressError Address is out of range.
@@ -483,7 +511,7 @@ status_t FLASH_VerifyProgram(flash_config_t *config,
  *        enum flash_property_tag_t
  * @param value A pointer to the value returned for the desired flash property.
  *
- * @retval #kStatus_FLASH_Success API was executed successfully.
+ * @retval #kStatus_FLASH_Success API was executed successfully; the flash property was stored to value.
  * @retval #kStatus_FLASH_InvalidArgument An invalid argument is provided.
  * @retval #kStatus_FLASH_UnknownProperty An unknown property tag.
  */
@@ -494,5 +522,7 @@ status_t FLASH_GetProperty(flash_config_t *config, flash_property_tag_t whichPro
 #ifdef __cplusplus
 }
 #endif
+
+/*@}*/
 
 #endif /* __FLASH_FLASH_H_ */

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2019 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -17,8 +17,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief FlexCOMM driver version 2.0.1. */
-#define FSL_FLEXCOMM_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+/*! @brief FlexCOMM driver version 2.0.2. */
+#define FSL_FLEXCOMM_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
 /*@}*/
 
 /*! @brief FLEXCOMM peripheral modes. */
@@ -53,7 +53,7 @@ status_t FLEXCOMM_Init(void *base, FLEXCOMM_PERIPH_T periph);
 
 /*! @brief Sets IRQ handler for given FLEXCOMM module. It is used by drivers register IRQ handler according to FLEXCOMM
  * mode */
-void FLEXCOMM_SetIRQHandler(void *base, flexcomm_irq_handler_t handler, void *handle);
+void FLEXCOMM_SetIRQHandler(void *base, flexcomm_irq_handler_t handler, void *flexcommHandle);
 
 #if defined(__cplusplus)
 }

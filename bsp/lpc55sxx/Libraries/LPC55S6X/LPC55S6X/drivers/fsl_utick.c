@@ -1,13 +1,15 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2018 NXP
+ * Copyright 2016-2019, 2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include "fsl_utick.h"
+#if !(defined(FSL_FEATURE_UTICK_HAS_NO_PDCFG) && FSL_FEATURE_UTICK_HAS_NO_PDCFG)
 #include "fsl_power.h"
+#endif
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -52,7 +54,11 @@ static const reset_ip_name_t s_utickResets[] = UTICK_RSTS;
 #endif
 
 /* UTICK ISR for transactional APIs. */
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+static utick_isr_t s_utickIsr = (utick_isr_t)DefaultISR;
+#else
 static utick_isr_t s_utickIsr;
+#endif
 
 /*******************************************************************************
  * Code
@@ -95,7 +101,12 @@ void UTICK_SetTick(UTICK_Type *base, utick_mode_t mode, uint32_t count, utick_ca
 
     /* Save the handle in global variables to support the double weak mechanism. */
     s_utickHandle[instance] = cb;
+#if ((defined(FSL_FEATURE_SOC_SYSCON_COUNT) && (FSL_FEATURE_SOC_SYSCON_COUNT > 0)) && \
+     !(defined(FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS) && FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS))
     EnableDeepSleepIRQ(s_utickIRQ[instance]);
+#else
+    (void)EnableIRQ(s_utickIRQ[instance]);
+#endif /* FSL_FEATURE_SOC_SYSCON_COUNT && !FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS */
     base->CTRL = count | UTICK_CTRL_REPEAT(mode);
 }
 
@@ -179,42 +190,41 @@ void UTICK_ClearStatusFlags(UTICK_Type *base)
 void UTICK_HandleIRQ(UTICK_Type *base, utick_callback_t cb)
 {
     UTICK_ClearStatusFlags(base);
-    if (cb)
+    if (cb != NULL)
     {
         cb();
     }
 }
 
 #if defined(UTICK0)
+void UTICK0_DriverIRQHandler(void);
 void UTICK0_DriverIRQHandler(void)
 {
     s_utickIsr(UTICK0, s_utickHandle[0]);
-/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
-  exception return operation might vector to incorrect interrupt */
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
+    SDK_ISR_EXIT_BARRIER;
 }
 #endif
 #if defined(UTICK1)
+void UTICK1_DriverIRQHandler(void);
 void UTICK1_DriverIRQHandler(void)
 {
     s_utickIsr(UTICK1, s_utickHandle[1]);
-/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
-  exception return operation might vector to incorrect interrupt */
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
+    SDK_ISR_EXIT_BARRIER;
 }
 #endif
 #if defined(UTICK2)
+void UTICK2_DriverIRQHandler(void);
 void UTICK2_DriverIRQHandler(void)
 {
     s_utickIsr(UTICK2, s_utickHandle[2]);
-/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
-  exception return operation might vector to incorrect interrupt */
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
+    SDK_ISR_EXIT_BARRIER;
+}
 #endif
+#if defined(UTICK)
+void UTICK_DriverIRQHandler(void);
+void UTICK_DriverIRQHandler(void)
+{
+    s_utickIsr(UTICK, s_utickHandle[0]);
+    SDK_ISR_EXIT_BARRIER;
 }
 #endif

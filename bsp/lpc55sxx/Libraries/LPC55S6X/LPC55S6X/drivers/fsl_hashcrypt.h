@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 NXP
+ * Copyright 2017-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -26,9 +26,9 @@ enum _hashcrypt_status
  */
 /*! @name Driver version */
 /*@{*/
-/*! @brief HASHCRYPT driver version. Version 2.0.2.
+/*! @brief HASHCRYPT driver version. Version 2.2.5.
  *
- * Current version: 2.0.2
+ * Current version: 2.2.5
  *
  * Change log:
  * - Version 2.0.0
@@ -37,18 +37,55 @@ enum _hashcrypt_status
  *   - Support loading AES key from unaligned address
  * - Version 2.0.2
  *   - Support loading AES key from unaligned address for different compiler and core variants
+ * - Version 2.0.3
+ *   - Remove SHA512 and AES ICB algorithm definitions
+ * - Version 2.0.4
+ *   - Add SHA context switch support
+ * - Version 2.1.0
+ *   - Update the register name and macro to align with new header.
+ * - Version 2.1.1
+ *   - Fix MISRA C-2012.
+ * - Version 2.1.2
+ *   - Support loading AES input data from unaligned address.
+ * - Version 2.1.3
+ *   - Fix MISRA C-2012.
+ * - Version 2.1.4
+ *   - Fix context switch cannot work when switching from AES.
+ * - Version 2.1.5
+ *   - Add data synchronization barriere inside hashcrypt_sha_ldm_stm_16_words()
+ *     to prevent possible optimization issue.
+ * - Version 2.2.0
+ *   - Add AES-OFB and AES-CFB mixed IP/SW modes.
+ * - Version 2.2.1
+ *   - Add data synchronization barrier inside hashcrypt_sha_ldm_stm_16_words()
+ *     prevent compiler from reordering memory write when -O2 or higher is used.
+ * - Version 2.2.2
+ *   - Add data synchronization barrier inside hashcrypt_sha_ldm_stm_16_words()
+ *     to fix optimization issue
+ * - Version 2.2.3
+ *   - Added check for size in hashcrypt_aes_one_block to prevent overflowing COUNT field in MEMCTRL register, if its
+ * bigger than COUNT field do a multiple runs.
+ * - Version 2.2.4
+ *   - In all HASHCRYPT_AES_xx functions have been added setting CTRL_MODE bitfield to 0 after processing data, which
+ * decreases power consumption.
+ * - Version 2.2.5
+ *   - Add data synchronization barrier and instruction  synchronization barrier inside
+ * hashcrypt_sha_process_message_data() to fix optimization issue
  */
-#define FSL_HASHCRYPT_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
+#define FSL_HASHCRYPT_DRIVER_VERSION (MAKE_VERSION(2, 2, 5))
 /*@}*/
+
+/*! @brief Algorithm definitions correspond with the values for Mode field in Control register !*/
+#define HASHCRYPT_MODE_SHA1   0x1
+#define HASHCRYPT_MODE_SHA256 0x2
+#define HASHCRYPT_MODE_AES    0x4
 
 /*! @brief Algorithm used for Hashcrypt operation */
 typedef enum _hashcrypt_algo_t
 {
-    kHASHCRYPT_Sha1   = 1, /*!< SHA_1 */
-    kHASHCRYPT_Sha256 = 2, /*!< SHA_256 */
-    kHASHCRYPT_Sha512 = 3, /*!< SHA_512 */
-    kHASHCRYPT_Aes    = 4, /*!< AES */
-    kHASHCRYPT_AesIcb = 5, /*!< AES_ICB */
+    kHASHCRYPT_Sha1   = HASHCRYPT_MODE_SHA1,   /*!< SHA_1 */
+    kHASHCRYPT_Sha256 = HASHCRYPT_MODE_SHA256, /*!< SHA_256 */
+    kHASHCRYPT_Aes    = HASHCRYPT_MODE_AES,    /*!< AES */
 } hashcrypt_algo_t;
 
 /*! @} */
@@ -63,9 +100,9 @@ typedef enum _hashcrypt_algo_t
  */
 
 /*! AES block size in bytes */
-#define HASHCRYPT_AES_BLOCK_SIZE 16
-#define AES_ENCRYPT 0
-#define AES_DECRYPT 1
+#define HASHCRYPT_AES_BLOCK_SIZE 16U
+#define AES_ENCRYPT              0
+#define AES_DECRYPT              1
 
 /*! @brief AES mode */
 typedef enum _hashcrypt_aes_mode_t
@@ -116,7 +153,11 @@ typedef struct _hashcrypt_handle hashcrypt_handle_t;
  */
 
 /*! @brief HASHCRYPT HASH Context size. */
+#if defined(FSL_FEATURE_HASHCRYPT_HAS_RELOAD_FEATURE) && (FSL_FEATURE_HASHCRYPT_HAS_RELOAD_FEATURE > 0)
+#define HASHCRYPT_HASH_CTX_SIZE 30
+#else
 #define HASHCRYPT_HASH_CTX_SIZE 22
+#endif
 
 /*! @brief Storage type used to save hash context. */
 typedef struct _hashcrypt_hash_ctx_t
@@ -287,6 +328,68 @@ status_t HASHCRYPT_AES_CryptCtr(HASHCRYPT_Type *base,
                                 uint8_t counterlast[HASHCRYPT_AES_BLOCK_SIZE],
                                 size_t *szLeft);
 
+/*!
+ * @brief Encrypts or decrypts AES using OFB block mode.
+ *
+ * Encrypts or decrypts AES using OFB block mode.
+ * AES OFB mode uses only forward AES cipher and same algorithm for encryption and decryption.
+ * The only difference between encryption and decryption is that, for encryption, the input argument
+ * is plain text and the output argument is cipher text. For decryption, the input argument is cipher text
+ * and the output argument is plain text.
+ *
+ * @param base HASHCRYPT peripheral base address
+ * @param handle Handle used for this request.
+ * @param input Input data for OFB block mode
+ * @param[out] output Output data for OFB block mode
+ * @param size Size of input and output data in bytes
+ * @param iv Input initial vector to combine with the first input block.
+ * @return Status from encrypt operation
+ */
+
+status_t HASHCRYPT_AES_CryptOfb(HASHCRYPT_Type *base,
+                                hashcrypt_handle_t *handle,
+                                const uint8_t *input,
+                                uint8_t *output,
+                                size_t size,
+                                const uint8_t iv[HASHCRYPT_AES_BLOCK_SIZE]);
+
+/*!
+ * @brief Encrypts AES using CFB block mode.
+ *
+ * @param base HASHCRYPT peripheral base address
+ * @param handle Handle used for this request.
+ * @param plaintext Input plain text to encrypt
+ * @param[out] ciphertext Output cipher text
+ * @param size Size of input and output data in bytes. Must be multiple of 16 bytes.
+ * @param iv Input initial vector to combine with the first input block.
+ * @return Status from encrypt operation
+ */
+
+status_t HASHCRYPT_AES_EncryptCfb(HASHCRYPT_Type *base,
+                                  hashcrypt_handle_t *handle,
+                                  const uint8_t *plaintext,
+                                  uint8_t *ciphertext,
+                                  size_t size,
+                                  const uint8_t iv[16]);
+
+/*!
+ * @brief Decrypts AES using CFB block mode.
+ *
+ * @param base HASHCRYPT peripheral base address
+ * @param handle Handle used for this request.
+ * @param ciphertext Input cipher text to decrypt
+ * @param[out] plaintext Output plaintext text
+ * @param size Size of input and output data in bytes. Must be multiple of 16 bytes.
+ * @param iv Input initial vector to combine with the first input block.
+ * @return Status from encrypt operation
+ */
+
+status_t HASHCRYPT_AES_DecryptCfb(HASHCRYPT_Type *base,
+                                  hashcrypt_handle_t *handle,
+                                  const uint8_t *ciphertext,
+                                  uint8_t *plaintext,
+                                  size_t size,
+                                  const uint8_t iv[16]);
 /*!
  *@}
  */ /* end of hashcrypt_driver_aes */
