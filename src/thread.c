@@ -641,6 +641,8 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
+        thread->error = -RT_EINTR;
+        
         rt_schedule();
 
         /* clear error number of this thread to RT_EOK */
@@ -1001,6 +1003,7 @@ rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
     {
         /* not to suspend */
         rt_hw_interrupt_enable(level);
+        rt_kprintf("-RT_EINTR\r\n");
         return -RT_EINTR;
     }
 #endif

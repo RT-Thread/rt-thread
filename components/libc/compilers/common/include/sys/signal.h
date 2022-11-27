@@ -24,10 +24,10 @@ extern "C" {
 
 #define SIGEV_NONE   1  /* No asynchronous notification shall be delivered */
                         /*   when the event of interest occurs. */
-#define SIGEV_SIGNAL 2  /* A queued signal, with an application defined */
+#define SIGEV_SIGNAL 0  /* A queued signal, with an application defined */
                         /*  value, shall be delivered when the event of */
                         /*  interest occurs. */
-#define SIGEV_THREAD 3  /* A notification function shall be called to */
+#define SIGEV_THREAD 2  /* A notification function shall be called to */
                         /*   perform notification. */
 
 /*  Signal Generation and Delivery, P1003.1b-1993, p. 63
@@ -41,9 +41,9 @@ union sigval
 
 struct sigevent
 {
-    int          sigev_notify;               /* Notification type */
+    union sigval sigev_value;
     int          sigev_signo;                /* Signal number */
-    union sigval sigev_value;                /* Signal value */
+    int          sigev_notify;               /* Notification type */
     void         (*sigev_notify_function)( union sigval );
                                              /* Notification function */
     void         *sigev_notify_attributes;   /* Notification Attributes, really pthread_attr_t */
