@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2018 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -23,13 +23,13 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief Defines WWDT driver version 2.1.2. */
-#define FSL_WWDT_DRIVER_VERSION (MAKE_VERSION(2, 1, 2))
+/*! @brief Defines WWDT driver version. */
+#define FSL_WWDT_DRIVER_VERSION (MAKE_VERSION(2, 1, 9))
 /*@}*/
 
 /*! @name Refresh sequence */
 /*@{*/
-#define WWDT_FIRST_WORD_OF_REFRESH (0xAAU)  /*!< First word of refresh sequence */
+#define WWDT_FIRST_WORD_OF_REFRESH  (0xAAU) /*!< First word of refresh sequence */
 #define WWDT_SECOND_WORD_OF_REFRESH (0x55U) /*!< Second word of refresh sequence */
 /*@}*/
 
@@ -149,6 +149,8 @@ static inline void WWDT_Enable(WWDT_Type *base)
 
 /*!
  * @brief Disables the WWDT module.
+ * @deprecated Do not use this function.  It will be deleted in next release version, for
+ *  once the bit field of WDEN written with a 1, it can not be re-written with a 0.
  *
  * This function write value into WWDT_MOD register to disable the WWDT.
  *

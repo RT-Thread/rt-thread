@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -24,8 +24,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief SPI DMA driver version 2.0.3. */
-#define FSL_SPI_DMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
+/*! @brief SPI DMA driver version 2.1.1. */
+#define FSL_SPI_DMA_DRIVER_VERSION (MAKE_VERSION(2, 1, 2))
 /*@}*/
 
 typedef struct _spi_dma_handle spi_dma_handle_t;
@@ -105,7 +105,7 @@ status_t SPI_MasterTransferDMA(SPI_Type *base, spi_dma_handle_t *handle, spi_tra
  *
  * @param base SPI base pointer
  * @param handle A pointer to the spi_master_dma_handle_t structure which stores the transfer state.
- * @param transfer A pointer to the spi_half_duplex_transfer_t structure.
+ * @param xfer A pointer to the spi_half_duplex_transfer_t structure.
  * @return status of status_t.
  */
 status_t SPI_MasterHalfDuplexTransferDMA(SPI_Type *base, spi_dma_handle_t *handle, spi_half_duplex_transfer_t *xfer);

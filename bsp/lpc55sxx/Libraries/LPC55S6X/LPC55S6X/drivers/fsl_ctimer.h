@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2018 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -23,7 +23,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_CTIMER_DRIVER_VERSION (MAKE_VERSION(2, 0, 2)) /*!< Version 2.0.2 */
+#define FSL_CTIMER_DRIVER_VERSION (MAKE_VERSION(2, 2, 2)) /*!< Version 2.2.2 */
 /*@}*/
 
 /*! @brief List of Timer capture channels */
@@ -31,10 +31,12 @@ typedef enum _ctimer_capture_channel
 {
     kCTIMER_Capture_0 = 0U, /*!< Timer capture channel 0 */
     kCTIMER_Capture_1,      /*!< Timer capture channel 1 */
-    kCTIMER_Capture_2,      /*!< Timer capture channel 2 */
+#if !(defined(FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2) && FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2)
+    kCTIMER_Capture_2, /*!< Timer capture channel 2 */
+#endif                 /* FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2 */
 #if defined(FSL_FEATURE_CTIMER_HAS_CCR_CAP3) && FSL_FEATURE_CTIMER_HAS_CCR_CAP3
     kCTIMER_Capture_3 /*!< Timer capture channel 3 */
-#endif                /* FSL_FEATURE_CTIMER_HAS_IR_CR3INT */
+#endif                /* FSL_FEATURE_CTIMER_HAS_CCR_CAP3 */
 } ctimer_capture_channel_t;
 
 /*! @brief List of capture edge options */
@@ -53,6 +55,15 @@ typedef enum _ctimer_match
     kCTIMER_Match_2,      /*!< Timer match register 2 */
     kCTIMER_Match_3       /*!< Timer match register 3 */
 } ctimer_match_t;
+
+/*! @brief List of external match */
+typedef enum _ctimer_external_match
+{
+    kCTIMER_External_Match_0 = (1U << 0), /*!< External match 0 */
+    kCTIMER_External_Match_1 = (1U << 1), /*!< External match 1 */
+    kCTIMER_External_Match_2 = (1U << 2), /*!< External match 2 */
+    kCTIMER_External_Match_3 = (1U << 3)  /*!< External match 3 */
+} ctimer_external_match_t;
 
 /*! @brief List of output control options */
 typedef enum _ctimer_match_output_control
@@ -82,7 +93,9 @@ typedef enum _ctimer_interrupt_enable
 #if !(defined(FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE) && (FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE))
     kCTIMER_Capture0InterruptEnable = CTIMER_CCR_CAP0I_MASK, /*!< Capture 0 interrupt */
     kCTIMER_Capture1InterruptEnable = CTIMER_CCR_CAP1I_MASK, /*!< Capture 1 interrupt */
+#if !(defined(FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2) && FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2)
     kCTIMER_Capture2InterruptEnable = CTIMER_CCR_CAP2I_MASK, /*!< Capture 2 interrupt */
+#endif                                                       /* FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2 */
 #if defined(FSL_FEATURE_CTIMER_HAS_CCR_CAP3) && FSL_FEATURE_CTIMER_HAS_CCR_CAP3
     kCTIMER_Capture3InterruptEnable = CTIMER_CCR_CAP3I_MASK, /*!< Capture 3 interrupt */
 #endif                                                       /* FSL_FEATURE_CTIMER_HAS_CCR_CAP3 */
@@ -99,7 +112,9 @@ typedef enum _ctimer_status_flags
 #if !(defined(FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE) && (FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE))
     kCTIMER_Capture0Flag = CTIMER_IR_CR0INT_MASK, /*!< Capture 0 interrupt flag */
     kCTIMER_Capture1Flag = CTIMER_IR_CR1INT_MASK, /*!< Capture 1 interrupt flag */
+#if !(defined(FSL_FEATURE_CTIMER_HAS_NO_IR_CR2INT) && FSL_FEATURE_CTIMER_HAS_NO_IR_CR2INT)
     kCTIMER_Capture2Flag = CTIMER_IR_CR2INT_MASK, /*!< Capture 2 interrupt flag */
+#endif                                            /* FSL_FEATURE_CTIMER_HAS_NO_IR_CR2INT */
 #if defined(FSL_FEATURE_CTIMER_HAS_IR_CR3INT) && FSL_FEATURE_CTIMER_HAS_IR_CR3INT
     kCTIMER_Capture3Flag = CTIMER_IR_CR3INT_MASK, /*!< Capture 3 interrupt flag */
 #endif                                            /* FSL_FEATURE_CTIMER_HAS_IR_CR3INT */
@@ -211,46 +226,47 @@ void CTIMER_GetDefaultConfig(ctimer_config_t *config);
  *
  * Enables PWM mode on the match channel passed in and will then setup the match value
  * and other match parameters to generate a PWM signal.
- * This function will assign match channel 3 to set the PWM cycle.
+ * This function can manually assign the specified channel to set the PWM cycle.
  *
  * @note When setting PWM output from multiple output pins, all should use the same PWM
  * period
  *
  * @param base             Ctimer peripheral base address
+ * @param pwmPeriodChannel Specify the channel to control the PWM period
  * @param matchChannel     Match pin to be used to output the PWM signal
  * @param pwmPeriod        PWM period match value
  * @param pulsePeriod      Pulse width match value
  * @param enableInt        Enable interrupt when the timer value reaches the match value of the PWM pulse,
- *                         if it is 0 then no interrupt is generated
- *
- * @return kStatus_Success on success
- *         kStatus_Fail If matchChannel passed in is 3; this channel is reserved to set the PWM period
+ *                         if it is 0 then no interrupt will be generated.
  */
-status_t CTIMER_SetupPwmPeriod(
-    CTIMER_Type *base, ctimer_match_t matchChannel, uint32_t pwmPeriod, uint32_t pulsePeriod, bool enableInt);
+status_t CTIMER_SetupPwmPeriod(CTIMER_Type *base,
+                               const ctimer_match_t pwmPeriodChannel,
+                               ctimer_match_t matchChannel,
+                               uint32_t pwmPeriod,
+                               uint32_t pulsePeriod,
+                               bool enableInt);
 
 /*!
  * @brief Configures the PWM signal parameters.
  *
  * Enables PWM mode on the match channel passed in and will then setup the match value
  * and other match parameters to generate a PWM signal.
- * This function will assign match channel 3 to set the PWM cycle.
+ * This function can manually assign the specified channel to set the PWM cycle.
  *
  * @note When setting PWM output from multiple output pins, all should use the same PWM
  * frequency. Please use CTIMER_SetupPwmPeriod to set up the PWM with high resolution.
  *
  * @param base             Ctimer peripheral base address
+ * @param pwmPeriodChannel Specify the channel to control the PWM period
  * @param matchChannel     Match pin to be used to output the PWM signal
  * @param dutyCyclePercent PWM pulse width; the value should be between 0 to 100
  * @param pwmFreq_Hz       PWM signal frequency in Hz
  * @param srcClock_Hz      Timer counter clock in Hz
  * @param enableInt        Enable interrupt when the timer value reaches the match value of the PWM pulse,
- *                         if it is 0 then no interrupt is generated
- *
- * @return kStatus_Success on success
- *         kStatus_Fail If matchChannel passed in is 3; this channel is reserved to set the PWM cycle
+ *                         if it is 0 then no interrupt will be generated.
  */
 status_t CTIMER_SetupPwm(CTIMER_Type *base,
+                         const ctimer_match_t pwmPeriodChannel,
                          ctimer_match_t matchChannel,
                          uint8_t dutyCyclePercent,
                          uint32_t pwmFreq_Hz,
@@ -273,13 +289,18 @@ static inline void CTIMER_UpdatePwmPulsePeriod(CTIMER_Type *base, ctimer_match_t
 /*!
  * @brief Updates the duty cycle of an active PWM signal.
  *
- * @note Please use CTIMER_UpdatePwmPulsePeriod to update the PWM with high resolution.
+ * @note Please use CTIMER_SetupPwmPeriod to update the PWM with high resolution.
+ * This function can manually assign the specified channel to set the PWM cycle.
  *
  * @param base             Ctimer peripheral base address
+ * @param pwmPeriodChannel Specify the channel to control the PWM period
  * @param matchChannel     Match pin to be used to output the PWM signal
  * @param dutyCyclePercent New PWM pulse width; the value should be between 0 to 100
  */
-void CTIMER_UpdatePwmDutycycle(CTIMER_Type *base, ctimer_match_t matchChannel, uint8_t dutyCyclePercent);
+void CTIMER_UpdatePwmDutycycle(CTIMER_Type *base,
+                               const ctimer_match_t pwmPeriodChannel,
+                               ctimer_match_t matchChannel,
+                               uint8_t dutyCyclePercent);
 
 /*! @}*/
 
@@ -293,6 +314,21 @@ void CTIMER_UpdatePwmDutycycle(CTIMER_Type *base, ctimer_match_t matchChannel, u
  * @param config       Pointer to the match configuration structure
  */
 void CTIMER_SetupMatch(CTIMER_Type *base, ctimer_match_t matchChannel, const ctimer_match_config_t *config);
+
+/*!
+ * @brief Get the status of output match.
+ *
+ * This function gets the status of output MAT, whether or not this output is connected to a pin.
+ * This status is driven to the MAT pins if the match function is selected via IOCON. 0 = LOW. 1 = HIGH.
+ *
+ * @param base         Ctimer peripheral base address
+ * @param matchChannel External match channel, user can obtain the status of multiple match channels
+ *                     at the same time by using the logic of "|"
+ *                     enumeration ::ctimer_external_match_t
+ * @return The mask of external match channel status flags. Users need to use the
+ *         _ctimer_external_match type to decode the return variables.
+ */
+uint32_t CTIMER_GetOutputMatchStatus(CTIMER_Type *base, uint32_t matchChannel);
 
 /*!
  * @brief Setup the capture.
@@ -347,7 +383,10 @@ static inline void CTIMER_EnableInterrupts(CTIMER_Type *base, uint32_t mask)
 
 /* Enable capture interrupts */
 #if !(defined(FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE) && (FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE))
-    base->CCR |= mask & (CTIMER_CCR_CAP0I_MASK | CTIMER_CCR_CAP1I_MASK | CTIMER_CCR_CAP2I_MASK
+    base->CCR |= mask & (CTIMER_CCR_CAP0I_MASK | CTIMER_CCR_CAP1I_MASK
+#if !(defined(FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2) && FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2)
+                         | CTIMER_CCR_CAP2I_MASK
+#endif /* FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2 */
 #if defined(FSL_FEATURE_CTIMER_HAS_CCR_CAP3) && FSL_FEATURE_CTIMER_HAS_CCR_CAP3
                          | CTIMER_CCR_CAP3I_MASK
 #endif /* FSL_FEATURE_CTIMER_HAS_CCR_CAP3 */
@@ -369,7 +408,10 @@ static inline void CTIMER_DisableInterrupts(CTIMER_Type *base, uint32_t mask)
 
 /* Disable capture interrupts */
 #if !(defined(FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE) && (FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE))
-    base->CCR &= ~(mask & (CTIMER_CCR_CAP0I_MASK | CTIMER_CCR_CAP1I_MASK | CTIMER_CCR_CAP2I_MASK
+    base->CCR &= ~(mask & (CTIMER_CCR_CAP0I_MASK | CTIMER_CCR_CAP1I_MASK
+#if !(defined(FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2) && FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2)
+                           | CTIMER_CCR_CAP2I_MASK
+#endif /* FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2 */
 #if defined(FSL_FEATURE_CTIMER_HAS_CCR_CAP3) && FSL_FEATURE_CTIMER_HAS_CCR_CAP3
                            | CTIMER_CCR_CAP3I_MASK
 #endif /* FSL_FEATURE_CTIMER_HAS_CCR_CAP3 */
@@ -395,7 +437,10 @@ static inline uint32_t CTIMER_GetEnabledInterrupts(CTIMER_Type *base)
 
 /* Get all the capture interrupts enabled */
 #if !(defined(FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE) && (FSL_FEATURE_CTIMER_HAS_NO_INPUT_CAPTURE))
-    enabledIntrs |= base->CCR & (CTIMER_CCR_CAP0I_MASK | CTIMER_CCR_CAP1I_MASK | CTIMER_CCR_CAP2I_MASK
+    enabledIntrs |= base->CCR & (CTIMER_CCR_CAP0I_MASK | CTIMER_CCR_CAP1I_MASK
+#if !(defined(FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2) && FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2)
+                                 | CTIMER_CCR_CAP2I_MASK
+#endif /* FSL_FEATURE_CTIMER_HAS_NO_CCR_CAP2 */
 #if defined(FSL_FEATURE_CTIMER_HAS_CCR_CAP3) && FSL_FEATURE_CTIMER_HAS_CCR_CAP3
                                  | CTIMER_CCR_CAP3I_MASK
 #endif /* FSL_FEATURE_CTIMER_HAS_CCR_CAP3 */

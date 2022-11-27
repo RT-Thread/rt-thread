@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2018 NXP
+ * Copyright 2016-2019, 2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -22,8 +22,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief UTICK driver version 2.0.2. */
-#define FSL_UTICK_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
+/*! @brief UTICK driver version 2.0.5. */
+#define FSL_UTICK_DRIVER_VERSION (MAKE_VERSION(2, 0, 5))
 /*@}*/
 
 /*! @brief UTICK timer operational mode. */
