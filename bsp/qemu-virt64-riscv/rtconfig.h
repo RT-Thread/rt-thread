@@ -125,6 +125,8 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_TTY
+#define RT_USING_CPUTIME
+#define RT_USING_CPUTIME_RISCV
 #define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -345,15 +347,6 @@
 
 
 /* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
-
 
 /* RISC-V QEMU virt64 configs */
 
