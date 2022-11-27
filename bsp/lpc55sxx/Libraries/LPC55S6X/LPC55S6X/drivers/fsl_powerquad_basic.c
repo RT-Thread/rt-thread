@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 NXP
+ * Copyright 2018-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -30,31 +30,35 @@ void PQ_GetDefaultConfig(pq_config_t *config)
     config->tmpFormat      = kPQ_Float;
     config->tmpPrescale    = 0;
     config->machineFormat  = kPQ_Float;
-    config->tmpBase        = (uint32_t *)0xE0000000;
+    config->tmpBase        = (uint32_t *)0xE0000000U;
 }
 
 void PQ_SetConfig(POWERQUAD_Type *base, const pq_config_t *config)
 {
-    assert(config);
+    assert(NULL != config);
 
-    base->TMPBASE = (uint32_t)config->tmpBase;
-    base->INAFORMAT =
-        ((uint32_t)config->inputAPrescale << 8U) | ((uint32_t)config->inputAFormat << 4U) | config->machineFormat;
-    base->INBFORMAT =
-        ((uint32_t)config->inputBPrescale << 8U) | ((uint32_t)config->inputBFormat << 4U) | config->machineFormat;
+    base->TMPBASE   = (uint32_t)config->tmpBase;
+    base->INAFORMAT = ((uint32_t)config->inputAPrescale << 8U) | ((uint32_t)config->inputAFormat << 4U) |
+                      (uint32_t)config->machineFormat;
+    base->INBFORMAT = ((uint32_t)config->inputBPrescale << 8U) | ((uint32_t)config->inputBFormat << 4U) |
+                      (uint32_t)config->machineFormat;
     base->TMPFORMAT =
-        ((uint32_t)config->tmpPrescale << 8U) | ((uint32_t)config->tmpFormat << 4U) | config->machineFormat;
-    base->OUTFORMAT =
-        ((uint32_t)config->outputPrescale << 8U) | ((uint32_t)config->outputFormat << 4U) | config->machineFormat;
+        ((uint32_t)config->tmpPrescale << 8U) | ((uint32_t)config->tmpFormat << 4U) | (uint32_t)config->machineFormat;
+    base->OUTFORMAT = ((uint32_t)config->outputPrescale << 8U) | ((uint32_t)config->outputFormat << 4U) |
+                      (uint32_t)config->machineFormat;
 }
 
 void PQ_Init(POWERQUAD_Type *base)
 {
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+#if defined(POWERQUAD_CLOCKS)
     CLOCK_EnableClock(kCLOCK_PowerQuad);
 #endif
+#endif
 #if !(defined(FSL_SDK_DISABLE_DRIVER_RESET_CONTROL) && FSL_SDK_DISABLE_DRIVER_RESET_CONTROL)
+#if defined(POWERQUAD_RSTS)
     RESET_PeripheralReset(kPOWERQUAD_RST_SHIFT_RSTn);
+#endif
 #endif
 
     /* Enable event used for WFE. */
@@ -66,7 +70,9 @@ void PQ_Init(POWERQUAD_Type *base)
 void PQ_Deinit(POWERQUAD_Type *base)
 {
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+#if defined(POWERQUAD_CLOCKS)
     CLOCK_DisableClock(kCLOCK_PowerQuad);
+#endif
 #endif
 }
 
@@ -113,7 +119,7 @@ void PQ_SetFormat(POWERQUAD_Type *base, pq_computationengine_t engine, pq_format
         config.tmpPrescale    = 0;
     }
 
-    if (CP_FFT == engine)
+    if (CP_FFT == (uint8_t)engine)
     {
         config.machineFormat = kPQ_32Bit;
     }

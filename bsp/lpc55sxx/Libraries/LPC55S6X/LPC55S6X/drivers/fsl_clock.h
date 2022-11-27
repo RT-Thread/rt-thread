@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 - 2019 , NXP
+ * Copyright 2017 - 2021 , NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -21,8 +21,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief CLOCK driver version 2.1.0. */
-#define FSL_CLOCK_DRIVER_VERSION (MAKE_VERSION(2, 1, 0))
+/*! @brief CLOCK driver version 2.3.6. */
+#define FSL_CLOCK_DRIVER_VERSION (MAKE_VERSION(2, 3, 6))
 /*@}*/
 
 /*! @brief Configure whether driver controls clock
@@ -52,7 +52,7 @@
 
 /* Definition for delay API in clock driver, users can redefine it to the real application. */
 #ifndef SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY
-#define SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY (100000000UL)
+#define SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY (150000000UL)
 #endif
 
 /*! @brief Clock ip name array for ROM. */
@@ -76,9 +76,9 @@
         kCLOCK_Fmc \
     }
 /*! @brief Clock ip name array for INPUTMUX. */
-#define INPUTMUX_CLOCKS                    \
-    {                                      \
-        kCLOCK_InputMux0, kCLOCK_InputMux1 \
+#define INPUTMUX_CLOCKS  \
+    {                    \
+        kCLOCK_InputMux0 \
     }
 /*! @brief Clock ip name array for IOCON. */
 #define IOCON_CLOCKS \
@@ -86,9 +86,9 @@
         kCLOCK_Iocon \
     }
 /*! @brief Clock ip name array for GPIO. */
-#define GPIO_CLOCKS                                                                        \
-    {                                                                                      \
-        kCLOCK_Gpio0, kCLOCK_Gpio1, kCLOCK_Gpio2, kCLOCK_Gpio3, kCLOCK_Gpio4, kCLOCK_Gpio5 \
+#define GPIO_CLOCKS                                            \
+    {                                                          \
+        kCLOCK_Gpio0, kCLOCK_Gpio1, kCLOCK_Gpio2, kCLOCK_Gpio3 \
     }
 /*! @brief Clock ip name array for PINT. */
 #define PINT_CLOCKS \
@@ -145,11 +145,6 @@
     {               \
         kCLOCK_Sct0 \
     }
-/*! @brief Clock ip name array for SCTIPU. */
-#define SCTIPU_CLOCKS \
-    {                 \
-        kCLOCK_Sctipu \
-    }
 /*! @brief Clock ip name array for UTICK. */
 #define UTICK_CLOCKS  \
     {                 \
@@ -184,30 +179,10 @@
         kCLOCK_FlexI2s0, kCLOCK_FlexI2s1, kCLOCK_FlexI2s2, kCLOCK_FlexI2s3, kCLOCK_FlexI2s4, kCLOCK_FlexI2s5, \
             kCLOCK_FlexI2s6, kCLOCK_FlexI2s7                                                                  \
     }
-/*! @brief Clock ip name array for USBTYPC. */
-#define USBTYPC_CLOCKS \
-    {                  \
-        kCLOCK_UsbTypc \
-    }
 /*! @brief Clock ip name array for CTIMER. */
 #define CTIMER_CLOCKS                                                             \
     {                                                                             \
         kCLOCK_Timer0, kCLOCK_Timer1, kCLOCK_Timer2, kCLOCK_Timer3, kCLOCK_Timer4 \
-    }
-/*! @brief Clock ip name array for PVT */
-#define PVT_CLOCKS \
-    {              \
-        kCLOCK_Pvt \
-    }
-/*! @brief Clock ip name array for EZHA */
-#define EZHA_CLOCKS \
-    {               \
-        kCLOCK_Ezha \
-    }
-/*! @brief Clock ip name array for EZHB */
-#define EZHB_CLOCKS \
-    {               \
-        kCLOCK_Ezhb \
     }
 /*! @brief Clock ip name array for COMP */
 #define COMP_CLOCKS \
@@ -233,11 +208,6 @@
 #define USBRAM_CLOCKS  \
     {                  \
         kCLOCK_UsbRam1 \
-    }
-/*! @brief Clock ip name array for OTP. */
-#define OTP_CLOCKS \
-    {              \
-        kCLOCK_Otp \
     }
 /*! @brief Clock ip name array for RNG. */
 #define RNG_CLOCKS \
@@ -323,9 +293,9 @@
 ------------------------------------------------------------------------------*/
 
 #define CLK_GATE_REG_OFFSET_SHIFT 8U
-#define CLK_GATE_REG_OFFSET_MASK 0xFFFFFF00U
-#define CLK_GATE_BIT_SHIFT_SHIFT 0U
-#define CLK_GATE_BIT_SHIFT_MASK 0x000000FFU
+#define CLK_GATE_REG_OFFSET_MASK  0xFFFFFF00U
+#define CLK_GATE_BIT_SHIFT_SHIFT  0U
+#define CLK_GATE_BIT_SHIFT_MASK   0x000000FFU
 
 #define CLK_GATE_DEFINE(reg_offset, bit_shift)                                  \
     ((((reg_offset) << CLK_GATE_REG_OFFSET_SHIFT) & CLK_GATE_REG_OFFSET_MASK) | \
@@ -341,108 +311,198 @@
 /*! @brief Clock gate name used for CLOCK_EnableClock/CLOCK_DisableClock. */
 typedef enum _clock_ip_name
 {
-    kCLOCK_IpInvalid    = 0U,
-    kCLOCK_Rom          = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 1),
-    kCLOCK_Sram1        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 3),
-    kCLOCK_Sram2        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 4),
-    kCLOCK_Sram3        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 5),
-    kCLOCK_Sram4        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 6),
-    kCLOCK_Flash        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 7),
-    kCLOCK_Fmc          = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 8),
-    kCLOCK_InputMux     = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 11),
-    kCLOCK_Iocon        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 13),
-    kCLOCK_Gpio0        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 14),
-    kCLOCK_Gpio1        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 15),
-    kCLOCK_Gpio2        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 16),
-    kCLOCK_Gpio3        = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 17),
-    kCLOCK_Pint         = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 18),
-    kCLOCK_Gint         = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 19),
-    kCLOCK_Dma0         = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 20),
-    kCLOCK_Crc          = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 21),
-    kCLOCK_Wwdt         = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 22),
-    kCLOCK_Rtc          = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 23),
-    kCLOCK_Mailbox      = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 26),
-    kCLOCK_Adc0         = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 27),
-    kCLOCK_Mrt          = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 0),
-    kCLOCK_OsTimer0     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 1),
-    kCLOCK_Sct0         = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 2),
-    kCLOCK_Sctipu       = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 6),
-    kCLOCK_Utick0       = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 10),
-    kCLOCK_FlexComm0    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11),
-    kCLOCK_FlexComm1    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12),
-    kCLOCK_FlexComm2    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13),
-    kCLOCK_FlexComm3    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14),
-    kCLOCK_FlexComm4    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15),
-    kCLOCK_FlexComm5    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16),
-    kCLOCK_FlexComm6    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17),
-    kCLOCK_FlexComm7    = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18),
-    kCLOCK_MinUart0     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11),
-    kCLOCK_MinUart1     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12),
-    kCLOCK_MinUart2     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13),
-    kCLOCK_MinUart3     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14),
-    kCLOCK_MinUart4     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15),
-    kCLOCK_MinUart5     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16),
-    kCLOCK_MinUart6     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17),
-    kCLOCK_MinUart7     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18),
-    kCLOCK_LSpi0        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11),
-    kCLOCK_LSpi1        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12),
-    kCLOCK_LSpi2        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13),
-    kCLOCK_LSpi3        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14),
-    kCLOCK_LSpi4        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15),
-    kCLOCK_LSpi5        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16),
-    kCLOCK_LSpi6        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17),
-    kCLOCK_LSpi7        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18),
-    kCLOCK_BI2c0        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11),
-    kCLOCK_BI2c1        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12),
-    kCLOCK_BI2c2        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13),
-    kCLOCK_BI2c3        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14),
-    kCLOCK_BI2c4        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15),
-    kCLOCK_BI2c5        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16),
-    kCLOCK_BI2c6        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17),
-    kCLOCK_BI2c7        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18),
-    kCLOCK_FlexI2s0     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11),
-    kCLOCK_FlexI2s1     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12),
-    kCLOCK_FlexI2s2     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13),
-    kCLOCK_FlexI2s3     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14),
-    kCLOCK_FlexI2s4     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15),
-    kCLOCK_FlexI2s5     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16),
-    kCLOCK_FlexI2s6     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17),
-    kCLOCK_FlexI2s7     = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18),
-    kCLOCK_UsbTypc      = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 20),
-    kCLOCK_Timer2       = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 22),
-    kCLOCK_Usbd0        = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 25),
-    kCLOCK_Timer0       = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 26),
-    kCLOCK_Timer1       = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 27),
-    kCLOCK_Pvt          = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 28),
-    kCLOCK_Ezha         = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 30),
-    kCLOCK_Ezhb         = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 31),
-    kCLOCK_Dma1         = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 1),
-    kCLOCK_Comp         = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 2),
-    kCLOCK_Sdio         = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 3),
-    kCLOCK_Usbh1        = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 4),
-    kCLOCK_Usbd1        = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 5),
-    kCLOCK_UsbRam1      = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 6),
-    kCLOCK_Usb1Clk      = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 7),
-    kCLOCK_Freqme       = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 8),
-    kCLOCK_Gpio4        = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 9),
-    kCLOCK_Gpio5        = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 10),
-    kCLOCK_Otp          = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 12),
-    kCLOCK_Rng          = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 13),
-    kCLOCK_InputMux1    = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 14),
-    kCLOCK_Sysctl       = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 15),
-    kCLOCK_Usbhmr0      = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 16),
-    kCLOCK_Usbhsl0      = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 17),
-    kCLOCK_HashCrypt    = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 18),
-    kCLOCK_PowerQuad    = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 19),
-    kCLOCK_PluLut       = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 20),
-    kCLOCK_Timer3       = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 21),
-    kCLOCK_Timer4       = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 22),
-    kCLOCK_Puf          = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 23),
-    kCLOCK_Casper       = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 24),
-    kCLOCK_AnalogCtrl   = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 27),
-    kCLOCK_Hs_Lspi      = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 28),
-    kCLOCK_Gpio_Sec     = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 29),
-    kCLOCK_Gpio_sec_Int = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 30)
+    kCLOCK_IpInvalid = 0U,                                /*!< Invalid Ip Name. */
+    kCLOCK_Rom       = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 1), /*!< Clock gate name: Rom. */
+
+    kCLOCK_Sram1 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 3), /*!< Clock gate name: Sram1. */
+
+    kCLOCK_Sram2 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 4), /*!< Clock gate name: Sram2. */
+
+    kCLOCK_Sram3 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 5), /*!< Clock gate name: Sram3. */
+
+    kCLOCK_Sram4 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 6), /*!< Clock gate name: Sram4. */
+
+    kCLOCK_Flash = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 7), /*!< Clock gate name: Flash. */
+
+    kCLOCK_Fmc = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 8), /*!< Clock gate name: Fmc. */
+
+    kCLOCK_InputMux = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 11), /*!< Clock gate name: InputMux. */
+
+    kCLOCK_Iocon = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 13), /*!< Clock gate name: Iocon. */
+
+    kCLOCK_Gpio0 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 14), /*!< Clock gate name: Gpio0. */
+
+    kCLOCK_Gpio1 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 15), /*!< Clock gate name: Gpio1. */
+
+    kCLOCK_Gpio2 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 16), /*!< Clock gate name: Gpio2. */
+
+    kCLOCK_Gpio3 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 17), /*!< Clock gate name: Gpio3. */
+
+    kCLOCK_Pint = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 18), /*!< Clock gate name: Pint. */
+
+    kCLOCK_Gint = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 19), /*!< Clock gate name: Gint. */
+
+    kCLOCK_Dma0 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 20), /*!< Clock gate name: Dma0. */
+
+    kCLOCK_Crc = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 21), /*!< Clock gate name: Crc. */
+
+    kCLOCK_Wwdt = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 22), /*!< Clock gate name: Wwdt. */
+
+    kCLOCK_Rtc = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 23), /*!< Clock gate name: Rtc. */
+
+    kCLOCK_Mailbox = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 26), /*!< Clock gate name: Mailbox. */
+
+    kCLOCK_Adc0 = CLK_GATE_DEFINE(AHB_CLK_CTRL0, 27), /*!< Clock gate name: Adc0. */
+
+    kCLOCK_Mrt = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 0), /*!< Clock gate name: Mrt. */
+
+    kCLOCK_OsTimer0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 1), /*!< Clock gate name: OsTimer0. */
+
+    kCLOCK_Sct0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 2), /*!< Clock gate name: Sct0. */
+
+    kCLOCK_Utick0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 10), /*!< Clock gate name: Utick0. */
+
+    kCLOCK_FlexComm0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11), /*!< Clock gate name: FlexComm0. */
+
+    kCLOCK_FlexComm1 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12), /*!< Clock gate name: FlexComm1. */
+
+    kCLOCK_FlexComm2 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13), /*!< Clock gate name: FlexComm2. */
+
+    kCLOCK_FlexComm3 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14), /*!< Clock gate name: FlexComm3. */
+
+    kCLOCK_FlexComm4 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15), /*!< Clock gate name: FlexComm4. */
+
+    kCLOCK_FlexComm5 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16), /*!< Clock gate name: FlexComm5. */
+
+    kCLOCK_FlexComm6 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17), /*!< Clock gate name: FlexComm6. */
+
+    kCLOCK_FlexComm7 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18), /*!< Clock gate name: FlexComm7. */
+
+    kCLOCK_MinUart0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11), /*!< Clock gate name: MinUart0. */
+
+    kCLOCK_MinUart1 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12), /*!< Clock gate name: MinUart1. */
+
+    kCLOCK_MinUart2 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13), /*!< Clock gate name: MinUart2. */
+
+    kCLOCK_MinUart3 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14), /*!< Clock gate name: MinUart3. */
+
+    kCLOCK_MinUart4 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15), /*!< Clock gate name: MinUart4. */
+
+    kCLOCK_MinUart5 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16), /*!< Clock gate name: MinUart5. */
+
+    kCLOCK_MinUart6 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17), /*!< Clock gate name: MinUart6. */
+
+    kCLOCK_MinUart7 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18), /*!< Clock gate name: MinUart7. */
+
+    kCLOCK_LSpi0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11), /*!< Clock gate name: LSpi0. */
+
+    kCLOCK_LSpi1 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12), /*!< Clock gate name: LSpi1. */
+
+    kCLOCK_LSpi2 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13), /*!< Clock gate name: LSpi2. */
+
+    kCLOCK_LSpi3 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14), /*!< Clock gate name: LSpi3. */
+
+    kCLOCK_LSpi4 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15), /*!< Clock gate name: LSpi4. */
+
+    kCLOCK_LSpi5 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16), /*!< Clock gate name: LSpi5. */
+
+    kCLOCK_LSpi6 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17), /*!< Clock gate name: LSpi6. */
+
+    kCLOCK_LSpi7 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18), /*!< Clock gate name: LSpi7. */
+
+    kCLOCK_BI2c0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11), /*!< Clock gate name: BI2c0. */
+
+    kCLOCK_BI2c1 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12), /*!< Clock gate name: BI2c1. */
+
+    kCLOCK_BI2c2 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13), /*!< Clock gate name: BI2c2. */
+
+    kCLOCK_BI2c3 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14), /*!< Clock gate name: BI2c3. */
+
+    kCLOCK_BI2c4 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15), /*!< Clock gate name: BI2c4. */
+
+    kCLOCK_BI2c5 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16), /*!< Clock gate name: BI2c5. */
+
+    kCLOCK_BI2c6 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17), /*!< Clock gate name: BI2c6. */
+
+    kCLOCK_BI2c7 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18), /*!< Clock gate name: BI2c7. */
+
+    kCLOCK_FlexI2s0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 11), /*!< Clock gate name: FlexI2s0. */
+
+    kCLOCK_FlexI2s1 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 12), /*!< Clock gate name: FlexI2s1. */
+
+    kCLOCK_FlexI2s2 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 13), /*!< Clock gate name: FlexI2s2. */
+
+    kCLOCK_FlexI2s3 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 14), /*!< Clock gate name: FlexI2s3. */
+
+    kCLOCK_FlexI2s4 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 15), /*!< Clock gate name: FlexI2s4. */
+
+    kCLOCK_FlexI2s5 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 16), /*!< Clock gate name: FlexI2s5. */
+
+    kCLOCK_FlexI2s6 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 17), /*!< Clock gate name: FlexI2s6. */
+
+    kCLOCK_FlexI2s7 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 18), /*!< Clock gate name: FlexI2s7. */
+
+    kCLOCK_Timer2 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 22), /*!< Clock gate name: Timer2. */
+
+    kCLOCK_Usbd0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 25), /*!< Clock gate name: Usbd0. */
+
+    kCLOCK_Timer0 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 26), /*!< Clock gate name: Timer0. */
+
+    kCLOCK_Timer1 = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 27), /*!< Clock gate name: Timer1. */
+
+    kCLOCK_Pvt = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 28), /*!< Clock gate name: Pvt. */
+
+    kCLOCK_Ezha = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 30), /*!< Clock gate name: Ezha. */
+
+    kCLOCK_Ezhb = CLK_GATE_DEFINE(AHB_CLK_CTRL1, 31), /*!< Clock gate name: Ezhb. */
+
+    kCLOCK_Dma1 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 1), /*!< Clock gate name: Dma1. */
+
+    kCLOCK_Comp = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 2), /*!< Clock gate name: Comp. */
+
+    kCLOCK_Sdio = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 3), /*!< Clock gate name: Sdio. */
+
+    kCLOCK_Usbh1 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 4), /*!< Clock gate name: Usbh1. */
+
+    kCLOCK_Usbd1 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 5), /*!< Clock gate name: Usbd1. */
+
+    kCLOCK_UsbRam1 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 6), /*!< Clock gate name: UsbRam1. */
+
+    kCLOCK_Usb1Clk = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 7), /*!< Clock gate name: Usb1Clk. */
+
+    kCLOCK_Freqme = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 8), /*!< Clock gate name: Freqme. */
+
+    kCLOCK_Rng = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 13), /*!< Clock gate name: Rng. */
+
+    kCLOCK_InputMux1 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 14), /*!< Clock gate name: InputMux1. */
+
+    kCLOCK_Sysctl = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 15), /*!< Clock gate name: Sysctl. */
+
+    kCLOCK_Usbhmr0 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 16), /*!< Clock gate name: Usbhmr0. */
+
+    kCLOCK_Usbhsl0 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 17), /*!< Clock gate name: Usbhsl0. */
+
+    kCLOCK_HashCrypt = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 18), /*!< Clock gate name: HashCrypt. */
+
+    kCLOCK_PowerQuad = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 19), /*!< Clock gate name: PowerQuad. */
+
+    kCLOCK_PluLut = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 20), /*!< Clock gate name: PluLut. */
+
+    kCLOCK_Timer3 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 21), /*!< Clock gate name: Timer3. */
+
+    kCLOCK_Timer4 = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 22), /*!< Clock gate name: Timer4. */
+
+    kCLOCK_Puf = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 23), /*!< Clock gate name: Puf. */
+
+    kCLOCK_Casper = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 24), /*!< Clock gate name: Casper. */
+
+    kCLOCK_AnalogCtrl = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 27), /*!< Clock gate name: AnalogCtrl. */
+
+    kCLOCK_Hs_Lspi = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 28), /*!< Clock gate name: Lspi. */
+
+    kCLOCK_Gpio_Sec = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 29), /*!< Clock gate name: GPIO Sec. */
+
+    kCLOCK_Gpio_Sec_Int = CLK_GATE_DEFINE(AHB_CLK_CTRL2, 30) /*!< Clock gate name: GPIO SEC Int. */
 } clock_ip_name_t;
 
 /*! @brief Peripherals clock source definition. */
@@ -457,34 +517,12 @@ typedef enum _clock_name
     kCLOCK_BusClk,     /*!< Bus clock (AHB clock)                                   */
     kCLOCK_ClockOut,   /*!< CLOCKOUT                                                */
     kCLOCK_FroHf,      /*!< FRO48/96                                                */
-    kCLOCK_Adc,        /*!< ADC                                                     */
-    kCLOCK_Usb0,       /*!< USB0                                                    */
-    kCLOCK_Usb1,       /*!< USB1                                                    */
     kCLOCK_Pll1Out,    /*!< PLL1 Output                                             */
     kCLOCK_Mclk,       /*!< MCLK                                                    */
-    kCLOCK_Sct,        /*!< SCT                                                     */
-    kCLOCK_SDio,       /*!< SDIO                                                    */
     kCLOCK_Fro12M,     /*!< FRO12M                                                  */
     kCLOCK_ExtClk,     /*!< External Clock                                          */
     kCLOCK_Pll0Out,    /*!< PLL0 Output                                             */
-    kCLOCK_WdtClk,     /*!< Watchdog clock                                          */
     kCLOCK_FlexI2S,    /*!< FlexI2S clock                                           */
-    kCLOCK_Flexcomm0,  /*!< Flexcomm0Clock                                          */
-    kCLOCK_Flexcomm1,  /*!< Flexcomm1Clock                                          */
-    kCLOCK_Flexcomm2,  /*!< Flexcomm2Clock                                          */
-    kCLOCK_Flexcomm3,  /*!< Flexcomm3Clock                                          */
-    kCLOCK_Flexcomm4,  /*!< Flexcomm4Clock                                          */
-    kCLOCK_Flexcomm5,  /*!< Flexcomm5Clock                                          */
-    kCLOCK_Flexcomm6,  /*!< Flexcomm6Clock                                          */
-    kCLOCK_Flexcomm7,  /*!< Flexcomm7Clock                                          */
-    kCLOCK_HsLspi,     /*!< HS LPSPI Clock                                          */
-    kCLOCK_CTimer0,    /*!< CTimer0Clock                                            */
-    kCLOCK_CTimer1,    /*!< CTimer1Clock                                            */
-    kCLOCK_CTimer2,    /*!< CTimer2Clock                                            */
-    kCLOCK_CTimer3,    /*!< CTimer3Clock                                            */
-    kCLOCK_CTimer4,    /*!< CTimer4Clock                                            */
-    kCLOCK_Systick0,   /*!< System Tick 0 Clock                                     */
-    kCLOCK_Systick1,   /*!< System Tick 1 Clock                                     */
 
 } clock_name_t;
 
@@ -496,273 +534,437 @@ typedef enum _clock_name
  *
  */
 
-#define CLK_ATTACH_ID(mux, sel, pos) (((mux << 0U) | ((sel + 1) & 0xFU) << 8U) << (pos * 12U))
-#define MUX_A(mux, sel) CLK_ATTACH_ID(mux, sel, 0U)
-#define MUX_B(mux, sel, selector) (CLK_ATTACH_ID(mux, sel, 1U) | (selector << 24U))
+#define CLK_ATTACH_ID(mux, sel, pos) \
+    ((((uint32_t)(mux) << 0U) | (((uint32_t)(sel) + 1U) & 0xFU) << 8U) << ((uint32_t)(pos)*12U))
+#define MUX_A(mux, sel)           CLK_ATTACH_ID((mux), (sel), 0U)
+#define MUX_B(mux, sel, selector) (CLK_ATTACH_ID((mux), (sel), 1U) | ((selector) << 24U))
 
-#define GET_ID_ITEM(connection) ((connection)&0xFFFU)
+#define GET_ID_ITEM(connection)      ((connection)&0xFFFU)
 #define GET_ID_NEXT_ITEM(connection) ((connection) >> 12U)
-#define GET_ID_ITEM_MUX(connection) ((connection)&0xFFU)
-#define GET_ID_ITEM_SEL(connection) ((((connection)&0xF00U) >> 8U) - 1U)
-#define GET_ID_SELECTOR(connection) ((connection)&0xF000000U)
+#define GET_ID_ITEM_MUX(connection)  (((uint8_t)connection) & 0xFFU)
+#define GET_ID_ITEM_SEL(connection)  ((uint8_t)((((uint32_t)(connection)&0xF00U) >> 8U) - 1U))
+#define GET_ID_SELECTOR(connection)  ((connection)&0xF000000U)
 
-#define CM_SYSTICKCLKSEL0 0
-#define CM_SYSTICKCLKSEL1 1
-#define CM_TRACECLKSEL 2
-#define CM_CTIMERCLKSEL0 3
-#define CM_CTIMERCLKSEL1 4
-#define CM_CTIMERCLKSEL2 5
-#define CM_CTIMERCLKSEL3 6
-#define CM_CTIMERCLKSEL4 7
-#define CM_MAINCLKSELA 8
-#define CM_MAINCLKSELB 9
-#define CM_CLKOUTCLKSEL 10
-#define CM_PLL0CLKSEL 12
-#define CM_PLL1CLKSEL 13
-#define CM_ADCASYNCCLKSEL 17
-#define CM_USB0CLKSEL 18
-#define CM_FXCOMCLKSEL0 20
-#define CM_FXCOMCLKSEL1 21
-#define CM_FXCOMCLKSEL2 22
-#define CM_FXCOMCLKSEL3 23
-#define CM_FXCOMCLKSEL4 24
-#define CM_FXCOMCLKSEL5 25
-#define CM_FXCOMCLKSEL6 26
-#define CM_FXCOMCLKSEL7 27
-#define CM_HSLSPICLKSEL 28
-#define CM_MCLKCLKSEL 32
-#define CM_SCTCLKSEL 36
-#define CM_SDIOCLKSEL 38
+#define CM_SYSTICKCLKSEL0 0U
+#define CM_SYSTICKCLKSEL1 1U
+#define CM_TRACECLKSEL    2U
+#define CM_CTIMERCLKSEL0  3U
+#define CM_CTIMERCLKSEL1  4U
+#define CM_CTIMERCLKSEL2  5U
+#define CM_CTIMERCLKSEL3  6U
+#define CM_CTIMERCLKSEL4  7U
+#define CM_MAINCLKSELA    8U
+#define CM_MAINCLKSELB    9U
+#define CM_CLKOUTCLKSEL   10U
+#define CM_PLL0CLKSEL     12U
+#define CM_PLL1CLKSEL     13U
+#define CM_ADCASYNCCLKSEL 17U
+#define CM_USB0CLKSEL     18U
+#define CM_FXCOMCLKSEL0   20U
+#define CM_FXCOMCLKSEL1   21U
+#define CM_FXCOMCLKSEL2   22U
+#define CM_FXCOMCLKSEL3   23U
+#define CM_FXCOMCLKSEL4   24U
+#define CM_FXCOMCLKSEL5   25U
+#define CM_FXCOMCLKSEL6   26U
+#define CM_FXCOMCLKSEL7   27U
+#define CM_HSLSPICLKSEL   28U
+#define CM_MCLKCLKSEL     32U
+#define CM_SCTCLKSEL      36U
+#define CM_SDIOCLKSEL     38U
 
-#define CM_RTCOSC32KCLKSEL 63
+#define CM_RTCOSC32KCLKSEL 63U
 
+/*!
+ * @brief The enumerator of clock attach Id.
+ */
 typedef enum _clock_attach_id
 {
 
-    kFRO12M_to_MAIN_CLK  = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 0, 0),
-    kEXT_CLK_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 1) | MUX_B(CM_MAINCLKSELB, 0, 0),
-    kFRO1M_to_MAIN_CLK   = MUX_A(CM_MAINCLKSELA, 2) | MUX_B(CM_MAINCLKSELB, 0, 0),
-    kFRO_HF_to_MAIN_CLK  = MUX_A(CM_MAINCLKSELA, 3) | MUX_B(CM_MAINCLKSELB, 0, 0),
-    kPLL0_to_MAIN_CLK    = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 1, 0),
-    kPLL1_to_MAIN_CLK    = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 2, 0),
-    kOSC32K_to_MAIN_CLK  = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 3, 0),
+    kFRO12M_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 0, 0), /*!< Attach FRO12M to MAIN_CLK. */
 
-    kMAIN_CLK_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 0),
-    kPLL0_to_CLKOUT     = MUX_A(CM_CLKOUTCLKSEL, 1),
-    kEXT_CLK_to_CLKOUT  = MUX_A(CM_CLKOUTCLKSEL, 2),
-    kFRO_HF_to_CLKOUT   = MUX_A(CM_CLKOUTCLKSEL, 3),
-    kFRO1M_to_CLKOUT    = MUX_A(CM_CLKOUTCLKSEL, 4),
-    kPLL1_to_CLKOUT     = MUX_A(CM_CLKOUTCLKSEL, 5),
-    kOSC32K_to_CLKOUT   = MUX_A(CM_CLKOUTCLKSEL, 6),
-    kNONE_to_SYS_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 7),
+    kEXT_CLK_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 1) | MUX_B(CM_MAINCLKSELB, 0, 0), /*!< Attach EXT_CLK to MAIN_CLK. */
 
-    kFRO12M_to_PLL0  = MUX_A(CM_PLL0CLKSEL, 0),
-    kEXT_CLK_to_PLL0 = MUX_A(CM_PLL0CLKSEL, 1),
-    kFRO1M_to_PLL0   = MUX_A(CM_PLL0CLKSEL, 2),
-    kOSC32K_to_PLL0  = MUX_A(CM_PLL0CLKSEL, 3),
-    kNONE_to_PLL0    = MUX_A(CM_PLL0CLKSEL, 7),
+    kFRO1M_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 2) | MUX_B(CM_MAINCLKSELB, 0, 0), /*!< Attach FRO1M to MAIN_CLK. */
 
-    kMAIN_CLK_to_ADC_CLK = MUX_A(CM_ADCASYNCCLKSEL, 0),
-    kPLL0_to_ADC_CLK     = MUX_A(CM_ADCASYNCCLKSEL, 1),
-    kFRO_HF_to_ADC_CLK   = MUX_A(CM_ADCASYNCCLKSEL, 2),
-    kFRO1M_to_ADC_CLK    = MUX_A(CM_ADCASYNCCLKSEL, 3), /* Need confirm */
-    kNONE_to_ADC_CLK     = MUX_A(CM_ADCASYNCCLKSEL, 7),
+    kFRO_HF_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 3) | MUX_B(CM_MAINCLKSELB, 0, 0), /*!< Attach FRO_HF to MAIN_CLK. */
 
-    kMAIN_CLK_to_USB0_CLK = MUX_A(CM_USB0CLKSEL, 0),
-    kPLL0_to_USB0_CLK     = MUX_A(CM_USB0CLKSEL, 1),
-    kFRO_HF_to_USB0_CLK   = MUX_A(CM_USB0CLKSEL, 3),
-    kPLL1_to_USB0_CLK     = MUX_A(CM_USB0CLKSEL, 5),
-    kNONE_to_USB0_CLK     = MUX_A(CM_USB0CLKSEL, 7),
+    kPLL0_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 1, 0), /*!< Attach PLL0 to MAIN_CLK. */
 
-    kMAIN_CLK_to_FLEXCOMM0   = MUX_A(CM_FXCOMCLKSEL0, 0),
-    kPLL0_DIV_to_FLEXCOMM0   = MUX_A(CM_FXCOMCLKSEL0, 1),
-    kFRO12M_to_FLEXCOMM0     = MUX_A(CM_FXCOMCLKSEL0, 2),
-    kFRO_HF_DIV_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 3),
-    kFRO1M_to_FLEXCOMM0      = MUX_A(CM_FXCOMCLKSEL0, 4),
-    kMCLK_to_FLEXCOMM0       = MUX_A(CM_FXCOMCLKSEL0, 5),
-    kOSC32K_to_FLEXCOMM0     = MUX_A(CM_FXCOMCLKSEL0, 6),
-    kNONE_to_FLEXCOMM0       = MUX_A(CM_FXCOMCLKSEL0, 7),
+    kPLL1_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 2, 0), /*!< Attach PLL1 to MAIN_CLK. */
 
-    kMAIN_CLK_to_FLEXCOMM1   = MUX_A(CM_FXCOMCLKSEL1, 0),
-    kPLL0_DIV_to_FLEXCOMM1   = MUX_A(CM_FXCOMCLKSEL1, 1),
-    kFRO12M_to_FLEXCOMM1     = MUX_A(CM_FXCOMCLKSEL1, 2),
-    kFRO_HF_DIV_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 3),
-    kFRO1M_to_FLEXCOMM1      = MUX_A(CM_FXCOMCLKSEL1, 4),
-    kMCLK_to_FLEXCOMM1       = MUX_A(CM_FXCOMCLKSEL1, 5),
-    kOSC32K_to_FLEXCOMM1     = MUX_A(CM_FXCOMCLKSEL1, 6),
-    kNONE_to_FLEXCOMM1       = MUX_A(CM_FXCOMCLKSEL1, 7),
+    kOSC32K_to_MAIN_CLK = MUX_A(CM_MAINCLKSELA, 0) | MUX_B(CM_MAINCLKSELB, 3, 0), /*!< Attach OSC32K to MAIN_CLK. */
 
-    kMAIN_CLK_to_FLEXCOMM2   = MUX_A(CM_FXCOMCLKSEL2, 0),
-    kPLL0_DIV_to_FLEXCOMM2   = MUX_A(CM_FXCOMCLKSEL2, 1),
-    kFRO12M_to_FLEXCOMM2     = MUX_A(CM_FXCOMCLKSEL2, 2),
-    kFRO_HF_DIV_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 3),
-    kFRO1M_to_FLEXCOMM2      = MUX_A(CM_FXCOMCLKSEL2, 4),
-    kMCLK_to_FLEXCOMM2       = MUX_A(CM_FXCOMCLKSEL2, 5),
-    kOSC32K_to_FLEXCOMM2     = MUX_A(CM_FXCOMCLKSEL2, 6),
-    kNONE_to_FLEXCOMM2       = MUX_A(CM_FXCOMCLKSEL2, 7),
+    kMAIN_CLK_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 0), /*!< Attach MAIN_CLK to CLKOUT. */
 
-    kMAIN_CLK_to_FLEXCOMM3   = MUX_A(CM_FXCOMCLKSEL3, 0),
-    kPLL0_DIV_to_FLEXCOMM3   = MUX_A(CM_FXCOMCLKSEL3, 1),
-    kFRO12M_to_FLEXCOMM3     = MUX_A(CM_FXCOMCLKSEL3, 2),
-    kFRO_HF_DIV_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 3),
-    kFRO1M_to_FLEXCOMM3      = MUX_A(CM_FXCOMCLKSEL3, 4),
-    kMCLK_to_FLEXCOMM3       = MUX_A(CM_FXCOMCLKSEL3, 5),
-    kOSC32K_to_FLEXCOMM3     = MUX_A(CM_FXCOMCLKSEL3, 6),
-    kNONE_to_FLEXCOMM3       = MUX_A(CM_FXCOMCLKSEL3, 7),
+    kPLL0_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 1), /*!< Attach PLL0 to CLKOUT. */
 
-    kMAIN_CLK_to_FLEXCOMM4   = MUX_A(CM_FXCOMCLKSEL4, 0),
-    kPLL0_DIV_to_FLEXCOMM4   = MUX_A(CM_FXCOMCLKSEL4, 1),
-    kFRO12M_to_FLEXCOMM4     = MUX_A(CM_FXCOMCLKSEL4, 2),
-    kFRO_HF_DIV_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 3),
-    kFRO1M_to_FLEXCOMM4      = MUX_A(CM_FXCOMCLKSEL4, 4),
-    kMCLK_to_FLEXCOMM4       = MUX_A(CM_FXCOMCLKSEL4, 5),
-    kOSC32K_to_FLEXCOMM4     = MUX_A(CM_FXCOMCLKSEL4, 6),
-    kNONE_to_FLEXCOMM4       = MUX_A(CM_FXCOMCLKSEL4, 7),
+    kEXT_CLK_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 2), /*!< Attach EXT_CLK to CLKOUT. */
 
-    kMAIN_CLK_to_FLEXCOMM5   = MUX_A(CM_FXCOMCLKSEL5, 0),
-    kPLL0_DIV_to_FLEXCOMM5   = MUX_A(CM_FXCOMCLKSEL5, 1),
-    kFRO12M_to_FLEXCOMM5     = MUX_A(CM_FXCOMCLKSEL5, 2),
-    kFRO_HF_DIV_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 3),
-    kFRO1M_to_FLEXCOMM5      = MUX_A(CM_FXCOMCLKSEL5, 4),
-    kMCLK_to_FLEXCOMM5       = MUX_A(CM_FXCOMCLKSEL5, 5),
-    kOSC32K_to_FLEXCOMM5     = MUX_A(CM_FXCOMCLKSEL5, 6),
-    kNONE_to_FLEXCOMM5       = MUX_A(CM_FXCOMCLKSEL5, 7),
+    kFRO_HF_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 3), /*!< Attach FRO_HF to CLKOUT. */
 
-    kMAIN_CLK_to_FLEXCOMM6   = MUX_A(CM_FXCOMCLKSEL6, 0),
-    kPLL0_DIV_to_FLEXCOMM6   = MUX_A(CM_FXCOMCLKSEL6, 1),
-    kFRO12M_to_FLEXCOMM6     = MUX_A(CM_FXCOMCLKSEL6, 2),
-    kFRO_HF_DIV_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 3),
-    kFRO1M_to_FLEXCOMM6      = MUX_A(CM_FXCOMCLKSEL6, 4),
-    kMCLK_to_FLEXCOMM6       = MUX_A(CM_FXCOMCLKSEL6, 5),
-    kOSC32K_to_FLEXCOMM6     = MUX_A(CM_FXCOMCLKSEL6, 6),
-    kNONE_to_FLEXCOMM6       = MUX_A(CM_FXCOMCLKSEL6, 7),
+    kFRO1M_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 4), /*!< Attach FRO1M to CLKOUT. */
 
-    kMAIN_CLK_to_FLEXCOMM7   = MUX_A(CM_FXCOMCLKSEL7, 0),
-    kPLL0_DIV_to_FLEXCOMM7   = MUX_A(CM_FXCOMCLKSEL7, 1),
-    kFRO12M_to_FLEXCOMM7     = MUX_A(CM_FXCOMCLKSEL7, 2),
-    kFRO_HF_DIV_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 3),
-    kFRO1M_to_FLEXCOMM7      = MUX_A(CM_FXCOMCLKSEL7, 4),
-    kMCLK_to_FLEXCOMM7       = MUX_A(CM_FXCOMCLKSEL7, 5),
-    kOSC32K_to_FLEXCOMM7     = MUX_A(CM_FXCOMCLKSEL7, 6),
-    kNONE_to_FLEXCOMM7       = MUX_A(CM_FXCOMCLKSEL7, 7),
+    kPLL1_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 5), /*!< Attach PLL1 to CLKOUT. */
 
-    kMAIN_CLK_to_HSLSPI   = MUX_A(CM_HSLSPICLKSEL, 0),
-    kPLL0_DIV_to_HSLSPI   = MUX_A(CM_HSLSPICLKSEL, 1),
-    kFRO12M_to_HSLSPI     = MUX_A(CM_HSLSPICLKSEL, 2),
-    kFRO_HF_DIV_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 3),
-    kFRO1M_to_HSLSPI      = MUX_A(CM_HSLSPICLKSEL, 4),
-    kOSC32K_to_HSLSPI     = MUX_A(CM_HSLSPICLKSEL, 6),
-    kNONE_to_HSLSPI       = MUX_A(CM_HSLSPICLKSEL, 7),
+    kOSC32K_to_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 6), /*!< Attach OSC32K to CLKOUT. */
 
-    kFRO_HF_to_MCLK   = MUX_A(CM_MCLKCLKSEL, 0),
-    kPLL0_to_MCLK     = MUX_A(CM_MCLKCLKSEL, 1),
-    kFRO1M_to_MCLK    = MUX_A(CM_MCLKCLKSEL, 2), /* Need confirm */
-    kMAIN_CLK_to_MCLK = MUX_A(CM_MCLKCLKSEL, 3), /* Need confirm */
-    kNONE_to_MCLK     = MUX_A(CM_MCLKCLKSEL, 7),
+    kNONE_to_SYS_CLKOUT = MUX_A(CM_CLKOUTCLKSEL, 7), /*!< Attach NONE to SYS_CLKOUT. */
 
-    kMAIN_CLK_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 0),
-    kPLL0_to_SCT_CLK     = MUX_A(CM_SCTCLKSEL, 1),
-    kEXT_CLK_to_SCT_CLK  = MUX_A(CM_SCTCLKSEL, 2),
-    kFRO_HF_to_SCT_CLK   = MUX_A(CM_SCTCLKSEL, 3),
-    kMCLK_to_SCT_CLK     = MUX_A(CM_SCTCLKSEL, 5),
-    kNONE_to_SCT_CLK     = MUX_A(CM_SCTCLKSEL, 7),
+    kFRO12M_to_PLL0 = MUX_A(CM_PLL0CLKSEL, 0), /*!< Attach FRO12M to PLL0. */
 
-    kMAIN_CLK_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 0),
-    kPLL0_to_SDIO_CLK     = MUX_A(CM_SDIOCLKSEL, 1),
-    kFRO_HF_to_SDIO_CLK   = MUX_A(CM_SDIOCLKSEL, 3),
-    kPLL1_to_SDIO_CLK     = MUX_A(CM_SDIOCLKSEL, 5),
-    kNONE_to_SDIO_CLK     = MUX_A(CM_SDIOCLKSEL, 7),
+    kEXT_CLK_to_PLL0 = MUX_A(CM_PLL0CLKSEL, 1), /*!< Attach EXT_CLK to PLL0. */
 
-    kFRO32K_to_OSC32K  = MUX_A(CM_RTCOSC32KCLKSEL, 0),
-    kXTAL32K_to_OSC32K = MUX_A(CM_RTCOSC32KCLKSEL, 1),
+    kFRO1M_to_PLL0 = MUX_A(CM_PLL0CLKSEL, 2), /*!< Attach FRO1M to PLL0. */
 
-    kTRACE_DIV_to_TRACE = MUX_A(CM_TRACECLKSEL, 0),
-    kFRO1M_to_TRACE     = MUX_A(CM_TRACECLKSEL, 1),
-    kOSC32K_to_TRACE    = MUX_A(CM_TRACECLKSEL, 2),
-    kNONE_to_TRACE      = MUX_A(CM_TRACECLKSEL, 7),
+    kOSC32K_to_PLL0 = MUX_A(CM_PLL0CLKSEL, 3), /*!< Attach OSC32K to PLL0. */
 
-    kSYSTICK_DIV0_to_SYSTICK0 = MUX_A(CM_SYSTICKCLKSEL0, 0),
-    kFRO1M_to_SYSTICK0        = MUX_A(CM_SYSTICKCLKSEL0, 1),
-    kOSC32K_to_SYSTICK0       = MUX_A(CM_SYSTICKCLKSEL0, 2),
-    kNONE_to_SYSTICK0         = MUX_A(CM_SYSTICKCLKSEL0, 7),
+    kNONE_to_PLL0 = MUX_A(CM_PLL0CLKSEL, 7), /*!< Attach NONE to PLL0. */
 
-    kSYSTICK_DIV1_to_SYSTICK1 = MUX_A(CM_SYSTICKCLKSEL1, 0),
-    kFRO1M_to_SYSTICK1        = MUX_A(CM_SYSTICKCLKSEL1, 1),
-    kOSC32K_to_SYSTICK1       = MUX_A(CM_SYSTICKCLKSEL1, 2),
-    kNONE_to_SYSTICK1         = MUX_A(CM_SYSTICKCLKSEL1, 7),
+    kMAIN_CLK_to_ADC_CLK = MUX_A(CM_ADCASYNCCLKSEL, 0), /*!< Attach MAIN_CLK to ADC_CLK. */
 
-    kFRO12M_to_PLL1  = MUX_A(CM_PLL1CLKSEL, 0),
-    kEXT_CLK_to_PLL1 = MUX_A(CM_PLL1CLKSEL, 1),
-    kFRO1M_to_PLL1   = MUX_A(CM_PLL1CLKSEL, 2),
-    kOSC32K_to_PLL1  = MUX_A(CM_PLL1CLKSEL, 3),
-    kNONE_to_PLL1    = MUX_A(CM_PLL1CLKSEL, 7),
+    kPLL0_to_ADC_CLK = MUX_A(CM_ADCASYNCCLKSEL, 1), /*!< Attach PLL0 to ADC_CLK. */
 
-    kMAIN_CLK_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 0),
-    kPLL0_to_CTIMER0     = MUX_A(CM_CTIMERCLKSEL0, 1),
-    kFRO_HF_to_CTIMER0   = MUX_A(CM_CTIMERCLKSEL0, 3),
-    kFRO1M_to_CTIMER0    = MUX_A(CM_CTIMERCLKSEL0, 4),
-    kMCLK_to_CTIMER0     = MUX_A(CM_CTIMERCLKSEL0, 5),
-    kOSC32K_to_CTIMER0   = MUX_A(CM_CTIMERCLKSEL0, 6),
-    kNONE_to_CTIMER0     = MUX_A(CM_CTIMERCLKSEL0, 7),
+    kFRO_HF_to_ADC_CLK = MUX_A(CM_ADCASYNCCLKSEL, 2), /*!< Attach FRO_HF to ADC_CLK. */
 
-    kMAIN_CLK_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 0),
-    kPLL0_to_CTIMER1     = MUX_A(CM_CTIMERCLKSEL1, 1),
-    kFRO_HF_to_CTIMER1   = MUX_A(CM_CTIMERCLKSEL1, 3),
-    kFRO1M_to_CTIMER1    = MUX_A(CM_CTIMERCLKSEL1, 4),
-    kMCLK_to_CTIMER1     = MUX_A(CM_CTIMERCLKSEL1, 5),
-    kOSC32K_to_CTIMER1   = MUX_A(CM_CTIMERCLKSEL1, 6),
-    kNONE_to_CTIMER1     = MUX_A(CM_CTIMERCLKSEL1, 7),
+    kNONE_to_ADC_CLK = MUX_A(CM_ADCASYNCCLKSEL, 7), /*!< Attach NONE to ADC_CLK. */
 
-    kMAIN_CLK_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 0),
-    kPLL0_to_CTIMER2     = MUX_A(CM_CTIMERCLKSEL2, 1),
-    kFRO_HF_to_CTIMER2   = MUX_A(CM_CTIMERCLKSEL2, 3),
-    kFRO1M_to_CTIMER2    = MUX_A(CM_CTIMERCLKSEL2, 4),
-    kMCLK_to_CTIMER2     = MUX_A(CM_CTIMERCLKSEL2, 5),
-    kOSC32K_to_CTIMER2   = MUX_A(CM_CTIMERCLKSEL2, 6),
-    kNONE_to_CTIMER2     = MUX_A(CM_CTIMERCLKSEL2, 7),
+    kMAIN_CLK_to_USB0_CLK = MUX_A(CM_USB0CLKSEL, 0), /*!< Attach MAIN_CLK to USB0_CLK. */
 
-    kMAIN_CLK_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 0),
-    kPLL0_to_CTIMER3     = MUX_A(CM_CTIMERCLKSEL3, 1),
-    kFRO_HF_to_CTIMER3   = MUX_A(CM_CTIMERCLKSEL3, 3),
-    kFRO1M_to_CTIMER3    = MUX_A(CM_CTIMERCLKSEL3, 4),
-    kMCLK_to_CTIMER3     = MUX_A(CM_CTIMERCLKSEL3, 5),
-    kOSC32K_to_CTIMER3   = MUX_A(CM_CTIMERCLKSEL3, 6),
-    kNONE_to_CTIMER3     = MUX_A(CM_CTIMERCLKSEL3, 7),
+    kPLL0_to_USB0_CLK = MUX_A(CM_USB0CLKSEL, 1), /*!< Attach PLL0 to USB0_CLK. */
 
-    kMAIN_CLK_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 0),
-    kPLL0_to_CTIMER4     = MUX_A(CM_CTIMERCLKSEL4, 1),
-    kFRO_HF_to_CTIMER4   = MUX_A(CM_CTIMERCLKSEL4, 3),
-    kFRO1M_to_CTIMER4    = MUX_A(CM_CTIMERCLKSEL4, 4),
-    kMCLK_to_CTIMER4     = MUX_A(CM_CTIMERCLKSEL4, 5),
-    kOSC32K_to_CTIMER4   = MUX_A(CM_CTIMERCLKSEL4, 6),
-    kNONE_to_CTIMER4     = MUX_A(CM_CTIMERCLKSEL4, 7),
-    kNONE_to_NONE        = (int)0x80000000U,
+    kFRO_HF_to_USB0_CLK = MUX_A(CM_USB0CLKSEL, 3), /*!< Attach FRO_HF to USB0_CLK. */
+
+    kPLL1_to_USB0_CLK = MUX_A(CM_USB0CLKSEL, 5), /*!< Attach PLL1 to USB0_CLK. */
+
+    kNONE_to_USB0_CLK = MUX_A(CM_USB0CLKSEL, 7), /*!< Attach NONE to USB0_CLK. */
+
+    kMAIN_CLK_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 0), /*!< Attach MAIN_CLK to FLEXCOMM0. */
+
+    kPLL0_DIV_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 1), /*!< Attach PLL0_DIV to FLEXCOMM0. */
+
+    kFRO12M_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 2), /*!< Attach FRO12M to FLEXCOMM0. */
+
+    kFRO_HF_DIV_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM0. */
+
+    kFRO1M_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 4), /*!< Attach FRO1M to FLEXCOMM0. */
+
+    kMCLK_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 5), /*!< Attach MCLK to FLEXCOMM0. */
+
+    kOSC32K_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 6), /*!< Attach OSC32K to FLEXCOMM0. */
+
+    kNONE_to_FLEXCOMM0 = MUX_A(CM_FXCOMCLKSEL0, 7), /*!< Attach NONE to FLEXCOMM0. */
+
+    kMAIN_CLK_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 0), /*!< Attach MAIN_CLK to FLEXCOMM1. */
+
+    kPLL0_DIV_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 1), /*!< Attach PLL0_DIV to FLEXCOMM1. */
+
+    kFRO12M_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 2), /*!< Attach FRO12M to FLEXCOMM1. */
+
+    kFRO_HF_DIV_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM1. */
+
+    kFRO1M_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 4), /*!< Attach FRO1M to FLEXCOMM1. */
+
+    kMCLK_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 5), /*!< Attach MCLK to FLEXCOMM1. */
+
+    kOSC32K_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 6), /*!< Attach OSC32K to FLEXCOMM1. */
+
+    kNONE_to_FLEXCOMM1 = MUX_A(CM_FXCOMCLKSEL1, 7), /*!< Attach NONE to FLEXCOMM1. */
+
+    kMAIN_CLK_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 0), /*!< Attach MAIN_CLK to FLEXCOMM2. */
+
+    kPLL0_DIV_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 1), /*!< Attach PLL0_DIV to FLEXCOMM2. */
+
+    kFRO12M_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 2), /*!< Attach FRO12M to FLEXCOMM2. */
+
+    kFRO_HF_DIV_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM2. */
+
+    kFRO1M_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 4), /*!< Attach FRO1M to FLEXCOMM2. */
+
+    kMCLK_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 5), /*!< Attach MCLK to FLEXCOMM2. */
+
+    kOSC32K_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 6), /*!< Attach OSC32K to FLEXCOMM2. */
+
+    kNONE_to_FLEXCOMM2 = MUX_A(CM_FXCOMCLKSEL2, 7), /*!< Attach NONE to FLEXCOMM2. */
+
+    kMAIN_CLK_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 0), /*!< Attach MAIN_CLK to FLEXCOMM3. */
+
+    kPLL0_DIV_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 1), /*!< Attach PLL0_DIV to FLEXCOMM3. */
+
+    kFRO12M_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 2), /*!< Attach FRO12M to FLEXCOMM3. */
+
+    kFRO_HF_DIV_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM3. */
+
+    kFRO1M_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 4), /*!< Attach FRO1M to FLEXCOMM3. */
+
+    kMCLK_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 5), /*!< Attach MCLK to FLEXCOMM3. */
+
+    kOSC32K_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 6), /*!< Attach OSC32K to FLEXCOMM3. */
+
+    kNONE_to_FLEXCOMM3 = MUX_A(CM_FXCOMCLKSEL3, 7), /*!< Attach NONE to FLEXCOMM3. */
+
+    kMAIN_CLK_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 0), /*!< Attach MAIN_CLK to FLEXCOMM4. */
+
+    kPLL0_DIV_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 1), /*!< Attach PLL0_DIV to FLEXCOMM4. */
+
+    kFRO12M_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 2), /*!< Attach FRO12M to FLEXCOMM4. */
+
+    kFRO_HF_DIV_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM4. */
+
+    kFRO1M_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 4), /*!< Attach FRO1M to FLEXCOMM4. */
+
+    kMCLK_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 5), /*!< Attach MCLK to FLEXCOMM4. */
+
+    kOSC32K_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 6), /*!< Attach OSC32K to FLEXCOMM4. */
+
+    kNONE_to_FLEXCOMM4 = MUX_A(CM_FXCOMCLKSEL4, 7), /*!< Attach NONE to FLEXCOMM4. */
+
+    kMAIN_CLK_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 0), /*!< Attach MAIN_CLK to FLEXCOMM5. */
+
+    kPLL0_DIV_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 1), /*!< Attach PLL0_DIV to FLEXCOMM5. */
+
+    kFRO12M_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 2), /*!< Attach FRO12M to FLEXCOMM5. */
+
+    kFRO_HF_DIV_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM5. */
+
+    kFRO1M_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 4), /*!< Attach FRO1M to FLEXCOMM5. */
+
+    kMCLK_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 5), /*!< Attach MCLK to FLEXCOMM5. */
+
+    kOSC32K_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 6), /*!< Attach OSC32K to FLEXCOMM5. */
+
+    kNONE_to_FLEXCOMM5 = MUX_A(CM_FXCOMCLKSEL5, 7), /*!< Attach NONE to FLEXCOMM5. */
+
+    kMAIN_CLK_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 0), /*!< Attach MAIN_CLK to FLEXCOMM6. */
+
+    kPLL0_DIV_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 1), /*!< Attach PLL0_DIV to FLEXCOMM6. */
+
+    kFRO12M_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 2), /*!< Attach FRO12M to FLEXCOMM6. */
+
+    kFRO_HF_DIV_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM6. */
+
+    kFRO1M_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 4), /*!< Attach FRO1M to FLEXCOMM6. */
+
+    kMCLK_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 5), /*!< Attach MCLK to FLEXCOMM6. */
+
+    kOSC32K_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 6), /*!< Attach OSC32K to FLEXCOMM6. */
+
+    kNONE_to_FLEXCOMM6 = MUX_A(CM_FXCOMCLKSEL6, 7), /*!< Attach NONE to FLEXCOMM6. */
+
+    kMAIN_CLK_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 0), /*!< Attach MAIN_CLK to FLEXCOMM7. */
+
+    kPLL0_DIV_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 1), /*!< Attach PLL0_DIV to FLEXCOMM7. */
+
+    kFRO12M_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 2), /*!< Attach FRO12M to FLEXCOMM7. */
+
+    kFRO_HF_DIV_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 3), /*!< Attach FRO_HF_DIV to FLEXCOMM7. */
+
+    kFRO1M_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 4), /*!< Attach FRO1M to FLEXCOMM7. */
+
+    kMCLK_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 5), /*!< Attach MCLK to FLEXCOMM7. */
+
+    kOSC32K_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 6), /*!< Attach OSC32K to FLEXCOMM7. */
+
+    kNONE_to_FLEXCOMM7 = MUX_A(CM_FXCOMCLKSEL7, 7), /*!< Attach NONE to FLEXCOMM7. */
+
+    kMAIN_CLK_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 0), /*!< Attach MAIN_CLK to HSLSPI. */
+
+    kPLL0_DIV_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 1), /*!< Attach PLL0_DIV to HSLSPI. */
+
+    kFRO12M_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 2), /*!< Attach FRO12M to HSLSPI. */
+
+    kFRO_HF_DIV_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 3), /*!< Attach FRO_HF_DIV to HSLSPI. */
+
+    kFRO1M_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 4), /*!< Attach FRO1M to HSLSPI. */
+
+    kOSC32K_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 6), /*!< Attach OSC32K to HSLSPI. */
+
+    kNONE_to_HSLSPI = MUX_A(CM_HSLSPICLKSEL, 7), /*!< Attach NONE to HSLSPI. */
+
+    kFRO_HF_to_MCLK = MUX_A(CM_MCLKCLKSEL, 0), /*!< Attach FRO_HF to MCLK. */
+
+    kPLL0_to_MCLK = MUX_A(CM_MCLKCLKSEL, 1), /*!< Attach PLL0 to MCLK. */
+
+    kNONE_to_MCLK = MUX_A(CM_MCLKCLKSEL, 7), /*!< Attach NONE to MCLK. */
+
+    kMAIN_CLK_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 0), /*!< Attach MAIN_CLK to SCT_CLK. */
+
+    kPLL0_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 1), /*!< Attach PLL0 to SCT_CLK. */
+
+    kEXT_CLK_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 2), /*!< Attach EXT_CLK to SCT_CLK. */
+
+    kFRO_HF_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 3), /*!< Attach FRO_HF to SCT_CLK. */
+
+    kMCLK_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 5), /*!< Attach MCLK to SCT_CLK. */
+
+    kNONE_to_SCT_CLK = MUX_A(CM_SCTCLKSEL, 7), /*!< Attach NONE to SCT_CLK. */
+
+    kMAIN_CLK_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 0), /*!< Attach MAIN_CLK to SDIO_CLK. */
+
+    kPLL0_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 1), /*!< Attach PLL0 to SDIO_CLK. */
+
+    kFRO_HF_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 3), /*!< Attach FRO_HF to SDIO_CLK. */
+
+    kPLL1_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 5), /*!< Attach PLL1 to SDIO_CLK. */
+
+    kNONE_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 7), /*!< Attach NONE to SDIO_CLK. */
+
+    kFRO32K_to_OSC32K = MUX_A(CM_RTCOSC32KCLKSEL, 0), /*!< Attach FRO32K to OSC32K. */
+
+    kXTAL32K_to_OSC32K = MUX_A(CM_RTCOSC32KCLKSEL, 1), /*!< Attach XTAL32K to OSC32K. */
+
+    kTRACE_DIV_to_TRACE = MUX_A(CM_TRACECLKSEL, 0), /*!< Attach TRACE_DIV to TRACE. */
+
+    kFRO1M_to_TRACE = MUX_A(CM_TRACECLKSEL, 1), /*!< Attach FRO1M to TRACE. */
+
+    kOSC32K_to_TRACE = MUX_A(CM_TRACECLKSEL, 2), /*!< Attach OSC32K to TRACE. */
+
+    kNONE_to_TRACE = MUX_A(CM_TRACECLKSEL, 7), /*!< Attach NONE to TRACE. */
+
+    kSYSTICK_DIV0_to_SYSTICK0 = MUX_A(CM_SYSTICKCLKSEL0, 0), /*!< Attach SYSTICK_DIV0 to SYSTICK0. */
+
+    kFRO1M_to_SYSTICK0 = MUX_A(CM_SYSTICKCLKSEL0, 1), /*!< Attach FRO1M to SYSTICK0. */
+
+    kOSC32K_to_SYSTICK0 = MUX_A(CM_SYSTICKCLKSEL0, 2), /*!< Attach OSC32K to SYSTICK0. */
+
+    kNONE_to_SYSTICK0 = MUX_A(CM_SYSTICKCLKSEL0, 7), /*!< Attach NONE to SYSTICK0. */
+
+    kSYSTICK_DIV1_to_SYSTICK1 = MUX_A(CM_SYSTICKCLKSEL1, 0), /*!< Attach SYSTICK_DIV1 to SYSTICK1. */
+
+    kFRO1M_to_SYSTICK1 = MUX_A(CM_SYSTICKCLKSEL1, 1), /*!< Attach FRO1M to SYSTICK1. */
+
+    kOSC32K_to_SYSTICK1 = MUX_A(CM_SYSTICKCLKSEL1, 2), /*!< Attach OSC32K to SYSTICK1. */
+
+    kNONE_to_SYSTICK1 = MUX_A(CM_SYSTICKCLKSEL1, 7), /*!< Attach NONE to SYSTICK1. */
+
+    kFRO12M_to_PLL1 = MUX_A(CM_PLL1CLKSEL, 0), /*!< Attach FRO12M to PLL1. */
+
+    kEXT_CLK_to_PLL1 = MUX_A(CM_PLL1CLKSEL, 1), /*!< Attach EXT_CLK to PLL1. */
+
+    kFRO1M_to_PLL1 = MUX_A(CM_PLL1CLKSEL, 2), /*!< Attach FRO1M to PLL1. */
+
+    kOSC32K_to_PLL1 = MUX_A(CM_PLL1CLKSEL, 3), /*!< Attach OSC32K to PLL1. */
+
+    kNONE_to_PLL1 = MUX_A(CM_PLL1CLKSEL, 7), /*!< Attach NONE to PLL1. */
+
+    kMAIN_CLK_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 0), /*!< Attach MAIN_CLK to CTIMER0. */
+
+    kPLL0_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 1), /*!< Attach PLL0 to CTIMER0. */
+
+    kFRO_HF_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 3), /*!< Attach FRO_HF to CTIMER0. */
+
+    kFRO1M_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 4), /*!< Attach FRO1M to CTIMER0. */
+
+    kMCLK_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 5), /*!< Attach MCLK to CTIMER0. */
+
+    kOSC32K_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 6), /*!< Attach OSC32K to CTIMER0. */
+
+    kNONE_to_CTIMER0 = MUX_A(CM_CTIMERCLKSEL0, 7), /*!< Attach NONE to CTIMER0. */
+
+    kMAIN_CLK_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 0), /*!< Attach MAIN_CLK to CTIMER1. */
+
+    kPLL0_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 1), /*!< Attach PLL0 to CTIMER1. */
+
+    kFRO_HF_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 3), /*!< Attach FRO_HF to CTIMER1. */
+
+    kFRO1M_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 4), /*!< Attach FRO1M to CTIMER1. */
+
+    kMCLK_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 5), /*!< Attach MCLK to CTIMER1. */
+
+    kOSC32K_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 6), /*!< Attach OSC32K to CTIMER1. */
+
+    kNONE_to_CTIMER1 = MUX_A(CM_CTIMERCLKSEL1, 7), /*!< Attach NONE to CTIMER1. */
+
+    kMAIN_CLK_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 0), /*!< Attach MAIN_CLK to CTIMER2. */
+
+    kPLL0_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 1), /*!< Attach PLL0 to CTIMER2. */
+
+    kFRO_HF_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 3), /*!< Attach FRO_HF to CTIMER2. */
+
+    kFRO1M_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 4), /*!< Attach FRO1M to CTIMER2. */
+
+    kMCLK_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 5), /*!< Attach MCLK to CTIMER2. */
+
+    kOSC32K_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 6), /*!< Attach OSC32K to CTIMER2. */
+
+    kNONE_to_CTIMER2 = MUX_A(CM_CTIMERCLKSEL2, 7), /*!< Attach NONE to CTIMER2. */
+
+    kMAIN_CLK_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 0), /*!< Attach MAIN_CLK to CTIMER3. */
+
+    kPLL0_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 1), /*!< Attach PLL0 to CTIMER3. */
+
+    kFRO_HF_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 3), /*!< Attach FRO_HF to CTIMER3. */
+
+    kFRO1M_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 4), /*!< Attach FRO1M to CTIMER3. */
+
+    kMCLK_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 5), /*!< Attach MCLK to CTIMER3. */
+
+    kOSC32K_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 6), /*!< Attach OSC32K to CTIMER3. */
+
+    kNONE_to_CTIMER3 = MUX_A(CM_CTIMERCLKSEL3, 7), /*!< Attach NONE to CTIMER3. */
+
+    kMAIN_CLK_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 0), /*!< Attach MAIN_CLK to CTIMER4. */
+
+    kPLL0_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 1), /*!< Attach PLL0 to CTIMER4. */
+
+    kFRO_HF_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 3), /*!< Attach FRO_HF to CTIMER4. */
+
+    kFRO1M_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 4), /*!< Attach FRO1M to CTIMER4. */
+
+    kMCLK_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 5), /*!< Attach MCLK to CTIMER4. */
+
+    kOSC32K_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 6), /*!< Attach OSC32K to CTIMER4. */
+
+    kNONE_to_CTIMER4 = MUX_A(CM_CTIMERCLKSEL4, 7), /*!< Attach NONE to CTIMER4. */
+
+    kNONE_to_NONE = (int)0x80000000U, /*!< Attach NONE to NONE. */
+
 } clock_attach_id_t;
 
-/*  Clock dividers */
+/*! @brief Clock dividers */
 typedef enum _clock_div_name
 {
-    kCLOCK_DivSystickClk0 = 0,
-    kCLOCK_DivSystickClk1 = 1,
-    kCLOCK_DivArmTrClkDiv = 2,
-    kCLOCK_DivFlexFrg0    = 8,
-    kCLOCK_DivFlexFrg1    = 9,
-    kCLOCK_DivFlexFrg2    = 10,
-    kCLOCK_DivFlexFrg3    = 11,
-    kCLOCK_DivFlexFrg4    = 12,
-    kCLOCK_DivFlexFrg5    = 13,
-    kCLOCK_DivFlexFrg6    = 14,
-    kCLOCK_DivFlexFrg7    = 15,
-    kCLOCK_DivAhbClk      = 32,
-    kCLOCK_DivClkOut      = 33,
-    kCLOCK_DivFrohfClk    = 34,
-    kCLOCK_DivWdtClk      = 35,
-    kCLOCK_DivAdcAsyncClk = 37,
-    kCLOCK_DivUsb0Clk     = 38,
-    kCLOCK_DivMClk        = 43,
-    kCLOCK_DivSctClk      = 45,
-    kCLOCK_DivSdioClk     = 47,
-    kCLOCK_DivPll0Clk     = 49
+    kCLOCK_DivSystickClk0 = 0, /*!< Systick Clk0 Divider. */
+
+    kCLOCK_DivSystickClk1 = 1, /*!< Systick Clk1 Divider. */
+
+    kCLOCK_DivArmTrClkDiv = 2, /*!< Arm Tr Clk Div Divider. */
+
+    kCLOCK_DivFlexFrg0 = 8, /*!< Flex Frg0 Divider. */
+
+    kCLOCK_DivFlexFrg1 = 9, /*!< Flex Frg1 Divider. */
+
+    kCLOCK_DivFlexFrg2 = 10, /*!< Flex Frg2 Divider. */
+
+    kCLOCK_DivFlexFrg3 = 11, /*!< Flex Frg3 Divider. */
+
+    kCLOCK_DivFlexFrg4 = 12, /*!< Flex Frg4 Divider. */
+
+    kCLOCK_DivFlexFrg5 = 13, /*!< Flex Frg5 Divider. */
+
+    kCLOCK_DivFlexFrg6 = 14, /*!< Flex Frg6 Divider. */
+
+    kCLOCK_DivFlexFrg7 = 15, /*!< Flex Frg7 Divider. */
+
+    kCLOCK_DivAhbClk = 32, /*!< Ahb Clock Divider. */
+
+    kCLOCK_DivClkOut = 33, /*!< Clk Out Divider. */
+
+    kCLOCK_DivFrohfClk = 34, /*!< Frohf Clock Divider. */
+
+    kCLOCK_DivWdtClk = 35, /*!< Wdt Clock Divider. */
+
+    kCLOCK_DivAdcAsyncClk = 37, /*!< Adc Async Clock Divider. */
+
+    kCLOCK_DivUsb0Clk = 38, /*!< Usb0 Clock Divider. */
+
+    kCLOCK_DivMClk = 43, /*!< I2S MCLK Clock Divider. */
+
+    kCLOCK_DivSctClk = 45, /*!< Sct Clock Divider. */
+
+    kCLOCK_DivSdioClk = 47, /*!< Sdio Clock Divider. */
+
+    kCLOCK_DivPll0Clk = 49 /*!< PLL clock divider. */
 } clock_div_name_t;
 
 /*******************************************************************************
@@ -775,29 +977,29 @@ extern "C" {
 
 /**
  * @brief Enable the clock for specific IP.
- * @param name : Clock to be enabled.
+ * @param clk : Clock to be enabled.
  * @return  Nothing
  */
 static inline void CLOCK_EnableClock(clock_ip_name_t clk)
 {
     uint32_t index               = CLK_GATE_ABSTRACT_REG_OFFSET(clk);
-    SYSCON->AHBCLKCTRLSET[index] = (1U << CLK_GATE_ABSTRACT_BITS_SHIFT(clk));
+    SYSCON->AHBCLKCTRLSET[index] = (1UL << CLK_GATE_ABSTRACT_BITS_SHIFT(clk));
 }
 /**
  * @brief Disable the clock for specific IP.
- * @param name : Clock to be Disabled.
+ * @param clk : Clock to be Disabled.
  * @return  Nothing
  */
 static inline void CLOCK_DisableClock(clock_ip_name_t clk)
 {
     uint32_t index               = CLK_GATE_ABSTRACT_REG_OFFSET(clk);
-    SYSCON->AHBCLKCTRLCLR[index] = (1U << CLK_GATE_ABSTRACT_BITS_SHIFT(clk));
+    SYSCON->AHBCLKCTRLCLR[index] = (1UL << CLK_GATE_ABSTRACT_BITS_SHIFT(clk));
 }
 /**
  * @brief   Initialize the Core clock to given frequency (12, 48 or 96 MHz).
  * Turns on FRO and uses default CCO, if freq is 12000000, then high speed output is off, else high speed output is
  * enabled.
- * @param   iFreq   : Desired frequency (must be one of #CLK_FRO_12MHZ or #CLK_FRO_48MHZ or #CLK_FRO_96MHZ)
+ * @param   iFreq   : Desired frequency (must be one of CLK_FRO_12MHZ or CLK_FRO_48MHZ or CLK_FRO_96MHZ)
  * @return  returns success or fail status.
  */
 status_t CLOCK_SetupFROClocking(uint32_t iFreq);
@@ -819,6 +1021,12 @@ status_t CLOCK_SetupExtClocking(uint32_t iFreq);
  * @return  returns success or fail status.
  */
 status_t CLOCK_SetupI2SMClkClocking(uint32_t iFreq);
+/**
+ * @brief   Initialize the PLU CLKIN clock to given frequency.
+ * @param   iFreq   : Desired frequency (must be equal to exact rate in Hz)
+ * @return  returns success or fail status.
+ */
+status_t CLOCK_SetupPLUClkInClocking(uint32_t iFreq);
 /**
  * @brief   Configure the clock selection muxes.
  * @param   connection  : Clock to be configured.
@@ -857,7 +1065,7 @@ void CLOCK_SetRtc1hzClkDiv(uint32_t divided_by_value);
 /**
  * @brief   Set the flexcomm output frequency.
  * @param   id      : flexcomm instance id
- *          freq    : output frequency
+ * @param   freq    : output frequency
  * @return  0   : the frequency range is out of range.
  *          1   : switch successfully.
  */
@@ -941,6 +1149,18 @@ uint32_t CLOCK_GetCoreSysClkFreq(void);
  *  @return Frequency of I2S MCLK Clock
  */
 uint32_t CLOCK_GetI2SMClkFreq(void);
+/*! @brief  Return Frequency of PLU CLKIN Clock
+ *  @return Frequency of PLU CLKIN Clock
+ */
+uint32_t CLOCK_GetPLUClkInFreq(void);
+/*! @brief  Return Frequency of FlexComm Clock
+ *  @return Frequency of FlexComm Clock
+ */
+uint32_t CLOCK_GetFlexCommClkFreq(uint32_t id);
+/*! @brief  Return Frequency of High speed SPI Clock
+ *  @return Frequency of High speed SPI Clock
+ */
+uint32_t CLOCK_GetHsLspiClkFreq(void);
 /*! @brief  Return Frequency of CTimer functional Clock
  *  @return Frequency of CTimer functional Clock
  */
@@ -968,15 +1188,6 @@ uint32_t CLOCK_GetPLL1InClockRate(void);
  *  is recommended to use 'false' with the 'recompute' parameter.
  */
 uint32_t CLOCK_GetPLL0OutClockRate(bool recompute);
-
-/*! @brief    Return  PLL1 output clock rate
- *  @param    recompute   : Forces a PLL rate recomputation if true
- *  @return    PLL1 output clock rate
- *  @note The PLL rate is cached in the driver in a variable as
- *  the rate computation function can take some time to perform. It
- *  is recommended to use 'false' with the 'recompute' parameter.
- */
-uint32_t CLOCK_GetPLL1OutClockRate(bool recompute);
 
 /*! @brief    Enables and disables PLL0 bypass mode
  *  @brief    bypass  : true to bypass PLL0 (PLL0 output = PLL0 input, false to disable bypass
@@ -1015,7 +1226,7 @@ __STATIC_INLINE void CLOCK_SetBypassPLL1(bool bypass)
  */
 __STATIC_INLINE bool CLOCK_IsPLL0Locked(void)
 {
-    return (bool)((SYSCON->PLL0STAT & SYSCON_PLL0STAT_LOCK_MASK) != 0);
+    return (bool)((SYSCON->PLL0STAT & SYSCON_PLL0STAT_LOCK_MASK) != 0UL);
 }
 
 /*! @brief	Check if PLL1 is locked or not
@@ -1023,7 +1234,7 @@ __STATIC_INLINE bool CLOCK_IsPLL0Locked(void)
  */
 __STATIC_INLINE bool CLOCK_IsPLL1Locked(void)
 {
-    return (bool)((SYSCON->PLL1STAT & SYSCON_PLL1STAT_LOCK_MASK) != 0);
+    return (bool)((SYSCON->PLL1STAT & SYSCON_PLL1STAT_LOCK_MASK) != 0UL);
 }
 
 /*! @brief Store the current PLL0 rate
@@ -1046,8 +1257,8 @@ void CLOCK_SetStoredPLL0ClockRate(uint32_t rate);
  * automatic bandwidth selection, Spread Spectrum (SS) support, and fractional M-divider
  * are not used.<br>
  */
-#define PLL_CONFIGFLAG_USEINRATE (1 << 0) /*!< Flag to use InputRate in PLL configuration structure for setup */
-#define PLL_CONFIGFLAG_FORCENOFRACT (1 << 2)
+#define PLL_CONFIGFLAG_USEINRATE    (1U << 0U) /*!< Flag to use InputRate in PLL configuration structure for setup */
+#define PLL_CONFIGFLAG_FORCENOFRACT (1U << 2U)
 /*!< Force non-fractional output mode, PLL output will not use the fractional, automatic bandwidth, or SS hardware */
 
 /*! @brief PLL Spread Spectrum (SS) Programmable modulation frequency
@@ -1117,10 +1328,10 @@ typedef struct _pll_config
 /*! @brief PLL setup structure flags for 'flags' field
  * These flags control how the PLL setup function sets up the PLL
  */
-#define PLL_SETUPFLAG_POWERUP (1 << 0)         /*!< Setup will power on the PLL after setup */
-#define PLL_SETUPFLAG_WAITLOCK (1 << 1)        /*!< Setup will wait for PLL lock, implies the PLL will be pwoered on */
-#define PLL_SETUPFLAG_ADGVOLT (1 << 2)         /*!< Optimize system voltage for the new PLL rate */
-#define PLL_SETUPFLAG_USEFEEDBACKDIV2 (1 << 3) /*!< Use feedback divider by 2 in divider path */
+#define PLL_SETUPFLAG_POWERUP         (1U << 0U) /*!< Setup will power on the PLL after setup */
+#define PLL_SETUPFLAG_WAITLOCK        (1U << 1U) /*!< Setup will wait for PLL lock, implies the PLL will be pwoered on */
+#define PLL_SETUPFLAG_ADGVOLT         (1U << 2U) /*!< Optimize system voltage for the new PLL rate */
+#define PLL_SETUPFLAG_USEFEEDBACKDIV2 (1U << 3U) /*!< Use feedback divider by 2 in divider path */
 
 /*! @brief PLL0 setup structure
  * This structure can be used to pre-build a PLL setup configuration
@@ -1281,15 +1492,10 @@ bool CLOCK_EnableUsbhs0DeviceClock(clock_usbhs_src_t src, uint32_t freq);
  */
 bool CLOCK_EnableUsbhs0HostClock(clock_usbhs_src_t src, uint32_t freq);
 
-/*!
- * @brief Use DWT to delay at least for some time.
- *  Please note that, this API will calculate the microsecond period with the maximum devices
- *  supported CPU frequency, so this API will only delay for at least the given microseconds, if precise
- *  delay count was needed, please implement a new timer count to achieve this function.
- *
- * @param delay_us  Delay time in unit of microsecond.
+/*! @brief Enable the OSTIMER 32k clock.
+ *  @return  Nothing
  */
-void SDK_DelayAtLeastUs(uint32_t delay_us);
+void CLOCK_EnableOstimer32kClock(void);
 
 #if defined(__cplusplus)
 }

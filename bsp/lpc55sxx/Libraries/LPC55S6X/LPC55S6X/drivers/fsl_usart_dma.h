@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -25,8 +25,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief USART dma driver version 2.0.1. */
-#define FSL_USART_DMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+/*! @brief USART dma driver version. */
+#define FSL_USART_DMA_DRIVER_VERSION (MAKE_VERSION(2, 6, 0))
 /*@}*/
 
 /* Forward declaration of the handle typedef. */
@@ -149,6 +149,20 @@ void USART_TransferAbortReceiveDMA(USART_Type *base, usart_dma_handle_t *handle)
  * @retval kStatus_Success Get successfully through the parameter \p count;
  */
 status_t USART_TransferGetReceiveCountDMA(USART_Type *base, usart_dma_handle_t *handle, uint32_t *count);
+
+/*!
+ * @brief Get the number of bytes that have been sent.
+ *
+ * This function gets the number of bytes that have been sent.
+ *
+ * @param base USART peripheral base address.
+ * @param handle USART handle pointer.
+ * @param count Sent bytes count.
+ * @retval kStatus_NoTransferInProgress No receive in progress.
+ * @retval kStatus_InvalidArgument Parameter is invalid.
+ * @retval kStatus_Success Get successfully through the parameter \p count;
+ */
+status_t USART_TransferGetSendCountDMA(USART_Type *base, usart_dma_handle_t *handle, uint32_t *count);
 
 /* @} */
 

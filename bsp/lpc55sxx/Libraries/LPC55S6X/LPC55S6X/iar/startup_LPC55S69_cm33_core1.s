@@ -7,7 +7,7 @@
 ; *----------------------------------------------------------------------------
 ; *
 ; Copyright 1997-2016 Freescale Semiconductor, Inc.
-; Copyright 2016-2019 NXP
+; Copyright 2016-2020 NXP
 ; All rights reserved.
 ;
 ; SPDX-License-Identifier: BSD-3-Clause
@@ -43,6 +43,9 @@
         PUBLIC  __Vectors_Size
 
         DATA
+
+__iar_init$$done:              ; The vector table is not needed
+                      ; until after copy initialization is done
 
 __vector_table
         DCD     sfe(CSTACK)
@@ -111,7 +114,7 @@ __vector_table_0x1c
         DCD     Reserved59_IRQHandler  ; Reserved interrupt
         DCD     Reserved60_IRQHandler  ; Reserved interrupt
         DCD     Reserved61_IRQHandler  ; Reserved interrupt
-        DCD     USB1_UTMI_IRQHandler  ; USB1_UTMI
+        DCD     USB1_PHY_IRQHandler  ; USB1_PHY
         DCD     USB1_IRQHandler  ; USB1 interrupt
         DCD     USB1_NEEDCLK_IRQHandler  ; USB1 activity
         DCD     SEC_HYPERVISOR_CALL_IRQHandler  ; SEC_HYPERVISOR_CALL interrupt
@@ -477,11 +480,11 @@ Reserved60_IRQHandler
 Reserved61_IRQHandler
         LDR     R0, =Reserved61_DriverIRQHandler
         BX      R0
-        PUBWEAK USB1_UTMI_IRQHandler
-        PUBWEAK USB1_UTMI_DriverIRQHandler
+        PUBWEAK USB1_PHY_IRQHandler
+        PUBWEAK USB1_PHY_DriverIRQHandler
         SECTION .text:CODE:REORDER:NOROOT(2)
-USB1_UTMI_IRQHandler
-        LDR     R0, =USB1_UTMI_DriverIRQHandler
+USB1_PHY_IRQHandler
+        LDR     R0, =USB1_PHY_DriverIRQHandler
         BX      R0
         PUBWEAK USB1_IRQHandler
         PUBWEAK USB1_DriverIRQHandler
@@ -607,7 +610,7 @@ SDIO_DriverIRQHandler
 Reserved59_DriverIRQHandler
 Reserved60_DriverIRQHandler
 Reserved61_DriverIRQHandler
-USB1_UTMI_DriverIRQHandler
+USB1_PHY_DriverIRQHandler
 USB1_DriverIRQHandler
 USB1_NEEDCLK_DriverIRQHandler
 SEC_HYPERVISOR_CALL_DriverIRQHandler

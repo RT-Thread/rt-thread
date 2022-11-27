@@ -1,5 +1,5 @@
 /*
- * Copyright  2018 NXP
+ * Copyright  2019 NXP
  * All rights reserved.
  *
  *
@@ -109,8 +109,8 @@ void SYSCTL_SetShareSet(SYSCTL_Type *base, uint32_t flexCommIndex, sysctl_fcctrl
 {
     uint32_t tempReg = base->FCCTRLSEL[flexCommIndex];
 
-    tempReg &= ~(SYSCTL_FCCTRLSEL_SCKINSEL_MASK << signal);
-    tempReg |= (set + 1U) << signal;
+    tempReg &= ~((uint32_t)SYSCTL_FCCTRLSEL_SCKINSEL_MASK << (uint32_t)signal);
+    tempReg |= (set + 1U) << (uint32_t)signal;
 
     SYSCTL_UpdateRegister(base, &base->FCCTRLSEL[flexCommIndex], tempReg);
 }
@@ -155,24 +155,21 @@ void SYSCTL_SetShareSetSrc(SYSCTL_Type *base,
                            uint32_t sckShareSrc,
                            uint32_t wsShareSrc,
                            uint32_t dataInShareSrc,
-                           uint32_t dataOutMask)
+                           uint32_t dataOutShareSrc)
 {
     uint32_t tempReg = base->SHAREDCTRLSET[setIndex];
 
     /* WS,SCK,DATA IN */
-    tempReg &=
-        ~(SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDSCKSEL_MASK | SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDWSSEL_MASK |
-          SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDDATASEL_MASK);
-    tempReg |= SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDSCKSEL(sckShareSrc) |
-               SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDWSSEL(wsShareSrc) |
-               SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDDATASEL(dataInShareSrc);
+    tempReg &= ~(SYSCTL_SHAREDCTRLSET_SHAREDSCKSEL_MASK | SYSCTL_SHAREDCTRLSET_SHAREDWSSEL_MASK |
+                 SYSCTL_SHAREDCTRLSET_SHAREDDATASEL_MASK);
+    tempReg |= SYSCTL_SHAREDCTRLSET_SHAREDSCKSEL(sckShareSrc) | SYSCTL_SHAREDCTRLSET_SHAREDWSSEL(wsShareSrc) |
+               SYSCTL_SHAREDCTRLSET_SHAREDDATASEL(dataInShareSrc);
 
     /* data out */
-    tempReg &=
-        ~(SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC0DATAOUTEN_MASK | SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC1DATAOUTEN_MASK |
-          SYSCTL_SHARECTRLSET_SHAREDCTRLSET_F20DATAOUTEN_MASK | SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC6DATAOUTEN_MASK |
-          SYSCTL_SHARECTRLSET_SHAREDCTRLSET_FC7DATAOUTEN_MASK);
-    tempReg |= dataOutMask;
+    tempReg &= ~(SYSCTL_SHAREDCTRLSET_FC0DATAOUTEN_MASK | SYSCTL_SHAREDCTRLSET_FC1DATAOUTEN_MASK |
+                 SYSCTL_SHAREDCTRLSET_FC2DATAOUTEN_MASK | SYSCTL_SHAREDCTRLSET_FC6DATAOUTEN_MASK |
+                 SYSCTL_SHAREDCTRLSET_FC7DATAOUTEN_MASK);
+    tempReg |= dataOutShareSrc;
 
     SYSCTL_UpdateRegister(base, &base->SHAREDCTRLSET[setIndex], tempReg);
 }
@@ -194,12 +191,12 @@ void SYSCTL_SetShareSignalSrc(SYSCTL_Type *base,
 
     if (signal == kSYSCTL_SharedCtrlSignalDataOut)
     {
-        tempReg |= 1 << (signal + shareSrc);
+        tempReg |= 1UL << ((uint32_t)signal + shareSrc);
     }
     else
     {
-        tempReg &= ~(SYSCTL_SHARECTRLSET_SHAREDCTRLSET_SHAREDSCKSEL_MASK << signal);
-        tempReg |= shareSrc << signal;
+        tempReg &= ~((uint32_t)SYSCTL_SHAREDCTRLSET_SHAREDSCKSEL_MASK << (uint32_t)signal);
+        tempReg |= shareSrc << (uint32_t)signal;
     }
 
     SYSCTL_UpdateRegister(base, &base->SHAREDCTRLSET[setIndex], tempReg);

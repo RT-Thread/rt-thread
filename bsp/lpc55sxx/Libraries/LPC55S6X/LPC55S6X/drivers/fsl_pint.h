@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -24,7 +24,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_PINT_DRIVER_VERSION (MAKE_VERSION(2, 1, 3)) /*!< Version 2.1.3 */
+#define FSL_PINT_DRIVER_VERSION (MAKE_VERSION(2, 1, 9)) /*!< Version 2.1.9 */
 /*@}*/
 
 /* Number of interrupt line supported by PINT */
@@ -38,31 +38,31 @@
 
 /* PININT Bit slice source register bits */
 #define PININT_BITSLICE_SRC_START 8U
-#define PININT_BITSLICE_SRC_MASK 7U
+#define PININT_BITSLICE_SRC_MASK  7U
 
 /* PININT Bit slice configuration register bits */
 #define PININT_BITSLICE_CFG_START 8U
-#define PININT_BITSLICE_CFG_MASK 7U
+#define PININT_BITSLICE_CFG_MASK  7U
 #define PININT_BITSLICE_ENDP_MASK 7U
 
-#define PINT_PIN_INT_LEVEL 0x10U
-#define PINT_PIN_INT_EDGE 0x00U
+#define PINT_PIN_INT_LEVEL              0x10U
+#define PINT_PIN_INT_EDGE               0x00U
 #define PINT_PIN_INT_FALL_OR_HIGH_LEVEL 0x02U
-#define PINT_PIN_INT_RISE 0x01U
-#define PINT_PIN_RISE_EDGE (PINT_PIN_INT_EDGE | PINT_PIN_INT_RISE)
-#define PINT_PIN_FALL_EDGE (PINT_PIN_INT_EDGE | PINT_PIN_INT_FALL_OR_HIGH_LEVEL)
-#define PINT_PIN_BOTH_EDGE (PINT_PIN_INT_EDGE | PINT_PIN_INT_RISE | PINT_PIN_INT_FALL_OR_HIGH_LEVEL)
-#define PINT_PIN_LOW_LEVEL (PINT_PIN_INT_LEVEL)
-#define PINT_PIN_HIGH_LEVEL (PINT_PIN_INT_LEVEL | PINT_PIN_INT_FALL_OR_HIGH_LEVEL)
+#define PINT_PIN_INT_RISE               0x01U
+#define PINT_PIN_RISE_EDGE              (PINT_PIN_INT_EDGE | PINT_PIN_INT_RISE)
+#define PINT_PIN_FALL_EDGE              (PINT_PIN_INT_EDGE | PINT_PIN_INT_FALL_OR_HIGH_LEVEL)
+#define PINT_PIN_BOTH_EDGE              (PINT_PIN_INT_EDGE | PINT_PIN_INT_RISE | PINT_PIN_INT_FALL_OR_HIGH_LEVEL)
+#define PINT_PIN_LOW_LEVEL              (PINT_PIN_INT_LEVEL)
+#define PINT_PIN_HIGH_LEVEL             (PINT_PIN_INT_LEVEL | PINT_PIN_INT_FALL_OR_HIGH_LEVEL)
 
 /*! @brief PINT Pin Interrupt enable type */
 typedef enum _pint_pin_enable
 {
-    kPINT_PinIntEnableNone = 0U,                      /*!< Do not generate Pin Interrupt */
-    kPINT_PinIntEnableRiseEdge = PINT_PIN_RISE_EDGE,  /*!< Generate Pin Interrupt on rising edge */
-    kPINT_PinIntEnableFallEdge = PINT_PIN_FALL_EDGE,  /*!< Generate Pin Interrupt on falling edge */
+    kPINT_PinIntEnableNone      = 0U,                 /*!< Do not generate Pin Interrupt */
+    kPINT_PinIntEnableRiseEdge  = PINT_PIN_RISE_EDGE, /*!< Generate Pin Interrupt on rising edge */
+    kPINT_PinIntEnableFallEdge  = PINT_PIN_FALL_EDGE, /*!< Generate Pin Interrupt on falling edge */
     kPINT_PinIntEnableBothEdges = PINT_PIN_BOTH_EDGE, /*!< Generate Pin Interrupt on both edges */
-    kPINT_PinIntEnableLowLevel = PINT_PIN_LOW_LEVEL,  /*!< Generate Pin Interrupt on low level */
+    kPINT_PinIntEnableLowLevel  = PINT_PIN_LOW_LEVEL, /*!< Generate Pin Interrupt on low level */
     kPINT_PinIntEnableHighLevel = PINT_PIN_HIGH_LEVEL /*!< Generate Pin Interrupt on high level */
 } pint_pin_enable_t;
 
@@ -70,92 +70,94 @@ typedef enum _pint_pin_enable
 typedef enum _pint_int
 {
     kPINT_PinInt0 = 0U, /*!< Pin Interrupt  0 */
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
     kPINT_PinInt1 = 1U, /*!< Pin Interrupt  1 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 2U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 2U)
     kPINT_PinInt2 = 2U, /*!< Pin Interrupt  2 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 3U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 3U)
     kPINT_PinInt3 = 3U, /*!< Pin Interrupt  3 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 4U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 4U)
     kPINT_PinInt4 = 4U, /*!< Pin Interrupt  4 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 5U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 5U)
     kPINT_PinInt5 = 5U, /*!< Pin Interrupt  5 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 6U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 6U)
     kPINT_PinInt6 = 6U, /*!< Pin Interrupt  6 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 7U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 7U)
     kPINT_PinInt7 = 7U, /*!< Pin Interrupt  7 */
 #endif
-#if (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 0U)
-    kPINT_SecPinInt0 = 8U, /*!< Secure Pin Interrupt  0 */
+#if defined(FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 0U)
+    kPINT_SecPinInt0 = 0U, /*!< Secure Pin Interrupt  0 */
 #endif
-#if (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
-    kPINT_SecPinInt1 = 9U, /*!< Secure Pin Interrupt  1 */
+#if defined(FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
+    kPINT_SecPinInt1 = 1U, /*!< Secure Pin Interrupt  1 */
 #endif
 } pint_pin_int_t;
 
 /*! @brief PINT Pattern Match bit slice input source type */
 typedef enum _pint_pmatch_input_src
 {
-    kPINT_PatternMatchInp0Src = 0U, /*!< Input source 0 */
-    kPINT_PatternMatchInp1Src = 1U, /*!< Input source 1 */
-    kPINT_PatternMatchInp2Src = 2U, /*!< Input source 2 */
-    kPINT_PatternMatchInp3Src = 3U, /*!< Input source 3 */
-    kPINT_PatternMatchInp4Src = 4U, /*!< Input source 4 */
-    kPINT_PatternMatchInp5Src = 5U, /*!< Input source 5 */
-    kPINT_PatternMatchInp6Src = 6U, /*!< Input source 6 */
-    kPINT_PatternMatchInp7Src = 7U, /*!< Input source 7 */
+    kPINT_PatternMatchInp0Src    = 0U, /*!< Input source 0 */
+    kPINT_PatternMatchInp1Src    = 1U, /*!< Input source 1 */
+    kPINT_PatternMatchInp2Src    = 2U, /*!< Input source 2 */
+    kPINT_PatternMatchInp3Src    = 3U, /*!< Input source 3 */
+    kPINT_PatternMatchInp4Src    = 4U, /*!< Input source 4 */
+    kPINT_PatternMatchInp5Src    = 5U, /*!< Input source 5 */
+    kPINT_PatternMatchInp6Src    = 6U, /*!< Input source 6 */
+    kPINT_PatternMatchInp7Src    = 7U, /*!< Input source 7 */
+    kPINT_SecPatternMatchInp0Src = 0U, /*!< Input source 0 */
+    kPINT_SecPatternMatchInp1Src = 1U, /*!< Input source 1 */
 } pint_pmatch_input_src_t;
 
 /*! @brief PINT Pattern Match bit slice type */
 typedef enum _pint_pmatch_bslice
 {
     kPINT_PatternMatchBSlice0 = 0U, /*!< Bit slice 0 */
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
     kPINT_PatternMatchBSlice1 = 1U, /*!< Bit slice 1 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 2U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 2U)
     kPINT_PatternMatchBSlice2 = 2U, /*!< Bit slice 2 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 3U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 3U)
     kPINT_PatternMatchBSlice3 = 3U, /*!< Bit slice 3 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 4U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 4U)
     kPINT_PatternMatchBSlice4 = 4U, /*!< Bit slice 4 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 5U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 5U)
     kPINT_PatternMatchBSlice5 = 5U, /*!< Bit slice 5 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 6U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 6U)
     kPINT_PatternMatchBSlice6 = 6U, /*!< Bit slice 6 */
 #endif
-#if (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 7U)
+#if defined(FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS > 7U)
     kPINT_PatternMatchBSlice7 = 7U, /*!< Bit slice 7 */
 #endif
-#if (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 0U)
-    kSECPINT_PatternMatchBSlice0 = 8U, /*!< Bit slice 0 */
+#if defined(FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 0U)
+    kPINT_SecPatternMatchBSlice0 = 0U, /*!< Bit slice 0 */
 #endif
-#if (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
-    kSECPINT_PatternMatchBSlice1 = 9U, /*!< Bit slice 1 */
+#if defined(FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS) && (FSL_FEATURE_SECPINT_NUMBER_OF_CONNECTED_OUTPUTS > 1U)
+    kPINT_SecPatternMatchBSlice1 = 1U, /*!< Bit slice 1 */
 #endif
 } pint_pmatch_bslice_t;
 
 /*! @brief PINT Pattern Match configuration type */
 typedef enum _pint_pmatch_bslice_cfg
 {
-    kPINT_PatternMatchAlways = 0U,          /*!< Always Contributes to product term match */
-    kPINT_PatternMatchStickyRise = 1U,      /*!< Sticky Rising edge */
-    kPINT_PatternMatchStickyFall = 2U,      /*!< Sticky Falling edge */
+    kPINT_PatternMatchAlways          = 0U, /*!< Always Contributes to product term match */
+    kPINT_PatternMatchStickyRise      = 1U, /*!< Sticky Rising edge */
+    kPINT_PatternMatchStickyFall      = 2U, /*!< Sticky Falling edge */
     kPINT_PatternMatchStickyBothEdges = 3U, /*!< Sticky Rising or Falling edge */
-    kPINT_PatternMatchHigh = 4U,            /*!< High level */
-    kPINT_PatternMatchLow = 5U,             /*!< Low level */
-    kPINT_PatternMatchNever = 6U,           /*!< Never contributes to product term match */
-    kPINT_PatternMatchBothEdges = 7U,       /*!< Either rising or falling edge */
+    kPINT_PatternMatchHigh            = 4U, /*!< High level */
+    kPINT_PatternMatchLow             = 5U, /*!< Low level */
+    kPINT_PatternMatchNever           = 6U, /*!< Never contributes to product term match */
+    kPINT_PatternMatchBothEdges       = 7U, /*!< Either rising or falling edge */
 } pint_pmatch_bslice_cfg_t;
 
 /*! @brief PINT Callback function. */
@@ -552,7 +554,7 @@ void PINT_Deinit(PINT_Type *base);
  * This function  enables callback by pin index instead of enabling all pins.
  *
  * @param base Base address of the peripheral.
- * @param pinIdx pin index.
+ * @param pintIdx pin index.
  *
  * @retval None.
  */
@@ -564,7 +566,7 @@ void PINT_EnableCallbackByIndex(PINT_Type *base, pint_pin_int_t pintIdx);
  * This function disables callback by pin index instead of disabling all pins.
  *
  * @param base Base address of the peripheral.
- * @param pinIdx pin index.
+ * @param pintIdx pin index.
  *
  * @retval None.
  */

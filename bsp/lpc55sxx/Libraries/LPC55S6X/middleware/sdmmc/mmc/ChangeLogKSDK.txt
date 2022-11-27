@@ -1,0 +1,113 @@
+/*!
+@page middleware_log Middleware Change Log
+
+@section mmc MMC Card driver for MCUXpresso SDK
+  The current driver version is 2.5.0.
+
+  - 2.5.0
+    - Improvements
+      - Added api MMC_SetSleepAwake to support enter/exit sleep state.
+      - Added new api MMC_PollingCardStatusBusy for application polling card status.
+      - Removed deprecated api in mmc driver and mark MMC_HostReset as deprecated.
+      - Improved the read/write/erase function flow.
+      - Added mutual exclusive access for init/deinit/read/write/erase function.
+      - Fixed violations of MISRA C-2012 rule 4.7, 17.7, 10.7, 10.4, 13.5, 14.4, 10.6.
+
+  - 2.4.1
+    - Improvements
+      - Improved the voltage window argument of CMD1 according to host capabilty instead of use card ocr directly.
+      - Added host HS200/HS400/8bit bus width capability validation during card initialization.
+      - Used cache line size align buffer for MMC relate api.
+      - Increased the CMD13 timeout count to avoid polling CMD13 time out issue.
+    - Bug Fixes
+      - Fixed violations of MISRA C-2012 rule 11.9, 15.7, 4.7, 16.4, 10.1, 10.3, 10.4, 11.3, 14.4, 10.6, 17.7, 16.1, 16.3.
+
+  - 2.4.0
+    - Improvements
+      - Added new apis MMC_EnableCacheControl/MMC_FlushCache to support cache feature.
+
+  - 2.3.1
+    - Improvements
+      - Removed the dead loop while polling DAT0 and CMD13 instead of using timeout mechanism.
+      - Added card state check before switching to HS400 to improve the emmc initialization stability.
+      - Removed the redundant operation of memset internal buffer in MMC_WrtiteBlocks function.
+    - Bug Fixes
+      - Fixed the sandisk emmc always busy while sending CMD1 without supported voltage provide in argument.
+
+  - 2.3.0
+    - Improvements
+      - Deprecated api MMC_PowerOnCard/MMC_PowerOffCard by api MMC_SetCardPower.
+      - Added internalBuffer in mmc_card_t and removed rawCid/rawCsd/rawExtendedCsd.
+      - Added retuning support during data transfer under HS200 mode.
+      - Increased the read/write blocks failed retry times for stability.
+      - Added delay while retry the CMD1 for stability.
+      - Added legacy card support, the card not support CMD6, CMD8.
+
+  - 2.2.13
+    - Improvements
+      - Used the boot mode value instead of boot mode mask value as the parameter of MMC_SetBootConfig to improve user experience.
+      - Removed dynamic voltage switch feature for mmc, according to JEDEC standard, the voltage should be fixed after power up.
+
+  - 2.2.12
+    - Improvement
+      - Increased the CMD1 retry times in the MMC card driver to improve driver compatibility.
+    - Bug Fixes
+      - Fixed the build warning by changing the old style function declaration static
+        status_t inline to static inline status_t(found by adding -Wold-style-declaration in armgcc build flag).
+      - Fixed the fall through build warning by adding SUPPRESS_FALL_THROUGH_WARNING() in mmc driver.
+
+  - 2.2.7
+    - Bug Fixes
+      - Fixed MDK 66-D warning.
+
+  - 2.2.6
+    - Improvements
+      - Saved MMC OCR registers while sending CMD1 with argument 0.
+
+    - Bug Fixes
+      - Added MMC_PowerOn function in which there is delay function after powerup sdcard. Otherwise, the
+        card initialization by fail.
+
+  - 2.2.5
+    - Improvements
+      - Added SDMMC_ENABLE_SOFTWARE_TUNING to enable/disable software tuning and it is disabled by default.
+
+  - 2.2.4
+    - Bug Fixes
+      - Fixed DDR mode data sequence miss issue, which is caused by NIBBLE_POS.
+
+    - Improvements
+      - Increased g_sdmmc 512byte to improve the performance when application use a non-word align data buffer address.
+      - Used OCR access mode bits to determine the mmccard high capacity flag.
+
+  - 2.2.3
+    - Bug Fixes
+      - Added response check for send operation condition command. If not checked, the card may occasionally init fail.
+
+  - 2.2.1
+    - Improvements
+      - Improved MMC Boot feature.
+
+  - 2.2.0
+    - Improvements
+      - Optimized tuning/mmc switch voltage/mmc select power class/mmc select timing function.
+      - Added strobe dll for mmc HS400 mode.
+      - Added write complete wait operation for MMC_Write to fix command timeout issue.
+
+  - 2.1.2
+    - Improvements
+      - Improved SDMMC to support eMMC v5.0.
+    - Bug Fixes
+      - Fixed incorrect comparison between count and length in MMC_ReadBlocks/MMC_WriteBlocks.
+
+  - 2.1.1
+    - Bug Fixes
+      - Fixed the block range boundary error when transferring data to MMC card.
+
+  - 2.1.0
+    - Improvements
+      - Optimized the function of setting maximum data bus width for MMC card.
+
+  - 2.0.0
+    - Initial version
+*/

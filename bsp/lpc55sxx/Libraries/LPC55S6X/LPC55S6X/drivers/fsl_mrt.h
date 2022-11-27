@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2017, 2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -23,7 +23,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_MRT_DRIVER_VERSION (MAKE_VERSION(2, 0, 1)) /*!< Version 2.0.1 */
+#define FSL_MRT_DRIVER_VERSION (MAKE_VERSION(2, 0, 3)) /*!< Version 2.0.3 */
 /*@}*/
 
 /*! @brief List of MRT channels */
@@ -112,7 +112,7 @@ void MRT_Deinit(MRT_Type *base);
  */
 static inline void MRT_GetDefaultConfig(mrt_config_t *config)
 {
-    assert(config);
+    assert(config != NULL);
 #if !(defined(FSL_FEATURE_MRT_HAS_NO_MODCFG_MULTITASK) && FSL_FEATURE_MRT_HAS_NO_MODCFG_MULTITASK)
     /* Use hardware status operating mode */
     config->enableMultiTask = false;
@@ -128,14 +128,14 @@ static inline void MRT_GetDefaultConfig(mrt_config_t *config)
  */
 static inline void MRT_SetupChannelMode(MRT_Type *base, mrt_chnl_t channel, const mrt_timer_mode_t mode)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
 
     uint32_t reg = base->CHANNEL[channel].CTRL;
 
     /* Clear old value */
     reg &= ~MRT_CHANNEL_CTRL_MODE_MASK;
     /* Add the new mode */
-    reg |= mode;
+    reg |= (uint32_t)mode;
 
     base->CHANNEL[channel].CTRL = reg;
 }
@@ -157,7 +157,7 @@ static inline void MRT_SetupChannelMode(MRT_Type *base, mrt_chnl_t channel, cons
  */
 static inline void MRT_EnableInterrupts(MRT_Type *base, mrt_chnl_t channel, uint32_t mask)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     base->CHANNEL[channel].CTRL |= mask;
 }
 
@@ -171,7 +171,7 @@ static inline void MRT_EnableInterrupts(MRT_Type *base, mrt_chnl_t channel, uint
  */
 static inline void MRT_DisableInterrupts(MRT_Type *base, mrt_chnl_t channel, uint32_t mask)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     base->CHANNEL[channel].CTRL &= ~mask;
 }
 
@@ -186,7 +186,7 @@ static inline void MRT_DisableInterrupts(MRT_Type *base, mrt_chnl_t channel, uin
  */
 static inline uint32_t MRT_GetEnabledInterrupts(MRT_Type *base, mrt_chnl_t channel)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     return (base->CHANNEL[channel].CTRL & MRT_CHANNEL_CTRL_INTEN_MASK);
 }
 
@@ -208,7 +208,7 @@ static inline uint32_t MRT_GetEnabledInterrupts(MRT_Type *base, mrt_chnl_t chann
  */
 static inline uint32_t MRT_GetStatusFlags(MRT_Type *base, mrt_chnl_t channel)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     return (base->CHANNEL[channel].STAT & (MRT_CHANNEL_STAT_INTFLAG_MASK | MRT_CHANNEL_STAT_RUN_MASK));
 }
 
@@ -222,7 +222,7 @@ static inline uint32_t MRT_GetStatusFlags(MRT_Type *base, mrt_chnl_t channel)
  */
 static inline void MRT_ClearStatusFlags(MRT_Type *base, mrt_chnl_t channel, uint32_t mask)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     base->CHANNEL[channel].STAT = (mask & MRT_CHANNEL_STAT_INTFLAG_MASK);
 }
 
@@ -264,7 +264,7 @@ void MRT_UpdateTimerPeriod(MRT_Type *base, mrt_chnl_t channel, uint32_t count, b
  */
 static inline uint32_t MRT_GetCurrentTimerCount(MRT_Type *base, mrt_chnl_t channel)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     return base->CHANNEL[channel].TIMER;
 }
 
@@ -285,12 +285,12 @@ static inline uint32_t MRT_GetCurrentTimerCount(MRT_Type *base, mrt_chnl_t chann
  *
  * @param base    Multi-Rate timer peripheral base address
  * @param channel Timer channel number.
- * @param count   Timer period in units of ticks
+ * @param count   Timer period in units of ticks. Count can contain the LOAD bit, which control the force load feature.
  */
 static inline void MRT_StartTimer(MRT_Type *base, mrt_chnl_t channel, uint32_t count)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
-    assert(count < MRT_CHANNEL_INTVAL_IVALUE_MASK);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint32_t)(count & ~MRT_CHANNEL_INTVAL_LOAD_MASK) <= (uint32_t)MRT_CHANNEL_INTVAL_IVALUE_MASK);
     /* Write the timer interval value */
     base->CHANNEL[channel].INTVAL = count;
 }
@@ -305,7 +305,7 @@ static inline void MRT_StartTimer(MRT_Type *base, mrt_chnl_t channel, uint32_t c
  */
 static inline void MRT_StopTimer(MRT_Type *base, mrt_chnl_t channel)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
     /* Stop the timer immediately */
     base->CHANNEL[channel].INTVAL = MRT_CHANNEL_INTVAL_LOAD_MASK;
 }
@@ -343,7 +343,7 @@ static inline uint32_t MRT_GetIdleChannel(MRT_Type *base)
  */
 static inline void MRT_ReleaseChannel(MRT_Type *base, mrt_chnl_t channel)
 {
-    assert(channel < FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
+    assert((uint8_t)channel < (uint8_t)FSL_FEATURE_MRT_NUMBER_OF_CHANNELS);
 
     uint32_t reg = base->CHANNEL[channel].STAT;
 

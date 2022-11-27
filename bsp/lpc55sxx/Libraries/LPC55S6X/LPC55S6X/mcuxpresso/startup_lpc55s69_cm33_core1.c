@@ -1,10 +1,10 @@
 //*****************************************************************************
 // LPC55S69_cm33_core1 startup code for use with MCUXpresso IDE
 //
-// Version : 240619
+// Version : 160420
 //*****************************************************************************
 //
-// Copyright 2016-2019 NXP
+// Copyright 2016-2020 NXP
 // All rights reserved.
 //
 // SPDX-License-Identifier: BSD-3-Clause
@@ -124,7 +124,7 @@ WEAK void SDIO_IRQHandler(void);
 WEAK void Reserved59_IRQHandler(void);
 WEAK void Reserved60_IRQHandler(void);
 WEAK void Reserved61_IRQHandler(void);
-WEAK void USB1_UTMI_IRQHandler(void);
+WEAK void USB1_PHY_IRQHandler(void);
 WEAK void USB1_IRQHandler(void);
 WEAK void USB1_NEEDCLK_IRQHandler(void);
 WEAK void SEC_HYPERVISOR_CALL_IRQHandler(void);
@@ -191,7 +191,7 @@ void SDIO_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void Reserved59_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void Reserved60_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void Reserved61_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
-void USB1_UTMI_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
+void USB1_PHY_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void USB1_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void USB1_NEEDCLK_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void SEC_HYPERVISOR_CALL_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
@@ -234,6 +234,9 @@ WEAK extern void __valid_user_code_checksum();
 // The vector table.
 // This relies on the linker script to place at correct location in memory.
 //*****************************************************************************
+
+
+
 extern void (* const g_pfnVectors[])(void);
 extern void * __Vectors __attribute__ ((alias ("g_pfnVectors")));
 
@@ -304,7 +307,7 @@ void (* const g_pfnVectors[])(void) = {
     Reserved59_IRQHandler,           // 59: Reserved interrupt
     Reserved60_IRQHandler,           // 60: Reserved interrupt
     Reserved61_IRQHandler,           // 61: Reserved interrupt
-    USB1_UTMI_IRQHandler,            // 62: USB1_UTMI
+    USB1_PHY_IRQHandler,             // 62: USB1_PHY
     USB1_IRQHandler,                 // 63: USB1 interrupt
     USB1_NEEDCLK_IRQHandler,         // 64: USB1 activity
     SEC_HYPERVISOR_CALL_IRQHandler,  // 65: SEC_HYPERVISOR_CALL interrupt
@@ -318,6 +321,7 @@ void (* const g_pfnVectors[])(void) = {
     PQ_IRQHandler,                   // 73: PQ interrupt
     DMA1_IRQHandler,                 // 74: DMA1 interrupt
     FLEXCOMM8_IRQHandler,            // 75: Flexcomm Interface 8 (SPI, , FLEXCOMM)
+
 
 }; /* End of g_pfnVectors */
 
@@ -361,7 +365,7 @@ extern unsigned int __bss_section_table_end;
 // Sets up a simple runtime environment and initializes the C/C++
 // library.
 //*****************************************************************************
-__attribute__ ((section(".after_vectors.reset")))
+__attribute__ ((naked, section(".after_vectors.reset")))
 void ResetISR(void) {
 
     // Disable interrupts
@@ -681,8 +685,8 @@ WEAK void Reserved61_IRQHandler(void)
 {   Reserved61_DriverIRQHandler();
 }
 
-WEAK void USB1_UTMI_IRQHandler(void)
-{   USB1_UTMI_DriverIRQHandler();
+WEAK void USB1_PHY_IRQHandler(void)
+{   USB1_PHY_DriverIRQHandler();
 }
 
 WEAK void USB1_IRQHandler(void)

@@ -1,5 +1,5 @@
 /*
- * Copyright  2018 NXP
+ * Copyright 2018-2019 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -20,7 +20,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_PLU_DRIVER_VERSION (MAKE_VERSION(2, 0, 1)) /*!< Version 2.0.1 */
+#define FSL_PLU_DRIVER_VERSION (MAKE_VERSION(2, 2, 1)) /*!< Version 2.2.1 */
                                                        /*@}*/
 
 /*! @brief Index of LUT */
@@ -153,6 +153,46 @@ typedef enum _plu_output_source
     kPLU_OUT_SRC_FLIPFLOP_3 = 29U  /*!< Select Flip-Flops state(3) to be connected to PLU output */
 } plu_output_source_t;
 
+#if defined(FSL_FEATURE_PLU_HAS_WAKEINT_CTRL_REG) && FSL_FEATURE_PLU_HAS_WAKEINT_CTRL_REG
+
+/*! @brief The enumerator of PLU Interrupt. */
+enum _plu_interrupt_mask
+{
+    kPLU_OUTPUT_0_INTERRUPT_MASK = 1 << 0, /*!< Select PLU output 0 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_1_INTERRUPT_MASK = 1 << 1, /*!< Select PLU output 1 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_2_INTERRUPT_MASK = 1 << 2, /*!< Select PLU output 2 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_3_INTERRUPT_MASK = 1 << 3, /*!< Select PLU output 3 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_4_INTERRUPT_MASK = 1 << 4, /*!< Select PLU output 4 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_5_INTERRUPT_MASK = 1 << 5, /*!< Select PLU output 5 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_6_INTERRUPT_MASK = 1 << 6, /*!< Select PLU output 6 contribute to interrupt/wake-up generation */
+    kPLU_OUTPUT_7_INTERRUPT_MASK = 1 << 7  /*!< Select PLU output 7 contribute to interrupt/wake-up generation */
+};
+
+/*! @brief Control input of the PLU, add filtering for glitch. */
+typedef enum _plu_wakeint_filter_mode
+{
+    kPLU_WAKEINT_FILTER_MODE_BYPASS       = 0U, /*!< Select Bypass mode */
+    kPLU_WAKEINT_FILTER_MODE_1_CLK_PERIOD = 1U, /*!< Filter 1 clock period */
+    kPLU_WAKEINT_FILTER_MODE_2_CLK_PERIOD = 2U, /*!< Filter 2 clock period */
+    kPLU_WAKEINT_FILTER_MODE_3_CLK_PERIOD = 3U  /*!< Filter 3 clock period */
+} plu_wakeint_filter_mode_t;
+
+/*! @brief Clock source for filter mode. */
+typedef enum _plu_wakeint_filter_clock_source
+{
+    kPLU_WAKEINT_FILTER_CLK_SRC_1MHZ_LPOSC = 0U, /*!< Select the 1MHz low-power oscillator as the filter clock */
+    kPLU_WAKEINT_FILTER_CLK_SRC_12MHZ_FRO  = 1U, /*!< Select the 12MHz FRO as the filer clock */
+    kPLU_WAKEINT_FILTER_CLK_SRC_ALT        = 2U  /*!< Select a third clock source */
+} plu_wakeint_filter_clock_source_t;
+
+/*! @brief Wake configuration. */
+typedef struct _plu_wakeint_config
+{
+    plu_wakeint_filter_mode_t filterMode;          /*!< Filter Mode. */
+    plu_wakeint_filter_clock_source_t clockSource; /*!< The clock source for filter mode. */
+} plu_wakeint_config_t;
+#endif /* FSL_FEATURE_PLU_HAS_WAKEINT_CTRL_REG */
+
 /*******************************************************************************
  * API
  ******************************************************************************/
@@ -167,7 +207,7 @@ extern "C" {
  */
 
 /*!
- * @brief Ungates the PLU clock and reset the module.
+ * @brief Enable the PLU clock and reset the module.
  *
  * @note This API should be called at the beginning of the application using the PLU driver.
  *
@@ -205,7 +245,7 @@ static inline void PLU_SetLutInputSource(PLU_Type *base,
                                          plu_lut_in_index_t lutInIndex,
                                          plu_lut_input_source_t inputSrc)
 {
-    PLU->LUT[lutIndex].INP[lutInIndex] = inputSrc;
+    PLU->LUT[lutIndex].INP_MUX[lutInIndex] = (uint32_t)inputSrc;
 }
 
 /*!
@@ -219,7 +259,7 @@ static inline void PLU_SetLutInputSource(PLU_Type *base,
  */
 static inline void PLU_SetOutputSource(PLU_Type *base, plu_output_index_t outputIndex, plu_output_source_t outputSrc)
 {
-    base->OUTPUT_MUX[outputIndex] = outputSrc;
+    base->OUTPUT_MUX[outputIndex] = (uint32_t)outputSrc;
 }
 
 /*!
@@ -256,6 +296,74 @@ static inline uint32_t PLU_ReadOutputState(PLU_Type *base)
 }
 
 /*! @}*/
+
+#if defined(FSL_FEATURE_PLU_HAS_WAKEINT_CTRL_REG) && FSL_FEATURE_PLU_HAS_WAKEINT_CTRL_REG
+/*!
+ * @name Wake-up/Interrupt Control
+ * @{
+ */
+
+/*!
+ * @brief Gets an available pre-defined settings for wakeup/interrupt control.
+ *
+ * This function initializes the initial configuration structure with an available settings. The default values are:
+ * @code
+ *   config->filterMode = kPLU_WAKEINT_FILTER_MODE_BYPASS;
+ *   config->clockSource = kPLU_WAKEINT_FILTER_CLK_SRC_1MHZ_LPOSC;
+ * @endcode
+ * @param config Pointer to configuration structure.
+ */
+void PLU_GetDefaultWakeIntConfig(plu_wakeint_config_t *config);
+
+/*!
+ * @brief Enable PLU outputs wakeup/interrupt request.
+ *
+ * This function enables Any of the eight selected PLU outputs to contribute to an asynchronous wake-up or an interrupt
+ * request.
+ *
+ * Note: If a PLU_CLKIN is provided, the raw wake-up/interrupt request will be set on the rising-edge of the PLU_CLKIN
+ * whenever the raw request signal is high. This registered signal will be glitch-free and just use the default wakeint
+ * config by PLU_GetDefaultWakeIntConfig(). If not, have to specify the filter mode and clock source to eliminate the
+ * glitches caused by long and widely disparate delays through the network of LUTs making up the PLU. This way may
+ * increase power consumption in low-power operating modes and inject delay before the wake-up/interrupt request is
+ * generated.
+ *
+ * @param base PLU peripheral base address.
+ * @param interruptMask PLU interrupt mask (see @ref _plu_interrupt_mask enumeration).
+ * @param config Pointer to configuration structure (see @ref plu_wakeint_config_t typedef enumeration)
+ */
+void PLU_EnableWakeIntRequest(PLU_Type *base, uint32_t interruptMask, const plu_wakeint_config_t *config);
+
+/*!
+ * @brief Latch an interrupt
+ *
+ * This function latches the interrupt and then it can be cleared with PLU_ClearLatchedInterrupt().
+ *
+ * Note: This mode is not compatible with use of the glitch filter. If this bit is set, the FILTER MODE should be set
+ * to kPLU_WAKEINT_FILTER_MODE_BYPASS (Bypass Mode) and PLU_CLKIN should be provided. If this bit is set, the
+ * wake-up/interrupt request will be set on the rising-edge of PLU_CLKIN whenever the raw wake-up/interrupt signal is
+ * high. The request must be cleared by software.
+ *
+ * @param base PLU peripheral base address.
+ */
+static inline void PLU_LatchInterrupt(PLU_Type *base)
+{
+    base->WAKEINT_CTRL |= PLU_WAKEINT_CTRL_LATCH_ENABLE_MASK;
+}
+
+/*!
+ * @brief Clear the latched interrupt
+ *
+ * This function clears the wake-up/interrupt request flag latched by PLU_LatchInterrupt()
+ *
+ * Note: It is not necessary for the PLU bus clock to be enabled in order to write-to or read-back this bit.
+ *
+ * @param base PLU peripheral base address.
+ */
+void PLU_ClearLatchedInterrupt(PLU_Type *base);
+
+/*! @}*/
+#endif /* FSL_FEATURE_PLU_HAS_WAKEINT_CTRL_REG */
 
 #if defined(__cplusplus)
 }

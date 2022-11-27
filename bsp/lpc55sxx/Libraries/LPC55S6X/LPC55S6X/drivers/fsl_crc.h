@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2017, 2019-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -24,17 +24,23 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief CRC driver version. Version 2.0.1.
+/*! @brief CRC driver version. Version 2.1.1.
  *
- * Current version: 2.0.1
+ * Current version: 2.1.1
  *
  * Change log:
  * - Version 2.0.0
  *   - initial version
  * - Version 2.0.1
  *   - add explicit type cast when writing to WR_DATA
+ * - Version 2.0.2
+ *   - Fix MISRA issue
+ * - Version 2.1.0
+ *   - Add CRC_WriteSeed function
+ * - Version 2.1.1
+ *   - Fix MISRA issue
  */
-#define FSL_CRC_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+#define FSL_CRC_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
 /*@}*/
 
 #ifndef CRC_DRIVER_CUSTOM_DEFAULTS
@@ -105,6 +111,14 @@ static inline void CRC_Deinit(CRC_Type *base)
  * @param base   CRC peripheral address.
  */
 void CRC_Reset(CRC_Type *base);
+
+/*!
+ * @brief Write seed to CRC peripheral module.
+ *
+ * @param base   CRC peripheral address.
+ * @param seed   CRC Seed value.
+ */
+void CRC_WriteSeed(CRC_Type *base, uint32_t seed);
 
 /*!
  * @brief Loads default values to CRC protocol configuration structure.

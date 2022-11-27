@@ -1,18 +1,19 @@
 /*
 ** ###################################################################
 **     Processors:          LPC55S69JBD100_cm33_core1
-**                          LPC55S69JET98_cm33_core1
+**                          LPC55S69JBD64_cm33_core1
+**                          LPC55S69JEV98_cm33_core1
 **
 **     Compiler:            IAR ANSI C/C++ Compiler for ARM
-**     Reference manual:    LPC55xx/LPC55Sxx User manual Rev.0.2  15 Aug 2018
-**     Version:             rev. 1.0, 2018-08-22
-**     Build:               b180921
+**     Reference manual:    LPC55S6x/LPC55S2x/LPC552x User manual(UM11126) Rev.1.3  16 May 2019
+**     Version:             rev. 1.1, 2019-05-16
+**     Build:               b210928
 **
 **     Abstract:
 **         Linker file for the IAR ANSI C/C++ Compiler for ARM
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2018 NXP
+**     Copyright 2016-2021 NXP
 **     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause
@@ -40,10 +41,10 @@ if (isdefinedsymbol(__heap_size__)) {
 }
 
 define symbol m_interrupts_start               = 0x00072000;
-define symbol m_interrupts_end                 = 0x0007213F;
+define symbol m_interrupts_end                 = 0x000721FF;
 
-define symbol m_text_start                     = 0x00072140;
-define symbol m_text_end                       = 0x00097FFF;
+define symbol m_text_start                     = 0x00072200;
+define symbol m_text_end                       = 0x0009D7FF;
 
 
 define symbol m_data_start                     = 0x20033000;
