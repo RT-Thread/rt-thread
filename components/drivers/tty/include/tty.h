@@ -152,11 +152,7 @@ struct tty_struct
 
     struct termios init_termios;
     struct winsize winsize;
-#ifdef RT_USING_SMP
-    struct rt_spinlock spinlock;
-#else
-    rt_spinlock_t spinlock;
-#endif
+    struct rt_mutex lock;
     pid_t pgrp;
     pid_t session;
     struct rt_lwp *foreground;
