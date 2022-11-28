@@ -398,7 +398,11 @@ const static struct rt_device_ops char_dev_ops =
 #endif
 
 #ifdef RT_USING_POSIX_DEVIO
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
 
 /* RT-Thread device filesystem interface */
 static int char_dev_fopen(struct dfs_fd *fd)
