@@ -1,0 +1,12 @@
+menu "DMA Devices"
+
+config DRIVERS_DMA
+    bool "enable dma driver"
+        default y
+
+config HAL_TEST_DMA
+    bool "enable dma hal APIs test command"
+	depends on DRIVERS_DMA
+        default n
+
+endmenu

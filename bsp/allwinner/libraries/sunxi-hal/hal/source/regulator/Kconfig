@@ -1,0 +1,7 @@
+menu "REGULATOR Devices"
+
+config DRIVERS_REGULATOR
+    bool "enable regulator driver"
+        default y
+
+endmenu

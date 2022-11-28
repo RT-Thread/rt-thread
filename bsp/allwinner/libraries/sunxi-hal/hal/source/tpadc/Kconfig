@@ -1,0 +1,12 @@
+menu "TPADC Devices"
+
+config DRIVERS_TPADC
+    bool "enable tpadc driver"
+        default n
+
+config HAL_TEST_TPADC
+    bool "enable tpadc hal APIs test command"
+    depends on DRIVERS_TPADC
+        default n
+
+endmenu
