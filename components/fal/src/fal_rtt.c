@@ -407,7 +407,7 @@ const static struct rt_device_ops char_dev_ops =
 /* RT-Thread device filesystem interface */
 static int char_dev_fopen(struct dfs_fd *fd)
 {
-    struct fal_char_device *part = (struct fal_char_device *) fd->fnode->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -431,7 +431,7 @@ static int char_dev_fopen(struct dfs_fd *fd)
 static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
 {
     int ret = 0;
-    struct fal_char_device *part = (struct fal_char_device *) fd->fnode->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -451,7 +451,7 @@ static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
 static int char_dev_fwrite(struct dfs_fd *fd, const void *buf, size_t count)
 {
     int ret = 0;
-    struct fal_char_device *part = (struct fal_char_device *) fd->fnode->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 

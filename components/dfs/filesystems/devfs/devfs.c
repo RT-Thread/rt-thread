@@ -37,7 +37,7 @@ int dfs_device_fs_ioctl(struct dfs_fd *file, int cmd, void *args)
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->fnode->data;
+    dev_id = (rt_device_t)file->vnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* close device handler */
@@ -56,7 +56,7 @@ int dfs_device_fs_read(struct dfs_fd *file, void *buf, size_t count)
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->fnode->data;
+    dev_id = (rt_device_t)file->vnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* read device data */
@@ -74,7 +74,7 @@ int dfs_device_fs_write(struct dfs_fd *file, const void *buf, size_t count)
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->fnode->data;
+    dev_id = (rt_device_t)file->vnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* read device data */
@@ -90,18 +90,18 @@ int dfs_device_fs_close(struct dfs_fd *file)
     rt_device_t dev_id;
 
     RT_ASSERT(file != RT_NULL);
-    RT_ASSERT(file->fnode->ref_count > 0);
+    RT_ASSERT(file->vnode->ref_count > 0);
 
-    if (file->fnode->ref_count > 1)
+    if (file->vnode->ref_count > 1)
     {
         return 0;
     }
 
-    if (file->fnode->type == FT_DIRECTORY)
+    if (file->vnode->type == FT_DIRECTORY)
     {
         struct device_dirent *root_dirent;
 
-        root_dirent = (struct device_dirent *)file->fnode->data;
+        root_dirent = (struct device_dirent *)file->vnode->data;
         RT_ASSERT(root_dirent != RT_NULL);
 
         /* release dirent */
@@ -110,14 +110,14 @@ int dfs_device_fs_close(struct dfs_fd *file)
     }
 
     /* get device handler */
-    dev_id = (rt_device_t)file->fnode->data;
+    dev_id = (rt_device_t)file->vnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* close device handler */
     result = rt_device_close(dev_id);
     if (result == RT_EOK)
     {
-        file->fnode->data = RT_NULL;
+        file->vnode->data = RT_NULL;
 
         return RT_EOK;
     }
@@ -130,14 +130,14 @@ int dfs_device_fs_open(struct dfs_fd *file)
     rt_err_t result;
     rt_device_t device;
 
-    RT_ASSERT(file->fnode->ref_count > 0);
-    if (file->fnode->ref_count > 1)
+    RT_ASSERT(file->vnode->ref_count > 0);
+    if (file->vnode->ref_count > 1)
     {
         file->pos = 0;
         return 0;
     }
     /* open root directory */
-    if ((file->fnode->path[0] == '/') && (file->fnode->path[1] == '\0') &&
+    if ((file->vnode->path[0] == '/') && (file->vnode->path[1] == '\0') &&
         (file->flags & O_DIRECTORY))
     {
         struct rt_object *object;
@@ -186,7 +186,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         }
 
         /* set data */
-        file->fnode->data = root_dirent;
+        file->vnode->data = root_dirent;
 
         return RT_EOK;
     }
@@ -198,14 +198,14 @@ int dfs_device_fs_open(struct dfs_fd *file)
             return -ENOSYS;
         }
         /* regester bus device */
-        if (rt_device_bus_create(&file->fnode->path[1], 0) == RT_NULL)
+        if (rt_device_bus_create(&file->vnode->path[1], 0) == RT_NULL)
         {
             return -EEXIST;
         }
     }
 #endif
 
-    device = rt_device_find(&file->fnode->path[1]);
+    device = rt_device_find(&file->vnode->path[1]);
     if (device == RT_NULL)
     {
         return -ENODEV;
@@ -215,16 +215,16 @@ int dfs_device_fs_open(struct dfs_fd *file)
     if (device->fops)
     {
         /* use device fops */
-        file->fnode->fops = device->fops;
-        file->fnode->data = (void *)device;
+        file->vnode->fops = device->fops;
+        file->vnode->data = (void *)device;
 
         /* use fops */
-        if (file->fnode->fops->open)
+        if (file->vnode->fops->open)
         {
-            result = file->fnode->fops->open(file);
+            result = file->vnode->fops->open(file);
             if (result == RT_EOK || result == -RT_ENOSYS)
             {
-                file->fnode->type = FT_DEVICE;
+                file->vnode->type = FT_DEVICE;
                 return 0;
             }
         }
@@ -235,13 +235,13 @@ int dfs_device_fs_open(struct dfs_fd *file)
         result = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
         if (result == RT_EOK || result == -RT_ENOSYS)
         {
-            file->fnode->data = device;
-            file->fnode->type = FT_DEVICE;
+            file->vnode->data = device;
+            file->vnode->type = FT_DEVICE;
             return RT_EOK;
         }
     }
 
-    file->fnode->data = RT_NULL;
+    file->vnode->data = RT_NULL;
     /* open device failed. */
     return -EIO;
 }
@@ -322,7 +322,7 @@ int dfs_device_fs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t co
     struct dirent *d;
     struct device_dirent *root_dirent;
 
-    root_dirent = (struct device_dirent *)file->fnode->data;
+    root_dirent = (struct device_dirent *)file->vnode->data;
     RT_ASSERT(root_dirent != RT_NULL);
 
     /* make integer count */

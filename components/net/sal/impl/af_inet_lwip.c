@@ -243,7 +243,7 @@ static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
     struct lwip_sock *sock;
     struct sal_socket *sal_sock;
 
-    sal_sock = sal_get_socket((int)(size_t)file->fnode->data);
+    sal_sock = sal_get_socket((int)(size_t)file->vnode->data);
     if(!sal_sock)
     {
         return -1;

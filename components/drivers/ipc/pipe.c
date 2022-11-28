@@ -57,7 +57,7 @@ static int pipe_fops_open(struct dfs_fd *fd)
     int rc = 0;
     rt_pipe_t *pipe;
 
-    pipe = (rt_pipe_t *)fd->fnode->data;
+    pipe = (rt_pipe_t *)fd->vnode->data;
     if (!pipe)
     {
         return -1;
@@ -74,7 +74,7 @@ static int pipe_fops_open(struct dfs_fd *fd)
     {
         pipe->writer = 1;
     }
-    if (fd->fnode->ref_count == 1)
+    if (fd->vnode->ref_count == 1)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
         if (pipe->fifo == RT_NULL)
@@ -104,7 +104,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
     rt_device_t device;
     rt_pipe_t *pipe;
 
-    pipe = (rt_pipe_t *)fd->fnode->data;
+    pipe = (rt_pipe_t *)fd->vnode->data;
     if (!pipe)
     {
         return -1;
@@ -127,7 +127,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
         }
     }
 
-    if (fd->fnode->ref_count == 1)
+    if (fd->vnode->ref_count == 1)
     {
         if (pipe->fifo != RT_NULL)
         {
@@ -138,7 +138,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     rt_mutex_release(&pipe->lock);
 
-    if (fd->fnode->ref_count == 1 && pipe->is_named == RT_FALSE)
+    if (fd->vnode->ref_count == 1 && pipe->is_named == RT_FALSE)
     {
         /* delete the unamed pipe */
         rt_pipe_delete(device->parent.name);
@@ -169,7 +169,7 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     rt_pipe_t *pipe;
     int ret = 0;
 
-    pipe = (rt_pipe_t *)fd->fnode->data;
+    pipe = (rt_pipe_t *)fd->vnode->data;
 
     switch (cmd)
     {
@@ -205,7 +205,7 @@ static int pipe_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     int len = 0;
     rt_pipe_t *pipe;
 
-    pipe = (rt_pipe_t *)fd->fnode->data;
+    pipe = (rt_pipe_t *)fd->vnode->data;
 
     /* no process has the pipe open for writing, return end-of-file */
     rt_mutex_take(&pipe->lock, RT_WAITING_FOREVER);
@@ -262,7 +262,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     int ret = 0;
     uint8_t *pbuf;
 
-    pipe = (rt_pipe_t *)fd->fnode->data;
+    pipe = (rt_pipe_t *)fd->vnode->data;
 
     if (count == 0)
     {
@@ -330,7 +330,7 @@ static int pipe_fops_poll(struct dfs_fd *fd, rt_pollreq_t *req)
     int mask = 0;
     rt_pipe_t *pipe;
     int mode = 0;
-    pipe = (rt_pipe_t *)fd->fnode->data;
+    pipe = (rt_pipe_t *)fd->vnode->data;
 
     rt_poll_add(&pipe->reader_queue, req);
     rt_poll_add(&pipe->writer_queue, req);

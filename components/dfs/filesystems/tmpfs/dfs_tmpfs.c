@@ -165,7 +165,7 @@ int dfs_tmpfs_ioctl(struct dfs_fd *file, int cmd, void *args)
     struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
 
-    d_file = (struct tmpfs_file *)file->fnode->data;
+    d_file = (struct tmpfs_file *)file->vnode->data;
     RT_ASSERT(d_file != NULL);
 
     superblock = d_file->sb;
@@ -179,7 +179,7 @@ int dfs_tmpfs_ioctl(struct dfs_fd *file, int cmd, void *args)
         struct dfs_mmap2_args *mmap2 = (struct dfs_mmap2_args *)args;
         if (mmap2)
         {
-            if (mmap2->length > file->fnode->size)
+            if (mmap2->length > file->vnode->size)
             {
                 return -RT_ENOMEM;
             }
@@ -266,13 +266,13 @@ int dfs_tmpfs_read(struct dfs_fd *file, void *buf, size_t count)
     rt_size_t length;
     struct tmpfs_file *d_file;
 
-    d_file = (struct tmpfs_file *)file->fnode->data;
+    d_file = (struct tmpfs_file *)file->vnode->data;
     RT_ASSERT(d_file != NULL);
 
-    if (count < file->fnode->size - file->pos)
+    if (count < file->vnode->size - file->pos)
         length = count;
     else
-        length = file->fnode->size - file->pos;
+        length = file->vnode->size - file->pos;
 
     if (length > 0)
         memcpy(buf, &(d_file->data[file->pos]), length);
@@ -289,13 +289,13 @@ int dfs_tmpfs_write(struct dfs_fd *fd, const void *buf, size_t count)
     struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
 
-    d_file = (struct tmpfs_file *)fd->fnode->data;
+    d_file = (struct tmpfs_file *)fd->vnode->data;
     RT_ASSERT(d_file != NULL);
 
     superblock = d_file->sb;
     RT_ASSERT(superblock != NULL);
 
-    if (count + fd->pos > fd->fnode->size)
+    if (count + fd->pos > fd->vnode->size)
     {
         rt_uint8_t *ptr;
         ptr = rt_realloc(d_file->data, fd->pos + count);
@@ -309,7 +309,7 @@ int dfs_tmpfs_write(struct dfs_fd *fd, const void *buf, size_t count)
         /* update d_file and file size */
         d_file->data = ptr;
         d_file->size = fd->pos + count;
-        fd->fnode->size = d_file->size;
+        fd->vnode->size = d_file->size;
         LOG_D("tmpfile ptr:%x, size:%d", ptr, d_file->size);
     }
 
@@ -324,7 +324,7 @@ int dfs_tmpfs_write(struct dfs_fd *fd, const void *buf, size_t count)
 
 int dfs_tmpfs_lseek(struct dfs_fd *file, off_t offset)
 {
-    if (offset <= (off_t)file->fnode->size)
+    if (offset <= (off_t)file->vnode->size)
     {
         file->pos = offset;
 
@@ -336,13 +336,13 @@ int dfs_tmpfs_lseek(struct dfs_fd *file, off_t offset)
 
 int dfs_tmpfs_close(struct dfs_fd *file)
 {
-    RT_ASSERT(file->fnode->ref_count > 0);
-    if (file->fnode->ref_count > 1)
+    RT_ASSERT(file->vnode->ref_count > 0);
+    if (file->vnode->ref_count > 1)
     {
         return 0;
     }
 
-    file->fnode->data = NULL;
+    file->vnode->data = NULL;
 
     return RT_EOK;
 }
@@ -357,10 +357,10 @@ int dfs_tmpfs_open(struct dfs_fd *file)
 
     RT_DEFINE_SPINLOCK(lock);
 
-    RT_ASSERT(file->fnode->ref_count > 0);
-    if (file->fnode->ref_count > 1)
+    RT_ASSERT(file->vnode->ref_count > 0);
+    if (file->vnode->ref_count > 1)
     {
-        if (file->fnode->type == FT_DIRECTORY
+        if (file->vnode->type == FT_DIRECTORY
                 && !(file->flags & O_DIRECTORY))
         {
             return -ENOENT;
@@ -369,13 +369,13 @@ int dfs_tmpfs_open(struct dfs_fd *file)
         return 0;
     }
 
-    fs = file->fnode->fs;
+    fs = file->vnode->fs;
 
     superblock = (struct tmpfs_sb *)fs->data;
     RT_ASSERT(superblock != NULL);
 
     /* find file */
-    d_file = dfs_tmpfs_lookup(superblock, file->fnode->path, &size);
+    d_file = dfs_tmpfs_lookup(superblock, file->vnode->path, &size);
     if (d_file == NULL && !(file->flags & O_CREAT))
         return -ENOENT;
 
@@ -386,7 +386,7 @@ int dfs_tmpfs_open(struct dfs_fd *file)
             return -EEXIST;
 
         /* find parent file */
-        _path_separate(file->fnode->path, parent_path, file_name);
+        _path_separate(file->vnode->path, parent_path, file_name);
         if (file_name[0] == '\0') /* it's root dir */
             return -ENOENT;
 
@@ -440,7 +440,7 @@ int dfs_tmpfs_open(struct dfs_fd *file)
     if (d_file->type == TMPFS_TYPE_DIR)
     {
         if (file->flags & O_DIRECTORY)
-            file->fnode->type = FT_DIRECTORY;
+            file->vnode->type = FT_DIRECTORY;
         else
             return -ENOMEM;
     }
@@ -450,14 +450,14 @@ int dfs_tmpfs_open(struct dfs_fd *file)
         {
             return -ENOMEM;
         }
-        file->fnode->type = FT_DEVICE;
+        file->vnode->type = FT_DEVICE;
     }
 
-    file->fnode->data = d_file;
-    file->fnode->size = d_file->size;
+    file->vnode->data = d_file;
+    file->vnode->size = d_file->size;
     if (file->flags & O_APPEND)
     {
-        file->pos = file->fnode->size;
+        file->pos = file->vnode->size;
     }
     else
     {
@@ -506,7 +506,7 @@ int dfs_tmpfs_getdents(struct dfs_fd *file,
     rt_list_t *list;
     struct tmpfs_sb *superblock;
 
-    d_file = (struct tmpfs_file *)file->fnode->data;
+    d_file = (struct tmpfs_file *)file->vnode->data;
 
     superblock  = d_file->sb;
     RT_ASSERT(superblock != RT_NULL);

@@ -1116,7 +1116,7 @@ static int n_tty_open(struct dfs_fd *fd)
 {
     int ret = 0;
     struct n_tty_data *ldata = RT_NULL;
-    struct tty_struct *tty = (struct tty_struct*)fd->fnode->data;
+    struct tty_struct *tty = (struct tty_struct*)fd->vnode->data;
 
     ldata = rt_malloc(sizeof(struct n_tty_data));
     if (ldata == RT_NULL)
@@ -1326,7 +1326,7 @@ static int n_tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
     struct tty_struct *real_tty = RT_NULL;
     struct tty_struct *tty = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     if (tty->type == TTY_DRIVER_TYPE_PTY && tty->subtype == PTY_TYPE_MASTER)
     {
@@ -1845,7 +1845,7 @@ static int n_tty_read(struct dfs_fd *fd, void *buf, size_t count)
     int c = 0;
 
     level = rt_hw_interrupt_disable();
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     c = job_control(tty);
     if (c < 0)
@@ -1901,7 +1901,7 @@ static int n_tty_write(struct dfs_fd *fd, const void *buf, size_t count)
     int c = 0;
     struct tty_struct *tty = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     retval = tty_check_change(tty);
     if (retval)
@@ -1998,7 +1998,7 @@ static int n_tty_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     struct rt_wqueue *wq = RT_NULL;
     struct rt_lwp *lwp = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
 
     RT_ASSERT(tty->init_flag == TTY_INIT_FLAG_INITED);

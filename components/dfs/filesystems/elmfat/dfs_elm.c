@@ -330,13 +330,13 @@ int dfs_elm_open(struct dfs_fd *file)
 
 #if (FF_VOLUMES > 1)
     int vol;
-    struct dfs_filesystem *fs = file->fnode->fs;
+    struct dfs_filesystem *fs = file->vnode->fs;
     extern int elm_get_vol(FATFS * fat);
 
-    RT_ASSERT(file->fnode->ref_count > 0);
-    if (file->fnode->ref_count > 1)
+    RT_ASSERT(file->vnode->ref_count > 0);
+    if (file->vnode->ref_count > 1)
     {
-        if (file->fnode->type == FT_DIRECTORY
+        if (file->vnode->type == FT_DIRECTORY
                 && !(file->flags & O_DIRECTORY))
         {
             return -ENOENT;
@@ -356,9 +356,9 @@ int dfs_elm_open(struct dfs_fd *file)
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
-    rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->fnode->path);
+    rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->vnode->path);
 #else
-    drivers_fn = file->fnode->path;
+    drivers_fn = file->vnode->path;
 #endif
 
     if (file->flags & O_DIRECTORY)
@@ -435,8 +435,8 @@ int dfs_elm_open(struct dfs_fd *file)
         if (result == FR_OK)
         {
             file->pos  = fd->fptr;
-            file->fnode->size = f_size(fd);
-            file->fnode->type = FT_REGULAR;
+            file->vnode->size = f_size(fd);
+            file->vnode->type = FT_REGULAR;
             file->data = fd;
 
             if (file->flags & O_APPEND)
@@ -461,13 +461,13 @@ int dfs_elm_close(struct dfs_fd *file)
 {
     FRESULT result;
 
-    RT_ASSERT(file->fnode->ref_count > 0);
-    if (file->fnode->ref_count > 1)
+    RT_ASSERT(file->vnode->ref_count > 0);
+    if (file->vnode->ref_count > 1)
     {
         return 0;
     }
     result = FR_OK;
-    if (file->fnode->type == FT_DIRECTORY)
+    if (file->vnode->type == FT_DIRECTORY)
     {
         DIR *dir = RT_NULL;
 
@@ -477,7 +477,7 @@ int dfs_elm_close(struct dfs_fd *file)
         /* release memory */
         rt_free(dir);
     }
-    else if (file->fnode->type == FT_REGULAR)
+    else if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd = RT_NULL;
         fd = (FIL *)(file->data);
@@ -536,7 +536,7 @@ int dfs_elm_read(struct dfs_fd *file, void *buf, size_t len)
     FRESULT result;
     UINT byte_read;
 
-    if (file->fnode->type == FT_DIRECTORY)
+    if (file->vnode->type == FT_DIRECTORY)
     {
         return -EISDIR;
     }
@@ -559,7 +559,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
     FRESULT result;
     UINT byte_write;
 
-    if (file->fnode->type == FT_DIRECTORY)
+    if (file->vnode->type == FT_DIRECTORY)
     {
         return -EISDIR;
     }
@@ -570,7 +570,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
     file->pos  = fd->fptr;
-    file->fnode->size = f_size(fd);
+    file->vnode->size = f_size(fd);
     if (result == FR_OK)
         return byte_write;
 
@@ -592,7 +592,7 @@ int dfs_elm_flush(struct dfs_fd *file)
 int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
 {
     FRESULT result = FR_OK;
-    if (file->fnode->type == FT_REGULAR)
+    if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd;
 
@@ -608,7 +608,7 @@ int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
             return fd->fptr;
         }
     }
-    else if (file->fnode->type == FT_DIRECTORY)
+    else if (file->vnode->type == FT_DIRECTORY)
     {
         /* which is a directory */
         DIR *dir = RT_NULL;

@@ -128,11 +128,11 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
         if (f)
         {
             mask = POLLMASK_DEFAULT;
-            if (f->fnode->fops->poll)
+            if (f->vnode->fops->poll)
             {
                 req->_key = pollfd->events | POLLERR | POLLHUP;
 
-                mask = f->fnode->fops->poll(f, req);
+                mask = f->vnode->fops->poll(f, req);
 
                 /* dealwith the device return error -1*/
                 if (mask < 0)

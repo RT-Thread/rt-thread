@@ -49,7 +49,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     rt_uint16_t flags = 0;
     rt_device_t device;
 
-    device = (rt_device_t)fd->fnode->data;
+    device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
     switch (fd->flags & O_ACCMODE)
@@ -83,7 +83,7 @@ static int serial_fops_close(struct dfs_fd *fd)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->fnode->data;
+    device = (rt_device_t)fd->vnode->data;
 
     rt_device_set_rx_indicate(device, RT_NULL);
     rt_device_close(device);
@@ -97,7 +97,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     int flags = (int)(rt_base_t)args;
     int mask  = O_NONBLOCK | O_APPEND;
 
-    device = (rt_device_t)fd->fnode->data;
+    device = (rt_device_t)fd->vnode->data;
     switch (cmd)
     {
     case FIONREAD:
@@ -119,7 +119,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     int size = 0;
     rt_device_t device;
 
-    device = (rt_device_t)fd->fnode->data;
+    device = (rt_device_t)fd->vnode->data;
 
     do
     {
@@ -143,7 +143,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->fnode->data;
+    device = (rt_device_t)fd->vnode->data;
     return rt_device_write(device, -1, buf, count);
 }
 
@@ -154,7 +154,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     rt_device_t device;
     struct rt_serial_device *serial;
 
-    device = (rt_device_t)fd->fnode->data;
+    device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
     serial = (struct rt_serial_device *)device;

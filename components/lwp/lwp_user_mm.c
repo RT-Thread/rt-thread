@@ -387,7 +387,7 @@ void* lwp_mmap2(void *addr, size_t length, int prot,
         struct dfs_fd *d;
 
         d = fd_get(fd);
-        if (d && d->fnode->type == FT_DEVICE)
+        if (d && d->vnode->type == FT_DEVICE)
         {
             struct dfs_mmap2_args mmap2;
         

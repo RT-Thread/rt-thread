@@ -56,7 +56,7 @@ int dfs_init(void)
         return 0;
     }
 
-    /* init fnode hash table */
+    /* init vnode hash table */
     dfs_fnode_mgr_init();
 
     /* clear filesystem operations table */
@@ -239,7 +239,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     }
     fd->ref_count = 1;
     fd->magic = DFS_FD_MAGIC;
-    fd->fnode = NULL;
+    fd->vnode = NULL;
     fdt->fds[idx] = fd;
 
     return idx;
@@ -356,10 +356,10 @@ void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
     /* clear this fd entry */
     if (fd_slot->ref_count == 0)
     {
-        struct dfs_fnode *fnode = fd_slot->fnode;
-        if (fnode)
+        struct dfs_fnode *vnode = fd_slot->vnode;
+        if (vnode)
         {
-            fnode->ref_count--;
+            vnode->ref_count--;
         }
         rt_free(fd_slot);
     }
@@ -447,9 +447,9 @@ int fd_is_open(const char *pathname)
         for (index = 0; index < fdt->maxfd; index++)
         {
             fd = fdt->fds[index];
-            if (fd == NULL || fd->fnode->fops == NULL || fd->fnode->path == NULL) continue;
+            if (fd == NULL || fd->vnode->fops == NULL || fd->vnode->path == NULL) continue;
 
-            if (fd->fnode->fs == fs && strcmp(fd->fnode->path, mountpath) == 0)
+            if (fd->vnode->fs == fs && strcmp(fd->vnode->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
@@ -594,7 +594,7 @@ void fd_init(struct dfs_fd *fd)
         fd->magic = DFS_FD_MAGIC;
         fd->ref_count = 1;
         fd->pos = 0;
-        fd->fnode = NULL;
+        fd->vnode = NULL;
         fd->data = NULL;
     }
 }
@@ -828,20 +828,20 @@ int list_fd(void)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
-        if (fd && fd->fnode->fops)
+        if (fd && fd->vnode->fops)
         {
             rt_kprintf("%2d ", index);
-            if (fd->fnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->fnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->fnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->fnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->fnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
+            if (fd->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%3d ", fd->fnode->ref_count);
+            rt_kprintf("%3d ", fd->vnode->ref_count);
             rt_kprintf("%04x  ", fd->magic);
-            if (fd->fnode->path)
+            if (fd->vnode->path)
             {
-                rt_kprintf("%s\n", fd->fnode->path);
+                rt_kprintf("%s\n", fd->vnode->path);
             }
             else
             {
@@ -882,7 +882,7 @@ static int lsofp(int pid)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
-        if (fd && fd->fnode->fops)
+        if (fd && fd->vnode->fops)
         {
             if(pid == (-1))
             {
@@ -894,27 +894,27 @@ static int lsofp(int pid)
             }
 
             rt_kprintf("%2d ", index);
-            if (fd->fnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->fnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->fnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->fnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->fnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
+            if (fd->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%6d ", fd->fnode->ref_count);
-            rt_kprintf("%04x  0x%.8x ", fd->magic, (int)(size_t)fd->fnode);
+            rt_kprintf("%6d ", fd->vnode->ref_count);
+            rt_kprintf("%04x  0x%.8x ", fd->magic, (int)(size_t)fd->vnode);
 
-            if(fd->fnode == RT_NULL)
+            if(fd->vnode == RT_NULL)
             {
                 rt_kprintf("0x%.8x 0x%.8x ", (int)0x00000000, (int)(size_t)fd);
             }
             else
             {
-                rt_kprintf("0x%.8x 0x%.8x ", (int)(size_t)(fd->fnode->data), (int)(size_t)fd);
+                rt_kprintf("0x%.8x 0x%.8x ", (int)(size_t)(fd->vnode->data), (int)(size_t)fd);
             }
 
-            if (fd->fnode->path)
+            if (fd->vnode->path)
             {
-                rt_kprintf("%s \n", fd->fnode->path);
+                rt_kprintf("%s \n", fd->vnode->path);
             }
             else
             {
@@ -929,7 +929,7 @@ static int lsofp(int pid)
 
 int lsof(int argc, char *argv[])
 {
-    rt_kprintf("PID fd type    fd-ref magic fnode      fnode/data addr       path  \n");
+    rt_kprintf("PID fd type    fd-ref magic vnode      vnode/data addr       path  \n");
 
     if (argc == 1)
     {

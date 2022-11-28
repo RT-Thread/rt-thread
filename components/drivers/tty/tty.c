@@ -217,7 +217,7 @@ static int tty_open(struct dfs_fd *fd)
     struct tty_struct *tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     ld = tty->ldisc;
     if (ld->ops->open)
@@ -226,8 +226,8 @@ static int tty_open(struct dfs_fd *fd)
     }
     noctty = (fd->flags & O_NOCTTY);
 
-    rt_device_t device = (rt_device_t)fd->fnode->data;
-    if (fd->fnode->ref_count == 1)
+    rt_device_t device = (rt_device_t)fd->vnode->data;
+    if (fd->vnode->ref_count == 1)
     {
         ret = rt_device_open(device, fd->flags);
     }
@@ -256,14 +256,14 @@ static int tty_close(struct dfs_fd *fd)
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     ld = tty->ldisc;
     if (ld->ops->close)
     {
         //ld->ops->close(tty);
     }
-    if (fd->fnode->ref_count == 1)
+    if (fd->vnode->ref_count == 1)
     {
         ret = rt_device_close((rt_device_t)tty);
     }
@@ -311,7 +311,7 @@ static int tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
     struct tty_struct *real_tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
 
     if (tty->type == TTY_DRIVER_TYPE_PTY && tty->subtype == PTY_TYPE_MASTER)
@@ -341,7 +341,7 @@ static int tty_read(struct dfs_fd *fd, void *buf, size_t count)
     struct tty_struct *tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     ld = tty->ldisc;
     if (ld->ops->read)
@@ -357,7 +357,7 @@ static int tty_write(struct dfs_fd *fd, const void *buf, size_t count)
     struct tty_struct *tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     ld = tty->ldisc;
     if (ld->ops->write)
@@ -373,7 +373,7 @@ static int tty_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     struct tty_struct *tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     ld = tty->ldisc;
     if (ld->ops->poll)

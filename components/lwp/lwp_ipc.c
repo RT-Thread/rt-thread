@@ -846,7 +846,7 @@ static int channel_fops_poll(struct dfs_fd *file, struct rt_pollreq *req)
     int mask = POLLOUT;
     rt_channel_t ch;
 
-    ch = (rt_channel_t)file->fnode->data;
+    ch = (rt_channel_t)file->vnode->data;
     rt_poll_add(&(ch->reader_queue), req);
     if (ch->stat != RT_IPC_STAT_IDLE)
     {
@@ -865,8 +865,8 @@ static int channel_fops_close(struct dfs_fd *file)
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    ch = (rt_channel_t)file->fnode->data;
-    if (file->fnode->ref_count == 1)
+    ch = (rt_channel_t)file->vnode->data;
+    if (file->vnode->ref_count == 1)
     {
         ch->ref--;
         if (ch->ref == 0)
@@ -910,8 +910,8 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
         goto quit;
     }
     d = lwp_fd_get(fdt_type, fd);
-    d->fnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
-    if (!d->fnode)
+    d->vnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+    if (!d->vnode)
     {
         _chfd_free(fd, fdt_type);
         fd = -1;
@@ -921,25 +921,25 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     ch = rt_raw_channel_open(name, flags);
     if (ch)
     {
-        rt_memset(d->fnode, 0, sizeof(struct dfs_fnode));
-        rt_list_init(&d->fnode->list);
-        d->fnode->type = FT_USER;
-        d->fnode->path = NULL;
-        d->fnode->fullpath = NULL;
+        rt_memset(d->vnode, 0, sizeof(struct dfs_fnode));
+        rt_list_init(&d->vnode->list);
+        d->vnode->type = FT_USER;
+        d->vnode->path = NULL;
+        d->vnode->fullpath = NULL;
 
-        d->fnode->fops = &channel_fops;
+        d->vnode->fops = &channel_fops;
 
         d->flags = O_RDWR; /* set flags as read and write */
-        d->fnode->size = 0;
+        d->vnode->size = 0;
         d->pos = 0;
-        d->fnode->ref_count = 1;
+        d->vnode->ref_count = 1;
 
         /* set socket to the data of dfs_fd */
-        d->fnode->data = (void *)ch;
+        d->vnode->data = (void *)ch;
     }
     else
     {
-        rt_free(d->fnode);
+        rt_free(d->vnode);
         _chfd_free(fd, fdt_type);
         fd = -1;
     }
@@ -956,7 +956,7 @@ static rt_channel_t fd_2_channel(int fdt_type, int fd)
     {
         rt_channel_t ch;
 
-        ch = (rt_channel_t)d->fnode->data;
+        ch = (rt_channel_t)d->vnode->data;
         if (ch)
         {
             return ch;
@@ -969,7 +969,7 @@ rt_err_t lwp_channel_close(int fdt_type, int fd)
 {
     rt_channel_t ch;
     struct dfs_fd *d;
-    struct dfs_fnode *fnode;
+    struct dfs_fnode *vnode;
 
     d = lwp_fd_get(fdt_type, fd);
     if (!d)
@@ -977,8 +977,8 @@ rt_err_t lwp_channel_close(int fdt_type, int fd)
         return -RT_EIO;
     }
 
-    fnode = d->fnode;
-    if (!fnode)
+    vnode = d->vnode;
+    if (!vnode)
     {
         return -RT_EIO;
     }
@@ -989,9 +989,9 @@ rt_err_t lwp_channel_close(int fdt_type, int fd)
         return -RT_EIO;
     }
     _chfd_free(fd, fdt_type);
-    if (fnode->ref_count == 1)
+    if (vnode->ref_count == 1)
     {
-        rt_free(fnode);
+        rt_free(vnode);
         return rt_raw_channel_close(ch);
     }
 

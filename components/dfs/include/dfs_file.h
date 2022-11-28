@@ -44,7 +44,7 @@ struct dfs_fnode
     char *path;                  /* Name (below mount point) */
     char *fullpath;              /* Full path is hash key */
     int ref_count;               /* Descriptor reference count */
-    rt_list_t list;              /* The node of fnode hash table */
+    rt_list_t list;              /* The node of vnode hash table */
 
     struct dfs_filesystem *fs;
     const struct dfs_file_ops *fops;
@@ -60,7 +60,7 @@ struct dfs_fd
     uint32_t flags;              /* Descriptor flags */
     int ref_count;               /* Descriptor reference count */
     off_t    pos;                /* Current file position */
-    struct dfs_fnode *fnode;     /* file node struct */
+    struct dfs_fnode *vnode;     /* file node struct */
     void *data;                  /* Specific fd data */
 };
 
