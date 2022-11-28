@@ -853,7 +853,8 @@ void cat(const char *filename)
         if (length > 0)
         {
             buffer[length] = '\0';
-            write(STDOUT_FILENO, (void *)buffer, sizeof(buffer));
+            rt_device_t out_device = rt_console_get_device();
+            rt_device_write(out_device, 0, (void *)buffer, sizeof(buffer));
         }
     } while (length > 0);
 
