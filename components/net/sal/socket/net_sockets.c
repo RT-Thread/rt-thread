@@ -41,28 +41,28 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         if(d)
         {
             /* this is a socket fd */
-            d->fnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
-            if (!d->fnode)
+            d->vnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+            if (!d->vnode)
             {
                 /* release fd */
                 fd_release(fd);
                 rt_set_errno(-ENOMEM);
                 return -1;
             }
-            rt_memset(d->fnode, 0, sizeof(struct dfs_fnode));
-            rt_list_init(&d->fnode->list);
+            rt_memset(d->vnode, 0, sizeof(struct dfs_fnode));
+            rt_list_init(&d->vnode->list);
 
-            d->fnode->type = FT_SOCKET;
-            d->fnode->path = NULL;
-            d->fnode->fullpath = NULL;
-            d->fnode->ref_count = 1;
-            d->fnode->fops = dfs_net_get_fops();
+            d->vnode->type = FT_SOCKET;
+            d->vnode->path = NULL;
+            d->vnode->fullpath = NULL;
+            d->vnode->ref_count = 1;
+            d->vnode->fops = dfs_net_get_fops();
             d->flags = O_RDWR; /* set flags as read and write */
-            d->fnode->size = 0;
+            d->vnode->size = 0;
             d->pos = 0;
 
             /* set socket to the data of dfs_fd */
-            d->fnode->data = (void *)(size_t)new_socket;
+            d->vnode->data = (void *)(size_t)new_socket;
 
             return fd;
         }
@@ -238,8 +238,8 @@ int socket(int domain, int type, int protocol)
         return -1;
     }
     d = fd_get(fd);
-    d->fnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
-    if (!d->fnode)
+    d->vnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+    if (!d->vnode)
     {
         /* release fd */
         fd_release(fd);
@@ -258,25 +258,25 @@ int socket(int domain, int type, int protocol)
     socket = sal_socket(domain, type, protocol);
     if (socket >= 0)
     {
-        rt_memset(d->fnode, 0, sizeof(struct dfs_fnode));
-        rt_list_init(&d->fnode->list);
+        rt_memset(d->vnode, 0, sizeof(struct dfs_fnode));
+        rt_list_init(&d->vnode->list);
         /* this is a socket fd */
-        d->fnode->type = FT_SOCKET;
-        d->fnode->path = NULL;
-        d->fnode->fullpath = NULL;
-        d->fnode->ref_count = 1;
-        d->fnode->fops = dfs_net_get_fops();
+        d->vnode->type = FT_SOCKET;
+        d->vnode->path = NULL;
+        d->vnode->fullpath = NULL;
+        d->vnode->ref_count = 1;
+        d->vnode->fops = dfs_net_get_fops();
 
         d->flags = O_RDWR; /* set flags as read and write */
-        d->fnode->size = 0;
+        d->vnode->size = 0;
         d->pos = 0;
 
         /* set socket to the data of dfs_fd */
-        d->fnode->data = (void *)(size_t)socket;
+        d->vnode->data = (void *)(size_t)socket;
     }
     else
     {
-        rt_free(d->fnode);
+        rt_free(d->vnode);
         /* release fd */
         fd_release(fd);
         rt_set_errno(-ENOMEM);
@@ -307,7 +307,7 @@ int closesocket(int s)
         return -1;
     }
 
-    if (!d->fnode)
+    if (!d->vnode)
     {
         rt_set_errno(-EBADF);
         return -1;
@@ -323,7 +323,7 @@ int closesocket(int s)
         error = -1;
     }
 
-    rt_free(d->fnode);
+    rt_free(d->vnode);
     /* socket has been closed, delete it from file system fd */
     fd_release(s);
 

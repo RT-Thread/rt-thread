@@ -184,7 +184,7 @@ static int ptmx_open(struct dfs_fd *fd)
     struct rt_lwp *lwp = RT_NULL;
     struct rt_wqueue *wq = RT_NULL;
 
-    tty = (struct tty_struct *)fd->fnode->data;
+    tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
 
     pts_drv = find_freepts();

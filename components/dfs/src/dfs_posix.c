@@ -228,7 +228,7 @@ off_t lseek(int fd, off_t offset, int whence)
         break;
 
     case SEEK_END:
-        offset += d->fnode->size;
+        offset += d->vnode->size;
         break;
 
     default:
@@ -358,13 +358,13 @@ int fstat(int fildes, struct stat *buf)
 
     buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                    S_IWUSR | S_IWGRP | S_IWOTH;
-    if (d->fnode->type == FT_DIRECTORY)
+    if (d->vnode->type == FT_DIRECTORY)
     {
         buf->st_mode &= ~S_IFREG;
         buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
-    buf->st_size    = d->fnode->size;
+    buf->st_size    = d->vnode->size;
     buf->st_mtime   = 0;
 
     return RT_EOK;

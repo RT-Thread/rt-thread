@@ -63,7 +63,7 @@ static unsigned int bkdr_hash(const char *str)
 
 static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
 {
-    struct dfs_fnode *fnode = NULL;
+    struct dfs_fnode *vnode = NULL;
     int hash = bkdr_hash(path);
     rt_list_t *hh;
 
@@ -76,11 +76,11 @@ static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
 
     while (hh != &dfs_fm.head[hash])
     {
-        fnode = rt_container_of(hh, struct dfs_fnode, list);
-        if (rt_strcmp(path, fnode->fullpath) == 0)
+        vnode = rt_container_of(hh, struct dfs_fnode, list);
+        if (rt_strcmp(path, vnode->fullpath) == 0)
         {
             /* found */
-            return fnode;
+            return vnode;
         }
         hh = hh->next;
     }
@@ -103,14 +103,14 @@ static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
 int dfs_file_is_open(const char *pathname)
 {
     char *fullpath = NULL;
-    struct dfs_fnode *fnode = NULL;
+    struct dfs_fnode *vnode = NULL;
     int ret = 0;
 
     fullpath = dfs_normalize_path(NULL, pathname);
 
     dfs_fm_lock();
-    fnode = dfs_fnode_find(fullpath, NULL);
-    if (fnode)
+    vnode = dfs_fnode_find(fullpath, NULL);
+    if (vnode)
     {
         ret = 1;
     }
@@ -135,7 +135,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     struct dfs_filesystem *fs;
     char *fullpath;
     int result;
-    struct dfs_fnode *fnode = NULL;
+    struct dfs_fnode *vnode = NULL;
     rt_list_t *hash_head;
 
     /* parameter check */
@@ -152,13 +152,13 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     LOG_D("open file:%s", fullpath);
 
     dfs_fm_lock();
-    /* fnode find */
-    fnode = dfs_fnode_find(fullpath, &hash_head);
-    if (fnode)
+    /* vnode find */
+    vnode = dfs_fnode_find(fullpath, &hash_head);
+    if (vnode)
     {
-        fnode->ref_count++;
+        vnode->ref_count++;
         fd->pos   = 0;
-        fd->fnode = fnode;
+        fd->vnode = vnode;
         dfs_fm_unlock();
         rt_free(fullpath); /* release path */
     }
@@ -173,76 +173,76 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
             return -ENOENT;
         }
 
-        fnode = rt_calloc(1, sizeof(struct dfs_fnode));
-        if (!fnode)
+        vnode = rt_calloc(1, sizeof(struct dfs_fnode));
+        if (!vnode)
         {
             dfs_fm_unlock();
             rt_free(fullpath); /* release path */
             return -ENOMEM;
         }
-        fnode->ref_count = 1;
+        vnode->ref_count = 1;
 
         LOG_D("open in filesystem:%s", fs->ops->name);
-        fnode->fs    = fs;             /* set file system */
-        fnode->fops  = fs->ops->fops;  /* set file ops */
+        vnode->fs    = fs;             /* set file system */
+        vnode->fops  = fs->ops->fops;  /* set file ops */
 
         /* initialize the fd item */
-        fnode->type  = FT_REGULAR;
-        fnode->flags = 0;
+        vnode->type  = FT_REGULAR;
+        vnode->flags = 0;
 
         if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
         {
             if (dfs_subdir(fs->path, fullpath) == NULL)
-                fnode->path = rt_strdup("/");
+                vnode->path = rt_strdup("/");
             else
-                fnode->path = rt_strdup(dfs_subdir(fs->path, fullpath));
-            LOG_D("Actual file path: %s", fnode->path);
+                vnode->path = rt_strdup(dfs_subdir(fs->path, fullpath));
+            LOG_D("Actual file path: %s", vnode->path);
         }
         else
         {
-            fnode->path = fullpath;
+            vnode->path = fullpath;
         }
-        fnode->fullpath = fullpath;
+        vnode->fullpath = fullpath;
 
         /* specific file system open routine */
-        if (fnode->fops->open == NULL)
+        if (vnode->fops->open == NULL)
         {
             dfs_fm_unlock();
             /* clear fd */
-            if (fnode->path != fnode->fullpath)
+            if (vnode->path != vnode->fullpath)
             {
-                rt_free(fnode->fullpath);
+                rt_free(vnode->fullpath);
             }
-            rt_free(fnode->path);
-            rt_free(fnode);
+            rt_free(vnode->path);
+            rt_free(vnode);
 
             return -ENOSYS;
         }
 
         fd->pos   = 0;
-        fd->fnode = fnode;
+        fd->vnode = vnode;
 
-        /* insert fnode to hash */
-        rt_list_insert_after(hash_head, &fnode->list);
+        /* insert vnode to hash */
+        rt_list_insert_after(hash_head, &vnode->list);
     }
 
     fd->flags = flags;
 
-    if ((result = fnode->fops->open(fd)) < 0)
+    if ((result = vnode->fops->open(fd)) < 0)
     {
-        fnode->ref_count--;
-        if (fnode->ref_count == 0)
+        vnode->ref_count--;
+        if (vnode->ref_count == 0)
         {
             /* remove from hash */
-            rt_list_remove(&fnode->list);
+            rt_list_remove(&vnode->list);
             /* clear fd */
-            if (fnode->path != fnode->fullpath)
+            if (vnode->path != vnode->fullpath)
             {
-                rt_free(fnode->fullpath);
+                rt_free(vnode->fullpath);
             }
-            rt_free(fnode->path);
-            fd->fnode = NULL;
-            rt_free(fnode);
+            rt_free(vnode->path);
+            fd->vnode = NULL;
+            rt_free(vnode);
         }
 
         dfs_fm_unlock();
@@ -254,7 +254,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     fd->flags |= DFS_F_OPEN;
     if (flags & O_DIRECTORY)
     {
-        fd->fnode->type = FT_DIRECTORY;
+        fd->vnode->type = FT_DIRECTORY;
         fd->flags |= DFS_F_DIRECTORY;
     }
     dfs_fm_unlock();
@@ -272,7 +272,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
  */
 int dfs_file_close(struct dfs_fd *fd)
 {
-    struct dfs_fnode *fnode = NULL;
+    struct dfs_fnode *vnode = NULL;
     int result = 0;
 
     if (fd == NULL)
@@ -283,17 +283,17 @@ int dfs_file_close(struct dfs_fd *fd)
     if (fd->ref_count == 1)
     {
         dfs_fm_lock();
-        fnode = fd->fnode;
+        vnode = fd->vnode;
 
-        if (fnode->ref_count <= 0)
+        if (vnode->ref_count <= 0)
         {
             dfs_fm_unlock();
             return -ENXIO;
         }
 
-        if (fnode->fops->close != NULL)
+        if (vnode->fops->close != NULL)
         {
-            result = fnode->fops->close(fd);
+            result = vnode->fops->close(fd);
         }
 
         /* close fd error, return */
@@ -303,18 +303,18 @@ int dfs_file_close(struct dfs_fd *fd)
             return result;
         }
 
-        if (fnode->ref_count == 1)
+        if (vnode->ref_count == 1)
         {
             /* remove from hash */
-            rt_list_remove(&fnode->list);
-            fd->fnode = NULL;
+            rt_list_remove(&vnode->list);
+            fd->vnode = NULL;
 
-            if (fnode->path != fnode->fullpath)
+            if (vnode->path != vnode->fullpath)
             {
-                rt_free(fnode->fullpath);
+                rt_free(vnode->fullpath);
             }
-            rt_free(fnode->path);
-            rt_free(fnode);
+            rt_free(vnode->path);
+            rt_free(vnode);
         }
         dfs_fm_unlock();
     }
@@ -339,7 +339,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
     }
 
     /* regular file system fd */
-    if (fd->fnode->type == FT_REGULAR || fd->fnode->type == FT_DEVICE)
+    if (fd->vnode->type == FT_REGULAR || fd->vnode->type == FT_DEVICE)
     {
         switch (cmd)
         {
@@ -358,9 +358,9 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         }
     }
 
-    if (fd->fnode->fops->ioctl != NULL)
+    if (fd->vnode->fops->ioctl != NULL)
     {
-        return fd->fnode->fops->ioctl(fd, cmd, args);
+        return fd->vnode->fops->ioctl(fd, cmd, args);
     }
 
     return -ENOSYS;
@@ -385,12 +385,12 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
         return -EINVAL;
     }
 
-    if (fd->fnode->fops->read == NULL)
+    if (fd->vnode->fops->read == NULL)
     {
         return -ENOSYS;
     }
 
-    if ((result = fd->fnode->fops->read(fd, buf, len)) < 0)
+    if ((result = fd->vnode->fops->read(fd, buf, len)) < 0)
     {
         fd->flags |= DFS_F_EOF;
     }
@@ -415,14 +415,14 @@ int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, size_t nbytes)
         return -EINVAL;
     }
 
-    if (fd->fnode->type != FT_DIRECTORY)
+    if (fd->vnode->type != FT_DIRECTORY)
     {
         return -EINVAL;
     }
 
-    if (fd->fnode->fops->getdents != NULL)
+    if (fd->vnode->fops->getdents != NULL)
     {
-        return fd->fnode->fops->getdents(fd, dirp, nbytes);
+        return fd->vnode->fops->getdents(fd, dirp, nbytes);
     }
 
     return -ENOSYS;
@@ -497,12 +497,12 @@ int dfs_file_write(struct dfs_fd *fd, const void *buf, size_t len)
         return -EINVAL;
     }
 
-    if (fd->fnode->fops->write == NULL)
+    if (fd->vnode->fops->write == NULL)
     {
         return -ENOSYS;
     }
 
-    return fd->fnode->fops->write(fd, buf, len);
+    return fd->vnode->fops->write(fd, buf, len);
 }
 
 /**
@@ -517,10 +517,10 @@ int dfs_file_flush(struct dfs_fd *fd)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fnode->fops->flush == NULL)
+    if (fd->vnode->fops->flush == NULL)
         return -ENOSYS;
 
-    return fd->fnode->fops->flush(fd);
+    return fd->vnode->fops->flush(fd);
 }
 
 /**
@@ -538,10 +538,10 @@ int dfs_file_lseek(struct dfs_fd *fd, off_t offset)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fnode->fops->lseek == NULL)
+    if (fd->vnode->fops->lseek == NULL)
         return -ENOSYS;
 
-    result = fd->fnode->fops->lseek(fd, offset);
+    result = fd->vnode->fops->lseek(fd, offset);
 
     /* update current position */
     if (result >= 0)
@@ -708,17 +708,17 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
     int result;
 
     /* fd is null or not a regular file system fd, or length is invalid */
-    if (fd == NULL || fd->fnode->type != FT_REGULAR || length < 0)
+    if (fd == NULL || fd->vnode->type != FT_REGULAR || length < 0)
         return -EINVAL;
 
-    if (fd->fnode->fops->ioctl == NULL)
+    if (fd->vnode->fops->ioctl == NULL)
         return -ENOSYS;
 
-    result = fd->fnode->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
+    result = fd->vnode->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
 
     /* update current size */
     if (result == 0)
-        fd->fnode->size = length;
+        fd->vnode->size = length;
 
     return result;
 }
@@ -729,13 +729,13 @@ int dfs_file_mmap2(struct dfs_fd *fd, struct dfs_mmap2_args *mmap2)
 
     if (fd && mmap2)
     {
-        if (fd->fnode->type != FT_DEVICE || !fd->fnode->fops->ioctl)
+        if (fd->vnode->type != FT_DEVICE || !fd->vnode->fops->ioctl)
         {
             rt_set_errno(EINVAL);
         }
-        else if (fd->fnode->type == FT_DEVICE && fd->fnode->fops->ioctl)
+        else if (fd->vnode->type == FT_DEVICE && fd->vnode->fops->ioctl)
         {
-            ret = fd->fnode->fops->ioctl(fd, RT_FIOMMAP2, mmap2);
+            ret = fd->vnode->fops->ioctl(fd, RT_FIOMMAP2, mmap2);
             if (ret != 0)
             {
                 ret = ret > 0? ret : -ret;
