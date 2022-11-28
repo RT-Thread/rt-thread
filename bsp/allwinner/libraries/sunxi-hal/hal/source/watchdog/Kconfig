@@ -1,0 +1,7 @@
+menu "WATCHDOG Devices"
+
+config DRIVERS_WATCHDOG
+    bool "enable watchdog driver"
+        default n
+
+endmenu
