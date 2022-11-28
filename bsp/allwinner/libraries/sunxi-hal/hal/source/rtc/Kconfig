@@ -1,0 +1,12 @@
+menu "RTC Devices"
+
+config DRIVERS_RTC
+    bool "enable rtc driver"
+        default y
+
+config HAL_TEST_RTC
+    bool "enable rtc hal APIs test command"
+    depends on DRIVERS_RTC
+        default n
+
+endmenu

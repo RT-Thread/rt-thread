@@ -1,0 +1,12 @@
+menu "IR Devices"
+
+config DRIVERS_IR
+    bool "enable ir driver"
+        default y
+
+config HAL_TEST_IR
+    bool "enable ir hal APIs test command"
+    depends on DRIVERS_IR
+        default n
+
+endmenu

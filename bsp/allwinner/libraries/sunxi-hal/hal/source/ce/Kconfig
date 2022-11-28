@@ -1,0 +1,13 @@
+menu "CE Devices"
+
+config DRIVERS_CE
+    bool "enable ce driver"
+        default y
+
+config HAL_TEST_CE
+    bool "enable ce hal APIs test command"
+	depends on DRIVERS_CE
+        default n
+
+
+endmenu
