@@ -570,8 +570,14 @@ typedef unsigned long rt_sigset_t;
 typedef siginfo_t rt_siginfo_t;
 typedef void (*rt_sighandler_t)(int signo);
 
-
 #define RT_SIG_MAX          32
+
+#else
+
+#ifdef RT_USING_LWP
+#include <sys/signal.h>
+#endif
+
 #endif /* RT_USING_SIGNALS */
 /**@}*/
 
