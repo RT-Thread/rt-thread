@@ -12,10 +12,11 @@
 #include <stdlib.h>
 
 #include <rtthread.h>
+#ifdef RT_USING_LWP
 #include <lwp.h>
-
-#include <board.h>
 #include <lwp_user_mm.h>
+#endif
+#include <board.h>
 
 #include "drv_clcd.h"
 #include "rt_lcd.h"
@@ -164,8 +165,10 @@ int drv_clcd_hw_init(void)
     memset(_lcd.fb, 0xff, _lcd.width * _lcd.height * 2);
 #endif
 
+    plio = (PL111MMIO*)PL111_IOBASE;
+#ifdef RT_USING_LWP
     plio = (PL111MMIO *)rt_ioremap((void*)PL111_IOBASE, 0x1000);
-
+#endif
     plio->tim0 = 0x3F1F3C00 | ((CLCD_WIDTH / 16 - 1) << 2);
     plio->tim1 = 0x080B6000 | (CLCD_HEIGHT - 1);
 
