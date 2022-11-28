@@ -787,7 +787,7 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
                       RT_THREAD_CTRL_CHANGE_PRIORITY,
                       &priority);
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* whether change the priority of taken mutex */
         struct rt_object* pending_obj = thread->pending_object;
@@ -1168,7 +1168,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                   thread->name, mutex->hold));
 
     /* reset thread error */
-    thread->error = -RT_EINTR;
+    thread->error = RT_EOK;
 
     if (mutex->owner == thread)
     {
@@ -1197,7 +1197,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
             {
                 /* set the priority of thread to the ceiling priority */
                 if (mutex->ceiling_priority < mutex->owner->current_priority)
-                    _thread_update_priority(mutex->owner, mutex->ceiling_priority, RT_UNINTERRUPTIBLE); /* TODO */
+                    _thread_update_priority(mutex->owner, mutex->ceiling_priority, suspend_flag);
             }
             else
             {

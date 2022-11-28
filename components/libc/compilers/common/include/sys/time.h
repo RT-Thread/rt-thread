@@ -137,7 +137,7 @@ int rt_timespec_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX_CLOCK */
 
 #ifdef RT_USING_POSIX_TIMER
-#include "signal.h"
+#include <sys/signal.h>
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
 int timer_delete(timer_t timerid);
 int timer_getoverrun(timer_t timerid);
