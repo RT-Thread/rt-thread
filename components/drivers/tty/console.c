@@ -302,7 +302,7 @@ rt_err_t console_register(const char *name, struct rt_device *iodev)
     }
     tty_initstack(console->head);
 
-    rt_spin_lock_init(&console->spinlock);
+    rt_mutex_init(&console->lock, "ttylock", RT_IPC_FLAG_PRIO);
     console->pgrp = -1;
     console->session = -1;
     console->foreground = RT_NULL;
