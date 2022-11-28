@@ -1737,9 +1737,9 @@ int _sys_fork(void)
         struct rt_lwp *old_lwp;
 
         old_lwp = lwp->tty->foreground;
-        rt_spin_lock(&lwp->tty->spinlock);
+        rt_mutex_take(&lwp->tty->lock, RT_WAITING_FOREVER);
         ret = tty_push(&lwp->tty->head, old_lwp);
-        rt_spin_unlock(&lwp->tty->spinlock);
+        rt_mutex_release(&lwp->tty->lock);
         if (ret < 0)
         {
             LOG_E("malloc fail!\n");
