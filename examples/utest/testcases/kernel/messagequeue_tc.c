@@ -15,7 +15,7 @@
 #define MAX_MSGS    5
 
 static struct rt_messagequeue static_mq;
-static rt_uint8_t mq_buf[(MSG_SIZE + 4) * MAX_MSGS];
+static rt_uint8_t mq_buf[(MSG_SIZE + (rt_uint8_t)sizeof(rt_ubase_t)) * MAX_MSGS];
 
 static struct rt_thread mq_send_thread;
 static struct rt_thread mq_recv_thread;
