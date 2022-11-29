@@ -1,10 +1,10 @@
 //*****************************************************************************
 // MIMXRT1062 startup code for use with MCUXpresso IDE
 //
-// Version : 150621
+// Version : 250422
 //*****************************************************************************
 //
-// Copyright 2016-2021 NXP
+// Copyright 2016-2022 NXP
 // All rights reserved.
 //
 // SPDX-License-Identifier: BSD-3-Clause
@@ -148,7 +148,7 @@ WEAK void ADC1_IRQHandler(void);
 WEAK void ADC2_IRQHandler(void);
 WEAK void DCDC_IRQHandler(void);
 WEAK void Reserved86_IRQHandler(void);
-WEAK void Reserved87_IRQHandler(void);
+WEAK void GPIO10_Combined_0_31_IRQHandler(void);
 WEAK void GPIO1_INT0_IRQHandler(void);
 WEAK void GPIO1_INT1_IRQHandler(void);
 WEAK void GPIO1_INT2_IRQHandler(void);
@@ -313,7 +313,7 @@ void ADC1_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void ADC2_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void DCDC_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void Reserved86_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
-void Reserved87_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
+void GPIO10_Combined_0_31_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void GPIO1_INT0_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void GPIO1_INT1_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
 void GPIO1_INT2_DriverIRQHandler(void) ALIAS(IntDefaultHandler);
@@ -432,20 +432,20 @@ void (* const g_pfnVectors[])(void) = {
     // Core Level - CM7
     &_vStackTop,                       // The initial stack pointer
     ResetISR,                          // The reset handler
-    NMI_Handler,                       // The NMI handler
-    HardFault_Handler,                 // The hard fault handler
-    MemManage_Handler,                 // The MPU fault handler
-    BusFault_Handler,                  // The bus fault handler
-    UsageFault_Handler,                // The usage fault handler
+    NMI_Handler,                       // NMI Handler
+    HardFault_Handler,                 // Hard Fault Handler
+    MemManage_Handler,                 // MPU Fault Handler
+    BusFault_Handler,                  // Bus Fault Handler
+    UsageFault_Handler,                // Usage Fault Handler
     0,                                 // Reserved
     0,                                 // Reserved
     0,                                 // Reserved
     0,                                 // Reserved
-    SVC_Handler,                       // SVCall handler
-    DebugMon_Handler,                  // Debug monitor handler
+    SVC_Handler,                       // SVCall Handler
+    DebugMon_Handler,                  // Debug Monitor Handler
     0,                                 // Reserved
-    PendSV_Handler,                    // The PendSV handler
-    SysTick_Handler,                   // The SysTick handler
+    PendSV_Handler,                    // PendSV Handler
+    SysTick_Handler,                   // SysTick Handler
 
     // Chip Level - MIMXRT1062
     DMA0_DMA16_IRQHandler,            // 16 : DMA channel 0/16 transfer complete
@@ -519,7 +519,7 @@ void (* const g_pfnVectors[])(void) = {
     ADC2_IRQHandler,                  // 84 : ADC2 interrupt
     DCDC_IRQHandler,                  // 85 : DCDC interrupt
     Reserved86_IRQHandler,            // 86 : Reserved interrupt
-    Reserved87_IRQHandler,            // 87 : Reserved interrupt
+    GPIO10_Combined_0_31_IRQHandler,  // 87 : Combined interrupt indication for GPIO10 signal 0 throughout 31
     GPIO1_INT0_IRQHandler,            // 88 : Active HIGH Interrupt from INT0 from GPIO
     GPIO1_INT1_IRQHandler,            // 89 : Active HIGH Interrupt from INT1 from GPIO
     GPIO1_INT2_IRQHandler,            // 90 : Active HIGH Interrupt from INT2 from GPIO
@@ -557,7 +557,7 @@ void (* const g_pfnVectors[])(void) = {
     PWM1_FAULT_IRQHandler,            // 122: PWM1 fault or reload error interrupt
     FLEXSPI2_IRQHandler,              // 123: FlexSPI2 interrupt
     FLEXSPI_IRQHandler,               // 124: FlexSPI0 interrupt
-    SEMC_IRQHandler,                  // 125: Reserved interrupt
+    SEMC_IRQHandler,                  // 125: SEMC interrupt
     USDHC1_IRQHandler,                // 126: USDHC1 interrupt
     USDHC2_IRQHandler,                // 127: USDHC2 interrupt
     USB_OTG2_IRQHandler,              // 128: USBO2 USB OTG2
@@ -1074,8 +1074,8 @@ WEAK void Reserved86_IRQHandler(void)
 {   Reserved86_DriverIRQHandler();
 }
 
-WEAK void Reserved87_IRQHandler(void)
-{   Reserved87_DriverIRQHandler();
+WEAK void GPIO10_Combined_0_31_IRQHandler(void)
+{   GPIO10_Combined_0_31_DriverIRQHandler();
 }
 
 WEAK void GPIO1_INT0_IRQHandler(void)

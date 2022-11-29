@@ -25,11 +25,11 @@
 ** ###################################################################
 */
 
-define symbol m_interrupts_start       = 0x70002000;
-define symbol m_interrupts_end         = 0x700023FF;
+define symbol m_interrupts_start       = 0x60002000;
+define symbol m_interrupts_end         = 0x600023FF;
 
-define symbol m_text_start             = 0x70002400;
-define symbol m_text_end               = 0x73FFFFFF;
+define symbol m_text_start             = 0x60002400;
+define symbol m_text_end               = 0x63FFFFFF;
 
 define symbol m_data_start             = 0x20000000;
 define symbol m_data_end               = 0x2001FFFF;
@@ -37,10 +37,13 @@ define symbol m_data_end               = 0x2001FFFF;
 define symbol m_data2_start            = 0x20200000;
 define symbol m_data2_end              = 0x2023FFFF;
 
-define exported symbol m_boot_hdr_conf_start = 0x70000000;
-define symbol m_boot_hdr_ivt_start           = 0x70001000;
-define symbol m_boot_hdr_boot_data_start     = 0x70001020;
-define symbol m_boot_hdr_dcd_data_start      = 0x70001030;
+define exported symbol __noncachedata_start__   = m_data2_start;
+define exported symbol __noncachedata_end__    = m_data2_start;
+
+define exported symbol m_boot_hdr_conf_start = 0x60000000;
+define symbol m_boot_hdr_ivt_start           = 0x60001000;
+define symbol m_boot_hdr_boot_data_start     = 0x60001020;
+define symbol m_boot_hdr_dcd_data_start      = 0x60001030;
 
 /* Sizes */
 if (isdefinedsymbol(__stack_size__)) {

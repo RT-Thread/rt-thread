@@ -53,10 +53,10 @@
 #include <rtdbg.h>
 
 #define MAX_ADDR_LEN 6
+#define RING_ID 0
 
 #ifdef SOC_IMXRT1170_SERIES
 #define ENET_RING_NUM 1U
-#define RING_ID 0
 typedef uint8_t rx_buffer_t[RT_ALIGN(ENET_TXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 typedef uint8_t tx_buffer_t[RT_ALIGN(ENET_TXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
@@ -142,7 +142,6 @@ void _enet_tx_callback(struct rt_imxrt_eth *eth)
     }
 }
 
-#ifdef SOC_IMXRT1170_SERIES
 static void _enet_callback(ENET_Type *base,
                            enet_handle_t *handle,
 #if FSL_FEATURE_ENET_QUEUE > 1
@@ -151,9 +150,6 @@ static void _enet_callback(ENET_Type *base,
                            enet_event_t event,
                            enet_frame_info_t *frameInfo,
                            void *userData)
-#else
-void _enet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, void *userData)
-#endif
 {
     switch (event)
     {
@@ -311,16 +307,18 @@ static void _enet_config(void)
     config.interrupt = kENET_TxFrameInterrupt | kENET_RxFrameInterrupt;
     config.miiSpeed = imxrt_eth_device.speed;
     config.miiDuplex = imxrt_eth_device.duplex;
+    config.callback = _enet_callback;
 
     /* Set SMI to get PHY link status. */
-    sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);
+//    sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);
+    sysClock = CLOCK_GetFreq(kCLOCK_IpgClk);
 
-    dbg_log(DBG_LOG, "deinit\n");
-    ENET_Deinit(imxrt_eth_device.enet_base);
+//    dbg_log(DBG_LOG, "deinit\n");
+//    ENET_Deinit(imxrt_eth_device.enet_base);
     dbg_log(DBG_LOG, "init\n");
     ENET_Init(imxrt_eth_device.enet_base, &imxrt_eth_device.enet_handle, &config, &buffConfig, &imxrt_eth_device.dev_addr[0], sysClock);
     dbg_log(DBG_LOG, "set call back\n");
-    ENET_SetCallback(&imxrt_eth_device.enet_handle, _enet_callback, &imxrt_eth_device);
+//    ENET_SetCallback(&imxrt_eth_device.enet_handle, _enet_callback, &imxrt_eth_device);
     dbg_log(DBG_LOG, "active read\n");
     ENET_ActiveRead(imxrt_eth_device.enet_base);
 #else
@@ -482,7 +480,6 @@ static rt_err_t rt_imxrt_eth_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-#ifdef SOC_IMXRT1170_SERIES
 static bool _ENET_TxDirtyRingAvailable(enet_tx_dirty_ring_t *txDirtyRing)
 {
     return !txDirtyRing->isFull;
@@ -546,32 +543,7 @@ static void _ENET_ActiveSendRing(ENET_Type *base, uint8_t ringId)
     /* Write to active tx descriptor */
     *txDesActive = 0;
 }
-#else
-static void _ENET_ActiveSend(ENET_Type *base, uint32_t ringId)
-{
-    assert(ringId < FSL_FEATURE_ENET_QUEUE);
 
-    switch (ringId)
-    {
-    case 0:
-        base->TDAR = ENET_TDAR_TDAR_MASK;
-        break;
-#if FSL_FEATURE_ENET_QUEUE > 1
-    case 1:
-        base->TDAR1 = ENET_TDAR1_TDAR_MASK;
-        break;
-    case 2:
-        base->TDAR2 = ENET_TDAR2_TDAR_MASK;
-        break;
-#endif /* FSL_FEATURE_ENET_QUEUE > 1 */
-    default:
-        base->TDAR = ENET_TDAR_TDAR_MASK;
-        break;
-    }
-}
-#endif
-
-#ifdef SOC_IMXRT1170_SERIES
 static status_t _ENET_SendFrame(ENET_Type *base,
                                 enet_handle_t *handle,
                                 const uint8_t *data,
@@ -778,166 +750,6 @@ static status_t _ENET_SendFrame(ENET_Type *base,
     }
     return result;
 }
-#else
-static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const uint8_t *data, uint32_t length)
-{
-    assert(handle);
-    assert(data);
-
-    volatile enet_tx_bd_struct_t *curBuffDescrip;
-    uint32_t len = 0;
-    uint32_t sizeleft = 0;
-    uint32_t address;
-
-    /* Check the frame length. */
-    if (length > ENET_FRAME_MAX_FRAMELEN)
-    {
-        return kStatus_ENET_TxFrameOverLen;
-    }
-
-    /* Check if the transmit buffer is ready. */
-    curBuffDescrip = handle->txBdCurrent[0];
-    if (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_TX_READY_MASK)
-    {
-        return kStatus_ENET_TxFrameBusy;
-    }
-#ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
-    bool isPtpEventMessage = false;
-    /* Check PTP message with the PTP header. */
-    isPtpEventMessage = ENET_Ptp1588ParseFrame(data, NULL, true);
-#endif /* ENET_ENHANCEDBUFFERDESCRIPTOR_MODE */
-    /* One transmit buffer is enough for one frame. */
-    if (handle->txBuffSizeAlign[0] >= length)
-    {
-        /* Copy data to the buffer for uDMA transfer. */
-#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
-        address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
-#else
-        address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-
-        pbuf_copy_partial((const struct pbuf *)data, (void *)address, length, 0);
-
-        /* Set data length. */
-        curBuffDescrip->length = length;
-#ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
-        /* For enable the timestamp. */
-        if (isPtpEventMessage)
-        {
-            curBuffDescrip->controlExtend1 |= ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK;
-        }
-        else
-        {
-            curBuffDescrip->controlExtend1 &= ~ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK;
-        }
-
-#endif /* ENET_ENHANCEDBUFFERDESCRIPTOR_MODE */
-        curBuffDescrip->control |= (ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK);
-
-        /* Increase the buffer descriptor address. */
-        if (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_TX_WRAP_MASK)
-        {
-            handle->txBdCurrent[0] = handle->txBdBase[0];
-        }
-        else
-        {
-            handle->txBdCurrent[0]++;
-        }
-#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
-        /* Add the cache clean maintain. */
-#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
-        address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
-#else
-        address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-        DCACHE_CleanByRange(address, length);
-#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
-        /* Active the transmit buffer descriptor. */
-        _ENET_ActiveSend(base, 0);
-
-        return kStatus_Success;
-    }
-    else
-    {
-        /* One frame requires more than one transmit buffers. */
-        do
-        {
-#ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
-            /* For enable the timestamp. */
-            if (isPtpEventMessage)
-            {
-                curBuffDescrip->controlExtend1 |= ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK;
-            }
-            else
-            {
-                curBuffDescrip->controlExtend1 &= ~ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK;
-            }
-#endif /* ENET_ENHANCEDBUFFERDESCRIPTOR_MODE */
-
-            /* Increase the buffer descriptor address. */
-            if (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_TX_WRAP_MASK)
-            {
-                handle->txBdCurrent[0] = handle->txBdBase[0];
-            }
-            else
-            {
-                handle->txBdCurrent[0]++;
-            }
-            /* update the size left to be transmit. */
-            sizeleft = length - len;
-            if (sizeleft > handle->txBuffSizeAlign[0])
-            {
-                /* Data copy. */
-#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
-                address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
-#else
-                address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-                rt_memcpy((void *)address, data + len, handle->txBuffSizeAlign[0]);
-                /* Data length update. */
-                curBuffDescrip->length = handle->txBuffSizeAlign[0];
-                len += handle->txBuffSizeAlign[0];
-                /* Sets the control flag. */
-                curBuffDescrip->control &= ~ENET_BUFFDESCRIPTOR_TX_LAST_MASK;
-                curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_TX_READY_MASK;
-                /* Active the transmit buffer descriptor*/
-                _ENET_ActiveSend(base, 0);
-            }
-            else
-            {
-#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
-                address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
-#else
-                address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-                rt_memcpy((void *)address, data + len, sizeleft);
-                curBuffDescrip->length = sizeleft;
-                /* Set Last buffer wrap flag. */
-                curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK;
-#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
-                /* Add the cache clean maintain. */
-#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
-                address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
-#else
-                address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-                DCACHE_CleanByRange(address, handle->txBuffSizeAlign[0]);
-#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
-                /* Active the transmit buffer descriptor. */
-                _ENET_ActiveSend(base, 0);
-
-                return kStatus_Success;
-            }
-
-            /* Get the current buffer descriptor address. */
-            curBuffDescrip = handle->txBdCurrent[0];
-
-        } while (!(curBuffDescrip->control & ENET_BUFFDESCRIPTOR_TX_READY_MASK));
-
-        return kStatus_ENET_TxFrameBusy;
-    }
-}
-#endif
 
 /* ethernet device interface */
 /* transmit packet. */
@@ -957,11 +769,7 @@ rt_err_t rt_imxrt_eth_tx(rt_device_t dev, struct pbuf *p)
 
     do
     {
-#ifdef SOC_IMXRT1170_SERIES
         result = _ENET_SendFrame(imxrt_eth_device.enet_base, enet_handle, (const uint8_t *)p, p->tot_len, RING_ID, false, NULL);
-#else
-        result = _ENET_SendFrame(imxrt_eth_device.enet_base, enet_handle, (const uint8_t *)p, p->tot_len);
-#endif
 
         if (result == kStatus_ENET_TxFrameBusy)
         {
@@ -985,12 +793,8 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     ENET_Type *enet_base = imxrt_eth_device.enet_base;
     enet_data_error_stats_t *error_statistic = &imxrt_eth_device.error_statistic;
 
-/* Get the Frame size */
-#ifdef SOC_IMXRT1170_SERIES
+    /* Get the Frame size */
     status = ENET_GetRxFrameSize(enet_handle, &length, RING_ID);
-#else
-    status = ENET_GetRxFrameSize(enet_handle, &length);
-#endif
 
     /* Call ENET_ReadFrame when there is a received frame. */
     if (length != 0)
@@ -1000,11 +804,7 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
 
         if (p != NULL)
         {
-#ifdef SOC_IMXRT1170_SERIES
             status = ENET_ReadFrame(enet_base, enet_handle, p->payload, length, RING_ID, NULL);
-#else
-            status = ENET_ReadFrame(enet_base, enet_handle, p->payload, length);
-#endif
             if (status == kStatus_Success)
             {
 #ifdef ETH_RX_DUMP
@@ -1027,17 +827,10 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     {
         dbg_log(DBG_WARNING, "ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
         /* Update the received buffer when error happened. */
-#ifdef SOC_IMXRT1170_SERIES
         /* Get the error information of the received g_frame. */
         ENET_GetRxErrBeforeReadFrame(enet_handle, error_statistic, RING_ID);
         /* update the receive buffer. */
         ENET_ReadFrame(enet_base, enet_handle, NULL, 0, RING_ID, NULL);
-#else
-        /* Get the error information of the received g_frame. */
-        ENET_GetRxErrBeforeReadFrame(enet_handle, error_statistic);
-        /* update the receive buffer. */
-        ENET_ReadFrame(enet_base, enet_handle, NULL, 0);
-#endif
     }
 
     ENET_EnableInterrupts(enet_base, kENET_RxFrameInterrupt);
@@ -1092,7 +885,7 @@ static void phy_monitor_thread_entry(void *parameter)
     rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_KSZ8081_ADDRESS, CLOCK_GetRootClockFreq(kCLOCK_Root_Bus));
 #endif
 #else
-    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_KSZ8081_ADDRESS, CLOCK_GetFreq(kCLOCK_IpgClk));
 #endif
     if (PHY_STATUS_OK != status)
     {
@@ -1368,7 +1161,9 @@ void enet_reg_dump(void)
     DUMP_REG(RMON_T_P1024TO2047);
     DUMP_REG(RMON_T_P_GTE2048);
     DUMP_REG(RMON_T_OCTETS);
+#ifndef SOC_MIMXRT1062DVL6A
     DUMP_REG(IEEE_T_DROP);
+#endif
     DUMP_REG(IEEE_T_FRAME_OK);
     DUMP_REG(IEEE_T_1COL);
     DUMP_REG(IEEE_T_MCOL);

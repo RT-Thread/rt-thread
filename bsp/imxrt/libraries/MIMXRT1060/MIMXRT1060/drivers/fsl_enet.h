@@ -24,7 +24,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief Defines the driver version. */
-#define FSL_ENET_DRIVER_VERSION (MAKE_VERSION(2, 5, 3))
+#define FSL_ENET_DRIVER_VERSION (MAKE_VERSION(2, 5, 4))
 /*@}*/
 
 /*! @name ENET DESCRIPTOR QUEUE */
@@ -776,6 +776,9 @@ typedef void (*enet_isr_t)(ENET_Type *base, enet_handle_t *handle);
 /*! @brief Pointers to enet clocks for each instance. */
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 extern const clock_ip_name_t s_enetClock[];
+#if defined(FSL_FEATURE_ENET_HAS_EXTRA_CLOCK_GATE) && FSL_FEATURE_ENET_HAS_EXTRA_CLOCK_GATE
+extern const clock_ip_name_t s_enetExtraClock[];
+#endif
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 /*******************************************************************************
