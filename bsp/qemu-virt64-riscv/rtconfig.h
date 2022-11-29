@@ -7,7 +7,6 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 20
-#define RT_USING_SMART
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -57,9 +56,6 @@
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
-#define RT_USING_USERSPACE
-#define KERNEL_VADDR_START 0x80000000
-#define PV_OFFSET 0
 #define ARCH_RISCV
 #define ARCH_RISCV64
 
@@ -347,6 +343,15 @@
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 
 /* RISC-V QEMU virt64 configs */
 
