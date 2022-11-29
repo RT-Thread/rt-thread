@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2022, Real-Thread Information Technology Ltd
  * All rights reserved
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -362,6 +362,7 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
     _rym_putchar(ctx, RYM_CODE_ACK);
     _rym_putchar(ctx, RYM_CODE_C);
     ctx->stage = RYM_STAGE_ESTABLISHED;
+    rt_size_t errors;
 
     while (1)
     {
@@ -387,7 +388,22 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
 
         err = _rym_trans_data(ctx, data_sz, &code);
         if (err != RT_EOK)
-            return err;
+        {
+            errors++;
+            if(errors > RYM_MAX_ERRORS)
+            {
+                return err;/* Abort communication */
+            }
+            else
+            {
+                _rym_putchar(ctx, RYM_CODE_NAK);/* Ask for a packet */
+                continue;
+            }
+        }
+        else
+        {
+            errors = 0;
+        }
         switch (code)
         {
         case RYM_CODE_CAN:

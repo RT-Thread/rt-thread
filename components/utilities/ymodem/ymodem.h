@@ -58,6 +58,11 @@ enum rym_code
 #define RYM_END_SESSION_SEND_CAN_NUM  0x07
 #endif
 
+/* how many retries were made when the error occurred */
+#ifndef RYM_MAX_ERRORS
+#define RYM_MAX_ERRORS    ((rt_size_t)5)
+#endif
+
 enum rym_stage
 {
     RYM_STAGE_NONE = 0,
