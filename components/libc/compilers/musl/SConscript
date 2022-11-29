@@ -14,7 +14,7 @@ if libc_name == 'musl':
     src = Glob('*.c')
 
     CPPPATH = [cwd]
-    CPPDEFINES = ['RT_USING_MUSLLIBC', 'RT_USING_LIBC','_POSIX_SOURCE']
+    CPPDEFINES = ['RT_USING_MUSLLIBC', 'RT_USING_LIBC']
     LIBS = ['c', 'gcc']
     LINKFLAGS = ' --specs=kernel.specs'
     AddDepend(['RT_USING_MUSLLIBC', 'RT_USING_LIBC'])
