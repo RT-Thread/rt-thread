@@ -86,12 +86,14 @@ config RT_USING_USERSPACE
 
 config KERNEL_VADDR_START
     hex "The virtural address of kernel start"
-    default 0xc0000000
+    default 0xc0000000 if ARCH_ARM
+    default 0x80000000 if ARCH_RISCV
     depends on RT_USING_USERSPACE
 
 config PV_OFFSET
     hex "The offset of kernel physical address and virtural address"
-    default 0
+    default 0xa0000000 if ARCH_ARM
+    default 0x0        if ARCH_RISCV
     depends on RT_USING_USERSPACE
 
 config RT_IOREMAP_LATE

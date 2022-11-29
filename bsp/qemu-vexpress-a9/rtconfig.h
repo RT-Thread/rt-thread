@@ -7,7 +7,6 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_USING_SMART
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_256
 #define RT_THREAD_PRIORITY_MAX 256
@@ -59,9 +58,6 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define RT_USING_USERSPACE
-#define KERNEL_VADDR_START 0xc0000000
-#define PV_OFFSET 0xa0000000
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V2
 #define ARCH_ARM_CORTEX_A9
@@ -109,14 +105,6 @@
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
 #define RT_USING_DFS_TMPFS
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define LWP_ENABLE_ASID
-#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
@@ -128,7 +116,6 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 256
-#define RT_USING_TTY
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -173,6 +160,7 @@
 #define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 

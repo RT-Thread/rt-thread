@@ -26,7 +26,9 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <unistd.h>
+#ifdef RT_USING_LWP
 #include "lwp.h"
+#endif
 #ifdef RT_USING_POSIX_DELAY
 #include <delay.h>
 #endif
@@ -711,6 +713,10 @@ RTM_EXPORT(clock_gettime);
 
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
+#ifndef RT_USING_RTC
+    LOG_W(_WARNING_NO_RTC);
+    return -RT_ERROR;
+#else
     if (rqtp->tv_sec < 0 || rqtp->tv_nsec < 0 || rqtp->tv_nsec >= NANOSECOND_PER_SECOND)
     {
         rt_set_errno(EINVAL);
@@ -783,6 +789,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         return -RT_ERROR;
     }
     return 0;
+#endif
 }
 
 int clock_settime(clockid_t clockid, const struct timespec *tp)
@@ -878,7 +885,9 @@ struct timer_obj
     rt_uint32_t reload;                    /* Reload value in ms */
     rt_uint32_t status;
     int sigev_signo;
+#ifdef RT_USING_LWP
     pid_t pid;
+#endif
 };
 
 static void rtthread_timer_wrapper(void *timerobj)
@@ -886,7 +895,6 @@ static void rtthread_timer_wrapper(void *timerobj)
     struct timer_obj *timer;
 
     timer = (struct timer_obj *)timerobj;
-    sys_kill(timer->pid, timer->sigev_signo);
 
     if (timer->reload == 0U)
     {
@@ -896,6 +904,15 @@ static void rtthread_timer_wrapper(void *timerobj)
     timer->reload = (timer->interval.tv_sec * RT_TICK_PER_SECOND) + (timer->interval.tv_nsec * RT_TICK_PER_SECOND) / NANOSECOND_PER_SECOND;
     if (timer->reload)
         rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
+
+#ifdef RT_USING_LWP
+    sys_kill(timer->pid, timer->sigev_signo);
+#else
+    if(timer->sigev_notify_function != RT_NULL)
+    {
+        (timer->sigev_notify_function)(timer->val);
+    }
+#endif
 }
 
 /**
@@ -912,7 +929,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     struct timer_obj *timer;
     char timername[RT_NAME_MAX] = {0};
 
-    if (clockid > CLOCK_TAI ||
+    if (clockid > CLOCK_ID_MAX ||
         (evp->sigev_notify != SIGEV_NONE &&
          evp->sigev_notify != SIGEV_SIGNAL))
     {
@@ -930,7 +947,9 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
     num %= 100;
     timer->sigev_signo = evp->sigev_signo;
+#ifdef RT_USING_LWP
     timer->pid = lwp_self()->pid;
+#endif
     timer->sigev_notify_function = evp->sigev_notify_function;
     timer->val = evp->sigev_value;
     timer->interval.tv_sec = 0;
@@ -1107,11 +1126,16 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         */
     if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
     {
+#ifndef RT_USING_RTC
+    LOG_W(_WARNING_NO_RTC);
+    return -RT_ERROR;
+#else
         rt_int64_t ts = ((value->it_value.tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND);
         rt_int64_t tns = (value->it_value.tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
         rt_int64_t reload = ts + tns;
         rt_tick_t rt_tick = rt_tick_get();
         timer->reload = reload < rt_tick ? 0 : reload - rt_tick;
+#endif
     }
     else
         timer->reload = (value->it_value.tv_sec * RT_TICK_PER_SECOND) + value->it_value.tv_nsec * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
