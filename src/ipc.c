@@ -1197,7 +1197,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
             {
                 /* set the priority of thread to the ceiling priority */
                 if (mutex->ceiling_priority < mutex->owner->current_priority)
-                    _thread_update_priority(mutex->owner, mutex->ceiling_priority, RT_UNINTERRUPTIBLE); /* TODO */
+                    _thread_update_priority(mutex->owner, mutex->ceiling_priority, suspend_flag);
             }
             else
             {
