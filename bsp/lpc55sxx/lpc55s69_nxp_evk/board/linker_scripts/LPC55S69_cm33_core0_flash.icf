@@ -61,7 +61,7 @@ if (isdefinedsymbol(__use_shmem__)) {
 
 define symbol m_usb_sram_start                 = 0x40100000;
 define symbol m_usb_sram_end                   = 0x40103FFF;
-
+define exported symbol __RTT_HEAP_END = m_data_end;
 define memory mem with size = 4G;
 
 define region TEXT_region             = mem:[from m_interrupts_start to m_interrupts_end]
