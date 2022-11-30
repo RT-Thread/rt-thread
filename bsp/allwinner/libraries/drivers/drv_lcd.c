@@ -507,22 +507,6 @@ void set_lcd_backlight(rt_uint8_t value)
     rt_pwm_enable(pwm_dev, LCD_PWM_DEV_CHANNEL);
 }
 
-rt_err_t rt_pwm_get(struct rt_device_pwm *device, int channel)
-{
-    rt_err_t result = RT_EOK;
-    struct rt_pwm_configuration configuration = {0};
-
-    if (!device)
-    {
-        return -RT_EIO;
-    }
-
-    configuration.channel = channel;
-    result = rt_device_control(&device->parent, PWM_CMD_GET, &configuration);
-
-    return result;
-}
-
 rt_uint8_t get_lcd_backlight(void)
 {
     int result = 0;
