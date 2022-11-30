@@ -29,7 +29,11 @@
 #include <sdmmc/sd_test.h>
 #include <drv_sdmmc.h>
 
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
 #include "partition.h"
 
 #define DBG_LEVEL DBG_LOG
