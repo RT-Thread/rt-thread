@@ -101,10 +101,8 @@ void rt_hw_interrupt_init(void)
     /* initialize ARM GIC */
 #ifdef RT_USING_USERSPACE
     gic_dist_base = (uint32_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_dist_base(), 0x2000, MMU_MAP_K_RW);
-    gic_cpu_base = (uint32_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_cpu_base(), 0x1000, MMU_MAP_K_RW);
 #else
     gic_dist_base = platform_get_gic_dist_base();
-    gic_cpu_base = platform_get_gic_cpu_base();
 #endif
 
     gic_irq_start = GIC_IRQ_START;
