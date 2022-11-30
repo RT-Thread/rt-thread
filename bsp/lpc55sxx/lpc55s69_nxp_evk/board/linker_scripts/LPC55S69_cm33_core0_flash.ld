@@ -1,18 +1,19 @@
 /*
 ** ###################################################################
 **     Processors:          LPC55S69JBD100_cm33_core0
-**                          LPC55S69JET98_cm33_core0
+**                          LPC55S69JBD64_cm33_core0
+**                          LPC55S69JEV98_cm33_core0
 **
 **     Compiler:            GNU C Compiler
-**     Reference manual:    LPC55xx/LPC55Sxx User manual Rev.0.2  15 Aug 2018
-**     Version:             rev. 1.0, 2018-08-22
-**     Build:               b180921
+**     Reference manual:    LPC55S6x/LPC55S2x/LPC552x User manual(UM11126) Rev.1.3  16 May 2019
+**     Version:             rev. 1.1, 2019-05-16
+**     Build:               b210928
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2018 NXP
+**     Copyright 2016-2021 NXP
 **     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause
@@ -35,9 +36,9 @@ RPMSG_SHMEM_SIZE = DEFINED(__use_shmem__) ? 0x1800 : 0;
 /* Specify the memory areas */
 MEMORY
 {
-  m_interrupts          (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000140
-  m_text                (RX)  : ORIGIN = 0x00000140, LENGTH = 0x00071EC0
-  m_core1_image         (RX)  : ORIGIN = 0x00072000, LENGTH = 0x00026000
+  m_interrupts          (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000200
+  m_text                (RX)  : ORIGIN = 0x00000200, LENGTH = 0x00071E00
+  m_core1_image         (RX)  : ORIGIN = 0x00072000, LENGTH = 0x0002B800
   m_data                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00033000 - RPMSG_SHMEM_SIZE
   rpmsg_sh_mem          (RW)  : ORIGIN = 0x20033000 - RPMSG_SHMEM_SIZE, LENGTH = RPMSG_SHMEM_SIZE
   m_usb_sram            (RW)  : ORIGIN = 0x40100000, LENGTH = 0x00004000
@@ -47,19 +48,21 @@ MEMORY
 SECTIONS
 {
   /* section for storing the secondary core image */
-  .m0code :
+  .core1_code :
   {
      . = ALIGN(4) ;
-    KEEP (*(.m0code))
-     *(.m0code*)
+    KEEP (*(.core1_code))
+     *(.core1_code*)
      . = ALIGN(4) ;
   } > m_core1_image
 
   /* NOINIT section for rpmsg_sh_mem */
   .noinit_rpmsg_sh_mem (NOLOAD) : ALIGN(4)
   {
+     __RPMSG_SH_MEM_START__ = .;
      *(.noinit.$rpmsg_sh_mem*)
      . = ALIGN(4) ;
+     __RPMSG_SH_MEM_END__ = .;
   } > rpmsg_sh_mem
 
   /* The startup code goes first into internal flash */
