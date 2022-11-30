@@ -791,6 +791,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     return 0;
 #endif
 }
+RTM_EXPORT(clock_nanosleep);
 
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {

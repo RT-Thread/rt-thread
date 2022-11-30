@@ -184,15 +184,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_LITTLEFS
-#define PKG_USING_LITTLEFS_V205
-#define LFS_READ_SIZE 256
-#define LFS_PROG_SIZE 256
-#define LFS_BLOCK_SIZE 4096
-#define LFS_CACHE_SIZE 256
-#define LFS_BLOCK_CYCLES 100
-#define LFS_THREADSAFE
-#define LFS_LOOKAHEAD_MAX 128
 
 /* peripheral libraries and drivers */
 
@@ -271,7 +262,6 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_SPI_FLASH
 #define BSP_USING_QSPI_FLASH
 #define BSP_USING_LCD_SPI
 #define LCD_BACKLIGHT_USING_GPIO

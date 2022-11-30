@@ -10,6 +10,7 @@
 #ifndef  CPUPORT_H__
 #define  CPUPORT_H__
 
+#ifdef RT_USING_SMP
 typedef union {
     unsigned long slock;
     struct __arch_tickets {
@@ -17,5 +18,6 @@ typedef union {
         unsigned short next;
     } tickets;
 } rt_hw_spinlock_t;
+#endif
 
 #endif  /*CPUPORT_H__*/

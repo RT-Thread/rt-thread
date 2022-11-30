@@ -174,8 +174,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_PERF_COUNTER
-#define PKG_USING_PERF_COUNTER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 

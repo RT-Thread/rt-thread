@@ -49,6 +49,16 @@
 /* all context registers */
 #define CTX_REG_NR  (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + CTX_VECTOR_REG_NR)
 
+#ifdef RT_USING_SMP
+typedef union {
+    unsigned long slock;
+    struct __arch_tickets {
+        unsigned short owner;
+        unsigned short next;
+    } tickets;
+} rt_hw_spinlock_t;
+#endif
+
 #ifndef __ASSEMBLY__
 rt_inline void rt_hw_dsb()
 {

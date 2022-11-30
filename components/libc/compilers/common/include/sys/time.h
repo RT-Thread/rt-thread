@@ -99,8 +99,6 @@ time_t time(time_t* t);
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #endif /* RT_USING_POSIX_DELAY */
 
-#if defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER)
-/* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
 #define NANOSECOND_PER_SECOND   1000000000UL
@@ -108,6 +106,9 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #define MILLISECOND_PER_TICK    (MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
 #define MICROSECOND_PER_TICK    (MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
 #define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
+
+#if defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER)
+/* POSIX clock and timer */
 
 #ifndef CLOCK_REALTIME
 #define CLOCK_REALTIME      1
