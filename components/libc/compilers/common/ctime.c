@@ -548,7 +548,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     {
         if (rmtp)
         {
-            uint64_t rmtp_cpu_tick = clock_cpu_gettime() - tick * (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
+            uint64_t rmtp_cpu_tick = cpu_tick_old + cpu_tick - clock_cpu_gettime();
             rmtp->tv_sec = ((int)(rmtp_cpu_tick * unit)) / NANOSECOND_PER_SECOND;
             rmtp->tv_nsec = ((int)(rmtp_cpu_tick * unit)) % NANOSECOND_PER_SECOND;
         }
@@ -558,7 +558,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     else
         while (clock_cpu_gettime() - cpu_tick_old < cpu_tick);
 #else
-    rt_tick_t tick;
+    rt_tick_t tick, tick_old = rt_tick_get();
     tick = rqtp->tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp->tv_nsec * RT_TICK_PER_SECOND) / NANOSECOND_PER_SECOND;
     rt_thread_delay(tick);
 
@@ -566,7 +566,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     {
         if (rmtp)
         {
-            tick = rt_tick_get() - tick;
+            tick = tick_old + tick - rt_tick_get();
             /* get the passed time */
             rmtp->tv_sec = tick / RT_TICK_PER_SECOND;
             rmtp->tv_nsec = (tick % RT_TICK_PER_SECOND) * (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
@@ -726,7 +726,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     {
     case CLOCK_REALTIME:
     {
-        rt_tick_t tick;
+        rt_tick_t tick, tick_old = rt_tick_get();
         if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
         {
             tick = (rqtp->tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND + (rqtp->tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
@@ -742,7 +742,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         {
             if (rmtp)
             {
-                tick = rt_tick_get() - tick;
+                tick = tick_old + tick - rt_tick_get();
                 /* get the passed time */
                 rmtp->tv_sec = tick / RT_TICK_PER_SECOND;
                 rmtp->tv_nsec = (tick % RT_TICK_PER_SECOND) * (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
@@ -772,7 +772,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         {
             if (rmtp)
             {
-                uint64_t rmtp_cpu_tick = clock_cpu_gettime() - tick * (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
+                uint64_t rmtp_cpu_tick = cpu_tick_old + cpu_tick - clock_cpu_gettime();
                 rmtp->tv_sec = ((int)(rmtp_cpu_tick * unit)) / NANOSECOND_PER_SECOND;
                 rmtp->tv_nsec = ((int)(rmtp_cpu_tick * unit)) % NANOSECOND_PER_SECOND;
             }
