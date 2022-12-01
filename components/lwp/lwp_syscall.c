@@ -927,7 +927,10 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
     ret = nanosleep(&rqtp_k, &rmtp_k);
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
+    {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
+        return -EINTR;
+    }
 #else
     if (rmtp)
     {
@@ -1235,6 +1238,40 @@ static void timer_timeout_callback(void *parameter)
 {
     rt_sem_t sem = (rt_sem_t)parameter;
     rt_sem_release(sem);
+}
+
+rt_timer_t sys_rt_timer_create(const char *name,
+                               void *data,
+                               rt_tick_t time,
+                               rt_uint8_t flag)
+{
+    rt_timer_t timer = rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)timer) != 0)
+    {
+        rt_timer_delete(timer);
+        timer = NULL;
+    }
+    return timer;
+}
+
+rt_err_t sys_rt_timer_delete(rt_timer_t timer)
+{
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)timer);
+}
+
+rt_err_t sys_rt_timer_start(rt_timer_t timer)
+{
+    return rt_timer_start(timer);
+}
+
+rt_err_t sys_rt_timer_stop(rt_timer_t timer)
+{
+    return rt_timer_stop(timer);
+}
+
+rt_err_t sys_rt_timer_control(rt_timer_t timer, int cmd, void *arg)
+{
+    return rt_timer_control(timer, cmd, arg);
 }
 
 rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
@@ -3839,7 +3876,10 @@ int sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, s
     lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
     ret = clock_nanosleep(clk, flags, &rqtp_k, &rmtp_k);
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
+    {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
+        return -EINTR;
+    }
 #else
     if (rmtp)
     {
@@ -4299,11 +4339,11 @@ const static void* func_table[] =
 #endif
     SYSCALL_SIGN(sys_waitpid),          /* 110 */
 
-    SYSCALL_SIGN(sys_timer_create),
-    SYSCALL_SIGN(sys_timer_delete),
-    SYSCALL_SIGN(sys_timer_settime),
-    SYSCALL_SIGN(sys_timer_gettime),
-    SYSCALL_SIGN(sys_timer_getoverrun),  /* 115 */
+    SYSCALL_SIGN(sys_rt_timer_create),
+    SYSCALL_SIGN(sys_rt_timer_delete),
+    SYSCALL_SIGN(sys_rt_timer_start),
+    SYSCALL_SIGN(sys_rt_timer_stop),
+    SYSCALL_SIGN(sys_rt_timer_control),  /* 115 */
     SYSCALL_SIGN(sys_getcwd),
     SYSCALL_SIGN(sys_chdir),
     SYSCALL_SIGN(sys_unlink),
@@ -4350,6 +4390,11 @@ const static void* func_table[] =
     SYSCALL_SIGN(sys_setaffinity),
     SYSCALL_SIGN(sys_fsync),
     SYSCALL_SIGN(sys_clock_nanosleep),
+    SYSCALL_SIGN(sys_timer_create),
+    SYSCALL_SIGN(sys_timer_delete),
+    SYSCALL_SIGN(sys_timer_settime),
+    SYSCALL_SIGN(sys_timer_gettime),
+    SYSCALL_SIGN(sys_timer_getoverrun),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
