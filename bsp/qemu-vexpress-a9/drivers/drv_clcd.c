@@ -51,7 +51,6 @@ struct drv_clcd_device
     int height;
 
     uint8_t *fb;
-    uint8_t *fb_virt;
 };
 struct drv_clcd_device _lcd;
 
@@ -143,8 +142,10 @@ int drv_clcd_hw_init(void)
     _lcd.height = CLCD_HEIGHT;
     rt_kprintf("try to allocate fb... | w - %d, h - %d | ", _lcd.width, _lcd.height);
 #ifdef RT_USING_USERSPACE
-    _lcd.fb_virt= rt_pages_alloc (rt_page_bits(_lcd.width * _lcd.height * 2));
-    _lcd.fb = _lcd.fb_virt + PV_OFFSET;
+    _lcd.fb = rt_pages_alloc(rt_page_bits(_lcd.width * _lcd.height * 2));
+#else
+    _lcd.fb = rt_malloc(_lcd.width * _lcd.height * 2);
+#endif
     rt_kprintf("done!\n");
     rt_kprintf("fb => 0x%08x\n", _lcd.fb);
     if (_lcd.fb == NULL)
@@ -152,27 +153,19 @@ int drv_clcd_hw_init(void)
         rt_kprintf("initialize frame buffer failed!\n");
         return -1;
     }
-
-    memset(_lcd.fb_virt, 0xff, _lcd.width * _lcd.height * 2);
-#else
-    _lcd.fb = rt_malloc(_lcd.width * _lcd.height * 2);
-    if (_lcd.fb == NULL)
-    {
-        rt_kprintf("initialize frame buffer failed!\n");
-        return -1;
-    }
-
     memset(_lcd.fb, 0xff, _lcd.width * _lcd.height * 2);
-#endif
 
     plio = (PL111MMIO*)PL111_IOBASE;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_USERSPACE
     plio = (PL111MMIO *)rt_ioremap((void*)PL111_IOBASE, 0x1000);
 #endif
     plio->tim0 = 0x3F1F3C00 | ((CLCD_WIDTH / 16 - 1) << 2);
     plio->tim1 = 0x080B6000 | (CLCD_HEIGHT - 1);
 
     plio->upbase = (uint32_t)_lcd.fb;
+#ifdef RT_USING_USERSPACE
+    plio->upbase += PV_OFFSET;
+#endif
     /* 16-bit 565 color */
     plio->control = 0x1921 | (0x6 << 1);
 

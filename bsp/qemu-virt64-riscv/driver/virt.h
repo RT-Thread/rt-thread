@@ -13,7 +13,7 @@
 
 #include <rtdef.h>
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_USERSPACE
 #include <mmu.h>
 #include <ioremap.h>
 
