@@ -278,9 +278,10 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     {
         pulse = MIN_PULSE;
     }
-    else if (pulse > period)
+    /*To determine user input, output high level is required*/
+    else if (pulse >= period)
     {
-        pulse = period;
+        pulse = period + 1;
     }
     __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
 
