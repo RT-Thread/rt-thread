@@ -173,11 +173,11 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
 #elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
     if ((rt_uint32_t)htim->Instance >= APB2PERIPH_BASE)
     {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk1_doubler);
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
     }
     else
     {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk2_doubler);
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
     }
 #endif
 
