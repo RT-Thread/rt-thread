@@ -405,8 +405,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
         bs_update_ide_project(dist_dir, target_path, rttide)
 
     # make zip package
-    if rttide == None:
-        zip_dist(dist_dir, dist_name)
+    zip_dist(dist_dir, dist_name)
 
     print('done!')
 
