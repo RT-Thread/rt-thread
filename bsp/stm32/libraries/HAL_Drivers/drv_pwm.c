@@ -167,26 +167,19 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
 
     stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#else
-#error "This driver has not supported this series yet!"
-#endif
+/* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
+    tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    if ((rt_uint32_t)htim->Instance >= APB2PERIPH_BASE)
     {
-#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) /* don't have HAL_RCC_GetPCLK2Freq */
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk1_doubler);
     }
     else
     {
-        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+        tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk2_doubler);
     }
+#endif
 
     return tim_clock;
 }
