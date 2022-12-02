@@ -140,6 +140,10 @@ struct netdev_ops
 
     /* set default network interface device in current network stack*/
     int (*set_default)(struct netdev *netdev);
+#ifdef NETDEV_USING_PRIORITY
+    /* set priority network interface device in current network stack*/
+    int (*set_priority)(struct netdev *netdev);
+#endif
 };
 
 /* The network interface device registered and unregistered*/
@@ -157,7 +161,10 @@ int netdev_family_get(struct netdev *netdev);
 
 /* Set default network interface device in list */
 void netdev_set_default(struct netdev *netdev);
-
+#ifdef NETDEV_USING_PRIORITY
+/* Set priority network interface device in list */
+void netdev_set_priority(struct netdev *netdev);
+#endif
 /*  Set network interface device status */
 int netdev_set_up(struct netdev *netdev);
 int netdev_set_down(struct netdev *netdev);

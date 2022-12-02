@@ -20,6 +20,10 @@ if RT_USING_NETDEV
         bool "Enable default netdev automatic change features"
         default y
 
+    config NETDEV_USING_PRIORITY
+        bool "Enable priority netdev automatic change features"
+        default n
+
     config NETDEV_USING_IPV6
         bool "Enable IPV6 protocol support"
         default n
