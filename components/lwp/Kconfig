@@ -8,7 +8,7 @@ menuconfig RT_USING_LWP
     select RT_USING_ZERO
     select RT_USING_RANDOM
     select RT_USING_RTC
-    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_RISCV64
+    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     default n
     help
         The lwP is a light weight process running in user mode.

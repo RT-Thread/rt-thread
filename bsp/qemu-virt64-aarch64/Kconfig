@@ -28,3 +28,17 @@ config SOC_VIRT64_AARCH64
     default y
 
 source "$BSP_DIR/driver/Kconfig"
+
+config BOARD_USING_SMART:
+    bool "Enable rt-smart features"
+    select RT_USING_SMART
+    select RT_USING_SIGNALS
+    default n
+
+if BOARD_USING_SMART
+    config KERNEL_VADDR_START
+        default 0xffff000000000000
+
+    config PV_OFFSET
+        default 0x1000040000000
+endif

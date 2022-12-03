@@ -80,8 +80,8 @@ config ARCH_ARM_MMU
     depends on ARCH_ARM
 
 config RT_USING_USERSPACE
-    bool "Isolated user space"
-    default n
+    bool
+    default y
     depends on ARCH_MM_MMU
 
 config KERNEL_VADDR_START
@@ -162,6 +162,7 @@ config RT_BACKTRACE_FUNCTION_NAME
 config ARCH_ARMV8
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
 
 config ARCH_MIPS
     bool
