@@ -39,20 +39,18 @@ define symbol m_data_end               = 0x2001FFFF;
 define symbol m_data2_start            = 0x20200000;
 define symbol m_data2_end              = 0x202BFFFF;
 
-define exported symbol __noncachedata_start__   = m_data2_start;
-define exported symbol __noncachedata_end__    = m_data2_start;
 
 /* Sizes */
 if (isdefinedsymbol(__stack_size__)) {
   define symbol __size_cstack__        = __stack_size__;
 } else {
-  define symbol __size_cstack__        = 0x1000;
+  define symbol __size_cstack__        = 0x0400;
 }
 
 if (isdefinedsymbol(__heap_size__)) {
   define symbol __size_heap__          = __heap_size__;
 } else {
-  define symbol __size_heap__          = 0x1000;
+  define symbol __size_heap__          = 0x0400;
 }
 
 define exported symbol __NCACHE_REGION_START   = m_data2_start;
