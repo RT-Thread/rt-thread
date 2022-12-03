@@ -35,7 +35,7 @@ config BOARD_USING_SMART:
     select RT_USING_SIGNALS
     default n
 
-if BOARD_USING_SMART
+if RT_USING_SMART
     config KERNEL_VADDR_START
         default 0xffff000000000000
 
