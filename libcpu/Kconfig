@@ -79,10 +79,12 @@ config ARCH_ARM_MMU
     select ARCH_MM_MMU
     depends on ARCH_ARM
 
+if RT_USING_SMART
 config RT_USING_USERSPACE
     bool
     default y
     depends on ARCH_MM_MMU
+endif
 
 config KERNEL_VADDR_START
     hex "The virtural address of kernel start"
