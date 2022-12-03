@@ -25,6 +25,7 @@ source "$PKGS_DIR/Kconfig"
 config SOC_LS2K1000
     bool
     select ARCH_MIPS64
+    select RT_USING_CACHE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select RT_USING_DEVICE

@@ -32,6 +32,12 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#include <console.h>
+#endif
+
 /* use precision */
 #define RT_PRINTF_PRECISION
 
@@ -96,7 +102,7 @@ RTM_EXPORT(rt_strerror);
  */
 rt_err_t rt_get_errno(void)
 {
-    rt_thread_t tid;
+    rt_thread_t tid = RT_NULL;
 
     if (rt_interrupt_get_nest() != 0)
     {
@@ -106,7 +112,9 @@ rt_err_t rt_get_errno(void)
 
     tid = rt_thread_self();
     if (tid == RT_NULL)
+    {
         return __rt_errno;
+    }
 
     return tid->error;
 }
@@ -119,7 +127,7 @@ RTM_EXPORT(rt_get_errno);
  */
 void rt_set_errno(rt_err_t error)
 {
-    rt_thread_t tid;
+    rt_thread_t tid = RT_NULL;
 
     if (rt_interrupt_get_nest() != 0)
     {
@@ -148,14 +156,18 @@ RTM_EXPORT(rt_set_errno);
  */
 int *_rt_errno(void)
 {
-    rt_thread_t tid;
+    rt_thread_t tid = RT_NULL;
 
     if (rt_interrupt_get_nest() != 0)
+    {
         return (int *)&__rt_errno;
+    }
 
     tid = rt_thread_self();
     if (tid != RT_NULL)
+    {
         return (int *) & (tid->error);
+    }
 
     return (int *)&__rt_errno;
 }
@@ -188,10 +200,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    unsigned int i;
+    unsigned int i = 0;
     char *m = (char *)s;
-    unsigned long buffer;
-    unsigned long *aligned_addr;
+    unsigned long buffer = 0;
+    unsigned long *aligned_addr = RT_NULL;
     unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
                                 unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
 
@@ -258,7 +270,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
-    rt_ubase_t len;
+    rt_ubase_t len = 0;
 
     if (tmp <= s || tmp > (s + count))
     {
@@ -282,8 +294,8 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 
     char *dst_ptr = (char *)dst;
     char *src_ptr = (char *)src;
-    long *aligned_dst;
-    long *aligned_src;
+    long *aligned_dst = RT_NULL;
+    long *aligned_src = RT_NULL;
     rt_ubase_t len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
@@ -378,7 +390,7 @@ RTM_EXPORT(rt_memmove);
  */
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
 {
-    const unsigned char *su1, *su2;
+    const unsigned char *su1 = RT_NULL, *su2 = RT_NULL;
     int res = 0;
 
     for (su1 = (const unsigned char *)cs, su2 = (const unsigned char *)ct; 0 < count; ++su1, ++su2, count--)
@@ -403,17 +415,23 @@ RTM_EXPORT(rt_memcmp);
  */
 char *rt_strstr(const char *s1, const char *s2)
 {
-    int l1, l2;
+    int l1 = 0, l2 = 0;
 
     l2 = rt_strlen(s2);
     if (!l2)
-        return (char *)s1;
+    {
+        return (char *)s1;        
+    }
+
     l1 = rt_strlen(s1);
     while (l1 >= l2)
     {
         l1 --;
         if (!rt_memcmp(s1, s2, l2))
-            return (char *)s1;
+        {
+            return (char *)s1;            
+        }
+
         s1 ++;
     }
 
@@ -435,7 +453,7 @@ RTM_EXPORT(rt_strstr);
  */
 rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
-    int ca, cb;
+    int ca = 0, cb = 0;
 
     do
     {
@@ -476,7 +494,10 @@ char *rt_strncpy(char *dst, const char *src, rt_size_t n)
             {
                 /* NUL pad the remaining n-1 bytes */
                 while (--n != 0)
-                    *d++ = 0;
+                {
+                    *d++ = 0;                    
+                }
+
                 break;
             }
         } while (--n != 0);
@@ -532,7 +553,10 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
     while (count)
     {
         if ((__res = *cs - *ct++) != 0 || !*cs++)
-            break;
+        {
+            break;            
+        }
+
         count --;
     }
 
@@ -574,7 +598,7 @@ RTM_EXPORT(rt_strcmp);
  */
 rt_size_t rt_strlen(const char *s)
 {
-    const char *sc;
+    const char *sc = RT_NULL;
 
     for (sc = s; *sc != '\0'; ++sc) /* nothing */
         ;
@@ -623,7 +647,9 @@ char *rt_strdup(const char *s)
     char *tmp = (char *)rt_malloc(len);
 
     if (!tmp)
-        return RT_NULL;
+    {
+        return RT_NULL;        
+    }
 
     rt_memcpy(tmp, s, len);
 
@@ -1230,6 +1256,28 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
+#ifdef RT_USING_LWP
+    rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
+extern void console_init();
+    console_init(); /*add line discipline*/
+    /* find new console device */
+    new_iodev = rt_device_find(name);
+    if (new_iodev != RT_NULL)
+    {
+        if (_console_device != RT_NULL)
+        {
+            old_iodev = console_set_iodev(new_iodev);
+        }
+        else
+        {
+            console_register("console", new_iodev);
+            _console_device = rt_device_find("console");
+            rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
+        }
+    }
+
+    return old_iodev;
+#else
     rt_device_t new_device, old_device;
 
     /* save old device */
@@ -1255,6 +1303,7 @@ rt_device_t rt_console_set_device(const char *name)
     }
 
     return old_device;
+#endif
 }
 RTM_EXPORT(rt_console_set_device);
 #endif /* RT_USING_DEVICE */
@@ -1702,7 +1751,7 @@ RTM_EXPORT(rt_malloc_align);
  */
 RT_WEAK void rt_free_align(void *ptr)
 {
-    void *real_ptr;
+    void *real_ptr = RT_NULL;
 
     /* NULL check */
     if (ptr == RT_NULL) return;

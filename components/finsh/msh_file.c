@@ -104,7 +104,7 @@ int msh_exec_script(const char *cmd_line, int size)
         int length;
 
         line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
-        if (line_buf == RT_NULL)
+        if (line_buf == RT_NULL) 
         {
             close(fd);
             return -RT_ENOMEM;
@@ -480,6 +480,15 @@ static int cmd_mkfs(int argc, char **argv)
 MSH_CMD_EXPORT_ALIAS(cmd_mkfs, mkfs, format disk with file system);
 
 extern struct dfs_filesystem filesystem_table[];
+
+/*
+ * If no argument is specified, display the mount history;
+ * If there are 3 arguments, mount the filesystem.
+ * The order of the arguments is:
+ * argv[1]: device name
+ * argv[2]: mountpoint path
+ * argv[3]: filesystem type
+ */
 static int cmd_mount(int argc, char **argv)
 {
     if (argc == 1)
@@ -509,6 +518,24 @@ static int cmd_mount(int argc, char **argv)
         /* mount a filesystem to the specified directory */
         rt_kprintf("mount device %s(%s) onto %s ... ", device, fstype, path);
         if (dfs_mount(device, path, fstype, 0, 0) == 0)
+        {
+            rt_kprintf("succeed!\n");
+            return 0;
+        }
+        else
+        {
+            rt_kprintf("failed!\n");
+            return -1;
+        }
+    }
+    else if (argc == 3)
+    {
+        char *path = argv[1];
+        char *fstype = argv[2];
+
+        /* mount a filesystem to the specified directory */
+        rt_kprintf("mount (%s) onto %s ... ", fstype, path);
+        if (dfs_mount(NULL, path, fstype, 0, 0) == 0)
         {
             rt_kprintf("succeed!\n");
             return 0;
@@ -550,7 +577,7 @@ static int cmd_umount(int argc, char **argv)
         return 0;
     }
 }
-MSH_CMD_EXPORT_ALIAS(cmd_umount, umount, Unmount device from file system);
+MSH_CMD_EXPORT_ALIAS(cmd_umount, umount, Unmount the mountpoint);
 
 extern int df(const char *path);
 static int cmd_df(int argc, char **argv)

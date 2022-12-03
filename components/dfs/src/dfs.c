@@ -28,12 +28,14 @@ struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
 
 /* device filesystem lock */
 static struct rt_mutex fslock;
+static struct rt_mutex fdlock;
 
 #ifdef DFS_USING_WORKDIR
 char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 static struct dfs_fdtable _fdtab;
+static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
  * @addtogroup DFS
@@ -54,6 +56,9 @@ int dfs_init(void)
         return 0;
     }
 
+    /* init vnode hash table */
+    dfs_fnode_mgr_init();
+
     /* clear filesystem operations table */
     rt_memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
     /* clear filesystem table */
@@ -63,11 +68,19 @@ int dfs_init(void)
 
     /* create device filesystem lock */
     rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_PRIO);
+    rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_PRIO);
 
 #ifdef DFS_USING_WORKDIR
     /* set current working directory */
     rt_memset(working_directory, 0, sizeof(working_directory));
     working_directory[0] = '/';
+#endif
+
+#ifdef RT_USING_DFS_TMPFS
+    {
+        extern int dfs_tmpfs_init(void);
+        dfs_tmpfs_init();
+    }
 #endif
 
 #ifdef RT_USING_DFS_DEVFS
@@ -79,6 +92,13 @@ int dfs_init(void)
 
         dfs_mount(NULL, "/dev", "devfs", 0, 0);
     }
+#if defined(RT_USING_DEV_BUS) && defined(RT_USING_DFS_TMPFS)
+    mkdir("/dev/shm", 0x777);
+    if (dfs_mount(RT_NULL, "/dev/shm", "tmp", 0, 0) != 0)
+    {
+        rt_kprintf("Dir /dev/shm mount failed!\n");
+    }
+#endif
 #endif
 
     init_ok = RT_TRUE;
@@ -107,6 +127,21 @@ void dfs_lock(void)
     }
 }
 
+void dfs_fd_lock(void)
+{
+    rt_err_t result = -RT_EBUSY;
+
+    while (result == -RT_EBUSY)
+    {
+        result = rt_mutex_take(&fdlock, RT_WAITING_FOREVER);
+    }
+
+    if (result != RT_EOK)
+    {
+        RT_ASSERT(0);
+    }
+}
+
 /**
  * this function will lock device file system.
  *
@@ -118,51 +153,95 @@ void dfs_unlock(void)
 }
 
 #ifdef DFS_USING_POSIX
-static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
+
+void dfs_fd_unlock(void)
+{
+    rt_mutex_release(&fdlock);
+}
+
+static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
+{
+    int nr;
+    int index;
+    struct dfs_fd **fds = NULL;
+
+    if (fd < fdt->maxfd)
+    {
+        return fd;
+    }
+    if (fd >= DFS_FD_MAX)
+    {
+        return -1;
+    }
+
+    nr = ((fd + 4) & ~3);
+    if (nr > DFS_FD_MAX)
+    {
+        nr = DFS_FD_MAX;
+    }
+    fds = (struct dfs_fd **)rt_realloc(fdt->fds, nr * sizeof(struct dfs_fd *));
+    if (!fds)
+    {
+        return -1;
+    }
+
+    /* clean the new allocated fds */
+    for (index = fdt->maxfd; index < nr; index++)
+    {
+        fds[index] = NULL;
+    }
+    fdt->fds   = fds;
+    fdt->maxfd = nr;
+
+    return fd;
+}
+
+static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
 
-    /* find an empty fd entry */
+    /* find an empty fd slot */
     for (idx = startfd; idx < (int)fdt->maxfd; idx++)
     {
         if (fdt->fds[idx] == RT_NULL)
-            break;
-        if (fdt->fds[idx]->ref_count == 0)
-            break;
-    }
-
-    /* allocate a larger FD container */
-    if (idx == (int)fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
-    {
-        int cnt, index;
-        struct dfs_fd **fds;
-
-        /* increase the number of FD with 4 step length */
-        cnt = fdt->maxfd + 4;
-        cnt = cnt > DFS_FD_MAX ? DFS_FD_MAX : cnt;
-
-        fds = (struct dfs_fd **)rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
-        if (fds == NULL) goto __exit; /* return fdt->maxfd */
-
-        /* clean the new allocated fds */
-        for (index = (int)fdt->maxfd; index < cnt; index ++)
         {
-            fds[index] = NULL;
+            return idx;
         }
-
-        fdt->fds   = fds;
-        fdt->maxfd = cnt;
     }
+
+    idx = fdt->maxfd;
+    if (idx < startfd)
+    {
+        idx = startfd;
+    }
+    if (fd_slot_expand(fdt, idx) < 0)
+    {
+        return -1;
+    }
+    return idx;
+}
+static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
+{
+    int idx;
+    struct dfs_fd *fd = NULL;
+
+    idx = fd_slot_alloc(fdt, startfd);
 
     /* allocate  'struct dfs_fd' */
-    if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
+    if (idx < 0)
     {
-        fdt->fds[idx] = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
-        if (fdt->fds[idx] == RT_NULL)
-            idx = fdt->maxfd;
+        return -1;
     }
+    fd = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
+    if (!fd)
+    {
+        return -1;
+    }
+    fd->ref_count = 1;
+    fd->magic = DFS_FD_MAGIC;
+    fd->vnode = NULL;
+    fdt->fds[idx] = fd;
 
-__exit:
     return idx;
 }
 
@@ -172,34 +251,32 @@ __exit:
  *
  * @return -1 on failed or the allocated file descriptor.
  */
-int fd_new(void)
+int fdt_fd_new(struct dfs_fdtable *fdt)
 {
-    struct dfs_fd *d;
     int idx;
-    struct dfs_fdtable *fdt;
 
-    fdt = dfs_fdtable_get();
     /* lock filesystem */
-    dfs_lock();
+    dfs_fd_lock();
 
     /* find an empty fd entry */
-    idx = fd_alloc(fdt, 0);
+    idx = fd_alloc(fdt, DFS_STDIO_OFFSET);
 
     /* can't find an empty fd entry */
-    if (idx == (int)fdt->maxfd)
+    if (idx < 0)
     {
-        idx = -(1 + DFS_FD_OFFSET);
         LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
-        goto __result;
     }
 
-    d = fdt->fds[idx];
-    d->ref_count = 1;
-    d->magic = DFS_FD_MAGIC;
+    dfs_fd_unlock();
+    return idx;
+}
 
-__result:
-    dfs_unlock();
-    return idx + DFS_FD_OFFSET;
+int fd_new(void)
+{
+    struct dfs_fdtable *fdt = NULL;
+
+    fdt = dfs_fdtable_get();
+    return fdt_fd_new(fdt);
 }
 
 /**
@@ -211,36 +288,37 @@ __result:
  * @return NULL on on this file descriptor or the file descriptor structure
  * pointer.
  */
-struct dfs_fd *fd_get(int fd)
+
+struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
 {
     struct dfs_fd *d;
-    struct dfs_fdtable *fdt;
 
-#ifdef RT_USING_POSIX_STDIO
-    if ((0 <= fd) && (fd <= 2))
-        fd = libc_stdio_get_console();
-#endif /* RT_USING_POSIX_STDIO */
-
-    fdt = dfs_fdtable_get();
-    fd = fd - DFS_FD_OFFSET;
     if (fd < 0 || fd >= (int)fdt->maxfd)
+    {
         return NULL;
+    }
 
-    dfs_lock();
+    dfs_fd_lock();
     d = fdt->fds[fd];
 
     /* check dfs_fd valid or not */
     if ((d == NULL) || (d->magic != DFS_FD_MAGIC))
     {
-        dfs_unlock();
+        dfs_fd_unlock();
         return NULL;
     }
 
-    /* increase the reference count */
-    d->ref_count ++;
-    dfs_unlock();
+    dfs_fd_unlock();
 
     return d;
+}
+
+struct dfs_fd *fd_get(int fd)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    return fdt_fd_get(fdt, fd);
 }
 
 /**
@@ -248,32 +326,81 @@ struct dfs_fd *fd_get(int fd)
  *
  * This function will put the file descriptor.
  */
-void fd_put(struct dfs_fd *fd)
+void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
 {
-    RT_ASSERT(fd != NULL);
+    struct dfs_fd *fd_slot = NULL;
 
-    dfs_lock();
+    RT_ASSERT(fdt != NULL);
 
-    fd->ref_count --;
+    dfs_fd_lock();
+
+    if ((fd < 0) || (fd >= fdt->maxfd))
+    {
+        dfs_fd_unlock();
+        return;
+    }
+
+    fd_slot = fdt->fds[fd];
+    if (fd_slot == NULL)
+    {
+        dfs_fd_unlock();
+        return;
+    }
+    fdt->fds[fd] = NULL;
+
+    /* check fd */
+    RT_ASSERT(fd_slot->magic == DFS_FD_MAGIC);
+
+    fd_slot->ref_count--;
 
     /* clear this fd entry */
-    if (fd->ref_count == 0)
+    if (fd_slot->ref_count == 0)
     {
-        int index;
-        struct dfs_fdtable *fdt;
-
-        fdt = dfs_fdtable_get();
-        for (index = 0; index < (int)fdt->maxfd; index ++)
+        struct dfs_fnode *vnode = fd_slot->vnode;
+        if (vnode)
         {
-            if (fdt->fds[index] == fd)
-            {
-                rt_free(fd);
-                fdt->fds[index] = 0;
-                break;
-            }
+            vnode->ref_count--;
         }
+        rt_free(fd_slot);
     }
-    dfs_unlock();
+    dfs_fd_unlock();
+}
+
+void fd_release(int fd)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    fdt_fd_release(fdt, fd);
+}
+
+int sys_dup(int oldfd)
+{
+    int newfd = -1;
+    struct dfs_fdtable *fdt = NULL;
+
+    dfs_fd_lock();
+    /* check old fd */
+    fdt = dfs_fdtable_get();
+    if ((oldfd < 0) || (oldfd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdt->fds[oldfd])
+    {
+        goto exit;
+    }
+    /* get a new fd */
+    newfd = fd_slot_alloc(fdt, DFS_STDIO_OFFSET);
+    if (newfd >= 0)
+    {
+        fdt->fds[newfd] = fdt->fds[oldfd];
+        /* inc ref_count */
+        fdt->fds[newfd]->ref_count++;
+    }
+exit:
+    dfs_fd_unlock();
+    return newfd;
 }
 
 #endif /* DFS_USING_POSIX */
@@ -320,9 +447,9 @@ int fd_is_open(const char *pathname)
         for (index = 0; index < fdt->maxfd; index++)
         {
             fd = fdt->fds[index];
-            if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
+            if (fd == NULL || fd->vnode->fops == NULL || fd->vnode->path == NULL) continue;
 
-            if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
+            if (fd->vnode->fs == fs && strcmp(fd->vnode->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
@@ -337,6 +464,139 @@ int fd_is_open(const char *pathname)
     }
 
     return -1;
+}
+
+int sys_dup2(int oldfd, int newfd)
+{
+    struct dfs_fdtable *fdt = NULL;
+    int ret = 0;
+    int retfd = -1;
+
+    dfs_fd_lock();
+    /* check old fd */
+    fdt = dfs_fdtable_get();
+    if ((oldfd < 0) || (oldfd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdt->fds[oldfd])
+    {
+        goto exit;
+    }
+    if (newfd < 0)
+    {
+        goto exit;
+    }
+    if (newfd >= fdt->maxfd)
+    {
+        newfd = fd_slot_expand(fdt, newfd);
+        if (newfd < 0)
+        {
+            goto exit;
+        }
+    }
+    if (fdt->fds[newfd] == fdt->fds[oldfd])
+    {
+        /* ok, return newfd */
+        retfd = newfd;
+        goto exit;
+    }
+
+    if (fdt->fds[newfd])
+    {
+        ret = dfs_file_close(fdt->fds[newfd]);
+        if (ret < 0)
+        {
+            goto exit;
+        }
+        fd_release(newfd);
+    }
+
+    fdt->fds[newfd] = fdt->fds[oldfd];
+    /* inc ref_count */
+    fdt->fds[newfd]->ref_count++;
+    retfd = newfd;
+exit:
+    dfs_fd_unlock();
+    return retfd;
+}
+
+static int fd_get_fd_index_form_fdt(struct dfs_fdtable *fdt, struct dfs_fd *file)
+{
+    int fd = -1;
+
+    if (file == RT_NULL)
+    {
+        return -1;
+    }
+
+    dfs_fd_lock();
+
+    for(int index = 0; index < (int)fdt->maxfd; index++)
+    {
+        if(fdt->fds[index] == file)
+        {
+            fd = index;
+            break;
+        }
+    }
+
+    dfs_fd_unlock();
+
+    return fd;
+}
+
+int fd_get_fd_index(struct dfs_fd *file)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    return fd_get_fd_index_form_fdt(fdt, file);
+}
+
+int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file)
+{
+    int retfd = -1;
+
+    if (!file)
+    {
+        return retfd;
+    }
+    if (!fdt)
+    {
+        return retfd;
+    }
+
+    dfs_fd_lock();
+    /* check old fd */
+    if ((fd < 0) || (fd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+
+    if (fdt->fds[fd])
+    {
+        goto exit;
+    }
+    /* inc ref_count */
+    file->ref_count++;
+    fdt->fds[fd] = file;
+    retfd = fd;
+exit:
+    dfs_fd_unlock();
+    return retfd;
+}
+
+void fd_init(struct dfs_fd *fd)
+{
+    if (fd)
+    {
+        fd->magic = DFS_FD_MAGIC;
+        fd->ref_count = 1;
+        fd->pos = 0;
+        fd->vnode = NULL;
+        fd->data = NULL;
+    }
 }
 
 /**
@@ -383,7 +643,13 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
 #ifdef DFS_USING_WORKDIR
     if (directory == NULL) /* shall use working directory */
+    {
+#ifdef RT_USING_LWP
+        directory = lwp_getcwd();
+#else
         directory = &working_directory[0];
+#endif
+    }
 #else
     if ((directory == NULL) && (filename[0] != '/'))
     {
@@ -422,14 +688,14 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         if (c == '.')
         {
-            if (!src[1]) src ++; /* '.' and ends */
+            if (!src[1]) src++; /* '.' and ends */
             else if (src[1] == '/')
             {
                 /* './' case */
                 src += 2;
 
                 while ((*src == '/') && (*src != '\0'))
-                    src ++;
+                    src++;
                 continue;
             }
             else if (src[1] == '.')
@@ -446,7 +712,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
                     src += 3;
 
                     while ((*src == '/') && (*src != '\0'))
-                        src ++;
+                        src++;
                     goto up_one;
                 }
             }
@@ -454,15 +720,15 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         /* copy up the next '/' and erase all '/' */
         while ((c = *src++) != '\0' && c != '/')
-            *dst ++ = c;
+            *dst++ = c;
 
         if (c == '/')
         {
-            *dst ++ = '/';
+            *dst++ = '/';
             while (c == '/')
                 c = *src++;
 
-            src --;
+            src--;
         }
         else if (!c)
             break;
@@ -470,20 +736,25 @@ char *dfs_normalize_path(const char *directory, const char *filename)
         continue;
 
 up_one:
-        dst --;
-        if (dst < dst0)
+        /* keep the topmost root directory */
+        if (dst - dst0 != 1 || dst[-1] != '/')
         {
-            rt_free(fullpath);
-            return NULL;
+            dst--;
+
+            if (dst < dst0)
+            {
+                rt_free(fullpath);
+                return NULL;
+            }
         }
         while (dst0 < dst && dst[-1] != '/')
-            dst --;
+            dst--;
     }
 
     *dst = '\0';
 
     /* remove '/' in the end of path if exist */
-    dst --;
+    dst--;
     if ((dst != fullpath) && (*dst == '/'))
         *dst = '\0';
 
@@ -519,6 +790,27 @@ struct dfs_fdtable *dfs_fdtable_get(void)
     return fdt;
 }
 
+#ifdef RT_USING_LWP
+struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
+{
+    struct rt_lwp *lwp = RT_NULL;
+    struct dfs_fdtable *fdt = RT_NULL;
+
+    lwp = lwp_from_pid(pid);
+    if (lwp)
+    {
+        fdt = &lwp->fdt;
+    }
+
+    return fdt;
+}
+#endif
+
+struct dfs_fdtable *dfs_fdtable_get_global(void)
+{
+    return &_fdtab;
+}
+
 #ifdef RT_USING_FINSH
 int list_fd(void)
 {
@@ -532,28 +824,24 @@ int list_fd(void)
 
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
-    for (index = 0; index < (int)fd_table->maxfd; index ++)
+    for (index = 0; index < (int)fd_table->maxfd; index++)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
-        if (fd && fd->fops)
+        if (fd && fd->vnode->fops)
         {
-            rt_kprintf("%2d ", index + DFS_FD_OFFSET);
-            if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
+            rt_kprintf("%2d ", index);
+            if (fd->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%3d ", fd->ref_count);
+            rt_kprintf("%3d ", fd->vnode->ref_count);
             rt_kprintf("%04x  ", fd->magic);
-            if (fd->fs && fd->fs->path && rt_strlen(fd->fs->path) > 1)
+            if (fd->vnode->path)
             {
-                rt_kprintf("%s", fd->fs->path);
-            }
-            if (fd->path)
-            {
-                rt_kprintf("%s\n", fd->path);
+                rt_kprintf("%s\n", fd->vnode->path);
             }
             else
             {
@@ -565,6 +853,119 @@ int list_fd(void)
 
     return 0;
 }
-#endif /* RT_USING_FINSH */
 
+#ifdef RT_USING_LWP
+static int lsofp(int pid)
+{
+    int index;
+    struct dfs_fdtable *fd_table = RT_NULL;
+
+    if (pid == (-1))
+    {
+        fd_table = dfs_fdtable_get();
+        if (!fd_table) return -1;
+    }
+    else
+    {
+        fd_table = dfs_fdtable_get_pid(pid);
+        if (!fd_table)
+        {
+            rt_kprintf("PID %s is not a applet(lwp)\n", pid);
+            return -1;
+        }
+    }
+
+    rt_kprintf("--- -- ------  ------ ----- ---------- ---------- ---------- ------\n");
+
+    rt_enter_critical();
+    for (index = 0; index < (int)fd_table->maxfd; index++)
+    {
+        struct dfs_fd *fd = fd_table->fds[index];
+
+        if (fd && fd->vnode->fops)
+        {
+            if(pid == (-1))
+            {
+                rt_kprintf("  K ");
+            }
+            else
+            {
+                rt_kprintf("%3d ", pid);
+            }
+
+            rt_kprintf("%2d ", index);
+            if (fd->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
+            else rt_kprintf("%-8.8s ", "unknown");
+            rt_kprintf("%6d ", fd->vnode->ref_count);
+            rt_kprintf("%04x  0x%.8x ", fd->magic, (int)(size_t)fd->vnode);
+
+            if(fd->vnode == RT_NULL)
+            {
+                rt_kprintf("0x%.8x 0x%.8x ", (int)0x00000000, (int)(size_t)fd);
+            }
+            else
+            {
+                rt_kprintf("0x%.8x 0x%.8x ", (int)(size_t)(fd->vnode->data), (int)(size_t)fd);
+            }
+
+            if (fd->vnode->path)
+            {
+                rt_kprintf("%s \n", fd->vnode->path);
+            }
+            else
+            {
+                rt_kprintf("\n");
+            }
+        }
+    }
+    rt_exit_critical();
+
+    return 0;
+}
+
+int lsof(int argc, char *argv[])
+{
+    rt_kprintf("PID fd type    fd-ref magic vnode      vnode/data addr       path  \n");
+
+    if (argc == 1)
+    {
+        struct rt_list_node *node, *list;
+        struct lwp_avl_struct *pids = lwp_get_pid_ary();
+
+        lsofp(-1);
+
+        for (int index = 0; index < RT_LWP_MAX_NR; index++)
+        {
+            struct rt_lwp *lwp = (struct rt_lwp *)pids[index].data;
+
+            if (lwp)
+            {
+                list = &lwp->t_grp;
+                for (node = list->next; node != list; node = node->next)
+                {
+                    lsofp(lwp_to_pid(lwp));
+                }
+            }
+        }
+    }
+    else if (argc == 3)
+    {
+        if (argv[1][0] == '-' && argv[1][1] == 'p')
+        {
+            int pid = atoi(argv[2]);
+            lsofp(pid);
+        }
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT(lsof, list open files);
+#endif /* RT_USING_LWP */
+
+#endif
 /*@}*/
+

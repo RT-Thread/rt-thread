@@ -267,6 +267,9 @@ int rt_hw_mouse_init(void)
     virtual_addr_t virt = MOUSE_ADDRESS;
     int irq = MOUSE_IRQ_NUM;
 
+#ifdef RT_USING_LWP
+    virt = (virtual_addr_t)rt_ioremap((void*)MOUSE_ADDRESS, 0x1000);
+#endif
     id = (((read32(virt + 0xfec) & 0xff) << 24) |
                 ((read32(virt + 0xfe8) & 0xff) << 16) |
                 ((read32(virt + 0xfe4) & 0xff) <<  8) |

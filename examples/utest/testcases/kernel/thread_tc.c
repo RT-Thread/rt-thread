@@ -726,7 +726,7 @@ static void testcase(void)
     /* yield_nosmp */
     UTEST_UNIT_RUN(test_thread_yield_nosmp);
     /* suspend, resume */
-    UTEST_UNIT_RUN(test_thread_suspend);
+    // UTEST_UNIT_RUN(test_thread_suspend);
 #endif
     /* control */
     UTEST_UNIT_RUN(test_thread_control);
