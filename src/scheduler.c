@@ -33,6 +33,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#endif /* RT_USING_LWP */
+
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -93,6 +97,19 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 static void _scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
+
+#ifdef RT_USING_LWP
+#ifndef ARCH_MM_MMU
+    struct rt_lwp *lwp = thread ? (struct rt_lwp *)thread->lwp : 0;
+
+    /* if stack pointer locate in user data section skip stack check. */
+    if (lwp && ((rt_uint32_t)thread->sp > (rt_uint32_t)lwp->data_entry &&
+    (rt_uint32_t)thread->sp <= (rt_uint32_t)lwp->data_entry + (rt_uint32_t)lwp->data_size))
+    {
+        return;
+    }
+#endif /* not defined ARCH_MM_MMU */
+#endif /* RT_USING_LWP */
 
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
@@ -322,13 +339,17 @@ void rt_schedule(void)
     }
 
 #ifdef RT_USING_SIGNALS
-    if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((current_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* if current_thread signal is in pending */
 
         if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
+#ifdef RT_USING_LWP
+            rt_thread_wakeup(current_thread);
+#else
             rt_thread_resume(current_thread);
+#endif
         }
     }
 #endif /* RT_USING_SIGNALS */
@@ -343,13 +364,20 @@ void rt_schedule(void)
             current_thread->oncpu = RT_CPU_DETACHED;
             if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
-                if (current_thread->current_priority < highest_ready_priority)
+                if (current_thread->bind_cpu == RT_CPUS_NR || current_thread->bind_cpu == cpu_id)
                 {
-                    to_thread = current_thread;
-                }
-                else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
-                {
-                    to_thread = current_thread;
+                    if (current_thread->current_priority < highest_ready_priority)
+                    {
+                        to_thread = current_thread;
+                    }
+                    else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                    {
+                        to_thread = current_thread;
+                    }
+                    else
+                    {
+                        rt_schedule_insert_thread(current_thread);
+                    }
                 }
                 else
                 {
@@ -526,7 +554,7 @@ void rt_schedule(void)
                     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
                     rt_hw_context_switch_interrupt((rt_ubase_t)&from_thread->sp,
-                            (rt_ubase_t)&to_thread->sp);
+                            (rt_ubase_t)&to_thread->sp, from_thread, to_thread);
                 }
             }
             else
@@ -566,13 +594,17 @@ void rt_scheduler_do_irq_switch(void *context)
     current_thread = pcpu->current_thread;
 
 #ifdef RT_USING_SIGNALS
-    if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((current_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* if current_thread signal is in pending */
 
         if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
+#ifdef RT_USING_LWP
+            rt_thread_wakeup(current_thread);
+#else
             rt_thread_resume(current_thread);
+#endif
         }
     }
 #endif /* RT_USING_SIGNALS */
@@ -596,13 +628,20 @@ void rt_scheduler_do_irq_switch(void *context)
             current_thread->oncpu = RT_CPU_DETACHED;
             if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
-                if (current_thread->current_priority < highest_ready_priority)
+                if (current_thread->bind_cpu == RT_CPUS_NR || current_thread->bind_cpu == cpu_id)
                 {
-                    to_thread = current_thread;
-                }
-                else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
-                {
-                    to_thread = current_thread;
+                    if (current_thread->current_priority < highest_ready_priority)
+                    {
+                        to_thread = current_thread;
+                    }
+                    else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                    {
+                        to_thread = current_thread;
+                    }
+                    else
+                    {
+                        rt_schedule_insert_thread(current_thread);
+                    }
                 }
                 else
                 {

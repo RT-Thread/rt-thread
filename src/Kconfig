@@ -17,6 +17,13 @@ config RT_USING_ARCH_DATA_TYPE
 
         Please re-define these data types in rtconfig_project.h file.
 
+config RT_USING_SMART
+    bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
+    default n
+    select RT_USING_LWP
+    help
+        RT-Thread Smart is a microkernel based operating system on RT-Thread.
+
 config RT_USING_SMP
     bool "Enable SMP(Symmetric multiprocessing)"
     default n
@@ -406,6 +413,21 @@ menu "Kernel Device Object"
     config RT_USING_DEVICE_OPS
         bool "Using ops for each device object"
         default n
+
+    config RT_USING_DM
+        bool "Enable device driver model with device tree"
+        default n
+        help
+            Enable device driver model with device tree (FDT). It will use more memory
+            to parse and support device tree feature.
+
+    config RT_USING_DM_FDT
+        bool "Enablie builtin libfdt"
+        depends on RT_USING_DM
+        default y
+        help
+            libfdt - Flat Device Tree manipulation. If your code already contains the
+            libfdt, you can cancel this built-in libfdt to avoid link issue.
 
     config RT_USING_INTERRUPT_INFO
         bool "Enable additional interrupt trace information"

@@ -23,6 +23,18 @@ if GetDepend(['RT_USING_PULSE_ENCODER']):
 if GetDepend(['RT_USING_INPUT_CAPTURE']):
     src = src + ['rt_inputcapture.c']
 
+if GetDepend(['RT_USING_DEV_BUS']):
+    src = src + ['rt_dev_bus.c']
+
+if GetDepend(['RT_USING_NULL']):
+    src = src + ['rt_null.c']
+
+if GetDepend(['RT_USING_ZERO']):
+    src = src + ['rt_zero.c']
+
+if GetDepend(['RT_USING_RANDOM']):
+    src = src + ['rt_random.c']
+
 if len(src):
     group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

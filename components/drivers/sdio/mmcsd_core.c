@@ -13,6 +13,7 @@
 #include <drivers/sd.h>
 #include <drivers/mmc.h>
 #include <drivers/sdio.h>
+#include <string.h>
 
 #define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG
@@ -40,7 +41,6 @@ static struct rt_mailbox  mmcsd_detect_mb;
 static rt_uint32_t mmcsd_detect_mb_pool[4];
 static struct rt_mailbox mmcsd_hotpluge_mb;
 static rt_uint32_t mmcsd_hotpluge_mb_pool[4];
-static rt_uint32_t allocated_host_num = 0;
 
 void mmcsd_host_lock(struct rt_mmcsd_host *host)
 {
@@ -59,7 +59,8 @@ void mmcsd_req_complete(struct rt_mmcsd_host *host)
 
 void mmcsd_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
-    do {
+    do
+    {
         req->cmd->retries--;
         req->cmd->err = 0;
         req->cmd->mrq = req;
@@ -79,7 +80,8 @@ void mmcsd_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 
         rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
 
-    } while(req->cmd->err && (req->cmd->retries > 0));
+    }
+    while (req->cmd->err && (req->cmd->retries > 0));
 
 
 }
@@ -243,7 +245,7 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
         return -RT_ERROR;
     }
 
-    for (i = 0;i < 4;i++)
+    for (i = 0; i < 4; i++)
         cid[i] = buf[i];
     rt_free(buf);
 
@@ -274,7 +276,7 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
         return 0;
     }
 
-    buf = (rt_uint32_t*)rt_malloc(16);
+    buf = (rt_uint32_t *)rt_malloc(16);
     if (!buf)
     {
         LOG_E("allocate memory failed!");
@@ -320,7 +322,7 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
         return -RT_ERROR;
     }
 
-    for (i = 0;i < 4;i++)
+    for (i = 0; i < 4; i++)
         csd[i] = buf[i];
     rt_free(buf);
 
@@ -388,10 +390,10 @@ rt_inline void mmcsd_set_iocfg(struct rt_mmcsd_host *host)
     struct rt_mmcsd_io_cfg *io_cfg = &host->io_cfg;
 
     mmcsd_dbg("clock %uHz busmode %u powermode %u cs %u Vdd %u "
-        "width %u \n",
-         io_cfg->clock, io_cfg->bus_mode,
-         io_cfg->power_mode, io_cfg->chip_select, io_cfg->vdd,
-         io_cfg->bus_width);
+              "width %u \n",
+              io_cfg->clock, io_cfg->bus_mode,
+              io_cfg->power_mode, io_cfg->chip_select, io_cfg->vdd,
+              io_cfg->bus_width);
 
     host->ops->set_iocfg(host, io_cfg);
 }
@@ -438,6 +440,12 @@ void mmcsd_set_bus_width(struct rt_mmcsd_host *host, rt_uint32_t width)
     mmcsd_set_iocfg(host);
 }
 
+void mmcsd_set_timing(struct rt_mmcsd_host *host, rt_uint32_t timing)
+{
+    host->io_cfg.timing = timing;
+    mmcsd_set_iocfg(host);
+}
+
 void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
                             const struct rt_mmcsd_card *card)
 {
@@ -475,7 +483,7 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
 
         timeout_us = data->timeout_ns / 1000;
         timeout_us += data->timeout_clks * 1000 /
-            (card->host->io_cfg.clock / 1000);
+                      (card->host->io_cfg.clock / 1000);
 
         if (data->flags & DATA_DIR_WRITE)
             /*
@@ -596,7 +604,7 @@ int mmcsd_wait_cd_changed(rt_int32_t timeout)
     struct rt_mmcsd_host *host;
     if (rt_mb_recv(&mmcsd_hotpluge_mb, (rt_ubase_t *)&host, timeout) == RT_EOK)
     {
-        if(host->card == RT_NULL)
+        if (host->card == RT_NULL)
         {
             return MMCSD_HOST_UNPLUGED;
         }
@@ -667,7 +675,6 @@ void mmcsd_detect(void *param)
                     continue;
                 }
                 mmcsd_host_unlock(host);
-                rt_mb_send(&mmcsd_hotpluge_mb, (rt_ubase_t)host);
             }
             else
             {
@@ -691,6 +698,19 @@ void mmcsd_detect(void *param)
     }
 }
 
+void mmcsd_host_init(struct rt_mmcsd_host *host)
+{
+    rt_memset(host, 0, sizeof(struct rt_mmcsd_host));
+    strncpy(host->name, "sd", sizeof(host->name) - 1);
+    host->max_seg_size = 65535;
+    host->max_dma_segs = 1;
+    host->max_blk_size = 512;
+    host->max_blk_count = 4096;
+
+    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
+    rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
+}
+
 struct rt_mmcsd_host *mmcsd_alloc_host(void)
 {
     struct rt_mmcsd_host *host;
@@ -703,17 +723,7 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
         return RT_NULL;
     }
 
-    rt_memset(host, 0, sizeof(struct rt_mmcsd_host));
-
-    host->max_seg_size = 65535;
-    host->max_dma_segs = 1;
-    host->max_blk_size = 512;
-    host->max_blk_count = 4096;
-    host->id = allocated_host_num;
-    allocated_host_num++;
-
-    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_PRIO);
-    rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
+    mmcsd_host_init(host);
 
     return host;
 }
@@ -725,6 +735,22 @@ void mmcsd_free_host(struct rt_mmcsd_host *host)
     rt_free(host);
 }
 
+rt_int32_t mmcsd_excute_tuning(struct rt_mmcsd_card *card)
+{
+    struct rt_mmcsd_host *host = card->host;
+    rt_int32_t opcode;
+
+    if (!host->ops->execute_tuning)
+        return RT_EOK;
+
+    if (card->card_type == CARD_TYPE_MMC)
+        opcode = SEND_TUNING_BLOCK_HS200;
+    else
+        opcode = SEND_TUNING_BLOCK;
+
+    return host->ops->execute_tuning(host, opcode);;
+}
+
 int rt_mmcsd_core_init(void)
 {
     rt_err_t ret;
@@ -732,16 +758,16 @@ int rt_mmcsd_core_init(void)
     /* initialize detect SD cart thread */
     /* initialize mailbox and create detect SD card thread */
     ret = rt_mb_init(&mmcsd_detect_mb, "mmcsdmb",
-        &mmcsd_detect_mb_pool[0], sizeof(mmcsd_detect_mb_pool) / sizeof(mmcsd_detect_mb_pool[0]),
-        RT_IPC_FLAG_FIFO);
+                     &mmcsd_detect_mb_pool[0], sizeof(mmcsd_detect_mb_pool) / sizeof(mmcsd_detect_mb_pool[0]),
+                     RT_IPC_FLAG_FIFO);
     RT_ASSERT(ret == RT_EOK);
 
-   ret = rt_mb_init(&mmcsd_hotpluge_mb, "mmcsdhotplugmb",
-        &mmcsd_hotpluge_mb_pool[0], sizeof(mmcsd_hotpluge_mb_pool) / sizeof(mmcsd_hotpluge_mb_pool[0]),
-        RT_IPC_FLAG_FIFO);
+    ret = rt_mb_init(&mmcsd_hotpluge_mb, "mmcsdhotplugmb",
+                     &mmcsd_hotpluge_mb_pool[0], sizeof(mmcsd_hotpluge_mb_pool) / sizeof(mmcsd_hotpluge_mb_pool[0]),
+                     RT_IPC_FLAG_FIFO);
     RT_ASSERT(ret == RT_EOK);
-     ret = rt_thread_init(&mmcsd_detect_thread, "mmcsd_detect", mmcsd_detect, RT_NULL,
-                 &mmcsd_stack[0], RT_MMCSD_STACK_SIZE, RT_MMCSD_THREAD_PREORITY, 20);
+    ret = rt_thread_init(&mmcsd_detect_thread, "mmcsd_detect", mmcsd_detect, RT_NULL,
+                         &mmcsd_stack[0], RT_MMCSD_STACK_SIZE, RT_MMCSD_THREAD_PREORITY, 20);
     if (ret == RT_EOK)
     {
         rt_thread_startup(&mmcsd_detect_thread);

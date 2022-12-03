@@ -1,0 +1,30 @@
+obj-y += pcm.o
+obj-y += control.o
+obj-y += alsa_config.o
+obj-y += pcm_config.o
+obj-y += pcm_hw.o
+obj-y += pcm_direct.o
+obj-y += pcm_dsnoop.o
+obj-y += pcm_dmix.o
+obj-y += pcm_asym.o
+obj-y += pcm_mmap.o
+obj-y += pcm_generic.o
+obj-y += pcm_plugin_generic.o
+obj-y += pcm_route.o
+obj-y += pcm_softvol.o
+obj-y += pcm_misc.o
+obj-y += pcm_linear.o
+obj-y += pcm_extplug.o
+obj-y += pcm_plug.o
+obj-y += pcm_rate.o
+obj-y += pcm_file.o
+obj-y += pcm_multi.o
+obj-y += pcm_params.o
+obj-y += pcm_rate_linear.o
+obj-y += external_resample/speexrate/rate_speexrate.o
+obj-y += external_resample/speexrate/resample_speexdsp.o
+#obj-y += external_resample/awrate/doResample.o
+#obj-y += external_resample/awrate/rate_awrate.o
+#obj-y += external_resample/awrate/audiomix.o
+
+

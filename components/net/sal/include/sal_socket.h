@@ -36,8 +36,12 @@ typedef uint16_t in_port_t;
 #define SOCK_STREAM     1
 #define SOCK_DGRAM      2
 #define SOCK_RAW        3
+#define SOCK_PACKET     10
 
-#define SOCK_MAX        (SOCK_RAW + 1)
+#define SOCK_NONBLOCK   04000
+#define SOCK_CLOEXEC    02000000
+
+#define SOCK_MAX        (SOCK_CLOEXEC + 1)
 
 /* Option flags per-socket. These must match the SOF_ flags in ip.h (checked in init.c) */
 #define SO_REUSEADDR    0x0004 /* Allow local address reuse */
@@ -68,11 +72,13 @@ typedef uint16_t in_port_t;
 #define  SOL_SOCKET     0xfff    /* options for socket level */
 
 #define AF_UNSPEC       0
+#define AF_UNIX         1
 #define AF_INET         2
 #define AF_INET6        10
 #define AF_CAN          29  /* Controller Area Network      */
 #define AF_AT           45  /* AT socket */
 #define AF_WIZ          46  /* WIZnet socket */
+#define PF_UNIX         AF_UNIX
 #define PF_INET         AF_INET
 #define PF_INET6        AF_INET6
 #define PF_UNSPEC       AF_UNSPEC
@@ -158,6 +164,15 @@ struct sockaddr
     char           sa_data[14];
 };
 
+/* Structure describing the address of an AF_LOCAL (aka AF_UNIX) socket.  */
+struct sockaddr_un
+{
+    uint8_t        sa_len;
+    sa_family_t    sa_family;
+    char sun_path[108];         /* Path name.  */
+};
+
+
 #if NETDEV_IPV4
 /* members are in network byte order */
 struct sockaddr_in
@@ -192,6 +207,40 @@ struct sockaddr_storage
 #if NETDEV_IPV6
     uint32_t       s2_data3[3];
 #endif /* NETDEV_IPV6 */
+};
+
+#define IFNAMSIZ	16
+struct sal_ifmap 
+{
+    unsigned long int mem_start;
+    unsigned long int mem_end;
+    unsigned short int base_addr;
+    unsigned char irq;
+    unsigned char dma;
+    unsigned char port;
+};
+
+struct sal_ifreq 
+{
+    union 
+    {
+        char ifrn_name[IFNAMSIZ];
+    } ifr_ifrn;
+    union 
+    {
+        struct sockaddr ifru_addr;
+        struct sockaddr ifru_dstaddr;
+        struct sockaddr ifru_broadaddr;
+        struct sockaddr ifru_netmask;
+        struct sockaddr ifru_hwaddr;
+        short int ifru_flags;
+        int ifru_ivalue;
+        int ifru_mtu;
+        struct sal_ifmap ifru_map;
+        char ifru_slave[IFNAMSIZ];
+        char ifru_newname[IFNAMSIZ];
+        char *ifru_data;
+    } ifr_ifru;
 };
 
 int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen);

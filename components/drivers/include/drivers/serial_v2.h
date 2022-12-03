@@ -158,6 +158,8 @@ struct rt_serial_device
 
     void *serial_rx;
     void *serial_tx;
+
+    struct rt_device_notify rx_notify;
 };
 
 /**

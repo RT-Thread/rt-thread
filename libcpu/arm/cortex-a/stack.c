@@ -9,11 +9,11 @@
  * 2011-10-05     Bernard      add thumb mode
  */
 #include <rtthread.h>
+#include <cpuport.h>
 #include <board.h>
-#include <armv7.h>
 
 /**
- * @addtogroup AM33xx
+ * @addtogroup ARM Cortex-A
  */
 /*@{*/
 

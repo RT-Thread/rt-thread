@@ -20,6 +20,16 @@
 #define __DSB() __asm__ volatile ("dsb 0xf":::"memory")
 #define __DMB() __asm__ volatile ("dmb 0xf":::"memory")
 
+#ifdef RT_USING_SMP
+typedef union {
+    unsigned long slock;
+    struct __arch_tickets {
+        unsigned short owner;
+        unsigned short next;
+    } tickets;
+} rt_hw_spinlock_t;
+#endif
+
 rt_inline void rt_hw_isb(void)
 {
     __asm__ volatile ("isb":::"memory");

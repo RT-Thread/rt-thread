@@ -10,6 +10,7 @@
  * 2020/11/20     BalanceTWK   Add FPU support
  */
 
+#define __ASSEMBLY__
 #include "cpuport.h"
 
 #ifdef RT_USING_SMP
