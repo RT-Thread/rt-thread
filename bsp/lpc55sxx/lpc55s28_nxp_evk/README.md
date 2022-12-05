@@ -166,46 +166,6 @@ msh />
 | SDIO       | 支持     | 操作SD卡                     |
 | I2S        | 不支持  | 暂不支持      |
 
-
-### 4.1 IO在板级支持包中的映射情况
-
-| PIO号 | 板级包中的定义 |
-| -- | -- |
-| PIO0_29 | Flexcomm0 USART RXD |
-| PIO0_30 | Flexcomm0 USART TXD |
-|  |  |
-| PIO0_7 | SDIO SD0_CLK |
-| PIO0_8 | SDIO SD0_CMD |
-| PIO0_9 | SDIO SD0_POW_EN |
-| PIO0_15 | SDIO SD0_WR_PRT |
-| PIO0_17 | SDIO SD0_CARD_INT |
-| PIO0_24 | SDIO SD0_D(0) |
-| PIO0_25 | SDIO SD0_D(1) |
-| PIO0_31 | SDIO SD0_D(2) |
-| PIO1_0 | SDIO SD0_D(3) |
-|  |  |
-| PIO0_26 | High Speed SPI MOSI |
-| PIO1_2 | High Speed SPI SCK |
-| PIO1_3 | High Speed SPI MISO |
-|  |  |
-| PIO1_4 | GPIO1_4 output LED BLUE |
-| PIO1_6 | GPIO1_6 output LED RED |
-| PIO1_7 | GPIO1_7 output LED GREEN |
-|  |  |
-| PIO0_27 | Flexcomm2 USART TXD mikro BUS |
-| PIO1_24 | Flexcomm2 USART RXD mikro BUS |
-|  |  |
-| PIO1_20 | Flexcomm4 I2C SCL |
-| PIO1_21 | Flexcomm4 I2C SDA |
-
-## 5. menuconfig Bsp菜单详解
-
-| 选项 | 解释 |
-| -- | -- |
-| Device type | 选择芯片型号，修改此处需修改MDK/IAR工程为相同芯片型号 |
-
-*部分选项需要在RT-Thread组件菜单中开启对应的设备框架才能显示。
-
 ## 6. 联系人信息
 
 维护人:
