@@ -13,6 +13,16 @@
 
 #include <rtdef.h>
 
+#ifdef RT_USING_LWP
+#include <mmu.h>
+#include <ioremap.h>
+
+extern rt_mmu_info mmu_info;
+#endif
+
+#define __REG32(x)          (*((volatile unsigned int *)(x)))
+#define __REG16(x)          (*((volatile unsigned short *)(x)))
+
 /* UART */
 #define PL011_UART0_BASE    0x09000000
 #define PL011_UART0_SIZE    0x00001000
@@ -47,6 +57,8 @@
 /* GICv2 */
 #define GIC_PL390_DISTRIBUTOR_PPTR      0x08000000
 #define GIC_PL390_CONTROLLER_PPTR       0x08010000
+#define GIC_PL390_HYPERVISOR_BASE       0x08030000
+#define GIC_PL390_VIRTUAL_CPU_BASE      0x08040000
 
 /* GICv3 */
 #define GIC_PL500_DISTRIBUTOR_PPTR      GIC_PL390_DISTRIBUTOR_PPTR
@@ -55,7 +67,7 @@
 #define GIC_PL500_ITS_PPTR              0x08080000
 
 /* the basic constants and interfaces needed by gic */
-rt_inline rt_uint32_t platform_get_gic_dist_base(void)
+rt_inline rt_ubase_t platform_get_gic_dist_base(void)
 {
 #ifdef BSP_USING_GICV2
     return GIC_PL390_DISTRIBUTOR_PPTR;
@@ -64,12 +76,12 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 #endif
 }
 
-rt_inline rt_uint32_t platform_get_gic_redist_base(void)
+rt_inline rt_ubase_t platform_get_gic_redist_base(void)
 {
     return GIC_PL500_REDISTRIBUTOR_PPTR;
 }
 
-rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
+rt_inline rt_ubase_t platform_get_gic_cpu_base(void)
 {
 #ifdef BSP_USING_GICV2
     return GIC_PL390_CONTROLLER_PPTR;
@@ -78,7 +90,7 @@ rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
 #endif
 }
 
-rt_inline rt_uint32_t platform_get_gic_its_base(void)
+rt_inline rt_ubase_t platform_get_gic_its_base(void)
 {
     return GIC_PL500_ITS_PPTR;
 }

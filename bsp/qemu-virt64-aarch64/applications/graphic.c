@@ -114,7 +114,7 @@ void graphic_thread(void *param)
 
             rt_device_control(device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
 
-            while (i < sizeof(cursor) / sizeof(rt_uint32_t))
+            while (i < sizeof(cursor) / 4)
             {
                 /* R: 0x4c G: 0xaf B: 0x50 A: 0.8 */
                 ((rt_uint32_t *)cursor)[i] = 0xcc4caf50;
