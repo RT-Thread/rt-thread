@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>rtthread-lpc55s6x</name>
+        <name>rtthread</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\NXP\LPC55S66_core0.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\NXP\LPC55S69_core0.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.32.1.18618</state>
+                    <state>9.30.1.50052</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -540,7 +540,7 @@
                 </option>
                 <option>
                     <name>IjetInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IjetInterfaceCmdLine</name>
@@ -882,7 +882,7 @@
                 </option>
                 <option>
                     <name>CCJLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCJLinkResetList</name>
@@ -1001,7 +1001,7 @@
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceCmdLine</name>
@@ -1081,7 +1081,7 @@
                 </option>
                 <option>
                     <name>CCSTLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSTLinkInterfaceCmdLine</name>
@@ -1098,7 +1098,7 @@
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSwoClockEdit</name>
@@ -1188,7 +1188,7 @@
                 <option>
                     <name>CCSTLinkProbeList</name>
                     <version>1</version>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
