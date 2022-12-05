@@ -35,5 +35,7 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(C,5), "uart3"},       /* Serial2-Rx */
     {D12, GET_PIN(A,8), "pwm1", 1},     /* PWM */
     {A0, GET_PIN(C,2), "adc1", 3},      /* ADC */
+    {A1, RT_NULL, "adc1", 18},          /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
+    {A2, RT_NULL, "adc1", 17},          /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
     {DAC0, GET_PIN(A,5), "dac1", 2},    /* DAC */
 };

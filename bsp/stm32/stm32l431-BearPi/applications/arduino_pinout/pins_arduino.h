@@ -26,7 +26,9 @@
 #define D11       (11)
 #define D12       (12)
 #define A0        (13)
-#define DAC0      (14)
+#define A1        (14)
+#define A2        (15)
+#define DAC0      (16)
 
 #define F_CPU          80000000L  /* CPU:80MHz */
 
@@ -37,7 +39,7 @@
 #define SS      D1  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
 
-/* Serial2 : PC4-TX  PC5-RX */
+/* Serial : PC4-TX  PC5-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart3"
 
 #endif /* Pins_Arduino_h */

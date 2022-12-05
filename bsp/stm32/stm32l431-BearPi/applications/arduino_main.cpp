@@ -13,12 +13,12 @@
 void setup(void)
 {
     /* put your setup code here, to run once: */
-    Serial2.begin();
+    Serial.begin();
 }
 
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    Serial2.println("Hello Arduino!");
+    Serial.println("Hello Arduino!");
     delay(800);
 }
