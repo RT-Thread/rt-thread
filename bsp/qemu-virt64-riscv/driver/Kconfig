@@ -4,4 +4,45 @@ config RISCV_S_MODE
     bool "RT-Thread run in RISC-V S-Mode(supervisor mode)"
     default y
 
+config RT_USING_VIRTIO
+    bool "Using VirtIO"
+    default y
+    depends on RT_USING_DEVICE_OPS
+
+config BSP_USING_VIRTIO_BLK
+    bool "Using VirtIO BLK"
+    default y
+    depends on RT_USING_VIRTIO
+
+config BSP_USING_VIRTIO_NET
+    bool "Using VirtIO NET"
+    default y
+    depends on RT_USING_VIRTIO
+
+config BSP_USING_VIRTIO_CONSOLE
+    bool "Using VirtIO Console"
+    default y
+    depends on RT_USING_VIRTIO
+
+config BSP_USING_VIRTIO_GPU
+    bool "Using VirtIO GPU"
+    default y
+    depends on RT_USING_VIRTIO
+
+config BSP_USING_VIRTIO_INPUT
+    bool "Using VirtIO Input"
+    default y
+    depends on RT_USING_VIRTIO
+
+menuconfig BSP_USING_UART1
+    bool "Enable UART1"
+    default n
+    if BSP_USING_UART1
+        config BSP_UART1_TXD_PIN
+            int "uart1 TXD pin number"
+            default 20
+        config BSP_UART1_RXD_PIN
+            int "uart1 RXD pin number"
+            default 21
+    endif
 endmenu

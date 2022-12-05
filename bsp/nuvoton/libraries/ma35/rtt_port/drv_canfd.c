@@ -611,8 +611,8 @@ static int nu_canfd_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t bo
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
-    pmsg->hdr = boxno;
-    can->hdr[pmsg->hdr].connected = 1;
+    pmsg->hdr_index = boxno;
+    can->hdr[pmsg->hdr_index].connected = 1;
 #endif
 
     pmsg->ide = (sRxMsg.eIdType == eCANFD_SID) ? RT_CAN_STDID : RT_CAN_EXTID;

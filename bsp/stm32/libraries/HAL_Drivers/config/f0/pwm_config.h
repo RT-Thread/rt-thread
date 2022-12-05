@@ -18,69 +18,57 @@ extern "C" {
 #endif
 
 #ifdef BSP_USING_PWM2
-#ifndef PWM2_CONFIG
 #define PWM2_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM2,         \
        .name                    = "pwm2",       \
-       .channel                 = 0             \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM2_CONFIG */
 #endif /* BSP_USING_PWM2 */
 
 #ifdef BSP_USING_PWM3
-#ifndef PWM3_CONFIG
 #define PWM3_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM3,         \
        .name                    = "pwm3",       \
-       .channel                 = 0             \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM3_CONFIG */
 #endif /* BSP_USING_PWM3 */
 
 #ifdef BSP_USING_PWM4
-#ifndef PWM4_CONFIG
 #define PWM4_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM4,         \
        .name                    = "pwm4",       \
-       .channel                 = 0             \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM4_CONFIG */
 #endif /* BSP_USING_PWM4 */
 
 #ifdef BSP_USING_PWM5
-#ifndef PWM5_CONFIG
 #define PWM5_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM5,         \
        .name                    = "pwm5",       \
-       .channel                 = 0             \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM5_CONFIG */
 #endif /* BSP_USING_PWM5 */
 
 #ifdef BSP_USING_PWM16
-#ifndef PWM16_CONFIG
-#define PWM16_CONFIG                             \
+#define PWM16_CONFIG                            \
     {                                           \
-       .tim_handle.Instance     = TIM16,         \
-       .name                    = "pwm16",       \
-       .channel                 = 0             \
+       .tim_handle.Instance     = TIM16,        \
+       .name                    = "pwm16",      \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM16_CONFIG */
 #endif /* BSP_USING_PWM16 */
 
 #ifdef BSP_USING_PWM17
-#ifndef PWM17_CONFIG
-#define PWM17_CONFIG                             \
+#define PWM17_CONFIG                            \
     {                                           \
-       .tim_handle.Instance     = TIM17,         \
-       .name                    = "pwm17",       \
-       .channel                 = 0             \
+       .tim_handle.Instance     = TIM17,        \
+       .name                    = "pwm17",      \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM17_CONFIG */
 #endif /* BSP_USING_PWM17 */
 
 #ifdef __cplusplus

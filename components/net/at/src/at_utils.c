@@ -36,7 +36,7 @@ void at_print_raw_cmd(const char *name, const char *buf, rt_size_t size)
         {
             if (i + j < size)
             {
-                rt_kprintf("%02X ", buf[i + j]);
+                rt_kprintf("%02X ", (unsigned char)buf[i + j]);
             }
             else
             {

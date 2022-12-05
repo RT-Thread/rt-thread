@@ -5,8 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018.10.30     SummerGift   first version
- * 2019.03.05     whj4674672   add stm32h7
+ * 2018-10-30     SummerGift   first version
+ * 2019-03-05     whj4674672   add stm32h7
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
 

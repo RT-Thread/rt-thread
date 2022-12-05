@@ -170,7 +170,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
 #ifdef RT_SERIAL_USING_DMA
     if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
-        uart->dma_rx.remaining_cnt = 0;
+        uart->dma_rx.remaining_cnt = cfg->bufsz;
     }
 #endif
 

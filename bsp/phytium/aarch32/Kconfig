@@ -1,0 +1,54 @@
+mainmenu "RT-Thread Project Configuration"
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../.."
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "../."
+
+config STANDALONE_DIR
+    string
+    option env="STANDALONE_DIR"
+    default ".././libraries/standalone"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "$BSP_DIR/libraries/drivers/Kconfig"
+
+config PHYTIUM_ARCH_AARCH32
+    bool
+    select ARCH_ARM_CORTEX_A
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_GIC_V3
+    select TARGET_ARMV8_AARCH32
+    select USE_AARCH64_L1_TO_AARCH32
+    default y
+
+menu "Standalone Setting"
+    config TARGET_ARMV8_AARCH32
+        bool "Armv8 Aarch32"
+        default y
+    
+    config USE_AARCH64_L1_TO_AARCH32
+        bool
+        prompt "Use Aarch64 L1 to Aarch32 code"
+        default y
+        help
+            Use the Aarch64 to Aarch32 mode function
+    
+    source "$STANDALONE_DIR/board/Kconfig"
+    source "$STANDALONE_DIR/drivers/Kconfig"
+    source "$STANDALONE_DIR/common/Kconfig"
+
+endmenu
+

@@ -2,7 +2,7 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/CMSIS/Include',cwd + '/components/codec', cwd + '/LPC55S6X', cwd + '/LPC55S6X/drivers', cwd + '/middleware/sdmmc/inc', cwd + '/middleware/sdmmc/port']
+path = [cwd + '/../CMSIS/Core/Include',cwd + '/components/codec', cwd + '/LPC55S6X', cwd + '/LPC55S6X/drivers', cwd + '/middleware/sdmmc/inc', cwd + '/middleware/sdmmc/port']
 src = Split('''
             LPC55S6X/system_LPC55S69_cm33_core0.c
             ''')
@@ -19,6 +19,7 @@ src += ['LPC55S6X/drivers/fsl_casper.c']
 src += ['LPC55S6X/drivers/fsl_clock.c']
 src += ['LPC55S6X/drivers/fsl_cmp.c']
 src += ['LPC55S6X/drivers/fsl_common.c']
+src += ['LPC55S6X/drivers/fsl_common_arm.c']
 src += ['LPC55S6X/drivers/fsl_crc.c']
 src += ['LPC55S6X/drivers/fsl_ctimer.c']
 src += ['LPC55S6X/drivers/fsl_flexcomm.c']
@@ -39,7 +40,6 @@ src += ['LPC55S6X/drivers/fsl_pint.c']
 src += ['LPC55S6X/drivers/fsl_plu.c']
 src += ['LPC55S6X/drivers/fsl_power.c']
 src += ['LPC55S6X/drivers/fsl_powerquad_basic.c']
-src += ['LPC55S6X/drivers/fsl_prince.c']
 src += ['LPC55S6X/drivers/fsl_puf.c']
 src += ['LPC55S6X/drivers/fsl_reset.c']
 src += ['LPC55S6X/drivers/fsl_rng.c']
@@ -53,17 +53,7 @@ src += ['LPC55S6X/drivers/fsl_usart.c']
 src += ['LPC55S6X/drivers/fsl_usart_dma.c']
 src += ['LPC55S6X/drivers/fsl_utick.c']
 src += ['LPC55S6X/drivers/fsl_wwdt.c']
-src += ['middleware/sdmmc/src/fsl_sd.c']
-src += ['middleware/sdmmc/src/fsl_sdmmc_common.c']
-src += ['middleware/sdmmc/port/sdif/rt_thread/fsl_sdmmc_event.c']
-src += ['middleware/sdmmc/port/sdif/rt_thread/fsl_sdmmc_host.c']
 
-if rtconfig.PLATFORM in ['gcc']:
-    src += ['LPC55S6X/gcc/libpower_hardabi.a']
-elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += ['LPC55S6X/arm/keil_lib_power_cm33_core0.lib']
-elif rtconfig.PLATFORM in ['iccarm']:
-    src += ['LPC55S6X/iar/iar_lib_power_cm33_core0.a']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 

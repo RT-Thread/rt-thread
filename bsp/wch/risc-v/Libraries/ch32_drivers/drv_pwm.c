@@ -7,53 +7,75 @@
  * Date           Author            Notes
  * 2021-09-23     charlown          first version
  * 2022-10-14     hg0720            the first version which add from wch
+ * 2022-10-20     MXH               add the remaining timers
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <drivers/rt_drv_pwm.h>
-#include <drivers/hwtimer.h>
-#include <board.h>
+#include "drv_pwm.h"
 
 #ifdef BSP_USING_PWM
 
 #define LOG_TAG "drv.pwm"
 #include <drv_log.h>
 
-#ifndef ITEM_NUM
-#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
-#endif
-
-#define MAX_COUNTER 65535
-#define MIN_COUNTER 2
-#define MIN_PULSE 2
-
-struct rtdevice_pwm_device
-{
-    struct rt_device_pwm parent;
-    TIM_TypeDef* periph;
-    rt_uint8_t channel[4];
-    char* name;
-};
-
 void ch32_tim_clock_init(TIM_TypeDef* timx)
 {
+#ifdef BSP_USING_TIM1_PWM
     if (timx == TIM1)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
     }
+#endif/* BSP_USING_TIM1_PWM */
+
+#ifdef BSP_USING_TIM2_PWM
     if (timx == TIM2)
     {
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
     }
+#endif/* BSP_USING_TIM2_PWM */
+
+#ifdef BSP_USING_TIM3_PWM
     if (timx == TIM3)
     {
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
     }
+#endif/* BSP_USING_TIM3_PWM */
+
+#ifdef BSP_USING_TIM4_PWM
     if (timx == TIM4)
     {
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
     }
+#endif/* BSP_USING_TIM4_PWM */
+
+#ifdef BSP_USING_TIM5_PWM
+    if (timx == TIM5)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
+    }
+#endif/* BSP_USING_TIM5_PWM */
+
+    /* TIM6 and TIM7 don't support PWM Mode. */
+
+#ifdef BSP_USING_TIM8_PWM
+    if (timx == TIM8)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
+    }
+#endif/* BSP_USING_TIM8_PWM */
+
+#ifdef BSP_USING_TIM9_PWM
+    if (timx == TIM9)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM9, ENABLE);
+    }
+#endif/* BSP_USING_TIM9_PWM */
+
+#ifdef BSP_USING_TIM10_PWM
+    if (timx == TIM10)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM10, ENABLE);
+    }
+#endif/* BSP_USING_TIM10_PWM */
 }
 
 rt_uint32_t ch32_tim_clock_get(TIM_TypeDef* timx)
@@ -61,77 +83,25 @@ rt_uint32_t ch32_tim_clock_get(TIM_TypeDef* timx)
     RCC_ClocksTypeDef RCC_Clocks;
     RCC_GetClocksFreq(&RCC_Clocks);
 
-    /*tim1~4 all in HCLK*/
+    /*tim1~10 all in HCLK*/
     return RCC_Clocks.HCLK_Frequency;
 }
 
-struct rt_hwtimer_info hwtimer_info1 =
-{
-    .maxfreq = 1000000,
-    .minfreq = 2000,
-    .maxcnt = 0xFFFF,
-    .cntmode = HWTIMER_CNTMODE_UP,
-};
-
-struct rt_hwtimer_info hwtimer_info2 =
-{
-    .maxfreq = 1000000,
-    .minfreq = 2000,
-    .maxcnt = 0xFFFF,
-    .cntmode = HWTIMER_CNTMODE_UP,
-
-};
-
-struct rt_hwtimer_info hwtimer_info3 =
-{
-    .maxfreq = 1000000,
-    .minfreq = 2000,
-    .maxcnt = 0xFFFF,
-    .cntmode = HWTIMER_CNTMODE_UP,
-
-};
-
-struct rt_hwtimer_info hwtimer_info4 =
-{
-    .maxfreq = 1000000,
-    .minfreq = 2000,
-    .maxcnt = 0xFFFF,
-    .cntmode = HWTIMER_CNTMODE_UP,
-
-};
-
-struct rt_hwtimer_info* ch32_hwtimer_info_config_get(TIM_TypeDef* timx)
-{
-    struct rt_hwtimer_info* info = RT_NULL;
-
-    if (timx == TIM1)
-    {
-        info = &hwtimer_info1;
-    }
-    else if (timx == TIM2)
-    {
-        info = &hwtimer_info2;
-    }
-    else if (timx == TIM3)
-    {
-        info = &hwtimer_info3;
-    }
-    else if (timx == TIM4)
-    {
-        info = &hwtimer_info4;
-    }
-
-    return info;
-}
+/*
+ * NOTE:  some pwm pins of some timers are reused,
+ *          please keep caution when using pwm
+ */
 
 void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
+#ifdef BSP_USING_TIM1_PWM
     if (timx == TIM1)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
+#ifdef BSP_USING_TIM1_PWM_CH1
         if (channel == TIM_Channel_1)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
@@ -139,6 +109,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM1_PWM_CH1 */
+
+#ifdef BSP_USING_TIM1_PWM_CH2
         if (channel == TIM_Channel_2)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
@@ -146,6 +119,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM1_PWM_CH2 */
+
+#ifdef BSP_USING_TIM1_PWM_CH3
         if (channel == TIM_Channel_3)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
@@ -153,6 +129,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM1_PWM_CH3 */
+
+#ifdef BSP_USING_TIM1_PWM_CH4
         if (channel == TIM_Channel_4)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
@@ -160,12 +139,16 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM1_PWM_CH4 */
     }
+#endif/* BSP_USING_TIM1_PWM */
 
+#ifdef BSP_USING_TIM2_PWM
     if (timx == TIM2)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
+#ifdef BSP_USING_TIM2_PWM_CH1
         if (channel == TIM_Channel_1)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
@@ -173,6 +156,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM2_PWM_CH1 */
+
+#ifdef BSP_USING_TIM2_PWM_CH2
         if (channel == TIM_Channel_2)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
@@ -180,6 +166,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM2_PWM_CH2 */
+
+#ifdef BSP_USING_TIM2_PWM_CH3
         if (channel == TIM_Channel_3)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
@@ -187,6 +176,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM2_PWM_CH3 */
+
+#ifdef BSP_USING_TIM2_PWM_CH4
         if (channel == TIM_Channel_4)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
@@ -194,13 +186,17 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM2_PWM_CH4 */
     }
+#endif/* BSP_USING_TIM2_PWM */
 
+#ifdef BSP_USING_TIM3_PWM
     if (timx == TIM3)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
+#ifdef BSP_USING_TIM3_PWM_CH1
         if (channel == TIM_Channel_1)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -208,6 +204,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM3_PWM_CH1 */
+
+#ifdef BSP_USING_TIM3_PWM_CH2
         if (channel == TIM_Channel_2)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
@@ -215,6 +214,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM3_PWM_CH2 */
+
+#ifdef BSP_USING_TIM3_PWM_CH3
         if (channel == TIM_Channel_3)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
@@ -222,6 +224,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOB, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM3_PWM_CH3 */
+
+#ifdef BSP_USING_TIM3_PWM_CH4
         if (channel == TIM_Channel_4)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
@@ -229,12 +234,16 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOB, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM3_PWM_CH4 */
     }
+#endif/* BSP_USING_TIM3_PWM */
 
+#ifdef BSP_USING_TIM4_PWM
     if (timx == TIM4)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
+#ifdef BSP_USING_TIM4_PWM_CH1
         if (channel == TIM_Channel_1)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -242,6 +251,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOB, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM4_PWM_CH1 */
+
+#ifdef BSP_USING_TIM4_PWM_CH2
         if (channel == TIM_Channel_2)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
@@ -249,6 +261,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOB, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM4_PWM_CH2 */
+
+#ifdef BSP_USING_TIM4_PWM_CH3
         if (channel == TIM_Channel_3)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
@@ -256,6 +271,9 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOB, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM4_PWM_CH3 */
+
+#ifdef BSP_USING_TIM4_PWM_CH4
         if (channel == TIM_Channel_4)
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
@@ -263,11 +281,208 @@ void ch32_pwm_io_init(TIM_TypeDef* timx, rt_uint8_t channel)
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_Init(GPIOB, &GPIO_InitStructure);
         }
+#endif/* BSP_USING_TIM4_PWM_CH4 */
     }
+#endif/* BSP_USING_TIM4_PWM */
+
+#ifdef BSP_USING_TIM5_PWM
+    if (timx == TIM5)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+#ifdef BSP_USING_TIM5_PWM_CH1
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM5_PWM_CH1 */
+
+#ifdef BSP_USING_TIM5_PWM_CH2
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM5_PWM_CH2 */
+
+#ifdef BSP_USING_TIM5_PWM_CH3
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM5_PWM_CH3 */
+
+#ifdef BSP_USING_TIM5_PWM_CH4
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM5_PWM_CH4 */
+    }
+#endif/* BSP_USING_TIM5_PWM */
+
+    /* TIM6 and TIM7 don't support PWM Mode. */
+
+#ifdef BSP_USING_TIM8_PWM
+    if (timx == TIM8)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+/* I don't test it, because there is a 10M-PHY ETH port on my board,
+ * which uses the following four pins.
+ * You can try it on a board without a 10M-PHY ETH port. */
+#ifdef BSP_USING_TIM8_PWM_CH1
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM8_PWM_CH1 */
+
+#ifdef BSP_USING_TIM8_PWM_CH2
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM8_PWM_CH2 */
+
+#ifdef BSP_USING_TIM8_PWM_CH3
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM8_PWM_CH3 */
+
+#ifdef BSP_USING_TIM8_PWM_CH4
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM8_PWM_CH4 */
+    }
+#endif/* BSP_USING_TIM8_PWM */
+
+#ifdef BSP_USING_TIM9_PWM
+    if (timx == TIM9)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+#ifdef BSP_USING_TIM9_PWM_CH1
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM9_PWM_CH1 */
+
+#ifdef BSP_USING_TIM9_PWM_CH2
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM9_PWM_CH2 */
+
+#ifdef BSP_USING_TIM9_PWM_CH3
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM9_PWM_CH3 */
+
+#ifdef BSP_USING_TIM9_PWM_CH4
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM9_PWM_CH4 */
+    }
+#endif/* BSP_USING_TIM9_PWM */
+
+#ifdef BSP_USING_TIM10_PWM
+    if (timx == TIM10)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+#ifdef BSP_USING_TIM10_PWM_CH1
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM10_PWM_CH1 */
+
+#ifdef BSP_USING_TIM10_PWM_CH2
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM10_PWM_CH2 */
+
+#ifdef BSP_USING_TIM10_PWM_CH3
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM10_PWM_CH3 */
+
+#ifdef BSP_USING_TIM10_PWM_CH4
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOC, &GPIO_InitStructure);
+        }
+#endif/* BSP_USING_TIM10_PWM_CH4 */
+    }
+#endif/* BSP_USING_TIM10_PWM */
 }
 
 /*
- * channel = 0xFF: the channel is not use.
+ * channel = FLAG_NOT_INIT: the channel is not use.
  */
 struct rtdevice_pwm_device pwm_device_list[] =
 {
@@ -278,26 +493,26 @@ struct rtdevice_pwm_device pwm_device_list[] =
 #ifdef BSP_USING_TIM1_PWM_CH1
         .channel[0] = TIM_Channel_1,
 #else
-        .channel[0] = 0xFF,
-#endif
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM1_PWM_CH1 */
 
 #ifdef BSP_USING_TIM1_PWM_CH2
         .channel[1] = TIM_Channel_2,
 #else
-        .channel[1] = 0xFF,
-#endif
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM1_PWM_CH2 */
 
 #ifdef BSP_USING_TIM1_PWM_CH3
         .channel[2] = TIM_Channel_3,
 #else
-        .channel[2] = 0xFF,
-#endif
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM1_PWM_CH3 */
 
 #ifdef BSP_USING_TIM1_PWM_CH4
         .channel[3] = TIM_Channel_4,
 #else
-        .channel[3] = 0xFF,
-#endif
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM1_PWM_CH4 */
     },
 #endif /* BSP_USING_TIM1_PWM */
 
@@ -308,26 +523,26 @@ struct rtdevice_pwm_device pwm_device_list[] =
 #ifdef BSP_USING_TIM2_PWM_CH1
         .channel[0] = TIM_Channel_1,
 #else
-        .channel[0] = 0xFF,
-#endif
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM2_PWM_CH1 */
 
 #ifdef BSP_USING_TIM2_PWM_CH2
         .channel[1] = TIM_Channel_2,
 #else
-        .channel[1] = 0xFF,
-#endif
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM2_PWM_CH2 */
 
 #ifdef BSP_USING_TIM2_PWM_CH3
         .channel[2] = TIM_Channel_3,
 #else
-        .channel[2] = 0xFF,
-#endif
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM2_PWM_CH3 */
 
 #ifdef BSP_USING_TIM2_PWM_CH4
         .channel[3] = TIM_Channel_4,
 #else
-        .channel[3] = 0xFF,
-#endif
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM2_PWM_CH4 */
     },
 #endif /* BSP_USING_TIM2_PWM */
 
@@ -338,26 +553,26 @@ struct rtdevice_pwm_device pwm_device_list[] =
 #ifdef BSP_USING_TIM3_PWM_CH1
         .channel[0] = TIM_Channel_1,
 #else
-        .channel[0] = 0xFF,
-#endif
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM3_PWM_CH1 */
 
 #ifdef BSP_USING_TIM3_PWM_CH2
         .channel[1] = TIM_Channel_2,
 #else
-        .channel[1] = 0xFF,
-#endif
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM3_PWM_CH2 */
 
 #ifdef BSP_USING_TIM3_PWM_CH3
         .channel[2] = TIM_Channel_3,
 #else
-        .channel[2] = 0xFF,
-#endif
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM3_PWM_CH3 */
 
 #ifdef BSP_USING_TIM3_PWM_CH4
         .channel[3] = TIM_Channel_4,
 #else
-        .channel[3] = 0xFF,
-#endif
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM3_PWM_CH4 */
     },
 #endif /* BSP_USING_TIM3_PWM */
 
@@ -368,28 +583,148 @@ struct rtdevice_pwm_device pwm_device_list[] =
 #ifdef BSP_USING_TIM4_PWM_CH1
         .channel[0] = TIM_Channel_1,
 #else
-        .channel[0] = 0xFF,
-#endif
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM4_PWM_CH1 */
 
 #ifdef BSP_USING_TIM4_PWM_CH2
         .channel[1] = TIM_Channel_2,
 #else
-        .channel[1] = 0xFF,
-#endif
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM4_PWM_CH2 */
 
 #ifdef BSP_USING_TIM4_PWM_CH3
         .channel[2] = TIM_Channel_3,
 #else
-        .channel[2] = 0xFF,
-#endif
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM4_PWM_CH3 */
 
 #ifdef BSP_USING_TIM4_PWM_CH4
         .channel[3] = TIM_Channel_4,
 #else
-        .channel[3] = 0xFF,
-#endif
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM4_PWM_CH4 */
     },
 #endif /* BSP_USING_TIM4_PWM */
+
+#ifdef BSP_USING_TIM5_PWM
+    {
+        .periph = TIM5,
+        .name = "pwm5",
+#ifdef BSP_USING_TIM5_PWM_CH1
+        .channel[0] = TIM_Channel_1,
+#else
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM5_PWM_CH1 */
+
+#ifdef BSP_USING_TIM5_PWM_CH2
+        .channel[1] = TIM_Channel_2,
+#else
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM5_PWM_CH2 */
+
+#ifdef BSP_USING_TIM5_PWM_CH3
+        .channel[2] = TIM_Channel_3,
+#else
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM5_PWM_CH3 */
+
+#ifdef BSP_USING_TIM5_PWM_CH4
+        .channel[3] = TIM_Channel_4,
+#else
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM5_PWM_CH4 */
+    },
+#endif /* BSP_USING_TIM5_PWM */
+
+#ifdef BSP_USING_TIM8_PWM
+    {
+        .periph = TIM8,
+        .name = "pwm8",
+#ifdef BSP_USING_TIM8_PWM_CH1
+        .channel[0] = TIM_Channel_1,
+#else
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM8_PWM_CH1 */
+
+#ifdef BSP_USING_TIM8_PWM_CH2
+        .channel[1] = TIM_Channel_2,
+#else
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM8_PWM_CH2 */
+
+#ifdef BSP_USING_TIM8_PWM_CH3
+        .channel[2] = TIM_Channel_3,
+#else
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM8_PWM_CH3 */
+
+#ifdef BSP_USING_TIM8_PWM_CH4
+        .channel[3] = TIM_Channel_4,
+#else
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM8_PWM_CH4 */
+    },
+#endif /* BSP_USING_TIM8_PWM */
+
+#ifdef BSP_USING_TIM9_PWM
+    {
+        .periph = TIM9,
+        .name = "pwm9",
+#ifdef BSP_USING_TIM9_PWM_CH1
+        .channel[0] = TIM_Channel_1,
+#else
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM9_PWM_CH1 */
+
+#ifdef BSP_USING_TIM9_PWM_CH2
+        .channel[1] = TIM_Channel_2,
+#else
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM9_PWM_CH2 */
+
+#ifdef BSP_USING_TIM9_PWM_CH3
+        .channel[2] = TIM_Channel_3,
+#else
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM9_PWM_CH3 */
+
+#ifdef BSP_USING_TIM9_PWM_CH4
+        .channel[3] = TIM_Channel_4,
+#else
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM9_PWM_CH4 */
+    },
+#endif /* BSP_USING_TIM9_PWM */
+
+#ifdef BSP_USING_TIM10_PWM
+    {
+        .periph = TIM10,
+        .name = "pwm10",
+#ifdef BSP_USING_TIM10_PWM_CH1
+        .channel[0] = TIM_Channel_1,
+#else
+        .channel[0] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM10_PWM_CH1 */
+
+#ifdef BSP_USING_TIM10_PWM_CH2
+        .channel[1] = TIM_Channel_2,
+#else
+        .channel[1] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM10_PWM_CH2 */
+
+#ifdef BSP_USING_TIM10_PWM_CH3
+        .channel[2] = TIM_Channel_3,
+#else
+        .channel[2] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM10_PWM_CH3 */
+
+#ifdef BSP_USING_TIM10_PWM_CH4
+        .channel[3] = TIM_Channel_4,
+#else
+        .channel[3] = FLAG_NOT_INIT,
+#endif/* BSP_USING_TIM10_PWM_CH4 */
+    },
+#endif /* BSP_USING_TIM10_PWM */
 };
 
 static rt_err_t ch32_pwm_device_enable(struct rt_device_pwm* device, struct rt_pwm_configuration* configuration, rt_bool_t enable)
@@ -412,15 +747,15 @@ static rt_err_t ch32_pwm_device_enable(struct rt_device_pwm* device, struct rt_p
 
     if (channel_index <= 4 && channel_index > 0)
     {
-        if (pwm_device->channel[channel_index - 1] == 0xFF)
+        if (pwm_device->channel[channel_index - 1] == FLAG_NOT_INIT)
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         TIM_CCxCmd(pwm_device->periph, pwm_device->channel[channel_index - 1], ccx_state);
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     TIM_Cmd(pwm_device->periph, ENABLE);
@@ -467,7 +802,7 @@ static rt_err_t ch32_pwm_device_get(struct rt_device_pwm* device, struct rt_pwm_
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
@@ -557,7 +892,7 @@ static rt_err_t ch32_pwm_device_set(struct rt_device_pwm* device, struct rt_pwm_
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     TIM_ARRPreloadConfig(pwm_device->periph, ENABLE);
@@ -583,7 +918,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm* device, int cmd, void* arg
     case PWM_CMD_GET:
         return ch32_pwm_device_get(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -603,7 +938,7 @@ static int rt_hw_pwm_init(void)
         ch32_tim_clock_init(pwm_device_list[index].periph);
         for (channel_index = 0; channel_index < sizeof(pwm_device_list[index].channel); channel_index++)
         {
-            if (pwm_device_list[index].channel[channel_index] != 0xFF)
+            if (pwm_device_list[index].channel[channel_index] != FLAG_NOT_INIT)
             {
                 ch32_pwm_io_init(pwm_device_list[index].periph, pwm_device_list[index].channel[channel_index]);
             }

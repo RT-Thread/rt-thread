@@ -14,12 +14,112 @@
 #include <dfs.h>
 #include <dfs_file.h>
 #include <dfs_private.h>
+#include <unistd.h>
+
+#define DFS_FNODE_HASH_NR 128
+
+struct dfs_fnode_mgr
+{
+    struct rt_mutex lock;
+    rt_list_t head[DFS_FNODE_HASH_NR];
+};
+
+static struct dfs_fnode_mgr dfs_fm;
+
+void dfs_fm_lock(void)
+{
+    rt_mutex_take(&dfs_fm.lock, RT_WAITING_FOREVER);
+}
+
+void dfs_fm_unlock(void)
+{
+    rt_mutex_release(&dfs_fm.lock);
+}
+
+void dfs_fnode_mgr_init(void)
+{
+    int i = 0;
+
+    rt_mutex_init(&dfs_fm.lock, "dfs_mgr", RT_IPC_FLAG_PRIO);
+    for (i = 0; i < DFS_FNODE_HASH_NR; i++)
+    {
+        rt_list_init(&dfs_fm.head[i]);
+    }
+}
+
+/* BKDR Hash Function */
+static unsigned int bkdr_hash(const char *str)
+{
+    unsigned int seed = 131; // 31 131 1313 13131 131313 etc..
+    unsigned int hash = 0;
+
+    while (*str)
+    {
+        hash = hash * seed + (*str++);
+    }
+
+    return (hash % DFS_FNODE_HASH_NR);
+}
+
+static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
+{
+    struct dfs_fnode *vnode = NULL;
+    int hash = bkdr_hash(path);
+    rt_list_t *hh;
+
+    hh = dfs_fm.head[hash].next;
+
+    if (hash_head)
+    {
+        *hash_head = &dfs_fm.head[hash];
+    }
+
+    while (hh != &dfs_fm.head[hash])
+    {
+        vnode = rt_container_of(hh, struct dfs_fnode, list);
+        if (rt_strcmp(path, vnode->fullpath) == 0)
+        {
+            /* found */
+            return vnode;
+        }
+        hh = hh->next;
+    }
+    return NULL;
+}
 
 /**
  * @addtogroup FileApi
  */
 
 /*@{*/
+
+/**
+ * This function will return whether this file has been opend.
+ *
+ * @param pathname the file path name.
+ *
+ * @return 0 on file has been open successfully, -1 on open failed.
+ */
+int dfs_file_is_open(const char *pathname)
+{
+    char *fullpath = NULL;
+    struct dfs_fnode *vnode = NULL;
+    int ret = 0;
+
+    fullpath = dfs_normalize_path(NULL, pathname);
+
+    dfs_fm_lock();
+    vnode = dfs_fnode_find(fullpath, NULL);
+    if (vnode)
+    {
+        ret = 1;
+    }
+    dfs_fm_unlock();
+
+    rt_free(fullpath);
+    return ret;
+}
+
 
 /**
  * this function will open a file which specified by path with specified flags.
@@ -35,6 +135,8 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     struct dfs_filesystem *fs;
     char *fullpath;
     int result;
+    struct dfs_fnode *vnode = NULL;
+    rt_list_t *hash_head;
 
     /* parameter check */
     if (fd == NULL)
@@ -49,56 +151,101 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 
     LOG_D("open file:%s", fullpath);
 
-    /* find filesystem */
-    fs = dfs_filesystem_lookup(fullpath);
-    if (fs == NULL)
+    dfs_fm_lock();
+    /* vnode find */
+    vnode = dfs_fnode_find(fullpath, &hash_head);
+    if (vnode)
     {
+        vnode->ref_count++;
+        fd->pos   = 0;
+        fd->vnode = vnode;
+        dfs_fm_unlock();
         rt_free(fullpath); /* release path */
-
-        return -ENOENT;
-    }
-
-    LOG_D("open in filesystem:%s", fs->ops->name);
-    fd->fs    = fs;             /* set file system */
-    fd->fops  = fs->ops->fops;  /* set file ops */
-
-    /* initialize the fd item */
-    fd->type  = FT_REGULAR;
-    fd->flags = flags;
-    fd->size  = 0;
-    fd->pos   = 0;
-    fd->data  = fs;
-
-    if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
-    {
-        if (dfs_subdir(fs->path, fullpath) == NULL)
-            fd->path = rt_strdup("/");
-        else
-            fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
-        rt_free(fullpath);
-        LOG_D("Actual file path: %s", fd->path);
     }
     else
     {
-        fd->path = fullpath;
+        /* find filesystem */
+        fs = dfs_filesystem_lookup(fullpath);
+        if (fs == NULL)
+        {
+            dfs_fm_unlock();
+            rt_free(fullpath); /* release path */
+            return -ENOENT;
+        }
+
+        vnode = rt_calloc(1, sizeof(struct dfs_fnode));
+        if (!vnode)
+        {
+            dfs_fm_unlock();
+            rt_free(fullpath); /* release path */
+            return -ENOMEM;
+        }
+        vnode->ref_count = 1;
+
+        LOG_D("open in filesystem:%s", fs->ops->name);
+        vnode->fs    = fs;             /* set file system */
+        vnode->fops  = fs->ops->fops;  /* set file ops */
+
+        /* initialize the fd item */
+        vnode->type  = FT_REGULAR;
+        vnode->flags = 0;
+
+        if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
+        {
+            if (dfs_subdir(fs->path, fullpath) == NULL)
+                vnode->path = rt_strdup("/");
+            else
+                vnode->path = rt_strdup(dfs_subdir(fs->path, fullpath));
+            LOG_D("Actual file path: %s", vnode->path);
+        }
+        else
+        {
+            vnode->path = fullpath;
+        }
+        vnode->fullpath = fullpath;
+
+        /* specific file system open routine */
+        if (vnode->fops->open == NULL)
+        {
+            dfs_fm_unlock();
+            /* clear fd */
+            if (vnode->path != vnode->fullpath)
+            {
+                rt_free(vnode->fullpath);
+            }
+            rt_free(vnode->path);
+            rt_free(vnode);
+
+            return -ENOSYS;
+        }
+
+        fd->pos   = 0;
+        fd->vnode = vnode;
+
+        /* insert vnode to hash */
+        rt_list_insert_after(hash_head, &vnode->list);
     }
 
-    /* specific file system open routine */
-    if (fd->fops->open == NULL)
+    fd->flags = flags;
+
+    if ((result = vnode->fops->open(fd)) < 0)
     {
-        /* clear fd */
-        rt_free(fd->path);
-        fd->path = NULL;
+        vnode->ref_count--;
+        if (vnode->ref_count == 0)
+        {
+            /* remove from hash */
+            rt_list_remove(&vnode->list);
+            /* clear fd */
+            if (vnode->path != vnode->fullpath)
+            {
+                rt_free(vnode->fullpath);
+            }
+            rt_free(vnode->path);
+            fd->vnode = NULL;
+            rt_free(vnode);
+        }
 
-        return -ENOSYS;
-    }
-
-    if ((result = fd->fops->open(fd)) < 0)
-    {
-        /* clear fd */
-        rt_free(fd->path);
-        fd->path = NULL;
-
+        dfs_fm_unlock();
         LOG_D("%s open failed", fullpath);
 
         return result;
@@ -107,9 +254,10 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     fd->flags |= DFS_F_OPEN;
     if (flags & O_DIRECTORY)
     {
-        fd->type = FT_DIRECTORY;
+        fd->vnode->type = FT_DIRECTORY;
         fd->flags |= DFS_F_DIRECTORY;
     }
+    dfs_fm_unlock();
 
     LOG_D("open successful");
     return 0;
@@ -124,20 +272,52 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
  */
 int dfs_file_close(struct dfs_fd *fd)
 {
+    struct dfs_fnode *vnode = NULL;
     int result = 0;
 
     if (fd == NULL)
+    {
         return -ENXIO;
+    }
 
-    if (fd->fops->close != NULL)
-        result = fd->fops->close(fd);
+    if (fd->ref_count == 1)
+    {
+        dfs_fm_lock();
+        vnode = fd->vnode;
 
-    /* close fd error, return */
-    if (result < 0)
-        return result;
+        if (vnode->ref_count <= 0)
+        {
+            dfs_fm_unlock();
+            return -ENXIO;
+        }
 
-    rt_free(fd->path);
-    fd->path = NULL;
+        if (vnode->fops->close != NULL)
+        {
+            result = vnode->fops->close(fd);
+        }
+
+        /* close fd error, return */
+        if (result < 0)
+        {
+            dfs_fm_unlock();
+            return result;
+        }
+
+        if (vnode->ref_count == 1)
+        {
+            /* remove from hash */
+            rt_list_remove(&vnode->list);
+            fd->vnode = NULL;
+
+            if (vnode->path != vnode->fullpath)
+            {
+                rt_free(vnode->fullpath);
+            }
+            rt_free(vnode->path);
+            rt_free(vnode);
+        }
+        dfs_fm_unlock();
+    }
 
     return result;
 }
@@ -154,10 +334,12 @@ int dfs_file_close(struct dfs_fd *fd)
 int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
     if (fd == NULL)
+    {
         return -EINVAL;
+    }
 
     /* regular file system fd */
-    if (fd->type == FT_REGULAR)
+    if (fd->vnode->type == FT_REGULAR || fd->vnode->type == FT_DEVICE)
     {
         switch (cmd)
         {
@@ -176,8 +358,10 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         }
     }
 
-    if (fd->fops->ioctl != NULL)
-        return fd->fops->ioctl(fd, cmd, args);
+    if (fd->vnode->fops->ioctl != NULL)
+    {
+        return fd->vnode->fops->ioctl(fd, cmd, args);
+    }
 
     return -ENOSYS;
 }
@@ -197,13 +381,19 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
     int result = 0;
 
     if (fd == NULL)
+    {
         return -EINVAL;
+    }
 
-    if (fd->fops->read == NULL)
+    if (fd->vnode->fops->read == NULL)
+    {
         return -ENOSYS;
+    }
 
-    if ((result = fd->fops->read(fd, buf, len)) < 0)
+    if ((result = fd->vnode->fops->read(fd, buf, len)) < 0)
+    {
         fd->flags |= DFS_F_EOF;
+    }
 
     return result;
 }
@@ -220,11 +410,20 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
 int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, size_t nbytes)
 {
     /* parameter check */
-    if (fd == NULL || fd->type != FT_DIRECTORY)
+    if (fd == NULL)
+    {
         return -EINVAL;
+    }
 
-    if (fd->fops->getdents != NULL)
-        return fd->fops->getdents(fd, dirp, nbytes);
+    if (fd->vnode->type != FT_DIRECTORY)
+    {
+        return -EINVAL;
+    }
+
+    if (fd->vnode->fops->getdents != NULL)
+    {
+        return fd->vnode->fops->getdents(fd, dirp, nbytes);
+    }
 
     return -ENOSYS;
 }
@@ -249,17 +448,17 @@ int dfs_file_unlink(const char *path)
         return -EINVAL;
     }
 
+    /* Check whether file is already open */
+    if (dfs_file_is_open(fullpath))
+    {
+        result = -EBUSY;
+        goto __exit;
+    }
+
     /* get filesystem */
     if ((fs = dfs_filesystem_lookup(fullpath)) == NULL)
     {
         result = -ENOENT;
-        goto __exit;
-    }
-
-    /* Check whether file is already open */
-    if (fd_is_open(fullpath) == 0)
-    {
-        result = -EBUSY;
         goto __exit;
     }
 
@@ -294,12 +493,16 @@ __exit:
 int dfs_file_write(struct dfs_fd *fd, const void *buf, size_t len)
 {
     if (fd == NULL)
+    {
         return -EINVAL;
+    }
 
-    if (fd->fops->write == NULL)
+    if (fd->vnode->fops->write == NULL)
+    {
         return -ENOSYS;
+    }
 
-    return fd->fops->write(fd, buf, len);
+    return fd->vnode->fops->write(fd, buf, len);
 }
 
 /**
@@ -314,10 +517,10 @@ int dfs_file_flush(struct dfs_fd *fd)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fops->flush == NULL)
+    if (fd->vnode->fops->flush == NULL)
         return -ENOSYS;
 
-    return fd->fops->flush(fd);
+    return fd->vnode->fops->flush(fd);
 }
 
 /**
@@ -335,10 +538,10 @@ int dfs_file_lseek(struct dfs_fd *fd, off_t offset)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fops->lseek == NULL)
+    if (fd->vnode->fops->lseek == NULL)
         return -ENOSYS;
 
-    result = fd->fops->lseek(fd, offset);
+    result = fd->vnode->fops->lseek(fd, offset);
 
     /* update current position */
     if (result >= 0)
@@ -425,11 +628,10 @@ int dfs_file_stat(const char *path, struct stat *buf)
  */
 int dfs_file_rename(const char *oldpath, const char *newpath)
 {
-    int result;
-    struct dfs_filesystem *oldfs, *newfs;
-    char *oldfullpath, *newfullpath;
+    int result = RT_EOK;
+    struct dfs_filesystem *oldfs = NULL, *newfs = NULL;
+    char *oldfullpath = NULL, *newfullpath = NULL;
 
-    result = RT_EOK;
     newfullpath = NULL;
     oldfullpath = NULL;
 
@@ -437,6 +639,12 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
     if (oldfullpath == NULL)
     {
         result = -ENOENT;
+        goto __exit;
+    }
+
+    if (dfs_file_is_open((const char *)oldfullpath))
+    {
+        result = -EBUSY;
         goto __exit;
     }
 
@@ -473,8 +681,14 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
     }
 
 __exit:
-    rt_free(oldfullpath);
-    rt_free(newfullpath);
+    if (oldfullpath)
+    {
+        rt_free(oldfullpath);
+    }
+    if (newfullpath)
+    {
+        rt_free(newfullpath);
+    }
 
     /* not at same file system, return EXDEV */
     return result;
@@ -494,28 +708,52 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
     int result;
 
     /* fd is null or not a regular file system fd, or length is invalid */
-    if (fd == NULL || fd->type != FT_REGULAR || length < 0)
+    if (fd == NULL || fd->vnode->type != FT_REGULAR || length < 0)
         return -EINVAL;
 
-    if (fd->fops->ioctl == NULL)
+    if (fd->vnode->fops->ioctl == NULL)
         return -ENOSYS;
 
-    result = fd->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
+    result = fd->vnode->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
 
     /* update current size */
     if (result == 0)
-        fd->size = length;
+        fd->vnode->size = length;
 
     return result;
+}
+
+int dfs_file_mmap2(struct dfs_fd *fd, struct dfs_mmap2_args *mmap2)
+{
+    int ret = 0;
+
+    if (fd && mmap2)
+    {
+        if (fd->vnode->type != FT_DEVICE || !fd->vnode->fops->ioctl)
+        {
+            rt_set_errno(EINVAL);
+        }
+        else if (fd->vnode->type == FT_DEVICE && fd->vnode->fops->ioctl)
+        {
+            ret = fd->vnode->fops->ioctl(fd, RT_FIOMMAP2, mmap2);
+            if (ret != 0)
+            {
+                ret = ret > 0? ret : -ret;
+                rt_set_errno(ret);
+            }
+        }
+    }
+
+    return ret;
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
-static struct dfs_fd fd;
-static struct dirent dirent;
 void ls(const char *pathname)
 {
+    struct dfs_fd fd;
+    struct dirent dirent;
     struct stat stat;
     int length;
     char *fullpath, *path;
@@ -537,6 +775,7 @@ void ls(const char *pathname)
         path = (char *)pathname;
     }
 
+    fd_init(&fd);
     /* list directory */
     if (dfs_file_open(&fd, path, O_DIRECTORY) == 0)
     {
@@ -595,9 +834,11 @@ FINSH_FUNCTION_EXPORT(rm, remove files or directories);
 
 void cat(const char *filename)
 {
-    uint32_t length;
+    struct dfs_fd fd;
+    int length = 0;
     char buffer[81];
 
+    fd_init(&fd);
     if (dfs_file_open(&fd, filename, O_RDONLY) < 0)
     {
         rt_kprintf("Open %s failed\n", filename);
@@ -607,15 +848,15 @@ void cat(const char *filename)
 
     do
     {
-        rt_memset(buffer, 0, sizeof(buffer));
-        length = dfs_file_read(&fd, buffer, sizeof(buffer) - 1);
+        rt_memset(buffer, 0x0, sizeof(buffer));
+        length = dfs_file_read(&fd, (void *)buffer, sizeof(buffer) - 1);
         if (length > 0)
         {
-            rt_kprintf("%s", buffer);
+            buffer[length] = '\0';
+            rt_device_t out_device = rt_console_get_device();
+            rt_device_write(out_device, 0, (void *)buffer, sizeof(buffer));
         }
-    }
-    while (length > 0);
-    rt_kprintf("\n");
+    } while (length > 0);
 
     dfs_file_close(&fd);
 }
@@ -625,6 +866,7 @@ FINSH_FUNCTION_EXPORT(cat, print file);
 #define BUF_SZ  4096
 static void copyfile(const char *src, const char *dst)
 {
+    struct dfs_fd fd;
     struct dfs_fd src_fd;
     rt_uint8_t *block_ptr;
     rt_int32_t read_bytes;
@@ -637,6 +879,7 @@ static void copyfile(const char *src, const char *dst)
         return;
     }
 
+    fd_init(&src_fd);
     if (dfs_file_open(&src_fd, src, O_RDONLY) < 0)
     {
         rt_free(block_ptr);
@@ -644,6 +887,7 @@ static void copyfile(const char *src, const char *dst)
 
         return;
     }
+    fd_init(&fd);
     if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT) < 0)
     {
         rt_free(block_ptr);

@@ -467,7 +467,17 @@ def GetLocalDepend(options, depend):
     return building
 
 def AddDepend(option):
-    BuildOptions[option] = 1
+    if isinstance(option, str):
+        BuildOptions[option] = 1
+    elif isinstance(option, list):
+        for obj in option:
+            if isinstance(obj, str):
+                BuildOptions[obj] = 1
+            else:
+                print('AddDepend arguements are illegal!')
+    else:
+        print('AddDepend arguements are illegal!')
+
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
@@ -802,35 +812,37 @@ def GenTargetProject(program = None):
         from keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
         if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
-            MDK5Project('project.uvprojx', Projects)
+            MDK5Project(GetOption('project-name') + '.uvprojx', Projects)
             print("Keil5 project is generating...")
         elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
-            MDK4Project('project.uvproj', Projects)
+            MDK4Project(GetOption('project-name') + '.uvproj', Projects)
             print("Keil4 project is generating...")
         elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
-            MDK2Project('project.Uv2', Projects)
+            MDK2Project(GetOption('project-name') + '.Uv2', Projects)
             print("Keil2 project is generating...")
         else:
             print ('No template project file found.')
             exit(1)
         print("Keil Version: " + ARMCC_Version())
+        print("Keil-MDK project has generated successfully!")
 
     if GetOption('target') == 'iar':
         from iar import IARProject, IARVersion
         print("IAR Version: " + IARVersion())
-        IARProject('project.ewp', Projects)
+        IARProject(GetOption('project-name') + '.ewp', Projects)
+        print("IAR project has generated successfully!")
 
     if GetOption('target') == 'vs':
         from vs import VSProject
-        VSProject('project.vcproj', Projects, program)
+        VSProject(GetOption('project-name') + '.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
         from vs2012 import VS2012Project
-        VS2012Project('project.vcxproj', Projects, program)
+        VS2012Project(GetOption('project-name') + '.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
         from codeblocks import CBProject
-        CBProject('project.cbp', Projects, program)
+        CBProject(GetOption('project-name') + '.cbp', Projects, program)
 
     if GetOption('target') == 'ua':
         from ua import PrepareUA
@@ -842,7 +854,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
-        CDKProject('project.cdkproj', Projects)
+        CDKProject(GetOption('project-name') + '.cdkproj', Projects)
 
     if GetOption('target') == 'ses':
         from ses import SESProject
@@ -908,10 +920,6 @@ def EndBuilding(target, program = None):
         from mkdist import MkDist
         project_path = GetOption('project-path')
         project_name = GetOption('project-name')
-
-        if not isinstance(project_name, str) or len(project_name) == 0:
-            project_name = "dist_ide_project"
-            print("\nwarning : --project-name not specified, use default project name: {0}.".format(project_name))
 
         if not isinstance(project_path, str) or len(project_path) == 0 :
             project_path = os.path.join(BSP_ROOT, 'rt-studio-project', project_name)

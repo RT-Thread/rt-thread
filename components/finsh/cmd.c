@@ -213,7 +213,7 @@ long list_thread(void)
 #endif /*RT_USING_SMP*/
                     stat = (thread->stat & RT_THREAD_STAT_MASK);
                     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-                    else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+                    else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
                     else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
                     else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
                     else if (stat == RT_THREAD_RUNNING) rt_kprintf(" running");
@@ -247,7 +247,6 @@ long list_thread(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node *list)
 {
@@ -328,8 +327,7 @@ long list_sem(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_sem, list semaphore in system);
-#endif
+#endif /* RT_USING_SEMAPHORE */
 
 #ifdef RT_USING_EVENT
 long list_event(void)
@@ -393,8 +391,7 @@ long list_event(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_event, list event in system);
-#endif
+#endif /* RT_USING_EVENT */
 
 #ifdef RT_USING_MUTEX
 long list_mutex(void)
@@ -411,9 +408,9 @@ long list_mutex(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s   owner  hold suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.s   owner  hold suspend thread priority\n", maxlen, item_title);
     object_split(maxlen);
-    rt_kprintf(" -------- ---- --------------\n");
+    rt_kprintf(" -------- ---- -------------- --------\n");
 
     do
     {
@@ -436,13 +433,14 @@ long list_mutex(void)
                 rt_hw_interrupt_enable(level);
 
                 m = (struct rt_mutex *)obj;
-                rt_kprintf("%-*.*s %-8.*s %04d %d\n",
+                rt_kprintf("%-*.*s %-8.*s %04d %d              %d\n",
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
                            m->owner->name,
                            m->hold,
-                           rt_list_len(&m->parent.suspend_thread));
+                           rt_list_len(&m->parent.suspend_thread),
+                           m->priority);
 
             }
         }
@@ -451,8 +449,7 @@ long list_mutex(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_mutex, list mutex in system);
-#endif
+#endif /* RT_USING_MUTEX */
 
 #ifdef RT_USING_MAILBOX
 long list_mailbox(void)
@@ -522,8 +519,7 @@ long list_mailbox(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_mailbox, list mail box in system);
-#endif
+#endif /* RT_USING_MAILBOX */
 
 #ifdef RT_USING_MESSAGEQUEUE
 long list_msgqueue(void)
@@ -589,8 +585,7 @@ long list_msgqueue(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
-#endif
+#endif /* RT_USING_MESSAGEQUEUE */
 
 #ifdef RT_USING_MEMHEAP
 long list_memheap(void)
@@ -646,8 +641,7 @@ long list_memheap(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_memheap, list memory heap in system);
-#endif
+#endif /* RT_USING_MEMHEAP */
 
 #ifdef RT_USING_MEMPOOL
 long list_mempool(void)
@@ -726,8 +720,7 @@ long list_mempool(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_mempool, list memory pool in system);
-#endif
+#endif /* RT_USING_MEMPOOL */
 
 long list_timer(void)
 {
@@ -790,7 +783,6 @@ long list_timer(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
 static char *const device_type_str[RT_Device_Class_Unknown] =
@@ -885,8 +877,7 @@ long list_device(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list_device, list device in system);
-#endif
+#endif /* RT_USING_DEVICE */
 
 int cmd_list(int argc, char **argv)
 {
@@ -930,6 +921,12 @@ int cmd_list(int argc, char **argv)
             list_msgqueue();
         }
 #endif /* RT_USING_MESSAGEQUEUE */
+#ifdef RT_USING_MEMHEAP
+        else if(strcmp(argv[1], "memheap") == 0)
+        {
+            list_memheap();
+        }
+#endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
         else if(strcmp(argv[1], "mempool") == 0)
         {
@@ -977,6 +974,9 @@ _usage:
 #ifdef RT_USING_MESSAGEQUEUE
     rt_kprintf("    msgqueue - list message queues\n");
 #endif /* RT_USING_MESSAGEQUEUE */
+#ifdef RT_USING_MEMHEAP
+    rt_kprintf("    memheap - list memory heaps\n");
+#endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
     rt_kprintf("    mempool - list memory pools\n");
 #endif /* RT_USING_MEMPOOL */

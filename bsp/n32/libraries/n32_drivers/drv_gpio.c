@@ -1,40 +1,17 @@
-/*****************************************************************************
- * Copyright (c) 2019, Nations Technologies Inc.
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * All rights reserved.
- * ****************************************************************************
+ * SPDX-License-Identifier: Apache-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the disclaimer below.
- *
- * Nations' name may not be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY NATIONS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * DISCLAIMED. IN NO EVENT SHALL NATIONS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ****************************************************************************/
-
-/**
- * @file drv_gpio.c
- * @author Nations
- * @version v1.0.0
- *
- * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-10-19     Nations      first version
  */
+
 #include <rtdevice.h>
 #include <rthw.h>
 #include "board.h"
+#include "drv_gpio.h"
 
 #ifdef RT_USING_PIN
 
@@ -259,6 +236,47 @@ static int n32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
+static void n32_gpio_clock_enable(GPIO_Module* GPIOx)
+{
+    /* Enable the GPIO Clock */
+    if (GPIOx == GPIOA)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+    }
+    else if (GPIOx == GPIOB)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+    }
+    else if (GPIOx == GPIOC)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+    }
+    else if (GPIOx == GPIOD)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
+    }
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    else if (GPIOx == GPIOE)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
+    }
+#endif
+#ifdef SOC_N32G45X
+    else if (GPIOx == GPIOF)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOF, ENABLE);
+    }
+    else if (GPIOx == GPIOG)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOG, ENABLE);
+    }
+#endif /* SOC_N32G45X */
+    else
+    {
+        rt_kprintf("The GPIO port number is incorrect. No GPIO port exists\n");
+    }
+}
+
 static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     const struct pin_index *index;
@@ -270,11 +288,17 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         return;
     }
 
+    /* Enable the GPIO Clock */
+    n32_gpio_clock_enable(index->gpio);
+
     GPIO_InitStruct(&GPIO_InitStructure);
 
     /* Configure GPIO_InitStructure */
     GPIO_InitStructure.Pin = index->pin;
+
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+#endif
 
     if (mode == PIN_MODE_OUTPUT)
     {
@@ -284,24 +308,44 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+        GPIO_InitStructure.GPIO_Pull = GPIO_No_Pull;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Input;
+#endif
     }
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+        GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Up;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Input;
+#endif
     }
     else if (mode == PIN_MODE_INPUT_PULLDOWN)
     {
         /* input setting: pull down. */
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+        GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Down;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Input;
+#endif
     }
     else if (mode == PIN_MODE_OUTPUT_OD)
     {
         /* output setting: od. */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
     }
-    GPIOInit(index->gpio, GPIO_InitStructure.GPIO_Mode, GPIO_InitStructure.GPIO_Speed, GPIO_InitStructure.Pin);
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
+#endif
+
 }
 
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
@@ -319,37 +363,42 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 
 rt_inline rt_int32_t port2portsource(GPIO_Module* module)
 {
-    if(module == GPIOA)
+    if (module == GPIOA)
     {
         return GPIOA_PORT_SOURCE;
     }
-    else if(module == GPIOB)
+    else if (module == GPIOB)
     {
         return GPIOB_PORT_SOURCE;
     }
-    else if(module == GPIOC)
+    else if (module == GPIOC)
     {
         return GPIOC_PORT_SOURCE;
     }
-    else if(module == GPIOD)
+    else if (module == GPIOD)
     {
         return GPIOD_PORT_SOURCE;
     }
-    else if(module == GPIOE)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+    else if (module == GPIOE)
     {
         return GPIOE_PORT_SOURCE;
     }
-    else if(module == GPIOF)
+#endif
+#ifdef SOC_N32G45X
+    else if (module == GPIOF)
     {
         return GPIOF_PORT_SOURCE;
     }
-    else if(module == GPIOG)
+    else if (module == GPIOG)
     {
         return GPIOG_PORT_SOURCE;
     }
+#endif /* SOC_N32G45X */
     else
     {
-        return GPIOA_PORT_SOURCE;
+        rt_kprintf("The GPIO port number is incorrect. No GPIO port exists\n");
+        return -RT_ERROR;
     }
 }
 
@@ -383,9 +432,9 @@ static rt_err_t n32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == pin &&
-            pin_irq_hdr_tab[irqindex].hdr == hdr &&
-            pin_irq_hdr_tab[irqindex].mode == mode &&
-            pin_irq_hdr_tab[irqindex].args == args)
+        pin_irq_hdr_tab[irqindex].hdr == hdr &&
+        pin_irq_hdr_tab[irqindex].mode == mode &&
+        pin_irq_hdr_tab[irqindex].args == args)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
@@ -443,7 +492,6 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     const struct pin_irq_map *irqmap;
     rt_base_t level;
     rt_int32_t irqindex = -1;
-    GPIO_InitType GPIO_InitStructure;
     EXTI_InitType EXTI_InitStructure;
 
     index = get_pin(pin);
@@ -470,26 +518,23 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         irqmap = &pin_irq_map[irqindex];
 
-        /* Configure GPIO_InitStructure */
-        GPIO_InitStruct(&GPIO_InitStructure);
-        GPIO_InitStructure.Pin = index->pin;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
-        case PIN_IRQ_MODE_RISING:
-            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-            break;
-        case PIN_IRQ_MODE_FALLING:
-            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-            break;
-        case PIN_IRQ_MODE_RISING_FALLING:
-            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-            break;
+            case PIN_IRQ_MODE_RISING:
+                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+                break;
+
+            case PIN_IRQ_MODE_FALLING:
+                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+                break;
+
+            case PIN_IRQ_MODE_RISING_FALLING:
+                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+                break;
+
+            default:
+                return -RT_ERROR;
         }
-        GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
 
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
         /* configure EXTI line */
@@ -502,8 +547,11 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         EXTI_InitPeripheral(&EXTI_InitStructure);
 
         EXTI_ClrITPendBit(index->pin);
+
+                /* enable and set interrupt priority */
         NVIC_SetPriority(irqmap->irqno, 5);
         NVIC_EnableIRQ(irqmap->irqno);
+
         pin_irq_enable_mask |= irqmap->pinbit;
 
         rt_hw_interrupt_enable(level);
@@ -521,14 +569,14 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         pin_irq_enable_mask &= ~irqmap->pinbit;
         if (( irqmap->pinbit>=GPIO_PIN_5 )&&( irqmap->pinbit<=GPIO_PIN_9 ))
         {
-            if(!(pin_irq_enable_mask&(GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9)))
+            if (!(pin_irq_enable_mask&(GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9)))
             {
                 NVIC_DisableIRQ(irqmap->irqno);
             }
         }
         else if (( irqmap->pinbit>=GPIO_PIN_10 )&&( irqmap->pinbit<=GPIO_PIN_15 ))
         {
-            if(!(pin_irq_enable_mask&(GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15)))
+            if (!(pin_irq_enable_mask&(GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15)))
             {
                 NVIC_DisableIRQ(irqmap->irqno);
             }
@@ -559,37 +607,8 @@ const static struct rt_pin_ops _n32_pin_ops =
 
 int rt_hw_pin_init(void)
 {
-#if defined(RCC_GPIOA_CLK_ENABLE)
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
-#endif
-
-#if defined(RCC_GPIOB_CLK_ENABLE)
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
-#endif
-
-#if defined(RCC_GPIOC_CLK_ENABLE)
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
-#endif
-
-#if defined(RCC_GPIOD_CLK_ENABLE)
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
-#endif
-
-#if defined(RCC_GPIOE_CLK_ENABLE)
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
-#endif
-
-#if defined(RCC_GPIOF_CLK_ENABLE)
-    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOF, ENABLE);
-#endif
-
-#if defined(RCC_GPIOG_CLK_ENABLE)
-    __RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOG, ENABLE);
-#endif
-
     return rt_device_pin_register("pin", &_n32_pin_ops, RT_NULL);
 }
-
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int irqno)
@@ -602,7 +621,7 @@ rt_inline void pin_irq_hdr(int irqno)
 
 void N32_GPIO_EXTI_IRQHandler(rt_int8_t exti_line)
 {
-    if(RESET != EXTI_GetITStatus(1 << exti_line))
+    if (RESET != EXTI_GetITStatus(1 << exti_line))
     {
         pin_irq_hdr(exti_line);
         EXTI_ClrITPendBit(1 << exti_line);
@@ -660,54 +679,5 @@ void EXTI15_10_IRQHandler(void)
     N32_GPIO_EXTI_IRQHandler(15);
     rt_interrupt_leave();
 }
-
-void GPIOInit(GPIO_Module* GPIOx, GPIO_ModeType mode, GPIO_SpeedType speed, uint16_t Pin)
-{
-    GPIO_InitType GPIO_InitStructure;
-
-    /* Check the parameters */
-    assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-
-    /* Enable the GPIO Clock */
-    if (GPIOx == GPIOA)
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
-    }
-    else if (GPIOx == GPIOB)
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
-    }
-    else if (GPIOx == GPIOC)
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
-    }
-    else if (GPIOx == GPIOD)
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
-    }
-    else if (GPIOx == GPIOE)
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
-    }
-    else if (GPIOx == GPIOF)
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOF, ENABLE);
-    }
-    else
-    {
-        if (GPIOx == GPIOG)
-        {
-            RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOG, ENABLE);
-        }
-    }
-
-    /* Configure the GPIO pin */
-    GPIO_InitStructure.Pin        = Pin;
-    GPIO_InitStructure.GPIO_Mode  = mode;
-    GPIO_InitStructure.GPIO_Speed = speed;
-    GPIO_InitPeripheral(GPIOx, &GPIO_InitStructure);
-
-}
-
 
 #endif /* RT_USING_PIN */

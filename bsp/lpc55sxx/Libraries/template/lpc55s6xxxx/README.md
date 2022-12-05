@@ -211,6 +211,8 @@ msh />
 维护人:
 [Magicoe][2] < [magicoe@163.com][3] >
 
+[AlexYang][2] < [alex.yang@nxp.com][3] >
+
 [1]: https://www.rt-thread.org/page/download.html
 [2]: https://github.com/Magicoe
 [3]: mailto:magicoe@163.com

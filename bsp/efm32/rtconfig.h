@@ -209,7 +209,6 @@
 #endif
 
 /* SECTION: Runtime library */
-// #define RT_USING_NEWLIB
 #define RT_LIBC_USING_TIME
 
 /* SECTION: Console options */
@@ -265,7 +264,7 @@
 #endif
 
 /* SECTION: device filesystem */
-#if (defined(RT_USING_NEWLIB) || defined(EFM32_USING_SPISD))
+#ifdef EFM32_USING_SPISD
 #define RT_USING_DFS
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX         (2)
@@ -273,14 +272,12 @@
 #define DFS_FD_MAX                  (4)
 /* the max number of cached sector      */
 #define DFS_CACHE_MAX_NUM           (4)
-#endif /* defined(RT_USING_NEWLIB) || defined(EFM32_USING_SPISD) */
+#endif /* EFM32_USING_SPISD */
 #if defined(EFM32_USING_SPISD)
 #define RT_USING_DFS_ELMFAT
 #define DFS_ELMFAT_INTERFACE_EFM
 #endif /* defined(EFM32_USING_SPISD) */
-#if defined(RT_USING_NEWLIB)
 #define RT_USING_DFS_DEVFS
-#endif /* defined(RT_USING_NEWLIB) */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #if defined(EFM32_USING_ETHERNET)

@@ -71,11 +71,20 @@
 ;// $
 ;//###########################################################################
 
-       .def _F28x_usDelay
-
        .cdecls LIST ;;Used to populate __TI_COMPILER_VERSION__ macro
        %{
+           #ifdef __TI_EABI__
+           #define __EABI__ 1
+           #else
+           #define __EABI__ 0
+           #endif
        %}
+
+       .if __EABI__
+       .def F28x_usDelay
+       .else
+       .def _F28x_usDelay
+       .endif
 
        .if __TI_COMPILER_VERSION__
        .if __TI_COMPILER_VERSION__ >= 15009000
@@ -86,9 +95,20 @@
        .endif
 
         .global  __F28x_usDelay
+
+       .if __EABI__
+F28x_usDelay:
+       .else
 _F28x_usDelay:
+       .endif
+
         SUB    ACC,#1
+       .if __EABI__
+        BF     F28x_usDelay,GEQ    ;; Loop if ACC >= 0
+       .else
         BF     _F28x_usDelay,GEQ    ;; Loop if ACC >= 0
+       .endif
+
         LRETR
 
 ;There is a 9/10 cycle overhead and each loop
