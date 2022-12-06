@@ -142,41 +142,14 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
-    /* special series */
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+/* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
     SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
-
-    /* normal series */
-#else
-    /* SPI1, SPI4 and SPI5 on APB2 */
-    if(spi_drv->config->Instance == SPI1
-    #ifdef SPI4
-    || spi_drv->config->Instance == SPI4
-    #endif
-    #ifdef SPI5
-    || spi_drv->config->Instance == SPI5
-    #endif
-    )
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    if ((rt_uint32_t)spi_drv->config->Instance >= APB2PERIPH_BASE)
     {
         SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
     }
-
-    /* SPI2 and SPI3 on APB1 */
-    #ifdef SPI2
-    else if(spi_drv->config->Instance == SPI2
-    #ifdef SPI3
-    || spi_drv->config->Instance == SPI3
-    #endif
-    )
-    {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
-    }
-    #endif
-
-    /* SPI6 get the input clk from APB4(such as on STM32H7). However, there is no HAL_RCC_GetPCLK4Freq api provided.
-    APB4 has same prescale factor as APB1 from HPRE Clock by default in CubeMx, so we assign APB1 to it.
-    if you change the default prescale factor of APB4, please modify SPI_APB_CLOCK accordingly.
-    */
     else
     {
         SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
