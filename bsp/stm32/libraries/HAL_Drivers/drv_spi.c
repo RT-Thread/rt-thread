@@ -142,7 +142,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
-/* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
+/* Some series may only have APBPERIPH_BASE, but don't have HAL_RCC_GetPCLK2Freq */
 #if defined(APBPERIPH_BASE)
     SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
 #elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
