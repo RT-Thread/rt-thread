@@ -799,7 +799,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\board\linker_scripts\link_ram.icf</state>
+                    <state>$PROJ_DIR$\board\linker_scripts\link.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
