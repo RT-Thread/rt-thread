@@ -1103,7 +1103,7 @@ void imrt_sdio_pins_init(void)
                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
                                                     Pull / Keep Select Field: Pull
                                                     Pull Up / Down Config. Field: 47K Ohm Pull Up
-                                                    Hyst. Enable Field: Hysteresis Enabled */   
+                                                    Hyst. Enable Field: Hysteresis Enabled */
 }
 #endif
 
@@ -1197,6 +1197,10 @@ void rt_hw_board_init()
 
 #ifdef BSP_USING_LCD
     imxrt_lcd_pins_init();
+#endif
+
+#ifdef BSP_USING_SDIO
+    imrt_sdio_pins_init();
 #endif
 
 #ifdef BSP_USING_DMA
