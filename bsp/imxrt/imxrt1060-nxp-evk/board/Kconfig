@@ -146,6 +146,20 @@ menu "Onboard Peripheral Drivers"
             select PKG_USING_GUI_GUIDER_DEMO
             default n
     endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -159,6 +173,20 @@ menu "On-chip Peripheral Drivers"
         bool "Enable RTC"
         select RT_USING_RTC
         default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_SDIO
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
+                help 
+                    "SD CARD work as boot devive"				
+        endif
 
     menuconfig BSP_USING_I2C
         bool "Enable I2C"

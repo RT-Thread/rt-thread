@@ -65,6 +65,28 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define RT_USING_DFS
+#define DFS_USING_POSIX
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
+#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -77,6 +99,12 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PHY
 #define RT_USING_PIN
+#define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
 
 /* Using USB */
 
@@ -274,17 +302,14 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_ETH
-#define BSP_USING_PHY
-#define PHY_USING_KSZ8081
-#define PHY_KSZ8081_ADDRESS 2
-#define PHY_RESET_KSZ8081_PORT 1
-#define PHY_RESET_KSZ8081_PIN 9
-#define FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+#define BSP_USING_SDRAM
+#define BSP_USING_FS
+#define BSP_USING_SDCARD_FATFS
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+#define BSP_USING_SDIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 #define BSP_USING_CACHE
