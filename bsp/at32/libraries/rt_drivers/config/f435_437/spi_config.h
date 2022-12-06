@@ -24,18 +24,15 @@ extern "C" {
 #define SPI4_IRQHandler      SPI4_IRQHandler
 
 #ifdef BSP_USING_SPI1
-#ifndef SPI1_CONFIG
 #define SPI1_CONFIG                                 \
     {                                               \
         .spi_x = SPI1,                              \
         .spi_name = "spi1",                         \
         .irqn = SPI1_IRQn,                          \
     }
-#endif /* SPI1_CONFIG */
 #endif /* BSP_USING_SPI1 */
 
 #ifdef BSP_SPI1_RX_USING_DMA
-#ifndef SPI1_RX_DMA_CONFIG
 #define SPI1_RX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI1_RX_DMA_CHANNEL,         \
@@ -44,11 +41,9 @@ extern "C" {
         .dmamux_channel = SPI1_RX_DMA_MUX_CHANNEL,  \
         .request_id = SPI1_RX_DMA_REQ_ID,           \
     }
-#endif /* SPI1_RX_DMA_CONFIG */
 #endif /* BSP_SPI1_RX_USING_DMA */
 
 #ifdef BSP_SPI1_TX_USING_DMA
-#ifndef SPI1_TX_DMA_CONFIG
 #define SPI1_TX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI1_TX_DMA_CHANNEL,         \
@@ -57,22 +52,18 @@ extern "C" {
         .dmamux_channel = SPI1_TX_DMA_MUX_CHANNEL,  \
         .request_id = SPI1_TX_DMA_REQ_ID,           \
     }
-#endif /* SPI1_TX_DMA_CONFIG */
 #endif /* BSP_SPI1_TX_USING_DMA */
 
 #ifdef BSP_USING_SPI2
-#ifndef SPI2_CONFIG
 #define SPI2_CONFIG                                 \
     {                                               \
         .spi_x = SPI2,                              \
         .spi_name = "spi2",                         \
         .irqn = SPI2_I2S2EXT_IRQn,                  \
     }
-#endif /* SPI2_CONFIG */
 #endif /* BSP_USING_SPI2 */
 
 #ifdef BSP_SPI2_RX_USING_DMA
-#ifndef SPI2_RX_DMA_CONFIG
 #define SPI2_RX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI2_RX_DMA_CHANNEL,         \
@@ -81,11 +72,9 @@ extern "C" {
         .dmamux_channel = SPI2_RX_DMA_MUX_CHANNEL,  \
         .request_id = SPI2_RX_DMA_REQ_ID,           \
     }
-#endif /* SPI2_RX_DMA_CONFIG */
 #endif /* BSP_SPI2_RX_USING_DMA */
 
 #ifdef BSP_SPI2_TX_USING_DMA
-#ifndef SPI2_TX_DMA_CONFIG
 #define SPI2_TX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI2_TX_DMA_CHANNEL,         \
@@ -94,22 +83,18 @@ extern "C" {
         .dmamux_channel = SPI2_TX_DMA_MUX_CHANNEL,  \
         .request_id = SPI2_TX_DMA_REQ_ID,           \
     }
-#endif /* SPI2_TX_DMA_CONFIG */
 #endif /* BSP_SPI2_TX_USING_DMA */
 
 #ifdef BSP_USING_SPI3
-#ifndef SPI3_CONFIG
 #define SPI3_CONFIG                                 \
     {                                               \
         .spi_x = SPI3,                              \
         .spi_name = "spi3",                         \
         .irqn = SPI3_I2S3EXT_IRQn,                  \
     }
-#endif /* SPI3_CONFIG */
 #endif /* BSP_USING_SPI3 */
 
 #ifdef BSP_SPI3_RX_USING_DMA
-#ifndef SPI3_RX_DMA_CONFIG
 #define SPI3_RX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI3_RX_DMA_CHANNEL,         \
@@ -118,11 +103,9 @@ extern "C" {
         .dmamux_channel = SPI3_RX_DMA_MUX_CHANNEL,  \
         .request_id = SPI3_RX_DMA_REQ_ID,           \
     }
-#endif /* SPI3_RX_DMA_CONFIG */
 #endif /* BSP_SPI3_RX_USING_DMA */
 
 #ifdef BSP_SPI3_TX_USING_DMA
-#ifndef SPI3_TX_DMA_CONFIG
 #define SPI3_TX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI3_TX_DMA_CHANNEL,         \
@@ -131,22 +114,18 @@ extern "C" {
         .dmamux_channel = SPI3_TX_DMA_MUX_CHANNEL,  \
         .request_id = SPI3_TX_DMA_REQ_ID,           \
     }
-#endif /* SPI3_TX_DMA_CONFIG */
 #endif /* BSP_SPI3_TX_USING_DMA */
 
 #ifdef BSP_USING_SPI4
-#ifndef SPI4_CONFIG
 #define SPI4_CONFIG                                 \
     {                                               \
         .spi_x = SPI4,                              \
         .spi_name = "spi4",                         \
         .irqn = SPI4_IRQn,                          \
     }
-#endif /* SPI4_CONFIG */
 #endif /* BSP_USING_SPI4 */
 
 #ifdef BSP_SPI4_RX_USING_DMA
-#ifndef SPI4_RX_DMA_CONFIG
 #define SPI4_RX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI4_RX_DMA_CHANNEL,         \
@@ -155,11 +134,9 @@ extern "C" {
         .dmamux_channel = SPI4_RX_DMA_MUX_CHANNEL,  \
         .request_id = SPI4_RX_DMA_REQ_ID,           \
     }
-#endif /* SPI4_RX_DMA_CONFIG */
 #endif /* BSP_SPI4_RX_USING_DMA */
 
 #ifdef BSP_SPI4_TX_USING_DMA
-#ifndef SPI4_TX_DMA_CONFIG
 #define SPI4_TX_DMA_CONFIG                          \
     {                                               \
         .dma_channel = SPI4_TX_DMA_CHANNEL,         \
@@ -168,7 +145,6 @@ extern "C" {
         .dmamux_channel = SPI4_TX_DMA_MUX_CHANNEL,  \
         .request_id = SPI4_TX_DMA_REQ_ID,           \
     }
-#endif /* SPI4_TX_DMA_CONFIG */
 #endif /* BSP_SPI4_TX_USING_DMA */
 
 #ifdef __cplusplus
