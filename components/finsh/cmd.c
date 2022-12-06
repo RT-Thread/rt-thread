@@ -957,34 +957,34 @@ int cmd_list(int argc, char **argv)
 _usage:
     rt_kprintf("Usage: list [options]\n");
     rt_kprintf("[options]:\n");
-    rt_kprintf("    thread - list threads\n");
-    rt_kprintf("    timer - list timers\n");
+    rt_kprintf("    %-12s - list threads\n", "thread");
+    rt_kprintf("    %-12s - list timers\n", "timer");
 #ifdef RT_USING_SEMAPHORE
-    rt_kprintf("    sem - list semaphores\n");
+    rt_kprintf("    %-12s - list semaphores\n", "sem");
 #endif /* RT_USING_SEMAPHORE */
 #ifdef RT_USING_MUTEX
-    rt_kprintf("    mutex - list mutexs\n");
+    rt_kprintf("    %-12s - list mutexs\n", "mutex");
 #endif /* RT_USING_MUTEX */
 #ifdef RT_USING_EVENT
-    rt_kprintf("    event - list events\n");
+    rt_kprintf("    %-12s - list events\n", "event");
 #endif /* RT_USING_EVENT */
 #ifdef RT_USING_MAILBOX
-    rt_kprintf("    mailbox - list mailboxs\n");
+    rt_kprintf("    %-12s - list mailboxs\n", "mailbox");
 #endif /* RT_USING_MAILBOX */
 #ifdef RT_USING_MESSAGEQUEUE
-    rt_kprintf("    msgqueue - list message queues\n");
+    rt_kprintf("    %-12s - list message queues\n", "msgqueue");
 #endif /* RT_USING_MESSAGEQUEUE */
 #ifdef RT_USING_MEMHEAP
-    rt_kprintf("    memheap - list memory heaps\n");
+    rt_kprintf("    %-12s - list memory heaps\n", "memheap");
 #endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
-    rt_kprintf("    mempool - list memory pools\n");
+    rt_kprintf("    %-12s - list memory pools\n", "mempool");
 #endif /* RT_USING_MEMPOOL */
 #ifdef RT_USING_DEVICE
-    rt_kprintf("    device - list devices\n");
+    rt_kprintf("    %-12s - list devices\n", "device");
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-    rt_kprintf("    fd - list file descriptors\n");
+    rt_kprintf("    %-12s - list file descriptors\n", "fd");
 #endif /* RT_USING_DFS */
 
     return 0;
