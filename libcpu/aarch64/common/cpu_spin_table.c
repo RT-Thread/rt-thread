@@ -8,7 +8,9 @@
  */
 #include <rthw.h>
 #include <rtthread.h>
+#ifdef RT_USING_USERSPACE
 #include <ioremap.h>
+#endif
 #include "cpu.h"
 
 #define DBG_TAG "libcpu.aarch64.cpu_spin_table"
@@ -43,8 +45,11 @@ static int spin_table_cpu_boot(rt_uint32_t cpuid)
         return -1;
 
     // map release_addr to addressable place
-    void *rel_va = rt_ioremap((void *)cpu_release_addr[cpuid], sizeof(cpu_release_addr[0]));
+    void *rel_va = (void *)cpu_release_addr[cpuid];
 
+#ifdef RT_USING_USERSPACE
+    rel_va = rt_ioremap(rel_va, sizeof(cpu_release_addr[0]));
+#endif
     if (!rel_va)
     {
         LOG_E("IO remap failing");
