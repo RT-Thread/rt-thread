@@ -261,21 +261,6 @@ int msh_exec_module(const char *cmd_line, int size)
     rt_free(pg_name);
     return ret;
 }
-
-int system(const char *command)
-{
-    int ret = -RT_ENOMEM;
-    char *cmd = rt_strdup(command);
-
-    if (cmd)
-    {
-        ret = msh_exec(cmd, rt_strlen(cmd));
-        rt_free(cmd);
-    }
-
-    return ret;
-}
-RTM_EXPORT(system);
 #endif
 
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
