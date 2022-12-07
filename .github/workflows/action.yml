@@ -230,7 +230,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libsdl-dev libncurses5-dev scons
+          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
           sudo python -m pip install --upgrade pip -qq
           pip install requests -qq
           git config --global http.postBuffer 524288000
