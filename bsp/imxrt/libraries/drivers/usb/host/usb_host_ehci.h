@@ -309,11 +309,7 @@ typedef struct _usb_host_ehci_instance
     uint32_t taskEventHandleBuffer[(OSA_EVENT_HANDLE_SIZE + 3) / 4]; /*!< EHCI task event handle buffer*/
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
     uint64_t matchTick;
-#ifdef SOC_IMXRT1170_SERIES
 #if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
-    USBPHY_Type *registerPhyBase; /*!< The base address of the PHY register */
-#endif
-#else
     USBPHY_Type *registerPhyBase; /*!< The base address of the PHY register */
 #endif
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
@@ -455,6 +451,7 @@ extern usb_status_t USB_HostEhciWritePipe(usb_host_controller_handle controllerH
  * @param[in] controllerHandle The controller handle.
  * @param[in] pipeHandle       The receiving pipe handle.
  * @param[in] transfer         The transfer information.
+
  * @retval kStatus_USB_Success              Send successfully.
  * @retval kStatus_USB_LackSwapBuffer       There is no swap buffer for KHCI.
  * @retval kStatus_USB_Error                There is no idle QTD/ITD/SITD for EHCI.
@@ -479,46 +476,6 @@ extern usb_status_t USB_HostEhciIoctl(usb_host_controller_handle controllerHandl
                                       uint32_t ioctlEvent,
                                       void *ioctlParam);
 
-#if !defined(SOC_IMXRT1170_SERIES)
-/*!
- * @brief control ehci bus.
- *
- * @param ehciInstance  ehci instance pointer.
- * @param bus_control   control code.
- *
- * @return kStatus_USB_Success or error codes.
- */
-extern usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstance, uint8_t busControl);
-
-/*!
- * @brief ehci port change interrupt process function.
- *
- * @param ehciInstance      ehci instance pointer.
- */
-extern void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance);
-
-/*!
- * @brief ehci timer0 interrupt process function.
- * cancel control/bulk transfer that time out.
- *
- * @param ehciInstance      ehci instance pointer.
- */
-extern void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance);
-
-/*!
- * @brief host ehci start async schedule.
- *
- * @param ehciInstance    ehci instance pointer.
- */
-extern void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance);
-
-/*!
- * @brief host ehci start periodic schedule.
- *
- * @param ehciInstance    ehci instance pointer.
- */
-extern void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance);
-#endif
 /*! @}*/
 
 #ifdef __cplusplus
