@@ -14,6 +14,18 @@
 
 #include <rtconfig.h>
 
+#ifndef __ASSEMBLY__
+#ifdef RT_USING_SMP
+typedef union {
+    unsigned long slock;
+    struct __arch_tickets {
+        unsigned short owner;
+        unsigned short next;
+    } tickets;
+} rt_hw_spinlock_t;
+#endif
+#endif
+
 /* bytes of register width  */
 #ifdef ARCH_CPU_64BIT
 #define STORE                   sd

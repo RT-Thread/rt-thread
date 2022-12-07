@@ -27,6 +27,9 @@ if GetDepend('RT_USING_DEVICE') == False:
 if GetDepend('RT_USING_SMP') == False:
     SrcRemove(src, ['cpu.c'])
 
+if GetDepend('RT_USING_DM') == False:
+    SrcRemove(src, ['driver.c'])
+
 group = DefineGroup('Kernel', src, depend = [''], CPPPATH = inc, CPPDEFINES = ['__RTTHREAD__'])
 
 Return('group')

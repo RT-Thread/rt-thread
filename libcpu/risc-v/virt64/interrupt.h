@@ -11,11 +11,13 @@
 #ifndef INTERRUPT_H__
 #define INTERRUPT_H__
 
+#define MAX_HANDLERS    128
+
 #include <rthw.h>
 #include "stack.h"
 
-int rt_hw_clint_ipi_enable(void);
-int rt_hw_clint_ipi_disable(void);
+// int rt_hw_clint_ipi_enable(void);
+// int rt_hw_clint_ipi_disable(void);
 int rt_hw_plic_irq_enable(int irq_number);
 int rt_hw_plic_irq_disable(int irq_number);
 void rt_hw_interrupt_init(void);

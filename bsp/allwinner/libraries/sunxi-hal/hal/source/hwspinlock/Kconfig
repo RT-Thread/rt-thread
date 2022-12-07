@@ -1,0 +1,7 @@
+menu "HW SPINLOCK Devices"
+
+config DRIVERS_HWSPINLOCK
+    bool "enable hwspinlock driver"
+        default n
+
+endmenu

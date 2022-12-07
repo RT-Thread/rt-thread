@@ -154,5 +154,5 @@ Arduino的 analogWrite 函数虽为模拟写，但是实际输出的是PWM数字
 在潘多拉板上，使用PA4来当做真模拟输出功能引脚，使用方法为：
 
 ```c
-analogWrite(DAC0, 1024); // STM32的DAC分辨率为12位，因此第二个参数范围可以为0-4095
+analogWrite(DAC0, 128);
 ```

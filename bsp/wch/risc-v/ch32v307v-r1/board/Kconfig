@@ -133,7 +133,6 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
-        select RT_USING_SPI_BITOPS
         select RT_USING_SPI
         
         if BSP_USING_SPI
@@ -154,7 +153,13 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI Flash"
                 default n
             endif
-            
+        endif
+
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable SOFT SPI"
+        select RT_USING_SPI_BITOPS
+
+        if BSP_USING_SOFT_SPI
             config BSP_USING_SOFT_SPI1
                 bool "Enable SSPI1 Bus (User SPI)"
                 default n
@@ -173,7 +178,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 79
                         default 23    
                 endif
-                
+        
             config BSP_USING_SOFT_SPI2
                 bool "Enable SSPI2 Bus (soft SPI)"
                 default n

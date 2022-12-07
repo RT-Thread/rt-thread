@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017/08/30     Bernard      The first version
+ * 2021/12/10     linzhenxing  put tty system
  */
 
 #ifndef __TERMIOS_H__
@@ -35,6 +36,7 @@ struct termios {
     speed_t __c_ospeed;
 };
 
+/* c_cc characters */
 #define VINTR     0
 #define VQUIT     1
 #define VERASE    2
@@ -53,6 +55,7 @@ struct termios {
 #define VLNEXT   15
 #define VEOL2    16
 
+/* c_iflag bits */
 #define IGNBRK  0000001
 #define BRKINT  0000002
 #define IGNPAR  0000004
@@ -69,37 +72,42 @@ struct termios {
 #define IMAXBEL 0020000
 #define IUTF8   0040000
 
+/* c_oflag bits */
 #define OPOST  0000001
-#define OLCUC  0000002
-#define ONLCR  0000004
+#define ONLCR  0000002
+#define OLCUC  0000004
+
 #define OCRNL  0000010
 #define ONOCR  0000020
 #define ONLRET 0000040
-#define OFILL  0000100
-#define OFDEL  0000200
-#define NLDLY  0000400
-#define NL0    0000000
-#define NL1    0000400
-#define CRDLY  0003000
-#define CR0    0000000
-#define CR1    0001000
-#define CR2    0002000
-#define CR3    0003000
-#define TABDLY 0014000
-#define TAB0   0000000
-#define TAB1   0004000
-#define TAB2   0010000
-#define TAB3   0014000
-#define BSDLY  0020000
-#define BS0    0000000
-#define BS1    0020000
-#define FFDLY  0100000
-#define FF0    0000000
-#define FF1    0100000
 
-#define VTDLY  0040000
-#define VT0    0000000
-#define VT1    0040000
+#define OFILL   00000100
+#define OFDEL   00000200
+#define NLDLY   00001400
+#define   NL0   00000000
+#define   NL1   00000400
+#define   NL2   00001000
+#define   NL3   00001400
+#define TABDLY  00006000
+#define   TAB0  00000000
+#define   TAB1  00002000
+#define   TAB2  00004000
+#define   TAB3  00006000
+#define CRDLY   00030000
+#define   KCR0  00000000
+#define   KCR1  00010000
+#define   KCR2  00020000
+#define   KCR3  00030000
+#define FFDLY   00040000
+#define   FF0   00000000
+#define   FF1   00040000
+#define BSDLY   00100000
+#define   BS0   00000000
+#define   BS1   00100000
+#define VTDLY   00200000
+#define   VT0   00000000
+#define   VT1   00200000
+#define XTABS   01000000
 
 #define B0       0000000
 #define B50      0000001
@@ -146,15 +154,23 @@ struct termios {
 #define HUPCL  0002000
 #define CLOCAL 0004000
 
-#define ISIG   0000001
-#define ICANON 0000002
-#define ECHO   0000010
-#define ECHOE  0000020
-#define ECHOK  0000040
-#define ECHONL 0000100
-#define NOFLSH 0000200
-#define TOSTOP 0000400
-#define IEXTEN 0100000
+/* c_lflag bits */
+#define ISIG    0000001
+#define ICANON  0000002
+#define XCASE   0000004
+#define ECHO    0000010
+#define ECHOE   0000020
+#define ECHOK   0000040
+#define ECHONL  0000100
+#define NOFLSH  0000200
+#define TOSTOP  0000400
+#define ECHOCTL 0001000
+#define ECHOPRT 0002000
+#define ECHOKE  0004000
+#define FLUSHO  0010000
+#define PENDIN  0040000
+#define IEXTEN  0100000
+#define EXTPROC 0200000
 
 #define TCOOFF 0
 #define TCOON  1
@@ -185,7 +201,13 @@ struct termios {
 #define PENDIN  0040000
 #define EXTPROC 0200000
 
-#define XTABS  0014000
+/*  intr=^C     quit=^|     erase=del   kill=^U
+    eof=^D      vtime=\0    vmin=\1     sxtc=\0
+    start=^Q    stop=^S     susp=^Z     eol=\0
+    reprint=^R  discard=^U  werase=^W   lnext=^V
+    eol2=\0
+*/
+#define INIT_C_CC "\003\034\177\025\004\0\1\0\021\023\032\0\022\017\027\026\0"
 
 speed_t cfgetospeed (const struct termios *);
 speed_t cfgetispeed (const struct termios *);

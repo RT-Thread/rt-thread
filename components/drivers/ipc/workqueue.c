@@ -65,7 +65,7 @@ static void _workqueue_thread_entry(void *parameter)
         if (rt_list_isempty(&(queue->work_list)))
         {
             /* no software timer exist, suspend self. */
-            rt_thread_suspend(rt_thread_self());
+            rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
             rt_hw_interrupt_enable(level);
             rt_schedule();
             continue;
@@ -116,7 +116,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
 
         /* whether the workqueue is doing work */
         if (queue->work_current == RT_NULL &&
-                ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+                ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_STAT_MASK))
         {
             /* resume work thread */
             rt_thread_resume(queue->work_thread);
@@ -198,7 +198,7 @@ static void _delayed_work_timeout_handler(void *parameter)
     }
     /* whether the workqueue is doing work */
     if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_STAT_MASK))
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
@@ -356,7 +356,7 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     rt_list_insert_after(&queue->work_list, &(work->list));
     /* whether the workqueue is doing work */
     if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_STAT_MASK))
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);

@@ -421,10 +421,10 @@ const static struct rt_device_ops rt_sensor_ops =
 /*
  * sensor register
  */
-int rt_hw_sensor_register(rt_sensor_t sensor,
-                          const char              *name,
-                          rt_uint32_t              flag,
-                          void                    *data)
+int rt_hw_sensor_register(rt_sensor_t    sensor,
+                          const char    *name,
+                          rt_uint32_t    flag,
+                          void          *data)
 {
     rt_int8_t result;
     rt_device_t device;

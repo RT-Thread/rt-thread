@@ -100,7 +100,7 @@ static struct udevice_descriptor dev_desc =
     USB_CLASS_CDC,              //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
-    CDC_MAX_PACKET_SIZE,          //bMaxPacketSize0;
+    CDC_MAX_PACKET_SIZE,        //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
     _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
@@ -498,6 +498,10 @@ static rt_err_t _function_enable(ufunction_t func)
     data->ep_out->buffer = rt_malloc(CDC_RX_BUFSIZE);
     RT_ASSERT(data->ep_out->buffer != RT_NULL);
 
+#ifdef RT_USING_SERIAL_V2
+    data->serial.serial_rx = &data->rx_ringbuffer;
+#endif
+
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
 
@@ -882,10 +886,15 @@ static void vcom_tx_thread_entry(void* parameter)
             if (!data->connected)
             {
                 if(data->serial.parent.open_flag &
+#ifdef RT_USING_SERIAL_V1
 #ifndef VCOM_TX_USE_DMA
                          RT_DEVICE_FLAG_INT_TX
 #else
                          RT_DEVICE_FLAG_DMA_TX
+#endif
+#endif
+#ifdef RT_USING_SERIAL_V2
+                         RT_DEVICE_FLAG_TX_BLOCKING
 #endif
                 )
                 {
@@ -911,10 +920,15 @@ static void vcom_tx_thread_entry(void* parameter)
                 RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom tx timeout\n"));
             }
             if(data->serial.parent.open_flag &
+#ifdef RT_USING_SERIAL_V1
 #ifndef VCOM_TX_USE_DMA
                          RT_DEVICE_FLAG_INT_TX
 #else
                          RT_DEVICE_FLAG_DMA_TX
+#endif
+#endif
+#ifdef RT_USING_SERIAL_V2
+                         RT_DEVICE_FLAG_TX_BLOCKING
 #endif
             )
             {

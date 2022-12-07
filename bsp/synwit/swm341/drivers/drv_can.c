@@ -226,13 +226,13 @@ static rt_err_t swm_can_control(struct rt_can_device *can_device, int cmd, void 
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-                if (filter_cfg->items[i].hdr == -1)
+                if (filter_cfg->items[i].hdr_bank == -1)
                 {
                     filter_idx = i;
                 }
                 else
                 {
-                    filter_idx = filter_cfg->items[i].hdr;
+                    filter_idx = filter_cfg->items[i].hdr_bank;
                 }
 
                 if (filter_cfg->items[i].ide == RT_CAN_STDID)

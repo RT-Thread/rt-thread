@@ -56,6 +56,12 @@
 /*! @brief USB stack version definition */
 #define USB_MAKE_VERSION(major, minor, bugfix) (((major) << 16) | ((minor) << 8) | (bugfix))
 
+#ifdef SOC_IMXRT1170_SERIES
+/*! @brief USB stack component version definition, changed with component in yaml together */
+#define USB_STACK_COMPONENT_VERSION \
+    MAKE_VERSION(USB_STACK_VERSION_MAJOR, USB_STACK_VERSION_MINOR, USB_STACK_VERSION_BUGFIX)
+#endif
+
 /*! @brief USB error code */
 typedef enum _usb_status
 {
@@ -80,6 +86,11 @@ typedef enum _usb_status
     kStatus_USB_MSDStatusFail,  /*!< For MSD, the CSW status means fail */
     kStatus_USB_EHCIAttached,
     kStatus_USB_EHCIDetached,
+#ifdef SOC_IMXRT1170_SERIES
+    kStatus_USB_DataOverRun, /*!< The amount of data returned by the endpoint exceeded
+                                  either the size of the maximum data packet allowed
+                                  from the endpoint or the remaining buffer size. */
+#endif
 } usb_status_t;
 
 /*! @brief USB host handle type define */
@@ -120,6 +131,11 @@ typedef enum _usb_controller_index
     kUSB_ControllerIp3516Hs1 =
         11U, /*!< IP3516HS 1U, Currently, there are no platforms which have two IP3516HS IPs, this is reserved
            to be used in the future. */
+#ifdef SOC_IMXRT1170_SERIES
+    kUSB_ControllerDwc30 = 12U,     /*!< DWC3 0U */
+    kUSB_ControllerDwc31 = 13U, /*!< DWC3 1U Currently, there are no platforms which have two Dwc IPs, this is reserved
+                              to be used in the future.*/
+#endif
 } usb_controller_index_t;
 
 /**

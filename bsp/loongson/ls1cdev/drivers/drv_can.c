@@ -50,7 +50,7 @@ static rt_err_t bxmodifyfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_i
         {
             return RT_EOK;
         }
-        else if (pitem->hdr == -1)
+        else if (pitem->hdr_bank == -1)
         {
             res = -1;
             if (res != RT_EOK)
@@ -58,7 +58,7 @@ static rt_err_t bxmodifyfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_i
                 return res;
             }
         }
-        else if (pitem->hdr >= 0)
+        else if (pitem->hdr_bank >= 0)
         {
             rt_enter_critical();
             res = RT_EOK;
@@ -66,7 +66,7 @@ static rt_err_t bxmodifyfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_i
             {
                 return res;
             }
-            hdr = pitem->hdr;
+            hdr = pitem->hdr_bank;
             rt_exit_critical();
         }
     }
@@ -387,7 +387,7 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
         pmsg->id = RxMessage.StdId;
     pmsg->len = RxMessage.DLC;
     pmsg->rtr = RxMessage.RTR;
-    pmsg->hdr = 0;
+    pmsg->hdr_index = 0;
     for(i= 0;i< RxMessage.DLC; i++)
     {
       pmsg->data[i] = RxMessage.Data[i];

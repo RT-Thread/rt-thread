@@ -1,43 +1,62 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-05-20     bigmagic     first version
  */
 
 #ifndef __DRV_UART_H__
 #define __DRV_UART_H__
 
-#define UART0_IRQ   (10)
+#include "riscv_io.h"
 
-#define UART_DEFAULT_BAUDRATE               115200
+/**
+ * uart ns16550a
+ * http://byterunner.com/16550.html
+ */
 
-#define UART_BASE            (0x10000000L)
+/* TRANSMIT AND RECEIVE HOLDING REGISTER */
+#define UART_RHR 0
+#define UART_THR 0
 
-#define RHR 0    // Receive Holding Register (read mode)
-#define THR 0    // Transmit Holding Register (write mode)
-#define DLL 0    // LSB of Divisor Latch (write mode)
-#define IER 1    // Interrupt Enable Register (write mode)
-#define DLM 1    // MSB of Divisor Latch (write mode)
-#define FCR 2    // FIFO Control Register (write mode)
-#define ISR 2    // Interrupt Status Register (read mode)
-#define LCR 3    // Line Control Register
-#define MCR 4    // Modem Control Register
-#define LSR 5    // Line Status Register
-#define MSR 6    // Modem Status Register
-#define SPR 7    // ScratchPad Register
+/* INTERRUPT ENABLE REGISTER */
+#define UART_IER 1
+#define UART_IER_RX_ENABLE (1 << 0)
+#define UART_IER_TX_ENABLE (1 << 1)
 
-#define UART_REG(reg) ((volatile uint8_t *)(UART_BASE + reg))
+/* FIFO CONTROL REGISTER */
+#define UART_FCR 2
+#define UART_FCR_FIFO_ENABLE (1 << 0)
+#define UART_FCR_FIFO_CLEAR (3 << 1)
 
-#define LSR_RX_READY (1 << 0)
-#define LSR_TX_IDLE  (1 << 5)
+/* INTERRUPT STATUS REGISTER */
+#define UART_ISR 2
 
-#define uart_read_reg(reg) (*(UART_REG(reg)))
-#define uart_write_reg(reg, v) (*(UART_REG(reg)) = (v))
+/* LINE CONTROL REGISTER */
+#define UART_LCR 3
+#define UART_LCR_EIGHT_BITS (3 << 0)
+// special mode to set baud rate
+#define UART_LCR_BAUD_LATCH (1 << 7)
 
+/* LINE STATUS REGISTER */
+#define UART_LSR 5
+// input is waiting to be read from RHR
+#define UART_LSR_RX_READY (1 << 0)
+// THR can accept another character to send
+#define UART_LSR_TX_IDLE (1 << 5)
+
+#define UART_REFERENCE_CLOCK  1843200
+#define UART_DEFAULT_BAUDRATE 115200
+
+extern void *uart0_base;
+
+#define write8_uart0(idx, value) __raw_writeb(((rt_uint8_t)value), (void*)((size_t)uart0_base + (idx)))
+#define read8_uart0(idx) __raw_readb((void*)((size_t)uart0_base + (idx)))
+
+void rt_hw_uart_start_rx_thread();
 int rt_hw_uart_init(void);
+void drv_uart_puts(char *str); // for syscall
 
 #endif /* __DRV_UART_H__ */
