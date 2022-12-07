@@ -124,27 +124,28 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
 
-    if rtconfig.PLATFORM in ['gcc']:
-        contents = ''
-        if not os.path.isfile('cconfig.h'):
-            import gcc
-            gcc.GenerateGCCConfig(rtconfig)
+    # if rtconfig.PLATFORM in ['gcc']:
+    #     contents = ''
+    #     if not os.path.isfile('cconfig.h'):
+    #         import gcc
+    #         gcc.GenerateGCCConfig(rtconfig)
 
-        # try again
-        if os.path.isfile('cconfig.h'):
-            f = open('cconfig.h', 'r')
-            if f:
-                contents = f.read()
-                f.close()
+    #     # try again
+    #     if os.path.isfile('cconfig.h'):
+    #         f = open('cconfig.h', 'r')
+    #         if f:
+    #             contents = f.read()
+    #             f.close()
 
-                prep = PatchedPreProcessor()
-                prep.process_contents(contents)
-                options = prep.cpp_namespace
+    #             prep = PatchedPreProcessor()
+    #             prep.process_contents(contents)
+    #             options = prep.cpp_namespace
 
-                BuildOptions.update(options)
+    #             BuildOptions.update(options)
 
-                # add HAVE_CCONFIG_H definition
-                env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    #             # add HAVE_CCONFIG_H definition
+    #             env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    pass
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
@@ -202,22 +203,36 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
             # replace the 'RTT_CC' to 'CROSS_TOOL'
             os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
-            utils.ReloadModule(rtconfig)
         except KeyError:
             print('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
             sys.exit(1)
+
+    exec_prefix = GetOption('exec-prefix')
+    if exec_prefix:
+        os.environ['RTT_EXEC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not os.path.exists(rtconfig.EXEC_PATH):
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
-            utils.ReloadModule(rtconfig)
 
     exec_path = GetOption('exec-path')
     if exec_path:
         os.environ['RTT_EXEC_PATH'] = exec_path
-        utils.ReloadModule(rtconfig)
+
+    utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
+
+    # some env variables have loaded in SConsctruct Environment() before re-load rtconfig.py;
+    # after update rtconfig.py's variables, those env variables need to synchronize
+    if exec_prefix:
+        env['CC'] = rtconfig.CC
+        env['CXX'] = rtconfig.CXX
+        env['AS'] = rtconfig.AS
+        env['AR'] = rtconfig.AR
+        env['LINK'] = rtconfig.LINK
+    if exec_path:
+        env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -313,12 +328,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     if GetOption('pyconfig_silent'):
         from menuconfig import guiconfig_silent
-
         guiconfig_silent(Rtt_Root)
         exit(0)
+
     elif GetOption('pyconfig'):
         from menuconfig import guiconfig
-
         guiconfig(Rtt_Root)
         exit(0)
 
