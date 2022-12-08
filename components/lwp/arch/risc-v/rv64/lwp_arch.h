@@ -50,6 +50,7 @@ extern "C" {
 #endif
 
 rt_mmu_info* arch_kernel_get_mmu_info(void);
+int arch_expand_user_stack(void *addr);
 
 rt_inline unsigned long rt_hw_ffz(unsigned long x)
 {

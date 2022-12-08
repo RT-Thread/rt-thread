@@ -10,7 +10,6 @@
  */
 #include <plic.h>
 #include <mmu.h>
-#include <lwp_arch.h>
 #include "tick.h"
 #include "encoding.h"
 #include "riscv.h"

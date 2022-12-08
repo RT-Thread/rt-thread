@@ -155,8 +155,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* Common Utilities */
 
-#define _RT_STRINGIFY(x...)	#x
-#define RT_STRINGIFY(x...) _RT_STRINGIFY(x)
+#ifdef RT_USING_SMART
+    #define rt_using_smart (1)
+#else
+    #define rt_using_smart (0)
+#endif
 
 #define RT_UNUSED(x)                   ((void)x)
 
@@ -190,6 +193,8 @@ typedef __gnuc_va_list              va_list;
 #define va_end(v)                   __builtin_va_end(v)
 #define va_arg(v,l)                 __builtin_va_arg(v,l)
 #endif /* RT_USING_LIBC */
+#define __RT_STRINGIFY(x...)        #x
+#define RT_STRINGIFY(x...)          __RT_STRINGIFY(x)
 #define RT_SECTION(x)               __attribute__((section(x)))
 #define RT_USED                     __attribute__((used))
 #define ALIGN(n)                    __attribute__((aligned(n)))

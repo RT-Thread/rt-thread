@@ -1320,7 +1320,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 #ifdef RT_USING_MUSL
 extern char **__environ;
 #else
-char __environ = 0;
+char **__environ = 0;
 #endif
 
 pid_t exec(char *filename, int debug, int argc, char **argv)
