@@ -15,7 +15,7 @@
 
 开发板正面外观如下图：
 
-![image-20221208102517429](docs/figures/eco-ra4m2.jpg)
+![image-20221208102517429](docs/pictures/eco-ra4m2.jpg)
 
 该开发板常用 **板载资源** 如下：
 
@@ -64,15 +64,7 @@
 
 > 注意：此工程需要使用 J-Flash Lite 工具烧录程序。建议使用 V7.50 及以上版本烧录工程。[J-Link 下载链接](https://www.segger.com/downloads/jlink/)
 
-- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA4M2AD，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/rtthread.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
-
-![image-20211011181555421](docs/picture/jflash1.png)
-
-![image-20211011182047981](docs/picture/jflash2.png)
-
-![image-20211011182434519](docs/picture/jflash.png)
-
-![image-20211011182949604](docs/picture/jflash3.png)
+- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA4M2AD，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/rtthread.hex 文件，点击 Program Device 按钮开始烧录。
 
 **查看运行结果**
 
