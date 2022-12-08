@@ -6,7 +6,7 @@
 
 Core-V-MCU的目的是展示cv32e40p，这是Open Hardware Group(OpenHW)提供的经过充分验证的RISC-V内核。cv32e40p核心连接到一组具有代表性的外围设备。
 
-![CORE-V-MCU_Block_Diagram](.\figures\CORE-V-MCU_Block_Diagram.png)
+![CORE-V-MCU_Block_Diagram](figures/CORE-V-MCU_Block_Diagram.png)
 
 **Core-V-MCU资源：**
 
@@ -64,7 +64,7 @@ Core-V-MCU的目的是展示cv32e40p，这是Open Hardware Group(OpenHW)提供�
 
     在指定工具链位置的同时直接编译，编译后生成rtthread.elf文件。
 
-   ![compilation result of core-v-mcu ](.\figures\compilation result of core-v-mcu .png)
+   ![compilation result of core-v-mcu ](figures/compilation result of core-v-mcu .png)
 
 6. 试运行rtthread.elf，将上步生成的rtthread.elf拷贝到编到编译的qemu工具的bin文件目录下，执行以下命令
 
@@ -74,7 +74,7 @@ Core-V-MCU的目的是展示cv32e40p，这是Open Hardware Group(OpenHW)提供�
 
    运行结果如下：
 
-   ![test-result1](.\figures\test-result1.png)
+   ![test-result1](figures/test-result1.png)
 
    7.运行以下命令生成完整可拷贝的工程 
 
@@ -90,7 +90,7 @@ scons --dist
 
 1.在上文拷贝的完整的工程根目录下找到**rtconfig.h**,去掉该文件中的预编译命令**#ifndef RT_CONFIG_H__**,**#define RT_CONFIG_H__**,**#ifndef RT_CONFIG_H__**,**#endif**,一定要执行这步操作，否则会编译报错。
 
-![remove ifdef](.\figures\remove ifdef.png)
+![remove ifdef](figures/remove ifdef.png)
 
 2.执行以下命令生成makefile工程
 
@@ -108,7 +108,7 @@ scons --target=makefile
 
 BSP支持RT-Thread的Finsh组件，输入version可以查看rt-thread的版本信息，Tap键可以查看支持的命令，运行结果如下：
 
-![test-result2](.\figures\test-result2.png)
+![test-result2](figures/test-result2.png)
 
 至此，基于Core-V-MCU的RT-Thread工程的配置与运行测试完成。
 
@@ -120,27 +120,27 @@ BSP支持RT-Thread的Finsh组件，输入version可以查看rt-thread的版本�
 
 3.选择`Import projects选项 `。
 
-![import_2](.\figures\import_2.png)
+![import_2](figures/import_2.png)
 
 4.选择`Existing Code as Makefile Project选项`
 
-![makefile project](.\figures\makefile project.png)
+![makefile project](figures/makefile project.png)
 
 5.设置如下
 
-![settings](.\figures\settings.png)
+![settings](figures/settings.png)
 
 6.工程配置设置
 
-![Properites](.\figures\Properites.png)
+![Properites](figures/Properites.png)
 
 7.修改编译命令
 
-![make](.\figures\make.png)
+![make](figures/make.png)
 
 8.清空工程编译出的文件，重新编译工程
 
-![IDE-MAKE](.\figures\IDE-MAKE.png)
+![IDE-MAKE](figures/IDE-MAKE.png)
 
 9.在使用IDE编译的工程的根目录下运行以下命令，结果和**3.2.1**运行的结果一致IDE下的工程便配置完成，至此，IDE导入Core-V-MCU的RT-Thread工程的导入与运行测试完成。
 
@@ -152,29 +152,29 @@ BSP支持RT-Thread的Finsh组件，输入version可以查看rt-thread的版本�
 
 1.Debug Configurations 配置
 
-![debug](.\figures\debug.png)
+![debug](figures/debug.png)
 
 2.双击`GDB OpenOCD Debugging`，生成调试配置选项
 
-![openocd](.\figures\openocd.png)
+![openocd](figures/openocd.png)
 
 3.导入片上外设寄存器文件
 
 文件路径`OpenHW/CORE-V-SDKv0.0.0.4/registers/csr`,具体路径根据用户安装的SDK路径配置。
 
-![register file](.\figures\register file.png)
+![register file](figures/register file.png)
 
 3.导入片上外设寄存器文件
 
 文件路径`/home/wangshun/OpenHW/CORE-V-SDKv0.0.0.4/registers/peripheral`,具体路径根据用户安装的SDK路径配置。
 
-![svd](.\figures\svd.png)
+![svd](figures/svd.png)
 
 3.配置qemu运行环境
 
 取消`Start OpenOCD locally的勾选`，配置参数如下
 
-![debug2](.\figures\debug2.png)
+![debug2](figures/debug2.png)
 
 4.运行下述指令
 
@@ -184,4 +184,4 @@ BSP支持RT-Thread的Finsh组件，输入version可以查看rt-thread的版本�
 
 5.点击debug开始调试
 
- ![run](.\figures\run.png)
+ ![run](figures/run.png)
