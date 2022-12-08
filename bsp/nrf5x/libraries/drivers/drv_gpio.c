@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,7 +46,7 @@ static const struct pin_index pins[] =
     __NRF5X_PIN(29,  0, 29),
     __NRF5X_PIN(30,  0, 30),
     __NRF5X_PIN(31,  0, 31),
-#ifdef SOC_NRF52840
+#if defined(SOC_NRF52840) || defined(SOC_NRF5340)
     __NRF5X_PIN(32,  1, 0 ),
     __NRF5X_PIN(33,  1, 1 ),
     __NRF5X_PIN(34,  1, 2 ),
@@ -63,7 +63,7 @@ static const struct pin_index pins[] =
     __NRF5X_PIN(45,  1, 13),
     __NRF5X_PIN(46,  1, 14),
     __NRF5X_PIN(47,  1, 15),
-#endif /* SOC_NRF52840 */
+#endif /* SOC_NRF52840 5340*/
 };
 
 /* EVENTS_IN[n](n=0..7) and EVENTS_PORT */
@@ -376,6 +376,18 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
+#if defined(SOC_NRF5340)
+/* test GPIO write, read, input interrupt */
+#define DK_BOARD_LED_1  28
+#define DK_BOARD_LED_2  29
+#define DK_BOARD_LED_3  30
+#define DK_BOARD_LED_4  31
+
+#define DK_BOARD_BUTTON_1  23
+#define DK_BOARD_BUTTON_2  24
+#define DK_BOARD_BUTTON_3  8
+#define DK_BOARD_BUTTON_4  9
+#else
 /* test GPIO write, read, input interrupt */
 #define DK_BOARD_LED_1  13
 #define DK_BOARD_LED_2  14
@@ -386,6 +398,7 @@ INIT_BOARD_EXPORT(rt_hw_pin_init);
 #define DK_BOARD_BUTTON_2  12
 #define DK_BOARD_BUTTON_3  24
 #define DK_BOARD_BUTTON_4  25
+#endif
 
 void button_1_callback(void *args)
 {
