@@ -15,7 +15,7 @@
 
 开发板正面外观如下图：
 
-![image-20221208102517429](docs/pictures/eco-ra4m2.jpg)
+![image-20221208102517429](docs/pictures/eco-ra4m2.png)
 
 该开发板常用 **板载资源** 如下：
 
@@ -150,7 +150,7 @@ void hal_entry(void)
 
 可按照下图操作，修改 Utilities 中的选项：
 
-![image-20211214102231248](docs/picture/readme_faq1.png)
+![image-20211214102231248](docs/pictures/readme_faq1.png)
 
 ## 联系人信息
 
@@ -158,4 +158,4 @@ void hal_entry(void)
 
 ## 贡献代码
 
-如果您对 CPK-RA6M4 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
+如果您对 RA4M2 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
