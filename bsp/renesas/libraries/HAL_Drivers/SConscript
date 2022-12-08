@@ -34,6 +34,7 @@ if GetDepend(['BSP_USING_I2C', 'BSP_USING_HW_I2C']):
 
 if GetDepend(['BSP_USING_SPI']):
     src += ['drv_spi.c']
+    src += ['drv_sci_spi.c']
 
 if GetDepend(['BSP_USING_ADC']):
     src += ['drv_adc.c']
