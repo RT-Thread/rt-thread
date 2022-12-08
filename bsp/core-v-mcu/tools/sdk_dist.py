@@ -5,7 +5,6 @@ cwd_path = os.getcwd()
 #cwd_path = E:\rt-thread\bsp\core-v-mcu\tools
 sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 
-
 # BSP dist function
 def dist_do_building(BSP_ROOT, dist_dir):
     from mkdist import bsp_copy_files

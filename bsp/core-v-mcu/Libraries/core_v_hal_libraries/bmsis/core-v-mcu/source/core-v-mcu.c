@@ -15,13 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  * Author: Robert Balas (balasr@iis.ee.ethz.ch)
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-12-08     WangShun     Remove FreeRTOS related code and add RT-Thread code
  */
 
 #include <stdint.h>
 #include <assert.h>
-
-//#include <FreeRTOS.h>
-//#include "FreeRTOSConfig.h"
 
 #include <core_pulp_cluster.h>
 #include <core-v-mcu-config.h>
@@ -33,27 +33,17 @@
 #include "hal_irq.h"
 #include "hal_soc_eu.h"
 #include "hal_apb_soc_ctrl_reg_defs.h"
-
 #include "udma_uart_driver.h"
 #include "udma_i2cm_driver.h"
 #include "udma_qspi_driver.h"
-
-//#include "../../app/N25Q_16Mb-1Gb_Device_Driver/N25Q.h"
 #include "hal_apb_i2cs.h"
-
-#include <rthw.h>
-#include <rtthread.h>
-//#include "portmacro.h"
-
 #include "hal_udma_ctrl_reg_defs.h"
 #include "hal_udma_uart_reg_defs.h"
 
+#include <rthw.h>
+#include <rtthread.h>
 #include "rtconfig.h"
 #define FOR_SIMULATION_TESTING 0
-
-
-char a[] = "a";
-char b[] = "b";
 
 #if (FOR_SIMULATION_TESTING == 1)
 
@@ -296,7 +286,7 @@ void system_init(void)
 
 	// hal_set_apb_i2cs_slave_on_off(1);
 	// if (hal_get_apb_i2cs_slave_address() != MY_I2C_SLAVE_ADDRESS)
-	// 	hal_set_apb_i2cs_slave_address(MY_I2C_SLAVE_ADDRESS);
+	// hal_set_apb_i2cs_slave_address(MY_I2C_SLAVE_ADDRESS);
 }
 
 void system_core_clock_update(void)
@@ -326,7 +316,6 @@ uint16_t Writeraw(uint8_t uart_id, uint16_t write_len, uint8_t* write_buffer) {
 void timer_irq_handler(uint32_t mcause)
 {
 #warning requires critical section if interrupt nesting is used.
-	//Writeraw(0, 1 ,(uint8_t*)a);
 	rt_interrupt_enter();
 	rt_tick_increase();
 	rt_interrupt_leave();
@@ -334,7 +323,6 @@ void timer_irq_handler(uint32_t mcause)
 
 void vSystemIrqHandler(uint32_t mcause)
 {
-	//Writeraw(0, 1,(uint8_t*)b);
 	isr_table[mcause & 0x1f](mcause & 0x1f);
 }
 
@@ -344,8 +332,6 @@ void undefined_handler(uint32_t mcause)
 #ifdef __PULP_USE_LIBC
 	abort();
 #else
-	//	taskDISABLE_INTERRUPTS();
-	//	for(;;);
 	if ((mcause == 18) || (mcause == 19) || (mcause == 31))
 	{
 		gSpecialHandlingIRQCnt++;
@@ -362,14 +348,12 @@ void undefined_handler(uint32_t mcause)
 	else
 	{
 		handler_count[mcause]++;
-		//csr_read_clear(CSR_MIE, BIT(mcause));
 	}
 #endif
 }
 
-void vPortSetupTimerInterrupt(void)
+void rt_systick_config(void)
 {
-
 	extern int timer_irq_init(uint32_t ticks);
 	timer_irq_init(ARCHI_FPGA_FREQUENCY / RT_TICK_PER_SECOND);
 }

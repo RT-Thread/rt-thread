@@ -15,6 +15,9 @@
 *
 * SPDX-License-Identifier: Apache-2.0
 * Author: Robert Balas (balasr@iis.ee.ethz.ch)
+* Change Logs:
+* Date           Author       Notes
+* 2022-12-08     WangShun     Remove FreeRTOS related code and add RT-Thread code
 */
 .extern IRQ_Handler
 #ifdef PULP_FREERTOS_VECTORED_CONTEXT_SWITCH
@@ -37,7 +40,7 @@ vector_table:
 	j IRQ_Handler //ctxt_handler  // irq 7 mtime or timer
 	j IRQ_Handler
 	j IRQ_Handler
-	j IRQ_Handler// IRQ_Handler
+	j IRQ_Handler // IRQ_Handler
 	j IRQ_Handler // irq 11 Machine (event Fifo)
 	j IRQ_Handler
 	j IRQ_Handler
@@ -74,7 +77,6 @@ __no_irq_handler:
 	la a0, no_exception_handler_msg
 	jal ra, puts
 	j __no_irq_handler
-
 
 sw_irq_handler:
 	csrr t0, mcause
@@ -113,7 +115,6 @@ end_handler:
 	addi a0, a0, 4
 	csrw mepc, a0
 	mret
-
 
 .section .rodata
 illegal_insn_msg:

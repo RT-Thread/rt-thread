@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09-09     WCH        the first version
+ * 2022-12-08     WangShun     the first version
  */
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__
@@ -13,17 +13,16 @@
 #include "rtdevice.h"
 #include <rthw.h>
 
-
 /* corev config class */
-struct ch32_uart_config
+struct corev_uart_config
 {
     const char *name;
 };
 
 /* corevs uart dirver class */
-struct ch32_uart
+struct corev_uart
 {
-    struct ch32_uart_config *config;
+    struct corev_uart_config *config;
     struct rt_serial_device serial;
 };
 

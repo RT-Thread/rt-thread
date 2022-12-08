@@ -11,11 +11,8 @@
 #include <rthw.h>
 #include <stdint.h>
 #include <rtthread.h>
-//#include <board.h>
-//#include <RV32M1_ri5cy.h>
 
 typedef void (*irq_handler_t)(void);
 extern const irq_handler_t isr_table[];
-
 
 extern void vSystemIrqHandler(uint32_t mcause);
