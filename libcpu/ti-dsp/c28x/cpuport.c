@@ -97,7 +97,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     unsigned long       i;
 
     stk  = stack_addr;
-    stk  = (rt_uint8_t *)RT_ALIGN((rt_uint32_t)stk, 2);
+    stk  = (rt_uint8_t *)RT_ALIGN_UP((rt_uint32_t)stk, 2);
     stk += 1; /*to work around the stack alignment*/
 
     stack_frame = (struct stack_frame *)stk;

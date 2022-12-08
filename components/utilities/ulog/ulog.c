@@ -566,7 +566,7 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
         ulog_frame_t log_frame;
 
         /* allocate log frame */
-        log_blk = rt_rbb_blk_alloc(ulog.async_rbb, RT_ALIGN(sizeof(struct ulog_frame) + log_buf_size, RT_ALIGN_SIZE));
+        log_blk = rt_rbb_blk_alloc(ulog.async_rbb, RT_ALIGN_UP(sizeof(struct ulog_frame) + log_buf_size, RT_ALIGN_SIZE));
         if (log_blk)
         {
             /* package the log frame */
@@ -1467,7 +1467,7 @@ int ulog_init(void)
     RT_ASSERT(ULOG_ASYNC_OUTPUT_STORE_LINES >= 2);
     ulog.async_enabled = RT_TRUE;
     /* async output ring block buffer */
-    ulog.async_rbb = rt_rbb_create(RT_ALIGN(ULOG_ASYNC_OUTPUT_BUF_SIZE, RT_ALIGN_SIZE), ULOG_ASYNC_OUTPUT_STORE_LINES);
+    ulog.async_rbb = rt_rbb_create(RT_ALIGN_UP(ULOG_ASYNC_OUTPUT_BUF_SIZE, RT_ALIGN_SIZE), ULOG_ASYNC_OUTPUT_STORE_LINES);
     if (ulog.async_rbb == RT_NULL)
     {
         rt_kprintf("Error: ulog init failed! No memory for async rbb.\n");

@@ -1531,7 +1531,7 @@ rt_inline void _slab_info(rt_size_t *total,
  */
 RT_WEAK void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
-    rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    rt_ubase_t begin_align = RT_ALIGN_UP((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
 
     RT_ASSERT(end_align > begin_align);

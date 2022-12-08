@@ -89,7 +89,7 @@ void *rt_dma_malloc_large(rt_size_t size)
     align = align > DMA_ALIGN_SIZE ? align : DMA_ALIGN_SIZE;
 #endif
 
-    align_size = RT_ALIGN(size, align) + align;
+    align_size = RT_ALIGN_UP(size, align) + align;
     ptr = rt_memheap_alloc(&_large_heap, align_size);
     if (ptr != RT_NULL)
     {
@@ -191,7 +191,7 @@ void *rt_dma_malloc_dtcm(rt_size_t size)
     align = align > DMA_ALIGN_SIZE ? align : DMA_ALIGN_SIZE;
 #endif
 
-    align_size = RT_ALIGN(size, align) + align;
+    align_size = RT_ALIGN_UP(size, align) + align;
     ptr = rt_memheap_alloc(&_dtcm_heap, align_size);
     if (ptr != RT_NULL)
     {
@@ -282,7 +282,7 @@ void *rt_dma_malloc_psram(rt_size_t size)
     align = align > DMA_ALIGN_SIZE ? align : DMA_ALIGN_SIZE;
 #endif
 
-    align_size = RT_ALIGN(size, align) + align;
+    align_size = RT_ALIGN_UP(size, align) + align;
     ptr = rt_memheap_alloc(&_psram_heap, align_size);
     if (ptr != RT_NULL)
     {

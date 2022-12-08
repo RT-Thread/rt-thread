@@ -121,8 +121,8 @@ rt_device_t rt_device_create(int type, int attach_size)
     int size;
     rt_device_t device;
 
-    size = RT_ALIGN(sizeof(struct rt_device), RT_ALIGN_SIZE);
-    attach_size = RT_ALIGN(attach_size, RT_ALIGN_SIZE);
+    size = RT_ALIGN_UP(sizeof(struct rt_device), RT_ALIGN_SIZE);
+    attach_size = RT_ALIGN_UP(attach_size, RT_ALIGN_SIZE);
     /* use the total size */
     size += attach_size;
 

@@ -552,7 +552,7 @@ static rt_err_t virtio_gpu_control(rt_device_t dev, int cmd, void *args)
 
         virtio_gpu_dev->smem_len =
                 virtio_gpu_dev->pmode.r.width * virtio_gpu_dev->pmode.r.height * VIRTIO_GPU_FORMAT_PIXEL;
-        virtio_gpu_dev->smem_len = RT_ALIGN(virtio_gpu_dev->smem_len, VIRTIO_PAGE_SIZE);
+        virtio_gpu_dev->smem_len = RT_ALIGN_UP(virtio_gpu_dev->smem_len, VIRTIO_PAGE_SIZE);
         virtio_gpu_dev->framebuffer = rt_malloc_align(virtio_gpu_dev->smem_len, VIRTIO_PAGE_SIZE);
 
         if (virtio_gpu_dev->framebuffer == RT_NULL)

@@ -2922,7 +2922,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     mq->msg_pool = msgpool;
 
     /* get correct message size */
-    msg_align_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
+    msg_align_size = RT_ALIGN_UP(msg_size, RT_ALIGN_SIZE);
     mq->msg_size = msg_size;
     mq->max_msgs = pool_size / (msg_align_size + sizeof(struct rt_mq_message));
 
@@ -3054,7 +3054,7 @@ rt_mq_t rt_mq_create(const char *name,
     /* initialize message queue */
 
     /* get correct message size */
-    msg_align_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
+    msg_align_size = RT_ALIGN_UP(msg_size, RT_ALIGN_SIZE);
     mq->msg_size = msg_size;
     mq->max_msgs = max_msgs;
 

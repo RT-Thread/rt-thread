@@ -42,7 +42,7 @@
 #define VIRTIO_PA2VA(paddr)         ((rt_ubase_t)paddr)
 #define VIRTIO_PAGE_SHIFT           12
 #define VIRTIO_PAGE_SIZE            (1 << VIRTIO_PAGE_SHIFT)
-#define VIRTIO_PAGE_ALIGN(addr)     (RT_ALIGN(addr, VIRTIO_PAGE_SIZE))
+#define VIRTIO_PAGE_ALIGN(addr)     (RT_ALIGN_UP(addr, VIRTIO_PAGE_SIZE))
 
 enum
 {

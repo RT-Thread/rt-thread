@@ -150,7 +150,7 @@ static struct nu_pdma_memfun_actor nu_pdma_memfun_actor_arr[NU_PDMA_MEMFUN_ACTOR
 
 /* SG table pool */
 static DSCT_T nu_pdma_sgtbl_arr[NU_PDMA_SGTBL_POOL_SIZE] = { 0 };
-static uint32_t nu_pdma_sgtbl_token[RT_ALIGN(NU_PDMA_SGTBL_POOL_SIZE, 32) / 32];
+static uint32_t nu_pdma_sgtbl_token[RT_ALIGN_UP(NU_PDMA_SGTBL_POOL_SIZE, 32) / 32];
 static rt_mutex_t g_mutex_sg = RT_NULL;
 
 static int nu_pdma_peripheral_set(uint32_t u32PeriphType)

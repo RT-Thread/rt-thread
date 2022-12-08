@@ -10,7 +10,7 @@
  * 2006-06-30     Bernard      fix the allocate/free block bug
  * 2006-08-04     Bernard      add hook support
  * 2006-08-10     Bernard      fix interrupt bug in rt_mp_alloc
- * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
+ * 2010-07-13     Bernard      fix RT_ALIGN_UP issue found by kuronca
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete
  * 2011-01-24     Bernard      add object allocation check.
  * 2012-03-22     Bernard      fix align issue in rt_mp_init and rt_mp_create.
@@ -109,7 +109,7 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
     mp->size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
     /* align the block size */
-    block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+    block_size = RT_ALIGN_UP(block_size, RT_ALIGN_SIZE);
     mp->block_size = block_size;
 
     /* align to align size byte */
@@ -216,7 +216,7 @@ rt_mp_t rt_mp_create(const char *name,
         return RT_NULL;
 
     /* initialize memory pool */
-    block_size     = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+    block_size     = RT_ALIGN_UP(block_size, RT_ALIGN_SIZE);
     mp->block_size = block_size;
     mp->size       = (block_size + sizeof(rt_uint8_t *)) * block_count;
 

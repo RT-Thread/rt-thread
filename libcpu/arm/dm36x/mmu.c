@@ -487,7 +487,7 @@ static void build_pte_mem_desc(struct mem_desc *mdesc, rt_uint32_t size)
     {
         if (mdesc->mapped_mode == PAGE_MAPPED)
         {
-            nsec = (RT_ALIGN(mdesc->vaddr_end, 0x100000) - RT_ALIGN_DOWN(mdesc->vaddr_start, 0x100000)) >> 20;
+            nsec = (RT_ALIGN_UP(mdesc->vaddr_end, 0x100000) - RT_ALIGN_DOWN(mdesc->vaddr_start, 0x100000)) >> 20;
             mdesc->sect_attr |= (((rt_uint32_t)_pte_table)& 0xfffffc00) + pte_offset;
             pte_offset += nsec << 10;
         }

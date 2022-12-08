@@ -739,9 +739,9 @@ Macro definitions are often used in RT-Thread. For example, some common macro de
 #define ALIGN(n)                    __attribute__((aligned(n)))
 ```
 
-6）RT_ALIGN(size,align)，definition is as follows, to increase size to a multiple of an integer defined by align. For example, RT_ALIGN(13,4) will return to 16.
+6）RT_ALIGN_UP(size,align)，definition is as follows, to increase size to a multiple of an integer defined by align. For example, RT_ALIGN_UP(13,4) will return to 16.
 
 ```c
-#define RT_ALIGN(size, align)      (((size) + (align) - 1) & ~((align) - 1))
+#define RT_ALIGN_UP(size, align)      (((size) + (align) - 1) & ~((align) - 1))
 ```
 

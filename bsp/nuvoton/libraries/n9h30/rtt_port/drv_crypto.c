@@ -141,7 +141,7 @@ static rt_err_t nu_aes_crypt_run(
     while (!(CRPT->INTSTS & CRPT_INTEN_AESIEN_Msk)) {};
 
     if ((u32DataLen % 16) && (CRPT->AES_STS & (CRPT_AES_STS_OUTBUFEMPTY_Msk | CRPT_AES_STS_INBUFEMPTY_Msk)))
-        rt_kprintf("AES WARNING - AES Data length(%d) is not enough. -> %d \n", u32DataLen, RT_ALIGN(u32DataLen, 16));
+        rt_kprintf("AES WARNING - AES Data length(%d) is not enough. -> %d \n", u32DataLen, RT_ALIGN_UP(u32DataLen, 16));
     else if (CRPT->INTSTS & (CRPT_INTSTS_AESERRIF_Msk) || (CRPT->AES_STS & (CRPT_AES_STS_BUSERR_Msk | CRPT_AES_STS_CNTERR_Msk)))
         rt_kprintf("AES ERROR - CRPT->INTSTS-%08x, CRPT->AES_STS-%08x\n", CRPT->INTSTS, CRPT->AES_STS);
 
@@ -383,7 +383,7 @@ static rt_err_t nu_des_crypt_run(
     while (!(CRPT->INTSTS & CRPT_INTEN_TDESIEN_Msk)) {};
 
     if ((u32DataLen % 16) && (CRPT->TDES_STS & (CRPT_TDES_STS_OUTBUFEMPTY_Msk | CRPT_TDES_STS_INBUFEMPTY_Msk)))
-        rt_kprintf("TDES WARNING - TDES Data length(%d) is not enough. -> %d \n", u32DataLen, RT_ALIGN(u32DataLen, 16));
+        rt_kprintf("TDES WARNING - TDES Data length(%d) is not enough. -> %d \n", u32DataLen, RT_ALIGN_UP(u32DataLen, 16));
     else if (CRPT->INTSTS & (CRPT_INTSTS_TDESERRIF_Msk) || (CRPT->TDES_STS & (CRPT_TDES_STS_BUSERR_Msk)))
         rt_kprintf("AES ERROR - CRPT->INTSTS-%08x, CRPT->AES_STS-%08x\n", CRPT->INTSTS, CRPT->AES_STS);
 

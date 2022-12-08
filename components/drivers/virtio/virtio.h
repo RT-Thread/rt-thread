@@ -57,7 +57,7 @@ extern rt_mmu_info mmu_info;
 #endif /* RT_USING_LWP */
 #define VIRTIO_PAGE_SHIFT           12
 #define VIRTIO_PAGE_SIZE            (1 << VIRTIO_PAGE_SHIFT)
-#define VIRTIO_PAGE_ALIGN(addr)     (RT_ALIGN(addr, VIRTIO_PAGE_SIZE))
+#define VIRTIO_PAGE_ALIGN(addr)     (RT_ALIGN_UP(addr, VIRTIO_PAGE_SIZE))
 
 enum
 {

@@ -233,7 +233,7 @@ static struct nu_pdma_memfun_actor nu_pdma_memfun_actor_arr[NU_PDMA_MEMFUN_ACTOR
 
 /* SG table pool */
 static DSCT_T nu_pdma_sgtbl_arr[NU_PDMA_SGTBL_POOL_SIZE] = { 0 };
-static uint32_t nu_pdma_sgtbl_token[RT_ALIGN(NU_PDMA_SGTBL_POOL_SIZE, 32) / 32];
+static uint32_t nu_pdma_sgtbl_token[RT_ALIGN_UP(NU_PDMA_SGTBL_POOL_SIZE, 32) / 32];
 static int nu_pdma_check_is_nonallocated(uint32_t u32ChnId)
 {
     uint32_t mod_idx = NU_PDMA_GET_MOD_IDX(u32ChnId);

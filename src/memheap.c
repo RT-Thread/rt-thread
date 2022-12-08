@@ -34,7 +34,7 @@
 #define RT_MEMHEAP_IS_USED(i)   ((i)->magic & RT_MEMHEAP_USED)
 #define RT_MEMHEAP_MINIALLOC    12
 
-#define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
+#define RT_MEMHEAP_SIZE         RT_ALIGN_UP(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 #define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
 
@@ -190,7 +190,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
     /* align allocated size */
-    size = RT_ALIGN(size, RT_ALIGN_SIZE);
+    size = RT_ALIGN_UP(size, RT_ALIGN_SIZE);
     if (size < RT_MEMHEAP_MINIALLOC)
         size = RT_MEMHEAP_MINIALLOC;
 
@@ -375,7 +375,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
         return RT_NULL;
     }
     /* align allocated size */
-    newsize = RT_ALIGN(newsize, RT_ALIGN_SIZE);
+    newsize = RT_ALIGN_UP(newsize, RT_ALIGN_SIZE);
     if (newsize < RT_MEMHEAP_MINIALLOC)
         newsize = RT_MEMHEAP_MINIALLOC;
 
@@ -906,8 +906,8 @@ int memheapcheck(int argc, char *argv[])
             /* check next and prev */
             if (!((rt_ubase_t)item->next <= (rt_ubase_t)((rt_ubase_t)heap->start_addr + heap->pool_size) &&
                   (rt_ubase_t)item->prev >= (rt_ubase_t)heap->start_addr) &&
-                  (rt_ubase_t)item->next == RT_ALIGN((rt_ubase_t)item->next, RT_ALIGN_SIZE) &&
-                  (rt_ubase_t)item->prev == RT_ALIGN((rt_ubase_t)item->prev, RT_ALIGN_SIZE))
+                  (rt_ubase_t)item->next == RT_ALIGN_UP((rt_ubase_t)item->next, RT_ALIGN_SIZE) &&
+                  (rt_ubase_t)item->prev == RT_ALIGN_UP((rt_ubase_t)item->prev, RT_ALIGN_SIZE))
             {
                 has_bad = RT_TRUE;
                 break;

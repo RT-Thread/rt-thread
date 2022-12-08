@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2008-07-12     Bernard      the first version
- * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
+ * 2010-07-13     Bernard      fix RT_ALIGN_UP issue found by kuronca
  * 2010-10-23     yi.qiu       add module memory allocator
  * 2010-12-18     yi.qiu       fix zone release bug
  */
@@ -324,10 +324,10 @@ rt_slab_t rt_slab_init(const char *name, void *begin_addr, rt_size_t size)
     rt_ubase_t start_addr, begin_align, end_align;
     struct rt_slab *slab;
 
-    slab = (struct rt_slab *)RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    slab = (struct rt_slab *)RT_ALIGN_UP((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     start_addr = (rt_ubase_t)slab + sizeof(*slab);
     /* align begin and end addr to page */
-    begin_align = RT_ALIGN((rt_ubase_t)start_addr, RT_MM_PAGE_SIZE);
+    begin_align = RT_ALIGN_UP((rt_ubase_t)start_addr, RT_MM_PAGE_SIZE);
     end_align   = RT_ALIGN_DOWN((rt_ubase_t)begin_addr + size, RT_MM_PAGE_SIZE);
     if (begin_align >= end_align)
     {
@@ -371,7 +371,7 @@ rt_slab_t rt_slab_init(const char *name, void *begin_addr, rt_size_t size)
 
     /* allocate slab->memusage array */
     limsize  = npages * sizeof(struct rt_slab_memusage);
-    limsize  = RT_ALIGN(limsize, RT_MM_PAGE_SIZE);
+    limsize  = RT_ALIGN_UP(limsize, RT_MM_PAGE_SIZE);
     slab->memusage = rt_slab_page_alloc((rt_slab_t)(&slab->parent), limsize / RT_MM_PAGE_SIZE);
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("slab->memusage 0x%x, size 0x%x\n",
@@ -502,7 +502,7 @@ void *rt_slab_alloc(rt_slab_t m, rt_size_t size)
      */
     if (size >= slab->zone_limit)
     {
-        size = RT_ALIGN(size, RT_MM_PAGE_SIZE);
+        size = RT_ALIGN_UP(size, RT_MM_PAGE_SIZE);
 
         chunk = rt_slab_page_alloc(m, size >> RT_MM_PAGE_BITS);
         if (chunk == RT_NULL)

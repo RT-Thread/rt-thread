@@ -615,7 +615,7 @@ rt_err_t nu_pdma_sgtbls_allocate(nu_pdma_desc_t *ppsSgtbls, int num)
     RT_ASSERT(ppsSgtbls != NULL);
     RT_ASSERT(num > 0);
 
-    psSgTblHead = (nu_pdma_desc_t) rt_malloc_align(RT_ALIGN(sizeof(DSCT_T) * num, 32), 32);
+    psSgTblHead = (nu_pdma_desc_t) rt_malloc_align(RT_ALIGN_UP(sizeof(DSCT_T) * num, 32), 32);
     RT_ASSERT(psSgTblHead != RT_NULL);
 
     rt_memset((void *)psSgTblHead, 0, sizeof(DSCT_T) * num);

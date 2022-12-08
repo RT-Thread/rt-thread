@@ -363,11 +363,11 @@ typedef int (*init_fn_t)(void);
 /**
  * @ingroup BasicDef
  *
- * @def RT_ALIGN(size, align)
- * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
+ * @def RT_ALIGN_UP(size, align)
+ * Return the most contiguous size aligned at specified width. RT_ALIGN_UP(13, 4)
  * would return 16.
  */
-#define RT_ALIGN(size, align)           (((size) + (align) - 1) & ~((align) - 1))
+#define RT_ALIGN_UP(size, align)           (((size) + (align) - 1) & ~((align) - 1))
 
 /**
  * @ingroup BasicDef

@@ -8,7 +8,7 @@
  * 2008-7-12      Bernard      the first version
  * 2010-06-09     Bernard      fix the end stub of heap
  *                             fix memory check in rt_realloc function
- * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
+ * 2010-07-13     Bernard      fix RT_ALIGN_UP issue found by kuronca
  * 2010-10-14     Bernard      fix rt_realloc issue when realloc a NULL pointer.
  * 2017-07-14     armink       fix rt_realloc issue when new size is 0
  * 2018-10-02     Bernard      Add 64bit support
@@ -100,10 +100,10 @@ struct rt_small_mem
     ((struct rt_small_mem *)(((rt_base_t)(((struct rt_small_mem_item *)(_mem))->pool_ptr)) & (MEM_MASK)))
 #define MEM_SIZE(_heap, _mem)      \
     (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
-    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
+    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN_UP(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
 
-#define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
-#define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE)
+#define MIN_SIZE_ALIGNED     RT_ALIGN_UP(MIN_SIZE, RT_ALIGN_SIZE)
+#define SIZEOF_STRUCT_MEM    RT_ALIGN_UP(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE)
 
 #ifdef RT_USING_MEMTRACE
 rt_inline void rt_smem_setname(struct rt_small_mem_item *mem, const char *name)
@@ -183,9 +183,9 @@ rt_smem_t rt_smem_init(const char    *name,
     struct rt_small_mem *small_mem;
     rt_ubase_t start_addr, begin_align, end_align, mem_size;
 
-    small_mem = (struct rt_small_mem *)RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    small_mem = (struct rt_small_mem *)RT_ALIGN_UP((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     start_addr = (rt_ubase_t)small_mem + sizeof(*small_mem);
-    begin_align = RT_ALIGN((rt_ubase_t)start_addr, RT_ALIGN_SIZE);
+    begin_align = RT_ALIGN_UP((rt_ubase_t)start_addr, RT_ALIGN_SIZE);
     end_align   = RT_ALIGN_DOWN((rt_ubase_t)begin_addr + size, RT_ALIGN_SIZE);
 
     /* alignment addr */
@@ -289,10 +289,10 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
     RT_ASSERT(rt_object_get_type(&m->parent) == RT_Object_Class_Memory);
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
 
-    if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
+    if (size != RT_ALIGN_UP(size, RT_ALIGN_SIZE))
     {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n",
-                                    size, RT_ALIGN(size, RT_ALIGN_SIZE)));
+                                    size, RT_ALIGN_UP(size, RT_ALIGN_SIZE)));
     }
     else
     {
@@ -301,7 +301,7 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
 
     small_mem = (struct rt_small_mem *)m;
     /* alignment size */
-    size = RT_ALIGN(size, RT_ALIGN_SIZE);
+    size = RT_ALIGN_UP(size, RT_ALIGN_SIZE);
 
     /* every data block must be at least MIN_SIZE_ALIGNED long */
     if (size < MIN_SIZE_ALIGNED)
@@ -433,7 +433,7 @@ void *rt_smem_realloc(rt_smem_t m, void *rmem, rt_size_t newsize)
 
     small_mem = (struct rt_small_mem *)m;
     /* alignment size */
-    newsize = RT_ALIGN(newsize, RT_ALIGN_SIZE);
+    newsize = RT_ALIGN_UP(newsize, RT_ALIGN_SIZE);
     if (newsize > small_mem->mem_size_aligned)
     {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("realloc: out of memory\n"));

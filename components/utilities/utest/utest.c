@@ -53,7 +53,7 @@ static struct utest local_utest = {UTEST_PASSED, 0, 0};
 #pragma section="UtestTcTab"
 #endif
 
-#define TC_FAIL_LIST_SIZE                (RT_ALIGN(tc_num, 8) / 8)
+#define TC_FAIL_LIST_SIZE                (RT_ALIGN_UP(tc_num, 8) / 8)
 #define TC_FAIL_LIST_MARK_FAILED(index)  (tc_fail_list[index / 8] |= (1UL << (index % 8)))
 #define TC_FAIL_LIST_IS_FAILED(index)    (tc_fail_list[index / 8] &  (1UL << (index % 8)))
 

@@ -40,7 +40,7 @@ struct rt_small_mem
 
 #define MEM_SIZE(_heap, _mem)      \
     (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
-    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
+    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN_UP(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
 
 #define TEST_MEM_SIZE 1024
 
@@ -92,7 +92,7 @@ static void mem_functional_test(void)
     /* Prepare test memory */
     buf = rt_malloc(TEST_MEM_SIZE);
     uassert_not_null(buf);
-    uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
+    uassert_int_equal(RT_ALIGN_UP((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
     /* small heap init */
     heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
@@ -318,7 +318,7 @@ static void mem_alloc_test(void)
     head.interval = (head.end - head.start) / 20;
     buf = rt_malloc(TEST_MEM_SIZE);
     uassert_not_null(buf);
-    uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
+    uassert_int_equal(RT_ALIGN_UP((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
     heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
@@ -361,9 +361,9 @@ static void mem_alloc_test(void)
                 }
                 continue;
             }
-            if (RT_ALIGN((rt_ubase_t)ctx, RT_ALIGN_SIZE) != (rt_ubase_t)ctx)
+            if (RT_ALIGN_UP((rt_ubase_t)ctx, RT_ALIGN_SIZE) != (rt_ubase_t)ctx)
             {
-                uassert_int_equal(RT_ALIGN((rt_ubase_t)ctx, RT_ALIGN_SIZE), (rt_ubase_t)ctx);
+                uassert_int_equal(RT_ALIGN_UP((rt_ubase_t)ctx, RT_ALIGN_SIZE), (rt_ubase_t)ctx);
             }
             rt_memset(ctx, 0, size);
             rt_list_init(&ctx->node);
@@ -446,7 +446,7 @@ static void mem_realloc_test(void)
     struct mem_realloc_context *ctx;
     int res;
 
-    size = RT_ALIGN(sizeof(struct mem_realloc_context), RT_ALIGN_SIZE) + RT_ALIGN_SIZE;
+    size = RT_ALIGN_UP(sizeof(struct mem_realloc_context), RT_ALIGN_SIZE) + RT_ALIGN_SIZE;
     size = TEST_MEM_SIZE / size;
     /* init */
     head.ctx_tab = RT_NULL;
@@ -456,7 +456,7 @@ static void mem_realloc_test(void)
     head.interval = (head.end - head.start) / 20;
     buf = rt_malloc(TEST_MEM_SIZE);
     uassert_not_null(buf);
-    uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
+    uassert_int_equal(RT_ALIGN_UP((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
     heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);

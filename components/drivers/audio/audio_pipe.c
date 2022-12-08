@@ -266,7 +266,7 @@ rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
     struct rt_audio_pipe *pipe = RT_NULL;
 
     /* get aligned size */
-    size = RT_ALIGN(size, RT_ALIGN_SIZE);
+    size = RT_ALIGN_UP(size, RT_ALIGN_SIZE);
     pipe = (struct rt_audio_pipe *)rt_calloc(1, sizeof(struct rt_audio_pipe));
     if (pipe == RT_NULL)
         return -RT_ENOMEM;
