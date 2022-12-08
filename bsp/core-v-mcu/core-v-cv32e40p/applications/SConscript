@@ -1,0 +1,17 @@
+from building import * #调用自定义的scons函数
+import os              #调用python的os模块操作文件
+
+cwd = GetCurrentDir()  #获取当前脚本所在的路径 返回字符串
+src = Glob('*.c')      #获取当前的路径下的所有的.c文件
+CPPPATH = [cwd]        #将当前路径导出为头文件路径
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+#定义组为Applications 将src中的C文件加入该组 不依靠宏定义 添加头文件路径
+
+#扫描当前路径下的子目录
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')
