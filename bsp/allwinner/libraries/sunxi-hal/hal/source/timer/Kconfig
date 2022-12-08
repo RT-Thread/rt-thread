@@ -1,0 +1,16 @@
+menu "TIMER Devices"
+
+config DRIVERS_TIMER
+    bool "enable timer driver"
+        default y
+
+config HAL_TEST_TIMER
+    bool "enable timer hal APIs test command"
+        depends on DRIVERS_TIMER
+        default n
+
+config DRIVERS_HTIMER
+    bool "enable hrtimer driver"
+        default n
+
+endmenu

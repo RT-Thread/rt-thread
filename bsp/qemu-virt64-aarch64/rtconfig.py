@@ -39,7 +39,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     DEVICE = ' -g -march=armv8-a -mtune=cortex-a53'
-    CFLAGS = DEVICE + ' -Wall '
+    CFLAGS = DEVICE + ' -Wall -fdiagnostics-color=always'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''

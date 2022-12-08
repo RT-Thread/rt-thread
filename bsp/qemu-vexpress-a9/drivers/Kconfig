@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_VEXPRESS_A9
     bool
     select ARCH_ARM_CORTEX_A9
+    select RT_USING_CACHE
+    select ARCH_ARM_MMU
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select RT_USING_GIC_V2

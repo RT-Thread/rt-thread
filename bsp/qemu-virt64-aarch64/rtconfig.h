@@ -57,6 +57,8 @@
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50000
 #define ARCH_CPU_64BIT
+#define RT_USING_CACHE
+#define ARCH_ARM
 #define ARCH_ARMV8
 
 /* RT-Thread Components */
@@ -104,6 +106,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 4096
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
@@ -301,6 +304,14 @@
 
 
 /* Device Control */
+
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 
 /* Other */
