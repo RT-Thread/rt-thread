@@ -15,7 +15,7 @@
 
 开发板正面外观如下图：
 
-![image-20221208102517429](docs/pictures/eco-ra4m2.png)
+![image-20221208102517429](docs/pictures/eco-ra4m2.jpg)
 
 该开发板常用 **板载资源** 如下：
 
