@@ -929,7 +929,8 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
     {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
-        return -EINTR;
+        if(ret != 0)
+            return -EINTR;
     }
 #else
     if (rmtp)
@@ -3878,7 +3879,8 @@ int sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, s
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
     {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
-        return -EINTR;
+                if(ret != 0)
+            return -EINTR;
     }
 #else
     if (rmtp)
