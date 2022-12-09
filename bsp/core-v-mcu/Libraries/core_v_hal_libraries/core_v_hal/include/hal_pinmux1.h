@@ -24,7 +24,6 @@
 /* Author: Robert Balas (balasr@iis.ee.ethz.ch) */
 
 #include <stdint.h>
-
 #include "pulp_io.h"
 #include "hal_apb_soc.h"
 #include "core-v-mcu-pulp-mem-map.h"

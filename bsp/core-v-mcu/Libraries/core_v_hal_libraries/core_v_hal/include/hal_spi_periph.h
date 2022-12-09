@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-
 #ifndef HAL_INCLUDE_HAL_SPI_PERIPH_H_
 #define HAL_INCLUDE_HAL_SPI_PERIPH_H_
-
-
 
 #include "hal_udma_core_periph.h"
 

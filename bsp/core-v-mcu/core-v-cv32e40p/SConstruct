@@ -16,10 +16,6 @@ except:
     print(RTT_ROOT)
     exit(-1)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
@@ -42,11 +38,6 @@ Export('rtconfig')
 SDK_ROOT = os.path.abspath('./') #当前脚本所在路径的绝对地址
 #SDK_ROOT = E:\rt-thread\bsp\core-v-mcu\core-v-cv32e40p
 
-<<<<<<< HEAD
-#env = Environment(CPPPATH = SDK_ROOT)
-
-=======
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 if os.path.exists(SDK_ROOT + '/Libraries'):
     libraries_path_prefix = SDK_ROOT + '/Libraries'
 else:

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-    # for module compiling 
-=======
 # for module compiling 
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 # 将当前目录与子目录下的 SConscript传递给上级SConscript脚本
 import os
 Import('RTT_ROOT')

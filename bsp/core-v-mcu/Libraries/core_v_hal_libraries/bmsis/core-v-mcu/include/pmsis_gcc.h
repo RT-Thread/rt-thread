@@ -128,7 +128,6 @@
 #define __get_PRIMASK()      1
 /*@} end of CMSIS_Core_RegAccFunctions */
 
-
 /* ##########################  Core Instruction Access  ######################### */
 /** \defgroup CMSIS_Core_InstructionInterface CMSIS Core Instruction Interface
   Access to dedicated instructions

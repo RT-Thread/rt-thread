@@ -15,12 +15,9 @@
 *
 * SPDX-License-Identifier: Apache-2.0
 * Author: Robert Balas (balasr@iis.ee.ethz.ch)
-<<<<<<< HEAD
-=======
 * Change Logs:
 * Date           Author       Notes
 * 2022-12-08     WangShun     Remove FreeRTOS related code and add RT-Thread code
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 */
 .extern IRQ_Handler
 #ifdef PULP_FREERTOS_VECTORED_CONTEXT_SWITCH
@@ -43,11 +40,7 @@ vector_table:
 	j IRQ_Handler //ctxt_handler  // irq 7 mtime or timer
 	j IRQ_Handler
 	j IRQ_Handler
-<<<<<<< HEAD
-	j IRQ_Handler// IRQ_Handler
-=======
 	j IRQ_Handler // IRQ_Handler
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 	j IRQ_Handler // irq 11 Machine (event Fifo)
 	j IRQ_Handler
 	j IRQ_Handler
@@ -85,10 +78,6 @@ __no_irq_handler:
 	jal ra, puts
 	j __no_irq_handler
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 sw_irq_handler:
 	csrr t0, mcause
 	slli t0, t0, 1  /* shift off the high bit */
@@ -127,10 +116,6 @@ end_handler:
 	csrw mepc, a0
 	mret
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 .section .rodata
 illegal_insn_msg:
 	.string "illegal instruction exception handler entered\n"

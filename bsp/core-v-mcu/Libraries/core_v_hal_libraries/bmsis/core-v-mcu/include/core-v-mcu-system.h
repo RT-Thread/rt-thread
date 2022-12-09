@@ -25,9 +25,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//#include "FreeRTOSConfig.h"
-
-
 extern volatile uint32_t system_core_clock;
 
 void system_init (void);

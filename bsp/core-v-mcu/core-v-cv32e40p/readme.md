@@ -1,6 +1,6 @@
 # Core-V-MCU BSP 说明
 
-[English](README.md) | **中文**
+[English](readme_EN.md) | **中文**
 
 ## 1 MCU简介
 

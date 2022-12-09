@@ -16,9 +16,6 @@
 
 #ifndef TARGET_CORE_V_MCU_INCLUDE_CORE_V_MCU_EVENTS_H_
 #define TARGET_CORE_V_MCU_INCLUDE_CORE_V_MCU_EVENTS_H_
-
-
-
 #include "core-v-mcu-properties.h"
 
 /* Events offsets. */
