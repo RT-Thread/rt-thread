@@ -934,11 +934,12 @@ def EndBuilding(target, program = None):
         MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
-        from eclipse import TargetEclipse
+        import subprocess
         if not isinstance(project_path, str) or len(project_path) == 0 :
             project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
-        TargetEclipse(Env, GetOption('reset-project-config'), project_name)
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase

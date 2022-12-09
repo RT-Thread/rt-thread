@@ -308,13 +308,13 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
 
     print('done!')
 
-def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path = None):
+def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     print('make distribution....')
 
     if project_path == None:
         dist_dir = os.path.join(BSP_ROOT, 'dist', project_name)
     else:
-        dist_dir = os.path.join(project_path, project_name)
+        dist_dir = project_path
 
     target_path = os.path.join(dist_dir, 'rt-thread')
 
