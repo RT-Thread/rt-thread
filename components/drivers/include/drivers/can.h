@@ -289,8 +289,9 @@ struct rt_can_msg
     rt_int32_t hdr_index : 8;/*Should be defined as:rx.FilterMatchIndex,which should be changed to rt_int32_t hdr_index : 8*/
 #ifdef RT_CAN_USING_CANFD
     rt_uint32_t fd_frame : 1;
+    rt_uint32_t brs : 1;
     rt_uint32_t rxfifo : 2;/*Redefined to return :CAN RX FIFO0/CAN RX FIFO1*/
-    rt_uint32_t reserved : 5;
+    rt_uint32_t reserved : 4;
 #else
     rt_uint32_t rxfifo : 2;/*Redefined to return :CAN RX FIFO0/CAN RX FIFO1*/
     rt_uint32_t reserved : 6;
