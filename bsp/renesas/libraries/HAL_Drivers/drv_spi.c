@@ -25,8 +25,8 @@
 #include <rtdbg.h>
 
 #if defined(BSP_USING_SPI0) || defined(BSP_USING_SPI1)
-#define RA_SPI0_EVENT 0x00
-#define RA_SPI1_EVENT 0x01
+#define RA_SPI0_EVENT 0x01
+#define RA_SPI1_EVENT 0x02
 static struct rt_event complete_event = {0};
 
 static struct ra_spi_handle spi_handle[] =
