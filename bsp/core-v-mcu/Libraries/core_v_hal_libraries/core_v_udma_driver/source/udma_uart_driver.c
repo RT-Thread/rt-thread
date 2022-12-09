@@ -23,19 +23,12 @@
 #include "hal_udma_uart_reg_defs.h"
 #include <drv_usart.h>
 #include <stdint.h>
-//#include "FreeRTOS.h"
-//#include "semphr.h"
 #include "core-v-mcu-config.h"
 #include "udma_uart_driver.h"
 #include "rtthread.h"
-//#include <ringbuffer.h>
-//#include "ipc/ringbuffer.h" 
 #include "rtdevice.h" 
 #define  unuse_freertos_in_uart
 
-
-//SemaphoreHandle_t  uart_semaphores_rx[N_UART];
-//SemaphoreHandle_t  uart_semaphores_tx[N_UART];
 char u1buffer[128], u0buffer[128];
 int u1rdptr, u1wrptr, u0rdptr,u0wrptr;
 UdmaUart_t *puart0 = (UdmaUart_t*)(UDMA_CH_ADDR_UART);
@@ -53,40 +46,12 @@ uint16_t outdata(uint8_t uart_id, uint16_t write_len, uint8_t* write_buffer) {
 
 	return 0;
 }
-
-// ringbuffer  
+ 
 #define UART_RX_BUFFER_LEN 16
 rt_uint8_t uart_rxbuffer[UART_RX_BUFFER_LEN]={0};
 struct rt_ringbuffer uart_rxTCB;
 struct rt_semaphore  shell_rx_semaphore;
 
-// extern struct ch32_uart_config uart_config[];
-// extern void uart_isr(struct rt_serial_device *serial);
-// extern struct ch32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] ;
-// extern UART1_INDEX;
-char n_data[]="\r\n";
-// void uart_rx_isr (void *id){
-// 	rt_interrupt_enter();
-// 	if (id == 6) {
-// 		while (*(int*)0x1a102130) {
-// 			u1buffer[u1wrptr++] = puart1->data_b.rx_data & 0xff;
-// 			u1wrptr &= 0x7f;
-// 		}
-// 	}
-// 	if (id == 2) {
-// 		while (puart0->valid) {
-// 			//u0buffer[u0wrptr++] = puart0->data_b.rx_data & 0xff;
-// 			//u0wrptr &= 0x7f;
-// 			//outdata(0,sizeof(u0buffer),u0buffer);
-// 			//outdata(0,sizeof(n_data),n_data);
-// 			//rt_ringbuffer_putchar(&uart_rxTCB,puart0->data_b.rx_data & 0xff);
-// 			//u0wrptr=0;
-// 			uart_isr(&(uart_obj[UART1_INDEX].serial));
-// 		}
-// 		//rt_sem_release(&shell_rx_semaphore);
-// 	}
-// 	rt_interrupt_leave();
-// }
 uint8_t uart_getchar (uint8_t id) {
 	uint8_t retval;
 	if (id == 1) {
@@ -112,9 +77,7 @@ uint16_t udma_uart_open (uint8_t uart_id, uint32_t xbaudrate) {
 	pudma_ctrl->reg_rst &= ~(UDMA_CTRL_UART0_CLKEN << uart_id);
 	pudma_ctrl->reg_cg |= (UDMA_CTRL_UART0_CLKEN << uart_id);
 
-
 	user_pi_fc_event_handler_set(SOC_EVENT_UART_RX(uart_id), uart_rx_isr);
-
 
 	/* Enable SOC events propagation to FC. */
 	hal_soc_eu_set_fc_mask(SOC_EVENT_UART_RX(uart_id));
@@ -145,12 +108,7 @@ uint16_t udma_uart_open (uint8_t uart_id, uint32_t xbaudrate) {
 uint16_t udma_uart_writeraw(uint8_t uart_id, uint16_t write_len, uint8_t* write_buffer) {
 	UdmaUart_t*				puart = (UdmaUart_t*)(UDMA_CH_ADDR_UART + uart_id * UDMA_CH_SIZE);
 
-	// SemaphoreHandle_t shSemaphoreHandle = uart_semaphores_tx[uart_id];
-	// if( xSemaphoreTake( shSemaphoreHandle, 1000000 ) != pdTRUE ) {
-	// 	return 1;
-	// }
-
-	while (puart->status_b.tx_busy) {  // ToDo: Why is this necessary?  Thought the semaphore should have protected
+	while (puart->status_b.tx_busy) { 
 	}
 
 	puart->tx_saddr = (uint32_t)write_buffer;
@@ -164,7 +122,6 @@ uint16_t udma_uart_read(uint8_t uart_id, uint16_t read_len, uint8_t* read_buffer
 	uint16_t ret = 0;
 	uint8_t last_char = 0;
 	UdmaUart_t*				puart = (UdmaUart_t*)(UDMA_CH_ADDR_UART + uart_id * UDMA_CH_SIZE);
-
 
 	while ( (ret < (read_len - 2)) && (last_char != 0xd)) {
 		if (puart->valid_b.rx_data_valid == 1) {

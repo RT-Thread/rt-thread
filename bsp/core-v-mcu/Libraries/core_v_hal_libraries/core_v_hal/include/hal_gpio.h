@@ -34,8 +34,6 @@ typedef struct {
 	uint32_t	number;
 }gpio_hal_typedef;
 
-
-
 void hal_write_gpio(uint8_t gpio_num, uint8_t value);
 void hal_set_gpio(uint8_t gpio_num);
 void hal_clr_gpio(uint8_t gpio_num);

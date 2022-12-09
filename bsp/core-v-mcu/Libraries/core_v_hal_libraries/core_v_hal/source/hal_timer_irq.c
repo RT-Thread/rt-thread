@@ -19,17 +19,15 @@
 /* Driver to configure PULP timer as periodic interrupt source */
 /* Author: Robert Balas (balasr@iis.ee.ethz.ch)
  *         Germain Haugou (germain.haugou@iis.ee.ethz.ch)
- */
+*/
 
 #include <bits.h>
 #include <pulp_io.h>
 #include <stdint.h>
 #include <stdbool.h>
-
 #include "core-v-mcu-pulp-mem-map.h"
 #include "hal_timer.h"
 #include "hal_timer_irq.h"
-//#include "FreeRTOSConfig.h"
 
 /* TODO: used to measure elapsed time since last "visit" */
 static uint32_t last_count;
@@ -74,8 +72,7 @@ int timer_irq_set_timeout(uint32_t ticks, bool idle)
 	writew(1, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_RESET_LO_OFFSET));
 	writew(ticks, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CMP_LO_OFFSET));
 	writew(1, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_RESET_HI_OFFSET));
-//	writew(ticks, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CMP_HI_OFFSET));
-
+	
 	return 0;
 }
 
@@ -88,5 +85,4 @@ uint32_t timer_irq_clock_elapsed()
 uint32_t timer_irq_cycle_get_32()
 {
 	return readw((uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CNT_LO_OFFSET));
-
 }

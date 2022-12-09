@@ -5,7 +5,6 @@ from building import *
 cwd = GetCurrentDir()
 
 src = Split("""
-source/udma_uart_driver.c
 """)
 
 if  GetDepend('SOC_RISCV_FAMILY_Core_V'):

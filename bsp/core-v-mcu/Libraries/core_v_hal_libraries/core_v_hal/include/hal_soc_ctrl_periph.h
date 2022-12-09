@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-
 #ifndef HAL_INCLUDE_HAL_SOC_CTRL_PERIPH_H_
 #define HAL_INCLUDE_HAL_SOC_CTRL_PERIPH_H_
-
-
 
 /* ----------------------------------------------------------------------------
    -- SOC_CTRL Peripheral Access Layer --

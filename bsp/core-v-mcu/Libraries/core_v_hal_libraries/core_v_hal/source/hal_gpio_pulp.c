@@ -25,7 +25,6 @@
 #include <hal_pinmux1.h>
 #include <bits.h>
 #include <pulp_io.h>
-
 #include "core-v-mcu-pulp-mem-map.h"
 
 int gpio_pin_conf_pad(int pin, uint32_t flags)
@@ -155,17 +154,3 @@ inline int gpio_pin_toggle(int pin)
 {
 	return gpio_port_toggle_bits(BIT(pin));
 }
-/* TODO: gpio interrupt handling and configuration */
-/* static inline int gpio_pin_interrupt_configure() */
-/* { */
-/* } */
-
-/* static inline int gpio_manage_callback(){ */
-
-/* } */
-/* static inline int gpio_enable_callback(){ */
-
-/* } */
-/* static inline int gpio_disable_callback(){ */
-
-/* } */
