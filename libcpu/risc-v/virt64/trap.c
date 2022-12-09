@@ -21,9 +21,8 @@
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
-#define rt_using_smart 1
 #else
-#define rt_using_smart 0
+#define rt_hw_backtrace(...) (0)
 #endif
 
 void dump_regs(struct rt_hw_stack_frame *regs)
@@ -243,8 +242,7 @@ static volatile int nested = 0;
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
-    if (rt_using_smart)
-        ENTER_TRAP;
+    ENTER_TRAP;
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
     const char *msg;
 
@@ -266,8 +264,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     else
     {
         // trap cannot nested when handling another trap / interrupt
-        if (rt_using_smart)
-            CHECK_NESTED_PANIC(scause, stval, sepc, sp);
+        CHECK_NESTED_PANIC(scause, stval, sepc, sp);
         rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
         const char *msg;
 
@@ -313,14 +310,12 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
         extern struct rt_thread *rt_current_thread;
         rt_kprintf("--------------Backtrace--------------\n");
-        if (rt_using_smart)
-            rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
+        rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
         while (1)
             ;
     }
 _exit:
-    if (rt_using_smart)
-        EXIT_TRAP;
+    EXIT_TRAP;
     return ;
 }
