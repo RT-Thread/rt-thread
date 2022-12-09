@@ -21,6 +21,9 @@
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
+#define rt_using_smart 1
+#else
+#define rt_using_smart 0
 #endif
 
 void dump_regs(struct rt_hw_stack_frame *regs)
