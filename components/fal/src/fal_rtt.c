@@ -397,13 +397,17 @@ const static struct rt_device_ops char_dev_ops =
 };
 #endif
 
-#ifdef RT_USING_POSIX
-#include <dfs_posix.h>
+#ifdef RT_USING_POSIX_DEVIO
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
 
 /* RT-Thread device filesystem interface */
 static int char_dev_fopen(struct dfs_fd *fd)
 {
-    struct fal_char_device *part = (struct fal_char_device *) fd->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -427,7 +431,7 @@ static int char_dev_fopen(struct dfs_fd *fd)
 static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
 {
     int ret = 0;
-    struct fal_char_device *part = (struct fal_char_device *) fd->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -447,7 +451,7 @@ static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
 static int char_dev_fwrite(struct dfs_fd *fd, const void *buf, size_t count)
 {
     int ret = 0;
-    struct fal_char_device *part = (struct fal_char_device *) fd->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -476,7 +480,7 @@ static const struct dfs_file_ops char_dev_fops =
     RT_NULL, /* getdents */
     RT_NULL,
 };
-#endif /* defined(RT_USING_POSIX) */
+#endif /* defined(RT_USING_POSIX_DEVIO) */
 
 /**
  * create RT-Thread char device by specified partition
@@ -527,7 +531,7 @@ struct rt_device *fal_char_device_create(const char *parition_name)
         rt_device_register(RT_DEVICE(char_dev), fal_part->name, RT_DEVICE_FLAG_RDWR);
         log_i("The FAL char device (%s) created successfully", fal_part->name);
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
         /* set fops */
         char_dev->parent.fops = &char_dev_fops;
 #endif

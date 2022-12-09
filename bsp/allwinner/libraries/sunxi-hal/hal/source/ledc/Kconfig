@@ -1,0 +1,6 @@
+menu "LEDC Devices"
+
+config DRIVERS_LEDC
+    bool "enable ledc driver"
+        default y
+endmenu

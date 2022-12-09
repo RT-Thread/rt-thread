@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-08-23     Mr.Tiger     first version
  * 2021-11-04     Sherman      ADD complete_event
+ * 2022-12-7      Vandoul      ADD sci spi support
  */
 /**< Note : Turn on any DMA mode and all SPIs will turn on DMA */
 
@@ -23,6 +24,7 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
+#if defined(BSP_USING_SPI0) || defined(BSP_USING_SPI1)
 #define RA_SPI0_EVENT 0x00
 #define RA_SPI1_EVENT 0x01
 static struct rt_event complete_event = {0};
@@ -250,20 +252,6 @@ static const struct rt_spi_ops ra_spi_ops =
     .xfer = ra_spixfer,
 };
 
-void rt_hw_spi_device_attach(struct rt_spi_device *device, const char *device_name, const char *bus_name, void *user_data)
-{
-    RT_ASSERT(device != NULL);
-    RT_ASSERT(device_name != NULL);
-    RT_ASSERT(bus_name != NULL);
-    RT_ASSERT(user_data != NULL);
-
-    rt_err_t err = rt_spi_bus_attach_device(device, device_name, bus_name, user_data);
-    if (RT_EOK != err)
-    {
-        LOG_E("%s attach failed.", bus_name);
-    }
-}
-
 int ra_hw_spi_init(void)
 {
     for (rt_uint8_t spi_index = 0; spi_index < sizeof(spi_handle) / sizeof(spi_handle[0]); spi_index++)
@@ -287,4 +275,18 @@ int ra_hw_spi_init(void)
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(ra_hw_spi_init);
+#endif
+void rt_hw_spi_device_attach(struct rt_spi_device *device, const char *device_name, const char *bus_name, void *user_data)
+{
+    RT_ASSERT(device != NULL);
+    RT_ASSERT(device_name != NULL);
+    RT_ASSERT(bus_name != NULL);
+    RT_ASSERT(user_data != NULL);
+
+    rt_err_t err = rt_spi_bus_attach_device(device, device_name, bus_name, user_data);
+    if (RT_EOK != err)
+    {
+        LOG_E("%s attach failed.", bus_name);
+    }
+}
 #endif /* RT_USING_SPI */

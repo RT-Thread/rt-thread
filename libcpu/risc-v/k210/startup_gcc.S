@@ -9,6 +9,7 @@
  * 2018/12/27     Jesven       Add SMP support
  */
 
+#define __ASSEMBLY__
 #define MSTATUS_FS      0x00006000U /* initial state of FPU     */
 #include <cpuport.h>
 

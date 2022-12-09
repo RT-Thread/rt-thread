@@ -51,11 +51,11 @@ uint64_t clock_cpu_gettime(void)
  *
  * @return the microsecond
  */
-uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
+uint64_t clock_cpu_microsecond(uint64_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
-    return (uint32_t)((cpu_tick * unit) / 1000);
+    return (uint64_t)((cpu_tick * unit) / 1000);
 }
 
 /**
@@ -66,11 +66,11 @@ uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
  *
  * @return the millisecond
  */
-uint32_t clock_cpu_millisecond(uint32_t cpu_tick)
+uint64_t clock_cpu_millisecond(uint64_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
-    return (uint32_t)((cpu_tick * unit) / (1000 * 1000));
+    return (uint64_t)((cpu_tick * unit) / (1000 * 1000));
 }
 
 /**

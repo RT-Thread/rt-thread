@@ -210,7 +210,7 @@ int msh_exec_module(const char *cmd_line, int size)
     length = cmd_length + 32;
 
     /* allocate program name memory */
-    pg_name = (char *) rt_malloc(length);
+    pg_name = (char *) rt_malloc(length + 3);
     if (pg_name == RT_NULL)
         return -RT_ENOMEM;
 
@@ -261,7 +261,7 @@ int msh_exec_module(const char *cmd_line, int size)
     rt_free(pg_name);
     return ret;
 }
-#endif /* defined(RT_USING_MODULE) && defined(DFS_USING_POSIX) */
+#endif
 
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
@@ -294,16 +294,139 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
+pid_t exec(char*, int, int, char**);
+
 #if defined(RT_USING_LWP) && defined(DFS_USING_POSIX)
-static int _msh_exec_lwp(char *cmd, rt_size_t length)
+/* check whether a file of the given path exits */
+static rt_bool_t _msh_lwp_cmd_exists(const char *path)
+{
+    int fd = -1;
+    fd = open(path, O_RDONLY, 0);
+    if (fd < 0)
+    {
+        return RT_FALSE;
+    }
+    close(fd);
+    return RT_TRUE;
+}
+
+/*
+ * search for the file named "pg_name" or "pg_name.elf" at the given directory,
+ * and return its path. return NULL when not found.
+ */
+static char *_msh_exec_search_path(const char *path, const char *pg_name)
+{
+    char *path_buffer = RT_NULL;
+    ssize_t pg_len = strlen(pg_name);
+    ssize_t base_len = 0;
+
+    if (path)
+    {
+        base_len = strlen(path);
+    }
+
+    path_buffer = rt_malloc(base_len + pg_len + 6);
+    if (path_buffer == RT_NULL)
+    {
+        return RT_NULL; /* no mem */
+    }
+
+    if (base_len > 0)
+    {
+        memcpy(path_buffer, path, base_len);
+        path_buffer[base_len] = '/';
+        path_buffer[base_len + 1] = '\0';
+    }
+    else
+    {
+        *path_buffer = '\0';
+    }
+    strcat(path_buffer, pg_name);
+    
+    if (_msh_lwp_cmd_exists(path_buffer))
+    {
+        return path_buffer;
+    }
+
+    if (strstr(path_buffer, ".elf") != NULL)
+    {
+        goto not_found;
+    }
+
+    strcat(path_buffer, ".elf");
+    if (_msh_lwp_cmd_exists(path_buffer))
+    {
+        return path_buffer;
+    }
+
+not_found:
+    rt_free(path_buffer);
+    return RT_NULL;
+}
+
+/*
+ * search for the file named "pg_name" or "pg_name.elf" at each env path,
+ * and return its path. return NULL when not found.
+ */
+static char *_msh_exec_search_env(const char *pg_name)
+{
+    char *result = RT_NULL;
+    char *exec_path = RT_NULL;
+    char *search_path = RT_NULL;
+    char *pos = RT_NULL;
+    char tmp_ch = '\0';
+
+    if (!(exec_path = getenv("PATH")))
+    {
+        return RT_NULL;
+    }
+
+    /* exec path may need to be modified */
+    if (!(exec_path = strdup(exec_path)))
+    {
+        return RT_NULL;
+    }
+
+    pos = exec_path;
+    search_path = exec_path;
+
+    /* walk through the entire exec_path until finding the program wanted
+       or hitting its end */
+    while (1)
+    {
+        /* env paths are seperated by ':' */
+        if (*pos == ':' || *pos == '\0')
+        {
+            tmp_ch = *pos;
+            *pos = '\0';
+
+            result = _msh_exec_search_path(search_path, pg_name);
+            if (result || tmp_ch == '\0')
+            {
+                goto ret;
+            }
+
+            pos++;
+            search_path = pos;
+            continue;
+        }
+
+        pos++;
+    }
+
+    /* release the duplicated exec_path and return */
+ret:
+    rt_free(exec_path);
+    return result;
+}
+
+int _msh_exec_lwp(int debug, char *cmd, rt_size_t length)
 {
     int argc;
     int cmd0_size = 0;
     char *argv[FINSH_ARG_MAX];
-    int fd = -1;
     char *pg_name;
-
-    extern int exec(char *, int, char **);
+    int ret;
 
     /* find the size of first command */
     while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
@@ -317,20 +440,46 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
     if (argc == 0)
         return -1;
 
-    pg_name = argv[0];
-    /* try to open program */
-    fd = open(pg_name, O_RDONLY, 0);
+    /* try to find program in working directory */
+    pg_name = _msh_exec_search_path("", argv[0]);
+    if (pg_name)
+    {
+        goto found_program;
+    }
 
-    if (fd < 0)
+    /* only check these paths when the first argument doesn't contain path 
+       seperator */
+    if (strstr(argv[0], "/"))
+    {
         return -1;
+    }
+
+    /* try to find program in /bin */
+    pg_name = _msh_exec_search_path("/bin", argv[0]);
+    if (pg_name)
+    {
+        goto found_program;
+    }
+
+    /* try to find program in dirs registered to env path */
+    pg_name = _msh_exec_search_env(argv[0]);
+    if (pg_name)
+    {
+        goto found_program;
+    }
+
+    /* not found in anywhere */
+    return -1;
 
     /* found program */
-    close(fd);
-    exec(pg_name, argc, argv);
+found_program:
+    ret = exec(pg_name, debug, argc, argv);
+    rt_free(pg_name);
 
-    return 0;
+    return ret;
 }
-#endif /* defined(RT_USING_LWP) && defined(DFS_USING_POSIX) */
+#endif
+
 
 int msh_exec(char *cmd, rt_size_t length)
 {
@@ -370,7 +519,9 @@ int msh_exec(char *cmd, rt_size_t length)
 #endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_LWP
-    if (_msh_exec_lwp(cmd, length) == 0)
+    /* exec from msh_exec , debug = 0*/
+    /* _msh_exec_lwp return is pid , <= 0 means failed */
+    if (_msh_exec_lwp(0, cmd, length) > 0)
     {
         return 0;
     }
@@ -472,6 +623,7 @@ void msh_auto_complete_path(char *path)
     }
     else
     {
+        int multi = 0;
         rt_size_t length, min_length;
 
         min_length = 0;
@@ -483,6 +635,7 @@ void msh_auto_complete_path(char *path)
             /* matched the prefix string */
             if (strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
             {
+                multi ++;
                 if (min_length == 0)
                 {
                     min_length = rt_strlen(dirent->d_name);
@@ -501,7 +654,7 @@ void msh_auto_complete_path(char *path)
 
         if (min_length)
         {
-            if (min_length < rt_strlen(full_path))
+            if (multi > 1)
             {
                 /* list the candidate */
                 rewinddir(dir);
@@ -519,6 +672,16 @@ void msh_auto_complete_path(char *path)
             length = index - path;
             rt_memcpy(index, full_path, min_length);
             path[length + min_length] = '\0';
+
+            /* try to locate folder */
+            if (multi == 1)
+            {
+                struct stat buffer = {0};
+                if ((stat(path, &buffer) == 0) && (S_ISDIR(buffer.st_mode)))
+                {
+                    strcat(path, "/");
+                }
+            }
         }
     }
 
@@ -558,7 +721,7 @@ void msh_auto_complete(char *prefix)
 
             ptr --;
         }
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) || defined(RT_USING_LWP)
         /* There is a chance that the user want to run the module directly. So
          * try to complete the file names. If the completed path is not a
          * module, the system won't crash anyway. */
