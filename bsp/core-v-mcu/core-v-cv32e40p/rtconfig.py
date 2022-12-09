@@ -69,4 +69,9 @@ def dist_handle(BSP_ROOT, dist_dir):
     cwd_path = os.getcwd()
     sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
     from sdk_dist import dist_do_building
+<<<<<<< HEAD
     dist_do_building(BSP_ROOT, dist_dir)
+=======
+    dist_do_building(BSP_ROOT, dist_dir)
+    
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd

@@ -6,6 +6,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018/10/28     Bernard      The unify RISC-V porting code.
+<<<<<<< HEAD
+=======
+ * 2022/12/08     WangShun     Change the parameters of rt_hw_context_switch_interrupt
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
  */
 
 #include <rthw.h>
@@ -103,17 +107,25 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  * #endif
  */
 
+<<<<<<< HEAD
 //extern void IRQ_Handler();
 #ifndef RT_USING_SMP
 void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+=======
+#ifndef RT_USING_SMP
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to,rt_thread_t from_thread, rt_thread_t to_thread)
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 {
     if (rt_thread_switch_interrupt_flag == 0)
         rt_interrupt_from_thread = from;
 
     rt_interrupt_to_thread = to;
     rt_thread_switch_interrupt_flag = 1;
+<<<<<<< HEAD
     //IRQ_Handler();
     //__asm volatile( "ecall" );
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
     return ;
 }
 #endif /* end of RT_USING_SMP */

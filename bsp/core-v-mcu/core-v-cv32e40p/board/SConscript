@@ -17,4 +17,8 @@ group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 #定义组Drivers 将board.c添加到当前组中 无以来条件 将路径导出为头文件路径 
 Return('group')
+<<<<<<< HEAD
 #将本脚本的配置导出给上级
+=======
+#将本脚本的配置导出给上级
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd

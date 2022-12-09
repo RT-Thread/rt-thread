@@ -4,4 +4,8 @@ config SOC_RISCV_FAMILY_Core_V
 config SOC_RISCV_SERIES_Core_V
     bool
     select ARCH_RISCV
+<<<<<<< HEAD
     select SOC_RISCV_FAMILY_Core_V
+=======
+    select SOC_RISCV_FAMILY_Core_V
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd

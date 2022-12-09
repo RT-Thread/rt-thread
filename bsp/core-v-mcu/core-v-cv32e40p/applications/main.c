@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * FreeRTOS Kernel V10.2.1
  * 1 tab == 8 spaces!
  */
@@ -17,10 +18,22 @@
 /* FreeRTOS kernel includes. */ 
 //#include <FreeRTOS.h>
 /* RT-Thread kernel includes. */
+=======
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-12-08     WangShun     first version
+ */
+
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 #include "rtthread.h"
 #include "hal_fc_event.h"
 #include <stdio.h>
 #include <stdint.h>
+<<<<<<< HEAD
 //#include "ringbuffer.h"
 #include "rtconfig.h"
 
@@ -40,10 +53,29 @@ void led_init(void)
 	rt_kprintf("RT-Thread TEST SUCCESS \r\n");
 }
 INIT_APP_EXPORT(led_init);
+=======
+#include "rtconfig.h"
+
+#define rtthread_task
+static struct rt_thread test1_thread;
+static rt_thread_t test2_thread = RT_NULL;
+
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t rt_test1_thread_stack[1024];
+static void test1_thread_entry(void* parameter);
+static void test2_thread_entry(void* parameter);
+
+void test_init(void)
+{
+	rt_kprintf("Hello RT-Thread\r\n");
+}
+INIT_APP_EXPORT(test_init);
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 
 int main(void)
 {
 #ifndef rtthread_task
+<<<<<<< HEAD
 	rt_thread_init(&led1_thread,                 /* 线程控制块 */
                    "led1",                       /* 线程名字 */
                    led1_thread_entry,            /* 线程入口函数 */
@@ -84,3 +116,44 @@ static void led2_thread_entry(void* parameter)
 	}
 }
 
+=======
+	rt_thread_init(&test1_thread,                 
+                   "test1",                       
+                   test1_thread_entry,            
+                   RT_NULL,                      
+                   &rt_test1_thread_stack[0],     
+                   sizeof(rt_test1_thread_stack), 
+                   6,                            
+                   20);                          
+
+    rt_thread_startup(&test1_thread);             
+
+    test2_thread = rt_thread_create( "test2",      
+                      test2_thread_entry,   		
+                      RT_NULL,             		
+                      512,                 		
+                      5,                   		
+                      20);                 		
+
+    rt_thread_startup(test2_thread);
+#endif
+}
+
+static void test1_thread_entry(void* parameter)
+{
+    while (1)
+    {
+    	rt_kprintf("test1\r\n");
+        rt_thread_delay(500);  
+    }
+}
+
+static void test2_thread_entry(void* parameter)
+{
+	while (1)
+	{
+        rt_kprintf("test2\r\n");
+		rt_thread_delay(500); 
+	}
+}
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd

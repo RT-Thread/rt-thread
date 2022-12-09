@@ -15,14 +15,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  * Author: Robert Balas (balasr@iis.ee.ethz.ch)
+<<<<<<< HEAD
+=======
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-12-08     WangShun     Remove FreeRTOS related code and add RT-Thread code
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
  */
 
 #include <stdint.h>
 #include <assert.h>
 
+<<<<<<< HEAD
 //#include <FreeRTOS.h>
 //#include "FreeRTOSConfig.h"
 
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 #include <core_pulp_cluster.h>
 #include <core-v-mcu-config.h>
 
@@ -33,6 +42,7 @@
 #include "hal_irq.h"
 #include "hal_soc_eu.h"
 #include "hal_apb_soc_ctrl_reg_defs.h"
+<<<<<<< HEAD
 
 #include "udma_uart_driver.h"
 #include "udma_i2cm_driver.h"
@@ -55,6 +65,20 @@
 char a[] = "a";
 char b[] = "b";
 
+=======
+#include "udma_uart_driver.h"
+#include "udma_i2cm_driver.h"
+#include "udma_qspi_driver.h"
+#include "hal_apb_i2cs.h"
+#include "hal_udma_ctrl_reg_defs.h"
+#include "hal_udma_uart_reg_defs.h"
+
+#include <rthw.h>
+#include <rtthread.h>
+#include "rtconfig.h"
+#define FOR_SIMULATION_TESTING 0
+
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 #if (FOR_SIMULATION_TESTING == 1)
 
 typedef struct
@@ -296,7 +320,11 @@ void system_init(void)
 
 	// hal_set_apb_i2cs_slave_on_off(1);
 	// if (hal_get_apb_i2cs_slave_address() != MY_I2C_SLAVE_ADDRESS)
+<<<<<<< HEAD
 	// 	hal_set_apb_i2cs_slave_address(MY_I2C_SLAVE_ADDRESS);
+=======
+	// hal_set_apb_i2cs_slave_address(MY_I2C_SLAVE_ADDRESS);
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 }
 
 void system_core_clock_update(void)
@@ -326,7 +354,10 @@ uint16_t Writeraw(uint8_t uart_id, uint16_t write_len, uint8_t* write_buffer) {
 void timer_irq_handler(uint32_t mcause)
 {
 #warning requires critical section if interrupt nesting is used.
+<<<<<<< HEAD
 	//Writeraw(0, 1 ,(uint8_t*)a);
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 	rt_interrupt_enter();
 	rt_tick_increase();
 	rt_interrupt_leave();
@@ -334,7 +365,10 @@ void timer_irq_handler(uint32_t mcause)
 
 void vSystemIrqHandler(uint32_t mcause)
 {
+<<<<<<< HEAD
 	//Writeraw(0, 1,(uint8_t*)b);
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 	isr_table[mcause & 0x1f](mcause & 0x1f);
 }
 
@@ -344,8 +378,11 @@ void undefined_handler(uint32_t mcause)
 #ifdef __PULP_USE_LIBC
 	abort();
 #else
+<<<<<<< HEAD
 	//	taskDISABLE_INTERRUPTS();
 	//	for(;;);
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 	if ((mcause == 18) || (mcause == 19) || (mcause == 31))
 	{
 		gSpecialHandlingIRQCnt++;
@@ -362,14 +399,22 @@ void undefined_handler(uint32_t mcause)
 	else
 	{
 		handler_count[mcause]++;
+<<<<<<< HEAD
 		//csr_read_clear(CSR_MIE, BIT(mcause));
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 	}
 #endif
 }
 
+<<<<<<< HEAD
 void vPortSetupTimerInterrupt(void)
 {
 
+=======
+void rt_systick_config(void)
+{
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 	extern int timer_irq_init(uint32_t ticks);
 	timer_irq_init(ARCHI_FPGA_FREQUENCY / RT_TICK_PER_SECOND);
 }

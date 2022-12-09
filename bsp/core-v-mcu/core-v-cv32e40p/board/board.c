@@ -5,24 +5,36 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2017-07-24     Tanek        the first version
  * 2018-11-12     Ernest Chen  modify copyright
+=======
+ * 2022-12-08     WangShun        the first version
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
  */
 
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 #include "udma_uart_driver.h"
 #include "hal_udma_ctrl_reg_defs.h"
 #include "hal_udma_uart_reg_defs.h"
 #include "core-v-mcu-config.h"
 #include "drv_usart.h"
 #include "string.h"
+<<<<<<< HEAD
 extern rt_uint8_t uart_rxbuffer[16];
 extern struct rt_ringbuffer uart_rxTCB;
 extern struct rt_semaphore  shell_rx_semaphore;
 extern void vPortSetupTimerInterrupt(void);
+=======
+
+extern void rt_systick_config(void);
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
 #define RT_HEAP_SIZE (64*1024)
@@ -43,7 +55,11 @@ void rt_hw_board_init()
 	extern void system_init(void);
 	system_init();
 	/* System Tick Configuration */
+<<<<<<< HEAD
 	vPortSetupTimerInterrupt();
+=======
+	rt_systick_config();
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 
 	volatile uint32_t mtvec = 0;
 	__asm volatile( "csrr %0, mtvec" : "=r"( mtvec ) );
@@ -63,6 +79,7 @@ void rt_hw_board_init()
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+<<<<<<< HEAD
 	//rt_ringbuffer_init(&uart_rxTCB,uart_rxbuffer,16);
 	//rt_sem_init(&(shell_rx_semaphore),"shell_rx",0,0);
 }
@@ -101,3 +118,6 @@ void rt_hw_console_output(const char *str)
 }
 #endif
 
+=======
+}
+>>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
