@@ -904,7 +904,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
     }
 }
 
-#ifdef RT_USING_POSIX_TERMIOS
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
 struct speed_baudrate_item
 {
     speed_t speed;
@@ -1052,7 +1052,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
             break;
 #ifdef RT_USING_POSIX_STDIO
-#ifdef RT_USING_POSIX_TERMIOS
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
         case TCGETA:
             {
                 struct termios *tio = (struct termios*)args;
