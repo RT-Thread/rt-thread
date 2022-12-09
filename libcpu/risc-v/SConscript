@@ -24,6 +24,8 @@ elif rtconfig.CPU == "ch32v3" :
     group = group
 elif rtconfig.CPU == "hpmicro":
     group = group
+elif rtconfig.CPU == "cv32e40p":
+    group = group
 else :
     group = group + SConscript(os.path.join('common', 'SConscript'))
 

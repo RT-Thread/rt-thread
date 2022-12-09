@@ -727,7 +727,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     case CLOCK_REALTIME:
     {
         rt_tick_t tick, tick_old = rt_tick_get();
-        if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
+        if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
         {
             tick = (rqtp->tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND + (rqtp->tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
             rt_tick_t rt_tick = rt_tick_get();
@@ -763,7 +763,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         float unit = clock_cpu_getres();
 
         cpu_tick = (rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec * (NANOSECOND_PER_SECOND / NANOSECOND_PER_SECOND)) / unit;
-        if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
+        if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
             cpu_tick = cpu_tick < cpu_tick_old ? 0 : cpu_tick - cpu_tick_old;
         tick = (unit * cpu_tick) / (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
         rt_thread_delay(tick);
@@ -1007,7 +1007,6 @@ RTM_EXPORT(timer_delete);
  **/
 int timer_getoverrun(timer_t timerid)
 {
-    struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
     rt_set_errno(ENOSYS);
     return -RT_ERROR;
 }
@@ -1125,7 +1124,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         *    RT_TICK_PER_SECOND           NANOSECOND_PER_SECOND                         NANOSECOND_PER_SECOND
         *
         */
-    if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
+    if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
     {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);
