@@ -155,12 +155,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* Common Utilities */
 
-#ifdef RT_USING_SMART
-    #define rt_using_smart (1)
-#else
-    #define rt_using_smart (0)
-#endif
-
 #define RT_UNUSED(x)                   ((void)x)
 
 /* Compiler Related Definitions */
