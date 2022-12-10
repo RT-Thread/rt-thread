@@ -17,13 +17,13 @@
 #define LOAD                    ld
 #define REGBYTES                8
 #else
-<<<<<<< HEAD
+
 #define STORE                     sw
 #define LOAD                         lw
-=======
+
 #define STORE                   sw
 #define LOAD                    lw
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
+
 #define REGBYTES                4
 #endif
 
