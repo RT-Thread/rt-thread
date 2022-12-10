@@ -117,8 +117,6 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to,rt_thread_t f
     rt_interrupt_to_thread = to;
     rt_thread_switch_interrupt_flag = 1;
 
-    //IRQ_Handler();
-    //__asm volatile( "ecall" );
 
     return ;
 }
