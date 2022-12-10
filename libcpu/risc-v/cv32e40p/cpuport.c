@@ -110,7 +110,6 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 
 #ifndef RT_USING_SMP
 void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to,rt_thread_t from_thread, rt_thread_t to_thread)
->>>>>>> 1185482745fa76c9094f8cf9227f85d55ed8e2bd
 {
     if (rt_thread_switch_interrupt_flag == 0)
         rt_interrupt_from_thread = from;
