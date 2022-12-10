@@ -30,7 +30,6 @@
 #ifndef __PMSIS_IMPLEM_PMSIS_TYPES_H__
 #define __PMSIS_IMPLEM_PMSIS_TYPES_H__
 
-//#include "pmsis/pmsis_types.h"
 #include "hal_pmsis_types.h"
 
 #ifndef PI_TASK_IMPLEM
@@ -57,6 +56,5 @@ typedef struct pi_task
 } pi_task_t;
 
 #endif  /* __PMSIS_IMPLEM_PMSIS_TYPES_H__ */
-
 
 #endif /* HAL_INCLUDE_HAL_PMSIS_TYPES_PI_H_ */

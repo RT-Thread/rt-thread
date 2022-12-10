@@ -22,7 +22,6 @@
 #include <csr.h>
 #include <pulp_io.h>
 #include <stdint.h>
-
 #include "core-v-mcu-pulp-mem-map.h"
 #include "hal_irq.h"
 
@@ -57,7 +56,7 @@ uint32_t irq_clint_enable()
 	val = csr_read(CSR_MSTATUS);
 
 	val = csr_read_set(CSR_MSTATUS, MSTATUS_IE);
-	//csr_write(CSR_MIE, BIT(25));
+
 	val = csr_read(CSR_MSTATUS);
 	return val;
 }

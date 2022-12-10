@@ -19,14 +19,8 @@
 #ifndef HAL_INCLUDE_HAL_I2C_INTERNAL_H_
 #define HAL_INCLUDE_HAL_I2C_INTERNAL_H_
 
-
-
 #include "core-v-mcu-pmsis.h"
-//#include "pmsis/task.h"
 #include "hal_i2c_pi.h"
-//#include "hal/include/hal_pmsis_hal.h"
-//#include "pmsis/implem/hal/hal_pmsis_hal.h"
-//#include "pmsis/implem/hal/hal.h"
 #include "hal_soc_eu_periph.h"
 
 /*******************************************************************************

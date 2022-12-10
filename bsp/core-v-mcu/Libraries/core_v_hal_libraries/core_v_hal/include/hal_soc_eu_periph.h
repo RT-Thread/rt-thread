@@ -19,9 +19,7 @@
 #ifndef HAL_INCLUDE_HAL_SOC_EU_PERIPH_H_
 #define HAL_INCLUDE_HAL_SOC_EU_PERIPH_H_
 
-//#include "pmsis/targets/target.h"
 #include "core-v-mcu-target.h"
-//#include "cores/TARGET_RISCV_32/pulp_io.h"
 #include "pulp_io.h"
 
 /*!

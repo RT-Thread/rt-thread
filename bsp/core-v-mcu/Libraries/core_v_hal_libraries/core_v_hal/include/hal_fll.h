@@ -20,18 +20,14 @@
 #ifndef HAL_INCLUDE_HAL_FLL_H_
 #define HAL_INCLUDE_HAL_FLL_H_
 
-
 #define FLL_STATUS_OFFSET        0x000
 #define FLL_CONF1_OFFSET         0x004
 #define FLL_CONF2_OFFSET         0x008
 #define FLL_INTEGRATOR_OFFSET    0x00C
 
-
 #define FLL_STATUS_MULT_FACTOR_BIT                 0
 #define FLL_STATUS_MULT_FACTOR_WIDTH               16
 #define FLL_STATUS_MULT_FACTOR_MASK                (0xFFFF)
-
-
 
 #define FLL_CONF1_MODE_BIT                       31
 #define FLL_CONF1_MODE_WIDTH                     1
@@ -55,8 +51,6 @@
 
 #define FLL_CONF1_MODE_STANDALONE                0
 #define FLL_CONF1_MODE_NORMAL                    1
-
-
 
 #define FLL_CONF2_GAIN_BIT                       0
 #define FLL_CONF2_GAIN_WIDTH                     4
@@ -86,8 +80,6 @@
 #define FLL_CONF2_DITHERING_WIDTH                1
 #define FLL_CONF2_DITHERING_MASK                 (0x80000000)
 
-
-
 #define FLL_INTEGRATOR_INT_BIT                       16
 #define FLL_INTEGRATOR_INT_WIDTH                     10
 #define FLL_INTEGRATOR_INT_MASK                      (0x03FF0000)
@@ -95,8 +87,6 @@
 #define FLL_INTEGRATOR_FRACT_BIT                     6
 #define FLL_INTEGRATOR_FRACT_WIDTH                   10
 #define FLL_INTEGRATOR_FRACT_MASK                    (0x0000FFC0)
-
-
 
 #if !defined(LANGUAGE_ASSEMBLY) && !defined(_ASMLANGUAGE)
 
@@ -178,8 +168,6 @@ typedef union {
 #define FLL_CONF1_MULT_FACTOR_SET(dst,src)       (__BITINSERT((dst),(src),0,16))
 #define FLL_CONF1_MULT_FACTOR(factor)            ((factor) << 0)
 
-
-
 #define FLL_CONF2_GAIN_GET(value)                ((((unsigned int)(value)) >> 0) & 0xF)
 #define FLL_CONF2_GAIN_SET(dst,src)              (__BITINSERT((dst),(src),4,0))
 #define FLL_CONF2_GAIN(value)                    ((value) << 0)
@@ -208,8 +196,6 @@ typedef union {
 #define FLL_CONF2_DITHER_SET(dst,src)            (__BITINSERT((dst),(src),1,31))
 #define FLL_CONF2_DITHER(value)                  ((value) << 31)
 
-
-
 #define FLL_INTEGRATOR_FRACT_GET(value)          ((((unsigned int)(value)) >> 6) & 0x3FF)
 #define FLL_INTEGRATOR_FRACT_SET(dst,src)        (__BITINSERT((dst),(src),6,10))
 #define FLL_INTEGRATOR_FRACT(value)              ((value) << 6)
@@ -218,11 +204,6 @@ typedef union {
 #define FLL_INTEGRATOR_INT_SET(dst,src)        (__BITINSERT((dst),(src),16,10))
 #define FLL_INTEGRATOR_INT(value)              ((value) << 16)
 
-
-
-
-
-
 /* Maximum Log2(DCO Frequency) */
 #define FLL_LOG2_MAXDCO     29
 /* Maximum Log2(Clok Divider) */
@@ -230,11 +211,9 @@ typedef union {
 /* Maximum Log2(Multiplier) */
 #define FLL_LOG2_MAXM       (FLL_LOG2_MAXDCO - ARCHI_REF_CLOCK_LOG2)
 
-
 /* TODO: doc */
 void pulp_fll_init(void);
 unsigned int __fll_init(int fll);
 unsigned int __rt_fll_set_freq(int fll, unsigned int frequency);
-
 
 #endif /* HAL_INCLUDE_HAL_FLL_H_ */

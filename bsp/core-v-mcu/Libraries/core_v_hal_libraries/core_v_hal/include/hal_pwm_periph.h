@@ -15,13 +15,8 @@
  * limitations under the License.
  */
 
-
 #ifndef HAL_INCLUDE_HAL_PWM_PERIPH_H_
 #define HAL_INCLUDE_HAL_PWM_PERIPH_H_
-
-
-
-
 
 /* ----------------------------------------------------------------------------
    -- PWM Peripheral Access Layer --
@@ -37,7 +32,6 @@ typedef struct
     volatile uint32_t ch_lut[4];       /**< ADV_TIMER0 channel LUT configuration register. */
     volatile uint32_t counter;         /**< ADV_TIMER0 counter register. */
 } pwm_t;
-
 
 /* ----------------------------------------------------------------------------
    -- PWM Register Bitfield Access --

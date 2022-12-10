@@ -123,5 +123,4 @@
 #define UDMA_I2S(id)                                (UDMA_PERIPH_BASE_ADDR + (UDMA_I2S_ID(id) << UDMA_PERIPH_SIZE_LOG2))
 #define UDMA_CPI(id)                                (UDMA_PERIPH_BASE_ADDR + (UDMA_CPI_ID(id) << UDMA_PERIPH_SIZE_LOG2))
 
-
 #endif /* TARGET_CORE_V_MCU_INCLUDE_CORE_V_MCU_MEMORY_MAP_H_ */

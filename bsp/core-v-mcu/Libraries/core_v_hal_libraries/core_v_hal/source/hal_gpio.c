@@ -16,16 +16,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
- //#include "FreeRTOS.h"
- //#include "FreeRTOSConfig.h"
- //#include "kernel/include/task.h"		// Needed for configASSERT
-
  #include "core-v-mcu-config.h"
  #include "efpga_template_reg_defs.h"
  #include "hal_apb_gpio_reg_defs.h"
  #include "hal_gpio.h"
-
-
+ 
 void hal_efpgaio_output(uint8_t efpgaio_num, efpgaio_enum_typedef value) {
 
 Efpga_t *efpga = (Efpga_t*)EFPGAIO_START_ADDR;

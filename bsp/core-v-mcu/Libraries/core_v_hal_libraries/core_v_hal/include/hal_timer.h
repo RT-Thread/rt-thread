@@ -23,8 +23,6 @@
 #ifndef HAL_INCLUDE_HAL_TIMER_H_
 #define HAL_INCLUDE_HAL_TIMER_H_
 
-
-
 #include "bits.h"
 
 /* Timer Low Configuration register. */
