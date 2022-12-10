@@ -17,7 +17,6 @@
 #define LOAD                    ld
 #define REGBYTES                8
 #else
-
 #define STORE                   sw
 #define LOAD                    lw
 #define REGBYTES                4
