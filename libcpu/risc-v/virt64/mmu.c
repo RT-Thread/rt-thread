@@ -10,6 +10,9 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+
+#ifdef RT_USING_SMART
+
 #include <board.h>
 #include <page.h>
 #include <stdlib.h>
@@ -639,3 +642,5 @@ void rt_hw_mmu_setup(rt_mmu_info *mmu_info, struct mem_desc *mdesc, int desc_nr)
 
     rt_hw_mmu_switch((void *)MMUTable);
 }
+
+#endif /* RT_USING_SMART */

@@ -43,10 +43,12 @@ _save_context:
     // now we are ready to enter interrupt / excepiton handler
 _distinguish_syscall:
     csrr    t0, scause
+#ifdef RT_USING_SMART
     // TODO swap 8 with config macro name
     li      t1, 8
     beq     t0, t1, syscall_entry
     // syscall never return here
+#endif
 
 _handle_interrupt_and_exception:
     mv      a0, t0
@@ -70,9 +72,11 @@ _context_switch:
     jal     rt_hw_context_switch
 
 _resume_execution:
+#ifdef RT_USING_SMART
     LOAD    t0, FRAME_OFF_SSTATUS(sp)
     andi    t0, t0, SSTATUS_SPP
     beqz    t0, arch_ret_to_user
+#endif
 
 _resume_kernel:
     RESTORE_ALL
