@@ -11,6 +11,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+
 #include "cpuport.h"
 
 #ifndef RT_USING_SMP
