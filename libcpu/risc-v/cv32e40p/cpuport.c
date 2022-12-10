@@ -11,7 +11,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
 #include "cpuport.h"
 
 #ifndef RT_USING_SMP
@@ -104,7 +103,6 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  * #endif
  */
 
-//extern void IRQ_Handler();
 #ifndef RT_USING_SMP
 void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 
