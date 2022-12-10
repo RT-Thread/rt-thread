@@ -12,13 +12,7 @@
 #include <stdint.h>
 #include <rtthread.h>
 
-
-
 typedef void (*irq_handler_t)(void);
 extern const irq_handler_t isr_table[];
-
-
-
-
 
 extern void vSystemIrqHandler(uint32_t mcause);
