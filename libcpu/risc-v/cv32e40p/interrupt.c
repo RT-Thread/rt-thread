@@ -12,8 +12,6 @@
 #include <stdint.h>
 #include <rtthread.h>
 
-//#include <board.h>
-//#include <RV32M1_ri5cy.h>
 
 
 typedef void (*irq_handler_t)(void);
