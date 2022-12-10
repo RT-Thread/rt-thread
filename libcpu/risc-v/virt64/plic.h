@@ -15,20 +15,14 @@
 #include <rtconfig.h>
 #include <rthw.h>
 
-/*
- * This machine puts platform-level interrupt controller (PLIC) here.
- * Here only list PLIC registers in Machine mode.
- *
- */
+#define PLIC_PRIORITY_BASE  0x0
+#define PLIC_PENDING_BASE   0x1000
+#define PLIC_ENABLE_BASE    0x2000
+#define PLIC_CONTEXT_BASE   0x200000
 
-#define PLIC_PRIORITY_BASE 0x0
-#define PLIC_PENDING_BASE 0x1000
-#define PLIC_ENABLE_BASE 0x2000
-#define PLIC_CONTEXT_BASE 0x200000
+extern size_t plic_base;
 
-#define PLIC_BASE_ADDR 0xC000000
-
-#define VIRT_PLIC_BASE                  0x0c000000L
+#define VIRT_PLIC_BASE                  (plic_base)
 
 #define PLIC_PRIORITY_OFFSET            (0x0)
 #define PLIC_PENDING_OFFSET             (0x1000)
@@ -61,6 +55,12 @@
 
 #define PLIC_PRIORITY(id)               (VIRT_PLIC_BASE + PLIC_PRIORITY_OFFSET + (id) * 4)
 #define PLIC_PENDING(id)                (VIRT_PLIC_BASE + PLIC_PENDING_OFFSET + ((id) / 32))
+
+#define WORD_CNT_BYTE (1024 / 8)
+
+/* IRQ config in system, max 1024 (from 0 to 1023) */
+#define CONFIG_IRQ_NR (128)
+#define CONFIG_IRQ_WORD (CONFIG_IRQ_NR / 32)
 
 void plic_set_priority(int irq, int priority);
 void plic_irq_enable(int irq);
