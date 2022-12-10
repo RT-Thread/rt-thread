@@ -34,15 +34,6 @@ uint32_t soc_eu_mask_get(uint32_t offset)
 	return readw((uintptr_t)(SOC_EU_ADDR + offset));
 }
 
-/* void soc_eu_irq_mask_set(uint32_t mask) */
-/* { */
-/* 	writew(mask, PULP_SOC_EU_ADDR + ) */
-/* } */
-
-/* uint32_t soc_eu_irq_mask_get() */
-/* { */
-/* } */
-
 void pulp_soc_eu_event_init()
 {
 	/* deactivate all soc events */

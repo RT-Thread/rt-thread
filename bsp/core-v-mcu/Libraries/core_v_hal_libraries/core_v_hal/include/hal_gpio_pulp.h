@@ -31,11 +31,8 @@
 #ifndef HAL_INCLUDE_HAL_GPIO_PULP_H_
 #define HAL_INCLUDE_HAL_GPIO_PULP_H_
 
-
-
 #include <stdint.h>
 #include <assert.h>
-
 #include "pulp_io.h"
 #include "hal_pinmux1.h"
 #include "core-v-mcu-pulp-mem-map.h"

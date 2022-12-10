@@ -20,9 +20,6 @@
 #ifndef HAL_INCLUDE_HAL_PWM_CTRL_PERIPH_H_
 #define HAL_INCLUDE_HAL_PWM_CTRL_PERIPH_H_
 
-
-
-
 /* ----------------------------------------------------------------------------
    -- PWM_CTRL Peripheral Access Layer --
    ---------------------------------------------------------------------------- */
@@ -33,7 +30,6 @@ typedef struct
     volatile uint32_t event_cfg; /**< ADV_TIMERS events configuration register. */
     volatile uint32_t cg; /**< ADV_TIMERS channels clock gating configuration register. */
 } pwm_ctrl_t;
-
 
 /* ----------------------------------------------------------------------------
    -- PWM_CTRL Register Bitfield Access --
