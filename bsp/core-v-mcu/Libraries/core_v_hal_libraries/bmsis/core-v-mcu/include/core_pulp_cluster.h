@@ -27,7 +27,6 @@
 
 #ifdef FEATURE_CLUSTER
 
-//#include "cores/TARGET_RISCV_32/core_pulp.h"
 #include "core_pulp.h"
 
 #ifdef __cplusplus
@@ -44,8 +43,6 @@
 /** SoC events statically reserved by the runtime*/
 #define FC_CLUSTER_SW_NOTIF_EVENT      0                /**< Used to notify FC*/
 #define CLUSTER_CLUSTER_SW_NOTIF_EVENT 1                /**< Used to notify CLUSTER*/
-
-
 
 /**
   \ingroup    CMSIS_core_register
@@ -77,7 +74,6 @@ typedef struct
 #define SCB_FETCH_EN_Msk               (1UL /* << SCB_FETCH_EN_Pos*/)    /*!< SCB FETCH_EN Mask */
 /*@} end of group CMSIS_FC_CTRL */
 
-
 /**
   \ingroup  CMSIS_core_register
   \defgroup CMSIS_SCBC     System Control Block for Icache (SCBC)
@@ -103,7 +99,6 @@ typedef struct
 #define SCBC_STATUS_Msk                    (1UL /* << SCBC_STATUS_Pos*/)         /*!< SCBC_STATUS Mask */
 
 /*@} end of group CMSIS_SCBC */
-
 
 /**
   \ingroup  CMSIS_core_register
@@ -138,7 +133,6 @@ typedef struct {
 
 /*@} end of group CMSIS_EU_CORE_DEMUX */
 
-
 /**
   \ingroup  CMSIS_core_register
   \defgroup CMSIS_EU_SEC_DEMUX     Event Unit Security
@@ -157,7 +151,6 @@ typedef struct {
 #define EU_SEC_ELEM_NUM                 8
 
 /*@} end of group CMSIS_EU_DEMUX */
-
 
 /**
   \ingroup  CMSIS_core_register
@@ -201,9 +194,7 @@ typedef struct {
   __IOM  uint32_t TRIGGER_CLR[8];             /**< EU_SW_EVENTS_DEMUX trigger clear register, offset: 0x80 */
 } EU_SW_EVENTS_DEMUX_Type;
 
-
 /*@} end of group CMSIS_EU_SW_EVENTS_DEMUX */
-
 
 /**
   \ingroup  CMSIS_core_register
@@ -234,7 +225,6 @@ typedef struct {
 
 /*@} end of group CMSIS_EU_MUTEX_DEMUX */
 
-
 /**
   \ingroup  CMSIS_core_register
   \defgroup CMSIS_EU_BARRIER_DEMUX     Event Unit Barrier
@@ -256,7 +246,6 @@ typedef struct {
 
 /*@} end of group CMSIS_EU_BARRIER_DEMUX */
 
-
 /**
   \ingroup  CMSIS_core_register
   \defgroup CMSIS_EU_SOC_EVENTS     Event Unit Barrier
@@ -276,9 +265,6 @@ typedef struct {
 #define EU_CURRENT_SOC_EVENT_MASK                  0xFF
 
 /*@} end of group CMSIS_EU_SOC_EVENTS */
-
-
-
 
 /**
   \ingroup    CMSIS_core_register
@@ -328,7 +314,6 @@ typedef struct
 
 /*@} end of group CMSIS_DMAMCHAN */
 
-
 /**
   \ingroup    CMSIS_core_register
   \defgroup   CMSIS_core_base     Core Definitions
@@ -377,7 +362,6 @@ typedef struct {
     __O uint32_t TCDM_STRIDE_REG;
 } decompressor_t;
 
-
 /**
   \ingroup  CMSIS_core_register
   \defgroup CMSIS_CLUSTER_EU_CORES    Cluster Event Unit Cores
@@ -412,7 +396,6 @@ typedef struct {
 #define CLUSTER_DISPATCH_IS_JOB_SHIFT                (31U)
 #define CLUSTER_DISPATCH_IS_JOB(x)                   (((uint32_t)(((uint32_t)(x)) << CLUSTER_DISPATCH_IS_JOB_SHIFT)) & CLUSTER_DISPATCH_IS_JOB_MASK)
 
-
 /* Memory map */
 
 #define CLUSTER_BASE                    (ARCHI_CLUSTER_GLOBAL_ADDR(0)) /*!< CLUSTER Base Address */
@@ -426,7 +409,6 @@ typedef struct {
 #define CLUSTER_EU_SOC_EVENTS_BASE      (ARCHI_EU_ADDR + 0x700UL) /*!< CLUSTER Event Unit SOC Events Base Address */
 #define CLUSTER_EU_EXT_EVENTS_BASE      (ARCHI_EU_ADDR + 0x780UL) /*!< CLUSTER Event Unit EXT Events Base Address */
 
-
 #define CLUSTER_EU_CORE_DEMUX_BASE      (ARCHI_DEMUX_PERIPHERALS_ADDR)        /*!< CLUSTER Event Unit Core Demux Base Address */
 #define CLUSTER_EU_SEC_DEMUX_BASE       (ARCHI_DEMUX_PREIPHERALS_ADDR + 0x040UL)  /*!< CLUSTER Event Unit Security Demux Base Address */
 #define CLUSTER_EU_LOOP_DEMUX_BASE      (ARCHI_DEMUX_PREIPHERALS_ADDR + 0x060UL)  /*!< CLUSTER Event Unit Loop Demux Base Address */
@@ -434,7 +416,6 @@ typedef struct {
 #define CLUSTER_EU_MUTEX_DEMUX_BASE     (ARCHI_DEMUX_PREIPHERALS_ADDR + 0x0C0UL)  /*!< CLUSTER Event Unit Mutex Demux Base Address */
 #define CLUSTER_EU_SW_EVENTS_DEMUX_BASE (ARCHI_DEMUX_PREIPHERALS_ADDR + 0x100UL)  /*!< CLUSTER Event Unit SW Events Demux Base Address */
 #define CLUSTER_EU_BARRIER_DEMUX_BASE   (ARCHI_DEMUX_PREIPHERALS_ADDR + 0x200UL)  /*!< CLUSTER Event Unit Barrier Demux Base Address */
-
 
 /* Cluster Core Structrue definitions */
 #define CLUSTER_EU_SW_EVENTS      ((EU_SW_EVENTS_DEMUX_Type   *)  CLUSTER_EU_SW_EVENTS_BASE) /*!< EU_SW_EVENTS_DEMUX configuration struct */
@@ -445,8 +426,6 @@ typedef struct {
 #define CLUSTER_SysTick             ((SysTick_Type   *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
 #define CLUSTER_TIMERL              ((TimerL_Type    *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
 #define CLUSTER_TIMERH              ((TimerH_Type    *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
-
-
 
 #ifdef __cplusplus
 }

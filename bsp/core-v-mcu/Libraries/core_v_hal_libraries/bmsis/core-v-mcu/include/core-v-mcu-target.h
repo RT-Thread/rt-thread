@@ -24,7 +24,6 @@
 #include "core_pulp.h"
 #include "core_utils.h"
 #include "core-v-mcu-periph.h"
-//#include "pmsis/targets/periph.h"
 
 static inline void hal_compiler_barrier()
 {

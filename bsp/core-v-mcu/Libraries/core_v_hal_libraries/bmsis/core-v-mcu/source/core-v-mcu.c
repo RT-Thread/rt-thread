@@ -25,8 +25,6 @@
 
 #include <core_pulp_cluster.h>
 #include <core-v-mcu-config.h>
-
-//#include "pmsis/implem/drivers/fc_event/fc_event.h"
 #include "hal_fc_event.h"
 /* TODO: weird include */
 #include "core-v-mcu-properties.h"
@@ -34,12 +32,8 @@
 #include "hal_soc_eu.h"
 #include "hal_apb_soc_ctrl_reg_defs.h"
 #include "udma_uart_driver.h"
-#include "udma_i2cm_driver.h"
-#include "udma_qspi_driver.h"
-#include "hal_apb_i2cs.h"
 #include "hal_udma_ctrl_reg_defs.h"
 #include "hal_udma_uart_reg_defs.h"
-
 #include <rthw.h>
 #include <rtthread.h>
 #include "rtconfig.h"
@@ -235,12 +229,7 @@ void system_init(void)
 	pulp_soc_eu_event_init();
 
 	/* Setup soc events handler. */
-	// pi_fc_event_handler_init(FC_SOC_EVENT);
 	pi_fc_event_handler_init(11);
-
-	/* TODO: I$ enable*/
-	/* enable core level interrupt (mie) */
-	//irq_clint_enable();
 
 	val = csr_read(CSR_MIE);
 
@@ -249,44 +238,10 @@ void system_init(void)
 	{
 		udma_uart_open(id, 115200);
 	}
-	#if 0  
-	for (uint8_t id = 0; id != N_I2CM; id++)
-	{
-		udma_i2cm_open(id, 400000); // 200000
-	} 
-	for (i = 0; i < N_QSPIM; i++)
-	{
-		setQspimPinMux(i);
-		udma_qspim_open(i, 2500000);
-		udma_qspim_control((uint8_t)i, (udma_qspim_control_type_t)kQSPImReset, (void *)0);
-
-		lFlashID = udma_flash_readid(i, 0);
-		if ((lFlashID == 0xFFFFFFFF) || (lFlashID == 0))
-		{
-			gQSPIFlashPresentFlg[i] = 0;
-		}
-		else
-		{
-			gQSPIFlashPresentFlg[i] = 1;
-			if ((lFlashID & 0xFF) == 0x20)
-			{
-				gMicronFlashDetectedFlg[i] = 1;
-				gQSPIIdNum = 0;
-			}
-			else
-				gMicronFlashDetectedFlg[i] = 0;
-		}
-		restoreQspimPinMux(i);
-	}
-	#endif
 
 #if (FOR_SIMULATION_TESTING == 1)
 	forSimulationTesting();
 #endif
-
-	// hal_set_apb_i2cs_slave_on_off(1);
-	// if (hal_get_apb_i2cs_slave_address() != MY_I2C_SLAVE_ADDRESS)
-	// hal_set_apb_i2cs_slave_address(MY_I2C_SLAVE_ADDRESS);
 }
 
 void system_core_clock_update(void)
@@ -357,106 +312,3 @@ void rt_systick_config(void)
 	extern int timer_irq_init(uint32_t ticks);
 	timer_irq_init(ARCHI_FPGA_FREQUENCY / RT_TICK_PER_SECOND);
 }
-
-#if (FOR_SIMULATION_TESTING == 1)
-uint8_t gCamDataBuf[1024];
-
-void udma_cam_open(uint8_t cam_id)
-{
-	int i = 0;
-	volatile UdmaCtrl_t *pudma_ctrl = (UdmaCtrl_t *)UDMA_CH_ADDR_CTRL;
-
-	/* Enable reset and enable uart clock */
-	pudma_ctrl->reg_rst |= (UDMA_CTRL_CAM0_CLKEN << cam_id);
-	pudma_ctrl->reg_rst &= ~(UDMA_CTRL_CAM0_CLKEN << cam_id);
-	pudma_ctrl->reg_cg |= (UDMA_CTRL_CAM0_CLKEN << cam_id);
-
-	// psdio_regs->clk_div_b.clk_div = 5;
-	// psdio_regs->clk_div_b.valid = 1;
-	hal_setpinmux(21, 0); // cam0_vsync
-	hal_setpinmux(22, 0); // cam0_hsync
-	hal_setpinmux(25, 0); // cam0_clk
-	for (i = 0; i < 8; i++)
-	{
-		// set pin muxes to cam functionality
-		hal_setpinmux(29 + i, 0);
-	}
-	return;
-}
-
-void cam_interface_init(uint16_t x, uint16_t y, uint8_t aBitMode)
-{
-	camera_struct_t *camera;
-
-	uint16_t lXCoordOfUpperRightCorner = 0; // X coordinate of upper right corner of slice
-	uint16_t lYCoordOfUpperRightCorner = 0; // Y coordinate of upper right corner of slice
-
-	lXCoordOfUpperRightCorner = x + 3;
-	lYCoordOfUpperRightCorner = y + 3;
-	// camera = (camera_struct_t *)0x1A102300;  // Peripheral 5?
-	camera = (camera_struct_t *)(UDMA_CH_ADDR_CAM + 0 * UDMA_CH_SIZE);
-	camera->cfg_ll = 0 << 16 | 0;
-	camera->cfg_ur = ((lYCoordOfUpperRightCorner << 16) | lXCoordOfUpperRightCorner);
-	// camera->cfg_ur = 323<<16 | 243; // 320 x 240 ?
-	camera->cfg_filter = (1 << 16) | (1 << 8) | 1;
-	// camera->cfg_size = 324;
-	camera->cfg_size = y + 4;
-	camera->vsync_pol = 1;
-	if (aBitMode == 1)
-	{
-		camera->cfg_glob |= (1 << 17);
-	}
-	else if (aBitMode == 4)
-	{
-		camera->cfg_glob |= (1 << 16);
-	}
-	else if (aBitMode == 8)
-	{
-		camera->cfg_glob |= (0 << 0);
-	}
-	camera->cfg_glob |= (0 << 0) |	    //  framedrop disabled
-			    (000000 << 1) | // number of frames to drop
-			    (0 << 7) |	    // Frame slice disabled
-			    (004 << 8) |    // Format binary 100 = ByPass little endian
-			    (0000 << 11);   // Shift value ignored in bypass
-}
-
-uint8_t cam_grab_frame(int x, int y, uint8_t *pparam)
-{
-	uint32_t lCounter = 0;
-	uint8_t lStatus = 0;
-	uint16_t lX = x + 4;
-	uint16_t lY = y + 4;
-
-	camera_struct_t *camera;
-	// camera = (camera_struct_t *)0x1A102300;  // Peripheral 5?
-	camera = (camera_struct_t *)(UDMA_CH_ADDR_CAM + 0 * UDMA_CH_SIZE);
-
-	camera->rx_saddr = pparam;
-	camera->rx_size = (lX * lY);
-	camera->rx_cfg = 0x12;				  // start 16-bit transfers
-	camera->cfg_glob |= camera->cfg_glob | (1 << 31); // enable 1 == go
-
-	lCounter = 0;
-	while (camera->rx_size != 0)
-	{
-		lCounter++;
-		if (lCounter >= 0x00100000)
-		{
-			lStatus = 3; // Time out
-			break;
-		}
-	}
-	// configASSERT( xSemaphoreTake( shSemaphoreHandle, 1000000 ) == pdTRUE );
-	camera->cfg_glob = camera->cfg_glob & (0x7fffffff); // enable 1 == go
-	// configASSERT( xSemaphoreGive( shSemaphoreHandle ) == pdTRUE );
-	return lStatus;
-}
-
-void forSimulationTesting(void)
-{
-	udma_cam_open(0);
-	cam_interface_init(240, 320, 8);
-	cam_grab_frame(240, 320, gCamDataBuf);
-}
-#endif

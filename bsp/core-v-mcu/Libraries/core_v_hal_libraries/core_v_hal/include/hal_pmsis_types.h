@@ -23,7 +23,6 @@
  * @defgroup groupDrivers Drivers
  */
 
-
 /// @cond IMPLEM
 
 /**

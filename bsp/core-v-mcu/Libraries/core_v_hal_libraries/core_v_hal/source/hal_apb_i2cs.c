@@ -1,7 +1,6 @@
 #include "core-v-mcu-config.h"
 #include "hal_apb_i2cs_reg_defs.h"
 
-
 uint8_t hal_get_apb_i2cs_slave_address(void)
 {
 

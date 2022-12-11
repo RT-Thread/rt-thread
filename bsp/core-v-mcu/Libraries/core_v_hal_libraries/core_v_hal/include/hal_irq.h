@@ -21,11 +21,8 @@
  *         Germain Haugou (germain.haugou@iis.ee.ethz.ch)
  */
 
-
 #ifndef HAL_INCLUDE_HAL_IRQ_H_
 #define HAL_INCLUDE_HAL_IRQ_H_
-
-
 
 #include "bits.h"
 

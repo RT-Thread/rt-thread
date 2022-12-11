@@ -17,15 +17,11 @@
 #ifndef HAL_INCLUDE_HAL_I2C_PI_H_
 #define HAL_INCLUDE_HAL_I2C_PI_H_
 
-
-
-//#include "pmsis/pmsis_types.h"
 #include "hal_pmsis_types.h"
 
 /**
 * @ingroup groupDrivers
 */
-
 
 /**
  * @defgroup I2C I2C
