@@ -17,7 +17,7 @@
 
 static struct rt_thread led;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t led_stack[256];
 
 static void rt_thread_entry_led(void *parameter)

@@ -22,7 +22,7 @@
 #include <rtdbg.h>
 
 static struct rt_thread usb_thread;
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char usb_thread_stack[1024];
 static struct rt_semaphore tx_sem_complete;
 

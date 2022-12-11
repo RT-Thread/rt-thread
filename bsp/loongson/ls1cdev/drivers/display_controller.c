@@ -43,7 +43,7 @@ struct vga_struct vga_mode[] =
 
 static volatile int fb_index = 0;
 
-ALIGN(16)
+rt_align(16)
 volatile rt_uint16_t _rt_framebuffer[FB_YSIZE][FB_XSIZE];
 volatile rt_uint16_t _rt_framebuffer0[FB_YSIZE][FB_XSIZE];
 volatile rt_uint16_t _rt_framebuffer1[FB_YSIZE][FB_XSIZE];

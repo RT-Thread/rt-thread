@@ -164,7 +164,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
-#define ALIGN(n)                    __attribute__((aligned(n)))
+#define rt_align(n)                    __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
 /* module compiling */
@@ -177,7 +177,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_section(x)               @ x
 #define rt_used                     __root
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    PRAGMA(data_alignment=n)
+#define rt_align(n)                    PRAGMA(data_alignment=n)
 #define rt_weak                     __weak
 #define rt_inline                   static inline
 #define RTT_API
@@ -192,21 +192,21 @@ typedef __gnuc_va_list              va_list;
 #endif /* RT_USING_LIBC */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
-#define ALIGN(n)                    __attribute__((aligned(n)))
+#define rt_align(n)                    __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
 #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
-#define ALIGN(n)                    __attribute__((aligned(n)))
+#define rt_align(n)                    __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (_MSC_VER)
 #define rt_section(x)
 #define rt_used
-#define ALIGN(n)                    __declspec(align(n))
+#define rt_align(n)                    __declspec(align(n))
 #define rt_weak
 #define rt_inline                   static __inline
 #define RTT_API
@@ -221,7 +221,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_used                     __attribute__((used))
 #endif
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    __attribute__((aligned(n)))
+#define rt_align(n)                    __attribute__((aligned(n)))
 #ifdef __TI_EABI__
 #define rt_weak                     __attribute__((weak))
 #else
@@ -233,7 +233,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    __attribute__((__align(n)))
+#define rt_align(n)                    __attribute__((__align(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API

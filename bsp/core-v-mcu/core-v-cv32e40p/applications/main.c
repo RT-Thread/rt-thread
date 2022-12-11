@@ -18,7 +18,7 @@
 static struct rt_thread test1_thread;
 static rt_thread_t test2_thread = RT_NULL;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t rt_test1_thread_stack[1024];
 static void test1_thread_entry(void* parameter);
 static void test2_thread_entry(void* parameter);
