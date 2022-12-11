@@ -71,8 +71,8 @@ sbi_get_impl_version(void)
 
 void sbi_print_version(void)
 {
-    u_int major;
-    u_int minor;
+    uint32_t major;
+    uint32_t minor;
 
     /* For legacy SBI implementations. */
     if (sbi_spec_version == 0)

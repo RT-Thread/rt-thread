@@ -18,7 +18,6 @@
 
 #include <stdlib.h>
 #include "hal_fll_pi.h"
-/* TODO: abstract this */
 #include "core-v-mcu-system.h"
 #include <rtthread.h>
 /*******************************************************************************

@@ -25,7 +25,6 @@
 
 #include <pulp_io.h>
 #include <stdint.h>
-
 #include "system_metal.h"
 #include "core-v-mcu-pulp-mem-map.h"
 #include "hal_fll.h"

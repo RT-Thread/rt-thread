@@ -19,10 +19,8 @@
 #ifndef HAL_INCLUDE_HAL_UART_INTERNAL_H_
 #define HAL_INCLUDE_HAL_UART_INTERNAL_H_
 
-//#include "../../pmsis_api/include/pmsis/drivers/uart-orig.h"
 #include "hal_uart_pi.h"
 #include "core-v-mcu-pmsis.h"
-//#include "pmsis/task.h"
 
 /*******************************************************************************
  * Definitions
@@ -36,7 +34,6 @@
 #ifndef UART_DRIVER_DATA_IMPLEM_SPECIFC
     #define UART_DRIVER_DATA_IMPLEM_SPECIFC
 #endif
-
 
 /*
  * pi_task:

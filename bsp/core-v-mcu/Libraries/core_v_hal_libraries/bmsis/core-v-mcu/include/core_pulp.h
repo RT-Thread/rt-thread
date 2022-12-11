@@ -30,11 +30,8 @@
 #include "core-v-mcu-memory-map.h"
 
 #include "pmsis_gcc.h"
-//#include "cores/TARGET_RISCV_32/csr.h"
 #include "csr.h"
-//#include "cores/TARGET_RISCV_32/bits.h"
 #include "bits.h"
-//#include "cores/TARGET_RISCV_32/pulp_io.h"
 #include "pulp_io.h"
 #include "core-v-mcu-periph.h"
 

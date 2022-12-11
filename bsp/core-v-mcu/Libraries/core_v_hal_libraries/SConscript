@@ -20,11 +20,13 @@ core_v_hal/source/hal_timer_irq.c
 bmsis/core-v-mcu/source/core-v-mcu.c
 bmsis/core-v-mcu/source/crt0.S
 bmsis/core-v-mcu/source/vectors.S
+core_v_udma_driver/source/udma_uart_driver.c
 """)
 
 path = [
 	cwd + '/bmsis/core-v-mcu/include',
-    cwd + '/core_v_hal/include']
+    cwd + '/core_v_hal/include',
+    cwd + '/core_v_udma_driver/include']
 
 group = DefineGroup('core_v_hal_lib', src, depend = [''], CPPPATH = path)
 

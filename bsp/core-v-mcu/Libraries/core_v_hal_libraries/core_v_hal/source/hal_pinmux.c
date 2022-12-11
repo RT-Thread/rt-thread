@@ -16,10 +16,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
  
- //#include "FreeRTOS.h"
- //#include "FreeRTOSConfig.h"
-//#include "kernel/include/task.h"		// Needed for configASSERT
- 
  #include "core-v-mcu-config.h"
  #include "hal_apb_soc_ctrl_regs.h"
  #include "hal_pinmux.h"

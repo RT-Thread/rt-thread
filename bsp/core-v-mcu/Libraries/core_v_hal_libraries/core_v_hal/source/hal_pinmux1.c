@@ -23,7 +23,6 @@
 #include <assert.h>
 #include <hal_pinmux1.h>
 #include <pulp_io.h>
-
 #include "core-v-mcu-pulp-mem-map.h"
 #include "hal_apb_soc.h"
 

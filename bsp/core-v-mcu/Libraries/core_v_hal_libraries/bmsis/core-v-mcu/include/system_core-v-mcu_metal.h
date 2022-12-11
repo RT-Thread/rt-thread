@@ -23,8 +23,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//#include "FreeRTOSConfig.h"
-
 /* PULPissimo defs */
 #define PULPISSIMO
 

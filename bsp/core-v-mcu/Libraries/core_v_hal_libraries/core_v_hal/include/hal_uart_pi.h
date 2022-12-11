@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #ifndef __PMSIS_DRIVERS_UART_H__
 #define __PMSIS_DRIVERS_UART_H__
 

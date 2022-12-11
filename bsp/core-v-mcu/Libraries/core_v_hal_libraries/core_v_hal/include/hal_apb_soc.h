@@ -24,8 +24,6 @@
 #ifndef HAL_INCLUDE_HAL_APB_SOC_H_
 #define HAL_INCLUDE_HAL_APB_SOC_H_
 
-
-
 #define APB_SOC_BOOT_OTHER    0
 #define APB_SOC_BOOT_JTAG     1
 #define APB_SOC_BOOT_SPI      2
@@ -105,7 +103,6 @@
 #define APB_SOC_STATUS_EOC_BIT  31
 #define APB_SOC_NB_CORE_BIT     16
 
-
 #define APB_SOC_BYPASS_OFFSET   0x70
 
 #define APB_SOC_BYPASS_CLOCK_GATE_BIT 10
@@ -113,19 +110,15 @@
 #define APB_SOC_BYPASS_USER0_BIT       14
 #define APB_SOC_BYPASS_USER1_BIT       15
 
-
 #define APB_SOC_FLL_CTRL_OFFSET         0xD0
 #define APB_SOC_CLKDIV_SOC_OFFSET       0xD4
 #define APB_SOC_CLKDIV_CLUSTER_OFFSET   0xD8
 #define APB_SOC_CLKDIV_PERIPH_OFFSET    0xDC
 
-
 #define APB_SOC_FLL_CTRL_SOC_BIT        0
 #define APB_SOC_FLL_CTRL_CLUSTER_BIT    1
 #define APB_SOC_FLL_CTRL_PERIPH_BIT     2
 
-
 #define APB_SOC_RTC_OFFSET     0x1D0
-
 
 #endif /* HAL_INCLUDE_HAL_APB_SOC_H_ */
