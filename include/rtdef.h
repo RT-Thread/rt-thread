@@ -162,7 +162,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* Compiler Related Definitions */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
-#define RT_SECTION(x)               __attribute__((section(x)))
+#define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define ALIGN(n)                    __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
@@ -174,7 +174,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RTT_API                     __declspec(dllexport)
 #endif /* RT_USING_MODULE */
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
-#define RT_SECTION(x)               @ x
+#define rt_section(x)               @ x
 #define rt_used                     __root
 #define PRAGMA(x)                   _Pragma(#x)
 #define ALIGN(n)                    PRAGMA(data_alignment=n)
@@ -190,21 +190,21 @@ typedef __gnuc_va_list              va_list;
 #define va_end(v)                   __builtin_va_end(v)
 #define va_arg(v,l)                 __builtin_va_arg(v,l)
 #endif /* RT_USING_LIBC */
-#define RT_SECTION(x)               __attribute__((section(x)))
+#define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define ALIGN(n)                    __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
 #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
-#define RT_SECTION(x)               __attribute__((section(x)))
+#define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define ALIGN(n)                    __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (_MSC_VER)
-#define RT_SECTION(x)
+#define rt_section(x)
 #define rt_used
 #define ALIGN(n)                    __declspec(align(n))
 #define rt_weak
@@ -214,7 +214,7 @@ typedef __gnuc_va_list              va_list;
 /* The way that TI compiler set section is different from other(at least
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
     * details. */
-#define RT_SECTION(x)               __attribute__((section(x)))
+#define rt_section(x)               __attribute__((section(x)))
 #ifdef __TI_EABI__
 #define rt_used                     __attribute__((retain)) __attribute__((used))
 #else
@@ -230,7 +230,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__TASKING__)
-#define RT_SECTION(x)               __attribute__((section(x)))
+#define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
 #define ALIGN(n)                    __attribute__((__align(n)))
@@ -280,11 +280,11 @@ typedef int (*init_fn_t)(void);
         };
         #define INIT_EXPORT(fn, level)                                                       \
             const char __rti_##fn##_name[] = #fn;                                            \
-            rt_used const struct rt_init_desc __rt_init_desc_##fn RT_SECTION(".rti_fn." level) = \
+            rt_used const struct rt_init_desc __rt_init_desc_##fn rt_section(".rti_fn." level) = \
             { __rti_##fn##_name, fn};
     #else
         #define INIT_EXPORT(fn, level)                                                       \
-            rt_used const init_fn_t __rt_init_##fn RT_SECTION(".rti_fn." level) = fn
+            rt_used const init_fn_t __rt_init_##fn rt_section(".rti_fn." level) = fn
     #endif
 #endif
 #else

@@ -22,7 +22,7 @@
 #include <vbus.h>
 #endif
 
-static const unsigned char _M0_CODE[] RT_SECTION("M0_CODE") = {
+static const unsigned char _M0_CODE[] rt_section("M0_CODE") = {
 #include "M0_CODE.h"
 };
 

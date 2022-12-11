@@ -109,7 +109,7 @@ void dac_start(void)
     //AUANGCON1 |= BIT(3);  // pa mute
 }
 
-RT_SECTION(".irq.audio")
+rt_section(".irq.audio")
 void audio_sem_post(void)
 {
     rt_sem_release(snd_dev.semaphore);
@@ -445,7 +445,7 @@ static struct rt_audio_ops ops =
     .buffer_info = sound_buffer_info,
 };
 
-RT_SECTION(".irq.audio")
+rt_section(".irq.audio")
 static void audio_isr(int vector, void *param)
 {
     rt_interrupt_enter();

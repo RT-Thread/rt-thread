@@ -22,10 +22,10 @@ static rt_size_t ve_exporter_num = 0;
 /* for ARM C and IAR Compiler */
 #if defined(__ARMCC_VERSION) || defined (__ICCARM__) || defined(__ICCRX__)
 static rt_used const struct ve_exporter __ve_table_start
-RT_SECTION("0.""VarExpTab") = {"ve_start", "ve_start", 0};
+rt_section("0.""VarExpTab") = {"ve_start", "ve_start", 0};
 
 static rt_used const struct ve_exporter __ve_table_end
-RT_SECTION("2.""VarExpTab") = {"ve_end", "ve_end", 2};
+rt_section("2.""VarExpTab") = {"ve_end", "ve_end", 2};
 #endif
 
 /* for MS VC++ compiler */
