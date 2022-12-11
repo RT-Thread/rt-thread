@@ -970,7 +970,7 @@ _exit:
 }
 #endif /* ARCH_MM_MMU */
 
-RT_WEAK int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size, struct process_aux *aux)
+rt_weak int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size, struct process_aux *aux)
 {
     uint8_t *ptr;
     int ret = -1;

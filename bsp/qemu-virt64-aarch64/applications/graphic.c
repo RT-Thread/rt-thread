@@ -24,7 +24,7 @@ static rt_uint32_t cur_points[2];
 static rt_uint32_t cur_last_points[2];
 static rt_bool_t cur_event_sync;
 static rt_uint32_t color[2] = { 0xff0000, 0x0000ff };
-static rt_uint8_t cursor[VIRTIO_GPU_CURSOR_IMG_SIZE] ALIGN(VIRTIO_PAGE_SIZE);
+static rt_uint8_t cursor[VIRTIO_GPU_CURSOR_IMG_SIZE] rt_align(VIRTIO_PAGE_SIZE);
 
 void tablet_event_handler(struct virtio_input_event event)
 {

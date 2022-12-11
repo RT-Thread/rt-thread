@@ -208,7 +208,7 @@ int lwp_avl_traversal(struct lwp_avl_struct *ptree, int (*fun)(struct lwp_avl_st
     return ret;
 }
 
-RT_WEAK struct lwp_avl_struct* lwp_map_find_first(struct lwp_avl_struct* ptree)
+rt_weak struct lwp_avl_struct* lwp_map_find_first(struct lwp_avl_struct* ptree)
 {
     if (ptree == AVL_EMPTY)
     {

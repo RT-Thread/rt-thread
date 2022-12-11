@@ -19,11 +19,11 @@
 
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
-ALIGN(8)
+rt_align(8)
 static rt_uint8_t init_stack[INIT_STACK_SIZE];
 static struct rt_thread init_thread;
 
-ALIGN(8)
+rt_align(8)
 static rt_uint8_t led_stack[LED_STACK_SIZE];
 static struct rt_thread led_thread;
 #endif

@@ -63,8 +63,8 @@ static const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
-ALIGN(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
-ALIGN(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+rt_align(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
+rt_align(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 static int __isleap(int year)
 {
@@ -346,7 +346,7 @@ RTM_EXPORT(strftime); /* inherent in the toolchain */
  *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */
-RT_WEAK time_t time(time_t *t)
+rt_weak time_t time(time_t *t)
 {
     struct timeval now;
 
@@ -366,7 +366,7 @@ RT_WEAK time_t time(time_t *t)
 }
 RTM_EXPORT(time);
 
-RT_WEAK clock_t clock(void)
+rt_weak clock_t clock(void)
 {
     return rt_tick_get();
 }

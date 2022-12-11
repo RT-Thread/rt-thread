@@ -129,16 +129,16 @@ rt_uint16_t MFX_IO_ReadMultiple(rt_uint16_t Addr, rt_uint8_t Reg, rt_uint8_t *Bu
     return read_reg(rt_mfx.i2c_bus, Reg, Length, Buffer);
 }
 
-RT_WEAK void MFX_IO_Delay(rt_uint32_t Delay)
+rt_weak void MFX_IO_Delay(rt_uint32_t Delay)
 {
     rt_thread_delay(Delay);
 }
 
-RT_WEAK void MFX_IO_Wakeup(void)
+rt_weak void MFX_IO_Wakeup(void)
 {
 }
 
-RT_WEAK void MFX_IO_EnableWakeupPin(void)
+rt_weak void MFX_IO_EnableWakeupPin(void)
 {
 }
 

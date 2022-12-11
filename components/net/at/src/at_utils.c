@@ -65,7 +65,7 @@ const char *at_get_last_cmd(rt_size_t *cmd_size)
     return send_buf;
 }
 
-RT_WEAK rt_size_t at_utils_send(rt_device_t dev,
+rt_weak rt_size_t at_utils_send(rt_device_t dev,
                                 rt_off_t    pos,
                                 const void *buffer,
                                 rt_size_t   size)

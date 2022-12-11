@@ -29,10 +29,10 @@
 所有在中断中使用的函数或数据需要放在 RAM 中，否则会导致系统运行报错。具体做法可以参考下面
 
 ``` c
-RT_SECTION(".irq.example.str")
+rt_section(".irq.example.str")
 static const char example_info[] = "example 0x%x";
 
-RT_SECTION(".irq.example")
+rt_section(".irq.example")
 void example_isr(void)
 {
     rt_kprintf(example_info, 11);

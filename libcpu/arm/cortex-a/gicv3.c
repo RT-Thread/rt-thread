@@ -42,12 +42,12 @@ static unsigned int _gic_max_irq;
  *                          PE within a cluster with an Affinity 0 value equal to the bit number.
  * @return {rt_uint32_t} 0 is finish , 1 is data valid
  */
-RT_WEAK rt_uint32_t arm_gic_cpumask_to_affval(rt_uint32_t *cpu_mask, rt_uint32_t *cluster_id, rt_uint32_t *target_list)
+rt_weak rt_uint32_t arm_gic_cpumask_to_affval(rt_uint32_t *cpu_mask, rt_uint32_t *cluster_id, rt_uint32_t *target_list)
 {
     return 0;
 }
 
-RT_WEAK rt_uint64_t get_main_cpu_affval(void)
+rt_weak rt_uint64_t get_main_cpu_affval(void)
 {
     return 0;
 }

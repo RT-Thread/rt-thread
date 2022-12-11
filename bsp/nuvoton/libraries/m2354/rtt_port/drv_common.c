@@ -24,7 +24,7 @@
 /**
  * This function will initial M487 board.
  */
-RT_WEAK void rt_hw_board_init(void)
+rt_weak void rt_hw_board_init(void)
 {
     /* Init System/modules clock */
     nutool_modclkcfg_init();

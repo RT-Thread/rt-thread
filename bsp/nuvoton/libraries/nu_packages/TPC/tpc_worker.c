@@ -18,7 +18,7 @@
 
 static rt_sem_t  tpc_sem = RT_NULL;
 
-RT_WEAK void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t state)
+rt_weak void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t state)
 {
     rt_kprintf("[%d] %d %d\n", state, x, y);
 }

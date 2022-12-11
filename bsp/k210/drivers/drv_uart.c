@@ -446,7 +446,7 @@ static void uart_irq_handler(int irqno, void *param)
 
 /* WEAK for SDK 0.5.6 */
 
-RT_WEAK void uart_debug_init(uart_device_number_t uart_channel)
+rt_weak void uart_debug_init(uart_device_number_t uart_channel)
 {
 
 }

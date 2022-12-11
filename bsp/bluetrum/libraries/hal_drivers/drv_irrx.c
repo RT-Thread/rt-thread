@@ -57,7 +57,7 @@ static struct ab32_irrx_data _irrx = {0};
  * @param addr inverted address   Extended NEC: 16bits address
  * @param cmd  inverted command
  */
-RT_SECTION(".irq.irrx")
+rt_section(".irq.irrx")
 rt_uint8_t ab32_get_irkey(rt_uint16_t *addr, rt_uint16_t *cmd)
 {
     if (_irrx.cnt != 32) {
@@ -82,7 +82,7 @@ void ab32_clr_irkey(void)
 }
 
 #ifdef BSP_USING_IRRX_HW
-RT_SECTION(".irq.irrx")
+rt_section(".irq.irrx")
 static void irrx_isr(int vector, void *param)
 {
     rt_interrupt_enter();
@@ -133,7 +133,7 @@ static void _irrx_hw_init(void)
 
 #define TMR3_RCLK               (1000u)            //xosc26m_div 1M
 
-RT_SECTION(".irq.irrx")
+rt_section(".irq.irrx")
 static void irrx_isr(int vector, void *param)
 {
     rt_uint32_t tmrcnt;
