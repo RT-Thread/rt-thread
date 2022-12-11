@@ -246,7 +246,7 @@ static char *get_log_buf(void)
     }
 }
 
-RT_WEAK rt_size_t ulog_head_formater(char *log_buf, rt_uint32_t level, const char *tag)
+rt_weak rt_size_t ulog_head_formater(char *log_buf, rt_uint32_t level, const char *tag)
 {
     /* the caller has locker, so it can use static variable for reduce stack usage */
     static rt_size_t log_len;
@@ -371,7 +371,7 @@ RT_WEAK rt_size_t ulog_head_formater(char *log_buf, rt_uint32_t level, const cha
 }
 
 
-RT_WEAK rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t newline, rt_uint32_t level)
+rt_weak rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t newline, rt_uint32_t level)
 {
     /* the caller has locker, so it can use static variable for reduce stack usage */
     static rt_size_t newline_len;
@@ -418,7 +418,7 @@ RT_WEAK rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t
     return log_len;
 }
 
-RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
+rt_weak rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
         const char *format, va_list args)
 {
     /* the caller has locker, so it can use static variable for reduce stack usage */
@@ -446,7 +446,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     return ulog_tail_formater(log_buf, log_len, newline, level);
 }
 
-RT_WEAK rt_size_t ulog_hex_formater(char *log_buf, const char *tag, const rt_uint8_t *buf, rt_size_t size, rt_size_t width, rt_base_t addr)
+rt_weak rt_size_t ulog_hex_formater(char *log_buf, const char *tag, const rt_uint8_t *buf, rt_size_t size, rt_size_t width, rt_base_t addr)
 {
 #define __is_print(ch)       ((unsigned int)((ch) - ' ') < 127u - ' ')
     /* the caller has locker, so it can use static variable for reduce stack usage */

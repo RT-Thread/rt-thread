@@ -20,11 +20,11 @@ static rt_mailbox_t test_dynamic_mb;
 static uint8_t static_mb_recv_thread_finish, static_mb_send_thread_finish;
 static uint8_t dynamic_mb_recv_thread_finish, dynamic_mb_send_thread_finish;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread1_stack[1024];
 static struct rt_thread thread1;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread2_stack[1024];
 static struct rt_thread thread2;
 

@@ -10,7 +10,7 @@
 
 #define configTOTAL_HEAP_SIZE           (24*1024)
 /* Allocate the memory for the heap. */
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
 /**
  * This is the timer interrupt service routine.

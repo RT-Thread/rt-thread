@@ -27,7 +27,7 @@
     rt_uint8_t _fiq_stack_start[1024];
     rt_uint8_t _undefined_stack_start[512];
     rt_uint8_t _abort_stack_start[512];
-    rt_uint8_t _svc_stack_start[1024] RT_SECTION(".nobss");
+    rt_uint8_t _svc_stack_start[1024] rt_section(".nobss");
     extern unsigned char __bss_start;
     extern unsigned char __bss_end;
 #endif
