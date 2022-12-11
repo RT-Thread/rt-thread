@@ -45,7 +45,7 @@ typedef long (*syscall_func)(void);
                 __TI_FINSH_EXPORT_FUNCTION(__fsym_##cmd);           \
                 const char __fsym_##cmd##_name[] = #cmd;            \
                 const char __fsym_##cmd##_desc[] = #desc;           \
-                RT_USED RT_NOBLOCKED const struct finsh_syscall __fsym_##cmd =           \
+                rt_used RT_NOBLOCKED const struct finsh_syscall __fsym_##cmd =           \
                 {                           \
                     __fsym_##cmd##_name,    \
                     __fsym_##cmd##_desc,    \
@@ -55,7 +55,7 @@ typedef long (*syscall_func)(void);
 #define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
                 const char __fsym_##cmd##_name[] RT_SECTION(".rodata.name") = #cmd;    \
                 const char __fsym_##cmd##_desc[] RT_SECTION(".rodata.name") = #desc;   \
-                RT_USED const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
+                rt_used const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
                     __fsym_##cmd##_desc,    \
@@ -88,7 +88,7 @@ typedef long (*syscall_func)(void);
 #else
 #define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
                 const char __fsym_##cmd##_name[] = #cmd;                            \
-                RT_USED const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
+                rt_used const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
                 {                                                                   \
                     __fsym_##cmd##_name,                                            \
                     (syscall_func)&name                                             \

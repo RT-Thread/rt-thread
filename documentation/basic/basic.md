@@ -715,10 +715,10 @@ Macro definitions are often used in RT-Thread. For example, some common macro de
 #define rt_inline                   static __inline
 ```
 
-2）RT_USED，definition is as follows, the purpose of this macro is to explain to the compiler that this code is useful, compilation needs to be saved even if it is not called in the function. For example, RT-Thread auto-initialization uses custom segments, using RT_USED will retain custom code snippets.
+2）rt_used，definition is as follows, the purpose of this macro is to explain to the compiler that this code is useful, compilation needs to be saved even if it is not called in the function. For example, RT-Thread auto-initialization uses custom segments, using rt_used will retain custom code snippets.
 
 ```c
-#define RT_USED                     __attribute__((used))
+#define rt_used                     __attribute__((used))
 ```
 
 3）RT_UNUSED，definition is as follows, indicates that a function or variable may not be used. This attribute prevents the compiler from generating warnings.

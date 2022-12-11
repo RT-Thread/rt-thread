@@ -46,7 +46,7 @@ typedef struct ve_iterator ve_iterator_t;
 #define VAR_EXPORT(module, identi, value)                                       \
     const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
     const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
-    RT_USED const struct ve_exporter _vexp_##module##identi                     \
+    rt_used const struct ve_exporter _vexp_##module##identi                     \
     RT_SECTION("1."#module".VarExpTab."#identi) =                               \
     {                                                                           \
         _vexp_##identi##_module,                                                \
@@ -57,7 +57,7 @@ typedef struct ve_iterator ve_iterator_t;
 #define VAR_EXPORT(module, identi, value)                                       \
     const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
     const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
-    RT_USED const struct ve_exporter _vexp_##module##identi                     \
+    rt_used const struct ve_exporter _vexp_##module##identi                     \
     RT_SECTION(#module".VarExpTab."#identi) =                                   \
     {                                                                           \
         _vexp_##identi##_module,                                                \
@@ -70,7 +70,7 @@ typedef struct ve_iterator ve_iterator_t;
     const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
     const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
     __declspec(allocate("VarExpTab$f"))                                         \
-    RT_USED const struct ve_exporter _vexp_##module##identi =                   \
+    rt_used const struct ve_exporter _vexp_##module##identi =                   \
     {                                                                           \
         _vexp_##identi##_module,                                                \
         _vexp_##identi##_identi,                                                \
