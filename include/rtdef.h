@@ -399,7 +399,7 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
 struct rt_object
 {
 #if RT_NAME_MAX == 0
-    char      *name;                                    /**< static name of kernel object */
+    const char      *name;                                    /**< static name of kernel object */
 #else
     char       name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
 #endif /* RT_NAME_MAX == 0 */
