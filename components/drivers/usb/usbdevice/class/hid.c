@@ -612,7 +612,7 @@ static rt_size_t _hid_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
 
     return 0;
 }
-RT_WEAK void HID_Report_Received(hid_report_t report)
+rt_weak void HID_Report_Received(hid_report_t report)
 {
     dump_report(report);
 }

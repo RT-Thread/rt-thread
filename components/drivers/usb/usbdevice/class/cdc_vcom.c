@@ -236,7 +236,7 @@ const static struct ucdc_data_descriptor _data_desc =
 };
 ALIGN(4)
 static char serno[_SER_NO_LEN + 1] = {'\0'};
-RT_WEAK rt_err_t vcom_get_stored_serno(char *serno, int size);
+rt_weak rt_err_t vcom_get_stored_serno(char *serno, int size);
 
 rt_err_t vcom_get_stored_serno(char *serno, int size)
 {

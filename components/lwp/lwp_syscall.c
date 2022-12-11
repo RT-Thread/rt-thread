@@ -1599,7 +1599,7 @@ fail:
     return GET_ERRNO();
 }
 
-RT_WEAK long sys_clone(void *arg[])
+rt_weak long sys_clone(void *arg[])
 {
     return _sys_clone(arg);
 }
@@ -1829,12 +1829,12 @@ size_t lwp_user_strlen(const char *s, int *err)
 
 /* arm needs to wrap fork/clone call to preserved lr & caller saved regs */
 
-RT_WEAK int sys_fork(void)
+rt_weak int sys_fork(void)
 {
     return _sys_fork();
 }
 
-RT_WEAK int sys_vfork(void)
+rt_weak int sys_vfork(void)
 {
     return sys_fork();
 }

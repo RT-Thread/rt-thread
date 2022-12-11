@@ -106,7 +106,7 @@ exit_nu_rtp_load_from_memory:
 }
 #endif
 
-RT_WEAK void nu_rtp_sspcc_setup(void)
+rt_weak void nu_rtp_sspcc_setup(void)
 {
     SSPCC_SET_REALM(SSPCC_UART16, SSPCC_SSET_SUBM);
 

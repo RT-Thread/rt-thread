@@ -160,6 +160,6 @@ int rt_hw_uart_init(void)
 }
 
 /* WEAK for SDK 0.5.6 */
-RT_WEAK void uart_debug_init(int uart_channel)
+rt_weak void uart_debug_init(int uart_channel)
 {
 }

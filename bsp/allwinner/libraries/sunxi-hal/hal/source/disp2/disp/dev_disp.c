@@ -808,7 +808,7 @@ static s32 start_process(void)
     return 0;
 }
 
-RT_WEAK s32 lcd_vsync_event_process(u32 sel)
+rt_weak s32 lcd_vsync_event_process(u32 sel)
 {
     return 0;
 }

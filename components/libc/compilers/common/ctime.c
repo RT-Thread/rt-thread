@@ -346,7 +346,7 @@ RTM_EXPORT(strftime); /* inherent in the toolchain */
  *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */
-RT_WEAK time_t time(time_t *t)
+rt_weak time_t time(time_t *t)
 {
     struct timeval now;
 
@@ -366,7 +366,7 @@ RT_WEAK time_t time(time_t *t)
 }
 RTM_EXPORT(time);
 
-RT_WEAK clock_t clock(void)
+rt_weak clock_t clock(void)
 {
     return rt_tick_get();
 }

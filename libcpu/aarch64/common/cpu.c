@@ -17,7 +17,7 @@
 
 #ifdef RT_USING_SMP
 /* The more common mpidr_el1 table, redefine it in BSP if it is in other cases */
-RT_WEAK rt_uint64_t rt_cpu_mpidr_early[] =
+rt_weak rt_uint64_t rt_cpu_mpidr_early[] =
 {
     [0] = 0x80000000,
     [1] = 0x80000001,
@@ -96,7 +96,7 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 /*@{*/
 
 /** shutdown CPU */
-RT_WEAK void rt_hw_cpu_shutdown()
+rt_weak void rt_hw_cpu_shutdown()
 {
     register rt_int32_t level;
     rt_kprintf("shutdown...\n");

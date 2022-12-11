@@ -727,10 +727,10 @@ Macro definitions are often used in RT-Thread. For example, some common macro de
 #define RT_UNUSED                   __attribute__((unused))
 ```
 
-4）RT_WEAK，definition is as follows, often used to define functions, when linking the function, the compiler will link the function without the keyword prefix first and link the function modified by weak if it can't find those functions.
+4）rt_weak，definition is as follows, often used to define functions, when linking the function, the compiler will link the function without the keyword prefix first and link the function modified by weak if it can't find those functions.
 
 ```c
-#define RT_WEAK                     __weak
+#define rt_weak                     __weak
 ```
 
 5）ALIGN(n)，definition is as follows, is used to align its stored address with n bytes when allocating an address space to an object. Here, n can be the power of 2. Byte alignment not only facilitates quick CPU access, but also save memory space if byte alignment  is properly used.
