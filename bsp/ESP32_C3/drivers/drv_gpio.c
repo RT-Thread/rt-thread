@@ -27,16 +27,6 @@ static int mcu_pin_read(rt_device_t dev, rt_base_t pin)
     value = gpio_get_level(pin);
     return value;
 }
-static gpio_config_t init_io(gpio_num_t num)
-{
-    gpio_config_t io_conf;
-    io_conf.intr_type = GPIO_INTR_DISABLE;
-    io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = (1ULL << num);
-    io_conf.pull_down_en = 0;
-    io_conf.pull_up_en = 0;
-    return io_conf;
-}
 
 static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
@@ -84,7 +74,7 @@ const static struct rt_pin_ops _mcu_pin_ops =
     mcu_pin_attach_irq,
     mcu_pin_dettach_irq,
     mcu_pin_irq_enable,
-    ///NULL,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)
