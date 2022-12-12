@@ -17,6 +17,7 @@ config PKGS_DIR
  
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+source "libraries/Kconfig"
 
 config SOC_RP2040
     bool

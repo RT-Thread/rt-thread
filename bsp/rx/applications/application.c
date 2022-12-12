@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -14,7 +10,7 @@
  */
 
 /**
- * @addtogroup STM32
+ * @addtogroup
  */
 /*@{*/
 
@@ -56,85 +52,80 @@ void cali_store(struct calibration_data *data)
 
 void rt_init_thread_entry(void* parameter)
 {
-    
+
     #ifdef RT_USING_MODULE
     rt_system_module_init();
 #endif
 
 #ifdef RT_USING_FINSH
-	/* initialize finsh */
-	finsh_system_init();
-	finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+    /* initialize finsh */
+    finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
 #endif
 
 #ifdef RT_USING_LWIP
-	/* initialize lwip stack */
-	/* register ethernetif device */
-	eth_system_device_init();
+    /* initialize lwip stack */
+    /* register ethernetif device */
+    eth_system_device_init();
 
-	/* initialize lwip system */
-	lwip_system_init();
-	rt_kprintf("TCP/IP initialized!\n");
+    /* initialize lwip system */
+    lwip_system_init();
+    rt_kprintf("TCP/IP initialized!\n");
 #endif
 
 #ifdef RT_USING_DFS
-	/* initialize the device file system */
-	dfs_init();
+    /* initialize the device file system */
+    dfs_init();
 
 #ifdef RT_USING_DFS_ELMFAT
-	/* initialize the elm chan FatFS file system*/
-	elm_init();
+    /* initialize the elm chan FatFS file system*/
+    elm_init();
 #endif
 
 #if defined(RT_USING_DFS_NFS) && defined(RT_USING_LWIP)
-	/* initialize NFSv3 client file system */
-	nfs_init();
+    /* initialize NFSv3 client file system */
+    nfs_init();
 #endif
 
 #ifdef RT_USING_DFS_YAFFS2
-	dfs_yaffs2_init();
+    dfs_yaffs2_init();
 #endif
 
 #ifdef RT_USING_DFS_UFFS
-	dfs_uffs_init();
+    dfs_uffs_init();
 #endif
 
 #ifdef RT_USING_DFS_JFFS2
-	dfs_jffs2_init();
+    dfs_jffs2_init();
 #endif
 
 #ifdef RT_USING_DFS_ROMFS
-	dfs_romfs_init();
+    dfs_romfs_init();
 #endif
 
 #ifdef RT_USING_DFS_RAMFS
-	dfs_ramfs_init();
+    dfs_ramfs_init();
 #endif
 
 #ifdef RT_USING_DFS_DEVFS
-	devfs_init();
+    devfs_init();
 #endif
 #endif /* end of RT_USING_DFS */
 
-#ifdef RT_USING_NEWLIB
-	libc_system_init(RT_CONSOLE_DEVICE_NAME);
-#else
-	/* the pthread system initialization will be initiallized in libc */
-#ifdef RT_USING_PTHREADS 
-	pthread_system_init();
-#endif
-#endif
-
 #ifdef RT_USING_RTGUI
-	rtgui_system_server_init();
+    rtgui_system_server_init();
 #endif
 
 #ifdef RT_USING_USB_HOST
-	rt_usb_host_init();
+    rt_usb_host_init("usbh");
 #endif
 
 #ifdef  RT_USING_FINSH
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
 #endif  /* RT_USING_FINSH */
 
     /* Filesystem Initialization */
@@ -181,7 +172,7 @@ void rt_init_thread_entry(void* parameter)
 
 
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
 static void led_thread_entry(void* parameter)

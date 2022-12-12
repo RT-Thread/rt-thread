@@ -352,9 +352,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__RTTHREAD__</Define>
+              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\lpc24xx;drivers;..\..\components\finsh;.;..\..\include</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\lpc24xx;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -396,16 +396,75 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -434,6 +493,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\lpc24xx\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\lpc24xx\cpu.c</FilePath>
@@ -455,23 +521,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\lpc24xx\start_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>trap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\lpc24xx\trap.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -493,7 +552,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -503,79 +562,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>finsh_compiler.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -656,13 +652,6 @@
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\signal.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -537,19 +537,19 @@ __weak void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan)
   *         the configuration information for CAN module
   * @param  CallbackID ID of the callback to be registered
   *         This parameter can be one of the following values:
-  *           @arg @ref HAL_CAN_TX_MAILBOX0_COMPLETE_CALLBACK_CB_ID Tx Mailbox 0 Complete callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX1_COMPLETE_CALLBACK_CB_ID Tx Mailbox 1 Complete callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX2_COMPLETE_CALLBACK_CB_ID Tx Mailbox 2 Complete callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX0_ABORT_CALLBACK_CB_ID Tx Mailbox 0 Abort callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX1_ABORT_CALLBACK_CB_ID Tx Mailbox 1 Abort callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX2_ABORT_CALLBACK_CB_ID Tx Mailbox 2 Abort callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO0_MSG_PENDING_CALLBACK_CB_ID Rx Fifo 0 message pending callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO0_FULL_CALLBACK_CB_ID Rx Fifo 0 full callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO1_MSGPENDING_CALLBACK_CB_ID Rx Fifo 1 message pending callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO1_FULL_CALLBACK_CB_ID Rx Fifo 1 full callback ID
-  *           @arg @ref HAL_CAN_SLEEP_CALLBACK_CB_ID Sleep callback ID
-  *           @arg @ref HAL_CAN_WAKEUP_FROM_RX_MSG_CALLBACK_CB_ID Wake Up from Rx message callback ID
-  *           @arg @ref HAL_CAN_ERROR_CALLBACK_CB_ID Error callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX0_COMPLETE_CB_ID Tx Mailbox 0 Complete callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX1_COMPLETE_CB_ID Tx Mailbox 1 Complete callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX2_COMPLETE_CB_ID Tx Mailbox 2 Complete callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX0_ABORT_CB_ID Tx Mailbox 0 Abort callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX1_ABORT_CB_ID Tx Mailbox 1 Abort callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX2_ABORT_CB_ID Tx Mailbox 2 Abort callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO0_MSG_PENDING_CB_ID Rx Fifo 0 message pending callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO0_FULL_CB_ID Rx Fifo 0 full callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO1_MSG_PENDING_CB_ID Rx Fifo 1 message pending callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO1_FULL_CB_ID Rx Fifo 1 full callback ID
+  *           @arg @ref HAL_CAN_SLEEP_CB_ID Sleep callback ID
+  *           @arg @ref HAL_CAN_WAKEUP_FROM_RX_MSG_CB_ID Wake Up from Rx message callback ID
+  *           @arg @ref HAL_CAN_ERROR_CB_ID Error callback ID
   *           @arg @ref HAL_CAN_MSPINIT_CB_ID MspInit callback ID
   *           @arg @ref HAL_CAN_MSPDEINIT_CB_ID MspDeInit callback ID
   * @param  pCallback pointer to the Callback function
@@ -680,19 +680,19 @@ HAL_StatusTypeDef HAL_CAN_RegisterCallback(CAN_HandleTypeDef *hcan, HAL_CAN_Call
   *         the configuration information for CAN module
   * @param  CallbackID ID of the callback to be unregistered
   *         This parameter can be one of the following values:
-  *           @arg @ref HAL_CAN_TX_MAILBOX0_COMPLETE_CALLBACK_CB_ID Tx Mailbox 0 Complete callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX1_COMPLETE_CALLBACK_CB_ID Tx Mailbox 1 Complete callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX2_COMPLETE_CALLBACK_CB_ID Tx Mailbox 2 Complete callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX0_ABORT_CALLBACK_CB_ID Tx Mailbox 0 Abort callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX1_ABORT_CALLBACK_CB_ID Tx Mailbox 1 Abort callback ID
-  *           @arg @ref HAL_CAN_TX_MAILBOX2_ABORT_CALLBACK_CB_ID Tx Mailbox 2 Abort callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO0_MSG_PENDING_CALLBACK_CB_ID Rx Fifo 0 message pending callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO0_FULL_CALLBACK_CB_ID Rx Fifo 0 full callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO1_MSGPENDING_CALLBACK_CB_ID Rx Fifo 1 message pending callback ID
-  *           @arg @ref HAL_CAN_RX_FIFO1_FULL_CALLBACK_CB_ID Rx Fifo 1 full callback ID
-  *           @arg @ref HAL_CAN_SLEEP_CALLBACK_CB_ID Sleep callback ID
-  *           @arg @ref HAL_CAN_WAKEUP_FROM_RX_MSG_CALLBACK_CB_ID Wake Up from Rx message callback ID
-  *           @arg @ref HAL_CAN_ERROR_CALLBACK_CB_ID Error callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX0_COMPLETE_CB_ID Tx Mailbox 0 Complete callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX1_COMPLETE_CB_ID Tx Mailbox 1 Complete callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX2_COMPLETE_CB_ID Tx Mailbox 2 Complete callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX0_ABORT_CB_ID Tx Mailbox 0 Abort callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX1_ABORT_CB_ID Tx Mailbox 1 Abort callback ID
+  *           @arg @ref HAL_CAN_TX_MAILBOX2_ABORT_CB_ID Tx Mailbox 2 Abort callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO0_MSG_PENDING_CB_ID Rx Fifo 0 message pending callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO0_FULL_CB_ID Rx Fifo 0 full callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO1_MSG_PENDING_CB_ID Rx Fifo 1 message pending callback ID
+  *           @arg @ref HAL_CAN_RX_FIFO1_FULL_CB_ID Rx Fifo 1 full callback ID
+  *           @arg @ref HAL_CAN_SLEEP_CB_ID Sleep callback ID
+  *           @arg @ref HAL_CAN_WAKEUP_FROM_RX_MSG_CB_ID Wake Up from Rx message callback ID
+  *           @arg @ref HAL_CAN_ERROR_CB_ID Error callback ID
   *           @arg @ref HAL_CAN_MSPINIT_CB_ID MspInit callback ID
   *           @arg @ref HAL_CAN_MSPDEINIT_CB_ID MspDeInit callback ID
   * @retval HAL status
@@ -1528,7 +1528,7 @@ HAL_StatusTypeDef HAL_CAN_GetRxMessage(CAN_HandleTypeDef *hcan, uint32_t RxFifo,
     {
       pHeader->ExtId = ((CAN_RI0R_EXID | CAN_RI0R_STID) & hcan->Instance->sFIFOMailBox[RxFifo].RIR) >> CAN_RI0R_EXID_Pos;
     }
-    pHeader->RTR = (CAN_RI0R_RTR & hcan->Instance->sFIFOMailBox[RxFifo].RIR) >> CAN_RI0R_RTR_Pos;
+    pHeader->RTR = (CAN_RI0R_RTR & hcan->Instance->sFIFOMailBox[RxFifo].RIR);
     pHeader->DLC = (CAN_RDT0R_DLC & hcan->Instance->sFIFOMailBox[RxFifo].RDTR) >> CAN_RDT0R_DLC_Pos;
     pHeader->FilterMatchIndex = (CAN_RDT0R_FMI & hcan->Instance->sFIFOMailBox[RxFifo].RDTR) >> CAN_RDT0R_FMI_Pos;
     pHeader->Timestamp = (CAN_RDT0R_TIME & hcan->Instance->sFIFOMailBox[RxFifo].RDTR) >> CAN_RDT0R_TIME_Pos;

@@ -317,7 +317,7 @@
   *         the same ADC common instance to their default reset values.
   * @note   This function is performing a hard reset, using high level
   *         clock source RCC ADC reset.
-  *         Caution: On this STM32 serie, if several ADC instances are available
+  *         Caution: On this STM32 series, if several ADC instances are available
   *         on the selected device, RCC ADC reset will reset
   *         all ADC instances belonging to the common ADC instance.
   *         To de-initialize only 1 ADC instance, use
@@ -333,7 +333,7 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
   /* Check the parameters */
   assert_param(IS_ADC_COMMON_INSTANCE(ADCxy_COMMON));
 
-  if(ADCxy_COMMON == ADC12_COMMON)
+  if (ADCxy_COMMON == ADC12_COMMON)
   {
     /* Force reset of ADC clock (core clock) */
     LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_ADC12);
@@ -343,11 +343,13 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
   }
   else
   {
+#if defined (ADC3)
     /* Force reset of ADC clock (core clock) */
     LL_AHB4_GRP1_ForceReset(LL_AHB4_GRP1_PERIPH_ADC3);
 
     /* Release reset of ADC clock (core clock) */
     LL_AHB4_GRP1_ReleaseReset(LL_AHB4_GRP1_PERIPH_ADC3);
+#endif
   }
 
   return SUCCESS;
@@ -385,7 +387,7 @@ ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonIni
 
   /* Note: Hardware constraint (refer to description of functions             */
   /*       "LL_ADC_SetCommonXXX()" and "LL_ADC_SetMultiXXX()"):               */
-  /*       On this STM32 serie, setting of these features is conditioned to   */
+  /*       On this STM32 series, setting of these features is conditioned to   */
   /*       ADC state:                                                         */
   /*       All ADC instances of the ADC common group must be disabled.        */
   if (__LL_ADC_IS_ENABLED_ALL_COMMON_INSTANCE(ADCxy_COMMON) == 0UL)
@@ -466,7 +468,7 @@ void LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
   *         is in an unknown state.
   *         In this case, perform a hard reset using high level
   *         clock source RCC ADC reset.
-  *         Caution: On this STM32 serie, if several ADC instances are available
+  *         Caution: On this STM32 series, if several ADC instances are available
   *         on the selected device, RCC ADC reset will reset
   *         all ADC instances belonging to the common ADC instance.
   *         Refer to function @ref LL_ADC_CommonDeInit().
@@ -606,19 +608,19 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 
     /* Reset register CFGR */
     CLEAR_BIT(ADCx->CFGR,
-              (  ADC_CFGR_AWD1CH  | ADC_CFGR_JAUTO   | ADC_CFGR_JAWD1EN
+              (ADC_CFGR_AWD1CH  | ADC_CFGR_JAUTO   | ADC_CFGR_JAWD1EN
                | ADC_CFGR_AWD1EN  | ADC_CFGR_AWD1SGL | ADC_CFGR_JQM
                | ADC_CFGR_JDISCEN | ADC_CFGR_DISCNUM | ADC_CFGR_DISCEN
                | ADC_CFGR_AUTDLY  | ADC_CFGR_CONT    | ADC_CFGR_OVRMOD
                | ADC_CFGR_EXTEN   | ADC_CFGR_EXTSEL  | ADC_CFGR_RES
-               | ADC_CFGR_DMNGT  )
+               | ADC_CFGR_DMNGT)
              );
 
     SET_BIT(ADCx->CFGR, ADC_CFGR_JQDIS);
 
     /* Reset register CFGR2 */
     CLEAR_BIT(ADCx->CFGR2,
-              (  ADC_CFGR2_LSHIFT  | ADC_CFGR2_OVSR    | ADC_CFGR2_RSHIFT1
+              (ADC_CFGR2_LSHIFT  | ADC_CFGR2_OVSR    | ADC_CFGR2_RSHIFT1
                | ADC_CFGR2_RSHIFT4 | ADC_CFGR2_RSHIFT3 | ADC_CFGR2_RSHIFT2
                | ADC_CFGR2_RSHIFT1 | ADC_CFGR2_ROVSM   | ADC_CFGR2_TROVS
                | ADC_CFGR2_OVSS    | ADC_CFGR2_JOVSE | ADC_CFGR2_ROVSE)
@@ -640,6 +642,29 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
              );
 
     /* Reset register TR1 */
+#if defined(ADC_VER_V5_V90)
+    if (ADCx == ADC3)
+    {
+      /* Reset register TR1 */
+      MODIFY_REG(ADCx->LTR1_TR1, ADC3_TR1_AWDFILT | ADC3_TR1_HT1 | ADC3_TR1_LT1, ADC3_TR1_HT1);
+
+      /* Reset register TR2 */
+      MODIFY_REG(ADCx->HTR1_TR2, ADC3_TR2_HT2 | ADC3_TR2_LT2, ADC3_TR2_HT2);
+
+      /* Reset register TR3 */
+      MODIFY_REG(ADCx->RES1_TR3, ADC3_TR3_HT3 | ADC3_TR3_LT3, ADC3_TR3_HT3);
+    }
+    else
+    {
+      CLEAR_BIT(ADCx->LTR1_TR1, ADC_LTR_LT);
+      SET_BIT(ADCx->HTR1_TR2, ADC_HTR_HT);
+
+      CLEAR_BIT(ADCx->LTR2_DIFSEL, ADC_LTR_LT);
+      SET_BIT(ADCx->HTR2_CALFACT, ADC_HTR_HT);
+      CLEAR_BIT(ADCx->LTR3_RES10, ADC_LTR_LT);
+      SET_BIT(ADCx->HTR3_RES11, ADC_HTR_HT);
+    }
+#else
     CLEAR_BIT(ADCx->LTR1, ADC_LTR_LT);
     SET_BIT(ADCx->HTR1, ADC_HTR_HT);
 
@@ -647,6 +672,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     SET_BIT(ADCx->HTR2, ADC_HTR_HT);
     CLEAR_BIT(ADCx->LTR3, ADC_LTR_LT);
     SET_BIT(ADCx->HTR3, ADC_HTR_HT);
+#endif
 
     /* Reset register SQR1 */
     CLEAR_BIT(ADCx->SQR1,
@@ -699,6 +725,25 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     CLEAR_BIT(ADCx->AWD3CR, ADC_AWD3CR_AWD3CH);
 
     /* Reset register DIFSEL */
+#if defined(ADC_VER_V5_V90)
+    if (ADCx == ADC3)
+    {
+      CLEAR_BIT(ADCx->LTR2_DIFSEL, ADC_DIFSEL_DIFSEL);
+
+      /* Reset register CALFACT */
+      CLEAR_BIT(ADCx->HTR2_CALFACT, ADC_CALFACT_CALFACT_D | ADC_CALFACT_CALFACT_S);
+    }
+    else
+    {
+      CLEAR_BIT(ADCx->DIFSEL_RES12, ADC_DIFSEL_DIFSEL);
+
+      /* Reset register CALFACT */
+      CLEAR_BIT(ADCx->CALFACT_RES13, ADC_CALFACT_CALFACT_D | ADC_CALFACT_CALFACT_S);
+
+      /* Reset register CALFACT2 */
+      CLEAR_BIT(ADCx->CALFACT2_RES14, ADC_CALFACT2_LINCALFACT);
+    }
+#else
     CLEAR_BIT(ADCx->DIFSEL, ADC_DIFSEL_DIFSEL);
 
     /* Reset register CALFACT */
@@ -706,16 +751,17 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 
     /* Reset register CALFACT2 */
     CLEAR_BIT(ADCx->CALFACT2, ADC_CALFACT2_LINCALFACT);
+#endif
   }
   else
   {
     /* ADC instance is in an unknown state */
     /* Need to performing a hard reset of ADC instance, using high level      */
     /* clock source RCC ADC reset.                                            */
-    /* Caution: On this STM32 serie, if several ADC instances are available   */
+    /* Caution: On this STM32 series, if several ADC instances are available   */
     /*          on the selected device, RCC ADC reset will reset              */
     /*          all ADC instances belonging to the common ADC instance.       */
-    /* Caution: On this STM32 serie, if several ADC instances are available   */
+    /* Caution: On this STM32 series, if several ADC instances are available   */
     /*          on the selected device, RCC ADC reset will reset              */
     /*          all ADC instances belonging to the common ADC instance.       */
     status = ERROR;
@@ -872,7 +918,7 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
     /*    - Set ADC group regular conversion data transfer: no transfer or    */
     /*      transfer by DMA, and DMA requests mode                            */
     /*    - Set ADC group regular overrun behavior                            */
-    /* Note: On this STM32 serie, ADC trigger edge is set to value 0x0 by     */
+    /* Note: On this STM32 series, ADC trigger edge is set to value 0x0 by     */
     /*       setting of trigger source to SW start.                           */
     if (ADC_REG_InitStruct->SequencerLength != LL_ADC_REG_SEQ_SCAN_DISABLE)
     {
@@ -932,7 +978,7 @@ void LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
 {
   /* Set ADC_REG_InitStruct fields to default values */
   /* Set fields of ADC group regular */
-  /* Note: On this STM32 serie, ADC trigger edge is set to value 0x0 by       */
+  /* Note: On this STM32 series, ADC trigger edge is set to value 0x0 by       */
   /*       setting of trigger source to SW start.                             */
   ADC_REG_InitStruct->TriggerSource    = LL_ADC_REG_TRIG_SOFTWARE;
   ADC_REG_InitStruct->SequencerLength  = LL_ADC_REG_SEQ_SCAN_DISABLE;
@@ -999,7 +1045,7 @@ ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_I
     /*    - Set ADC group injected sequencer discontinuous mode               */
     /*    - Set ADC group injected conversion trigger: independent or         */
     /*      from ADC group regular                                            */
-    /* Note: On this STM32 serie, ADC trigger edge is set to value 0x0 by     */
+    /* Note: On this STM32 series, ADC trigger edge is set to value 0x0 by     */
     /*       setting of trigger source to SW start.                           */
     if (ADC_INJ_InitStruct->SequencerLength != LL_ADC_REG_SEQ_SCAN_DISABLE)
     {

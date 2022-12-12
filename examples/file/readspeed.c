@@ -10,7 +10,11 @@
  */
 
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 void readspeed(const char* filename, int block_size)
 {
@@ -58,7 +62,6 @@ void readspeed(const char* filename, int block_size)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(readspeed, perform file read test);
 
-#ifdef FINSH_USING_MSH
 static void cmd_readspeed(int argc, char *argv[])
 {
     char* filename;
@@ -82,6 +85,5 @@ static void cmd_readspeed(int argc, char *argv[])
     }
     readspeed(filename, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_readspeed, __cmd_readspeed, test file system read speed);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(cmd_readspeed, readspeed, test file system read speed);
 #endif /* RT_USING_FINSH */

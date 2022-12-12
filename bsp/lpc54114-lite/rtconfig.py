@@ -14,9 +14,9 @@ if  CROSS_TOOL == 'gcc':
     EXEC_PATH   = r'D:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
-    EXEC_PATH   = 'D:/Keil_v5'
+    EXEC_PATH   = r'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
+    PLATFORM    = 'iccarm'
     EXEC_PATH  = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -86,7 +86,7 @@ elif PLATFORM == 'armcc':
     
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
     
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
     AS = 'iasmarm'

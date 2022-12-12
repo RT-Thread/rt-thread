@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,10 +12,17 @@
 #include <rtthread.h>
 #include <stdint.h>
 
+#include "mmu.h"
 #include "board.h"
 
-#define TIMER01_HW_BASE                 0x10011000
-#define TIMER23_HW_BASE                 0x10012000
+#define TIMER01_HW_BASE_PHY                 0x10011000
+#define TIMER23_HW_BASE_PHY                 0x10012000
+
+void* timer01_hw_base;
+void* timer23_hw_base;
+
+#define TIMER01_HW_BASE timer01_hw_base
+#define TIMER23_HW_BASE timer23_hw_base
 
 #define TIMER_LOAD(hw_base)             __REG32(hw_base + 0x00)
 #define TIMER_VALUE(hw_base)            __REG32(hw_base + 0x04)
@@ -51,8 +58,10 @@
 #define TIMER_MIS(hw_base)              __REG32(hw_base + 0x14)
 #define TIMER_BGLOAD(hw_base)           __REG32(hw_base + 0x18)
 
-#define SYS_CTRL                        __REG32(REALVIEW_SCTL_BASE)
-#define TIMER_HW_BASE                   REALVIEW_TIMER2_3_BASE
+void* sys_ctrl;
+#define SYS_CTRL                        __REG32(sys_ctrl)
+void* timer_hw_base;
+#define TIMER_HW_BASE                   timer_hw_base
 
 static void rt_hw_timer_isr(int vector, void *param)
 {
@@ -64,6 +73,14 @@ static void rt_hw_timer_isr(int vector, void *param)
 int rt_hw_timer_init(void)
 {
     rt_uint32_t val;
+
+#ifdef RT_USING_LWP
+    sys_ctrl = (void*)rt_ioremap((void*)REALVIEW_SCTL_BASE, 0x1000);
+    timer_hw_base = (void*)rt_ioremap((void*)REALVIEW_TIMER2_3_BASE, 0x1000);
+#else
+    sys_ctrl = (void*)REALVIEW_SCTL_BASE;
+    timer_hw_base = (void*)REALVIEW_TIMER2_3_BASE;
+#endif
 
     SYS_CTRL |= REALVIEW_REFCLK;
 
@@ -89,8 +106,13 @@ void timer_init(int timer, unsigned int preload)
 {
     uint32_t val;
 
-    if (timer == 0) 
+    if (timer == 0)
     {
+#ifdef RT_USING_LWP
+        timer01_hw_base = (void*)rt_ioremap((void*)TIMER01_HW_BASE_PHY, 0x1000);
+#else
+        timer01_hw_base = (void*)TIMER01_HW_BASE_PHY;
+#endif
         /* Setup Timer0 for generating irq */
         val = TIMER_CTRL(TIMER01_HW_BASE);
         val &= ~TIMER_CTRL_ENABLE;
@@ -101,9 +123,14 @@ void timer_init(int timer, unsigned int preload)
 
         /* enable timer */
         TIMER_CTRL(TIMER01_HW_BASE) |= TIMER_CTRL_ENABLE;
-    } 
-    else 
+    }
+    else
     {
+#ifdef RT_USING_LWP
+        timer23_hw_base = (void*)rt_ioremap((void*)TIMER23_HW_BASE_PHY, 0x1000);
+#else
+        timer01_hw_base = (void*)TIMER23_HW_BASE_PHY;
+#endif
         /* Setup Timer1 for generating irq */
         val = TIMER_CTRL(TIMER23_HW_BASE);
         val &= ~TIMER_CTRL_ENABLE;
@@ -122,7 +149,7 @@ void timer_clear_pending(int timer)
     if (timer == 0)
     {
         TIMER_INTCLR(TIMER01_HW_BASE) = 0x01;
-    } 
+    }
     else
     {
         TIMER_INTCLR(TIMER23_HW_BASE) = 0x01;

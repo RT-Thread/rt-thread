@@ -69,7 +69,6 @@ def CheckHeader(rtconfig, filename):
 def GetNewLibVersion(rtconfig):
     version = 'unknown'
     root = GetGCCRoot(rtconfig)
-
     if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
         f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
         if f:
@@ -85,6 +84,33 @@ def GetNewLibVersion(rtconfig):
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
             f.close()
     return version
+
+# FIXME: it's not very good
+def CheckMUSLLibc(rtconfig):
+    if 'musl' in rtconfig.PREFIX:
+        return True
+    return False
+
+# FIXME: there is no musl version or musl macros can be found officially
+def GetMuslVersion(rtconfig):
+    version = 'unknown'
+    # root = GetGCCRoot(rtconfig)
+    # print(root)
+    return version
+
+# return libc name and version
+def GetGCCLibcNameVersion(rtconfig):
+    if rtconfig.PLATFORM != 'gcc':
+        return ('unknown', 'unknown')
+
+    newlib_version = GetNewLibVersion(rtconfig)
+    if newlib_version != 'unknown':
+        return ('newlib', newlib_version) # libc: newlib, version: newlib_version
+    elif CheckMUSLLibc(rtconfig) == True:
+        GetMuslVersion(rtconfig)
+        return ('musl', 'unknown') #libc: musl, version: unknown
+    else:
+        return ('unknown', 'unknown') # libc: unknown, version: unknown
 
 def GCCResult(rtconfig, str):
     import subprocess
@@ -113,7 +139,7 @@ def GCCResult(rtconfig, str):
         stdout, stderr = child.communicate()
 
         # print(stdout)
-        if stderr != '':
+        if stderr != '' and stderr != b'':
             print(stderr)
 
         have_fdset = 0
@@ -173,43 +199,44 @@ def GCCResult(rtconfig, str):
     return result
 
 def GenerateGCCConfig(rtconfig):
-    str = ''
-    cc_header = ''
-    cc_header += '#ifndef CCONFIG_H__\n'
-    cc_header += '#define CCONFIG_H__\n'
-    cc_header += '/* Automatically generated file; DO NOT EDIT. */\n'
-    cc_header += '/* compiler configure file for RT-Thread in GCC*/\n\n'
+    # str = ''
+    # cc_header = ''
+    # cc_header += '#ifndef CCONFIG_H__\n'
+    # cc_header += '#define CCONFIG_H__\n'
+    # cc_header += '/* Automatically generated file; DO NOT EDIT. */\n'
+    # cc_header += '/* compiler configure file for RT-Thread in GCC*/\n\n'
 
-    if CheckHeader(rtconfig, 'newlib.h'):
-        str += '#include <newlib.h>\n'
-        cc_header += '#define HAVE_NEWLIB_H 1\n'
-        cc_header += '#define LIBC_VERSION "newlib %s"\n\n' % GetNewLibVersion(rtconfig)
+    # if CheckHeader(rtconfig, 'newlib.h'):
+    #     str += '#include <newlib.h>\n'
+    #     cc_header += '#define HAVE_NEWLIB_H 1\n'
+    #     cc_header += '#define LIBC_VERSION "newlib %s"\n\n' % GetNewLibVersion(rtconfig)
 
-    if CheckHeader(rtconfig, 'sys/signal.h'):
-        str += '#include <sys/signal.h>\n'
-        cc_header += '#define HAVE_SYS_SIGNAL_H 1\n'
-    if CheckHeader(rtconfig, 'sys/select.h'):
-        str += '#include <sys/select.h>\n'
-        cc_header += '#define HAVE_SYS_SELECT_H 1\n'
-    if CheckHeader(rtconfig, 'pthread.h'):
-        str += "#include <pthread.h>\n"
-        cc_header += '#define HAVE_PTHREAD_H 1\n'
+    # if CheckHeader(rtconfig, 'sys/signal.h'):
+    #     str += '#include <sys/signal.h>\n'
+    #     cc_header += '#define HAVE_SYS_SIGNAL_H 1\n'
+    # if CheckHeader(rtconfig, 'sys/select.h'):
+    #     str += '#include <sys/select.h>\n'
+    #     cc_header += '#define HAVE_SYS_SELECT_H 1\n'
+    # if CheckHeader(rtconfig, 'pthread.h'):
+    #     str += "#include <pthread.h>\n"
+    #     cc_header += '#define HAVE_PTHREAD_H 1\n'
 
-    # if CheckHeader(rtconfig, 'sys/dirent.h'):
-    #    str += '#include <sys/dirent.h>\n'
+    # # if CheckHeader(rtconfig, 'sys/dirent.h'):
+    # #    str += '#include <sys/dirent.h>\n'
 
-    # add some common features
-    str += 'const char* version = __VERSION__;\n'
-    str += 'const int iso_c_visible = __ISO_C_VISIBLE;\n'
-    str += '\n#ifdef HAVE_INITFINI_ARRAY\n'
-    str += 'const int init_fini_array = HAVE_INITFINI_ARRAY;\n'
-    str += '#endif\n'
+    # # add some common features
+    # str += 'const char* version = __VERSION__;\n'
+    # str += 'const int iso_c_visible = __ISO_C_VISIBLE;\n'
+    # str += '\n#ifdef HAVE_INITFINI_ARRAY\n'
+    # str += 'const int init_fini_array = HAVE_INITFINI_ARRAY;\n'
+    # str += '#endif\n'
 
-    cc_header += '\n'
-    cc_header += GCCResult(rtconfig, str)
-    cc_header += '\n#endif\n'
+    # cc_header += '\n'
+    # cc_header += GCCResult(rtconfig, str)
+    # cc_header += '\n#endif\n'
 
-    cc_file = open('cconfig.h', 'w')
-    if cc_file:
-        cc_file.write(cc_header)
-        cc_file.close()
+    # cc_file = open('cconfig.h', 'w')
+    # if cc_file:
+    #     cc_file.write(cc_header)
+    #     cc_file.close()
+    pass

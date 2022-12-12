@@ -14,13 +14,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -956,6 +955,16 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
+  
+/** @addtogroup Hardware_Constant_Definition
+  * @{
+  */
+#define LSI_STARTUP_TIME 130U /*!< LSI Maximum startup time in us */
+
+/**
+  * @}
+  */
+
 
 /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
@@ -3720,6 +3729,9 @@ typedef struct
 #define FLASH_ECCR_CPUID_Pos                (26U)                              
 #define FLASH_ECCR_CPUID_Msk                (0x7UL << FLASH_ECCR_CPUID_Pos)    /*!< 0x1C000000 */
 #define FLASH_ECCR_CPUID                    FLASH_ECCR_CPUID_Msk               /*!< CPU identification                                  */
+#define FLASH_ECCR_CPUID_0                  (0x1U << FLASH_ECCR_CPUID_Pos)     /*!< 0x04000000 */
+#define FLASH_ECCR_CPUID_1                  (0x2U << FLASH_ECCR_CPUID_Pos)     /*!< 0x08000000 */
+#define FLASH_ECCR_CPUID_2                  (0x4U << FLASH_ECCR_CPUID_Pos)     /*!< 0x10000000 */
 #define FLASH_ECCR_ECCC_Pos                 (30U)                              
 #define FLASH_ECCR_ECCC_Msk                 (0x1UL << FLASH_ECCR_ECCC_Pos)     /*!< 0x40000000 */
 #define FLASH_ECCR_ECCC                     FLASH_ECCR_ECCC_Msk                /*!< ECC correction                                      */

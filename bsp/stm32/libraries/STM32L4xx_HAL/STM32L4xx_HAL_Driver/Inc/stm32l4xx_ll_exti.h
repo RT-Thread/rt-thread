@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_LL_EXTI_H
-#define __STM32L4xx_LL_EXTI_H
+#ifndef STM32L4xx_LL_EXTI_H
+#define STM32L4xx_LL_EXTI_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -1356,6 +1356,6 @@ void LL_EXTI_StructInit(LL_EXTI_InitTypeDef *EXTI_InitStruct);
 }
 #endif
 
-#endif /* __STM32L4xx_LL_EXTI_H */
+#endif /* STM32L4xx_LL_EXTI_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -2,25 +2,25 @@
 //
 // timer.c - Driver for the timer module.
 //
-// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -297,6 +297,7 @@ TimerDisable(uint32_t ui32Base, uint32_t ui32Timer)
 //! - \b TIMER_CFG_A_CAP_TIME - Half-width edge time capture
 //! - \b TIMER_CFG_A_CAP_TIME_UP - Half-width edge time capture that counts up
 //!   instead of down (not available on all parts)
+//! - \b TIMER_CFG_A_ONE_SHOT_PWM - Half-width one shot PWM output
 //! - \b TIMER_CFG_A_PWM - Half-width PWM output
 //!
 //! Some Tiva devices also allow configuring an action when the timers
@@ -351,11 +352,11 @@ TimerConfigure(uint32_t ui32Base, uint32_t ui32Config)
     // Check the arguments.
     //
     ASSERT(_TimerBaseValid(ui32Base));
-    ASSERT((ui32Config == TIMER_CFG_ONE_SHOT) ||
-           (ui32Config == TIMER_CFG_ONE_SHOT_UP) ||
-           (ui32Config == TIMER_CFG_PERIODIC) ||
-           (ui32Config == TIMER_CFG_PERIODIC_UP) ||
-           (ui32Config == TIMER_CFG_RTC) ||
+    ASSERT(((ui32Config & 0xfff0ffff) == TIMER_CFG_ONE_SHOT) ||
+           ((ui32Config & 0xfff0ffff) == TIMER_CFG_ONE_SHOT_UP) ||
+           ((ui32Config & 0xfff0ffff) == TIMER_CFG_PERIODIC) ||
+           ((ui32Config & 0xfff0ffff) == TIMER_CFG_PERIODIC_UP) ||
+           ((ui32Config & 0xfff0ffff) == TIMER_CFG_RTC) ||
            ((ui32Config & 0xff000000) == TIMER_CFG_SPLIT_PAIR));
     ASSERT(((ui32Config & 0xff000000) != TIMER_CFG_SPLIT_PAIR) ||
            ((((ui32Config & 0x000000ff) == TIMER_CFG_A_ONE_SHOT) ||
@@ -366,6 +367,7 @@ TimerConfigure(uint32_t ui32Base, uint32_t ui32Config)
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_COUNT_UP) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_TIME) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_TIME_UP) ||
+             ((ui32Config & 0x000000ff) == TIMER_CFG_A_ONE_SHOT_PWM) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_PWM)) &&
             (((ui32Config & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT) ||
              ((ui32Config & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT_UP) ||
@@ -375,6 +377,7 @@ TimerConfigure(uint32_t ui32Base, uint32_t ui32Config)
              ((ui32Config & 0x0000ff00) == TIMER_CFG_B_CAP_COUNT_UP) ||
              ((ui32Config & 0x0000ff00) == TIMER_CFG_B_CAP_TIME) ||
              ((ui32Config & 0x0000ff00) == TIMER_CFG_B_CAP_TIME_UP) ||
+             ((ui32Config & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT_PWM) ||
              ((ui32Config & 0x0000ff00) == TIMER_CFG_B_PWM))));
 
     //
@@ -1454,10 +1457,12 @@ TimerIntUnregister(uint32_t ui32Base, uint32_t ui32Timer)
 //! - \b TIMER_TIMA_DMA - Timer A uDMA complete
 //! - \b TIMER_CAPB_EVENT  - Capture B event interrupt
 //! - \b TIMER_CAPB_MATCH  - Capture B match interrupt
+//! - \b TIMER_TIMB_MATCH  - Timer B match interrupt
 //! - \b TIMER_TIMB_TIMEOUT  - Timer B timeout interrupt
 //! - \b TIMER_RTC_MATCH  - RTC interrupt mask
 //! - \b TIMER_CAPA_EVENT  - Capture A event interrupt
 //! - \b TIMER_CAPA_MATCH  - Capture A match interrupt
+//! - \b TIMER_TIMA_MATCH  - Timer A match interrupt
 //! - \b TIMER_TIMA_TIMEOUT  - Timer A timeout interrupt
 //!
 //! \return None.

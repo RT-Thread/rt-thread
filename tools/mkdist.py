@@ -105,6 +105,18 @@ def bsp_update_sconstruct(dist_dir):
                     f.write('if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
             f.write(line)
 
+def bsp_update_kconfig_testcases(dist_dir):
+    # delete testcases in rt-thread/Kconfig
+    if not os.path.isfile(os.path.join(dist_dir, 'rt-thread/Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'rt-thread/Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(dist_dir, 'rt-thread/Kconfig'), 'w') as f:
+        for line in data:
+            if line.find('examples/utest/testcases/Kconfig') == -1:
+                f.write(line)
+
 def bsp_update_kconfig(dist_dir):
     # change RTT_ROOT in Kconfig
     if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
@@ -161,10 +173,11 @@ def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
     if rttide == None:
         tgt_dict = {'mdk4':('keil', 'armcc'),
                     'mdk5':('keil', 'armcc'),
-                    'iar':('iar', 'iar'),
+                    'iar':('iar', 'iccarm'),
                     'vs':('msvc', 'cl'),
                     'vs2012':('msvc', 'cl'),
-                    'cdk':('gcc', 'gcc')}
+                    'cdk':('gcc', 'gcc'),
+                    'eclipse':('eclipse', 'gcc')}
     else:
         item = 'eclipse --project-name=' + rttide['project_name']
         tgt_dict = {item:('gcc', 'gcc')}
@@ -218,7 +231,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     if 'dist_handle' in Env:
         print("=> start dist handle")
         dist_handle = Env['dist_handle']
-        dist_handle(BSP_ROOT)
+        dist_handle(BSP_ROOT, dist_dir)
 
     # get all source files from program
     for item in program:
@@ -307,11 +320,14 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
 
+    print('Update configuration files...')
     # change RTT_ROOT in SConstruct
     bsp_update_sconstruct(dist_dir)
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
     bsp_update_kconfig_library(dist_dir)
+    # delete testcases in Kconfig
+    bsp_update_kconfig_testcases(dist_dir)
     # update all project files
     bs_update_ide_project(dist_dir, target_path)
 
@@ -374,12 +390,14 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
     do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
 
+    print('Update configuration files...')
     # change RTT_ROOT in SConstruct
     bsp_update_sconstruct(dist_dir)
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
     bsp_update_kconfig_library(dist_dir)
-
+    # delete testcases in Kconfig
+    bsp_update_kconfig_testcases(dist_dir)
     # update all project files
     if rttide == None:
         bs_update_ide_project(dist_dir, target_path)

@@ -412,7 +412,7 @@ rt_err_t mci_hw_init(const char *device_name)
     }
 
     /* initialize mutex lock */
-    rt_mutex_init(&_mci_device->lock, device_name, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_mci_device->lock, device_name, RT_IPC_FLAG_PRIO);
     /* create finish event */
     _mci_device->finish_event = rt_event_create(device_name, RT_IPC_FLAG_FIFO);
 

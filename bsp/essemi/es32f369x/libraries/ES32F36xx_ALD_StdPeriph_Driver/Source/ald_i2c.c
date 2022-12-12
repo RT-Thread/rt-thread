@@ -1,20 +1,38 @@
 /**
- *********************************************************************************
- *
- * @file    ald_i2c.c
- * @brief   I2C module driver.
- *
- * @version V1.0
- * @date    15 Nov 2019
- * @author  AE Team
- * @note
- *
- * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
- *
- @verbatim
- ==============================================================================
+  *********************************************************************************
+  *
+  * @file    ald_i2c.c
+  * @brief   I2C module driver.
+  *
+  * @version V1.0
+  * @date    15 Nov 2019
+  * @author  AE Team
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          15 Nov 2019     AE Team         The first version
+  *
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
+  *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
+  *
+  @verbatim
+ ===============================================================================
                        ##### How to use this driver #####
- ==============================================================================
+ ===============================================================================
  [..]
    The I2C driver can be used as follows:
 
@@ -151,7 +169,7 @@
  *********************************************************************************
  */
 
-#include "ald_i2c.h"
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
  * @{
@@ -168,9 +186,9 @@
  * @{
  */
 
-#define I2C_TIMEOUT_FLAG          (__systick_interval / 20 + 1)
-#define I2C_TIMEOUT_ADDR_SLAVE    (__systick_interval * 10)
-#define I2C_TIMEOUT_BUSY_FLAG     (__systick_interval * 10)
+#define I2C_TIMEOUT_FLAG          (10)
+#define I2C_TIMEOUT_ADDR_SLAVE    (10)
+#define I2C_TIMEOUT_BUSY_FLAG     (10)
 #define I2C_MAX_DELAY             0xFFFFFFFF
 
 /**
@@ -248,64 +266,66 @@ static ald_status_t i2c_slave_stopf(i2c_handle_t *hperh);
  * @brief  I2C Configuration Speed function.      
  * @param  hperh: Pointer to a i2c_handle_t structure that contains.
  *                the configuration information for the I2C speed.
- * @param  freqrange: I2C Peripheral bus clock
+ * @param  clk: I2C Peripheral bus clock
  * @retval Status, see @ref ald_status_t.
  */
-ald_status_t i2c_speed_init(i2c_handle_t *hperh, uint32_t freqrange)
+ald_status_t i2c_speed_init(i2c_handle_t *hperh, uint32_t clk)
 {
-	float Tsync = 0;
-	float Tscl  = 0;
-	float Tfre  = 0;
-	uint32_t Tper  = 0;
-	uint32_t presc = 0;
-	uint32_t tmp = 0;
+	int32_t t_scl, t_pre, tmp;
 
 	if (hperh->init.module == I2C_MODULE_SLAVE) {
-		hperh->init.clk_speed = 450000;
+		hperh->init.clk_speed = 450000UL;
 	}
 
-	if (hperh->init.clk_speed <= 100000) {
-		tmp = freqrange / 4000000;
-		freqrange = 4000000;
-	} else {
-		tmp = freqrange / 8000000;
-		freqrange = 8000000;
-	}
-
-	Tscl = 1000.0 / (hperh->init.clk_speed / 1000000.0);
-	Tfre = 1000.0 / I2C_FREQ_RANGE(freqrange);
-
-	Tsync = (READ_BITS(hperh->perh->CON2, I2C_CON1_DNF_MSK, I2C_CON1_DNF_POSS) + 2) * 2 * Tfre;
-
-	Tper = (uint32_t)((Tscl - Tsync) / Tfre);
-
-	while (Tper > 512) {
-		Tper = Tper - 512;
-		presc++;
-	}
-
-	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_PRESC_MSK, (presc + tmp ) << I2C_TIMINGR_PRESC_POSS);
-
-	if (hperh->init.clk_speed <= I2C_STANDARD_MODE_MAX_CLK) {
-		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 2 << I2C_TIMINGR_SDADEL_POSS);
-		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 4 << I2C_TIMINGR_SCLDEL_POSS);
-		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLH_MSK, (((Tper - 2) / 2) - 4) << I2C_TIMINGR_SCLH_POSS);
-		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, (((Tper - 2) / 2) + 4) << I2C_TIMINGR_SCLL_POSS);
+	if (hperh->init.clk_speed <= 100000UL) {
+		tmp = clk / 4000000UL;
+		clk = (tmp >= 16UL) ? (clk >> 4UL) : 4000000UL;
 	}
 	else {
-		if (hperh->init.clk_speed <= I2C_FAST_MODE_MAX_CLK) {
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 2 << I2C_TIMINGR_SDADEL_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 3 << I2C_TIMINGR_SCLDEL_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLH_MSK, (((Tper - 2) / 2) - 6) << I2C_TIMINGR_SCLH_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, (((Tper - 2) / 2) + 6) << I2C_TIMINGR_SCLL_POSS);
-		}
-		else {
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 0 << I2C_TIMINGR_SDADEL_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 1 << I2C_TIMINGR_SCLDEL_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLH_MSK, (((Tper - 2) / 2) - 3) << I2C_TIMINGR_SCLH_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, (((Tper - 2) / 2) + 3) << I2C_TIMINGR_SCLL_POSS);
-		}
+		tmp = clk / 8000000UL;
+		clk = (tmp >= 16UL) ? (clk >> 4UL) : 8000000UL;
 	}
+
+	tmp = tmp >= 16UL ? 15UL : tmp;
+	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_PRESC_MSK, tmp << I2C_TIMINGR_PRESC_POSS);
+
+	t_scl = 1000000000 / hperh->init.clk_speed;
+	t_pre = 1000000000 / clk;
+
+	tmp = (t_scl * 10) / (t_pre << 1UL);
+	tmp = (tmp % 10) >= 5 ? (tmp / 10 + 1) : tmp / 10;
+	tmp = tmp >= 255UL ? 255UL : tmp;
+	/* SCLDEL+1+SDADEL+0+SCLH+1 */
+	if ((long)(t_scl - ((tmp + 3UL) * t_pre)) < 0)
+		return ERROR;
+
+	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, (tmp - 1UL) << I2C_TIMINGR_SCLL_POSS);	
+	if (hperh->init.clk_speed > 100000UL) {		
+		if ((tmp - 1UL) > 3UL) {
+			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, ((tmp - 1UL) / 3UL) << I2C_TIMINGR_SCLDEL_POSS);
+			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, ((((tmp - 1UL) / 3UL) >= 3) ? 3 : (((tmp - 1UL) / 3UL) % 3)) << I2C_TIMINGR_SDADEL_POSS);		
+		}
+ 		else {
+			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 1UL << I2C_TIMINGR_SCLDEL_POSS);
+			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 1UL << I2C_TIMINGR_SDADEL_POSS);
+		}                
+	}
+	else {
+		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 2UL << I2C_TIMINGR_SDADEL_POSS);
+		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 4UL << I2C_TIMINGR_SCLDEL_POSS);
+	}
+
+	tmp = t_scl - (tmp + READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, I2C_TIMINGR_SCLDEL_POSS) + \
+                             READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, I2C_TIMINGR_SDADEL_POSS) + 1UL) * t_pre;
+	if (tmp < 0)
+		return ERROR;
+
+	tmp = (tmp * 10) / t_pre;
+	tmp = (tmp % 10) >= 5 ? (tmp / 10 + 1) : tmp / 10;
+	tmp = tmp >= 255UL ? 255UL : tmp;
+	/* tscll >= 3*tsclh */
+	tmp = (tmp - 1) <= (READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, I2C_TIMINGR_SCLL_POSS) / 3) ? (READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, I2C_TIMINGR_SCLL_POSS) / 3) + 1: tmp;
+	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLH_MSK, (tmp - 1UL) << I2C_TIMINGR_SCLH_POSS);
 
 	return OK;
 }
@@ -337,7 +357,9 @@ ald_status_t ald_i2c_init(i2c_handle_t *hperh)
 
 	I2C_DISABLE(hperh);
 
-	i2c_speed_init(hperh, freqrange);
+	if (OK != i2c_speed_init(hperh, freqrange))
+		return ERROR;
+
 	MODIFY_REG(hperh->perh->CON1, I2C_CON1_NOSTRETCH_MSK, (hperh->init.no_stretch) << I2C_CON1_NOSTRETCH_POS);
 	MODIFY_REG(hperh->perh->CON1, I2C_CON1_GCEN_MSK, (hperh->init.general_call) << I2C_CON1_GCEN_POS);
 
@@ -397,8 +419,8 @@ ald_status_t ald_i2c_reset(i2c_handle_t *hperh)
 	WRITE_REG(hperh->perh->ADDR2, 0);
 	WRITE_REG(hperh->perh->TIMINGR, 0);
 	WRITE_REG(hperh->perh->TIMEOUTR, 0);
-	WRITE_REG(hperh->perh->FCON, 0);
-	WRITE_REG(hperh->perh->TXDATA, 0);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 	WRITE_REG(hperh->perh->IDR, I2C_FLAG_MASK);
 	WRITE_REG(hperh->perh->ICR, I2C_FLAG_MASK);
 
@@ -513,7 +535,6 @@ ald_status_t ald_i2c_master_send(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t
 	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
 	while (size > 0) {
-		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA  = (*buf++);
 		size--;
 		hperh->xfer_count++;
@@ -637,7 +658,7 @@ SUCCESS:
 		goto SUCCESS;
 
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	goto SUCCESS;
+		goto SUCCESS;
 
 ERROR:
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
@@ -687,11 +708,13 @@ ald_status_t ald_i2c_slave_send(i2c_handle_t *hperh, uint8_t *buf, uint32_t size
 	hperh->xfer_size  = size;
 	hperh->xfer_count = 0;
 
-	MODIFY_REG(hperh->perh->FCON, I2C_FCON_TXFTH_MSK, 0x03 << I2C_FCON_TXFTH_POSS);
 	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	MODIFY_REG(hperh->perh->FCON, I2C_FCON_TXFTH_MSK, 0x03 << I2C_FCON_TXFTH_POSS);
 
 	for (i = 0; i < 16; i++) {
-		while(hperh->perh->STAT & (0x1 << 1));
+		if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TXF, SET, timeout) != OK)
+			goto ERROR;
+
 		hperh->perh->TXDATA = (*buf++);
 		--size;
 		hperh->xfer_count++;
@@ -708,7 +731,9 @@ ald_status_t ald_i2c_slave_send(i2c_handle_t *hperh, uint8_t *buf, uint32_t size
 			goto ERROR;
 
 		for (i = 0; i < 8; i++) {
-			while(hperh->perh->STAT & (0x1 << 1));
+			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TXF, SET, timeout) != OK)
+				goto ERROR;
+
 			hperh->perh->TXDATA = (*buf++);
 			--size;
 			hperh->xfer_count++;
@@ -829,7 +854,7 @@ ald_status_t ald_i2c_master_send_by_it(i2c_handle_t *hperh, uint16_t dev_addr, u
 
 	i2c_master_req_write(hperh, dev_addr, I2C_TIMEOUT_FLAG);
 
-	if (size <= 0xff) {
+	if (size <= 0xFF) {
 		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
 	}
 	else {
@@ -1169,15 +1194,15 @@ ald_status_t ald_i2c_slave_send_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_
 
  	ald_dma_config_struct(&hperh->hdmatx.config);
 	hperh->hdmatx.config.burst      = ENABLE;
-	hperh->hdmatx.config.src     	 = (void *)buf;
-	hperh->hdmatx.config.dst     	 = (void *)&hperh->perh->TXDATA;
-	hperh->hdmatx.config.size    	 = size;
+	hperh->hdmatx.config.src     	= (void *)buf;
+	hperh->hdmatx.config.dst     	= (void *)&hperh->perh->TXDATA;
+	hperh->hdmatx.config.size    	= size;
 	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmatx.config.src_inc 	 = DMA_DATA_INC_BYTE;
-	hperh->hdmatx.config.dst_inc 	 = DMA_DATA_INC_NONE;
-	hperh->hdmatx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmatx.config.msigsel 	 = DMA_MSIGSEL_I2C_TXEMPTY;
-	hperh->hdmatx.config.channel 	 = channel;
+	hperh->hdmatx.config.src_inc 	= DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc 	= DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    	= hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+	hperh->hdmatx.config.msigsel 	= DMA_MSIGSEL_I2C_TXEMPTY;
+	hperh->hdmatx.config.channel 	= channel;
 	ald_dma_config_basic(&hperh->hdmatx);
 
 	if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, I2C_TIMEOUT_ADDR_SLAVE) == ERROR) {
@@ -1188,6 +1213,7 @@ ald_status_t ald_i2c_slave_send_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_
 		return ERROR;
 	}
 
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 	SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
 	return OK;
@@ -1235,15 +1261,15 @@ ald_status_t ald_i2c_slave_recv_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_
 	hperh->hdmarx.err_arg  = (void *)hperh;
 
 	ald_dma_config_struct(&hperh->hdmarx.config);
-	hperh->hdmarx.config.src     	 = (void *)&hperh->perh->RXDATA;
-	hperh->hdmarx.config.dst     	 = (void *)buf;
-	hperh->hdmarx.config.size    	 = size;
+	hperh->hdmarx.config.src     	= (void *)&hperh->perh->RXDATA;
+	hperh->hdmarx.config.dst     	= (void *)buf;
+	hperh->hdmarx.config.size    	= size;
 	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmarx.config.src_inc 	 = DMA_DATA_INC_NONE;
-	hperh->hdmarx.config.dst_inc 	 = DMA_DATA_INC_BYTE;
-	hperh->hdmarx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmarx.config.msigsel 	 = DMA_MSIGSEL_I2C_RNR;
-	hperh->hdmarx.config.channel 	 = channel;
+	hperh->hdmarx.config.src_inc 	= DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc 	= DMA_DATA_INC_BYTE;
+	hperh->hdmarx.config.msel    	= hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+	hperh->hdmarx.config.msigsel 	= DMA_MSIGSEL_I2C_RNR;
+	hperh->hdmarx.config.channel 	= channel;
 	ald_dma_config_basic(&hperh->hdmarx);
 
 	if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, I2C_TIMEOUT_ADDR_SLAVE) == ERROR) {
@@ -1254,6 +1280,7 @@ ald_status_t ald_i2c_slave_recv_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_
 		return ERROR;
 	}
 
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 	SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
 
 	return OK;
@@ -1297,31 +1324,25 @@ ald_status_t ald_i2c_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t 
 	hperh->xfer_size  = size;
 	hperh->xfer_count = 0;
 
-	i2c_master_req_write(hperh, dev_addr, timeout);
+	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	if (add_size == I2C_MEMADD_SIZE_8BIT) {
-		nbyte = size + 1;
-	}
-	else {
-		nbyte = size + 2;
-	}
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (nbyte <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, timeout) != OK)
+		goto ERROR;
+
+	if (size <= 0xFF) {
+		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
 	}
 	else {
 		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
 		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 	}
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK)
-		goto ERROR;
-
-	hperh->xfer_count += 2;
 	while (size > 0) {
-		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = (*buf++);
 		--size;
 		hperh->xfer_count++;
@@ -1348,8 +1369,11 @@ ald_status_t ald_i2c_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t 
 	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
 		goto SUCCESS;
 
+	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, timeout))
+		goto ERROR;
+
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	goto SUCCESS;
+		goto SUCCESS;
 
 ERROR:
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
@@ -1404,22 +1428,15 @@ ald_status_t ald_i2c_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t m
 	hperh->xfer_count = 0;
 	hperh->xfer_size  = size;
 
-	i2c_master_req_write(hperh, dev_addr, timeout);
-
 	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
 	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
 	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
-
+	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, timeout) != OK)
 		return ERROR;
-	}
 
 	if (size <= 0xFF) {
 		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
@@ -1441,7 +1458,7 @@ ald_status_t ald_i2c_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t m
 		hperh->xfer_count++;
 
 		if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
-			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
+			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, timeout) == OK) {
 				if (size > 0xFF) {
 					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
 				}
@@ -1460,7 +1477,7 @@ ald_status_t ald_i2c_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t m
 		goto SUCCESS;
 
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	goto SUCCESS;
+		goto SUCCESS;
 
 ERROR:
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
@@ -1515,20 +1532,9 @@ ald_status_t ald_i2c_mem_write_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uin
 	hperh->xfer_size  = size;
 	hperh->xfer_count = 0;
 
-	if (add_size == I2C_MEMADD_SIZE_8BIT) {
-		nbyte = size + 1;
-	}
-	else {
-		nbyte = size + 2;
-	}
-
-	if (nbyte <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
 	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
@@ -1541,13 +1547,20 @@ ald_status_t ald_i2c_mem_write_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uin
 
 		return ERROR;
 	}
-
+	
+	if (size <= 0xFF) {
+		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+	}
+	else {
+		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+	}
+	
 	I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
 	I2C_CLEAR_IT(hperh , I2C_IT_NACK);
 	I2C_CLEAR_IT(hperh , I2C_IT_TC);
 	I2C_CLEAR_IT(hperh , I2C_IT_TCR);
 
-	while(hperh->perh->STAT & (0x1 << 1));
 	hperh->perh->TXDATA = (*hperh->p_buff++);
 	hperh->xfer_count++;
 
@@ -1596,6 +1609,7 @@ ald_status_t ald_i2c_mem_read_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint
 
 	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
 	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
 	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
@@ -1667,32 +1681,12 @@ ald_status_t ald_i2c_mem_write_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, ui
 	hperh->xfer_size  = size;
 	hperh->xfer_count = 0;
 
-	if (hperh->hdmatx.perh == NULL)
-		hperh->hdmatx.perh = DMA0;
-
-	hperh->hdmatx.cplt_cbk = i2c_dma_mem_send_cplt;
-	hperh->hdmatx.cplt_arg = hperh;
-	hperh->hdmatx.err_cbk  = i2c_dma_error;
-	hperh->hdmatx.err_arg  = hperh;
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
 	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
 	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
 	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-
-	ald_dma_config_struct(&hperh->hdmatx.config);
-	hperh->hdmatx.config.burst      = ENABLE;
-	hperh->hdmatx.config.src        = (void *)hperh->p_buff;
-	hperh->hdmatx.config.dst     	 = (void *)&hperh->perh->TXDATA;
-	hperh->hdmatx.config.size       = size;
-	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmatx.config.src_inc 	 = DMA_DATA_INC_BYTE;
-	hperh->hdmatx.config.dst_inc 	 = DMA_DATA_INC_NONE;
-	hperh->hdmatx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmatx.config.msigsel 	 = DMA_MSIGSEL_I2C_TXEMPTY;
-	hperh->hdmatx.config.channel 	 = channel;
-	ald_dma_config_basic(&hperh->hdmatx);
-
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 
 	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
 		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
@@ -1703,9 +1697,29 @@ ald_status_t ald_i2c_mem_write_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, ui
 		return ERROR;
 	}
 
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
 
+	hperh->hdmatx.cplt_cbk = i2c_dma_mem_send_cplt;
+	hperh->hdmatx.cplt_arg = hperh;
+	hperh->hdmatx.err_cbk  = i2c_dma_error;
+	hperh->hdmatx.err_arg  = hperh;
+
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.burst      = ENABLE;
+	hperh->hdmatx.config.src        = (void *)hperh->p_buff;
+	hperh->hdmatx.config.dst     	= (void *)&hperh->perh->TXDATA;
+	hperh->hdmatx.config.size       = size;
+	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
+	hperh->hdmatx.config.src_inc 	= DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc 	= DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    	= hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+	hperh->hdmatx.config.msigsel 	= DMA_MSIGSEL_I2C_TXEMPTY;
+	hperh->hdmatx.config.channel 	= channel;
+	ald_dma_config_basic(&hperh->hdmatx);
+
+	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
 	SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
 	return OK;
@@ -1726,6 +1740,8 @@ ald_status_t ald_i2c_mem_write_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, ui
 ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr, i2c_addr_size_t add_size,
                               uint8_t *buf, uint8_t size, uint8_t channel)
 {
+	uint32_t nbyte = 0;
+
 	if (hperh->state != I2C_STATE_READY)
 		return BUSY;
 
@@ -1745,6 +1761,20 @@ ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uin
 	hperh->xfer_size  = size;
 	hperh->xfer_count = size;
 
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+
+	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+
+	if (i2c_req_mem_read(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
+		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+		hperh->state = I2C_STATE_READY;
+		hperh->mode  = I2C_MODE_NONE;
+		__UNLOCK(hperh);
+	}
+
 	if (hperh->hdmarx.perh == NULL)
 		hperh->hdmarx.perh = DMA0;
 
@@ -1752,23 +1782,13 @@ ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uin
 	hperh->hdmarx.cplt_arg = (void *)hperh;
 	hperh->hdmarx.err_cbk  = i2c_dma_error;
 	hperh->hdmarx.err_arg  = (void *)hperh;
-
-	if (add_size == I2C_MEMADD_SIZE_16BIT) {
-		hperh->hdmatx.config.size = size + 2;
-	}
-	else {
-		hperh->hdmatx.config.size = size + 1;
-	}
-
-        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-        hperh->hdmatx.config.size = size;
-
+	
 	ald_dma_config_struct(&hperh->hdmarx.config);
-	hperh->hdmatx.config.burst      = ENABLE;
+	hperh->hdmatx.config.burst       = ENABLE;
 	hperh->hdmarx.config.src     	 = (void *)&hperh->perh->RXDATA;
 	hperh->hdmarx.config.dst     	 = (void *)buf;
 	hperh->hdmarx.config.data_width	 = DMA_DATA_SIZE_BYTE;
-	hperh->hdmarx.config.size	 = size;
+	hperh->hdmarx.config.size        = size;
 	hperh->hdmarx.config.src_inc 	 = DMA_DATA_INC_NONE;
 	hperh->hdmarx.config.dst_inc 	 = DMA_DATA_INC_BYTE;
 	hperh->hdmarx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
@@ -1776,20 +1796,8 @@ ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uin
 	hperh->hdmarx.config.channel 	 = channel;
 	ald_dma_config_basic(&hperh->hdmarx);
 
-	if (!I2C_GET_FLAG(hperh, I2C_STAT_TXE)) {
-		SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	}
-
-	if (i2c_req_mem_read(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
-		if (hperh->error_code == I2C_ERROR_AF) {
-			__UNLOCK(hperh);
-			return ERROR;
-		}
-		else {
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-	}
+	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
 	SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
 	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
@@ -1908,7 +1916,6 @@ void ald_i2c_ev_irq_handler(i2c_handle_t *hperh)
 
 		ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
 	}
-
 	/**< Transmit FIFO empty interrupt */
 	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXE) == SET) {
 		ald_i2c_clear_flag_status(hperh, I2C_IT_TXE);
@@ -1964,8 +1971,14 @@ void ald_i2c_er_irq_handler(i2c_handle_t *hperh)
 
 	/**< NACK interrupt */
 	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_NACK) == SET) {
-		if (hperh->xfer_count != hperh->xfer_size)
+		if (hperh->xfer_count != hperh->xfer_size) {
 			hperh->state |= I2C_ERROR_AF;
+		}
+		else {
+			I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK);
+			ald_i2c_clear_flag_status(hperh, I2C_IT_NACK);
+			return;
+		}
 
 		if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM))
 			SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
@@ -2352,14 +2365,20 @@ static ald_status_t i2c_req_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, ui
 
 		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
 			return ERROR;
-		
+
 		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
 	}
 
-	if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
+	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, timeout) != OK) {
+		CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+		ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
 		return ERROR;
+	}
 
+	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+	ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
+	
 	return OK;
 }
 #ifdef ALD_DMA
@@ -2401,7 +2420,6 @@ static ald_status_t i2c_req_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uin
 				return TIMEOUT;
 			}
 		}
-
 		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
 	}
@@ -2412,6 +2430,7 @@ static ald_status_t i2c_req_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uin
 		if (tim_count > 0xFFFF)
 			return TIMEOUT;
 	}
+
 	return OK;
 }
 
@@ -2532,12 +2551,19 @@ static void i2c_dma_slave_recv_cplt(void *argv)
  * @brief  DMA I2C Memory Write process complete callback
  * @param  argv: I2C handle
  * @retval None
- */
+ */uint32_t ccct = 0;
 static void i2c_dma_mem_send_cplt(void *argv)
 {
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+	uint32_t cnt = 0xFFFFFF;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == ERROR)
+	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+ccct++;ccct = ccct;
+	while (cnt--) {
+		if ((hperh->perh->STAT & I2C_STAT_TC) != 0)
+			break;
+	}
+
+	if (cnt == 0)
 		hperh->error_code |= I2C_ERROR_TIMEOUT;
 
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
@@ -2565,9 +2591,16 @@ static void i2c_dma_mem_send_cplt(void *argv)
  */
 static void i2c_dma_mem_recv_cplt(void *argv)
 {
+	uint32_t cnt = 0xFFFFF;
+
 	i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == OK)
+	while (cnt--) {
+		if ((hperh->perh->STAT & I2C_STAT_TC) != 0)
+			break;
+	}
+
+	if (cnt == 0)
 		hperh->error_code |= I2C_ERROR_TIMEOUT;
 
 	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);

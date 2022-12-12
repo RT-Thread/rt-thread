@@ -1,0 +1,23 @@
+menuconfig RTT_POSIX_TESTCASE_STDLIB_H
+    bool "<stdlib.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_STDLIB_H
+
+    config STDLIB_H_ATOI
+        bool "<stdlib.h> -> atoi"
+        default n
+
+    config STDLIB_H_ATOL
+        bool "<stdlib.h> -> atol"
+        default n
+
+    config STDLIB_H_QSORT
+        bool "<stdlib.h> -> qsort"
+        default n
+
+    config STDLIB_H_STRTOL
+        bool "<stdlib.h> -> strtol"
+        default n
+
+endif

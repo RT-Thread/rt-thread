@@ -14,12 +14,24 @@
   ==============================================================================
                         ##### How to use this driver #####
   ==============================================================================
-    [..]
-     (#) Program the required configuration through the following parameters:
-         the LTDC timing, the horizontal and vertical polarity,
-         the pixel clock polarity, Data Enable polarity and the LTDC background color value
-         using HAL_LTDC_Init() function
+     [..]
+     The LTDC HAL driver can be used as follows:
 
+     (#) Declare a LTDC_HandleTypeDef handle structure, for example: LTDC_HandleTypeDef  hltdc;
+
+     (#) Initialize the LTDC low level resources by implementing the HAL_LTDC_MspInit() API:
+         (##) Enable the LTDC interface clock
+         (##) NVIC configuration if you need to use interrupt process
+             (+++) Configure the LTDC interrupt priority
+             (+++) Enable the NVIC LTDC IRQ Channel
+
+     (#) Initialize the required configuration through the following parameters:
+         the LTDC timing, the horizontal and vertical polarity, the pixel clock polarity,
+         Data Enable polarity and the LTDC background color value using HAL_LTDC_Init() function
+
+     *** Configuration ***
+     =========================
+     [..]
      (#) Program the required configuration through the following parameters:
          the pixel format, the blending factors, input alpha value, the window size
          and the image size using HAL_LTDC_ConfigLayer() function for foreground
@@ -73,57 +85,64 @@
       (+) __HAL_LTDC_DISABLE_IT: Disable the specified LTDC interrupts.
       (+) __HAL_LTDC_GET_IT_SOURCE: Check whether the specified LTDC interrupt has occurred or not.
 
-
-  *** Callback registration ***
-  =============================================
-
-  The compilation define  USE_HAL_LTDC_REGISTER_CALLBACKS when set to 1
-  allows the user to configure dynamically the driver callbacks.
-  Use Function @ref HAL_LTDC_RegisterCallback() to register a callback.
-
-  Function @ref HAL_LTDC_RegisterCallback() allows to register following callbacks:
-    (+) LineEventCallback   : LTDC Line Event Callback.
-    (+) ReloadEventCallback : LTDC Reload Event Callback.
-    (+) ErrorCallback       : LTDC Error Callback
-    (+) MspInitCallback     : LTDC MspInit.
-    (+) MspDeInitCallback   : LTDC MspDeInit.
-  This function takes as parameters the HAL peripheral handle, the Callback ID
-  and a pointer to the user callback function.
-
-  Use function @ref HAL_LTDC_UnRegisterCallback() to reset a callback to the default
-  weak function.
-  @ref HAL_LTDC_UnRegisterCallback takes as parameters the HAL peripheral handle,
-  and the Callback ID.
-  This function allows to reset following callbacks:
-    (+) LineEventCallback   : LTDC Line Event Callback.
-    (+) ReloadEventCallback : LTDC Reload Event Callback.
-    (+) ErrorCallback       : LTDC Error Callback
-    (+) MspInitCallback     : LTDC MspInit.
-    (+) MspDeInitCallback   : LTDC MspDeInit.
-
-  By default, after the HAL_LTDC_Init and when the state is HAL_LTDC_STATE_RESET
-  all callbacks are set to the corresponding weak functions:
-  examples @ref HAL_LTDC_LineEventCallback(), @ref HAL_LTDC_ErrorCallback().
-  Exception done for MspInit and MspDeInit functions that are
-  reset to the legacy weak function in the HAL_LTDC_Init/ @ref HAL_LTDC_DeInit only when
-  these callbacks are null (not registered beforehand).
-  if not, MspInit or MspDeInit are not null, the @ref HAL_LTDC_Init/ @ref HAL_LTDC_DeInit
-  keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
-
-  Callbacks can be registered/unregistered in HAL_LTDC_STATE_READY state only.
-  Exception done MspInit/MspDeInit that can be registered/unregistered
-  in HAL_LTDC_STATE_READY or HAL_LTDC_STATE_RESET state,
-  thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
-  In that case first register the MspInit/MspDeInit user callbacks
-  using @ref HAL_LTDC_RegisterCallback() before calling @ref HAL_LTDC_DeInit
-  or HAL_LTDC_Init function.
-
-  When The compilation define USE_HAL_LTDC_REGISTER_CALLBACKS is set to 0 or
-  not defined, the callback registration feature is not available and all callbacks
-  are set to the corresponding weak functions.
-
      [..]
        (@) You can refer to the LTDC HAL driver header file for more useful macros
+
+
+     *** Callback registration ***
+     =============================================
+     [..]
+     The compilation define  USE_HAL_LTDC_REGISTER_CALLBACKS when set to 1
+     allows the user to configure dynamically the driver callbacks.
+     Use function HAL_LTDC_RegisterCallback() to register a callback.
+
+    [..]
+    Function HAL_LTDC_RegisterCallback() allows to register following callbacks:
+      (+) LineEventCallback   : LTDC Line Event Callback.
+      (+) ReloadEventCallback : LTDC Reload Event Callback.
+      (+) ErrorCallback       : LTDC Error Callback
+      (+) MspInitCallback     : LTDC MspInit.
+      (+) MspDeInitCallback   : LTDC MspDeInit.
+    [..]
+    This function takes as parameters the HAL peripheral handle, the callback ID
+    and a pointer to the user callback function.
+
+    [..]
+    Use function HAL_LTDC_UnRegisterCallback() to reset a callback to the default
+    weak function.
+    HAL_LTDC_UnRegisterCallback() takes as parameters the HAL peripheral handle
+    and the callback ID.
+    [..]
+    This function allows to reset following callbacks:
+      (+) LineEventCallback   : LTDC Line Event Callback
+      (+) ReloadEventCallback : LTDC Reload Event Callback
+      (+) ErrorCallback       : LTDC Error Callback
+      (+) MspInitCallback     : LTDC MspInit
+      (+) MspDeInitCallback   : LTDC MspDeInit.
+
+    [..]
+    By default, after the HAL_LTDC_Init and when the state is HAL_LTDC_STATE_RESET
+    all callbacks are set to the corresponding weak functions:
+    examples HAL_LTDC_LineEventCallback(), HAL_LTDC_ErrorCallback().
+    Exception done for MspInit and MspDeInit functions that are
+    reset to the legacy weak (surcharged) functions in the HAL_LTDC_Init() and HAL_LTDC_DeInit()
+    only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_LTDC_Init() and HAL_LTDC_DeInit()
+    keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
+
+    [..]
+    Callbacks can be registered/unregistered in HAL_LTDC_STATE_READY state only.
+    Exception done MspInit/MspDeInit that can be registered/unregistered
+    in HAL_LTDC_STATE_READY or HAL_LTDC_STATE_RESET state,
+    thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
+    In that case first register the MspInit/MspDeInit user callbacks
+    using HAL_LTDC_RegisterCallback() before calling HAL_LTDC_DeInit()
+    or HAL_LTDC_Init() function.
+
+    [..]
+    When the compilation define USE_HAL_LTDC_REGISTER_CALLBACKS is set to 0 or
+    not defined, the callback registration feature is not available and all callbacks
+    are set to the corresponding weak functions.
 
   @endverbatim
   ******************************************************************************
@@ -143,11 +162,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-#ifdef HAL_LTDC_MODULE_ENABLED
-#if defined (LTDC)
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
   */
+
+#ifdef HAL_LTDC_MODULE_ENABLED
+
+#if defined (LTDC)
 
 /** @defgroup LTDC LTDC
   * @brief LTDC HAL module driver
@@ -2131,12 +2152,12 @@ static void LTDC_SetConfig(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLay
   * @}
   */
 
+#endif /* LTDC */
+
+#endif /* HAL_LTDC_MODULE_ENABLED */
 
 /**
   * @}
   */
-
-#endif /* LTDC */
-#endif /* HAL_LTDC_MODULE_ENABLED */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

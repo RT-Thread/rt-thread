@@ -30,7 +30,7 @@ extern "C" {
 #define STM32_SRAM_SIZE           (64)
 #define STM32_SRAM_END            (0x10030000 + 64 * 1024)
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

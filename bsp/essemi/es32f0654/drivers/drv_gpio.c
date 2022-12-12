@@ -3,100 +3,31 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * Change Logs:
  * Date           Author        Notes
  * 2019-01-23     wangyq        the first version
  * 2019-11-01     wangyq        update libraries
+ * 2021-04-20     liuhy         the second version
  */
 
-#include <rthw.h>
-#include <rtdevice.h>
 #include "board.h"
 #include "drv_gpio.h"
-#include <ald_cmu.h>
-#include <ald_gpio.h>
+
+/*管脚映射在 es_conf_info_map.h 的 pins[] 中*/
 
 #ifdef RT_USING_PIN
-
-#define __ES32F0_PIN(index, gpio, gpio_index) {index, GPIO##gpio, GPIO_PIN_##gpio_index}
-#define __ES32F0_PIN_DEFAULT {-1, 0, 0}
-
-/* ES32F0 GPIO driver */
-struct pin_index
-{
-    int index;
-    GPIO_TypeDef *gpio;
-    uint32_t pin;
-};
-
-static const struct pin_index pins[] =
-{
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN(2, C, 13),
-    __ES32F0_PIN(3, C, 14),
-    __ES32F0_PIN(4, C, 15),
-    __ES32F0_PIN(5, H, 0),
-    __ES32F0_PIN(6, H, 1),
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN(8, C, 0),
-    __ES32F0_PIN(9, C, 1),
-    __ES32F0_PIN(10, C, 2),
-    __ES32F0_PIN(11, C, 3),
-    __ES32F0_PIN(12, H, 3),
-    __ES32F0_PIN(13, H, 4),
-    __ES32F0_PIN(14, A, 0),
-    __ES32F0_PIN(15, A, 1),
-    __ES32F0_PIN(16, A, 2),
-    __ES32F0_PIN(17, A, 3),
-    __ES32F0_PIN(18, F, 0),
-    __ES32F0_PIN(19, F, 1),
-    __ES32F0_PIN(20, A, 4),
-    __ES32F0_PIN(21, A, 5),
-    __ES32F0_PIN(22, A, 6),
-    __ES32F0_PIN(23, A, 7),
-    __ES32F0_PIN(24, C, 4),
-    __ES32F0_PIN(25, C, 5),
-    __ES32F0_PIN(26, B, 0),
-    __ES32F0_PIN(27, B, 1),
-    __ES32F0_PIN(28, B, 2),
-    __ES32F0_PIN(29, B, 10),
-    __ES32F0_PIN(30, B, 11),
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN(33, B, 12),
-    __ES32F0_PIN(34, B, 13),
-    __ES32F0_PIN(35, B, 14),
-    __ES32F0_PIN(36, B, 15),
-    __ES32F0_PIN(37, C, 6),
-    __ES32F0_PIN(38, C, 7),
-    __ES32F0_PIN(39, C, 8),
-    __ES32F0_PIN(40, C, 9),
-    __ES32F0_PIN(41, A, 8),
-    __ES32F0_PIN(42, A, 9),
-    __ES32F0_PIN(43, A, 10),
-    __ES32F0_PIN(44, A, 11),
-    __ES32F0_PIN(45, A, 12),
-    __ES32F0_PIN(46, A, 13),
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN(49, A, 14),
-    __ES32F0_PIN(50, A, 15),
-    __ES32F0_PIN(51, C, 10),
-    __ES32F0_PIN(52, C, 11),
-    __ES32F0_PIN(53, C, 12),
-    __ES32F0_PIN(54, D, 2),
-    __ES32F0_PIN(55, B, 3),
-    __ES32F0_PIN(56, B, 4),
-    __ES32F0_PIN(57, B, 5),
-    __ES32F0_PIN(58, B, 6),
-    __ES32F0_PIN(59, B, 7),
-    __ES32F0_PIN(60, H, 2),
-    __ES32F0_PIN(61, B, 8),
-    __ES32F0_PIN(62, B, 9),
-    __ES32F0_PIN_DEFAULT,
-    __ES32F0_PIN_DEFAULT,
-};
 
 struct pin_irq_map
 {
@@ -142,6 +73,150 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     { -1, 0, RT_NULL, RT_NULL},
     { -1, 0, RT_NULL, RT_NULL},
 };
+
+#ifdef ES_CONF_EXTI_IRQ_0
+
+rt_weak void irq_pin0_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 0\r\n");
+}
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_1
+
+rt_weak void irq_pin1_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 1\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_2
+
+   rt_weak void irq_pin2_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 2\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_3
+
+rt_weak void irq_pin3_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 3\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_4
+
+rt_weak void irq_pin4_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 4\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_5
+
+rt_weak void irq_pin5_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 5\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_6
+
+rt_weak void irq_pin6_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 6\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_7
+
+rt_weak void irq_pin7_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 7\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_8
+
+rt_weak void irq_pin8_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 8\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_9
+
+rt_weak void irq_pin9_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 9\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_10
+
+rt_weak void irq_pin10_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 10\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_11
+
+rt_weak void irq_pin11_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 11\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_12
+
+rt_weak void irq_pin12_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 12\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_13
+
+rt_weak void irq_pin13_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 13\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_14
+
+rt_weak void irq_pin14_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 14\r\n");
+}
+
+#endif
+
+#ifdef ES_CONF_EXTI_IRQ_15
+
+rt_weak void irq_pin15_callback(void* arg)
+{
+    rt_kprintf("\r\nEXTI 15\r\n");
+}
+
+#endif
+
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 const struct pin_index *get_pin(uint8_t pin)
@@ -239,12 +314,18 @@ void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
 {
-    rt_int32_t mapindex = gpio_pin & 0x00FF;
-    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    uint8_t map_index = 0U;
+
+    while(gpio_pin >> (++map_index))
+    {
+    }
+    map_index--;
+
+    if (map_index >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
-    return &pin_irq_map[mapindex];
+    return &pin_irq_map[map_index];
 };
 
 rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
@@ -408,17 +489,8 @@ const static struct rt_pin_ops _es32f0_pin_ops =
     es32f0_pin_attach_irq,
     es32f0_pin_detach_irq,
     es32f0_pin_irq_enable,
-    RT_NULL,
+    /*RT_NULL,*/
 };
-
-int rt_hw_pin_init(void)
-{
-    int result;
-    ald_cmu_perh_clock_config(CMU_PERH_GPIO, ENABLE);
-    result = rt_device_pin_register("pin", &_es32f0_pin_ops, RT_NULL);
-    return result;
-}
-INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 rt_inline void pin_irq_hdr(uint16_t GPIO_Pin)
 {
@@ -487,5 +559,45 @@ void EXTI12_15_Handler(void)
     GPIO_EXTI_Callback(GPIO_PIN_15);
     rt_interrupt_leave();
 }
+
+int rt_hw_pin_init(void)
+{
+    int result;
+
+
+#ifdef   ES_INIT_GPIOS
+
+    rt_size_t i,gpio_conf_num = sizeof(gpio_conf_all) / sizeof(gpio_conf_t);
+
+#endif
+
+    ald_cmu_perh_clock_config(CMU_PERH_GPIO, ENABLE);
+
+    result = rt_device_pin_register(ES_DEVICE_NAME_PIN, &_es32f0_pin_ops, RT_NULL);
+
+    if(result != RT_EOK)return result;
+
+#ifdef   ES_INIT_GPIOS
+
+       for(i = 0;i < gpio_conf_num;i++)
+    {
+        rt_pin_mode( gpio_conf_all[i].pin,gpio_conf_all[i].pin_mode);
+
+        if((gpio_conf_all[i].pin_mode == ES_C_GPIO_MODE_OUTPUT)||(gpio_conf_all[i].pin_mode == ES_C_GPIO_MODE_OUTPUT_OD))
+        rt_pin_write(gpio_conf_all[i].pin,gpio_conf_all[i].pin_level);
+
+        if(!gpio_conf_all[i].irq_en)continue;
+
+        rt_pin_attach_irq(gpio_conf_all[i].pin, gpio_conf_all[i].irq_mode, gpio_conf_all[i].callback, RT_NULL);
+        rt_pin_irq_enable(gpio_conf_all[i].pin, gpio_conf_all[i].irq_en);
+    }
+
+#endif
+
+
+
+    return result;
+}
+INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 #endif

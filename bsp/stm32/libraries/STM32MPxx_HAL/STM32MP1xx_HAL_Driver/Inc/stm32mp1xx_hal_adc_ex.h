@@ -396,7 +396,7 @@ typedef struct
   *         Usage of this macro is not the Standard way of multimode
   *         configuration and can lead to have HAL ADC handles status
   *         misaligned. Usage of this macro must be limited to cases
-  *         mentionned above.
+  *         mentioned above.
   * @param __HANDLE__ ADC handle.
   * @retval None
   */
@@ -439,7 +439,8 @@ typedef struct
   * @param __RANKNB__ Rank number.
   * @retval None
   */
-#define ADC_JSQR_RK(__CHANNELNB__, __RANKNB__) ((((__CHANNELNB__) & ADC_CHANNEL_ID_NUMBER_MASK) >> ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) << ((__RANKNB__) & ADC_INJ_RANK_ID_JSQR_MASK))
+#define ADC_JSQR_RK(__CHANNELNB__, __RANKNB__) ((((__CHANNELNB__)\
+                                                  & ADC_CHANNEL_ID_NUMBER_MASK) >> ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) << ((__RANKNB__) & ADC_INJ_RANK_ID_JSQR_MASK))
 
 /**
   * @brief Configure ADC injected context queue
@@ -509,7 +510,8 @@ typedef struct
   * @param __CALIBRATION_FACTOR__ Calibration factor value.
   * @retval None
   */
-#define ADC_CALFACT_DIFF_SET(__CALIBRATION_FACTOR__) (((__CALIBRATION_FACTOR__) & (ADC_CALFACT_CALFACT_D_Pos >> ADC_CALFACT_CALFACT_D_Pos) ) << ADC_CALFACT_CALFACT_D_Pos)
+#define ADC_CALFACT_DIFF_SET(__CALIBRATION_FACTOR__) (((__CALIBRATION_FACTOR__)\
+                                                       & (ADC_CALFACT_CALFACT_D_Pos >> ADC_CALFACT_CALFACT_D_Pos) ) << ADC_CALFACT_CALFACT_D_Pos)
 
 /**
   * @brief Calibration factor in differential mode to be retrieved from calibration register.
@@ -1078,7 +1080,8 @@ HAL_StatusTypeDef HAL_ADCEx_RegularMultiModeStop_DMA(ADC_HandleTypeDef *hadc);
   * @{
   */
 /* Peripheral Control functions ***********************************************/
-HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc,ADC_InjectionConfTypeDef* sConfigInjected);
+HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc,
+                                                        ADC_InjectionConfTypeDef *sConfigInjected);
 #if defined(ADC_MULTIMODE_SUPPORT)
 HAL_StatusTypeDef       HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef *hadc, ADC_MultiModeTypeDef *multimode);
 #endif /* ADC_MULTIMODE_SUPPORT */

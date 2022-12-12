@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #include <board.h>
 #include "drv_gpio.h"
 
-#ifdef RT_USING_PIN
+#ifdef BSP_USING_GPIO
 
 #define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
 #define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
@@ -84,7 +84,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EXTI4_15_IRQn},
     {GPIO_PIN_14, EXTI4_15_IRQn},
     {GPIO_PIN_15, EXTI4_15_IRQn},
-#elif defined(SOC_SERIES_STM32MP1)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32U5)
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},
     {GPIO_PIN_2, EXTI2_IRQn},
@@ -101,6 +101,23 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EXTI13_IRQn},
     {GPIO_PIN_14, EXTI14_IRQn},
     {GPIO_PIN_15, EXTI15_IRQn},
+#elif defined(SOC_SERIES_STM32F3)
+    {GPIO_PIN_0, EXTI0_IRQn},
+    {GPIO_PIN_1, EXTI1_IRQn},
+    {GPIO_PIN_2, EXTI2_TSC_IRQn},
+    {GPIO_PIN_3, EXTI3_IRQn},
+    {GPIO_PIN_4, EXTI4_IRQn},
+    {GPIO_PIN_5, EXTI9_5_IRQn},
+    {GPIO_PIN_6, EXTI9_5_IRQn},
+    {GPIO_PIN_7, EXTI9_5_IRQn},
+    {GPIO_PIN_8, EXTI9_5_IRQn},
+    {GPIO_PIN_9, EXTI9_5_IRQn},
+    {GPIO_PIN_10, EXTI15_10_IRQn},
+    {GPIO_PIN_11, EXTI15_10_IRQn},
+    {GPIO_PIN_12, EXTI15_10_IRQn},
+    {GPIO_PIN_13, EXTI15_10_IRQn},
+    {GPIO_PIN_14, EXTI15_10_IRQn},
+    {GPIO_PIN_15, EXTI15_10_IRQn},
 #else
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},
@@ -142,8 +159,9 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 };
 static uint32_t pin_irq_enable_mask = 0;
 
-#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
+#define ITEM_NUM(items) (sizeof(items) / sizeof((items)[0]))
 
+/* e.g. PE.7 */
 static rt_base_t stm32_pin_get(const char *name)
 {
     rt_base_t pin = 0;
@@ -262,10 +280,10 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
-    int i;
+    rt_int32_t i;
     for (i = 0; i < 32; i++)
     {
-        if ((0x01 << i) == bit)
+        if (((rt_uint32_t)0x01 << i) == bit)
         {
             return i;
         }
@@ -276,7 +294,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
 {
     rt_int32_t mapindex = bit2bitno(pinbit);
-    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    if (mapindex < 0 || mapindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
@@ -295,9 +313,9 @@ static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
 
     irqindex = bit2bitno(PIN_STPIN(pin));
-    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -312,7 +330,7 @@ static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -334,9 +352,9 @@ static rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     }
 
     irqindex = bit2bitno(PIN_STPIN(pin));
-    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -370,9 +388,9 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     if (enabled == PIN_IRQ_ENABLE)
     {
         irqindex = bit2bitno(PIN_STPIN(pin));
-        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -380,7 +398,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         irqmap = &pin_irq_map[irqindex];
@@ -416,7 +434,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(PIN_STPIN(pin));
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -480,7 +498,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     return RT_EOK;
 }
-const static struct rt_pin_ops _stm32_pin_ops =
+static const struct rt_pin_ops _stm32_pin_ops =
 {
     stm32_pin_mode,
     stm32_pin_write,
@@ -550,7 +568,7 @@ void EXTI4_15_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#elif defined(SOC_STM32MP157A)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5)
 void EXTI0_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -776,4 +794,4 @@ int rt_hw_pin_init(void)
     return rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
 }
 
-#endif /* RT_USING_PIN */
+#endif /* BSP_USING_GPIO */

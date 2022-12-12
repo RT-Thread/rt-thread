@@ -8,10 +8,26 @@
   * @date    19 Jun 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          19 Jun 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #ifndef __ALD_CRYPT_H__
@@ -22,7 +38,6 @@
 #endif
 
 #include "utils.h"
-#include "ald_dma.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{
@@ -170,10 +185,10 @@ typedef struct {
 typedef struct crypt_handle_s {
 	CRYPT_TypeDef *perh;	/**< Register base address */
 	crypt_init_t init;  	/**< CRYPT required parameters */
-#ifdef ALD_DMA
+
 	dma_handle_t hdma_m2p;	/**< CRYPT DMA handle parameters memory to crypt module */
 	dma_handle_t hdma_p2m;	/**< CRYPT DMA handle parameters crypt module to memory */
-#endif
+
 	uint8_t *plain_text; 	/**< Pointer to plain text */
 	uint8_t *cipher_text;	/**< Pointer to cipher text */
 	uint32_t size;       	/**< The size of crypt data buf */
@@ -265,12 +280,12 @@ extern ald_status_t ald_crypt_decrypt(crypt_handle_t *hperh, uint8_t * cipher_te
 extern ald_status_t ald_crypt_gcm_verify(crypt_handle_t *hperh, uint8_t *cipher_text, uint32_t size, uint8_t *aadata, uint32_t alen, uint8_t *tag);
 extern ald_status_t ald_crypt_encrypt_by_it(crypt_handle_t *hperh, uint8_t *plain_text, uint8_t *cipher_text, uint32_t size);
 extern ald_status_t ald_crypt_decrypt_by_it(crypt_handle_t *hperh, uint8_t *cipher_text, uint8_t *plain_text, uint32_t size);
-#ifdef ALD_DMA
+
 extern ald_status_t ald_crypt_encrypt_by_dma(crypt_handle_t *hperh, uint8_t * plain_text,
              uint8_t *cipher_text, uint32_t size, uint8_t channel_m2p, uint8_t channel_p2m);
 extern ald_status_t ald_crypt_decrypt_by_dma(crypt_handle_t *hperh, uint8_t * cipher_text,
                uint8_t *plain_text, uint32_t size, uint8_t channel_m2p, uint8_t channel_p2m);
-#endif
+
 /**
   * @}
   */
@@ -278,11 +293,11 @@ extern ald_status_t ald_crypt_decrypt_by_dma(crypt_handle_t *hperh, uint8_t * ci
 /** @addtogroup CRYPT_Public_Functions_Group3
   * @{
   */
-#ifdef ALD_DMA
+
 extern ald_status_t ald_crypt_dma_pause(crypt_handle_t *hperh);
 extern ald_status_t ald_crypt_dma_resume(crypt_handle_t *hperh);
 extern ald_status_t ald_crypt_dma_stop(crypt_handle_t *hperh);
-#endif
+
 extern void ald_crypt_irq_handler(crypt_handle_t *hperh);
 /**
   * @}

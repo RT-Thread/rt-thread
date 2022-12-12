@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <finsh.h>
-#include <errno.h>
+#include <sys/errno.h>
 
 static int errors = 0;
 static void merror(const char *msg)

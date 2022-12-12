@@ -1,11 +1,7 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -20,6 +16,9 @@
 #if defined(__CC_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void*)&Image$$RW_IRAM1$$ZI$$Limit)
+#elif defined(__ICCARM__)
+#pragma section="CSTACK"
+#define HEAP_BEGIN      (__segment_end("CSTACK"))
 #elif defined(__GNUC__)
 extern int __bss_end;
 #define HEAP_BEGIN      ((void*)&__bss_end)

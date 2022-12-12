@@ -88,7 +88,7 @@ def IARProject(target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
     Libs = []
     lib_prefix = ['lib', '']
     lib_suffix = ['.a', '.o', '']
@@ -169,28 +169,28 @@ def IARProject(target, script):
 
     IARWorkspace(target)
 
+def IARPath():
+    import rtconfig
+
+    # backup environ
+    old_environ = os.environ
+    os.environ['RTT_CC'] = 'iar'
+    utils.ReloadModule(rtconfig)
+
+    # get iar path
+    path = rtconfig.EXEC_PATH
+
+    # restore environ
+    os.environ = old_environ
+    utils.ReloadModule(rtconfig)
+
+    return path
+
 def IARVersion():
     import subprocess
     import re
 
-    def IARPath():
-        import rtconfig
-
-        # backup environ
-        old_environ = os.environ
-        os.environ['RTT_CC'] = 'iar'
-        utils.ReloadModule(rtconfig)
-
-        # get iar path
-        path = rtconfig.EXEC_PATH
-
-        # restore environ
-        os.environ = old_environ
-        utils.ReloadModule(rtconfig)
-
-        return path
-
-    path = IARPath();
+    path = IARPath()
 
     if os.path.exists(path):
         cmd = os.path.join(path, 'iccarm.exe')
@@ -200,9 +200,8 @@ def IARVersion():
 
     child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = child.communicate()
-
+    if not isinstance(stdout, str):
+        stdout = str(stdout, 'utf8') # Patch for Python 3
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
     iar_version = re.search('[\d\.]+', stdout).group(0)
-    if GetOption('verbose'):
-        print("IAR version: %s" % iar_version)
     return iar_version

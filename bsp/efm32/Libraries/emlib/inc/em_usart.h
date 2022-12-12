@@ -276,7 +276,7 @@ typedef struct
 
 #if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
 /** USART PRS trigger enable */
-typedef struct 
+typedef struct
 {
 #if defined(_EFM32_GIANT_FAMILY)
   /** Enable AUTOTX */

@@ -157,18 +157,21 @@ struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM] =
 {
     [0] =
     {
-        .block_start =  0,
-        .block_end   = 23,
-        .block_total = 24,
+        /*nand0: U-boot, env, rtthread*/
+        .block_start = 0,
+        .block_end   = 63,
+        .block_total = 64,
     },
     [1] =
     {
-        .block_start = 24,
+        /*nand1: for filesystem mounting*/
+        .block_start = 64,
         .block_end   = 1023,
-        .block_total = 1000,
+        .block_total = 960,
     },
     [2] =
     {
+        /*nand2: Whole blocks size, overlay*/
         .block_start = 0,
         .block_end   = 1023,
         .block_total = 1024,
@@ -189,6 +192,12 @@ static int rt_hw_spinand_init(void)
 INIT_COMPONENT_EXPORT(rt_hw_spinand_init);
 #endif
 
+#if defined(BSP_USING_ADC_TOUCH) && defined(NU_PKG_USING_ADC_TOUCH)
+#include "adc_touch.h"
+#if (BSP_LCD_WIDTH==320) && (BSP_LCD_HEIGHT==240)
+S_CALIBRATION_MATRIX g_sCalMat = { 43, -5839, 21672848, 4193, -11, -747882, 65536 };
+#endif
+#endif
 
 #if defined(BOARD_USING_LCD_ILI9341) && defined(NU_PKG_USING_ILI9341_SPI)
 #include <lcd_ili9341.h>
@@ -197,7 +206,7 @@ INIT_COMPONENT_EXPORT(rt_hw_spinand_init);
 #endif
 int rt_hw_ili9341_port(void)
 {
-    if (rt_hw_lcd_ili9341_spi_init("spi0") != RT_EOK)
+    if (rt_hw_lcd_ili9341_spi_init("spi0", RT_NULL) != RT_EOK)
         return -1;
 
     rt_hw_lcd_ili9341_init();
@@ -245,35 +254,6 @@ static int rt_hw_esp8266_port(void)
                               (void *) esp8266);
 }
 INIT_APP_EXPORT(rt_hw_esp8266_port);
-
-static int at_wifi_set(int argc, char **argv)
-{
-    struct at_device_ssid_pwd sATDConf;
-    struct at_device *at_dev = RT_NULL;
-
-    /* If the number of arguments less than 2 */
-    if (argc != 3)
-    {
-        rt_kprintf("\n");
-        rt_kprintf("at_wifi_set <ssid> <password>\n");
-        return -1;
-    }
-
-    sATDConf.ssid     = argv[1]; //ssid
-    sATDConf.password = argv[2]; //password
-
-    if ((at_dev = at_device_get_first_initialized()) != RT_NULL)
-        at_device_control(at_dev, AT_DEVICE_CTRL_SET_WIFI_INFO, &sATDConf);
-    else
-    {
-        rt_kprintf("Can't find any initialized AT device.\n");
-    }
-
-    return 0;
-}
-#ifdef FINSH_USING_MSH
-    MSH_CMD_EXPORT(at_wifi_set, AT device wifi set ssid / password function);
-#endif
 #endif /* BOARD_USING_ESP8266  */
 
 

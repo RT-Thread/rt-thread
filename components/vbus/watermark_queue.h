@@ -41,7 +41,7 @@ void rt_wm_que_dump(struct rt_watermark_queue *wg);
 rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
                                  int timeout)
 {
-    rt_base_t ilvl;
+    rt_base_t level;
 
     /* Assert as early as possible. */
     if (timeout != 0)
@@ -49,7 +49,7 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
         RT_DEBUG_IN_THREAD_CONTEXT;
     }
 
-    ilvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     while (wg->level > wg->high_mark)
     {
@@ -57,7 +57,7 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
 
         if (timeout == 0)
         {
-            rt_hw_interrupt_enable(ilvl);
+            rt_hw_interrupt_enable(level);
             return -RT_EFULL;
         }
 
@@ -72,12 +72,12 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
                              &timeout);
             rt_timer_start(&(thread->thread_timer));
         }
-        rt_hw_interrupt_enable(ilvl);
+        rt_hw_interrupt_enable(level);
         rt_schedule();
         if (thread->error != RT_EOK)
             return thread->error;
 
-        ilvl = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
     }
 
     wg->level++;
@@ -87,7 +87,7 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
         wg->level = ~0;
     }
 
-    rt_hw_interrupt_enable(ilvl);
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -101,12 +101,12 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
 rt_inline void rt_wm_que_dec(struct rt_watermark_queue *wg)
 {
     int need_sched = 0;
-    rt_base_t ilvl;
+    rt_base_t level;
 
     if (wg->level == 0)
         return;
 
-    ilvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     wg->level--;
     if (wg->level == wg->low_mark)
     {
@@ -123,7 +123,7 @@ rt_inline void rt_wm_que_dec(struct rt_watermark_queue *wg)
             need_sched = 1;
         }
     }
-    rt_hw_interrupt_enable(ilvl);
+    rt_hw_interrupt_enable(level);
 
     if (need_sched)
         rt_schedule();

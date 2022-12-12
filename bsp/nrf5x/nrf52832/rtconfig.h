@@ -13,12 +13,16 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -33,6 +37,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -41,7 +46,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40101
 
 /* RT-Thread Components */
 
@@ -49,62 +54,51 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
+#define RT_USING_MSH
 #define RT_USING_FINSH
+#define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
-#define FINSH_USING_MSH_ONLY
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
-#define RT_USING_LIBC
+#define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
+
 
 /* Network */
 
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
-
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -128,8 +122,21 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
 
 /* multimedia packages */
+
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -137,16 +144,46 @@
 
 /* system packages */
 
+/* enhanced kernel services */
+
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
 
 /* peripheral libraries and drivers */
 
 #define PKG_USING_NRFX
-#define PKG_USING_NRFX_V210
+#define PKG_USING_NRFX_LATEST_VERSION
+
+/* Kendryte SDK */
+
+
+/* AI packages */
+
 
 /* miscellaneous packages */
 
+/* project laboratory */
 
 /* samples: kernel and components samples */
+
+
+/* entertainment: terminal games and other interesting software packages */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 
 /* Hardware Drivers Config */
@@ -175,9 +212,9 @@
 /* On-chip flash config */
 
 #define MCU_FLASH_START_ADDRESS 0x00000000
-#define MCU_FLASH_SIZE_KB 1024
+#define MCU_FLASH_SIZE_KB 512
 #define MCU_SRAM_START_ADDRESS 0x20000000
-#define MCU_SRAM_SIZE_KB 256
+#define MCU_SRAM_SIZE_KB 64
 #define MCU_FLASH_PAGE_SIZE 0x1000
 #define BLE_STACK_USING_NULL
 

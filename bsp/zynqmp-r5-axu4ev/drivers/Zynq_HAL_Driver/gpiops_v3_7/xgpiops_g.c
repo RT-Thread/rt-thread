@@ -6,9 +6,9 @@
 * DO NOT EDIT.
 *
 * Copyright (C) 2010-2020 Xilinx, Inc. All Rights Reserved.
-* SPDX-License-Identifier: MIT 
+* SPDX-License-Identifier: MIT
 
-* 
+*
 * Description: Driver configuration
 *
 *******************************************************************/
@@ -22,10 +22,10 @@
 
 XGpioPs_Config XGpioPs_ConfigTable[XPAR_XGPIOPS_NUM_INSTANCES] =
 {
-	{
-		XPAR_PSU_GPIO_0_DEVICE_ID,
-		XPAR_PSU_GPIO_0_BASEADDR
-	}
+    {
+        XPAR_PSU_GPIO_0_DEVICE_ID,
+        XPAR_PSU_GPIO_0_BASEADDR
+    }
 };
 
 

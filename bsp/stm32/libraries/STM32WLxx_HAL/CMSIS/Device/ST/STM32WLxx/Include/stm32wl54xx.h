@@ -14,13 +14,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics. 
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020(-2021) STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Apache License, Version 2.0,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/Apache-2.0
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -206,7 +205,7 @@ typedef enum
 #define __VTOR_PRESENT            1U /*!< Vector Table Register supported               */
 #define __NVIC_PRIO_BITS          4U /*!< STM32WLxx uses 4 Bits for the Priority Levels */
 #define __Vendor_SysTickConfig    0U /*!< Set to 1 if different SysTick Config is used  */
-#define __FPU_PRESENT             0U /*!< FPU present                                   */
+#define __FPU_PRESENT             0U /*!< FPU not present                                   */
 
 #include "core_cm4.h"                /* Cortex-M4 processor and core peripherals */
 
@@ -481,7 +480,7 @@ typedef struct
 } GPIO_TypeDef;
 
 /**
-  * @brief Global TrustZone Controller
+  * @brief Global Security Controller
   */
 typedef struct{
   __IO uint32_t CR;             /*!< TZSC control register,                             Address offset: 0x00       */
@@ -1186,6 +1185,15 @@ typedef struct
 
 /** @addtogroup Exported_constants
   * @{
+  */
+  
+/** @addtogroup Hardware_Constant_Definition
+  * @{
+  */
+#define LSI_STARTUP_TIME 130U /*!< LSI Maximum startup time in us */
+
+/**
+  * @}
   */
 
 /** @addtogroup Peripheral_Registers_Bits_Definition
@@ -4001,7 +4009,7 @@ typedef struct
 
 /******************************************************************************/
 /*                                                                            */
-/*                        Global TrustZone Control                            */
+/*                        Global Security Control                            */
 /*                                                                            */
 /******************************************************************************/
 /*******************  Bits definition for registers x = 0  ********************/

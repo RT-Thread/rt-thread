@@ -1,21 +1,7 @@
 /*
- * File      : core_ck802.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -147,24 +133,24 @@ extern "C" {
  */
 
 /**
-  \brief  ·ÃÎÊ´¦ÀíÆ÷×´Ì¬¼Ä´æÆ÷(PSR)µÄÁªºÏÌå¶¨Òå.
+  \brief  è®¿é—®å¤„ç†å™¨çŠ¶æ€å¯„å­˜å™¨(PSR)çš„è”åˆä½“å®šä¹‰.
  */
 typedef union
 {
     struct
     {
-        uint32_t C: 1;                       /*!< bit:      0  Ìõ¼şÂë£¯½øÎ»Î» */
-        uint32_t _reserved0: 5;              /*!< bit:  2.. 5  ±£Áô */
-        uint32_t IE: 1;                      /*!< bit:      6  ÖĞ¶ÏÓĞĞ§¿ØÖÆÎ» */
-        uint32_t IC: 1;                      /*!< bit:      7  ÖĞ¶Ï¿ØÖÆÎ» */
-        uint32_t EE: 1;                      /*!< bit:      8  Òì³£ÓĞĞ§¿ØÖÆÎ» */
-        uint32_t MM: 1;                      /*!< bit:      9  ²»¶ÔÆëÒì³£ÑÚ¸ÇÎ» */
-        uint32_t _reserved1: 6;              /*!< bit: 10..15  ±£Áô */
-        uint32_t VEC: 8;                     /*!< bit: 16..23  Òì³£ÊÂ¼şÏòÁ¿Öµ */
-        uint32_t _reserved2: 7;              /*!< bit: 24..30  ±£Áô */
-        uint32_t S: 1;                       /*!< bit:     31  ³¬¼¶ÓÃ»§Ä£Ê½ÉèÖÃÎ» */
-    } b;                                   /*!< Structure    ÓÃÀ´°´Î»·ÃÎÊ */
-    uint32_t w;                            /*!< Type         Õû¸ö¼Ä´æÆ÷·ÃÎÊ */
+        uint32_t C: 1;                       /*!< bit:      0  æ¡ä»¶ç ï¼è¿›ä½ä½ */
+        uint32_t _reserved0: 5;              /*!< bit:  2.. 5  ä¿ç•™ */
+        uint32_t IE: 1;                      /*!< bit:      6  ä¸­æ–­æœ‰æ•ˆæ§åˆ¶ä½ */
+        uint32_t IC: 1;                      /*!< bit:      7  ä¸­æ–­æ§åˆ¶ä½ */
+        uint32_t EE: 1;                      /*!< bit:      8  å¼‚å¸¸æœ‰æ•ˆæ§åˆ¶ä½ */
+        uint32_t MM: 1;                      /*!< bit:      9  ä¸å¯¹é½å¼‚å¸¸æ©ç›–ä½ */
+        uint32_t _reserved1: 6;              /*!< bit: 10..15  ä¿ç•™ */
+        uint32_t VEC: 8;                     /*!< bit: 16..23  å¼‚å¸¸äº‹ä»¶å‘é‡å€¼ */
+        uint32_t _reserved2: 7;              /*!< bit: 24..30  ä¿ç•™ */
+        uint32_t S: 1;                       /*!< bit:     31  è¶…çº§ç”¨æˆ·æ¨¡å¼è®¾ç½®ä½ */
+    } b;                                   /*!< Structure    ç”¨æ¥æŒ‰ä½è®¿é—® */
+    uint32_t w;                            /*!< Type         æ•´ä¸ªå¯„å­˜å™¨è®¿é—® */
 } PSR_Type;
 
 /* PSR Register Definitions */
@@ -190,21 +176,21 @@ typedef union
 #define PSR_C_Msk                          (1UL << PSR_C_Pos)                             /*!< PSR: C Mask */
 
 /**
-  \brief  ·ÃÎÊ¸ßËÙ»º´æÅäÖÃ¼Ä´æÆ÷(CCR, CR<18, 0>)µÄÁªºÏÌå¶¨Òå.
+  \brief  è®¿é—®é«˜é€Ÿç¼“å­˜é…ç½®å¯„å­˜å™¨(CCR, CR<18, 0>)çš„è”åˆä½“å®šä¹‰.
  */
 typedef union
 {
     struct
     {
-        uint32_t MP: 1;                      /*!< bit:      0  ÄÚ´æ±£»¤ÉèÖÃÎ» */
-        uint32_t _reserved0: 6;              /*!< bit:  1.. 6  ±£Áô */
-        uint32_t BE: 1;                      /*!< bit:      7  EndianÄ£Ê½ */
-        uint32_t SCK: 3;                     /*!< bit:  8..10  ÏµÍ³ºÍ´¦ÀíÆ÷µÄÊ±ÖÓ±È */
-        uint32_t _reserved1: 2;              /*!< bit: 11..12  ±£Áô */
-        uint32_t BE_V2: 1;                   /*!< bit:     13  V2°æ±¾´óĞ¡¶Ë */
-        uint32_t _reserved2: 18;             /*!< bit: 14..31  ±£Áô */
-    } b;                                   /*!< Structure    ÓÃÀ´°´Î»·ÃÎÊ */
-    uint32_t w;                            /*!< Type         Õû¸ö¼Ä´æÆ÷·ÃÎÊ */
+        uint32_t MP: 1;                      /*!< bit:      0  å†…å­˜ä¿æŠ¤è®¾ç½®ä½ */
+        uint32_t _reserved0: 6;              /*!< bit:  1.. 6  ä¿ç•™ */
+        uint32_t BE: 1;                      /*!< bit:      7  Endianæ¨¡å¼ */
+        uint32_t SCK: 3;                     /*!< bit:  8..10  ç³»ç»Ÿå’Œå¤„ç†å™¨çš„æ—¶é’Ÿæ¯” */
+        uint32_t _reserved1: 2;              /*!< bit: 11..12  ä¿ç•™ */
+        uint32_t BE_V2: 1;                   /*!< bit:     13  V2ç‰ˆæœ¬å¤§å°ç«¯ */
+        uint32_t _reserved2: 18;             /*!< bit: 14..31  ä¿ç•™ */
+    } b;                                   /*!< Structure    ç”¨æ¥æŒ‰ä½è®¿é—® */
+    uint32_t w;                            /*!< Type         æ•´ä¸ªå¯„å­˜å™¨è®¿é—® */
 } CCR_Type;
 
 /* CCR Register Definitions */
@@ -221,38 +207,38 @@ typedef union
 #define CCR_MP_Msk                        (0x1UL << CCR_MP_Pos)                          /*!< CCR: MP Mask */
 
 /**
-  \brief  ·ÃÎÊ¿É¸ß»ººÍ·ÃÎÊÈ¨ÏŞÅäÖÃ¼Ä´æÆ÷(CAPR, CR<19,0>)µÄÁªºÏÌå¶¨Òå..
+  \brief  è®¿é—®å¯é«˜ç¼“å’Œè®¿é—®æƒé™é…ç½®å¯„å­˜å™¨(CAPR, CR<19,0>)çš„è”åˆä½“å®šä¹‰..
  */
 typedef union
 {
     struct
     {
-        uint32_t X0: 1;                      /*!< bit:      0  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X1: 1;                      /*!< bit:      1  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X2: 1;                      /*!< bit:      2  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X3: 1;                      /*!< bit:      3  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X4: 1;                      /*!< bit:      4  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X5: 1;                      /*!< bit:      5  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X6: 1;                      /*!< bit:      6  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t X7: 1;                      /*!< bit:      7  ²»¿ÉÖ´ĞĞÊôĞÔÉèÖÃÎ» */
-        uint32_t AP0: 2;                     /*!< bit:  8.. 9  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP1: 2;                     /*!< bit: 10..11  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP2: 2;                     /*!< bit: 12..13  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP3: 2;                     /*!< bit: 14..15  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP4: 2;                     /*!< bit: 16..17  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP5: 2;                     /*!< bit: 18..19  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP6: 2;                     /*!< bit: 20..21  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t AP7: 2;                     /*!< bit: 22..23  ·ÃÎÊÈ¨ÏŞÉèÖÃÎ» */
-        uint32_t S0: 1;                      /*!< bit:     24  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S1: 1;                      /*!< bit:     25  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S2: 1;                      /*!< bit:     26  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S3: 1;                      /*!< bit:     27  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S4: 1;                      /*!< bit:     28  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S5: 1;                      /*!< bit:     29  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S6: 1;                      /*!< bit:     30  °²È«ÊôĞÔÉèÖÃÎ» */
-        uint32_t S7: 1;                      /*!< bit:     31  °²È«ÊôĞÔÉèÖÃÎ» */
-    } b;                                   /*!< Structure    ÓÃÀ´°´Î»·ÃÎÊ */
-    uint32_t w;                            /*!< Type         Õû¸ö¼Ä´æÆ÷·ÃÎÊ */
+        uint32_t X0: 1;                      /*!< bit:      0  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X1: 1;                      /*!< bit:      1  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X2: 1;                      /*!< bit:      2  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X3: 1;                      /*!< bit:      3  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X4: 1;                      /*!< bit:      4  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X5: 1;                      /*!< bit:      5  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X6: 1;                      /*!< bit:      6  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t X7: 1;                      /*!< bit:      7  ä¸å¯æ‰§è¡Œå±æ€§è®¾ç½®ä½ */
+        uint32_t AP0: 2;                     /*!< bit:  8.. 9  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP1: 2;                     /*!< bit: 10..11  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP2: 2;                     /*!< bit: 12..13  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP3: 2;                     /*!< bit: 14..15  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP4: 2;                     /*!< bit: 16..17  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP5: 2;                     /*!< bit: 18..19  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP6: 2;                     /*!< bit: 20..21  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t AP7: 2;                     /*!< bit: 22..23  è®¿é—®æƒé™è®¾ç½®ä½ */
+        uint32_t S0: 1;                      /*!< bit:     24  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S1: 1;                      /*!< bit:     25  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S2: 1;                      /*!< bit:     26  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S3: 1;                      /*!< bit:     27  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S4: 1;                      /*!< bit:     28  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S5: 1;                      /*!< bit:     29  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S6: 1;                      /*!< bit:     30  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+        uint32_t S7: 1;                      /*!< bit:     31  å®‰å…¨å±æ€§è®¾ç½®ä½ */
+    } b;                                   /*!< Structure    ç”¨æ¥æŒ‰ä½è®¿é—® */
+    uint32_t w;                            /*!< Type         æ•´ä¸ªå¯„å­˜å™¨è®¿é—® */
 } CAPR_Type;
 
 /* CAPR Register Definitions */
@@ -329,18 +315,18 @@ typedef union
 #define CAPR_X0_Msk                        (0x1UL << CAPR_X0_Pos)                         /*!< CAPR: X0 Mask */
 
 /**
-  \brief  ·ÃÎÊ±£»¤Çø¿ØÖÆ¼Ä´æÆ÷(PACR, CR<20,0>)µÄÁªºÏÌå¶¨Òå.
+  \brief  è®¿é—®ä¿æŠ¤åŒºæ§åˆ¶å¯„å­˜å™¨(PACR, CR<20,0>)çš„è”åˆä½“å®šä¹‰.
  */
 typedef union
 {
     struct
     {
-        uint32_t E: 1;                       /*!< bit:      0  ±£»¤ÇøÓĞĞ§ÉèÖÃ */
-        uint32_t Size: 5;                    /*!< bit:  1.. 5  ±£»¤Çø´óĞ¡ */
-        uint32_t _reserved0: 4;              /*!< bit:  6.. 9  ±£Áô */
-        uint32_t base_addr: 22;              /*!< bit: 10..31  ±£»¤ÇøµØÖ·µÄ¸ßÎ» */
-    } b;                                   /*!< Structure    ÓÃÀ´°´Î»·ÃÎÊ */
-    uint32_t w;                            /*!< Type         Õû¸ö¼Ä´æÆ÷·ÃÎÊ */
+        uint32_t E: 1;                       /*!< bit:      0  ä¿æŠ¤åŒºæœ‰æ•ˆè®¾ç½® */
+        uint32_t Size: 5;                    /*!< bit:  1.. 5  ä¿æŠ¤åŒºå¤§å° */
+        uint32_t _reserved0: 4;              /*!< bit:  6.. 9  ä¿ç•™ */
+        uint32_t base_addr: 22;              /*!< bit: 10..31  ä¿æŠ¤åŒºåœ°å€çš„é«˜ä½ */
+    } b;                                   /*!< Structure    ç”¨æ¥æŒ‰ä½è®¿é—® */
+    uint32_t w;                            /*!< Type         æ•´ä¸ªå¯„å­˜å™¨è®¿é—® */
 } PACR_Type;
 
 /* PACR Register Definitions */
@@ -354,16 +340,16 @@ typedef union
 #define PACK_E_Msk                         (0x1UL << PACR_E_Pos)                          /*!< PACR: E Mask */
 
 /**
-  \brief  ·ÃÎÊ±£»¤ÇøÑ¡Ôñ¼Ä´æÆ÷(PRSR,CR<21,0>)µÄÁªºÏÌå¶¨Òå.
+  \brief  è®¿é—®ä¿æŠ¤åŒºé€‰æ‹©å¯„å­˜å™¨(PRSR,CR<21,0>)çš„è”åˆä½“å®šä¹‰.
  */
 typedef union
 {
     struct
     {
-        uint32_t RID: 3;                     /*!< bit:  0.. 2  ±£»¤ÇøË÷ÒıÖµ */
-        uint32_t _reserved0: 30;             /*!< bit:  3..31  ±£Áô */
-    } b;                                   /*!< Structure    ÓÃÀ´°´Î»·ÃÎÊ */
-    uint32_t w;                            /*!< Type         Õû¸ö¼Ä´æÆ÷·ÃÎÊ */
+        uint32_t RID: 3;                     /*!< bit:  0.. 2  ä¿æŠ¤åŒºç´¢å¼•å€¼ */
+        uint32_t _reserved0: 30;             /*!< bit:  3..31  ä¿ç•™ */
+    } b;                                   /*!< Structure    ç”¨æ¥æŒ‰ä½è®¿é—® */
+    uint32_t w;                            /*!< Type         æ•´ä¸ªå¯„å­˜å™¨è®¿é—® */
 } PRSR_Type;
 
 /* PRSR Register Definitions */
@@ -381,30 +367,30 @@ typedef union
  */
 
 /**
-  \brief ·ÃÎÊÊ¸Á¿ÖĞ¶Ï¿ØÖÆÆ÷µÄ½á¹¹Ìå.
+  \brief è®¿é—®çŸ¢é‡ä¸­æ–­æ§åˆ¶å™¨çš„ç»“æ„ä½“.
  */
 typedef struct
 {
-    __IOM uint32_t ISER[1U];               /*!< Offset: 0x000 (R/W)  ÖĞ¶ÏÊ¹ÄÜÉèÖÃ¼Ä´æÆ÷ */
+    __IOM uint32_t ISER[1U];               /*!< Offset: 0x000 (R/W)  ä¸­æ–­ä½¿èƒ½è®¾ç½®å¯„å­˜å™¨ */
     uint32_t RESERVED0[15U];
-    __IOM uint32_t IWER[1U];               /*!< Offset: 0x040 (R/W)  ÖĞ¶ÏµÍ¹¦ºÄ»½ĞÑÉèÖÃ¼Ä´æÆ÷ */
+    __IOM uint32_t IWER[1U];               /*!< Offset: 0x040 (R/W)  ä¸­æ–­ä½åŠŸè€—å”¤é†’è®¾ç½®å¯„å­˜å™¨ */
     uint32_t RESERVED1[15U];
-    __IOM uint32_t ICER[1U];               /*!< Offset: 0x080 (R/W)  ÖĞ¶ÏÊ¹ÄÜÇå³ı¼Ä´æÆ÷ */
+    __IOM uint32_t ICER[1U];               /*!< Offset: 0x080 (R/W)  ä¸­æ–­ä½¿èƒ½æ¸…é™¤å¯„å­˜å™¨ */
     uint32_t RESERVED2[15U];
-    __IOM uint32_t IWDR[1U];               /*!< Offset: 0x0c0 (R/W)  ÖĞ¶ÏµÍ¹¦ºÄ»½ĞÑÇå³ı¼Ä´æÆ÷ */
+    __IOM uint32_t IWDR[1U];               /*!< Offset: 0x0c0 (R/W)  ä¸­æ–­ä½åŠŸè€—å”¤é†’æ¸…é™¤å¯„å­˜å™¨ */
     uint32_t RESERVED3[15U];
-    __IOM uint32_t ISPR[1U];               /*!< Offset: 0x100 (R/W)  ÖĞ¶ÏµÈ´ıÉèÖÃ¼Ä´æÆ÷ */
+    __IOM uint32_t ISPR[1U];               /*!< Offset: 0x100 (R/W)  ä¸­æ–­ç­‰å¾…è®¾ç½®å¯„å­˜å™¨ */
     uint32_t RESERVED4[15U];
-    __IOM uint32_t ISSR[1U];               /*!< Offset: 0x140 (R/W)  °²È«ÖĞ¶ÏÊ¹ÄÜÉèÖÃ¼Ä´æÆ÷ */
+    __IOM uint32_t ISSR[1U];               /*!< Offset: 0x140 (R/W)  å®‰å…¨ä¸­æ–­ä½¿èƒ½è®¾ç½®å¯„å­˜å™¨ */
     uint32_t RESERVED5[15U];
-    __IOM uint32_t ICPR[1U];               /*!< Offset: 0x180 (R/W)  ÖĞ¶ÏµÈ´ıÇå³ı¼Ä´æÆ÷ */
+    __IOM uint32_t ICPR[1U];               /*!< Offset: 0x180 (R/W)  ä¸­æ–­ç­‰å¾…æ¸…é™¤å¯„å­˜å™¨ */
     uint32_t RESERVED6[31U];
-    __IOM uint32_t IABR[1U];               /*!< Offset: 0x200 (R/W)  ÖĞ¶ÏÏìÓ¦×´Ì¬¼Ä´æÆ÷ */
+    __IOM uint32_t IABR[1U];               /*!< Offset: 0x200 (R/W)  ä¸­æ–­å“åº”çŠ¶æ€å¯„å­˜å™¨ */
     uint32_t RESERVED7[63U];
-    __IOM uint32_t IPR[8U];                /*!< Offset: 0x300 (R/W)  ÖĞ¶ÏÓÅÏÈ¼¶ÉèÖÃ¼Ä´æÆ÷ */
+    __IOM uint32_t IPR[8U];                /*!< Offset: 0x300 (R/W)  ä¸­æ–­ä¼˜å…ˆçº§è®¾ç½®å¯„å­˜å™¨ */
     uint32_t RESERVED8[504U];
-    __IM  uint32_t ISR;                    /*!< Offset: 0xB00 (R/ )  ÖĞ¶Ï×´Ì¬¼Ä´æÆ÷ */
-    __IOM uint32_t IPTR;                   /*!< Offset: 0xB04 (R/W)  ÖĞ¶ÏÓÅÏÈ¼¶ãĞÖµ¼Ä´æÆ÷ */
+    __IM  uint32_t ISR;                    /*!< Offset: 0xB00 (R/ )  ä¸­æ–­çŠ¶æ€å¯„å­˜å™¨ */
+    __IOM uint32_t IPTR;                   /*!< Offset: 0xB04 (R/W)  ä¸­æ–­ä¼˜å…ˆçº§é˜ˆå€¼å¯„å­˜å™¨ */
 } NVIC_Type;
 
 /*@} end of group CSI_NVIC */
@@ -417,14 +403,14 @@ typedef struct
  */
 
 /**
-  \brief  ·ÃÎÊÏµÍ³¼ÆÊ±Æ÷µÄÊı¾İ½á¹¹.
+  \brief  è®¿é—®ç³»ç»Ÿè®¡æ—¶å™¨çš„æ•°æ®ç»“æ„.
  */
 typedef struct
 {
-    __IOM uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  ¿ØÖÆ×´Ì¬¼Ä´æÆ÷ */
-    __IOM uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  »ØÌîÖµ¼Ä´æÆ÷ */
-    __IOM uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  µ±Ç°Öµ¼Ä´æÆ÷ */
-    __IM  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  Ğ£×¼¼Ä´æÆ÷ */
+    __IOM uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  æ§åˆ¶çŠ¶æ€å¯„å­˜å™¨ */
+    __IOM uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  å›å¡«å€¼å¯„å­˜å™¨ */
+    __IOM uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  å½“å‰å€¼å¯„å­˜å™¨ */
+    __IM  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  æ ¡å‡†å¯„å­˜å™¨ */
 } CORET_Type;
 
 /* CORET Control / Status Register Definitions */
@@ -468,7 +454,7 @@ typedef struct
  */
 
 /**
-  \brief  ·ÃÎÊDCCµÄÊı¾İ½á¹¹.
+  \brief  è®¿é—®DCCçš„æ•°æ®ç»“æ„.
  */
 typedef struct
 {
@@ -478,8 +464,8 @@ typedef struct
     uint32_t RESERVED1[6U];
     union
     {
-        __IM uint32_t DERJW;                 /*!< Offset: 0x058 (R/ )  Êı¾İ½»»»¼Ä´æÆ÷ CPU¶Á*/
-        __OM uint32_t DERJR;                 /*!< Offset: 0x058 ( /W)  Êı¾İ½»»»¼Ä´æÆ÷ CPUĞ´*/
+        __IM uint32_t DERJW;                 /*!< Offset: 0x058 (R/ )  æ•°æ®äº¤æ¢å¯„å­˜å™¨ CPUè¯»*/
+        __OM uint32_t DERJR;                 /*!< Offset: 0x058 ( /W)  æ•°æ®äº¤æ¢å¯„å­˜å™¨ CPUå†™*/
     };
 
 } DCC_Type;

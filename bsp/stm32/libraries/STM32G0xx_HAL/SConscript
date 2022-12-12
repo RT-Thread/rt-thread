@@ -56,8 +56,7 @@ if GetDepend(['RT_USING_RTC']):
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_rtc.c']
 
 path = [cwd + '/STM32G0xx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Device/ST/STM32G0xx/Include',
-    cwd + '/CMSIS/Include']
+    cwd + '/CMSIS/Device/ST/STM32G0xx/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

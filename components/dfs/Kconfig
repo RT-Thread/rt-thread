@@ -1,26 +1,26 @@
-menu "Device virtual file system"
-
-config RT_USING_DFS
-    bool "Using device virtual file system"
+menuconfig RT_USING_DFS
+    bool "DFS: device virtual file system"
     select RT_USING_MUTEX
     default y
     help
         The device file system is a light weight virtual file system.
 
 if RT_USING_DFS
+    config DFS_USING_POSIX
+        bool "Using posix-like functions, open/read/write/close"
+        default y
+
     config DFS_USING_WORKDIR
         bool "Using working directory"
         default y
 
     config DFS_FILESYSTEMS_MAX
         int "The maximal number of mounted file system"
-        default 4 if RT_USING_DFS_NFS
-        default 2
+        default 4
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
-        default 4 if RT_USING_DFS_NFS
-        default 2
+        default 4
 
     config DFS_FD_MAX
         int "The maximal number of opened files"
@@ -124,6 +124,12 @@ if RT_USING_DFS
         config RT_DFS_ELM_REENTRANT
             bool "Enable the reentrancy (thread safe) of the FatFs module"
             default y
+
+        config RT_DFS_ELM_MUTEX_TIMEOUT
+            int "Timeout of thread-safe protection mutex"
+            range 0 1000000
+            default 3000
+            depends on RT_DFS_ELM_REENTRANT
         endmenu
     endif
 
@@ -135,9 +141,18 @@ if RT_USING_DFS
         bool "Enable ReadOnly file system on flash"
         default n
 
+    config RT_USING_DFS_CROMFS
+        bool "Enable readonly compressed file system on flash"
+        default n
+        # select PKG_USING_ZLIB
+
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"
         select RT_USING_MEMHEAP
+        default n
+
+    config RT_USING_DFS_TMPFS
+        bool "Enable TMP file system"
         default n
 
     config RT_USING_DFS_NFS
@@ -152,5 +167,3 @@ if RT_USING_DFS
     endif
 
 endif
-
-endmenu

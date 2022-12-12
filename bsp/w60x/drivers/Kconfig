@@ -133,43 +133,43 @@ menu "On-chip Peripheral Drivers"
 
     if BSP_USING_PWM
         config USING_PWM_CH1
-            bool "Enable pwm channel 1"
+            bool "Enable PWM channel 1"
             default n
             if USING_PWM_CH1
                 config WM_PWM_CH1_PIN
-                int "wm pwm channel 1 pin number"
+                int "wm PWM channel 1 pin number"
                 default 23
             endif
         config USING_PWM_CH2
-            bool "Enable pwm channel 2"
+            bool "Enable PWM channel 2"
             default n
             if USING_PWM_CH2
                 config WM_PWM_CH2_PIN
-                int "wm pwm channel 2 pin number"
+                int "wm PWM channel 2 pin number"
                 default 22
             endif
         config USING_PWM_CH3
-            bool "Enable pwm channel 3"
+            bool "Enable PWM channel 3"
             default n
             if USING_PWM_CH3
                 config WM_PWM_CH3_PIN
-                int "wm pwm channel 3 pin number"
+                int "wm PWM channel 3 pin number"
                 default 21
             endif
         config USING_PWM_CH4
-            bool "Enable pwm channel 4"
+            bool "Enable PWM channel 4"
             default n
             if USING_PWM_CH4
                 config WM_PWM_CH4_PIN
-                int "wm pwm channel 4 pin number"
+                int "wm PWM channel 4 pin number"
                 default 37
             endif
         config USING_PWM_CH5
-            bool "Enable pwm channel 5"
+            bool "Enable PWM channel 5"
             default n
             if USING_PWM_CH5
                 config WM_PWM_CH5_PIN
-                int "wm pwm channel 5 pin number"
+                int "wm PWM channel 5 pin number"
                 default 19
             endif
     endif

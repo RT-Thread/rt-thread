@@ -276,6 +276,10 @@ HAL_StatusTypeDef HAL_EXTI_GetConfigLine(EXTI_HandleTypeDef *hexti, EXTI_ConfigT
     pExtiConfig->Mode |= EXTI_MODE_EVENT;
   }
 
+  /* Get default Trigger and GPIOSel configuration */
+  pExtiConfig->Trigger = EXTI_TRIGGER_NONE;
+  pExtiConfig->GPIOSel = 0x00u;
+
   /* 2] Get trigger for configurable lines : rising */
   if ((pExtiConfig->Line & EXTI_CONFIG) != 0x00u)
   {
@@ -283,10 +287,6 @@ HAL_StatusTypeDef HAL_EXTI_GetConfigLine(EXTI_HandleTypeDef *hexti, EXTI_ConfigT
     if ((EXTI->RTSR & maskline) != 0x00u)
     {
       pExtiConfig->Trigger = EXTI_TRIGGER_RISING;
-    }
-    else
-    {
-      pExtiConfig->Trigger = EXTI_TRIGGER_NONE;
     }
 
     /* Get falling configuration */
@@ -304,16 +304,6 @@ HAL_StatusTypeDef HAL_EXTI_GetConfigLine(EXTI_HandleTypeDef *hexti, EXTI_ConfigT
       regval = AFIO->EXTICR[linepos >> 2u];
       pExtiConfig->GPIOSel = ((regval << (AFIO_EXTICR1_EXTI1_Pos * (3uL - (linepos & 0x03u)))) >> 24);
     }
-    else
-    {
-      pExtiConfig->GPIOSel = 0x00u;
-    }
-  }
-  else
-  {
-    /* No Trigger selected */
-    pExtiConfig->Trigger = EXTI_TRIGGER_NONE;
-    pExtiConfig->GPIOSel = 0x00u;
   }
 
   return HAL_OK;
@@ -485,6 +475,9 @@ uint32_t HAL_EXTI_GetPending(EXTI_HandleTypeDef *hexti, uint32_t Edge)
   assert_param(IS_EXTI_CONFIG_LINE(hexti->Line));
   assert_param(IS_EXTI_PENDING_EDGE(Edge));
 
+  /* Prevent unused argument compilation warning */
+  UNUSED(Edge);
+
   /* Compute line mask */
   linepos = (hexti->Line & EXTI_PIN_MASK);
   maskline = (1uL << linepos);
@@ -511,6 +504,9 @@ void HAL_EXTI_ClearPending(EXTI_HandleTypeDef *hexti, uint32_t Edge)
   assert_param(IS_EXTI_LINE(hexti->Line));
   assert_param(IS_EXTI_CONFIG_LINE(hexti->Line));
   assert_param(IS_EXTI_PENDING_EDGE(Edge));
+
+  /* Prevent unused argument compilation warning */
+  UNUSED(Edge);
 
   /* Compute line mask */
   maskline = (1uL << (hexti->Line & EXTI_PIN_MASK));

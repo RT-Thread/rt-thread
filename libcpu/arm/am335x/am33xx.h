@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,8 +9,8 @@
 #ifndef __AM33XX_H__
 #define __AM33XX_H__
 
-#define REG32(x) 	(*((volatile unsigned int *)(x)))
-#define REG16(x) 	(*((volatile unsigned short *)(x)))
+#define REG32(x)    (*((volatile unsigned int *)(x)))
+#define REG16(x)    (*((volatile unsigned short *)(x)))
 
 /** Cache Line size in ARM Cortex-A8.                                         */
 #define AM33XX_CACHELINE_SIZE                   (64)
@@ -98,6 +98,8 @@
 #define CM_PER_UART4_CLKCTRL(base)        (CM_PER(base) + 0x78)
 #define CM_PER_UART5_CLKCTRL(base)        (CM_PER(base) + 0x38)
 #define CM_WKUP(base)                     ((base) + 0x400)
+#define CM_WKUP_CLKSTCTRL(base)           (CM_WKUP(base) + 0)
+#define CM_WKUP_UART0_CLKCTRL(base)       (CM_WKUP(base) + 0xB4)
 #define CM_DPLL(base)                     ((base) + 0x500)
 #define CM_MPU(base)                      ((base) + 0x600)
 #define CM_DEVICE(base)                   ((base) + 0x700)
@@ -194,26 +196,29 @@
 #define PRM_PER_PWRSTST_REG(base)          REG32(PRM_PER_PWRSTST(base))
 #define PRM_PER_PWRSTCTRL_REG(base)        REG32(PRM_PER_PWRSTCTRL(base))
 
+#define CM_WKUP_CLKSTCTRL_REG(base)        REG32(CM_WKUP_CLKSTCTRL(base))
+#define CM_WKUP_UART0_CLKCTRL_REG(base)    REG32(CM_WKUP_UART0_CLKCTRL(base))
+
 #define CM_DPLL_CLKSEL_TIMER7_CLK(base)    REG32(CM_DPLL(base) + 0x4)
 #define CM_DPLL_CLKSEL_TIMER2_CLK(base)    REG32(CM_DPLL(base) + 0x8)
 
 /* timer registers */
-#define DMTIMER_TIDR(base)   		REG32(base + 0x0)
-#define DMTIMER_TIOCP_CFG(base)   	REG32(base + 0x10)
-#define DMTIMER_IRQ_EOI(base)   	REG32(base + 0x20)
-#define DMTIMER_IRQSTATUS_RAW(base)	REG32(base + 0x24)
-#define DMTIMER_IRQSTATUS(base)   	REG32(base + 0x28)
-#define DMTIMER_IRQENABLE_SET(base)	REG32(base + 0x2C)
-#define DMTIMER_IRQENABLE_CLR(base)	REG32(base + 0x30)
-#define DMTIMER_IRQWAKEEN(base)   	REG32(base + 0x34)
-#define DMTIMER_TCLR(base)   		REG32(base + 0x38)
-#define DMTIMER_TCRR(base)   		REG32(base + 0x3C)
-#define DMTIMER_TLDR(base)   		REG32(base + 0x40)
-#define DMTIMER_TTGR(base)   		REG32(base + 0x44)
-#define DMTIMER_TWPS(base)   		REG32(base + 0x48)
-#define DMTIMER_TMAR(base)   		REG32(base + 0x4C)
-#define DMTIMER_TCAR(base, n)		REG32(base + 0x50 + (((n) - 1) * 8))
-#define DMTIMER_TSICR(base)   		REG32(base + 0x54)
+#define DMTIMER_TIDR(base)          REG32(base + 0x0)
+#define DMTIMER_TIOCP_CFG(base)     REG32(base + 0x10)
+#define DMTIMER_IRQ_EOI(base)       REG32(base + 0x20)
+#define DMTIMER_IRQSTATUS_RAW(base) REG32(base + 0x24)
+#define DMTIMER_IRQSTATUS(base)     REG32(base + 0x28)
+#define DMTIMER_IRQENABLE_SET(base) REG32(base + 0x2C)
+#define DMTIMER_IRQENABLE_CLR(base) REG32(base + 0x30)
+#define DMTIMER_IRQWAKEEN(base)     REG32(base + 0x34)
+#define DMTIMER_TCLR(base)          REG32(base + 0x38)
+#define DMTIMER_TCRR(base)          REG32(base + 0x3C)
+#define DMTIMER_TLDR(base)          REG32(base + 0x40)
+#define DMTIMER_TTGR(base)          REG32(base + 0x44)
+#define DMTIMER_TWPS(base)          REG32(base + 0x48)
+#define DMTIMER_TMAR(base)          REG32(base + 0x4C)
+#define DMTIMER_TCAR(base, n)       REG32(base + 0x50 + (((n) - 1) * 8))
+#define DMTIMER_TSICR(base)         REG32(base + 0x54)
 
 #define EMU_INT               0
 #define COMMTX_INT            1
@@ -317,33 +322,33 @@
 
 struct rt_hw_register
 {
-	unsigned long r0;
-	unsigned long r1;
-	unsigned long r2;
-	unsigned long r3;
-	unsigned long r4;
-	unsigned long r5;
-	unsigned long r6;
-	unsigned long r7;
-	unsigned long r8;
-	unsigned long r9;
-	unsigned long r10;
-	unsigned long fp;
-	unsigned long ip;
-	unsigned long sp;
-	unsigned long lr;
-	unsigned long pc;
-	unsigned long cpsr;
-	unsigned long ORIG_r0;
+    unsigned long r0;
+    unsigned long r1;
+    unsigned long r2;
+    unsigned long r3;
+    unsigned long r4;
+    unsigned long r5;
+    unsigned long r6;
+    unsigned long r7;
+    unsigned long r8;
+    unsigned long r9;
+    unsigned long r10;
+    unsigned long fp;
+    unsigned long ip;
+    unsigned long sp;
+    unsigned long lr;
+    unsigned long pc;
+    unsigned long cpsr;
+    unsigned long ORIG_r0;
 };
 
-#define USERMODE	0x10
-#define FIQMODE		0x11
-#define IRQMODE		0x12
-#define SVCMODE		0x13
-#define ABORTMODE	0x17
-#define UNDEFMODE	0x1b
-#define MODEMASK	0x1f
-#define NOINT		0xc0
+#define USERMODE    0x10
+#define FIQMODE     0x11
+#define IRQMODE     0x12
+#define SVCMODE     0x13
+#define ABORTMODE   0x17
+#define UNDEFMODE   0x1b
+#define MODEMASK    0x1f
+#define NOINT       0xc0
 
 #endif

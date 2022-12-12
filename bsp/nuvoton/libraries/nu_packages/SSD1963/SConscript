@@ -1,0 +1,19 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+group = []
+
+src = Split("""
+lcd_ssd1963.c
+""")
+CPPPATH = [cwd]
+
+if GetDepend('NU_PKG_USING_SSD1963_EBI'):
+    src += Glob('ssd1963_ebi.c')
+
+if GetDepend('NU_PKG_USING_SSD1963'):
+    group = DefineGroup('nu_pkgs_ssd1963', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
+

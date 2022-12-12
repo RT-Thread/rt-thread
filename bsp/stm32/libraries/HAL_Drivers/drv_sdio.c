@@ -46,7 +46,7 @@ struct rthw_sdio
     struct sdio_pkg *pkg;
 };
 
-ALIGN(SDIO_ALIGN_LEN)
+rt_align(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 
 static rt_uint32_t stm32_sdio_clk_get(struct stm32_sdio *hw_sdio)
@@ -650,7 +650,7 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
     sdio->sdio_des.clk_get = (sdio_des->clk_get == RT_NULL ? stm32_sdio_clk_get : sdio_des->clk_get);
 
     rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
     /* set host defautl attributes */
     host->ops = &ops;

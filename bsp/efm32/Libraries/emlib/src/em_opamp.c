@@ -243,7 +243,7 @@ void OPAMP_Disable( DAC_TypeDef *dac, OPAMP_TypeDef opa )
 void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, const OPAMP_Init_TypeDef *init )
 {
   uint32_t offset;
-  
+
   EFM_ASSERT( DAC_REF_VALID( dac ) );
   EFM_ASSERT( DAC_OPA_VALID( opa ) );
   EFM_ASSERT( init->bias <= ( _DAC_BIASPROG_BIASPROG_MASK  >>
@@ -267,13 +267,13 @@ void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, const OPAMP_Init_TypeDef
     }
     else
     {
-      EFM_ASSERT( init->offset <= ( _DAC_CAL_CH0OFFSET_MASK >> 
+      EFM_ASSERT( init->offset <= ( _DAC_CAL_CH0OFFSET_MASK >>
                                     _DAC_CAL_CH0OFFSET_SHIFT   ) );
-      
+
       dac->CAL = ( dac->CAL      & ~_DAC_CAL_CH0OFFSET_MASK  ) |
-                 ( init->offset <<  _DAC_CAL_CH0OFFSET_SHIFT );        
+                 ( init->offset <<  _DAC_CAL_CH0OFFSET_SHIFT );
     }
-    
+
     dac->OPA0MUX  = (uint32_t)init->resSel                                |
                     (uint32_t)init->outMode                               |
                     init->outPen                                          |
@@ -315,11 +315,11 @@ void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, const OPAMP_Init_TypeDef
     }
     else
     {
-      EFM_ASSERT( init->offset <= ( _DAC_CAL_CH1OFFSET_MASK >> 
+      EFM_ASSERT( init->offset <= ( _DAC_CAL_CH1OFFSET_MASK >>
                                     _DAC_CAL_CH1OFFSET_SHIFT   ) );
-      
+
       dac->CAL = ( dac->CAL      & ~_DAC_CAL_CH1OFFSET_MASK  ) |
-                 ( init->offset <<  _DAC_CAL_CH1OFFSET_SHIFT );        
+                 ( init->offset <<  _DAC_CAL_CH1OFFSET_SHIFT );
     }
 
     dac->OPA1MUX  = (uint32_t)init->resSel                                |
@@ -370,11 +370,11 @@ void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, const OPAMP_Init_TypeDef
     }
     else
     {
-      EFM_ASSERT( init->offset <= ( _DAC_OPAOFFSET_OPA2OFFSET_MASK >> 
+      EFM_ASSERT( init->offset <= ( _DAC_OPAOFFSET_OPA2OFFSET_MASK >>
                                     _DAC_OPAOFFSET_OPA2OFFSET_SHIFT   ) );
-      
+
       dac->CAL = ( dac->CAL      & ~_DAC_OPAOFFSET_OPA2OFFSET_MASK  ) |
-                 ( init->offset <<  _DAC_OPAOFFSET_OPA2OFFSET_SHIFT );        
+                 ( init->offset <<  _DAC_OPAOFFSET_OPA2OFFSET_SHIFT );
     }
 
     dac->OPA2MUX  = (uint32_t)init->resSel                                |

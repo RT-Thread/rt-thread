@@ -73,7 +73,7 @@
 #define BC_HW_VERSION        ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x14)) /**< HW version */
 #define BC_FW_BUILDNO        ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x15)) /**< FW build number */
 #define BC_FW_VERSION        ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x16)) /**< FW version */
-#define BC_SCRATCH_COMMON    ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x17)) /**< Scratch common */ 
+#define BC_SCRATCH_COMMON    ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x17)) /**< Scratch common */
 #define BC_SCRATCH_EFM0      ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x18)) /**< Scratch EFM0 */
 #define BC_SCRATCH_EFM1      ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x19)) /**< Scratch EFM1 */
 #define BC_SCRATCH_EFM2      ((volatile uint16_t *)(BC_REGISTER_BASE + sizeof(uint16_t) * 0x1A)) /**< Scratch EFM2 */

@@ -9,7 +9,11 @@
  * 2020-04-12     Jianjia Ma   add msh cmd
  */
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 void writespeed(const char* filename, int total_length, int block_size)
 {
@@ -66,7 +70,6 @@ void writespeed(const char* filename, int total_length, int block_size)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(writespeed, perform file write test);
 
-#ifdef FINSH_USING_MSH
 static void cmd_writespeed(int argc, char *argv[])
 {
     char* filename;
@@ -93,6 +96,5 @@ static void cmd_writespeed(int argc, char *argv[])
     }
     writespeed(filename, length, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_writespeed, __cmd_writespeed, test file system write speed);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(cmd_writespeed, writespeed, test file system write speed);
 #endif /* RT_USING_FINSH */

@@ -11,7 +11,7 @@
  * Test case that illustrates a timed wait on a condition variable.
  */
 
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>

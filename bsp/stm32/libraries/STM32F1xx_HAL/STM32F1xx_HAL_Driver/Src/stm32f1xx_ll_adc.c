@@ -495,7 +495,12 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
               (  ADC_SQR2_SQ12 | ADC_SQR2_SQ11 | ADC_SQR2_SQ10
                | ADC_SQR2_SQ9 | ADC_SQR2_SQ8 | ADC_SQR2_SQ7)
              );
-    
+
+    /* Reset register SQR3 */
+    CLEAR_BIT(ADCx->SQR3,
+              (  ADC_SQR3_SQ6 | ADC_SQR3_SQ5 | ADC_SQR3_SQ4
+               | ADC_SQR3_SQ3 | ADC_SQR3_SQ2 | ADC_SQR3_SQ1)
+             );
     
     /* Reset register JSQR */
     CLEAR_BIT(ADCx->JSQR,
@@ -656,6 +661,11 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
   }
   assert_param(IS_LL_ADC_REG_CONTINUOUS_MODE(ADC_REG_InitStruct->ContinuousMode));
   assert_param(IS_LL_ADC_REG_DMA_TRANSFER(ADC_REG_InitStruct->DMATransfer));
+  
+  /* ADC group regular continuous mode and discontinuous mode                 */
+  /* can not be enabled simultenaeously                                       */
+  assert_param((ADC_REG_InitStruct->ContinuousMode == LL_ADC_REG_CONV_SINGLE)
+               || (ADC_REG_InitStruct->SequencerDiscont == LL_ADC_REG_SEQ_DISCONT_DISABLE));
   
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */

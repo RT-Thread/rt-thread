@@ -6,32 +6,17 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
@@ -126,10 +111,14 @@ uint32_t RCC_PLL_GetFreqDomain_SYS(void);
   */
 ErrorStatus LL_RCC_DeInit(void)
 {
-  uint32_t vl_mask = 0U;
+  __IO uint32_t vl_mask;
 
   /* Set HSION bit */
   LL_RCC_HSI_Enable();
+
+  /* Wait for HSI READY bit */
+  while(LL_RCC_HSI_IsReady() != 1U)
+  {}
 
   /* Set HSITRIM bits to the reset value*/
   LL_RCC_HSI_SetCalibTrimming(0x10U);
@@ -137,12 +126,26 @@ ErrorStatus LL_RCC_DeInit(void)
   /* Reset SW, HPRE, PPRE and MCOSEL bits */
   vl_mask = 0xFFFFFFFFU;
   CLEAR_BIT(vl_mask, (RCC_CFGR_SW | RCC_CFGR_HPRE | RCC_CFGR_PPRE | RCC_CFGR_MCOSEL));
+  
+  /* Write new value in CFGR register */
   LL_RCC_WriteReg(CFGR, vl_mask);
 
+  /* Wait till system clock source is ready */
+  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
+  {}
+
+  /* Read CR register */
+  vl_mask = LL_RCC_ReadReg(CR);
+
   /* Reset HSEON, CSSON, PLLON bits */
-  vl_mask = 0xFFFFFFFFU;
   CLEAR_BIT(vl_mask, (RCC_CR_PLLON | RCC_CR_CSSON | RCC_CR_HSEON));
+  
+  /* Write new value in CR register */
   LL_RCC_WriteReg(CR, vl_mask);
+
+  /* Wait for PLL READY bit to be reset */
+  while(LL_RCC_PLL_IsReady() != 0U)
+  {}
 
   /* Reset HSEBYP bit */
   LL_RCC_HSE_DisableBypass();
@@ -171,14 +174,21 @@ ErrorStatus LL_RCC_DeInit(void)
 
   /* Clear pending flags */
 #if defined(RCC_HSI48_SUPPORT)
-  vl_mask = (LL_RCC_CIR_LSIRDYC | LL_RCC_CIR_LSERDYC | LL_RCC_CIR_HSIRDYC | LL_RCC_CIR_HSERDYC | LL_RCC_CIR_PLLRDYC | LL_RCC_CIR_HSI14RDYC | LL_RCC_CIR_HSI48RDYC | LL_RCC_CIR_CSSC);
+  vl_mask = (LL_RCC_CIR_LSIRDYC | LL_RCC_CIR_LSERDYC | LL_RCC_CIR_HSIRDYC | LL_RCC_CIR_HSERDYC |\
+             LL_RCC_CIR_PLLRDYC | LL_RCC_CIR_HSI14RDYC | LL_RCC_CIR_HSI48RDYC | LL_RCC_CIR_CSSC);
 #else
-  vl_mask = (LL_RCC_CIR_LSIRDYC | LL_RCC_CIR_LSERDYC | LL_RCC_CIR_HSIRDYC | LL_RCC_CIR_HSERDYC | LL_RCC_CIR_PLLRDYC | LL_RCC_CIR_HSI14RDYC | LL_RCC_CIR_CSSC);
+  vl_mask = (LL_RCC_CIR_LSIRDYC | LL_RCC_CIR_LSERDYC | LL_RCC_CIR_HSIRDYC | LL_RCC_CIR_HSERDYC |\
+             LL_RCC_CIR_PLLRDYC | LL_RCC_CIR_HSI14RDYC | LL_RCC_CIR_CSSC);
 #endif /* RCC_HSI48_SUPPORT */
-  SET_BIT(RCC->CIR, vl_mask);
+
+  /* Write new value in CIR register */
+  LL_RCC_WriteReg(CIR, vl_mask);
 
   /* Disable all interrupts */
   LL_RCC_WriteReg(CIR, 0x00000000U);
+  
+  /* Clear reset flags */
+  LL_RCC_ClearResetFlags();
 
   return SUCCESS;
 }

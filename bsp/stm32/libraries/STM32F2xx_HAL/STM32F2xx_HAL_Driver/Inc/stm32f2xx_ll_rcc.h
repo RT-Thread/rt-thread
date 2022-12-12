@@ -1653,6 +1653,19 @@ __STATIC_INLINE uint32_t LL_RCC_PLL_GetQ(void)
 }
 
 /**
+  * @brief  Configure PLL clock source
+  * @rmtoll PLLCFGR      PLLSRC        LL_RCC_PLL_SetMainSource
+  * @param PLLSource This parameter can be one of the following values:
+  *         @arg @ref LL_RCC_PLLSOURCE_HSI
+  *         @arg @ref LL_RCC_PLLSOURCE_HSE
+  * @retval None
+  */
+__STATIC_INLINE void LL_RCC_PLL_SetMainSource(uint32_t PLLSource)
+{
+  MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLSRC, PLLSource);
+}
+
+/**
   * @brief  Get the oscillator used as PLL clock source.
   * @rmtoll PLLCFGR      PLLSRC        LL_RCC_PLL_GetMainSource
   * @retval Returned value can be one of the following values:

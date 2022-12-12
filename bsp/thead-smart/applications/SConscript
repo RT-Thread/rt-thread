@@ -6,8 +6,8 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = GetCurrentDir()
 
-CCFLAGS = ' -c -ffunction-sections'
+CFLAGS = ' -c -ffunction-sections'
 
-group   = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CCFLAGS=CCFLAGS)
+group   = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CFLAGS=CFLAGS)
 
 Return('group')

@@ -1,7 +1,0 @@
-menu "C++ features"
-
-config RT_USING_CPLUSPLUS
-    bool "Support C++ features"
-    default n
-
-endmenu

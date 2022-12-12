@@ -5,9 +5,13 @@ CPU      = 'arm926'
 # toolchains options
 CROSS_TOOL 	= 'gcc'
 
-#------- toolchains path -------------------------------------------------------
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+
+# cross_tool provides the cross compiler
+# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM = 'gcc'
@@ -20,7 +24,7 @@ if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
-#BUILD = 'release'
+#BUILD = ''
 
 CORE = 'arm926ej-s'
 MAP_FILE = 'rtthread_nuc980.map'
@@ -32,9 +36,9 @@ if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
-    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
+    CXX = PREFIX + 'g++'
     LINK = PREFIX + 'gcc'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
@@ -53,10 +57,12 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O2 -gdwarf-2'
+        CFLAGS += ' -O0 -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS 
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n' 
     POST_ACTION += SIZE + ' $TARGET\n'
@@ -86,3 +92,9 @@ elif PLATFORM == 'armcc':
 
     POST_ACTION = 'fromelf --bin $TARGET --output ' + TARGET_NAME + ' \n'
     POST_ACTION += 'fromelf -z $TARGET\n'
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

@@ -6,7 +6,7 @@
   *
   *          This file override the native HAL time base functions (defined as weak)
   *          to use the RTC ALARM for time base generation:
-  *           + Intializes the RTC peripheral to increment the seconds registers each 1ms
+  *           + Initializes the RTC peripheral to increment the seconds registers each 1ms
   *           + The alarm is configured to assert an interrupt when the RTC reaches 1ms
   *           + HAL_IncTick is called at each Alarm event and the time is reset to 00:00:00
   *           + HSE (default), LSE or LSI can be selected as RTC clock source
@@ -63,86 +63,133 @@
   + RTC_CLOCK_SOURCE_LSI: can be selected for applications with low constraint on timing
                           precision.
   */
-#define RTC_CLOCK_SOURCE_HSE
+/* #define RTC_CLOCK_SOURCE_HSE */
 /* #define RTC_CLOCK_SOURCE_LSE */
-/* #define RTC_CLOCK_SOURCE_LSI */
+#define RTC_CLOCK_SOURCE_LSI 
 
-#ifdef RTC_CLOCK_SOURCE_HSE
-#define RTC_ASYNCH_PREDIV       49U
-#define RTC_SYNCH_PREDIV        4U
-#else /* RTC_CLOCK_SOURCE_LSE || RTC_CLOCK_SOURCE_LSI */
-#define RTC_ASYNCH_PREDIV       0U
-#define RTC_SYNCH_PREDIV        31U
-#endif /* RTC_CLOCK_SOURCE_HSE */
+/* Minimize Asynchronous prescaler for power consumption :
+  ck_apre = RTCCLK / (ASYNC prediv + 1)
+  ck_spre = ck_apre/(SYNC prediv + 1) = 1 Hz */
+#if defined (RTC_CLOCK_SOURCE_LSE)
+/* LSE Freq = 32.768 kHz RC */
+#define RTC_ASYNCH_PREDIV                   0u
+#define RTC_SYNCH_PREDIV                    0x3FFFu /* (16384 - 1) */
+#elif defined (RTC_CLOCK_SOURCE_LSI)
+/* LSI Freq = 32 kHz RC  */
+#define RTC_ASYNCH_PREDIV                   0u
+#define RTC_SYNCH_PREDIV                    0x3E7Fu /* (16000 - 1) */
+#elif defined (RTC_CLOCK_SOURCE_HSE)
+/* HSE Freq as RTCCLK = 8 MHz / 32 = 250 kHz */
+#define RTC_ASYNCH_PREDIV                   0x07u   /* (8 - 1) */
+#define RTC_SYNCH_PREDIV                    0x7A11u /* (31250 -1) */
+#endif /* RTC_CLOCK_SOURCE_LSE */
+
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern RTC_HandleTypeDef hRTC_Handle;
-RTC_HandleTypeDef hRTC_Handle;
+RTC_HandleTypeDef        hRTC_Handle = {.Init = {0}};
 
 /* Private function prototypes -----------------------------------------------*/
 void RTC_TAMP_IRQHandler(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  This function configures the RTC_ALARMA as a time base source.
-  *         The time source is configured  to have 1ms time base with a dedicated
-  *         Tick interrupt priority.
-  * @note   This function is called  automatically at the beginning of program after
-  *         reset by HAL_Init() or at any time when clock is configured, by HAL_RCC_ClockConfig().
-  * @param  TickPriority: Tick interrupt priority.
+  * @brief  This function configures the RTC ALARM A as a time base source. 
+  *         The time source is configured to have 1ms time base with a dedicated 
+  *         Tick interrupt priority. 
+  *         Calendar time base is = ((RTC_ASYNCH_PREDIV + 1) * (RTC_SYNCH_PREDIV + 1)) / RTC_CLOCK
+  *                               = 1s
+  *         Alarm interrupt timebase is = (RTC_SYNCH_PREDIV / (1000 / uwTickFreq))
+  *                                     = 1 ms when uwTickFreq is set to 1 kHz
+  * @note   This function is called automatically at the beginning of program after
+  *         reset by HAL_Init() or at any time when clock is configured, by HAL_RCC_ClockConfig(). 
+  * @param  TickPriority Tick interrupt priority.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
-  __IO uint32_t counter = 0U;
+  HAL_StatusTypeDef status = HAL_OK;
+  RCC_OscInitTypeDef        RCC_OscInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct = {0};
+  RTC_TimeTypeDef           time;
+  RTC_DateTypeDef           date;
+  RTC_AlarmTypeDef          alarm;
 
-  RCC_OscInitTypeDef        RCC_OscInitStruct;
-  RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 
-#ifdef RTC_CLOCK_SOURCE_LSE
-  /* Configue LSE as RTC clock soucre */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  /* Check uwTickFreq for MisraC 2012 (even if uwTickFreq is a enum type that don't take the value zero)*/
+  if ((uint32_t)uwTickFreq != 0U)
+  {
+    /* Disable backup domeain protection */
+    HAL_PWR_EnableBkUpAccess();
+
+    /* Enable RTC APB clock gating */
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
+
+    /* Disable the Alarm A */
+    __HAL_RTC_ALARMA_DISABLE(&hRTC_Handle);
+    /* In case of interrupt mode is used, the interrupt source must disabled */ 
+    __HAL_RTC_ALARM_DISABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
+    __HAL_RTC_ALARM_CLEAR_FLAG(&hRTC_Handle, RTC_FLAG_ALRAF);
+
+    /* Get RTC clock configuration */
+    HAL_RCCEx_GetPeriphCLKConfig(&PeriphClkInitStruct);
+
+    /*In case of RTC clock already enable, make sure it's the good one */
+#if defined (RTC_CLOCK_SOURCE_LSE)
+    if ((PeriphClkInitStruct.RTCClockSelection == RCC_RTCCLKSOURCE_LSE) && (__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) != 0x00u))
 #elif defined (RTC_CLOCK_SOURCE_LSI)
-  /* Configue LSI as RTC clock soucre */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+    if ((PeriphClkInitStruct.RTCClockSelection == RCC_RTCCLKSOURCE_LSI) && (__HAL_RCC_GET_FLAG(RCC_FLAG_LSIRDY) != 0x00u))
 #elif defined (RTC_CLOCK_SOURCE_HSE)
-  /* Configue HSE as RTC clock soucre */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_HSE_DIV32;
+    if ((PeriphClkInitStruct.RTCClockSelection == RCC_RTCCLKSOURCE_HSE_DIV32) && (__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != 0x00u))
 #else
 #error Please select the RTC Clock source
 #endif /* RTC_CLOCK_SOURCE_LSE */
-
-  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK)
-  {
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) == HAL_OK)
     {
-      /* Enable RTC Clock */
-      __HAL_RCC_RTC_ENABLE();
-      __HAL_RCC_RTCAPB_CLK_ENABLE();
+      /* Do nothing */
+    }
+    else
+    {
+#ifdef RTC_CLOCK_SOURCE_LSE
+      /* Configure LSE as RTC clock source */
+      RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
+      RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+      RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+      PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+#elif defined (RTC_CLOCK_SOURCE_LSI)
+      /* Configure LSI as RTC clock source */
+      RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
+      RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+      RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+      PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+#elif defined (RTC_CLOCK_SOURCE_HSE)
+      /* Configure HSE as RTC clock source */
+      RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+      RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+      RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+      PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_HSE_DIV32;
+#endif /* RTC_CLOCK_SOURCE_LSE */
 
-      /* The time base should be 1ms
-         Time base = ((RTC_ASYNCH_PREDIV + 1) * (RTC_SYNCH_PREDIV + 1)) / RTC_CLOCK
-         HSE as RTC clock
-           Time base = ((49 + 1) * (4 + 1)) / 250kHz
-                     = 1ms
-         LSE as RTC clock
-           Time base = ((31 + 1) * (0 + 1)) / 32.768KHz
-                     = ~1ms
-         LSI as RTC clock
-           Time base = ((31 + 1) * (0 + 1)) / 32KHz
-                     = 1ms
-      */
+      /* Configure oscillator */
+      status = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+      if (status == HAL_OK)
+      {
+        /* Configure RTC clock source */
+        PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+        status = HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+
+        /* Enable RTC Clock */
+        if(status == HAL_OK)
+        {
+          __HAL_RCC_RTC_ENABLE();
+        }
+      }
+    }
+
+    /* If RTC Clock configuration is ok */
+    if (status == HAL_OK)
+    {
+      /* The time base is defined to have highest synchronous prescaler but keeping 
+         a 1Hz RTC frequency. */
       hRTC_Handle.Instance = RTC;
       hRTC_Handle.Init.HourFormat = RTC_HOURFORMAT_24;
       hRTC_Handle.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
@@ -150,80 +197,104 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
       hRTC_Handle.Init.OutPut = RTC_OUTPUT_DISABLE;
       hRTC_Handle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
       hRTC_Handle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-      if (HAL_RTC_Init(&hRTC_Handle) != HAL_OK)
+      status = HAL_RTC_Init(&hRTC_Handle);
+    }
+
+    /* HAL RTC Init is ok & calendar has never been initialized */
+    if((status == HAL_OK)  && (__HAL_RTC_GET_FLAG(&hRTC_Handle, RTC_FLAG_INITS) == 0x00u))
+    {
+      time.Hours = 0x00u;
+      time.Minutes = 0x00u;
+      time.Seconds = 0x00u;
+      time.TimeFormat = RTC_HOURFORMAT12_PM;
+      time.SubSeconds = 0x00u;
+      time.SecondFraction = 0x00u;
+      time.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+      time.StoreOperation = RTC_STOREOPERATION_RESET;
+      status = HAL_RTC_SetTime(&hRTC_Handle, &time, RTC_FORMAT_BCD);
+      if(status == HAL_OK)
       {
-        return HAL_ERROR;
+        date.WeekDay = RTC_WEEKDAY_MONDAY;
+        date.Date = 0x01u;
+        date.Month = RTC_MONTH_JANUARY;
+        date.Year = 0x01u;
+        status = HAL_RTC_SetDate(&hRTC_Handle, &date, RTC_FORMAT_BCD);
       }
+    }
 
-      /* Disable the write protection for RTC registers */
-      __HAL_RTC_WRITEPROTECTION_DISABLE(&hRTC_Handle);
+    /* If RTC calendar is initialized */
+    if (status == HAL_OK)
+    {
+      alarm.AlarmTime.Hours = 0x00u;
+      alarm.AlarmTime.Minutes = 0x00u;
+      alarm.AlarmTime.Seconds = 0x00u;
+      alarm.AlarmTime.TimeFormat = RTC_HOURFORMAT12_PM;
+      alarm.AlarmTime.SubSeconds = (RTC_SYNCH_PREDIV / (1000 / (uint32_t)uwTickFreq));
+      alarm.AlarmTime.SecondFraction = 0x00u;
+      alarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+      alarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+      alarm.AlarmMask = RTC_ALARMMASK_ALL;
 
-      /* Disable the Alarm A interrupt */
-      __HAL_RTC_ALARMA_DISABLE(&hRTC_Handle);
-
-      /* Clear flag alarm A */
-      __HAL_RTC_ALARM_CLEAR_FLAG(&hRTC_Handle, RTC_FLAG_ALRAF);
-
-      counter = 0U;
-      /* Wait till RTC ALRAWF flag is set and if Time out is reached exit */
-      while(__HAL_RTC_ALARM_GET_FLAG(&hRTC_Handle, RTC_FLAG_ALRAWF) == 0U)
+      /* Depending on input frequency select Subsecond mask */
+      if (uwTickFreq == HAL_TICK_FREQ_1KHZ)
       {
-        if(counter++ == (SystemCoreClock / 56U)) /* Timeout = ~ 1s */
+        alarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_SS14_5;
+      }
+      else if (uwTickFreq == HAL_TICK_FREQ_100HZ)
+      {
+        alarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_SS14_9;
+      }
+      else
+      {
+#if defined (RTC_CLOCK_SOURCE_HSE)
+        /* When RTCCLK = 1 MHz, need to mask Subsecond register bit 12 to 14
+          to have 10 Hhz interrupt */
+        alarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_SS14_12;
+#else
+        /* When RTCCLK is around 32 kHz, need to mask Subsecond register bit 12 to 11
+          to have 10 Hhz interrupt */
+        alarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_SS14_11;
+#endif /* RTC_CLOCK_SOURCE_HSE */
+      }
+      alarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
+      alarm.AlarmDateWeekDay = RTC_WEEKDAY_MONDAY;
+      alarm.Alarm = RTC_ALARM_A;
+      status = HAL_RTC_SetAlarm_IT(&hRTC_Handle, &alarm, RTC_FORMAT_BCD);
+      if(status == HAL_OK)
+      {
+        /* Enable the RTC global Interrupt */
+        HAL_NVIC_EnableIRQ(RTC_TAMP_IRQn);
+
+        /* Configure the SysTick IRQ priority */
+        if (TickPriority < (1UL << __NVIC_PRIO_BITS))
         {
-          return HAL_ERROR;
+          HAL_NVIC_SetPriority(RTC_TAMP_IRQn, TickPriority, 0U);
+          uwTickPrio = TickPriority;
+        }
+        else
+        {
+          status = HAL_ERROR;
         }
       }
-
-      hRTC_Handle.Instance->ALRMAR = (uint32_t)0x01U;
-
-      /* Configure the Alarm state: Enable Alarm */
-      __HAL_RTC_ALARMA_ENABLE(&hRTC_Handle);
-      /* Configure the Alarm interrupt */
-      __HAL_RTC_ALARM_ENABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
-
-      /* RTC Alarm Interrupt Configuration: EXTI configuration */
-      __HAL_RTC_ALARM_EXTI_ENABLE_IT();
-
-      /* Check if the Initialization mode is set */
-      if((hRTC_Handle.Instance->ICSR & RTC_ICSR_INITF) == (uint32_t)RESET)
-      {
-        /* Set the Initialization mode */
-        hRTC_Handle.Instance->ICSR = (uint32_t)RTC_INIT_MASK;
-        counter = 0U;
-        while((hRTC_Handle.Instance->ICSR & RTC_ICSR_INITF) == (uint32_t)RESET)
-        {
-          if(counter++ == (SystemCoreClock / 56U)) /* Timeout = ~ 1s */
-          {
-            return HAL_ERROR;
-          }
-        }
-      }
-      hRTC_Handle.Instance->DR = 0U;
-      hRTC_Handle.Instance->TR = 0U;
-
-      hRTC_Handle.Instance->ICSR &= (uint32_t)~RTC_ICSR_INIT;
-
-      /* Enable the write protection for RTC registers */
-      __HAL_RTC_WRITEPROTECTION_ENABLE(&hRTC_Handle);
-
-      HAL_NVIC_SetPriority(RTC_TAMP_IRQn, TickPriority, 0U);
-      HAL_NVIC_EnableIRQ(RTC_TAMP_IRQn);
-      return HAL_OK;
     }
   }
-  return HAL_ERROR;
+  else
+  {
+    status = HAL_ERROR;
+  }
+  return status;
 }
 
 /**
   * @brief  Suspend Tick increment.
-  * @note   Disable the tick increment by disabling RTC ALARM interrupt.
+  * @note   Disable the tick increment by disabling RTC_ALRA interrupt.
   * @retval None
   */
 void HAL_SuspendTick(void)
 {
   /* Disable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_DISABLE(&hRTC_Handle);
-  /* Disable RTC ALARM update Interrupt */
+  /* Disable ALARM A Interrupt */
   __HAL_RTC_ALARM_DISABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(&hRTC_Handle);
@@ -238,46 +309,23 @@ void HAL_ResumeTick(void)
 {
   /* Disable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_DISABLE(&hRTC_Handle);
-  /* Enable RTC ALARM Update interrupt */
+  /* Enable ALARM A interrupt */
   __HAL_RTC_ALARM_ENABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(&hRTC_Handle);
 }
 
 /**
-  * @brief  ALARM A Event Callback in non blocking mode
-  * @note   This function is called  when RTC_ALARM interrupt took place, inside
-  * RTC_ALARM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  hrtc : RTC handle
+  * @brief  Alarm Timer Event Callback in non blocking mode
+  * @note   This function is called  when RTC Alarm takes place, inside
+  *         HAL_RTC_AlarmIRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  *         a global variable "uwTick" used as application time base.
+  * @param  hrtc  RTC handle
   * @retval None
   */
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-  __IO uint32_t counter = 0U;
-
   HAL_IncTick();
-
-  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
-
-  /* Set the Initialization mode */
-  hrtc->Instance->ICSR = (uint32_t)RTC_INIT_MASK;
-
-  while((hrtc->Instance->ICSR & RTC_ICSR_INITF) == (uint32_t)RESET)
-  {
-    if(counter++ == (SystemCoreClock / 56U)) /* Timeout = ~ 1s */
-    {
-      break;
-    }
-  }
-
-  hrtc->Instance->DR = 0U;
-  hrtc->Instance->TR = 0U;
-
-  hrtc->Instance->ICSR &= (uint32_t)~RTC_ICSR_INIT;
-
-  /* Enable the write protection for RTC registers */
-  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
 }
 
 /**

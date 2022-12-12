@@ -53,7 +53,7 @@ extern "C" {
 /** @defgroup DACEx_lfsrunmask_triangleamplitude DACEx lfsrunmask triangle amplitude
   * @{
   */
-#define DAC_LFSRUNMASK_BIT0                0x00000000U                                                         /*!< Unmask DAC channel LFSR bit0 for noise wave generation */
+#define DAC_LFSRUNMASK_BIT0                0x00000000UL                                                        /*!< Unmask DAC channel LFSR bit0 for noise wave generation */
 #define DAC_LFSRUNMASK_BITS1_0             (                                                   DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[1:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS2_0             (                                  DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[2:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS3_0             (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[3:0] for noise wave generation */
@@ -65,7 +65,7 @@ extern "C" {
 #define DAC_LFSRUNMASK_BITS9_0             (DAC_CR_MAMP1_3                                   | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[9:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS10_0            (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[10:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS11_0            (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[11:0] for noise wave generation */
-#define DAC_TRIANGLEAMPLITUDE_1            0x00000000U                                                         /*!< Select max triangle amplitude of 1 */
+#define DAC_TRIANGLEAMPLITUDE_1            0x00000000UL                                                        /*!< Select max triangle amplitude of 1 */
 #define DAC_TRIANGLEAMPLITUDE_3            (                                                   DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 3 */
 #define DAC_TRIANGLEAMPLITUDE_7            (                                  DAC_CR_MAMP1_1                 ) /*!< Select max triangle amplitude of 7 */
 #define DAC_TRIANGLEAMPLITUDE_15           (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 15 */
@@ -145,7 +145,6 @@ extern "C" {
 /** @defgroup DACEx_Private_Macros DACEx Private Macros
   * @{
   */
-
 #if defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG)
 #define IS_DAC_TRIGGER(TRIGGER) (((TRIGGER) == DAC_TRIGGER_NONE)    || \
                                  ((TRIGGER) == DAC_TRIGGER_T6_TRGO) || \
@@ -223,6 +222,8 @@ extern "C" {
 HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude);
 HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude);
 
+HAL_StatusTypeDef HAL_DACEx_DualStart(DAC_HandleTypeDef *hdac);
+HAL_StatusTypeDef HAL_DACEx_DualStop(DAC_HandleTypeDef *hdac);
 HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Alignment, uint32_t Data1, uint32_t Data2);
 uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac);
 
@@ -231,6 +232,10 @@ void HAL_DACEx_ConvHalfCpltCallbackCh2(DAC_HandleTypeDef *hdac);
 void HAL_DACEx_ErrorCallbackCh2(DAC_HandleTypeDef *hdac);
 void HAL_DACEx_DMAUnderrunCallbackCh2(DAC_HandleTypeDef *hdac);
 
+
+/**
+  * @}
+  */
 
 /**
   * @}
@@ -258,10 +263,6 @@ void DAC_DMAHalfConvCpltCh2(DMA_HandleTypeDef *hdma);
   * @}
   */
 
-/**
-  * @}
-  */
-
 #endif /* DAC */
 
 /**
@@ -272,6 +273,6 @@ void DAC_DMAHalfConvCpltCh2(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /*STM32F1xx_HAL_DAC_EX_H */
+#endif /* STM32F1xx_HAL_DAC_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

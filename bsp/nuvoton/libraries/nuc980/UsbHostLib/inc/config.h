@@ -33,7 +33,7 @@
 #define DISABLE_EHCI_IRQ()     rt_hw_interrupt_mask(IRQ_EHCI)
 #define IS_EHCI_IRQ_ENABLED()  ((inpw(REG_AIC_INTMSK0)>>IRQ_EHCI) & 0x1)
 
-//#define ENABLE_OHCI                         /* Enable OHCI host controller                */
+#define ENABLE_OHCI                         /* Enable OHCI host controller                */
 #define ENABLE_EHCI                         /* Enable EHCI host controller                */
 
 #define EHCI_PORT_CNT          2            /* Number of EHCI roothub ports               */
@@ -50,7 +50,7 @@
                                                unconditionally reclaim iTD/isTD scheduled
                                                in just elapsed EHCI_ISO_RCLM_RANGE ms.    */
 
-#define MAX_DESC_BUFF_SIZE     1024         /* To hold the configuration descriptor, USB
+#define MAX_DESC_BUFF_SIZE     4096         /* To hold the configuration descriptor, USB
                                                core will allocate a buffer with this size
                                                for each connected device. USB core does
                                                not release it until device disconnected.  */

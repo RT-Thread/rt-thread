@@ -222,7 +222,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -918,10 +918,10 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
     /* Set the RTC_TR register */
     WRITE_REG(RTC->TR, (tmpreg & RTC_TR_RESERVED_MASK));
 
-    /* Clear the bits to be configured */
+    /* This interface is deprecated. To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions */
     CLEAR_BIT(RTC->CR, RTC_CR_BKP);
 
-    /* Configure the RTC_CR register */
+    /* This interface is deprecated. To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions */
     SET_BIT(RTC->CR, (sTime->DayLightSaving | sTime->StoreOperation));
 
     /* Exit Initialization mode */
@@ -1198,7 +1198,7 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
               ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
               ((uint32_t)sAlarm->AlarmMask));
   }
-  else /* format BCD */
+  else /* Format BCD */
   {
     if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
     {
@@ -1420,6 +1420,7 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
               ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
               ((uint32_t)sAlarm->AlarmMask));
   }
+
   /* Configure the Alarm A or Alarm B Sub Second registers */
   subsecondtmpreg = (uint32_t)((uint32_t)(sAlarm->AlarmTime.SubSeconds) | (uint32_t)(sAlarm->AlarmSubSecondMask));
 
@@ -1430,7 +1431,8 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   if (sAlarm->Alarm == RTC_ALARM_A)
   {
     /* Disable the Alarm A interrupt */
-    CLEAR_BIT(RTC->CR, RTC_CR_ALRAIE);
+    CLEAR_BIT(RTC->CR, (RTC_CR_ALRAE | RTC_CR_ALRAIE));
+
     /* Clear flag alarm A */
     WRITE_REG(RTC->SCR, RTC_SCR_CALRAF);
     __HAL_RTC_ALARM_EXTI_CLEAR_IT();
@@ -1462,7 +1464,8 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   else
   {
     /* Disable the Alarm B interrupt */
-    CLEAR_BIT(RTC->CR, RTC_CR_ALRBIE);
+    CLEAR_BIT(RTC->CR, (RTC_CR_ALRBE | RTC_CR_ALRBIE));
+
     /* Clear flag alarm B */
     WRITE_REG(RTC->SCR, RTC_SCR_CALRBF);
     __HAL_RTC_ALARM_EXTI_CLEAR_IT();
@@ -1499,6 +1502,7 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
 
+  /* Change RTC state */
   hrtc->State = HAL_RTC_STATE_READY;
 
   /* Process Unlocked */
@@ -1740,6 +1744,10 @@ HAL_StatusTypeDef HAL_RTC_PollForAlarmAEvent(RTC_HandleTypeDef *hrtc, uint32_t T
       if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
       {
         hrtc->State = HAL_RTC_STATE_TIMEOUT;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hrtc);
+
         return HAL_TIMEOUT;
       }
     }
@@ -1794,7 +1802,7 @@ HAL_StatusTypeDef HAL_RTC_WaitForSynchro(RTC_HandleTypeDef *hrtc)
   UNUSED(hrtc);
 
   /* Clear RSF flag */
-  SET_BIT(RTC->ICSR, RTC_RSF_MASK);
+  CLEAR_BIT(RTC->ICSR, RTC_ICSR_RSF);
 
   tickstart = HAL_GetTick();
 
@@ -1953,6 +1961,72 @@ uint8_t RTC_Bcd2ToByte(uint8_t Value)
   uint32_t tmp;
   tmp = (((uint32_t)Value & 0xF0U) >> 4) * 10U;
   return (uint8_t)(tmp + ((uint32_t)Value & 0x0FU));
+}
+
+/**
+  * @brief  Daylight Saving Time, Add one hour to the calendar in one single operation
+  *         without going through the initialization procedure.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_Add1Hour(RTC_HandleTypeDef *hrtc)
+{
+  UNUSED(hrtc);
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  SET_BIT(RTC->CR, RTC_CR_ADD1H);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Subtract one hour from the calendar in one
+  *         single operation without going through the initialization procedure.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_Sub1Hour(RTC_HandleTypeDef *hrtc)
+{
+  UNUSED(hrtc);
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  SET_BIT(RTC->CR, RTC_CR_SUB1H);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Set the store operation bit.
+  * @note   It can be used by the software in order to memorize the DST status.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_SetStoreOperation(RTC_HandleTypeDef *hrtc)
+{
+  UNUSED(hrtc);
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  SET_BIT(RTC->CR, RTC_CR_BKP);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Clear the store operation bit.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_ClearStoreOperation(RTC_HandleTypeDef *hrtc)
+{
+  UNUSED(hrtc);
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  CLEAR_BIT(RTC->CR, RTC_CR_BKP);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Read the store operation bit.
+  * @param  hrtc RTC handle
+  * @retval operation see RTC_StoreOperation_Definitions
+  */
+uint32_t HAL_RTC_DST_ReadStoreOperation(RTC_HandleTypeDef *hrtc)
+{
+  UNUSED(hrtc);
+  return READ_BIT(RTC->CR, RTC_CR_BKP);
 }
 
 /**

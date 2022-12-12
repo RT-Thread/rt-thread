@@ -1,27 +1,24 @@
 from building import *
-
 Import('rtconfig')
 
 src   = []
 cwd   = GetCurrentDir()
 group = []
-CPPPATH = [cwd]
+CPPPATH = [cwd + '/include']
+CPPDEFINES = []
 
-if GetDepend('RT_USING_LIBC'):
-    src += Glob('*.c')
-else:
-    if GetDepend('RT_LIBC_USING_TIME'):
-        src += ['time.c']
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
+elif rtconfig.PLATFORM in ['iccarm']:
+    CPPDEFINES += ['CLOCKS_PER_SEC=RT_TICK_PER_SECOND'] # forcly revert to 1 by IAR
 
-if GetDepend('RT_USING_POSIX') == False:
-    SrcRemove(src, ['unistd.c'])
+src += Glob('*.c')
 
-if rtconfig.CROSS_TOOL == 'keil':
-    CPPDEFINES = ['__CLK_TCK=RT_TICK_PER_SECOND']
-else:
-    CPPDEFINES = []
+group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
-if GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME'):
-    group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

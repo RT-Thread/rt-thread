@@ -1,12 +1,13 @@
 /**************************************************************************//**
 *
-* @copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
+* @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
 * SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
 * Date            Author       Notes
-* 2020-2-07       ChingI       First version
+* 2020-6-22       ChingI       First version
+* 2022-1-8        Wayne        Fix IE issue
 *
 ******************************************************************************/
 
@@ -56,9 +57,10 @@ struct nu_can
 {
     struct rt_can_device dev;
     char *name;
-    CAN_T *can_base;
-    uint32_t can_rst;
-    IRQn_Type can_irq_n;
+    CAN_T *base;
+    IRQn_Type irqn;
+    uint32_t rstidx;
+    uint32_t int_flag;
 };
 typedef struct nu_can *nu_can_t;
 
@@ -74,29 +76,27 @@ static struct nu_can nu_can_arr[] =
 #if defined(BSP_USING_CAN0)
     {
         .name = "can0",
-        .can_base = CAN0,
-        .can_rst = CAN0_RST,
-        .can_irq_n =  CAN0_IRQn,
+        .base = CAN0,
+        .rstidx = CAN0_RST,
+        .irqn =  CAN0_IRQn,
     },
 #endif
 #if defined(BSP_USING_CAN1)
     {
         .name = "can1",
-        .can_base = CAN1,
-        .can_rst = CAN1_RST,
-        .can_irq_n =  CAN1_IRQn,
+        .base = CAN1,
+        .rstidx = CAN1_RST,
+        .irqn =  CAN1_IRQn,
     },
 #endif
-
 #if defined(BSP_USING_CAN2)
     {
         .name = "can2",
-        .can_base = CAN2,
-        .can_rst = CAN2_RST,
-        .can_irq_n =  CAN2_IRQn,
+        .base = CAN2,
+        .rstidx = CAN2_RST,
+        .irqn =  CAN2_IRQn,
     },
 #endif
-    {0}
 }; /* struct nu_can */
 
 /* Public functions ------------------------------------------------------------*/
@@ -158,267 +158,271 @@ void CAN2_IRQHandler(void)
 
 /* Private Variables ------------------------------------------------------------*/
 
-
-static void nu_can_isr(nu_can_t can)
+static void nu_can_isr(nu_can_t psNuCAN)
 {
-    uint32_t u32IIDRstatus;
     /* Get base address of CAN register */
-    CAN_T *can_base = ((nu_can_t)can)->can_base;
+    CAN_T *base = psNuCAN->base;
 
     /* Get interrupt event */
-    u32IIDRstatus = CAN_GET_INT_PENDING_STATUS(can_base);
+    uint32_t u32IIDRstatus = CAN_GET_INT_PENDING_STATUS(base) & CAN_IIDR_INTID_Msk;
 
-    if (u32IIDRstatus == 0x00008000)       /* Check Status Interrupt Flag (Error status Int and Status change Int) */
+    /* Check Status Interrupt Flag (Error status Int and Status change Int) */
+    if (u32IIDRstatus == 0x00008000)
     {
         /**************************/
         /* Status Change interrupt*/
         /**************************/
-        if (can_base->STATUS & CAN_STATUS_TXOK_Msk)
+        if (base->STATUS & CAN_STATUS_TXOK_Msk)
         {
-            can_base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
+            base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
 #ifndef RT_CAN_USING_HDR
-            /* Using as Lisen,Loopback,Loopback+Lisen mode*/
-            rt_hw_can_isr(&can->dev, RT_CAN_EVENT_TX_DONE);
+            if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX)
+            {
+                /*Using as Lisen,Loopback,Loopback+Lisen mode*/
+                rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
+            }
 #endif
-            //rt_kprintf("[%s]TX OK INT\n", can->name) ;
         }
 
-        if (can_base->STATUS & CAN_STATUS_RXOK_Msk)
+        if (base->STATUS & CAN_STATUS_RXOK_Msk)
         {
-            can_base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
+            base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
 #ifndef RT_CAN_USING_HDR
-            /* Using as Lisen,Loopback,Loopback+Lisen mode*/
-            rt_hw_can_isr(&can->dev, RT_CAN_EVENT_RX_IND);
+            if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX)
+            {
+                /*Using as Lisen,Loopback,Loopback+Lisen mode*/
+                rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_RX_IND);
+            }
 #endif
-            //rt_kprintf("[%s]RX OK INT\n", can->name) ;
         }
 
         /**************************/
         /* Error Status interrupt */
         /**************************/
-        if (can_base->STATUS & CAN_STATUS_EWARN_Msk)
+        if (base->STATUS & CAN_STATUS_EWARN_Msk)
         {
-            rt_kprintf("[%s]EWARN INT\n", can->name) ;
+            rt_kprintf("[%s]EWARN INT\n", psNuCAN->name) ;
         }
 
-        if (can_base->STATUS & CAN_STATUS_BOFF_Msk)
+        if (base->STATUS & CAN_STATUS_BOFF_Msk)
         {
-            rt_kprintf("[%s]BUSOFF INT\n", can->name) ;
+            rt_kprintf("[%s]BUSOFF INT\n", psNuCAN->name) ;
 
-            /* Do Init to release busoff pin */
-            can_base->CON = (CAN_CON_INIT_Msk | CAN_CON_CCE_Msk);
-            can_base->CON &= (~(CAN_CON_INIT_Msk | CAN_CON_CCE_Msk));
-            while (can_base->CON & CAN_CON_INIT_Msk);
+            /* To release busoff pin */
+            CAN_EnterInitMode(base, CAN_CON_INIT_Msk | CAN_CON_CCE_Msk);
+            CAN_LeaveInitMode(base);
         }
+
+        if (base->STATUS & CAN_STATUS_LEC_Msk)
+        {
+            rt_kprintf("[%s] Last Error Code %03x\n", psNuCAN->name, base->STATUS & CAN_STATUS_LEC_Msk) ;
+        }
+
     }
 #ifdef RT_CAN_USING_HDR
     /*IntId: 0x0001-0x0020, Number of Message Object which caused the interrupt.*/
     else if (u32IIDRstatus > 0 && u32IIDRstatus <= 32)
     {
-        /*Message RAM 0~RX_MSG_ID_INDEX for CAN Tx using*/
-        if (u32IIDRstatus <= RX_MSG_ID_INDEX)
+        if ((psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX) &&
+                (u32IIDRstatus <= RX_MSG_ID_INDEX))
         {
-            //rt_kprintf("[%s-Tx]IntId = %d\n", can->name, u32IIDRstatus);
-            rt_hw_can_isr(&can->dev, RT_CAN_EVENT_TX_DONE);
+            /*Message RAM 0~RX_MSG_ID_INDEX for CAN Tx using*/
+            rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
         }
-        else /*Message RAM RX_MSG_ID_INDEX~31 for CAN Rx using*/
+        else if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX)
         {
-            //rt_kprintf("[%s-Rx]IntId = %d\n", can->name, u32IIDRstatus);
-            rt_hw_can_isr(&can->dev, (RT_CAN_EVENT_RX_IND | ((u32IIDRstatus - 1) << 8)));
+            /*Message RAM RX_MSG_ID_INDEX~31 for CAN Rx using*/
+            rt_hw_can_isr(&psNuCAN->dev, (RT_CAN_EVENT_RX_IND | ((u32IIDRstatus - 1) << 8)));
         }
-        CAN_CLR_INT_PENDING_BIT(can_base, (u32IIDRstatus - 1));     /* Clear Interrupt Pending */
+        CAN_CLR_INT_PENDING_BIT(base, (u32IIDRstatus - 1));     /* Clear Interrupt Pending */
     }
 #endif
-
 }
 
+static void nu_can_ie(nu_can_t psNuCAN)
+{
+    uint32_t u32CanIE = CAN_CON_IE_Msk;
+
+    if (psNuCAN->int_flag & (RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX))
+    {
+        u32CanIE |= CAN_CON_SIE_Msk;
+    }
+    else
+    {
+        u32CanIE &= ~CAN_CON_SIE_Msk;
+    }
+
+    if (psNuCAN->int_flag & RT_DEVICE_CAN_INT_ERR)
+    {
+        u32CanIE |= CAN_CON_EIE_Msk;
+    }
+    else
+    {
+        u32CanIE &= ~CAN_CON_EIE_Msk;
+    }
+
+    if (u32CanIE & (CAN_CON_SIE_Msk | CAN_CON_EIE_Msk))
+    {
+        CAN_EnableInt(psNuCAN->base, u32CanIE);
+
+        /* Enable interrupt. */
+        NVIC_EnableIRQ(psNuCAN->irqn);
+    }
+    else
+    {
+        u32CanIE |= (CAN_CON_IE_Msk | CAN_CON_SIE_Msk);
+        CAN_DisableInt(psNuCAN->base, u32CanIE);
+
+        /* Disable interrupt. */
+        NVIC_DisableIRQ(psNuCAN->irqn);
+    }
+}
 
 static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure *cfg)
 {
+    nu_can_t psNuCAN  = (nu_can_t)can;
+    uint32_t u32CANMode;
 
-    RT_ASSERT(can != RT_NULL);
-    RT_ASSERT(cfg != RT_NULL);
+    RT_ASSERT(can);
+    RT_ASSERT(cfg);
 
     /* Get base address of CAN register */
-    CAN_T *can_base = ((nu_can_t)can)->can_base;
-
-    RT_ASSERT(can_base != RT_NULL);
+    CAN_T *base = psNuCAN->base;
 
     /* Reset this module */
-    SYS_ResetModule(((nu_can_t)can)->can_rst);
+    SYS_ResetModule(psNuCAN->rstidx);
 
-    switch (cfg->mode)
-    {
-    /* CAN default Normal mode */
-    case RT_CAN_MODE_NORMAL:
-        can->config.mode = CAN_NORMAL_MODE;
-        break;
-    case RT_CAN_MODE_LISEN:
-        can->config.mode = RT_CAN_MODE_LISEN;
-        break;
-    case RT_CAN_MODE_LOOPBACK:
-        can->config.mode = RT_CAN_MODE_LOOPBACK;
-        break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
-        can->config.mode = RT_CAN_MODE_LOOPBACKANLISEN;
-        break;
-    default:
-        rt_kprintf("Unsupported Operating mode");
-        goto exit_nu_can_configure;
-    }
+    u32CANMode = (cfg->mode == RT_CAN_MODE_NORMAL) ? CAN_NORMAL_MODE : CAN_BASIC_MODE;
 
     /*Set the CAN Bit Rate and Operating mode*/
-    if (CAN_Open(can_base, can->config.baud_rate, can->config.mode) < 1)
-        return -(RT_ERROR);
-
+    if (CAN_Open(base, cfg->baud_rate, u32CANMode) != cfg->baud_rate)
+        goto exit_nu_can_configure;
 
     switch (cfg->mode)
     {
-    /* CAN default Normal mode */
     case RT_CAN_MODE_NORMAL:
 #ifdef RT_CAN_USING_HDR
-        CAN_LeaveTestMode(can_base);
+        CAN_LeaveTestMode(base);
 #else
-        CAN_EnterTestMode(can_base, CAN_TEST_BASIC_Msk);
+        CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk);
 #endif
         break;
-    case RT_CAN_MODE_LISEN:
-        CAN_EnterTestMode(can_base, CAN_TEST_BASIC_Msk | CAN_TEST_SILENT_Msk);
+    case RT_CAN_MODE_LISTEN:
+        CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk | CAN_TEST_SILENT_Msk);
         break;
     case RT_CAN_MODE_LOOPBACK:
-        CAN_EnterTestMode(can_base, CAN_TEST_BASIC_Msk | CAN_TEST_LBACK_Msk);
+        CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk | CAN_TEST_LBACK_Msk);
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
-        CAN_EnterTestMode(can_base, CAN_TEST_BASIC_Msk | CAN_TEST_SILENT_Msk | CAN_TEST_LBACK_Msk);
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
+        CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk | CAN_TEST_SILENT_Msk | CAN_TEST_LBACK_Msk);
         break;
     default:
         rt_kprintf("Unsupported Operating mode");
         goto exit_nu_can_configure;
     }
 
+    nu_can_ie(psNuCAN);
 
     return RT_EOK;
 
 exit_nu_can_configure:
 
-    CAN_Close(can_base);
+    CAN_Close(base);
 
     return -(RT_ERROR);
 }
 
 static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 {
-    rt_uint32_t argval;
+    rt_uint32_t argval = (rt_uint32_t)arg;
+    nu_can_t psNuCAN = (nu_can_t)can;
 
-#ifdef RT_CAN_USING_HDR
-    struct rt_can_filter_config *filter_cfg;
-#endif
-    /* Get base address of CAN register */
-    CAN_T *can_base = ((nu_can_t)can)->can_base;
-
-    RT_ASSERT(can_base != RT_NULL);
-    /* Check baud rate */
-    RT_ASSERT(can->config.baud_rate != 0);
+    RT_ASSERT(can);
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_CLR_INT:
-        argval = (rt_uint32_t) arg;
-        if ((argval == RT_DEVICE_FLAG_INT_RX) || (argval == RT_DEVICE_FLAG_INT_TX))
-        {
-            /* Disable NVIC interrupt. */
-            NVIC_DisableIRQ(((nu_can_t)can)->can_irq_n);
-            /* Disable Status Change Interrupt  */
-            CAN_DisableInt(can_base, CAN_CON_IE_Msk | CAN_CON_SIE_Msk);
-
-        }
-        else if (argval == RT_DEVICE_CAN_INT_ERR)
-        {
-            /* Disable NVIC interrupt. */
-            NVIC_DisableIRQ(((nu_can_t)can)->can_irq_n);
-            /* Disable Error Interrupt */
-            CAN_DisableInt(can_base, CAN_CON_EIE_Msk);
-        }
-        break;
-
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
-        if (argval == RT_DEVICE_FLAG_INT_RX || (argval == RT_DEVICE_FLAG_INT_TX))
-        {
-            /* Enable Status Change Interrupt  */
-            CAN_EnableInt(can_base, CAN_CON_IE_Msk | CAN_CON_SIE_Msk);
-            /* Enable NVIC interrupt. */
-            NVIC_EnableIRQ(((nu_can_t)can)->can_irq_n);
-
-        }
-        else if (argval == RT_DEVICE_CAN_INT_ERR)
-        {
-            /* Enable Error Status and Status Change Interrupt  */
-            CAN_EnableInt(can_base, CAN_CON_IE_Msk | CAN_CON_SIE_Msk | CAN_CON_EIE_Msk);
-            /* Enable NVIC interrupt. */
-            NVIC_EnableIRQ(((nu_can_t)can)->can_irq_n);
-        }
+        psNuCAN->int_flag |= argval;
+        nu_can_ie(psNuCAN);
         break;
 
-#ifdef RT_CAN_USING_HDR
+    case RT_DEVICE_CTRL_CLR_INT:
+        psNuCAN->int_flag &= ~argval;
+        nu_can_ie(psNuCAN);
+        break;
+
     case RT_CAN_CMD_SET_FILTER:
-        filter_cfg = (struct rt_can_filter_config *)arg;
+    {
+        struct rt_can_filter_config *filter_cfg = (struct rt_can_filter_config *)arg;
 
         for (int i = 0; i < filter_cfg->count; i++)
         {
-
             /*set the filter message object*/
             if (filter_cfg->items[i].mode == 1)
             {
-                if (CAN_SetRxMsgObjAndMsk(can_base, MSG(filter_cfg->items[i].hdr + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask, FALSE) == FALSE)
+                if (CAN_SetRxMsgObjAndMsk(psNuCAN->base, MSG(filter_cfg->items[i].hdr_bank + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask, FALSE) == FALSE)
                 {
                     return -(RT_ERROR);
                 }
             }
             else
-
             {
                 /*set the filter message object*/
-                if (CAN_SetRxMsgAndMsk(can_base, MSG(filter_cfg->items[i].hdr + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask) == FALSE)
+                if (CAN_SetRxMsgAndMsk(psNuCAN->base, MSG(filter_cfg->items[i].hdr_bank + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask) == FALSE)
                 {
                     return -(RT_ERROR);
                 }
             }
         }
-        break;
-#endif
+    }
+    break;
 
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
-        if (argval != RT_CAN_MODE_NORMAL && argval != RT_CAN_MODE_LISEN &&
-                argval != RT_CAN_MODE_LOOPBACK && argval != RT_CAN_MODE_LOOPBACKANLISEN)
+        if ((argval == RT_CAN_MODE_NORMAL) ||
+                (argval == RT_CAN_MODE_LISTEN) ||
+                (argval == RT_CAN_MODE_LOOPBACK) ||
+                (argval == RT_CAN_MODE_LOOPBACKANLISTEN))
+        {
+            if (argval != can->config.mode)
+            {
+                can->config.mode = argval;
+                return nu_can_configure(can, &can->config);
+            }
+        }
+        else
         {
             return -(RT_ERROR);
-        }
-        if (argval != can->config.mode)
-        {
-            can->config.mode = argval;
-            return nu_can_configure(can, &can->config);
         }
         break;
 
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
-        if (argval != CAN1MBaud && argval != CAN800kBaud && argval != CAN500kBaud && argval != CAN250kBaud &&
-                argval != CAN125kBaud && argval != CAN100kBaud && argval != CAN50kBaud  && argval != CAN20kBaud  && argval != CAN10kBaud)
+    {
+        if ((argval == CAN1MBaud) ||
+                (argval == CAN800kBaud) ||
+                (argval == CAN500kBaud) ||
+                (argval == CAN250kBaud) ||
+                (argval == CAN125kBaud) ||
+                (argval == CAN100kBaud) ||
+                (argval == CAN50kBaud) ||
+                (argval == CAN20kBaud) ||
+                (argval == CAN10kBaud))
+        {
+            if (argval != can->config.baud_rate)
+            {
+                can->config.baud_rate = argval;
+                return nu_can_configure(can, &can->config);
+            }
+        }
+        else
         {
             return -(RT_ERROR);
         }
-        if (argval != can->config.baud_rate)
-        {
-            can->config.baud_rate = argval;
-            return nu_can_configure(can, &can->config);
-        }
-        break;
+    }
+    break;
 
     case RT_CAN_CMD_SET_PRIV:
-        argval = (rt_uint32_t) arg;
-        if (argval != RT_CAN_MODE_PRIV && argval != RT_CAN_MODE_NOPRIV)
+        if (argval != RT_CAN_MODE_PRIV &&
+                argval != RT_CAN_MODE_NOPRIV)
         {
             return -(RT_ERROR);
         }
@@ -428,20 +432,29 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
             return nu_can_configure(can, &can->config);
         }
         break;
+
     case RT_CAN_CMD_GET_STATUS:
     {
-        rt_uint32_t errtype;
-        errtype = can_base->ERR;
-        /*Receive Error Counter*/
+        rt_uint32_t errtype = psNuCAN->base->ERR;
+
+        RT_ASSERT(arg);
+
+        /*Receive Error Counter, return value is with Receive Error Passive.*/
         can->status.rcverrcnt = (errtype >> 8);
+
         /*Transmit Error Counter*/
-        can->status.snderrcnt = ((errtype >> 24) & 0xFF);
-        can->status.lasterrtype = CAN_GET_INT_STATUS(can_base) & 0x8000;
-        /*status error code*/
-        can->status.errcode = CAN_GET_INT_STATUS(can_base) & 0x07;
-        rt_memcpy(arg, &can->status, sizeof(can->status));
+        can->status.snderrcnt = (errtype & 0xFF);
+
+        /*Last Error Type*/
+        can->status.lasterrtype = CAN_GET_INT_STATUS(psNuCAN->base) & 0x8000;
+
+        /*Status error code*/
+        can->status.errcode = CAN_GET_INT_STATUS(psNuCAN->base) & 0x07;
+
+        rt_memcpy(arg, &can->status, sizeof(struct rt_can_status));
     }
     break;
+
     default:
         return -(RT_EINVAL);
 
@@ -453,27 +466,29 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
     STR_CANMSG_T tMsg;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
-    /* Get base address of CAN register */
-    CAN_T *can_base = ((nu_can_t)can)->can_base;
+    struct rt_can_msg *pmsg;
+    nu_can_t psNuCAN = (nu_can_t)can;
 
-    RT_ASSERT(can_base != RT_NULL);
-    RT_ASSERT(buf != RT_NULL);
-    /* Check the parameters */
-    RT_ASSERT(IS_CAN_DLC(pmsg->len));
-    /* Standard ID (11 bits)*/
-    if (pmsg->ide == RT_CAN_STDID)
+    RT_ASSERT(can);
+    RT_ASSERT(buf);
+
+    pmsg = (struct rt_can_msg *) buf;
+
+    if (pmsg->ide == RT_CAN_STDID && IS_CAN_STDID(pmsg->id))
     {
+        /* Standard ID (11 bits)*/
         tMsg.IdType = CAN_STD_ID;
-        RT_ASSERT(IS_CAN_STDID(pmsg->id))
         tMsg.Id  = pmsg->id ;
     }
-    else
+    else if (pmsg->ide == RT_CAN_EXTID && IS_CAN_EXTID(pmsg->id))
     {
         /* Extended ID (29 bits)*/
         tMsg.IdType = CAN_EXT_ID;
-        RT_ASSERT(IS_CAN_EXTID(pmsg->id));
         tMsg.Id = pmsg->id ;
+    }
+    else
+    {
+        goto exit_nu_can_sendmsg;
     }
 
     if (pmsg->rtr == RT_CAN_DTR)
@@ -481,33 +496,61 @@ static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_
         /* Data frame */
         tMsg.FrameType = CAN_DATA_FRAME;
     }
-    else
+    else if (pmsg->rtr == RT_CAN_RTR)
     {
         /* Remote frame */
         tMsg.FrameType = CAN_REMOTE_FRAME;
     }
-    tMsg.DLC = pmsg->len;
-    rt_memcpy(tMsg.Data, pmsg->data, pmsg->len);
-
-    if (CAN_Transmit(can_base, MSG(boxno), &tMsg) == FALSE) // Configure Msg RAM and send the Msg in the RAM
+    else
     {
-        return -(RT_ERROR);
+        goto exit_nu_can_sendmsg;
+    }
+
+    /* Check the parameters */
+    if (IS_CAN_DLC(pmsg->len))
+    {
+        tMsg.DLC = pmsg->len;
+    }
+    else
+    {
+        goto exit_nu_can_sendmsg;
+    }
+
+    if (pmsg->data && pmsg->len)
+    {
+        rt_memcpy(&tMsg.Data[0], pmsg->data, pmsg->len);
+    }
+    else
+    {
+        goto exit_nu_can_sendmsg;
+    }
+
+    /* Configure Msg RAM and send the Msg in the RAM. */
+    if (CAN_Transmit(psNuCAN->base, MSG(boxno), &tMsg) == FALSE)
+    {
+        goto exit_nu_can_sendmsg;
     }
 
     return RT_EOK;
+
+exit_nu_can_sendmsg:
+
+    return -(RT_ERROR);
 }
+
 static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
 {
     STR_CANMSG_T tMsg;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
-    /* Get base address of CAN register */
-    CAN_T *can_base = ((nu_can_t)can)->can_base;
+    struct rt_can_msg *pmsg;
+    nu_can_t psNuCAN = (nu_can_t)can;
 
-    RT_ASSERT(can_base != RT_NULL);
-    RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(can);
+    RT_ASSERT(buf);
+
+    pmsg = (struct rt_can_msg *) buf;
 
     /* get data */
-    if (CAN_Receive(can_base, boxno, &tMsg) == FALSE)
+    if (CAN_Receive(psNuCAN->base, boxno, &tMsg) == FALSE)
     {
         rt_kprintf("No available RX Msg.\n");
         return -(RT_ERROR);
@@ -515,36 +558,17 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
-    pmsg->hdr = boxno - RX_MSG_ID_INDEX;
-    can->hdr[pmsg->hdr].connected = 1;
+    pmsg->hdr_index = boxno - RX_MSG_ID_INDEX;
+    can->hdr[pmsg->hdr_index].connected = 1;
 #endif
 
-    /* Standard ID (11 bits)*/
-    if (tMsg.IdType == CAN_STD_ID)
-    {
-        pmsg->ide = RT_CAN_STDID;
-        pmsg->id  = tMsg.Id;
-    }
-    else /* Extended ID (29 bits)*/
-    {
-        pmsg->ide = RT_CAN_EXTID;
-        pmsg->id  = tMsg.Id;
-    }
-
-    if (tMsg.FrameType == CAN_DATA_FRAME)
-    {
-        /* Data frame */
-        pmsg->rtr = RT_CAN_DTR;
-    }
-    else
-    {
-        /* Remote frame */
-        pmsg->rtr = RT_CAN_RTR;
-    }
-
+    pmsg->ide = (tMsg.IdType == CAN_STD_ID) ? RT_CAN_STDID : RT_CAN_EXTID;
+    pmsg->rtr = (tMsg.FrameType == CAN_DATA_FRAME) ? RT_CAN_DTR : RT_CAN_RTR;
+    pmsg->id  = tMsg.Id;
     pmsg->len = tMsg.DLC ;
 
-    rt_memcpy(pmsg->data, tMsg.Data, pmsg->len);
+    if (pmsg->data && pmsg->len)
+        rt_memcpy(pmsg->data, &tMsg.Data[0], pmsg->len);
 
     return RT_EOK;
 }
@@ -559,13 +583,12 @@ static int rt_hw_can_init(void)
 
     for (i = (CAN_START + 1); i < CAN_CNT; i++)
     {
-
-        nu_can_arr[i].dev.ops = &nu_can_ops;
         nu_can_arr[i].dev.config = nu_can_default_config;
 
 #ifdef RT_CAN_USING_HDR
         nu_can_arr[i].dev.config.maxhdr = RT_CANMSG_BOX_SZ;
 #endif
+        /* Register can device */
         ret = rt_hw_can_register(&nu_can_arr[i].dev, nu_can_arr[i].name, &nu_can_ops, NULL);
         RT_ASSERT(ret == RT_EOK);
     }

@@ -63,8 +63,9 @@ SECTIONS
     .ctors :
     {
         PROVIDE(__ctors_start__ = .);
-        KEEP(*(SORT(.ctors.*)))
-        KEEP(*(.ctors))
+        /* new GCC version uses .init_array */
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
         PROVIDE(__ctors_end__ = .);
     } > CODE
 

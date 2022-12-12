@@ -1,0 +1,16 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+uart_rxb_txnb.c
+uart_rxb_txb.c
+uart_rxnb_txb.c
+uart_rxnb_txnb.c
+''')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = ['UTEST_SERIAL_TC'], CPPPATH = CPPPATH)
+
+Return('group')

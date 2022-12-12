@@ -71,8 +71,13 @@ menu "Hardware Drivers Config"
 
         config BOARD_USING_LCD_ILI9341
             bool "LCD ILI9341 (over spi0)"
+            select RT_USING_TOUCH
+            select BSP_USING_ADC_TOUCH
+            select NU_PKG_USING_ADC_TOUCH
             select NU_PKG_USING_ILI9341
             select NU_PKG_USING_ILI9341_SPI
+            select NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
+            select NU_PKG_ILI9341_HORIZONTAL
             select BSP_USING_SPI0
             default n
 
@@ -108,5 +113,6 @@ menu "Hardware Drivers Config"
 
     endmenu
 
+    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
 
 endmenu

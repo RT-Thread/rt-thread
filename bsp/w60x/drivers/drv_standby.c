@@ -97,7 +97,7 @@ static void standby(uint8_t argc, char **argv)
         sys_start_standby(atoi(argv[1]));
     }
 }
-FINSH_FUNCTION_EXPORT_ALIAS(standby, __cmd_standby, sleep System);
+MSH_CMD_EXPORT(standby, sleep system);
 #endif /* RT_USING_FINSH */
 
 #endif /* BSP_USING_STANDBY */

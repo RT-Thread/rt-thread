@@ -163,7 +163,7 @@ uint32_t RCC_PLLI2S_GetFreqDomain_SPDIFRX(void);
   */
 ErrorStatus LL_RCC_DeInit(void)
 {
-  uint32_t vl_mask = 0xFFFFFFFFU;
+  __IO uint32_t vl_mask;
 
   /* Set HSION bit */
   LL_RCC_HSI_Enable();
@@ -175,10 +175,13 @@ ErrorStatus LL_RCC_DeInit(void)
   /* Reset CFGR register */
   LL_RCC_WriteReg(CFGR, 0x00000000U);
 
+  /* Read CR register */
+  vl_mask = LL_RCC_ReadReg(CR);
+  
   /* Reset HSEON, HSEBYP, PLLON, CSSON, PLLI2SON and PLLSAION bits */
   CLEAR_BIT(vl_mask, (RCC_CR_HSEON | RCC_CR_HSEBYP | RCC_CR_PLLON | RCC_CR_CSSON | RCC_CR_PLLSAION | RCC_CR_PLLI2SON));
 
-  /* Write new mask in CR register */
+  /* Write new value in CR register */
   LL_RCC_WriteReg(CR, vl_mask);
 
   /* Set HSITRIM bits to the reset value*/

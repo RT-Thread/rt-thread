@@ -10,7 +10,7 @@
     [..]
     The LL CORTEX driver contains a set of generic APIs that can be
     used by user:
-      (+) SYSTICK configuration used by @ref LL_mDelay and @ref LL_Init1msTick
+      (+) SYSTICK configuration used by LL_mDelay and LL_Init1msTick
           functions
       (+) Low power mode configuration (SCB register of Cortex-MCU)
       (+) MPU API to configure and enable regions
@@ -66,8 +66,8 @@ extern "C" {
 /** @defgroup CORTEX_LL_EC_CLKSOURCE_HCLK SYSTICK Clock Source
   * @{
   */
-#define LL_SYSTICK_CLKSOURCE_HCLK_DIV8     ((uint32_t)0x00000000U)                 /*!< AHB clock divided by 8 selected as SysTick clock source.*/
-#define LL_SYSTICK_CLKSOURCE_HCLK          ((uint32_t)SysTick_CTRL_CLKSOURCE_Msk) /*!< AHB clock selected as SysTick clock source. */
+#define LL_SYSTICK_CLKSOURCE_HCLK_DIV8     (0x00000000U)                 /*!< AHB clock divided by 8 selected as SysTick clock source.*/
+#define LL_SYSTICK_CLKSOURCE_HCLK          (SysTick_CTRL_CLKSOURCE_Msk) /*!< AHB clock selected as SysTick clock source. */
 /**
   * @}
   */
@@ -77,7 +77,7 @@ extern "C" {
 /** @defgroup CORTEX_LL_EC_CTRL_HFNMI_PRIVDEF MPU Control
   * @{
   */
-#define LL_MPU_CTRL_HFNMI_PRIVDEF_NONE     ((uint32_t)0x00000000U)                            /*!< Disable NMI and privileged SW access */
+#define LL_MPU_CTRL_HFNMI_PRIVDEF_NONE     (0x00000000U)                            /*!< Disable NMI and privileged SW access */
 #define LL_MPU_CTRL_HARDFAULT_NMI          MPU_CTRL_HFNMIENA_Msk                             /*!< Enables the operation of MPU during hard fault, NMI, and FAULTMASK handlers */
 #define LL_MPU_CTRL_PRIVILEGED_DEFAULT     MPU_CTRL_PRIVDEFENA_Msk                           /*!< Enable privileged software access to default memory map */
 #define LL_MPU_CTRL_HFNMI_PRIVDEF          (MPU_CTRL_HFNMIENA_Msk | MPU_CTRL_PRIVDEFENA_Msk) /*!< Enable NMI and privileged SW access */
@@ -88,14 +88,14 @@ extern "C" {
 /** @defgroup CORTEX_LL_EC_REGION MPU Region Number
   * @{
   */
-#define LL_MPU_REGION_NUMBER0              ((uint32_t)0x00U) /*!< REGION Number 0 */
-#define LL_MPU_REGION_NUMBER1              ((uint32_t)0x01U) /*!< REGION Number 1 */
-#define LL_MPU_REGION_NUMBER2              ((uint32_t)0x02U) /*!< REGION Number 2 */
-#define LL_MPU_REGION_NUMBER3              ((uint32_t)0x03U) /*!< REGION Number 3 */
-#define LL_MPU_REGION_NUMBER4              ((uint32_t)0x04U) /*!< REGION Number 4 */
-#define LL_MPU_REGION_NUMBER5              ((uint32_t)0x05U) /*!< REGION Number 5 */
-#define LL_MPU_REGION_NUMBER6              ((uint32_t)0x06U) /*!< REGION Number 6 */
-#define LL_MPU_REGION_NUMBER7              ((uint32_t)0x07U) /*!< REGION Number 7 */
+#define LL_MPU_REGION_NUMBER0              (0x00U) /*!< REGION Number 0 */
+#define LL_MPU_REGION_NUMBER1              (0x01U) /*!< REGION Number 1 */
+#define LL_MPU_REGION_NUMBER2              (0x02U) /*!< REGION Number 2 */
+#define LL_MPU_REGION_NUMBER3              (0x03U) /*!< REGION Number 3 */
+#define LL_MPU_REGION_NUMBER4              (0x04U) /*!< REGION Number 4 */
+#define LL_MPU_REGION_NUMBER5              (0x05U) /*!< REGION Number 5 */
+#define LL_MPU_REGION_NUMBER6              (0x06U) /*!< REGION Number 6 */
+#define LL_MPU_REGION_NUMBER7              (0x07U) /*!< REGION Number 7 */
 /**
   * @}
   */
@@ -162,7 +162,7 @@ extern "C" {
 /** @defgroup CORTEX_LL_EC_INSTRUCTION_ACCESS MPU Instruction Access
   * @{
   */
-#define LL_MPU_INSTRUCTION_ACCESS_ENABLE   ((uint32_t)0x00U) /*!< Instruction fetches enabled */
+#define LL_MPU_INSTRUCTION_ACCESS_ENABLE   (0x00U) /*!< Instruction fetches enabled */
 #define LL_MPU_INSTRUCTION_ACCESS_DISABLE  MPU_RASR_XN_Msk  /*!< Instruction fetches disabled*/
 /**
   * @}
@@ -172,7 +172,7 @@ extern "C" {
   * @{
   */
 #define LL_MPU_ACCESS_SHAREABLE            MPU_RASR_S_Msk   /*!< Shareable memory attribute */
-#define LL_MPU_ACCESS_NOT_SHAREABLE        ((uint32_t)0x00U) /*!< Not Shareable memory attribute */
+#define LL_MPU_ACCESS_NOT_SHAREABLE        (0x00U) /*!< Not Shareable memory attribute */
 /**
   * @}
   */
@@ -181,7 +181,7 @@ extern "C" {
   * @{
   */
 #define LL_MPU_ACCESS_CACHEABLE            MPU_RASR_C_Msk   /*!< Cacheable memory attribute */
-#define LL_MPU_ACCESS_NOT_CACHEABLE        ((uint32_t)0x00U) /*!< Not Cacheable memory attribute */
+#define LL_MPU_ACCESS_NOT_CACHEABLE        (0x00U) /*!< Not Cacheable memory attribute */
 /**
   * @}
   */
@@ -190,7 +190,7 @@ extern "C" {
   * @{
   */
 #define LL_MPU_ACCESS_BUFFERABLE           MPU_RASR_B_Msk   /*!< Bufferable memory attribute */
-#define LL_MPU_ACCESS_NOT_BUFFERABLE       ((uint32_t)0x00U) /*!< Not Bufferable memory attribute */
+#define LL_MPU_ACCESS_NOT_BUFFERABLE       (0x00U) /*!< Not Bufferable memory attribute */
 /**
   * @}
   */

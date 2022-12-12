@@ -64,6 +64,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define DLYB_TIMEOUT 0xFFU
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -94,55 +95,67 @@
   */
 HAL_StatusTypeDef DelayBlock_Enable(DLYB_TypeDef *DLYBx)
 {
-  uint32_t i=0,N, lng, tuningOn = 1;
-  uint32_t length_valid;
-  uint32_t length_value;
-  assert_param(IS_DLYB_ALL_INSTANCE(DLYBx));
+  uint32_t unit = 0U;
+  uint32_t sel = 0U;
+  uint32_t sel_current;
+  uint32_t unit_current;
+  uint32_t tuning;
+  uint32_t lng_mask;
+  uint32_t tickstart;
 
   DLYBx->CR = DLYB_CR_DEN | DLYB_CR_SEN;
-    
-  while((tuningOn != 0U) && (i < DLYB_MAX_UNIT))
+
+  for (sel_current = 0U; sel_current < DLYB_MAX_SELECT; sel_current++)
   {
-    
-    DLYBx->CFGR = 12U | (i << 8U);
-    HAL_Delay(1);
-
-    length_valid = DLYBx->CFGR & DLYB_CFGR_LNGF;
-    length_value = DLYBx->CFGR & DLYB_CFGR_LNG;
-
-    if((length_valid != 0U)
-       && (length_value != 0U)
-       && (length_value != (DLYB_CFGR_LNG_11 | DLYB_CFGR_LNG_10)))
+    /* lng_mask is the mask bit for the LNG field to check the output of the UNITx*/
+    lng_mask = DLYB_CFGR_LNG_0 << sel_current;
+    tuning = 0U;
+    for (unit_current = 0U; unit_current < DLYB_MAX_UNIT; unit_current++)
     {
-      tuningOn = 0;
-    }
-    i++;
+      /* Set the Delay of the UNIT(s)*/
+      DLYBx->CFGR = DLYB_MAX_SELECT | (unit_current << DLYB_CFGR_UNIT_Pos);
 
+      /* Waiting for a LNG valid value */
+      tickstart =  HAL_GetTick();
+      while ((DLYBx->CFGR & DLYB_CFGR_LNGF) == 0U)
+      {
+        if((HAL_GetTick() - tickstart) >=  DLYB_TIMEOUT)
+        {
+          return HAL_TIMEOUT;
+        }
+      }
+      if (tuning == 0U)
+      {
+        if ((DLYBx->CFGR & lng_mask) != 0U)
+        {
+          /* 1/2 period HIGH is detected */
+          tuning = 1U;
+        }
+      }
+      else
+      {
+        /* 1/2 period LOW detected after the HIGH 1/2 period => FULL PERIOD passed*/
+        if((DLYBx->CFGR & lng_mask ) == 0U)
+        {
+          /* Save the first result */
+          if( unit == 0U )
+          {
+            unit = unit_current;
+            sel  = sel_current + 1U;
+          }
+          break;
+        }
+      }
+    }
   }
-  
-  if(DLYB_MAX_UNIT != i)
-  {
 
-    lng = (DLYBx->CFGR & DLYB_CFGR_LNG) >> 16;
-    N = 10;
-    while((N>0U) && ((lng >> N) == 0U))
-    {
-      N--;
-    }
-    if(0U != N)
-    {
-      MODIFY_REG(DLYBx->CFGR, DLYB_CFGR_SEL, ((N/2U)+1U));
-    
-      /* Disable Selection phase */
-      DLYBx->CR = DLYB_CR_DEN;
-      return HAL_OK;
-    }
-  }
+  /* Apply the Tuning settings */
+  DLYBx->CR   = 0U;
+  DLYBx->CR   = DLYB_CR_DEN | DLYB_CR_SEN;
+  DLYBx->CFGR = sel | (unit << DLYB_CFGR_UNIT_Pos);
+  DLYBx->CR   = DLYB_CR_DEN;
 
-  /* Disable DLYB */
-  (void) DelayBlock_Disable(DLYBx);
-  return HAL_ERROR;
-  
+  return HAL_OK;
 }
 
 /**
@@ -153,9 +166,29 @@ HAL_StatusTypeDef DelayBlock_Enable(DLYB_TypeDef *DLYBx)
 HAL_StatusTypeDef DelayBlock_Disable(DLYB_TypeDef *DLYBx)
 {
   /* Disable DLYB */
-  DLYBx->CR = 0;
+  DLYBx->CR = 0U;
   return HAL_OK;
 }
+
+/**
+  * @brief  Configure the Delay Block instance.
+  * @param  DLYBx: Pointer to DLYB instance.
+  * @param  PhaseSel: Phase selection [0..11].
+  * @param  Units: Delay units[0..127].
+  * @retval HAL status
+  */
+HAL_StatusTypeDef DelayBlock_Configure(DLYB_TypeDef *DLYBx,uint32_t PhaseSel, uint32_t Units )
+{
+  /* Apply the delay settings */
+
+  DLYBx->CR   = 0U;
+  DLYBx->CR   = DLYB_CR_DEN | DLYB_CR_SEN;
+  DLYBx->CFGR = PhaseSel | (Units << DLYB_CFGR_UNIT_Pos);
+  DLYBx->CR   = DLYB_CR_DEN;
+
+  return HAL_OK;
+}
+
 
 /**
   * @}

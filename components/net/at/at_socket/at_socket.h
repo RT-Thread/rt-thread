@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-06-06     chenYong     first version
+ * 2022-06-02     xianxistu    add implement about "AT server"
  */
 
 #ifndef __AT_SOCKET_H__
@@ -32,6 +33,10 @@ extern "C" {
 /* sal socket magic word */
 #define AT_SOCKET_MAGIC                0xA100
 
+#ifdef AT_USING_SOCKET_SERVER
+#define AT_SOCKET_INFO_LEN (sizeof("SOCKET:") + 4)
+#endif
+
 /* Current state of the AT socket. */
 enum at_socket_state
 {
@@ -53,6 +58,9 @@ typedef enum
 {
     AT_SOCKET_EVT_RECV,
     AT_SOCKET_EVT_CLOSED,
+#ifdef AT_USING_SOCKET_SERVER
+    AT_SOCKET_EVT_CONNECTED,
+#endif
 } at_socket_evt_t;
 
 struct at_socket;
@@ -72,6 +80,9 @@ struct at_socket_ops
     int (*at_domain_resolve)(const char *name, char ip[16]);
     void (*at_set_event_cb)(at_socket_evt_t event, at_evt_cb_t cb);
     int (*at_socket)(struct at_device *device, enum at_socket_type type);
+#ifdef AT_USING_SOCKET_SERVER
+    int (*at_listen)(struct at_socket *socket, int backlog);
+#endif
 };
 
 /* AT receive package list structure */
@@ -84,12 +95,24 @@ struct at_recv_pkt
 };
 typedef struct at_recv_pkt *at_recv_pkt_t;
 
+#ifdef AT_USING_SOCKET_SERVER
+struct at_listen_state
+{
+    uint16_t is_listen;
+    uint16_t port;
+};
+#endif
+
 struct at_socket
 {
     /* AT socket magic word */
     uint32_t magic;
 
     int socket;
+#ifdef AT_USING_SOCKET_SERVER
+    struct at_listen_state listen;
+#endif
+
     /* device releated information for the socket */
     void *device;
     /* type of the AT socket (TCP, UDP or RAW) */
@@ -129,7 +152,13 @@ int at_socket(int domain, int type, int protocol);
 int at_closesocket(int socket);
 int at_shutdown(int socket, int how);
 int at_bind(int socket, const struct sockaddr *name, socklen_t namelen);
+#ifdef AT_USING_SOCKET_SERVER
+int at_listen(int socket, int backlog);
+#endif
 int at_connect(int socket, const struct sockaddr *name, socklen_t namelen);
+#ifdef AT_USING_SOCKET_SERVER
+int at_accept(int socket, struct sockaddr *name, socklen_t *namelen);
+#endif
 int at_sendto(int socket, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen);
 int at_send(int socket, const void *data, size_t size, int flags);
 int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
@@ -141,6 +170,9 @@ int at_getaddrinfo(const char *nodename, const char *servname, const struct addr
 void at_freeaddrinfo(struct addrinfo *ai);
 
 struct at_socket *at_get_socket(int socket);
+#ifdef AT_USING_SOCKET_SERVER
+struct at_socket *at_get_base_socket(int base_socket);
+#endif
 
 #ifndef RT_USING_SAL
 

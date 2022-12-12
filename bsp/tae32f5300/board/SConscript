@@ -1,0 +1,17 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general board.
+src = Split("""
+board.c
+tae32f53xx_ll_msp.c
+""")
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

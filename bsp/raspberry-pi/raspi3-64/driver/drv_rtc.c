@@ -40,16 +40,16 @@ static time_t raspi_get_timestamp(void)
 
 static int raspi_set_timestamp(time_t timestamp)
 {
-    struct tm *tblock;
-    tblock = gmtime(&timestamp);
+    struct tm tblock;
+    gmtime_r(&timestamp, &tblock);
     buf[0] = 0;
-    buf[1] = tblock->tm_sec;
-    buf[2] = tblock->tm_min;
-    buf[3] = tblock->tm_hour;
-    buf[4] = tblock->tm_wday;
-    buf[5] = tblock->tm_mday;
-    buf[6] = tblock->tm_mon;
-    buf[7] = tblock->tm_year;
+    buf[1] = tblock.tm_sec;
+    buf[2] = tblock.tm_min;
+    buf[3] = tblock.tm_hour;
+    buf[4] = tblock.tm_wday;
+    buf[5] = tblock.tm_mday;
+    buf[6] = tblock.tm_mon;
+    buf[7] = tblock.tm_year;
     bcm283x_i2c_write((PER_BASE + BCM283X_BSC0_BASE) ,buf, 8);
     return RT_EOK;
 }

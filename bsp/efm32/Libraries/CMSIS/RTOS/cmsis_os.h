@@ -1,20 +1,20 @@
-/* ----------------------------------------------------------------------  
- * Copyright (C) 2012 ARM Limited. All rights reserved.  
- *  
+/* ----------------------------------------------------------------------
+ * Copyright (C) 2012 ARM Limited. All rights reserved.
+ *
  * $Date:        5. March 2012
  * $Revision:    V0.03
- *  
+ *
  * Project:      CMSIS-RTOS API
  * Title:        cmsis_os.h template header file
- *  
+ *
  * Version 0.02
- *    Initial Proposal Phase 
+ *    Initial Proposal Phase
  * Version 0.03
  *    osKernelStart added, optional feature: main started as thread
  *    osSemaphores have standard behaviour
  *    osTimerCreate does not start the timer, added osTimerStart
- *    osThreadPass is renamed to osThreadYield 
- * -------------------------------------------------------------------- */ 
+ *    osThreadPass is renamed to osThreadYield
+ * -------------------------------------------------------------------- */
 
 /**
 \page cmsis_os_h Header File Template: cmsis_os.h
@@ -35,8 +35,8 @@ The file cmsis_os.h contains:
 All definitions are prefixed with \b os to give an unique name space for CMSIS-RTOS functions.
 Definitions that are prefixed \b os_ are not used in the application code but local to this header file.
 All definitions and functions that belong to a module are grouped and have a common prefix, i.e. \b osThread.
- 
-Definitions that are marked with <b>CAN BE CHANGED</b> can be adapted towards the needs of the actual CMSIS-RTOS implementation. 
+
+Definitions that are marked with <b>CAN BE CHANGED</b> can be adapted towards the needs of the actual CMSIS-RTOS implementation.
 These definitions can be specific to the underlying RTOS kernel.
 
 Definitions that are marked with <b>MUST REMAIN UNCHANGED</b> cannot be altered. Otherwise the CMSIS-RTOS implementation is no longer
@@ -52,7 +52,7 @@ The following CMSIS-RTOS functions can be called from threads and interrupt serv
   - \ref osMessagePut, \ref osMessageGet
   - \ref osMailAlloc, \ref osMailCAlloc, \ref osMailGet, \ref osMailPut, \ref osMailFree
 
-Functions that cannot be called from an ISR are verifying the interrupt status and return in case that they are called 
+Functions that cannot be called from an ISR are verifying the interrupt status and return in case that they are called
 from an ISR context the status code \b osErrorISR. In some implementations this condition might be caught using the HARD FAULT vector.
 
 Some CMSIS-RTOS implementations support CMSIS-RTOS function calls from multiple ISR at the same time.
@@ -73,11 +73,11 @@ extern void thread_sample (void const *argument);             // function protot
 osThreadDef (thread_sample, osPriorityBelowNormal, 1, 100);
 
 // Pool definition
-osPoolDef(MyPool, 10, long);                      
+osPoolDef(MyPool, 10, long);
 \endcode
 
 
-This header file defines all objects when included in a C/C++ source file. When <b>\#define osObjectsExternal</b> is 
+This header file defines all objects when included in a C/C++ source file. When <b>\#define osObjectsExternal</b> is
 present before the header file, the objects are defined as external symbols. A single consistent header file can therefore be
 used throughout the whole project.
 
@@ -92,7 +92,7 @@ used throughout the whole project.
 \endcode
 
 */
- 
+
 #ifndef _CMSIS_OS_H
 #define _CMSIS_OS_H
 
@@ -100,7 +100,7 @@ used throughout the whole project.
 #define osCMSIS           0x00003      ///< API version (main [31:16] .sub [15:0])
 
 /// \note CAN BE CHANGED: \b osCMSIS_KERNEL identifies the underlaying RTOS kernel and version number.
-#define osCMSIS_KERNEL    0x10000	   ///< RTOS identification and version (main [31:16] .sub [15:0])
+#define osCMSIS_KERNEL    0x10000      ///< RTOS identification and version (main [31:16] .sub [15:0])
 
 /// \note MUST REMAIN UNCHANGED: \b osKernelSystemId shall be consistent in every CMSIS-RTOS.
 #define osKernelSystemId "KERNEL V1.00"   ///< RTOS identification string
@@ -113,7 +113,7 @@ used throughout the whole project.
 #define osFeature_Signals      8       ///< maximum number of Signal Flags available per thread
 #define osFeature_Semaphore    30      ///< maximum count for SemaphoreInit function
 #define osFeature_Wait         1       ///< osWait function: 1=available, 0=not available
-                                    
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -133,7 +133,7 @@ typedef enum  {
   osPriorityBelowNormal   = -1,          ///< priority: below normal
   osPriorityNormal        =  0,          ///< priority: normal (default)
   osPriorityAboveNormal   = +1,          ///< priority: above normal
-  osPriorityHigh          = +2,          ///< priority: high 
+  osPriorityHigh          = +2,          ///< priority: high
   osPriorityRealtime      = +3,          ///< priority: realtime (highest)
   osPriorityError         =  0x84        ///< system cannot determine priority or thread has illegal priority
 } osPriority;
@@ -160,23 +160,23 @@ typedef enum  {
   osErrorValue            =  0x86,       ///< value of a parameter is out of range.
   osErrorOS               =  0xFF,       ///< unspecified RTOS error: run-time error but no other error message fits.
   os_status_reserved      =  0x7FFFFFFF  ///< prevent from enum down-size compiler optimization.
-} osStatus; 
+} osStatus;
 
 
 /// Timer type value for the timer definition
 /// \note MUST REMAIN UNCHANGED: \b os_timer_type shall be consistent in every CMSIS-RTOS.
 typedef enum  {
-  osTimerOnce             =     0,       ///< one-shot timer 
-  osTimerPeriodic         =     1        ///< repeating timer 
-} os_timer_type; 
+  osTimerOnce             =     0,       ///< one-shot timer
+  osTimerPeriodic         =     1        ///< repeating timer
+} os_timer_type;
 
 /// Entry point of a thread.
 /// \note MUST REMAIN UNCHANGED: \b os_pthread shall be consistent in every CMSIS-RTOS.
-typedef void (*os_pthread) (void const *argument); 
+typedef void (*os_pthread) (void const *argument);
 
 /// Entry point of a timer call back function.
 /// \note MUST REMAIN UNCHANGED: \b os_ptimer shall be consistent in every CMSIS-RTOS.
-typedef void (*os_ptimer) (void const *argument); 
+typedef void (*os_ptimer) (void const *argument);
 
 // >>> the following data type definitions may shall adapted towards a specific RTOS
 
@@ -240,7 +240,7 @@ typedef const struct os_semaphore_def  {
 /// \note CAN BE CHANGED: \b os_pool_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_pool_def  {
   uint32_t                 pool_sz;    ///< number of items (elements) in the pool
-  uint32_t                 item_sz;    ///< size of an item 
+  uint32_t                 item_sz;    ///< size of an item
   void                       *pool;    ///< pointer to memory for pool
 } osPoolDef_t;
 
@@ -248,7 +248,7 @@ typedef const struct os_pool_def  {
 /// \note CAN BE CHANGED: \b os_messageQ_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_messageQ_def  {
   uint32_t                queue_sz;    ///< number of elements in the queue
-  uint32_t                 item_sz;    ///< size of an item 
+  uint32_t                 item_sz;    ///< size of an item
   void                       *pool;    ///< memory array for messages
 } osMessageQDef_t;
 
@@ -256,23 +256,23 @@ typedef const struct os_messageQ_def  {
 /// \note CAN BE CHANGED: \b os_mailQ_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_mailQ_def  {
   uint32_t                queue_sz;    ///< number of elements in the queue
-  uint32_t                 item_sz;    ///< size of an item 
+  uint32_t                 item_sz;    ///< size of an item
   void                       *pool;    ///< memory array for mail
 } osMailQDef_t;
 
-/// Event structure contains detailed information about an event. 
-/// \note MUST REMAIN UNCHANGED: \b os_event shall be consistent in every CMSIS-RTOS. 
+/// Event structure contains detailed information about an event.
+/// \note MUST REMAIN UNCHANGED: \b os_event shall be consistent in every CMSIS-RTOS.
 ///       However the struct may be extended at the end.
 typedef struct  {
   osStatus                 status;     ///< status code: event or error information
   union  {
-    uint32_t                    v;     ///< message as 32-bit value 
+    uint32_t                    v;     ///< message as 32-bit value
     void                       *p;     ///< message or mail as void pointer
-    int32_t               signals;     ///< signal flags 
+    int32_t               signals;     ///< signal flags
   } value;                             ///< event value
   union  {
-    osMailQId             mail_id;     ///< mail id obtained by \ref osMailCreate 
-    osMessageQId       message_id;     ///< message id obtained by \ref osMessageCreate 
+    osMailQId             mail_id;     ///< mail id obtained by \ref osMailCreate
+    osMessageQId       message_id;     ///< message id obtained by \ref osMessageCreate
   } def;                               ///< event definition
 } osEvent;
 
@@ -283,11 +283,11 @@ typedef struct  {
 /// \param[in]     thread_def    thread definition referenced with \ref osThread.
 /// \param[in]     argument      pointer that is passed to the thread function as start argument.
 /// \return status code that indicates the execution status of the function.
-/// \note MUST REMAIN UNCHANGED: \b osKernelStart shall be consistent in every CMSIS-RTOS. 
+/// \note MUST REMAIN UNCHANGED: \b osKernelStart shall be consistent in every CMSIS-RTOS.
 osStatus osKernelStart (osThreadDef_t *thread_def, void *argument);
-   
+
 /// Check if the RTOS kernel is already started.
-/// \note MUST REMAIN UNCHANGED: \b osKernelRunning shall be consistent in every CMSIS-RTOS. 
+/// \note MUST REMAIN UNCHANGED: \b osKernelRunning shall be consistent in every CMSIS-RTOS.
 /// \return 0 RTOS is not started, 1 RTOS is started.
 int32_t osKernelRunning(void);
 
@@ -299,7 +299,7 @@ int32_t osKernelRunning(void);
 /// \param         priority     initial priority of the thread function.
 /// \param         instances    number of possible thread instances.
 /// \param         stacksz      stack size (in bytes) requirements for the thread function.
-/// \note CAN BE CHANGED: The parameters to \b osThreadDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameters to \b osThreadDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osThreadDef(name, priority, instances, stacksz)  \
@@ -312,7 +312,7 @@ osThreadDef_t os_thread_def_##name = \
 
 /// Access a Thread defintion.
 /// \param         name          name of the thread definition object.
-/// \note CAN BE CHANGED: The parameter to \b osThread shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osThread shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osThread(name)  \
 &os_thread_def_##name
@@ -341,7 +341,7 @@ osStatus osThreadTerminate (osThreadId thread_id);
 /// \note MUST REMAIN UNCHANGED: \b osThreadYield shall be consistent in every CMSIS-RTOS.
 osStatus osThreadYield (void);
 
-/// Change priority of an active thread.  
+/// Change priority of an active thread.
 /// \param[in]     thread_id     thread ID obtained by \ref osThreadCreate or \ref osThreadGetId.
 /// \param[in]     priority      new priority value for the thread function.
 /// \return status code that indicates the execution status of the function.
@@ -359,7 +359,7 @@ osPriority osThreadGetPriority (osThreadId thread_id);
 //  ==== Generic Wait Functions ====
 
 /// Wait for Timeout (Time Delay)
-/// \param[in]     millisec      time delay value 
+/// \param[in]     millisec      time delay value
 /// \return status code that indicates the execution status of the function.
 osStatus osDelay (uint32_t millisec);
 
@@ -378,7 +378,7 @@ osEvent osWait (uint32_t millisec);
 /// Define a Timer object.
 /// \param         name          name of the timer object.
 /// \param         function      name of the timer call back function.
-/// \note CAN BE CHANGED: The parameter to \b osTimerDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osTimerDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osTimerDef(name, function)  \
@@ -391,7 +391,7 @@ osTimerDef_t os_timer_def_##name = \
 
 /// Access a Timer definition.
 /// \param         name          name of the timer object.
-/// \note CAN BE CHANGED: The parameter to \b osTimer shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osTimer shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osTimer(name) \
 &os_timer_def_##name
@@ -452,7 +452,7 @@ osEvent osSignalWait (int32_t signals, uint32_t millisec);
 
 /// Define a Mutex.
 /// \param         name          name of the mutex object.
-/// \note CAN BE CHANGED: The parameter to \b osMutexDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osMutexDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osMutexDef(name)  \
@@ -464,7 +464,7 @@ osMutexDef_t os_mutex_def_##name = { 0 }
 
 /// Access a Mutex defintion.
 /// \param         name          name of the mutex object.
-/// \note CAN BE CHANGED: The parameter to \b osMutex shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osMutex shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osMutex(name)  \
 &os_mutex_def_##name
@@ -495,7 +495,7 @@ osStatus osMutexRelease (osMutexId mutex_id);
 
 /// Define a Semaphore object.
 /// \param         name          name of the semaphore object.
-/// \note CAN BE CHANGED: The parameter to \b osSemaphoreDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osSemaphoreDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osSemaphoreDef(name)  \
@@ -507,7 +507,7 @@ osSemaphoreDef_t os_semaphore_def_##name = { 0 }
 
 /// Access a Semaphore definition.
 /// \param         name          name of the semaphore object.
-/// \note CAN BE CHANGED: The parameter to \b osSemaphore shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osSemaphore shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osSemaphore(name)  \
 &os_semaphore_def_##name
@@ -533,7 +533,7 @@ int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec);
 osStatus osSemaphoreRelease (osSemaphoreId semaphore_id);
 
 #endif     // Semaphore available
- 
+
 //  ==== Memory Pool Management Functions ====
 
 #if (defined (osFeature_Pool)  &&  (osFeature_Pool != 0))  // Memory Pool Management available
@@ -542,7 +542,7 @@ osStatus osSemaphoreRelease (osSemaphoreId semaphore_id);
 /// \param         name          name of the memory pool.
 /// \param         no            maximum number of objects (elements) in the memory pool.
 /// \param         type          data type of a single object (element).
-/// \note CAN BE CHANGED: The parameter to \b osPoolDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osPoolDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osPoolDef(name, no, type)   \
@@ -555,7 +555,7 @@ osPoolDef_t os_pool_def_##name = \
 
 /// \brief Access a Memory Pool definition.
 /// \param         name          name of the memory pool
-/// \note CAN BE CHANGED: The parameter to \b osPool shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osPool shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osPool(name) \
 &os_pool_def_##name
@@ -572,7 +572,7 @@ osPoolId osPoolCreate (osPoolDef_t *pool_def);
 /// \note MUST REMAIN UNCHANGED: \b osPoolAlloc shall be consistent in every CMSIS-RTOS.
 void *osPoolAlloc (osPoolId pool_id);
 
-/// Allocate a memory block from a memory pool and set memory block to zero 
+/// Allocate a memory block from a memory pool and set memory block to zero
 /// \param[in]     pool_id       memory pool ID obtain referenced with \ref osPoolCreate.
 /// \return address of the allocated memory block or NULL in case of no memory available.
 /// \note MUST REMAIN UNCHANGED: \b osPoolCAlloc shall be consistent in every CMSIS-RTOS.
@@ -596,7 +596,7 @@ osStatus osPoolFree (osPoolId pool_id, void *block);
 /// \param         name          name of the queue.
 /// \param         queue_sz      maximum number of messages in the queue.
 /// \param         type          data type of a single message element (for debugger).
-/// \note CAN BE CHANGED: The parameter to \b osMessageQDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osMessageQDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osMessageQDef(name, queue_sz, type)   \
@@ -609,7 +609,7 @@ osMessageQDef_t os_messageQ_def_##name = \
 
 /// \brief Access a Message Queue Definition.
 /// \param         name          name of the queue
-/// \note CAN BE CHANGED: The parameter to \b osMessageQ shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osMessageQ shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osMessageQ(name) \
 &os_messageQ_def_##name
@@ -647,7 +647,7 @@ osEvent osMessageGet (osMessageQId queue_id, uint32_t millisec);
 /// \param         name          name of the queue
 /// \param         queue_sz      maximum number of messages in queue
 /// \param         type          data type of a single message element
-/// \note CAN BE CHANGED: The parameter to \b osMailQDef shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osMailQDef shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #if defined (osObjectsExternal)  // object is external
 #define osMailQDef(name, queue_sz, type) \
@@ -657,10 +657,10 @@ extern osMailQDef_t os_mailQ_def_##name
 osMailQDef_t os_mailQ_def_##name =  \
 { (queue_sz), sizeof (type) }
 #endif
-     
+
 /// \brief Access a Mail Queue Definition
 /// \param         name          name of the queue
-/// \note CAN BE CHANGED: The parameter to \b osMailQ shall be consistent but the 
+/// \note CAN BE CHANGED: The parameter to \b osMailQ shall be consistent but the
 ///       macro body is implementation specific in every CMSIS-RTOS.
 #define osMailQ(name)  \
 &os_mailQ_def_##name
@@ -706,7 +706,7 @@ osEvent osMailGet (osMailQId queue_id, uint32_t millisec);
 /// \return status code that indicates the execution status of the function.
 /// \note MUST REMAIN UNCHANGED: \b osMailFree shall be consistent in every CMSIS-RTOS.
 osStatus osMailFree (osMailQId queue_id, void *mail);
-                            
+
 #endif  // Mail Queues available
 
 

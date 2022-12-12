@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -32,7 +32,7 @@ extern void *_heap_end;
  */
 extern void _init(void);
 
-/* 
+/*
  * - Check MCU pin assignment here https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html
  * - If you changed menuconfig to use different peripherals such as SPI, ADC, GPIO,
  *   HWTIMER, I2C, PWM, UART, WDT, RTC, please add or change related pinmux configuration
@@ -146,7 +146,7 @@ void rt_hw_board_init(void)
 #endif
 
     /* Set the shell console output device */
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

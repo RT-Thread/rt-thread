@@ -1137,10 +1137,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_CTS_ENABLE(__HANDLE__)        \
-  do{                                                      \
-    SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE);  \
-    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_CTSE;        \
+#define __HAL_UART_HWCONTROL_CTS_ENABLE(__HANDLE__)               \
+  do{                                                             \
+    ATOMIC_SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE);  \
+    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_CTSE;               \
   } while(0U)
 
 /** @brief  Disable CTS flow control.
@@ -1156,10 +1156,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_CTS_DISABLE(__HANDLE__)        \
-  do{                                                       \
-    CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE); \
-    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_CTSE);      \
+#define __HAL_UART_HWCONTROL_CTS_DISABLE(__HANDLE__)               \
+  do{                                                              \
+    ATOMIC_CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE); \
+    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_CTSE);             \
   } while(0U)
 
 /** @brief  Enable RTS flow control.
@@ -1175,10 +1175,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_RTS_ENABLE(__HANDLE__)       \
-  do{                                                     \
-    SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE); \
-    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_RTSE;       \
+#define __HAL_UART_HWCONTROL_RTS_ENABLE(__HANDLE__)              \
+  do{                                                            \
+    ATOMIC_SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE); \
+    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_RTSE;              \
   } while(0U)
 
 /** @brief  Disable RTS flow control.
@@ -1194,10 +1194,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_RTS_DISABLE(__HANDLE__)       \
-  do{                                                      \
-    CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE);\
-    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_RTSE);     \
+#define __HAL_UART_HWCONTROL_RTS_DISABLE(__HANDLE__)              \
+  do{                                                             \
+    ATOMIC_CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE);\
+    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_RTSE);            \
   } while(0U)
 /**
   * @}

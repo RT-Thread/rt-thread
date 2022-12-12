@@ -8,10 +8,26 @@
   * @date    22 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          22 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   * @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -124,9 +140,7 @@
   ******************************************************************************
   */
 
-#include "ald_cmu.h"
-#include "ald_flash.h"
-
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{
@@ -276,12 +290,11 @@ ald_status_t ald_cmu_clock_config_default(void)
 		return ERROR;
 	}
 
-	WRITE_REG(CMU->CFGR, 0x0);
-	CLEAR_BIT(CMU->CFGR, CMU_CFGR_HRCFST_MSK);	/* Select 24Mhz */
+	WRITE_REG(CMU->CFGR, 0x4000000);	/* Select 24MHz */
 
 	tmp = READ_REG(CMU->CLKENR);
-	/* Enable HRC/LRC/LOSC */
-	SET_BIT(tmp, CMU_CLKENR_HRCEN_MSK | CMU_CLKENR_LRCEN_MSK | CMU_CLKENR_LOSCEN_MSK);
+	/* Enable HRC/LRC */
+	SET_BIT(tmp, CMU_CLKENR_HRCEN_MSK | CMU_CLKENR_LRCEN_MSK);
 	WRITE_REG(CMU->CLKENR, tmp);
 	/* Reset LRC */
 	for (cnt = 0; cnt < 10000; ++cnt);
@@ -1093,7 +1106,7 @@ void ald_cmu_perh_clock_config(cmu_perh_t perh, type_func_t status)
 		return;
 	}
 
-	idx = (perh >> 27) & 0x3;
+	idx = (uint32_t)(perh >> 27) & 0x3;
 	pos = perh & ~(0x3 << 27);
 
 	if (status) {

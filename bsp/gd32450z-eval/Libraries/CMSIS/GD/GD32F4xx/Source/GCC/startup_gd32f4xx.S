@@ -1,21 +1,7 @@
 ;/*
-; * File      : startup_gd32f4xx.c
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+; * Copyright (c) 2006-2021, RT-Thread Development Team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
-; *  (at your option) any later version.
-; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
-; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -34,7 +20,7 @@
     .type  g_pfnVectors, %object
 
 g_pfnVectors:
-    .word     _estack                      	// Top of Stack
+    .word     _estack                       // Top of Stack
     .word     Reset_Handler                     // Reset Handler
     .word     NMI_Handler                       // NMI Handler
     .word     HardFault_Handler                 // Hard Fault Handler
@@ -118,6 +104,7 @@ g_pfnVectors:
     .word     CAN1_TX_IRQHandler                // 79:CAN1 TX
     .word     CAN1_RX0_IRQHandler               // 80:CAN1 RX0
     .word     CAN1_RX1_IRQHandler               // 81:CAN1 RX1
+    .word     CAN1_EWMC_IRQHandler              // 82:CAN1 EWMC
     .word     USBFS_IRQHandler                  // 83:USBFS
     .word     DMA1_Channel5_IRQHandler          // 84:DMA1 Channel5
     .word     DMA1_Channel6_IRQHandler          // 85:DMA1 Channel6
@@ -134,10 +121,11 @@ g_pfnVectors:
     .word     TRNG_IRQHandler                   // 96:TRNG
     .word     FPU_IRQHandler                    // 97:FPU
     .word     UART6_IRQHandler                  // 98:UART6
-    .word     UART7_IRQHandler                  // 98:UART7
+    .word     UART7_IRQHandler                  // 99:UART7
     .word     SPI3_IRQHandler                   // 100:SPI3
     .word     SPI4_IRQHandler                   // 101:SPI4
     .word     SPI5_IRQHandler                   // 102:SPI5
+    .word     0                                 // 103:Reserved
     .word     TLI_IRQHandler                    // 104:TLI
     .word     TLI_ER_IRQHandler                 // 105:TLI Error
     .word     IPA_IRQHandler                    // 106:IPA
@@ -195,13 +183,13 @@ MemManage_Handler:
 BusFault_Handler:
     b       .
     .size   BusFault_Handler, . - BusFault_Handler
-    
+
     .weak   UsageFault_Handler
     .type   UsageFault_Handler, %function
 UsageFault_Handler:
     b       .
     .size   UsageFault_Handler, . - UsageFault_Handler
-    
+
     .weak   SVC_Handler
     .type   SVC_Handler, %function
 SVC_Handler:
@@ -219,13 +207,13 @@ DebugMon_Handler:
 PendSV_Handler:
     b       .
     .size   PendSV_Handler, . - PendSV_Handler
-    
+
     .weak   SysTick_Handler
     .type   SysTick_Handler, %function
 SysTick_Handler:
     b       .
     .size   SysTick_Handler, . - SysTick_Handler
-    
+
     /* IQR Handler */
     .section  .text.Default_Handler,"ax",%progbits
     .type  Default_Handler, %function

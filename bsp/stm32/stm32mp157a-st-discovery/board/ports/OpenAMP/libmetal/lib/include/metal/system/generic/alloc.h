@@ -18,18 +18,21 @@
 
 #include <stdlib.h>
 
+extern void *rt_malloc(unsigned long nbytes);
+extern void rt_free(void *ptr);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 static inline void *metal_allocate_memory(unsigned int size)
 {
-	return (malloc(size));
+	return (rt_malloc(size));
 }
 
 static inline void metal_free_memory(void *ptr)
 {
-	free(ptr);
+	rt_free(ptr);
 }
 
 #ifdef __cplusplus

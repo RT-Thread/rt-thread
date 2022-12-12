@@ -49,11 +49,37 @@ extern "C" {
 /**
   * @}
   */
+
+  
+/** @defgroup FLASHEx_ECC_CPUID FLASHEx ECC CPU Identification
+  * @{
+  */
+#define FLASH_ECC_CPUID_1    0x00000000U            /*!< Bus-ID of the CPU1 access causing the ECC failure. */
+#define FLASH_ECC_CPUID_2    FLASH_ECCR_CPUID_0     /*!< Bus-ID of the CPU2 access causing the ECC failure. */
+
+/**
+  * @}
+  */
 /**
   * @}
   */
 
 /* Exported macro ------------------------------------------------------------*/
+/** @defgroup FLASH_ECC FLASH ECC Macros
+  *  @brief macros to get Error Code Correction informations
+  * @{
+  */
+
+/**
+  * @brief Get the Bus-ID of the CPU access causing the ECC failure
+  * @retval CPUID
+  */
+#define __HAL_FLASH_ECC_CPUID()   READ_BIT(FLASH->ECCR, FLASH_ECCR_CPUID)
+
+/**
+  * @}
+  */
+
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup FLASHEx_Exported_Functions
   * @{

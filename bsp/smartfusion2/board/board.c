@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-08-06     whik         first version
  */
- 
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
@@ -28,24 +28,24 @@ static uint32_t _SysTick_Config(rt_uint32_t ticks)
     {
         return 1;
     }
-    
-    _SYSTICK_LOAD = ticks - 1; 
+
+    _SYSTICK_LOAD = ticks - 1;
     _SYSTICK_PRI = 0xFF;
     _SYSTICK_VAL  = 0;
-    _SYSTICK_CTRL = 0x07;  
-    
+    _SYSTICK_CTRL = 0x07;
+
     return 0;
 }
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
 #define RT_HEAP_SIZE 1024
 static uint32_t rt_heap[RT_HEAP_SIZE];     // heap default size: 4K(1024 * 4)
-RT_WEAK void *rt_heap_begin_get(void)
+rt_weak void *rt_heap_begin_get(void)
 {
     return rt_heap;
 }
 
-RT_WEAK void *rt_heap_end_get(void)
+rt_weak void *rt_heap_end_get(void)
 {
     return rt_heap + RT_HEAP_SIZE;
 }
@@ -56,7 +56,7 @@ void rt_hw_board_init()
 {
     /* System Clock Update */
     SystemCoreClockUpdate();
-    
+
     /* System Tick Configuration */
     _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
@@ -65,10 +65,10 @@ void rt_hw_board_init()
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    
+
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
     rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
 #endif

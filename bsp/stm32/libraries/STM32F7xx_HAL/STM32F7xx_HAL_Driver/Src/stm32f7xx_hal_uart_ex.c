@@ -57,6 +57,9 @@
 /** @defgroup UARTEx_Private_Functions UARTEx Private Functions
   * @{
   */
+#if defined(USART_CR1_UESM)
+static void UARTEx_Wakeup_AddressConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection);
+#endif /* USART_CR1_UESM */
 /**
   * @}
   */
@@ -144,7 +147,8 @@
   *       oversampling rate).
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime, uint32_t DeassertionTime)
+HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime,
+                                   uint32_t DeassertionTime)
 {
   uint32_t temp;
 
@@ -224,42 +228,109 @@ HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity,
   * @}
   */
 
-/** @defgroup UARTEx_Exported_Functions_Group2 IO operation functions
-  *  @brief Extended functions
-  *
-@verbatim
- ===============================================================================
-                      ##### IO operation functions #####
- ===============================================================================
-    This subsection provides a set of Wakeup and FIFO mode related callback functions.
-
-@endverbatim
-  * @{
-  */
-
-
-/**
-  * @}
-  */
 
 /** @defgroup UARTEx_Exported_Functions_Group3 Peripheral Control functions
   * @brief    Extended Peripheral Control functions
- *
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
  ===============================================================================
     [..] This section provides the following functions:
+     (+) HAL_UARTEx_EnableClockStopMode() API enables the UART clock (HSI or LSE only) during stop mode
+     (+) HAL_UARTEx_DisableClockStopMode() API disables the above functionality
      (+) HAL_MultiProcessorEx_AddressLength_Set() API optionally sets the UART node address
          detection length to more than 4 bits for multiprocessor address mark wake up.
+#if defined(USART_CR1_UESM)
+     (+) HAL_UARTEx_StopModeWakeUpSourceConfig() API defines the wake-up from stop mode
+         trigger: address match, Start Bit detection or RXNE bit status.
+     (+) HAL_UARTEx_EnableStopMode() API enables the UART to wake up the MCU from stop mode
+     (+) HAL_UARTEx_DisableStopMode() API disables the above functionality
+#endif
+
+    [..] This subsection also provides a set of additional functions providing enhanced reception
+    services to user. (For example, these functions allow application to handle use cases
+    where number of data to be received is unknown).
+
+    (#) Compared to standard reception services which only consider number of received
+        data elements as reception completion criteria, these functions also consider additional events
+        as triggers for updating reception status to caller :
+       (+) Detection of inactivity period (RX line has not been active for a given period).
+          (++) RX inactivity detected by IDLE event, i.e. RX line has been in idle state (normally high state)
+               for 1 frame time, after last received byte.
+          (++) RX inactivity detected by RTO, i.e. line has been in idle state
+               for a programmable time, after last received byte.
+       (+) Detection that a specific character has been received.
+
+    (#) There are two mode of transfer:
+       (+) Blocking mode: The reception is performed in polling mode, until either expected number of data is received,
+           or till IDLE event occurs. Reception is handled only during function execution.
+           When function exits, no data reception could occur. HAL status and number of actually received data elements,
+           are returned by function after finishing transfer.
+       (+) Non-Blocking mode: The reception is performed using Interrupts or DMA.
+           These API's return the HAL status.
+           The end of the data processing will be indicated through the
+           dedicated UART IRQ when using Interrupt mode or the DMA IRQ when using DMA mode.
+           The HAL_UARTEx_RxEventCallback() user callback will be executed during Receive process
+           The HAL_UART_ErrorCallback()user callback will be executed when a reception error is detected.
+
+    (#) Blocking mode API:
+        (+) HAL_UARTEx_ReceiveToIdle()
+
+    (#) Non-Blocking mode API with Interrupt:
+        (+) HAL_UARTEx_ReceiveToIdle_IT()
+
+    (#) Non-Blocking mode API with DMA:
+        (+) HAL_UARTEx_ReceiveToIdle_DMA()
 
 @endverbatim
   * @{
   */
 
+#if defined(USART_CR3_UCESM)
+/**
+  * @brief  Keep UART Clock enabled when in Stop Mode.
+  * @note   When the USART clock source is configured to be LSE or HSI, it is possible to keep enabled
+  *         this clock during STOP mode by setting the UCESM bit in USART_CR3 control register.
+  * @note   When LPUART is used to wakeup from stop with LSE is selected as LPUART clock source,
+  *         and desired baud rate is 9600 baud, the bit UCESM bit in LPUART_CR3 control register must be set.
+  * @param  huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_EnableClockStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
 
+  /* Set UCESM bit */
+  SET_BIT(huart->Instance->CR3, USART_CR3_UCESM);
 
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
 
+  return HAL_OK;
+}
+
+/**
+  * @brief  Disable UART Clock when in Stop Mode.
+  * @param  huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_DisableClockStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  /* Clear UCESM bit */
+  CLEAR_BIT(huart->Instance->CR3, USART_CR3_UCESM);
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return HAL_OK;
+}
+
+#endif /* USART_CR3_UCESM */
 /**
   * @brief By default in multiprocessor mode, when the wake up method is set
   *        to address mark, the UART handles only 4-bit long addresses detection;
@@ -299,7 +370,358 @@ HAL_StatusTypeDef HAL_MultiProcessorEx_AddressLength_Set(UART_HandleTypeDef *hua
   return (UART_CheckIdleState(huart));
 }
 
+#if defined(USART_CR1_UESM)
+/**
+  * @brief Set Wakeup from Stop mode interrupt flag selection.
+  * @note It is the application responsibility to enable the interrupt used as
+  *       usart_wkup interrupt source before entering low-power mode.
+  * @param huart           UART handle.
+  * @param WakeUpSelection Address match, Start Bit detection or RXNE/RXFNE bit status.
+  *          This parameter can be one of the following values:
+  *          @arg @ref UART_WAKEUP_ON_ADDRESS
+  *          @arg @ref UART_WAKEUP_ON_STARTBIT
+  *          @arg @ref UART_WAKEUP_ON_READDATA_NONEMPTY
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_StopModeWakeUpSourceConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  uint32_t tickstart;
 
+  /* check the wake-up from stop mode UART instance */
+  assert_param(IS_UART_WAKEUP_FROMSTOP_INSTANCE(huart->Instance));
+  /* check the wake-up selection parameter */
+  assert_param(IS_UART_WAKEUP_SELECTION(WakeUpSelection.WakeUpEvent));
+
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  huart->gState = HAL_UART_STATE_BUSY;
+
+  /* Disable the Peripheral */
+  __HAL_UART_DISABLE(huart);
+
+#if defined(USART_CR3_WUS)
+  /* Set the wake-up selection scheme */
+  MODIFY_REG(huart->Instance->CR3, USART_CR3_WUS, WakeUpSelection.WakeUpEvent);
+#endif /* USART_CR3_WUS */
+
+  if (WakeUpSelection.WakeUpEvent == UART_WAKEUP_ON_ADDRESS)
+  {
+    UARTEx_Wakeup_AddressConfig(huart, WakeUpSelection);
+  }
+
+  /* Enable the Peripheral */
+  __HAL_UART_ENABLE(huart);
+
+  /* Init tickstart for timeout management */
+  tickstart = HAL_GetTick();
+
+  /* Wait until REACK flag is set */
+  if (UART_WaitOnFlagUntilTimeout(huart, USART_ISR_REACK, RESET, tickstart, HAL_UART_TIMEOUT_VALUE) != HAL_OK)
+  {
+    status = HAL_TIMEOUT;
+  }
+  else
+  {
+    /* Initialize the UART State */
+    huart->gState = HAL_UART_STATE_READY;
+  }
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return status;
+}
+
+/**
+  * @brief Enable UART Stop Mode.
+  * @note The UART is able to wake up the MCU from Stop 1 mode as long as UART clock is HSI or LSE.
+  * @param huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_EnableStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  /* Set UESM bit */
+  SET_BIT(huart->Instance->CR1, USART_CR1_UESM);
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return HAL_OK;
+}
+
+/**
+  * @brief Disable UART Stop Mode.
+  * @param huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_DisableStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  /* Clear UESM bit */
+  CLEAR_BIT(huart->Instance->CR1, USART_CR1_UESM);
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return HAL_OK;
+}
+
+#endif /* USART_CR1_UESM */
+/**
+  * @brief Receive an amount of data in blocking mode till either the expected number of data
+  *        is received or an IDLE event occurs.
+  * @note  HAL_OK is returned if reception is completed (expected number of data has been received)
+  *        or if reception is stopped after IDLE event (less than the expected number of data has been received)
+  *        In this case, RxLen output parameter indicates number of data available in reception buffer.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the received data is handled as a set of uint16_t. In this case, Size must indicate the number
+  *        of uint16_t available through pData.
+  * @param huart   UART handle.
+  * @param pData   Pointer to data buffer (uint8_t or uint16_t data elements).
+  * @param Size    Amount of data elements (uint8_t or uint16_t) to be received.
+  * @param RxLen   Number of data elements finally received
+  *                (could be lower than Size, in case reception ends on IDLE event)
+  * @param Timeout Timeout duration expressed in ms (covers the whole reception sequence).
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint16_t *RxLen,
+                                           uint32_t Timeout)
+{
+  uint8_t  *pdata8bits;
+  uint16_t *pdata16bits;
+  uint16_t uhMask;
+  uint32_t tickstart;
+
+  /* Check that a Rx process is not already ongoing */
+  if (huart->RxState == HAL_UART_STATE_READY)
+  {
+    if ((pData == NULL) || (Size == 0U))
+    {
+      return  HAL_ERROR;
+    }
+
+    __HAL_LOCK(huart);
+
+    huart->ErrorCode = HAL_UART_ERROR_NONE;
+    huart->RxState = HAL_UART_STATE_BUSY_RX;
+    huart->ReceptionType = HAL_UART_RECEPTION_TOIDLE;
+
+    /* Init tickstart for timeout management */
+    tickstart = HAL_GetTick();
+
+    huart->RxXferSize  = Size;
+    huart->RxXferCount = Size;
+
+    /* Computation of UART mask to apply to RDR register */
+    UART_MASK_COMPUTATION(huart);
+    uhMask = huart->Mask;
+
+    /* In case of 9bits/No Parity transfer, pRxData needs to be handled as a uint16_t pointer */
+    if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
+    {
+      pdata8bits  = NULL;
+      pdata16bits = (uint16_t *) pData;
+    }
+    else
+    {
+      pdata8bits  = pData;
+      pdata16bits = NULL;
+    }
+
+    __HAL_UNLOCK(huart);
+
+    /* Initialize output number of received elements */
+    *RxLen = 0U;
+
+    /* as long as data have to be received */
+    while (huart->RxXferCount > 0U)
+    {
+      /* Check if IDLE flag is set */
+      if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE))
+      {
+        /* Clear IDLE flag in ISR */
+        __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_IDLEF);
+
+        /* If Set, but no data ever received, clear flag without exiting loop */
+        /* If Set, and data has already been received, this means Idle Event is valid : End reception */
+        if (*RxLen > 0U)
+        {
+          huart->RxState = HAL_UART_STATE_READY;
+
+          return HAL_OK;
+        }
+      }
+
+      /* Check if RXNE flag is set */
+      if (__HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE))
+      {
+        if (pdata8bits == NULL)
+        {
+          *pdata16bits = (uint16_t)(huart->Instance->RDR & uhMask);
+          pdata16bits++;
+        }
+        else
+        {
+          *pdata8bits = (uint8_t)(huart->Instance->RDR & (uint8_t)uhMask);
+          pdata8bits++;
+        }
+        /* Increment number of received elements */
+        *RxLen += 1U;
+        huart->RxXferCount--;
+      }
+
+      /* Check for the Timeout */
+      if (Timeout != HAL_MAX_DELAY)
+      {
+        if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
+        {
+          huart->RxState = HAL_UART_STATE_READY;
+
+          return HAL_TIMEOUT;
+        }
+      }
+    }
+
+    /* Set number of received elements in output parameter : RxLen */
+    *RxLen = huart->RxXferSize - huart->RxXferCount;
+    /* At end of Rx process, restore huart->RxState to Ready */
+    huart->RxState = HAL_UART_STATE_READY;
+
+    return HAL_OK;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+
+/**
+  * @brief Receive an amount of data in interrupt mode till either the expected number of data
+  *        is received or an IDLE event occurs.
+  * @note  Reception is initiated by this function call. Further progress of reception is achieved thanks
+  *        to UART interrupts raised by RXNE and IDLE events. Callback is called at end of reception indicating
+  *        number of received data elements.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the received data is handled as a set of uint16_t. In this case, Size must indicate the number
+  *        of uint16_t available through pData.
+  * @param huart UART handle.
+  * @param pData Pointer to data buffer (uint8_t or uint16_t data elements).
+  * @param Size  Amount of data elements (uint8_t or uint16_t) to be received.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)
+{
+  HAL_StatusTypeDef status;
+
+  /* Check that a Rx process is not already ongoing */
+  if (huart->RxState == HAL_UART_STATE_READY)
+  {
+    if ((pData == NULL) || (Size == 0U))
+    {
+      return HAL_ERROR;
+    }
+
+    __HAL_LOCK(huart);
+
+    /* Set Reception type to reception till IDLE Event*/
+    huart->ReceptionType = HAL_UART_RECEPTION_TOIDLE;
+
+    status =  UART_Start_Receive_IT(huart, pData, Size);
+
+    /* Check Rx process has been successfully started */
+    if (status == HAL_OK)
+    {
+      if (huart->ReceptionType == HAL_UART_RECEPTION_TOIDLE)
+      {
+        __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_IDLEF);
+        SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
+      }
+      else
+      {
+        /* In case of errors already pending when reception is started,
+           Interrupts may have already been raised and lead to reception abortion.
+           (Overrun error for instance).
+           In such case Reception Type has been reset to HAL_UART_RECEPTION_STANDARD. */
+        status = HAL_ERROR;
+      }
+    }
+
+    return status;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+
+/**
+  * @brief Receive an amount of data in DMA mode till either the expected number
+  *        of data is received or an IDLE event occurs.
+  * @note  Reception is initiated by this function call. Further progress of reception is achieved thanks
+  *        to DMA services, transferring automatically received data elements in user reception buffer and
+  *        calling registered callbacks at half/end of reception. UART IDLE events are also used to consider
+  *        reception phase as ended. In all cases, callback execution will indicate number of received data elements.
+  * @note  When the UART parity is enabled (PCE = 1), the received data contain
+  *        the parity bit (MSB position).
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the received data is handled as a set of uint16_t. In this case, Size must indicate the number
+  *        of uint16_t available through pData.
+  * @param huart UART handle.
+  * @param pData Pointer to data buffer (uint8_t or uint16_t data elements).
+  * @param Size  Amount of data elements (uint8_t or uint16_t) to be received.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)
+{
+  HAL_StatusTypeDef status;
+
+  /* Check that a Rx process is not already ongoing */
+  if (huart->RxState == HAL_UART_STATE_READY)
+  {
+    if ((pData == NULL) || (Size == 0U))
+    {
+      return HAL_ERROR;
+    }
+
+    __HAL_LOCK(huart);
+
+    /* Set Reception type to reception till IDLE Event*/
+    huart->ReceptionType = HAL_UART_RECEPTION_TOIDLE;
+
+    status =  UART_Start_Receive_DMA(huart, pData, Size);
+
+    /* Check Rx process has been successfully started */
+    if (status == HAL_OK)
+    {
+      if (huart->ReceptionType == HAL_UART_RECEPTION_TOIDLE)
+      {
+        __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_IDLEF);
+        SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
+      }
+      else
+      {
+        /* In case of errors already pending when reception is started,
+           Interrupts may have already been raised and lead to reception abortion.
+           (Overrun error for instance).
+           In such case Reception Type has been reset to HAL_UART_RECEPTION_STANDARD. */
+        status = HAL_ERROR;
+      }
+    }
+
+    return status;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
 
 /**
   * @}
@@ -312,6 +734,25 @@ HAL_StatusTypeDef HAL_MultiProcessorEx_AddressLength_Set(UART_HandleTypeDef *hua
 /** @addtogroup UARTEx_Private_Functions
   * @{
   */
+#if defined(USART_CR1_UESM)
+
+/**
+  * @brief Initialize the UART wake-up from stop mode parameters when triggered by address detection.
+  * @param huart           UART handle.
+  * @param WakeUpSelection UART wake up from stop mode parameters.
+  * @retval None
+  */
+static void UARTEx_Wakeup_AddressConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection)
+{
+  assert_param(IS_UART_ADDRESSLENGTH_DETECT(WakeUpSelection.AddressLength));
+
+  /* Set the USART address length */
+  MODIFY_REG(huart->Instance->CR2, USART_CR2_ADDM7, WakeUpSelection.AddressLength);
+
+  /* Set the USART address node */
+  MODIFY_REG(huart->Instance->CR2, USART_CR2_ADD, ((uint32_t)WakeUpSelection.Address << UART_CR2_ADDRESS_LSB_POS));
+}
+#endif /* USART_CR1_UESM */
 
 /**
   * @}

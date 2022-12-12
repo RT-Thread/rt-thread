@@ -37,7 +37,8 @@ extern "C" {
 #define SET_BLOCKLEN         16   /* ac   [31:0] block len   R1  */
 #define READ_SINGLE_BLOCK    17   /* adtc [31:0] data addr   R1  */
 #define READ_MULTIPLE_BLOCK  18   /* adtc [31:0] data addr   R1  */
-
+#define SEND_TUNING_BLOCK    19   /* adtc                    R1 */
+#define SEND_TUNING_BLOCK_HS200 21 /* adtc R1*/
   /* class 3 */
 #define WRITE_DAT_UNTIL_STOP 20   /* adtc [31:0] data addr   R1  */
 

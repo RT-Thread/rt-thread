@@ -1372,7 +1372,7 @@ int32_t  ECC_GenerateSignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *messag
         Reg2Hex(pCurve->Echar, temp_result1, R);
 
         /*
-         *   4. Compute s = k ? 1 ｝ (e + d ｝ r)(mod n). If s = 0, go to step 2
+         *   4. Compute s = k ? 1 * (e + d * r)(mod n). If s = 0, go to step 2
          *      (1) Write the curve order to N registers according
          *      (2) Write 0x1 to Y1 registers
          *      (3) Write the random integer k to X1 registers according
@@ -1602,7 +1602,7 @@ int32_t  ECC_VerifySignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *message,
 #endif
 
         /*
-         *   4. Compute u1 = e ｝ w (mod n) and u2 = r ｝ w (mod n)
+         *   4. Compute u1 = e * w (mod n) and u2 = r * w (mod n)
          *      (1) Write the curve order and curve length to N ,M registers
          *      (2) Write e, w to X1, Y1 registers
          *      (3) Set ECCOP(CRPT_ECC_CTL[10:9]) to 01
@@ -1684,7 +1684,7 @@ int32_t  ECC_VerifySignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *message,
 #endif
 
         /*
-         *   5. Compute X・ (x1・, y1・) = u1 * G + u2 * Q
+         *   5. Compute X' (x1' y1') = u1 * G + u2 * Q
          *      (1) Write the curve parameter A, B, N, and curve length M to corresponding registers
          *      (2) Write the point G(x, y) to X1, Y1 registers
          *      (3) Write u1 to K registers
@@ -1703,17 +1703,17 @@ int32_t  ECC_VerifySignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *message,
          *      (16) Set ECCOP(CRPT_ECC_CTL[10:9]) to 10
          *      (17) Set START(CRPT_ECC_CTL[0]) to 1
          *      (18) Wait for BUSY(CRPT_ECC_STS[0]) be cleared
-         *      (19) Read X1, Y1 registers to get X・(x1・, y1・)
+         *      (19) Read X1, Y1 registers to get X('x1', y1')
          *      (20) Write the curve order and curve length to N ,M registers
-         *      (21) Write x1・ to X1 registers
+         *      (21) Write x1' to X1 registers
          *      (22) Write 0x0 to Y1 registers
          *      (23) Set ECCOP(CRPT_ECC_CTL[10:9]) to 01
          *      (24) Set MOPOP(CRPT_ECC_CTL[12:11]) to 10
          *      (25) Set START(CRPT_ECC_CTL[0]) to 1
          *      (26) Wait for BUSY(CRPT_ECC_STS[0]) be cleared
-         *      (27) Read X1 registers to get x1・ (mod n)
+         *      (27) Read X1 registers to get x1' (mod n)
          *
-         *   6. The signature is valid if x1・ = r, otherwise it is invalid
+         *   6. The signature is valid if x1' = r, otherwise it is invalid
          */
 
         /*
@@ -1797,7 +1797,7 @@ int32_t  ECC_VerifySignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *message,
 
         run_ecc_codec(crpt, ECCOP_POINT_ADD);
 
-        /* (19) Read X1, Y1 registers to get X・(x1・, y1・) */
+        /* (19) Read X1, Y1 registers to get X'(x1' y1') */
         for (i = 0; i < 18; i++)
         {
             temp_x[i] = crpt->ECC_X1[i];
@@ -1819,7 +1819,7 @@ int32_t  ECC_VerifySignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *message,
         Hex2Reg(pCurve->Eorder, crpt->ECC_N);
 
         /*
-         *  (21) Write x1・ to X1 registers
+         *  (21) Write x1' to X1 registers
          *  (22) Write 0x0 to Y1 registers
          */
         for (i = 0; i < 18; i++)
@@ -1837,11 +1837,11 @@ int32_t  ECC_VerifySignature(CRPT_T *crpt, E_ECC_CURVE ecc_curve, char *message,
 
         run_ecc_codec(crpt, ECCOP_MODULE | MODOP_ADD);
 
-        /*  (27) Read X1 registers to get x1・ (mod n) */
+        /*  (27) Read X1 registers to get x1' (mod n) */
         Reg2Hex(pCurve->Echar, crpt->ECC_X1, temp_hex_str);
         CRPT_DBGMSG("5-(27) x1' (mod n) = %s\n", temp_hex_str);
 
-        /* 6. The signature is valid if x1・ = r, otherwise it is invalid */
+        /* 6. The signature is valid if x1' = r, otherwise it is invalid */
 
         /* Compare with test pattern to check if r is correct or not */
         if (ecc_strcmp(temp_hex_str, R) != 0)
@@ -2169,6 +2169,8 @@ static uint32_t mpShortDiv(uint32_t q[], const uint32_t u[], uint32_t v,
             break;
         bitmask >>= 1;
     }
+
+    if (shift == BITS_PER_DIGIT) return 0;   /* Avoid cppcheck false-alarm. */
 
     v <<= shift;
     overflow = mpShiftLeft(q, u, shift, ndigits);

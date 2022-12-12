@@ -200,7 +200,17 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
         }
       }
     }
-    __HAL_RCC_RTC_CONFIG(PeriphClkInit->RTCClockSelection);
+#if defined(LCD)
+    if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_LCD) == RCC_PERIPHCLK_LCD)
+    {
+      __HAL_RCC_LCD_CONFIG(PeriphClkInit->LCDClockSelection);
+    } 
+#endif /* LCD */
+
+    if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_RTC) == RCC_PERIPHCLK_RTC)
+    {
+      __HAL_RCC_RTC_CONFIG(PeriphClkInit->RTCClockSelection);
+    }
 
     /* Require to disable power clock if necessary */
     if(pwrclkchanged == SET)

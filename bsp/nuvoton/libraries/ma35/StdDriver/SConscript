@@ -1,0 +1,13 @@
+# RT-Thread building script for component
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+libs = []
+src = Glob('*src/*.c') + Glob('src/*.cpp')
+cpppath = [cwd + '/inc']
+libpath = [cwd + '/lib']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath)
+
+Return('group')

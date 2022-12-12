@@ -561,7 +561,7 @@ void nutool_modclkcfg_deinit_sc2(void)
 void nutool_modclkcfg_init_sdh0(void)
 {
     CLK_EnableModuleClock(SDH0_MODULE);
-    CLK_SetModuleClock(SDH0_MODULE, CLK_CLKSEL0_SDH0SEL_HCLK, CLK_CLKDIV0_SDH0(1));
+    CLK_SetModuleClock(SDH0_MODULE, CLK_CLKSEL0_SDH0SEL_HCLK, CLK_CLKDIV0_SDH0(4));
 
     return;
 }

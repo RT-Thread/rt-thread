@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_SYS_SHM_H
+    bool "<sys/shm.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SYS_SELECT_H
+
+    config SELECT_H_SELECT
+        bool "<sys/select.h> -> select"
+        default n
+
+endif

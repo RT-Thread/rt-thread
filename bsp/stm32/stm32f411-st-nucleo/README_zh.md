@@ -22,7 +22,7 @@
 
 该开发板常用 ** 板载资源 ** 如下：
 
-- MCU：STM32F407ZGT6，主频 100MHz，512KB FLASH ，128KB RAM。
+- MCU：STM32F411RET6，主频 100MHz，512KB FLASH ，128KB RAM。
 - 常用外设
   - LED：3 个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
   - 按键，2 个，USER and RESET 。

@@ -19,7 +19,7 @@
 #include <drv_log.h>
 
 #define FILTER_FIFO_SIZE    (1024)
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(0x2FFC8000))) static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
 #elif defined ( __GNUC__ )
 static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE] __attribute__((section(".Filter0Section")));
@@ -28,7 +28,7 @@ static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE] __attribute__((section(".Filter
 __no_init static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
 #endif
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(0x2FFC9000))) static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
 #elif defined ( __GNUC__ )
 static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE] __attribute__((section(".Filter1Section")));
@@ -38,7 +38,7 @@ __no_init static rt_int32_t FILTER1_FIFO[FILTER_FIFO_SIZE];
 #endif
 
 #define PALY_SIZE 2048
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(0x2FFCA000))) static rt_int16_t PLAY_BUF[PALY_SIZE];
 #elif defined ( __GNUC__ )
 __attribute__((at(0x2FFCA000))) __attribute__((section(".DfsdmSection")));

@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            "executable": "rt-thread.elf",
+            "name": "Debug MAX",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "jlink",
+            "interface": "swd",
+            "device": "NRF52840_XXAA",
+            "runToMain": true
+        },
+    ]
+}

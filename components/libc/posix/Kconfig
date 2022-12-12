@@ -1,0 +1,86 @@
+menu "POSIX (Portable Operating System Interface) layer"
+
+config RT_USING_POSIX_FS
+    bool "Enable POSIX file system and I/O"
+    select RT_USING_DFS
+    select DFS_USING_POSIX
+    default n
+
+if RT_USING_POSIX_FS
+    config RT_USING_POSIX_DEVIO
+        bool "Enable devices as file descriptors"
+        select RT_USING_DFS_DEVFS
+        default n
+
+    config RT_USING_POSIX_STDIO
+        bool "Enable standard I/O devices, e.g. STDOUT_FILENO"
+        select RT_USING_POSIX_DEVIO
+        default n
+
+    config RT_USING_POSIX_POLL
+        bool "Enable I/O Multiplexing poll() <poll.h>"
+        default n
+
+    config RT_USING_POSIX_SELECT
+        bool "Enable I/O Multiplexing select() <sys/select.h>"
+        select RT_USING_POSIX_POLL
+        default n
+
+    config RT_USING_POSIX_SOCKET
+        bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
+        select RT_USING_POSIX_SELECT
+        select RT_USING_SAL
+        default n
+
+    config RT_USING_POSIX_TERMIOS
+        bool "Enable Terminal I/O <termios.h>"
+        select RT_USING_POSIX_STDIO
+        default n
+
+    config RT_USING_POSIX_AIO
+        bool "Enable Asynchronous I/O <aio.h>"
+        default n
+
+    config RT_USING_POSIX_MMAN
+        bool "Enable Memory-Mapped I/O <sys/mman.h>"
+        default n
+endif
+
+config RT_USING_POSIX_DELAY
+    bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
+    default n
+
+config RT_USING_POSIX_CLOCK
+    bool "Enable clock/time APIs, clock_gettime()/clock_settime() etc"
+    select RT_USING_POSIX_DELAY
+    default n
+
+config RT_USING_POSIX_TIMER
+    select RT_USING_TIMER_SOFT
+    bool "Enable timer APIs, timer_create()/timer_gettime() etc"
+    default n
+
+config RT_USING_PTHREADS
+    bool "Enable pthreads APIs"
+    select RT_USING_POSIX_CLOCK
+    default n
+
+if RT_USING_PTHREADS
+    config PTHREAD_NUM_MAX
+        int "Maximum number of pthreads"
+        default 8
+endif
+
+config RT_USING_MODULE
+    bool "Enable dynamic module APIs, dlopen()/dlsym()/dlclose() etc"
+    default n
+
+if RT_USING_MODULE
+    config RT_USING_CUSTOM_DLMODULE
+        bool "Enable load dynamic module by custom"
+        default n
+endif
+
+source "$RTT_DIR/components/libc/posix/ipc/Kconfig"
+
+endmenu

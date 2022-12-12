@@ -8,12 +8,28 @@
   * @date    09 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          09 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
-#include "ald_qspi.h"
+#include "ald_conf.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -92,15 +108,13 @@ void ald_qspi_init(qspi_handle_t *hperh)
 	assert_param(IS_QSPI_CLOCK_PRESCALER(hperh->init.clkdiv));
 	assert_param(IS_QSPI_CLOCK_PHASE(hperh->init.chpa));
 	assert_param(IS_QSPI_CLOCK_POLARITY(hperh->init.cpol));
-
+	
 	MODIFY_REG(hperh->perh->CR, QSPI_CR_BAUD_MSK | QSPI_CR_CPOL_MSK | QSPI_CR_CPHA_MSK | \
 	                            QSPI_CR_PSL_MSK  | QSPI_CR_SWPP_MSK , (hperh->init.clkdiv << QSPI_CR_BAUD_POSS) | \
 	                            (hperh->init.cpol << QSPI_CR_CPOL_POS) | \
 	                            (hperh->init.chpa << QSPI_CR_CPHA_POS) | \
 	                            (hperh->init.chipsel << QSPI_CR_PSL_POSS) | \
 	                            (hperh->init.wrppin << QSPI_CR_SWPP_POS));
-
-	return;
 }
 
 /**
@@ -245,7 +259,7 @@ ald_status_t ald_qspi_read_data_capture_config(qspi_handle_t * hperh, qspi_data_
 		return status;
 
 	MODIFY_REG(hperh->perh->RDCR, QSPI_RDCR_BYLPC_MSK | QSPI_RDCR_DLYR_MSK | QSPI_RDCR_SMES_MSK | QSPI_RDCR_DLYT_MSK, \
-				      dtcptcfg->bypsalcc | (dtcptcfg->dlydcl << 1) | (dtcptcfg->smpledge << 5) | (dtcptcfg->dlytd << 16));
+				      0x1U | (dtcptcfg->dlydcl << 1) | (dtcptcfg->smpledge << 5) | (dtcptcfg->dlytd << 16));
 	return status;
 }
 
@@ -315,15 +329,7 @@ ald_status_t qspi_dac_config(qspi_handle_t * hperh, qspi_dac_cfg_t * dcfg)
 		return ERROR;
 	if (ald_qspi_read_config(hperh, &dcfg->rdinit) != OK)
 		return ERROR;
-
-	MODIFY_REG(hperh->perh->DWIR, QSPI_DWIR_WINST_MSK | QSPI_DWIR_DCYC_MSK | \
-				      QSPI_DWIR_ADMODE_MSK | QSPI_DWIR_DMODE_MSK | \
-				      QSPI_DWIR_WELD_MSK, dcfg->wrinit.wrcde | dcfg->wrinit.autowel << 8 | \
-							  (dcfg->wrinit.addxfer << 12) | \
-							  (dcfg->wrinit.datxfer << 16) | \
-							  (dcfg->wrinit.dcyles << 24));
-	MODIFY_REG(hperh->perh->DRIR, QSPI_DRIR_RINST_MSK, dcfg->wrinit.instxfer);
-
+	
 	if (dcfg->addrremap)
 		MODIFY_REG(hperh->perh->RAR, QSPI_RAR_READDR_MSK, dcfg->remapaddr);
 

@@ -193,7 +193,7 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
@@ -255,7 +255,7 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 /*@}*/

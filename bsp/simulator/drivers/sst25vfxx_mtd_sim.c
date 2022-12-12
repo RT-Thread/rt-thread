@@ -16,7 +16,7 @@
 
 #ifdef RT_USING_MTD_NOR
 #define NOR_SIM "nor.bin"
-/* JEDEC Manufacturer’s ID */
+/* JEDEC Manufacturer's ID */
 #define MF_ID           (0xBF)
 /* JEDEC Device ID : Memory Type */
 #define MT_ID           (0x25)
@@ -171,7 +171,7 @@ rt_err_t sst25vfxx_mtd_init(const char *nor_name,
     mtd->ops = &sst25vfxx_mtd_ops;
 
     /* initialize mutex */
-    if (rt_mutex_init(&flash_lock, nor_name, RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&flash_lock, nor_name, RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         rt_kprintf("init sd lock mutex failed\n");
     }

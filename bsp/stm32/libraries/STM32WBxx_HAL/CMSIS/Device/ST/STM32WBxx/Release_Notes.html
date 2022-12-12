@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32WBxx CMSIS</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<center>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32wbxx-cmsis"><mark>STM32WBxx CMSIS</mark></h1>
+<p>Copyright © 2019 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
+</center>
+<h1 id="purpose">Purpose</h1>
+<p>This driver provides the CMSIS device for the stm32wbxx products. This covers</p>
+<ul>
+<li>STM32WB55xx devices</li>
+<li>STM32WB5Mxx devices</li>
+<li>STM32WB50xx devices</li>
+<li>STM32WB35xx devices</li>
+<li>STM32WB30xx devices</li>
+<li>STM32WB15xx devices</li>
+<li>STM32WB10xx devices</li>
+</ul>
+<p>This driver is composed of the descriptions of the registers under “Include” directory.</p>
+<p>Various template file are provided to easily build an application. They can be adapted to fit applications requirements.</p>
+<ul>
+<li>Templates/system_stm32wbxx.c contains the initialization code referred as SystemInit.</li>
+<li>Startup files are provided as example for IAR©, KEIL© and SW4STM32©.</li>
+<li>Linker files are provided as example for IAR©, KEIL© and SW4STM32©.</li>
+</ul>
+<h1 id="specific-consideration-for-available-flash-size-inside-linker-file">Specific consideration for available FLASH size inside linker file</h1>
+<p>The available flash size depends on the wireless binary used inside the STM32WB device.</p>
+<p>The linker files templates for IAR, KEIL and GCC provide example of implementation which can be tuned.</p>
+<p>You can refer to the below chapters to optimize the usage of the flash on your device.</p>
+<h2 id="stm32wb55xx-stm32wb50xx-and-stm32wb5m">STM32WB55xx, STM32WB50xx and STM32WB5M</h2>
+<p>The default linker file provided in “/Drivers/CMSIS/DeviceST/STM32WBxx/Source/Templates” allows the application to use 512KB of flash.</p>
+<p>The maximum flash memory that can be used by the application is up to the Secure Flash Start Address (SFSA) that can be read from the option byte.</p>
+<p>The __ICFEDIT_region_ROM_end__ in the linker can be modified with a value up to : (0x08000000 + (SFSA &lt;&lt; 12)) - 1.</p>
+<p>Example:</p>
+<ul>
+<li>When the SFSA option byte is set to 0xA0, the maximum value to be used for __ICFEDIT_region_ROM_end is 0x0809FFFF which is 640KB of flash.</li>
+</ul>
+<p>Note:</p>
+<ul>
+<li>The SFSA option byte can only be set by the CPU2. The user cannot modify that value.</li>
+</ul>
+<h2 id="stm32wb35xx-and-stm32wb30xx">STM32WB35xx and STM32WB30xx</h2>
+<p>The default linker file provided in "/Drivers/CMSIS/Device/ST/STM32WBxx/Source/Templates allows the application to use 120KB of flash.</p>
+<p>The maximum flash memory that can be used by the application is up to the Secure Flash Start Address (SFSA) that can be read from the option byte.</p>
+<p>The __ICFEDIT_region_ROM_end__ in the linker can be modified with a value up to : (0x08000000 + (SFSA &lt;&lt; 12)) - 1.</p>
+<p>Example:</p>
+<ul>
+<li>When the SFSA option byte is set to 0x32, the maximum value to be used for __ICFEDIT_region_ROM_end is 0x08031FFF – which is 200KB of flash</li>
+</ul>
+<p>Note:</p>
+<ul>
+<li>The SFSA option byte can only be set by the CPU2. The user cannot modify that value.</li>
+</ul>
+<h2 id="stm32wb15xx-and-stm32wb10xx">STM32WB15xx and STM32WB10xx</h2>
+<p>The default linker file provided in "/Drivers/CMSIS/Device/ST/STM32WBxx/Source/Templates allows the application to use 110KB of flash.</p>
+<p>The maximum flash memory that can be used by the application is up to the Secure Flash Start Address (SFSA) that can be read from the option byte.</p>
+<p>The __ICFEDIT_region_ROM_end__ in the linker can be modified with a value up to : (0x08000000 + (SFSA &lt;&lt; 11)) - 1 considering minimum CPU secure area size is one sector (2kBytes).</p>
+<p>Example:</p>
+<ul>
+<li>When the SFSA option byte is set to 0x37, the maximum value to be used for __ICFEDIT_region_ROM_end is 0x0801B800 – which is 110kB of flash</li>
+</ul>
+<p>Note:</p>
+<ul>
+<li>The SFSA option byte can only be set by the CPU2. The user cannot modify that value.</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.9.0 / 24-June-2021</label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>Add atomic register access services:
+<ul>
+<li>32-bit register access: ATOMIC_SET_BIT(), ATOMIC_CLEAR_BIT(), ATOMIC_MODIFY_REG()</li>
+<li>16-bit register access: ATOMIC_SETH_BIT(), ATOMIC_CLEARH_BIT(), ATOMIC_MODIFYH_BIT()</li>
+</ul></li>
+<li>Update linker files templates for all IDE (.icf/.sct/.ld)
+<ul>
+<li>RAM start address has been updated from 0x20000000/0x20000004 to 0x20000008 to be aligned on a 8 byte boundary, and be compatible with ARM Compiler 6 (Keil MDK-ARM)</li>
+</ul></li>
+<li>Add define LSI_STARTUP_TIME used in default IWDG timeout calculation (HAL_IWDG_DEFAULT_TIMEOUT)</li>
+<li>Add define FLASH_ECCR_CPUID bits for new macro __HAL_FLASH_ECC_CPUID() macro</li>
+</ul>
+<h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB5Mxx, STM32WB50xx, STM32WB35xx, STM32WB30xx, STM32WB15xx and STM32WB10xx devices.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.8.0 / 09-February-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="add-support-for-stm32wb15xx-and-stm32wb10xx">Add support for STM32WB15xx and STM32WB10xx</h3>
+<ul>
+<li>Change how to adapt VTOR for user</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.7</li>
+</ul>
+<h2 id="supported-devices-and-boards-1">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB5Mxx, STM32WB50xx, STM32WB35xx, STM32WB30xx, STM32WB15xx and STM32WB10xx devices.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7"  aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.7.0 / 30-October-2020</label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<h3 id="maintenance-release">Maintenance release</h3>
+<p>Maintenance release for <strong>STM32WBxx</strong> devices (stm32wb55xx, stm32wb50xx, stm32wb35xx and stm32wb30xx devices)</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fixed bugs headline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">[STM32WB35] Remove EXTI_C2IMR2_IM43 and EXTI_IMR2_IM43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[STM32WB50] Remove RCC_CR_HSEBYP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[STM32WB55] Remove RCC_CR_HSEBYP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[STM32WB5M] Remove RCC_CR_HSEBYP</td>
+</tr>
+</tbody>
+</table>
+<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.7</li>
+</ul>
+<h2 id="supported-devices-and-boards-2">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB5Mxx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section6"  aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">v1.6.0 / 05-June-2020</label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<h3 id="maintenance-release-1">Maintenance release</h3>
+<p>Maintenance release for <strong>STM32WBxx</strong> devices (stm32wb55xx, stm32wb50xx, stm32wb35xx and stm32wb30xx devices)</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fixed bugs headline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">[All devices] Correct DMAMUX_CxCR_DMAREQ_ID_Msk</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[All devices] Remove DMAMUX_CxCR_DMAREQ_ID_[6-7]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[All devices] Call SystemInit first in startup/Reset_Handler, so GCC code is similar to IAR/Keil</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[STM32WB50xx and STM32WB30xx] Remove OR register from LPTIM_TypeDef</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[STM32WB50xx and STM32WB30xx] Remove DMAMUX_CSR_SOF[7-13] and DMAMUX_CFR_SOF[7-13]</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[STM32WB50xx and STM32WB30xx] Remove EXTI_RTSR1_RTxx_Pos [20, 21 and 31]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[STM32WB50xx and STM32WB30xx] Remove TIM2_OR_TI4_RMP, TIM2_OR_ITR1_RMP and LPTIM_OR_OR</td>
+</tr>
+</tbody>
+</table>
+<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.7</li>
+</ul>
+<h2 id="supported-devices-and-boards-3">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB5Mxx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 12-February-2020</label>
+<div>
+<h2 id="main-changes-4">Main Changes</h2>
+<h3 id="introduction-of-stm32wb35xx-stm32wb30xx-and-stm32wb5mxx-product">Introduction of STM32WB35xx, STM32WB30xx and STM32WB5Mxx product</h3>
+<p>This release introduce the support of STM32WB5Mxx, STM32WB35xx product and its value line STM32WB30xx.</p>
+<p>Added features:</p>
+<ul>
+<li>Templates/system_stm32wbxx.c contains the initialization code referred as SystemInit.</li>
+<li>Startup files are provided as example for IAR©, KEIL© and SW4STM32©.</li>
+<li>Linker files are provided as example for IAR©, KEIL© and SW4STM32©.</li>
+<li>The product STM32WB5Mxx is supported by enabling inside your project the define “STM32WB5Mxx”.</li>
+<li>The product STM32WB35xx is supported by enabling inside your project the define “STM32WB35xx”.</li>
+<li>The product STM32WB30xx is supported by enabling inside your project the define “STM32WB30xx”.</li>
+</ul>
+<h2 id="development-toolchains-and-compilers-3">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.7</li>
+</ul>
+<h2 id="supported-devices-and-boards-4">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB5Mxx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4"  aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.3.0 / 11-September-2019</label>
+<div>
+<h2 id="main-changes-5">Main Changes</h2>
+<p>Maintenance release for <strong>STM32WBxx</strong> devices (stm32wb55xx and stm32wb50xx devices)</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fixed bugs headline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Remove IS_TIM_SYNCHRO_INSTANCE macro from CMSIS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Move FLASH_SIZE define from hal flash. h to cmsis device file</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Correct size of .bin files generated by SW4STM32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Remove RCC_PLLSAI_SUPPORT for STM32WB50</td>
+</tr>
+</tbody>
+</table>
+<h2 id="development-toolchains-and-compilers-4">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.7</li>
+</ul>
+<h2 id="supported-devices-and-boards-5">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB50xx devices</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
+<div>
+<h2 id="main-changes-6">Main Changes</h2>
+<h3 id="introduction-of-stm32wb50xx-device">Introduction of STM32WB50xx device</h3>
+<p>First release for STM32WBxx CMSIS introducing <strong>stm32wb50xx</strong> devices.</p>
+<h2 id="contents">Contents</h2>
+<p>CMSIS devices files for stm32wb55xx, stm32wb50xx devices.</p>
+<h2 id="development-toolchains-and-compilers-5">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.7</li>
+</ul>
+<h2 id="supported-devices-and-boards-6">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx and STM32WB50xx devices</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
+<div>
+<h2 id="main-changes-7">Main Changes</h2>
+<h3 id="maintenance-release-2">Maintenance release</h3>
+<p>Maintenance release for <strong>STM32WBxx</strong> devices (stm32wb55xx devices)</p>
+<table>
+<caption>Fixed bugs list</caption>
+<thead>
+<tr class="header">
+<th>Headline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Correct GCC linker file: Set available size of RAM1 to 192K - 4 instead of 191K.</td>
+</tr>
+<tr class="even">
+<td>Set FLASH_ACR_LATENCY_x as uint32_t (UL instead of U).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
+<div>
+<h2 id="main-changes-8">Main Changes</h2>
+<h3 id="first-release">First release</h3>
+<p>Add support of STM32WB55xx.</p>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<p>For complete documentation on STM32WBxx, visit: [<a href="http://www.st.com/stm32wb">www.st.com/stm32wb</a>]</p>
+<em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

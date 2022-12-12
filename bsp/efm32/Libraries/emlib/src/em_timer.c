@@ -136,7 +136,7 @@ void TIMER_Init(TIMER_TypeDef *timer, const TIMER_Init_TypeDef *init)
   {
     timer->CMD = TIMER_CMD_STOP;
   }
-  
+
   /* Reset counter */
   timer->CNT = _TIMER_CNT_RESETVALUE;
 

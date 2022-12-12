@@ -4,7 +4,10 @@ import rtconfig
 cwd = GetCurrentDir()
 src = ['spi_core.c', 'spi_dev.c']
 CPPPATH = [cwd, cwd + '/../include']
-LOCAL_CCFLAGS = ''
+LOCAL_CFLAGS = ''
+
+if GetDepend('RT_USING_SPI_BITOPS'):
+    src += ['spi-bit-ops.c']
 
 if GetDepend('RT_USING_QSPI'):
     src += ['qspi_core.c']
@@ -25,13 +28,14 @@ if GetDepend('RT_USING_SFUD'):
     CPPPATH += [cwd + '/sfud/inc']
     if GetDepend('RT_SFUD_USING_SFDP'):
         src_device += ['sfud/src/sfud_sfdp.c']
-    if rtconfig.CROSS_TOOL == 'gcc':
-        LOCAL_CCFLAGS += ' -std=c99'
-    elif rtconfig.CROSS_TOOL == 'keil':
-        LOCAL_CCFLAGS += ' --c99'
+
+    if rtconfig.PLATFORM in ['gcc', 'armclang']:
+        LOCAL_CFLAGS += ' -std=c99'
+    elif rtconfig.PLATFORM in ['armcc']:
+        LOCAL_CFLAGS += ' --c99'
 
 src += src_device
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
 
 Return('group')

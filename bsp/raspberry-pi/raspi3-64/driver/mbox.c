@@ -14,6 +14,8 @@
 #include "mmu.h"
 //volatile unsigned int  __attribute__((aligned(16))) mbox[36];
 volatile unsigned int *mbox = (volatile unsigned int *) MBOX_ADDR;
+#define BUS_ADDRESS(phys)   (((phys) & ~0xC0000000)  |  0xC0000000)
+
 /**
  * Make a mailbox call. Returns 0 on failure, non-zero on success
  */

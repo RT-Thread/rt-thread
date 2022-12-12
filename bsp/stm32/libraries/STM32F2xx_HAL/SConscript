@@ -28,7 +28,7 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['RT_USING_SPI']):
     src += ['STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_spi.c']
 
-if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+if GetDepend(['RT_USING_USB']):
     src += ['STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pccard.c']
     src += ['STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pcd.c']
     src += ['STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pcd_ex.c'] 
@@ -78,8 +78,7 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash_ex.c']
 
 path = [cwd + '/CMSIS/Device/ST/STM32F2xx/Include', 
-    cwd + '/STM32F2xx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Include']
+    cwd + '/STM32F2xx_HAL_Driver/Inc']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

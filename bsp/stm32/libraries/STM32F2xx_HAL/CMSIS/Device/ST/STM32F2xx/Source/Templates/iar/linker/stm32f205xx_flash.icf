@@ -10,7 +10,7 @@ define symbol __ICFEDIT_region_RAM_start__ = 0x20000000;
 define symbol __ICFEDIT_region_RAM_end__   = 0x20020000;
 /*-Sizes-*/
 define symbol __ICFEDIT_size_cstack__ = 0x400;
-define symbol __ICFEDIT_size_heap__   = 0x200;
+define symbol __ICFEDIT_size_heap__   = 0x000;
 /**** End of ICF editor section. ###ICF###*/
 
 

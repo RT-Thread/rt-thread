@@ -23,24 +23,24 @@ void trap_c(uint32_t *regs)
 
     vec = __get_MCAUSE() & 0x3FF;
 
-    printf("CPU Exception: NO.%d", vec);
+    printf("CPU Exception: NO.%ld", vec);
     printf("\n");
 
-    for (i = 0; i < 31; i++) 
+    for (i = 0; i < 31; i++)
     {
-        printf("x%d: %08x\t", i + 1, regs[i]);
+        printf("x%d: %08lx\t", i + 1, regs[i]);
 
-        if ((i % 4) == 3) 
+        if ((i % 4) == 3)
         {
             printf("\n");
         }
     }
 
     printf("\n");
-    printf("mepc   : %08x\n", regs[31]);
-    printf("mstatus: %08x\n", regs[32]);
+    printf("mepc   : %08lx\n", regs[31]);
+    printf("mstatus: %08lx\n", regs[32]);
 
-    if (trap_c_callback) 
+    if (trap_c_callback)
     {
         trap_c_callback();
     }

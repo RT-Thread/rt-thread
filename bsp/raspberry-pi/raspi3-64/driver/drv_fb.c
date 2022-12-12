@@ -299,7 +299,7 @@ int hdmi_fb_init(void)
     _hdmi.pitch = 0;
     _hdmi.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB888;
 
-    armv8_map((unsigned long)_hdmi.fb, (unsigned long)_hdmi.fb, 0x200000, MEM_ATTR_IO);
+    rt_hw_mmu_map((unsigned long)_hdmi.fb, 0x200000, DEVICE_MEM);
 
     rt_hw_dcache_invalidate_range((unsigned long)_hdmi.fb,LCD_WIDTH * LCD_HEIGHT * 3);
 

@@ -363,6 +363,7 @@
 
 #ifdef HAL_HRTIM_MODULE_ENABLED
 
+#if defined(HRTIM1)
 
 /** @defgroup HRTIM HRTIM
   * @brief HRTIM HAL module driver
@@ -1219,6 +1220,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
      return HAL_BUSY;
   }
 
+  /* Process Locked */
+  __HAL_LOCK(hhrtim);
+
   /* Set HRTIM state */
   hhrtim->State = HAL_HRTIM_STATE_BUSY;
 
@@ -1315,6 +1319,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
 
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -1336,6 +1343,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
 
   /* Set HRTIM state */
   hhrtim->State = HAL_HRTIM_STATE_READY;
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hhrtim);
 
   return HAL_OK;
 }
@@ -1860,6 +1870,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimplePWMChannelConfig(HRTIM_HandleTypeDef * hhrtim,
     }
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -2467,7 +2480,7 @@ HAL_StatusTypeDef HAL_HRTIM_SimplePWMStop_DMA(HRTIM_HandleTypeDef * hhrtim,
   *                    @arg HRTIM_CAPTUREUNIT_1: Capture unit 1
   *                    @arg HRTIM_CAPTUREUNIT_2: Capture unit 2
   * @param  pSimpleCaptureChannelCfg pointer to the simple capture configuration structure
-  * @note When the timer operates in simple capture mode the capture is trigerred
+  * @note When the timer operates in simple capture mode the capture is triggered
   *       by the designated external event and GPIO input is implicitly used as event source.
   *       The cature can be triggered by a rising edge, a falling edge or both
   *       edges on event channel.
@@ -3185,6 +3198,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOnePulseChannelConfig(HRTIM_HandleTypeDef * hh
 
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -3634,8 +3650,8 @@ HAL_StatusTypeDef HAL_HRTIM_EventConfig(HRTIM_HandleTypeDef * hhrtim,
                                         HRTIM_EventCfgTypeDef* pEventCfg)
 {
   /* Check parameters */
-  assert_param(IS_HRTIM_EVENTSRC(pEventCfg->Source));
   assert_param(IS_HRTIM_EVENT(Event));
+  assert_param(IS_HRTIM_EVENTSRC(pEventCfg->Source));
   assert_param(IS_HRTIM_EVENTPOLARITY(pEventCfg->Sensitivity, pEventCfg->Polarity));
   assert_param(IS_HRTIM_EVENTSENSITIVITY(pEventCfg->Sensitivity));
   assert_param(IS_HRTIM_EVENTFASTMODE(Event, pEventCfg->FastMode));
@@ -5122,11 +5138,11 @@ HAL_StatusTypeDef HAL_HRTIM_WaveformCountStart(HRTIM_HandleTypeDef * hhrtim,
   * @param  Timers Timer counter(s) to stop
   *                   This parameter can be any combination of the following values:
   *                   @arg HRTIM_TIMERID_MASTER
-  *                   @arg HRTIM_TIMERID_A
-  *                   @arg HRTIM_TIMERID_B
-  *                   @arg HRTIM_TIMERID_C
-  *                   @arg HRTIM_TIMERID_D
-  *                   @arg HRTIM_TIMERID_E
+  *                   @arg HRTIM_TIMERID_TIMER_A
+  *                   @arg HRTIM_TIMERID_TIMER_B
+  *                   @arg HRTIM_TIMERID_TIMER_C
+  *                   @arg HRTIM_TIMERID_TIMER_D
+  *                   @arg HRTIM_TIMERID_TIMER_E
   * @retval HAL status
   * @note The counter of a timer is stopped only if all timer outputs are disabled
   */
@@ -5159,11 +5175,11 @@ HAL_StatusTypeDef HAL_HRTIM_WaveformCountStop(HRTIM_HandleTypeDef * hhrtim,
   * @param  Timers Timer counter(s) to start
   *                   This parameter can be any combination of the following values:
   *                   @arg HRTIM_TIMERID_MASTER
-  *                   @arg HRTIM_TIMERID_A
-  *                   @arg HRTIM_TIMERID_B
-  *                   @arg HRTIM_TIMERID_C
-  *                   @arg HRTIM_TIMERID_D
-  *                   @arg HRTIM_TIMERID_E
+  *                   @arg HRTIM_TIMERID_TIMER_A
+  *                   @arg HRTIM_TIMERID_TIMER_B
+  *                   @arg HRTIM_TIMERID_TIMER_C
+  *                   @arg HRTIM_TIMERID_TIMER_D
+  *                   @arg HRTIM_TIMERID_TIMER_E
   * @note HRTIM interrupts (e.g. faults interrupts) and interrupts related
   *       to the timers to start are enabled within this function.
   *       Interrupts to enable are selected through HAL_HRTIM_WaveformTimerConfig
@@ -5223,11 +5239,11 @@ HAL_StatusTypeDef HAL_HRTIM_WaveformCountStart_IT(HRTIM_HandleTypeDef * hhrtim,
   * @param  Timers Timer counter(s) to stop
   *                   This parameter can be any combination of the following values:
   *                   @arg HRTIM_TIMERID_MASTER
-  *                   @arg HRTIM_TIMERID_A
-  *                   @arg HRTIM_TIMERID_B
-  *                   @arg HRTIM_TIMERID_C
-  *                   @arg HRTIM_TIMERID_D
-  *                   @arg HRTIM_TIMERID_E
+  *                   @arg HRTIM_TIMERID_TIMER_A
+  *                   @arg HRTIM_TIMERID_TIMER_B
+  *                   @arg HRTIM_TIMERID_TIMER_C
+  *                   @arg HRTIM_TIMERID_TIMER_D
+  *                   @arg HRTIM_TIMERID_TIMER_E
   * @retval HAL status
   * @note The counter of a timer is stopped only if all timer outputs are disabled
   * @note All enabled timer related interrupts are disabled.
@@ -5298,7 +5314,7 @@ HAL_StatusTypeDef HAL_HRTIM_WaveformCountStop_IT(HRTIM_HandleTypeDef * hhrtim,
   *                   @arg HRTIM_TIMERID_TIMER_D
   *                   @arg HRTIM_TIMERID_TIMER_E
   * @retval HAL status
-  * @note This function enables the dma request(s) mentionned in the timer
+  * @note This function enables the dma request(s) mentioned in the timer
   *       configuration data structure for every timers to start.
   * @note The source memory address, the destination memory address and the
   *       size of each DMA transfer are specified at timer configuration time
@@ -5642,7 +5658,7 @@ HAL_StatusTypeDef HAL_HRTIM_SoftwareCapture(HRTIM_HandleTypeDef * hhrtim,
   *                   @arg HRTIM_TIMERUPDATE_D
   *                   @arg HRTIM_TIMERUPDATE_E
   * @retval HAL status
-  * @note The 'software update' bits in the HRTIM conrol register 2 register are
+  * @note The 'software update' bits in the HRTIM control register 2 register are
   *       automatically reset by hardware
   */
 HAL_StatusTypeDef HAL_HRTIM_SoftwareUpdate(HRTIM_HandleTypeDef * hhrtim,
@@ -5684,7 +5700,7 @@ HAL_StatusTypeDef HAL_HRTIM_SoftwareUpdate(HRTIM_HandleTypeDef * hhrtim,
   *                   @arg HRTIM_TIMERRESET_TIMER_D
   *                   @arg HRTIM_TIMERRESET_TIMER_E
   * @retval HAL status
-  * @note The 'software reset' bits in the HRTIM conrol register 2  are
+  * @note The 'software reset' bits in the HRTIM control register 2  are
   *       automatically reset by hardware
   */
 HAL_StatusTypeDef HAL_HRTIM_SoftwareReset(HRTIM_HandleTypeDef * hhrtim,
@@ -6180,7 +6196,7 @@ uint32_t HAL_HRTIM_WaveformGetOutputState(HRTIM_HandleTypeDef * hhrtim,
 
   if ((hhrtim->Instance->sCommonRegs.OENR & output_bit) != (uint32_t)RESET)
   {
-    /* Output is enabled: output in RUN state (whatever ouput disable status is)*/
+    /* Output is enabled: output in RUN state (whatever output disable status is)*/
     output_state = HRTIM_OUTPUTSTATE_RUN;
   }
   else
@@ -7563,7 +7579,7 @@ static void HRTIM_MasterWaveform_Config(HRTIM_HandleTypeDef * hhrtim,
   hrtim_mcr &= ~(HRTIM_MCR_DACSYNC);
   hrtim_mcr |= pTimerCfg->DACSynchro;
 
-  /* Enable/Disable preload meachanism for timer registers */
+  /* Enable/Disable preload mechanism for timer registers */
   hrtim_mcr &= ~(HRTIM_MCR_PREEN);
   hrtim_mcr |= pTimerCfg->PreloadEnable;
 
@@ -7626,7 +7642,7 @@ static void  HRTIM_TimingUnitWaveform_Config(HRTIM_HandleTypeDef * hhrtim,
   hrtim_timcr &= ~(HRTIM_TIMCR_DACSYNC);
   hrtim_timcr |= pTimerCfg->DACSynchro;
 
-  /* Enable/Disable preload meachanism for timer registers */
+  /* Enable/Disable preload mechanism for timer registers */
   hrtim_timcr &= ~(HRTIM_TIMCR_PREEN);
   hrtim_timcr |= pTimerCfg->PreloadEnable;
 
@@ -8539,10 +8555,13 @@ static void HRTIM_ForceRegistersUpdate(HRTIM_HandleTypeDef * hhrtim,
   */
 static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
 {
+  uint32_t isrflags = READ_REG(hhrtim->Instance->sCommonRegs.ISR);
+  uint32_t ierits   = READ_REG(hhrtim->Instance->sCommonRegs.IER);
+
   /* Fault 1 event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_FLT1) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_FLT1) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_FLT1) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_FLT1) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_FLT1);
 
@@ -8556,9 +8575,9 @@ static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Fault 2 event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_FLT2) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_FLT2) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_FLT2) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_FLT2) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_FLT2);
 
@@ -8572,9 +8591,9 @@ static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Fault 3 event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_FLT3) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_FLT3) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_FLT3) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_FLT3) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_FLT3);
 
@@ -8588,9 +8607,9 @@ static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Fault 4 event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_FLT4) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_FLT4) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_FLT4) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_FLT4) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_FLT4);
 
@@ -8604,9 +8623,9 @@ static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Fault 5 event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_FLT5) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_FLT5) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_FLT5) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_FLT5) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_FLT5);
 
@@ -8620,9 +8639,9 @@ static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* System fault event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_SYSFLT) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_SYSFLT) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_SYSFLT) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_SYSFLT) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_SYSFLT);
 
@@ -8643,10 +8662,15 @@ static void HRTIM_HRTIM_ISR(HRTIM_HandleTypeDef * hhrtim)
 */
 static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
 {
+  uint32_t isrflags  = READ_REG(hhrtim->Instance->sCommonRegs.ISR);
+  uint32_t ierits    = READ_REG(hhrtim->Instance->sCommonRegs.IER);
+  uint32_t misrflags = READ_REG(hhrtim->Instance->sMasterRegs.MISR);
+  uint32_t mdierits  = READ_REG(hhrtim->Instance->sMasterRegs.MDIER);
+
   /* Burst mode period event */
-  if(__HAL_HRTIM_GET_FLAG(hhrtim, HRTIM_FLAG_BMPER) != (uint32_t)RESET)
+  if((uint32_t)(isrflags & HRTIM_FLAG_BMPER) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_GET_ITSTATUS(hhrtim, HRTIM_IT_BMPER) != RESET)
+    if((uint32_t)(ierits & HRTIM_IT_BMPER) != (uint32_t)RESET)
     {
       __HAL_HRTIM_CLEAR_IT(hhrtim, HRTIM_IT_BMPER);
 
@@ -8660,9 +8684,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Master timer compare 1 event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_MCMP1) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_MCMP1) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_MCMP1) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_MCMP1) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_MCMP1);
 
@@ -8676,9 +8700,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Master timer compare 2 event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_MCMP2) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_MCMP2) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_MCMP2) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_MCMP2) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_MCMP2);
 
@@ -8692,9 +8716,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Master timer compare 3 event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_MCMP3) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_MCMP3) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_MCMP3) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_MCMP3) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_MCMP3);
 
@@ -8708,9 +8732,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Master timer compare 4 event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_MCMP4) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_MCMP4) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_MCMP4) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_MCMP4) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_MCMP4);
 
@@ -8724,9 +8748,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Master timer repetition event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_MREP) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_MREP) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_MREP) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_MREP) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_MREP);
 
@@ -8740,9 +8764,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Synchronization input event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_SYNC) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_SYNC) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_SYNC) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_SYNC) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_SYNC);
 
@@ -8756,9 +8780,9 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
   }
 
   /* Master timer registers update event */
-  if(__HAL_HRTIM_MASTER_GET_FLAG(hhrtim, HRTIM_MASTER_FLAG_MUPD) != (uint32_t)RESET)
+  if((uint32_t)(misrflags & HRTIM_MASTER_FLAG_MUPD) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_MASTER_GET_ITSTATUS(hhrtim, HRTIM_MASTER_IT_MUPD) != RESET)
+    if((uint32_t)(mdierits & HRTIM_MASTER_IT_MUPD) != (uint32_t)RESET)
     {
       __HAL_HRTIM_MASTER_CLEAR_IT(hhrtim, HRTIM_MASTER_IT_MUPD);
 
@@ -8787,10 +8811,13 @@ static void HRTIM_Master_ISR(HRTIM_HandleTypeDef * hhrtim)
 static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
                      uint32_t TimerIdx)
 {
+  uint32_t tisrflags = READ_REG(hhrtim->Instance->sTimerxRegs[TimerIdx].TIMxISR);
+  uint32_t tdierits  = READ_REG(hhrtim->Instance->sTimerxRegs[TimerIdx].TIMxDIER);
+
   /* Timer compare 1 event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_CMP1) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_CMP1) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP1) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_CMP1) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP1);
 
@@ -8804,9 +8831,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer compare 2 event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_CMP2) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_CMP2) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP2) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_CMP2) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP2);
 
@@ -8820,9 +8847,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer compare 3 event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_CMP3) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_CMP3) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP3) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_CMP3) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP3);
 
@@ -8836,9 +8863,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer compare 4 event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_CMP4) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_CMP4) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP4) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_CMP4) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_CMP4);
 
@@ -8852,9 +8879,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer repetition event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_REP) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_REP) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_REP) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_REP) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_REP);
 
@@ -8868,9 +8895,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer registers update event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_UPD) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_UPD) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_UPD) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_UPD) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_UPD);
 
@@ -8884,9 +8911,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer capture 1 event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_CPT1) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_CPT1) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_CPT1) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_CPT1) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_CPT1);
 
@@ -8900,9 +8927,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer capture 2 event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_CPT2) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_CPT2) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_CPT2) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_CPT2) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_CPT2);
 
@@ -8916,9 +8943,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer output 1 set event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_SET1) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_SET1) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_SET1) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_SET1) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_SET1);
 
@@ -8932,9 +8959,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer output 1 reset event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_RST1) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_RST1) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_RST1) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_RST1) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_RST1);
 
@@ -8948,9 +8975,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer output 2 set event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_SET2) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_SET2) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_SET2) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_SET2) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_SET2);
 
@@ -8964,9 +8991,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer output 2 reset event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_RST2) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_RST2) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_RST2) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_RST2) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_RST2);
 
@@ -8980,9 +9007,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Timer reset event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_RST) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_RST) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_RST) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_RST) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_RST);
 
@@ -8996,9 +9023,9 @@ static void HRTIM_Timer_ISR(HRTIM_HandleTypeDef * hhrtim,
   }
 
   /* Delayed protection event */
-  if(__HAL_HRTIM_TIMER_GET_FLAG(hhrtim, TimerIdx, HRTIM_TIM_FLAG_DLYPRT) != (uint32_t)RESET)
+  if((uint32_t)(tisrflags & HRTIM_TIM_FLAG_DLYPRT) != (uint32_t)RESET)
   {
-    if(__HAL_HRTIM_TIMER_GET_ITSTATUS(hhrtim, TimerIdx, HRTIM_TIM_IT_DLYPRT) != RESET)
+    if((uint32_t)(tdierits & HRTIM_TIM_IT_DLYPRT) != (uint32_t)RESET)
     {
       __HAL_HRTIM_TIMER_CLEAR_IT(hhrtim, TimerIdx, HRTIM_TIM_IT_DLYPRT);
 
@@ -9256,6 +9283,7 @@ static void HRTIM_BurstDMACplt(DMA_HandleTypeDef *hdma)
   * @}
   */
 
+#endif /* HRTIM1 */
 
 #endif /* HAL_HRTIM_MODULE_ENABLED */
 

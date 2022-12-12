@@ -174,13 +174,12 @@
 #define IS_RCC_PCLK(__PCLK__) (((__PCLK__) == RCC_HCLK_DIV1) || ((__PCLK__) == RCC_HCLK_DIV2) || \
                                ((__PCLK__) == RCC_HCLK_DIV4) || ((__PCLK__) == RCC_HCLK_DIV8) || \
                                ((__PCLK__) == RCC_HCLK_DIV16))
-#if  defined(STM32L031xx) || defined(STM32L041xx) || defined(STM32L073xx) || defined(STM32L083xx) \
-  || defined(STM32L072xx) || defined(STM32L082xx) || defined(STM32L071xx) || defined(STM32L081xx)
+#if defined(RCC_MCO3_SUPPORT)
 #define IS_RCC_MCO(__MCO__) (((__MCO__) == RCC_MCO1) || ((__MCO__) == RCC_MCO2) || ((__MCO__) == RCC_MCO3))
 #else
 #define IS_RCC_MCO(__MCO__) (((__MCO__) == RCC_MCO1) || ((__MCO__) == RCC_MCO2))
 
-#endif
+#endif /* RCC_MCO3_SUPPORT */
 #define IS_RCC_MCODIV(__DIV__) (((__DIV__) == RCC_MCODIV_1) || ((__DIV__) == RCC_MCODIV_2) || \
                                 ((__DIV__) == RCC_MCODIV_4) || ((__DIV__) == RCC_MCODIV_8) || \
                                 ((__DIV__) == RCC_MCODIV_16))
@@ -317,14 +316,14 @@ typedef struct
 /** @defgroup RCC_Oscillator_Type Oscillator Type
   * @{
   */
-#define RCC_OSCILLATORTYPE_NONE            ((uint32_t)0x00000000)
-#define RCC_OSCILLATORTYPE_HSE             ((uint32_t)0x00000001)
-#define RCC_OSCILLATORTYPE_HSI             ((uint32_t)0x00000002)
-#define RCC_OSCILLATORTYPE_LSE             ((uint32_t)0x00000004)
-#define RCC_OSCILLATORTYPE_LSI             ((uint32_t)0x00000008)
-#define RCC_OSCILLATORTYPE_MSI             ((uint32_t)0x00000010)
+#define RCC_OSCILLATORTYPE_NONE            (0x00000000U)
+#define RCC_OSCILLATORTYPE_HSE             (0x00000001U)
+#define RCC_OSCILLATORTYPE_HSI             (0x00000002U)
+#define RCC_OSCILLATORTYPE_LSE             (0x00000004U)
+#define RCC_OSCILLATORTYPE_LSI             (0x00000008U)
+#define RCC_OSCILLATORTYPE_MSI             (0x00000010U)
 #if defined(RCC_HSI48_SUPPORT)
-#define RCC_OSCILLATORTYPE_HSI48           ((uint32_t)0x00000020)
+#define RCC_OSCILLATORTYPE_HSI48           (0x00000020U)
 #endif /* RCC_HSI48_SUPPORT */
 /**
   * @}
@@ -333,7 +332,7 @@ typedef struct
 /** @defgroup RCC_HSE_Config HSE Config
   * @{
   */
-#define RCC_HSE_OFF                      ((uint32_t)0x00000000)                     /*!< HSE clock deactivation */
+#define RCC_HSE_OFF                      (0x00000000U)                     /*!< HSE clock deactivation */
 #define RCC_HSE_ON                       RCC_CR_HSEON                               /*!< HSE clock activation */
 #define RCC_HSE_BYPASS                   ((uint32_t)(RCC_CR_HSEBYP | RCC_CR_HSEON)) /*!< External clock source for HSE clock */
 /**
@@ -343,7 +342,7 @@ typedef struct
 /** @defgroup RCC_LSE_Config LSE Config
   * @{
   */
-#define RCC_LSE_OFF                      ((uint32_t)0x00000000)                       /*!< LSE clock deactivation */
+#define RCC_LSE_OFF                      (0x00000000U)                       /*!< LSE clock deactivation */
 #define RCC_LSE_ON                       RCC_CSR_LSEON                                /*!< LSE clock activation */
 #define RCC_LSE_BYPASS                   ((uint32_t)(RCC_CSR_LSEBYP | RCC_CSR_LSEON)) /*!< External clock source for LSE clock */
 
@@ -354,7 +353,7 @@ typedef struct
 /** @defgroup RCC_HSI_Config HSI Config
   * @{
   */
-#define RCC_HSI_OFF                      ((uint32_t)0x00000000)           /*!< HSI clock deactivation */
+#define RCC_HSI_OFF                      (0x00000000U)           /*!< HSI clock deactivation */
 #define RCC_HSI_ON                       RCC_CR_HSION                     /*!< HSI clock activation */
 #define RCC_HSI_DIV4                     (RCC_CR_HSIDIVEN | RCC_CR_HSION) /*!< HSI_DIV4 clock activation */
 #if defined(RCC_CR_HSIOUTEN)
@@ -362,7 +361,7 @@ typedef struct
                                                                           /* This value is to be used in combination with RCC_HSI_ON/RCC_HSI_DIV4 */
 #endif /* RCC_CR_HSIOUTEN */
 
-#define RCC_HSICALIBRATION_DEFAULT       ((uint32_t)0x10)         /* Default HSI calibration trimming value */
+#define RCC_HSICALIBRATION_DEFAULT       (0x10U)         /* Default HSI calibration trimming value */
 
 /**
   * @}
@@ -387,7 +386,7 @@ typedef struct
 /** @defgroup RCC_LSI_Config LSI Config
   * @{
   */
-#define RCC_LSI_OFF                      ((uint32_t)0x00000000)   /*!< LSI clock deactivation */
+#define RCC_LSI_OFF                      (0x00000000U)   /*!< LSI clock deactivation */
 #define RCC_LSI_ON                       RCC_CSR_LSION            /*!< LSI clock activation */
 
 /**
@@ -397,10 +396,10 @@ typedef struct
 /** @defgroup RCC_MSI_Config MSI Config
   * @{
   */
-#define RCC_MSI_OFF                      ((uint32_t)0x00000000)
-#define RCC_MSI_ON                       ((uint32_t)0x00000001)
+#define RCC_MSI_OFF                      (0x00000000U)
+#define RCC_MSI_ON                       (0x00000001U)
 
-#define RCC_MSICALIBRATION_DEFAULT       ((uint32_t)0x00000000U)   /* Default MSI calibration trimming value */
+#define RCC_MSICALIBRATION_DEFAULT       (0x00000000U)   /* Default MSI calibration trimming value */
 
 /**
   * @}
@@ -421,9 +420,9 @@ typedef struct
 /** @defgroup RCC_PLL_Config PLL Config
   * @{
   */
-#define RCC_PLL_NONE                      ((uint32_t)0x00000000)  /*!< PLL is not configured */
-#define RCC_PLL_OFF                       ((uint32_t)0x00000001)  /*!< PLL deactivation */
-#define RCC_PLL_ON                        ((uint32_t)0x00000002)  /*!< PLL activation */
+#define RCC_PLL_NONE                      (0x00000000U)  /*!< PLL is not configured */
+#define RCC_PLL_OFF                       (0x00000001U)  /*!< PLL deactivation */
+#define RCC_PLL_ON                        (0x00000002U)  /*!< PLL activation */
 
 /**
   * @}
@@ -432,10 +431,10 @@ typedef struct
 /** @defgroup RCC_System_Clock_Type System Clock Type
   * @{
   */
-#define RCC_CLOCKTYPE_SYSCLK             ((uint32_t)0x00000001) /*!< SYSCLK to configure */
-#define RCC_CLOCKTYPE_HCLK               ((uint32_t)0x00000002) /*!< HCLK to configure */
-#define RCC_CLOCKTYPE_PCLK1              ((uint32_t)0x00000004) /*!< PCLK1 to configure */
-#define RCC_CLOCKTYPE_PCLK2              ((uint32_t)0x00000008) /*!< PCLK2 to configure */
+#define RCC_CLOCKTYPE_SYSCLK             (0x00000001U) /*!< SYSCLK to configure */
+#define RCC_CLOCKTYPE_HCLK               (0x00000002U) /*!< HCLK to configure */
+#define RCC_CLOCKTYPE_PCLK1              (0x00000004U) /*!< PCLK1 to configure */
+#define RCC_CLOCKTYPE_PCLK2              (0x00000008U) /*!< PCLK2 to configure */
 
 /**
   * @}
@@ -498,7 +497,7 @@ typedef struct
 /** @defgroup RCC_HAL_EC_RTC_HSE_DIV RTC HSE Prescaler
   * @{
   */
-#define RCC_RTC_HSE_DIV_2               (uint32_t)0x00000000U /*!< HSE is divided by 2 for RTC clock  */
+#define RCC_RTC_HSE_DIV_2               (0x00000000U) /*!< HSE is divided by 2 for RTC clock  */
 #define RCC_RTC_HSE_DIV_4               RCC_CR_RTCPRE_0       /*!< HSE is divided by 4 for RTC clock  */
 #define RCC_RTC_HSE_DIV_8               RCC_CR_RTCPRE_1       /*!< HSE is divided by 8 for RTC clock  */
 #define RCC_RTC_HSE_DIV_16              RCC_CR_RTCPRE         /*!< HSE is divided by 16 for RTC clock */
@@ -509,7 +508,7 @@ typedef struct
 /** @defgroup RCC_RTC_LCD_Clock_Source RTC LCD Clock Source
   * @{
   */
-#define RCC_RTCCLKSOURCE_NO_CLK          ((uint32_t)0x00000000)                 /*!< No clock */
+#define RCC_RTCCLKSOURCE_NO_CLK          (0x00000000U)                 /*!< No clock */
 #define RCC_RTCCLKSOURCE_LSE             RCC_CSR_RTCSEL_LSE                  /*!< LSE oscillator clock used as RTC clock */
 #define RCC_RTCCLKSOURCE_LSI             RCC_CSR_RTCSEL_LSI                  /*!< LSI oscillator clock used as RTC clock */
 #define RCC_RTCCLKSOURCE_HSE_DIVX        RCC_CSR_RTCSEL_HSE                         /*!< HSE oscillator clock divided by X used as RTC clock */
@@ -554,12 +553,16 @@ typedef struct
 /** @defgroup RCC_MCO_Index MCO Index
   * @{
   */
-#define RCC_MCO1                         ((uint32_t)0x00000000)
-#define RCC_MCO2                         ((uint32_t)0x00000001)
-#if  defined(STM32L031xx) || defined(STM32L041xx) || defined(STM32L073xx) || defined(STM32L083xx) \
-  || defined(STM32L072xx) || defined(STM32L082xx) || defined(STM32L071xx) || defined(STM32L081xx)
-#define RCC_MCO3                         ((uint32_t)0x00000002)
-#endif
+#define RCC_MCO1                         (0x00000000U)
+#define RCC_MCO2                         (0x00000001U)
+#if defined(RCC_MCO3_SUPPORT)
+#define RCC_MCO3                         (0x00000002U)
+#if defined(RCC_MCO3_AF0_SUPPORT)
+#define MCO3_GPIO_AF                      GPIO_AF0_MCO
+#else
+#define MCO3_GPIO_AF                      GPIO_AF2_MCO
+#endif /* RCC_MCO3_AF0_SUPPORT */
+#endif /* RCC_MCO3_SUPPORT */
 
 /**
   * @}

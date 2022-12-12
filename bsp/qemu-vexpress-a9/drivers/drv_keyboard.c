@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -141,7 +141,7 @@ static const struct keymap map[] = {
     {0x74,  RTGUIK_RIGHT, 0, "RIGHT"   },
     {0x0d,  RTGUIK_TAB,   0, "TAB"     },
     {0x76,  RTGUIK_ESCAPE, 0, "ESC"    },
-    {0x37,  RTGUIK_POWER,  0, "POWER"  }, 
+    {0x37,  RTGUIK_POWER,  0, "POWER"  },
     {0x5a,  RTGUIK_KP_ENTER, 0, "ENTER"},
     {0x66,  RTGUIK_BACKSPACE, 0, "BACKSPACE"},
 };
@@ -431,14 +431,16 @@ int rt_hw_keyboard_init(void)
     rt_uint8_t value;
     rt_uint32_t id;
     struct keyboard_pl050_pdata_t *pdat;
-    virtual_addr_t virt = (virtual_addr_t)KEYBOARD_ADDRESS;
+    virtual_addr_t virt;
     int irq = KEYBOARD_IRQ_NUM;
-    
+
+    virt = (virtual_addr_t)rt_ioremap((void*)KEYBOARD_ADDRESS, 0x1000);
+
     id = (((read32(virt + 0xfec) & 0xff) << 24) |
                 ((read32(virt + 0xfe8) & 0xff) << 16) |
                 ((read32(virt + 0xfe4) & 0xff) <<  8) |
                 ((read32(virt + 0xfe0) & 0xff) <<  0));
-    
+
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
         LOG_E("read id fail id:0x%08x", id);

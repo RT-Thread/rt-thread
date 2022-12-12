@@ -75,8 +75,10 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
+#define RT_USING_LIBC
 #define RT_USING_DFS
-/* SECTION: DFS options */
+#define RT_USING_POSIX_DEVIO
+#define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
 
@@ -144,6 +146,5 @@
 /* the size of each pbuf in the pbuf pool. */
 #define RT_LWIP_PBUF_POOL_BUFSIZE		1500
 
-#define RT_USING_LIBC
 #define RT_USING_LWIP141
 #endif

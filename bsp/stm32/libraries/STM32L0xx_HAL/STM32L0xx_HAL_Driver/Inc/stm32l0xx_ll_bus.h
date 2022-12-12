@@ -71,7 +71,7 @@ extern "C" {
 /** @defgroup BUS_LL_EC_AHB1_GRP1_PERIPH  AHB1 GRP1 PERIPH
   * @{
   */
-#define LL_AHB1_GRP1_PERIPH_ALL            (uint32_t)0xFFFFFFFFU
+#define LL_AHB1_GRP1_PERIPH_ALL            0xFFFFFFFFU
 #define LL_AHB1_GRP1_PERIPH_DMA1           RCC_AHBENR_DMA1EN      /*!< DMA1 clock enable */
 #define LL_AHB1_GRP1_PERIPH_MIF            RCC_AHBENR_MIFEN       /*!< MIF clock enable */
 #define LL_AHB1_GRP1_PERIPH_SRAM           RCC_AHBSMENR_SRAMSMEN  /*!< Sleep Mode SRAM clock enable */
@@ -93,7 +93,7 @@ extern "C" {
 /** @defgroup BUS_LL_EC_APB1_GRP1_PERIPH  APB1 GRP1 PERIPH
   * @{
   */
-#define LL_APB1_GRP1_PERIPH_ALL            (uint32_t)0xFFFFFFFFU
+#define LL_APB1_GRP1_PERIPH_ALL            0xFFFFFFFFU
 #define LL_APB1_GRP1_PERIPH_TIM2           RCC_APB1ENR_TIM2EN     /*!< TIM2 clock enable */
 #if defined(TIM3)
 #define LL_APB1_GRP1_PERIPH_TIM3           RCC_APB1ENR_TIM3EN     /*!< TIM3 clock enable */
@@ -147,7 +147,7 @@ extern "C" {
 /** @defgroup BUS_LL_EC_APB2_GRP1_PERIPH  APB2 GRP1 PERIPH
   * @{
   */
-#define LL_APB2_GRP1_PERIPH_ALL            (uint32_t)0xFFFFFFFFU
+#define LL_APB2_GRP1_PERIPH_ALL            0xFFFFFFFFU
 #define LL_APB2_GRP1_PERIPH_SYSCFG         RCC_APB2ENR_SYSCFGEN  /*!< SYSCFG clock enable */
 #define LL_APB2_GRP1_PERIPH_TIM21          RCC_APB2ENR_TIM21EN   /*!< TIM21 clock enable */
 #if defined(TIM22)
@@ -170,7 +170,7 @@ extern "C" {
 /** @defgroup BUS_LL_EC_IOP_GRP1_PERIPH  IOP GRP1 PERIPH
   * @{
   */
-#define LL_IOP_GRP1_PERIPH_ALL             (uint32_t)0xFFFFFFFFU
+#define LL_IOP_GRP1_PERIPH_ALL             0xFFFFFFFFU
 #define LL_IOP_GRP1_PERIPH_GPIOA           RCC_IOPENR_GPIOAEN    /*!< GPIO port A control */
 #define LL_IOP_GRP1_PERIPH_GPIOB           RCC_IOPENR_GPIOBEN    /*!< GPIO port B control */
 #define LL_IOP_GRP1_PERIPH_GPIOC           RCC_IOPENR_GPIOCEN    /*!< GPIO port C control */

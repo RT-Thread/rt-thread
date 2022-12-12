@@ -1,0 +1,37 @@
+menu "RTT Posix Testcase"
+
+    config RTT_POSIX_TESTCASE
+        select RT_USING_UTEST
+        bool "RTT Posix Testcase"
+        default n
+
+    if RTT_POSIX_TESTCASE
+        # source "$RTT_DIR/examples/utest/testcases/posix/aio_h/Kconfig"        # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/arpa/Kconfig"         # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/ctype_h/Kconfig"      # reserve
+        source "$RTT_DIR/examples/utest/testcases/posix/dirent_h/Kconfig"
+        # source "$RTT_DIR/examples/utest/testcases/posix/errno_h/Kconfig"      # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/fcntl_h/Kconfig"      # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/fenv_h/Kconfig"       # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/inttypes_h/Kconfig"   # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/libgen_h/Kconfig"     # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/locale_h/Kconfig"     # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/mqueue_h/Kconfig"     # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/net/Kconfig"          # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/netdb_h/Kconfig"      # reserve
+        source "$RTT_DIR/examples/utest/testcases/posix/pthread_h/Kconfig"
+        # source "$RTT_DIR/examples/utest/testcases/posix/sched_h/Kconfig"      # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/semaphore_h/Kconfig"  # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/setjmp_h/Kconfig"     # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/signal_h/Kconfig"     # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/stdarg_h/Kconfig"     # reserve
+        source "$RTT_DIR/examples/utest/testcases/posix/stdio_h/Kconfig"
+        source "$RTT_DIR/examples/utest/testcases/posix/stdlib_h/Kconfig"
+        # source "$RTT_DIR/examples/utest/testcases/posix/string_h/Kconfig"     # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/stropts_h/Kconfig"    # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/sys/Kconfig"          # reserve
+        # source "$RTT_DIR/examples/utest/testcases/posix/time_h/Kconfig"       # reserve
+        source "$RTT_DIR/examples/utest/testcases/posix/unistd_h/Kconfig"
+    endif
+
+endmenu

@@ -35,7 +35,7 @@ float f_var2;
 float f_var3;
 float f_var4;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread_led1_stack[1024];
 struct rt_thread thread_led1;
 static void rt_thread_entry_led1(void* parameter)

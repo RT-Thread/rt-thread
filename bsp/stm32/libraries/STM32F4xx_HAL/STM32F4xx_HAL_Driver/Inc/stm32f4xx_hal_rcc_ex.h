@@ -103,7 +103,7 @@ typedef struct
   */
 typedef struct
 {
-  uint32_t PLLSAIM;    /*!< Spcifies division factor for PLL VCO input clock.
+  uint32_t PLLSAIM;    /*!< Specifies division factor for PLL VCO input clock.
                             This parameter must be a number between Min_Data = 2 and Max_Data = 63       */
 
   uint32_t PLLSAIN;    /*!< Specifies the multiplication factor for PLLI2S VCO output clock.
@@ -4969,7 +4969,6 @@ typedef struct
                                       tmpreg = READ_BIT(RCC->APB1ENR, RCC_APB1ENR_RTCAPBEN);\
                                       UNUSED(tmpreg); \
                                       } while(0U)
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_CLK_ENABLE() do { \
                                       __IO uint32_t tmpreg = 0x00U; \
                                       SET_BIT(RCC->APB1ENR, RCC_APB1ENR_USART3EN);\
@@ -4977,7 +4976,6 @@ typedef struct
                                       tmpreg = READ_BIT(RCC->APB1ENR, RCC_APB1ENR_USART3EN);\
                                       UNUSED(tmpreg); \
                                       } while(0U)
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx || STM32F423xx */
 
 #if defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_UART4_CLK_ENABLE()  do { \
@@ -5098,9 +5096,7 @@ typedef struct
 #endif /* STM32F413xx || STM32F423xx */
 #define __HAL_RCC_RTCAPB_CLK_DISABLE()  (RCC->APB1ENR &= ~(RCC_APB1ENR_RTCAPBEN))                                       
 #define __HAL_RCC_SPI3_CLK_DISABLE()    (RCC->APB1ENR &= ~(RCC_APB1ENR_SPI3EN))
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_CLK_DISABLE()  (RCC->APB1ENR &= ~(RCC_APB1ENR_USART3EN))
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx || STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)   
 #define __HAL_RCC_UART4_CLK_DISABLE()   (RCC->APB1ENR &= ~(RCC_APB1ENR_UART4EN))
 #define __HAL_RCC_UART5_CLK_DISABLE()   (RCC->APB1ENR &= ~(RCC_APB1ENR_UART5EN))
@@ -5140,9 +5136,7 @@ typedef struct
 #endif /* STM32F413xx || STM32F423xx */                                            
 #define __HAL_RCC_RTCAPB_IS_CLK_ENABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_RTCAPBEN)) != RESET)                                    
 #define __HAL_RCC_SPI3_IS_CLK_ENABLED()    ((RCC->APB1ENR & (RCC_APB1ENR_SPI3EN)) != RESET)
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_IS_CLK_ENABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_USART3EN)) != RESET)
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx | STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_UART4_IS_CLK_ENABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_UART4EN)) != RESET) 
 #define __HAL_RCC_UART5_IS_CLK_ENABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_UART5EN)) != RESET) 
@@ -5171,9 +5165,7 @@ typedef struct
 #endif /* STM32F413xx || STM32F423xx */                                         
 #define __HAL_RCC_RTCAPB_IS_CLK_DISABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_RTCAPBEN)) == RESET)                                        
 #define __HAL_RCC_SPI3_IS_CLK_DISABLED()    ((RCC->APB1ENR & (RCC_APB1ENR_SPI3EN)) == RESET)
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_IS_CLK_DISABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_USART3EN)) == RESET)
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx | STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)                                           
 #define __HAL_RCC_UART4_IS_CLK_DISABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_UART4EN)) == RESET) 
 #define __HAL_RCC_UART5_IS_CLK_DISABLED()  ((RCC->APB1ENR & (RCC_APB1ENR_UART5EN)) == RESET) 
@@ -5445,9 +5437,7 @@ typedef struct
 #define __HAL_RCC_LPTIM1_FORCE_RESET()   (RCC->APB1RSTR |= (RCC_APB1RSTR_LPTIM1RST)) 
 #endif /* STM32F413xx || STM32F423xx */                                        
 #define __HAL_RCC_SPI3_FORCE_RESET()     (RCC->APB1RSTR |= (RCC_APB1RSTR_SPI3RST))                                        
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_FORCE_RESET()   (RCC->APB1RSTR |= (RCC_APB1RSTR_USART3RST))
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx || STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_UART4_FORCE_RESET()    (RCC->APB1RSTR |= (RCC_APB1RSTR_UART4RST))
 #define __HAL_RCC_UART5_FORCE_RESET()    (RCC->APB1RSTR |= (RCC_APB1RSTR_UART5RST))                                        
@@ -5475,9 +5465,7 @@ typedef struct
 #define __HAL_RCC_LPTIM1_RELEASE_RESET()  (RCC->APB1RSTR &= ~(RCC_APB1RSTR_LPTIM1RST))
 #endif /* STM32F413xx || STM32F423xx */                                        
 #define __HAL_RCC_SPI3_RELEASE_RESET()    (RCC->APB1RSTR &= ~(RCC_APB1RSTR_SPI3RST))
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_RELEASE_RESET()  (RCC->APB1RSTR &= ~(RCC_APB1RSTR_USART3RST))
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx || STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_UART4_RELEASE_RESET()   (RCC->APB1RSTR &= ~(RCC_APB1RSTR_UART4RST))
 #define __HAL_RCC_UART5_RELEASE_RESET()   (RCC->APB1RSTR &= ~(RCC_APB1RSTR_UART5RST))
@@ -5633,9 +5621,7 @@ typedef struct
 #endif /* STM32F413xx || STM32F423xx */                                        
 #define __HAL_RCC_RTCAPB_CLK_SLEEP_ENABLE()  (RCC->APB1LPENR |= (RCC_APB1LPENR_RTCAPBLPEN))
 #define __HAL_RCC_SPI3_CLK_SLEEP_ENABLE()    (RCC->APB1LPENR |= (RCC_APB1LPENR_SPI3LPEN))                                       
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_CLK_SLEEP_ENABLE()  (RCC->APB1LPENR |= (RCC_APB1LPENR_USART3LPEN))
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx || STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_UART4_CLK_SLEEP_ENABLE()   (RCC->APB1LPENR |= (RCC_APB1LPENR_UART4LPEN))
 #define __HAL_RCC_UART5_CLK_SLEEP_ENABLE()   (RCC->APB1LPENR |= (RCC_APB1LPENR_UART5LPEN))
@@ -5664,9 +5650,7 @@ typedef struct
 #endif /* STM32F413xx || STM32F423xx */                                        
 #define __HAL_RCC_RTCAPB_CLK_SLEEP_DISABLE() (RCC->APB1LPENR &= ~(RCC_APB1LPENR_RTCAPBLPEN))
 #define __HAL_RCC_SPI3_CLK_SLEEP_DISABLE()   (RCC->APB1LPENR &= ~(RCC_APB1LPENR_SPI3LPEN))                                        
-#if defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_USART3_CLK_SLEEP_DISABLE() (RCC->APB1LPENR &= ~(RCC_APB1LPENR_USART3LPEN))
-#endif /* STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F413xx || STM32F423xx */
 #if defined(STM32F413xx) || defined(STM32F423xx)
 #define __HAL_RCC_UART4_CLK_SLEEP_DISABLE()  (RCC->APB1LPENR &= ~(RCC_APB1LPENR_UART4LPEN))
 #define __HAL_RCC_UART5_CLK_SLEEP_DISABLE()  (RCC->APB1LPENR &= ~(RCC_APB1LPENR_UART5LPEN))
@@ -6384,7 +6368,7 @@ typedef struct
   * @param  __DFSDM1_CLKSOURCE__ specifies the DFSDM1 clock source.
   *         This parameter can be one of the following values:
   *            @arg RCC_DFSDM1CLKSOURCE_PCLK2: PCLK2 clock used as kernel clock. 
-  *            @arg RCC_DFSDM1CLKSOURCE_SYSCLK: System clock used as kernal clock.
+  *            @arg RCC_DFSDM1CLKSOURCE_SYSCLK: System clock used as kernel clock.
   * @retval None
   */
 #define __HAL_RCC_DFSDM1_CONFIG(__DFSDM1_CLKSOURCE__)  MODIFY_REG(RCC->DCKCFGR, RCC_DCKCFGR_CKDFSDM1SEL, (__DFSDM1_CLKSOURCE__))
@@ -6392,7 +6376,7 @@ typedef struct
 /** @brief  Macro to get the DFSDM1 clock source.
   * @retval The clock source can be one of the following values:
   *            @arg RCC_DFSDM1CLKSOURCE_PCLK2: PCLK2 clock used as kernel clock. 
-  *            @arg RCC_DFSDM1CLKSOURCE_SYSCLK: System clock used as kernal clock.
+  *            @arg RCC_DFSDM1CLKSOURCE_SYSCLK: System clock used as kernel clock.
   */
 #define __HAL_RCC_GET_DFSDM1_SOURCE() ((uint32_t)(READ_BIT(RCC->DCKCFGR, RCC_DCKCFGR_CKDFSDM1SEL)))
 
@@ -6420,7 +6404,7 @@ typedef struct
   * @param  __DFSDM2_CLKSOURCE__ specifies the DFSDM1 clock source.
   *         This parameter can be one of the following values:
   *            @arg RCC_DFSDM2CLKSOURCE_PCLK2: PCLK2 clock used as kernel clock. 
-  *            @arg RCC_DFSDM2CLKSOURCE_SYSCLK: System clock used as kernal clock.
+  *            @arg RCC_DFSDM2CLKSOURCE_SYSCLK: System clock used as kernel clock.
   * @retval None
   */
 #define __HAL_RCC_DFSDM2_CONFIG(__DFSDM2_CLKSOURCE__)  MODIFY_REG(RCC->DCKCFGR, RCC_DCKCFGR_CKDFSDM1SEL, (__DFSDM2_CLKSOURCE__))
@@ -6428,7 +6412,7 @@ typedef struct
 /** @brief  Macro to get the DFSDM2 clock source.
   * @retval The clock source can be one of the following values:
   *            @arg RCC_DFSDM2CLKSOURCE_PCLK2: PCLK2 clock used as kernel clock. 
-  *            @arg RCC_DFSDM2CLKSOURCE_SYSCLK: System clock used as kernal clock.
+  *            @arg RCC_DFSDM2CLKSOURCE_SYSCLK: System clock used as kernel clock.
   */
 #define __HAL_RCC_GET_DFSDM2_SOURCE() ((uint32_t)(READ_BIT(RCC->DCKCFGR, RCC_DCKCFGR_CKDFSDM1SEL)))
 
@@ -6867,16 +6851,8 @@ HAL_StatusTypeDef HAL_RCCEx_DisablePLLSAI(void);
 /** @defgroup RCCEx_IS_RCC_Definitions RCC Private macros to check input parameters
   * @{
   */
-#if defined(STM32F411xE)
-#define IS_RCC_PLLN_VALUE(VALUE) ((192U <= (VALUE)) && ((VALUE) <= 432U))
-#define IS_RCC_PLLI2SN_VALUE(VALUE) ((192U <= (VALUE)) && ((VALUE) <= 432U))      
-#else /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F427xx || STM32F437xx ||
-         STM32F429xx || STM32F439xx || STM32F401xC || STM32F401xE || STM32F410Tx || STM32F410Cx || 
-         STM32F410Rx || STM32F446xx || STM32F469xx || STM32F479xx || STM32F412Cx || STM32F412Rx || 
-         STM32F412Vx || STM32F412Zx || STM32F413xx || STM32F423xx */
 #define IS_RCC_PLLN_VALUE(VALUE) ((50U <= (VALUE)) && ((VALUE) <= 432U))
 #define IS_RCC_PLLI2SN_VALUE(VALUE) ((50U <= (VALUE)) && ((VALUE) <= 432U))
-#endif  /* STM32F411xE */    
       
 #if defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx)|| defined(STM32F439xx)
 #define IS_RCC_PERIPHCLOCK(SELECTION) ((1U <= (SELECTION)) && ((SELECTION) <= 0x0000007FU))

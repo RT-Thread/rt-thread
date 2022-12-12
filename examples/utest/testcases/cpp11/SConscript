@@ -1,0 +1,13 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+thread_tc.cpp
+''')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = ['UTEST_CPP11_THREAD_TC'], CPPPATH = CPPPATH)
+
+Return('group')

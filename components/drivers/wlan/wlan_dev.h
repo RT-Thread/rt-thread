@@ -44,7 +44,9 @@ typedef enum
     RT_WLAN_CMD_SET_COUNTRY,
     RT_WLAN_CMD_GET_COUNTRY,
     RT_WLAN_CMD_SET_MAC,
-    RT_WLAN_CMD_GET_MAC
+    RT_WLAN_CMD_GET_MAC,
+    RT_WLAN_CMD_GET_FAST_CONNECT_INFO,
+    RT_WLAN_CMD_FAST_CONNECT,
 } rt_wlan_cmd_t;
 
 typedef enum
@@ -509,6 +511,8 @@ struct rt_wlan_dev_ops
     int (*wlan_recv)(struct rt_wlan_device *wlan, void *buff, int len);
     int (*wlan_send)(struct rt_wlan_device *wlan, void *buff, int len);
     int (*wlan_send_raw_frame)(struct rt_wlan_device *wlan, void *buff, int len);
+    int (*wlan_get_fast_info)(void *data);
+    rt_err_t (*wlan_fast_connect)(void *data,rt_int32_t len);
 };
 
 /*
@@ -520,6 +524,7 @@ rt_err_t rt_wlan_dev_init(struct rt_wlan_device *device, rt_wlan_mode_t mode);
  * wlan device station interface
  */
 rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len);
+rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len);
 rt_err_t rt_wlan_dev_disconnect(struct rt_wlan_device *device);
 int rt_wlan_dev_get_rssi(struct rt_wlan_device *device);
 

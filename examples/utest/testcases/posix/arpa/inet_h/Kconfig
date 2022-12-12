@@ -1,0 +1,11 @@
+menuconfig RTT_POSIX_TESTCASE_ARPA_INET_H
+    bool "<arpa/inet.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_ARPA_INET_H
+
+    config ARPA_INET_H_INTERFACE
+    bool "<arpa/inet.h> -> htonl, htons, ntohl, ntohs, inet_addr, inet_ntoa, inet_ntop, inet_pton"
+    default n
+
+endif

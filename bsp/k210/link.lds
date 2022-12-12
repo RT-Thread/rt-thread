@@ -44,6 +44,18 @@ SECTIONS
         *(.glue_7)
         *(.glue_7t)
         *(.gnu.linkonce.t*)
+
+        . = ALIGN(8);
+
+        PROVIDE(__ctors_start__ = .);
+        /* old GCC version uses .ctors */
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        /* new GCC version uses .init_array */
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+        
      
         /* section information for finsh shell */
         . = ALIGN(8);
@@ -63,6 +75,13 @@ SECTIONS
         __rt_init_end = .;
         . = ALIGN(8);
 
+
+        __spi_func_start = .;
+        KEEP(*(.spi_call))
+        __spi_func_end = .;
+
+        . = ALIGN(8);
+        
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
         __rt_utest_tc_tab_end = .;
@@ -93,6 +112,12 @@ SECTIONS
 
         *(.sdata)
         *(.sdata.*)
+
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+        
     } > SRAM
 
     /* stack for dual core */

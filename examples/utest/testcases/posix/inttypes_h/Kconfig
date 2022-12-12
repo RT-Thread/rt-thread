@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_INTTYPES_H
+    bool "<inttypes.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_INTTYPES_H
+
+# function, TODO
+
+endif

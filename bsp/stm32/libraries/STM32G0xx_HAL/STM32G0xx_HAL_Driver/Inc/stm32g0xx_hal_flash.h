@@ -48,6 +48,9 @@ typedef struct
 {
   uint32_t TypeErase;   /*!< Mass erase or page erase.
                              This parameter can be a value of @ref FLASH_Type_Erase */
+  uint32_t Banks;       /*!< Select bank to erase.
+                             This parameter must be a value of @ref FLASH_Banks
+                             (FLASH_BANK_BOTH should be used only for mass erase) */
   uint32_t Page;        /*!< Initial Flash page to erase when page erase is enabled
                              This parameter must be a value between 0 and (FLASH_PAGE_NB - 1) */
   uint32_t NbPages;     /*!< Number of pages to be erased.
@@ -85,6 +88,8 @@ typedef struct
                                    @ref FLASH_OB_USER_IWDG_STANDBY,
                                    @ref FLASH_OB_USER_WWDG_SW,
                                    @ref FLASH_OB_USER_SRAM_PARITY,
+                                   @ref FLASH_OB_USER_BANK_SWAP(*),
+                                   @ref FLASH_OB_USER_DUAL_BANK(*),
                                    @ref FLASH_OB_USER_nBOOT_SEL,
                                    @ref FLASH_OB_USER_nBOOT1,
                                    @ref FLASH_OB_USER_nBOOT0,
@@ -103,24 +108,40 @@ typedef struct
                                    to protect. Make sure this parameter is multiple of PCROP granularity: 512 Bytes.*/
   uint32_t PCROP1BEndAddr;    /*!< PCROP End address (used for OPTIONBYTE_PCROP). It represents first address of end block
                                    to protect. Make sure this parameter is multiple of PCROP granularity: 512 Bytes.*/
-#endif
+#if defined(FLASH_DBANK_SUPPORT)
+  uint32_t PCROP2AStartAddr;  /*!< PCROP Start address (used for OPTIONBYTE_PCROP). It represents first address of start block
+                                   to protect. Make sure this parameter is multiple of PCROP granularity: 512 Bytes.*/
+  uint32_t PCROP2AEndAddr;    /*!< PCROP End address (used for OPTIONBYTE_PCROP). It represents first address of end block
+                                   to protect. Make sure this parameter is multiple of PCROP granularity: 512 Bytes.*/
+  uint32_t PCROP2BStartAddr;  /*!< PCROP Start address (used for OPTIONBYTE_PCROP). It represents first address of start block
+                                   to protect. Make sure this parameter is multiple of PCROP granularity: 512 Bytes.*/
+  uint32_t PCROP2BEndAddr;    /*!< PCROP End address (used for OPTIONBYTE_PCROP). It represents first address of end block
+                                   to protect. Make sure this parameter is multiple of PCROP granularity: 512 Bytes.*/
+#endif /* FLASH_DBANK_SUPPORT */
+#endif /* FLASH_PCROP_SUPPORT */
 #if defined(FLASH_SECURABLE_MEMORY_SUPPORT)
   uint32_t BootEntryPoint;    /*!< Allow to force a unique boot entry point to Flash or system Flash */
   uint32_t SecSize;           /*!< This parameter defines securable memory area width in number of pages starting from Flash base address.
                                    This parameter must be a value between [0] and [FLASH_PAGE_NB],
                                    [0] meaning no secure area defined, [1] meaning first page only protected, etc... */
-#endif
+#if defined(FLASH_DBANK_SUPPORT)
+  uint32_t SecSize2;           /*!< This parameter defines securable memory area width in number of pages starting from 2nd Bank start address.
+                                   This parameter must be a value between [0] and [FLASH_PAGE_NB],
+                                   [0] meaning no secure area defined, [1] meaning first page only protected, etc... */
+#endif /* FLASH_SECURABLE_MEMORY_SUPPORT */
+#endif /* FLASH_DBANK_SUPPORT */
 } FLASH_OBProgramInitTypeDef;
 
 /**
-* @brief  FLASH handle Structure definition
-*/
+  * @brief  FLASH handle Structure definition
+  */
 typedef struct
 {
   HAL_LockTypeDef   Lock;              /* FLASH locking object */
   uint32_t          ErrorCode;         /* FLASH error code */
   uint32_t          ProcedureOnGoing;  /* Internal variable to indicate which procedure is ongoing or not in IT context */
   uint32_t          Address;           /* Internal variable to save address selected for program in IT context */
+  uint32_t          Banks;             /* Internal variable to save current bank selected during erase in IT context */
   uint32_t          Page;              /* Internal variable to define the current page which is erasing in IT context */
   uint32_t          NbPagesToErase;    /* Internal variable to save the remaining pages to erase in IT context */
 } FLASH_ProcessTypeDef;
@@ -149,9 +170,9 @@ typedef struct
 /** @defgroup FLASH_Latency FLASH Latency
   * @{
   */
-#define FLASH_LATENCY_0                 0x00000000UL                                /*!< FLASH Zero wait state */
-#define FLASH_LATENCY_1                 FLASH_ACR_LATENCY_0                         /*!< FLASH One wait state */
-#define FLASH_LATENCY_2                 FLASH_ACR_LATENCY_1                         /*!< FLASH Two wait states */
+#define FLASH_LATENCY_0                 0x00000000UL        /*!< FLASH Zero wait state */
+#define FLASH_LATENCY_1                 FLASH_ACR_LATENCY_0 /*!< FLASH One wait state */
+#define FLASH_LATENCY_2                 FLASH_ACR_LATENCY_1 /*!< FLASH Two wait states */
 /**
   * @}
   */
@@ -159,36 +180,36 @@ typedef struct
 /** @defgroup FLASH_Flags FLASH Flags Definition
   * @{
   */
-#define FLASH_FLAG_EOP                  FLASH_SR_EOP      /*!< FLASH End of operation flag */
-#define FLASH_FLAG_OPERR                FLASH_SR_OPERR    /*!< FLASH Operation error flag */
-#define FLASH_FLAG_PROGERR              FLASH_SR_PROGERR  /*!< FLASH Programming error flag */
-#define FLASH_FLAG_WRPERR               FLASH_SR_WRPERR   /*!< FLASH Write protection error flag */
-#define FLASH_FLAG_PGAERR               FLASH_SR_PGAERR   /*!< FLASH Programming alignment error flag */
-#define FLASH_FLAG_SIZERR               FLASH_SR_SIZERR   /*!< FLASH Size error flag  */
-#define FLASH_FLAG_PGSERR               FLASH_SR_PGSERR   /*!< FLASH Programming sequence error flag */
-#define FLASH_FLAG_MISERR               FLASH_SR_MISERR   /*!< FLASH Fast programming data miss error flag */
-#define FLASH_FLAG_FASTERR              FLASH_SR_FASTERR  /*!< FLASH Fast programming error flag */
+#define FLASH_FLAG_EOP                  ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_EOP_Pos)         /*!< FLASH End of operation flag */
+#define FLASH_FLAG_OPERR                ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_OPERR_Pos)       /*!< FLASH Operation error flag */
+#define FLASH_FLAG_PROGERR              ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_PROGERR_Pos)     /*!< FLASH Programming error flag */
+#define FLASH_FLAG_WRPERR               ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_WRPERR_Pos)      /*!< FLASH Write protection error flag */
+#define FLASH_FLAG_PGAERR               ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_PGAERR_Pos)      /*!< FLASH Programming alignment error flag */
+#define FLASH_FLAG_SIZERR               ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_SIZERR_Pos)      /*!< FLASH Size error flag  */
+#define FLASH_FLAG_PGSERR               ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_PGSERR_Pos)      /*!< FLASH Programming sequence error flag */
+#define FLASH_FLAG_MISERR               ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_MISERR_Pos)      /*!< FLASH Fast programming data miss error flag */
+#define FLASH_FLAG_FASTERR              ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_FASTERR_Pos)     /*!< FLASH Fast programming error flag */
 #if defined(FLASH_PCROP_SUPPORT)
-#define FLASH_FLAG_RDERR                FLASH_SR_RDERR    /*!< FLASH PCROP read error flag */
+#define FLASH_FLAG_RDERR                ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_RDERR_Pos)       /*!< FLASH PCROP read error flag */
 #endif /* FLASH_PCROP_SUPPORT */
-#define FLASH_FLAG_OPTVERR              FLASH_SR_OPTVERR  /*!< FLASH Option validity error flag */
-#define FLASH_FLAG_BSY                  FLASH_SR_BSY1     /*!< FLASH Operation Busy flag */
-#define FLASH_FLAG_CFGBSY               FLASH_SR_CFGBSY   /*!< FLASH Configuration Busy flag */
-#define FLASH_FLAG_ECCC                 FLASH_ECCR_ECCC   /*!< FLASH ECC correction */
-#define FLASH_FLAG_ECCD                 FLASH_ECCR_ECCD   /*!< FLASH ECC detection */
-
-#if defined(FLASH_PCROP_SUPPORT)
-#define FLASH_FLAG_ALL_ERRORS           (FLASH_FLAG_OPERR   | FLASH_FLAG_PROGERR | FLASH_FLAG_WRPERR | \
-                                         FLASH_FLAG_PGAERR  | FLASH_FLAG_SIZERR  | FLASH_FLAG_PGSERR | \
-                                         FLASH_FLAG_MISERR  | FLASH_FLAG_FASTERR | FLASH_FLAG_RDERR  | \
-                                         FLASH_FLAG_OPTVERR | FLASH_FLAG_ECCC    | FLASH_FLAG_ECCD)
-#else
-#define FLASH_FLAG_ALL_ERRORS           (FLASH_FLAG_OPERR   | FLASH_FLAG_PROGERR | FLASH_FLAG_WRPERR | \
-                                         FLASH_FLAG_PGAERR  | FLASH_FLAG_SIZERR  | FLASH_FLAG_PGSERR | \
-                                         FLASH_FLAG_MISERR  | FLASH_FLAG_FASTERR | \
-                                         FLASH_FLAG_OPTVERR | FLASH_FLAG_ECCC    | FLASH_FLAG_ECCD)
-
-#endif /* FLASH_PCROP_SUPPORT */
+#define FLASH_FLAG_OPTVERR              ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_OPTVERR_Pos)     /*!< FLASH Option validity error flag */
+#define FLASH_FLAG_BSY1                 ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_BSY1_Pos)        /*!< FLASH Operation Busy flag for Bank 1 */
+#if defined(FLASH_DBANK_SUPPORT)
+#define FLASH_FLAG_BSY2                  ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_BSY2_Pos)       /*!< FLASH Operation Busy flag for Bank 2 */
+#endif /* FLASH_DBANK_SUPPORT */
+#define FLASH_FLAG_BSY                  FLASH_FLAG_BSY1                                                       /*!< FLASH Operation Busy flag - legacy name for single bank */
+#define FLASH_FLAG_CFGBSY               ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_CFGBSY_Pos)      /*!< FLASH Configuration Busy flag */
+#if defined(FLASH_DBANK_SUPPORT)
+#define FLASH_FLAG_PESD                 ((FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS) | FLASH_SR_PESD_Pos)        /*!< FLASH Programming/erase operation suspended */
+#endif /* FLASH_DBANK_SUPPORT */
+#define FLASH_FLAG_ECCC1                ((FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS) | FLASH_ECCR_ECCC_Pos)   /*!< FLASH ECC correction on bank 1 */
+#define FLASH_FLAG_ECCD1                ((FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS) | FLASH_ECCR_ECCD_Pos)   /*!< FLASH ECC detection on bank 1 */
+#if defined(FLASH_DBANK_SUPPORT)
+#define FLASH_FLAG_ECCC2                ((FLASH_FLAG_ECCR2_ID << FLASH_FLAG_REG_POS) | FLASH_ECC2R_ECCC_Pos)  /*!< FLASH ECC correction on bank 2 */
+#define FLASH_FLAG_ECCD2                ((FLASH_FLAG_ECCR2_ID << FLASH_FLAG_REG_POS) | FLASH_ECC2R_ECCD_Pos)  /*!< FLASH ECC detection on bank 2 */
+#endif /* FLASH_DBANK_SUPPORT */
+#define FLASH_FLAG_ECCC                 FLASH_FLAG_ECCC1   /*!< FLASH ECC correction - legacy name for single bank */
+#define FLASH_FLAG_ECCD                 FLASH_FLAG_ECCD1   /*!< FLASH ECC detection - legacy name for single bank */
 /**
   * @}
   */
@@ -197,12 +218,16 @@ typedef struct
   * @brief FLASH Interrupt definition
   * @{
   */
-#define FLASH_IT_EOP                    FLASH_CR_EOPIE              /*!< End of FLASH Operation Interrupt source */
-#define FLASH_IT_OPERR                  FLASH_CR_ERRIE              /*!< Error Interrupt source */
+#define FLASH_IT_EOP                    ((FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS) | FLASH_CR_EOPIE_Pos)         /*!< End of FLASH Operation Interrupt source */
+#define FLASH_IT_OPERR                  ((FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS) | FLASH_CR_ERRIE_Pos)         /*!< Error Interrupt source */
 #if defined(FLASH_PCROP_SUPPORT)
-#define FLASH_IT_RDERR                  FLASH_CR_RDERRIE            /*!< PCROP Read Error Interrupt source*/
-#endif
-#define FLASH_IT_ECCC                   (FLASH_ECCR_ECCCIE >> FLASH_ECCR_ECCCIE_Pos)   /*!< ECC Correction Interrupt source */
+#define FLASH_IT_RDERR                  ((FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS) | FLASH_CR_RDERRIE_Pos)       /*!< PCROP Read Error Interrupt source*/
+#endif /* FLASH_PCROP_SUPPORT */
+#define FLASH_IT_ECCC1                  ((FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS) | FLASH_ECCR_ECCCIE_Pos)   /*!< ECC Correction on Bank 1 Interrupt source */
+#if defined(FLASH_DBANK_SUPPORT)
+#define FLASH_IT_ECCC2                  ((FLASH_FLAG_ECCR2_ID << FLASH_FLAG_REG_POS) | FLASH_ECC2R_ECCCIE_Pos)  /*!< ECC Correction on Bank 2 Interrupt source */
+#endif /* FLASH_DBANK_SUPPORT */
+#define FLASH_IT_ECCC                   FLASH_IT_ECCC1                                                          /*!< ECC Correction - legacy name for single bank */
 /**
   * @}
   */
@@ -211,19 +236,19 @@ typedef struct
   * @{
   */
 #define HAL_FLASH_ERROR_NONE            0x00000000U
-#define HAL_FLASH_ERROR_OP              FLASH_FLAG_OPERR
-#define HAL_FLASH_ERROR_PROG            FLASH_FLAG_PROGERR
-#define HAL_FLASH_ERROR_WRP             FLASH_FLAG_WRPERR
-#define HAL_FLASH_ERROR_PGA             FLASH_FLAG_PGAERR
-#define HAL_FLASH_ERROR_SIZ             FLASH_FLAG_SIZERR
-#define HAL_FLASH_ERROR_PGS             FLASH_FLAG_PGSERR
-#define HAL_FLASH_ERROR_MIS             FLASH_FLAG_MISERR
-#define HAL_FLASH_ERROR_FAST            FLASH_FLAG_FASTERR
+#define HAL_FLASH_ERROR_OP              FLASH_SR_EOP
+#define HAL_FLASH_ERROR_PROG            FLASH_SR_PROGERR
+#define HAL_FLASH_ERROR_WRP             FLASH_SR_WRPERR
+#define HAL_FLASH_ERROR_PGA             FLASH_SR_PGAERR
+#define HAL_FLASH_ERROR_SIZ             FLASH_SR_SIZERR
+#define HAL_FLASH_ERROR_PGS             FLASH_SR_PGSERR
+#define HAL_FLASH_ERROR_MIS             FLASH_SR_MISERR
+#define HAL_FLASH_ERROR_FAST            FLASH_SR_FASTERR
 #if defined(FLASH_PCROP_SUPPORT)
-#define HAL_FLASH_ERROR_RD              FLASH_FLAG_RDERR
-#endif
-#define HAL_FLASH_ERROR_OPTV            FLASH_FLAG_OPTVERR
-#define HAL_FLASH_ERROR_ECCD            FLASH_FLAG_ECCD
+#define HAL_FLASH_ERROR_RD              FLASH_SR_RDERR
+#endif /* FLASH_PCROP_SUPPORT */
+#define HAL_FLASH_ERROR_OPTV            FLASH_SR_OPTVERR
+#define HAL_FLASH_ERROR_ECCD            FLASH_ECCR_ECCD
 /**
   * @}
   */
@@ -236,6 +261,18 @@ typedef struct
 /**
   * @}
   */
+
+/** @defgroup FLASH_Banks FLASH Banks
+  * @{
+  */
+#define FLASH_BANK_1                    FLASH_CR_MER1   /*!< Bank 1 */
+#if defined(FLASH_DBANK_SUPPORT)
+#define FLASH_BANK_2                    FLASH_CR_MER2   /*!< Bank 2 */
+#endif /* FLASH_DBANK_SUPPORT */
+/**
+  * @}
+  */
+
 
 /** @defgroup FLASH_Type_Program FLASH Program Type
   * @{
@@ -254,17 +291,17 @@ typedef struct
 #define OPTIONBYTE_USER                 0x00000004U  /*!< USER option byte configuration */
 #if defined(FLASH_PCROP_SUPPORT)
 #define OPTIONBYTE_PCROP                0x00000008U  /*!< PCROP option byte configuration */
-#endif
+#endif /* FLASH_PCROP_SUPPORT */
 #if defined(FLASH_SECURABLE_MEMORY_SUPPORT)
 #define OPTIONBYTE_SEC                  0x00000010U  /*!< SEC option byte configuration */
-#endif
+#endif /* FLASH_SECURABLE_MEMORY_SUPPORT */
 
-#if defined(STM32G071xx) || defined(STM32G081xx) || defined(STM32G031xx) || defined(STM32G041xx)
-#define OPTIONBYTE_ALL                  (OPTIONBYTE_WRP  | OPTIONBYTE_RDP | OPTIONBYTE_USER | \
-                                        OPTIONBYTE_PCROP | OPTIONBYTE_SEC)                   /*!< All option byte configuration */
-#elif defined (STM32G070xx) || defined (STM32G030xx)
-#define OPTIONBYTE_ALL                  (OPTIONBYTE_WRP  | OPTIONBYTE_RDP | OPTIONBYTE_USER) /*!< All option byte configuration */
-#endif
+#if defined(FLASH_PCROP_SUPPORT) && defined(FLASH_SECURABLE_MEMORY_SUPPORT)
+#define OPTIONBYTE_ALL                  (OPTIONBYTE_WRP   | OPTIONBYTE_RDP | OPTIONBYTE_USER | \
+                                         OPTIONBYTE_PCROP | OPTIONBYTE_SEC)                   /*!< All option byte configuration */
+#else
+#define OPTIONBYTE_ALL                  (OPTIONBYTE_WRP   | OPTIONBYTE_RDP | OPTIONBYTE_USER) /*!< All option byte configuration */
+#endif /* FLASH_PCROP_SUPPORT && FLASH_SECURABLE_MEMORY_SUPPORT */
 /**
   * @}
   */
@@ -274,6 +311,10 @@ typedef struct
   */
 #define OB_WRPAREA_ZONE_A               0x00000001U  /*!< Flash Zone A */
 #define OB_WRPAREA_ZONE_B               0x00000002U  /*!< Flash Zone B */
+#if defined(FLASH_DBANK_SUPPORT)
+#define OB_WRPAREA_ZONE2_A              0x00000004U  /*!< Flash Bank 2 Zone A */
+#define OB_WRPAREA_ZONE2_B              0x00000008U  /*!< Flash Bank 2 Zone B */
+#endif /* FLASH_DBANK_SUPPORT */
 /**
   * @}
   */
@@ -295,39 +336,62 @@ typedef struct
 #if defined(PWR_BOR_SUPPORT)
 #define OB_USER_BOR_EN                  FLASH_OPTR_BOR_EN                           /*!< BOR reset enable */
 #define OB_USER_BOR_LEV                 (FLASH_OPTR_BORF_LEV | FLASH_OPTR_BORR_LEV) /*!< BOR reset Level */
-#endif
+#endif /* PWR_BOR_SUPPORT */
 #define OB_USER_nRST_STOP               FLASH_OPTR_nRST_STOP                        /*!< Reset generated when entering the stop mode */
 #define OB_USER_nRST_STDBY              FLASH_OPTR_nRST_STDBY                       /*!< Reset generated when entering the standby mode */
 #if defined(PWR_SHDW_SUPPORT)
 #define OB_USER_nRST_SHDW               FLASH_OPTR_nRST_SHDW                        /*!< Reset generated when entering the shutdown mode */
-#endif
+#endif /* PWR_SHDW_SUPPORT */
 #define OB_USER_IWDG_SW                 FLASH_OPTR_IWDG_SW                          /*!< Independent watchdog selection */
 #define OB_USER_IWDG_STOP               FLASH_OPTR_IWDG_STOP                        /*!< Independent watchdog counter freeze in stop mode */
 #define OB_USER_IWDG_STDBY              FLASH_OPTR_IWDG_STDBY                       /*!< Independent watchdog counter freeze in standby mode */
 #define OB_USER_WWDG_SW                 FLASH_OPTR_WWDG_SW                          /*!< Window watchdog selection */
+#if defined(FLASH_DBANK_SUPPORT)
+#define OB_USER_BANK_SWAP               FLASH_OPTR_nSWAP_BANK                       /*!< Swap bank memory addresses */
+#define OB_USER_DUAL_BANK               FLASH_OPTR_DUAL_BANK                        /*!< Select single or dual bank (depending of device memory size) */
+#endif /* FLASH_DBANK_SUPPORT */
 #define OB_USER_RAM_PARITY_CHECK        FLASH_OPTR_RAM_PARITY_CHECK                 /*!< Sram parity check control */
 #define OB_USER_nBOOT_SEL               FLASH_OPTR_nBOOT_SEL                        /*!< Boot Selection */
 #define OB_USER_nBOOT1                  FLASH_OPTR_nBOOT1                           /*!< nBoot1 configuration */
 #define OB_USER_nBOOT0                  FLASH_OPTR_nBOOT0                           /*!< nBoot0 configuration */
 #if defined(GPIO_NRST_CONFIG_SUPPORT)
 #define OB_USER_NRST_MODE               FLASH_OPTR_NRST_MODE                        /*!< Reset pin configuration */
-#endif
+#endif /* GPIO_NRST_CONFIG_SUPPORT */
 #if defined(FLASH_OPTR_IRHEN)
 #define OB_USER_INPUT_RESET_HOLDER      FLASH_OPTR_IRHEN                            /*!< Internal reset holder enable */
-#endif
-#if defined(STM32G071xx) || defined(STM32G081xx) || defined(STM32G031xx) || defined(STM32G041xx)
+#endif /* FLASH_OPTR_IRHEN */
+
+#if defined(FLASH_DBANK_SUPPORT)
+#if defined(PWR_BOR_SUPPORT) && defined(PWR_SHDW_SUPPORT) && defined(GPIO_NRST_CONFIG_SUPPORT)
+#define OB_USER_ALL                     (OB_USER_BOR_EN           | OB_USER_BOR_LEV    | OB_USER_nRST_STOP | \
+                                         OB_USER_nRST_STDBY       | OB_USER_nRST_SHDW  | OB_USER_IWDG_SW   | \
+                                         OB_USER_IWDG_STOP        | OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | \
+                                         OB_USER_BANK_SWAP        | OB_USER_DUAL_BANK                      | \
+                                         OB_USER_RAM_PARITY_CHECK | OB_USER_nBOOT_SEL  | OB_USER_nBOOT1    | \
+                                         OB_USER_nBOOT0           | OB_USER_NRST_MODE  | OB_USER_INPUT_RESET_HOLDER)   /*!< all option bits */
+#else
+#define OB_USER_ALL                     (                                                OB_USER_nRST_STOP | \
+    OB_USER_nRST_STDBY                            | OB_USER_IWDG_SW   | \
+    OB_USER_IWDG_STOP        | OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | \
+    OB_USER_BANK_SWAP        | OB_USER_DUAL_BANK                      | \
+    OB_USER_RAM_PARITY_CHECK | OB_USER_nBOOT_SEL  | OB_USER_nBOOT1    | \
+    OB_USER_nBOOT0)                                                               /*!< all option bits */
+#endif /* PWR_BOR_SUPPORT && PWR_SHDW_SUPPORT && GPIO_NRST_CONFIG_SUPPORT */
+#else
+#if defined(PWR_BOR_SUPPORT) && defined(PWR_SHDW_SUPPORT) && defined(GPIO_NRST_CONFIG_SUPPORT)
 #define OB_USER_ALL                     (OB_USER_BOR_EN           | OB_USER_BOR_LEV    | OB_USER_nRST_STOP | \
                                          OB_USER_nRST_STDBY       | OB_USER_nRST_SHDW  | OB_USER_IWDG_SW   | \
                                          OB_USER_IWDG_STOP        | OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | \
                                          OB_USER_RAM_PARITY_CHECK | OB_USER_nBOOT_SEL  | OB_USER_nBOOT1    | \
                                          OB_USER_nBOOT0           | OB_USER_NRST_MODE  | OB_USER_INPUT_RESET_HOLDER)   /*!< all option bits */
-#elif defined (STM32G070xx) || defined (STM32G030xx)
+#else
 #define OB_USER_ALL                     (                                                OB_USER_nRST_STOP | \
-                                         OB_USER_nRST_STDBY                            | OB_USER_IWDG_SW   | \
-                                         OB_USER_IWDG_STOP        | OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | \
-                                         OB_USER_RAM_PARITY_CHECK | OB_USER_nBOOT_SEL  | OB_USER_nBOOT1    | \
-                                         OB_USER_nBOOT0)                                                               /*!< all option bits */
-#endif
+    OB_USER_nRST_STDBY                            | OB_USER_IWDG_SW   | \
+    OB_USER_IWDG_STOP        | OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | \
+    OB_USER_RAM_PARITY_CHECK | OB_USER_nBOOT_SEL  | OB_USER_nBOOT1    | \
+    OB_USER_nBOOT0)                                                               /*!< all option bits */
+#endif /* PWR_BOR_SUPPORT && PWR_SHDW_SUPPORT && GPIO_NRST_CONFIG_SUPPORT */
+#endif /* FLASH_DBANK_SUPPORT */
 /**
   * @}
   */
@@ -356,7 +420,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* PWR_BOR_SUPPORT */
 
 /** @defgroup FLASH_OB_USER_nRST_STOP FLASH Option Bytes User Reset On Stop
   * @{
@@ -385,7 +449,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* PWR_SHDW_SUPPORT */
 
 /** @defgroup FLASH_OB_USER_IWDG_SW FLASH Option Bytes User IWDG Type
   * @{
@@ -422,6 +486,26 @@ typedef struct
 /**
   * @}
   */
+
+#if defined(FLASH_DBANK_SUPPORT)
+/** @defgroup FLASH_OB_USER_BANK_SWAP FLASH Option Bytes User bank swap Type
+  * @{
+  */
+#define OB_USER_DUALBANK_SWAP_ENABLE    0x00000000U            /*!< Enable bank swap */
+#define OB_USER_DUALBANK_SWAP_DISABLE   FLASH_OPTR_nSWAP_BANK  /*!< Disable bank swap */
+/**
+  * @}
+  */
+
+/** @defgroup FLASH_OB_USER_DUAL_BANK FLASH Option Bytes User dual bank enable Type
+  * @{
+  */
+#define OB_USER_DUALBANK_DISABLE        0x00000000U           /*!< Disable dual bank */
+#define OB_USER_DUALBANK_ENABLE         FLASH_OPTR_DUAL_BANK  /*!< Enable dual bank */
+/**
+  * @}
+  */
+#endif /* FLASH_DBANK_SUPPORT */
 
 /** @defgroup FLASH_OB_USER_SRAM_PARITY FLASH Option Bytes User SRAM parity
   * @{
@@ -469,7 +553,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* GPIO_NRST_CONFIG_SUPPORT */
 
 #if defined(FLASH_OPTR_IRHEN)
 /** @defgroup FLASH_OB_USER_INPUT_RESET_HOLDER FLASH Option Bytes User input reset holder bit
@@ -480,7 +564,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* FLASH_OPTR_IRHEN */
 
 #if defined(FLASH_PCROP_SUPPORT)
 /** @defgroup FLASH_OB_PCROP_ZONE FLASH Option Bytes PCROP ZONE
@@ -488,6 +572,10 @@ typedef struct
   */
 #define OB_PCROP_ZONE_A                 0x00000001U /*!< PCROP Zone A */
 #define OB_PCROP_ZONE_B                 0x00000002U /*!< PCROP Zone B */
+#if defined(FLASH_DBANK_SUPPORT)
+#define OB_PCROP_ZONE2_A                0x00000004U /*!< PCROP Bank 2 Zone A */
+#define OB_PCROP_ZONE2_B                0x00000008U /*!< PCROP Bank 2 Zone B */
+#endif /* FLASH_DBANK_SUPPORT */
 /**
   * @}
   */
@@ -503,7 +591,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* FLASH_PCROP_SUPPORT */
 
 #if defined(FLASH_SECURABLE_MEMORY_SUPPORT)
 /** @defgroup FLASH_OB_SEC_BOOT_LOCK FLASH Option Bytes Secure boot lock
@@ -514,7 +602,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* FLASH_SECURABLE_MEMORY_SUPPORT */
 
 /**
   * @}
@@ -584,44 +672,62 @@ typedef struct
   */
 
 /** @defgroup FLASH_Interrupt FLASH Interrupts Macros
- *  @brief macros to handle FLASH interrupts
- * @{
- */
+  *  @brief macros to handle FLASH interrupts
+  * @{
+  */
 
 /**
   * @brief  Enable the specified FLASH interrupt.
   * @param  __INTERRUPT__ FLASH interrupt
-  *         This parameter can be any combination of the following values:
+  *         This parameter can be one of the following values :
   *     @arg @ref FLASH_IT_EOP End of FLASH Operation Interrupt
   *     @arg @ref FLASH_IT_OPERR Error Interrupt
   *     @arg @ref FLASH_IT_RDERR PCROP Read Error Interrupt(*)
-  *     @arg @ref FLASH_IT_ECCC ECC Correction Interrupt
+  *     @arg @ref FLASH_IT_ECCC1 ECC Correction Interrupt on bank 1
+  *     @arg @ref FLASH_IT_ECCC2 ECC Correction Interrupt on bank 2(*)
+  *     @arg @ref FLASH_IT_ECCC ECC Correction Interrupt - legacy name for single bank
   * @note (*) availability depends on devices
   * @retval none
   */
-#define __HAL_FLASH_ENABLE_IT(__INTERRUPT__)    do { if(((__INTERRUPT__) & FLASH_IT_ECCC) != 0U) { SET_BIT(FLASH->ECCR, FLASH_ECCR_ECCCIE); }\
-                                                     if(((__INTERRUPT__) & (~FLASH_IT_ECCC)) != 0U) { SET_BIT(FLASH->CR, ((__INTERRUPT__) & (~FLASH_IT_ECCC))); }\
+#if defined(FLASH_DBANK_SUPPORT)
+#define __HAL_FLASH_ENABLE_IT(__INTERRUPT__)    do { if(((__INTERRUPT__) & (FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS)) != 0U) { SET_BIT(FLASH->CR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }             \
+                                                     else if(((__INTERRUPT__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) { SET_BIT(FLASH->ECCR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }   \
+                                                     else if(((__INTERRUPT__) & (FLASH_FLAG_ECCR2_ID << FLASH_FLAG_REG_POS)) != 0U) { SET_BIT(FLASH->ECC2R, (1uL << ((__INTERRUPT__) & 0x1Fu))); }  \
                                                    } while(0U)
+#else
+#define __HAL_FLASH_ENABLE_IT(__INTERRUPT__)    do { if(((__INTERRUPT__) & (FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS)) != 0U) { SET_BIT(FLASH->CR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }             \
+                                                     else if(((__INTERRUPT__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) { SET_BIT(FLASH->ECCR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }   \
+                                                   } while(0U)
+#endif /* FLASH_DBANK_SUPPORT */
 
 /**
   * @brief  Disable the specified FLASH interrupt.
   * @param  __INTERRUPT__ FLASH interrupt
-  *         This parameter can be any combination of the following values:
+  *         This parameter can be one of the following values :
   *     @arg @ref FLASH_IT_EOP End of FLASH Operation Interrupt
   *     @arg @ref FLASH_IT_OPERR Error Interrupt
   *     @arg @ref FLASH_IT_RDERR PCROP Read Error Interrupt(*)
-  *     @arg @ref FLASH_IT_ECCC ECC Correction Interrupt
+  *     @arg @ref FLASH_IT_ECCC1 ECC Correction Interrupt on bank 1
+  *     @arg @ref FLASH_IT_ECCC2 ECC Correction Interrupt on bank 2(*)
+  *     @arg @ref FLASH_IT_ECCC ECC Correction Interrupt - legacy name for single bank
   * @note (*) availability depends on devices
   * @retval none
   */
-#define __HAL_FLASH_DISABLE_IT(__INTERRUPT__)   do { if(((__INTERRUPT__) & FLASH_IT_ECCC) != 0U) { CLEAR_BIT(FLASH->ECCR, FLASH_ECCR_ECCCIE); }\
-                                                     if(((__INTERRUPT__) & (~FLASH_IT_ECCC)) != 0U) { CLEAR_BIT(FLASH->CR, ((__INTERRUPT__) & (~FLASH_IT_ECCC))); }\
+#if defined(FLASH_DBANK_SUPPORT)
+#define __HAL_FLASH_DISABLE_IT(__INTERRUPT__)   do { if(((__INTERRUPT__) & (FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS)) != 0U) { CLEAR_BIT(FLASH->CR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }             \
+                                                     else if(((__INTERRUPT__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) { CLEAR_BIT(FLASH->ECCR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }   \
+                                                     else if(((__INTERRUPT__) & (FLASH_FLAG_ECCR2_ID << FLASH_FLAG_REG_POS)) != 0U) { CLEAR_BIT(FLASH->ECC2R, (1uL << ((__INTERRUPT__) & 0x1Fu))); }  \
                                                    } while(0U)
+#else
+#define __HAL_FLASH_DISABLE_IT(__INTERRUPT__)   do { if(((__INTERRUPT__) & (FLASH_FLAG_CR_ID << FLASH_FLAG_REG_POS)) != 0U) { CLEAR_BIT(FLASH->CR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }             \
+                                                     else if(((__INTERRUPT__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) { CLEAR_BIT(FLASH->ECCR, (1uL << ((__INTERRUPT__) & 0x1Fu))); }   \
+                                                   } while(0U)
+#endif /* FLASH_DBANK_SUPPORT */
 
 /**
   * @brief  Check whether the specified FLASH flag is set or not.
   * @param  __FLAG__ specifies the FLASH flag to check.
-  *   This parameter can be one of the following values:
+  *         This parameter can be one of the following values :
   *     @arg @ref FLASH_FLAG_EOP FLASH End of Operation flag
   *     @arg @ref FLASH_FLAG_OPERR FLASH Operation error flag
   *     @arg @ref FLASH_FLAG_PROGERR FLASH Programming error flag
@@ -633,21 +739,35 @@ typedef struct
   *     @arg @ref FLASH_FLAG_FASTERR FLASH Fast programming error flag
   *     @arg @ref FLASH_FLAG_RDERR FLASH PCROP read  error flag(*)
   *     @arg @ref FLASH_FLAG_OPTVERR FLASH Option validity error flag
-  *     @arg @ref FLASH_FLAG_BSY FLASH write/erase operations in progress flag
+  *     @arg @ref FLASH_FLAG_BSY1 FLASH bank 1 write/erase operations in progress flag
+  *     @arg @ref FLASH_FLAG_BSY2 FLASH bank 2 write/erase operations in progress flag(*)
+  *     @arg @ref FLASH_FLAG_BSY FLASH write/erase operations in progress flag  - legacy name for single bank
   *     @arg @ref FLASH_FLAG_CFGBSY FLASH configuration is busy : program or erase setting are used.
-  *     @arg @ref FLASH_FLAG_ECCC FLASH one ECC error has been detected and corrected
-  *     @arg @ref FLASH_FLAG_ECCD FLASH two ECC errors have been detected
+  *     @arg @ref FLASH_FLAG_ECCC1 FLASH one ECC error has been detected and corrected
+  *     @arg @ref FLASH_FLAG_ECCD1 FLASH two ECC errors have been detected on bank 1
+  *     @arg @ref FLASH_FLAG_ECCC2 FLASH one ECC error has been detected and corrected on bank 2(*)
+  *     @arg @ref FLASH_FLAG_ECCD2 FLASH two ECC errors have been detected on bank 2(*)
+  *     @arg @ref FLASH_FLAG_ECCC FLASH one ECC error has been detected and corrected - legacy name for single bank
+  *     @arg @ref FLASH_FLAG_ECCD FLASH two ECC errors have been detected - legacy name for single bank
   * @note (*) availability depends on devices
-  * @retval The new state of FLASH_FLAG (SET or RESET).
+  * @retval The state of FLASH_FLAG (SET or RESET).
   */
-#define __HAL_FLASH_GET_FLAG(__FLAG__)          ((((__FLAG__) & (FLASH_FLAG_ECCC | FLASH_FLAG_ECCD)) != 0U) ? \
-                                                 (READ_BIT(FLASH->ECCR, (__FLAG__)) == (__FLAG__))  : \
-                                                 (READ_BIT(FLASH->SR,   (__FLAG__)) == (__FLAG__)))
+#if defined(FLASH_DBANK_SUPPORT)
+#define __HAL_FLASH_GET_FLAG(__FLAG__)          ((((__FLAG__) & (FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS)) != 0U) ?             \
+                                                 (READ_BIT(FLASH->SR, (1uL << ((__FLAG__) & 0x1Fu))) != 0x00u) :        \
+                                                 ((((__FLAG__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) ? \
+                                                  (READ_BIT(FLASH->ECCR, (1uL << ((__FLAG__) & 0x1Fu))) != 0x00u) :      \
+                                                  (READ_BIT(FLASH->ECC2R, (1uL << ((__FLAG__) & 0x1Fu))) != 0x00u)))
+#else
+#define __HAL_FLASH_GET_FLAG(__FLAG__)          ((((__FLAG__) & (FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS)) != 0U) ?   \
+                                                 (READ_BIT(FLASH->SR, (1uL << ((__FLAG__) & 0x1Fu))) != 0x00u) : \
+                                                 (READ_BIT(FLASH->ECCR, (1uL << ((__FLAG__) & 0x1Fu))) != 0x00u))
+#endif /* FLASH_DBANK_SUPPORT */
 
 /**
-  * @brief  Clear the FLASHs pending flags.
+  * @brief  Clear the FLASH pending flags.
   * @param  __FLAG__ specifies the FLASH flags to clear.
-  *   This parameter can be any combination of the following values:
+  *         This parameter can be one of the following values :
   *     @arg @ref FLASH_FLAG_EOP FLASH End of Operation flag
   *     @arg @ref FLASH_FLAG_OPERR FLASH Operation error flag
   *     @arg @ref FLASH_FLAG_PROGERR FLASH Programming error flag
@@ -659,14 +779,25 @@ typedef struct
   *     @arg @ref FLASH_FLAG_FASTERR FLASH Fast programming error flag
   *     @arg @ref FLASH_FLAG_RDERR FLASH PCROP read  error flag
   *     @arg @ref FLASH_FLAG_OPTVERR FLASH Option validity error flag
-  *     @arg @ref FLASH_FLAG_ECCC FLASH one ECC error has been detected and corrected
-  *     @arg @ref FLASH_FLAG_ECCD FLASH two ECC errors have been detected
-  *     @arg @ref FLASH_FLAG_ALL_ERRORS FLASH All errors flags
+  *     @arg @ref FLASH_FLAG_ECCC1 FLASH one ECC error has been detected and corrected
+  *     @arg @ref FLASH_FLAG_ECCD1 FLASH two ECC errors have been detected on bank 1
+  *     @arg @ref FLASH_FLAG_ECCC2 FLASH one ECC error has been detected and corrected on bank 2(*)
+  *     @arg @ref FLASH_FLAG_ECCD2 FLASH two ECC errors have been detected on bank 2(*)
+  *     @arg @ref FLASH_FLAG_ECCC FLASH one ECC error has been detected and corrected - legacy name for single bank
+  *     @arg @ref FLASH_FLAG_ECCD FLASH two ECC errors have been detected - legacy name for single bank
+  * @note (*) availability depends on devices
   * @retval None
   */
-#define __HAL_FLASH_CLEAR_FLAG(__FLAG__)        do { if(((__FLAG__) & (FLASH_FLAG_ECCC | FLASH_FLAG_ECCD)) != 0U) { SET_BIT(FLASH->ECCR, ((__FLAG__) & (FLASH_FLAG_ECCC | FLASH_FLAG_ECCD))); }\
-                                                     if(((__FLAG__) & ~(FLASH_FLAG_ECCC | FLASH_FLAG_ECCD)) != 0U) { WRITE_REG(FLASH->SR, ((__FLAG__) & ~(FLASH_FLAG_ECCC | FLASH_FLAG_ECCD))); }\
+#if defined(FLASH_DBANK_SUPPORT)
+#define __HAL_FLASH_CLEAR_FLAG(__FLAG__)        do { if(((__FLAG__) & (FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS)) != 0U)         { FLASH->SR = (1uL << ((__FLAG__) & 0x1Fu)); }    \
+                                                     else if(((__FLAG__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) { FLASH->ECCR = (1uL << ((__FLAG__) & 0x1Fu)); }  \
+                                                     else if(((__FLAG__) & (FLASH_FLAG_ECCR2_ID << FLASH_FLAG_REG_POS)) != 0U) { FLASH->ECC2R = (1uL << ((__FLAG__) & 0x1Fu)); }  \
                                                    } while(0U)
+#else
+#define __HAL_FLASH_CLEAR_FLAG(__FLAG__)        do { if(((__FLAG__) & (FLASH_FLAG_SR_ID << FLASH_FLAG_REG_POS)) != 0U)         { FLASH->SR = (1uL << ((__FLAG__) & 0x1Fu)); }    \
+                                                     else if(((__FLAG__) & (FLASH_FLAG_ECCR1_ID << FLASH_FLAG_REG_POS)) != 0U) { FLASH->ECCR = (1uL << ((__FLAG__) & 0x1Fu)); }  \
+                                                   } while(0U)
+#endif /* FLASH_DBANK_SUPPORT */
 /**
   * @}
   */
@@ -744,56 +875,93 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
   */
 #define FLASH_SIZE_DATA_REGISTER        FLASHSIZE_BASE
 
-#define FLASH_SIZE                      (((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x00FFU)) << 10U)
-
+#if defined(FLASH_DBANK_SUPPORT)
+#define OB_DUAL_BANK_BASE               (FLASH_R_BASE + 0x20U)               /*!< Not use cmsis FLASH alias to avoid iar warning about volatile reading sequence */
+#define FLASH_SALES_TYPE_Pos            (24U)
+#define FLASH_SALES_TYPE                (0x3UL << FLASH_SALES_TYPE_Pos)     /*!< 0x000001E0 */
+#define FLASH_SALES_TYPE_0              (0x1UL << FLASH_SALES_TYPE_Pos)     /*!< 0x01000000 */
+#define FLASH_SALES_TYPE_1              (0x2UL << FLASH_SALES_TYPE_Pos)     /*!< 0x02000000 */
+#define FLASH_SALES_VALUE               ((*((uint32_t *)PACKAGE_BASE)) & (FLASH_SALES_TYPE))
+#define OB_DUAL_BANK_VALUE              ((*((uint32_t *)OB_DUAL_BANK_BASE)) & (FLASH_OPTR_DUAL_BANK))
+#define FLASH_BANK_NB                   (((FLASH_SALES_VALUE == 0U)\
+                                          || ((FLASH_SALES_VALUE == FLASH_SALES_TYPE_0) && (OB_DUAL_BANK_VALUE == 0U)))?1U:2U)
+#define FLASH_BANK_SIZE                 ((FLASH_BANK_NB==1U)?(FLASH_SIZE):(FLASH_SIZE >> 1U)) /*!< FLASH Bank Size. Divided by 2 if 2 Banks */
+#else /* FLASH_DBANK_SUPPORT */
 #define FLASH_BANK_SIZE                 (FLASH_SIZE)   /*!< FLASH Bank Size */
+#endif /* FLASH_DBANK_SUPPORT */
 
 #define FLASH_PAGE_SIZE                 0x00000800U    /*!< FLASH Page Size, 2 KBytes */
-
-#if defined(STM32G081xx)||defined(STM32G071xx)||defined(STM32G070xx)
-#define FLASH_PAGE_NB                   64U
-#else
-#define FLASH_PAGE_NB                   32U
-#endif
-
+#define FLASH_PAGE_NB                   (FLASH_BANK_SIZE/FLASH_PAGE_SIZE) /* Number of pages per bank */
 #define FLASH_TIMEOUT_VALUE             1000U          /*!< FLASH Execution Timeout, 1 s */
-
-#define FLASH_TYPENONE                  0x00000000U    /*!< No Programmation Procedure On Going */
+#define FLASH_TYPENONE                  0x00000000U    /*!< No programming Procedure On Going */
 
 #if defined(FLASH_PCROP_SUPPORT)
-#define FLASH_FLAG_SR_ERROR             (FLASH_FLAG_OPERR  | FLASH_FLAG_PROGERR | FLASH_FLAG_WRPERR |  \
-                                         FLASH_FLAG_PGAERR | FLASH_FLAG_SIZERR  | FLASH_FLAG_PGSERR |   \
-                                         FLASH_FLAG_MISERR | FLASH_FLAG_FASTERR | FLASH_FLAG_RDERR |   \
-                                         FLASH_FLAG_OPTVERR)     /*!< All SR error flags */
+#define FLASH_SR_ERRORS                 (FLASH_SR_OPERR  | FLASH_SR_PROGERR | FLASH_SR_WRPERR | \
+                                         FLASH_SR_PGAERR | FLASH_SR_SIZERR  | FLASH_SR_PGSERR |  \
+                                         FLASH_SR_MISERR | FLASH_SR_FASTERR | FLASH_SR_RDERR |   \
+                                         FLASH_SR_OPTVERR) /*!< All SR error flags */
 #else
-#define FLASH_FLAG_SR_ERROR             (FLASH_FLAG_OPERR  | FLASH_FLAG_PROGERR | FLASH_FLAG_WRPERR |  \
-                                         FLASH_FLAG_PGAERR | FLASH_FLAG_SIZERR  | FLASH_FLAG_PGSERR |   \
-                                         FLASH_FLAG_MISERR | FLASH_FLAG_FASTERR |   \
-                                         FLASH_FLAG_OPTVERR)     /*!< All SR error flags */
-#endif
+#define FLASH_SR_ERRORS                 (FLASH_SR_OPERR  | FLASH_SR_PROGERR | FLASH_SR_WRPERR | \
+                                         FLASH_SR_PGAERR | FLASH_SR_SIZERR  | FLASH_SR_PGSERR |  \
+                                         FLASH_SR_MISERR | FLASH_SR_FASTERR |                    \
+                                         FLASH_SR_OPTVERR) /*!< All SR error flags */
+#endif /* FLASH_PCROP_SUPPORT */
 
-#define FLASH_FLAG_SR_CLEAR             (FLASH_FLAG_SR_ERROR | FLASH_SR_EOP)
+#if defined(FLASH_DBANK_SUPPORT)
+#define FLASH_SR_CLEAR                  (FLASH_SR_ERRORS | FLASH_SR_EOP | FLASH_SR_PESD)
+#else
+#define FLASH_SR_CLEAR                  (FLASH_SR_ERRORS | FLASH_SR_EOP)
+#endif /* FLASH_DBANK_SUPPORT */
+
+/* Internal defines for HAL macro usage */
+#define FLASH_FLAG_REG_POS              16u
+#define FLASH_FLAG_SR_ID                1u
+#define FLASH_FLAG_CR_ID                2u
+#define FLASH_FLAG_ECCR1_ID             4u
+#define FLASH_FLAG_ECCR2_ID             8u
+
 /**
   * @}
   */
 
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup FLASH_Private_Macros FLASH Private Macros
- *  @{
- */
-#define IS_FLASH_MAIN_MEM_ADDRESS(__ADDRESS__)         (((__ADDRESS__) >= (FLASH_BASE)) && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 1UL)))
+  *  @{
+  */
+#define IS_FLASH_MAIN_MEM_ADDRESS(__ADDRESS__)         (((__ADDRESS__) >= (FLASH_BASE))\
+                                                        && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 1UL)))
 
-#define IS_FLASH_PROGRAM_MAIN_MEM_ADDRESS(__ADDRESS__) (((__ADDRESS__) >= (FLASH_BASE)) && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 8UL)))
+#define IS_FLASH_MAIN_FIRSTHALF_MEM_ADDRESS(__ADDRESS__)  (((__ADDRESS__) >= (FLASH_BASE))\
+                                                           && ((__ADDRESS__) <= (FLASH_BASE + FLASH_BANK_SIZE - 1UL)))
+#if defined(FLASH_DBANK_SUPPORT)
+#define IS_FLASH_MAIN_SECONDHALF_MEM_ADDRESS(__ADDRESS__) (((__ADDRESS__) >= (FLASH_BASE + FLASH_BANK_SIZE))\
+                                                           && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 1UL)))
+#endif /* FLASH_DBANK_SUPPORT */
 
-#define IS_FLASH_PROGRAM_OTP_ADDRESS(__ADDRESS__)      (((__ADDRESS__) >= 0x1FFF7000U) && ((__ADDRESS__) <= (0x1FFF7400U - 8UL)))
+#define IS_FLASH_PROGRAM_MAIN_MEM_ADDRESS(__ADDRESS__) (((__ADDRESS__) >= (FLASH_BASE))\
+                                                        && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 8UL)))
 
-#define IS_FLASH_PROGRAM_ADDRESS(__ADDRESS__)          ((IS_FLASH_PROGRAM_MAIN_MEM_ADDRESS(__ADDRESS__)) || (IS_FLASH_PROGRAM_OTP_ADDRESS(__ADDRESS__)))
+#define IS_FLASH_PROGRAM_OTP_ADDRESS(__ADDRESS__)      (((__ADDRESS__) >= 0x1FFF7000U)\
+                                                        && ((__ADDRESS__) <= (0x1FFF7400U - 8UL)))
 
-#define IS_FLASH_FAST_PROGRAM_ADDRESS(__ADDRESS__)     (((__ADDRESS__) >= (FLASH_BASE)) && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 256UL)))
+#define IS_FLASH_PROGRAM_ADDRESS(__ADDRESS__)          ((IS_FLASH_PROGRAM_MAIN_MEM_ADDRESS(__ADDRESS__))\
+                                                        || (IS_FLASH_PROGRAM_OTP_ADDRESS(__ADDRESS__)))
+
+#define IS_FLASH_FAST_PROGRAM_ADDRESS(__ADDRESS__)     (((__ADDRESS__) >= (FLASH_BASE))\
+                                                        && ((__ADDRESS__) <= (FLASH_BASE + FLASH_SIZE - 256UL)))
 
 #define IS_FLASH_PAGE(__PAGE__)                        ((__PAGE__) < FLASH_PAGE_NB)
 
-#define IS_FLASH_BANK(__BANK__)                        ((__BANK__) == 0x00UL)
+#if defined(FLASH_DBANK_SUPPORT)
+#define IS_FLASH_BANK(__BANK__)                       \
+  ((FLASH_BANK_NB == 2U) ?                         \
+   (((__BANK__) == FLASH_BANK_1)  ||               \
+    ((__BANK__) == FLASH_BANK_2)  ||                \
+    ((__BANK__) == (FLASH_BANK_2 | FLASH_BANK_1))): \
+   ((__BANK__) == FLASH_BANK_1))
+#else
+#define IS_FLASH_BANK(__BANK__)                        ((__BANK__) == FLASH_BANK_1)
+#endif /* FLASH_DBANK_SUPPORT */
 
 #define IS_FLASH_TYPEERASE(__VALUE__)                  (((__VALUE__) == FLASH_TYPEERASE_PAGES) || \
                                                         ((__VALUE__) == FLASH_TYPEERASE_MASS))
@@ -802,9 +970,18 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
                                                         ((__VALUE__) == FLASH_TYPEPROGRAM_FAST))
 
 #define IS_OPTIONBYTE(__VALUE__)                       ((((__VALUE__) & OPTIONBYTE_ALL) != 0x00U) && \
-                                                       (((__VALUE__) & ~OPTIONBYTE_ALL) == 0x00U))
+                                                        (((__VALUE__) & ~OPTIONBYTE_ALL) == 0x00U))
 
-#define IS_OB_WRPAREA(__VALUE__)                       (((__VALUE__) == OB_WRPAREA_ZONE_A) || ((__VALUE__) == OB_WRPAREA_ZONE_B))
+#if defined(FLASH_DBANK_SUPPORT)
+#define IS_OB_WRPAREA(__VALUE__)                                                     \
+  ((FLASH_BANK_NB == 2U) ?                                                        \
+   (((__VALUE__) == OB_WRPAREA_ZONE_A) || ((__VALUE__) == OB_WRPAREA_ZONE_B) ||   \
+    ((__VALUE__) == OB_WRPAREA_ZONE2_A) || ((__VALUE__) == OB_WRPAREA_ZONE2_B)) :  \
+   (((__VALUE__) == OB_WRPAREA_ZONE_A) || ((__VALUE__) == OB_WRPAREA_ZONE_B)))
+#else
+#define IS_OB_WRPAREA(__VALUE__)                       (((__VALUE__) == OB_WRPAREA_ZONE_A)\
+                                                        || ((__VALUE__) == OB_WRPAREA_ZONE_B))
+#endif /* FLASH_DBANK_SUPPORT */
 
 #define IS_OB_RDP_LEVEL(__LEVEL__)                     (((__LEVEL__) == OB_RDP_LEVEL_0)   ||\
                                                         ((__LEVEL__) == OB_RDP_LEVEL_1)   ||\
@@ -816,14 +993,24 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
 #define IS_OB_USER_CONFIG(__TYPE__,__CONFIG__)         ((~(__TYPE__) & (__CONFIG__)) == 0x00U)
 
 #if defined(FLASH_PCROP_SUPPORT)
-#define IS_OB_PCROP_CONFIG(__CONFIG__)                 (((__CONFIG__) & ~(OB_PCROP_ZONE_A | OB_PCROP_ZONE_B | OB_PCROP_RDP_ERASE)) == 0x00U)
-#endif
+#if defined(FLASH_DBANK_SUPPORT)
+#define IS_OB_PCROP_CONFIG(__CONFIG__)                                                           \
+  ((FLASH_BANK_NB == 2U) ?                                                                    \
+   (((__CONFIG__) & ~(OB_PCROP_ZONE_A | OB_PCROP_ZONE_B |                                     \
+                      OB_PCROP_ZONE2_A | OB_PCROP_ZONE2_B | OB_PCROP_RDP_ERASE)) == 0x00U):   \
+   (((__CONFIG__) & ~(OB_PCROP_ZONE_A | OB_PCROP_ZONE_B | OB_PCROP_RDP_ERASE)) == 0x00U))
+#else
+#define IS_OB_PCROP_CONFIG(__CONFIG__)                 (((__CONFIG__)\
+                                                         & ~(OB_PCROP_ZONE_A | OB_PCROP_ZONE_B | OB_PCROP_RDP_ERASE)) == 0x00U)
+#endif /* FLASH_DBANK_SUPPORT */
+#endif /* FLASH_PCROP_SUPPORT */
 
 #if defined(FLASH_SECURABLE_MEMORY_SUPPORT)
-#define IS_OB_SEC_BOOT_LOCK(__VALUE__)                 (((__VALUE__) == OB_BOOT_ENTRY_FORCED_NONE) || ((__VALUE__) == OB_BOOT_ENTRY_FORCED_FLASH))
+#define IS_OB_SEC_BOOT_LOCK(__VALUE__)                 (((__VALUE__) == OB_BOOT_ENTRY_FORCED_NONE)\
+                                                        || ((__VALUE__) == OB_BOOT_ENTRY_FORCED_FLASH))
 
 #define IS_OB_SEC_SIZE(__VALUE__)                      ((__VALUE__) < (FLASH_PAGE_NB + 1U))
-#endif
+#endif /* FLASH_SECURABLE_MEMORY_SUPPORT */
 
 #define IS_FLASH_LATENCY(__LATENCY__)                  (((__LATENCY__) == FLASH_LATENCY_0) || \
                                                         ((__LATENCY__) == FLASH_LATENCY_1) || \

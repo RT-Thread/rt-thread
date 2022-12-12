@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-04-28     xckhmf       Modify for <nrfx>
+ * 2021-06-26     supperthomas fix rt_hw_uart_init
  *
  */
 #include <rtdevice.h>
@@ -165,7 +166,7 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
 
     return RT_EOK;
 }
-RT_WEAK int uart_putc_hook(rt_uint8_t *ch)
+rt_weak int uart_putc_hook(rt_uint8_t *ch)
 {
     return -1;
 }
@@ -191,7 +192,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
     return rtn;
 }
 
-RT_WEAK int uart_getc_hook(rt_uint8_t *ch)
+rt_weak int uart_getc_hook(rt_uint8_t *ch)
 {
     return -1;
 };
@@ -236,18 +237,18 @@ static struct rt_uart_ops _uart_ops = {
     _uart_getc
 };
 
-void rt_hw_uart_init(void)
+int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    rt_err_t result = RT_EOK;
 
 #ifdef BSP_USING_UART0
     _serial_0.config = config;
     _serial_0.ops = &_uart_ops;
     m_uart0_cfg.serial = &_serial_0;
-    rt_hw_serial_register(&_serial_0, "uart0", \
+    result = rt_hw_serial_register(&_serial_0, "uart0", \
                             RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,  &m_uart0_cfg);
 #endif  /* BSP_USING_UART0 */
-
+    return result;
 }
-
 #endif /* BSP_USING_UART */

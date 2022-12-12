@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2021 hpmicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
+
+#ifndef HPM_CAMERA_H
+#define HPM_CAMERA_H
+
+#if CONFIG_CAMERA_OV7725
+#include "hpm_ov7725.h"
+#define CAMERA_MAX_IMAGE_OUTPUT_WIDTH  OV7725_ACTIVE_IMAGE_WIDTH
+#define CAMERA_MAX_IMAGE_OUTPUT_HEIGHT OV7725_ACTIVE_IMAGE_HEIGHT
+#elif CONFIG_CAMERA_OV5640
+#include "hpm_ov5640.h"
+#define CAMERA_MAX_IMAGE_OUTPUT_WIDTH  OV5640_ACTIVE_IMAGE_WIDTH
+#define CAMERA_MAX_IMAGE_OUTPUT_HEIGHT OV5640_ACTIVE_IMAGE_HEIGHT
+#else
+#error "unknown camera type, either have CONFIG_CAMERA_OV7725 or CONFIG_CAMERA_OV5640 defined"
+#endif
+
+
+#endif /* HPM_CAMERA_H */

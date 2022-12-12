@@ -36,13 +36,13 @@ struct rt_ecm_eth
     rt_uint8_t              host_addr[MAX_ADDR_LEN];
     rt_uint8_t              dev_addr[MAX_ADDR_LEN];
 
-    ALIGN(4)
+    rt_align(4)
     rt_uint8_t              rx_pool[512];
-    ALIGN(4)
+    rt_align(4)
     rt_size_t               rx_size;
-    ALIGN(4)
+    rt_align(4)
     rt_size_t               rx_offset;
-    ALIGN(4)
+    rt_align(4)
     char                    rx_buffer[USB_ETH_MTU];
     char                    tx_buffer[USB_ETH_MTU];
 
@@ -51,7 +51,7 @@ struct rt_ecm_eth
 };
 typedef struct rt_ecm_eth * rt_ecm_eth_t;
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor _dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     /* bLength */
@@ -71,7 +71,7 @@ static struct udevice_descriptor _dev_desc =
 };
 
 /* communcation interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_eth_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -141,7 +141,7 @@ const static struct ucdc_eth_descriptor _comm_desc =
 };
 
 /* data interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
@@ -176,7 +176,7 @@ const static struct ucdc_data_descriptor _data_desc =
     },
 };
 
-ALIGN(4)
+rt_align(4)
 const static char* _ustring[] =
 {
     "Language",                 /* LANGID */
@@ -187,7 +187,7 @@ const static char* _ustring[] =
     "Interface",                /* INTERFACE */
 };
 
-ALIGN(4)
+rt_align(4)
 //FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
@@ -644,12 +644,16 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
     _ecm_eth->host_addr[4] = 0xEC;//*(const rt_uint8_t *)(0x1fff7a14);
     _ecm_eth->host_addr[5] = 0xAB;//*(const rt_uint8_t *)(0x1fff7a18);
 
+#ifdef RT_USING_DEVICE_OPS
+    _ecm_eth->parent.parent.ops = &ecm_device_ops;
+#else
     _ecm_eth->parent.parent.init       = rt_ecm_eth_init;
     _ecm_eth->parent.parent.open       = rt_ecm_eth_open;
     _ecm_eth->parent.parent.close      = rt_ecm_eth_close;
     _ecm_eth->parent.parent.read       = rt_ecm_eth_read;
     _ecm_eth->parent.parent.write      = rt_ecm_eth_write;
     _ecm_eth->parent.parent.control    = rt_ecm_eth_control;
+#endif
     _ecm_eth->parent.parent.user_data  = device;
 
     _ecm_eth->parent.eth_rx     = rt_ecm_eth_rx;

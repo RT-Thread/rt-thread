@@ -1,0 +1,13 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd + '/../inc']
+
+group = DefineGroup('rt-link', src, depend = ['RT_USING_RT_LINK'], CPPPATH = CPPPATH)
+
+if os.path.isfile(os.path.join(cwd, 'hw', 'SConscript')):
+    group = group + SConscript(os.path.join('hw', 'SConscript'))
+
+Return('group')

@@ -183,7 +183,7 @@ typedef struct __DMA_HandleTypeDef
 
 /* STM32L010x4 || STM32L010x6 || STM32L010x8 || STM32L010xC */
 
-#elif defined (STM32L021xx) || defined (STM32L041xx) || defined (STM32L061xx) || defined (STM32L062xx) || defined (STM32L063xx) || defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#elif defined (STM32L021xx) || defined (STM32L041xx) || defined (STM32L062xx) || defined (STM32L063xx) || defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx)
 
 #define DMA_REQUEST_0                     0U
 #define DMA_REQUEST_1                     1U
@@ -219,7 +219,7 @@ typedef struct __DMA_HandleTypeDef
                                      ((REQUEST) == DMA_REQUEST_14) || \
                                      ((REQUEST) == DMA_REQUEST_15))
 
-/* (STM32L021xx) || (STM32L041xx) || (STM32L061xx) || (STM32L062xx) || (STM32L063xx) || (STM32L081xx) || (STM32L082xx) || (STM32L083xx) */
+/* (STM32L021xx) || (STM32L041xx) || (STM32L062xx) || (STM32L063xx) || (STM32L081xx) || (STM32L082xx) || (STM32L083xx) */
 
 #else
 
@@ -386,22 +386,22 @@ typedef struct __DMA_HandleTypeDef
   * @{
   */
 
-/** @brief  Reset DMA handle state.
-  * @param  __HANDLE__: DMA handle
+/** @brief  Reset DMA handle state
+  * @param  __HANDLE__ DMA handle
   * @retval None
   */
 #define __HAL_DMA_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_DMA_STATE_RESET)
 
 /**
   * @brief  Enable the specified DMA Channel.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval None
   */
 #define __HAL_DMA_ENABLE(__HANDLE__)        ((__HANDLE__)->Instance->CCR |=  DMA_CCR_EN)
 
 /**
   * @brief  Disable the specified DMA Channel.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval None
   */
 #define __HAL_DMA_DISABLE(__HANDLE__)       ((__HANDLE__)->Instance->CCR &=  ~DMA_CCR_EN)
@@ -434,7 +434,7 @@ typedef struct __DMA_HandleTypeDef
 #endif
 /**
   * @brief  Return the current DMA Channel half transfer complete flag.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The specified half transfer complete flag index.
   */
 #if defined (STM32L010x4) || defined (STM32L011xx) || defined (STM32L021xx)
@@ -528,7 +528,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Enable the specified DMA Channel interrupts.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @param __INTERRUPT__: specifies the DMA interrupt sources to be enabled or disabled.
   *          This parameter can be any combination of the following values:
   *            @arg DMA_IT_TC:  Transfer complete interrupt mask
@@ -540,8 +540,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Disable the specified DMA Channel interrupts.
-  * @param  __HANDLE__: DMA handle
-  * @param __INTERRUPT__: specifies the DMA interrupt sources to be enabled or disabled.
+  * @param  __HANDLE__ DMA handle
+  * @param  __INTERRUPT__ specifies the DMA interrupt sources to be enabled or disabled. 
   *          This parameter can be any combination of the following values:
   *            @arg DMA_IT_TC:  Transfer complete interrupt mask
   *            @arg DMA_IT_HT:  Half transfer complete interrupt mask
@@ -552,8 +552,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Check whether the specified DMA Channel interrupt is enabled or not.
-  * @param  __HANDLE__: DMA handle
-  * @param  __INTERRUPT__: specifies the DMA interrupt source to check.
+  * @param  __HANDLE__ DMA handle
+  * @param  __INTERRUPT__ specifies the DMA interrupt source to check.
   *          This parameter can be one of the following values:
   *            @arg DMA_IT_TC:  Transfer complete interrupt mask
   *            @arg DMA_IT_HT:  Half transfer complete interrupt mask
@@ -564,7 +564,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Return the number of remaining data units in the current DMA Channel transfer.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The number of remaining data units in the current DMA Channel transfer.
   */
 #define __HAL_DMA_GET_COUNTER(__HANDLE__) ((__HANDLE__)->Instance->CNDTR)

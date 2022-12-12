@@ -68,7 +68,7 @@ def _CDKProject(tree, target, script):
     for child in root:
         if child.tag == 'VirtualDirectory':
             root.remove(child)
-    
+
     for group in script:
         group_tree = SDKAddGroup(ProjectFiles, root, group['name'], group['src'], project_path)
 
@@ -91,8 +91,8 @@ def _CDKProject(tree, target, script):
             if CCFLAGS:
                 CCFLAGS += ' ' + group['CCFLAGS']
             else:
-                CCFLAGS += group['CCFLAGS']   
-                
+                CCFLAGS += group['CCFLAGS']
+
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:
             if LINKFLAGS:
@@ -114,7 +114,7 @@ def _CDKProject(tree, target, script):
 
     CC_Misc = tree.find('BuildConfigs/BuildConfig/Compiler/OtherFlags')
     CC_Misc.text = CCFLAGS
-    
+
     LK_Misc = tree.find('BuildConfigs/BuildConfig/Linker/OtherFlags')
     LK_Misc.text = LINKFLAGS
 

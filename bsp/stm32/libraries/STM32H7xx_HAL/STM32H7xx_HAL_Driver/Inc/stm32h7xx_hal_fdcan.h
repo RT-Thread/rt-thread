@@ -28,6 +28,8 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_def.h"
 
+#if defined(FDCAN1)
+
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
   */
@@ -2403,6 +2405,7 @@ HAL_FDCAN_StateTypeDef HAL_FDCAN_GetState(FDCAN_HandleTypeDef *hfdcan);
 /**
   * @}
   */
+#endif /* FDCAN1 */
 
 #ifdef __cplusplus
 }

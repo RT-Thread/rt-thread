@@ -11,12 +11,12 @@ src += Glob('common/board/*.c')
 src += Glob('common/chip/*.c')
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     print("not gcc startup file")
     exit(0)
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/common/startup/keil_startup_lpc82x.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/common/startup/iar_startup_lpc82x.s']
 
 CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board', 

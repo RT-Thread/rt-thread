@@ -82,10 +82,10 @@
   [..]
      The compilation flag USE_HAL_TSC_REGISTER_CALLBACKS when set to 1
      allows the user to configure dynamically the driver callbacks.
-     Use Functions @ref HAL_TSC_RegisterCallback() to register an interrupt callback.
+     Use Functions HAL_TSC_RegisterCallback() to register an interrupt callback.
 
   [..]
-     Function @ref HAL_TSC_RegisterCallback() allows to register following callbacks:
+     Function HAL_TSC_RegisterCallback() allows to register following callbacks:
        (+) ConvCpltCallback   : callback for conversion complete process.
        (+) ErrorCallback      : callback for error detection.
        (+) MspInitCallback    : callback for Msp Init.
@@ -95,9 +95,9 @@
      and a pointer to the user callback function.
 
   [..]
-     Use function @ref HAL_TSC_UnRegisterCallback to reset a callback to the default
+     Use function HAL_TSC_UnRegisterCallback to reset a callback to the default
      weak function.
-     @ref HAL_TSC_UnRegisterCallback takes as parameters the HAL peripheral handle,
+     HAL_TSC_UnRegisterCallback takes as parameters the HAL peripheral handle,
      and the Callback ID.
   [..]
      This function allows to reset following callbacks:
@@ -107,23 +107,23 @@
        (+) MspDeInitCallback  : callback for Msp DeInit.
 
   [..]
-     By default, after the @ref HAL_TSC_Init() and when the state is @ref HAL_TSC_STATE_RESET
+     By default, after the HAL_TSC_Init() and when the state is HAL_TSC_STATE_RESET
      all callbacks are set to the corresponding weak functions:
-     examples @ref HAL_TSC_ConvCpltCallback(), @ref HAL_TSC_ErrorCallback().
+     examples HAL_TSC_ConvCpltCallback(), HAL_TSC_ErrorCallback().
      Exception done for MspInit and MspDeInit functions that are
-     reset to the legacy weak functions in the @ref HAL_TSC_Init()/ @ref HAL_TSC_DeInit() only when
+     reset to the legacy weak functions in the HAL_TSC_Init()/ HAL_TSC_DeInit() only when
      these callbacks are null (not registered beforehand).
-     If MspInit or MspDeInit are not null, the @ref HAL_TSC_Init()/ @ref HAL_TSC_DeInit()
+     If MspInit or MspDeInit are not null, the HAL_TSC_Init()/ HAL_TSC_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
 
   [..]
-     Callbacks can be registered/unregistered in @ref HAL_TSC_STATE_READY state only.
+     Callbacks can be registered/unregistered in HAL_TSC_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
-     in @ref HAL_TSC_STATE_READY or @ref HAL_TSC_STATE_RESET state,
+     in HAL_TSC_STATE_READY or HAL_TSC_STATE_RESET state,
      thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
      Then, the user first registers the MspInit/MspDeInit user callbacks
-     using @ref HAL_TSC_RegisterCallback() before calling @ref HAL_TSC_DeInit()
-     or @ref HAL_TSC_Init() function.
+     using HAL_TSC_RegisterCallback() before calling HAL_TSC_DeInit()
+     or HAL_TSC_Init() function.
 
   [..]
      When the compilation flag USE_HAL_TSC_REGISTER_CALLBACKS is set to 0 or
@@ -254,6 +254,7 @@ HAL_StatusTypeDef HAL_TSC_Init(TSC_HandleTypeDef *htsc)
   assert_param(IS_TSC_SSD(htsc->Init.SpreadSpectrumDeviation));
   assert_param(IS_TSC_SS_PRESC(htsc->Init.SpreadSpectrumPrescaler));
   assert_param(IS_TSC_PG_PRESC(htsc->Init.PulseGeneratorPrescaler));
+  assert_param(IS_TSC_PG_PRESC_VS_CTPL(htsc->Init.PulseGeneratorPrescaler, htsc->Init.CTPulseLowLength));
   assert_param(IS_TSC_MCV(htsc->Init.MaxCountValue));
   assert_param(IS_TSC_IODEF(htsc->Init.IODefaultMode));
   assert_param(IS_TSC_SYNC_POL(htsc->Init.SynchroPinPolarity));
@@ -427,7 +428,8 @@ __weak void HAL_TSC_MspDeInit(TSC_HandleTypeDef *htsc)
   * @param  pCallback pointer to the Callback function
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TSC_RegisterCallback(TSC_HandleTypeDef *htsc, HAL_TSC_CallbackIDTypeDef CallbackID, pTSC_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_TSC_RegisterCallback(TSC_HandleTypeDef *htsc, HAL_TSC_CallbackIDTypeDef CallbackID,
+                                           pTSC_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 

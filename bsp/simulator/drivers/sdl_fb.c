@@ -11,10 +11,14 @@
 #ifdef _WIN32
 #include <sdl.h>
 #else
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #endif
 #include <rtdevice.h>
 #include <rtgui/driver.h>
+
+#define DBG_TAG    "sdl.fb"
+#define DBG_LVL    DBG_WARNING
+#include <rtdbg.h>
 
 #define SDL_SCREEN_WIDTH    480
 #define SDL_SCREEN_HEIGHT   320
@@ -220,7 +224,11 @@ static void sdlfb_hw_init(void)
 
     rt_device_register(RT_DEVICE(&_device), "sdl", RT_DEVICE_FLAG_RDWR);
 
-    sdllock = rt_mutex_create("fb", RT_IPC_FLAG_FIFO);
+    sdllock = rt_mutex_create("fb", RT_IPC_FLAG_PRIO);
+    if (sdllock == RT_NULL)
+    {
+        LOG_E("Create mutex for sdlfb failed!");
+    }
 }
 
 #ifdef _WIN32
@@ -516,6 +524,7 @@ void rt_hw_sdl_start(void)
     pthread_mutex_lock(&sdl_ok_mutex);
     pthread_cond_wait(&sdl_ok_event, &sdl_ok_mutex);
 
+    pthread_mutex_unlock(&sdl_ok_mutex);
     pthread_mutex_destroy(&sdl_ok_mutex);
     pthread_cond_destroy(&sdl_ok_event);
 #endif

@@ -11,7 +11,9 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include "drivers/usb_device.h"
-#include "audio.h"
+
+#define AUFMT_MAX_FREQUENCIES       1
+#include "uaudioreg.h"
 
 #define DBG_TAG              "usbd.audio.speaker"
 #define DBG_LVL              DBG_INFO
@@ -46,9 +48,6 @@
 #define UAC_MAX_PACKET_SIZE         64
 #define UAC_EP_MAX_PACKET_SIZE      32
 #define UAC_CHANNEL_NUM             AUDIO_CHANNEL
-#define UAC_INTR_NUM                1
-#define UAC_CH_NUM                  1
-#define UAC_FORMAT_NUM              1
 
 struct uac_ac_descriptor
 {
@@ -56,21 +55,21 @@ struct uac_ac_descriptor
     struct uiad_descriptor iad_desc;
 #endif
     struct uinterface_descriptor intf_desc;
-    DECLARE_UAC_AC_HEADER_DESCRIPTOR(UAC_INTR_NUM) hdr_desc;
-    struct uac_input_terminal_descriptor it_desc;
-    struct uac1_output_terminal_descriptor ot_desc;
+    struct usb_audio_control_descriptor hdr_desc;
+    struct usb_audio_input_terminal it_desc;
+    struct usb_audio_output_terminal ot_desc;
 #if UAC_USE_FEATURE_UNIT
-    DECLARE_UAC_FEATURE_UNIT_DESCRIPTOR(UAC_CH_NUM) feature_unit_desc;
+    struct usb_audio_feature_unit feature_unit_desc;
 #endif
 };
 
 struct uac_as_descriptor
 {
     struct uinterface_descriptor intf_desc;
-    struct uac1_as_header_descriptor hdr_desc;
-    DECLARE_UAC_FORMAT_TYPE_I_DISCRETE_DESC(UAC_FORMAT_NUM) format_type_desc;
+    struct usb_audio_streaming_interface_descriptor hdr_desc;
+    struct usb_audio_streaming_type1_descriptor format_type_desc;
     struct uendpoint_descriptor ep_desc;
-    struct uac_iso_endpoint_descriptor as_ep_desc;
+    struct usb_audio_streaming_endpoint_descriptor as_ep_desc;
 };
 
 /*
@@ -90,7 +89,7 @@ struct uac_audio_speaker
 };
 static struct uac_audio_speaker speaker;
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -110,7 +109,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
-ALIGN(4)
+rt_align(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -124,7 +123,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
     0,
 };
 
-ALIGN(4)
+rt_align(4)
 const static char *_ustring[] =
 {
     "Language",
@@ -135,7 +134,7 @@ const static char *_ustring[] =
     "Interface",
 };
 
-ALIGN(4)
+rt_align(4)
 static struct uac_ac_descriptor ac_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -169,9 +168,9 @@ static struct uac_ac_descriptor ac_desc =
     },
     /* Header Descriptor */
     {
-        UAC_DT_AC_HEADER_SIZE(UAC_INTR_NUM),
+        sizeof(struct usb_audio_control_descriptor),
         UAC_CS_INTERFACE,
-        UAC_HEADER,
+        UDESCSUB_AC_HEADER,
         0x0100,    /* Version: 1.00 */
         0x0027,    /* Total length: 39 */
         0x01,      /* Total number of interfaces: 1 */
@@ -179,9 +178,9 @@ static struct uac_ac_descriptor ac_desc =
     },
     /*  Input Terminal Descriptor */
     {
-        UAC_DT_INPUT_TERMINAL_SIZE,
+        sizeof(struct usb_audio_input_terminal),
         UAC_CS_INTERFACE,
-        UAC_INPUT_TERMINAL,
+        UDESCSUB_AC_INPUT,
         0x01,      /* Terminal ID: 1 */
         0x0101,    /* Terminal Type: USB Streaming (0x0101) */
         0x00,      /* Assoc Terminal: 0 */
@@ -192,9 +191,9 @@ static struct uac_ac_descriptor ac_desc =
     },
     /*  Output Terminal Descriptor */
     {
-        UAC_DT_OUTPUT_TERMINAL_SIZE,
+        sizeof(struct usb_audio_output_terminal),
         UAC_CS_INTERFACE,
-        UAC_OUTPUT_TERMINAL,
+        UDESCSUB_AC_OUTPUT,
         0x02,      /* Terminal ID: 2 */
         0x0302,    /* Terminal Type: Headphones (0x0302) */
         0x00,      /* Assoc Terminal: 0 */
@@ -215,7 +214,7 @@ static struct uac_ac_descriptor ac_desc =
 #endif
 };
 
-ALIGN(4)
+rt_align(4)
 static struct uinterface_descriptor as_desc0 =
 {
     USB_DESC_LENGTH_INTERFACE,
@@ -229,7 +228,7 @@ static struct uinterface_descriptor as_desc0 =
     0x00,
 };
 
-ALIGN(4)
+rt_align(4)
 static struct uac_as_descriptor as_desc =
 {
     /* Interface Descriptor */
@@ -246,19 +245,19 @@ static struct uac_as_descriptor as_desc =
     },
     /* General AS Descriptor */
     {
-        UAC_DT_AS_HEADER_SIZE,
+        sizeof(struct usb_audio_streaming_interface_descriptor),
         UAC_CS_INTERFACE,
-        UAC_AS_GENERAL,
+        AS_GENERAL,
         0x01,      /* Terminal ID: 1 */
         0x01,      /* Interface delay in frames: 1 */
-        UAC_FORMAT_TYPE_I_PCM,
+        UA_FMT_PCM,
     },
     /* Format type i Descriptor */
     {
-        UAC_FORMAT_TYPE_I_DISCRETE_DESC_SIZE(UAC_FORMAT_NUM),
+        sizeof(struct usb_audio_streaming_type1_descriptor),
         UAC_CS_INTERFACE,
-        UAC_FORMAT_TYPE,
-        UAC_FORMAT_TYPE_I,
+        FORMAT_TYPE,
+        FORMAT_TYPE_I,
         UAC_CHANNEL_NUM,
         2,         /* Subframe Size: 2 */
         RESOLUTION_BITS,
@@ -276,9 +275,9 @@ static struct uac_as_descriptor as_desc =
     },
     /* AS Endpoint Descriptor */
     {
-        UAC_ISO_ENDPOINT_DESC_SIZE,
+        sizeof(struct usb_audio_streaming_endpoint_descriptor),
         UAC_CS_ENDPOINT,
-        UAC_MS_GENERAL,
+        AS_GENERAL,
     },
 };
 
@@ -477,9 +476,9 @@ static rt_err_t _uac_descriptor_config(struct uac_ac_descriptor *ac,
 
 static rt_err_t _uac_samplerate_config(struct uac_as_descriptor *as, rt_uint32_t samplerate)
 {
-    as->format_type_desc.tSamFreq[0][2] = samplerate >> 16 & 0xff;
-    as->format_type_desc.tSamFreq[0][1] = samplerate >> 8 & 0xff;
-    as->format_type_desc.tSamFreq[0][0] = samplerate & 0xff;
+    as->format_type_desc.tSamFreq[0 * 3 + 2] = samplerate >> 16 & 0xff;
+    as->format_type_desc.tSamFreq[0 * 3 + 1] = samplerate >> 8 & 0xff;
+    as->format_type_desc.tSamFreq[0 * 3 + 0] = samplerate & 0xff;
     return RT_EOK;
 }
 

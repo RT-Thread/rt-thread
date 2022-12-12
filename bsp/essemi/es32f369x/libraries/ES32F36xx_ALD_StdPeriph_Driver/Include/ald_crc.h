@@ -8,10 +8,26 @@
   * @date    18 Jun 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          18 Jun 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #ifndef __ALD_CRC_H__
@@ -94,9 +110,9 @@ typedef struct crc_handle_s {
 	crc_init_t init;  	/**< CRC required parameters */
 	uint8_t *cal_buf; 	/**< The pointer of preparing buffer */
 	uint32_t *cal_res;	/**< The pointer of result */
-#ifdef ALD_DMA
+
 	dma_handle_t hdma;	/**< CRC DMA handle parameters */
-#endif
+
 	lock_state_t lock;	/**< Locking object */
 	crc_state_t state;	/**< CRC operation state */
 
@@ -155,7 +171,7 @@ uint32_t ald_crc_calculate_word(crc_handle_t *hperh, uint32_t *buf, uint32_t siz
   * @}
   */
 
-#ifdef ALD_DMA
+
 /** @addtogroup CRC_Public_Functions_Group3
   * @{
   */
@@ -168,7 +184,7 @@ ald_status_t ald_crc_dma_stop(crc_handle_t *hperh);
 /**
   * @}
   */
-#endif
+
 /** @addtogroup CRC_Public_Functions_Group4
   * @{
   */

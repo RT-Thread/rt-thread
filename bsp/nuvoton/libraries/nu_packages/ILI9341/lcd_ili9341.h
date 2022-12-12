@@ -46,7 +46,7 @@ void ili9341_lcd_get_pixel(char *color, int x, int y);
 void ili9341_send_pixels(rt_uint16_t *pixels, int len);
 
 #if defined(NU_PKG_USING_ILI9341_SPI)
-    rt_err_t rt_hw_lcd_ili9341_spi_init(const char *spibusname);
+    rt_err_t rt_hw_lcd_ili9341_spi_init(const char *spibusname, void *pvUserData);
 #elif defined(NU_PKG_USING_ILI9341_EBI)
     rt_err_t rt_hw_lcd_ili9341_ebi_init(rt_uint32_t ebi_base);
 #endif

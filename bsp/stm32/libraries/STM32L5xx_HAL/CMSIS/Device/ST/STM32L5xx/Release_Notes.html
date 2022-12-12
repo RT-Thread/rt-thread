@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32L5xx CMSIS</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<center>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32l5xx-cmsis"><mark>STM32L5xx CMSIS</mark></h1>
+<p>Copyright © 2019 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="./_htmresc/st_logo_2020.png" alt="ST logo" /></a>
+</center>
+<h1 id="license">License</h1>
+<p>This software component is licensed by ST under Apache-2.0 license, the "License"; You may not use this component except in compliance with the License. You may obtain a copy of the License at:</p>
+<p><a href="https://opensource.org/licenses/Apache-2.0">Apache License v2.0</a></p>
+<h1 id="purpose">Purpose</h1>
+<p>This driver provides the CMSIS device for the STM32L5 products. This covers STM32L552xx/STM32L5622x devices.</p>
+<p>This driver is composed of the descriptions of the registers under “Include” directory.</p>
+<p>Various template file are provided to easily build an application. They can be adapted to fit applications requirements.</p>
+<ul>
+<li>Include/Templates/partition_stm32l552xx.h and partition_stm32l562xx.h contain a default Secure Attribute Unit (SAU) set up from SystemInit() for secure application when the TrustZone-M security is enabled (TZEN=1).</li>
+<li>Source/Templates/system_stm32l5xx.c contains the initialization code referred as SystemInit() when there is no TrustZone-M security enabled (TZEN=0).</li>
+<li>Source/Templates/system_stm32l5xx_s.c contains the initialization code referred as SystemInit() for secure application when the TrustZone-M security is enabled (TZEN=1).</li>
+<li>Source/Templates/system_stm32l5xx_ns.c contains the initialization code referred as SystemInit() for non-secure application when the TrustZone-M security is enabled (TZEN=1).</li>
+<li>Startup files are provided as example for IAR, KEIL and STM32CubeIDE.</li>
+<li>Linker files are provided as example for IAR, KEIL and STM32CubeIDE.</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="true"><strong>V1.0.4 / 10-February-2021</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p><strong>Maintenance release</strong></p>
+<h2 id="contents">Contents</h2>
+<p>Maintenance release of STM32L5xx CMSIS Device drivers to support <strong>STM32L552xx and STM32L562xx</strong> devices</p>
+<ul>
+<li>stm32l552xx.h and stm32l562xx.h updates
+<ul>
+<li>Add TAMP_CFGR configuration register and definitions for TMONEN, VMONEN and WUTMONEN monitoring functions</li>
+<li>Fix I2C4_EV_IRQn and I2C4_ER_IRQn order in IRQn_Type</li>
+</ul></li>
+</ul>
+<h2 id="notes">Notes</h2>
+<p>Reminder:</p>
+<ul>
+<li>When TrustZone is enabled in the system (Flash option bit TZEN=1)
+<ul>
+<li>template device partition_stm32l552xx.h or partition_stm32l562xx.h file must be copied and optionally updated in user application secure project to configure the system (SAU, interrupts, core).</li>
+<li>default Security Attribute Unit (SAU) configuration in the partition_stm32l552xx.h and partition_stm32l562xx.h:
+<ul>
+<li>SAU region 0: 0x0C03E000-0x0C03FFFF (Secure, Non-Secure Callable)</li>
+<li>SAU region 1: 0x08040000-0x0807FFFF (Non-Secure FLASH Bank2 (256 Kbytes))</li>
+<li>SAU region 2: 0x20018000-0x2003FFFF (Non-Secure RAM (2nd half SRAM1 + SRAM2 (160 Kbytes)))</li>
+<li>SAU region 3: 0x40000000-0x4FFFFFFF (Non-Secure Peripheral mapped memory)</li>
+<li>SAU region 4: 0x60000000-0x9FFFFFFF (Non-Secure external memories)</li>
+<li>SAU region 5: 0x0BF90000-0x0BFA8FFF (Non-Secure System memory)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true"><strong>V1.0.3 / 26-June-2020</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<p><strong>Fourth release</strong></p>
+<h2 id="contents-1">Contents</h2>
+<p>Fourth release of STM32L5xx CMSIS Device drivers to support <strong>STM32L552xx and STM32L562xx</strong> devices</p>
+<ul>
+<li>stm32l552xx.h and stm32l562xx.h updates
+<ul>
+<li>Fix ICACHE_FCR_CERRF bit definition</li>
+<li>Align DBGMCU_CR register and bits definitions with RM0438 revision 5</li>
+<li>Cleanup RCC_CFGR_* definitions to keep only bits definitions</li>
+</ul></li>
+<li>Templates\gcc\startup_stm32l552xx.s and startup_stm32l562xx.s
+<ul>
+<li>Call SystemInit() before RAM initialization in startup/Reset_Handler</li>
+</ul></li>
+<li>Add README.md and License.md files for GitHub publication</li>
+<li>Misspelled words corrections in driver descriptions</li>
+</ul>
+<h2 id="notes-1">Notes</h2>
+<p>Reminder:</p>
+<ul>
+<li>When TrustZone is enabled in the system (Flash option bit TZEN=1)
+<ul>
+<li>template device partition_stm32l552xx.h or partition_stm32l562xx.h file must be copied and optionally updated in user application secure project to configure the system (SAU, interrupts, core).</li>
+<li>default Security Attribute Unit (SAU) configuration in the partition_stm32l552xx.h and partition_stm32l562xx.h:
+<ul>
+<li>SAU region 0: 0x0C03E000-0x0C03FFFF (Secure, Non-Secure Callable)</li>
+<li>SAU region 1: 0x08040000-0x0807FFFF (Non-Secure FLASH Bank2 (256 Kbytes))</li>
+<li>SAU region 2: 0x20018000-0x2003FFFF (Non-Secure RAM (2nd half SRAM1 + SRAM2 (160 Kbytes)))</li>
+<li>SAU region 3: 0x40000000-0x4FFFFFFF (Non-Secure Peripheral mapped memory)</li>
+<li>SAU region 4: 0x60000000-0x9FFFFFFF (Non-Secure external memories)</li>
+<li>SAU region 5: 0x0BF90000-0x0BFA8FFF (Non-Secure System memory)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true"><strong>V1.0.2 / 12-February-2020</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<p><strong>Third release</strong></p>
+<h2 id="contents-2">Contents</h2>
+<p>Third official release of STM32L5xx CMSIS Device drivers to support <strong>STM32L552xx and STM32L562xx</strong> devices</p>
+<ul>
+<li>stm32l552xx.h and stm32l562xx.h updates
+<ul>
+<li>Add root secure services library (RSSLIB) definitions</li>
+<li>Add bootloader id address</li>
+<li>Align DBGMCU_APB2FZR register and bits definitions with RM0438</li>
+</ul></li>
+</ul>
+<h2 id="notes-2">Notes</h2>
+<p>Reminder:</p>
+<ul>
+<li>When TrustZone is enabled in the system (Flash option bit TZEN=1)
+<ul>
+<li>template device partition_stm32l552xx.h or partition_stm32l562xx.h file must be copied and optionally updated in user application secure project to configure the system (SAU, interrupts, core).</li>
+<li>default Security Attribute Unit (SAU) configuration in the partition_stm32l552xx.h and partition_stm32l562xx.h:
+<ul>
+<li>SAU region 0: 0x0C03E000-0x0C03FFFF (Secure, Non-Secure Callable)</li>
+<li>SAU region 1: 0x08040000-0x0807FFFF (Non-Secure FLASH Bank2 (256 Kbytes))</li>
+<li>SAU region 2: 0x20018000-0x2003FFFF (Non-Secure RAM (2nd half SRAM1 + SRAM2 (160 Kbytes)))</li>
+<li>SAU region 3: 0x40000000-0x4FFFFFFF (Non-Secure Peripheral mapped memory)</li>
+<li>SAU region 4: 0x60000000-0x9FFFFFFF (Non-Secure external memories)</li>
+<li>SAU region 5: 0x0BF90000-0x0BFA8FFF (Non-Secure System memory)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" unchecked aria-hidden="true"> <label for="collapse-section2" aria-hidden="true"><strong>V1.0.1 / 22-January-2020</strong></label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<p><strong>Second release</strong></p>
+<h2 id="contents-3">Contents</h2>
+<p>Second official release of STM32L5xx CMSIS Device drivers to support <strong>STM32L552xx and STM32L562xx</strong> devices</p>
+<ul>
+<li>Templates system_stm32l5xx.c, system_stm32l5xx_s.c and system_stm32l5xx_ns.c
+<ul>
+<li>Add vector table relocation capability with conditional USER_VECT_TAB_ADDRESS</li>
+</ul></li>
+</ul>
+<h2 id="notes-3">Notes</h2>
+<p>Reminder:</p>
+<ul>
+<li>When TrustZone is enabled in the system (Flash option bit TZEN=1)
+<ul>
+<li>template device partition_stm32l552xx.h or partition_stm32l562xx.h file must be copied and optionally updated in user application secure project to configure the system (SAU, interrupts, core).</li>
+<li>default Security Attribute Unit (SAU) configuration in the partition_stm32l552xx.h and partition_stm32l562xx.h:
+<ul>
+<li>SAU region 0: 0x0C03E000-0x0C03FFFF (Secure, Non-Secure Callable)</li>
+<li>SAU region 1: 0x08040000-0x0807FFFF (Non-Secure FLASH Bank2 (256 Kbytes))</li>
+<li>SAU region 2: 0x20018000-0x2003FFFF (Non-Secure RAM (2nd half SRAM1 + SRAM2 (160 Kbytes)))</li>
+<li>SAU region 3: 0x40000000-0x4FFFFFFF (Non-Secure Peripheral mapped memory)</li>
+<li>SAU region 4: 0x60000000-0x9FFFFFFF (Non-Secure external memories)</li>
+<li>SAU region 5: 0x0BF90000-0x0BFA8FFF (Non-Secure System memory)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" unchecked aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V1.0.0 / 13-December-2019</strong></label>
+<div>
+<h2 id="main-changes-4">Main Changes</h2>
+<p><strong>First release</strong></p>
+<h2 id="contents-4">Contents</h2>
+<p>First official release of STM32L5xx CMSIS Device drivers to support <strong>STM32L552xx and STM32L562xx</strong> devices</p>
+<ul>
+<li>Templates
+<ul>
+<li>When TrustZone security is enabled in the system (Flash option bit TZEN=1), the partition_stm32l552xx.h and partition_stm32l562xx.h are available from \Include\Templates with a default Security Attribute Unit (SAU) configuration:
+<ul>
+<li>SAU region 0: 0x0C03E000-0x0C03FFFF (Secure, Non-Secure Callable)</li>
+<li>SAU region 1: 0x08040000-0x0807FFFF (Non-Secure FLASH Bank2 (256 Kbytes))</li>
+<li>SAU region 2: 0x20018000-0x2003FFFF (Non-Secure RAM (2nd half SRAM1 + SRAM2 (160 Kbytes)))</li>
+<li>SAU region 3: 0x40000000-0x4FFFFFFF (Non-Secure Peripheral mapped memory)</li>
+<li>SAU region 4: 0x60000000-0x9FFFFFFF (Non-Secure external memories)</li>
+<li>SAU region 5: 0x0BF90000-0x0BFA8FFF (Non-Secure System memory)</li>
+</ul></li>
+<li>system_stm32l5xx_s.c and system_stm32l5xx_ns.c for respectively secure application and non-secure application when TrustZone security is enabled (TZEN=1)</li>
+<li>Linker files for 256 and 512 Kbytes Flash device configurations</li>
+</ul></li>
+</ul>
+<h2 id="notes-4">Notes</h2>
+<p>When TrustZone is enabled in the system (Flash option bit TZEN=1), template device partition_stm32l552xx.h or partition_stm32l562xx.h file must be copied and optionally updated in user application secure project to configure the system (SAU, interrupts, core)</p>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<p>For complete documentation on STM32L5xx, visit: [<a href="http://www.st.com/stm32l5">www.st.com/stm32l5</a>]</p>
+<em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

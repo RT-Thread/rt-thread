@@ -108,7 +108,7 @@ typedef struct
 #define EXTI_LINE_17                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG1 | 0x11u)  /* RTC timestamp and SecureError wakeup */
 #define EXTI_LINE_18                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG1 | 0x12u)  /* TAMP tamper and SecureError wakeup */
 #define EXTI_LINE_19                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG1 | 0x13u)  /* RTC Wakeup timer and Alarms (A and B) and SecureError wakeup */
-#define EXTI_LINE_20                        (EXTI_RESERVED |            | EXTI_REG1 | 0x14u)  /* RESERVED */
+#define EXTI_LINE_20                        (EXTI_RESERVED |              EXTI_REG1 | 0x14u)  /* RESERVED */
 #define EXTI_LINE_21                        (EXTI_DIRECT   |              EXTI_REG1 | 0x15u)  /* I2C1 wakeup */
 #define EXTI_LINE_22                        (EXTI_DIRECT   |              EXTI_REG1 | 0x16u)  /* I2C2 wakeup */
 #define EXTI_LINE_23                        (EXTI_DIRECT   |              EXTI_REG1 | 0x17u)  /* I2C3 wakeup */
@@ -175,7 +175,6 @@ typedef struct
   */
 #define EXTI_MODE_C1_NONE                   0x00000010u
 #define EXTI_MODE_C1_INTERRUPT              0x00000011u
-#define EXTI_MODE_C1_EVENT                  0x00000012u
 #define EXTI_MODE_C2_NONE                   0x00000020u
 #define EXTI_MODE_C2_INTERRUPT              0x00000021u
 #define EXTI_MODE_C2_EVENT                  0x00000022u
@@ -254,7 +253,8 @@ typedef struct
 #define EXTI_REG_SHIFT                      16u
 #define EXTI_REG1                           (0x00uL << EXTI_REG_SHIFT)
 #define EXTI_REG2                           (0x01uL << EXTI_REG_SHIFT)
-#define EXTI_REG_MASK                       (EXTI_REG1 | EXTI_REG2)
+#define EXTI_REG3                           (0x02uL << EXTI_REG_SHIFT)
+#define EXTI_REG_MASK                       (EXTI_REG1 | EXTI_REG2 | EXTI_REG3)
 #define EXTI_PIN_MASK                       0x0000001Fu
 
 /**

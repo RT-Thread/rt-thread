@@ -1,4 +1,6 @@
 import os
+import platform
+
 
 # toolchains options
 ARCH        ='risc-v'
@@ -15,7 +17,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'D:/Softwares/RT-ThreadStudio/repo/Extract/ToolChain_Support_Packages/RISC-V/RISC-V-GCC/10.1.0/bin'
+    EXEC_PATH   = r'D:/program_files/programming/RT-ThreadStudio/repo/Extract/ToolChain_Support_Packages/RISC-V/RISC-V-GCC/10.1.0/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -38,9 +40,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    # DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -fsingle-precision-constant'
-    DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32'
-    # CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
+    DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -msave-restore -ffunction-sections'
     CFLAGS = DEVICE + ' -D_USE_LONG_TIME_T'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
@@ -57,8 +57,10 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-POST_ACTION += './riscv32-elf-xmaker -b rtthread.xm\n'
-POST_ACTION += './riscv32-elf-xmaker -b download.xm\n'
+
+if "Windows" in platform.platform():
+    POST_ACTION += './riscv32-elf-xmaker -b rtthread.xm\n'
+    POST_ACTION += './riscv32-elf-xmaker -b download.xm\n'
 
 def dist_handle(BSP_ROOT, dist_dir):
     import sys

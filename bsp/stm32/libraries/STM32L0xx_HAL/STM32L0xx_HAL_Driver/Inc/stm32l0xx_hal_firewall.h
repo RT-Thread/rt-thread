@@ -90,8 +90,8 @@ typedef struct
 /** @defgroup FIREWALL_VolatileData_Executable   FIREWALL volatile data segment execution status
   * @{
   */
-#define FIREWALL_VOLATILEDATA_NOT_EXECUTABLE                 ((uint32_t)0x0000U)
-#define FIREWALL_VOLATILEDATA_EXECUTABLE                     ((uint32_t)FW_CR_VDE)
+#define FIREWALL_VOLATILEDATA_NOT_EXECUTABLE                 (0x0000U)
+#define FIREWALL_VOLATILEDATA_EXECUTABLE                     FW_CR_VDE
 /**
   * @}
   */
@@ -99,8 +99,8 @@ typedef struct
 /** @defgroup FIREWALL_VolatileData_Shared  FIREWALL volatile data segment share status
   * @{
   */
-#define FIREWALL_VOLATILEDATA_NOT_SHARED                ((uint32_t)0x0000U)
-#define FIREWALL_VOLATILEDATA_SHARED                    ((uint32_t)FW_CR_VDS)
+#define FIREWALL_VOLATILEDATA_NOT_SHARED                (0x0000U)
+#define FIREWALL_VOLATILEDATA_SHARED                    FW_CR_VDS
 /**
   * @}
   */
@@ -108,8 +108,8 @@ typedef struct
 /** @defgroup FIREWALL_Pre_Arm FIREWALL pre arm status
   * @{
   */
-#define FIREWALL_PRE_ARM_RESET                 ((uint32_t)0x0000U)
-#define FIREWALL_PRE_ARM_SET                   ((uint32_t)FW_CR_FPA)
+#define FIREWALL_PRE_ARM_RESET                 (0x0000U)
+#define FIREWALL_PRE_ARM_SET                   FW_CR_FPA
 
 /**
   * @}

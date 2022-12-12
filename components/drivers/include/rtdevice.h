@@ -57,7 +57,11 @@ extern "C" {
 #endif /* RT_USING_USB_HOST */
 
 #ifdef RT_USING_SERIAL
+#ifdef RT_USING_SERIAL_V2
+#include "drivers/serial_v2.h"
+#else
 #include "drivers/serial.h"
+#endif
 #endif /* RT_USING_SERIAL */
 
 #ifdef RT_USING_I2C
@@ -148,6 +152,14 @@ extern "C" {
 #ifdef RT_USING_INPUT_CAPTURE
 #include "drivers/rt_inputcapture.h"
 #endif /* RT_USING_INPUT_CAPTURE */
+
+#ifdef RT_USING_TOUCH
+#include "drivers/touch.h"
+#endif
+
+#ifdef RT_USING_DEV_BUS
+#include "drivers/rt_dev_bus.h"
+#endif
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,129 @@
+'''
+ : Copyright (c) 2020 Phytium Information Technology, Inc. 
+ 
+SPDX-License-Identifier: Apache-2.0.
+
+Date: 2021-05-24 14:30:13
+LastEditTime: 2021-05-26 14:58:34
+Description:  This files is for 
+
+Modify History: 
+ Ver   Who        Date         Changes
+----- ------     --------    --------------------------------------
+'''
+from building import *
+import rtconfig
+Import('RTT_ROOT')
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+bsp/standlone/ft_assert.c
+bsp/standlone/ft_generic_timer.c
+bsp/standlone/ft_printf.c
+bsp/standlone/ft_trace.c
+bsp/standlone/ft_mux.c
+bsp/standlone/inbyte.c
+bsp/standlone/outbyte.c
+bsp/standlone/ft_cache.c
+bsp/standlone/ft_cpu.c
+bsp/standlone/ft_smc.S
+bsp/standlone/ft_psci.c
+bsp/standlone/ft_debug.c
+""")
+
+
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['bsp/ft_uart/ft_uart_g.c']
+    src += ['bsp/ft_uart/ft_uart_hw.c']
+    src += ['bsp/ft_uart/ft_uart_intr.c']
+    src += ['bsp/ft_uart/ft_uart_options.c']
+    src += ['bsp/ft_uart/ft_uart_selftest.c']
+    src += ['bsp/ft_uart/ft_uart_sinit.c']
+    src += ['bsp/ft_uart/ft_uart.c']
+
+if GetDepend(['RT_USING_I2C']):
+    None
+
+if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+    None
+
+if GetDepend(['BSP_USE_CAN']):
+    src += ['bsp/ft_can/ft_can_g.c']
+    src += ['bsp/ft_can/ft_can_hw.c']
+    src += ['bsp/ft_can/ft_can_intr.c']
+    src += ['bsp/ft_can/ft_can_sinit.c']
+    src += ['bsp/ft_can/ft_can.c']
+    src += ['bsp/ft_can/ft_can_calc.c']
+    None
+
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+    None
+
+if GetDepend(['RT_USING_ADC']):
+    None
+
+if GetDepend(['RT_USING_RTC']):
+    None
+
+if GetDepend(['RT_USING_WDT']):
+    None
+
+if GetDepend(['RT_USING_AUDIO']):
+    None
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    None
+
+if GetDepend(['BSP_USING_GMAC']):
+    src += ['bsp/ft_gmac/ft_gmac_desc.c']
+    src += ['bsp/ft_gmac/ft_gmac_g.c']
+    src += ['bsp/ft_gmac/ft_gmac_hw.c']
+    src += ['bsp/ft_gmac/ft_gmac_intr.c']
+    src += ['bsp/ft_gmac/ft_gmac_sinit.c']
+    src += ['bsp/ft_gmac/ft_gmac.c']
+
+if GetDepend(['BSP_USING_SDC']):
+    src += ['bsp/ft_sd/ft_sdctrl_option.c']
+    src += ['bsp/ft_sd/ft_sdctrl_sinit.c']
+    src += ['bsp/ft_sd/ft_sdctrl_intr.c']
+    src += ['bsp/ft_sd/ft_sdctrl_g.c']
+    src += ['bsp/ft_sd/ft_sdctrl_hw.c']
+    src += ['bsp/ft_sd/ft_sdctrl.c']
+
+if GetDepend(['BSP_USE_QSPI']):
+    src += ['bsp/ft_qspi/qspi_g.c']
+    src += ['bsp/ft_qspi/qspi_hw.c']
+    src += ['bsp/ft_qspi/ft_qspi.c']
+    src += ['bsp/ft_qspi/qspi_sinit.c']
+    
+if GetDepend(['BSP_USE_SPI']):
+    src += ['bsp/ft_spi/ft_spi.c']
+    src += ['bsp/ft_spi/ft_spi_irq.c']
+
+if GetDepend(['BSP_USE_GPIO']):
+    src += ['bsp/ft_gpio/ft_gpio.c']
+
+path = [cwd + '/bsp/standlone/',
+        cwd + '/bsp/ft_gicv3',
+        cwd + '/bsp/ft_gmac',
+        cwd + '/bsp/ft_uart',
+        cwd + '/bsp/ft_sd',
+        cwd + '/bsp/ft_qspi',
+        cwd + '/bsp/ft_can',
+        cwd + '/bsp/ft_spi',
+        cwd + '/bsp/ft_gpio',
+        cwd + '/bsp/include',
+        cwd + '/include',
+        cwd + '/cpu', ]
+
+
+CPPDEFINES = ['USE_FT_DRIVER']
+group = DefineGroup('FT_DRIVER', src, depend=[
+                    ''], CPPPATH=path, CPPDEFINES=CPPDEFINES)
+
+Return('group')

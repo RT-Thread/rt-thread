@@ -1,0 +1,21 @@
+# RT-Thread building script for component
+
+from building import *
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+src = Glob('*.cpp') + Glob('*.c')
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_CPLUSPLUS11'):
+    src += Glob('cpp11/*.cpp') + Glob('cpp11/*.c')
+    if rtconfig.PLATFORM in ['armclang']:
+        src += Glob('cpp11/armclang/*.cpp') + Glob('cpp11/armclang/*.c')
+        CPPPATH += [cwd + '/cpp11/armclang']
+    elif rtconfig.PLATFORM in ['gcc']:
+        src += Glob('cpp11/gcc/*.cpp') + Glob('cpp11/gcc/*.c')
+        CPPPATH += [cwd + '/cpp11/gcc']
+
+group = DefineGroup('CPlusPlus', src, depend = ['RT_USING_CPLUSPLUS'], CPPPATH = CPPPATH)
+
+Return('group')

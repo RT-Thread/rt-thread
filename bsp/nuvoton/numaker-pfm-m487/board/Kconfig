@@ -37,42 +37,48 @@ menu "Hardware Drivers Config"
             select BSP_USING_QSPI0
             default y
 
-        choice
-            prompt "Select FS/HS USB Ports"
+        config BOARD_USING_USB_D_H
+            bool "Enable USB Device or Host function"
+            help
+                Choose this option if you need USB function.
 
-            config BOARD_USING_HSUSBD
-                select BSP_USING_HSUSBD
-                bool "Enable HSUSBD(over USB2.0)"
-                help
-                    Choose this option if you need HSUSBD function mode.
+        if BOARD_USING_USB_D_H
+            choice
+                prompt "Select FS/HS USB Ports"
 
-            config BOARD_USING_HSUSBD_USBH
-                select BSP_USING_USBH
-                select BSP_USING_HSUSBD
-                bool "Enable HSUSBD(over USB2.0) and USBH(over USB1.1)"
-                help
-                    Choose this option if you need HSUSBD and USBH function mode at the same time.
+                config BOARD_USING_HSUSBD
+                    select BSP_USING_HSUSBD
+                    bool "Enable HSUSBD(over USB2.0)"
+                    help
+                        Choose this option if you need HSUSBD function mode.
 
-            config BOARD_USING_HSUSBH
-                select BSP_USING_HSUSBH
-                bool "Enable HSUSBH(over USB2.0)"
-                help
-                    Choose this option if you need HSUSBH function mode.
+                config BOARD_USING_HSUSBD_USBH
+                    select BSP_USING_USBH
+                    select BSP_USING_HSUSBD
+                    bool "Enable HSUSBD(over USB2.0) and USBH(over USB1.1)"
+                    help
+                        Choose this option if you need HSUSBD and USBH function mode at the same time.
 
-            config BOARD_USING_HSUSBH_USBD
-                select BSP_USING_HSUSBH
-                select BSP_USING_USBD
-                bool "Enable HSUSBH(over USB2.0) and USBD(over USB1.1)"
-                help
-                    Choose this option if you need HSUSBH and USBD function mode at the same time.
+                config BOARD_USING_HSUSBH
+                    select BSP_USING_HSUSBH
+                    bool "Enable HSUSBH(over USB2.0)"
+                    help
+                        Choose this option if you need HSUSBH function mode.
 
-            config BOARD_USING_HSOTG
-                select BSP_USING_HSOTG
-                bool "Enable HSOTG(over USB2.0)"
-                help
-                    Choose this option if you need HSOTG function mode.
+                config BOARD_USING_HSUSBH_USBD
+                    select BSP_USING_HSUSBH
+                    select BSP_USING_USBD
+                    bool "Enable HSUSBH(over USB2.0) and USBD(over USB1.1)"
+                    help
+                        Choose this option if you need HSUSBH and USBD function mode at the same time.
 
-        endchoice
+                config BOARD_USING_HSOTG
+                    select BSP_USING_HSOTG
+                    bool "Enable HSOTG(over USB2.0)"
+                    help
+                        Choose this option if you need HSOTG function mode.
+            endchoice
+        endif
 
     endmenu
 
@@ -92,7 +98,6 @@ menu "Hardware Drivers Config"
 
             config BOARD_USING_MPU6500
                 bool "MPU6500 6-axis sensor(over i2c2)"
-                select PKG_USING_SENSORS_DRIVERS
                 select PKG_USING_MPU6XXX
                 select PKG_USING_MPU6XXX_LATEST_VERSION
                 select PKG_USING_MPU6XXX_ACCE
@@ -102,8 +107,15 @@ menu "Hardware Drivers Config"
 
             config BOARD_USING_LCD_ILI9341
                 bool "LCD ILI9341(over ebi0)"
+                select RT_USING_TOUCH
+                select BSP_USING_EADC
+                select BSP_USING_EADC0
+                select NU_PKG_USING_ADC_TOUCH
+                select NU_PKG_USING_ADC_TOUCH_SW
                 select NU_PKG_USING_ILI9341
                 select NU_PKG_USING_ILI9341_EBI
+                select NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
+                select NU_PKG_ILI9341_HORIZONTAL
                 default n
 
             if BOARD_USING_LCD_ILI9341
@@ -161,5 +173,7 @@ menu "Hardware Drivers Config"
         endif
 
     endmenu
+
+    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
 
 endmenu

@@ -289,8 +289,8 @@ __STATIC_INLINE void BURTC_Enable(bool enable)
   if( enable )
   {
     BITBAND_Peripheral(&BURTC->CTRL, _BURTC_CTRL_RSTEN_SHIFT, 0);
-  } 
-  else 
+  }
+  else
   {
     BITBAND_Peripheral(&BURTC->CTRL, _BURTC_CTRL_RSTEN_SHIFT, 1);
   }

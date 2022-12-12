@@ -19,7 +19,7 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | IDE/编译器 | 已测试版本                   |
 | ---------- | ---------------------------- |
 | MDK4       | MDK4.74                      |
-| MDK5       | MDK523                       |
+| MDK5       | MDK531                       |
 | IAR        | IAR8.20                      |
 | GCC        | GCC 5.4.1 20160919 (release) |
 
@@ -50,58 +50,58 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | WDT       | 支持     |                            |
 | RTC       | 支持     |                            |
 | FLASH     | 支持     |                            |
-| ETH       | 支持     |                            |
+| EMAC      | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 
-| IO号 | 板级包中的定义 |
-| ---- | -------------- |
-| PD13 | LED2           |
-| PD14 | LED3           |
-| PD15 | LED4           |
-| PA9  | USART1_TX      |
-| PA10 | USART1_RX      |
-| PA2  | USART2_TX      |
-| PA3  | USART2_RX      |
-| PB10 | USART3_TX      |
-| PB11 | USART3_RX      |
-| PA4  | SPI1_NSS       |
-| PA5  | SPI1_SCK       |
-| PA6  | SPI1_MISO      |
-| PA7  | SPI1_MOSI      |
-| PB12 | SPI2_NSS       |
-| PB13 | SPI2_SCK       |
-| PB14 | SPI2_MISO      |
-| PB15 | SPI2_MOSI      |
-| PB6  | I2C1_SCL       |
-| PB7  | I2C1_SDA       |
-| PC8  | SDIO1_D0       |
-| PC9  | SDIO1_D1       |
-| PC10 | SDIO1_D2       |
-| PC11 | SDIO1_D3       |
-| PC12 | SDIO1_CK       |
-| PD2  | SDIO1_CMD      |
-| PA8  | PWM_TMR1_CH1   |
-| PA11 | PWM_TMR1_CH4   |
-| PA0  | PWM_TMR2_CH1   |
-| PA1  | PWM_TMR2_CH2   |
-| PC0  | ADC1/2_IN10    |
-| PC1  | ADC1/2_IN11    |
-| PC2  | ADC1/2_IN12    |
-| PC3  | ADC1/2_IN13    |
-| PC4  | ADC1/2_IN14    |
-| PC5  | ADC1/2_IN15    |
-| PA11 | CAN1_RX        |
-| PA12 | CAN1_TX        |
-| PB5  | CAN2_RX        |
-| PB6  | CAN2_TX        |
-| PB11 | ETH_RMII_TX_EN |
-| PB12 | ETH_RMII_TX0   |
-| PB13 | ETH_RMII_TX1   |
-| PD8  | ETH_RMII_RX_DV |
-| PD9  | ETH_RMII_RXD0  |
-| PD10 | ETH_RMII_RXD1  |
-| PA1  | ETH_RMII_REF_CLK |
+| IO号 |   板级包中的定义  |
+| ---- | ----------------- |
+| PD13 | LED2              |
+| PD14 | LED3              |
+| PD15 | LED4              |
+| PA9  | USART1_TX         |
+| PA10 | USART1_RX         |
+| PD5  | USART2_TX         |
+| PD6  | USART2_RX         |
+| PB10 | USART3_TX         |
+| PB11 | USART3_RX         |
+| PA4  | SPI1_NSS          |
+| PA5  | SPI1_SCK          |
+| PA6  | SPI1_MISO         |
+| PA7  | SPI1_MOSI         |
+| PB12 | SPI2_NSS          |
+| PB13 | SPI2_SCK          |
+| PB14 | SPI2_MISO         |
+| PB15 | SPI2_MOSI         |
+| PB6  | I2C1_SCL          |
+| PB7  | I2C1_SDA          |
+| PC8  | SDIO1_D0          |
+| PC9  | SDIO1_D1          |
+| PC10 | SDIO1_D2          |
+| PC11 | SDIO1_D3          |
+| PC12 | SDIO1_CK          |
+| PD2  | SDIO1_CMD         |
+| PA8  | PWM_TMR1_CH1      |
+| PA11 | PWM_TMR1_CH4      |
+| PA0  | PWM_TMR2_CH1      |
+| PA1  | PWM_TMR2_CH2      |
+| PC0  | ADC1/2_IN10       |
+| PC1  | ADC1/2_IN11       |
+| PC2  | ADC1/2_IN12       |
+| PC3  | ADC1/2_IN13       |
+| PC4  | ADC1/2_IN14       |
+| PC5  | ADC1/2_IN15       |
+| PB8  | CAN1_RX           |
+| PB9  | CAN1_TX           |
+| PB5  | CAN2_RX           |
+| PB6  | CAN2_TX           |
+| PB11 | EMAC_RMII_TX_EN   |
+| PB12 | EMAC_RMII_TX0     |
+| PB13 | EMAC_RMII_TX1     |
+| PD8  | EMAC_RMII_RX_DV   |
+| PD9  | EMAC_RMII_RXD0    |
+| PD10 | EMAC_RMII_RXD1    |
+| PA1  | EMAC_RMII_REF_CLK |
 
 ## 使用说明
 
@@ -119,7 +119,7 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 JLink 下载程序，在通过 JLink 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用AT-LINK SWD下载程序，在通过AT-LINK SWD连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
@@ -130,14 +130,14 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Mar  9 2020
- 2006 - 2020 Copyright by rt-thread team
+ / | \     4.1.0 build Mar 23 2022
+ 2006 - 2022 Copyright by RT-Thread team
 msh />
 ```
 
 ## 注意事项
 
-AT32F407使用Ethernet且PHY时钟由MCO输出提供时，主频最好采用200Mhz。
+AT32F407使用Ethernet且PHY时钟由CLKOUT(PA8)输出提供时，主频最好采用200Mhz。
 
 可在雅特力官方网站进行所需资料下载，如Keil_v5/Keil_v4/IAR等pack安装包和AT-START开发板原理图等（www.arterytek.com）
 
@@ -145,4 +145,4 @@ AT32F407使用Ethernet且PHY时钟由MCO输出提供时，主频最好采用200M
 
 维护人:
 
-- [sheltonyu](https://github.com/sheltonyu) 
+- [sheltonyu]

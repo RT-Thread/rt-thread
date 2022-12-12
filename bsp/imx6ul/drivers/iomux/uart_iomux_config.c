@@ -33,9 +33,20 @@
 #include "io.h"
 #include <assert.h>
 
-#define MX6UL_PAD_UART1_TX_DATA__UART1_TX1	(IOMUXC_BASE_ADDR+0x084)
-#define MX6UL_PAD_UART1_RX_DATA__UART1_RX1	(IOMUXC_BASE_ADDR+0x088)
+#define MX6UL_PAD_UART1_TX_DATA__UART1_TX1  (IOMUXC_BASE_ADDR+0x084)
+#define MX6UL_PAD_UART1_RX_DATA__UART1_RX1  (IOMUXC_BASE_ADDR+0x088)
 #define IOMUXC_UART1_UART_RXD_MUX_SELECT_INPUT1 (IOMUXC_BASE_ADDR+0x624)
+
+#define PIN_CFG(mux_ctl_offset, pad_ctl_offset, select_input_offset, mux_mode, daisy, pad_setting) \
+    do {\
+        writel(mux_mode, IOMUXC_BASE_ADDR + mux_ctl_offset);\
+        if (select_input_offset != 0)\
+            writel(daisy, IOMUXC_BASE_ADDR + select_input_offset);\
+        writel(pad_setting, IOMUXC_BASE_ADDR + pad_ctl_offset);\
+    } while(0);
+
+#define MX6UL_PAD_UART1_TX_DATA__UART1_TX(p)                         PIN_CFG(0x0084, 0x0310, 0x0624, 0x0, 0x2, p)
+#define MX6UL_PAD_UART1_RX_DATA__UART1_RX(p)                         PIN_CFG(0x0088, 0x0314, 0x0624, 0x0, 0x3, p)
 
 void uart1_iomux_config(void)
 {
@@ -97,11 +108,11 @@ void uart_iomux_config(int instance)
             return uart5_iomux_config();
 
         case HW_UART7:
-            return uart5_iomux_config();       
+            return uart5_iomux_config();
 
         case HW_UART8:
-            return uart5_iomux_config(); 
-                             
+            return uart5_iomux_config();
+
         default:
             assert(false);
     }

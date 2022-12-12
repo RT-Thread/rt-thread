@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -84,7 +84,7 @@ mips_irq_handle:
     jal     rt_interrupt_enter
     nop
     /* Get Old SP from k0 as paremeter in a0 */
-    move	a0, k0
+    move    a0, k0
     jal     rt_general_exc_dispatch
     nop
     jal     rt_interrupt_leave

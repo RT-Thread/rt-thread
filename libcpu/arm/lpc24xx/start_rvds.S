@@ -1,5 +1,5 @@
 ;/*
-; * Copyright (c) 2006-2018, RT-Thread Development Team
+; * Copyright (c) 2006-2022, RT-Thread Development Team
 ; *
 ; * SPDX-License-Identifier: Apache-2.0
 ; *
@@ -20,22 +20,22 @@
 ;/*****************************************************************************/
 
 ;/*
-; *  The LPC2400.S code is executed after CPU Reset. This file may be 
-; *  translated with the following SET symbols. In uVision these SET 
+; *  The LPC2400.S code is executed after CPU Reset. This file may be
+; *  translated with the following SET symbols. In uVision these SET
 ; *  symbols are entered under Options - ASM - Define.
 ; *
-; *  NO_CLOCK_SETUP: when set the startup code will not initialize Clock 
-; *  (used mostly when clock is already initialized from script .ini 
+; *  NO_CLOCK_SETUP: when set the startup code will not initialize Clock
+; *  (used mostly when clock is already initialized from script .ini
 ; *  file).
 ; *
-; *  NO_EMC_SETUP: when set the startup code will not initialize 
+; *  NO_EMC_SETUP: when set the startup code will not initialize
 ; *  External Bus Controller.
 ; *
-; *  RAM_INTVEC: when set the startup code copies exception vectors 
+; *  RAM_INTVEC: when set the startup code copies exception vectors
 ; *  from on-chip Flash to on-chip RAM.
 ; *
-; *  REMAP: when set the startup code initializes the register MEMMAP 
-; *  which overwrites the settings of the CPU configuration pins. The 
+; *  REMAP: when set the startup code initializes the register MEMMAP
+; *  which overwrites the settings of the CPU configuration pins. The
 ; *  startup and interrupt vectors are remapped from:
 ; *     0x00000000  default setting (not remapped)
 ; *     0x40000000  when RAM_MODE is used
@@ -45,7 +45,7 @@
 ; *  from external memory starting at address 0x80000000.
 ; *
 ; *  RAM_MODE: when set the device is configured for code execution
-; *  from on-chip RAM starting at address 0x40000000. 
+; *  from on-chip RAM starting at address 0x40000000.
 ; */
 
 
@@ -64,7 +64,7 @@ F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
 ;----------------------- Memory Definitions ------------------------------------
 
 ; Internal Memory Base Addresses
-FLASH_BASE      EQU     0x00000000   
+FLASH_BASE      EQU     0x00000000
 RAM_BASE        EQU     0x40000000
 EXTMEM_BASE     EQU     0x80000000
 
@@ -73,10 +73,10 @@ STA_MEM0_BASE   EQU     0x80000000
 STA_MEM1_BASE   EQU     0x81000000
 STA_MEM2_BASE   EQU     0x82000000
 STA_MEM3_BASE   EQU     0x83000000
-DYN_MEM0_BASE   EQU     0xA0000000   
-DYN_MEM1_BASE   EQU     0xB0000000   
-DYN_MEM2_BASE   EQU     0xC0000000   
-DYN_MEM3_BASE   EQU     0xD0000000   
+DYN_MEM0_BASE   EQU     0xA0000000
+DYN_MEM1_BASE   EQU     0xB0000000
+DYN_MEM2_BASE   EQU     0xC0000000
+DYN_MEM3_BASE   EQU     0xD0000000
 
 
 ;----------------------- Stack and Heap Definitions ----------------------------
@@ -516,7 +516,7 @@ EMC_DYN_RD_CFG_Val  EQU 0x00000001
 ;//       <h> Dynamic Memory Self-refresh Exit Time Register (EMCDynamictSREX)
 ;//         <o2.0..3> tSREX: Self-refresh exit time <1-16> <#-1>
 ;//           <i> The delay is in CCLK cycles
-;//           <i> This value is normally found in SDRAM data sheets as tSREX, 
+;//           <i> This value is normally found in SDRAM data sheets as tSREX,
 ;//           <i> for devices without this parameter you use the same value as tXSR
 ;//       </h>
 ;//       <h> Dynamic Memory Last Data Out to Active Time Register (EMCDynamictAPR)
@@ -799,7 +799,7 @@ EMC_STA_WWEN0_Val   EQU 0x00000002
 ;//           <i> The delay is in CCLK cycles
 ;//       </h>
 EMC_STA_WOEN0_Val   EQU 0x00000002
-                                      
+
 ;//       <h> Static Memory Read Delay Register (EMCStaticWaitRd0)
 ;//         <i> Selects the delay from CS0 to a read access
 ;//         <o.0..4> WAITRD: Non-page mode read wait states or asynchronous page mode read first access wait states <1-32> <#-1>
@@ -866,7 +866,7 @@ EMC_STA_WWEN1_Val   EQU 0x00000000
 ;//           <i> The delay is in CCLK cycles
 ;//       </h>
 EMC_STA_WOEN1_Val   EQU 0x00000000
-                                      
+
 ;//       <h> Static Memory Read Delay Register (EMCStaticWaitRd1)
 ;//         <i> Selects the delay from CS1 to a read access
 ;//         <o.0..4> WAITRD: Non-page mode read wait states or asynchronous page mode read first access wait states <1-32> <#-1>
@@ -933,7 +933,7 @@ EMC_STA_WWEN2_Val   EQU 0x00000000
 ;//           <i> The delay is in CCLK cycles
 ;//       </h>
 EMC_STA_WOEN2_Val   EQU 0x00000000
-                                      
+
 ;//       <h> Static Memory Read Delay Register (EMCStaticWaitRd2)
 ;//         <i> Selects the delay from CS2 to a read access
 ;//         <o.0..4> WAITRD: Non-page mode read wait states or asynchronous page mode read first access wait states <1-32> <#-1>
@@ -1000,7 +1000,7 @@ EMC_STA_WWEN3_Val   EQU 0x00000000
 ;//           <i> The delay is in CCLK cycles
 ;//       </h>
 EMC_STA_WOEN3_Val   EQU 0x00000000
-                                      
+
 ;//       <h> Static Memory Read Delay Register (EMCStaticWaitRd3)
 ;//         <i> Selects the delay from CS3 to a read access
 ;//         <o.0..4> WAITRD: Non-page mode read wait states or asynchronous page mode read first access wait states <1-32> <#-1>
@@ -1057,12 +1057,12 @@ EMC_STA_EXT_W_Val   EQU 0x00000000
 ;  Absolute addressing mode must be used.
 ;  Dummy Handlers are implemented as infinite loops which can be modified.
 
-Vectors         LDR     PC, Reset_Addr         
+Vectors         LDR     PC, Reset_Addr
                 LDR     PC, Undef_Addr
                 LDR     PC, SWI_Addr
                 LDR     PC, PAbt_Addr
                 LDR     PC, DAbt_Addr
-                NOP                            ; Reserved Vector 
+                NOP                            ; Reserved Vector
                 LDR     PC, IRQ_Addr
                 LDR     PC, FIQ_Addr
 
@@ -1071,7 +1071,7 @@ Undef_Addr      DCD     Undef_Handler
 SWI_Addr        DCD     SWI_Handler
 PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
-                DCD     0                      ; Reserved Address 
+                DCD     0                      ; Reserved Address
 IRQ_Addr        DCD     IRQ_Handler
 FIQ_Addr        DCD     FIQ_Handler
 
@@ -1085,32 +1085,32 @@ FIQ_Addr        DCD     FIQ_Handler
 
 ; Prepare Fatal Context
         MACRO
-		prepare_fatal
-		STMFD   sp!, {r0-r3}
-		MOV     r1, sp
-		ADD     sp, sp, #16
-		SUB     r2, lr, #4
-		MRS     r3, spsr
+        prepare_fatal
+        STMFD   sp!, {r0-r3}
+        MOV     r1, sp
+        ADD     sp, sp, #16
+        SUB     r2, lr, #4
+        MRS     r3, spsr
 
-		; switch to SVC mode and no interrupt
-		MSR     cpsr_c, #I_Bit :OR: F_Bit :OR: Mode_SVC
+        ; switch to SVC mode and no interrupt
+        MSR     cpsr_c, #I_Bit :OR: F_Bit :OR: Mode_SVC
 
-		STMFD   sp!, {r0}       ; old r0
-		; get sp
-		ADD     r0, sp, #4
-		STMFD   sp!, {r3}       ; cpsr
-		STMFD   sp!, {r2}       ; pc
-		STMFD   sp!, {lr}       ; lr
-		STMFD   sp!, {r0}       ; sp
-		STMFD   sp!, {r4-r12}
+        STMFD   sp!, {r0}       ; old r0
+        ; get sp
+        ADD     r0, sp, #4
+        STMFD   sp!, {r3}       ; cpsr
+        STMFD   sp!, {r2}       ; pc
+        STMFD   sp!, {lr}       ; lr
+        STMFD   sp!, {r0}       ; sp
+        STMFD   sp!, {r4-r12}
 
-		MOV     r4, r1
+        MOV     r4, r1
 
-		LDMFD   r4!, {r0-r3}
-		STMFD   sp!, {r0-r3}
+        LDMFD   r4!, {r0-r3}
+        STMFD   sp!, {r0-r3}
 
-		MOV     r0, sp
-		MEND
+        MOV     r0, sp
+        MEND
 
 Undef_Handler
         prepare_fatal
@@ -1123,7 +1123,7 @@ SWI_Handler
         B       .
 
 PAbt_Handler
-		prepare_fatal
+        prepare_fatal
         BL      rt_hw_trap_pabt
         B       .
 
@@ -1140,7 +1140,7 @@ FIQ_Handler
 ; Reset Handler
 
                 EXPORT  Reset_Handler
-Reset_Handler   
+Reset_Handler
 
 
 ; Clock Setup ------------------------------------------------------------------
@@ -1152,18 +1152,18 @@ Reset_Handler
 
 ;  Configure and Enable PLL
                 LDR     R3, =SCS_Val          ; Enable main oscillator
-                STR     R3, [R0, #SCS_OFS] 
+                STR     R3, [R0, #SCS_OFS]
 
-                IF      (SCS_Val:AND:OSCEN) != 0  
+                IF      (SCS_Val:AND:OSCEN) != 0
 OSC_Loop        LDR     R3, [R0, #SCS_OFS]    ; Wait for main osc stabilize
                 ANDS    R3, R3, #OSCSTAT
                 BEQ     OSC_Loop
                 ENDIF
 
                 LDR     R3, =CLKSRCSEL_Val    ; Select PLL source clock
-                STR     R3, [R0, #CLKSRCSEL_OFS] 
+                STR     R3, [R0, #CLKSRCSEL_OFS]
                 LDR     R3, =PLLCFG_Val
-                STR     R3, [R0, #PLLCFG_OFS] 
+                STR     R3, [R0, #PLLCFG_OFS]
                 STR     R1, [R0, #PLLFEED_OFS]
                 STR     R2, [R0, #PLLFEED_OFS]
                 MOV     R3, #PLLCON_PLLE
@@ -1217,9 +1217,9 @@ M_N_Lock        LDR     R3, [R0, #PLLSTAT_OFS]
                 IF      MAM_SETUP != 0
                 LDR     R0, =MAM_BASE
                 MOV     R1, #MAMTIM_Val
-                STR     R1, [R0, #MAMTIM_OFS] 
+                STR     R1, [R0, #MAMTIM_OFS]
                 MOV     R1, #MAMCR_Val
-                STR     R1, [R0, #MAMCR_OFS] 
+                STR     R1, [R0, #MAMCR_OFS]
                 ENDIF   ; MAM_SETUP
 
 
@@ -1325,7 +1325,7 @@ Wait_1          SUBS    R6, R6, #1                ; Delay ~200 ms proc clk 57.6 
 
                 LDR     R4, =(PALL_CMD:OR:0x03)   ; Write Precharge All Command
                 STR     R4, [R0, #EMC_DYN_CTRL_OFS]
-  
+
                 MOV     R4, #2
                 STR     R4, [R0, #EMC_DYN_RFSH_OFS]
 
@@ -1338,7 +1338,7 @@ Wait_2          SUBS    R6, R6, #1                ; Delay
 
                 LDR     R4, =(MODE_CMD:OR:0x03)   ; Write MODE Command
                 STR     R4, [R0, #EMC_DYN_CTRL_OFS]
-    
+
                 ; Dummy read
                 IF      (EMC_DYNCS0_SETUP != 0)
                 LDR     R4, =DYN_MEM0_BASE
@@ -1476,7 +1476,7 @@ Wait_5          SUBS    R6, R6, #1                ; Delay ~10 ms @ proc clk 57.6
                 ADD     R5, R5, R0
                 STR     R4, [R5, #0]
 
-                ENDIF   ; EMC_STATIC_SETUP 
+                ENDIF   ; EMC_STATIC_SETUP
 
                 ENDIF   ; EMC_SETUP
 
@@ -1486,9 +1486,9 @@ Wait_5          SUBS    R6, R6, #1                ; Delay ~10 ms @ proc clk 57.6
                 IF      :DEF:RAM_INTVEC
                 ADR     R8, Vectors         ; Source
                 LDR     R9, =RAM_BASE       ; Destination
-                LDMIA   R8!, {R0-R7}        ; Load Vectors 
-                STMIA   R9!, {R0-R7}        ; Store Vectors 
-                LDMIA   R8!, {R0-R7}        ; Load Handler Addresses 
+                LDMIA   R8!, {R0-R7}        ; Load Vectors
+                STMIA   R9!, {R0-R7}        ; Store Vectors
+                LDMIA   R8!, {R0-R7}        ; Load Handler Addresses
                 STMIA   R9!, {R0-R7}        ; Store Handler Addresses
                 ENDIF
 
@@ -1610,8 +1610,8 @@ rt_hw_context_switch_interrupt_do   PROC
                 LDR     sp,  [r6]       ; get new task's stack pointer
 
                 LDMFD   sp!, {r4}       ; pop new task's cpsr to spsr
-				MSR     spsr_cxsf, r4
-				BIC     r4, r4, #0x20   ; must be ARM mode
+                MSR     spsr_cxsf, r4
+                BIC     r4, r4, #0x20   ; must be ARM mode
                 MSR     cpsr_cxsf, r4
 
                 LDMFD   sp!, {r0-r12,lr,pc}^ ; pop new task's r0-r12,lr & pc, copy spsr to cpsr

@@ -29,7 +29,7 @@ extern void finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
 #pragma section="HEAP"
@@ -72,7 +72,7 @@ void rtthread_startup(void)
     rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
-    #if defined(__CC_ARM) || defined(__CLANG_ARM)
+    #if defined(__ARMCC_VERSION)
         rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)CHIP_SRAM_END);
     #elif __ICCARM__
         rt_system_heap_init(__segment_end("HEAP"), (void*)CHIP_SRAM_END);

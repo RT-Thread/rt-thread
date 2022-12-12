@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include "drv_usart.h"
+#include "api_huart.h"
 
 #ifdef RT_USING_SERIAL
 
@@ -39,6 +40,7 @@ static struct ab32_uart_config uart_config[] =
         .name = "uart0",
         .instance = UART0_BASE,
         .mode = UART_MODE_TX_RX | UART_MODE_1LINE,
+        .fifo_size = BSP_UART0_FIFO_SIZE,
     },
 #endif
 #ifdef BSP_USING_UART1
@@ -46,6 +48,7 @@ static struct ab32_uart_config uart_config[] =
         .name = "uart1",
         .instance = UART1_BASE,
         .mode = UART_MODE_TX_RX,
+        .fifo_size = BSP_UART1_FIFO_SIZE,
     },
 #endif
 #ifdef BSP_USING_UART2
@@ -53,11 +56,16 @@ static struct ab32_uart_config uart_config[] =
         .name = "uart2",
         .instance = UART2_BASE,
         .mode = UART_MODE_TX_RX,
+        .fifo_size = BSP_UART2_FIFO_SIZE,
     }
 #endif
 };
 
 static struct ab32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
+
+#ifdef HUART_ENABLE
+static rt_uint8_t huart_dma[512];
+#endif
 
 static rt_err_t ab32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -100,7 +108,14 @@ static rt_err_t ab32_configure(struct rt_serial_device *serial, struct serial_co
     uart->dma_rx.last_index = 0;
 #endif
 
-    hal_uart_init(&uart->handle);
+    if (!uart->uart_dma_flag) {
+        hal_uart_init(&uart->handle);
+    }
+#ifdef HUART_ENABLE
+    else {
+        huart_init_do(HUART_TR_PB3, HUART_TR_PB4, uart->handle.init.baud, huart_dma, 512);
+    }
+#endif
 
     return RT_EOK;
 }
@@ -140,9 +155,17 @@ static int ab32_putc(struct rt_serial_device *serial, char ch)
     RT_ASSERT(serial != RT_NULL);
 
     uart = rt_container_of(serial, struct ab32_uart, serial);
-    hal_uart_clrflag(uart->handle.instance,  UART_FLAG_TXPND);
-    hal_uart_write(uart->handle.instance, ch);
-    while(hal_uart_getflag(uart->handle.instance, UART_FLAG_TXPND) == 0);
+
+    if (!uart->uart_dma_flag) {
+        hal_uart_clrflag(uart->handle.instance,  UART_FLAG_TXPND);
+        hal_uart_write(uart->handle.instance, ch);
+        while(hal_uart_getflag(uart->handle.instance, UART_FLAG_TXPND) == 0);
+    }
+#ifdef HUART_ENABLE
+    else {
+        huart_putchar(ch);
+    }
+#endif
 
     return 1;
 }
@@ -152,12 +175,35 @@ static int ab32_getc(struct rt_serial_device *serial)
     int ch;
     struct ab32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
+
     uart = rt_container_of(serial, struct ab32_uart, serial);
 
     ch = -1;
-    if(hal_uart_getflag(uart->handle.instance, UART_FLAG_RXPND) != HAL_RESET) {
-        ch = hal_uart_read(uart->handle.instance);
-        hal_uart_clrflag(uart->handle.instance, UART_FLAG_RXPND);
+    switch ((rt_uint32_t)(uart->handle.instance)) {
+        case (rt_uint32_t)UART0_BASE:
+            if (uart->rx_idx != uart->rx_idx_prev) {
+                ch = (int)(uart->rx_buf[uart->rx_idx_prev++ % 10]);
+            }
+            break;
+        case (rt_uint32_t)UART1_BASE:
+#ifdef HUART_ENABLE
+            if ((uart->uart_dma_flag) && (huart_get_rxcnt())) {
+                ch = huart_getchar();
+            } else
+#endif
+            {
+                if (uart->rx_idx != uart->rx_idx_prev) {
+                    ch = (int)(uart->rx_buf[uart->rx_idx_prev++ % 10]);
+                }
+            }
+            break;
+        case (rt_uint32_t)UART2_BASE:
+            if (uart->rx_idx != uart->rx_idx_prev) {
+                ch = (int)(uart->rx_buf[uart->rx_idx_prev++ % 10]);
+            }
+            break;
+        default:
+            break;
     }
 
     return ch;
@@ -168,6 +214,26 @@ static rt_size_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *
     return -1;
 }
 
+void uart0_irq_process(void)
+{
+    rt_hw_serial_isr(&(uart_obj[UART0_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+}
+
+#ifdef BSP_USING_UART1
+void uart1_irq_process(void)
+{
+    rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+}
+#endif
+
+#ifdef BSP_USING_UART2
+void uart2_irq_process(void)
+{
+    rt_hw_serial_isr(&(uart_obj[UART2_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+}
+#endif
+
+rt_section(".irq.usart")
 static void uart_isr(int vector, void *param)
 {
     rt_interrupt_enter();
@@ -175,24 +241,49 @@ static void uart_isr(int vector, void *param)
 #ifdef BSP_USING_UART0
     if(hal_uart_getflag(UART0_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART0_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_obj[0].rx_buf[uart_obj[0].rx_idx++ % 10] = hal_uart_read(UART0_BASE);
+        hal_uart_clrflag(UART0_BASE, UART_FLAG_RXPND);
+        uart0_irq_post();
     }
 #endif
 #ifdef BSP_USING_UART1
     if(hal_uart_getflag(UART1_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_obj[1].rx_buf[uart_obj[1].rx_idx++ % 10] = hal_uart_read(UART1_BASE);
+        hal_uart_clrflag(UART1_BASE, UART_FLAG_RXPND);
+        uart1_irq_post();
     }
 #endif
 #ifdef BSP_USING_UART2
     if(hal_uart_getflag(UART2_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART2_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_obj[2].rx_buf[uart_obj[2].rx_idx++ % 10] = hal_uart_read(UART2_BASE);
+        hal_uart_clrflag(UART2_BASE, UART_FLAG_RXPND);
+        uart2_irq_post();
     }
 #endif
 
     rt_interrupt_leave();
 }
+
+#ifdef HUART_ENABLE
+rt_section(".irq.huart")
+void huart_timer_isr(void)
+{
+    huart_if_rx_ovflow();
+
+    if (0 == huart_get_rxcnt()) {
+        return;
+    }
+
+    uart1_irq_post();
+}
+#else
+rt_section(".irq.huart")
+void huart_timer_isr(void)
+{
+}
+#endif
 
 static const struct rt_uart_ops ab32_uart_ops =
 {
@@ -215,9 +306,17 @@ int rt_hw_usart_init(void)
     {
         /* init UART object */
         uart_obj[i].config          = &uart_config[i];
+        uart_obj[i].rx_idx          = 0;
+        uart_obj[i].rx_idx_prev     = 0;
         uart_obj[i].serial.ops      = &ab32_uart_ops;
         uart_obj[i].serial.config   = config;
         uart_obj[i].serial.config.baud_rate = 1500000;
+        uart_obj[i].rx_buf          = rt_malloc(uart_config[i].fifo_size);
+
+        if (uart_obj[i].rx_buf == RT_NULL) {
+            LOG_E("uart%d malloc failed!", i);
+            continue;
+        }
 
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[i].serial, uart_obj[i].config->name,
@@ -225,11 +324,11 @@ int rt_hw_usart_init(void)
                                        | RT_DEVICE_FLAG_INT_RX
                                        | RT_DEVICE_FLAG_INT_TX
                                        | uart_obj[i].uart_dma_flag
-                                       , NULL);
+                                       , RT_NULL);
         RT_ASSERT(result == RT_EOK);
     }
 
-   return result;
+    return result;
 }
 
 #endif

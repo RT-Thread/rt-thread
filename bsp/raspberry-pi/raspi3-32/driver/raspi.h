@@ -172,19 +172,19 @@ typedef enum
 
 /* Defines for GPIO */
 #define BCM283X_GPIO_BASE     (PER_BASE + GPIO_BASE_OFFSET)
-#define BCM283X_GPIO_GPFSEL(n) HWREG32(BCM283X_GPIO_BASE + 0x0000 + 0x4 * n) /* GPIO Function Select 32bit R/W */
-#define BCM283X_GPIO_GPSET(n) HWREG32(BCM283X_GPIO_BASE + 0x001C + 0x4 * n) /* GPIO Pin Output Set */
-#define BCM283X_GPIO_GPCLR(n) HWREG32(BCM283X_GPIO_BASE + 0x0028 + 0x4 * n) /* GPIO Pin Output Clear */
-#define BCM2835_GPIO_GPLEV(n) HWREG32(BCM283X_GPIO_BASE + 0x0034 + 0x4 * n) /* GPIO Pin Level */
-#define BCM283X_GPIO_GPEDS(n) HWREG32(BCM283X_GPIO_BASE + 0x0040 + 0x4 * n) /* GPIO Pin Event Detect Status */
-#define BCM283X_GPIO_GPREN(n) HWREG32(BCM283X_GPIO_BASE + 0x004c + 0x4 * n) /* GPIO Pin Rising Edge Detect Enable */
-#define BCM283X_GPIO_GPFEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0058 + 0x4 * n) /* GPIO Pin Falling Edge Detect Enable */
-#define BCM283X_GPIO_GPHEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0064 + 0x4 * n) /* GPIO Pin High Detect Enable  */
-#define BCM283X_GPIO_GPLEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0070 + 0x4 * n) /* GPIO Pin Low Detect Enable */
-#define BCM283X_GPIO_GPAREN(n) HWREG32(BCM283X_GPIO_BASE + 0x007C + 0x4 * n) /* GPIO Pin Async. Rising Edge Detect */
-#define BCM283X_GPIO_GPAFEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0088 + 0x4 * n) /* GPIO Pin Async. Falling Edge Detect */
+#define BCM283X_GPIO_GPFSEL(n) HWREG32(BCM283X_GPIO_BASE + 0x0000 + 0x4 * (n)) /* GPIO Function Select 32bit R/W */
+#define BCM283X_GPIO_GPSET(n) HWREG32(BCM283X_GPIO_BASE + 0x001C + 0x4 * (n)) /* GPIO Pin Output Set */
+#define BCM283X_GPIO_GPCLR(n) HWREG32(BCM283X_GPIO_BASE + 0x0028 + 0x4 * (n)) /* GPIO Pin Output Clear */
+#define BCM2835_GPIO_GPLEV(n) HWREG32(BCM283X_GPIO_BASE + 0x0034 + 0x4 * (n)) /* GPIO Pin Level */
+#define BCM283X_GPIO_GPEDS(n) HWREG32(BCM283X_GPIO_BASE + 0x0040 + 0x4 * (n)) /* GPIO Pin Event Detect Status */
+#define BCM283X_GPIO_GPREN(n) HWREG32(BCM283X_GPIO_BASE + 0x004c + 0x4 * (n)) /* GPIO Pin Rising Edge Detect Enable */
+#define BCM283X_GPIO_GPFEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0058 + 0x4 * (n)) /* GPIO Pin Falling Edge Detect Enable */
+#define BCM283X_GPIO_GPHEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0064 + 0x4 * (n)) /* GPIO Pin High Detect Enable  */
+#define BCM283X_GPIO_GPLEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0070 + 0x4 * (n)) /* GPIO Pin Low Detect Enable */
+#define BCM283X_GPIO_GPAREN(n) HWREG32(BCM283X_GPIO_BASE + 0x007C + 0x4 * (n)) /* GPIO Pin Async. Rising Edge Detect */
+#define BCM283X_GPIO_GPAFEN(n) HWREG32(BCM283X_GPIO_BASE + 0x0088 + 0x4 * (n)) /* GPIO Pin Async. Falling Edge Detect */
 #define BCM283X_GPIO_GPPUD     HWREG32(BCM283X_GPIO_BASE + 0x0094)     /* GPIO Pin Pull-up/down Enable */
-#define BCM283X_GPIO_GPPUDCLK(n)    HWREG32(BCM283X_GPIO_BASE + 0x0098 + 0x4 * n) /* GPIO Pin Pull-up/down Enable Clock */
+#define BCM283X_GPIO_GPPUDCLK(n)    HWREG32(BCM283X_GPIO_BASE + 0x0098 + 0x4 * (n)) /* GPIO Pin Pull-up/down Enable Clock */
 
 #define GPIO_FSEL_NUM(pin)  (pin/10)
 #define GPIO_FSEL_SHIFT(pin)  ((pin%10)*3)

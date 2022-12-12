@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L0xx_LL_LPUART_H
-#define __STM32L0xx_LL_LPUART_H
+#ifndef STM32L0xx_LL_LPUART_H
+#define STM32L0xx_LL_LPUART_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,32 +77,38 @@ typedef struct
 {
   uint32_t BaudRate;                  /*!< This field defines expected LPUART communication baud rate.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_LPUART_SetBaudRate().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_LPUART_SetBaudRate().*/
 
   uint32_t DataWidth;                 /*!< Specifies the number of data bits transmitted or received in a frame.
                                            This parameter can be a value of @ref LPUART_LL_EC_DATAWIDTH.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_LPUART_SetDataWidth().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_LPUART_SetDataWidth().*/
 
   uint32_t StopBits;                  /*!< Specifies the number of stop bits transmitted.
                                            This parameter can be a value of @ref LPUART_LL_EC_STOPBITS.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_LPUART_SetStopBitsLength().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_LPUART_SetStopBitsLength().*/
 
   uint32_t Parity;                    /*!< Specifies the parity mode.
                                            This parameter can be a value of @ref LPUART_LL_EC_PARITY.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_LPUART_SetParity().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_LPUART_SetParity().*/
 
   uint32_t TransferDirection;         /*!< Specifies whether the Receive and/or Transmit mode is enabled or disabled.
                                            This parameter can be a value of @ref LPUART_LL_EC_DIRECTION.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_LPUART_SetTransferDirection().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_LPUART_SetTransferDirection().*/
 
   uint32_t HardwareFlowControl;       /*!< Specifies whether the hardware flow control mode is enabled or disabled.
                                            This parameter can be a value of @ref LPUART_LL_EC_HWCONTROL.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_LPUART_SetHWFlowCtrl().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_LPUART_SetHWFlowCtrl().*/
 
 } LL_LPUART_InitTypeDef;
 
@@ -120,15 +126,15 @@ typedef struct
   * @brief    Flags defines which can be used with LL_LPUART_WriteReg function
   * @{
   */
-#define LL_LPUART_ICR_PECF                 USART_ICR_PECF                /*!< Parity error flag */
-#define LL_LPUART_ICR_FECF                 USART_ICR_FECF                /*!< Framing error flag */
-#define LL_LPUART_ICR_NCF                  USART_ICR_NCF                 /*!< Noise error detected flag */
-#define LL_LPUART_ICR_ORECF                USART_ICR_ORECF               /*!< Overrun error flag */
-#define LL_LPUART_ICR_IDLECF               USART_ICR_IDLECF              /*!< Idle line detected flag */
-#define LL_LPUART_ICR_TCCF                 USART_ICR_TCCF                /*!< Transmission complete flag */
-#define LL_LPUART_ICR_CTSCF                USART_ICR_CTSCF               /*!< CTS flag */
-#define LL_LPUART_ICR_CMCF                 USART_ICR_CMCF                /*!< Character match flag */
-#define LL_LPUART_ICR_WUCF                 USART_ICR_WUCF                /*!< Wakeup from Stop mode flag */
+#define LL_LPUART_ICR_PECF                 USART_ICR_PECF                /*!< Parity error clear flag */
+#define LL_LPUART_ICR_FECF                 USART_ICR_FECF                /*!< Framing error clear flag */
+#define LL_LPUART_ICR_NCF                  USART_ICR_NCF                 /*!< Noise error detected clear flag */
+#define LL_LPUART_ICR_ORECF                USART_ICR_ORECF               /*!< Overrun error clear flag */
+#define LL_LPUART_ICR_IDLECF               USART_ICR_IDLECF              /*!< Idle line detected clear flag */
+#define LL_LPUART_ICR_TCCF                 USART_ICR_TCCF                /*!< Transmission complete clear flag */
+#define LL_LPUART_ICR_CTSCF                USART_ICR_CTSCF               /*!< CTS clear flag */
+#define LL_LPUART_ICR_CMCF                 USART_ICR_CMCF                /*!< Character match clear flag */
+#define LL_LPUART_ICR_WUCF                 USART_ICR_WUCF                /*!< Wakeup from Stop mode clear flag */
 /**
   * @}
   */
@@ -137,23 +143,23 @@ typedef struct
   * @brief    Flags defines which can be used with LL_LPUART_ReadReg function
   * @{
   */
-#define LL_LPUART_ISR_PE                   USART_ISR_PE                  /*!< Parity error flag */
-#define LL_LPUART_ISR_FE                   USART_ISR_FE                  /*!< Framing error flag */
-#define LL_LPUART_ISR_NE                   USART_ISR_NE                  /*!< Noise detected flag */
-#define LL_LPUART_ISR_ORE                  USART_ISR_ORE                 /*!< Overrun error flag */
-#define LL_LPUART_ISR_IDLE                 USART_ISR_IDLE                /*!< Idle line detected flag */
-#define LL_LPUART_ISR_RXNE                 USART_ISR_RXNE                /*!< Read data register not empty flag */
-#define LL_LPUART_ISR_TC                   USART_ISR_TC                  /*!< Transmission complete flag */
-#define LL_LPUART_ISR_TXE                  USART_ISR_TXE                 /*!< Transmit data register empty flag */
-#define LL_LPUART_ISR_CTSIF                USART_ISR_CTSIF               /*!< CTS interrupt flag */
-#define LL_LPUART_ISR_CTS                  USART_ISR_CTS                 /*!< CTS flag */
-#define LL_LPUART_ISR_BUSY                 USART_ISR_BUSY                /*!< Busy flag */
-#define LL_LPUART_ISR_CMF                  USART_ISR_CMF                 /*!< Character match flag */
-#define LL_LPUART_ISR_SBKF                 USART_ISR_SBKF                /*!< Send break flag */
-#define LL_LPUART_ISR_RWU                  USART_ISR_RWU                 /*!< Receiver wakeup from Mute mode flag */
-#define LL_LPUART_ISR_WUF                  USART_ISR_WUF                 /*!< Wakeup from Stop mode flag */
-#define LL_LPUART_ISR_TEACK                USART_ISR_TEACK               /*!< Transmit enable acknowledge flag */
-#define LL_LPUART_ISR_REACK                USART_ISR_REACK               /*!< Receive enable acknowledge flag */
+#define LL_LPUART_ISR_PE               USART_ISR_PE         /*!< Parity error flag */
+#define LL_LPUART_ISR_FE               USART_ISR_FE         /*!< Framing error flag */
+#define LL_LPUART_ISR_NE               USART_ISR_NE         /*!< Noise detected flag */
+#define LL_LPUART_ISR_ORE              USART_ISR_ORE        /*!< Overrun error flag */
+#define LL_LPUART_ISR_IDLE             USART_ISR_IDLE       /*!< Idle line detected flag */
+#define LL_LPUART_ISR_RXNE             USART_ISR_RXNE       /*!< Read data register not empty flag */
+#define LL_LPUART_ISR_TC               USART_ISR_TC         /*!< Transmission complete flag */
+#define LL_LPUART_ISR_TXE              USART_ISR_TXE        /*!< Transmit data register empty flag */
+#define LL_LPUART_ISR_CTSIF            USART_ISR_CTSIF      /*!< CTS interrupt flag */
+#define LL_LPUART_ISR_CTS              USART_ISR_CTS        /*!< CTS flag */
+#define LL_LPUART_ISR_BUSY             USART_ISR_BUSY       /*!< Busy flag */
+#define LL_LPUART_ISR_CMF              USART_ISR_CMF        /*!< Character match flag */
+#define LL_LPUART_ISR_SBKF             USART_ISR_SBKF       /*!< Send break flag */
+#define LL_LPUART_ISR_RWU              USART_ISR_RWU        /*!< Receiver wakeup from Mute mode flag */
+#define LL_LPUART_ISR_WUF              USART_ISR_WUF        /*!< Wakeup from Stop mode flag */
+#define LL_LPUART_ISR_TEACK            USART_ISR_TEACK      /*!< Transmit enable acknowledge flag */
+#define LL_LPUART_ISR_REACK            USART_ISR_REACK      /*!< Receive enable acknowledge flag */
 /**
   * @}
   */
@@ -162,15 +168,15 @@ typedef struct
   * @brief    IT defines which can be used with LL_LPUART_ReadReg and  LL_LPUART_WriteReg functions
   * @{
   */
-#define LL_LPUART_CR1_IDLEIE               USART_CR1_IDLEIE              /*!< IDLE interrupt enable */
-#define LL_LPUART_CR1_RXNEIE               USART_CR1_RXNEIE              /*!< Read data register not empty interrupt enable */
-#define LL_LPUART_CR1_TCIE                 USART_CR1_TCIE                /*!< Transmission complete interrupt enable */
-#define LL_LPUART_CR1_TXEIE                USART_CR1_TXEIE               /*!< Transmit data register empty interrupt enable */
-#define LL_LPUART_CR1_PEIE                 USART_CR1_PEIE                /*!< Parity error */
-#define LL_LPUART_CR1_CMIE                 USART_CR1_CMIE                /*!< Character match interrupt enable */
-#define LL_LPUART_CR3_EIE                  USART_CR3_EIE                 /*!< Error interrupt enable */
-#define LL_LPUART_CR3_CTSIE                USART_CR3_CTSIE               /*!< CTS interrupt enable */
-#define LL_LPUART_CR3_WUFIE                USART_CR3_WUFIE               /*!< Wakeup from Stop mode interrupt enable */
+#define LL_LPUART_CR1_IDLEIE         USART_CR1_IDLEIE         /*!< IDLE interrupt enable */
+#define LL_LPUART_CR1_RXNEIE         USART_CR1_RXNEIE         /*!< Read data register not empty interrupt enable */
+#define LL_LPUART_CR1_TCIE           USART_CR1_TCIE           /*!< Transmission complete interrupt enable */
+#define LL_LPUART_CR1_TXEIE          USART_CR1_TXEIE          /*!< Transmit data register empty interrupt enable */
+#define LL_LPUART_CR1_PEIE           USART_CR1_PEIE           /*!< Parity error */
+#define LL_LPUART_CR1_CMIE           USART_CR1_CMIE           /*!< Character match interrupt enable */
+#define LL_LPUART_CR3_EIE            USART_CR3_EIE            /*!< Error interrupt enable */
+#define LL_LPUART_CR3_CTSIE          USART_CR3_CTSIE          /*!< CTS interrupt enable */
+#define LL_LPUART_CR3_WUFIE          USART_CR3_WUFIE          /*!< Wakeup from Stop mode interrupt enable */
 /**
   * @}
   */
@@ -178,10 +184,10 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DIRECTION Direction
   * @{
   */
-#define LL_LPUART_DIRECTION_NONE           0x00000000U                        /*!< Transmitter and Receiver are disabled */
-#define LL_LPUART_DIRECTION_RX             USART_CR1_RE                       /*!< Transmitter is disabled and Receiver is enabled */
-#define LL_LPUART_DIRECTION_TX             USART_CR1_TE                       /*!< Transmitter is enabled and Receiver is disabled */
-#define LL_LPUART_DIRECTION_TX_RX          (USART_CR1_TE |USART_CR1_RE)       /*!< Transmitter and Receiver are enabled */
+#define LL_LPUART_DIRECTION_NONE  0x00000000U                  /*!< Transmitter and Receiver are disabled           */
+#define LL_LPUART_DIRECTION_RX    USART_CR1_RE                 /*!< Transmitter is disabled and Receiver is enabled */
+#define LL_LPUART_DIRECTION_TX    USART_CR1_TE                 /*!< Transmitter is enabled and Receiver is disabled */
+#define LL_LPUART_DIRECTION_TX_RX (USART_CR1_TE |USART_CR1_RE) /*!< Transmitter and Receiver are enabled            */
 /**
   * @}
   */
@@ -189,9 +195,9 @@ typedef struct
 /** @defgroup LPUART_LL_EC_PARITY Parity Control
   * @{
   */
-#define LL_LPUART_PARITY_NONE              0x00000000U                        /*!< Parity control disabled */
-#define LL_LPUART_PARITY_EVEN              USART_CR1_PCE                      /*!< Parity control enabled and Even Parity is selected */
-#define LL_LPUART_PARITY_ODD               (USART_CR1_PCE | USART_CR1_PS)     /*!< Parity control enabled and Odd Parity is selected */
+#define LL_LPUART_PARITY_NONE 0x00000000U                    /*!< Parity control disabled                            */
+#define LL_LPUART_PARITY_EVEN USART_CR1_PCE                  /*!< Parity control enabled and Even Parity is selected */
+#define LL_LPUART_PARITY_ODD  (USART_CR1_PCE | USART_CR1_PS) /*!< Parity control enabled and Odd Parity is selected  */
 /**
   * @}
   */
@@ -199,8 +205,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_WAKEUP Wakeup
   * @{
   */
-#define LL_LPUART_WAKEUP_IDLELINE          0x00000000U                        /*!<  LPUART wake up from Mute mode on Idle Line */
-#define LL_LPUART_WAKEUP_ADDRESSMARK       USART_CR1_WAKE                     /*!<  LPUART wake up from Mute mode on Address Mark */
+#define LL_LPUART_WAKEUP_IDLELINE    0x00000000U    /*!<  LPUART wake up from Mute mode on Idle Line    */
+#define LL_LPUART_WAKEUP_ADDRESSMARK USART_CR1_WAKE /*!<  LPUART wake up from Mute mode on Address Mark */
 /**
   * @}
   */
@@ -208,9 +214,9 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DATAWIDTH Datawidth
   * @{
   */
-#define LL_LPUART_DATAWIDTH_7B             USART_CR1_M1                       /*!< 7 bits word length : Start bit, 7 data bits, n stop bits */
-#define LL_LPUART_DATAWIDTH_8B             0x00000000U                        /*!< 8 bits word length : Start bit, 8 data bits, n stop bits */
-#define LL_LPUART_DATAWIDTH_9B             USART_CR1_M0                       /*!< 9 bits word length : Start bit, 9 data bits, n stop bits */
+#define LL_LPUART_DATAWIDTH_7B USART_CR1_M1 /*!< 7 bits word length : Start bit, 7 data bits, n stop bits */
+#define LL_LPUART_DATAWIDTH_8B 0x00000000U  /*!< 8 bits word length : Start bit, 8 data bits, n stop bits */
+#define LL_LPUART_DATAWIDTH_9B USART_CR1_M0 /*!< 9 bits word length : Start bit, 9 data bits, n stop bits */
 /**
   * @}
   */
@@ -218,8 +224,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_STOPBITS Stop Bits
   * @{
   */
-#define LL_LPUART_STOPBITS_1               0x00000000U                        /*!< 1 stop bit */
-#define LL_LPUART_STOPBITS_2               USART_CR2_STOP_1                   /*!< 2 stop bits */
+#define LL_LPUART_STOPBITS_1         0x00000000U             /*!< 1 stop bit */
+#define LL_LPUART_STOPBITS_2         USART_CR2_STOP_1        /*!< 2 stop bits */
 /**
   * @}
   */
@@ -227,8 +233,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_TXRX TX RX Pins Swap
   * @{
   */
-#define LL_LPUART_TXRX_STANDARD            0x00000000U                        /*!< TX/RX pins are used as defined in standard pinout */
-#define LL_LPUART_TXRX_SWAPPED             (USART_CR2_SWAP)                   /*!< TX and RX pins functions are swapped.             */
+#define LL_LPUART_TXRX_STANDARD      0x00000000U        /*!< TX/RX pins are used as defined in standard pinout */
+#define LL_LPUART_TXRX_SWAPPED       (USART_CR2_SWAP)   /*!< TX and RX pins functions are swapped.             */
 /**
   * @}
   */
@@ -236,8 +242,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_RXPIN_LEVEL RX Pin Active Level Inversion
   * @{
   */
-#define LL_LPUART_RXPIN_LEVEL_STANDARD     0x00000000U                        /*!< RX pin signal works using the standard logic levels */
-#define LL_LPUART_RXPIN_LEVEL_INVERTED     (USART_CR2_RXINV)                  /*!< RX pin signal values are inverted.                  */
+#define LL_LPUART_RXPIN_LEVEL_STANDARD   0x00000000U       /*!< RX pin signal works using the standard logic levels */
+#define LL_LPUART_RXPIN_LEVEL_INVERTED   (USART_CR2_RXINV) /*!< RX pin signal values are inverted.                  */
 /**
   * @}
   */
@@ -245,8 +251,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_TXPIN_LEVEL TX Pin Active Level Inversion
   * @{
   */
-#define LL_LPUART_TXPIN_LEVEL_STANDARD     0x00000000U                        /*!< TX pin signal works using the standard logic levels */
-#define LL_LPUART_TXPIN_LEVEL_INVERTED     (USART_CR2_TXINV)                  /*!< TX pin signal values are inverted.                  */
+#define LL_LPUART_TXPIN_LEVEL_STANDARD  0x00000000U       /*!< TX pin signal works using the standard logic levels */
+#define LL_LPUART_TXPIN_LEVEL_INVERTED  (USART_CR2_TXINV) /*!< TX pin signal values are inverted.                  */
 /**
   * @}
   */
@@ -254,8 +260,11 @@ typedef struct
 /** @defgroup LPUART_LL_EC_BINARY_LOGIC Binary Data Inversion
   * @{
   */
-#define LL_LPUART_BINARY_LOGIC_POSITIVE    0x00000000U                        /*!< Logical data from the data register are send/received in positive/direct logic. (1=H, 0=L) */
-#define LL_LPUART_BINARY_LOGIC_NEGATIVE    USART_CR2_DATAINV                  /*!< Logical data from the data register are send/received in negative/inverse logic. (1=L, 0=H). The parity bit is also inverted. */
+#define LL_LPUART_BINARY_LOGIC_POSITIVE 0x00000000U       /*!< Logical data from the data register are send/received
+                                                               in positive/direct logic. (1=H, 0=L)                  */
+#define LL_LPUART_BINARY_LOGIC_NEGATIVE USART_CR2_DATAINV /*!< Logical data from the data register are send/received
+                                                               in negative/inverse logic. (1=L, 0=H).
+                                                               The parity bit is also inverted.                      */
 /**
   * @}
   */
@@ -263,8 +272,10 @@ typedef struct
 /** @defgroup LPUART_LL_EC_BITORDER Bit Order
   * @{
   */
-#define LL_LPUART_BITORDER_LSBFIRST        0x00000000U                        /*!< data is transmitted/received with data bit 0 first, following the start bit */
-#define LL_LPUART_BITORDER_MSBFIRST        USART_CR2_MSBFIRST                 /*!< data is transmitted/received with the MSB first, following the start bit */
+#define LL_LPUART_BITORDER_LSBFIRST 0x00000000U        /*!< data is transmitted/received with data bit 0 first,
+                                                            following the start bit */
+#define LL_LPUART_BITORDER_MSBFIRST USART_CR2_MSBFIRST /*!< data is transmitted/received with the MSB first,
+                                                            following the start bit */
 /**
   * @}
   */
@@ -272,8 +283,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_ADDRESS_DETECT Address Length Detection
   * @{
   */
-#define LL_LPUART_ADDRESS_DETECT_4B        0x00000000U                        /*!< 4-bit address detection method selected */
-#define LL_LPUART_ADDRESS_DETECT_7B        USART_CR2_ADDM7                    /*!< 7-bit address detection (in 8-bit data mode) method selected */
+#define LL_LPUART_ADDRESS_DETECT_4B 0x00000000U     /*!< 4-bit address detection method selected */
+#define LL_LPUART_ADDRESS_DETECT_7B USART_CR2_ADDM7 /*!< 7-bit address detection (in 8-bit data mode) method selected */
 /**
   * @}
   */
@@ -281,10 +292,12 @@ typedef struct
 /** @defgroup LPUART_LL_EC_HWCONTROL Hardware Control
   * @{
   */
-#define LL_LPUART_HWCONTROL_NONE           0x00000000U                        /*!< CTS and RTS hardware flow control disabled */
-#define LL_LPUART_HWCONTROL_RTS            USART_CR3_RTSE                     /*!< RTS output enabled, data is only requested when there is space in the receive buffer */
-#define LL_LPUART_HWCONTROL_CTS            USART_CR3_CTSE                     /*!< CTS mode enabled, data is only transmitted when the nCTS input is asserted (tied to 0) */
-#define LL_LPUART_HWCONTROL_RTS_CTS        (USART_CR3_RTSE | USART_CR3_CTSE)  /*!< CTS and RTS hardware flow control enabled */
+#define LL_LPUART_HWCONTROL_NONE    0x00000000U                       /*!< CTS and RTS hardware flow control disabled */
+#define LL_LPUART_HWCONTROL_RTS     USART_CR3_RTSE                    /*!< RTS output enabled, data is only requested
+                                                                           when there is space in the receive buffer  */
+#define LL_LPUART_HWCONTROL_CTS     USART_CR3_CTSE                    /*!< CTS mode enabled, data is only transmitted
+                                                                           when the nCTS input is asserted (tied to 0)*/
+#define LL_LPUART_HWCONTROL_RTS_CTS (USART_CR3_RTSE | USART_CR3_CTSE) /*!< CTS and RTS hardware flow control enabled  */
 /**
   * @}
   */
@@ -292,9 +305,9 @@ typedef struct
 /** @defgroup LPUART_LL_EC_WAKEUP_ON Wakeup Activation
   * @{
   */
-#define LL_LPUART_WAKEUP_ON_ADDRESS        0x00000000U                             /*!< Wake up active on address match */
-#define LL_LPUART_WAKEUP_ON_STARTBIT       USART_CR3_WUS_1                         /*!< Wake up active on Start bit detection */
-#define LL_LPUART_WAKEUP_ON_RXNE           (USART_CR3_WUS_0 | USART_CR3_WUS_1)     /*!< Wake up active on RXNE */
+#define LL_LPUART_WAKEUP_ON_ADDRESS   0x00000000U                          /*!< Wake up active on address match */
+#define LL_LPUART_WAKEUP_ON_STARTBIT  USART_CR3_WUS_1                      /*!< Wake up active on Start bit detection */
+#define LL_LPUART_WAKEUP_ON_RXNE      (USART_CR3_WUS_0 | USART_CR3_WUS_1)  /*!< Wake up active on RXNE */
 /**
   * @}
   */
@@ -302,8 +315,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DE_POLARITY Driver Enable Polarity
   * @{
   */
-#define LL_LPUART_DE_POLARITY_HIGH         0x00000000U                        /*!< DE signal is active high */
-#define LL_LPUART_DE_POLARITY_LOW          USART_CR3_DEP                      /*!< DE signal is active low */
+#define LL_LPUART_DE_POLARITY_HIGH         0x00000000U    /*!< DE signal is active high */
+#define LL_LPUART_DE_POLARITY_LOW          USART_CR3_DEP  /*!< DE signal is active low */
 /**
   * @}
   */
@@ -311,8 +324,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DMA_REG_DATA DMA Register Data
   * @{
   */
-#define LL_LPUART_DMA_REG_DATA_TRANSMIT    0x00000000U                       /*!< Get address of data register used for transmission */
-#define LL_LPUART_DMA_REG_DATA_RECEIVE     0x00000001U                       /*!< Get address of data register used for reception */
+#define LL_LPUART_DMA_REG_DATA_TRANSMIT    0x00000000U    /*!< Get address of data register used for transmission */
+#define LL_LPUART_DMA_REG_DATA_RECEIVE     0x00000001U    /*!< Get address of data register used for reception */
 /**
   * @}
   */
@@ -361,7 +374,8 @@ typedef struct
   * @param  __BAUDRATE__ Baud Rate value to achieve
   * @retval LPUARTDIV value to be used for BRR register filling
   */
-#define __LL_LPUART_DIV(__PERIPHCLK__, __BAUDRATE__) (((((uint64_t)(__PERIPHCLK__)*LPUART_LPUARTDIV_FREQ_MUL) + ((__BAUDRATE__)/2U))/(__BAUDRATE__)) & LPUART_BRR_MASK)
+#define __LL_LPUART_DIV(__PERIPHCLK__, __BAUDRATE__) (uint32_t)(((((uint64_t)(__PERIPHCLK__)*LPUART_LPUARTDIV_FREQ_MUL) + (uint32_t)((__BAUDRATE__)/2U))/(__BAUDRATE__))\
+                                                                & LPUART_BRR_MASK)
 
 /**
   * @}
@@ -418,7 +432,7 @@ __STATIC_INLINE void LL_LPUART_Disable(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabled(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_UE) == (USART_CR1_UE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_UE) == (USART_CR1_UE)) ? 1UL : 0UL);
 }
 
 
@@ -432,7 +446,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabled(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableInStopMode(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_UESM);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_UESM);
 }
 
 /**
@@ -444,7 +458,7 @@ __STATIC_INLINE void LL_LPUART_EnableInStopMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableInStopMode(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_UESM);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_UESM);
 }
 
 /**
@@ -456,7 +470,7 @@ __STATIC_INLINE void LL_LPUART_DisableInStopMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledInStopMode(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_UESM) == (USART_CR1_UESM));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_UESM) == (USART_CR1_UESM)) ? 1UL : 0UL);
 }
 
 /**
@@ -468,7 +482,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledInStopMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableClockInStopMode(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR3, USART_CR3_UCESM);
+  ATOMIC_SET_BIT(LPUARTx->CR3, USART_CR3_UCESM);
 }
 
 /**
@@ -480,7 +494,7 @@ __STATIC_INLINE void LL_LPUART_EnableClockInStopMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableClockInStopMode(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR3, USART_CR3_UCESM);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR3, USART_CR3_UCESM);
 }
 
 /**
@@ -491,7 +505,7 @@ __STATIC_INLINE void LL_LPUART_DisableClockInStopMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsClockEnabledInStopMode(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_UCESM) == (USART_CR3_UCESM));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_UCESM) == (USART_CR3_UCESM)) ? 1UL : 0UL);
 }
 
 /**
@@ -502,7 +516,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsClockEnabledInStopMode(USART_TypeDef *LPUAR
   */
 __STATIC_INLINE void LL_LPUART_EnableDirectionRx(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_RE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_RE);
 }
 
 /**
@@ -513,7 +527,7 @@ __STATIC_INLINE void LL_LPUART_EnableDirectionRx(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableDirectionRx(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_RE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_RE);
 }
 
 /**
@@ -524,7 +538,7 @@ __STATIC_INLINE void LL_LPUART_DisableDirectionRx(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableDirectionTx(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_TE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_TE);
 }
 
 /**
@@ -535,7 +549,7 @@ __STATIC_INLINE void LL_LPUART_EnableDirectionTx(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableDirectionTx(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_TE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_TE);
 }
 
 /**
@@ -553,7 +567,7 @@ __STATIC_INLINE void LL_LPUART_DisableDirectionTx(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_SetTransferDirection(USART_TypeDef *LPUARTx, uint32_t TransferDirection)
 {
-  MODIFY_REG(LPUARTx->CR1, USART_CR1_RE | USART_CR1_TE, TransferDirection);
+  ATOMIC_MODIFY_REG(LPUARTx->CR1, USART_CR1_RE | USART_CR1_TE, TransferDirection);
 }
 
 /**
@@ -670,7 +684,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetDataWidth(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableMuteMode(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_MME);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_MME);
 }
 
 /**
@@ -681,7 +695,7 @@ __STATIC_INLINE void LL_LPUART_EnableMuteMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableMuteMode(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_MME);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_MME);
 }
 
 /**
@@ -692,7 +706,7 @@ __STATIC_INLINE void LL_LPUART_DisableMuteMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledMuteMode(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_MME) == (USART_CR1_MME));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_MME) == (USART_CR1_MME)) ? 1UL : 0UL);
 }
 
 
@@ -1060,7 +1074,7 @@ __STATIC_INLINE void LL_LPUART_DisableOverrunDetect(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledOverrunDetect(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_OVRDIS) != USART_CR3_OVRDIS);
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_OVRDIS) != USART_CR3_OVRDIS) ? 1UL : 0UL);
 }
 
 /**
@@ -1110,7 +1124,10 @@ __STATIC_INLINE uint32_t LL_LPUART_GetWKUPType(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_SetBaudRate(USART_TypeDef *LPUARTx, uint32_t PeriphClk, uint32_t BaudRate)
 {
-  LPUARTx->BRR = __LL_LPUART_DIV(PeriphClk, BaudRate);
+  if (BaudRate != 0U)
+  {
+    LPUARTx->BRR = __LL_LPUART_DIV(PeriphClk, BaudRate);
+  }
 }
 
 /**
@@ -1124,14 +1141,18 @@ __STATIC_INLINE void LL_LPUART_SetBaudRate(USART_TypeDef *LPUARTx, uint32_t Peri
   */
 __STATIC_INLINE uint32_t LL_LPUART_GetBaudRate(USART_TypeDef *LPUARTx, uint32_t PeriphClk)
 {
-  register uint32_t lpuartdiv = 0x0U;
-  register uint32_t brrresult = 0x0U;
+  uint32_t lpuartdiv;
+  uint32_t brrresult;
 
   lpuartdiv = LPUARTx->BRR & LPUART_BRR_MASK;
 
   if (lpuartdiv >= LPUART_BRR_MIN_VALUE)
   {
     brrresult = (uint32_t)(((uint64_t)(PeriphClk) * LPUART_LPUARTDIV_FREQ_MUL) / lpuartdiv);
+  }
+  else
+  {
+    brrresult = 0x0UL;
   }
 
   return (brrresult);
@@ -1175,7 +1196,7 @@ __STATIC_INLINE void LL_LPUART_DisableHalfDuplex(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledHalfDuplex(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_HDSEL) == (USART_CR3_HDSEL));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_HDSEL) == (USART_CR3_HDSEL)) ? 1UL : 0UL);
 }
 
 /**
@@ -1262,7 +1283,7 @@ __STATIC_INLINE void LL_LPUART_DisableDEMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDEMode(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_DEM) == (USART_CR3_DEM));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_DEM) == (USART_CR3_DEM)) ? 1UL : 0UL);
 }
 
 /**
@@ -1308,7 +1329,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetDESignalPolarity(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_PE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_PE) == (USART_ISR_PE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_PE) == (USART_ISR_PE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1319,7 +1340,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_PE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_FE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_FE) == (USART_ISR_FE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_FE) == (USART_ISR_FE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1330,7 +1351,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_FE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_NE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_NE) == (USART_ISR_NE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_NE) == (USART_ISR_NE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1341,7 +1362,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_NE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_ORE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_ORE) == (USART_ISR_ORE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_ORE) == (USART_ISR_ORE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1352,7 +1373,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_ORE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_IDLE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_IDLE) == (USART_ISR_IDLE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_IDLE) == (USART_ISR_IDLE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1363,7 +1384,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_IDLE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_RXNE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_RXNE) == (USART_ISR_RXNE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_RXNE) == (USART_ISR_RXNE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1374,7 +1395,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_RXNE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_TC(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_TC) == (USART_ISR_TC));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_TC) == (USART_ISR_TC)) ? 1UL : 0UL);
 }
 
 /**
@@ -1385,7 +1406,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_TC(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_TXE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_TXE) == (USART_ISR_TXE));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_TXE) == (USART_ISR_TXE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1396,7 +1417,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_TXE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_nCTS(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_CTSIF) == (USART_ISR_CTSIF));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_CTSIF) == (USART_ISR_CTSIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1407,7 +1428,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_nCTS(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_CTS(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_CTS) == (USART_ISR_CTS));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_CTS) == (USART_ISR_CTS)) ? 1UL : 0UL);
 }
 
 /**
@@ -1418,7 +1439,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_CTS(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_BUSY(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_BUSY) == (USART_ISR_BUSY));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_BUSY) == (USART_ISR_BUSY)) ? 1UL : 0UL);
 }
 
 /**
@@ -1429,7 +1450,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_BUSY(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_CM(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_CMF) == (USART_ISR_CMF));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_CMF) == (USART_ISR_CMF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1440,7 +1461,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_CM(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_SBK(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_SBKF) == (USART_ISR_SBKF));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_SBKF) == (USART_ISR_SBKF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1451,7 +1472,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_SBK(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_RWU(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_RWU) == (USART_ISR_RWU));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_RWU) == (USART_ISR_RWU)) ? 1UL : 0UL);
 }
 
 /**
@@ -1462,7 +1483,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_RWU(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_WKUP(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_WUF) == (USART_ISR_WUF));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_WUF) == (USART_ISR_WUF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1473,7 +1494,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_WKUP(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_TEACK(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_TEACK) == (USART_ISR_TEACK));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_TEACK) == (USART_ISR_TEACK)) ? 1UL : 0UL);
 }
 
 /**
@@ -1484,7 +1505,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_TEACK(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_REACK(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->ISR, USART_ISR_REACK) == (USART_ISR_REACK));
+  return ((READ_BIT(LPUARTx->ISR, USART_ISR_REACK) == (USART_ISR_REACK)) ? 1UL : 0UL);
 }
 
 
@@ -1518,7 +1539,7 @@ __STATIC_INLINE void LL_LPUART_ClearFlag_FE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_ClearFlag_NE(USART_TypeDef *LPUARTx)
 {
-  WRITE_REG(LPUARTx->ICR, USART_ICR_NCF );
+  WRITE_REG(LPUARTx->ICR, USART_ICR_NCF);
 }
 
 /**
@@ -1604,7 +1625,7 @@ __STATIC_INLINE void LL_LPUART_ClearFlag_WKUP(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_IDLE(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_IDLEIE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_IDLEIE);
 }
 
 
@@ -1616,7 +1637,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_IDLE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_RXNE(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_RXNEIE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_RXNEIE);
 }
 
 /**
@@ -1627,7 +1648,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_RXNE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_TC(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_TCIE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_TCIE);
 }
 
 
@@ -1639,7 +1660,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_TC(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_TXE(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_TXEIE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_TXEIE);
 }
 
 /**
@@ -1650,7 +1671,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_TXE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_PE(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_PEIE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_PEIE);
 }
 
 /**
@@ -1661,7 +1682,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_PE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_CM(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR1, USART_CR1_CMIE);
+  ATOMIC_SET_BIT(LPUARTx->CR1, USART_CR1_CMIE);
 }
 
 
@@ -1677,7 +1698,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_CM(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_ERROR(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR3, USART_CR3_EIE);
+  ATOMIC_SET_BIT(LPUARTx->CR3, USART_CR3_EIE);
 }
 
 /**
@@ -1688,7 +1709,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_ERROR(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_CTS(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR3, USART_CR3_CTSIE);
+  ATOMIC_SET_BIT(LPUARTx->CR3, USART_CR3_CTSIE);
 }
 
 /**
@@ -1699,7 +1720,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_CTS(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableIT_WKUP(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR3, USART_CR3_WUFIE);
+  ATOMIC_SET_BIT(LPUARTx->CR3, USART_CR3_WUFIE);
 }
 
 
@@ -1711,7 +1732,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_WKUP(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_IDLE(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_IDLEIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_IDLEIE);
 }
 
 
@@ -1723,7 +1744,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_IDLE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_RXNE(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_RXNEIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_RXNEIE);
 }
 
 /**
@@ -1734,7 +1755,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_RXNE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_TC(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_TCIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_TCIE);
 }
 
 
@@ -1746,7 +1767,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_TC(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_TXE(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_TXEIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_TXEIE);
 }
 
 /**
@@ -1757,7 +1778,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_TXE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_PE(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_PEIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_PEIE);
 }
 
 /**
@@ -1768,7 +1789,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_PE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_CM(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR1, USART_CR1_CMIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR1, USART_CR1_CMIE);
 }
 
 
@@ -1784,7 +1805,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_CM(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_ERROR(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR3, USART_CR3_EIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR3, USART_CR3_EIE);
 }
 
 /**
@@ -1795,7 +1816,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_ERROR(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_CTS(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR3, USART_CR3_CTSIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR3, USART_CR3_CTSIE);
 }
 
 /**
@@ -1806,7 +1827,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_CTS(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableIT_WKUP(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR3, USART_CR3_WUFIE);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR3, USART_CR3_WUFIE);
 }
 
 
@@ -1818,7 +1839,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_WKUP(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_IDLE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_IDLEIE) == (USART_CR1_IDLEIE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_IDLEIE) == (USART_CR1_IDLEIE)) ? 1UL : 0UL);
 }
 
 
@@ -1830,7 +1851,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_IDLE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_RXNE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_RXNEIE) == (USART_CR1_RXNEIE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_RXNEIE) == (USART_CR1_RXNEIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1841,7 +1862,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_RXNE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_TC(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_TCIE) == (USART_CR1_TCIE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_TCIE) == (USART_CR1_TCIE)) ? 1UL : 0UL);
 }
 
 
@@ -1853,7 +1874,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_TC(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_TXE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_TXEIE) == (USART_CR1_TXEIE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_TXEIE) == (USART_CR1_TXEIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1864,7 +1885,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_TXE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_PE(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_PEIE) == (USART_CR1_PEIE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_PEIE) == (USART_CR1_PEIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1875,7 +1896,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_PE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_CM(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR1, USART_CR1_CMIE) == (USART_CR1_CMIE));
+  return ((READ_BIT(LPUARTx->CR1, USART_CR1_CMIE) == (USART_CR1_CMIE)) ? 1UL : 0UL);
 }
 
 
@@ -1887,7 +1908,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_CM(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_ERROR(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_EIE) == (USART_CR3_EIE));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_EIE) == (USART_CR3_EIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1898,7 +1919,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_ERROR(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_CTS(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_CTSIE) == (USART_CR3_CTSIE));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_CTSIE) == (USART_CR3_CTSIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1909,7 +1930,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_CTS(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_WKUP(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_WUFIE) == (USART_CR3_WUFIE));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_WUFIE) == (USART_CR3_WUFIE)) ? 1UL : 0UL);
 }
 
 
@@ -1929,7 +1950,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_WKUP(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableDMAReq_RX(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR3, USART_CR3_DMAR);
+  ATOMIC_SET_BIT(LPUARTx->CR3, USART_CR3_DMAR);
 }
 
 /**
@@ -1940,7 +1961,7 @@ __STATIC_INLINE void LL_LPUART_EnableDMAReq_RX(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableDMAReq_RX(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR3, USART_CR3_DMAR);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR3, USART_CR3_DMAR);
 }
 
 /**
@@ -1951,7 +1972,7 @@ __STATIC_INLINE void LL_LPUART_DisableDMAReq_RX(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDMAReq_RX(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_DMAR) == (USART_CR3_DMAR));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_DMAR) == (USART_CR3_DMAR)) ? 1UL : 0UL);
 }
 
 /**
@@ -1962,7 +1983,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDMAReq_RX(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_EnableDMAReq_TX(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->CR3, USART_CR3_DMAT);
+  ATOMIC_SET_BIT(LPUARTx->CR3, USART_CR3_DMAT);
 }
 
 /**
@@ -1973,7 +1994,7 @@ __STATIC_INLINE void LL_LPUART_EnableDMAReq_TX(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_DisableDMAReq_TX(USART_TypeDef *LPUARTx)
 {
-  CLEAR_BIT(LPUARTx->CR3, USART_CR3_DMAT);
+  ATOMIC_CLEAR_BIT(LPUARTx->CR3, USART_CR3_DMAT);
 }
 
 /**
@@ -1984,7 +2005,7 @@ __STATIC_INLINE void LL_LPUART_DisableDMAReq_TX(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDMAReq_TX(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_DMAT) == (USART_CR3_DMAT));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_DMAT) == (USART_CR3_DMAT)) ? 1UL : 0UL);
 }
 
 /**
@@ -2017,7 +2038,7 @@ __STATIC_INLINE void LL_LPUART_DisableDMADeactOnRxErr(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDMADeactOnRxErr(USART_TypeDef *LPUARTx)
 {
-  return (READ_BIT(LPUARTx->CR3, USART_CR3_DDRE) == (USART_CR3_DDRE));
+  return ((READ_BIT(LPUARTx->CR3, USART_CR3_DDRE) == (USART_CR3_DDRE)) ? 1UL : 0UL);
 }
 
 /**
@@ -2032,17 +2053,17 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDMADeactOnRxErr(USART_TypeDef *LPUAR
   */
 __STATIC_INLINE uint32_t LL_LPUART_DMA_GetRegAddr(USART_TypeDef *LPUARTx, uint32_t Direction)
 {
-  register uint32_t data_reg_addr = 0U;
+  uint32_t data_reg_addr;
 
   if (Direction == LL_LPUART_DMA_REG_DATA_TRANSMIT)
   {
     /* return address of TDR register */
-    data_reg_addr = (uint32_t) & (LPUARTx->TDR);
+    data_reg_addr = (uint32_t) &(LPUARTx->TDR);
   }
   else
   {
     /* return address of RDR register */
-    data_reg_addr = (uint32_t) & (LPUARTx->RDR);
+    data_reg_addr = (uint32_t) &(LPUARTx->RDR);
   }
 
   return data_reg_addr;
@@ -2064,7 +2085,7 @@ __STATIC_INLINE uint32_t LL_LPUART_DMA_GetRegAddr(USART_TypeDef *LPUARTx, uint32
   */
 __STATIC_INLINE uint8_t LL_LPUART_ReceiveData8(USART_TypeDef *LPUARTx)
 {
-  return (uint8_t)(READ_BIT(LPUARTx->RDR, USART_RDR_RDR));
+  return (uint8_t)(READ_BIT(LPUARTx->RDR, USART_RDR_RDR) & 0xFFU);
 }
 
 /**
@@ -2099,7 +2120,7 @@ __STATIC_INLINE void LL_LPUART_TransmitData8(USART_TypeDef *LPUARTx, uint8_t Val
   */
 __STATIC_INLINE void LL_LPUART_TransmitData9(USART_TypeDef *LPUARTx, uint16_t Value)
 {
-  LPUARTx->TDR = Value & 0x1FFU;
+  LPUARTx->TDR = Value & 0x1FFUL;
 }
 
 /**
@@ -2118,7 +2139,7 @@ __STATIC_INLINE void LL_LPUART_TransmitData9(USART_TypeDef *LPUARTx, uint16_t Va
   */
 __STATIC_INLINE void LL_LPUART_RequestBreakSending(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->RQR, USART_RQR_SBKRQ);
+  SET_BIT(LPUARTx->RQR, (uint16_t)USART_RQR_SBKRQ);
 }
 
 /**
@@ -2129,7 +2150,7 @@ __STATIC_INLINE void LL_LPUART_RequestBreakSending(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_RequestEnterMuteMode(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->RQR, USART_RQR_MMRQ);
+  SET_BIT(LPUARTx->RQR, (uint16_t)USART_RQR_MMRQ);
 }
 
 /**
@@ -2142,7 +2163,7 @@ __STATIC_INLINE void LL_LPUART_RequestEnterMuteMode(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_RequestRxDataFlush(USART_TypeDef *LPUARTx)
 {
-  SET_BIT(LPUARTx->RQR, USART_RQR_RXFRQ);
+  SET_BIT(LPUARTx->RQR, (uint16_t)USART_RQR_RXFRQ);
 }
 
 /**
@@ -2179,6 +2200,6 @@ void        LL_LPUART_StructInit(LL_LPUART_InitTypeDef *LPUART_InitStruct);
 }
 #endif
 
-#endif /* __STM32L0xx_LL_LPUART_H */
+#endif /* STM32L0xx_LL_LPUART_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

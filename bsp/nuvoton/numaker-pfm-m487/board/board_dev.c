@@ -153,7 +153,7 @@ INIT_COMPONENT_EXPORT(rt_hw_spiflash_init);
 #if defined(BOARD_USING_SRAM0_AS_MEMHEAP)
 /*
 In Advance board design, SRAM address bus A16/A17/A18 are GPIO-controlled by SW, not EBI.
-So we just remap 128KB only to RTT memory heap, due to it is out of controll.
+So we just remap 128KB only to RTT memory heap, due to it is out of control.
 AD0~AD15: 2^16*16bit = 128KB
 */
 #include <drv_ebi.h>
@@ -208,6 +208,67 @@ INIT_APP_EXPORT(rt_hw_mpu6500_port);
 #endif /* BOARD_USING_MPU6500 */
 
 #if defined(BOARD_USING_LCD_ILI9341) && defined(NU_PKG_USING_ILI9341_EBI)
+
+#if defined(NU_PKG_USING_ADC_TOUCH_SW)
+
+#include "adc_touch.h"
+#include "touch_sw.h"
+
+#define NU_MFP_POS(PIN)                             ((PIN % 8) * 4)
+#define NU_MFP_MSK(PIN)                             (0xful << NU_MFP_POS(PIN))
+
+S_CALIBRATION_MATRIX g_sCalMat = { -7, 6358, -3727548, 4990, 30, -2368560, 65536 };
+
+static void nu_pin_func(rt_base_t pin, int data)
+{
+    uint32_t pin_index      = NU_GET_PINS(pin);
+    uint32_t port_index     = NU_GET_PORT(pin);
+    __IO uint32_t *GPx_MFPx = ((__IO uint32_t *) &SYS->GPA_MFPL) + port_index * 2 + (pin_index / 8);
+    uint32_t MFP_Msk        = NU_MFP_MSK(pin_index);
+
+    *GPx_MFPx  = (*GPx_MFPx & (~MFP_Msk)) | data;
+}
+
+static void tp_switch_to_analog(rt_base_t pin)
+{
+    GPIO_T *port = (GPIO_T *)(GPIOA_BASE + (0x40) * NU_GET_PORT(pin));
+
+    if (pin == NU_GET_PININDEX(NU_PB, 8))
+        nu_pin_func(pin, SYS_GPB_MFPH_PB8MFP_EADC0_CH8);
+    else if (pin == NU_GET_PININDEX(NU_PB, 9))
+        nu_pin_func(pin, SYS_GPB_MFPH_PB9MFP_EADC0_CH9);
+
+    GPIO_DISABLE_DIGITAL_PATH(port, NU_GET_PIN_MASK(NU_GET_PINS(pin)));
+}
+
+static void tp_switch_to_digital(rt_base_t pin)
+{
+    GPIO_T *port = (GPIO_T *)(GPIOA_BASE + (0x40) * NU_GET_PORT(pin));
+
+    nu_pin_func(pin, 0);
+
+    /* Enable digital path on these EADC pins */
+    GPIO_ENABLE_DIGITAL_PATH(port, NU_GET_PIN_MASK(NU_GET_PINS(pin)));
+}
+
+static S_TOUCH_SW sADCTP =
+{
+    .adc_name    = "eadc0",
+    .i32ADCChnYU = 8,
+    .i32ADCChnXR = 9,
+    .pin =
+    {
+        NU_GET_PININDEX(NU_PH, 4), // XL
+        NU_GET_PININDEX(NU_PB, 8), // YU
+        NU_GET_PININDEX(NU_PB, 9), // XR
+        NU_GET_PININDEX(NU_PH, 5), // YD
+    },
+    .switch_to_analog  = tp_switch_to_analog,
+    .switch_to_digital = tp_switch_to_digital,
+};
+#endif
+
+
 #include <lcd_ili9341.h>
 #if defined(PKG_USING_GUIENGINE)
     #include <rtgui/driver.h>
@@ -251,6 +312,10 @@ int rt_hw_ili9341_port(void)
     {
         rtgui_graphic_set_device(lcd_ili9341);
     }
+#endif
+
+#if defined(NU_PKG_USING_ADC_TOUCH_SW)
+    nu_adc_touch_sw_register(&sADCTP);
 #endif
 
     return 0;

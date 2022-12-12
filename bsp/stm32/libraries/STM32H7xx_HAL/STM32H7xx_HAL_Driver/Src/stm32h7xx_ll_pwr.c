@@ -17,7 +17,7 @@
   ******************************************************************************
   */
 
-#if defined(USE_FULL_LL_DRIVER)
+#if defined (USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_ll_pwr.h"
@@ -26,7 +26,7 @@
   * @{
   */
 
-#if defined(PWR)
+#if defined (PWR)
 
 /** @defgroup PWR_LL PWR
   * @{
@@ -55,9 +55,13 @@
   */
 ErrorStatus LL_PWR_DeInit(void)
 {
+#if defined (PWR_WKUPCR_WKUPC3)
   WRITE_REG(PWR->WKUPCR, (PWR_WKUPCR_WKUPC1 | PWR_WKUPCR_WKUPC2 | PWR_WKUPCR_WKUPC3 | \
                           PWR_WKUPCR_WKUPC4 | PWR_WKUPCR_WKUPC5 | PWR_WKUPCR_WKUPC6));
-
+#else
+  WRITE_REG(PWR->WKUPCR, (PWR_WKUPCR_WKUPC1 | PWR_WKUPCR_WKUPC2 | \
+                          PWR_WKUPCR_WKUPC4 | PWR_WKUPCR_WKUPC6));
+#endif /* defined (PWR_WKUPCR_WKUPC3) */
   return SUCCESS;
 }
 
@@ -72,11 +76,11 @@ ErrorStatus LL_PWR_DeInit(void)
 /**
   * @}
   */
-#endif /* defined(PWR) */
+#endif /* defined (PWR) */
 /**
   * @}
   */
 
-#endif /* USE_FULL_LL_DRIVER */
+#endif /* defined (USE_FULL_LL_DRIVER) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

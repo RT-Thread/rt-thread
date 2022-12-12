@@ -1,21 +1,7 @@
 /*
- * File      :_rtc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -52,7 +38,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *time;
     struct tm time_temp;
-    struct tm* time_new;
+    struct tm time_new;
     am_hal_rtc_time_t hal_time;
 
     RT_ASSERT(dev != RT_NULL);
@@ -85,16 +71,16 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 
         case RT_DEVICE_CTRL_RTC_SET_TIME:
             time = (time_t *)args;
-            time_new = gmtime(time);
+            gmtime_r(time, &time_new);
 
-            hal_time.ui32Hour = time_new->tm_hour;
-            hal_time.ui32Minute = time_new->tm_min;
-            hal_time.ui32Second = time_new->tm_sec;
+            hal_time.ui32Hour = time_new.tm_hour;
+            hal_time.ui32Minute = time_new.tm_min;
+            hal_time.ui32Second = time_new.tm_sec;
             hal_time.ui32Hundredths = 00;
-            hal_time.ui32Weekday = time_new->tm_wday;
-            hal_time.ui32DayOfMonth = time_new->tm_mday;
-            hal_time.ui32Month = time_new->tm_mon + 1;
-            hal_time.ui32Year = time_new->tm_year + 1900 - 2000;
+            hal_time.ui32Weekday = time_new.tm_wday;
+            hal_time.ui32DayOfMonth = time_new.tm_mday;
+            hal_time.ui32Month = time_new.tm_mon + 1;
+            hal_time.ui32Year = time_new.tm_year + 1900 - 2000;
             hal_time.ui32Century = 0;
 
             am_hal_rtc_time_set(&hal_time);
@@ -116,7 +102,7 @@ int rt_hw_rtc_init(void)
     /* Select LFRC for RTC clock source */
     am_hal_rtc_osc_select(AM_HAL_RTC_OSC_LFRC);
 #endif
-  
+
 #if RTC_CLK_SRC == XT
     /* Enable the XT for the RTC */
     am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_XT);
@@ -129,12 +115,12 @@ int rt_hw_rtc_init(void)
     am_hal_rtc_osc_enable();
 
     /* register rtc device */
-    rtc.type	= RT_Device_Class_RTC;
-    rtc.init 	= RT_NULL;
-    rtc.open 	= rt_rtc_open;
-    rtc.close	= RT_NULL;
-    rtc.read 	= rt_rtc_read;
-    rtc.write	= RT_NULL;
+    rtc.type    = RT_Device_Class_RTC;
+    rtc.init    = RT_NULL;
+    rtc.open    = rt_rtc_open;
+    rtc.close   = RT_NULL;
+    rtc.read    = rt_rtc_read;
+    rtc.write   = RT_NULL;
     rtc.control = rt_rtc_control;
 
     /* no private */

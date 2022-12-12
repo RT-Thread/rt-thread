@@ -5,7 +5,7 @@ import os
 
 import struct
 from collections import namedtuple
-import StringIO
+import io
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -43,8 +43,10 @@ class File(object):
 
         if self.entry_size == 0:
             return ''
-
-        return head + ','.join(('0x%02x' % ord(i) for i in self._data)) + tail
+        if len(self._data) > 0 and type(self._data[0]) == int:
+            return head + ','.join(('0x%02x' % i for i in self._data)) + tail
+        else:
+            return head + ','.join(('0x%02x' % ord(i) for i in self._data)) + tail
 
     @property
     def entry_size(self):
@@ -104,7 +106,8 @@ class Folder(object):
                 return 1
             else:
                 return -1
-        self._children.sort(cmp=_sort)
+        from functools import cmp_to_key
+        self._children.sort(key=cmp_to_key(_sort))
 
         # sort recursively
         for c in self._children:
@@ -169,7 +172,7 @@ class Folder(object):
         #  rt_uint32_t type;
         #  const char *name;
         #  const rt_uint8_t *data;
-	    #  rt_size_t size;
+        #  rt_size_t size;
         #}
         d_li = []
         # payload base
@@ -188,7 +191,7 @@ class Folder(object):
             else:
                 assert False, 'Unkown instance:%s' % str(c)
 
-            name = bytes(c.bin_name)
+            name = bytes(c.bin_name.encode('utf-8'))
             name_addr = v_len
             v_len += len(name)
 
@@ -197,7 +200,7 @@ class Folder(object):
             # pad the data to 4 bytes boundary
             pad_len = 4
             if len(data) % pad_len != 0:
-                data += '\0' * (pad_len - len(data) % pad_len)
+                data += ('\0' * (pad_len - len(data) % pad_len)).encode('utf-8')
             v_len += len(data)
 
             d_li.append(self.bin_fmt.pack(*self.bin_item(
@@ -229,7 +232,7 @@ const struct romfs_dirent {name} = {{
 
 def get_bin_data(tree, base_addr):
     v_len = base_addr + Folder.bin_fmt.size
-    name = bytes('/\0\0\0')
+    name = bytes('/\0\0\0'.encode("utf-8"))
     name_addr = v_len
     v_len += len(name)
     data_addr = v_len
@@ -255,7 +258,7 @@ if __name__ == '__main__':
     if args.binary:
         data = get_bin_data(tree, int(args.addr, 16))
     else:
-        data = get_c_data(tree)
+        data = get_c_data(tree).encode()
 
     output = args.output
     if not output:

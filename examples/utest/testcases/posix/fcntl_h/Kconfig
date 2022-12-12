@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_FCNTL_H
+    bool "<fcntl.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_FCNTL_H
+
+# function, TODO
+
+endif

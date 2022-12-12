@@ -31,29 +31,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -115,6 +99,7 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
 
   RCC_OscInitTypeDef        RCC_OscInitStruct;
   RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
+  HAL_StatusTypeDef     status;
 
 #ifdef RTC_CLOCK_SOURCE_LSE
   /* Configue LSE as RTC clock soucre */
@@ -138,92 +123,110 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
 #error Please select the RTC Clock source
 #endif /* RTC_CLOCK_SOURCE_LSE */
 
-  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK)
+  status = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+  if (status == HAL_OK)
   {
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) == HAL_OK)
+    status = HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+  }
+  if (status == HAL_OK)
+  {
+    /* Enable RTC Clock */
+    __HAL_RCC_RTC_ENABLE();
+    /* The time base should be 1ms
+       Time base = ((RTC_ASYNCH_PREDIV + 1) * (RTC_SYNCH_PREDIV + 1)) / RTC_CLOCK
+       HSE/32 as RTC clock and HSE 8MHz
+         Time base = ((49 + 1) * (4 + 1)) / 250kHz
+                   = 1ms
+       LSE as RTC clock
+         Time base = ((31 + 1) * (0 + 1)) / 32.768KHz
+                   = ~1ms
+       LSI as RTC clock
+         Time base = ((39 + 1) * (0 + 1)) / 40KHz
+                   = 1ms
+    */
+    hRTC_Handle.Instance = RTC;
+    hRTC_Handle.Init.HourFormat = RTC_HOURFORMAT_24;
+    hRTC_Handle.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
+    hRTC_Handle.Init.SynchPrediv = RTC_SYNCH_PREDIV;
+    hRTC_Handle.Init.OutPut = RTC_OUTPUT_DISABLE;
+    hRTC_Handle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+    hRTC_Handle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+    status = HAL_RTC_Init(&hRTC_Handle);
+
+    /* Disable the write protection for RTC registers */
+    __HAL_RTC_WRITEPROTECTION_DISABLE(&hRTC_Handle);
+
+    /* Disable the Alarm A interrupt */
+    __HAL_RTC_ALARMA_DISABLE(&hRTC_Handle);
+
+    /* Clear flag alarm A */
+    __HAL_RTC_ALARM_CLEAR_FLAG(&hRTC_Handle, RTC_FLAG_ALRAF);
+
+    counter = 0U;
+    /* Wait till RTC ALRAWF flag is set and if Time out is reached exit */
+    while (__HAL_RTC_ALARM_GET_FLAG(&hRTC_Handle, RTC_FLAG_ALRAWF) == RESET)
     {
-      /* Enable RTC Clock */
-      __HAL_RCC_RTC_ENABLE();
-      /* The time base should be 1ms
-         Time base = ((RTC_ASYNCH_PREDIV + 1) * (RTC_SYNCH_PREDIV + 1)) / RTC_CLOCK 
-         HSE/32 as RTC clock and HSE 8MHz
-           Time base = ((49 + 1) * (4 + 1)) / 250kHz
-                     = 1ms
-         LSE as RTC clock 
-           Time base = ((31 + 1) * (0 + 1)) / 32.768KHz
-                     = ~1ms
-         LSI as RTC clock 
-           Time base = ((39 + 1) * (0 + 1)) / 40KHz
-                     = 1ms
-      */
-      hRTC_Handle.Instance = RTC;
-      hRTC_Handle.Init.HourFormat = RTC_HOURFORMAT_24;
-      hRTC_Handle.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
-      hRTC_Handle.Init.SynchPrediv = RTC_SYNCH_PREDIV;
-      hRTC_Handle.Init.OutPut = RTC_OUTPUT_DISABLE;
-      hRTC_Handle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-      hRTC_Handle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-      HAL_RTC_Init(&hRTC_Handle);
-
-      /* Disable the write protection for RTC registers */
-      __HAL_RTC_WRITEPROTECTION_DISABLE(&hRTC_Handle);
-
-      /* Disable the Alarm A interrupt */
-      __HAL_RTC_ALARMA_DISABLE(&hRTC_Handle);
-
-      /* Clear flag alarm A */
-      __HAL_RTC_ALARM_CLEAR_FLAG(&hRTC_Handle, RTC_FLAG_ALRAF);
-
-      counter = 0U;
-      /* Wait till RTC ALRAWF flag is set and if Time out is reached exit */
-      while(__HAL_RTC_ALARM_GET_FLAG(&hRTC_Handle, RTC_FLAG_ALRAWF) == RESET)
+      if (counter++ == (SystemCoreClock / 48U)) /* Timeout = ~ 1s */
       {
-        if(counter++ == (SystemCoreClock /48U)) /* Timeout = ~ 1s */
-        {
-          return HAL_ERROR;
-        }
+        status = HAL_ERROR;
       }
-
-      hRTC_Handle.Instance->ALRMAR = 0x01U;
-
-      /* Configure the Alarm state: Enable Alarm */
-      __HAL_RTC_ALARMA_ENABLE(&hRTC_Handle);
-      /* Configure the Alarm interrupt */
-      __HAL_RTC_ALARM_ENABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
-
-      /* RTC Alarm Interrupt Configuration: EXTI configuration */
-      __HAL_RTC_ALARM_EXTI_ENABLE_IT();
-      __HAL_RTC_ALARM_EXTI_ENABLE_RISING_EDGE();
-
-      /* Check if the Initialization mode is set */
-      if((hRTC_Handle.Instance->ISR & RTC_ISR_INITF) == (uint32_t)RESET)
-      {
-        /* Set the Initialization mode */
-        hRTC_Handle.Instance->ISR = (uint32_t)RTC_INIT_MASK;
-        counter = 0U;
-        while((hRTC_Handle.Instance->ISR & RTC_ISR_INITF) == (uint32_t)RESET)
-        {
-          if(counter++ == (SystemCoreClock /48U)) /* Timeout = ~ 1s */
-          {
-            return HAL_ERROR;
-          }
-        }
-      }
-      hRTC_Handle.Instance->DR = 0U;
-      hRTC_Handle.Instance->TR = 0U;
-
-      hRTC_Handle.Instance->ISR &= (uint32_t)~RTC_ISR_INIT;
-
-      /* Enable the write protection for RTC registers */
-      __HAL_RTC_WRITEPROTECTION_ENABLE(&hRTC_Handle);
-
-      HAL_NVIC_SetPriority(RTC_IRQn, TickPriority, 0U);
-      HAL_NVIC_EnableIRQ(RTC_IRQn);
-      return HAL_OK;
     }
   }
-  return HAL_ERROR;
+  if (status == HAL_OK)
+  {
+    hRTC_Handle.Instance->ALRMAR = 0x01U;
+
+    /* Configure the Alarm state: Enable Alarm */
+    __HAL_RTC_ALARMA_ENABLE(&hRTC_Handle);
+    /* Configure the Alarm interrupt */
+    __HAL_RTC_ALARM_ENABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
+
+    /* RTC Alarm Interrupt Configuration: EXTI configuration */
+    __HAL_RTC_ALARM_EXTI_ENABLE_IT();
+    __HAL_RTC_ALARM_EXTI_ENABLE_RISING_EDGE();
+
+    /* Check if the Initialization mode is set */
+    if ((hRTC_Handle.Instance->ISR & RTC_ISR_INITF) == (uint32_t)RESET)
+    {
+      /* Set the Initialization mode */
+      hRTC_Handle.Instance->ISR = (uint32_t)RTC_INIT_MASK;
+      counter = 0U;
+      while ((hRTC_Handle.Instance->ISR & RTC_ISR_INITF) == (uint32_t)RESET)
+      {
+        if (counter++ == (SystemCoreClock / 48U)) /* Timeout = ~ 1s */
+        {
+          status = HAL_ERROR;
+        }
+      }
+    }
+  }
+  if (status == HAL_OK)
+  {
+    hRTC_Handle.Instance->DR = 0U;
+    hRTC_Handle.Instance->TR = 0U;
+
+    hRTC_Handle.Instance->ISR &= (uint32_t)~RTC_ISR_INIT;
+
+    /* Enable the write protection for RTC registers */
+    __HAL_RTC_WRITEPROTECTION_ENABLE(&hRTC_Handle);
+
+    /* Enable the RTC Alarm Interrupt */
+    HAL_NVIC_EnableIRQ(RTC_IRQn);
+
+    /* Configure the SysTick IRQ priority */
+    if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+    {
+      HAL_NVIC_SetPriority(RTC_IRQn, TickPriority, 0U);
+      uwTickPrio = TickPriority;
+    }
+    else
+    {
+      status = HAL_ERROR;
+    }
+
+  }
+  return status;
 }
 
 /**

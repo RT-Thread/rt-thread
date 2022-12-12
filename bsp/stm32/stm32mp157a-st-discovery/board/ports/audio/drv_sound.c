@@ -22,7 +22,7 @@
 
 /* SYSRAM  */
 #define TX_FIFO_SIZE       (4096)
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE] __attribute__((at(0x2FFC3000)));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFC3000

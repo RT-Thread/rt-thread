@@ -107,8 +107,8 @@
     allows the user to configure dynamically the driver callbacks.
 
     [..]
-    Use Function @ref HAL_SMARTCARD_RegisterCallback() to register a user callback.
-    Function @ref HAL_SMARTCARD_RegisterCallback() allows to register following callbacks:
+    Use Function HAL_SMARTCARD_RegisterCallback() to register a user callback.
+    Function HAL_SMARTCARD_RegisterCallback() allows to register following callbacks:
     (+) TxCpltCallback            : Tx Complete Callback.
     (+) RxCpltCallback            : Rx Complete Callback.
     (+) ErrorCallback             : Error Callback.
@@ -123,9 +123,9 @@
     and a pointer to the user callback function.
 
     [..]
-    Use function @ref HAL_SMARTCARD_UnRegisterCallback() to reset a callback to the default
+    Use function HAL_SMARTCARD_UnRegisterCallback() to reset a callback to the default
     weak (surcharged) function.
-    @ref HAL_SMARTCARD_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    HAL_SMARTCARD_UnRegisterCallback() takes as parameters the HAL peripheral handle,
     and the Callback ID.
     This function allows to reset following callbacks:
     (+) TxCpltCallback            : Tx Complete Callback.
@@ -140,13 +140,13 @@
     (+) MspDeInitCallback         : SMARTCARD MspDeInit.
 
     [..]
-    By default, after the @ref HAL_SMARTCARD_Init() and when the state is HAL_SMARTCARD_STATE_RESET
+    By default, after the HAL_SMARTCARD_Init() and when the state is HAL_SMARTCARD_STATE_RESET
     all callbacks are set to the corresponding weak (surcharged) functions:
-    examples @ref HAL_SMARTCARD_TxCpltCallback(), @ref HAL_SMARTCARD_RxCpltCallback().
+    examples HAL_SMARTCARD_TxCpltCallback(), HAL_SMARTCARD_RxCpltCallback().
     Exception done for MspInit and MspDeInit functions that are respectively
-    reset to the legacy weak (surcharged) functions in the @ref HAL_SMARTCARD_Init()
-    and @ref HAL_SMARTCARD_DeInit() only when these callbacks are null (not registered beforehand).
-    If not, MspInit or MspDeInit are not null, the @ref HAL_SMARTCARD_Init() and @ref HAL_SMARTCARD_DeInit()
+    reset to the legacy weak (surcharged) functions in the HAL_SMARTCARD_Init()
+    and HAL_SMARTCARD_DeInit() only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_SMARTCARD_Init() and HAL_SMARTCARD_DeInit()
     keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
 
     [..]
@@ -155,8 +155,8 @@
     in HAL_SMARTCARD_STATE_READY or HAL_SMARTCARD_STATE_RESET state, thus registered (user)
     MspInit/DeInit callbacks can be used during the Init/DeInit.
     In that case first register the MspInit/MspDeInit user callbacks
-    using @ref HAL_SMARTCARD_RegisterCallback() before calling @ref HAL_SMARTCARD_DeInit()
-    or @ref HAL_SMARTCARD_Init() function.
+    using HAL_SMARTCARD_RegisterCallback() before calling HAL_SMARTCARD_DeInit()
+    or HAL_SMARTCARD_Init() function.
 
     [..]
     When The compilation define USE_HAL_SMARTCARD_REGISTER_CALLBACKS is set to 0 or
@@ -742,60 +742,61 @@ HAL_StatusTypeDef HAL_SMARTCARD_UnRegisterCallback(SMARTCARD_HandleTypeDef *hsma
     (+) 1.5 stop bits when transmitting and receiving: where STOP=11 in the USART_CR2 register.
 
   [..]
-    (+) There are two modes of transfer:
-        (++) Blocking mode: The communication is performed in polling mode.
+    (#) There are two modes of transfer:
+        (##) Blocking mode: The communication is performed in polling mode.
              The HAL status of all data processing is returned by the same function
              after finishing transfer.
-        (++) Non-Blocking mode: The communication is performed using Interrupts
+        (##) Non-Blocking mode: The communication is performed using Interrupts
              or DMA, the relevant API's return the HAL status.
              The end of the data processing will be indicated through the
              dedicated SMARTCARD IRQ when using Interrupt mode or the DMA IRQ when
              using DMA mode.
-        (++) The HAL_SMARTCARD_TxCpltCallback(), HAL_SMARTCARD_RxCpltCallback() user callbacks
+        (##) The HAL_SMARTCARD_TxCpltCallback(), HAL_SMARTCARD_RxCpltCallback() user callbacks
              will be executed respectively at the end of the Transmit or Receive process
              The HAL_SMARTCARD_ErrorCallback() user callback will be executed when a communication
              error is detected.
 
-    (+) Blocking mode APIs are :
-        (++) HAL_SMARTCARD_Transmit()
-        (++) HAL_SMARTCARD_Receive()
+    (#) Blocking mode APIs are :
+        (##) HAL_SMARTCARD_Transmit()
+        (##) HAL_SMARTCARD_Receive()
 
-    (+) Non Blocking mode APIs with Interrupt are :
-        (++) HAL_SMARTCARD_Transmit_IT()
-        (++) HAL_SMARTCARD_Receive_IT()
-        (++) HAL_SMARTCARD_IRQHandler()
+    (#) Non Blocking mode APIs with Interrupt are :
+        (##) HAL_SMARTCARD_Transmit_IT()
+        (##) HAL_SMARTCARD_Receive_IT()
+        (##) HAL_SMARTCARD_IRQHandler()
 
-    (+) Non Blocking mode functions with DMA are :
-        (++) HAL_SMARTCARD_Transmit_DMA()
-        (++) HAL_SMARTCARD_Receive_DMA()
+    (#) Non Blocking mode functions with DMA are :
+        (##) HAL_SMARTCARD_Transmit_DMA()
+        (##) HAL_SMARTCARD_Receive_DMA()
 
-    (+) A set of Transfer Complete Callbacks are provided in non Blocking mode:
-        (++) HAL_SMARTCARD_TxCpltCallback()
-        (++) HAL_SMARTCARD_RxCpltCallback()
-        (++) HAL_SMARTCARD_ErrorCallback()
+    (#) A set of Transfer Complete Callbacks are provided in non Blocking mode:
+        (##) HAL_SMARTCARD_TxCpltCallback()
+        (##) HAL_SMARTCARD_RxCpltCallback()
+        (##) HAL_SMARTCARD_ErrorCallback()
 
+  [..]
     (#) Non-Blocking mode transfers could be aborted using Abort API's :
-        (+) HAL_SMARTCARD_Abort()
-        (+) HAL_SMARTCARD_AbortTransmit()
-        (+) HAL_SMARTCARD_AbortReceive()
-        (+) HAL_SMARTCARD_Abort_IT()
-        (+) HAL_SMARTCARD_AbortTransmit_IT()
-        (+) HAL_SMARTCARD_AbortReceive_IT()
+        (##) HAL_SMARTCARD_Abort()
+        (##) HAL_SMARTCARD_AbortTransmit()
+        (##) HAL_SMARTCARD_AbortReceive()
+        (##) HAL_SMARTCARD_Abort_IT()
+        (##) HAL_SMARTCARD_AbortTransmit_IT()
+        (##) HAL_SMARTCARD_AbortReceive_IT()
 
     (#) For Abort services based on interrupts (HAL_SMARTCARD_Abortxxx_IT), a set of Abort Complete Callbacks are provided:
-        (+) HAL_SMARTCARD_AbortCpltCallback()
-        (+) HAL_SMARTCARD_AbortTransmitCpltCallback()
-        (+) HAL_SMARTCARD_AbortReceiveCpltCallback()
+        (##) HAL_SMARTCARD_AbortCpltCallback()
+        (##) HAL_SMARTCARD_AbortTransmitCpltCallback()
+        (##) HAL_SMARTCARD_AbortReceiveCpltCallback()
 
     (#) In Non-Blocking mode transfers, possible errors are split into 2 categories.
         Errors are handled as follows :
-       (+) Error is considered as Recoverable and non blocking : Transfer could go till end, but error severity is
+       (##) Error is considered as Recoverable and non blocking : Transfer could go till end, but error severity is
            to be evaluated by user : this concerns Frame Error, Parity Error or Noise Error in Interrupt mode reception .
            Received character is then retrieved and stored in Rx buffer, Error code is set to allow user to identify error type,
            and HAL_SMARTCARD_ErrorCallback() user callback is executed. Transfer is kept ongoing on SMARTCARD side.
            If user wants to abort it, Abort services should be called by user.
-       (+) Error is considered as Blocking : Transfer could not be completed properly and is aborted.
-           This concerns Frame Error in Interrupt mode tranmission, Overrun Error in Interrupt mode reception and all errors in DMA mode.
+       (##) Error is considered as Blocking : Transfer could not be completed properly and is aborted.
+           This concerns Frame Error in Interrupt mode transmission, Overrun Error in Interrupt mode reception and all errors in DMA mode.
            Error code is set to allow user to identify error type, and HAL_SMARTCARD_ErrorCallback() user callback is executed.
 
 @endverbatim
@@ -840,13 +841,22 @@ HAL_StatusTypeDef HAL_SMARTCARD_Transmit(SMARTCARD_HandleTypeDef *hsmartcard, ui
     /* Disable the Peripheral first to update mode for TX master */
     CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
 
-    /* Disable Rx, enable Tx */
-    CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
-    SET_BIT(hsmartcard->Instance->RQR, (uint16_t)SMARTCARD_RXDATA_FLUSH_REQUEST);
+    /* In case of TX only mode, if NACK is enabled, the USART must be able to monitor
+       the bidirectional line to detect a NACK signal in case of parity error.
+       Therefore, the receiver block must be enabled as well (RE bit must be set). */
+    if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX)
+     && (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
+    {
+      SET_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
+    }
+    /* Enable Tx */
     SET_BIT(hsmartcard->Instance->CR1, USART_CR1_TE);
 
     /* Enable the Peripheral */
     SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+
+    /* Perform a TX/RX FIFO Flush */
+    __HAL_SMARTCARD_FLUSH_DRREGISTER(hsmartcard);
 
     hsmartcard->ErrorCode = HAL_SMARTCARD_ERROR_NONE;
     hsmartcard->TxXferSize = Size;
@@ -867,15 +877,23 @@ HAL_StatusTypeDef HAL_SMARTCARD_Transmit(SMARTCARD_HandleTypeDef *hsmartcard, ui
     {
       return HAL_TIMEOUT;
     }
-    /* Re-enable Rx at end of transmission if initial mode is Rx/Tx */
-    if (hsmartcard->Init.Mode == SMARTCARD_MODE_TX_RX)
+
+    /* Disable the Peripheral first to update mode */
+    CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+    if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX)
+     && (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
     {
-      /* Disable the Peripheral first to update modes */
-      CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
-      SET_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
-      /* Enable the Peripheral */
-      SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+      /* In case of TX only mode, if NACK is enabled, receiver block has been enabled
+         for Transmit phase. Disable this receiver block. */
+      CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
     }
+    if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX_RX)
+     || (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
+    {
+      /* Perform a TX FIFO Flush at end of Tx phase, as all sent bytes are appearing in Rx Data register */
+      __HAL_SMARTCARD_FLUSH_DRREGISTER(hsmartcard);
+    }
+    SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
 
     /* At end of Tx process, restore hsmartcard->gState to Ready */
     hsmartcard->gState = HAL_SMARTCARD_STATE_READY;
@@ -996,13 +1014,22 @@ HAL_StatusTypeDef HAL_SMARTCARD_Transmit_IT(SMARTCARD_HandleTypeDef *hsmartcard,
     /* Disable the Peripheral first to update mode for TX master */
     CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
 
-    /* Disable Rx, enable Tx */
-    CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
-    SET_BIT(hsmartcard->Instance->RQR, (uint16_t)SMARTCARD_RXDATA_FLUSH_REQUEST);
+    /* In case of TX only mode, if NACK is enabled, the USART must be able to monitor
+       the bidirectional line to detect a NACK signal in case of parity error.
+       Therefore, the receiver block must be enabled as well (RE bit must be set). */
+    if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX)
+     && (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
+    {
+      SET_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
+    }
+    /* Enable Tx */
     SET_BIT(hsmartcard->Instance->CR1, USART_CR1_TE);
 
     /* Enable the Peripheral */
     SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+
+    /* Perform a TX/RX FIFO Flush */
+    __HAL_SMARTCARD_FLUSH_DRREGISTER(hsmartcard);
 
     /* Configure Tx interrupt processing */
 #if defined(USART_CR1_FIFOEN)
@@ -1169,13 +1196,22 @@ HAL_StatusTypeDef HAL_SMARTCARD_Transmit_DMA(SMARTCARD_HandleTypeDef *hsmartcard
     /* Disable the Peripheral first to update mode for TX master */
     CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
 
-    /* Disable Rx, enable Tx */
-    CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
-    SET_BIT(hsmartcard->Instance->RQR, (uint16_t)SMARTCARD_RXDATA_FLUSH_REQUEST);
+    /* In case of TX only mode, if NACK is enabled, the USART must be able to monitor
+       the bidirectional line to detect a NACK signal in case of parity error.
+       Therefore, the receiver block must be enabled as well (RE bit must be set). */
+    if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX)
+     && (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
+    {
+      SET_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
+    }
+    /* Enable Tx */
     SET_BIT(hsmartcard->Instance->CR1, USART_CR1_TE);
 
     /* Enable the Peripheral */
     SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+
+    /* Perform a TX/RX FIFO Flush */
+    __HAL_SMARTCARD_FLUSH_DRREGISTER(hsmartcard);
 
     /* Set the SMARTCARD DMA transfer complete callback */
     hsmartcard->hdmatx->XferCpltCallback = SMARTCARD_DMATransmitCplt;
@@ -2401,8 +2437,9 @@ static HAL_StatusTypeDef SMARTCARD_SetConfig(SMARTCARD_HandleTypeDef *hsmartcard
   SMARTCARD_ClockSourceTypeDef clocksource;
   HAL_StatusTypeDef ret = HAL_OK;
 #if defined(USART_PRESC_PRESCALER)
-  const uint16_t SMARTCARDPrescTable[12] = {1U, 2U, 4U, 6U, 8U, 10U, 12U, 16U, 32U, 64U, 128U, 256U};
+  static const uint16_t SMARTCARDPrescTable[12] = {1U, 2U, 4U, 6U, 8U, 10U, 12U, 16U, 32U, 64U, 128U, 256U};
 #endif /* USART_PRESC_PRESCALER */
+  uint32_t pclk;
 
   /* Check the parameters */
   assert_param(IS_SMARTCARD_INSTANCE(hsmartcard->Instance));
@@ -2428,12 +2465,7 @@ static HAL_StatusTypeDef SMARTCARD_SetConfig(SMARTCARD_HandleTypeDef *hsmartcard
    * Configure the Parity and Mode:
    *  set PS bit according to hsmartcard->Init.Parity value
    *  set TE and RE bits according to hsmartcard->Init.Mode value */
-#if defined(USART_CR1_FIFOEN)
-  tmpreg = (uint32_t) hsmartcard->Init.Parity | hsmartcard->Init.Mode;
-  tmpreg |= (uint32_t) hsmartcard->Init.WordLength | hsmartcard->FifoMode;
-#else
   tmpreg = (uint32_t)(hsmartcard->Init.Parity | hsmartcard->Init.Mode | hsmartcard->Init.WordLength);
-#endif /* USART_CR1_FIFOEN */
   MODIFY_REG(hsmartcard->Instance->CR1, USART_CR1_FIELDS, tmpreg);
 
   /*-------------------------- USART CR2 Configuration -----------------------*/
@@ -2482,17 +2514,19 @@ static HAL_StatusTypeDef SMARTCARD_SetConfig(SMARTCARD_HandleTypeDef *hsmartcard
   switch (clocksource)
   {
     case SMARTCARD_CLOCKSOURCE_PCLK1:
+      pclk = HAL_RCC_GetPCLK1Freq();
 #if defined(USART_PRESC_PRESCALER)
-      tmpreg = (uint16_t)(((HAL_RCC_GetPCLK1Freq() / SMARTCARDPrescTable[hsmartcard->Init.ClockPrescaler]) + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
+      tmpreg = (uint16_t)(((pclk / SMARTCARDPrescTable[hsmartcard->Init.ClockPrescaler]) + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
 #else
-      tmpreg = (uint16_t)((HAL_RCC_GetPCLK1Freq() + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
+      tmpreg = (uint16_t)((pclk + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
 #endif /* USART_PRESC_PRESCALER */
       break;
     case SMARTCARD_CLOCKSOURCE_PCLK2:
+      pclk = HAL_RCC_GetPCLK2Freq();
 #if defined(USART_PRESC_PRESCALER)
-      tmpreg = (uint16_t)(((HAL_RCC_GetPCLK2Freq() / SMARTCARDPrescTable[hsmartcard->Init.ClockPrescaler]) + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
+      tmpreg = (uint16_t)(((pclk / SMARTCARDPrescTable[hsmartcard->Init.ClockPrescaler]) + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
 #else
-      tmpreg = (uint16_t)((HAL_RCC_GetPCLK2Freq() + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
+      tmpreg = (uint16_t)((pclk + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
 #endif /* USART_PRESC_PRESCALER */
       break;
     case SMARTCARD_CLOCKSOURCE_HSI:
@@ -2503,10 +2537,11 @@ static HAL_StatusTypeDef SMARTCARD_SetConfig(SMARTCARD_HandleTypeDef *hsmartcard
 #endif /* USART_PRESC_PRESCALER */
       break;
     case SMARTCARD_CLOCKSOURCE_SYSCLK:
+      pclk = HAL_RCC_GetSysClockFreq();
 #if defined(USART_PRESC_PRESCALER)
-      tmpreg = (uint16_t)(((HAL_RCC_GetSysClockFreq() / SMARTCARDPrescTable[hsmartcard->Init.ClockPrescaler]) + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
+      tmpreg = (uint16_t)(((pclk / SMARTCARDPrescTable[hsmartcard->Init.ClockPrescaler]) + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
 #else
-      tmpreg = (uint16_t)((HAL_RCC_GetSysClockFreq() + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
+      tmpreg = (uint16_t)((pclk + (hsmartcard->Init.BaudRate / 2U)) / hsmartcard->Init.BaudRate);
 #endif /* USART_PRESC_PRESCALER */
       break;
     case SMARTCARD_CLOCKSOURCE_LSE:
@@ -3104,15 +3139,22 @@ static void SMARTCARD_EndTransmit_IT(SMARTCARD_HandleTypeDef *hsmartcard)
     CLEAR_BIT(hsmartcard->Instance->CR3, USART_CR3_EIE);
   }
 
-  /* Re-enable Rx at end of transmission if initial mode is Rx/Tx */
-  if (hsmartcard->Init.Mode == SMARTCARD_MODE_TX_RX)
+  /* Disable the Peripheral first to update mode */
+  CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+  if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX)
+   && (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
   {
-    /* Disable the Peripheral first to update modes */
-    CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
-    SET_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
-    /* Enable the Peripheral */
-    SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
+    /* In case of TX only mode, if NACK is enabled, receiver block has been enabled
+       for Transmit phase. Disable this receiver block. */
+    CLEAR_BIT(hsmartcard->Instance->CR1, USART_CR1_RE);
   }
+  if ((hsmartcard->Init.Mode == SMARTCARD_MODE_TX_RX)
+   || (hsmartcard->Init.NACKEnable == SMARTCARD_NACK_ENABLE))
+  {
+    /* Perform a TX FIFO Flush at end of Tx phase, as all sent bytes are appearing in Rx Data register */
+    __HAL_SMARTCARD_FLUSH_DRREGISTER(hsmartcard);
+  }
+  SET_BIT(hsmartcard->Instance->CR1, USART_CR1_UE);
 
   /* Tx process is ended, restore hsmartcard->gState to Ready */
   hsmartcard->gState = HAL_SMARTCARD_STATE_READY;

@@ -1089,6 +1089,7 @@ extern void SystemInit(void);
 #include "nu_scu.h"
 #include "nu_tamper.h"
 #include "nu_rng.h"
+#include "nu_trng.h"
 #include "nu_dpm.h"
 #include "nu_fvc.h"
 #include "nu_ewwdt.h"

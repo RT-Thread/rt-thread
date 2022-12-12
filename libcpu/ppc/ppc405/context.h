@@ -1,9 +1,9 @@
 #ifndef __CONTEXT_H__
 #define __CONTEXT_H__
 
-#define MSR_ME		(1<<12)		/* Machine Check Enable */
+#define MSR_ME      (1<<12)     /* Machine Check Enable */
 #define MSR_EE      (1<<15)     /* External Interrupt Enable */
-#define MSR_CE		(1<<17)		/* Critical Interrupt Enable */
+#define MSR_CE      (1<<17)     /* Critical Interrupt Enable */
 
 #define GPR0    0
 #define GPR2    4

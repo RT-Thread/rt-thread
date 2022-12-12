@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 #include <rtthread.h>
 
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
-                  /* Clang */ || (defined ( __CLANG_ARM ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
+                  /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
                   /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
                   /* GNU */   || (defined ( __GNUC__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) )
 #define USE_FPU   1
@@ -169,10 +169,65 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stack_frame->exception_stack_frame.pc  = (unsigned long)tentry;    /* entry point, pc */
     stack_frame->exception_stack_frame.psr = 0x01000000L;              /* PSR */
 
-    stack_frame->tz = 0x00;
-    stack_frame->lr = 0xFFFFFFBC;
+    stack_frame->tz = 0x00;                                            /* trustzone thread context */
+    /*
+     * Exception return behavior
+     * +--------+---+---+------+-------+------+-------+---+----+
+     * | PREFIX | - | S | DCRS | FType | Mode | SPSEL | - | ES |
+     * +--------+---+---+------+-------+------+-------+---+----+
+     * PREFIX [31:24]  - Indicates that this is an EXC_RETURN value. This field reads as 0b11111111.
+     * S      [6]      - Indicates whether registers have been pushed to a Secure or Non-secure stack.
+     *                    0: Non-secure stack used.
+     *                    1: Secure stack used.
+     * DCRS   [5]      - Indicates whether the default stacking rules apply, or whether the callee registers are already on the stack.
+     *                    0: Stacking of the callee saved registers is skipped.
+     *                    1: Default rules for stacking the callee registers are followed.
+     * FType  [4]      - In a PE with the Main and Floating-point Extensions:
+     *                    0: The PE allocated space on the stack for FP context.
+     *                    1: The PE did not allocate space on the stack for FP context.
+     *                    In a PE without the Floating-point Extension, this bit is Reserved, RES1.
+     * Mode   [3]      - Indicates the mode that was stacked from.
+     *                    0: Handler mode.
+     *                    1: Thread mode.
+     * SPSEL  [2]      - Indicates which stack contains the exception stack frame.
+     *                    0: Main stack pointer.
+     *                    1: Process stack pointer.
+     * ES     [0]      - Indicates the Security state the exception was taken to.
+     *                    0: Non-secure.
+     *                    1: Secure.
+     */
+#ifdef ARCH_ARM_CORTEX_SECURE
+    stack_frame->lr = 0xfffffffdL;
+#else
+    stack_frame->lr = 0xffffffbcL;
+#endif
     stack_frame->psplim = 0x00;
-    stack_frame->control = 0x00;
+    /*
+     * CONTROL register bit assignments
+     * +---+------+------+-------+-------+
+     * | - | SFPA | FPCA | SPSEL | nPRIV |
+     * +---+------+------+-------+-------+
+     * SFPA   [3]      - Indicates that the floating-point registers contain active state that belongs to the Secure state:
+     *                    0: The floating-point registers do not contain state that belongs to the Secure state.
+     *                    1: The floating-point registers contain state that belongs to the Secure state.
+     *                    This bit is not banked between Security states and RAZ/WI from Non-secure state.
+     * FPCA   [2]      - Indicates whether floating-point context is active:
+     *                    0: No floating-point context active.
+     *                    1: Floating-point context active.
+     *                    This bit is used to determine whether to preserve floating-point state when processing an exception.
+     *                    This bit is not banked between Security states.
+     * SPSEL  [1]      - Defines the currently active stack pointer:
+     *                    0: MSP is the current stack pointer.
+     *                    1: PSP is the current stack pointer.
+     *                    In Handler mode, this bit reads as zero and ignores writes. The CortexM33 core updates this bit automatically onexception return.
+     *                    This bit is banked between Security states.
+     * nPRIV  [0]      - Defines the Thread mode privilege level:
+     *                    0: Privileged.
+     *                    1: Unprivileged.
+     *                    This bit is banked between Security states.
+     *
+     */
+    stack_frame->control = 0x00000000L;
 
     /* return task's current stack address */
     return stk;
@@ -373,7 +428,9 @@ struct exception_info
 
 void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 {
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     extern long list_thread(void);
+#endif
     struct exception_stack_frame *exception_stack = &exception_info->stack_frame.exception_stack_frame;
     struct stack_frame *context = &exception_info->stack_frame;
 
@@ -407,7 +464,7 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
     {
         rt_kprintf("hard fault on thread: %s\r\n\r\n", rt_thread_self()->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_thread();
 #endif
     }
@@ -431,7 +488,7 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 /**
  * shutdown CPU
  */
-RT_WEAK void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 
@@ -441,7 +498,7 @@ RT_WEAK void rt_hw_cpu_shutdown(void)
 /**
  * reset CPU
  */
-RT_WEAK void rt_hw_cpu_reset(void)
+rt_weak void rt_hw_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }
@@ -457,7 +514,7 @@ RT_WEAK void rt_hw_cpu_reset(void)
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-#if defined(__CC_ARM) 
+#if defined(__CC_ARM)
 __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
@@ -470,7 +527,7 @@ __asm int __rt_ffs(int value)
 exit
     BX      lr
 }
-#elif defined(__CLANG_ARM)
+#elif defined(__clang__)
 int __rt_ffs(int value)
 {
     if (value == 0) return value;

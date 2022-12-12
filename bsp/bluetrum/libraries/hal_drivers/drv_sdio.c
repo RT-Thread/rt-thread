@@ -47,12 +47,12 @@ struct rthw_sdio
     struct sdio_pkg *pkg;
 };
 
-ALIGN(SDIO_ALIGN_LEN)
+rt_align(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 
-static uint8_t sd_baud = 119;
+static rt_uint8_t sd_baud = 119;
 
-uint8_t sysclk_update_baud(uint8_t baud);
+rt_uint8_t sysclk_update_baud(rt_uint8_t baud);
 
 static rt_uint32_t ab32_sdio_clk_get(hal_sfr_t hw_sdio)
 {
@@ -496,6 +496,7 @@ static rt_int32_t rthw_sd_detect(struct rt_mmcsd_host *host)
   * @param  host  rt_mmcsd_host
   * @retval None
   */
+rt_section(".irq.sdio")
 void rthw_sdio_irq_process(struct rt_mmcsd_host *host)
 {
     int complete = 0;
@@ -569,7 +570,7 @@ struct rt_mmcsd_host *sdio_host_create(struct ab32_sdio_des *sdio_des)
     sdio->sdio_des.clk_get = (sdio_des->clk_get == RT_NULL ? ab32_sdio_clk_get : sdio_des->clk_get);
 
     rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
     /* set host defautl attributes */
     host->ops = &ab32_sdio_ops;
@@ -616,6 +617,7 @@ static rt_err_t _dma_rxconfig(rt_uint32_t *dst, int Size)
     return RT_EOK;
 }
 
+rt_section(".irq.sdio")
 void sdio_isr(int vector, void *param)
 {
     /* enter interrupt */
@@ -631,7 +633,7 @@ int rt_hw_sdio_init(void)
 {
     struct ab32_sdio_des sdio_des = {0};
     struct sd_handle hsd = {0};
-    uint8_t param = 0;
+    rt_uint8_t param = 0;
     hsd.instance = SDMMC0_BASE;
 
     hal_rcu_periph_clk_enable(RCU_SD0);

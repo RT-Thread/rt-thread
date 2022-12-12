@@ -11,13 +11,13 @@ src = Glob('MK64F12/*.c')
 src += ['system_MK64F12.c']
 
 #add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
      src = src + ['TOOLCHAIN_GCC_ARM/startup_MK64F12.S']
      src = src + ['TOOLCHAIN_GCC_ARM/startup.c']
      path += [cwd + 'TOOLCHAIN_GCC_ARM']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
      src = src + ['TOOLCHAIN_ARM_STD/startup_MK64F12.s']
-# elif rtconfig.CROSS_TOOL == 'iar':
+# elif rtconfig.PLATFORM in ['iccarm']:
 
 CPPDEFINES = ['CPU_MK64FN1M0VLL12']
 

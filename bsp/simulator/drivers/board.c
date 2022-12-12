@@ -11,6 +11,7 @@
 #include <rtthread.h>
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "board.h"
 #include "uart_console.h"
@@ -18,7 +19,6 @@
 /**
  * @addtogroup simulator on win32
  */
-rt_uint8_t *heap;
 
 rt_uint8_t *rt_hw_sram_init(void)
 {
@@ -33,6 +33,10 @@ rt_uint8_t *rt_hw_sram_init(void)
         exit(1);
 #endif
     }
+#ifdef RT_USING_HEAP
+    /* init memory system */
+    rt_system_heap_init((void*)heap, (void*)&heap[RT_HEAP_SIZE - 1]);
+#endif
     return heap;
 }
 
@@ -81,16 +85,16 @@ void rt_hw_exit(void)
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, __cmd_quit, exit rt-thread);
+MSH_CMD_EXPORT_ALIAS(rt_hw_exit, quit, exit rt-thread);
 #endif /* RT_USING_FINSH */
 
 /**
  * This function will initial win32
  */
-void rt_hw_board_init()
+int rt_hw_board_init(void)
 {
     /* init system memory */
-    heap = rt_hw_sram_init();
+    rt_hw_sram_init();
 
     uart_console_init();
 
@@ -98,8 +102,14 @@ void rt_hw_board_init()
     rt_thread_idle_sethook(rt_hw_win32_low_cpu);
 #endif
 
-#if defined(RT_USING_CONSOLE)
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+    /* init board */
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
+    return 0;
 }
+
 /*@}*/

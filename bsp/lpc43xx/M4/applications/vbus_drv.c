@@ -2,6 +2,7 @@
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2015-01-07     Grissiom     add comment
@@ -14,7 +15,7 @@
 #include <vbus.h>
 #include <board.h>
 
-struct rt_vbus_ring rt_vbus_rings[2] RT_SECTION("vbus_ring");
+struct rt_vbus_ring rt_vbus_rings[2] rt_section("vbus_ring");
 
 int rt_vbus_do_init(void)
 {

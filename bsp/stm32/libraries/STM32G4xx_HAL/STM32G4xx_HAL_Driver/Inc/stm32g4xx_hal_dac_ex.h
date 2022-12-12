@@ -53,7 +53,7 @@ extern "C" {
 /** @defgroup DACEx_lfsrunmask_triangleamplitude DACEx lfsrunmask triangle amplitude
   * @{
   */
-#define DAC_LFSRUNMASK_BIT0                0x00000000U                                                         /*!< Unmask DAC channel LFSR bit0 for noise wave generation */
+#define DAC_LFSRUNMASK_BIT0                0x00000000UL                                                        /*!< Unmask DAC channel LFSR bit0 for noise wave generation */
 #define DAC_LFSRUNMASK_BITS1_0             (                                                   DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[1:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS2_0             (                                  DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[2:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS3_0             (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[3:0] for noise wave generation */
@@ -65,7 +65,7 @@ extern "C" {
 #define DAC_LFSRUNMASK_BITS9_0             (DAC_CR_MAMP1_3                                   | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[9:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS10_0            (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[10:0] for noise wave generation */
 #define DAC_LFSRUNMASK_BITS11_0            (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[11:0] for noise wave generation */
-#define DAC_TRIANGLEAMPLITUDE_1            0x00000000U                                                         /*!< Select max triangle amplitude of 1 */
+#define DAC_TRIANGLEAMPLITUDE_1            0x00000000UL                                                        /*!< Select max triangle amplitude of 1 */
 #define DAC_TRIANGLEAMPLITUDE_3            (                                                   DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 3 */
 #define DAC_TRIANGLEAMPLITUDE_7            (                                  DAC_CR_MAMP1_1                 ) /*!< Select max triangle amplitude of 7 */
 #define DAC_TRIANGLEAMPLITUDE_15           (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 15 */
@@ -85,7 +85,7 @@ extern "C" {
 /** @defgroup DACEx_SawtoothPolarityMode DAC Sawtooth polarity mode
   * @{
   */
-#define DAC_SAWTOOTH_POLARITY_DECREMENT        0x00000000U             /*!< Sawtooth wave generation, polarity is decrement */
+#define DAC_SAWTOOTH_POLARITY_DECREMENT        0x00000000UL            /*!< Sawtooth wave generation, polarity is decrement */
 #define DAC_SAWTOOTH_POLARITY_INCREMENT        (DAC_STR1_STDIR1)       /*!< Sawtooth wave generation, polarity is increment */
 
 /**
@@ -342,6 +342,6 @@ void DAC_DMAHalfConvCpltCh2(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /*STM32G4xx_HAL_DAC_EX_H */
+#endif /* STM32G4xx_HAL_DAC_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

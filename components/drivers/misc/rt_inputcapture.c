@@ -8,8 +8,10 @@
  * 2019-08-13     balanceTWK   the first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
+
+#define DBG_TAG "incap"
+#define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
 static rt_err_t rt_inputcapture_init(struct rt_device *dev)

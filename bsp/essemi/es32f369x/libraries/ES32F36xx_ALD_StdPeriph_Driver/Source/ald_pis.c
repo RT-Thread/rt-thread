@@ -8,13 +8,29 @@
   * @date    27 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          27 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
-#include "ald_pis.h"
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{
@@ -178,7 +194,7 @@ ald_status_t ald_pis_output_start(pis_handle_t *hperh, pis_out_ch_t ch)
 	assert_param(IS_PIS(hperh->perh));
 	assert_param(IS_PIS_OUPUT_CH(ch));
 	__LOCK(hperh);
-	SET_BIT(PIS->CH_OER, (1 << ch));
+	SET_BIT(PIS->CH_OER, (1 << (uint32_t)ch));
 	__UNLOCK(hperh);
 
 	return OK;
@@ -201,7 +217,7 @@ ald_status_t ald_pis_output_stop(pis_handle_t *hperh, pis_out_ch_t ch)
 	assert_param(IS_PIS(hperh->perh));
 	assert_param(IS_PIS_OUPUT_CH(ch));
 	__LOCK(hperh);
-	CLEAR_BIT(PIS->CH_OER, (1 << ch));
+	CLEAR_BIT(PIS->CH_OER, (1 << (uint32_t)ch));
 	__UNLOCK(hperh);
 
 	return OK;

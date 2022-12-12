@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -30,9 +30,9 @@
 /* Clock divider for sai1 clock source */
 #define DEMO_SAI1_CLOCK_SOURCE_DIVIDER (63U)
 /* Get frequency of sai1 clock */
-#define AUD_BLOCK_CNT	2
-#define AUD_BLOCK_SIZE	1024
-#define AUD_FIFO_SIZE 	(AUD_BLOCK_SIZE * AUD_BLOCK_CNT)
+#define AUD_BLOCK_CNT   2
+#define AUD_BLOCK_SIZE  1024
+#define AUD_FIFO_SIZE   (AUD_BLOCK_SIZE * AUD_BLOCK_CNT)
 #define DEMO_SAI_CLK_FREQ                                                        \
     (CLOCK_GetFreq(kCLOCK_AudioPllClk) / (DEMO_SAI1_CLOCK_SOURCE_DIVIDER + 1U) / \
      (DEMO_SAI1_CLOCK_SOURCE_PRE_DIVIDER + 1U))

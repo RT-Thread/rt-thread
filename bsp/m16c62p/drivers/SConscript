@@ -5,9 +5,9 @@ cwd = GetCurrentDir()
 src_c = Glob('*.c')
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src_asm = ['start_gcc.S', 'vectors_gcc.S', 'interrupts_gcc.S']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src_asm = ['start_iar.asm', 'vectors_iar.asm', 'interrupts_iar.asm']
 
 src = File(src_c + src_asm)

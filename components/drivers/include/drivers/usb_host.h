@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-3-12     Yi Qiu      first version
+ * 2021-02-23     Leslie Lee  provide possibility for multi usb host
  */
 
 #ifndef __RT_USB_HOST_H__
@@ -137,6 +138,7 @@ struct uhcd
     uhcd_ops_t ops;
     rt_uint8_t num_ports;
     uhub_t roothub;
+    struct rt_messagequeue *usb_mq;
 };
 typedef struct uhcd* uhcd_t;
 
@@ -163,7 +165,7 @@ struct uhost_msg
 typedef struct uhost_msg* uhost_msg_t;
 
 /* usb host system interface */
-rt_err_t rt_usb_host_init(void);
+rt_err_t rt_usb_host_init(const char *name);
 void rt_usbh_hub_init(struct uhcd *hcd);
 
 /* usb host core interface */
@@ -203,7 +205,7 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t uhub, rt_uint16_t port,
 rt_err_t rt_usbh_hub_set_port_feature(uhub_t uhub, rt_uint16_t port,
     rt_uint16_t feature);
 rt_err_t rt_usbh_hub_reset_port(uhub_t uhub, rt_uint16_t port);
-rt_err_t rt_usbh_event_signal(struct uhost_msg* msg);
+rt_err_t rt_usbh_event_signal(uhcd_t uhcd, struct uhost_msg* msg);
 
 
 void rt_usbh_root_hub_connect_handler(struct uhcd *hcd, rt_uint8_t port, rt_bool_t isHS);
@@ -265,5 +267,3 @@ rt_inline int rt_usb_hcd_setup_xfer(uhcd_t hcd, upipe_t pipe, ureq_t setup, int 
 #endif
 
 #endif
-
-

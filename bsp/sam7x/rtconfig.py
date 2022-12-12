@@ -81,7 +81,7 @@ elif PLATFORM == 'armcc':
 
     POST_ACTION = 'fromelf --i32 $TARGET --output rtthread-sam7x.hex \nfromelf -z $TARGET'
 
-elif PLATFORM == 'iar':
+elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'armcc'
     AS = 'armasm'

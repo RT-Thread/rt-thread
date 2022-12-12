@@ -4,9 +4,9 @@
   * @author  MCD Application Team
   * @brief   Empty file; This file is no longer used to handle the Black&White
   *          feature. Its content is now moved to common files
-  *          (stm32f7xx_hal_dcmi.c/.h) as there's no device's dependency within F7
-  *          family. It's just kept for compatibility reasons.
-  * 
+  *          (stm32f7xx_hal_dcmi.c/.h) as there's no device's dependency within
+  *          this family. It's just kept for compatibility reasons.
+  *
   ******************************************************************************
   * @attention
   *

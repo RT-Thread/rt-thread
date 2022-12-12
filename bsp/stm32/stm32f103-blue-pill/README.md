@@ -151,6 +151,14 @@ You can use other USB to UART adapters to replace FTDI adapter.
 
 ### 3.4 Compile and Download
 
+#### 3.4.1 Using RT-Studio to create and compile the project
+
+***Please watch this tutorial video:***
+
+- [RT-Thread RTOS Tutorial #3 | Advanced Skills - YouTube](https://www.youtube.com/watch?v=k4-ArvvIiR8)
+
+#### 3.4.2 Using Keil-MDK or IAR to compile the project
+
 - Double-click the `project.uvprojx` file to open the MDK-Keil5 project  (**NOT** `template.uvprojx` file)
 - Click the “option for target” button
   - Debug: Choose "ST-LINK Debugger" and Click "Setting" button:
@@ -158,10 +166,6 @@ You can use other USB to UART adapters to replace FTDI adapter.
     - Flash Download: check "Reset and Run"
 
 - Compile and download the program to the board
-
-You can also follow this video to configurate *Blue Pill BSP* Keil5 project: 
-
-> https://www.youtube.com/watch?v=0PwBBYXQ08g&t
 
 
 
@@ -183,7 +187,7 @@ msh >
 
 ### 3.6 Terminal tool - PuTTy 
 
-If you have no terminal tool software available, you can download *PuTTy*:
+If you have no terminal tool software available, you can download ***PuTTy***:
 
 >  https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 
@@ -224,7 +228,7 @@ Each peripheral supporting condition for this BSP is as follows:
 
 ### 3.8 MDK-Keil5 Simulator
 
- If you haven't had a real Blue Pill Board yet, you may use MDK-Keil5 simulator to simulate to run RT-Thread on Blue Pill Board.
+ If you haven't had a real Blue Pill Board yet, you may use MDK-Keil5 simulator to simulate to run RT-Thread on Blue Pill Board. Please Double-click the `project.uvprojx` file to open the MDK-Keil5 project  (**NOT** `template.uvprojx` file).
 
 ![simulator1](figures/simulator1.png)
 
@@ -247,7 +251,7 @@ This BSP only enables GPIO and USART1 by default. If you need more advanced feat
 3. Enter `pkgs --update` command to update the package;
 4. Enter `scons --target=mdk4/mdk5/iar` command to regenerate the project.
 
-Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
+Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rt-thread/blob/master/documentation/env/env.md).
 
 
 
@@ -292,7 +296,7 @@ Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1
 
 ### 4.2 How to extend Blue Pill board’s Flash space
 
-According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM32F103C8 and STM32F103CB use the same type of silicon die, which means STM32F103C8 also has 128KB ROM in theory, but ST locked the high 64KB. Basically, to force the debugger to download program can unlock the high 64KB. There is a good news that **Keil5 will help you to unlock the Blue Pill Board high 64KB block** if you use Blue Pill Board BSP as a template to create your project. You just need to press the "Flash Download" button as usual. What you only need to remember is that Blue Pill board has 128KB of Flash rather than 64KB.
+According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM32F103C8 and STM32F103CB use the same type of silicon die, which means STM32F103C8 also has 128KB ROM in theory, but ST locked the high 64KB. Basically, to force the debugger to download program can unlock the high 64KB. There is a good news that **Keil5 / IAR / RT-Studio will help you to unlock the Blue Pill Board high 64KB block** if you use this Blue Pill Board BSP as a template to create your project. You just need to press the "Flash Download" button as usual. What you only need to remember is that Blue Pill board has 128KB of Flash rather than 64KB.
 
 
 
@@ -309,8 +313,7 @@ According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM3
 
 ## 6 Maintained By
 
-Meco Man @ RT-Thread Community
+[Meco Man](https://github.com/mysterywolf) @ RT-Thread Community
 
 jiantingman@foxmail.com 
 
-https://github.com/mysterywolf

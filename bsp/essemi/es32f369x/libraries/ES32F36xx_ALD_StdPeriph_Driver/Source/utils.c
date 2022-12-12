@@ -4,21 +4,35 @@
   * @file    utils.c
   * @brief   This file contains the Utilities functions/types for the driver.
   *
-  * @version V1.0
-  * @date    07 Nov 2019
+  * @version V1.1
+  * @date    13 Apr 2021
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          07 Nov 2019     AE Team         The first version
+  *          13 Apr 2021     AE Team         Add API: sys_config()
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #include <string.h>
-#include "utils.h"
-#include "ald_dma.h"
-#include "ald_cmu.h"
-
+#include "ald_conf.h"
 
 /** @defgroup ES32FXXX_ALD EASTSOFT ES32F3xx ALD
   * @brief Shanghai Eastsoft Microelectronics Cortex-M Chip Abstraction Layer Driver(ALD)
@@ -138,9 +152,9 @@ void ald_cmu_init(void)
 __weak void ald_tick_init(uint32_t prio)
 {
 	/* Configure the SysTick IRQ */
-	NVIC_SetPriority(SysTick_IRQn, prio);
 	SysTick_Config(ald_cmu_get_sys_clock() / SYSTICK_INTERVAL_1MS);
-
+	NVIC_SetPriority(SysTick_IRQn, prio);
+	
 	return;
 }
 
@@ -156,6 +170,8 @@ __weak void ald_tick_init(uint32_t prio)
 void ald_systick_interval_select(systick_interval_t value)
 {
 	assert_param(IS_SYSTICK_INTERVAL(value));
+	
+	if (value == 0) return;
 
 	SysTick_Config(ald_cmu_get_sys_clock() / value);
 	__systick_interval = value;
@@ -231,6 +247,31 @@ __weak void ald_inc_tick(void)
 __weak uint32_t ald_get_tick(void)
 {
 	return lib_tick;
+}
+
+/**
+  * @brief  This function provides accurate delay (in microseconds) based
+  *         on variable incremented.
+  * @note   In the default implementation, SysTick timer is the source of time base.
+  *         It is used to generate interrupts at regular time intervals where lib_tick
+  *         is incremented.
+  * @note   This function is declared as __weak to be overwritten in case of other
+  *         implementations in user file.
+  * @param  delay: specifies the delay time length, in microseconds(us).
+  * @retval None
+  */
+__weak void ald_delay_us(__IO uint32_t delay)
+{
+    uint32_t start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = ald_cmu_get_sys_clock() / 1000000UL;
+    do
+    {
+        now = SysTick->VAL;
+        delta = (start > now) ? (start - now) : (reload + start - now);
+    }
+    while (delta <  (us_tick * delay));
 }
 
 /**
@@ -452,6 +493,210 @@ void ald_mcu_get_uid(uint8_t *buf)
 uint32_t ald_mcu_get_chipid(void)
 {
 	return (uint32_t)*(uint32_t *)MCU_CHIPID_ADDR;
+}
+
+/**
+  * @brief  Bypass bootroom and set VR1_Ref 0xA
+  * @retval None
+  */
+void sys_config(void)
+{
+	uint32_t i = 0, tmp = 0;
+	uint8_t err = 0, flag = 0;
+	uint32_t inf014 = 0, inf0154 = 0, inf0244 = 0;
+	uint8_t cnt = 4;
+
+	uint32_t *inf0_addr = (uint32_t *)0x20003C00;
+	/* read bootroom cfg register */
+	inf014  = *((uint32_t *)(0x80000 + 56));
+	/* read VR1_VREF register */
+	inf0154 = *((uint32_t *)(0x80000 + 616));
+	/* read Chip_v */
+	inf0244 = *((uint32_t *)(0x80000 + 0x03D0));
+	
+	/* if D version ,do nothing */
+	if (inf0244 == 0xFFFFFF44) return;
+	
+	if (inf0154 == 0xFFFFFFFF)
+		while(1);
+	
+	/* if bypass bootroom */
+	if ((0xFFFFFFFF != inf014)) { 
+		/* change cfg_boot value = 0xffff */
+		inf014 = 0xFFFFFFFF; 
+		flag   = 0x1;
+	}
+
+	/* change CFG_VR1_VREF value, FLASH ref 0xA */
+	tmp = (inf0154 >> 8) & 0xF;
+	if (0xA != tmp) {
+		inf0154 &= (uint32_t)~(0xF << 8);
+		inf0154 |= (0xA << 8);
+		inf0154 = (inf0154 & (0x0000FFFF)) | ((~(inf0154 & 0xFFFF)) << 16);
+		flag = 0x1;
+	}
+	
+	/* if flag reset, return */
+	if (0x0 == flag)
+		return;
+	
+	/* 0x80000, 256words,INFO0 value */
+	for (i = 0; i < 256; i++)
+		inf0_addr[i] = *((uint32_t *)(0x80000 + i * 4));
+
+	/* refresh value */
+	inf0_addr[14]  = inf014;
+	inf0_addr[154] = inf0154;
+
+	while(--cnt) {
+		err = 0;
+		/* unlock */
+		*((volatile uint32_t *)(0x40080000)) = 0x55AA6996;
+		*((volatile uint32_t *)(0x40080100)) = 0x5A962814;
+		*((volatile uint32_t *)(0x40080100)) = 0xE7CB69A5;	
+
+		/* erase */
+		if (ald_iap_erase_page(0x80000) == OK) {
+			/* program 256*4bytes, info0 */
+			if (ald_iap_program_words(0x80000, (uint8_t *)inf0_addr, 1024, 0) == OK) {
+				/* check */
+				for (i = 0; i < 256; i++) {
+					if (inf0_addr[i] != *((uint32_t *)(0x80000 + i * 4))) {
+						err = 1;
+						break;;
+					}
+				}
+				if (err == 0) { 
+					/* lock */
+					*((volatile uint32_t *)(0x40080100)) = 0x123456;
+					*((volatile uint32_t *)(0x40080100)) = 0x123456;
+					*((volatile uint32_t *)(0x40080000)) = 0x123456;
+					return;
+				}
+			}
+			else {
+				err = 1;
+			}
+		}
+		else {
+			err = 1;
+		}
+	}
+
+	if (err) {
+		ald_iap_erase_page(0x80000);
+		/* lock */
+		*((volatile uint32_t *)(0x40080100)) = 0x123456;
+		*((volatile uint32_t *)(0x40080100)) = 0x123456;
+		*((volatile uint32_t *)(0x40080000)) = 0x123456;
+		while(1);
+	}
+}
+
+/**
+  * @brief  ADC adjust parameter config
+  * @retval None
+  */
+void adc_config(void)
+{
+	uint32_t inf0176 = 0, inf0178 = 0;
+	uint32_t inf0250 = 0, inf0251 = 0;
+	uint32_t inf0242 = 0, i = 0;
+	uint8_t flag = 0, err = 0;
+	uint8_t cnt = 4;
+	/* ram store inf0 1k buffer, 15k ~ 16k */
+	uint32_t *inf0_addr = (uint32_t *)0x20003C00;
+
+	/* Read ADC_GE */
+	inf0242 = *((uint32_t *)(0x80000 + 968));
+
+	if (0xF5230ADC == inf0242)  return;
+
+	/* read Lot ID */
+	inf0250 = *((uint32_t *)(0x80000 + 1000));
+	inf0251 = *((uint32_t *)(0x80000 + 1004));
+	inf0251 = (inf0251 & 0xFFFF0000) >> 16;
+
+	/* read CFG_ADC0DA/CFG_ADC1DA */
+	inf0176 = *((uint32_t *)(0x80000 + 704));
+	inf0178 = *((uint32_t *)(0x80000 + 712));
+
+	switch(inf0250) {
+		case 0x45465537:
+			if ((inf0251 == 0x3034) || (inf0251 == 0x3035))
+				flag = 1;
+			break;
+		case 0x45503931:
+			if ((inf0251 == 0x3732) || (inf0251 == 0x3734))
+				flag = 1;
+			break;
+		case 0x45503935:
+			if ((inf0251 == 0x3837) || (inf0251 == 0x3839))
+				flag = 1;
+			break;
+		default:
+			break;
+	}
+
+	if (!flag)  return;
+        
+	inf0176 ^= (0x1 << 15);
+	inf0176  = (inf0176 & 0x0000FFFF) | ((~(inf0176 & 0xFFFF)) << 16);
+
+	inf0178 ^= (0x1 << 15);
+	inf0178  = (inf0178 & 0x0000FFFF) | ((~(inf0178 & 0xFFFF)) << 16);
+
+	/* 0x80000, 256words,INFO0 value */
+	for (i = 0; i < 256; i++)
+		inf0_addr[i] = *((uint32_t *)(0x80000 + i * 4));
+
+	inf0_addr[176] = inf0176;
+	inf0_addr[178] = inf0178;
+	inf0_addr[242] = 0xF5230ADC;
+
+	while(--cnt) {
+		err = 0;
+		/* unlock */
+		*((volatile uint32_t *)(0x40080000)) = 0x55AA6996;
+		*((volatile uint32_t *)(0x40080100)) = 0x5A962814;
+		*((volatile uint32_t *)(0x40080100)) = 0xE7CB69A5;	
+
+		/* erase */
+		if (ald_iap_erase_page(0x80000) == OK) {
+			/* program 256*4bytes, info0 */
+			if (ald_iap_program_words(0x80000, (uint8_t *)inf0_addr, 1024, 0) == OK) {
+				/* check */
+				for (i = 0; i < 256; i++) {
+					if (inf0_addr[i] != *((uint32_t *)(0x80000 + i * 4))) {
+						err = 1;
+						break;;
+					}
+				}
+				if (err == 0) { 
+					/* lock */
+					*((volatile uint32_t *)(0x40080100)) = 0x123456;
+					*((volatile uint32_t *)(0x40080100)) = 0x123456;
+					*((volatile uint32_t *)(0x40080000)) = 0x123456;
+					return;
+				}
+			}
+			else {
+				err = 1;
+			}
+		}
+		else {
+			err = 1;
+		}
+	}
+
+	if (err) {
+		ald_iap_erase_page(0x80000);
+		/* lock */
+		*((volatile uint32_t *)(0x40080100)) = 0x123456;
+		*((volatile uint32_t *)(0x40080100)) = 0x123456;
+		*((volatile uint32_t *)(0x40080000)) = 0x123456;
+		while(1);
+	}
 }
 /**
   * @}

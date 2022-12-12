@@ -103,14 +103,14 @@
   allows the user to configure dynamically the driver callbacks.
 
   [..]
-  Use Function @ref HAL_TIM_RegisterCallback() to register a callback.
-  @ref HAL_TIM_RegisterCallback() takes as parameters the HAL peripheral handle,
+  Use Function HAL_TIM_RegisterCallback() to register a callback.
+  HAL_TIM_RegisterCallback() takes as parameters the HAL peripheral handle,
   the Callback ID and a pointer to the user callback function.
 
   [..]
-  Use function @ref HAL_TIM_UnRegisterCallback() to reset a callback to the default
+  Use function HAL_TIM_UnRegisterCallback() to reset a callback to the default
   weak function.
-  @ref HAL_TIM_UnRegisterCallback takes as parameters the HAL peripheral handle,
+  HAL_TIM_UnRegisterCallback takes as parameters the HAL peripheral handle,
   and the Callback ID.
 
   [..]
@@ -147,7 +147,7 @@
   [..]
 By default, after the Init and when the state is HAL_TIM_STATE_RESET
 all interrupt callbacks are set to the corresponding weak functions:
-  examples @ref HAL_TIM_TriggerCallback(), @ref HAL_TIM_ErrorCallback().
+  examples HAL_TIM_TriggerCallback(), HAL_TIM_ErrorCallback().
 
   [..]
   Exception done for MspInit and MspDeInit functions that are reset to the legacy weak
@@ -161,7 +161,7 @@ all interrupt callbacks are set to the corresponding weak functions:
     in HAL_TIM_STATE_READY or HAL_TIM_STATE_RESET state,
     thus registered(user) MspInit / DeInit callbacks can be used during the Init / DeInit.
   In that case first register the MspInit/MspDeInit user callbacks
-      using @ref HAL_TIM_RegisterCallback() before calling DeInit or Init function.
+      using HAL_TIM_RegisterCallback() before calling DeInit or Init function.
 
   [..]
       When The compilation define USE_HAL_TIM_REGISTER_CALLBACKS is set to 0 or
@@ -2333,6 +2333,23 @@ HAL_StatusTypeDef HAL_TIM_IC_Start_DMA(TIM_HandleTypeDef *htim, uint32_t Channel
     return HAL_ERROR;
   }
 
+  /* Enable the Input Capture channel */
+  TIM_CCxChannelCmd(htim->Instance, Channel, TIM_CCx_ENABLE);
+
+  /* Enable the Peripheral, except in trigger mode where enable is automatically done with trigger */
+  if (IS_TIM_SLAVE_INSTANCE(htim->Instance))
+  {
+    tmpsmcr = htim->Instance->SMCR & TIM_SMCR_SMS;
+    if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr))
+    {
+      __HAL_TIM_ENABLE(htim);
+    }
+  }
+  else
+  {
+    __HAL_TIM_ENABLE(htim);
+  }
+
   switch (Channel)
   {
     case TIM_CHANNEL_1:
@@ -2417,23 +2434,6 @@ HAL_StatusTypeDef HAL_TIM_IC_Start_DMA(TIM_HandleTypeDef *htim, uint32_t Channel
 
     default:
       break;
-  }
-
-  /* Enable the Input Capture channel */
-  TIM_CCxChannelCmd(htim->Instance, Channel, TIM_CCx_ENABLE);
-
-  /* Enable the Peripheral, except in trigger mode where enable is automatically done with trigger */
-  if (IS_TIM_SLAVE_INSTANCE(htim->Instance))
-  {
-    tmpsmcr = htim->Instance->SMCR & TIM_SMCR_SMS;
-    if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr))
-    {
-      __HAL_TIM_ENABLE(htim);
-    }
-  }
-  else
-  {
-    __HAL_TIM_ENABLE(htim);
   }
 
   /* Return function status */
@@ -2690,11 +2690,12 @@ __weak void HAL_TIM_OnePulse_MspDeInit(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  Starts the TIM One Pulse signal generation.
+  * @note Though OutputChannel parameter is deprecated and ignored by the function
+  *        it has been kept to avoid HAL_TIM API compatibility break.
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
-  * @param  OutputChannel TIM Channels to be enabled
-  *          This parameter can be one of the following values:
-  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
-  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  * @param  OutputChannel See note above
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Start(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
@@ -2726,7 +2727,7 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start(TIM_HandleTypeDef *htim, uint32_t Outpu
     (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
     if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
     if TIM_CHANNEL_1 is used as input, the TIM_CHANNEL_2 will be used as output
-    in all combinations, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be enabled together
+    whatever the combination, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be enabled together
 
     No need to enable the counter, it's enabled automatically by hardware
     (the counter starts in response to a stimulus and generate a pulse */
@@ -2746,11 +2747,12 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start(TIM_HandleTypeDef *htim, uint32_t Outpu
 
 /**
   * @brief  Stops the TIM One Pulse signal generation.
+  * @note Though OutputChannel parameter is deprecated and ignored by the function
+  *        it has been kept to avoid HAL_TIM API compatibility break.
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
-  * @param  OutputChannel TIM Channels to be disable
-  *          This parameter can be one of the following values:
-  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
-  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  * @param  OutputChannel See note above
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Stop(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
@@ -2762,7 +2764,7 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Stop(TIM_HandleTypeDef *htim, uint32_t Output
   (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
   if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
   if TIM_CHANNEL_1 is used as input, the TIM_CHANNEL_2 will be used as output
-  in all combinations, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be disabled together */
+  whatever the combination, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be disabled together */
 
   TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_1, TIM_CCx_DISABLE);
   TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_2, TIM_CCx_DISABLE);
@@ -2788,11 +2790,12 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Stop(TIM_HandleTypeDef *htim, uint32_t Output
 
 /**
   * @brief  Starts the TIM One Pulse signal generation in interrupt mode.
+  * @note Though OutputChannel parameter is deprecated and ignored by the function
+  *        it has been kept to avoid HAL_TIM API compatibility break.
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
-  * @param  OutputChannel TIM Channels to be enabled
-  *          This parameter can be one of the following values:
-  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
-  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  * @param  OutputChannel See note above
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Start_IT(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
@@ -2824,7 +2827,7 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start_IT(TIM_HandleTypeDef *htim, uint32_t Ou
     (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
     if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
     if TIM_CHANNEL_1 is used as input, the TIM_CHANNEL_2 will be used as output
-    in all combinations, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be enabled together
+    whatever the combination, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be enabled together
 
     No need to enable the counter, it's enabled automatically by hardware
     (the counter starts in response to a stimulus and generate a pulse */
@@ -2850,11 +2853,12 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start_IT(TIM_HandleTypeDef *htim, uint32_t Ou
 
 /**
   * @brief  Stops the TIM One Pulse signal generation in interrupt mode.
+  * @note Though OutputChannel parameter is deprecated and ignored by the function
+  *        it has been kept to avoid HAL_TIM API compatibility break.
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
-  * @param  OutputChannel TIM Channels to be enabled
-  *          This parameter can be one of the following values:
-  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
-  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  * @param  OutputChannel See note above
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Stop_IT(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
@@ -2872,7 +2876,7 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Stop_IT(TIM_HandleTypeDef *htim, uint32_t Out
   (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
   if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
   if TIM_CHANNEL_1 is used as input, the TIM_CHANNEL_2 will be used as output
-  in all combinations, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be disabled together */
+  whatever the combination, the TIM_CHANNEL_1 and TIM_CHANNEL_2 should be disabled together */
   TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_1, TIM_CCx_DISABLE);
   TIM_CCxChannelCmd(htim->Instance, TIM_CHANNEL_2, TIM_CCx_DISABLE);
 

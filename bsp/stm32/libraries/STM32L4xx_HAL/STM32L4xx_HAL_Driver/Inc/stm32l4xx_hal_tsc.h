@@ -28,6 +28,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal_def.h"
 
+
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
   */
@@ -106,13 +107,17 @@ typedef struct
 /**
   * @brief  TSC handle Structure definition
   */
+#if (USE_HAL_TSC_REGISTER_CALLBACKS == 1)
 typedef struct __TSC_HandleTypeDef
+#else
+typedef struct
+#endif  /* USE_HAL_TSC_REGISTER_CALLBACKS */
 {
   TSC_TypeDef               *Instance;  /*!< Register base address      */
   TSC_InitTypeDef           Init;       /*!< Initialization parameters  */
   __IO HAL_TSC_StateTypeDef State;      /*!< Peripheral state           */
   HAL_LockTypeDef           Lock;       /*!< Lock feature               */
-  __IO uint32_t             ErrorCode;  /*!< I2C Error code             */
+  __IO uint32_t             ErrorCode;  /*!< TSC Error code             */
 
 #if (USE_HAL_TSC_REGISTER_CALLBACKS == 1)
   void (* ConvCpltCallback)(struct __TSC_HandleTypeDef *htsc);   /*!< TSC Conversion complete callback  */
@@ -679,6 +684,10 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
                                          ((__VALUE__) == TSC_PG_PRESC_DIV64) || \
                                          ((__VALUE__) == TSC_PG_PRESC_DIV128))
 
+#define IS_TSC_PG_PRESC_VS_CTPL(__PGPSC__, __CTPL__)    ((((__PGPSC__) == TSC_PG_PRESC_DIV1) && ((__CTPL__) > TSC_CTPL_2CYCLES)) || \
+                                                         (((__PGPSC__) == TSC_PG_PRESC_DIV2) && ((__CTPL__) > TSC_CTPL_1CYCLE))  || \
+                                                         (((__PGPSC__) > TSC_PG_PRESC_DIV2)  && (((__CTPL__) == TSC_CTPL_1CYCLE) || ((__CTPL__) > TSC_CTPL_1CYCLE))))
+
 #define IS_TSC_MCV(__VALUE__)           (((__VALUE__) == TSC_MCV_255)  || \
                                          ((__VALUE__) == TSC_MCV_511)  || \
                                          ((__VALUE__) == TSC_MCV_1023) || \
@@ -699,7 +708,8 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
 
 
 #define IS_TSC_GROUP(__VALUE__)        ((((__VALUE__) & TSC_GROUPX_NOT_SUPPORTED) != TSC_GROUPX_NOT_SUPPORTED) && \
-                                        ((((__VALUE__) & TSC_GROUP1_IO1) == TSC_GROUP1_IO1) ||\
+                                        (((__VALUE__) == 0UL)                               ||\
+                                         (((__VALUE__) & TSC_GROUP1_IO1) == TSC_GROUP1_IO1) ||\
                                          (((__VALUE__) & TSC_GROUP1_IO2) == TSC_GROUP1_IO2) ||\
                                          (((__VALUE__) & TSC_GROUP1_IO3) == TSC_GROUP1_IO3) ||\
                                          (((__VALUE__) & TSC_GROUP1_IO4) == TSC_GROUP1_IO4) ||\

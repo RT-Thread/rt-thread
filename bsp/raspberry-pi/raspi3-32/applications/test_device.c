@@ -14,7 +14,8 @@
 #include <rthw.h>
 #include <string.h>
 #include <drivers/hwtimer.h>
-#include "raspi.h"
+#include <raspi.h>
+#include <sys/time.h>
 
 #ifdef BSP_USING_HDMI
 #include "drv_fb.h"
@@ -368,7 +369,7 @@ int test_rtc(void)
 {
 #ifdef BSP_USING_RTC
     rt_kprintf("Hello Test RTC!\n");
-    uint8_t i;
+    rt_uint8_t i;
     time_t now;
 
     rt_err_t ret = RT_EOK;

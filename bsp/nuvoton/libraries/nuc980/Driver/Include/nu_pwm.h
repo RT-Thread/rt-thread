@@ -46,7 +46,7 @@ extern "C"
 #define PWM1_TIMER3     7   ///< PWM1 channel 3
 
 //ioctl command
-#define START_PWMTIMER          0   ///< Start PWM ioctl command 
+#define START_PWMTIMER          0   ///< Start PWM ioctl command
 #define STOP_PWMTIMER           1   ///< Stop PWM ioctl command
 #define SET_CSR                 2   ///< Set CSR ioctl command
 #define SET_CP                  3   ///< Set CP ioctl command

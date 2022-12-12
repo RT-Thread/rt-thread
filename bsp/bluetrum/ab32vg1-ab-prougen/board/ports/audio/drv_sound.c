@@ -13,17 +13,21 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define SAI_AUDIO_FREQUENCY_44K         ((uint32_t)44100u)
 #define SAI_AUDIO_FREQUENCY_48K         ((uint32_t)48000u)
-#define TX_FIFO_SIZE         (1024)
+#define SAI_AUDIO_FREQUENCY_44K         ((uint32_t)44100u)
+#define SAI_AUDIO_FREQUENCY_38K         ((uint32_t)38000u)
+#define TX_FIFO_SIZE                    (1024)
 
 struct sound_device
 {
     struct rt_audio_device audio;
     struct rt_audio_configure replay_config;
+    rt_sem_t    semaphore;
+    rt_thread_t thread;
     rt_uint8_t *tx_fifo;
     rt_uint8_t *rx_fifo;
-    rt_uint8_t volume;
+    rt_uint8_t  volume;
+    rt_uint8_t  dma_to_aubuf;
 };
 
 static struct sound_device snd_dev = {0};
@@ -105,18 +109,28 @@ void dac_start(void)
     //AUANGCON1 |= BIT(3);  // pa mute
 }
 
+rt_section(".irq.audio")
+void audio_sem_post(void)
+{
+    rt_sem_release(snd_dev.semaphore);
+}
+
+void audio_sem_pend(void)
+{
+    rt_sem_take(snd_dev.semaphore, RT_WAITING_FOREVER);
+}
+
 void saia_frequency_set(uint32_t frequency)
 {
+    DACDIGCON0 &= ~(0xf << 2);
     if (frequency == SAI_AUDIO_FREQUENCY_48K) {
-        DACDIGCON0 |= BIT(1);
-        DACDIGCON0 &= ~(0xf << 2);
-        DACDIGCON0 |= BIT(6);
+        DACDIGCON0 |= (0 << 2);
     } else if (frequency == SAI_AUDIO_FREQUENCY_44K) {
-        DACDIGCON0 &= ~BIT(1);
-        DACDIGCON0 &= ~(0xf << 2);
-        DACDIGCON0 |= BIT(1);
-        DACDIGCON0 |= BIT(6);
+        DACDIGCON0 |= (1 << 2);
+    } else if (frequency == SAI_AUDIO_FREQUENCY_38K) {
+        DACDIGCON0 |= (2 << 2);
     }
+    DACDIGCON0 |= BIT(6);
 }
 
 void saia_channels_set(uint8_t channels)
@@ -258,6 +272,10 @@ static rt_err_t sound_configure(struct rt_audio_device *audio, struct rt_audio_c
             break;
         }
 
+        case AUDIO_MIXER_EXTEND:
+            snd_dev->dma_to_aubuf = caps->udata.value;
+        break;
+
         default:
             result = -RT_ERROR;
             break;
@@ -336,6 +354,7 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     /* set default params */
     saia_frequency_set(snd_dev->replay_config.samplerate);
     saia_channels_set(snd_dev->replay_config.channels);
+    saia_volume_set(snd_dev->volume);
 
     return RT_EOK;
 }
@@ -355,11 +374,9 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
         AUBUFSIZE       |= (TX_FIFO_SIZE / 8) << 16;
         AUBUFSTARTADDR  = DMA_ADR(snd_dev->rx_fifo);
 
-        DACDIGCON0  = BIT(0) | BIT(10); // (0x01<<2)
-        DACVOLCON   = 0x7fff; // -60DB
-        DACVOLCON  |= BIT(20);
+        DACDIGCON0  |= BIT(0) | BIT(10); // (0x01<<2)
 
-        AUBUFCON |= BIT(1) | BIT(4);
+        AUBUFCON |= BIT(1);
     }
 
     return RT_EOK;
@@ -367,14 +384,10 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
 
 static rt_err_t sound_stop(struct rt_audio_device *audio, int stream)
 {
-    struct sound_device *snd_dev = RT_NULL;
-
     RT_ASSERT(audio != RT_NULL);
-    snd_dev = (struct sound_device *)audio->parent.user_data;
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
-        AUBUFCON &= ~BIT(4);
         LOG_D("close sound device");
     }
 
@@ -391,7 +404,10 @@ rt_size_t sound_transmit(struct rt_audio_device *audio, const void *writeBuf, vo
     snd_dev = (struct sound_device *)audio->parent.user_data;
 
     while (tmp_size-- > 0) {
-        while(AUBUFCON & BIT(8)); // aubuf full
+        if (AUBUFCON & BIT(8)) { // aubuf full
+            AUBUFCON |= BIT(1) | BIT(4);
+            audio_sem_pend();
+        }
         AUBUFDATA = ((const uint32_t *)writeBuf)[count++];
     }
 
@@ -429,16 +445,30 @@ static struct rt_audio_ops ops =
     .buffer_info = sound_buffer_info,
 };
 
-void audio_isr(int vector, void *param)
+rt_section(".irq.audio")
+static void audio_isr(int vector, void *param)
 {
     rt_interrupt_enter();
 
     //Audio buffer pend
     if (AUBUFCON & BIT(5)) {
         AUBUFCON |= BIT(1);         //Audio Buffer Pend Clear
-        rt_audio_tx_complete(&snd_dev.audio);
+        AUBUFCON &= ~BIT(4);
+        audio_sem_post();
     }
     rt_interrupt_leave();
+}
+
+static void audio_thread_entry(void *parameter)
+{
+    while (1)
+    {
+        if ((snd_dev.dma_to_aubuf == RT_FALSE) && (snd_dev.audio.replay->activated == RT_TRUE)) {
+            rt_audio_tx_complete(&snd_dev.audio);
+        } else {
+            rt_thread_mdelay(50);
+        }
+    }
 }
 
 static int rt_hw_sound_init(void)
@@ -464,9 +494,29 @@ static int rt_hw_sound_init(void)
 
     snd_dev.rx_fifo = rx_fifo;
 
+    snd_dev.semaphore = rt_sem_create("snd", 0, RT_IPC_FLAG_FIFO);
+    if (snd_dev.semaphore == RT_NULL)
+    {
+        return -RT_ENOMEM;
+    }
+
+    snd_dev.thread = rt_thread_create(
+        "audio",
+        audio_thread_entry,
+        RT_NULL,
+        1024,
+        20, // must equal or lower than tshell priority
+        1
+    );
+
+    if (snd_dev.thread != RT_NULL)
+    {
+        rt_thread_startup(snd_dev.thread);
+    }
+
     /* init default configuration */
     {
-        snd_dev.replay_config.samplerate = 48000;
+        snd_dev.replay_config.samplerate = SAI_AUDIO_FREQUENCY_48K;
         snd_dev.replay_config.channels   = 2;
         snd_dev.replay_config.samplebits = 16;
         snd_dev.volume                   = 55;

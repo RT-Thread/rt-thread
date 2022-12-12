@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2018, RT-Thread Development Team
+* Copyright (c) 2006-2021, RT-Thread Development Team
 *
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -20,13 +20,13 @@ void SystemClock_Config(void)
 {
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-    
+
     /**Configure LSE Drive Capability
     */
     HAL_PWR_EnableBkUpAccess();
     __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_MEDIUMHIGH);
-    
-    /**Initializes the CPU, AHB and APB busses clocks 
+
+    /**Initializes the CPU, AHB and APB busses clocks
     */
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE
         |RCC_OSCILLATORTYPE_LSE;
@@ -35,7 +35,7 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.HSIState = RCC_HSI_ON;
     RCC_OscInitStruct.HSICalibrationValue = 16;
     RCC_OscInitStruct.HSIDivValue = RCC_HSI_DIV1;
-    
+
     /**PLL1 Config
     */
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -49,7 +49,7 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL.PLLMODE = RCC_PLL_FRACTIONAL;
     RCC_OscInitStruct.PLL.RPDFN_DIS = RCC_RPDFN_DIS_DISABLED;
     RCC_OscInitStruct.PLL.TPDFN_DIS = RCC_TPDFN_DIS_DISABLED;
-    
+
     /**PLL2 Config
     */
     RCC_OscInitStruct.PLL2.PLLState = RCC_PLL_ON;
@@ -63,7 +63,7 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL2.PLLMODE = RCC_PLL_FRACTIONAL;
     RCC_OscInitStruct.PLL2.RPDFN_DIS = RCC_RPDFN_DIS_DISABLED;
     RCC_OscInitStruct.PLL2.TPDFN_DIS = RCC_TPDFN_DIS_DISABLED;
-    
+
     /**PLL3 Config
     */
     RCC_OscInitStruct.PLL3.PLLState = RCC_PLL_ON;
@@ -78,7 +78,7 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL3.PLLMODE = RCC_PLL_FRACTIONAL;
     RCC_OscInitStruct.PLL3.RPDFN_DIS = RCC_RPDFN_DIS_DISABLED;
     RCC_OscInitStruct.PLL3.TPDFN_DIS = RCC_TPDFN_DIS_DISABLED;
-    
+
     /**PLL4 Config
     */
     RCC_OscInitStruct.PLL4.PLLState = RCC_PLL_ON;
@@ -93,7 +93,7 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL4.PLLMODE = RCC_PLL_INTEGER;
     RCC_OscInitStruct.PLL4.RPDFN_DIS = RCC_RPDFN_DIS_DISABLED;
     RCC_OscInitStruct.PLL4.TPDFN_DIS = RCC_TPDFN_DIS_DISABLED;
-    
+
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
         Error_Handler();
@@ -115,12 +115,12 @@ void SystemClock_Config(void)
     RCC_ClkInitStruct.APB1_Div = RCC_APB1_DIV2;
     RCC_ClkInitStruct.APB2_Div = RCC_APB2_DIV2;
     RCC_ClkInitStruct.APB3_Div = RCC_APB3_DIV2;
-    
+
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct) != HAL_OK)
     {
         Error_Handler();
     }
-    
+
     /**Set the HSE division factor for RTC clock
     */
     __HAL_RCC_RTC_HSEDIV(24);
@@ -133,7 +133,7 @@ void SystemClock_Config(void)
 */
 void PeriphCommonClock_Config(void) {
     RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-    
+
     /** Initializes the common periph clock
     */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_CKPER;
@@ -145,11 +145,11 @@ void PeriphCommonClock_Config(void) {
 
 extern void rt_hw_systick_init(void);
 extern int rt_hw_usart_init(void);
-void rt_hw_board_init() 
+void rt_hw_board_init()
 {
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
-    
+
     /* enable interrupt */
     __set_PRIMASK(0);
     /* Configure the system clock */
@@ -159,29 +159,29 @@ void rt_hw_board_init()
     }
     /* disable interrupt */
     __set_PRIMASK(1);
-    
+
     rt_hw_systick_init();
-    
+
     /* Heap initialization */
 #if defined(RT_USING_HEAP)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
-    
+
     /* Pin driver initialization is open by default */
 #ifdef RT_USING_PIN
     rt_hw_pin_init();
 #endif
-    
+
     /* USART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
     rt_hw_usart_init();
 #endif
-    
+
     /* Set the shell console output device */
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    
+
     /* Board underlying hardware initialization */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

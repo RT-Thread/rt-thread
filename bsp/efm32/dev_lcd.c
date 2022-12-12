@@ -1,20 +1,14 @@
-/***************************************************************************//**
- * @file 	dev_lcd.c
- * @brief 	LCD driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
- * Date			Author		Notes
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date         Author      Notes
  * 2011-12-16   onelife     Initial creation of address mapped method (pixel
- *  drive) for EFM32GG_DK3750 board
+ *                            drive) for EFM32GG_DK3750 board
  * 2011-12-29   onelife     Add direct drive method (frame buffer) support
- ******************************************************************************/
+ */
 
 /***************************************************************************//**
  * @addtogroup EFM32GG_DK3750
@@ -451,48 +445,48 @@ rt_err_t efm32_spiLcd_writeRegister(rt_uint8_t reg, rt_uint16_t data)
 
 /***************************************************************************//**
  * @brief
- *	Register LCD device
+ *  Register LCD device
  *
  * @details
  *
  * @note
  *
  * @param[in] device
- *	Pointer to device descriptor
+ *  Pointer to device descriptor
  *
  * @param[in] name
- *	Device name
+ *  Device name
  *
  * @param[in] flag
- *	Configuration flags
+ *  Configuration flags
  *
  * @param[in] iic
- *	Pointer to IIC device descriptor
+ *  Pointer to IIC device descriptor
  *
  * @return
- *	Error code
+ *  Error code
  ******************************************************************************/
 rt_err_t efm32_spiLcd_register(
-	rt_device_t		                device,
-	const char		                *name,
-	rt_uint32_t		                flag,
-	void                            *data)
+    rt_device_t                     device,
+    const char                      *name,
+    rt_uint32_t                     flag,
+    void                            *data)
 {
-	RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device != RT_NULL);
 
-	device->type 		= RT_Device_Class_Graphic;
-	device->rx_indicate = RT_NULL;
-	device->tx_complete = RT_NULL;
-	device->init 		= RT_NULL;
-	device->open		= RT_NULL;
-	device->close		= RT_NULL;
-	device->read 		= RT_NULL;
-	device->write 		= RT_NULL;
-	device->control 	= efm32_spiLcd_control;
-	device->user_data	= data;
+    device->type        = RT_Device_Class_Graphic;
+    device->rx_indicate = RT_NULL;
+    device->tx_complete = RT_NULL;
+    device->init        = RT_NULL;
+    device->open        = RT_NULL;
+    device->close       = RT_NULL;
+    device->read        = RT_NULL;
+    device->write       = RT_NULL;
+    device->control     = efm32_spiLcd_control;
+    device->user_data   = data;
 
-	/* register a character device */
-	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
+    /* register a character device */
+    return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
 }
 
 /***************************************************************************//**
@@ -511,18 +505,18 @@ void efm32_spiLcd_init(void)
     DMD_DisplayGeometry         *geometry;
     rt_uint32_t                 ret;
 
-	do
-	{
+    do
+    {
         USART_InitSync_TypeDef init = USART_INITSYNC_DEFAULT;
 
-		/* Find SPI device */
-		lcd = rt_device_find(LCD_USING_DEVICE_NAME);
-		if (lcd == RT_NULL)
-		{
-			lcd_debug("LCD err: Can't find %s!\n", LCD_USING_DEVICE_NAME);
-			break;
-		}
-		lcd_debug("LCD: Find device %s\n", LCD_USING_DEVICE_NAME);
+        /* Find SPI device */
+        lcd = rt_device_find(LCD_USING_DEVICE_NAME);
+        if (lcd == RT_NULL)
+        {
+            lcd_debug("LCD err: Can't find %s!\n", LCD_USING_DEVICE_NAME);
+            break;
+        }
+        lcd_debug("LCD: Find device %s\n", LCD_USING_DEVICE_NAME);
 
         /* Config CS pin */
         usart = (struct efm32_usart_device_t *)(lcd->user_data);
@@ -647,7 +641,7 @@ void efm32_spiLcd_init(void)
         }
 
         /* Init LCD info */
-		flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_TX;
+        flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_TX;
         lcd_info.pixel_format       = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
         lcd_info.bits_per_pixel     = 16;
         lcd_info.width              = geometry->xSize;

@@ -13,7 +13,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <time.h>
+#include <sys/time.h>
 #include "bcm283x.h"
 
 struct rt_rtc_device

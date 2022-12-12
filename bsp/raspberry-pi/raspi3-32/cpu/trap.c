@@ -18,7 +18,7 @@
 #include "armv7.h"
 
 extern struct rt_thread *rt_current_thread;
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
 extern long list_thread(void);
 #endif
 
@@ -52,7 +52,7 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("undefined instruction:\n");
     rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -71,7 +71,7 @@ void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("software interrupt:\n");
     rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -89,7 +89,7 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("prefetch abort:\n");
     rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -107,7 +107,7 @@ void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("data abort:");
     rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -124,11 +124,50 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("reserved trap:\n");
     rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
 }
+
+#ifdef RT_USING_CPU_FFS
+int __rt_ffs(int value)
+{
+    if (!value)
+    {
+        return 0;
+    }
+
+    int num = 1;
+
+    if ((value & 0xffff) == 0)
+    {
+        num += 16;
+        value >>= 16;
+    }
+    if ((value & 0xff) == 0)
+    {
+        num += 8;
+        value >>= 8;
+    }
+    if ((value & 0xf) == 0)
+    {
+        num += 4;
+        value >>= 4;
+    }
+    if ((value & 0x3) == 0)
+    {
+        num += 2;
+        value >>= 2;
+    }
+    if ((value & 0x1) == 0)
+    {
+        num += 1;
+    }
+
+    return num;
+}
+#endif
 
 void rt_hw_trap_irq(void)
 {

@@ -1002,7 +1002,7 @@ uint32_t HAL_DMA_GetError(DMA_HandleTypeDef *hdma)
     This subsection provides functions allowing to
       (+) Configure the DMA channel(s) privilege and non-privilege attributes
       (+) Configure the DMA channel(s) secure and non-secure attributes from
-          secure world when the system implements the security (TZEN=1)
+          secure world when the system implements the security (ESE=1)
       (+) Get the DMA channel(s) attributes
 
 @endverbatim
@@ -1142,7 +1142,7 @@ HAL_StatusTypeDef HAL_DMA_ConfigChannelAttributes(DMA_HandleTypeDef *hdma, uint3
 /**
   * @brief Get the attribute of a DMA channel.
   * @note  Secure and non-secure attributes are only available from secure state
-  *        when the system implements the security (TZEN=1)
+  *        when the system implements the security (ESE=1)
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
   *             the configuration information for the specified DMA Channel.
   * @param ChannelAttributes pointer to return the attributes.

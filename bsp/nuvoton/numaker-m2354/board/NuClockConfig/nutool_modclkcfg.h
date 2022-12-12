@@ -1,7 +1,7 @@
 /****************************************************************************
  * @file     nutool_modclkcfg.h
  * @version  V1.05
- * @Date     2020/11/11-11:43:32 
+ * @Date     2020/11/11-11:43:32
  * @brief    NuMicro generated code file
  *
  * SPDX-License-Identifier: Apache-2.0

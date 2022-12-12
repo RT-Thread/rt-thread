@@ -14,7 +14,7 @@ By reading the ***Quickly Get Started*** section developers can quickly get thei
 
 ## Resources Introduction
 
-[![board](figures/stm32-nucleo-64.jpg)](figures/stm32-nucleo-64.jpg) 
+[![board](figures_en/stm32-nucleo-64.jpg)](figures/stm32-nucleo-64.jpg) 
 
 ### Description 
 
@@ -50,7 +50,7 @@ The STM32 Nucleo-64 board provides an affordable and flexible way for users to t
 
 This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-![nucleo64_layout](figures/nucleo64_layout.jpg)
+![nucleo64_layout](figures_en/nucleo64_layout.jpg)
 
 ### Hardware connection
 
@@ -107,7 +107,7 @@ This BSP only enables GPIO and USART2 by default. If you need more advanced feat
 3. Enter `pkgs --update` command to update the package;
 4. Enter `scons --target=mdk4/mdk5/iar` command to regenerate the project.
 
-Learn how to use RT-Thread Env, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
+Learn how to use RT-Thread Env, click [Here](https://github.com/RT-Thread/rt-thread/blob/master/documentation/env/env.md).
 
 
 

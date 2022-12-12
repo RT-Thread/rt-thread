@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-03-19 	  WangHuachen  first version
+ * 2020-03-19     WangHuachen  first version
  */
 
 #include <rtthread.h>
 #include "board.h"
 #include "gic.h"
 
-/* ZynqMP-RPU uses the Arm PL-390 generic interrupt controller that is 
+/* ZynqMP-RPU uses the Arm PL-390 generic interrupt controller that is
  * compliant to the GICv1 architecture specification. */
 
 struct arm_gic
@@ -39,12 +39,12 @@ static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 #define GIC_DIST_ENABLE_SET(hw_base, n)     __REG32((hw_base) + 0x100 + ((n)/32) * 4)
 #define GIC_DIST_ENABLE_CLEAR(hw_base, n)   __REG32((hw_base) + 0x180 + ((n)/32) * 4)
 #define GIC_DIST_PENDING_SET(hw_base, n)    __REG32((hw_base) + 0x200 + ((n)/32) * 4)
-#define GIC_DIST_PENDING_CLEAR(hw_base, n)  __REG32((hw_base) + 0x280 + ((n)/32) * 4)              
+#define GIC_DIST_PENDING_CLEAR(hw_base, n)  __REG32((hw_base) + 0x280 + ((n)/32) * 4)
 #define GIC_DIST_ACTIVE_SET(hw_base, n)     __REG32((hw_base) + 0x300 + ((n)/32) * 4)
 #define GIC_DIST_PRI(hw_base, n)            __REG32((hw_base) + 0x400 +  ((n)/4) * 4)
 #define GIC_DIST_TARGET(hw_base, n)         __REG32((hw_base) + 0x800 +  ((n)/4) * 4)
 #define GIC_DIST_CONFIG(hw_base, n)         __REG32((hw_base) + 0xc00 + ((n)/16) * 4)
-#define GIC_DIST_SOFTINT(hw_base)           __REG32((hw_base) + 0xf00)  
+#define GIC_DIST_SOFTINT(hw_base)           __REG32((hw_base) + 0xf00)
 #define GIC_DIST_ICPIDR2(hw_base)           __REG32((hw_base) + 0xfe8)
 
 static unsigned int _gic_max_irq;

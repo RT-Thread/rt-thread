@@ -109,10 +109,12 @@ ErrorStatus LL_PWR_DeInit(void)
   /* Clear all flags */
   LL_PWR_WriteReg(SCR,
                     LL_PWR_SCR_CC2HF
-                  | LL_PWR_SCR_C802AF
                   | LL_PWR_SCR_CBLEAF
                   | LL_PWR_SCR_CCRPEF
+#if defined(PWR_CR3_E802A)
+                  | LL_PWR_SCR_C802AF
                   | LL_PWR_SCR_C802WUF
+#endif
                   | LL_PWR_SCR_CBLEWUF
 #if defined(PWR_CR5_SMPSEN)
                   | LL_PWR_SCR_CBORHF

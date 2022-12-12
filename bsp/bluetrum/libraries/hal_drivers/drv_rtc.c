@@ -7,13 +7,17 @@
  * Date           Author            Notes
  * 2021-01-28     greedyhao         first version
  * 2021-03-19     iysheng           modify just set time first power up
+ * 2021-03-26     iysheng           add alarm and 1s interrupt support
  */
 
 #include "board.h"
-#include <time.h>
 #include <sys/time.h>
 
 #ifdef BSP_USING_ONCHIP_RTC
+
+#if RTTHREAD_VERSION < 40004
+#error "RTTHREAD_VERSION is less than 4.0.4"
+#endif
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.rtc"
@@ -23,59 +27,59 @@ static struct rt_device rtc;
 
 /************** HAL Start *******************/
 #define IRTC_ENTER_CRITICAL()       uint32_t cpu_ie = PICCON & BIT(0); PICCONCLR = BIT(0);
-#define IRTC_EXIT_CRITICAL()       PICCON |= cpu_ie
+#define IRTC_EXIT_CRITICAL()        PICCON |= cpu_ie
 
-uint8_t get_weekday(struct tm *const _tm)
+rt_uint8_t get_weekday(struct tm *const _tm)
 {
-    uint8_t weekday;
+    rt_uint8_t weekday;
     time_t secs = timegm(_tm);
 
     weekday = (secs / 86400 + 4) % 7;
     return weekday;
 }
 
-void irtc_write(uint32_t cmd)
+void irtc_write(rt_uint32_t cmd)
 {
     RTCDAT = cmd;
     while (RTCCON & RTC_CON_TRANS_DONE);
 }
 
-uint8_t irtc_read(void)
+rt_uint8_t irtc_read(void)
 {
     RTCDAT = 0x00;
     while (RTCCON & RTC_CON_TRANS_DONE);
-    return (uint8_t)RTCDAT;
+    return (rt_uint8_t)RTCDAT;
 }
 
-void irtc_time_write(uint32_t cmd, uint32_t dat)
+void irtc_time_write(rt_uint32_t cmd, rt_uint32_t dat)
 {
     IRTC_ENTER_CRITICAL();
     RTCCON |= RTC_CON_CHIP_SELECT;
     irtc_write(cmd | RTC_WR);
-    irtc_write((uint8_t)(dat >> 24));
-    irtc_write((uint8_t)(dat >> 16));
-    irtc_write((uint8_t)(dat >>  8));
-    irtc_write((uint8_t)(dat >>  0));
+    irtc_write((rt_uint8_t)(dat >> 24));
+    irtc_write((rt_uint8_t)(dat >> 16));
+    irtc_write((rt_uint8_t)(dat >>  8));
+    irtc_write((rt_uint8_t)(dat >>  0));
     RTCCON &= ~RTC_CON_CHIP_SELECT;
     IRTC_EXIT_CRITICAL();
 }
 
-uint32_t irtc_time_read(uint32_t cmd)
+rt_uint32_t irtc_time_read(rt_uint32_t cmd)
 {
-    uint32_t rd_val;
+    rt_uint32_t rd_val;
     IRTC_ENTER_CRITICAL();
     RTCCON |= RTC_CON_CHIP_SELECT;
     irtc_write(cmd | RTC_RD);
-    *((uint8_t *)&rd_val + 3) = irtc_read();
-    *((uint8_t *)&rd_val + 2) = irtc_read();
-    *((uint8_t *)&rd_val + 1) = irtc_read();
-    *((uint8_t *)&rd_val + 0) = irtc_read();
+    *((rt_uint8_t *)&rd_val + 3) = irtc_read();
+    *((rt_uint8_t *)&rd_val + 2) = irtc_read();
+    *((rt_uint8_t *)&rd_val + 1) = irtc_read();
+    *((rt_uint8_t *)&rd_val + 0) = irtc_read();
     RTCCON &= ~RTC_CON_CHIP_SELECT;
     IRTC_EXIT_CRITICAL();
     return rd_val;
 }
 
-void irtc_sfr_write(uint32_t cmd, uint8_t dat)
+void irtc_sfr_write(rt_uint32_t cmd, rt_uint8_t dat)
 {
     IRTC_ENTER_CRITICAL();
     RTCCON |= RTC_CON_CHIP_SELECT;
@@ -85,9 +89,9 @@ void irtc_sfr_write(uint32_t cmd, uint8_t dat)
     IRTC_EXIT_CRITICAL();
 }
 
-uint8_t irtc_sfr_read(uint32_t cmd)
+rt_uint8_t irtc_sfr_read(rt_uint32_t cmd)
 {
-    uint8_t rd_val;
+    rt_uint8_t rd_val;
     IRTC_ENTER_CRITICAL();
     RTCCON |= RTC_CON_CHIP_SELECT;
     irtc_write(cmd | RTC_RD);
@@ -98,8 +102,8 @@ uint8_t irtc_sfr_read(uint32_t cmd)
 
 static void _init_rtc_clock(void)
 {
-    uint8_t rtccon0;
-    uint8_t rtccon2;
+    rt_uint8_t rtccon0;
+    rt_uint8_t rtccon2;
 
     rtccon0 = irtc_sfr_read(RTCCON0_CMD);
     rtccon2 = irtc_sfr_read(RTCCON2_CMD);
@@ -120,7 +124,7 @@ void hal_rtc_init(void)
 {
     time_t sec = 0;
     struct tm tm_new = {0};
-    uint8_t temp;
+    rt_uint8_t temp;
 
     _init_rtc_clock();
     temp = irtc_sfr_read(RTCCON0_CMD);
@@ -134,99 +138,77 @@ void hal_rtc_init(void)
 
         irtc_time_write(RTCCNT_CMD, sec);
     }
+#ifdef RT_USING_ALARM
+    RTCCON |= RTC_CON_ALM_INTERRUPT;
+#ifdef RTC_USING_1S_INT
+    RTCCON |= RTC_CON_1S_INTERRUPT;
+#endif
+#endif
 }
 /************** HAL End *******************/
 
-static time_t get_rtc_timestamp(void)
+static rt_err_t ab32_rtc_get_secs(void *args)
 {
-    time_t sec = 0;
-
-    sec = irtc_time_read(RTCCNT_CMD);
-    LOG_D("get rtc time.");
-    return sec;
-}
-
-static rt_err_t set_rtc_time_stamp(time_t time_stamp)
-{
-    irtc_time_write(RTCCNT_CMD, time_stamp);
+    *(rt_uint32_t *)args = irtc_time_read(RTCCNT_CMD);
+    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
 
     return RT_EOK;
 }
 
-static void rt_rtc_init(void)
+static rt_err_t ab32_rtc_set_secs(void *args)
+{
+    irtc_time_write(RTCCNT_CMD, *(rt_uint32_t *)args);
+
+    return RT_EOK;
+}
+
+static rt_err_t ab32_rtc_get_alarm(void *args)
+{
+    *(rt_uint32_t *)args = irtc_time_read(RTCALM_CMD);
+
+    return RT_EOK;
+}
+
+static rt_err_t ab32_rtc_set_alarm(void *args)
+{
+    irtc_time_write(RTCALM_CMD, *(rt_uint32_t *)args);
+
+    return RT_EOK;
+}
+
+static rt_err_t ab32_rtc_init(void)
 {
     hal_rtc_init();
+
+    return RT_EOK;
 }
 
-static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
+static const struct rt_rtc_ops ab32_rtc_ops =
 {
-    rt_err_t result = RT_EOK;
-    RT_ASSERT(dev != RT_NULL);
-    switch (cmd)
-    {
-    case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = get_rtc_timestamp();
-        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
-
-    case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (set_rtc_time_stamp(*(rt_uint32_t *)args))
-        {
-            result = -RT_ERROR;
-        }
-        LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
-    }
-
-    return result;
-}
-
-#ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rtc_ops =
-{
+    ab32_rtc_init,
+    ab32_rtc_get_secs,
+    ab32_rtc_set_secs,
+    ab32_rtc_get_alarm,
+    ab32_rtc_set_alarm,
     RT_NULL,
     RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    rt_rtc_control
 };
-#endif
 
-static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint32_t flag)
-{
-    RT_ASSERT(device != RT_NULL);
+static rt_rtc_dev_t ab32_rtc_dev;
 
-    rt_rtc_init();
-#ifdef RT_USING_DEVICE_OPS
-    device->ops         = &rtc_ops;
-#else
-    device->init        = RT_NULL;
-    device->open        = RT_NULL;
-    device->close       = RT_NULL;
-    device->read        = RT_NULL;
-    device->write       = RT_NULL;
-    device->control     = rt_rtc_control;
-#endif
-    device->type        = RT_Device_Class_RTC;
-    device->rx_indicate = RT_NULL;
-    device->tx_complete = RT_NULL;
-    device->user_data   = RT_NULL;
-
-    /* register a character device */
-    return rt_device_register(device, name, flag);
-}
-
-int rt_hw_rtc_init(void)
+static int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-    result = rt_hw_rtc_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+
+    ab32_rtc_dev.ops = &ab32_rtc_ops;
+    result = rt_hw_rtc_register(&ab32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
         return result;
     }
     LOG_D("rtc init success");
+
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);

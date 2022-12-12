@@ -92,7 +92,7 @@ __vector_table
         DCD     DMA1_Channel5_IRQHandler      ; DMA1 Channel 5
         DCD     DMA1_Channel6_IRQHandler      ; DMA1 Channel 6
         DCD     DMA1_Channel7_IRQHandler      ; DMA1 Channel 7
-        DCD     ADC1_2_IRQHandler             ; ADC1 & ADC2
+        DCD     ADC1_IRQHandler               ; ADC1
         DCD     0                         ; Reserved
         DCD     0                         ; Reserved
         DCD     0                         ; Reserved
@@ -283,10 +283,10 @@ DMA1_Channel6_IRQHandler
 DMA1_Channel7_IRQHandler
         B DMA1_Channel7_IRQHandler
 
-        PUBWEAK ADC1_2_IRQHandler
+        PUBWEAK ADC1_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
-ADC1_2_IRQHandler
-        B ADC1_2_IRQHandler
+ADC1_IRQHandler
+        B ADC1_IRQHandler
 
          PUBWEAK EXTI9_5_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)

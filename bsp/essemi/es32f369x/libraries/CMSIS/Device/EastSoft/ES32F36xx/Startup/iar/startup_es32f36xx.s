@@ -3,15 +3,34 @@
 ; description: es32f36xx Device Startup File
 ; author     : AE Team
 ; data       : 04 Jul 2019
+; note
+;          Change Logs:
+;          Date            Author          Notes
+;          04 Jul 2019     AE Team         The first version
+;
 ; Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
-;*******************************************************************************
+;
+; SPDX-License-Identifier: Apache-2.0
+;
+; Licensed under the Apache License, Version 2.0 (the License); you may
+; not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+;
+; www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an AS IS BASIS, WITHOUT
+; WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+;*********************************************************************************
 
         MODULE  ?cstartup
 
         ;; Forward declaration of sections.
         SECTION CSTACK:DATA:NOROOT(3)
         SECTION .intvec:CODE:NOROOT(2)
-
+		
         EXTERN  __iar_program_start
         PUBLIC  __vector_table
 
@@ -116,8 +135,50 @@ __vector_table
         PUBWEAK RESET_Handler
         SECTION .text:CODE:NOROOT:REORDER(2)
 RESET_Handler
-        LDR     R0, =__iar_program_start
-        BX      R0
+	ldr r0, =0x55AA6996
+	ldr r1, =0x40080000
+	str r0, [r1]
+
+	ldr r0, =0x5A962814
+	ldr r1, =0x40080100
+	str r0, [r1]
+	ldr r0, =0xE7CB69A5
+	str r0, [r1]
+
+	ldr r0, =0x40083C00
+	ldr r1, [r0]
+	ldr r2, =0xffff
+	and r1, r2, r1
+	ldr r2, =0x55AA0000
+	orr r1, r2, r1
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+
+	mov r0, r0
+	mov r0, r0
+
+	ldr r0, =0x123456
+	ldr r1, =0x40080100
+	str r0, [r1]
+
+	ldr r0, =0x40080404
+	ldr r1, =0x4000000
+	str r1, [r0]
+	
+	ldr r0, =0x123456
+	ldr r1, =0x40080000
+	str r0, [r1]
+	
+    LDR     R0, =__iar_program_start
+    BX      R0
         
         PUBWEAK NMI_Handler
         SECTION .text:CODE:NOROOT:REORDER(1)

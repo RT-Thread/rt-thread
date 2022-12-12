@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<v1:pinSettings xmlns:v1="http://www.tasking.com/schema/pinsettings/v1.1">
+  <v1:pinMappingsRef version="2.05" file="" />
+  <v1:deviceSetting id="renesas.ra6m4_fp" pattern="R7FA6M4****FP">
+    <v1:packageSetting id="renesas.100lqfp" />
+  </v1:deviceSetting>
+  <v1:configSetting configurationId="debug0.mode" altId="debug0.mode.jtag" />
+  <v1:configSetting configurationId="p108.gpio_mode" altId="p108.gpio_mode.gpio_mode_peripheral" />
+  <v1:configSetting configurationId="p108" altId="p108.debug0.tms">
+    <v1:connectionSetting altId="debug0.tms.p108" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="debug0.tms" altId="debug0.tms.p108">
+    <v1:connectionSetting altId="p108.debug0.tms" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="p109.gpio_mode" altId="p109.gpio_mode.gpio_mode_peripheral" />
+  <v1:configSetting configurationId="p109" altId="p109.debug0.tdo">
+    <v1:connectionSetting altId="debug0.tdo.p109" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="debug0.tdo" altId="debug0.tdo.p109">
+    <v1:connectionSetting altId="p109.debug0.tdo" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="p110.gpio_mode" altId="p110.gpio_mode.gpio_mode_peripheral" />
+  <v1:configSetting configurationId="p110" altId="p110.debug0.tdi">
+    <v1:connectionSetting altId="debug0.tdi.p110" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="debug0.tdi" altId="debug0.tdi.p110">
+    <v1:connectionSetting altId="p110.debug0.tdi" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="p300.gpio_mode" altId="p300.gpio_mode.gpio_mode_peripheral" />
+  <v1:configSetting configurationId="p300" altId="p300.debug0.tck">
+    <v1:connectionSetting altId="debug0.tck.p300" />
+  </v1:configSetting>
+  <v1:configSetting configurationId="debug0.tck" altId="debug0.tck.p300">
+    <v1:connectionSetting altId="p300.debug0.tck" />
+  </v1:configSetting>
+</v1:pinSettings>

@@ -1,0 +1,35 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('src/*.c')
+src += ['socket/net_netdb.c']
+
+CPPPATH = [cwd + '/include']
+CPPPATH += [cwd + '/include/socket']
+
+if GetDepend('SAL_USING_LWIP') or GetDepend('SAL_USING_AT'):
+    CPPPATH += [cwd + '/impl']
+
+if GetDepend('SAL_USING_LWIP'):
+    src += ['impl/af_inet_lwip.c']
+
+if GetDepend('SAL_USING_AT'):
+    src += ['impl/af_inet_at.c']
+
+if GetDepend('SAL_USING_TLS'):
+    src += ['impl/proto_mbedtls.c']
+
+if GetDepend('SAL_USING_POSIX'):
+    CPPPATH += [cwd + '/include/dfs_net']
+    src += ['socket/net_sockets.c']
+    src += Glob('dfs_net/*.c')
+
+if not GetDepend('HAVE_SYS_SOCKET_H'):
+    CPPPATH += [cwd + '/include/socket/sys_socket']
+
+group = DefineGroup('SAL', src, depend = ['RT_USING_SAL'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <rtthread.h>
 
 #include "led.h"
@@ -13,7 +10,7 @@ int main(void)
 {
     rt_device_t device;
 
-    printf("hello rt-thread\n");
+    rt_kprintf("hello rt-thread\n");
 
 #ifdef PKG_USING_GUIENGINE
     device = rt_device_find("lcd");

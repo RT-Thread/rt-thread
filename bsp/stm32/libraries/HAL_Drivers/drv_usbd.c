@@ -22,13 +22,28 @@ static struct udcd _stm_udc;
 static struct ep_id _ep_pool[] =
 {
     {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
+#ifdef BSP_USBD_EP_ISOC
+    {0x1,  USB_EP_ATTR_ISOC,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x1,  USB_EP_ATTR_ISOC,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+#else
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x3,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
-#if !defined(SOC_SERIES_STM32F1)
     {0x3,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+#endif
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x8,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x9,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+#if !defined(SOC_SERIES_STM32F1)
+    {0x9,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
 #endif
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
@@ -195,7 +210,7 @@ static rt_err_t _init(rt_device_t device)
     memset(&pcd->Init, 0, sizeof pcd->Init);
     pcd->Init.dev_endpoints = 8;
     pcd->Init.speed = USBD_PCD_SPEED;
-    pcd->Init.ep0_mps = DEP0CTL_MPS_64;
+    pcd->Init.ep0_mps = EP_MPS_64;
 #if !defined(SOC_SERIES_STM32F1)
     pcd->Init.phy_itface = USBD_PCD_PHY_MODULE;
 #endif

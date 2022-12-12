@@ -19,7 +19,7 @@
 
 #if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
 #error "Please define at least one BSP_USING_I2Cx"
-/* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 static const struct ab32_soft_i2c_config soft_i2c_config[] =
@@ -142,41 +142,6 @@ static rt_int32_t ab32_get_scl(void *data)
     return rt_pin_read(cfg->scl);
 }
 
-/**
- * The time delay function.
- *
- * @param us microseconds.
- */
-static void ab32_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = TMR0PR;
-
-    ticks = us * reload / (1000 / RT_TICK_PER_SECOND);
-    told = TMR0CNT;
-    while (1)
-    {
-        tnow = TMR0CNT;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
-
 static const struct rt_i2c_bit_ops ab32_bit_ops_default =
 {
     .data     = RT_NULL,
@@ -184,7 +149,7 @@ static const struct rt_i2c_bit_ops ab32_bit_ops_default =
     .set_scl  = ab32_set_scl,
     .get_sda  = ab32_get_sda,
     .get_scl  = ab32_get_scl,
-    .udelay   = ab32_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };
@@ -205,9 +170,9 @@ static rt_err_t ab32_i2c_bus_unlock(const struct ab32_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl, PIN_HIGH);
-            ab32_udelay(100);
+            rt_hw_us_delay(100);
             rt_pin_write(cfg->scl, PIN_LOW);
-            ab32_udelay(100);
+            rt_hw_us_delay(100);
         }
     }
     if (PIN_LOW == rt_pin_read(cfg->sda))

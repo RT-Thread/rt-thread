@@ -169,7 +169,7 @@
 
   @endverbatim
      [..]
-       (@) Additionnal remark: If the parity is enabled, then the MSB bit of the data written
+       (@) Additional remark: If the parity is enabled, then the MSB bit of the data written
            in the data register is transmitted but is changed by the parity bit.
            Depending on the frame length defined by the M bit (8-bits or 9-bits),
            the possible IRDA frame formats are as listed in the following table:
@@ -786,7 +786,7 @@ HAL_StatusTypeDef HAL_IRDA_Transmit(IRDA_HandleTypeDef *hirda, uint8_t *pData, u
     hirda->ErrorCode = HAL_IRDA_ERROR_NONE;
     hirda->gState = HAL_IRDA_STATE_BUSY_TX;
 
-    /* Init tickstart for timeout managment*/
+    /* Init tickstart for timeout management*/
     tickstart = HAL_GetTick();
 
     hirda->TxXferSize = Size;
@@ -871,7 +871,7 @@ HAL_StatusTypeDef HAL_IRDA_Receive(IRDA_HandleTypeDef *hirda, uint8_t *pData, ui
     hirda->ErrorCode = HAL_IRDA_ERROR_NONE;
     hirda->RxState = HAL_IRDA_STATE_BUSY_RX;
 
-    /* Init tickstart for timeout managment*/
+    /* Init tickstart for timeout management*/
     tickstart = HAL_GetTick();
 
     hirda->RxXferSize = Size;
@@ -1223,7 +1223,7 @@ HAL_StatusTypeDef HAL_IRDA_DMAResume(IRDA_HandleTypeDef *hirda)
     /* Clear the Overrun flag before resuming the Rx transfer */
     __HAL_IRDA_CLEAR_OREFLAG(hirda);
 
-    /* Reenable PE and ERR (Frame error, noise error, overrun error) interrupts */
+    /* Re-enable PE and ERR (Frame error, noise error, overrun error) interrupts */
     SET_BIT(hirda->Instance->CR1, USART_CR1_PEIE);
     SET_BIT(hirda->Instance->CR3, USART_CR3_EIE);
 
@@ -1763,7 +1763,7 @@ void HAL_IRDA_IRQHandler(IRDA_HandleTypeDef *hirda)
     }
 
     /* IRDA Over-Run interrupt occurred -----------------------------------*/
-    if (((isrflags & USART_SR_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if (((isrflags & USART_SR_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       hirda->ErrorCode |= HAL_IRDA_ERROR_ORE;
     }

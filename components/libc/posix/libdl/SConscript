@@ -1,0 +1,12 @@
+from building import *
+Import('rtconfig')
+
+src = Glob('*.c') + Glob('arch/*.c')
+cwd = GetCurrentDir()
+group   = []
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM in ['gcc']:
+    group = DefineGroup('POSIX', src, depend = ['RT_USING_MODULE'], CPPPATH = CPPPATH)
+
+Return('group')

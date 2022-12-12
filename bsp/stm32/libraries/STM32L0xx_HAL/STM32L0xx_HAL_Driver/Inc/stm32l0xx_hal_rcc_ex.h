@@ -80,7 +80,7 @@
 #define IS_RCC_PERIPHCLOCK(__CLK__) ((__CLK__) <= ( RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_LPUART1 | \
                                                   RCC_PERIPHCLK_I2C1   |  RCC_PERIPHCLK_RTC    | \
                                                   RCC_PERIPHCLK_LPTIM1))
-#elif defined(STM32L051xx) || defined(STM32L061xx)
+#elif defined(STM32L051xx)
 #define IS_RCC_PERIPHCLOCK(__CLK__) ((__CLK__) <= (RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_LPUART1 | \
                                                  RCC_PERIPHCLK_I2C1   | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_RTC       |  \
                                                  RCC_PERIPHCLK_LPTIM1))
@@ -285,22 +285,22 @@ typedef struct
   * @{
   */
 #if defined(RCC_CCIPR_USART1SEL)
-#define RCC_PERIPHCLK_USART1           ((uint32_t)0x00000001)
+#define RCC_PERIPHCLK_USART1           (0x00000001U)
 #endif /* RCC_CCIPR_USART1SEL */
-#define RCC_PERIPHCLK_USART2           ((uint32_t)0x00000002)
-#define RCC_PERIPHCLK_LPUART1          ((uint32_t)0x00000004)
-#define RCC_PERIPHCLK_I2C1             ((uint32_t)0x00000008)
-#define RCC_PERIPHCLK_I2C2             ((uint32_t)0x00000010)
-#define RCC_PERIPHCLK_RTC              ((uint32_t)0x00000020)
+#define RCC_PERIPHCLK_USART2           (0x00000002U)
+#define RCC_PERIPHCLK_LPUART1          (0x00000004U)
+#define RCC_PERIPHCLK_I2C1             (0x00000008U)
+#define RCC_PERIPHCLK_I2C2             (0x00000010U)
+#define RCC_PERIPHCLK_RTC              (0x00000020U)
 #if defined(USB)
-#define RCC_PERIPHCLK_USB              ((uint32_t)0x00000040)
+#define RCC_PERIPHCLK_USB              (0x00000040U)
 #endif /* USB */
-#define RCC_PERIPHCLK_LPTIM1           ((uint32_t)0x00000080)
+#define RCC_PERIPHCLK_LPTIM1           (0x00000080U)
 #if defined(LCD)
-#define RCC_PERIPHCLK_LCD              ((uint32_t)0x00000800)
+#define RCC_PERIPHCLK_LCD              (0x00000800U)
 #endif /* LCD */
 #if defined(RCC_CCIPR_I2C3SEL)
-#define RCC_PERIPHCLK_I2C3             ((uint32_t)0x00000100)
+#define RCC_PERIPHCLK_I2C3             (0x00000100U)
 #endif /* RCC_CCIPR_I2C3SEL */
 
 /**
@@ -449,12 +449,12 @@ typedef struct
   * @{
   */
 #define RCC_CRS_NONE      (0x00000000U)
-#define RCC_CRS_TIMEOUT   ((uint32_t)0x00000001)
-#define RCC_CRS_SYNCOK    ((uint32_t)0x00000002)
-#define RCC_CRS_SYNCWARN  ((uint32_t)0x00000004)
-#define RCC_CRS_SYNCERR   ((uint32_t)0x00000008)
-#define RCC_CRS_SYNCMISS  ((uint32_t)0x00000010)
-#define RCC_CRS_TRIMOVF   ((uint32_t)0x00000020)
+#define RCC_CRS_TIMEOUT   (0x00000001U)
+#define RCC_CRS_SYNCOK    (0x00000002U)
+#define RCC_CRS_SYNCWARN  (0x00000004U)
+#define RCC_CRS_SYNCERR   (0x00000008U)
+#define RCC_CRS_SYNCMISS  (0x00000010U)
+#define RCC_CRS_TRIMOVF   (0x00000020U)
 
 /**
   * @}
@@ -463,7 +463,7 @@ typedef struct
 /** @defgroup RCCEx_CRS_SynchroSource RCCEx CRS Synchronization Source
   * @{
   */
-#define RCC_CRS_SYNC_SOURCE_GPIO       ((uint32_t)0x00000000U) /*!< Synchro Signal source GPIO */
+#define RCC_CRS_SYNC_SOURCE_GPIO       (0x00000000U) /*!< Synchro Signal source GPIO */
 #define RCC_CRS_SYNC_SOURCE_LSE        CRS_CFGR_SYNCSRC_0      /*!< Synchro Signal source LSE */
 #define RCC_CRS_SYNC_SOURCE_USB        CRS_CFGR_SYNCSRC_1      /*!< Synchro Signal source USB SOF (default)*/
 /**
@@ -473,7 +473,7 @@ typedef struct
 /** @defgroup RCCEx_CRS_SynchroDivider RCCEx CRS Synchronization Divider
   * @{
   */
-#define RCC_CRS_SYNC_DIV1        ((uint32_t)0x00000000U)                   /*!< Synchro Signal not divided (default) */
+#define RCC_CRS_SYNC_DIV1        (0x00000000U)                   /*!< Synchro Signal not divided (default) */
 #define RCC_CRS_SYNC_DIV2        CRS_CFGR_SYNCDIV_0                        /*!< Synchro Signal divided by 2 */
 #define RCC_CRS_SYNC_DIV4        CRS_CFGR_SYNCDIV_1                        /*!< Synchro Signal divided by 4 */
 #define RCC_CRS_SYNC_DIV8        (CRS_CFGR_SYNCDIV_1 | CRS_CFGR_SYNCDIV_0) /*!< Synchro Signal divided by 8 */
@@ -488,7 +488,7 @@ typedef struct
 /** @defgroup RCCEx_CRS_SynchroPolarity RCCEx CRS Synchronization Polarity
   * @{
   */
-#define RCC_CRS_SYNC_POLARITY_RISING   ((uint32_t)0x00000000U) /*!< Synchro Active on rising edge (default) */
+#define RCC_CRS_SYNC_POLARITY_RISING   (0x00000000U) /*!< Synchro Active on rising edge (default) */
 #define RCC_CRS_SYNC_POLARITY_FALLING  CRS_CFGR_SYNCPOL        /*!< Synchro Active on falling edge */
 /**
   * @}
@@ -497,7 +497,7 @@ typedef struct
 /** @defgroup RCCEx_CRS_ReloadValueDefault RCCEx CRS Default Reload Value
   * @{
   */
-#define RCC_CRS_RELOADVALUE_DEFAULT    ((uint32_t)0x0000BB7FU) /*!< The reset value of the RELOAD field corresponds
+#define RCC_CRS_RELOADVALUE_DEFAULT    (0x0000BB7FU) /*!< The reset value of the RELOAD field corresponds
                                                                     to a target frequency of 48 MHz and a synchronization signal frequency of 1 kHz (SOF signal from USB). */
 /**
   * @}
@@ -506,7 +506,7 @@ typedef struct
 /** @defgroup RCCEx_CRS_ErrorLimitDefault RCCEx CRS Default Error Limit Value
   * @{
   */
-#define RCC_CRS_ERRORLIMIT_DEFAULT     ((uint32_t)0x00000022U) /*!< Default Frequency error limit */
+#define RCC_CRS_ERRORLIMIT_DEFAULT     (0x00000022U) /*!< Default Frequency error limit */
 /**
   * @}
   */
@@ -514,7 +514,7 @@ typedef struct
 /** @defgroup RCCEx_CRS_HSI48CalibrationDefault RCCEx CRS Default HSI48 Calibration vakye
   * @{
   */
-#define RCC_CRS_HSI48CALIBRATION_DEFAULT ((uint32_t)0x00000020U) /*!< The default value is 32, which corresponds to the middle of the trimming interval.
+#define RCC_CRS_HSI48CALIBRATION_DEFAULT (0x00000020U) /*!< The default value is 32, which corresponds to the middle of the trimming interval.
                                                                       The trimming step is around 67 kHz between two consecutive TRIM steps. A higher TRIM value
                                                                       corresponds to a higher output frequency */
 /**
@@ -524,8 +524,8 @@ typedef struct
 /** @defgroup RCCEx_CRS_FreqErrorDirection RCCEx CRS Frequency Error Direction
   * @{
   */
-#define RCC_CRS_FREQERRORDIR_UP        ((uint32_t)0x00000000U)   /*!< Upcounting direction, the actual frequency is above the target */
-#define RCC_CRS_FREQERRORDIR_DOWN      ((uint32_t)CRS_ISR_FEDIR) /*!< Downcounting direction, the actual frequency is below the target */
+#define RCC_CRS_FREQERRORDIR_UP        (0x00000000U)   /*!< Upcounting direction, the actual frequency is above the target */
+#define RCC_CRS_FREQERRORDIR_DOWN      CRS_ISR_FEDIR /*!< Downcounting direction, the actual frequency is below the target */
 /**
   * @}
   */
@@ -579,7 +579,7 @@ typedef struct
   * @{
   */
 
-#if defined(STM32L062xx) || defined(STM32L063xx)|| defined(STM32L082xx) || defined(STM32L083xx) || defined(STM32L041xx) || defined(STM32L021xx)
+#if defined(STM32L062xx) || defined(STM32L063xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx) || defined(STM32L041xx) || defined(STM32L021xx)
 #define __HAL_RCC_AES_CLK_ENABLE()   do { \
                                         __IO uint32_t tmpreg; \
                                         SET_BIT(RCC->AHBENR, RCC_AHBENR_CRYPEN);\
@@ -592,9 +592,9 @@ typedef struct
 #define __HAL_RCC_AES_IS_CLK_ENABLED()        (READ_BIT(RCC->AHBENR, RCC_AHBENR_CRYPEN) != 0U)
 #define __HAL_RCC_AES_IS_CLK_DISABLED()       (READ_BIT(RCC->AHBENR, RCC_AHBENR_CRYPEN) == 0U)
 
-#endif /* STM32L062xx || STM32L063xx || STM32L072xx  || STM32L073xx || STM32L082xx  || STM32L083xx || STM32L041xx || STM32L021xx */
+#endif /* STM32L062xx || STM32L063xx || STM32L072xx  || STM32L073xx || STM32L081xx || STM32L082xx  || STM32L083xx || STM32L041xx || STM32L021xx */
 
-#if !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4) && !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && !defined(STM32L051xx) && !defined(STM32L061xx) && !defined(STM32L071xx) && !defined(STM32L081xx)
+#if !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4) && !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && !defined(STM32L051xx) && !defined(STM32L071xx) && !defined(STM32L081xx)
 #define __HAL_RCC_TSC_CLK_ENABLE()   do { \
                                         __IO uint32_t tmpreg; \
                                         SET_BIT(RCC->AHBENR, RCC_AHBENR_TSCEN);\
@@ -618,7 +618,7 @@ typedef struct
 
 #define __HAL_RCC_RNG_IS_CLK_ENABLED()        (READ_BIT(RCC->AHBENR, RCC_AHBENR_RNGEN) != 0U)
 #define __HAL_RCC_RNG_IS_CLK_DISABLED()       (READ_BIT(RCC->AHBENR, RCC_AHBENR_RNGEN) == 0U)
-#endif /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx ) && !(STM32L041xx ) && !(STM32L051xx ) && !(STM32L061xx ) && !(STM32L071xx ) && !(STM32L081xx ) */
+#endif /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx ) && !(STM32L041xx ) && !(STM32L051xx ) && !(STM32L071xx ) && !(STM32L081xx ) */
 
 /**
   * @}
@@ -672,7 +672,7 @@ typedef struct
   * @{
   */
 
-#if !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4) && !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && !defined(STM32L051xx) && !defined(STM32L061xx) && !defined(STM32L071xx) && !defined(STM32L081xx)
+#if !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4) && !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && !defined(STM32L051xx) && !defined(STM32L071xx) && !defined(STM32L081xx)
 #define __HAL_RCC_USB_CLK_ENABLE()        SET_BIT(RCC->APB1ENR, (RCC_APB1ENR_USBEN))
 #define __HAL_RCC_USB_CLK_DISABLE()       CLEAR_BIT(RCC->APB1ENR, (RCC_APB1ENR_USBEN))
 
@@ -685,7 +685,7 @@ typedef struct
 #define __HAL_RCC_CRS_IS_CLK_ENABLED()        (READ_BIT(RCC->APB1ENR, RCC_APB1ENR_CRSEN) != 0U)
 #define __HAL_RCC_CRS_IS_CLK_DISABLED()       (READ_BIT(RCC->APB1ENR, RCC_APB1ENR_CRSEN) == 0U)
 
-#endif /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx ) && !(STM32L041xx ) && !(STM32L051xx ) && !(STM32L061xx ) && !(STM32L071xx ) && !(STM32L081xx ) */
+#endif /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx ) && !(STM32L041xx ) && !(STM32L051xx ) && !(STM32L071xx ) && !(STM32L081xx ) */
 
 
 #if defined(STM32L053xx) || defined(STM32L063xx) || defined(STM32L073xx) || defined(STM32L083xx)
@@ -699,7 +699,7 @@ typedef struct
 
 #if defined(STM32L053xx) || defined(STM32L063xx) \
  || defined(STM32L052xx) || defined(STM32L062xx) \
- || defined(STM32L051xx) || defined(STM32L061xx)
+ || defined(STM32L051xx)
 #define __HAL_RCC_TIM2_CLK_ENABLE()    SET_BIT(RCC->APB1ENR, (RCC_APB1ENR_TIM2EN))
 #define __HAL_RCC_TIM6_CLK_ENABLE()    SET_BIT(RCC->APB1ENR, (RCC_APB1ENR_TIM6EN))
 #define __HAL_RCC_SPI2_CLK_ENABLE()    SET_BIT(RCC->APB1ENR, (RCC_APB1ENR_SPI2EN))
@@ -739,9 +739,9 @@ typedef struct
 #define __HAL_RCC_DAC_IS_CLK_DISABLED()     (READ_BIT(RCC->APB1ENR, RCC_APB1ENR_DACEN) == 0U)
 #define __HAL_RCC_LPTIM1_IS_CLK_DISABLED()  (READ_BIT(RCC->APB1ENR, RCC_APB1ENR_LPTIM1EN) == 0U)
 
-#endif /* STM32L051xx  || STM32L061xx  ||  */
+#endif /* STM32L053xx  || STM32L063xx  ||  */
        /* STM32L052xx  || STM32L062xx  ||  */
-       /* STM32L053xx  || STM32L063xx  ||  */
+       /* STM32L051xx                      */
 
 #if defined(STM32L010xB) || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4) || \
     defined(STM32L011xx) || defined(STM32L021xx) || defined(STM32L031xx) || defined(STM32L041xx)
@@ -844,9 +844,9 @@ typedef struct
 
 #if defined(STM32L053xx) || defined(STM32L063xx) || defined(STM32L073xx) || defined(STM32L083xx) \
  || defined(STM32L052xx) || defined(STM32L062xx) || defined(STM32L072xx) || defined(STM32L082xx) \
- || defined(STM32L051xx) || defined(STM32L061xx) || defined(STM32L071xx) || defined(STM32L081xx) \
- || defined(STM32L031xx) || defined(STM32L041xx) || defined(STM32L011xx) || defined(STM32L021xx) \
- || defined(STM32L010xB) || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
+ || defined(STM32L051xx) || defined(STM32L071xx) || defined(STM32L081xx) || defined(STM32L031xx) \
+ || defined(STM32L041xx) || defined(STM32L011xx) || defined(STM32L021xx) || defined(STM32L010xB) \
+ || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
 /** @defgroup RCCEx_APB2_Clock_Enable_Disable APB2 Peripheral Clock Enable Disable
   * @brief  Enable or disable the APB2 peripheral clock.
   * @note   After reset, the peripheral clock (used for registers read/write access)
@@ -894,11 +894,11 @@ typedef struct
 #define __HAL_RCC_FIREWALL_IS_CLK_DISABLED() (READ_BIT(RCC->APB2ENR,  (RCC_APB2ENR_MIFIEN) == 0U)
 #endif /* !(STM32L010x4) && !(STM32L010x6) && !(STM32L010x8) && !(STM32L010xB) && !(STM32L011xx) && !(STM32L021xx) && !STM32L031xx && !STM32L041xx */
 
-#endif /* STM32L051xx  || STM32L061xx  || STM32L071xx  ||  STM32L081xx  || */
+#endif /* STM32L053xx  || STM32L063xx  || STM32L073xx  ||  STM32L083xx  || */
        /* STM32L052xx  || STM32L062xx  || STM32L072xx  ||  STM32L082xx  || */
-       /* STM32L053xx  || STM32L063xx  || STM32L073xx  ||  STM32L083xx  || */
-       /* STM32L031xx  || STM32L041xx  || STM32L011xx  || STM32L021xx   || */
-       /* STM32L010xB  || STM32L010x8  || STM32L010x6  || STM32L010x4      */
+       /* STM32L051xx  || STM32L071xx  || STM32L081xx  ||  STM32L031xx  || */
+       /* STM32L041xx  || STM32L011xx  || STM32L021xx  || STM32L010xB   || */
+       /* STM32L010x8  || STM32L010x6  || STM32L010x4                      */
 /**
   * @}
   */
@@ -907,17 +907,17 @@ typedef struct
   * @brief  Force or release AHB peripheral reset.
   * @{
   */
-#if defined(STM32L062xx) || defined(STM32L063xx)|| defined(STM32L082xx) || defined(STM32L083xx) || defined(STM32L041xx) || defined(STM32L021xx)
+#if defined(STM32L062xx) || defined(STM32L063xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx) || defined(STM32L041xx) || defined(STM32L021xx)
 #define __HAL_RCC_AES_FORCE_RESET()     SET_BIT(RCC->AHBRSTR, (RCC_AHBRSTR_CRYPRST))
 #define __HAL_RCC_AES_RELEASE_RESET()   CLEAR_BIT(RCC->AHBRSTR, (RCC_AHBRSTR_CRYPRST))
-#endif /* STM32L062xx || STM32L063xx || STM32L072xx  || STM32L073xx || STM32L082xx  || STM32L083xx || STM32L041xx || STM32L021xx*/
+#endif /* STM32L062xx || STM32L063xx || STM32L072xx || STM32L073xx || STM32L081xx || STM32L082xx  || STM32L083xx || STM32L041xx || STM32L021xx*/
 
-#if !defined (STM32L010x4) && !defined (STM32L010x6) && !defined (STM32L010x8) && !defined (STM32L010xB) && !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && !defined(STM32L051xx) && !defined(STM32L061xx) && !defined(STM32L071xx) && !defined(STM32L081xx)
+#if !defined (STM32L010x4) && !defined (STM32L010x6) && !defined (STM32L010x8) && !defined (STM32L010xB) && !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && !defined(STM32L051xx) && !defined(STM32L071xx) && !defined(STM32L081xx)
 #define __HAL_RCC_TSC_FORCE_RESET()        SET_BIT(RCC->AHBRSTR, (RCC_AHBRSTR_TSCRST))
 #define __HAL_RCC_TSC_RELEASE_RESET()      CLEAR_BIT(RCC->AHBRSTR, (RCC_AHBRSTR_TSCRST))
 #define __HAL_RCC_RNG_FORCE_RESET()        SET_BIT(RCC->AHBRSTR, (RCC_AHBRSTR_RNGRST))
 #define __HAL_RCC_RNG_RELEASE_RESET()      CLEAR_BIT(RCC->AHBRSTR, (RCC_AHBRSTR_RNGRST))
-#endif /* !(STM32L010x4) && !(STM32L010x6) && !(STM32L010x8) && !(STM32L010xB) && !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx ) && !(STM32L041xx ) && !(STM32L051xx ) && !(STM32L061xx ) && !(STM32L071xx ) && !(STM32L081xx ) */
+#endif /* !(STM32L010x4) && !(STM32L010x6) && !(STM32L010x8) && !(STM32L010xB) && !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx ) && !(STM32L041xx ) && !(STM32L051xx ) && !(STM32L071xx ) && !(STM32L081xx ) */
 
 /**
   * @}
@@ -954,7 +954,7 @@ typedef struct
 
 #if defined(STM32L053xx) || defined(STM32L063xx) \
  || defined(STM32L052xx) || defined(STM32L062xx) \
- || defined(STM32L051xx) || defined(STM32L061xx)
+ || defined(STM32L051xx)
 #define __HAL_RCC_TIM2_FORCE_RESET()     SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_TIM2RST))
 #define __HAL_RCC_TIM6_FORCE_RESET()     SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_TIM6RST))
 #define __HAL_RCC_LPTIM1_FORCE_RESET()   SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_LPTIM1RST))
@@ -974,9 +974,9 @@ typedef struct
 #define __HAL_RCC_LPUART1_RELEASE_RESET()  CLEAR_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_LPUART1RST))
 #define __HAL_RCC_SPI2_RELEASE_RESET()     CLEAR_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_SPI2RST))
 #define __HAL_RCC_DAC_RELEASE_RESET()      CLEAR_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_DACRST))
-#endif /* STM32L051xx  || STM32L061xx  || */
+#endif /* STM32L053xx  || STM32L063xx  || */
        /* STM32L052xx  || STM32L062xx  || */
-       /* STM32L053xx  || STM32L063xx     */
+       /* STM32L051xx                     */
 #if defined(STM32L011xx) || defined(STM32L021xx) || defined(STM32L031xx) || defined(STM32L041xx) || \
     defined(STM32L010xB) || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
 #define __HAL_RCC_TIM2_FORCE_RESET()     SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_TIM2RST))
@@ -1030,15 +1030,15 @@ typedef struct
        /* STM32L073xx  ||  STM32L083xx  || */
 
 #if !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && \
-    !defined(STM32L051xx) && !defined(STM32L061xx) && !defined(STM32L071xx) && !defined(STM32L081xx) && \
+    !defined(STM32L051xx) && !defined(STM32L071xx) && !defined(STM32L081xx) && \
     !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4)
 #define __HAL_RCC_USB_FORCE_RESET()        SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_USBRST))
 #define __HAL_RCC_USB_RELEASE_RESET()      CLEAR_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_USBRST))
 #define __HAL_RCC_CRS_FORCE_RESET()        SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_CRSRST))
 #define __HAL_RCC_CRS_RELEASE_RESET()      CLEAR_BIT(RCC->APB1RSTR,(RCC_APB1RSTR_CRSRST))
 #endif /* !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx) && !(STM32L041xx) && */
-       /* !(STM32L051xx) && !(STM32L061xx) && !(STM32L071xx) && !(STM32L081xx) && */
-       /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && */
+       /* !(STM32L051xx) && !(STM32L071xx) && !(STM32L081xx) && !(STM32L010xB) && */
+       /* !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && */
 
 #if defined(STM32L053xx) || defined(STM32L063xx) || defined(STM32L073xx) || defined(STM32L083xx)
 #define __HAL_RCC_LCD_FORCE_RESET()           SET_BIT(RCC->APB1RSTR, (RCC_APB1RSTR_LCDRST))
@@ -1051,7 +1051,7 @@ typedef struct
 
 #if defined(STM32L053xx) || defined(STM32L063xx) || defined(STM32L073xx) || defined(STM32L083xx) \
  || defined(STM32L052xx) || defined(STM32L062xx) || defined(STM32L072xx) || defined(STM32L082xx) \
- || defined(STM32L051xx) || defined(STM32L061xx) || defined(STM32L071xx) || defined(STM32L081xx)
+ || defined(STM32L051xx) || defined(STM32L071xx) || defined(STM32L081xx)
 
 /** @defgroup RCCEx_APB2_Force_Release_Reset APB2 Peripheral Force Release Reset
   * @brief  Force or release APB2 peripheral reset.
@@ -1069,9 +1069,9 @@ typedef struct
 #define __HAL_RCC_TIM21_RELEASE_RESET()      CLEAR_BIT(RCC->APB2RSTR, (RCC_APB2RSTR_TIM21RST))
 #define __HAL_RCC_TIM22_RELEASE_RESET()      CLEAR_BIT(RCC->APB2RSTR, (RCC_APB2RSTR_TIM22RST))
 
-#endif /* STM32L051xx  || STM32L061xx  || STM32L071xx  ||  STM32L081xx  || */
-       /* STM32L052xx  || STM32L062xx  || STM32L072xx  ||  STM32L082xx  || */
-       /* STM32L053xx  || STM32L063xx  || STM32L073xx  ||  STM32L083xx  || */
+#endif /* STM32L051xx  || STM32L071xx  ||  STM32L081xx ||  STM32L052xx  ||    */
+       /* STM32L062xx  || STM32L072xx  ||  STM32L082xx ||  STM32L053xx  ||    */
+       /* STM32L063xx  || STM32L073xx  ||  STM32L083xx                        */
 
 #if defined(STM32L011xx) || defined(STM32L021xx) || defined(STM32L031xx) || defined(STM32L041xx) || \
     defined(STM32L010xB) || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
@@ -1104,8 +1104,8 @@ typedef struct
   */
 
 #if !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && \
-    !defined(STM32L051xx) && !defined(STM32L061xx) && !defined(STM32L071xx) && !defined(STM32L081xx) && \
-    !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4)
+    !defined(STM32L051xx) && !defined(STM32L071xx) && !defined(STM32L081xx) && !defined(STM32L010xB) && \
+    !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4)
 #define __HAL_RCC_TSC_CLK_SLEEP_ENABLE()           SET_BIT(RCC->AHBSMENR, (RCC_AHBSMENR_TSCSMEN))
 #define __HAL_RCC_RNG_CLK_SLEEP_ENABLE()           SET_BIT(RCC->AHBSMENR, (RCC_AHBSMENR_RNGSMEN))
 #define __HAL_RCC_TSC_CLK_SLEEP_DISABLE()          CLEAR_BIT(RCC->AHBSMENR, (RCC_AHBSMENR_TSCSMEN))
@@ -1116,16 +1116,16 @@ typedef struct
 #define __HAL_RCC_TSC_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHBSMENR, RCC_AHBSMENR_TSCSMEN) == 0U)
 #define __HAL_RCC_RNG_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHBSMENR, RCC_AHBSMENR_RNGSMEN) == 0U)
 #endif /* !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx) && !(STM32L041xx) && */
-       /* !(STM32L051xx) && !(STM32L061xx) && !(STM32L071xx) && !(STM32L081xx) && */
-       /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && */
+       /* !(STM32L051xx) && !(STM32L071xx) && !(STM32L081xx) &&!(STM32L010xB)  && */
+       /* !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4) && */
 
-#if defined(STM32L062xx) || defined(STM32L063xx)|| defined(STM32L082xx) || defined(STM32L083xx) || defined(STM32L041xx)
+#if defined(STM32L062xx) || defined(STM32L063xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx) || defined(STM32L041xx)
 #define __HAL_RCC_AES_CLK_SLEEP_ENABLE()          SET_BIT(RCC->AHBLPENR, (RCC_AHBSMENR_CRYPSMEN))
 #define __HAL_RCC_AES_CLK_SLEEP_DISABLE()         CLEAR_BIT(RCC->AHBLPENR, (RCC_AHBSMENR_CRYPSMEN))
 
 #define __HAL_RCC_AES_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->AHBLPENR, RCC_AHBSMENR_CRYPSMEN) != 0U)
 #define __HAL_RCC_AES_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHBLPENR, RCC_AHBSMENR_CRYPSMEN) == 0U)
-#endif /* STM32L062xx || STM32L063xx || STM32L072xx || STM32L073xx || STM32L082xx || STM32L083xx || STM32L041xx */
+#endif /* STM32L062xx || STM32L063xx || STM32L072xx || STM32L073xx || STM32L081xx || STM32L082xx || STM32L083xx || STM32L041xx */
 
 /**
   * @}
@@ -1175,7 +1175,7 @@ typedef struct
 
 #if defined(STM32L053xx) || defined(STM32L063xx) \
  || defined(STM32L052xx) || defined(STM32L062xx) \
- || defined(STM32L051xx) || defined(STM32L061xx)
+ || defined(STM32L051xx)
 #define __HAL_RCC_TIM2_CLK_SLEEP_ENABLE()    SET_BIT(RCC->APB1SMENR, (RCC_APB1SMENR_TIM2SMEN))
 #define __HAL_RCC_TIM6_CLK_SLEEP_ENABLE()    SET_BIT(RCC->APB1SMENR, (RCC_APB1SMENR_TIM6SMEN))
 #define __HAL_RCC_SPI2_CLK_SLEEP_ENABLE()    SET_BIT(RCC->APB1SMENR, (RCC_APB1SMENR_SPI2SMEN))
@@ -1214,9 +1214,9 @@ typedef struct
 #define __HAL_RCC_I2C2_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->APB1SMENR, RCC_APB1SMENR_I2C2SMEN) == 0U)
 #define __HAL_RCC_DAC_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->APB1SMENR, RCC_APB1SMENR_DACSMEN) == 0U)
 #define __HAL_RCC_LPTIM1_IS_CLK_SLEEP_DISABLED()  (READ_BIT(RCC->APB1SMENR, RCC_APB1SMENR_LPTIM1SMEN) == 0U)
-#endif /* STM32L051xx  || STM32L061xx  || */
+#endif /* STM32L053xx  ||  STM32L063xx || */
        /* STM32L052xx  || STM32L062xx  || */
-       /* STM32L053xx  || STM32L063xx     */
+       /* STM32L051xx                     */
 
 #if defined(STM32L073xx) || defined(STM32L083xx) \
  || defined(STM32L072xx) || defined(STM32L082xx) \
@@ -1281,7 +1281,7 @@ typedef struct
 #define __HAL_RCC_LPTIM1_IS_CLK_SLEEP_DISABLED()  (READ_BIT(RCC->APB1SMENR, RCC_APB1SMENR_LPTIM1SMEN) == 0U)
 #endif /*  STM32L071xx  ||  STM32L081xx  || */
        /*  STM32L072xx  ||  STM32L082xx  || */
-       /*  STM32L073xx  ||  STM32L083xx  || */
+       /*  STM32L073xx  ||  STM32L083xx     */
 
 #if defined(STM32L011xx) || defined(STM32L021xx) || defined(STM32L031xx) || defined(STM32L041xx) || \
     defined(STM32L010xB) || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
@@ -1312,7 +1312,7 @@ typedef struct
        /* STM32L010xB || STM32L010x8 || STM32L010x6 || STM32L010x4 */
 
 #if !defined(STM32L011xx) && !defined(STM32L021xx) && !defined(STM32L031xx) && !defined(STM32L041xx) && \
-    !defined(STM32L051xx) && !defined(STM32L061xx) && !defined(STM32L071xx) && !defined(STM32L081xx)  && \
+    !defined(STM32L051xx) && !defined(STM32L071xx) && !defined(STM32L081xx)  && \
     !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4)
 #define __HAL_RCC_USB_CLK_SLEEP_ENABLE()    SET_BIT(RCC->APB1SMENR, (RCC_APB1SMENR_USBSMEN))
 #define __HAL_RCC_USB_CLK_SLEEP_DISABLE()   CLEAR_BIT(RCC->APB1SMENR, (RCC_APB1SMENR_USBSMEN))
@@ -1324,8 +1324,8 @@ typedef struct
 #define __HAL_RCC_CRS_IS_CLK_SLEEP_ENABLED()        (READ_BIT(RCC->APB1SMENR, RCC_APB1SMENR_CRSSMEN) != 0U)
 #define __HAL_RCC_CRS_IS_CLK_SLEEP_DISABLED()       (READ_BIT(RCC->APB1SMENR, RCC_APB1SMENR_CRSSMEN) == 0U)
 #endif /* !(STM32L011xx) && !(STM32L021xx) && !(STM32L031xx) && !(STM32L041xx) && */
-       /* !(STM32L051xx) && !(STM32L061xx) && !(STM32L071xx) && !(STM32L081xx) && */
-       /* !(STM32L010xB) && !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4)    */
+       /* !(STM32L051xx) && !(STM32L071xx) && !(STM32L081xx) && !(STM32L010xB) && */
+       /* !(STM32L010x8) && !(STM32L010x6) && !(STM32L010x4)                  */
 
 #if defined(STM32L053xx) || defined(STM32L063xx) || defined(STM32L073xx) || defined(STM32L083xx)
 #define __HAL_RCC_LCD_CLK_SLEEP_ENABLE()      SET_BIT(RCC->APB1SMENR, (RCC_APB1SMENR_LCDSMEN))
@@ -1341,9 +1341,9 @@ typedef struct
 
 #if defined(STM32L053xx) || defined(STM32L063xx) || defined(STM32L073xx) || defined(STM32L083xx) \
  || defined(STM32L052xx) || defined(STM32L062xx) || defined(STM32L072xx) || defined(STM32L082xx) \
- || defined(STM32L051xx) || defined(STM32L061xx) || defined(STM32L071xx) || defined(STM32L081xx) \
- || defined(STM32L031xx) || defined(STM32L041xx) || defined(STM32L011xx) || defined(STM32L021xx)  \
- || defined(STM32L010xB) || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
+ || defined(STM32L051xx) || defined(STM32L071xx) || defined(STM32L081xx) || defined(STM32L031xx) \
+ || defined(STM32L041xx) || defined(STM32L011xx) || defined(STM32L021xx) || defined(STM32L010xB) \
+ || defined(STM32L010x8) || defined(STM32L010x6) || defined(STM32L010x4)
 
 /** @defgroup RCCEx_APB2_Clock_Sleep_Enable_Disable APB2 Peripheral Clock Sleep Enable Disable
   * @brief  Enable or disable the APB2 peripheral clock during Low Power (Sleep) mode.
@@ -1389,11 +1389,11 @@ typedef struct
   * @}
   */
 
-#endif /* STM32L051xx  || STM32L061xx  || STM32L071xx  ||  STM32L081xx  || */
-       /* STM32L052xx  || STM32L062xx  || STM32L072xx  ||  STM32L082xx  || */
-       /* STM32L053xx  || STM32L063xx  || STM32L073xx  ||  STM32L083xx  || */
-       /* STM32L031xx  || STM32L041xx  || STM32L011xx  ||  STM32L021xx  || */
-       /* STM32L010xB  || STM32L010x8  || STM32L010x6  ||  STM32L010x4     */
+#endif /* STM32L053xx  || STM32L063xx  ||  STM32L073xx  ||  STM32L083xx  || */
+       /* STM32L052xx  || STM32L062xx  ||  STM32L072xx  ||  STM32L082xx  || */
+       /* STM32L051xx  || STM32L071xx  ||  STM32L081xx  ||  STM32L031xx  || */
+       /* STM32L041xx  || STM32L011xx  ||  STM32L021xx  ||  STM32L010xB  || */
+       /* STM32L010x8  || STM32L010x6  ||  STM32L010x4                      */
 
 
 /**

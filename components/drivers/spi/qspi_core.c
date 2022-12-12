@@ -186,7 +186,7 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
     RT_ASSERT(length != 0);
 
     struct rt_qspi_message message;
-    char *ptr = (char *)send_buf;
+    unsigned char *ptr = (unsigned char *)send_buf;
     rt_size_t  count = 0;
     rt_err_t result = 0;
 
@@ -241,7 +241,6 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
     else
     {
         message.qspi_data_lines = 0;
-
     }
 
     /* set send buf and send size */

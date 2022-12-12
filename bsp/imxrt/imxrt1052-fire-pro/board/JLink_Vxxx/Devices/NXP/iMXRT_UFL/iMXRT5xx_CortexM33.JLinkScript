@@ -1,0 +1,55 @@
+/*********************************************************************
+*            (c) 1995 - 2018 SEGGER Microcontroller GmbH             *
+*                        The Embedded Experts                        *
+*                           www.segger.com                           *
+**********************************************************************
+
+-------------------------- END-OF-HEADER -----------------------------
+*/
+
+/*********************************************************************
+*
+*       ResetTarget
+*/
+void ResetTarget(void) {
+  //
+  // This device requires a special reset as default reset does not work for this device.
+  // TBD
+  //
+  JLINK_SYS_Report("******************************************************");
+  JLINK_SYS_Report("J-Link script: ResetTarget()");
+  JLINK_SYS_Report("******************************************************");
+  JLINK_TARGET_Halt(); // Make sure that the CPU is halted when reset is called
+}
+
+/*********************************************************************
+*
+*       InitTarget
+*/
+void InitTarget(void) {
+  int v;
+
+  JLINK_SYS_Report("******************************************************");
+  JLINK_SYS_Report("J-Link script: i.MXRT5xx Cortex-M33 core J-Link script");
+  JLINK_SYS_Report("******************************************************");
+  JLINK_CORESIGHT_Configure("IRPre=0;DRPre=0;IRPost=0;DRPost=0;IRLenDevice=4");
+  CPU = CORTEX_M33;      // Pre-select that we have a Cortex-M33 connected
+  JTAG_AllowTAPReset = 0;   // J-Link is allowed to use a TAP reset for JTAG-chain auto-detection
+
+  JTAG_SetDeviceId(0, 0x6BA02477);  // 4-bits IRLen
+
+  // Select ISP-AP
+  JLINK_CORESIGHT_WriteDP(2, 0x020000f0);
+  v = JLINK_CORESIGHT_ReadAP(3);
+  JLINK_SYS_Report1("DAP-IDCODE:", v);
+  JLINK_CORESIGHT_WriteDP(2, 0x02000000);
+  JLINK_CORESIGHT_ReadDP(0);
+
+  // Active DebugMailbox
+  JLINK_CORESIGHT_WriteAP(0, 0x21);
+  JLINK_CORESIGHT_ReadAP(0);
+
+  // Enter Debug Session
+  JLINK_CORESIGHT_WriteAP(1, 0x07);
+  JLINK_CORESIGHT_ReadAP(0);
+}

@@ -3,8 +3,27 @@
 ; description: es32f36xx Device Startup File
 ; author     : AE Team
 ; data       : 23 Jan 2019
+; note
+;          Change Logs:
+;          Date            Author          Notes
+;          23 Jan 2019     AE Team         The first version
+;
 ; Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
-;*******************************************************************************
+;
+; SPDX-License-Identifier: Apache-2.0
+;
+; Licensed under the Apache License, Version 2.0 (the License); you may
+; not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+;
+; www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an AS IS BASIS, WITHOUT
+; WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+;*********************************************************************************
 
 ;Stack Configuration------------------------------------------------------------
 Stack_Size      EQU     0x00000800
@@ -123,6 +142,49 @@ __Vectors       DCD     __initial_sp                    ;0,  load top of stack
 ;Reset Handler----------------------------------------------
 RESET_Handler   PROC
 	EXPORT  RESET_Handler                  [WEAK]
+
+	ldr r0, =0x55AA6996
+	ldr r1, =0x40080000
+	str r0, [r1]
+
+	ldr r0, =0x5A962814
+	ldr r1, =0x40080100
+	str r0, [r1]
+	ldr r0, =0xE7CB69A5
+	str r0, [r1]
+
+	ldr r0, =0x40083C00
+	ldr r1, [r0]
+	ldr r2, =0xffff
+	and r1, r2
+	ldr r2, =0x55AA0000
+	orr r1, r2
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+	str r1, [r0]
+
+	mov r0, r0
+	mov r0, r0
+
+	ldr r0, =0x123456
+	ldr r1, =0x40080100
+	str r0, [r1]
+
+	ldr r0, =0x40080404
+	ldr r1, =0x4000000
+	str r1, [r0]
+	
+	ldr r0, =0x123456
+	ldr r1, =0x40080000
+	str r0, [r1]
+
 	IMPORT  __main
 	LDR     R0, =__main
 	BX      R0

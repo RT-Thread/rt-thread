@@ -155,7 +155,7 @@ uint16_t DVK_getPushButtons(void)
   /* Check state */
   aemState = DVK_readRegister(BC_AEMSTATE);
   /* Read pushbutton status */
-  if ( aemState == BC_AEMSTATE_EFM ) 
+  if ( aemState == BC_AEMSTATE_EFM )
   {
     pb = (~(DVK_readRegister(BC_PUSHBUTTON))) & 0x000f;
   }
@@ -174,7 +174,7 @@ uint16_t DVK_getJoystick(void)
   /* Check state */
   aemState = DVK_readRegister(BC_AEMSTATE);
   /* Read pushbutton status */
-  if ( aemState == BC_AEMSTATE_EFM ) 
+  if ( aemState == BC_AEMSTATE_EFM )
   {
     joyStick = (~(DVK_readRegister(BC_JOYSTICK))) & 0x001f;
   }

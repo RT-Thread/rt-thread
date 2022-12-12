@@ -1,0 +1,52 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+""")
+
+# add pin drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+# add usart drivers.
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
+
+# add i2c drivers.
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3'):
+        src += ['drv_soft_i2c.c']
+
+# add spi drivers.
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
+# add spi flash drivers.
+if GetDepend('RT_USING_SFUD'):
+    src += ['drv_spi_flash.c', 'drv_spi.c']
+
+# add wdt drivers.
+if GetDepend('RT_USING_WDT'):
+    src += ['drv_wdt.c']
+
+# add rtc drivers.
+if GetDepend('RT_USING_RTC'):
+    src += ['drv_rtc.c']
+
+# add timer drivers.
+if GetDepend('RT_USING_HWTIMER'):
+    src += ['drv_hwtimer.c']
+
+# add adc drivers.
+if GetDepend('RT_USING_ADC'):
+    src += ['drv_adc.c']
+
+path = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

@@ -1,0 +1,68 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+#var defined
+CPPDEFINES = []
+
+#common lib define
+CPPDEFINES += [rtconfig.DEVICE_TYPE]
+
+# The set of source files associated with this SConscript file.
+
+src  = Glob('hal/src/*.c')
+src += Glob('hal/utils/src/*.c')
+src += Glob('hpl/adc/*.c')
+src += Glob('hpl/aes/*.c')
+src += Glob('hpl/can/*.c')
+src += Glob('hpl/cmcc/*.c')
+src += Glob('hpl/core/*.c')
+src += Glob('hpl/dmac/*.c')
+src += Glob('hpl/gclk/*.c')
+src += Glob('hpl/gmac/*.c')
+src += Glob('hpl/mclk/*.c')
+src += Glob('hpl/osc32kctrl/*.c')
+src += Glob('hpl/oscctrl/*.c')
+src += Glob('hpl/pm/*.c')
+src += Glob('hpl/port/*.c')
+src += Glob('hpl/ramecc/*.c')
+src += Glob('hpl/sercom/*.c')
+src += Glob('ethernet_phy/*.c')
+src += [cwd + '/atmel_start.c']
+src += [cwd + '/driver_init.c']
+src += [cwd + '/ethernet_phy_main.c']
+
+#add for startup script
+if rtconfig.PLATFORM in ['gcc']:
+    src += [cwd + '/gcc/system_same54.c']
+    src += [cwd + '/gcc/gcc/startup_same54.c']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [cwd + '/armcc/arm_addon/armcc/' + 'system_same54.c']
+    src += [cwd + '/armcc/arm_addon/armcc/arm/' + 'startup_same54.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [cwd + '/iar/' + 'system_same54.c']
+    src += [cwd + '/iar/iar/' + 'startup_same54.c']
+
+path = [
+    cwd,
+    cwd + '/CMSIS/Core/Include',
+    cwd + '/config',
+    cwd + '/ethernet_phy',
+    cwd + '/hal/include',
+    cwd + '/hal/utils/include',
+    cwd + '/hpl/adc',
+    cwd + '/hpl/can',
+    cwd + '/hpl/core',
+    cwd + '/hpl/gclk',
+    cwd + '/hpl/pm',
+    cwd + '/hpl/port',
+    cwd + '/hri',
+    cwd + '/include',
+    cwd + '/../board',
+    cwd + '/../../common/applications']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

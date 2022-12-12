@@ -15,15 +15,12 @@ CubeMX_Config/Src/stm32f4xx_hal_msp.c
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += ['ports/drv_qspi_flash.c']
 
-if GetDepend(['PKG_USING_FAL']):
+if GetDepend(['RT_USING_FAL']):
     src += ['ports/qspi_mnt.c']
     
 if GetDepend(['BSP_USING_LCD_OTM8009A']):
     src += ['ports/drv_otm8009a.c']
-    
-if GetDepend(['BSP_USING_TOUCH']):
-    src += Glob('ports/touch/*.c')
-    
+
 if GetDepend(['BSP_USING_SDCARD']):
     src += ['ports/drv_sdcard.c']
 
@@ -33,11 +30,11 @@ path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f469xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f469xx.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f469xx.s']
 
 # STM32F405xx) || STM32F415xx) || STM32F407xx) || STM32F417xx)

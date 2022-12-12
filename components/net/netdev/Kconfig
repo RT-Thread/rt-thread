@@ -1,0 +1,41 @@
+menuconfig RT_USING_NETDEV
+    bool "Enable network interface device"
+    default n
+
+if RT_USING_NETDEV
+
+    config NETDEV_USING_IFCONFIG
+        bool "Enable ifconfig features"
+        default y
+
+    config NETDEV_USING_PING
+        bool "Enable ping features"
+        default y
+
+    config NETDEV_USING_NETSTAT
+        bool "Enable netstat features"
+        default y
+
+    config NETDEV_USING_AUTO_DEFAULT
+        bool "Enable default netdev automatic change features"
+        default y
+
+    config NETDEV_USING_IPV6
+        bool "Enable IPV6 protocol support"
+        default n
+
+    config NETDEV_IPV4
+        int
+        default 1
+
+    config NETDEV_IPV6
+        int
+        default 1 if NETDEV_USING_IPV6
+        default 0 if !NETDEV_USING_IPV6
+
+    config NETDEV_IPV6_SCOPES
+        bool
+        help
+            Defined to synchronize the ip6_addr structure state
+        default n
+endif

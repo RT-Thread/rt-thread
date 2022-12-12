@@ -51,12 +51,32 @@ extern "C" {
 
 #define RCC_FLAG_MASK             0x1FU
 
+/* Defines Oscillator Masks */
+#define RCC_OSCILLATORTYPE_ALL          (RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_MSI | RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_LSE)  /*!< All Oscillator to configure */
+
 /** @defgroup RCC_Timeout_Value Timeout Values
   * @{
   */
 #define RCC_DBP_TIMEOUT_VALUE          2U                   /*!< 2 ms (minimum Tick + 1)  */
 #define RCC_LSE_TIMEOUT_VALUE          LSE_STARTUP_TIMEOUT  /*!< LSE timeout in ms        */
 #define PLL_TIMEOUT_VALUE              10U                 /*!< 10 ms (minimum Tick + 1)  */
+/**
+  * @}
+  */
+
+/** @defgroup RCC_Reset_Flag Reset Flag
+  * @{
+  */
+#define RCC_RESET_FLAG_OBL             RCC_CSR_OBLRSTF    /*!< Option Byte Loader reset flag */
+#define RCC_RESET_FLAG_PIN             RCC_CSR_PINRSTF    /*!< PIN reset flag */
+#define RCC_RESET_FLAG_PWR             RCC_CSR_BORRSTF    /*!< BOR or POR/PDR reset flag */
+#define RCC_RESET_FLAG_SW              RCC_CSR_SFTRSTF    /*!< Software Reset flag */
+#define RCC_RESET_FLAG_IWDG            RCC_CSR_IWDGRSTF   /*!< Independent Watchdog reset flag */
+#define RCC_RESET_FLAG_WWDG            RCC_CSR_WWDGRSTF   /*!< Window watchdog reset flag */
+#define RCC_RESET_FLAG_LPWR            RCC_CSR_LPWRRSTF   /*!< Low power reset flag */
+#define RCC_RESET_FLAG_ALL             (RCC_RESET_FLAG_OBL | RCC_RESET_FLAG_PIN | RCC_RESET_FLAG_PWR | \
+                                        RCC_RESET_FLAG_SW | RCC_RESET_FLAG_IWDG | RCC_RESET_FLAG_WWDG | \
+                                        RCC_RESET_FLAG_LPWR)
 /**
   * @}
   */
@@ -70,13 +90,8 @@ extern "C" {
   * @{
   */
 
-#define IS_RCC_OSCILLATORTYPE(__OSCILLATOR__)                                     \
-  (((__OSCILLATOR__) == RCC_OSCILLATORTYPE_NONE)                               || \
-   (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSE)   == RCC_OSCILLATORTYPE_HSE)   || \
-   (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSI)   == RCC_OSCILLATORTYPE_HSI)   || \
-   (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_MSI)   == RCC_OSCILLATORTYPE_MSI)   || \
-   (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSI)   == RCC_OSCILLATORTYPE_LSI)   || \
-   (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSE)   == RCC_OSCILLATORTYPE_LSE))
+#define IS_RCC_OSCILLATORTYPE(__OSCILLATOR__)  (((__OSCILLATOR__) == RCC_OSCILLATORTYPE_NONE) || \
+                                                (((__OSCILLATOR__) & ~RCC_OSCILLATORTYPE_ALL) == 0x00U))
 
 
 #define IS_RCC_HSE(__HSE__)  (((__HSE__) == RCC_HSE_OFF) || ((__HSE__) == RCC_HSE_ON) || \
@@ -2360,6 +2375,7 @@ void              HAL_RCC_NMI_IRQHandler(void);
 /* User Callbacks in non blocking mode (IT mode) */
 void              HAL_RCC_CSSCallback(void);
 
+uint32_t          HAL_RCC_GetResetSource(void);
 /**
   * @}
   */

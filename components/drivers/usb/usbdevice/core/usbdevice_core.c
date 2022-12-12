@@ -1834,14 +1834,14 @@ rt_err_t rt_usbd_ep0_set_stall(udevice_t device)
 {
     RT_ASSERT(device != RT_NULL);
 
-    return dcd_ep_set_stall(device->dcd, 0);
+    return dcd_ep_set_stall(device->dcd, 0x80);
 }
 
 rt_err_t rt_usbd_ep0_clear_stall(udevice_t device)
 {
     RT_ASSERT(device != RT_NULL);
 
-    return dcd_ep_clear_stall(device->dcd, 0);
+    return dcd_ep_clear_stall(device->dcd, 0x80);
 }
 
 rt_err_t rt_usbd_ep_set_stall(udevice_t device, uep_t ep)
@@ -2225,7 +2225,7 @@ rt_err_t rt_usbd_event_signal(struct udev_msg* msg)
 }
 
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t usb_thread_stack[RT_USBD_THREAD_STACK_SZ];
 static struct rt_thread usb_thread;
 #define USBD_MQ_MSG_SZ  32

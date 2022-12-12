@@ -589,6 +589,7 @@ __STATIC_INLINE uint32_t LL_HSEM_IsEnabledIT_C2IER(HSEM_TypeDef *HSEMx, uint32_t
   return ((READ_BIT(HSEMx->C2IER, SemaphoreMask) == (SemaphoreMask)) ? 1UL : 0UL);
 }
 #endif /* DUAL_CORE */
+
 /**
   * @}
   */

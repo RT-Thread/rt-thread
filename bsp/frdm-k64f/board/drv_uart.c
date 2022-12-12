@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -243,7 +243,7 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-	config.bufsz	 = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     _k64_serial.ops    = &_k64_ops;
     _k64_serial.config = config;

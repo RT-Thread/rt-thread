@@ -17,12 +17,13 @@
 ;* Copyright (c) 2017 STMicroelectronics. All rights reserved.
 ;*
 ;* This software component is licensed by ST under BSD 3-Clause license,
-;* the "License"; You may not use this file except in compliance with the 
+;* the "License"; You may not use this file except in compliance with the
 ;* License. You may obtain a copy of the License at:
 ;*                        opensource.org/licenses/BSD-3-Clause
-;
+;*
 ;*******************************************************************************
-
+;* <<< Use Configuration Wizard in Context Menu >>>
+;
 ; Amount of memory (in bytes) allocated for Stack
 ; Tailor this value to your application needs
 ; <h> Stack Configuration
@@ -40,7 +41,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00000200
+Heap_Size       EQU     0x00000000
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base

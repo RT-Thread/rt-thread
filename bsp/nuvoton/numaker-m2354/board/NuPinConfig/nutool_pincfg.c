@@ -1,7 +1,7 @@
 /****************************************************************************
  * @file     nutool_pincfg.c
  * @version  V1.21
- * @Date     2020/11/11-12:06:36 
+ * @Date     2020/11/11-12:06:36
  * @brief    NuMicro generated code file
  *
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.
@@ -108,7 +108,12 @@ void nutool_pincfg_deinit_epwm0(void)
 void nutool_pincfg_init_epwm1(void)
 {
     SYS->GPC_MFPH &= ~(SYS_GPC_MFPH_PC12MFP_Msk | SYS_GPC_MFPH_PC11MFP_Msk | SYS_GPC_MFPH_PC10MFP_Msk | SYS_GPC_MFPH_PC9MFP_Msk);
+#if !defined(BOARD_USING_LCD_ILI9341)
     SYS->GPC_MFPH |= (SYS_GPC_MFPH_PC12MFP_EPWM1_CH0 | SYS_GPC_MFPH_PC11MFP_EPWM1_CH1 | SYS_GPC_MFPH_PC10MFP_EPWM1_CH2 | SYS_GPC_MFPH_PC9MFP_EPWM1_CH3);
+#else
+    SYS->GPC_MFPH |= (SYS_GPC_MFPH_PC12MFP_EPWM1_CH0 | SYS_GPC_MFPH_PC10MFP_EPWM1_CH2 | SYS_GPC_MFPH_PC9MFP_EPWM1_CH3);
+#endif
+
     SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC0MFP_Msk);
     SYS->GPC_MFPL |= (SYS_GPC_MFPL_PC1MFP_EPWM1_CH4 | SYS_GPC_MFPL_PC0MFP_EPWM1_CH5);
 
@@ -318,44 +323,44 @@ void pincfg_init_slcd(void)
             SEG 33~36 : PH.7, PH.6, PH.5, PH.4
             SEG 37~39 : PG.4, PG.3, PG.2
     */
-    
+
     /* COM 0~5 */
-    SYS->GPC_MFPL = (SYS->GPC_MFPL & 
-                    ~(SYS_GPC_MFPL_PC0MFP_Msk | SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk | SYS_GPC_MFPL_PC3MFP_Msk | 
-                      SYS_GPC_MFPL_PC4MFP_Msk | SYS_GPC_MFPL_PC5MFP_Msk)) |
+    SYS->GPC_MFPL = (SYS->GPC_MFPL &
+                     ~(SYS_GPC_MFPL_PC0MFP_Msk | SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk | SYS_GPC_MFPL_PC3MFP_Msk |
+                       SYS_GPC_MFPL_PC4MFP_Msk | SYS_GPC_MFPL_PC5MFP_Msk)) |
                     (LCD_COM0_PC0 | LCD_COM1_PC1 | LCD_COM2_PC2 | LCD_COM3_PC3 | LCD_COM4_PC4 | LCD_COM5_PC5);
     /* COM 6~7 */
     SYS->GPD_MFPH = (SYS->GPD_MFPH & ~(SYS_GPD_MFPH_PD8MFP_Msk | SYS_GPD_MFPH_PD9MFP_Msk)) |
                     (LCD_COM6_PD8 | LCD_COM7_PD9);
-    
+
     /* SEG 0 */
     SYS->GPD_MFPH = (SYS->GPD_MFPH & ~SYS_GPD_MFPH_PD14MFP_Msk) | LCD_SEG0_PD14;
     /* SEG 1~4 */
     SYS->GPH_MFPH = (SYS->GPH_MFPH & ~(SYS_GPH_MFPH_PH11MFP_Msk | SYS_GPH_MFPH_PH10MFP_Msk | SYS_GPH_MFPH_PH9MFP_Msk | SYS_GPH_MFPH_PH8MFP_Msk)) |
                     (LCD_SEG1_PH11 | LCD_SEG2_PH10 | LCD_SEG3_PH9 | LCD_SEG4_PH8);
     /* SEG 5~12 */
-    SYS->GPE_MFPL = (SYS->GPE_MFPL & 
-                    ~(SYS_GPE_MFPL_PE0MFP_Msk | SYS_GPE_MFPL_PE1MFP_Msk | SYS_GPE_MFPL_PE2MFP_Msk | SYS_GPE_MFPL_PE3MFP_Msk |
-                      SYS_GPE_MFPL_PE4MFP_Msk | SYS_GPE_MFPL_PE5MFP_Msk | SYS_GPE_MFPL_PE6MFP_Msk | SYS_GPE_MFPL_PE7MFP_Msk)) |
+    SYS->GPE_MFPL = (SYS->GPE_MFPL &
+                     ~(SYS_GPE_MFPL_PE0MFP_Msk | SYS_GPE_MFPL_PE1MFP_Msk | SYS_GPE_MFPL_PE2MFP_Msk | SYS_GPE_MFPL_PE3MFP_Msk |
+                       SYS_GPE_MFPL_PE4MFP_Msk | SYS_GPE_MFPL_PE5MFP_Msk | SYS_GPE_MFPL_PE6MFP_Msk | SYS_GPE_MFPL_PE7MFP_Msk)) |
                     (LCD_SEG5_PE0 | LCD_SEG6_PE1 | LCD_SEG7_PE2 | LCD_SEG8_PE3 |
                      LCD_SEG9_PE4 | LCD_SEG10_PE5 | LCD_SEG11_PE6 | LCD_SEG12_PE7);
     /* SEG 13~14 */
     SYS->GPD_MFPL = (SYS->GPD_MFPL & ~(SYS_GPD_MFPL_PD6MFP_Msk | SYS_GPD_MFPL_PD7MFP_Msk)) | (LCD_SEG13_PD6 | LCD_SEG14_PD7);
     /* SEG 15~21 */
-    SYS->GPG_MFPH = (SYS->GPG_MFPH & 
-                    ~(SYS_GPG_MFPH_PG15MFP_Msk | SYS_GPG_MFPH_PG14MFP_Msk | SYS_GPG_MFPH_PG13MFP_Msk | SYS_GPG_MFPH_PG12MFP_Msk |
-                      SYS_GPG_MFPH_PG11MFP_Msk | SYS_GPG_MFPH_PG10MFP_Msk | SYS_GPG_MFPH_PG9MFP_Msk)) |
+    SYS->GPG_MFPH = (SYS->GPG_MFPH &
+                     ~(SYS_GPG_MFPH_PG15MFP_Msk | SYS_GPG_MFPH_PG14MFP_Msk | SYS_GPG_MFPH_PG13MFP_Msk | SYS_GPG_MFPH_PG12MFP_Msk |
+                       SYS_GPG_MFPH_PG11MFP_Msk | SYS_GPG_MFPH_PG10MFP_Msk | SYS_GPG_MFPH_PG9MFP_Msk)) |
                     (LCD_SEG15_PG15 | LCD_SEG16_PG14 | LCD_SEG17_PG13 | LCD_SEG18_PG12 |
                      LCD_SEG19_PG11 | LCD_SEG20_PG10 | LCD_SEG21_PG9);
     /* SEG 22~23 */
     SYS->GPE_MFPH = (SYS->GPE_MFPH & ~(SYS_GPE_MFPH_PE15MFP_Msk | SYS_GPE_MFPH_PE14MFP_Msk)) | (LCD_SEG22_PE15 | LCD_SEG23_PE14);
     /* SEG 24~29 */
-    SYS->GPA_MFPL = (SYS->GPA_MFPL & 
-                    ~(SYS_GPA_MFPL_PA0MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA3MFP_Msk |
-                      SYS_GPA_MFPL_PA4MFP_Msk | SYS_GPA_MFPL_PA5MFP_Msk)) |
-                    (LCD_SEG24_PA0 | LCD_SEG25_PA1 | LCD_SEG26_PA2 | LCD_SEG27_PA3 | LCD_SEG28_PA4 |LCD_SEG29_PA5);
+    SYS->GPA_MFPL = (SYS->GPA_MFPL &
+                     ~(SYS_GPA_MFPL_PA0MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA3MFP_Msk |
+                       SYS_GPA_MFPL_PA4MFP_Msk | SYS_GPA_MFPL_PA5MFP_Msk)) |
+                    (LCD_SEG24_PA0 | LCD_SEG25_PA1 | LCD_SEG26_PA2 | LCD_SEG27_PA3 | LCD_SEG28_PA4 | LCD_SEG29_PA5);
     /* SEG 30~32 */
-    SYS->GPE_MFPH = (SYS->GPE_MFPH & ~(SYS_GPE_MFPH_PE10MFP_Msk | SYS_GPE_MFPH_PE9MFP_Msk | SYS_GPE_MFPH_PE8MFP_Msk)) | 
+    SYS->GPE_MFPH = (SYS->GPE_MFPH & ~(SYS_GPE_MFPH_PE10MFP_Msk | SYS_GPE_MFPH_PE9MFP_Msk | SYS_GPE_MFPH_PE8MFP_Msk)) |
                     (LCD_SEG30_PE10 | LCD_SEG31_PE9 | LCD_SEG32_PE8);
     /* SEG 33~36 */
     SYS->GPH_MFPL = (SYS->GPH_MFPL & ~(SYS_GPH_MFPL_PH7MFP_Msk | SYS_GPH_MFPL_PH6MFP_Msk | SYS_GPH_MFPL_PH5MFP_Msk | SYS_GPH_MFPL_PH4MFP_Msk)) |
@@ -396,7 +401,9 @@ void nutool_pincfg_init(void)
     nutool_pincfg_init_spi0();
     nutool_pincfg_init_spi1();
     nutool_pincfg_init_uart0();
+#if !defined(BOARD_USING_LCD_ILI9341)
     nutool_pincfg_init_uart1();
+#endif
     nutool_pincfg_init_uart4();
     nutool_pincfg_init_usb();
 

@@ -12,7 +12,11 @@
 
 #ifdef SAL_USING_POSIX
 #include <sys/select.h> // only dfs_net
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #else
 #define read        lwip_read
 #define write       lwip_write

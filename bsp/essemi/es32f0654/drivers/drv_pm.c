@@ -3,19 +3,29 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * Change Logs:
  * Date           Author        Notes
  * 2019-04-08     wangyq        the first version
  * 2019-11-01     wangyq        adapt to the new power management interface
+ * 2020-12-15     liuhy        the first version
  */
 
-#include <rthw.h>
-#include <board.h>
-#include <rtdevice.h>
-#include <ald_cmu.h>
-#include <ald_pmu.h>
+#include "drv_pm.h"
 
 #ifdef RT_USING_PM
+
 
 static void uart_console_reconfig(void)
 {
@@ -24,26 +34,14 @@ static void uart_console_reconfig(void)
     rt_device_control(rt_console_get_device(), RT_DEVICE_CTRL_CONFIG, &config);
 }
 
-static void delay(void)
-{
-    long i;
-    rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    i = 0;
-    do{
-        i++;
-    }
-    while (i < 10000); 
-    
-    rt_hw_interrupt_enable(level);
-}
-
 /**
- * This function will put ES32F033x into sleep mode.
+ * This function will put ES32F065x into sleep mode.
  *
  * @param pm pointer to power manage structure
  */
+
+
+/* 注意：进入睡眠前，如果有中断挂起（SYSTICK、PENDSV、UART、EXTI等），睡眠将被瞬间唤醒。*/
 static void sleep(struct rt_pm *pm, uint8_t mode)
 {
     switch (mode)
@@ -52,31 +50,26 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         break;
 
     case PM_SLEEP_MODE_IDLE:
-        //__WFI();
         break;
 
     case PM_SLEEP_MODE_LIGHT:
         /* Enter SLEEP Mode, Main regulator is ON */
         ald_pmu_stop1_enter();
-        delay();
         break;
 
     case PM_SLEEP_MODE_DEEP:
         /* Enter STOP 2 mode  */
         ald_pmu_stop2_enter();
-        delay();
         break;
 
     case PM_SLEEP_MODE_STANDBY:
         /* Enter STANDBY mode */
         ald_pmu_stop2_enter();
-        delay();
         break;
 
     case PM_SLEEP_MODE_SHUTDOWN:
         /* Enter SHUTDOWNN mode */
         ald_pmu_stop2_enter();
-        delay();
         break;
 
     default:

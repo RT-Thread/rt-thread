@@ -472,7 +472,7 @@ __STATIC_INLINE void LL_COMP_SetInputPlus(COMP_TypeDef *COMPx, uint32_t InputPlu
   /*        - enable IO switch control mode (RI_ASCR1_SCM)                    */
   /*          If ADC needs to be used afterwards, disable IO switch control   */
   /*          mode using function @ref LL_RI_DisableSwitchControlMode().      */
-  register uint32_t *preg = ((uint32_t *)((uint32_t) ((uint32_t)(&(RI->ASCR1)) + ((__COMP_IS_INSTANCE_EVEN(COMPx)) << 2U))));
+  uint32_t *preg = ((uint32_t *)((uint32_t) ((uint32_t)(&(RI->ASCR1)) + ((__COMP_IS_INSTANCE_EVEN(COMPx)) << 2U))));
   
   MODIFY_REG(*preg,
              (RI_ASCR1_CH * __COMP_IS_INSTANCE_ODD(COMPx)) | (RI_ASCR2_GR6 * __COMP_IS_INSTANCE_EVEN(COMPx)),
@@ -535,7 +535,7 @@ __STATIC_INLINE void LL_COMP_SetInputPlus(COMP_TypeDef *COMPx, uint32_t InputPlu
 __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
 {
   /* Get switch state in routing interface (RI) register ASCR1 or ASCR2 */
-  register uint32_t *preg = ((uint32_t *)((uint32_t) ((uint32_t)(&(RI->ASCR1)) + ((__COMP_IS_INSTANCE_EVEN(COMPx)) << 2U))));
+  uint32_t *preg = ((uint32_t *)((uint32_t) ((uint32_t)(&(RI->ASCR1)) + ((__COMP_IS_INSTANCE_EVEN(COMPx)) << 2U))));
   
   return (uint32_t)(READ_BIT(*preg,
                              (RI_ASCR1_CH * __COMP_IS_INSTANCE_ODD(COMPx)) | (RI_ASCR2_GR6 * __COMP_IS_INSTANCE_EVEN(COMPx))));

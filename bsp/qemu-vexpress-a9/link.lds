@@ -16,7 +16,7 @@ SECTIONS
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
         __rt_utest_tc_tab_end = .;
-        
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -26,7 +26,12 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
+
+        /* section information for var export */
         . = ALIGN(4);
+        __ve_table_start = .;
+        KEEP(*(SORT(*.VarExpTab.*)))
+        __ve_table_end = .;
 
         /* section information for modules */
         . = ALIGN(4);
@@ -42,9 +47,12 @@ SECTIONS
     } =0
     __text_end = .;
 
-    __exidx_start = .;
-    .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
-    __exidx_end = .;
+    .ARM.exidx   :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    }
 
     __rodata_start = .;
     .rodata   : { *(.rodata) *(.rodata.*) }
@@ -54,16 +62,17 @@ SECTIONS
     .ctors :
     {
         PROVIDE(__ctors_start__ = .);
-        KEEP(*(SORT(.ctors.*)))
-        KEEP(*(.ctors))
+        /* new GCC version uses .init_array */
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
         PROVIDE(__ctors_end__ = .);
     }
 
     .dtors :
     {
         PROVIDE(__dtors_start__ = .);
-        KEEP(*(SORT(.dtors.*)))
-        KEEP(*(.dtors))
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
         PROVIDE(__dtors_end__ = .);
     }
 
@@ -76,7 +85,7 @@ SECTIONS
     }
     __data_end = .;
 
-    . = ALIGN(8);
+    . = ALIGN(4);
     __bss_start = .;
     .bss       :
     {

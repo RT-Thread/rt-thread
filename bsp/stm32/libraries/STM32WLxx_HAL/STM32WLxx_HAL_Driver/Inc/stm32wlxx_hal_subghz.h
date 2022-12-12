@@ -51,7 +51,7 @@ typedef struct
 {
   uint32_t BaudratePrescaler;   /*!< Specifies the Baud Rate prescaler value which will be
                                      used to configure SUBGHZSPI clock.
-                                     This parameter can be a value of @ref SUBGHZSPI_BAUDRATE_Prescaler  */
+                                     This parameter can be a value of @ref SUBGHZ_SPI_BAUDRATE_Prescaler  */
 } SUBGHZ_InitTypeDef;
 
 /**
@@ -207,7 +207,7 @@ typedef enum
   * @}
   */
 
-/** @defgroup SUBGHZSPI_BAUDRATE_Prescaler SUBGHZ BaudRate Prescaler
+/** @defgroup SUBGHZ_SPI_BAUDRATE_Prescaler SUBGHZ BaudRate Prescaler
   * @{
   */
 #define SUBGHZSPI_BAUDRATEPRESCALER_2       (0x00000000U)
@@ -305,7 +305,7 @@ typedef enum
 
 /** @brief  Checks if SUBGHZSPI Baudrate prescaler parameter is in allowed range.
   * @param  __PRESCALER__ specifies the SUBGHZSPI Baudrate prescaler.
-  *         This parameter can be a value of @ref SUBGHZSPI_BAUDRATE_Prescaler
+  *         This parameter can be a value of @ref SUBGHZ_SPI_BAUDRATE_Prescaler
   * @retval None
   */
 #define IS_SUBGHZSPI_BAUDRATE_PRESCALER(__PRESCALER__) (((__PRESCALER__) == SUBGHZSPI_BAUDRATEPRESCALER_2)    || \

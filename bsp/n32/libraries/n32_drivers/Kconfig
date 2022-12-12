@@ -1,0 +1,6 @@
+if BSP_USING_USBD
+    config BSP_USBD_TYPE_FS
+        bool
+        # "USB Full Speed (FS) Core"
+endif
+

@@ -12,16 +12,19 @@ board.c
 CubeMX_Config/Src/stm32l4xx_hal_msp.c
 ''')
 
+if GetDepend('BSP_USING_SPI_LCD'):
+    src += ['ports/lcd/drv_lcd.c']
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
-
+path += [cwd + '/ports/lcd']
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/gcc/startup_stm32l431xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/arm/startup_stm32l431xx.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/iar/startup_stm32l431xx.s']
 
 # STM32L412xx || STM32L422xx || STM32L431xx
@@ -33,7 +36,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 # STM32L4R7xx || STM32L4R9xx || STM32L4S5xx
 # STM32L4S7xx || STM32L4S9xx
 # You can select chips from the list above	
-CPPDEFINES = ['STM32L432xx']
+CPPDEFINES = ['STM32L431xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

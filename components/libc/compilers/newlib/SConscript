@@ -1,30 +1,29 @@
+import os
 from building import *
+from gcc import *
 Import('rtconfig')
 
-src = []
-cwd = GetCurrentDir()
 group = []
 
-CPPPATH = [cwd]
+libc_name, libc_version = GetGCCLibcNameVersion(rtconfig)
 
-if rtconfig.PLATFORM == 'gcc':
-    if GetDepend('RT_USING_LIBC'):
-        CPPDEFINES = ['RT_USING_NEWLIB']
-        # link with libc and libm:
-        # libm is a frequently used lib. Newlib is compiled with -ffunction-sections in
-        # recent GCC tool chains. The linker would just link in the functions that have
-        # been referenced. So setting this won't result in bigger text size.
-        LIBS = ['c', 'm']
+if libc_name == 'newlib':
+    print('Newlib version: ' + libc_version)
 
-        src += Glob('*.c')
-        SrcRemove(src, ['minilib.c'])
-        if GetDepend('RT_USING_MODULE') == False:
-            SrcRemove(src, ['libc_syms.c'])
-    else:
-        src += ['minilib.c']
-        CPPDEFINES = []
-        LIBS = []
+    cwd = GetCurrentDir()
+    src = Glob('*.c')
 
-    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+    CPPPATH = [cwd]
+    CPPDEFINES = ['RT_USING_NEWLIBC', 'RT_USING_LIBC', '_POSIX_C_SOURCE=1'] # identify this is Newlib, and only enable POSIX.1-1990
+    LIBS = ['c', 'm'] # link libc and libm
+    AddDepend(['RT_USING_NEWLIBC', 'RT_USING_LIBC'])
+
+    group = group + DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+
+    list = os.listdir(cwd)
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
 
 Return('group')

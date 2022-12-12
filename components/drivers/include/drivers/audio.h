@@ -16,7 +16,7 @@
 #include "audio_pipe.h"
 
 /* AUDIO command */
-#define _AUDIO_CTL(a) (0x10 + a)
+#define _AUDIO_CTL(a) (RT_DEVICE_CTRL_BASE(Sound) + a)
 
 #define AUDIO_CTL_GETCAPS                   _AUDIO_CTL(1)
 #define AUDIO_CTL_CONFIGURE                 _AUDIO_CTL(2)

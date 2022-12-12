@@ -41,7 +41,7 @@ if GetDepend(['RT_USING_SPI']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi_ex.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_qspi.c']
 
-if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+if GetDepend(['RT_USING_USB']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd.c'] 
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd_ex.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_hcd.c']
@@ -99,10 +99,10 @@ if GetDepend(['BSP_USING_LTDC']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_dma2d.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dsi.c']
 
 path = [cwd + '/STM32F7xx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Device/ST/STM32F7xx/Include',
-    cwd + '/CMSIS/Include']
+    cwd + '/CMSIS/Device/ST/STM32F7xx/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

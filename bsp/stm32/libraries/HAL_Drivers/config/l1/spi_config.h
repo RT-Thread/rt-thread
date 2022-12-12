@@ -24,6 +24,7 @@ extern "C" {
     {                                               \
         .Instance = SPI1,                           \
         .bus_name = "spi1",                         \
+        .irq_type = SPI1_IRQn,                      \
     }
 #endif /* SPI1_BUS_CONFIG */
 #endif /* BSP_USING_SPI1 */
@@ -56,6 +57,7 @@ extern "C" {
     {                                               \
         .Instance = SPI2,                           \
         .bus_name = "spi2",                         \
+        .irq_type = SPI2_IRQn,                      \
     }
 #endif /* SPI2_BUS_CONFIG */
 #endif /* BSP_USING_SPI2 */
@@ -88,6 +90,7 @@ extern "C" {
     {                                               \
         .Instance = SPI3,                           \
         .bus_name = "spi3",                         \
+        .irq_type = SPI3_IRQn,                      \
     }
 #endif /* SPI3_BUS_CONFIG */
 #endif /* BSP_USING_SPI3 */

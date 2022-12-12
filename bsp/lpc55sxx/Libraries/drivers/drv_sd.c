@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -232,7 +232,7 @@ int rt_hw_mci_init(void)
     }
 
     /* initialize mutex lock */
-    rt_mutex_init(&_mci_device->lock, "sdcard0", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_mci_device->lock, "sdcard0", RT_IPC_FLAG_PRIO);
     /* create finish event */
     _mci_device->finish_event = rt_event_create("sdcard0", RT_IPC_FLAG_FIFO);
 

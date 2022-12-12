@@ -161,10 +161,10 @@ exit_nu_qspi_bus_configure:
     return -(ret);
 }
 
-#if defined(RT_SFUD_USING_QSPI)
 static int nu_qspi_mode_config(struct nu_spi *qspi_bus, rt_uint8_t *tx, rt_uint8_t *rx, int qspi_lines)
 {
     QSPI_T *qspi_base = (QSPI_T *)qspi_bus->spi_base;
+#if defined(RT_SFUD_USING_QSPI)
     if (qspi_lines > 1)
     {
         if (tx)
@@ -199,13 +199,13 @@ static int nu_qspi_mode_config(struct nu_spi *qspi_bus, rt_uint8_t *tx, rt_uint8
         }
     }
     else
+#endif
     {
         QSPI_DISABLE_DUAL_MODE(qspi_base);
         QSPI_DISABLE_QUAD_MODE(qspi_base);
     }
     return qspi_lines;
 }
-#endif
 
 static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
@@ -298,9 +298,11 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
                         qspi_message->dummy_cycles / (8 / u8last),
                         1);
     }
-
     /* Data stage */
     nu_qspi_mode_config(qspi_bus, (rt_uint8_t *) message->send_buf, (rt_uint8_t *) message->recv_buf, qspi_message->qspi_data_lines);
+#else
+    /* Data stage */
+    nu_qspi_mode_config(qspi_bus, RT_NULL, RT_NULL, 1);
 #endif //#if defined(RT_SFUD_USING_QSPI)
 
     if (message->length != 0)
@@ -350,8 +352,7 @@ static int rt_hw_qspi_init(void)
 #if defined(BSP_USING_SPI_PDMA)
         nu_qspi_arr[i].pdma_chanid_tx = -1;
         nu_qspi_arr[i].pdma_chanid_rx = -1;
-#endif
-#if defined(BSP_USING_QSPI_PDMA)
+
         if ((nu_qspi_arr[i].pdma_perp_tx != NU_PDMA_UNUSED) && (nu_qspi_arr[i].pdma_perp_rx != NU_PDMA_UNUSED))
         {
             if (nu_hw_spi_pdma_allocate(&nu_qspi_arr[i]) != RT_EOK)

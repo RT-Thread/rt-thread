@@ -500,7 +500,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
             uint8_t send_buffer[100]; /* 100byte > 74 clock */
 
             /* initial message */
-            memset(send_buffer, DUMMY, sizeof(send_buffer));
+            rt_memset(send_buffer, DUMMY, sizeof(send_buffer));
             message.send_buf = send_buffer;
             message.recv_buf = RT_NULL;
             message.length = sizeof(send_buffer);
@@ -697,7 +697,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     uint8_t send_buffer[100];
 
                     /* initial message */
-                    memset(send_buffer, DUMMY, sizeof(send_buffer));
+                    rt_memset(send_buffer, DUMMY, sizeof(send_buffer));
                     message.send_buf = send_buffer;
                     message.recv_buf = RT_NULL;
                     message.length = sizeof(send_buffer);

@@ -3,6 +3,18 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * Change Logs:
  * Date           Author        Notes
  * 2020-12-15     liuhy        the first version
@@ -12,24 +24,25 @@
 
 #ifdef RT_USING_PM
 
-//uint32_t save_mem[1024] __attribute__ ((aligned(4)));
 
 void save_register(void *p_head,uint32_t size,void *p_save)
 {
      memcpy(p_save,p_head,size);
 }
- 
+
 void load_register(void *p_head,uint32_t size,void *p_load)
 {
-    uint32_t tmp;
      memcpy(p_head,p_load,size);
-    
-    if((p_head == UART0) || (p_head == UART1) || (p_head == UART2) || 
+
+#ifdef ES_PMU_SAVE_LOAD_UART
+
+    if((p_head == UART0) || (p_head == UART1) || (p_head == UART2) ||
          (p_head == UART3) || (p_head == UART4) || (p_head == UART5) )
     {
-        tmp = ((UART_TypeDef*)p_load)->IVS;
-        ((UART_TypeDef*)p_head)->IER = tmp;
+        ((UART_TypeDef*)p_head)->IER = ((UART_TypeDef*)p_load)->IVS;
     }
+#endif
+
 }
 
 static void uart_console_reconfig(void)
@@ -39,39 +52,17 @@ static void uart_console_reconfig(void)
     rt_device_control(rt_console_get_device(), RT_DEVICE_CTRL_CONFIG, &config);
 }
 
-static void delay(void)
-{
-    long i;
-    rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    i = 0;
-    do{
-        i++;
-    }
-    while (i < 4000000); 
-    
-    rt_hw_interrupt_enable(level);
-}
-
 /**
  * This function will put ES32F369x into sleep mode.
  *
  * @param pm pointer to power manage structure
  */
 
-struct pm_callback_t
-{
-     volatile int in_fun_times;   /*进入函数的次数*/
-     volatile char flag;          /*标志*/
-     volatile int mode;           /*需要打印的模式*/
-};
 
-extern volatile struct pm_callback_t g_pm_data;
-
+/* 注意：进入睡眠前，如果有中断挂起（SYSTICK、PENDSV、UART、EXTI等），睡眠将被瞬间唤醒。*/
 static void sleep(struct rt_pm *pm, uint8_t mode)
 {
-   
+
     switch (mode)
     {
     case PM_SLEEP_MODE_NONE:
@@ -83,33 +74,28 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
     case PM_SLEEP_MODE_LIGHT:
         /* Enter SLEEP Mode, Main regulator is ON */
         ald_pmu_stop1_enter();
-        delay();
-      
         break;
 
-    case PM_SLEEP_MODE_DEEP:           
+    case PM_SLEEP_MODE_DEEP:
         /* Enter STOP 2 mode  */
         ald_pmu_stop2_enter();
-        delay();
         break;
 
     case PM_SLEEP_MODE_STANDBY:
         /* Enter STANDBY mode */
         ald_pmu_stop2_enter();
-        delay();
         break;
 
     case PM_SLEEP_MODE_SHUTDOWN:
         /* Enter SHUTDOWNN mode */
         ald_pmu_stop2_enter();
-        delay();
         break;
 
     default:
         RT_ASSERT(0);
         break;
     }
-    
+
 }
 
 static uint8_t run_speed[PM_RUN_MODE_MAX][2] =

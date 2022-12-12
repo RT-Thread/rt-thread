@@ -25,7 +25,7 @@
  extern "C" {
 #endif
    
-#if !defined (STM32L010xB) && !defined (STM32L010x8) && !defined (STM32L010x6) && !defined (STM32L010x4) && !defined (STM32L011xx) && !defined (STM32L021xx) && !defined (STM32L031xx) && !defined (STM32L041xx) && !defined (STM32L051xx) && !defined (STM32L061xx) && !defined (STM32L071xx) && !defined (STM32L081xx)
+#if !defined (STM32L010xB) && !defined (STM32L010x8) && !defined (STM32L010x6) && !defined (STM32L010x4) && !defined (STM32L011xx) && !defined (STM32L021xx) && !defined (STM32L031xx) && !defined (STM32L041xx) && !defined (STM32L051xx) && !defined (STM32L071xx) && !defined (STM32L081xx)
    
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal_def.h"
@@ -63,7 +63,7 @@ typedef enum
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
 typedef struct __DAC_HandleTypeDef
 #else
-typedef struct DAC_HandleTypeDef
+typedef struct
 #endif
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
@@ -74,7 +74,7 @@ typedef struct DAC_HandleTypeDef
 
   DMA_HandleTypeDef           *DMA_Handle1;  /*!< Pointer DMA handler for channel 1 */
 
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#if defined (DAC_CHANNEL2_SUPPORT)
   DMA_HandleTypeDef           *DMA_Handle2;  /*!< Pointer DMA handler for channel 2 */ 
 #endif
 
@@ -149,7 +149,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   */
 #define  HAL_DAC_ERROR_NONE              0x00U    /*!< No error                          */
 #define  HAL_DAC_ERROR_DMAUNDERRUNCH1    0x01U    /*!< DAC channel1 DMA underrun error   */
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#if defined (DAC_CHANNEL2_SUPPORT)
 #define  HAL_DAC_ERROR_DMAUNDERRUNCH2    0x02U    /*!< DAC channel2 DMA underrun error   */
 #endif
 #define  HAL_DAC_ERROR_DMA               0x04U    /*!< DMA error                         */
@@ -164,20 +164,20 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_trigger_selection DAC trigger selection
   * @{
   */
-#define DAC_TRIGGER_NONE       ((uint32_t)0x00000000U) /*!< Conversion is automatic once the DAC1_DHRxxxx register has been loaded, and not by external trigger */
-#define DAC_TRIGGER_T6_TRGO    ((uint32_t)                                                    DAC_CR_TEN1)  /*!< TIM6 TRGO selected as external conversion trigger for DAC channel */
+#define DAC_TRIGGER_NONE       (0x00000000U) /*!< Conversion is automatic once the DAC1_DHRxxxx register has been loaded, and not by external trigger */
+#define DAC_TRIGGER_T6_TRGO    (                                                              DAC_CR_TEN1)  /*!< TIM6 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T21_TRGO   ((uint32_t)(                 DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM21 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T2_TRGO    ((uint32_t)(DAC_CR_TSEL1_2 |                                   DAC_CR_TEN1)) /*!< TIM2 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_EXT_IT9    ((uint32_t)(DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 |                  DAC_CR_TEN1)) /*!< EXTI Line9 event selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_SOFTWARE   ((uint32_t)(DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< Conversion started by software trigger for DAC channel */
 
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#if defined (DAC_CHANNEL2_SUPPORT)
 #define DAC_TRIGGER_T3_TRGO    ((uint32_t)(                                  DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM3  TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T3_CH3     ((uint32_t)(                 DAC_CR_TSEL1_1 |                  DAC_CR_TEN1)) /*!< TIM3  CH3  selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T7_TRGO    ((uint32_t)(DAC_CR_TSEL1_2 |                  DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM7  TRGO selected as external conversion trigger for DAC channel */
 #endif
 
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#if defined (DAC_CHANNEL2_SUPPORT)
 #define IS_DAC_TRIGGER(TRIGGER) (((TRIGGER) == DAC_TRIGGER_NONE)       || \
                                  ((TRIGGER) == DAC_TRIGGER_T6_TRGO)    || \
                                  ((TRIGGER) == DAC_TRIGGER_T3_TRGO)    || \
@@ -187,14 +187,14 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
                                  ((TRIGGER) == DAC_TRIGGER_T2_TRGO)    || \
                                  ((TRIGGER) == DAC_TRIGGER_EXT_IT9)    || \
                                  ((TRIGGER) == DAC_TRIGGER_SOFTWARE))
-#else /* STM32L072xx || STM32L073xx || STM32L082xx || STM32L083xx */
+#else
 #define IS_DAC_TRIGGER(TRIGGER) (((TRIGGER) == DAC_TRIGGER_NONE)       || \
                                  ((TRIGGER) == DAC_TRIGGER_T6_TRGO)    || \
                                  ((TRIGGER) == DAC_TRIGGER_T21_TRGO)   || \
                                  ((TRIGGER) == DAC_TRIGGER_T2_TRGO)    || \
                                  ((TRIGGER) == DAC_TRIGGER_EXT_IT9)    || \
                                  ((TRIGGER) == DAC_TRIGGER_SOFTWARE))
-#endif /* STM32L072xx || STM32L073xx || STM32L082xx || STM32L083xx */
+#endif /* DAC_CHANNEL2_SUPPORT */
 /**
   * @}
   */
@@ -202,8 +202,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_output_buffer DAC output buffer
   * @{
   */
-#define DAC_OUTPUTBUFFER_ENABLE            ((uint32_t)0x00000000U)
-#define DAC_OUTPUTBUFFER_DISABLE           ((uint32_t)DAC_CR_BOFF1)
+#define DAC_OUTPUTBUFFER_ENABLE            (0x00000000U)
+#define DAC_OUTPUTBUFFER_DISABLE           (DAC_CR_BOFF1)
 
 #define IS_DAC_OUTPUT_BUFFER_STATE(STATE) (((STATE) == DAC_OUTPUTBUFFER_ENABLE) || \
                                            ((STATE) == DAC_OUTPUTBUFFER_DISABLE))
@@ -214,12 +214,12 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_Channel_selection DAC Channel selection
   * @{
   */
-#define DAC_CHANNEL_1                      ((uint32_t)0x00000000U)
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
-#define DAC_CHANNEL_2                      ((uint32_t)0x00000010U)
+#define DAC_CHANNEL_1                      (0x00000000U)
+#if defined (DAC_CHANNEL2_SUPPORT)
+#define DAC_CHANNEL_2                      (0x00000010U)
 #endif
 
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#if defined (DAC_CHANNEL2_SUPPORT)
 #define IS_DAC_CHANNEL(CHANNEL) (((CHANNEL) == DAC_CHANNEL_1) || \
                                  ((CHANNEL) == DAC_CHANNEL_2))
 #else
@@ -232,9 +232,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_data_alignement DAC data alignement
   * @{
   */
-#define DAC_ALIGN_12B_R                    ((uint32_t)0x00000000U)
-#define DAC_ALIGN_12B_L                    ((uint32_t)0x00000004U)
-#define DAC_ALIGN_8B_R                     ((uint32_t)0x00000008U)
+#define DAC_ALIGN_12B_R                    (0x00000000U)
+#define DAC_ALIGN_12B_L                    (0x00000004U)
+#define DAC_ALIGN_8B_R                     (0x00000008U)
 
 #define IS_DAC_ALIGN(ALIGN) (((ALIGN) == DAC_ALIGN_12B_R) || \
                              ((ALIGN) == DAC_ALIGN_12B_L) || \
@@ -254,9 +254,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_flags_definition DAC flags definition
   * @{
   */ 
-#define DAC_FLAG_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
-#define DAC_FLAG_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)   
+#define DAC_FLAG_DMAUDR1                   (DAC_SR_DMAUDR1)
+#if defined (DAC_CHANNEL2_SUPPORT)
+#define DAC_FLAG_DMAUDR2                   (DAC_SR_DMAUDR2)   
 #endif
 
 /**
@@ -266,9 +266,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_IT_definition DAC IT definition
   * @{
   */ 
-#define DAC_IT_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
-#if defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L082xx) || defined (STM32L083xx)
-#define DAC_IT_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)   
+#define DAC_IT_DMAUDR1                   (DAC_SR_DMAUDR1)
+#if defined (DAC_CHANNEL2_SUPPORT)
+#define DAC_IT_DMAUDR2                   (DAC_SR_DMAUDR2)   
 #endif
 
 /**
@@ -369,19 +369,19 @@ CLEAR_BIT((__HANDLE__)->Instance->CR, (__INTERRUPT__))
   * @param  __ALIGNMENT__ specifies the DAC alignement
   * @retval None
   */
-#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) (((uint32_t)0x00000008U) + (__ALIGNMENT__))
+#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) ((0x00000008U) + (__ALIGNMENT__))
 
 /** @brief  Set DHR12R2 alignment
   * @param  __ALIGNMENT__ specifies the DAC alignement
   * @retval None
   */
-#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) (((uint32_t)0x00000014U) + (__ALIGNMENT__))
+#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) ((0x00000014U) + (__ALIGNMENT__))
 
 /** @brief  Set DHR12RD alignment
   * @param  __ALIGNMENT__ specifies the DAC alignement
   * @retval None
   */
-#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) (((uint32_t)0x00000020U) + (__ALIGNMENT__))
+#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) ((0x00000020U) + (__ALIGNMENT__))
 
 /** @brief Enable the DAC interrupt
   * @param  __HANDLE__ specifies the DAC handle
@@ -475,7 +475,7 @@ uint32_t HAL_DAC_GetError(DAC_HandleTypeDef *hdac);
   * @}
   */
 
-#endif /* !STM32L010xB && !STM32L010x8 && !STM32L010x6 && !STM32L010x4 && !STM32L011xx && !STM32L021xx && !STM32L031xx && !STM32L041xx && !STM32L061xx && !STM32L071xx && !STM32L081xx*/
+#endif /* !STM32L010xB && !STM32L010x8 && !STM32L010x6 && !STM32L010x4 && !STM32L011xx && !STM32L021xx && !STM32L031xx && !STM32L041xx && !STM32L071xx && !STM32L081xx*/
   
 #ifdef __cplusplus
 }

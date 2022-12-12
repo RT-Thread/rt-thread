@@ -1,5 +1,5 @@
 ;/*
-; * Copyright (c) 2006-2019, RT-Thread Development Team
+; * Copyright (c) 2006-2022, RT-Thread Development Team
 ; *
 ; * SPDX-License-Identifier: Apache-2.0
 ; *
@@ -47,8 +47,8 @@ rt_hw_interrupt_disable    PROC
 ; */
 rt_hw_interrupt_enable    PROC
     EXPORT  rt_hw_interrupt_enable
-    MSR		PRIMASK, r0
-    BX		LR
+    MSR     PRIMASK, r0
+    BX      LR
     ENDP
 
 ;/*
@@ -189,6 +189,10 @@ rt_hw_context_switch_to    PROC
 
     ; enable interrupts at processor level
     CPSIE   I
+
+    ; ensure PendSV exception taken place before subsequent operation
+    DSB
+    ISB
 
     ; never reach here!
     ENDP

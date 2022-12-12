@@ -31,7 +31,7 @@
 
 #if defined(RNG)
 
-/** @addtogroup RNGEx
+/** @addtogroup RNG_Ex
   * @brief RNG Extended HAL module driver.
   * @{
   */
@@ -40,7 +40,7 @@
 #if defined(RNG_CR_CONDRST)
 /* Private types -------------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
-/** @defgroup RNGEx_Private_Defines RNGEx Private Defines
+/** @defgroup RNG_Ex_Private_Defines RNGEx Private Defines
   * @{
   */
 /*  Health test control register information to use in CCM algorithm */
@@ -51,7 +51,7 @@
   */
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
-/** @defgroup RNGEx_Private_Constants RNGEx Private Constants
+/** @defgroup RNG_Ex_Private_Constants RNGEx Private Constants
   * @{
   */
 #define RNG_TIMEOUT_VALUE     2U
@@ -63,11 +63,11 @@
 /* Private functions  --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 
-/** @addtogroup RNGEx_Exported_Functions
+/** @addtogroup RNG_Ex_Exported_Functions
   * @{
   */
 
-/** @addtogroup RNGEx_Exported_Functions_Group1
+/** @addtogroup RNG_Ex_Exported_Functions_Group1
   *  @brief   Configuration functions
   *
 @verbatim
@@ -152,9 +152,13 @@ HAL_StatusTypeDef HAL_RNGEx_SetConfig(RNG_HandleTypeDef *hrng, RNG_ConfigTypeDef
     {
       if ((HAL_GetTick() - tickstart) > RNG_TIMEOUT_VALUE)
       {
-        hrng->State = HAL_RNG_STATE_READY;
-        hrng->ErrorCode = HAL_RNG_ERROR_TIMEOUT;
-        return HAL_ERROR;
+        /* New check to avoid false timeout detection in case of prememption */
+        if (HAL_IS_BIT_SET(hrng->Instance->CR, RNG_CR_CONDRST))
+        {
+          hrng->State = HAL_RNG_STATE_READY;
+          hrng->ErrorCode = HAL_RNG_ERROR_TIMEOUT;
+          return HAL_ERROR;
+        }
       }
     }
 
@@ -276,7 +280,7 @@ HAL_StatusTypeDef HAL_RNGEx_LockConfig(RNG_HandleTypeDef *hrng)
   * @}
   */
 
-/** @addtogroup RNGEx_Exported_Functions_Group2
+/** @addtogroup RNG_Ex_Exported_Functions_Group2
   *  @brief   Recover from seed error function
   *
 @verbatim

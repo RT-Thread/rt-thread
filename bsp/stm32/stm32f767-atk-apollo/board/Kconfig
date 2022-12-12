@@ -110,21 +110,6 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_SPI
         if BSP_USING_SPI
-            config BSP_USING_SPI1
-                bool "Enable SPI1 BUS"
-                default n
-
-            config BSP_SPI1_TX_USING_DMA
-                bool "Enable SPI1 TX DMA"
-                depends on BSP_USING_SPI1
-                default n
-                
-            config BSP_SPI1_RX_USING_DMA
-                bool "Enable SPI1 RX DMA"
-                depends on BSP_USING_SPI1
-                select BSP_SPI1_TX_USING_DMA
-                default n
-
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
                 default n  
@@ -163,12 +148,12 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
         menuconfig BSP_USING_PWM3
-            bool "Enable timer3 output pwm"
+            bool "Enable timer3 output PWM"
             default n
             if BSP_USING_PWM3
                 config BSP_USING_PWM3_CH3

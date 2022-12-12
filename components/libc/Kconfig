@@ -1,62 +1,11 @@
-menu "POSIX layer and C standard library"
+menu "C/C++ and POSIX layer"
 
-config RT_USING_LIBC
-    bool "Enable libc APIs from toolchain"
-    default y
-
-config RT_USING_PTHREADS
-    bool "Enable pthreads APIs"
-    default n
-
-if RT_USING_PTHREADS
-    config PTHREAD_NUM_MAX
-    int "Maximum number of pthreads"
+config RT_LIBC_DEFAULT_TIMEZONE
+    int "Set the default time zone (UTC+)"
+    range -12 12
     default 8
-endif
 
-if RT_USING_LIBC && RT_USING_DFS
-    config RT_USING_POSIX
-        bool "Enable POSIX layer for poll/select, stdin etc"
-        select RT_USING_DFS_DEVFS
-        default y
-
-    if RT_USING_POSIX
-    config RT_USING_POSIX_MMAP
-        bool "Enable mmap() API"
-        default n
-
-    config RT_USING_POSIX_TERMIOS
-        bool "Enable termios APIs"
-        default n
-
-    config RT_USING_POSIX_GETLINE
-        bool "Enable getline()/getdelim() APIs"
-        default n
-
-    config RT_USING_POSIX_AIO
-        bool "Enable AIO"
-        default n
-    endif
-
-endif
-
-if RT_USING_LIBC
-    config RT_USING_MODULE
-        bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
-        default n
-
-    if RT_USING_MODULE
-    config RT_USING_CUSTOM_DLMODULE
-        bool "Enable load dynamic module by custom"
-        default n
-    endif
-
-endif
-
-if RT_USING_LIBC != y
-    config RT_LIBC_USING_TIME
-    bool "Enable TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
-    default y
-endif
+source "$RTT_DIR/components/libc/posix/Kconfig"
+source "$RTT_DIR/components/libc/cplusplus/Kconfig"
 
 endmenu

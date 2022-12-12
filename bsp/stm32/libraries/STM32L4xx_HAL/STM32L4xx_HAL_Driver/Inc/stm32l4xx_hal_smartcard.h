@@ -113,7 +113,7 @@ typedef struct
 } SMARTCARD_InitTypeDef;
 
 /**
-  * @brief  SMARTCARD advanced features initalization structure definition
+  * @brief  SMARTCARD advanced features initialization structure definition
   */
 typedef struct
 {
@@ -161,7 +161,7 @@ typedef struct
   *             11 : Error
   *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
-  *             1  : Init done (Peripheral not initialized. HAL SMARTCARD Init function already called)
+  *             1  : Init done (Peripheral initialized. HAL SMARTCARD Init function already called)
   *          b4-b3  (not used)
   *             xx : Should be set to 00
   *          b2     Intrinsic process state
@@ -178,7 +178,7 @@ typedef struct
   *             xx : Should be set to 00
   *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
-  *             1  : Init done (Peripheral not initialized)
+  *             1  : Init done (Peripheral initialized)
   *          b4-b2  (not used)
   *            xxx : Should be set to 000
   *          b1     Rx state
@@ -449,7 +449,7 @@ typedef enum
   */
 
 #if defined(USART_PRESC_PRESCALER)
-/** @defgroup SMARTCARD_ClockPrescaler  Clock Prescaler
+/** @defgroup SMARTCARD_ClockPrescaler  SMARTCARD Clock Prescaler
   * @{
   */
 #define SMARTCARD_PRESCALER_DIV1    0x00000000U  /*!< fclk_pres = fclk     */

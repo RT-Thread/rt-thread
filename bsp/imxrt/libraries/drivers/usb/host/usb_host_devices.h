@@ -1,31 +1,9 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016 NXP
+ * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef _USB_HOST_DEV_MNG_H_
@@ -79,11 +57,11 @@ typedef struct _usb_host_device_instance
     usb_descriptor_device_t *deviceDescriptor; /*!< Standard device descriptor */
     usb_host_pipe_handle controlPipe;          /*!< Device's control pipe */
     uint8_t *configurationDesc;                /*!< Configuration descriptor pointer */
+    uint8_t *enumBuffer;                       /*!< Buffer for enumeration */
     uint16_t configurationLen;                 /*!< Configuration descriptor length */
-    uint16_t configurationValue;               /*!< Configuration index */
     uint8_t interfaceStatus[USB_HOST_CONFIG_CONFIGURATION_MAX_INTERFACE]; /*!< Interfaces' status, please reference to
                                                                              #usb_host_interface_state_t */
-    uint8_t *enumBuffer;                                                  /*!< Buffer for enumeration */
+    uint8_t configurationValue;                                           /*!< Configuration index */
     uint8_t state;                                                        /*!< Device state for enumeration */
     uint8_t enumRetries;       /*!< Re-enumeration when error in control transfer */
     uint8_t stallRetries;      /*!< Re-transfer when stall */
@@ -104,11 +82,10 @@ typedef struct _usb_host_device_instance
 
 typedef struct _usb_host_enum_process_entry
 {
-    uint8_t successState; /*!< When the last step is successful, the next state value */
-    uint8_t retryState;   /*!< When the last step need retry, the next state value */
-    usb_status_t (*process)(usb_host_device_instance_t *deviceInstance); /*!< When the last step transfer is done, the
-                                                                            function is used to process the transfer
-                                                                            data */
+    usb_host_device_enumeration_status_t successState; /*!< When the last step is successful, the next state value */
+    usb_host_device_enumeration_status_t retryState;   /*!< When the last step need retry, the next state value */
+    /*! When the last step transfer is done, the function is used to process the transfer data */
+    usb_status_t (*process)(usb_host_device_instance_t *deviceInstance, uint32_t dataLength);
 } usb_host_enum_process_entry_t;
 
 /*******************************************************************************

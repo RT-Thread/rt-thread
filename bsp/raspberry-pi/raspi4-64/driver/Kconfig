@@ -1,8 +1,3 @@
-
-config BSP_SUPPORT_FPU
-    bool "Using Float"
-    default n
-
 menu "Hardware Drivers Config"
     menu "BCM Peripheral Drivers"
         menuconfig BSP_USING_UART
@@ -12,22 +7,33 @@ menu "Hardware Drivers Config"
 
             if BSP_USING_UART
                 config RT_USING_UART0
-                bool "Enabel UART 0"
+                bool "Enable UART 0"
                 default y
-            endif
-            
-        menuconfig BSP_USING_GIC
-            bool "Enable GIC"
-            select RT_USING_GIC
-            default y
-        if BSP_USING_GIC
-            config BSP_USING_GIC400
-                bool "Enable GIC400"
-                default y
-            config BSP_USING_GIC500
-                bool "Enable GIC500"
+
+                config RT_USING_UART1
+                bool "Enable UART 1"
                 default n
-        endif
+
+                config RT_USING_UART3
+                bool "Enable UART 3"
+                default n
+
+                config RT_USING_UART4
+                bool "Enable UART 4"
+                default n
+
+                config RT_USING_UART5
+                bool "Enable UART 5"
+                default n
+            endif
+
+        config BSP_USING_GIC
+            bool
+            default y
+
+            config BSP_USING_GICV2
+                bool
+                default y
 
         config BSP_USING_PIN
             bool "Using PIN"
@@ -52,6 +58,10 @@ menu "Hardware Drivers Config"
                 bool "Enable sys timer3"
                 default n
         endif
+
+        config BSP_USING_ETH
+            bool "Enable ETH"
+            default n
 
         config BSP_USING_WDT
             bool "Enable WDT"

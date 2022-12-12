@@ -206,46 +206,53 @@ TIMEx_BreakInputConfigTypeDef;
   * @{
   */
 #if defined(STM32WB55xx) || defined(STM32WB5Mxx) || defined(STM32WB35xx)
+#define IS_TIM_REMAP(__INSTANCE__, __REMAP__)                                        \
+  ((((__INSTANCE__) == TIM1)  && ((((__REMAP__) & 0xFFFE3FECU) == 0x00000000U)))     \
+   || (((__INSTANCE__) == TIM2)  && ((((__REMAP__) & 0xFFFE3FF0U) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM16) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM17) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U))))
+#elif defined(STM32WB10xx)
 #define IS_TIM_REMAP(__INSTANCE__, __REMAP__)                                             \
-          ((((__INSTANCE__) == TIM1)  && ((((__REMAP__) & 0xFFFF3FECU) == 0x00000000U)))  \
-        || (((__INSTANCE__) == TIM2)  && ((((__REMAP__) & 0xFFFF3FF0U) == 0x00000000U)))  \
-        || (((__INSTANCE__) == TIM16) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
-        || (((__INSTANCE__) == TIM17) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U))))
+  ((((__INSTANCE__) == TIM1)  && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM2)  && ((((__REMAP__) & 0xFFFFFFFDU) == 0x00000000U))))
+#elif defined(STM32WB15xx)
+#define IS_TIM_REMAP(__INSTANCE__, __REMAP__)                                             \
+  ((((__INSTANCE__) == TIM1)  && ((((__REMAP__) & 0xFFFF3FECU) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM2)  && ((((__REMAP__) & 0xFFFF3FF0U) == 0x00000000U))))
 #else
 #define IS_TIM_REMAP(__INSTANCE__, __REMAP__)                                             \
-          ((((__INSTANCE__) == TIM1)  && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
-        || (((__INSTANCE__) == TIM2)  && ((((__REMAP__) & 0xFFFFFFF0U) == 0x00000000U)))  \
-        || (((__INSTANCE__) == TIM16) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
-        || (((__INSTANCE__) == TIM17) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U))))
+  ((((__INSTANCE__) == TIM1)  && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM2)  && ((((__REMAP__) & 0xFFFFFFF0U) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM16) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U)))  \
+   || (((__INSTANCE__) == TIM17) && ((((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U))))
 #endif
 
-#define IS_TIM_BREAKINPUT(__BREAKINPUT__)               \
-          (((__BREAKINPUT__) == TIM_BREAKINPUT_BRK)  || \
-           ((__BREAKINPUT__) == TIM_BREAKINPUT_BRK2))
+#define IS_TIM_BREAKINPUT(__BREAKINPUT__)       \
+  (((__BREAKINPUT__) == TIM_BREAKINPUT_BRK)  || \
+   ((__BREAKINPUT__) == TIM_BREAKINPUT_BRK2))
 
 #if defined(COMP1)
 #if defined(COMP2)
-#define IS_TIM_BREAKINPUTSOURCE(__SOURCE__)                \
-          (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN)  || \
-           ((__SOURCE__) == TIM_BREAKINPUTSOURCE_COMP1) || \
-           ((__SOURCE__) == TIM_BREAKINPUTSOURCE_COMP2))
+#define IS_TIM_BREAKINPUTSOURCE(__SOURCE__)        \
+  (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN)  || \
+   ((__SOURCE__) == TIM_BREAKINPUTSOURCE_COMP1) || \
+   ((__SOURCE__) == TIM_BREAKINPUTSOURCE_COMP2))
 #else
-#define IS_TIM_BREAKINPUTSOURCE(__SOURCE__)                \
-          (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN)  || \
-           ((__SOURCE__) == TIM_BREAKINPUTSOURCE_COMP1))
+#define IS_TIM_BREAKINPUTSOURCE(__SOURCE__)          \
+  (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN))
 #endif
 #else
 #define IS_TIM_BREAKINPUTSOURCE(__SOURCE__)                \
-          (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN))
+  (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN))
 #endif
 
-#define IS_TIM_BREAKINPUTSOURCE_STATE(__STATE__)             \
-          (((__STATE__) == TIM_BREAKINPUTSOURCE_DISABLE)  || \
-           ((__STATE__) == TIM_BREAKINPUTSOURCE_ENABLE))
+#define IS_TIM_BREAKINPUTSOURCE_STATE(__STATE__)     \
+  (((__STATE__) == TIM_BREAKINPUTSOURCE_DISABLE)  || \
+   ((__STATE__) == TIM_BREAKINPUTSOURCE_ENABLE))
 
-#define IS_TIM_BREAKINPUTSOURCE_POLARITY(__POLARITY__)                 \
-            (((__POLARITY__) == TIM_BREAKINPUTSOURCE_POLARITY_LOW)  || \
-             ((__POLARITY__) == TIM_BREAKINPUTSOURCE_POLARITY_HIGH))
+#define IS_TIM_BREAKINPUTSOURCE_POLARITY(__POLARITY__)       \
+  (((__POLARITY__) == TIM_BREAKINPUTSOURCE_POLARITY_LOW)  || \
+   ((__POLARITY__) == TIM_BREAKINPUTSOURCE_POLARITY_HIGH))
 
 /**
   * @}

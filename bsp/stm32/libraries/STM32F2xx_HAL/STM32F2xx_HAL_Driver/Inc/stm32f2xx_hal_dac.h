@@ -64,7 +64,7 @@ typedef enum
 typedef struct __DAC_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
 
@@ -83,17 +83,18 @@ typedef struct
   void (* ConvHalfCpltCallbackCh1)        (struct __DAC_HandleTypeDef *hdac);
   void (* ErrorCallbackCh1)               (struct __DAC_HandleTypeDef *hdac);
   void (* DMAUnderrunCallbackCh1)         (struct __DAC_HandleTypeDef *hdac);
+
   void (* ConvCpltCallbackCh2)            (struct __DAC_HandleTypeDef *hdac);
   void (* ConvHalfCpltCallbackCh2)        (struct __DAC_HandleTypeDef *hdac);
   void (* ErrorCallbackCh2)               (struct __DAC_HandleTypeDef *hdac);
   void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef *hdac);
 
+
   void (* MspInitCallback)                (struct __DAC_HandleTypeDef *hdac);
-  void (* MspDeInitCallback )             (struct __DAC_HandleTypeDef *hdac);
+  void (* MspDeInitCallback)              (struct __DAC_HandleTypeDef *hdac);
 #endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 } DAC_HandleTypeDef;
-
 
 /**
   * @brief   DAC Configuration regular Channel structure definition
@@ -118,10 +119,12 @@ typedef enum
   HAL_DAC_CH1_HALF_COMPLETE_CB_ID            = 0x01U,  /*!< DAC CH1 half Complete Callback ID */
   HAL_DAC_CH1_ERROR_ID                       = 0x02U,  /*!< DAC CH1 error Callback ID         */
   HAL_DAC_CH1_UNDERRUN_CB_ID                 = 0x03U,  /*!< DAC CH1 underrun Callback ID      */
+
   HAL_DAC_CH2_COMPLETE_CB_ID                 = 0x04U,  /*!< DAC CH2 Complete Callback ID      */
   HAL_DAC_CH2_HALF_COMPLETE_CB_ID            = 0x05U,  /*!< DAC CH2 half Complete Callback ID */
   HAL_DAC_CH2_ERROR_ID                       = 0x06U,  /*!< DAC CH2 error Callback ID         */
   HAL_DAC_CH2_UNDERRUN_CB_ID                 = 0x07U,  /*!< DAC CH2 underrun Callback ID      */
+
   HAL_DAC_MSPINIT_CB_ID                      = 0x08U,  /*!< DAC MspInit Callback ID           */
   HAL_DAC_MSPDEINIT_CB_ID                    = 0x09U,  /*!< DAC MspDeInit Callback ID         */
   HAL_DAC_ALL_CB_ID                          = 0x0AU   /*!< DAC All ID                        */
@@ -162,13 +165,13 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_trigger_selection DAC trigger selection
   * @{
   */
-#define DAC_TRIGGER_NONE                0x00000000U                                                      /*!< Conversion is automatic once the DAC1_DHRxxxx register has been loaded, and not by external trigger */
+#define DAC_TRIGGER_NONE                0x00000000UL                                                     /*!< Conversion is automatic once the DAC1_DHRxxxx register has been loaded, and not by external trigger */
 #define DAC_TRIGGER_T2_TRGO             (DAC_CR_TSEL1_2                                   | DAC_CR_TEN1) /*!< TIM2 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T4_TRGO             (DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM4 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T5_TRGO             (                 DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM3 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T6_TRGO             (                                                   DAC_CR_TEN1) /*!< Conversion started by software trigger for DAC channel */
 #define DAC_TRIGGER_T7_TRGO             (                 DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< TIM7 TRGO selected as external conversion trigger for DAC channel */
-#define DAC_TRIGGER_T8_TRGO             (                                  DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel */                                                                       
+#define DAC_TRIGGER_T8_TRGO             (                                  DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_EXT_IT9             (DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< EXTI Line9 event selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_SOFTWARE            (DAC_CR_TSEL1                                     | DAC_CR_TEN1) /*!< Conversion started by software trigger for DAC channel */
 
@@ -190,7 +193,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 #define DAC_CHANNEL_1                      0x00000000U
+
 #define DAC_CHANNEL_2                      0x00000010U
+
 /**
   * @}
   */
@@ -210,7 +215,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 #define DAC_FLAG_DMAUDR1                   (DAC_SR_DMAUDR1)
+
 #define DAC_FLAG_DMAUDR2                   (DAC_SR_DMAUDR2)
+
 
 /**
   * @}
@@ -220,7 +227,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 #define DAC_IT_DMAUDR1                   (DAC_SR_DMAUDR1)
+
 #define DAC_IT_DMAUDR2                   (DAC_SR_DMAUDR2)
+
 
 /**
   * @}
@@ -270,26 +279,28 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
   */
-#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) (0x00000008U + (__ALIGNMENT__))
+#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) (0x00000008UL + (__ALIGNMENT__))
+
 
 /** @brief  Set DHR12R2 alignment.
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
   */
-#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) (0x00000014U + (__ALIGNMENT__))
+#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) (0x00000014UL + (__ALIGNMENT__))
+
 
 /** @brief  Set DHR12RD alignment.
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
   */
-#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) (0x00000020U + (__ALIGNMENT__))
+#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) (0x00000020UL + (__ALIGNMENT__))
 
 /** @brief Enable the DAC interrupt.
   * @param  __HANDLE__ specifies the DAC handle
   * @param  __INTERRUPT__ specifies the DAC interrupt.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR1 DAC channel 1 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt
   * @retval None
   */
 #define __HAL_DAC_ENABLE_IT(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR) |= (__INTERRUPT__))
@@ -298,8 +309,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param  __HANDLE__ specifies the DAC handle
   * @param  __INTERRUPT__ specifies the DAC interrupt.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR1 DAC channel 1 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt
   * @retval None
   */
 #define __HAL_DAC_DISABLE_IT(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR) &= ~(__INTERRUPT__))
@@ -308,18 +319,19 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param __HANDLE__ DAC handle
   * @param __INTERRUPT__ DAC interrupt source to check
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR1 DAC channel 1 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt
   * @retval State of interruption (SET or RESET)
   */
-#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR\
+                                                             & (__INTERRUPT__)) == (__INTERRUPT__))
 
 /** @brief  Get the selected DAC's flag status.
   * @param  __HANDLE__ specifies the DAC handle.
   * @param  __FLAG__ specifies the DAC flag to get.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_FLAG_DMAUDR1: DAC channel 1 DMA underrun flag
-  *            @arg DAC_FLAG_DMAUDR2: DAC channel 2 DMA underrun flag
+  *            @arg DAC_FLAG_DMAUDR1 DAC channel 1 DMA underrun flag
+  *            @arg DAC_FLAG_DMAUDR2 DAC channel 2 DMA underrun flag
   * @retval None
   */
 #define __HAL_DAC_GET_FLAG(__HANDLE__, __FLAG__) ((((__HANDLE__)->Instance->SR) & (__FLAG__)) == (__FLAG__))
@@ -328,8 +340,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param  __HANDLE__ specifies the DAC handle.
   * @param  __FLAG__ specifies the DAC flag to clear.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_FLAG_DMAUDR1: DAC channel 1 DMA underrun flag
-  *            @arg DAC_FLAG_DMAUDR2: DAC channel 2 DMA underrun flag
+  *            @arg DAC_FLAG_DMAUDR1 DAC channel 1 DMA underrun flag
+  *            @arg DAC_FLAG_DMAUDR2 DAC channel 2 DMA underrun flag
   * @retval None
   */
 #define __HAL_DAC_CLEAR_FLAG(__HANDLE__, __FLAG__) (((__HANDLE__)->Instance->SR) = (__FLAG__))
@@ -353,7 +365,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
                              ((ALIGN) == DAC_ALIGN_12B_L) || \
                              ((ALIGN) == DAC_ALIGN_8B_R))
 
-#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0U)
+#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0UL)
 
 /**
   * @}
@@ -390,9 +402,7 @@ HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef *hdac, uint32_t Channel);
 HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData, uint32_t Length,
                                     uint32_t Alignment);
 HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel);
-
 void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac);
-
 HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Alignment, uint32_t Data);
 
 void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac);
@@ -416,7 +426,6 @@ HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback(DAC_HandleTypeDef *hdac, HAL_DA
   */
 /* Peripheral Control functions ***********************************************/
 uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef *hdac, uint32_t Channel);
-
 HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel);
 /**
   * @}
@@ -462,7 +471,6 @@ void DAC_DMAHalfConvCpltCh1(DMA_HandleTypeDef *hdma);
 #endif
 
 
-#endif /*STM32F2xx_HAL_DAC_H */
+#endif /* STM32F2xx_HAL_DAC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

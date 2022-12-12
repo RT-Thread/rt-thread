@@ -204,6 +204,120 @@ typedef struct __DMA_HandleTypeDef
 
 #define DMA_REQUEST_ADC1                    5U  /*!< DMAMUX1 ADC1 request      */
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+
+#define DMA_REQUEST_ADC2                    6U  /*!< DMAMUX1 ADC1 request      */
+
+#define DMA_REQUEST_DAC1_CH1                7U  /*!< DMAMUX1 DAC1 CH1 request  */
+#define DMA_REQUEST_DAC1_CH2                8U  /*!< DMAMUX1 DAC1 CH2 request  */
+
+#define DMA_REQUEST_TIM6_UP                 9U  /*!< DMAMUX1 TIM6 UP request   */
+#define DMA_REQUEST_TIM7_UP                10U  /*!< DMAMUX1 TIM7 UP request   */
+
+#define DMA_REQUEST_SPI1_RX                11U  /*!< DMAMUX1 SPI1 RX request   */
+#define DMA_REQUEST_SPI1_TX                12U  /*!< DMAMUX1 SPI1 TX request   */
+#define DMA_REQUEST_SPI2_RX                13U  /*!< DMAMUX1 SPI2 RX request   */
+#define DMA_REQUEST_SPI2_TX                14U  /*!< DMAMUX1 SPI2 TX request   */
+#define DMA_REQUEST_SPI3_RX                15U  /*!< DMAMUX1 SPI3 RX request   */
+#define DMA_REQUEST_SPI3_TX                16U  /*!< DMAMUX1 SPI3 TX request   */
+
+#define DMA_REQUEST_I2C1_RX                17U  /*!< DMAMUX1 I2C1 RX request   */
+#define DMA_REQUEST_I2C1_TX                18U  /*!< DMAMUX1 I2C1 TX request   */
+#define DMA_REQUEST_I2C2_RX                19U  /*!< DMAMUX1 I2C2 RX request   */
+#define DMA_REQUEST_I2C2_TX                20U  /*!< DMAMUX1 I2C2 TX request   */
+#define DMA_REQUEST_I2C3_RX                21U  /*!< DMAMUX1 I2C3 RX request   */
+#define DMA_REQUEST_I2C3_TX                22U  /*!< DMAMUX1 I2C3 TX request   */
+#define DMA_REQUEST_I2C4_RX                23U  /*!< DMAMUX1 I2C4 RX request   */
+#define DMA_REQUEST_I2C4_TX                24U  /*!< DMAMUX1 I2C4 TX request   */
+
+#define DMA_REQUEST_USART1_RX              25U  /*!< DMAMUX1 USART1 RX request */
+#define DMA_REQUEST_USART1_TX              26U  /*!< DMAMUX1 USART1 TX request */
+#define DMA_REQUEST_USART2_RX              27U  /*!< DMAMUX1 USART2 RX request */
+#define DMA_REQUEST_USART2_TX              28U  /*!< DMAMUX1 USART2 TX request */
+#define DMA_REQUEST_USART3_RX              29U  /*!< DMAMUX1 USART3 RX request */
+#define DMA_REQUEST_USART3_TX              30U  /*!< DMAMUX1 USART3 TX request */
+
+#define DMA_REQUEST_UART4_RX               31U  /*!< DMAMUX1 UART4 RX request  */
+#define DMA_REQUEST_UART4_TX               32U  /*!< DMAMUX1 UART4 TX request  */
+#define DMA_REQUEST_UART5_RX               33U  /*!< DMAMUX1 UART5 RX request  */
+#define DMA_REQUEST_UART5_TX               34U  /*!< DMAMUX1 UART5 TX request  */
+
+#define DMA_REQUEST_LPUART1_RX             35U  /*!< DMAMUX1 LP_UART1_RX request */
+#define DMA_REQUEST_LPUART1_TX             36U  /*!< DMAMUX1 LP_UART1_RX request */
+
+#define DMA_REQUEST_SAI1_A                 37U  /*!< DMAMUX1 SAI1 A request    */
+#define DMA_REQUEST_SAI1_B                 38U  /*!< DMAMUX1 SAI1 B request    */
+#define DMA_REQUEST_SAI2_A                 39U  /*!< DMAMUX1 SAI2 A request    */
+#define DMA_REQUEST_SAI2_B                 40U  /*!< DMAMUX1 SAI2 B request    */
+
+#define DMA_REQUEST_OCTOSPI1               41U  /*!< DMAMUX1 OCTOSPI1 request  */
+#define DMA_REQUEST_OCTOSPI2               42U  /*!< DMAMUX1 OCTOSPI2 request  */
+
+#define DMA_REQUEST_TIM1_CH1               43U  /*!< DMAMUX1 TIM1 CH1 request  */
+#define DMA_REQUEST_TIM1_CH2               44U  /*!< DMAMUX1 TIM1 CH2 request  */
+#define DMA_REQUEST_TIM1_CH3               45U  /*!< DMAMUX1 TIM1 CH3 request  */
+#define DMA_REQUEST_TIM1_CH4               46U  /*!< DMAMUX1 TIM1 CH4 request  */
+#define DMA_REQUEST_TIM1_UP                47U  /*!< DMAMUX1 TIM1 UP  request  */
+#define DMA_REQUEST_TIM1_TRIG              48U  /*!< DMAMUX1 TIM1 TRIG request */
+#define DMA_REQUEST_TIM1_COM               49U  /*!< DMAMUX1 TIM1 COM request  */
+
+#define DMA_REQUEST_TIM8_CH1               50U  /*!< DMAMUX1 TIM8 CH1 request  */
+#define DMA_REQUEST_TIM8_CH2               51U  /*!< DMAMUX1 TIM8 CH2 request  */
+#define DMA_REQUEST_TIM8_CH3               52U  /*!< DMAMUX1 TIM8 CH3 request  */
+#define DMA_REQUEST_TIM8_CH4               53U  /*!< DMAMUX1 TIM8 CH4 request  */
+#define DMA_REQUEST_TIM8_UP                54U  /*!< DMAMUX1 TIM8 UP  request  */
+#define DMA_REQUEST_TIM8_TRIG              55U  /*!< DMAMUX1 TIM8 TRIG request */
+#define DMA_REQUEST_TIM8_COM               56U  /*!< DMAMUX1 TIM8 COM request  */
+
+#define DMA_REQUEST_TIM2_CH1               57U  /*!< DMAMUX1 TIM2 CH1 request  */
+#define DMA_REQUEST_TIM2_CH2               58U  /*!< DMAMUX1 TIM2 CH2 request  */
+#define DMA_REQUEST_TIM2_CH3               59U  /*!< DMAMUX1 TIM2 CH3 request  */
+#define DMA_REQUEST_TIM2_CH4               60U  /*!< DMAMUX1 TIM2 CH4 request  */
+#define DMA_REQUEST_TIM2_UP                61U  /*!< DMAMUX1 TIM2 UP  request  */
+
+#define DMA_REQUEST_TIM3_CH1               62U  /*!< DMAMUX1 TIM3 CH1 request  */
+#define DMA_REQUEST_TIM3_CH2               63U  /*!< DMAMUX1 TIM3 CH2 request  */
+#define DMA_REQUEST_TIM3_CH3               64U  /*!< DMAMUX1 TIM3 CH3 request  */
+#define DMA_REQUEST_TIM3_CH4               65U  /*!< DMAMUX1 TIM3 CH4 request  */
+#define DMA_REQUEST_TIM3_UP                66U  /*!< DMAMUX1 TIM3 UP  request  */
+#define DMA_REQUEST_TIM3_TRIG              67U  /*!< DMAMUX1 TIM3 TRIG request */
+
+#define DMA_REQUEST_TIM4_CH1               68U  /*!< DMAMUX1 TIM4 CH1 request  */
+#define DMA_REQUEST_TIM4_CH2               69U  /*!< DMAMUX1 TIM4 CH2 request  */
+#define DMA_REQUEST_TIM4_CH3               70U  /*!< DMAMUX1 TIM4 CH3 request  */
+#define DMA_REQUEST_TIM4_CH4               71U  /*!< DMAMUX1 TIM4 CH4 request  */
+#define DMA_REQUEST_TIM4_UP                72U  /*!< DMAMUX1 TIM4 UP  request  */
+
+#define DMA_REQUEST_TIM5_CH1               73U  /*!< DMAMUX1 TIM5 CH1 request  */
+#define DMA_REQUEST_TIM5_CH2               74U  /*!< DMAMUX1 TIM5 CH2 request  */
+#define DMA_REQUEST_TIM5_CH3               75U  /*!< DMAMUX1 TIM5 CH3 request  */
+#define DMA_REQUEST_TIM5_CH4               76U  /*!< DMAMUX1 TIM5 CH4 request  */
+#define DMA_REQUEST_TIM5_UP                77U  /*!< DMAMUX1 TIM5 UP  request  */
+#define DMA_REQUEST_TIM5_TRIG              78U  /*!< DMAMUX1 TIM5 TRIG request */
+
+#define DMA_REQUEST_TIM15_CH1              79U  /*!< DMAMUX1 TIM15 CH1 request */
+#define DMA_REQUEST_TIM15_UP               80U  /*!< DMAMUX1 TIM15 UP  request */
+#define DMA_REQUEST_TIM15_TRIG             81U  /*!< DMAMUX1 TIM15 TRIG request */
+#define DMA_REQUEST_TIM15_COM              82U  /*!< DMAMUX1 TIM15 COM request */
+
+#define DMA_REQUEST_TIM16_CH1              83U  /*!< DMAMUX1 TIM16 CH1 request */
+#define DMA_REQUEST_TIM16_UP               84U  /*!< DMAMUX1 TIM16 UP  request */
+#define DMA_REQUEST_TIM17_CH1              85U  /*!< DMAMUX1 TIM17 CH1 request */
+#define DMA_REQUEST_TIM17_UP               86U  /*!< DMAMUX1 TIM17 UP  request */
+
+#define DMA_REQUEST_DFSDM1_FLT0            87U  /*!< DMAMUX1 DFSDM1 Filter0 request */
+#define DMA_REQUEST_DFSDM1_FLT1            88U  /*!< DMAMUX1 DFSDM1 Filter1 request */
+
+#define DMA_REQUEST_DCMI                   91U  /*!< DMAMUX1 DCMI request      */
+#define DMA_REQUEST_DCMI_PSSI              91U  /*!< DMAMUX1 DCMI/PSSI request */
+
+#define DMA_REQUEST_AES_IN                 92U  /*!< DMAMUX1 AES IN request    */
+#define DMA_REQUEST_AES_OUT                93U  /*!< DMAMUX1 AES OUT request   */
+
+#define DMA_REQUEST_HASH_IN                94U  /*!< DMAMUX1 HASH IN request   */
+
+#else
+
 #define DMA_REQUEST_DAC1_CH1                6U  /*!< DMAMUX1 DAC1 CH1 request  */
 #define DMA_REQUEST_DAC1_CH2                7U  /*!< DMAMUX1 DAC1 CH2 request  */
 
@@ -312,6 +426,7 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_AES_OUT                92U  /*!< DMAMUX1 AES OUT request   */
 
 #define DMA_REQUEST_HASH_IN                93U  /*!< DMAMUX1 HASH IN request   */
+#endif /* STM32L4P5xx || STM32L4Q5xx */
 
 #endif /* DMAMUX1 */
 

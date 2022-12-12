@@ -14,8 +14,13 @@
 #define WM_UART2_RX_PIN  1          // PB19 : UART2_RX  (W601)
 #define WM_UART2_TX_PIN  2          // PB20 : UART2_TX  (W601)
 
+#if defined(SOC_W600_A8xx)
 #define WM_UART1_RX_PIN  31         // PB11 : UART1_RX  (W600)
 #define WM_UART1_TX_PIN  32         // PB12 : UART1_TX  (W600)
+#elif defined(SOC_W601_A8xx)
+#define WM_UART1_RX_PIN  66         // PB11 : UART1_RX  (W601)
+#define WM_UART1_TX_PIN  67         // PB12 : UART1_TX  (W601)
+#endif
 
 // spi
 #define WM_SPI_CK_PIN 53            // PB27 : SPI_SCK

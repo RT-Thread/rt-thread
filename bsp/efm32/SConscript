@@ -3,7 +3,7 @@ Import('RTT_ROOT')
 from building import *
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src_bsp.append('start_gcc.S')
 src_drv1 = ['drv_emu.c', 'drv_dma.c', 'drv_rtc.c', 'drv_adc.c', 'drv_acmp.c', 'drv_usart.c', 'drv_leuart.c', 'drv_iic.c', 'drv_timer.c']
 src_drv2 = ['drv_sdcard.c', 'drv_ethernet.c']

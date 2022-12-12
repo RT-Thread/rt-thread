@@ -13,7 +13,7 @@
 #include <board.h>
 
 #ifdef BSP_USING_SRAM
-#include <sram_port.h>
+#include "drv_sram.h"
 
 #define DRV_DEBUG
 #define LOG_TAG             "drv.sram"

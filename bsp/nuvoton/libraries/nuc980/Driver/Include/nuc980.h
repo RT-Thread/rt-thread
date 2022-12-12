@@ -1295,25 +1295,38 @@
     #define     REG_PWM0_PIER    (PWM0_BA+0x3C)  /*!< PWM Timer Interrupt Enable Register */
     #define     REG_PWM0_PIIR    (PWM0_BA+0x40)  /*!< PWM Timer Interrupt Identification Register */
 
-    #define     REG_PWM1_PPR     (PWM1_BA+0x00)  /*!< PWM Pre-scale Register 0 */
-    #define     REG_PWM1_CSR     (PWM1_BA+0x04)  /*!< PWM Clock Select Register */
-    #define     REG_PWM1_PCR     (PWM1_BA+0x08)  /*!< PWM Control Register */
-    #define     REG_PWM1_CNR0    (PWM1_BA+0x0C)  /*!< PWM Counter Register 0 */
-    #define     REG_PWM1_CMR0    (PWM1_BA+0x10)  /*!< PWM Comparator Register 0 */
-    #define     REG_PWM1_PDR0    (PWM1_BA+0x14)  /*!< PWM Data Register 0 */
-    #define     REG_PWM1_CNR1    (PWM1_BA+0x18)  /*!< PWM Counter Register 1 */
-    #define     REG_PWM1_CMR1    (PWM1_BA+0x1C)  /*!< PWM Comparator Register 1 */
-    #define     REG_PWM1_PDR1    (PWM1_BA+0x20)  /*!< PWM Data Register 1 */
-    #define     REG_PWM1_CNR2    (PWM1_BA+0x24)  /*!< PWM Counter Register 2 */
-    #define     REG_PWM1_CMR2    (PWM1_BA+0x28)  /*!< PWM Comparator Register 2 */
-    #define     REG_PWM1_PDR2    (PWM1_BA+0x2C)  /*!< PWM Data Register 2 */
-    #define     REG_PWM1_CNR3    (PWM1_BA+0x30)  /*!< PWM Counter Register 3 */
-    #define     REG_PWM1_CMR3    (PWM1_BA+0x34)  /*!< PWM Comparator Register 3 */
-    #define     REG_PWM1_PDR3    (PWM1_BA+0x38)  /*!< PWM Data Register 3 */
-    #define     REG_PWM1_PIER    (PWM1_BA+0x3C)  /*!< PWM Timer Interrupt Enable Register */
-    #define     REG_PWM1_PIIR    (PWM1_BA+0x40)  /*!< PWM Timer Interrupt Identification Register */
+    /*---------------------- Analog to Digital Converter -------------------------*/
+    /**
+    @addtogroup ADC Analog to Digital Converter(ADC)
+    Memory Mapped Structure for ADC Controller
+    @{ */
 
-    /**@}*/ /* end of PWM register group */
+    #define REG_ADC_CTL       (ADC_BA+0x000) /*!< ADC Contrl */
+    #define REG_ADC_CONF      (ADC_BA+0x004) /*!< ADC Configure */
+    #define REG_ADC_IER       (ADC_BA+0x008) /*!< ADC Interrupt Enable Register */
+    #define REG_ADC_ISR       (ADC_BA+0x00C) /*!< ADC Interrupt Status Register */
+    #define REG_ADC_WKISR     (ADC_BA+0x010) /*!< ADC Wake Up Interrupt Status Register */
+    #define REG_ADC_XYDATA    (ADC_BA+0x020) /*!< ADC Touch XY Pressure Data */
+    #define REG_ADC_ZDATA     (ADC_BA+0x024) /*!< ADC Touch Z Pressure Data */
+    #define REG_ADC_DATA      (ADC_BA+0x028) /*!< ADC Normal Conversion Data */
+    #define REG_ADC_VBADATA   (ADC_BA+0x02C) /*!< ADC Battery Detection Data */
+    #define REG_ADC_KPDATA    (ADC_BA+0x030) /*!< ADC Key Pad Data */
+    #define REG_ADC_SELFDATA  (ADC_BA+0x034) /*!< ADC Self-Test Data */
+    #define REG_ADC_XYSORT0   (ADC_BA+0x1F4) /*!< ADC Touch XY Position Mean Value Sort 0 */
+    #define REG_ADC_XYSORT1   (ADC_BA+0x1F8) /*!< ADC Touch XY Position Mean Value Sort 1 */
+    #define REG_ADC_XYSORT2   (ADC_BA+0x1FC) /*!< ADC Touch XY Position Mean Value Sort 2 */
+    #define REG_ADC_XYSORT3   (ADC_BA+0x200) /*!< ADC Touch XY Position Mean Value Sort 3 */
+    #define REG_ADC_ZSORT0    (ADC_BA+0x204) /*!< ADC Touch Z Pressure Mean Value Sort 0 */
+    #define REG_ADC_ZSORT1    (ADC_BA+0x208) /*!< ADC Touch Z Pressure Mean Value Sort 1 */
+    #define REG_ADC_ZSORT2    (ADC_BA+0x20C) /*!< ADC Touch Z Pressure Mean Value Sort 2 */
+    #define REG_ADC_ZSORT3    (ADC_BA+0x210) /*!< ADC Touch Z Pressure Mean Value Sort 3 */
+    #define REG_ADC_MTMULCK   (ADC_BA+0x220) /*!< ADC Manual Test Mode Unlock */
+    #define REG_ADC_MTCONF    (ADC_BA+0x224) /*!< ADC Manual Test Mode Configure */
+    #define REG_ADC_MTCON     (ADC_BA+0x228) /*!< ADC Manual Test Mode Control */
+    #define REG_ADC_ADCAII    (ADC_BA+0x22C) /*!< ADC Analog Interface Information */
+    #define REG_ADC_ADCAIIRLT (ADC_BA+0x230) /*!< ADC Analog Interface Information Result */
+
+    /**@}*/ /* end of ADC register group */
 
 
     /*------------------ Capture Sensor Interface Controller ---------------------*/

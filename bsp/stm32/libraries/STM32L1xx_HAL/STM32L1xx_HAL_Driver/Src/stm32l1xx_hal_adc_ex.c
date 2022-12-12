@@ -283,13 +283,17 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
       {
         if((Timeout == 0) || ((HAL_GetTick() - tickstart ) > Timeout))
         {
-          /* Update ADC state machine to timeout */
-          SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
-          
-          /* Process unlocked */
-          __HAL_UNLOCK(hadc);
-          
-          return HAL_TIMEOUT;
+          /* New check to avoid false timeout detection in case of preemption */
+          if(HAL_IS_BIT_CLR(hadc->Instance->SR, ADC_FLAG_JEOC))
+          {
+            /* Update ADC state machine to timeout */
+            SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
+
+            /* Process unlocked */
+            __HAL_UNLOCK(hadc);
+
+            return HAL_TIMEOUT;
+          }
         }
       }
     }
@@ -310,13 +314,17 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
       {
         if((Timeout == 0) || ((HAL_GetTick() - tickstart ) > Timeout))
         {
-          /* Update ADC state machine to timeout */
-          SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
+          /* New check to avoid false timeout detection in case of preemption */
+          if(conversion_timeout_cpu_cycles < conversion_timeout_cpu_cycles_max)
+          {
+            /* Update ADC state machine to timeout */
+            SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
 
-          /* Process unlocked */
-          __HAL_UNLOCK(hadc);
-          
-          return HAL_TIMEOUT;
+            /* Process unlocked */
+            __HAL_UNLOCK(hadc);
+
+            return HAL_TIMEOUT;
+          }
         }
       }
       conversion_timeout_cpu_cycles ++;

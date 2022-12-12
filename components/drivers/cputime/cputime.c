@@ -10,6 +10,7 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
+#include <sys/errno.h>
 
 static const struct rt_clock_cputime_ops *_cputime_ops  = RT_NULL;
 
@@ -24,7 +25,7 @@ float clock_cpu_getres(void)
     if (_cputime_ops)
         return _cputime_ops->cputime_getres();
 
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return 0;
 }
 
@@ -33,12 +34,12 @@ float clock_cpu_getres(void)
  *
  * @return the cpu tick
  */
-uint32_t clock_cpu_gettime(void)
+uint64_t clock_cpu_gettime(void)
 {
     if (_cputime_ops)
         return _cputime_ops->cputime_gettime();
 
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return 0;
 }
 
@@ -50,11 +51,11 @@ uint32_t clock_cpu_gettime(void)
  *
  * @return the microsecond
  */
-uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
+uint64_t clock_cpu_microsecond(uint64_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
-    return (uint32_t)((cpu_tick * unit) / 1000);
+    return (uint64_t)((cpu_tick * unit) / 1000);
 }
 
 /**
@@ -65,11 +66,11 @@ uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
  *
  * @return the millisecond
  */
-uint32_t clock_cpu_millisecond(uint32_t cpu_tick)
+uint64_t clock_cpu_millisecond(uint64_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
-    return (uint32_t)((cpu_tick * unit) / (1000 * 1000));
+    return (uint64_t)((cpu_tick * unit) / (1000 * 1000));
 }
 
 /**

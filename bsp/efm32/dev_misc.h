@@ -1,18 +1,13 @@
-/***************************************************************************//**
- * @file    dev_misc.h
- * @brief   Miscellaneous driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2011-02-22   onelife     Initial creation for EFM32
- ******************************************************************************/
+ */
+
 #ifndef __DEV_MISC_H__
 #define __DEV_MISC_H__
 

@@ -218,7 +218,7 @@ sfud_err sfud_qspi_fast_read_enable(sfud_flash *flash, uint8_t data_line_width) 
         break;
     case 2:
         if (read_mode & DUAL_IO) {
-            qspi_set_read_cmd_format(flash, SFUD_CMD_DUAL_IO_READ_DATA, 1, 2, 8, 2);
+            qspi_set_read_cmd_format(flash, SFUD_CMD_DUAL_IO_READ_DATA, 1, 2, 4, 2);
         } else if (read_mode & DUAL_OUTPUT) {
             qspi_set_read_cmd_format(flash, SFUD_CMD_DUAL_OUTPUT_READ_DATA, 1, 1, 8, 2);
         } else {
@@ -348,13 +348,17 @@ static sfud_err hardware_init(sfud_flash *flash) {
         return result;
     }
 
-    /* I found when the flash write mode is supported AAI mode. The flash all blocks is protected,
-     * so need change the flash status to unprotected before write and erase operate. */
+    /* The flash all blocks is protected,so need change the flash status to unprotected before write and erase operate. */
     if (flash->chip.write_mode & SFUD_WM_AAI) {
         result = sfud_write_status(flash, true, 0x00);
-        if (result != SFUD_SUCCESS) {
-            return result;
+    } else {
+        /* MX25L3206E */
+        if ((0xC2 == flash->chip.mf_id) && (0x20 == flash->chip.type_id) && (0x16 == flash->chip.capacity_id)) {
+            result = sfud_write_status(flash, false, 0x00);
         }
+    }
+    if (result != SFUD_SUCCESS) {
+        return result;
     }
 
     /* if the flash is large than 16MB (256Mb) then enter in 4-Byte addressing mode */
@@ -650,7 +654,7 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         size -= data_size;
         addr += data_size;
 
-        memcpy(&cmd_data[cmd_size], data, data_size);
+        rt_memcpy(&cmd_data[cmd_size], data, data_size);
 
         result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
         if (result != SFUD_SUCCESS) {

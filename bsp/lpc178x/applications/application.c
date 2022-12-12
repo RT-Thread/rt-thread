@@ -112,7 +112,7 @@ void rt_init_thread_entry(void *parameter)
 // trun off led n
 #define rt_hw_led_off(n)   LPC_GPIO2->SET |= 1<<25;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread_led_stack[1024];
 struct rt_thread thread_led;
 static void rt_thread_entry_led(void* parameter)

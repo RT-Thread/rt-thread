@@ -1,21 +1,16 @@
-/***************************************************************************//**
- * @file        efm32_rom_g.ld
- * @brief   Linker script for EFM32 gecko
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  Bernard, onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2009-10-14   Bernard     first version
  * 2010-12-22   onelife     Modify for EFM32
  * 2011-07-06   onelife     Modify to make use the start code in libraries
  * 2012-05-15   onelife     Modified to compatible with CMSIS v3
- ******************************************************************************/
+ */
+
 MEMORY
 {
     FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 131072

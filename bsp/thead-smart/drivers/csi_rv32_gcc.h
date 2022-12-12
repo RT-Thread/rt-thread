@@ -185,6 +185,29 @@ __ALWAYS_STATIC_INLINE void __set_MHCR(uint32_t mhcr)
 }
 
 /**
+  \brief   Get MHINT
+  \details Returns the content of the MHINT Register.
+  \return               MHINT Register value
+ */
+__ALWAYS_STATIC_INLINE uint32_t __get_MHINT(void)
+{
+    uint32_t result;
+
+    __ASM volatile("csrr %0, mhint" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set MHINT
+  \details Writes the given value to the MHINT Register.
+  \param [in]           MHINT Register value to set
+ */
+__ALWAYS_STATIC_INLINE void __set_MHINT(uint32_t mhint)
+{
+    __ASM volatile("csrw mhint, %0" : : "r"(mhint));
+}
+
+/**
   \brief   Get MISA Register
   \details Returns the content of the MISA Register.
   \return               MISA Register value

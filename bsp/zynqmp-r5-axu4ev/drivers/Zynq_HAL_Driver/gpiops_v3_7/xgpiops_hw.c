@@ -19,7 +19,7 @@
 * ----- ---- -------- -----------------------------------------------
 * 1.02a hk   08/22/13 First Release
 * 3.00  kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
-* 3.1	kvn  04/13/15 Add support for Zynq Ultrascale+ MP. CR# 856980.
+* 3.1    kvn  04/13/15 Add support for Zynq Ultrascale+ MP. CR# 856980.
 * 3.5   sne  03/01/19 Fixes violations according to MISRAC-2012
 *                     in safety mode and modified the code such as
 *                     Use of mixed mode arithmetic,Declared the pointer param
@@ -52,19 +52,19 @@
 * This function resets the GPIO module by writing reset values to
 * all registers
 *
-* @param	Base address of GPIO module
+* @param    Base address of GPIO module
 *
-* @return	None
+* @return    None
 *
-* @note		None.
+* @note        None.
 *
 ******************************************************************************/
 void XGpioPs_ResetHw(u32 BaseAddress)
 {
-	u32 BankCount;
-	u32 Platform,MaxBanks;
+    u32 BankCount;
+    u32 Platform,MaxBanks;
 
-	Platform = XGetPlatform_Info();
+    Platform = XGetPlatform_Info();
         if (Platform == (u32)XPLAT_ZYNQ_ULTRA_MP) {
                 MaxBanks = (u32)6;
         }

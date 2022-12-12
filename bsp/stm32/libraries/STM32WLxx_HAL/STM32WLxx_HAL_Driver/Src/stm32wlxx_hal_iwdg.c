@@ -65,13 +65,13 @@
       (++) Configure the IWDG prescaler and counter reload value. This reload
            value will be loaded in the IWDG counter each time the watchdog is
            reloaded, then the IWDG will start counting down from this value.
-      (++) Wait for status flags to be reset.
       (++) Depending on window parameter:
         (+++) If Window Init parameter is same as Window register value,
              nothing more is done but reload counter value in order to exit
              function with exact time base.
         (+++) Else modify Window register. This will automatically reload
              watchdog counter.
+      (++) Wait for status flags to be reset.
 
     (#) Then the application program must refresh the IWDG counter at regular
         intervals during normal operation to prevent an MCU reset, using
@@ -121,11 +121,14 @@
 /* Status register needs up to 5 LSI clock periods divided by the clock
    prescaler to be updated. The number of LSI clock periods is upper-rounded to
    6 for the timeout value calculation.
-   The timeout value is also calculated using the highest prescaler (256) and
+   The timeout value is calculated using the highest prescaler (256) and
    the LSI_VALUE constant. The value of this constant can be changed by the user
    to take into account possible LSI clock period variations.
-   The timeout value is multiplied by 1000 to be converted in milliseconds. */
-#define HAL_IWDG_DEFAULT_TIMEOUT ((6UL * 256UL * 1000UL) / LSI_VALUE)
+   The timeout value is multiplied by 1000 to be converted in milliseconds.
+   LSI startup time is also considered here by adding LSI_STARTUP_TIMEOUT
+   converted in milliseconds. */
+#define HAL_IWDG_DEFAULT_TIMEOUT        (((6UL * 256UL * 1000UL) / LSI_VALUE) + ((LSI_STARTUP_TIME / 1000UL) + 1UL))
+#define IWDG_KERNEL_UPDATE_FLAGS        (IWDG_SR_WVU | IWDG_SR_RVU | IWDG_SR_PVU)
 /**
   * @}
   */
@@ -196,11 +199,14 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   tickstart = HAL_GetTick();
 
   /* Wait for register to be updated */
-  while (hiwdg->Instance->SR != 0x00u)
+  while ((hiwdg->Instance->SR & IWDG_KERNEL_UPDATE_FLAGS) != 0x00u)
   {
     if ((HAL_GetTick() - tickstart) > HAL_IWDG_DEFAULT_TIMEOUT)
     {
-      return HAL_TIMEOUT;
+      if ((hiwdg->Instance->SR & IWDG_KERNEL_UPDATE_FLAGS) != 0x00u)
+      {
+        return HAL_TIMEOUT;
+      }
     }
   }
 
@@ -223,6 +229,7 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   return HAL_OK;
 }
 
+
 /**
   * @}
   */
@@ -242,7 +249,6 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   * @{
   */
 
-
 /**
   * @brief  Refresh the IWDG.
   * @param  hiwdg  pointer to a IWDG_HandleTypeDef structure that contains
@@ -257,6 +263,7 @@ HAL_StatusTypeDef HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg)
   /* Return function status */
   return HAL_OK;
 }
+
 
 /**
   * @}

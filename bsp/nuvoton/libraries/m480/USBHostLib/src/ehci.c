@@ -29,13 +29,13 @@ extern int ehci_iso_xfer(UTR_T *utr);       /* EHCI isochronous transfer functio
 extern int ehci_quit_iso_xfer(UTR_T *utr, EP_INFO_T *ep);
 
 #ifdef __ICCARM__
-#pragma data_alignment=4096
-uint32_t  _PFList[FL_SIZE];                 /* Periodic frame list (IAR)                  */
+    #pragma data_alignment=4096
+    uint32_t  _PFList[FL_SIZE];                 /* Periodic frame list (IAR)                  */
 #else
-uint32_t _PFList[FL_SIZE] __attribute__((aligned(4096)));  /* Periodic frame list         */
+    uint32_t _PFList[FL_SIZE] __attribute__((aligned(4096)));  /* Periodic frame list         */
 #endif
 
-QH_T  * _Iqh[NUM_IQH];
+QH_T   *_Iqh[NUM_IQH];
 
 
 #ifdef ENABLE_ERROR_MSG
@@ -65,7 +65,7 @@ void dump_ehci_qtd(qTD_T *qtd)
     USB_debug("    [qTD] - 0x%08x\n", (int)qtd);
     USB_debug("        0x%08x (Next qtd Pointer)\n", qtd->Next_qTD);
     USB_debug("        0x%08x (Alternate Next qtd Pointer)\n", qtd->Alt_Next_qTD);
-    USB_debug("        0x%08x (qtd Token) PID: %s, Bytes: %d, IOC: %d\n", qtd->Token, (((qtd->Token>>8)&0x3)==0) ? "OUT" : ((((qtd->Token>>8)&0x3)==1) ? "IN" : "SETUP"), (qtd->Token>>16)&0x7FFF, (qtd->Token>>15)&0x1);
+    USB_debug("        0x%08x (qtd Token) PID: %s, Bytes: %d, IOC: %d\n", qtd->Token, (((qtd->Token >> 8) & 0x3) == 0) ? "OUT" : ((((qtd->Token >> 8) & 0x3) == 1) ? "IN" : "SETUP"), (qtd->Token >> 16) & 0x7FFF, (qtd->Token >> 15) & 0x1);
     USB_debug("        0x%08x (Buffer Pointer (page 0))\n", qtd->Bptr[0]);
     //USB_debug("        0x%08x (Buffer Pointer (page 1))\n", qtd->Bptr[1]);
     //USB_debug("        0x%08x (Buffer Pointer (page 2))\n", qtd->Bptr[2]);
@@ -84,7 +84,7 @@ void dump_ehci_asynclist(void)
     {
         USB_debug("[QH] - 0x%08x\n", (int)qh);
         USB_debug("    0x%08x (Queue Head Horizontal Link Pointer, Queue Head DWord 0)\n", qh->HLink);
-        USB_debug("    0x%08x (Endpoint Characteristics) DevAddr: %d, EP: 0x%x, PktSz: %d, Speed: %s\n", qh->Chrst, qh->Chrst&0x7F, (qh->Chrst>>8)&0xF, (qh->Chrst>>16)&0x7FF, ((qh->Chrst>>12)&0x3 == 0) ? "Full" : (((qh->Chrst>>12)&0x3 == 1) ? "Low" : "High"));
+        USB_debug("    0x%08x (Endpoint Characteristics) DevAddr: %d, EP: 0x%x, PktSz: %d, Speed: %s\n", qh->Chrst, qh->Chrst & 0x7F, (qh->Chrst >> 8) & 0xF, (qh->Chrst >> 16) & 0x7FF, ((qh->Chrst >> 12) & 0x3 == 0) ? "Full" : (((qh->Chrst >> 12) & 0x3 == 1) ? "Low" : "High"));
         USB_debug("    0x%08x (Endpoint Capabilities: Queue Head DWord 2)\n", qh->Cap);
         USB_debug("    0x%08x (Current qtd Pointer)\n", qh->Curr_qTD);
         USB_debug("    --- Overlay Area ---\n");
@@ -122,7 +122,7 @@ void dump_ehci_asynclist_simple(void)
 
 void dump_ehci_period_frame_list_simple(void)
 {
-    QH_T     *qh = _Iqh[NUM_IQH-1];
+    QH_T     *qh = _Iqh[NUM_IQH - 1];
 
     USB_debug(">>> EHCI period frame list simple <<<\n");
     USB_debug("[FList] => ");
@@ -165,7 +165,7 @@ static void init_periodic_frame_list()
 
     iso_ep_list = NULL;
 
-    for (i = NUM_IQH-1; i >= 0; i--)        /* interval = i^2                             */
+    for (i = NUM_IQH - 1; i >= 0; i--)      /* interval = i^2                             */
     {
         _Iqh[i] = alloc_ehci_QH();
 
@@ -204,19 +204,19 @@ static void init_periodic_frame_list()
     }
 }
 
-static QH_T * get_int_tree_head_node(int interval)
+static QH_T *get_int_tree_head_node(int interval)
 {
     int    i;
 
     interval /= 8;                          /* each frame list entry for 8 micro-frame    */
 
-    for (i = 0; i < NUM_IQH-1; i++)
+    for (i = 0; i < NUM_IQH - 1; i++)
     {
         interval >>= 1;
         if (interval == 0)
             return _Iqh[i];
     }
-    return _Iqh[NUM_IQH-1];
+    return _Iqh[NUM_IQH - 1];
 }
 
 static int  make_int_s_mask(int bInterval)
@@ -245,7 +245,7 @@ static int  make_int_s_mask(int bInterval)
 
 static int  ehci_init(void)
 {
-    int      timeout = 250*1000;            /* EHCI reset time-out 250 ms                */
+    int      timeout = 250 * 1000;          /* EHCI reset time-out 250 ms                */
 
     /*------------------------------------------------------------------------------------*/
     /*  Reset EHCI host controller                                                        */
@@ -283,11 +283,11 @@ static int  ehci_init(void)
     /*  Initialize periodic list                                                          */
     /*------------------------------------------------------------------------------------*/
     if (FL_SIZE == 256)
-        _ehci->UCMDR |= (0x2<<HSUSBH_UCMDR_FLSZ_Pos);
+        _ehci->UCMDR |= (0x2 << HSUSBH_UCMDR_FLSZ_Pos);
     else if (FL_SIZE == 512)
-        _ehci->UCMDR |= (0x1<<HSUSBH_UCMDR_FLSZ_Pos);
+        _ehci->UCMDR |= (0x1 << HSUSBH_UCMDR_FLSZ_Pos);
     else if (FL_SIZE == 1024)
-        _ehci->UCMDR |= (0x0<<HSUSBH_UCMDR_FLSZ_Pos);
+        _ehci->UCMDR |= (0x0 << HSUSBH_UCMDR_FLSZ_Pos);
     else
         return USBH_ERR_EHCI_INIT;               /* Invalid FL_SIZE setting!              */
 
@@ -371,7 +371,7 @@ static void move_qh_to_remove_list(QH_T *qh)
     /*------------------------------------------------------------------------------------*/
     /*  Search periodic frame list and remove qh if found in list.                        */
     /*------------------------------------------------------------------------------------*/
-    q =  _Iqh[NUM_IQH-1];
+    q =  _Iqh[NUM_IQH - 1];
     while (q->HLink != QH_HLNK_END)
     {
         if (QH_PTR(q->HLink) == qh)
@@ -508,7 +508,7 @@ static int ehci_ctrl_xfer(UTR_T *utr)
 
     if (utr->data_len > 0)
     {
-        if (((uint32_t)utr->buff + utr->data_len) > (((uint32_t)utr->buff & ~0xFFF)+0x5000))
+        if (((uint32_t)utr->buff + utr->data_len) > (((uint32_t)utr->buff & ~0xFFF) + 0x5000))
             return USBH_ERR_BUFF_OVERRUN;
     }
 
@@ -918,7 +918,7 @@ static int visit_qtd(qTD_T *qtd)
 static void scan_asynchronous_list()
 {
     QH_T    *qh, *qh_tmp;
-    qTD_T   *q_pre=NULL, *qtd, *qtd_tmp;
+    qTD_T   *q_pre = NULL, *qtd, *qtd_tmp;
     UTR_T   *utr;
 
     qh =  QH_PTR(_H_qh->HLink);
@@ -982,7 +982,7 @@ static void scan_periodic_frame_list()
     /*------------------------------------------------------------------------------------*/
     /* Scan interrupt frame list                                                          */
     /*------------------------------------------------------------------------------------*/
-    qh =  _Iqh[NUM_IQH-1];
+    qh =  _Iqh[NUM_IQH - 1];
     while (qh != NULL)
     {
         qtd = qh->qtd_list;
@@ -1095,7 +1095,7 @@ void iaad_remove_qh()
     /*------------------------------------------------------------------------------------*/
     /* Free all qTD in done_list of each QH of periodic frame list                        */
     /*------------------------------------------------------------------------------------*/
-    qh =  _Iqh[NUM_IQH-1];
+    qh =  _Iqh[NUM_IQH - 1];
     while (qh != NULL)
     {
         while (qh->done_list)               /* we can free the qTDs now                   */
@@ -1112,6 +1112,9 @@ void iaad_remove_qh()
 void EHCI_IRQHandler(void)
 {
     uint32_t  intsts;
+
+    /* enter interrupt */
+    rt_interrupt_enter();
 
     intsts = _ehci->USTSR;
     _ehci->USTSR = intsts;                  /* clear interrupt status                     */
@@ -1136,9 +1139,12 @@ void EHCI_IRQHandler(void)
     {
         iaad_remove_qh();
     }
+
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
-static UDEV_T * ehci_find_device_by_port(int port)
+static UDEV_T *ehci_find_device_by_port(int port)
 {
     UDEV_T  *udev;
 
@@ -1165,12 +1171,12 @@ static int ehci_rh_port_reset(int port)
         _ehci->UPSCR[port] = (_ehci->UPSCR[port] | HSUSBH_UPSCR_PRST_Msk) & ~HSUSBH_UPSCR_PE_Msk;
 
         t0 = usbh_get_ticks();
-        while (usbh_get_ticks() - t0 <  (reset_time)+1) ;     /* wait at least 50 ms        */
+        while (usbh_get_ticks() - t0 < (reset_time) + 1) ;    /* wait at least 50 ms        */
 
         _ehci->UPSCR[port] &= ~HSUSBH_UPSCR_PRST_Msk;
 
         t0 = usbh_get_ticks();
-        while (usbh_get_ticks() - t0 < (reset_time)+1)
+        while (usbh_get_ticks() - t0 < (reset_time) + 1)
         {
             if (!(_ehci->UPSCR[port] & HSUSBH_UPSCR_CCS_Msk) ||
                     ((_ehci->UPSCR[port] & (HSUSBH_UPSCR_CCS_Msk | HSUSBH_UPSCR_PE_Msk)) == (HSUSBH_UPSCR_CCS_Msk | HSUSBH_UPSCR_PE_Msk)))
@@ -1179,7 +1185,7 @@ static int ehci_rh_port_reset(int port)
         reset_time += PORT_RESET_RETRY_INC_MS;
     }
 
-    USB_debug("EHCI port %d - port reset failed!\n", port+1);
+    USB_debug("EHCI port %d - port reset failed!\n", port + 1);
     return USBH_ERR_PORT_RESET;
 
 port_reset_done:
@@ -1222,7 +1228,7 @@ static int ehci_rh_polling(void)
     /*  Port de-bounce                                                                */
     /*--------------------------------------------------------------------------------*/
     t0 = usbh_get_ticks();
-	debounce_tick = usbh_tick_from_millisecond(HUB_DEBOUNCE_TIME);
+    debounce_tick = usbh_tick_from_millisecond(HUB_DEBOUNCE_TIME);
     connect_status = _ehci->UPSCR[0] & HSUSBH_UPSCR_CCS_Msk;
     while (usbh_get_ticks() - t0 < debounce_tick)
     {

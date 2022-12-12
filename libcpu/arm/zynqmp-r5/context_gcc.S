@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-03-19 	  WangHuachen  first version
+ * 2020-03-19     WangHuachen  first version
  */
 
 .section .text, "ax"
@@ -35,7 +35,7 @@ rt_hw_context_switch_to:
     ldr sp, [r0]            @ get new task stack pointer
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    ldmfd sp!, {r1}				/* Restore floating point registers */
+    ldmfd sp!, {r1}             /* Restore floating point registers */
     vmsr FPEXC, r1
     ldmfd sp!, {r1}
     vmsr FPSCR, r1
@@ -79,7 +79,7 @@ _ARM_MODE:
     ldr sp, [r1]            @ get new task stack pointer
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    ldmfd sp!, {r1}				/* Restore floating point registers */
+    ldmfd sp!, {r1}             /* Restore floating point registers */
     vmsr FPEXC, r1
     ldmfd sp!, {r1}
     vmsr FPSCR, r1

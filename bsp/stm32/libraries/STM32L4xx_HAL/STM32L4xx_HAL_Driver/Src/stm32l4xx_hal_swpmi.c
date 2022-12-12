@@ -1896,7 +1896,7 @@ static void SWPMI_DMAAbortOnError(DMA_HandleTypeDef *hdma)
 /**
   * @brief  Handle SWPMI Communication Timeout.
   * @param  hswpmi SWPMI handle
-  * @param  Flag: specifies the SWPMI flag to check.
+  * @param  Flag specifies the SWPMI flag to check.
   * @param  Tickstart Tick start value
   * @param  Timeout timeout duration.
   * @retval HAL status

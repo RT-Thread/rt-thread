@@ -8,7 +8,7 @@
  * 2019-07-23     tyustli      first version
  *
  */
-
+#include <stddef.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
@@ -62,7 +62,7 @@ extern void riscv_clock_init(void);
 #endif
 
     /* Set the shell console output device */
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

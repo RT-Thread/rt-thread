@@ -1,0 +1,116 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+path = [cwd]
+src = []
+
+if GetDepend('RTT_POSIX_TESTCASE_STDIO_H'):
+    src += Glob('./definitions/*.c')
+
+
+if GetDepend('STDIO_H_CLEARERR'):
+    src += Glob('./functions/clearerr.c')
+
+if GetDepend('STDIO_H_FCLOSE'):
+    src += Glob('./functions/fclose.c')
+
+if GetDepend('STDIO_H_FDOPEN'):
+    src += Glob('./functions/fdopen_tc.c')
+
+if GetDepend('STDIO_H_FEOF'):
+    src += Glob('./functions/feof.c')
+
+if GetDepend('STDIO_H_FERROR'):
+    src += Glob('./functions/ferror.c')
+
+if GetDepend('STDIO_H_FFLUSH'):
+    src += Glob('./functions/fflush.c')
+
+if GetDepend('STDIO_H_FGETC'):
+    src += Glob('./functions/fgetc.c')
+
+if GetDepend('STDIO_H_FGETS'):
+    src += Glob('./functions/fgets.c')
+
+if GetDepend('STDIO_H_FILENO'):
+    src += Glob('./functions/fileno.c')
+
+if GetDepend('STDIO_H_FOPEN'):
+    src += Glob('./functions/fopen.c')
+
+if GetDepend('STDIO_H_FPRINTF'):
+    src += Glob('./functions/fprintf.c')
+
+if GetDepend('STDIO_H_FPUTC'):
+    src += Glob('./functions/fputc.c')
+
+if GetDepend('STDIO_H_FPUTS'):
+    src += Glob('./functions/fputs.c')
+
+if GetDepend('STDIO_H_FREAD'):
+    src += Glob('./functions/fread.c')
+
+if GetDepend('STDIO_H_FSCANF'):
+    src += Glob('./functions/fscanf.c')
+
+if GetDepend('STDIO_H_FSEEK'):
+    src += Glob('./functions/fseek.c')
+
+if GetDepend('STDIO_H_FTELL'):
+    src += Glob('./functions/ftell.c')
+
+if GetDepend('STDIO_H_FWRITE'):
+    src += Glob('./functions/fwrite.c')
+
+
+if GetDepend('STDIO_H_PERROR'):
+    src += Glob('./functions/perror.c')
+
+if GetDepend('STDIO_H_PRINTF'):
+    src += Glob('./functions/printf.c')
+
+if GetDepend('STDIO_H_PUTC'):
+    src += Glob('./functions/puts.c')
+
+if GetDepend('STDIO_H_REMOVE'):
+    src += Glob('./functions/remove.c')
+
+if GetDepend('STDIO_H_RENAME'):
+    src += Glob('./functions/rename.c')
+
+if GetDepend('STDIO_H_REWIND'):
+    src += Glob('./functions/rewind.c')
+
+if GetDepend('STDIO_H_SETBUF'):
+    src += Glob('./functions/setbuf.c')
+
+if GetDepend('STDIO_H_SETVBUF'):
+    src += Glob('./functions/setvbuf.c')
+
+if GetDepend('STDIO_H_SNPRINTF'):
+    src += Glob('./functions/snprintf.c')
+
+if GetDepend('STDIO_H_SPRINTF'):
+    src += Glob('./functions/sprintf.c')
+
+if GetDepend('STDIO_H_SSCANF'):
+    src += Glob('./functions/sscanf.c')
+
+if GetDepend('STDIO_H_VFPRINTF'):
+    src += Glob('./functions/vfprintf.c')
+
+if GetDepend('STDIO_H_VPRINTF'):
+    src += Glob('./functions/vprintf.c')
+
+if GetDepend('STDIO_H_VSNPRINTF'):
+    src += Glob('./functions/vsnprintf.c')
+
+if GetDepend('STDIO_H_VSPRINTF'):
+    src += Glob('./functions/vsprintf.c')
+
+group = DefineGroup('rtt_posix_testcase', src, depend = ['RTT_POSIX_TESTCASE_STDIO_H'], CPPPATH = path)
+
+Return('group')

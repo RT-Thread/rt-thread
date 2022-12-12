@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 #include <rtdef.h>
 #include <board.h>
 
-/* The L1-caches on all Cortex®-M7s are divided into lines of 32 bytes. */
+/* The L1-caches on all CortexÂ®-M7s are divided into lines of 32 bytes. */
 #define L1CACHE_LINESIZE_BYTE       (32)
 
 void rt_hw_cpu_icache_enable(void)
@@ -69,8 +69,9 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
 {
     rt_uint32_t startAddr = (rt_uint32_t)addr & (rt_uint32_t)~(L1CACHE_LINESIZE_BYTE - 1);
     rt_uint32_t size_byte = size + (rt_uint32_t)addr - startAddr;
+    rt_uint32_t clean_invalid = RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE;
 
-    if (ops & (RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE))
+    if ((ops & clean_invalid) == clean_invalid)
     {
         SCB_CleanInvalidateDCache_by_Addr((uint32_t *)startAddr, size_byte);
     }

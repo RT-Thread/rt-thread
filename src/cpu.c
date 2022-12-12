@@ -10,16 +10,20 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_USERSPACE
+#include <lwp.h>
+#endif
+
 #ifdef RT_USING_SMP
-static struct rt_cpu rt_cpus[RT_CPUS_NR];
+static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 
 /*
  * disable scheduler
  */
-static void rt_preempt_disable(void)
+static void _cpu_preempt_disable(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -42,9 +46,9 @@ static void rt_preempt_disable(void)
 /*
  * enable scheduler
  */
-static void rt_preempt_enable(void)
+static void _cpu_preempt_enable(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -64,64 +68,127 @@ static void rt_preempt_enable(void)
     /* enable interrupt */
     rt_hw_local_irq_enable(level);
 }
+#endif /* RT_USING_SMP */
 
+/**
+ * @brief   Initialize a static spinlock object.
+ *
+ * @param   lock is a pointer to the spinlock to initialize.
+ */
 void rt_spin_lock_init(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     rt_hw_spin_lock_init(&lock->lock);
+#endif
 }
 RTM_EXPORT(rt_spin_lock_init)
 
+/**
+ * @brief   This function will lock the spinlock.
+ *
+ * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
+ *          until the spinlock is unlocked.
+ *
+ * @param   lock is a pointer to the spinlock.
+ */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
-    rt_preempt_disable();
+#ifdef RT_USING_SMP
+    _cpu_preempt_disable();
     rt_hw_spin_lock(&lock->lock);
+#else
+    rt_enter_critical();
+#endif
 }
 RTM_EXPORT(rt_spin_lock)
 
+/**
+ * @brief   This function will unlock the spinlock.
+ *
+ * @param   lock is a pointer to the spinlock.
+ */
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     rt_hw_spin_unlock(&lock->lock);
-    rt_preempt_enable();
+    _cpu_preempt_enable();
+#else
+    rt_exit_critical();
+#endif
 }
 RTM_EXPORT(rt_spin_unlock)
 
+/**
+ * @brief   This function will disable the local interrupt and then lock the spinlock.
+ *
+ * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
+ *          until the spinlock is unlocked.
+ *
+ * @param   lock is a pointer to the spinlock.
+ *
+ * @return  Return current cpu interrupt status.
+ */
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     unsigned long level;
 
-    rt_preempt_disable();
+    _cpu_preempt_disable();
 
     level = rt_hw_local_irq_disable();
     rt_hw_spin_lock(&lock->lock);
 
     return level;
+#else
+    return rt_hw_interrupt_disable();
+#endif
 }
 RTM_EXPORT(rt_spin_lock_irqsave)
 
+/**
+ * @brief   This function will unlock the spinlock and then restore current cpu interrupt status.
+ *
+ * @param   lock is a pointer to the spinlock.
+ *
+ * @param   level is interrupt status returned by rt_spin_lock_irqsave().
+ */
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
+#ifdef RT_USING_SMP
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
 
-    rt_preempt_enable();
+    _cpu_preempt_enable();
+#else
+    rt_hw_interrupt_enable(level);
+#endif
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
 /**
- * This fucntion will return current cpu.
+ * @brief   This fucntion will return current cpu object.
+ *
+ * @return  Return a pointer to the current cpu object.
  */
 struct rt_cpu *rt_cpu_self(void)
 {
-    return &rt_cpus[rt_hw_cpu_id()];
-}
-
-struct rt_cpu *rt_cpu_index(int index)
-{
-    return &rt_cpus[index];
+    return &_cpus[rt_hw_cpu_id()];
 }
 
 /**
- * This function will lock all cpus's scheduler and disable local irq.
+ * @brief   This fucntion will return the cpu object corresponding to index.
+ *
+ * @return  Return a pointer to the cpu object corresponding to index.
+ */
+struct rt_cpu *rt_cpu_index(int index)
+{
+    return &_cpus[index];
+}
+
+/**
+ * @brief   This function will lock all cpus's scheduler and disable local irq.
+ *
+ * @return  Return current cpu interrupt status.
  */
 rt_base_t rt_cpus_lock(void)
 {
@@ -148,7 +215,9 @@ rt_base_t rt_cpus_lock(void)
 RTM_EXPORT(rt_cpus_lock);
 
 /**
- * This function will restore all cpus's scheduler and restore local irq.
+ * @brief   This function will restore all cpus's scheduler and restore local irq.
+ *
+ * @param   level is interrupt status returned by rt_cpus_lock().
  */
 void rt_cpus_unlock(rt_base_t level)
 {
@@ -177,6 +246,9 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 {
     struct rt_cpu* pcpu = rt_cpu_self();
 
+#ifdef RT_USING_USERSPACE
+    lwp_mmu_switch(thread);
+#endif
     pcpu->current_thread = thread;
     if (!thread->cpus_lock_nest)
     {
@@ -184,5 +256,3 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     }
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
-
-#endif

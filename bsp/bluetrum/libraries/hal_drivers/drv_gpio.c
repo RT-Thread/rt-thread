@@ -18,18 +18,18 @@
 
 struct port_info
 {
-    uint8_t start_pin;
-    uint8_t delta_pin;
-    uint8_t total_pin;
+    rt_uint8_t start_pin;
+    rt_uint8_t delta_pin;
+    rt_uint8_t total_pin;
 };
 
 /* It needs to be adjusted to the hardware. */
 static const struct port_info port_table[] =
 {
     {0, 8, 0},      /* PA0-PA7 */
-    {0, 5, 8},      /* PB0-PB5 */
+    {0, 5, 8},      /* PB0-PB4 */
     {0, 8, 13},     /* PE0-PE7 */
-    {0, 6, 21},     /* PF0-PF6 */
+    {0, 6, 21},     /* PF0-PF5 */
 };
 
 static const hal_sfr_t port_sfr[] =
@@ -40,9 +40,9 @@ static const hal_sfr_t port_sfr[] =
     GPIOF_BASE,
 };
 
-static uint8_t _pin_port(uint32_t pin)
+static rt_uint8_t _pin_port(rt_uint32_t pin)
 {
-    uint8_t port = 0;
+    rt_uint8_t port = 0;
     for (port = 0; port < 3; port++) {
         if (pin < (port_table[port].total_pin + port_table[port].delta_pin)) {
             break;
@@ -51,12 +51,10 @@ static uint8_t _pin_port(uint32_t pin)
     return port;
 }
 
-#define PIN_NUM(port, no)       ((uint8_t)(port_table[port].total_pin + no - port_table[port].start_pin))
+#define PIN_NUM(port, no)       ((rt_uint8_t)(port_table[port].total_pin + no - port_table[port].start_pin))
 #define PIN_PORT(pin)           _pin_port(pin)
 #define PORT_SFR(port)          (port_sfr[(port)])
-#define PIN_NO(pin)             (uint8_t)((pin) & 0xFu)
-
-// #define PIN_ABPIN(pin)  (uint8_t)(port_table[PIN_PORT(pin)].total_pin + PIN_NO(pin))
+#define PIN_NO(pin)             (rt_uint8_t)((pin) & 0xFu)
 
 static rt_base_t ab32_pin_get(const char *name)
 {
@@ -103,22 +101,22 @@ static rt_base_t ab32_pin_get(const char *name)
 
 static void ab32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
-    uint8_t port = PIN_PORT(pin);
-    uint8_t gpio_pin  = pin - port_table[port].total_pin;
-    hal_gpio_write(PORT_SFR(port), gpio_pin, (uint8_t)value);
+    rt_uint8_t port = PIN_PORT(pin);
+    rt_uint8_t gpio_pin  = pin - port_table[port].total_pin;
+    hal_gpio_write(PORT_SFR(port), gpio_pin, (rt_uint8_t)value);
 }
 
 static int ab32_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    uint8_t port = PIN_PORT(pin);
-    uint8_t gpio_pin  = pin - port_table[port].total_pin;
+    rt_uint8_t port = PIN_PORT(pin);
+    rt_uint8_t gpio_pin  = pin - port_table[port].total_pin;
     return hal_gpio_read(PORT_SFR(port), gpio_pin);
 }
 
 static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     struct gpio_init gpio_init;
-    uint8_t port = PIN_PORT(pin);
+    rt_uint8_t port = PIN_PORT(pin);
 
     gpio_init.pin = BIT(pin - port_table[port].total_pin);
     gpio_init.de  = GPIO_DIGITAL;
@@ -128,6 +126,9 @@ static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     switch (mode)
     {
     case PIN_MODE_INPUT:
+        gpio_init.pull = GPIO_NOPULL;
+        gpio_init.dir = GPIO_DIR_INPUT;
+        break;
     case PIN_MODE_INPUT_PULLUP:
         gpio_init.pull = GPIO_PULLUP;
         gpio_init.dir = GPIO_DIR_INPUT;

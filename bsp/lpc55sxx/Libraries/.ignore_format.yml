@@ -1,0 +1,8 @@
+# files format check exclude path, please follow the instructions below to modify;
+
+dir_path:
+- LPC55S6X
+- LPC55S06
+- LPC5502
+- LPC55S28
+- LPC55S36

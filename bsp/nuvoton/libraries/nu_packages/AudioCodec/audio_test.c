@@ -16,7 +16,11 @@
 
 #include "wavrecorder.h"
 #include "wavplayer.h"
-#include "dfs_posix.h"
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 /*
   The routine just for test automatically.
@@ -83,4 +87,46 @@ static int audio_test(int argc, char **argv)
 #ifdef FINSH_USING_MSH
     MSH_CMD_EXPORT(audio_test, Audio record / replay);
 #endif
+
+
+static int audio_overnight(int argc, char **argv)
+{
+#define DEF_MAX_TEST_SECOND 5
+
+    struct wavrecord_info info;
+    char strbuf[128];
+    struct stat stat_buf;
+
+    snprintf(strbuf, sizeof(strbuf), "/test.wav");
+    while (1)
+    {
+        rt_kprintf("Recording file at %s\n", strbuf);
+        info.uri = strbuf;
+        info.samplerate = 16000;
+        info.samplebits = 16;
+        info.channels = 2;
+        wavrecorder_start(&info);
+        rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
+        wavrecorder_stop();
+        rt_thread_mdelay(1000);
+
+        if (stat((const char *)strbuf, &stat_buf) < 0)
+        {
+            rt_kprintf("%s non-exist.\n", strbuf);
+            break;
+        }
+
+        rt_kprintf("Replay file at %s\n", strbuf);
+        wavplayer_play(strbuf);
+        rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
+        wavplayer_stop();
+        rt_thread_mdelay(1000);
+    }
+    return 0;
+}
+
+#ifdef FINSH_USING_MSH
+    MSH_CMD_EXPORT(audio_overnight, auto test record / replay);
+#endif
+
 #endif /* PKG_USING_WAVPLAYER */

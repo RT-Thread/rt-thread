@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-03-19 	  WangHuachen  first version
+ * 2020-03-19     WangHuachen  first version
+ * 2021-05-11     WangHuachen  Added call to Xil_InitializeExistingMPURegConfig to
+ *                             initialize the MPU configuration table with the MPU
+ *                             configurations already set in Init_Mpu function.
  */
 
 .equ Mode_USR,        0x10
@@ -56,19 +59,19 @@ stack_top:
 _reset:
 
     /* Initialize processor registers to 0 */
-    mov	r0,#0
-    mov	r1,#0
-    mov	r2,#0
-    mov	r3,#0
-    mov	r4,#0
-    mov	r5,#0
-    mov	r6,#0
-    mov	r7,#0
-    mov	r8,#0
-    mov	r9,#0
-    mov	r10,#0
-    mov	r11,#0
-    mov	r12,#0
+    mov r0,#0
+    mov r1,#0
+    mov r2,#0
+    mov r3,#0
+    mov r4,#0
+    mov r5,#0
+    mov r6,#0
+    mov r7,#0
+    mov r8,#0
+    mov r9,#0
+    mov r10,#0
+    mov r11,#0
+    mov r12,#0
 
     /* set the cpu to SVC32 mode and disable interrupt */
     cpsid  if, #Mode_SVC
@@ -80,18 +83,18 @@ _reset:
     * Enable access to VFP by enabling access to Coprocessors 10 and 11.
     * Enables Full Access i.e. in both privileged and non privileged modes
     */
-    mrc     p15, 0, r0, c1, c0, 2      	/* Read Coprocessor Access Control Register (CPACR) */
-    orr     r0, r0, #(0xF << 20)       	/* Enable access to CP 10 & 11 */
-    mcr     p15, 0, r0, c1, c0, 2      	/* Write Coprocessor Access Control Register (CPACR) */
+    mrc     p15, 0, r0, c1, c0, 2       /* Read Coprocessor Access Control Register (CPACR) */
+    orr     r0, r0, #(0xF << 20)        /* Enable access to CP 10 & 11 */
+    mcr     p15, 0, r0, c1, c0, 2       /* Write Coprocessor Access Control Register (CPACR) */
     isb
 
     /* enable fpu access  */
     vmrs    r3, FPEXC
-    orr	r1, r3, #(1<<30)
+    orr r1, r3, #(1<<30)
     vmsr    FPEXC, r1
 
     /* clear the floating point register*/
-    mov	    r1,#0
+    mov     r1,#0
     vmov    d0,r1,r1
     vmov    d1,r1,r1
     vmov    d2,r1,r1
@@ -111,16 +114,16 @@ _reset:
 
 #ifdef __SOFTFP__
 /* Disable the FPU if SOFTFP is defined*/
-    vmsr	FPEXC,r3
+    vmsr    FPEXC,r3
 #endif
 
     /* Disable MPU and caches */
-    mrc     p15, 0, r0, c1, c0, 0       	/* Read CP15 Control Register*/
-    bic     r0, r0, #0x05               	/* Disable MPU (M bit) and data cache (C bit) */
-    bic     r0, r0, #0x1000             	/* Disable instruction cache (I bit) */
-    dsb                                 	/* Ensure all previous loads/stores have completed */
-    mcr     p15, 0, r0, c1, c0, 0       	/* Write CP15 Control Register */
-    isb                                 	/* Ensure subsequent insts execute wrt new MPU settings */
+    mrc     p15, 0, r0, c1, c0, 0           /* Read CP15 Control Register*/
+    bic     r0, r0, #0x05                   /* Disable MPU (M bit) and data cache (C bit) */
+    bic     r0, r0, #0x1000                 /* Disable instruction cache (I bit) */
+    dsb                                     /* Ensure all previous loads/stores have completed */
+    mcr     p15, 0, r0, c1, c0, 0           /* Write CP15 Control Register */
+    isb                                     /* Ensure subsequent insts execute wrt new MPU settings */
 
     /* Disable Branch prediction, TCM ECC checks */
     mrc     p15, 0, r0, c1, c0, 1           /* Read ACTLR */
@@ -170,14 +173,14 @@ _reset:
     nop
 
 init:
-    bl 	Init_MPU                            /* Initialize MPU */
+    bl  Init_MPU                            /* Initialize MPU */
 
     /* Enable Branch prediction */
     mrc     p15, 0, r0, c1, c0, 1       /* Read ACTLR*/
     bic     r0, r0, #(0x1 << 17)        /* Clear RSDIS bit 17 to enable return stack*/
     bic     r0, r0, #(0x1 << 16)        /* Clear BP bit 15 and BP bit 16:*/
     bic     r0, r0, #(0x1 << 15)        /* Normal operation, BP is taken from the global history table.*/
-    orr     r0, r0, #(0x1 << 14)	    /* Disable DBWR for errata 780125 */
+    orr     r0, r0, #(0x1 << 14)        /* Disable DBWR for errata 780125 */
     mcr     p15, 0, r0, c1, c0, 1       /* Write ACTLR*/
 
     /* Enable icahce and dcache */
@@ -186,7 +189,7 @@ init:
     orr     r1,r1,r0
     dsb
     mcr     p15,0,r1,c1,c0,0            /* Enable cache  */
-    isb                                 /* isb	flush prefetch buffer */
+    isb                                 /* isb  flush prefetch buffer */
 
     /* Set vector table in TCM/LOVEC */
     mrc     p15, 0, r0, c1, c0, 0
@@ -234,6 +237,7 @@ ctor_loop:
     b       ctor_loop
 ctor_end:
 
+    bl  Xil_InitializeExistingMPURegConfig  /* Initialize MPU config */
     /* start RT-Thread Kernel       */
     ldr     pc, _entry
 
@@ -389,35 +393,35 @@ rt_hw_context_switch_interrupt_do:
 .endm
 
     .align  5
-    .globl	vector_swi
+    .globl  vector_swi
 vector_swi:
     push_svc_reg
     bl      rt_hw_trap_swi
     b       .
 
     .align  5
-    .globl	vector_undef
+    .globl  vector_undef
 vector_undef:
     push_svc_reg
     bl      rt_hw_trap_undef
     b       .
 
     .align  5
-    .globl	vector_pabt
+    .globl  vector_pabt
 vector_pabt:
     push_svc_reg
     bl      rt_hw_trap_pabt
     b       .
 
     .align  5
-    .globl	vector_dabt
+    .globl  vector_dabt
 vector_dabt:
     push_svc_reg
     bl      rt_hw_trap_dabt
     b       .
 
     .align  5
-    .globl	vector_resv
+    .globl  vector_resv
 vector_resv:
     push_svc_reg
     bl      rt_hw_trap_resv

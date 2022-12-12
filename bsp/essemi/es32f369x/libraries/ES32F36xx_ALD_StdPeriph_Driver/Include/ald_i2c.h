@@ -7,11 +7,27 @@
  * @version V1.0
  * @date    15 Nov 2019
  * @author  AE Team
- * @note
- *
- * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
- *
- ********************************************************************************
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          30 Jun 2020     AE Team         The first version
+  *
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
+  *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
  */
 
 #ifndef __ALD_I2C_H__
@@ -272,10 +288,10 @@ typedef struct i2c_handle_s {
 	uint8_t *p_buff;          /**< Pointer to I2C transfer buffer */
 	uint16_t xfer_size;       /**< I2C transfer size */
 	__IO uint16_t xfer_count; /**< I2C transfer counter */
-#ifdef ALD_DMA
+
 	dma_handle_t hdmatx;      /**< I2C Tx DMA handle parameters */
 	dma_handle_t hdmarx;      /**< I2C Rx DMA handle parameters */
-#endif
+
 	lock_state_t lock;        /**< I2C locking object */
 	__IO i2c_state_t state;   /**< I2C communication state */
 	__IO i2c_mode_t mode;     /**< I2C communication mode */
@@ -306,9 +322,11 @@ typedef struct i2c_handle_s {
 #define I2C_GET_IT_SOURCE(x, y) ((((x)->perh->IFM & (y))  == (y)) ? SET : RESET)
 #define I2C_GET_FLAG(x, y) ((((x)->perh->STAT) & ((y) & I2C_FLAG_MASK)) != RESET)
 #define I2C_MASTER_GET_DIR(x) (READ_BIT(((x)->perh->CON2), I2C_CON2_RD_WRN_MSK))
-#define I2C_SLAVE_GET_DIR(x) (READ_BIT(hperh->perh->STAT, I2C_STAT_DIR_MSK))
+#define I2C_SLAVE_GET_DIR(x) (READ_BIT(((x)->perh->STAT), I2C_STAT_DIR_MSK))
 #define I2C_ENABLE(x)  (SET_BIT((x)->perh->CON1, I2C_CON1_PE_MSK))
 #define I2C_DISABLE(x) (CLEAR_BIT((x)->perh->CON1, I2C_CON1_PE_MSK))
+#define I2C_RST_TXFIFO(x) (SET_BIT((x)->perh->FCON, I2C_FCON_TXFRST_MSK))
+#define I2C_RST_RXFIFO(x) (SET_BIT((x)->perh->FCON, I2C_FCON_RXFRST_MSK))
 /**
   * @}
   */
@@ -394,7 +412,7 @@ ald_status_t ald_i2c_mem_write_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uin
 ald_status_t ald_i2c_mem_read_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr,
                              i2c_addr_size_t add_size, uint8_t *buf, uint32_t size);
 
-#ifdef ALD_DMA
+
  /** Non-Blocking mode: DMA */
 ald_status_t ald_i2c_master_send_by_dma(i2c_handle_t *hperh, uint16_t dev_addr,
                                      uint8_t *buf, uint8_t size, uint8_t channel);
@@ -406,7 +424,7 @@ ald_status_t ald_i2c_mem_write_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, ui
                                  uint8_t *buf, uint8_t size, uint8_t channel);
 ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr,
                                 i2c_addr_size_t add_size, uint8_t *buf, uint8_t size, uint8_t channel);
-#endif
+
 /**
  * @}
  */

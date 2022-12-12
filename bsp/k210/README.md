@@ -31,9 +31,25 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 
 ## 2. 编译说明
 
-编译K210，需要有RT-Thread的代码，因为K210的sdk是以软件包方式，所以需要在bsp/k210下做软件包更新。Windows下推进使用[env工具][1]，然后在console下进入bsp/k210目录中，运行：
+编译 K210，需要有 RT-Thread 的代码，因为 K210 的 sdk 是以软件包方式，所以需要在 bsp/k210 下做软件包更新。注意，需要使用 latest 的 RT-Thread 源码和 Latest 的软件包，软件包在menuconfig中的配置路径如下:
+
+```
+RT-Thread online packages --->
+    peripheral libraries and drivers --->
+        Kendryte SDK --->
+            [*] kendryte K210 SDK
+```
+
+最新的 k210 SDK 使用了 C++17 编写了部分代码，因此需要打开 C++ 组件，C++组件在menuconfig中的配置路径如下：
+
+```
+RT-Thread Components --->  C++ features
+```
+
+Windows下推荐使用[env工具][1]，然后在console下进入bsp/k210目录中，运行：
 
     cd bsp/k210
+    menuconfig # 在软件包中选择最新的 k210 SDK
     pkgs --update
 
 如果在Linux平台下，可以先执行
@@ -56,10 +72,15 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 
 然后执行scons编译：  
 
-    set RTT_EXEC_PATH=your_toolchains
+```
+    set RTT_EXEC_PATH=C:\Users\xxxx\Downloads\xpack-riscv-none-embed-gcc-10.2.0-1.2\bin
     scons
+```
+来编译这个板级支持包。
 
-来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。  
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
+如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。  
 注：如果初次使用编译报错，可能是使用的SDK过老，使用`menuconfig`命令，在→ RT-Thread online packages → peripheral libraries 
 and drivers → the kendryte-sdk package for rt-thread中将SDK改为latest版本即可。
 ## 3. 烧写及执行

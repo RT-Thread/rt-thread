@@ -12,14 +12,14 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>AT32F407VGT7</Device>
+          <Device>-AT32F407VGT7</Device>
           <Vendor>ArteryTek</Vendor>
           <Cpu>IRAM(0x20000000-0x20037FFF) IROM(0x08000000-0x080FFFFF) CLOCK(8000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"Startup\ArteryTek\AT32F4xx\startup_at32f407vgt7.s" ("AT32F403A Startup Code")</StartupFile>
+          <StartupFile>"Startup\ArteryTek\AT32F403A_407\startup_at32f403a_f407.s" ("AT32F403A_407 Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0AT32F407_1024 -FS08000000 -FL0100000)</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>at32f4xx.h</RegisterFile>
+          <RegisterFile>at32f403a_407.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -29,14 +29,14 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>SFD\ArteryTek\AT32F407\AT32F407xx.SFR</SFDFile>
+          <SFDFile>SFD\ArteryTek\AT32F407\AT32F407xx_v2.SFR</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>ArteryTek\AT32F4xx\</RegisterFilePath>
-          <DBRegisterFilePath>ArteryTek\AT32F4xx\</DBRegisterFilePath>
+          <RegisterFilePath>ArteryTek\AT32F403A_407\</RegisterFilePath>
+          <DBRegisterFilePath>ArteryTek\AT32F403A_407\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -144,7 +144,7 @@
             <UsePdscDebugDescription>0</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>6</TargetSelection>
+          <TargetSelection>12</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -158,7 +158,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>Segger\JL2CM3.dll</Driver>
+            <Driver>BIN\CMSIS_AGDI.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -168,7 +168,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>4099</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>

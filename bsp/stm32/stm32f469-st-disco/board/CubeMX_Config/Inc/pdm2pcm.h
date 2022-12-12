@@ -36,6 +36,8 @@
 /* Global variables ---------------------------------------------------------*/
 extern PDM_Filter_Handler_t PDM1_filter_handler;
 extern PDM_Filter_Config_t PDM1_filter_config;
+extern PDM_Filter_Handler_t PDM2_filter_handler;
+extern PDM_Filter_Config_t PDM2_filter_config;
 
 /* USER CODE BEGIN 1 */
 /* USER CODE END 1 */

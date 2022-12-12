@@ -52,7 +52,7 @@ fail = False
 
 BSP_ROOT = '../bsp'
 
-for bsp,cpu in bsp_to_cpu.iteritems():
+for bsp,cpu in bsp_to_cpu.items():
     project_dir = os.path.join(BSP_ROOT, bsp)
     if os.getenv('RTT_CPU') == cpu and os.path.isfile(os.path.join(project_dir, 'SConstruct')):
         if os.system('scons --directory=' + project_dir) != 0:
@@ -63,10 +63,10 @@ for bsp,cpu in bsp_to_cpu.iteritems():
     else:
         results['ignore'].append(bsp)
 
-for result,bsp_list in results.iteritems():
-    print "## {0}: {1}\n".format(result, len(bsp_list))
+for result,bsp_list in results.items():
+    print("## {0}: {1}\n".format(result, len(bsp_list)))
     for bsp in bsp_list:
-        print "* " + bsp
+        print("* " + bsp)
 
 if fail:
     sys.exit(1)

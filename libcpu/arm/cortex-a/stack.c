@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,11 +9,11 @@
  * 2011-10-05     Bernard      add thumb mode
  */
 #include <rtthread.h>
+#include <cpuport.h>
 #include <board.h>
-#include <armv7.h>
 
 /**
- * @addtogroup AM33xx
+ * @addtogroup ARM Cortex-A
  */
 /*@{*/
 

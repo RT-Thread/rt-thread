@@ -1314,7 +1314,7 @@ HAL_StatusTypeDef HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hdac, HAL_DAC_Call
   * @param  hdac DAC handle
   * @param  CallbackID ID of the callback to be unregistered
   *         This parameter can be one of the following values:
-  *          @arg @ref HAL_DAC_CH1_COMPLETE_CB_ID          DAC CH1 tranfer Complete Callback ID
+  *          @arg @ref HAL_DAC_CH1_COMPLETE_CB_ID          DAC CH1 Transfer Complete Callback ID
   *          @arg @ref HAL_DAC_CH1_HALF_COMPLETE_CB_ID     DAC CH1 Half Complete Callback ID
   *          @arg @ref HAL_DAC_CH1_ERROR_ID                DAC CH1 Error Callback ID
   *          @arg @ref HAL_DAC_CH1_UNDERRUN_CB_ID          DAC CH1 UnderRun Callback ID

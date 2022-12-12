@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -325,7 +325,8 @@ struct rt_hw_register
     unsigned long ORIG_r0;
 };
 
-#include <armv7.h>
+#include <rtdef.h>
+#include <cpuport.h>
 
 /* Interrupt Control Interface */
 #define ARM_GIC_CPU_BASE    0x1E000000

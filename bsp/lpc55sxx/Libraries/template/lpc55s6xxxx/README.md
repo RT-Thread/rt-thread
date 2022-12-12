@@ -97,7 +97,7 @@ LPC55S69 是由恩智浦NXP半导体推出的基于Cortex-M33内核的高性能�
 使用以下指令设置gcc路径
 
 ```bash
-    SET RTT_EXEC_PATH=[GCC路径]
+    set RTT_EXEC_PATH=[GCC路径]
 ```
 
 （Linux/Mac arm-none-eabi-gcc）
@@ -112,6 +112,8 @@ LPC55S69 是由恩智浦NXP半导体推出的基于Cortex-M33内核的高性能�
 ```bash
     scons -j4
 ```
+
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
 
 出现下列信息即为编译成功
 
@@ -208,6 +210,8 @@ msh />
 
 维护人:
 [Magicoe][2] < [magicoe@163.com][3] >
+
+[AlexYang][2] < [alex.yang@nxp.com][3] >
 
 [1]: https://www.rt-thread.org/page/download.html
 [2]: https://github.com/Magicoe

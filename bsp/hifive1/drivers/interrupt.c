@@ -1,21 +1,7 @@
 /*
- * File      : interrupt.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -62,13 +48,13 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 void rt_hw_interrupt_init(void)
 {
     int idx;
-    
+
     /*  config interrupt vector*/
     asm volatile(
         "la t0, trap_entry\n"
         "csrw mtvec, t0"
     );
-    
+
     /*  enable global interrupt*/
     PLIC_init(&g_plic,
             PLIC_CTRL_ADDR,
@@ -86,8 +72,8 @@ void rt_hw_interrupt_init(void)
         irq_desc[idx].counter = 0;
 #endif
     }
-    
-    // enable machine external interrupt 
+
+    // enable machine external interrupt
     set_csr(mie, MIP_MEIP);
 }
 
@@ -132,7 +118,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 }
 
 /**
- * This function will be call when external machine-level 
+ * This function will be call when external machine-level
  * interrupt from PLIC occurred.
  */
 void handle_m_ext_interrupt(void)

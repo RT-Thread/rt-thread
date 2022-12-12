@@ -1,3 +1,17 @@
+<p align="center">
+<img src="documentation/figures/logo.png" width="60%" >
+</p>
+
+[English](README.md) | **中文** | [Español](README_es.md) | [Deutsch](README_de.md)
+
+[![GitHubStars](https://img.shields.io/github/stars/RT-Thread/rt-thread?style=flat-square&logo=GitHub)](https://github.com/RT-Thread/rt-thread/stargazers)
+[![GiteeStars](https://gitee.com/rtthread/rt-thread/badge/star.svg?theme=gvp)](https://gitee.com/rtthread/rt-thread/stargazers)
+[![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RT-Thread/rt-thread?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
+
 ## 简介
 
 RT-Thread诞生于2006年，是一款以开源、中立、社区化发展起来的物联网操作系统。
@@ -9,7 +23,7 @@ RT-Thread有完整版和Nano版，对于资源受限的微控制器（MCU）系�
 
 RT-Thread是一个集实时操作系统（RTOS）内核、中间件组件的物联网操作系统，架构如下：
 
-![architecturezh](./documentation/figures/architecturezh.png)  
+![architecturezh](./documentation/figures/architecturezh.png)
 
 
 
@@ -18,15 +32,15 @@ RT-Thread是一个集实时操作系统（RTOS）内核、中间件组件的物�
 - 组件与服务层：组件是基于 RT-Thread内核之上的上层软件，例如虚拟文件系统、FinSH命令行界面、网络框架、设备框架等。采用模块化设计，做到组件内部高内聚，组件之间低耦合。
 
 
-- RT-Thread软件包：运行于 RT-Thread物联网操作系统平台上，面向不同应用领域的通用软件组件，由描述信息、源代码或库文件组成。RT-Thread提供了开放的软件包平台，这里存放了官方提供或开发者提供的软件包，该平台为开发者提供了众多可重用软件包的选择，这也是 RT-Thread生态的重要组成部分。软件包生态对于一个操作系统的选择至关重要，因为这些软件包具有很强的可重用性，模块化程度很高，极大的方便应用开发者在最短时间内，打造出自己想要的系统。RT-Thread已经支持的软件包数量已经达到 180+。
-  
+- RT-Thread软件包：运行于 RT-Thread物联网操作系统平台上，面向不同应用领域的通用软件组件，由描述信息、源代码或库文件组成。RT-Thread提供了开放的软件包平台，这里存放了官方提供或开发者提供的软件包，该平台为开发者提供了众多可重用软件包的选择，这也是 RT-Thread生态的重要组成部分。软件包生态对于一个操作系统的选择至关重要，因为这些软件包具有很强的可重用性，模块化程度很高，极大的方便应用开发者在最短时间内，打造出自己想要的系统。RT-Thread已经支持的软件包数量已经达到450+。
+
 
 
 ## RT-Thread的特点
 
 - 资源占用极低，超低功耗设计，最小内核（Nano版本）仅需1.2KB RAM，3KB Flash。
 
-- 组件丰富，繁荣发展的软件包生态 。                                 
+- 组件丰富，繁荣发展的软件包生态 。
 
 - 简单易用 ，优雅的代码风格，易于阅读、掌握。
 
@@ -58,7 +72,7 @@ Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统�
 
 [下载 Env 工具](https://www.rt-thread.org/page/download.html)
 
-[Env 用户手册](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md)
+[Env 用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 
 
 # 资源文档
@@ -68,35 +82,21 @@ Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统�
 RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主要架构。涉及的架构和芯片制造商有：
 
 - ARM Cortex-M0/M0+：如芯片制造商 ST
-
 - ARM Cortex-M3：如芯片制造商 ST、全志、灵动等.
-
-- ARM Cortex-M4：如芯片制造商 ST、Nuvton、NXP、GigaDevice、Realtek、Ambiq Micro等
-
+- ARM Cortex-M4：如芯片制造商 ST、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro等
 - ARM Cortex-M7：如芯片制造商 ST、NXP
-
 - ARM Cortex-M23：如芯片制造商 GigaDevice
-
+- ARM Cortex-M33：如芯片制造商 ST
 - ARM Cortex-R4
-
 - ARM Cortex-A8/A9：如芯片制造商 NXP
-
 - ARM7：如芯片制造商Samsung
-
 - ARM9：如芯片制造商Allwinner、Xilinx 、GOKE
-
 - ARM11：如芯片制造商Fullhan
-
 - MIPS32：如芯片制造商loongson、Ingenic
-
 - RISC-V：如芯片制造商Hifive、Kendryte、[芯来Nuclei](https://nucleisys.com/)
-
 - ARC：如芯片制造商SYNOPSYS
-
 - DSP：如芯片制造商 TI
-
 - C-Sky
-
 - x86
 
 
@@ -117,29 +117,29 @@ RT-Thread主要支持的IDE/编译器包括：
 RT-Thread Studio演示：
 
 
-![studiozh](./documentation/figures/studiozh.gif)                                        
+![studiozh](./documentation/figures/studiozh.gif)
 
 
 ## **快速上手**
 
 RT-Thread BSP可以直接编译并下载到相应的开发板使用。此外，RT-Thread还提供 qemu-vexpress-a9 BSP，无需硬件平台即可使用。有关详细信息，请参阅下面的入门指南。
 
-[QEMU 入门指南(Windows)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu.md)
+[QEMU 入门指南(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
 
-[QEMU 入门指南(Ubuntu)](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/quick_start_qemu/quick_start_qemu_linux.md)
+[QEMU 入门指南(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
 
 
 ## 文档
 
-[文档中心](https://www.rt-thread.org/document/site/ ) | [编程指南](https://www.rt-thread.org/document/site/programming-manual/basic/basic/ ) 
+[文档中心](https://www.rt-thread.org/document/site/ ) | [编程指南](https://www.rt-thread.org/document/site/programming-manual/basic/basic/ )
 
-[应用 RT-Thread 实现蜂鸣器播放器教程](https://www.rt-thread.org/document/site/tutorial/beep-player/) | [分布式温度监控系统教程](https://www.rt-thread.org/document/site/tutorial/temperature-system/ ) | [智能车连载教程](https://www.rt-thread.org/document/site/tutorial/smart-car/ ) 
+[应用 RT-Thread 实现蜂鸣器播放器教程](https://www.rt-thread.org/document/site/tutorial/beep-player/) | [分布式温度监控系统教程](https://www.rt-thread.org/document/site/tutorial/temperature-system/ ) | [智能车连载教程](https://www.rt-thread.org/document/site/tutorial/smart-car/ )
 
 ## 例程
 
-[内核示例](https://github.com/RT-Thread-packages/kernel-sample)  | [设备示例代码](https://github.com/RT-Thread-packages/peripheral-sample ) | [文件系统示例代码](https://github.com/RT-Thread-packages/filesystem-sample ) | [网络示例代码](https://github.com/RT-Thread-packages/network-sample ) | [RT-Thread API参考手册](https://www.rt-thread.org/document/api/ ) 
+[内核示例](https://github.com/RT-Thread-packages/kernel-sample)  | [设备示例代码](https://github.com/RT-Thread-packages/peripheral-sample ) | [文件系统示例代码](https://github.com/RT-Thread-packages/filesystem-sample ) | [网络示例代码](https://github.com/RT-Thread-packages/network-sample ) | [RT-Thread API参考手册](https://www.rt-thread.org/document/api/ )
 
-[基于STM32L475 IoT Board 开发板SDK](https://github.com/RT-Thread/IoT_Board) | [基于W601 IoT Board 开发板SDK](https://github.com/RT-Thread/W601_IoT_Board) 
+[基于STM32L475 IoT Board 开发板SDK](https://github.com/RT-Thread/IoT_Board) | [基于W601 IoT Board 开发板SDK](https://github.com/RT-Thread/W601_IoT_Board)
 
 ## 视频
 
@@ -151,7 +151,7 @@ RT-Thread视频中心提供了一系列RT-Thread相关教程及分享内容。
 
 # **许可协议**
 
-RT-Thread系统完全开源，3.1.0 及以前的版本遵循 GPL V2 + 开源许可协议。从 3.1.0 以后的版本遵循Apache License 2.0开源许可协议，可以免费在商业产品中使用，并且不需要公开私有代码。
+RT-Thread 系统完全开源，遵循 Apache License 2.0 开源许可协议，可以免费在商业产品中使用，并且不需要公开私有代码，没有潜在商业风险。
 
 ```
 /*
@@ -163,16 +163,21 @@ RT-Thread系统完全开源，3.1.0 及以前的版本遵循 GPL V2 + 开源许�
 
 # 社区支持
 
-RT-Thread非常感谢所有社区小伙伴的支持，在使用RT-Thread的过程中若您有任何的想法，建议或疑问都可通过以下方式联系到 RT-Thread，我们也实时在这些频道更新RT-Thread的最新讯息。同时，任何问题都可以在 [issue section](https://github.com/RT-Thread/rtthread-manual-doc/issues) 中提出。通过创建一个issue来描述您的问题，社区成员将回答这些问题。
+RT-Thread非常感谢所有社区小伙伴的支持，在使用RT-Thread的过程中若您有任何的想法，建议或疑问都可通过以下方式联系到 RT-Thread，我们也实时在这些频道更新RT-Thread的最新讯息。同时，任何问题都可以在 [论坛](https://club.rt-thread.org/index.html) 中提出，社区成员将回答这些问题。
 
-[官网]( https://www.rt-thread.org) | [论坛]( https://www.rt-thread.org/qa/forum.php) | [哔哩哔哩官方账号](https://space.bilibili.com/423462075?spm_id_from=333.788.b_765f7570696e666f.2) | [微博官方账号](https://weibo.com/rtthread?is_hot=1) | [知乎官方账号](https://www.zhihu.com/topic/19964581/hot) 
+[官网]( https://www.rt-thread.org) | [论坛]( https://www.rt-thread.org/qa/forum.php) | [哔哩哔哩官方账号](https://space.bilibili.com/423462075?spm_id_from=333.788.b_765f7570696e666f.2) | [微博官方账号](https://weibo.com/rtthread?is_hot=1) | [知乎官方账号](https://www.zhihu.com/topic/19964581/hot)
 
 RT-Thread微信公众号：
 
-![qrcode](./documentation/figures/qrcode.png)
+![qrcode](./documentation/figures/qrcode.jpg)
 
 
 # 贡献代码
 
-如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/contribution_guide/contribution_guide.md)。
+如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/githubd)。
 
+## 感谢以下小伙伴对本仓库的贡献！
+
+<a href="https://github.com/RT-Thread/rt-thread/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=RT-Thread/rt-thread" />
+</a>

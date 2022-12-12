@@ -15,7 +15,7 @@ TARGET = 'rtthread-zynqmp-r5.' + rtconfig.TARGET_EXT
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-    CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)

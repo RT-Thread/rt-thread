@@ -13,7 +13,8 @@
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
-  *  ******************************************************************************
+  *
+  ******************************************************************************
   */
 #if defined(USE_FULL_LL_DRIVER)
 
@@ -24,10 +25,10 @@
 
 
 #ifdef  USE_FULL_ASSERT
-  #include "stm32_assert.h"
+#include "stm32_assert.h"
 #else
-  #define assert_param(expr) ((void)0U)
-#endif
+#define assert_param(expr) ((void)0U)
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32L0xx_LL_Driver
   * @{
@@ -47,22 +48,22 @@
   * @{
   */
 #define IS_LL_LPTIM_CLOCK_SOURCE(__VALUE__) (((__VALUE__) == LL_LPTIM_CLK_SOURCE_INTERNAL) \
-                                       || ((__VALUE__) == LL_LPTIM_CLK_SOURCE_EXTERNAL))
+                                             || ((__VALUE__) == LL_LPTIM_CLK_SOURCE_EXTERNAL))
 
 #define IS_LL_LPTIM_CLOCK_PRESCALER(__VALUE__) (((__VALUE__) == LL_LPTIM_PRESCALER_DIV1)   \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV2)   \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV4)   \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV8)   \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV16)  \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV32)  \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV64)  \
-                                          || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV128))
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV2)   \
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV4)   \
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV8)   \
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV16)  \
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV32)  \
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV64)  \
+                                                || ((__VALUE__) == LL_LPTIM_PRESCALER_DIV128))
 
 #define IS_LL_LPTIM_WAVEFORM(__VALUE__) (((__VALUE__) == LL_LPTIM_OUTPUT_WAVEFORM_PWM) \
-                                   || ((__VALUE__) == LL_LPTIM_OUTPUT_WAVEFORM_SETONCE))
+                                         || ((__VALUE__) == LL_LPTIM_OUTPUT_WAVEFORM_SETONCE))
 
 #define IS_LL_LPTIM_OUTPUT_POLARITY(__VALUE__) (((__VALUE__) == LL_LPTIM_OUTPUT_POLARITY_REGULAR) \
-                                          || ((__VALUE__) == LL_LPTIM_OUTPUT_POLARITY_INVERSE))
+                                                || ((__VALUE__) == LL_LPTIM_OUTPUT_POLARITY_INVERSE))
 /**
   * @}
   */
@@ -92,30 +93,23 @@
   *          - SUCCESS: LPTIMx registers are de-initialized
   *          - ERROR: invalid LPTIMx instance
   */
-ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef* LPTIMx)
+ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef *LPTIMx)
 {
   ErrorStatus result = SUCCESS;
 
   /* Check the parameters */
-  assert_param(IS_LPTIM_INSTANCE(LPTIMx)); 
- 
+  assert_param(IS_LPTIM_INSTANCE(LPTIMx));
+
   if (LPTIMx == LPTIM1)
   {
     LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_LPTIM1);
-    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPTIM1);  
-  } 
-#if defined(LPTIM2)
-  else if (LPTIMx == LPTIM2)
-  { 
-    LL_APB1_GRP2_ForceReset(LL_APB1_GRP2_PERIPH_LPTIM2);
-    LL_APB1_GRP2_ReleaseReset(LL_APB1_GRP2_PERIPH_LPTIM2);
+    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPTIM1);
   }
-#endif /* LPTIM2 */
   else
   {
     result = ERROR;
   }
-  
+
   return result;
 }
 
@@ -125,7 +119,7 @@ ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef* LPTIMx)
   * @param  LPTIM_InitStruct pointer to a @ref LL_LPTIM_InitTypeDef structure
   * @retval None
   */
-void LL_LPTIM_StructInit(LL_LPTIM_InitTypeDef* LPTIM_InitStruct)
+void LL_LPTIM_StructInit(LL_LPTIM_InitTypeDef *LPTIM_InitStruct)
 {
   /* Set the default configuration */
   LPTIM_InitStruct->ClockSource = LL_LPTIM_CLK_SOURCE_INTERNAL;
@@ -144,7 +138,7 @@ void LL_LPTIM_StructInit(LL_LPTIM_InitTypeDef* LPTIM_InitStruct)
   *          - SUCCESS: LPTIMx instance has been initialized
   *          - ERROR: LPTIMx instance hasn't been initialized
   */
-ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef * LPTIMx, LL_LPTIM_InitTypeDef* LPTIM_InitStruct)
+ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef *LPTIMx, LL_LPTIM_InitTypeDef *LPTIM_InitStruct)
 {
   ErrorStatus result = SUCCESS;
   /* Check the parameters */
@@ -153,8 +147,8 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef * LPTIMx, LL_LPTIM_InitTypeDef* LPTIM_In
   assert_param(IS_LL_LPTIM_CLOCK_PRESCALER(LPTIM_InitStruct->Prescaler));
   assert_param(IS_LL_LPTIM_WAVEFORM(LPTIM_InitStruct->Waveform));
   assert_param(IS_LL_LPTIM_OUTPUT_POLARITY(LPTIM_InitStruct->Polarity));
-  
-  /* The LPTIMx_CFGR register must only be modified when the LPTIM is disabled 
+
+  /* The LPTIMx_CFGR register must only be modified when the LPTIM is disabled
      (ENABLE bit is reset to 0).
   */
   if (LL_LPTIM_IsEnabled(LPTIMx) == 1UL)
@@ -163,28 +157,20 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef * LPTIMx, LL_LPTIM_InitTypeDef* LPTIM_In
   }
   else
   {
-  /* Set CKSEL bitfield according to ClockSource value */
-  /* Set PRESC bitfield according to Prescaler value */
-  /* Set WAVE bitfield according to Waveform value */
-  /* Set WAVEPOL bitfield according to Polarity value */
-  MODIFY_REG(LPTIMx->CFGR, 
-             (LPTIM_CFGR_CKSEL | LPTIM_CFGR_PRESC | LPTIM_CFGR_WAVE| LPTIM_CFGR_WAVPOL), 
-             LPTIM_InitStruct->ClockSource | \
-             LPTIM_InitStruct->Prescaler | \
-             LPTIM_InitStruct->Waveform | \
-             LPTIM_InitStruct->Polarity);
+    /* Set CKSEL bitfield according to ClockSource value */
+    /* Set PRESC bitfield according to Prescaler value */
+    /* Set WAVE bitfield according to Waveform value */
+    /* Set WAVEPOL bitfield according to Polarity value */
+    MODIFY_REG(LPTIMx->CFGR,
+               (LPTIM_CFGR_CKSEL | LPTIM_CFGR_PRESC | LPTIM_CFGR_WAVE | LPTIM_CFGR_WAVPOL),
+               LPTIM_InitStruct->ClockSource | \
+               LPTIM_InitStruct->Prescaler | \
+               LPTIM_InitStruct->Waveform | \
+               LPTIM_InitStruct->Polarity);
   }
 
   return result;
 }
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /**
   * @brief  Disable the LPTIM instance
@@ -213,16 +199,11 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
   /* Save LPTIM source clock */
   switch ((uint32_t)LPTIMx)
   {
-     case LPTIM1_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
-       break;
-#if defined(LPTIM2)
-     case LPTIM2_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE);
-       break;
-#endif /* LPTIM2 */
-     default:
-       break;
+    case LPTIM1_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
+      break;
+    default:
+      break;
   }
 
   /* Save LPTIM configuration registers */
@@ -242,16 +223,11 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
     /* Force LPTIM source kernel clock from APB */
     switch ((uint32_t)LPTIMx)
     {
-       case LPTIM1_BASE:
-         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
-         break;
-#if defined(LPTIM2)
-       case LPTIM2_BASE:
-         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE_PCLK1);
-         break;
-#endif /* LPTIM2 */
-       default:
-         break;
+      case LPTIM1_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
+        break;
+      default:
+        break;
     }
 
     if (tmpCMP != 0UL)
@@ -279,10 +255,12 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
       do
       {
         rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
-      } while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+      }
+      while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
 
       LL_LPTIM_ClearFlag_ARROK(LPTIMx);
     }
+
 
     /* Restore LPTIM source kernel clock */
     LL_RCC_SetLPTIMClockSource(tmpclksource);
@@ -300,12 +278,20 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
   * @}
   */
 
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
 #endif /* LPTIM1 */
 
 /**
   * @}
   */
-  
+
 #endif /* USE_FULL_LL_DRIVER */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2020-08-18     ylz0923           first version
+ * 2021-08-12     chenyingchun      optimize wdt_control arg usage
  */
 
 #include <board.h>
@@ -42,7 +43,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         break;
     /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-        nrf5x_wdt_cfg.reload_value = (rt_uint32_t)arg * 1000;
+        nrf5x_wdt_cfg.reload_value = (*((rt_uint32_t*)arg)) * 1000;
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
         *((rt_uint32_t*)arg) = nrf5x_wdt_cfg.reload_value;
@@ -79,9 +80,10 @@ INIT_BOARD_EXPORT(rt_wdt_init);
 
 static int wdt_sample(int argc, char *argv[])
 {
+    rt_uint32_t timeout = 2;                    /* 溢出时间，单位：秒*/
     rt_device_t wdt = rt_device_find("wdt");
     rt_device_init(wdt);
-    rt_device_control(wdt, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, (void *)2);
+    rt_device_control(wdt, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     rt_device_control(wdt, RT_DEVICE_CTRL_WDT_START, RT_NULL);
 }
 MSH_CMD_EXPORT(wdt_sample, wdt sample);

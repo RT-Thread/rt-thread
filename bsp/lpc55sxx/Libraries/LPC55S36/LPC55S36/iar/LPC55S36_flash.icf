@@ -1,0 +1,103 @@
+/*
+** ###################################################################
+**     Processors:          LPC55S36JBD100
+**                          LPC55S36JHI48
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    LPC55S3x Reference Manual Rev. DraftG, 07/2021
+**     Version:             rev. 1.1, 2021-08-04
+**     Build:               b210913
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2021 NXP
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+
+/* USB BDT size */
+define symbol usb_bdt_size             = 0x0;
+/* Stack and Heap Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x0400;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x0400;
+}
+
+if (isdefinedsymbol(__pkc__)) {
+  define symbol retention_RAMsize              = 0x00004000;  /* SRAM A(16K) reserved for pkc */
+} else if (isdefinedsymbol(__power_down__)) {
+  define symbol retention_RAMsize              = 0x00000604;  /* The first 0x604 bytes reserved to CPU retention for power down mode */
+} else {
+  define symbol retention_RAMsize              = 0x00000000;
+}
+
+if (isdefinedsymbol(__powerquad__)) {
+  define symbol powerquad_RAMsize              = 0x00004000;  /* SRAM E(16K) reserved for powerquad */
+} else {
+  define symbol powerquad_RAMsize              = 0x00000000;
+}
+
+define symbol m_interrupts_start               = 0x00000000;
+define symbol m_interrupts_end                 = 0x000003FF;
+
+define symbol m_text_start                     = 0x00000400;
+define symbol m_text_end                       = 0x0003D7FF;
+
+define symbol m_data_start                     = 0x20000000 + retention_RAMsize;
+define symbol m_data_end                       = 0x2001BFFF - powerquad_RAMsize;
+
+define symbol m_sramx_start                    = 0x04000000;
+define symbol m_sramx_end                      = 0x04003FFF;
+
+define memory mem with size = 4G;
+
+define region TEXT_region             = mem:[from m_interrupts_start to m_interrupts_end]
+                                      | mem:[from m_text_start to m_text_end];
+define region DATA_region = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+if (isdefinedsymbol(__use_shmem__)) {
+  define region rpmsg_sh_mem_region     = mem:[from rpmsg_sh_mem_start to rpmsg_sh_mem_end];
+}
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { readwrite };
+define block ZI        { zi };
+
+initialize by copy { readwrite, section .textrw };
+
+if (isdefinedsymbol(__USE_DLIB_PERTHREAD))
+{
+  /* Required in a multi-threaded application */
+  initialize by copy with packing = none { section __DLIB_PERTHREAD };
+}
+
+if (isdefinedsymbol(__use_shmem__)) {
+  do not initialize  { section rpmsg_sh_mem_section };
+}
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+place in TEXT_region                        { readonly };
+place in DATA_region                        { block RW };
+place in DATA_region                        { block ZI };
+place in DATA_region                        { last block HEAP };
+place in CSTACK_region                      { block CSTACK };
+
+
+

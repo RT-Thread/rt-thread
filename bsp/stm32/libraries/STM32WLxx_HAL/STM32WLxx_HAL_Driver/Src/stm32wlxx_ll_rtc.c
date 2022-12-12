@@ -343,7 +343,7 @@ ErrorStatus LL_RTC_TIME_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Time
     }
 
     /* Exit Initialization mode */
-    LL_RTC_DisableInitMode(RTC);
+    LL_RTC_DisableInitMode(RTCx);
 
     /* If  RTC_CR_BYPSHAD bit = 0, wait for synchro else this check is not needed */
     if (LL_RTC_IsShadowRegBypassEnabled(RTCx) == 0U)
@@ -431,7 +431,7 @@ ErrorStatus LL_RTC_DATE_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Date
     }
 
     /* Exit Initialization mode */
-    LL_RTC_DisableInitMode(RTC);
+    LL_RTC_DisableInitMode(RTCx);
 
     /* If  RTC_CR_BYPSHAD bit = 0, wait for synchro else this check is not needed */
     if (LL_RTC_IsShadowRegBypassEnabled(RTCx) == 0U)

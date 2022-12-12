@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #include <rthw.h>
@@ -79,7 +79,9 @@ void rtthread_startup(void)
 #ifdef RT_USING_FINSH
     /* init finsh */
     finsh_system_init();
-    finsh_set_device( FINSH_DEVICE_NAME );
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+    finsh_set_device(FINSH_DEVICE_NAME);
+#endif
 #endif
 
     /* init timer thread */

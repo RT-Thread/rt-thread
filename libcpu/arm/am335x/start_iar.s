@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-04-06     zchong      the first version 
+ * 2015-04-06     zchong      the first version
  */
 
         MODULE  ?cstartup
-        
+
         ; --------------------
 ; Mode, correspords to bits 0-5 in CPSR
 
@@ -25,7 +25,7 @@ ABT_MODE DEFINE 0x17            ; Abort mode
 UND_MODE DEFINE 0x1B            ; Undefined Instruction mode
 SYS_MODE DEFINE 0x1F            ; System mode
 
-        
+
         ;; Forward declaration of sections.
         SECTION IRQ_STACK:DATA:NOROOT(3)
         SECTION FIQ_STACK:DATA:NOROOT(3)
@@ -34,8 +34,8 @@ SYS_MODE DEFINE 0x1F            ; System mode
         SECTION UND_STACK:DATA:NOROOT(3)
         SECTION CSTACK:DATA:NOROOT(3)
         SECTION .text:CODE
-        
-        
+
+
         SECTION .intvec:CODE:NOROOT(5)
 
         PUBLIC  __vector
@@ -95,7 +95,7 @@ FIQ_Addr:       DCD   FIQ_Handler
         EXTERN  rt_current_thread
         EXTERN  vmm_thread
         EXTERN  vmm_virq_check
-        
+
         EXTERN  __cmain
         REQUIRE __vector
         EXTWEAK __iar_init_core
@@ -135,7 +135,7 @@ __iar_program_start:
         MSR     cpsr_c, r0              ; Change the mode
         LDR     sp, =SFE(FIQ_STACK)     ; End of FIQ_STACK
         BIC     sp,sp,#0x7              ; Make sure SP is 8 aligned
-        
+
         BIC     r0,r0,#MODE_MSK         ; Clear the mode bits
         ORR     r0,r0,#ABT_MODE         ; Set Abort mode bits
         MSR     cpsr_c,r0               ; Change the mode
@@ -165,7 +165,7 @@ __iar_program_start:
         ;; Continue to __cmain for C-level initialization.
         B       __cmain
 
-      
+
 Undefined_Handler:
         SUB     sp, sp, #72
         STMIA   sp, {r0 - r12}          ;/* Calling r0-r12                  */
@@ -217,7 +217,7 @@ Abort_Handler:
         LDR      lr, [sp, #60]          ;/* Get PC   */
         ADD      sp, sp, #72
         MOVS     pc, lr                 ;/* return & move spsr_svc into cpsr */
-         
+
 FIQ_Handler:
         STMFD   sp!,{r0-r7,lr}
         BL      rt_hw_trap_fiq
@@ -274,5 +274,5 @@ rt_hw_context_switch_interrupt_do:
         MSR     spsr_cxsf, r4
 
         LDMFD   sp!, {r0-r12,lr,pc}^ ; pop new task's r0-r12,lr & pc, copy spsr to cpsr
-    
+
      END

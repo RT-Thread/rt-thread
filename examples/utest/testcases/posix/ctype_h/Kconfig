@@ -1,0 +1,9 @@
+menuconfig RTT_POSIX_TESTCASE_CTYPE_H
+    bool "<ctype.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_CTYPE_H
+
+    # functions, TODO
+
+endif

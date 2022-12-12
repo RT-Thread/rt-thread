@@ -23,7 +23,7 @@ struct stm32_lcd
     struct rt_device parent;
     struct rt_device_graphic_info info;
 };
-static struct stm32_lcd lcd;
+struct stm32_lcd lcd;
 
 extern void stm32_mipi_lcd_init(void);
 extern void stm32_mipi_lcd_config(rt_uint32_t pixel_format);
@@ -76,7 +76,7 @@ rt_err_t ltdc_init(void)
     HAL_DSI_Init(&hdsi, &dsi_pll);
 
     hdsi_video.VirtualChannelID             = 0;
-    hdsi_video.ColorCoding                  = DSI_RGB888;
+    hdsi_video.ColorCoding                  = DSI_RGB565;
     hdsi_video.VSPolarity                   = DSI_VSYNC_ACTIVE_HIGH;
     hdsi_video.HSPolarity                   = DSI_HSYNC_ACTIVE_HIGH;
     hdsi_video.DEPolarity                   = DSI_DATA_ENABLE_ACTIVE_HIGH;
@@ -130,7 +130,7 @@ rt_err_t ltdc_init(void)
 
     HAL_DSI_Start(&(hdsi));
 
-    stm32_mipi_lcd_config(RTGRAPHIC_PIXEL_FORMAT_ARGB888);
+    stm32_mipi_lcd_config(RTGRAPHIC_PIXEL_FORMAT_RGB565);
 
     return RT_EOK;
 }
@@ -143,7 +143,7 @@ void ltdc_layer_init(uint16_t index, uint32_t framebuffer)
     layer_cfg.WindowX1        = LCD_WIDTH;
     layer_cfg.WindowY0        = 0;
     layer_cfg.WindowY1        = LCD_HEIGHT;
-    layer_cfg.PixelFormat     = LTDC_PIXEL_FORMAT_ARGB8888;
+    layer_cfg.PixelFormat     = LTDC_PIXEL_FORMAT_RGB565;
     layer_cfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
     layer_cfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
     layer_cfg.Alpha           = 255;
@@ -169,9 +169,9 @@ static rt_err_t stm32_lcd_init(rt_device_t device)
 {
     lcd.info.width          = LCD_WIDTH;
     lcd.info.height         = LCD_HEIGHT;
-    lcd.info.pixel_format   = RTGRAPHIC_PIXEL_FORMAT_ARGB888;
-    lcd.info.bits_per_pixel = 32;
-    lcd.info.framebuffer    = (void *)rt_malloc_align(LCD_WIDTH * LCD_HEIGHT * (lcd.info.bits_per_pixel / 8), 32);
+    lcd.info.pixel_format   = RTGRAPHIC_PIXEL_FORMAT_RGB565;
+    lcd.info.bits_per_pixel = 16;
+    lcd.info.framebuffer    = (void *)rt_malloc_align(LCD_WIDTH * LCD_HEIGHT * (lcd.info.bits_per_pixel / 8), 32);;
     memset(lcd.info.framebuffer, 0, LCD_WIDTH * LCD_HEIGHT * (lcd.info.bits_per_pixel / 8));
     ltdc_init();
     ltdc_layer_init(0, (uint32_t)lcd.info.framebuffer);
@@ -231,22 +231,22 @@ int rt_hw_lcd_init(void)
 INIT_DEVICE_EXPORT(rt_hw_lcd_init);
 
 
-RT_WEAK void stm32_mipi_lcd_init(void)
+rt_weak void stm32_mipi_lcd_init(void)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }
 
-RT_WEAK void stm32_mipi_lcd_config(rt_uint32_t pixel_format)
+rt_weak void stm32_mipi_lcd_config(rt_uint32_t pixel_format)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }
 
-RT_WEAK void stm32_mipi_display_on(void)
+rt_weak void stm32_mipi_display_on(void)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }
 
-RT_WEAK void stm32_mipi_display_off(void)
+rt_weak void stm32_mipi_display_off(void)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }

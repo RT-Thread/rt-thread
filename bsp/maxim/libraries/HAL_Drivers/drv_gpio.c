@@ -158,7 +158,7 @@ static rt_err_t mcu_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     tmp_gpio_cfg.func = GPIO_FUNC_IN;
     GPIO_Config(&tmp_gpio_cfg);
     GPIO_IntDisable(&tmp_gpio_cfg);
-    GPIO_RegisterCallback(&tmp_gpio_cfg, NULL, NULL);
+    GPIO_RegisterCallback(&tmp_gpio_cfg, RT_NULL, RT_NULL);
     return RT_EOK;
 }
 
@@ -189,7 +189,7 @@ const static struct rt_pin_ops _mcu_pin_ops =
     mcu_pin_attach_irq,
     mcu_pin_dettach_irq,
     mcu_pin_irq_enable,
-    NULL,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

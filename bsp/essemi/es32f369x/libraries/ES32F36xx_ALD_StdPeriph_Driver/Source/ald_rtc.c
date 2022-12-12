@@ -15,10 +15,27 @@
   * @version V1.0
   * @date    25 Apr 2019
   * @author  AE Team
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          25 Apr 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  ********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   * @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -116,10 +133,7 @@
   ******************************************************************************
   */
 
-#include "ald_rtc.h"
-#include "ald_bkpc.h"
-#include "ald_tsense.h"
-#include "ald_syscfg.h"
+#include "ald_conf.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -1157,7 +1171,7 @@ flag_status_t ald_rtc_get_flag_status(rtc_flag_t flag)
 {
 	assert_param(IS_RTC_IF(flag));
 
-	if (READ_BIT(RTC->IFR, flag))
+	if ((READ_BIT(RTC->IER, flag)) && (READ_BIT(RTC->ISR, flag)))
 		return SET;
 
 	return RESET;

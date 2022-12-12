@@ -87,7 +87,6 @@ typedef struct
 #define IWDG_PRESCALER_64               IWDG_PR_PR_2                                    /*!< IWDG prescaler set to 64  */
 #define IWDG_PRESCALER_128              (IWDG_PR_PR_2 | IWDG_PR_PR_0)                   /*!< IWDG prescaler set to 128 */
 #define IWDG_PRESCALER_256              (IWDG_PR_PR_2 | IWDG_PR_PR_1)                   /*!< IWDG prescaler set to 256 */
-
 /**
   * @}
   */
@@ -99,7 +98,6 @@ typedef struct
 /**
   * @}
   */
-
 
 /**
   * @}
@@ -138,7 +136,7 @@ typedef struct
   * @{
   */
 /* Initialization/Start functions  ********************************************/
-HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg);
+HAL_StatusTypeDef     HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg);
 /**
   * @}
   */
@@ -147,7 +145,7 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg);
   * @{
   */
 /* I/O operation functions ****************************************************/
-HAL_StatusTypeDef HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg);
+HAL_StatusTypeDef     HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg);
 /**
   * @}
   */

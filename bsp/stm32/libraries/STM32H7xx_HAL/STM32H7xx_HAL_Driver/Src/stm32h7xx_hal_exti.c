@@ -32,34 +32,34 @@
         (++) Falling
 
     (+) Exti lines 0 to 15 are linked to gpio pin number 0 to 15. Gpio port can
-        be selected throught multiplexer.
+        be selected through multiplexer.
 
-    (+) PendClearSource used to set the D3 Smart Run Domain autoamtic pend clear soure.
+    (+) PendClearSource used to set the D3 Smart Run Domain autoamtic pend clear source.
         It is applicable for line with wkaeup target is Any (CPU1 , CPU2 and D3 smart run domain).
         Value can be one of the following:
-        (++)  EXTI_D3_PENDCLR_SRC_NONE : no pend clear source is selcted :
+        (++)  EXTI_D3_PENDCLR_SRC_NONE : no pend clear source is selected :
               In this case corresponding bit of D2PMRx register is set to 0
                 (+++) On a configurable Line : the D3 domain wakeup signal is
                       automatically cleared after after the Delay + Rising Edge detect
                 (+++) On a direct Line : the D3 domain wakeup signal is
                       cleared after the direct event input signal is cleared
 
-        (++)  EXTI_D3_PENDCLR_SRC_DMACH6 : no pend clear source is selcted :
+        (++)  EXTI_D3_PENDCLR_SRC_DMACH6 : no pend clear source is selected :
               In this case corresponding bit of D2PMRx register is set to 1
               and corresponding bits(2) of D3PCRxL/H is set to b00 :
                 DMA ch6 event selected as D3 domain pendclear source
 
-        (++)  EXTI_D3_PENDCLR_SRC_DMACH7 : no pend clear source is selcted :
+        (++)  EXTI_D3_PENDCLR_SRC_DMACH7 : no pend clear source is selected :
               In this case corresponding bit of D2PMRx register is set to 1
               and corresponding bits(2) of D3PCRxL/H is set to b01 :
                 DMA ch7 event selected as D3 domain pendclear source
 
-        (++)  EXTI_D3_PENDCLR_SRC_LPTIM4 : no pend clear source is selcted :
+        (++)  EXTI_D3_PENDCLR_SRC_LPTIM4 : no pend clear source is selected :
               In this case corresponding bit of D2PMRx register is set to 1
               and corresponding bits(2) of D3PCRxL/H is set to b10 :
                 LPTIM4 out selected as D3 domain pendclear source
 
-        (++)  EXTI_D3_PENDCLR_SRC_LPTIM5 : no pend clear source is selcted :
+        (++)  EXTI_D3_PENDCLR_SRC_LPTIM5 : no pend clear source is selected :
               In this case corresponding bit of D2PMRx register is set to 1
               and corresponding bits(2) of D3PCRxL/H is set to b11 :
                 LPTIM5 out selected as D3 domain pendclear source

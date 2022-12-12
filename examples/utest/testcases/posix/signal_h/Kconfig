@@ -1,0 +1,23 @@
+menuconfig RTT_POSIX_TESTCASE_SIGNAL_H
+    bool "<signal.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SIGNAL_H
+
+    config SIGNAL_H_SIGACTION
+        bool "<signal.h> -> sigaction"
+        default n
+
+    config SIGNAL_H_SIGPROCMASK
+        bool "<signal.h> -> sigprocmask"
+        default n
+
+    config SIGNAL_H_RAISE
+        bool "<signal.h> -> raise"
+        default n
+
+    config SIGNAL_H_SIGNAL
+        bool "<signal.h> -> signal"
+        default n
+
+endif

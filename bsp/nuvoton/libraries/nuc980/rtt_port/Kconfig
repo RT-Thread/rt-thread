@@ -70,6 +70,13 @@ config SOC_SERIES_NUC980
         bool "Enable Analog-to-Digital Converter(ADC)"
         select RT_USING_ADC
 
+        if BSP_USING_ADC
+            config BSP_USING_ADC_TOUCH
+            bool "Enable ADC Touching function"
+            select RT_USING_TOUCH
+            default n
+        endif
+
     menuconfig BSP_USING_TMR
         bool "Enable Timer Controller(TIMER)"
 
@@ -346,6 +353,7 @@ config SOC_SERIES_NUC980
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
+        select DFS_USING_POSIX
 
         if BSP_USING_SDH
             config BSP_USING_SDH0
@@ -472,12 +480,17 @@ config SOC_SERIES_NUC980
         select BSP_USING_SPI
 
         if BSP_USING_QSPI
-           config BSP_USING_QSPI0
-               bool "Enable QSPI0"
+            config BSP_USING_QSPI_PDMA
+            bool
+            select BSP_USING_SPI_PDMA
+            default n
 
-           config BSP_USING_QSPI0_PDMA
+            config BSP_USING_QSPI0
+                bool "Enable QSPI0"
+
+            config BSP_USING_QSPI0_PDMA
                 bool "Enable PDMA for QSPI0"
-                select BSP_USING_SPI_PDMA
+                select BSP_USING_QSPI_PDMA
                 depends on BSP_USING_QSPI0
         endif
 

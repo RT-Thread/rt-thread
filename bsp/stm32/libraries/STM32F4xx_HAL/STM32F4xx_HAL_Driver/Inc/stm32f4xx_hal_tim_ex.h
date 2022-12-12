@@ -129,66 +129,66 @@ typedef struct
   * @{
   */
 #if defined(SPDIFRX)
-#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                       \
-        ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
-         (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSI)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSE)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
-         (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
-                                    ((TIM_REMAP) == TIM_TIM11_SPDIFRX)       || \
-                                    ((TIM_REMAP) == TIM_TIM11_HSE))))
+#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                 \
+  ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
+   (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
+                              ((TIM_REMAP) == TIM_TIM5_LSI)            || \
+                              ((TIM_REMAP) == TIM_TIM5_LSE)            || \
+                              ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
+   (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
+                              ((TIM_REMAP) == TIM_TIM11_SPDIFRX)       || \
+                              ((TIM_REMAP) == TIM_TIM11_HSE))))
 #elif defined(TIM2)
 #if defined(LPTIM_OR_TIM1_ITR2_RMP) && defined(LPTIM_OR_TIM5_ITR1_RMP) && defined(LPTIM_OR_TIM5_ITR1_RMP)
-#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                       \
-        ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
-         (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSI)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSE)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
-         (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
-                                    ((TIM_REMAP) == TIM_TIM11_HSE)))         || \
-         (((INSTANCE) == TIM1)  && (((TIM_REMAP) == TIM_TIM1_TIM3_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM1_LPTIM)))        || \
-         (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_TIM3_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM5_LPTIM)))        || \
-         (((INSTANCE) == TIM9)  && (((TIM_REMAP) == TIM_TIM9_TIM3_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM9_LPTIM))))
+#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                 \
+  ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
+   (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
+                              ((TIM_REMAP) == TIM_TIM5_LSI)            || \
+                              ((TIM_REMAP) == TIM_TIM5_LSE)            || \
+                              ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
+   (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
+                              ((TIM_REMAP) == TIM_TIM11_HSE)))         || \
+   (((INSTANCE) == TIM1)  && (((TIM_REMAP) == TIM_TIM1_TIM3_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM1_LPTIM)))        || \
+   (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_TIM3_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM5_LPTIM)))        || \
+   (((INSTANCE) == TIM9)  && (((TIM_REMAP) == TIM_TIM9_TIM3_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM9_LPTIM))))
 #elif defined(TIM8)
-#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                       \
-        ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
-         (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSI)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSE)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
-         (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
-                                    ((TIM_REMAP) == TIM_TIM11_HSE))))
+#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                 \
+  ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
+   (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
+                              ((TIM_REMAP) == TIM_TIM5_LSI)            || \
+                              ((TIM_REMAP) == TIM_TIM5_LSE)            || \
+                              ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
+   (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
+                              ((TIM_REMAP) == TIM_TIM11_HSE))))
 #else
-#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                       \
-        ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_ETH_PTP)        || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
-         (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSI)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSE)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
-         (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
-                                    ((TIM_REMAP) == TIM_TIM11_HSE))))
+#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                 \
+  ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_ETH_PTP)        || \
+                              ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
+   (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
+                              ((TIM_REMAP) == TIM_TIM5_LSI)            || \
+                              ((TIM_REMAP) == TIM_TIM5_LSE)            || \
+                              ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
+   (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
+                              ((TIM_REMAP) == TIM_TIM11_HSE))))
 #endif /* LPTIM_OR_TIM1_ITR2_RMP &&  LPTIM_OR_TIM5_ITR1_RMP && LPTIM_OR_TIM5_ITR1_RMP */
 #else
-#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                       \
-        ((((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSI)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSE)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
-         (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
-                                    ((TIM_REMAP) == TIM_TIM11_HSE))))
+#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                 \
+  ((((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
+                              ((TIM_REMAP) == TIM_TIM5_LSI)            || \
+                              ((TIM_REMAP) == TIM_TIM5_LSE)            || \
+                              ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
+   (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
+                              ((TIM_REMAP) == TIM_TIM11_HSE))))
 #endif /* SPDIFRX */
 
 /**
@@ -202,9 +202,9 @@ typedef struct
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group1 Extended Timer Hall Sensor functions
- *  @brief    Timer Hall Sensor functions
- * @{
- */
+  *  @brief    Timer Hall Sensor functions
+  * @{
+  */
 /*  Timer Hall Sensor functions  **********************************************/
 HAL_StatusTypeDef HAL_TIMEx_HallSensor_Init(TIM_HandleTypeDef *htim, TIM_HallSensor_InitTypeDef *sConfig);
 HAL_StatusTypeDef HAL_TIMEx_HallSensor_DeInit(TIM_HandleTypeDef *htim);
@@ -226,9 +226,9 @@ HAL_StatusTypeDef HAL_TIMEx_HallSensor_Stop_DMA(TIM_HandleTypeDef *htim);
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group2 Extended Timer Complementary Output Compare functions
- *  @brief   Timer Complementary Output Compare functions
- * @{
- */
+  *  @brief   Timer Complementary Output Compare functions
+  * @{
+  */
 /*  Timer Complementary Output Compare functions  *****************************/
 /* Blocking mode: Polling */
 HAL_StatusTypeDef HAL_TIMEx_OCN_Start(TIM_HandleTypeDef *htim, uint32_t Channel);
@@ -246,9 +246,9 @@ HAL_StatusTypeDef HAL_TIMEx_OCN_Stop_DMA(TIM_HandleTypeDef *htim, uint32_t Chann
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group3 Extended Timer Complementary PWM functions
- *  @brief    Timer Complementary PWM functions
- * @{
- */
+  *  @brief    Timer Complementary PWM functions
+  * @{
+  */
 /*  Timer Complementary PWM functions  ****************************************/
 /* Blocking mode: Polling */
 HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel);
@@ -265,9 +265,9 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Stop_DMA(TIM_HandleTypeDef *htim, uint32_t Chan
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group4 Extended Timer Complementary One Pulse functions
- *  @brief    Timer Complementary One Pulse functions
- * @{
- */
+  *  @brief    Timer Complementary One Pulse functions
+  * @{
+  */
 /*  Timer Complementary One Pulse functions  **********************************/
 /* Blocking mode: Polling */
 HAL_StatusTypeDef HAL_TIMEx_OnePulseN_Start(TIM_HandleTypeDef *htim, uint32_t OutputChannel);
@@ -281,15 +281,20 @@ HAL_StatusTypeDef HAL_TIMEx_OnePulseN_Stop_IT(TIM_HandleTypeDef *htim, uint32_t 
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group5 Extended Peripheral Control functions
- *  @brief    Peripheral Control functions
- * @{
- */
+  *  @brief    Peripheral Control functions
+  * @{
+  */
 /* Extended Control functions  ************************************************/
-HAL_StatusTypeDef HAL_TIMEx_ConfigCommutEvent(TIM_HandleTypeDef *htim, uint32_t  InputTrigger, uint32_t  CommutationSource);
-HAL_StatusTypeDef HAL_TIMEx_ConfigCommutEvent_IT(TIM_HandleTypeDef *htim, uint32_t  InputTrigger, uint32_t  CommutationSource);
-HAL_StatusTypeDef HAL_TIMEx_ConfigCommutEvent_DMA(TIM_HandleTypeDef *htim, uint32_t  InputTrigger, uint32_t  CommutationSource);
-HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim, TIM_MasterConfigTypeDef *sMasterConfig);
-HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim, TIM_BreakDeadTimeConfigTypeDef *sBreakDeadTimeConfig);
+HAL_StatusTypeDef HAL_TIMEx_ConfigCommutEvent(TIM_HandleTypeDef *htim, uint32_t  InputTrigger,
+                                              uint32_t  CommutationSource);
+HAL_StatusTypeDef HAL_TIMEx_ConfigCommutEvent_IT(TIM_HandleTypeDef *htim, uint32_t  InputTrigger,
+                                                 uint32_t  CommutationSource);
+HAL_StatusTypeDef HAL_TIMEx_ConfigCommutEvent_DMA(TIM_HandleTypeDef *htim, uint32_t  InputTrigger,
+                                                  uint32_t  CommutationSource);
+HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+                                                        TIM_MasterConfigTypeDef *sMasterConfig);
+HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
+                                                TIM_BreakDeadTimeConfigTypeDef *sBreakDeadTimeConfig);
 HAL_StatusTypeDef HAL_TIMEx_RemapConfig(TIM_HandleTypeDef *htim, uint32_t Remap);
 /**
   * @}
@@ -313,6 +318,7 @@ void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim);
   */
 /* Extended Peripheral State functions  ***************************************/
 HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef *htim);
+HAL_TIM_ChannelStateTypeDef HAL_TIMEx_GetChannelNState(TIM_HandleTypeDef *htim,  uint32_t ChannelN);
 /**
   * @}
   */
@@ -323,7 +329,7 @@ HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef *htim);
 /* End of exported functions -------------------------------------------------*/
 
 /* Private functions----------------------------------------------------------*/
-/** @defgroup TIMEx_Private_Functions TIM Extended Private Functions
+/** @addtogroup TIMEx_Private_Functions TIMEx Private Functions
   * @{
   */
 void TIMEx_DMACommutationCplt(DMA_HandleTypeDef *hdma);

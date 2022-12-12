@@ -6,31 +6,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -121,28 +105,29 @@ typedef enum
   */
 
 /** @defgroup GPIO_mode GPIO mode
-  * @brief GPIO Configuration Mode 
-  *        Elements values convention: 0xX0yz00YZ
-  *           - X  : GPIO mode or EXTI Mode
-  *           - y  : External IT or Event trigger detection 
-  *           - z  : IO configuration on External IT or Event
-  *           - Y  : Output type (Push Pull or Open Drain)
-  *           - Z  : IO Direction mode (Input, Output, Alternate or Analog)
+  * @brief GPIO Configuration Mode
+  *        Elements values convention: 0x00WX00YZ
+  *           - W  : EXTI trigger detection on 3 bits
+  *           - X  : EXTI mode (IT or Event) on 2 bits
+  *           - Y  : Output type (Push Pull or Open Drain) on 1 bit
+  *           - Z  : GPIO mode (Input, Output, Alternate or Analog) on 2 bits
   * @{
   */ 
-#define  GPIO_MODE_INPUT                        (0x00000000U)   /*!< Input Floating Mode                   */
-#define  GPIO_MODE_OUTPUT_PP                    (0x00000001U)   /*!< Output Push Pull Mode                 */
-#define  GPIO_MODE_OUTPUT_OD                    (0x00000011U)   /*!< Output Open Drain Mode                */
-#define  GPIO_MODE_AF_PP                        (0x00000002U)   /*!< Alternate Function Push Pull Mode     */
-#define  GPIO_MODE_AF_OD                        (0x00000012U)   /*!< Alternate Function Open Drain Mode    */
-#define  GPIO_MODE_ANALOG                       (0x00000003U)   /*!< Analog Mode  */  
-#define  GPIO_MODE_IT_RISING                    (0x10110000U)   /*!< External Interrupt Mode with Rising edge trigger detection          */
-#define  GPIO_MODE_IT_FALLING                   (0x10210000U)   /*!< External Interrupt Mode with Falling edge trigger detection         */
-#define  GPIO_MODE_IT_RISING_FALLING            (0x10310000U)   /*!< External Interrupt Mode with Rising/Falling edge trigger detection  */
-#define  GPIO_MODE_EVT_RISING                   (0x10120000U)   /*!< External Event Mode with Rising edge trigger detection               */
-#define  GPIO_MODE_EVT_FALLING                  (0x10220000U)   /*!< External Event Mode with Falling edge trigger detection              */
-#define  GPIO_MODE_EVT_RISING_FALLING           (0x10320000U)   /*!< External Event Mode with Rising/Falling edge trigger detection       */
-/**
+#define  GPIO_MODE_INPUT                        MODE_INPUT                                                  /*!< Input Floating Mode                   */
+#define  GPIO_MODE_OUTPUT_PP                    (MODE_OUTPUT | OUTPUT_PP)                                   /*!< Output Push Pull Mode                 */
+#define  GPIO_MODE_OUTPUT_OD                    (MODE_OUTPUT | OUTPUT_OD)                                   /*!< Output Open Drain Mode                */
+#define  GPIO_MODE_AF_PP                        (MODE_AF | OUTPUT_PP)                                       /*!< Alternate Function Push Pull Mode     */
+#define  GPIO_MODE_AF_OD                        (MODE_AF | OUTPUT_OD)                                       /*!< Alternate Function Open Drain Mode    */
+
+#define  GPIO_MODE_ANALOG                       MODE_ANALOG                                                 /*!< Analog Mode  */
+    
+#define  GPIO_MODE_IT_RISING                    (MODE_INPUT | EXTI_IT | TRIGGER_RISING)                     /*!< External Interrupt Mode with Rising edge trigger detection          */
+#define  GPIO_MODE_IT_FALLING                   (MODE_INPUT | EXTI_IT | TRIGGER_FALLING)                    /*!< External Interrupt Mode with Falling edge trigger detection         */
+#define  GPIO_MODE_IT_RISING_FALLING            (MODE_INPUT | EXTI_IT | TRIGGER_RISING | TRIGGER_FALLING)   /*!< External Interrupt Mode with Rising/Falling edge trigger detection  */
+ 
+#define  GPIO_MODE_EVT_RISING                   (MODE_INPUT | EXTI_EVT | TRIGGER_RISING)                     /*!< External Event Mode with Rising edge trigger detection             */
+#define  GPIO_MODE_EVT_FALLING                  (MODE_INPUT | EXTI_EVT | TRIGGER_FALLING)                    /*!< External Event Mode with Falling edge trigger detection            */
+#define  GPIO_MODE_EVT_RISING_FALLING           (MODE_INPUT | EXTI_EVT | TRIGGER_RISING | TRIGGER_FALLING)   /*!< External Event Mode with Rising/Falling edge trigger detection     *//**
   * @}
   */
                                                          
@@ -222,13 +207,38 @@ typedef enum
   */
 
 /* Private macros ------------------------------------------------------------*/
+/** @defgroup GPIO_Private_Constants GPIO Private Constants
+  * @{
+  */
+#define GPIO_MODE_Pos                           0U
+#define GPIO_MODE                               (0x3UL << GPIO_MODE_Pos)
+#define MODE_INPUT                              (0x0UL << GPIO_MODE_Pos)
+#define MODE_OUTPUT                             (0x1UL << GPIO_MODE_Pos)
+#define MODE_AF                                 (0x2UL << GPIO_MODE_Pos)
+#define MODE_ANALOG                             (0x3UL << GPIO_MODE_Pos)
+#define OUTPUT_TYPE_Pos                         4U
+#define OUTPUT_TYPE                             (0x1UL << OUTPUT_TYPE_Pos)
+#define OUTPUT_PP                               (0x0UL << OUTPUT_TYPE_Pos)
+#define OUTPUT_OD                               (0x1UL << OUTPUT_TYPE_Pos)
+#define EXTI_MODE_Pos                           16U
+#define EXTI_MODE                               (0x3UL << EXTI_MODE_Pos)
+#define EXTI_IT                                 (0x1UL << EXTI_MODE_Pos)
+#define EXTI_EVT                                (0x2UL << EXTI_MODE_Pos)
+#define TRIGGER_MODE_Pos                        20U
+#define TRIGGER_MODE                            (0x7UL << TRIGGER_MODE_Pos)
+#define TRIGGER_RISING                          (0x1UL << TRIGGER_MODE_Pos)
+#define TRIGGER_FALLING                         (0x2UL << TRIGGER_MODE_Pos)
+/**
+  * @}
+  */
+
 /** @addtogroup GPIO_Private_Macros GPIO Private Macros
   * @{
   */
 #define IS_GPIO_PIN_ACTION(ACTION)  (((ACTION) == GPIO_PIN_RESET) || ((ACTION) == GPIO_PIN_SET))
 
-#define IS_GPIO_PIN(__PIN__)        ((((__PIN__) & GPIO_PIN_MASK) != 0x00U) &&\
-                                     (((__PIN__) & ~GPIO_PIN_MASK) == 0x00U))
+#define IS_GPIO_PIN(__PIN__)        (((((uint32_t)__PIN__) & GPIO_PIN_MASK) != 0x00U) &&\
+                                     ((((uint32_t)__PIN__) & ~GPIO_PIN_MASK) == 0x00U))
 
 #define IS_GPIO_MODE(__MODE__)      (((__MODE__) == GPIO_MODE_INPUT)              ||\
                                      ((__MODE__) == GPIO_MODE_OUTPUT_PP)          ||\

@@ -1,11 +1,7 @@
 /*
- * File      : usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -259,8 +255,8 @@ static const struct gd32_uart uarts[] = {
         UART6,                                 // uart peripheral index
         UART6_IRQn,                            // uart iqrn
         RCU_UART6, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_8,          // tx port, tx alternate, tx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_7,          // rx port, rx alternate, rx pin
         &serial6,
         "uart6",
     },
@@ -271,8 +267,8 @@ static const struct gd32_uart uarts[] = {
         UART7,                                 // uart peripheral index
         UART7_IRQn,                            // uart iqrn
         RCU_UART7, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_1,          // tx port, tx alternate, tx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_0,          // rx port, rx alternate, rx pin
         &serial7,
         "uart7",
     },
@@ -381,14 +377,14 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd, void *arg
         /* disable rx irq */
         NVIC_DisableIRQ(uart->irqn);
         /* disable interrupt */
-        usart_interrupt_disable(uart->uart_periph, USART_INTEN_RBNEIE);
+        usart_interrupt_disable(uart->uart_periph, USART_INT_RBNE);
 
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_EnableIRQ(uart->irqn);
         /* enable interrupt */
-        usart_interrupt_enable(uart->uart_periph, USART_INTEN_RBNEIE);
+        usart_interrupt_enable(uart->uart_periph, USART_INT_RBNE);
         break;
     }
 
@@ -434,7 +430,7 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_RBNEIE) != RESET) &&
+    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_FLAG_RBNE) != RESET) &&
             (usart_flag_get(uart->uart_periph, USART_FLAG_RBNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);

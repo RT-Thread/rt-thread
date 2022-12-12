@@ -345,9 +345,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>CORE_M4, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, CORE_M4, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;Libraries\CMSIS\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;Libraries\lpc_chip\chip_common;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config</IncludePath>
+              <IncludePath>applications;.;Libraries\CMSIS\Include;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;Libraries\lpc_chip\chip_common;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -396,6 +396,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\board.c</FilePath>
@@ -408,16 +415,16 @@
               <FilePath>applications\demo_thread.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>keil_startup_lpc5410x.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\Device\startup\keil_startup_lpc5410x.s</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>sysinit.c</FileName>
@@ -425,11 +432,63 @@
               <FilePath>Libraries\Device\startup\sysinit.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>keil_startup_lpc5410x.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\Device\startup\keil_startup_lpc5410x.s</FilePath>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -458,16 +517,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -475,58 +534,58 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -548,7 +607,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -558,79 +617,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>finsh_compiler.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -722,13 +718,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
@@ -746,93 +735,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fpu_init.c</FileName>
+              <FileName>stopwatch_5410x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_common\fpu_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>iap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_common\iap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ring_buffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_common\ring_buffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rtc_ut.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_common\rtc_ut.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>chip_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\chip_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\clock_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>crc_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\crc_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fifo_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\fifo_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gpiogroup_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\gpiogroup_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gpio_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\gpio_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_dmaaltd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_dmaaltd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_dmaaltd_rom_api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_dmaaltd_rom_api.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\stopwatch_5410x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -844,37 +749,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>hw_i2cmd_rom_api.c</FileName>
+              <FileName>pll_5410x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmd_rom_api.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\pll_5410x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hw_i2cmond.c</FileName>
+              <FileName>rtc_ut.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmond.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_common\rtc_ut.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hw_i2cmond_rom_api.c</FileName>
+              <FileName>wwdt_5410x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmond_rom_api.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_i2csd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2csd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_i2csd_rom_api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2csd_rom_api.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\wwdt_5410x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -886,76 +777,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>hw_spimd_rom_api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_spimd_rom_api.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_spisd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_spisd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_spisd_rom_api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_spisd_rom_api.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hw_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\hw_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>iocon_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\iocon_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pinint_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\pinint_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pll_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\pll_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ritimer_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\ritimer_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>romapi_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>romapi_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>romapi_i2cm.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cm.c</FilePath>
@@ -963,30 +784,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>romapi_i2cmon.c</FileName>
+              <FileName>hw_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cmon.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>romapi_i2cs.c</FileName>
+              <FileName>hw_i2csd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cs.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2csd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>romapi_spim.c</FileName>
+              <FileName>hw_spimd_rom_api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_spim.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_spimd_rom_api.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>romapi_spis.c</FileName>
+              <FileName>clock_5410x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_spis.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\clock_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\timer_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>crc_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\crc_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romapi_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_dma.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1005,9 +847,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>sct_5410x.c</FileName>
+              <FileName>hw_i2cmond_rom_api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\sct_5410x.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmond_rom_api.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_spisd_rom_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_spisd_rom_api.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gpiogroup_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\gpiogroup_5410x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1019,30 +875,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stopwatch_5410x.c</FileName>
+              <FileName>ritimer_5410x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\stopwatch_5410x.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\ritimer_5410x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscon_5410x.c</FileName>
+              <FileName>pinint_5410x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\syscon_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sysinit_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\sysinit_5410x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer_5410x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\timer_5410x.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\pinint_5410x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1054,9 +896,156 @@
           </Files>
           <Files>
             <File>
-              <FileName>wwdt_5410x.c</FileName>
+              <FileName>hw_i2cmond.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\wwdt_5410x.c</FilePath>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmond.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_dmaaltd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_dmaaltd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sct_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\sct_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_i2csd_rom_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2csd_rom_api.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_dmaaltd_rom_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_dmaaltd_rom_api.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>chip_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\chip_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sysinit_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\sysinit_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscon_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\syscon_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romapi_i2cs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ring_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_common\ring_buffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>iap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_common\iap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romapi_i2cmon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cmon.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romapi_spis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_spis.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romapi_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fpu_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_common\fpu_init.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_i2cmd_rom_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmd_rom_api.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fifo_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\fifo_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>iocon_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\iocon_5410x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hw_spisd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\hw_spisd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romapi_spim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\romapi_spim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gpio_5410x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\gpio_5410x.c</FilePath>
             </File>
           </Files>
           <Files>

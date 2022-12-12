@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author           Notes
@@ -196,7 +192,7 @@ static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer
             while (UA1TSF == 1U)
                 ;
             UA1TX = *ptr;
-  
+
             ptr ++;
             size --;
         }

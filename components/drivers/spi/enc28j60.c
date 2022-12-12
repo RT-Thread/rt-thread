@@ -85,7 +85,7 @@ static uint8_t spi_read_op(struct rt_spi_device *spi_device, uint8_t op, uint8_t
 
 static void spi_write_op(struct rt_spi_device *spi_device, uint8_t op, uint8_t address, uint8_t data)
 {
-    uint32_t level;
+    rt_base_t level;
     uint8_t buffer[2];
 
     level = rt_hw_interrupt_disable();
@@ -778,7 +778,7 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
         rt_spi_configure(spi_device, &cfg);
     } /* config spi */
 
-    memset(&enc28j60_dev, 0, sizeof(enc28j60_dev));
+    rt_memset(&enc28j60_dev, 0, sizeof(enc28j60_dev));
 
     rt_event_init(&tx_event, "eth_tx", RT_IPC_FLAG_FIFO);
     enc28j60_dev.spi_device = spi_device;
@@ -834,7 +834,7 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
     enc28j60_dev.parent.eth_rx  = enc28j60_rx;
     enc28j60_dev.parent.eth_tx  = enc28j60_tx;
 
-    rt_mutex_init(&enc28j60_dev.lock, "enc28j60", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&enc28j60_dev.lock, "enc28j60", RT_IPC_FLAG_PRIO);
 
     eth_device_init(&(enc28j60_dev.parent), "e0");
 

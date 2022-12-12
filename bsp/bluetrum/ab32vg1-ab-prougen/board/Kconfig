@@ -1,5 +1,14 @@
 menu "Hardware Drivers Config"
 
+menuconfig SOC_AB32VG1
+    bool "SOC_AB32VG1"
+    select PKG_USING_BLUETRUM_SDK
+    default y
+
+menuconfig PKG_USING_BLUETRUM_NIMBLE
+    bool "PKG_USING_BLUETRUM_NIMBLE"
+    default n
+
 menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_AUDIO
@@ -25,24 +34,49 @@ menu "Onboard Peripheral Drivers"
         default 24000000
     endif
 
+    config BSP_USING_NIMBLE
+        bool "use nimble stack(iot)"
+        select PKG_USING_BLUETRUM_NIMBLE
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_UART
-		bool "Enable UART"
+        bool "Enable UART"
         if BSP_USING_UART
             config BSP_USING_UART0
                 bool "Enable UART0"
                 select RT_USING_SERIAL
                 default y
+            if BSP_USING_UART0
+                config BSP_UART0_FIFO_SIZE
+                    int "BSP_UART0_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
+
             config BSP_USING_UART1
                 bool "Enable UART1"
                 select RT_USING_SERIAL
                 default n
+            if BSP_USING_UART1
+                config BSP_UART1_FIFO_SIZE
+                    int "BSP_UART1_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
+
             config BSP_USING_UART2
                 bool "Enable UART2"
                 select RT_USING_SERIAL
                 default n
+            if BSP_USING_UART2
+                config BSP_UART2_FIFO_SIZE
+                    int "BSP_UART2_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
         endif
 
     config BSP_USING_SDIO
@@ -90,16 +124,16 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_T4_PWM
                 config BSP_USING_T4_PWM1
                     bool "Enable Timer4 PWM1 (PA6)(Confit with uart0 rx)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_T5_PWM
             bool "Enable Timer5 PWM"
-            default n
+            default y
             if BSP_USING_T5_PWM
                 config BSP_USING_T5_PWM0
                     bool "Enable Timer5 PWM2 (PE1)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_LPWM0
@@ -109,7 +143,7 @@ menu "On-chip Peripheral Drivers"
                 comment "G1, G2 and G3 are mutually exclusive"
                 config BSP_USING_LPWM0_G1
                     bool "Enable LPWM0 G1 (PE4)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_LPWM1
@@ -119,7 +153,7 @@ menu "On-chip Peripheral Drivers"
                 comment "G1, G2 and G3 are mutually exclusive"
                 config BSP_USING_LPWM1_G3
                     bool "Enable LPWM1 G3 (PA1)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_LPWM2
@@ -129,7 +163,7 @@ menu "On-chip Peripheral Drivers"
                 comment "G1, G2 and G3 are mutually exclusive"
                 config BSP_USING_LPWM2_G2
                     bool "Enable LPWM2 G2 (PE0)"
-                    default n
+                    default y
                 config BSP_USING_LPWM2_G3
                     bool "Enable LPWM2 G3 (PA2)"
                     default n
@@ -148,7 +182,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_TIM
             config BSP_USING_TIM1
                 bool "Enable TIM1"
-                default n
+                default y
 
             config BSP_USING_TIM2
                 bool "Enable TIM2"
@@ -170,12 +204,15 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             config RTC_USING_INTERNAL_CLK
-            bool "Using internal clock RTC"
-            default y
+                bool "Using internal clock RTC"
+                default y
+            config RTC_USING_1S_INT
+                bool "Using 1 second interrupt"
+                depends on RT_USING_ALARM
+                default n
         endif
 
     menuconfig BSP_USING_ADC
@@ -185,12 +222,25 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC0
                 bool "Enable ADC0"
+                default y
+        endif
+
+    menuconfig BSP_USING_IRRX
+        bool "Enable IRRX(HW or SW)"
+        default n
+        if BSP_USING_IRRX
+            config BSP_USING_IRRX_HW
+                bool "Enable hardware IRRX"
+                default y
+            config BSP_USING_IRRX_SW
+                bool "Enable software IRRX"
                 default n
         endif
 
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
 endmenu
 
-menu "Board extended module Drivers"
-endmenu
 
 endmenu

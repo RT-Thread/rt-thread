@@ -13,7 +13,11 @@
 #if defined(BSP_USING_DCMI)
 
 #include "drv_mfx.h"
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include "drv_ov5640.h"
 
 //#define DRV_DEBUG
@@ -27,7 +31,7 @@
 #define JPEG_BUF_SIZE   8 * 1024
 #define JPEG_LINE_SIZE  1 * 1024
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(0x2FFCC000))) static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE];
 #elif defined(__GNUC__)
 static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE] __attribute__((section(".Dcmi0Section")));
@@ -36,7 +40,7 @@ static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE] __attribute__((section(".Dcmi0Sec
 __no_init static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE];
 #endif
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(0x2FFDC000))) static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE];
 #elif defined(__GNUC__)
 static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]  __attribute__((section(".Dcmi1Section")));

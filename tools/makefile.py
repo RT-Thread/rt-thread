@@ -27,7 +27,7 @@ def TargetMakefile(env):
     RTT_ROOT = os.path.abspath(env['RTT_ROOT'])
 
     match_bsp = False
-    if BSP_ROOT.startswith(RTT_ROOT): 
+    if BSP_ROOT.startswith(RTT_ROOT):
         match_bsp = True
 
     make = open('config.mk', 'w')
@@ -50,6 +50,14 @@ def TargetMakefile(env):
     make.write('\n')
     if 'CXXFLAGS' in dir(rtconfig):
         make.write('CXXFLAGS :=%s' % (rtconfig.CXXFLAGS))
+        make.write('\n')
+    if ('LIBS' in env):
+        make.write('EXTERN_LIB := ')
+        for tlib in env['LIBS']:
+            make.write('-l%s ' % (tlib))
+        if ('LIBPATH' in env):
+            for tlibpath in env['LIBPATH']:
+                make.write('-L%s ' % (tlibpath))
         make.write('\n')
 
     make.write('\n')

@@ -12,18 +12,50 @@
 
 #include <rtthread.h>
 
-#if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
-#endif
+#define LOG_TAG         "mnt"
+#define DBG_ENABLE
+#define DBG_SECTION_NAME "mnt"
+#define DBG_LEVEL DBG_ERROR
+#define DBG_COLOR
+#include <rtdbg.h>
 
-#if defined(PKG_USING_FAL)
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
+
+#if defined(RT_USING_FAL)
     #include <fal.h>
 #endif
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
     #define MOUNT_POINT_SPIFLASH0 "/"
 #endif
+
+#ifdef RT_USING_DFS_MNTTABLE
+
+/*
+const char   *device_name;
+const char   *path;
+const char   *filesystemtype;
+unsigned long rwflag;
+const void   *data;
+*/
+
+const struct dfs_mount_tbl mount_table[] =
+{
+    { "sd0", "/mnt/sd0", "elm", 0, RT_NULL },
+    { "sd0p0", "/mnt/sd0p0", "elm", 0, RT_NULL },
+    { "sd0p1", "/mnt/sd0p1", "elm", 0, RT_NULL },
+    { "sd1", "/mnt/sd1", "elm", 0, RT_NULL },
+    { "sd1p0", "/mnt/sd1p0", "elm", 0, RT_NULL },
+    { "sd1p1", "/mnt/sd1p1", "elm", 0, RT_NULL },
+    {0},
+};
+#endif
+
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
 
@@ -105,6 +137,7 @@ exit_mkdir_p:
 
     return ret;
 }
+
 #endif
 
 int mnt_init_spiflash0(void)
@@ -116,6 +149,12 @@ int mnt_init_spiflash0(void)
         goto exit_mnt_init_spiflash0;
     }
     rt_kprintf("mount flash0 with elmfat type: ok\n");
+    mkdir_p("/mnt/sd0", 0x777);
+    mkdir_p("/mnt/sd0p0", 0x777);
+    mkdir_p("/mnt/sd0p1", 0x777);
+    mkdir_p("/mnt/sd1", 0x777);
+    mkdir_p("/mnt/sd1p0", 0x777);
+    mkdir_p("/mnt/sd1p1", 0x777);
 
 #if defined(RT_USBH_MSTORAGE) && defined(UDISK_MOUNTPOINT)
     if (mkdir_p(UDISK_MOUNTPOINT, 0) < 0)

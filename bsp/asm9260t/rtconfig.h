@@ -8,19 +8,23 @@
 
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
+#define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-/* RT_DEBUG_THREAD is not set */
-#define RT_USING_INTERRUPT_INFO
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
+
+/* kservice optimization */
+
+#define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -29,131 +33,207 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
-/* RT_USING_SIGNALS is not set */
 
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_MEMHEAP
-#define RT_USING_HEAP
-/* RT_USING_SMALL_MEM is not set */
+#define RT_USING_SMALL_MEM
 #define RT_USING_SLAB
+#define RT_USING_MEMHEAP
+#define RT_MEMHEAP_FAST_MODE
+#define RT_USING_MEMHEAP_AS_HEAP
+#define RT_USING_MEMHEAP_AUTO_BINDING
+#define RT_USING_HEAP
 
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
+#define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart3"
-/* RT_USING_MODULE is not set */
+#define RT_VER_NUM 0x50000
+#define RT_USING_CACHE
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-
-/* C++ features */
-
-/* RT_USING_CPLUSPLUS is not set */
-
-/* Command shell */
-
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
+#define RT_USING_MSH
 #define RT_USING_FINSH
-#define FINSH_USING_HISTORY
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
+#define FINSH_USING_MSH
+#define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
+#define FINSH_USING_SYMTAB
 #define FINSH_CMD_SIZE 80
-/* FINSH_USING_AUTH is not set */
-/* FINSH_USING_MSH is not set */
-
-/* Device virtual file system */
-
-/* RT_USING_DFS is not set */
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
+#define FINSH_ARG_MAX 10
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
-/* RT_USING_CAN is not set */
-/* RT_USING_HWTIMER is not set */
-/* RT_USING_I2C is not set */
-/* RT_USING_PIN is not set */
-/* RT_USING_MTD_NOR is not set */
-/* RT_USING_MTD_NAND is not set */
-/* RT_USING_RTC is not set */
-/* RT_USING_SDIO is not set */
-/* RT_USING_SPI is not set */
-/* RT_USING_WDT is not set */
-/* RT_USING_USB_HOST is not set */
-/* RT_USING_USB_DEVICE is not set */
+#define RT_SERIAL_RB_BUFSZ 64
 
-/* POSIX layer and C standard library */
+/* Using USB */
 
-#define RT_USING_LIBC
-/* RT_USING_PTHREADS is not set */
-/* RT_USING_POSIX is not set */
 
-/* Network stack */
+/* C/C++ and POSIX layer */
 
-/* light weight TCP/IP stack */
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
-/* RT_USING_LWIP is not set */
+/* POSIX (Portable Operating System Interface) layer */
 
-/* Modbus master and slave stack */
 
-/* RT_USING_MODBUS is not set */
+/* Interprocess Communication (IPC) */
 
-/* RT-Thread UI Engine */
 
-/* PKG_USING_GUIENGINE is not set */
+/* Socket is in the 'Network' category */
+
+
+/* Network */
+
+
+/* Utilities */
+
+
+/* RT-Thread Utestcases */
+
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* PKG_USING_PARTITION is not set */
-/* PKG_USING_SQLITE is not set */
-
 /* IoT - internet of things */
 
-/* PKG_USING_PAHOMQTT is not set */
-/* PKG_USING_WEBCLIENT is not set */
-/* PKG_USING_MONGOOSE is not set */
-/* PKG_USING_WEBTERMINAL is not set */
-/* PKG_USING_CJSON is not set */
-/* PKG_USING_EZXML is not set */
+
+/* Wi-Fi */
 
 /* Marvell WiFi */
 
-/* PKG_USING_MARVELLWIFI is not set */
+
+/* Wiced WiFi */
+
+
+/* IoT Cloud */
+
 
 /* security packages */
 
-/* PKG_USING_MBEDTLS is not set */
 
 /* language packages */
 
-/* PKG_USING_JERRYSCRIPT is not set */
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
-/* PKG_USING_CMBACKTRACE is not set */
-/* PKG_USING_EASYLOGGER is not set */
+
+/* system packages */
+
+/* enhanced kernel services */
+
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
+/* peripheral libraries and drivers */
+
+/* sensors drivers */
+
+
+/* touch drivers */
+
+
+/* Kendryte SDK */
+
+
+/* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
+
 
 /* miscellaneous packages */
 
-/* PKG_USING_HELLO is not set */
+/* project laboratory */
 
-/* BSP_SPECIAL CONFIG */
+/* samples: kernel and components samples */
 
-/* RT_USING_UART0 is not set */
+
+/* entertainment: terminal games and other interesting software packages */
+
+
+/* Arduino libraries */
+
+
+/* Projects */
+
+
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
+#define SOC_AT91SAM926
 #define RT_USING_UART3
-/* RT_USING_UART4 is not set */
 #define RT_USING_LED
 
 #endif

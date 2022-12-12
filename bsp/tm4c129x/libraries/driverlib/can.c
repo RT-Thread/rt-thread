@@ -2,25 +2,25 @@
 //
 // can.c - Driver for the CAN module.
 //
-// Copyright (c) 2006-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2006-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -831,7 +831,7 @@ CANIntRegister(uint32_t ui32Base, void (*pfnHandler)(void))
     IntRegister(ui8IntNumber, pfnHandler);
 
     //
-    // Enable the Ethernet interrupt.
+    // Enable the CAN interrupt.
     //
     IntEnable(ui8IntNumber);
 }
@@ -1076,6 +1076,13 @@ CANIntStatus(uint32_t ui32Base, tCANIntStsReg eIntStsReg)
 //! actually cleared.  Failure to do so may result in the interrupt handler
 //! being immediately reentered (because the interrupt controller still sees
 //! the interrupt source asserted).
+//!
+//! \note The functions CANIntClear(), CANMessageSet(), and CANMessageClear()
+//! are not re-entrant.  If any of these functions are used in the main
+//! application code and if any of them are also used within an interrupt
+//! routine, then the corresponding interrupt for that interrupt routine should
+//! be disabled prior to the call for any of these functions.  The interrupt
+//! can be re-enabled immediately after the function call has returned.
 //!
 //! \return None.
 //
@@ -1470,6 +1477,13 @@ CANErrCntrGet(uint32_t ui32Base, uint32_t *pui32RxCount,
 //! If you specify a message object buffer that already contains a message
 //! definition, it is overwritten.
 //!
+//! \note The functions CANIntClear(), CANMessageSet(), and CANMessageClear()
+//! are not re-entrant.  If any of these functions are used in the main
+//! application code and if any of them are also used within an interrupt
+//! routine, then the corresponding interrupt for that interrupt routine should
+//! be disabled prior to the call for any of these functions.  The interrupt
+//! can be re-enabled immediately after the function call has returned.
+//!
 //! \return None.
 //
 //*****************************************************************************
@@ -1831,6 +1845,12 @@ CANMessageSet(uint32_t ui32Base, uint32_t ui32ObjID,
 //! - \b MSG_OBJ_DATA_LOST indicates that at least one message was received on
 //!   this message object and not read by the host before being overwritten.
 //!
+//! \note This function is not re-entrant.  If it is used in both main
+//! application code and in an interrupt routine, then the corresponding
+//! interrupt should be disabled prior to the call for CANMessageGet().
+//! The interrupt can be re-enabled immediately after the function call has
+//! returned.
+//!
 //! \return None.
 //
 //*****************************************************************************
@@ -2075,6 +2095,13 @@ CANMessageGet(uint32_t ui32Base, uint32_t ui32ObjID,
 //! This function frees the specified message object from use.  Once a message
 //! object has been ``cleared,'' it no longer automatically sends or receives
 //! messages, nor does it generate interrupts.
+//!
+//! \note The functions CANIntClear(), CANMessageSet(), and CANMessageClear()
+//! are not re-entrant.  If any of these functions are used in the main
+//! application code and if any of them are also used within an interrupt
+//! routine, then the corresponding interrupt for that interrupt routine should
+//! be disabled prior to the call for any of these functions.  The interrupt
+//! can be re-enabled immediately after the function call has returned.
 //!
 //! \return None.
 //

@@ -26,7 +26,7 @@
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32F4xx_LL_Driver
   * @{
@@ -64,7 +64,7 @@ ErrorStatus LL_RNG_DeInit(RNG_TypeDef *RNGx)
 {
   /* Check the parameters */
   assert_param(IS_RNG_ALL_INSTANCE(RNGx));
-#if  !defined (RCC_AHB2_SUPPORT)
+#if !defined(RCC_AHB2_SUPPORT)
   /* Enable RNG reset state */
   LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_RNG);
 
@@ -76,7 +76,7 @@ ErrorStatus LL_RNG_DeInit(RNG_TypeDef *RNGx)
 
   /* Release RNG from reset state */
   LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_RNG);
-#endif
+#endif /* !RCC_AHB2_SUPPORT */
   return (SUCCESS);
 }
 

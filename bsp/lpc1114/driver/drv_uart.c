@@ -8,7 +8,7 @@
  * 2013-05-18     Bernard      The first version for LPC40xx
  * 2019-05-05     jg1uaa       port to LPC1114
  */
-
+#include <stddef.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>

@@ -1,18 +1,12 @@
-/***************************************************************************//**
- * @file 	dev_keys.c
- * @brief 	Keys driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
- * Date			Author		Notes
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date         Author      Notes
  * 2011-12-29   onelife     Initial creation for EFM32GG_DK3750 board
- ******************************************************************************/
+ */
 
 /***************************************************************************//**
  * @addtogroup EFM32GG_DK3750
@@ -48,14 +42,14 @@ static rt_bool_t                            click;
 /* Private functions ---------------------------------------------------------*/
 /***************************************************************************//**
  * @brief
- *	Keys interrupt handler
+ *  Keys interrupt handler
  *
  * @details
  *
  * @note
  *
  * @param[in] device
- *	Pointer to device descriptor
+ *  Pointer to device descriptor
  ******************************************************************************/
 static void efm32_keys_isr(rt_device_t dev)
 {
@@ -158,18 +152,18 @@ static void efm32_keys_isr(rt_device_t dev)
 
 /***************************************************************************//**
  * @brief
- *	Keys timeout handler
+ *  Keys timeout handler
  *
  * @details
  *
  * @note
  *
  * @param[in] param
- *	Parameter
+ *  Parameter
  ******************************************************************************/
 static void efm32_keys_timer_isr(void *param)
 {
-	rt_uint16_t joystick;
+    rt_uint16_t joystick;
 
     joystick = DVK_getJoystick();
 
@@ -277,11 +271,11 @@ void efm32_hw_keys_init(void)
     GPIO_IntConfig(KEYS_INT_PORT, KEYS_INT_PIN, true, true, true);
 
     efm32_irq_hook_init_t hook;
-	hook.type       = efm32_irq_type_gpio;
-	hook.unit       = KEYS_INT_PIN;
-	hook.cbFunc     = efm32_keys_isr;
-	hook.userPtr    = RT_NULL;
-	efm32_irq_hook_register(&hook);
+    hook.type       = efm32_irq_type_gpio;
+    hook.unit       = KEYS_INT_PIN;
+    hook.cbFunc     = efm32_keys_isr;
+    hook.userPtr    = RT_NULL;
+    efm32_irq_hook_register(&hook);
 
     if ((rt_uint8_t)KEYS_INT_PIN % 2)
     {
@@ -299,12 +293,12 @@ void efm32_hw_keys_init(void)
     /* Enable DVK joystick interrupt */
     DVK_enableInterrupt(BC_INTEN_JOYSTICK);
 
-	rt_timer_init(&joy.timer,
-		"joy_tmr",
-		efm32_keys_timer_isr,
-		RT_NULL,
-		KEYS_POLL_TIME,
-		RT_TIMER_FLAG_PERIODIC);
+    rt_timer_init(&joy.timer,
+        "joy_tmr",
+        efm32_keys_timer_isr,
+        RT_NULL,
+        KEYS_POLL_TIME,
+        RT_TIMER_FLAG_PERIODIC);
 
     joy_dev.init        = efm32_keys_init;
     joy_dev.open        = RT_NULL;

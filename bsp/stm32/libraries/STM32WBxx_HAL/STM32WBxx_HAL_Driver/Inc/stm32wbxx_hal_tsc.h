@@ -628,6 +628,10 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
                                          ((__VALUE__) == TSC_PG_PRESC_DIV64) || \
                                          ((__VALUE__) == TSC_PG_PRESC_DIV128))
 
+#define IS_TSC_PG_PRESC_VS_CTPL(__PGPSC__, __CTPL__)    ((((__PGPSC__) == TSC_PG_PRESC_DIV1) && ((__CTPL__) > TSC_CTPL_2CYCLES)) || \
+                                                         (((__PGPSC__) == TSC_PG_PRESC_DIV2) && ((__CTPL__) > TSC_CTPL_1CYCLE))  || \
+                                                         (((__PGPSC__) > TSC_PG_PRESC_DIV2)  && (((__CTPL__) == TSC_CTPL_1CYCLE) || ((__CTPL__) > TSC_CTPL_1CYCLE))))
+
 #define IS_TSC_MCV(__VALUE__)           (((__VALUE__) == TSC_MCV_255)  || \
                                          ((__VALUE__) == TSC_MCV_511)  || \
                                          ((__VALUE__) == TSC_MCV_1023) || \

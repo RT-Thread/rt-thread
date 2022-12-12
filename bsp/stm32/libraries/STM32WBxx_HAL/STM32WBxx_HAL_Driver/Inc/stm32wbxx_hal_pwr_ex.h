@@ -366,7 +366,9 @@ typedef struct
 #endif
 #define PWR_FLAG_PVDO                       (PWR_FLAG_REG_SR2 | PWR_SR2_PVDO_Pos)    /*!< Power Voltage Detector output flag */
 
+#if defined(PWR_CR2_PVME1)
 #define PWR_FLAG_PVMO1                      (PWR_FLAG_REG_SR2 | PWR_SR2_PVMO1_Pos)   /*!< Power Voltage Monitoring 1 output flag */
+#endif
 #define PWR_FLAG_PVMO3                      (PWR_FLAG_REG_SR2 | PWR_SR2_PVMO3_Pos)   /*!< Power Voltage Monitoring 3 output flag */
 
 /*------------------------------EXTSCR---------------------------*/
@@ -938,7 +940,9 @@ HAL_StatusTypeDef HAL_PWREx_DisableLowPowerRunMode(void);
 
 void              HAL_PWREx_EnterSTOP0Mode(uint8_t STOPEntry);
 void              HAL_PWREx_EnterSTOP1Mode(uint8_t STOPEntry);
+#if defined(PWR_SUPPORT_STOP2)
 void              HAL_PWREx_EnterSTOP2Mode(uint8_t STOPEntry);
+#endif
 void              HAL_PWREx_EnterSHUTDOWNMode(void);
 
 void              HAL_PWREx_PVD_PVM_IRQHandler(void);

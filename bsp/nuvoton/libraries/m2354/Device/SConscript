@@ -11,11 +11,11 @@ Nuvoton/M2354/Source/system_M2354.c
 """)
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['Nuvoton/M2354/Source/GCC/startup_M2354.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['Nuvoton/M2354/Source/ARM/startup_M2354.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['Nuvoton/M2354/Source/IAR/startup_M2354.s']
 
 path = [cwd + '/Nuvoton/M2354/Include',]

@@ -1,0 +1,8 @@
+config SOC_FAMILY_GD32
+    bool
+
+config SOC_GD32VF103V
+    bool
+    select SOC_SERIES_GD32VF103V
+    select SOC_FAMILY_GD32
+

@@ -106,7 +106,7 @@ static void spiInit(void)
   /* Configure SPI bus connect pins, DOUT set to 0, disable EBI */
   GPIO_PinModeSet(PORT_SPIBUS_CONNECT, PIN_SPIBUS_CONNECT, gpioModePushPull, 0);
   GPIO_PinModeSet(PORT_EBIBUS_CONNECT, PIN_EBIBUS_CONNECT, gpioModePushPull, 1);
-  
+
   /* Configure SPI pins */
   GPIO_PinModeSet(PORT_SPI_TX, PIN_SPI_TX, gpioModePushPull, 0);
   GPIO_PinModeSet(PORT_SPI_RX, PIN_SPI_RX, gpioModePushPull, 0);
@@ -164,11 +164,11 @@ static uint16_t spiAccess(uint8_t spiaddr, uint8_t rw, uint16_t spidata)
   /* Just ignore data read back */
   USART_Rx(USART_USED);
 
-  /* SPI data LSB */ 
+  /* SPI data LSB */
   USART_Tx(USART_USED, spidata & 0xFF);
   tmp = (uint16_t)USART_Rx(USART_USED);
 
-  /* SPI data MSB */ 
+  /* SPI data MSB */
   USART_Tx(USART_USED, spidata >> 8);
   tmp |= (uint16_t)USART_Rx(USART_USED) << 8;
 
@@ -213,7 +213,7 @@ bool DVK_SPI_init(void)
   if(spiMagic != BC_MAGIC_VALUE)
   {
     return false;
-  } 
+  }
   else
   {
     return true;

@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_PWR_EX_H
-#define __STM32L4xx_HAL_PWR_EX_H
+#ifndef STM32L4xx_HAL_PWR_EX_H
+#define STM32L4xx_HAL_PWR_EX_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -278,6 +278,20 @@ typedef struct
 #endif /* PWR_CR2_PVME2 */
 #define PWR_FLAG_PVMO3                      ((uint32_t)0x004E)   /*!< Power Voltage Monitoring 3 output flag */
 #define PWR_FLAG_PVMO4                      ((uint32_t)0x004F)   /*!< Power Voltage Monitoring 4 output flag */
+/**
+  * @}
+  */
+
+/** @defgroup PWREx_SRAM2_Retention PWR SRAM2 Retention in Standby mode
+  * @{
+  */
+#define PWR_NO_SRAM2_RETENTION         ((uint32_t)0x00000000)  /*!< SRAM2 is powered off in Standby mode (SRAM2 content is lost) */  
+#if defined(PWR_CR3_RRS_1)
+#define PWR_FULL_SRAM2_RETENTION       PWR_CR3_RRS_0      /*!< Full SRAM2 is powered by the low-power regulator in Standby mode */
+#define PWR_4KBYTES_SRAM2_RETENTION    PWR_CR3_RRS_1      /*!< Only 4 Kbytes of SRAM2 is powered by the low-power regulator in Standby mode */
+#else
+#define PWR_FULL_SRAM2_RETENTION       PWR_CR3_RRS        /*!< Full SRAM2 is powered by the low-power regulator in Standby mode */
+#endif /* PWR_CR3_RRS_1 */
 /**
   * @}
   */
@@ -657,7 +671,7 @@ typedef struct
 
 /**
   * @brief Configure the main internal regulator output voltage.
-  * @param  __REGULATOR__: specifies the regulator output voltage to achieve
+  * @param  __REGULATOR__ specifies the regulator output voltage to achieve
   *         a tradeoff between performance and power consumption.
   *          This parameter can be one of the following values:
   *            @arg @ref PWR_REGULATOR_VOLTAGE_SCALE1  Regulator voltage output range 1 mode,
@@ -706,6 +720,7 @@ typedef struct
 
 #if defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx)                                                   || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx)                                                   || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define IS_PWR_PVM_TYPE(TYPE) (((TYPE) == PWR_PVM_1) ||\
                                ((TYPE) == PWR_PVM_2) ||\
@@ -782,6 +797,7 @@ typedef struct
                            ((GPIO) == PWR_GPIO_G) ||\
                            ((GPIO) == PWR_GPIO_H))
 #elif defined (STM32L496xx) || defined (STM32L4A6xx) || \
+      defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
       defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define IS_PWR_GPIO(GPIO) (((GPIO) == PWR_GPIO_A) ||\
                            ((GPIO) == PWR_GPIO_B) ||\
@@ -794,6 +810,14 @@ typedef struct
                            ((GPIO) == PWR_GPIO_I))
 #endif
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+#define IS_PWR_SRAM2_RETENTION(SRAM2) (((SRAM2) == PWR_NO_SRAM2_RETENTION)   ||\
+                                       ((SRAM2) == PWR_FULL_SRAM2_RETENTION) ||\
+                                       ((SRAM2) == PWR_4KBYTES_SRAM2_RETENTION))
+#else
+#define IS_PWR_SRAM2_RETENTION(SRAM2) (((SRAM2) == PWR_NO_SRAM2_RETENTION)   ||\
+                                       ((SRAM2) == PWR_FULL_SRAM2_RETENTION))
+#endif
 
 /**
   * @}
@@ -832,6 +856,7 @@ void HAL_PWREx_EnablePullUpPullDownConfig(void);
 void HAL_PWREx_DisablePullUpPullDownConfig(void);
 void HAL_PWREx_EnableSRAM2ContentRetention(void);
 void HAL_PWREx_DisableSRAM2ContentRetention(void);
+HAL_StatusTypeDef HAL_PWREx_SetSRAM2ContentRetention(uint32_t SRAM2Size);
 #if defined(PWR_CR1_RRSTP)
 void HAL_PWREx_EnableSRAM3ContentRetention(void);
 void HAL_PWREx_DisableSRAM3ContentRetention(void);
@@ -902,6 +927,6 @@ void HAL_PWREx_PVM4Callback(void);
 #endif
 
 
-#endif /* __STM32L4xx_HAL_PWR_EX_H */
+#endif /* STM32L4xx_HAL_PWR_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -36,7 +36,7 @@
 *
 * Ver   Who      Date     Changes
 * ----- -------- -------- -----------------------------------------------
-* 5.00 	pkp		 05/21/14 First release
+* 5.00  pkp      05/21/14 First release
 * 6.0   mus      07/27/16 Consolidated file for a53,a9 and r5 processors
 * </pre>
 *
@@ -59,38 +59,38 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions ********************/
 
 /* necessary for pre-processor */
-#define stringify(s)	tostring(s)
-#define tostring(s)	#s
+#define stringify(s)    tostring(s)
+#define tostring(s) #s
 
 #if defined (__aarch64__)
 /* pseudo assembler instructions */
-#define mfcpsr()	({rt_uint32_t rval = 0U; \
-			   asm volatile("mrs %0,  DAIF" : "=r" (rval));\
-			  rval;\
-			 })
+#define mfcpsr()    ({rt_uint32_t rval = 0U; \
+               asm volatile("mrs %0,  DAIF" : "=r" (rval));\
+              rval;\
+             })
 
 #define mtcpsr(v) __asm__ __volatile__ ("msr DAIF, %0" : : "r" (v))
 
-#define cpsiei()	//__asm__ __volatile__("cpsie	i\n")
-#define cpsidi()	//__asm__ __volatile__("cpsid	i\n")
+#define cpsiei()    //__asm__ __volatile__("cpsie   i\n")
+#define cpsidi()    //__asm__ __volatile__("cpsid   i\n")
 
-#define cpsief()	//__asm__ __volatile__("cpsie	f\n")
-#define cpsidf()	//__asm__ __volatile__("cpsid	f\n")
+#define cpsief()    //__asm__ __volatile__("cpsie   f\n")
+#define cpsidf()    //__asm__ __volatile__("cpsid   f\n")
 
 
 
-#define mtgpr(rn, v)	/*__asm__ __volatile__(\
-			  "mov r" stringify(rn) ", %0 \n"\
-			  : : "r" (v)\
-			)*/
+#define mtgpr(rn, v)    /*__asm__ __volatile__(\
+              "mov r" stringify(rn) ", %0 \n"\
+              : : "r" (v)\
+            )*/
 
-#define mfgpr(rn)	/*({rt_uint32_t rval; \
-			  __asm__ __volatile__(\
-			    "mov %0,r" stringify(rn) "\n"\
-			    : "=r" (rval)\
-			  );\
-			  rval;\
-			 })*/
+#define mfgpr(rn)   /*({rt_uint32_t rval; \
+              __asm__ __volatile__(\
+                "mov %0,r" stringify(rn) "\n"\
+                : "=r" (rval)\
+              );\
+              rval;\
+             })*/
 
 /* memory synchronization operations */
 
@@ -105,13 +105,13 @@ extern "C" {
 
 
 /* Memory Operations */
-#define ldr(adr)	({u64 rval; \
-			  __asm__ __volatile__(\
-			    "ldr	%0,[%1]"\
-			    : "=r" (rval) : "r" (adr)\
-			  );\
-			  rval;\
-			 })
+#define ldr(adr)    ({u64 rval; \
+              __asm__ __volatile__(\
+                "ldr    %0,[%1]"\
+                : "=r" (rval) : "r" (adr)\
+              );\
+              rval;\
+             })
 
 #define mfelrel3() ({u64 rval = 0U; \
                    asm volatile("mrs %0,  ELR_EL3" : "=r" (rval));\
@@ -123,39 +123,39 @@ extern "C" {
 #else
 
 /* pseudo assembler instructions */
-#define mfcpsr()	({rt_uint32_t rval = 0U; \
-			  __asm__ __volatile__(\
-			    "mrs	%0, cpsr\n"\
-			    : "=r" (rval)\
-			  );\
-			  rval;\
-			 })
+#define mfcpsr()    ({rt_uint32_t rval = 0U; \
+              __asm__ __volatile__(\
+                "mrs    %0, cpsr\n"\
+                : "=r" (rval)\
+              );\
+              rval;\
+             })
 
-#define mtcpsr(v)	__asm__ __volatile__(\
-			  "msr	cpsr,%0\n"\
-			  : : "r" (v)\
-			)
+#define mtcpsr(v)   __asm__ __volatile__(\
+              "msr  cpsr,%0\n"\
+              : : "r" (v)\
+            )
 
-#define cpsiei()	__asm__ __volatile__("cpsie	i\n")
-#define cpsidi()	__asm__ __volatile__("cpsid	i\n")
+#define cpsiei()    __asm__ __volatile__("cpsie i\n")
+#define cpsidi()    __asm__ __volatile__("cpsid i\n")
 
-#define cpsief()	__asm__ __volatile__("cpsie	f\n")
-#define cpsidf()	__asm__ __volatile__("cpsid	f\n")
+#define cpsief()    __asm__ __volatile__("cpsie f\n")
+#define cpsidf()    __asm__ __volatile__("cpsid f\n")
 
 
 
-#define mtgpr(rn, v)	__asm__ __volatile__(\
-			  "mov r" stringify(rn) ", %0 \n"\
-			  : : "r" (v)\
-			)
+#define mtgpr(rn, v)    __asm__ __volatile__(\
+              "mov r" stringify(rn) ", %0 \n"\
+              : : "r" (v)\
+            )
 
-#define mfgpr(rn)	({rt_uint32_t rval; \
-			  __asm__ __volatile__(\
-			    "mov %0,r" stringify(rn) "\n"\
-			    : "=r" (rval)\
-			  );\
-			  rval;\
-			 })
+#define mfgpr(rn)   ({rt_uint32_t rval; \
+              __asm__ __volatile__(\
+                "mov %0,r" stringify(rn) "\n"\
+                : "=r" (rval)\
+              );\
+              rval;\
+             })
 
 /* memory synchronization operations */
 
@@ -170,72 +170,72 @@ extern "C" {
 
 
 /* Memory Operations */
-#define ldr(adr)	({rt_uint32_t rval; \
-			  __asm__ __volatile__(\
-			    "ldr	%0,[%1]"\
-			    : "=r" (rval) : "r" (adr)\
-			  );\
-			  rval;\
-			 })
+#define ldr(adr)    ({rt_uint32_t rval; \
+              __asm__ __volatile__(\
+                "ldr    %0,[%1]"\
+                : "=r" (rval) : "r" (adr)\
+              );\
+              rval;\
+             })
 
 #endif
 
-#define ldrb(adr)	({rt_uint8_t rval; \
-			  __asm__ __volatile__(\
-			    "ldrb	%0,[%1]"\
-			    : "=r" (rval) : "r" (adr)\
-			  );\
-			  rval;\
-			 })
+#define ldrb(adr)   ({rt_uint8_t rval; \
+              __asm__ __volatile__(\
+                "ldrb   %0,[%1]"\
+                : "=r" (rval) : "r" (adr)\
+              );\
+              rval;\
+             })
 
-#define str(adr, val)	__asm__ __volatile__(\
-			  "str	%0,[%1]\n"\
-			  : : "r" (val), "r" (adr)\
-			)
+#define str(adr, val)   __asm__ __volatile__(\
+              "str  %0,[%1]\n"\
+              : : "r" (val), "r" (adr)\
+            )
 
-#define strb(adr, val)	__asm__ __volatile__(\
-			  "strb	%0,[%1]\n"\
-			  : : "r" (val), "r" (adr)\
-			)
+#define strb(adr, val)  __asm__ __volatile__(\
+              "strb %0,[%1]\n"\
+              : : "r" (val), "r" (adr)\
+            )
 
 /* Count leading zeroes (clz) */
-#define clz(arg)	({rt_uint8_t rval; \
-			  __asm__ __volatile__(\
-			    "clz	%0,%1"\
-			    : "=r" (rval) : "r" (arg)\
-			  );\
-			  rval;\
-			 })
+#define clz(arg)    ({rt_uint8_t rval; \
+              __asm__ __volatile__(\
+                "clz    %0,%1"\
+                : "=r" (rval) : "r" (arg)\
+              );\
+              rval;\
+             })
 
 #if defined (__aarch64__)
-#define mtcpdc(reg,val)	__asm__ __volatile__("dc " #reg ",%0"  : : "r" (val))
-#define mtcpic(reg,val)	__asm__ __volatile__("ic " #reg ",%0"  : : "r" (val))
+#define mtcpdc(reg,val) __asm__ __volatile__("dc " #reg ",%0"  : : "r" (val))
+#define mtcpic(reg,val) __asm__ __volatile__("ic " #reg ",%0"  : : "r" (val))
 
-#define mtcpicall(reg)	__asm__ __volatile__("ic " #reg)
-#define mtcptlbi(reg)	__asm__ __volatile__("tlbi " #reg)
-#define mtcpat(reg,val)	__asm__ __volatile__("at " #reg ",%0"  : : "r" (val))
+#define mtcpicall(reg)  __asm__ __volatile__("ic " #reg)
+#define mtcptlbi(reg)   __asm__ __volatile__("tlbi " #reg)
+#define mtcpat(reg,val) __asm__ __volatile__("at " #reg ",%0"  : : "r" (val))
 /* CP15 operations */
-#define mfcp(reg)	({u64 rval = 0U;\
-			__asm__ __volatile__("mrs	%0, " #reg : "=r" (rval));\
-			rval;\
-			})
+#define mfcp(reg)   ({u64 rval = 0U;\
+            __asm__ __volatile__("mrs   %0, " #reg : "=r" (rval));\
+            rval;\
+            })
 
-#define mtcp(reg,val)	__asm__ __volatile__("msr " #reg ",%0"  : : "r" (val))
+#define mtcp(reg,val)   __asm__ __volatile__("msr " #reg ",%0"  : : "r" (val))
 
 #else
 /* CP15 operations */
-#define mtcp(rn, v)	__asm__ __volatile__(\
-			 "mcr " rn "\n"\
-			 : : "r" (v)\
-			);
+#define mtcp(rn, v) __asm__ __volatile__(\
+             "mcr " rn "\n"\
+             : : "r" (v)\
+            );
 
-#define mfcp(rn)	({rt_uint32_t rval = 0U; \
-			 __asm__ __volatile__(\
-			   "mrc " rn "\n"\
-			   : "=r" (rval)\
-			 );\
-			 rval;\
-			 })
+#define mfcp(rn)    ({rt_uint32_t rval = 0U; \
+             __asm__ __volatile__(\
+               "mrc " rn "\n"\
+               : "=r" (rval)\
+             );\
+             rval;\
+             })
 #endif
 
 /************************** Variable Definitions ****************************/

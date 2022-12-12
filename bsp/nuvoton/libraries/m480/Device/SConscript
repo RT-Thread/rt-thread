@@ -11,11 +11,11 @@ Nuvoton/M480/Source/system_M480.c
 """)
 
 # add for startup script 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src = src + ['Nuvoton/M480/Source/GCC/startup_M480.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['Nuvoton/M480/Source/ARM/startup_M480.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['Nuvoton/M480/Source/IAR/startup_M480.s']
 
 path = [cwd + '/Nuvoton/M480/Include',]

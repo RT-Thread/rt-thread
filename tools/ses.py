@@ -37,7 +37,7 @@ def SESProject(env) :
 
     project = ProjectInfo(env)
     # print(project)
-    # return 
+    # return
 
     project_path = os.path.abspath(env['BSP_ROOT'])
     script = env['project']
@@ -49,7 +49,7 @@ def SESProject(env) :
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
 
     project_node = tree.find('project')
 
@@ -59,14 +59,14 @@ def SESProject(env) :
         group_tree = SDKAddGroup(project_node, group['name'], group['src'], project_path)
 
         # get each group's cc flags
-        if group.has_key('CCFLAGS') and group['CCFLAGS']:
-            if CCFLAGS:
-                CCFLAGS += ' ' + group['CCFLAGS']
+        if 'CFLAGS' in group and group['CFLAGS']:
+            if CFLAGS:
+                CFLAGS += ' ' + group['CFLAGS']
             else:
-                CCFLAGS += group['CCFLAGS']   
-                
+                CFLAGS += group['CFLAGS']
+
         # get each group's link flags
-        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
+        if 'LINKFLAGS' in group and group['LINKFLAGS']:
             if LINKFLAGS:
                 LINKFLAGS += ' ' + group['LINKFLAGS']
             else:

@@ -22,7 +22,7 @@ struct hwcrypto_bignum;
 /* bignum obj */
 struct hw_bignum_mpi
 {
-    int sign;                   /**< integer sign */
+    int sign;                   /**< integer sign. -1 or 1 */
     rt_size_t total;            /**< total of limbs */
     rt_uint8_t *p;              /**< pointer to limbs */
 };
@@ -108,9 +108,9 @@ int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int 
  * @param buf       Buffer for the binary number
  * @param len       Length of the buffer
  *
- * @return          RT_EOK on success.
+ * @return          import length.
  */
-rt_err_t rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len);
+int rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len);
 
 /**
  * @brief           x = a + b

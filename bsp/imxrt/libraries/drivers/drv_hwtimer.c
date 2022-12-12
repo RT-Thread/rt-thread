@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,7 +29,14 @@
 /* Clock divider for PERCLK_CLK clock source */
 #define EXAMPLE_GPT_CLOCK_DIVIDER_SELECT (5U)
 /* Get source clock for GPT driver (GPT prescaler = 6) */
+#ifdef SOC_IMXRT1170_SERIES
+#undef EXAMPLE_GPT_CLOCK_DIVIDER_SELECT
+#define EXAMPLE_GPT_CLOCK_DIVIDER_SELECT (2U)
+// 1170 use this root directly, we have already divide this clk, can read it directly
+#define EXAMPLE_GPT_CLK_FREQ (CLOCK_GetRootClockFreq(kCLOCK_Root_Gpt1))
+#else
 #define EXAMPLE_GPT_CLK_FREQ (CLOCK_GetFreq(kCLOCK_IpgClk) / (EXAMPLE_GPT_CLOCK_DIVIDER_SELECT + 1U))
+#endif
 
 static void NVIC_Configuration(void)
 {
@@ -91,9 +98,22 @@ static void imxrt_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 
     if (state == 1)
     {
+    #ifdef SOC_IMXRT1170_SERIES
+    #ifdef BSP_USING_HWTIMER1
+        /*Clock setting for GPT*/
+        CLOCK_SetRootClockMux(kCLOCK_Root_Gpt1, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
+        CLOCK_SetRootClockDiv(kCLOCK_Root_Gpt1, EXAMPLE_GPT_CLOCK_DIVIDER_SELECT);
+    #endif
+    #ifdef BSP_USING_HWTIMER2
+        /*Clock setting for GPT*/
+        CLOCK_SetRootClockMux(kCLOCK_Root_Gpt2, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
+        CLOCK_SetRootClockDiv(kCLOCK_Root_Gpt2, EXAMPLE_GPT_CLOCK_DIVIDER_SELECT);
+    #endif
+    #else
         /*Clock setting for GPT*/
         CLOCK_SetMux(kCLOCK_PerclkMux, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
         CLOCK_SetDiv(kCLOCK_PerclkDiv, EXAMPLE_GPT_CLOCK_DIVIDER_SELECT);
+    #endif
 
         /* Initialize GPT module by default config */
         GPT_GetDefaultConfig(&gptConfig);

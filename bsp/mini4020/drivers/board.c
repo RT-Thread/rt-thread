@@ -21,14 +21,14 @@
 
 void rt_hw_serial_putc(const char c);
 
-#define UART0	((struct uartport *)UART0_BASE)
+#define UART0   ((struct uartport *)UART0_BASE)
 struct rt_device uart0_device;
 struct serial_int_rx uart0_int_rx;
 struct serial_device uart0 =
 {
-	UART0,
-	&uart0_int_rx,
-	RT_NULL
+    UART0,
+    &uart0_int_rx,
+    RT_NULL
 };
 
 /**
@@ -36,12 +36,12 @@ struct serial_device uart0 =
  */
 void rt_timer_handler(int vector, void *param)
 {
-	rt_uint32_t clear_int;
-	rt_tick_increase();
+    rt_uint32_t clear_int;
+    rt_tick_increase();
 
-	/*Clear timer interrupt*/
-	clear_int = *(RP)TIMER_T1ISCR; 
-	*(RP)TIMER_T1ISCR=clear_int;
+    /*Clear timer interrupt*/
+    clear_int = *(RP)TIMER_T1ISCR;
+    *(RP)TIMER_T1ISCR=clear_int;
 }
 
 /**
@@ -49,31 +49,33 @@ void rt_timer_handler(int vector, void *param)
  */
 void rt_serial_handler(int vector, void *param)
 {
-	//rt_kprintf("in rt_serial_handler\n");
-	rt_int32_t stat = *(RP)UART0_IIR ;
-	RT_UNUSED char c;
+    //rt_kprintf("in rt_serial_handler\n");
+    rt_int32_t stat = *(RP)UART0_IIR ;
+    char c;
 
-	/*Received data*/
-	if (((stat & 0x0E) >> 1) == 0x02)
-	{
-		rt_hw_serial_isr(&uart0_device);
-	}
-	else
-	{
-		/*clear the timeout interrupt*/
-		while (uart0.uart_device->lsr & USTAT_RCV_READY)
-			c = uart0.uart_device->dlbl_fifo.rxfifo;	
-	}
+    RT_UNUSED(c);
+
+    /*Received data*/
+    if (((stat & 0x0E) >> 1) == 0x02)
+    {
+        rt_hw_serial_isr(&uart0_device);
+    }
+    else
+    {
+        /*clear the timeout interrupt*/
+        while (uart0.uart_device->lsr & USTAT_RCV_READY)
+            c = uart0.uart_device->dlbl_fifo.rxfifo;
+    }
 }
 
-/** 
+/**
  * This function will init led on the board
  */
 static void rt_hw_board_led_init(void)
 {
   /* PE3 PE4 PE5 for led */
   *(RP)GPIO_PORTE_SEL |=0x38; /* GPIO */
-  
+
   *(RP)GPIO_PORTE_DIR &= ~0x38; /* output*/
 
   *(RP)GPIO_PORTE_DATA &= ~0x38;  /* low */
@@ -84,15 +86,15 @@ static void rt_hw_board_led_init(void)
  */
 void rt_hw_timer_init(void)
 {
-	/*Set timer1*/
-	*(RP)TIMER_T1LCR = 880000;
-	*(RP)TIMER_T1CR = 0x06;
+    /*Set timer1*/
+    *(RP)TIMER_T1LCR = 880000;
+    *(RP)TIMER_T1CR = 0x06;
 
-	rt_hw_interrupt_install(INTSRC_TIMER1, rt_timer_handler, RT_NULL, "tick");
-	rt_hw_interrupt_umask(INTSRC_TIMER1);
+    rt_hw_interrupt_install(INTSRC_TIMER1, rt_timer_handler, RT_NULL, "tick");
+    rt_hw_interrupt_umask(INTSRC_TIMER1);
 
-	/*Enable timer1*/
-	*(RP)TIMER_T1CR |= 0x01;
+    /*Enable timer1*/
+    *(RP)TIMER_T1CR |= 0x01;
 }
 
 /**
@@ -100,55 +102,55 @@ void rt_hw_timer_init(void)
  */
 void rt_hw_uart_init(void)
 {
-	const rt_int32_t sysclk = 72000000;
-	
-	/*Set data bit:8*/
-	*(RP)(UART0_LCR) = 0x83;
-	/*Set baud rate high*/
-	*(RP)(UART0_DLBH) = (sysclk/16/115200) >> 8;
-	/*Set baud rate low*/
-	*(RP)(UART0_DLBL) = (sysclk/16/115200) & 0xff;
+    const rt_int32_t sysclk = 72000000;
 
-	*(RP)(UART0_LCR) = 0x83&(~(0x1 << 7));
+    /*Set data bit:8*/
+    *(RP)(UART0_LCR) = 0x83;
+    /*Set baud rate high*/
+    *(RP)(UART0_DLBH) = (sysclk/16/115200) >> 8;
+    /*Set baud rate low*/
+    *(RP)(UART0_DLBL) = (sysclk/16/115200) & 0xff;
 
-	/*Set trigger level*/
-	*(RP)(UART0_FCR) = 0x0;
-	*(RP)(UART0_IER) = 0x0;
+    *(RP)(UART0_LCR) = 0x83&(~(0x1 << 7));
 
-	/*Enable rx interrupt*/
-	*(RP)(UART0_IER) |= 0x01;
-	/*Disable tx interrupt*/
-	*(RP)(UART0_IER) &= ~(0x1<<1);
-	
-	rt_hw_interrupt_install(INTSRC_UART0, rt_serial_handler, RT_NULL, "UART0");
-	rt_hw_interrupt_umask(INTSRC_UART0);
-	/* register uart0 */
-	rt_hw_serial_register(&uart0_device, "uart0",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-		&uart0);
+    /*Set trigger level*/
+    *(RP)(UART0_FCR) = 0x0;
+    *(RP)(UART0_IER) = 0x0;
+
+    /*Enable rx interrupt*/
+    *(RP)(UART0_IER) |= 0x01;
+    /*Disable tx interrupt*/
+    *(RP)(UART0_IER) &= ~(0x1<<1);
+
+    rt_hw_interrupt_install(INTSRC_UART0, rt_serial_handler, RT_NULL, "UART0");
+    rt_hw_interrupt_umask(INTSRC_UART0);
+    /* register uart0 */
+    rt_hw_serial_register(&uart0_device, "uart0",
+        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+        &uart0);
 }
 
 void rt_hw_board_init(void)
 {
-	/* initialize uart */
-	rt_hw_uart_init();
-//	rt_hw_board_led_init();
-	rt_hw_timer_init();
+    /* initialize uart */
+    rt_hw_uart_init();
+//  rt_hw_board_led_init();
+    rt_hw_timer_init();
 }
 
 /* write one character to serial, must not trigger interrupt */
 void rt_hw_serial_putc(const char c)
 {
-	/*
-		to be polite with serial console add a line feed
-		to the carriage return character
-	*/
-	if (c=='\n')
-		rt_hw_serial_putc('\r');
+    /*
+        to be polite with serial console add a line feed
+        to the carriage return character
+    */
+    if (c=='\n')
+        rt_hw_serial_putc('\r');
 
-	while (!((*(RP)UART0_LSR) & 0x40));
+    while (!((*(RP)UART0_LSR) & 0x40));
 
-	*(RP)(UART0_BASE) = c;
+    *(RP)(UART0_BASE) = c;
 }
 
 /**
@@ -158,8 +160,8 @@ void rt_hw_serial_putc(const char c)
  */
 void rt_hw_console_output(const char *str)
 {
-	while (*str)
-	{
-		rt_hw_serial_putc(*str++);
-	}
+    while (*str)
+    {
+        rt_hw_serial_putc(*str++);
+    }
 }

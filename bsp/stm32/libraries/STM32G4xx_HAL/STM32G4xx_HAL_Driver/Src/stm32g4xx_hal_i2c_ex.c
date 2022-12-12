@@ -73,7 +73,7 @@
 
 /** @defgroup I2CEx_Exported_Functions_Group1 Extended features functions
   * @brief    Extended features functions
- *
+  *
 @verbatim
  ===============================================================================
                       ##### Extended features functions #####

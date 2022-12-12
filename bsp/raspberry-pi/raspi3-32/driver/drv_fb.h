@@ -53,7 +53,7 @@ struct rt_hdmi_fb_device
     fb_t fb;
 };
 
-fb_t fb_info;
+extern fb_t fb_info;
 void print_fb_info();
 
 #endif/* __DRV_FB_H__ */

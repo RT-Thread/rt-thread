@@ -1,7 +1,7 @@
 /****************************************************************************
  * @file     nutool_modclkcfg.c
  * @version  V1.05
- * @Date     2020/11/11-11:43:32 
+ * @Date     2020/11/11-11:43:32
  * @brief    NuMicro generated code file
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -718,7 +718,7 @@ void nutool_modclkcfg_deinit_sc2(void)
 void nutool_modclkcfg_init_sdh0(void)
 {
     CLK_EnableModuleClock(SDH0_MODULE);
-    CLK_SetModuleClock(SDH0_MODULE, CLK_CLKSEL0_SDH0SEL_HCLK, CLK_CLKDIV0_SDH0(1));
+    CLK_SetModuleClock(SDH0_MODULE, CLK_CLKSEL0_SDH0SEL_HCLK, CLK_CLKDIV0_SDH0(2));
 
     return;
 }
@@ -1160,14 +1160,14 @@ void nutool_modclkcfg_init_base(void)
 {
     /* LXT source from external LXT */
     CLK_EnableModuleClock(RTC_MODULE);
-    RTC->LXTCTL &= ~(RTC_LXTCTL_LIRC32KEN_Msk|RTC_LXTCTL_C32KSEL_Msk);
+    RTC->LXTCTL &= ~(RTC_LXTCTL_LIRC32KEN_Msk | RTC_LXTCTL_C32KSEL_Msk);
     CLK_DisableModuleClock(RTC_MODULE);
 
     /* Enable clock source */
-    CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk|CLK_PWRCTL_LXTEN_Msk|CLK_PWRCTL_HXTEN_Msk|CLK_PWRCTL_HIRC48EN_Msk|CLK_PWRCTL_MIRCEN_Msk);
+    CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_LXTEN_Msk | CLK_PWRCTL_HXTEN_Msk | CLK_PWRCTL_HIRC48EN_Msk | CLK_PWRCTL_MIRCEN_Msk);
 
     /* Waiting for clock source ready */
-    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk|CLK_STATUS_LXTSTB_Msk|CLK_STATUS_HXTSTB_Msk|CLK_STATUS_HIRC48STB_Msk|CLK_STATUS_MIRCSTB_Msk);
+    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_LXTSTB_Msk | CLK_STATUS_HXTSTB_Msk | CLK_STATUS_HIRC48STB_Msk | CLK_STATUS_MIRCSTB_Msk);
 
     /* Disable PLL first to avoid unstable when setting PLL */
     CLK_DisablePLL();

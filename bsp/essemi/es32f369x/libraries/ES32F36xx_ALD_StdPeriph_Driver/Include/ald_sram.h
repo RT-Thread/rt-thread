@@ -8,10 +8,26 @@
   * @date    07 Dec 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          07 Dec 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #ifndef __ALD_SRAM_H__
@@ -56,10 +72,10 @@ typedef struct {
 	ald_ebi_nor_sram_init_t init;		/**< SRAM device control configuration parameters */
 	lock_state_t lock;			/**< SRAM locking object */ 
 	__IO ald_sram_state_t state;		/**< SRAM device access state */
-#ifdef ALD_DMA
+
 	dma_handle_t hdma;			/**< SRAM DMA Handle parameters */
 	void(*cplt_cbk)(void *arg);             /**< DMA transmit completely callback function */
-#endif
+
 } sram_handle_t;
 /**
   * @}

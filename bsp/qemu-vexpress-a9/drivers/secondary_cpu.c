@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,6 +19,10 @@
 #ifdef RT_USING_SMP
 #include <interrupt.h>
 
+#ifdef RT_USING_USERSPACE
+#include <mmu.h>
+#endif
+
 static void rt_hw_timer2_isr(int vector, void *param)
 {
     rt_tick_increase();
@@ -28,20 +32,32 @@ static void rt_hw_timer2_isr(int vector, void *param)
 
 void rt_hw_secondary_cpu_up(void)
 {
-    extern void set_secondary_cpu_boot_address(void);
+    volatile void **plat_boot_reg = (volatile void **)0x10000034;
+    char *entry = (char *)rt_secondary_cpu_entry;
 
-    set_secondary_cpu_boot_address();
-    __asm__ volatile ("dsb":::"memory");
+#ifdef RT_USING_USERSPACE
+    plat_boot_reg = (volatile void **)rt_hw_mmu_map(&mmu_info, 0, (void *)plat_boot_reg, 0x1000, MMU_MAP_K_RW);
+    if (!plat_boot_reg)
+    {
+        /* failed */
+        return;
+    }
+    entry += PV_OFFSET;
+#endif
+    *plat_boot_reg-- = (void *)(size_t)-1;
+    *plat_boot_reg = (void *)entry;
+    rt_hw_dsb();
     rt_hw_ipi_send(0, 1 << 1);
 }
 
-void secondary_cpu_c_start(void)
+/* Interface */
+void rt_hw_secondary_cpu_bsp_start(void)
 {
     rt_hw_vector_init();
 
     rt_hw_spin_lock(&_cpus_lock);
 
-    arm_gic_cpu_init(0, REALVIEW_GIC_CPU_BASE);
+    arm_gic_cpu_init(0, 0);
     arm_gic_set_cpu(0, IRQ_PBA8_TIMER0_1, 0x2);
 
     timer_init(0, 10000);

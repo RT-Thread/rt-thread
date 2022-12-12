@@ -1144,6 +1144,9 @@ void USBH_IRQHandler(void)
     TD_T       *td, *td_prev, *td_next;
     uint32_t   int_sts;
 
+    /* enter interrupt */
+    rt_interrupt_enter();
+
     int_sts = _ohci->HcInterruptStatus;
 
     //USB_debug("ohci int_sts = 0x%x\n", int_sts);
@@ -1199,6 +1202,10 @@ void USBH_IRQHandler(void)
     }
 
     _ohci->HcInterruptStatus = int_sts;
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+
 }
 
 #ifdef ENABLE_DEBUG_MSG

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,10 +13,6 @@
 #include <rthw.h>
 #include <stdint.h>
 #include "syslog.h"
-
-#ifdef ULOG_OUTPUT_FLOAT
-#include <stdio.h>
-#endif
 
 /*
  * reference:
@@ -172,9 +168,9 @@ static const char *get_month_str(uint8_t month)
     }
 }
 
-RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_bool_t newline, const char *format, va_list args)
+rt_weak rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_bool_t newline, const char *format, va_list args)
 {
-    extern size_t ulog_strcpy(size_t cur_len, char *dst, const char *src);
+    extern rt_size_t ulog_strcpy(rt_size_t cur_len, char *dst, const char *src);
 
     rt_size_t log_len = 0, newline_len = rt_strlen(ULOG_NEWLINE_SIGN);
     int fmt_result;
@@ -227,12 +223,7 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
 #endif /* ULOG_OUTPUT_THREAD_NAME */
 
     log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
-
-#ifdef ULOG_OUTPUT_FLOAT
-    fmt_result = vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
-#else
     fmt_result = rt_vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
-#endif /* ULOG_OUTPUT_FLOAT */
 
     /* calculate log length */
     if ((log_len + fmt_result <= ULOG_LINE_BUF_SIZE) && (fmt_result > -1))
@@ -245,13 +236,15 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
         log_len = ULOG_LINE_BUF_SIZE;
     }
 
-    /* overflow check and reserve some space for newline sign */
-    if (log_len + newline_len > ULOG_LINE_BUF_SIZE)
+    /* overflow check and reserve some space for newline sign and string end sign */
+    if (log_len + newline_len + sizeof('\0') > ULOG_LINE_BUF_SIZE)
     {
         /* using max length */
         log_len = ULOG_LINE_BUF_SIZE;
         /* reserve some space for newline sign */
         log_len -= newline_len;
+        /* reserve some space for string end sign */
+        log_len -= sizeof('\0');
     }
 
     /* package newline sign */
@@ -259,6 +252,9 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
     {
         log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
     }
+
+    /* add string end sign */
+    log_buf[log_len] = '\0';
 
     return log_len;
 }

@@ -96,14 +96,8 @@ static rt_uint32_t nu_crc_run(
 
 rt_err_t nu_crc_init(void)
 {
-    rt_err_t result;
-
     SYS_ResetModule(CRC_RST);
-
-    result = rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_FIFO);
-    RT_ASSERT(result == RT_EOK);
-
-    return RT_EOK;
+    return rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_PRIO);
 }
 
 rt_uint32_t nu_crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, rt_size_t length)

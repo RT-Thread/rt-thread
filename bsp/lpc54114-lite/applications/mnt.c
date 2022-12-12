@@ -11,7 +11,10 @@
 
 #if defined(RT_USING_DFS)
 #include <dfs_file.h>
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 #define BSP_FLASH_MOUNT_PATH  "/mnt/flash"

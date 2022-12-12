@@ -4,11 +4,27 @@
  * @version V1.0
  * @date    09 Nov 2019
  * @author  AE Team
- * @note
- *
- * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
- *
- *********************************************************************************
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          09 Nov 2019     AE Team         The first version
+  *
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
+  *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
  */
 
 #ifndef __ALD_QSPI_H_
@@ -262,9 +278,9 @@ typedef struct {
 	uint8_t *rx_buf;	/**< Pointer to QSPI receive buffer */
 	uint16_t rx_size;       /**< QSPI receive size */
 	uint16_t rx_cnt;        /**< QSPI receive counter */
-#ifdef ALD_DMA
+
 	dma_handle_t hdma;	/**< QSPI Rx/Tx DMA Handle parameters*/
-#endif
+
 	qspi_state_t state;	/**< QSPI communication state */
 	__IO lock_state_t lock;	/**< Locking object*/
 } qspi_handle_t;
@@ -285,7 +301,6 @@ typedef struct {
 typedef struct {
 	uint32_t dlytd;			/**< Delay transmitted data [0 ~ 15]*/
 	uint32_t dlydcl;		/**< Delay the read data capturing logic [0 ~ 15]*/
-	type_func_t bypsalcc;		/**< Bypass of the adapted loopback clock circuit @ref type_func_t*/
 	qspi_data_sampled_t smpledge;	/**< Sample edge selection(of the flash data outputs) @ref qspi_data_sampled_t*/
 } qspi_data_capture_cfg_t;
 

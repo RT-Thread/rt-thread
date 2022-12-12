@@ -12,28 +12,15 @@
   *            After Reset the Cortex-M0+ processor is in Thread mode,
   *            priority is Privileged, and the Stack is set to Main.
   ******************************************************************************
-  * 
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * @attention
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -66,41 +53,42 @@ Reset_Handler:
    mov   sp, r0          /* set stack pointer */
 
 /* Copy the data segment initializers from flash to SRAM */
-  movs  r1, #0
-  b  LoopCopyDataInit
+  ldr r0, =_sdata
+  ldr r1, =_edata
+  ldr r2, =_sidata
+  movs r3, #0
+  b LoopCopyDataInit
 
 CopyDataInit:
-  ldr  r3, =_sidata
-  ldr  r3, [r3, r1]
-  str  r3, [r0, r1]
-  adds  r1, r1, #4
+  ldr r4, [r2, r3]
+  str r4, [r0, r3]
+  adds r3, r3, #4
 
 LoopCopyDataInit:
-  ldr  r0, =_sdata
-  ldr  r3, =_edata
-  adds  r2, r0, r1
-  cmp  r2, r3
-  bcc  CopyDataInit
-  ldr  r2, =_sbss
-  b  LoopFillZerobss
+  adds r4, r0, r3
+  cmp r4, r1
+  bcc CopyDataInit
+  
 /* Zero fill the bss segment. */
+  ldr r2, =_sbss
+  ldr r4, =_ebss
+  movs r3, #0
+  b LoopFillZerobss
+
 FillZerobss:
-  movs  r3, #0
   str  r3, [r2]
   adds r2, r2, #4
 
-
 LoopFillZerobss:
-  ldr  r3, = _ebss
-  cmp  r2, r3
-  bcc  FillZerobss
+  cmp r2, r4
+  bcc FillZerobss
 
 /* Call the clock system intitialization function.*/
   bl  SystemInit
 /* Call static constructors */
-/* bl __libc_init_array */
+    bl __libc_init_array
 /* Call the application's entry point.*/
-  bl entry
+  bl  entry
 
 LoopForever:
     b LoopForever

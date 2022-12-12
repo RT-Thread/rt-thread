@@ -53,20 +53,20 @@ struct rt_rndis_eth
     struct rt_timer timer;
 #endif /* RNDIS_DELAY_LINK_UP */
 
-    ALIGN(4)
+    rt_align(4)
     rt_uint8_t rx_pool[512];
-    ALIGN(4)
+    rt_align(4)
     rt_uint8_t tx_pool[512];
 
     rt_uint32_t cmd_pool[2];
-    ALIGN(4)
+    rt_align(4)
     char rx_buffer[sizeof(struct rndis_packet_msg) + USB_ETH_MTU + 14];
     rt_size_t rx_offset;
     rt_size_t rx_length;
     rt_bool_t rx_flag;
     rt_bool_t rx_frist;
 
-    ALIGN(4)
+    rt_align(4)
     char tx_buffer[sizeof(struct rndis_packet_msg) + USB_ETH_MTU + 14];
     struct rt_semaphore tx_buffer_free;
 
@@ -77,7 +77,7 @@ struct rt_rndis_eth
 typedef struct rt_rndis_eth * rt_rndis_eth_t;
 static rt_uint32_t oid_packet_filter = 0x0000000;
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor _dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,   /* bLength */
@@ -97,7 +97,7 @@ static struct udevice_descriptor _dev_desc =
 };
 
 /* communcation interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_comm_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -171,7 +171,7 @@ const static struct ucdc_comm_descriptor _comm_desc =
 };
 
 /* data interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
@@ -206,7 +206,7 @@ const static struct ucdc_data_descriptor _data_desc =
     },
 };
 
-ALIGN(4)
+rt_align(4)
 const static char* _ustring[] =
 {
     "Language",                 /* LANGID */
@@ -218,7 +218,7 @@ const static char* _ustring[] =
     USB_STRING_OS
 };
 
-ALIGN(4)
+rt_align(4)
 struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc =
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
@@ -229,7 +229,7 @@ struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc =
 };
 
 //FS and HS needed
-ALIGN(4)
+rt_align(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -244,7 +244,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 /* supported OIDs */
-ALIGN(4)
+rt_align(4)
 const static rt_uint32_t oid_supported_list[] =
 {
     /* General OIDs */
@@ -376,7 +376,7 @@ static rndis_query_cmplt_t _create_resp(rt_size_t size)
 static void _copy_resp(rndis_query_cmplt_t resp, const void * buffer)
 {
     char * resp_buffer = (char *)resp + sizeof(struct rndis_query_cmplt);
-    memcpy(resp_buffer, buffer, resp->InformationBufferLength);
+    rt_memcpy(resp_buffer, buffer, resp->InformationBufferLength);
 }
 
 static void _set_resp(rndis_query_cmplt_t resp, rt_uint32_t value)
@@ -897,13 +897,13 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
             data += sizeof(struct rndis_packet_msg);
             size -= sizeof(struct rndis_packet_msg);
             ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_FALSE;
-            memcpy(&((rt_rndis_eth_t)func->user_data)->rx_buffer[((rt_rndis_eth_t)func->user_data)->rx_offset], data, size);
+            rt_memcpy(&((rt_rndis_eth_t)func->user_data)->rx_buffer[((rt_rndis_eth_t)func->user_data)->rx_offset], data, size);
             ((rt_rndis_eth_t)func->user_data)->rx_offset += size;
         }
     }
     else
     {
-        memcpy(&((rt_rndis_eth_t)func->user_data)->rx_buffer[((rt_rndis_eth_t)func->user_data)->rx_offset], data, size);
+        rt_memcpy(&((rt_rndis_eth_t)func->user_data)->rx_buffer[((rt_rndis_eth_t)func->user_data)->rx_offset], data, size);
         ((rt_rndis_eth_t)func->user_data)->rx_offset += size;
     }
 
@@ -1137,7 +1137,7 @@ struct pbuf *rt_rndis_eth_rx(rt_device_t dev)
             for (q = p; q != RT_NULL; q= q->next)
             {
                 /* Copy the received frame into buffer from memory pointed by the current ETHERNET DMA Rx descriptor */
-                memcpy(q->payload,
+                rt_memcpy(q->payload,
                        (rt_uint8_t *)((device->rx_buffer) + offset),
                        q->len);
                 offset += q->len;
@@ -1191,7 +1191,7 @@ rt_err_t rt_rndis_eth_tx(rt_device_t dev, struct pbuf* p)
     buffer = (char *)&device->tx_buffer + sizeof(struct rndis_packet_msg);
     for (q = p; q != NULL; q = q->next)
     {
-        memcpy(buffer, q->payload, q->len);
+        rt_memcpy(buffer, q->payload, q->len);
         buffer += q->len;
     }
 

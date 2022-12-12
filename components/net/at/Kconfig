@@ -1,6 +1,4 @@
-menu "AT commands"
-
-config RT_USING_AT
+menuconfig RT_USING_AT
     bool "Enable AT commands"
     default n
 
@@ -59,7 +57,16 @@ if RT_USING_AT
         config AT_USING_SOCKET
             bool "Enable BSD Socket API support by AT commnads"
             select RT_USING_SAL
+            select SAL_USING_AT
             default n
+
+        if AT_USING_SOCKET
+
+            config AT_USING_SOCKET_SERVER
+                bool "Enable BSD Socket API support about AT server"
+                default n
+
+        endif
 
     endif
 
@@ -68,7 +75,7 @@ if RT_USING_AT
         config AT_USING_CLI
             bool "Enable CLI(Command-Line Interface) for AT commands"
             default y
-            depends on FINSH_USING_MSH
+            depends on RT_USING_FINSH
 
        config AT_PRINT_RAW_CMD
             bool "Enable print RAW format AT command communication data"
@@ -87,5 +94,3 @@ if RT_USING_AT
             software module version number
 
 endif
-
-endmenu

@@ -1,0 +1,25 @@
+menu "Hardware Drivers Config"
+
+config SOC_RP2040
+    bool
+    select SOC_SERIES_RP2040_PICO
+    select RT_USING_COMPONENTS_INIT
+    default y
+    
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        select BSP_USING_SPI_LCD
+        default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            select PKG_USING_LV_MUSIC_DEMO
+            default y
+    endif
+endmenu         
+
+endmenu   

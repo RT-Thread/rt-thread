@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>STM32F767xx, USE_HAL_DRIVER, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, STM32F769xx, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\common;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include;..\..\..\components\net\lwip-2.0.2\src;..\..\..\components\net\lwip-2.0.2\src\include;..\..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\..\components\net\lwip-2.0.2\src\arch\include;..\..\..\components\net\lwip-2.0.2\src\include\netif;..\..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
+              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,6 +387,65 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Compiler</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>CPU</GroupName>
           <Files>
             <File>
@@ -411,6 +470,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cpu_cache.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
@@ -423,16 +489,58 @@
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>pin.c</FileName>
@@ -447,63 +555,14 @@
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FileName>startup_stm32f767xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\arm\startup_stm32f767xx.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -515,9 +574,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_stm32f767xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\arm\startup_stm32f767xx.s</FilePath>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -534,16 +600,9 @@
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -553,16 +612,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -647,13 +713,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
@@ -668,22 +727,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f7xx.c</FileName>
+              <FileName>stm32f7xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\system_stm32f7xx.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -695,65 +744,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f7xx_hal_cec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cec.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cortex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_crc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_cryp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cryp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>stm32f7xx_hal_cryp_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cryp_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_dma_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma_ex.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -772,23 +765,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f7xx_hal_rcc.c</FileName>
+              <FileName>stm32f7xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_rcc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f7xx_hal_rng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rng.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma_ex.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -800,16 +779,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f7xx_hal_gpio.c</FileName>
+              <FileName>stm32f7xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_gpio.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc_ex.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stm32f7xx_hal_uart.c</FileName>
+              <FileName>stm32f7xx_hal_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f7xx_hal_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cortex.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -826,266 +812,67 @@
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_usart.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>lwIP</GroupName>
           <Files>
             <File>
-              <FileName>sys_arch.c</FileName>
+              <FileName>stm32f7xx_hal_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\arch\sys_arch.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>api_lib.c</FileName>
+              <FileName>stm32f7xx_hal_rng.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\api_lib.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rng.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>api_msg.c</FileName>
+              <FileName>stm32f7xx_hal_crc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\api_msg.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc_ex.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>err.c</FileName>
+              <FileName>stm32f7xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\err.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netbuf.c</FileName>
+              <FileName>stm32f7xx_hal_cec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\netbuf.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cec.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netdb.c</FileName>
+              <FileName>stm32f7xx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\netdb.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netifapi.c</FileName>
+              <FileName>stm32f7xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\netifapi.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>sockets.c</FileName>
+              <FileName>system_stm32f7xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\sockets.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\system_stm32f7xx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>tcpip.c</FileName>
+              <FileName>stm32f7xx_hal_cryp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\api\tcpip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>def.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\def.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dns.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\dns.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>inet_chksum.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\inet_chksum.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\memp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\netif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\pbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>raw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\raw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stats.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\stats.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\tcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\tcp_in.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\tcp_out.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timeouts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\timeouts.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>udp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\udp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\netif\ethernet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernetif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\netif\ethernetif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lowpan6.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\netif\lowpan6.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>autoip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\autoip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dhcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\dhcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>etharp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\etharp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>icmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\icmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>igmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\igmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4_addr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_addr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4_frag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cryp.c</FilePath>
             </File>
           </Files>
         </Group>

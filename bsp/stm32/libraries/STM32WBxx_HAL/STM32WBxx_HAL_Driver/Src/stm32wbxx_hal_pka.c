@@ -94,7 +94,7 @@
       (++) HAL_PKA_Arithmetic_GetResult() to retrieve the result of the operation.
             The resulting size can be the input parameter or the input parameter size + 1 (overflow).
 
-      (+) Arithmetic substraction using:
+      (+) Arithmetic subtraction using:
       (++) HAL_PKA_Sub().
       (++) HAL_PKA_Sub_IT().
       (++) HAL_PKA_Arithmetic_GetResult() to retrieve the result of the operation.
@@ -114,7 +114,7 @@
       (++) HAL_PKA_ModAdd_IT().
       (++) HAL_PKA_Arithmetic_GetResult() to retrieve the result of the operation.
 
-      (+) Modular substraction using:
+      (+) Modular subtraction using:
       (++) HAL_PKA_ModSub().
       (++) HAL_PKA_ModSub_IT().
       (++) HAL_PKA_Arithmetic_GetResult() to retrieve the result of the operation.
@@ -156,7 +156,7 @@
     [..]
       (+) Add HAL_PKA_IRQHandler to the IRQHandler of PKA.
       (+) Enable the IRQ using HAL_NVIC_EnableIRQ().
-      (+) When an operation is started in interrupt mode, the function returns immediatly.
+      (+) When an operation is started in interrupt mode, the function returns immediately.
       (+) When the operation is completed, the callback HAL_PKA_OperationCpltCallback is called.
       (+) When an error is encountered, the callback HAL_PKA_ErrorCallback is called.
       (+) To stop any operation in interrupt mode, use HAL_PKA_Abort().
@@ -174,11 +174,11 @@
 
      The compilation flag USE_HAL_PKA_REGISTER_CALLBACKS, when set to 1,
      allows the user to configure dynamically the driver callbacks.
-     Use Functions @ref HAL_PKA_RegisterCallback()
+     Use Functions HAL_PKA_RegisterCallback()
      to register an interrupt callback.
     [..]
 
-     Function @ref HAL_PKA_RegisterCallback() allows to register following callbacks:
+     Function HAL_PKA_RegisterCallback() allows to register following callbacks:
        (+) OperationCpltCallback : callback for End of operation.
        (+) ErrorCallback         : callback for error detection.
        (+) MspInitCallback       : callback for Msp Init.
@@ -187,11 +187,11 @@
      and a pointer to the user callback function.
     [..]
 
-     Use function @ref HAL_PKA_UnRegisterCallback to reset a callback to the default
+     Use function HAL_PKA_UnRegisterCallback to reset a callback to the default
      weak function.
     [..]
 
-     @ref HAL_PKA_UnRegisterCallback takes as parameters the HAL peripheral handle,
+     HAL_PKA_UnRegisterCallback takes as parameters the HAL peripheral handle,
      and the Callback ID.
      This function allows to reset following callbacks:
        (+) OperationCpltCallback : callback for End of operation.
@@ -200,27 +200,27 @@
        (+) MspDeInitCallback     : callback for Msp DeInit.
      [..]
 
-     By default, after the @ref HAL_PKA_Init() and when the state is @ref HAL_PKA_STATE_RESET
+     By default, after the HAL_PKA_Init() and when the state is HAL_PKA_STATE_RESET
      all callbacks are set to the corresponding weak functions:
-     examples @ref HAL_PKA_OperationCpltCallback(), @ref HAL_PKA_ErrorCallback().
+     examples HAL_PKA_OperationCpltCallback(), HAL_PKA_ErrorCallback().
      Exception done for MspInit and MspDeInit functions that are
-     reset to the legacy weak functions in the @ref HAL_PKA_Init()/ @ref HAL_PKA_DeInit() only when
+     reset to the legacy weak functions in the HAL_PKA_Init()/ HAL_PKA_DeInit() only when
      these callbacks are null (not registered beforehand).
     [..]
 
-     If MspInit or MspDeInit are not null, the @ref HAL_PKA_Init()/ @ref HAL_PKA_DeInit()
+     If MspInit or MspDeInit are not null, the HAL_PKA_Init()/ HAL_PKA_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
      [..]
 
-     Callbacks can be registered/unregistered in @ref HAL_PKA_STATE_READY state only.
+     Callbacks can be registered/unregistered in HAL_PKA_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
-     in @ref HAL_PKA_STATE_READY or @ref HAL_PKA_STATE_RESET state,
+     in HAL_PKA_STATE_READY or HAL_PKA_STATE_RESET state,
      thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
     [..]
 
      Then, the user first registers the MspInit/MspDeInit user callbacks
-     using @ref HAL_PKA_RegisterCallback() before calling @ref HAL_PKA_DeInit()
-     or @ref HAL_PKA_Init() function.
+     using HAL_PKA_RegisterCallback() before calling HAL_PKA_DeInit()
+     or HAL_PKA_Init() function.
      [..]
 
      When the compilation flag USE_HAL_PKA_REGISTER_CALLBACKS is set to 0 or
@@ -663,7 +663,7 @@ HAL_StatusTypeDef HAL_PKA_UnRegisterCallback(PKA_HandleTypeDef *hpka, HAL_PKA_Ca
        (++) Blocking mode : The operation is performed in the polling mode.
             These functions return when data operation is completed.
        (++) No-Blocking mode : The operation is performed using Interrupts.
-            These functions return immediatly.
+            These functions return immediately.
             The end of the operation is indicated by HAL_PKA_ErrorCallback in case of error.
             The end of the operation is indicated by HAL_PKA_OperationCpltCallback in case of success.
             To stop any operation in interrupt mode, use HAL_PKA_Abort().
@@ -1013,7 +1013,7 @@ HAL_StatusTypeDef HAL_PKA_PointCheck_IT(PKA_HandleTypeDef *hpka, PKA_PointCheckI
 uint32_t HAL_PKA_PointCheck_IsOnCurve(PKA_HandleTypeDef const *const hpka)
 {
   #define PKA_POINT_IS_ON_CURVE 0UL
-  /* Invert the value of the PKA RAM containig the result of the operation */
+  /* Invert the value of the PKA RAM containing the result of the operation */
   return (hpka->Instance->RAM[PKA_POINT_CHECK_OUT_ERROR] == PKA_POINT_IS_ON_CURVE) ? 1UL : 0UL;
 }
 
@@ -1131,7 +1131,7 @@ HAL_StatusTypeDef HAL_PKA_Add_IT(PKA_HandleTypeDef *hpka, PKA_AddInTypeDef *in)
 }
 
 /**
-  * @brief  Arithmetic substraction in blocking mode.
+  * @brief  Arithmetic subtraction in blocking mode.
   * @param  hpka PKA handle
   * @param  in Input information
   * @param  Timeout Timeout duration
@@ -1147,7 +1147,7 @@ HAL_StatusTypeDef HAL_PKA_Sub(PKA_HandleTypeDef *hpka, PKA_SubInTypeDef *in, uin
 }
 
 /**
-  * @brief  Arithmetic substraction in non-blocking mode with Interrupt.
+  * @brief  Arithmetic subtraction in non-blocking mode with Interrupt.
   * @param  hpka PKA handle
   * @param  in Input information
   * @retval HAL status
@@ -1286,7 +1286,7 @@ HAL_StatusTypeDef HAL_PKA_ModInv_IT(PKA_HandleTypeDef *hpka, PKA_ModInvInTypeDef
 }
 
 /**
-  * @brief  Modular substraction in blocking mode.
+  * @brief  Modular subtraction in blocking mode.
   * @param  hpka PKA handle
   * @param  in Input information
   * @param  Timeout Timeout duration
@@ -1302,7 +1302,7 @@ HAL_StatusTypeDef HAL_PKA_ModSub(PKA_HandleTypeDef *hpka, PKA_ModSubInTypeDef *i
 }
 
 /**
-  * @brief  Modular substraction in non-blocking mode with Interrupt.
+  * @brief  Modular subtraction in non-blocking mode with Interrupt.
   * @param  hpka PKA handle
   * @param  in Input information
   * @retval HAL status
@@ -1499,7 +1499,7 @@ HAL_StatusTypeDef HAL_PKA_Abort(PKA_HandleTypeDef *hpka)
   HAL_StatusTypeDef err = HAL_OK;
 
   /* Clear EN bit */
-  /* This abort any operation in progress (PKA RAM content is not guaranted in this case) */
+  /* This abort any operation in progress (PKA RAM content is not guaranteed in this case) */
   CLEAR_BIT(hpka->Instance->CR, PKA_CR_EN);
   SET_BIT(hpka->Instance->CR, PKA_CR_EN);
 

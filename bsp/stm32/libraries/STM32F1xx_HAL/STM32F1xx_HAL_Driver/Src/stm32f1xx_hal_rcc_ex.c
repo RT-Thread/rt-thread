@@ -110,10 +110,10 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   /*------------------------------- RTC/LCD Configuration ------------------------*/
   if ((((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_RTC) == RCC_PERIPHCLK_RTC))
   {
+    FlagStatus pwrclkchanged = RESET;
+
     /* check for RTC Parameters used to output RTCCLK */
     assert_param(IS_RCC_RTCCLKSOURCE(PeriphClkInit->RTCClockSelection));
-
-    FlagStatus       pwrclkchanged = RESET;
 
     /* As soon as function is called to change RTC clock source, activation of the
        power domain is done. */

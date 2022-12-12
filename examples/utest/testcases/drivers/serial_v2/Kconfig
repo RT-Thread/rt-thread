@@ -1,0 +1,7 @@
+menu "Utest Serial Testcase"
+
+config UTEST_SERIAL_TC
+    bool "Serial testcase"
+    default n
+
+endmenu

@@ -64,14 +64,14 @@ msh >
 
 ## Peripheral Condition
 
-| Drive | Support | Remark |
-| ----- | ------- | ------ |
-| UART  | Support | UART0  |
-| GPIO  | Support | 0-29   |
-| I2C   | -       | -      |
-| RTC   | -       | -      |
-| SDIO  | -       | -      |
-| SPI   | -       | -      |
-| TIMER | -       | -      |
-| WDT   | -       | -      |
+| Drive | Support | Remark  |
+| ----- | ------- | ------- |
+| UART  | Support | UART0/1 |
+| GPIO  | Support | 0-29    |
+| I2C   | -       | -       |
+| RTC   | -       | -       |
+| SDIO  | -       | -       |
+| SPI   | -       | -       |
+| TIMER | -       | -       |
+| WDT   | -       | -       |
 

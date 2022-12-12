@@ -14,18 +14,6 @@
 #include <string.h>
 #include <sys/time.h>
 
-#if defined (RT_USING_POSIX)
-    #include <dfs_posix.h>
-    #include <dfs_select.h>
-    #if defined (RT_USING_POSIX_TERMIOS)
-        #include <termios.h>
-    #else
-        #error "TERMIOS need RT_USING_POSIX_TERMIOS"
-    #endif
-#else
-    #error "POSIX poll/select need RT_USING_POSIX"
-#endif
-
 #define JOINT(x,y) x##y
 #define B(x) JOINT(B,x)
 #define Default_baud_rate   115200
@@ -356,8 +344,8 @@ int termios_test(int argc, char **argv)
 
 #ifdef RT_USING_FINSH
     #include <finsh.h>
-    #ifdef FINSH_USING_MSH
+    #ifdef RT_USING_FINSH
         MSH_CMD_EXPORT_ALIAS(termios_test, termtest, e.g: termtest /dev/uart4 115200);
-    #endif /* FINSH_USING_MSH */
+    #endif /* RT_USING_FINSH */
 #endif /* RT_USING_FINSH */
 

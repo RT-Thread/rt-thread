@@ -1,0 +1,22 @@
+config SOC_FAMILY_HC32
+    bool
+
+config SOC_SERIES_HC32F1
+    bool
+    select ARCH_ARM_CORTEX_M0
+    select SOC_FAMILY_HC32
+
+config SOC_SERIES_HC32F4
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_HC32
+
+config SOC_SERIES_HC32M1
+    bool
+    select ARCH_ARM_CORTEX_M0
+    select SOC_FAMILY_HC32
+
+config SOC_SERIES_HC32M4
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_HC32

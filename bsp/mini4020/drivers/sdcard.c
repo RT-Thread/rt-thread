@@ -1,11 +1,7 @@
 /*
- * File      : sdcard.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2007 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author      Notes
@@ -62,7 +58,7 @@ static void delay(U32 j)
 
     for (i = 0; i < j; i++)
     {
-    	/* nothing */
+        /* nothing */
     }
 }
 
@@ -267,10 +263,12 @@ static rt_err_t sd_readblock(rt_uint32_t address, rt_uint8_t *buf)
     U32 complete, i;
     rt_uint8_t temp;
     rt_err_t err;
-    RT_UNUSED rt_uint32_t discard;
+    rt_uint32_t discard;
 #ifdef USE_TIMEOUT
     rt_uint32_t to = 10;
 #endif
+
+    RT_UNUSED(discard);
 
     //rt_kprintf("in readblock:%x\n",address);
     //Clear all the errors & interrups

@@ -71,14 +71,21 @@ struct rt_rbb
     rt_size_t blk_max_num;
     /* saved the initialized and put status blocks */
     rt_slist_t blk_list;
+    /* point to tail node */
+    rt_slist_t *tail;
+    /* free node list */
+    rt_slist_t free_list;
 };
 typedef struct rt_rbb *rt_rbb_t;
 
 /* rbb (ring block buffer) API */
 void rt_rbb_init(rt_rbb_t rbb, rt_uint8_t *buf, rt_size_t buf_size, rt_rbb_blk_t block_set, rt_size_t blk_max_num);
+rt_size_t rt_rbb_get_buf_size(rt_rbb_t rbb);
+
+#ifdef RT_USING_HEAP
 rt_rbb_t rt_rbb_create(rt_size_t buf_size, rt_size_t blk_max_num);
 void rt_rbb_destroy(rt_rbb_t rbb);
-rt_size_t rt_rbb_get_buf_size(rt_rbb_t rbb);
+#endif
 
 /* rbb block API */
 rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size);

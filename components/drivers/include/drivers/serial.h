@@ -27,6 +27,7 @@
 #define BAUD_RATE_460800                460800
 #define BAUD_RATE_921600                921600
 #define BAUD_RATE_2000000               2000000
+#define BAUD_RATE_2500000               2500000
 #define BAUD_RATE_3000000               3000000
 
 #define DATA_BITS_5                     5
@@ -77,6 +78,9 @@
 #define RT_SERIAL_TX_DATAQUEUE_SIZE     2048
 #define RT_SERIAL_TX_DATAQUEUE_LWM      30
 
+#define RT_SERIAL_FLOWCONTROL_CTSRTS     1
+#define RT_SERIAL_FLOWCONTROL_NONE       0
+
 /* Default config for serial_configure structure */
 #define RT_SERIAL_CONFIG_DEFAULT           \
 {                                          \
@@ -87,6 +91,7 @@
     BIT_ORDER_LSB,    /* LSB first sent */ \
     NRZ_NORMAL,       /* Normal mode */    \
     RT_SERIAL_RB_BUFSZ, /* Buffer size */  \
+    RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
     0                                      \
 }
 
@@ -100,7 +105,8 @@ struct serial_configure
     rt_uint32_t bit_order               :1;
     rt_uint32_t invert                  :1;
     rt_uint32_t bufsz                   :16;
-    rt_uint32_t reserved                :6;
+    rt_uint32_t flowcontrol             :1;
+    rt_uint32_t reserved                :5;
 };
 
 /*
@@ -144,6 +150,8 @@ struct rt_serial_device
 
     void *serial_rx;
     void *serial_tx;
+
+    struct rt_device_notify rx_notify;
 };
 typedef struct rt_serial_device rt_serial_t;
 

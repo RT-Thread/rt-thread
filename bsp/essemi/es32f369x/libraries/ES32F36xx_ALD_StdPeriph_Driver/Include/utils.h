@@ -8,10 +8,26 @@
   * @date    07 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          07 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #ifndef __UTILS_H__
@@ -22,7 +38,6 @@
 #endif
 
 #include <stdlib.h>
-#include "ald_conf.h"
 #include "type.h"
 #ifdef ES32F36xx
 #include "es32f36xx.h"
@@ -116,7 +131,7 @@ do {			\
   */
 #define MCU_UID0_ADDR	0x000803E0U
 #define MCU_UID1_ADDR	0x000803E8U
-#define MCU_UID2_ADDR	0x000803F0U
+#define MCU_UID2_ADDR	0x000803ECU
 #define MCU_CHIPID_ADDR	0x000803F8U
 #define DWT_CR		*(uint32_t *)0xE0001000U
 #define DWT_CYCCNT	*(volatile uint32_t *)0xE0001004U
@@ -155,8 +170,9 @@ void ald_systick_interval_select(systick_interval_t value);
   */
 /* Peripheral Control functions */
 void ald_inc_tick(void);
-void ald_systick_irq_cbk(void);
+void ald_systick_irq_cbk(void);      
 void ald_delay_ms(__IO uint32_t delay);
+void ald_delay_us(__IO uint32_t delay);
 uint32_t ald_get_tick(void);
 void ald_suspend_tick(void);
 void ald_resume_tick(void);

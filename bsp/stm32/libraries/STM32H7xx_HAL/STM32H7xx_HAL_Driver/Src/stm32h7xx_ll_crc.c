@@ -69,11 +69,19 @@ ErrorStatus LL_CRC_DeInit(CRC_TypeDef *CRCx)
 
   if (CRCx == CRC)
   {
+#if defined(LL_AHB4_GRP1_PERIPH_CRC)
     /* Force CRC reset */
-    LL_AHB4_GRP1_ForceReset (LL_AHB4_GRP1_PERIPH_CRC);
-    
+    LL_AHB4_GRP1_ForceReset(LL_AHB4_GRP1_PERIPH_CRC);
+
     /* Release CRC reset */
-    LL_AHB4_GRP1_ReleaseReset (LL_AHB4_GRP1_PERIPH_CRC);
+    LL_AHB4_GRP1_ReleaseReset(LL_AHB4_GRP1_PERIPH_CRC);
+#else
+    /* Force CRC reset */
+    LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_CRC);
+
+    /* Release CRC reset */
+    LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_CRC);
+#endif/*LL_AHB4_GRP1_PERIPH_CRC)*/
   }
   else
   {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ struct
     uint32_t base;
     uint32_t irq;
     void *handler;
-} 
+}
 const sg_usart_config[CONFIG_USART_NUM] =
 {
     {CSKY_UART_BASE, UART_IRQn, ck_usart0_irqhandler},
@@ -44,22 +44,22 @@ const sg_usart_config[CONFIG_USART_NUM] =
 
 int32_t target_usart_init(int32_t idx, uint32_t *base, uint32_t *irq, void **handler)
 {
-    if (idx >= CONFIG_USART_NUM) 
+    if (idx >= CONFIG_USART_NUM)
     {
         return -1;
     }
 
-    if (base != NULL) 
+    if (base != NULL)
     {
         *base = sg_usart_config[idx].base;
     }
 
-    if (irq != NULL) 
+    if (irq != NULL)
     {
         *irq = sg_usart_config[idx].irq;
     }
 
-    if (handler != NULL) 
+    if (handler != NULL)
     {
         *handler = sg_usart_config[idx].handler;
     }

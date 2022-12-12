@@ -15,6 +15,7 @@
 #if defined(NU_PKG_USING_ILI9341_EBI)
 
 #include <lcd_ili9341.h>
+#include "drv_pdma.h"
 
 #define ILI9341_ADDR_CMD  0x0
 #define ILI9341_ADDR_DATA 0x0030000
@@ -44,11 +45,22 @@ void ili9341_send_pixel_data(rt_uint16_t color)
 
 void ili9341_send_pixels(rt_uint16_t *pixels, int len)
 {
-    int i = 0;
-    int size = len / sizeof(rt_uint16_t);
-
-    while (i < size)
-        ili9341_write_data(pixels[i]);
+    int count = len / sizeof(rt_uint16_t);
+    if (count < 1024)
+    {
+        // CPU feed
+        int i = 0;
+        while (i < count)
+        {
+            ili9341_write_data(pixels[i]);
+            i++;
+        }
+    }
+    else
+    {
+        // PDMA-M2M feed
+        nu_pdma_mempush((void *)(g_uint32_ili9341_base + (ILI9341_ADDR_DATA)), (void *)pixels, 16, count);
+    }
 }
 
 void ili9341_set_column(uint16_t StartCol, uint16_t EndCol)

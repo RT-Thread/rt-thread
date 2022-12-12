@@ -91,7 +91,7 @@ typedef struct
   *             11 : Error
   *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
-  *             1  : Init done (Peripheral not initialized. HAL IRDA Init function already called)
+  *             1  : Init done (Peripheral initialized. HAL IRDA Init function already called)
   *          b4-b3  (not used)
   *             xx : Should be set to 00
   *          b2     Intrinsic process state
@@ -108,7 +108,7 @@ typedef struct
   *             xx : Should be set to 00
   *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
-  *             1  : Init done (Peripheral not initialized)
+  *             1  : Init done (Peripheral initialized)
   *          b4-b2  (not used)
   *            xxx : Should be set to 000
   *          b1     Rx state

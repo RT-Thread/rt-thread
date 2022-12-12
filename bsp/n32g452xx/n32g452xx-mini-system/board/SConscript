@@ -1,0 +1,27 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+msp/n32_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/msp']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/N32_Std_Driver/CMSIS/device/startup/startup_n32g45x_gcc.S']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/N32_Std_Driver/CMSIS/device/startup/startup_n32g45x.s']
+
+CPPDEFINES = ['N32G45X']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

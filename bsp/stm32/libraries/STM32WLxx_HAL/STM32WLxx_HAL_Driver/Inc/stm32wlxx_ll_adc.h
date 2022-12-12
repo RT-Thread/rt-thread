@@ -54,14 +54,14 @@ extern "C" {
 
 /* Definition of ADC group regular sequencer bits information to be inserted  */
 /* into ADC group regular sequencer ranks literals definition.                */
-#define ADC_REG_RANK_1_SQRX_BITOFFSET_POS  ( 0UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ1" position in register */
-#define ADC_REG_RANK_2_SQRX_BITOFFSET_POS  ( 4UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ2" position in register */
-#define ADC_REG_RANK_3_SQRX_BITOFFSET_POS  ( 8UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ3" position in register */
-#define ADC_REG_RANK_4_SQRX_BITOFFSET_POS  (12UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ4" position in register */
-#define ADC_REG_RANK_5_SQRX_BITOFFSET_POS  (16UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ5" position in register */
-#define ADC_REG_RANK_6_SQRX_BITOFFSET_POS  (20UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ6" position in register */
-#define ADC_REG_RANK_7_SQRX_BITOFFSET_POS  (24UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ7" position in register */
-#define ADC_REG_RANK_8_SQRX_BITOFFSET_POS  (28UL) /* Value equivalent to bitfield "ADC_CHSELR_SQ8" position in register */
+#define ADC_REG_RANK_1_SQRX_BITOFFSET_POS  ( 0UL) /* Equivalent to bitfield "ADC_CHSELR_SQ1" position in register */
+#define ADC_REG_RANK_2_SQRX_BITOFFSET_POS  ( 4UL) /* Equivalent to bitfield "ADC_CHSELR_SQ2" position in register */
+#define ADC_REG_RANK_3_SQRX_BITOFFSET_POS  ( 8UL) /* Equivalent to bitfield "ADC_CHSELR_SQ3" position in register */
+#define ADC_REG_RANK_4_SQRX_BITOFFSET_POS  (12UL) /* Equivalent to bitfield "ADC_CHSELR_SQ4" position in register */
+#define ADC_REG_RANK_5_SQRX_BITOFFSET_POS  (16UL) /* Equivalent to bitfield "ADC_CHSELR_SQ5" position in register */
+#define ADC_REG_RANK_6_SQRX_BITOFFSET_POS  (20UL) /* Equivalent to bitfield "ADC_CHSELR_SQ6" position in register */
+#define ADC_REG_RANK_7_SQRX_BITOFFSET_POS  (24UL) /* Equivalent to bitfield "ADC_CHSELR_SQ7" position in register */
+#define ADC_REG_RANK_8_SQRX_BITOFFSET_POS  (28UL) /* Equivalent to bitfield "ADC_CHSELR_SQ8" position in register */
 
 
 
@@ -88,8 +88,8 @@ extern "C" {
                                              ((ADC_REG_TRIG_EXT_EDGE_DEFAULT)              << (4U * 3UL))  )
 
 /* Definition of ADC group regular trigger bits information.                  */
-#define ADC_REG_TRIG_EXTSEL_BITOFFSET_POS  ( 6UL) /* Value equivalent to bitfield "ADC_CFGR1_EXTSEL" position in register */
-#define ADC_REG_TRIG_EXTEN_BITOFFSET_POS   (10UL) /* Value equivalent to bitfield "ADC_CFGR1_EXTEN" position in register */
+#define ADC_REG_TRIG_EXTSEL_BITOFFSET_POS  ( 6UL) /* Equivalent to bitfield "ADC_CFGR1_EXTSEL" position in register */
+#define ADC_REG_TRIG_EXTEN_BITOFFSET_POS   (10UL) /* Equivalent to bitfield "ADC_CFGR1_EXTEN" position in register */
 
 
 
@@ -101,8 +101,8 @@ extern "C" {
 /*   GPIO pins) and internal channels (connected to internal paths)           */
 #define ADC_CHANNEL_ID_NUMBER_MASK         (ADC_CFGR1_AWD1CH)
 #define ADC_CHANNEL_ID_BITFIELD_MASK       (ADC_CHSELR_CHSEL)
-#define ADC_CHANNEL_ID_NUMBER_MASK_SEQ     (ADC_CHSELR_SQ1 << ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) /* Value equivalent to ADC_CHANNEL_ID_NUMBER_MASK with reduced range: on this STM32 series, ADC group regular sequencer, if set to mode "fully configurable", can contain channels with a restricted channel number. Refer to function @ref LL_ADC_REG_SetSequencerConfigurable(). */
-#define ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS (26UL)/* Value equivalent to bitfield "ADC_CHANNEL_ID_NUMBER_MASK" position in register */
+#define ADC_CHANNEL_ID_NUMBER_MASK_SEQ     (ADC_CHSELR_SQ1 << ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) /* Equivalent to ADC_CHANNEL_ID_NUMBER_MASK with reduced range: on this STM32 series, ADC group regular sequencer, if set to mode "fully configurable", can contain channels with a restricted channel number. Refer to function @ref LL_ADC_REG_SetSequencerConfigurable(). */
+#define ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS (26UL)/* Equivalent to bitfield "ADC_CHANNEL_ID_NUMBER_MASK" position in register */
 #define ADC_CHANNEL_ID_MASK                (ADC_CHANNEL_ID_NUMBER_MASK | ADC_CHANNEL_ID_BITFIELD_MASK | \
                                             ADC_CHANNEL_ID_INTERNAL_CH_MASK)
 /* Equivalent mask of ADC_CHANNEL_NUMBER_MASK aligned on register LSB (bit 0) */
@@ -210,31 +210,31 @@ extern "C" {
 
 
 /* ADC registers bits positions */
-#define ADC_CFGR1_RES_BITOFFSET_POS        ( 3UL) /* Value equivalent to bitfield "ADC_CFGR1_RES" position in register */
-#define ADC_CFGR1_AWDSGL_BITOFFSET_POS     (22UL) /* Value equivalent to bitfield "ADC_CFGR1_AWDSGL" position in register */
-#define ADC_TR1_HT1_BITOFFSET_POS          (16UL) /* Value equivalent to bitfield "ADC_TR1_HT1" position in register */
-#define ADC_CHSELR_CHSEL0_BITOFFSET_POS    ( 0UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL0" position in register */
-#define ADC_CHSELR_CHSEL1_BITOFFSET_POS    ( 1UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL1" position in register */
-#define ADC_CHSELR_CHSEL2_BITOFFSET_POS    ( 2UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL2" position in register */
-#define ADC_CHSELR_CHSEL3_BITOFFSET_POS    ( 3UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL3" position in register */
-#define ADC_CHSELR_CHSEL4_BITOFFSET_POS    ( 4UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL4" position in register */
-#define ADC_CHSELR_CHSEL5_BITOFFSET_POS    ( 5UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL5" position in register */
-#define ADC_CHSELR_CHSEL6_BITOFFSET_POS    ( 6UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL6" position in register */
-#define ADC_CHSELR_CHSEL7_BITOFFSET_POS    ( 7UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL7" position in register */
-#define ADC_CHSELR_CHSEL8_BITOFFSET_POS    ( 8UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL8" position in register */
-#define ADC_CHSELR_CHSEL9_BITOFFSET_POS    ( 9UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL9" position in register */
-#define ADC_CHSELR_CHSEL10_BITOFFSET_POS   (10UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL10" position in register */
-#define ADC_CHSELR_CHSEL11_BITOFFSET_POS   (11UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL11" position in register */
-#define ADC_CHSELR_CHSEL12_BITOFFSET_POS   (12UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL12" position in register */
-#define ADC_CHSELR_CHSEL13_BITOFFSET_POS   (13UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL13" position in register */
-#define ADC_CHSELR_CHSEL14_BITOFFSET_POS   (14UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL14" position in register */
-#define ADC_CHSELR_CHSEL15_BITOFFSET_POS   (15UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL15" position in register */
-#define ADC_CHSELR_CHSEL16_BITOFFSET_POS   (16UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL16" position in register */
-#define ADC_CHSELR_CHSEL17_BITOFFSET_POS   (17UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL17" position in register */
-#define ADC_CHSELR_CHSEL18_BITOFFSET_POS   (18UL) /* Value equivalent to bitfield "ADC_CHSELR_CHSEL18" position in register */
-#define ADC_SMPR_SMP1_BITOFFSET_POS        ( 0UL) /* Value equivalent to bitfield "ADC_SMPR_SMP1" position in register */
-#define ADC_SMPR_SMP2_BITOFFSET_POS        ( 4UL) /* Value equivalent to bitfield "ADC_SMPR_SMP2" position in register */
-#define ADC_SMPR_SMPSEL0_BITOFFSET_POS     ( 8UL) /* Value equivalent to bitfield "ADC_SMPR_SMPSEL0" position in register */
+#define ADC_CFGR1_RES_BITOFFSET_POS        ( 3UL) /* Equivalent to bitfield "ADC_CFGR1_RES" position in register */
+#define ADC_CFGR1_AWDSGL_BITOFFSET_POS     (22UL) /* Equivalent to bitfield "ADC_CFGR1_AWDSGL" position in register */
+#define ADC_TR1_HT1_BITOFFSET_POS          (16UL) /* Equivalent to bitfield "ADC_TR1_HT1" position in register */
+#define ADC_CHSELR_CHSEL0_BITOFFSET_POS    ( 0UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL0" position in register */
+#define ADC_CHSELR_CHSEL1_BITOFFSET_POS    ( 1UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL1" position in register */
+#define ADC_CHSELR_CHSEL2_BITOFFSET_POS    ( 2UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL2" position in register */
+#define ADC_CHSELR_CHSEL3_BITOFFSET_POS    ( 3UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL3" position in register */
+#define ADC_CHSELR_CHSEL4_BITOFFSET_POS    ( 4UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL4" position in register */
+#define ADC_CHSELR_CHSEL5_BITOFFSET_POS    ( 5UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL5" position in register */
+#define ADC_CHSELR_CHSEL6_BITOFFSET_POS    ( 6UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL6" position in register */
+#define ADC_CHSELR_CHSEL7_BITOFFSET_POS    ( 7UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL7" position in register */
+#define ADC_CHSELR_CHSEL8_BITOFFSET_POS    ( 8UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL8" position in register */
+#define ADC_CHSELR_CHSEL9_BITOFFSET_POS    ( 9UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL9" position in register */
+#define ADC_CHSELR_CHSEL10_BITOFFSET_POS   (10UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL10" position in register */
+#define ADC_CHSELR_CHSEL11_BITOFFSET_POS   (11UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL11" position in register */
+#define ADC_CHSELR_CHSEL12_BITOFFSET_POS   (12UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL12" position in register */
+#define ADC_CHSELR_CHSEL13_BITOFFSET_POS   (13UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL13" position in register */
+#define ADC_CHSELR_CHSEL14_BITOFFSET_POS   (14UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL14" position in register */
+#define ADC_CHSELR_CHSEL15_BITOFFSET_POS   (15UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL15" position in register */
+#define ADC_CHSELR_CHSEL16_BITOFFSET_POS   (16UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL16" position in register */
+#define ADC_CHSELR_CHSEL17_BITOFFSET_POS   (17UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL17" position in register */
+#define ADC_CHSELR_CHSEL18_BITOFFSET_POS   (18UL) /* Equivalent to bitfield "ADC_CHSELR_CHSEL18" position in register */
+#define ADC_SMPR_SMP1_BITOFFSET_POS        ( 0UL) /* Equivalent to bitfield "ADC_SMPR_SMP1" position in register */
+#define ADC_SMPR_SMP2_BITOFFSET_POS        ( 4UL) /* Equivalent to bitfield "ADC_SMPR_SMP2" position in register */
+#define ADC_SMPR_SMPSEL0_BITOFFSET_POS     ( 8UL) /* Equivalent to bitfield "ADC_SMPR_SMPSEL0" position in register */
 
 
 /* ADC registers bits groups */
@@ -328,7 +328,6 @@ typedef struct
                                              @note On this STM32 series, this parameter has some clock ratio constraints:
                                                    ADC clock synchronous (from PCLK) with prescaler 1 must be enabled only if PCLK has a 50% duty clock cycle
                                                    (APB prescaler configured inside the RCC must be bypassed and the system clock must by 50% duty cycle).
-
 
                                              This feature can be modified afterwards using unitary function @ref LL_ADC_SetClock().
                                              For more details, refer to description of this function. */
@@ -2318,17 +2317,17 @@ __STATIC_INLINE void LL_ADC_REG_SetTriggerSource(ADC_TypeDef *ADCx, uint32_t Tri
   */
 __STATIC_INLINE uint32_t LL_ADC_REG_GetTriggerSource(ADC_TypeDef *ADCx)
 {
-  __IO uint32_t TriggerSource = READ_BIT(ADCx->CFGR1, ADC_CFGR1_EXTSEL | ADC_CFGR1_EXTEN);
+  __IO uint32_t trigger_source = READ_BIT(ADCx->CFGR1, ADC_CFGR1_EXTSEL | ADC_CFGR1_EXTEN);
 
   /* Value for shift of {0; 4; 8; 12} depending on value of bitfield          */
   /* corresponding to ADC_CFGR1_EXTEN {0; 1; 2; 3}.                           */
-  uint32_t ShiftExten = ((TriggerSource & ADC_CFGR1_EXTEN) >> (ADC_REG_TRIG_EXTEN_BITOFFSET_POS - 2UL));
+  uint32_t shift_exten = ((trigger_source & ADC_CFGR1_EXTEN) >> (ADC_REG_TRIG_EXTEN_BITOFFSET_POS - 2UL));
 
   /* Set bitfield corresponding to ADC_CFGR1_EXTEN and ADC_CFGR1_EXTSEL       */
   /* to match with triggers literals definition.                              */
-  return ((TriggerSource
-           & (ADC_REG_TRIG_SOURCE_MASK >> ShiftExten) & ADC_CFGR1_EXTSEL)
-          | ((ADC_REG_TRIG_EDGE_MASK >> ShiftExten) & ADC_CFGR1_EXTEN)
+  return ((trigger_source
+           & (ADC_REG_TRIG_SOURCE_MASK >> shift_exten) & ADC_CFGR1_EXTSEL)
+          | ((ADC_REG_TRIG_EDGE_MASK >> shift_exten) & ADC_CFGR1_EXTEN)
          );
 }
 
@@ -2575,21 +2574,21 @@ __STATIC_INLINE void LL_ADC_REG_SetSequencerLength(ADC_TypeDef *ADCx, uint32_t S
   */
 __STATIC_INLINE uint32_t LL_ADC_REG_GetSequencerLength(ADC_TypeDef *ADCx)
 {
-  __IO uint32_t ChannelsRanks = READ_BIT(ADCx->CHSELR, ADC_CHSELR_SQ_ALL);
-  uint32_t SequencerLength = LL_ADC_REG_SEQ_SCAN_ENABLE_8RANKS;
-  uint32_t RankIndex;
+  __IO uint32_t channels_ranks = READ_BIT(ADCx->CHSELR, ADC_CHSELR_SQ_ALL);
+  uint32_t sequencer_length = LL_ADC_REG_SEQ_SCAN_ENABLE_8RANKS;
+  uint32_t rank_index;
 
   /* Parse register for end of sequence identifier */
-  for (RankIndex = 0UL; RankIndex < (32U - 4U); RankIndex += 4U)
+  for (rank_index = 0UL; rank_index < (32U - 4U); rank_index += 4U)
   {
-    if ((ChannelsRanks & (ADC_CHSELR_SQ2 << RankIndex)) == (ADC_CHSELR_SQ2 << RankIndex))
+    if ((channels_ranks & (ADC_CHSELR_SQ2 << rank_index)) == (ADC_CHSELR_SQ2 << rank_index))
     {
-      SequencerLength = (ADC_CHSELR_SQ2 << RankIndex);
+      sequencer_length = (ADC_CHSELR_SQ2 << rank_index);
       break;
     }
   }
 
-  return SequencerLength;
+  return sequencer_length;
 }
 
 /**
@@ -3194,26 +3193,26 @@ __STATIC_INLINE void LL_ADC_REG_SetSequencerChRem(ADC_TypeDef *ADCx, uint32_t Ch
   */
 __STATIC_INLINE uint32_t LL_ADC_REG_GetSequencerChannels(ADC_TypeDef *ADCx)
 {
-  uint32_t ChannelsBitfield = (uint32_t)READ_BIT(ADCx->CHSELR, ADC_CHSELR_CHSEL);
+  uint32_t channels_bitfield = (uint32_t)READ_BIT(ADCx->CHSELR, ADC_CHSELR_CHSEL);
 
-  return ((((ChannelsBitfield & ADC_CHSELR_CHSEL0) >> ADC_CHSELR_CHSEL0_BITOFFSET_POS) * LL_ADC_CHANNEL_0)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL1) >> ADC_CHSELR_CHSEL1_BITOFFSET_POS) * LL_ADC_CHANNEL_1)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL2) >> ADC_CHSELR_CHSEL2_BITOFFSET_POS) * LL_ADC_CHANNEL_2)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL3) >> ADC_CHSELR_CHSEL3_BITOFFSET_POS) * LL_ADC_CHANNEL_3)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL4) >> ADC_CHSELR_CHSEL4_BITOFFSET_POS) * LL_ADC_CHANNEL_4)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL5) >> ADC_CHSELR_CHSEL5_BITOFFSET_POS) * LL_ADC_CHANNEL_5)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL6) >> ADC_CHSELR_CHSEL6_BITOFFSET_POS) * LL_ADC_CHANNEL_6)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL7) >> ADC_CHSELR_CHSEL7_BITOFFSET_POS) * LL_ADC_CHANNEL_7)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL8) >> ADC_CHSELR_CHSEL8_BITOFFSET_POS) * LL_ADC_CHANNEL_8)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL9) >> ADC_CHSELR_CHSEL9_BITOFFSET_POS) * LL_ADC_CHANNEL_9)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL10) >> ADC_CHSELR_CHSEL10_BITOFFSET_POS) * LL_ADC_CHANNEL_10)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL11) >> ADC_CHSELR_CHSEL11_BITOFFSET_POS) * LL_ADC_CHANNEL_11)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL12) >> ADC_CHSELR_CHSEL12_BITOFFSET_POS) * LL_ADC_CHANNEL_12)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL13) >> ADC_CHSELR_CHSEL13_BITOFFSET_POS) * LL_ADC_CHANNEL_13)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL14) >> ADC_CHSELR_CHSEL14_BITOFFSET_POS) * LL_ADC_CHANNEL_14)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL15) >> ADC_CHSELR_CHSEL15_BITOFFSET_POS) * LL_ADC_CHANNEL_15)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL16) >> ADC_CHSELR_CHSEL16_BITOFFSET_POS) * LL_ADC_CHANNEL_16)
-          | (((ChannelsBitfield & ADC_CHSELR_CHSEL17) >> ADC_CHSELR_CHSEL17_BITOFFSET_POS) * LL_ADC_CHANNEL_17)
+  return ((((channels_bitfield & ADC_CHSELR_CHSEL0) >> ADC_CHSELR_CHSEL0_BITOFFSET_POS) * LL_ADC_CHANNEL_0)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL1) >> ADC_CHSELR_CHSEL1_BITOFFSET_POS) * LL_ADC_CHANNEL_1)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL2) >> ADC_CHSELR_CHSEL2_BITOFFSET_POS) * LL_ADC_CHANNEL_2)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL3) >> ADC_CHSELR_CHSEL3_BITOFFSET_POS) * LL_ADC_CHANNEL_3)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL4) >> ADC_CHSELR_CHSEL4_BITOFFSET_POS) * LL_ADC_CHANNEL_4)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL5) >> ADC_CHSELR_CHSEL5_BITOFFSET_POS) * LL_ADC_CHANNEL_5)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL6) >> ADC_CHSELR_CHSEL6_BITOFFSET_POS) * LL_ADC_CHANNEL_6)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL7) >> ADC_CHSELR_CHSEL7_BITOFFSET_POS) * LL_ADC_CHANNEL_7)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL8) >> ADC_CHSELR_CHSEL8_BITOFFSET_POS) * LL_ADC_CHANNEL_8)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL9) >> ADC_CHSELR_CHSEL9_BITOFFSET_POS) * LL_ADC_CHANNEL_9)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL10) >> ADC_CHSELR_CHSEL10_BITOFFSET_POS) * LL_ADC_CHANNEL_10)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL11) >> ADC_CHSELR_CHSEL11_BITOFFSET_POS) * LL_ADC_CHANNEL_11)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL12) >> ADC_CHSELR_CHSEL12_BITOFFSET_POS) * LL_ADC_CHANNEL_12)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL13) >> ADC_CHSELR_CHSEL13_BITOFFSET_POS) * LL_ADC_CHANNEL_13)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL14) >> ADC_CHSELR_CHSEL14_BITOFFSET_POS) * LL_ADC_CHANNEL_14)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL15) >> ADC_CHSELR_CHSEL15_BITOFFSET_POS) * LL_ADC_CHANNEL_15)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL16) >> ADC_CHSELR_CHSEL16_BITOFFSET_POS) * LL_ADC_CHANNEL_16)
+          | (((channels_bitfield & ADC_CHSELR_CHSEL17) >> ADC_CHSELR_CHSEL17_BITOFFSET_POS) * LL_ADC_CHANNEL_17)
          );
 }
 
@@ -3717,55 +3716,55 @@ __STATIC_INLINE uint32_t LL_ADC_GetAnalogWDMonitChannels(ADC_TypeDef *ADCx, uint
   __IO uint32_t *preg = __ADC_PTR_REG_OFFSET(ADCx->CFGR1, ((AWDy & ADC_AWD_CRX_REGOFFSET_MASK) >> ADC_AWD_CRX_REGOFFSET_POS)
                                              + ((AWDy & ADC_AWD_CR12_REGOFFSETGAP_MASK) * ADC_AWD_CR12_REGOFFSETGAP_VAL));
 
-  uint32_t AnalogWDMonitChannels = (READ_BIT(*preg, AWDy) & AWDy & ADC_AWD_CR_ALL_CHANNEL_MASK);
+  uint32_t analog_wd_monit_channels = (READ_BIT(*preg, AWDy) & AWDy & ADC_AWD_CR_ALL_CHANNEL_MASK);
 
-  /* If "AnalogWDMonitChannels" == 0, then the selected AWD is disabled       */
+  /* If "analog_wd_monit_channels" == 0, then the selected AWD is disabled       */
   /* (parameter value LL_ADC_AWD_DISABLE).                                    */
   /* Else, the selected AWD is enabled and is monitoring a group of channels  */
   /* or a single channel.                                                     */
-  if (AnalogWDMonitChannels != 0UL)
+  if (analog_wd_monit_channels != 0UL)
   {
     if (AWDy == LL_ADC_AWD1)
     {
-      if ((AnalogWDMonitChannels & ADC_CFGR1_AWD1SGL) == 0UL)
+      if ((analog_wd_monit_channels & ADC_CFGR1_AWD1SGL) == 0UL)
       {
         /* AWD monitoring a group of channels */
-        AnalogWDMonitChannels = ((AnalogWDMonitChannels
-                                  | (ADC_AWD_CR23_CHANNEL_MASK)
-                                 )
-                                 & (~(ADC_CFGR1_AWD1CH))
-                                );
+        analog_wd_monit_channels = ((analog_wd_monit_channels
+                                     | (ADC_AWD_CR23_CHANNEL_MASK)
+                                    )
+                                    & (~(ADC_CFGR1_AWD1CH))
+                                   );
       }
       else
       {
         /* AWD monitoring a single channel */
-        AnalogWDMonitChannels = (AnalogWDMonitChannels
-                                 | (ADC_AWD2CR_AWD2CH_0 << (AnalogWDMonitChannels >> ADC_CFGR1_AWD1CH_Pos))
-                                );
+        analog_wd_monit_channels = (analog_wd_monit_channels
+                                    | (ADC_AWD2CR_AWD2CH_0 << (analog_wd_monit_channels >> ADC_CFGR1_AWD1CH_Pos))
+                                   );
       }
     }
     else
     {
-      if ((AnalogWDMonitChannels & ADC_AWD_CR23_CHANNEL_MASK) == ADC_AWD_CR23_CHANNEL_MASK)
+      if ((analog_wd_monit_channels & ADC_AWD_CR23_CHANNEL_MASK) == ADC_AWD_CR23_CHANNEL_MASK)
       {
         /* AWD monitoring a group of channels */
-        AnalogWDMonitChannels = (ADC_AWD_CR23_CHANNEL_MASK
-                                 | (ADC_CFGR1_AWD1EN)
-                                );
+        analog_wd_monit_channels = (ADC_AWD_CR23_CHANNEL_MASK
+                                    | (ADC_CFGR1_AWD1EN)
+                                   );
       }
       else
       {
         /* AWD monitoring a single channel */
         /* AWD monitoring a group of channels */
-        AnalogWDMonitChannels = (AnalogWDMonitChannels
-                                 | (ADC_CFGR1_AWD1EN | ADC_CFGR1_AWD1SGL)
-                                 | (__LL_ADC_CHANNEL_TO_DECIMAL_NB(AnalogWDMonitChannels) << ADC_CFGR1_AWD1CH_Pos)
-                                );
+        analog_wd_monit_channels = (analog_wd_monit_channels
+                                    | (ADC_CFGR1_AWD1EN | ADC_CFGR1_AWD1SGL)
+                                    | (__LL_ADC_CHANNEL_TO_DECIMAL_NB(analog_wd_monit_channels) << ADC_CFGR1_AWD1CH_Pos)
+                                   );
       }
     }
   }
 
-  return AnalogWDMonitChannels;
+  return analog_wd_monit_channels;
 }
 
 /**
@@ -4731,7 +4730,7 @@ __STATIC_INLINE void LL_ADC_EnableIT_ADRDY(ADC_TypeDef *ADCx)
 
 /**
   * @brief  Enable interruption ADC channel configuration ready.
-  * @rmtoll IER      ADRDYIE        LL_ADC_EnableIT_CCRDY
+  * @rmtoll IER      CCRDYIE        LL_ADC_EnableIT_CCRDY
   * @param  ADCx ADC instance
   * @retval State of bit (1 or 0).
   */
@@ -4841,7 +4840,7 @@ __STATIC_INLINE void LL_ADC_DisableIT_ADRDY(ADC_TypeDef *ADCx)
 
 /**
   * @brief  Disable interruption ADC channel configuration ready.
-  * @rmtoll IER      ADRDYIE        LL_ADC_DisableIT_CCRDY
+  * @rmtoll IER      CCRDYIE        LL_ADC_DisableIT_CCRDY
   * @param  ADCx ADC instance
   * @retval State of bit (1 or 0).
   */
@@ -4952,7 +4951,7 @@ __STATIC_INLINE uint32_t LL_ADC_IsEnabledIT_ADRDY(ADC_TypeDef *ADCx)
 
 /**
   * @brief  Get state of interruption ADC channel configuration ready.
-  * @rmtoll IER      ADRDYIE        LL_ADC_IsEnabledIT_CCRDY
+  * @rmtoll IER      CCRDYIE        LL_ADC_IsEnabledIT_CCRDY
   * @param  ADCx ADC instance
   * @retval State of bit (1 or 0).
   */
@@ -5068,19 +5067,19 @@ __STATIC_INLINE uint32_t LL_ADC_IsEnabledIT_EOCAL(ADC_TypeDef *ADCx)
 
 /* Initialization of some features of ADC common parameters and multimode */
 ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON);
-ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct);
-void        LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct);
+ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonInitTypeDef *pADC_CommonInitStruct);
+void        LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *pADC_CommonInitStruct);
 
 /* De-initialization of ADC instance */
 ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx);
 
 /* Initialization of some features of ADC instance */
-ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct);
-void        LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct);
+ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *pADC_InitStruct);
+void        LL_ADC_StructInit(LL_ADC_InitTypeDef *pADC_InitStruct);
 
 /* Initialization of some features of ADC instance and ADC group regular */
-ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct);
-void        LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct);
+ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *pADC_RegInitStruct);
+void        LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *pADC_RegInitStruct);
 
 /**
   * @}

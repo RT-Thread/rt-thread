@@ -229,7 +229,7 @@ menu "On-chip Peripheral Drivers"
             default 1
             config BSP_USING_I2C0
                 bool "Enable I2C0 bus"
-                default n
+                default y
             if BSP_USING_I2C0
                 config NRFX_TWIM0_ENABLED
                 int 
@@ -338,8 +338,12 @@ menu "On-chip Peripheral Drivers"
 
         endif
     config BSP_USING_ON_CHIP_FLASH
-        select PKG_USING_FAL
+        select RT_USING_FAL
         bool "Enable on-chip FLASH"
+        default n
+    
+    config BSP_USING_ON_CHIP_FS
+        bool "Enable on-chip filesystem" 
         default n
 
     menu "On-chip flash config"
@@ -351,7 +355,7 @@ menu "On-chip Peripheral Drivers"
         config MCU_FLASH_SIZE_KB  
             int "MCU FLASH SIZE, MAX size 1024 KB"
             range 1 1024
-            default 1024		
+            default 512		
 
         config MCU_SRAM_START_ADDRESS 
             hex "MCU RAM START ADDRESS"
@@ -360,7 +364,7 @@ menu "On-chip Peripheral Drivers"
         config MCU_SRAM_SIZE_KB 
             int "MCU RAM SIZE, MAX size 256 KB"
             range 1 256
-            default 256
+            default 64
 
         config MCU_FLASH_PAGE_SIZE 
             hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
@@ -386,7 +390,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
     bool "Enable RTC"
     select RT_USING_RTC
-    select RT_USING_LIBC
     default n
     if BSP_USING_ONCHIP_RTC
         config NRFX_CLOCK_ENABLED
@@ -415,6 +418,57 @@ menu "On-chip Peripheral Drivers"
             range 0 2
             default 2
     endif
+
+    config BSP_USING_TIM
+        bool "Enable TIMER"
+        select RT_USING_HWTIMER
+        default n
+        if BSP_USING_TIM
+            config NRFX_TIMER_ENABLED
+            int 
+            default 1
+            config BSP_USING_TIM0
+                bool "Enable TIMER0"
+                default n
+            if BSP_USING_TIM0
+                config NRFX_TIMER0_ENABLED
+                int 
+                default 1
+            endif
+            config BSP_USING_TIM1
+                bool "Enable TIMER1"
+                default n
+            if BSP_USING_TIM1
+                config NRFX_TIMER1_ENABLED
+                int 
+                default 1
+            endif
+            config BSP_USING_TIM2
+                bool "Enable TIMER2"
+                default n
+            if BSP_USING_TIM2
+                config NRFX_TIMER2_ENABLED
+                int 
+                default 1
+            endif
+            config BSP_USING_TIM3
+                bool "Enable TIMER3"
+                default n
+            if BSP_USING_TIM3
+                config NRFX_TIMER3_ENABLED
+                int 
+                default 1
+            endif
+
+            config BSP_USING_TIM4
+                bool "Enable TIMER4"
+                default n
+            if BSP_USING_TIM4
+                config NRFX_TIMER4_ENABLED
+                int 
+                default 1
+            endif
+        endif
 endmenu
 
 choice

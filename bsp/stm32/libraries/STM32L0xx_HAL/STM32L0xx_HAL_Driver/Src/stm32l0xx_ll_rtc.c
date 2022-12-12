@@ -87,18 +87,7 @@
 
 #define IS_LL_RTC_DAY(__DAY__)    (((__DAY__) >= 1U) && ((__DAY__) <= 31U))
 
-#define IS_LL_RTC_MONTH(__VALUE__) (((__VALUE__) == LL_RTC_MONTH_JANUARY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_FEBRUARY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_MARCH) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_APRIL) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_MAY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_JUNE) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_JULY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_AUGUST) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_SEPTEMBER) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_OCTOBER) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_NOVEMBER) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_DECEMBER))
+#define IS_LL_RTC_MONTH(__MONTH__) (((__MONTH__) >= 1U) && ((__MONTH__) <= 12U))
 
 #define IS_LL_RTC_YEAR(__YEAR__) ((__YEAR__) <= 99U)
 
@@ -328,7 +317,7 @@ ErrorStatus LL_RTC_TIME_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Time
     }
 
     /* Exit Initialization mode */
-    LL_RTC_DisableInitMode(RTC);
+    LL_RTC_DisableInitMode(RTCx);
 
     /* If  RTC_CR_BYPSHAD bit = 0, wait for synchro else this check is not needed */
     if (LL_RTC_IsShadowRegBypassEnabled(RTCx) == 0U)
@@ -416,7 +405,7 @@ ErrorStatus LL_RTC_DATE_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Date
     }
 
     /* Exit Initialization mode */
-    LL_RTC_DisableInitMode(RTC);
+    LL_RTC_DisableInitMode(RTCx);
 
     /* If  RTC_CR_BYPSHAD bit = 0, wait for synchro else this check is not needed */
     if (LL_RTC_IsShadowRegBypassEnabled(RTCx) == 0U)

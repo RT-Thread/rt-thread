@@ -1,16 +1,14 @@
 /*
- * File      : gpio.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  */
 
 #ifndef __GPIO_H__
 #define __GPIO_H__
+
+#define GET_PIN(gpiox, pinNumber) (rt_base_t)(gpiox << 5 | pinNumber)
 
 int rt_hw_gpio_init(void);
 

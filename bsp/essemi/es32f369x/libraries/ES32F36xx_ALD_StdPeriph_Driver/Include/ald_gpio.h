@@ -8,10 +8,26 @@
   * @date    07 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          07 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #ifndef __ALD_GPIO_H__
@@ -36,23 +52,63 @@
   * @defgroup GPIO_Public_Macros GPIO Public Macros
   * @{
   */
-#define GPIO_PIN_0	(1U << 0)
-#define GPIO_PIN_1	(1U << 1)
-#define GPIO_PIN_2	(1U << 2)
-#define GPIO_PIN_3	(1U << 3)
-#define GPIO_PIN_4	(1U << 4)
-#define GPIO_PIN_5	(1U << 5)
-#define GPIO_PIN_6	(1U << 6)
-#define GPIO_PIN_7	(1U << 7)
-#define GPIO_PIN_8	(1U << 8)
-#define GPIO_PIN_9	(1U << 9)
-#define GPIO_PIN_10	(1U << 10)
-#define GPIO_PIN_11	(1U << 11)
-#define GPIO_PIN_12	(1U << 12)
-#define GPIO_PIN_13	(1U << 13)
-#define GPIO_PIN_14	(1U << 14)
-#define GPIO_PIN_15	(1U << 15)
-#define GPIO_PIN_ALL	(0xFFFF)
+#define GPIO_PIN_0      (0x1U)
+#define GPIO_PIN_1      (0x2U)
+#define GPIO_PIN_2      (0x4U)
+#define GPIO_PIN_3      (0x8U)
+#define GPIO_PIN_4      (0x10U)
+#define GPIO_PIN_5      (0x20U)
+#define GPIO_PIN_6      (0x40U)
+#define GPIO_PIN_7      (0x80U)
+#define GPIO_PIN_8      (0x100U)
+#define GPIO_PIN_9      (0x200U)
+#define GPIO_PIN_10     (0x400U)
+#define GPIO_PIN_11     (0x800U)
+#define GPIO_PIN_12     (0x1000U)
+#define GPIO_PIN_13     (0x2000U)
+#define GPIO_PIN_14     (0x4000U)
+#define GPIO_PIN_15     (0x8000U)
+#define GPIO_PIN_ALL    (0xFFFF)
+
+/* Toggle IO */
+#define ALD_GPIOA_TOGGLE_PIN(x)    (GPIOA->BIR = (x))
+#define ALD_GPIOB_TOGGLE_PIN(x)    (GPIOB->BIR = (x))
+#define ALD_GPIOC_TOGGLE_PIN(x)    (GPIOC->BIR = (x))
+#define ALD_GPIOD_TOGGLE_PIN(x)    (GPIOD->BIR = (x))
+#define ALD_GPIOE_TOGGLE_PIN(x)    (GPIOE->BIR = (x))
+#define ALD_GPIOF_TOGGLE_PIN(x)    (GPIOF->BIR = (x))
+#define ALD_GPIOG_TOGGLE_PIN(x)    (GPIOG->BIR = (x))
+#define ALD_GPIOH_TOGGLE_PIN(x)    (GPIOH->BIR = (x))
+
+/* Read IO level */
+#define ALD_GPIOA_READ_PIN(x)      ((GPIOA->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOB_READ_PIN(x)      ((GPIOB->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOC_READ_PIN(x)      ((GPIOC->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOD_READ_PIN(x)      ((GPIOD->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOE_READ_PIN(x)      ((GPIOE->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOF_READ_PIN(x)      ((GPIOF->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOG_READ_PIN(x)      ((GPIOG->DIN & (x)) ? 1 : 0)
+#define ALD_GPIOH_READ_PIN(x)      ((GPIOH->DIN & (x)) ? 1 : 0)
+
+/* Set IO as high */
+#define ALD_GPIOA_SET_PIN(x)       (GPIOA->BSRR = (x))
+#define ALD_GPIOB_SET_PIN(x)       (GPIOB->BSRR = (x))
+#define ALD_GPIOC_SET_PIN(x)       (GPIOC->BSRR = (x))
+#define ALD_GPIOD_SET_PIN(x)       (GPIOD->BSRR = (x))
+#define ALD_GPIOE_SET_PIN(x)       (GPIOE->BSRR = (x))
+#define ALD_GPIOF_SET_PIN(x)       (GPIOF->BSRR = (x))
+#define ALD_GPIOG_SET_PIN(x)       (GPIOG->BSRR = (x))
+#define ALD_GPIOH_SET_PIN(x)       (GPIOH->BSRR = (x))
+
+/* Set IO as low */
+#define ALD_GPIOA_RESET_PIN(x)     (GPIOA->BSRR = ((x) << 16))
+#define ALD_GPIOB_RESET_PIN(x)     (GPIOB->BSRR = ((x) << 16))
+#define ALD_GPIOC_RESET_PIN(x)     (GPIOC->BSRR = ((x) << 16))
+#define ALD_GPIOD_RESET_PIN(x)     (GPIOD->BSRR = ((x) << 16))
+#define ALD_GPIOE_RESET_PIN(x)     (GPIOE->BSRR = ((x) << 16))
+#define ALD_GPIOF_RESET_PIN(x)     (GPIOF->BSRR = ((x) << 16))
+#define ALD_GPIOG_RESET_PIN(x)     (GPIOG->BSRR = ((x) << 16))
+#define ALD_GPIOH_RESET_PIN(x)     (GPIOH->BSRR = ((x) << 16))
 /**
   * @}
   */

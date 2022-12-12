@@ -198,7 +198,7 @@ void HAL_PWREx_EnableInternalWakeUpLine(void)
 void HAL_PWREx_DisableInternalWakeUpLine(void)
 {
 #ifdef CORE_CM0PLUS
-  CLEAR_BIT(PWR->CR3, PWR_C2CR3_EIWUL);
+  CLEAR_BIT(PWR->C2CR3, PWR_C2CR3_EIWUL);
 #else
   CLEAR_BIT(PWR->CR3, PWR_CR3_EIWUL);
 #endif

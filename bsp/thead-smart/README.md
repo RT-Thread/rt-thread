@@ -3,7 +3,7 @@ SMART-EVB is a development board provided by T-HEAD, based on FPGA to provide im
 
 ## The main resources on board are as follows:
 
-1. SMART-EVB for E906/E906F/E906FD
+1. SMART-EVB for T-Head CPU E9xx Series
 
 | res | description |
 | -- | -- |
@@ -25,15 +25,21 @@ SMART-EVB is a development board provided by T-HEAD, based on FPGA to provide im
 
 # Compile T-HEAD BSP
 SMART-EVB BSP supports GCC compiler, the version information is:
-
-1. SMART-EVB for E906/E906F/E906FD
+1. SMART-EVB for E906/7/F/D/P
 
 | IDE/Compiler| version|
 | - | - |
 | GCC | gcc version 8.4.0 (C-SKY RISCV Tools V1.9.6 B20200616) |
+2. select cpu in rtconfig.py
+3. scons -c; scons
 
-# run smart-evb bsp
+# Quick start with qemu
+1. download qemu
+wget https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource/1356021/1612269502091/csky-qemu-x86_64-Ubuntu-16.04-20210202-1445.tar.gz
+2. qemu run
+qemu-system-riscv32 -cpu e906fdp -M smartl -kernel rtthread-e9xx.elf -nographic
 
+# Quick start with smart-evb
 1. Connect JTAG
 2. Connect the serial port
 3. riscv64-unknown-elf-gdb rtthread-e906f.elf

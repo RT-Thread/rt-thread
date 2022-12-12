@@ -21,12 +21,14 @@
 #define DBG_COLOR
 #include <rtdbg.h>
 
-#if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
-#endif
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     #include <fal.h>
 #endif
 
@@ -209,7 +211,7 @@ INIT_ENV_EXPORT(filesystem_init);
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
 int mnt_init_spiflash0(void)
 {
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     extern int fal_init_check(void);
     if (!fal_init_check())
         fal_init();
@@ -232,6 +234,6 @@ exit_mnt_init_spiflash0:
 
     return 0;
 }
-INIT_ENV_EXPORT(mnt_init_spiflash0);
+INIT_APP_EXPORT(mnt_init_spiflash0);
 #endif
 

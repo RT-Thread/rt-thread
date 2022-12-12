@@ -607,6 +607,7 @@ static void FLASH_OB_WRPConfig(uint32_t WRPArea, uint32_t WRPStartOffset, uint32
   *         @arg @ref OB_STOP_RST or @ref OB_STOP_NORST
   *         @arg @ref OB_STANDBY_RST or @ref OB_STANDBY_NORST
   *         @arg @ref OB_SHUTDOWN_RST or @ref OB_SHUTDOWN_NORST
+  *         @arg @ref OB_IRH_ENABLE or @ref OB_IRH_DISABLE (*)
   *         @arg @ref OB_IWDG_SW or @ref OB_IWDG_HW
   *         @arg @ref OB_IWDG_STOP_FREEZE or @ref OB_IWDG_STOP_RUN
   *         @arg @ref OB_IWDG_STDBY_FREEZE or @ref OB_IWDG_STDBY_RUN
@@ -616,6 +617,7 @@ static void FLASH_OB_WRPConfig(uint32_t WRPArea, uint32_t WRPStartOffset, uint32
   *         @arg @ref OB_SRAM2_RST_ERASE or @ref OB_SRAM2_RST_NOT_ERASE
   *         @arg @ref OB_BOOT0_FROM_OB or @ref OB_BOOT0_FROM_PIN
   *         @arg @ref OB_BOOT0_RESET or @ref OB_BOOT0_SET
+  *         @arg @ref OB_RESET_MODE_INPUT_ONLY or @ref OB_RESET_MODE_GPIO or @ref OB_RESET_MODE_INPUT_OUTPUT (*)
   *         @arg @ref OB_AGC_TRIM_0 or @ref OB_AGC_TRIM_1 or ... or @ref OB_AGC_TRIM_7
   * @param  RDPLevel: specifies the read protection level.
   *         This parameter can be one of the following values:
@@ -768,21 +770,35 @@ static void FLASH_OB_SecureConfig(FLASH_OBProgramInitTypeDef *pOBParam)
     MODIFY_REG(sfr_reg_val, FLASH_SFR_SFSA, (((pOBParam->SecureFlashStartAddr - FLASH_BASE) / FLASH_PAGE_SIZE) << FLASH_SFR_SFSA_Pos));
 
     /* Configure SRRVR register */
+#if defined(FLASH_SRRVR_SBRSA_A)
+    MODIFY_REG(srrvr_reg_val, (FLASH_SRRVR_SBRSA_A | FLASH_SRRVR_SBRSA_B), \
+               (((((pOBParam->SecureRAM2aStartAddr - SRAM2A_BASE) >> SRAM_SECURE_PAGE_GRANULARITY_OFFSET) << FLASH_SRRVR_SBRSA_A_Pos)) | \
+                ((((pOBParam->SecureRAM2bStartAddr - SRAM2B_BASE) >> SRAM_SECURE_PAGE_GRANULARITY_OFFSET) << FLASH_SRRVR_SBRSA_B_Pos))));
+#else
     MODIFY_REG(srrvr_reg_val, (FLASH_SRRVR_SBRSA | FLASH_SRRVR_SNBRSA), \
                (((((pOBParam->SecureRAM2aStartAddr - SRAM2A_BASE) >> SRAM_SECURE_PAGE_GRANULARITY_OFFSET) << FLASH_SRRVR_SBRSA_Pos)) | \
                 ((((pOBParam->SecureRAM2bStartAddr - SRAM2B_BASE) >> SRAM_SECURE_PAGE_GRANULARITY_OFFSET) << FLASH_SRRVR_SNBRSA_Pos))));
+#endif
 
     /* If Full System Secure mode is requested, clear all the corresponding bit */
     /* Else set the corresponding bit */
     if (pOBParam->SecureMode == SYSTEM_IN_SECURE_MODE)
     {
       CLEAR_BIT(sfr_reg_val, FLASH_SFR_FSD);
+#if defined(FLASH_SRRVR_BRSD_A)
+      CLEAR_BIT(srrvr_reg_val, (FLASH_SRRVR_BRSD_A | FLASH_SRRVR_BRSD_B));
+#else
       CLEAR_BIT(srrvr_reg_val, (FLASH_SRRVR_BRSD | FLASH_SRRVR_NBRSD));
+#endif
     }
     else
     {
       SET_BIT(sfr_reg_val, FLASH_SFR_FSD);
+#if defined(FLASH_SRRVR_BRSD_A)
+      SET_BIT(srrvr_reg_val, (FLASH_SRRVR_BRSD_A | FLASH_SRRVR_BRSD_B));
+#else
       SET_BIT(srrvr_reg_val, (FLASH_SRRVR_BRSD | FLASH_SRRVR_NBRSD));
+#endif
     }
 
     /* Update Flash registers */
@@ -870,6 +886,7 @@ static uint32_t FLASH_OB_GetRDP(void)
   *         @arg @ref OB_STOP_RST or @ref OB_STOP_RST
   *         @arg @ref OB_STANDBY_RST or @ref OB_STANDBY_NORST
   *         @arg @ref OB_SHUTDOWN_RST or @ref OB_SHUTDOWN_NORST
+  *         @arg @ref OB_IRH_ENABLE or @ref OB_IRH_DISABLE (*)
   *         @arg @ref OB_IWDG_SW or @ref OB_IWDG_HW
   *         @arg @ref OB_IWDG_STOP_FREEZE or @ref OB_IWDG_STOP_RUN
   *         @arg @ref OB_IWDG_STDBY_FREEZE or @ref OB_IWDG_STDBY_RUN
@@ -879,6 +896,7 @@ static uint32_t FLASH_OB_GetRDP(void)
   *         @arg @ref OB_SRAM2_RST_ERASE or @ref OB_SRAM2_RST_NOT_ERASE
   *         @arg @ref OB_BOOT0_FROM_OB or @ref OB_BOOT0_FROM_PIN
   *         @arg @ref OB_BOOT0_RESET or @ref OB_BOOT0_SET
+  *         @arg @ref OB_RESET_MODE_INPUT_ONLY or @ref OB_RESET_MODE_GPIO or @ref OB_RESET_MODE_INPUT_OUTPUT (*)
   *         @arg @ref OB_AGC_TRIM_0 or @ref OB_AGC_TRIM_1 or ... or @ref OB_AGC_TRIM_7
   */
 static uint32_t FLASH_OB_GetUser(void)
@@ -952,12 +970,20 @@ static void FLASH_OB_GetSecureMemoryConfig(uint32_t *SecureFlashStartAddr, uint3
   *SecureFlashStartAddr = ((user_config * FLASH_PAGE_SIZE) + FLASH_BASE);
 
   /* Get Secure SRAM2a start address */
+#if defined(FLASH_SRRVR_SBRSA_A)
+  user_config = (READ_BIT(srrvr_reg_val, FLASH_SRRVR_SBRSA_A) >> FLASH_SRRVR_SBRSA_A_Pos);
+#else
   user_config = (READ_BIT(srrvr_reg_val, FLASH_SRRVR_SBRSA) >> FLASH_SRRVR_SBRSA_Pos);
+#endif
 
   *SecureRAM2aStartAddr = ((user_config << SRAM_SECURE_PAGE_GRANULARITY_OFFSET) + SRAM2A_BASE);
 
   /* Get Secure SRAM2b start address */
+#if defined(FLASH_SRRVR_SBRSA_B)
+  user_config = (READ_BIT(srrvr_reg_val, FLASH_SRRVR_SBRSA_B) >> FLASH_SRRVR_SBRSA_B_Pos);
+#else
   user_config = (READ_BIT(srrvr_reg_val, FLASH_SRRVR_SNBRSA) >> FLASH_SRRVR_SNBRSA_Pos);
+#endif
 
   *SecureRAM2bStartAddr = ((user_config << SRAM_SECURE_PAGE_GRANULARITY_OFFSET) + SRAM2B_BASE);
 

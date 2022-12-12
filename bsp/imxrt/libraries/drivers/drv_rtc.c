@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <sys/time.h>
-
 #ifdef BSP_USING_RTC
 
 #define LOG_TAG             "drv.rtc"
@@ -20,17 +19,21 @@
 
 #include "drv_rtc.h"
 #include "fsl_snvs_hp.h"
-#include <time.h>
+#include "fsl_snvs_lp.h"
+#include <sys/time.h>
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
-static time_t get_timestamp(void)
+static time_t imxrt_hp_get_timestamp(void)
 {
     struct tm tm_new = {0};
     snvs_hp_rtc_datetime_t rtcDate = {0};
+    snvs_lp_srtc_datetime_t srtcDate = {0};
 
+    SNVS_LP_SRTC_GetDatetime(SNVS, &srtcDate);
+    SNVS_HP_RTC_TimeSynchronize(SNVS);
     SNVS_HP_RTC_GetDatetime(SNVS, &rtcDate);
 
     tm_new.tm_sec  = rtcDate.second;
@@ -44,26 +47,29 @@ static time_t get_timestamp(void)
     return timegm(&tm_new);
 }
 
-static int set_timestamp(time_t timestamp)
+static int imxrt_hp_set_timestamp(time_t timestamp)
 {
-    struct tm *p_tm;
-    snvs_hp_rtc_datetime_t rtcDate = {0};
+    struct tm now;
+    snvs_lp_srtc_datetime_t srtcDate = {0};
 
-    p_tm = gmtime(&timestamp);
+    gmtime_r(&timestamp, &now);
 
-    rtcDate.second = p_tm->tm_sec ;
-    rtcDate.minute = p_tm->tm_min ;
-    rtcDate.hour   = p_tm->tm_hour;
+    srtcDate.second = now.tm_sec;
+    srtcDate.minute = now.tm_min;
+    srtcDate.hour = now.tm_hour;
 
-    rtcDate.day    = p_tm->tm_mday;
-    rtcDate.month  = p_tm->tm_mon  + 1;
-    rtcDate.year   = p_tm->tm_year + 1900;
+    srtcDate.day = now.tm_mday;
+    srtcDate.month = now.tm_mon + 1;
+    srtcDate.year = now.tm_year + 1900;
 
-    if (SNVS_HP_RTC_SetDatetime(SNVS, &rtcDate) != kStatus_Success)
+
+    if (SNVS_LP_SRTC_SetDatetime(SNVS, &srtcDate) != kStatus_Success)
     {
         LOG_E("set rtc date time failed\n");
         return -RT_ERROR;
     }
+
+    SNVS_HP_RTC_TimeSynchronize(SNVS);
 
     return RT_EOK;
 }
@@ -71,17 +77,22 @@ static int set_timestamp(time_t timestamp)
 static rt_err_t imxrt_hp_rtc_init(rt_device_t dev)
 {
     snvs_hp_rtc_config_t snvsRtcConfig;
+    snvs_lp_srtc_config_t snvsSrtcConfig;
 
+    /* Init SNVS_HP */
     SNVS_HP_RTC_GetDefaultConfig(&snvsRtcConfig);
     SNVS_HP_RTC_Init(SNVS, &snvsRtcConfig);
 
+    /* Init SNVS_LP */
+    SNVS_LP_SRTC_GetDefaultConfig(&snvsSrtcConfig);
+    SNVS_LP_SRTC_Init(SNVS, &snvsSrtcConfig);
     return RT_EOK;
 }
 
 static rt_err_t imxrt_hp_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
     SNVS_HP_RTC_StartTimer(SNVS);
-
+    SNVS_LP_SRTC_StartTimer(SNVS);
     return RT_EOK;
 }
 
@@ -94,12 +105,12 @@ static rt_err_t imxrt_hp_rtc_close(rt_device_t dev)
 
 static rt_size_t imxrt_hp_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-    return RT_EOK;
+    return -RT_EINVAL;
 }
 
 static rt_size_t imxrt_hp_rtc_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-    return RT_EOK;
+    return -RT_EINVAL;
 }
 
 static rt_err_t imxrt_hp_rtc_control(rt_device_t dev, int cmd, void *args)
@@ -110,18 +121,18 @@ static rt_err_t imxrt_hp_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
     {
-        *(uint32_t *)args = get_timestamp();
+        *(uint32_t *)args = imxrt_hp_get_timestamp();
     }
     break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        set_timestamp(*(time_t *)args);
+        imxrt_hp_set_timestamp(*(time_t *)args);
     }
     break;
 
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
@@ -157,4 +168,50 @@ int rt_hw_rtc_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
 
+#include <rtthread.h>
+#include <rtdevice.h>
+
+#define RTC_NAME       "rtc"
+
+static int rtc_sample(int argc, char *argv[])
+{
+    rt_err_t ret = RT_EOK;
+    time_t now;
+    rt_device_t device = RT_NULL;
+
+    device = rt_device_find(RTC_NAME);
+    if (!device)
+    {
+      LOG_E("find %s failed!", RTC_NAME);
+      return RT_ERROR;
+    }
+
+    if(rt_device_open(device, 0) != RT_EOK)
+    {
+      LOG_E("open %s failed!", RTC_NAME);
+      return -RT_ERROR;
+    }
+
+    ret = set_date(2018, 12, 3);
+    if (ret != RT_EOK)
+    {
+        rt_kprintf("set RTC date failed\n");
+        return ret;
+    }
+
+    ret = set_time(11, 15, 50);
+    if (ret != RT_EOK)
+    {
+        rt_kprintf("set RTC time failed\n");
+        return ret;
+    }
+
+    rt_thread_mdelay(1000);
+
+    now = time(RT_NULL);
+    rt_kprintf("%s\n", ctime(&now));
+
+    return ret;
+}
+MSH_CMD_EXPORT(rtc_sample, rtc sample);
 #endif /* BSP_USING_RTC */

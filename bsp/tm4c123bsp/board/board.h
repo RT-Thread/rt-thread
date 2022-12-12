@@ -18,7 +18,7 @@
     #define TM4C123_SRAM1_START              (0x20000000)
     #define TM4C123_SRAM1_END                (TM4C123_SRAM1_START + 32 * 1024)   // end address = 0x20000000(base adddress) + 32K(RAM size)
 
-    #if defined(__CC_ARM) || defined(__CLANG_ARM)
+    #if defined(__ARMCC_VERSION)
         extern int Image$$RW_IRAM$$ZI$$Limit;                   // RW_IRAM
         #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM$$ZI$$Limit)
     #elif __ICCARM__

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,13 +13,13 @@
 
 /*Core definations*/
 #define SVCMODE
-#define	Mode_USR	0x10
-#define	Mode_FIQ	0x11
-#define	Mode_IRQ	0x12
-#define	Mode_SVC	0x13
-#define	Mode_ABT	0x17
-#define	Mode_UND	0x1B
-#define	Mode_SYS	0x1F
+#define Mode_USR    0x10
+#define Mode_FIQ    0x11
+#define Mode_IRQ    0x12
+#define Mode_SVC    0x13
+#define Mode_ABT    0x17
+#define Mode_UND    0x1B
+#define Mode_SYS    0x1F
 
 
 
@@ -106,7 +106,7 @@
 #define RTC_INT_STS               (RTC_BASE+0X014)        /* 中断状态寄存器 */
 #define RTC_SAMP                  (RTC_BASE+0X018)        /* 采样周期寄存器 */
 #define RTC_WD_CNT                (RTC_BASE+0X01C)        /* Watch-Dog计数值寄存器 */
-#define RTC_WD_SEV                (RTC_BASE+0X020)        /* Watch-Dog服务寄存器 */ 
+#define RTC_WD_SEV                (RTC_BASE+0X020)        /* Watch-Dog服务寄存器 */
 #define RTC_CONFIG_CHECK          (RTC_BASE+0X024)        /* 配置时间确认寄存器 (在配置时间之前先写0xaaaaaaaa) */
 #define RTC_KEY0                  (RTC_BASE+0X02C)        /* 密钥寄存器 */
 
@@ -325,18 +325,18 @@
  *  SD模块
  *  基址: 0x1000B000
  */
- 
-#define SDC_CLOCK_CONTROL  		  (SD_BASE+0x00)          /* SDIO时钟控制寄存器 */
-#define SDC_SOFTWARE_RESET 		  (SD_BASE+0X04)          /* SDIO软件复位寄存器 */
-#define SDC_ARGUMENT     		  (SD_BASE+0X08)          /* SDIO命令参数寄存器 */
-#define SDC_COMMAND       	      (SD_BASE+0X0C)          /* SDIO命令控制寄存器 */
+
+#define SDC_CLOCK_CONTROL         (SD_BASE+0x00)          /* SDIO时钟控制寄存器 */
+#define SDC_SOFTWARE_RESET        (SD_BASE+0X04)          /* SDIO软件复位寄存器 */
+#define SDC_ARGUMENT              (SD_BASE+0X08)          /* SDIO命令参数寄存器 */
+#define SDC_COMMAND               (SD_BASE+0X0C)          /* SDIO命令控制寄存器 */
 #define SDC_BLOCK_SIZE            (SD_BASE+0X10)          /* SDIO数据块长度寄存器 */
-#define SDC_BLOCK_COUNT    		  (SD_BASE+0X14)          /* SDIO数据块数目寄存器 */
-#define SDC_TRANSFER_MODE  		  (SD_BASE+0X18)          /* SDIO传输模式选择寄存器 */
-#define SDC_RESPONSE0    		  (SD_BASE+0X1c)          /* SDIO响应寄存器0 */
-#define SDC_RESPONSE1    		  (SD_BASE+0X20)          /* SDIO响应寄存器1 */
-#define SDC_RESPONSE2    		  (SD_BASE+0X24)          /* SDIO响应寄存器2 */
-#define SDC_RESPONSE3    		  (SD_BASE+0X28)          /* SDIO响应寄存器3 */
+#define SDC_BLOCK_COUNT           (SD_BASE+0X14)          /* SDIO数据块数目寄存器 */
+#define SDC_TRANSFER_MODE         (SD_BASE+0X18)          /* SDIO传输模式选择寄存器 */
+#define SDC_RESPONSE0             (SD_BASE+0X1c)          /* SDIO响应寄存器0 */
+#define SDC_RESPONSE1             (SD_BASE+0X20)          /* SDIO响应寄存器1 */
+#define SDC_RESPONSE2             (SD_BASE+0X24)          /* SDIO响应寄存器2 */
+#define SDC_RESPONSE3             (SD_BASE+0X28)          /* SDIO响应寄存器3 */
 #define SDC_READ_TIMEOUT_CONTROL  (SD_BASE+0X2c)          /* SDIO读超时控制寄存器 */
 #define SDC_INTERRUPT_STATUS      (SD_BASE+0X30)          /* SDIO中断状态寄存器 */
 #define SDC_INTERRUPT_STATUS_MASK (SD_BASE+0X34)          /* SDIO中断状态屏蔽寄存器 */
@@ -650,15 +650,15 @@
 #define MAC_HASH0                 (MAC_BASE+0X048)        /* MAC HASH寄存器 */
 #define MAC_HASH1                 (MAC_BASE+0X04C)        /* MAC HASH寄存器 */
 #define MAC_TXPAUSE               (MAC_BASE+0X050)        /* MAC控制帧寄存器 */
-#define MAC_TX_BD                 (MAC_BASE+0X400)      
-#define MAC_RX_BD                 (MAC_BASE+0X600)      
+#define MAC_TX_BD                 (MAC_BASE+0X400)
+#define MAC_RX_BD                 (MAC_BASE+0X600)
 
 
 /*
  **************************************
  * Error Codes:
  *    IF SUCCESS RETURN 0, ELSE RETURN OTHER ERROR CODE,
- *    parameter error return (-33)/E_PAR, 
+ *    parameter error return (-33)/E_PAR,
  *    hardware error reture (-99)/E_HA
  **************************************
  */
@@ -680,7 +680,7 @@
 #define    E_QOVR        (-73)    /* Queuing or nesting overflow */
 #define    E_DLT         (-81)    /* Object being waited for was deleted */
 #define    E_TMOUT       (-85)    /* Polling failure or timeout exceeded */
-#define    E_RLWAI       (-86)    /* WAIT state was forcibly released */ 
+#define    E_RLWAI       (-86)    /* WAIT state was forcibly released */
 
 #define    E_HA          (-99)    /* HARD WARE ERROR */
 
@@ -692,7 +692,7 @@
  */
 
 #define    CLK_SGPT      (1 << 16)
-#define    CLK_SI2S      (1 << 15) 
+#define    CLK_SI2S      (1 << 15)
 #define    CLK_SSMC      (1 << 14)
 #define    CLK_SMAC      (1 << 13)
 #define    CLK_SUSB      (1 << 12)
@@ -713,8 +713,8 @@
 /*Interrupt Sources*/
 
 
-#define  INTSRC_RTC        31		        
-#define  INTSRC_DMAC       30	                
+#define  INTSRC_RTC        31
+#define  INTSRC_DMAC       30
 #define  INTSRC_EMI        29
 #define  INTSRC_MAC        28
 #define  INTSRC_TIMER1     27
@@ -732,17 +732,17 @@
 #define  INTSRC_USB        15
 #define  INTSRC_SMC0       14
 #define  INTSRC_SMC1       13
-#define  INTSRC_SDIO       12  
-#define  INTSRC_EXINT10    11              
-#define  INTSRC_EXINT9     10              
-#define  INTSRC_EXINT8     9               
-#define  INTSRC_EXINT7     8               
-#define  INTSRC_EXINT6     7               
-#define  INTSRC_EXINT5     6               
-#define  INTSRC_EXINT4     5               
-#define  INTSRC_EXINT3     4               
-#define  INTSRC_EXINT2     3               
-#define  INTSRC_EXINT1     2               
+#define  INTSRC_SDIO       12
+#define  INTSRC_EXINT10    11
+#define  INTSRC_EXINT9     10
+#define  INTSRC_EXINT8     9
+#define  INTSRC_EXINT7     8
+#define  INTSRC_EXINT6     7
+#define  INTSRC_EXINT5     6
+#define  INTSRC_EXINT4     5
+#define  INTSRC_EXINT3     4
+#define  INTSRC_EXINT2     3
+#define  INTSRC_EXINT1     2
 #define  INTSRC_EXINT0     1
 #define  INTSRC_NULL       0
 
@@ -752,7 +752,7 @@
 #define set_int_force(intnum)       *(RP)INTC_IFR = (1 << intnum)                //置1后，软件强制该位对应的中断源发出中断信号
 #define enable_irq(intnum)          *(RP)INTC_IER |= (1 << intnum)               //置1后，允许中断源的IRQ 中断信号
 #define disable_irq( intnum)        *(RP)INTC_IER &= ~(1<< intnum)               //置0后，不允许中断源的IRQ 中断信号
-#define mask_irq(intnum)            *(RP)INTC_IMR |= (1 << intnum)               //置1后，屏蔽对应的IRQ 中断信号               
+#define mask_irq(intnum)            *(RP)INTC_IMR |= (1 << intnum)               //置1后，屏蔽对应的IRQ 中断信号
 #define unmask_irq(intnum)          *(RP)INTC_IMR &= ~(1 << intnum)              //置0后，通过对应的IRQ 中断信号
 #define mask_all_irq()              *(RP)INTC_IMR = 0xFFFFFFFF                   //屏蔽对应的IRQ 中断信号
 #define unmask_all_irq()            *(RP)INTC_IMR = 0x00000000                   //通过对应的IRQ 中断信号
@@ -765,7 +765,7 @@
  * 所有程序中用到的Typedef
  **************************************
  */
- 
+
 typedef    char                 S8;        /* signed 8-bit integer */
 typedef    short                S16;       /* signed 16-bit integer */
 typedef    long                 S32;       /* signed 32-bit integer */
@@ -782,8 +782,8 @@ typedef    void                 (*FP)();   /* program start address */
 
 #ifndef    _BOOL_TYPE_
 #define    _BOOL_TYPE_
-typedef    int                  BOOL;	     /* Boolean value.  TRUE (1) or FALSE (0). */
-#endif  
+typedef    int                  BOOL;        /* Boolean value.  TRUE (1) or FALSE (0). */
+#endif
 
 typedef    int                  ER;         /* Error code.  A signed integer. */
 
@@ -802,71 +802,71 @@ typedef    int                  ER;         /* Error code.  A signed integer. */
 /*Macros for debug*/
 
 #define EOUT(fmt,...) \
-	do \
-	{ 	\
-		rt_kprintf("EOUT:(%s:%i)  ",__FILE__,__LINE__); \
-		rt_kprintf(fmt,##__VA_ARGS__); \
-	}while(0)
+    do \
+    {   \
+        rt_kprintf("EOUT:(%s:%i)  ",__FILE__,__LINE__); \
+        rt_kprintf(fmt,##__VA_ARGS__); \
+    }while(0)
 
 #define RT_DEBUG
 #ifdef RT_DEBUG
-	#define DBOUT(fmt,...) \
-	do \
-	{ 	\
-		rt_kprintf("DBOUT:(%s:%i)  ",__FILE__,__LINE__); \
-		rt_kprintf(fmt,##__VA_ARGS__); \
-	}while(0)
+    #define DBOUT(fmt,...) \
+    do \
+    {   \
+        rt_kprintf("DBOUT:(%s:%i)  ",__FILE__,__LINE__); \
+        rt_kprintf(fmt,##__VA_ARGS__); \
+    }while(0)
 #else
-	#define DBOUT(fmt,...) \
-	do{}while(0)
+    #define DBOUT(fmt,...) \
+    do{}while(0)
 #endif
 
-#ifdef	RT_DEBUG
-	#define ASSERT(arg) \
-	if((arg) == 0) \
-	{		\
-		while(1) \
-		{		  \
-			rt_kprintf("have a assert failure\n"); \
-		}										 \
-	}
+#ifdef  RT_DEBUG
+    #define ASSERT(arg) \
+    if((arg) == 0) \
+    {       \
+        while(1) \
+        {         \
+            rt_kprintf("have a assert failure\n"); \
+        }                                        \
+    }
 #else
-	#define ASSERT(arg) \
-	do		\
-	{		 \
-	}while(0)
+    #define ASSERT(arg) \
+    do      \
+    {        \
+    }while(0)
 #endif
 
 
 #define write_reg(reg,value) \
-	do \
-	{ \
-		*(RP)(reg) = value; \
-	}while(0)
+    do \
+    { \
+        *(RP)(reg) = value; \
+    }while(0)
 
 #define read_reg(reg) (*(RP)reg)
 
 
 struct rt_hw_register
 {
-	rt_uint32_t r0;
-	rt_uint32_t r1;
-	rt_uint32_t r2;
-	rt_uint32_t r3;
-	rt_uint32_t r4;
-	rt_uint32_t r5;
-	rt_uint32_t r6;
-	rt_uint32_t r7;
-	rt_uint32_t r8;
-	rt_uint32_t r9;
-	rt_uint32_t r10;
-	rt_uint32_t fp;
-	rt_uint32_t ip;
-	rt_uint32_t sp;
-	rt_uint32_t lr;
-	rt_uint32_t pc;
-	rt_uint32_t cpsr;
-	rt_uint32_t ORIG_r0;
+    rt_uint32_t r0;
+    rt_uint32_t r1;
+    rt_uint32_t r2;
+    rt_uint32_t r3;
+    rt_uint32_t r4;
+    rt_uint32_t r5;
+    rt_uint32_t r6;
+    rt_uint32_t r7;
+    rt_uint32_t r8;
+    rt_uint32_t r9;
+    rt_uint32_t r10;
+    rt_uint32_t fp;
+    rt_uint32_t ip;
+    rt_uint32_t sp;
+    rt_uint32_t lr;
+    rt_uint32_t pc;
+    rt_uint32_t cpsr;
+    rt_uint32_t ORIG_r0;
 };
 
 

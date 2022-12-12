@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #include <rthw.h>
@@ -69,7 +69,7 @@ void rt_hw_board_init()
 {
     /* NVIC Configuration */
     NVIC_Configuration();
-    
+
     BOARD_BootClockRUN();
 
     /* Configure the SysTick */
@@ -77,7 +77,7 @@ void rt_hw_board_init()
 
     rt_hw_uart_init();
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(CONSOLE_DEVICE);
 #endif
 }

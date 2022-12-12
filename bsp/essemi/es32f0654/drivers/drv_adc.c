@@ -3,10 +3,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * Change Logs:
  * Date           Author        Notes
  * 2019-04-03     wangyq        the first version
  * 2019-11-01     wangyq        update libraries
+ * 2021-04-20     liuhy         the second version
  */
 
 #include <rthw.h>
@@ -59,77 +72,69 @@ static adc_channel_t es32f0_adc_get_channel(rt_uint32_t channel)
     {
     case  0:
         es32f0_channel = ADC_CHANNEL_0;
-        ald_gpio_init(GPIOC, GPIO_PIN_0, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH0_GPIO, ES_GPIO_ADC_CH0_PIN, &gpio_initstruct);
         break;
     case  1:
         es32f0_channel = ADC_CHANNEL_1;
-        ald_gpio_init(GPIOC, GPIO_PIN_1, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH1_GPIO, ES_GPIO_ADC_CH1_PIN, &gpio_initstruct);
         break;
     case  2:
         es32f0_channel = ADC_CHANNEL_2;
-        ald_gpio_init(GPIOC, GPIO_PIN_2, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH2_GPIO, ES_GPIO_ADC_CH2_PIN, &gpio_initstruct);
         break;
     case  3:
         es32f0_channel = ADC_CHANNEL_3;
-        ald_gpio_init(GPIOC, GPIO_PIN_3, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH3_GPIO, ES_GPIO_ADC_CH3_PIN, &gpio_initstruct);
         break;
     case  4:
         es32f0_channel = ADC_CHANNEL_4;
-        ald_gpio_init(GPIOA, GPIO_PIN_0, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH4_GPIO, ES_GPIO_ADC_CH4_PIN, &gpio_initstruct);
         break;
     case  5:
         es32f0_channel = ADC_CHANNEL_5;
-        ald_gpio_init(GPIOA, GPIO_PIN_1, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH5_GPIO, ES_GPIO_ADC_CH5_PIN, &gpio_initstruct);
         break;
     case  6:
         es32f0_channel = ADC_CHANNEL_6;
-        ald_gpio_init(GPIOA, GPIO_PIN_2, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH6_GPIO, ES_GPIO_ADC_CH6_PIN, &gpio_initstruct);
         break;
     case  7:
         es32f0_channel = ADC_CHANNEL_7;
-        ald_gpio_init(GPIOA, GPIO_PIN_3, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH7_GPIO, ES_GPIO_ADC_CH7_PIN, &gpio_initstruct);
         break;
     case  8:
         es32f0_channel = ADC_CHANNEL_8;
-        ald_gpio_init(GPIOA, GPIO_PIN_4, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH8_GPIO, ES_GPIO_ADC_CH8_PIN, &gpio_initstruct);
         break;
     case  9:
         es32f0_channel = ADC_CHANNEL_9;
-        ald_gpio_init(GPIOA, GPIO_PIN_5, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH9_GPIO, ES_GPIO_ADC_CH9_PIN, &gpio_initstruct);
         break;
     case 10:
         es32f0_channel = ADC_CHANNEL_10;
-        ald_gpio_init(GPIOA, GPIO_PIN_6, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH10_GPIO, ES_GPIO_ADC_CH10_PIN, &gpio_initstruct);
         break;
     case 11:
         es32f0_channel = ADC_CHANNEL_11;
-        ald_gpio_init(GPIOA, GPIO_PIN_7, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH11_GPIO, ES_GPIO_ADC_CH11_PIN, &gpio_initstruct);
         break;
     case 12:
         es32f0_channel = ADC_CHANNEL_12;
-        ald_gpio_init(GPIOC, GPIO_PIN_4, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH12_GPIO, ES_GPIO_ADC_CH12_PIN, &gpio_initstruct);
         break;
     case 13:
         es32f0_channel = ADC_CHANNEL_13;
-        ald_gpio_init(GPIOC, GPIO_PIN_5, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH13_GPIO, ES_GPIO_ADC_CH13_PIN, &gpio_initstruct);
         break;
     case 14:
         es32f0_channel = ADC_CHANNEL_14;
-        ald_gpio_init(GPIOB, GPIO_PIN_0, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH14_GPIO, ES_GPIO_ADC_CH14_PIN, &gpio_initstruct);
         break;
     case 15:
         es32f0_channel = ADC_CHANNEL_15;
-        ald_gpio_init(GPIOB, GPIO_PIN_1, &gpio_initstruct);
+        ald_gpio_init(ES_GPIO_ADC_CH15_GPIO, ES_GPIO_ADC_CH15_PIN, &gpio_initstruct);
         break;
-    case 16:
-        es32f0_channel = ADC_CHANNEL_16;
-        break;
-    case 17:
-        es32f0_channel = ADC_CHANNEL_17;
-        break;
-    case 18:
-        es32f0_channel = ADC_CHANNEL_18;
-        break;
+
     default:
         break;
     }
@@ -148,6 +153,9 @@ static rt_err_t es32f0_get_adc_value(struct rt_adc_device *device, rt_uint32_t c
     /* config adc channel */
     nm_config.ch       = es32f0_adc_get_channel(channel);
     nm_config.idx          = ADC_NCH_IDX_1;
+
+/*aaabbbccc*/
+    nm_config.samp = ES_ADC0_NCH_SAMPLETIME;
     nm_config.samp = ADC_SAMPLETIME_4;
     ald_adc_normal_channel_config(_hadc, &nm_config);
 
@@ -168,23 +176,33 @@ static const struct rt_adc_ops es32f0_adc_ops =
 int rt_hw_adc_init(void)
 {
     int result = RT_EOK;
+
+    adc_handle_t _h_adc;
+
+    _h_adc.init.scan = DISABLE;
+    _h_adc.init.cont = DISABLE;
+    _h_adc.init.disc = ADC_ALL_DISABLE;
+    _h_adc.init.disc_nr = ADC_DISC_NR_1;
+    _h_adc.init.nche_sel = ADC_NCHESEL_MODE_ALL;
+    _h_adc.init.n_ref = ADC_NEG_REF_VSS;
+    _h_adc.init.p_ref = ADC_POS_REF_VDD;
+    _h_adc.init.nch_nr = ADC_NCH_NR_16;
+
+#ifdef BSP_USING_ADC0
+
     static adc_handle_t _h_adc0;
 
-    /* adc function initialization */
+    _h_adc0.init = _h_adc.init;
+
     _h_adc0.perh = ADC0;
-    _h_adc0.init.align = ADC_DATAALIGN_RIGHT;
-    _h_adc0.init.scan = DISABLE;
-    _h_adc0.init.cont = DISABLE;
-    _h_adc0.init.disc = ADC_ALL_DISABLE;
-    _h_adc0.init.disc_nr = ADC_DISC_NR_1;
-    _h_adc0.init.data_bit = ADC_CONV_BIT_12;
-    _h_adc0.init.div = ADC_CKDIV_128;
-    _h_adc0.init.nche_sel = ADC_NCHESEL_MODE_ALL;
-    _h_adc0.init.n_ref = ADC_NEG_REF_VSS;
-    _h_adc0.init.p_ref = ADC_POS_REF_VDD;
+    _h_adc0.init.align = ES_ADC0_ALIGN;
+    _h_adc0.init.data_bit = ES_ADC0_DATA_BIT;
+    _h_adc0.init.div = ES_ADC0_CLK_DIV;
     ald_adc_init(&_h_adc0);
 
-    rt_hw_adc_register(&_device_adc0, "adc0", &es32f0_adc_ops, &_h_adc0);
+    result = rt_hw_adc_register(&_device_adc0, ES_DEVICE_NAME_ADC0, &es32f0_adc_ops, &_h_adc0);
+
+#endif /*BSP_USING_ADC0*/
 
     return result;
 }

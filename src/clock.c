@@ -13,7 +13,8 @@
  * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
  * 2011-06-26     Bernard      add rt_tick_set function.
  * 2018-11-22     Jesven       add per cpu tick
- * 2020-12-29     Meco Man     add function rt_tick_get_millisecond()
+ * 2020-12-29     Meco Man     implement rt_tick_get_millisecond()
+ * 2021-06-01     Meco Man     add critical section projection for rt_tick_increase()
  */
 
 #include <rthw.h>
@@ -22,8 +23,34 @@
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
-static rt_tick_t rt_tick = 0;
+static volatile rt_tick_t rt_tick = 0;
+#endif /* RT_USING_SMP */
+
+#ifndef __on_rt_tick_hook
+    #define __on_rt_tick_hook()          __ON_HOOK_ARGS(rt_tick_hook, ())
 #endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
+static void (*rt_tick_hook)(void);
+
+/**
+ * @addtogroup Hook
+ */
+
+/**@{*/
+
+/**
+ * This function will set a hook function, which will be invoked when tick increase
+ *
+ *
+ * @param hook the hook function
+ */
+void rt_tick_sethook(void (*hook)(void))
+{
+    rt_tick_hook = hook;
+}
+/**@}*/
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup Clock
@@ -32,9 +59,9 @@ static rt_tick_t rt_tick = 0;
 /**@{*/
 
 /**
- * This function will return current tick from operating system startup
+ * @brief    This function will return current tick from operating system startup.
  *
- * @return current tick
+ * @return   Return current tick.
  */
 rt_tick_t rt_tick_get(void)
 {
@@ -44,7 +71,9 @@ rt_tick_t rt_tick_get(void)
 RTM_EXPORT(rt_tick_get);
 
 /**
- * This function will set current tick
+ * @brief    This function will set current tick.
+ *
+ * @param    tick is the value that you will set.
  */
 void rt_tick_set(rt_tick_t tick)
 {
@@ -56,19 +85,24 @@ void rt_tick_set(rt_tick_t tick)
 }
 
 /**
- * This function will notify kernel there is one tick passed. Normally,
- * this function is invoked by clock ISR.
+ * @brief    This function will notify kernel there is one tick passed.
+ *           Normally, this function is invoked by clock ISR.
  */
 void rt_tick_increase(void)
 {
     struct rt_thread *thread;
+    rt_base_t level;
+
+    RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
+
+    level = rt_hw_interrupt_disable();
 
     /* increase the global tick */
 #ifdef RT_USING_SMP
     rt_cpu_self()->tick ++;
 #else
     ++ rt_tick;
-#endif
+#endif /* RT_USING_SMP */
 
     /* check time slice */
     thread = rt_thread_self();
@@ -78,10 +112,14 @@ void rt_tick_increase(void)
     {
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
-
         thread->stat |= RT_THREAD_STAT_YIELD;
 
+        rt_hw_interrupt_enable(level);
         rt_schedule();
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
     }
 
     /* check timer */
@@ -89,14 +127,14 @@ void rt_tick_increase(void)
 }
 
 /**
- * This function will calculate the tick from millisecond.
+ * @brief    This function will calculate the tick from millisecond.
  *
- * @param ms the specified millisecond
- *           - Negative Number wait forever
- *           - Zero not wait
- *           - Max 0x7fffffff
+ * @param    ms is the specified millisecond.
+ *              - Negative Number wait forever
+ *              - Zero not wait
+ *              - Max 0x7fffffff
  *
- * @return the calculated tick
+ * @return   Return the calculated tick.
  */
 rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 {
@@ -118,11 +156,15 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 RTM_EXPORT(rt_tick_from_millisecond);
 
 /**
- * This function will provide the passed millisecond from boot.
+ * @brief    This function will return the passed millisecond from boot.
  *
- * @return passed millisecond from boot
+ * @note     if the value of RT_TICK_PER_SECOND is lower than 1000 or
+ *           is not an integral multiple of 1000, this function will not
+ *           provide the correct 1ms-based tick.
+ *
+ * @return   Return passed millisecond from boot.
  */
-RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
+rt_weak rt_tick_t rt_tick_get_millisecond(void)
 {
 #if 1000 % RT_TICK_PER_SECOND == 0u
     return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
@@ -130,7 +172,7 @@ RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
     #warning "rt-thread cannot provide a correct 1ms-based tick any longer,\
     please redefine this function in another file by using a high-precision hard-timer."
     return 0;
-#endif
+#endif /* 1000 % RT_TICK_PER_SECOND == 0u */
 }
 
 /**@}*/

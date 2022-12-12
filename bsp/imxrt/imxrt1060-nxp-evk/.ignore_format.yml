@@ -1,0 +1,6 @@
+# files format check exclude path, please follow the instructions below to modify;
+
+dir_path:
+- board/board.c
+- board/MCUX_Config
+- xip

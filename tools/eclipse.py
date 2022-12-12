@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2019, RT-Thread Development Team
+# Copyright (c) 2006-2022, RT-Thread Development Team
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -21,7 +21,7 @@ from utils import xml_indent
 
 MODULE_VER_NUM = 6
 
-source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
+source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm','*.cmd']
 
 
 def OSPath(path):
@@ -54,6 +54,12 @@ def CollectPaths(paths):
         # path = os.path.abspath(path)
         path = path.replace('\\', '/')
         all_paths = all_paths + [path] + ParentPaths(path)
+
+    cwd = os.getcwd()
+    for path in os.listdir(cwd):
+        temp_path = cwd.replace('\\', '/') + '/' + path
+        if os.path.isdir(temp_path):
+            all_paths = all_paths + [temp_path]
 
     all_paths = list(set(all_paths))
     return sorted(all_paths)
@@ -212,7 +218,7 @@ def HandleToolOption(tools, env, project, reset):
                     linker_nostart_option = option
                 elif option.get('id').find('linker.libs') != -1:
                     linker_libs_option = option
-                elif option.get('id').find('linker.paths') != -1 and env.has_key('LIBPATH'):
+                elif option.get('id').find('linker.paths') != -1 and 'LIBPATH' in env:
                     linker_paths_option = option
                 elif option.get('id').find('linker.usenewlibnano') != -1:
                     linker_newlib_nano_option = option
@@ -291,7 +297,8 @@ def HandleToolOption(tools, env, project, reset):
 
         listOptionValue = option.find('listOptionValue')
         if listOptionValue != None:
-            listOptionValue.set('value', linker_script)
+            if reset is True or IsRttEclipsePathFormat(listOptionValue.get('value')):
+                listOptionValue.set('value', linker_script)
         else:
             SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
     # scriptfile in stm32cubeIDE
@@ -317,8 +324,14 @@ def HandleToolOption(tools, env, project, reset):
                 option.remove(item)
 
         # add new libs
-        if env.has_key('LIBS'):
+        if 'LIBS' in env:
             for lib in env['LIBS']:
+                lib_name = os.path.basename(str(lib))
+                if lib_name.endswith('.a'):
+                    if lib_name.startswith('lib'):
+                        lib = lib_name[3:].split('.')[0]
+                    else:
+                        lib = ':' + lib_name
                 formatedLib = ConverToRttEclipseLibFormat(lib)
                 SubElement(option, 'listOptionValue', {
                            'builtIn': 'false', 'value': formatedLib})
@@ -365,7 +378,7 @@ def UpdateProjectStructure(env, prj_name):
     out = open('.project', 'w')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
     out.close()
 
     return
@@ -504,7 +517,7 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     out.write('<?fileVersion 4.0.0?>')
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
     out.close()
 
 

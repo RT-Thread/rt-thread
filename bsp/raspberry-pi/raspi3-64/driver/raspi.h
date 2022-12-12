@@ -118,6 +118,7 @@ typedef enum
 #define BSC2_BASE_OFFSET (0x805000)
 
 /* IRQ */
+#define MAX_HANDLERS       72
 #define IRQ_SYSTEM_TIMER_0 0
 #define IRQ_SYSTEM_TIMER_1  1
 #define IRQ_SYSTEM_TIMER_2 2
@@ -175,19 +176,19 @@ typedef enum
 
 /* Defines for GPIO */
 #define BCM283X_GPIO_BASE     (PER_BASE + GPIO_BASE_OFFSET)
-#define BCM283X_GPIO_GPFSEL(n) __REG32(BCM283X_GPIO_BASE + 0x0000 + 0x4 * n) /* GPIO Function Select 32bit R/W */
-#define BCM283X_GPIO_GPSET(n) __REG32(BCM283X_GPIO_BASE + 0x001C + 0x4 * n) /* GPIO Pin Output Set */
-#define BCM283X_GPIO_GPCLR(n) __REG32(BCM283X_GPIO_BASE + 0x0028 + 0x4 * n) /* GPIO Pin Output Clear */
-#define BCM2835_GPIO_GPLEV(n) __REG32(BCM283X_GPIO_BASE + 0x0034 + 0x4 * n) /* GPIO Pin Level */
-#define BCM283X_GPIO_GPEDS(n) __REG32(BCM283X_GPIO_BASE + 0x0040 + 0x4 * n) /* GPIO Pin Event Detect Status */
-#define BCM283X_GPIO_GPREN(n) __REG32(BCM283X_GPIO_BASE + 0x004c + 0x4 * n) /* GPIO Pin Rising Edge Detect Enable */
-#define BCM283X_GPIO_GPFEN(n) __REG32(BCM283X_GPIO_BASE + 0x0058 + 0x4 * n) /* GPIO Pin Falling Edge Detect Enable */
-#define BCM283X_GPIO_GPHEN(n) __REG32(BCM283X_GPIO_BASE + 0x0064 + 0x4 * n) /* GPIO Pin High Detect Enable  */
-#define BCM283X_GPIO_GPLEN(n) __REG32(BCM283X_GPIO_BASE + 0x0070 + 0x4 * n) /* GPIO Pin Low Detect Enable */
-#define BCM283X_GPIO_GPAREN(n) __REG32(BCM283X_GPIO_BASE + 0x007C + 0x4 * n) /* GPIO Pin Async. Rising Edge Detect */
-#define BCM283X_GPIO_GPAFEN(n) __REG32(BCM283X_GPIO_BASE + 0x0088 + 0x4 * n) /* GPIO Pin Async. Falling Edge Detect */
+#define BCM283X_GPIO_GPFSEL(n) __REG32(BCM283X_GPIO_BASE + 0x0000 + 0x4 * (n)) /* GPIO Function Select 32bit R/W */
+#define BCM283X_GPIO_GPSET(n) __REG32(BCM283X_GPIO_BASE + 0x001C + 0x4 * (n)) /* GPIO Pin Output Set */
+#define BCM283X_GPIO_GPCLR(n) __REG32(BCM283X_GPIO_BASE + 0x0028 + 0x4 * (n)) /* GPIO Pin Output Clear */
+#define BCM2835_GPIO_GPLEV(n) __REG32(BCM283X_GPIO_BASE + 0x0034 + 0x4 * (n)) /* GPIO Pin Level */
+#define BCM283X_GPIO_GPEDS(n) __REG32(BCM283X_GPIO_BASE + 0x0040 + 0x4 * (n)) /* GPIO Pin Event Detect Status */
+#define BCM283X_GPIO_GPREN(n) __REG32(BCM283X_GPIO_BASE + 0x004c + 0x4 * (n)) /* GPIO Pin Rising Edge Detect Enable */
+#define BCM283X_GPIO_GPFEN(n) __REG32(BCM283X_GPIO_BASE + 0x0058 + 0x4 * (n)) /* GPIO Pin Falling Edge Detect Enable */
+#define BCM283X_GPIO_GPHEN(n) __REG32(BCM283X_GPIO_BASE + 0x0064 + 0x4 * (n)) /* GPIO Pin High Detect Enable  */
+#define BCM283X_GPIO_GPLEN(n) __REG32(BCM283X_GPIO_BASE + 0x0070 + 0x4 * (n)) /* GPIO Pin Low Detect Enable */
+#define BCM283X_GPIO_GPAREN(n) __REG32(BCM283X_GPIO_BASE + 0x007C + 0x4 * (n)) /* GPIO Pin Async. Rising Edge Detect */
+#define BCM283X_GPIO_GPAFEN(n) __REG32(BCM283X_GPIO_BASE + 0x0088 + 0x4 * (n)) /* GPIO Pin Async. Falling Edge Detect */
 #define BCM283X_GPIO_GPPUD     __REG32(BCM283X_GPIO_BASE + 0x0094)     /* GPIO Pin Pull-up/down Enable */
-#define BCM283X_GPIO_GPPUDCLK(n)    __REG32(BCM283X_GPIO_BASE + 0x0098 + 0x4 * n) /* GPIO Pin Pull-up/down Enable Clock */
+#define BCM283X_GPIO_GPPUDCLK(n)    __REG32(BCM283X_GPIO_BASE + 0x0098 + 0x4 * (n)) /* GPIO Pin Pull-up/down Enable Clock */
 
 #define GPIO_FSEL_NUM(pin)  (pin/10)
 #define GPIO_FSEL_SHIFT(pin)  ((pin%10)*3)
@@ -303,6 +304,10 @@ typedef enum
 #define SYSTEM_TIMER_IRQ_3    (1 << 3)
 
 #define NON_SECURE_TIMER_IRQ    (1 << 1)
+rt_inline void core_timer_enable(int cpu_id)
+{
+    CORETIMER_INTCTL(cpu_id) |= NON_SECURE_TIMER_IRQ;
+}
 
 /* ARM Core Mailbox interrupt */
 #define C0MB_INTCTL      __REG32(PER_BASE_40000000 + 0x50)  /* Core0 Mailboxes Interrupt control */
@@ -336,6 +341,10 @@ typedef enum
 #define IPI_MAILBOX_SET  CORE_MAILBOX0_SET
 #define IPI_MAILBOX_CLEAR     CORE_MAILBOX0_CLEAR
 #define IPI_MAILBOX_INT_MASK (0x01)
+rt_inline void enable_cpu_ipi_intr(int cpu_id)
+{
+    COREMB_INTCTL(cpu_id) = IPI_MAILBOX_INT_MASK;
+}
 
 enum spi_bit_order
 {

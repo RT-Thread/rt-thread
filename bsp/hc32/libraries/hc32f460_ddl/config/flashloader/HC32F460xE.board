@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_board>
+  <pass>
+    <loader>$PROJ_DIR$\..\libraries\hc32f460_ddl\config\flashloader\FlashHC32F460xE.flash</loader>
+    <range>CODE 0x0 0x7FFFF</range>
+  </pass>
+  <pass>
+    <loader>$PROJ_DIR$\..\libraries\hc32f460_ddl\config\flashloader\FlashHC32F460_otp.flash</loader>
+    <range>CODE 0x03000C00 0x03000FFB</range>
+  </pass>
+</flash_board>

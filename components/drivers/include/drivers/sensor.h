@@ -29,100 +29,181 @@ extern "C" {
 
 #define  RT_SENSOR_MODULE_MAX          (3)       /* The maximum number of members of a sensor module */
 
-/* Sensor types */
+#define RT_SENSOR_MACRO_GET_NAME(macro) (macro##_STR)
 
+/* Sensor types */
 #define RT_SENSOR_CLASS_NONE           (0)
-#define RT_SENSOR_CLASS_ACCE           (1)  /* Accelerometer     */
-#define RT_SENSOR_CLASS_GYRO           (2)  /* Gyroscope         */
-#define RT_SENSOR_CLASS_MAG            (3)  /* Magnetometer      */
-#define RT_SENSOR_CLASS_TEMP           (4)  /* Temperature       */
-#define RT_SENSOR_CLASS_HUMI           (5)  /* Relative Humidity */
-#define RT_SENSOR_CLASS_BARO           (6)  /* Barometer         */
-#define RT_SENSOR_CLASS_LIGHT          (7)  /* Ambient light     */
-#define RT_SENSOR_CLASS_PROXIMITY      (8)  /* Proximity         */
-#define RT_SENSOR_CLASS_HR             (9)  /* Heart Rate        */
-#define RT_SENSOR_CLASS_TVOC           (10) /* TVOC Level        */
-#define RT_SENSOR_CLASS_NOISE          (11) /* Noise Loudness    */
-#define RT_SENSOR_CLASS_STEP           (12) /* Step sensor       */
-#define RT_SENSOR_CLASS_FORCE          (13) /* Force sensor      */
-#define RT_SENSOR_CLASS_DUST           (14) /* Dust sensor       */
-#define RT_SENSOR_CLASS_ECO2           (15) /* eCO2 sensor       */
-#define RT_SENSOR_CLASS_GNSS           (16) /* GPS/GNSS sensor   */
-#define RT_SENSOR_CLASS_TOF            (17) /* TOF sensor        */
+#define RT_SENSOR_CLASS_NONE_STR       "None"
+#define RT_SENSOR_CLASS_ACCE           (1)
+#define RT_SENSOR_CLASS_ACCE_STR       "Accelerometer"
+#define RT_SENSOR_CLASS_GYRO           (2)
+#define RT_SENSOR_CLASS_GYRO_STR       "Gyroscope"
+#define RT_SENSOR_CLASS_MAG            (3)
+#define RT_SENSOR_CLASS_MAG_STR        "Magnetometer"
+#define RT_SENSOR_CLASS_TEMP           (4)
+#define RT_SENSOR_CLASS_TEMP_STR       "Temperature"
+#define RT_SENSOR_CLASS_HUMI           (5)
+#define RT_SENSOR_CLASS_HUMI_STR       "Relative Humidity"
+#define RT_SENSOR_CLASS_BARO           (6)
+#define RT_SENSOR_CLASS_BARO_STR       "Barometer"
+#define RT_SENSOR_CLASS_LIGHT          (7)
+#define RT_SENSOR_CLASS_LIGHT_STR      "Ambient light"
+#define RT_SENSOR_CLASS_PROXIMITY      (8)
+#define RT_SENSOR_CLASS_PROXIMITY_STR  "Proximity"
+#define RT_SENSOR_CLASS_HR             (9)
+#define RT_SENSOR_CLASS_HR_STR         "Heart Rate"
+#define RT_SENSOR_CLASS_TVOC           (10)
+#define RT_SENSOR_CLASS_TVOC_STR       "TVOC Level"
+#define RT_SENSOR_CLASS_NOISE          (11)
+#define RT_SENSOR_CLASS_NOISE_STR      "Noise Loudness"
+#define RT_SENSOR_CLASS_STEP           (12)
+#define RT_SENSOR_CLASS_STEP_STR       "Step"
+#define RT_SENSOR_CLASS_FORCE          (13)
+#define RT_SENSOR_CLASS_FORCE_STR      "Force"
+#define RT_SENSOR_CLASS_DUST           (14)
+#define RT_SENSOR_CLASS_DUST_STR       "Dust"
+#define RT_SENSOR_CLASS_ECO2           (15)
+#define RT_SENSOR_CLASS_ECO2_STR       "eCO2"
+#define RT_SENSOR_CLASS_GNSS           (16)
+#define RT_SENSOR_CLASS_GNSS_STR       "GNSS"
+#define RT_SENSOR_CLASS_TOF            (17)
+#define RT_SENSOR_CLASS_TOF_STR        "ToF"
+#define RT_SENSOR_CLASS_SPO2           (18)
+#define RT_SENSOR_CLASS_SPO2_STR       "SpO2"
+#define RT_SENSOR_CLASS_IAQ            (19)
+#define RT_SENSOR_CLASS_IAQ_STR        "IAQ"
+#define RT_SENSOR_CLASS_ETOH           (20)
+#define RT_SENSOR_CLASS_ETOH_STR       "EtOH"
+#define RT_SENSOR_CLASS_BP             (21)
+#define RT_SENSOR_CLASS_BP_STR         "Blood Pressure"
 
 /* Sensor vendor types */
-
 #define RT_SENSOR_VENDOR_UNKNOWN       (0)
-#define RT_SENSOR_VENDOR_STM           (1)  /* STMicroelectronics */
-#define RT_SENSOR_VENDOR_BOSCH         (2)  /* Bosch */
-#define RT_SENSOR_VENDOR_INVENSENSE    (3)  /* Invensense */
-#define RT_SENSOR_VENDOR_SEMTECH       (4)  /* Semtech */
-#define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
-#define RT_SENSOR_VENDOR_MIRAMEMS      (6)  /* MiraMEMS */
-#define RT_SENSOR_VENDOR_DALLAS        (7)  /* Dallas */
-#define RT_SENSOR_VENDOR_ASAIR         (8)  /* Aosong */
-#define RT_SENSOR_VENDOR_SHARP         (9)  /* Sharp */
-#define RT_SENSOR_VENDOR_SENSIRION     (10) /* Sensirion */
-#define RT_SENSOR_VENDOR_TI            (11) /* Texas Instruments */
-#define RT_SENSOR_VENDOR_PLANTOWER     (12) /* Plantower */
-#define RT_SENSOR_VENDOR_AMS           (13) /* ams AG */
-#define RT_SENSOR_VENDOR_MAXIM         (14) /* Maxim Integrated */
-
+#define RT_SENSOR_VENDOR_UNKNOWN_STR   "Vendor Unknown"
+#define RT_SENSOR_VENDOR_STM           (1)
+#define RT_SENSOR_VENDOR_STM_STR       "STMicroelectronics"
+#define RT_SENSOR_VENDOR_BOSCH         (2)
+#define RT_SENSOR_VENDOR_BOSCH_STR     "Bosch"
+#define RT_SENSOR_VENDOR_INVENSENSE    (3)
+#define RT_SENSOR_VENDOR_INVENSENSE_STR "Invensense"
+#define RT_SENSOR_VENDOR_SEMTECH       (4)
+#define RT_SENSOR_VENDOR_SEMTECH_STR   "Semtech"
+#define RT_SENSOR_VENDOR_GOERTEK       (5)
+#define RT_SENSOR_VENDOR_GOERTEK_STR   "Goertek"
+#define RT_SENSOR_VENDOR_MIRAMEMS      (6)
+#define RT_SENSOR_VENDOR_MIRAMEMS_STR  "MiraMEMS"
+#define RT_SENSOR_VENDOR_DALLAS        (7)
+#define RT_SENSOR_VENDOR_DALLAS_STR    "Dallas"
+#define RT_SENSOR_VENDOR_ASAIR         (8)
+#define RT_SENSOR_VENDOR_ASAIR_STR     "Aosong"
+#define RT_SENSOR_VENDOR_SHARP         (9)
+#define RT_SENSOR_VENDOR_SHARP_STR     "Sharp"
+#define RT_SENSOR_VENDOR_SENSIRION     (10)
+#define RT_SENSOR_VENDOR_SENSIRION_STR "Sensirion"
+#define RT_SENSOR_VENDOR_TI            (11)
+#define RT_SENSOR_VENDOR_TI_STR        "Texas Instruments"
+#define RT_SENSOR_VENDOR_PLANTOWER     (12)
+#define RT_SENSOR_VENDOR_PLANTOWER_STR "Plantower"
+#define RT_SENSOR_VENDOR_AMS           (13)
+#define RT_SENSOR_VENDOR_AMS_STR       "ams-OSRAM AG"
+#define RT_SENSOR_VENDOR_MAXIM         (14)
+#define RT_SENSOR_VENDOR_MAXIM_STR     "Maxim Integrated"
+#define RT_SENSOR_VENDOR_MELEXIS       (15)
+#define RT_SENSOR_VENDOR_MELEXIS_STR   "Melexis"
 
 /* Sensor unit types */
-
-#define  RT_SENSOR_UNIT_NONE           (0)
-#define  RT_SENSOR_UNIT_MG             (1)  /* Accelerometer           unit: mG         */
-#define  RT_SENSOR_UNIT_MDPS           (2)  /* Gyroscope               unit: mdps       */
-#define  RT_SENSOR_UNIT_MGAUSS         (3)  /* Magnetometer            unit: mGauss     */
-#define  RT_SENSOR_UNIT_LUX            (4)  /* Ambient light           unit: lux        */
-#define  RT_SENSOR_UNIT_CM             (5)  /* Distance                unit: cm         */
-#define  RT_SENSOR_UNIT_PA             (6)  /* Barometer               unit: pa         */
-#define  RT_SENSOR_UNIT_PERMILLAGE     (7)  /* Relative Humidity       unit: permillage */
-#define  RT_SENSOR_UNIT_DCELSIUS       (8)  /* Temperature             unit: dCelsius   */
-#define  RT_SENSOR_UNIT_HZ             (9)  /* Frequency               unit: HZ         */
-#define  RT_SENSOR_UNIT_ONE            (10) /* Dimensionless quantity  unit: 1          */
-#define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
-#define  RT_SENSOR_UNIT_MM             (12) /* Distance                unit: mm         */
-#define  RT_SENSOR_UNIT_MN             (13) /* Force                   unit: mN         */
-#define  RT_SENSOR_UNIT_PPM            (14) /* Concentration           unit: ppm        */
-#define  RT_SENSOR_UNIT_PPB            (15) /* Concentration           unit: ppb        */
-#define  RT_SENSOR_UNIT_DMS            (16) /* Coordinates             unit: DMS        */
-#define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
+#define RT_SENSOR_UNIT_NONE           (0)  /* Dimensionless quantity */
+#define RT_SENSOR_UNIT_NONE_STR       ""
+#define RT_SENSOR_UNIT_MG             (1)  /* Accelerometer           unit: mG         */
+#define RT_SENSOR_UNIT_MG_STR         "mG"
+#define RT_SENSOR_UNIT_MDPS           (2)  /* Gyroscope               unit: mdps       */
+#define RT_SENSOR_UNIT_MDPS_STR       "mdps"
+#define RT_SENSOR_UNIT_MGAUSS         (3)  /* Magnetometer            unit: mGauss     */
+#define RT_SENSOR_UNIT_MGAUSS_STR     "mGauss"
+#define RT_SENSOR_UNIT_LUX            (4)  /* Ambient light           unit: lux        */
+#define RT_SENSOR_UNIT_LUX_STR        "lux"
+#define RT_SENSOR_UNIT_CM             (5)  /* Distance                unit: cm         */
+#define RT_SENSOR_UNIT_CM_STR         "cm"
+#define RT_SENSOR_UNIT_MM             (6)  /* Distance                unit: mm         */
+#define RT_SENSOR_UNIT_MM_STR         "mm"
+#define RT_SENSOR_UNIT_PA             (7)  /* Barometer               unit: Pa         */
+#define RT_SENSOR_UNIT_PA_STR         "Pa"
+#define RT_SENSOR_UNIT_MMHG           (8)  /* Blood Pressure          unit: mmHg       */
+#define RT_SENSOR_UNIT_MMHG_STR       "mmHg"
+#define RT_SENSOR_UNIT_PERMILLAGE     (9)  /* Relative Humidity       unit: permillage */
+#define RT_SENSOR_UNIT_PERMILLAGE_STR "‰"
+#define RT_SENSOR_UNIT_PERCENTAGE     (10) /* Relative Humidity       unit: percentage */
+#define RT_SENSOR_UNIT_PERCENTAGE_STR "%"
+#define RT_SENSOR_UNIT_CELSIUS        (11) /* Temperature             unit: Celsius ℃ */
+#define RT_SENSOR_UNIT_CELSIUS_STR    "℃"
+#define RT_SENSOR_UNIT_FAHRENHEIT     (12) /* Temperature             unit: Fahrenheit ℉ */
+#define RT_SENSOR_UNIT_FAHRENHEIT_STR "℉"
+#define RT_SENSOR_UNIT_KELVIN         (13) /* Temperature             unit: K          */
+#define RT_SENSOR_UNIT_KELVIN_STR     "K"
+#define RT_SENSOR_UNIT_HZ             (14) /* Frequency               unit: Hz         */
+#define RT_SENSOR_UNIT_HZ_STR         "Hz"
+#define RT_SENSOR_UNIT_BPM            (15) /* Heart rate              unit: bpm        */
+#define RT_SENSOR_UNIT_BPM_STR        "bpm"
+#define RT_SENSOR_UNIT_MN             (16) /* Force                   unit: mN         */
+#define RT_SENSOR_UNIT_MN_STR         "mN"
+#define RT_SENSOR_UNIT_N              (17) /* Force                   unit: N          */
+#define RT_SENSOR_UNIT_N_STR          "N"
+#define RT_SENSOR_UNIT_PPM            (18) /* Concentration           unit: ppm        */
+#define RT_SENSOR_UNIT_PPM_STR        "ppm"
+#define RT_SENSOR_UNIT_PPB            (19) /* Concentration           unit: ppb        */
+#define RT_SENSOR_UNIT_PPB_STR        "ppb"
+#define RT_SENSOR_UNIT_DMS            (20) /* Coordinates             unit: DMS        */
+#define RT_SENSOR_UNIT_DMS_STR        "DMS"
+#define RT_SENSOR_UNIT_DD             (21) /* Coordinates             unit: DD         */
+#define RT_SENSOR_UNIT_DD_STR         "DD"
+#define RT_SENSOR_UNIT_MGM3           (22) /* Concentration           unit: mg/m3      */
+#define RT_SENSOR_UNIT_MGM3_STR       "mg/m3"
 
 /* Sensor communication interface types */
-
-#define  RT_SENSOR_INTF_I2C            (1 << 0)
-#define  RT_SENSOR_INTF_SPI            (1 << 1)
-#define  RT_SENSOR_INTF_UART           (1 << 2)
-#define  RT_SENSOR_INTF_ONEWIRE        (1 << 3)
+#define RT_SENSOR_INTF_I2C            (1 << 0)
+#define RT_SENSOR_INTF_I2C_STR        "I2C"
+#define RT_SENSOR_INTF_SPI            (1 << 1)
+#define RT_SENSOR_INTF_SPI_STR        "SPI"
+#define RT_SENSOR_INTF_UART           (1 << 2)
+#define RT_SENSOR_INTF_UART_STR       "UART"
+#define RT_SENSOR_INTF_ONEWIRE        (1 << 3)
+#define RT_SENSOR_INTF_ONEWIRE_STR    "1-Wire"
 
 /* Sensor power mode types */
-
-#define  RT_SENSOR_POWER_NONE          (0)
-#define  RT_SENSOR_POWER_DOWN          (1)  /* power down mode   */
-#define  RT_SENSOR_POWER_NORMAL        (2)  /* normal-power mode */
-#define  RT_SENSOR_POWER_LOW           (3)  /* low-power mode    */
-#define  RT_SENSOR_POWER_HIGH          (4)  /* high-power mode   */
+#define RT_SENSOR_POWER_NONE          (0)
+#define RT_SENSOR_POWER_NONE_STR      "None"
+#define RT_SENSOR_POWER_DOWN          (1)  /* power down mode   */
+#define RT_SENSOR_POWER_DOWN_STR      "Down"
+#define RT_SENSOR_POWER_NORMAL        (2)  /* normal-power mode */
+#define RT_SENSOR_POWER_NORMAL_STR    "Normal"
+#define RT_SENSOR_POWER_LOW           (3)  /* low-power mode    */
+#define RT_SENSOR_POWER_LOW_STR       "Low"
+#define RT_SENSOR_POWER_HIGH          (4)  /* high-power mode   */
+#define RT_SENSOR_POWER_HIGH_STR      "High"
 
 /* Sensor work mode types */
-
-#define  RT_SENSOR_MODE_NONE           (0)
-#define  RT_SENSOR_MODE_POLLING        (1)  /* One shot only read a data */
-#define  RT_SENSOR_MODE_INT            (2)  /* TODO: One shot interrupt only read a data */
-#define  RT_SENSOR_MODE_FIFO           (3)  /* TODO: One shot interrupt read all fifo data */
+#define RT_SENSOR_MODE_NONE           (0)
+#define RT_SENSOR_MODE_POLLING        (1)  /* One shot only read a data */
+#define RT_SENSOR_MODE_INT            (2)  /* TODO: One shot interrupt only read a data */
+#define RT_SENSOR_MODE_FIFO           (3)  /* TODO: One shot interrupt read all fifo data */
 
 /* Sensor control cmd types */
-
-#define  RT_SENSOR_CTRL_GET_ID         (0)  /* Get device id */
-#define  RT_SENSOR_CTRL_GET_INFO       (1)  /* Get sensor info */
-#define  RT_SENSOR_CTRL_SET_RANGE      (2)  /* Set the measure range of sensor. unit is info of sensor */
-#define  RT_SENSOR_CTRL_SET_ODR        (3)  /* Set output date rate. unit is HZ */
-#define  RT_SENSOR_CTRL_SET_MODE       (4)  /* Set sensor's work mode. ex. RT_SENSOR_MODE_POLLING,RT_SENSOR_MODE_INT */
-#define  RT_SENSOR_CTRL_SET_POWER      (5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
-#define  RT_SENSOR_CTRL_SELF_TEST      (6)  /* Take a self test */
+#define RT_SENSOR_CTRL_GET_ID         (RT_DEVICE_CTRL_BASE(Sensor) + 0)  /* Get device id */
+#define RT_SENSOR_CTRL_GET_INFO       (RT_DEVICE_CTRL_BASE(Sensor) + 1)  /* Get sensor info */
+#define RT_SENSOR_CTRL_SET_RANGE      (RT_DEVICE_CTRL_BASE(Sensor) + 2)  /* Set the measure range of sensor. unit is info of sensor */
+#define RT_SENSOR_CTRL_SET_ODR        (RT_DEVICE_CTRL_BASE(Sensor) + 3)  /* Set output date rate. unit is HZ */
+#define RT_SENSOR_CTRL_SET_MODE       (RT_DEVICE_CTRL_BASE(Sensor) + 4)  /* Set sensor's work mode. ex. RT_SENSOR_MODE_POLLING,RT_SENSOR_MODE_INT */
+#define RT_SENSOR_CTRL_SET_POWER      (RT_DEVICE_CTRL_BASE(Sensor) + 5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
+#define RT_SENSOR_CTRL_SELF_TEST      (RT_DEVICE_CTRL_BASE(Sensor) + 6)  /* Take a self test */
 
 #define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
+
+/* sensor floating data type */
+#ifdef RT_USING_SENSOR_DOUBLE_FLOAT
+typedef double rt_sensor_float_t;
+#else
+typedef float rt_sensor_float_t;
+#endif /* RT_USING_SENSOR_DOUBLE_FLOAT */
 
 struct rt_sensor_info
 {
@@ -139,9 +220,9 @@ struct rt_sensor_info
 
 struct rt_sensor_intf
 {
-    char                       *dev_name;   /* The name of the communication device */
-    rt_uint8_t                  type;       /* Communication interface type */
-    void                       *user_data;  /* Private data for the sensor. ex. i2c addr,spi cs,control I/O */
+    char          *dev_name;                /* The name of the communication device */
+    rt_uint8_t     type;                    /* Communication interface type */
+    void          *arg;                     /* Interface argument for the sensor. ex. i2c addr,spi cs,control I/O */
 };
 
 struct rt_sensor_config
@@ -155,6 +236,8 @@ struct rt_sensor_config
 };
 
 typedef struct rt_sensor_device *rt_sensor_t;
+typedef struct rt_sensor_data   *rt_sensor_data_t;
+typedef struct rt_sensor_info   *rt_sensor_info_t;
 
 struct rt_sensor_device
 {
@@ -163,7 +246,7 @@ struct rt_sensor_device
     struct rt_sensor_info        info;      /* The sensor info data */
     struct rt_sensor_config      config;    /* The sensor config data */
 
-    void                        *data_buf;  /* The buf of the data received */
+    rt_sensor_data_t             data_buf;  /* The buf of the data received */
     rt_size_t                    data_len;  /* The size of the data received */
 
     const struct rt_sensor_ops  *ops;       /* The sensor ops */
@@ -184,15 +267,22 @@ struct rt_sensor_module
 /* 3-axis Data Type */
 struct sensor_3_axis
 {
-    rt_int32_t x;
-    rt_int32_t y;
-    rt_int32_t z;
+    rt_sensor_float_t x;
+    rt_sensor_float_t y;
+    rt_sensor_float_t z;
+};
+
+/* Blood Pressure Data Type */
+struct sensor_bp
+{
+    rt_sensor_float_t sbp; /* SBP : systolic pressure */
+    rt_sensor_float_t dbp; /* DBP : diastolic pressure */
 };
 
 struct coordinates
 {
-    double longitude;
-    double latitude;
+    rt_sensor_float_t longitude;
+    rt_sensor_float_t latitude;
 };
 
 struct rt_sensor_data
@@ -205,31 +295,35 @@ struct rt_sensor_data
         struct sensor_3_axis gyro;          /* Gyroscope.           unit: mdps        */
         struct sensor_3_axis mag;           /* Magnetometer.        unit: mGauss      */
         struct coordinates   coord;         /* Coordinates          unit: degrees     */
-        rt_int32_t           temp;          /* Temperature.         unit: dCelsius    */
-        rt_int32_t           humi;          /* Relative humidity.   unit: permillage  */
-        rt_int32_t           baro;          /* Pressure.            unit: pascal (Pa) */
-        rt_int32_t           light;         /* Light.               unit: lux         */
-        rt_int32_t           proximity;     /* Distance.            unit: centimeters */
-        rt_int32_t           hr;            /* Heart rate.          unit: bpm         */
-        rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
-        rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
-        rt_uint32_t          step;          /* Step sensor.         unit: 1           */
-        rt_int32_t           force;         /* Force sensor.        unit: mN          */
-        rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
-        rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
+        struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
+        rt_sensor_float_t    temp;          /* Temperature.         unit: dCelsius    */
+        rt_sensor_float_t    humi;          /* Relative humidity.   unit: permillage  */
+        rt_sensor_float_t    baro;          /* Pressure.            unit: pascal (Pa) */
+        rt_sensor_float_t    light;         /* Light.               unit: lux         */
+        rt_sensor_float_t    proximity;     /* Distance.            unit: centimeters */
+        rt_sensor_float_t    hr;            /* Heart rate.          unit: bpm         */
+        rt_sensor_float_t    tvoc;          /* TVOC.                unit: permillage  */
+        rt_sensor_float_t    noise;         /* Noise Loudness.      unit: HZ          */
+        rt_sensor_float_t    step;          /* Step sensor.         unit: 1           */
+        rt_sensor_float_t    force;         /* Force sensor.        unit: mN          */
+        rt_sensor_float_t    dust;          /* Dust sensor.         unit: ug/m3       */
+        rt_sensor_float_t    eco2;          /* eCO2 sensor.         unit: ppm         */
+        rt_sensor_float_t    spo2;          /* SpO2 sensor.         unit: permillage  */
+        rt_sensor_float_t    iaq;           /* IAQ sensor.          unit: 1           */
+        rt_sensor_float_t    etoh;          /* EtOH sensor.         unit: ppm         */
     } data;
 };
 
 struct rt_sensor_ops
 {
-    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
-    rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
+    rt_ssize_t (*fetch_data)(rt_sensor_t sensor, rt_sensor_data_t buf, rt_size_t len);
+    rt_err_t (*control)(rt_sensor_t sensor, int cmd, void *arg);
 };
 
-int rt_hw_sensor_register(rt_sensor_t sensor,
-                          const char              *name,
-                          rt_uint32_t              flag,
-                          void                    *data);
+int rt_hw_sensor_register(rt_sensor_t     sensor,
+                          const char     *name,
+                          rt_uint32_t     flag,
+                          void           *data);
 
 #ifdef __cplusplus
 }

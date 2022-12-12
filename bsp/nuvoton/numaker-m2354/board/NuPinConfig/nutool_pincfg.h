@@ -1,7 +1,7 @@
 /****************************************************************************
  * @file     nutool_pincfg.h
  * @version  V1.21
- * @Date     2020/11/11-12:06:36 
+ * @Date     2020/11/11-12:06:36
  * @brief    NuMicro generated code file
  *
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.

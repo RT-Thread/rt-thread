@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F7xx_ADC_EX_H
-#define __STM32F7xx_ADC_EX_H
+#ifndef STM32F7xx_ADC_EX_H
+#define STM32F7xx_ADC_EX_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -210,7 +210,7 @@ typedef struct
 /** @defgroup ADCEx_channels  ADC Specific Channels
   * @{
   */
-#define ADC_CHANNEL_TEMPSENSOR  ((uint32_t)ADC_CHANNEL_18 | 0x10000000U)    
+
 /**
   * @}
   */
@@ -274,8 +274,6 @@ HAL_StatusTypeDef HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef* hadc, ADC_
 /** @defgroup ADCEx_Private_Macros ADC Private Macros
   * @{
   */
-#define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) <= ADC_CHANNEL_18)  || \
-                                 ((CHANNEL) == ADC_CHANNEL_TEMPSENSOR))
                                      
 #define IS_ADC_MODE(__MODE__) (((__MODE__) == ADC_MODE_INDEPENDENT)                 || \
                                ((__MODE__) == ADC_DUALMODE_REGSIMULT_INJECSIMULT)   || \
@@ -352,7 +350,7 @@ HAL_StatusTypeDef HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef* hadc, ADC_
 }
 #endif
 
-#endif /*__STM32F7xx_ADC_EX_H */
+#endif /* STM32F7xx_ADC_EX_H */
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,11 +1,12 @@
 import os
+import SCons.Tool.MSCommon.vc
 
 # toolchains options
 ARCH='sim'
 #CROSS_TOOL='msvc' or 'gcc' or 'mingw'
 #'msvc' and 'mingw' are both for windows
 # 'gcc' is for linux
-CROSS_TOOL='mingw'
+CROSS_TOOL='msvc'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -26,8 +27,25 @@ elif  CROSS_TOOL == 'msvc':
     CPU       = 'win32'
     PLATFORM  = 'cl'
     EXEC_PATH = ''
+    try:
+        vc_version = ''
+        vc_versions = SCons.Tool.MSCommon.vc.get_installed_vcs()
+        if not vc_versions:
+            print("No vc version!")
+            exit(1)
+        else:
+            vc_version = vc_versions[0]
+        EXEC_PATH = SCons.Tool.MSCommon.vc.find_vc_pdir(vc_version)
+        if not EXEC_PATH:
+            print('Installed VC %s failure!' % vc_version)
+            exit(1)
+        else:
+            print('Successfully installed VC %s, path:%s' % (vc_version, EXEC_PATH))
+    except:
+        pass
+
 else:
-    print("bad CROSS TOOL!")
+    print("Simulator does not support this CROSS TOOL!")
     exit(1)
 
 if os.getenv('RTT_EXEC_PATH'):

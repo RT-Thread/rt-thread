@@ -1,21 +1,16 @@
-/***************************************************************************//**
- * @file    dev_led.h
- * @brief   LED driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2009-01-05   Bernard     the first version
  * 2010-12-27   onelife     Modify for EFM32
  * 2011-05-06   onelife     Add EFM32 development kit support
  * 2011-12-08   onelife     Add giant gecko development kit support
- ******************************************************************************/
+ */
+
 #ifndef __DEV_LED_H__
 #define __DEV_LED_H__
 

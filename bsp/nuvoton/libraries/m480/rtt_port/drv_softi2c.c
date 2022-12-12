@@ -212,6 +212,6 @@ int rt_soft_i2c_init(void)
 
     return 0;
 }
-INIT_BOARD_EXPORT(rt_soft_i2c_init);
+INIT_DEVICE_EXPORT(rt_soft_i2c_init);
 
 #endif //#if (defined(BSP_USING_SOFT_I2C) && defined(BSP_USING_GPIO) && defined(RT_USING_I2C_BITOPS) && defined(RT_USING_I2C) && defined(RT_USING_PIN))

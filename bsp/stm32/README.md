@@ -9,6 +9,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f072-st-nucleo](stm32f072-st-nucleo) | ST 官方 STM32F072-nucleo 开发板 |
 | [stm32f091-st-nucleo](stm32f091-st-nucleo) | ST 官方 STM32F091-nucleo 开发板 |
 | **F1 系列** |  |
+| [stm32f103-100ask-mini](stm32f103-100ask-mini)        | 百问网F103 Mini开发板  |
+| [stm32f103-100ask-pro](stm32f103-100ask-pro)        | 百问网F103 Pro开发板  |
 | [stm32f103-atk-nano](stm32f103-atk-nano)        | 正点原子 F103 NANO 开发板  |
 | [stm32f103-atk-warshipv3](stm32f103-atk-warshipv3)  | 正点原子 F103 战舰V3 开发板  |
 | [stm32f103-blue-pill](stm32f103-blue-pill) | STM32F103C8T6蓝色最小系统板 |
@@ -20,10 +22,13 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f103-onenet-nbiot](stm32f103-onenet-nbiot) | STM32F103 OneNET NB-IoT 开发板 |
 | [stm32f103-yf-ufun](stm32f103-yf-ufun) | STM32F103 yf-ufun 开发板 |
 | [stm32f107-uc-eval](stm32f107-uc-eval) | uC/Eval STM32F107 评估板（中国版） |
+| **F2 系列** |  |
+| [stm32f207-st-nucleo](stm32f207-st-nucleo) | ST 官方 STM32F207-nucleo 开发板 |
 | **F4 系列** |  |
 | [stm32f401-st-nucleo](stm32f401-st-nucleo) | ST 官方 STM32F401 Nucleo-64 开发板 |
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer) | 正点原子 F407 探索者开发板 |
+| [stm32f407-robomaster-c](stm32f407-robomaster-c) | 大疆公司 RoboMaster C型开发板 |
 | [stm32f407-st-discovery](stm32f407-st-discovery) | ST 官方 STM32F407-discovery 开发板 |
 | [stm32f410-st-nucleo](stm32f410-st-nucleo) | ST 官方 STM32F410-Nucleo-64 开发板 |
 | [stm32f411-atk-nano](stm32f411-atk-nano/) | 正点原子 F411 NANO 开发板 |
@@ -41,7 +46,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **F7 系列** |  |
 | [stm32f746-st-disco](stm32f746-st-disco) | ST 官方 STM32F746-discovery 开发板 |
 | [stm32f767-atk-apollo](stm32f767-atk-apollo) | 正点原子 F767 阿波罗开发板 |
-| [stm32f767-fire-challenger](stm32f767-fire-challenger/) | 野火 F767 挑战者开发板 |
+| [stm32f767-fire-challenger-v1](stm32f767-fire-challenger-v1/) | 野火 F767-V1 挑战者开发板 |
 | [stm32f767-st-nucleo](stm32f767-st-nucleo) | ST 官方 STM32F767-nucleo 开发板 |
 | [stm32f769-st-disco](stm32f769-st-disco) | ST 官方 STM32f769-discovery 开发板 |
 | **G0 系列** |  |
@@ -68,8 +73,13 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l475-atk-pandora](stm32l475-atk-pandora) | 正点原子 L475 潘多拉 IoT 开发板 |
 | [stm32l475-st-discovery](stm32l475-st-discovery) | ST 官方 stm32l475-discovery 开发板 |
 | [stm32l476-st-nucleo](stm32l476-st-nucleo) | ST 官方 STM32L476-Nucleo 开发板 |
+| [stm32l433-ali-startkit](stm32l433-ali-startkit) | 诺行 STM32L433 Ali Start Kit 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
 | [stm32l496-st-nucleo](stm32l496-st-nucleo) | ST 官方 STM32L496-Nucleo 开发板 |
+| **L5 系列** |  |
+| [stm32l552-st-nucleo](stm32l552-st-nucleo) | ST 官方 STM32L552-Nucleo 开发板 |
+| **U5 系列** |  |
+| [stm32u575-st-nucleo](stm32u575-st-nucleo) | ST 官方 STM32U575ZI-Nucleo 开发板 |
 | **MP1 系列** |  |
 | [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-DK1 开发板 |
 | [stm32mp157a-st-ev1](stm32mp157a-st-ev1) | ST 官方 STM32MP157A-EV1 开发板 |

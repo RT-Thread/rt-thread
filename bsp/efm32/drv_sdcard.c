@@ -1,24 +1,17 @@
-/***************************************************************************//**
- * @file    drv_sdcard.c
- * @brief   Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32
- *  USART module
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2011-05-13   onelife     Initial creation for using EFM32 USART module
  * 2011-07-07   onelife     Modify initialization function to return error code
  * 2011-12-08   onelife     Add giant gecko development kit support
  * 2011-12-15   onelife     Move MicroSD enabling routine to driver
- *  initialization function (board.c)
+ *                            initialization function (board.c)
  * 2011-12-21   onelife     Modify code due to SPI write format changed
- ******************************************************************************/
+ */
 
 /***************************************************************************//**
  * @addtogroup efm32_dk

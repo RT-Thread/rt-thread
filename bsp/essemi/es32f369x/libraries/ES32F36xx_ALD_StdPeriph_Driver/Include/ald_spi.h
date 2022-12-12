@@ -8,10 +8,26 @@
   * @date    13 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          13 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   */
 
 #ifndef __ALD_SPI_H__
@@ -234,10 +250,10 @@ typedef struct spi_handle_s {
 	uint8_t *rx_buf;	/**< Pointer to SPI Rx transfer buffer */
 	uint16_t rx_size;	/**< SPI Rx Transfer size */
 	uint16_t rx_count;	/**< SPI Rx Transfer Counter */
-#ifdef ALD_DMA
+
 	dma_handle_t hdmatx;	/**< SPI Tx DMA handle parameters */
 	dma_handle_t hdmarx;	/**< SPI Rx DMA handle parameters */
-#endif
+
 	lock_state_t lock;	/**< Locking object */
 	spi_state_t state;	/**< SPI communication state */
 	uint32_t err_code;	/**< SPI error code */
@@ -386,14 +402,14 @@ ald_status_t ald_spi_send_recv(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx
 ald_status_t ald_spi_send_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size);
 ald_status_t ald_spi_recv_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size);
 ald_status_t ald_spi_send_recv_by_it(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size);
-#ifdef ALD_DMA
+
 ald_status_t ald_spi_send_by_dma(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel);
 ald_status_t ald_spi_recv_by_dma(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel);
 ald_status_t ald_spi_send_recv_by_dma(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size, uint8_t tx_channel, uint8_t rx_channel);
 ald_status_t ald_spi_dma_pause(spi_handle_t *hperh);
 ald_status_t ald_spi_dma_resume(spi_handle_t *hperh);
 ald_status_t ald_spi_dma_stop(spi_handle_t *hperh);
-#endif
+
 /**
   * @}
   */

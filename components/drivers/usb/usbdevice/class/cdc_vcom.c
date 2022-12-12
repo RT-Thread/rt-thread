@@ -10,11 +10,11 @@
  * 2013-06-25     heyuanjie87  remove SOF mechinism
  * 2013-07-20     Yi Qiu       do more test
  * 2016-02-01     Urey         Fix some error
+ * 2021-10-14     mazhiyuan    Fix some error
  */
 
 #include <rthw.h>
 #include <rtdevice.h>
-#include <drivers/serial.h>
 #include "drivers/usb_device.h"
 #include "cdc.h"
 
@@ -57,7 +57,7 @@
 #define _SER_NO_LEN 14 /*rt_strlen("32021919830108")*/
 #endif /*RT_VCOM_SER_LEN*/
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t vcom_thread_stack[VCOM_TASK_STK_SIZE];
 static struct rt_thread vcom_thread;
 static struct ucdc_line_coding line_coding;
@@ -91,7 +91,7 @@ struct vcom_tx_msg
     rt_size_t size;
 };
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -100,7 +100,7 @@ static struct udevice_descriptor dev_desc =
     USB_CLASS_CDC,              //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
-    CDC_MAX_PACKET_SIZE,          //bMaxPacketSize0;
+    CDC_MAX_PACKET_SIZE,        //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
     _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
@@ -111,7 +111,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
-ALIGN(4)
+rt_align(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -126,7 +126,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 /* communcation interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_comm_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -200,7 +200,7 @@ const static struct ucdc_comm_descriptor _comm_desc =
 };
 
 /* data interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
@@ -234,15 +234,15 @@ const static struct ucdc_data_descriptor _data_desc =
         0x00,
     },
 };
-ALIGN(4)
+rt_align(4)
 static char serno[_SER_NO_LEN + 1] = {'\0'};
-RT_WEAK rt_err_t vcom_get_stored_serno(char *serno, int size);
+rt_weak rt_err_t vcom_get_stored_serno(char *serno, int size);
 
 rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
     return RT_ERROR;
 }
-ALIGN(4)
+rt_align(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -257,17 +257,17 @@ static void rt_usb_vcom_init(struct ufunction *func);
 static void _vcom_reset_state(ufunction_t func)
 {
     struct vcom* data;
-    int lvl;
+    rt_base_t level;
 
     RT_ASSERT(func != RT_NULL)
 
     data = (struct vcom*)func->user_data;
 
-    lvl = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     data->connected = RT_FALSE;
     data->in_sending = RT_FALSE;
     /*rt_kprintf("reset USB serial\n", cnt);*/
-    rt_hw_interrupt_enable(lvl);
+    rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -320,7 +320,7 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
  */
 static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     struct vcom *data;
 
     RT_ASSERT(func != RT_NULL);
@@ -498,6 +498,10 @@ static rt_err_t _function_enable(ufunction_t func)
     data->ep_out->buffer = rt_malloc(CDC_RX_BUFSIZE);
     RT_ASSERT(data->ep_out->buffer != RT_NULL);
 
+#ifdef RT_USING_SERIAL_V2
+    data->serial.serial_rx = &data->rx_ringbuffer;
+#endif
+
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
 
@@ -670,6 +674,12 @@ static rt_err_t _vcom_configure(struct rt_serial_device *serial,
 static rt_err_t _vcom_control(struct rt_serial_device *serial,
                               int cmd, void *arg)
 {
+    struct ufunction *func;
+    struct vcom *data;
+
+    func = (struct ufunction*)serial->parent.user_data;
+    data = (struct vcom*)func->user_data;
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -677,6 +687,9 @@ static rt_err_t _vcom_control(struct rt_serial_device *serial,
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
+        break;
+    case RT_USBD_CLASS_CTRL_CONNECTED:
+        (*(rt_bool_t*)arg) = data->connected;
         break;
     }
 
@@ -687,7 +700,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
 {
     int result;
     rt_uint8_t ch;
-    rt_uint32_t level;
+    rt_base_t level;
     struct ufunction *func;
     struct vcom *data;
 
@@ -710,7 +723,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
 
 static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_size_t   put_len = 0;
     rt_size_t   w_ptr = 0;
     rt_uint32_t res;
@@ -738,7 +751,7 @@ static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt
     return size;
 }
 
-static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size,int direction)
+static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct ufunction *func;
     struct vcom *data;
@@ -799,7 +812,7 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
 }
 static int _vcom_putc(struct rt_serial_device *serial, char c)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     struct ufunction *func;
     struct vcom *data;
 
@@ -838,7 +851,7 @@ static const struct rt_uart_ops usb_vcom_ops =
 /* Vcom Tx Thread */
 static void vcom_tx_thread_entry(void* parameter)
 {
-    rt_uint32_t level;
+    rt_base_t level;
     rt_uint32_t res;
     struct ufunction *func = (struct ufunction *)parameter;
     struct vcom *data = (struct vcom*)func->user_data;
@@ -873,10 +886,15 @@ static void vcom_tx_thread_entry(void* parameter)
             if (!data->connected)
             {
                 if(data->serial.parent.open_flag &
+#ifdef RT_USING_SERIAL_V1
 #ifndef VCOM_TX_USE_DMA
                          RT_DEVICE_FLAG_INT_TX
 #else
                          RT_DEVICE_FLAG_DMA_TX
+#endif
+#endif
+#ifdef RT_USING_SERIAL_V2
+                         RT_DEVICE_FLAG_TX_BLOCKING
 #endif
                 )
                 {
@@ -902,10 +920,15 @@ static void vcom_tx_thread_entry(void* parameter)
                 RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom tx timeout\n"));
             }
             if(data->serial.parent.open_flag &
+#ifdef RT_USING_SERIAL_V1
 #ifndef VCOM_TX_USE_DMA
                          RT_DEVICE_FLAG_INT_TX
 #else
                          RT_DEVICE_FLAG_DMA_TX
+#endif
+#endif
+#ifdef RT_USING_SERIAL_V2
+                         RT_DEVICE_FLAG_TX_BLOCKING
 #endif
             )
             {
@@ -939,8 +962,12 @@ static void rt_usb_vcom_init(struct ufunction *func)
     config.parity       = PARITY_NONE;
     config.bit_order    = BIT_ORDER_LSB;
     config.invert       = NRZ_NORMAL;
+#if defined(RT_USING_SERIAL_V1)
     config.bufsz        = CDC_RX_BUFSIZE;
-
+#elif defined(RT_USING_SERIAL_V2)
+    config.rx_bufsz     = CDC_RX_BUFSIZE;
+    config.tx_bufsz     = CDC_TX_BUFSIZE;
+#endif
     data->serial.ops        = &usb_vcom_ops;
     data->serial.serial_rx  = RT_NULL;
     data->serial.config     = config;

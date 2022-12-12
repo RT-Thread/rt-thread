@@ -660,8 +660,13 @@ static void FLASH_Program_DoubleWord(uint32_t Address, uint64_t Data)
   FLASH->CR |= FLASH_PSIZE_DOUBLE_WORD;
   FLASH->CR |= FLASH_CR_PG;
 
-  /* Program the double-word */
+  /* Program first word */
   *(__IO uint32_t*)Address = (uint32_t)Data;
+  /* Barrier to ensure programming is performed in 2 steps, in right order
+    (independently of compiler optimization behavior) */
+  __ISB();
+
+  /* Program second word */
   *(__IO uint32_t*)(Address+4) = (uint32_t)(Data >> 32);
 
   /* Data synchronous Barrier (DSB) Just after the write operation
@@ -673,7 +678,7 @@ static void FLASH_Program_DoubleWord(uint32_t Address, uint64_t Data)
 /**
   * @brief  Program word (32-bit) at a specified address.
   * @note   This function must be used when the device voltage range is from
-  *         2.7V to 3.6V.
+  *         2.7V to 3.3V.
   *
   * @note   If an erase and a program operations are requested simultaneously,    
   *         the erase operation is performed before the program one.
@@ -702,7 +707,7 @@ static void FLASH_Program_Word(uint32_t Address, uint32_t Data)
 /**
   * @brief  Program a half-word (16-bit) at a specified address.
   * @note   This function must be used when the device voltage range is from
-  *         2.7V to 3.6V.
+  *         2.1V to 3.6V.
   *
   * @note   If an erase and a program operations are requested simultaneously,    
   *         the erase operation is performed before the program one.
@@ -732,7 +737,7 @@ static void FLASH_Program_HalfWord(uint32_t Address, uint16_t Data)
 /**
   * @brief  Program byte (8-bit) at a specified address.
   * @note   This function must be used when the device voltage range is from
-  *         2.7V to 3.6V.
+  *         1.7V to 3.6V.
   *
   * @note   If an erase and a program operations are requested simultaneously,    
   *         the erase operation is performed before the program one.

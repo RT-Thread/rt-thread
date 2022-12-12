@@ -8,10 +8,26 @@
   * @date    09 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          09 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   * @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -57,7 +73,6 @@
 
 #include <string.h>
 #include "ald_conf.h"
-#include "ald_dma.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -169,22 +184,34 @@ static void dma_config_base(DMA_TypeDef *DMAx, dma_cycle_ctrl_t mode, dma_config
   */
 void ald_dma_irq_handler(void)
 {
-	uint32_t i, reg = DMA0->IFLAG;
+	uint32_t i, reg;
+	dma_descriptor_t *descr0, *descr1;
+	uint32_t p_addr, a_addr;
+	
+	reg    = DMA0->IFLAG;
+	p_addr = DMA0->CTRLBASE;
+	a_addr = DMA0->ALTCTRLBASE;
 
 	for (i = 0; i < DMA_CH_COUNT; ++i) {
-		if (READ_BIT(reg, (1 << i))) {
+		if (READ_BIT(reg, (1U << i))) {
 			if (dma0_cbk[i].cplt_cbk != NULL)
 				dma0_cbk[i].cplt_cbk(dma0_cbk[i].cplt_arg);
 
-			ald_dma_clear_flag_status(DMA0, i);
+			DMA0->ICFR = (1U << i);
+			descr0     = (dma_descriptor_t *)(p_addr) + i;
+			descr1     = (dma_descriptor_t *)(a_addr) + i;
+			
+			if ((descr0->ctrl.cycle_ctrl == DMA_CYCLE_CTRL_NONE)
+				&& (descr1->ctrl.cycle_ctrl == DMA_CYCLE_CTRL_NONE))
+				DMA0->CHENCLR = (1U << i);
 		}
 	}
 
 	if (READ_BIT(reg, (1U << DMA_ERR))) {
-		ald_dma_clear_flag_status(DMA0, DMA_ERR);
-
+		DMA0->ICFR = (1U << DMA_ERR);
+		
 		for (i = 0; i < DMA_CH_COUNT; ++i) {
-			if (((DMA0->CHENSET >> i) & 0x1) && (dma0_cbk[i].err_cbk != NULL))
+			if (dma0_cbk[i].err_cbk != NULL)
 				dma0_cbk[i].err_cbk(dma0_cbk[i].err_arg);
 		}
 	}

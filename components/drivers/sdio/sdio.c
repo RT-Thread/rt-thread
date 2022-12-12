@@ -103,7 +103,7 @@ rt_int32_t sdio_io_send_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        mmcsd_delay_ms(10);
+        rt_thread_mdelay(10);
     }
 
     if (cmd5_resp)

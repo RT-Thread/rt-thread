@@ -39,7 +39,7 @@ extern "C" {
 #define STM32_FLASH_SIZE             (1024 * 1024)
 #define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
@@ -53,6 +53,17 @@ extern int __bss_end;
 #define HEAP_END        STM32_SRAM_END
 
 void SystemClock_Config(void);
+
+#ifdef RT_USING_PM
+void SystemClock_Config(void);
+void SystemClock_MSI_ON(void);
+void SystemClock_MSI_OFF(void);
+void SystemClock_80M(void);
+void SystemClock_24M(void);
+void SystemClock_2M(void);
+void SystemClock_ReConfig(uint8_t mode);
+void SystemClock_Config_fromSTOP(void);
+#endif
 
 #ifdef __cplusplus
 }

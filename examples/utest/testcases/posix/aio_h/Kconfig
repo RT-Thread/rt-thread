@@ -1,0 +1,39 @@
+menuconfig RTT_POSIX_TESTCASE_AIO_H
+    bool "<aio.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_AIO_H
+
+    config AIO_H_AIO_CANCEL
+        bool "<aio.h -> aio_cancel>"
+        default n
+
+    config AIO_H_AIO_ERROR
+        bool "<aio.h -> aio_error>"
+        default n
+
+    config AIO_H_AIO_FSYNC
+        bool "<aio.h -> aio_fsync>"
+        default n
+
+    config AIO_H_AIO_READ
+        bool "<aio.h -> aio_read>"
+        default n
+
+    config AIO_H_AIO_RETURN
+        bool "<aio.h -> aio_return>"
+        default n
+
+    config AIO_H_AIO_SUSPEND
+        bool "<aio.h -> aio_suspend>"
+        default n
+
+    config AIO_H_AIO_WRITE
+        bool "<aio.h -> aio_write>"
+        default n
+
+    config AIO_H_AIO_LISTIO
+        bool "<aio.h -> lio_listio>"
+        default n
+
+endif

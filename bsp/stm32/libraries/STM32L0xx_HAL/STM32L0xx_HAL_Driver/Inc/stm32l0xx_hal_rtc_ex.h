@@ -89,10 +89,10 @@ typedef struct
 /** @defgroup RTCEx_Output_selection_Definitions RTCEx Output Selection Definition
   * @{
   */
-#define RTC_OUTPUT_DISABLE             ((uint32_t)0x00000000U)
-#define RTC_OUTPUT_ALARMA              ((uint32_t)RTC_CR_OSEL_0)
-#define RTC_OUTPUT_ALARMB              ((uint32_t)RTC_CR_OSEL_1)
-#define RTC_OUTPUT_WAKEUP              ((uint32_t)RTC_CR_OSEL)
+#define RTC_OUTPUT_DISABLE             (0x00000000U)
+#define RTC_OUTPUT_ALARMA              RTC_CR_OSEL_0
+#define RTC_OUTPUT_ALARMB              RTC_CR_OSEL_1
+#define RTC_OUTPUT_WAKEUP              RTC_CR_OSEL
 
 /**
   * @}
@@ -101,11 +101,11 @@ typedef struct
 /** @defgroup RTCEx_Backup_Registers_Definitions RTCEx Backup Registers Definition
   * @{
   */
-#define RTC_BKP_DR0                       ((uint32_t)0x00000000U)
-#define RTC_BKP_DR1                       ((uint32_t)0x00000001U)
-#define RTC_BKP_DR2                       ((uint32_t)0x00000002U)
-#define RTC_BKP_DR3                       ((uint32_t)0x00000003U)
-#define RTC_BKP_DR4                       ((uint32_t)0x00000004U)
+#define RTC_BKP_DR0                       (0x00000000U)
+#define RTC_BKP_DR1                       (0x00000001U)
+#define RTC_BKP_DR2                       (0x00000002U)
+#define RTC_BKP_DR3                       (0x00000003U)
+#define RTC_BKP_DR4                       (0x00000004U)
 /**
   * @}
   */
@@ -114,7 +114,7 @@ typedef struct
 /** @defgroup RTCEx_Time_Stamp_Edges_definitions RTCEx Time Stamp Edges definition
   * @{
   */
-#define RTC_TIMESTAMPEDGE_RISING        ((uint32_t)0x00000000U)
+#define RTC_TIMESTAMPEDGE_RISING        (0x00000000U)
 #define RTC_TIMESTAMPEDGE_FALLING       RTC_CR_TSEDGE
 
 /**
@@ -124,7 +124,7 @@ typedef struct
 /** @defgroup RTCEx_TimeStamp_Pin_Selections RTCEx TimeStamp Pin Selection
   * @{
   */
-#define RTC_TIMESTAMPPIN_DEFAULT              ((uint32_t)0x00000000U)
+#define RTC_TIMESTAMPPIN_DEFAULT              (0x00000000U)
 
 /**
   * @}
@@ -169,8 +169,8 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Trigger_Definitions RTCEx Tamper Trigger Definitions
   * @{
   */
-#define RTC_TAMPERTRIGGER_RISINGEDGE       ((uint32_t)0x00000000U)
-#define RTC_TAMPERTRIGGER_FALLINGEDGE      ((uint32_t)0x00000002U)
+#define RTC_TAMPERTRIGGER_RISINGEDGE       (0x00000000U)
+#define RTC_TAMPERTRIGGER_FALLINGEDGE      (0x00000002U)
 #define RTC_TAMPERTRIGGER_LOWLEVEL         RTC_TAMPERTRIGGER_RISINGEDGE
 #define RTC_TAMPERTRIGGER_HIGHLEVEL        RTC_TAMPERTRIGGER_FALLINGEDGE
 
@@ -181,8 +181,8 @@ typedef struct
 /** @defgroup RTCEx_Tamper_EraseBackUp_Definitions RTCEx Tamper EraseBackUp Definitions
 * @{
 */
-#define RTC_TAMPER_ERASE_BACKUP_ENABLE               ((uint32_t)0x00000000U)
-#define RTC_TAMPER_ERASE_BACKUP_DISABLE              ((uint32_t)0x00020000U)
+#define RTC_TAMPER_ERASE_BACKUP_ENABLE               (0x00000000U)
+#define RTC_TAMPER_ERASE_BACKUP_DISABLE              (0x00020000U)
 /**
   * @}
   */
@@ -190,8 +190,8 @@ typedef struct
 /** @defgroup RTCEx_Tamper_MaskFlag_Definitions RTCEx Tamper MaskFlag Definitions
 * @{
 */
-#define RTC_TAMPERMASK_FLAG_DISABLE               ((uint32_t)0x00000000U)
-#define RTC_TAMPERMASK_FLAG_ENABLE                ((uint32_t)0x00040000U)
+#define RTC_TAMPERMASK_FLAG_DISABLE               (0x00000000U)
+#define RTC_TAMPERMASK_FLAG_ENABLE                (0x00040000U)
 
 /**
   * @}
@@ -200,7 +200,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Filter_Definitions RTCEx Tamper Filter Definitions
   * @{
   */
-#define RTC_TAMPERFILTER_DISABLE   ((uint32_t)0x00000000U)  /*!< Tamper filter is disabled */
+#define RTC_TAMPERFILTER_DISABLE   (0x00000000U)  /*!< Tamper filter is disabled */
 
 #define RTC_TAMPERFILTER_2SAMPLE   RTC_TAMPCR_TAMPFLT_0    /*!< Tamper is activated after 2
                                                                 consecutive samples at the active level */
@@ -216,7 +216,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Sampling_Frequencies_Definitions RTCEx Tamper Sampling Frequencies Definitions
   * @{
   */
-#define RTC_TAMPERSAMPLINGFREQ_RTCCLK_DIV32768  ((uint32_t)0x00000000U)                                         /*!< Each of the tamper inputs are sampled
+#define RTC_TAMPERSAMPLINGFREQ_RTCCLK_DIV32768  (0x00000000U)                                         /*!< Each of the tamper inputs are sampled
                                                                                                                     with a frequency =  RTCCLK / 32768 */
 #define RTC_TAMPERSAMPLINGFREQ_RTCCLK_DIV16384  RTC_TAMPCR_TAMPFREQ_0                                          /*!< Each of the tamper inputs are sampled
                                                                                                                     with a frequency =  RTCCLK / 16384 */
@@ -241,7 +241,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Pin_Precharge_Duration_Definitions RTCEx Tamper Pin Precharge Duration Definitions
   * @{
   */
-#define RTC_TAMPERPRECHARGEDURATION_1RTCCLK  ((uint32_t)0x00000000U)                                     /*!< Tamper pins are pre-charged before
+#define RTC_TAMPERPRECHARGEDURATION_1RTCCLK  (0x00000000U)                                     /*!< Tamper pins are pre-charged before
                                                                                                             sampling during 1 RTCCLK cycle  */
 #define RTC_TAMPERPRECHARGEDURATION_2RTCCLK  RTC_TAMPCR_TAMPPRCH_0                                      /*!< Tamper pins are pre-charged before
                                                                                                              sampling during 2 RTCCLK cycles */
@@ -258,7 +258,7 @@ typedef struct
   * @{
   */
 #define RTC_TIMESTAMPONTAMPERDETECTION_ENABLE  RTC_TAMPCR_TAMPTS       /*!< TimeStamp on Tamper Detection event saved        */
-#define RTC_TIMESTAMPONTAMPERDETECTION_DISABLE ((uint32_t)0x00000000U)  /*!< TimeStamp on Tamper Detection event is not saved */
+#define RTC_TIMESTAMPONTAMPERDETECTION_DISABLE (0x00000000U)  /*!< TimeStamp on Tamper Detection event is not saved */
 
 /**
   * @}
@@ -267,7 +267,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Pull_UP_Definitions RTCEx Tamper Pull UP Definitions
   * @{
   */
-#define RTC_TAMPER_PULLUP_ENABLE  ((uint32_t)0x00000000U)  /*!< Tamper pins are pre-charged before sampling */
+#define RTC_TAMPER_PULLUP_ENABLE  (0x00000000U)  /*!< Tamper pins are pre-charged before sampling */
 #define RTC_TAMPER_PULLUP_DISABLE  RTC_TAMPCR_TAMPPUDIS   /*!< Tamper pins pre-charge is disabled          */
 
 /**
@@ -277,7 +277,7 @@ typedef struct
 /** @defgroup RTCEx_Wakeup_Timer_Definitions RTCEx Wakeup Timer Definitions
   * @{
   */
-#define RTC_WAKEUPCLOCK_RTCCLK_DIV16        ((uint32_t)0x00000000U)
+#define RTC_WAKEUPCLOCK_RTCCLK_DIV16        (0x00000000U)
 #define RTC_WAKEUPCLOCK_RTCCLK_DIV8         RTC_CR_WUCKSEL_0
 #define RTC_WAKEUPCLOCK_RTCCLK_DIV4         RTC_CR_WUCKSEL_1
 #define RTC_WAKEUPCLOCK_RTCCLK_DIV2         ((uint32_t) (RTC_CR_WUCKSEL_0 | RTC_CR_WUCKSEL_1))
@@ -290,7 +290,7 @@ typedef struct
 /** @defgroup RTCEx_Smooth_calib_period_Definitions RTCEx Smooth calib period Definitions
   * @{
   */
-#define RTC_SMOOTHCALIB_PERIOD_32SEC   ((uint32_t)0x00000000U)   /*!< If RTCCLK = 32768 Hz, Smooth calibation
+#define RTC_SMOOTHCALIB_PERIOD_32SEC   (0x00000000U)   /*!< If RTCCLK = 32768 Hz, Smooth calibation
                                                                      period is 32s,  else 2exp20 RTCCLK pulses */
 #define RTC_SMOOTHCALIB_PERIOD_16SEC   RTC_CALR_CALW16          /*!< If RTCCLK = 32768 Hz, Smooth calibation
                                                                      period is 16s, else 2exp19 RTCCLK pulses */
@@ -307,7 +307,7 @@ typedef struct
 #define RTC_SMOOTHCALIB_PLUSPULSES_SET    RTC_CALR_CALP            /*!< The number of RTCCLK pulses added
                                                                         during a X -second window = Y - CALM[8:0]
                                                                         with Y = 512, 256, 128 when X = 32, 16, 8 */
-#define RTC_SMOOTHCALIB_PLUSPULSES_RESET  ((uint32_t)0x00000000U)   /*!< The number of RTCCLK pulses subbstited
+#define RTC_SMOOTHCALIB_PLUSPULSES_RESET  (0x00000000U)   /*!< The number of RTCCLK pulses subbstited
                                                                         during a 32-second window = CALM[8:0] */
 
 /**
@@ -316,7 +316,7 @@ typedef struct
 /** @defgroup RTCEx_Calib_Output_selection_Definitions RTCEx Calib Output selection Definitions
  * @{
  */
-#define RTC_CALIBOUTPUT_512HZ            ((uint32_t)0x00000000U)
+#define RTC_CALIBOUTPUT_512HZ            (0x00000000U)
 #define RTC_CALIBOUTPUT_1HZ              RTC_CR_COSEL
 
 /**
@@ -327,7 +327,7 @@ typedef struct
 /** @defgroup RTCEx_Add_1_Second_Parameter_Definition RTCEx Add 1 Second Parameter Definitions
   * @{
   */
-#define RTC_SHIFTADD1S_RESET      ((uint32_t)0x00000000U)
+#define RTC_SHIFTADD1S_RESET      (0x00000000U)
 #define RTC_SHIFTADD1S_SET        RTC_SHIFTR_ADD1S
 /**
   * @}
@@ -336,7 +336,7 @@ typedef struct
 * @{
 */
 #if defined(RTC_TAMPER3_SUPPORT)
-#define RTC_IT_TAMP3                      ((uint32_t)RTC_TAMPCR_TAMP3IE)  /*!< Enable Tamper 3 Interrupt     */
+#define RTC_IT_TAMP3                      RTC_TAMPCR_TAMP3IE  /*!< Enable Tamper 3 Interrupt     */
 #endif
 /**
   * @}
@@ -346,7 +346,7 @@ typedef struct
   * @{
   */
 #if defined(RTC_TAMPER3_SUPPORT)
-#define RTC_FLAG_TAMP3F                   ((uint32_t)RTC_ISR_TAMP3F)
+#define RTC_FLAG_TAMP3F                   RTC_ISR_TAMP3F
 #endif
 /**
   * @}
@@ -768,7 +768,7 @@ typedef struct
   */
 #define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)    (((__INTERRUPT__) == RTC_IT_TAMP1) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 3U)) != 0U) ? 1U : 0U) : \
                                                                ((__INTERRUPT__) == RTC_IT_TAMP2) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 5U)) != 0U) ? 1U : 0U) : \
-                                                               ((__INTERRUPT__) == RTC_IT_TAMP3) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 7U)) != 0U) ? 1U : 0U))
+                                                               (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 7U)) != 0U) ? 1U : 0U))
 
 #elif defined(RTC_TAMPER1_SUPPORT)
 
@@ -782,7 +782,7 @@ typedef struct
   * @retval None
   */
 #define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)    (((__INTERRUPT__) == RTC_IT_TAMP1) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 3U)) != 0U) ? 1U : 0U) : \
-                                                               ((__INTERRUPT__) == RTC_IT_TAMP2) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 5U)) != 0U) ? 1U : 0U))
+                                                               (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 5U)) != 0U) ? 1U : 0U))
 
 #elif defined(RTC_TAMPER3_SUPPORT)
 
@@ -796,7 +796,7 @@ typedef struct
   * @retval None
   */
 #define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)    (((__INTERRUPT__) == RTC_IT_TAMP2) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 5U)) != 0U) ? 1U : 0U) : \
-                                                               ((__INTERRUPT__) == RTC_IT_TAMP3) ? (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 7U)) != 0U) ? 1U : 0U))
+                                                               (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__)>> 7U)) != 0U) ? 1U : 0U))
 
 
 #endif

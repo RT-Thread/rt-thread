@@ -10,11 +10,11 @@ src = Glob('GD32F30x_standard_peripheral/Source/*.c')
 src += [cwd + '/CMSIS/GD/GD32F30x/Source/system_gd32f30x.c']
 
 #add for startup script
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [cwd + '/CMSIS/GD/GD32F30x/Source/GCC/startup_gd32f30x_hd.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/CMSIS/GD/GD32F30x/Source/ARM/startup_gd32f30x_hd.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/CMSIS/GD/GD32F30x/Source/IAR/startup_gd32f30x_hd.s']
 
 path = [

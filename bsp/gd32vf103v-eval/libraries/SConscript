@@ -8,7 +8,6 @@ cwd = GetCurrentDir()
 
 src = Glob('GD32VF103_standard_peripheral/Source/*.c')
 src += Glob('n22/env_Eclipse/*.c')
-src += Glob('n22/stubs/*.c')
 src += ['GD32VF103_standard_peripheral/system_gd32vf103.c',
         'n22/drivers/n22_func.c',
         'n22/env_Eclipse/start.S',
@@ -16,11 +15,8 @@ src += ['GD32VF103_standard_peripheral/system_gd32vf103.c',
 
 CPPPATH = [ cwd + '/GD32VF103_standard_peripheral/Include',
             cwd + '/GD32VF103_standard_peripheral',
-            cwd + '/n22/drivers',
-            cwd + '/n22/stubs']
+            cwd + '/n22/drivers']
 
-CPPDEFINES = []
-
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

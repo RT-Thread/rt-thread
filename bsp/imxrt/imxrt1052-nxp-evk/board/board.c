@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -259,8 +259,8 @@ void imxrt_enet_pins_init(void)
     CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
 
     IOMUXC_SetPinMux(
-	IOMUXC_GPIO_AD_B0_09_GPIO1_IO09,        /* GPIO_AD_B0_09 is configured as GPIO1_IO09 */
-	0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_GPIO_AD_B0_09_GPIO1_IO09,        /* GPIO_AD_B0_09 is configured as GPIO1_IO09 */
+    0U);                                    /* Software Input On Field: Input Path is determined by functionality */
     IOMUXC_SetPinMux(
         IOMUXC_GPIO_AD_B0_10_GPIO1_IO10,        /* GPIO_AD_B0_10 is configured as GPIO1_IO10 */
         0U);
@@ -650,7 +650,7 @@ void imxrt_SDcard_pins_init(void)
                                                  Pull / Keep Enable Field: Pull/Keeper Enabled
                                                  Pull / Keep Select Field: Pull
                                                  Pull Up / Down Config. Field: 47K Ohm Pull Up
-                                                 Hyst. Enable Field: Hysteresis Enabled */	
+                                                 Hyst. Enable Field: Hysteresis Enabled */
 }
 #endif
 void rt_hw_board_init()
@@ -690,7 +690,7 @@ void rt_hw_board_init()
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }

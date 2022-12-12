@@ -12,24 +12,6 @@
 
 #include <rtconfig.h>
 
-/* settings depend check */
-#ifdef RT_USING_POSIX
-#if !defined(RT_USING_DFS) || !defined(RT_USING_DFS_DEVFS)
-#error "POSIX poll/select, stdin need file system(RT_USING_DFS) and device file system(RT_USING_DFS_DEVFS)"
-#endif
-
-#if !defined(RT_USING_LIBC)
-#error "POSIX layer need standard C library(RT_USING_LIBC)"
-#endif
-
-#endif
-
-#ifdef RT_USING_POSIX_TERMIOS
-#if !defined(RT_USING_POSIX)
-#error "termios need POSIX layer(RT_USING_POSIX)"
-#endif
-#endif
-
 /* Using this macro to control all kernel debug features. */
 #ifdef RT_DEBUG
 
@@ -68,6 +50,10 @@
 
 #ifndef RT_DEBUG_IPC
 #define RT_DEBUG_IPC                   0
+#endif
+
+#ifndef RT_DEBUG_DEVICE
+#define RT_DEBUG_DEVICE                1
 #endif
 
 #ifndef RT_DEBUG_INIT
@@ -128,9 +114,34 @@ do                                                                            \
     rt_hw_interrupt_enable(level);                                            \
 }                                                                             \
 while (0)
+
+/* "scheduler available" means:
+ *     1) the scheduler has been started.
+ *     2) not in interrupt context.
+ *     3) scheduler is not locked.
+ */
+#define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)                              \
+do                                                                            \
+{                                                                             \
+    if (need_check)                                                           \
+    {                                                                         \
+        rt_base_t level;                                                      \
+        level = rt_hw_interrupt_disable();                                    \
+        if (rt_critical_level() != 0)                                         \
+        {                                                                     \
+            rt_kprintf("Function[%s]: scheduler is not available\n",          \
+                    __FUNCTION__);                                            \
+            RT_ASSERT(0)                                                      \
+        }                                                                     \
+        RT_DEBUG_IN_THREAD_CONTEXT;                                           \
+        rt_hw_interrupt_enable(level);                                        \
+    }                                                                         \
+}                                                                             \
+while (0)
 #else
 #define RT_DEBUG_NOT_IN_INTERRUPT
 #define RT_DEBUG_IN_THREAD_CONTEXT
+#define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)
 #endif
 
 #else /* RT_DEBUG */
@@ -139,6 +150,7 @@ while (0)
 #define RT_DEBUG_LOG(type, message)
 #define RT_DEBUG_NOT_IN_INTERRUPT
 #define RT_DEBUG_IN_THREAD_CONTEXT
+#define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)
 
 #endif /* RT_DEBUG */
 

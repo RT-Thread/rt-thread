@@ -100,11 +100,19 @@ void HAL_PWR_DeInit(void)
   *         backup data registers and backup SRAM).
   * @note If the HSE divided by 2, 3, ..31 is used as the RTC clock, the 
   *         Backup Domain Access should be kept enabled.
+  * @note The following sequence is required to bypass the delay between
+  *         DBP bit programming and the effective enabling  of the backup domain.
+  *         Please check the Errata Sheet for more details under "Possible delay
+  *         in backup domain protection disabling/enabling after programming the
+  *         DBP bit" section.
   * @retval None
   */
 void HAL_PWR_EnableBkUpAccess(void)
 {
+  __IO uint32_t dummyread;
   *(__IO uint32_t *) CR_DBP_BB = (uint32_t)ENABLE;
+  dummyread = PWR->CR;
+  UNUSED(dummyread);
 }
 
 /**
@@ -112,11 +120,19 @@ void HAL_PWR_EnableBkUpAccess(void)
   *         backup data registers and backup SRAM).
   * @note If the HSE divided by 2, 3, ..31 is used as the RTC clock, the 
   *         Backup Domain Access should be kept enabled.
+  * @note The following sequence is required to bypass the delay between
+  *         DBP bit programming and the effective disabling  of the backup domain.
+  *         Please check the Errata Sheet for more details under "Possible delay
+  *         in backup domain protection disabling/enabling after programming the
+  *         DBP bit" section.
   * @retval None
   */
 void HAL_PWR_DisableBkUpAccess(void)
 {
+  __IO uint32_t dummyread;
   *(__IO uint32_t *) CR_DBP_BB = (uint32_t)DISABLE;
+  dummyread = PWR->CR;
+  UNUSED(dummyread);
 }
 
 /**

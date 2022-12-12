@@ -9,11 +9,15 @@
  * 2020-04-12     Jianjia Ma   add msh cmd
  */
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 void list_dir(const char* path)
 {
-    char * fullpath;
+    char * fullpath = RT_NULL;
     DIR *dir;
 
     dir = opendir(path);
@@ -57,14 +61,16 @@ void list_dir(const char* path)
         rt_kprintf("open %s directory failed\n", path);
     }
 
-    rt_free(fullpath);
+    if (RT_NULL != fullpath)
+    {
+        rt_free(fullpath);
+    }
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(list_dir, list directory);
 
-#ifdef FINSH_USING_MSH
 static void cmd_list_dir(int argc, char *argv[])
 {
     char* filename;
@@ -80,6 +86,5 @@ static void cmd_list_dir(int argc, char *argv[])
     }
     list_dir(filename);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_list_dir, __cmd_list_dir, list directory);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(cmd_list_dir, list_dir, list directory);
 #endif /* RT_USING_FINSH */

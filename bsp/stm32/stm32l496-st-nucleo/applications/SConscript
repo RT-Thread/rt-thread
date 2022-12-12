@@ -1,19 +1,15 @@
 from building import *
+import os
 
-cwd     = GetCurrentDir()
-
-src = Split('''
-main.c
-''')
-
-if GetDepend(['BSP_USING_SPI_LCD']):
-    src += ['lcd_sample.c']
-
-if GetDepend(['PKG_USING_NRF24L01']):
-    src += ['nrf24l01_init.c']
-
-CPPPATH = [str(Dir('#')), cwd]
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

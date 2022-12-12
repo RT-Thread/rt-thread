@@ -1,21 +1,7 @@
 ;/*
-; * File      : context_iar.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * Copyright (c) 2006-2021, RT-Thread Development Team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
-; *  (at your option) any later version.
-; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
-; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -54,6 +40,8 @@ rt_hw_context_switch:
     STMFD   SP!, {LR}               ; push pc (lr should be pushed in place of PC)
     STMFD   SP!, {R0-R12, LR}       ; push lr & register file
     MRS     R4, CPSR
+    TST     LR, #0x01
+    ORRNE   R4, R4, #0x20           ; it's thumb code
     STMFD   SP!, {R4}               ; push cpsr
     STR     SP, [R0]                ; store sp in preempted tasks TCB
     LDR     SP, [R1]                ; get new task stack pointer
@@ -70,6 +58,8 @@ rt_hw_context_switch_to:
     LDR     SP, [R0]                ; get new task stack pointer
     LDMFD   SP!, {R4}               ; pop new task spsr
     MSR     SPSR_cxsf, R4
+    BIC     R4, R4, #0x20           ; must be ARM mode
+    MSR     CPSR_CXSF, R4
     LDMFD   SP!, {R0-R12, LR, PC}^  ; pop new task r0-r12, lr & pc
 
 /*

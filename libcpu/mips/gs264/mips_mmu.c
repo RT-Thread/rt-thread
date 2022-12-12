@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@ void mmu_init()
     uint32_t status = read_c0_status();
     status |= 0x07 << 5;//ux = 1,sx = 1,kx = 1
     write_c0_status(status);
-    
+
     mmu_clear_tlb();
     mmu_clear_itlb();
 }
@@ -154,7 +154,7 @@ void mmu_set_map(uint64_t vpn,uint64_t ppn,page_mask_enum_t page_mask,uint32_t a
     uint64_t even_vpn = vpn & (~lb);
     uint32_t index;
     tlb_item_t tlb_item,tlb2_item;
-    
+
     mmu_tlb_item_init(&tlb_item);
     mmu_tlb_item_init(&tlb2_item);
     tlb_item.page_mask.mask = page_mask;

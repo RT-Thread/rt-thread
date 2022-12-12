@@ -88,10 +88,10 @@ typedef struct
 typedef struct
 {
   uint32_t        PageSize;              /*!< NAND memory page (without spare area) size measured in bytes 
-                                              for 8 bits adressing or words for 16 bits addressing             */
+                                              for 8 bits addressing or words for 16 bits addressing            */
 
   uint32_t        SpareAreaSize;         /*!< NAND memory spare area size measured in bytes 
-                                              for 8 bits adressing or words for 16 bits addressing             */
+                                              for 8 bits addressing or words for 16 bits addressing            */
   
   uint32_t        BlockSize;             /*!< NAND memory block size measured in number of pages               */
 

@@ -25,9 +25,10 @@
 extern "C" {
 #endif
 
-#if defined(DSI)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
+
+#if defined(DSI)
 
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
@@ -347,6 +348,9 @@ typedef  void (*pDSI_CallbackTypeDef)(DSI_HandleTypeDef *hdsi);  /*!< pointer to
 #endif /* USE_HAL_DSI_REGISTER_CALLBACKS */
 
 /* Exported constants --------------------------------------------------------*/
+/** @defgroup DSI_Exported_Constants DSI Exported Constants
+  * @{
+  */
 /** @defgroup DSI_DCS_Command DSI DCS Command
   * @{
   */
@@ -908,10 +912,18 @@ typedef  void (*pDSI_CallbackTypeDef)(DSI_HandleTypeDef *hdsi);  /*!< pointer to
   * @}
   */
 
+/**
+  * @}
+  */
+
 /* Exported macros -----------------------------------------------------------*/
+/** @defgroup DSI_Exported_Macros DSI Exported Macros
+  * @{
+  */
+
 /**
   * @brief Reset DSI handle state.
-  * @param  __HANDLE__: DSI handle
+  * @param  __HANDLE__ DSI handle
   * @retval None
   */
 #if (USE_HAL_DSI_REGISTER_CALLBACKS == 1)
@@ -1100,6 +1112,10 @@ typedef  void (*pDSI_CallbackTypeDef)(DSI_HandleTypeDef *hdsi);  /*!< pointer to
   * @retval The state of INTERRUPT (SET or RESET).
   */
 #define __HAL_DSI_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((__HANDLE__)->Instance->WIER & (__INTERRUPT__))
+
+/**
+  * @}
+  */
 
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup DSI_Exported_Functions DSI Exported Functions

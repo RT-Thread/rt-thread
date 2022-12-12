@@ -39,11 +39,11 @@
 /** @defgroup RCC_LL_Private_Functions RCC Private functions
   * @{
   */
-uint32_t RCC_GetSystemClockFreq(void);
-uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency);
-uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency);
-uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency);
-uint32_t RCC_PLL_GetFreqDomain_SYS(void);
+static uint32_t RCC_GetSystemClockFreq(void);
+static uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency);
+static uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency);
+static uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency);
+static uint32_t RCC_PLL_GetFreqDomain_SYS(void);
 /**
   * @}
   */
@@ -199,7 +199,7 @@ void LL_RCC_GetSystemClocksFreq(LL_RCC_ClocksTypeDef *RCC_Clocks)
   * @brief  Return SYSTEM clock frequency
   * @retval SYSTEM clock frequency (in Hz)
   */
-uint32_t RCC_GetSystemClockFreq(void)
+static uint32_t RCC_GetSystemClockFreq(void)
 {
   uint32_t frequency;
 
@@ -235,7 +235,7 @@ uint32_t RCC_GetSystemClockFreq(void)
   * @param  SYSCLK_Frequency SYSCLK clock frequency
   * @retval HCLK clock frequency (in Hz)
   */
-uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)
+static uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)
 {
   /* HCLK clock frequency */
   return __LL_RCC_CALC_HCLK_FREQ(SYSCLK_Frequency, LL_RCC_GetAHBPrescaler());
@@ -246,7 +246,7 @@ uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)
   * @param  HCLK_Frequency HCLK clock frequency
   * @retval PCLK1 clock frequency (in Hz)
   */
-uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
+static uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
 {
   /* PCLK1 clock frequency */
   return __LL_RCC_CALC_PCLK1_FREQ(HCLK_Frequency, LL_RCC_GetAPB1Prescaler());
@@ -257,7 +257,7 @@ uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
   * @param  HCLK_Frequency HCLK clock frequency
   * @retval PCLK2 clock frequency (in Hz)
   */
-uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
+static uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
 {
   /* PCLK2 clock frequency */
   return __LL_RCC_CALC_PCLK2_FREQ(HCLK_Frequency, LL_RCC_GetAPB2Prescaler());
@@ -267,7 +267,7 @@ uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
   * @brief  Return PLL clock frequency used for system domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_SYS(void)
+static uint32_t RCC_PLL_GetFreqDomain_SYS(void)
 {
   uint32_t pllsource, pllinputfreq;
 

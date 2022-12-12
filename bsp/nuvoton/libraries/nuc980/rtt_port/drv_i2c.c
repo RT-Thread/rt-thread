@@ -100,20 +100,32 @@ static nu_i2c_bus_t nu_i2c_arr [ ] =
 static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num);
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus,
+                                   rt_uint32_t u32Cmd,
+                                   rt_uint32_t u32Value);
 
 static const struct rt_i2c_bus_device_ops nu_i2c_ops =
 {
     .master_xfer        = nu_i2c_mst_xfer,
     .slave_xfer         = NULL,
-    .i2c_bus_control    = NULL,
+    .i2c_bus_control    = nu_i2c_bus_control
 };
 
-static rt_err_t nu_i2c_configure(nu_i2c_bus_t *bus)
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u32Cmd, rt_uint32_t u32Value)
 {
-    RT_ASSERT(bus != RT_NULL);
+    nu_i2c_bus_t *nu_i2c;
 
-    bus->parent.ops = &nu_i2c_ops;
-    I2C_Open(bus->I2C, 100000);
+    RT_ASSERT(bus != RT_NULL);
+    nu_i2c = (nu_i2c_bus_t *) bus;
+
+    switch (u32Cmd)
+    {
+    case RT_I2C_DEV_CTRL_CLK:
+        I2C_SetBusClockFreq(nu_i2c->I2C, u32Value);
+        break;
+    default:
+        return -RT_EIO;
+    }
 
     return RT_EOK;
 }
@@ -376,11 +388,14 @@ int rt_hw_i2c_init(void)
 
     for (i = (I2C_START + 1); i < I2C_CNT; i++)
     {
-
         nu_sys_ipclk_enable(nu_i2c_arr[i].clkidx);
         nu_sys_ip_reset(nu_i2c_arr[i].rstidx);
 
-        nu_i2c_configure(&nu_i2c_arr[i]);
+        /* Reset and initial IP engine. */
+        I2C_Close(nu_i2c_arr[i].I2C);
+        I2C_Open(nu_i2c_arr[i].I2C, 100000);
+        nu_i2c_arr[i].parent.ops = &nu_i2c_ops;
+
         ret = rt_i2c_bus_device_register(&nu_i2c_arr[i].parent, nu_i2c_arr[i].device_name);
         RT_ASSERT(RT_EOK == ret);
     }

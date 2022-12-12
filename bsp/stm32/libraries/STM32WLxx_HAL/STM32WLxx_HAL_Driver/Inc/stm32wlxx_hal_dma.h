@@ -347,7 +347,7 @@ typedef struct __DMA_HandleTypeDef
 /** @defgroup DMA_Channel_Attributes DMA Channel Attributes
   * @brief DMA channel secure or non-secure and privileged or non-privileged attributes
   * @note Secure and non-secure attributes are only available from secure when the system
-  *       implements the security (TZEN=1)
+  *       implements the security (ESE=1)
   * @{
   */
 

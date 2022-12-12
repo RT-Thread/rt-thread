@@ -116,12 +116,16 @@ typedef struct
 /** 
   * @brief  DFSDM channel handle structure definition  
   */  
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 typedef struct __DFSDM_Channel_HandleTypeDef
+#else
+typedef struct
+#endif /* USE_HAL_DFSDM_REGISTER_CALLBACKS */
 {
   DFSDM_Channel_TypeDef          *Instance; /*!< DFSDM channel instance */
   DFSDM_Channel_InitTypeDef      Init;      /*!< DFSDM channel init parameters */
   HAL_DFSDM_Channel_StateTypeDef State;     /*!< DFSDM channel state */
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
   void (*CkabCallback)      (struct __DFSDM_Channel_HandleTypeDef *hdfsdm_channel); /*!< DFSDM channel clock absence detection callback */
   void (*ScdCallback)       (struct __DFSDM_Channel_HandleTypeDef *hdfsdm_channel); /*!< DFSDM channel short circuit detection callback */
   void (*MspInitCallback)   (struct __DFSDM_Channel_HandleTypeDef *hdfsdm_channel); /*!< DFSDM channel MSP init callback */
@@ -129,7 +133,7 @@ typedef struct __DFSDM_Channel_HandleTypeDef
 #endif
 }DFSDM_Channel_HandleTypeDef;
 
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 /**
   * @brief  DFSDM channel callback ID enumeration definition
   */
@@ -212,7 +216,11 @@ typedef struct
 /** 
   * @brief  DFSDM filter handle structure definition  
   */  
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 typedef struct __DFSDM_Filter_HandleTypeDef
+#else
+typedef struct
+#endif /* USE_HAL_DFSDM_REGISTER_CALLBACKS */
 {
   DFSDM_Filter_TypeDef          *Instance;           /*!< DFSDM filter instance */
   DFSDM_Filter_InitTypeDef      Init;                /*!< DFSDM filter init parameters */
@@ -227,7 +235,7 @@ typedef struct __DFSDM_Filter_HandleTypeDef
   uint32_t                      InjConvRemaining;    /*!< Injected conversions remaining */
   HAL_DFSDM_Filter_StateTypeDef State;               /*!< DFSDM filter state */
   uint32_t                      ErrorCode;           /*!< DFSDM filter error code */  
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
   void (*AwdCallback)             (struct __DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
                                    uint32_t Channel, uint32_t Threshold);               /*!< DFSDM filter analog watchdog callback */
   void (*RegConvCpltCallback)     (struct __DFSDM_Filter_HandleTypeDef *hdfsdm_filter); /*!< DFSDM filter regular conversion complete callback */
@@ -259,7 +267,7 @@ typedef struct
                                  This parameter can be a values combination of @ref DFSDM_BreakSignals */
 }DFSDM_Filter_AwdParamTypeDef;
 
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 /**
   * @brief  DFSDM filter callback ID enumeration definition
   */
@@ -437,7 +445,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
 #define DFSDM_FILTER_ERROR_REGULAR_OVERRUN  0x00000001U /*!< Overrun occurs during regular conversion */
 #define DFSDM_FILTER_ERROR_INJECTED_OVERRUN 0x00000002U /*!< Overrun occurs during injected conversion */
 #define DFSDM_FILTER_ERROR_DMA              0x00000003U /*!< DMA error occurs */
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 #define DFSDM_FILTER_ERROR_INVALID_CALLBACK 0x00000004U /*!< Invalid callback error occurs */
 #endif
 /**
@@ -511,7 +519,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
   * @param  __HANDLE__ DFSDM channel handle.
   * @retval None
   */
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 #define __HAL_DFSDM_CHANNEL_RESET_HANDLE_STATE(__HANDLE__) do{                                                      \
                                                                (__HANDLE__)->State = HAL_DFSDM_CHANNEL_STATE_RESET; \
                                                                (__HANDLE__)->MspInitCallback = NULL;                \
@@ -525,7 +533,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
   * @param  __HANDLE__ DFSDM filter handle.
   * @retval None
   */
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 #define __HAL_DFSDM_FILTER_RESET_HANDLE_STATE(__HANDLE__) do{                                                     \
                                                               (__HANDLE__)->State = HAL_DFSDM_FILTER_STATE_RESET; \
                                                               (__HANDLE__)->MspInitCallback = NULL;               \
@@ -557,7 +565,7 @@ HAL_StatusTypeDef HAL_DFSDM_ChannelDeInit(DFSDM_Channel_HandleTypeDef *hdfsdm_ch
 void HAL_DFSDM_ChannelMspInit(DFSDM_Channel_HandleTypeDef *hdfsdm_channel);
 void HAL_DFSDM_ChannelMspDeInit(DFSDM_Channel_HandleTypeDef *hdfsdm_channel);
 
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 /* Channel callbacks register/unregister functions ****************************/
 HAL_StatusTypeDef HAL_DFSDM_Channel_RegisterCallback(DFSDM_Channel_HandleTypeDef        *hdfsdm_channel,
                                                      HAL_DFSDM_Channel_CallbackIDTypeDef CallbackID,
@@ -613,7 +621,7 @@ HAL_StatusTypeDef HAL_DFSDM_FilterDeInit(DFSDM_Filter_HandleTypeDef *hdfsdm_filt
 void HAL_DFSDM_FilterMspInit(DFSDM_Filter_HandleTypeDef *hdfsdm_filter);
 void HAL_DFSDM_FilterMspDeInit(DFSDM_Filter_HandleTypeDef *hdfsdm_filter);
 
-#if defined (USE_HAL_DFSDM_REGISTER_CALLBACKS) && (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1U)
+#if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 /* Filter callbacks register/unregister functions ****************************/
 HAL_StatusTypeDef HAL_DFSDM_Filter_RegisterCallback(DFSDM_Filter_HandleTypeDef        *hdfsdm_filter,
                                                     HAL_DFSDM_Filter_CallbackIDTypeDef CallbackID,

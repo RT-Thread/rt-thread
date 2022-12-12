@@ -14,10 +14,26 @@
   * @date    13 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          13 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
-  *********************************************************************************
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  **********************************************************************************
   @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -56,7 +72,7 @@
   * @endverbatim
   */
 
-#include "ald_spi.h"
+#include "ald_conf.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -130,6 +146,7 @@ static void spi_dma_send_recv_cplt(void *arg);
   */
 void ald_spi_reset(spi_handle_t *hperh)
 {
+	SPI_DISABLE(hperh);
 	hperh->perh->CON1    = 0x0;
 	hperh->perh->CON2    = 0x0;
 	hperh->perh->CRCPOLY = 0x00000007;
@@ -278,7 +295,7 @@ int32_t ald_spi_send_byte_fast(spi_handle_t *hperh, uint8_t data)
 int32_t ald_spi_send_byte_fast_1line(spi_handle_t *hperh, uint8_t data)
 {
 	uint16_t cnt = 5000;
-
+	
 	while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
 	hperh->perh->DATA = data;
 	while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
@@ -964,6 +981,23 @@ ald_status_t ald_spi_send_recv_by_it(spi_handle_t *hperh, uint8_t *tx_buf, uint8
 		return BUSY;
 	if (tx_buf == NULL || rx_buf == NULL || size == 0)
 		return ERROR;
+
+	if (hperh->init.mode == SPI_MODE_SLAVER) {
+		if ((spi_get_status(hperh, SPI_STATUS_TXE) == RESET) || (spi_get_status(hperh, SPI_STATUS_RXE) == RESET)) {
+
+			if (hperh->perh == SPI0)
+				ald_rmu_reset_periperal(RMU_PERH_SPI0);
+			else if (hperh->perh == SPI1)
+				ald_rmu_reset_periperal(RMU_PERH_SPI1);
+			else if (hperh->perh == SPI2)
+				ald_rmu_reset_periperal(RMU_PERH_SPI2);
+			else
+				return  ERROR;
+				
+			ald_spi_reset(hperh);
+			ald_spi_init(hperh);
+		}
+	}
 
 	__LOCK(hperh);
 	hperh->state    = SPI_STATE_BUSY_TX_RX;

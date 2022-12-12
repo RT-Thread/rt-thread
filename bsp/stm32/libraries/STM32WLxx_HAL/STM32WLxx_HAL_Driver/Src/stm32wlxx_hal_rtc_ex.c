@@ -282,6 +282,12 @@ HAL_StatusTypeDef HAL_RTCEx_DeactivateTimeStamp(RTC_HandleTypeDef *hrtc)
   /* In case of interrupt mode is used, the interrupt source must disabled */
   CLEAR_BIT(RTC->CR, (RTC_CR_TSEDGE | RTC_CR_TSE | RTC_CR_TSIE));
 
+  /* Clear timestamp flag only if internal timestamp flag not set */
+  if( READ_BIT( RTC->SR, RTC_SR_ITSF) == 0U )
+  {
+    WRITE_REG(RTC->SCR, RTC_SCR_CTSF);
+  }
+
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
 
@@ -341,6 +347,16 @@ HAL_StatusTypeDef HAL_RTCEx_DeactivateInternalTimeStamp(RTC_HandleTypeDef *hrtc)
 
   /* Configure the internal Time Stamp Enable bits */
   CLEAR_BIT(RTC->CR, RTC_CR_ITSE);
+
+  /* Clear internal timestamp flag if Timestamp not enabled and TSOVF not set */
+  WRITE_REG(RTC->SCR, RTC_SCR_CITSF);
+  if ( READ_BIT(RTC->SR, RTC_SR_TSOVF) == 0U )
+  {
+    if ( READ_BIT(RTC->CR, RTC_CR_TSE) == 0U ) 
+    {
+      WRITE_REG(RTC->SCR, RTC_SCR_CTSF);
+    }
+  }
 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
@@ -709,6 +725,9 @@ HAL_StatusTypeDef HAL_RTCEx_DeactivateWakeUpTimer(RTC_HandleTypeDef *hrtc)
       return HAL_TIMEOUT;
     }
   }
+
+  /* Clear wakeup timer flag */
+  WRITE_REG(RTC->SCR, RTC_SCR_CWUTF);
 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
@@ -1354,6 +1373,9 @@ HAL_StatusTypeDef HAL_RTCEx_DeactivateSSRU(RTC_HandleTypeDef *hrtc)
 
   /* In case of interrupt mode is used, the interrupt source must disabled */
   __HAL_RTC_SSRU_DISABLE_IT(hrtc, RTC_IT_TS);
+
+  /* Clear SSR underflow flag */
+  WRITE_REG(RTC->SCR, RTC_SCR_CSSRUF);
 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);

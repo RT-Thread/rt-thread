@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-11-15     xckhmf       First Verison
+ * 2021-11-27     chenyingchun fix _master_xfer bug
  *
  */
 
@@ -56,35 +57,53 @@ static int twi_master_init(struct rt_i2c_bus_device *bus)
     nrfx_twi_twim_bus_recover(config.scl,config.sda);
 
     rtn = nrfx_twim_init(p_instance,&config,NULL,NULL);
+    if (rtn != NRFX_SUCCESS)
+    {
+        return rtn;
+    }
     nrfx_twim_enable(p_instance);
     return 0;
 }
 
 static rt_size_t _master_xfer(struct rt_i2c_bus_device *bus,
-                                struct rt_i2c_msg msgs[],
-                                rt_uint32_t num)
+                              struct rt_i2c_msg msgs[],
+                              rt_uint32_t num)
 {
-    nrfx_twim_t const * p_instance = &((drv_i2c_cfg_t *)bus->priv)->twi_instance;
+    struct rt_i2c_msg *msg;
+    nrfx_twim_t const *p_instance = &((drv_i2c_cfg_t *)bus->priv)->twi_instance;
     nrfx_err_t ret = NRFX_ERROR_INTERNAL;
     uint32_t no_stop_flag = 0;
+    rt_int32_t i = 0;
 
-    nrfx_twim_xfer_desc_t xfer = NRFX_TWIM_XFER_DESC_TX(msgs->addr,msgs->buf, msgs->len);
-    if((msgs->flags & 0x01) == RT_I2C_WR)
+    for (i = 0; i < num; i++)
     {
-        xfer.type = NRFX_TWIM_XFER_TX;
-        if((msgs->flags & 0x40) == RT_I2C_NO_READ_ACK)
+        msg = &msgs[i];
+        nrfx_twim_xfer_desc_t xfer = NRFX_TWIM_XFER_DESC_TX(msg->addr, msg->buf, msg->len);
+
+        if (msg->flags & RT_I2C_RD)
         {
-            no_stop_flag = NRFX_TWIM_FLAG_TX_NO_STOP;
+            xfer.type = NRFX_TWIM_XFER_RX;
+        }
+        else
+        {
+            xfer.type = NRFX_TWIM_XFER_TX;
+            if (msg->flags & RT_I2C_NO_READ_ACK)
+            {
+                no_stop_flag = NRFX_TWIM_FLAG_TX_NO_STOP;
+            }
+        }
+
+        ret = nrfx_twim_xfer(p_instance, &xfer, no_stop_flag);
+        if (ret != NRFX_SUCCESS)
+        {
+            goto out;
         }
     }
-    else if((msgs->flags & 0x01) == RT_I2C_RD)
-    {
-        xfer.type = NRFX_TWIM_XFER_RX;
-    }
-    ret = nrfx_twim_xfer(p_instance,&xfer,no_stop_flag);
-    return (ret == NRFX_SUCCESS) ? msgs->len : 0;
 
+out:
+    return i;
 }
+
 
 static const struct rt_i2c_bus_device_ops _i2c_ops =
 {

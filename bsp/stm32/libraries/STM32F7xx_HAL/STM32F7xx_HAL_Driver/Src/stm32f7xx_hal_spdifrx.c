@@ -93,7 +93,7 @@
 
   The compilation define  USE_HAL_SPDIFRX_REGISTER_CALLBACKS when set to 1
   allows the user to configure dynamically the driver callbacks.
-  Use HAL_SPDIFRX_RegisterCallback() funtion to register an interrupt callback.
+  Use HAL_SPDIFRX_RegisterCallback() function to register an interrupt callback.
 
   The HAL_SPDIFRX_RegisterCallback() function allows to register the following callbacks:
     (+) RxHalfCpltCallback  : SPDIFRX Data flow half completed callback.
@@ -841,7 +841,7 @@ HAL_StatusTypeDef HAL_SPDIFRX_ReceiveControlFlow(SPDIFRX_HandleTypeDef *hspdif, 
   */
 HAL_StatusTypeDef HAL_SPDIFRX_ReceiveDataFlow_IT(SPDIFRX_HandleTypeDef *hspdif, uint32_t *pData, uint16_t Size)
 {
-  register uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
+  uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
 
   const HAL_SPDIFRX_StateTypeDef tempState = hspdif->State;
 
@@ -926,7 +926,7 @@ HAL_StatusTypeDef HAL_SPDIFRX_ReceiveDataFlow_IT(SPDIFRX_HandleTypeDef *hspdif, 
   */
 HAL_StatusTypeDef HAL_SPDIFRX_ReceiveControlFlow_IT(SPDIFRX_HandleTypeDef *hspdif, uint32_t *pData, uint16_t Size)
 {
-  register uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
+  uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
 
   const HAL_SPDIFRX_StateTypeDef tempState = hspdif->State;
 
@@ -1011,7 +1011,7 @@ HAL_StatusTypeDef HAL_SPDIFRX_ReceiveControlFlow_IT(SPDIFRX_HandleTypeDef *hspdi
   */
 HAL_StatusTypeDef HAL_SPDIFRX_ReceiveDataFlow_DMA(SPDIFRX_HandleTypeDef *hspdif, uint32_t *pData, uint16_t Size)
 {
-  register uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
+  uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
 
   const HAL_SPDIFRX_StateTypeDef tempState = hspdif->State;
 
@@ -1112,7 +1112,7 @@ HAL_StatusTypeDef HAL_SPDIFRX_ReceiveDataFlow_DMA(SPDIFRX_HandleTypeDef *hspdif,
   */
 HAL_StatusTypeDef HAL_SPDIFRX_ReceiveControlFlow_DMA(SPDIFRX_HandleTypeDef *hspdif, uint32_t *pData, uint16_t Size)
 {
-  register uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
+  uint32_t count = SPDIFRX_TIMEOUT_VALUE * (SystemCoreClock / 24U / 1000U);
 
   const HAL_SPDIFRX_StateTypeDef tempState = hspdif->State;
 

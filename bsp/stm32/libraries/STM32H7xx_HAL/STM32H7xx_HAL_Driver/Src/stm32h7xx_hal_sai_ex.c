@@ -75,9 +75,13 @@ HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_Pdm
   SAI_TypeDef *SaiBaseAddress;
 
   /* Get the SAI base address according to the SAI handle */
-  SaiBaseAddress = (hsai->Instance == SAI1_Block_A) ? SAI1 : \
-                   ((hsai->Instance == SAI4_Block_A) ? SAI4 : \
+#if defined(SAI4)
+  SaiBaseAddress = ((hsai->Instance == SAI1_Block_A) ? SAI1 : \
+                    (hsai->Instance == SAI4_Block_A) ? SAI4 : \
                      NULL);
+#else
+  SaiBaseAddress = ((hsai->Instance == SAI1_Block_A) ? SAI1 : NULL);
+#endif /* SAI4 */
 
   /* Check that SAI sub-block is SAI sub-block A */
   if (SaiBaseAddress == NULL)

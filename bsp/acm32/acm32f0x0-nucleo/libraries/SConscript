@@ -1,0 +1,41 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+src = Split("""
+Device/System_ACM32F0x0.c
+HAL_Driver/Src/HAL_DMA.c
+HAL_Driver/Src/HAL_ADC.c
+HAL_Driver/Src/HAL_GPIO.c
+HAL_Driver/Src/HAL_WDT.c
+HAL_Driver/Src/HAL_IWDT.c
+HAL_Driver/Src/HAL_UART.c
+HAL_Driver/Src/HAL_TIMER.c
+HAL_Driver/Src/HAL_EXTI.c
+HAL_Driver/Src/HAL_RTC.c
+HAL_Driver/Src/HAL_SPI.c
+HAL_Driver/Src/HAL_I2C.c
+HAL_Driver/Src/HAL_CRC.c
+""")
+
+
+libpath = ['.', cwd + '/Device', cwd + '/HAL_Driver/Src']
+libs = []
+
+if rtconfig.PLATFORM in ['gcc']:
+    src = src + ['Device/Startup_ACM32F0x0_gcc.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src = src + ['Device/Startup_ACM32F0x0.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src = src + ['Device/Startup_ACM32F0x0_iar.s']
+
+path = [cwd + '/HAL_Driver/Inc',
+    cwd + '/Device',
+    cwd + '/CMSIS']
+
+group = DefineGroup('ACM32_HAL', src, depend = [''], CPPPATH = path, LIBS = libs, LIBPATH = libpath)
+
+Return('group')

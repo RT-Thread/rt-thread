@@ -54,12 +54,12 @@ struct hwcrypto_symmetric_info
 struct hwcrypto_symmetric
 {
     struct rt_hwcrypto_ctx parent;                      /**< Inheritance from hardware crypto context */
-    rt_uint32_t flags;                                  /**< key or iv or ivoff has been changed. The flag will be set up */
-    rt_int32_t iv_len;                                  /**< initialization vector effective length */
-    rt_int32_t iv_off;                                  /**< The offset in IV */
+    rt_uint16_t flags;                                  /**< key or iv or ivoff has been changed. The flag will be set up */
+    rt_uint16_t iv_len;                                 /**< initialization vector effective length */
+    rt_uint16_t iv_off;                                 /**< The offset in IV */
+    rt_uint16_t key_bitlen;                             /**< The crypto key bit length */
     rt_uint8_t iv[RT_HWCRYPTO_IV_MAX_SIZE];             /**< The initialization vector */
     rt_uint8_t key[RT_HWCRYPTO_KEYBIT_MAX_SIZE >> 3];   /**< The crypto key */
-    rt_int32_t key_bitlen;                              /**< The crypto key bit length */
     const struct hwcrypto_symmetric_ops *ops;           /**< !! Hardware initializes this value when creating context !! */
 };
 

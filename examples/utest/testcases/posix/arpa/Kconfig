@@ -1,0 +1,1 @@
+source "$RTT_DIR/examples/utest/testcases/posix/arpa/inet_h/Kconfig"

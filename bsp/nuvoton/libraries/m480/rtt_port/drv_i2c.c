@@ -81,20 +81,32 @@ static nu_i2c_bus_t nu_i2c2 =
 static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num);
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus,
+                                   rt_uint32_t u32Cmd,
+                                   rt_uint32_t u32Value);
 
 static const struct rt_i2c_bus_device_ops nu_i2c_ops =
 {
     .master_xfer        = nu_i2c_mst_xfer,
     .slave_xfer         = NULL,
-    .i2c_bus_control    = NULL,
+    .i2c_bus_control    = nu_i2c_bus_control
 };
 
-static rt_err_t nu_i2c_configure(nu_i2c_bus_t *bus)
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u32Cmd, rt_uint32_t u32Value)
 {
-    RT_ASSERT(bus != RT_NULL);
+    nu_i2c_bus_t *nu_i2c;
 
-    bus->parent.ops = &nu_i2c_ops;
-    I2C_Open(bus->I2C, 100000);
+    RT_ASSERT(bus != RT_NULL);
+    nu_i2c = (nu_i2c_bus_t *) bus;
+
+    switch (u32Cmd)
+    {
+    case RT_I2C_DEV_CTRL_CLK:
+        I2C_SetBusClockFreq(nu_i2c->I2C, u32Value);
+        break;
+    default:
+        return -RT_EIO;
+    }
 
     return RT_EOK;
 }
@@ -354,35 +366,37 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 int rt_hw_i2c_init(void)
 {
     rt_err_t ret = RT_ERROR;
-#if   defined(BSP_USING_I2C0)
+
     SYS_UnlockReg();
-    /* Enable I2C0 clock */
-    SYS_ResetModule(I2C0_RST);
-    SYS_LockReg();
-    nu_i2c_configure(&nu_i2c0);
+
+#if   defined(BSP_USING_I2C0)
+    I2C_Close(nu_i2c0.I2C);
+    I2C_Open(nu_i2c0.I2C, 100000);
+    nu_i2c0.parent.ops = &nu_i2c_ops;
+
     ret = rt_i2c_bus_device_register(&nu_i2c0.parent, nu_i2c0.device_name);
     RT_ASSERT(RT_EOK == ret);
 #endif  /* BSP_USING_I2C0 */
 
 #if   defined(BSP_USING_I2C1)
-    SYS_UnlockReg();
-    /* Enable I2C1 clock */
-    SYS_ResetModule(I2C1_RST);
-    SYS_LockReg();
-    nu_i2c_configure(&nu_i2c1);
+    I2C_Close(nu_i2c1.I2C);
+    I2C_Open(nu_i2c1.I2C, 100000);
+    nu_i2c1.parent.ops = &nu_i2c_ops;
+
     ret = rt_i2c_bus_device_register(&nu_i2c1.parent, nu_i2c1.device_name);
     RT_ASSERT(RT_EOK == ret);
 #endif  /* BSP_USING_I2C1 */
 
 #if   defined(BSP_USING_I2C2)
-    SYS_UnlockReg();
-    /* Enable I2C2 clock */
-    SYS_ResetModule(I2C2_RST);
-    SYS_LockReg();
-    nu_i2c_configure(&nu_i2c2);
+    I2C_Close(nu_i2c2.I2C);
+    I2C_Open(nu_i2c2.I2C, 100000);
+    nu_i2c2.parent.ops = &nu_i2c_ops;
+
     ret = rt_i2c_bus_device_register(&nu_i2c2.parent, nu_i2c2.device_name);
     RT_ASSERT(RT_EOK == ret);
 #endif  /* BSP_USING_I2C2 */
+
+    SYS_LockReg();
 
     return ret;
 }

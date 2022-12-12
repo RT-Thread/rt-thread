@@ -52,7 +52,7 @@ bool DVK_init(void)
 #endif
 #ifdef DVK_SPI_CONTROL
   ret = DVK_SPI_init();
-#endif  
+#endif
   if ( ret == false )
   {
     /* Board is configured in wrong mode, please restart KIT! */

@@ -32,6 +32,10 @@ enum
 #define RTC_CON_BAUD_SELECT                 (0x3u <<  1)    /*!< Increase clock selection           */
 #define RTC_CON_CHIP_SELECT                 (0x1u <<  0)    /*!< RTC chip select                    */
 
+// RTCCPND
+#define RTC_CPND_1S                         (0x1u <<  18)    /*!< Clear RTC 1S pending              */
+#define RTC_CPND_ALM                        (0x1u <<  17)    /*!< Clear RTC alarm pendind           */
+
 // RTCCON0
 #define RTC_CON0_PWRUP_FIRST                (0x01u << 7)    /*!< RTC first power up flag            */
 #define RTC_CON0_INTERNAL_32K               (0x01u << 6)    /*!< Internal 32K select                */

@@ -350,16 +350,14 @@ static rt_err_t gd32vf_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         return RT_ENOSYS;
     }
 
-        /* configure pin as input */
-    gpio_init(index->gpio_periph, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, index->pin);
+    irqindex = bit2bitno(index->pin);
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    {
+        return RT_ENOSYS;
+    }
+
     if (enabled == PIN_IRQ_ENABLE)
     {
-        irqindex = bit2bitno(index->pin);
-        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
-        {
-            return RT_ENOSYS;
-        }
-
         level = rt_hw_interrupt_disable();
 
         if (pin_irq_hdr_tab[irqindex].pin == -1)
@@ -372,24 +370,31 @@ static rt_err_t gd32vf_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         /* enable and set EXTI interrupt to the lowest priority */
         eclic_irq_enable(irqmap->irqno, 1, 1);
-        gpio_exti_source_select(GPIO_PORT_SOURCE_GPIOA, GPIO_PIN_SOURCE_0);
+        /* select SOURCE_PORT_x and SOURCE_PIN_x */
+        gpio_exti_source_select(index->index >> 4, irqindex);
         /* Configure GPIO_InitStructure */
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
         case PIN_IRQ_MODE_RISING:
+            gpio_init( index->gpio_periph, GPIO_MODE_IPD, GPIO_OSPEED_50MHZ,
+                     index->pin );
             exti_init(EXTI_(irqindex), EXTI_INTERRUPT, EXTI_TRIG_RISING);
             break;
         case PIN_IRQ_MODE_FALLING:
+            gpio_init( index->gpio_periph, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ,
+                     index->pin );
             exti_init(EXTI_(irqindex), EXTI_INTERRUPT, EXTI_TRIG_FALLING);
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
+            gpio_init(index->gpio_periph, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ,
+                     index->pin);
             exti_init(EXTI_(irqindex), EXTI_INTERRUPT, EXTI_TRIG_BOTH);
             break;
         }
 
         pin_irq_enable_mask |= irqmap->pinbit;
-
-        exti_interrupt_flag_clear(EXTI_(index->pin));
+        /* irqindex should be bitno and then EXTI_(x) can be the bit */
+        exti_interrupt_flag_clear(EXTI_(irqindex));
 
         rt_hw_interrupt_enable(level);
     }
@@ -408,7 +413,7 @@ static rt_err_t gd32vf_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         pin_irq_enable_mask &= ~irqmap->pinbit;
 
         eclic_irq_disable(irqmap->irqno);
-        exti_interrupt_flag_clear(EXTI_(index->pin));
+        exti_interrupt_flag_clear(EXTI_(irqindex));
 
         rt_hw_interrupt_enable(level);
     }
@@ -553,10 +558,6 @@ void EXTI10_15_IRQHandler(void)
 
 int rt_hw_pin_init(void)
 {
-    /* enable the global interrupt */
-    eclic_global_interrupt_enable();
-    eclic_priority_group_set(ECLIC_PRIGROUP_LEVEL3_PRIO1);
-
     rcu_periph_clock_enable(RCU_GPIOA);
     rcu_periph_clock_enable(RCU_GPIOB);
     rcu_periph_clock_enable(RCU_GPIOC);

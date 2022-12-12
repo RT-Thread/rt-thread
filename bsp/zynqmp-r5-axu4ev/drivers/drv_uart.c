@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,7 +21,7 @@
 
 #define XUARTPS_MAX_RATE    921600U
 #define XUARTPS_MIN_RATE    110U
-#define XUARTPS_MAX_BAUD_ERROR_RATE     3U	/* max % error allowed */
+#define XUARTPS_MAX_BAUD_ERROR_RATE     3U    /* max % error allowed */
 
 #define ZynqMP_UART_INT_DISABLE(UART)       \
     (UART->IER &= ~(UART_IXR_RXOVR | UART_IXR_RXFULL))
@@ -92,12 +92,12 @@ static void rt_hw_uart_isr(int irqno, void *param)
 
 static rt_err_t XUartPsSetBandRate(struct hw_uart_device *pdev, rt_uint32_t targetBandRate)
 {
-    rt_uint32_t IterBAUDDIV;	/* Iterator for available baud divisor values */
-    rt_uint32_t BRGR_Value;		/* Calculated value for baud rate generator */
-    rt_uint32_t CalcBaudRate;	/* Calculated baud rate */
-    rt_uint32_t BaudError;		/* Diff between calculated and requested baud rate */
-    rt_uint32_t Best_BRGR = 0U;	/* Best value for baud rate generator */
-    rt_uint8_t Best_BAUDDIV = 0U;	/* Best value for baud divisor */
+    rt_uint32_t IterBAUDDIV;    /* Iterator for available baud divisor values */
+    rt_uint32_t BRGR_Value;        /* Calculated value for baud rate generator */
+    rt_uint32_t CalcBaudRate;    /* Calculated baud rate */
+    rt_uint32_t BaudError;        /* Diff between calculated and requested baud rate */
+    rt_uint32_t Best_BRGR = 0U;    /* Best value for baud rate generator */
+    rt_uint8_t Best_BAUDDIV = 0U;    /* Best value for baud divisor */
     rt_uint32_t Best_Error = 0xFFFFFFFFU;
     rt_uint32_t PercentError;
     rt_uint32_t ModeReg;

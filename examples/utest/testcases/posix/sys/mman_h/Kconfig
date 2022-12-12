@@ -1,0 +1,31 @@
+menuconfig RTT_POSIX_TESTCASE_SYS_MMAN_H
+    bool "<sys/mman.h>"
+    default n
+
+if RTT_POSIX_TESTCASE_SYS_MMAN_H
+
+    config MMAN_H_MLOCK
+        bool "<sys/mman.h> -> mlock"
+        default n
+
+    config MMAN_H_MMAP
+        bool "<sys/mman.h> -> mmap"
+        default n
+
+    config MMAN_H_MPROTECT
+        bool "<sys/mman.h> -> mprotect"
+        default n
+
+    config MMAN_H_MSYNC
+        bool "<sys/mman.h> -> msync"
+        default n
+
+    config MMAN_H_MUNLOCK
+        bool "<sys/mman.h> -> munlock"
+        default n
+
+    config MMAN_H_MUNMAP
+        bool "<sys/mman.h> -> munmap"
+        default n
+
+endif

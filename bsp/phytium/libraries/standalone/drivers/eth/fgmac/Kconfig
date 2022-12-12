@@ -1,0 +1,13 @@
+choice FGMAC_PHY_TYPE
+    prompt "PHY Type"
+    default FGMAC_PHY_COMMON
+    help
+        Select PHY for FGMAC
+
+    config FGMAC_PHY_COMMON
+        bool "Common"
+    config FGMAC_PHY_AR803X
+        bool "AR803X"
+
+endchoice # FGMAC_PHY_TYPE
+

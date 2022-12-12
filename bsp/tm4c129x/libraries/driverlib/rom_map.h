@@ -3,25 +3,25 @@
 // rom_map.h - Macros to facilitate calling functions in the ROM when they are
 //             available and in flash otherwise.
 //
-// Copyright (c) 2008-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2008-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,8 +33,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1703,12 +1703,33 @@
 #define MAP_FlashUserSet                                                      \
         FlashUserSet
 #endif
+#ifdef ROM_FlashAllUserRegisterGet
+#define MAP_FlashAllUserRegisterGet                                           \
+        ROM_FlashAllUserRegisterGet
+#else
+#define MAP_FlashAllUserRegisterGet                                           \
+        FlashAllUserRegisterGet
+#endif
+#ifdef ROM_FlashAllUserRegisterSet
+#define MAP_FlashAllUserRegisterSet                                           \
+        ROM_FlashAllUserRegisterSet
+#else
+#define MAP_FlashAllUserRegisterSet                                           \
+        FlashAllUserRegisterSet
+#endif
 #ifdef ROM_FlashUserSave
 #define MAP_FlashUserSave                                                     \
         ROM_FlashUserSave
 #else
 #define MAP_FlashUserSave                                                     \
         FlashUserSave
+#endif
+#ifdef ROM_FlashAllUserRegisterSave
+#define MAP_FlashAllUserRegisterSave                                          \
+        ROM_FlashAllUserRegisterSave
+#else
+#define MAP_FlashAllUserRegisterSave                                          \
+        FlashAllUserRegisterSave
 #endif
 #ifdef ROM_FlashIntEnable
 #define MAP_FlashIntEnable                                                    \
@@ -1883,6 +1904,41 @@
 #define MAP_GPIOPinTypeComparator                                             \
         GPIOPinTypeComparator
 #endif
+#ifdef ROM_GPIOPinTypeComparatorOutput
+#define MAP_GPIOPinTypeComparatorOutput                                       \
+        ROM_GPIOPinTypeComparatorOutput
+#else
+#define MAP_GPIOPinTypeComparatorOutput                                       \
+        GPIOPinTypeComparatorOutput
+#endif
+#ifdef ROM_GPIOPinTypeDIVSCLK
+#define MAP_GPIOPinTypeDIVSCLK                                                \
+        ROM_GPIOPinTypeDIVSCLK
+#else
+#define MAP_GPIOPinTypeDIVSCLK                                                \
+        GPIOPinTypeDIVSCLK
+#endif
+#ifdef ROM_GPIOPinTypeEPI
+#define MAP_GPIOPinTypeEPI                                                    \
+        ROM_GPIOPinTypeEPI
+#else
+#define MAP_GPIOPinTypeEPI                                                    \
+        GPIOPinTypeEPI
+#endif
+#ifdef ROM_GPIOPinTypeEthernetLED
+#define MAP_GPIOPinTypeEthernetLED                                            \
+        ROM_GPIOPinTypeEthernetLED
+#else
+#define MAP_GPIOPinTypeEthernetLED                                            \
+        GPIOPinTypeEthernetLED
+#endif
+#ifdef ROM_GPIOPinTypeEthernetMII
+#define MAP_GPIOPinTypeEthernetMII                                            \
+        ROM_GPIOPinTypeEthernetMII
+#else
+#define MAP_GPIOPinTypeEthernetMII                                            \
+        GPIOPinTypeEthernetMII
+#endif
 #ifdef ROM_GPIOPinTypeGPIOInput
 #define MAP_GPIOPinTypeGPIOInput                                              \
         ROM_GPIOPinTypeGPIOInput
@@ -1896,6 +1952,13 @@
 #else
 #define MAP_GPIOPinTypeGPIOOutput                                             \
         GPIOPinTypeGPIOOutput
+#endif
+#ifdef ROM_GPIOPinTypeHibernateRTCCLK
+#define MAP_GPIOPinTypeHibernateRTCCLK                                        \
+        ROM_GPIOPinTypeHibernateRTCCLK
+#else
+#define MAP_GPIOPinTypeHibernateRTCCLK                                        \
+        GPIOPinTypeHibernateRTCCLK
 #endif
 #ifdef ROM_GPIOPinTypeI2C
 #define MAP_GPIOPinTypeI2C                                                    \
@@ -1931,6 +1994,13 @@
 #else
 #define MAP_GPIOPinTypeTimer                                                  \
         GPIOPinTypeTimer
+#endif
+#ifdef ROM_GPIOPinTypeTrace
+#define MAP_GPIOPinTypeTrace                                                  \
+        ROM_GPIOPinTypeTrace
+#else
+#define MAP_GPIOPinTypeTrace                                                  \
+        GPIOPinTypeTrace
 #endif
 #ifdef ROM_GPIOPinTypeUART
 #define MAP_GPIOPinTypeUART                                                   \
@@ -2058,12 +2128,47 @@
 #define MAP_GPIOIntStatus                                                     \
         GPIOIntStatus
 #endif
+#ifdef ROM_GPIOIntRegister
+#define MAP_GPIOIntRegiste                                                    \
+        ROM_GPIOIntRegister
+#else
+#define MAP_GPIOIntRegister                                                   \
+        GPIOIntRegister
+#endif
+#ifdef ROM_GPIOIntUnregister
+#define MAP_GPIOIntUnregister                                                 \
+        ROM_GPIOIntUnregister
+#else
+#define MAP_GPIOIntUnregister                                                 \
+        GPIOIntUnregister
+#endif
+#ifdef ROM_GPIOIntRegisterPin
+#define MAP_GPIOIntRegisterPin                                                \
+        ROM_GPIOIntRegisterPin
+#else
+#define MAP_GPIOIntRegisterPin                                                \
+        GPIOIntRegisterPin
+#endif
+#ifdef ROM_GPIOIntUnregisterPin
+#define MAP_GPIOIntUnregisterPin                                              \
+        ROM_GPIOIntUnregisterPin
+#else
+#define MAP_GPIOIntUnregisterPin                                              \
+        GPIOIntUnregisterPin
+#endif
 #ifdef ROM_GPIOPinWakeStatus
 #define MAP_GPIOPinWakeStatus                                                 \
         ROM_GPIOPinWakeStatus
 #else
 #define MAP_GPIOPinWakeStatus                                                 \
         GPIOPinWakeStatus
+#endif
+#ifdef ROM_GPIOUnlockPin
+#define MAP_GPIOUnlockPin                                                     \
+        ROM_GPIOUnlockPin
+#else
+#define MAP_GPIOUnlockPin                                                     \
+        GPIOUnlockPin
 #endif
 
 //*****************************************************************************
@@ -2755,6 +2860,13 @@
 #else
 #define MAP_I2CMasterGlitchFilterConfigSet                                    \
         I2CMasterGlitchFilterConfigSet
+#endif
+#ifdef ROM_I2CLoopbackEnable
+#define MAP_I2CLoopbackEnable                                                 \
+        ROM_I2CLoopbackEnable
+#else
+#define MAP_I2CLoopbackEnable                                                 \
+        I2CLoopbackEnable
 #endif
 
 //*****************************************************************************
@@ -3491,6 +3603,27 @@
 #else
 #define MAP_QEIErrorGet                                                       \
         QEIErrorGet
+#endif
+#ifdef ROM_QEIFilterEnable
+#define MAP_QEIFilterEnable                                                   \
+        ROM_QEIFilterEnable
+#else
+#define MAP_QEIFilterEnable                                                   \
+        QEIFilterEnable
+#endif
+#ifdef ROM_QEIFilterDisable
+#define MAP_QEIFilterDisable                                                  \
+        ROM_QEIFilterDisable
+#else
+#define MAP_QEIFilterDisable                                                  \
+        QEIFilterDisable
+#endif
+#ifdef ROM_QEIFilterConfigure
+#define MAP_QEIFilterConfigure                                                \
+        ROM_QEIFilterConfigure
+#else
+#define MAP_QEIFilterConfigure                                                \
+        QEIFilterConfigure
 #endif
 #ifdef ROM_QEIVelocityEnable
 #define MAP_QEIVelocityEnable                                                 \
@@ -4405,6 +4538,20 @@
 #define MAP_SSIAdvFrameHoldDisable                                            \
         SSIAdvFrameHoldDisable
 #endif
+#ifdef ROM_SSILoopbackEnable
+#define MAP_SSILoopbackEnable                                                 \
+        ROM_SSILoopbackEnable
+#else
+#define MAP_SSILoopbackEnable                                                 \
+        SSILoopbackEnable
+#endif
+#ifdef ROM_SSILoopbackDisable
+#define MAP_SSILoopbackDisable                                                \
+        ROM_SSILoopbackDisable
+#else
+#define MAP_SSILoopbackDisable                                                \
+        SSILoopbackDisable
+#endif
 
 //*****************************************************************************
 //
@@ -4725,6 +4872,13 @@
 #else
 #define MAP_SysCtlAltClkConfig                                                \
         SysCtlAltClkConfig
+#endif
+#ifdef ROM_SysCtlVCOGet
+#define MAP_SysCtlVCOGet                                                      \
+        ROM_SysCtlVCOGet
+#else
+#define MAP_SysCtlVCOGet                                                      \
+        SysCtlVCOGet
 #endif
 
 //*****************************************************************************
@@ -5066,6 +5220,13 @@
 #define MAP_TimerSynchronize                                                  \
         TimerSynchronize
 #endif
+#ifdef ROM_TimerUpdateMode
+#define MAP_TimerUpdateMode                                                   \
+        ROM_TimerUpdateMode
+#else
+#define MAP_TimerUpdateMode                                                   \
+        TimerUpdateMode
+#endif
 
 //*****************************************************************************
 //
@@ -5379,6 +5540,13 @@
 #else
 #define MAP_UARTFlowControlSet                                                \
         UARTFlowControlSet
+#endif
+#ifdef ROM_UARTLoopbackEnable
+#define MAP_UARTLoopbackEnable                                                \
+        ROM_UARTLoopbackEnable
+#else
+#define MAP_UARTLoopbackEnable                                                \
+        UARTLoopbackEnable
 #endif
 
 //*****************************************************************************

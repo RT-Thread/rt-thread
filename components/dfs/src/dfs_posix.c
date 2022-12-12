@@ -7,11 +7,16 @@
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version
  * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
+ * 2022-01-19     Meco Man     add creat()
  */
 
-#include <dfs.h>
-#include <dfs_posix.h>
-#include "dfs_private.h"
+#include <dfs_file.h>
+#include <dfs_private.h>
+#include <sys/errno.h>
+
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#endif
 
 /**
  * @addtogroup FsPosixApi
@@ -47,20 +52,31 @@ int open(const char *file, int flags, ...)
     if (result < 0)
     {
         /* release the ref-count of fd */
-        fd_put(d);
-        fd_put(d);
+        fd_release(fd);
 
         rt_set_errno(result);
 
         return -1;
     }
 
-    /* release the ref-count of fd */
-    fd_put(d);
-
     return fd;
 }
 RTM_EXPORT(open);
+
+/**
+ * this function is a POSIX compliant version,
+ * which will create a new file or rewrite an existing one
+ *
+ * @param path the path name of file.
+ * @param mode the file permission bits to be used in creating the file (not used, can be 0)
+ *
+ * @return the non-negative integer on successful open, others for failed.
+ */
+int creat(const char *path, mode_t mode)
+{
+    return open(path, O_WRONLY | O_CREAT | O_TRUNC, mode);
+}
+RTM_EXPORT(creat);
 
 /**
  * this function is a POSIX compliant version, which will close the open
@@ -84,7 +100,6 @@ int close(int fd)
     }
 
     result = dfs_file_close(d);
-    fd_put(d);
 
     if (result < 0)
     {
@@ -93,7 +108,7 @@ int close(int fd)
         return -1;
     }
 
-    fd_put(d);
+    fd_release(fd);
 
     return 0;
 }
@@ -110,10 +125,10 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
-_READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
+#ifdef _READ_WRITE_RETURN_TYPE
+_READ_WRITE_RETURN_TYPE read(int fd, void *buf, size_t len) /* some gcc tool chains will use different data structure */
 #else
-int read(int fd, void *buf, size_t len)
+ssize_t read(int fd, void *buf, size_t len)
 #endif
 {
     int result;
@@ -131,14 +146,10 @@ int read(int fd, void *buf, size_t len)
     result = dfs_file_read(d, buf, len);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return result;
 }
@@ -154,10 +165,10 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
-#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
-_READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
+#ifdef _READ_WRITE_RETURN_TYPE
+_READ_WRITE_RETURN_TYPE write(int fd, const void *buf, size_t len) /* some gcc tool chains will use different data structure */
 #else
-int write(int fd, const void *buf, size_t len)
+ssize_t write(int fd, const void *buf, size_t len)
 #endif
 {
     int result;
@@ -175,14 +186,10 @@ int write(int fd, const void *buf, size_t len)
     result = dfs_file_write(d, buf, len);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return result;
 }
@@ -221,11 +228,10 @@ off_t lseek(int fd, off_t offset, int whence)
         break;
 
     case SEEK_END:
-        offset += d->size;
+        offset += d->vnode->size;
         break;
 
     default:
-        fd_put(d);
         rt_set_errno(-EINVAL);
 
         return -1;
@@ -233,7 +239,6 @@ off_t lseek(int fd, off_t offset, int whence)
 
     if (offset < 0)
     {
-        fd_put(d);
         rt_set_errno(-EINVAL);
 
         return -1;
@@ -241,19 +246,16 @@ off_t lseek(int fd, off_t offset, int whence)
     result = dfs_file_lseek(d, offset);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
 
-    /* release the ref-count of fd */
-    fd_put(d);
-
     return offset;
 }
 RTM_EXPORT(lseek);
 
+#ifndef _WIN32
 /**
  * this function is a POSIX compliant version, which will rename old file name
  * to new file name.
@@ -280,6 +282,7 @@ int rename(const char *old_file, const char *new_file)
     return 0;
 }
 RTM_EXPORT(rename);
+#endif
 
 /**
  * this function is a POSIX compliant version, which will unlink (remove) a
@@ -305,7 +308,6 @@ int unlink(const char *pathname)
 }
 RTM_EXPORT(unlink);
 
-#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will get file information.
  *
@@ -356,21 +358,18 @@ int fstat(int fildes, struct stat *buf)
 
     buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                    S_IWUSR | S_IWGRP | S_IWOTH;
-    if (d->type == FT_DIRECTORY)
+    if (d->vnode->type == FT_DIRECTORY)
     {
         buf->st_mode &= ~S_IFREG;
         buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
-    buf->st_size    = d->size;
+    buf->st_size    = d->vnode->size;
     buf->st_mtime   = 0;
-
-    fd_put(d);
 
     return RT_EOK;
 }
 RTM_EXPORT(fstat);
-#endif
 
 /**
  * this function is a POSIX compliant version, which shall request that all data
@@ -397,7 +396,6 @@ int fsync(int fildes)
 
     ret = dfs_file_flush(d);
 
-    fd_put(d);
     return ret;
 }
 RTM_EXPORT(fsync);
@@ -431,7 +429,6 @@ int fcntl(int fildes, int cmd, ...)
         va_end(ap);
 
         ret = dfs_file_ioctl(d, cmd, arg);
-        fd_put(d);
     }
     else ret = -EBADF;
 
@@ -496,7 +493,6 @@ int ftruncate(int fd, off_t length)
 
     if (length < 0)
     {
-        fd_put(d);
         rt_set_errno(-EINVAL);
 
         return -1;
@@ -504,14 +500,10 @@ int ftruncate(int fd, off_t length)
     result = dfs_file_ftruncate(d, length);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return 0;
 }
@@ -570,25 +562,18 @@ int mkdir(const char *path, mode_t mode)
 
     if (result < 0)
     {
-        fd_put(d);
-        fd_put(d);
+        fd_release(fd);
         rt_set_errno(result);
 
         return -1;
     }
 
     dfs_file_close(d);
-    fd_put(d);
-    fd_put(d);
+    fd_release(fd);
 
     return 0;
 }
 RTM_EXPORT(mkdir);
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT(mkdir, create a directory);
-#endif
 
 /**
  * this function is a POSIX compliant version, which will remove a directory.
@@ -646,22 +631,20 @@ DIR *opendir(const char *name)
         if (t == NULL)
         {
             dfs_file_close(d);
-            fd_put(d);
+            fd_release(fd);
         }
         else
         {
-            memset(t, 0, sizeof(DIR));
+            rt_memset(t, 0, sizeof(DIR));
 
             t->fd = fd;
         }
-        fd_put(d);
 
         return t;
     }
 
     /* open failed */
-    fd_put(d);
-    fd_put(d);
+    fd_release(fd);
     rt_set_errno(result);
 
     return NULL;
@@ -704,7 +687,6 @@ struct dirent *readdir(DIR *d)
                                    sizeof(d->buf) - 1);
         if (result <= 0)
         {
-            fd_put(fd);
             rt_set_errno(result);
 
             return NULL;
@@ -713,8 +695,6 @@ struct dirent *readdir(DIR *d)
         d->num = result;
         d->cur = 0; /* current entry index */
     }
-
-    fd_put(fd);
 
     return (struct dirent *)(d->buf + d->cur);
 }
@@ -742,7 +722,6 @@ long telldir(DIR *d)
     }
 
     result = fd->pos - d->num + d->cur;
-    fd_put(fd);
 
     return result;
 }
@@ -755,7 +734,7 @@ RTM_EXPORT(telldir);
  * @param d the directory stream.
  * @param offset the offset in directory stream.
  */
-void seekdir(DIR *d, off_t offset)
+void seekdir(DIR *d, long offset)
 {
     struct dfs_fd *fd;
 
@@ -770,7 +749,6 @@ void seekdir(DIR *d, off_t offset)
     /* seek to the offset position of directory */
     if (dfs_file_lseek(fd, offset) >= 0)
         d->num = d->cur = 0;
-    fd_put(fd);
 }
 RTM_EXPORT(seekdir);
 
@@ -795,7 +773,6 @@ void rewinddir(DIR *d)
     /* seek to the beginning of directory */
     if (dfs_file_lseek(fd, 0) >= 0)
         d->num = d->cur = 0;
-    fd_put(fd);
 }
 RTM_EXPORT(rewinddir);
 
@@ -821,9 +798,8 @@ int closedir(DIR *d)
     }
 
     result = dfs_file_close(fd);
-    fd_put(fd);
+    fd_release(d->fd);
 
-    fd_put(fd);
     rt_free(d);
 
     if (result < 0)
@@ -854,7 +830,9 @@ int chdir(const char *path)
     if (path == NULL)
     {
         dfs_lock();
+#ifdef DFS_USING_WORKDIR
         rt_kprintf("%s\n", working_directory);
+#endif
         dfs_unlock();
 
         return 0;
@@ -888,9 +866,12 @@ int chdir(const char *path)
 
     /* close directory stream */
     closedir(d);
-
+#ifdef RT_USING_LWP
     /* copy full path to working directory */
-    strncpy(working_directory, fullpath, DFS_PATH_MAX);
+    lwp_setcwd(fullpath);
+#else
+    rt_strncpy(working_directory, fullpath, DFS_PATH_MAX);
+#endif
     /* release normalize directory path name */
     rt_free(fullpath);
 
@@ -923,6 +904,31 @@ int access(const char *path, int amode)
     /* ignore R_OK,W_OK,X_OK condition */
     return 0;
 }
+/**
+ * this function is a POSIX compliant version, which will set current
+ * working directory.
+ *
+ * @param buf the current directory.
+ *
+ * @return null.
+ */
+void setcwd(char *buf)
+{
+#ifdef DFS_USING_WORKDIR
+    dfs_lock();
+#ifdef RT_USING_LWP
+    lwp_setcwd(buf);
+#else
+    rt_strncpy(working_directory, buf, DFS_PATH_MAX);
+#endif
+    dfs_unlock();
+#else
+    rt_kprintf(NO_WORKING_DIR);
+#endif
+
+    return ;
+}
+RTM_EXPORT(setcwd);
 
 /**
  * this function is a POSIX compliant version, which will return current
@@ -936,8 +942,22 @@ int access(const char *path, int amode)
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
+    char *dir_buf = RT_NULL;
+
     dfs_lock();
-    strncpy(buf, working_directory, size);
+
+#ifdef RT_USING_LWP
+    dir_buf = lwp_getcwd();
+#else
+    dir_buf = &working_directory[0];
+#endif
+
+    /* copy to buf parameter */
+    if (buf)
+    {
+        rt_strncpy(buf, dir_buf, size);
+    }
+
     dfs_unlock();
 #else
     rt_kprintf(NO_WORKING_DIR);

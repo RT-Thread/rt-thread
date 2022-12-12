@@ -44,6 +44,9 @@ extern "C" {
   * @{
   */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC oversampling" not available on ADC peripheral of this STM32WB device */
+#else
 /**
   * @brief  ADC group regular oversampling structure definition
   */
@@ -67,6 +70,7 @@ typedef struct
                                                This parameter can be a value of @ref ADC_HAL_EC_OVS_SCOPE_REG */
 
 } ADC_OversamplingTypeDef;
+#endif
 
 /**
   * @brief  Structure definition of ADC instance and ADC group regular.
@@ -131,6 +135,13 @@ typedef struct
                                              use HAL_ADC_PollForConversion() to ensure that conversion is completed and HAL_ADC_GetValue() to retrieve conversion result and trig another conversion start.
                                              (in case of usage of ADC group injected, use the equivalent functions HAL_ADCExInjected_Start(), HAL_ADCEx_InjectedGetValue(), ...). */
 
+#if defined(ADC_SUPPORT_2_5_MSPS)
+  FunctionalState LowPowerAutoPowerOff; /*!< Select the auto-off mode: the ADC automatically powers-off after a conversion and automatically wakes-up when a new conversion is triggered (with startup time between trigger and start of sampling).
+                                       This feature can be combined with automatic wait mode (parameter 'LowPowerAutoWait').
+                                       This parameter can be set to ENABLE or DISABLE.
+                                       Note: If enabled, this feature also turns off the ADC dedicated 14 MHz RC oscillator (HSI14) */
+
+#endif
   FunctionalState ContinuousConvMode; /*!< Specify whether the conversion is performed in single mode (one conversion) or continuous mode for ADC group regular,
                                        after the first ADC conversion start trigger occurred (software start or external trigger).
                                        This parameter can be set to ENABLE or DISABLE. */
@@ -147,9 +158,13 @@ typedef struct
                                        Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
                                        This parameter can be set to ENABLE or DISABLE. */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group regular number of discontinuous conversions" not available on ADC peripheral of this STM32WB device */
+#else
   uint32_t NbrOfDiscConversion;   /*!< Specifies the number of discontinuous conversions in which the main sequence of ADC group regular (parameter NbrOfConversion) will be subdivided.
                                        If parameter 'DiscontinuousConvMode' is disabled, this parameter is discarded.
                                        This parameter must be a number between Min_Data = 1 and Max_Data = 8. */
+#endif
 
   uint32_t ExternalTrigConv;      /*!< Select the external event source used to trigger ADC group regular conversion start.
                                        If set to ADC_SOFTWARE_START, external triggers are disabled and software trigger is used instead.
@@ -176,12 +191,47 @@ typedef struct
                                                overwritten, user can willingly not read all the converted data, this is not considered as an erroneous case.
                                              - Usage with ADC conversion by DMA: Error is reported whatever overrun setting (DMA is expected to process all data from data register). */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  uint32_t SamplingTimeCommon1;   /*!< Set sampling time common to a group of channels.
+                                       Unit: ADC clock cycles
+                                       Conversion time is the addition of sampling time and processing time (12.5 ADC clock cycles at ADC resolution 12 bits, 10.5 cycles at 10 bits, 8.5 cycles at 8 bits, 6.5 cycles at 6 bits).
+                                       Note: On this STM32 family, two different sampling time settings are available, each channel can use one of these two settings. On some other STM32 devices, this parameter in channel wise and is located into ADC channel initialization structure.
+                                       This parameter can be a value of @ref ADC_HAL_EC_CHANNEL_SAMPLINGTIME_INST_SCOPE
+                                       Note: In case of usage of internal measurement channels (VrefInt/Vbat/TempSensor),
+                                             sampling time constraints must be respected (sampling time can be adjusted in function of ADC clock frequency and sampling time setting)
+                                             Refer to device datasheet for timings values, parameters TS_vrefint, TS_vbat, TS_temp (values rough order: few tens of microseconds). */
+
+  uint32_t SamplingTimeCommon2;   /*!< Set sampling time common to a group of channels, second common setting possible.
+                                       Unit: ADC clock cycles
+                                       Conversion time is the addition of sampling time and processing time (12.5 ADC clock cycles at ADC resolution 12 bits, 10.5 cycles at 10 bits, 8.5 cycles at 8 bits, 6.5 cycles at 6 bits).
+                                       Note: On this STM32 family, two different sampling time settings are available, each channel can use one of these two settings. On some other STM32 devices, this parameter in channel wise and is located into ADC channel initialization structure.
+                                       This parameter can be a value of @ref ADC_HAL_EC_CHANNEL_SAMPLINGTIME_INST_SCOPE
+                                       Note: In case of usage of internal measurement channels (VrefInt/Vbat/TempSensor),
+                                             sampling time constraints must be respected (sampling time can be adjusted in function of ADC clock frequency and sampling time setting)
+                                             Refer to device datasheet for timings values, parameters TS_vrefint, TS_vbat, TS_temp (values rough order: few tens of microseconds). */
+#endif
+
+#if !defined (ADC_SUPPORT_2_5_MSPS)
   FunctionalState OversamplingMode;       /*!< Specify whether the oversampling feature is enabled or disabled.
                                                This parameter can be set to ENABLE or DISABLE.
-                                               Note: This parameter can be modified only if there is no conversion is ongoing on ADC groups regular and injected */
+                                               Note: This parameter can be modified only if there is no conversion is ongoing on ADC group regular. */
 
   ADC_OversamplingTypeDef Oversampling;   /*!< Specify the Oversampling parameters.
                                                Caution: this setting overwrites the previous oversampling configuration if oversampling is already enabled. */
+#endif
+
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  uint32_t TriggerFrequencyMode;  /*!< Set ADC trigger frequency mode.
+                                       This parameter can be a value of @ref ADC_HAL_EC_REG_TRIGGER_FREQ.
+                                       Note: ADC trigger frequency mode must be set to low frequency when
+                                             a duration is exceeded before ADC conversion start trigger event
+                                             (between ADC enable and ADC conversion start trigger event
+                                             or between two ADC conversion start trigger event).
+                                             Duration value: Refer to device datasheet, parameter "tIdle".
+                                       Note: When ADC trigger frequency mode is set to low frequency, 
+                                             some rearm cycles are inserted before performing ADC conversion
+                                             start, inducing a delay of 2 ADC clock cycles. */
+#endif
 
 } ADC_InitTypeDef;
 
@@ -218,6 +268,7 @@ typedef struct
                                               sampling time constraints must be respected (sampling time can be adjusted in function of ADC clock frequency and sampling time setting)
                                               Refer to device datasheet for timings values. */
 
+#if !defined (ADC_SUPPORT_2_5_MSPS)
   uint32_t SingleDiff;             /*!< Select single-ended or differential input.
                                         In differential mode: Differential measurement is carried out between the selected channel 'i' (positive input) and channel 'i+1' (negative input).
                                                               Only channel 'i' has to be configured, channel 'i+1' is configured automatically.
@@ -241,6 +292,7 @@ typedef struct
                                         Note: This parameter must be modified when no conversion is on going on both regular and injected groups (ADC disabled, or ADC enabled
                                               without continuous mode or external trigger that could launch a conversion). */
 
+#endif
 } ADC_ChannelConfTypeDef;
 
 /**
@@ -253,7 +305,7 @@ typedef struct
 {
   uint32_t WatchdogNumber;    /*!< Select which ADC analog watchdog is monitoring the selected channel.
                                    For Analog Watchdog 1: Only 1 channel can be monitored (or overall group of channels by setting parameter 'WatchdogMode')
-                                   For Analog Watchdog 2 and 3: Several channels can be monitored (by successive calls of 'HAL_ADC_AnalogWDGConfig()' for each channel)
+                                   For Analog Watchdog 2 and 3: Several channels can be monitored (by successive calls of 'HAL_ADC_AnalogWDGConfig()' for each channel). Note: Analog Watchdog 2 and 3 are not available on devices: STM32WB10xx, STM32WB15xx.
                                    This parameter can be a value of @ref ADC_HAL_EC_AWD_NUMBER. */
 
   uint32_t WatchdogMode;      /*!< Configure the ADC analog watchdog mode: single/all/none channels.
@@ -367,7 +419,11 @@ typedef struct
   HAL_LockTypeDef               Lock;                   /*!< ADC locking object */
   __IO uint32_t                 State;                  /*!< ADC communication state (bitmap of ADC states) */
   __IO uint32_t                 ErrorCode;              /*!< ADC Error code */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  uint32_t                      ADCGroupRegularSequencerRanks; /*!< ADC group regular sequencer memorization of ranks setting, used in mode "fully configurable" (refer to parameter 'ScanConvMode') */
+#else
   ADC_InjectionConfigTypeDef    InjectionConfig ;       /*!< ADC injected channel configuration build-up structure */
+#endif
 #if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
   void (* ConvCpltCallback)(struct __ADC_HandleTypeDef *hadc);              /*!< ADC conversion complete callback */
   void (* ConvHalfCpltCallback)(struct __ADC_HandleTypeDef *hadc);          /*!< ADC conversion DMA half-transfer callback */
@@ -474,7 +530,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @{
   */
 #define ADC_DATAALIGN_RIGHT                (LL_ADC_DATA_ALIGN_RIGHT)/*!< ADC conversion data alignment: right aligned (alignment on data register LSB bit 0)*/
-#define ADC_DATAALIGN_LEFT                 (LL_ADC_DATA_ALIGN_LEFT)       /*!< ADC conversion data alignment: left aligned (aligment on data register MSB bit 15)*/
+#define ADC_DATAALIGN_LEFT                 (LL_ADC_DATA_ALIGN_LEFT)       /*!< ADC conversion data alignment: left aligned (alignment on data register MSB bit 15)*/
 /**
   * @}
   */
@@ -482,8 +538,33 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /** @defgroup ADC_Scan_mode ADC sequencer scan mode
   * @{
   */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Note: On STM32WB10xx, STM32WB15xx devices, ADC group regular sequencer     */
+/*       both modes "fully configurable" or "not fully configurable" are      */
+/*       available.                                                           */
+/*       Scan mode values must be compatible with other STM32 devices having  */
+/*       a configurable sequencer.                                            */
+/*       Scan direction setting values are defined by taking in account       */
+/*       already defined values for other STM32 devices:                      */
+/*         ADC_SCAN_DISABLE         (0x00000000UL)                            */
+/*         ADC_SCAN_ENABLE          (0x00000001UL)                            */
+/*       Sequencer fully configurable with only rank 1 enabled is considered  */
+/*       as default setting equivalent to scan enable.                        */
+/*       In case of migration from another STM32 device, the user will be     */
+/*       warned of change of setting choices with assert check.               */
+#define ADC_SCAN_DISABLE                  (0x00000000UL)                               /*!< Sequencer set to fully configurable: only the rank 1 is enabled (no scan sequence on several ranks) */
+#define ADC_SCAN_ENABLE                   (ADC_CFGR1_CHSELRMOD)                        /*!< Sequencer set to fully configurable: sequencer length and each rank affectation to a channel are configurable. */
+
+#define ADC_SCAN_SEQ_FIXED                (ADC_SCAN_SEQ_FIXED_INT)                     /*!< Sequencer set to not fully configurable: sequencer length and each rank affectation to a channel are fixed by channel HW number (channel 0 fixed on rank 0, channel 1 fixed on rank1, ...). Scan direction forward: from channel 0 to channel 18 */
+#define ADC_SCAN_SEQ_FIXED_BACKWARD       (ADC_SCAN_SEQ_FIXED_INT | ADC_CFGR1_SCANDIR) /*!< Sequencer set to not fully configurable: sequencer length and each rank affectation to a channel are fixed by channel HW number (channel 0 fixed on rank 0, channel 1 fixed on rank1, ...). Scan direction backward: from channel 18 to channel 0 */
+
+#define ADC_SCAN_DIRECTION_FORWARD        (ADC_SCAN_SEQ_FIXED)                   /* For compatibility with other STM32 devices */
+#define ADC_SCAN_DIRECTION_BACKWARD       (ADC_SCAN_SEQ_FIXED_BACKWARD)          /* For compatibility with other STM32 devices */
+
+#else
 #define ADC_SCAN_DISABLE         (0x00000000UL)       /*!< Scan mode disabled */
 #define ADC_SCAN_ENABLE          (0x00000001UL)       /*!< Scan mode enabled  */
+#endif /* ADC_SUPPORT_2_5_MSPS */
 /**
   * @}
   */
@@ -493,6 +574,14 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 /* ADC group regular trigger sources for all ADC instances */
 #define ADC_SOFTWARE_START            (LL_ADC_REG_TRIG_SOFTWARE)                 /*!< ADC group regular conversion trigger internal: SW start. */
+#if defined(ADC_SUPPORT_2_5_MSPS)
+#define ADC_EXTERNALTRIG_T1_TRGO2     (LL_ADC_REG_TRIG_EXT_TIM1_TRGO2)           /*!< ADC group regular conversion trigger from external peripheral: TIM1 TRGO. Trigger edge set to rising edge (default setting). */
+#define ADC_EXTERNALTRIG_T1_CC4       (LL_ADC_REG_TRIG_EXT_TIM1_CH4)             /*!< ADC group regular conversion trigger from external peripheral: TIM1 channel 4 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
+#define ADC_EXTERNALTRIG_T2_TRGO      (LL_ADC_REG_TRIG_EXT_TIM2_TRGO)            /*!< ADC group regular conversion trigger from external peripheral: TIM2 TRGO. Trigger edge set to rising edge (default setting). */
+#define ADC_EXTERNALTRIG_T2_CC4       (LL_ADC_REG_TRIG_EXT_TIM2_CH4)             /*!< ADC group regular conversion trigger from external peripheral: TIM2 channel 4 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
+#define ADC_EXTERNALTRIG_T2_CC3       (LL_ADC_REG_TRIG_EXT_TIM2_CH3)             /*!< ADC group regular conversion trigger from external peripheral: TIM2 channel 3 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
+#define ADC_EXTERNALTRIG_EXT_IT11     (LL_ADC_REG_TRIG_EXT_EXTI_LINE11)          /*!< ADC group regular conversion trigger from external peripheral: external interrupt line 11. Trigger edge set to rising edge (default setting). */
+#else
 #define ADC_EXTERNALTRIG_T1_TRGO      (LL_ADC_REG_TRIG_EXT_TIM1_TRGO)            /*!< ADC group regular conversion trigger from external peripheral: TIM1 TRGO. Trigger edge set to rising edge (default setting). */
 #define ADC_EXTERNALTRIG_T1_TRGO2     (LL_ADC_REG_TRIG_EXT_TIM1_TRGO2)           /*!< ADC group regular conversion trigger from external peripheral: TIM1 TRGO2. Trigger edge set to rising edge (default setting). */
 #define ADC_EXTERNALTRIG_T1_CC1       (LL_ADC_REG_TRIG_EXT_TIM1_CH1)             /*!< ADC group regular conversion trigger from external peripheral: TIM1 channel 1 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
@@ -501,6 +590,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_EXTERNALTRIG_T2_TRGO      (LL_ADC_REG_TRIG_EXT_TIM2_TRGO)            /*!< ADC group regular conversion trigger from external peripheral: TIM2 TRGO. Trigger edge set to rising edge (default setting). */
 #define ADC_EXTERNALTRIG_T2_CC2       (LL_ADC_REG_TRIG_EXT_TIM2_CH2)             /*!< ADC group regular conversion trigger from external peripheral: TIM2 channel 2 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
 #define ADC_EXTERNALTRIG_EXT_IT11     (LL_ADC_REG_TRIG_EXT_EXTI_LINE11)          /*!< ADC group regular conversion trigger from external peripheral: external interrupt line 11. Trigger edge set to rising edge (default setting). */
+#endif
 /**
   * @}
   */
@@ -537,6 +627,19 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /** @defgroup ADC_HAL_EC_REG_SEQ_RANKS  ADC group regular - Sequencer ranks
   * @{
   */
+#if defined(ADC_SUPPORT_2_5_MSPS)
+#define ADC_RANK_CHANNEL_NUMBER            (0x00000001U)  /*!< Setting relevant if parameter "ScanConvMode" is set to sequencer not fully configurable: Enable the rank of the selected channels. Number of ranks in the sequence is defined by number of channels enabled, rank of each channel is defined by channel number (channel 0 fixed on rank 0, channel 1 fixed on rank1, ...) */
+#define ADC_RANK_NONE                      (0x00000002U)  /*!< Setting relevant if parameter "ScanConvMode" is set to sequencer not fully configurable: Disable the selected rank (selected channel) from sequencer */
+
+#define ADC_REGULAR_RANK_1                 (LL_ADC_REG_RANK_1)  /*!< ADC group regular sequencer rank 1 */
+#define ADC_REGULAR_RANK_2                 (LL_ADC_REG_RANK_2)  /*!< ADC group regular sequencer rank 2 */
+#define ADC_REGULAR_RANK_3                 (LL_ADC_REG_RANK_3)  /*!< ADC group regular sequencer rank 3 */
+#define ADC_REGULAR_RANK_4                 (LL_ADC_REG_RANK_4)  /*!< ADC group regular sequencer rank 4 */
+#define ADC_REGULAR_RANK_5                 (LL_ADC_REG_RANK_5)  /*!< ADC group regular sequencer rank 5 */
+#define ADC_REGULAR_RANK_6                 (LL_ADC_REG_RANK_6)  /*!< ADC group regular sequencer rank 6 */
+#define ADC_REGULAR_RANK_7                 (LL_ADC_REG_RANK_7)  /*!< ADC group regular sequencer rank 7 */
+#define ADC_REGULAR_RANK_8                 (LL_ADC_REG_RANK_8)  /*!< ADC group regular sequencer rank 8 */
+#else
 #define ADC_REGULAR_RANK_1                 (LL_ADC_REG_RANK_1)  /*!< ADC group regular sequencer rank 1 */
 #define ADC_REGULAR_RANK_2                 (LL_ADC_REG_RANK_2)  /*!< ADC group regular sequencer rank 2 */
 #define ADC_REGULAR_RANK_3                 (LL_ADC_REG_RANK_3)  /*!< ADC group regular sequencer rank 3 */
@@ -553,10 +656,36 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_REGULAR_RANK_14                (LL_ADC_REG_RANK_14) /*!< ADC group regular sequencer rank 14 */
 #define ADC_REGULAR_RANK_15                (LL_ADC_REG_RANK_15) /*!< ADC group regular sequencer rank 15 */
 #define ADC_REGULAR_RANK_16                (LL_ADC_REG_RANK_16) /*!< ADC group regular sequencer rank 16 */
+#endif
 /**
   * @}
   */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/** @defgroup ADC_HAL_EC_CHANNEL_SAMPLINGTIME  ADC instance - Sampling time common to a group of channels
+  * @{
+  */
+#define ADC_SAMPLINGTIME_COMMON_1          (LL_ADC_SAMPLINGTIME_COMMON_1) /*!< Set sampling time common to a group of channels: sampling time nb 1 */
+#define ADC_SAMPLINGTIME_COMMON_2          (LL_ADC_SAMPLINGTIME_COMMON_2) /*!< Set sampling time common to a group of channels: sampling time nb 2 */
+/**
+  * @}
+  */
+
+/** @defgroup ADC_HAL_EC_CHANNEL_SAMPLINGTIME_INST_SCOPE  Channel - Sampling time (ADC instance scope for sampling time common 1 or 2, not channel wise)
+  * @{
+  */
+#define ADC_SAMPLETIME_1CYCLE_5          (LL_ADC_SAMPLINGTIME_1CYCLE_5)     /*!< Sampling time 1.5 ADC clock cycle */
+#define ADC_SAMPLETIME_3CYCLES_5         (LL_ADC_SAMPLINGTIME_3CYCLES_5)    /*!< Sampling time 3.5 ADC clock cycles */
+#define ADC_SAMPLETIME_7CYCLES_5         (LL_ADC_SAMPLINGTIME_7CYCLES_5)    /*!< Sampling time 7.5 ADC clock cycles */
+#define ADC_SAMPLETIME_12CYCLES_5        (LL_ADC_SAMPLINGTIME_12CYCLES_5)   /*!< Sampling time 12.5 ADC clock cycles */
+#define ADC_SAMPLETIME_19CYCLES_5        (LL_ADC_SAMPLINGTIME_19CYCLES_5)   /*!< Sampling time 19.5 ADC clock cycles */
+#define ADC_SAMPLETIME_39CYCLES_5        (LL_ADC_SAMPLINGTIME_39CYCLES_5)   /*!< Sampling time 39.5 ADC clock cycles */
+#define ADC_SAMPLETIME_79CYCLES_5        (LL_ADC_SAMPLINGTIME_79CYCLES_5)   /*!< Sampling time 79.5 ADC clock cycles */
+#define ADC_SAMPLETIME_160CYCLES_5       (LL_ADC_SAMPLINGTIME_160CYCLES_5)  /*!< Sampling time 160.5 ADC clock cycles */
+/**
+  * @}
+  */
+#else
 /** @defgroup ADC_HAL_EC_CHANNEL_SAMPLINGTIME  Channel - Sampling time
   * @{
   */
@@ -571,6 +700,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @}
   */
+#endif
 
 /** @defgroup ADC_HAL_EC_CHANNEL  ADC instance - Channel number
   * @{
@@ -607,8 +737,12 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @{
   */
 #define ADC_ANALOGWATCHDOG_1               (LL_ADC_AWD1) /*!< ADC analog watchdog number 1 */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC analog watchdog 2 and 3" not available on ADC peripheral of this STM32WB device */
+#else
 #define ADC_ANALOGWATCHDOG_2               (LL_ADC_AWD2) /*!< ADC analog watchdog number 2 */
 #define ADC_ANALOGWATCHDOG_3               (LL_ADC_AWD3) /*!< ADC analog watchdog number 3 */
+#endif
 /**
   * @}
   */
@@ -627,6 +761,9 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @}
   */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC oversampling" not available on ADC peripheral of this STM32WB device */
+#else
 /** @defgroup ADC_HAL_EC_OVS_RATIO  Oversampling - Ratio
   * @{
   */
@@ -657,6 +794,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @}
   */
+#endif
 
 /** @defgroup ADC_HAL_EC_OVS_DISCONT_MODE  Oversampling - Discontinuous mode
   * @{
@@ -676,6 +814,17 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @}
   */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/** @defgroup ADC_HAL_EC_REG_TRIGGER_FREQ  ADC group regular - Trigger frequency mode
+  * @{
+  */
+#define ADC_TRIGGER_FREQ_HIGH              (LL_ADC_TRIGGER_FREQ_HIGH) /*!< ADC trigger frequency mode set to high frequency. Note: ADC trigger frequency mode must be set to low frequency when a duration is exceeded before ADC conversion start trigger event (between ADC enable and ADC conversion start trigger event or between two ADC conversion start trigger event). Duration value: Refer to device datasheet, parameter "tIdle". */
+#define ADC_TRIGGER_FREQ_LOW               (LL_ADC_TRIGGER_FREQ_LOW)  /*!< ADC trigger frequency mode set to low frequency. Note: ADC trigger frequency mode must be set to low frequency when a duration is exceeded before ADC conversion start trigger event (between ADC enable and ADC conversion start trigger event or between two ADC conversion start trigger event). Duration value: Refer to device datasheet, parameter "tIdle". */
+/**
+  * @}
+  */
+#endif
+
 
 /** @defgroup ADC_Event_type ADC Event type
   * @{
@@ -685,7 +834,9 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_AWD2_EVENT           (ADC_FLAG_AWD2)  /*!< ADC Analog watchdog 2 event (additional analog watchdog, not present on all STM32 series) */
 #define ADC_AWD3_EVENT           (ADC_FLAG_AWD3)  /*!< ADC Analog watchdog 3 event (additional analog watchdog, not present on all STM32 series) */
 #define ADC_OVR_EVENT            (ADC_FLAG_OVR)   /*!< ADC overrun event */
+#if !defined (ADC_SUPPORT_2_5_MSPS)
 #define ADC_JQOVF_EVENT          (ADC_FLAG_JQOVF) /*!< ADC Injected Context Queue Overflow event */
+#endif
 /**
   * @}
   */
@@ -699,12 +850,17 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_IT_EOC           ADC_IER_EOCIE      /*!< ADC End of regular conversion interrupt source */
 #define ADC_IT_EOS           ADC_IER_EOSIE      /*!< ADC End of regular sequence of conversions interrupt source */
 #define ADC_IT_OVR           ADC_IER_OVRIE      /*!< ADC overrun interrupt source */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define ADC_IT_EOCAL         ADC_IER_EOCALIE    /*!< ADC end of calibration interrupt source */
+#define ADC_IT_CCRDY         ADC_IER_CCRDYIE    /*!< ADC channel configuration ready interrupt source */
+#else
 #define ADC_IT_JEOC          ADC_IER_JEOCIE     /*!< ADC End of injected conversion interrupt source */
 #define ADC_IT_JEOS          ADC_IER_JEOSIE     /*!< ADC End of injected sequence of conversions interrupt source */
+#define ADC_IT_JQOVF         ADC_IER_JQOVFIE    /*!< ADC Injected Context Queue Overflow interrupt source */
+#endif
 #define ADC_IT_AWD1          ADC_IER_AWD1IE     /*!< ADC Analog watchdog 1 interrupt source (main analog watchdog) */
 #define ADC_IT_AWD2          ADC_IER_AWD2IE     /*!< ADC Analog watchdog 2 interrupt source (additional analog watchdog) */
 #define ADC_IT_AWD3          ADC_IER_AWD3IE     /*!< ADC Analog watchdog 3 interrupt source (additional analog watchdog) */
-#define ADC_IT_JQOVF         ADC_IER_JQOVFIE    /*!< ADC Injected Context Queue Overflow interrupt source */
 
 #define ADC_IT_AWD           ADC_IT_AWD1        /*!< ADC Analog watchdog 1 interrupt source: naming for compatibility with other STM32 devices having only one analog watchdog */
 
@@ -720,13 +876,17 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_FLAG_EOC           ADC_ISR_EOC      /*!< ADC End of Regular Conversion flag */
 #define ADC_FLAG_EOS           ADC_ISR_EOS      /*!< ADC End of Regular sequence of Conversions flag */
 #define ADC_FLAG_OVR           ADC_ISR_OVR      /*!< ADC overrun flag */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define ADC_FLAG_EOCAL         ADC_ISR_EOCAL    /*!< ADC end of calibration flag */
+#define ADC_FLAG_CCRDY         ADC_ISR_CCRDY    /*!< ADC channel configuration ready flag */
+#else
 #define ADC_FLAG_JEOC          ADC_ISR_JEOC     /*!< ADC End of Injected Conversion flag */
 #define ADC_FLAG_JEOS          ADC_ISR_JEOS     /*!< ADC End of Injected sequence of Conversions flag */
+#define ADC_FLAG_JQOVF         ADC_ISR_JQOVF    /*!< ADC Injected Context Queue Overflow flag */
+#endif
 #define ADC_FLAG_AWD1          ADC_ISR_AWD1     /*!< ADC Analog watchdog 1 flag (main analog watchdog) */
 #define ADC_FLAG_AWD2          ADC_ISR_AWD2     /*!< ADC Analog watchdog 2 flag (additional analog watchdog) */
 #define ADC_FLAG_AWD3          ADC_ISR_AWD3     /*!< ADC Analog watchdog 3 flag (additional analog watchdog) */
-#define ADC_FLAG_JQOVF         ADC_ISR_JQOVF    /*!< ADC Injected Context Queue Overflow flag */
-
 /**
   * @}
   */
@@ -781,7 +941,11 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @param __LENGTH__ number of programmed conversions.
   * @retval SET (__LENGTH__ is within the maximum number of possible programmable regular conversions) or RESET (__LENGTH__ is null or too large)
   */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define IS_ADC_REGULAR_NB_CONV(__LENGTH__) (((__LENGTH__) >= (1UL)) && ((__LENGTH__) <= (8UL)))
+#else
 #define IS_ADC_REGULAR_NB_CONV(__LENGTH__) (((__LENGTH__) >= (1UL)) && ((__LENGTH__) <= (16UL)))
+#endif
 
 
 /**
@@ -863,6 +1027,15 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @param __REGTRIG__ programmed ADC regular conversions external trigger.
   * @retval SET (__REGTRIG__ is a valid value) or RESET (__REGTRIG__ is invalid)
   */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define IS_ADC_EXTTRIG(__HANDLE__, __REGTRIG__) (((__REGTRIG__) == ADC_EXTERNALTRIG_T1_TRGO2) || \
+                                                 ((__REGTRIG__) == ADC_EXTERNALTRIG_T1_CC4)   || \
+                                                 ((__REGTRIG__) == ADC_EXTERNALTRIG_T2_TRGO)  || \
+                                                 ((__REGTRIG__) == ADC_EXTERNALTRIG_T2_CC4)   || \
+                                                 ((__REGTRIG__) == ADC_EXTERNALTRIG_T2_CC3)   || \
+                                                 ((__REGTRIG__) == ADC_EXTERNALTRIG_EXT_IT11) || \
+                                                 ((__REGTRIG__) == ADC_SOFTWARE_START)          )
+#else
 #define IS_ADC_EXTTRIG(__HANDLE__, __REGTRIG__) (((__REGTRIG__) == ADC_EXTERNALTRIG_T1_CC1)   || \
                                                  ((__REGTRIG__) == ADC_EXTERNALTRIG_T1_CC2)   || \
                                                  ((__REGTRIG__) == ADC_EXTERNALTRIG_T1_CC3)   || \
@@ -872,6 +1045,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
                                                  ((__REGTRIG__) == ADC_EXTERNALTRIG_T1_TRGO2) || \
                                                  ((__REGTRIG__) == ADC_EXTERNALTRIG_T2_TRGO)  || \
                                                  ((__REGTRIG__) == ADC_SOFTWARE_START)           )
+#endif
 
 /**
   * @brief Verify the ADC regular conversions check for converted data availability.
@@ -889,11 +1063,26 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define IS_ADC_OVERRUN(__OVR__) (((__OVR__) == ADC_OVR_DATA_PRESERVED)  || \
                                  ((__OVR__) == ADC_OVR_DATA_OVERWRITTEN)  )
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define IS_ADC_SAMPLING_TIME_COMMON(SAMPLING_TIME_COMMON) (((SAMPLING_TIME_COMMON) == ADC_SAMPLINGTIME_COMMON_1) || \
+                                                           ((SAMPLING_TIME_COMMON) == ADC_SAMPLINGTIME_COMMON_2)   )
+#endif
+
 /**
   * @brief Verify the ADC conversions sampling time.
   * @param __TIME__ ADC conversions sampling time.
   * @retval SET (__TIME__ is a valid value) or RESET (__TIME__ is invalid)
   */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define IS_ADC_SAMPLE_TIME(__TIME__) (((__TIME__) == ADC_SAMPLETIME_1CYCLE_5)    || \
+                                      ((__TIME__) == ADC_SAMPLETIME_3CYCLES_5)   || \
+                                      ((__TIME__) == ADC_SAMPLETIME_7CYCLES_5)   || \
+                                      ((__TIME__) == ADC_SAMPLETIME_12CYCLES_5)  || \
+                                      ((__TIME__) == ADC_SAMPLETIME_19CYCLES_5)  || \
+                                      ((__TIME__) == ADC_SAMPLETIME_39CYCLES_5)  || \
+                                      ((__TIME__) == ADC_SAMPLETIME_79CYCLES_5)  || \
+                                      ((__TIME__) == ADC_SAMPLETIME_160CYCLES_5)   )
+#else
 #define IS_ADC_SAMPLE_TIME(__TIME__) (((__TIME__) == ADC_SAMPLETIME_2CYCLES_5)   || \
                                       ((__TIME__) == ADC_SAMPLETIME_6CYCLES_5)   || \
                                       ((__TIME__) == ADC_SAMPLETIME_12CYCLES_5)  || \
@@ -902,28 +1091,45 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
                                       ((__TIME__) == ADC_SAMPLETIME_92CYCLES_5)  || \
                                       ((__TIME__) == ADC_SAMPLETIME_247CYCLES_5) || \
                                       ((__TIME__) == ADC_SAMPLETIME_640CYCLES_5)   )
+#endif
+
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define IS_ADC_REGULAR_RANK_SEQ_FIXED(RANK) (((RANK) == ADC_RANK_CHANNEL_NUMBER) || \
+                                             ((RANK) == ADC_RANK_NONE)             )
+#endif
 
 /**
   * @brief Verify the ADC regular channel setting.
-  * @param  __CHANNEL__ programmed ADC regular channel.
-  * @retval SET (__CHANNEL__ is valid) or RESET (__CHANNEL__ is invalid)
+  * @param  RANK programmed ADC regular channel.
+  * @retval SET (RANK is valid) or RESET (RANK is invalid)
   */
-#define IS_ADC_REGULAR_RANK(__CHANNEL__) (((__CHANNEL__) == ADC_REGULAR_RANK_1 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_2 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_3 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_4 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_5 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_6 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_7 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_8 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_9 ) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_10) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_11) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_12) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_13) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_14) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_15) || \
-                                          ((__CHANNEL__) == ADC_REGULAR_RANK_16)   )
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define IS_ADC_REGULAR_RANK(RANK) (((RANK) == ADC_REGULAR_RANK_1 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_2 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_3 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_4 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_5 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_6 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_7 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_8 )   )
+#else
+#define IS_ADC_REGULAR_RANK(RANK) (((RANK) == ADC_REGULAR_RANK_1 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_2 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_3 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_4 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_5 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_6 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_7 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_8 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_9 ) || \
+                                   ((RANK) == ADC_REGULAR_RANK_10) || \
+                                   ((RANK) == ADC_REGULAR_RANK_11) || \
+                                   ((RANK) == ADC_REGULAR_RANK_12) || \
+                                   ((RANK) == ADC_REGULAR_RANK_13) || \
+                                   ((RANK) == ADC_REGULAR_RANK_14) || \
+                                   ((RANK) == ADC_REGULAR_RANK_15) || \
+                                   ((RANK) == ADC_REGULAR_RANK_16)   )
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
 /**
   * @}
@@ -949,6 +1155,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /* Maximum delay is 120us (refer device datasheet, parameter tSTART).       */
 /* Unit: us                                                                 */
 #define ADC_TEMPSENSOR_DELAY_US         (LL_ADC_DELAY_TEMPSENSOR_STAB_US)
+
+#if defined (ADC_SUPPORT_2_5_MSPS)
+#define ADC_SCAN_SEQ_FIXED_INT  0x80000000U  /* Internal definition to differentiate sequencer setting fixed or configurable */
+#endif
 
 /**
   * @}
@@ -994,10 +1204,12 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *            @arg @ref ADC_IT_OVR    ADC overrun interrupt source
   *            @arg @ref ADC_IT_JEOC   ADC End of Injected Conversion interrupt source
   *            @arg @ref ADC_IT_JEOS   ADC End of Injected sequence of Conversions interrupt source
+  *            @arg @ref ADC_IT_JQOVF  ADC Injected Context Queue Overflow interrupt source.
   *            @arg @ref ADC_IT_AWD1   ADC Analog watchdog 1 interrupt source (main analog watchdog)
   *            @arg @ref ADC_IT_AWD2   ADC Analog watchdog 2 interrupt source (additional analog watchdog)
   *            @arg @ref ADC_IT_AWD3   ADC Analog watchdog 3 interrupt source (additional analog watchdog)
-  *            @arg @ref ADC_IT_JQOVF  ADC Injected Context Queue Overflow interrupt source.
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval None
   */
 #define __HAL_ADC_ENABLE_IT(__HANDLE__, __INTERRUPT__)                         \
@@ -1015,10 +1227,12 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *            @arg @ref ADC_IT_OVR    ADC overrun interrupt source
   *            @arg @ref ADC_IT_JEOC   ADC End of Injected Conversion interrupt source
   *            @arg @ref ADC_IT_JEOS   ADC End of Injected sequence of Conversions interrupt source
+  *            @arg @ref ADC_IT_JQOVF  ADC Injected Context Queue Overflow interrupt source.
   *            @arg @ref ADC_IT_AWD1   ADC Analog watchdog 1 interrupt source (main analog watchdog)
   *            @arg @ref ADC_IT_AWD2   ADC Analog watchdog 2 interrupt source (additional analog watchdog)
   *            @arg @ref ADC_IT_AWD3   ADC Analog watchdog 3 interrupt source (additional analog watchdog)
-  *            @arg @ref ADC_IT_JQOVF  ADC Injected Context Queue Overflow interrupt source.
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval None
   */
 #define __HAL_ADC_DISABLE_IT(__HANDLE__, __INTERRUPT__)                        \
@@ -1033,12 +1247,14 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *            @arg @ref ADC_IT_EOC    ADC End of Regular Conversion interrupt source
   *            @arg @ref ADC_IT_EOS    ADC End of Regular sequence of Conversions interrupt source
   *            @arg @ref ADC_IT_OVR    ADC overrun interrupt source
-  *            @arg @ref ADC_IT_JEOC   ADC End of Injected Conversion interrupt source
-  *            @arg @ref ADC_IT_JEOS   ADC End of Injected sequence of Conversions interrupt source
+  *            @arg @ref ADC_IT_JEOC   ADC End of Injected Conversion interrupt source (1)
+  *            @arg @ref ADC_IT_JEOS   ADC End of Injected sequence of Conversions interrupt source (1)
+  *            @arg @ref ADC_IT_JQOVF  ADC Injected Context Queue Overflow interrupt source (1)
   *            @arg @ref ADC_IT_AWD1   ADC Analog watchdog 1 interrupt source (main analog watchdog)
   *            @arg @ref ADC_IT_AWD2   ADC Analog watchdog 2 interrupt source (additional analog watchdog)
   *            @arg @ref ADC_IT_AWD3   ADC Analog watchdog 3 interrupt source (additional analog watchdog)
-  *            @arg @ref ADC_IT_JQOVF  ADC Injected Context Queue Overflow interrupt source.
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval State of interruption (SET or RESET)
   */
 #define __HAL_ADC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)                     \
@@ -1054,12 +1270,14 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *            @arg @ref ADC_FLAG_EOC     ADC End of Regular Conversion flag
   *            @arg @ref ADC_FLAG_EOS     ADC End of Regular sequence of Conversions flag
   *            @arg @ref ADC_FLAG_OVR     ADC overrun flag
-  *            @arg @ref ADC_FLAG_JEOC    ADC End of Injected Conversion flag
-  *            @arg @ref ADC_FLAG_JEOS    ADC End of Injected sequence of Conversions flag
+  *            @arg @ref ADC_FLAG_JEOC    ADC End of Injected Conversion flag (1)
+  *            @arg @ref ADC_FLAG_JEOS    ADC End of Injected sequence of Conversions flag (1)
+  *            @arg @ref ADC_FLAG_JQOVF   ADC Injected Context Queue Overflow flag (1)
   *            @arg @ref ADC_FLAG_AWD1    ADC Analog watchdog 1 flag (main analog watchdog)
   *            @arg @ref ADC_FLAG_AWD2    ADC Analog watchdog 2 flag (additional analog watchdog)
   *            @arg @ref ADC_FLAG_AWD3    ADC Analog watchdog 3 flag (additional analog watchdog)
-  *            @arg @ref ADC_FLAG_JQOVF   ADC Injected Context Queue Overflow flag.
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval State of flag (TRUE or FALSE).
   */
 #define __HAL_ADC_GET_FLAG(__HANDLE__, __FLAG__)                               \
@@ -1075,12 +1293,14 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *            @arg @ref ADC_FLAG_EOC     ADC End of Regular Conversion flag
   *            @arg @ref ADC_FLAG_EOS     ADC End of Regular sequence of Conversions flag
   *            @arg @ref ADC_FLAG_OVR     ADC overrun flag
-  *            @arg @ref ADC_FLAG_JEOC    ADC End of Injected Conversion flag
-  *            @arg @ref ADC_FLAG_JEOS    ADC End of Injected sequence of Conversions flag
+  *            @arg @ref ADC_FLAG_JEOC    ADC End of Injected Conversion flag (1)
+  *            @arg @ref ADC_FLAG_JEOS    ADC End of Injected sequence of Conversions flag (1)
+  *            @arg @ref ADC_FLAG_JQOVF   ADC Injected Context Queue Overflow flag (1)
   *            @arg @ref ADC_FLAG_AWD1    ADC Analog watchdog 1 flag (main analog watchdog)
   *            @arg @ref ADC_FLAG_AWD2    ADC Analog watchdog 2 flag (additional analog watchdog)
   *            @arg @ref ADC_FLAG_AWD3    ADC Analog watchdog 3 flag (additional analog watchdog)
-  *            @arg @ref ADC_FLAG_JQOVF   ADC Injected Context Queue Overflow flag.
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval None
   */
 /* Note: bit cleared bit by writing 1 (writing 0 has no effect on any bit of register ISR) */

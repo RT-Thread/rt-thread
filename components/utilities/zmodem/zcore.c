@@ -11,8 +11,9 @@
 #include <shell.h>
 #include <rtdef.h>
 #include <dfs.h>
-#include <dfs_file.h>
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <stdio.h>
 #include "zdef.h"
 

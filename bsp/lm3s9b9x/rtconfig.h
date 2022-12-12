@@ -57,6 +57,7 @@
 /* SECTION: Device System */
 /* Using Device System*/
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 
 #define RT_USING_UART1
 // #define RT_USING_UART2
@@ -89,6 +90,7 @@
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
 #define RT_USING_LWIP
+#define RT_USING_LWIP203
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */

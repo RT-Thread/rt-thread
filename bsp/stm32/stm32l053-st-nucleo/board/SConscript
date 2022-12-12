@@ -17,11 +17,11 @@ path += [cwd + '/CubeMX_Config/Inc']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/STM32L0xx_HAL/CMSIS/Device/ST/STM32L0xx/Source/Templates/gcc/startup_stm32l053xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32L0xx_HAL/CMSIS/Device/ST/STM32L0xx/Source/Templates/arm/startup_stm32l053xx.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32L0xx_HAL/CMSIS/Device/ST/STM32L0xx/Source/Templates/iar/startup_stm32l053xx.s']
 
 # STM32L052xx || STM32L053xx || STM32L062xx

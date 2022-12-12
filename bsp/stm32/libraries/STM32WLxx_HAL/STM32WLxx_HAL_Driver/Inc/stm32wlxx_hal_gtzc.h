@@ -121,7 +121,7 @@ typedef struct
   * @note     that two maximum values are also defined here:
   *           - max number of securable AHB/APB peripherals or masters (used in
   *           TZSC sub-block)
-  *           - max number of securable and TrustZone-aware AHB/APB peripherals
+  *           - max number of securable and security-aware AHB/APB peripherals
   *           or masters (used in TZIC sub-block)
   * @{
   */
@@ -146,7 +146,7 @@ typedef struct
 /* Note that two maximum values are also defined here:
  * - max number of securable peripherals
  *   (used in TZSC sub-block)
- * - max number of securable and TrustZone-aware peripherals or masters
+ * - max number of securable and security-aware peripherals or masters
  *   (used in TZIC sub-block)
  */
 #define GTZC_TZSC_PERIPH_NUMBER             4U

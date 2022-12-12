@@ -29,7 +29,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <drv_common.h>
-#include <time.h>
+#include <sys/time.h>
 
 /// definition for rtc handle.
 typedef void *rtc_handle_t;

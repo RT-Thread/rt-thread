@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -54,7 +54,7 @@ static rt_err_t SCL_H(struct rt_i2c_bit_ops *ops)
     {
         if ((rt_tick_get() - start) > ops->timeout)
             return -RT_ETIMEOUT;
-        rt_thread_delay((ops->timeout + 1) >> 1);
+        i2c_delay(ops);
     }
 #ifdef RT_I2C_BITOPS_DEBUG
     if (rt_tick_get() != start)
@@ -372,7 +372,8 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
 {
     struct rt_i2c_msg *msg;
     struct rt_i2c_bit_ops *ops = (struct rt_i2c_bit_ops *)bus->priv;
-    rt_int32_t i, ret;
+    rt_int32_t ret;
+    rt_uint32_t i;
     rt_uint16_t ignore_nack;
 
     if (num == 0) return 0;
@@ -404,7 +405,9 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
         {
             ret = i2c_recv_bytes(bus, msg);
             if (ret >= 1)
+            {
                 LOG_D("read %d byte%s", ret, ret == 1 ? "" : "s");
+            }
             if (ret < msg->len)
             {
                 if (ret >= 0)
@@ -416,7 +419,9 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
         {
             ret = i2c_send_bytes(bus, msg);
             if (ret >= 1)
+            {
                 LOG_D("write %d byte%s", ret, ret == 1 ? "" : "s");
+            }
             if (ret < msg->len)
             {
                 if (ret >= 0)

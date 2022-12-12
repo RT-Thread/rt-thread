@@ -55,58 +55,58 @@
   */
 typedef struct 
 {
-  uint32_t InjectedChannel;               /*!< Selection of ADC channel to configure
-                                               This parameter can be a value of @ref ADC_channels
-                                               Note: Depending on devices, some channels may not be available on package pins. Refer to device datasheet for channels availability. */
-  uint32_t InjectedRank;                  /*!< Rank in the injected group sequencer
-                                               This parameter must be a value of @ref ADCEx_injected_rank
-                                               Note: In case of need to disable a channel or change order of conversion sequencer, rank containing a previous channel setting can be overwritten by the new channel setting (or parameter number of conversions can be adjusted) */
-  uint32_t InjectedSamplingTime;          /*!< Sampling time value to be set for the selected channel.
-                                               Unit: ADC clock cycles
-                                               Conversion time is the addition of sampling time and processing time (12 ADC clock cycles at ADC resolution 12 bits, 11 cycles at 10 bits, 9 cycles at 8 bits, 7 cycles at 6 bits).
-                                               This parameter can be a value of @ref ADC_sampling_times
-                                               Caution: This parameter updates the parameter property of the channel, that can be used into regular and/or injected groups.
-                                                        If this same channel has been previously configured in the other group (regular/injected), it will be updated to last setting.
-                                               Note: In case of usage of internal measurement channels (VrefInt/Vbat/TempSensor),
-                                                     sampling time constraints must be respected (sampling time can be adjusted in function of ADC clock frequency and sampling time setting)
-                                                     Refer to device datasheet for timings values, parameters TS_vrefint, TS_temp (values rough order: 4us min). */
-  uint32_t InjectedOffset;                /*!< Defines the offset to be subtracted from the raw converted data (for channels set on injected group only).
-                                               Offset value must be a positive number.
-                                               Depending of ADC resolution selected (12, 10, 8 or 6 bits),
-                                               this parameter must be a number between Min_Data = 0x000 and Max_Data = 0xFFF, 0x3FF, 0xFF or 0x3F respectively. */
-  uint32_t InjectedNbrOfConversion;       /*!< Specifies the number of ranks that will be converted within the injected group sequencer.
-                                               To use the injected group sequencer and convert several ranks, parameter 'ScanConvMode' must be enabled.
-                                               This parameter must be a number between Min_Data = 1 and Max_Data = 4.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
-                                                        configure a channel on injected group can impact the configuration of other channels previously set. */
-  uint32_t InjectedDiscontinuousConvMode; /*!< Specifies whether the conversions sequence of injected group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
-                                               Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
-                                               Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
-                                               This parameter can be set to ENABLE or DISABLE.
-                                               Note: For injected group, number of discontinuous ranks increment is fixed to one-by-one.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
-                                                        configure a channel on injected group can impact the configuration of other channels previously set. */
-  uint32_t AutoInjectedConv;              /*!< Enables or disables the selected ADC automatic injected group conversion after regular one
-                                               This parameter can be set to ENABLE or DISABLE.      
-                                               Note: To use Automatic injected conversion, discontinuous mode must be disabled ('DiscontinuousConvMode' and 'InjectedDiscontinuousConvMode' set to DISABLE)
-                                               Note: To use Automatic injected conversion, injected group external triggers must be disabled ('ExternalTrigInjecConv' set to ADC_SOFTWARE_START)
-                                               Note: In case of DMA used with regular group: if DMA configured in normal mode (single shot) JAUTO will be stopped upon DMA transfer complete.
-                                                     To maintain JAUTO always enabled, DMA must be configured in circular mode.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
-                                                        configure a channel on injected group can impact the configuration of other channels previously set. */
-  uint32_t ExternalTrigInjecConv;         /*!< Selects the external event used to trigger the conversion start of injected group.
-                                               If set to ADC_INJECTED_SOFTWARE_START, external triggers are disabled.
-                                               If set to external trigger source, triggering is on event rising edge.
-                                               This parameter can be a value of @ref ADCEx_External_trigger_Source_Injected
-                                               Note: This parameter must be modified when ADC is disabled (before ADC start conversion or after ADC stop conversion).
-                                                     If ADC is enabled, this parameter setting is bypassed without error reporting (as it can be the expected behaviour in case of another parameter update on the fly)
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
-                                                        configure a channel on injected group can impact the configuration of other channels previously set. */
-  uint32_t ExternalTrigInjecConvEdge;     /*!< Selects the external trigger edge of injected group.
-                                               This parameter can be a value of @ref ADCEx_External_trigger_edge_Injected.
-                                               If trigger is set to ADC_INJECTED_SOFTWARE_START, this parameter is discarded.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
-                                                        configure a channel on injected group can impact the configuration of other channels previously set. */
+  uint32_t InjectedChannel;                      /*!< Selection of ADC channel to configure
+                                                      This parameter can be a value of @ref ADC_channels
+                                                      Note: Depending on devices, some channels may not be available on package pins. Refer to device datasheet for channels availability. */
+  uint32_t InjectedRank;                         /*!< Rank in the injected group sequencer
+                                                      This parameter must be a value of @ref ADCEx_injected_rank
+                                                      Note: In case of need to disable a channel or change order of conversion sequencer, rank containing a previous channel setting can be overwritten by the new channel setting (or parameter number of conversions can be adjusted) */
+  uint32_t InjectedSamplingTime;                 /*!< Sampling time value to be set for the selected channel.
+                                                      Unit: ADC clock cycles
+                                                      Conversion time is the addition of sampling time and processing time (12 ADC clock cycles at ADC resolution 12 bits, 11 cycles at 10 bits, 9 cycles at 8 bits, 7 cycles at 6 bits).
+                                                      This parameter can be a value of @ref ADC_sampling_times
+                                                      Caution: This parameter updates the parameter property of the channel, that can be used into regular and/or injected groups.
+                                                               If this same channel has been previously configured in the other group (regular/injected), it will be updated to last setting.
+                                                      Note: In case of usage of internal measurement channels (VrefInt/Vbat/TempSensor),
+                                                            sampling time constraints must be respected (sampling time can be adjusted in function of ADC clock frequency and sampling time setting)
+                                                            Refer to device datasheet for timings values, parameters TS_vrefint, TS_temp (values rough order: 4us min). */
+  uint32_t InjectedOffset;                       /*!< Defines the offset to be subtracted from the raw converted data (for channels set on injected group only).
+                                                      Offset value must be a positive number.
+                                                      Depending of ADC resolution selected (12, 10, 8 or 6 bits),
+                                                      this parameter must be a number between Min_Data = 0x000 and Max_Data = 0xFFF, 0x3FF, 0xFF or 0x3F respectively. */
+  uint32_t InjectedNbrOfConversion;              /*!< Specifies the number of ranks that will be converted within the injected group sequencer.
+                                                      To use the injected group sequencer and convert several ranks, parameter 'ScanConvMode' must be enabled.
+                                                      This parameter must be a number between Min_Data = 1 and Max_Data = 4.
+                                                      Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
+                                                               configure a channel on injected group can impact the configuration of other channels previously set. */
+  FunctionalState InjectedDiscontinuousConvMode; /*!< Specifies whether the conversions sequence of injected group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
+                                                      Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
+                                                      Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
+                                                      This parameter can be set to ENABLE or DISABLE.
+                                                      Note: For injected group, number of discontinuous ranks increment is fixed to one-by-one.
+                                                      Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
+                                                               configure a channel on injected group can impact the configuration of other channels previously set. */
+  FunctionalState AutoInjectedConv;                     /*!< Enables or disables the selected ADC automatic injected group conversion after regular one
+                                                      This parameter can be set to ENABLE or DISABLE.      
+                                                      Note: To use Automatic injected conversion, discontinuous mode must be disabled ('DiscontinuousConvMode' and 'InjectedDiscontinuousConvMode' set to DISABLE)
+                                                      Note: To use Automatic injected conversion, injected group external triggers must be disabled ('ExternalTrigInjecConv' set to ADC_SOFTWARE_START)
+                                                      Note: In case of DMA used with regular group: if DMA configured in normal mode (single shot) JAUTO will be stopped upon DMA transfer complete.
+                                                            To maintain JAUTO always enabled, DMA must be configured in circular mode.
+                                                      Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                               configure a channel on injected group can impact the configuration of other channels previously set. */
+  uint32_t ExternalTrigInjecConv;                /*!< Selects the external event used to trigger the conversion start of injected group.
+                                                      If set to ADC_INJECTED_SOFTWARE_START, external triggers are disabled.
+                                                      If set to external trigger source, triggering is on event rising edge.
+                                                      This parameter can be a value of @ref ADCEx_External_trigger_Source_Injected
+                                                      Note: This parameter must be modified when ADC is disabled (before ADC start conversion or after ADC stop conversion).
+                                                            If ADC is enabled, this parameter setting is bypassed without error reporting (as it can be the expected behaviour in case of another parameter update on the fly)
+                                                      Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                               configure a channel on injected group can impact the configuration of other channels previously set. */
+  uint32_t ExternalTrigInjecConvEdge;            /*!< Selects the external trigger edge of injected group.
+                                                      This parameter can be a value of @ref ADCEx_External_trigger_edge_Injected.
+                                                      If trigger is set to ADC_INJECTED_SOFTWARE_START, this parameter is discarded.
+                                                      Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
+                                                               configure a channel on injected group can impact the configuration of other channels previously set. */
 }ADC_InjectionConfTypeDef; 
 
 /** 

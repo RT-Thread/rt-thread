@@ -1,15 +1,16 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2022-01-24     ChungHsuan   improve code comments
  */
 
 #include <rtthread.h>
 
-#include <sys/socket.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include <sys/socket.h> /* socket.h header file is needed when using BSD socket */ /* 使用BSD socket，需要包含sockets.h头文件 */
 #include "netdb.h"
 
 #define DEBUG_UDP_CLIENT
@@ -27,14 +28,17 @@ static int is_running = 0;
 static char url[256];
 static int port = 8080;
 static int count = 10;
-const char send_data[] = "This is UDP Client from RT-Thread.\n"; /* 发送用到的数据 */
+const char send_data[] = "This is UDP Client from RT-Thread.\n";/* The message be sent */ /* 发送用到的数据 */
 
+/**
+* @brief  This function is for creating a udp client on RT-Thread
+*/
 static void udpclient(void *arg)
 {
     int sock;
     struct hostent *host;
     struct sockaddr_in server_addr;
-
+    /* Get host address by parameter URL (domain name resolution if input domain) */
     /* 通过函数入口参数url获得host地址（如果是域名，会做域名解析） */
     host = (struct hostent *) gethostbyname(url);
     if (host == RT_NULL)
@@ -42,14 +46,15 @@ static void udpclient(void *arg)
         LOG_E("Get host by name failed!");
         return;
     }
-
+    /* Create a socket and set it to SOCK_DGRAM(UDP) */
     /* 创建一个socket，类型是SOCK_DGRAM，UDP类型 */
     if ((sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
+        /* Failed on creatinf socket */
         LOG_E("Create socket error");
         return;
     }
-
+    /* Initialize server side address */
     /* 初始化预连接的服务端地址 */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
@@ -58,17 +63,18 @@ static void udpclient(void *arg)
 
     started = 1;
     is_running = 1;
-
+    /* The total sending number(count)  */
     /* 总计发送count次数据 */
     while (count && is_running)
     {
+        /* Send message to server side */
         /* 发送数据到服务远端 */
         sendto(sock, send_data, rt_strlen(send_data), 0,
                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-
+        /* Thread sllep for 1 second */
         /* 线程休眠一段时间 */
         rt_thread_mdelay(1000);
-
+        /* count decrease 1 */
         /* 计数值减一 */
         count --;
     }
@@ -77,7 +83,7 @@ static void udpclient(void *arg)
     {
         LOG_I("UDP client send data finished!");
     }
-
+    /* Close the socket */
     /* 关闭这个socket */
     if (sock >= 0)
     {
@@ -88,6 +94,9 @@ static void udpclient(void *arg)
     is_running = 0;
 }
 
+/**
+* @brief    The usage description of udp client on rt-Thread
+*/
 static void usage(void)
 {
     rt_kprintf("Usage: udpclient -h <host> -p <port> [--cnt] [count]\n");
@@ -102,6 +111,9 @@ static void usage(void)
     rt_kprintf("  --help       Print help information\n");
 }
 
+/**
+* @brief    This function is for testing udp client on rt-Thread
+*/
 static void udpclient_test(int argc, char** argv)
 {
     rt_thread_t tid;

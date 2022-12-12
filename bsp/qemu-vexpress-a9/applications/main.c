@@ -14,7 +14,7 @@
 
 int main(void)
 {
-    printf("hello rt-thread\n");
+    printf("Hello RT-Thread!\n");
 
     return 0;
 }

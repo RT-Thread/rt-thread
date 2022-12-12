@@ -607,7 +607,13 @@ void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
   SET_BIT(PWR->MPUCR, PWR_MPUCR_CSTBYDIS);
 
   /* RCC Stop Request Set Register */
+#if defined(RCC_MP_SREQSETR_STPREQ_P0) & defined(RCC_MP_SREQSETR_STPREQ_P1)
+  /* CA7_CORE0 and CA7_CORE1 available */
   RCC->MP_SREQSETR = RCC_MP_SREQSETR_STPREQ_P0 | RCC_MP_SREQSETR_STPREQ_P1;
+#else
+  /* Only CA7_CORE0 available */
+  RCC->MP_SREQSETR = RCC_MP_SREQSETR_STPREQ_P0;
+#endif /* RCC_MP_SREQSETR_STPREQ_P0 & RCC_MP_SREQSETR_STPREQ_P1 */
 
 #else
   /* Prevent unused argument compilation warning */
@@ -635,7 +641,13 @@ void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
 
 #ifdef CORE_CA7
   /* RCC Clear Request Set Register */
-  RCC->MP_SREQCLRR = RCC_MP_SREQSETR_STPREQ_P0 | RCC_MP_SREQSETR_STPREQ_P1;
+#if defined(RCC_MP_SREQCLRR_STPREQ_P0) & defined(RCC_MP_SREQCLRR_STPREQ_P1)
+  /* CA7_CORE0 and CA7_CORE1 available */
+  RCC->MP_SREQCLRR = RCC_MP_SREQCLRR_STPREQ_P0 | RCC_MP_SREQCLRR_STPREQ_P1;
+#else
+  /* Only CA7_CORE0 available */
+  RCC->MP_SREQCLRR = RCC_MP_SREQCLRR_STPREQ_P0;
+#endif /* RCC_MP_SREQCLRR_STPREQ_P0 | RCC_MP_SREQCLRR_STPREQ_P1 */
 #endif
 }
 
@@ -672,7 +684,13 @@ void HAL_PWR_EnterSTANDBYMode(void)
   CLEAR_BIT(PWR->MPUCR, PWR_MPUCR_CSTBYDIS);
 
   /* RCC Stop Request Set Register */
+#if defined(RCC_MP_SREQSETR_STPREQ_P0) & defined(RCC_MP_SREQSETR_STPREQ_P1)
+  /* CA7_CORE0 and CA7_CORE1 available */
   RCC->MP_SREQSETR = RCC_MP_SREQSETR_STPREQ_P0 | RCC_MP_SREQSETR_STPREQ_P1;
+#else
+  /* Only CA7_CORE0 available */
+  RCC->MP_SREQSETR = RCC_MP_SREQSETR_STPREQ_P0;
+#endif /* RCC_MP_SREQSETR_STPREQ_P0 & RCC_MP_SREQSETR_STPREQ_P1 */
 #endif
 
   /* Clear Reset Status */

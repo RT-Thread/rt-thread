@@ -34,7 +34,7 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
     result = rt_mq_send(&rx_mq, &msg, sizeof(msg));
     if ( result == -RT_EFULL)
     {
-        rt_kprintf("message queue full！\n");
+        rt_kprintf("message queue full!\n");
     }
     return result;
 }

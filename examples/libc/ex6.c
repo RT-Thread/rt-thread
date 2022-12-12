@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>

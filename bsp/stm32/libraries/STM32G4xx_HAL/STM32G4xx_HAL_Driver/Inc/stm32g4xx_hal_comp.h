@@ -1004,7 +1004,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                              :((__INSTANCE__) == COMP5) ? COMP_EXTI_LINE_COMP5 \
                                              :((__INSTANCE__) == COMP6) ? COMP_EXTI_LINE_COMP6 \
                                              : COMP_EXTI_LINE_COMP7)
-#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx)
+#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || defined(STM32G491xx) || defined(STM32G4A1xx)
 #define COMP_GET_EXTI_LINE(__INSTANCE__)    (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1  \
                                              :((__INSTANCE__) == COMP2) ? COMP_EXTI_LINE_COMP2 \
                                              :((__INSTANCE__) == COMP3) ? COMP_EXTI_LINE_COMP3 \
@@ -1014,7 +1014,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @}
   */
 
-/** @defgroup COMP_IS_COMP_Definitions COMP private macros to check input parameters
+/** @defgroup COMP_IS_COMP_Private_Definitions COMP private macros to check input parameters
   * @{
   */
 #define IS_COMP_INPUT_PLUS(__COMP_INSTANCE__, __INPUT_PLUS__) (((__INPUT_PLUS__) == COMP_INPUT_PLUS_IO1) || \
@@ -1055,7 +1055,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                                                   (((__INPUT_MINUS__) == COMP_INPUT_MINUS_DAC2_CH1)  || \
                                                                    ((__INPUT_MINUS__) == COMP_INPUT_MINUS_DAC4_CH1))    \
                                                                  ))
-#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx)
+#elif defined(STM32GBK1CB) || defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || defined(STM32G491xx) || defined(STM32G4A1xx)
 #define IS_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__) (((__INPUT_MINUS__) == COMP_INPUT_MINUS_1_4VREFINT)  || \
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_1_2VREFINT)  || \
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_3_4VREFINT)  || \
@@ -1216,6 +1216,39 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
      ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM3_OC4_COMP4)  ||      \
      ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM8_OC5_COMP4)  ||      \
      ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM15_OC1_COMP4)))       \
+    || ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM15_OC1)             \
+    || ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM4_OC3)              \
+    )
+#elif defined(STM32G491xx) || defined(STM32G4A1xx)
+#define IS_COMP_BLANKINGSRC_INSTANCE(__INSTANCE__, __OUTPUT_BLANKING_SOURCE__)  \
+   ((((__INSTANCE__) == COMP1) &&                                               \
+    (((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_NONE)            ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM1_OC5_COMP1)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM2_OC3_COMP1)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM3_OC3_COMP1)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM8_OC5_COMP1)))        \
+    ||                                                                          \
+    (((__INSTANCE__) == COMP2) &&                                               \
+    (((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_NONE)            ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM1_OC5_COMP2)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM2_OC3_COMP2)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM3_OC3_COMP2)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM8_OC5_COMP2)))        \
+    ||                                                                          \
+    (((__INSTANCE__) == COMP3) &&                                               \
+    (((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_NONE)            ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM1_OC5_COMP3)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM2_OC4_COMP3)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM3_OC3_COMP3)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM8_OC5_COMP3)))        \
+    ||                                                                          \
+    (((__INSTANCE__) == COMP4) &&                                               \
+    (((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_NONE)            ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM1_OC5_COMP4)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM3_OC4_COMP4)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM8_OC5_COMP4)  ||      \
+     ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM15_OC1_COMP4)))       \
+    || ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM20_OC5)             \
     || ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM15_OC1)             \
     || ((__OUTPUT_BLANKING_SOURCE__) == COMP_BLANKINGSRC_TIM4_OC3)              \
     )

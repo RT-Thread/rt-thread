@@ -843,14 +843,14 @@ GPJUP_Val       EQU     0x00000000
 ;  Absolute addressing mode must be used.
 ;  Dummy Handlers are implemented as infinite loops which can be modified.
 
-				EXPORT Entry_Point
+                EXPORT Entry_Point
 Entry_Point
 Vectors         LDR     PC, Reset_Addr
                 LDR     PC, Undef_Addr
                 LDR     PC, SWI_Addr
                 LDR     PC, PAbt_Addr
                 LDR     PC, DAbt_Addr
-		NOP
+        NOP
                 LDR     PC, IRQ_Addr
                 LDR     PC, FIQ_Addr
 
@@ -880,17 +880,17 @@ FIQ_Handler     B       FIQ_Handler
 DAbt_Handler
                IMPORT rt_hw_trap_dabt
 
-                	sub 	sp, sp, #72
-	                stmia 	sp, {r0 - r12}   		;/* Calling r0-r12					*/
-                    add		r8, sp, #60
-	                stmdb   r8, {sp, lr}            ;/* Calling SP, LR					*/
-	                str		lr, [r8, #0]            ;/* Save calling PC					*/
-	                mrs		r6, spsr
-	                str		r6, [r8, #4]            ;/* Save CPSR						*/
-	                str		r0, [r8, #8]            ;/* Save OLD_R0						*/
-	                mov		r0, sp
+                    sub     sp, sp, #72
+                    stmia   sp, {r0 - r12}          ;/* Calling r0-r12                  */
+                    add     r8, sp, #60
+                    stmdb   r8, {sp, lr}            ;/* Calling SP, LR                  */
+                    str     lr, [r8, #0]            ;/* Save calling PC                 */
+                    mrs     r6, spsr
+                    str     r6, [r8, #4]            ;/* Save CPSR                       */
+                    str     r0, [r8, #8]            ;/* Save OLD_R0                     */
+                    mov     r0, sp
 
-	                bl 		rt_hw_trap_dabt
+                    bl      rt_hw_trap_dabt
 
 
 ;##########################################
@@ -1137,7 +1137,7 @@ rt_hw_context_switch_interrupt_do   PROC
                 MRS     r3,  spsr       ; get cpsr of interrupt thread
 
                 ; switch to SVC mode and no interrupt
-				MSR 	cpsr_c, #I_Bit:OR:F_Bit:OR:Mode_SVC
+                MSR     cpsr_c, #I_Bit:OR:F_Bit:OR:Mode_SVC
 
                 STMFD   sp!, {r2}       ; push old task's pc
                 STMFD   sp!, {r4-r12,lr}; push old task's lr,r12-r4

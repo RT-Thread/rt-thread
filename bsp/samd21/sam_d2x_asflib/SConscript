@@ -31,18 +31,18 @@ if rtconfig.DEVICE_SERIES == 'SAMD20':
 	path += [cwd + '/sam0/', cwd + '/sam0/utils/cmsis/samd20/include/']
 	path += [cwd + '/sam0/utils/cmsis/samd20/source/']
 	src	+= Glob('./sam0/utils/cmsis/samd20/source/*.c')
-	if rtconfig.CROSS_TOOL == 'gcc':
+	if rtconfig.PLATFORM in ['gcc']:
 		src += Glob('./sam0/utils/cmsis/samd20/source/gcc/*.s')
-	elif rtconfig.CROSS_TOOL == 'keil':
+	elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 		src += Glob('./sam0/utils/cmsis/samd20/source/arm/*.s')
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
 	#D21
 	path += [cwd + '/sam0/utils/cmsis/samd21/include/']
 	path += [cwd + '/sam0/utils/cmsis/samd21/source/']
 	src	+= Glob('./sam0/utils/cmsis/samd21/source/*.c')
-	if rtconfig.CROSS_TOOL == 'gcc':
+	if rtconfig.PLATFORM in ['gcc']:
 		src += Glob('./sam0/utils/cmsis/samd21/source/gcc/*.s')
-	elif rtconfig.CROSS_TOOL == 'keil':
+	elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 		src += Glob('./sam0/utils/cmsis/samd21/source/arm/*.s')
 
 #sam0/drivers/system

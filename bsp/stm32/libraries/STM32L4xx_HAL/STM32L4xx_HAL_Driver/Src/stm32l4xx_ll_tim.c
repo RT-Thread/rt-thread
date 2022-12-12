@@ -309,7 +309,7 @@ void LL_TIM_StructInit(LL_TIM_InitTypeDef *TIM_InitStruct)
   TIM_InitStruct->CounterMode       = LL_TIM_COUNTERMODE_UP;
   TIM_InitStruct->Autoreload        = 0xFFFFFFFFU;
   TIM_InitStruct->ClockDivision     = LL_TIM_CLOCKDIVISION_DIV1;
-  TIM_InitStruct->RepetitionCounter = (uint8_t)0x00;
+  TIM_InitStruct->RepetitionCounter = 0x00000000U;
 }
 
 /**
@@ -701,9 +701,9 @@ void LL_TIM_BDTR_StructInit(LL_TIM_BDTR_InitTypeDef *TIM_BDTRInitStruct)
   *  and DTG[7:0] can be write-locked depending on the LOCK configuration, it
   *  can be necessary to configure all of them during the first write access to
   *  the TIMx_BDTR register.
-  * @note Macro @ref IS_TIM_BREAK_INSTANCE(TIMx) can be used to check whether or not
+  * @note Macro IS_TIM_BREAK_INSTANCE(TIMx) can be used to check whether or not
   *       a timer instance provides a break input.
-  * @note Macro @ref IS_TIM_BKIN2_INSTANCE(TIMx) can be used to check whether or not
+  * @note Macro IS_TIM_BKIN2_INSTANCE(TIMx) can be used to check whether or not
   *       a timer instance provides a second break input.
   * @param  TIMx Timer Instance
   * @param  TIM_BDTRInitStruct pointer to a @ref LL_TIM_BDTR_InitTypeDef structure (Break and Dead Time configuration data structure)

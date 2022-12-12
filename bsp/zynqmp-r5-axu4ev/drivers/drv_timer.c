@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,10 +47,10 @@ static int rt_hw_timer_init(void)
     /* Setup interval */
     TTC_INTERVAL_VAL(TTC0_0_BASEADDR) = TTC0_0_CLK_FREQ_HZ / RT_TICK_PER_SECOND;
     /* Clear all of the prescaler control bits in the register */
-    TTC_CLK_CNTRL(TTC0_0_BASEADDR) &= ~(TTC_CLK_CNTRL_PS_VAL_MASK | 
+    TTC_CLK_CNTRL(TTC0_0_BASEADDR) &= ~(TTC_CLK_CNTRL_PS_VAL_MASK |
                                             TTC_CLK_CNTRL_PS_EN_MASK);
     /* We do not need a prescaler*/
-    
+
     /* Register the ticker handler with the GIC */
     rt_hw_interrupt_install(XPAR_XTTCPS_0_INTR, rt_hw_timer_isr, RT_NULL, "tick");
     /* Enable TTC interrupts in the GIC */

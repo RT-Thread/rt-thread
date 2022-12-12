@@ -44,7 +44,7 @@ SECTIONS
   .text : AT(ADDR(.text)){
   . = ALIGN(0x4) ;
   __stext = . ;
-  KEEP(*startup.o(*.text*))
+  KEEP(*startup_gcc.o(*.text*))
   *(.text)
   *(.text*)
   *(.text.*)
@@ -101,6 +101,7 @@ SECTIONS
   *(.rodata1)
   *(.rodata*)
   *(.rodata.*)
+  *(.srodata*)
   *(.rodata.str1.4)
   . = ALIGN(0x4) ;
   __ctor_start__ = .;
@@ -116,10 +117,10 @@ SECTIONS
  } > REGION_RODATA
  .data : {
   . = ALIGN(0x4) ;
-  __sdata = . ;
   __data_start__ = . ;
+  __sdata = . ;
   data_start = . ;
-  KEEP(*startup.o(*.vectors*))
+  KEEP(*startup_gcc.o(*.vectors*))
   *(.got.plt)
   *(.got)
   *(.gnu.linkonce.r*)

@@ -18,7 +18,7 @@
 #include "drv_config.h"
 #include "drv_flash.h"
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include "fal.h"
 #endif
 
@@ -78,7 +78,7 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
         LOG_E("write outrange flash size! addr is (0x%p)", (void *)(addr + size));
         return -RT_EINVAL;
     }
-    
+
     if(addr % 32 != 0)
     {
         LOG_E("write addr must be 32-byte alignment");
@@ -158,27 +158,35 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
 
     rt_uint32_t addr_bank1 = 0;
     rt_uint32_t size_bank1 = 0;
+#ifdef FLASH_BANK_2
     rt_uint32_t addr_bank2 = 0;
     rt_uint32_t size_bank2 = 0;
+#endif
 
     if((addr + size) < FLASH_BANK2_BASE)
     {
         addr_bank1 = addr;
         size_bank1 = size;
+#ifdef FLASH_BANK_2
         size_bank2 = 0;
+#endif
     }
     else if(addr >= FLASH_BANK2_BASE)
     {
         size_bank1 = 0;
+#ifdef FLASH_BANK_2
         addr_bank2 = addr;
-        size_bank2 = size; 
+        size_bank2 = size;
+#endif
     }
     else
     {
         addr_bank1 = addr;
         size_bank1 = FLASH_BANK2_BASE - addr_bank1;
+#ifdef FLASH_BANK_2
         addr_bank2 = FLASH_BANK2_BASE;
         size_bank2 = addr + size - FLASH_BANK2_BASE;
+#endif
     }
 
     /*Variable used for Erase procedure*/
@@ -188,7 +196,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
     EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
     SCB_DisableDCache();
-    
+
     if(size_bank1)
     {
         EraseInitStruct.Sector    = (addr_bank1 - FLASH_BANK1_BASE) / FLASH_SECTOR_SIZE;
@@ -201,6 +209,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
         }
     }
 
+#ifdef FLASH_BANK_2
     if(size_bank2)
     {
         EraseInitStruct.Sector    = (addr_bank2 - FLASH_BANK2_BASE) / FLASH_SECTOR_SIZE;
@@ -212,6 +221,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
             goto __exit;
         }
     }
+#endif
 
 __exit:
 
@@ -227,7 +237,7 @@ __exit:
     return size;
 }
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write_128k(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase_128k(long offset, size_t size);
