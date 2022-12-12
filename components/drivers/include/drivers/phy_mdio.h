@@ -32,6 +32,7 @@ struct rt_mdio_bus
     void *hw_obj;
     char *name;
     struct rt_mdio_bus_ops *ops;
+    rt_mutex_t lock;
 };
 
 typedef struct rt_mdio_bus rt_mdio_t;
