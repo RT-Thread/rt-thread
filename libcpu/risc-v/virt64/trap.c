@@ -5,9 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2022-12-08     RT-Thread    first version
  */
 #include <rthw.h>
 #include <rtthread.h>
+#include <stdint.h>
 
 #include "encoding.h"
 #include "stack.h"
@@ -15,7 +17,13 @@
 #include "riscv.h"
 #include "tick.h"
 #include "plic.h"
-#include "lwp_arch.h"
+#include "riscv_mmu.h"
+
+#ifdef RT_USING_SMART
+#include <lwp_arch.h>
+#else
+#define rt_hw_backtrace(...) (0)
+#endif
 
 void dump_regs(struct rt_hw_stack_frame *regs)
 {
@@ -147,11 +155,11 @@ static const char *get_exception_msg(int id)
     return msg;
 }
 
+#ifdef RT_USING_SMART
 void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
 
-#ifdef RT_USING_USERSPACE
     /* user page fault */
     if (id == EP_LOAD_PAGE_FAULT ||
         id == EP_STORE_PAGE_FAULT)
@@ -161,7 +169,6 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             return;
         }
     }
-#endif
     LOG_E("[FATAL ERROR] Exception %ld:%s\n", id, get_exception_msg(id));
     LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
     dump_regs(sp);
@@ -171,6 +178,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     LOG_E("User Fault, killing thread: %s", rt_thread_self()->name);
     sys_exit(-1);
 }
+#endif
 
 static void vector_enable(struct rt_hw_stack_frame *sp)
 {
@@ -282,12 +290,14 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
                     goto _exit;
             }
 #endif /* ENABLE_VECTOR */
+#ifdef RT_USING_SMART
             if (!(sp->sstatus & 0x100))
             {
                 handle_user(scause, stval, sepc, sp);
                 // if handle_user() return here, jump to u mode then
                 goto _exit;
             }
+#endif
 
             // handle kernel exception:
             rt_kprintf("Unhandled Exception %ld:%s\n", id, get_exception_msg(id));

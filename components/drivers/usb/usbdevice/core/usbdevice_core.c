@@ -2225,7 +2225,7 @@ rt_err_t rt_usbd_event_signal(struct udev_msg* msg)
 }
 
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t usb_thread_stack[RT_USBD_THREAD_STACK_SZ];
 static struct rt_thread usb_thread;
 #define USBD_MQ_MSG_SZ  32

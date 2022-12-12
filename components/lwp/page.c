@@ -37,7 +37,7 @@ static size_t page_nr;
 
 static struct page *page_list[ARCH_PAGE_LIST_SIZE];
 
-RT_WEAK int rt_hw_clz(size_t n)
+rt_weak int rt_hw_clz(size_t n)
 {
     int bits = sizeof(size_t) * 8;
 
@@ -66,7 +66,7 @@ RT_WEAK int rt_hw_clz(size_t n)
     return bits - n;
 }
 
-RT_WEAK int rt_hw_ctz(size_t n)
+rt_weak int rt_hw_ctz(size_t n)
 {
     int ret = sizeof(size_t) * 8;
 

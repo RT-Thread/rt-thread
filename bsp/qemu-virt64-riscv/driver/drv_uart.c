@@ -156,10 +156,11 @@ int rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
     rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, RT_CONSOLE_DEVICE_NAME);
+    rt_hw_interrupt_umask(uart->irqno);
     return 0;
 }
 
 /* WEAK for SDK 0.5.6 */
-RT_WEAK void uart_debug_init(int uart_channel)
+rt_weak void uart_debug_init(int uart_channel)
 {
 }

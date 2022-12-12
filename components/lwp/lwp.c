@@ -970,7 +970,7 @@ _exit:
 }
 #endif /* ARCH_MM_MMU */
 
-RT_WEAK int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size, struct process_aux *aux)
+rt_weak int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size, struct process_aux *aux)
 {
     uint8_t *ptr;
     int ret = -1;
@@ -1320,7 +1320,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 #ifdef RT_USING_MUSL
 extern char **__environ;
 #else
-char __environ = 0;
+char **__environ = 0;
 #endif
 
 pid_t exec(char *filename, int debug, int argc, char **argv)

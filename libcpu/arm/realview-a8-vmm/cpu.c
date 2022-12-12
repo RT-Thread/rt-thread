@@ -18,7 +18,7 @@
 /*@{*/
 
 /** shutdown CPU */
-RT_WEAK void rt_hw_cpu_shutdown()
+rt_weak void rt_hw_cpu_shutdown()
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

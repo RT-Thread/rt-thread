@@ -89,7 +89,7 @@ struct uac_audio_speaker
 };
 static struct uac_audio_speaker speaker;
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -109,7 +109,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
-ALIGN(4)
+rt_align(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -123,7 +123,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
     0,
 };
 
-ALIGN(4)
+rt_align(4)
 const static char *_ustring[] =
 {
     "Language",
@@ -134,7 +134,7 @@ const static char *_ustring[] =
     "Interface",
 };
 
-ALIGN(4)
+rt_align(4)
 static struct uac_ac_descriptor ac_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -214,7 +214,7 @@ static struct uac_ac_descriptor ac_desc =
 #endif
 };
 
-ALIGN(4)
+rt_align(4)
 static struct uinterface_descriptor as_desc0 =
 {
     USB_DESC_LENGTH_INTERFACE,
@@ -228,7 +228,7 @@ static struct uinterface_descriptor as_desc0 =
     0x00,
 };
 
-ALIGN(4)
+rt_align(4)
 static struct uac_as_descriptor as_desc =
 {
     /* Interface Descriptor */

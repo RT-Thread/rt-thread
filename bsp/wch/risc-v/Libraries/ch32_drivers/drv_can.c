@@ -100,7 +100,7 @@ static struct ch32v307x_can_obj  drv_can2 =
 #endif
 
 #ifdef BSP_USING_CAN
-RT_WEAK void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
+rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
 {
     GPIO_InitTypeDef GPIO_InitSturcture={0};
 #ifdef BSP_USING_CAN1

@@ -24,7 +24,7 @@ struct rthw_sdio
 
 static struct rt_mmcsd_host *host;
 
-ALIGN(SDIO_ALIGN_LEN)
+rt_align(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 
 rt_err_t command_send(sdhi_instance_ctrl_t *p_ctrl, struct rt_mmcsd_cmd *cmd)

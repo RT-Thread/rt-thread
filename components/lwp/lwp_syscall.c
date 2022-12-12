@@ -929,7 +929,8 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
     {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
-        return -EINTR;
+        if(ret != 0)
+            return -EINTR;
     }
 #else
     if (rmtp)
@@ -1598,7 +1599,7 @@ fail:
     return GET_ERRNO();
 }
 
-RT_WEAK long sys_clone(void *arg[])
+rt_weak long sys_clone(void *arg[])
 {
     return _sys_clone(arg);
 }
@@ -1828,12 +1829,12 @@ size_t lwp_user_strlen(const char *s, int *err)
 
 /* arm needs to wrap fork/clone call to preserved lr & caller saved regs */
 
-RT_WEAK int sys_fork(void)
+rt_weak int sys_fork(void)
 {
     return _sys_fork();
 }
 
-RT_WEAK int sys_vfork(void)
+rt_weak int sys_vfork(void)
 {
     return sys_fork();
 }
@@ -3878,7 +3879,8 @@ int sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, s
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
     {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
-        return -EINTR;
+                if(ret != 0)
+            return -EINTR;
     }
 #else
     if (rmtp)

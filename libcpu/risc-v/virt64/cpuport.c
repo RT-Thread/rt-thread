@@ -14,9 +14,8 @@
 
 #include "cpuport.h"
 #include "stack.h"
-#include "sbi.h"
-
-#include <lwp_arch.h>
+#include <sbi.h>
+#include <encoding.h>
 
 #define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
 

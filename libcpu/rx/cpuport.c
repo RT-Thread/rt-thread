@@ -179,7 +179,7 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
  *
  * @author LXZ (2014/11/8)
  */
-RT_WEAK void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 

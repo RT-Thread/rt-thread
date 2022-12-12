@@ -19,7 +19,7 @@
  * reset cpu by dog's time-out
  *
  */
-RT_WEAK void rt_hw_cpu_reset()
+rt_weak void rt_hw_cpu_reset()
 {
     /*NOTREACHED*/
 }

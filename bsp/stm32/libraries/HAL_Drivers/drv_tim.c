@@ -212,7 +212,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 #if defined(APBPERIPH_BASE)
         prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler / 10000) - 1;
 #elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
-        if ((rt_uint32_t)htim->Instance >= APB2PERIPH_BASE)
+        if ((rt_uint32_t)tim->Instance >= APB2PERIPH_BASE)
         {
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler / 10000) - 1;
         }

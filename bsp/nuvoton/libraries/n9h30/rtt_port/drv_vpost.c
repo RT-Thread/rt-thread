@@ -70,9 +70,9 @@ static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 #endif
 };
 
-RT_WEAK void nu_lcd_backlight_on(void) { }
+rt_weak void nu_lcd_backlight_on(void) { }
 
-RT_WEAK void nu_lcd_backlight_off(void) { }
+rt_weak void nu_lcd_backlight_off(void) { }
 static rt_err_t vpost_layer_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_vpost_t psVpost = (nu_vpost_t)dev;

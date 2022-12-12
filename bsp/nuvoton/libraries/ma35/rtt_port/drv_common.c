@@ -301,7 +301,7 @@ void idle_wfi(void)
 extern void nu_clock_dump(void);
 extern void nu_clock_raise(void);
 
-RT_WEAK void nutool_pincfg_init(void)
+rt_weak void nutool_pincfg_init(void)
 {
 
 }
@@ -309,7 +309,7 @@ RT_WEAK void nutool_pincfg_init(void)
 /**
  * This function will initial board.
  */
-RT_WEAK void rt_hw_board_init(void)
+rt_weak void rt_hw_board_init(void)
 {
     /* Unlock protected registers */
     SYS_UnlockReg();

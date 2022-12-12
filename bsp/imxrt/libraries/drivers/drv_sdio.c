@@ -69,7 +69,7 @@ static int enable_log = 1;
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
 #endif
 
-//ALIGN(USDHC_ADMA2_ADDR_ALIGN) uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS] SECTION("NonCacheable");
+//rt_align(USDHC_ADMA2_ADDR_ALIGN) uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS] SECTION("NonCacheable");
 AT_NONCACHEABLE_SECTION_ALIGN(uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS], USDHC_ADMA2_ADDR_ALIGN);
 struct imxrt_mmcsd
 {
