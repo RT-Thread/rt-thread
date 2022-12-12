@@ -294,9 +294,9 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
+#if defined(RT_USING_LWP) && defined(DFS_USING_POSIX)
 pid_t exec(char*, int, int, char**);
 
-#if defined(RT_USING_LWP) && defined(DFS_USING_POSIX)
 /* check whether a file of the given path exits */
 static rt_bool_t _msh_lwp_cmd_exists(const char *path)
 {
