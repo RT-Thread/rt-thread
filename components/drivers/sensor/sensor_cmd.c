@@ -21,68 +21,216 @@
 
 static rt_sem_t sensor_rx_sem = RT_NULL;
 
+static const char *sensor_get_type_name(rt_sensor_info_t info)
+{
+    switch(info->type)
+    {
+        case RT_SENSOR_CLASS_ACCE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_ACCE);
+        case RT_SENSOR_CLASS_GYRO:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_GYRO);
+        case RT_SENSOR_CLASS_MAG:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_MAG);
+        case RT_SENSOR_CLASS_TEMP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_TEMP);
+        case RT_SENSOR_CLASS_HUMI:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_HUMI);
+        case RT_SENSOR_CLASS_BARO:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_BARO);
+        case RT_SENSOR_CLASS_LIGHT:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_LIGHT);
+        case RT_SENSOR_CLASS_PROXIMITY:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_PROXIMITY);
+        case RT_SENSOR_CLASS_HR:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_HR);
+        case RT_SENSOR_CLASS_TVOC:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_TVOC);
+        case RT_SENSOR_CLASS_NOISE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_NOISE);
+        case RT_SENSOR_CLASS_STEP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_STEP);
+        case RT_SENSOR_CLASS_FORCE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_FORCE);
+        case RT_SENSOR_CLASS_DUST:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_DUST);
+        case RT_SENSOR_CLASS_ECO2:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_ECO2);
+        case RT_SENSOR_CLASS_GNSS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_GNSS);
+        case RT_SENSOR_CLASS_TOF:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_TOF);
+        case RT_SENSOR_CLASS_SPO2:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_SPO2);
+        case RT_SENSOR_CLASS_IAQ:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_IAQ);
+        case RT_SENSOR_CLASS_ETOH:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_ETOH);
+        case RT_SENSOR_CLASS_BP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_BP);
+        case RT_SENSOR_CLASS_NONE:
+        default:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_NONE);
+    }
+}
+
+static const char *sensor_get_vendor_name(rt_sensor_info_t info)
+{
+    switch(info->vendor)
+    {
+        case RT_SENSOR_VENDOR_STM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_STM);
+        case RT_SENSOR_VENDOR_BOSCH:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_BOSCH);
+        case RT_SENSOR_VENDOR_INVENSENSE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_INVENSENSE);
+        case RT_SENSOR_VENDOR_SEMTECH:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_SEMTECH);
+        case RT_SENSOR_VENDOR_GOERTEK:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_GOERTEK);
+        case RT_SENSOR_VENDOR_MIRAMEMS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MIRAMEMS);
+        case RT_SENSOR_VENDOR_DALLAS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_DALLAS);
+        case RT_SENSOR_VENDOR_ASAIR:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_ASAIR);
+        case RT_SENSOR_VENDOR_SHARP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_SHARP);
+        case RT_SENSOR_VENDOR_SENSIRION:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_SENSIRION);
+        case RT_SENSOR_VENDOR_TI:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_TI);
+        case RT_SENSOR_VENDOR_PLANTOWER:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_PLANTOWER);
+        case RT_SENSOR_VENDOR_AMS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_AMS);
+        case RT_SENSOR_VENDOR_MAXIM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MAXIM);
+        case RT_SENSOR_VENDOR_MELEXIS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MELEXIS);
+        case RT_SENSOR_VENDOR_UNKNOWN:
+        default:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_UNKNOWN);
+    }
+}
+
+static const char *sensor_get_unit_name(rt_sensor_info_t info)
+{
+    switch(info->unit)
+    {
+        case RT_SENSOR_UNIT_MG:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MG);
+        case RT_SENSOR_UNIT_MDPS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MDPS);
+        case RT_SENSOR_UNIT_MGAUSS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MGAUSS);
+        case RT_SENSOR_UNIT_LUX:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_LUX);
+        case RT_SENSOR_UNIT_CM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_CM);
+        case RT_SENSOR_UNIT_MM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MM);
+        case RT_SENSOR_UNIT_PA:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PA);
+        case RT_SENSOR_UNIT_MMHG:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MMHG);
+        case RT_SENSOR_UNIT_PERMILLAGE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PERMILLAGE);
+        case RT_SENSOR_UNIT_PERCENTAGE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PERCENTAGE);
+        case RT_SENSOR_UNIT_CELSIUS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_CELSIUS);
+        case RT_SENSOR_UNIT_FAHRENHEIT:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_FAHRENHEIT);
+        case RT_SENSOR_UNIT_KELVIN:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_KELVIN);
+        case RT_SENSOR_UNIT_HZ:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_HZ);
+        case RT_SENSOR_UNIT_BPM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_BPM);
+        case RT_SENSOR_UNIT_MN:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MN);
+        case RT_SENSOR_UNIT_N:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_N);
+        case RT_SENSOR_UNIT_PPM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PPM);
+        case RT_SENSOR_UNIT_PPB:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PPB);
+        case RT_SENSOR_UNIT_DMS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_DMS);
+        case RT_SENSOR_UNIT_DD:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_DD);
+        case RT_SENSOR_UNIT_MGM3:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MGM3);
+        case RT_SENSOR_UNIT_NONE:
+        default:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_NONE);
+    }
+}
+
 static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor_data *sensor_data)
 {
+    const char *unit_name = sensor_get_unit_name(&sensor->info);
     switch (sensor->info.type)
     {
     case RT_SENSOR_CLASS_ACCE:
-        LOG_I("num:%d, x:%f, y:%f, z:%f mg, timestamp:%u", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
+        LOG_I("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GYRO:
-        LOG_I("num:%d, x:%f, y:%f, z:%f dps, timestamp:%u", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, sensor_data->timestamp);
+        LOG_I("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_MAG:
-        LOG_I("num:%d, x:%f, y:%f, z:%f mGauss, timestamp:%u", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
+        LOG_I("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GNSS:
-        LOG_I("num:%d, lon:%f, lat:%f, timestamp:%u", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, sensor_data->timestamp);
+        LOG_I("num:%d, lon:%f, lat:%f %s, timestamp:%u", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_TEMP:
-        LOG_I("num:%d, temp:%f C, timestamp:%u", num, sensor_data->data.temp, sensor_data->timestamp);
+        LOG_I("num:%d, temp:%f%s, timestamp:%u", num, sensor_data->data.temp, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
-        LOG_I("num:%d, humi:%f%%, timestamp:%u", num, sensor_data->data.humi, sensor_data->timestamp);
+        LOG_I("num:%d, humi:%f%s, timestamp:%u", num, sensor_data->data.humi, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BARO:
-        LOG_I("num:%d, press:%f pa, timestamp:%u", num, sensor_data->data.baro, sensor_data->timestamp);
+        LOG_I("num:%d, press:%f%s, timestamp:%u", num, sensor_data->data.baro, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_LIGHT:
-        LOG_I("num:%d, light:%f lux, timestamp:%u", num, sensor_data->data.light, sensor_data->timestamp);
+        LOG_I("num:%d, light:%f%s, timestamp:%u", num, sensor_data->data.light, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_PROXIMITY:
     case RT_SENSOR_CLASS_TOF:
-        LOG_I("num:%d, distance:%f, timestamp:%u", num, sensor_data->data.proximity, sensor_data->timestamp);
+        LOG_I("num:%d, distance:%f%s, timestamp:%u", num, sensor_data->data.proximity, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HR:
-        LOG_I("num:%d, heart rate:%f bpm, timestamp:%u", num, sensor_data->data.hr, sensor_data->timestamp);
+        LOG_I("num:%d, heart rate:%f%s, timestamp:%u", num, sensor_data->data.hr, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_TVOC:
-        LOG_I("num:%d, tvoc:%f ppb, timestamp:%u", num, sensor_data->data.tvoc, sensor_data->timestamp);
+        LOG_I("num:%d, tvoc:%f%s, timestamp:%u", num, sensor_data->data.tvoc, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_NOISE:
-        LOG_I("num:%d, noise:%f, timestamp:%u", num, sensor_data->data.noise, sensor_data->timestamp);
+        LOG_I("num:%d, noise:%f%s, timestamp:%u", num, sensor_data->data.noise, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_STEP:
-        LOG_I("num:%d, step:%f, timestamp:%u", num, sensor_data->data.step, sensor_data->timestamp);
+        LOG_I("num:%d, step:%f%s, timestamp:%u", num, sensor_data->data.step, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_FORCE:
-        LOG_I("num:%d, force:%f, timestamp:%u", num, sensor_data->data.force, sensor_data->timestamp);
+        LOG_I("num:%d, force:%f%s, timestamp:%u", num, sensor_data->data.force, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_DUST:
-        LOG_I("num:%d, dust:%f ug/m3, timestamp:%u", num, sensor_data->data.dust, sensor_data->timestamp);
+        LOG_I("num:%d, dust:%f%s, timestamp:%u", num, sensor_data->data.dust, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_ECO2:
-        LOG_I("num:%d, eco2:%f ppm, timestamp:%u", num, sensor_data->data.eco2, sensor_data->timestamp);
+        LOG_I("num:%d, eco2:%f%s, timestamp:%u", num, sensor_data->data.eco2, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_IAQ:
-        LOG_I("num:%d, IAQ:%f, timestamp:%u", num, sensor_data->data.iaq, sensor_data->timestamp);
+        LOG_I("num:%d, IAQ:%f%s, timestamp:%u", num, sensor_data->data.iaq, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_ETOH:
-        LOG_I("num:%d, EtOH:%f ppm, timestamp:%u", num, sensor_data->data.etoh, sensor_data->timestamp);
+        LOG_I("num:%d, EtOH:%f%s, timestamp:%u", num, sensor_data->data.etoh, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BP:
-        LOG_I("num:%d, bp.sbp:%f mmHg, bp.dbp:%f mmHg, timestamp:%u", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, sensor_data->timestamp);
+        LOG_I("num:%d, bp.sbp:%f, bp.dbp:%f %s, timestamp:%u", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, unit_name, sensor_data->timestamp);
         break;
+    case RT_SENSOR_CLASS_NONE:
     default:
         LOG_E("Unknown type of sensor!");
         break;
@@ -313,112 +461,10 @@ static void sensor(int argc, char **argv)
             return ;
         }
         rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
-        switch (info.vendor)
-        {
-        case RT_SENSOR_VENDOR_UNKNOWN:
-            rt_kprintf("vendor    :unknown vendor\n");
-            break;
-        case RT_SENSOR_VENDOR_STM:
-            rt_kprintf("vendor    :STMicroelectronics\n");
-            break;
-        case RT_SENSOR_VENDOR_BOSCH:
-            rt_kprintf("vendor    :Bosch\n");
-            break;
-        case RT_SENSOR_VENDOR_INVENSENSE:
-            rt_kprintf("vendor    :Invensense\n");
-            break;
-        case RT_SENSOR_VENDOR_SEMTECH:
-            rt_kprintf("vendor    :Semtech\n");
-            break;
-        case RT_SENSOR_VENDOR_GOERTEK:
-            rt_kprintf("vendor    :Goertek\n");
-            break;
-        case RT_SENSOR_VENDOR_MIRAMEMS:
-            rt_kprintf("vendor    :MiraMEMS\n");
-            break;
-        case RT_SENSOR_VENDOR_DALLAS:
-            rt_kprintf("vendor    :Dallas\n");
-            break;
-        case RT_SENSOR_VENDOR_ASAIR:
-            rt_kprintf("vendor    :Asair\n");
-            break;
-        case RT_SENSOR_VENDOR_SHARP:
-            rt_kprintf("vendor    :Sharp\n");
-            break;
-        case RT_SENSOR_VENDOR_SENSIRION:
-            rt_kprintf("vendor    :Sensirion\n");
-            break;
-        case RT_SENSOR_VENDOR_TI:
-            rt_kprintf("vendor    :Texas Instruments\n");
-            break;
-        case RT_SENSOR_VENDOR_PLANTOWER:
-            rt_kprintf("vendor    :Plantower\n");
-            break;
-        case RT_SENSOR_VENDOR_AMS:
-            rt_kprintf("vendor    :AMS\n");
-            break;
-        case RT_SENSOR_VENDOR_MAXIM:
-            rt_kprintf("vendor    :Maxim Integrated\n");
-            break;
-        case RT_SENSOR_VENDOR_MELEXIS:
-            rt_kprintf("vendor    :Melexis\n");
-            break;
-        }
         rt_kprintf("model     :%s\n", info.model);
-        switch (info.unit)
-        {
-        case RT_SENSOR_UNIT_NONE:
-            rt_kprintf("unit      :none\n");
-            break;
-        case RT_SENSOR_UNIT_MG:
-            rt_kprintf("unit      :mG\n");
-            break;
-        case RT_SENSOR_UNIT_MDPS:
-            rt_kprintf("unit      :mdps\n");
-            break;
-        case RT_SENSOR_UNIT_MGAUSS:
-            rt_kprintf("unit      :mGauss\n");
-            break;
-        case RT_SENSOR_UNIT_LUX:
-            rt_kprintf("unit      :lux\n");
-            break;
-        case RT_SENSOR_UNIT_CM:
-            rt_kprintf("unit      :cm\n");
-            break;
-        case RT_SENSOR_UNIT_PA:
-            rt_kprintf("unit      :pa\n");
-            break;
-        case RT_SENSOR_UNIT_PERMILLAGE:
-            rt_kprintf("unit      :permillage\n");
-            break;
-        case RT_SENSOR_UNIT_DCELSIUS:
-            rt_kprintf("unit      :Celsius\n");
-            break;
-        case RT_SENSOR_UNIT_HZ:
-            rt_kprintf("unit      :HZ\n");
-            break;
-        case RT_SENSOR_UNIT_ONE:
-            rt_kprintf("unit      :1\n");
-            break;
-        case RT_SENSOR_UNIT_BPM:
-            rt_kprintf("unit      :bpm\n");
-            break;
-        case RT_SENSOR_UNIT_MM:
-            rt_kprintf("unit      :mm\n");
-            break;
-        case RT_SENSOR_UNIT_MN:
-            rt_kprintf("unit      :mN\n");
-            break;
-        case RT_SENSOR_UNIT_PPM:
-            rt_kprintf("unit      :ppm\n");
-            break;
-        case RT_SENSOR_UNIT_PPB:
-            rt_kprintf("unit      :ppb\n");
-            break;
-        case RT_SENSOR_UNIT_MMHG:
-            rt_kprintf("unit      :mmHg\n");
-            break;
-        }
+        rt_kprintf("type:     :%s\n", sensor_get_type_name(&info));
+        rt_kprintf("vendor    :%s\n", sensor_get_vendor_name(&info));
+        rt_kprintf("unit      :%s\n", sensor_get_unit_name(&info));
         rt_kprintf("range_max :%d\n", info.range_max);
         rt_kprintf("range_min :%d\n", info.range_min);
         rt_kprintf("period_min:%dms\n", info.period_min);
