@@ -76,39 +76,47 @@ extern "C" {
 #define RT_SENSOR_CLASS_ETOH_STR       "EtOH"
 #define RT_SENSOR_CLASS_BP             (21)
 #define RT_SENSOR_CLASS_BP_STR         "Blood Pressure"
+#define RT_SENSOR_CLASS_VOLTAGE        (22)
+#define RT_SENSOR_CLASS_VOLTAGE_STR    "Voltage"
+#define RT_SENSOR_CLASS_CURRENT        (23)
+#define RT_SENSOR_CLASS_CURRENT_STR    "Current"
 
 /* Sensor vendor types */
 #define RT_SENSOR_VENDOR_UNKNOWN       (0)
-#define RT_SENSOR_VENDOR_UNKNOWN_STR   "Vendor Unknown"
-#define RT_SENSOR_VENDOR_STM           (1)
+#define RT_SENSOR_VENDOR_UNKNOWN_STR   "Unknown"
+#define RT_SENSOR_VENDOR_VIRTUAL       (1)
+#define RT_SENSOR_VENDOR_VIRTUAL_STR   "Virtual Sensor"
+#define RT_SENSOR_VENDOR_ONCHIP        (2)
+#define RT_SENSOR_VENDOR_ONCHIP_STR    "OnChip"
+#define RT_SENSOR_VENDOR_STM           (3)
 #define RT_SENSOR_VENDOR_STM_STR       "STMicroelectronics"
-#define RT_SENSOR_VENDOR_BOSCH         (2)
+#define RT_SENSOR_VENDOR_BOSCH         (4)
 #define RT_SENSOR_VENDOR_BOSCH_STR     "Bosch"
-#define RT_SENSOR_VENDOR_INVENSENSE    (3)
+#define RT_SENSOR_VENDOR_INVENSENSE    (5)
 #define RT_SENSOR_VENDOR_INVENSENSE_STR "Invensense"
-#define RT_SENSOR_VENDOR_SEMTECH       (4)
+#define RT_SENSOR_VENDOR_SEMTECH       (6)
 #define RT_SENSOR_VENDOR_SEMTECH_STR   "Semtech"
-#define RT_SENSOR_VENDOR_GOERTEK       (5)
+#define RT_SENSOR_VENDOR_GOERTEK       (7)
 #define RT_SENSOR_VENDOR_GOERTEK_STR   "Goertek"
-#define RT_SENSOR_VENDOR_MIRAMEMS      (6)
+#define RT_SENSOR_VENDOR_MIRAMEMS      (8)
 #define RT_SENSOR_VENDOR_MIRAMEMS_STR  "MiraMEMS"
-#define RT_SENSOR_VENDOR_DALLAS        (7)
+#define RT_SENSOR_VENDOR_DALLAS        (9)
 #define RT_SENSOR_VENDOR_DALLAS_STR    "Dallas"
-#define RT_SENSOR_VENDOR_ASAIR         (8)
+#define RT_SENSOR_VENDOR_ASAIR         (10)
 #define RT_SENSOR_VENDOR_ASAIR_STR     "Aosong"
-#define RT_SENSOR_VENDOR_SHARP         (9)
+#define RT_SENSOR_VENDOR_SHARP         (11)
 #define RT_SENSOR_VENDOR_SHARP_STR     "Sharp"
-#define RT_SENSOR_VENDOR_SENSIRION     (10)
+#define RT_SENSOR_VENDOR_SENSIRION     (12)
 #define RT_SENSOR_VENDOR_SENSIRION_STR "Sensirion"
-#define RT_SENSOR_VENDOR_TI            (11)
+#define RT_SENSOR_VENDOR_TI            (13)
 #define RT_SENSOR_VENDOR_TI_STR        "Texas Instruments"
-#define RT_SENSOR_VENDOR_PLANTOWER     (12)
+#define RT_SENSOR_VENDOR_PLANTOWER     (14)
 #define RT_SENSOR_VENDOR_PLANTOWER_STR "Plantower"
-#define RT_SENSOR_VENDOR_AMS           (13)
+#define RT_SENSOR_VENDOR_AMS           (15)
 #define RT_SENSOR_VENDOR_AMS_STR       "ams-OSRAM AG"
-#define RT_SENSOR_VENDOR_MAXIM         (14)
+#define RT_SENSOR_VENDOR_MAXIM         (16)
 #define RT_SENSOR_VENDOR_MAXIM_STR     "Maxim Integrated"
-#define RT_SENSOR_VENDOR_MELEXIS       (15)
+#define RT_SENSOR_VENDOR_MELEXIS       (17)
 #define RT_SENSOR_VENDOR_MELEXIS_STR   "Melexis"
 
 /* Sensor unit types */
@@ -122,41 +130,51 @@ extern "C" {
 #define RT_SENSOR_UNIT_MGAUSS_STR     "mGauss"
 #define RT_SENSOR_UNIT_LUX            (4)  /* Ambient light           unit: lux        */
 #define RT_SENSOR_UNIT_LUX_STR        "lux"
-#define RT_SENSOR_UNIT_CM             (5)  /* Distance                unit: cm         */
+#define RT_SENSOR_UNIT_M              (5)  /* Distance                unit: m          */
+#define RT_SENSOR_UNIT_M_STR          "m"
+#define RT_SENSOR_UNIT_CM             (6)  /* Distance                unit: cm         */
 #define RT_SENSOR_UNIT_CM_STR         "cm"
-#define RT_SENSOR_UNIT_MM             (6)  /* Distance                unit: mm         */
+#define RT_SENSOR_UNIT_MM             (7)  /* Distance                unit: mm         */
 #define RT_SENSOR_UNIT_MM_STR         "mm"
-#define RT_SENSOR_UNIT_PA             (7)  /* Barometer               unit: Pa         */
+#define RT_SENSOR_UNIT_PA             (8)  /* Barometer               unit: Pa         */
 #define RT_SENSOR_UNIT_PA_STR         "Pa"
-#define RT_SENSOR_UNIT_MMHG           (8)  /* Blood Pressure          unit: mmHg       */
+#define RT_SENSOR_UNIT_MMHG           (9)  /* Blood Pressure          unit: mmHg       */
 #define RT_SENSOR_UNIT_MMHG_STR       "mmHg"
-#define RT_SENSOR_UNIT_PERMILLAGE     (9)  /* Relative Humidity       unit: permillage */
-#define RT_SENSOR_UNIT_PERMILLAGE_STR "‰"
 #define RT_SENSOR_UNIT_PERCENTAGE     (10) /* Relative Humidity       unit: percentage */
 #define RT_SENSOR_UNIT_PERCENTAGE_STR "%"
-#define RT_SENSOR_UNIT_CELSIUS        (11) /* Temperature             unit: Celsius ℃ */
+#define RT_SENSOR_UNIT_PERMILLAGE     (11) /* Relative Humidity       unit: permillage */
+#define RT_SENSOR_UNIT_PERMILLAGE_STR "‰"
+#define RT_SENSOR_UNIT_CELSIUS        (12) /* Temperature             unit: Celsius ℃ */
 #define RT_SENSOR_UNIT_CELSIUS_STR    "℃"
-#define RT_SENSOR_UNIT_FAHRENHEIT     (12) /* Temperature             unit: Fahrenheit ℉ */
+#define RT_SENSOR_UNIT_FAHRENHEIT     (13) /* Temperature             unit: Fahrenheit ℉ */
 #define RT_SENSOR_UNIT_FAHRENHEIT_STR "℉"
-#define RT_SENSOR_UNIT_KELVIN         (13) /* Temperature             unit: K          */
+#define RT_SENSOR_UNIT_KELVIN         (14) /* Temperature             unit: Kelvin K   */
 #define RT_SENSOR_UNIT_KELVIN_STR     "K"
-#define RT_SENSOR_UNIT_HZ             (14) /* Frequency               unit: Hz         */
+#define RT_SENSOR_UNIT_HZ             (15) /* Frequency               unit: Hz         */
 #define RT_SENSOR_UNIT_HZ_STR         "Hz"
-#define RT_SENSOR_UNIT_BPM            (15) /* Heart rate              unit: bpm        */
-#define RT_SENSOR_UNIT_BPM_STR        "bpm"
-#define RT_SENSOR_UNIT_MN             (16) /* Force                   unit: mN         */
-#define RT_SENSOR_UNIT_MN_STR         "mN"
-#define RT_SENSOR_UNIT_N              (17) /* Force                   unit: N          */
+#define RT_SENSOR_UNIT_V              (16) /* Voltage                 unit: V          */
+#define RT_SENSOR_UNIT_V_STR          "V"
+#define RT_SENSOR_UNIT_MV             (17) /* Voltage                 unit: mV         */
+#define RT_SENSOR_UNIT_MV_STR         "mV"
+#define RT_SENSOR_UNIT_A              (18) /* Current                 unit: A          */
+#define RT_SENSOR_UNIT_A_STR          "A"
+#define RT_SENSOR_UNIT_MA             (19) /* Current                 unit: mA         */
+#define RT_SENSOR_UNIT_MA_STR         "mA"
+#define RT_SENSOR_UNIT_N              (20) /* Force                   unit: N          */
 #define RT_SENSOR_UNIT_N_STR          "N"
-#define RT_SENSOR_UNIT_PPM            (18) /* Concentration           unit: ppm        */
+#define RT_SENSOR_UNIT_MN             (21) /* Force                   unit: mN         */
+#define RT_SENSOR_UNIT_MN_STR         "mN"
+#define RT_SENSOR_UNIT_BPM            (22) /* Heart rate              unit: bpm        */
+#define RT_SENSOR_UNIT_BPM_STR        "bpm"
+#define RT_SENSOR_UNIT_PPM            (23) /* Concentration           unit: ppm        */
 #define RT_SENSOR_UNIT_PPM_STR        "ppm"
-#define RT_SENSOR_UNIT_PPB            (19) /* Concentration           unit: ppb        */
+#define RT_SENSOR_UNIT_PPB            (24) /* Concentration           unit: ppb        */
 #define RT_SENSOR_UNIT_PPB_STR        "ppb"
-#define RT_SENSOR_UNIT_DMS            (20) /* Coordinates             unit: DMS        */
+#define RT_SENSOR_UNIT_DMS            (25) /* Coordinates             unit: DMS        */
 #define RT_SENSOR_UNIT_DMS_STR        "DMS"
-#define RT_SENSOR_UNIT_DD             (21) /* Coordinates             unit: DD         */
+#define RT_SENSOR_UNIT_DD             (26) /* Coordinates             unit: DD         */
 #define RT_SENSOR_UNIT_DD_STR         "DD"
-#define RT_SENSOR_UNIT_MGM3           (22) /* Concentration           unit: mg/m3      */
+#define RT_SENSOR_UNIT_MGM3           (27) /* Concentration           unit: mg/m3      */
 #define RT_SENSOR_UNIT_MGM3_STR       "mg/m3"
 
 /* Sensor communication interface types */
