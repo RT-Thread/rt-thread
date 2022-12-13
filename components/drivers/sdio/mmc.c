@@ -514,7 +514,6 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     rt_int32_t err;
     rt_uint32_t resp[4];
     rt_uint32_t rocr = 0;
-    rt_uint32_t max_data_rate;
     rt_uint8_t *ext_csd = RT_NULL;
     struct rt_mmcsd_card *card = RT_NULL;
 
@@ -598,12 +597,6 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     */
     if (!(card->flags & CARD_FLAG_SDHC) && (rocr & (1 << 30)))
         card->flags |= CARD_FLAG_SDHC;
-
-    /* set bus speed */
-    if (card->flags & (CARD_FLAG_HIGHSPEED | CARD_FLAG_HIGHSPEED_DDR))
-        max_data_rate = card->hs_max_data_rate;
-    else
-        max_data_rate = card->max_data_rate;
 
     /*switch bus width and bus mode*/
     err = mmc_select_bus_width(card, ext_csd);
