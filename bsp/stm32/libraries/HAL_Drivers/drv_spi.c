@@ -19,6 +19,23 @@
 
 #ifdef BSP_USING_SPI
 
+#define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
+#define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
+#define PIN_NO(pin) ((uint8_t)((pin) & 0xFu))
+
+#if defined(SOC_SERIES_STM32MP1)
+#if defined(GPIOZ)
+#define gpioz_port_base (175) /* PIN_STPORT_MAX * 16 - 16 */
+#define PIN_STPORT(pin) ((pin > gpioz_port_base) ? ((GPIO_TypeDef *)(GPIOZ_BASE )) : ((GPIO_TypeDef *)(GPIOA_BASE + (0x1000u * PIN_PORT(pin)))))
+#else
+#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x1000u * PIN_PORT(pin))))
+#endif /* GPIOZ */
+#else
+#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x400u * PIN_PORT(pin))))
+#endif /* SOC_SERIES_STM32MP1 */
+
+#define PIN_STPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
+
 #if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6)
 
 #include "drv_spi.h"
@@ -418,10 +435,19 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return stm32_spi_init(spi_drv, configuration);
 }
 
+static void *spi_get_user_data(rt_base_t cspin)
+{
+    struct stm32_hw_spi_cs *cs_user_data = rt_malloc(sizeof(struct stm32_hw_spi_cs));
+    cs_user_data->GPIOx = PIN_STPORT(cspin);
+    cs_user_data->GPIO_Pin = PIN_STPIN(cspin);
+    return cs_user_data;
+}
+
 static const struct rt_spi_ops stm_spi_ops =
 {
     .configure = spi_configure,
     .xfer = spixfer,
+    .get_user_data = spi_get_user_data,
 };
 
 static int rt_hw_spi_bus_init(void)

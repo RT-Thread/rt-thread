@@ -40,6 +40,23 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     return RT_EOK;
 }
 
+rt_err_t rt_spi_bus_attach_device_cs(struct rt_spi_device *device,
+                                  const char           *name,
+                                  const char           *bus_name,
+                                  rt_base_t             cspin)
+{
+    rt_err_t result;
+    struct rt_spi_bus *spi_bus;
+    void *user_data;
+
+    spi_bus = (struct rt_spi_bus *)rt_device_find(bus_name);
+    if(spi_bus->ops->get_user_data)
+        user_data = spi_bus->ops->get_user_data(cspin);
+    
+    result = rt_spi_bus_attach_device(device,name,bus_name,user_data);
+    return result;
+}
+
 rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *name,
                                   const char           *bus_name,

@@ -100,6 +100,7 @@ struct rt_spi_ops
 {
     rt_err_t (*configure)(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
     rt_uint32_t (*xfer)(struct rt_spi_device *device, struct rt_spi_message *message);
+    void * (*get_user_data)(rt_base_t cspin);
 };
 
 /**
@@ -170,6 +171,11 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
                              const struct rt_spi_ops *ops);
 
 /* attach a device on SPI bus */
+rt_err_t rt_spi_bus_attach_device_cs(struct rt_spi_device *device,
+                                  const char           *name,
+                                  const char           *bus_name,
+                                  rt_base_t             cspin);
+
 rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *name,
                                   const char           *bus_name,
