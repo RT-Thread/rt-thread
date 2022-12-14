@@ -25,51 +25,51 @@ static const char *sensor_get_type_name(rt_sensor_info_t info)
 {
     switch(info->type)
     {
-        case RT_SENSOR_CLASS_ACCE:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_ACCE);
-        case RT_SENSOR_CLASS_GYRO:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_GYRO);
-        case RT_SENSOR_CLASS_MAG:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_MAG);
-        case RT_SENSOR_CLASS_TEMP:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_TEMP);
-        case RT_SENSOR_CLASS_HUMI:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_HUMI);
-        case RT_SENSOR_CLASS_BARO:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_BARO);
-        case RT_SENSOR_CLASS_LIGHT:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_LIGHT);
-        case RT_SENSOR_CLASS_PROXIMITY:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_PROXIMITY);
-        case RT_SENSOR_CLASS_HR:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_HR);
-        case RT_SENSOR_CLASS_TVOC:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_TVOC);
-        case RT_SENSOR_CLASS_NOISE:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_NOISE);
-        case RT_SENSOR_CLASS_STEP:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_STEP);
-        case RT_SENSOR_CLASS_FORCE:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_FORCE);
-        case RT_SENSOR_CLASS_DUST:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_DUST);
-        case RT_SENSOR_CLASS_ECO2:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_ECO2);
-        case RT_SENSOR_CLASS_GNSS:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_GNSS);
-        case RT_SENSOR_CLASS_TOF:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_TOF);
-        case RT_SENSOR_CLASS_SPO2:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_SPO2);
-        case RT_SENSOR_CLASS_IAQ:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_IAQ);
-        case RT_SENSOR_CLASS_ETOH:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_ETOH);
-        case RT_SENSOR_CLASS_BP:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_BP);
-        case RT_SENSOR_CLASS_NONE:
+        case RT_SENSOR_TYPE_ACCE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_ACCE);
+        case RT_SENSOR_TYPE_GYRO:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_GYRO);
+        case RT_SENSOR_TYPE_MAG:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_MAG);
+        case RT_SENSOR_TYPE_TEMP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_TEMP);
+        case RT_SENSOR_TYPE_HUMI:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_HUMI);
+        case RT_SENSOR_TYPE_BARO:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_BARO);
+        case RT_SENSOR_TYPE_LIGHT:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_LIGHT);
+        case RT_SENSOR_TYPE_PROXIMITY:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_PROXIMITY);
+        case RT_SENSOR_TYPE_HR:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_HR);
+        case RT_SENSOR_TYPE_TVOC:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_TVOC);
+        case RT_SENSOR_TYPE_NOISE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_NOISE);
+        case RT_SENSOR_TYPE_STEP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_STEP);
+        case RT_SENSOR_TYPE_FORCE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_FORCE);
+        case RT_SENSOR_TYPE_DUST:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_DUST);
+        case RT_SENSOR_TYPE_ECO2:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_ECO2);
+        case RT_SENSOR_TYPE_GNSS:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_GNSS);
+        case RT_SENSOR_TYPE_TOF:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_TOF);
+        case RT_SENSOR_TYPE_SPO2:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_SPO2);
+        case RT_SENSOR_TYPE_IAQ:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_IAQ);
+        case RT_SENSOR_TYPE_ETOH:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_ETOH);
+        case RT_SENSOR_TYPE_BP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_BP);
+        case RT_SENSOR_TYPE_NONE:
         default:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_CLASS_NONE);
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_NONE);
     }
 }
 
@@ -172,65 +172,65 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     const char *unit_name = sensor_get_unit_name(&sensor->info);
     switch (sensor->info.type)
     {
-    case RT_SENSOR_CLASS_ACCE:
+    case RT_SENSOR_TYPE_ACCE:
         LOG_I("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_GYRO:
+    case RT_SENSOR_TYPE_GYRO:
         LOG_I("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_MAG:
+    case RT_SENSOR_TYPE_MAG:
         LOG_I("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_GNSS:
+    case RT_SENSOR_TYPE_GNSS:
         LOG_I("num:%d, lon:%f, lat:%f %s, timestamp:%u", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_TEMP:
+    case RT_SENSOR_TYPE_TEMP:
         LOG_I("num:%d, temp:%f%s, timestamp:%u", num, sensor_data->data.temp, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_HUMI:
+    case RT_SENSOR_TYPE_HUMI:
         LOG_I("num:%d, humi:%f%s, timestamp:%u", num, sensor_data->data.humi, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_BARO:
+    case RT_SENSOR_TYPE_BARO:
         LOG_I("num:%d, press:%f%s, timestamp:%u", num, sensor_data->data.baro, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_LIGHT:
+    case RT_SENSOR_TYPE_LIGHT:
         LOG_I("num:%d, light:%f%s, timestamp:%u", num, sensor_data->data.light, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_PROXIMITY:
-    case RT_SENSOR_CLASS_TOF:
+    case RT_SENSOR_TYPE_PROXIMITY:
+    case RT_SENSOR_TYPE_TOF:
         LOG_I("num:%d, distance:%f%s, timestamp:%u", num, sensor_data->data.proximity, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_HR:
+    case RT_SENSOR_TYPE_HR:
         LOG_I("num:%d, heart rate:%f%s, timestamp:%u", num, sensor_data->data.hr, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_TVOC:
+    case RT_SENSOR_TYPE_TVOC:
         LOG_I("num:%d, tvoc:%f%s, timestamp:%u", num, sensor_data->data.tvoc, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_NOISE:
+    case RT_SENSOR_TYPE_NOISE:
         LOG_I("num:%d, noise:%f%s, timestamp:%u", num, sensor_data->data.noise, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_STEP:
+    case RT_SENSOR_TYPE_STEP:
         LOG_I("num:%d, step:%f%s, timestamp:%u", num, sensor_data->data.step, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_FORCE:
+    case RT_SENSOR_TYPE_FORCE:
         LOG_I("num:%d, force:%f%s, timestamp:%u", num, sensor_data->data.force, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_DUST:
+    case RT_SENSOR_TYPE_DUST:
         LOG_I("num:%d, dust:%f%s, timestamp:%u", num, sensor_data->data.dust, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_ECO2:
+    case RT_SENSOR_TYPE_ECO2:
         LOG_I("num:%d, eco2:%f%s, timestamp:%u", num, sensor_data->data.eco2, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_IAQ:
+    case RT_SENSOR_TYPE_IAQ:
         LOG_I("num:%d, IAQ:%f%s, timestamp:%u", num, sensor_data->data.iaq, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_ETOH:
+    case RT_SENSOR_TYPE_ETOH:
         LOG_I("num:%d, EtOH:%f%s, timestamp:%u", num, sensor_data->data.etoh, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_BP:
+    case RT_SENSOR_TYPE_BP:
         LOG_I("num:%d, bp.sbp:%f, bp.dbp:%f %s, timestamp:%u", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, unit_name, sensor_data->timestamp);
         break;
-    case RT_SENSOR_CLASS_NONE:
+    case RT_SENSOR_TYPE_NONE:
     default:
         LOG_E("Unknown type of sensor!");
         break;
