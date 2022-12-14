@@ -40,6 +40,6 @@ if platform in platform_file.keys(): # support platforms
         CPPPATH = [cwd]
         CPPPATH += [cwd + '/arch/' + arch + '/' + cpu]
 
-group = DefineGroup('lwP', src, depend = ['RT_USING_LWP'], CPPPATH = CPPPATH)
+group = DefineGroup('lwP', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
 Return('group')

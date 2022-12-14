@@ -6,6 +6,6 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.S')
 CPPPATH = [cwd]
 
-group = DefineGroup('lwp-x86-i386', src, depend = ['RT_USING_LWP'], CPPPATH = CPPPATH)
+group = DefineGroup('lwp-x86-i386', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
 Return('group')

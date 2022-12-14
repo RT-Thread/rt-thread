@@ -32,7 +32,7 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_user_mm.h>
 #include <console.h>
@@ -1256,7 +1256,7 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
 extern void console_init();
     console_init(); /*add line discipline*/

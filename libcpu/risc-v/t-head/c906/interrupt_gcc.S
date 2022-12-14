@@ -93,7 +93,7 @@ copy_context_loop_interrupt:
     LOAD  s1, 0(s0)
     LOAD  sp, 0(s1)
 
-    #ifdef RT_USING_USERSPACE
+    #ifdef RT_USING_SMART
         mv a0, s1
         jal rt_thread_sp_to_thread
         jal lwp_mmu_switch

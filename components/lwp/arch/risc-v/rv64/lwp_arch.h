@@ -14,9 +14,9 @@
 #include <lwp_arch_comm.h>
 #include <riscv_mmu.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 
-#ifdef RT_USING_USERSPACE_32BIT_LIMIT
+#ifdef ARCH_MM_MMU_32BIT_LIMIT
 #define USER_HEAP_VADDR     0xF0000000UL
 #define USER_HEAP_VEND      0xFE000000UL
 #define USER_STACK_VSTART   0xE0000000UL

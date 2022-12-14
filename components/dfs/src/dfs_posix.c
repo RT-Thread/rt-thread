@@ -14,7 +14,7 @@
 #include <dfs_private.h>
 #include <sys/errno.h>
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
 
@@ -866,7 +866,7 @@ int chdir(const char *path)
 
     /* close directory stream */
     closedir(d);
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     /* copy full path to working directory */
     lwp_setcwd(fullpath);
 #else
@@ -916,7 +916,7 @@ void setcwd(char *buf)
 {
 #ifdef DFS_USING_WORKDIR
     dfs_lock();
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     lwp_setcwd(buf);
 #else
     rt_strncpy(working_directory, buf, DFS_PATH_MAX);
@@ -946,7 +946,7 @@ char *getcwd(char *buf, size_t size)
 
     dfs_lock();
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     dir_buf = lwp_getcwd();
 #else
     dir_buf = &working_directory[0];

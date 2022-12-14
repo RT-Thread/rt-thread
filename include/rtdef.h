@@ -420,9 +420,9 @@ struct rt_object
     void      *module_id;                               /**< id of application module */
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
     rt_list_t  list;                                    /**< list node of kernel object */
 };
@@ -573,7 +573,7 @@ typedef void (*rt_sighandler_t)(int signo);
 
 #else
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <sys/signal.h>
 #endif
 
@@ -676,7 +676,7 @@ struct rt_cpu
 
 struct rt_thread;
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);
 
 struct rt_wakeup
@@ -733,9 +733,9 @@ struct rt_thread
     void       *module_id;                              /**< id of application module */
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
     rt_list_t   list;                                   /**< the object list */
     rt_list_t   tlist;                                  /**< the thread list */
@@ -793,7 +793,7 @@ struct rt_thread
     void            *si_list;                           /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#if defined(RT_USING_LWP)
+#ifdef RT_USING_SMART
     void            *msg_ret;                           /**< the return msg */
 #endif
 
@@ -813,7 +813,7 @@ struct rt_thread
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
     /* light weight process if present */
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     void        *lwp;
     /* for user create */
     void        *user_entry;
@@ -833,7 +833,7 @@ struct rt_thread
 
     struct rt_wakeup wakeup;                            /**< wakeup data */
     int exit_request;
-#ifdef RT_USING_USERSPACE
+#if defined(ARCH_MM_MMU)
     int step_exec;
     int debug_attach_req;
     int debug_ret_user;
@@ -1304,7 +1304,7 @@ struct rt_device_notify
     struct rt_device *dev;
 };
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 struct rt_channel
 {
     struct rt_ipc_object parent;                        /**< inherit from object */

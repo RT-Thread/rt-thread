@@ -19,7 +19,7 @@
 #define SHAREDEVICE    (1<<2)  /* shared device */
 #define STRONGORDER    (0<<2)  /* strong ordered */
 #define XN             (1<<4)  /* eXecute Never */
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #define AP_RW          (1<<10) /* supervisor=RW, user=No */
 #define AP_RO          ((1<<10) |(1 << 15)) /* supervisor=RW, user=No */
 #else
@@ -100,7 +100,7 @@ int rt_hw_mmu_map_init(rt_mmu_info *mmu_info, void* v_address, size_t size, size
 int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size);
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size);
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr);
 void *rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size_t attr);
 #else

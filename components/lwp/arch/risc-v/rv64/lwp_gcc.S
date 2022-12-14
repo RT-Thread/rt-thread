@@ -299,7 +299,7 @@ copy_context_loop:
     addi a7, a7, -0xfe
     beqz a7, arch_signal_quit
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
     /* save setting when syscall enter */
     call  rt_thread_self
     call  lwp_user_setting_save
@@ -314,7 +314,7 @@ copy_context_loop:
 arch_syscall_exit:
     CLOSE_INTERRUPT
 
-    #if defined(RT_USING_USERSPACE)
+    #if defined(ARCH_MM_MMU)
         LOAD s0, 2 * REGBYTES(sp)
         andi s0, s0, 0x100
         bnez s0, dont_ret_to_user
@@ -322,7 +322,7 @@ arch_syscall_exit:
     #endif
 dont_ret_to_user:
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
     /* restore setting when syscall exit */
     call  rt_thread_self
     call  lwp_user_setting_restore

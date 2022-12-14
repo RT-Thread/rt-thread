@@ -105,7 +105,7 @@ static void _signal_deliver(rt_thread_t tid)
     if ((tid->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* resume thread to handle signal */
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
         rt_thread_wakeup(tid);
 #else
         rt_thread_resume(tid);

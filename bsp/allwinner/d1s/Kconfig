@@ -27,10 +27,6 @@ config BOARD_allwinnerd1s
     select ARCH_MM_MMU
     default y
 
-config RT_USING_USERSPACE
-    bool
-    default y
-
 config ENABLE_FPU
     bool "Enable FPU"
     default y

@@ -18,12 +18,12 @@
 #include "drv_timer.h"
 
 #include <mmu.h>
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <page.h>
 #include <lwp_arch.h>
 #endif
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 struct mem_desc platform_mem_desc[] = {
     {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x0fffffff, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM}
 };
@@ -53,7 +53,7 @@ rt_mmu_info mmu_info;
 
 extern size_t MMUTable[];
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 rt_region_t init_page_region = {
     (uint32_t)PAGE_START,
     (uint32_t)PAGE_END,
@@ -62,7 +62,7 @@ rt_region_t init_page_region = {
 
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&mmu_info, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
 
     rt_page_init(init_page_region);

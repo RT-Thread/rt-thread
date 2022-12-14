@@ -15,7 +15,7 @@
 #include <rthw.h>
 #include <rtdef.h>
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <mmu.h>
 #include <ioremap.h>
 #endif
@@ -47,14 +47,14 @@
 #define VIRTIO_F_VERSION_1          32
 #define VIRTIO_F_RING_PACKED        34
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 extern rt_mmu_info mmu_info;
 #define VIRTIO_VA2PA(vaddr)         ((rt_ubase_t)rt_hw_mmu_v2p(&mmu_info, vaddr))
 #define VIRTIO_PA2VA(paddr)         ((rt_ubase_t)rt_ioremap((void *)paddr, ARCH_PAGE_SIZE))
 #else
 #define VIRTIO_VA2PA(vaddr)         ((rt_ubase_t)vaddr)
 #define VIRTIO_PA2VA(paddr)         ((rt_ubase_t)paddr)
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 #define VIRTIO_PAGE_SHIFT           12
 #define VIRTIO_PAGE_SIZE            (1 << VIRTIO_PAGE_SHIFT)
 #define VIRTIO_PAGE_ALIGN(addr)     (RT_ALIGN(addr, VIRTIO_PAGE_SIZE))
