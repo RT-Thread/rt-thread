@@ -67,6 +67,10 @@ static const char *sensor_get_type_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_ETOH);
         case RT_SENSOR_TYPE_BP:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_BP);
+        case RT_SENSOR_TYPE_VOLTAGE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_VOLTAGE);
+        case RT_SENSOR_TYPE_CURRENT:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_CURRENT);
         case RT_SENSOR_TYPE_NONE:
         default:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_TYPE_NONE);
@@ -77,6 +81,10 @@ static const char *sensor_get_vendor_name(rt_sensor_info_t info)
 {
     switch(info->vendor)
     {
+        case RT_SENSOR_VENDOR_VIRTUAL:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_VIRTUAL);
+        case RT_SENSOR_VENDOR_ONCHIP:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_ONCHIP);
         case RT_SENSOR_VENDOR_STM:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_STM);
         case RT_SENSOR_VENDOR_BOSCH:
@@ -125,6 +133,8 @@ static const char *sensor_get_unit_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MGAUSS);
         case RT_SENSOR_UNIT_LUX:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_LUX);
+        case RT_SENSOR_UNIT_M:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_M);
         case RT_SENSOR_UNIT_CM:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_CM);
         case RT_SENSOR_UNIT_MM:
@@ -135,6 +145,8 @@ static const char *sensor_get_unit_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MMHG);
         case RT_SENSOR_UNIT_PERCENTAGE:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PERCENTAGE);
+        case RT_SENSOR_UNIT_PERMILLAGE:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PERMILLAGE);
         case RT_SENSOR_UNIT_CELSIUS:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_CELSIUS);
         case RT_SENSOR_UNIT_FAHRENHEIT:
@@ -143,12 +155,20 @@ static const char *sensor_get_unit_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_KELVIN);
         case RT_SENSOR_UNIT_HZ:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_HZ);
-        case RT_SENSOR_UNIT_BPM:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_BPM);
-        case RT_SENSOR_UNIT_MN:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MN);
+        case RT_SENSOR_UNIT_V:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_V);
+        case RT_SENSOR_UNIT_MV:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MV);
+        case RT_SENSOR_UNIT_A:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_A);
+        case RT_SENSOR_UNIT_MA:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MA);
         case RT_SENSOR_UNIT_N:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_N);
+        case RT_SENSOR_UNIT_MN:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MN);
+        case RT_SENSOR_UNIT_BPM:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_BPM);
         case RT_SENSOR_UNIT_PPM:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PPM);
         case RT_SENSOR_UNIT_PPB:

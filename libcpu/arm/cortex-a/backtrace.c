@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-03-29     Jesven       the first version
+ */
+
 #ifndef __CHECKER__
 #if !defined (__ARM_EABI__)
 #warning Your compiler does not have EABI support.
@@ -31,30 +41,17 @@ rt_inline void arm_get_current_stackframe(struct pt_regs *regs, struct stackfram
     frame->pc = regs->ARM_pc;
 }
 
-/* Dummy functions to avoid linker complaints */
-void __aeabi_unwind_cpp_pr0(void)
-{
-};
-
-void __aeabi_unwind_cpp_pr1(void)
-{
-};
-
-void __aeabi_unwind_cpp_pr2(void)
-{
-};
-
 struct unwind_ctrl_block {
-    unsigned long vrs[16];		/* virtual register set */
-    const unsigned long *insn;	/* pointer to the current instructions word */
-    unsigned long sp_high;		/* highest value of sp allowed */
+    unsigned long vrs[16];      /* virtual register set */
+    const unsigned long *insn;  /* pointer to the current instructions word */
+    unsigned long sp_high;      /* highest value of sp allowed */
     /*
      * 1 : check for stack overflow for each register pop.
      * 0 : save overhead if there is plenty of stack remaining.
      */
     int check_each_pop;
-    int entries;			/* number of entries left to interpret */
-    int byte;			/* current byte number in the instructions word */
+    int entries;            /* number of entries left to interpret */
+    int byte;           /* current byte number in the instructions word */
 };
 
 enum regs
@@ -75,11 +72,11 @@ static int core_kernel_text(unsigned long addr)
 }
 
 /* Convert a prel31 symbol to an absolute address */
-#define prel31_to_addr(ptr)				\
-    ({							\
-     /* sign-extend to 32 bits */			\
-     long offset = (((long)*(ptr)) << 1) >> 1;	\
-     (unsigned long)(ptr) + offset;			\
+#define prel31_to_addr(ptr)                     \
+    ({                                          \
+     /* sign-extend to 32 bits */               \
+     long offset = (((long)*(ptr)) << 1) >> 1;  \
+     (unsigned long)(ptr) + offset;             \
      })
 
 /*
@@ -376,6 +373,7 @@ static char *unwind_get_function_name(void *address)
     return RT_NULL;
 }
 #endif
+
 /*
  * Unwind a single frame starting with *sp for the symbol at *pc. It
  * updates the *pc and *sp with the new values.
@@ -542,4 +540,3 @@ void rt_backtrace(void)
     asm volatile ("mov %0, pc":"=r"(regs.pc));
     rt_unwind(&regs, 8);
 }
-

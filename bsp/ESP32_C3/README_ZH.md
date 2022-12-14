@@ -57,17 +57,27 @@
 ```
 pkgs --update
 ```
-- 进入到ESP-IDF软件包路径，安装IDf工具链。此命令只需要在下载完软件包后执行一次。
+- 安装IDF工具链。如果使用Linux或MacOS系统，在命令行内进入到ESP-IDF软件包路径，安装IDf工具链。
 ```
 cd packages/ESP-IDF-latest
 ./install.sh
-# Windows环境下使用install.bat
 ```
+如果使用Windows系统，打开Command Prompt，注意不能使用其他任何命令行，如Env命令行和PowerShell。进入BSP目录并执行
+```
+install.bat
+```
+无论使用任何系统，这一步只需要在下载完软件包后执行一次。
 - 在软件包路径下设置IDF路径。每当在新的命令行编译BSP时需要执行此命令。
+如果使用Linux或MacOS系统，执行
 ```
 . export.sh
-# Windows环境下使用export.bat
 ```
+如果使用Windows系统，执行
+```
+export.bat
+```
+这一步仍然只能使用Command Prompt。
+
 2. 在本地ESP-IDF加载patch
 - 通过`SCons --menuconfig`选择
 ```
@@ -79,6 +89,10 @@ Hardware Drivers Config
 RT-Thread online packages
     peripheral libraries and drivers
         [ ] ESP-IDF: Espressif IoT Development Framework
+```
+- 使用Env工具下载FreeRTOS兼容层
+```
+pkgs --update
 ```
 - 可以选择其他方式在本地安装ESP-IDF，如[VSCode插件](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md)。确保安装的ESP-IDF是master版本。
 - 进入本地ESP-IDF目录执行以下命令
@@ -98,7 +112,7 @@ scons --menuconfig
 ```
 scons --target=esp-idf
 ```
-3. 如果使用Env安装了ESP-IDF，使用`idf.py`命令编译，烧录。具体参考[乐鑫官网](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project)。如果使用了在本地ESP-IDF加载patch的方式，可使用其他相应的编译和烧录方法，如[VSCode插件](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md)。
+3. 如果使用Env安装了ESP-IDF，使用`idf.py`命令编译，烧录。具体参考[乐鑫官网](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project)。注意如果使用Windows系统，`idf.py`只能在Command Prompt里执行。如果使用了在本地ESP-IDF加载patch的方式，可使用其他相应的编译和烧录方法，如[VSCode插件](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md)。
 4. 下载程序成功之后，系统会运行，红色的 LED灯以 1S 周期闪烁。
 
 ## 注意事项
