@@ -133,8 +133,6 @@ static const char *sensor_get_unit_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PA);
         case RT_SENSOR_UNIT_MMHG:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_MMHG);
-        case RT_SENSOR_UNIT_PERMILLAGE:
-            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PERMILLAGE);
         case RT_SENSOR_UNIT_PERCENTAGE:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_UNIT_PERCENTAGE);
         case RT_SENSOR_UNIT_CELSIUS:
@@ -245,15 +243,11 @@ static rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 
 static void sensor_fifo_rx_entry(void *parameter)
 {
-    rt_device_t dev = (rt_device_t)parameter;
     rt_sensor_t sensor = (rt_sensor_t)parameter;
     struct rt_sensor_data *data = RT_NULL;
-    struct rt_sensor_info info;
     rt_size_t res, i;
 
-    rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
-
-    data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
+    data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * sensor->info.fifo_max);
     if (data == RT_NULL)
     {
         LOG_E("Memory allocation failed!");
@@ -263,7 +257,7 @@ static void sensor_fifo_rx_entry(void *parameter)
     {
         rt_sem_take(sensor_rx_sem, RT_WAITING_FOREVER);
 
-        res = rt_device_read(dev, 0, data, info.fifo_max);
+        res = rt_device_read((rt_device_t)sensor, 0, data, sensor->info.fifo_max);
         for (i = 0; i < res; i++)
         {
             sensor_show_data(i, sensor, &data[i]);
@@ -311,7 +305,7 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_set_rx_indicate(dev, rx_callback);
 
-    rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
+    rt_device_control(dev, RT_SENSOR_CTRL_SET_RATE_MODE, (void *)20);
 }
 #ifdef RT_USING_FINSH
     MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
@@ -375,7 +369,7 @@ static void sensor_int(int argc, char **argv)
         LOG_E("open device failed!");
         return;
     }
-    rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
+    rt_device_control(dev, RT_SENSOR_CTRL_SET_RATE_MODE, (void *)20);
 }
 #ifdef RT_USING_FINSH
     MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
@@ -401,7 +395,7 @@ static void sensor_polling(int argc, char **argv)
         num = atoi(argv[2]);
 
     sensor = (rt_sensor_t)dev;
-    delay  = sensor->info.period_min > 100 ? sensor->info.period_min : 100;
+    delay  = sensor->config.period_min > 100 ? sensor->config.period_min : 100;
 
     result = rt_device_open(dev, RT_DEVICE_FLAG_RDONLY);
     if (result != RT_EOK)
@@ -409,7 +403,7 @@ static void sensor_polling(int argc, char **argv)
         LOG_E("open device failed! error code : %d", result);
         return;
     }
-    rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)100);
+    rt_device_control(dev, RT_SENSOR_CTRL_SET_RATE_MODE, (void *)100);
 
     for (i = 0; i < num; i++)
     {
@@ -454,21 +448,20 @@ static void sensor(int argc, char **argv)
     }
     else if (!strcmp(argv[1], "info"))
     {
-        struct rt_sensor_info info;
         if (dev == RT_NULL)
         {
             LOG_W("Please probe sensor device first!");
             return ;
         }
-        rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
-        rt_kprintf("model     :%s\n", info.model);
-        rt_kprintf("type:     :%s\n", sensor_get_type_name(&info));
-        rt_kprintf("vendor    :%s\n", sensor_get_vendor_name(&info));
-        rt_kprintf("unit      :%s\n", sensor_get_unit_name(&info));
-        rt_kprintf("range_max :%d\n", info.range_max);
-        rt_kprintf("range_min :%d\n", info.range_min);
-        rt_kprintf("period_min:%dms\n", info.period_min);
-        rt_kprintf("fifo_max  :%d\n", info.fifo_max);
+        sensor = (rt_sensor_t)dev;
+        rt_kprintf("name      :%s\n", sensor->info.name);
+        rt_kprintf("type:     :%s\n", sensor_get_type_name(&sensor->info));
+        rt_kprintf("vendor    :%s\n", sensor_get_vendor_name(&sensor->info));
+        rt_kprintf("unit      :%s\n", sensor_get_unit_name(&sensor->info));
+        rt_kprintf("fifo_max  :%d\n", sensor->info.fifo_max);
+        rt_kprintf("range_max :%f\n", sensor->config.range_max);
+        rt_kprintf("range_min :%f\n", sensor->config.range_min);
+        rt_kprintf("period_min:%dms\n", sensor->config.period_min);
     }
     else if (!strcmp(argv[1], "read"))
     {
@@ -485,7 +478,7 @@ static void sensor(int argc, char **argv)
         }
 
         sensor = (rt_sensor_t)dev;
-        delay  = sensor->info.period_min > 100 ? sensor->info.period_min : 100;
+        delay  = sensor->config.period_min > 100 ? sensor->config.period_min : 100;
 
         for (i = 0; i < num; i++)
         {
@@ -505,7 +498,6 @@ static void sensor(int argc, char **argv)
     {
         if (!strcmp(argv[1], "probe"))
         {
-            rt_uint8_t reg = 0xFF;
             rt_device_t new_dev;
 
             new_dev = rt_device_find(argv[2]);
@@ -519,8 +511,7 @@ static void sensor(int argc, char **argv)
                 LOG_E("open device failed!");
                 return;
             }
-            rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg);
-            LOG_I("device id: 0x%x!", reg);
+            LOG_I("probe new device: %.*s", RT_NAME_MAX, new_dev->parent.name);
             if (dev)
             {
                 rt_device_close(dev);
@@ -534,19 +525,19 @@ static void sensor(int argc, char **argv)
         }
         else if (!strcmp(argv[1], "range"))
         {
-            rt_device_control(dev, RT_SENSOR_CTRL_SET_RANGE, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_SCALE_MODE, (void *)atoi(argv[2]));
         }
         else if (!strcmp(argv[1], "mode"))
         {
-            rt_device_control(dev, RT_SENSOR_CTRL_SET_MODE, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_FETCH_MODE, (void *)atoi(argv[2]));
         }
         else if (!strcmp(argv[1], "power"))
         {
-            rt_device_control(dev, RT_SENSOR_CTRL_SET_POWER, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_POWER_MODE, (void *)atoi(argv[2]));
         }
         else if (!strcmp(argv[1], "rate"))
         {
-            rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_RATE_MODE, (void *)atoi(argv[2]));
         }
         else
         {

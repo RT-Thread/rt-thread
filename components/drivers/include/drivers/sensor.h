@@ -130,33 +130,31 @@ extern "C" {
 #define RT_SENSOR_UNIT_PA_STR         "Pa"
 #define RT_SENSOR_UNIT_MMHG           (8)  /* Blood Pressure          unit: mmHg       */
 #define RT_SENSOR_UNIT_MMHG_STR       "mmHg"
-#define RT_SENSOR_UNIT_PERMILLAGE     (9)  /* Relative Humidity       unit: permillage */
-#define RT_SENSOR_UNIT_PERMILLAGE_STR "‰"
-#define RT_SENSOR_UNIT_PERCENTAGE     (10) /* Relative Humidity       unit: percentage */
+#define RT_SENSOR_UNIT_PERCENTAGE     (9)  /* Relative Humidity       unit: percentage */
 #define RT_SENSOR_UNIT_PERCENTAGE_STR "%"
-#define RT_SENSOR_UNIT_CELSIUS        (11) /* Temperature             unit: Celsius ℃ */
-#define RT_SENSOR_UNIT_CELSIUS_STR    "℃"
-#define RT_SENSOR_UNIT_FAHRENHEIT     (12) /* Temperature             unit: Fahrenheit ℉ */
-#define RT_SENSOR_UNIT_FAHRENHEIT_STR "℉"
-#define RT_SENSOR_UNIT_KELVIN         (13) /* Temperature             unit: K          */
+#define RT_SENSOR_UNIT_CELSIUS        (10) /* Temperature             unit: Celsius ℃ */
+#define RT_SENSOR_UNIT_CELSIUS_STR    "C"
+#define RT_SENSOR_UNIT_FAHRENHEIT     (11) /* Temperature             unit: Fahrenheit ℉ */
+#define RT_SENSOR_UNIT_FAHRENHEIT_STR "F"
+#define RT_SENSOR_UNIT_KELVIN         (12) /* Temperature             unit: K          */
 #define RT_SENSOR_UNIT_KELVIN_STR     "K"
-#define RT_SENSOR_UNIT_HZ             (14) /* Frequency               unit: Hz         */
+#define RT_SENSOR_UNIT_HZ             (13) /* Frequency               unit: Hz         */
 #define RT_SENSOR_UNIT_HZ_STR         "Hz"
-#define RT_SENSOR_UNIT_BPM            (15) /* Heart rate              unit: bpm        */
+#define RT_SENSOR_UNIT_BPM            (14) /* Heart rate              unit: bpm        */
 #define RT_SENSOR_UNIT_BPM_STR        "bpm"
-#define RT_SENSOR_UNIT_MN             (16) /* Force                   unit: mN         */
+#define RT_SENSOR_UNIT_MN             (15) /* Force                   unit: mN         */
 #define RT_SENSOR_UNIT_MN_STR         "mN"
-#define RT_SENSOR_UNIT_N              (17) /* Force                   unit: N          */
+#define RT_SENSOR_UNIT_N              (16) /* Force                   unit: N          */
 #define RT_SENSOR_UNIT_N_STR          "N"
-#define RT_SENSOR_UNIT_PPM            (18) /* Concentration           unit: ppm        */
+#define RT_SENSOR_UNIT_PPM            (17) /* Concentration           unit: ppm        */
 #define RT_SENSOR_UNIT_PPM_STR        "ppm"
-#define RT_SENSOR_UNIT_PPB            (19) /* Concentration           unit: ppb        */
+#define RT_SENSOR_UNIT_PPB            (18) /* Concentration           unit: ppb        */
 #define RT_SENSOR_UNIT_PPB_STR        "ppb"
-#define RT_SENSOR_UNIT_DMS            (20) /* Coordinates             unit: DMS        */
+#define RT_SENSOR_UNIT_DMS            (19) /* Coordinates             unit: DMS        */
 #define RT_SENSOR_UNIT_DMS_STR        "DMS"
-#define RT_SENSOR_UNIT_DD             (21) /* Coordinates             unit: DD         */
+#define RT_SENSOR_UNIT_DD             (20) /* Coordinates             unit: DD         */
 #define RT_SENSOR_UNIT_DD_STR         "DD"
-#define RT_SENSOR_UNIT_MGM3           (22) /* Concentration           unit: mg/m3      */
+#define RT_SENSOR_UNIT_MGM3           (21) /* Concentration           unit: mg/m3      */
 #define RT_SENSOR_UNIT_MGM3_STR       "mg/m3"
 
 /* Sensor communication interface types */
@@ -181,20 +179,20 @@ extern "C" {
 #define RT_SENSOR_POWER_HIGH          (4)  /* high-power mode   */
 #define RT_SENSOR_POWER_HIGH_STR      "High"
 
-/* Sensor work mode types */
-#define RT_SENSOR_MODE_NONE           (0)
-#define RT_SENSOR_MODE_POLLING        (1)  /* One shot only read a data */
-#define RT_SENSOR_MODE_INT            (2)  /* TODO: One shot interrupt only read a data */
-#define RT_SENSOR_MODE_FIFO           (3)  /* TODO: One shot interrupt read all fifo data */
+/* Sensor fetch data mode types */
+#define RT_SENSOR_FETCH_NONE          (0)
+#define RT_SENSOR_FETCH_POLLING       (1)  /* One shot only read a data */
+#define RT_SENSOR_FETCH_INT           (2)  /* TODO: One shot interrupt only read a data */
+#define RT_SENSOR_FETCH_FIFO          (3)  /* TODO: One shot interrupt read all fifo data */
 
 /* Sensor control cmd types */
-#define RT_SENSOR_CTRL_GET_ID         (RT_DEVICE_CTRL_BASE(Sensor) + 0)  /* Get device id */
-#define RT_SENSOR_CTRL_GET_INFO       (RT_DEVICE_CTRL_BASE(Sensor) + 1)  /* Get sensor info */
-#define RT_SENSOR_CTRL_SET_RANGE      (RT_DEVICE_CTRL_BASE(Sensor) + 2)  /* Set the measure range of sensor. unit is info of sensor */
-#define RT_SENSOR_CTRL_SET_ODR        (RT_DEVICE_CTRL_BASE(Sensor) + 3)  /* Set output date rate. unit is HZ */
-#define RT_SENSOR_CTRL_SET_MODE       (RT_DEVICE_CTRL_BASE(Sensor) + 4)  /* Set sensor's work mode. ex. RT_SENSOR_MODE_POLLING,RT_SENSOR_MODE_INT */
-#define RT_SENSOR_CTRL_SET_POWER      (RT_DEVICE_CTRL_BASE(Sensor) + 5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
-#define RT_SENSOR_CTRL_SELF_TEST      (RT_DEVICE_CTRL_BASE(Sensor) + 6)  /* Take a self test */
+#define RT_SENSOR_CTRL_SET_FETCH_MODE      (RT_DEVICE_CTRL_BASE(Sensor) + 1)  /* Set fetch data mode. ex. RT_SENSOR_FETCH_POLLING,RT_SENSOR_FETCH_INT */
+#define RT_SENSOR_CTRL_SET_RATE_MODE       (RT_DEVICE_CTRL_BASE(Sensor) + 2)  /* Set data output rate mode. should be defined in specific sensor driver header file */
+#define RT_SENSOR_CTRL_SET_POWER_MODE      (RT_DEVICE_CTRL_BASE(Sensor) + 3)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN, RT_SENSOR_POWER_NORMAL */
+#define RT_SENSOR_CTRL_SET_SCALE_MODE      (RT_DEVICE_CTRL_BASE(Sensor) + 4)  /* Set scale mode. should be defined in specific sensor driver header file */
+#define RT_SENSOR_CTRL_SET_RESOLUTION_MODE (RT_DEVICE_CTRL_BASE(Sensor) + 5)  /* Set resolution mode. should be defined in specific sensor driver header file */
+#define RT_SENSOR_CTRL_SELF_TEST           (RT_DEVICE_CTRL_BASE(Sensor) + 6)  /* Take a self test */
+#define RT_SENSOR_CTRL_SOFTRESET           (RT_DEVICE_CTRL_BASE(Sensor) + 7)  /* soft reset sensor */
 
 #define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
 
@@ -205,34 +203,43 @@ typedef double rt_sensor_float_t;
 typedef float rt_sensor_float_t;
 #endif /* RT_USING_SENSOR_DOUBLE_FLOAT */
 
+/* sensor basic information */
 struct rt_sensor_info
 {
-    rt_uint8_t     type;                    /* The sensor type */
-    rt_uint8_t     vendor;                  /* Vendor of sensors */
-    const char    *model;                   /* model name of sensor */
-    rt_uint8_t     unit;                    /* unit of measurement */
-    rt_uint8_t     intf_type;               /* Communication interface type */
-    rt_int32_t     range_max;               /* maximum range of this sensor's value. unit is 'unit' */
-    rt_int32_t     range_min;               /* minimum range of this sensor's value. unit is 'unit' */
-    rt_uint32_t    period_min;              /* Minimum measurement period,unit:ms. zero = not a constant rate */
-    rt_uint8_t     fifo_max;
+    rt_uint8_t          type;               /* the sensor type */
+    rt_uint8_t          vendor;             /* vendor of sensors */
+    const char         *name;               /* sensor name */
+    rt_uint8_t          unit;               /* unit of measurement */
+    rt_uint8_t          intf_type;          /* sensor supports communication interface type, such as RT_SENSOR_INTF_I2C | RT_SENSOR_INTF_SPI */
+    rt_uint8_t          fifo_max;
 };
 
+/* sensor interface */
 struct rt_sensor_intf
 {
-    char          *dev_name;                /* The name of the communication device */
-    rt_uint8_t     type;                    /* Communication interface type */
-    void          *arg;                     /* Interface argument for the sensor. ex. i2c addr,spi cs,control I/O */
+    char          *com_dev_name;            /* the name of the communication device */
+    rt_uint8_t     type;                    /* current sensor communication interface type, such as RT_SENSOR_INTF_I2C (only choose one) */
+    void          *arg;                     /* Interface argument for the sensor. ex. i2c addr, spi cs, control I/O */
 };
 
+/* sensor configuration */
 struct rt_sensor_config
 {
-    struct rt_sensor_intf        intf;      /* sensor interface config */
-    struct rt_device_pin_mode    irq_pin;   /* Interrupt pin, The purpose of this pin is to notification read data */
-    rt_uint8_t                   mode;      /* sensor work mode */
-    rt_uint8_t                   power;     /* sensor power mode */
-    rt_uint16_t                  odr;       /* sensor out data rate */
-    rt_int32_t                   range;     /* sensor range of measurement */
+    /* application users configurations */
+    struct rt_sensor_intf       intf;       /* sensor interface config */
+    struct rt_device_pin_mode   irq_pin;    /* interrupt pin, The purpose of this pin is to notification read data */
+
+    /* internel configurations */
+    rt_uint8_t                  fetch_mode; /* sensor mode, eg. polling / interrupt / fifo */
+    rt_uint8_t                  power_mode; /* sensor power mode eg. power down / high / normal / low */
+    rt_uint8_t                  scale_mode; /* sensor scale mode, defined in specific sensor driver header file */
+    rt_uint8_t                  rate_mode;  /* sensor output data rate mode, defined in specific sensor driver header file */
+    rt_uint8_t                  resolution_mode; /* sensor resolution mode, defined in specific sensor driver header file */
+    rt_sensor_float_t           range_max;  /* maximum range of this sensor's value. unit is 'unit' */
+    rt_sensor_float_t           range_min;  /* minimum range of this sensor's value. unit is 'unit' */
+    rt_sensor_float_t           resolution; /* sensor resolution */
+    rt_sensor_float_t           error;      /* sensor error */
+    rt_uint32_t                 period_min; /* minimum measurement period,unit:ms. 0 = not a constant rate */
 };
 
 typedef struct rt_sensor_device *rt_sensor_t;
@@ -275,8 +282,8 @@ struct sensor_3_axis
 /* Blood Pressure Data Type */
 struct sensor_bp
 {
-    rt_sensor_float_t sbp; /* SBP : systolic pressure */
-    rt_sensor_float_t dbp; /* DBP : diastolic pressure */
+    rt_sensor_float_t sbp; /* SBP: systolic pressure */
+    rt_sensor_float_t dbp; /* DBP: diastolic pressure */
 };
 
 struct coordinates
