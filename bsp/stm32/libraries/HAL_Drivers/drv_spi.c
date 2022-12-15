@@ -146,10 +146,10 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 #if defined(APBPERIPH_BASE)
     SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
 #elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
-    /*The SPI clock for H7 cannot be configured with a peripheral bus clock, so it needs to be written separately*/
+    /* The SPI clock for H7 cannot be configured with a peripheral bus clock, so it needs to be written separately */
 #if defined(SOC_SERIES_STM32H7)
-    /*When the configuration is generated using CUBEMX, the configuration for the SPI clock is placed in the HAL_SPI_Init function. 
-    Therefore, it is necessary to initialize and configure the SPI clock to automatically configure the frequency division*/
+    /* When the configuration is generated using CUBEMX, the configuration for the SPI clock is placed in the HAL_SPI_Init function.
+    Therefore, it is necessary to initialize and configure the SPI clock to automatically configure the frequency division */
     HAL_SPI_Init(spi_handle);
     SPI_CLOCK = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI123);
 #else
@@ -161,8 +161,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     {
         SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
     }
-#endif /*SOC_SERIES_STM32H7)*/
-#endif /*APBPERIPH_BASE*/
+#endif /* SOC_SERIES_STM32H7) */
+#endif /* APBPERIPH_BASE */
 
     if (cfg->max_hz >= SPI_CLOCK / 2)
     {
@@ -351,7 +351,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)dma_buf, (uint8_t *)dma_buf, send_length);
         }
         else
-#endif /*SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7*/
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
         
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
@@ -430,7 +430,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             }
             rt_free_align(dma_buf);
         }
-#endif /*SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7*/
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
