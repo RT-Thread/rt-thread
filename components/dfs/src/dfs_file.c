@@ -857,6 +857,7 @@ void cat(const char *filename)
             rt_device_write(out_device, 0, (void *)buffer, sizeof(buffer));
         }
     } while (length > 0);
+    rt_kprintf("\n");
 
     dfs_file_close(&fd);
 }
