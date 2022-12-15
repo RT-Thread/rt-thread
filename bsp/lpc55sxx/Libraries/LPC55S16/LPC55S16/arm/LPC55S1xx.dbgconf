@@ -1,0 +1,18 @@
+// <<< Use Configuration Wizard in Context Menu >>>
+
+// <o0> SWO pin
+// <i> The SWO (Serial Wire Output) pin optionally provides data from the ITM
+// <i> for an external debug tool to evaluate.
+//      <0=> PIO0_10
+//      <1=> PIO0_8
+SWO_Pin = 0;
+// 
+
+// <h>Debug Configuration
+//   <o.0>    StopAfterBootloader       <i> Stop after Bootloader
+// </h>
+Dbg_CR = 0x00000001;
+//
+
+
+// <<< end of configuration section >>>
