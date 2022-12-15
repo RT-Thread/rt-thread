@@ -39,7 +39,7 @@ extern "C" {
 #endif
 
 /*!
- * @brief	Initialize INPUTMUX peripheral.
+ * @brief   Initialize INPUTMUX peripheral.
 
  * This function enables the INPUTMUX clock.
  *
@@ -78,7 +78,7 @@ void INPUTMUX_EnableSignal(INPUTMUX_Type *base, inputmux_signal_t signal, bool e
 #endif
 
 /*!
- * @brief	Deinitialize INPUTMUX peripheral.
+ * @brief   Deinitialize INPUTMUX peripheral.
 
  * This function disables the INPUTMUX clock.
  *

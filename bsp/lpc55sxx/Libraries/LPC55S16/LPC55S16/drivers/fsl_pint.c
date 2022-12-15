@@ -37,7 +37,7 @@ static pint_cb_t s_pintCallback[FSL_FEATURE_PINT_NUMBER_OF_CONNECTED_OUTPUTS];
  ******************************************************************************/
 
 /*!
- * brief	Initialize PINT peripheral.
+ * brief    Initialize PINT peripheral.
 
  * This function initializes the PINT peripheral and enables the clock.
  *
@@ -151,7 +151,7 @@ void PINT_Init(PINT_Type *base)
 }
 
 /*!
- * brief	Configure PINT peripheral pin interrupt.
+ * brief    Configure PINT peripheral pin interrupt.
 
  * This function configures a given pin interrupt.
  *
@@ -208,7 +208,7 @@ void PINT_PinInterruptConfig(PINT_Type *base, pint_pin_int_t intr, pint_pin_enab
 }
 
 /*!
- * brief	Get PINT peripheral pin interrupt configuration.
+ * brief    Get PINT peripheral pin interrupt configuration.
 
  * This function returns the configuration of a given pin interrupt.
  *
@@ -287,7 +287,7 @@ void PINT_PinInterruptGetConfig(PINT_Type *base, pint_pin_int_t pintr, pint_pin_
 }
 
 /*!
- * brief	Configure PINT pattern match.
+ * brief    Configure PINT pattern match.
 
  * This function configures a given pattern match bit slice.
  *
@@ -352,7 +352,7 @@ void PINT_PatternMatchConfig(PINT_Type *base, pint_pmatch_bslice_t bslice, pint_
 }
 
 /*!
- * brief	Get PINT pattern match configuration.
+ * brief    Get PINT pattern match configuration.
 
  * This function returns the configuration of a given pattern match bit slice.
  *
@@ -405,7 +405,7 @@ void PINT_PatternMatchGetConfig(PINT_Type *base, pint_pmatch_bslice_t bslice, pi
 }
 
 /*!
- * brief	Reset pattern match detection logic.
+ * brief    Reset pattern match detection logic.
 
  * This function resets the pattern match detection logic if any of the product term is matching.
  *
@@ -432,7 +432,7 @@ uint32_t PINT_PatternMatchResetDetectLogic(PINT_Type *base)
 }
 
 /*!
- * @brief	Clear Selected pin interrupt status only when the pin was triggered by edge-sensitive.
+ * @brief   Clear Selected pin interrupt status only when the pin was triggered by edge-sensitive.
 
  * This function clears the selected pin interrupt status.
  *
@@ -454,7 +454,7 @@ void PINT_PinInterruptClrStatus(PINT_Type *base, pint_pin_int_t pintr)
 }
 
 /*!
- * @brief	Clear all pin interrupts status only when pins were triggered by edge-sensitive.
+ * @brief   Clear all pin interrupts status only when pins were triggered by edge-sensitive.
 
  * This function clears the status of all pin interrupts.
  *
@@ -497,7 +497,7 @@ void PINT_PinInterruptClrStatusAll(PINT_Type *base)
 }
 
 /*!
- * brief	Enable callback.
+ * brief    Enable callback.
 
  * This function enables the interrupt for the selected PINT peripheral. Although the pin(s) are monitored
  * as soon as they are enabled, the callback function is not enabled until this function is called.
@@ -535,7 +535,7 @@ void PINT_EnableCallback(PINT_Type *base)
 }
 
 /*!
- * brief	enable callback by pin index.
+ * brief    enable callback by pin index.
 
  * This function  enables callback by pin index instead of enabling all pins.
  *
@@ -564,7 +564,7 @@ void PINT_EnableCallbackByIndex(PINT_Type *base, pint_pin_int_t pintIdx)
 }
 
 /*!
- * brief	Disable callback.
+ * brief    Disable callback.
 
  * This function disables the interrupt for the selected PINT peripheral. Although the pins are still
  * being monitored but the callback function is not called.
@@ -632,7 +632,7 @@ void PINT_DisableCallbackByIndex(PINT_Type *base, pint_pin_int_t pintIdx)
 }
 
 /*!
- * brief	Deinitialize PINT peripheral.
+ * brief    Deinitialize PINT peripheral.
 
  * This function disables the PINT clock.
  *

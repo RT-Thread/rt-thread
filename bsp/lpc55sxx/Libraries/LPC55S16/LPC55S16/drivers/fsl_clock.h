@@ -1008,9 +1008,9 @@ static inline void CLOCK_DisableClock(clock_ip_name_t clk)
  */
 status_t CLOCK_SetupFROClocking(uint32_t iFreq);
 /**
- * @brief	Set the flash wait states for the input freuqency.
- * @param	system_freq_hz	: Input frequency
- * @return	Nothing
+ * @brief   Set the flash wait states for the input freuqency.
+ * @param   system_freq_hz  : Input frequency
+ * @return  Nothing
  */
 void CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz);
 /**
@@ -1242,8 +1242,8 @@ __STATIC_INLINE bool CLOCK_IsPLL0Locked(void)
     return (bool)((SYSCON->PLL0STAT & SYSCON_PLL0STAT_LOCK_MASK) != 0UL);
 }
 
-/*! @brief	Check if PLL1 is locked or not
- *  @return	true if the PLL1 is locked, false if not locked
+/*! @brief  Check if PLL1 is locked or not
+ *  @return true if the PLL1 is locked, false if not locked
  */
 __STATIC_INLINE bool CLOCK_IsPLL1Locked(void)
 {
