@@ -351,7 +351,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)dma_buf, (uint8_t *)dma_buf, send_length);
         }
         else
-#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */        
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
