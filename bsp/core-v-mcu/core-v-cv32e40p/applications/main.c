@@ -13,6 +13,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "rtconfig.h"
+#include "udma_uart_driver.h"
+#include "stdlib.h"
+/*Note:Bsp shell switch flag,do not modify*/
+int irq_cli_flag = 1;
+/*If add CorevMCU_CLI package,please put the code in example.c here*/
 
 #define rtthread_task
 static struct rt_thread test1_thread;
@@ -25,7 +30,7 @@ static void test2_thread_entry(void* parameter);
 
 void test_init(void)
 {
-	rt_kprintf("Hello RT-Thread\r\n");
+	rt_kprintf("Hello RT-Thread!\r\n");
 }
 INIT_APP_EXPORT(test_init);
 

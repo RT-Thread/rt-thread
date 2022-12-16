@@ -9,7 +9,7 @@
  */
 
 #include "board.h"
-#include <rtdevice.h>
+#include "rtthread.h"
 #include <drv_usart.h>
 #include "hal_udma_ctrl_reg_defs.h"
 #include "hal_udma_uart_reg_defs.h"
@@ -84,7 +84,7 @@ static int corev_putc(struct rt_serial_device *serial, char c)
 
 static int corev_getc(struct rt_serial_device *serial)
 {
-    signed char ch;
+    int ch;
     struct corev_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     uart = (struct corev_uart *)serial->parent.user_data;
@@ -96,7 +96,7 @@ static int corev_getc(struct rt_serial_device *serial)
 		ch = puart->data_b.rx_data & 0xff;
 	}
 
-    return (int)ch;
+    return ch;
 }
 
 rt_size_t corevdma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
@@ -120,6 +120,7 @@ static const struct rt_uart_ops corev_uart_ops =
     corevdma_transmit
 };
 
+extern int irq_cli_flag;
 void uart_rx_isr (void *id){
 	rt_interrupt_enter();
 	if (id == 6) {
@@ -130,7 +131,15 @@ void uart_rx_isr (void *id){
 	}
 	if (id == 2) {//use this uart
 		while (puart0->valid) {
-			uart_isr(&(uart_obj[UART1_INDEX].serial));
+			if(irq_cli_flag==1)
+			{
+				uart_isr(&(uart_obj[UART1_INDEX].serial));
+			}
+			else if(irq_cli_flag==0)
+			{
+				u0buffer[u0wrptr++] = puart0->data_b.rx_data & 0xff;
+				u0wrptr &= 0x7f;
+			}
 		}
 	}
 	rt_interrupt_leave();

@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-12-08     WangShun        the first version
+ * 2022-12-08     WangShun     the first version
+ * 2022-12-13     WangShun     put the rt_system_heap_init in head
  */
 
 #include <stdint.h>
@@ -35,6 +36,10 @@ void *rt_heap_end_get(void)
 
 void rt_hw_board_init()
 {
+	/*Initialize heap first, or system_ Semaphore in init cannot be created*/
+#if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
+	rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
+#endif
     /* System Clock Update */
 	extern void system_init(void);
 	system_init();
@@ -45,9 +50,6 @@ void rt_hw_board_init()
 	__asm volatile( "csrr %0, mtvec" : "=r"( mtvec ) );
 	__asm volatile( "csrs mie, %0" :: "r"(0x880) );
 
-#if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-    rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
-#endif
     /* USART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
     rt_hw_usart_init();

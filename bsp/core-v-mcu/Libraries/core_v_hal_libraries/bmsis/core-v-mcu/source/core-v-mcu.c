@@ -37,6 +37,16 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "rtconfig.h"
+#ifdef PKG_USING_FREERTOS_WRAPPER
+#include "N25Q.h"
+#include "hal_apb_i2cs.h"
+FLASH_DEVICE_OBJECT gFlashDeviceObject[N_QSPIM];
+uint8_t gQSPIFlashPresentFlg[N_QSPIM] = {0};
+uint8_t gMicronFlashDetectedFlg[N_QSPIM] = {0};
+#endif 
+
+#define HEAP_SIZE (( unsigned int) (64 * 1024 ))
+
 #define FOR_SIMULATION_TESTING 0
 
 #if (FOR_SIMULATION_TESTING == 1)
@@ -63,10 +73,6 @@ typedef struct
 void forSimulationTesting(void);
 #endif
 
-//FLASH_DEVICE_OBJECT gFlashDeviceObject[N_QSPIM];
-uint8_t gQSPIFlashPresentFlg[N_QSPIM] = {0};
-uint8_t gMicronFlashDetectedFlg[N_QSPIM] = {0};
-
 /* test some assumptions we make about compiler settings */
 static_assert(sizeof(uintptr_t) == 4,
 	      "uintptr_t is not 4 bytes. Make sure you are using -mabi=ilp32*");
@@ -76,17 +82,16 @@ static_assert(sizeof(uintptr_t) == 4,
  * section for our heap), so when using LTO it will be removed. We force it to
  * stay with the "used" attribute
  */
-__attribute__((section(".heap"), used)) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+__attribute__((section(".heap"), used)) uint8_t ucHeap[HEAP_SIZE];
 
 /* Inform linker script about .heap section size. Note: GNU ld seems to
  * internally represent integers with the bfd_vma type, that is a type that can
  * contain memory addresses (typdefd to some int type depending on the
  * architecture). uint32_t seems to me the most fitting candidate for rv32.
  */
-uint32_t __heap_size = configTOTAL_HEAP_SIZE;
+uint32_t __heap_size = HEAP_SIZE;
 
 volatile uint32_t system_core_clock = 5000000u;
-
 
 /* interrupt handling */
 void timer_irq_handler(uint32_t mcause);
