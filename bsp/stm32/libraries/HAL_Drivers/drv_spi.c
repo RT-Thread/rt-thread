@@ -347,7 +347,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             {
                 rt_memset(dma_buf, 0xFF, send_length);
             }
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH,dma_buf, send_length);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_buf, send_length);
             state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)dma_buf, (uint8_t *)dma_buf, send_length);
         }
         else
@@ -424,7 +424,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             if(recv_buf)
             {
-                rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE,dma_buf, send_length);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, dma_buf, send_length);
                 rt_memcpy(recv_buf, dma_buf,send_length);
             }
             rt_free_align(dma_buf);
