@@ -30,30 +30,30 @@ static void test2_thread_entry(void* parameter);
 
 void test_init(void)
 {
-	rt_kprintf("Hello RT-Thread!\r\n");
+    rt_kprintf("Hello RT-Thread!\r\n");
 }
 INIT_APP_EXPORT(test_init);
 
 int main(void)
 {
 #ifndef rtthread_task
-	rt_thread_init(&test1_thread,                 
-                   "test1",                       
-                   test1_thread_entry,            
-                   RT_NULL,                      
-                   &rt_test1_thread_stack[0],     
-                   sizeof(rt_test1_thread_stack), 
-                   6,                            
-                   20);                          
+    rt_thread_init(&test1_thread,
+                   "test1",
+                   test1_thread_entry,
+                   RT_NULL,
+                   &rt_test1_thread_stack[0],
+                   sizeof(rt_test1_thread_stack),
+                   6,
+                   20);
 
-    rt_thread_startup(&test1_thread);             
+    rt_thread_startup(&test1_thread);
 
-    test2_thread = rt_thread_create( "test2",      
-                      test2_thread_entry,   		
-                      RT_NULL,             		
-                      512,                 		
-                      5,                   		
-                      20);                 		
+    test2_thread = rt_thread_create( "test2",
+                      test2_thread_entry,
+                      RT_NULL,
+                      512,
+                      5,
+                      20);
 
     rt_thread_startup(test2_thread);
 #endif
@@ -63,16 +63,16 @@ static void test1_thread_entry(void* parameter)
 {
     while (1)
     {
-    	rt_kprintf("test1\r\n");
-        rt_thread_delay(500);  
+        rt_kprintf("test1\r\n");
+        rt_thread_delay(500);
     }
 }
 
 static void test2_thread_entry(void* parameter)
 {
-	while (1)
-	{
+    while (1)
+    {
         rt_kprintf("test2\r\n");
-		rt_thread_delay(500); 
-	}
+        rt_thread_delay(500);
+    }
 }
