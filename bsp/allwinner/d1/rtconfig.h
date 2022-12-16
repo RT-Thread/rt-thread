@@ -46,7 +46,6 @@
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
-#define RT_USING_USERSPACE
 #define KERNEL_VADDR_START 0x150000000
 #define PV_OFFSET 0x0
 #define ARCH_RISCV
@@ -214,7 +213,7 @@
 
 /* Utilities */
 
-#define RT_USING_LWP
+#define RT_USING_SMART
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024

@@ -15,7 +15,7 @@
 
 .globl system_vectors
 system_vectors:
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     b _reset
 #else
     ldr pc, _vector_reset

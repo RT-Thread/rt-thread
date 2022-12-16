@@ -27,7 +27,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
@@ -520,7 +520,7 @@ void rt_unwind(struct rt_hw_exp_stack *regs, unsigned int pc_adj)
     e_regs.ARM_sp = regs->sp;
     e_regs.ARM_lr = regs->lr;
     e_regs.ARM_pc = regs->pc - pc_adj;
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     if (!lwp_user_accessable((void *)e_regs.ARM_pc, sizeof (void *)))
     {
         e_regs.ARM_pc = regs->lr - sizeof(void *);

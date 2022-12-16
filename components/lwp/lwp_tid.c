@@ -13,7 +13,7 @@
 
 #include "lwp.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include "lwp_user_mm.h"
 #endif
 

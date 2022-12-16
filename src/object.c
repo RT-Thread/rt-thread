@@ -23,7 +23,7 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
 
@@ -71,7 +71,7 @@ enum rt_object_info_type
 #ifdef RT_USING_HEAP
     RT_Object_Info_Memory,                            /**< The object is a memory. */
 #endif
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     RT_Object_Info_Channel,                            /**< The object is a IPC channel */
 #endif
 #ifdef RT_USING_HEAP
@@ -129,7 +129,7 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
     /* initialize object container - small memory */
     {RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory)},
 #endif
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     /* initialize object container - module */
     {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel)},
     {RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object)},

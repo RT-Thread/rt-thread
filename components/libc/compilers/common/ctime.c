@@ -26,7 +26,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <unistd.h>
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include "lwp.h"
 #endif
 #ifdef RT_USING_POSIX_DELAY
@@ -886,7 +886,7 @@ struct timer_obj
     rt_uint32_t reload;                    /* Reload value in ms */
     rt_uint32_t status;
     int sigev_signo;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     pid_t pid;
 #endif
 };
@@ -906,7 +906,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     if (timer->reload)
         rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     sys_kill(timer->pid, timer->sigev_signo);
 #else
     if(timer->sigev_notify_function != RT_NULL)
@@ -948,7 +948,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
     num %= 100;
     timer->sigev_signo = evp->sigev_signo;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     timer->pid = lwp_self()->pid;
 #endif
     timer->sigev_notify_function = evp->sigev_notify_function;

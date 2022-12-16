@@ -27,7 +27,7 @@
 #include "hal_uart.h"
 #include "hal_dma.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include "riscv_mmu.h"
 #include "mmu.h"
 #include "page.h"
@@ -81,7 +81,7 @@ void primary_cpu_entry(void)
 // 这个初始化程序由内核主动调用，此时调度器还未启动，因此在此不能使用依赖线程上下文的函数
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_page_init(init_page_region);
     rt_hw_mmu_map_init(&mmu_info, (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, (rt_size_t *)MMUTable, 0);
     rt_hw_mmu_kernel_map_init(&mmu_info, 0x00000000UL, USER_VADDR_START - 1);

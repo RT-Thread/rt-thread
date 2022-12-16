@@ -19,7 +19,7 @@
 extern long list_thread(void);
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_arch.h>
 
@@ -70,7 +70,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("fp :0x%08x ip :0x%08x\n", regs->fp, regs->ip);
     rt_kprintf("sp :0x%08x lr :0x%08x pc :0x%08x\n", regs->sp, regs->lr, regs->pc);
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     {
         uint32_t v;
         asm volatile ("MRC p15, 0, %0, c5, c0, 0":"=r"(v));
@@ -128,7 +128,7 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
         }
     }
 #endif
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     check_user_fault(regs, 4, "User undefined instruction");
 #endif
     rt_unwind(regs, 4);
@@ -169,7 +169,7 @@ void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     if (dbg_check_event(regs, 4))
     {
         return;
@@ -195,7 +195,7 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     if (dbg_check_event(regs, 8))
     {
         return;

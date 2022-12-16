@@ -22,7 +22,7 @@
 .equ I_Bit,           0x80   /* when I bit is set, IRQ is disabled */
 .equ F_Bit,           0x40   /* when F bit is set, FIQ is disabled */
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 .data
 .align 14
 init_mtbl:
@@ -101,7 +101,7 @@ continue:
     dsb
     isb
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     ldr r5, =PV_OFFSET
 
     mov r7, #0x100000
@@ -179,7 +179,7 @@ bss_loop:
     ldr r1, [r1]
     bl rt_hw_init_mmu_table
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     ldr r0, =MMUTable     /* vaddr    */
     add r0, r5            /* to paddr */
     bl  rt_hw_mmu_switch
@@ -225,7 +225,7 @@ stack_setup:
 
     bx      lr
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 .align 2
 .global enable_mmu
 enable_mmu:
@@ -331,7 +331,7 @@ vector_irq:
     mrs     r1,  spsr         /* original mode */
     stmfd   r0!, {r1}
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd   r0, {r13, r14}^   /* usr_sp, usr_lr */
     sub     r0, #8
 #endif
@@ -379,7 +379,7 @@ vector_irq:
     cmp     r1, #1
     beq     rt_hw_context_switch_interrupt_do
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd   sp!, {r0-r12,lr}
     cps     #Mode_SVC
     push    {r0-r12}
@@ -430,7 +430,7 @@ rt_hw_context_switch_interrupt_do:
     stmfd   sp!, {r1-r4}        /* push old task's r0-r3 */
     stmfd   sp!, {r0}           /* push old task's cpsr */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd   sp, {r13, r14}^     /*push usr_sp, usr_lr */
     sub     sp, #8
 #endif
@@ -457,7 +457,7 @@ rt_hw_context_switch_interrupt_do:
     ldr     sp,  [r6]       /* get new task's stack pointer */
 
     bl      rt_thread_self
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     mov     r4, r0
     bl      lwp_mmu_switch
     mov     r0, r4
@@ -477,7 +477,7 @@ rt_hw_context_switch_interrupt_do:
 1:
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd sp, {r13, r14}^    /*pop usr_sp, usr_lr */
     add sp, #8
 #endif
@@ -485,7 +485,7 @@ rt_hw_context_switch_interrupt_do:
     ldmfd   sp!, {r4}        /* pop new task's cpsr to spsr */
     msr     spsr_cxsf, r4
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     and     r4, #0x1f
     cmp     r4, #0x10
     bne     1f
@@ -543,7 +543,7 @@ vector_undef:
     .globl  vector_pabt
 vector_pabt:
     push_svc_reg
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     /* cp Mode_ABT stack to SVC */
     sub     sp, sp, #17 * 4     /* Sizeof(struct rt_hw_exp_stack)  */
     mov     lr, r0
@@ -571,7 +571,7 @@ vector_pabt:
     .globl  vector_dabt
 vector_dabt:
     push_svc_reg
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     /* cp Mode_ABT stack to SVC */
     sub     sp, sp, #17 * 4    /* Sizeof(struct rt_hw_exp_stack)  */
     mov     lr, r0
@@ -610,7 +610,7 @@ rt_hw_clz:
 
 .global rt_secondary_cpu_entry
 rt_secondary_cpu_entry:
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     ldr     r5, =PV_OFFSET
 
     ldr     lr, =after_enable_mmu_n
@@ -641,7 +641,7 @@ after_enable_mmu_n:
     bl stack_setup
 
     /* initialize the mmu table and enable mmu */
-#ifndef RT_USING_USERSPACE
+#ifndef RT_USING_SMART
     bl rt_hw_mmu_init
 #endif
 

@@ -19,7 +19,7 @@
 #include <rthw.h>
 #include <stddef.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 
 #include <mmu.h>
 #include <page.h>
@@ -261,4 +261,4 @@ void *arch_get_usp_from_uctx(struct rt_user_context *uctx)
     return uctx->sp;
 }
 
-#endif /* RT_USING_USERSPACE */
+#endif /* ARCH_MM_MMU */

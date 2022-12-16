@@ -13,7 +13,7 @@
 #include <rtconfig.h>
 #include <rtdbg.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 
 #include <stackframe.h>
 #include <interrupt.h>
@@ -368,4 +368,4 @@ void lwp_signal_do_return(rt_hw_stack_frame_t *frame)
 }
 #endif /* RT_USING_SIGNALS */
 
-#endif  /* RT_USING_USERSPACE */
+#endif  /* ARCH_MM_MMU */

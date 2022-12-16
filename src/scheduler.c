@@ -33,9 +33,9 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
@@ -98,7 +98,7 @@ static void _scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #ifndef ARCH_MM_MMU
     struct rt_lwp *lwp = thread ? (struct rt_lwp *)thread->lwp : 0;
 
@@ -109,7 +109,7 @@ static void _scheduler_stack_check(struct rt_thread *thread)
         return;
     }
 #endif /* not defined ARCH_MM_MMU */
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
@@ -345,7 +345,7 @@ void rt_schedule(void)
 
         if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
             rt_thread_wakeup(current_thread);
 #else
             rt_thread_resume(current_thread);
@@ -600,7 +600,7 @@ void rt_scheduler_do_irq_switch(void *context)
 
         if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
             rt_thread_wakeup(current_thread);
 #else
             rt_thread_resume(current_thread);

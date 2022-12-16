@@ -14,7 +14,7 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_user_mm.h>
 #endif
@@ -173,8 +173,8 @@ int dfs_tmpfs_ioctl(struct dfs_fd *file, int cmd, void *args)
 
     switch (cmd)
     {
-#ifdef RT_USING_LWP
-    case RT_FIOMMAP2: 
+#ifdef RT_USING_SMART
+    case RT_FIOMMAP2:
     {
         struct dfs_mmap2_args *mmap2 = (struct dfs_mmap2_args *)args;
         if (mmap2)
@@ -394,7 +394,7 @@ int dfs_tmpfs_open(struct dfs_fd *file)
         p_file = dfs_tmpfs_lookup(superblock, parent_path, &size);
         if (p_file == NULL)
             return -ENOENT;
-        
+
         /* create a file entry */
         d_file = (struct tmpfs_file *)rt_calloc(1, sizeof(struct tmpfs_file));
         if (d_file == NULL)

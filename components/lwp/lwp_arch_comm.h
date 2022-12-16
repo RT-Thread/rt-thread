@@ -23,7 +23,7 @@ void arch_syscall_exit();
 void arch_ret_to_user();
 
 /* ELF relocation */
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);
 #else
 void arch_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);

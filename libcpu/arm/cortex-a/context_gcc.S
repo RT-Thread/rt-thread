@@ -45,12 +45,12 @@ rt_hw_context_switch_to:
 #ifdef RT_USING_SMP
     mov     r0, r1
     bl      rt_cpus_lock_status_restore
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     bl      rt_thread_self
     bl      lwp_user_setting_restore
 #endif
 #else
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     bl      rt_thread_self
     mov     r4, r0
     bl      lwp_mmu_switch
@@ -85,7 +85,7 @@ rt_hw_context_switch:
 
     stmfd sp!, {r4}         @ push cpsr
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd sp, {r13, r14}^   @ push usr_sp usr_lr
     sub sp, #8
 #endif
@@ -108,12 +108,12 @@ rt_hw_context_switch:
 #ifdef RT_USING_SMP
     mov     r0, r2
     bl      rt_cpus_lock_status_restore
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     bl      rt_thread_self
     bl      lwp_user_setting_restore
 #endif
 #else
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     bl      rt_thread_self
     mov     r4, r0
     bl      lwp_mmu_switch
@@ -149,9 +149,9 @@ rt_hw_context_switch_interrupt:
      * r2 :addr of to_thread's sp
      * r3 :to_thread's tcb
      */
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     push {r0 - r3, lr}
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     bl rt_thread_self
     bl lwp_user_setting_save
 #endif
@@ -161,11 +161,11 @@ rt_hw_context_switch_interrupt:
 
     ldr     sp, [r2]
     mov     r0, r3
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     mov     r4, r0
 #endif
     bl      rt_cpus_lock_status_restore
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     mov     r0, r4
     bl      lwp_user_setting_restore
 #endif
@@ -177,7 +177,7 @@ rt_hw_context_switch_interrupt:
      * r2 :from_thread's tcb
      * r3 :to_thread's tcb
      */
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     /* now to_thread(r3) not used */
     ldr ip, =rt_thread_switch_interrupt_flag
     ldr r3, [ip]
@@ -187,7 +187,7 @@ rt_hw_context_switch_interrupt:
     str r0, [r3]
     mov r3, #1              @ set rt_thread_switch_interrupt_flag to 1
     str r3, [ip]
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     push {r1, lr}
     mov r0, r2
     bl lwp_user_setting_save
@@ -239,14 +239,14 @@ rt_hw_context_switch_exit:
 1:
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd   sp, {r13, r14}^ /* usr_sp, usr_lr */
     add     sp, #8
 #endif
     ldmfd   sp!, {r1}
     msr     spsr_cxsf, r1        /* original mode */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     and r1, #0x1f
     cmp r1, #0x10
     bne 1f

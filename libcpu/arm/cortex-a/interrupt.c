@@ -69,7 +69,7 @@ void rt_hw_interrupt_init(void)
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
     /* initialize ARM GIC */
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     gic_dist_base = (uint32_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_dist_base(), 0x2000, MMU_MAP_K_RW);
     gic_cpu_base = (uint32_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_cpu_base(), 0x1000, MMU_MAP_K_RW);
 #else
@@ -99,7 +99,7 @@ void rt_hw_interrupt_init(void)
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
     /* initialize ARM GIC */
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     gic_dist_base = (uint32_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_dist_base(), 0x2000, MMU_MAP_K_RW);
 #else
     gic_dist_base = platform_get_gic_dist_base();

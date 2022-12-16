@@ -319,7 +319,7 @@ static size_t find_vaddr(rt_mmu_info *mmu_info, int pages)
     return 0;
 }
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 static int check_vaddr(rt_mmu_info *mmu_info, void *va, int pages)
 {
     size_t loop_va = (size_t)va & ~ARCH_PAGE_MASK;
@@ -398,7 +398,7 @@ static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages
             (*ref_cnt)--;
             if (!*ref_cnt)
             {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
                 rt_pages_free(mmu_l2, 0);
 #else
                 rt_free_align(mmu_l2);
@@ -438,7 +438,7 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
         }
         else
         {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
             mmu_l2 = (size_t*)rt_pages_alloc(0);
 #else
             mmu_l2 = (size_t*)rt_malloc_align(ARCH_PAGE_TBL_SIZE * 2, ARCH_PAGE_TBL_SIZE);
@@ -480,7 +480,7 @@ static void rt_hw_cpu_tlb_invalidate(void)
     mmu_clear_itlb();
 }
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 void *_rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr)
 {
     size_t pa_s, pa_e;
@@ -551,7 +551,7 @@ void *_rt_hw_mmu_map(rt_mmu_info *mmu_info, void* p_addr, size_t size, size_t at
 }
 #endif
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npages, size_t attr)
 {
     size_t loop_va = (size_t)v_addr & ~ARCH_PAGE_MASK;
@@ -695,7 +695,7 @@ void *rt_hw_kernel_phys_to_virt(void *p_addr, size_t size)
 {
     void *v_addr = 0;
 
-    #ifdef RT_USING_USERSPACE
+    #ifdef RT_USING_SMART
     extern rt_mmu_info mmu_info;
     v_addr = rt_hw_mmu_map(&mmu_info, 0, p_addr, size, MMU_MAP_K_RW);
     #else
@@ -705,7 +705,7 @@ void *rt_hw_kernel_phys_to_virt(void *p_addr, size_t size)
     return v_addr;
 }
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr)
 {
     void *ret;
@@ -802,7 +802,7 @@ void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr)
     return ret;
 }
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off)
 {
     unsigned int va;

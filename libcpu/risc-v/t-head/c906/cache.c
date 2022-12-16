@@ -128,7 +128,7 @@ void rt_hw_sync_cache_local(void *addr, int size)
     rt_hw_cpu_icache_invalidate_local(addr, size);
 }
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp_arch.h>
 #define ICACHE (1 << 0)
 #define DCACHE (1 << 1)

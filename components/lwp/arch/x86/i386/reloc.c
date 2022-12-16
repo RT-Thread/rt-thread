@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <elf.h>
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include <mmu.h>
 #include <page.h>
 #endif
@@ -27,7 +27,7 @@ typedef struct
     Elf32_Half st_shndx;
 } Elf32_sym;
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
 {
 

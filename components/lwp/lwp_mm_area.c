@@ -9,7 +9,7 @@
  */
 #include <rtthread.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include <lwp_mm_area.h>
 
 int lwp_map_area_insert(struct lwp_avl_struct **avl_tree, size_t addr, size_t size, int ma_type)

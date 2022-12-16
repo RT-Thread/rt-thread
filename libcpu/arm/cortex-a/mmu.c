@@ -16,7 +16,7 @@
 #include "cp15.h"
 #include "mmu.h"
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp_mm.h>
 #include "page.h"
 #endif
@@ -24,7 +24,7 @@
 /* level1 page table, each entry for 1MB memory. */
 volatile unsigned long MMUTable[4*1024] __attribute__((aligned(16*1024)));
 
-#ifndef RT_USING_LWP
+#ifndef RT_USING_SMART
 static rt_mutex_t mm_lock = RT_NULL;
 
 void rt_mm_lock(void)
@@ -323,7 +323,7 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
     return 0;
 }
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 static size_t find_vaddr(rt_mmu_info *mmu_info, int pages)
 {
     size_t l1_off, l2_off;
