@@ -69,6 +69,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
@@ -234,6 +235,5 @@
 /* Onboard System Settings */
 
 #define DEFAULT_SYSTEM_CLOCK 5000000u
-#define configTOTAL_HEAP_SIZE  ( unsigned int) (64 * 1024 )
 
 #endif

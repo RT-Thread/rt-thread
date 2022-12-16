@@ -19,7 +19,11 @@
 #define HAL_INCLUDE_HAL_FC_EVENT_H_
 
 #include "core-v-mcu-pmsis.h"
-
+#ifdef PKG_USING_FREERTOS_WRAPPER
+#include <FreeRTOS.h>
+#include <semphr.h>
+#include <task.h>
+#endif 
 /*!
  * @addtogroup FC_EventHandler
  * @{
@@ -45,9 +49,9 @@ void pi_fc_event_handler_init(uint32_t fc_event_irq);
  * This function pops an event and executes the handler corresponding to the event.
  */
 void fc_soc_event_handler(void);
-
-//void pi_fc_event_handler_set(uint32_t event_id, pi_fc_event_handler_t event_handler, SemaphoreHandle_t semaphoreHandle);//This function based on  freertos 
-
+#ifdef PKG_USING_FREERTOS_WRAPPER
+void pi_fc_event_handler_set(uint32_t event_id, pi_fc_event_handler_t event_handler, SemaphoreHandle_t semaphoreHandle);//This function based on  freertos 
+#endif
 void user_pi_fc_event_handler_set(uint32_t event_id,pi_fc_event_handler_t event_handler);
 
 void pi_fc_event_handler_clear(uint32_t event_id);

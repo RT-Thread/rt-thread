@@ -19,7 +19,9 @@
  #include "core-v-mcu-config.h"
  #include "hal_apb_soc_ctrl_regs.h"
  #include "hal_pinmux.h"
-
+ #ifdef PKG_USING_FREERTOS_WRAPPER
+ #include "FreeRTOS.h"
+ #endif
  void hal_setpullup(uint8_t io_num, uint8_t on) {
  	SocCtrl_t*		psoc_ctrl = SOC_CTRL_START_ADDR;
 

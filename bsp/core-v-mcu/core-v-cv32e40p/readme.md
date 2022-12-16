@@ -185,3 +185,12 @@ BSP支持RT-Thread的Finsh组件，输入version可以查看rt-thread的版本�
 5.点击debug开始调试
 
  ![run](figures/run.png)
+
+### 4.CLI组件
+
+​	OPENHW提供的FreeRTOS工程支持一个CLI组件用于测试，再使用RT-Thread时为了确保兼容原有的CLI，所以将原来的CLI做成了独立的软件包，同时该软件包自动开启了FreeRTOS兼容层，所以该软件包既可以支持原有的CLI组件，同时依旧可以使用FreeRTOS的接口函数。
+
+#### 4.1使用方法
+
+​	在ENV工具中使用menuconfig配置开启CorevMCU_CL软件包，将example.c中的示例代码放到main.c提示的地方即可。
+

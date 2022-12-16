@@ -177,3 +177,11 @@ Cancle`Start OpenOCD locally`，the configuration parameters are as follows:![de
 5.Click debug to start debugging:
 
 ![run](figures/run.png)
+
+### 4.CLI components
+
+​	The FreeRTOS project provided by OPENHW supports a CLI component for testing. To ensure compatibility with the original CLI when using RT Thread again, the original CLI is made into an independent software package. At the same time, the software package automatically opens the FreeRTOS compatibility layer, so the software package can support the original CLI components and still use FreeRTOS interface functions.
+
+#### 4.1使用方法
+
+​	Enable CorevMCU with menuconfig configuration in ENV tool_ CL software package, just put the sample code in example. c at the prompt of main. c.
