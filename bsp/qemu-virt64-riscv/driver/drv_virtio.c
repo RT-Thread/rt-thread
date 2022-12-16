@@ -66,7 +66,7 @@ int rt_virtio_devices_init(void)
         return 0;
     }
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     mmio_base = (rt_ubase_t)rt_ioremap((void *)mmio_base, VIRTIO_MMIO_SIZE * VIRTIO_MAX_NR);
 
     if (mmio_base == RT_NULL)

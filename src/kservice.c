@@ -32,7 +32,7 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_user_mm.h>
 #include <console.h>
@@ -420,7 +420,7 @@ char *rt_strstr(const char *s1, const char *s2)
     l2 = rt_strlen(s2);
     if (!l2)
     {
-        return (char *)s1;        
+        return (char *)s1;
     }
 
     l1 = rt_strlen(s1);
@@ -429,7 +429,7 @@ char *rt_strstr(const char *s1, const char *s2)
         l1 --;
         if (!rt_memcmp(s1, s2, l2))
         {
-            return (char *)s1;            
+            return (char *)s1;
         }
 
         s1 ++;
@@ -495,7 +495,7 @@ char *rt_strncpy(char *dst, const char *src, rt_size_t n)
                 /* NUL pad the remaining n-1 bytes */
                 while (--n != 0)
                 {
-                    *d++ = 0;                    
+                    *d++ = 0;
                 }
 
                 break;
@@ -554,7 +554,7 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
     {
         if ((__res = *cs - *ct++) != 0 || !*cs++)
         {
-            break;            
+            break;
         }
 
         count --;
@@ -648,7 +648,7 @@ char *rt_strdup(const char *s)
 
     if (!tmp)
     {
-        return RT_NULL;        
+        return RT_NULL;
     }
 
     rt_memcpy(tmp, s, len);
@@ -1256,7 +1256,7 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
 extern void console_init();
     console_init(); /*add line discipline*/

@@ -26,7 +26,7 @@
 #include "rt_interrupt.h"
 #include "plic.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     #include "riscv_mmu.h"
     #include "mmu.h"
     #include "page.h"
@@ -112,7 +112,7 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_size_t satp_v = read_csr(satp);
     rt_kprintf("satp = 0x%p\n",satp_v);
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_kprintf("\tCurrent Page Table(Physical) = 0x%p\n",__MASKVALUE(satp_v,__MASK(44)) << PAGE_OFFSET_BIT);
     rt_kprintf("\tCurrent ASID = 0x%p\n",__MASKVALUE(satp_v >> 44,__MASK(16)) << PAGE_OFFSET_BIT);
 #endif
@@ -238,7 +238,7 @@ void handle_trap(rt_size_t scause,rt_size_t stval,rt_size_t sepc,struct rt_hw_st
     }
     else
     {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
         /* page fault */
         if (id == EP_LOAD_PAGE_FAULT ||
             id == EP_STORE_PAGE_FAULT)

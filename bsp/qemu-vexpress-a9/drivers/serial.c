@@ -134,7 +134,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     _uart0_device.hw_base = (uint32_t)rt_ioremap((void*)_uart0_device.hw_base, 0x1000);
 #endif
     uart = &_uart0_device;
@@ -152,7 +152,7 @@ int rt_hw_uart_init(void)
 #endif
 
 #ifdef RT_USING_UART1
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     _uart1_device.hw_base = (uint32_t)rt_ioremap((void*)_uart1_device.hw_base, 0x1000);
 #endif
     uart = &_uart1_device;

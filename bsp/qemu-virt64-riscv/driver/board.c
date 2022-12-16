@@ -23,7 +23,7 @@
 #include "plic.h"
 #include "stack.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include "riscv_mmu.h"
 #include "mmu.h"
 #include "page.h"
@@ -68,7 +68,7 @@ void primary_cpu_entry(void)
 
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_page_init(init_page_region);
     /* init mmu_info structure */
     rt_hw_mmu_map_init(&mmu_info, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);

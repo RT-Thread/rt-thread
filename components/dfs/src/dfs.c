@@ -14,7 +14,7 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 #include "dfs_private.h"
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
 
@@ -644,7 +644,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 #ifdef DFS_USING_WORKDIR
     if (directory == NULL) /* shall use working directory */
     {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
         directory = lwp_getcwd();
 #else
         directory = &working_directory[0];
@@ -775,7 +775,7 @@ RTM_EXPORT(dfs_normalize_path);
 struct dfs_fdtable *dfs_fdtable_get(void)
 {
     struct dfs_fdtable *fdt;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     struct rt_lwp *lwp;
 
     lwp = (struct rt_lwp *)rt_thread_self()->lwp;
@@ -790,7 +790,7 @@ struct dfs_fdtable *dfs_fdtable_get(void)
     return fdt;
 }
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
 {
     struct rt_lwp *lwp = RT_NULL;
@@ -854,7 +854,7 @@ int list_fd(void)
     return 0;
 }
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 static int lsofp(int pid)
 {
     int index;
@@ -964,7 +964,7 @@ int lsof(int argc, char *argv[])
     return 0;
 }
 MSH_CMD_EXPORT(lsof, list open files);
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
 #endif
 /*@}*/

@@ -22,7 +22,7 @@
 #include "drv_lcd.h"
 #include "lcd_cfg.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <page.h>
 #include <lwp_user_mm.h>
 #endif
@@ -218,7 +218,7 @@ static int _lcd_drv_init(lcd_device_t lcd_drv)
 
     /* allocate the framebuffer, the front buffer and the back buffer */
     /* framebuffer */
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     framebuffer = rt_pages_alloc(rt_page_bits(LCD_DRV_FB_SZ));
 #else
     framebuffer = rt_malloc(LCD_DRV_FB_SZ);
@@ -233,7 +233,7 @@ static int _lcd_drv_init(lcd_device_t lcd_drv)
     lcd_drv->framebuffer_phy = (void *)((size_t)framebuffer + PV_OFFSET);
     memset(framebuffer, 0, LCD_DRV_FB_SZ);
     rt_hw_cpu_dcache_clean(lcd_drv->framebuffer, LCD_DRV_FB_SZ);
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     frontbuf = rt_pages_alloc(rt_page_bits(LCD_DRV_FB_SZ));
 #else
     frontbuf = rt_malloc(LCD_DRV_FB_SZ);
@@ -251,7 +251,7 @@ static int _lcd_drv_init(lcd_device_t lcd_drv)
     if ((lcd_drv->panel) && (lcd_drv->panel->swap_flag != 0))
     {
         /* backbuf */
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
         backbuf = rt_pages_alloc(rt_page_bits(LCD_DRV_FB_SZ));
 #else
         backbuf = rt_malloc(LCD_DRV_FB_SZ);
@@ -271,7 +271,7 @@ static int _lcd_drv_init(lcd_device_t lcd_drv)
 out:
     if (framebuffer)
     {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
         rt_free_align(framebuffer);
 #else
         rt_free(framebuffer);
@@ -280,7 +280,7 @@ out:
 
     if (frontbuf)
     {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
         rt_free_align(frontbuf);
 #else
         rt_free(frontbuf);
@@ -289,7 +289,7 @@ out:
 
     if (backbuf)
     {
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
         rt_free_align(backbuf);
 #else
         rt_free(backbuf);
@@ -596,7 +596,7 @@ static rt_err_t rt_lcd_control(rt_device_t dev, int cmd, void *args)
         struct fb_fix_screeninfo *info = (struct fb_fix_screeninfo *)args;
         strncpy(info->id, "lcd", sizeof(info->id));
         info->smem_len = LCD_DRV_FB_SZ;
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
         info->smem_start = (size_t)lwp_map_user_phy(lwp_self(), RT_NULL, lcd_drv->framebuffer_phy, info->smem_len, 1);
 #else
         info->smem_start = (size_t)lcd_drv->framebuffer_phy;
@@ -633,9 +633,7 @@ int rt_hw_lcd_init(void)
     /* register lcd device to RT-Thread */
     rt_device_register(&lcd_drv->lcd, "lcd", RT_DEVICE_FLAG_RDWR);
 
-    // #if !defined(RT_USING_USERSPACE) && !defined(PKG_USING_JS_PERSIMMON)
     rt_lcd_init((rt_device_t)lcd_drv);
-    // #endif
 
     return RT_EOK;
 }

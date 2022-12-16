@@ -1,15 +1,7 @@
 menuconfig RT_USING_LWP
     bool "light-weight process"
-    select RT_USING_DFS
-    select RT_USING_LIBC
-    select RT_USING_POSIX_CLOCKTIME
-    select RT_USING_TTY
-    select RT_USING_NULL
-    select RT_USING_ZERO
-    select RT_USING_RANDOM
-    select RT_USING_RTC
-    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_RISCV64
-    default n
+    depends on RT_USING_SMART
+    default y
     help
         The lwP is a light weight process running in user mode.
 

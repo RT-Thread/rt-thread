@@ -501,7 +501,7 @@ int smc911x_emac_hw_init(void)
     rt_memset(&_emac, 0x0, sizeof(_emac));
 
     _emac.iobase = VEXPRESS_ETH_BASE;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     _emac.iobase = (uint32_t)rt_ioremap((void*)VEXPRESS_ETH_BASE, 0x1000);
 #endif
     _emac.irqno  = IRQ_VEXPRESS_A9_ETH;

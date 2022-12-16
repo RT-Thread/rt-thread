@@ -74,7 +74,7 @@ int rt_hw_timer_init(void)
 {
     rt_uint32_t val;
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     sys_ctrl = (void*)rt_ioremap((void*)REALVIEW_SCTL_BASE, 0x1000);
     timer_hw_base = (void*)rt_ioremap((void*)REALVIEW_TIMER2_3_BASE, 0x1000);
 #else
@@ -108,7 +108,7 @@ void timer_init(int timer, unsigned int preload)
 
     if (timer == 0)
     {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
         timer01_hw_base = (void*)rt_ioremap((void*)TIMER01_HW_BASE_PHY, 0x1000);
 #else
         timer01_hw_base = (void*)TIMER01_HW_BASE_PHY;
@@ -126,7 +126,7 @@ void timer_init(int timer, unsigned int preload)
     }
     else
     {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
         timer23_hw_base = (void*)rt_ioremap((void*)TIMER23_HW_BASE_PHY, 0x1000);
 #else
         timer01_hw_base = (void*)TIMER23_HW_BASE_PHY;

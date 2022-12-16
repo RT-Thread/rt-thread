@@ -215,7 +215,7 @@ arch_ret_to_user:
 2:
     movs pc, lr
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 .global lwp_check_debug
 lwp_check_debug:
     ldr r0, =rt_dbg_ops

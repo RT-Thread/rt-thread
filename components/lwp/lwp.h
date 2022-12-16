@@ -29,7 +29,7 @@
 #include "lwp_syscall.h"
 #include "lwp_avl.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include "lwp_shm.h"
 
 #include "mmu.h"
@@ -59,7 +59,7 @@ extern "C" {
 
 struct rt_lwp
 {
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
     rt_mmu_info mmu_info;
     struct lwp_avl_struct *map_area;
     size_t end_heap;
@@ -153,14 +153,14 @@ int lwp_execve(char *filename, int debug, int argc, char **argv, char **envp);
 
 /*create by lwp_setsid.c*/
 int setsid(void);
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 void lwp_mmu_switch(struct rt_thread *thread);
 #endif
 void lwp_user_setting_save(rt_thread_t thread);
 void lwp_user_setting_restore(rt_thread_t thread);
 int lwp_setaffinity(pid_t pid, int cpu);
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 struct __pthread {
     /* Part 1 -- these fields may be external or
      *      * internal (accessed via asm) ABI. Do not change. */

@@ -2,7 +2,7 @@
 #include <rtthread.h>
 
 #include <rthw.h>
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <mmu.h>
 #include <lwp_arch.h>
 #endif

@@ -12,7 +12,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <tty_ldisc.h>
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
 #if defined(RT_USING_POSIX_TERMIOS)

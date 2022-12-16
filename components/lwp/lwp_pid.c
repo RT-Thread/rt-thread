@@ -22,7 +22,7 @@
 #include "lwp_pid.h"
 #include "tty.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include "lwp_user_mm.h"
 #endif
 
@@ -46,7 +46,7 @@ static pid_t current_pid = 0;
 
 struct lwp_avl_struct *lwp_get_pid_ary(void)
 {
-    return lwp_pid_ary; 
+    return lwp_pid_ary;
 }
 
 static pid_t lwp_pid_get(void)
@@ -418,7 +418,7 @@ void lwp_free(struct rt_lwp* lwp)
         }
     }
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
     lwp_unmap_user_space(lwp);
 #endif
 

@@ -21,6 +21,15 @@ config RT_USING_SMART
     bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
     default n
     select RT_USING_LWP
+    select RT_USING_DFS
+    select RT_USING_LIBC
+    select RT_USING_POSIX_CLOCKTIME
+    select RT_USING_TTY
+    select RT_USING_NULL
+    select RT_USING_ZERO
+    select RT_USING_RANDOM
+    select RT_USING_RTC
+    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_RISCV64
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
