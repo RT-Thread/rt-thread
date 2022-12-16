@@ -1226,10 +1226,10 @@ typedef struct rt_wqueue rt_wqueue_t;
 struct rt_device
 {
     struct rt_object          parent;                   /**< inherit from rt_object */
-#ifdef RT_USING_DM    
+#ifdef RT_USING_DM
     struct rt_driver *drv;
-    void *dtb_node; 
-#endif    
+    void *dtb_node;
+#endif
     enum rt_device_class_type type;                     /**< device type */
     rt_uint16_t               flag;                     /**< device flag */
     rt_uint16_t               open_flag;                /**< device open flag */
@@ -1262,7 +1262,7 @@ struct rt_device
 };
 
 #define RT_DRIVER_MATCH_DTS (1<<0)
-struct rt_device_id 
+struct rt_device_id
 {
     const char *compatible;
     void *data;
@@ -1270,7 +1270,7 @@ struct rt_device_id
 
 struct rt_driver
 {
-#ifdef RT_USING_DEVICE_OPS    
+#ifdef RT_USING_DEVICE_OPS
     const struct rt_device_ops *dev_ops;
 #else
     /* common device interface */
@@ -1279,7 +1279,7 @@ struct rt_driver
     rt_err_t  (*close)  (rt_device_t dev);
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);    
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
     const struct filesystem_ops *fops;
     const char *name;

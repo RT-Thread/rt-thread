@@ -923,7 +923,7 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 #ifdef ARCH_MM_MMU
     struct timespec rqtp_k;
     struct timespec rmtp_k;
-    
+
     lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
     ret = nanosleep(&rqtp_k, &rmtp_k);
     if ((ret != -1 || rt_get_errno() == EINTR) && rmtp && lwp_user_accessable((void *)rmtp, sizeof *rmtp))
@@ -1783,7 +1783,7 @@ int _sys_fork(void)
             LOG_E("malloc fail!\n");
             goto fail;
         }
-        
+
         lwp->tty->foreground = lwp;
     }
     rt_hw_interrupt_enable(level);
@@ -4147,7 +4147,7 @@ int sys_sched_get_priority_max(int policy)
     {
         rt_set_errno(EINVAL);
         return -rt_get_errno();
-    }    
+    }
     return RT_THREAD_PRIORITY_MAX;
 }
 

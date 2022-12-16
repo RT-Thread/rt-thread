@@ -46,7 +46,7 @@ static pid_t current_pid = 0;
 
 struct lwp_avl_struct *lwp_get_pid_ary(void)
 {
-    return lwp_pid_ary; 
+    return lwp_pid_ary;
 }
 
 static pid_t lwp_pid_get(void)

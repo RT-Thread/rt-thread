@@ -188,7 +188,7 @@ int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
         return -RT_EINVAL;
     }
 
-    /** 
+    /**
      * if (op & (FUTEX_WAKE|FUTEX_FD|FUTEX_WAKE_BITSET|FUTEX_TRYLOCK_PI|FUTEX_UNLOCK_PI)) was TRUE
      * `timeout` should be ignored by implementation, according to POSIX futex(2) manual.
      * since only FUTEX_WAKE is implemented in rt-smart, only FUTEX_WAKE was omitted currently

@@ -642,7 +642,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         rt_hw_interrupt_enable(level);
 
         thread->error = -RT_EINTR;
-        
+
         rt_schedule();
 
         /* clear error number of this thread to RT_EOK */

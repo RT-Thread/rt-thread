@@ -1055,7 +1055,7 @@ void lwp_cleanup(struct rt_thread *tid)
             tty_pop(&tty_head, lwp);
         }
     }
-    
+
     return;
 }
 
@@ -1247,7 +1247,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
                         LOG_E("malloc fail!\n");
                         return -ENOMEM;
                     }
-                    
+
                     lwp->tty = tty;
                     lwp->tty->pgrp = lwp->__pgrp;
                     lwp->tty->session = lwp->session;
@@ -1271,7 +1271,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
                             LOG_E("malloc fail!\n");
                             return -ENOMEM;
                         }
-                        
+
                         lwp->tty = self_lwp->tty;
                         lwp->tty->pgrp = lwp->__pgrp;
                         lwp->tty->session = lwp->session;

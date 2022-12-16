@@ -390,7 +390,7 @@ void* lwp_mmap2(void *addr, size_t length, int prot,
         if (d && d->vnode->type == FT_DEVICE)
         {
             struct dfs_mmap2_args mmap2;
-        
+
             mmap2.addr = addr;
             mmap2.length = length;
             mmap2.prot = prot;
