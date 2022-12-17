@@ -315,6 +315,40 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     }
 }
 
+static const char* sensor_get_intf_name(rt_sensor_t sensor)
+{
+    rt_uint8_t type = sensor->config.intf.type;
+
+    if (type | RT_SENSOR_INTF_I2C)
+    {
+        return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_INTF_I2C);
+    }
+    else if (type | RT_SENSOR_INTF_SPI)
+    {
+        return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_INTF_SPI);
+    }
+    else if (type | RT_SENSOR_INTF_UART)
+    {
+        return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_INTF_UART);
+    }
+    else if (type | RT_SENSOR_INTF_ONEWIRE)
+    {
+        return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_INTF_ONEWIRE);
+    }
+    else if (type | RT_SENSOR_INTF_CAN)
+    {
+        return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_INTF_CAN);
+    }
+    else if (type | RT_SENSOR_INTF_MODBUS)
+    {
+        return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_INTF_MODBUS);
+    }
+    else
+    {
+        return "";
+    }
+}
+
 static rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 {
     rt_sem_release(sensor_rx_sem);
@@ -529,6 +563,7 @@ static void sensor(int argc, char **argv)
         rt_kprintf("name      :%s\n", sensor->info.name);
         rt_kprintf("type:     :%s\n", sensor_get_type_name(&sensor->info));
         rt_kprintf("vendor    :%s\n", sensor_get_vendor_name(&sensor->info));
+        rt_kprintf("interface :%s\n", sensor_get_intf_name(sensor));
         rt_kprintf("unit      :%s\n", sensor_get_unit_name(&sensor->info));
         rt_kprintf("fetch data:%s\n", sensor_get_fetch_mode_name(&sensor->info));
         rt_kprintf("power     :%s\n", sensor_get_power_mode_name(&sensor->info));

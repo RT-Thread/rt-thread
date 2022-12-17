@@ -186,7 +186,10 @@ extern "C" {
 #define RT_SENSOR_INTF_UART_STR       "UART"
 #define RT_SENSOR_INTF_ONEWIRE        (1 << 3)
 #define RT_SENSOR_INTF_ONEWIRE_STR    "1-Wire"
-
+#define RT_SENSOR_INTF_CAN            (1 << 4)
+#define RT_SENSOR_INTF_CAN_STR        "CAN"
+#define RT_SENSOR_INTF_MODBUS         (1 << 5)
+#define RT_SENSOR_INTF_MODBUS_STR     "Modbus"
 
 /**
  *                 Sensor mode
