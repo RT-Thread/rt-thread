@@ -137,6 +137,9 @@ void rt_hw_mmu_ktbl_set(unsigned long tbl);
 void *rt_hw_mmu_tbl_get();
 void rt_hw_mmu_switch(void *mmu_table);
 
+void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_size_t desc_nr);
+void rt_hw_mmu_init(void);
+
 extern rt_mmu_info mmu_info;
 
 #endif

@@ -26,9 +26,9 @@ static void rt_hw_timer_isr(int vector, void *parameter)
 void rt_hw_gtimer_init(void)
 {
     rt_hw_interrupt_install(EL1_PHY_TIMER_IRQ_NUM, rt_hw_timer_isr, RT_NULL, "tick");
-    __ISB();
+    rt_hw_isb();
     timer_step = rt_hw_get_gtimer_frq();
-    __DSB();
+    rt_hw_dsb();
     timer_step /= RT_TICK_PER_SECOND;
     rt_hw_gtimer_local_enable();
 }

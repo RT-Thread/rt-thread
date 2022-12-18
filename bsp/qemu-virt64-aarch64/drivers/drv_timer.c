@@ -22,9 +22,6 @@ int rt_hw_get_gtimer_frq(void);
 void rt_hw_set_gtimer_val(rt_uint64_t value);
 int rt_hw_get_gtimer_val(void);
 int rt_hw_get_cntpct_val(void);
-void rt_hw_gtimer_enable(void);
-void rt_hw_gtimer_disable(void);
-
 
 static void rt_hw_timer_isr(int vector, void *param)
 {

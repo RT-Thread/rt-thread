@@ -879,6 +879,72 @@ void rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void *v_addr, size_t size)
     _rt_hw_mmu_unmap(mmu_info, v_addr, size);
     rt_mm_unlock();
 }
+#else
+
+#include <cache.h>
+
+void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_size_t desc_nr)
+{
+    rt_memset((void *)MMUTable, 0, sizeof(MMUTable));
+    rt_memset((void *)MMUPage, 0, sizeof(MMUPage));
+
+    /* set page table */
+    for (; desc_nr > 0; --desc_nr)
+    {
+        rt_hw_mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end, mdesc->paddr_start, mdesc->attr);
+        ++mdesc;
+    }
+
+    rt_hw_cpu_dcache_clean((void *)MMUTable, sizeof(MMUTable));
+}
+
+
+void rt_hw_mmu_init(void)
+{
+    unsigned long reg_val;
+
+    reg_val = 0x00447fUL;
+    __asm__ volatile("msr mair_el1, %0"::"r"(reg_val));
+
+    rt_hw_isb();
+
+    reg_val = (16UL << 0)   /* t0sz 48bit */
+            | (0UL  << 6)   /* reserved */
+            | (0UL  << 7)   /* epd0 */
+            | (3UL  << 8)   /* t0 wb cacheable */
+            | (3UL  << 10)  /* inner shareable */
+            | (2UL  << 12)  /* t0 outer shareable */
+            | (0UL  << 14)  /* t0 4K */
+            | (16UL << 16)  /* t1sz 48bit */
+            | (0UL  << 22)  /* define asid use ttbr0.asid */
+            | (0UL  << 23)  /* epd1 */
+            | (3UL  << 24)  /* t1 inner wb cacheable */
+            | (3UL  << 26)  /* t1 outer wb cacheable */
+            | (2UL  << 28)  /* t1 outer shareable */
+            | (2UL  << 30)  /* t1 4k */
+            | (1UL  << 32)  /* 001b 64GB PA */
+            | (0UL  << 35)  /* reserved */
+            | (1UL  << 36)  /* as: 0:8bit 1:16bit */
+            | (0UL  << 37)  /* tbi0 */
+            | (0UL  << 38); /* tbi1 */
+    __asm__ volatile("msr tcr_el1, %0"::"r"(reg_val));
+
+    rt_hw_isb();
+
+    __asm__ volatile ("mrs %0, sctlr_el1":"=r"(reg_val));
+
+    reg_val |= 1 << 2;  /* enable dcache */
+    reg_val |= 1 << 0;  /* enable mmu */
+
+    __asm__ volatile (
+        "msr ttbr0_el1, %0\n\r"
+        "msr sctlr_el1, %1\n\r"
+        "dsb sy\n\r"
+        "isb sy\n\r"
+        ::"r"(MMUTable), "r"(reg_val) :"memory");
+
+    rt_hw_cpu_tlb_invalidate();
+}
 #endif
 
 void *_rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void *v_addr)
