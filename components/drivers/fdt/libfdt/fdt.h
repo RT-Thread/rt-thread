@@ -54,6 +54,10 @@
 
 #ifndef __ASSEMBLY__
 
+#include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 struct fdt_header {
 	fdt32_t magic;			 /* magic word FDT_MAGIC */
 	fdt32_t totalsize;		 /* total size of DT block */

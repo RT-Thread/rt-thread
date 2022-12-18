@@ -1,38 +1,45 @@
 /*
+ * serial.c UART driver
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018/5/5       Bernard      The first version
+ * 2013-03-30     Bernard      the first verion
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #include "board.h"
-
-#define PL011_UARTDR            0x000
-#define PL011_UARTFR            0x018
-#define PL011_UARTFR_TXFF_BIT   5
-
-unsigned int readl(volatile void *addr)
-{
-    return *(volatile unsigned int *)addr;
-}
-
-void writel(unsigned int v, volatile void *addr)
-{
-    *(volatile unsigned int *)addr = v;
-}
+#include "mmu.h"
 
 struct hw_uart_device
 {
-    rt_ubase_t hw_base;
-    rt_uint32_t irqno;
+    rt_size_t hw_base;
+    rt_size_t irqno;
 };
+
+#define UART_DR(base)   __REG32(base + 0x00)
+#define UART_FR(base)   __REG32(base + 0x18)
+#define UART_CR(base)   __REG32(base + 0x30)
+#define UART_IMSC(base) __REG32(base + 0x38)
+#define UART_ICR(base)  __REG32(base + 0x44)
+
+#define UARTFR_RXFE     0x10
+#define UARTFR_TXFF     0x20
+#define UARTIMSC_RXIM   0x10
+#define UARTIMSC_TXIM   0x20
+#define UARTICR_RXIC    0x10
+#define UARTICR_TXIC    0x20
+
+static void rt_hw_uart_isr(int irqno, void *param)
+{
+    struct rt_serial_device *serial = (struct rt_serial_device *)param;
+
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+}
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -42,28 +49,22 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
 static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct hw_uart_device *uart;
-    uint32_t val;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
     switch (cmd)
     {
-        case RT_DEVICE_CTRL_CLR_INT:
-            /* disable rx irq */
-            val = readl((volatile void *)(uart->hw_base + 0x38));
-            val &= ~0x10;
-            writel(val, (volatile void *)(uart->hw_base + 0x38));
-            rt_hw_interrupt_mask(uart->irqno);
-            break;
+    case RT_DEVICE_CTRL_CLR_INT:
+        /* disable rx irq */
+        UART_IMSC(uart->hw_base) &= ~UARTIMSC_RXIM;
+        break;
 
-        case RT_DEVICE_CTRL_SET_INT:
-            /* enable rx irq */
-            val = readl((volatile void *)(uart->hw_base + 0x38));
-            val |= 0x10;
-            writel(val, (volatile void *)(uart->hw_base + 0x38));
-            rt_hw_interrupt_umask(uart->irqno);
-            break;
+    case RT_DEVICE_CTRL_SET_INT:
+        /* enable rx irq */
+        UART_IMSC(uart->hw_base) |= UARTIMSC_RXIM;
+        rt_hw_interrupt_umask(uart->irqno);
+        break;
     }
 
     return RT_EOK;
@@ -76,26 +77,24 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    while (readl((volatile void *)(uart->hw_base + PL011_UARTFR)) & (1 << PL011_UARTFR_TXFF_BIT))
-    {
-    }
-
-    writel(c, (volatile void *)( uart->hw_base + PL011_UARTDR));
+    while (UART_FR(uart->hw_base) & UARTFR_TXFF);
+    UART_DR(uart->hw_base) = c;
 
     return 1;
 }
 
 static int uart_getc(struct rt_serial_device *serial)
 {
-    int ch = -1;
+    int ch;
     struct hw_uart_device *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    if (!(readl((volatile void *)(uart->hw_base + 0x18)) & (1 << 4)))
+    ch = -1;
+    if (!(UART_FR(uart->hw_base) & UARTFR_RXFE))
     {
-        ch = readl((volatile void *)(uart->hw_base));
+        ch = UART_DR(uart->hw_base) & 0xff;
     }
 
     return ch;
@@ -108,12 +107,6 @@ static const struct rt_uart_ops _uart_ops =
     uart_putc,
     uart_getc,
 };
-
-static void rt_hw_uart_isr(int irqno, void *param)
-{
-    struct rt_serial_device *serial = (struct rt_serial_device*)param;
-    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-}
 
 #ifdef RT_USING_UART0
 /* UART device driver structure */
@@ -131,6 +124,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
+    _uart0_device.hw_base = (rt_size_t)rt_ioremap((void*)_uart0_device.hw_base, PL011_UART0_SIZE);
     uart = &_uart0_device;
 
     _serial0.ops    = &_uart_ops;
@@ -138,9 +132,11 @@ int rt_hw_uart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&_serial0, "uart0",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-            uart);
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
     rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, &_serial0, "uart0");
+    /* enable Rx and Tx of UART */
+    UART_CR(uart->hw_base) = (1 << 0) | (1 << 8) | (1 << 9);
 #endif
 
     return 0;

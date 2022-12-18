@@ -1,33 +1,45 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09-09     GuEe-GUI     The first version
  */
+#ifndef __SMCCC_H__
+#define __SMCCC_H__
 
-#include <stdint.h>
-
-/*
- * The ARM SMCCC v1.0 calling convention provides the following guarantees about registers:
- *  Register     Modified    Return State
- *  X0...X3      Yes         Result values
- *  X4...X17     Yes         Unpredictable
- *  X18...X30    No          Preserved
- *  SP_EL0       No          Preserved
- *  SP_ELx       No          Preserved
+/**
+ * result from SMC/HVC call
+ * ARM DEN0028E chapter 5,
  */
-
-struct arm_smccc_ret
+typedef struct arm_smccc_res_t
 {
-    uint64_t x0;    /* Parameter registers */
-    uint64_t x1;    /* Parameter registers */
-    uint64_t x2;    /* Parameter registers */
-    uint64_t x3;    /* Parameter registers */
-    uint64_t x6;    /* Parameter register: Optional Session ID register */
+    unsigned long a0;
+    // reserved for ARM SMC and HVC Fast Call services
+    unsigned long a1;
+    unsigned long a2;
+    unsigned long a3;
+} arm_smccc_res_t;
+
+/**
+ * quirk is a structure contains vendor specified information,
+ * it just a placeholder currently
+ */
+struct arm_smccc_quirk_t
+{
 };
 
-struct arm_smccc_ret arm_smc_call(uint32_t w0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6, uint32_t w7);
-struct arm_smccc_ret arm_hvc_call(uint32_t w0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6, uint32_t w7);
+/* smccc version 0.2 */
+
+void arm_smccc_smc(unsigned long a0, unsigned long a1, unsigned long a2,
+                   unsigned long a3, unsigned long a4, unsigned long a5,
+                   unsigned long a6, unsigned long a7, struct arm_smccc_res_t *res,
+                   struct arm_smccc_quirk_t *quirk);
+
+void arm_smccc_hvc(unsigned long a0, unsigned long a1, unsigned long a2,
+                   unsigned long a3, unsigned long a4, unsigned long a5,
+                   unsigned long a6, unsigned long a7, struct arm_smccc_res_t *res,
+                   struct arm_smccc_quirk_t *quirk);
+
+#endif /* __SMCCC_H__ */
