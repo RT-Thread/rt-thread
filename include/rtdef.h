@@ -155,17 +155,14 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* Common Utilities */
 
-#define _RT_STRINGIFY(x...)	#x
-#define RT_STRINGIFY(x...) _RT_STRINGIFY(x)
-
 #define RT_UNUSED(x)                   ((void)x)
 
 /* Compiler Related Definitions */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
-#define RT_SECTION(x)               __attribute__((section(x)))
-#define RT_USED                     __attribute__((used))
-#define ALIGN(n)                    __attribute__((aligned(n)))
-#define RT_WEAK                     __attribute__((weak))
+#define rt_section(x)               __attribute__((section(x)))
+#define rt_used                     __attribute__((used))
+#define rt_align(n)                 __attribute__((aligned(n)))
+#define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
 /* module compiling */
 #ifdef RT_USING_MODULE
@@ -174,11 +171,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RTT_API                     __declspec(dllexport)
 #endif /* RT_USING_MODULE */
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
-#define RT_SECTION(x)               @ x
-#define RT_USED                     __root
+#define rt_section(x)               @ x
+#define rt_used                     __root
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    PRAGMA(data_alignment=n)
-#define RT_WEAK                     __weak
+#define rt_align(n)                    PRAGMA(data_alignment=n)
+#define rt_weak                     __weak
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
@@ -190,51 +187,53 @@ typedef __gnuc_va_list              va_list;
 #define va_end(v)                   __builtin_va_end(v)
 #define va_arg(v,l)                 __builtin_va_arg(v,l)
 #endif /* RT_USING_LIBC */
-#define RT_SECTION(x)               __attribute__((section(x)))
-#define RT_USED                     __attribute__((used))
-#define ALIGN(n)                    __attribute__((aligned(n)))
-#define RT_WEAK                     __attribute__((weak))
+#define __RT_STRINGIFY(x...)        #x
+#define RT_STRINGIFY(x...)          __RT_STRINGIFY(x)
+#define rt_section(x)               __attribute__((section(x)))
+#define rt_used                     __attribute__((used))
+#define rt_align(n)                 __attribute__((aligned(n)))
+#define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
 #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
-#define RT_SECTION(x)               __attribute__((section(x)))
-#define RT_USED                     __attribute__((used))
-#define ALIGN(n)                    __attribute__((aligned(n)))
-#define RT_WEAK                     __attribute__((weak))
+#define rt_section(x)               __attribute__((section(x)))
+#define rt_used                     __attribute__((used))
+#define rt_align(n)                 __attribute__((aligned(n)))
+#define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (_MSC_VER)
-#define RT_SECTION(x)
-#define RT_USED
-#define ALIGN(n)                    __declspec(align(n))
-#define RT_WEAK
+#define rt_section(x)
+#define rt_used
+#define rt_align(n)                 __declspec(align(n))
+#define rt_weak
 #define rt_inline                   static __inline
 #define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
 /* The way that TI compiler set section is different from other(at least
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
     * details. */
-#define RT_SECTION(x)               __attribute__((section(x)))
+#define rt_section(x)               __attribute__((section(x)))
 #ifdef __TI_EABI__
-#define RT_USED                     __attribute__((retain)) __attribute__((used))
+#define rt_used                     __attribute__((retain)) __attribute__((used))
 #else
-#define RT_USED                     __attribute__((used))
+#define rt_used                     __attribute__((used))
 #endif
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    __attribute__((aligned(n)))
+#define rt_align(n)                 __attribute__((aligned(n)))
 #ifdef __TI_EABI__
-#define RT_WEAK                     __attribute__((weak))
+#define rt_weak                     __attribute__((weak))
 #else
-#define RT_WEAK
+#define rt_weak
 #endif
 #define rt_inline                   static inline
 #define RTT_API
 #elif defined (__TASKING__)
-#define RT_SECTION(x)               __attribute__((section(x)))
-#define RT_USED                     __attribute__((used, protect))
+#define rt_section(x)               __attribute__((section(x)))
+#define rt_used                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
-#define ALIGN(n)                    __attribute__((__align(n)))
-#define RT_WEAK                     __attribute__((weak))
+#define rt_align(n)                 __attribute__((__align(n)))
+#define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define RTT_API
 #else
@@ -257,7 +256,7 @@ typedef int (*init_fn_t)(void);
                                 const char __rti_level_##fn[] = ".rti_fn." level;       \
                                 const char __rti_##fn##_name[] = #fn;                   \
                                 __declspec(allocate("rti_fn$f"))                        \
-                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                rt_used const struct rt_init_desc __rt_init_msc_##fn =  \
                                 {__rti_level_##fn, fn, __rti_##fn##_name};
     #else
         struct rt_init_desc
@@ -268,7 +267,7 @@ typedef int (*init_fn_t)(void);
         #define INIT_EXPORT(fn, level)                                  \
                                 const char __rti_level_##fn[] = ".rti_fn." level;       \
                                 __declspec(allocate("rti_fn$f"))                        \
-                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                rt_used const struct rt_init_desc __rt_init_msc_##fn =  \
                                 {__rti_level_##fn, fn };
     #endif
 #else
@@ -280,11 +279,11 @@ typedef int (*init_fn_t)(void);
         };
         #define INIT_EXPORT(fn, level)                                                       \
             const char __rti_##fn##_name[] = #fn;                                            \
-            RT_USED const struct rt_init_desc __rt_init_desc_##fn RT_SECTION(".rti_fn." level) = \
+            rt_used const struct rt_init_desc __rt_init_desc_##fn rt_section(".rti_fn." level) = \
             { __rti_##fn##_name, fn};
     #else
         #define INIT_EXPORT(fn, level)                                                       \
-            RT_USED const init_fn_t __rt_init_##fn RT_SECTION(".rti_fn." level) = fn
+            rt_used const init_fn_t __rt_init_##fn rt_section(".rti_fn." level) = fn
     #endif
 #endif
 #else
@@ -421,9 +420,9 @@ struct rt_object
     void      *module_id;                               /**< id of application module */
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
     rt_list_t  list;                                    /**< list node of kernel object */
 };
@@ -574,7 +573,7 @@ typedef void (*rt_sighandler_t)(int signo);
 
 #else
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <sys/signal.h>
 #endif
 
@@ -677,7 +676,7 @@ struct rt_cpu
 
 struct rt_thread;
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);
 
 struct rt_wakeup
@@ -734,9 +733,9 @@ struct rt_thread
     void       *module_id;                              /**< id of application module */
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 
     rt_list_t   list;                                   /**< the object list */
     rt_list_t   tlist;                                  /**< the thread list */
@@ -794,7 +793,7 @@ struct rt_thread
     void            *si_list;                           /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#if defined(RT_USING_LWP)
+#ifdef RT_USING_SMART
     void            *msg_ret;                           /**< the return msg */
 #endif
 
@@ -814,7 +813,7 @@ struct rt_thread
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
     /* light weight process if present */
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     void        *lwp;
     /* for user create */
     void        *user_entry;
@@ -834,7 +833,7 @@ struct rt_thread
 
     struct rt_wakeup wakeup;                            /**< wakeup data */
     int exit_request;
-#ifdef RT_USING_USERSPACE
+#if defined(ARCH_MM_MMU)
     int step_exec;
     int debug_attach_req;
     int debug_ret_user;
@@ -1227,10 +1226,10 @@ typedef struct rt_wqueue rt_wqueue_t;
 struct rt_device
 {
     struct rt_object          parent;                   /**< inherit from rt_object */
-#ifdef RT_USING_DM    
+#ifdef RT_USING_DM
     struct rt_driver *drv;
-    void *dtb_node; 
-#endif    
+    void *dtb_node;
+#endif
     enum rt_device_class_type type;                     /**< device type */
     rt_uint16_t               flag;                     /**< device flag */
     rt_uint16_t               open_flag;                /**< device open flag */
@@ -1263,7 +1262,7 @@ struct rt_device
 };
 
 #define RT_DRIVER_MATCH_DTS (1<<0)
-struct rt_device_id 
+struct rt_device_id
 {
     const char *compatible;
     void *data;
@@ -1271,7 +1270,7 @@ struct rt_device_id
 
 struct rt_driver
 {
-#ifdef RT_USING_DEVICE_OPS    
+#ifdef RT_USING_DEVICE_OPS
     const struct rt_device_ops *dev_ops;
 #else
     /* common device interface */
@@ -1280,7 +1279,7 @@ struct rt_driver
     rt_err_t  (*close)  (rt_device_t dev);
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);    
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
     const struct filesystem_ops *fops;
     const char *name;
@@ -1305,7 +1304,7 @@ struct rt_device_notify
     struct rt_device *dev;
 };
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 struct rt_channel
 {
     struct rt_ipc_object parent;                        /**< inherit from object */

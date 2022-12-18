@@ -78,7 +78,7 @@ volatile rt_uint8_t rt_interrupt_nest = 0;
  *
  * @see rt_interrupt_leave
  */
-RT_WEAK void rt_interrupt_enter(void)
+rt_weak void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
@@ -100,7 +100,7 @@ RTM_EXPORT(rt_interrupt_enter);
  *
  * @see rt_interrupt_enter
  */
-RT_WEAK void rt_interrupt_leave(void)
+rt_weak void rt_interrupt_leave(void)
 {
     rt_base_t level;
 
@@ -123,7 +123,7 @@ RTM_EXPORT(rt_interrupt_leave);
  *
  * @return the number of nested interrupts.
  */
-RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
+rt_weak rt_uint8_t rt_interrupt_get_nest(void)
 {
     rt_uint8_t ret;
     rt_base_t level;

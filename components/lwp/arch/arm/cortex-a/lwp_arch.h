@@ -13,7 +13,7 @@
 #include <lwp.h>
 #include <lwp_arch_comm.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 
 #define USER_VADDR_TOP    0xC0000000UL
 #define USER_HEAP_VEND    0xB0000000UL

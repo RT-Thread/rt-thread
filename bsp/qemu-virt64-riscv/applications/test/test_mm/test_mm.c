@@ -9,7 +9,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_UTEST
+#if defined(RT_USING_UTEST) && defined(RT_USING_SMART)
 
 #include "riscv_mmu.h"
 #include "mmu.h"

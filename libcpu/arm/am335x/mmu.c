@@ -156,7 +156,7 @@ void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrS
 }
 
 /* set page table */
-RT_WEAK void mmu_setmtts(void)
+rt_weak void mmu_setmtts(void)
 {
     mmu_setmtt(0x00000000, 0xFFFFFFFF,     0x00000000, RW_NCNB);  /* None cached for 4G memory   */
     mmu_setmtt(0x80200000, 0x80800000 - 1, 0x80200000, RW_CB);    /* 126M cached DDR memory      */

@@ -2,7 +2,7 @@
 #include <rtthread.h>
 
 #include <rthw.h>
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <mmu.h>
 #include <lwp_arch.h>
 #endif
@@ -58,7 +58,7 @@ static inline uint64_t arch_counter_get_cntpct(void)
     return cval;
 }
 
-RT_WEAK int msleep(unsigned int msecs)
+rt_weak int msleep(unsigned int msecs)
 {
     rt_thread_mdelay(msecs);
     return 0;
@@ -76,7 +76,7 @@ void rt_hw_us_delay(rt_uint32_t us)
     while (arch_counter_get_cntpct() - start <= target) ;
 }
 
-RT_WEAK int usleep(unsigned int usecs)
+rt_weak int usleep(unsigned int usecs)
 {
     int tickDiv = 1000 * (1000 / CONFIG_HZ);
     int ticks   = usecs / tickDiv;
@@ -189,7 +189,7 @@ void awos_arch_flush_icache_all(void)
     rt_hw_cpu_icache_invalidate_all();
 }
 
-RT_WEAK int32_t hal_spi_gpio_cfg_count(const char *secname)
+rt_weak int32_t hal_spi_gpio_cfg_count(const char *secname)
 {
     rt_kprintf("FUNCTION:%s not implemented.\n", __FUNCTION__);
     return 0;
@@ -218,13 +218,13 @@ int32_t esCFG_GetGPIOSecKeyCount(char *GPIOSecName)
     return 0;
 }
 
-RT_WEAK int hal_spi_gpio_cfg_load(user_gpio_set_t *gpio_cfg, int32_t GPIONum, int id)
+rt_weak int hal_spi_gpio_cfg_load(user_gpio_set_t *gpio_cfg, int32_t GPIONum, int id)
 {
     rt_kprintf("FUNCTION:%s not implemented.\n", __FUNCTION__);
     return -1;
 }
 
-RT_WEAK int hal_i2c_gpio_cfg_load(user_gpio_set_t *gpio_cfg, int32_t GPIONum, int id)
+rt_weak int hal_i2c_gpio_cfg_load(user_gpio_set_t *gpio_cfg, int32_t GPIONum, int id)
 {
     rt_kprintf("FUNCTION:%s not implemented.\n", __FUNCTION__);
     return -1;

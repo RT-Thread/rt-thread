@@ -6,7 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  */
+
 #include <rtthread.h>
+#ifdef RT_USING_SMART
 #include <lwp_arch.h>
 
 #define TRANCE_LEVEL 20
@@ -132,3 +134,5 @@ static char *_get_elf_name(size_t sepc)
 {
     return IN_USERSPACE ? rt_current_thread->name : "rtthread.elf";
 }
+
+#endif /* RT_USING_SMART */

@@ -51,7 +51,7 @@ menuconfig RT_USING_SERIAL
 
 config RT_USING_TTY
     bool "Using TTY SYSTEM"
-    depends on RT_USING_LWP
+    depends on RT_USING_SMART
     default y
 
 if RT_USING_TTY
@@ -567,8 +567,8 @@ endif
 
 config RT_USING_DEV_BUS
     bool "Using Device Bus device drivers"
-    default y if RT_USING_LWP
-    default n if !RT_USING_LWP
+    default y if RT_USING_SMART
+    default n if !RT_USING_SMART
 
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"

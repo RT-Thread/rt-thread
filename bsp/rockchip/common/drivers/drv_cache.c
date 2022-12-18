@@ -248,37 +248,37 @@ int rt_hw_cpu_cache_init(void)
 
 #else
 
-RT_WEAK void rt_hw_cpu_icache_enable(void)
+rt_weak void rt_hw_cpu_icache_enable(void)
 {
 }
 
-RT_WEAK void rt_hw_cpu_icache_disable(void)
+rt_weak void rt_hw_cpu_icache_disable(void)
 {
 }
 
-RT_WEAK rt_base_t rt_hw_cpu_icache_status(void)
-{
-    return 0;
-}
-
-RT_WEAK void rt_hw_cpu_icache_ops(int ops, void *addr, int size)
-{
-}
-
-RT_WEAK void rt_hw_cpu_dcache_enable(void)
-{
-}
-
-RT_WEAK void rt_hw_cpu_dcache_disable(void)
-{
-}
-
-RT_WEAK rt_base_t rt_hw_cpu_dcache_status(void)
+rt_weak rt_base_t rt_hw_cpu_icache_status(void)
 {
     return 0;
 }
 
-RT_WEAK void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
+rt_weak void rt_hw_cpu_icache_ops(int ops, void *addr, int size)
+{
+}
+
+rt_weak void rt_hw_cpu_dcache_enable(void)
+{
+}
+
+rt_weak void rt_hw_cpu_dcache_disable(void)
+{
+}
+
+rt_weak rt_base_t rt_hw_cpu_dcache_status(void)
+{
+    return 0;
+}
+
+rt_weak void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
 {
 }
 

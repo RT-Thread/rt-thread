@@ -26,7 +26,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <unistd.h>
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include "lwp.h"
 #endif
 #ifdef RT_USING_POSIX_DELAY
@@ -63,8 +63,8 @@ static const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
-ALIGN(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
-ALIGN(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+rt_align(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
+rt_align(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 static int __isleap(int year)
 {
@@ -346,7 +346,7 @@ RTM_EXPORT(strftime); /* inherent in the toolchain */
  *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */
-RT_WEAK time_t time(time_t *t)
+rt_weak time_t time(time_t *t)
 {
     struct timeval now;
 
@@ -366,7 +366,7 @@ RT_WEAK time_t time(time_t *t)
 }
 RTM_EXPORT(time);
 
-RT_WEAK clock_t clock(void)
+rt_weak clock_t clock(void)
 {
     return rt_tick_get();
 }
@@ -727,7 +727,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     case CLOCK_REALTIME:
     {
         rt_tick_t tick, tick_old = rt_tick_get();
-        if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
+        if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
         {
             tick = (rqtp->tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND + (rqtp->tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
             rt_tick_t rt_tick = rt_tick_get();
@@ -763,7 +763,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         float unit = clock_cpu_getres();
 
         cpu_tick = (rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec * (NANOSECOND_PER_SECOND / NANOSECOND_PER_SECOND)) / unit;
-        if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
+        if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
             cpu_tick = cpu_tick < cpu_tick_old ? 0 : cpu_tick - cpu_tick_old;
         tick = (unit * cpu_tick) / (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
         rt_thread_delay(tick);
@@ -886,7 +886,7 @@ struct timer_obj
     rt_uint32_t reload;                    /* Reload value in ms */
     rt_uint32_t status;
     int sigev_signo;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     pid_t pid;
 #endif
 };
@@ -906,7 +906,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     if (timer->reload)
         rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     sys_kill(timer->pid, timer->sigev_signo);
 #else
     if(timer->sigev_notify_function != RT_NULL)
@@ -948,7 +948,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
     num %= 100;
     timer->sigev_signo = evp->sigev_signo;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     timer->pid = lwp_self()->pid;
 #endif
     timer->sigev_notify_function = evp->sigev_notify_function;
@@ -1007,7 +1007,6 @@ RTM_EXPORT(timer_delete);
  **/
 int timer_getoverrun(timer_t timerid)
 {
-    struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
     rt_set_errno(ENOSYS);
     return -RT_ERROR;
 }
@@ -1125,7 +1124,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         *    RT_TICK_PER_SECOND           NANOSECOND_PER_SECOND                         NANOSECOND_PER_SECOND
         *
         */
-    if (flags & TIMER_ABSTIME == TIMER_ABSTIME)
+    if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
     {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);

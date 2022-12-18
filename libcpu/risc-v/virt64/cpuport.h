@@ -60,6 +60,7 @@ typedef union {
 #endif
 
 #ifndef __ASSEMBLY__
+#include <rtthread.h>
 rt_inline void rt_hw_dsb()
 {
     asm volatile("fence":::"memory");

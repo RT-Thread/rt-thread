@@ -59,12 +59,12 @@ typedef struct nu_sdh *nu_sdh_t;
 
 /* Private variables ------------------------------------------------------------*/
 #if defined(BSP_USING_SDH0)
-    ALIGN(SDH_ALIGN_LEN)
+    rt_align(SDH_ALIGN_LEN)
     static uint8_t g_au8CacheBuf_SDH0[SDH_BUFF_SIZE];
 #endif
 
 #if defined(BSP_USING_SDH1)
-    ALIGN(SDH_ALIGN_LEN)
+    rt_align(SDH_ALIGN_LEN)
     static uint8_t g_au8CacheBuf_SDH1[SDH_BUFF_SIZE];
 #endif
 

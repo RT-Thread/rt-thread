@@ -390,7 +390,7 @@ static void uart_handle_busy(uart_port_t uart_port)
     hal_writeb(uart_priv->mcr, uart_base + UART_MCR);
 }
 
-RT_WEAK void hal_uart_handler_hook(uart_port_t uart_port)
+rt_weak void hal_uart_handler_hook(uart_port_t uart_port)
 {
 }
 

@@ -37,7 +37,7 @@ static int read(long offset, uint8_t *buf, size_t size)
     rt_size_t sector_offset;
     rt_size_t remain_size = size;
     rt_size_t req_size;
-    ALIGN(4) uint8_t buffer[SECTOR_SIZE];
+    rt_align(4) uint8_t buffer[SECTOR_SIZE];
 
     while (remain_size)
     {
@@ -60,7 +60,7 @@ static int write(long offset, const uint8_t *buf, size_t size)
     rt_size_t sector_offset;
     rt_size_t remain_size = size;
     rt_size_t req_size;
-    ALIGN(4) uint8_t buffer[SECTOR_SIZE];
+    rt_align(4) uint8_t buffer[SECTOR_SIZE];
 
     while (remain_size)
     {

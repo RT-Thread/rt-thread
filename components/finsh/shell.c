@@ -35,7 +35,7 @@
 /* finsh thread */
 #ifndef RT_USING_HEAP
     static struct rt_thread finsh_thread;
-    ALIGN(RT_ALIGN_SIZE)
+    rt_align(RT_ALIGN_SIZE)
     static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
     struct finsh_shell _shell;
 #endif

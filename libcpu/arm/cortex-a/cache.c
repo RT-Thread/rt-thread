@@ -154,7 +154,7 @@ rt_base_t rt_hw_cpu_dcache_status(void)
     return 0;
 }
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #define ICACHE (1<<0)
 #define DCACHE (1<<1)
 #define BCACHE (ICACHE|DCACHE)

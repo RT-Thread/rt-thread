@@ -420,7 +420,7 @@ int pl180_init(void)
     }
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     virt = (rt_uint32_t)rt_ioremap((void*)MMC_BASE_ADDR, 0x1000);
 #else
     virt = MMC_BASE_ADDR;

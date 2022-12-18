@@ -539,7 +539,7 @@ u32_t sys_now(void)
     return rt_tick_get_millisecond();
 }
 
-RT_WEAK void mem_init(void)
+rt_weak void mem_init(void)
 {
 }
 

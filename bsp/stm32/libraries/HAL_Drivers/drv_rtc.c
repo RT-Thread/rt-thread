@@ -43,12 +43,12 @@ static RTC_AlarmTypeDef Alarm_InitStruct = { 0 };
 static struct rtc_device_object rtc_device;
 static RTC_HandleTypeDef RTC_Handler;
 
-RT_WEAK uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
+rt_weak uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
 {
     return (~BKUP_REG_DATA);
 }
 
-RT_WEAK void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data)
+rt_weak void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data)
 {
     return;
 }

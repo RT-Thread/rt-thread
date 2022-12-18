@@ -15,7 +15,7 @@
 #include "drv_uart.h"
 
 #include <stdio.h>
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <ioremap.h>
 #endif
 #include "sbi.h"
@@ -138,7 +138,7 @@ int rt_hw_uart_init(void)
     struct rt_serial_device *serial;
     struct device_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     uart0_base = rt_ioremap(uart0_base, 4096);
 #endif
     // register device
@@ -156,10 +156,11 @@ int rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
     rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, RT_CONSOLE_DEVICE_NAME);
+    rt_hw_interrupt_umask(uart->irqno);
     return 0;
 }
 
 /* WEAK for SDK 0.5.6 */
-RT_WEAK void uart_debug_init(int uart_channel)
+rt_weak void uart_debug_init(int uart_channel)
 {
 }

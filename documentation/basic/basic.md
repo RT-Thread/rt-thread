@@ -715,10 +715,10 @@ Macro definitions are often used in RT-Thread. For example, some common macro de
 #define rt_inline                   static __inline
 ```
 
-2）RT_USED，definition is as follows, the purpose of this macro is to explain to the compiler that this code is useful, compilation needs to be saved even if it is not called in the function. For example, RT-Thread auto-initialization uses custom segments, using RT_USED will retain custom code snippets.
+2）rt_used，definition is as follows, the purpose of this macro is to explain to the compiler that this code is useful, compilation needs to be saved even if it is not called in the function. For example, RT-Thread auto-initialization uses custom segments, using rt_used will retain custom code snippets.
 
 ```c
-#define RT_USED                     __attribute__((used))
+#define rt_used                     __attribute__((used))
 ```
 
 3）RT_UNUSED，definition is as follows, indicates that a function or variable may not be used. This attribute prevents the compiler from generating warnings.
@@ -727,10 +727,10 @@ Macro definitions are often used in RT-Thread. For example, some common macro de
 #define RT_UNUSED                   __attribute__((unused))
 ```
 
-4）RT_WEAK，definition is as follows, often used to define functions, when linking the function, the compiler will link the function without the keyword prefix first and link the function modified by weak if it can't find those functions.
+4）rt_weak，definition is as follows, often used to define functions, when linking the function, the compiler will link the function without the keyword prefix first and link the function modified by weak if it can't find those functions.
 
 ```c
-#define RT_WEAK                     __weak
+#define rt_weak                     __weak
 ```
 
 5）ALIGN(n)，definition is as follows, is used to align its stored address with n bytes when allocating an address space to an object. Here, n can be the power of 2. Byte alignment not only facilitates quick CPU access, but also save memory space if byte alignment  is properly used.
