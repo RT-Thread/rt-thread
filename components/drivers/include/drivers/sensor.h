@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-01-31     flybreak     first version
+ * 2022-12-17     Meco Man     re-implement sensor framework
  */
 
 #ifndef __SENSOR_H__

@@ -8,6 +8,7 @@
  * 2019-01-31     flybreak       first version
  * 2019-07-16     WillianChan    Increase the output of sensor information
  * 2020-02-22     luhuadong      Add vendor info and sensor types for cmd
+ * 2022-12-17     Meco Man       re-implement sensor framework
  */
 
 #include <drivers/sensor.h>
@@ -624,8 +625,10 @@ static void sensor(int argc, char **argv)
                 LOG_E("open device failed!");
                 return;
             }
-            rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg);
-            LOG_I("device id: 0x%x!", reg);
+            if (rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg) == RT_EOK)
+            {
+                LOG_I("Sensor Chip ID: %#x", reg);
+            }
             if (dev)
             {
                 rt_device_close(dev);
