@@ -15,6 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+#include "rtconfig.h"
 #ifdef PKG_USING_FREERTOS_WRAPPER
 #include "FreeRTOS.h"
 #include <camera.h>
