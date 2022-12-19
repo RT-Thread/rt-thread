@@ -203,6 +203,7 @@ void rt_hw_interrupt_ack(int vector)
 #endif
 }
 
+#ifndef SOC_BCM283x
 /**
  * This function set interrupt CPU targets.
  * @param vector:   the interrupt number
@@ -345,6 +346,7 @@ unsigned int rt_hw_interrupt_get_prior_group_bits(void)
 
     return (7 - bp);
 }
+#endif /* SOC_BCM283x */
 
 /**
  * This function will install a interrupt service routine to a interrupt.

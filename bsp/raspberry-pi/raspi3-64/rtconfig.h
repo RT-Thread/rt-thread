@@ -257,6 +257,7 @@
 /* Uncategorized */
 
 #define BCM2836_SOC
+#define SOC_BCM283x
 
 /* Hardware Drivers Config */
 
