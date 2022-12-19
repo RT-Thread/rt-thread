@@ -51,6 +51,8 @@ void rt_hw_timer_isr(int vector, void *parameter)
     rt_tick_increase();
 }
 
+rt_uint8_t core_timer_flag;
+
 void rt_hw_timer_init(void)
 {
     rt_hw_interrupt_install(IRQ_ARM_TIMER, rt_hw_timer_isr, RT_NULL, "tick");
