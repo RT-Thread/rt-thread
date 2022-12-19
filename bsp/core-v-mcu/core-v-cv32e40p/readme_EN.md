@@ -184,4 +184,8 @@ Cancle`Start OpenOCD locally`，the configuration parameters are as follows:![de
 
 #### 4.1使用方法
 
-​	Enable CorevMCU with menuconfig configuration in ENV tool_ CL software package, just put the sample code in example. c at the prompt of main. c.
+​	Enable CorevMCU with menuconfig configuration in ENV tool_ CL software package, place the sample code in example. c at the prompt of main. c. The steps to use menuconfig configuration are as follows:
+
+> `RT-Thread online packages`
+>    ` miscellaneous packages --->`
+>      `   [*] CorevMCU_CLI`
