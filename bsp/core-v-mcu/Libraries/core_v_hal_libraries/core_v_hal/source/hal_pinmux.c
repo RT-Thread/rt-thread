@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
- 
+ #include "rtconfig.h"
  #include "core-v-mcu-config.h"
  #include "hal_apb_soc_ctrl_regs.h"
  #include "hal_pinmux.h"
