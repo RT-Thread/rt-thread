@@ -899,6 +899,7 @@ def GenTargetProject(program = None):
         ESPIDFProject(Env, Projects)
 
 def EndBuilding(target, program = None):
+    from mkdist import MkDist, MkDist_Strip
 
     need_exit = False
 
@@ -923,24 +924,22 @@ def EndBuilding(target, program = None):
         need_exit = True
 
     BSP_ROOT = Dir('#').abspath
+
+    project_name = GetOption('project-name')
+    project_path = GetOption('project-path')
     if GetOption('make-dist') and program != None:
-        from mkdist import MkDist
-        MkDist(program, BSP_ROOT, Rtt_Root, Env)
+        MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+        need_exit = True
     if GetOption('make-dist-strip') and program != None:
-        from mkdist import MkDist_Strip
         MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
-        from mkdist import MkDist
-        project_path = GetOption('project-path')
-        project_name = GetOption('project-name')
-
+        import subprocess
         if not isinstance(project_path, str) or len(project_path) == 0 :
-            project_path = os.path.join(BSP_ROOT, 'rt-studio-project', project_name)
-            print("\nwarning : --project-path not specified, use default path: {0}.".format(project_path))
-
-        rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
-        MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
+            project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
+        MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase

@@ -47,7 +47,7 @@ def AddOptions():
                       dest = 'project-path',
                       type = 'string',
                       default = None,
-                      help = 'set dist-ide project output path')
+                      help = 'set project output path')
     AddOption('--project-name',
                       dest = 'project-name',
                       type = 'string',
