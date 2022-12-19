@@ -13,15 +13,11 @@
 #include <stdint.h>
 #include "cp15.h"
 #include "board.h"
+#include "gtimer.h"
 
 #define TIMER_IRQ   30
 
 static rt_uint64_t timerStep = 0;
-
-int rt_hw_get_gtimer_frq(void);
-void rt_hw_set_gtimer_val(rt_uint64_t value);
-int rt_hw_get_gtimer_val(void);
-int rt_hw_get_cntpct_val(void);
 
 static void rt_hw_timer_isr(int vector, void *param)
 {
