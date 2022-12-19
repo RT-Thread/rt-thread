@@ -23,7 +23,7 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'aarch64-linux-musleabi-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
