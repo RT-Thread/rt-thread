@@ -308,7 +308,7 @@ static int ptmx_register(void)
 
     level = rt_hw_interrupt_disable();
     RT_ASSERT(ptm_drv->init_flag == TTY_INIT_FLAG_NONE);
-    
+
     device = &(ptm_drv->parent);
 
     device->type = RT_Device_Class_Char;
