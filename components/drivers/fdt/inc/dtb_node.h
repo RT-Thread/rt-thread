@@ -8,6 +8,7 @@
 
 #include "libfdt_env.h"
 #include <rtthread.h>
+#include <stdint.h>
 
 //#define RT_DTB_DEBUG
 #ifdef RT_DTB_DEBUG
@@ -326,7 +327,7 @@ struct dtb_node *dtb_node_first_subnode(const struct dtb_node *node);
 struct dtb_node *dtb_node_next_subnode(const struct dtb_node *node);
 struct dtb_node *dtb_node_get_parent(const struct dtb_node *node);
 const char *dtb_node_get_name(const struct dtb_node *node);
-struct dtb_node *dtb_node_get_by_phandle(uint phandle);
+struct dtb_node *dtb_node_get_by_phandle(uint32_t phandle);
 int dtb_node_read_size(const struct dtb_node *node, const char *propname);
 size_t dtb_node_get_addr_index(const struct dtb_node *node, int index);
 size_t dtb_node_get_addr(const struct dtb_node *node);

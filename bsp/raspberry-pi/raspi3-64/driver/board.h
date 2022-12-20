@@ -20,6 +20,11 @@ extern unsigned char __bss_end;
 #define RT_HW_HEAP_BEGIN    (void*)&__bss_end
 #define RT_HW_HEAP_END      (void*)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024)
 
+#ifndef RT_USING_SMART
+#define PV_OFFSET 0
+#define KERNEL_VADDR_START 0
+#endif
+
 void rt_hw_board_init(void);
 
 #endif
