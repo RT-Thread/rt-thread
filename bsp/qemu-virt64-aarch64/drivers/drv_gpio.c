@@ -39,14 +39,16 @@ static struct pl061
     void *args[PL061_GPIO_NR];
 } _pl061;
 
+static rt_ubase_t pl061_gpio_base = PL061_GPIO_BASE;
+
 rt_inline rt_uint8_t pl061_read8(rt_ubase_t offset)
 {
-    return HWREG8(PL061_GPIO_BASE + offset);
+    return HWREG8(pl061_gpio_base + offset);
 }
 
 rt_inline void pl061_write8(rt_ubase_t offset, rt_uint8_t value)
 {
-    HWREG8(PL061_GPIO_BASE + offset) = value;
+    HWREG8(pl061_gpio_base + offset) = value;
 }
 
 static void pl061_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
@@ -301,6 +303,10 @@ int rt_hw_gpio_init(void)
 {
 #ifdef RT_USING_SMP
     rt_spin_lock_init(&_pl061.spinlock);
+#endif
+
+#ifdef RT_USING_LWP
+    pl061_gpio_base = (rt_size_t)rt_ioremap((void *)pl061_gpio_base, PL061_GPIO_SIZE);
 #endif
 
     rt_device_pin_register("gpio", &ops, RT_NULL);

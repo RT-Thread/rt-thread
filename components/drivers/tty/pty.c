@@ -308,7 +308,7 @@ static int ptmx_register(void)
 
     level = rt_hw_interrupt_disable();
     RT_ASSERT(ptm_drv->init_flag == TTY_INIT_FLAG_NONE);
-    
+
     device = &(ptm_drv->parent);
 
     device->type = RT_Device_Class_Char;
@@ -348,7 +348,6 @@ static int ptmx_register(void)
     }
     tty_initstack(ptm_drv->head);
 
-    rt_spin_lock_init(&ptm_drv->spinlock);
     ptm_drv->pgrp = -1;
     ptm_drv->session = -1;
     ptm_drv->foreground = RT_NULL;

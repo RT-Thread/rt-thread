@@ -82,6 +82,7 @@ config ARCH_ARM_MMU
 if RT_USING_SMART
 config KERNEL_VADDR_START
     hex "The virtural address of kernel start"
+    default 0xffff000000000000 if ARCH_ARMV8
     default 0xc0000000 if ARCH_ARM
     default 0x80000000 if ARCH_RISCV
     depends on ARCH_MM_MMU
@@ -159,6 +160,7 @@ config RT_BACKTRACE_FUNCTION_NAME
 config ARCH_ARMV8
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
 
 config ARCH_MIPS
     bool
