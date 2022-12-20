@@ -1135,7 +1135,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCFLSH:
             {
-                int queue = (int)args;
+                int queue = (int)(rt_ubase_t)args;
 
                 _tc_flush(serial, queue);
             }
