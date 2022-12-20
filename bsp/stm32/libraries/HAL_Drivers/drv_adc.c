@@ -287,8 +287,24 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
 
 static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 {
-    RT_ASSERT(device);
-    return 3300;
+static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
+{
+    if(device == RT_NULL)
+      return RT_ERROR;
+    
+    rt_err_t ret = RT_EOK;
+    rt_uint32_t vref_value;
+    rt_uint16_t vref_mv; 
+    ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
+    
+    ret = rt_adc_enable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    vref_value = rt_adc_read(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    ret = rt_adc_disable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    
+    vref_mv = __HAL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
+    
+    return vref_mv;
+}
 }
 
 static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
