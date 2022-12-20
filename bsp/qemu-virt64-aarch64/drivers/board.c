@@ -14,11 +14,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <mmu.h>
+
 #ifdef RT_USING_SMART
 #include <page.h>
 #include <lwp_arch.h>
 #endif
+
 #include "board.h"
+#include <interrupt.h>
 
 #ifdef RT_USING_FDT
 #include "interrupt.h"
