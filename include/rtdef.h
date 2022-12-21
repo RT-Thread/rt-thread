@@ -45,6 +45,7 @@
  * 2022-04-21     THEWON       add macro RT_VERSION_CHECK
  * 2022-06-29     Meco Man     add RT_USING_LIBC and standard libc headers
  * 2022-08-16     Meco Man     change version number to v5.0.0
+ * 2022-12-20     Meco Man     add static name for rt_object
  */
 
 #ifndef __RT_DEF_H__
