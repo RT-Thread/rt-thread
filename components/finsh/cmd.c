@@ -166,11 +166,11 @@ long list_thread(void)
     maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, item_title);
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- ---\n");
 #else
-    rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, item_title);
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
@@ -278,7 +278,7 @@ long list_sem(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s v   suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s v   suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" --- --------------\n");
 
@@ -344,7 +344,7 @@ long list_event(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s      set    suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s      set    suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf("  ---------- --------------\n");
 
@@ -408,7 +408,7 @@ long list_mutex(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s   owner  hold priority suspend thread \n", maxlen, item_title);
+    rt_kprintf("%-*.*s   owner  hold priority suspend thread \n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" -------- ---- -------- --------------\n");
 
@@ -481,7 +481,7 @@ long list_mailbox(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s entry size suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s entry size suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ----  ---- --------------\n");
 
@@ -551,7 +551,7 @@ long list_msgqueue(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s entry suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s entry suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ----  --------------\n");
     do
@@ -617,7 +617,7 @@ long list_memheap(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  pool size  max used size available size\n", maxlen, item_title);
+    rt_kprintf("%-*.*s  pool size  max used size available size\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---------- ------------- --------------\n");
     do
@@ -673,7 +673,7 @@ long list_mempool(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s block total free suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s block total free suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ----  ----  ---- --------------\n");
     do
@@ -751,7 +751,7 @@ long list_timer(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  periodic   timeout    activated     mode\n", maxlen, item_title);
+    rt_kprintf("%-*.*s  periodic   timeout    activated     mode\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---------- ---------- ----------- ---------\n");
     do
@@ -849,7 +849,7 @@ long list_device(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title);
+    rt_kprintf("%-*.*s         type         ref count\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" -------------------- ----------\n");
     do
