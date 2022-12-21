@@ -46,6 +46,7 @@
  * 2022-06-29     Meco Man     add RT_USING_LIBC and standard libc headers
  * 2022-08-16     Meco Man     change version number to v5.0.0
  * 2022-09-12     Meco Man     define rt_ssize_t
+ * 2022-12-20     Meco Man     add const name for rt_object
  */
 
 #ifndef __RT_DEF_H__
@@ -412,21 +413,25 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
  */
 struct rt_object
 {
-    char       name[RT_NAME_MAX];                       /**< name of kernel object */
-    rt_uint8_t type;                                    /**< type of kernel object */
-    rt_uint8_t flag;                                    /**< flag of kernel object */
+#if RT_NAME_MAX > 0
+    char        name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
+#else
+    const char *name;                                    /**< static name of kernel object */
+#endif /* RT_NAME_MAX > 0 */
+    rt_uint8_t  type;                                    /**< type of kernel object */
+    rt_uint8_t  flag;                                    /**< flag of kernel object */
 
 #ifdef RT_USING_MODULE
-    void      *module_id;                               /**< id of application module */
+    void      * module_id;                               /**< id of application module */
 #endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_SMART
-    int       lwp_ref_count;                            /**< ref count for lwp */
+    int         lwp_ref_count;                           /**< ref count for lwp */
 #endif /* RT_USING_SMART */
 
-    rt_list_t  list;                                    /**< list node of kernel object */
+    rt_list_t   list;                                    /**< list node of kernel object */
 };
-typedef struct rt_object *rt_object_t;                  /**< Type for kernel objects. */
+typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
 
 /**
  *  The object type can be one of the follows with specific
@@ -725,7 +730,11 @@ struct rt_user_context
 struct rt_thread
 {
     /* rt object */
-    char        name[RT_NAME_MAX];                      /**< the name of thread */
+#if RT_NAME_MAX > 0
+    char        name[RT_NAME_MAX];                      /**< dynamic name of kernel object */
+#else
+    const char *name;                                   /**< static name of kernel object */
+#endif /* RT_NAME_MAX > 0 */
     rt_uint8_t  type;                                   /**< type of object */
     rt_uint8_t  flags;                                  /**< thread's flags */
 
