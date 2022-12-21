@@ -8,6 +8,7 @@ config RT_NAME_MAX
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
+        If RT_NAME_MAX sets as 0, the name will be const.
 
 config RT_USING_ARCH_DATA_TYPE
     bool "Use the data types defined in ARCH_CPU"
