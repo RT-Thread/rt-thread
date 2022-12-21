@@ -367,6 +367,12 @@ static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
 {
     if (p_dev->wkalarm.enable)
     {
+        #ifdef SOC_SERIES_STM32F1
+        Alarm_InitStruct.Alarm = RTC_ALARM_A;
+        Alarm_InitStruct.AlarmTime.Hours = p_dev->wkalarm.tm_hour;
+        Alarm_InitStruct.AlarmTime.Minutes = p_dev->wkalarm.tm_min;
+        Alarm_InitStruct.AlarmTime.Seconds = p_dev->wkalarm.tm_sec;
+        #else
         Alarm_InitStruct.Alarm = RTC_ALARM_A;
         Alarm_InitStruct.AlarmDateWeekDay = RTC_WEEKDAY_MONDAY;
         Alarm_InitStruct.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
@@ -376,6 +382,7 @@ static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
         Alarm_InitStruct.AlarmTime.Hours = p_dev->wkalarm.tm_hour;
         Alarm_InitStruct.AlarmTime.Minutes = p_dev->wkalarm.tm_min;
         Alarm_InitStruct.AlarmTime.Seconds = p_dev->wkalarm.tm_sec;
+        #endif
         LOG_D("alarm set:%d:%d:%d", Alarm_InitStruct.AlarmTime.Hours,
             Alarm_InitStruct.AlarmTime.Minutes,
             Alarm_InitStruct.AlarmTime.Seconds);
