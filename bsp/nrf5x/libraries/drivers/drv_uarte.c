@@ -155,9 +155,11 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
     case BAUD_RATE_921600:
         config.baudrate = NRF_UARTE_BAUDRATE_921600;
         break;
-        case 1000000:
+#if defined(SOC_NRF5340)
+    case 1000000:
         config.baudrate = NRF_UARTE_BAUDRATE_1000000;
-                break;
+        break;
+#endif /* SOC_NRF5340*/
     case BAUD_RATE_2000000:
     case BAUD_RATE_3000000:
         return -RT_EINVAL;
@@ -286,7 +288,9 @@ int rt_hw_uart_init(void)
 
 #ifdef BSP_USING_UART0
     m_serial_0.config = config;
-        m_serial_0.config.baud_rate =  1000000;
+#if defined(SOC_NRF5340)
+    m_serial_0.config.baud_rate =  1000000;
+#endif /* SOC_NRF5340*/
     m_serial_0.ops = &_uart_ops;
     m_uarte0_cb.serial = &m_serial_0;
     rt_hw_serial_register(&m_serial_0, "uart0", \
