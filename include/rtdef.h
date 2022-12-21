@@ -398,20 +398,20 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
  */
 struct rt_object
 {
-#if RT_NAME_MAX == 0
-    const char      *name;                                    /**< static name of kernel object */
+#if RT_NAME_MAX > 0
+    char        name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
 #else
-    char       name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
-#endif /* RT_NAME_MAX == 0 */
-    rt_uint8_t type;                                    /**< type of kernel object */
-    rt_uint8_t flag;                                    /**< flag of kernel object */
+    const char *name;                                    /**< static name of kernel object */
+#endif /* RT_NAME_MAX > 0 */
+    rt_uint8_t  type;                                    /**< type of kernel object */
+    rt_uint8_t  flag;                                    /**< flag of kernel object */
 
 #ifdef RT_USING_MODULE
-    void      *module_id;                               /**< id of application module */
+    void      * module_id;                               /**< id of application module */
 #endif /* RT_USING_MODULE */
-    rt_list_t  list;                                    /**< list node of kernel object */
+    rt_list_t   list;                                    /**< list node of kernel object */
 };
-typedef struct rt_object *rt_object_t;                  /**< Type for kernel objects. */
+typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
 
 /**
  *  The object type can be one of the follows with specific
@@ -634,11 +634,11 @@ struct rt_cpu
 struct rt_thread
 {
     /* rt object */
-#if RT_NAME_MAX == 0
-    char      *name;                                    /**< static name of kernel object */
+#if RT_NAME_MAX > 0
+    char        name[RT_NAME_MAX];                      /**< dynamic name of kernel object */
 #else
-    char       name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
-#endif /* RT_NAME_MAX == 0 */
+    const char *name;                                   /**< static name of kernel object */
+#endif /* RT_NAME_MAX > 0 */
     rt_uint8_t  type;                                   /**< type of object */
     rt_uint8_t  flags;                                  /**< thread's flags */
 
