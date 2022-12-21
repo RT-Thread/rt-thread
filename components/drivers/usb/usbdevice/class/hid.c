@@ -31,7 +31,7 @@ struct hid_s
 };
 
 /* CustomHID_ConfigDescriptor */
-ALIGN(4)
+rt_align(4)
 const rt_uint8_t _report_desc[]=
 {
 #ifdef RT_USB_DEVICE_HID_KEYBOARD
@@ -236,7 +236,7 @@ const rt_uint8_t _report_desc[]=
 #endif
 }; /* CustomHID_ReportDescriptor */
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor _dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -256,7 +256,7 @@ static struct udevice_descriptor _dev_desc =
 };
 
 //FS and HS needed
-ALIGN(4)
+rt_align(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -272,7 +272,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 
 
 /* hid interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct uhid_comm_descriptor _hid_comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -361,7 +361,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     },
 };
 
-ALIGN(4)
+rt_align(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -612,11 +612,11 @@ static rt_size_t _hid_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
 
     return 0;
 }
-RT_WEAK void HID_Report_Received(hid_report_t report)
+rt_weak void HID_Report_Received(hid_report_t report)
 {
     dump_report(report);
 }
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t hid_thread_stack[512];
 static struct rt_thread hid_thread;
 

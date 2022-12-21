@@ -36,7 +36,7 @@ void at_print_raw_cmd(const char *name, const char *buf, rt_size_t size)
         {
             if (i + j < size)
             {
-                rt_kprintf("%02X ", buf[i + j]);
+                rt_kprintf("%02X ", (unsigned char)buf[i + j]);
             }
             else
             {
@@ -65,7 +65,7 @@ const char *at_get_last_cmd(rt_size_t *cmd_size)
     return send_buf;
 }
 
-RT_WEAK rt_size_t at_utils_send(rt_device_t dev,
+rt_weak rt_size_t at_utils_send(rt_device_t dev,
                                 rt_off_t    pos,
                                 const void *buffer,
                                 rt_size_t   size)

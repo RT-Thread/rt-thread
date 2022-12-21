@@ -2284,6 +2284,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\rtc\rtc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
     <file>
@@ -2318,6 +2321,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_hwtimer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_spi.c</name>
@@ -2392,6 +2398,9 @@
   <group>
     <name>Libraries</name>
     <file>
+      <name>$PROJ_DIR$\..\libraries\N32G45x_Firmware_Library\n32g45x_std_periph_driver\src\n32g45x_pwr.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\N32G45x_Firmware_Library\n32g45x_std_periph_driver\src\n32g45x_usart.c</name>
     </file>
     <file>
@@ -2414,6 +2423,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\N32G45x_Firmware_Library\n32g45x_std_periph_driver\src\n32g45x_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\N32G45x_Firmware_Library\n32g45x_std_periph_driver\src\n32g45x_rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\N32G45x_Firmware_Library\n32g45x_std_periph_driver\src\n32g45x_gpio.c</name>

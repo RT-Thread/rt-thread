@@ -169,34 +169,33 @@ def IARProject(target, script):
 
     IARWorkspace(target)
 
+def IARPath():
+    import rtconfig
+
+    # backup environ
+    old_environ = os.environ
+    os.environ['RTT_CC'] = 'iar'
+    utils.ReloadModule(rtconfig)
+
+    # get iar path
+    path = rtconfig.EXEC_PATH
+
+    # restore environ
+    os.environ = old_environ
+    utils.ReloadModule(rtconfig)
+
+    return path
+
 def IARVersion():
     import subprocess
     import re
-
-    def IARPath():
-        import rtconfig
-
-        # backup environ
-        old_environ = os.environ
-        os.environ['RTT_CC'] = 'iar'
-        utils.ReloadModule(rtconfig)
-
-        # get iar path
-        path = rtconfig.EXEC_PATH
-
-        # restore environ
-        os.environ = old_environ
-        utils.ReloadModule(rtconfig)
-
-        return path
 
     path = IARPath()
 
     if os.path.exists(path):
         cmd = os.path.join(path, 'iccarm.exe')
     else:
-        print('Error: get IAR version failed. Please update the IAR installation path in rtconfig.py!')
-        exit(-1)
+        return "0.0"
 
     child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = child.communicate()

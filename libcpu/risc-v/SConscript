@@ -16,17 +16,21 @@ elif rtconfig.CPU == "nuclei" :
     group = group
 elif rtconfig.CPU == "virt64" :
     group = group
+elif rtconfig.CPU == "c906" :
+    group = group
 elif rtconfig.CPU == "ch32v1" :
     group = group
 elif rtconfig.CPU == "ch32v3" :
     group = group
 elif rtconfig.CPU == "hpmicro":
     group = group
+elif rtconfig.CPU == "cv32e40p":
+    group = group
 else :
     group = group + SConscript(os.path.join('common', 'SConscript'))
 
 # cpu porting code files
-if  rtconfig.CPU == "e9xx" :
+if  rtconfig.CPU == "e9xx" or rtconfig.CPU == "c906":
     group = group + SConscript(os.path.join(rtconfig.VENDOR, rtconfig.CPU, 'SConscript'))
 elif rtconfig.CPU in list:
     group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))

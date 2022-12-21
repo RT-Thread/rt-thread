@@ -96,7 +96,7 @@ void rt_init_thread_entry(void *parameter)
 #define LED3     (1<<18) //P1
 #define LED4     (1<<19) //P1
 
-ALIGN(4) char thread_led1_stack[512];
+rt_align(4) char thread_led1_stack[512];
 struct rt_thread thread_led1;
 void thread_led1_entry(void *parameter)
 {
@@ -122,7 +122,7 @@ void thread_led1_entry(void *parameter)
     }
 }
 
-ALIGN(4) char thread_led2_stack[512];
+rt_align(4) char thread_led2_stack[512];
 struct rt_thread thread_led2;
 void thread_led2_entry(void *parameter)
 {

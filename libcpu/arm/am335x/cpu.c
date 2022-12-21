@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-09-15     Bernard      first version
+ * 2022-09-20     YangZhongQing
+ *                             add IAR assembler
  */
 
 #include <rthw.h>
@@ -86,10 +88,42 @@ rt_inline void cache_disable(rt_uint32_t bit)
         :"r" (bit)                  \
         :"memory");
 }
+#elif defined(__ICCARM__)
+rt_inline rt_uint32_t cp15_rd(void)
+{
+    rt_uint32_t i;
+
+    __asm volatile("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+    return i;
+}
+
+rt_inline void cache_enable(rt_uint32_t bit)
+{
+    rt_uint32_t tmp;
+
+    __asm volatile(                 \
+        "mrc  p15,0,%0,c1,c0,0\n\t" \
+        "orr  %0,%0,%1\n\t"         \
+        "mcr  p15,0,%0,c1,c0,0"     \
+        :"+r"(tmp)                  \
+        :"r"(bit)                   \
+        :"memory");
+}
+
+rt_inline void cache_disable(rt_uint32_t bit)
+{
+    rt_uint32_t tmp;
+
+    __asm volatile(                 \
+        "mrc  p15,0,%0,c1,c0,0\n\t" \
+        "bic  %0,%0,%1\n\t"         \
+        "mcr  p15,0,%0,c1,c0,0"     \
+        :"+r"(tmp)                  \
+        :"r"(bit)                   \
+        :"memory");
+}
 #endif
 
-
-#if defined(__CC_ARM)|(__GNUC__)
 /**
  * enable I-Cache
  *
@@ -143,13 +177,12 @@ rt_base_t rt_hw_cpu_dcache_status()
 {
     return (cp15_rd() & DCACHE_MASK);
 }
-#endif
 
 /**
  *  shutdown CPU
  *
  */
-RT_WEAK void rt_hw_cpu_shutdown()
+rt_weak void rt_hw_cpu_shutdown()
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

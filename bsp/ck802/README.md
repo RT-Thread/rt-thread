@@ -34,7 +34,7 @@ Linux：
 RTT_EXEC_PATH=r'/opt/csky-abiv2-elf-tools-x86_64-minilibc-20161211/bin'
 ```
 
-
+或者通过`scons --exec-path="GCC工具链路径"`命令，在指定工具链位置的同时直接编译，推荐使用该方法。
 
 ## BSP使用
 
@@ -52,6 +52,8 @@ RTT_EXEC_PATH=r'/opt/csky-abiv2-elf-tools-x86_64-minilibc-20161211/bin'
 ```
 scons
 ```
+
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
 
 #### 仿真
 

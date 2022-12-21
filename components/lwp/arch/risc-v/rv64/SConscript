@@ -1,0 +1,11 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('*.S')
+CPPPATH = [cwd]
+
+group = DefineGroup('lwp-riscv', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -16,6 +16,9 @@
 #if defined(__CC_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void*)&Image$$RW_IRAM1$$ZI$$Limit)
+#elif defined(__ICCARM__)
+#pragma section="CSTACK"
+#define HEAP_BEGIN      (__segment_end("CSTACK"))
 #elif defined(__GNUC__)
 extern int __bss_end;
 #define HEAP_BEGIN      ((void*)&__bss_end)

@@ -37,7 +37,7 @@
   - TFTLCD 显示屏：1个
   - WIFI 模块（AP6181）：1个
   - 板载 ST LINK V2.1 功能
-- 常用接口：SD 卡接口、USB OTG Micro USB 接口
+- 常用接口：SD 卡接口、USB OTG、Micro USB 接口
 - 调试接口，ST-LINK Micro USB 接口
 
 开发板更多详细信息请参考正点原子 [STM32 潘多拉开发板介绍](https://eboard.taobao.com/index.htm)。
@@ -50,7 +50,7 @@
 | :----------------- | :----------: | :------------------------------ |
 | 板载 ST-LINK 转串口 |     支持     |                                    |
 | QSPI_FLASH         |     支持     |                                   |
-| SD卡               |   支持       | 使用 SPI1 驱动 |
+| SD 卡               |   支持       | 使用 SPI1 驱动 |
 | 温湿度传感器        |    支持     |                             |
 | 六轴传感器         |    支持     |                              |
 | 音频解码           |    支持     |                                     |
@@ -74,7 +74,7 @@
 | **扩展模块**      | **支持情况** | **备注**                              |
 | NRF24L01 模块  |     支持    | 根据实际板子接线情况修改 NRF24L01 软件包中的 `NRF24L01_CE_PIN` 和 `NRF24_IRQ_PIN` 的宏定义，以及 SPI 设备名 |
 | ATK-ESP8266 模块  |    暂不支持  | 即将支持                              |
-| enc28j60 模块  |     暂不支持    | 即将支持                              |
+| ENC28J60 模块  |     暂不支持    | 即将支持                              |
 使用该开发板的更多高级功能请参考 RT-Thread 代码仓库： [RT-Thread IoT-Board SDK](https://github.com/RT-Thread/IoT_Board)。
 
 ## 使用说明
@@ -106,7 +106,7 @@
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LED 会周期性闪烁。
+下载程序成功之后，系统会自动运行，观察开发板上 LED 灯的运行效果，红色 LED 灯会周期性闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
@@ -120,21 +120,21 @@ msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
-1. 在 bsp 下打开 env 工具。
+1. 在 bsp 下打开 ENV 工具。
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+2. 输入 `menuconfig` 命令配置工程，配置好之后保存退出。
 
-3. 输入`pkgs --update`命令更新软件包。
+3. 输入 `pkgs --update` 命令更新软件包。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
 ## 注意事项
 
-暂无
+关于ST-Link无法升级的问题请参考：https://github.com/armink/HackSTLinkUpgrade
 
 ## 联系人信息
 

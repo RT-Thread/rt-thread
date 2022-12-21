@@ -263,7 +263,7 @@ in_addr_t netdev_ipaddr_addr(const char *cp)
 
 #if NETDEV_IPV6
 
-RT_WEAK const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;
+rt_weak const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;
 
 /**
  * Check whether "cp" is a valid ascii representation

@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2022, Real-Thread Information Technology Ltd
  * All rights reserved
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -149,20 +149,33 @@ static rt_err_t _rym_send_packet(
     rt_uint16_t send_crc;
     rt_uint8_t index_inv = ~index;
     rt_size_t writelen = 0;
+    rt_size_t packetlen = 0;
 
-    send_crc = CRC16(ctx->buf + 3, _RYM_SOH_PKG_SZ - 5);
+    switch(code)
+    {
+    case RYM_CODE_SOH:
+        packetlen = _RYM_SOH_PKG_SZ;
+        break;
+    case RYM_CODE_STX:
+        packetlen = _RYM_STX_PKG_SZ;
+        break;
+    default:
+        return -RT_ERROR;
+    }
+
+    send_crc = CRC16(ctx->buf + 3, packetlen - 5);
     ctx->buf[0] = code;
     ctx->buf[1] = index;
     ctx->buf[2] = index_inv;
-    ctx->buf[131] = (rt_uint8_t)(send_crc >> 8);
-    ctx->buf[132] = (rt_uint8_t)send_crc & 0xff;
+    ctx->buf[packetlen - 2] = (rt_uint8_t)(send_crc >> 8);
+    ctx->buf[packetlen - 1] = (rt_uint8_t)send_crc & 0xff;
 
     do
     {
         writelen += rt_device_write(ctx->dev, 0, ctx->buf + writelen,
-                                    _RYM_SOH_PKG_SZ - writelen);
+                packetlen - writelen);
     }
-    while (writelen < _RYM_SOH_PKG_SZ);
+    while (writelen < packetlen);
 
     return RT_EOK;
 }
@@ -349,6 +362,7 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
     _rym_putchar(ctx, RYM_CODE_ACK);
     _rym_putchar(ctx, RYM_CODE_C);
     ctx->stage = RYM_STAGE_ESTABLISHED;
+    rt_size_t errors;
 
     while (1)
     {
@@ -374,7 +388,22 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
 
         err = _rym_trans_data(ctx, data_sz, &code);
         if (err != RT_EOK)
-            return err;
+        {
+            errors++;
+            if(errors > RYM_MAX_ERRORS)
+            {
+                return err;/* Abort communication */
+            }
+            else
+            {
+                _rym_putchar(ctx, RYM_CODE_NAK);/* Ask for a packet */
+                continue;
+            }
+        }
+        else
+        {
+            errors = 0;
+        }
         switch (code)
         {
         case RYM_CODE_CAN:
@@ -402,21 +431,20 @@ static rt_err_t _rym_do_send_trans(struct rym_ctx *ctx)
     rt_uint32_t index = 1;
     rt_uint8_t getc_ack;
 
-    data_sz = _RYM_SOH_PKG_SZ;
-
+    data_sz = _RYM_STX_PKG_SZ;
     while (1)
     {
-        if (ctx->on_data && ctx->on_data(ctx, ctx->buf + 3, data_sz - 5) != RYM_CODE_SOH)
+        if (!ctx->on_data)
+        {
             return -RYM_ERR_CODE;
-
-        code = RYM_CODE_SOH;
+        }
+        code = ctx->on_data(ctx, ctx->buf + 3, data_sz - 5);
 
         _rym_send_packet(ctx, code, index);
         index++;
         rt_device_set_rx_indicate(ctx->dev, _rym_rx_ind);
 
         getc_ack = _rym_getchar(ctx);
-
         if (getc_ack != RYM_CODE_ACK)
         {
             return -RYM_ERR_ACK;

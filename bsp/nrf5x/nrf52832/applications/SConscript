@@ -1,17 +1,18 @@
 from building import *
+import os
 
-cwd     = GetCurrentDir()
-
-src = Split('''
-main.c
-''')
+cwd = GetCurrentDir()
+src = ['main.c']
+CPPPATH = [cwd]
 
 if GetDepend(['BSP_USING_ON_CHIP_FS']):
     src += ['mnt.c']
 
-
-CPPPATH = [str(Dir('#')), cwd]
-
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

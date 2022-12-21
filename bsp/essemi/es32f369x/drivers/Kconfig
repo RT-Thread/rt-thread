@@ -13,7 +13,7 @@ menu "Hardware Drivers Config"
 
     menu "Onboard Peripheral Drivers"
         config BSP_USING_ARDUINO
-            bool "Support Arduino"
+            bool "Compatible with Arduino Ecosystem (RTduino)"
             select PKG_USING_RTDUINO
             select BSP_USING_GPIO
             select BSP_USING_UART2

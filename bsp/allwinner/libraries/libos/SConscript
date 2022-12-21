@@ -1,0 +1,14 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+src/os.c
+''')
+
+CPPPATH = [cwd + '/include']
+
+group = DefineGroup('hal', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -24,7 +24,7 @@ if os.getenv('RTT_EXEC_PATH'):
 if PLATFORM == 'gcc':
     # toolchains
     # PREFIX = 'arm-none-eabi-'
-    PREFIX = 'arm-none-eabi-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'arm-none-eabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -36,7 +36,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     DEVICE = ' -march=armv8-a -mtune=cortex-a72'
-    CFLAGS = DEVICE + ' -Wall'
+    CFLAGS = DEVICE + ' -Wall -Wno-cpp'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''

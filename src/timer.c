@@ -45,7 +45,7 @@ static rt_uint8_t _soft_timer_status = RT_SOFT_TIMER_IDLE;
 /* soft timer list */
 static rt_list_t _soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_thread _timer_thread;
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif /* RT_USING_TIMER_SOFT */
 
@@ -502,7 +502,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     {
         /* check whether timer thread is ready */
         if ((_soft_timer_status == RT_SOFT_TIMER_IDLE) &&
-           ((_timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+           ((_timer_thread.stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
         {
             /* resume timer thread to check soft timer */
             rt_thread_resume(&_timer_thread);
@@ -534,17 +534,20 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 {
     rt_base_t level;
 
-    /* parameter check */
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* timer check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
     if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+    {
+        rt_hw_interrupt_enable(level);
         return -RT_ERROR;
+    }
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(timer->parent)));
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
 
     _timer_remove(timer);
     /* change status */
@@ -609,6 +612,21 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 
     case RT_TIMER_CTRL_GET_REMAIN_TIME:
         *(rt_tick_t *)arg =  timer->timeout_tick;
+        break;
+    case RT_TIMER_CTRL_GET_FUNC:
+        *(void **)arg = timer->timeout_func;
+        break;
+
+    case RT_TIMER_CTRL_SET_FUNC:
+        timer->timeout_func = (void (*)(void*))arg;
+        break;
+
+    case RT_TIMER_CTRL_GET_PARM:
+        *(void **)arg = timer->parameter;
+        break;
+
+    case RT_TIMER_CTRL_SET_PARM:
+        timer->parameter = arg;
         break;
 
     default:
@@ -801,7 +819,7 @@ static void _timer_thread_entry(void *parameter)
         if (_timer_list_next_timeout(_soft_timer_list, &next_timeout) != RT_EOK)
         {
             /* no software timer exist, suspend self. */
-            rt_thread_suspend(rt_thread_self());
+            rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
             rt_schedule();
         }
         else

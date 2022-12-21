@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+group = []
+
+CPPPATH = [cwd]
+
+if GetDepend('BSP_USING_GMAC'):
+    group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

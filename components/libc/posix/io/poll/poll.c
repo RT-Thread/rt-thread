@@ -89,20 +89,22 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 
     if (timeout != 0 && !pt->triggered)
     {
-        rt_thread_suspend(thread);
-        if (timeout > 0)
+        if (rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE) == RT_EOK)
         {
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
-            rt_timer_start(&(thread->thread_timer));
+            if (timeout > 0)
+            {
+                rt_timer_control(&(thread->thread_timer),
+                        RT_TIMER_CTRL_SET_TIME,
+                        &timeout);
+                rt_timer_start(&(thread->thread_timer));
+            }
+
+            rt_hw_interrupt_enable(level);
+
+            rt_schedule();
+
+            level = rt_hw_interrupt_disable();
         }
-
-        rt_hw_interrupt_enable(level);
-
-        rt_schedule();
-
-        level = rt_hw_interrupt_disable();
     }
 
     ret = !pt->triggered;
@@ -126,23 +128,21 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
         if (f)
         {
             mask = POLLMASK_DEFAULT;
-            if (f->fops->poll)
+            if (f->vnode->fops->poll)
             {
                 req->_key = pollfd->events | POLLERR | POLLHUP;
 
-                mask = f->fops->poll(f, req);
+                mask = f->vnode->fops->poll(f, req);
 
                 /* dealwith the device return error -1*/
                 if (mask < 0)
                 {
-                    fd_put(f);
                     pollfd->revents = 0;
                     return mask;
                 }
             }
             /* Mask out unneeded events. */
             mask &= pollfd->events | POLLERR | POLLHUP;
-            fd_put(f);
         }
     }
     pollfd->revents = mask;

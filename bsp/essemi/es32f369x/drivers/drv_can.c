@@ -225,8 +225,8 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
             {
 
                 /*默认过滤表判断*/
-                if(filter_cfg->items[i].hdr < drv_can->device.config.maxhdr)
-                    drv_can->FilterConfig.number = filter_cfg->items[i].hdr;
+                if(filter_cfg->items[i].hdr_bank < drv_can->device.config.maxhdr)
+                    drv_can->FilterConfig.number = filter_cfg->items[i].hdr_bank;
                 else
                     drv_can->FilterConfig.number = ES_C_CAN_DEFAULT_FILTER_NUMBER;
 
@@ -496,8 +496,8 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     }
     /* get len */
     pmsg->len = rxheader.len;
-    /* get hdr */
-    pmsg->hdr = (rxheader.fmi + 1) >> 1;
+    /* get hdr_index */
+    pmsg->hdr_index = (rxheader.fmi + 1) >> 1;
 
     return RT_EOK;
 }

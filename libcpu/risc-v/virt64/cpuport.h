@@ -20,36 +20,65 @@
 #define REGBYTES                8
 #else
 // error here, not portable
+#error "Not supported XLEN"
 #endif
 
+/* 33 general register */
+#define CTX_GENERAL_REG_NR  33
+
+#ifdef ENABLE_FPU
+/* 32 fpu register */
+#define CTX_FPU_REG_NR  32
+#else
+#define CTX_FPU_REG_NR  0
+#endif
+
+#ifdef ENABLE_VECTOR
+
+#if defined(ARCH_VECTOR_VLEN_128)
+#define CTX_VECTOR_REGS 64
+#elif defined(ARCH_VECTOR_VLEN_256)
+#define CTX_VECTOR_REGS 128
+#endif
+
+#define CTX_VECTOR_REG_NR  (CTX_VECTOR_REGS + 4)
+#else
+#define CTX_VECTOR_REG_NR  0
+#endif
+
+/* all context registers */
+#define CTX_REG_NR  (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + CTX_VECTOR_REG_NR)
+
+#ifdef RT_USING_SMP
+typedef union {
+    unsigned long slock;
+    struct __arch_tickets {
+        unsigned short owner;
+        unsigned short next;
+    } tickets;
+} rt_hw_spinlock_t;
+#endif
+
+#ifndef __ASSEMBLY__
+#include <rtthread.h>
+rt_inline void rt_hw_dsb()
+{
+    asm volatile("fence":::"memory");
+}
+
+rt_inline void rt_hw_dmb()
+{
+    asm volatile("fence":::"memory");
+}
+
+rt_inline void rt_hw_isb()
+{
+    asm volatile(".long 0x0000100F":::"memory");
+}
+
+#endif
+
+#endif
 #ifdef RISCV_U_MODE
 #define RISCV_USER_ENTRY 0xFFFFFFE000000000ULL
-#endif
-
-#ifdef RISCV_S_MODE
-//csr in s-mode
-// M/U/S Interrupt Registers
-#define SRC_XIE         sie
-#define SRC_XIP         sip
-#define SRC_XTVEC       stvec
-#define SRC_XSTATUS     sstatus
-#define SRC_XSCRATCH    sscratch
-#define SRC_XEPC        sepc
-#define SRC_XCAUSE      scause
-#define SRC_XTVAL       stval
-#define XRET            sret
-#else
-//csr in m-mode
-// M/U/S Interrupt Registers
-#define SRC_XIE         mie
-#define SRC_XIP         mip
-#define SRC_XTVEC       mtvec
-#define SRC_XSTATUS     mstatus
-#define SRC_XSCRATCH    mscratch
-#define SRC_XEPC        mepc
-#define SRC_XCAUSE      mcause
-#define SRC_XTVAL       mtval
-#define XRET            mret
-#endif
-
 #endif

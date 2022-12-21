@@ -12,7 +12,7 @@
 #include <plib.h>
 #include <rtthread.h>
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 int thread_led1_stack[512];
 struct rt_thread thread_led1;
 void thread_led1_entry(void* parameter)

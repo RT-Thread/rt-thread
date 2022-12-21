@@ -162,7 +162,7 @@ rt_err_t rt_mtd_nand_mark_badblock(struct rt_mtd_nand_device *device, rt_uint32_
 #include <finsh.h>
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
 
-static void mtd_dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
+static void mtd_dump_hex(const rt_uint8_t *ptr, int buflen)
 {
     unsigned char *buf = (unsigned char *)ptr;
     int i, j;

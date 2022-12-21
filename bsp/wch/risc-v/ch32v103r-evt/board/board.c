@@ -53,12 +53,12 @@ static uint32_t _SysTick_Config(rt_uint32_t ticks)
 #define RT_HEAP_SIZE (1024)
 /* heap default size: 4K(1024 * 4) */
 static uint32_t rt_heap[RT_HEAP_SIZE];
-RT_WEAK void *rt_heap_begin_get(void)
+rt_weak void *rt_heap_begin_get(void)
 {
     return rt_heap;
 }
 
-RT_WEAK void *rt_heap_end_get(void)
+rt_weak void *rt_heap_end_get(void)
 {
     return rt_heap + RT_HEAP_SIZE;
 }

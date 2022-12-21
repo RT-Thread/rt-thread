@@ -19,25 +19,21 @@ extern "C" {
 #endif
 
 #ifdef BSP_USING_PWM2
-#ifndef PWM2_CONFIG
 #define PWM2_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM2,         \
        .name                    = "pwm2",       \
-       .channel                 = 0             \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM2_CONFIG */
 #endif /* BSP_USING_PWM2 */
 
 #ifdef BSP_USING_PWM3
-#ifndef PWM3_CONFIG
 #define PWM3_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM3,         \
        .name                    = "pwm3",       \
-       .channel                 = 0             \
+       .channel                 = RT_NULL       \
     }
-#endif /* PWM2_CONFIG */
 #endif /* BSP_USING_PWM2 */
 
 #ifdef __cplusplus

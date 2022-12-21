@@ -36,22 +36,26 @@ typedef long (*syscall_func)(void);
 #pragma comment(linker, "/merge:FSymTab=mytext")
 
 #elif defined(__TI_COMPILER_VERSION__)
+#ifdef __TMS320C28XX__
+#define RT_NOBLOCKED __attribute__((noblocked))
+#else
+#define RT_NOBLOCKED
+#endif
 #define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
                 __TI_FINSH_EXPORT_FUNCTION(__fsym_##cmd);           \
                 const char __fsym_##cmd##_name[] = #cmd;            \
                 const char __fsym_##cmd##_desc[] = #desc;           \
-                const struct finsh_syscall __fsym_##cmd =           \
+                rt_used RT_NOBLOCKED const struct finsh_syscall __fsym_##cmd =           \
                 {                           \
                     __fsym_##cmd##_name,    \
                     __fsym_##cmd##_desc,    \
                     (syscall_func)&name     \
                 };
-
 #else
 #define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
-                const char __fsym_##cmd##_name[] RT_SECTION(".rodata.name") = #cmd;    \
-                const char __fsym_##cmd##_desc[] RT_SECTION(".rodata.name") = #desc;   \
-                RT_USED const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
+                const char __fsym_##cmd##_name[] rt_section(".rodata.name") = #cmd;    \
+                const char __fsym_##cmd##_desc[] rt_section(".rodata.name") = #desc;   \
+                rt_used const struct finsh_syscall __fsym_##cmd rt_section("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
                     __fsym_##cmd##_desc,    \
@@ -84,7 +88,7 @@ typedef long (*syscall_func)(void);
 #else
 #define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
                 const char __fsym_##cmd##_name[] = #cmd;                            \
-                RT_USED const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
+                rt_used const struct finsh_syscall __fsym_##cmd rt_section("FSymTab")= \
                 {                                                                   \
                     __fsym_##cmd##_name,                                            \
                     (syscall_func)&name                                             \

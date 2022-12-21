@@ -68,12 +68,12 @@ struct rw009_wifi
     struct rt_mailbox rw009_cmd_mb;
     uint32_t last_cmd;
 
-    ALIGN(4)
+    rt_align(4)
     rt_uint8_t spi_tx_mempool[(sizeof(struct spi_data_packet) + 4) * SPI_TX_POOL_SIZE];
-    ALIGN(4)
+    rt_align(4)
     rt_uint8_t spi_rx_mempool[(sizeof(struct spi_data_packet) + 4) * SPI_RX_POOL_SIZE];
 
-    ALIGN(4)
+    rt_align(4)
     uint8_t spi_hw_rx_buffer[MAX_SPI_BUFFER_SIZE];
 
     /* status for RW009 */

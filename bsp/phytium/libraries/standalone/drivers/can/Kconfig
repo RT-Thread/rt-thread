@@ -1,0 +1,18 @@
+
+menu "CAN Configuration"
+    config USE_FCAN
+        bool
+        prompt "Use FCAN"
+        default n
+    if  USE_FCAN
+        config FCAN_USE_CANFD
+        depends on TARGET_E2000
+        bool
+        prompt "Use CanFD"
+        default n
+        help
+            use canfd protocol
+    endif
+        
+endmenu
+

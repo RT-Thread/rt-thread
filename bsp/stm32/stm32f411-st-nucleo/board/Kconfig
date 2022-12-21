@@ -8,6 +8,35 @@ config SOC_STM32F411RE
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (uart2)"
+        select BSP_USING_UART
+        select BSP_USING_UART2
+        default y
+
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM4
+        select BSP_USING_PWM3
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH2
+        select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM3_CH2
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
 
 endmenu
 
@@ -42,6 +71,16 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -60,52 +99,59 @@ menu "On-chip Peripheral Drivers"
                 default 25
         endif
 
-    menuconfig BSP_USING_SPI
-        bool "Enable SPI BUS"
-        default n
-        select RT_USING_SPI
-        if BSP_USING_SPI
-            config BSP_USING_SPI1
-                bool "Enable SPI1 BUS"
-                default n
-
-            config BSP_SPI1_TX_USING_DMA
-                bool "Enable SPI1 TX DMA"
-                depends on BSP_USING_SPI1
-                default n
-                
-            config BSP_SPI1_RX_USING_DMA
-                bool "Enable SPI1 RX DMA"
-                depends on BSP_USING_SPI1
-                select BSP_SPI1_TX_USING_DMA
-                default n
-        endif
-
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
         select RT_USING_PWM
+
         if BSP_USING_PWM
-        menuconfig BSP_USING_PWM3
-            bool "Enable timer3 output PWM"
-            default n
-            if BSP_USING_PWM3
-                config BSP_USING_PWM3_CH1
-                    bool "Enable PWM3 channel1 (PA6)"
-                    default n
+            menuconfig BSP_USING_PWM1
+                bool "Enable timer1 output PWM"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable PWM1 channel1"
+                        default n
+                endif
 
-                config BSP_USING_PWM3_CH2
-                    bool "Enable PWM3 channel2 (PA7)"
-                    default n
+            menuconfig BSP_USING_PWM2
+                bool "Enable timer2 output PWM"
+                default n
+                if BSP_USING_PWM2
+                    config BSP_USING_PWM2_CH2
+                        bool "Enable PWM2 channel2"
+                        default n
 
-                config BSP_USING_PWM3_CH3
-                    bool "Enable PWM3 channel3 (PB0)"
-                    default n
+                    config BSP_USING_PWM2_CH3
+                        bool "Enable PWM2 channel3"
+                        default n
+                endif
 
-                config BSP_USING_PWM3_CH4
-                    bool "Enable PWM3 channel4 (PB1)"
-                    default n
-            endif
+            menuconfig BSP_USING_PWM3
+                bool "Enable timer3 output PWM"
+                default n
+                if BSP_USING_PWM3
+                    config BSP_USING_PWM3_CH1
+                        bool "Enable PWM3 channel1"
+                        default n
+
+                    config BSP_USING_PWM3_CH2
+                        bool "Enable PWM3 channel2"
+                        default n
+
+                    config BSP_USING_PWM3_CH4
+                        bool "Enable PWM3 channel4"
+                        default n
+                endif
+            
+            menuconfig BSP_USING_PWM4
+                bool "Enable timer4 output PWM"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4 channel1"
+                        default n
+                endif
         endif
 
     menuconfig BSP_USING_ONCHIP_RTC
@@ -128,6 +174,12 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
+    
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+        
     source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu

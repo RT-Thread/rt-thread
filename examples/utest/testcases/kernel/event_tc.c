@@ -20,11 +20,11 @@ static struct rt_event static_event = {0};
 static rt_event_t dynamic_event = RT_NULL;
 static rt_uint32_t dynamic_event_recv_thread_finish = 0, dynamic_event_send_thread_finish = 0;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread3_stack[1024];
 static struct rt_thread thread3;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread4_stack[1024];
 static struct rt_thread thread4;
 #endif /* RT_USING_HEAP */
@@ -32,11 +32,11 @@ static struct rt_thread thread4;
 static rt_uint32_t recv_event_times1 = 0, recv_event_times2 = 0;
 static rt_uint32_t static_event_recv_thread_finish = 0, static_event_send_thread_finish = 0;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread1_stack[1024];
 static struct rt_thread thread1;
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread2_stack[1024];
 static struct rt_thread thread2;
 

@@ -218,7 +218,7 @@ int rt_hw_touch_register(rt_touch_t touch,
                          rt_uint32_t              flag,
                          void                    *data)
 {
-    rt_int8_t result;
+    rt_err_t result;
     rt_device_t device;
     RT_ASSERT(touch != RT_NULL);
 

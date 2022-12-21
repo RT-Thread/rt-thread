@@ -150,7 +150,7 @@ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to)
  * @brief shutdown CPU
  *
  */
-RT_WEAK void rt_hw_cpu_shutdown()
+rt_weak void rt_hw_cpu_shutdown()
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

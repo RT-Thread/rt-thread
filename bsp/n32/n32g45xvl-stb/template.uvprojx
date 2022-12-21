@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>N32G457VEL7</Device>
           <Vendor>Nationstech</Vendor>
-          <PackID>Nationstech.N32G45x_DFP.1.0.1</PackID>
+          <PackID>Nationstech.N32G45x_DFP.1.0.5</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x24000) IROM(0x08000000,0x80000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>

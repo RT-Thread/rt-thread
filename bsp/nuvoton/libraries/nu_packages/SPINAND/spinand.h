@@ -90,6 +90,9 @@ rt_size_t nu_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qsp
 rt_err_t nu_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_buf, rt_size_t send_length, void *recv_buf, rt_size_t recv_length);
 rt_err_t nu_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_size_t length);
 rt_err_t spinand_flash_init(struct rt_qspi_device *qspi);
+rt_err_t spinand_jedecid_get(struct rt_qspi_device *qspi, uint32_t *pu32ID);
+int spinand_supported_flash_size(void);
+nu_spinand_info_t spinand_info_get(int idx);
 
 extern struct nu_spinand g_spinandflash_dev;
 extern rt_uint8_t spinand_flash_data_layout[SPINAND_SPARE_LAYOUT_SIZE];

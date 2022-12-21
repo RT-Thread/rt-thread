@@ -7,9 +7,12 @@ Import('rtconfig')
 cwd     = GetCurrentDir()
 src     = Split('''
 cache.c
-cpu.c
+cpuport.c
+gtimer.c
 mmu.c
+pmu.c
 stack.c
+backtrace.c
 ''')
 CPPPATH = [cwd]
 

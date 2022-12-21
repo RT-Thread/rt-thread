@@ -124,27 +124,28 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
 
-    if rtconfig.PLATFORM in ['gcc']:
-        contents = ''
-        if not os.path.isfile('cconfig.h'):
-            import gcc
-            gcc.GenerateGCCConfig(rtconfig)
+    # if rtconfig.PLATFORM in ['gcc']:
+    #     contents = ''
+    #     if not os.path.isfile('cconfig.h'):
+    #         import gcc
+    #         gcc.GenerateGCCConfig(rtconfig)
 
-        # try again
-        if os.path.isfile('cconfig.h'):
-            f = open('cconfig.h', 'r')
-            if f:
-                contents = f.read()
-                f.close()
+    #     # try again
+    #     if os.path.isfile('cconfig.h'):
+    #         f = open('cconfig.h', 'r')
+    #         if f:
+    #             contents = f.read()
+    #             f.close()
 
-                prep = PatchedPreProcessor()
-                prep.process_contents(contents)
-                options = prep.cpp_namespace
+    #             prep = PatchedPreProcessor()
+    #             prep.process_contents(contents)
+    #             options = prep.cpp_namespace
 
-                BuildOptions.update(options)
+    #             BuildOptions.update(options)
 
-                # add HAVE_CCONFIG_H definition
-                env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    #             # add HAVE_CCONFIG_H definition
+    #             env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    pass
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
@@ -173,7 +174,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     tgt_dict = {'mdk':('keil', 'armcc'),
                 'mdk4':('keil', 'armcc'),
                 'mdk5':('keil', 'armcc'),
-                'iar':('iar', 'iar'),
+                'iar':('iar', 'iccarm'),
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
                 'vsc' : ('gcc', 'gcc'),
@@ -186,7 +187,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cmake':('gcc', 'gcc'),
                 'cmake-armclang':('keil', 'armclang'),
                 'xmake':('gcc', 'gcc'),
-                'codelite' : ('gcc', 'gcc')}
+                'codelite' : ('gcc', 'gcc'),
+                'esp-idf': ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
     if tgt_name:
@@ -201,17 +203,36 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
             # replace the 'RTT_CC' to 'CROSS_TOOL'
             os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
-            utils.ReloadModule(rtconfig)
         except KeyError:
             print('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
             sys.exit(1)
+
+    exec_prefix = GetOption('exec-prefix')
+    if exec_prefix:
+        os.environ['RTT_EXEC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not os.path.exists(rtconfig.EXEC_PATH):
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
-            utils.ReloadModule(rtconfig)
+
+    exec_path = GetOption('exec-path')
+    if exec_path:
+        os.environ['RTT_EXEC_PATH'] = exec_path
+
+    utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
+
+    # some env variables have loaded in SConsctruct Environment() before re-load rtconfig.py;
+    # after update rtconfig.py's variables, those env variables need to synchronize
+    if exec_prefix:
+        env['CC'] = rtconfig.CC
+        env['CXX'] = rtconfig.CXX
+        env['AS'] = rtconfig.AS
+        env['AR'] = rtconfig.AR
+        env['LINK'] = rtconfig.LINK
+    if exec_path:
+        env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -307,12 +328,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     if GetOption('pyconfig_silent'):
         from menuconfig import guiconfig_silent
-
         guiconfig_silent(Rtt_Root)
         exit(0)
+
     elif GetOption('pyconfig'):
         from menuconfig import guiconfig
-
         guiconfig(Rtt_Root)
         exit(0)
 
@@ -461,7 +481,17 @@ def GetLocalDepend(options, depend):
     return building
 
 def AddDepend(option):
-    BuildOptions[option] = 1
+    if isinstance(option, str):
+        BuildOptions[option] = 1
+    elif isinstance(option, list):
+        for obj in option:
+            if isinstance(obj, str):
+                BuildOptions[obj] = 1
+            else:
+                print('AddDepend arguements are illegal!')
+    else:
+        print('AddDepend arguements are illegal!')
+
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
@@ -775,8 +805,16 @@ def DoBuilding(target, objects):
                             objects.remove(obj)
 
         # re-add the source files to the objects
+
+        objects_in_group = []
         for group in Projects:
-            local_group(group, objects)
+            local_group(group, objects_in_group)
+
+        # sort seperately, because the data type of
+        # the members of the two lists are different
+        objects_in_group = sorted(objects_in_group)
+        objects = sorted(objects)
+        objects.append(objects_in_group)
 
         program = Env.Program(target, objects)
 
@@ -788,35 +826,37 @@ def GenTargetProject(program = None):
         from keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
         if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
-            MDK5Project('project.uvprojx', Projects)
+            MDK5Project(GetOption('project-name') + '.uvprojx', Projects)
             print("Keil5 project is generating...")
         elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
-            MDK4Project('project.uvproj', Projects)
+            MDK4Project(GetOption('project-name') + '.uvproj', Projects)
             print("Keil4 project is generating...")
         elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
-            MDK2Project('project.Uv2', Projects)
+            MDK2Project(GetOption('project-name') + '.Uv2', Projects)
             print("Keil2 project is generating...")
         else:
             print ('No template project file found.')
             exit(1)
         print("Keil Version: " + ARMCC_Version())
+        print("Keil-MDK project has generated successfully!")
 
     if GetOption('target') == 'iar':
         from iar import IARProject, IARVersion
         print("IAR Version: " + IARVersion())
-        IARProject('project.ewp', Projects)
+        IARProject(GetOption('project-name') + '.ewp', Projects)
+        print("IAR project has generated successfully!")
 
     if GetOption('target') == 'vs':
         from vs import VSProject
-        VSProject('project.vcproj', Projects, program)
+        VSProject(GetOption('project-name') + '.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
         from vs2012 import VS2012Project
-        VS2012Project('project.vcxproj', Projects, program)
+        VS2012Project(GetOption('project-name') + '.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
         from codeblocks import CBProject
-        CBProject('project.cbp', Projects, program)
+        CBProject(GetOption('project-name') + '.cbp', Projects, program)
 
     if GetOption('target') == 'ua':
         from ua import PrepareUA
@@ -828,7 +868,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
-        CDKProject('project.cdkproj', Projects)
+        CDKProject(GetOption('project-name') + '.cdkproj', Projects)
 
     if GetOption('target') == 'ses':
         from ses import SESProject
@@ -849,11 +889,17 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
+
     if GetOption('target') == 'xmake':
         from xmake import XMakeProject
         XMakeProject(Env, Projects)
 
+    if GetOption('target') == 'esp-idf':
+        from esp_idf import ESPIDFProject
+        ESPIDFProject(Env, Projects)
+
 def EndBuilding(target, program = None):
+    from mkdist import MkDist, MkDist_Strip
 
     need_exit = False
 
@@ -875,29 +921,25 @@ def EndBuilding(target, program = None):
 
     if GetOption('target'):
         GenTargetProject(program)
+        need_exit = True
 
     BSP_ROOT = Dir('#').abspath
+
+    project_name = GetOption('project-name')
+    project_path = GetOption('project-path')
     if GetOption('make-dist') and program != None:
-        from mkdist import MkDist
-        MkDist(program, BSP_ROOT, Rtt_Root, Env)
+        MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+        need_exit = True
     if GetOption('make-dist-strip') and program != None:
-        from mkdist import MkDist_Strip
         MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
-        from mkdist import MkDist
-        project_path = GetOption('project-path')
-        project_name = GetOption('project-name')
-
+        import subprocess
         if not isinstance(project_path, str) or len(project_path) == 0 :
-            project_path = os.path.join(BSP_ROOT, 'dist_ide_project')
-            print("\nwarning : --project-path not specified, use default path: {0}.".format(project_path))
-        if not isinstance(project_name, str) or len(project_name) == 0:
-            project_name = "dist_ide_project"
-            print("\nwarning : --project-name not specified, use default project name: {0}.".format(project_name))
-
-        rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
-        MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
+            project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
+        MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase

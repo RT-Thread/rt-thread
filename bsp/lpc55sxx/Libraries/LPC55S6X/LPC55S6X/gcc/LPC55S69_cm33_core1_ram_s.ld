@@ -1,18 +1,19 @@
 /*
 ** ###################################################################
 **     Processors:          LPC55S69JBD100_cm33_core1
-**                          LPC55S69JET98_cm33_core1
+**                          LPC55S69JBD64_cm33_core1
+**                          LPC55S69JEV98_cm33_core1
 **
 **     Compiler:            GNU C Compiler
-**     Reference manual:    LPC55xx/LPC55Sxx User manual Rev.0.2  15 Aug 2018
-**     Version:             rev. 1.0, 2018-08-22
-**     Build:               b180921
+**     Reference manual:    LPC55S6x/LPC55S2x/LPC552x User manual(UM11126) Rev.1.3  16 May 2019
+**     Version:             rev. 1.1, 2019-05-16
+**     Build:               b190926
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2018 NXP
+**     Copyright 2016-2019 NXP
 **     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause
@@ -35,9 +36,9 @@ RPMSG_SHMEM_SIZE = DEFINED(__use_shmem__) ? 0x1800 : 0;
 /* Specify the memory areas */
 MEMORY
 {
-  m_interrupts          (RX)  : ORIGIN = 0x30033000, LENGTH = 0x00000140
-  m_text                (RX)  : ORIGIN = 0x30033140, LENGTH = 0x0000B6C0
-  m_data                (RW)  : ORIGIN = 0x3003E800, LENGTH = 0x00005800
+  m_interrupts          (RX)  : ORIGIN = 0x30033000, LENGTH = 0x00000200
+  m_text                (RX)  : ORIGIN = 0x30033200, LENGTH = 0x0000C600
+  m_data                (RW)  : ORIGIN = 0x3003F800, LENGTH = 0x00004800
   rpmsg_sh_mem          (RW)  : ORIGIN = 0x30033000 - RPMSG_SHMEM_SIZE, LENGTH = RPMSG_SHMEM_SIZE
   m_usb_sram            (RW)  : ORIGIN = 0x50100000, LENGTH = 0x00004000
 }
@@ -48,8 +49,10 @@ SECTIONS
   /* NOINIT section for rpmsg_sh_mem */
   .noinit_rpmsg_sh_mem (NOLOAD) : ALIGN(4)
   {
+     __RPMSG_SH_MEM_START__ = .;
      *(.noinit.$rpmsg_sh_mem*)
      . = ALIGN(4) ;
+     __RPMSG_SH_MEM_END__ = .;
   } > rpmsg_sh_mem
 
   /* The startup code goes first into internal flash */

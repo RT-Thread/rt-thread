@@ -32,6 +32,12 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
+#ifdef RT_USING_SMART
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#include <console.h>
+#endif
+
 /* use precision */
 #define RT_PRINTF_PRECISION
 
@@ -48,7 +54,7 @@ static volatile int __rt_errno;
 static rt_device_t _console_device = RT_NULL;
 #endif
 
-RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
+rt_weak void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
     RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
@@ -96,7 +102,7 @@ RTM_EXPORT(rt_strerror);
  */
 rt_err_t rt_get_errno(void)
 {
-    rt_thread_t tid;
+    rt_thread_t tid = RT_NULL;
 
     if (rt_interrupt_get_nest() != 0)
     {
@@ -106,7 +112,9 @@ rt_err_t rt_get_errno(void)
 
     tid = rt_thread_self();
     if (tid == RT_NULL)
+    {
         return __rt_errno;
+    }
 
     return tid->error;
 }
@@ -119,7 +127,7 @@ RTM_EXPORT(rt_get_errno);
  */
 void rt_set_errno(rt_err_t error)
 {
-    rt_thread_t tid;
+    rt_thread_t tid = RT_NULL;
 
     if (rt_interrupt_get_nest() != 0)
     {
@@ -148,14 +156,18 @@ RTM_EXPORT(rt_set_errno);
  */
 int *_rt_errno(void)
 {
-    rt_thread_t tid;
+    rt_thread_t tid = RT_NULL;
 
     if (rt_interrupt_get_nest() != 0)
+    {
         return (int *)&__rt_errno;
+    }
 
     tid = rt_thread_self();
     if (tid != RT_NULL)
+    {
         return (int *) & (tid->error);
+    }
 
     return (int *)&__rt_errno;
 }
@@ -174,7 +186,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return The address of source memory.
  */
-RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
+rt_weak void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -188,10 +200,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    unsigned int i;
+    unsigned int i = 0;
     char *m = (char *)s;
-    unsigned long buffer;
-    unsigned long *aligned_addr;
+    unsigned long buffer = 0;
+    unsigned long *aligned_addr = RT_NULL;
     unsigned char d = (unsigned int)c & (unsigned char)(-1);  /* To avoid sign extension, copy C to an
                                 unsigned variable. (unsigned)((char)(-1))=0xFF for 8bit and =0xFFFF for 16bit: word independent */
 
@@ -254,11 +266,11 @@ RTM_EXPORT(rt_memset);
  *
  * @return The address of destination memory
  */
-RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+rt_weak void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
-    rt_ubase_t len;
+    rt_ubase_t len = 0;
 
     if (tmp <= s || tmp > (s + count))
     {
@@ -282,8 +294,8 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 
     char *dst_ptr = (char *)dst;
     char *src_ptr = (char *)src;
-    long *aligned_dst;
-    long *aligned_src;
+    long *aligned_dst = RT_NULL;
+    long *aligned_src = RT_NULL;
     rt_ubase_t len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
@@ -378,7 +390,7 @@ RTM_EXPORT(rt_memmove);
  */
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
 {
-    const unsigned char *su1, *su2;
+    const unsigned char *su1 = RT_NULL, *su2 = RT_NULL;
     int res = 0;
 
     for (su1 = (const unsigned char *)cs, su2 = (const unsigned char *)ct; 0 < count; ++su1, ++su2, count--)
@@ -403,17 +415,23 @@ RTM_EXPORT(rt_memcmp);
  */
 char *rt_strstr(const char *s1, const char *s2)
 {
-    int l1, l2;
+    int l1 = 0, l2 = 0;
 
     l2 = rt_strlen(s2);
     if (!l2)
+    {
         return (char *)s1;
+    }
+
     l1 = rt_strlen(s1);
     while (l1 >= l2)
     {
         l1 --;
         if (!rt_memcmp(s1, s2, l2))
+        {
             return (char *)s1;
+        }
+
         s1 ++;
     }
 
@@ -435,7 +453,7 @@ RTM_EXPORT(rt_strstr);
  */
 rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
-    int ca, cb;
+    int ca = 0, cb = 0;
 
     do
     {
@@ -476,7 +494,10 @@ char *rt_strncpy(char *dst, const char *src, rt_size_t n)
             {
                 /* NUL pad the remaining n-1 bytes */
                 while (--n != 0)
+                {
                     *d++ = 0;
+                }
+
                 break;
             }
         } while (--n != 0);
@@ -532,7 +553,10 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
     while (count)
     {
         if ((__res = *cs - *ct++) != 0 || !*cs++)
+        {
             break;
+        }
+
         count --;
     }
 
@@ -574,7 +598,7 @@ RTM_EXPORT(rt_strcmp);
  */
 rt_size_t rt_strlen(const char *s)
 {
-    const char *sc;
+    const char *sc = RT_NULL;
 
     for (sc = s; *sc != '\0'; ++sc) /* nothing */
         ;
@@ -623,7 +647,9 @@ char *rt_strdup(const char *s)
     char *tmp = (char *)rt_malloc(len);
 
     if (!tmp)
+    {
         return RT_NULL;
+    }
 
     rt_memcpy(tmp, s, len);
 
@@ -876,7 +902,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
 #ifdef RT_KPRINTF_USING_LONGLONG
     unsigned long long num;
@@ -1230,6 +1256,28 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
+#ifdef RT_USING_SMART
+    rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
+extern void console_init();
+    console_init(); /*add line discipline*/
+    /* find new console device */
+    new_iodev = rt_device_find(name);
+    if (new_iodev != RT_NULL)
+    {
+        if (_console_device != RT_NULL)
+        {
+            old_iodev = console_set_iodev(new_iodev);
+        }
+        else
+        {
+            console_register("console", new_iodev);
+            _console_device = rt_device_find("console");
+            rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
+        }
+    }
+
+    return old_iodev;
+#else
     rt_device_t new_device, old_device;
 
     /* save old device */
@@ -1255,11 +1303,12 @@ rt_device_t rt_console_set_device(const char *name)
     }
 
     return old_device;
+#endif
 }
 RTM_EXPORT(rt_console_set_device);
 #endif /* RT_USING_DEVICE */
 
-RT_WEAK void rt_hw_console_output(const char *str)
+rt_weak void rt_hw_console_output(const char *str)
 {
     /* empty console output */
 }
@@ -1295,7 +1344,7 @@ void rt_kputs(const char *str)
  *
  * @return The number of characters actually written to buffer.
  */
-RT_WEAK int rt_kprintf(const char *fmt, ...)
+rt_weak int rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;
@@ -1480,7 +1529,7 @@ rt_inline void _slab_info(rt_size_t *total,
  *
  * @param end_addr the end address of system page.
  */
-RT_WEAK void rt_system_heap_init(void *begin_addr, void *end_addr)
+rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
@@ -1500,7 +1549,7 @@ RT_WEAK void rt_system_heap_init(void *begin_addr, void *end_addr)
  *
  * @return the pointer to allocated memory or NULL if no free memory was found.
  */
-RT_WEAK void *rt_malloc(rt_size_t size)
+rt_weak void *rt_malloc(rt_size_t size)
 {
     rt_base_t level;
     void *ptr;
@@ -1526,7 +1575,7 @@ RTM_EXPORT(rt_malloc);
  *
  * @return the changed memory block address.
  */
-RT_WEAK void *rt_realloc(void *rmem, rt_size_t newsize)
+rt_weak void *rt_realloc(void *rmem, rt_size_t newsize)
 {
     rt_base_t level;
     void *nptr;
@@ -1554,7 +1603,7 @@ RTM_EXPORT(rt_realloc);
  *
  * @return pointer to allocated memory / NULL pointer if there is an error.
  */
-RT_WEAK void *rt_calloc(rt_size_t count, rt_size_t size)
+rt_weak void *rt_calloc(rt_size_t count, rt_size_t size)
 {
     void *p;
 
@@ -1575,7 +1624,7 @@ RTM_EXPORT(rt_calloc);
  *
  * @param rmem the address of memory which will be released.
  */
-RT_WEAK void rt_free(void *rmem)
+rt_weak void rt_free(void *rmem)
 {
     rt_base_t level;
 
@@ -1601,7 +1650,7 @@ RTM_EXPORT(rt_free);
 *
 * @param max_used is a pointer to get the maximum memory used.
 */
-RT_WEAK void rt_memory_info(rt_size_t *total,
+rt_weak void rt_memory_info(rt_size_t *total,
                             rt_size_t *used,
                             rt_size_t *max_used)
 {
@@ -1654,7 +1703,7 @@ void rt_page_free(void *addr, rt_size_t npages)
  * @return The memory block address was returned successfully, otherwise it was
  *         returned empty RT_NULL.
  */
-RT_WEAK void *rt_malloc_align(rt_size_t size, rt_size_t align)
+rt_weak void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
     void *ptr;
     void *align_ptr;
@@ -1700,9 +1749,9 @@ RTM_EXPORT(rt_malloc_align);
  *
  * @param ptr is the memory block pointer.
  */
-RT_WEAK void rt_free_align(void *ptr)
+rt_weak void rt_free_align(void *ptr)
 {
-    void *real_ptr;
+    void *real_ptr = RT_NULL;
 
     /* NULL check */
     if (ptr == RT_NULL) return;

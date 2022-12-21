@@ -47,7 +47,7 @@ struct rt_link_receive_buffer *rt_link_hw_buffer_init(void *parameter)
 
 static rt_size_t rt_link_hw_buffer_write(void *data, rt_size_t count)
 {
-    int surplus = 0;
+    rt_size_t surplus = 0;
     if (rx_buffer == RT_NULL)
     {
         return 0;

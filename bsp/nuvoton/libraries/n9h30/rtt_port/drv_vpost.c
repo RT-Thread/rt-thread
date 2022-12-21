@@ -46,7 +46,8 @@ struct nu_vpost
 };
 typedef struct nu_vpost *nu_vpost_t;
 
-static volatile uint32_t g_u32VSyncBlank = 0;
+static volatile uint32_t s_u32VSyncBlank = 0;
+static volatile uint32_t s_u32UnderRun = 0;
 static struct rt_completion vsync_wq;
 
 static struct nu_vpost nu_fbdev[eVpost_Cnt] =
@@ -69,9 +70,9 @@ static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 #endif
 };
 
-RT_WEAK void nu_lcd_backlight_on(void) { }
+rt_weak void nu_lcd_backlight_on(void) { }
 
-RT_WEAK void nu_lcd_backlight_off(void) { }
+rt_weak void nu_lcd_backlight_off(void) { }
 static rt_err_t vpost_layer_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_vpost_t psVpost = (nu_vpost_t)dev;
@@ -178,7 +179,7 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
         {
             uint8_t *pu8BufPtr = (uint8_t *)args;
 
-            psVpost->last_commit = g_u32VSyncBlank;
+            psVpost->last_commit = s_u32VSyncBlank;
 
             /* Pan display */
             switch (psVpost->layer)
@@ -206,9 +207,9 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
     case RTGRAPHIC_CTRL_WAIT_VSYNC:
     {
         if (args != RT_NULL)
-            psVpost->last_commit = g_u32VSyncBlank + 1;
+            psVpost->last_commit = s_u32VSyncBlank + 1;
 
-        if (psVpost->last_commit >= g_u32VSyncBlank)
+        if (psVpost->last_commit >= s_u32VSyncBlank)
         {
             rt_completion_init(&vsync_wq);
             rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / 60);
@@ -238,6 +239,26 @@ static rt_err_t vpost_layer_init(rt_device_t dev)
     return RT_EOK;
 }
 
+
+static void nu_vpost_calculate_fps(void)
+{
+#define DEF_PERIOD_SEC  10
+    static uint32_t u32LastTick = 0;
+    static uint32_t u32VSyncBlank = 0;
+    static uint32_t u32UnderRun = 0;
+    uint32_t u32CurrTick = rt_tick_get();
+
+    if ((u32CurrTick - u32LastTick) > (DEF_PERIOD_SEC * RT_TICK_PER_SECOND))
+    {
+        rt_kprintf("VPOST: %d FPS, URPS: %d\n",
+                   (s_u32VSyncBlank - u32VSyncBlank) / DEF_PERIOD_SEC,
+                   (s_u32UnderRun - u32UnderRun) / DEF_PERIOD_SEC);
+        u32LastTick = u32CurrTick;
+        u32VSyncBlank = s_u32VSyncBlank;
+        u32UnderRun = s_u32UnderRun;
+    }
+}
+
 static void nu_vpost_isr(int vector, void *param)
 {
     /*
@@ -255,17 +276,20 @@ static void nu_vpost_isr(int vector, void *param)
     {
         outpw(REG_LCM_INT_CS, inpw(REG_LCM_INT_CS) | VPOSTB_DISP_F_STATUS);
 
-        g_u32VSyncBlank++;
+        s_u32VSyncBlank++;
         rt_completion_done(&vsync_wq);
     }
     else if (u32VpostIRQStatus & VPOSTB_UNDERRUN_INT)
     {
+        s_u32UnderRun++;
         outpw(REG_LCM_INT_CS, inpw(REG_LCM_INT_CS) | VPOSTB_UNDERRUN_INT);
     }
     else if (u32VpostIRQStatus & VPOSTB_BUS_ERROR_INT)
     {
         outpw(REG_LCM_INT_CS, inpw(REG_LCM_INT_CS) | VPOSTB_BUS_ERROR_INT);
     }
+
+    nu_vpost_calculate_fps();
 }
 
 int rt_hw_vpost_init(void)
@@ -283,6 +307,9 @@ int rt_hw_vpost_init(void)
 
         /* LCD clock is selected from UPLL and divide to 30MHz */
         //outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0x918);
+
+        /* LCD clock is selected from UPLL and divide to 33.3MHz */
+        //outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0x818);
     }
     else
     {

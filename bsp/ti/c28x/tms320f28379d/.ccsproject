@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVersion value="8.1.0"/>
+	<deviceVariant value="TMS320C28XX.TMS320F28379D"/>
+	<deviceFamily value="C2000"/>
+	<deviceEndianness value="little"/>
+	<codegenToolVersion value="18.1.3.LTS"/>
+	<isElfFormat value="false"/>
+	<connection value="common/targetdb/connections/TIXDS100v2_Connection.xml"/>
+	<linkerCommandFile value="2837x_FLASH_lnk_cpu1.cmd"/>
+	<rts value="libc.a"/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate"/>
+	<filesToOpen value="main.c"/>
+	<isTargetManual value="true"/>
+</projectOptions>

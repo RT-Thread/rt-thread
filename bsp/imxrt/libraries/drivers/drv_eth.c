@@ -112,11 +112,11 @@ struct rt_imxrt_eth
 };
 
 AT_NONCACHEABLE_SECTION_ALIGN(static enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM], ENET_BUFF_ALIGNMENT);
-ALIGN(ENET_BUFF_ALIGNMENT)
+rt_align(ENET_BUFF_ALIGNMENT)
 rt_uint8_t g_txDataBuff[ENET_TXBD_NUM][RT_ALIGN(ENET_TXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
 AT_NONCACHEABLE_SECTION_ALIGN(static enet_rx_bd_struct_t g_rxBuffDescrip[ENET_RXBD_NUM], ENET_BUFF_ALIGNMENT);
-ALIGN(ENET_BUFF_ALIGNMENT)
+rt_align(ENET_BUFF_ALIGNMENT)
 rt_uint8_t g_rxDataBuff[ENET_RXBD_NUM][RT_ALIGN(ENET_RXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
 static struct rt_imxrt_eth imxrt_eth_device;
@@ -703,7 +703,7 @@ static status_t _ENET_SendFrame(ENET_Type *base,
                     if (sizeleft > handle->txBuffSizeAlign[ringId])
                     {
                         /* Data copy. */
-                        (void)memcpy((void *)(uint32_t *)address, (void *)(uint32_t *)src,
+                        (void)rt_memcpy((void *)(uint32_t *)address, (void *)(uint32_t *)src,
                                      handle->txBuffSizeAlign[ringId]);
 #if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
                         if (handle->txMaintainEnable[ringId])
@@ -733,7 +733,7 @@ static status_t _ENET_SendFrame(ENET_Type *base,
                     }
                     else
                     {
-                        (void)memcpy((void *)(uint32_t *)address, (void *)(uint32_t *)src, sizeleft);
+                        (void)rt_memcpy((void *)(uint32_t *)address, (void *)(uint32_t *)src, sizeleft);
 #if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
                         if (handle->txMaintainEnable[ringId])
                         {
@@ -893,7 +893,7 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
 #else
                 address = (uint32_t)curBuffDescrip->buffer;
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-                memcpy((void *)address, data + len, handle->txBuffSizeAlign[0]);
+                rt_memcpy((void *)address, data + len, handle->txBuffSizeAlign[0]);
                 /* Data length update. */
                 curBuffDescrip->length = handle->txBuffSizeAlign[0];
                 len += handle->txBuffSizeAlign[0];
@@ -910,7 +910,7 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
 #else
                 address = (uint32_t)curBuffDescrip->buffer;
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
-                memcpy((void *)address, data + len, sizeleft);
+                rt_memcpy((void *)address, data + len, sizeleft);
                 curBuffDescrip->length = sizeleft;
                 /* Set Last buffer wrap flag. */
                 curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK;

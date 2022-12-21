@@ -23,6 +23,12 @@ menu "Nuvoton Packages Config"
         select RT_USING_SENSOR
         default n
 
+    config NU_PKG_USING_NCT7717U
+        bool "NCT7717U Temperature sensor."
+        select RT_USING_I2C
+        select RT_USING_SENSOR
+        default n
+
     config NU_PKG_USING_NAU88L25
         bool "NAU88L25 Audio Codec."
         select BSP_USING_I2C
@@ -193,19 +199,15 @@ menu "Nuvoton Packages Config"
             prompt "Select TPC drivers"
             config NU_PKG_USING_TPC_ILI
                 bool "ILI Series TPC"
-                default n
 
             config NU_PKG_USING_TPC_GT911
                 bool "GT911 TPC"
-                default n
 
             config NU_PKG_USING_TPC_FT5446
                 bool "FT5446 TPC"
-                default n
 
             config NU_PKG_USING_TPC_ST1663I
                 bool "ST1663I TPC"
-                default n
 
         endchoice
 

@@ -1,0 +1,13 @@
+# RT-Thread building script for component
+Import('RTT_ROOT')
+
+from building import *
+
+cwd = GetCurrentDir()
+group = []
+if GetDepend('NU_PKG_USING_DA9062'):
+	src = Glob('*.c') + Glob('*.cpp')
+	CPPPATH = [cwd]
+	group = DefineGroup('nu_pkgs_da9062', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

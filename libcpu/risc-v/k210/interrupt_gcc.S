@@ -9,6 +9,7 @@
  * 2018/12/27     Jesven       Add SMP schedule
  */
 
+#define __ASSEMBLY__
 #include "cpuport.h"
 
   .section      .text.entry
