@@ -1,8 +1,8 @@
-# xxx 开发板的Arduino生态兼容说明
+# 大疆STM32F407 Robomaster C型开发板的Arduino生态兼容说明
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
-stm32f407-robomaster-c 开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
+大疆STM32F407 Robomaster C型开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
 
 ### 1.1 如何开启针对本BSP的Arduino生态兼容层
 
