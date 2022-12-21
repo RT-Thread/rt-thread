@@ -107,6 +107,7 @@ jobs:
          - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf5340", RTT_TOOL_CHAIN: "sourcery-arm"}         
          - {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f072-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
