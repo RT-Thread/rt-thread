@@ -306,13 +306,21 @@ static void rt_thread_system_entry(void *parameter)
 void rt_thread_idle_init(void)
 {
     rt_ubase_t i;
+#if RT_NAME_MAX > 0
     char idle_thread_name[RT_NAME_MAX];
+#endif /* RT_NAME_MAX > 0 */
 
     for (i = 0; i < _CPUS_NR; i++)
     {
-        rt_sprintf(idle_thread_name, "tidle%d", i);
+#if RT_NAME_MAX > 0
+        rt_snprintf(idle_thread_name, RT_NAME_MAX, "tidle%d", i);
+#endif /* RT_NAME_MAX > 0 */
         rt_thread_init(&idle_thread[i],
+#if RT_NAME_MAX > 0
                 idle_thread_name,
+#else
+                "tidle",
+#endif /* RT_NAME_MAX > 0 */
                 idle_thread_entry,
                 RT_NULL,
                 &idle_thread_stack[i][0],
