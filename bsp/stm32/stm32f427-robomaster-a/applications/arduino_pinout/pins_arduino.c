@@ -30,7 +30,7 @@ const pin_map_t pin_map_table[]=
     {D6, GET_PIN(E,1), "uart8"},        /* Serial-TX */
     {D7, GET_PIN(E,7), "uart7"},        /* Serial-RX */
     {D8, GET_PIN(E,8), "uart7"},        /* Serial-TX */
-    {D9, GET_PIN(H,6), "pwm12", 1},     /* PWM */
+    {D9, GET_PIN(H,6), "pwm12", 1},     /* BSP: Buzzer, PWM */
     {D10, GET_PIN(D,12), "pwm4", 1},    /* PWM */
     {D11, GET_PIN(D,13), "pwm4", 2},    /* PWM */
     {D12, GET_PIN(D,14), "pwm4", 3},    /* PWM */
