@@ -30,7 +30,7 @@ Hardware Drivers Config --->
 | 6 (D6) | PE1 | 是/否 | Serial-TX，默认被RT-Thread的UART设备框架uart8接管 |
 | 7 (D7) | PE7 | 是/否 | Serial-RX，默认被RT-Thread的UART设备框架uart7接管 |
 | 8 (D8) | PE8 | 是/否 | Serial-TX，默认被RT-Thread的UART设备框架uart7接管 |
-| 9 (D9) | PH6 | 是/否 | PWM12-CH1，默认被RT-Thread的PWM设备框架pwm12接管 |
+| 9 (D9) | PH6 | 是/否 | 板载蜂鸣器，PWM12-CH1，默认被RT-Thread的PWM设备框架pwm12接管 |
 | 10 (D10) | PD12 | 是/否 | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管 |
 | 11 (D11) | PD13 | 是/否 | PWM4-CH2，默认被RT-Thread的PWM设备框架pwm4接管 |
 | 12 (D12) | PD14 | 是/否 | PWM4-CH3，默认被RT-Thread的PWM设备框架pwm4接管 |
@@ -67,7 +67,3 @@ Hardware Drivers Config --->
 | 43 (D43) | PI9 | 是/否 |  |
 | 44 (A0) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 45 (A1) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
-
-> 注意：
->
-> 1. 9 (D9) | PH6 | PWM12-CH1 为板载蜂鸣器PWM源
