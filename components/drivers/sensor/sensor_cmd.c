@@ -362,7 +362,7 @@ static void sensor_fifo_rx_entry(void *parameter)
     struct rt_sensor_data *data = RT_NULL;
     rt_size_t res, i;
 
-    data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * sensor->info.fifo_max);
+    data = (struct rt_sensor_data *)rt_calloc(sensor->info.fifo_max, sizeof(struct rt_sensor_data));
     if (data == RT_NULL)
     {
         LOG_E("Memory allocation failed!");
@@ -564,7 +564,6 @@ static void sensor(int argc, char **argv)
         rt_kprintf("name      :%s\n", sensor->info.name);
         rt_kprintf("type:     :%s\n", sensor_get_type_name(&sensor->info));
         rt_kprintf("vendor    :%s\n", sensor_get_vendor_name(&sensor->info));
-        rt_kprintf("interface :%s\n", sensor_get_intf_name(sensor));
         rt_kprintf("unit      :%s\n", sensor_get_unit_name(&sensor->info));
         rt_kprintf("fetch data:%s\n", sensor_get_fetch_mode_name(&sensor->info));
         rt_kprintf("power     :%s\n", sensor_get_power_mode_name(&sensor->info));
@@ -575,6 +574,8 @@ static void sensor(int argc, char **argv)
         rt_kprintf("error     :%f\n", sensor->info.accuracy.error);
         rt_kprintf("acquire min:%fms\n", sensor->info.acquire_min);
         rt_kprintf("fifo max  :%d\n", sensor->info.fifo_max);
+        rt_kprintf("interface type   :%s\n", sensor_get_intf_name(sensor));
+        rt_kprintf("interface device :%s\n", sensor->config.intf.dev_name);
     }
     else if (!strcmp(argv[1], "read"))
     {
