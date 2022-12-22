@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-01-31     flybreak     first version
+ * 2022-12-17     Meco Man     re-implement sensor framework
  */
 
 #ifndef __SENSOR_H__
@@ -32,54 +33,54 @@ extern "C" {
 #define RT_SENSOR_MACRO_GET_NAME(macro) (macro##_STR)
 
 /* Sensor types */
-#define RT_SENSOR_CLASS_NONE           (0)
-#define RT_SENSOR_CLASS_NONE_STR       "None"
-#define RT_SENSOR_CLASS_ACCE           (1)
-#define RT_SENSOR_CLASS_ACCE_STR       "Accelerometer"
-#define RT_SENSOR_CLASS_GYRO           (2)
-#define RT_SENSOR_CLASS_GYRO_STR       "Gyroscope"
-#define RT_SENSOR_CLASS_MAG            (3)
-#define RT_SENSOR_CLASS_MAG_STR        "Magnetometer"
-#define RT_SENSOR_CLASS_TEMP           (4)
-#define RT_SENSOR_CLASS_TEMP_STR       "Temperature"
-#define RT_SENSOR_CLASS_HUMI           (5)
-#define RT_SENSOR_CLASS_HUMI_STR       "Relative Humidity"
-#define RT_SENSOR_CLASS_BARO           (6)
-#define RT_SENSOR_CLASS_BARO_STR       "Barometer"
-#define RT_SENSOR_CLASS_LIGHT          (7)
-#define RT_SENSOR_CLASS_LIGHT_STR      "Ambient light"
-#define RT_SENSOR_CLASS_PROXIMITY      (8)
-#define RT_SENSOR_CLASS_PROXIMITY_STR  "Proximity"
-#define RT_SENSOR_CLASS_HR             (9)
-#define RT_SENSOR_CLASS_HR_STR         "Heart Rate"
-#define RT_SENSOR_CLASS_TVOC           (10)
-#define RT_SENSOR_CLASS_TVOC_STR       "TVOC Level"
-#define RT_SENSOR_CLASS_NOISE          (11)
-#define RT_SENSOR_CLASS_NOISE_STR      "Noise Loudness"
-#define RT_SENSOR_CLASS_STEP           (12)
-#define RT_SENSOR_CLASS_STEP_STR       "Step"
-#define RT_SENSOR_CLASS_FORCE          (13)
-#define RT_SENSOR_CLASS_FORCE_STR      "Force"
-#define RT_SENSOR_CLASS_DUST           (14)
-#define RT_SENSOR_CLASS_DUST_STR       "Dust"
-#define RT_SENSOR_CLASS_ECO2           (15)
-#define RT_SENSOR_CLASS_ECO2_STR       "eCO2"
-#define RT_SENSOR_CLASS_GNSS           (16)
-#define RT_SENSOR_CLASS_GNSS_STR       "GNSS"
-#define RT_SENSOR_CLASS_TOF            (17)
-#define RT_SENSOR_CLASS_TOF_STR        "ToF"
-#define RT_SENSOR_CLASS_SPO2           (18)
-#define RT_SENSOR_CLASS_SPO2_STR       "SpO2"
-#define RT_SENSOR_CLASS_IAQ            (19)
-#define RT_SENSOR_CLASS_IAQ_STR        "IAQ"
-#define RT_SENSOR_CLASS_ETOH           (20)
-#define RT_SENSOR_CLASS_ETOH_STR       "EtOH"
-#define RT_SENSOR_CLASS_BP             (21)
-#define RT_SENSOR_CLASS_BP_STR         "Blood Pressure"
-#define RT_SENSOR_CLASS_VOLTAGE        (22)
-#define RT_SENSOR_CLASS_VOLTAGE_STR    "Voltage"
-#define RT_SENSOR_CLASS_CURRENT        (23)
-#define RT_SENSOR_CLASS_CURRENT_STR    "Current"
+#define RT_SENSOR_TYPE_NONE           (0)
+#define RT_SENSOR_TYPE_NONE_STR       "None"
+#define RT_SENSOR_TYPE_ACCE           (1)
+#define RT_SENSOR_TYPE_ACCE_STR       "Accelerometer"
+#define RT_SENSOR_TYPE_GYRO           (2)
+#define RT_SENSOR_TYPE_GYRO_STR       "Gyroscope"
+#define RT_SENSOR_TYPE_MAG            (3)
+#define RT_SENSOR_TYPE_MAG_STR        "Magnetometer"
+#define RT_SENSOR_TYPE_TEMP           (4)
+#define RT_SENSOR_TYPE_TEMP_STR       "Temperature"
+#define RT_SENSOR_TYPE_HUMI           (5)
+#define RT_SENSOR_TYPE_HUMI_STR       "Relative Humidity"
+#define RT_SENSOR_TYPE_BARO           (6)
+#define RT_SENSOR_TYPE_BARO_STR       "Barometer"
+#define RT_SENSOR_TYPE_LIGHT          (7)
+#define RT_SENSOR_TYPE_LIGHT_STR      "Ambient light"
+#define RT_SENSOR_TYPE_PROXIMITY      (8)
+#define RT_SENSOR_TYPE_PROXIMITY_STR  "Proximity"
+#define RT_SENSOR_TYPE_HR             (9)
+#define RT_SENSOR_TYPE_HR_STR         "Heart Rate"
+#define RT_SENSOR_TYPE_TVOC           (10)
+#define RT_SENSOR_TYPE_TVOC_STR       "TVOC Level"
+#define RT_SENSOR_TYPE_NOISE          (11)
+#define RT_SENSOR_TYPE_NOISE_STR      "Noise Loudness"
+#define RT_SENSOR_TYPE_STEP           (12)
+#define RT_SENSOR_TYPE_STEP_STR       "Step"
+#define RT_SENSOR_TYPE_FORCE          (13)
+#define RT_SENSOR_TYPE_FORCE_STR      "Force"
+#define RT_SENSOR_TYPE_DUST           (14)
+#define RT_SENSOR_TYPE_DUST_STR       "Dust"
+#define RT_SENSOR_TYPE_ECO2           (15)
+#define RT_SENSOR_TYPE_ECO2_STR       "eCO2"
+#define RT_SENSOR_TYPE_GNSS           (16)
+#define RT_SENSOR_TYPE_GNSS_STR       "GNSS"
+#define RT_SENSOR_TYPE_TOF            (17)
+#define RT_SENSOR_TYPE_TOF_STR        "ToF"
+#define RT_SENSOR_TYPE_SPO2           (18)
+#define RT_SENSOR_TYPE_SPO2_STR       "SpO2"
+#define RT_SENSOR_TYPE_IAQ            (19)
+#define RT_SENSOR_TYPE_IAQ_STR        "IAQ"
+#define RT_SENSOR_TYPE_ETOH           (20)
+#define RT_SENSOR_TYPE_ETOH_STR       "EtOH"
+#define RT_SENSOR_TYPE_BP             (21)
+#define RT_SENSOR_TYPE_BP_STR         "Blood Pressure"
+#define RT_SENSOR_TYPE_VOLTAGE        (22)
+#define RT_SENSOR_TYPE_VOLTAGE_STR    "Voltage"
+#define RT_SENSOR_TYPE_CURRENT        (23)
+#define RT_SENSOR_TYPE_CURRENT_STR    "Current"
 
 /* Sensor vendor types */
 #define RT_SENSOR_VENDOR_UNKNOWN       (0)
@@ -186,33 +187,76 @@ extern "C" {
 #define RT_SENSOR_INTF_UART_STR       "UART"
 #define RT_SENSOR_INTF_ONEWIRE        (1 << 3)
 #define RT_SENSOR_INTF_ONEWIRE_STR    "1-Wire"
+#define RT_SENSOR_INTF_CAN            (1 << 4)
+#define RT_SENSOR_INTF_CAN_STR        "CAN"
+#define RT_SENSOR_INTF_MODBUS         (1 << 5)
+#define RT_SENSOR_INTF_MODBUS_STR     "Modbus"
 
-/* Sensor power mode types */
-#define RT_SENSOR_POWER_NONE          (0)
-#define RT_SENSOR_POWER_NONE_STR      "None"
-#define RT_SENSOR_POWER_DOWN          (1)  /* power down mode   */
-#define RT_SENSOR_POWER_DOWN_STR      "Down"
-#define RT_SENSOR_POWER_NORMAL        (2)  /* normal-power mode */
-#define RT_SENSOR_POWER_NORMAL_STR    "Normal"
-#define RT_SENSOR_POWER_LOW           (3)  /* low-power mode    */
-#define RT_SENSOR_POWER_LOW_STR       "Low"
-#define RT_SENSOR_POWER_HIGH          (4)  /* high-power mode   */
-#define RT_SENSOR_POWER_HIGH_STR      "High"
+/**
+ *                 Sensor mode
+ *              rt_uint16_t mode
+ *   0000   |    0000    |   0000   |    0000
+ *  unused     accuracy      power     fetch data
+ */
+#define RT_SENSOR_MODE_ACCURACY_BIT_OFFSET    (8)
+#define RT_SENSOR_MODE_POWER_BIT_OFFSET       (4)
+#define RT_SENSOR_MODE_FETCH_BIT_OFFSET       (0)
 
-/* Sensor work mode types */
-#define RT_SENSOR_MODE_NONE           (0)
-#define RT_SENSOR_MODE_POLLING        (1)  /* One shot only read a data */
-#define RT_SENSOR_MODE_INT            (2)  /* TODO: One shot interrupt only read a data */
-#define RT_SENSOR_MODE_FIFO           (3)  /* TODO: One shot interrupt read all fifo data */
+#define RT_SENSOR_MODE_GET_ACCURACY(mode)     (rt_uint8_t)((mode >> RT_SENSOR_MODE_ACCURACY_BIT_OFFSET) & 0x0F)
+#define RT_SENSOR_MODE_GET_POWER(mode)        (rt_uint8_t)((mode >> RT_SENSOR_MODE_POWER_BIT_OFFSET) & 0x0F)
+#define RT_SENSOR_MODE_GET_FETCH(mode)        (rt_uint8_t)((mode >> RT_SENSOR_MODE_FETCH_BIT_OFFSET) & 0x0F)
+
+#define RT_SENSOR_MODE_CLEAR_ACCURACY(mode)   (mode &= ((rt_uint16_t)~((rt_uint16_t)0x0F << RT_SENSOR_MODE_ACCURACY_BIT_OFFSET)))
+#define RT_SENSOR_MODE_CLEAR_POWER(mode)      (mode &= ((rt_uint16_t)~((rt_uint16_t)0x0F << RT_SENSOR_MODE_POWER_BIT_OFFSET)))
+#define RT_SENSOR_MODE_CLEAR_FETCH(mode)      (mode &= ((rt_uint16_t)~((rt_uint16_t)0x0F << RT_SENSOR_MODE_FETCH_BIT_OFFSET)))
+
+#define RT_SENSOR_MODE_SET_ACCURACY(mode, accuracy_mode) RT_SENSOR_MODE_CLEAR_ACCURACY(mode); (mode |= (accuracy_mode << RT_SENSOR_MODE_ACCURACY_BIT_OFFSET))
+#define RT_SENSOR_MODE_SET_POWER(mode, power_mode)       RT_SENSOR_MODE_CLEAR_POWER(mode); (mode |= (power_mode << RT_SENSOR_MODE_POWER_BIT_OFFSET))
+#define RT_SENSOR_MODE_SET_FETCH(mode, fetch_mode)       RT_SENSOR_MODE_CLEAR_FETCH(mode); (mode |= (fetch_mode << RT_SENSOR_MODE_FETCH_BIT_OFFSET))
+
+/* Sensor mode: accuracy */
+#define RT_SENSOR_MODE_ACCURACY_HIGHEST       (0)
+#define RT_SENSOR_MODE_ACCURACY_HIGHEST_STR   "Accuracy Highest"
+#define RT_SENSOR_MODE_ACCURACY_HIGH          (1)
+#define RT_SENSOR_MODE_ACCURACY_HIGH_STR      "Accuracy High"
+#define RT_SENSOR_MODE_ACCURACY_MEDIUM        (2)
+#define RT_SENSOR_MODE_ACCURACY_MEDIUM_STR    "Accuracy Medium"
+#define RT_SENSOR_MODE_ACCURACY_LOW           (4)
+#define RT_SENSOR_MODE_ACCURACY_LOW_STR       "Accuracy Low"
+#define RT_SENSOR_MODE_ACCURACY_LOWEST        (5)
+#define RT_SENSOR_MODE_ACCURACY_LOWEST_STR    "Accuracy Lowest"
+#define RT_SENSOR_MODE_ACCURACY_NOTRUST       (6)
+#define RT_SENSOR_MODE_ACCURACY_NOTRUST_STR   "Accuracy No Trust"
+
+/* Sensor mode: power */
+#define RT_SENSOR_MODE_POWER_HIGHEST          (0)
+#define RT_SENSOR_MODE_POWER_HIGHEST_STR      "Power Highest"
+#define RT_SENSOR_MODE_POWER_HIGH             (1)
+#define RT_SENSOR_MODE_POWER_HIGH_STR         "Power High"
+#define RT_SENSOR_MODE_POWER_MEDIUM           (2)
+#define RT_SENSOR_MODE_POWER_MEDIUM_STR       "Power Medium"
+#define RT_SENSOR_MODE_POWER_LOW              (3)
+#define RT_SENSOR_MODE_POWER_LOW_STR          "Power Low"
+#define RT_SENSOR_MODE_POWER_LOWEST           (4)
+#define RT_SENSOR_MODE_POWER_LOWEST_STR       "Power Lowest"
+#define RT_SENSOR_MODE_POWER_DOWN             (5)
+#define RT_SENSOR_MODE_POWER_DOWN_STR         "Power Down"
+
+/* Sensor mode: fetch data */
+#define RT_SENSOR_MODE_FETCH_POLLING          (0)  /* One shot only read a data */
+#define RT_SENSOR_MODE_FETCH_POLLING_STR      "Polling Mode"
+#define RT_SENSOR_MODE_FETCH_INT              (1)  /* TODO: One shot interrupt only read a data */
+#define RT_SENSOR_MODE_FETCH_INT_STR          "Interrupt Mode"
+#define RT_SENSOR_MODE_FETCH_FIFO             (2)  /* TODO: One shot interrupt read all fifo data */
+#define RT_SENSOR_MODE_FETCH_FIFO_STR         "FIFO Mode"
 
 /* Sensor control cmd types */
-#define RT_SENSOR_CTRL_GET_ID         (RT_DEVICE_CTRL_BASE(Sensor) + 0)  /* Get device id */
-#define RT_SENSOR_CTRL_GET_INFO       (RT_DEVICE_CTRL_BASE(Sensor) + 1)  /* Get sensor info */
-#define RT_SENSOR_CTRL_SET_RANGE      (RT_DEVICE_CTRL_BASE(Sensor) + 2)  /* Set the measure range of sensor. unit is info of sensor */
-#define RT_SENSOR_CTRL_SET_ODR        (RT_DEVICE_CTRL_BASE(Sensor) + 3)  /* Set output date rate. unit is HZ */
-#define RT_SENSOR_CTRL_SET_MODE       (RT_DEVICE_CTRL_BASE(Sensor) + 4)  /* Set sensor's work mode. ex. RT_SENSOR_MODE_POLLING,RT_SENSOR_MODE_INT */
-#define RT_SENSOR_CTRL_SET_POWER      (RT_DEVICE_CTRL_BASE(Sensor) + 5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
-#define RT_SENSOR_CTRL_SELF_TEST      (RT_DEVICE_CTRL_BASE(Sensor) + 6)  /* Take a self test */
+#define RT_SENSOR_CTRL_GET_ID                 (RT_DEVICE_CTRL_BASE(Sensor) + 0)  /* Get device id */
+#define RT_SENSOR_CTRL_SELF_TEST              (RT_DEVICE_CTRL_BASE(Sensor) + 1)  /* Take a self test */
+#define RT_SENSOR_CTRL_SOFT_RESET             (RT_DEVICE_CTRL_BASE(Sensor) + 2)  /* soft reset sensor */
+#define RT_SENSOR_CTRL_SET_FETCH_MODE         (RT_DEVICE_CTRL_BASE(Sensor) + 3)  /* set fetch data mode */
+#define RT_SENSOR_CTRL_SET_POWER_MODE         (RT_DEVICE_CTRL_BASE(Sensor) + 4)  /* set power mode */
+#define RT_SENSOR_CTRL_SET_ACCURACY_MODE      (RT_DEVICE_CTRL_BASE(Sensor) + 5)  /* set accuracy mode */
 
 #define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
 
@@ -223,17 +267,30 @@ typedef double rt_sensor_float_t;
 typedef float rt_sensor_float_t;
 #endif /* RT_USING_SENSOR_DOUBLE_FLOAT */
 
+struct rt_sensor_accuracy
+{
+    rt_sensor_float_t resolution;           /* resolution of sesnor measurement */
+    rt_sensor_float_t error;                /* error of sesnor measurement */
+};
+
+struct rt_sensor_scale
+{
+    rt_sensor_float_t range_max;            /* maximum range of this sensor's value. unit is 'unit' */
+    rt_sensor_float_t range_min;            /* minimum range of this sensor's value. unit is 'unit' */
+};
+
 struct rt_sensor_info
 {
-    rt_uint8_t     type;                    /* The sensor type */
-    rt_uint8_t     vendor;                  /* Vendor of sensors */
-    const char    *model;                   /* model name of sensor */
+    rt_uint8_t     type;                    /* sensor type */
+    rt_uint8_t     vendor;                  /* sensors vendor */
+    const char    *name;                    /* name of sensor */
     rt_uint8_t     unit;                    /* unit of measurement */
-    rt_uint8_t     intf_type;               /* Communication interface type */
-    rt_int32_t     range_max;               /* maximum range of this sensor's value. unit is 'unit' */
-    rt_int32_t     range_min;               /* minimum range of this sensor's value. unit is 'unit' */
-    rt_uint32_t    period_min;              /* Minimum measurement period,unit:ms. zero = not a constant rate */
+    rt_uint8_t     intf_type;               /* communication interface type */
+    rt_uint16_t    mode;                    /* sensor work mode */
     rt_uint8_t     fifo_max;
+    rt_sensor_float_t acquire_min;          /* minimum acquirement period, unit:ms. zero = not a constant rate */
+    struct rt_sensor_accuracy accuracy;     /* sensor current measure accuracy */
+    struct rt_sensor_scale scale;           /* sensor current scale range */
 };
 
 struct rt_sensor_intf
@@ -247,15 +304,13 @@ struct rt_sensor_config
 {
     struct rt_sensor_intf        intf;      /* sensor interface config */
     struct rt_device_pin_mode    irq_pin;   /* Interrupt pin, The purpose of this pin is to notification read data */
-    rt_uint8_t                   mode;      /* sensor work mode */
-    rt_uint8_t                   power;     /* sensor power mode */
-    rt_uint16_t                  odr;       /* sensor out data rate */
-    rt_int32_t                   range;     /* sensor range of measurement */
 };
 
 typedef struct rt_sensor_device *rt_sensor_t;
 typedef struct rt_sensor_data   *rt_sensor_data_t;
 typedef struct rt_sensor_info   *rt_sensor_info_t;
+typedef struct rt_sensor_accuracy *rt_sensor_accuracy_t;
+typedef struct rt_sensor_scale  *rt_sensor_scale_t;
 
 struct rt_sensor_device
 {
