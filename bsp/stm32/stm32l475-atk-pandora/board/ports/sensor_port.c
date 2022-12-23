@@ -27,8 +27,26 @@ static int rt_hw_icm20608_port(void)
     return RT_EOK;
 }
 INIT_ENV_EXPORT(rt_hw_icm20608_port);
+#endif /* BSP_USING_ICM20608 */
 
-#endif
+#ifdef BSP_USING_AP3216C
+#include <sensor_lsc_ap3216c.h>
+
+static int rt_hw_ap3216c_port(void)
+{
+    struct rt_sensor_config cfg;
+
+    cfg.intf.dev_name  = "i2c3";
+    cfg.intf.type = RT_SENSOR_INTF_I2C;
+    cfg.intf.arg = RT_NULL;
+    cfg.irq_pin.pin  = RT_PIN_NONE;
+
+    rt_hw_ap3216c_init("ap3216c", &cfg);
+
+    return RT_EOK;
+}
+INIT_ENV_EXPORT(rt_hw_ap3216c_port);
+#endif /* BSP_USING_AP3216C */
 
 #ifdef BSP_USING_AHT10
 #include <sensor_asair_aht10.h>
@@ -47,4 +65,4 @@ static int rt_hw_aht10_port(void)
     return RT_EOK;
 }
 INIT_ENV_EXPORT(rt_hw_aht10_port);
-#endif
+#endif /* BSP_USING_AHT10 */
