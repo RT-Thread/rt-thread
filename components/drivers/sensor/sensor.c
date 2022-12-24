@@ -493,5 +493,10 @@ int rt_hw_sensor_register(rt_sensor_t    sensor,
 
     LOG_I("sensor[%s] init success", device_name);
     rt_free(device_name);
+
+    /* set sensor accuracy and power as the hightest */
+    rt_device_control(device, RT_SENSOR_CTRL_SET_ACCURACY_MODE, RT_SENSOR_MODE_ACCURACY_HIGHEST);
+    rt_device_control(device, RT_SENSOR_CTRL_SET_POWER_MODE, RT_SENSOR_MODE_POWER_HIGHEST);
+
     return RT_EOK;
 }
