@@ -119,6 +119,8 @@ extern "C" {
 #define RT_SENSOR_VENDOR_MAXIM_STR     "Maxim Integrated"
 #define RT_SENSOR_VENDOR_MELEXIS       (17)
 #define RT_SENSOR_VENDOR_MELEXIS_STR   "Melexis"
+#define RT_SENSOR_VENDOR_LSC           (18)
+#define RT_SENSOR_VENDOR_LSC_STR       "Lite On"
 
 /* Sensor unit types */
 #define RT_SENSOR_UNIT_NONE           (0)  /* Dimensionless quantity */
