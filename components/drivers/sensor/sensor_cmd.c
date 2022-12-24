@@ -116,6 +116,8 @@ static const char *sensor_get_vendor_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MAXIM);
         case RT_SENSOR_VENDOR_MELEXIS:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MELEXIS);
+        case RT_SENSOR_VENDOR_LSC:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_LSC);
         case RT_SENSOR_VENDOR_UNKNOWN:
         default:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_UNKNOWN);
