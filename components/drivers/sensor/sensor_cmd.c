@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -422,9 +422,7 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_set_rx_indicate(dev, rx_callback);
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
-#endif
+MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
 
 static void sensor_irq_rx_entry(void *parameter)
 {
@@ -485,9 +483,7 @@ static void sensor_int(int argc, char **argv)
         return;
     }
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
-#endif
+MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
 
 static void sensor_polling(int argc, char **argv)
 {
@@ -533,9 +529,21 @@ static void sensor_polling(int argc, char **argv)
     }
     rt_device_close(dev);
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
-#endif
+MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
+
+static void sensor_cmd_warning_unknown(void)
+{
+    LOG_W("Unknown command, please enter 'sensor' get help information!");
+    rt_kprintf("sensor  [OPTION] [PARAM]\n");
+    rt_kprintf("         probe <dev_name>      probe sensor by given name\n");
+    rt_kprintf("         info                  get sensor information\n");
+    rt_kprintf("         read [num]            read [num] times sensor (default 5)\n");
+}
+
+static void sensor_cmd_warning_probe(void)
+{
+    LOG_W("Please probe sensor device first!");
+}
 
 static void sensor(int argc, char **argv)
 {
@@ -548,18 +556,14 @@ static void sensor(int argc, char **argv)
     /* If the number of arguments less than 2 */
     if (argc < 2)
     {
-        rt_kprintf("\n");
-        rt_kprintf("sensor  [OPTION] [PARAM]\n");
-        rt_kprintf("         probe <dev_name>      probe sensor by given name\n");
-        rt_kprintf("         info                  get sensor information\n");
-        rt_kprintf("         read [num]            read [num] times sensor (default 5)\n");
-        return ;
+        sensor_cmd_warning_unknown();
+        return;
     }
     else if (!strcmp(argv[1], "info"))
     {
         if (dev == RT_NULL)
         {
-            LOG_W("Please probe sensor device first!");
+            sensor_cmd_warning_probe();
             return ;
         }
         sensor = (rt_sensor_t)dev;
@@ -585,8 +589,8 @@ static void sensor(int argc, char **argv)
 
         if (dev == RT_NULL)
         {
-            LOG_W("Please probe sensor device first!");
-            return ;
+            sensor_cmd_warning_probe();
+            return;
         }
         if (argc == 3)
         {
@@ -610,49 +614,71 @@ static void sensor(int argc, char **argv)
             rt_thread_mdelay(delay);
         }
     }
-    else if (argc == 3)
+    else if (!strcmp(argv[1], "list"))
     {
-        if (!strcmp(argv[1], "probe"))
-        {
-            rt_uint8_t reg = 0xFF;
-            rt_device_t new_dev;
+        struct rt_object *object;
+        struct rt_list_node *node;
+        struct rt_object_information *information;
+        rt_sensor_t sensor_dev;
 
-            new_dev = rt_device_find(argv[2]);
-            if (new_dev == RT_NULL)
-            {
-                LOG_E("Can't find device:%s", argv[2]);
-                return;
-            }
-            if (rt_device_open(new_dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
-            {
-                LOG_E("open device failed!");
-                return;
-            }
-            if (rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg) == RT_EOK)
-            {
-                LOG_I("Sensor Chip ID: %#x", reg);
-            }
-            if (dev)
-            {
-                rt_device_close(dev);
-            }
-            dev = new_dev;
-        }
-        else if (dev == RT_NULL)
+        information = rt_object_get_information(RT_Object_Class_Device);
+        if(information == RT_NULL)
+            return;
+
+        rt_kprintf("device name sensor name       sensor type    resolution       mode \n");
+        rt_kprintf("----------- ------------- ------------------ ------------- ---------- \n");
+        for (node  = information->object_list.next;
+             node != &(information->object_list);
+             node  = node->next)
         {
-            LOG_W("Please probe sensor first!");
-            return ;
+            object = rt_list_entry(node, struct rt_object, list);
+            sensor_dev   = (rt_sensor_t)object;
+            if (sensor_dev->parent.type != RT_Device_Class_Sensor)
+                continue;
+
+            rt_kprintf("%-*.*s %-*s %-*s %f%-*s %s + %s + %s\n",
+            RT_NAME_MAX+3, RT_NAME_MAX, sensor_dev->parent.parent.name,
+            14, sensor_dev->info.name,
+            17, sensor_get_type_name(&sensor_dev->info),
+            sensor_dev->info.accuracy.resolution, 5, sensor_get_unit_name(&sensor_dev->info),
+            sensor_get_accuracy_mode_name(&sensor_dev->info), sensor_get_power_mode_name(&sensor_dev->info), sensor_get_fetch_mode_name(&sensor_dev->info));
         }
-        else
+    }
+    else if (!strcmp(argv[1], "probe"))
+    {
+        rt_uint8_t reg = 0xFF;
+        rt_device_t new_dev;
+
+        if (argc < 3)
         {
-            LOG_W("Unknown command, please enter 'sensor' get help information!");
+            sensor_cmd_warning_unknown();
+            return;
         }
+
+        new_dev = rt_device_find(argv[2]);
+        if (new_dev == RT_NULL)
+        {
+            LOG_E("Can't find device:%s", argv[2]);
+            return;
+        }
+        if (rt_device_open(new_dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        {
+            LOG_E("open device failed!");
+            return;
+        }
+        if (rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg) == RT_EOK)
+        {
+            LOG_I("Sensor Chip ID: %#x", reg);
+        }
+        if (dev)
+        {
+            rt_device_close(dev);
+        }
+        dev = new_dev;
     }
     else
     {
-        LOG_W("Unknown command, please enter 'sensor' get help information!");
+        sensor_cmd_warning_unknown();
     }
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor, sensor test function);
-#endif
+MSH_CMD_EXPORT(sensor, sensor test function);
