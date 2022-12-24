@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -422,7 +422,6 @@ const static struct rt_device_ops rt_sensor_ops =
     _sensor_control
 };
 #endif
-
 
 /*
  * sensor register
