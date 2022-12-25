@@ -1,0 +1,8 @@
+This is a subset of klibc (http://www.kernel.org/pub/linux/libs/klibc/)
+which is itself a subset of standard C library functions.
+
+The provided functions are those which can be safely used in the SDK
+environment.
+
+The included code was extracted from klibc version 1.5.15 without any
+of the GPL licensed parts.  See the LICENSE file for details.
