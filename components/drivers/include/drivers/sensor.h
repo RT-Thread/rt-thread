@@ -47,7 +47,7 @@ extern "C" {
 #define RT_SENSOR_TYPE_BARO           (6)
 #define RT_SENSOR_TYPE_BARO_STR       "Barometer"
 #define RT_SENSOR_TYPE_LIGHT          (7)
-#define RT_SENSOR_TYPE_LIGHT_STR      "Ambient light"
+#define RT_SENSOR_TYPE_LIGHT_STR      "Ambient Light"
 #define RT_SENSOR_TYPE_PROXIMITY      (8)
 #define RT_SENSOR_TYPE_PROXIMITY_STR  "Proximity"
 #define RT_SENSOR_TYPE_HR             (9)
