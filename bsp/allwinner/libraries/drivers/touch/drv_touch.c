@@ -264,7 +264,7 @@ int rt_touch_init(void)
     else if (TOUCH_POLL_MODE == current_driver->check_mode)
     {
         rt_thread_t thread;
-        irq_pin = RT_PIN_NONE; // No interrupt pins are used
+        irq_pin = PIN_IRQ_PIN_NONE; // No interrupt pins are used
         thread = rt_thread_create("touch", touch_poll_entry, RT_NULL, 2048, 16, 20);
         if (thread == RT_NULL)
         {

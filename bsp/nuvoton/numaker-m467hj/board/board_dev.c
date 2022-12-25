@@ -347,7 +347,7 @@ int rt_hw_nct7717u_port(void)
     struct rt_sensor_config cfg;
 
     cfg.intf.dev_name = "i2c2";
-    cfg.irq_pin.pin = RT_PIN_NONE;
+    cfg.irq_pin.pin = PIN_IRQ_PIN_NONE;
 
     return rt_hw_nct7717u_init("nct7717u", &cfg);
 }
