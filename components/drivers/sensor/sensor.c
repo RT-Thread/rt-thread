@@ -96,7 +96,7 @@ static void _irq_callback(void *args)
 /* Sensor interrupt initialization function */
 static rt_err_t _sensor_irq_init(rt_sensor_t sensor)
 {
-    if (sensor->config.irq_pin.pin == RT_PIN_NONE)
+    if (sensor->config.irq_pin.pin == PIN_IRQ_PIN_NONE)
     {
         return -RT_EINVAL;
     }
@@ -269,7 +269,7 @@ static rt_err_t _sensor_close(rt_device_t dev)
     if (RT_SENSOR_MODE_GET_FETCH(sensor->info.mode) != RT_SENSOR_MODE_FETCH_POLLING)
     {
         /* Sensor disable interrupt */
-        if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+        if (sensor->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
         {
             rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
         }

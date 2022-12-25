@@ -24,8 +24,6 @@ extern "C" {
 #define  rt_touch_get_ts()  rt_tick_get()          /* API for the touch to get the timestamp */
 #endif
 
-#define  RT_PIN_NONE                     0xFFFF      /* RT PIN NONE */
-
 /* Touch vendor types */
 #define RT_TOUCH_VENDOR_UNKNOWN          (0)  /* unknown */
 #define RT_TOUCH_VENDOR_GT               (1)  /* GTxx series */

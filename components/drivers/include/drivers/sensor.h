@@ -25,7 +25,6 @@ extern "C" {
 #define  rt_sensor_get_ts()  rt_tick_get()   /* API for the sensor to get the timestamp */
 #endif
 
-#define  RT_PIN_NONE                   0xFFFF    /* RT PIN NONE */
 #define  RT_DEVICE_FLAG_FIFO_RX        0x200     /* Flag to use when the sensor is open by fifo mode */
 
 #define  RT_SENSOR_MODULE_MAX          (3)       /* The maximum number of members of a sensor module */
