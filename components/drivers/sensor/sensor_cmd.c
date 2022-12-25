@@ -535,9 +535,12 @@ static void sensor_cmd_warning_unknown(void)
 {
     LOG_W("Unknown command, please enter 'sensor' get help information!");
     rt_kprintf("sensor  [OPTION] [PARAM]\n");
+    rt_kprintf("         list                  list all sensor devices\n");
     rt_kprintf("         probe <dev_name>      probe sensor by given name\n");
     rt_kprintf("         info                  get sensor information\n");
     rt_kprintf("         read [num]            read [num] times sensor (default 5)\n");
+    rt_kprintf("         power [mode]          set or get power mode\n");
+    rt_kprintf("         accuracy [mode]       set or get accuracy mode\n");
 }
 
 static void sensor_cmd_warning_probe(void)
@@ -625,8 +628,8 @@ static void sensor(int argc, char **argv)
         if(information == RT_NULL)
             return;
 
-        rt_kprintf("device name sensor name       sensor type    resolution       mode \n");
-        rt_kprintf("----------- ------------- ------------------ ------------- ---------- \n");
+        rt_kprintf("device name sensor name      sensor type     mode resolution range\n");
+        rt_kprintf("----------- ------------- ------------------ ---- ---------- ----------\n");
         for (node  = information->object_list.next;
              node != &(information->object_list);
              node  = node->next)
@@ -636,12 +639,13 @@ static void sensor(int argc, char **argv)
             if (sensor_dev->parent.type != RT_Device_Class_Sensor)
                 continue;
 
-            rt_kprintf("%-*.*s %-*s %-*s %f%-*s %s + %s + %s\n",
+            rt_kprintf("%-*.*s %-*s %-*s %u%u%u  %-*f %.*f - %.*f%-*s\n",
             RT_NAME_MAX+3, RT_NAME_MAX, sensor_dev->parent.parent.name,
-            14, sensor_dev->info.name,
-            17, sensor_get_type_name(&sensor_dev->info),
-            sensor_dev->info.accuracy.resolution, 5, sensor_get_unit_name(&sensor_dev->info),
-            sensor_get_accuracy_mode_name(&sensor_dev->info), sensor_get_power_mode_name(&sensor_dev->info), sensor_get_fetch_mode_name(&sensor_dev->info));
+            13, sensor_dev->info.name,
+            18, sensor_get_type_name(&sensor_dev->info),
+            RT_SENSOR_MODE_GET_ACCURACY(sensor_dev->info.mode), RT_SENSOR_MODE_GET_POWER(sensor_dev->info.mode), RT_SENSOR_MODE_GET_FETCH(sensor_dev->info.mode),
+            10, sensor_dev->info.accuracy.resolution,
+            2, sensor_dev->info.scale.range_min, 2, sensor_dev->info.scale.range_max, 5, sensor_get_unit_name(&sensor_dev->info));
         }
     }
     else if (!strcmp(argv[1], "probe"))

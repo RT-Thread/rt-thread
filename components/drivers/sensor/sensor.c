@@ -337,6 +337,7 @@ static rt_err_t _sensor_control(rt_device_t dev, int cmd, void *args)
     rt_err_t result = RT_EOK;
     RT_ASSERT(dev != RT_NULL);
     rt_err_t (*local_ctrl)(rt_sensor_t sensor, int cmd, void *arg) = _local_control;
+    rt_uint8_t mode;
 
     if (sensor->module)
     {
@@ -349,58 +350,81 @@ static rt_err_t _sensor_control(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
-    case RT_SENSOR_CTRL_GET_ID:
-        if (args)
-        {
-            result = local_ctrl(sensor, RT_SENSOR_CTRL_GET_ID, args);
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_ACCURACY_MODE:
-        /* Configuration sensor power mode */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_ACCURACY_MODE, args);
-        if (result == RT_EOK)
-        {
-            RT_SENSOR_MODE_SET_ACCURACY(sensor->info.mode, (rt_uint32_t)args & 0x0F);
-            LOG_D("set accuracy mode code: %d", RT_SENSOR_MODE_GET_ACCURACY(sensor->info.mode));
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_POWER_MODE:
-        /* Configuration sensor power mode */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER_MODE, args);
-        if (result == RT_EOK)
-        {
-            RT_SENSOR_MODE_SET_POWER(sensor->info.mode, (rt_uint32_t)args & 0x0F);
-            LOG_D("set power mode code: %d", RT_SENSOR_MODE_GET_POWER(sensor->info.mode));
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_FETCH_MODE:
-        /* Configuration sensor power mode */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_FETCH_MODE, args);
-        if (result == RT_EOK)
-        {
-            RT_SENSOR_MODE_SET_FETCH(sensor->info.mode, (rt_uint32_t)args & 0x0F);
-            LOG_D("set fetch mode code: %d", RT_SENSOR_MODE_GET_FETCH(sensor->info.mode));
-        }
-        break;
-    case RT_SENSOR_CTRL_SELF_TEST:
-        /* device self test */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
-        break;
-    case RT_SENSOR_CTRL_SOFT_RESET:
-        /* device soft reset */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SOFT_RESET, args);
-        break;
-    default:
-        if (cmd > RT_SENSOR_CTRL_USER_CMD_START)
-        {
-            /* Custom commands */
-            result = local_ctrl(sensor, cmd, args);
-        }
-        else
-        {
-            result = -RT_ERROR;
-        }
-        break;
+        case RT_SENSOR_CTRL_GET_ID:
+            if (args)
+            {
+                result = local_ctrl(sensor, RT_SENSOR_CTRL_GET_ID, args);
+            }
+            break;
+        case RT_SENSOR_CTRL_SET_ACCURACY_MODE:
+            /* Configuration sensor power mode */
+            mode = (rt_uint32_t)args;
+            if (!(mode == RT_SENSOR_MODE_ACCURACY_HIGHEST || mode == RT_SENSOR_MODE_ACCURACY_HIGH ||\
+                  mode == RT_SENSOR_MODE_ACCURACY_MEDIUM  || mode == RT_SENSOR_MODE_ACCURACY_LOW  ||\
+                  mode == RT_SENSOR_MODE_ACCURACY_LOWEST  || mode == RT_SENSOR_MODE_ACCURACY_NOTRUST))
+            {
+                LOG_E("sensor accuracy mode illegal: %d", mode);
+                return -RT_EINVAL;
+            }
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_ACCURACY_MODE, args);
+            if (result == RT_EOK)
+            {
+                RT_SENSOR_MODE_SET_ACCURACY(sensor->info.mode, (rt_uint32_t)args & 0x0F);
+                LOG_D("set accuracy mode code: %d", RT_SENSOR_MODE_GET_ACCURACY(sensor->info.mode));
+            }
+            break;
+        case RT_SENSOR_CTRL_SET_POWER_MODE:
+            /* Configuration sensor power mode */
+            mode = (rt_uint32_t)args;
+            if (!(mode == RT_SENSOR_MODE_POWER_HIGHEST || mode == RT_SENSOR_MODE_POWER_HIGH ||\
+                  mode == RT_SENSOR_MODE_POWER_MEDIUM  || mode == RT_SENSOR_MODE_POWER_LOW  ||\
+                  mode == RT_SENSOR_MODE_POWER_LOWEST  || mode == RT_SENSOR_MODE_POWER_DOWN))
+            {
+                LOG_E("sensor power mode illegal: %d", mode);
+                return -RT_EINVAL;
+            }
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER_MODE, args);
+            if (result == RT_EOK)
+            {
+                RT_SENSOR_MODE_SET_POWER(sensor->info.mode, (rt_uint32_t)args & 0x0F);
+                LOG_D("set power mode code: %d", RT_SENSOR_MODE_GET_POWER(sensor->info.mode));
+            }
+            break;
+        case RT_SENSOR_CTRL_SET_FETCH_MODE:
+            /* Configuration sensor power mode */
+            mode = (rt_uint32_t)args;
+            if (!(mode == RT_SENSOR_MODE_FETCH_POLLING || mode == RT_SENSOR_MODE_FETCH_INT ||\
+                  mode == RT_SENSOR_MODE_FETCH_FIFO))
+            {
+                LOG_E("sensor fetch data mode illegal: %d", mode);
+                return -RT_EINVAL;
+            }
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_FETCH_MODE, args);
+            if (result == RT_EOK)
+            {
+                RT_SENSOR_MODE_SET_FETCH(sensor->info.mode, (rt_uint32_t)args & 0x0F);
+                LOG_D("set fetch mode code: %d", RT_SENSOR_MODE_GET_FETCH(sensor->info.mode));
+            }
+            break;
+        case RT_SENSOR_CTRL_SELF_TEST:
+            /* device self test */
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
+            break;
+        case RT_SENSOR_CTRL_SOFT_RESET:
+            /* device soft reset */
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SOFT_RESET, args);
+            break;
+        default:
+            if (cmd > RT_SENSOR_CTRL_USER_CMD_START)
+            {
+                /* Custom commands */
+                result = local_ctrl(sensor, cmd, args);
+            }
+            else
+            {
+                result = -RT_EINVAL;
+            }
+            break;
     }
 
     if (sensor->module)
