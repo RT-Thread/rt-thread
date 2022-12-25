@@ -20,7 +20,7 @@ static int rt_hw_icm20608_port(void)
     cfg.intf.dev_name = "i2c3";
     cfg.intf.type = RT_SENSOR_INTF_I2C;
     cfg.intf.arg = (void *)MPU6XXX_ADDR_DEFAULT;
-    cfg.irq_pin.pin  = RT_PIN_NONE;
+    cfg.irq_pin.pin  = PIN_IRQ_PIN_NONE;
 
     rt_hw_mpu6xxx_init("icm", &cfg);
 
@@ -39,7 +39,7 @@ static int rt_hw_ap3216c_port(void)
     cfg.intf.dev_name  = "i2c3";
     cfg.intf.type = RT_SENSOR_INTF_I2C;
     cfg.intf.arg = RT_NULL;
-    cfg.irq_pin.pin  = RT_PIN_NONE;
+    cfg.irq_pin.pin  = PIN_IRQ_PIN_NONE;
 
     rt_hw_ap3216c_init("ap3216c", &cfg);
 
@@ -58,7 +58,7 @@ static int rt_hw_aht10_port(void)
     cfg.intf.dev_name  = "i2c4";
     cfg.intf.type = RT_SENSOR_INTF_I2C;
     cfg.intf.arg = (void *)AHT10_I2C_ADDR;
-    cfg.irq_pin.pin  = RT_PIN_NONE;
+    cfg.irq_pin.pin  = PIN_IRQ_PIN_NONE;
 
     rt_hw_aht10_init("aht10", &cfg);
 
