@@ -1,8 +1,9 @@
+#include "rtconfig.h"
 menu "RT-Thread Kernel"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
-    range 2 32
+    range 1 64
     default 8
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
@@ -29,7 +30,7 @@ config RT_USING_SMART
     select RT_USING_ZERO
     select RT_USING_RANDOM
     select RT_USING_RTC
-    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_RISCV64
+    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 

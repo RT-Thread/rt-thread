@@ -369,6 +369,7 @@ config RT_USING_SENSOR
 if RT_USING_SENSOR
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
+        select PKG_USING_RT_VSNPRINTF_FULL
         default y
 endif
 

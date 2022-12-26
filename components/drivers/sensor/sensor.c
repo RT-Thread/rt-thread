@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-01-31     flybreak     first version
  * 2020-02-22     luhuadong    support custom commands
+ * 2022-12-17     Meco Man     re-implement sensor framework
  */
 
 #include <drivers/sensor.h>
@@ -61,12 +62,12 @@ static void _sensor_cb(rt_sensor_t sen)
     {
         sen->parent.rx_indicate(&sen->parent, sen->data_len / sizeof(struct rt_sensor_data));
     }
-    else if (sen->config.mode == RT_SENSOR_MODE_INT)
+    else if (RT_SENSOR_MODE_GET_FETCH(sen->info.mode) == RT_SENSOR_MODE_FETCH_INT)
     {
         /* The interrupt mode only produces one data at a time */
         sen->parent.rx_indicate(&sen->parent, 1);
     }
-    else if (sen->config.mode == RT_SENSOR_MODE_FIFO)
+    else if (RT_SENSOR_MODE_GET_FETCH(sen->info.mode) == RT_SENSOR_MODE_FETCH_FIFO)
     {
         sen->parent.rx_indicate(&sen->parent, sen->info.fifo_max);
     }
@@ -95,7 +96,7 @@ static void _irq_callback(void *args)
 /* Sensor interrupt initialization function */
 static rt_err_t _sensor_irq_init(rt_sensor_t sensor)
 {
-    if (sensor->config.irq_pin.pin == RT_PIN_NONE)
+    if (sensor->config.irq_pin.pin == PIN_IRQ_PIN_NONE)
     {
         return -RT_EINVAL;
     }
@@ -168,30 +169,32 @@ static rt_err_t _sensor_open(rt_device_t dev, rt_uint16_t oflag)
         local_ctrl = sensor->ops->control;
     }
 
-    sensor->config.mode = RT_SENSOR_MODE_POLLING;
     if (oflag & RT_DEVICE_FLAG_RDONLY && dev->flag & RT_DEVICE_FLAG_RDONLY)
     {
         /* If polling mode is supported, configure it to polling mode */
-        local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_POLLING);
+        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_FETCH_MODE, (void *)RT_SENSOR_MODE_FETCH_POLLING) == RT_EOK)
+        {
+            RT_SENSOR_MODE_SET_FETCH(sensor->info.mode, RT_SENSOR_MODE_FETCH_POLLING);
+        }
     }
     else if (oflag & RT_DEVICE_FLAG_INT_RX && dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
         /* If interrupt mode is supported, configure it to interrupt mode */
-        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT) == RT_EOK)
+        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_FETCH_MODE, (void *)RT_SENSOR_MODE_FETCH_INT) == RT_EOK)
         {
             /* Initialization sensor interrupt */
             _sensor_irq_init(sensor);
-            sensor->config.mode = RT_SENSOR_MODE_INT;
+            RT_SENSOR_MODE_SET_FETCH(sensor->info.mode, RT_SENSOR_MODE_FETCH_INT);
         }
     }
     else if (oflag & RT_DEVICE_FLAG_FIFO_RX && dev->flag & RT_DEVICE_FLAG_FIFO_RX)
     {
         /* If fifo mode is supported, configure it to fifo mode */
-        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)
+        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_FETCH_MODE, (void *)RT_SENSOR_MODE_FETCH_FIFO) == RT_EOK)
         {
             /* Initialization sensor interrupt */
             _sensor_irq_init(sensor);
-            sensor->config.mode = RT_SENSOR_MODE_FIFO;
+            RT_SENSOR_MODE_SET_FETCH(sensor->info.mode, RT_SENSOR_MODE_FETCH_FIFO);
         }
     }
     else
@@ -200,10 +203,16 @@ static rt_err_t _sensor_open(rt_device_t dev, rt_uint16_t oflag)
         goto __exit;
     }
 
-    /* Configure power mode to normal mode */
-    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_NORMAL) == RT_EOK)
+    /* Configure power mode to highest mode */
+    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER_MODE, (void *)RT_SENSOR_MODE_POWER_HIGHEST) == RT_EOK)
     {
-        sensor->config.power = RT_SENSOR_POWER_NORMAL;
+        RT_SENSOR_MODE_SET_POWER(sensor->info.mode, RT_SENSOR_MODE_POWER_HIGHEST);
+    }
+
+    /* Configure accuracy mode to highest mode */
+    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_ACCURACY_MODE, (void *)RT_SENSOR_MODE_ACCURACY_HIGHEST) == RT_EOK)
+    {
+        RT_SENSOR_MODE_SET_ACCURACY(sensor->info.mode, RT_SENSOR_MODE_ACCURACY_HIGHEST);
     }
 
 __exit:
@@ -234,9 +243,9 @@ static rt_err_t _sensor_close(rt_device_t dev)
     }
 
     /* Configure power mode to power down mode */
-    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_DOWN) == RT_EOK)
+    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER_MODE, (void *)RT_SENSOR_MODE_POWER_DOWN) == RT_EOK)
     {
-        sensor->config.power = RT_SENSOR_POWER_DOWN;
+        RT_SENSOR_MODE_SET_POWER(sensor->info.mode, RT_SENSOR_MODE_POWER_DOWN);
     }
 
     if (sensor->module != RT_NULL && sensor->info.fifo_max > 0 && sensor->data_buf != RT_NULL)
@@ -257,10 +266,10 @@ static rt_err_t _sensor_close(rt_device_t dev)
             }
         }
     }
-    if (sensor->config.mode != RT_SENSOR_MODE_POLLING)
+    if (RT_SENSOR_MODE_GET_FETCH(sensor->info.mode) != RT_SENSOR_MODE_FETCH_POLLING)
     {
         /* Sensor disable interrupt */
-        if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+        if (sensor->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
         {
             rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
         }
@@ -328,6 +337,7 @@ static rt_err_t _sensor_control(rt_device_t dev, int cmd, void *args)
     rt_err_t result = RT_EOK;
     RT_ASSERT(dev != RT_NULL);
     rt_err_t (*local_ctrl)(rt_sensor_t sensor, int cmd, void *arg) = _local_control;
+    rt_uint8_t mode;
 
     if (sensor->module)
     {
@@ -340,61 +350,81 @@ static rt_err_t _sensor_control(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
-    case RT_SENSOR_CTRL_GET_ID:
-        if (args)
-        {
-            result = local_ctrl(sensor, RT_SENSOR_CTRL_GET_ID, args);
-        }
-        break;
-    case RT_SENSOR_CTRL_GET_INFO:
-        if (args)
-        {
-            rt_memcpy(args, &sensor->info, sizeof(struct rt_sensor_info));
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_RANGE:
-        /* Configuration measurement range */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_RANGE, args);
-        if (result == RT_EOK)
-        {
-            sensor->config.range = (rt_int32_t)args;
-            LOG_D("set range %d", sensor->config.range);
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_ODR:
-        /* Configuration data output rate */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_ODR, args);
-        if (result == RT_EOK)
-        {
-            sensor->config.odr = (rt_uint32_t)args & 0xFFFF;
-            LOG_D("set odr %d", sensor->config.odr);
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_POWER:
-        /* Configuration sensor power mode */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, args);
-        if (result == RT_EOK)
-        {
-            sensor->config.power = (rt_uint32_t)args & 0xFF;
-            LOG_D("set power mode code:", sensor->config.power);
-        }
-        break;
-    case RT_SENSOR_CTRL_SELF_TEST:
-        /* Device self-test */
-        result = local_ctrl(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
-        break;
-    default:
-
-        if (cmd > RT_SENSOR_CTRL_USER_CMD_START)
-        {
-            /* Custom commands */
-            result = local_ctrl(sensor, cmd, args);
-        }
-        else
-        {
-            result = -RT_ERROR;
-        }
-        break;
+        case RT_SENSOR_CTRL_GET_ID:
+            if (args)
+            {
+                result = local_ctrl(sensor, RT_SENSOR_CTRL_GET_ID, args);
+            }
+            break;
+        case RT_SENSOR_CTRL_SET_ACCURACY_MODE:
+            /* Configuration sensor power mode */
+            mode = (rt_uint32_t)args & 0x000F;
+            if (!(mode == RT_SENSOR_MODE_ACCURACY_HIGHEST || mode == RT_SENSOR_MODE_ACCURACY_HIGH ||\
+                  mode == RT_SENSOR_MODE_ACCURACY_MEDIUM  || mode == RT_SENSOR_MODE_ACCURACY_LOW  ||\
+                  mode == RT_SENSOR_MODE_ACCURACY_LOWEST  || mode == RT_SENSOR_MODE_ACCURACY_NOTRUST))
+            {
+                LOG_E("sensor accuracy mode illegal: %d", mode);
+                return -RT_EINVAL;
+            }
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_ACCURACY_MODE, args);
+            if (result == RT_EOK)
+            {
+                RT_SENSOR_MODE_SET_ACCURACY(sensor->info.mode, mode);
+                LOG_D("set accuracy mode code: %d", RT_SENSOR_MODE_GET_ACCURACY(sensor->info.mode));
+            }
+            break;
+        case RT_SENSOR_CTRL_SET_POWER_MODE:
+            /* Configuration sensor power mode */
+            mode = (rt_uint32_t)args & 0x000F;
+            if (!(mode == RT_SENSOR_MODE_POWER_HIGHEST || mode == RT_SENSOR_MODE_POWER_HIGH ||\
+                  mode == RT_SENSOR_MODE_POWER_MEDIUM  || mode == RT_SENSOR_MODE_POWER_LOW  ||\
+                  mode == RT_SENSOR_MODE_POWER_LOWEST  || mode == RT_SENSOR_MODE_POWER_DOWN))
+            {
+                LOG_E("sensor power mode illegal: %d", mode);
+                return -RT_EINVAL;
+            }
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER_MODE, args);
+            if (result == RT_EOK)
+            {
+                RT_SENSOR_MODE_SET_POWER(sensor->info.mode, mode);
+                LOG_D("set power mode code: %d", RT_SENSOR_MODE_GET_POWER(sensor->info.mode));
+            }
+            break;
+        case RT_SENSOR_CTRL_SET_FETCH_MODE:
+            /* Configuration sensor power mode */
+            mode = (rt_uint32_t)args & 0x000F;
+            if (!(mode == RT_SENSOR_MODE_FETCH_POLLING || mode == RT_SENSOR_MODE_FETCH_INT ||\
+                  mode == RT_SENSOR_MODE_FETCH_FIFO))
+            {
+                LOG_E("sensor fetch data mode illegal: %d", mode);
+                return -RT_EINVAL;
+            }
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SET_FETCH_MODE, args);
+            if (result == RT_EOK)
+            {
+                RT_SENSOR_MODE_SET_FETCH(sensor->info.mode, mode);
+                LOG_D("set fetch mode code: %d", RT_SENSOR_MODE_GET_FETCH(sensor->info.mode));
+            }
+            break;
+        case RT_SENSOR_CTRL_SELF_TEST:
+            /* device self test */
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
+            break;
+        case RT_SENSOR_CTRL_SOFT_RESET:
+            /* device soft reset */
+            result = local_ctrl(sensor, RT_SENSOR_CTRL_SOFT_RESET, args);
+            break;
+        default:
+            if (cmd > RT_SENSOR_CTRL_USER_CMD_START)
+            {
+                /* Custom commands */
+                result = local_ctrl(sensor, cmd, args);
+            }
+            else
+            {
+                result = -RT_EINVAL;
+            }
+            break;
     }
 
     if (sensor->module)
@@ -416,7 +446,6 @@ const static struct rt_device_ops rt_sensor_ops =
     _sensor_control
 };
 #endif
-
 
 /*
  * sensor register
@@ -487,5 +516,11 @@ int rt_hw_sensor_register(rt_sensor_t    sensor,
 
     LOG_I("sensor[%s] init success", device_name);
     rt_free(device_name);
+
+    /* set sensor accuracy and power as the hightest, and polling data as default */
+    rt_device_control(device, RT_SENSOR_CTRL_SET_ACCURACY_MODE, RT_SENSOR_MODE_ACCURACY_HIGHEST);
+    rt_device_control(device, RT_SENSOR_CTRL_SET_POWER_MODE, RT_SENSOR_MODE_POWER_HIGHEST);
+    rt_device_control(device, RT_SENSOR_CTRL_SET_FETCH_MODE, RT_SENSOR_MODE_FETCH_POLLING);
+
     return RT_EOK;
 }

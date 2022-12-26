@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,23 +14,45 @@
 #include "interrupt.h"
 #include "gic.h"
 #include "gicv3.h"
-#include "armv8.h"
-#include "mmu.h"
-#include "cpuport.h"
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 
+#ifndef RT_USING_SMP
 /* Those variables will be accessed in ISR, so we need to share them. */
 rt_ubase_t rt_interrupt_from_thread        = 0;
 rt_ubase_t rt_interrupt_to_thread          = 0;
 rt_ubase_t rt_thread_switch_interrupt_flag = 0;
+#endif
 
-extern int system_vectors;
+#ifndef RT_CPUS_NR
+#define RT_CPUS_NR 1
+#endif
+
+const unsigned int VECTOR_BASE = 0x00;
+extern void rt_cpu_vector_set_base(void *addr);
+extern void *system_vectors;
+
+#ifdef RT_USING_SMP
+#define rt_interrupt_nest rt_cpu_self()->irq_nest
+#else
+extern volatile rt_uint8_t rt_interrupt_nest;
+#endif
+
+#ifdef SOC_BCM283x
+static void default_isr_handler(int vector, void *param)
+{
+#ifdef RT_USING_SMP
+    rt_kprintf("cpu %d unhandled irq: %d\n", rt_hw_cpu_id(),vector);
+#else
+    rt_kprintf("unhandled irq: %d\n",vector);
+#endif
+}
+#endif
 
 void rt_hw_vector_init(void)
 {
-    rt_hw_set_current_vbar((rt_ubase_t)&system_vectors);
+    rt_cpu_vector_set_base(&system_vectors);
 }
 
 /**
@@ -38,23 +60,69 @@ void rt_hw_vector_init(void)
  */
 void rt_hw_interrupt_init(void)
 {
+#ifdef SOC_BCM283x
+    rt_uint32_t index;
     /* initialize vector table */
     rt_hw_vector_init();
 
     /* initialize exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
-#ifndef BSP_USING_GIC
     /* mask all of interrupts */
     IRQ_DISABLE_BASIC = 0x000000ff;
     IRQ_DISABLE1      = 0xffffffff;
     IRQ_DISABLE2      = 0xffffffff;
+    for (index = 0; index < MAX_HANDLERS; index ++)
+    {
+        isr_table[index].handler = default_isr_handler;
+        isr_table[index].param = RT_NULL;
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_strncpy(isr_table[index].name, "unknown", RT_NAME_MAX);
+        isr_table[index].counter = 0;
+#endif
+    }
+
+    /* init interrupt nest, and context in thread sp */
+    rt_interrupt_nest = 0;
+    rt_interrupt_from_thread = 0;
+    rt_interrupt_to_thread = 0;
+    rt_thread_switch_interrupt_flag = 0;
 #else
-    /* initialize ARM GIC */
-    arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
-    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+    rt_uint64_t gic_cpu_base;
+    rt_uint64_t gic_dist_base;
 #ifdef BSP_USING_GICV3
-    arm_gic_redist_init(0, platform_get_gic_redist_base());
+    rt_uint64_t gic_rdist_base;
+#endif
+    rt_uint64_t gic_irq_start;
+
+    /* initialize vector table */
+    rt_hw_vector_init();
+
+    /* initialize exceptions table */
+    rt_memset(isr_table, 0x00, sizeof(isr_table));
+
+    /* initialize ARM GIC */
+#ifdef RT_USING_SMART
+    gic_dist_base = (rt_uint64_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_dist_base(), 0x2000, MMU_MAP_K_DEVICE);
+    gic_cpu_base = (rt_uint64_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_cpu_base(), 0x1000, MMU_MAP_K_DEVICE);
+#ifdef BSP_USING_GICV3
+    gic_rdist_base = (rt_uint64_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_redist_base(),
+            RT_CPUS_NR * (2 << 16), MMU_MAP_K_DEVICE);
+#endif
+#else
+    gic_dist_base = platform_get_gic_dist_base();
+    gic_cpu_base = platform_get_gic_cpu_base();
+#ifdef BSP_USING_GICV3
+    gic_rdist_base = platform_get_gic_redist_base();
+#endif
+#endif
+
+    gic_irq_start = GIC_IRQ_START;
+
+    arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
+    arm_gic_cpu_init(0, gic_cpu_base);
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, gic_rdist_base);
 #endif
 #endif
 }
@@ -65,7 +133,7 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
-#ifndef BSP_USING_GIC
+#ifdef SOC_BCM283x
     if (vector < 32)
     {
         IRQ_DISABLE1 = (1 << vector);
@@ -91,8 +159,8 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
-#ifndef BSP_USING_GIC
-    if (vector < 32)
+#ifdef SOC_BCM283x
+if (vector < 32)
     {
         IRQ_ENABLE1 = (1 << vector);
     }
@@ -117,7 +185,7 @@ void rt_hw_interrupt_umask(int vector)
  */
 int rt_hw_interrupt_get_irq(void)
 {
-#ifdef BSP_USING_GIC
+#ifndef SOC_BCM283x
     return arm_gic_get_active_irq(0);
 #else
     return 0;
@@ -130,11 +198,12 @@ int rt_hw_interrupt_get_irq(void)
  */
 void rt_hw_interrupt_ack(int vector)
 {
-#ifdef BSP_USING_GIC
+#ifndef SOC_BCM283x
     arm_gic_ack(0, vector);
 #endif
 }
 
+#ifndef SOC_BCM283x
 /**
  * This function set interrupt CPU targets.
  * @param vector:   the interrupt number
@@ -142,9 +211,7 @@ void rt_hw_interrupt_ack(int vector)
  */
 void rt_hw_interrupt_set_target_cpus(int vector, unsigned int cpu_mask)
 {
-#ifdef BSP_USING_GIC
     arm_gic_set_cpu(0, vector, cpu_mask);
-#endif
 }
 
 /**
@@ -154,11 +221,7 @@ void rt_hw_interrupt_set_target_cpus(int vector, unsigned int cpu_mask)
  */
 unsigned int rt_hw_interrupt_get_target_cpus(int vector)
 {
-#ifdef BSP_USING_GIC
     return arm_gic_get_target_cpu(0, vector);
-#else
-    return -RT_ERROR;
-#endif
 }
 
 /**
@@ -168,9 +231,7 @@ unsigned int rt_hw_interrupt_get_target_cpus(int vector)
  */
 void rt_hw_interrupt_set_triger_mode(int vector, unsigned int mode)
 {
-#ifdef BSP_USING_GIC
     arm_gic_set_configuration(0, vector, mode);
-#endif
 }
 
 /**
@@ -180,11 +241,7 @@ void rt_hw_interrupt_set_triger_mode(int vector, unsigned int mode)
  */
 unsigned int rt_hw_interrupt_get_triger_mode(int vector)
 {
-#ifdef BSP_USING_GIC
     return arm_gic_get_configuration(0, vector);
-#else
-    return -RT_ERROR;
-#endif
 }
 
 /**
@@ -193,9 +250,7 @@ unsigned int rt_hw_interrupt_get_triger_mode(int vector)
  */
 void rt_hw_interrupt_set_pending(int vector)
 {
-#ifdef BSP_USING_GIC
     arm_gic_set_pending_irq(0, vector);
-#endif
 }
 
 /**
@@ -205,11 +260,7 @@ void rt_hw_interrupt_set_pending(int vector)
  */
 unsigned int rt_hw_interrupt_get_pending(int vector)
 {
-#ifdef BSP_USING_GIC
     return arm_gic_get_pending_irq(0, vector);
-#else
-    return -RT_ERROR;
-#endif
 }
 
 /**
@@ -218,9 +269,7 @@ unsigned int rt_hw_interrupt_get_pending(int vector)
  */
 void rt_hw_interrupt_clear_pending(int vector)
 {
-#ifdef BSP_USING_GIC
     arm_gic_clear_pending_irq(0, vector);
-#endif
 }
 
 /**
@@ -230,9 +279,7 @@ void rt_hw_interrupt_clear_pending(int vector)
  */
 void rt_hw_interrupt_set_priority(int vector, unsigned int priority)
 {
-#ifdef BSP_USING_GIC
     arm_gic_set_priority(0, vector, priority);
-#endif
 }
 
 /**
@@ -242,11 +289,7 @@ void rt_hw_interrupt_set_priority(int vector, unsigned int priority)
  */
 unsigned int rt_hw_interrupt_get_priority(int vector)
 {
-#ifdef BSP_USING_GIC
     return arm_gic_get_priority(0, vector);
-#else
-    return -RT_ERROR;
-#endif
 }
 
 /**
@@ -255,9 +298,7 @@ unsigned int rt_hw_interrupt_get_priority(int vector)
  */
 void rt_hw_interrupt_set_priority_mask(unsigned int priority)
 {
-#ifdef BSP_USING_GIC
     arm_gic_set_interface_prior_mask(0, priority);
-#endif
 }
 
 /**
@@ -267,11 +308,7 @@ void rt_hw_interrupt_set_priority_mask(unsigned int priority)
  */
 unsigned int rt_hw_interrupt_get_priority_mask(void)
 {
-#ifdef BSP_USING_GIC
     return arm_gic_get_interface_prior_mask(0);
-#else
-    return -RT_ERROR;
-#endif
 }
 
 /**
@@ -281,7 +318,6 @@ unsigned int rt_hw_interrupt_get_priority_mask(void)
  */
 int rt_hw_interrupt_set_prior_group_bits(unsigned int bits)
 {
-#ifdef BSP_USING_GIC
     int status;
 
     if (bits < 8)
@@ -295,9 +331,6 @@ int rt_hw_interrupt_set_prior_group_bits(unsigned int bits)
     }
 
     return (status);
-#else
-    return -RT_ERROR;
-#endif
 }
 
 /**
@@ -307,16 +340,13 @@ int rt_hw_interrupt_set_prior_group_bits(unsigned int bits)
  */
 unsigned int rt_hw_interrupt_get_prior_group_bits(void)
 {
-#ifdef BSP_USING_GIC
     unsigned int bp;
 
     bp = arm_gic_get_binary_point(0) & 0x07;
 
     return (7 - bp);
-#else
-    return -RT_ERROR;
-#endif
 }
+#endif /* SOC_BCM283x */
 
 /**
  * This function will install a interrupt service routine to a interrupt.
@@ -349,26 +379,10 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 #ifdef RT_USING_SMP
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
-#ifdef BSP_USING_GIC
 #ifdef BSP_USING_GICV2
     arm_gic_send_sgi(0, ipi_vector, cpu_mask, 0);
-#else
-    arm_gic_send_affinity_sgi(0, ipi_vector, (rt_uint64_t *)&cpu_mask, GICV3_ROUTED_TO_SPEC);
-#endif
-#else
-    int i;
-
-    __DSB();
-
-    for (i = 0; i < RT_CPUS_NR; ++i)
-    {
-        if (cpu_mask & (1 << i))
-        {
-            IPI_MAILBOX_SET(i) = 1 << ipi_vector;
-        }
-    }
-
-    __DSB();
+#elif defined(BSP_USING_GICV3)
+    arm_gic_send_affinity_sgi(0, ipi_vector, (unsigned int *)&cpu_mask, GICV3_ROUTED_TO_SPEC);
 #endif
 }
 
@@ -378,4 +392,3 @@ void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
     rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
 }
 #endif
-

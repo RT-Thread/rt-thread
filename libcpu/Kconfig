@@ -82,14 +82,16 @@ config ARCH_ARM_MMU
 if RT_USING_SMART
 config KERNEL_VADDR_START
     hex "The virtural address of kernel start"
+    default 0xffff000000000000 if ARCH_ARMV8
     default 0xc0000000 if ARCH_ARM
     default 0x80000000 if ARCH_RISCV
     depends on ARCH_MM_MMU
 
 config PV_OFFSET
     hex "The offset of kernel physical address and virtural address"
-    default 0xa0000000 if ARCH_ARM
-    default 0x0        if ARCH_RISCV
+    default 0x1000040000000 if ARCH_ARMV8
+    default 0xa0000000      if ARCH_ARM
+    default 0x0             if ARCH_RISCV
     depends on ARCH_MM_MMU
 
 config RT_IOREMAP_LATE
@@ -159,6 +161,7 @@ config RT_BACKTRACE_FUNCTION_NAME
 config ARCH_ARMV8
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
 
 config ARCH_MIPS
     bool

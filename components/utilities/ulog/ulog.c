@@ -1235,7 +1235,7 @@ static void ulog_filter(uint8_t argc, char **argv)
         for (node = rt_slist_first(ulog_tag_lvl_list_get()); node; node = rt_slist_next(node))
         {
             tag_lvl = rt_slist_entry(node, struct ulog_tag_lvl_filter, list);
-            rt_kprintf("%-*.s: ", ULOG_FILTER_TAG_MAX_LEN, tag_lvl->tag);
+            rt_kprintf("%-*.*s: ", ULOG_FILTER_TAG_MAX_LEN, ULOG_FILTER_TAG_MAX_LEN, tag_lvl->tag);
 
 #ifndef ULOG_USING_SYSLOG
             rt_kprintf("%s\n", lvl_name[tag_lvl->level]);

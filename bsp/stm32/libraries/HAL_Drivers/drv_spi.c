@@ -267,7 +267,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         __HAL_LINKDMA(&spi_drv->handle, hdmatx, spi_drv->dma.handle_tx);
 
         /* NVIC configuration for DMA transfer complete interrupt */
-        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 0, 1);
+        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 1, 0);
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
 

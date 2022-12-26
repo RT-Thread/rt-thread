@@ -1,44 +1,60 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Date           Author       Notes
- * 2018-10-06     ZhaoXiaowei  the first version
- * 2022-02-16     GuEe-GUI     replace vectors entry to macro
+ * 2018-10-06     ZhaoXiaowei    the first version
  */
-
-.macro  ventry label
-    .align 7
-    b   \label
-.endm
+ 
+.text
 
 .globl system_vectors
-.globl vector_error
+.globl vector_exception
 .globl vector_irq
 .globl vector_fiq
-.align 11
-system_vectors:
-    /* Exception from CurrentEL (EL1t) with SP_EL0 (SPSEL = 0) */
-    ventry  vector_error    /* Synchronous */
-    ventry  vector_irq      /* IRQ/vIRQ */
-    ventry  vector_fiq      /* FIQ/vFIQ */
-    ventry  vector_error    /* SError/vSError */
 
-    /* Exception from CurrentEL (EL1h) with SP_ELn */
-    ventry  vector_error    /* Synchronous */
-    ventry  vector_irq      /* IRQ/vIRQ */
-    ventry  vector_fiq      /* FIQ/vFIQ */
-    ventry  vector_error    /* SError/vSError */
+system_vectors:
+.align 11
+    .set    VBAR, system_vectors
+    .org    VBAR
+
+    /*  Exception from CurrentEL (EL1) with SP_EL0 (SPSEL=1) */
+    .org (VBAR + 0x00 + 0)
+    B vector_serror                     /* Synchronous */
+    .org (VBAR + 0x80 + 0)
+    B vector_serror                     /* IRQ/vIRQ */
+    .org (VBAR + 0x100 + 0)
+    B vector_serror                     /* FIQ/vFIQ */
+    .org (VBAR + 0x180 + 0)
+    B vector_serror                     /* Error/vError */
+
+    /*  Exception from CurrentEL (EL1) with SP_ELn */
+    .org (VBAR + 0x200 + 0)
+    B vector_exception                  /* Synchronous */
+    .org (VBAR + 0x280 + 0)
+    B vector_irq    	                /* IRQ/vIRQ */
+    .org (VBAR + 0x300 + 0)
+    B vector_fiq                        /* FIQ/vFIQ */
+    .org (VBAR + 0x380 + 0)
+    B vector_serror
 
     /* Exception from lower EL, aarch64 */
-    ventry  vector_error    /* Synchronous */
-    ventry  vector_error    /* IRQ/vIRQ */
-    ventry  vector_error    /* FIQ/vFIQ */
-    ventry  vector_error    /* SError/vSError */
+    .org (VBAR + 0x400 + 0)
+    B vector_exception
+    .org (VBAR + 0x480 + 0)
+    B vector_irq
+    .org (VBAR + 0x500 + 0)
+    B vector_fiq
+    .org (VBAR + 0x580 + 0)
+    B vector_serror
 
     /* Exception from lower EL, aarch32 */
-    ventry  vector_error    /* Synchronous */
-    ventry  vector_error    /* IRQ/vIRQ */
-    ventry  vector_error    /* FIQ/vFIQ */
-    ventry  vector_error    /* SError/vSError */
+    .org (VBAR + 0x600 + 0)
+    B vector_serror
+    .org (VBAR + 0x680 + 0)
+    B vector_serror
+    .org (VBAR + 0x700 + 0)
+    B vector_serror
+    .org (VBAR + 0x780 + 0)
+    B vector_serror
