@@ -45,7 +45,7 @@ _vector_base:
     .word   0
     .word   SysTick_Handler            /* SysTick */
     .word   0
-    .word   SW_Handler                 /* SW */
+    .word   SW_handler                 /* SW */
     .word   0
     /* External Interrupts */
     .word   WWDG_IRQHandler            /* Window Watchdog */
@@ -112,7 +112,7 @@ _vector_base:
     .weak   Ecall_U_Mode_Handler       /* Ecall U Mode */
     .weak   Break_Point_Handler        /* Break Point */
     .weak   SysTick_Handler            /* SysTick */
-    .weak   SW_Handler                 /* SW */
+    .weak   SW_handler                 /* SW */
     .weak   WWDG_IRQHandler            /* Window Watchdog */
     .weak   PVD_IRQHandler             /* PVD through EXTI Line detect */
     .weak   TAMPER_IRQHandler          /* TAMPER */
@@ -174,7 +174,7 @@ Ecall_M_Mode_Handler:  1:  j 1b
 Ecall_U_Mode_Handler:  1:  j 1b
 Break_Point_Handler:  1:  j 1b
 SysTick_Handler:  1:  j 1b
-SW_Handler:  1:  j 1b
+SW_handler:  1:  j 1b
 WWDG_IRQHandler:  1:  j 1b
 PVD_IRQHandler:  1:  j 1b
 TAMPER_IRQHandler:  1:  j 1b

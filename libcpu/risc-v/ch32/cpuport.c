@@ -10,7 +10,16 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#ifdef SOC_CH32V307VC
+#include "ch32v30x.h"
+#endif
+#ifdef SOC_CH32V208WBU6
+#include "ch32v20x.h"
+#endif
+#ifdef SOC_CH32V103R8
 #include "ch32v10x.h"
+#endif
+
 #include "cpuport.h"
 
 #ifndef RT_USING_SMP
@@ -107,8 +116,8 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
                              void       *texit)
 {
     struct rt_hw_stack_frame *frame;
-    rt_uint8_t *stk;
-    int i;
+    rt_uint8_t         *stk;
+    int                i;
 
     stk  = stack_addr + sizeof(rt_ubase_t);
     stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_ubase_t)stk, REGBYTES);
@@ -121,12 +130,16 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
         ((rt_ubase_t *)frame)[i] = 0xdeadbeef;
     }
 
-    frame->ra = (rt_ubase_t)texit;
-    frame->a0 = (rt_ubase_t)parameter;
-    frame->epc = (rt_ubase_t)tentry;
-
+    frame->ra      = (rt_ubase_t)texit;
+    frame->a0      = (rt_ubase_t)parameter;
+    frame->epc     = (rt_ubase_t)tentry;
+    #ifdef  SOC_CH32V307VC
     /* force to machine mode(MPP=11) and set MPIE to 1 and FS=11 */
+    frame->mstatus = 0x00007880;
+    #else
+    /* force to machine mode(MPP=11) and set MPIE to 1 */
     frame->mstatus = 0x00001880;
+    #endif
     return stk;
 }
 
@@ -135,7 +148,12 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  */
 void sw_setpend(void)
 {
+    /*CH32V103 does not support systick software interrupt*/
+    #ifdef SOC_CH32V103R8
     NVIC_SetPendingIRQ(Software_IRQn);
+    #else
+    SysTick->CTLR |= (1<<31);
+    #endif
 }
 
 /*
@@ -143,7 +161,12 @@ void sw_setpend(void)
  */
 void sw_clearpend(void)
 {
+    /*CH32V103 does not support systick software interrupt*/
+    #ifdef SOC_CH32V103R8
     NVIC_ClearPendingIRQ(Software_IRQn);
+    #else
+    SysTick->CTLR &= ~(1<<31);
+    #endif
 }
 
 /*
@@ -151,8 +174,12 @@ void sw_clearpend(void)
  */
 rt_base_t rt_hw_interrupt_disable(void)
 {
-    register rt_base_t value = 0;
+    rt_base_t value=0;
+    #ifdef  SOC_CH32V307VC
+    asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x7800));
+    #else
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x1800));
+    #endif
     return value;
 }
 
@@ -172,7 +199,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
  * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to);
  * #endif
  */
-void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
 {
     if (rt_thread_switch_interrupt_flag == 0)
         rt_interrupt_from_thread = from;
@@ -183,12 +210,10 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
     sw_setpend();
 }
 
-
-
 /* shutdown CPU */
 void rt_hw_cpu_shutdown(void)
 {
-    rt_base_t level;
+    rt_uint32_t level;
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();

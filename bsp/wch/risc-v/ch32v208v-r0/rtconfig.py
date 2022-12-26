@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'ch32v2'
+CPU      = 'ch32'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 
@@ -15,8 +15,8 @@ else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
 	
-# if os.getenv('RTT_EXEC_PATH'):
-#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
     
 print(EXEC_PATH)
 

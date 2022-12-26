@@ -32,6 +32,7 @@ rt_hw_context_switch_to:
     j    rt_hw_context_switch_exit
 
 
+
 /*
  * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
  * a0 --> from
@@ -126,6 +127,7 @@ rt_hw_context_switch:
 	j  rt_hw_context_switch_exit
 
 
+
 .global rt_hw_context_switch_exit
 rt_hw_context_switch_exit:
     /* resw ra to mepc */
@@ -133,8 +135,13 @@ rt_hw_context_switch_exit:
     csrw mepc, a0
 
     LOAD x1,   1 * REGBYTES(sp)
+
 	/* keep machine mode */
+	#ifdef SOC_CH32V307VC
+	li    a0,      0x7800
+	#else
 	li    a0,      0x1800
+	#endif
 	csrs  mstatus, a0
 	/* resume MPIE */
 	LOAD  a0,      2*REGBYTES(sp)

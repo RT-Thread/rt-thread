@@ -57,6 +57,12 @@ SW_handler:
  	li    t0,   0x80
     STORE t0,   2 * REGBYTES(sp)
 
+	/* Temporarily disable HPE  */
+	#ifdef SOC_CH32V307VC
+	li   t0,    0x20
+	csrs 0x804, t0
+	#endif
+
     STORE x1,   1 * REGBYTES(sp)
     STORE x4,   4 * REGBYTES(sp)
     STORE x6,   6 * REGBYTES(sp)
@@ -116,9 +122,13 @@ SW_handler:
     csrw  mepc, a0
 
 1:  LOAD  x1,   1 * REGBYTES(sp)
-
-	li t0,0x1800
+	#ifdef SOC_CH32V307VC
+	li t0,0x7800
 	csrs mstatus, t0
+	#else
+	li t0,0x1800
+	csrs mstatus, t0	
+	#endif
 	LOAD t0, 2*REGBYTES(sp)
 	csrs mstatus, t0
 
