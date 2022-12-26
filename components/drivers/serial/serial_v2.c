@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -694,6 +694,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
 
         tx_fifo->activated = RT_FALSE;
         tx_fifo->put_size = 0;
+        rt_memset(&tx_fifo->rb,0,sizeof(tx_fifo->rb));
         rt_completion_init(&(tx_fifo->tx_cpt));
         dev->open_flag |= RT_SERIAL_TX_BLOCKING;
 
