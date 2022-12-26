@@ -11,6 +11,7 @@
  * 2020-06-17     thread-liu   Porting for stm32mp1xx
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  * 2022-05-22     Stanley Lwin Add stm32_adc_get_vref
+ * 2022-12-26     wdfk-prog    Change the order of configuration channels and calibration functions
  */
 
 #include <board.h>
@@ -66,7 +67,10 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
 /* ADC channel number is up to 17 */
 #if !defined(ADC_CHANNEL_18)
-        if (channel <= 17)
+        if (channel <= 17 || \
+           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
 /* ADC channel number is up to 19 */
 #elif defined(ADC_CHANNEL_19)
         if (channel <= 19 || \
@@ -75,7 +79,10 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
             channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
 /* ADC channel number is up to 18 */
 #else
-        if (channel <= 18)
+        if (channel <= 18 || \
+           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
 #endif
         {
             /* set stm32 ADC channel */
@@ -148,19 +155,11 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
             return -RT_ERROR;
         }
 #endif
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
         HAL_ADC_Start(stm32_adc_handler);
-#else
-        __HAL_ADC_ENABLE(stm32_adc_handler);
-#endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
         HAL_ADC_Stop(stm32_adc_handler);
-#else
-        __HAL_ADC_DISABLE(stm32_adc_handler);
-#endif
     }
 
     return RT_EOK;
@@ -271,14 +270,19 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
         stm32_channel = ADC_CHANNEL_19;
         break;
 #endif
-    case ADC_CHANNEL_VREFINT - ADC_CHANNEL_0:
-        stm32_channel = ADC_CHANNEL_VREFINT;
-        break;
-    case ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0:
-        stm32_channel = ADC_CHANNEL_TEMPSENSOR;
-        break;
-    case ADC_CHANNEL_VBAT - ADC_CHANNEL_0:
-        stm32_channel = ADC_CHANNEL_VBAT;
+    default:
+        switch (channel)
+        {
+          case ADC_CHANNEL_VREFINT - ADC_CHANNEL_0:
+            stm32_channel = ADC_CHANNEL_VREFINT;
+            break;
+          case ADC_CHANNEL_VBAT - ADC_CHANNEL_0:
+            stm32_channel = ADC_CHANNEL_VBAT;
+            break;
+          case ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0:
+            stm32_channel = ADC_CHANNEL_TEMPSENSOR;
+            break;
+        }
         break;
     }
 
@@ -290,17 +294,21 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
     if(device == RT_NULL)
       return RT_ERROR;
 
+    rt_uint16_t vref_mv;
+#ifdef __LL_ADC_CALC_VREFANALOG_VOLTAGE
     rt_err_t ret = RT_EOK;
     rt_uint32_t vref_value;
-    rt_uint16_t vref_mv;
+
     ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
 
     ret = rt_adc_enable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
     vref_value = rt_adc_read(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
     ret = rt_adc_disable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
 
-    vref_mv = __HAL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
-
+    vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
+#else
+    vref_mv = 3300;
+#endif /* __LL_ADC_CALC_VREFANALOG_VOLTAGE */
     return vref_mv;
 }
 
