@@ -629,6 +629,7 @@ static void sensor(int argc, char **argv)
         if(information == RT_NULL)
             return;
 
+        rt_enter_critical();
         rt_kprintf("device name sensor name      sensor type     mode resolution range\n");
         rt_kprintf("----------- ------------- ------------------ ---- ---------- ----------\n");
         for (node  = information->object_list.next;
@@ -648,6 +649,7 @@ static void sensor(int argc, char **argv)
             10, sensor_dev->info.accuracy.resolution,
             2, sensor_dev->info.scale.range_min, 2, sensor_dev->info.scale.range_max, 5, sensor_get_unit_name(&sensor_dev->info));
         }
+        rt_exit_critical();
     }
     else if (!rt_strcmp(argv[1], "probe"))
     {
