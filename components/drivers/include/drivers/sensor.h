@@ -222,11 +222,11 @@ extern "C" {
 #define RT_SENSOR_MODE_ACCURACY_HIGH_STR      "Accuracy High"
 #define RT_SENSOR_MODE_ACCURACY_MEDIUM        (2)
 #define RT_SENSOR_MODE_ACCURACY_MEDIUM_STR    "Accuracy Medium"
-#define RT_SENSOR_MODE_ACCURACY_LOW           (4)
+#define RT_SENSOR_MODE_ACCURACY_LOW           (3)
 #define RT_SENSOR_MODE_ACCURACY_LOW_STR       "Accuracy Low"
-#define RT_SENSOR_MODE_ACCURACY_LOWEST        (5)
+#define RT_SENSOR_MODE_ACCURACY_LOWEST        (4)
 #define RT_SENSOR_MODE_ACCURACY_LOWEST_STR    "Accuracy Lowest"
-#define RT_SENSOR_MODE_ACCURACY_NOTRUST       (6)
+#define RT_SENSOR_MODE_ACCURACY_NOTRUST       (5)
 #define RT_SENSOR_MODE_ACCURACY_NOTRUST_STR   "Accuracy No Trust"
 
 /* Sensor mode: power */

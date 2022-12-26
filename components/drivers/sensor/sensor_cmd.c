@@ -541,6 +541,7 @@ static void sensor_cmd_warning_unknown(void)
     rt_kprintf("         read [num]            read [num] times sensor (default 5)\n");
     rt_kprintf("         power [mode]          set or get power mode\n");
     rt_kprintf("         accuracy [mode]       set or get accuracy mode\n");
+    rt_kprintf("         fetch [mode]          set or get fetch data mode\n");
 }
 
 static void sensor_cmd_warning_probe(void)
@@ -562,7 +563,7 @@ static void sensor(int argc, char **argv)
         sensor_cmd_warning_unknown();
         return;
     }
-    else if (!strcmp(argv[1], "info"))
+    else if (!rt_strcmp(argv[1], "info"))
     {
         if (dev == RT_NULL)
         {
@@ -586,7 +587,7 @@ static void sensor(int argc, char **argv)
         rt_kprintf("interface type   :%s\n", sensor_get_intf_name(sensor));
         rt_kprintf("interface device :%s\n", sensor->config.intf.dev_name);
     }
-    else if (!strcmp(argv[1], "read"))
+    else if (!rt_strcmp(argv[1], "read"))
     {
         rt_uint16_t num = 5;
 
@@ -617,7 +618,7 @@ static void sensor(int argc, char **argv)
             rt_thread_mdelay(delay);
         }
     }
-    else if (!strcmp(argv[1], "list"))
+    else if (!rt_strcmp(argv[1], "list"))
     {
         struct rt_object *object;
         struct rt_list_node *node;
@@ -648,7 +649,7 @@ static void sensor(int argc, char **argv)
             2, sensor_dev->info.scale.range_min, 2, sensor_dev->info.scale.range_max, 5, sensor_get_unit_name(&sensor_dev->info));
         }
     }
-    else if (!strcmp(argv[1], "probe"))
+    else if (!rt_strcmp(argv[1], "probe"))
     {
         rt_uint8_t reg = 0xFF;
         rt_device_t new_dev;
@@ -679,6 +680,102 @@ static void sensor(int argc, char **argv)
             rt_device_close(dev);
         }
         dev = new_dev;
+    }
+    else if (!rt_strcmp(argv[1], "power"))
+    {
+        rt_uint32_t mode;
+
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        sensor = (rt_sensor_t)dev;
+        if (argc == 2)
+        {
+            rt_kprintf("current power mode: %s\n", sensor_get_power_mode_name(&sensor->info));
+        }
+        else if (argc == 3)
+        {
+            mode = atoi(argv[2]);
+            if (rt_device_control(dev, RT_SENSOR_CTRL_SET_POWER_MODE, (void *)mode) == RT_EOK)
+            {
+                rt_kprintf("set new power mode as: %s\n", sensor_get_power_mode_name(&sensor->info));
+            }
+            else
+            {
+                LOG_E("Don't support! Set new power mode error!");
+            }
+        }
+        else
+        {
+            sensor_cmd_warning_unknown();
+        }
+    }
+    else if (!rt_strcmp(argv[1], "accuracy"))
+    {
+        rt_uint32_t mode;
+
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        sensor = (rt_sensor_t)dev;
+        if (argc == 2)
+        {
+            rt_kprintf("current accuracy mode: %s\n", sensor_get_accuracy_mode_name(&sensor->info));
+        }
+        else if (argc == 3)
+        {
+            mode = atoi(argv[2]);
+            if (rt_device_control(dev, RT_SENSOR_CTRL_SET_ACCURACY_MODE, (void *)mode) == RT_EOK)
+            {
+                rt_kprintf("set new accuracy mode as: %s\n", sensor_get_accuracy_mode_name(&sensor->info));
+            }
+            else
+            {
+                LOG_E("Don't support! Set new accuracy mode error!");
+            }
+        }
+        else
+        {
+            sensor_cmd_warning_unknown();
+        }
+    }
+    else if (!rt_strcmp(argv[1], "fetch"))
+    {
+        rt_uint32_t mode;
+
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        sensor = (rt_sensor_t)dev;
+        if (argc == 2)
+        {
+            rt_kprintf("current fetch data mode: %s\n", sensor_get_fetch_mode_name(&sensor->info));
+        }
+        else if (argc == 3)
+        {
+            mode = atoi(argv[2]);
+            if (rt_device_control(dev, RT_SENSOR_CTRL_SET_FETCH_MODE, (void *)mode) == RT_EOK)
+            {
+                rt_kprintf("set new fetch data mode as: %s\n", sensor_get_fetch_mode_name(&sensor->info));
+            }
+            else
+            {
+                LOG_E("Don't support! Set new fetch data mode error!");
+            }
+        }
+        else
+        {
+            sensor_cmd_warning_unknown();
+        }
     }
     else
     {
