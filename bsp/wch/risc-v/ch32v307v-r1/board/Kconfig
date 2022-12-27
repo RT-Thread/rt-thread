@@ -19,60 +19,60 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_UART
-           config BSP_USING_UART1
-               bool "Enable UART1"
-               default n
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
 
-           config BSP_USING_UART2
-               bool "Enable UART2"
-           default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
 
-          config BSP_USING_UART3
-              bool "Enable UART3"
-              default n
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
 
-          config BSP_USING_UART4
-              bool "Enable UART4"
-              default n
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
 
-          config BSP_USING_UART5
-              bool "Enable UART5"
-              default n
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
 
-          config BSP_USING_UART6
-              bool "Enable UART6"
-              default n
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
 
-          config BSP_USING_UART7
-              bool "Enable UART7"
-              default n
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
 
-          config BSP_USING_UART8
-              bool "Enable UART8"
-              default n
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
         endif
-   
+    
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         select RT_USING_ADC
         default n
 
         if BSP_USING_ADC
-           config BSP_USING_ADC1
-               bool "Enable ADC1"
-               default n
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
 
-           config BSP_USING_ADC2
-               bool "Enable ADC2"
-               default n
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
 
-           config ADC_CHANNEL_16
-               bool "Enable ADC CHANNEL 16 (inside temperature)"
-               default n    
+            config ADC_CHANNEL_16
+                bool "Enable ADC CHANNEL 16 (inside temperature)"
+                default n    
 
-           config ADC_CHANNEL_17
-               bool "Enable ADC CHANNEL 17 (inside Verf)"
-               default n    
+            config ADC_CHANNEL_17
+                bool "Enable ADC CHANNEL 17 (inside Verf)"
+                default n    
         endif
 
     menuconfig BSP_USING_DAC
@@ -139,11 +139,11 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SPI1
                 bool "Enable SPI1"
                 default n
-		
+        
             config BSP_USING_SPI2
                 bool "Enable SPI2"
                 default n
-		
+        
             config BSP_USING_SPI3
                 bool "Enable SPI3"
                 default n
@@ -153,6 +153,8 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI Flash"
                 default n
             endif
+
+        endif
             
     menuconfig BSP_USING_SOFT_SPI
         bool "Enable SOFT SPI"
@@ -219,8 +221,8 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         select LSI_VALUE
         default n
-		
-	menuconfig BSP_USING_CAN
+        
+    menuconfig BSP_USING_CAN
             bool "Enable CAN"
             default n
             select RT_USING_CAN
@@ -277,6 +279,10 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM1 channel 4"
                     endif
 
+                    if BSP_USING_TIM1_HWTIMER && BSP_USING_TIM1_PWM
+                        comment "BSP_USING_TIM1_HWTIMER and BSP_USING_TIM1_PWM can only be chosen for one!"
+                    endif
+
                 endif
 
             config BSP_USING_TIM2
@@ -308,6 +314,10 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM2 channel 4"
                     endif
 
+                    if BSP_USING_TIM2_HWTIMER && BSP_USING_TIM2_PWM
+                        comment "BSP_USING_TIM2_HWTIMER and BSP_USING_TIM2_PWM can only be chosen for one!"
+                    endif
+
                 endif
 
             config BSP_USING_TIM3
@@ -323,21 +333,25 @@ menu "On-chip Peripheral Drivers"
                         bool "Using TIM3 as PWM mode"
                         select BSP_USING_PWM
 
-                if BSP_USING_TIM3_PWM
-                    config BSP_USING_TIM3_PWM_CH1
-                        bool "Using TIM3 channel 1"
-                        default n
+                    if BSP_USING_TIM3_PWM
+                        config BSP_USING_TIM3_PWM_CH1
+                            bool "Using TIM3 channel 1"
+                            default n
 
-                    config BSP_USING_TIM3_PWM_CH2
-                        bool "Using TIM3 channel 2"
-                        default n
+                        config BSP_USING_TIM3_PWM_CH2
+                            bool "Using TIM3 channel 2"
+                            default n
 
-                    config BSP_USING_TIM3_PWM_CH3
-                        bool "Using TIM3 channel 3"
+                        config BSP_USING_TIM3_PWM_CH3
+                            bool "Using TIM3 channel 3"
 
-                    config BSP_USING_TIM3_PWM_CH4
-                        bool "Using TIM3 channel 4"
-                endif
+                        config BSP_USING_TIM3_PWM_CH4
+                            bool "Using TIM3 channel 4"
+                    endif
+
+                    if BSP_USING_TIM3_HWTIMER && BSP_USING_TIM3_PWM
+                        comment "BSP_USING_TIM3_HWTIMER and BSP_USING_TIM3_PWM can only be chosen for one!"
+                    endif
 
                 endif
 
@@ -370,6 +384,10 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM4 channel 4"
                     endif
 
+                    if BSP_USING_TIM4_HWTIMER && BSP_USING_TIM4_PWM
+                        comment "BSP_USING_TIM4_HWTIMER and BSP_USING_TIM4_PWM can only be chosen for one!"
+                    endif
+
                 endif
                 
             config BSP_USING_TIM5
@@ -399,6 +417,10 @@ menu "On-chip Peripheral Drivers"
 
                         config BSP_USING_TIM5_PWM_CH4
                             bool "Using TIM5 channel 4"
+                    endif
+
+                    if BSP_USING_TIM5_HWTIMER && BSP_USING_TIM5_PWM
+                        comment "BSP_USING_TIM5_HWTIMER and BSP_USING_TIM5_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -451,6 +473,10 @@ menu "On-chip Peripheral Drivers"
                         config BSP_USING_TIM8_PWM_CH4
                             bool "Using TIM8 channel 4"
                     endif
+
+                    if BSP_USING_TIM8_HWTIMER && BSP_USING_TIM8_PWM
+                        comment "BSP_USING_TIM8_HWTIMER and BSP_USING_TIM8_PWM can only be chosen for one!"
+                    endif
                     
                 endif
                 
@@ -481,6 +507,10 @@ menu "On-chip Peripheral Drivers"
 
                         config BSP_USING_TIM9_PWM_CH4
                             bool "Using TIM9 channel 4"
+                    endif
+
+                    if BSP_USING_TIM9_HWTIMER && BSP_USING_TIM9_PWM
+                        comment "BSP_USING_TIM9_HWTIMER and BSP_USING_TIM9_PWM can only be chosen for one!"
                     endif
                     
                 endif
@@ -513,11 +543,15 @@ menu "On-chip Peripheral Drivers"
                         config BSP_USING_TIM10_PWM_CH4
                             bool "Using TIM10 channel 4"
                     endif
+
+                    if BSP_USING_TIM10_HWTIMER && BSP_USING_TIM10_PWM
+                        comment "BSP_USING_TIM10_HWTIMER and BSP_USING_TIM10_PWM can only be chosen for one!"
+                    endif
                     
                 endif
                 
         endif
-		
+        
 endmenu
 
 menu "Onboard Peripheral Drivers"
@@ -549,6 +583,7 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         default n
+
 endmenu
 
 menu "Board extended module Drivers"
@@ -556,3 +591,4 @@ menu "Board extended module Drivers"
 endmenu
 
 endmenu
+    
