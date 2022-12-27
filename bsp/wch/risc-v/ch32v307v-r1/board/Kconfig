@@ -51,7 +51,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART8"
                 default n
         endif
-    
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         select RT_USING_ADC
@@ -68,16 +68,16 @@ menu "On-chip Peripheral Drivers"
 
             config ADC_CHANNEL_16
                 bool "Enable ADC CHANNEL 16 (inside temperature)"
-                default n    
+                default n
 
             config ADC_CHANNEL_17
                 bool "Enable ADC CHANNEL 17 (inside Verf)"
-                default n    
+                default n
         endif
 
     menuconfig BSP_USING_DAC
         bool "Enable DAC"
-        select RT_USING_DAC        
+        select RT_USING_DAC
         default n
 
         if BSP_USING_DAC
@@ -86,8 +86,8 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_DAC_CHANNEL2
                 bool "Enable DAC CHANNEL2"
-                default n  
-        endif 
+                default n
+        endif
 
     menuconfig BSP_USING_SOFT_I2C
         bool "Enable I2C Bus"
@@ -134,20 +134,20 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_SPI
-        
+
         if BSP_USING_SPI
             config BSP_USING_SPI1
                 bool "Enable SPI1"
                 default n
-        
+
             config BSP_USING_SPI2
                 bool "Enable SPI2"
                 default n
-        
+
             config BSP_USING_SPI3
                 bool "Enable SPI3"
                 default n
-                
+
             if  BSP_USING_SPI3
                 config BSP_USING_SPI_FLASH
                 bool "Enable SPI Flash"
@@ -155,7 +155,7 @@ menu "On-chip Peripheral Drivers"
             endif
 
         endif
-            
+
     menuconfig BSP_USING_SOFT_SPI
         bool "Enable SOFT SPI"
         select RT_USING_SPI_BITOPS
@@ -165,7 +165,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SSPI1 Bus (User SPI)"
                 default n
                 if BSP_USING_SOFT_SPI1
-                    comment "Notice: PB9 --> 25; PB8 --> 24; PB7 --> 23" 
+                    comment "Notice: PB9 --> 25; PB8 --> 24; PB7 --> 23"
                     config BSP_S_SPI1_SCK_PIN
                         int "sspi1 SCL pin number"
                         range 1 79
@@ -177,14 +177,14 @@ menu "On-chip Peripheral Drivers"
                     config BSP_S_SPI1_MISO_PIN
                         int "sspi1 MOSI pin number"
                         range 1 79
-                        default 23    
+                        default 23
                 endif
-        
+
             config BSP_USING_SOFT_SPI2
                 bool "Enable SSPI2 Bus (soft SPI)"
                 default n
                 if BSP_USING_SOFT_SPI2
-                    comment "Notice: PE0 --> 64; PE1 --> 65; PE2 --> 66" 
+                    comment "Notice: PE0 --> 64; PE1 --> 65; PE2 --> 66"
                     config BSP_S_SPI2_SCK_PIN
                         int "sspi2 SCL pin number"
                         range 1 79
@@ -196,15 +196,15 @@ menu "On-chip Peripheral Drivers"
                     config BSP_S_SPI2_MISO_PIN
                         int "sspi2 MOSI pin number"
                         range 1 79
-                        default 66    
-                endif                 
+                        default 66
+                endif
         endif
 
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         default n
-        
+
         if BSP_USING_RTC
             config BSP_USING_RTC_LSI
                 bool "Using LSI clock for rtc, if not, LSE default"
@@ -221,7 +221,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         select LSI_VALUE
         default n
-        
+
     menuconfig BSP_USING_CAN
             bool "Enable CAN"
             default n
@@ -389,7 +389,7 @@ menu "On-chip Peripheral Drivers"
                     endif
 
                 endif
-                
+
             config BSP_USING_TIM5
                     bool "Using TIM5"
                     default n
@@ -424,7 +424,7 @@ menu "On-chip Peripheral Drivers"
                     endif
 
                 endif
-                
+
             config BSP_USING_TIM6
                     bool "Using TIM6"
                     default n
@@ -432,9 +432,9 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_TIM6
                     config BSP_USING_TIM6_HWTIMER
                         bool "Using TIM6 as hwtimer mode"
-                        select BSP_USING_HWTIMER     
+                        select BSP_USING_HWTIMER
                 endif
-                
+
             config BSP_USING_TIM7
                     bool "Using TIM7"
                     default n
@@ -444,7 +444,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Using TIM7 as hwtimer mode"
                         select BSP_USING_HWTIMER
                 endif
-                
+
             config BSP_USING_TIM8
                     bool "Using TIM8"
                     default n
@@ -477,9 +477,9 @@ menu "On-chip Peripheral Drivers"
                     if BSP_USING_TIM8_HWTIMER && BSP_USING_TIM8_PWM
                         comment "BSP_USING_TIM8_HWTIMER and BSP_USING_TIM8_PWM can only be chosen for one!"
                     endif
-                    
+
                 endif
-                
+
             config BSP_USING_TIM9
                     bool "Using TIM9"
                     default n
@@ -512,9 +512,9 @@ menu "On-chip Peripheral Drivers"
                     if BSP_USING_TIM9_HWTIMER && BSP_USING_TIM9_PWM
                         comment "BSP_USING_TIM9_HWTIMER and BSP_USING_TIM9_PWM can only be chosen for one!"
                     endif
-                    
+
                 endif
-                
+
             config BSP_USING_TIM10
                     bool "Using TIM10"
                     default n
@@ -547,11 +547,11 @@ menu "On-chip Peripheral Drivers"
                     if BSP_USING_TIM10_HWTIMER && BSP_USING_TIM10_PWM
                         comment "BSP_USING_TIM10_HWTIMER and BSP_USING_TIM10_PWM can only be chosen for one!"
                     endif
-                    
+
                 endif
-                
+
         endif
-        
+
 endmenu
 
 menu "Onboard Peripheral Drivers"
@@ -591,4 +591,4 @@ menu "Board extended module Drivers"
 endmenu
 
 endmenu
-    
+
