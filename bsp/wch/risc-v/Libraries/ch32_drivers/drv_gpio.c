@@ -431,7 +431,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     pin_irq_hdr(bit2bitno(GPIO_Pin));
 }
 
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void EXTI0_IRQHandler(void) __attribute__((interrupt()));
 void EXTI1_IRQHandler(void) __attribute__((interrupt()));
 void EXTI2_IRQHandler(void) __attribute__((interrupt()));

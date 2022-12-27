@@ -137,7 +137,7 @@ rt_hw_context_switch_exit:
     LOAD x1,   1 * REGBYTES(sp)
 
 	/* keep machine mode */
-	#ifdef SOC_CH32V307VC
+	#ifdef SOC_RISCV_SERIES_CH32V3
 	li    a0,      0x7800
 	#else
 	li    a0,      0x1800

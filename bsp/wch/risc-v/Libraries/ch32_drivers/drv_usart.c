@@ -369,7 +369,7 @@ static const struct rt_uart_ops ch32_uart_ops =
 };
 
 #ifdef BSP_USING_UART1
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART1_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -385,7 +385,7 @@ void USART1_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART2
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART2_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -401,7 +401,7 @@ void USART2_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART3
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART3_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -417,7 +417,7 @@ void USART3_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART4
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART4_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -433,7 +433,7 @@ void UART4_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART5
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART5_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -449,7 +449,7 @@ void UART5_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART6
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART6_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -465,7 +465,7 @@ void UART6_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART7
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART7_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -481,7 +481,7 @@ void UART7_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART8
-#ifdef SOC_CH32V208WBU6
+#ifdef SOC_RISCV_SERIES_CH32V2
 void USART8_IRQHandler(void) __attribute__((interrupt()));
 #else
 void USART8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
