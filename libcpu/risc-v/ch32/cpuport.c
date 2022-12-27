@@ -10,14 +10,14 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#ifdef SOC_RISCV_SERIES_CH32V3
-#include "ch32v30x.h"
-#endif
-#ifdef SOC_RISCV_SERIES_CH32V2
-#include "ch32v20x.h"
-#endif
-#ifdef SOC_RISCV_SERIES_CH32V1
+#if defined (SOC_RISCV_SERIES_CH32V1)
 #include "ch32v10x.h"
+#elif defined (SOC_RISCV_SERIES_CH32V2)
+#include "ch32v20x.h"
+#elif defined (SOC_RISCV_SERIES_CH32V3)
+#include "ch32v30x.h"
+#else
+#error "CH32 architecture doesn't support!"
 #endif
 
 #include "cpuport.h"
@@ -133,7 +133,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     frame->ra      = (rt_ubase_t)texit;
     frame->a0      = (rt_ubase_t)parameter;
     frame->epc     = (rt_ubase_t)tentry;
-    #ifdef  SOC_RISCV_SERIES_CH32V3
+    #if defined (SOC_RISCV_SERIES_CH32V3)
     /* force to machine mode(MPP=11) and set MPIE to 1 and FS=11 */
     frame->mstatus = 0x00007880;
     #else
@@ -149,7 +149,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 void sw_setpend(void)
 {
     /*CH32V103 does not support systick software interrupt*/
-    #ifdef SOC_RISCV_SERIES_CH32V1
+    #if defined (SOC_RISCV_SERIES_CH32V1)
     NVIC_SetPendingIRQ(Software_IRQn);
     #else
     SysTick->CTLR |= (1<<31);
@@ -162,7 +162,7 @@ void sw_setpend(void)
 void sw_clearpend(void)
 {
     /*CH32V103 does not support systick software interrupt*/
-    #ifdef SOC_RISCV_SERIES_CH32V1
+    #if defined (SOC_RISCV_SERIES_CH32V1)
     NVIC_ClearPendingIRQ(Software_IRQn);
     #else
     SysTick->CTLR &= ~(1<<31);
@@ -175,7 +175,7 @@ void sw_clearpend(void)
 rt_base_t rt_hw_interrupt_disable(void)
 {
     rt_base_t value=0;
-    #ifdef  SOC_RISCV_SERIES_CH32V3
+    #if defined (SOC_RISCV_SERIES_CH32V3)
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x7800));
     #else
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x1800));

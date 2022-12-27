@@ -58,7 +58,7 @@ SW_handler:
     STORE t0,   2 * REGBYTES(sp)
 
 	/* Temporarily disable HPE  */
-	#ifdef SOC_RISCV_SERIES_CH32V3
+	#if defined (SOC_RISCV_SERIES_CH32V3)
 	li   t0,    0x20
 	csrs 0x804, t0
 	#endif
@@ -122,7 +122,7 @@ SW_handler:
     csrw  mepc, a0
 
 1:  LOAD  x1,   1 * REGBYTES(sp)
-	#ifdef SOC_RISCV_SERIES_CH32V3
+	#if defined (SOC_RISCV_SERIES_CH32V3)
 	li t0,0x7800
 	csrs mstatus, t0
 	#else
