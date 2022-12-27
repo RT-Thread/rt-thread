@@ -7,42 +7,15 @@
  * Date           Author       Notes
  * 2021-09-09     WCH        the first version
  */
-
+ 
 #include "cpuport.h"
 
-/*
- * #ifdef RT_USING_SMP
- * void rt_hw_context_switch_to(rt_ubase_t to, stuct rt_thread *to_thread);
- * #else
- * void rt_hw_context_switch_to(rt_ubase_t to);
- * #endif
- * a0 --> to
- * a1 --> to_thread
- */
-    .globl rt_hw_context_switch_to
-rt_hw_context_switch_to:
-    /* first save interrupt stack */
-	la t0, _eusrstack
-	addi t0, t0, -512
-    csrw mscratch,t0
-
-    LOAD sp, (a0)
-    LOAD a0,   2 * REGBYTES(sp)
-    csrw mstatus, a0
-    j    rt_hw_context_switch_exit
-
-
-/*
- * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
- * a0 --> from
- * a1 --> to
- */
-	.globl rt_hw_context_switch
-rt_hw_context_switch:
-	/* switch in thread */
+.global SW_handler
+.align 2
+SW_handler:
+    /* save all from thread context */
 #ifdef ARCH_RISCV_FPU
-	addi sp, sp, -32*FREGBYTES
-
+    addi    sp, sp, -32 * FREGBYTES
     FSTORE  f0, 0 * FREGBYTES(sp)
     FSTORE  f1, 1 * FREGBYTES(sp)
     FSTORE  f2, 2 * FREGBYTES(sp)
@@ -77,24 +50,22 @@ rt_hw_context_switch:
     FSTORE  f31, 31 * FREGBYTES(sp)
 #endif
 
-	addi sp, sp, -32 * REGBYTES
-	/* save from sp */
-	STORE sp,   0(a0)
-	/* save ra to epc */
-	STORE x1,   0 * REGBYTES(sp)
-	STORE x1,   1 * REGBYTES(sp)
-	STORE x5,   5 * REGBYTES(sp)
+    addi sp, sp, -32 * REGBYTES
+    STORE x5,   5 * REGBYTES(sp)
 
-	csrr  t0,  mstatus
-	andi  t0, t0, 8
-	/* if MIE be enabled,set MPIE */
-	beqz  t0, 1f
-	li    t0, 0x80
+    /* saved MPIE */
+ 	li    t0,   0x80
+    STORE t0,   2 * REGBYTES(sp)
 
-1:  STORE t0,   2 * REGBYTES(sp)
-	STORE x4,   4 * REGBYTES(sp)
+	/* Temporarily disable HPE  */
+	#if defined (SOC_RISCV_SERIES_CH32V3)
+	li   t0,    0x20
+	csrs 0x804, t0
+	#endif
 
-	STORE x6,   6 * REGBYTES(sp)
+    STORE x1,   1 * REGBYTES(sp)
+    STORE x4,   4 * REGBYTES(sp)
+    STORE x6,   6 * REGBYTES(sp)
     STORE x7,   7 * REGBYTES(sp)
     STORE x8,   8 * REGBYTES(sp)
     STORE x9,   9 * REGBYTES(sp)
@@ -121,58 +92,78 @@ rt_hw_context_switch:
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
 
-	/* get "to" thread sp */
-	LOAD  sp,  0(a1)
-	j  rt_hw_context_switch_exit
+    /* switch to interrupt stack */
+	csrrw sp,mscratch,sp
+    call  rt_interrupt_enter
+    /* clear interrupt */
+    jal   sw_clearpend
+    call  rt_interrupt_leave
+    /* switch to from thread stack */
+	csrrw sp,mscratch,sp
 
+    /* if rt_thread_switch_interrupt_flag=1,then clear it  */
+    la    s0, rt_thread_switch_interrupt_flag
+    lw    s2, 0(s0)
+    beqz  s2, 1f
+    sw    zero, 0(s0)
+#1:
+    csrr  a0, mepc
+    STORE a0, 0 * REGBYTES(sp)
 
-.global rt_hw_context_switch_exit
-rt_hw_context_switch_exit:
-    /* resw ra to mepc */
-    LOAD a0,   0 * REGBYTES(sp)
-    csrw mepc, a0
+    la    s0, rt_interrupt_from_thread
+    LOAD  s1, 0(s0)
+    STORE sp, 0(s1)
 
-    LOAD x1,   1 * REGBYTES(sp)
-	/* keep machine mode */
-	li    a0,      0x1800
-	csrs  mstatus, a0
-	/* resume MPIE */
-	LOAD  a0,      2*REGBYTES(sp)
-    csrs  mstatus, a0
+    la    s0, rt_interrupt_to_thread
+    LOAD  s1, 0(s0)
+    LOAD  sp, 0(s1)
 
-    LOAD x4,   4 * REGBYTES(sp)
-    LOAD x5,   5 * REGBYTES(sp)
-    LOAD x6,   6 * REGBYTES(sp)
-    LOAD x7,   7 * REGBYTES(sp)
-    LOAD x8,   8 * REGBYTES(sp)
-    LOAD x9,   9 * REGBYTES(sp)
-    LOAD x10, 10 * REGBYTES(sp)
-    LOAD x11, 11 * REGBYTES(sp)
-    LOAD x12, 12 * REGBYTES(sp)
-    LOAD x13, 13 * REGBYTES(sp)
-    LOAD x14, 14 * REGBYTES(sp)
-    LOAD x15, 15 * REGBYTES(sp)
-    LOAD x16, 16 * REGBYTES(sp)
-    LOAD x17, 17 * REGBYTES(sp)
-    LOAD x18, 18 * REGBYTES(sp)
-    LOAD x19, 19 * REGBYTES(sp)
-    LOAD x20, 20 * REGBYTES(sp)
-    LOAD x21, 21 * REGBYTES(sp)
-    LOAD x22, 22 * REGBYTES(sp)
-    LOAD x23, 23 * REGBYTES(sp)
-    LOAD x24, 24 * REGBYTES(sp)
-    LOAD x25, 25 * REGBYTES(sp)
-    LOAD x26, 26 * REGBYTES(sp)
-    LOAD x27, 27 * REGBYTES(sp)
-    LOAD x28, 28 * REGBYTES(sp)
-    LOAD x29, 29 * REGBYTES(sp)
-    LOAD x30, 30 * REGBYTES(sp)
-    LOAD x31, 31 * REGBYTES(sp)
-    addi sp,  sp, 32 * REGBYTES
+    LOAD  a0,  0 * REGBYTES(sp)
+    csrw  mepc, a0
 
- /* load float reg */
+1:  LOAD  x1,   1 * REGBYTES(sp)
+	#if defined (SOC_RISCV_SERIES_CH32V3)
+	li t0,0x7800
+	csrs mstatus, t0
+	#else
+	li t0,0x1800
+	csrs mstatus, t0	
+	#endif
+	LOAD t0, 2*REGBYTES(sp)
+	csrs mstatus, t0
+
+    LOAD  x4,   4 * REGBYTES(sp)
+    LOAD  x5,   5 * REGBYTES(sp)
+    LOAD  x6,   6 * REGBYTES(sp)
+    LOAD  x7,   7 * REGBYTES(sp)
+    LOAD  x8,   8 * REGBYTES(sp)
+    LOAD  x9,   9 * REGBYTES(sp)
+    LOAD  x10, 10 * REGBYTES(sp)
+    LOAD  x11, 11 * REGBYTES(sp)
+    LOAD  x12, 12 * REGBYTES(sp)
+    LOAD  x13, 13 * REGBYTES(sp)
+    LOAD  x14, 14 * REGBYTES(sp)
+    LOAD  x15, 15 * REGBYTES(sp)
+    LOAD  x16, 16 * REGBYTES(sp)
+    LOAD  x17, 17 * REGBYTES(sp)
+    LOAD  x18, 18 * REGBYTES(sp)
+    LOAD  x19, 19 * REGBYTES(sp)
+    LOAD  x20, 20 * REGBYTES(sp)
+    LOAD  x21, 21 * REGBYTES(sp)
+    LOAD  x22, 22 * REGBYTES(sp)
+    LOAD  x23, 23 * REGBYTES(sp)
+    LOAD  x24, 24 * REGBYTES(sp)
+    LOAD  x25, 25 * REGBYTES(sp)
+    LOAD  x26, 26 * REGBYTES(sp)
+    LOAD  x27, 27 * REGBYTES(sp)
+    LOAD  x28, 28 * REGBYTES(sp)
+    LOAD  x29, 29 * REGBYTES(sp)
+    LOAD  x30, 30 * REGBYTES(sp)
+    LOAD  x31, 31 * REGBYTES(sp)
+    addi  sp, sp, 32 * REGBYTES
+
+    /* load float reg */
 #ifdef ARCH_RISCV_FPU
-
     FLOAD   f0, 0 * FREGBYTES(sp)
     FLOAD   f1, 1 * FREGBYTES(sp)
     FLOAD   f2, 2 * FREGBYTES(sp)
@@ -207,5 +198,4 @@ rt_hw_context_switch_exit:
     FLOAD   f31, 31 * FREGBYTES(sp)
     addi    sp, sp, 32 * FREGBYTES
 #endif
-
     mret

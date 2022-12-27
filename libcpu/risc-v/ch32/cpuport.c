@@ -10,7 +10,16 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#if defined (SOC_RISCV_SERIES_CH32V1)
 #include "ch32v10x.h"
+#elif defined (SOC_RISCV_SERIES_CH32V2)
+#include "ch32v20x.h"
+#elif defined (SOC_RISCV_SERIES_CH32V3)
+#include "ch32v30x.h"
+#else
+#error "CH32 architecture doesn't support!"
+#endif
+
 #include "cpuport.h"
 
 #ifndef RT_USING_SMP
@@ -107,8 +116,8 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
                              void       *texit)
 {
     struct rt_hw_stack_frame *frame;
-    rt_uint8_t *stk;
-    int i;
+    rt_uint8_t         *stk;
+    int                i;
 
     stk  = stack_addr + sizeof(rt_ubase_t);
     stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_ubase_t)stk, REGBYTES);
@@ -121,12 +130,16 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
         ((rt_ubase_t *)frame)[i] = 0xdeadbeef;
     }
 
-    frame->ra = (rt_ubase_t)texit;
-    frame->a0 = (rt_ubase_t)parameter;
-    frame->epc = (rt_ubase_t)tentry;
-
+    frame->ra      = (rt_ubase_t)texit;
+    frame->a0      = (rt_ubase_t)parameter;
+    frame->epc     = (rt_ubase_t)tentry;
+    #if defined (SOC_RISCV_SERIES_CH32V3)
     /* force to machine mode(MPP=11) and set MPIE to 1 and FS=11 */
+    frame->mstatus = 0x00007880;
+    #else
+    /* force to machine mode(MPP=11) and set MPIE to 1 */
     frame->mstatus = 0x00001880;
+    #endif
     return stk;
 }
 
@@ -135,7 +148,12 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  */
 void sw_setpend(void)
 {
+    /*CH32V103 does not support systick software interrupt*/
+    #if defined (SOC_RISCV_SERIES_CH32V1)
     NVIC_SetPendingIRQ(Software_IRQn);
+    #else
+    SysTick->CTLR |= (1<<31);
+    #endif
 }
 
 /*
@@ -143,7 +161,12 @@ void sw_setpend(void)
  */
 void sw_clearpend(void)
 {
+    /*CH32V103 does not support systick software interrupt*/
+    #if defined (SOC_RISCV_SERIES_CH32V1)
     NVIC_ClearPendingIRQ(Software_IRQn);
+    #else
+    SysTick->CTLR &= ~(1<<31);
+    #endif
 }
 
 /*
@@ -151,8 +174,12 @@ void sw_clearpend(void)
  */
 rt_base_t rt_hw_interrupt_disable(void)
 {
-    register rt_base_t value = 0;
+    rt_base_t value=0;
+    #if defined (SOC_RISCV_SERIES_CH32V3)
+    asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x7800));
+    #else
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x1800));
+    #endif
     return value;
 }
 
@@ -183,12 +210,10 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
     sw_setpend();
 }
 
-
-
 /* shutdown CPU */
 void rt_hw_cpu_shutdown(void)
 {
-    rt_base_t level;
+    rt_uint32_t level;
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();
