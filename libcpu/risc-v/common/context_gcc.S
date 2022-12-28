@@ -8,6 +8,7 @@
  * 2018/10/28     Bernard      The unify RISC-V porting implementation
  * 2018/12/27     Jesven       Add SMP support
  * 2020/11/20     BalanceTWK   Add FPU support
+ * 2022/12/28     WangShun     Add macro to distinguish whether FPU is supported
  */
 
 #define __ASSEMBLY__
@@ -212,8 +213,11 @@ rt_hw_context_switch_exit:
     csrw mepc, a0
 
     LOAD x1,   1 * REGBYTES(sp)
-
+    #ifdef ARCH_RISCV_FPU
     li    t0, 0x00007800
+    #else
+    li    t0, 0x00001800
+    #endif
     csrw  mstatus, t0
     LOAD a0,   2 * REGBYTES(sp)
     csrs mstatus, a0
