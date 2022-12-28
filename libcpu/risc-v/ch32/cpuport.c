@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-09-09     WCH        the first version
+ * 2022-12-27     WangShun   Merge WCH series mcu port files
  */
 
 #include <rthw.h>
