@@ -33,6 +33,7 @@ jobs:
       fail-fast: false
       matrix:
        legs:
+         - {RTT_BSP: "airm2m/air32f103", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "acm32/acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f103xe-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
