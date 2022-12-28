@@ -7,22 +7,22 @@
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
  * 2022-07-15     Aligagago         add apm32F4 serie MCU support
+ * 2022-12-26     luobeihai         add apm32F0 serie MCU support
  */
 
 #include <board.h>
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3)
 
-//#define DRV_DEBUG
-#define LOG_TAG               "drv.adc"
+#define DBG_TAG               "drv.adc"
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
 
-#define DRV_ADC_CHANNEL_MAX_NUM  14
+#define DRV_ADC_CHANNEL_MAX_NUM  16
 #define DRV_ADC_TIME_OUT         0xFFF
 
-#define _ADC_GET_PORT(pin_num) ((GPIO_T *)(GPIOA_BASE + (0x400u * (((pin_num) >> 4) & 0xFu))))
-#define _ADC_GET_PIN(pin_num)  ((uint16_t)(1u << ((pin_num) & 0xFu)))
+#define APM32_ADC_GET_PORT(pin_num) ((GPIO_T *)(GPIOA_BASE + (0x400u * (((pin_num) >> 4) & 0xFu))))
+#define APM32_ADC_GET_PIN(pin_num)  ((uint16_t)(1u << ((pin_num) & 0xFu)))
 
 struct apm32_adc
 {
@@ -32,7 +32,8 @@ struct apm32_adc
     rt_base_t channel_pin[DRV_ADC_CHANNEL_MAX_NUM];
     struct rt_adc_device adc_dev;
 };
-#ifdef APM32F10X_HD
+
+#if defined(SOC_SERIES_APM32F1)
 static struct apm32_adc adc_config[] =
 {
 #ifdef BSP_USING_ADC1
@@ -95,7 +96,7 @@ static struct apm32_adc adc_config[] =
     },
 #endif
 };
-#elif APM32F40X
+#elif defined(SOC_SERIES_APM32F4)
 static struct apm32_adc adc_config[] =
 {
 #ifdef BSP_USING_ADC1
@@ -162,11 +163,37 @@ static struct apm32_adc adc_config[] =
     },
 #endif
 };
+#elif defined(SOC_SERIES_APM32F0)
+static struct apm32_adc adc_config[] =
+{
+#ifdef BSP_USING_ADC1
+    {
+        "adc1",
+        ADC,
+        {
+            ADC_RESOLUTION_12B,
+            ADC_DATA_ALIGN_RIGHT,
+            ADC_SCAN_DIR_UPWARD,
+            ADC_CONVERSION_SINGLE,
+            ADC_EXT_TRIG_CONV_TRG0,
+            ADC_EXT_TRIG_EDGE_NONE
+        },
+        {
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(A, 4),
+            GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
+            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4),
+            GET_PIN(C, 5)
+        },
+        RT_NULL
+    },
 #endif
-static rt_err_t _adc_channel_check(struct rt_adc_device *device, rt_uint32_t channel)
+};
+#endif
+
+static rt_err_t apm32_adc_channel_check(struct rt_adc_device *device, rt_uint32_t channel)
 {
     struct apm32_adc *adc_cfg = ((struct apm32_adc *)device->parent.user_data);
-#ifdef APM32F10X_HD
+#if defined(SOC_SERIES_APM32F1)
     if (adc_cfg->adc == ADC3)
     {
         if (channel <= 8)
@@ -181,8 +208,13 @@ static rt_err_t _adc_channel_check(struct rt_adc_device *device, rt_uint32_t cha
             return RT_EOK;
         }
     }
-#elif APM32F40X
+#elif defined(SOC_SERIES_APM32F4)
     if (channel <= 13)
+    {
+        return RT_EOK;
+    }
+#elif defined(SOC_SERIES_APM32F0)
+    if (channel <= 16)
     {
         return RT_EOK;
     }
@@ -191,24 +223,27 @@ static rt_err_t _adc_channel_check(struct rt_adc_device *device, rt_uint32_t cha
     return -RT_ERROR;
 }
 
-static rt_err_t _adc_gpio_init(struct rt_adc_device *device, rt_uint32_t channel)
+static rt_err_t apm32_adc_gpio_init(struct rt_adc_device *device, rt_uint32_t channel)
 {
     struct apm32_adc *adc_cfg = ((struct apm32_adc *)device->parent.user_data);
     GPIO_Config_T hw_gpio_config;
 
-    if (_adc_channel_check(device, channel) != RT_EOK)
+    if (apm32_adc_channel_check(device, channel) != RT_EOK)
     {
         return -RT_ERROR;
     }
-#ifdef APM32F10X_HD
+#if defined(SOC_SERIES_APM32F1)
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA << ((adc_cfg->channel_pin[channel] >> 4) & 0xFu));
     hw_gpio_config.mode = GPIO_MODE_ANALOG;
-#elif APM32F40X
+#elif defined(SOC_SERIES_APM32F4)
     RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOA << ((adc_cfg->channel_pin[channel] >> 4) & 0xFu));
     hw_gpio_config.mode = GPIO_MODE_AN;
+#elif defined(SOC_SERIES_APM32F0)
+    RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_GPIOA << ((adc_cfg->channel_pin[channel] >> 4) & 0xFu));
+    hw_gpio_config.mode = GPIO_MODE_AN;
 #endif
-    hw_gpio_config.pin = _ADC_GET_PIN(adc_cfg->channel_pin[channel]);
-    GPIO_Config(_ADC_GET_PORT(adc_cfg->channel_pin[channel]), &hw_gpio_config);
+    hw_gpio_config.pin = APM32_ADC_GET_PIN(adc_cfg->channel_pin[channel]);
+    GPIO_Config(APM32_ADC_GET_PORT(adc_cfg->channel_pin[channel]), &hw_gpio_config);
 
     return RT_EOK;
 }
@@ -224,12 +259,28 @@ static rt_err_t _adc_gpio_init(struct rt_adc_device *device, rt_uint32_t channel
  *
  * @return   RT_EOK indicates successful enable or disable adc, other value indicates failed.
  */
-static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t apm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
     struct apm32_adc *adc_cfg = ((struct apm32_adc *)device->parent.user_data);
 
     RT_ASSERT(device != RT_NULL);
 
+#if defined(SOC_SERIES_APM32F0)
+    if (enabled)
+    {
+        RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_ADC1);
+        if (apm32_adc_gpio_init(device, channel) != RT_EOK)
+        {
+            return -RT_ERROR;
+        }
+        ADC_Config(&adc_cfg->adc_config);
+        ADC_Enable();
+    }
+    else
+    {
+        ADC_Disable();
+    }
+#else
     if (enabled)
     {
         if (adc_cfg->adc == ADC1)
@@ -244,7 +295,7 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, 
         {
             RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_ADC3);
         }
-        if (_adc_gpio_init(device, channel) != RT_EOK)
+        if (apm32_adc_gpio_init(device, channel) != RT_EOK)
         {
             return -RT_ERROR;
         }
@@ -257,6 +308,7 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, 
     {
         ADC_Disable(adc_cfg->adc);
     }
+#endif
 
     return RT_EOK;
 }
@@ -272,19 +324,22 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, 
  *
  * @return   RT_EOK indicates successful get adc value, other value indicates failed.
  */
-static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
+#if !defined(SOC_SERIES_APM32F0)
     struct apm32_adc *adc_cfg = ((struct apm32_adc *)device->parent.user_data);
+#endif
     volatile rt_uint32_t counter = 0;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(value != RT_NULL);
 
-    if (_adc_channel_check(device, channel) != RT_EOK)
+    if (apm32_adc_channel_check(device, channel) != RT_EOK)
     {
         return -RT_ERROR;
     }
-#ifdef APM32F10X_HD
+    
+#if defined(SOC_SERIES_APM32F1)
     ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_13CYCLES5);
 
     ADC_StartCalibration(adc_cfg->adc);
@@ -298,11 +353,7 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_uint32_t channel
     }
 
     ADC_EnableSoftwareStartConv(adc_cfg->adc);
-#elif APM32F40X
-    ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_15CYCLES);
-    ADC_SoftwareStartConv(adc_cfg->adc);
-#endif
-    counter = 0;
+    
     while (!ADC_ReadStatusFlag(adc_cfg->adc, ADC_FLAG_EOC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
@@ -310,16 +361,41 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_uint32_t channel
             return RT_ETIMEOUT;
         }
     }
-
     *value = ADC_ReadConversionValue(adc_cfg->adc);
-
+#elif defined(SOC_SERIES_APM32F4)
+    ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_15CYCLES);
+    ADC_SoftwareStartConv(adc_cfg->adc);
+    
+    while (!ADC_ReadStatusFlag(adc_cfg->adc, ADC_FLAG_EOC))
+    {
+        if (++counter > DRV_ADC_TIME_OUT)
+        {
+            return RT_ETIMEOUT;
+        }
+    }
+    *value = ADC_ReadConversionValue(adc_cfg->adc);
+#elif defined(SOC_SERIES_APM32F0)
+    ADC_ConfigChannel((uint16_t)(1u << ((channel) & 0xFu)), ADC_SAMPLE_TIME_239_5);
+    
+    ADC_StartConversion();
+    
+    while (!ADC_ReadStatusFlag(ADC_FLAG_CC))
+    {
+        if (++counter > DRV_ADC_TIME_OUT)
+        {
+            return RT_ETIMEOUT;
+        }
+    }
+    *value = ADC_ReadConversionValue();
+#endif
+    
     return RT_EOK;
 }
 
-static const struct rt_adc_ops _adc_ops =
+static const struct rt_adc_ops apm32_adc_ops =
 {
-    .enabled = _adc_enabled,
-    .convert = _adc_get_value,
+    .enabled = apm32_adc_enabled,
+    .convert = apm32_adc_get_value,
 };
 
 /**
@@ -336,7 +412,7 @@ static int rt_hw_adc_init(void)
     for (i = 0; i < obj_num; i++)
     {
         /* register ADC device */
-        if (rt_hw_adc_register(&adc_config[i].adc_dev, adc_config[i].name, &_adc_ops, adc_config))
+        if (rt_hw_adc_register(&adc_config[i].adc_dev, adc_config[i].name, &apm32_adc_ops, &adc_config[i]) == RT_EOK)
         {
             LOG_D("%s init success", adc_config[i].name);
         }

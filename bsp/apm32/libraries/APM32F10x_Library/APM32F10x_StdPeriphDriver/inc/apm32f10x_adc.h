@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions prototypes for the ADC firmware library
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,16 +23,17 @@
  *  and limitations under the License.
  */
 
+/* Define to prevent recursive inclusion */
 #ifndef __APM32F10X_ADC_H
 #define __APM32F10X_ADC_H
 
+/* Includes */
+#include "apm32f10x.h"
 #ifdef __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 
-#include "apm32f10x.h"
-
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -40,7 +41,33 @@
   @{
 */
 
-/** @addtogroup ADC_Enumerations Enumerations
+
+/** @defgroup ADC_Macros
+  @{
+*/
+
+/* ADC_IJD Offset */
+#define INJDATA_OFFSET          ((uint8_t)0x28)
+
+/* ADC_RDG register address */
+#define RDG_ADDRESS             ((uint32_t)0x4001244C)
+
+/* INJSEQ register config */
+#define INJSEQ_SET_INJSEQC      ((uint32_t)0x0000001F)
+#define INJSEQ_SET_INJSEQLEN    ((uint32_t)0x00300000)
+
+/* SMPTIM register SET */
+#define SMPCYCCFG_SET_SMPTIM1   ((uint32_t)0x00000007)
+#define SMPCYCCFG_SET_SMPTIM2   ((uint32_t)0x00000007)
+
+/* REGSEQ register SET  */
+#define REGSEQC_SET_REGSEQ3     ((uint32_t)0x0000001F)
+#define REGSEQC_SET_REGSEQ2     ((uint32_t)0x0000001F)
+#define REGSEQC_SET_REGSEQ1     ((uint32_t)0x0000001F)
+
+/**@} end of group ADC_Macros*/
+
+/** @defgroup ADC_Enumerations
   @{
 */
 
@@ -49,16 +76,16 @@
  */
 typedef enum
 {
-    ADC_MODE_INDEPENDENT              = ((uint32_t)0x00000000), //!< Independent mode
-    ADC_MODE_REG_INJEC_SIMULT         = ((uint32_t)0x00010000), //!< Combined regular simultaneous and injected simultaneous mode
-    ADC_MODE_REG_SIMULT_ALTER_TRIG    = ((uint32_t)0x00020000), //!< Combined regular simultaneous and alternate trigger mode
-    ADC_MODE_INJEC_SIMULT_FAST_TNTERL = ((uint32_t)0x00030000), //!< Combined injected simultaneous and fast interleaved mode
-    ADC_MODE_INJEC_SIMULT_SLOW_INTERL = ((uint32_t)0x00040000), //!< Combined injected simultaneous and slow interleaved mode
-    ADC_MODE_INJEC_SIMULT             = ((uint32_t)0x00050000), //!< Injected simultaneous mode
-    ADC_MODE_REG_SIMULT               = ((uint32_t)0x00060000), //!< Regular simultaneous mode
-    ADC_MODE_FAST_INTERL              = ((uint32_t)0x00070000), //!< Fast interleaved mode
-    ADC_MODE_SLOW_INTERL              = ((uint32_t)0x00080000), //!< Slow interleaved mode
-    ADC_MODE_ALTER_TRIG               = ((uint32_t)0x00090000)  //!< Alternate trigger mode
+    ADC_MODE_INDEPENDENT              = ((uint32_t)0x00000000), /*!< Independent mode */
+    ADC_MODE_REG_INJEC_SIMULT         = ((uint32_t)0x00010000), /*!< Combined regular simultaneous and injected simultaneous mode */
+    ADC_MODE_REG_SIMULT_ALTER_TRIG    = ((uint32_t)0x00020000), /*!< Combined regular simultaneous and alternate trigger mode */
+    ADC_MODE_INJEC_SIMULT_FAST_TNTERL = ((uint32_t)0x00030000), /*!< Combined injected simultaneous and fast interleaved mode */
+    ADC_MODE_INJEC_SIMULT_SLOW_INTERL = ((uint32_t)0x00040000), /*!< Combined injected simultaneous and slow interleaved mode */
+    ADC_MODE_INJEC_SIMULT             = ((uint32_t)0x00050000), /*!< Injected simultaneous mode */
+    ADC_MODE_REG_SIMULT               = ((uint32_t)0x00060000), /*!< Regular simultaneous mode */
+    ADC_MODE_FAST_INTERL              = ((uint32_t)0x00070000), /*!< Fast interleaved mode */
+    ADC_MODE_SLOW_INTERL              = ((uint32_t)0x00080000), /*!< Slow interleaved mode */
+    ADC_MODE_ALTER_TRIG               = ((uint32_t)0x00090000)  /*!< Alternate trigger mode */
 } ADC_MODE_T;
 
 /**
@@ -139,19 +166,19 @@ typedef enum
  */
 typedef enum
 {
-    /** for ADC1 and ADC2 */
+    /* for ADC1 and ADC2 */
     ADC_EXT_TRIG_INJEC_CONV_TMR2_TRGO       = ((uint8_t)0x02),
     ADC_EXT_TRIG_INJEC_CONV_TMR2_CC1        = ((uint8_t)0x03),
     ADC_EXT_TRIG_INJEC_CONV_TMR3_CC4        = ((uint8_t)0x04),
     ADC_EXT_TRIG_INJEC_CONV_TMR4_TRGO       = ((uint8_t)0x05),
     ADC_EXT_TRIG_INJEC_CONV_EINT15_T8_CC4   = ((uint8_t)0x06),
 
-    /** for ADC1, ADC2 and ADC3 */
+    /* for ADC1, ADC2 and ADC3 */
     ADC_EXT_TRIG_INJEC_CONV_TMR1_TRGO       = ((uint8_t)0x00),
     ADC_EXT_TRIG_INJEC_CONV_TMR1_CC4        = ((uint8_t)0x01),
     ADC_EXT_TRIG_INJEC_CONV_NONE            = ((uint8_t)0x07),
 
-    /** for ADC3 only */
+    /* for ADC3 only */
     ADC_EXT_TRIG_INJEC_CONV_TMR4_CC3        = ((uint8_t)0x02),
     ADC_EXT_TRIG_INJEC_CONV_TMR8_CC2        = ((uint8_t)0x03),
     ADC_EXT_TRIG_INJEC_CONV_TMR8_CC4        = ((uint8_t)0x04),
@@ -189,9 +216,9 @@ typedef enum
  */
 typedef enum
 {
-    ADC_INT_AWD    = ((uint16_t)0x0140), //!<  Analog Watchdog interrupt
-    ADC_INT_EOC    = ((uint16_t)0x0220), //!<  End Of Conversion interrupt
-    ADC_INT_INJEOC = ((uint16_t)0x0480)  //!<  Injected Channel End Of Conversion interrupt
+    ADC_INT_AWD    = ((uint16_t)0x0140), /*!<  Analog Watchdog interrupt */
+    ADC_INT_EOC    = ((uint16_t)0x0220), /*!<  End Of Conversion interrupt */
+    ADC_INT_INJEOC = ((uint16_t)0x0480)  /*!<  Injected Channel End Of Conversion interrupt */
 } ADC_INT_T;
 
 /**
@@ -199,43 +226,16 @@ typedef enum
  */
 typedef enum
 {
-    ADC_FLAG_AWD    = ((uint8_t)0x01), //!<  Analog Watchdog event occur flag
-    ADC_FLAG_EOC    = ((uint8_t)0x02), //!<  End Of Conversion flag
-    ADC_FLAG_INJEOC = ((uint8_t)0x04), //!<  Injected Channel End Of Conversion flag
-    ADC_FLAG_INJCS  = ((uint8_t)0x08), //!<  Injected Channel Conversion Start flag
-    ADC_FLAG_REGCS  = ((uint8_t)0x10)  //!<  Regular Channel Conversion Start flag
+    ADC_FLAG_AWD    = ((uint8_t)0x01), /*!<  Analog Watchdog event occur flag */
+    ADC_FLAG_EOC    = ((uint8_t)0x02), /*!<  End Of Conversion flag */
+    ADC_FLAG_INJEOC = ((uint8_t)0x04), /*!<  Injected Channel End Of Conversion flag */
+    ADC_FLAG_INJCS  = ((uint8_t)0x08), /*!<  Injected Channel Conversion Start flag */
+    ADC_FLAG_REGCS  = ((uint8_t)0x10)  /*!<  Regular Channel Conversion Start flag */
 } ADC_FLAG_T;
 
 /**@} end of group ADC_Enumerations*/
 
-
-/** @addtogroup ADC_Macros Macros
-  @{
-*/
-
-/** ADC_IJD Offset */
-#define INJDATA_OFFSET          ((uint8_t)0x28)
-
-/** ADC_RDG register address */
-#define RDG_ADDRESS             ((uint32_t)0x4001244C)
-
-/** INJSEQ register config */
-#define INJSEQ_SET_INJSEQC      ((uint32_t)0x0000001F)
-#define INJSEQ_SET_INJSEQLEN    ((uint32_t)0x00300000)
-
-/** SMPTIM register SET */
-#define SMPCYCCFG_SET_SMPTIM1   ((uint32_t)0x00000007)
-#define SMPCYCCFG_SET_SMPTIM2   ((uint32_t)0x00000007)
-
-/** REGSEQ register SET  */
-#define REGSEQC_SET_REGSEQ3     ((uint32_t)0x0000001F)
-#define REGSEQC_SET_REGSEQ2     ((uint32_t)0x0000001F)
-#define REGSEQC_SET_REGSEQ1     ((uint32_t)0x0000001F)
-
-/**@} end of group ADC_Macros*/
-
-
-/** @addtogroup ADC_Structure Data Structure
+/** @defgroup ADC_Structures Structures
   @{
 */
 
@@ -245,89 +245,89 @@ typedef enum
 typedef struct
 {
     ADC_MODE_T          mode;
-    uint8_t             scanConvMode;       //!< This parameter can be ENABLE or DISABLE.
-    uint8_t             continuosConvMode;  //!< This parameter can be ENABLE or DISABLE.
+    uint8_t             scanConvMode;       /*!< This parameter can be ENABLE or DISABLE. */
+    uint8_t             continuosConvMode;  /*!< This parameter can be ENABLE or DISABLE. */
     ADC_EXT_TRIG_CONV_T externalTrigConv;
     ADC_DATA_ALIGN_T    dataAlign;
-    uint8_t             nbrOfChannel;       //!< This parameter must range from 1 to 16.
+    uint8_t             nbrOfChannel;       /*!< This parameter must range from 1 to 16. */
 } ADC_Config_T;
 
-/**@} end of group ADC_Structure*/
+/**@} end of group ADC_Structures*/
 
 
-/** @addtogroup ADC_Fuctions Fuctions
+/** @defgroup ADC_Functions Functions
   @{
 */
 
-/** ADC reset and common configuration */
+/* ADC reset and common configuration */
 void ADC_Reset(ADC_T* adc);
 void ADC_Config(ADC_T* adc, ADC_Config_T* adcConfig);
 void ADC_ConfigStructInit(ADC_Config_T* adcConfig);
-void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel,uint8_t rank, uint8_t sampleTime);
+void ADC_ConfigRegularChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t sampleTime);
 void ADC_Enable(ADC_T* adc);
 void ADC_Disable(ADC_T* adc);
 
-/** ADC for DMA */
+/* ADC for DMA */
 void ADC_EnableDMA(ADC_T* adc);
 void ADC_DisableDMA(ADC_T* adc);
 
-/** ADC Calibration */
+/* ADC Calibration */
 void ADC_ResetCalibration(ADC_T* adc);
 uint8_t ADC_ReadResetCalibrationStatus(ADC_T* adc);
 void ADC_StartCalibration(ADC_T* adc);
 uint8_t ADC_ReadCalibrationStartFlag(ADC_T* adc);
 
-/** ADC software start conversion */
+/* ADC software start conversion */
 void ADC_EnableSoftwareStartConv(ADC_T* adc);
 void ADC_DisableSoftwareStartConv(ADC_T* adc);
 uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc);
 
-/** ADC Discontinuous mode */
+/* ADC Discontinuous mode */
 void ADC_ConfigDiscMode(ADC_T* adc, uint8_t number);
 void ADC_EnableDiscMode(ADC_T* adc);
 void ADC_DisableDiscMode(ADC_T* adc);
 
-/** ADC External trigger conversion */
+/* ADC External trigger conversion */
 void ADC_EnableExternalTrigConv(ADC_T* adc);
 void ADC_DisableExternalTrigConv(ADC_T* adc);
 
-/** ADC Conversion result */
+/* ADC Conversion result */
 uint16_t ADC_ReadConversionValue(ADC_T* adc);
 uint32_t ADC_ReadDualModeConversionValue(ADC_T* adc);
 
-/** ADC Automatic injected group */
+/* ADC Automatic injected group */
 void ADC_EnableAutoInjectedConv(ADC_T* adc);
 void ADC_DisableAutoInjectedConv(ADC_T* adc);
 void ADC_EnableInjectedDiscMode(ADC_T* adc);
 void ADC_DisableInjectedDiscMode(ADC_T* adc);
 
-/** ADC External trigger for injected channels conversion */
+/* ADC External trigger for injected channels conversion */
 void ADC_ConfigExternalTrigInjectedConv(ADC_T* adc, ADC_EXT_TRIG_INJEC_CONV_T extTrigInjecConv);
 void ADC_EnableExternalTrigInjectedConv(ADC_T* adc);
 void ADC_DisableExternalTrigInjectedConv(ADC_T* adc);
 
-/** ADC Start of the injected channels conversion */
+/* ADC Start of the injected channels conversion */
 void ADC_EnableSoftwareStartInjectedConv(ADC_T* adc);
 void ADC_DisableSoftwareStartInjectedConv(ADC_T* adc);
 uint8_t ADC_ReadSoftwareStartInjectedConvStatus(ADC_T* adc);
 
-/** ADC injected channel */
+/* ADC injected channel */
 void ADC_ConfigInjectedChannel(ADC_T* adc, uint8_t channel, uint8_t rank, uint8_t sampleTime);
 void ADC_ConfigInjectedSequencerLength(ADC_T* adc, uint8_t length);
 void ADC_ConfigInjectedOffset(ADC_T* adc, ADC_INJEC_CHANNEL_T channel, uint16_t offSet);
 uint16_t ADC_ReadInjectedConversionValue(ADC_T* adc, ADC_INJEC_CHANNEL_T channel);
 
-/** ADC analog watchdog */
+/* ADC analog watchdog */
 void ADC_EnableAnalogWatchdog(ADC_T* adc, uint32_t analogWatchdog);
 void ADC_DisableAnalogWatchdog(ADC_T* adc);
 void ADC_ConfigAnalogWatchdogThresholds(ADC_T* adc, uint16_t highThreshold, uint16_t lowThreshold);
 void ADC_ConfigAnalogWatchdogSingleChannel(ADC_T* adc, uint8_t channel);
 
-/** ADC temperature sensor */
+/* ADC temperature sensor */
 void ADC_EnableTempSensorVrefint(ADC_T* adc);
 void ADC_DisableTempSensorVrefint(ADC_T* adc);
 
-/** Interrupt and flag */
+/* Interrupt and flag */
 void ADC_EnableInterrupt(ADC_T* adc, uint16_t interrupt);
 void ADC_DisableInterrupt(ADC_T* adc, uint16_t interrupt);
 uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag);
@@ -335,12 +335,14 @@ void ADC_ClearStatusFlag(ADC_T* adc, uint8_t flag);
 uint8_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_T flag);
 void ADC_ClearIntFlag(ADC_T* adc, uint16_t flag);
 
-/**@} end of group ADC_Fuctions*/
-/**@} end of group ADC_Driver*/
-/**@} end of group Peripherals_Library*/
+
 
 #ifdef __cplusplus
 }
+
+/**@} end of group ADC_Functions*/
+/**@} end of group ADC_Driver*/
+/**@} end of group APM32F10x_StdPeriphDriver */
 #endif
 
-#endif /** __APM32F10X_ADC_H */
+#endif /* __APM32F10X_ADC_H */

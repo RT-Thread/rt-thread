@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions for the DMC controler peripheral
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,15 +26,16 @@
 #ifdef APM32F10X_HD
 #include "apm32f10x_dmc.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
-/** @addtogroup DMC_Driver  DMC Driver
+/** @addtogroup DMC_Driver DMC Driver
+  * @brief DMC driver modules
   @{
 */
 
-/** @addtogroup  DMC_Fuctions Fuctions
+/** @defgroup  DMC_Functions Functions
   @{
 */
 
@@ -45,7 +46,7 @@
  *
  * @retval      None
  */
-void DMC_Config(DMC_Config_T *dmcConfig)
+void DMC_Config(DMC_Config_T* dmcConfig)
 {
     DMC->SW_B.MCSW = 1;
     while (!DMC->CTRL1_B.INIT);
@@ -73,7 +74,7 @@ void DMC_Config(DMC_Config_T *dmcConfig)
  *
  * @retval      None
  */
-void DMC_ConfigStructInit(DMC_Config_T *dmcConfig)
+void DMC_ConfigStructInit(DMC_Config_T* dmcConfig)
 {
     dmcConfig->bankWidth   = DMC_BANK_WIDTH_2;
     dmcConfig->clkPhase    = DMC_CLK_PHASE_REVERSE;
@@ -91,7 +92,7 @@ void DMC_ConfigStructInit(DMC_Config_T *dmcConfig)
  *
  * @retval      None
  */
-void DMC_ConfigTiming(DMC_TimingConfig_T *timingConfig)
+void DMC_ConfigTiming(DMC_TimingConfig_T* timingConfig)
 {
     DMC->TIM0_B.RASMINTSEL = timingConfig->tRAS;
     DMC->TIM0_B.DTIMSEL    = timingConfig->tRCD;
@@ -116,7 +117,7 @@ void DMC_ConfigTiming(DMC_TimingConfig_T *timingConfig)
  *
  * @retval      None
  */
-void DMC_ConfigTimingStructInit(DMC_TimingConfig_T *timingConfig)
+void DMC_ConfigTimingStructInit(DMC_TimingConfig_T* timingConfig)
 {
     timingConfig->latencyCAS = DMC_CAS_LATENCY_3;
     timingConfig->tARP = DMC_AUTO_REFRESH_10;
@@ -457,8 +458,9 @@ void DMC_ConfigWRAPB(DMC_WRPB_T burst)
     DMC->CTRL2_B.WRPBSEL = burst;
 }
 
+/**@} end of group DMC_Functions*/
+/**@} end of group DMC_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver*/
+
 #endif //defined APM32F10X_HD
 
-/**@} end of group DMC_Fuctions*/
-/**@} end of group DMC_Driver*/
-/**@} end of group Peripherals_Library*/
