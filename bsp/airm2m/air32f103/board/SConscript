@@ -1,0 +1,30 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/spi_flash_init.c')
+
+path =  [cwd]
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/Startup/gcc/startup_air32f10x.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/Startup/arm/startup_air32f10x.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/Startup/iar/startup_air32f10x.s']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+Return('group')
