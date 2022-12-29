@@ -10,7 +10,7 @@
 
 #include <lvgl.h>
 
-RT_WEAK void lv_user_gui_init(void)
+rt_weak void lv_user_gui_init(void)
 {
     /* display demo; you may replace with your LVGL application at here and disable related definitions. */
 
