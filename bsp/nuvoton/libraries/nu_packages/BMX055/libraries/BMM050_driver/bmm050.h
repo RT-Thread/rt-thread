@@ -709,7 +709,7 @@ delay_func(delay_in_msec)
 #define E_BMM050_NULL_PTR           ((s8)-127)
 #define ERROR                       ((s8)-1)
 #define E_BMM050_OUT_OF_RANGE       ((s8)-2)
-#define BMM050_NULL                 ((u8)0)
+#define BMM050_NULL                 (0)
 #define E_BMM050_UNDEFINED_MODE     (0)
 
 /********************************************/

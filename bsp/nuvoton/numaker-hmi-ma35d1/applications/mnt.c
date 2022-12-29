@@ -12,6 +12,8 @@
 
 #include <rtthread.h>
 
+#if defined(RT_USING_DFS)
+
 #define LOG_TAG         "mnt"
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "mnt"
@@ -57,9 +59,10 @@ const struct dfs_mount_tbl mount_table[] =
     { RAMDISK_UDC, "/mnt/ram_usbd", "elm", 0, RT_NULL },
 #endif
 #if defined(PKG_USING_DFS_YAFFS)
-    { "nand1", "/mnt/filesystem", "yaffs", 0, RT_NULL },
+    { "nand1", "/mnt/nand1", "yaffs", 0, RT_NULL },
+    { "rawnd1", "/mnt/nfi", "yaffs", 0, RT_NULL },
 #elif defined(RT_USING_DFS_UFFS)
-    { "nand1", "/mnt/filesystem", "uffs", 0, RT_NULL },
+    { "nand1", "/mnt/nand1", "uffs", 0, RT_NULL },
 #endif
     { "sd0", "/mnt/sd0", "elm", 0, RT_NULL },
     { "sd0p0", "/mnt/sd0p0", "elm", 0, RT_NULL },
@@ -163,9 +166,10 @@ exit_mkdir_p:
 
 #if defined(PKG_USING_DFS_YAFFS) && defined(RT_USING_DFS_MNTTABLE)
 #include "yaffs_guts.h"
-void yaffs_dev_init(void)
+int yaffs_dev_init(void)
 {
     int i;
+
     for (i = 0; i < sizeof(mount_table) / sizeof(struct dfs_mount_tbl); i++)
     {
         if (mount_table[i].filesystemtype && !rt_strcmp(mount_table[i].filesystemtype, "yaffs"))
@@ -173,11 +177,26 @@ void yaffs_dev_init(void)
             struct rt_mtd_nand_device *psMtdNandDev = RT_MTD_NAND_DEVICE(rt_device_find(mount_table[i].device_name));
             if (psMtdNandDev)
             {
+                LOG_I("yaffs start [%s].", mount_table[i].device_name);
+
                 yaffs_start_up(psMtdNandDev, (const char *)mount_table[i].path);
+
+                LOG_I("dfs mount [%s].", mount_table[i].device_name);
+                if (dfs_mount(mount_table[i].device_name,
+                              mount_table[i].path,
+                              mount_table[i].filesystemtype,
+                              mount_table[i].rwflag,
+                              mount_table[i].data) != 0)
+                {
+                    LOG_E("mount fs[%s] on %s failed.", mount_table[i].filesystemtype, mount_table[i].path);
+                }
             }
         }
     }
+
+    return 0;
 }
+INIT_APP_EXPORT(yaffs_dev_init);
 #endif
 
 /* Initialize the filesystem */
@@ -214,7 +233,8 @@ int filesystem_init(void)
             mkdir_p("/cache", 0x777);
             mkdir_p("/download", 0x777);
             mkdir_p("/mnt/ram_usbd", 0x777);
-            mkdir_p("/mnt/filesystem", 0x777);
+            mkdir_p("/mnt/nand1", 0x777);
+            mkdir_p("/mnt/nfi", 0x777);
             mkdir_p("/mnt/sd0", 0x777);
             mkdir_p("/mnt/sd0p0", 0x777);
             mkdir_p("/mnt/sd0p1", 0x777);
@@ -254,13 +274,10 @@ int filesystem_init(void)
     }
 #endif
 
-#if defined(PKG_USING_DFS_YAFFS) && defined(RT_USING_DFS_MNTTABLE)
-    yaffs_dev_init();
-#endif
-
 exit_filesystem_init:
 
     return -result;
 }
 INIT_ENV_EXPORT(filesystem_init);
+#endif
 #endif

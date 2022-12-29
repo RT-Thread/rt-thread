@@ -151,7 +151,7 @@ Pin175:EADC0_CH7
 Pin176:EADC0_CH6
 ********************/
 
-#include "M460.h"
+#include "NuMicro.h"
 #include "rtconfig.h"
 
 void nutool_pincfg_init_can0(void)

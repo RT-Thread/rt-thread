@@ -191,11 +191,11 @@ static void nu_clock_i2s_init(void)
 {
 #if defined(BSP_USING_I2S0)
     CLK_EnableModuleClock(I2S0_MODULE);
-    CLK_SetModuleClock(I2S0_MODULE, CLK_CLKSEL4_I2S0SEL_SYSCLK1_DIV2, MODULE_NoMsk);
+    CLK_SetModuleClock(I2S0_MODULE, CLK_CLKSEL4_I2S0SEL_APLL, MODULE_NoMsk);
 #endif
 #if defined(BSP_USING_I2S1)
     CLK_EnableModuleClock(I2S1_MODULE);
-    CLK_SetModuleClock(I2S1_MODULE, CLK_CLKSEL4_I2S1SEL_SYSCLK1_DIV2, MODULE_NoMsk);
+    CLK_SetModuleClock(I2S1_MODULE, CLK_CLKSEL4_I2S1SEL_APLL, MODULE_NoMsk);
 #endif
 }
 
@@ -365,6 +365,23 @@ void nu_clock_base_init(void)
 }
 #endif
 
+static void nu_clock_hwsem_init(void)
+{
+#if defined(BSP_USING_HWSEM0)
+    CLK_EnableModuleClock(HWSEM0_MODULE);
+#endif
+}
+
+static void nu_clock_whc_init(void)
+{
+#if defined(BSP_USING_WHC0)
+    CLK_EnableModuleClock(WHC0_MODULE);
+#endif
+#if defined(BSP_USING_WHC1)
+    CLK_EnableModuleClock(WHC1_MODULE);
+#endif
+}
+
 void nu_clock_init(void)
 {
 #if !defined(USE_MA35D1_SUBM)
@@ -377,6 +394,8 @@ void nu_clock_init(void)
     nu_clock_disp_init();
 #endif
 
+    nu_clock_whc_init();
+    nu_clock_hwsem_init();
     nu_clock_pdma_init();
     nu_clock_gpio_init();
     nu_clock_uart_init();

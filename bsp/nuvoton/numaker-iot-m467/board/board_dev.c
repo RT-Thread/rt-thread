@@ -185,7 +185,7 @@ int rt_hw_mpu6xxx_port(void)
     rt_base_t mpu_int = NU_GET_PININDEX(NU_PD, 2);
 
     cfg.intf.dev_name = "i2c2";
-    cfg.intf.user_data = (void *)MPU6XXX_ADDR_DEFAULT;
+    cfg.intf.arg = (void *)MPU6XXX_ADDR_DEFAULT;
     cfg.irq_pin.pin = mpu_int;
 
     return rt_hw_mpu6xxx_init("mpu", &cfg);

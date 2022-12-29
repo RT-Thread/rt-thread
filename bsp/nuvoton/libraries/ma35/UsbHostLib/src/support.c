@@ -39,8 +39,7 @@ typedef struct USB_mhdr
     uint32_t  reserved;
 }  USB_MHDR_T;
 
-uint8_t  _USBMemoryPool[USB_MEMORY_POOL_SIZE] __attribute__((aligned(USB_MEM_BLOCK_SIZE)));
-
+uint8_t  _USBMemoryPool[USB_MEMORY_POOL_SIZE] __attribute__((section(".usbhostlib.USBMemoryPool")))  __attribute__((aligned(USB_MEM_BLOCK_SIZE)));
 
 static USB_MHDR_T  *_pCurrent;
 uint32_t  *_USB_pCurrent = (uint32_t *) &_pCurrent;
@@ -50,7 +49,7 @@ static uint32_t  _MemoryPoolBase, _MemoryPoolEnd;
 
 void  USB_InitializeMemoryPool()
 {
-    _MemoryPoolBase = (uint32_t)&_USBMemoryPool[0] | NON_CACHE_MASK;
+    _MemoryPoolBase = (uint32_t)&_USBMemoryPool[0];
     _MemoryPoolEnd = _MemoryPoolBase + USB_MEMORY_POOL_SIZE;
     _FreeMemorySize = _MemoryPoolEnd - _MemoryPoolBase;
     _AllocatedMemorySize = 0;
