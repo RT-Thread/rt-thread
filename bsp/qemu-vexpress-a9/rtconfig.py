@@ -37,7 +37,7 @@ BUILD       = 'debug'
 LINK_SCRIPT = 'link.lds'
 
 if PLATFORM == 'gcc':
-    PREFIX  = os.getenv('RTT_EXEC_PREFIX') or 'arm-none-eabi-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'arm-none-eabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -66,7 +66,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS   += ' -Os'
         CXXFLAGS += ' -Os'
-    CXXFLAGS += ' -Woverloaded-virtual -fno-exceptions -fno-rtti'
+    CXXFLAGS += ' -Woverloaded-virtual -fno-rtti'
 
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
