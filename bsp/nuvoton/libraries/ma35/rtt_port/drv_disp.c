@@ -73,9 +73,9 @@ static struct nu_disp nu_fbdev[eLayer_Cnt] =
 #endif
 };
 
-RT_WEAK void nu_lcd_backlight_on(void) { }
+rt_weak void nu_lcd_backlight_on(void) { }
 
-RT_WEAK void nu_lcd_backlight_off(void) { }
+rt_weak void nu_lcd_backlight_off(void) { }
 
 static void nu_disp_isr(int vector, void *param)
 {
