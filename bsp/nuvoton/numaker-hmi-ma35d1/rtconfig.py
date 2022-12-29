@@ -16,7 +16,8 @@ if os.getenv('RTT_ROOT'):
 if  CROSS_TOOL == 'gcc':
 	PLATFORM = 'gcc'
 	EXEC_PATH = r'C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q1-update\bin'
-elif os.getenv('RTT_EXEC_PATH'):
+
+if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #BUILD = 'debug'
@@ -40,10 +41,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -march=armv8-a -mfpu=neon-vfpv4 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
-#    DEVICE = ' -march=armv7-a -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
+    DEVICE = ' -march=armv8-a -mfpu=neon-vfpv4  -ftree-vectorize -ffast-math -msoft-float'
     CFLAGS = DEVICE + ' -Wall -fno-zero-initialized-in-bss '
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ -I. '
     LFLAGS = DEVICE + ' -nostartfiles  -Wl,--gc-sections,-cref,-Map=' + MAP_FILE + ',-cref,-u,system_vectors' + ' -T ' + LINK_FILE + '.ld'
     CXXFLAGS = '  -march=armv8-a -mfpu=neon-vfpv4 -std=c++11 '
 
@@ -58,10 +58,10 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2 -g'
+        CFLAGS += ' -O0 -gdwarf-2 -g '
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -O2 '
 
     CXXFLAGS = CFLAGS 
 

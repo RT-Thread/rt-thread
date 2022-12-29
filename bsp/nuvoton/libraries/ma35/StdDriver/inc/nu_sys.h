@@ -36,15 +36,15 @@ extern "C"
 #define PDMA2_RST           ((0UL<<24) | SYS_IPRST0_PDMA2RST_Pos)       /*!< Reset PDMA2 \hideinitializer */
 #define PDMA3_RST           ((0UL<<24) | SYS_IPRST0_PDMA3RST_Pos)       /*!< Reset PDMA3 \hideinitializer */
 #define DISPC_RST           ((0UL<<24) | SYS_IPRST0_DISPCRST_Pos)       /*!< Reset DISPC \hideinitializer */
-#define CCAP0_RST           ((0UL<<24) | SYS_IPRST0_CCAP0RST_Pos)       /*!< Reset VCAP0 \hideinitializer */
-#define CCAP1_RST           ((0UL<<24) | SYS_IPRST0_CCAP1RST_Pos)       /*!< Reset VCAP1 \hideinitializer */
+#define CCAP0_RST           ((0UL<<24) | SYS_IPRST0_CCAP0RST_Pos)       /*!< Reset CCAP0 \hideinitializer */
+#define CCAP1_RST           ((0UL<<24) | SYS_IPRST0_CCAP1RST_Pos)       /*!< Reset CCAP1 \hideinitializer */
 #define GFX_RST             ((0UL<<24) | SYS_IPRST0_GFXRST_Pos)         /*!< Reset GFX \hideinitializer */
 #define VDEC_RST            ((0UL<<24) | SYS_IPRST0_VDECRST_Pos)        /*!< Reset VDEC \hideinitializer */
-#define WRHO0_RST           ((0UL<<24) | SYS_IPRST0_WRHO0RST_Pos)       /*!< Reset WRHO0 \hideinitializer */
-#define WRHO1_RST           ((0UL<<24) | SYS_IPRST0_WRHO1RST_Pos)       /*!< Reset WRHO1 \hideinitializer */
+#define WHC0_RST            ((0UL<<24) | SYS_IPRST0_WRHO0RST_Pos)       /*!< Reset WRHO0 \hideinitializer */
+#define WHC1_RST            ((0UL<<24) | SYS_IPRST0_WRHO1RST_Pos)       /*!< Reset WRHO1 \hideinitializer */
 #define GMAC0_RST           ((0UL<<24) | SYS_IPRST0_GMAC0RST_Pos)       /*!< Reset GMAC0 \hideinitializer */
 #define GMAC1_RST           ((0UL<<24) | SYS_IPRST0_GMAC1RST_Pos)       /*!< Reset GMAC1 \hideinitializer */
-#define HWSEM_RST           ((0UL<<24) | SYS_IPRST0_HWSEMRST_Pos)       /*!< Reset HWSEM \hideinitializer */
+#define HWSEM0_RST          ((0UL<<24) | SYS_IPRST0_HWSEMRST_Pos)       /*!< Reset HWSEM \hideinitializer */
 #define EBI_RST             ((0UL<<24) | SYS_IPRST0_EBIRST_Pos)         /*!< Reset EBI \hideinitializer */
 #define HSUSBH0_RST         ((0UL<<24) | SYS_IPRST0_HSUSBH0RST_Pos)     /*!< Reset HSUSBH0 \hideinitializer */
 #define HSUSBH1_RST         ((0UL<<24) | SYS_IPRST0_HSUSBH1RST_Pos)     /*!< Reset HSUSBH1 \hideinitializer */
@@ -184,7 +184,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPA_MFPH_PA8MFP_GPIO              (0x00UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPA_MFPH_PA8MFP_UART5_nCTS        (0x02UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< Clear to Send input pin for UART5. */
 #define SYS_GPA_MFPH_PA8MFP_UART4_RXD         (0x03UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< Data receiver input pin for UART4. */
-#define SYS_GPA_MFPH_PA8MFP_NAND_RDY          (0x06UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< NAND Flash ready/busy input pin. */
+#define SYS_GPA_MFPH_PA8MFP_NAND_RDY0         (0x06UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< NAND Flash ready/busy input pin. */
 #define SYS_GPA_MFPH_PA8MFP_EBI_AD8           (0x07UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< EBI address/data bus bit8. */
 #define SYS_GPA_MFPH_PA8MFP_EBI_ADR8          (0x09UL<<SYS_GPA_MFPH_PA8MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPA_MFPH_PA9MFP_GPIO              (0x00UL<<SYS_GPA_MFPH_PA9MFP_Pos)  /*!< General purpose digital I/O pin. */
@@ -212,7 +212,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPA_MFPH_PA13MFP_GPIO             (0x00UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPA_MFPH_PA13MFP_UART7_nRTS       (0x02UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< Request to Send output pin for UART7. */
 #define SYS_GPA_MFPH_PA13MFP_UART8_TXD        (0x03UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< Data transmitter output pin for UART8. */
-#define SYS_GPA_MFPH_PA13MFP_NAND_nCS         (0x06UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< NAND Flash chip select pin. */
+#define SYS_GPA_MFPH_PA13MFP_NAND_nCS0        (0x06UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< NAND Flash chip select pin. */
 #define SYS_GPA_MFPH_PA13MFP_EBI_AD13         (0x07UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< EBI address/data bus bit1. */
 #define SYS_GPA_MFPH_PA13MFP_EBI_ADR13        (0x09UL<<SYS_GPA_MFPH_PA13MFP_Pos) /*!< EBI address/data bus bit*. */
 #define SYS_GPA_MFPH_PA14MFP_GPIO             (0x00UL<<SYS_GPA_MFPH_PA14MFP_Pos) /*!< General purpose digital I/O pin. */
@@ -270,7 +270,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPB_MFPH_PB9MFP_I2C2_SCL          (0x04UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< I2C2 clock pin. */
 #define SYS_GPB_MFPH_PB9MFP_SPI0_CLK          (0x05UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< SPI0 serial clock pin. */
 #define SYS_GPB_MFPH_PB9MFP_I2S0_MCLK         (0x06UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< I2S0 master clock output pin. */
-#define SYS_GPB_MFPH_PB9MFP_VCAP1_HSYNC       (0x07UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< Camera capture 1 interface hsync input pin. */
+#define SYS_GPB_MFPH_PB9MFP_CCAP1_HSYNC       (0x07UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< Camera capture 1 interface hsync input pin. */
 #define SYS_GPB_MFPH_PB9MFP_ADC0_CH1          (0x08UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< ADC0 channel 1 analog input. */
 #define SYS_GPB_MFPH_PB9MFP_EBI_ALE           (0x09UL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< EBI address latch enable output pin. */
 #define SYS_GPB_MFPH_PB9MFP_EBI_AD13          (0x0AUL<<SYS_GPB_MFPH_PB9MFP_Pos)  /*!< EBI address/data bus bit1. */
@@ -285,7 +285,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPB_MFPH_PB10MFP_USBHL2_DM        (0x04UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< USB 1.1 host-lite 2 differential signal D-. */
 #define SYS_GPB_MFPH_PB10MFP_SPI0_MOSI        (0x05UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< 1st SPI0 MOSI (Master Out, Slave In) pin. */
 #define SYS_GPB_MFPH_PB10MFP_EBI_MCLK         (0x06UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< EBI external clock output pin. */
-#define SYS_GPB_MFPH_PB10MFP_VCAP1_VSYNC      (0x07UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< Camera capture 1 interface vsync input pin. */
+#define SYS_GPB_MFPH_PB10MFP_CCAP1_VSYNC      (0x07UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< Camera capture 1 interface vsync input pin. */
 #define SYS_GPB_MFPH_PB10MFP_ADC0_CH2         (0x08UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< ADC0 channel 2 analog input. */
 #define SYS_GPB_MFPH_PB10MFP_EBI_ADR15        (0x09UL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< EBI address/data bus bit*. */
 #define SYS_GPB_MFPH_PB10MFP_EBI_AD14         (0x0AUL<<SYS_GPB_MFPH_PB10MFP_Pos) /*!< EBI address/data bus bit1. */
@@ -300,7 +300,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPB_MFPH_PB11MFP_USBHL2_DP        (0x04UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< USB 1.1 host-lite 2 differential signal D+. */
 #define SYS_GPB_MFPH_PB11MFP_SPI0_MISO        (0x05UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< 1st SPI0 MISO (Master In, Slave Out) pin. */
 #define SYS_GPB_MFPH_PB11MFP_I2S1_MCLK        (0x06UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< I2S1 master clock output pin. */
-#define SYS_GPB_MFPH_PB11MFP_VCAP1_SFIELD     (0x07UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< Camera capture 1 interface SFIELD input pin. */
+#define SYS_GPB_MFPH_PB11MFP_CCAP1_SFIELD     (0x07UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< Camera capture 1 interface SFIELD input pin. */
 #define SYS_GPB_MFPH_PB11MFP_ADC0_CH3         (0x08UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< ADC0 channel 3 analog input. */
 #define SYS_GPB_MFPH_PB11MFP_EBI_nCS2         (0x09UL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< EBI chip select enable output pin. */
 #define SYS_GPB_MFPH_PB11MFP_EBI_ALE          (0x0AUL<<SYS_GPB_MFPH_PB11MFP_Pos) /*!< EBI address latch enable output pin. */
@@ -567,81 +567,81 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPE_MFPL_PE0MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE0MFP_UART9_nCTS        (0x02UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< Clear to Send input pin for UART*. */
 #define SYS_GPE_MFPL_PE0MFP_UART8_RXD         (0x03UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< Data receiver input pin for UART8. */
-#define SYS_GPE_MFPL_PE0MFP_VCAP1_DATA0       (0x07UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< Camera capture 1 data input bus bit 0. */
+#define SYS_GPE_MFPL_PE0MFP_CCAP1_DATA0       (0x07UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< Camera capture 1 data input bus bit 0. */
 #define SYS_GPE_MFPL_PE0MFP_RGMII0_MDC        (0x08UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< RGMII0 Management Data Clock. */
 #define SYS_GPE_MFPL_PE0MFP_RMII0_MDC         (0x09UL<<SYS_GPE_MFPL_PE0MFP_Pos)  /*!< RMII0 PHY Management Clock output pin. */
 #define SYS_GPE_MFPL_PE1MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE1MFP_UART9_nRTS        (0x02UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< Request to Send output pin for UART*. */
 #define SYS_GPE_MFPL_PE1MFP_UART8_TXD         (0x03UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< Data transmitter output pin for UART8. */
-#define SYS_GPE_MFPL_PE1MFP_VCAP1_DATA1       (0x07UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< Camera capture 1 data input bus bit 1. */
+#define SYS_GPE_MFPL_PE1MFP_CCAP1_DATA1       (0x07UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< Camera capture 1 data input bus bit 1. */
 #define SYS_GPE_MFPL_PE1MFP_RGMII0_MDIO       (0x08UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< RGMII0 PHY Management Data pin. */
 #define SYS_GPE_MFPL_PE1MFP_RMII0_MDIO        (0x09UL<<SYS_GPE_MFPL_PE1MFP_Pos)  /*!< RMII0 PHY Management Data pin. */
 #define SYS_GPE_MFPL_PE2MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE2MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE2MFP_UART9_RXD         (0x02UL<<SYS_GPE_MFPL_PE2MFP_Pos)  /*!< Data receiver input pin for UART*. */
-#define SYS_GPE_MFPL_PE2MFP_VCAP1_DATA2       (0x07UL<<SYS_GPE_MFPL_PE2MFP_Pos)  /*!< Camera capture 1 data input bus bit 2. */
+#define SYS_GPE_MFPL_PE2MFP_CCAP1_DATA2       (0x07UL<<SYS_GPE_MFPL_PE2MFP_Pos)  /*!< Camera capture 1 data input bus bit 2. */
 #define SYS_GPE_MFPL_PE2MFP_RGMII0_TXCTL      (0x08UL<<SYS_GPE_MFPL_PE2MFP_Pos)  /*!< RGMII0 Transmit Control output pin. */
 #define SYS_GPE_MFPL_PE2MFP_RMII0_TXEN        (0x09UL<<SYS_GPE_MFPL_PE2MFP_Pos)  /*!< RMII0 Transmit Enable output pin. */
 #define SYS_GPE_MFPL_PE3MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE3MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE3MFP_UART9_TXD         (0x02UL<<SYS_GPE_MFPL_PE3MFP_Pos)  /*!< Data transmitter output pin for UART*. */
-#define SYS_GPE_MFPL_PE3MFP_VCAP1_DATA3       (0x07UL<<SYS_GPE_MFPL_PE3MFP_Pos)  /*!< Camera capture 1 data input bus bit 3. */
+#define SYS_GPE_MFPL_PE3MFP_CCAP1_DATA3       (0x07UL<<SYS_GPE_MFPL_PE3MFP_Pos)  /*!< Camera capture 1 data input bus bit 3. */
 #define SYS_GPE_MFPL_PE3MFP_RGMII0_TXD0       (0x08UL<<SYS_GPE_MFPL_PE3MFP_Pos)  /*!< MII/RMII Transmit Data bus bit 0. */
 #define SYS_GPE_MFPL_PE3MFP_RMII0_TXD0        (0x09UL<<SYS_GPE_MFPL_PE3MFP_Pos)  /*!< RMII0 Transmit Data bus bit 0. */
 #define SYS_GPE_MFPL_PE4MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE4MFP_UART4_nCTS        (0x02UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< Clear to Send input pin for UART4. */
 #define SYS_GPE_MFPL_PE4MFP_UART3_RXD         (0x03UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< Data receiver input pin for UART3. */
-#define SYS_GPE_MFPL_PE4MFP_VCAP1_DATA4       (0x07UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< Camera capture 1 data input bus bit 4. */
+#define SYS_GPE_MFPL_PE4MFP_CCAP1_DATA4       (0x07UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< Camera capture 1 data input bus bit 4. */
 #define SYS_GPE_MFPL_PE4MFP_RGMII0_TXD1       (0x08UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< MII/RMII Transmit Data bus bit 1. */
 #define SYS_GPE_MFPL_PE4MFP_RMII0_TXD1        (0x09UL<<SYS_GPE_MFPL_PE4MFP_Pos)  /*!< RMII0 Transmit Data bus bit 1. */
 #define SYS_GPE_MFPL_PE5MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE5MFP_UART4_nRTS        (0x02UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< Request to Send output pin for UART4. */
 #define SYS_GPE_MFPL_PE5MFP_UART3_TXD         (0x03UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< Data transmitter output pin for UART3. */
-#define SYS_GPE_MFPL_PE5MFP_VCAP1_DATA5       (0x07UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< Camera capture 1 data input bus bit 5. */
+#define SYS_GPE_MFPL_PE5MFP_CCAP1_DATA5       (0x07UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< Camera capture 1 data input bus bit 5. */
 #define SYS_GPE_MFPL_PE5MFP_RGMII0_RXCLK      (0x08UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< RGMII0 Mode RX Clock input pin. */
 #define SYS_GPE_MFPL_PE5MFP_RMII0_REFCLK      (0x09UL<<SYS_GPE_MFPL_PE5MFP_Pos)  /*!< RMII0 Reference Clock input pin. */
 #define SYS_GPE_MFPL_PE6MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE6MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE6MFP_UART4_RXD         (0x02UL<<SYS_GPE_MFPL_PE6MFP_Pos)  /*!< Data receiver input pin for UART4. */
-#define SYS_GPE_MFPL_PE6MFP_VCAP1_DATA6       (0x07UL<<SYS_GPE_MFPL_PE6MFP_Pos)  /*!< Camera capture 1 data input bus bit 6. */
+#define SYS_GPE_MFPL_PE6MFP_CCAP1_DATA6       (0x07UL<<SYS_GPE_MFPL_PE6MFP_Pos)  /*!< Camera capture 1 data input bus bit 6. */
 #define SYS_GPE_MFPL_PE6MFP_RGMII0_RXCTL      (0x08UL<<SYS_GPE_MFPL_PE6MFP_Pos)  /*!< RGMII0 Receive Control input pin. */
 #define SYS_GPE_MFPL_PE6MFP_RMII0_CRSDV       (0x09UL<<SYS_GPE_MFPL_PE6MFP_Pos)  /*!< RMII0 Carrier Sense/Receive Data input pin. */
 #define SYS_GPE_MFPL_PE7MFP_GPIO              (0x00UL<<SYS_GPE_MFPL_PE7MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPL_PE7MFP_UART4_TXD         (0x02UL<<SYS_GPE_MFPL_PE7MFP_Pos)  /*!< Data transmitter output pin for UART4. */
-#define SYS_GPE_MFPL_PE7MFP_VCAP1_DATA7       (0x07UL<<SYS_GPE_MFPL_PE7MFP_Pos)  /*!< Camera capture 1 data input bus bit 7. */
+#define SYS_GPE_MFPL_PE7MFP_CCAP1_DATA7       (0x07UL<<SYS_GPE_MFPL_PE7MFP_Pos)  /*!< Camera capture 1 data input bus bit 7. */
 #define SYS_GPE_MFPL_PE7MFP_RGMII0_RXD0       (0x08UL<<SYS_GPE_MFPL_PE7MFP_Pos)  /*!< RGMII0 Receive Data bus bit 0. */
 #define SYS_GPE_MFPL_PE7MFP_RMII0_RXD0        (0x09UL<<SYS_GPE_MFPL_PE7MFP_Pos)  /*!< RMII0 Receive Data bus bit 0. */
 /********************* Bit definition of GPE_MFPH register **********************/
 #define SYS_GPE_MFPH_PE8MFP_GPIO              (0x00UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE8MFP_UART13_nCTS       (0x02UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< Clear to Send input pin for UART13. */
 #define SYS_GPE_MFPH_PE8MFP_UART12_RXD        (0x03UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< Data receiver input pin for UART12. */
-#define SYS_GPE_MFPH_PE8MFP_VCAP1_SCLK        (0x07UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< Camera capture 1 interface sensor clock output pin. */
+#define SYS_GPE_MFPH_PE8MFP_CCAP1_SCLK        (0x07UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< Camera capture 1 interface sensor clock output pin. */
 #define SYS_GPE_MFPH_PE8MFP_RGMII0_RXD1       (0x08UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< RGMII0 Receive Data bus bit 1. */
 #define SYS_GPE_MFPH_PE8MFP_RMII0_RXD1        (0x09UL<<SYS_GPE_MFPH_PE8MFP_Pos)  /*!< RMII0 Receive Data bus bit 1. */
 #define SYS_GPE_MFPH_PE9MFP_GPIO              (0x00UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE9MFP_UART13_nRTS       (0x02UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< Request to Send output pin for UART13. */
 #define SYS_GPE_MFPH_PE9MFP_UART12_TXD        (0x03UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< Data transmitter output pin for UART12. */
-#define SYS_GPE_MFPH_PE9MFP_VCAP1_PIXCLK      (0x07UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< Camera capture 1 interface pixel clock input pin. */
+#define SYS_GPE_MFPH_PE9MFP_CCAP1_PIXCLK      (0x07UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< Camera capture 1 interface pixel clock input pin. */
 #define SYS_GPE_MFPH_PE9MFP_RGMII0_RXD2       (0x08UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< RGMII0 Receive Data bus bit 2. */
 #define SYS_GPE_MFPH_PE9MFP_RMII0_RXERR       (0x09UL<<SYS_GPE_MFPH_PE9MFP_Pos)  /*!< RMII0 Receive Data Error input pin. */
 #define SYS_GPE_MFPH_PE10MFP_GPIO             (0x00UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE10MFP_UART15_nCTS      (0x02UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< Clear to Send input pin for UART15. */
 #define SYS_GPE_MFPH_PE10MFP_UART14_RXD       (0x03UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< Data receiver input pin for UART14. */
 #define SYS_GPE_MFPH_PE10MFP_SPI1_SS0         (0x05UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< 1st SPI1 slave select pin. */
-#define SYS_GPE_MFPH_PE10MFP_VCAP1_HSYNC      (0x07UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< Camera capture 1 interface hsync input pin. */
+#define SYS_GPE_MFPH_PE10MFP_CCAP1_HSYNC      (0x07UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< Camera capture 1 interface hsync input pin. */
 #define SYS_GPE_MFPH_PE10MFP_RGMII0_RXD3      (0x08UL<<SYS_GPE_MFPH_PE10MFP_Pos) /*!< RGMII0 Receive Data bus bit 3. */
 #define SYS_GPE_MFPH_PE11MFP_GPIO             (0x00UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE11MFP_UART15_nRTS      (0x02UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< Request to Send output pin for UART15. */
 #define SYS_GPE_MFPH_PE11MFP_UART14_TXD       (0x03UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< Data transmitter output pin for UART14. */
 #define SYS_GPE_MFPH_PE11MFP_SPI1_CLK         (0x05UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< SPI1 serial clock pin. */
-#define SYS_GPE_MFPH_PE11MFP_VCAP1_VSYNC      (0x07UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< Camera capture 1 interface vsync input pin. */
+#define SYS_GPE_MFPH_PE11MFP_CCAP1_VSYNC      (0x07UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< Camera capture 1 interface vsync input pin. */
 #define SYS_GPE_MFPH_PE11MFP_RGMII0_TXCLK     (0x08UL<<SYS_GPE_MFPH_PE11MFP_Pos) /*!< RGMII0 Mode TX Clock output pin. */
 #define SYS_GPE_MFPH_PE12MFP_GPIO             (0x00UL<<SYS_GPE_MFPH_PE12MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE12MFP_UART15_RXD       (0x02UL<<SYS_GPE_MFPH_PE12MFP_Pos) /*!< Data receiver input pin for UART15. */
 #define SYS_GPE_MFPH_PE12MFP_SPI1_MOSI        (0x05UL<<SYS_GPE_MFPH_PE12MFP_Pos) /*!< 1st SPI1 MOSI (Master Out, Slave In) pin. */
-#define SYS_GPE_MFPH_PE12MFP_VCAP1_DATA8      (0x07UL<<SYS_GPE_MFPH_PE12MFP_Pos) /*!< Camera capture 1 data input bus bit 8. */
+#define SYS_GPE_MFPH_PE12MFP_CCAP1_DATA8      (0x07UL<<SYS_GPE_MFPH_PE12MFP_Pos) /*!< Camera capture 1 data input bus bit 8. */
 #define SYS_GPE_MFPH_PE12MFP_RGMII0_TXD2      (0x08UL<<SYS_GPE_MFPH_PE12MFP_Pos) /*!< MII/RMII Transmit Data bus bit 2. */
 #define SYS_GPE_MFPH_PE13MFP_GPIO             (0x00UL<<SYS_GPE_MFPH_PE13MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE13MFP_UART15_TXD       (0x02UL<<SYS_GPE_MFPH_PE13MFP_Pos) /*!< Data transmitter output pin for UART15. */
 #define SYS_GPE_MFPH_PE13MFP_SPI1_MISO        (0x05UL<<SYS_GPE_MFPH_PE13MFP_Pos) /*!< 1st SPI1 MISO (Master In, Slave Out) pin. */
-#define SYS_GPE_MFPH_PE13MFP_VCAP1_DATA9      (0x07UL<<SYS_GPE_MFPH_PE13MFP_Pos) /*!< Camera capture 1 data input bus bit 9. */
+#define SYS_GPE_MFPH_PE13MFP_CCAP1_DATA9      (0x07UL<<SYS_GPE_MFPH_PE13MFP_Pos) /*!< Camera capture 1 data input bus bit 9. */
 #define SYS_GPE_MFPH_PE13MFP_RGMII0_TXD3      (0x08UL<<SYS_GPE_MFPH_PE13MFP_Pos) /*!< MII/RMII Transmit Data bus bit 3. */
 #define SYS_GPE_MFPH_PE14MFP_GPIO             (0x00UL<<SYS_GPE_MFPH_PE14MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPE_MFPH_PE14MFP_UART0_TXD        (0x01UL<<SYS_GPE_MFPH_PE14MFP_Pos) /*!< Data transmitter output pin for UART0. */
@@ -762,7 +762,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPF_MFPH_PF14MFP_RMII1_PPS        (0x04UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< RMII1 Pulse Per Second output pin. */
 #define SYS_GPF_MFPH_PF14MFP_SPI0_I2SMCLK     (0x05UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< SPI0 I2S master clock output pin. */
 #define SYS_GPF_MFPH_PF14MFP_SPI1_I2SMCLK     (0x06UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< SPI1 I2S master clock output pin. */
-#define SYS_GPF_MFPH_PF14MFP_VCAP1_SFIELD     (0x07UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< Camera capture 1 interface SFIELD input pin. */
+#define SYS_GPF_MFPH_PF14MFP_CCAP1_SFIELD     (0x07UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< Camera capture 1 interface SFIELD input pin. */
 #define SYS_GPF_MFPH_PF14MFP_RGMII0_PPS       (0x08UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< RGMII0 Pulse Per Second output pin. */
 #define SYS_GPF_MFPH_PF14MFP_RMII0_PPS        (0x09UL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< RMII0 Pulse Per Second output pin. */
 #define SYS_GPF_MFPH_PF14MFP_TM0              (0x0BUL<<SYS_GPF_MFPH_PF14MFP_Pos) /*!< Timer0 event counter input / toggle output */
@@ -1316,19 +1316,19 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPK_MFPH_PK8MFP_QEI1_INDEX        (0x0CUL<<SYS_GPK_MFPH_PK8MFP_Pos)  /*!< Quadrature encoder index input of QEI Unit 1. */
 #define SYS_GPK_MFPH_PK9MFP_GPIO              (0x00UL<<SYS_GPK_MFPH_PK9MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPK_MFPH_PK9MFP_I2C3_SCL          (0x04UL<<SYS_GPK_MFPH_PK9MFP_Pos)  /*!< I2C3 clock pin. */
-#define SYS_GPK_MFPH_PK9MFP_VCAP0_SCLK        (0x06UL<<SYS_GPK_MFPH_PK9MFP_Pos)  /*!< Camera capture 0 interface sensor clock output pin. */
+#define SYS_GPK_MFPH_PK9MFP_CCAP0_SCLK        (0x06UL<<SYS_GPK_MFPH_PK9MFP_Pos)  /*!< Camera capture 0 interface sensor clock output pin. */
 #define SYS_GPK_MFPH_PK9MFP_EBI_AD0           (0x08UL<<SYS_GPK_MFPH_PK9MFP_Pos)  /*!< EBI address/data bus bit0. */
 #define SYS_GPK_MFPH_PK9MFP_EBI_ADR0          (0x0AUL<<SYS_GPK_MFPH_PK9MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPK_MFPH_PK10MFP_GPIO             (0x00UL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPK_MFPH_PK10MFP_CAN1_RXD         (0x03UL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< CAN1 bus receiver input. */
 #define SYS_GPK_MFPH_PK10MFP_USBHL3_DM        (0x04UL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< USB 1.1 host-lite 3 differential signal D-. */
-#define SYS_GPK_MFPH_PK10MFP_VCAP0_PIXCLK     (0x06UL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< Camera capture 0 interface pixel clock input pin. */
+#define SYS_GPK_MFPH_PK10MFP_CCAP0_PIXCLK     (0x06UL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< Camera capture 0 interface pixel clock input pin. */
 #define SYS_GPK_MFPH_PK10MFP_EBI_AD1          (0x08UL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< EBI address/data bus bit1. */
 #define SYS_GPK_MFPH_PK10MFP_EBI_ADR1         (0x0AUL<<SYS_GPK_MFPH_PK10MFP_Pos) /*!< EBI address/data bus bit*. */
 #define SYS_GPK_MFPH_PK11MFP_GPIO             (0x00UL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPK_MFPH_PK11MFP_CAN1_TXD         (0x03UL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< CAN1 bus transmitter output. */
 #define SYS_GPK_MFPH_PK11MFP_USBHL3_DP        (0x04UL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< USB 1.1 host-lite 3 differential signal D+. */
-#define SYS_GPK_MFPH_PK11MFP_VCAP0_HSYNC      (0x06UL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< Camera capture 0 interface hsync input pin. */
+#define SYS_GPK_MFPH_PK11MFP_CCAP0_HSYNC      (0x06UL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< Camera capture 0 interface hsync input pin. */
 #define SYS_GPK_MFPH_PK11MFP_EBI_AD2          (0x08UL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< EBI address/data bus bit2. */
 #define SYS_GPK_MFPH_PK11MFP_EBI_ADR2         (0x0AUL<<SYS_GPK_MFPH_PK11MFP_Pos) /*!< EBI address/data bus bit*. */
 #define SYS_GPK_MFPH_PK12MFP_GPIO             (0x00UL<<SYS_GPK_MFPH_PK12MFP_Pos) /*!< General purpose digital I/O pin. */
@@ -1574,58 +1574,58 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 /********************* Bit definition of GPM_MFPL register **********************/
 #define SYS_GPM_MFPL_PM0MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM0MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM0MFP_I2C4_SDA          (0x04UL<<SYS_GPM_MFPL_PM0MFP_Pos)  /*!< I2C4 data input/output pin. */
-#define SYS_GPM_MFPL_PM0MFP_VCAP0_VSYNC       (0x06UL<<SYS_GPM_MFPL_PM0MFP_Pos)  /*!< Camera capture 0 interface vsync input pin. */
+#define SYS_GPM_MFPL_PM0MFP_CCAP0_VSYNC       (0x06UL<<SYS_GPM_MFPL_PM0MFP_Pos)  /*!< Camera capture 0 interface vsync input pin. */
 #define SYS_GPM_MFPL_PM0MFP_EBI_AD3           (0x08UL<<SYS_GPM_MFPL_PM0MFP_Pos)  /*!< EBI address/data bus bit3. */
 #define SYS_GPM_MFPL_PM0MFP_EBI_ADR3          (0x0AUL<<SYS_GPM_MFPL_PM0MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM1MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM1MFP_I2C4_SCL          (0x04UL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< I2C4 clock pin. */
 #define SYS_GPM_MFPL_PM1MFP_SPI3_I2SMCLK      (0x05UL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< SPI3 I2S master clock output pin. */
-#define SYS_GPM_MFPL_PM1MFP_VCAP0_SFIELD      (0x06UL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< Camera capture 0 interface SFIELD input pin. */
+#define SYS_GPM_MFPL_PM1MFP_CCAP0_SFIELD      (0x06UL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< Camera capture 0 interface SFIELD input pin. */
 #define SYS_GPM_MFPL_PM1MFP_EBI_AD4           (0x08UL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< EBI address/data bus bit4. */
 #define SYS_GPM_MFPL_PM1MFP_EBI_ADR4          (0x0AUL<<SYS_GPM_MFPL_PM1MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM2MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM2MFP_CAN3_RXD          (0x03UL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< CAN3 bus receiver input. */
 #define SYS_GPM_MFPL_PM2MFP_USBHL0_DM         (0x04UL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< USB 1.1 host-lite 0 differential signal D-. */
-#define SYS_GPM_MFPL_PM2MFP_VCAP0_DATA0       (0x06UL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< Camera capture 0 data input bus bit 0. */
+#define SYS_GPM_MFPL_PM2MFP_CCAP0_DATA0       (0x06UL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< Camera capture 0 data input bus bit 0. */
 #define SYS_GPM_MFPL_PM2MFP_EBI_AD5           (0x08UL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< EBI address/data bus bit5. */
 #define SYS_GPM_MFPL_PM2MFP_EBI_ADR5          (0x0AUL<<SYS_GPM_MFPL_PM2MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM3MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM3MFP_CAN3_TXD          (0x03UL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< CAN3 bus transmitter output. */
 #define SYS_GPM_MFPL_PM3MFP_USBHL0_DP         (0x04UL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< USB 1.1 host-lite 0 differential signal D+. */
-#define SYS_GPM_MFPL_PM3MFP_VCAP0_DATA1       (0x06UL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< Camera capture 0 data input bus bit 1. */
+#define SYS_GPM_MFPL_PM3MFP_CCAP0_DATA1       (0x06UL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< Camera capture 0 data input bus bit 1. */
 #define SYS_GPM_MFPL_PM3MFP_EBI_AD6           (0x08UL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< EBI address/data bus bit6. */
 #define SYS_GPM_MFPL_PM3MFP_EBI_ADR6          (0x0AUL<<SYS_GPM_MFPL_PM3MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM4MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM4MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM4MFP_I2C5_SDA          (0x04UL<<SYS_GPM_MFPL_PM4MFP_Pos)  /*!< I2C5 data input/output pin. */
-#define SYS_GPM_MFPL_PM4MFP_VCAP0_DATA2       (0x06UL<<SYS_GPM_MFPL_PM4MFP_Pos)  /*!< Camera capture 0 data input bus bit 2. */
+#define SYS_GPM_MFPL_PM4MFP_CCAP0_DATA2       (0x06UL<<SYS_GPM_MFPL_PM4MFP_Pos)  /*!< Camera capture 0 data input bus bit 2. */
 #define SYS_GPM_MFPL_PM4MFP_EBI_AD7           (0x08UL<<SYS_GPM_MFPL_PM4MFP_Pos)  /*!< EBI address/data bus bit7. */
 #define SYS_GPM_MFPL_PM4MFP_EBI_ADR7          (0x0AUL<<SYS_GPM_MFPL_PM4MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM5MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM5MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM5MFP_I2C5_SCL          (0x04UL<<SYS_GPM_MFPL_PM5MFP_Pos)  /*!< I2C5 clock pin. */
-#define SYS_GPM_MFPL_PM5MFP_VCAP0_DATA3       (0x06UL<<SYS_GPM_MFPL_PM5MFP_Pos)  /*!< Camera capture 0 data input bus bit 3. */
+#define SYS_GPM_MFPL_PM5MFP_CCAP0_DATA3       (0x06UL<<SYS_GPM_MFPL_PM5MFP_Pos)  /*!< Camera capture 0 data input bus bit 3. */
 #define SYS_GPM_MFPL_PM5MFP_EBI_AD8           (0x08UL<<SYS_GPM_MFPL_PM5MFP_Pos)  /*!< EBI address/data bus bit8. */
 #define SYS_GPM_MFPL_PM5MFP_EBI_ADR8          (0x0AUL<<SYS_GPM_MFPL_PM5MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM6MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM6MFP_CAN0_RXD          (0x03UL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< CAN0 bus receiver input. */
 #define SYS_GPM_MFPL_PM6MFP_USBHL1_DM         (0x04UL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< USB 1.1 host-lite 1 differential signal D-. */
-#define SYS_GPM_MFPL_PM6MFP_VCAP0_DATA4       (0x06UL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< Camera capture 0 data input bus bit 4. */
+#define SYS_GPM_MFPL_PM6MFP_CCAP0_DATA4       (0x06UL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< Camera capture 0 data input bus bit 4. */
 #define SYS_GPM_MFPL_PM6MFP_EBI_AD9           (0x08UL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< EBI address/data bus bit9. */
 #define SYS_GPM_MFPL_PM6MFP_EBI_ADR9          (0x0AUL<<SYS_GPM_MFPL_PM6MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPL_PM7MFP_GPIO              (0x00UL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPL_PM7MFP_CAN0_TXD          (0x03UL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< CAN0 bus transmitter output. */
 #define SYS_GPM_MFPL_PM7MFP_USBHL1_DP         (0x04UL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< USB 1.1 host-lite 1 differential signal D+. */
-#define SYS_GPM_MFPL_PM7MFP_VCAP0_DATA5       (0x06UL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< Camera capture 0 data input bus bit 5. */
+#define SYS_GPM_MFPL_PM7MFP_CCAP0_DATA5       (0x06UL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< Camera capture 0 data input bus bit 5. */
 #define SYS_GPM_MFPL_PM7MFP_EBI_AD10          (0x08UL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< EBI address/data bus bit1. */
 #define SYS_GPM_MFPL_PM7MFP_EBI_ADR10         (0x0AUL<<SYS_GPM_MFPL_PM7MFP_Pos)  /*!< EBI address/data bus bit*. */
 /********************* Bit definition of GPM_MFPH register **********************/
 #define SYS_GPM_MFPH_PM8MFP_GPIO              (0x00UL<<SYS_GPM_MFPH_PM8MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPH_PM8MFP_I2C0_SDA          (0x04UL<<SYS_GPM_MFPH_PM8MFP_Pos)  /*!< I2C0 data input/output pin. */
-#define SYS_GPM_MFPH_PM8MFP_VCAP0_DATA6       (0x06UL<<SYS_GPM_MFPH_PM8MFP_Pos)  /*!< Camera capture 0 data input bus bit 6. */
+#define SYS_GPM_MFPH_PM8MFP_CCAP0_DATA6       (0x06UL<<SYS_GPM_MFPH_PM8MFP_Pos)  /*!< Camera capture 0 data input bus bit 6. */
 #define SYS_GPM_MFPH_PM8MFP_EBI_AD11          (0x08UL<<SYS_GPM_MFPH_PM8MFP_Pos)  /*!< EBI address/data bus bit1. */
 #define SYS_GPM_MFPH_PM8MFP_EBI_ADR11         (0x0AUL<<SYS_GPM_MFPH_PM8MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPH_PM9MFP_GPIO              (0x00UL<<SYS_GPM_MFPH_PM9MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPM_MFPH_PM9MFP_I2C0_SCL          (0x04UL<<SYS_GPM_MFPH_PM9MFP_Pos)  /*!< I2C0 clock pin. */
-#define SYS_GPM_MFPH_PM9MFP_VCAP0_DATA7       (0x06UL<<SYS_GPM_MFPH_PM9MFP_Pos)  /*!< Camera capture 0 data input bus bit 7. */
+#define SYS_GPM_MFPH_PM9MFP_CCAP0_DATA7       (0x06UL<<SYS_GPM_MFPH_PM9MFP_Pos)  /*!< Camera capture 0 data input bus bit 7. */
 #define SYS_GPM_MFPH_PM9MFP_EBI_AD12          (0x08UL<<SYS_GPM_MFPH_PM9MFP_Pos)  /*!< EBI address/data bus bit1. */
 #define SYS_GPM_MFPH_PM9MFP_EBI_ADR12         (0x0AUL<<SYS_GPM_MFPH_PM9MFP_Pos)  /*!< EBI address/data bus bit*. */
 #define SYS_GPM_MFPH_PM10MFP_GPIO             (0x00UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< General purpose digital I/O pin. */
@@ -1633,7 +1633,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPM_MFPH_PM10MFP_CAN2_RXD         (0x03UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< CAN2 bus receiver input. */
 #define SYS_GPM_MFPH_PM10MFP_USBHL4_DM        (0x04UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< USB 1.1 host-lite 4 differential signal D-. */
 #define SYS_GPM_MFPH_PM10MFP_SPI3_SS0         (0x05UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< 1st SPI3 slave select pin. */
-#define SYS_GPM_MFPH_PM10MFP_VCAP0_DATA8      (0x06UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< Camera capture 0 data input bus bit 8. */
+#define SYS_GPM_MFPH_PM10MFP_CCAP0_DATA8      (0x06UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< Camera capture 0 data input bus bit 8. */
 #define SYS_GPM_MFPH_PM10MFP_SPI2_I2SMCLK     (0x07UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< SPI2 I2S master clock output pin. */
 #define SYS_GPM_MFPH_PM10MFP_EBI_AD13         (0x08UL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< EBI address/data bus bit1. */
 #define SYS_GPM_MFPH_PM10MFP_EBI_ADR13        (0x0AUL<<SYS_GPM_MFPH_PM10MFP_Pos) /*!< EBI address/data bus bit*. */
@@ -1642,7 +1642,7 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 #define SYS_GPM_MFPH_PM11MFP_CAN2_TXD         (0x03UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< CAN2 bus transmitter output. */
 #define SYS_GPM_MFPH_PM11MFP_USBHL4_DP        (0x04UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< USB 1.1 host-lite 4 differential signal D+. */
 #define SYS_GPM_MFPH_PM11MFP_SPI3_SS1         (0x05UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< 1st SPI3 slave select pin. */
-#define SYS_GPM_MFPH_PM11MFP_VCAP0_DATA9      (0x06UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< Camera capture 0 data input bus bit 9. */
+#define SYS_GPM_MFPH_PM11MFP_CCAP0_DATA9      (0x06UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< Camera capture 0 data input bus bit 9. */
 #define SYS_GPM_MFPH_PM11MFP_SPI2_SS1         (0x07UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< 1st SPI2 slave select pin. */
 #define SYS_GPM_MFPH_PM11MFP_EBI_AD14         (0x08UL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< EBI address/data bus bit1. */
 #define SYS_GPM_MFPH_PM11MFP_EBI_ADR14        (0x0AUL<<SYS_GPM_MFPH_PM11MFP_Pos) /*!< EBI address/data bus bit*. */
@@ -1690,67 +1690,67 @@ Example 1: If user want to set PA.0 as SC0_CLK in initial function,
 /********************* Bit definition of GPN_MFPL register **********************/
 #define SYS_GPN_MFPL_PN0MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN0MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN0MFP_I2C2_SDA          (0x04UL<<SYS_GPN_MFPL_PN0MFP_Pos)  /*!< I2C2 data input/output pin. */
-#define SYS_GPN_MFPL_PN0MFP_VCAP1_DATA0       (0x06UL<<SYS_GPN_MFPL_PN0MFP_Pos)  /*!< Camera capture 1 data input bus bit 0. */
+#define SYS_GPN_MFPL_PN0MFP_CCAP1_DATA0       (0x06UL<<SYS_GPN_MFPL_PN0MFP_Pos)  /*!< Camera capture 1 data input bus bit 0. */
 #define SYS_GPN_MFPL_PN1MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN1MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN1MFP_I2C2_SCL          (0x04UL<<SYS_GPN_MFPL_PN1MFP_Pos)  /*!< I2C2 clock pin. */
-#define SYS_GPN_MFPL_PN1MFP_VCAP1_DATA1       (0x06UL<<SYS_GPN_MFPL_PN1MFP_Pos)  /*!< Camera capture 1 data input bus bit 1. */
+#define SYS_GPN_MFPL_PN1MFP_CCAP1_DATA1       (0x06UL<<SYS_GPN_MFPL_PN1MFP_Pos)  /*!< Camera capture 1 data input bus bit 1. */
 #define SYS_GPN_MFPL_PN2MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN2MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN2MFP_CAN0_RXD          (0x03UL<<SYS_GPN_MFPL_PN2MFP_Pos)  /*!< CAN0 bus receiver input. */
 #define SYS_GPN_MFPL_PN2MFP_USBHL0_DM         (0x04UL<<SYS_GPN_MFPL_PN2MFP_Pos)  /*!< USB 1.1 host-lite 0 differential signal D-. */
-#define SYS_GPN_MFPL_PN2MFP_VCAP1_DATA2       (0x06UL<<SYS_GPN_MFPL_PN2MFP_Pos)  /*!< Camera capture 1 data input bus bit 2. */
+#define SYS_GPN_MFPL_PN2MFP_CCAP1_DATA2       (0x06UL<<SYS_GPN_MFPL_PN2MFP_Pos)  /*!< Camera capture 1 data input bus bit 2. */
 #define SYS_GPN_MFPL_PN3MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN3MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN3MFP_CAN0_TXD          (0x03UL<<SYS_GPN_MFPL_PN3MFP_Pos)  /*!< CAN0 bus transmitter output. */
 #define SYS_GPN_MFPL_PN3MFP_USBHL0_DP         (0x04UL<<SYS_GPN_MFPL_PN3MFP_Pos)  /*!< USB 1.1 host-lite 0 differential signal D+. */
-#define SYS_GPN_MFPL_PN3MFP_VCAP1_DATA3       (0x06UL<<SYS_GPN_MFPL_PN3MFP_Pos)  /*!< Camera capture 1 data input bus bit 3. */
+#define SYS_GPN_MFPL_PN3MFP_CCAP1_DATA3       (0x06UL<<SYS_GPN_MFPL_PN3MFP_Pos)  /*!< Camera capture 1 data input bus bit 3. */
 #define SYS_GPN_MFPL_PN4MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN4MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN4MFP_I2C1_SDA          (0x04UL<<SYS_GPN_MFPL_PN4MFP_Pos)  /*!< I2C1 data input/output pin. */
-#define SYS_GPN_MFPL_PN4MFP_VCAP1_DATA4       (0x06UL<<SYS_GPN_MFPL_PN4MFP_Pos)  /*!< Camera capture 1 data input bus bit 4. */
+#define SYS_GPN_MFPL_PN4MFP_CCAP1_DATA4       (0x06UL<<SYS_GPN_MFPL_PN4MFP_Pos)  /*!< Camera capture 1 data input bus bit 4. */
 #define SYS_GPN_MFPL_PN5MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN5MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN5MFP_I2C1_SCL          (0x04UL<<SYS_GPN_MFPL_PN5MFP_Pos)  /*!< I2C1 clock pin. */
-#define SYS_GPN_MFPL_PN5MFP_VCAP1_DATA5       (0x06UL<<SYS_GPN_MFPL_PN5MFP_Pos)  /*!< Camera capture 1 data input bus bit 5. */
+#define SYS_GPN_MFPL_PN5MFP_CCAP1_DATA5       (0x06UL<<SYS_GPN_MFPL_PN5MFP_Pos)  /*!< Camera capture 1 data input bus bit 5. */
 #define SYS_GPN_MFPL_PN6MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN6MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN6MFP_CAN1_RXD          (0x03UL<<SYS_GPN_MFPL_PN6MFP_Pos)  /*!< CAN1 bus receiver input. */
 #define SYS_GPN_MFPL_PN6MFP_USBHL1_DM         (0x04UL<<SYS_GPN_MFPL_PN6MFP_Pos)  /*!< USB 1.1 host-lite 1 differential signal D-. */
-#define SYS_GPN_MFPL_PN6MFP_VCAP1_DATA6       (0x06UL<<SYS_GPN_MFPL_PN6MFP_Pos)  /*!< Camera capture 1 data input bus bit 6. */
+#define SYS_GPN_MFPL_PN6MFP_CCAP1_DATA6       (0x06UL<<SYS_GPN_MFPL_PN6MFP_Pos)  /*!< Camera capture 1 data input bus bit 6. */
 #define SYS_GPN_MFPL_PN7MFP_GPIO              (0x00UL<<SYS_GPN_MFPL_PN7MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPL_PN7MFP_CAN1_TXD          (0x03UL<<SYS_GPN_MFPL_PN7MFP_Pos)  /*!< CAN1 bus transmitter output. */
 #define SYS_GPN_MFPL_PN7MFP_USBHL1_DP         (0x04UL<<SYS_GPN_MFPL_PN7MFP_Pos)  /*!< USB 1.1 host-lite 1 differential signal D+. */
-#define SYS_GPN_MFPL_PN7MFP_VCAP1_DATA7       (0x06UL<<SYS_GPN_MFPL_PN7MFP_Pos)  /*!< Camera capture 1 data input bus bit 7. */
+#define SYS_GPN_MFPL_PN7MFP_CCAP1_DATA7       (0x06UL<<SYS_GPN_MFPL_PN7MFP_Pos)  /*!< Camera capture 1 data input bus bit 7. */
 /********************* Bit definition of GPN_MFPH register **********************/
 #define SYS_GPN_MFPH_PN8MFP_GPIO              (0x00UL<<SYS_GPN_MFPH_PN8MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN8MFP_EPWM2_CH4         (0x01UL<<SYS_GPN_MFPH_PN8MFP_Pos)  /*!< EPWM2 channel4 output/capture input. */
 #define SYS_GPN_MFPH_PN8MFP_I2C0_SDA          (0x04UL<<SYS_GPN_MFPH_PN8MFP_Pos)  /*!< I2C0 data input/output pin. */
 #define SYS_GPN_MFPH_PN8MFP_SPI2_I2SMCLK      (0x05UL<<SYS_GPN_MFPH_PN8MFP_Pos)  /*!< SPI2 I2S master clock output pin. */
-#define SYS_GPN_MFPH_PN8MFP_VCAP1_DATA8       (0x06UL<<SYS_GPN_MFPH_PN8MFP_Pos)  /*!< Camera capture 1 data input bus bit 8. */
+#define SYS_GPN_MFPH_PN8MFP_CCAP1_DATA8       (0x06UL<<SYS_GPN_MFPH_PN8MFP_Pos)  /*!< Camera capture 1 data input bus bit 8. */
 #define SYS_GPN_MFPH_PN9MFP_GPIO              (0x00UL<<SYS_GPN_MFPH_PN9MFP_Pos)  /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN9MFP_EPWM2_CH5         (0x01UL<<SYS_GPN_MFPH_PN9MFP_Pos)  /*!< EPWM2 channel5 output/capture input. */
 #define SYS_GPN_MFPH_PN9MFP_I2C0_SCL          (0x04UL<<SYS_GPN_MFPH_PN9MFP_Pos)  /*!< I2C0 clock pin. */
 #define SYS_GPN_MFPH_PN9MFP_SPI1_I2SMCLK      (0x05UL<<SYS_GPN_MFPH_PN9MFP_Pos)  /*!< SPI1 I2S master clock output pin. */
-#define SYS_GPN_MFPH_PN9MFP_VCAP1_DATA9       (0x06UL<<SYS_GPN_MFPH_PN9MFP_Pos)  /*!< Camera capture 1 data input bus bit 9. */
+#define SYS_GPN_MFPH_PN9MFP_CCAP1_DATA9       (0x06UL<<SYS_GPN_MFPH_PN9MFP_Pos)  /*!< Camera capture 1 data input bus bit 9. */
 #define SYS_GPN_MFPH_PN10MFP_GPIO             (0x00UL<<SYS_GPN_MFPH_PN10MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN10MFP_CAN2_RXD         (0x03UL<<SYS_GPN_MFPH_PN10MFP_Pos) /*!< CAN2 bus receiver input. */
 #define SYS_GPN_MFPH_PN10MFP_USBHL2_DM        (0x04UL<<SYS_GPN_MFPH_PN10MFP_Pos) /*!< USB 1.1 host-lite 2 differential signal D-. */
-#define SYS_GPN_MFPH_PN10MFP_VCAP1_SCLK       (0x06UL<<SYS_GPN_MFPH_PN10MFP_Pos) /*!< Camera capture 1 interface sensor clock output pin. */
+#define SYS_GPN_MFPH_PN10MFP_CCAP1_SCLK       (0x06UL<<SYS_GPN_MFPH_PN10MFP_Pos) /*!< Camera capture 1 interface sensor clock output pin. */
 #define SYS_GPN_MFPH_PN11MFP_GPIO             (0x00UL<<SYS_GPN_MFPH_PN11MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN11MFP_CAN2_TXD         (0x03UL<<SYS_GPN_MFPH_PN11MFP_Pos) /*!< CAN2 bus transmitter output. */
 #define SYS_GPN_MFPH_PN11MFP_USBHL2_DP        (0x04UL<<SYS_GPN_MFPH_PN11MFP_Pos) /*!< USB 1.1 host-lite 2 differential signal D+. */
-#define SYS_GPN_MFPH_PN11MFP_VCAP1_PIXCLK     (0x06UL<<SYS_GPN_MFPH_PN11MFP_Pos) /*!< Camera capture 1 interface pixel clock input pin. */
+#define SYS_GPN_MFPH_PN11MFP_CCAP1_PIXCLK     (0x06UL<<SYS_GPN_MFPH_PN11MFP_Pos) /*!< Camera capture 1 interface pixel clock input pin. */
 #define SYS_GPN_MFPH_PN12MFP_GPIO             (0x00UL<<SYS_GPN_MFPH_PN12MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN12MFP_UART6_nCTS       (0x02UL<<SYS_GPN_MFPH_PN12MFP_Pos) /*!< Clear to Send input pin for UART6. */
 #define SYS_GPN_MFPH_PN12MFP_UART12_RXD       (0x03UL<<SYS_GPN_MFPH_PN12MFP_Pos) /*!< Data receiver input pin for UART12. */
 #define SYS_GPN_MFPH_PN12MFP_I2C5_SDA         (0x04UL<<SYS_GPN_MFPH_PN12MFP_Pos) /*!< I2C5 data input/output pin. */
-#define SYS_GPN_MFPH_PN12MFP_VCAP1_HSYNC      (0x06UL<<SYS_GPN_MFPH_PN12MFP_Pos) /*!< Camera capture 1 interface hsync input pin. */
+#define SYS_GPN_MFPH_PN12MFP_CCAP1_HSYNC      (0x06UL<<SYS_GPN_MFPH_PN12MFP_Pos) /*!< Camera capture 1 interface hsync input pin. */
 #define SYS_GPN_MFPH_PN13MFP_GPIO             (0x00UL<<SYS_GPN_MFPH_PN13MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN13MFP_UART6_nRTS       (0x02UL<<SYS_GPN_MFPH_PN13MFP_Pos) /*!< Request to Send output pin for UART6. */
 #define SYS_GPN_MFPH_PN13MFP_UART12_TXD       (0x03UL<<SYS_GPN_MFPH_PN13MFP_Pos) /*!< Data transmitter output pin for UART12. */
 #define SYS_GPN_MFPH_PN13MFP_I2C5_SCL         (0x04UL<<SYS_GPN_MFPH_PN13MFP_Pos) /*!< I2C5 clock pin. */
-#define SYS_GPN_MFPH_PN13MFP_VCAP1_VSYNC      (0x06UL<<SYS_GPN_MFPH_PN13MFP_Pos) /*!< Camera capture 1 interface vsync input pin. */
+#define SYS_GPN_MFPH_PN13MFP_CCAP1_VSYNC      (0x06UL<<SYS_GPN_MFPH_PN13MFP_Pos) /*!< Camera capture 1 interface vsync input pin. */
 #define SYS_GPN_MFPH_PN14MFP_GPIO             (0x00UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN14MFP_UART6_RXD        (0x02UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< Data receiver input pin for UART6. */
 #define SYS_GPN_MFPH_PN14MFP_CAN3_RXD         (0x03UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< CAN3 bus receiver input. */
 #define SYS_GPN_MFPH_PN14MFP_USBHL3_DM        (0x04UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< USB 1.1 host-lite 3 differential signal D-. */
 #define SYS_GPN_MFPH_PN14MFP_SPI1_SS1         (0x05UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< 1st SPI1 slave select pin. */
-#define SYS_GPN_MFPH_PN14MFP_VCAP1_SFIELD     (0x06UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< Camera capture 1 interface SFIELD input pin. */
+#define SYS_GPN_MFPH_PN14MFP_CCAP1_SFIELD     (0x06UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< Camera capture 1 interface SFIELD input pin. */
 #define SYS_GPN_MFPH_PN14MFP_SPI1_I2SMCLK     (0x07UL<<SYS_GPN_MFPH_PN14MFP_Pos) /*!< SPI1 I2S master clock output pin. */
 #define SYS_GPN_MFPH_PN15MFP_GPIO             (0x00UL<<SYS_GPN_MFPH_PN15MFP_Pos) /*!< General purpose digital I/O pin. */
 #define SYS_GPN_MFPH_PN15MFP_EPWM2_CH4        (0x01UL<<SYS_GPN_MFPH_PN15MFP_Pos) /*!< EPWM2 channel4 output/capture input. */

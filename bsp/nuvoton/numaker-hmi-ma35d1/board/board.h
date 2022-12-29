@@ -29,6 +29,9 @@ extern int __bss_end;
     #include <drivers/mtd_nand.h>
     #define MTD_SPINAND_PARTITION_NUM 3
     extern struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM];
+
+    #define MTD_NFI_PARTITION_NUM 3
+    extern struct rt_mtd_nand_device mtd_partitions_nfi[MTD_NFI_PARTITION_NUM];
 #endif
 extern void rt_hw_board_init(void);
 extern void nu_clock_init(void);

@@ -402,7 +402,7 @@ static int rt_hw_qspi_init(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(rt_hw_qspi_init);
+INIT_PREV_EXPORT(rt_hw_qspi_init);
 
 rt_err_t nu_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
 {

@@ -17,11 +17,9 @@
 
 #define PORT_CNT    (_ohci->HcRhDescriptorA & 0xf)
 
-static uint8_t  _hcca_mem[256] __attribute__((aligned(256)));
+static HCCA_T _hcca __attribute__((section(".usbhostlib._hcca")))  __attribute__((aligned(256)));
 
-static HCCA_T  *_hcca;
-
-static ED_T   *_Ied[6];
+static ED_T  * _Ied[6] __attribute__((section(".usbhostlib._Ied")));
 
 
 static ED_T  *ed_remove_list;
@@ -97,7 +95,7 @@ static void init_hcca_int_table()
     ED_T   *ed_p;
     int    i, idx, interval;
 
-    memset(_hcca->int_table, 0, sizeof(_hcca->int_table));
+    memset(_hcca.int_table, 0, sizeof(_hcca.int_table));
 
     for (i = 5; i >= 0; i--)                /* interval = i^2                             */
     {
@@ -108,13 +106,13 @@ static void init_hcca_int_table()
 
         for (idx = interval - 1; idx < 32; idx += interval)
         {
-            if (_hcca->int_table[idx] == 0)       /* is empty list, insert directly        */
+            if (_hcca.int_table[idx] == 0)       /* is empty list, insert directly        */
             {
-                _hcca->int_table[idx] = (uint32_t)_Ied[i];
+                _hcca.int_table[idx] = (uint32_t)_Ied[i];
             }
             else
             {
-                ed_p = (ED_T *)_hcca->int_table[idx];
+                ed_p = (ED_T *)_hcca.int_table[idx];
 
                 while (1)
                 {
@@ -133,7 +131,7 @@ static void init_hcca_int_table()
     }
 }
 
-static ED_T *get_int_tree_head_node(int interval)
+static ED_T * get_int_tree_head_node(int interval)
 {
     int    i;
 
@@ -166,8 +164,6 @@ static int  ohci_init(void)
     uint32_t    fminterval;
     volatile int    i;
 
-    _hcca = (HCCA_T *)((uint32_t)_hcca_mem | NON_CACHE_MASK);
-
     if (ohci_reset() < 0)
         return -1;
 
@@ -180,11 +176,11 @@ static int  ohci_init(void)
     _ohci->HcControlHeadED = 0;             /* control ED list head                       */
     _ohci->HcBulkHeadED = 0;                /* bulk ED list head                          */
 
-    _ohci->HcHCCA = (uint32_t)_hcca;        /* HCCA area                                  */
+    _ohci->HcHCCA = (uint32_t)&_hcca;        /* HCCA area                                  */
 
     /* periodic start 90% of frame interval       */
     fminterval = 0x2edf;                    /* 11,999                                     */
-    _ohci->HcPeriodicStart = (fminterval * 9) / 10;
+    _ohci->HcPeriodicStart = (fminterval*9)/10;
 
     /* set FSLargestDataPacket, 10,104 for 0x2edf frame interval */
     fminterval |= ((((fminterval - 210) * 6) / 7) << 16);
@@ -342,7 +338,7 @@ static uint32_t ed_make_info(UDEV_T *udev, EP_INFO_T *ep)
 static void write_td(TD_T *td, uint32_t info, uint8_t *buff, uint32_t data_len)
 {
 	uint32_t   baddr = ptr_to_u32(buff);
-
+	
     td->Info = info;
     td->CBP  = (((baddr == 0) || !data_len) ? 0 : baddr);
     td->BE   = (((baddr == 0) || !data_len) ? 0 : baddr + data_len - 1);
@@ -661,7 +657,7 @@ static int ohci_int_xfer(UTR_T *utr)
         info = (TD_CC | TD_R | TD_DP_IN | TD_TYPE_INT);
 
     /* Keep data toggle                               */
-    info = (info & ~(1 << 25)) | (td->Info & (1 << 25));
+    info = (info & ~(1<<25)) | (td->Info & (1<<25));
 
     /* fill this TD                                   */
     write_td(td, info, utr->buff, utr->data_len);
@@ -735,7 +731,7 @@ static int ohci_iso_xfer(UTR_T *utr)
     /*  Prepare TDs                                                                       */
     /*------------------------------------------------------------------------------------*/
     if (utr->bIsoNewSched)                   /* Is the starting of isochronous streaming?  */
-        ed->next_sf = _hcca->frame_no + OHCI_ISO_DELAY;
+        ed->next_sf = _hcca.frame_no + OHCI_ISO_DELAY;
 
     utr->td_cnt = 0;
     utr->iso_sf = ed->next_sf;
@@ -759,7 +755,7 @@ static int ohci_iso_xfer(UTR_T *utr)
         td->PSW[0] = 0xE000 | (buff_addr & 0xFFF);
 
         td->ed = ed;
-        utr->td_cnt++;                      /* increase TD count, for recalim counter     */
+        utr->td_cnt++;                      /* increase TD count, for reclaim counter     */
 
         /* chain to end of TD list */
         if (td_list == NULL)
@@ -841,7 +837,7 @@ static int ohci_rh_port_reset(int port)
         _ohci->HcRhPortStatus[port] = USBH_HcRhPortStatus_PRS_Msk;
 
         t0 = usbh_get_ticks();
-        while (usbh_get_ticks() - t0 < (reset_time) + 1)
+        while (usbh_get_ticks() - t0 < (reset_time/10) + 1)
         {
             /*
              *  If device is disconnected or port enabled, we can stop port reset.
@@ -853,7 +849,7 @@ static int ohci_rh_port_reset(int port)
         reset_time += PORT_RESET_RETRY_INC_MS;
     }
 
-    USB_debug("OHCI port %d - port reset failed!\n", port + 1);
+    USB_debug("OHCI port %d - port reset failed!\n", port+1);
     return USBH_ERR_PORT_RESET;
 
 port_reset_done:
@@ -871,7 +867,7 @@ static int ohci_rh_polling(void)
     UDEV_T    *udev;
     int       ret;
 
-    for (i = 0; i < OHCI_PORT_CNT; i++)
+    for (i = 0; i < 1; i++)
     {
         /* clear unwanted port change status */
         _ohci->HcRhPortStatus[i] = USBH_HcRhPortStatus_OCIC_Msk | USBH_HcRhPortStatus_PRSC_Msk |
@@ -1183,8 +1179,8 @@ void OHCI_IRQHandler(int vector, void *param)
         /*
          *  reverse done list
          */
-        td = (TD_T *)(_hcca->done_head & TD_ADDR_MASK);
-        _hcca->done_head = 0;
+        td = (TD_T *)(_hcca.done_head & TD_ADDR_MASK);
+        _hcca.done_head = 0;
         td_prev = NULL;
         _ohci->HcInterruptStatus = USBH_HcInterruptStatus_WDH_Msk;
 
@@ -1232,7 +1228,7 @@ static void dump_ohci_int_table()
     {
         USB_debug("%02d: ", i);
 
-        ed = (ED_T *)_hcca->int_table[i];
+        ed = (ED_T *)_hcca.int_table[i];
 
         while (ed != NULL)
         {
@@ -1268,12 +1264,14 @@ static void dump_ohci_regs()
     USB_debug("    HcRhDescriptorB    = 0x%x\n", _ohci->HcRhDescriptorB);
     USB_debug("    HcRhStatus         = 0x%x\n", _ohci->HcRhStatus);
     USB_debug("    HcRhPortStatus0    = 0x%x\n", _ohci->HcRhPortStatus[0]);
+    USB_debug("    HcRhPortStatus1    = 0x%x\n", _ohci->HcRhPortStatus[1]);
     USB_debug("    HcPhyControl       = 0x%x\n", _ohci->HcPhyControl);
+    USB_debug("    HcMiscControl      = 0x%x\n", _ohci->HcMiscControl);
 }
 
 static void dump_ohci_ports()
 {
-    USB_debug("_ohci port0=0x%x\n", _ohci->HcRhPortStatus[0]);
+    USB_debug("_ohci port0=0x%x, port1=0x%x\n", _ohci->HcRhPortStatus[0], _ohci->HcRhPortStatus[1]);
 }
 
 #endif  // ENABLE_DEBUG_MSG

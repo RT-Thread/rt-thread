@@ -864,14 +864,14 @@ static int nid(int argc, char **argv)
 */
 #include "drv_spi.h"
 
-static int find_valid_window(const char* pcDevName)
+static int find_valid_window(const char *pcDevName)
 {
     rt_device_t psRtDev;
     nu_spi_t psNuSpiBus;
     int i, j, k;
 
     psRtDev = rt_device_find(pcDevName);
-    if (!psRtDev || (psRtDev->type != RT_Device_Class_SPIDevice) )
+    if (!psRtDev || (psRtDev->type != RT_Device_Class_SPIDevice))
     {
         LOG_E("Usage %s: %s <spi device name>.\n", __func__, __func__);
         return -1;
@@ -887,21 +887,21 @@ static int find_valid_window(const char* pcDevName)
         LOG_I("Probe JEDEC[%08X] on %s bus.", u32JedecId, psNuSpiBus->name);
 
         rt_kprintf("   ");
-        for (i=0; i<8; i++) // Pin driving
+        for (i = 0; i < 8; i++) // Pin driving
             rt_kprintf("%d ", i);
         rt_kprintf("\n");
 
-        for (j=0; j<0xC; j++) // Master RX delay cycle
+        for (j = 0; j < 0xC; j++) // Master RX delay cycle
         {
             rt_kprintf("%X: ", j);
-            for (i=0; i<8; i++) // Pin driving
+            for (i = 0; i < 8; i++) // Pin driving
             {
                 SPI_SET_MRXPHASE(psNuSpiBus->spi_base, j);
-                GPIO_SetDrivingCtl(PD, (BIT0|BIT1|BIT2|BIT3|BIT4|BIT5), i);
+                GPIO_SetDrivingCtl(PD, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5), i);
 
                 spinand_jedecid_get((struct rt_qspi_device *)psRtDev, &id);
 
-                if ( id==u32JedecId )
+                if (id == u32JedecId)
                 {
                     rt_kprintf("O ");
                 }
@@ -934,9 +934,9 @@ static int nprobe(int argc, char **argv)
 
 static int nprobe_auto(int argc, char **argv)
 {
-    int count=0;
+    int count = 0;
 
-    while( count++ < 100 )
+    while (count++ < 100)
         find_valid_window("qspi01");
 
     return 0;

@@ -370,9 +370,13 @@ static rt_err_t nau8822_mixer_control(rt_uint32_t ui32Units, rt_uint32_t ui32Val
     break;
     case AUDIO_MIXER_VOLUME:
     {
-        uint8_t u8DACGAIN = 256 * ui32Value / 100;
-        I2C_WriteNAU8822(11,  u8DACGAIN);
-        I2C_WriteNAU8822(12,  u8DACGAIN);
+        uint8_t u8GAIN = 256 * ui32Value / 100;
+        I2C_WriteNAU8822(11,  0x100 | u8GAIN);
+        I2C_WriteNAU8822(12,  0x100 | u8GAIN);
+
+        u8GAIN = 0x3F * ui32Value / 100;
+        I2C_WriteNAU8822(54,  0x100 | u8GAIN);
+        I2C_WriteNAU8822(55,  0x100 | u8GAIN);
     }
     break;
     case AUDIO_MIXER_QUERY:

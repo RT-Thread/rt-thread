@@ -182,7 +182,7 @@ int rt_hw_max31875_port(void)
     struct rt_sensor_config cfg;
 
     cfg.intf.dev_name = "i2c1";
-    cfg.intf.user_data = (void *)MAX31875_I2C_SLAVE_ADR_R0;
+    cfg.intf.arg = (void *)MAX31875_I2C_SLAVE_ADR_R0;
     cfg.irq_pin.pin = PIN_IRQ_PIN_NONE;
 
     rt_hw_max31875_init("max31875", &cfg);
@@ -198,7 +198,7 @@ int rt_hw_mpu6500_port(void)
     struct rt_sensor_config cfg;
 
     cfg.intf.dev_name = "i2c2";
-    cfg.intf.user_data = (void *)MPU6XXX_ADDR_DEFAULT;
+    cfg.intf.arg = (void *)MPU6XXX_ADDR_DEFAULT;
     cfg.irq_pin.pin = PIN_IRQ_PIN_NONE;
 
     rt_hw_mpu6xxx_init("mpu",  &cfg);

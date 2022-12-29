@@ -558,7 +558,7 @@ void CLK_DisableXtalRC(uint32_t u32ClkMask)
   *             - \ref PDMA3_MODULE
   *             - \ref WH0_MODULE
   *             - \ref WH1_MODULE
-  *             - \ref HWS_MODULE
+  *             - \ref HWSEM0_MODULE
   *             - \ref EBI_MODULE
   *             - \ref SRAM0_MODULE
   *             - \ref SRAM1_MODULE
@@ -692,7 +692,7 @@ void CLK_EnableModuleClock(uint32_t u32ModuleIdx)
   *             - \ref PDMA3_MODULE
   *             - \ref WH0_MODULE
   *             - \ref WH1_MODULE
-  *             - \ref HWS_MODULE
+  *             - \ref HWSEM0_MODULE
   *             - \ref EBI_MODULE
   *             - \ref SRAM0_MODULE
   *             - \ref SRAM1_MODULE
@@ -1471,7 +1471,7 @@ uint64_t CLK_SetPLLFreq(uint32_t u32PllIdx, uint32_t u32OpMode, uint64_t PllSrcC
   *             - \ref PDMA3_MODULE
   *             - \ref WH0_MODULE
   *             - \ref WH1_MODULE
-  *             - \ref HWS_MODULE
+  *             - \ref HWSEM0_MODULE
   *             - \ref EBI_MODULE
   *             - \ref SRAM0_MODULE
   *             - \ref SRAM1_MODULE
@@ -1611,7 +1611,7 @@ uint32_t CLK_GetModuleClockSource(uint32_t u32ModuleIdx)
   *             - \ref PDMA3_MODULE
   *             - \ref WH0_MODULE
   *             - \ref WH1_MODULE
-  *             - \ref HWS_MODULE
+  *             - \ref HWSEM0_MODULE
   *             - \ref EBI_MODULE
   *             - \ref SRAM0_MODULE
   *             - \ref SRAM1_MODULE
