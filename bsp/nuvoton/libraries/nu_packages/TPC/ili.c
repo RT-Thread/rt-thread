@@ -615,11 +615,11 @@ int rt_hw_ili_tpc_init(const char *name, struct rt_touch_config *cfg)
         goto exit_rt_hw_ili_tpc_init;
     }
 
-    rt_memset(&pre_x[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_y[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_w[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&s_tp_dowm[0], 0, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_id[0], 0xff,  ILI_MAX_TOUCH * sizeof(int8_t));
+    rt_memset(&pre_x[0], 0xff, ILI_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_y[0], 0xff, ILI_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_w[0], 0xff, ILI_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, ILI_MAX_TOUCH * sizeof(rt_uint8_t));
+    rt_memset(&pre_id[0], 0xff,  ILI_MAX_TOUCH * sizeof(rt_uint8_t));
 
     /* register touch device */
     rt_memcpy(&touch_device->config, cfg, sizeof(struct rt_touch_config));

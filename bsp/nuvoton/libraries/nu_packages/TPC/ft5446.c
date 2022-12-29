@@ -318,11 +318,11 @@ int rt_hw_ft5446_init(const char *name, struct rt_touch_config *cfg)
 
     ft5446_init(&ft5446_client);
 
-    rt_memset(&pre_x[0], 0xff,  FT_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_y[0], 0xff,  FT_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_w[0], 0xff,  FT_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&s_tp_dowm[0], 0, FT_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_id[0], 0xff,  FT_MAX_TOUCH * sizeof(int8_t));
+    rt_memset(&pre_x[0], 0xff,  FT_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_y[0], 0xff,  FT_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_w[0], 0xff,  FT_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, FT_MAX_TOUCH * sizeof(rt_int8_t));
+    rt_memset(&pre_id[0], 0xff,  FT_MAX_TOUCH * sizeof(rt_int8_t));
 
     /* register touch device */
     touch_device->info.type = RT_TOUCH_TYPE_CAPACITANCE;

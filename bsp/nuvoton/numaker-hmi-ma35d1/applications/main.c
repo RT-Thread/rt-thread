@@ -47,25 +47,3 @@ int main(int argc, char **argv)
 }
 
 #endif
-
-void happy_counter(void *pdata)
-{
-    uint32_t counter = 0;
-    while (1)
-    {
-        rt_kprintf("cpu-%d %d\r\n", rt_hw_cpu_id(), counter++);
-        rt_thread_mdelay(1000);
-    }
-}
-
-void go_happy_counter(void)
-{
-    rt_thread_t tid = rt_thread_create("cpu-1", happy_counter, RT_NULL,  2048, 10, 20);
-    RT_ASSERT(tid != RT_NULL);
-
-    rt_thread_control(tid, RT_THREAD_CTRL_BIND_CPU, (void *)1);
-
-    rt_thread_startup(tid);
-}
-MSH_CMD_EXPORT(go_happy_counter, go happy counter);
-
