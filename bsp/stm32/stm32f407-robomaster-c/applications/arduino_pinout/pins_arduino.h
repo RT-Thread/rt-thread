@@ -26,9 +26,8 @@
 #define D11       (11)
 #define D12       (12)
 #define D13       (13)
-#define D14       (14)
-#define A0        (15)
-#define A1        (16)
+#define A0        (14)
+#define A1        (15)
 
 #define F_CPU          168000000L  /* CPU:168MHz */
 
