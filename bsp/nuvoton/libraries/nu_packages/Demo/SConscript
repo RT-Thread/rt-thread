@@ -1,13 +1,9 @@
 Import('RTT_ROOT')
 from building import *
+
 cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
-src = Split("""
-    usbd_hid_dance_mouse.c
-    slcd_show_tick.c
-    usbd_cdc_vcom_echo.c
-    atdev_utils.c
-    """)
 
 group = DefineGroup('nu_pkgs_demo', src, depend = ['NU_PKG_USING_DEMO'], CPPPATH = CPPPATH)
 Return('group')

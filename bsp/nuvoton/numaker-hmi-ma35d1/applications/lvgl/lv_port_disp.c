@@ -17,6 +17,10 @@
 #define DBG_COLOR
 #include <rtdbg.h>
 
+#if !defined(NU_PKG_LVGL_RENDERING_LAYER)
+    #define NU_PKG_LVGL_RENDERING_LAYER "lcd"
+#endif
+
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
 static rt_device_t lcd_device = 0;
@@ -47,24 +51,6 @@ static void nu_antitearing(lv_disp_draw_buf_t *draw_buf, lv_color_t *color_p)
     }
 }
 
-static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
-{
-    /* Use PANDISPLAY */
-    rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, color_p);
-
-    //TODO
-    nu_antitearing(disp_drv->draw_buf, color_p);
-
-    if (!u32FirstFlush)
-    {
-        /* Enable backlight at first flushing. */
-        rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
-        u32FirstFlush = 1;
-    }
-
-    lv_disp_flush_ready(disp_drv);
-}
-
 static void nu_flush_full_refresh(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
     rt_hw_cpu_dcache_clean(color_p, disp_drv->draw_buf->size * sizeof(lv_color_t));
@@ -86,16 +72,29 @@ static void nu_flush_full_refresh(lv_disp_drv_t *disp_drv, const lv_area_t *area
 
 static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-    int32_t flush_area_w = lv_area_get_width(area);
-    int32_t flush_area_h = lv_area_get_height(area);
+    int32_t x, y;
+    int32_t w = lv_area_get_width(area);
+    int32_t h = lv_area_get_height(area);
+    lv_color_t *pDisp;
 
-    rt_kprintf("[%s %08x] %dx%d %d %d %d %d\n", __func__, color_p, flush_area_w, flush_area_h, area->x1, area->y1, area->x2, area->y2);
+    pDisp = (lv_color_t *)info.framebuffer + (info.width * area->y1 + area->x1);
 
     /* Update dirty region. */
-    //TODO
+    for (y = 0; y < h; y++)
+    {
+        for (x = 0; x < w; x++)
+        {
+            pDisp[x] = color_p[x];
+        }
+        pDisp += info.width;
+        color_p += w;
+    }
 
     if (!u32FirstFlush)
     {
+        /* Point to first screen buffer address. */
+        rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, info.framebuffer);
+
         /* Enable backlight at first flushing. */
         rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
         u32FirstFlush = 1;
@@ -115,7 +114,7 @@ void lv_port_disp_init(void)
     void *buf2 = RT_NULL;
     uint32_t u32FBSize;
 
-    lcd_device = rt_device_find("lcd");
+    lcd_device = rt_device_find(NU_PKG_LVGL_RENDERING_LAYER);
     if (lcd_device == 0)
     {
         LOG_E("error!");
@@ -142,30 +141,25 @@ void lv_port_disp_init(void)
     /*Set the resolution of the display*/
     disp_drv.hor_res = info.width;
     disp_drv.ver_res = info.height;
-    disp_drv.full_refresh = 1;
-    //disp_drv.direct_mode = 1;
+    //disp_drv.full_refresh = 1;
     u32FBSize = info.height * info.width * (info.bits_per_pixel / 8);
 
-    if (disp_drv.full_refresh || disp_drv.direct_mode)
+    if (disp_drv.full_refresh)
     {
+        disp_drv.flush_cb = nu_flush_full_refresh;
         buf1 = (void *)((uint32_t)info.framebuffer & (~UNCACHEABLE));
         buf2 = (void *)((uint32_t)buf1 + u32FBSize);
         buf3_next = (void *)((uint32_t)buf2 + u32FBSize);
-        rt_kprintf("LVGL: Triple screen-sized buffers(%s) - buf1@%08x, buf2@%08x, buf3_next@%08x\n", (disp_drv.full_refresh == 1) ? "full_refresh" : "direct_mode", buf1, buf2, buf3_next);
 
-        if (disp_drv.direct_mode)
-            disp_drv.flush_cb = nu_flush_direct;
-        else
-            disp_drv.flush_cb = nu_flush_full_refresh;
+        LOG_I("LVGL: Triple screen-sized buffers(full_refresh) - buf1@%08x, buf2@%08x, buf3_next@%08x\n", buf1, buf2, buf3_next);
     }
     else
     {
-        buf1 = (void *)(((uint32_t)info.framebuffer) + u32FBSize);
-        buf2 = (void *)((uint32_t)buf1 + u32FBSize);
-        rt_kprintf("LVGL: Two screen-sized buffers - buf1@%08x, buf2@%08x\n", buf1, buf2);
-        rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, info.framebuffer);
-
         disp_drv.flush_cb = nu_flush;
+        buf1 = (void *)(((uint32_t)info.framebuffer & (~UNCACHEABLE)) + u32FBSize);
+        buf2 = (void *)((uint32_t)buf1 + u32FBSize);
+
+        rt_kprintf("LVGL: Two screen-sized buffers - buf1@%08x, buf2@%08x\n", buf1, buf2);
     }
 
     /*Initialize `disp_buf` with the buffer(s).*/

@@ -471,7 +471,7 @@ int rt_hw_gt911_init(const char *name, struct rt_touch_config *cfg)
     rt_memset(&pre_x[0], 0xff,  GT911_MAX_TOUCH * sizeof(rt_int16_t));
     rt_memset(&pre_y[0], 0xff,  GT911_MAX_TOUCH * sizeof(rt_int16_t));
     rt_memset(&pre_w[0], 0xff,  GT911_MAX_TOUCH * sizeof(rt_int16_t));
-    rt_memset(&s_tp_dowm[0], 0, GT911_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, GT911_MAX_TOUCH * sizeof(rt_int8_t));
     rt_memset(&pre_id[0], 0xff, GT911_MAX_TOUCH * sizeof(rt_uint8_t));
 
     /* register touch device */

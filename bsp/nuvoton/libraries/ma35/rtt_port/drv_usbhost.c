@@ -517,7 +517,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         if ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_OUT)
         {
             rt_memcpy(buffer_nonch, buffer, nbytes);
-            rt_hw_cpu_dcache_clean_inv((void *)buffer_nonch, nbytes);
+            rt_hw_cpu_dcache_clean_and_invalidate((void *)buffer_nonch, nbytes);
         }
     }
 

@@ -12,7 +12,10 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <rtthread.h>
 #include "ch32v30x.h"
+#include "drv_gpio.h"
+#include "drv_pwm.h"
 
 /* board configuration */
 #define SRAM_SIZE  96

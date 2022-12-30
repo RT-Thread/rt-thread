@@ -15,6 +15,13 @@
 #include "drv_sys.h"
 #include <stdio.h>
 
+#define LOG_TAG    "drv.sys"
+#undef  DBG_ENABLE
+#define DBG_SECTION_NAME   LOG_TAG
+#define DBG_LEVEL      LOG_LVL_DBG
+#define DBG_COLOR
+#include <rtdbg.h>
+
 #define DEF_RAISING_CPU_FREQUENCY
 //Dont enable #define DEF_RAISING_CPU_VOLTAGE
 
@@ -80,14 +87,14 @@ void nu_sys_check_register(S_NU_REG *psNuReg)
     {
         vu32 vc32RegValue = *((vu32 *)psNuReg->vu32RegAddr);
         vu32 vc32BMValue = vc32RegValue & psNuReg->vu32BitMask;
-        rt_kprintf("[%3s] %32s(0x%08x) %24s(0x%08x): 0x%08x(AndBitMask:0x%08x)\n",
-                   (psNuReg->vu32Value == vc32BMValue) ? "Ok" : "!OK",
-                   psNuReg->szVName,
-                   psNuReg->vu32Value,
-                   psNuReg->szRegName,
-                   psNuReg->vu32RegAddr,
-                   vc32RegValue,
-                   vc32BMValue);
+        LOG_I("[%3s] %32s(0x%08x) %24s(0x%08x): 0x%08x(AndBitMask:0x%08x)\n",
+              (psNuReg->vu32Value == vc32BMValue) ? "Ok" : "!OK",
+              psNuReg->szVName,
+              psNuReg->vu32Value,
+              psNuReg->szRegName,
+              psNuReg->vu32RegAddr,
+              vc32RegValue,
+              vc32BMValue);
         psNuReg++;
     }
 }
@@ -122,7 +129,7 @@ static int nu_tempsen_get_value()
         count = 0;
         temp = (double)((SYS->TSENSRFCR & 0x0FFF0000) >> 16) * 274.3531 / 4096.0 - 93.3332;
         snprintf(sztmp, sizeof(sztmp), "Temperature: %.1f\n", temp);
-        rt_kprintf("%s", sztmp);
+        LOG_I("%s", sztmp);
     }
 
     // Clear Valid bit
@@ -142,7 +149,7 @@ static int nu_tempsen_go(void)
 
     if (err != RT_EOK)
     {
-        rt_kprintf("set %s idle hook failed!\n", __func__);
+        LOG_E("set %s idle hook failed!\n", __func__);
         return -1;
     }
 
@@ -153,32 +160,51 @@ static int nu_tempsen_go(void)
 //INIT_APP_EXPORT(nu_tempsen_go);
 MSH_CMD_EXPORT(nu_tempsen_go, go tempsen);
 
-void nu_clock_dump(void)
+#define REG_SYS_CHIPCFG      (SYS_BASE + 0x1F4)
+
+uint32_t nu_chipcfg_ddrsize(void)
 {
-    rt_kprintf("HXT: %d Hz\n", CLK_GetHXTFreq());
-    rt_kprintf("LXT: %d Hz\n", CLK_GetLXTFreq());
-    rt_kprintf("CAPLL: %d Hz(OpMode=%d)\n", CLK_GetPLLClockFreq(CAPLL),   CLK_GetPLLOpMode(CAPLL));
-    rt_kprintf("DDRPLL: %d Hz(OpMode=%d)\n", CLK_GetPLLClockFreq(DDRPLL), CLK_GetPLLOpMode(DDRPLL));
-    rt_kprintf("APLL: %d Hz(OpMode=%d)\n", CLK_GetPLLClockFreq(APLL),     CLK_GetPLLOpMode(APLL));
-    rt_kprintf("EPLL: %d Hz(OpMode=%d)\n", CLK_GetPLLClockFreq(EPLL),     CLK_GetPLLOpMode(EPLL));
-    rt_kprintf("VPLL: %d Hz(OpMode=%d)\n", CLK_GetPLLClockFreq(VPLL),     CLK_GetPLLOpMode(VPLL));
+    uint32_t u32ChipCfg = *((vu32 *)REG_SYS_CHIPCFG);
 
-    rt_kprintf("M4-CPU: %d Hz\n", CLK_GetCPUFreq());
-
-    rt_kprintf("SYSCLK0: %d Hz\n", CLK_GetSYSCLK0Freq());
-    rt_kprintf("SYSCLK1: %d Hz\n", CLK_GetSYSCLK1Freq());
-    rt_kprintf("HCLK0: %d Hz\n", CLK_GetHCLK0Freq());
-    rt_kprintf("HCLK1: %d Hz\n", CLK_GetHCLK1Freq());
-    rt_kprintf("HCLK2: %d Hz\n", CLK_GetHCLK2Freq());
-    rt_kprintf("HCLK3: %d Hz\n", CLK_GetHCLK3Freq());
-    rt_kprintf("PCLK0: %d Hz\n", CLK_GetPCLK0Freq());
-    rt_kprintf("PCLK1: %d Hz\n", CLK_GetPCLK1Freq());
-    rt_kprintf("PCLK2: %d Hz\n", CLK_GetPCLK2Freq());
-    rt_kprintf("PCLK3: %d Hz\n", CLK_GetPCLK3Freq());
-    rt_kprintf("PCLK4: %d Hz\n", CLK_GetPCLK4Freq());
+    return ((u32ChipCfg & 0xF0000) != 0) ? (1 << ((u32ChipCfg & 0xF0000) >> 16)) << 20 : 0;
 }
 
-const char *szClockName [] =
+void nu_chipcfg_dump(void)
+{
+    uint32_t u32ChipCfg = *((vu32 *)REG_SYS_CHIPCFG);
+    uint32_t u32ChipCfg_DDRSize = ((u32ChipCfg & 0xF0000) != 0) ? 1 << ((u32ChipCfg & 0xF0000) >> 16) : 0;
+    uint32_t u32ChipCfg_DDRType = ((u32ChipCfg & 0x8000) >> 15);
+
+    LOG_I("CHIPCFG: 0x%08x ", u32ChipCfg);
+    LOG_I("DDR SDRAM Size: %d MB", u32ChipCfg_DDRSize);
+    LOG_I("MCP DDR TYPE: %s", u32ChipCfg_DDRSize ? (u32ChipCfg_DDRType ? "DDR2" : "DDR3/3L") : "Unknown");
+}
+
+void nu_clock_dump(void)
+{
+    LOG_I("HXT: %d Hz", CLK_GetHXTFreq());
+    LOG_I("LXT: %d Hz", CLK_GetLXTFreq());
+    LOG_I("CAPLL: %d Hz(OpMode=%d)", CLK_GetPLLClockFreq(CAPLL),   CLK_GetPLLOpMode(CAPLL));
+    LOG_I("DDRPLL: %d Hz(OpMode=%d)", CLK_GetPLLClockFreq(DDRPLL), CLK_GetPLLOpMode(DDRPLL));
+    LOG_I("APLL: %d Hz(OpMode=%d)", CLK_GetPLLClockFreq(APLL),     CLK_GetPLLOpMode(APLL));
+    LOG_I("EPLL: %d Hz(OpMode=%d)", CLK_GetPLLClockFreq(EPLL),     CLK_GetPLLOpMode(EPLL));
+    LOG_I("VPLL: %d Hz(OpMode=%d)", CLK_GetPLLClockFreq(VPLL),     CLK_GetPLLOpMode(VPLL));
+
+    LOG_I("M4-CPU: %d Hz", CLK_GetCPUFreq());
+    LOG_I("SYSCLK0: %d Hz", CLK_GetSYSCLK0Freq());
+    LOG_I("SYSCLK1: %d Hz", CLK_GetSYSCLK1Freq());
+    LOG_I("HCLK0: %d Hz", CLK_GetHCLK0Freq());
+    LOG_I("HCLK1: %d Hz", CLK_GetHCLK1Freq());
+    LOG_I("HCLK2: %d Hz", CLK_GetHCLK2Freq());
+    LOG_I("HCLK3: %d Hz", CLK_GetHCLK3Freq());
+    LOG_I("PCLK0: %d Hz", CLK_GetPCLK0Freq());
+    LOG_I("PCLK1: %d Hz", CLK_GetPCLK1Freq());
+    LOG_I("PCLK2: %d Hz", CLK_GetPCLK2Freq());
+    LOG_I("PCLK3: %d Hz", CLK_GetPCLK3Freq());
+    LOG_I("PCLK4: %d Hz", CLK_GetPCLK4Freq());
+}
+
+static const char *szClockName [] =
 {
     "HXT",
     "LXT",
@@ -202,7 +228,7 @@ void nu_clock_isready(void)
     {
         if (i == 5 || i == 7 || i == 2) continue;
         u32IsReady = CLK_WaitClockReady(1 << i);
-        rt_kprintf("%s: %s\n", szClockName[i], (u32IsReady == 1) ? "[Stable]" : "[Unstable]");
+        LOG_I("%s: %s\n", szClockName[i], (u32IsReady == 1) ? "[Stable]" : "[Unstable]");
     }
 }
 
@@ -230,7 +256,7 @@ void nu_clock_raise(void)
     }
 
     CLK_SetPLLFreq(VPLL, PLL_OPMODE_INTEGER, u32PllRefClk, 102000000ul);
-    CLK_SetPLLFreq(APLL, PLL_OPMODE_INTEGER, u32PllRefClk, 160000000ul);
+    CLK_SetPLLFreq(APLL, PLL_OPMODE_INTEGER, u32PllRefClk, 144000000ul);
     CLK_SetPLLFreq(EPLL, PLL_OPMODE_INTEGER, u32PllRefClk, 500000000ul);
 
     /* Waiting clock ready */
@@ -247,7 +273,9 @@ void nu_clock_raise(void)
     else
 #endif
     {
+#if defined(DEF_RAISING_CPU_VOLTAGE)
         ma35d1_set_cpu_voltage(CLK_GetPLLClockFreq(SYSPLL), 0x5F);
+#endif
         CLK_SetPLLFreq(CAPLL, PLL_OPMODE_INTEGER, u32PllRefClk, 800000000ul);
     }
 
@@ -266,4 +294,75 @@ void nu_clock_raise(void)
     MSH_CMD_EXPORT(nu_clock_isready, Check PLL clocks);
 #endif
 
+
+void devmem(int argc, char *argv[])
+{
+    volatile unsigned int u32Addr;
+    unsigned int value = 0, mode = 0;
+
+    if (argc < 2 || argc > 3)
+    {
+        goto exit_devmem;
+    }
+
+    if (argc == 3)
+    {
+        if (sscanf(argv[2], "0x%x", &value) != 1)
+            goto exit_devmem;
+        mode = 1; //Write
+    }
+
+    if (sscanf(argv[1], "0x%x", &u32Addr) != 1)
+        goto exit_devmem;
+    else if (u32Addr & (4 - 1))
+        goto exit_devmem;
+
+    if (mode)
+    {
+        *((volatile uint32_t *)u32Addr) = value;
+    }
+    LOG_I("0x%08x\n", *((volatile uint32_t *)u32Addr));
+
+    return;
+exit_devmem:
+    rt_kprintf("Read: devmem <physical address in hex>\n");
+    rt_kprintf("Write: devmem <physical address in hex> <value in hex format>\n");
+    return;
+}
+MSH_CMD_EXPORT(devmem, dump device registers);
+
+void devmem2(int argc, char *argv[])
+{
+    volatile unsigned int u32Addr;
+    unsigned int value = 0, word_count = 1;
+
+    if (argc < 2 || argc > 3)
+    {
+        goto exit_devmem;
+    }
+
+    if (argc == 3)
+    {
+        if (sscanf(argv[2], "%d", &value) != 1)
+            goto exit_devmem;
+        word_count = value;
+    }
+
+    if (sscanf(argv[1], "0x%x", &u32Addr) != 1)
+        goto exit_devmem;
+    else if (u32Addr & (4 - 1))
+        goto exit_devmem;
+
+    if (word_count > 0)
+    {
+        LOG_HEX("devmem", 16, (void *)u32Addr, word_count * sizeof(rt_base_t));
+    }
+
+    return;
+
+exit_devmem:
+    rt_kprintf("devmem2: <physical address in hex> <count in dec>\n");
+    return;
+}
+MSH_CMD_EXPORT(devmem2, dump device registers);
 

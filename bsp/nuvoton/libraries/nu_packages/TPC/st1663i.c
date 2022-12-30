@@ -313,11 +313,11 @@ int rt_hw_st1663i_init(const char *name, struct rt_touch_config *cfg)
 
     st1663i_init(&st1663i_client);
 
-    rt_memset(&pre_x[0], 0xff,  ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_y[0], 0xff,  ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_w[0], 0xff,  ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&s_tp_dowm[0], 0, ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_id[0], 0xff,  ST_MAX_TOUCH * sizeof(int8_t));
+    rt_memset(&pre_x[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_y[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_w[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, ST_MAX_TOUCH * sizeof(rt_int8_t));
+    rt_memset(&pre_id[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int8_t));
 
     /* register touch device */
     touch_device->info.type = RT_TOUCH_TYPE_CAPACITANCE;

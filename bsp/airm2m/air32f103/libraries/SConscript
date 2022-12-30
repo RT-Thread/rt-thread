@@ -1,0 +1,81 @@
+from building import *
+
+
+cwd     = GetCurrentDir()
+path = [cwd,cwd+"/AIR32F10xLib/inc",cwd+"/rt_drivers"]
+
+# add general drivers
+src = Split('''
+AIR32F10xLib/src/air32f10x_adc.c
+AIR32F10xLib/src/air32f10x_bkp.c
+AIR32F10xLib/src/air32f10x_can.c
+AIR32F10xLib/src/air32f10x_crc.c
+AIR32F10xLib/src/air32f10x_dac.c
+AIR32F10xLib/src/air32f10x_dbgmcu.c
+AIR32F10xLib/src/air32f10x_dma.c
+AIR32F10xLib/src/air32f10x_exti.c
+AIR32F10xLib/src/air32f10x_flash.c
+AIR32F10xLib/src/air32f10x_fsmc.c
+AIR32F10xLib/src/air32f10x_gpio.c
+AIR32F10xLib/src/air32f10x_i2c.c
+AIR32F10xLib/src/air32f10x_iwdg.c
+AIR32F10xLib/src/air32f10x_otp.c
+AIR32F10xLib/src/air32f10x_pwr.c
+AIR32F10xLib/src/air32f10x_rcc.c
+AIR32F10xLib/src/air32f10x_rcc_ex.c
+AIR32F10xLib/src/air32f10x_rtc.c
+AIR32F10xLib/src/air32f10x_sdio.c
+AIR32F10xLib/src/air32f10x_spi.c
+AIR32F10xLib/src/air32f10x_tim.c
+AIR32F10xLib/src/air32f10x_trng.c
+AIR32F10xLib/src/air32f10x_usart.c
+AIR32F10xLib/src/air32f10x_wwdg.c
+AIR32F10xLib/src/misc.c
+AIR32F10xLib/src/system_air32f10x.c
+''')
+
+src += ['rt_drivers/drv_common.c']
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['rt_drivers/drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['rt_drivers/drv_usart_v2.c']
+    else:
+        src += ['rt_drivers/drv_usart.c']
+
+if GetDepend(['RT_USING_I2C','RT_USING_I2C_BITOPS']):
+    src += ['rt_drivers/drv_soft_i2c.c']
+
+if GetDepend(['RT_USING_SPI', 'BSP_USING_SPI']):
+    src += ['rt_drivers/drv_spi.c']
+
+if GetDepend('BSP_USING_RTC'):
+    src += ['rt_drivers/drv_rtc.c']
+
+if GetDepend('BSP_USING_ADC'):
+    src += ['rt_drivers/drv_adc.c']
+
+if GetDepend('BSP_USING_DAC'):
+    src += ['rt_drivers/drv_dac.c']
+
+if GetDepend('BSP_USING_PWM'):
+    src += ['rt_drivers/drv_pwm.c']
+
+if GetDepend('BSP_USING_TIM'):
+    src += ['rt_drivers/drv_hwtimer.c']
+
+if GetDepend('BSP_USING_WDT'):
+    src += ['rt_drivers/drv_wdt.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['rt_drivers/drv_flash.c']
+
+
+if not GetDepend('PKG_CMSIS_CORE'):
+    path += [cwd + '/CMSIS/Include']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
