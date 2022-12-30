@@ -26,16 +26,15 @@ const pin_map_t pin_map_table[]=
     {D2, GET_PIN(A,9), "uart1"},        /* Serial-TX */
     {D3, GET_PIN(G,9), "uart6"},        /* Serial-RX */
     {D4, GET_PIN(G,14), "uart6"},       /* Serial-TX */
-    {D5, GET_PIN(B,0), "i2c1"},         /* I2C-SCL (Wire) */
-    {D6, GET_PIN(B,0), "i2c1"},         /* I2C-SDA (Wire) */
+    {D5, GET_PIN(F,1), "i2c1"},         /* I2C-SCL (Wire) */
+    {D6, GET_PIN(F,0), "i2c1"},         /* I2C-SDA (Wire) */
     {D7, GET_PIN(E,9), "pwm1", 1},      /* PWM */
     {D8, GET_PIN(E,11), "pwm1", 2},     /* PWM */
     {D9, GET_PIN(E,13), "pwm1", 3},     /* PWM */
     {D10, GET_PIN(E,14), "pwm1", 4},    /* PWM */
-    {D11, GET_PIN(E,14), "pwm1", 4},    /* PWM */
-    {D12, GET_PIN(C,6), "pwm8", 1},     /* PWM */
-    {D13, GET_PIN(I,6), "pwm8", 2},     /* PWM */
-    {D14, GET_PIN(I,7), "pwm8", 3},     /* PWM */
+    {D11, GET_PIN(C,6), "pwm8", 1},     /* PWM */
+    {D12, GET_PIN(I,6), "pwm8", 2},     /* PWM */
+    {D13, GET_PIN(I,7), "pwm8", 3},     /* PWM */
     {A0, RT_NULL, "adc1", 18},          /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
     {A1, RT_NULL, "adc1", 17},          /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
 };
