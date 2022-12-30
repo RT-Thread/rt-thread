@@ -8,7 +8,7 @@
  * 2018/10/02     Bernard      The first version
  */
 
-#include "cpuport.h"
+#include "../common/cpuport.h"
 
   .section      .text.entry
   .align 2

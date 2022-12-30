@@ -7,12 +7,11 @@
  * Date           Author       Notes
  * 2018-10-03     Bernard      The first version
  * 2020/11/20     BalanceTWK   Add FPU support
+ * 2022/12/30     WangShun     Remove #include "rtconfig.h"
  */
 
 #ifndef CPUPORT_H__
 #define CPUPORT_H__
-
-#include <rtconfig.h>
 
 #ifndef __ASSEMBLY__
 #ifdef RT_USING_SMP
