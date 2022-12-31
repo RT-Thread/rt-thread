@@ -119,6 +119,21 @@ menu "On-chip Peripheral Drivers"
                         default n
                 endif
 
+            menuconfig BSP_USING_PWM5
+                bool "Enable timer5 output PWM"
+                default n
+                if BSP_USING_PWM5
+                    config BSP_USING_PWM5_CH1
+                        bool "Enable PWM5 channel1(LED_B)"
+                        default n
+                    config BSP_USING_PWM5_CH2
+                        bool "Enable PWM5 channel2(LED_G)"
+                        default n
+                    config BSP_USING_PWM5_CH3
+                        bool "Enable PWM5 channel3(LED_R)"
+                        default n
+                endif
+                
             menuconfig BSP_USING_PWM8
                 bool "Enable timer8 output PWM"
                 default n
