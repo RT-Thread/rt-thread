@@ -158,6 +158,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 #define RT_UNUSED(x)                   ((void)x)
 
+#define RT_LIKELY(x)    __builtin_expect(!!(x), 1)
+#define RT_UNLIKELY(x)  __builtin_expect(!!(x), 0)
+
 /* Compiler Related Definitions */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
 #define rt_section(x)               __attribute__((section(x)))

@@ -140,7 +140,7 @@ struct sbi_ret
     long value;
 };
 
-static __inline struct sbi_ret
+static inline struct sbi_ret
 sbi_call(uint64_t arg7, uint64_t arg6, uint64_t arg0, uint64_t arg1,
          uint64_t arg2, uint64_t arg3, uint64_t arg4)
 {
@@ -184,7 +184,9 @@ void sbi_send_ipi(const unsigned long *hart_mask);
 
 /* RFENCE extension functions. */
 void sbi_remote_fence_i(const unsigned long *hart_mask);
-void sbi_remote_sfence_vma(const unsigned long *hart_mask, unsigned long start, unsigned long size);
+int sbi_remote_sfence_vma(const unsigned long *hart_mask,
+                          const unsigned long hart_mask_base,
+                          unsigned long start, unsigned long size);
 void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask, unsigned long start,
                                 unsigned long size, unsigned long asid);
 

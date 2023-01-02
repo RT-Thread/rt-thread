@@ -258,34 +258,27 @@ rt_hw_set_process_id:
     MCR p15, 0, r0, c13, c0, 1
     mov pc, lr
 
+#endif
 .global rt_hw_mmu_switch
 rt_hw_mmu_switch:
-    mov r3, #0
-    mcr p15, 0, r3, c13, c0, 1   /* set contextid = 0, for synchronization*/ 
-    isb
-    
     orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0    /* ttbr0 */
+    mcr p15, 0, r0, c2, c0, 0       // ttbr0
 
-    isb
-    mov r1, r1, LSL #0x8         
-    and r2, r2, #0xff             
-    orr r1, r1, r2                /* contextid.PROCID = pid, contextid.ASID = asid*/
-    mcr p15, 0, r1, c13, c0, 1    /* set contextid = r1*/ 
-    isb
-
-    mcr p15, 0, r0, c7, c5, 0    /* iciallu */
-    mcr p15, 0, r0, c7, c5, 6    /* bpiall */
+                                    //invalid tlb
+    mov r0, #0
+    mcr p15, 0, r0, c8, c7, 0
+    mcr p15, 0, r0, c7, c5, 0       //iciallu
+    mcr p15, 0, r0, c7, c5, 6       //bpiall 
 
     dsb
     isb
     mov pc, lr
+
 .global rt_hw_mmu_tbl_get
 rt_hw_mmu_tbl_get:
     mrc p15, 0, r0, c2, c0, 0    /* ttbr0 */
     bic r0, #0x18
     mov pc, lr
-#endif
 
 _halt:
     wfe
@@ -459,7 +452,7 @@ rt_hw_context_switch_interrupt_do:
     bl      rt_thread_self
 #ifdef RT_USING_SMART
     mov     r4, r0
-    bl      lwp_mmu_switch
+    bl      lwp_aspace_switch
     mov     r0, r4
     bl      lwp_user_setting_restore
 #endif

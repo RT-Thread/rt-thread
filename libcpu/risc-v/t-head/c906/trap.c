@@ -107,7 +107,7 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_kprintf("\t%s\n",(regs->sstatus & SSTATUS_SIE) ? "Supervisor Interrupt Enabled" : "Supervisor Interrupt Disabled");
     rt_kprintf("\t%s\n",(regs->sstatus & SSTATUS_SPIE) ? "Last Time Supervisor Interrupt Enabled" : "Last Time Supervisor Interrupt Disabled");
     rt_kprintf("\t%s\n",(regs->sstatus & SSTATUS_SPP) ? "Last Privilege is Supervisor Mode" : "Last Privilege is User Mode");
-    rt_kprintf("\t%s\n",(regs->sstatus & SSTATUS_PUM) ? "Permit to Access User Page" : "Not Permit to Access User Page");
+    rt_kprintf("\t%s\n",(regs->sstatus & SSTATUS_SUM) ? "Permit to Access User Page" : "Not Permit to Access User Page");
     rt_kprintf("\t%s\n",(regs->sstatus & (1 << 19)) ? "Permit to Read Executable-only Page" : "Not Permit to Read Executable-only Page");
     rt_size_t satp_v = read_csr(satp);
     rt_kprintf("satp = 0x%p\n",satp_v);
@@ -202,6 +202,45 @@ void generic_handle_irq(int irq)
     plic_complete(irq);
 }
 
+static const char *get_exception_msg(int id)
+{
+    const char *msg;
+    if (id < sizeof(Exception_Name) / sizeof(const char *))
+    {
+        msg = Exception_Name[id];
+    }
+    else
+    {
+        msg = "Unknown Exception";
+    }
+    return msg;
+}
+
+void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
+{
+    rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+
+#ifdef RT_USING_USERSPACE
+    /* user page fault */
+    if (id == EP_LOAD_PAGE_FAULT ||
+        id == EP_STORE_PAGE_FAULT)
+    {
+        if (arch_expand_user_stack((void *)stval))
+        {
+            return;
+        }
+    }
+#endif
+    LOG_E("[FATAL ERROR] Exception %ld:%s", id, get_exception_msg(id));
+    LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p", scause, stval, sepc);
+    dump_regs(sp);
+
+    rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
+
+    LOG_E("User Fault, killing thread: %s", rt_thread_self()->name);
+    sys_exit(-1);
+}
+
 /* Trap entry */
 void handle_trap(rt_size_t scause,rt_size_t stval,rt_size_t sepc,struct rt_hw_stack_frame *sp)
 {
@@ -238,28 +277,28 @@ void handle_trap(rt_size_t scause,rt_size_t stval,rt_size_t sepc,struct rt_hw_st
     }
     else
     {
-#ifdef RT_USING_SMART
-        /* page fault */
-        if (id == EP_LOAD_PAGE_FAULT ||
-            id == EP_STORE_PAGE_FAULT)
+        if (!(sp->sstatus & 0x100))
         {
-            arch_expand_user_stack((void *)stval);
-            return;
-        }
-#endif
-        if(id < sizeof(Exception_Name) / sizeof(const char *))
-        {
-            msg = Exception_Name[id];
-        }
-        else
-        {
-            msg = "Unknown Exception";
+            handle_user(scause, stval, sepc, sp);
+            // after handle_user(), return to user space.
+            // otherwise it never returns
+            return ;
         }
 
-        rt_kprintf("Unhandled Exception %ld:%s\n",id,msg);
+        // handle kernel exception:
+        rt_kprintf("Unhandled Exception %ld:%s\n", id, get_exception_msg(id));
     }
 
-    rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n",scause,stval,sepc);
+    rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
     dump_regs(sp);
-    while(1);
+    rt_kprintf("--------------Thread list--------------\n");
+    rt_kprintf("current thread: %s\n", rt_thread_self()->name);
+    list_process();
+
+    extern struct rt_thread *rt_current_thread;
+    rt_kprintf("--------------Backtrace--------------\n");
+    rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
+
+    while (1)
+        ;
 }
