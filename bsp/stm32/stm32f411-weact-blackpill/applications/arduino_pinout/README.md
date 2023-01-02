@@ -18,7 +18,8 @@ Hardware Drivers Config --->
 
 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
-![xxx-pinout](weact-blackpill-f411-pinout.png)
+![pinout](weact-blackpill-f411-pinout.png)
+
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | PC13 | 是 | 板载用户LED |
