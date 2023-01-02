@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-int lwp_user_space_init(struct rt_lwp *lwp);
+int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork);
 void lwp_unmap_user_space(struct rt_lwp *lwp);
 
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
@@ -42,9 +42,22 @@ size_t lwp_get_from_user(void *dst, void *src, size_t size);
 size_t lwp_put_to_user(void *dst, void *src, size_t size);
 int lwp_user_accessable(void *addr, size_t size);
 
-size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size);
-size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size);
-void lwp_data_cache_flush(rt_mmu_info *mmu_info, void *vaddr, size_t size);
+size_t lwp_data_get(struct rt_lwp *lwp, void *dst, void *src, size_t size);
+size_t lwp_data_put(struct rt_lwp *lwp, void *dst, void *src, size_t size);
+void lwp_data_cache_flush(struct rt_lwp *lwp, void *vaddr, size_t size);
+
+static inline void *_lwp_v2p(struct rt_lwp *lwp, void *vaddr)
+{
+    return rt_hw_mmu_v2p(lwp->aspace, vaddr);
+}
+
+static inline void *lwp_v2p(struct rt_lwp *lwp, void *vaddr)
+{
+    RD_LOCK(lwp->aspace);
+    void *paddr = _lwp_v2p(lwp, vaddr);
+    RD_UNLOCK(lwp->aspace);
+    return paddr;
+}
 
 #ifdef __cplusplus
 }

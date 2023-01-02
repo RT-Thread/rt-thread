@@ -25,7 +25,6 @@ enum
 {
     MM_AREA_TYPE_PHY = 0,  /* mm_area physical address is IO register or reserved memory no cached*/
     MM_AREA_TYPE_PHY_CACHED,  /* mm_area physical address is IO register or reserved memory with cached */
-    MM_AREA_TYPE_SHM,      /* mm_area physical address is shared memory */
     MM_AREA_TYPE_DATA,     /* mm_area physical address is alloced from page manager for data */
     MM_AREA_TYPE_TEXT,     /* mm_area physical address is alloced from page manager for text */
     MM_AREA_TYPE_UNKNOW,

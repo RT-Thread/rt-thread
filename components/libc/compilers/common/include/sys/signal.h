@@ -12,6 +12,10 @@
 #ifndef __SYS_SIGNAL_H__
 #define __SYS_SIGNAL_H__
 
+#if defined(RT_USING_SMART) && (defined(ARCH_ARMV8) || defined(ARCH_RISCV))
+#include <signal.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -236,6 +240,8 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif /* RT_USING_SMART */
 
 #endif /* __SYS_SIGNAL_H__ */
 
