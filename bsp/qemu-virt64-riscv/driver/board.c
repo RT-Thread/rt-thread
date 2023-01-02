@@ -13,6 +13,7 @@
 #include <rtdevice.h>
 
 #include "board.h"
+#include "mm_aspace.h"
 #include "tick.h"
 
 #include "drv_uart.h"
@@ -31,8 +32,6 @@
 
 rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
 
-rt_mmu_info mmu_info;
-
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
@@ -43,24 +42,13 @@ struct mem_desc platform_mem_desc[] = {
 
 #endif
 
-void init_bss(void)
-{
-    unsigned int *dst;
-
-    dst = &__bss_start;
-    while (dst < &__bss_end)
-    {
-        *dst++ = 0;
-    }
-}
-
 void primary_cpu_entry(void)
 {
     extern void entry(void);
 
     /* disable global interrupt */
-    init_bss();
     rt_hw_interrupt_disable();
+
     entry();
 }
 
@@ -69,14 +57,14 @@ void primary_cpu_entry(void)
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
-    rt_page_init(init_page_region);
-    /* init mmu_info structure */
-    rt_hw_mmu_map_init(&mmu_info, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
-    // this API is reserved currently since PLIC etc had not been porting completely to MMU version
-    rt_hw_mmu_kernel_map_init(&mmu_info, 0x00000000UL, 0x80000000);
-    /* setup region, and enable MMU */
-    rt_hw_mmu_setup(&mmu_info, platform_mem_desc, NUM_MEM_DESC);
+    /* init data structure */
+    rt_hw_mmu_map_init(&kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
 
+    /* init page allocator */
+    rt_page_init(init_page_region);
+
+    /* setup region, and enable MMU */
+    rt_hw_mmu_setup(&kernel_space, platform_mem_desc, NUM_MEM_DESC);
 #endif
 
 #ifdef RT_USING_HEAP

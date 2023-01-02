@@ -17,7 +17,6 @@
 #include <mmu.h>
 #include <ioremap.h>
 
-extern rt_mmu_info mmu_info;
 #else
 #define rt_ioremap(x, ...) (x)
 #endif
