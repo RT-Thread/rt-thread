@@ -18,7 +18,6 @@ Hardware Drivers Config --->
 
 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
-![xxx-pinout](xxx-pinout.jpg)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | PF14 | 是 | 板载用户LED |
