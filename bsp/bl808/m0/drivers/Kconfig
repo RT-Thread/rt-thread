@@ -6,6 +6,7 @@ config SOC_BL808
     select ARCH_RISCV_FPU_S
     default y
 
+
 config BSP_USING_JTAG_M0
     bool "Enable M0 JTAG "
     default n

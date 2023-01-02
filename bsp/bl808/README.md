@@ -96,9 +96,16 @@ Windows下推荐使用[env工具][1]，然后在console下进入bsp/bl808目录�
 
 维护人：[flyingcys](https://github.com/flyingcys)
 
-## 6. 参考
+## 6. 支持开发板列表
 
+|        | 开发板型号 |
+| ------ | ---------- |
+| Sipeed | M1s Dock   |
+|        |            |
+
+
+## 7. 参考
 * 芯片[datasheet][2]
 
-  [1]: https://www.rt-thread.org/page/download.html 
+  [1]: https://www.rt-thread.org/page/download.html
   [2]: https://github.com/bouffalolab/bl_docs

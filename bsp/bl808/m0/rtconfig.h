@@ -48,6 +48,8 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50000
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_S
 
 /* RT-Thread Components */
 
@@ -219,7 +221,7 @@
 
 /* Uncategorized */
 
-/* Hardware Drivers Config */
+/* BL808_M0 Hardware Drivers Config */
 
 #define SOC_BL808
 

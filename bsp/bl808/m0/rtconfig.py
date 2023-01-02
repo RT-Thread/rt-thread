@@ -45,11 +45,6 @@ if PLATFORM == 'gcc':
 
     LINKER_SCRIPTS_PATH = r'libraries/platform/soc/bl808/startup_bl808/evb/ld/'
     LINKER_SCRIPTS = 'bl808_flash.ld'
-    # LINKER_SCRIPTS = bl808_ram_phyrf.ld
-    # LINKER_SCRIPTS = bl808_ram.ld
-    # LINKER_SCRIPTS = bl808_flash_rom.ld
-    # LINKER_SCRIPTS = bl808_flash_phyrf.ld
-    # LINKER_SCRIPTS = bl808_flash_no_wifi.ld
 
     CFLAGS += ' -DCFG_COMPONENT_BLOG_ENABLE=0 -DARCH_RISCV -DBFLB_USE_HAL_DRIVER -DCPU_M0 -DBL808'
 
@@ -59,10 +54,10 @@ if PLATFORM == 'gcc':
     LPATH   = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -ggdb'
-        AFLAGS += ' -ggdb'
+        CFLAGS += ' -O0 -gdwarf'
+        AFLAGS += ' -gdwarf'
     else:
-        CFLAGS += ' -O2 -Os'
+        CFLAGS += ' -O3'
 
     CXXFLAGS = CFLAGS + ' -std=gnu++17 -Wno-multichar'
 
