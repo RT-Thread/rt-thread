@@ -43,7 +43,7 @@ static void touch_irq_callback(void *param)
 static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
-    if (touch->config.irq_pin.pin == RT_PIN_NONE)
+    if (touch->config.irq_pin.pin == PIN_IRQ_PIN_NONE)
     {
         return -RT_EINVAL;
     }
@@ -73,7 +73,7 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 static void rt_touch_irq_enable(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
-    if (touch->config.irq_pin.pin != RT_PIN_NONE)
+    if (touch->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_TRUE);
     }
@@ -86,7 +86,7 @@ static void rt_touch_irq_enable(rt_touch_t touch)
 static void rt_touch_irq_disable(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
-    if (touch->config.irq_pin.pin != RT_PIN_NONE)
+    if (touch->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_FALSE);
     }

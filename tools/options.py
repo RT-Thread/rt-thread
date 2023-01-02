@@ -85,11 +85,11 @@ def AddOptions():
                       dest = 'target',
                       type = 'string',
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
-    AddOption('--exec-prefix',
+    AddOption('--cc-prefix', '--exec-prefix',
                 dest = 'exec-prefix',
                 type = 'string',
-                help = 'set RTT_EXEC_PREFIX temperately')
-    AddOption('--exec-path',
+                help = 'set RTT_CC_PREFIX temperately')
+    AddOption('--cc-path', '--exec-path',
                 dest = 'exec-path',
                 type = 'string',
                 help = 'set RTT_EXEC_PATH temperately')

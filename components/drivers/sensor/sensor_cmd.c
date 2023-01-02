@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -116,6 +116,8 @@ static const char *sensor_get_vendor_name(rt_sensor_info_t info)
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MAXIM);
         case RT_SENSOR_VENDOR_MELEXIS:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_MELEXIS);
+        case RT_SENSOR_VENDOR_LSC:
+            return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_LSC);
         case RT_SENSOR_VENDOR_UNKNOWN:
         default:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_VENDOR_UNKNOWN);
@@ -362,7 +364,7 @@ static void sensor_fifo_rx_entry(void *parameter)
     struct rt_sensor_data *data = RT_NULL;
     rt_size_t res, i;
 
-    data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * sensor->info.fifo_max);
+    data = (struct rt_sensor_data *)rt_calloc(sensor->info.fifo_max, sizeof(struct rt_sensor_data));
     if (data == RT_NULL)
     {
         LOG_E("Memory allocation failed!");
@@ -420,9 +422,7 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_set_rx_indicate(dev, rx_callback);
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
-#endif
+MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
 
 static void sensor_irq_rx_entry(void *parameter)
 {
@@ -483,9 +483,7 @@ static void sensor_int(int argc, char **argv)
         return;
     }
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
-#endif
+MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
 
 static void sensor_polling(int argc, char **argv)
 {
@@ -531,9 +529,25 @@ static void sensor_polling(int argc, char **argv)
     }
     rt_device_close(dev);
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
-#endif
+MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
+
+static void sensor_cmd_warning_unknown(void)
+{
+    LOG_W("Unknown command, please enter 'sensor' get help information!");
+    rt_kprintf("sensor  [OPTION] [PARAM]\n");
+    rt_kprintf("         list                  list all sensor devices\n");
+    rt_kprintf("         probe <dev_name>      probe sensor by given name\n");
+    rt_kprintf("         info                  get sensor information\n");
+    rt_kprintf("         read [num]            read [num] times sensor (default 5)\n");
+    rt_kprintf("         power [mode]          set or get power mode\n");
+    rt_kprintf("         accuracy [mode]       set or get accuracy mode\n");
+    rt_kprintf("         fetch [mode]          set or get fetch data mode\n");
+}
+
+static void sensor_cmd_warning_probe(void)
+{
+    LOG_W("Please probe sensor device first!");
+}
 
 static void sensor(int argc, char **argv)
 {
@@ -546,25 +560,20 @@ static void sensor(int argc, char **argv)
     /* If the number of arguments less than 2 */
     if (argc < 2)
     {
-        rt_kprintf("\n");
-        rt_kprintf("sensor  [OPTION] [PARAM]\n");
-        rt_kprintf("         probe <dev_name>      probe sensor by given name\n");
-        rt_kprintf("         info                  get sensor information\n");
-        rt_kprintf("         read [num]            read [num] times sensor (default 5)\n");
-        return ;
+        sensor_cmd_warning_unknown();
+        return;
     }
-    else if (!strcmp(argv[1], "info"))
+    else if (!rt_strcmp(argv[1], "info"))
     {
         if (dev == RT_NULL)
         {
-            LOG_W("Please probe sensor device first!");
+            sensor_cmd_warning_probe();
             return ;
         }
         sensor = (rt_sensor_t)dev;
         rt_kprintf("name      :%s\n", sensor->info.name);
         rt_kprintf("type:     :%s\n", sensor_get_type_name(&sensor->info));
         rt_kprintf("vendor    :%s\n", sensor_get_vendor_name(&sensor->info));
-        rt_kprintf("interface :%s\n", sensor_get_intf_name(sensor));
         rt_kprintf("unit      :%s\n", sensor_get_unit_name(&sensor->info));
         rt_kprintf("fetch data:%s\n", sensor_get_fetch_mode_name(&sensor->info));
         rt_kprintf("power     :%s\n", sensor_get_power_mode_name(&sensor->info));
@@ -575,15 +584,17 @@ static void sensor(int argc, char **argv)
         rt_kprintf("error     :%f\n", sensor->info.accuracy.error);
         rt_kprintf("acquire min:%fms\n", sensor->info.acquire_min);
         rt_kprintf("fifo max  :%d\n", sensor->info.fifo_max);
+        rt_kprintf("interface type   :%s\n", sensor_get_intf_name(sensor));
+        rt_kprintf("interface device :%s\n", sensor->config.intf.dev_name);
     }
-    else if (!strcmp(argv[1], "read"))
+    else if (!rt_strcmp(argv[1], "read"))
     {
         rt_uint16_t num = 5;
 
         if (dev == RT_NULL)
         {
-            LOG_W("Please probe sensor device first!");
-            return ;
+            sensor_cmd_warning_probe();
+            return;
         }
         if (argc == 3)
         {
@@ -607,49 +618,168 @@ static void sensor(int argc, char **argv)
             rt_thread_mdelay(delay);
         }
     }
-    else if (argc == 3)
+    else if (!rt_strcmp(argv[1], "list"))
     {
-        if (!strcmp(argv[1], "probe"))
-        {
-            rt_uint8_t reg = 0xFF;
-            rt_device_t new_dev;
+        struct rt_object *object;
+        struct rt_list_node *node;
+        struct rt_object_information *information;
+        rt_sensor_t sensor_dev;
 
-            new_dev = rt_device_find(argv[2]);
-            if (new_dev == RT_NULL)
-            {
-                LOG_E("Can't find device:%s", argv[2]);
-                return;
-            }
-            if (rt_device_open(new_dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
-            {
-                LOG_E("open device failed!");
-                return;
-            }
-            if (rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg) == RT_EOK)
-            {
-                LOG_I("Sensor Chip ID: %#x", reg);
-            }
-            if (dev)
-            {
-                rt_device_close(dev);
-            }
-            dev = new_dev;
-        }
-        else if (dev == RT_NULL)
+        information = rt_object_get_information(RT_Object_Class_Device);
+        if(information == RT_NULL)
+            return;
+
+        rt_kprintf("device name sensor name      sensor type     mode resolution range\n");
+        rt_kprintf("----------- ------------- ------------------ ---- ---------- ----------\n");
+        for (node  = information->object_list.next;
+             node != &(information->object_list);
+             node  = node->next)
         {
-            LOG_W("Please probe sensor first!");
-            return ;
+            object = rt_list_entry(node, struct rt_object, list);
+            sensor_dev   = (rt_sensor_t)object;
+            if (sensor_dev->parent.type != RT_Device_Class_Sensor)
+                continue;
+
+            rt_kprintf("%-*.*s %-*s %-*s %u%u%u  %-*f %.*f - %.*f%-*s\n",
+            RT_NAME_MAX+3, RT_NAME_MAX, sensor_dev->parent.parent.name,
+            13, sensor_dev->info.name,
+            18, sensor_get_type_name(&sensor_dev->info),
+            RT_SENSOR_MODE_GET_ACCURACY(sensor_dev->info.mode), RT_SENSOR_MODE_GET_POWER(sensor_dev->info.mode), RT_SENSOR_MODE_GET_FETCH(sensor_dev->info.mode),
+            10, sensor_dev->info.accuracy.resolution,
+            2, sensor_dev->info.scale.range_min, 2, sensor_dev->info.scale.range_max, 5, sensor_get_unit_name(&sensor_dev->info));
+        }
+    }
+    else if (!rt_strcmp(argv[1], "probe"))
+    {
+        rt_uint8_t reg = 0xFF;
+        rt_device_t new_dev;
+
+        if (argc < 3)
+        {
+            sensor_cmd_warning_unknown();
+            return;
+        }
+
+        new_dev = rt_device_find(argv[2]);
+        if (new_dev == RT_NULL)
+        {
+            LOG_E("Can't find device:%s", argv[2]);
+            return;
+        }
+        if (rt_device_open(new_dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        {
+            LOG_E("open device failed!");
+            return;
+        }
+        if (rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg) == RT_EOK)
+        {
+            LOG_I("Sensor Chip ID: %#x", reg);
+        }
+        if (dev)
+        {
+            rt_device_close(dev);
+        }
+        dev = new_dev;
+    }
+    else if (!rt_strcmp(argv[1], "power"))
+    {
+        rt_uint32_t mode;
+
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        sensor = (rt_sensor_t)dev;
+        if (argc == 2)
+        {
+            rt_kprintf("current power mode: %s\n", sensor_get_power_mode_name(&sensor->info));
+        }
+        else if (argc == 3)
+        {
+            mode = atoi(argv[2]);
+            if (rt_device_control(dev, RT_SENSOR_CTRL_SET_POWER_MODE, (void *)mode) == RT_EOK)
+            {
+                rt_kprintf("set new power mode as: %s\n", sensor_get_power_mode_name(&sensor->info));
+            }
+            else
+            {
+                LOG_E("Don't support! Set new power mode error!");
+            }
         }
         else
         {
-            LOG_W("Unknown command, please enter 'sensor' get help information!");
+            sensor_cmd_warning_unknown();
+        }
+    }
+    else if (!rt_strcmp(argv[1], "accuracy"))
+    {
+        rt_uint32_t mode;
+
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        sensor = (rt_sensor_t)dev;
+        if (argc == 2)
+        {
+            rt_kprintf("current accuracy mode: %s\n", sensor_get_accuracy_mode_name(&sensor->info));
+        }
+        else if (argc == 3)
+        {
+            mode = atoi(argv[2]);
+            if (rt_device_control(dev, RT_SENSOR_CTRL_SET_ACCURACY_MODE, (void *)mode) == RT_EOK)
+            {
+                rt_kprintf("set new accuracy mode as: %s\n", sensor_get_accuracy_mode_name(&sensor->info));
+            }
+            else
+            {
+                LOG_E("Don't support! Set new accuracy mode error!");
+            }
+        }
+        else
+        {
+            sensor_cmd_warning_unknown();
+        }
+    }
+    else if (!rt_strcmp(argv[1], "fetch"))
+    {
+        rt_uint32_t mode;
+
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        sensor = (rt_sensor_t)dev;
+        if (argc == 2)
+        {
+            rt_kprintf("current fetch data mode: %s\n", sensor_get_fetch_mode_name(&sensor->info));
+        }
+        else if (argc == 3)
+        {
+            mode = atoi(argv[2]);
+            if (rt_device_control(dev, RT_SENSOR_CTRL_SET_FETCH_MODE, (void *)mode) == RT_EOK)
+            {
+                rt_kprintf("set new fetch data mode as: %s\n", sensor_get_fetch_mode_name(&sensor->info));
+            }
+            else
+            {
+                LOG_E("Don't support! Set new fetch data mode error!");
+            }
+        }
+        else
+        {
+            sensor_cmd_warning_unknown();
         }
     }
     else
     {
-        LOG_W("Unknown command, please enter 'sensor' get help information!");
+        sensor_cmd_warning_unknown();
     }
 }
-#ifdef RT_USING_FINSH
-    MSH_CMD_EXPORT(sensor, sensor test function);
-#endif
+MSH_CMD_EXPORT(sensor, sensor test function);

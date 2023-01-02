@@ -25,7 +25,6 @@ extern "C" {
 #define  rt_sensor_get_ts()  rt_tick_get()   /* API for the sensor to get the timestamp */
 #endif
 
-#define  RT_PIN_NONE                   0xFFFF    /* RT PIN NONE */
 #define  RT_DEVICE_FLAG_FIFO_RX        0x200     /* Flag to use when the sensor is open by fifo mode */
 
 #define  RT_SENSOR_MODULE_MAX          (3)       /* The maximum number of members of a sensor module */
@@ -48,7 +47,7 @@ extern "C" {
 #define RT_SENSOR_TYPE_BARO           (6)
 #define RT_SENSOR_TYPE_BARO_STR       "Barometer"
 #define RT_SENSOR_TYPE_LIGHT          (7)
-#define RT_SENSOR_TYPE_LIGHT_STR      "Ambient light"
+#define RT_SENSOR_TYPE_LIGHT_STR      "Ambient Light"
 #define RT_SENSOR_TYPE_PROXIMITY      (8)
 #define RT_SENSOR_TYPE_PROXIMITY_STR  "Proximity"
 #define RT_SENSOR_TYPE_HR             (9)
@@ -119,6 +118,8 @@ extern "C" {
 #define RT_SENSOR_VENDOR_MAXIM_STR     "Maxim Integrated"
 #define RT_SENSOR_VENDOR_MELEXIS       (17)
 #define RT_SENSOR_VENDOR_MELEXIS_STR   "Melexis"
+#define RT_SENSOR_VENDOR_LSC           (18)
+#define RT_SENSOR_VENDOR_LSC_STR       "Lite On"
 
 /* Sensor unit types */
 #define RT_SENSOR_UNIT_NONE           (0)  /* Dimensionless quantity */
@@ -221,11 +222,11 @@ extern "C" {
 #define RT_SENSOR_MODE_ACCURACY_HIGH_STR      "Accuracy High"
 #define RT_SENSOR_MODE_ACCURACY_MEDIUM        (2)
 #define RT_SENSOR_MODE_ACCURACY_MEDIUM_STR    "Accuracy Medium"
-#define RT_SENSOR_MODE_ACCURACY_LOW           (4)
+#define RT_SENSOR_MODE_ACCURACY_LOW           (3)
 #define RT_SENSOR_MODE_ACCURACY_LOW_STR       "Accuracy Low"
-#define RT_SENSOR_MODE_ACCURACY_LOWEST        (5)
+#define RT_SENSOR_MODE_ACCURACY_LOWEST        (4)
 #define RT_SENSOR_MODE_ACCURACY_LOWEST_STR    "Accuracy Lowest"
-#define RT_SENSOR_MODE_ACCURACY_NOTRUST       (6)
+#define RT_SENSOR_MODE_ACCURACY_NOTRUST       (5)
 #define RT_SENSOR_MODE_ACCURACY_NOTRUST_STR   "Accuracy No Trust"
 
 /* Sensor mode: power */

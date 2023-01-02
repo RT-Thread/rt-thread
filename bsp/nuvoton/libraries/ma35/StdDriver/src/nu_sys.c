@@ -42,7 +42,7 @@ extern "C"
   *             - \ref WRHO1_RST
   *             - \ref GMAC0_RST
   *             - \ref GMAC1_RST
-  *             - \ref HWSEM_RST
+  *             - \ref HWSEM0_RST
   *             - \ref EBI_RST
   *             - \ref HSUSBH0_RST
   *             - \ref HSUSBH1_RST

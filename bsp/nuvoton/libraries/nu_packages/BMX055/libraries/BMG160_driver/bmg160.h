@@ -1570,7 +1570,7 @@ FOR THE AUTO OFFSET INTERRUPT  */
 /***********************************************/
 /**\name    NUMERIC DEFINITIONS*/
 /**********************************************/
-#define BMG160_INIT_VALUE                   ((u8)0)
+#define BMG160_INIT_VALUE                   (0)
 #define BMG160_GEN_READ_WRITE_DATA_LENGTH   ((u8)1)
 #define BMG160_X_DATA_LENGTH                ((u8)2)
 #define BMG160_Y_DATA_LENGTH                ((u8)2)

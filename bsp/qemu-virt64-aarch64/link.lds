@@ -2,7 +2,6 @@ OUTPUT_FORMAT("elf64-littleaarch64", "elf64-littleaarch64", "elf64-littleaarch64
 OUTPUT_ARCH(aarch64)
 SECTIONS
 {
-    /*. = 0x60080000; */
     . = 0x40080000;
     /* . = 0xffff000000080000; */
 

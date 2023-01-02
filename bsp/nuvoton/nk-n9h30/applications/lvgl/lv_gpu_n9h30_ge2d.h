@@ -21,8 +21,6 @@ extern "C" {
 #include "../../hal/lv_hal_disp.h"
 #include "../sw/lv_draw_sw.h"
 
-#if LV_USE_GPU_N9H30_GE2D && LV_VERSION_CHECK(8, 2, 0)
-
 /*********************
  *      DEFINES
  *********************/
@@ -53,8 +51,6 @@ void lv_gpu_n9h30_ge2d_wait_cb(lv_draw_ctx_t *draw_ctx);
 /**********************
  *      MACROS
  **********************/
-
-#endif  /*#if LV_USE_GPU_N9H30_GE2D && LV_VERSION_CHECK(8, 2, 0)*/
 
 #ifdef __cplusplus
 } /*extern "C"*/

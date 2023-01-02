@@ -88,10 +88,10 @@ Support GCC compiler. More information of these compiler version as following:
 
 | Compiler | Tested version |
 | -- | -- |
-| GCC | 6-2017-q1-update|
+| GCC | Arm Embedded Toolchain 10.3-2021.10 (Env 1.3.5 embedded version)|
 
 ## **Build RT-Thread**
-You can build rt-thread.bin for NuMaker-HMI-MA35D1 board. Steps as following. Notice, the building will include **ma35-rtp/rtthread.bin** file into **NuMaker-HMI-MA35D1/rtthread.bin** for heterogeneous multi-core demonstration.
+You can build rt-thread.bin for NuMaker-HMI-MA35D1 board. Steps as following. Notice, the building will include **ma35-rtp/rtthread.bin** file into **numaker-hmi-ma35d1/rtthread.bin** for heterogeneous multi-core demonstration.
 
 ```bash
 # cd rt-thread/bsp/nuvoton/numaker-hmi-ma35d1
@@ -194,8 +194,8 @@ You can run windows batch script to download rtthread.bin into Raw NAND flash, t
 
 |Connector on board|Wiring|Usage|
 |-|-|-|
-|VCOM(CON21)|Use an USB line| rt-thread@RTP Console |
-|RS232_16(CON14)|Using an USB to RS232 convert| rt-thread@CA35 Console |
+|VCOM(CON21)|Use an USB line| rt-thread@CA35 Console |
+|RS232_16(CON14)|Using an USB to RS232 convert| rt-thread@RTP Console |
 
 You can use Tera Term terminate emulator (or other software) to type commands of RTT. All parameters of serial communication are shown in below image. Here, you can find out the corresponding port number of Nuvoton Virtual Com Port in window device manager.
 
@@ -206,11 +206,11 @@ You can use Tera Term terminate emulator (or other software) to type commands of
 
 ## **Purchase**
 
-* [Nuvoton Direct](https://ComingSoon)
+* [Nuvoton Direct](https://direct.nuvoton.com/en/numaker-hmi-ma35d1-s1)
 
 ## **Resources**
 
-* [Download Board Schematics](https://ComingSoon)
-* [Download Quick Start Guide](https://ComingSoon)
-* [Download TRM](https://ComingSoon)
+* [Download Board Schematics](https://www.nuvoton.com/resource-download.jsp?tp_GUID=HL102022102107140870)
+* [Download User Manual](https://www.nuvoton.com/resource-download.jsp?tp_GUID=UG132022101900252882)
+* [Download Datasheet](https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA00-MA35D16)
 * [Download NuWriter](https://github.com/OpenNuvoton/MA35D1_NuWriter)

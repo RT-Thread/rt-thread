@@ -564,6 +564,7 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void *v_address, size_t size)
     return 0;
 }
 
+#ifdef RT_USING_SMART
 static size_t find_vaddr(rt_mmu_info *mmu_info, int pages)
 {
     size_t loop_pages;
@@ -607,7 +608,6 @@ static size_t find_vaddr(rt_mmu_info *mmu_info, int pages)
     return 0;
 }
 
-#ifdef RT_USING_SMART
 static int check_vaddr(rt_mmu_info *mmu_info, void *va, int pages)
 {
     size_t loop_va;

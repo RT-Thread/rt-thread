@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'ch32v3'
+CPU      = 'ch32'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 

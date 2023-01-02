@@ -154,12 +154,6 @@ static const nu_pdma_periph_ctl_t g_nu_pdma_peripheral_ctl_pool[ ] =
     { PDMA_SPI9_TX,  eMemCtl_SrcInc_DstFix },
     { PDMA_SPI10_TX,  eMemCtl_SrcInc_DstFix },
 
-    { PDMA_I2C0_TX,  eMemCtl_SrcInc_DstFix },
-    { PDMA_I2C1_TX,  eMemCtl_SrcInc_DstFix },
-    { PDMA_I2C2_TX,  eMemCtl_SrcInc_DstFix },
-    { PDMA_I2C3_TX,  eMemCtl_SrcInc_DstFix },
-    { PDMA_I2C4_TX,  eMemCtl_SrcInc_DstFix },
-
     { PDMA_I2S0_TX,  eMemCtl_SrcInc_DstFix },
     { PDMA_I2S1_TX,  eMemCtl_SrcInc_DstFix },
 
@@ -214,12 +208,6 @@ static const nu_pdma_periph_ctl_t g_nu_pdma_peripheral_ctl_pool[ ] =
     { PDMA_EPWM1_P1_RX, eMemCtl_SrcFix_DstInc },
     { PDMA_EPWM1_P2_RX, eMemCtl_SrcFix_DstInc },
     { PDMA_EPWM1_P3_RX, eMemCtl_SrcFix_DstInc },
-
-    { PDMA_I2C0_RX, eMemCtl_SrcFix_DstInc },
-    { PDMA_I2C1_RX, eMemCtl_SrcFix_DstInc },
-    { PDMA_I2C2_RX, eMemCtl_SrcFix_DstInc },
-    { PDMA_I2C3_RX, eMemCtl_SrcFix_DstInc },
-    { PDMA_I2C4_RX, eMemCtl_SrcFix_DstInc },
 
     { PDMA_I2S0_RX, eMemCtl_SrcFix_DstInc },
     { PDMA_I2S1_RX, eMemCtl_SrcFix_DstInc },

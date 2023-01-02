@@ -209,7 +209,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     exec_prefix = GetOption('exec-prefix')
     if exec_prefix:
-        os.environ['RTT_EXEC_PREFIX'] = exec_prefix
+        os.environ['RTT_CC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not os.path.exists(rtconfig.EXEC_PATH):

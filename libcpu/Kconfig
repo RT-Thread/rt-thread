@@ -89,8 +89,9 @@ config KERNEL_VADDR_START
 
 config PV_OFFSET
     hex "The offset of kernel physical address and virtural address"
-    default 0xa0000000 if ARCH_ARM
-    default 0x0        if ARCH_RISCV
+    default 0x1000040000000 if ARCH_ARMV8
+    default 0xa0000000      if ARCH_ARM
+    default 0x0             if ARCH_RISCV
     depends on ARCH_MM_MMU
 
 config RT_IOREMAP_LATE

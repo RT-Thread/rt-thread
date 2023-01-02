@@ -18,24 +18,22 @@ Hardware Drivers Config --->
 
 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
-![xxx-pinout](xxx-pinout.jpg)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
-| 0 (D0) | PH11 | 是/否 | 板载用户LED |
-| 1 (D1) | PB7 | 是/否 | Serial-RX，默认被RT-Thread的UART设备框架uart1接管 |
-| 2 (D2) | PA9 | 是/否 | Serial-TX，默认被RT-Thread的UART设备框架uart1接管 |
-| 3 (D3) | PG9 | 是/否 | Serial-RX，默认被RT-Thread的UART设备框架uart6接管 |
-| 4 (D4) | PG14 | 是/否 | Serial-TX，默认被RT-Thread的UART设备框架uart6接管 |
-| 5 (D5) | PB0 | 是/否 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
-| 6 (D6) | PB0 | 是/否 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
-| 7 (D7) | PE9 | 是/否 | PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管 |
-| 8 (D8) | PE11 | 是/否 | PWM1-CH2，默认被RT-Thread的PWM设备框架pwm1接管 |
-| 9 (D9) | PE13 | 是/否 | PWM1-CH3，默认被RT-Thread的PWM设备框架pwm1接管 |
-| 10 (D10) | PE14 | 是/否 | PWM1-CH4，默认被RT-Thread的PWM设备框架pwm1接管 |
-| 11 (D11) | PE14 | 是/否 | PWM1-CH4，默认被RT-Thread的PWM设备框架pwm1接管 |
-| 12 (D12) | PC6 | 是/否 | PWM8-CH1，默认被RT-Thread的PWM设备框架pwm8接管 |
-| 13 (D13) | PI6 | 是/否 | PWM8-CH2，默认被RT-Thread的PWM设备框架pwm8接管 |
-| 14 (D14) | PI7 | 是/否 | PWM8-CH3，默认被RT-Thread的PWM设备框架pwm8接管 |
-| 15 (A0) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
-| 16 (A1) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
+| 0 (D0) | PH11 | 是 | 板载用户LED |
+| 1 (D1) | PB7 | 是 | Serial-RX，默认被RT-Thread的UART设备框架uart1接管 |
+| 2 (D2) | PA9 | 是 | Serial-TX，默认被RT-Thread的UART设备框架uart1接管 |
+| 3 (D3) | PG9 | 是 | Serial-RX，默认被RT-Thread的UART设备框架uart6接管 |
+| 4 (D4) | PG14 | 是 | Serial-TX，默认被RT-Thread的UART设备框架uart6接管 |
+| 5 (D5) | PF1 | 否 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 6 (D6) | PF0 | 否 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 7 (D7) | PE9 | 是 | PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 8 (D8) | PE11 | 是 | PWM1-CH2，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 9 (D9) | PE13 | 是 | PWM1-CH3，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 10 (D10) | PE14 | 是 | PWM1-CH4，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 11 (D11) | PC6 | 是 | PWM8-CH1，默认被RT-Thread的PWM设备框架pwm8接管 |
+| 12 (D12) | PI6 | 是 | PWM8-CH2，默认被RT-Thread的PWM设备框架pwm8接管 |
+| 13 (D13) | PI7 | 是 | PWM8-CH3，默认被RT-Thread的PWM设备框架pwm8接管 |
+| 14 (A0) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
+| 15 (A1) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 
