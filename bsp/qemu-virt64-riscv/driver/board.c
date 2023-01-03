@@ -58,13 +58,13 @@ void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
     /* init data structure */
-    rt_hw_mmu_map_init(&kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
 
     /* init page allocator */
     rt_page_init(init_page_region);
 
     /* setup region, and enable MMU */
-    rt_hw_mmu_setup(&kernel_space, platform_mem_desc, NUM_MEM_DESC);
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, NUM_MEM_DESC);
 #endif
 
 #ifdef RT_USING_HEAP

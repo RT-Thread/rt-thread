@@ -239,7 +239,7 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
 
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
-    if (aspace != &kernel_space)
+    if (aspace != &rt_kernel_space)
     {
         void *pgtbl = aspace->page_table;
         pgtbl = _rt_kmem_v2p(pgtbl);
@@ -314,7 +314,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
 
-    rt_hw_mmu_ktbl_set((unsigned long)kernel_space.page_table);
+    rt_hw_mmu_ktbl_set((unsigned long)rt_kernel_space.page_table);
     rt_page_cleanup();
 }
 

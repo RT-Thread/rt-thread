@@ -53,7 +53,7 @@ static void *_ioremap_type(void *paddr, size_t size, int type)
     default:
         return v_addr;
     }
-    err = rt_aspace_map_phy(&kernel_space, &hint, attr, MM_PA_TO_OFF(paddr),
+    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr),
                             &v_addr);
 
     if (err)
@@ -85,7 +85,7 @@ void *rt_ioremap_cached(void *paddr, size_t size)
 
 void rt_iounmap(volatile void *vaddr)
 {
-    rt_aspace_unmap(&kernel_space, (void *)vaddr, 1);
+    rt_aspace_unmap(&rt_kernel_space, (void *)vaddr, 1);
 }
 
 #else

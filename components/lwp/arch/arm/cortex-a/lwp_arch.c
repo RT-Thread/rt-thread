@@ -35,7 +35,7 @@ int arch_user_space_init(struct rt_lwp *lwp)
     lwp->end_heap = USER_HEAP_VADDR;
 
     rt_memcpy(mmu_table + (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT),
-              (size_t *)kernel_space.page_table +
+              (size_t *)rt_kernel_space.page_table +
                   (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT),
               ARCH_PAGE_SIZE);
     rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);

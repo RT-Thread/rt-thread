@@ -304,7 +304,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
         }
     }
 
-    rt_aspace_init(&kernel_space, (void *)0x1000, USER_VADDR_START - 0x1000,
+    rt_aspace_init(&rt_kernel_space, (void *)0x1000, USER_VADDR_START - 0x1000,
                    vtable);
 
     _init_region(v_address, size);
@@ -481,7 +481,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
 
-    rt_hw_aspace_switch(&kernel_space);
+    rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();
 }
 

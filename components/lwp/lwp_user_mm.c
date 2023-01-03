@@ -66,7 +66,7 @@ void lwp_aspace_switch(struct rt_thread *thread)
         aspace = lwp->aspace;
     }
     else
-        aspace = &kernel_space;
+        aspace = &rt_kernel_space;
 
     from_tbl = rt_hw_mmu_tbl_get();
     if (aspace->page_table != from_tbl)

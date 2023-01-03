@@ -118,14 +118,14 @@ void *rt_hw_mmu_tbl_get();
 
 static inline void *_rt_kmem_v2p(void *vaddr)
 {
-    return rt_hw_mmu_v2p(&kernel_space, vaddr);
+    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
 }
 
 static inline void *rt_kmem_v2p(void *vaddr)
 {
-    MM_PGTBL_LOCK(&kernel_space);
+    MM_PGTBL_LOCK(&rt_kernel_space);
     void *paddr = _rt_kmem_v2p(vaddr);
-    MM_PGTBL_UNLOCK(&kernel_space);
+    MM_PGTBL_UNLOCK(&rt_kernel_space);
     return paddr;
 }
 

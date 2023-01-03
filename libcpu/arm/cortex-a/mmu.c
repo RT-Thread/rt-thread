@@ -122,12 +122,12 @@ int rt_hw_mmu_map_init(struct rt_aspace *aspace, void* v_address, size_t size, s
     }
 
 #ifdef RT_USING_SMART
-    rt_aspace_init(&kernel_space, (void *)USER_VADDR_TOP, 0 - USER_VADDR_TOP, vtable);
+    rt_aspace_init(&rt_kernel_space, (void *)USER_VADDR_TOP, 0 - USER_VADDR_TOP, vtable);
     rt_ioremap_start = v_address;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
 #else
-    rt_aspace_init(&kernel_space, (void *)0x1000, 0 - 0x1000, vtable);
+    rt_aspace_init(&rt_kernel_space, (void *)0x1000, 0 - 0x1000, vtable);
     rt_mpr_start = (void *)0 - rt_mpr_size;
 #endif
 
@@ -348,7 +348,7 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
 
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
-    if (aspace != &kernel_space)
+    if (aspace != &rt_kernel_space)
     {
         void *pgtbl = aspace->page_table;
         pgtbl = _rt_kmem_v2p(pgtbl);

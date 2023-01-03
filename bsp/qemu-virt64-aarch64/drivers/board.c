@@ -38,11 +38,11 @@ struct mem_desc platform_mem_desc[] = {
 #else
 
 #define PAGE_POOL_SIZE (2ul << 20)
-#define PHYMEM_END (0x50000000ul)
+#define PHYMEM_END (0x48000000ul)
 
 struct mem_desc platform_mem_desc[] =
 {
-    {0x40000000, PHYMEM_END - 1 - PAGE_POOL_SIZE, 0x40000000, NORMAL_MEM},
+    {0x40000000, PHYMEM_END - 1, 0x40000000, NORMAL_MEM},
     // {PL031_RTC_BASE, PL031_RTC_BASE + 0x1000 - 1, PL031_RTC_BASE, DEVICE_MEM},
     // {PL061_GPIO_BASE, PL061_GPIO_BASE + 0x1000 - 1, PL061_GPIO_BASE, DEVICE_MEM},
     {PL011_UART0_BASE, PL011_UART0_BASE + ARCH_SECTION_SIZE - 1, PL011_UART0_BASE, DEVICE_MEM},
@@ -85,12 +85,12 @@ rt_region_t init_page_region = {
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
-    rt_hw_mmu_map_init(&kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
 #else
-    rt_hw_mmu_map_init(&kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
 #endif
     rt_page_init(init_page_region);
-    rt_hw_mmu_setup(&kernel_space, platform_mem_desc, platform_mem_desc_size);
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
     /* initialize system heap */
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);

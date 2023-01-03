@@ -85,14 +85,14 @@ void primary_cpu_entry(void)
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
-    rt_hw_mmu_map_init(&kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
     rt_page_init(init_page_region);
-    rt_hw_mmu_kernel_map_init(&kernel_space, 0x00000000UL, USER_VADDR_START - 1);
+    rt_hw_mmu_kernel_map_init(&rt_kernel_space, 0x00000000UL, USER_VADDR_START - 1);
     // 将低1GB MMIO区域设置为无Cache与Strong Order访存模式
     MMUTable[0] &= ~PTE_CACHE;
     MMUTable[0] &= ~PTE_SHARE;
     MMUTable[0] |= PTE_SO;
-    rt_hw_aspace_switch(&kernel_space);
+    rt_hw_aspace_switch(&rt_kernel_space);
 #endif
     /* initalize interrupt */
     rt_hw_interrupt_init();
