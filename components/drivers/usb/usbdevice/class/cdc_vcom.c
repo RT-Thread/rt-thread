@@ -98,7 +98,7 @@ static struct udevice_descriptor dev_desc =
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
     USB_CLASS_CDC,              //bDeviceClass;
-    0x00,                       //bDeviceSubClass;
+    0x02,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     CDC_MAX_PACKET_SIZE,        //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
@@ -118,7 +118,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
     USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
     USB_CLASS_CDC,                  //bDeviceClass
-    0x00,                           //bDeviceSubClass
+    0x02,                           //bDeviceSubClass
     0x00,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
     0x01,                           //bNumConfigurations
