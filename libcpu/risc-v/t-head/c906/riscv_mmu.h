@@ -65,7 +65,7 @@
 
 #define PTE_USED(pte) __MASKVALUE(pte, PTE_V)
 
-/** 
+/**
  * encoding of SATP (Supervisor Address Translation and Protection register)
  */
 #define SATP_MODE_OFFSET    60

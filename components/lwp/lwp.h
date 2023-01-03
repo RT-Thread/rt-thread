@@ -161,7 +161,6 @@ int lwp_execve(char *filename, int debug, int argc, char **argv, char **envp);
 /*create by lwp_setsid.c*/
 int setsid(void);
 #ifdef ARCH_MM_MMU
-void lwp_mmu_switch(struct rt_thread *thread);
 void lwp_aspace_switch(struct rt_thread *thread);
 #endif
 void lwp_user_setting_save(rt_thread_t thread);

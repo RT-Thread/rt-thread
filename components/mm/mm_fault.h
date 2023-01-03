@@ -17,9 +17,8 @@
 #define MM_FAULT_STATUS_UNRECOVERABLE 1
 
 struct mm_fault_res {
-    // a vaddr provided backing store
     void *vaddr;
-    size_t size;
+    rt_size_t size;
     int status;
 };
 
@@ -37,10 +36,9 @@ enum mm_fault_type {
 };
 
 struct mm_fault_msg {
-    // (require offset inside varea)
     enum mm_fault_op fault_op;
     enum mm_fault_type fault_type;
-    size_t off;
+    rt_size_t off;
     void *vaddr;
 
     struct mm_fault_res response;

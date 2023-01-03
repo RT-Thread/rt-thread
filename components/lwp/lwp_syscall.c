@@ -1609,13 +1609,6 @@ rt_weak long sys_clone(void *arg[])
 
 int lwp_dup_user(rt_varea_t varea, void *arg);
 
-static int _dump(rt_varea_t varea, void *arg)
-{
-    rt_kprintf("%s[%p - %p]\n", varea->mem_obj->get_name(varea), varea->start,
-               varea->start + varea->size);
-    return 0;
-}
-
 static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
 {
     int err;

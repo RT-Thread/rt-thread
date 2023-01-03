@@ -17,10 +17,9 @@
 
 #include "mm_fault.h"
 #include "mm_private.h"
-#include "mm_rmem.h"
-#include <mm_aspace.h>
-#include <mm_flag.h>
-#include <mm_page.h>
+#include "mm_aspace.h"
+#include "mm_flag.h"
+#include "mm_page.h"
 #include <mmu.h>
 
 #define DBG_TAG "mm.page"
@@ -38,15 +37,15 @@
 #ifdef ARCH_CPU_64BIT
 CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
 #else
-CT_ASSERT(size_width, sizeof(size_t) == sizeof(rt_size_t));
+CT_ASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
 #endif /* ARCH_CPU_64BIT */
 
 #else
 #define PV_OFFSET 0
 #endif /* RT_USING_SMART */
 
-static size_t init_mpr_align_start;
-static size_t init_mpr_align_end;
+static rt_size_t init_mpr_align_start;
+static rt_size_t init_mpr_align_end;
 static void *init_mpr_cont_start;
 
 static struct rt_varea mpr_varea;
@@ -55,8 +54,8 @@ static struct rt_page *page_list[RT_PAGE_MAX_ORDER];
 
 #define page_start ((rt_page_t)rt_mpr_start)
 
-static size_t page_nr;
-static size_t early_offset;
+static rt_size_t page_nr;
+static rt_size_t early_offset;
 
 static const char *get_name(rt_varea_t varea)
 {
@@ -77,7 +76,7 @@ static void on_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
     void *init_end = (void *)init_mpr_align_end;
     if (msg->vaddr < init_end && msg->vaddr >= init_start)
     {
-        size_t offset = msg->vaddr - init_start;
+        rt_size_t offset = msg->vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
         msg->response.vaddr = init_mpr_cont_start + offset;
         msg->response.size = ARCH_PAGE_SIZE;
@@ -108,12 +107,12 @@ static inline rt_page_t addr_to_page(rt_page_t pg_start, void *addr)
     return &pg_start[((uintptr_t)addr >> ARCH_PAGE_SHIFT)];
 }
 
-#define FLOOR(val, align) (((size_t)(val) + (align)-1) & ~((align)-1))
+#define FLOOR(val, align) (((rt_size_t)(val) + (align)-1) & ~((align)-1))
 
-const size_t shadow_mask =
+const rt_size_t shadow_mask =
     ((1ul << (RT_PAGE_MAX_ORDER + ARCH_PAGE_SHIFT - 1)) - 1);
 
-const size_t rt_mpr_size = FLOOR(
+const rt_size_t rt_mpr_size = FLOOR(
     ((1ul << (ARCH_VADDR_WIDTH - ARCH_PAGE_SHIFT))) * sizeof(struct rt_page),
     ARCH_PAGE_SIZE);
 
@@ -129,9 +128,9 @@ rt_weak int rt_hw_ctz(unsigned long n)
     return __builtin_ctzl(n);
 }
 
-size_t rt_page_bits(size_t size)
+rt_size_t rt_page_bits(rt_size_t size)
 {
-    int bit = sizeof(size_t) * 8 - rt_hw_clz(size) - 1;
+    int bit = sizeof(rt_size_t) * 8 - rt_hw_clz(size) - 1;
 
     if ((size ^ (1UL << bit)) != 0)
     {
@@ -155,16 +154,17 @@ void *rt_page_page2addr(struct rt_page *p)
     return page_to_addr(p);
 }
 
-static inline struct rt_page *buddy_get(struct rt_page *p, uint32_t size_bits)
+static inline struct rt_page *buddy_get(struct rt_page *p,
+                                        rt_uint32_t size_bits)
 {
-    size_t addr;
+    rt_size_t addr;
 
-    addr = (size_t)rt_page_page2addr(p);
+    addr = (rt_size_t)rt_page_page2addr(p);
     addr ^= (1UL << (size_bits + ARCH_PAGE_SHIFT));
     return rt_page_addr2page((void *)addr);
 }
 
-static void page_remove(struct rt_page *p, uint32_t size_bits)
+static void page_remove(struct rt_page *p, rt_uint32_t size_bits)
 {
     if (p->pre)
     {
@@ -183,7 +183,7 @@ static void page_remove(struct rt_page *p, uint32_t size_bits)
     p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
 }
 
-static void page_insert(struct rt_page *p, uint32_t size_bits)
+static void page_insert(struct rt_page *p, rt_uint32_t size_bits)
 {
     p->next = page_list[size_bits];
     if (p->next)
@@ -195,7 +195,7 @@ static void page_insert(struct rt_page *p, uint32_t size_bits)
     p->size_bits = size_bits;
 }
 
-static void _pages_ref_inc(struct rt_page *p, uint32_t size_bits)
+static void _pages_ref_inc(struct rt_page *p, rt_uint32_t size_bits)
 {
     struct rt_page *page_head;
     int idx;
@@ -209,7 +209,7 @@ static void _pages_ref_inc(struct rt_page *p, uint32_t size_bits)
     page_head->ref_cnt++;
 }
 
-static int _pages_ref_get(struct rt_page *p, uint32_t size_bits)
+static int _pages_ref_get(struct rt_page *p, rt_uint32_t size_bits)
 {
     struct rt_page *page_head;
     int idx;
@@ -222,14 +222,13 @@ static int _pages_ref_get(struct rt_page *p, uint32_t size_bits)
     return page_head->ref_cnt;
 }
 
-static int _pages_free(struct rt_page *p, uint32_t size_bits)
+static int _pages_free(struct rt_page *p, rt_uint32_t size_bits)
 {
-    uint32_t level = size_bits;
+    rt_uint32_t level = size_bits;
     struct rt_page *buddy;
 
     RT_ASSERT(p >= page_start);
     RT_ASSERT((void *)p < rt_mpr_start + rt_mpr_size);
-    // free a page not existed
     RT_ASSERT(rt_kmem_v2p(p));
     RT_ASSERT(p->ref_cnt > 0);
     RT_ASSERT(p->size_bits == ARCH_ADDRESS_WIDTH_BITS);
@@ -259,7 +258,7 @@ static int _pages_free(struct rt_page *p, uint32_t size_bits)
     return 1;
 }
 
-static struct rt_page *_pages_alloc(uint32_t size_bits)
+static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
 {
     struct rt_page *p;
 
@@ -270,7 +269,7 @@ static struct rt_page *_pages_alloc(uint32_t size_bits)
     }
     else
     {
-        uint32_t level;
+        rt_uint32_t level;
 
         for (level = size_bits + 1; level < RT_PAGE_MAX_ORDER; level++)
         {
@@ -298,7 +297,7 @@ static struct rt_page *_pages_alloc(uint32_t size_bits)
     return p;
 }
 
-static void _early_page_remove(rt_page_t page, uint32_t size_bits)
+static void _early_page_remove(rt_page_t page, rt_uint32_t size_bits)
 {
     rt_page_t page_cont = (void *)page + early_offset;
     if (page_cont->pre)
@@ -337,7 +336,7 @@ static void _early_page_insert(rt_page_t page, int size_bits)
     page_cont->size_bits = size_bits;
 }
 
-static struct rt_page *_early_pages_alloc(uint32_t size_bits)
+static struct rt_page *_early_pages_alloc(rt_uint32_t size_bits)
 {
     struct rt_page *p;
 
@@ -348,7 +347,7 @@ static struct rt_page *_early_pages_alloc(uint32_t size_bits)
     }
     else
     {
-        uint32_t level;
+        rt_uint32_t level;
 
         for (level = size_bits + 1; level < RT_PAGE_MAX_ORDER; level++)
         {
@@ -377,7 +376,7 @@ static struct rt_page *_early_pages_alloc(uint32_t size_bits)
     return p;
 }
 
-int rt_page_ref_get(void *addr, uint32_t size_bits)
+int rt_page_ref_get(void *addr, rt_uint32_t size_bits)
 {
     struct rt_page *p;
     rt_base_t level;
@@ -390,7 +389,7 @@ int rt_page_ref_get(void *addr, uint32_t size_bits)
     return ref;
 }
 
-void rt_page_ref_inc(void *addr, uint32_t size_bits)
+void rt_page_ref_inc(void *addr, rt_uint32_t size_bits)
 {
     struct rt_page *p;
     rt_base_t level;
@@ -401,9 +400,9 @@ void rt_page_ref_inc(void *addr, uint32_t size_bits)
     rt_hw_interrupt_enable(level);
 }
 
-static rt_page_t (*pages_alloc_handler)(uint32_t size_bits);
+static rt_page_t (*pages_alloc_handler)(rt_uint32_t size_bits);
 
-void *rt_pages_alloc(uint32_t size_bits)
+void *rt_pages_alloc(rt_uint32_t size_bits)
 {
     struct rt_page *p;
     rt_base_t level;
@@ -414,7 +413,7 @@ void *rt_pages_alloc(uint32_t size_bits)
     return page_to_addr(p);
 }
 
-int rt_pages_free(void *addr, uint32_t size_bits)
+int rt_pages_free(void *addr, rt_uint32_t size_bits)
 {
     struct rt_page *p;
     int real_free = 0;
@@ -435,7 +434,7 @@ void rt_page_list(void) __attribute__((alias("list_page")));
 void list_page(void)
 {
     int i;
-    size_t total = 0;
+    rt_size_t total = 0;
 
     rt_base_t level;
     level = rt_hw_interrupt_disable();
@@ -460,10 +459,10 @@ void list_page(void)
 }
 MSH_CMD_EXPORT(list_page, show page info);
 
-void rt_page_get_info(size_t *total_nr, size_t *free_nr)
+void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
 {
     int i;
-    size_t total_free = 0;
+    rt_size_t total_free = 0;
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
@@ -510,7 +509,7 @@ void rt_page_init(rt_region_t reg)
                                rt_mpr_size, MMU_MAP_K_RWCB, MMF_MAP_FIXED,
                                &mm_page_mapper, 0);
 
-    if (err != MM_EOK)
+    if (err != RT_EOK)
     {
         LOG_E("MPR map failed with size %lx at %p", rt_mpr_size, rt_mpr_start);
         while (1)
@@ -519,12 +518,12 @@ void rt_page_init(rt_region_t reg)
 
     /* calculate footprint */
     init_mpr_align_start =
-        (size_t)addr_to_page(page_start, (void *)shadow.start) &
+        (rt_size_t)addr_to_page(page_start, (void *)shadow.start) &
         ~ARCH_PAGE_MASK;
     init_mpr_align_end =
         FLOOR(addr_to_page(page_start, (void *)shadow.end), ARCH_PAGE_SIZE);
-    size_t init_mpr_size = init_mpr_align_end - init_mpr_align_start;
-    size_t init_mpr_npage = init_mpr_size >> ARCH_PAGE_SHIFT;
+    rt_size_t init_mpr_size = init_mpr_align_end - init_mpr_align_start;
+    rt_size_t init_mpr_npage = init_mpr_size >> ARCH_PAGE_SHIFT;
 
     init_mpr_cont_start = (void *)reg.start;
     void *init_mpr_cont_end = init_mpr_cont_start + init_mpr_size;
@@ -552,7 +551,7 @@ void rt_page_init(rt_region_t reg)
     }
 
     /* insert reserved pages to list */
-    reg.start = (size_t)init_mpr_cont_end;
+    reg.start = (rt_size_t)init_mpr_cont_end;
     const int max_order = RT_PAGE_MAX_ORDER + ARCH_PAGE_SHIFT - 1;
     while (reg.start != reg.end)
     {
@@ -618,10 +617,8 @@ int rt_page_install(rt_region_t region)
 
         page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
 
-        // prepare page for MPR area if necessary
         _load_mpr_area(head, tail);
 
-        // add pages to free list
         while (region.start != region.end)
         {
             struct rt_page *p;

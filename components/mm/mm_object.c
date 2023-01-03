@@ -10,9 +10,9 @@
 
 #include <rtthread.h>
 
-#include <mm_aspace.h>
-#include <mm_fault.h>
-#include <mm_page.h>
+#include "mm_aspace.h"
+#include "mm_fault.h"
+#include "mm_page.h"
 #include <mmu.h>
 
 #define DBG_TAG "mm.object"
@@ -54,7 +54,7 @@ void rt_varea_free_pages(rt_varea_t varea)
     }
 }
 
-void rt_varea_offload_page(rt_varea_t varea, void *vaddr, size_t size)
+void rt_varea_offload_page(rt_varea_t varea, void *vaddr, rt_size_t size)
 {
     void *vend = vaddr + size;
     while (vaddr != vend)
@@ -87,14 +87,14 @@ static void on_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
 
 static void on_varea_open(struct rt_varea *varea)
 {
-    // varea->data = NULL;
+    varea->data = NULL;
 }
 
 static void on_varea_close(struct rt_varea *varea)
 {
 }
 
-static void on_page_offload(rt_varea_t varea, void *vaddr, size_t size)
+static void on_page_offload(rt_varea_t varea, void *vaddr, rt_size_t size)
 {
     rt_varea_offload_page(varea, vaddr, size);
 }

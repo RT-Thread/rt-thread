@@ -331,21 +331,6 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
     }
 }
 
-/*
-    orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0       // ttbr0
-
-                                    //invalid tlb
-    mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0       //iciallu
-    mcr p15, 0, r0, c7, c5, 6       //bpiall 
-
-    dsb
-    isb
-    mov pc, lr
-*/
-
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
     if (aspace != &rt_kernel_space)
@@ -435,5 +420,5 @@ void *rt_hw_mmu_v2p(rt_aspace_t aspace, void* v_addr)
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd)
 {
-    return -MM_ENOSUPP;
+    return -RT_ENOSYS;
 }

@@ -51,11 +51,6 @@ void *arch_kernel_mmu_table_get(void)
     return (void *)NULL;
 }
 
-/**
- * @brief vtable is allocated by `arch_user_space_init`
- * and is free by aspace delete
- * @param lwp 
- */
 void arch_user_space_vtable_free(struct rt_lwp *lwp)
 {
     if (lwp && lwp->aspace->page_table)

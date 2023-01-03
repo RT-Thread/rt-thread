@@ -594,7 +594,7 @@ static int _noncache(uintptr_t *pte)
     else
     {
         // do not support other type to be noncache
-        err = MM_ENOSUPP;
+        err = RT_ENOSYS;
     }
     return err;
 }
@@ -612,7 +612,7 @@ static int _cache(uintptr_t *pte)
     else
     {
         // do not support other type to be cache
-        err = -MM_ENOSUPP;
+        err = -RT_ENOSYS;
     }
     return err;
 }
@@ -650,7 +650,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
     }
     else
     {
-        err = -MM_ENOSUPP;
+        err = -RT_ENOSYS;
     }
 
     return err;

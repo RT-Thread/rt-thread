@@ -288,9 +288,9 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     else
         va = shm_vaddr;
 
-    err = rt_aspace_map(lwp->aspace, &va, p->size, MMU_MAP_U_RWCB, MMF_PREFETCH, 
+    err = rt_aspace_map(lwp->aspace, &va, p->size, MMU_MAP_U_RWCB, MMF_PREFETCH,
                         &p->mem_obj, 0);
-    if (err != MM_EOK)
+    if (err != RT_EOK)
     {
         va = 0;
     }
@@ -390,7 +390,7 @@ int _lwp_shmdt(void *shm_vaddr)
     }
 
     ret = rt_aspace_unmap(lwp->aspace, shm_vaddr, 1);
-    if (ret != MM_EOK)
+    if (ret != RT_EOK)
     {
         ret = -1;
     }

@@ -12,10 +12,10 @@
 #ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_syscall.h>
-#include <mm_aspace.h>
-#include <mm_fault.h>
-#include <mm_flag.h>
-#include <mm_private.h>
+#include "mm_aspace.h"
+#include "mm_fault.h"
+#include "mm_flag.h"
+#include "mm_private.h"
 #include <mmu.h>
 #include <tlb.h>
 
@@ -33,7 +33,7 @@ static int _fetch_page(rt_varea_t varea, struct mm_fault_msg *msg)
     if (msg->response.status == MM_FAULT_STATUS_OK)
     {
         void *store = msg->response.vaddr;
-        size_t store_sz = msg->response.size;
+        rt_size_t store_sz = msg->response.size;
 
         if (msg->vaddr + store_sz > varea->start + varea->size)
         {
@@ -61,7 +61,7 @@ static int _read_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
     }
     else
     {
-        // signal a fault to user?
+        /* signal a fault to user? */
     }
     return err;
 }
@@ -80,7 +80,7 @@ static int _write_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
     }
     else
     {
-        // signal a fault to user?
+        /* signal a fault to user? */
     }
     return err;
 }
@@ -98,7 +98,6 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
 
 int mm_fault_try_fix(struct mm_fault_msg *msg)
 {
-    // find current aspace
     struct rt_lwp *lwp = lwp_self();
     int err = UNRECOVERABLE;
     uintptr_t va = (uintptr_t)msg->vaddr;
@@ -113,7 +112,8 @@ int mm_fault_try_fix(struct mm_fault_msg *msg)
         {
             void *pa = rt_hw_mmu_v2p(aspace, msg->vaddr);
             msg->off = (msg->vaddr - varea->start) >> ARCH_PAGE_SHIFT;
-            // check permission
+
+            /* permission checked by fault op */
             switch (msg->fault_op)
             {
             case MM_FAULT_OP_READ:

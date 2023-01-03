@@ -21,13 +21,6 @@
 #define MM_PAGE_SHIFT    12
 #define MM_PA_TO_OFF(pa) ((uintptr_t)(pa) >> MM_PAGE_SHIFT)
 
-#define MM_EOK                 0
-#define MM_ERR_MAP_FAILED      1
-#define MM_ENOSUPP             2
-#define MM_ERR_VAREA_NOT_EXIST 3
-#define MM_EINVAL              4
-#define MM_ENOMEM              5
-
 #ifndef RT_USING_SMP
 typedef rt_spinlock_t mm_spinlock;
 
@@ -53,7 +46,7 @@ extern struct rt_aspace rt_kernel_space;
 typedef struct rt_aspace
 {
     void *start;
-    size_t size;
+    rt_size_t size;
 
     void *page_table;
     mm_spinlock pgtbl_lock;
@@ -65,11 +58,11 @@ typedef struct rt_aspace
 typedef struct rt_varea
 {
     void *start;
-    size_t size;
-    size_t offset;
+    rt_size_t size;
+    rt_size_t offset;
 
-    size_t attr;
-    size_t flag;
+    rt_size_t attr;
+    rt_size_t flag;
 
     struct rt_aspace *aspace;
     struct rt_mem_obj *mem_obj;
@@ -83,10 +76,10 @@ typedef struct rt_varea
 typedef struct rt_mm_va_hint
 {
     void *limit_start;
-    size_t limit_range_size;
+    rt_size_t limit_range_size;
 
     void *prefer;
-    const size_t map_size;
+    const rt_size_t map_size;
 
     mm_flag_t flags;
 } *rt_mm_va_hint_t;
@@ -101,7 +94,7 @@ typedef struct rt_mem_obj
     /* do post close bushiness like def a ref */
     void (*on_varea_close)(struct rt_varea *varea);
 
-    void (*on_page_offload)(struct rt_varea *varea, void *vaddr, size_t size);
+    void (*on_page_offload)(struct rt_varea *varea, void *vaddr, rt_size_t size);
 
     const char *(*get_name)(rt_varea_t varea);
 } *rt_mem_obj_t;
@@ -117,7 +110,6 @@ enum rt_mmu_cntl
 
 /**
  * @brief Lock to access page table of address space
- * TODO acquire a write lock, deal with error code
  */
 #define WR_LOCK(aspace)                                                        \
     rt_thread_self() ? rt_mutex_take(&(aspace)->bst_lock, RT_WAITING_FOREVER)  \
@@ -128,9 +120,9 @@ enum rt_mmu_cntl
 #define RD_LOCK(aspace)   WR_LOCK(aspace)
 #define RD_UNLOCK(aspace) WR_UNLOCK(aspace)
 
-rt_aspace_t rt_aspace_create(void *start, size_t length, void *pgtbl);
+rt_aspace_t rt_aspace_create(void *start, rt_size_t length, void *pgtbl);
 
-rt_aspace_t rt_aspace_init(rt_aspace_t aspace, void *start, size_t length,
+rt_aspace_t rt_aspace_init(rt_aspace_t aspace, void *start, rt_size_t length,
                            void *pgtbl);
 
 void rt_aspace_delete(rt_aspace_t aspace);
@@ -153,17 +145,17 @@ void rt_aspace_detach(rt_aspace_t aspace);
  * @return int E_OK on success, with addr set to vaddr of mapping
  *             E_INVAL
  */
-int rt_aspace_map(rt_aspace_t aspace, void **addr, size_t length, size_t attr,
-                  mm_flag_t flags, rt_mem_obj_t mem_obj, size_t offset);
+int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length, rt_size_t attr,
+                  mm_flag_t flags, rt_mem_obj_t mem_obj, rt_size_t offset);
 
 /** no malloc routines call */
 int rt_aspace_map_static(rt_aspace_t aspace, rt_varea_t varea, void **addr,
-                         size_t length, size_t attr, mm_flag_t flags,
-                         rt_mem_obj_t mem_obj, size_t offset);
+                         rt_size_t length, rt_size_t attr, mm_flag_t flags,
+                         rt_mem_obj_t mem_obj, rt_size_t offset);
 
 /**
  * @brief Memory Map on Virtual Address Space to Physical Memory
- * 
+ *
  * @param aspace target virtual address space
  * @param hint hint of mapping va
  * @param attr MMU attribution
@@ -172,12 +164,12 @@ int rt_aspace_map_static(rt_aspace_t aspace, rt_varea_t varea, void **addr,
  * @return int E_OK on success, with ret_va set to vaddr of mapping
  *             E_INVAL
  */
-int rt_aspace_map_phy(rt_aspace_t aspace, rt_mm_va_hint_t hint, size_t attr,
-                      size_t pa_off, void **ret_va);
+int rt_aspace_map_phy(rt_aspace_t aspace, rt_mm_va_hint_t hint, rt_size_t attr,
+                      rt_size_t pa_off, void **ret_va);
 
 /** no malloc routines call */
 int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
-                             rt_mm_va_hint_t hint, size_t attr, size_t pa_off,
+                             rt_mm_va_hint_t hint, rt_size_t attr, rt_size_t pa_off,
                              void **ret_va);
 
 /**
@@ -188,13 +180,13 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
  * @param length
  * @return int
  */
-int rt_aspace_unmap(rt_aspace_t aspace, void *addr, size_t length);
+int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 
 int mm_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd);
 
-int rt_aspace_load_page(rt_aspace_t aspace, void *addr, size_t npage);
+int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage);
 
-int rt_aspace_offload_page(rt_aspace_t aspace, void *addr, size_t npage);
+int rt_aspace_offload_page(rt_aspace_t aspace, void *addr, rt_size_t npage);
 
 int rt_aspace_traversal(rt_aspace_t aspace,
                         int (*fn)(rt_varea_t varea, void *arg), void *arg);
@@ -205,6 +197,6 @@ void rt_varea_insert_page(rt_varea_t varea, void *page_addr);
 
 void rt_varea_free_pages(rt_varea_t varea);
 
-void rt_varea_offload_page(rt_varea_t varea, void *vaddr, size_t size);
+void rt_varea_offload_page(rt_varea_t varea, void *vaddr, rt_size_t size);
 
 #endif /* __MM_ASPACE_H__ */

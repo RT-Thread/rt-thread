@@ -430,7 +430,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
     }
     else
     {
-        err = -MM_ENOSUPP;
+        err = -RT_ENOSYS;
     }
 
     return err;

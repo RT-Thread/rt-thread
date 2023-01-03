@@ -47,8 +47,9 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
         if (!is_fork && err == RT_EOK)
         {
             void *addr = (void *)USER_STACK_VSTART;
-            err = rt_aspace_map(lwp->aspace, &addr, USER_STACK_VEND - USER_STACK_VSTART,
-                        MMU_MAP_U_RWCB, 0, &lwp->lwp_obj->mem_obj, 0);
+            err = rt_aspace_map(lwp->aspace, &addr,
+                                USER_STACK_VEND - USER_STACK_VSTART,
+                                MMU_MAP_U_RWCB, 0, &lwp->lwp_obj->mem_obj, 0);
         }
     }
     return err;
@@ -96,7 +97,7 @@ static const char *user_get_name(rt_varea_t varea)
             name = "user.stack";
         }
         else if (varea->start >= (void *)USER_HEAP_VADDR &&
-                varea->start < (void *)USER_HEAP_VEND)
+                 varea->start < (void *)USER_HEAP_VEND)
         {
             name = "user.heap";
         }
@@ -135,8 +136,8 @@ static void user_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
                 }
                 else
                 {
-                    LOG_W("%s: page alloc failed at %p", __func__, 
-                        varea->start);
+                    LOG_W("%s: page alloc failed at %p", __func__,
+                          varea->start);
                 }
             }
             else
@@ -148,7 +149,6 @@ static void user_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
                 msg->response.vaddr = vaddr;
                 msg->response.size = ARCH_PAGE_SIZE;
             }
-    
         }
         else if (!(varea->flag & MMF_TEXT))
         {
@@ -185,9 +185,9 @@ static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,
     rt_mem_obj_t mem_obj = &lwp->lwp_obj->mem_obj;
     va = map_va ? map_va : ARCH_MAP_FAILED;
 
-    ret = rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB,
-                        flags, mem_obj, 0);
-    if (ret != MM_EOK)
+    ret = rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB, flags,
+                        mem_obj, 0);
+    if (ret != RT_EOK)
     {
         va = RT_NULL;
         LOG_I("lwp_map_user: failed to map %lx with size %lx", map_va,
@@ -204,7 +204,8 @@ int lwp_unmap_user(struct rt_lwp *lwp, void *va)
     return err;
 }
 
-static void _dup_varea(rt_varea_t varea, struct rt_lwp *src_lwp, rt_aspace_t dst)
+static void _dup_varea(rt_varea_t varea, struct rt_lwp *src_lwp,
+                       rt_aspace_t dst)
 {
     void *vaddr = varea->start;
     void *vend = vaddr + varea->size;
@@ -253,7 +254,7 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
     {
         pa = lwp_v2p(self_lwp, (void *)varea->start);
         va = lwp_map_user_type(new_lwp, (void *)varea->start, pa, varea->size,
-                               !(varea->attr - MMU_MAP_U_RWCB),
+                               (varea->attr == MMU_MAP_U_RWCB),
                                MM_AREA_TYPE_PHY);
     }
     else
@@ -262,9 +263,9 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
         int err;
         va = varea->start;
         err = rt_aspace_map(new_lwp->aspace, &va, varea->size, varea->attr,
-                            varea->flag, &new_lwp->lwp_obj->mem_obj, 
+                            varea->flag, &new_lwp->lwp_obj->mem_obj,
                             varea->offset);
-        if (err != MM_EOK)
+        if (err != RT_EOK)
         {
             LOG_W("%s: aspace map failed", __func__);
         }
@@ -338,7 +339,7 @@ static void *_lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa,
         attr = MMU_MAP_U_RW;
     }
 
-    struct rt_mem_obj *mem_obj = lwp->lwp_obj ? &lwp->lwp_obj->mem_obj: NULL;
+    struct rt_mem_obj *mem_obj = lwp->lwp_obj ? &lwp->lwp_obj->mem_obj : NULL;
 
     if (map_pa == ARCH_MAP_FAILED)
     {
@@ -350,10 +351,10 @@ static void *_lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa,
         if (!map_va)
             map_va = ARCH_MAP_FAILED;
         struct rt_mm_va_hint hint = {.flags = 0,
-                                    .limit_range_size = lwp->aspace->size,
-                                    .limit_start = lwp->aspace->start,
-                                    .prefer = map_va,
-                                    .map_size = map_size};
+                                     .limit_range_size = lwp->aspace->size,
+                                     .limit_start = lwp->aspace->start,
+                                     .prefer = map_va,
+                                     .map_size = map_size};
         ret = rt_aspace_map_phy(lwp->aspace, &hint, attr,
                                 (uintptr_t)map_pa >> MM_PAGE_SHIFT, &map_va);
     }

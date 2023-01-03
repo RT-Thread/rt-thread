@@ -10,9 +10,9 @@
 #include <rtdef.h>
 
 #include <avl.h>
-#include <avl_adpt.h>
-#include <mm_aspace.h>
-#include <mm_private.h>
+#include "avl_adpt.h"
+#include "mm_aspace.h"
+#include "mm_private.h"
 
 #define DBG_TAG "MM"
 #define DBG_LVL DBG_INFO
@@ -71,14 +71,17 @@ static int compare_exceed(void *as, void *ae, void *bs, void *be)
     return cmp;
 }
 
-static struct rt_varea *search(struct util_avl_root *root, struct _mm_range range,
-                               int (*compare)(void *as, void *ae, void *bs, void *be))
+static struct rt_varea *search(struct util_avl_root *root,
+                               struct _mm_range range,
+                               int (*compare)(void *as, void *ae, void *bs,
+                                              void *be))
 {
     struct util_avl_struct *node = root->root_node;
     while (node)
     {
         rt_varea_t varea = VAREA_ENTRY(node);
-        int cmp = compare(range.start, range.end, varea->start, varea->start + varea->size - 1);
+        int cmp = compare(range.start, range.end, varea->start,
+                          varea->start + varea->size - 1);
 
         if (cmp < 0)
         {
@@ -137,7 +140,8 @@ rt_varea_t _aspace_bst_search_exceed(struct rt_aspace *aspace, void *start)
     return closest;
 }
 
-struct rt_varea *_aspace_bst_search_overlap(struct rt_aspace *aspace, struct _mm_range range)
+struct rt_varea *_aspace_bst_search_overlap(struct rt_aspace *aspace,
+                                            struct _mm_range range)
 {
     struct util_avl_root *root = &aspace->tree.tree;
     return search(root, range, compare_overlap);
