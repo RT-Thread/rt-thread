@@ -16,6 +16,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifdef RT_USING_MUSLLIBC
+#include <signal.h>
+#else
+
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -228,6 +232,8 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #ifndef SIG_IGN
 #define SIG_IGN  ((void (*)(int)) 1)
 #endif
+
+#endif /* RT_USING_MUSLLIBC */
 
 #ifdef __cplusplus
 }
