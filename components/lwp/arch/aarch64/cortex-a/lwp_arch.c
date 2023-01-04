@@ -8,7 +8,6 @@
  * 2021-05-18     Jesven       first version
  */
 
-#include "mm_aspace.h"
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -17,6 +16,7 @@
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 #include <mmu.h>
+#include <mm_aspace.h>
 #include <page.h>
 
 extern size_t MMUTable[];
@@ -35,8 +35,8 @@ int arch_user_space_init(struct rt_lwp *lwp)
     memset(mmu_table, 0, ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
 
-    lwp->aspace = rt_aspace_create((void *)USER_VADDR_START,
-                   USER_VADDR_TOP - USER_VADDR_START, mmu_table);
+    lwp->aspace = rt_aspace_create(
+        (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
     {
         return -1;

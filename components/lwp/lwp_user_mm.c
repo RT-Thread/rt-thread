@@ -12,21 +12,21 @@
  * 2021-06-07     lizhirui     modify user space bound check
  */
 
-#include "lwp.h"
-#include "mm_aspace.h"
-#include "mm_fault.h"
-#include "mm_flag.h"
-#include "mm_page.h"
 #include <rtthread.h>
 #include <rthw.h>
 #include <string.h>
 
 #ifdef ARCH_MM_MMU
 
+#include <lwp.h>
 #include <lwp_arch.h>
 #include <lwp_mm.h>
-
 #include <lwp_user_mm.h>
+
+#include <mm_aspace.h>
+#include <mm_fault.h>
+#include <mm_flag.h>
+#include <mm_page.h>
 #include <mmu.h>
 #include <page.h>
 

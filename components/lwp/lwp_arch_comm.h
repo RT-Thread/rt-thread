@@ -10,7 +10,7 @@
 #ifndef __LWP_ARCH_COMM__
 #define __LWP_ARCH_COMM__
 
-#include "mm_aspace.h"
+#include <mm_aspace.h>
 #include <rtthread.h>
 #include <mmu.h>
 

@@ -18,9 +18,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <mm_aspace.h>
-#include <mm_fault.h>
-#include <mm_private.h>
 #include <stddef.h>
 
 #ifdef ARCH_MM_MMU
@@ -29,6 +26,9 @@
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 #include <mmu.h>
+#include <mm_aspace.h>
+#include <mm_fault.h>
+#include <mm_private.h>
 #include <page.h>
 
 #include <cpuport.h>
