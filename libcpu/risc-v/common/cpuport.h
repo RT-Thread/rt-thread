@@ -17,8 +17,6 @@
 #if !defined(__ASSEMBLY__)
 #if defined(SOC_RISCV_FAMILY_CH32)
 #include "interrupt.h"
-#else
-#error "CH32 architecture doesn't support!"
 #endif
 #endif
 
