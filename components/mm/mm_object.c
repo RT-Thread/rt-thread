@@ -67,7 +67,7 @@ void rt_varea_offload_page(rt_varea_t varea, void *vaddr, rt_size_t size)
     }
 }
 
-static void on_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
+static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
 {
     void *page;
     page = rt_pages_alloc(0);
@@ -99,7 +99,7 @@ static void on_page_offload(rt_varea_t varea, void *vaddr, rt_size_t size)
     rt_varea_offload_page(varea, vaddr, size);
 }
 
-struct rt_mem_obj mm_dummy_mapper = {
+struct rt_mem_obj rt_mm_dummy_mapper = {
     .get_name = get_name,
     .on_page_fault = on_page_fault,
     .hint_free = NULL,

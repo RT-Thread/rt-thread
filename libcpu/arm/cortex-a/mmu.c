@@ -414,7 +414,7 @@ void *rt_hw_mmu_v2p(rt_aspace_t aspace, void* v_addr)
             pa += ((size_t)v_addr & ARCH_SECTION_MASK);
             return (void*)pa;
     }
-    return (void*)0;
+    return ARCH_MAP_FAILED;
 }
 
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,

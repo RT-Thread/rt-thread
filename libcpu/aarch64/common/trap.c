@@ -79,8 +79,8 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
     int ret = 0;
 
     ec = (unsigned char)((esr >> 26) & 0x3fU);
-    enum mm_fault_op fault_op;
-    enum mm_fault_type fault_type;
+    enum rt_mm_fault_op fault_op;
+    enum rt_mm_fault_type fault_type;
     switch (ec)
     {
     case 0x20:
@@ -100,12 +100,12 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
     if (fault_op)
     {
         asm volatile("mrs %0, far_el1":"=r"(dfar));
-        struct mm_fault_msg msg = {
+        struct rt_mm_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
             .vaddr = dfar,
         };
-        if (mm_fault_try_fix(&msg))
+        if (rt_mm_fault_try_fix(&msg))
         {
             ret = 1;
         }

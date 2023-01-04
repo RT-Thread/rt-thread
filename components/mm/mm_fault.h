@@ -10,41 +10,46 @@
 #ifndef __MM_FAULT_H__
 #define __MM_FAULT_H__
 
+#include <rtthread.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#define MM_FAULT_STATUS_OK 0
+#define MM_FAULT_STATUS_OK            0
 #define MM_FAULT_STATUS_UNRECOVERABLE 1
 
-struct mm_fault_res {
+struct rt_mm_fault_res
+{
     void *vaddr;
     rt_size_t size;
     int status;
 };
 
-enum mm_fault_op {
+enum rt_mm_fault_op
+{
     MM_FAULT_OP_READ = 1,
     MM_FAULT_OP_WRITE,
     MM_FAULT_OP_EXECUTE,
 };
 
-enum mm_fault_type {
+enum rt_mm_fault_type
+{
     MM_FAULT_TYPE_ACCESS_FAULT,
     MM_FAULT_TYPE_PAGE_FAULT,
     MM_FAULT_TYPE_BUS_ERROR,
     MM_FAULT_TYPE_GENERIC,
 };
 
-struct mm_fault_msg {
-    enum mm_fault_op fault_op;
-    enum mm_fault_type fault_type;
+struct rt_mm_fault_msg
+{
+    enum rt_mm_fault_op fault_op;
+    enum rt_mm_fault_type fault_type;
     rt_size_t off;
     void *vaddr;
 
-    struct mm_fault_res response;
+    struct rt_mm_fault_res response;
 };
 
 /* MMU base page fault handler, return 1 is */
-int mm_fault_try_fix(struct mm_fault_msg *msg);
+int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg);
 
 #endif /* __MM_FAULT_H__ */

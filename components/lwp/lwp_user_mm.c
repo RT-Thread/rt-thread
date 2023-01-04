@@ -109,7 +109,7 @@ static const char *user_get_name(rt_varea_t varea)
     return name;
 }
 
-static void user_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
+static void user_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
 {
     struct rt_lwp_objs *lwp_objs;
     lwp_objs = rt_container_of(varea->mem_obj, struct rt_lwp_objs, mem_obj);
@@ -153,12 +153,12 @@ static void user_page_fault(struct rt_varea *varea, struct mm_fault_msg *msg)
         else if (!(varea->flag & MMF_TEXT))
         {
             // if data segment not exist in source do a fallback
-            mm_dummy_mapper.on_page_fault(varea, msg);
+            rt_mm_dummy_mapper.on_page_fault(varea, msg);
         }
     }
     else // if (!lwp_objs->source)
     {
-        mm_dummy_mapper.on_page_fault(varea, msg);
+        rt_mm_dummy_mapper.on_page_fault(varea, msg);
     }
 }
 
@@ -168,9 +168,9 @@ static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace)
     lwp_objs->mem_obj.get_name = user_get_name;
     lwp_objs->mem_obj.hint_free = NULL;
     lwp_objs->mem_obj.on_page_fault = user_page_fault;
-    lwp_objs->mem_obj.on_page_offload = mm_dummy_mapper.on_page_offload;
-    lwp_objs->mem_obj.on_varea_open = mm_dummy_mapper.on_varea_open;
-    lwp_objs->mem_obj.on_varea_close = mm_dummy_mapper.on_varea_close;
+    lwp_objs->mem_obj.on_page_offload = rt_mm_dummy_mapper.on_page_offload;
+    lwp_objs->mem_obj.on_varea_open = rt_mm_dummy_mapper.on_varea_open;
+    lwp_objs->mem_obj.on_varea_close = rt_mm_dummy_mapper.on_varea_close;
 }
 
 static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,

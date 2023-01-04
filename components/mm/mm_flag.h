@@ -12,8 +12,8 @@
 
 /**
  * @brief mm_flag_t
- * |max ------- 7|6 ---- 0|
- * |   control   |  align |
+ * |max ------- 7|6 ----- 0|
+ * |   control   |  align  |
  *
  * there should be no more than 25 flags
  */
@@ -75,10 +75,12 @@ enum mm_flag_cntl
 /**
  * @brief Create Flags
  *
- * example: MMF_CREATE(0, 0, MMF_TEXT)
- *          MMF_CREATE(MM_MAP_FIXED, 0x2000, MMF_RO)
+ * example: MMF_CREATE(0, 0)
+ *          MMF_CREATE(MM_MAP_FIXED, 0x2000)
+ *
+ * Direct use of flag is also acceptable: (MMF_MAP_FIXED | MMF_PREFETCH)
  */
-#define MMF_CREATE(cntl, align)                                          \
+#define MMF_CREATE(cntl, align)                                                \
     (align ? (MMF_SET_CNTL((mm_flag_t)0, (cntl) | MMF_REQUEST_ALIGN) |         \
               MMF_SET_ALIGN((mm_flag_t)0, align))                              \
            : (MMF_SET_CNTL((mm_flag_t)0, (cntl) & ~MMF_REQUEST_ALIGN)))

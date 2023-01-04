@@ -20,9 +20,6 @@
 
 /**
  * @brief Adapter Layer for lwp AVL BST
- * optimized for better performance, eliminated the chances
- * that API listed here may failed. Eventually, they don't report
- * an error code when they did failed
  */
 
 rt_err_t _aspace_bst_init(struct rt_aspace *aspace)

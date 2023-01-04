@@ -172,8 +172,8 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
 
     /* user page fault */
-    enum mm_fault_op fault_op;
-    enum mm_fault_type fault_type;
+    enum rt_mm_fault_op fault_op;
+    enum rt_mm_fault_type fault_type;
     switch (id)
     {
         case EP_LOAD_PAGE_FAULT:
@@ -218,13 +218,13 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
-        struct mm_fault_msg msg = {
+        struct rt_mm_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
             .vaddr = (void *)stval,
         };
 
-        if (mm_fault_try_fix(&msg))
+        if (rt_mm_fault_try_fix(&msg))
         {
             return;
         }

@@ -26,7 +26,7 @@
 #define UNRECOVERABLE 0
 #define RECOVERABLE   1
 
-static int _fetch_page(rt_varea_t varea, struct mm_fault_msg *msg)
+static int _fetch_page(rt_varea_t varea, struct rt_mm_fault_msg *msg)
 {
     int err = UNRECOVERABLE;
     varea->mem_obj->on_page_fault(varea, msg);
@@ -51,7 +51,7 @@ static int _fetch_page(rt_varea_t varea, struct mm_fault_msg *msg)
     return err;
 }
 
-static int _read_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
+static int _read_fault(rt_varea_t varea, void *pa, struct rt_mm_fault_msg *msg)
 {
     int err = UNRECOVERABLE;
     if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
@@ -66,7 +66,7 @@ static int _read_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
     return err;
 }
 
-static int _write_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
+static int _write_fault(rt_varea_t varea, void *pa, struct rt_mm_fault_msg *msg)
 {
     int err = UNRECOVERABLE;
     if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
@@ -85,7 +85,7 @@ static int _write_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
     return err;
 }
 
-static int _exec_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
+static int _exec_fault(rt_varea_t varea, void *pa, struct rt_mm_fault_msg *msg)
 {
     int err = UNRECOVERABLE;
     if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
@@ -96,7 +96,7 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct mm_fault_msg *msg)
     return err;
 }
 
-int mm_fault_try_fix(struct mm_fault_msg *msg)
+int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
 {
     struct rt_lwp *lwp = lwp_self();
     int err = UNRECOVERABLE;

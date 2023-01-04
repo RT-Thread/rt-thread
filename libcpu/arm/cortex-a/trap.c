@@ -50,12 +50,12 @@ int check_user_stack(struct rt_hw_exp_stack *regs)
 
     if ((dfar >= (void *)USER_STACK_VSTART) && (dfar < (void *)USER_STACK_VEND))
     {
-        struct mm_fault_msg msg = {
+        struct rt_mm_fault_msg msg = {
             .fault_op = MM_FAULT_OP_WRITE,
             .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
             .vaddr = dfar,
         };
-        if (mm_fault_try_fix(&msg))
+        if (rt_mm_fault_try_fix(&msg))
         {
             regs->pc -= 8;
             return 1;

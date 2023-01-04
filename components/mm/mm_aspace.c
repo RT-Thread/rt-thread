@@ -157,7 +157,7 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
     return err;
 }
 
-rt_inline void _do_page_fault(struct mm_fault_msg *msg, rt_size_t off,
+rt_inline void _do_page_fault(struct rt_mm_fault_msg *msg, rt_size_t off,
                               void *vaddr, rt_mem_obj_t mem_obj,
                               rt_varea_t varea)
 {
@@ -184,7 +184,7 @@ static int _do_prefetch(rt_aspace_t aspace, rt_varea_t varea, void *start,
     while (vaddr != end)
     {
         /* TODO try to map with huge TLB, when flag & HUGEPAGE */
-        struct mm_fault_msg msg;
+        struct rt_mm_fault_msg msg;
         _do_page_fault(&msg, off, vaddr, varea->mem_obj, varea);
 
         if (msg.response.status == MM_FAULT_STATUS_OK)

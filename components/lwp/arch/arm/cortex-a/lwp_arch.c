@@ -61,7 +61,7 @@ void arch_kuser_init(rt_aspace_t aspace, void *vectors)
 
     err = rt_aspace_map_static(aspace, &kuser_varea, &vectors, kuser_size,
                                MMU_MAP_U_RO, MMF_MAP_FIXED | MMF_PREFETCH,
-                               &mm_dummy_mapper, 0);
+                               &rt_mm_dummy_mapper, 0);
     if (err != 0)
         while (1)
             ; // early failed

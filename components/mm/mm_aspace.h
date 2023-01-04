@@ -87,7 +87,7 @@ typedef struct rt_mm_va_hint
 typedef struct rt_mem_obj
 {
     void (*hint_free)(rt_mm_va_hint_t hint);
-    void (*on_page_fault)(struct rt_varea *varea, struct mm_fault_msg *msg);
+    void (*on_page_fault)(struct rt_varea *varea, struct rt_mm_fault_msg *msg);
 
     /* do pre open bushiness like inc a ref */
     void (*on_varea_open)(struct rt_varea *varea);
@@ -99,7 +99,7 @@ typedef struct rt_mem_obj
     const char *(*get_name)(rt_varea_t varea);
 } *rt_mem_obj_t;
 
-extern struct rt_mem_obj mm_dummy_mapper;
+extern struct rt_mem_obj rt_mm_dummy_mapper;
 
 enum rt_mmu_cntl
 {
