@@ -9,6 +9,7 @@
  * 2022-12-27     WangShun   Merge WCH series mcu port files
  */
  
+#define __ASSEMBLY__
 #include "cpuport.h"
 
 .global SW_handler
