@@ -15,17 +15,21 @@
 #ifdef RT_USING_SMART
 #include <mmu.h>
 #include <lwp_mm.h>
-#include <lwp_mm_area.h>
 #include <mm_aspace.h>
 
 #define DBG_TAG "mm.ioremap"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+enum ioremap_type {
+    MM_AREA_TYPE_PHY,
+    MM_AREA_TYPE_PHY_CACHED
+};
+
 void *rt_ioremap_start;
 size_t rt_ioremap_size;
 
-static void *_ioremap_type(void *paddr, size_t size, int type)
+static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 {
     void *v_addr = NULL;
     size_t attr;

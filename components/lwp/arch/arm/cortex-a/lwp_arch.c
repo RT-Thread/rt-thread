@@ -17,7 +17,6 @@
 #ifdef ARCH_MM_MMU
 
 #include <lwp_arch.h>
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 #include <mmu.h>
 #include <page.h>

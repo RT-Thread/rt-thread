@@ -16,7 +16,6 @@
 
 #ifdef ARCH_MM_MMU
 #include <lwp.h>
-#include <lwp_mm_area.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,13 +25,10 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork);
 void lwp_unmap_user_space(struct rt_lwp *lwp);
 
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
-void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text);
+void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, rt_bool_t text);
 
-void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, int cached);
+void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, rt_bool_t cached);
 int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va);
-
-void *lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, int cached, int type);
-int lwp_unmap_user_type(struct rt_lwp *lwp, void *va);
 
 rt_base_t lwp_brk(void *addr);
 void* lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd, off_t pgoffset);

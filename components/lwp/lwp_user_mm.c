@@ -25,7 +25,7 @@
 
 #include <lwp_arch.h>
 #include <lwp_mm.h>
-#include <lwp_mm_area.h>
+
 #include <lwp_user_mm.h>
 #include <mmu.h>
 #include <page.h>
@@ -109,7 +109,8 @@ static const char *user_get_name(rt_varea_t varea)
     return name;
 }
 
-static void user_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void _user_do_page_fault(struct rt_varea *varea,
+                                struct rt_mm_fault_msg *msg)
 {
     struct rt_lwp_objs *lwp_objs;
     lwp_objs = rt_container_of(varea->mem_obj, struct rt_lwp_objs, mem_obj);
@@ -117,12 +118,11 @@ static void user_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
 
     if (lwp_objs->source)
     {
-        // provide page from source
         void *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->vaddr);
         if (paddr != ARCH_MAP_FAILED)
         {
             vaddr = paddr - PV_OFFSET;
-            // for data segment, provide a dup new page
+
             if (!(varea->flag & MMF_TEXT))
             {
                 void *cp = rt_pages_alloc(0);
@@ -152,11 +152,11 @@ static void user_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
         }
         else if (!(varea->flag & MMF_TEXT))
         {
-            // if data segment not exist in source do a fallback
+            /* if data segment not exist in source do a fallback */
             rt_mm_dummy_mapper.on_page_fault(varea, msg);
         }
     }
-    else // if (!lwp_objs->source)
+    else /* if (!lwp_objs->source), no aspace as source data */
     {
         rt_mm_dummy_mapper.on_page_fault(varea, msg);
     }
@@ -167,7 +167,7 @@ static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace)
     lwp_objs->source = NULL;
     lwp_objs->mem_obj.get_name = user_get_name;
     lwp_objs->mem_obj.hint_free = NULL;
-    lwp_objs->mem_obj.on_page_fault = user_page_fault;
+    lwp_objs->mem_obj.on_page_fault = _user_do_page_fault;
     lwp_objs->mem_obj.on_page_offload = rt_mm_dummy_mapper.on_page_offload;
     lwp_objs->mem_obj.on_varea_open = rt_mm_dummy_mapper.on_varea_open;
     lwp_objs->mem_obj.on_varea_close = rt_mm_dummy_mapper.on_varea_close;
@@ -243,6 +243,7 @@ static void _dup_varea(rt_varea_t varea, struct rt_lwp *src_lwp,
 
 int lwp_dup_user(rt_varea_t varea, void *arg)
 {
+    int err;
     struct rt_lwp *self_lwp = lwp_self();
     struct rt_lwp *new_lwp = (struct rt_lwp *)arg;
 
@@ -252,25 +253,37 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
 
     if (!mem_obj)
     {
+        /* duplicate a physical mapping */
         pa = lwp_v2p(self_lwp, (void *)varea->start);
-        va = lwp_map_user_type(new_lwp, (void *)varea->start, pa, varea->size,
-                               (varea->attr == MMU_MAP_U_RWCB),
-                               MM_AREA_TYPE_PHY);
+        RT_ASSERT(pa != ARCH_MAP_FAILED);
+        struct rt_mm_va_hint hint = {.flags = MMF_MAP_FIXED,
+                                     .limit_range_size = new_lwp->aspace->size,
+                                     .limit_start = new_lwp->aspace->start,
+                                     .prefer = varea->start,
+                                     .map_size = varea->size};
+        err = rt_aspace_map_phy(new_lwp->aspace, &hint, varea->attr,
+                                MM_PA_TO_OFF(pa), &va);
+        if (err != RT_EOK)
+        {
+            LOG_W("%s: aspace map failed at %p with size %p", __func__,
+                  varea->start, varea->size);
+        }
     }
     else
     {
-        // duplicate by mem_obj
-        int err;
+        /* duplicate a mem_obj backing mapping */
         va = varea->start;
         err = rt_aspace_map(new_lwp->aspace, &va, varea->size, varea->attr,
                             varea->flag, &new_lwp->lwp_obj->mem_obj,
                             varea->offset);
         if (err != RT_EOK)
         {
-            LOG_W("%s: aspace map failed", __func__);
+            LOG_W("%s: aspace map failed at %p with size %p", __func__,
+                  varea->start, varea->size);
         }
         else
         {
+            /* loading page frames for !MMF_PREFETCH varea */
             if (!(varea->flag & MMF_PREFETCH))
             {
                 _dup_varea(varea, self_lwp, new_lwp->aspace);
@@ -286,11 +299,6 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
 }
 
 int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va)
-{
-    return lwp_unmap_user(lwp, va);
-}
-
-int lwp_unmap_user_type(struct rt_lwp *lwp, void *va)
 {
     return lwp_unmap_user(lwp, va);
 }
@@ -318,63 +326,11 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
     return ret;
 }
 
-static void *_lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa,
-                                size_t map_size, int cached, int type)
+void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
+                       size_t map_size, int cached)
 {
-    void *va = RT_NULL;
-
-    size_t attr = 0;
-    int ret = 0;
-
-    if (cached)
-    {
-        attr = MMU_MAP_U_RWCB;
-        if (type == MM_AREA_TYPE_PHY)
-        {
-            type = MM_AREA_TYPE_PHY_CACHED;
-        }
-    }
-    else
-    {
-        attr = MMU_MAP_U_RW;
-    }
-
-    struct rt_mem_obj *mem_obj = lwp->lwp_obj ? &lwp->lwp_obj->mem_obj : NULL;
-
-    if (map_pa == ARCH_MAP_FAILED)
-    {
-        ret = rt_aspace_map(lwp->aspace, &map_va, map_size, attr, MMF_PREFETCH,
-                            mem_obj, 0);
-    }
-    else
-    {
-        if (!map_va)
-            map_va = ARCH_MAP_FAILED;
-        struct rt_mm_va_hint hint = {.flags = 0,
-                                     .limit_range_size = lwp->aspace->size,
-                                     .limit_start = lwp->aspace->start,
-                                     .prefer = map_va,
-                                     .map_size = map_size};
-        ret = rt_aspace_map_phy(lwp->aspace, &hint, attr,
-                                (uintptr_t)map_pa >> MM_PAGE_SHIFT, &map_va);
-    }
-
-    if (ret == RT_EOK)
-    {
-        va = map_va;
-    }
-    else
-    {
-        LOG_I("lwp_map_user_type: map failed");
-    }
-
-    return va;
-}
-
-void *lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa,
-                        size_t map_size, int cached, int type)
-{
-    void *ret = RT_NULL;
+    int err;
+    void *va;
     size_t offset = 0;
 
     if (!map_size)
@@ -394,19 +350,25 @@ void *lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa,
     map_size &= ~ARCH_PAGE_MASK;
     map_pa = (void *)((size_t)map_pa & ~ARCH_PAGE_MASK);
 
-    ret = _lwp_map_user_type(lwp, map_va, map_pa, map_size, cached, type);
-    if (ret)
-    {
-        ret = (void *)((char *)ret + offset);
-    }
-    return ret;
-}
+    if (map_va == RT_NULL)
+        map_va = ARCH_MAP_FAILED;
 
-void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
-                       size_t map_size, int cached)
-{
-    return lwp_map_user_type(lwp, map_va, map_pa, map_size, cached,
-                             MM_AREA_TYPE_PHY);
+    struct rt_mm_va_hint hint = {.flags = MMF_MAP_FIXED,
+                                 .limit_range_size = lwp->aspace->size,
+                                 .limit_start = lwp->aspace->start,
+                                 .prefer = map_va,
+                                 .map_size = map_size};
+    rt_size_t attr = cached ? MMU_MAP_U_RWCB : MMU_MAP_U_RW;
+
+    err =
+        rt_aspace_map_phy(lwp->aspace, &hint, attr, MM_PA_TO_OFF(map_pa), &va);
+    if (err != RT_EOK)
+    {
+        va = RT_NULL;
+        LOG_W("%s", __func__);
+    }
+
+    return va + offset;
 }
 
 rt_base_t lwp_brk(void *addr)

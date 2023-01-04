@@ -15,7 +15,6 @@
 #include <lwp_shm.h>
 #include <lwp_mm.h>
 
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 #include <mmu.h>
 #include <mm_aspace.h>

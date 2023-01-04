@@ -1364,7 +1364,7 @@ rt_thread_t sys_thread_create(void *arg[])
     lwp = rt_thread_self()->lwp;
     lwp_ref_inc(lwp);
 #ifdef ARCH_MM_MMU
-    user_stack  = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
+    user_stack = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
     if (!user_stack)
     {
         goto fail;

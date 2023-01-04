@@ -37,7 +37,6 @@
 #include <rtdbg.h>
 
 #ifdef ARCH_MM_MMU
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 #endif /* end of ARCH_MM_MMU */
 
@@ -737,7 +736,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         {
             if (user_area[i].size != 0)
             {
-                va = lwp_map_user(lwp, user_area[i].start, user_area[i].size, (int)(i == 0));
+                va = lwp_map_user(lwp, user_area[i].start, user_area[i].size, (i == 0));
                 if (!va || (va != user_area[i].start))
                 {
                     result = -RT_ERROR;
