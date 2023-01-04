@@ -12,10 +12,6 @@
 #ifndef __SYS_SIGNAL_H__
 #define __SYS_SIGNAL_H__
 
-#if defined(RT_USING_SMART)
-#include <signal.h>
-#else
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -91,9 +87,9 @@ typedef struct sigaltstack
   size_t    ss_size;  /* Stack size.  */
 } stack_t;
 
-#define SIG_BLOCK   0   /* set of signals to block */
-#define SIG_UNBLOCK 1   /* set of signals to, well, unblock */
-#define SIG_SETMASK 2   /* set mask with sigprocmask() */
+#define SIG_SETMASK 0   /* set mask with sigprocmask() */
+#define SIG_BLOCK   1   /* set of signals to block */
+#define SIG_UNBLOCK 2   /* set of signals to, well, unblock */
 
 #define sigaddset(what,sig) (*(what) |= (1<<(sig)), 0)
 #define sigdelset(what,sig) (*(what) &= ~(1<<(sig)), 0)
@@ -240,8 +236,6 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* RT_USING_SMART */
 
 #endif /* __SYS_SIGNAL_H__ */
 
