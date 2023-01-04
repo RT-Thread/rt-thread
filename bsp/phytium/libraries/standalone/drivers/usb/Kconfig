@@ -1,0 +1,9 @@
+config ENABLE_USB_FXHCI
+    bool
+    prompt "Use USB3.0 Host(FUSB_HC_XHCI)"
+    default n
+    depends on USE_USB
+    help
+        Select USB FUSB_HC_XHCI Host driver component
+	
+	

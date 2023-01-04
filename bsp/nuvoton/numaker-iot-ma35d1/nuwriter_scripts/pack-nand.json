@@ -1,0 +1,21 @@
+{
+    "image":
+    [
+        {  
+          "offset": "0x0",
+          "file": "conv/header.bin",
+          "type": 1
+        },
+
+        {
+          "offset": "0x20000",
+          "file": "ddrimg/enc_ddr3_winbond_512mb.bin",
+          "type": 0
+        },
+        {
+          "offset": "0x80000",
+          "file": "../rtthread.bin",
+          "type": 1
+        }
+    ]
+}

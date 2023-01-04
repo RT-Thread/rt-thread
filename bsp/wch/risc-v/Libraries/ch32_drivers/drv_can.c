@@ -100,7 +100,7 @@ static struct ch32v307x_can_obj  drv_can2 =
 #endif
 
 #ifdef BSP_USING_CAN
-RT_WEAK void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
+rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
 {
     GPIO_InitTypeDef GPIO_InitSturcture={0};
 #ifdef BSP_USING_CAN1
@@ -441,14 +441,14 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-                if (filter_cfg->items[i].hdr == -1)
+                if (filter_cfg->items[i].hdr_bank == -1)
                 {
                     drv_can_obj->can_filter_init.CAN_FilterNumber = i;
                 }
                 else
                 {
                     /* use user-defined filter bank settings */
-                    drv_can_obj->can_filter_init.CAN_FilterNumber = filter_cfg->items[i].hdr;
+                    drv_can_obj->can_filter_init.CAN_FilterNumber = filter_cfg->items[i].hdr_bank;
                 }
 
                 if (filter_cfg->items[i].mode == 0x00)  //CAN_FILTERMODE_IDMASK
@@ -725,14 +725,14 @@ static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, uint3
         pmsg->rtr = RT_CAN_RTR;
     }
 
-    /* get hdr */
+    /* get hdr_index */
     if (can_base == CAN1)
     {
-        pmsg->hdr = (RxMessage->FMI + 1) >> 1;
+        pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
     else if (can_base == CAN2)
     {
-        pmsg->hdr = (RxMessage->FMI >> 1) + 14;
+        pmsg->hdr_index = (RxMessage->FMI >> 1) + 14;
     }
     /* Release FIFO */
     CAN_FIFORelease(can_base,FIFONum);

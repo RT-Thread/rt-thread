@@ -1,3 +1,5 @@
 .launches/
+.settings/
 FLASH
 RAM
+makefile.targets

@@ -167,7 +167,7 @@ int rt_hw_nct7717u_port(void)
     struct rt_sensor_config cfg;
 
     cfg.intf.dev_name = "i2c2";
-    cfg.irq_pin.pin = RT_PIN_NONE;
+    cfg.irq_pin.pin = PIN_IRQ_PIN_NONE;
 
     return rt_hw_nct7717u_init("nct7717u", &cfg);
 }
@@ -185,7 +185,7 @@ int rt_hw_mpu6xxx_port(void)
     rt_base_t mpu_int = NU_GET_PININDEX(NU_PD, 2);
 
     cfg.intf.dev_name = "i2c2";
-    cfg.intf.user_data = (void *)MPU6XXX_ADDR_DEFAULT;
+    cfg.intf.arg = (void *)MPU6XXX_ADDR_DEFAULT;
     cfg.irq_pin.pin = mpu_int;
 
     return rt_hw_mpu6xxx_init("mpu", &cfg);

@@ -29,7 +29,7 @@ extern void nutool_pincfg_init(void);
 /**
  * This function will initial.
  */
-RT_WEAK void rt_hw_board_init(void)
+rt_weak void rt_hw_board_init(void)
 {
     uint32_t u32RegLockBackup = SYS_IsRegLocked();
 

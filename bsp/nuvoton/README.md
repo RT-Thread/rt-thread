@@ -14,3 +14,4 @@ Current supported BSP shown in below table:
 | NuMaker-M467HJ | CORTEX-M4 | [numaker-m467hj](numaker-m467hj) |
 | NuMaker-IoT-M467 | CORTEX-M4 | [numaker-iot-m467](numaker-iot-m467) |
 | NuMaker-HMI-MA35D1 | CORTEX-A35, CORTEX-M4 | [numaker-hmi-ma35d1](numaker-hmi-ma35d1), [ma35-rtp](ma35-rtp) |
+| NuMaker-IOT-MA35D1 | CORTEX-A35, CORTEX-M4 | [numaker-iot-ma35d1](numaker-iot-ma35d1), [ma35-rtp](ma35-rtp) |

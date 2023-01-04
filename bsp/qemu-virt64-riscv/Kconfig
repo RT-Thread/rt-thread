@@ -17,19 +17,50 @@ config PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+source "driver/Kconfig"
 
-config BOARD_virt
+config BOARD_QEMU_VIRT_RV64
     bool
     select ARCH_RISCV64
+    select ARCH_CONTEXT_EXTEND
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    select ARCH_MM_MMU
     default y
 
-config RT_USING_USERSPACE
+config ENABLE_FPU
+    bool "Enable FPU"
+    default y
+
+config ENABLE_VECTOR
+    bool "Using RISC-V Vector Extension"
+    default n
+
+if ENABLE_VECTOR
+    choice
+    prompt "Vector Registers Length in Bits"
+    default ARCH_VECTOR_VLEN_128
+    
+    config ARCH_VECTOR_VLEN_128
+        bool "128"
+
+    config ARCH_VECTOR_VLEN_256
+        bool "256"
+    endchoice
+endif
+
+config RT_USING_USERSPACE_32BIT_LIMIT
+    bool "Enable userspace 32bit limit"
+    default n
+
+config RT_USING_VIRTIO_MMIO_ALIGN
+    bool "Open packed attribution, this may caused an error on virtio"
+    default n
+
+config ARCH_USING_NEW_CTX_SWITCH
     bool
     default y
-
-source "driver/Kconfig"
 
 config __STACKSIZE__
     int "stack size for interrupt"

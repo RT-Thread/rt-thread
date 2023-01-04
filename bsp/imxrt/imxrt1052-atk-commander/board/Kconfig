@@ -2,7 +2,7 @@ menu "Hardware Drivers Config"
 
 config SOC_IMXRT1052CVL5B
     bool
-    select SOC_MIMXRT1050_SERIES
+    select SOC_IMXRT1050_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

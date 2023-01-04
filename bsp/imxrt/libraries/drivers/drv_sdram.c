@@ -34,8 +34,8 @@ int rt_hw_sdram_init(void)
 #endif
 
     /* Initializes the MAC configure structure to zero. */
-    memset(&config, 0, sizeof(semc_config_t));
-    memset(&sdramconfig, 0, sizeof(semc_sdram_config_t));
+    rt_memset(&config, 0, sizeof(semc_config_t));
+    rt_memset(&sdramconfig, 0, sizeof(semc_sdram_config_t));
 
     /* Initialize SEMC. */
     SEMC_GetDefaultConfig(&config);

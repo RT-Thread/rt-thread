@@ -510,7 +510,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
                 /* Get default filter */
                 for(int i = 0; i < filter_cfg->count; i++)
                 {
-                    if (filter_cfg->items[i].hdr == -1)
+                    if (filter_cfg->items[i].hdr_bank == -1)
                     {
                         /* Can banks 0~13 */
                         drv_can->FilterConfig.Filter_Num = i;
@@ -518,7 +518,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
                     else
                     {
                         /* Use user-defined filter bank settings */
-                        drv_can->FilterConfig.Filter_Num = filter_cfg->items[i].hdr;
+                        drv_can->FilterConfig.Filter_Num = filter_cfg->items[i].hdr_bank;
                     }
 
                     /* Filter groups work in identifier masking bit mode */
@@ -826,22 +826,22 @@ static int can_recvmsg_rtmsg(CAN_Module *CANx, struct rt_can_msg *pmsg, uint32_t
         pmsg->rtr = RT_CAN_RTR;
     }
 
-    /* get hdr */
+    /* get hdr_index */
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452)
     if (CANx == CAN1)
     {
-        pmsg->hdr = (RxMessage->FMI + 1) >> 1;
+        pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
 #ifdef CAN2
     else if (CANx == CAN2)
     {
-        pmsg->hdr = (RxMessage->FMI + 1) >> 1;
+        pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
 #endif
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     if (CANx == CAN)
     {
-        pmsg->hdr = (RxMessage->FMI + 1) >> 1;
+        pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
 #endif
 

@@ -371,7 +371,6 @@ menu "On-chip Peripheral Drivers"
         select RT_TOUCH_PIN_IRQ
         select BSP_USING_I2C
         select BSP_USING_I2C0
-        select PKG_USING_TOUCH_DRIVERS
         select PKG_USING_GT9147
         select PKG_USING_GT9147_LATEST_VERSION
         default n

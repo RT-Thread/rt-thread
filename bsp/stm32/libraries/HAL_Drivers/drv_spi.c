@@ -140,74 +140,55 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     spi_handle->Init.NSS = SPI_NSS_SOFT;
 
-    uint32_t SPI_APB_CLOCK;
+    uint32_t SPI_CLOCK;
 
-    /* special series */
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
-
-    /* normal series */
+/* Some series may only have APBPERIPH_BASE, but don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
+    SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    /* The SPI clock for H7 cannot be configured with a peripheral bus clock, so it needs to be written separately */
+#if defined(SOC_SERIES_STM32H7)
+    /* When the configuration is generated using CUBEMX, the configuration for the SPI clock is placed in the HAL_SPI_Init function.
+    Therefore, it is necessary to initialize and configure the SPI clock to automatically configure the frequency division */
+    HAL_SPI_Init(spi_handle);
+    SPI_CLOCK = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI123);
 #else
-    /* SPI1, SPI4 and SPI5 on APB2 */
-    if(spi_drv->config->Instance == SPI1
-    #ifdef SPI4
-    || spi_drv->config->Instance == SPI4
-    #endif
-    #ifdef SPI5
-    || spi_drv->config->Instance == SPI5
-    #endif
-    )
+    if ((rt_uint32_t)spi_drv->config->Instance >= APB2PERIPH_BASE)
     {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
+        SPI_CLOCK = HAL_RCC_GetPCLK2Freq();
     }
-
-    /* SPI2 and SPI3 on APB1 */
-    #ifdef SPI2
-    else if(spi_drv->config->Instance == SPI2
-    #ifdef SPI3
-    || spi_drv->config->Instance == SPI3
-    #endif
-    )
-    {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
-    }
-    #endif
-
-    /* SPI6 get the input clk from APB4(such as on STM32H7). However, there is no HAL_RCC_GetPCLK4Freq api provided.
-    APB4 has same prescale factor as APB1 from HPRE Clock by default in CubeMx, so we assign APB1 to it.
-    if you change the default prescale factor of APB4, please modify SPI_APB_CLOCK accordingly.
-    */
     else
     {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
+        SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
     }
-#endif
+#endif /* SOC_SERIES_STM32H7) */
+#endif /* APBPERIPH_BASE */
 
-    if (cfg->max_hz >= SPI_APB_CLOCK / 2)
+    if (cfg->max_hz >= SPI_CLOCK / 2)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 4)
+    else if (cfg->max_hz >= SPI_CLOCK / 4)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 8)
+    else if (cfg->max_hz >= SPI_CLOCK / 8)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 16)
+    else if (cfg->max_hz >= SPI_CLOCK / 16)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 32)
+    else if (cfg->max_hz >= SPI_CLOCK / 32)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 64)
+    else if (cfg->max_hz >= SPI_CLOCK / 64)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 128)
+    else if (cfg->max_hz >= SPI_CLOCK / 128)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
     }
@@ -217,15 +198,15 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
     }
 
-    LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
+    LOG_D("sys freq: %d, pclk freq: %d, SPI limiting freq: %d, SPI usage freq: %d",
 #if defined(SOC_SERIES_STM32MP1)
           HAL_RCC_GetSystemCoreClockFreq(),
 #else
           HAL_RCC_GetSysClockFreq(),
 #endif
-          SPI_APB_CLOCK,
+          SPI_CLOCK,
           cfg->max_hz,
-          spi_handle->Init.BaudRatePrescaler);
+          SPI_CLOCK / (rt_size_t)pow(2,(spi_handle->Init.BaudRatePrescaler >> 28) + 1));
 
     if (cfg->mode & RT_SPI_MSB)
     {
@@ -286,7 +267,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         __HAL_LINKDMA(&spi_drv->handle, hdmatx, spi_drv->dma.handle_tx);
 
         /* NVIC configuration for DMA transfer complete interrupt */
-        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 0, 1);
+        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 1, 0);
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
 
@@ -353,6 +334,24 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
         recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
 
+#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+        rt_uint32_t* dma_buf = RT_NULL;
+        if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
+        {
+            dma_buf = (rt_uint32_t *)rt_malloc_align(send_length,32);
+            if(send_buf)
+            {
+                rt_memcpy(dma_buf, send_buf, send_length);
+            }
+            else
+            {
+                rt_memset(dma_buf, 0xFF, send_length);
+            }
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_buf, send_length);
+            state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)dma_buf, (uint8_t *)dma_buf, send_length);
+        }
+        else
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
@@ -420,6 +419,17 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
         }
+#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+        if(dma_buf)
+        {
+            if(recv_buf)
+            {
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, dma_buf, send_length);
+                rt_memcpy(recv_buf, dma_buf,send_length);
+            }
+            rt_free_align(dma_buf);
+        }
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))

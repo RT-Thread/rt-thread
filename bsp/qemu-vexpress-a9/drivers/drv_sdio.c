@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "board.h"
 #include "drv_sdio.h"
 
 #ifdef RT_USING_SDIO
@@ -294,8 +295,8 @@ static rt_err_t sdhci_pl180_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
 
     if(clock)
     {
-        temp = read32(pdat->virt + PL180_CLOCK) | (0x1<<8);
-        temp = temp; // skip warning
+        temp = read32(pdat->virt + PL180_CLOCK) | (0x1 << 8);
+        (void)temp; // skip warning
         write32(pdat->virt + PL180_CLOCK, 0x100);
     }
     else
@@ -419,7 +420,12 @@ int pl180_init(void)
     }
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
 
+#ifdef RT_USING_SMART
+    virt = (rt_uint32_t)rt_ioremap((void*)MMC_BASE_ADDR, 0x1000);
+#else
     virt = MMC_BASE_ADDR;
+#endif
+
     id = (((read32((virt + 0xfec)) & 0xff) << 24) |
                 ((read32((virt + 0xfe8)) & 0xff) << 16) |
                 ((read32((virt + 0xfe4)) & 0xff) <<  8) |

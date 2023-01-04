@@ -49,7 +49,7 @@ Robomaster 开发板C型 是大疆创新科技有限公司推出的一款基于 
 | GPIO         |     支持     | PA0, PA1... PH1 ---> PIN: 0, 1...144 |
 | UART         |     支持     | UART1(FinSH),  UART3(DBUS),  UART6          |
 | CAN          |     支持    | CAN1, CAN2                           |
-| PWM          |   支持   | TIM1(CH1/2/3/4), TIM4(CH3), TIM8(CH1/2/3)  |
+| PWM          |   支持   | TIM1(CH1/2/3/4), TIM4(CH3), TIM5(CH1/2/3), TIM8(CH1/2/3) |
 | SPI          |   支持   | SPI2 |
 | IIC          |   支持   | 模拟IIC(SDA-->PF0, SCL-->PF1) |
 

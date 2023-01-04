@@ -170,7 +170,12 @@ static void qspi_set_read_cmd_format(sfud_flash *flash, uint8_t ins, uint8_t ins
         flash->read_cmd_format.instruction = ins;
         flash->read_cmd_format.address_size = 24;
     } else {
-        flash->read_cmd_format.instruction = ins + 1;
+        if(ins == SFUD_CMD_READ_DATA){
+            flash->read_cmd_format.instruction = ins + 0x10;
+        }
+        else{
+            flash->read_cmd_format.instruction = ins + 1;
+        }
         flash->read_cmd_format.address_size = 32;
     }
 

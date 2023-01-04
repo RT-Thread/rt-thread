@@ -36,7 +36,7 @@
 #endif
 
 #ifdef RT_USING_CRU
-RT_WEAK const struct clk_init clk_inits[] =
+rt_weak const struct clk_init clk_inits[] =
 {
     INIT_CLK("SCLK_SHRM", SCLK_SHRM, 10 * MHZ),
     INIT_CLK("PCLK_SHRM", PCLK_SHRM, 10 * MHZ),
@@ -63,7 +63,7 @@ RT_WEAK const struct clk_init clk_inits[] =
     { /* sentinel */ },
 };
 
-RT_WEAK const struct clk_unused clks_unused[] =
+rt_weak const struct clk_unused clks_unused[] =
 {
     {0, 0, 0x00030003},
     {0, 5, 0x00ee00ee},
@@ -78,7 +78,7 @@ RT_WEAK const struct clk_unused clks_unused[] =
 #endif
 
 #if defined(RT_USING_UART0)
-RT_WEAK const struct uart_board g_uart0_board =
+rt_weak const struct uart_board g_uart0_board =
 {
     .baud_rate = ROCKCHIP_UART_BAUD_RATE_DEFAULT,
     .dev_flag = ROCKCHIP_UART_SUPPORT_FLAG_DEFAULT,
@@ -88,7 +88,7 @@ RT_WEAK const struct uart_board g_uart0_board =
 #endif /* RT_USING_UART0 */
 
 #if defined(RT_USING_UART1)
-RT_WEAK const struct uart_board g_uart1_board =
+rt_weak const struct uart_board g_uart1_board =
 {
     .baud_rate = ROCKCHIP_UART_BAUD_RATE_DEFAULT,
     .dev_flag = ROCKCHIP_UART_SUPPORT_FLAG_DEFAULT,
@@ -98,7 +98,7 @@ RT_WEAK const struct uart_board g_uart1_board =
 #endif /* RT_USING_UART1 */
 
 #if defined(RT_USING_UART2)
-RT_WEAK const struct uart_board g_uart2_board =
+rt_weak const struct uart_board g_uart2_board =
 {
     .baud_rate = ROCKCHIP_UART_BAUD_RATE_DEFAULT,
     .dev_flag = ROCKCHIP_UART_SUPPORT_FLAG_DEFAULT,
@@ -108,7 +108,7 @@ RT_WEAK const struct uart_board g_uart2_board =
 #endif /* RT_USING_UART2 */
 
 extern void SysTick_Handler(void);
-RT_WEAK void tick_isr(int vector, void *param)
+rt_weak void tick_isr(int vector, void *param)
 {
     /* enter interrupt */
     rt_interrupt_enter();

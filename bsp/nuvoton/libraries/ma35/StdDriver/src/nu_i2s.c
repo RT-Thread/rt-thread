@@ -28,10 +28,8 @@ static uint32_t I2S_GetSourceClockFreq(I2S_T *i2s);
   * @param[in]  i2s The pointer of the specified I2S module.
   * @return Source clock frequency of I2S peripheral.
   * @details
-    *           0: _HXT
-    *           1: APLL
-    *           2: PCLK0
-    *           3: HIRC
+    *           0: APLL
+    *           1: SYSCLK1_DIV2
   */
 
 static uint32_t I2S_GetSourceClockFreq(I2S_T *i2s)

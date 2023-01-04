@@ -22,8 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-extern void _Error_Handler(char *s, int num);
-#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
+#include <drv_common.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

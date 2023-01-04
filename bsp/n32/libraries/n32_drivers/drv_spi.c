@@ -149,7 +149,6 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     /* SPI configuration */
     SPI_InitStructure.DataDirection = SPI_DIR_DOUBLELINE_FULLDUPLEX;
     SPI_InitStructure.SpiMode       = SPI_MODE_MASTER;
-    SPI_InitStructure.CLKPHA        = SPI_CLKPHA_SECOND_EDGE;
     SPI_InitStructure.NSS           = SPI_NSS_SOFT;
     SPI_InitStructure.CRCPoly       = 7;
 

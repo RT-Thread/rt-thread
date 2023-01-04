@@ -164,7 +164,7 @@ RTM_EXPORT(rt_tick_from_millisecond);
  *
  * @return   Return passed millisecond from boot.
  */
-RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
+rt_weak rt_tick_t rt_tick_get_millisecond(void)
 {
 #if 1000 % RT_TICK_PER_SECOND == 0u
     return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);

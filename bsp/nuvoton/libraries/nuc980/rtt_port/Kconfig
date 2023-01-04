@@ -12,6 +12,7 @@ config SOC_SERIES_NUC980
 
     config BSP_USING_MMU
         bool "Enable MMU"
+        select ARCH_ARM_MMU
         default y
 
     menuconfig BSP_USING_PDMA

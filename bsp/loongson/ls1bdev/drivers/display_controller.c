@@ -33,7 +33,7 @@ struct vga_struct vga_mode[] =
     {/*"1440x900_67.00"*/   120280, 1440,   1528,   1680,   1920,   900,    901,    904,    935,    },
 };
 
-ALIGN(16)
+rt_align(16)
 volatile rt_uint16_t _rt_framebuffer[FB_YSIZE][FB_XSIZE];
 static struct rt_device_graphic_info _dc_info;
 

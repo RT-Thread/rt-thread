@@ -70,7 +70,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     rt_uint16_t flags = 0;
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
     switch (fd->flags & O_ACCMODE)
@@ -104,7 +104,7 @@ static int serial_fops_close(struct dfs_fd *fd)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
 
     rt_device_set_rx_indicate(device, RT_NULL);
     rt_device_close(device);
@@ -118,7 +118,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     int flags = (int)(rt_base_t)args;
     int mask  = O_NONBLOCK | O_APPEND;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     switch (cmd)
     {
     case FIONREAD:
@@ -139,12 +139,13 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
+    int wait_ret;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
 
     do
     {
-        size = rt_device_read(device, -1, buf, count);
+        size = rt_device_read(device, -1,  buf, count);
         if (size <= 0)
         {
             if (fd->flags & O_NONBLOCK)
@@ -153,10 +154,18 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
                 break;
             }
 
-            rt_wqueue_wait(&(device->wait_queue), 0, RT_WAITING_FOREVER);
+            wait_ret = rt_wqueue_wait_interruptible(&(device->wait_queue), 0, RT_WAITING_FOREVER);
+            if (wait_ret != RT_EOK)
+            {
+                break;
+            }
         }
     }while (size <= 0);
 
+    if (size < 0)
+    {
+        size = 0;
+    }
     return size;
 }
 
@@ -164,7 +173,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     return rt_device_write(device, -1, buf, count);
 }
 
@@ -175,7 +184,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     rt_device_t device;
     struct rt_serial_device *serial;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
     serial = (struct rt_serial_device *)device;
@@ -590,6 +599,8 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
     serial->serial_rx = RT_NULL;
     serial->serial_tx = RT_NULL;
 
+    rt_memset(&serial->rx_notify, 0, sizeof(struct rt_device_notify));
+
     /* apply configuration */
     if (serial->ops->configure)
         result = serial->ops->configure(serial, &serial->config);
@@ -893,7 +904,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
     }
 }
 
-#ifdef RT_USING_POSIX_TERMIOS
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
 struct speed_baudrate_item
 {
     speed_t speed;
@@ -1026,10 +1037,22 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     serial->ops->configure(serial, (struct serial_configure *) args);
                 }
             }
+            break;
+        case RT_DEVICE_CTRL_NOTIFY_SET:
+            if (args)
+            {
+                rt_memcpy(&serial->rx_notify, args, sizeof(struct rt_device_notify));
+            }
+            break;
 
+        case RT_DEVICE_CTRL_CONSOLE_OFLAG:
+            if (args)
+            {
+                *(rt_uint16_t*)args = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM;
+            }
             break;
 #ifdef RT_USING_POSIX_STDIO
-#ifdef RT_USING_POSIX_TERMIOS
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
         case TCGETA:
             {
                 struct termios *tio = (struct termios*)args;
@@ -1112,7 +1135,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCFLSH:
             {
-                int queue = (int)args;
+                int queue = (int)(rt_ubase_t)args;
 
                 _tc_flush(serial, queue);
             }
@@ -1344,6 +1367,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 {
                     serial->parent.rx_indicate(&serial->parent, rx_length);
                 }
+            }
+            if (serial->rx_notify.notify)
+            {
+                serial->rx_notify.notify(serial->rx_notify.dev);
             }
             break;
         }

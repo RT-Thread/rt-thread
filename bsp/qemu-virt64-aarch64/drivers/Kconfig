@@ -1,0 +1,80 @@
+
+menu "AARCH64 qemu virt64 configs"
+    menuconfig BSP_SUPPORT_FPU
+        bool "Using Float"
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Using UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+            config RT_USING_UART0
+            bool "Enabel UART 0"
+            default y
+        endif
+
+    menuconfig BSP_USING_RTC
+            bool "Using RTC"
+            select RT_USING_RTC
+            default y
+
+        if BSP_USING_RTC
+            config BSP_USING_ALARM
+                bool "Enable Alarm"
+                select RT_USING_ALARM
+                default n
+        endif
+
+    config BSP_USING_PIN
+        bool "Using PIN"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_VIRTIO_BLK
+        bool "Using VirtIO BLK"
+        select RT_USING_VIRTIO
+        select RT_USING_VIRTIO_BLK
+        default y
+
+    config BSP_USING_VIRTIO_NET
+        bool "Using VirtIO NET"
+        select RT_USING_VIRTIO
+        select RT_USING_VIRTIO_NET
+        default y
+
+    config BSP_USING_VIRTIO_CONSOLE
+        bool "Using VirtIO Console"
+        select RT_USING_VIRTIO
+        select RT_USING_VIRTIO_CONSOLE
+        default y
+
+    config BSP_USING_VIRTIO_GPU
+        bool "Using VirtIO GPU"
+        select RT_USING_VIRTIO
+        select RT_USING_VIRTIO_GPU
+        default y
+
+    config BSP_USING_VIRTIO_INPUT
+        bool "Using VirtIO Input"
+        select RT_USING_VIRTIO
+        select RT_USING_VIRTIO_INPUT
+        default y
+
+    config BSP_USING_GIC
+    bool
+    default y
+
+    choice
+        prompt "GIC Version"
+        default BSP_USING_GICV2
+
+        config BSP_USING_GICV2
+            bool "GICv2"
+
+        config BSP_USING_GICV3
+            bool "GICv3"
+    endchoice
+
+endmenu

@@ -53,6 +53,10 @@ typedef struct nu_disp *nu_disp_t;
 static volatile uint32_t g_u32VSyncBlank = 0;
 static struct rt_completion vsync_wq;
 
+#if defined(DISP_USING_OVERLAY)
+static rt_mutex_t disp_lock;
+#endif
+
 static struct nu_disp nu_fbdev[eLayer_Cnt] =
 {
     {
@@ -69,9 +73,9 @@ static struct nu_disp nu_fbdev[eLayer_Cnt] =
 #endif
 };
 
-RT_WEAK void nu_lcd_backlight_on(void) { }
+rt_weak void nu_lcd_backlight_on(void) { }
 
-RT_WEAK void nu_lcd_backlight_off(void) { }
+rt_weak void nu_lcd_backlight_off(void) { }
 
 static void nu_disp_isr(int vector, void *param)
 {
@@ -87,6 +91,10 @@ static rt_err_t disp_layer_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_disp_t psDisp = (nu_disp_t)dev;
     RT_ASSERT(psDisp != RT_NULL);
+
+#if defined(DISP_USING_OVERLAY)
+    rt_mutex_take(disp_lock, RT_WAITING_FOREVER);
+#endif
 
     psDisp->ref_count++;
 
@@ -112,6 +120,10 @@ static rt_err_t disp_layer_open(rt_device_t dev, rt_uint16_t oflag)
     }
 #endif
 
+#if defined(DISP_USING_OVERLAY)
+    rt_mutex_release(disp_lock);
+#endif
+
     return RT_EOK;
 }
 
@@ -119,6 +131,10 @@ static rt_err_t disp_layer_close(rt_device_t dev)
 {
     nu_disp_t psDisp = (nu_disp_t)dev;
     RT_ASSERT(psDisp != RT_NULL);
+
+#if defined(DISP_USING_OVERLAY)
+    rt_mutex_take(disp_lock, RT_WAITING_FOREVER);
+#endif
 
     psDisp->ref_count--;
 
@@ -139,6 +155,10 @@ static rt_err_t disp_layer_close(rt_device_t dev)
         DISP_DISABLE_INT();
         DISP_Trigger(eLayer_Video, 0);
     }
+
+#if defined(DISP_USING_OVERLAY)
+    rt_mutex_release(disp_lock);
+#endif
 
     return RT_EOK;
 }
@@ -208,8 +228,6 @@ static rt_err_t disp_layer_control(rt_device_t dev, int cmd, void *args)
 
         /* Initial LCD */
         DISP_SetFBFmt(psDisp->layer, eFBFmt, psDisp->info.pitch);
-
-
     }
     break;
 
@@ -243,7 +261,7 @@ static rt_err_t disp_layer_control(rt_device_t dev, int cmd, void *args)
         if (psDisp->last_commit >= g_u32VSyncBlank)
         {
             rt_completion_init(&vsync_wq);
-            rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / 60);
+            rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / DISP_LCDTIMING_GetFPS(RT_NULL));
         }
     }
     break;
@@ -331,11 +349,19 @@ int rt_hw_disp_init(void)
         rt_kprintf("%s's fbdev video memory at 0x%08x.\n", psDisp->name, psDisp->info.framebuffer);
     }
 
+#if defined(DISP_USING_OVERLAY)
+    /* Initial display lock */
+    disp_lock = rt_mutex_create("displock", RT_IPC_FLAG_FIFO);
+    RT_ASSERT(disp_lock);
+#endif
+
     /* Register ISR */
     rt_hw_interrupt_install(DISP_IRQn, nu_disp_isr, RT_NULL, "DISP");
 
     /* Enable interrupt. */
     rt_hw_interrupt_umask(DISP_IRQn);
+
+    rt_kprintf("LCD panel timing is %d FPS.\n", DISP_LCDTIMING_GetFPS(&psDispLcdInstance->sLcdTiming));
 
     return (int)ret;
 }

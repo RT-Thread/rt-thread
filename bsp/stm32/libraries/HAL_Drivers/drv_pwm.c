@@ -13,6 +13,7 @@
 
 #ifdef BSP_USING_PWM
 #include "drv_config.h"
+#include "drv_tim.h"
 #include <drivers/rt_drv_pwm.h>
 
 //#define DRV_DEBUG
@@ -159,68 +160,26 @@ static struct stm32_pwm stm32_pwm_obj[] =
 #endif
 };
 
-/* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
-static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
-{
-    uint32_t flatency = 0;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-    RT_ASSERT(pclk1_doubler != RT_NULL);
-    RT_ASSERT(pclk1_doubler != RT_NULL);
-
-    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
-
-    *pclk1_doubler = 1;
-    *pclk2_doubler = 1;
-
-#if defined(SOC_SERIES_STM32MP1)
-    if (RCC_ClkInitStruct.APB1_Div != RCC_APB1_DIV1)
-    {
-        *pclk1_doubler = 2;
-    }
-    if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
-    {
-        *pclk2_doubler = 2;
-    }
-#else
-    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
-    {
-        *pclk1_doubler = 2;
-    }
-#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0))
-    if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
-    {
-        *pclk2_doubler = 2;
-    }
-#endif
-#endif
-}
-
 static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
 {
     rt_uint32_t pclk1_doubler, pclk2_doubler;
     rt_uint64_t tim_clock;
 
-    pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+    stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#endif
+/* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
+    tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    if ((rt_uint32_t)htim->Instance >= APB2PERIPH_BASE)
     {
-#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) /* don't have HAL_RCC_GetPCLK2Freq */
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
     }
     else
     {
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
     }
+#endif
 
     return tim_clock;
 }
@@ -312,9 +271,10 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     {
         pulse = MIN_PULSE;
     }
-    else if (pulse > period)
+    /*To determine user input, output high level is required*/
+    else if (pulse >= period)
     {
-        pulse = period;
+        pulse = period + 1;
     }
     __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
 
@@ -442,13 +402,16 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
         goto __exit;
     }
 
-    master_config.MasterOutputTrigger = TIM_TRGO_RESET;
-    master_config.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    if (HAL_TIMEx_MasterConfigSynchronization(tim, &master_config) != HAL_OK)
+    if(IS_TIM_MASTER_INSTANCE(tim->Instance))
     {
-        LOG_E("%s master config failed", device->name);
-        result = -RT_ERROR;
-        goto __exit;
+        master_config.MasterOutputTrigger = TIM_TRGO_RESET;
+        master_config.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+        if (HAL_TIMEx_MasterConfigSynchronization(tim, &master_config) != HAL_OK)
+        {
+            LOG_E("%s master config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
 
     oc_config.OCMode = TIM_OCMODE_PWM1;

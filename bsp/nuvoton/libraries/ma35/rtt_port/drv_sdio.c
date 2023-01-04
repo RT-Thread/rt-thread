@@ -481,7 +481,7 @@ static void nu_sdh_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
                 }
             }
 
-            rt_hw_cpu_dcache_clean_inv((void *)data.dest, size);
+            rt_hw_cpu_dcache_clean_and_invalidate((void *)data.dest, size);
             req->cmd->err = nu_sdh_send_command(sdh->base, &cmd, &data);
             rt_hw_cpu_dcache_invalidate((void *)data.dest, size);
 
@@ -766,7 +766,7 @@ void nu_sdh_host_initial(nu_sdh_t sdh)
     nu_sdh_irq_update(host, 1);
 
     /* ready to change */
-    mmcsd_change(host);
+    //mmcsd_change(host);
 }
 
 void nu_sd_attach(void)

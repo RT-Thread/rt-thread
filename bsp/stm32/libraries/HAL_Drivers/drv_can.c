@@ -42,14 +42,14 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
 {
     {CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 3)},
-    {CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ  | CAN_BS2_5TQ | 4)},
-    {CAN500kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 6)},
-    {CAN250kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 12)},
-    {CAN125kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 24)},
-    {CAN100kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 30)},
-    {CAN50kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 60)},
-    {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 150)},
-    {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 300)}
+    {CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ  | CAN_BS2_4TQ | 4)},
+    {CAN500kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 6)},
+    {CAN250kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 12)},
+    {CAN125kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 24)},
+    {CAN100kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 30)},
+    {CAN50kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 60)},
+    {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 150)},
+    {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 300)}
 };
 #else  /* APB1 45MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
@@ -333,7 +333,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-                if (filter_cfg->items[i].hdr == -1)
+                if (filter_cfg->items[i].hdr_bank == -1)
                 {
                     /* use default filter bank settings */
                     if (rt_strcmp(drv_can->name, "can1") == 0)
@@ -350,7 +350,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 else
                 {
                     /* use user-defined filter bank settings */
-                    drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
+                    drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr_bank;
                 }
                  /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
@@ -401,6 +401,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->FilterConfig.FilterMaskIdLow = mask_l;
 
                 drv_can->FilterConfig.FilterMode = filter_cfg->items[i].mode;
+                drv_can->FilterConfig.FilterFIFOAssignment = filter_cfg->items[i].rxfifo;/*rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
                 /* Filter conf */
                 HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
             }
@@ -610,17 +611,20 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     {
         pmsg->rtr = RT_CAN_RTR;
     }
+    /*get rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
+    pmsg->rxfifo = fifo;
+
     /* get len */
     pmsg->len = rxheader.DLC;
-    /* get hdr */
+    /* get hdr_index */
     if (hcan->Instance == CAN1)
     {
-        pmsg->hdr = (rxheader.FilterMatchIndex + 1) >> 1;
+        pmsg->hdr_index = rxheader.FilterMatchIndex;
     }
 #ifdef CAN2
     else if (hcan->Instance == CAN2)
     {
-       pmsg->hdr = (rxheader.FilterMatchIndex >> 1) + 14;
+       pmsg->hdr_index = rxheader.FilterMatchIndex;
     }
 #endif
 

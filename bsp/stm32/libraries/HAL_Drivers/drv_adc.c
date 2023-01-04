@@ -11,6 +11,7 @@
  * 2020-06-17     thread-liu   Porting for stm32mp1xx
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  * 2022-05-22     Stanley Lwin Add stm32_adc_get_vref
+ * 2022-12-26     wdfk-prog    Change the order of configuration channels and calibration functions
  */
 
 #include <board.h>
@@ -44,6 +45,7 @@ struct stm32_adc
 };
 
 static struct stm32_adc stm32_adc_obj[sizeof(adc_config) / sizeof(adc_config[0])];
+static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel);
 
 static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
@@ -53,19 +55,111 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
     if (enabled)
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
-        ADC_Enable(stm32_adc_handler);
-#else
-        __HAL_ADC_ENABLE(stm32_adc_handler);
+        ADC_ChannelConfTypeDef ADC_ChanConf;
+        rt_memset(&ADC_ChanConf, 0, sizeof(ADC_ChanConf));
+#ifndef ADC_CHANNEL_16
+        if (channel == 16)
+        {
+            LOG_E("ADC channel must not be 16.");
+            return -RT_ERROR;
+        }
 #endif
+
+/* ADC channel number is up to 17 */
+#if !defined(ADC_CHANNEL_18)
+        if (channel <= 17 || \
+           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
+/* ADC channel number is up to 19 */
+#elif defined(ADC_CHANNEL_19)
+        if (channel <= 19 || \
+           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
+/* ADC channel number is up to 18 */
+#else
+        if (channel <= 18 || \
+           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
+            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
+#endif
+        {
+            /* set stm32 ADC channel */
+            ADC_ChanConf.Channel =  stm32_adc_get_channel(channel);
+        }
+        else
+        {
+#if !defined(ADC_CHANNEL_18)
+            LOG_E("ADC channel must be between 0 and 17.");
+#elif defined(ADC_CHANNEL_19)
+            LOG_E("ADC channel must be between 0 and 19.");
+#else
+            LOG_E("ADC channel must be between 0 and 18.");
+#endif
+            return -RT_ERROR;
+        }
+
+#if defined(SOC_SERIES_STM32MP1) || defined (SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
+        ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;
+#else
+        ADC_ChanConf.Rank = 1;
+#endif
+
+#if defined(SOC_SERIES_STM32F0)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_71CYCLES_5;
+#elif defined(SOC_SERIES_STM32F1)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_112CYCLES;
+#elif defined(SOC_SERIES_STM32L4)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
+#elif defined(SOC_SERIES_STM32MP1)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_810CYCLES_5;
+#elif defined(SOC_SERIES_STM32H7)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_810CYCLES_5;
+    #elif defined (SOC_SERIES_STM32WB)
+        ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+#endif
+
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
+        ADC_ChanConf.Offset = 0;
+#endif
+
+#if defined(SOC_SERIES_STM32L4)
+        ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;
+        ADC_ChanConf.SingleDiff = LL_ADC_SINGLE_ENDED;
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
+        ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;  /* ADC channel affected to offset number */
+        ADC_ChanConf.Offset       = 0;
+        ADC_ChanConf.SingleDiff   = ADC_SINGLE_ENDED; /* ADC channel differential mode */
+#endif
+    if(HAL_ADC_ConfigChannel(stm32_adc_handler, &ADC_ChanConf) != HAL_OK)
+    {
+        LOG_E("Failed to configure ADC channel %d", channel);
+    }
+
+    /* perform an automatic ADC calibration to improve the conversion accuracy */
+#if defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
+        if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_ChanConf.SingleDiff) != HAL_OK)
+        {
+            LOG_E("ADC calibration error!\n");
+            return -RT_ERROR;
+        }
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
+        /* Run the ADC linear calibration in single-ended mode */
+        if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_CALIB_OFFSET_LINEARITY, ADC_ChanConf.SingleDiff) != HAL_OK)
+        {
+            LOG_E("ADC open linear calibration error!\n");
+            /* Calibration Error */
+            return -RT_ERROR;
+        }
+#endif
+        HAL_ADC_Start(stm32_adc_handler);
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
-        ADC_Disable(stm32_adc_handler);
-#else
-        __HAL_ADC_DISABLE(stm32_adc_handler);
-#endif
+        HAL_ADC_Stop(stm32_adc_handler);
     }
 
     return RT_EOK;
@@ -82,14 +176,22 @@ static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
 
     switch(stm32_adc_handler->Init.Resolution)
     {
+#ifdef SOC_SERIES_STM32H7
+        case ADC_RESOLUTION_16B:
+            return 16;
+        case ADC_RESOLUTION_14B:
+            return 14;
+#endif /* SOC_SERIES_STM32H7 */
         case ADC_RESOLUTION_12B:
             return 12;
         case ADC_RESOLUTION_10B:
             return 10;
         case ADC_RESOLUTION_8B:
             return 8;
+#ifndef SOC_SERIES_STM32H7
         case ADC_RESOLUTION_6B:
             return 6;
+#endif /* SOC_SERIES_STM32H7 */
         default:
             return 0;
     }
@@ -168,6 +270,20 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
         stm32_channel = ADC_CHANNEL_19;
         break;
 #endif
+    default:
+        switch (channel)
+        {
+          case ADC_CHANNEL_VREFINT - ADC_CHANNEL_0:
+            stm32_channel = ADC_CHANNEL_VREFINT;
+            break;
+          case ADC_CHANNEL_VBAT - ADC_CHANNEL_0:
+            stm32_channel = ADC_CHANNEL_VBAT;
+            break;
+          case ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0:
+            stm32_channel = ADC_CHANNEL_TEMPSENSOR;
+            break;
+        }
+        break;
     }
 
     return stm32_channel;
@@ -175,110 +291,35 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
 
 static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 {
-    RT_ASSERT(device);
-    return 3300;
+    if(device == RT_NULL)
+      return RT_ERROR;
+
+    rt_uint16_t vref_mv;
+#ifdef __LL_ADC_CALC_VREFANALOG_VOLTAGE
+    rt_err_t ret = RT_EOK;
+    rt_uint32_t vref_value;
+
+    ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
+
+    ret = rt_adc_enable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    vref_value = rt_adc_read(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    ret = rt_adc_disable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+
+    vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
+#else
+    vref_mv = 3300;
+#endif /* __LL_ADC_CALC_VREFANALOG_VOLTAGE */
+    return vref_mv;
 }
 
 static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
-    ADC_ChannelConfTypeDef ADC_ChanConf;
     ADC_HandleTypeDef *stm32_adc_handler;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(value != RT_NULL);
 
     stm32_adc_handler = device->parent.user_data;
-
-    rt_memset(&ADC_ChanConf, 0, sizeof(ADC_ChanConf));
-
-#ifndef ADC_CHANNEL_16
-    if (channel == 16)
-    {
-        LOG_E("ADC channel must not be 16.");
-        return -RT_ERROR;
-    }
-#endif
-
-/* ADC channel number is up to 17 */
-#if !defined(ADC_CHANNEL_18)
-    if (channel <= 17)
-/* ADC channel number is up to 19 */
-#elif defined(ADC_CHANNEL_19)
-    if (channel <= 19)
-/* ADC channel number is up to 18 */
-#else
-    if (channel <= 18)
-#endif
-    {
-        /* set stm32 ADC channel */
-        ADC_ChanConf.Channel =  stm32_adc_get_channel(channel);
-    }
-    else
-    {
-#if !defined(ADC_CHANNEL_18)
-        LOG_E("ADC channel must be between 0 and 17.");
-#elif defined(ADC_CHANNEL_19)
-        LOG_E("ADC channel must be between 0 and 19.");
-#else
-        LOG_E("ADC channel must be between 0 and 18.");
-#endif
-        return -RT_ERROR;
-    }
-
-#if defined(SOC_SERIES_STM32MP1) || defined (SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
-    ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;
-#else
-    ADC_ChanConf.Rank = 1;
-#endif
-
-#if defined(SOC_SERIES_STM32F0)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_71CYCLES_5;
-#elif defined(SOC_SERIES_STM32F1)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_112CYCLES;
-#elif defined(SOC_SERIES_STM32L4)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
-#elif defined(SOC_SERIES_STM32MP1)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_810CYCLES_5;
-#elif defined(SOC_SERIES_STM32H7)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_64CYCLES_5;
-    #elif defined (SOC_SERIES_STM32WB)
-    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
-#endif
-
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
-    ADC_ChanConf.Offset = 0;
-#endif
-
-#if defined(SOC_SERIES_STM32L4)
-    ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;
-    ADC_ChanConf.SingleDiff = LL_ADC_SINGLE_ENDED;
-#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
-    ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;  /* ADC channel affected to offset number */
-    ADC_ChanConf.Offset       = 0;
-    ADC_ChanConf.SingleDiff   = ADC_SINGLE_ENDED; /* ADC channel differential mode */
-#endif
-    HAL_ADC_ConfigChannel(stm32_adc_handler, &ADC_ChanConf);
-
-    /* perform an automatic ADC calibration to improve the conversion accuracy */
-#if defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
-    if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_ChanConf.SingleDiff) != HAL_OK)
-    {
-        LOG_E("ADC calibration error!\n");
-        return -RT_ERROR;
-    }
-#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
-    /* Run the ADC linear calibration in single-ended mode */
-    if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_CALIB_OFFSET_LINEARITY, ADC_ChanConf.SingleDiff) != HAL_OK)
-    {
-        LOG_E("ADC open linear calibration error!\n");
-        /* Calibration Error */
-        return -RT_ERROR;
-    }
-#endif
-    /* start ADC */
-    HAL_ADC_Start(stm32_adc_handler);
 
     /* Wait for the ADC to convert */
     HAL_ADC_PollForConversion(stm32_adc_handler, 100);

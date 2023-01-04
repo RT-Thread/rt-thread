@@ -32,7 +32,7 @@
 
 static int rt_led_app_init(void);
 
-RT_WEAK int main(void)
+rt_weak int main(void)
 {
 #ifdef RT_USING_SDIO
     int timeout = 0;

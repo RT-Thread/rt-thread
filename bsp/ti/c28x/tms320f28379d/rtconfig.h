@@ -73,6 +73,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 #define RT_USING_ADC
@@ -124,8 +125,21 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
 
 /* multimedia packages */
+
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -133,14 +147,35 @@
 
 /* system packages */
 
+/* enhanced kernel services */
+
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
 
 /* peripheral libraries and drivers */
 
 
+/* Kendryte SDK */
+
+
+/* AI packages */
+
+
 /* miscellaneous packages */
 
+/* project laboratory */
 
 /* samples: kernel and components samples */
+
+
+/* entertainment: terminal games and other interesting software packages */
 
 
 /* Hardware Drivers Config */
@@ -152,11 +187,25 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_ADC
-#define BSP_USING_ADC1
-#define BSP_ADC_USING_12BIT
-#define BSP_USING_ADC2
-#define BSP_USING_ADC3
+#define BSP_USING_PWM
+#define BSP_USING_PWM1
+
+/* Basic settings for PWM1 */
+
+#define BSP_PWM1_INIT_PERIOD 10000
+#define BSP_PWM1_INIT_PULSE 1000
+
+/* Advanced Settings for PWM1 */
+
+#define BSP_PWM1_HSPCLKDIV1
+#define BSP_PWM1_HSPCLKDIV 0
+#define BSP_PWM1_CLKDIV1
+#define BSP_PWM1_CLKDIV 0
+#define BSP_PWM1_CTR_MODE_UPDOWN
+#define BSP_PWM1_CTRMODE 2
+#define BSP_PWM1_CC_CTR_ZERO
+#define BSP_PWM1_LOADAMODE 0
+#define BSP_PWM1_DB 100
 
 /* Board extended module Drivers */
 

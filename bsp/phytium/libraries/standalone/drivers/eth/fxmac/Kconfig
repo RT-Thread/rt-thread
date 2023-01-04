@@ -1,0 +1,13 @@
+choice FXMAC_PHY_TYPE
+    prompt "PHY Type"
+    default FXMAC_PHY_COMMON
+    help
+        Select PHY for FGMAC
+
+    config FXMAC_PHY_COMMON
+        bool "Common"
+    config FXMAC_PHY_YT
+        bool "YT"
+
+endchoice # FXMAC_PHY_TYPE
+
