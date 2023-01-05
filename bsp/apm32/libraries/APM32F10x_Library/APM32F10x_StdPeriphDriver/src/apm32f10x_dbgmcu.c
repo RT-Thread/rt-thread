@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the DEBUG firmware functions
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,15 +25,16 @@
 
 #include "apm32f10x_dbgmcu.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
 /** @addtogroup DBGMCU_Driver DBGMCU Driver
+  * @brief DBGMCU driver modules
   @{
 */
 
-/** @addtogroup DBGMCU_Fuctions Fuctions
+/** @defgroup DBGMCU_Functions Functions
   @{
 */
 
@@ -141,6 +142,6 @@ void DBGMCU_Disable(uint32_t periph)
     DBGMCU->CFG &= ~periph;
 }
 
-/**@} end of group DBGMCU_Fuctions*/
-/**@} end of group DBGMCU_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group DBGMCU_Functions*/
+/**@} end of group DBGMCU_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver */

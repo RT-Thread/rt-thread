@@ -4,9 +4,9 @@
  * @brief       This file provides all the miscellaneous firmware functions.
  *             Include NVIC,SystemTick and Power management.
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -16,7 +16,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,10 @@
  *  and limitations under the License.
  */
 
+/* Includes */
 #include "apm32f10x_misc.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -34,7 +35,7 @@
   @{
 */
 
-/** @addtogroup MISC_Macros Macros
+/** @defgroup MISC_Macros Macros
   @{
 */
 
@@ -43,7 +44,7 @@
 /**@} end of group MISC_Macros*/
 
 
-/** @addtogroup MISC_Fuctions Fuctions
+/** @defgroup MISC_Functions Functions
   @{
 */
 
@@ -82,42 +83,42 @@ void NVIC_EnableIRQRequest(IRQn_Type irq, uint8_t preemptionPriority, uint8_t su
     uint32_t tempPriority, tempPrePri, tempSubPri;
     uint32_t priorityGrp;
 
-    /** Get priority group */
+    /* Get priority group */
     priorityGrp = (SCB->AIRCR) & (uint32_t)0x700U;
 
-    /** get pre-emption priority and subpriority */
+    /* get pre-emption priority and subpriority */
     switch (priorityGrp)
     {
-    case NVIC_PRIORITY_GROUP_0:
-        tempPrePri = 0;
-        tempSubPri = 4;
-        break;
+        case NVIC_PRIORITY_GROUP_0:
+            tempPrePri = 0;
+            tempSubPri = 4;
+            break;
 
-    case NVIC_PRIORITY_GROUP_1:
-        tempPrePri = 1;
-        tempSubPri = 3;
-        break;
+        case NVIC_PRIORITY_GROUP_1:
+            tempPrePri = 1;
+            tempSubPri = 3;
+            break;
 
-    case NVIC_PRIORITY_GROUP_2:
-        tempPrePri = 2;
-        tempSubPri = 2;
-        break;
+        case NVIC_PRIORITY_GROUP_2:
+            tempPrePri = 2;
+            tempSubPri = 2;
+            break;
 
-    case NVIC_PRIORITY_GROUP_3:
-        tempPrePri = 3;
-        tempSubPri = 1;
-        break;
+        case NVIC_PRIORITY_GROUP_3:
+            tempPrePri = 3;
+            tempSubPri = 1;
+            break;
 
-    case NVIC_PRIORITY_GROUP_4:
-        tempPrePri = 4;
-        tempSubPri = 0;
-        break;
+        case NVIC_PRIORITY_GROUP_4:
+            tempPrePri = 4;
+            tempSubPri = 0;
+            break;
 
-    default:
-        NVIC_ConfigPriorityGroup(NVIC_PRIORITY_GROUP_0);
-        tempPrePri = 0;
-        tempSubPri = 4;
-        break;
+        default:
+            NVIC_ConfigPriorityGroup(NVIC_PRIORITY_GROUP_0);
+            tempPrePri = 0;
+            tempSubPri = 4;
+            break;
     }
 
     tempPrePri = 4 - tempPrePri;
@@ -127,7 +128,7 @@ void NVIC_EnableIRQRequest(IRQn_Type irq, uint8_t preemptionPriority, uint8_t su
     tempPriority <<= 4;
     NVIC->IP[irq] = (uint8_t)tempPriority;
 
-    /** enable the selected IRQ */
+    /* enable the selected IRQ */
     NVIC->ISER[irq >> 0x05U] = (uint32_t)0x01U << (irq & (uint8_t)0x1FU);
 }
 
@@ -140,7 +141,7 @@ void NVIC_EnableIRQRequest(IRQn_Type irq, uint8_t preemptionPriority, uint8_t su
  */
 void NVIC_DisableIRQRequest(IRQn_Type irq)
 {
-    /** disable the selected IRQ.*/
+    /* disable the selected IRQ.*/
     NVIC->ICER[irq >> 0x05U] = (uint32_t)0x01U << (irq & (uint8_t)0x1FU);
 }
 
@@ -215,6 +216,6 @@ void SysTick_ConfigCLKSource(SYSTICK_CLK_SOURCE_T clkSource)
     }
 }
 
-/**@} end of group MISC_Fuctions*/
-/**@} end of group MISC_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group MISC_Functions*/
+/**@} end of group MISC_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver*/

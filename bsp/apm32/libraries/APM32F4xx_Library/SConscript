@@ -9,6 +9,7 @@ cwd = GetCurrentDir()
 src = Split("""
 Device/Geehy/APM32F4xx/Source/system_apm32f4xx.c
 APM32F4xx_StdPeriphDriver/src/apm32f4xx_gpio.c
+APM32F4xx_StdPeriphDriver/src/apm32f4xx_syscfg.c
 APM32F4xx_StdPeriphDriver/src/apm32f4xx_misc.c
 APM32F4xx_StdPeriphDriver/src/apm32f4xx_rcm.c
 APM32F4xx_StdPeriphDriver/src/apm32f4xx_usart.c
@@ -35,9 +36,13 @@ if GetDepend(['RT_USING_WDT']):
     src += ['APM32F4xx_StdPeriphDriver/src/apm32f4xx_wwdt.c']
     src += ['APM32F4xx_StdPeriphDriver/src/apm32f4xx_iwdt.c']
     
+if GetDepend(['BSP_USING_ETH']):
+    src += ['APM32F4xx_ETH_Driver/src/apm32f4xx_eth.c']
+    
 path = [cwd + '/Device/Geehy/APM32F4xx/Include', 
     cwd + '/APM32F4xx_StdPeriphDriver/inc',
-    cwd + '/CMSIS/Include']
+    cwd + '/CMSIS/Include',
+    cwd + '/APM32F4xx_ETH_Driver/inc']
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

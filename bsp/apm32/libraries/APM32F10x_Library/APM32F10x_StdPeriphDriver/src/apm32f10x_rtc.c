@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the RTC firmware functions
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,24 +15,26 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
  *  and limitations under the License.
  */
+
 #include "apm32f10x_rtc.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
 /** @addtogroup RTC_Driver RTC Driver
+  * @brief RTC driver modules
   @{
 */
 
-/** @addtogroup RTC_Fuctions Fuctions
+/** @defgroup RTC_Functions Functions
   @{
 */
 
@@ -76,7 +78,7 @@ uint32_t RTC_ReadCounter(void)
 }
 
 /*!
- * @brief     Config the RTC counter value.
+ * @brief     Configures the RTC counter value.
  *
  * @param     value: RTC counter new value.
  *
@@ -91,7 +93,7 @@ void RTC_ConfigCounter(uint32_t value)
 }
 
 /*!
- * @brief     Config the RTC prescaler value.
+ * @brief     Configures the RTC prescaler value.
  *
  * @param     value: RTC prescaler new value.
  *
@@ -106,7 +108,7 @@ void RTC_ConfigPrescaler(uint32_t value)
 }
 
 /*!
- * @brief     Config the RTC alarm value.
+ * @brief     Configures the RTC alarm value.
  *
  * @param     value: RTC alarm new value.
  *
@@ -121,7 +123,7 @@ void RTC_ConfigAlarm(uint32_t value)
 }
 
 /*!
- * @brief     Reads the RTC divider value.
+ * @brief     Read the RTC divider value.
  *
  * @param     None
  *
@@ -150,7 +152,7 @@ void RTC_WaitForLastTask(void)
 }
 
 /*!
- * @brief     Waits until the RTC registers
+ * @brief     Waits until the RTC registers Synchronized.
  *
  * @param     None
  *
@@ -258,6 +260,6 @@ void RTC_ClearIntFlag(uint16_t flag)
     RTC->CSTS &= (uint32_t)~flag;
 }
 
-/**@} end of group RTC_Fuctions*/
-/**@} end of group RTC_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group RTC_Functions */
+/**@} end of group RTC_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver */

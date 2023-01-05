@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions prototypes for the I2C firmware library
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,16 +23,18 @@
  *  and limitations under the License.
  */
 
+/* Define to prevent recursive inclusion */
 #ifndef __APM32F10X_I2C_H
 #define __APM32F10X_I2C_H
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
-
+/* Includes */
 #include "apm32f10x.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -40,7 +42,7 @@
   @{
 */
 
-/** @addtogroup I2C_Enumerations Enumerations
+/** @defgroup I2C_Enumerations Enumerations
   @{
 */
 
@@ -150,58 +152,56 @@ typedef enum
  */
 typedef enum
 {
-    /** I2C Master Events */
-    /** Event 5: Communication start event */
-    I2C_EVENT_MASTER_MODE_SELECT                       = 0x00030001,  //!< BUSBSYFLG, MSFLG and STARTFLG flag
+    /* I2C Master Events */
+    /* Event 5: Communication start event */
+    I2C_EVENT_MASTER_MODE_SELECT                       = 0x00030001,  /*!< BUSBSYFLG, MSFLG and STARTFLG flag */
 
-    /**
-     * Event 6: 7-bit Address Acknowledge
-     *          in case of master receiver
-     */
-    I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED         = 0x00070082,  //!< BUSBSYFLG, MSFLG, ADDRFLG, TXBEFLG and TRFLG flags */
-    I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED            = 0x00030002,  //!< BUSBSYFLG, MSFLG and ADDRFLG flags */
-    /**
-     * Event 9: Master has sent the first byte
-     *          in 10-bit address mode
-     */
-    I2C_EVENT_MASTER_MODE_ADDRESS10                    = 0x00030008,  //!< BUSBSYFLG, MSFLG and ADDR10FLG flags */
+    /* Event 6: 7-bit Address Acknowledge
+       in case of master receiver
+    */
+    I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED         = 0x00070082,  /*!< BUSBSYFLG, MSFLG, ADDRFLG, TXBEFLG and TRFLG flags */
+    I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED            = 0x00030002,  /*!< BUSBSYFLG, MSFLG and ADDRFLG flags */
+    /* Event 9: Master has sent the first byte
+       in 10-bit address mode
+    */
+    I2C_EVENT_MASTER_MODE_ADDRESS10                    = 0x00030008,  /*!< BUSBSYFLG, MSFLG and ADDR10FLG flags */
 
-    /** Master RECEIVER mode */
-    /** Event 7 */
-    I2C_EVENT_MASTER_BYTE_RECEIVED                     = 0x00030040,  //!< BUSBSYFLG, MSFLG and RXBNEFLG flags */
+    /* Master RECEIVER mode */
+    /* Event 7 */
+    I2C_EVENT_MASTER_BYTE_RECEIVED                     = 0x00030040,  /*!< BUSBSYFLG, MSFLG and RXBNEFLG flags */
 
-    /** Master TRANSMITTER mode */
-    /** Event 8 */
-    I2C_EVENT_MASTER_BYTE_TRANSMITTING                 = 0x00070080,  //!< TRFLG, BUSBSYFLG, MSFLG, TXBEFLG flags */
-    /** Event 8_2 */
-    I2C_EVENT_MASTER_BYTE_TRANSMITTED                  = 0x00070084,  //!< TRFLG, BUSBSYFLG, MSFLG, TXBEFLG and BTCFLG flags */
+    /* Master TRANSMITTER mode */
+    /* Event 8 */
+    I2C_EVENT_MASTER_BYTE_TRANSMITTING                 = 0x00070080,  /*!< TRFLG, BUSBSYFLG, MSFLG, TXBEFLG flags */
+    /* Event 8_2 */
+    I2C_EVENT_MASTER_BYTE_TRANSMITTED                  = 0x00070084,  /*!< TRFLG, BUSBSYFLG, MSFLG, TXBEFLG and BTCFLG flags */
 
 
-    /** EV1 (all the events below are variants of EV1) */
-    /** 1, Case of One Single Address managed by the slave */
-    I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED           = 0x00020002, //!< BUSBSYFLG and ADDRFLG flags */
-    I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED        = 0x00060082, //!< TRFLG, BUSBSYFLG, TXBEFLG and ADDRFLG flags */
+    /* EV1 (all the events below are variants of EV1) */
+    /* 1, Case of One Single Address managed by the slave */
+    I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED           = 0x00020002, /*!< BUSBSYFLG and ADDRFLG flags */
+    I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED        = 0x00060082, /*!< TRFLG, BUSBSYFLG, TXBEFLG and ADDRFLG flags */
 
-    /** 2, Case of Dual address managed by the slave */
-    I2C_EVENT_SLAVE_RECEIVER_SECONDADDRESS_MATCHED     = 0x00820000, //!< DUALF and BUSBSYFLG flags */
-    I2C_EVENT_SLAVE_TRANSMITTER_SECONDADDRESS_MATCHED  = 0x00860080, //!< DUALF, TRFLG, BUSBSYFLG and TXBEFLG flags */
+    /* 2, Case of Dual address managed by the slave */
+    I2C_EVENT_SLAVE_RECEIVER_SECONDADDRESS_MATCHED     = 0x00820000, /*!< DUALF and BUSBSYFLG flags */
+    I2C_EVENT_SLAVE_TRANSMITTER_SECONDADDRESS_MATCHED  = 0x00860080, /*!< DUALF, TRFLG, BUSBSYFLG and TXBEFLG flags */
 
-    /** 3, Case of General Call enabled for the slave */
-    I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED         = 0x00120000, //!< GENCALL and BUSBSYFLG flags */
+    /* 3, Case of General Call enabled for the slave */
+    I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED         = 0x00120000, /*!< GENCALL and BUSBSYFLG flags */
 
 
-    /** Slave RECEIVER mode */
-    /** EV2 */
-    I2C_EVENT_SLAVE_BYTE_RECEIVED                      = 0x00020040, //!< BUSBSYFLG and RXBNEFLG flags */
-    /** EV4  */
-    I2C_EVENT_SLAVE_STOP_DETECTED                      = 0x00000010, //!< STOPFLG flag */
+    /* Slave RECEIVER mode */
+    /* EV2 */
+    I2C_EVENT_SLAVE_BYTE_RECEIVED                      = 0x00020040, /*!< BUSBSYFLG and RXBNEFLG flags */
+    /* EV4  */
+    I2C_EVENT_SLAVE_STOP_DETECTED                      = 0x00000010, /*!< STOPFLG flag */
 
-    /** Slave TRANSMITTER mode */
-    /** EV3 */
-    I2C_EVENT_SLAVE_BYTE_TRANSMITTED                   = 0x00060084, //!< TRFLG, BUSBSYFLG, TXBEFLG and BTCFLG flags */
-    I2C_EVENT_SLAVE_BYTE_TRANSMITTING                  = 0x00060080, //!< TRFLG, BUSBSYFLG and TXBEFLG flags */
-    /** EV3_2 */
-    I2C_EVENT_SLAVE_ACK_FAILURE                        = 0x00000400, //!< AEFLG flag */
+    /* Slave TRANSMITTER mode */
+    /* EV3 */
+    I2C_EVENT_SLAVE_BYTE_TRANSMITTED                   = 0x00060084, /*!< TRFLG, BUSBSYFLG, TXBEFLG and BTCFLG flags */
+    I2C_EVENT_SLAVE_BYTE_TRANSMITTING                  = 0x00060080, /*!< TRFLG, BUSBSYFLG and TXBEFLG flags */
+    /* EV3_2 */
+    I2C_EVENT_SLAVE_ACK_FAILURE                        = 0x00000400, /*!< AEFLG flag */
 } I2C_EVENT_T;
 
 /**
@@ -209,7 +209,7 @@ typedef enum
  */
 typedef enum
 {
-    /** STS2 register flags */
+    /* STS2 register flags */
     I2C_FLAG_DUALADDR,
     I2C_FLAG_SMMHADDR,
     I2C_FLAG_SMBDADDR,
@@ -218,7 +218,7 @@ typedef enum
     I2C_FLAG_BUSBSY,
     I2C_FLAG_MS,
 
-    /** STS1 register flags */
+    /* STS1 register flags */
     I2C_FLAG_SMBALT,
     I2C_FLAG_TTE,
     I2C_FLAG_PECE,
@@ -258,7 +258,7 @@ typedef enum
 
 /**@} end of group I2C_Enumerations*/
 
-/** @addtogroup I2C_Structure Data Structure
+/** @defgroup I2C_Structures Structures
   @{
 */
 
@@ -275,14 +275,14 @@ typedef struct
     I2C_ACK_ADDRESS_T   ackAddress;
 } I2C_Config_T;
 
-/**@} end of group I2C_Structure*/
+/**@} end of group I2C_Structures*/
 
 
-/** @addtogroup I2C_Fuctions Fuctions
+/** @defgroup I2C_Functions Functions
   @{
 */
 
-/** I2C reset and configuration */
+/* I2C reset and configuration */
 void I2C_Reset(I2C_T* i2c);
 void I2C_Config(I2C_T* i2c, I2C_Config_T* i2cConfig);
 void I2C_ConfigStructInit(I2C_Config_T* i2cConfig);
@@ -300,7 +300,7 @@ void I2C_DisableDualAddress(I2C_T* i2c);
 void I2C_EnableGeneralCall(I2C_T* i2c);
 void I2C_DisableGeneralCall(I2C_T* i2c);
 
-/** Transmit Configuration */
+/* Transmit Configuration */
 void I2C_TxData(I2C_T* i2c, uint8_t data);
 uint8_t I2C_RxData(I2C_T* i2c);
 void I2C_Tx7BitAddress(I2C_T* i2c, uint8_t address, I2C_DIRECTION_T direction);
@@ -321,13 +321,13 @@ void I2C_EnableStretchClock(I2C_T* i2c);
 void I2C_DisableStretchClock(I2C_T* i2c);
 void I2C_ConfigFastModeDutyCycle(I2C_T* i2c, I2C_DUTYCYCLE_T dutyCycle);
 
-/** DMA */
+/* DMA */
 void I2C_EnableDMA(I2C_T* i2c);
 void I2C_DisableDMA(I2C_T* i2c);
 void I2C_EnableDMALastTransfer(I2C_T* i2c);
 void I2C_DisableDMALastTransfer(I2C_T* i2c);
 
-/** Interrupts and flags */
+/* Interrupts and flags */
 void I2C_EnableInterrupt(I2C_T* i2c, uint16_t interrupt);
 void I2C_DisableInterrupt(I2C_T* i2c, uint16_t interrupt);
 uint8_t  I2C_ReadEventStatus(I2C_T* i2c, I2C_EVENT_T i2cEvent);
@@ -337,9 +337,9 @@ void I2C_ClearStatusFlag(I2C_T* i2c, I2C_FLAG_T flag);
 uint8_t I2C_ReadIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag);
 void I2C_ClearIntFlag(I2C_T* i2c, uint32_t flag);
 
-/**@} end of group I2C_Fuctions*/
+/**@} end of group I2C_Functions*/
 /**@} end of group I2C_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group APM32F10x_StdPeriphDriver*/
 
 #ifdef __cplusplus
 }
