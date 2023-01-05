@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,12 +7,18 @@
  * Date           Author       Notes
  * 2018-10-03     Bernard      The first version
  * 2020/11/20     BalanceTWK   Add FPU support
+ * 2023/01/04     WangShun     Adapt to CH32
  */
 
 #ifndef CPUPORT_H__
 #define CPUPORT_H__
 
 #include <rtconfig.h>
+#if !defined(__ASSEMBLY__)
+#if defined(SOC_RISCV_FAMILY_CH32)
+#include "interrupt.h"
+#endif
+#endif
 
 #ifndef __ASSEMBLY__
 #ifdef RT_USING_SMP
