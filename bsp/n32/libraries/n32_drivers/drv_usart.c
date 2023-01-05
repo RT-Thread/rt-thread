@@ -21,7 +21,7 @@
 
 /* n32 uart driver */
 // Todo: compress uart info
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
 struct n32_uart
 {
     USART_Module* uart_periph;      //Todo: 3bits
@@ -173,7 +173,7 @@ void UART7_IRQHandler(void)
 #endif /* BSP_USING_UART7 */
 
 static const struct n32_uart uarts[] = {
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
 #ifdef BSP_USING_USART1
     {
         USART1,                                                               // uart peripheral index
@@ -335,7 +335,7 @@ void n32_uart_gpio_init(struct n32_uart *uart, struct serial_configure *cfg)
 {
     GPIO_InitType GPIO_InitStructure;
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     /* enable USART clock */
     RCC_EnableAPB2PeriphClk(uart->tx_gpio_clk | uart->rx_gpio_clk | RCC_APB2_PERIPH_AFIO, ENABLE);
 

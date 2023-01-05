@@ -53,6 +53,7 @@ jobs:
          - {RTT_BSP: "n32/n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}

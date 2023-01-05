@@ -112,7 +112,7 @@ static void bxcan2_hw_init(void)
 
 
 /* baud calculation example: Tclk / ((ss + bs1 + bs2) * brp), 36 / ((1 + 8 + 3) * 3) = 1MHz*/
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452) /* APB1 36MHz(max) */
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR) /* APB1 36MHz(max) */
 static const struct n32_baud_rate_tab can_baud_rate_tab[] =
 {
     N32_CAN_BAUD_DEF(CAN1MBaud,   CAN_RSJW_1tq, CAN_TBS1_5tq, CAN_TBS2_3tq, 4),
@@ -172,7 +172,7 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
 
 static rt_err_t setfilter(struct n32_can *drv_can)
 {
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     if (drv_can->CANx == CAN1)
     {
         CAN1_InitFilter(&(drv_can->FilterConfig));
@@ -270,7 +270,7 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     drv_can = (struct n32_can *)can->parent.user_data;
     pbxcan  = drv_can->CANx;
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     if (pbxcan == CAN1)
     {
 #ifdef BSP_USING_CAN1
@@ -334,7 +334,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             argval = (rt_uint32_t) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
             if (CAN1 == drv_can->CANx)
             {
                 NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
@@ -384,7 +384,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
         {
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
             if (CAN1 == drv_can->CANx)
             {
                 NVIC_DisableIRQ(CAN1_SCE_IRQn);
@@ -420,7 +420,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             CAN_INTConfig(drv_can->CANx, CAN_INT_FF1, ENABLE);  /* DATFIFO 1 full Interrupt */
             CAN_INTConfig(drv_can->CANx, CAN_INT_FOV1, ENABLE); /* DATFIFO 1 overrun Interrupt */
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
             if (CAN1 == drv_can->CANx)
             {
                 CAN_NVIC_Config(USB_LP_CAN1_RX0_IRQn, 1, 0, ENABLE);
@@ -445,7 +445,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         {
             CAN_INTConfig(drv_can->CANx, CAN_INT_TME, ENABLE); /* Transmit mailbox empty Interrupt */
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
             if (CAN1 == drv_can->CANx)
             {
                 CAN_NVIC_Config(USB_HP_CAN1_TX_IRQn, 1, 0, ENABLE);
@@ -471,7 +471,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             CAN_INTConfig(drv_can->CANx, CAN_INT_LEC, ENABLE); /* Last error code Interrupt */
             CAN_INTConfig(drv_can->CANx, CAN_INT_ERR, ENABLE); /* Error Interrupt */
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
             if (CAN1 == drv_can->CANx)
             {
                 CAN_NVIC_Config(CAN1_SCE_IRQn, 1, 0, ENABLE);
