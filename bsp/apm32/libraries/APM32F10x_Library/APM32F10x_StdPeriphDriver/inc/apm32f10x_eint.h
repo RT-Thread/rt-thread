@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions prototypes for the EINT firmware library
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,16 +23,18 @@
  *  and limitations under the License.
  */
 
+/* Define to prevent recursive inclusion */
 #ifndef __APM32F10X_EINT_H
 #define __APM32F10X_EINT_H
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
-
+/* Includes */
 #include "apm32f10x.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -40,7 +42,7 @@
   @{
 */
 
-/** @addtogroup EINT_Enumerations Enumerations
+/** @defgroup EINT_Enumerations Enumerations
   @{
 */
 
@@ -65,32 +67,32 @@ typedef enum
 
 typedef enum
 {
-    EINT_LINENONE = 0x00000,  //!<No interrupt selected >
-    EINT_LINE_0   = 0x00001,  //!< External interrupt line 0
-    EINT_LINE_1   = 0x00002,  //!< External interrupt line 1
-    EINT_LINE_2   = 0x00004,  //!< External interrupt line 2
-    EINT_LINE_3   = 0x00008,  //!< External interrupt line 3
-    EINT_LINE_4   = 0x00010,  //!< External interrupt line 4
-    EINT_LINE_5   = 0x00020,  //!< External interrupt line 5
-    EINT_LINE_6   = 0x00040,  //!< External interrupt line 6
-    EINT_LINE_7   = 0x00080,  //!< External interrupt line 7
-    EINT_LINE_8   = 0x00100,  //!< External interrupt line 8
-    EINT_LINE_9   = 0x00200,  //!< External interrupt line 9
-    EINT_LINE_10  = 0x00400,  //!< External interrupt line 10
-    EINT_LINE_11  = 0x00800,  //!< External interrupt line 11
-    EINT_LINE_12  = 0x01000,  //!< External interrupt line 12
-    EINT_LINE_13  = 0x02000,  //!< External interrupt line 13
-    EINT_LINE_14  = 0x04000,  //!< External interrupt line 14
-    EINT_LINE_15  = 0x08000,  //!< External interrupt line 15
-    EINT_LINE_16  = 0x10000,  //!< External interrupt line 16 Connected to the PVD Output
-    EINT_LINE_17  = 0x20000,  //!< External interrupt line 17 Connected to the RTC Alarm event
-    EINT_LINE_18  = 0x40000,  //!< External interrupt line 18 Connected to the USB Device
+    EINT_LINENONE = 0x00000,  /*!<No interrupt selected > */
+    EINT_LINE_0   = 0x00001,  /*!< External interrupt line 0 */
+    EINT_LINE_1   = 0x00002,  /*!< External interrupt line 1 */
+    EINT_LINE_2   = 0x00004,  /*!< External interrupt line 2 */
+    EINT_LINE_3   = 0x00008,  /*!< External interrupt line 3 */
+    EINT_LINE_4   = 0x00010,  /*!< External interrupt line 4 */
+    EINT_LINE_5   = 0x00020,  /*!< External interrupt line 5 */
+    EINT_LINE_6   = 0x00040,  /*!< External interrupt line 6 */
+    EINT_LINE_7   = 0x00080,  /*!< External interrupt line 7 */
+    EINT_LINE_8   = 0x00100,  /*!< External interrupt line 8 */
+    EINT_LINE_9   = 0x00200,  /*!< External interrupt line 9 */
+    EINT_LINE_10  = 0x00400,  /*!< External interrupt line 10 */
+    EINT_LINE_11  = 0x00800,  /*!< External interrupt line 11 */
+    EINT_LINE_12  = 0x01000,  /*!< External interrupt line 12 */
+    EINT_LINE_13  = 0x02000,  /*!< External interrupt line 13 */
+    EINT_LINE_14  = 0x04000,  /*!< External interrupt line 14 */
+    EINT_LINE_15  = 0x08000,  /*!< External interrupt line 15 */
+    EINT_LINE_16  = 0x10000,  /*!< External interrupt line 16 Connected to the PVD Output */
+    EINT_LINE_17  = 0x20000,  /*!< External interrupt line 17 Connected to the RTC Alarm event */
+    EINT_LINE_18  = 0x40000,  /*!< External interrupt line 18 Connected to the USB Device */
 } EINT_LINE_T;
 
 /**@} end of group EINT_Enumerations*/
 
 
-/** @addtogroup EINT_Structure Data Structure
+/** @defgroup EINT_Structures Structures
   @{
 */
 
@@ -105,31 +107,31 @@ typedef struct
     uint8_t         lineCmd;
 } EINT_Config_T;
 
-/**@} end of group EINT_Structure*/
+/**@} end of group EINT_Structures*/
 
 
-/** @addtogroup EINT_Fuctions Fuctions
+/** @defgroup EINT_Functions Functions
   @{
 */
 
-/** Reset and configuration */
+/* Reset and configuration */
 void EINT_Reset(void);
-void EINT_Config( EINT_Config_T* eintConfig);
+void EINT_Config(EINT_Config_T* eintConfig);
 void EINT_ConfigStructInit(EINT_Config_T* eintConfig);
 
-/** Interrupt and flag */
+/* Interrupt and flag */
 void EINT_SelectSWInterrupt(uint32_t line);
 uint8_t EINT_ReadStatusFlag(EINT_LINE_T line);
 void EINT_ClearStatusFlag(uint32_t line);
 uint8_t EINT_ReadIntFlag(EINT_LINE_T line);
 void EINT_ClearIntFlag(uint32_t line);
 
-/**@} end of group EINT_Fuctions*/
-/**@} end of group EINT_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group EINT_Functions*/
+/**@} end of group EINT_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver*/
 
-#ifdef __cplusplus
+#ifdef __APM32F10X_cplusplus
 }
 #endif
 
-#endif /* __APM32F10XEINT_H */
+#endif /* __EINT_H */

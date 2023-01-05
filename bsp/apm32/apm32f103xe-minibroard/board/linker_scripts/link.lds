@@ -57,6 +57,7 @@ SECTIONS
 
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
+        _start_address_init_data = .;
     } > CODE
     __exidx_end = .;
 
@@ -67,6 +68,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _sdata = . ;
+        _start_address_data = .;
 
         *(.data)
         *(.data.*)
@@ -75,6 +77,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
+        _end_address_data = .;
     } >DATA
 
     .stack : 
@@ -85,6 +88,7 @@ SECTIONS
     } >DATA
 
     __bss_start = .;
+    _start_address_bss = .;
     .bss :
     {
         . = ALIGN(4);
@@ -102,6 +106,7 @@ SECTIONS
         *(.bss.init)
     } > DATA
     __bss_end = .;
+    _end_address_bss = .;
 
     _end = .;
 

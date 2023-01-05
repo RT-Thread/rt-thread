@@ -27,7 +27,8 @@ if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
     
 if GetDepend(['RT_USING_I2C']):
-    src += ['drv_soft_i2c.c']
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
 
 if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
@@ -38,8 +39,11 @@ if GetDepend(['RT_USING_HWTIMER']):
 if GetDepend(['RT_USING_PWM']):
     src += ['drv_pwm.c']
 
-if GetDepend(['RT_USING_WDT']):
+if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
+    src += ['drv_eth.c']
 
 src += ['drv_common.c']
 

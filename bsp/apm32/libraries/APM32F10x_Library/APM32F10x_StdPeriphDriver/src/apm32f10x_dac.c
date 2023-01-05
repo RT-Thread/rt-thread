@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the DAC firmware functions
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,15 +26,16 @@
 #include "apm32f10x_dac.h"
 #include "apm32f10x_rcm.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
 /** @addtogroup DAC_Driver DAC Driver
+  * @brief DAC driver modules
   @{
 */
 
-/** @addtogroup DAC_Fuctions Fuctions
+/** @defgroup DAC_Functions Functions
   @{
 */
 
@@ -63,7 +64,7 @@ void DAC_Reset(void)
  *
  * @retval       None
  */
-void DAC_Config(uint32_t channel, DAC_Config_T *dacConfig)
+void DAC_Config(uint32_t channel, DAC_Config_T* dacConfig)
 {
     uint32_t tmp1 = 0, tmp2 = 0;
 
@@ -88,15 +89,15 @@ void DAC_Config(uint32_t channel, DAC_Config_T *dacConfig)
  *
  * @retval       None
  */
-void DAC_ConfigStructInit(DAC_Config_T *dacConfig)
+void DAC_ConfigStructInit(DAC_Config_T* dacConfig)
 {
-    /** Initialize the DAC_Trigger member */
+    /* Initialize the DAC_Trigger member */
     dacConfig->trigger = DAC_TRIGGER_NONE;
-    /** Initialize the DAC_WaveGeneration member */
+    /* Initialize the DAC_WaveGeneration member */
     dacConfig->waveGeneration = DAC_WAVE_GENERATION_NONE;
-    /** Initialize the DAC_LFSRUnmask_TriangleAmplitude member */
+    /* Initialize the DAC_LFSRUnmask_TriangleAmplitude member */
     dacConfig->maskAmplitudeSelect = DAC_LFSR_MASK_BIT11_1;
-    /** Initialize the DAC_OutputBuffer member */
+    /* Initialize the DAC_OutputBuffer member */
     dacConfig->outputBuffer = DAC_OUTPUT_BUFFER_ENBALE;
 }
 
@@ -321,8 +322,8 @@ void DAC_ConfigChannel1Data(DAC_ALIGN_T align, uint16_t data)
     tmp = (uint32_t)DAC_BASE;
     tmp += 0x00000008 + align;
 
-    /** Set the DAC channel1 selected data holding register */
-    *(__IO uint32_t *) tmp = data;
+    /* Set the DAC channel1 selected data holding register */
+    *(__IO uint32_t*) tmp = data;
 }
 
 /*!
@@ -345,8 +346,8 @@ void DAC_ConfigChannel2Data(DAC_ALIGN_T align, uint16_t data)
     tmp = (uint32_t)DAC_BASE;
     tmp += 0x00000014 + align;
 
-    /** Set the DAC channel1 selected data holding register */
-    *(__IO uint32_t *) tmp = data;
+    /* Set the DAC channel1 selected data holding register */
+    *(__IO uint32_t*) tmp = data;
 }
 
 /*!
@@ -368,7 +369,7 @@ void DAC_ConfigDualChannelData(DAC_ALIGN_T align, uint16_t data2, uint16_t data1
 {
     uint32_t data = 0, tmp = 0;
 
-    /** Calculate and set dual DAC data holding register value */
+    /* Calculate and set dual DAC data holding register value */
     if (align == DAC_ALIGN_8BIT_R)
     {
         data = ((uint32_t)data2 << 8) | data1;
@@ -381,8 +382,8 @@ void DAC_ConfigDualChannelData(DAC_ALIGN_T align, uint16_t data2, uint16_t data1
     tmp = (uint32_t)DAC_BASE;
     tmp += 0x00000020 + align;
 
-    /** Set the dual DAC selected data holding register */
-    *(__IO uint32_t *)tmp = data;
+    /* Set the dual DAC selected data holding register */
+    *(__IO uint32_t*)tmp = data;
 }
 
 /*!
@@ -402,10 +403,10 @@ uint16_t DAC_ReadDataOutputValue(DAC_CHANNEL_T channel)
     tmp = (uint32_t) DAC_BASE ;
     tmp += 0x0000002C + ((uint32_t)channel >> 2);
 
-    /** Returns the DAC channel data output register value */
-    return (uint16_t)(*(__IO uint32_t *) tmp);
+    /* Returns the DAC channel data output register value */
+    return (uint16_t)(*(__IO uint32_t*) tmp);
 }
 
-/**@} end of group DAC_Fuctions*/
+/**@} end of group DAC_Functions*/
 /**@} end of group DAC_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group APM32F10x_StdPeriphDriver */
