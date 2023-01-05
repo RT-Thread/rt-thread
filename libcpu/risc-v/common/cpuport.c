@@ -126,11 +126,11 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     frame->epc     = (rt_ubase_t)tentry;
 
     /* force to machine mode(MPP=11) and set MPIE to 1 */
-    #ifdef ARCH_RISCV_FPU
+#ifdef ARCH_RISCV_FPU
     frame->mstatus = 0x00007880;
-    #else
+#else
     frame->mstatus = 0x00001880;
-    #endif
+#endif
 
     return stk;
 }

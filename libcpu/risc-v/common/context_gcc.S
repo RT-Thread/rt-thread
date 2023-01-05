@@ -213,11 +213,11 @@ rt_hw_context_switch_exit:
     csrw mepc, a0
 
     LOAD x1,   1 * REGBYTES(sp)
-    #ifdef ARCH_RISCV_FPU
+#ifdef ARCH_RISCV_FPU
     li    t0, 0x00007800
-    #else
+#else
     li    t0, 0x00001800
-    #endif
+#endif
     csrw  mstatus, t0
     LOAD a0,   2 * REGBYTES(sp)
     csrs mstatus, a0

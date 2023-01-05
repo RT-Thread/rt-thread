@@ -24,11 +24,11 @@
 void sw_setpend(void)
 {
     /*CH32V103 does not support systick software interrupt*/
-    #if defined (SOC_RISCV_SERIES_CH32V1)
+#if defined(SOC_RISCV_SERIES_CH32V1)
     NVIC_SetPendingIRQ(Software_IRQn);
-    #else
-    SysTick->CTLR |= (1<<31);
-    #endif
+#else
+    SysTick->CTLR |= (1 << 31);
+#endif
 }
 
 /*
@@ -37,11 +37,11 @@ void sw_setpend(void)
 void sw_clearpend(void)
 {
     /*CH32V103 does not support systick software interrupt*/
-    #if defined (SOC_RISCV_SERIES_CH32V1)
+#if defined(SOC_RISCV_SERIES_CH32V1)
     NVIC_ClearPendingIRQ(Software_IRQn);
-    #else
-    SysTick->CTLR &= ~(1<<31);
-    #endif
+#else
+    SysTick->CTLR &= ~(1 << 31);
+#endif
 }
 
 /*
@@ -50,11 +50,11 @@ void sw_clearpend(void)
 rt_weak rt_base_t rt_hw_interrupt_disable(void)
 {
     rt_base_t value=0;
-    #if defined (SOC_RISCV_SERIES_CH32V3)
+#if defined(SOC_RISCV_SERIES_CH32V3)
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x7800));
-    #else
+#else
     asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x1800));
-    #endif
+#endif
     return value;
 }
 
