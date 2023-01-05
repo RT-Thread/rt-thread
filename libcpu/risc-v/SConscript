@@ -18,8 +18,6 @@ elif rtconfig.CPU == "virt64" :
     group = group
 elif rtconfig.CPU == "c906" :
     group = group
-elif rtconfig.CPU == "hpmicro":
-    group = group
 else :
     group = group + SConscript(os.path.join('common', 'SConscript'))
 
