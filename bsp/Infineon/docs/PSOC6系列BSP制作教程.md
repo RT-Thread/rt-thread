@@ -127,9 +127,9 @@ BSP 的制作过程分为如下四个步骤：
 
 ####  3.4.2 修改构建脚本
 
-**SConscript** 脚本决定 MDK/IAR 工程的生成以及编译过程中要添加文件。
+**SConscript** 脚本决定 MDK/IAR/RT-Thread Studio 工程的生成以及编译过程中要添加文件。
 
-在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：
+在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：其中 CPPDEFINES  的参数要根据芯片的 low level（hal) 库中定义的芯片型号去填写。
 
 ![](./figures/SConscript.png)
 
@@ -153,11 +153,37 @@ rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选�
 
 ![](./figures/template_3.png)
 
+---
+
+以 RT-Thread Studio 为例，介绍如何导入，修改模板配置：
+
+首先打开 RT-Thread Studio ，在 IDE 的左上角点击 `文件—>导入—>RT-Thread Bsp 到工作空间中`
+
+![](./figures/studio1.png)
+
+![](./figures/studio2.png)
+
+导入成功后，文件资源管理器窗口中会显示如下结构，其中 RT-Thread Settings 为图形化工程配置文件，双击打开即可。
+
+![](./figures/studio3.png)
+
+RT-Thread Settings 中硬件相关配置是在 board/Kconfig 中描述的。移植过程如需添加/修改配置，请修改此文件。
+
+![](./figures/studio4.png)
+
 ### 3.5 重新生成工程
 
-重新生成工程需要使用 Env 工具。
+* MDK5 ：重新生成工程需要使用 Env 工具。
+
+* RT-Thread Studio：使用 Env 工具/同步 scons 配置至项目
+
+同步 scons 配置至项目：
+
+![](./figures/studio5.png)
 
 #### 3.5.1 重新生成 rtconfig.h 文件
+
+**MDK5：**
 
 在 Env 界面输入命令 menuconfig 对工程进行配置，并生成新的 rtconfig.h 文件。如下图所示：
 
@@ -165,9 +191,15 @@ rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选�
 
 ![](./figures/menuconfig_2.png)
 
+---
+
+**RT-Thread Studio：**
+
+使用上述方法/点击同步 scons 配置至项目
+
 #### 3.5.2 重新生成 MDK 工程
 
-下面以重新生成 MDK 工程为例，介绍如何重新生成 BSP 工程。
+以重新生成 MDK 工程为例，介绍如何重新生成 BSP 工程。
 
 使用 env 工具输入命令 `scons --target=mdk5` 重新生成工程，如下图所示：
 
@@ -176,6 +208,10 @@ rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选�
 到这一步为止，新的 BSP 就可以使用了。
 
 接下来我们可以分别使用命令 `scons --target=mdk4` 和 `scons --target=iar`，来更新 MDK4 和 IAR 的工程，使得该 BSP 变成一个完整的，可以提交到 GitHub 的 BSP （MDK4工程的制作为可选）。
+
+---
+
+**RT-Thread Studio：**使用上述方法/点击同步 scons 配置至项目
 
 感谢每一位贡献代码的开发者，RT-Thread 将与你一同成长。
 
