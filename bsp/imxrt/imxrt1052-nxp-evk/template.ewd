@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>32</version>
+                <version>30</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -36,7 +36,7 @@
                 </option>
                 <option>
                     <name>MacFile</name>
-                    <state>$PROJ_DIR$/evkmimxrt1060_sdram_init.mac</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>MemOverride</name>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\NXP\MIMXRT1062xxx6A.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\NXP\MIMXRT1052xxx6A.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -76,11 +76,11 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.32.1.18618</state>
+                    <state>8.20.1.14181</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -88,11 +88,11 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>9.30.1.50052</state>
+                    <state>8.32.1.18618</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CLowLevel</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$/config/flashloader/NXP/FlashIMXRT1060_EVK_FlexSPI.board</state>
+                    <state>$TOOLKIT_DIR$\config\flashloader\NXP\FlashIMXRT1050_EVK_FlexSPI.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -140,7 +140,7 @@
                 </option>
                 <option>
                     <name>OverrideDefFlashBoard</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCImagesOffset1</name>
@@ -183,6 +183,14 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>OCMulticoreMaster</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OCMulticorePort</name>
+                    <state>53461</state>
+                </option>
+                <option>
                     <name>OCMulticoreWorkspace</name>
                     <state></state>
                 </option>
@@ -208,18 +216,6 @@
                 </option>
                 <option>
                     <name>OCMulticoreNrOfCoresSlave</name>
-                    <state>1</state>
-                </option>
-                <option>
-                    <name>OCMulticoreAMPConfigType</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>OCMulticoreSessionFile</name>
-                    <state></state>
-                </option>
-                <option>
-                    <name>OCTpiuBaseOption</name>
                     <state>1</state>
                 </option>
             </data>
@@ -296,7 +292,7 @@
                 <option>
                     <name>CMSISDAPResetList</name>
                     <version>1</version>
-                    <state>4</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CMSISDAPHWResetDuration</name>
@@ -498,7 +494,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>8</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -722,58 +718,6 @@
                     <name>CCIjetUsbSerialNoSelect</name>
                     <state>0</state>
                 </option>
-                <option>
-                    <name>CatchV8ARReset</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREREL1NS</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREREL1S</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREREL2NS</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREREL3S</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREEL1NS</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8ARREL1NS</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREEL1S</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8ARREL1S</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREEL2NS</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8ARREL2NS</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8AREEL3S</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CatchV8ARREL3S</name>
-                    <state>0</state>
-                </option>
             </data>
         </settings>
         <settings>
@@ -980,7 +924,7 @@
             <name>LMIFTDI_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>3</version>
+                <version>2</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -1005,19 +949,6 @@
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceCmdLine</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CCLmiftdiUsbSerialNo</name>
-                    <state></state>
-                </option>
-                <option>
-                    <name>CCLmiftdiUsbSerialNoSelect</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CCLmiftdiResetList</name>
-                    <version>0</version>
                     <state>0</state>
                 </option>
             </data>
@@ -1072,7 +1003,7 @@
             <name>STLINK_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>7</version>
+                <version>6</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -1187,8 +1118,8 @@
                 </option>
                 <option>
                     <name>CCSTLinkProbeList</name>
-                    <version>1</version>
-                    <state>2</state>
+                    <version>0</version>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -1292,7 +1223,7 @@
             <name>XDS100_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>8</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -1444,7 +1375,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>3</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -1464,10 +1395,6 @@
                 </option>
                 <option>
                     <name>OCXDSDigitalStatesConfigFile</name>
-                    <state>1</state>
-                </option>
-                <option>
-                    <name>OCSelectedCoreName</name>
                     <state>1</state>
                 </option>
             </data>
@@ -1490,6 +1417,10 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
+                <file>$TOOLKIT_DIR$\plugins\rtos\HWRTOSplugin\HWRTOSplugin.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\Mbed\MbedArmPlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -1506,15 +1437,19 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9BE.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8BE.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\ThreadX\ThreadXArmPlugin.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$TOOLKIT_DIR$\plugins\rtos\TI-RTOS\tirtosplugin.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
@@ -1528,6 +1463,10 @@
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-III\uCOS-III-KA-CSpy.ewplugin</file>
                 <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
+                <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
