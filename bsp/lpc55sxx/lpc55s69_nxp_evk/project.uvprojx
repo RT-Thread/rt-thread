@@ -10,7 +10,7 @@
       <TargetName>rtthread-lpc55s6x</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -186,6 +186,7 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -339,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;board;..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;..\..\..\components\libc\posix\io\poll;..\Libraries\drivers\config;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\libc\posix\io\stdio;applications;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\components\codec;.;..\..\..\components\libc\compilers\common\extension;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\..\..\components\drivers\include;..\..\..\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;board;..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;..\..\..\components\libc\posix\io\poll;..\Libraries\drivers\config;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\libc\posix\io\stdio;applications;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\components\codec;.;..\..\..\components\libc\compilers\common\extension;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\..\..\components\drivers\include;..\..\..\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -474,6 +475,16 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
@@ -539,6 +550,11 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_i2c.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_key.c</FilePath>
@@ -547,6 +563,11 @@
               <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_mma8562.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_mma8562.c</FilePath>
             </File>
             <File>
               <FileName>drv_pin.c</FileName>
