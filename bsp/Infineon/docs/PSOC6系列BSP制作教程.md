@@ -211,7 +211,7 @@ RT-Thread Settings 中硬件相关配置是在 board/Kconfig 中描述的。移�
 
 ---
 
-**RT-Thread Studio：**使用上述方法/点击同步 scons 配置至项目
+**RT-Thread Studio：** 使用上述方法/点击同步 scons 配置至项目
 
 感谢每一位贡献代码的开发者，RT-Thread 将与你一同成长。
 
