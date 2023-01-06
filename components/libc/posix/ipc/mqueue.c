@@ -127,6 +127,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
         mode = (mode_t)va_arg(arg, unsigned int);
         mode = mode;
         attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
+        attr = attr;
         va_end(arg);
 
         if (oflag & O_EXCL)
