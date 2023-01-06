@@ -1177,6 +1177,12 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_dev.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
@@ -1216,10 +1222,16 @@
       <name>$PROJ_DIR$\board\board.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\Libraries\drivers\drv_i2c.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\Libraries\drivers\drv_key.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\drivers\drv_led.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\drivers\drv_mma8562.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\drivers\drv_pin.c</name>

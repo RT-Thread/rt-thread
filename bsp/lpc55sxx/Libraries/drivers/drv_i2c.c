@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,8 @@
 #include "fsl_i2c.h"
 
 #ifdef RT_USING_I2C
+
+#define i2c_dbg         rt_kprintf
 
 struct lpc_i2c_bus
 {
@@ -112,7 +114,7 @@ int rt_hw_i2c_init(void)
     rt_memset((void *)&lpc_i2c1, 0, sizeof(struct lpc_i2c_bus));
     lpc_i2c1.parent.ops = &i2c_ops;
     lpc_i2c1.I2C = I2C1;
-    lpc_i2c1.device_name = "LPC Flexcomm1 as I2C";
+    lpc_i2c1.device_name = "i2c1";
     rt_i2c_bus_device_register(&lpc_i2c1.parent, "i2c1");
 #endif /* BSP_USING_I2C1 */
 
@@ -132,8 +134,8 @@ int rt_hw_i2c_init(void)
     rt_memset((void *)&lpc_i2c4, 0, sizeof(struct lpc_i2c_bus));
     lpc_i2c4.parent.ops = &i2c_ops;
     lpc_i2c4.I2C = I2C4;
-    lpc_i2c4.device_name = "LPC Flexcomm4 as I2C";
-    rt_i2c_bus_device_register(&lpc_i2c4.parent, BSP_USING_MMA8562I2C);
+    lpc_i2c4.device_name = "i2c4";
+    rt_i2c_bus_device_register(&lpc_i2c4.parent, "i2c4");
 
 #endif /* BSP_USING_I2C4 */
 
