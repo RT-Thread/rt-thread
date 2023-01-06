@@ -254,8 +254,8 @@ ssize_t mq_timedreceive(mqd_t                  mqdes,
 
         return -1;
     }
-
-    tick = rt_timespec_to_tick(abs_timeout);
+    if (abs_timeout != RT_NULL)
+        tick = rt_timespec_to_tick(abs_timeout);
 
     result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, tick);
     if (result == RT_EOK)
