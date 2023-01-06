@@ -57,13 +57,13 @@ define symbol m_boot_hdr_dcd_data_start      = 0x60001030;
 if (isdefinedsymbol(__stack_size__)) {
   define symbol __size_cstack__        = __stack_size__;
 } else {
-  define symbol __size_cstack__        = 0x1000;
+  define symbol __size_cstack__        = 0x2000;
 }
 
 if (isdefinedsymbol(__heap_size__)) {
   define symbol __size_heap__          = __heap_size__;
 } else {
-  define symbol __size_heap__          = 0x1000;
+  define symbol __size_heap__          = 0x2000;
 }
 
 define exported symbol __NCACHE_REGION_START   = m_data2_start;
