@@ -595,8 +595,6 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 #ifdef RT_USING_SPI_SOFT_CS
     spi_cfg.cs_pin = cs_pin;
     result = rt_spi_configure(spi_device, &spi_cfg);
-    rt_pin_mode(spi_cfg.cs_pin, PIN_MODE_OUTPUT);
-    rt_pin_write(spi_cfg.cs_pin, PIN_HIGH);
 #endif
     
     if (result != RT_EOK)
