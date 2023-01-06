@@ -93,6 +93,7 @@ RTM_EXPORT(mq_setattr);
 
 int mq_getattr(mqd_t mqdes, struct mq_attr *mqstat)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     if ((mqdes == RT_NULL) || mqstat == RT_NULL)
     {
         rt_set_errno(EBADF);
@@ -173,7 +174,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     }
     rt_sem_release(&posix_mq_lock);
 
-    return mqdes;
+    return (mqd_t)((uintptr_t)mqdes >> 1);
 
 __return:
     /* release lock */
@@ -195,6 +196,7 @@ RTM_EXPORT(mq_open);
 
 ssize_t mq_receive(mqd_t mqdes, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     rt_err_t result;
 
     if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
@@ -215,6 +217,7 @@ RTM_EXPORT(mq_receive);
 
 int mq_send(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     rt_err_t result;
 
     if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
@@ -240,7 +243,8 @@ ssize_t mq_timedreceive(mqd_t                  mqdes,
                         unsigned              *msg_prio,
                         const struct timespec *abs_timeout)
 {
-    int tick;
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
+    int tick = 0;
     rt_err_t result;
 
     /* parameters check */
@@ -279,6 +283,7 @@ RTM_EXPORT(mq_timedsend);
 
 int mq_notify(mqd_t mqdes, const struct sigevent *notification)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     rt_set_errno(-RT_ERROR);
 
     return -1;
@@ -287,6 +292,7 @@ RTM_EXPORT(mq_notify);
 
 int mq_close(mqd_t mqdes)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     if (mqdes == RT_NULL)
     {
         rt_set_errno(EINVAL);
