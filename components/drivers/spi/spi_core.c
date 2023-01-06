@@ -80,6 +80,9 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     device->config.data_width = cfg->data_width;
     device->config.mode       = cfg->mode & RT_SPI_MODE_MASK ;
     device->config.max_hz     = cfg->max_hz ;
+#ifdef RT_USING_SPI_SOFT_CS
+    device->config.cs_pin     = cfg->cs_pin ;
+#endif
 
     if (device->bus != RT_NULL)
     {
