@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -68,11 +68,11 @@
 #include "lwp_ipc_internal.h"
 #include <sched.h>
 #ifndef GRND_NONBLOCK
-#define GRND_NONBLOCK	0x0001
+#define GRND_NONBLOCK   0x0001
 #endif /* GRND_NONBLOCK */
 
 #ifndef GRND_RANDOM
-#define GRND_RANDOM	0x0002
+#define GRND_RANDOM 0x0002
 #endif /*GRND_RANDOM */
 
 #define SET_ERRNO(no) rt_set_errno(-(no))
@@ -4271,7 +4271,7 @@ int sys_mq_timedsend(mqd_t mqd, const char *msg, size_t len, unsigned prio, cons
     kmsg = (char *)kmem_get(len + 1);
     if (!kmsg)
         return -ENOMEM;
-    
+
     lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
     lwp_get_from_user(kmsg, (void *)msg, len + 1);
     ret = mq_timedsend(mqd, kmsg, len, prio, &at_k);
