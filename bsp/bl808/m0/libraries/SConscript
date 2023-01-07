@@ -1,0 +1,101 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+	platform/soc/bl808/startup_bl808/evb/src/startup_interrupt.c
+	platform/soc/bl808/startup_bl808/evb/src/startup_bl606p.c
+	platform/soc/bl808/startup_bl808/evb/src/debug.c
+	platform/soc/bl808/startup_bl808/evb/src/boot/gcc/start_load.c
+	platform/soc/bl808/startup_bl808/evb/src/boot/gcc/startup.S
+''')
+
+path = [cwd, 
+	cwd + r'/platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/regs',
+    cwd + r'/platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/startup/m0/source',
+	cwd + r'/platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/inc',
+	cwd + r'/platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/risc-v/Core/Include',
+	cwd + r'/platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/hal_drv/default_config',
+	cwd + r'/platform/soc/bl808/bl808_e907_std/common/misc',
+	cwd + r'/platform/soc/bl808/bl808_e907_std/common/soft_crc']
+
+src += Split("""
+	stage/blog/blog.c
+	utils/src/utils_log.c
+	stage/blfdt/src/fdt.c
+	stage/blfdt/src/fdt_ro.c
+	stage/blfdt/src/fdt_wip.c
+	stage/blfdt/src/fdt_sw.c
+	stage/blfdt/src/fdt_rw.c
+	stage/blfdt/src/fdt_strerror.c
+	stage/blfdt/src/fdt_empty_tree.c
+	stage/blfdt/src/fdt_addresses.c
+	stage/blfdt/src/fdt_overlay.c
+""")
+
+path += [cwd + r'/stage/blog',
+	cwd + r'/stage/blfdt/inc',
+	cwd + r'/utils/include'
+]
+	
+	# platform/hosal/bl808_e907_hal/bl_pm.c
+	# platform/hosal/bl808_e907_hal/bl_sec.c
+	# platform/hosal/bl808_e907_hal/bl_timer.c
+	# platform/hosal/bl808_e907_hal/hal_board.c
+	# platform/hosal/bl808_e907_hal/hal_sdh.c
+	# platform/hosal/bl808_e907_hal/hosal_adc.c
+	# platform/hosal/bl808_e907_hal/hosal_dma.c
+	# platform/hosal/bl808_e907_hal/hosal_pwm.c
+	# platform/hosal/bl808_e907_hal/hosal_spi.c
+	# platform/hosal/bl808_e907_hal/hosal_uart.c
+	# platform/hosal/bl808_e907_hal/hal_sdh.c
+
+
+src += Split("""
+    platform/hosal/bl808_e907_hal/bl_uart.c
+	platform/hosal/bl808_e907_hal/bl_irq.c
+	platform/hosal/bl808_e907_hal/bl_chip.c
+	platform/hosal/bl808_e907_hal/bl_flash.c
+	platform/hosal/bl808_e907_hal/bl_wifi.c
+	platform/hosal/bl808_e907_hal/bl_efuse.c
+	platform/hosal/bl808_e907_hal/bl_sys.c
+	platform/hosal/bl808_e907_hal/bl_boot2.c
+	platform/hosal/bl808_e907_hal/bl_ipc.c
+	platform/hosal/bl808_e907_hal/bl_cam.c
+	platform/hosal/bl808_e907_hal/bl_audio.c
+	platform/hosal/bl808_e907_hal/bl_sdh.c
+    platform/hosal/bl808_e907_hal/hal_boot2.c
+	platform/hosal/bl808_e907_hal/hal_sys.c
+	platform/hosal/bl808_e907_hal/bl_psram.c
+	platform/hosal/bl808_e907_hal/bl_mm_clock.c
+	platform/hosal/bl808_e907_hal/hal_board.c
+	platform/soc/bl808/bl808_e907_std/common/misc/misc.c
+	platform/soc/bl808/bl808_e907_std/common/soft_crc/softcrc.c
+""")
+
+src += Split("""
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_common.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_clock.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_uart.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_glb.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_glb_gpio.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_pds.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_hbn.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_sflash.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_xip_sflash.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_sf_cfg.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_ef_ctrl.c
+	platform/soc/bl808/bl808_e907_std/bl808_bsp_driver/std_drv/src/bl808_sf_ctrl.c
+""")
+
+path += [cwd + r'/platform/hosal/bl808_e907_hal']
+
+libpath = []
+libs = []
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, LIBS = libs, LIBPATH = libpath)
+
+
+Return('group')

@@ -1,0 +1,46 @@
+menu "BL808_M0 Hardware Drivers Config"
+config SOC_BL808
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select ARCH_RISCV_FPU_S
+    default y
+
+
+config BSP_USING_JTAG_M0
+    bool "Enable M0 JTAG "
+    default n
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+
+            if BSP_USING_UART0
+                config BSP_UART0_TXD_PIN
+                    int "uart0 TXD pin number"
+                    default 14
+
+                config BSP_UART0_RXD_PIN
+                    int "uart0 RXD pin number"
+                    default 15
+
+            endif
+
+        endif
+
+endmenu
+
+endmenu
+
