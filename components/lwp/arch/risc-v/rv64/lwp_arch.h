@@ -10,9 +10,9 @@
 #ifndef  LWP_ARCH_H__
 #define  LWP_ARCH_H__
 
+#include <rthw.h>
 #include <lwp.h>
 #include <lwp_arch_comm.h>
-#include <cache.h>
 
 #ifdef ARCH_MM_MMU
 

@@ -25,10 +25,6 @@
 #include <lwp.h>
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
-#include <mmu.h>
-#include <mm_aspace.h>
-#include <mm_fault.h>
-#include <mm_private.h>
 #include <page.h>
 
 #include <cpuport.h>

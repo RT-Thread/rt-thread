@@ -16,10 +16,6 @@
 
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
-#include <mmu.h>
-#include <mm_aspace.h>
-#include <mm_flag.h>
-#include <page.h>
 
 int arch_user_space_init(struct rt_lwp *lwp)
 {

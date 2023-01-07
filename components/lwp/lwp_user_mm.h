@@ -16,6 +16,10 @@
 
 #ifdef ARCH_MM_MMU
 #include <lwp.h>
+#include <mmu.h>
+#include <mm_aspace.h>
+#include <mm_fault.h>
+#include <mm_page.h>
 
 #ifdef __cplusplus
 extern "C" {

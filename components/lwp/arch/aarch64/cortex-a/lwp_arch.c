@@ -15,9 +15,6 @@
 
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
-#include <mmu.h>
-#include <mm_aspace.h>
-#include <page.h>
 
 extern size_t MMUTable[];
 
