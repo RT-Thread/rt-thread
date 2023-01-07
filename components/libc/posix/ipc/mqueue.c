@@ -85,7 +85,10 @@ int mq_setattr(mqd_t                 mqdes,
                const struct mq_attr *mqstat,
                struct mq_attr       *omqstat)
 {
-    rt_set_errno(-RT_ERROR);
+    if (mqstat == RT_NULL)
+        return mq_getattr(mqdes, omqstat);
+    else
+        rt_set_errno(-RT_ERROR);
 
     return -1;
 }
