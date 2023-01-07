@@ -35,6 +35,7 @@
 #endif
 
 #include "syscall_data.h"
+#include "mqueue.h"
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
@@ -4195,6 +4196,171 @@ int sys_fsync(int fd)
     return res;
 }
 
+mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr)
+{
+    int ret = 0;
+    mqd_t mqdes;
+#ifdef ARCH_MM_MMU
+    char *kname = RT_NULL;
+    int a_err = 0;
+    rt_size_t len = 0;
+    struct mq_attr attr_k;
+
+    lwp_user_strlen(name, &a_err);
+    if (a_err)
+        return -EFAULT;
+    len = rt_strlen(name);
+    if (!len)
+        return -EINVAL;
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+        return -ENOMEM;
+
+    lwp_get_from_user(&attr_k, (void *)attr, sizeof(struct mq_attr));
+    lwp_get_from_user(kname, (void *)name, len + 1);
+    mqdes = mq_open(kname, flags, mode, &attr_k);
+    lwp_put_to_user(attr, &attr_k, sizeof(struct mq_attr));
+    kmem_put(kname);
+#else
+    mqdes = mq_open(name, flags, mode, attr);
+#endif
+    if (mqdes == RT_NULL)
+        return (mqd_t)GET_ERRNO();
+    else
+        return mqdes;
+}
+
+int sys_mq_unlink(const char *name)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    char *kname = RT_NULL;
+    int a_err = 0;
+    rt_size_t len = 0;
+
+    lwp_user_strlen(name, &a_err);
+    if (a_err)
+        return -EFAULT;
+    len = rt_strlen(name);
+    if (!len)
+        return -EINVAL;
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+        return -ENOMEM;
+
+    lwp_get_from_user(kname, (void *)name, len + 1);
+    ret = mq_unlink(kname);
+    kmem_put(kname);
+#else
+    ret = mq_unlink(name);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_timedsend(mqd_t mqd, const char *msg, size_t len, unsigned prio, const struct timespec *at)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    char *kmsg = RT_NULL;
+    int a_err = 0;
+    struct timespec at_k;
+
+    lwp_user_strlen(msg, &a_err);
+    if (a_err)
+        return -EFAULT;
+    kmsg = (char *)kmem_get(len + 1);
+    if (!kmsg)
+        return -ENOMEM;
+    
+    lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
+    lwp_get_from_user(kmsg, (void *)msg, len + 1);
+    ret = mq_timedsend(mqd, kmsg, len, prio, &at_k);
+    kmem_put(kmsg);
+#else
+    ret = mq_timedsend(mqd, msg, len, prio, at);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_timedreceive(mqd_t mqd, char *restrict msg, size_t len, unsigned *restrict prio, const struct timespec *restrict at)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    char *restrict kmsg = RT_NULL;
+    int a_err = 0;
+    rt_size_t prio_len = 0;
+
+    struct timespec at_k;
+
+    lwp_user_strlen(msg, &a_err);
+    if (a_err)
+        return -EFAULT;
+    kmsg = (char *restrict)kmem_get(len + 1);
+    if (!kmsg)
+        return -ENOMEM;
+
+    lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
+    lwp_get_from_user(kmsg, (void *)msg, len + 1);
+    ret = mq_timedreceive(mqd, kmsg, len, prio, &at_k);
+    if (ret > 0)
+        lwp_put_to_user(msg, kmsg, len + 1);
+    kmem_put(kmsg);
+#else
+    ret = mq_timedreceive(mqd, msg, len, prio, at);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_notify(mqd_t mqd, const struct sigevent *sev)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    struct sigevent sev_k;
+    lwp_get_from_user(&sev_k, (void *)sev, sizeof(struct timespec));
+    ret = mq_notify(mqd, &sev_k);
+#else
+    ret = mq_notify(mqd, sev);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_getsetattr(mqd_t mqd, const struct mq_attr *restrict new, struct mq_attr *restrict old)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    size_t size = sizeof(struct mq_attr);
+    struct mq_attr *restrict knew = NULL;
+    struct mq_attr *restrict kold = NULL;
+
+    if (new != RT_NULL)
+    {
+        if (!lwp_user_accessable((void *)new, size))
+            return -EFAULT;
+        knew = kmem_get(size);
+        if (!knew)
+            return -ENOMEM;
+        lwp_get_from_user(knew, (void *)new, size);
+    }
+
+    if (!lwp_user_accessable((void *)old, size))
+        return -EFAULT;
+    kold = kmem_get(size);
+    if (!kold)
+        return -ENOMEM;
+
+    lwp_get_from_user(kold, (void *)old, size);
+    ret = mq_setattr(mqd, knew, kold);
+    if (ret != -1)
+        lwp_put_to_user(old, kold, size);
+    kmem_put(kold);
+    if (new != RT_NULL)
+        kmem_put(knew);
+#else
+    ret = mq_setattr(mqd, new, old);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 const static void* func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -4397,6 +4563,12 @@ const static void* func_table[] =
     SYSCALL_SIGN(sys_timer_settime),
     SYSCALL_SIGN(sys_timer_gettime),
     SYSCALL_SIGN(sys_timer_getoverrun),
+    SYSCALL_SIGN(sys_mq_open),
+    SYSCALL_SIGN(sys_mq_unlink),
+    SYSCALL_SIGN(sys_mq_timedsend),
+    SYSCALL_SIGN(sys_mq_timedreceive),
+    SYSCALL_SIGN(sys_mq_notify),
+    SYSCALL_SIGN(sys_mq_getsetattr),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
