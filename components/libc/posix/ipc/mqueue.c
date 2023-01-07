@@ -121,7 +121,13 @@ mqd_t mq_open(const char *name, int oflag, ...)
     rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
 
     mqdes = RT_NULL;
-    if (oflag & O_CREAT)
+    /* find mqueue */
+    mqdes = posix_mq_find(name);
+    if (mqdes != RT_NULL)
+    {
+        mqdes->refcount ++; /* increase reference count */
+    }
+    else if (oflag & O_CREAT)
     {
         va_start(arg, oflag);
         mode = (mode_t)va_arg(arg, unsigned int);
@@ -161,17 +167,8 @@ mqd_t mq_open(const char *name, int oflag, ...)
     }
     else
     {
-        /* find mqueue */
-        mqdes = posix_mq_find(name);
-        if (mqdes != RT_NULL)
-        {
-            mqdes->refcount ++; /* increase reference count */
-        }
-        else
-        {
-            rt_set_errno(ENOENT);
-            goto __return;
-        }
+        rt_set_errno(ENOENT);
+        goto __return;
     }
     rt_sem_release(&posix_mq_lock);
 
