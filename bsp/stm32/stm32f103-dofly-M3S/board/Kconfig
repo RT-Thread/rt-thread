@@ -16,7 +16,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         select RT_USING_PIN
         default n
-        
+
     config BSP_USING_SPI_SDCARD
         bool "Enable SDCARD (spi2)"
         select BSP_USING_SPI
@@ -25,7 +25,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
-        
+
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q64 spi2)"
         select BSP_USING_SPI
@@ -33,7 +33,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SFUD
         select RT_SFUD_USING_SFDP
         default n
-        
+
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c2)"
         select BSP_USING_I2C2
@@ -57,7 +57,7 @@ menu "On-chip Peripheral Drivers"
                 default y
 
         endif
-        
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -71,7 +71,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -80,35 +80,35 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
         endif
-        
+
     menuconfig BSP_USING_I2C2
         bool "Enable I2C2 BUS (software simulation)"
         default n
@@ -116,7 +116,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C2
-            comment "Notice: PB10 --> 26; PB11 --> 27" 
+            comment "Notice: PB10 --> 26; PB11 --> 27"
             config BSP_I2C2_SCL_PIN
                 int "i2c2 scl pin number"
                 range 0 175
@@ -126,18 +126,18 @@ menu "On-chip Peripheral Drivers"
                 range 0 175
                 default 27
         endif
-        
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
-        
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

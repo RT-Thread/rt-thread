@@ -6,5 +6,5 @@ config SOC_SERIES_FT32F0
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_FT32
 
-    
+
 

@@ -19,7 +19,7 @@ choice
     help
         Refer to SAME70 DataSheet
 
-endchoice 
+endchoice
 endmenu
 
 menu "Onboard Peripheral Drivers"

@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25" 
+            comment "Notice: PB8 --> 24; PB9 --> 25"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 80
@@ -143,7 +143,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM3 channel4"
                         default n
                 endif
-            
+
             menuconfig BSP_USING_PWM4
                 bool "Enable timer4 output PWM"
                 default n
@@ -174,14 +174,14 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
-    
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-        
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

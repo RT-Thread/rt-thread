@@ -23,11 +23,11 @@ drivers/hc32_ll_driver/src/hc32_ll_sram.c
 drivers/hc32_ll_driver/src/hc32_ll_utility.c
 drivers/hc32_ll_driver/src/hc32f4a0_ll_interrupts_share.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_usart.c']
     src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr0.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_i2c.c']
 
@@ -61,7 +61,7 @@ if GetDepend(['RT_USING_ON_CHIP_FLASH']):
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_tmra.c']
-    
+
 path = [
     cwd + '/drivers/cmsis/Device/HDSC/hc32f4xx/Include',
     cwd + '/drivers/cmsis/Include',

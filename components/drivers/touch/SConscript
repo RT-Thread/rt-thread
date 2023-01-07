@@ -1,4 +1,4 @@
-# SConscript for touch framework 
+# SConscript for touch framework
 
 from building import *
 

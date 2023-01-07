@@ -33,17 +33,17 @@ if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
 
 if GetDepend(['RT_USING_ADC']):
     src += ['Src/fm33lc0xx_fl_adc.c']
-    
+
 if GetDepend(['RT_USING_RTC']):
     src += ['Src/fm33lc0xx_fl_rtc.c']
-    
+
 if GetDepend(['RT_USING_WDT']):
     src += ['Src/fm33lc0xx_fl_wwdt.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['Src/fm33lc0xx_fl_flash.c']
 
-path = [cwd + '/CMSIS/Include', 
+path = [cwd + '/CMSIS/Include',
     cwd + '/Inc']
 
 CPPDEFINES = ['USE_HAL_DRIVER']

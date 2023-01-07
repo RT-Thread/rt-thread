@@ -13,7 +13,7 @@ if  GetDepend('SOC_RISCV_FAMILY_Core_V'):
         src += ['source/drv_usart.c']
 
 path = [
-	cwd + '/include']
+    cwd + '/include']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

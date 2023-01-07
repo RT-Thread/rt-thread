@@ -16,11 +16,11 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
         src += ['drv_adc.c']
 
     if GetDepend('BSP_USING_DAC'):
-        src += ['drv_dac.c'] 
+        src += ['drv_dac.c']
 
     if GetDepend('BSP_USING_SOFT_I2C'):
         src += ['drv_soft_i2c.c']
-    
+
     if GetDepend('BSP_USING_SPI'):
         src += ['drv_soft_spi.c','drv_spi.c']
 
@@ -29,13 +29,13 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
 
     if GetDepend('BSP_USING_IWDT'):
         src += ['drv_iwdt.c']
-        
+
     if GetDepend('BSP_USING_CAN'):
-        src += ['drv_can.c']	
+        src += ['drv_can.c']
 
     if GetDepend('BSP_USING_PWM'):
         src += ['drv_pwm.c']
-        
+
     if GetDepend('BSP_USING_HWTIMER'):
         src += ['drv_hwtimer.c']
 

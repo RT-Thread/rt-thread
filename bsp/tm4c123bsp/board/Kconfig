@@ -42,7 +42,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable potentiometer"
         select BSP_USING_ADC
         select BSP_USING_ADC1
-        default n  
+        default n
 
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
@@ -118,7 +118,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -126,9 +126,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n  
+                default n
         endif
-   
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
@@ -150,7 +150,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -159,33 +159,33 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
         endif
 
     menuconfig BSP_USING_I2C1
@@ -337,8 +337,8 @@ menu "On-chip Peripheral Drivers"
         select RT_HWCRYPTO_USING_CRC
         # "Crypto device frame dose not support above 8-bits granularity"
         # "Reserve progress, running well, about 32-bits granularity, such as stm32f1, stm32f4"
-        default n  
-        
+        default n
+
 endmenu
 
 menu "Board extended module Drivers"

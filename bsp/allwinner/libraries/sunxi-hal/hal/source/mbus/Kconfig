@@ -5,39 +5,39 @@ config DRIVERS_MBUS
         default y
 
 if DRIVERS_MBUS
-	config DRIVERS_MBUS_GPU_BW
-	    bool "mbus gpu bandwidth"
-		default n
-	config DRIVERS_MBUS_RV_SYS_BW
-	    bool "mbus riscv sys bandwidth"
-		default n
-	config DRIVERS_MBUS_MAHB_BW
-	    bool "mbus mahb bandwidth"
-		default n
-	config DRIVERS_MBUS_DMA_BW
-	    bool "mbus dma bandwidth"
-		default n
-	config DRIVERS_MBUS_CE_BW
-	    bool "mbus ce bandwidth"
-		default n
-	config DRIVERS_MBUS_TVD_BW
-	    bool "mbus tvd bandwidth"
-		default n
-	config DRIVERS_MBUS_CSI_BW
-	    bool "mbus csi bandwidth"
-		default n
-	config DRIVERS_MBUS_DSP_SYS_BW
-	    bool "mbus dsp sys bandwidth"
-		default n
-	config DRIVERS_MBUS_G2D_BW
-	    bool "mbus g2d bandwidth"
-		default n
-	config DRIVERS_MBUS_DI_BW
-	    bool "mbus di bandwidth"
-		default n
-	config DRIVERS_MBUS_IOMMU_BW
-	    bool "mbus iommu bandwidth"
-		default n
+    config DRIVERS_MBUS_GPU_BW
+        bool "mbus gpu bandwidth"
+        default n
+    config DRIVERS_MBUS_RV_SYS_BW
+        bool "mbus riscv sys bandwidth"
+        default n
+    config DRIVERS_MBUS_MAHB_BW
+        bool "mbus mahb bandwidth"
+        default n
+    config DRIVERS_MBUS_DMA_BW
+        bool "mbus dma bandwidth"
+        default n
+    config DRIVERS_MBUS_CE_BW
+        bool "mbus ce bandwidth"
+        default n
+    config DRIVERS_MBUS_TVD_BW
+        bool "mbus tvd bandwidth"
+        default n
+    config DRIVERS_MBUS_CSI_BW
+        bool "mbus csi bandwidth"
+        default n
+    config DRIVERS_MBUS_DSP_SYS_BW
+        bool "mbus dsp sys bandwidth"
+        default n
+    config DRIVERS_MBUS_G2D_BW
+        bool "mbus g2d bandwidth"
+        default n
+    config DRIVERS_MBUS_DI_BW
+        bool "mbus di bandwidth"
+        default n
+    config DRIVERS_MBUS_IOMMU_BW
+        bool "mbus iommu bandwidth"
+        default n
 endif
 
 config HAL_TEST_MBUS

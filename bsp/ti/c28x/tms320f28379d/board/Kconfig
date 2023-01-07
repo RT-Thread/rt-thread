@@ -135,7 +135,7 @@ menu "On-chip Peripheral Drivers"
                                             the phase for PWM1 module
                                 endif
                             endif
-                        
+
                         menuconfig BSP_PWM1_IT_ENABLE
                             bool "Enable interrupt service"
                             default n
@@ -184,13 +184,13 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate interrupt at the third time"
                                 endchoice
                                 config BSP_PWM1_INTPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM1_INT_ET_DISABLE
                                     default 1 if BSP_PWM1_INT_ET_1ST
                                     default 2 if BSP_PWM1_INT_ET_2ND
                                     default 3 if BSP_PWM1_INT_ET_3RD
                             endif
-                        choice 
+                        choice
                             prompt "HSP Clock division"
                             default BSP_PWM1_HSPCLKDIV1
                             config BSP_PWM1_HSPCLKDIV1
@@ -201,11 +201,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM1_HSPCLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM1_HSPCLKDIV1
                             default 1 if BSP_PWM1_HSPCLKDIV2
                             default 2 if BSP_PWM1_HSPCLKDIV4
-                        choice 
+                        choice
                             prompt "Clock division"
                             default BSP_PWM1_CLKDIV1
                             config BSP_PWM1_CLKDIV1
@@ -216,11 +216,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM1_CLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM1_CLKDIV1
                             default 1 if BSP_PWM1_CLKDIV2
                             default 2 if BSP_PWM1_CLKDIV4
-                        choice 
+                        choice
                             default BSP_PWM1_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM1_CTR_MODE_UPDOWN
@@ -251,7 +251,7 @@ menu "On-chip Peripheral Drivers"
                         endchoice
 
                         config BSP_PWM1_LOADAMODE
-                            int 
+                            int
                             default 0 if BSP_PWM1_CC_CTR_ZERO
                             default 1 if BSP_PWM1_CC_CTR_PRD
                             default 2 if BSP_PWM1_CC_CTR_ZERO_PRD
@@ -308,7 +308,7 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate soc at the third time"
                                 endchoice
                                 config BSP_PWM1_SOCAPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM1_SOCA_ET_DISABLE
                                     default 1 if BSP_PWM1_SOCA_ET_1ST
                                     default 2 if BSP_PWM1_SOCA_ET_2ND
@@ -355,7 +355,7 @@ menu "On-chip Peripheral Drivers"
                                             the phase for PWM2 module
                                 endif
                             endif
-                        
+
                         menuconfig BSP_PWM2_IT_ENABLE
                             bool "Enable interrupt service"
                             default n
@@ -404,13 +404,13 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate interrupt at the third time"
                                 endchoice
                                 config BSP_PWM2_INTPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM2_INT_ET_DISABLE
                                     default 1 if BSP_PWM2_INT_ET_1ST
                                     default 2 if BSP_PWM2_INT_ET_2ND
                                     default 3 if BSP_PWM2_INT_ET_3RD
                             endif
-                        choice 
+                        choice
                             prompt "HSP Clock division"
                             default BSP_PWM2_HSPCLKDIV1
                             config BSP_PWM2_HSPCLKDIV1
@@ -421,11 +421,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM2_HSPCLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM2_HSPCLKDIV1
                             default 1 if BSP_PWM2_HSPCLKDIV2
                             default 2 if BSP_PWM2_HSPCLKDIV4
-                        choice 
+                        choice
                             prompt "Clock division"
                             default BSP_PWM2_CLKDIV1
                             config BSP_PWM2_CLKDIV1
@@ -436,11 +436,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM2_CLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM2_CLKDIV1
                             default 1 if BSP_PWM2_CLKDIV2
                             default 2 if BSP_PWM2_CLKDIV4
-                        choice 
+                        choice
                             default BSP_PWM2_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM2_CTR_MODE_UPDOWN
@@ -471,7 +471,7 @@ menu "On-chip Peripheral Drivers"
                         endchoice
 
                         config BSP_PWM2_LOADAMODE
-                            int 
+                            int
                             default 0 if BSP_PWM2_CC_CTR_ZERO
                             default 1 if BSP_PWM2_CC_CTR_PRD
                             default 2 if BSP_PWM2_CC_CTR_ZERO_PRD
@@ -528,7 +528,7 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate soc at the third time"
                                 endchoice
                                 config BSP_PWM2_SOCAPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM2_SOCA_ET_DISABLE
                                     default 1 if BSP_PWM2_SOCA_ET_1ST
                                     default 2 if BSP_PWM2_SOCA_ET_2ND
@@ -575,7 +575,7 @@ menu "On-chip Peripheral Drivers"
                                             the phase for PWM3 module
                                 endif
                             endif
-                        
+
                         menuconfig BSP_PWM3_IT_ENABLE
                             bool "Enable interrupt service"
                             default n
@@ -624,13 +624,13 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate interrupt at the third time"
                                 endchoice
                                 config BSP_PWM3_INTPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM3_INT_ET_DISABLE
                                     default 1 if BSP_PWM3_INT_ET_1ST
                                     default 2 if BSP_PWM3_INT_ET_2ND
                                     default 3 if BSP_PWM3_INT_ET_3RD
                             endif
-                        choice 
+                        choice
                             prompt "HSP Clock division"
                             default BSP_PWM3_HSPCLKDIV1
                             config BSP_PWM3_HSPCLKDIV1
@@ -641,11 +641,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM3_HSPCLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM3_HSPCLKDIV1
                             default 1 if BSP_PWM3_HSPCLKDIV2
                             default 2 if BSP_PWM3_HSPCLKDIV4
-                        choice 
+                        choice
                             prompt "Clock division"
                             default BSP_PWM3_CLKDIV1
                             config BSP_PWM3_CLKDIV1
@@ -656,11 +656,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM3_CLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM3_CLKDIV1
                             default 1 if BSP_PWM3_CLKDIV2
                             default 2 if BSP_PWM3_CLKDIV4
-                        choice 
+                        choice
                             default BSP_PWM3_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM3_CTR_MODE_UPDOWN
@@ -691,7 +691,7 @@ menu "On-chip Peripheral Drivers"
                         endchoice
 
                         config BSP_PWM3_LOADAMODE
-                            int 
+                            int
                             default 0 if BSP_PWM3_CC_CTR_ZERO
                             default 1 if BSP_PWM3_CC_CTR_PRD
                             default 2 if BSP_PWM3_CC_CTR_ZERO_PRD
@@ -748,7 +748,7 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate soc at the third time"
                                 endchoice
                                 config BSP_PWM3_SOCAPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM3_SOCA_ET_DISABLE
                                     default 1 if BSP_PWM3_SOCA_ET_1ST
                                     default 2 if BSP_PWM3_SOCA_ET_2ND
@@ -795,7 +795,7 @@ menu "On-chip Peripheral Drivers"
                                             the phase for PWM4 module
                                 endif
                             endif
-                        
+
                         menuconfig BSP_PWM4_IT_ENABLE
                             bool "Enable interrupt service"
                             default n
@@ -844,13 +844,13 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate interrupt at the third time"
                                 endchoice
                                 config BSP_PWM4_INTPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM4_INT_ET_DISABLE
                                     default 1 if BSP_PWM4_INT_ET_1ST
                                     default 2 if BSP_PWM4_INT_ET_2ND
                                     default 3 if BSP_PWM4_INT_ET_3RD
                             endif
-                        choice 
+                        choice
                             prompt "HSP Clock division"
                             default BSP_PWM4_HSPCLKDIV1
                             config BSP_PWM4_HSPCLKDIV1
@@ -861,11 +861,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM4_HSPCLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM4_HSPCLKDIV1
                             default 1 if BSP_PWM4_HSPCLKDIV2
                             default 2 if BSP_PWM4_HSPCLKDIV4
-                        choice 
+                        choice
                             prompt "Clock division"
                             default BSP_PWM4_CLKDIV1
                             config BSP_PWM4_CLKDIV1
@@ -876,11 +876,11 @@ menu "On-chip Peripheral Drivers"
                                 bool "Clock Divided by 4"
                         endchoice
                         config BSP_PWM4_CLKDIV
-                            int 
+                            int
                             default 0 if BSP_PWM4_CLKDIV1
                             default 1 if BSP_PWM4_CLKDIV2
                             default 2 if BSP_PWM4_CLKDIV4
-                        choice 
+                        choice
                             default BSP_PWM4_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM4_CTR_MODE_UPDOWN
@@ -911,7 +911,7 @@ menu "On-chip Peripheral Drivers"
                         endchoice
 
                         config BSP_PWM4_LOADAMODE
-                            int 
+                            int
                             default 0 if BSP_PWM4_CC_CTR_ZERO
                             default 1 if BSP_PWM4_CC_CTR_PRD
                             default 2 if BSP_PWM4_CC_CTR_ZERO_PRD
@@ -968,7 +968,7 @@ menu "On-chip Peripheral Drivers"
                                         bool "generate soc at the third time"
                                 endchoice
                                 config BSP_PWM4_SOCAPRD
-                                    int 
+                                    int
                                     default 0 if BSP_PWM4_SOCA_ET_DISABLE
                                     default 1 if BSP_PWM4_SOCA_ET_1ST
                                     default 2 if BSP_PWM4_SOCA_ET_2ND

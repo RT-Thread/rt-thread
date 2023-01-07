@@ -4,7 +4,7 @@ from building import *
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
 
-src	= File(src_bsp)
+src = File(src_bsp)
 CPPPATH = [RTT_ROOT + '/bsp/avr32uc3b0']
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 

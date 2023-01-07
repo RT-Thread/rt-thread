@@ -39,7 +39,7 @@ if GetDepend(['RT_USING_I2C']):
 
 if GetDepend(['RT_USING_SPI']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_spi.c']
-    src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_spi_ex.c'] 
+    src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_spi_ex.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_spi.c']
 
 if GetDepend(['RT_USING_USB']):
@@ -53,18 +53,18 @@ if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_tim.c']
-    
+
 
 if GetDepend(['RT_USING_ADC']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc_ex.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_adc.c']
-    
+
 if GetDepend(['RT_USING_RTC']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_rtc.c']
-    
+
 if GetDepend(['RT_USING_WDT']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_iwdg.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_wwdg.c']
@@ -76,7 +76,7 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c']
 
-path = [cwd + '/CMSIS/Device/ST/STM32F0xx/Include', 
+path = [cwd + '/CMSIS/Device/ST/STM32F0xx/Include',
     cwd + '/STM32F0xx_HAL_Driver/Inc']
 
 CPPDEFINES = ['USE_HAL_DRIVER']

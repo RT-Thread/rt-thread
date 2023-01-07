@@ -31,7 +31,7 @@ config USE_DEFAULT_INTERRUPT_CONFIG
     bool
     prompt "Use default interrupt configuration"
     default y
-    help 
+    help
         "If this option is not selected, core0 is used as the main core by default and all interrupt driver modules are initialized. Non-0 core initializes only the necessary interrupt driver modules.  If this option is selected, the developer needs to initiate each module independently  "
     if USE_DEFAULT_INTERRUPT_CONFIG
         choice INTERRUPT_ROLE_SELECT
@@ -41,8 +41,8 @@ config USE_DEFAULT_INTERRUPT_CONFIG
             "Select Interrupt role"
 
         config INTERRUPT_ROLE_MASTER
-            bool "use master role"    
-        
+            bool "use master role"
+
         config INTERRUPT_ROLE_SLAVE
             bool "use slave role"
 
@@ -61,4 +61,4 @@ config BOOTUP_DEBUG_PRINTS
     default n
     help
         Enable Bootup debug printing
-	
+

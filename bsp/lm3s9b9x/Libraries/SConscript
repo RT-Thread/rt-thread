@@ -8,15 +8,15 @@ src = Glob('driverlib/*.c')
 
 # cortex-m3 no FPU.
 if rtconfig.PART_TYPE.startswith('PART_LM4F') != True:
-	 SrcRemove(src, 'fpu.c')
+     SrcRemove(src, 'fpu.c')
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-	src += ['startup/gcc/start_gcc.S']
+    src += ['startup/gcc/start_gcc.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-	src += ['startup/arm/start_rvds.S']
+    src += ['startup/arm/start_rvds.S']
 elif rtconfig.PLATFORM in ['iccarm']:
-	src += ['startup/iar/start_iar.S']
+    src += ['startup/iar/start_iar.S']
 
 CPPPATH = [cwd]
 

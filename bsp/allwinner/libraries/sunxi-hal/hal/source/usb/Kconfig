@@ -1,6 +1,6 @@
 menuconfig DRIVERS_USB
-	bool "USB Drivers"
-	default y
+    bool "USB Drivers"
+    default y
 
 if DRIVERS_USB
 menu "USB HOST"
@@ -10,24 +10,24 @@ config USB_HOST
     default n
 
 config HAL_TEST_HCI
-	bool "enable HCI hal APIs test command"
-	depends on USB_HOST
-	default n
+    bool "enable HCI hal APIs test command"
+    depends on USB_HOST
+    default n
 
 config USB_STORAGE
-	bool "USB Mass Storage support"
-	depends on USB_HOST
-	default n
+    bool "USB Mass Storage support"
+    depends on USB_HOST
+    default n
 
 config USB_CAMERA
-	bool "UVC support"
-	depends on USB_HOST
-	default n
+    bool "UVC support"
+    depends on USB_HOST
+    default n
 
 config USB_HID
-	bool "USB HID support"
-	depends on USB_HOST
-	default n
+    bool "USB HID support"
+    depends on USB_HOST
+    default n
 endmenu
 
 menu "USB DEVICE"
@@ -37,13 +37,13 @@ config USB_DEVICE
     default y
 
 config HAL_TEST_UDC
-	bool "enable udc hal APIs test command"
-	depends on USB_DEVICE
-	default y
+    bool "enable udc hal APIs test command"
+    depends on USB_DEVICE
+    default y
 endmenu
 
 config USB_MANAGER
-	bool "USB Manager support"
-	default n
+    bool "USB Manager support"
+    default n
 endif
 

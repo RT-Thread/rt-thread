@@ -9,11 +9,11 @@ config SOC_STM32F746ZG
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_USB_TO_USART 
+    config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart3)"
         select BSP_USING_UART3
         default y
-        
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         select RT_USING_LWIP
@@ -29,7 +29,7 @@ menu "Onboard Peripheral Drivers"
 
                 config PHY_USING_DM9161CEP
                     bool "DM9161CEP"
-                    
+
                 config PHY_USING_LAN8742A
                     bool "LAN8742A"
             endchoice
@@ -48,7 +48,7 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-     
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -56,9 +56,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n  
-				
-			config BSP_USING_UART5
+                default n
+
+            config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
 
@@ -67,7 +67,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
                 default n
         endif
-	menuconfig BSP_USING_SPI
+    menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
         select RT_USING_SPI
@@ -80,7 +80,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -89,33 +89,33 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
         endif
 
     menuconfig BSP_USING_I2C1
@@ -242,11 +242,11 @@ menu "On-chip Peripheral Drivers"
                 default 0
         endif
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

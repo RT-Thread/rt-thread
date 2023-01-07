@@ -4,5 +4,5 @@ config USE_FI2C
     default n
     help
         Include FI2C driver component
-	
-	
+
+

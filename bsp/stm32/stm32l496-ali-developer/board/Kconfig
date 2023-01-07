@@ -65,7 +65,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         select RT_USING_FAL
         default n
-        
+
     config BSP_USING_ON_CHIP_FLASH_FATFS
         bool "Enable onchip flash with FatFS"
         depends on BSP_USING_ON_CHIP_FLASH
@@ -93,7 +93,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
+                default n
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
@@ -190,7 +190,7 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_PWM3_CH2
                     bool "Enable PWM3 channel2"
                     default n
-            
+
                 config BSP_USING_PWM3_CH3
                     bool "Enable PWM3 channel3"
                     default n
@@ -227,9 +227,9 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-        
+
  source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

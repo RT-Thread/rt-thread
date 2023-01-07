@@ -3,9 +3,9 @@ Import('rtconfig')
 from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'board')
-src	= Glob('./src/*.c')
+src = Glob('./src/*.c')
 path = [cwd + '/inc'
-	]
+    ]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

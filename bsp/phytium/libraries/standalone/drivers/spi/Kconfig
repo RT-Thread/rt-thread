@@ -7,5 +7,5 @@ config USE_FSPIM
     depends on TARGET_F2000_4 || TARGET_D2000 || TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q
     help
         Select FSPIM driver component
-	
-	
+
+

@@ -11,12 +11,12 @@ CPPPATH = [cwd + '/../CMSIS/Include']
 CPPDEFINES = ['CORE_M4']
 
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-    src += ['startup/gcc_startup_lpc5410x.c'] 
+    src += ['startup/gcc_startup_lpc5410x.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['startup/keil_startup_lpc5410x.s']
-	
+
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

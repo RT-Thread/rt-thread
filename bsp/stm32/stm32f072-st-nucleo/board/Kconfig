@@ -154,7 +154,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 Bus (User I2C)"
                 default n
                 if BSP_USING_I2C1
-                    comment "Notice: PB9 --> 25; PB8 --> 24" 
+                    comment "Notice: PB9 --> 25; PB8 --> 24"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 SCL pin number"
                         range 1 176
@@ -167,7 +167,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

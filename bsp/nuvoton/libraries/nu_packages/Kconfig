@@ -216,13 +216,13 @@ menu "Nuvoton Packages Config"
     config NU_PKG_USING_ADC_TOUCH
         bool "ADC touch function"
         default n
-    
+
 
     if NU_PKG_USING_ADC_TOUCH
         config NU_PKG_USING_ADC_TOUCH_SW
             bool "Using SW ADC touch"
             select RT_USING_ADC
-            default n     
+            default n
     endif
 
     config NU_PKG_USING_SPINAND

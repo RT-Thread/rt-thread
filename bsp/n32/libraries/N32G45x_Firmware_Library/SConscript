@@ -14,10 +14,10 @@ n32g45x_std_periph_driver/src/n32g45x_rcc.c
 n32g45x_std_periph_driver/src/n32g45x_exti.c
 n32g45x_std_periph_driver/src/misc.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_i2c.c']
 
@@ -46,13 +46,13 @@ if GetDepend(['RT_USING_RTC']):
 if GetDepend(['RT_USING_WDT']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_wwdg.c']
     src += ['n32g45x_std_periph_driver/src/n32g45x_iwdg.c']
-    
+
 if GetDepend(['BSP_USING_RTC']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_bkp.c']
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_sdio.c']
-    
+
 if GetDepend(['RT_USING_BSP_USB']):
     path += [cwd + '/n32g45x_usbfs_driver/inc']
     src  += [cwd + '/n32g45x_usbfs_driver/src']

@@ -6,7 +6,7 @@ config DRIVERS_DMA
 
 config HAL_TEST_DMA
     bool "enable dma hal APIs test command"
-	depends on DRIVERS_DMA
+    depends on DRIVERS_DMA
         default n
 
 endmenu

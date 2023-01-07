@@ -84,7 +84,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
-            comment "Notice: PC14 --> 46; PC15 --> 47" 
+            comment "Notice: PC14 --> 46; PC15 --> 47"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 48
@@ -111,7 +111,7 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_PWM1_CH2
                     bool "Enable PWM1 channel2"
                     default n
-                
+
                 config BSP_USING_PWM1_CH3
                     bool "Enable PWM1 channel3"
                     default n
@@ -152,7 +152,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1

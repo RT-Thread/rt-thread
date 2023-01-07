@@ -1,22 +1,22 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = [] 
+src = []
 CPPPATH = [cwd + '/../include']
 group = []
 
 if GetDepend(['RT_USING_PIN']):
     src = src + ['pin.c']
-    
+
 if GetDepend(['RT_USING_ADC']):
     src = src + ['adc.c']
-    
+
 if GetDepend(['RT_USING_DAC']):
     src = src + ['dac.c']
 
 if GetDepend(['RT_USING_PWM']):
     src = src + ['rt_drv_pwm.c']
-    
+
 if GetDepend(['RT_USING_PULSE_ENCODER']):
     src = src + ['pulse_encoder.c']
 

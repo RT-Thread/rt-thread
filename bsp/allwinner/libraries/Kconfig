@@ -14,5 +14,5 @@ if RT_USING_SUNXI_HAL
     source "$BSP_DIR/../libraries/sunxi-hal/hal/source/g2d_rcq/Kconfig"
     source "$BSP_DIR/../libraries/sunxi-hal/hal/source/usb/Kconfig"
     source "$BSP_DIR/../libraries/sunxi-hal/hal/source/ce/Kconfig"
-    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/efuse/Kconfig"    
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/efuse/Kconfig"
 endif

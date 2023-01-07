@@ -1,4 +1,4 @@
-﻿# RT-Thread building script for component
+# RT-Thread building script for component
 
 from building import *
 
@@ -18,3 +18,4 @@ CPPPATH = [cwd, cwd + '/NuClockConfig', cwd + '/NuPinConfig']
 group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
+')

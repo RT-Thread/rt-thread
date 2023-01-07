@@ -41,7 +41,7 @@ if ENABLE_VECTOR
     choice
     prompt "Vector Registers Length in Bits"
     default ARCH_VECTOR_VLEN_128
-    
+
     config ARCH_VECTOR_VLEN_128
         bool "128"
 

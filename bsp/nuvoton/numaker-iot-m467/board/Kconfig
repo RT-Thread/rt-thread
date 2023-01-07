@@ -110,7 +110,7 @@ menu "Hardware Drivers Config"
 
         config BOARD_USING_LCD_ILI9341
             bool "LCD ILI9341 (over spi2)"
-	    select RT_USING_TOUCH	    
+        select RT_USING_TOUCH
             select BSP_USING_SPI2
             select BSP_USING_EADC
             select BSP_USING_EADC0

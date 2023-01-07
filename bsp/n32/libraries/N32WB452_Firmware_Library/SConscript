@@ -14,10 +14,10 @@ n32wb452_std_periph_driver/src/n32wb452_rcc.c
 n32wb452_std_periph_driver/src/n32wb452_exti.c
 n32wb452_std_periph_driver/src/misc.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['n32wb452_std_periph_driver/src/n32wb452_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['n32wb452_std_periph_driver/src/n32wb452_i2c.c']
 
@@ -47,7 +47,7 @@ if GetDepend(['RT_USING_WDT']):
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['n32wb452_std_periph_driver/src/n32wb452_sdio.c']
-    
+
 if GetDepend(['RT_USING_BSP_USB']):
     path += [cwd + '/n32wb452_usbfs_driver/inc']
     src  += [cwd + '/n32wb452_usbfs_driver/src']

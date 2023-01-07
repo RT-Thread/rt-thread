@@ -83,7 +83,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
         endif
-        
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -157,7 +157,7 @@ menu "On-chip Peripheral Drivers"
                     bool "RTC USING LSI"
             endchoice
         endif
-        
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -171,7 +171,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                        
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -196,7 +196,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

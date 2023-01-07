@@ -5,9 +5,9 @@ config SOC_NRF5340
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-    
+
 config SOC_NORDIC
-    bool 
+    bool
     default y
 
 choice
@@ -20,7 +20,7 @@ choice
         bool "NRF5340 pca10095 "
 
     config BSP_BOARD_ARDUINO_NANO_33_BLE
-        bool "Arduino Nano 33 BLE (Sense)"    
+        bool "Arduino Nano 33 BLE (Sense)"
 endchoice
 
 menu "Onboard Peripheral Drivers"
@@ -30,7 +30,7 @@ menu "Onboard Peripheral Drivers"
         depends on BSP_BOARD_PCA_10095
 
     config RT_BSP_LED_PIN
-        int 
+        int
         default 28 if BSP_BOARD_PCA_10095
         default 16 if BSP_BOARD_ARDUINO_NANO_33_BLE
         depends on BSP_USING_GPIO
@@ -44,7 +44,7 @@ menu "Onboard Peripheral Drivers"
 
         if BSP_USING_QSPI_FLASH
             config NRFX_QSPI_ENABLED
-            int 
+            int
             default 1
             config BSP_QSPI_SCK_PIN
                 int "QSPI SCK pin number"
@@ -70,7 +70,7 @@ menu "Onboard Peripheral Drivers"
                 int "QSPI IO3 pin number"
                 range 0 31
                 default 16
-            config QSPI_FLASH_SIZE_KB 
+            config QSPI_FLASH_SIZE_KB
                 int "QSPI FLASH SIZE, DEFAULT size 8192 KB"
                 default 8192
         endif
@@ -83,28 +83,28 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-    
+
     config BSP_USING_UART
-		bool "Enable UART"
+        bool "Enable UART"
         default n
         select RT_USING_SERIAL
-		if BSP_USING_UART
-		choice
-		prompt "UART or UARTE"
-		default NRFX_USING_UARTE
-		help
-			Select the UART or UARTE
-		config NRFX_USING_UART
-			bool "UART"
-		
-		config NRFX_USING_UARTE
-			bool "UARTE"
-		endchoice
-		endif
+        if BSP_USING_UART
+        choice
+        prompt "UART or UARTE"
+        default NRFX_USING_UARTE
+        help
+            Select the UART or UARTE
+        config NRFX_USING_UART
+            bool "UART"
+
+        config NRFX_USING_UARTE
+            bool "UARTE"
+        endchoice
+        endif
         if BSP_USING_UART&&NRFX_USING_UART
             config BSP_USING_UART0
                 bool "Enable UART0"
-                default y 
+                default y
                 if BSP_USING_UART0
                     config BSP_UART0_RX_PIN
                         int "uart0 rx pin number"
@@ -120,15 +120,15 @@ menu "On-chip Peripheral Drivers"
         endif
         if BSP_USING_UART&&NRFX_USING_UARTE
             config NRFX_UARTE_ENABLED
-            int 
+            int
             default 1
 
             config BSP_USING_UART0
                 bool "Enable UARTE0"
-                default n 
+                default n
                 if BSP_USING_UART0
                     config NRFX_UARTE0_ENABLED
-                    int 
+                    int
                     default 1
                     config BSP_UART0_RX_PIN
                         int "uarte0 rx pin number"
@@ -141,10 +141,10 @@ menu "On-chip Peripheral Drivers"
                 endif
             config BSP_USING_UART1
                 bool "Enable UARTE1"
-                default n 
+                default n
                 if BSP_USING_UART1
                     config NRFX_UARTE1_ENABLED
-                    int 
+                    int
                     default 1
                     config BSP_UART1_RX_PIN
                         int "uarte1 rx pin number"
@@ -155,12 +155,12 @@ menu "On-chip Peripheral Drivers"
                         range 0 64
                         default 5
                 endif
-			 config BSP_USING_UART2
+             config BSP_USING_UART2
                 bool "Enable UARTE2"
-                default n 
+                default n
                 if BSP_USING_UART2
                     config NRFX_UARTE2_ENABLED
-                    int 
+                    int
                     default 1
                     config BSP_UART2_RX_PIN
                         int "uarte2 rx pin number"
@@ -171,12 +171,12 @@ menu "On-chip Peripheral Drivers"
                         range 0 64
                         default 5
                 endif
-			config BSP_USING_UART3
+            config BSP_USING_UART3
                 bool "Enable UARTE3"
-                default n 
+                default n
                 if BSP_USING_UART3
                     config NRFX_UARTE3_ENABLED
-                    int 
+                    int
                     default 1
                     config BSP_UART3_RX_PIN
                         int "uarte3 rx pin number"
@@ -193,12 +193,12 @@ menu "On-chip Peripheral Drivers"
         bool "Enable ADC"
         select RT_USING_ADC
         default n
-	
-	config BSP_USING_IPC
+
+    config BSP_USING_IPC
         bool "Enable IPC"
         select RT_USING_IPC
         default n
-		
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         select RT_USING_I2C
@@ -230,7 +230,7 @@ menu "On-chip Peripheral Drivers"
                     range 0 31
                     default 25
             endif
-			config BSP_USING_I2C2
+            config BSP_USING_I2C2
                 bool "Enable I2C2 bus"
                 default n
             if BSP_USING_I2C2
@@ -243,7 +243,7 @@ menu "On-chip Peripheral Drivers"
                     range 0 31
                     default 2
             endif
-			config BSP_USING_I2C3
+            config BSP_USING_I2C3
                 bool "Enable I2C3 bus"
                 default n
             if BSP_USING_I2C3
@@ -260,7 +260,7 @@ menu "On-chip Peripheral Drivers"
 
    menuconfig BSP_USING_SPI
         bool "Enable SPI"
-        select RT_USING_SPI  
+        select RT_USING_SPI
         default n
 
         if BSP_USING_SPI
@@ -332,7 +332,7 @@ menu "On-chip Peripheral Drivers"
                     range 0 47
                     default 31
             endif
-			config BSP_USING_SPI3
+            config BSP_USING_SPI3
                 bool "Enable SPI3 bus"
                 default n
             if BSP_USING_SPI3
@@ -353,7 +353,7 @@ menu "On-chip Peripheral Drivers"
                     range 0 47
                     default 31
             endif
-			config BSP_USING_SPI4
+            config BSP_USING_SPI4
                 bool "Enable SPI4 bus"
                 default n
             if BSP_USING_SPI4
@@ -407,7 +407,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_PWM1
                 config NRFX_PWM1_ENABLED
-                int 
+                int
                 default 1
                 config BSP_USING_PWM1_CH0
                     int "PWM1 channel 0 pin number set"
@@ -488,41 +488,41 @@ menu "On-chip Peripheral Drivers"
 
     menu "MCU flash config"
 
-        config MCU_FLASH_START_ADDRESS  
+        config MCU_FLASH_START_ADDRESS
             hex "MCU FLASH START ADDRESS"
             default 0x00000000
 
-        config MCU_FLASH_SIZE_KB  
+        config MCU_FLASH_SIZE_KB
             int "MCU FLASH SIZE, MAX size 1024 KB"
             default 1024
 
-        config MCU_SRAM_START_ADDRESS 
+        config MCU_SRAM_START_ADDRESS
             hex "MCU RAM START ADDRESS"
             default 0x20000000
 
-        config MCU_SRAM_SIZE_KB  
+        config MCU_SRAM_SIZE_KB
             int "MCU RAM SIZE"
             default 256
 
-        config MCU_FLASH_PAGE_SIZE 
+        config MCU_FLASH_PAGE_SIZE
             hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
             default 0x1000
-	endmenu
-	
-	config BSP_USING_TIM
+    endmenu
+
+    config BSP_USING_TIM
         bool "Enable TIMER"
         select RT_USING_HWTIMER
         default n
         if BSP_USING_TIM
             config NRFX_TIMER_ENABLED
-            int 
+            int
             default 1
             config BSP_USING_TIM1
                 bool "Enable TIMER1"
                 default n
             if BSP_USING_TIM1
                 config NRFX_TIMER1_ENABLED
-                int 
+                int
                 default 1
             endif
             config BSP_USING_TIM2
@@ -530,7 +530,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_TIM2
                 config NRFX_TIMER2_ENABLED
-                int 
+                int
                 default 1
             endif
         endif
@@ -538,7 +538,7 @@ menu "On-chip Peripheral Drivers"
 
     if PKG_USING_TINYUSB
         config NRFX_POWER_ENABLED
-        int 
+        int
         default 1
     endif
 
@@ -565,39 +565,39 @@ endchoice
 
 if SOC_NORDIC
     config NRFX_CLOCK_ENABLED
-    int 
+    int
     default 1
     config    NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
-    int 
+    int
     default 7
     config NRFX_CLOCK_CONFIG_LF_SRC
-    int 
-    default 1    
+    int
+    default 1
 endif
 
 if BSP_USING_UART
     config NRFX_USING_UART
     bool
     default y
-    
+
     config NRFX_UART_ENABLED
-    int 
+    int
     default 1
 if BSP_USING_UART0
     config NRFX_UART0_ENABLED
-    int 
+    int
     default 1
 endif
 
 if NRFX_USING_UART
     config NRFX_UART_ENABLED
-    int 
+    int
     default 1
 endif
 
 if NRFX_USING_UARTE
     config NRFX_UARTE0_ENABLED
-    int 
+    int
     default 1
 endif
 
@@ -606,103 +606,103 @@ endif
 
 if BSP_USING_GPIO
     config NRFX_GPIOTE_ENABLED
-    int 
-    default 1  
+    int
+    default 1
 endif
 
 if BSP_USING_SAADC
     config NRFX_SAADC_ENABLED
-    int 
-    default 1  
+    int
+    default 1
 endif
 
 if BSP_USING_I2C
     config NRFX_TWIM_ENABLED
-    int 
+    int
     default 1
     if BSP_USING_I2C0
         config NRFX_TWIM0_ENABLED
-        int 
+        int
         default 1
     endif
 
     if BSP_USING_I2C1
         config NRFX_TWIM1_ENABLED
-        int 
+        int
         default 1
     endif
-	
-	if BSP_USING_I2C2
+
+    if BSP_USING_I2C2
         config NRFX_TWIM2_ENABLED
-        int 
+        int
         default 1
     endif
-	
-	if BSP_USING_I2C3
+
+    if BSP_USING_I2C3
         config NRFX_TWIM3_ENABLED
-        int 
+        int
         default 1
     endif
 endif
 
 if BSP_USING_SPI
     config NRFX_SPIM_ENABLED
-    int 
+    int
     default 1
 
     if BSP_USING_SPI0
         config NRFX_SPIM0_ENABLED
-        int 
+        int
         default 1
     endif
 
     if BSP_USING_SPI1
         config NRFX_SPIM1_ENABLED
-        int 
+        int
         default 1
     endif
 
     if BSP_USING_SPI2
         config NRFX_SPIM2_ENABLED
-        int 
+        int
         default 1
     endif
-	
-	if BSP_USING_SPI3
+
+    if BSP_USING_SPI3
         config NRFX_SPIM3_ENABLED
-        int 
+        int
         default 1
     endif
-	
-	if BSP_USING_SPI4
+
+    if BSP_USING_SPI4
         config NRFX_SPIM4_ENABLED
-        int 
+        int
         default 1
     endif
 endif
 
 if BSP_USING_PWM
     config NRFX_PWM_ENABLED
-    int 
+    int
     default 1
     if BSP_USING_PWM0
         config NRFX_PWM0_ENABLED
-        int 
+        int
         default 1
     endif
     if BSP_USING_PWM1
     config NRFX_PWM1_ENABLED
-    int 
+    int
     default 1
     endif
     if BSP_USING_PWM2
         config NRFX_PWM2_ENABLED
-        int 
+        int
         default 1
     endif
     if BSP_USING_PWM3
         config NRFX_PWM3_ENABLED
-        int 
+        int
         default 1
     endif
 
@@ -722,13 +722,13 @@ endif
 
 if BSP_USING_ONCHIP_RTC
     config NRFX_CLOCK_ENABLED
-    int 
+    int
     default 1
     config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
     int
     default 7
     config NRFX_RTC_ENABLED
-    int 
+    int
     default 1
     config NRFX_RTC1_ENABLED
     int
@@ -737,7 +737,7 @@ if BSP_USING_ONCHIP_RTC
     int
     default 0
     config RTC_INSTANCE_ID
-    int 
+    int
     default 1
 endif
 
