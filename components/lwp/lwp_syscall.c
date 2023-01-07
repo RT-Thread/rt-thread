@@ -4361,6 +4361,17 @@ int sys_mq_getsetattr(mqd_t mqd, const struct mq_attr *restrict new, struct mq_a
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
+int sys_mq_close(mqd_t mqd)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    ret = mq_close(mqd);
+#else
+    ret = mq_close(mqd);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 const static void* func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -4569,6 +4580,7 @@ const static void* func_table[] =
     SYSCALL_SIGN(sys_mq_timedreceive),
     SYSCALL_SIGN(sys_mq_notify),
     SYSCALL_SIGN(sys_mq_getsetattr),
+    SYSCALL_SIGN(sys_mq_close),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
