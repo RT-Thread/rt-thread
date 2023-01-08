@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
+ * 2021-05-03     lizhirui     porting to c906
  */
 
 #ifndef __RISCV_MMU_H__
