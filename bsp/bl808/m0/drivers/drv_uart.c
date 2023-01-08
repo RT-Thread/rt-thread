@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -170,7 +170,7 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
         case STOP_BITS_1:
             uart_cfg.stopBits = UART_STOPBITS_1;
             break;
-        
+
         case STOP_BITS_2:
             uart_cfg.stopBits = UART_STOPBITS_2;
             break;
@@ -213,7 +213,7 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
 
     /* enable uart */
     UART_AutoBaudDetection(id, 0);
-    UART_Enable(id, UART_TXRX);    
+    UART_Enable(id, UART_TXRX);
 
     return RT_EOK;
 }
@@ -231,7 +231,7 @@ static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *ar
     {
     /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
-    	bl_uart_int_disable(uart->port);
+        bl_uart_int_disable(uart->port);
         bl_uart_int_rx_notify_unregister(uart->port, _uart_rx_irq, uart);
         break;
 
@@ -309,7 +309,7 @@ int rt_hw_uart_init(void)
     /* register USART device */
     result = rt_hw_serial_register(serial,
                                     "uart0",
-                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, 
+                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                                     uart);
     RT_ASSERT(result == RT_EOK);
 #endif
