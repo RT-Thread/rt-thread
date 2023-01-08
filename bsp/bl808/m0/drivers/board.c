@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -57,9 +57,9 @@ static void cmd_jtag_cpu0(void)
 
 /* This is the timer interrupt service routine. */
 static void mtime_handler(void)
-{   
+{
     rt_tick_increase();
-    
+
     csi_coret_config(CPU_Get_MTimer_Clock() / RT_TICK_PER_SECOND, MTIME_IRQn);
 }
 
@@ -74,7 +74,7 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_HEAP
     /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
-#endif   
+#endif
 
     /* UART driver initialization is open by default */
 #ifdef RT_USING_SERIAL

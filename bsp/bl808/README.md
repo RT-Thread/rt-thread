@@ -40,15 +40,34 @@ IR remote、 Display 和 GPIO。
 
 ## 2. 编译说明
 
-BL808是多核异构架构，每个核需要单独编译，并烧录到对应的位置。
+BL808是多核异构架构，分为m0和d0，每个核需要单独编译，并烧录到对应的位置。
 
-Windows下推荐使用[env工具][1]，然后在console下进入bsp/bl808目录中，选择需要编译的核心，m0或d0，运行：
+### 2.1. 交叉编译期路径设置
+下载risc-v的工具链，[下载地址1](https://occ.t-head.cn/community/download?id=4073475960903634944)或[下载地址2](https://dl.sipeed.com/shareURL/others/toolchain)
+
+Windows下请使用使用[env工具][1]，使用命令 `tar -xvf Xuantie-900-gcc-elf-newlib-mingw-V2.6.1-20220906.tar.gz` 解压交叉编译器，使用Windows下解压工具直接解压可能出现Windows下编译错误。
+
+在`rtconfig.py`中将risc-v工具链的本地路径加入 `EXEC_PATH` 或通过 `RTT_EXEC_PATH` 环境变量指定路径
+
+Windows：
+```
+set RTT_EXEC_PATH=C:\Users\xxxx\Downloads\Xuantie-900-gcc-elf-newlib-x86_64-V2.6.1\bin
+```
+
+Linux:
+```
+export RTT_EXEC_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.6.1/bin
+```
+
+### 2.2. 编译
+
+Windows下推荐使用[env工具][1]，在console下进入bsp/bl808目录中，选择需要编译的核心，m0或d0，运行：
 
     cd bsp/bl808/m0
     menuconfig
     pkgs --update
 
-如果在Linux平台下，可以先执行
+如果在Linux平台下，可以先执行：
 
     scons --menuconfig
 
@@ -58,19 +77,8 @@ Windows下推荐使用[env工具][1]，然后在console下进入bsp/bl808目录�
     
     cd bsp/bl808/m0
     pkgs --update
-下载risc-v的工具链，[下载地址](https://occ.t-head.cn/community/download?id=4073475960903634944)或[下载地址](https://dl.sipeed.com/shareURL/others/toolchain)
 
-更新完软件包后，在`rtconfig.py`中将risc-v工具链的本地路径加入文档。
-
-然后执行scons编译：  
-
-```
-    set RTT_EXEC_PATH=C:\Users\xxxx\Downloads\Xuantie-900-gcc-elf-newlib-x86_64-V2.6.1/bin
-    scons
-```
-来编译这个板级支持包。
-
-或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+更新完软件包后，执行 `scons -j10` 或 `scons -j10 --verbose` 来编译这个板级支持包。或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
 
 如果编译正确无误，会产生rtthread.elf、rtthread_m0.bin文件。其中rtthread_m0.bin需要烧写到设备中进行运行。  
 
