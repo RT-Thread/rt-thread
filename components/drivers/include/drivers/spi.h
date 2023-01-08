@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <rtthread.h>
+#include <drivers/pin.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -111,6 +112,7 @@ struct rt_spi_device
     struct rt_spi_bus *bus;
 
     struct rt_spi_configuration config;
+    rt_base_t cs_pin;
     void   *user_data;
 };
 
@@ -174,6 +176,13 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *name,
                                   const char           *bus_name,
                                   void                 *user_data);
+
+/* attach a device on SPI bus with CS pin */
+rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
+                                        const char           *name,
+                                        const char           *bus_name,
+                                        rt_base_t            cs_pin,
+                                        void                 *user_data);
 
 /**
  * This function takes SPI bus.
