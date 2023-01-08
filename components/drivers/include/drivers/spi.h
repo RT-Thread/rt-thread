@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -78,6 +79,7 @@ struct rt_spi_configuration
     rt_uint8_t mode;
     rt_uint8_t data_width;
     rt_uint16_t reserved;
+    rt_base_t cs_pin;
 
     rt_uint32_t max_hz;
 };
