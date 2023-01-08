@@ -79,9 +79,7 @@ struct rt_spi_configuration
     rt_uint8_t mode;
     rt_uint8_t data_width;
     rt_uint16_t reserved;
-#ifdef RT_USING_SPI_SOFT_CS
     rt_base_t cs_pin;
-#endif
 
     rt_uint32_t max_hz;
 };

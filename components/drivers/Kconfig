@@ -276,11 +276,6 @@ config RT_USING_SPI
     default n
 
     if RT_USING_SPI
-        config RT_USING_SPI_SOFT_CS
-            select RT_USING_PIN
-            bool "Use GPIO to simulate SPI chip select"
-            default n
-
         config RT_USING_SPI_BITOPS
             select RT_USING_PIN
             bool "Use GPIO to simulate SPI"

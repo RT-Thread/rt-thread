@@ -85,10 +85,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     RT_ASSERT(spi_drv != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-#ifdef RT_USING_SPI_SOFT_CS
     rt_pin_mode(cfg->cs_pin, PIN_MODE_OUTPUT);
     rt_pin_write(cfg->cs_pin, PIN_HIGH);
-#endif
 
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
 
@@ -301,7 +299,6 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
 
-#ifdef RT_USING_SPI_SOFT_CS
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
@@ -309,7 +306,6 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         else
             rt_pin_write(device->config.cs_pin, PIN_LOW);
     }
-#endif
 
     LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
     LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d",
@@ -437,7 +433,6 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 #endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
     }
 
-#ifdef RT_USING_SPI_SOFT_CS
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
@@ -445,7 +440,6 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         else
             rt_pin_write(device->config.cs_pin, PIN_HIGH);
     }
-#endif
 
     return message->length;
 }
@@ -577,14 +571,13 @@ static int rt_hw_spi_bus_init(void)
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, struct rt_spi_configuration *cfg)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
 
     rt_err_t result;
     struct rt_spi_device *spi_device;
-    struct rt_spi_configuration spi_cfg;
 
     /* attach the device to spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
@@ -592,10 +585,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 
     result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
 
-#ifdef RT_USING_SPI_SOFT_CS
-    spi_cfg.cs_pin = cs_pin;
-    result = rt_spi_configure(spi_device, &spi_cfg);
-#endif
+    result = rt_spi_configure(spi_device, cfg);
     
     if (result != RT_EOK)
     {
