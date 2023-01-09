@@ -247,7 +247,7 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     struct rt_cpu* pcpu = rt_cpu_self();
 
 #if defined(ARCH_MM_MMU) && defined(RT_USING_SMART)
-    lwp_mmu_switch(thread);
+    lwp_aspace_switch(thread);
 #endif
     pcpu->current_thread = thread;
     if (!thread->cpus_lock_nest)

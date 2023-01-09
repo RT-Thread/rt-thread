@@ -54,6 +54,11 @@ enum RT_HW_CACHE_OPS
  * CPU interfaces
  */
 #ifdef RT_USING_CACHE
+
+#ifdef ARCH_RISCV64
+#include <cache.h>
+#endif
+
 void rt_hw_cpu_icache_enable(void);
 void rt_hw_cpu_icache_disable(void);
 rt_base_t rt_hw_cpu_icache_status(void);

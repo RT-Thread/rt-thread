@@ -10,7 +10,7 @@
  * 2020/6/12      Xim          Port to QEMU and remove SMP support
  */
 
-#define SSTATUS_FS      0x00006000U /* initial state of FPU, clear to disable */
+#include <encoding.h>
 #include <cpuport.h>
 
 boot_hartid: .int
@@ -72,7 +72,7 @@ _start:
   li x31,0
 
   /* set to disable FPU */
-  li t0, SSTATUS_FS
+  li t0, SSTATUS_FS + SSTATUS_VS
   csrc sstatus, t0
   li t0, 0x40000 // SUM in sstatus
   csrs sstatus, t0
@@ -91,4 +91,6 @@ _start:
    * sscratch is always zero on kernel mode
    */
   csrw sscratch, zero
+  call init_bss
+  call sbi_init
   j primary_cpu_entry

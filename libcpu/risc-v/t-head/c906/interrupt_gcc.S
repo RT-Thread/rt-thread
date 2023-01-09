@@ -96,7 +96,7 @@ copy_context_loop_interrupt:
     #ifdef RT_USING_SMART
         mv a0, s1
         jal rt_thread_sp_to_thread
-        jal lwp_mmu_switch
+        jal lwp_aspace_switch
     #endif
 
 spurious_interrupt:

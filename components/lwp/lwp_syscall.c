@@ -13,8 +13,11 @@
  */
 #define _GNU_SOURCE
 /* RT-Thread System call */
+#include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
+#include <mm_aspace.h>
+#include <string.h>
 
 #include <lwp.h>
 #ifdef ARCH_MM_MMU
@@ -1282,7 +1285,7 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
 #ifdef ARCH_MM_MMU
     struct sigevent sevp_k;
     timer_t timerid_k;
-    struct sigevent evp_default;
+
     if (sevp == NULL)
     {
         sevp_k.sigev_notify = SIGEV_SIGNAL;
@@ -1362,7 +1365,7 @@ rt_thread_t sys_thread_create(void *arg[])
     lwp = rt_thread_self()->lwp;
     lwp_ref_inc(lwp);
 #ifdef ARCH_MM_MMU
-    user_stack  = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
+    user_stack = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
     if (!user_stack)
     {
         goto fail;
@@ -1605,11 +1608,15 @@ rt_weak long sys_clone(void *arg[])
     return _sys_clone(arg);
 }
 
-int lwp_dup_user(struct lwp_avl_struct* ptree, void *arg);
+int lwp_dup_user(rt_varea_t varea, void *arg);
 
 static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
 {
-    return lwp_avl_traversal(src_lwp->map_area, lwp_dup_user, dest_lwp);
+    int err;
+    dest_lwp->lwp_obj->source = src_lwp->aspace;
+    err = rt_aspace_traversal(src_lwp->aspace, lwp_dup_user, dest_lwp);
+    dest_lwp->lwp_obj->source = NULL;
+    return err;
 }
 
 static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
@@ -1694,7 +1701,7 @@ int _sys_fork(void)
     }
 
     /* user space init */
-    if (lwp_user_space_init(lwp) != 0)
+    if (lwp_user_space_init(lwp, 1) != 0)
     {
         SET_ERRNO(ENOMEM);
         goto fail;
@@ -2302,7 +2309,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     rt_memset(new_lwp, 0, sizeof(struct rt_lwp));
     new_lwp->ref = 1;
     lwp_user_object_lock_init(new_lwp);
-    ret = arch_user_space_init(new_lwp);
+    ret = lwp_user_space_init(new_lwp, 0);
     if (ret != 0)
     {
         SET_ERRNO(ENOMEM);
@@ -2371,8 +2378,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         rt_pages_free(page, 0);
 
 #ifdef ARCH_MM_MMU
-        _swap_lwp_data(lwp, new_lwp, rt_mmu_info, mmu_info);
-        _swap_lwp_data(lwp, new_lwp, struct lwp_avl_struct *, map_area);
+        _swap_lwp_data(lwp, new_lwp, struct rt_aspace *, aspace);
+        _swap_lwp_data(lwp, new_lwp, struct rt_lwp_objs *, lwp_obj);
+
         _swap_lwp_data(lwp, new_lwp, size_t, end_heap);
 #endif
         _swap_lwp_data(lwp, new_lwp, uint8_t, lwp_type);
@@ -2392,7 +2400,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
 
         /* to do: clsoe files with flag CLOEXEC */
 
-        lwp_mmu_switch(thread);
+        lwp_aspace_switch(thread);
 
         rt_hw_interrupt_enable(level);
 
@@ -4562,17 +4570,17 @@ const static void* func_table[] =
     SYSCALL_USPACE(SYSCALL_SIGN(sys_madvise)),
     SYSCALL_SIGN(sys_sched_setparam),
     SYSCALL_SIGN(sys_sched_getparam),
-    SYSCALL_SIGN(sys_sched_get_priority_max),
+    SYSCALL_SIGN(sys_sched_get_priority_max),           /* 150 */
     SYSCALL_SIGN(sys_sched_get_priority_min),
     SYSCALL_SIGN(sys_sched_setscheduler),
     SYSCALL_SIGN(sys_sched_getscheduler),
     SYSCALL_SIGN(sys_setaffinity),
-    SYSCALL_SIGN(sys_fsync),
+    SYSCALL_SIGN(sys_fsync),                            /* 155 */
     SYSCALL_SIGN(sys_clock_nanosleep),
     SYSCALL_SIGN(sys_timer_create),
     SYSCALL_SIGN(sys_timer_delete),
     SYSCALL_SIGN(sys_timer_settime),
-    SYSCALL_SIGN(sys_timer_gettime),
+    SYSCALL_SIGN(sys_timer_gettime),                    /* 160 */
     SYSCALL_SIGN(sys_timer_getoverrun),
     SYSCALL_SIGN(sys_mq_open),
     SYSCALL_SIGN(sys_mq_unlink),

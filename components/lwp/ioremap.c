@@ -12,33 +12,40 @@
 
 #include <ioremap.h>
 
-#ifdef ARCH_MM_MMU
+#ifdef RT_USING_SMART
 #include <mmu.h>
-#include <lwp_mm_area.h>
 #include <lwp_mm.h>
+#include <mm_aspace.h>
 
-static struct lwp_avl_struct *k_map_area;
-extern rt_mmu_info mmu_info;
+#define DBG_TAG "mm.ioremap"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
 
-static void _iounmap_range(void *addr, size_t size)
+enum ioremap_type
 {
-    void *va = RT_NULL, *pa = RT_NULL;
-    int i = 0;
+    MM_AREA_TYPE_PHY,
+    MM_AREA_TYPE_PHY_CACHED
+};
 
-    for (va = addr, i = 0; i < size; va = (void *)((char *)va + ARCH_PAGE_SIZE), i += ARCH_PAGE_SIZE)
-    {
-        pa = rt_hw_mmu_v2p(&mmu_info, va);
-        if (pa)
-        {
-            rt_hw_mmu_unmap(&mmu_info, va, ARCH_PAGE_SIZE);
-        }
-    }
-}
+void *rt_ioremap_start;
+size_t rt_ioremap_size;
 
-static void *_ioremap_type(void *paddr, size_t size, int type)
+static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 {
     void *v_addr = NULL;
     size_t attr;
+    size_t lo_off;
+    int err;
+
+    lo_off = (uintptr_t)paddr & ARCH_PAGE_MASK;
+
+    struct rt_mm_va_hint hint = {
+        .prefer = ARCH_MAP_FAILED,
+        .map_size = RT_ALIGN(size + lo_off, ARCH_PAGE_SIZE),
+        .flags = 0,
+        .limit_start = rt_ioremap_start,
+        .limit_range_size = rt_ioremap_size,
+    };
 
     switch (type)
     {
@@ -51,19 +58,17 @@ static void *_ioremap_type(void *paddr, size_t size, int type)
     default:
         return v_addr;
     }
+    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), &v_addr);
 
-    rt_mm_lock();
-    v_addr = rt_hw_mmu_map(&mmu_info, 0, paddr, size, attr);
-    if (v_addr)
+    if (err)
     {
-        int ret = lwp_map_area_insert(&k_map_area, (size_t)v_addr, size, type);
-        if (ret != 0)
-        {
-            _iounmap_range(v_addr, size);
-            v_addr = NULL;
-        }
+        LOG_W("IOREMAP 0x%lx failed", paddr);
+        v_addr = NULL;
     }
-    rt_mm_unlock();
+    else
+    {
+        v_addr = v_addr + lo_off;
+    }
     return v_addr;
 }
 
@@ -84,18 +89,7 @@ void *rt_ioremap_cached(void *paddr, size_t size)
 
 void rt_iounmap(volatile void *vaddr)
 {
-    struct lwp_avl_struct *ma_avl_node;
-
-    rt_mm_lock();
-    ma_avl_node = lwp_map_find(k_map_area, (size_t)vaddr);
-    if (ma_avl_node)
-    {
-        struct rt_mm_area_struct *ma = (struct rt_mm_area_struct *)ma_avl_node->data;
-
-        _iounmap_range((void *)ma->addr, ma->size);
-        lwp_map_area_remove(&k_map_area, (size_t)vaddr);
-    }
-    rt_mm_unlock();
+    rt_aspace_unmap(&rt_kernel_space, (void *)vaddr, 1);
 }
 
 #else

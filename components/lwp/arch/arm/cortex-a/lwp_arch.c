@@ -8,64 +8,72 @@
  * 2019-10-28     Jesven       first version
  */
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <rtthread.h>
+#include <stddef.h>
 
 #ifdef ARCH_MM_MMU
 
-#include <mmu.h>
-#include <page.h>
-#include <lwp_mm_area.h>
-#include <lwp_user_mm.h>
 #include <lwp_arch.h>
+#include <lwp_user_mm.h>
 
-extern size_t MMUTable[];
+#define KPTE_START (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT)
 
 int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
 
-    mmu_table = (size_t*)rt_pages_alloc(2);
+    mmu_table = (size_t *)rt_pages_alloc(2);
     if (!mmu_table)
     {
         return -1;
     }
 
     lwp->end_heap = USER_HEAP_VADDR;
-    rt_memcpy(mmu_table + (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT), MMUTable + (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT), ARCH_PAGE_SIZE);
+
+    rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
     rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
-    rt_hw_mmu_map_init(&lwp->mmu_info, (void*)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table, PV_OFFSET);
+    lwp->aspace = rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
+    if (!lwp->aspace)
+    {
+        return -1;
+    }
 
     return 0;
 }
 
-void *arch_kernel_mmu_table_get(void)
-{
-    return (void*)((char*)MMUTable + PV_OFFSET);
-}
+static struct rt_varea kuser_varea;
 
-void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors)
+void arch_kuser_init(rt_aspace_t aspace, void *vectors)
 {
+    const size_t kuser_size = 0x1000;
+    int err;
     extern char __kuser_helper_start[], __kuser_helper_end[];
     int kuser_sz = __kuser_helper_end - __kuser_helper_start;
 
-    rt_hw_mmu_map_auto(mmu_info, vectors, 0x1000, MMU_MAP_U_RO);
+    err = rt_aspace_map_static(aspace, &kuser_varea, &vectors, kuser_size,
+                               MMU_MAP_U_RO, MMF_MAP_FIXED | MMF_PREFETCH,
+                               &rt_mm_dummy_mapper, 0);
+    if (err != 0)
+        while (1)
+            ; // early failed
 
-    rt_memcpy((void*)((char*)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
+    rt_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
     /*
      * vectors + 0xfe0 = __kuser_get_tls
      * vectors + 0xfe8 = hardware TLS instruction at 0xffff0fe8
      */
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)((char*)vectors + 0x1000 - kuser_sz), kuser_sz);
-    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void*)((char*)vectors + 0x1000 - kuser_sz), kuser_sz);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)((char *)vectors + 0x1000 - kuser_sz), kuser_sz);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void *)((char *)vectors + 0x1000 - kuser_sz), kuser_sz);
 }
 
 void arch_user_space_vtable_free(struct rt_lwp *lwp)
 {
-    if (lwp && lwp->mmu_info.vtable)
+    if (lwp && lwp->aspace->page_table)
     {
-        rt_pages_free(lwp->mmu_info.vtable, 2);
+        rt_pages_free(lwp->aspace->page_table, 2);
+        lwp->aspace->page_table = NULL;
     }
 }
 
@@ -77,7 +85,7 @@ int arch_expand_user_stack(void *addr)
     stack_addr &= ~ARCH_PAGE_MASK;
     if ((stack_addr >= (size_t)USER_STACK_VSTART) && (stack_addr < (size_t)USER_STACK_VEND))
     {
-        void *map = lwp_map_user(lwp_self(), (void*)stack_addr, ARCH_PAGE_SIZE, 0);
+        void *map = lwp_map_user(lwp_self(), (void *)stack_addr, ARCH_PAGE_SIZE, 0);
 
         if (map || lwp_user_accessable(addr, 1))
         {

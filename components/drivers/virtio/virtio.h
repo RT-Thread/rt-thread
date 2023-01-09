@@ -48,8 +48,7 @@
 #define VIRTIO_F_RING_PACKED        34
 
 #ifdef RT_USING_SMART
-extern rt_mmu_info mmu_info;
-#define VIRTIO_VA2PA(vaddr)         ((rt_ubase_t)rt_hw_mmu_v2p(&mmu_info, vaddr))
+#define VIRTIO_VA2PA(vaddr)         ((rt_ubase_t)rt_kmem_v2p(vaddr))
 #define VIRTIO_PA2VA(paddr)         ((rt_ubase_t)rt_ioremap((void *)paddr, ARCH_PAGE_SIZE))
 #else
 #define VIRTIO_VA2PA(vaddr)         ((rt_ubase_t)vaddr)

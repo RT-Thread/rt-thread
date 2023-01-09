@@ -23,7 +23,7 @@ rt_hw_context_switch_to:
 
     #ifdef RT_USING_SMART
         mv a0, s1
-        jal lwp_mmu_switch
+        jal lwp_aspace_switch
     #endif
 
     RESTORE_ALL
@@ -56,7 +56,7 @@ rt_hw_context_switch:
 
     #ifdef RT_USING_SMART
         mv a0, s1
-        jal lwp_mmu_switch
+        jal lwp_aspace_switch
     #endif
 
     RESTORE_ALL

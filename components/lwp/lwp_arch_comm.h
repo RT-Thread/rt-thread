@@ -10,7 +10,9 @@
 #ifndef __LWP_ARCH_COMM__
 #define __LWP_ARCH_COMM__
 
+#include <mm_aspace.h>
 #include <rtthread.h>
+#include <mmu.h>
 
 /**
  * APIs that must port to all architectures
@@ -24,7 +26,9 @@ void arch_ret_to_user();
 
 /* ELF relocation */
 #ifdef ARCH_MM_MMU
-void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);
+
+struct rt_lwp;
+void arch_elf_reloc(rt_aspace_t aspace, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);
 #else
 void arch_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);
 #endif
@@ -42,7 +46,7 @@ void *arch_get_user_sp(void);
 int arch_user_space_init(struct rt_lwp *lwp);
 void arch_user_space_vtable_free(struct rt_lwp *lwp);
 void *arch_kernel_mmu_table_get(void);
-void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors);
+void arch_kuser_init(rt_aspace_t aspace, void *vectors);
 int arch_expand_user_stack(void *addr);
 
 /* thread id register */

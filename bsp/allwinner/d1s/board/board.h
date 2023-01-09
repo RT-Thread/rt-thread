@@ -11,6 +11,7 @@
 #ifndef BOARD_H__
 #define BOARD_H__
 
+#include <rtthread.h>
 #include <rtconfig.h>
 
 extern unsigned int __bss_start;

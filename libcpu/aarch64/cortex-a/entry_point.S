@@ -91,10 +91,11 @@ __start:
     msr     cpacr_el1, x1
 
     /* clear bss */
-    ldr     x1, =__bss_start     /* get bss start address */
-    ldr     x2, =__bss_end
+    adrp    x1, __bss_start     /* get bss start address */
+    add	    x1, x1, #:lo12:__bss_start
+    adrp    x2, __bss_end
+    add	    x1, x1, #:lo12:__bss_end
     sub     x2, x2, x1            /* get bss size          */
-    add     x1, x1, x9
 
     and     x3, x2, #7           /* x3 is < 7 */
     ldr     x4, =~0x7
@@ -140,14 +141,14 @@ __start:
     orr x1, x1, #(1 << 0)    /* M */
     msr sctlr_el1, x1        /* enable MMU */
 
-    dsb sy
-    isb sy
+    dsb ish
+    isb
     ic ialluis               /* Invalidate all instruction caches in Inner Shareable domain to Point of Unification */
-    dsb sy
-    isb sy
+    dsb ish
+    isb
     tlbi vmalle1             /* Invalidate all stage 1 translations used at EL1 with the current VMID */
-    dsb sy
-    isb sy
+    dsb ish
+    isb
     ret
 
 after_mmu_enable:

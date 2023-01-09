@@ -15,6 +15,12 @@
 #include "gic.h"
 #include "gicv3.h"
 
+#ifdef RT_USING_SMART
+#include "ioremap.h"
+#else
+#define rt_ioremap(x, ...) (x)
+#endif
+
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 
@@ -103,11 +109,11 @@ void rt_hw_interrupt_init(void)
 
     /* initialize ARM GIC */
 #ifdef RT_USING_SMART
-    gic_dist_base = (rt_uint64_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_dist_base(), 0x2000, MMU_MAP_K_DEVICE);
-    gic_cpu_base = (rt_uint64_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_cpu_base(), 0x1000, MMU_MAP_K_DEVICE);
+    gic_dist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x2000);
+    gic_cpu_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_cpu_base(), 0x1000);
 #ifdef BSP_USING_GICV3
-    gic_rdist_base = (rt_uint64_t)rt_hw_mmu_map(&mmu_info, 0, (void*)platform_get_gic_redist_base(),
-            RT_CPUS_NR * (2 << 16), MMU_MAP_K_DEVICE);
+    gic_rdist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_redist_base(),
+            RT_CPUS_NR * (2 << 16));
 #endif
 #else
     gic_dist_base = platform_get_gic_dist_base();

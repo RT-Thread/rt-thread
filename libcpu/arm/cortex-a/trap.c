@@ -8,12 +8,13 @@
  * 2013-07-20     Bernard      first version
  */
 
-#include <rtthread.h>
-#include <rthw.h>
-#include <board.h>
 #include <backtrace.h>
+#include <board.h>
+#include <rthw.h>
+#include <rtthread.h>
 
 #include "interrupt.h"
+#include "mm_fault.h"
 
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
@@ -44,14 +45,23 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 
 int check_user_stack(struct rt_hw_exp_stack *regs)
 {
-    void* dfar = RT_NULL;
+    void *dfar = RT_NULL;
+    asm volatile("MRC p15, 0, %0, c6, c0, 0" : "=r"(dfar));
 
-    asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(dfar));
-    if (arch_expand_user_stack(dfar))
+    if ((dfar >= (void *)USER_STACK_VSTART) && (dfar < (void *)USER_STACK_VEND))
     {
-        regs->pc -= 8;
-        return 1;
+        struct rt_mm_fault_msg msg = {
+            .fault_op = MM_FAULT_OP_WRITE,
+            .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
+            .vaddr = dfar,
+        };
+        if (rt_mm_fault_try_fix(&msg))
+        {
+            regs->pc -= 8;
+            return 1;
+        }
     }
+
     return 0;
 }
 #endif
@@ -79,7 +89,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
         rt_kprintf("ttbr0:0x%08x\n", v);
         asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(v));
         rt_kprintf("dfar:0x%08x\n", v);
-        rt_kprintf("0x%08x -> 0x%08x\n", v, rt_hw_mmu_v2p(&mmu_info, (void *)v));
+        rt_kprintf("0x%08x -> 0x%08x\n", v, rt_kmem_v2p((void *)v));
     }
 #endif
 }

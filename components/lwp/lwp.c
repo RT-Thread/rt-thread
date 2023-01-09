@@ -37,7 +37,6 @@
 #include <rtdbg.h>
 
 #ifdef ARCH_MM_MMU
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 #endif /* end of ARCH_MM_MMU */
 
@@ -183,7 +182,7 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
         return RT_NULL;
     }
 
-    args_k = (size_t *)rt_hw_mmu_v2p(&lwp->mmu_info, args);
+    args_k = (size_t *)lwp_v2p(lwp, args);
     args_k = (size_t *)((size_t)args_k - PV_OFFSET);
 
     /* argc, argv[], 0, envp[], 0 , aux[] */
@@ -511,7 +510,6 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     void *pa, *va;
     void *va_self;
 
-    rt_mmu_info *m_info = &lwp->mmu_info;
 #endif
 
     if (len < sizeof eheader)
@@ -613,7 +611,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             LOG_E("lwp map user failed!");
             return -RT_ERROR;
         }
-        pa = rt_hw_mmu_v2p(m_info, va);
+        pa = lwp_v2p(lwp, va);
         process_header = (uint8_t *)pa - PV_OFFSET;
 #else
         process_header = (uint8_t *)rt_malloc(process_header_size + sizeof(char[16]));
@@ -646,7 +644,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
 
             random = (uint8_t *)(USER_VADDR_TOP - ARCH_PAGE_SIZE - sizeof(char[16]));
 
-            krandom = (uint8_t *)rt_hw_mmu_v2p(m_info, random);
+            krandom = (uint8_t *)lwp_v2p(lwp, random);
             krandom = (uint8_t *)krandom - PV_OFFSET;
             rt_memcpy(krandom, &random_value, sizeof random_value);
 #else
@@ -738,7 +736,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         {
             if (user_area[i].size != 0)
             {
-                va = lwp_map_user(lwp, user_area[i].start, user_area[i].size, (int)(i == 0));
+                va = lwp_map_user(lwp, user_area[i].start, user_area[i].size, (i == 0));
                 if (!va || (va != user_area[i].start))
                 {
                     result = -RT_ERROR;
@@ -836,7 +834,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                 read_len = 0;
                 while (size)
                 {
-                    pa = rt_hw_mmu_v2p(m_info, va);
+                    pa = lwp_v2p(lwp, va);
                     va_self = (void *)((char *)pa - PV_OFFSET);
                     LOG_D("va_self = %p pa = %p", va_self, pa);
                     tmp_len = (size < ARCH_PAGE_SIZE) ? size : ARCH_PAGE_SIZE;
@@ -864,7 +862,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                 while (size)
                 {
                     size_s = (size < ARCH_PAGE_SIZE - off) ? size : ARCH_PAGE_SIZE - off;
-                    pa = rt_hw_mmu_v2p(m_info, va);
+                    pa = lwp_v2p(lwp, va);
                     va_self = (void *)((char *)pa - PV_OFFSET);
                     memset((void *)((char *)va_self + off), 0, size_s);
                     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)((char *)va_self + off), size_s);
@@ -942,7 +940,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             check_read(read_len, dynsym_size);
         }
 #ifdef ARCH_MM_MMU
-        arch_elf_reloc(m_info, (void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
+        arch_elf_reloc(lwp->aspace, (void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
 #else
         arch_elf_reloc((void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
 
@@ -1151,7 +1149,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         return -ENOMEM;
     }
 #ifdef ARCH_MM_MMU
-    if (lwp_user_space_init(lwp) != 0)
+    if (lwp_user_space_init(lwp, 0) != 0)
     {
         lwp_tid_put(tid);
         lwp_ref_dec(lwp);

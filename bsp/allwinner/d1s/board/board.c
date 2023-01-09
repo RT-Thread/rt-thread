@@ -13,6 +13,7 @@
 #include <rtdevice.h>
 
 #include "board.h"
+#include "mm_aspace.h"
 #include "tick.h"
 
 #include "drv_uart.h"
@@ -40,8 +41,7 @@ rt_region_t init_page_region =
         (rt_size_t)RT_HW_PAGE_END};
 
 // 内核页表
-volatile rt_size_t MMUTable[__SIZE(VPN2_BIT)] __attribute__((aligned(4 * 1024)));
-rt_mmu_info mmu_info;
+extern volatile rt_size_t MMUTable[__SIZE(VPN2_BIT)] __attribute__((aligned(4 * 1024)));
 
 #endif
 
@@ -71,6 +71,7 @@ void primary_cpu_entry(void)
 
     // 初始化BSS
     init_bss();
+    sbi_init();
     // 关中断
     rt_hw_interrupt_disable();
     rt_assert_set_hook(__rt_assert_handler);
@@ -78,18 +79,20 @@ void primary_cpu_entry(void)
     entry();
 }
 
+#define IOREMAP_SIZE (1ul << 30)
+
 // 这个初始化程序由内核主动调用，此时调度器还未启动，因此在此不能使用依赖线程上下文的函数
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
     rt_page_init(init_page_region);
-    rt_hw_mmu_map_init(&mmu_info, (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, (rt_size_t *)MMUTable, 0);
-    rt_hw_mmu_kernel_map_init(&mmu_info, 0x00000000UL, USER_VADDR_START - 1);
+    rt_hw_mmu_kernel_map_init(&rt_kernel_space, 0x00000000UL, USER_VADDR_START - 1);
     // 将低1GB MMIO区域设置为无Cache与Strong Order访存模式
     MMUTable[0] &= ~PTE_CACHE;
     MMUTable[0] &= ~PTE_SHARE;
     MMUTable[0] |= PTE_SO;
-    rt_hw_mmu_switch((void *)MMUTable);
+    rt_hw_aspace_switch(&rt_kernel_space);
 #endif
     /* initalize interrupt */
     rt_hw_interrupt_init();
