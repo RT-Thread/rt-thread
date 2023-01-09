@@ -83,7 +83,7 @@ RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主�
 
 - ARM Cortex-M0/M0+：如芯片制造商 ST
 - ARM Cortex-M3：如芯片制造商 ST、全志、灵动等.
-- ARM Cortex-M4：如芯片制造商 ST、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro等
+- ARM Cortex-M4：如芯片制造商 ST、Infineon、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro等
 - ARM Cortex-M7：如芯片制造商 ST、NXP
 - ARM Cortex-M23：如芯片制造商 GigaDevice
 - ARM Cortex-M33：如芯片制造商 ST
