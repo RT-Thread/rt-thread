@@ -60,13 +60,13 @@ chip_5410x/wwdt_5410x.c
 #LIBS = [cwd + '/chip_5410x/power_lib/keil/lib_power']
 
 #lpc_chip\chip_5410x\power_lib\lpcxpresso
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-	LIBPATH = [cwd + '/chip_5410x/power_lib/lpcxpresso']
-	LIBS = ['libpower']
+    LIBPATH = [cwd + '/chip_5410x/power_lib/lpcxpresso']
+    LIBS = ['libpower']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-	LIBPATH = [cwd + '/chip_5410x/power_lib/keil']
-	LIBS = ['lib_power']
+    LIBPATH = [cwd + '/chip_5410x/power_lib/keil']
+    LIBS = ['lib_power']
 
 CPPPATH = [cwd + '/chip_common',cwd + '/chip_5410x',cwd + '/chip_5410x/config']
 

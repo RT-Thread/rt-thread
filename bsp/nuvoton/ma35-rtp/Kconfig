@@ -9,7 +9,7 @@ config RTT_DIR
     string
     option env="RTT_ROOT"
     default "../../.."
-    
+
 # you can change the RTT_ROOT default "../../.." to your rtthread_root,
 # example : default "F:/git_repositories/rt-thread"
 

@@ -9,7 +9,7 @@ menu "On-chip Peripheral Drivers"
             config RT_USING_UART1
                 bool "Enable UART1"
                 default y
-            
+
             config RT_USING_UART0
                 bool "Enable UART0"
                 default n
@@ -33,10 +33,10 @@ menu "On-chip Peripheral Drivers"
             config BSP_SDC_USE_IRQ
                 bool "Use interrupt to handle when cmd complete, dma complete"
                 default n
-            
+
             if BSP_SDC_USE_IRQ
                 config BSP_SDC_IRQ_CARD_REMOVE
-                    bool "Use interrupt to determine if the card is pulled out" 
+                    bool "Use interrupt to determine if the card is pulled out"
                     default n
 
             endif
@@ -48,7 +48,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_NETDEV
 
-        
+
         if BSP_USING_GMAC
             config BSP_USING_GMAC0
                 bool "Enable GMAC0"
@@ -91,7 +91,7 @@ menu "On-chip Peripheral Drivers"
     #             bool "Enable qspi debug print"
     #             default n
     #     endif
-    
+
     menuconfig BSP_USE_SPI
         bool "Enable Spi"
         select RT_USING_SFUD
@@ -118,8 +118,8 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USE_CAN
         bool "Enable Can"
         select RT_USING_CAN
-        default n        
-    
+        default n
+
         if BSP_USE_CAN
             config BSP_USING_CAN0
                 bool "Enable can0"
@@ -127,7 +127,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_CAN1
                 bool "Enable can1"
                 default n
-            
+
             if BSP_USING_CAN0
                 config BSP_USING_CAN0_DEBUG
                     bool "Enable can0 work in loop back"
@@ -136,7 +136,7 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-    
+
 endmenu
 
 menu "Board extended module Drivers"

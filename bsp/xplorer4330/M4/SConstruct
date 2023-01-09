@@ -26,5 +26,5 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-# do building 
+# do building
 DoBuilding(TARGET, objs)

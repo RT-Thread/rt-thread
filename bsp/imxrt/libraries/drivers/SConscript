@@ -79,7 +79,7 @@ if GetDepend('BSP_USING_PULSE_ENCODER'):
 
 if GetDepend('BSP_USING_FLEXSPI'):
     src += ['drv_flexspi.c']
-    
+
 src += ['drv_common.c']
 path =  [cwd]
 

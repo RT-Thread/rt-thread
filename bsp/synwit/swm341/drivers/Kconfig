@@ -65,16 +65,16 @@ menu "On-chip Peripheral Drivers"
                     config BSP_USING_ADC0_CHN7
                         bool "Enable ADC0_CHN7(A15)"
                         default n
-	      config BSP_USING_ADC0_CHN8
+          config BSP_USING_ADC0_CHN8
                         bool "Enable ADC0_CHN8(A14)"
                         default n
-	      config BSP_USING_ADC0_CHN9
+          config BSP_USING_ADC0_CHN9
                         bool "Enable ADC0_CHN9(A13)"
                         default n
-	      config BSP_USING_ADC0_CHN10
+          config BSP_USING_ADC0_CHN10
                         bool "Enable ADC0_CHN10(A12)"
                         default n
-	      config BSP_USING_ADC0_CHN11
+          config BSP_USING_ADC0_CHN11
                         bool "Enable ADC0_CHN11(A10)"
                         default n
                 endif
@@ -394,7 +394,7 @@ menu "On-chip Peripheral Drivers"
                 select PKG_USING_LVGL
                 default n
         endif
-        
+
 endmenu
 
 menu "Onboard Peripheral Drivers"

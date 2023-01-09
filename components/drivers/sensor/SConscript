@@ -1,4 +1,4 @@
-# SConscript for sensor framework 
+# SConscript for sensor framework
 
 from building import *
 

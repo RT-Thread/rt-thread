@@ -60,7 +60,7 @@ menu "Hardware Drivers Config"
 
         config BOARD_USING_MPU6500
             bool "MPU6500 6-axis MotionTracking Sensor(over i2c1)"
-	        select RT_USING_SENSOR
+            select RT_USING_SENSOR
             select PKG_USING_MPU6XXX
             select PKG_USING_MPU6XXX_LATEST_VERSION
             select PKG_USING_MPU6XXX_ACCE

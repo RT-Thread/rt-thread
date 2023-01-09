@@ -125,7 +125,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM3 channel2"
                         default n
                 endif
-            
+
             menuconfig BSP_USING_PWM4
                 bool "Enable timer4 output PWM"
                 default n
@@ -149,7 +149,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -169,7 +169,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 Bus (User I2C)"
                 default n
                 if BSP_USING_I2C1
-                    comment "Notice: PB9 --> 25; PB8 --> 24" 
+                    comment "Notice: PB9 --> 25; PB8 --> 24"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 SCL pin number"
                         range 1 176
@@ -182,11 +182,11 @@ menu "On-chip Peripheral Drivers"
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

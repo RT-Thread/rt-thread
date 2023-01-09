@@ -41,21 +41,21 @@ if GetDepend(['RT_USING_ADC']):
 
 if GetDepend(['RT_USING_DAC']):
     src += ['MM32F3270_HAL_Driver/Src/hal_dac.c']
-    
+
 if GetDepend(['RT_USING_RTC']):
     src += ['MM32F3270_HAL_Driver/Src/hal_rtc.c']
-   
+
 if GetDepend(['RT_USING_EXRAM']):
     src += ['MM32F3270_HAL_Driver/Src/hal_fsmc.c']
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['MM32F3270_HAL_Driver/Src/hal_sdio.c']
-    
+
 if GetDepend(['RT_USING_WDT']):
     src += ['MM32F3270_HAL_Driver/Src/hal_iwdg.c']
     src += ['MM32F3270_HAL_Driver/Src/hal_wwdg.c']
 
-path = [cwd + '/CMSIS/Device/MM32/MM32F3277/Include', 
+path = [cwd + '/CMSIS/Device/MM32/MM32F3277/Include',
     cwd + '/MM32F3270_HAL_Driver/Inc']
 
 if not GetDepend('PKG_CMSIS_CORE'):

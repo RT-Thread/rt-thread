@@ -38,16 +38,16 @@ if GetDepend(['RT_USING_WDT']):
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
     src += ['TAE32F53xx_StdPeriph_Driver/src/tae32f53xx_ll_tmr.c']
 
-#add for startup script 
+#add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/GCC/startup_ARMCM3.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-	src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/startup_tae32f53xx.c']
+    src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/startup_tae32f53xx.c']
 elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/Tai_action/TAE32F53xx/Source/IAR/startup_ARMCM3.s']
 
-#add headfile script 
-path = [cwd + '/CMSIS/Include', 
+#add headfile script
+path = [cwd + '/CMSIS/Include',
     cwd + '/CMSIS/Device/Tai_action/TAE32F53xx/Include',
     cwd + '/TAE32F53xx_StdPeriph_Driver/inc']
 

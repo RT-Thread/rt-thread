@@ -31,15 +31,15 @@ if GetDepend(['RT_USING_SPI']):
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_tmr.c']
-    
+
 if GetDepend(['RT_USING_WDT']):
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_wwdt.c']
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_iwdt.c']
-    
+
 if GetDepend(['RT_USING_CAN']):
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_can.c']
-    
-path = [cwd + '/Device/Geehy/APM32F0xx/Include', 
+
+path = [cwd + '/Device/Geehy/APM32F0xx/Include',
     cwd + '/APM32F0xx_StdPeriphDriver/inc',
     cwd + '/CMSIS/Include']
 

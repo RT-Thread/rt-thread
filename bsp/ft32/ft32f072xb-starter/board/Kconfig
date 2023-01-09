@@ -42,7 +42,7 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
     source "../libraries/Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

@@ -14,8 +14,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y
-		
-	config BSP_USING_SPI_FLASH
+
+    config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q64 spi3)"
         select BSP_USING_SPI
         select BSP_USING_SPI3
@@ -71,7 +71,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
-        
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
@@ -89,7 +89,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
@@ -186,12 +186,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
-    source "../libraries/HAL_Drivers/Kconfig"    
-    
+    source "../libraries/HAL_Drivers/Kconfig"
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

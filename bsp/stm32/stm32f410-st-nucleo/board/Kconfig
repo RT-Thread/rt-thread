@@ -13,7 +13,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART2
         default y
-    
+
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
@@ -53,7 +53,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART2
                 bool "Enable UART2"
                 default y
@@ -73,7 +73,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable ADC1"
                 default n
         endif
-    
+
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
@@ -94,8 +94,8 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM1 channel3"
                         default n
                 endif
-        endif   
-    
+        endif
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -103,7 +103,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25" 
+            comment "Notice: PB8 --> 24; PB9 --> 25"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 80
@@ -113,9 +113,9 @@ menu "On-chip Peripheral Drivers"
                 range 0 80
                 default 25
         endif
-    
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

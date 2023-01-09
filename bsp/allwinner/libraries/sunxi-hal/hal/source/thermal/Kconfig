@@ -7,7 +7,7 @@ config DRIVERS_THERMAL
 
 config HAL_TEST_THERMAL
     bool "enable thermal hal APIs test command"
-	depends on DRIVERS_THERMAL
+    depends on DRIVERS_THERMAL
         default n
 
 

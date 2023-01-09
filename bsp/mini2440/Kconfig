@@ -33,10 +33,10 @@ choice
 
     config RT_MINI2440_LCD_T43
         bool "T43"
-    
+
     config RT_MINI2440_LCD_N35
         bool "N35"
-    
+
     config RT_MINI2440_LCD_T35
         bool "T35"
 

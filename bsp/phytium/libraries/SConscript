@@ -19,54 +19,54 @@ if GetDepend(['TARGET_ARMV8_AARCH32']):
     path += [STANDALONE_DIR + '/arch/armv8/aarch32']
 elif GetDepend(['TARGET_ARMV8_AARCH64']):
     src += Glob(STANDALONE_DIR+'/arch/armv8/aarch64/*.c') + Glob(STANDALONE_DIR+'/arch/armv8/aarch64/gcc/*.S')
-    path += [STANDALONE_DIR + '/arch/armv8/aarch64']    
+    path += [STANDALONE_DIR + '/arch/armv8/aarch64']
 
 # board
 src += Glob(STANDALONE_DIR+'/board/common/*.c') + Glob(STANDALONE_DIR+'/board/common/*.S')
-path += [STANDALONE_DIR + '/board/common'] 
+path += [STANDALONE_DIR + '/board/common']
 
 if GetDepend(['TARGET_F2000_4']):
     src += Glob(STANDALONE_DIR+'/board/ft2004/*.c')
-    path += [STANDALONE_DIR + '/board/ft2004'] 
+    path += [STANDALONE_DIR + '/board/ft2004']
 
 if GetDepend(['TARGET_E2000']):
     src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
-    path += [STANDALONE_DIR + '/board/e2000'] 
+    path += [STANDALONE_DIR + '/board/e2000']
 
     if GetDepend(['TARGET_E2000Q']):
         src += Glob(STANDALONE_DIR+'/board/e2000/q/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/q'] 
+        path += [STANDALONE_DIR + '/board/e2000/q']
 
     if GetDepend(['TARGET_E2000D']):
         src += Glob(STANDALONE_DIR+'/board/e2000/d/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/d'] 
-    
+        path += [STANDALONE_DIR + '/board/e2000/d']
+
     if GetDepend(['ARGET_E2000S']):
         src += Glob(STANDALONE_DIR+'/board/e2000/s/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/s'] 
-    
+        path += [STANDALONE_DIR + '/board/e2000/s']
+
 if GetDepend(['TARGET_D2000']):
     src += Glob(STANDALONE_DIR+'/board/d2000/*.c')
-    path += [STANDALONE_DIR + '/board/d2000'] 
+    path += [STANDALONE_DIR + '/board/d2000']
 
 # driver
 
 ## serial
 if GetDepend(['ENABLE_Pl011_UART']):
     src += Glob(STANDALONE_DIR+'/drivers/serial/fpl011/*.c')
-    path += [STANDALONE_DIR + '/drivers/serial/fpl011'] 
+    path += [STANDALONE_DIR + '/drivers/serial/fpl011']
 
 ## gicv3
 if GetDepend(['ENABLE_GICV3']):
     src += Glob(STANDALONE_DIR+'/drivers/gic/fgic/*.c') + Glob(STANDALONE_DIR+'/drivers/gic/fgic/*.S')
-    path += [STANDALONE_DIR + '/drivers/gic/fgic'] 
+    path += [STANDALONE_DIR + '/drivers/gic/fgic']
 
 
 # phytium ports rt-thread drivers
 PORT_DRV_DIR = cwd + '/drivers'
 
 src += Glob(PORT_DRV_DIR + '/*.S')
-src	+= Glob(PORT_DRV_DIR + '/*.c')
+src += Glob(PORT_DRV_DIR + '/*.c')
 
 ASFLAGS = ''
 group = DefineGroup('FT_DRIVER', src, depend=[

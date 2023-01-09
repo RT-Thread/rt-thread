@@ -30,7 +30,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2"
                 default n
         endif
-        
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
@@ -40,7 +40,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable ADC1"
                 default n
         endif
-    
+
     menuconfig BSP_USING_DAC
         bool "Enable DAC"
         default n
@@ -50,7 +50,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable DAC1"
                 default n
         endif
-    
+
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -67,7 +67,7 @@ menu "On-chip Peripheral Drivers"
                     bool "RTC USING LSI"
             endchoice
         endif
-    
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C BUS (software simulation)"
         default n
@@ -115,7 +115,7 @@ menu "On-chip Peripheral Drivers"
                         default 41
                 endif
         endif
-    
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         default n
@@ -129,7 +129,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2"
                 default n
         endif
-    
+
     menuconfig BSP_USING_TMR
         bool "Enable Timer"
         default n
@@ -158,20 +158,20 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TMR14
                 bool "Enable TMR14"
                 default n
-                
+
             config BSP_USING_TMR15
                 bool "Enable TMR15"
                 default n
-                
+
             config BSP_USING_TMR16
                 bool "Enable TMR16"
                 default n
-                
+
             config BSP_USING_TMR17
                 bool "Enable TMR17"
                 default n
         endif
-    
+
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
@@ -198,12 +198,12 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
         endif
-    
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-    
+
 endmenu
 
 menu "Board extended module Drivers"

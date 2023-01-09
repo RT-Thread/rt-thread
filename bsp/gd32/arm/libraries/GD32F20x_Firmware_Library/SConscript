@@ -13,10 +13,10 @@ GD32F20x_standard_peripheral/Source/gd32f20x_rcu.c
 GD32F20x_standard_peripheral/Source/gd32f20x_exti.c
 GD32F20x_standard_peripheral/Source/gd32f20x_misc.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['GD32F20x_standard_peripheral/Source/gd32f20x_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['GD32F20x_standard_peripheral/Source/gd32f20x_i2c.c']
 
@@ -45,7 +45,7 @@ if GetDepend(['RT_USING_WDT']):
 
 if GetDepend(['RT_USING_SDIO']):
     src += ['GD32F20x_standard_peripheral/Source/gd32f20x_sdio.c']
-    src += ['GD32F20x_standard_peripheral/Source/gd32f20x_dma.c']    
+    src += ['GD32F20x_standard_peripheral/Source/gd32f20x_dma.c']
 
 path = [
     cwd + '/CMSIS/GD/GD32F20x/Include',

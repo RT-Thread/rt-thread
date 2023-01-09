@@ -1,42 +1,42 @@
 menu "AllWinner CODEC drivers"
 
 config SND_CODEC_SUNXI_RWFUNC
-	bool
-	default n
+    bool
+    default n
 
 config SND_CODEC_SUN8IW18_AUDIOCODEC
-	bool "Allwinner AudioCodec support"
-	default n
-	select SND_PLATFORM_SUNXI_CPUDAI
-	select SND_PLATFORM_SUNXI_PCM
-	select SND_CODEC_SUNXI_RWFUNC
-	depends on (ARCH_SUN8IW18P1 || ARCH_SUN8IW18)
-	help
-	  Select Y to add support the Codec embedded in the Allwinner
-	  sun8iw18 and affiliated SoCs.
+    bool "Allwinner AudioCodec support"
+    default n
+    select SND_PLATFORM_SUNXI_CPUDAI
+    select SND_PLATFORM_SUNXI_PCM
+    select SND_CODEC_SUNXI_RWFUNC
+    depends on (ARCH_SUN8IW18P1 || ARCH_SUN8IW18)
+    help
+      Select Y to add support the Codec embedded in the Allwinner
+      sun8iw18 and affiliated SoCs.
 
 config SND_CODEC_SUN8IW19_AUDIOCODEC
-	bool "Allwinner AudioCodec support"
-	default n
-	select SND_PLATFORM_SUNXI_CPUDAI
-	select SND_PLATFORM_SUNXI_PCM
-	depends on (ARCH_SUN8IW19P1 || ARCH_SUN8IW19)
-	help
-	  Select Y to add support the Codec embedded in the Allwinner
-	  sun8iw19 and affiliated SoCs.
+    bool "Allwinner AudioCodec support"
+    default n
+    select SND_PLATFORM_SUNXI_CPUDAI
+    select SND_PLATFORM_SUNXI_PCM
+    depends on (ARCH_SUN8IW19P1 || ARCH_SUN8IW19)
+    help
+      Select Y to add support the Codec embedded in the Allwinner
+      sun8iw19 and affiliated SoCs.
 
 config SND_CODEC_SUN8IW20_AUDIOCODEC
-	bool "Allwinner AudioCodec support"
-	default n
-	select SND_PLATFORM_SUNXI_CPUDAI
-	select SND_PLATFORM_SUNXI_PCM
-	depends on SOC_SUN20IW1P1
-	help
-	  Select Y to add support the Codec embedded in the Allwinner
-	  sun8iw20 and affiliated SoCs.
+    bool "Allwinner AudioCodec support"
+    default n
+    select SND_PLATFORM_SUNXI_CPUDAI
+    select SND_PLATFORM_SUNXI_PCM
+    depends on SOC_SUN20IW1P1
+    help
+      Select Y to add support the Codec embedded in the Allwinner
+      sun8iw20 and affiliated SoCs.
 
 config SND_CODEC_AC108
-	bool "Sunxi AC108 codec"
-	default n
+    bool "Sunxi AC108 codec"
+    default n
 
 endmenu

@@ -19,7 +19,7 @@ src = Split('''
             mtb-hal-cat1/source/cyhal_utils_psoc.c
             mtb-hal-cat1/source/cyhal_utils.c
             mtb-hal-cat1/source/cyhal_lptimer.c
-            mtb-hal-cat1/source/cyhal_irq_psoc.c   
+            mtb-hal-cat1/source/cyhal_irq_psoc.c
             mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c
             mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_124_bga.c
             mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c
@@ -36,7 +36,7 @@ src = Split('''
             mtb-pdl-cat1/drivers/source/cy_ipc_sema.c
             mtb-pdl-cat1/drivers/source/cy_ipc_drv.c
             mtb-pdl-cat1/drivers/source/cy_trigmux.c
-            mtb-pdl-cat1/drivers/source/cy_prot.c           
+            mtb-pdl-cat1/drivers/source/cy_prot.c
             TARGET_CY8CKIT-062S2-43012/cybsp.c
             TARGET_CY8CKIT-062S2-43012/COMPONENT_CM4/system_psoc6_cm4.c
             TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg.c
@@ -44,7 +44,7 @@ src = Split('''
             TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_system.c
             TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_clocks.c
             TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_routing.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_peripherals.c            
+            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_peripherals.c
             lib/cy_capsense.lib
             ''')
 
@@ -130,10 +130,10 @@ if GetDepend(['RT_USING_WDT']):
     src += ['mtb-hal-cat1/source/cyhal_wdt.c']
 
 if GetDepend(['RT_USING_DAC']):
-    src += ['mtb_shared/csdidac/cy_csdidac.c']	
+    src += ['mtb_shared/csdidac/cy_csdidac.c']
 
 if GetDepend(['RT_USING_HWTIMER']):
-    src += ['mtb-hal-cat1/source/cyhal_timer.c']    
+    src += ['mtb-hal-cat1/source/cyhal_timer.c']
 
 path = [cwd + '/capsense',
         cwd + '/psoc6cm0p',

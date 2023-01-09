@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config SOC_HC32F4A0SI
-    bool 
+    bool
     select SOC_SERIES_HC32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -29,9 +29,9 @@ menu "Onboard Peripheral Drivers"
                 bool "enable phy interrupt mode"
                 select ETH_PHY_INT_PIN
                 default n
- 
+
             config ETH_PHY_INT_PIN
-                int 
+                int
                 default 16
         endif
 
@@ -84,7 +84,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2
                 select RT_SERIAL_USING_DMA
                 default n
-            
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -100,7 +100,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART6
                 bool "Enable UART6"
                 default n
-            
+
             config BSP_UART6_RX_USING_DMA
                 bool "Enable UART6 RX DMA"
                 depends on BSP_USING_UART6
@@ -147,7 +147,7 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
-        select RT_USING_PIN 
+        select RT_USING_PIN
         if BSP_USING_I2C1
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
@@ -157,7 +157,7 @@ menu "On-chip Peripheral Drivers"
                 int "I2C1 sda pin number"
                 range 1 176
                 default 90
-        endif 
+        endif
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
@@ -172,42 +172,42 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
 
             config BSP_USING_SPI4
                 bool "Enable SPI4 BUS"
@@ -217,7 +217,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI4 TX DMA"
                 depends on BSP_USING_SPI4
                 default n
-                
+
             config BSP_SPI4_RX_USING_DMA
                 bool "Enable SPI4 RX DMA"
                 depends on BSP_USING_SPI4
@@ -260,5 +260,5 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

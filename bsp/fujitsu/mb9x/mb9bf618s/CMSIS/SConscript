@@ -7,13 +7,13 @@ src = Glob('DeviceSupport/fujitsu/mb9bf61x/*.c')
 
 CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport/fujitsu/mb9bf61x/']
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/gcc/startup_mb9bf61x.c']
+    src += ['DeviceSupport/fujitsu/mb9bf61x/startup/gcc/startup_mb9bf61x.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/arm/startup_mb9bf61x.S']
+    src += ['DeviceSupport/fujitsu/mb9bf61x/startup/arm/startup_mb9bf61x.S']
 elif rtconfig.PLATFORM in ['iccarm']:
-	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/iar/startup_mb9bf61x.S']
+    src += ['DeviceSupport/fujitsu/mb9bf61x/startup/iar/startup_mb9bf61x.S']
 
 CPPDEFINES = [rtconfig.FM3_TYPE]
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)

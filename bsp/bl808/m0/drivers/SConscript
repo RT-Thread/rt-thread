@@ -14,7 +14,7 @@ if GetDepend(['RT_USING_SERIAL']):
         src += ['drv_uart_v2.c']
     else:
         src += ['drv_uart.c']
-    
+
 # if GetDepend('RT_USING_PIN'):
 #     src += ['drv_gpio.c']
 

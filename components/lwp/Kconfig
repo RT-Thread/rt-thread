@@ -56,11 +56,11 @@ if RT_USING_LWP
             int "The unix98 PTY input buffer size"
             default 1024
 
-        config LWP_PTY_PTS_SIZE 
+        config LWP_PTY_PTS_SIZE
             int "The unix98 PTY device max num"
             default 3
 
-        config LWP_PTY_USING_DEBUG 
+        config LWP_PTY_USING_DEBUG
             bool "The unix98 PTY debug output"
             default n
     endif

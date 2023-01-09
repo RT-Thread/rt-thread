@@ -35,9 +35,9 @@ menu "Onboard Peripheral Drivers"
             config WIZ_SPI_BUS
                 string "WIZ SPI bus name"
                 default "spi2"
-			config WIZ_SPI_CS
+            config WIZ_SPI_CS
                 int "WIZ SPI bus cs pin"
-                default 19				
+                default 19
         endif
 
 endmenu
@@ -129,7 +129,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_I2C
             config I2C_BUS_NAME
                 string "HW I2C bus name"
-                default "i2c"			
+                default "i2c"
         endif
 
     menuconfig BSP_USING_SPI
@@ -151,8 +151,8 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_USING_SPI0S
                 bool "Enable SPI0S BUS"
                 default n
@@ -162,7 +162,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable HW onchip rtc"
         select RT_USING_ONCHIP_RTC
         default n
-    
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT

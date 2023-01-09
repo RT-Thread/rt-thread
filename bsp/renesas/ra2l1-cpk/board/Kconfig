@@ -197,7 +197,7 @@ menu "Hardware Drivers Config"
             bool "Enable SPI BUS"
             default n
             select RT_USING_SPI
-            if BSP_USING_SPI 
+            if BSP_USING_SPI
                 config BSP_SPI_USING_DTC_DMA
                     bool "Enable SPI DTC transfers data without using the CPU."
                     default n
@@ -205,7 +205,7 @@ menu "Hardware Drivers Config"
                 config BSP_USING_SPI0
                     bool "Enable SPI0 BUS"
                     default n
-        
+
                 config BSP_USING_SPI1
                     bool "Enable SPI1 BUS"
                     default n
@@ -239,7 +239,7 @@ menu "Hardware Drivers Config"
                 config BSP_USING_PWM0
                     bool "Enable GPT0 (32-Bits) output PWM"
                     default n
-                
+
                 config BSP_USING_PWM1
                     bool "Enable GPT1 (32-Bits) output PWM"
                     default n
