@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ SECTIONS
 
     . = ALIGN(8);
 
-    .text : 
+    .text :
     {
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
@@ -44,7 +44,7 @@ SECTIONS
         *(.glue_7)
         *(.glue_7t)
         *(.gnu.linkonce.t*)
-     
+
         /* section information for finsh shell */
         . = ALIGN(8);
         __fsymtab_start = .;
@@ -71,20 +71,20 @@ SECTIONS
         _etext = .;
     } > SRAM
 
-    .eh_frame_hdr : 
-    { 
-         *(.eh_frame_hdr) 
+    .eh_frame_hdr :
+    {
+         *(.eh_frame_hdr)
          *(.eh_frame_entry)
     } > SRAM
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) } > SRAM
 
     . = ALIGN(8);
 
-    .data : 
+    .data :
     {
         *(.data)
         *(.data.*)
-    
+
         *(.data1)
         *(.data1.*)
 
@@ -105,7 +105,7 @@ SECTIONS
         __stack = .;
     } > SRAM
 
-    .sbss : 
+    .sbss :
     {
     __bss_start = .;
         *(.sbss)

@@ -1,7 +1,7 @@
 ;*******************************************************************************
 ;  (c) Copyright 2015 Microsemi SoC Products Group. All rights reserved.
 ;  SmartFusion2 scatter file for executing code in internal eNVM.
-; 
+;
 ;  SVN $Revision: 7419 $
 ;  SVN $Date: 2015-05-15 16:50:21 +0100 (Fri, 15 May 2015) $
 ;
@@ -23,22 +23,22 @@
 ; * --DDR3-------DevKit-----------0xA0000000------0xAFFFFFFF-----512MB--16--MT41K256M8DA---050------------------------
 ;
 ;  Example linker scripts use lowest practicl values so will work accross dev kits
-;  eNVM=256KB  eRAM=64KB  External memory = 64MB  
+;  eNVM=256KB  eRAM=64KB  External memory = 64MB
 
-FLASH_LOAD 0x00000000 0x40000		
+FLASH_LOAD 0x00000000 0x40000
 {
 ;   All R only code/data is located in ENVM
     ER_RO 0x00000000 0x40000
     {
-       	*.o (RESET, +First)
+        *.o (RESET, +First)
         *(InRoot$$Sections)
         .ANY (+RO)
     }
 ;   Heap size is defined in startup_m2sxxx.s
-;   Heap will be added after RW data in ER_RW unless explicitly 
+;   Heap will be added after RW data in ER_RW unless explicitly
 ;   allocated a meemory region in .sct file
 ;   Stack size is defined in startup_m2sxxx.s
-;   Stack will be added after heap in ER_RW unless explicitly 
+;   Stack will be added after heap in ER_RW unless explicitly
 ;   allocated a memory region in .sct file
     ER_RW 0x20000000 0x10000
     {

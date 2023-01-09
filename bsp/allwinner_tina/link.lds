@@ -4,7 +4,7 @@ OUTPUT_ARCH(arm)
 SECTIONS
 {
     . = 0x80000000;
-    
+
     . = ALIGN(4);
     __text_start = .;
     .text :
@@ -12,7 +12,7 @@ SECTIONS
         *(.vectors)
         *(.text)
         *(.text.*)
-	KEEP(*(.fini))
+    KEEP(*(.fini))
 
         /* section information for finsh shell */
         . = ALIGN(4);
@@ -47,18 +47,18 @@ SECTIONS
     .ctors :
     {
         PROVIDE(__ctors_start__ = .);
-	*crtbegin.o(.ctors)
-	*crtbegin?.o(.ctors)
-	*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
-	*(SORT(.ctors.*))
-	*(.ctors)
-        PROVIDE(__ctors_end__ = .);       
+    *crtbegin.o(.ctors)
+    *crtbegin?.o(.ctors)
+    *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+    *(SORT(.ctors.*))
+    *(.ctors)
+        PROVIDE(__ctors_end__ = .);
     }
 
-    .ARM.extab : 
+    .ARM.extab :
     {
-	*(.ARM.extab* .gnu.linkonce.armextab.*)
-    } 
+    *(.ARM.extab* .gnu.linkonce.armextab.*)
+    }
     /* The .ARM.exidx section is used for C++ exception handling. */
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
@@ -70,15 +70,15 @@ SECTIONS
         _sidata = .;
     }
     __exidx_end = .;
-    
+
     .dtors :
     {
         PROVIDE(__dtors_start__ = .);
         *crtbegin.o(.dtors)
- 		*crtbegin?.o(.dtors)
- 		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
- 		*(SORT(.dtors.*))
- 		*(.dtors)
+        *crtbegin?.o(.dtors)
+        *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+        *(SORT(.dtors.*))
+        *(.dtors)
         PROVIDE(__dtors_end__ = .);
     }
 
@@ -89,30 +89,30 @@ SECTIONS
         *(.data)
         *(.data.*)
 
-		. = ALIGN(4);
-		/* preinit data */
-		PROVIDE_HIDDEN (__preinit_array_start = .);
-		KEEP(*(.preinit_array))
-		PROVIDE_HIDDEN (__preinit_array_end = .);
+        . = ALIGN(4);
+        /* preinit data */
+        PROVIDE_HIDDEN (__preinit_array_start = .);
+        KEEP(*(.preinit_array))
+        PROVIDE_HIDDEN (__preinit_array_end = .);
 
-		. = ALIGN(4);
-		/* init data */
-		PROVIDE_HIDDEN (__init_array_start = .);
-		KEEP(*(SORT(.init_array.*)))
-		KEEP(*(.init_array))
-		PROVIDE_HIDDEN (__init_array_end = .);
+        . = ALIGN(4);
+        /* init data */
+        PROVIDE_HIDDEN (__init_array_start = .);
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
+        PROVIDE_HIDDEN (__init_array_end = .);
 
 
-		. = ALIGN(4);
-		/* finit data */
-		PROVIDE_HIDDEN (__fini_array_start = .);
-		KEEP(*(SORT(.fini_array.*)))
-		KEEP(*(.fini_array))
-		PROVIDE_HIDDEN (__fini_array_end = .);
+        . = ALIGN(4);
+        /* finit data */
+        PROVIDE_HIDDEN (__fini_array_start = .);
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
+        PROVIDE_HIDDEN (__fini_array_end = .);
 
-		KEEP(*(.jcr*))
-		. = ALIGN(4);
-		/* All data end */
+        KEEP(*(.jcr*))
+        . = ALIGN(4);
+        /* All data end */
 
         *(.gnu.linkonce.d*)
     }

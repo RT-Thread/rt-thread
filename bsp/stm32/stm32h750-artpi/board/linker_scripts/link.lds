@@ -113,7 +113,7 @@ SECTIONS
         _edata = . ;
     } >RAM
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -136,7 +136,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM
     __bss_end = .;
@@ -149,7 +149,7 @@ SECTIONS
     . = ALIGN(4);
     __RxDecripSection_free__ = .;
     } > RxDecripSection
-    
+
     .TxDecripSection (NOLOAD) : ALIGN(4)
     {
     . = ALIGN(4);
@@ -158,7 +158,7 @@ SECTIONS
     . = ALIGN(4);
     __TxDecripSection_free__ = .;
     } > TxDecripSection
-    
+
     .RxArraySection (NOLOAD) : ALIGN(4)
     {
     . = ALIGN(4);

@@ -65,7 +65,7 @@ SECTIONS
 
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
-		_start_address_init_data = .;
+        _start_address_init_data = .;
     } > ROM
     __exidx_end = .;
 
@@ -76,7 +76,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _sdata = . ;
-		_start_address_data = .;
+        _start_address_data = .;
 
         *(.data)
         *(.data.*)
@@ -91,21 +91,21 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-		_end_address_data = .;
+        _end_address_data = .;
     } >RAM
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
-		_end_stack = .;
+        _end_stack = .;
     } >RAM
 
     __bss_start = .;
-	_start_address_bss = .;
+    _start_address_bss = .;
     .bss :
     {
         . = ALIGN(4);
@@ -119,11 +119,11 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM
     __bss_end = .;
-	_end_address_bss = .;
+    _end_address_bss = .;
 
     _end = .;
 
