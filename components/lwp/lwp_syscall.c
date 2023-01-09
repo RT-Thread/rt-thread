@@ -4206,7 +4206,6 @@ int sys_fsync(int fd)
 
 mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr)
 {
-    int ret = 0;
     mqd_t mqdes;
 #ifdef ARCH_MM_MMU
     char *kname = RT_NULL;
@@ -4216,13 +4215,13 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
 
     lwp_user_strlen(name, &a_err);
     if (a_err)
-        return -EFAULT;
+        return (mqd_t)-EFAULT;
     len = rt_strlen(name);
     if (!len)
-        return -EINVAL;
+        return (mqd_t)-EINVAL;
     kname = (char *)kmem_get(len + 1);
     if (!kname)
-        return -ENOMEM;
+        return (mqd_t)-ENOMEM;
 
     lwp_get_from_user(&attr_k, (void *)attr, sizeof(struct mq_attr));
     lwp_get_from_user(kname, (void *)name, len + 1);
@@ -4296,7 +4295,6 @@ int sys_mq_timedreceive(mqd_t mqd, char *restrict msg, size_t len, unsigned *res
 #ifdef ARCH_MM_MMU
     char *restrict kmsg = RT_NULL;
     int a_err = 0;
-    rt_size_t prio_len = 0;
 
     struct timespec at_k;
 
