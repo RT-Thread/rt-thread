@@ -12,6 +12,7 @@
 #include <stdint.h>
 
 #include "encoding.h"
+#include "mm_fault.h"
 #include "stack.h"
 #include "sbi.h"
 #include "riscv.h"
@@ -139,7 +140,17 @@ extern struct rt_irq_desc irq_desc[];
 
 #include "rtdbg.h"
 #include "encoding.h"
-void sys_exit(int value);
+
+#ifndef RT_USING_SMP
+static volatile int nested = 0;
+#define ENTER_TRAP \
+    nested += 1
+#define EXIT_TRAP \
+    nested -= 1
+#define CHECK_NESTED_PANIC(cause, tval, epc, eframe) \
+    if (nested != 1)                                 \
+    handle_nested_trap_panic(cause, tval, epc, eframe)
+#endif /* RT_USING_SMP */
 
 static const char *get_exception_msg(int id)
 {
@@ -161,10 +172,59 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
 
     /* user page fault */
-    if (id == EP_LOAD_PAGE_FAULT ||
-        id == EP_STORE_PAGE_FAULT)
+    enum rt_mm_fault_op fault_op;
+    enum rt_mm_fault_type fault_type;
+    switch (id)
     {
-        if (arch_expand_user_stack((void *)stval))
+        case EP_LOAD_PAGE_FAULT:
+            fault_op = MM_FAULT_OP_READ;
+            fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            break;
+        case EP_LOAD_ACCESS_FAULT:
+            fault_op = MM_FAULT_OP_READ;
+            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            break;
+        case EP_LOAD_ADDRESS_MISALIGNED:
+            fault_op = MM_FAULT_OP_READ;
+            fault_type = MM_FAULT_TYPE_BUS_ERROR;
+            break;
+        case EP_STORE_PAGE_FAULT:
+            fault_op = MM_FAULT_OP_WRITE;
+            fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            break;
+        case EP_STORE_ACCESS_FAULT:
+            fault_op = MM_FAULT_OP_WRITE;
+            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            break;
+        case EP_STORE_ADDRESS_MISALIGNED:
+            fault_op = MM_FAULT_OP_WRITE;
+            fault_type = MM_FAULT_TYPE_BUS_ERROR;
+            break;
+        case EP_INSTRUCTION_PAGE_FAULT:
+            fault_op = MM_FAULT_OP_EXECUTE;
+            fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            break;
+        case EP_INSTRUCTION_ACCESS_FAULT:
+            fault_op = MM_FAULT_OP_EXECUTE;
+            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            break;
+        case EP_INSTRUCTION_ADDRESS_MISALIGNED:
+            fault_op = MM_FAULT_OP_EXECUTE;
+            fault_type = MM_FAULT_TYPE_BUS_ERROR;
+            break;
+        default:
+            fault_op = 0;
+    }
+
+    if (fault_op)
+    {
+        struct rt_mm_fault_msg msg = {
+            .fault_op = fault_op,
+            .fault_type = fault_type,
+            .vaddr = (void *)stval,
+        };
+
+        if (rt_mm_fault_try_fix(&msg))
         {
             return;
         }
@@ -176,6 +236,8 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
     LOG_E("User Fault, killing thread: %s", rt_thread_self()->name);
+
+    EXIT_TRAP;
     sys_exit(-1);
 }
 #endif
@@ -227,17 +289,6 @@ static void handle_nested_trap_panic(
     dump_regs(eframe);
     rt_hw_cpu_shutdown();
 }
-
-#ifndef RT_USING_SMP
-static volatile int nested = 0;
-#define ENTER_TRAP \
-    nested += 1
-#define EXIT_TRAP \
-    nested -= 1
-#define CHECK_NESTED_PANIC(cause, tval, epc, eframe) \
-    if (nested != 1)                                 \
-    handle_nested_trap_panic(cause, tval, epc, eframe)
-#endif /* RT_USING_SMP */
 
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)

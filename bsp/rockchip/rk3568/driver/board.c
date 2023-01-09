@@ -39,8 +39,9 @@ void idle_wfi(void)
 
 void rt_hw_board_init(void)
 {
-    rt_hw_init_mmu_table(platform_mem_desc, platform_mem_desc_size);
-    rt_hw_mmu_init();
+    extern void *MMUTable;
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();

@@ -6,7 +6,7 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 20
+#define RT_NAME_MAX 24
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -39,6 +39,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -124,6 +125,8 @@
 #define RT_USING_VIRTIO10
 #define RT_USING_VIRTIO_BLK
 #define RT_USING_VIRTIO_NET
+#define RT_USING_VIRTIO_CONSOLE
+#define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
 
 /* Using USB */
 
@@ -221,118 +224,12 @@
 /* RT-Thread Utestcases */
 
 
-/* RT-Thread online packages */
-
-/* IoT - internet of things */
-
-
-/* Wi-Fi */
-
-/* Marvell WiFi */
-
-
-/* Wiced WiFi */
-
-
-/* IoT Cloud */
-
-
-/* security packages */
-
-
-/* language packages */
-
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
-
-/* multimedia packages */
-
-/* LVGL: powerful and easy-to-use embedded GUI library */
-
-
-/* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
-/* tools packages */
-
-
-/* system packages */
-
-/* enhanced kernel services */
-
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
-
-/* peripheral libraries and drivers */
-
-
-/* Kendryte SDK */
-
-
-/* AI packages */
-
-
-/* miscellaneous packages */
-
-/* project laboratory */
-
-/* samples: kernel and components samples */
-
-
-/* entertainment: terminal games and other interesting software packages */
-
-
-/* Arduino libraries */
-
-
-/* Projects */
-
-
-/* Sensors */
-
-
-/* Display */
-
-
-/* Timing */
-
-
-/* Data Processing */
-
-
-/* Data Storage */
-
-/* Communication */
-
-
-/* Device Control */
-
-
-/* Other */
-
-/* Signal IO */
-
-
-/* Uncategorized */
-
 /* RISC-V QEMU virt64 configs */
 
 #define RISCV_S_MODE
 #define BSP_USING_VIRTIO_BLK
 #define BSP_USING_VIRTIO_NET
+#define BSP_USING_VIRTIO_CONSOLE
 #define BOARD_QEMU_VIRT_RV64
 #define ENABLE_FPU
 #define ARCH_USING_NEW_CTX_SWITCH

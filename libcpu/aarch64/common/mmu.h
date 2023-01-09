@@ -11,6 +11,7 @@
 #define __MMU_H_
 
 #include <rtthread.h>
+#include <mm_aspace.h>
 
 /* normal memory wra mapping type */
 #define NORMAL_MEM           0
@@ -25,6 +26,7 @@ struct mem_desc
     unsigned long vaddr_end;
     unsigned long paddr_start;
     unsigned long attr;
+    struct rt_varea varea;
 };
 
 #define MMU_AF_SHIFT     10
@@ -37,60 +39,17 @@ struct mem_desc
 #define MMU_AP_KRUN      2UL /* kernel r, user none */
 #define MMU_AP_KRUR      3UL /* kernel r, user r */
 
-#define MMU_MAP_K_RO     (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KRUN << MMU_AP_SHIFT) |\
-                          (NORMAL_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_K_RWCB   (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KAUN << MMU_AP_SHIFT) |\
-                          (NORMAL_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_K_RW     (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KAUN << MMU_AP_SHIFT) |\
-                          (NORMAL_NOCACHE_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_K_DEVICE (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KAUN << MMU_AP_SHIFT) |\
-                          (DEVICE_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_U_RO     (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KRUR << MMU_AP_SHIFT) |\
-                          (NORMAL_NOCACHE_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_U_RWCB   (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KAUA << MMU_AP_SHIFT) |\
-                          (NORMAL_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_U_RW     (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KAUA << MMU_AP_SHIFT) |\
-                          (NORMAL_NOCACHE_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_U_DEVICE (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          (MMU_AP_KAUA << MMU_AP_SHIFT) |\
-                          (DEVICE_MEM << MMU_MA_SHIFT)\
-                         )
-#define MMU_MAP_CUSTOM(ap, mtype) (\
-                          (0x1UL << MMU_AF_SHIFT) |\
-                          (0x2UL << MMU_SHARED_SHIFT) |\
-                          ((ap) << MMU_AP_SHIFT) |\
-                          ((mtype) << MMU_MA_SHIFT)\
-                         )
+#define MMU_MAP_CUSTOM(ap, mtype)                                              \
+    ((0x1UL << MMU_AF_SHIFT) | (0x2UL << MMU_SHARED_SHIFT) |                   \
+     ((ap) << MMU_AP_SHIFT) | ((mtype) << MMU_MA_SHIFT))
+#define MMU_MAP_K_RO     MMU_MAP_CUSTOM(MMU_AP_KRUN, NORMAL_MEM)
+#define MMU_MAP_K_RWCB   MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM)
+#define MMU_MAP_K_RW     MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_NOCACHE_MEM)
+#define MMU_MAP_K_DEVICE MMU_MAP_CUSTOM(MMU_AP_KAUN, DEVICE_MEM)
+#define MMU_MAP_U_RO     MMU_MAP_CUSTOM(MMU_AP_KRUR, NORMAL_NOCACHE_MEM)
+#define MMU_MAP_U_RWCB   MMU_MAP_CUSTOM(MMU_AP_KAUA, NORMAL_MEM)
+#define MMU_MAP_U_RW     MMU_MAP_CUSTOM(MMU_AP_KAUA, NORMAL_NOCACHE_MEM)
+#define MMU_MAP_U_DEVICE MMU_MAP_CUSTOM(MMU_AP_KAUA, DEVICE_MEM)
 
 #define ARCH_SECTION_SHIFT  21
 #define ARCH_SECTION_SIZE   (1 << ARCH_SECTION_SHIFT)
@@ -102,6 +61,7 @@ struct mem_desc
 #define ARCH_PAGE_TBL_SIZE  (1 << ARCH_PAGE_TBL_SHIFT)
 #define ARCH_PAGE_TBL_MASK  (ARCH_PAGE_TBL_SIZE - 1)
 
+#define ARCH_VADDR_WIDTH        48
 #define ARCH_ADDRESS_WIDTH_BITS 64
 
 #define MMU_MAP_ERROR_VANOTALIGN  -1
@@ -109,37 +69,48 @@ struct mem_desc
 #define MMU_MAP_ERROR_NOPAGE      -3
 #define MMU_MAP_ERROR_CONFLICT    -4
 
-typedef struct
-{
-    size_t *vtable;
-    size_t vstart;
-    size_t vend;
-    size_t pv_off;
-} rt_mmu_info;
+#define ARCH_MAP_FAILED ((void *)0x1ffffffffffff)
 
-void rt_hw_mmu_setup_early(unsigned long *tbl0, unsigned long *tbl1, unsigned long size, unsigned long pv_off);
-void rt_hw_mmu_setup(struct mem_desc *mdesc, int desc_nr);
-
-int rt_hw_mmu_map_init(rt_mmu_info *mmu_info, void* v_address, size_t size, size_t *vtable, size_t pv_off);
-int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size);
-
-#ifdef RT_USING_SMART
-void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr);
-void *rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size_t attr);
-#else
-void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void* p_addr, size_t size, size_t attr);
-#endif
-
-void rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size);
-void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr);
+struct rt_aspace;
 
 void rt_hw_mmu_ktbl_set(unsigned long tbl);
-void *rt_hw_mmu_tbl_get();
-void rt_hw_mmu_switch(void *mmu_table);
+void rt_hw_mmu_setup_early(unsigned long *tbl0, unsigned long *tbl1,
+                           unsigned long size, unsigned long pv_off);
+void rt_hw_mmu_setup(struct rt_aspace *aspace, struct mem_desc *mdesc,
+                     int desc_nr);
 
-void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_size_t desc_nr);
-void rt_hw_mmu_init(void);
+int rt_hw_mmu_map_init(struct rt_aspace *aspace, void *v_address,
+                       rt_size_t size, rt_size_t *vtable, rt_size_t pv_off);
+void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
+                    size_t size, size_t attr);
+void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size);
+void rt_hw_aspace_switch(struct rt_aspace *aspace);
+void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr);
+void rt_hw_mmu_kernel_map_init(struct rt_aspace *aspace, rt_size_t vaddr_start,
+                               rt_size_t size);
+void rt_hw_mmu_ktbl_set(unsigned long tbl);
 
-extern rt_mmu_info mmu_info;
+static inline void *rt_hw_mmu_tbl_get()
+{
+    uintptr_t tbl;
+    __asm__ volatile("MRS %0, TTBR0_EL1" : "=r"(tbl));
+    return (void *)(tbl & ((1ul << 48) - 2));
+}
+
+static inline void *_rt_kmem_v2p(void *vaddr)
+{
+    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
+}
+
+static inline void *rt_kmem_v2p(void *vaddr)
+{
+    MM_PGTBL_LOCK(&rt_kernel_space);
+    void *paddr = _rt_kmem_v2p(vaddr);
+    MM_PGTBL_UNLOCK(&rt_kernel_space);
+    return paddr;
+}
+
+int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
+                      enum rt_mmu_cntl cmd);
 
 #endif

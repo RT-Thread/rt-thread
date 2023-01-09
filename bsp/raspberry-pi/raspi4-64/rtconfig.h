@@ -36,6 +36,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -50,7 +51,9 @@
 #define RT_VER_NUM 0x50000
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
+#define ARCH_MM_MMU
 #define ARCH_ARM
+#define ARCH_ARM_MMU
 #define ARCH_ARMV8
 
 /* RT-Thread Components */
@@ -257,19 +260,11 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
 
 /* Kendryte SDK */
 
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -314,14 +309,6 @@
 
 
 /* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
 
 #define BCM2711_SOC
 

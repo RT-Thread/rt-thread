@@ -21,7 +21,6 @@
 #include <stdint.h>
 #include <mmu.h>
 #include <page.h>
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 
 #include "riscv_mmu.h"

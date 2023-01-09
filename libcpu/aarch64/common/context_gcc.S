@@ -183,7 +183,7 @@ rt_hw_get_gtimer_frq:
 #ifdef RT_USING_LWP
     BL      rt_thread_self
     MOV     X19, X0
-    BL      lwp_mmu_switch
+    BL      lwp_aspace_switch
     MOV     X0, X19
     BL      lwp_user_setting_restore
 #endif
@@ -514,28 +514,3 @@ vector_serror:
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .
-
-.global rt_hw_mmu_switch
-rt_hw_mmu_switch:
-    MSR TTBR0_EL1, X0
-    MRS X1, TCR_EL1
-    CMP X0, XZR
-    ORR X1, X1, #(1 << 7)
-    BEQ 1f
-    BIC X1, X1, #(1 << 7)
-1:
-    MSR TCR_EL1, X1
-    DSB SY
-    ISB
-    TLBI VMALLE1
-    DSB SY
-    ISB
-    IC IALLUIS
-    DSB SY
-    ISB
-    RET
-
-.global rt_hw_mmu_tbl_get
-rt_hw_mmu_tbl_get:
-    MRS X0, TTBR0_EL1
-    RET

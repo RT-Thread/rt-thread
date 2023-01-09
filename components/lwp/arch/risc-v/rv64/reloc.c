@@ -1,3 +1,4 @@
+#include "mm_aspace.h"
 #include <rtthread.h>
 #include <stdint.h>
 #include <string.h>
@@ -18,7 +19,7 @@ typedef struct
 } Elf64_sym;
 
 #ifdef ARCH_MM_MMU
-void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf64_sym *dynsym)
+void arch_elf_reloc(rt_aspace_t aspace, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf64_sym *dynsym)
 {
     size_t rel_off;
     void* addr;
@@ -31,12 +32,12 @@ void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, 
     {
         uint32_t v1, v2;
 
-        addr = rt_hw_mmu_v2p(m_info, (void *)(((rt_size_t)rel_dyn_start) + rel_off));
+        addr = rt_hw_mmu_v2p(aspace, (void *)(((rt_size_t)rel_dyn_start) + rel_off));
         memcpy(&v1, addr, 4);
-        addr = rt_hw_mmu_v2p(m_info, (void *)(((rt_size_t)rel_dyn_start) + rel_off + 4));
+        addr = rt_hw_mmu_v2p(aspace, (void *)(((rt_size_t)rel_dyn_start) + rel_off + 4));
         memcpy(&v2, addr, 4);
 
-        addr = rt_hw_mmu_v2p(m_info, (void *)((rt_size_t)text_start + v1));
+        addr = rt_hw_mmu_v2p(aspace, (void *)((rt_size_t)text_start + v1));
         if ((v2 & 0xff) == R_ARM_RELATIVE)
         {
             *(rt_size_t*)addr += (rt_size_t)text_start;
@@ -58,7 +59,7 @@ void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, 
 
         for (rel_off = 0; rel_off < got_size; rel_off += 4, got_item++)
         {
-            addr = rt_hw_mmu_v2p(m_info, got_item);
+            addr = rt_hw_mmu_v2p(aspace, got_item);
             *(rt_size_t *)addr += (rt_size_t)text_start;
         }
     }

@@ -38,6 +38,4 @@ extern int __bss_end;
 
 void rt_hw_board_init(void);
 
-extern rt_mmu_info mmu_info;
-
 #endif

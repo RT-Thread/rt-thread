@@ -14,6 +14,7 @@
 
 #include <armv8.h>
 #include "interrupt.h"
+#include "mm_fault.h"
 
 #include <backtrace.h>
 
@@ -48,6 +49,29 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
     }
 }
 
+int _get_type(unsigned long esr)
+{
+    int ret;
+    int fsc = esr & 0x3f;
+    switch (fsc)
+    {
+        case 0x4:
+        case 0x5:
+        case 0x6:
+        case 0x7:
+            ret = MM_FAULT_TYPE_PAGE_FAULT;
+            break;
+        case 0x9:
+        case 0xa:
+        case 0xb:
+            ret = MM_FAULT_TYPE_ACCESS_FAULT;
+            break;
+        default:
+            ret = MM_FAULT_TYPE_GENERIC;
+    }
+    return ret;
+}
+
 int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
 {
     unsigned char ec;
@@ -55,19 +79,36 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
     int ret = 0;
 
     ec = (unsigned char)((esr >> 26) & 0x3fU);
+    enum rt_mm_fault_op fault_op;
+    enum rt_mm_fault_type fault_type;
     switch (ec)
     {
     case 0x20:
+        fault_op = MM_FAULT_OP_EXECUTE;
+        fault_type = _get_type(esr);
+        break;
     case 0x21:
     case 0x24:
+        fault_op = MM_FAULT_OP_WRITE;
+        fault_type = _get_type(esr);
+        break;
+    default:
+        fault_op = 0;
+        break;
+    }
+
+    if (fault_op)
+    {
         asm volatile("mrs %0, far_el1":"=r"(dfar));
-        if (arch_expand_user_stack(dfar))
+        struct rt_mm_fault_msg msg = {
+            .fault_op = fault_op,
+            .fault_type = fault_type,
+            .vaddr = dfar,
+        };
+        if (rt_mm_fault_try_fix(&msg))
         {
             ret = 1;
         }
-        break;
-    default:
-        break;
     }
     return ret;
 }

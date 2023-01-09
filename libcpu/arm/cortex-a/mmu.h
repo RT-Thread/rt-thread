@@ -11,6 +11,7 @@
 #define __MMU_H_
 
 #include <rtthread.h>
+#include <mm_aspace.h>
 
 #define DESC_SEC       (0x2)
 #define MEMWBWA        ((1<<12)|(3<<2))     /* write back, write allocate */
@@ -87,27 +88,43 @@ struct mem_desc
 #define ARCH_TYPE_SUPERSECTION (1 << 18)
 
 #define ARCH_ADDRESS_WIDTH_BITS 32
+#define ARCH_VADDR_WIDTH        32
 
-typedef struct
-{
-    size_t *vtable;
-    size_t vstart;
-    size_t vend;
-    size_t pv_off;
-} rt_mmu_info;
+/**
+ * *info it's possible to map (-1ul & ~ARCH_PAGE_MASK) but a not aligned -1 is
+ * never returned on a successful mapping
+ */
+#define ARCH_MAP_FAILED ((void *)-1)
 
-int rt_hw_mmu_map_init(rt_mmu_info *mmu_info, void* v_address, size_t size, size_t *vtable, size_t pv_off);
-int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size);
+int rt_hw_mmu_ioremap_init(struct rt_aspace *aspace, void *v_address, size_t size);
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size);
 
-#ifdef RT_USING_SMART
-void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr);
-void *rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size_t attr);
-#else
-void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void* p_addr, size_t size, size_t attr);
-#endif
+void rt_hw_mmu_setup(struct rt_aspace *aspace, struct mem_desc *mdesc, int desc_nr);
 
-void rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size);
-void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr);
+int rt_hw_mmu_map_init(struct rt_aspace *aspace, void *v_address, size_t size, size_t *vtable, size_t pv_off);
+void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr, size_t size, size_t attr);
+void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size);
+
+void rt_hw_aspace_switch(struct rt_aspace *aspace);
+void rt_hw_mmu_switch(void *tbl);
+
+void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr);
+void rt_hw_mmu_kernel_map_init(struct rt_aspace *aspace, size_t vaddr_start, size_t size);
+void *rt_hw_mmu_tbl_get();
+
+static inline void *_rt_kmem_v2p(void *vaddr)
+{
+    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
+}
+
+static inline void *rt_kmem_v2p(void *vaddr)
+{
+    MM_PGTBL_LOCK(&rt_kernel_space);
+    void *paddr = _rt_kmem_v2p(vaddr);
+    MM_PGTBL_UNLOCK(&rt_kernel_space);
+    return paddr;
+}
+
+int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size, enum rt_mmu_cntl cmd);
 
 #endif
