@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -586,7 +586,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
 
     result = rt_spi_configure(spi_device, cfg);
-    
+
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d\n", device_name, bus_name, result);
