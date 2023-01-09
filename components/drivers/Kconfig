@@ -107,6 +107,9 @@ if RT_USING_CPUTIME
         depends on ARCH_RISCV64
         help
             Some RISCV64 MCU Use rdtime instructions read CPU time.
+    config CPUTIME_TIMER_FREQ
+        int "CPUTIME timer freq"
+        default 0
 endif
 
 config RT_USING_I2C
