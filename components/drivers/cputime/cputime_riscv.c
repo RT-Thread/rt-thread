@@ -4,16 +4,13 @@
 
 #include <board.h>
 
-
-#define TIMER_FREQ (24000000)
-
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
 
-static float riscv_cputime_getres(void)
+static double riscv_cputime_getres(void)
 {
-    float ret = 1000 * 1000 * 1000;
+    double ret = 1000UL * 1000 * 1000;
 
-    ret = ret / TIMER_FREQ;
+    ret = ret / CPUTIME_TIMER_FREQ;
     return ret;
 }
 
@@ -27,9 +24,10 @@ static uint64_t riscv_cputime_gettime(void)
 }
 
 const static struct rt_clock_cputime_ops _riscv_ops =
-    {
-        riscv_cputime_getres,
-        riscv_cputime_gettime};
+{
+    riscv_cputime_getres,
+    riscv_cputime_gettime
+};
 
 int riscv_cputime_init(void)
 {
