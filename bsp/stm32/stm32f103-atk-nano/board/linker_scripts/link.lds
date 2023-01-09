@@ -52,7 +52,7 @@ SECTIONS
         KEEP (*(.init_array))
         PROVIDE(__ctors_end__ = .);
 
-        . = ALIGN(4); 
+        . = ALIGN(4);
 
         _etext = .;
     } > ROM = 0
@@ -84,13 +84,13 @@ SECTIONS
         KEEP(*(SORT(.dtors.*)))
         KEEP(*(.dtors))
         PROVIDE(__dtors_end__ = .);
-        
+
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
     } >RAM
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -113,7 +113,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM
     __bss_end = .;

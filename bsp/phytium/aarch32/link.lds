@@ -12,7 +12,7 @@ SECTIONS
 
         *(.boot)
         . = ALIGN(64);
-        
+
         *(.vectors)
         *(.text)
         *(.text.*)

@@ -268,7 +268,7 @@ SECTIONS
     stack_end = .;
     __StackTop = .;
   } > m_sdram
-  
+
   .RTT_HEAP :
   {
     heap_start = .;

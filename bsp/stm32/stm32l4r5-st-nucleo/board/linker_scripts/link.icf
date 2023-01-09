@@ -4,14 +4,14 @@
 /*-Specials-*/
 define symbol __ICFEDIT_intvec_start__ = 0x08000000;
 /*-Memory Regions-*/
-define symbol __ICFEDIT_region_ROM_start__    	= 0x08000000;
-define symbol __ICFEDIT_region_ROM_end__      	= 0x08200000;
-define symbol __ICFEDIT_region_RAM1_start__    	= 0x20000000;
-define symbol __ICFEDIT_region_RAM1_end__      	= 0x20030000;
-define symbol __ICFEDIT_region_RAM2_start__ 	= 0x20040000;
-define symbol __ICFEDIT_region_RAM2_end__   	= 0x200A0000;
-define symbol __ICFEDIT_region_RAM3_start__ 	= 0x10000000;
-define symbol __ICFEDIT_region_RAM3_end__   	= 0x10010000;
+define symbol __ICFEDIT_region_ROM_start__      = 0x08000000;
+define symbol __ICFEDIT_region_ROM_end__        = 0x08200000;
+define symbol __ICFEDIT_region_RAM1_start__     = 0x20000000;
+define symbol __ICFEDIT_region_RAM1_end__       = 0x20030000;
+define symbol __ICFEDIT_region_RAM2_start__     = 0x20040000;
+define symbol __ICFEDIT_region_RAM2_end__       = 0x200A0000;
+define symbol __ICFEDIT_region_RAM3_start__     = 0x10000000;
+define symbol __ICFEDIT_region_RAM3_end__       = 0x10010000;
 
 /*-Sizes-*/
 define symbol __ICFEDIT_size_cstack__ = 0x0800;

@@ -7,18 +7,18 @@
 ; *************************************************************
 
 
-LR_ROM1 0x30000000 0x0FFD00 ; load region size_region 
-  {    
-  	ER_ROM1 0x30000000 0x0FFD00  ; load address = execution address
-	{  
-   		*.o (RESET, +First)
-		*(InRoot$$Sections)
-		.ANY (+RO)
-  	}
-  	RW_RAM1 0x30100000 0x100000 ; RW data 
-  	{  
-   		.ANY (+RW +ZI)
-  	}
+LR_ROM1 0x30000000 0x0FFD00 ; load region size_region
+  {
+    ER_ROM1 0x30000000 0x0FFD00  ; load address = execution address
+    {
+        *.o (RESET, +First)
+        *(InRoot$$Sections)
+        .ANY (+RO)
+    }
+    RW_RAM1 0x30100000 0x100000 ; RW data
+    {
+        .ANY (+RW +ZI)
+    }
 
 
 }
