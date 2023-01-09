@@ -542,6 +542,7 @@ static void sensor_cmd_warning_unknown(void)
     rt_kprintf("         power [mode]          set or get power mode\n");
     rt_kprintf("         accuracy [mode]       set or get accuracy mode\n");
     rt_kprintf("         fetch [mode]          set or get fetch data mode\n");
+    rt_kprintf("         reset                 reset sensor chip\n");
 }
 
 static void sensor_cmd_warning_probe(void)
@@ -647,6 +648,19 @@ static void sensor(int argc, char **argv)
             RT_SENSOR_MODE_GET_ACCURACY(sensor_dev->info.mode), RT_SENSOR_MODE_GET_POWER(sensor_dev->info.mode), RT_SENSOR_MODE_GET_FETCH(sensor_dev->info.mode),
             10, sensor_dev->info.accuracy.resolution,
             2, sensor_dev->info.scale.range_min, 2, sensor_dev->info.scale.range_max, 5, sensor_get_unit_name(&sensor_dev->info));
+        }
+    }
+    else if (!rt_strcmp(argv[1], "reset"))
+    {
+        if (dev == RT_NULL)
+        {
+            sensor_cmd_warning_probe();
+            return;
+        }
+
+        if (rt_device_control(dev, RT_SENSOR_CTRL_SOFT_RESET, RT_NULL) != RT_EOK)
+        {
+            LOG_E("This sensor doesn't support this command!");
         }
     }
     else if (!rt_strcmp(argv[1], "probe"))
