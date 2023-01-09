@@ -58,9 +58,9 @@ SECTIONS
         _etext = .;
     } > CODE = 0
 
-    .ARM.extab : 
-    { 
-        *(.ARM.extab*) 
+    .ARM.extab :
+    {
+        *(.ARM.extab*)
     } > CODE
 
     /* The .ARM.exidx section is used for C++ exception handling. */
@@ -98,7 +98,7 @@ SECTIONS
         _edata = . ;
     } > DATA
 
-    .stack : 
+    .stack :
     {
         . = . + _system_stack_size;
         . = ALIGN(4);
@@ -118,7 +118,7 @@ SECTIONS
 
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
-        _ebss = . ;        
+        _ebss = . ;
         *(.bss.init)
     } > DATA
     __bss_end = .;

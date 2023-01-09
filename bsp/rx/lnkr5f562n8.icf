@@ -34,17 +34,17 @@ place at address mem:0xFFFFFF80 { ro section .nmivec };
                                        ro section .data24* };
 "RAM24":place in RAM_region24        { rw section .data24* };
 "ROM32":place in ROM_region32        { ro,
-									   ro section FSymTab,
-									   ro section VSymTab,
-									   ro section .rti_fn*,
-									 };
+                                       ro section FSymTab,
+                                       ro section VSymTab,
+                                       ro section .rti_fn*,
+                                     };
 "RAM32":place in RAM_region32        { rw,
                                        ro section D,
                                        ro section D_1,
                                        ro section D_2,
                                        block STACKS,
-									   block HEAP,	
-									};
+                                       block HEAP,
+                                    };
 
 "DATAFLASH":place in DATA_FLASH_region
                                      { ro section .dataflash* };

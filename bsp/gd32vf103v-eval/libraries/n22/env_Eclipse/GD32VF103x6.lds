@@ -3,15 +3,15 @@ OUTPUT_ARCH( "riscv" )
 ENTRY( _start )
 
 MEMORY
-{ 
-	/* Run in FLASH */ 
-	flash (rxai!w) : ORIGIN = 0x08000000, LENGTH = 32k
-	ram   (wxa!ri) : ORIGIN = 0x20000000, LENGTH = 10k 
+{
+    /* Run in FLASH */
+    flash (rxai!w) : ORIGIN = 0x08000000, LENGTH = 32k
+    ram   (wxa!ri) : ORIGIN = 0x20000000, LENGTH = 10k
 
-	/* Run in RAM */ 
-/*	flash (rxai!w) : ORIGIN = 0x20000000, LENGTH = 7k
-	ram   (wxa!ri) : ORIGIN = 0x20001C00, LENGTH = 3K
-*/	
+    /* Run in RAM */
+/*  flash (rxai!w) : ORIGIN = 0x20000000, LENGTH = 7k
+    ram   (wxa!ri) : ORIGIN = 0x20001C00, LENGTH = 3K
+*/
 }
 
 
@@ -23,32 +23,32 @@ SECTIONS
   .init           :
   {
     KEEP (*(SORT_NONE(.init)))
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .ilalign         :
   {
     . = ALIGN(4);
     PROVIDE( _ilm_lma = . );
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .ialign         :
   {
     PROVIDE( _ilm = . );
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .text           :
   {
-    *(.rodata .rodata.*)  
+    *(.rodata .rodata.*)
     *(.text.unlikely .text.unlikely.*)
     *(.text.startup .text.startup.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
-  } >flash AT>flash 
+  } >flash AT>flash
 
   . = ALIGN(4);
 
@@ -62,7 +62,7 @@ SECTIONS
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .init_array     :
   {
@@ -70,7 +70,7 @@ SECTIONS
     KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
     KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .fini_array     :
   {
@@ -78,7 +78,7 @@ SECTIONS
     KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
     KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .ctors          :
   {
@@ -100,7 +100,7 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .dtors          :
   {
@@ -109,7 +109,7 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-  } >flash AT>flash 
+  } >flash AT>flash
 
     . = ALIGN(4);
     PROVIDE( _eilm = . );
@@ -118,24 +118,24 @@ SECTIONS
   {
     . = ALIGN(4);
     PROVIDE( _data_lma = . );
-  } >flash AT>flash 
+  } >flash AT>flash
 
   .dalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data = . );
-  } >ram AT>flash 
-  
-  
+  } >ram AT>flash
+
+
   .data          :
   {
-    *(.rdata) 
-   
+    *(.rdata)
+
     *(.gnu.linkonce.r.*)
     *(.data .data.*)
     *(.gnu.linkonce.d.*)
     . = ALIGN(8);
-    PROVIDE( __global_pointer$ = . + 0x800); 
+    PROVIDE( __global_pointer$ = . + 0x800);
     *(.sdata .sdata.*)
     *(.gnu.linkonce.s.*)
     . = ALIGN(8);
@@ -144,7 +144,7 @@ SECTIONS
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
-  } >ram AT>flash 
+  } >ram AT>flash
 
   . = ALIGN(4);
   PROVIDE( _edata = . );
@@ -160,7 +160,7 @@ SECTIONS
     *(.gnu.linkonce.b.*)
     *(COMMON)
     . = ALIGN(4);
-  } >ram AT>ram 
+  } >ram AT>ram
 
   . = ALIGN(8);
   PROVIDE( _end = . ); /*0X2000,0340*/
@@ -168,8 +168,8 @@ SECTIONS
 
   .stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
   {
-    PROVIDE( _heap_end = . ); 
-    . = __stack_size;  
-    PROVIDE( _sp = . ); 
-  } >ram AT>ram 
+    PROVIDE( _heap_end = . );
+    . = __stack_size;
+    PROVIDE( _sp = . );
+  } >ram AT>ram
 }

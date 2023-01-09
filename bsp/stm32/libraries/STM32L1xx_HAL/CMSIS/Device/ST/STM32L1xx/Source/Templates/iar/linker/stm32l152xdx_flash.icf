@@ -17,7 +17,7 @@ define symbol __ICFEDIT_size_heap__   = 0x000;
 
 
 define memory mem with size = 4G;
-define region ROM_region   = mem:[from __ICFEDIT_region_ROM_start__   to __ICFEDIT_region_ROM_end__] | 
+define region ROM_region   = mem:[from __ICFEDIT_region_ROM_start__   to __ICFEDIT_region_ROM_end__] |
     mem:[from __ICFEDIT_region_ROM1_start__   to __ICFEDIT_region_ROM1_end__];
 define region RAM_region   = mem:[from __ICFEDIT_region_RAM_start__   to __ICFEDIT_region_RAM_end__];
 

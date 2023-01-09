@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@ SECTIONS
         __ebase_end = .;
         start = .;
         *(.start);
-            . = ALIGN(4);	 
+            . = ALIGN(4);
             *(.text)
             *(.text.*)
             *(.rodata)
@@ -54,26 +54,26 @@ SECTIONS
         __rt_utest_tc_tab_end = .;
         . = ALIGN(4);
     }
-    
-    .eh_frame_hdr : 
-    { 
-         *(.eh_frame_hdr) 
+
+    .eh_frame_hdr :
+    {
+         *(.eh_frame_hdr)
          *(.eh_frame_entry)
     }
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) }
 
     . = ALIGN(4);
-    .data : 
+    .data :
     {
          *(.data)
          *(.data.*)
-        
+
          *(.data1)
          *(.data1.*)
 
          . = ALIGN(8);
          _gp = ABSOLUTE(.);     /* Base of small data */
-         
+
          *(.sdata)
          *(.sdata.*)
     }
@@ -86,7 +86,7 @@ SECTIONS
         _system_stack = .;
     }
 
-    .sbss : 
+    .sbss :
     {
         __bss_start = .;
         *(.sbss)
