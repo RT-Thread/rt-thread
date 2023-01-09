@@ -21,7 +21,8 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-enum ioremap_type {
+enum ioremap_type
+{
     MM_AREA_TYPE_PHY,
     MM_AREA_TYPE_PHY_CACHED
 };
@@ -57,8 +58,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     default:
         return v_addr;
     }
-    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr),
-                            &v_addr);
+    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), &v_addr);
 
     if (err)
     {

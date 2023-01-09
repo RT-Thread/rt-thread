@@ -17,6 +17,8 @@
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 
+#define KPTE_START (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT)
+
 int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
@@ -29,14 +31,10 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
     lwp->end_heap = USER_HEAP_VADDR;
 
-    rt_memcpy(mmu_table + (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT),
-              (size_t *)rt_kernel_space.page_table +
-                  (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT),
-              ARCH_PAGE_SIZE);
+    rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
     rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
-    lwp->aspace = rt_aspace_create(
-        (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
+    lwp->aspace = rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
     {
         return -1;
@@ -61,18 +59,13 @@ void arch_kuser_init(rt_aspace_t aspace, void *vectors)
         while (1)
             ; // early failed
 
-    rt_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz),
-              __kuser_helper_start, kuser_sz);
+    rt_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
     /*
      * vectors + 0xfe0 = __kuser_get_tls
      * vectors + 0xfe8 = hardware TLS instruction at 0xffff0fe8
      */
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH,
-                         (void *)((char *)vectors + 0x1000 - kuser_sz),
-                         kuser_sz);
-    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE,
-                         (void *)((char *)vectors + 0x1000 - kuser_sz),
-                         kuser_sz);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)((char *)vectors + 0x1000 - kuser_sz), kuser_sz);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void *)((char *)vectors + 0x1000 - kuser_sz), kuser_sz);
 }
 
 void arch_user_space_vtable_free(struct rt_lwp *lwp)
@@ -90,11 +83,9 @@ int arch_expand_user_stack(void *addr)
     size_t stack_addr = (size_t)addr;
 
     stack_addr &= ~ARCH_PAGE_MASK;
-    if ((stack_addr >= (size_t)USER_STACK_VSTART) &&
-        (stack_addr < (size_t)USER_STACK_VEND))
+    if ((stack_addr >= (size_t)USER_STACK_VSTART) && (stack_addr < (size_t)USER_STACK_VEND))
     {
-        void *map =
-            lwp_map_user(lwp_self(), (void *)stack_addr, ARCH_PAGE_SIZE, 0);
+        void *map = lwp_map_user(lwp_self(), (void *)stack_addr, ARCH_PAGE_SIZE, 0);
 
         if (map || lwp_user_accessable(addr, 1))
         {
