@@ -6,7 +6,7 @@ config DRIVERS_PRCM
 
 config HAL_TEST_PRCM
     bool "enable prcm hal APIs test command"
-	depends on DRIVERS_PRCM
+    depends on DRIVERS_PRCM
         default n
 
 endmenu

@@ -16,7 +16,7 @@ config PKGS_DIR
     default "packages"
 
 config SOC_LPC55S36
-    bool 
+    bool
     select ARCH_ARM_CORTEX_M33
     select ARCH_ARM_CORTEX_SECURE
     default y

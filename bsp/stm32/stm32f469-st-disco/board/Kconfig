@@ -27,7 +27,7 @@ menu "Onboard Peripheral Drivers"
             select PKG_USING_LV_MUSIC_DEMO
             default y
     endif
-    
+
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
@@ -64,7 +64,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_FAL
         select FAL_USING_SFUD_PORT
         default n
-        
+
     config BSP_MOUNT_QSPI_WITH_LFS
         bool "Mount QSPI flash to / with little fs"
         depends on BSP_USING_QSPI_FLASH
@@ -72,7 +72,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_MTD_NOR
         select RT_USING_DFS
         default y
-        
+
     config BSP_USING_SDCARD
         bool "Enable SDCARD (sdio)"
         select BSP_USING_SDIO
@@ -86,24 +86,24 @@ menu "Onboard Peripheral Drivers"
         range 0 24000000
         depends on BSP_USING_SDCARD
         default 24000000
-        
+
     config BSP_USING_TOUCH
         bool "Enable touch screen"
         select BSP_USING_I2C1
-    
+
     choice
         prompt "Touch IC type"
         depends on BSP_USING_TOUCH
         default BSP_USING_TOUCH_FT6X36
 
         config BSP_USING_TOUCH_FT6206
-            bool "FT6206"            
+            bool "FT6206"
             select PKG_USING_FT6206
 
         config BSP_USING_TOUCH_FT6X36
             bool "FT6x36"
             select PKG_USING_FT6236
-    endchoice  
+    endchoice
 
     config BSP_USING_LCD_MIPI
         bool
@@ -193,7 +193,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
         endif
-        
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         select RT_USING_I2C
@@ -201,7 +201,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default n
         if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25" 
+            comment "Notice: PB8 --> 24; PB9 --> 25"
             config BSP_I2C1_SCL_PIN
                 int "I2C1 scl pin number"
                 range 1 176
@@ -216,23 +216,23 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SPI BUS"
         select RT_USING_SPI
         default n
-        if BSP_USING_SPI  
+        if BSP_USING_SPI
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
         endif
-    
+
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
@@ -246,7 +246,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_FMC
         bool "Enable FMC"
         default n
-        
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
@@ -262,11 +262,11 @@ menu "On-chip Peripheral Drivers"
         bool "Enable LTDC"
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

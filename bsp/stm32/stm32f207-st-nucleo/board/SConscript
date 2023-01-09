@@ -25,7 +25,7 @@ elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32F2xx_HAL/CMSIS/Device/ST/STM32F2xx/Source/Templates/iar/startup_stm32f207xx.s']
 
 # STM32F205xx || STM32F207xx || STM32F215xx
-# STM32F217xx 
+# STM32F217xx
 # You can select chips from the list above
 CPPDEFINES = ['STM32F207xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

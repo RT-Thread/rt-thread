@@ -28,7 +28,7 @@ core_v_udma_driver/source/udma_sdio_driver.c
 """)
 
 path = [
-	cwd + '/bmsis/core-v-mcu/include',
+    cwd + '/bmsis/core-v-mcu/include',
     cwd + '/core_v_hal/include',
     cwd + '/core_v_udma_driver/include']
 

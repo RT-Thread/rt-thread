@@ -46,12 +46,12 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
-				
-			config BSP_USING_UART6
+
+            config BSP_USING_UART6
                 bool "Enable UART6"
                 default n
-				
-			config BSP_USING_UART7
+
+            config BSP_USING_UART7
                 bool "Enable UART7"
                 default n
         endif
@@ -176,8 +176,8 @@ menu "On-chip Peripheral Drivers"
                 bool "using dac2"
                 default n
         endif
-		
-	menuconfig BSP_USING_CAN
+
+    menuconfig BSP_USING_CAN
         bool "Enable CAN"
         default n
         select RT_USING_CAN

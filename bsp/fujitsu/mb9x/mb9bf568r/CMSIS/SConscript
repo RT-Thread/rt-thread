@@ -7,7 +7,7 @@ src = Glob('DeviceSupport/*.c')
 
 CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport']
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['DeviceSupport/arm/startup_mb9bf56xr.s']
 

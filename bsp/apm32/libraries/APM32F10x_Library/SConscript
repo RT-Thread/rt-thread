@@ -30,15 +30,15 @@ if GetDepend(['RT_USING_SPI']):
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_tmr.c']
-    
+
 if GetDepend(['RT_USING_WDT']):
     src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_wwdt.c']
     src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_iwdt.c']
-    
+
 if GetDepend(['BSP_USING_ETH']):
     src += ['APM32F10x_ETH_Driver/src/apm32f10x_eth.c']
-    
-path = [cwd + '/Device/Geehy/APM32F10x/Include', 
+
+path = [cwd + '/Device/Geehy/APM32F10x/Include',
     cwd + '/APM32F10x_StdPeriphDriver/inc',
     cwd + '/CMSIS/Include',
     cwd + '/APM32F10x_ETH_Driver/inc']

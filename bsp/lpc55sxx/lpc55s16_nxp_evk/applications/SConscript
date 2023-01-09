@@ -5,7 +5,7 @@ cwd = GetCurrentDir()
 src = Glob('main.c')
 CPPPATH = [cwd]
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     CPPDEFINES = ['__START=entry']
 else:

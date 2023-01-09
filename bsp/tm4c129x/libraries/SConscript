@@ -8,7 +8,7 @@ src = Glob('driverlib/*.c')
 SrcRemove(src, 'onewire.c')
 CFLAGS = ''
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     src += ['startup/startup_gcc.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:

@@ -3,14 +3,14 @@ menu "Hardware Drivers Config"
 config SOC_SERIES_N32G45X
     bool
     default y
-	
+
 config SOC_N32G45X
     bool
     select SOC_SERIES_N32G45X
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-	
+
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -46,12 +46,12 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
-				
-			config BSP_USING_UART6
+
+            config BSP_USING_UART6
                 bool "Enable UART6"
                 default n
-				
-			config BSP_USING_UART7
+
+            config BSP_USING_UART7
                 bool "Enable UART7"
                 default n
         endif
@@ -64,12 +64,12 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SPI1
                 bool "Enable SPI1 BUS"
                 default n
-				
-			config BSP_USING_SPI2
+
+            config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
                 default n
-				
-			config BSP_USING_SPI3
+
+            config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
 
@@ -91,8 +91,8 @@ menu "On-chip Peripheral Drivers"
                 range 0 111
                 default 23
         endif
-		
-	menuconfig BSP_USING_RTC
+
+    menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         default n
@@ -103,8 +103,8 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_RTC_USING_LSE
                     bool "RTC USING LSE"
-					
-				config BSP_RTC_USING_HSE
+
+                config BSP_RTC_USING_HSE
                     bool "RTC USING HSE"
 
                 config BSP_RTC_USING_LSI
@@ -143,7 +143,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_HWTIMER7
                 bool "using hwtimer7"
                 default n
-			config BSP_USING_HWTIMER8
+            config BSP_USING_HWTIMER8
                 bool "using hwtimer8"
                 default n
         endif
@@ -159,15 +159,15 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC2
                 bool "using adc2"
                 default n
-			config BSP_USING_ADC3
+            config BSP_USING_ADC3
                 bool "using adc3"
                 default n
-			config BSP_USING_ADC4
+            config BSP_USING_ADC4
                 bool "using adc4"
                 default n
         endif
-		
-	menuconfig BSP_USING_DAC
+
+    menuconfig BSP_USING_DAC
         bool "Enable DAC"
         default n
         select RT_USING_DAC
@@ -179,8 +179,8 @@ menu "On-chip Peripheral Drivers"
                 bool "using dac2"
                 default n
         endif
-		
-	menuconfig BSP_USING_CAN
+
+    menuconfig BSP_USING_CAN
         bool "Enable CAN"
         default n
         select RT_USING_CAN
@@ -192,7 +192,7 @@ menu "On-chip Peripheral Drivers"
                 bool "using can2"
                 default n
         endif
-		
+
     source "../libraries/n32_drivers/Kconfig"
 
 endmenu

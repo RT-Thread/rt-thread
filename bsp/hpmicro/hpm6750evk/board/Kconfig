@@ -17,7 +17,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         default y
         select RT_USING_SERIAL
-        
+
         if BSP_USING_UART
             menuconfig BSP_USING_UART0
                 bool "Enable UART0 (Debugger)"
@@ -172,7 +172,7 @@ menu "On-chip Peripheral Drivers"
                         default 0
                 endif
         endif
-        
+
 
 
     menuconfig BSP_USING_SPI
@@ -196,21 +196,21 @@ menu "On-chip Peripheral Drivers"
        default n
 
     menuconfig BSP_USING_ETH
-       bool "Enable Ethernet"       
-       default n 
-       
+       bool "Enable Ethernet"
+       default n
+
        select RT_USING_ETH
        if BSP_USING_ETH
-       		choice 
-		prompt "ETH"			
-	    	config BSP_USING_ETH0
-	        bool "Enable ETH0"	  	
-	    		        	   
-	    	config BSP_USING_ETH1
-	        bool "Enable ETH1"			        	        
-	   	endchoice	
-       endif       
-	    	       	
+            choice
+        prompt "ETH"
+            config BSP_USING_ETH0
+            bool "Enable ETH0"
+
+            config BSP_USING_ETH1
+            bool "Enable ETH1"
+        endchoice
+       endif
+
     menuconfig BSP_USING_SDXC
         bool "Enable SDXC"
         default n
@@ -239,8 +239,8 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_LCD
-    	bool "Enable LCD"
-    	default n
+        bool "Enable LCD"
+        default n
 
     menuconfig BSP_USING_LVGL
         bool "Enable LVGL"
@@ -248,31 +248,31 @@ menu "On-chip Peripheral Drivers"
         select PKG_USING_LVGL if BSP_USING_LVGL
 
     menuconfig BSP_USING_GPTMR
-	   	bool "Enable GPTMR"
-	   	default n
-	   	select RT_USING_HWTIMER if BSP_USING_GPTMR
-	   	if BSP_USING_GPTMR
-	   		config BSP_USING_GPTMR1
-	   			bool "Enable GPTMR1"
-	   			default n
-	   		config BSP_USING_GPTMR2
-	   			bool "Enable GPTMR2"
-	   			default n
-	   		config BSP_USING_GPTMR3
-	   			bool "Enable GPTMR3"
-	   			default n
-	   		config BSP_USING_GPTMR4
-	   			bool "Enable GPTMR4"
-	   			default n
-	   		config BSP_USING_GPTMR5
-	   			bool "Enable GPTMR5"
-	   			default n
-	   		config BSP_USING_GPTMR6
-	   			bool "Enable GPTMR6"
-	   			default n
-	   		config BSP_USING_GPTMR7
-	   			bool "Enable GPTMR7"
-	   			default n
+        bool "Enable GPTMR"
+        default n
+        select RT_USING_HWTIMER if BSP_USING_GPTMR
+        if BSP_USING_GPTMR
+            config BSP_USING_GPTMR1
+                bool "Enable GPTMR1"
+                default n
+            config BSP_USING_GPTMR2
+                bool "Enable GPTMR2"
+                default n
+            config BSP_USING_GPTMR3
+                bool "Enable GPTMR3"
+                default n
+            config BSP_USING_GPTMR4
+                bool "Enable GPTMR4"
+                default n
+            config BSP_USING_GPTMR5
+                bool "Enable GPTMR5"
+                default n
+            config BSP_USING_GPTMR6
+                bool "Enable GPTMR6"
+                default n
+            config BSP_USING_GPTMR7
+                bool "Enable GPTMR7"
+                default n
         endif
 
     menuconfig BSP_USING_I2C
@@ -291,16 +291,16 @@ menu "On-chip Peripheral Drivers"
     menuconfig INIT_EXT_RAM_FOR_DATA
         bool "INIT_EXT_RAM_FOR_DATA"
         default y
-        
-        
+
+
     menuconfig BSP_USING_XPI_FLASH
-    	bool "Enable XPI FLASH"
-	default n 
-    	select PKG_USING_FAL if BSP_USING_XPI_FLASH
+        bool "Enable XPI FLASH"
+    default n
+        select PKG_USING_FAL if BSP_USING_XPI_FLASH
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
-	default n
+    default n
 
     menuconfig BSP_USING_DAO
         bool "Enable Audio DAO play"
@@ -326,51 +326,51 @@ menu "On-chip Peripheral Drivers"
        bool "Enable USB"
        default n
        if BSP_USING_USB
-       		config BSP_USING_USB_DEVICE
+            config BSP_USING_USB_DEVICE
                 bool "Enable USB Device"
                     default n
             config BSP_USING_USB_HOST
                 bool "Enable USB Host"
                     default n
        endif
-       
-     
+
+
      menuconfig BSP_USING_WDG
-     	bool "Enable Watchdog"
-     	default n
-     	select RT_USING_WDT if BSP_USING_WDG
-     	if BSP_USING_WDG
-     		config BSP_USING_WDG0
-     			bool "Enable WDG0"
-     			default n
-     		config BSP_USING_WDG1
-     			bool "Enable WDG1"
-     			default n
-     		config BSP_USING_WDG2
-     			bool "Enable WDG2"
-     			default n
-     		config BSP_USING_WDG3
-     			bool "Enable WDG3"
-     			default n
-     	endif
-     		
+        bool "Enable Watchdog"
+        default n
+        select RT_USING_WDT if BSP_USING_WDG
+        if BSP_USING_WDG
+            config BSP_USING_WDG0
+                bool "Enable WDG0"
+                default n
+            config BSP_USING_WDG1
+                bool "Enable WDG1"
+                default n
+            config BSP_USING_WDG2
+                bool "Enable WDG2"
+                default n
+            config BSP_USING_WDG3
+                bool "Enable WDG3"
+                default n
+        endif
+
      menuconfig BSP_USING_CAN
-     	bool "Enable CAN"
-     	default n
-     	select RT_USING_CAN if BSP_USING_CAN
-     	if BSP_USING_CAN
-     		config BSP_USING_CAN0
-     			bool "Enable CAN0"
-     			default n
-     		config BSP_USING_CAN1
-     			bool "Enable CAN1"
-     			default n
-     		config BSP_USING_CAN2
-     			bool "Enable CAN2"
-     			default n
-     		config BSP_USING_CAN3
-     			bool "Enable CAN3"
-     			default n
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN if BSP_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN0
+                bool "Enable CAN0"
+                default n
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default n
+            config BSP_USING_CAN2
+                bool "Enable CAN2"
+                default n
+            config BSP_USING_CAN3
+                bool "Enable CAN3"
+                default n
      endif
 endmenu
 

@@ -10,21 +10,21 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtt2m16c.' + rtconfig.TARGET_EXT 
+TARGET = 'rtt2m16c.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 if rtconfig.PLATFORM in ['iccarm']:
-	env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
-	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -f lnkm30627fhp.xcl -l rtt2m16c.map -o rtt2m16c.d34 -Omotorola-s28=$TARGET'])
-	env.Replace(ARFLAGS = '')
-	
+    env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
+    env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -f lnkm30627fhp.xcl -l rtt2m16c.map -o rtt2m16c.d34 -Omotorola-s28=$TARGET'])
+    env.Replace(ARFLAGS = '')
+
 Export('RTT_ROOT')
 Export('rtconfig')
 

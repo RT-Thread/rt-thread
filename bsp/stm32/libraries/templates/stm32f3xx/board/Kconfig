@@ -27,11 +27,11 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2"
                 default y
         endif
-            
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

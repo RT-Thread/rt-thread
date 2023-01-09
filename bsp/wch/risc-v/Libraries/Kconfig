@@ -5,12 +5,12 @@ config SOC_RISCV_SERIES_CH32V1
     bool
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
-    
+
 config SOC_RISCV_SERIES_CH32V2
     bool
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
-	
+
 config SOC_RISCV_SERIES_CH32V3
     bool
     select ARCH_RISCV

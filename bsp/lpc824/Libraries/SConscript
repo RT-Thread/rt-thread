@@ -10,7 +10,7 @@ src  = Glob('peri_driver/*/*.c')
 src += Glob('common/board/*.c')
 src += Glob('common/chip/*.c')
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     print("not gcc startup file")
     exit(0)
@@ -19,9 +19,9 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [cwd + '/common/startup/iar_startup_lpc82x.s']
 
-CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board', 
-			cwd + '/common/chip', cwd + '/common/CMSIS']
-					
+CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board',
+            cwd + '/common/chip', cwd + '/common/CMSIS']
+
 CPPDEFINES = ['CORE_M0PLUS']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)

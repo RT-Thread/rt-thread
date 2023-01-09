@@ -6,7 +6,7 @@ config DRIVERS_G2D
 
 config HAL_TEST_G2D
     bool "enable g2d hal APIs test command"
-	depends on DRIVERS_G2D
+    depends on DRIVERS_G2D
         default n
 
 endmenu

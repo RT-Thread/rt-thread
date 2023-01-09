@@ -82,8 +82,8 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
@@ -122,7 +122,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n 
+        default n
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"

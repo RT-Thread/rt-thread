@@ -4,7 +4,7 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src	= Glob('*.c')
+src = Glob('*.c')
 
 # remove no need file.
 if GetDepend('RT_USING_LWIP') == False:

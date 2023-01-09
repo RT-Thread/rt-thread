@@ -51,7 +51,7 @@ if GetDepend(['RT_USING_CAN']):
 
 if GetDepend(['BSP_USING_FLEXSPI']):
     src += ['MIMXRT1176/drivers/fsl_flexspi.c']
-    
+
 #fsl os abstract files
 src += ['MIMXRT1176/drivers/fsl_os_abstraction_rtthread.c']
 src += ['MIMXRT1176/drivers/generic_list.c']

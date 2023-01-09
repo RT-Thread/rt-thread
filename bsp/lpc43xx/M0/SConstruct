@@ -44,5 +44,5 @@ if rtconfig.PLATFORM in ['gcc']:
         print('TODO: remove the object files in ../Libraries')
         os.chdir(ocwd)
 
-# do building 
+# do building
 DoBuilding(TARGET, objs)

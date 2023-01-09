@@ -27,7 +27,7 @@ elif rtconfig.PLATFORM in ['iccarm']:
 # STM32L052xx || STM32L053xx || STM32L062xx
 # STM32L063xx || STM32L072xx || STM32L073xx
 # STM32L082xx ||  STM32L083xx
-# You can select chips from the list above	
+# You can select chips from the list above
 CPPDEFINES = ['STM32L053xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

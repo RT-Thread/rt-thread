@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config MCU_TAE32F53xx
-    bool 
+    bool
     select ARCH_ARM_CORTEX_M3
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -56,7 +56,7 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
-        select RT_USING_PIN 
+        select RT_USING_PIN
         if BSP_USING_I2C1
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
@@ -66,7 +66,7 @@ menu "On-chip Peripheral Drivers"
                 int "I2C1 sda pin number"
                 range 1 176
                 default 90
-        endif 
+        endif
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
@@ -81,42 +81,42 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
-                default n        
+                default n
 
             config BSP_SPI3_TX_USING_DMA
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
                 select BSP_SPI3_TX_USING_DMA
-                default n  
+                default n
 
             config BSP_USING_SPI4
                 bool "Enable SPI4 BUS"
@@ -126,42 +126,42 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI4 TX DMA"
                 depends on BSP_USING_SPI4
                 default n
-                
+
             config BSP_SPI4_RX_USING_DMA
                 bool "Enable SPI4 RX DMA"
                 depends on BSP_USING_SPI4
                 select BSP_SPI4_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI5
                 bool "Enable SPI5 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI5_RX_USING_DMA
                 bool "Enable SPI5 TX DMA"
                 depends on BSP_USING_SPI5
                 default n
-                
+
             config BSP_SPI5_RX_USING_DMA
                 bool "Enable SPI5 RX DMA"
                 depends on BSP_USING_SPI5
                 select BSP_SPI5_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI6
                 bool "Enable SPI6 BUS"
-                default n        
+                default n
 
             config BSP_SPI6_TX_USING_DMA
                 bool "Enable SPI6 TX DMA"
                 depends on BSP_USING_SPI6
                 default n
-                
+
             config BSP_SPI6_RX_USING_DMA
                 bool "Enable SPI6 RX DMA"
                 depends on BSP_USING_SPI6
                 select BSP_SPI6_TX_USING_DMA
-                default n 
+                default n
         endif
 
     menuconfig BSP_USING_RTC

@@ -4,10 +4,10 @@ from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'drivers')
 
-src	= ['board.c']
+src = ['board.c']
 
 # add uart driver.
-src	+= ['uart.c']
+src += ['uart.c']
 
 # add EMAC driver for Lwip.
 if GetDepend('RT_USING_LWIP') == True:

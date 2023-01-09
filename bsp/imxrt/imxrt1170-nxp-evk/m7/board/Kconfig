@@ -27,22 +27,22 @@ menu "On-chip Peripheral Drivers"
         bool "Enable RTC"
         select RT_USING_RTC
         default n
-		
+
     config BSP_USING_USB
         bool "Enable USB"
         select RT_USING_USB_HOST
         default n
-		
-    if BSP_USING_USB
-	config BSP_USB0_HOST
-	    bool "Enable USB0"
-	    default n
 
-	config BSP_USB1_HOST
-	    bool "Enable USB1"
-	    default n	
+    if BSP_USING_USB
+    config BSP_USB0_HOST
+        bool "Enable USB0"
+        default n
+
+    config BSP_USB1_HOST
+        bool "Enable USB1"
+        default n
     endif
-		
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
@@ -53,8 +53,8 @@ menu "On-chip Peripheral Drivers"
             config CODE_STORED_ON_SDCARD
                 bool "Enable Code STORED On SDCARD"
                 default n
-                help 
-                    "SD CARD work as boot devive"				
+                help
+                    "SD CARD work as boot devive"
         endif
 
     menuconfig BSP_USING_LPUART
@@ -67,17 +67,17 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable LPUART1"
                 default y
 
-	    config BSP_LPUART1_RX_USING_DMA
-	        bool "Enable LPUART1 RX DMA"
-	        depends on BSP_USING_LPUART1
-	        select BSP_USING_DMA
-	        select RT_SERIAL_USING_DMA
-	        default n
+        config BSP_LPUART1_RX_USING_DMA
+            bool "Enable LPUART1 RX DMA"
+            depends on BSP_USING_LPUART1
+            select BSP_USING_DMA
+            select RT_SERIAL_USING_DMA
+            default n
 
-	    config BSP_LPUART1_RX_DMA_CHANNEL
-		depends on BSP_LPUART1_RX_USING_DMA
-		int "Set LPUART1 RX DMA channel (0-32)"
-		default 0
+        config BSP_LPUART1_RX_DMA_CHANNEL
+        depends on BSP_LPUART1_RX_USING_DMA
+        int "Set LPUART1 RX DMA channel (0-32)"
+        default 0
 
                 config BSP_LPUART1_TX_USING_DMA
                     bool "Enable LPUART1 TX DMA"
@@ -119,28 +119,28 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART3 TX DMA channel (0-32)"
                         default 1
         endif
-		
-		menuconfig BSP_USING_CAN
-			bool "Enable CAN"
-			select RT_USING_CAN
-			default n
-			if BSP_USING_CAN
-				config BSP_USING_CAN3
-					bool "Enable FLEXCAN3"
-					default n
-			endif
+
+        menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            select RT_USING_CAN
+            default n
+            if BSP_USING_CAN
+                config BSP_USING_CAN3
+                    bool "Enable FLEXCAN3"
+                    default n
+            endif
 
         menuconfig BSP_USING_FLEXSPI
-			bool "Enable FLEXSPI"
-			default n
-			if BSP_USING_FLEXSPI
-				config BSP_USING_FLEXSPI1
-					bool "Enable FLEXSPI1"
-					default n
+            bool "Enable FLEXSPI"
+            default n
+            if BSP_USING_FLEXSPI
+                config BSP_USING_FLEXSPI1
+                    bool "Enable FLEXSPI1"
+                    default n
                 config BSP_USING_FLEXSPI2
-					bool "Enable FLEXSPI2"
-					default n    
-			endif 
+                    bool "Enable FLEXSPI2"
+                    default n
+            endif
 endmenu
 
 menu "Onboard Peripheral Drivers"
