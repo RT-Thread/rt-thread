@@ -3,7 +3,7 @@ menu "FPWM Configuration"
         bool
         prompt "Use FPWM"
         default n
-        
+
 endmenu
 
 

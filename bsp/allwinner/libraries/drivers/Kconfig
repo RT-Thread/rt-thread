@@ -279,5 +279,5 @@ menu "Board extended module Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI0
 endmenu
-        
+
 endmenu

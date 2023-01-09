@@ -6,7 +6,7 @@ config DRIVERS_EFUSE
 
 config HAL_TEST_EFUSE
     bool "enable efuse hal APIs test command"
-	depends on DRIVERS_EFUSE
+    depends on DRIVERS_EFUSE
         default n
 
 endmenu

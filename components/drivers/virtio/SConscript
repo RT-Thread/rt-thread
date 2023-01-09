@@ -3,7 +3,7 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src  	= Glob('*.c')
+src     = Glob('*.c')
 CPPPATH = [cwd]
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_VIRTIO'], CPPPATH = CPPPATH)

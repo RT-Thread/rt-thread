@@ -248,7 +248,7 @@ config SOC_SERIES_M032
             config BSP_USING_UART5_RX_DMA
                 bool "Enable UART5 RX DMA"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
-				
+
             config BSP_USING_UART6
                 bool "Enable UART6"
 

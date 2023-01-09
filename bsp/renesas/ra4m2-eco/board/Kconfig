@@ -48,7 +48,7 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
-                    
+
                 menuconfig BSP_USING_UART1
                     bool "Enable UART1"
                     default n
@@ -75,7 +75,7 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
-                    
+
                 menuconfig BSP_USING_UART2
                     bool "Enable UART2"
                     default n
@@ -102,7 +102,7 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
-                    
+
                 menuconfig BSP_USING_UART3
                     bool "Enable UART3"
                     default n
@@ -129,7 +129,7 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
-                    
+
                 menuconfig BSP_USING_UART4
                     bool "Enable UART4"
                     default n
@@ -156,7 +156,7 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
-                    
+
                 menuconfig BSP_USING_UART9
                     bool "Enable UART9"
                     default n
@@ -184,24 +184,24 @@ menu "Hardware Drivers Config"
                             default 0
                     endif
             endif
-    
+
     menuconfig BSP_USING_SPI
             bool "Enable SPI"
             default n
             select RT_USING_SPI
             if BSP_USING_SPI
-				config BSP_SPI_USING_DTC_DMA
+                config BSP_SPI_USING_DTC_DMA
                     bool "Enable SPI DTC transfers data without using the CPU."
                     default n
 
                 config BSP_USING_SPI0
                     bool "Enable SPI0 BUS"
                     default n
-        
+
                 config BSP_USING_SPI1
                     bool "Enable SPI1 BUS"
                     default n
-        
+
                 config BSP_USING_SCI_SPI0
                     bool "Enable SCI SPI0 BUS"
                     default n
@@ -220,9 +220,9 @@ menu "Hardware Drivers Config"
                 config BSP_USING_SCI_SPI9
                     bool "Enable SCI SPI9 BUS"
                     default n
-                    
+
             endif
-	endmenu
+    endmenu
     menu "Board extended module Drivers"
 
     endmenu

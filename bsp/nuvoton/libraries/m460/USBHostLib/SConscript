@@ -5,8 +5,8 @@ from building import *
 cwd = GetCurrentDir()
 group = []
 if GetDepend('BSP_USING_HSUSBH') or GetDepend('BSP_USING_USBH'):
-	src = Glob('*src/*.c') + Glob('src/*.cpp')
-	CPPPATH = [cwd + '/inc']
-	group = DefineGroup('m460_usbhostlib', src, depend = [''], CPPPATH = CPPPATH)
+    src = Glob('*src/*.c') + Glob('src/*.cpp')
+    CPPPATH = [cwd + '/inc']
+    group = DefineGroup('m460_usbhostlib', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

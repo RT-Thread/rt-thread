@@ -16,21 +16,21 @@ src = []
 src += [ os.path.join(cwd, 'debug_console', 'hpm_debug_console.c') ]
 src += [ os.path.join(cwd, 'dma_manager', 'hpm_dma_manager.c') ]
 if GetDepend(['BSP_USING_TOUCH_GT911']):
-	src += [os.path.join(cwd, 'touch', 'gt911', 'hpm_touch_gt911.c') ]
-	src += [os.path.join(cwd, 'touch', 'gt911', 'hpm_gt911.c') ]
-	path += [ os.path.join(cwd, 'touch', 'gt911') ]
-	CPPDEFINES = ['CONFIG_TOUCH_GT911=1']
+    src += [os.path.join(cwd, 'touch', 'gt911', 'hpm_touch_gt911.c') ]
+    src += [os.path.join(cwd, 'touch', 'gt911', 'hpm_gt911.c') ]
+    path += [ os.path.join(cwd, 'touch', 'gt911') ]
+    CPPDEFINES = ['CONFIG_TOUCH_GT911=1']
 if GetDepend(['BSP_USING_TOUCH_FT5406']):
-	src += [ os.path.join(cwd, 'touch', 'ft5406', 'hpm_touch_ft5406.c') ]
-	src += [ os.path.join(cwd, 'touch', 'ft5406', 'hpm_ft5406.c') ]
-	path += [ os.path.join(cwd, 'touch', 'ft5406') ]
-	CPPDEFINES = ['CONFIG_TOUCH_FT5406=1']
+    src += [ os.path.join(cwd, 'touch', 'ft5406', 'hpm_touch_ft5406.c') ]
+    src += [ os.path.join(cwd, 'touch', 'ft5406', 'hpm_ft5406.c') ]
+    path += [ os.path.join(cwd, 'touch', 'ft5406') ]
+    CPPDEFINES = ['CONFIG_TOUCH_FT5406=1']
 if GetDepend(['BSP_USING_USB_DEVICE']):
-	src += [ os.path.join(cwd, 'usb', 'device', 'hpm_usb_device.c') ]
-	path += [ os.path.join(cwd, 'usb', 'device') ]
+    src += [ os.path.join(cwd, 'usb', 'device', 'hpm_usb_device.c') ]
+    path += [ os.path.join(cwd, 'usb', 'device') ]
 if GetDepend(['BSP_USING_USB_HOST']):
-	src += [ os.path.join(cwd, 'usb', 'host', 'hpm_usb_host.c') ]
-	path += [ os.path.join(cwd, 'usb', 'host') ]
+    src += [ os.path.join(cwd, 'usb', 'host', 'hpm_usb_host.c') ]
+    path += [ os.path.join(cwd, 'usb', 'host') ]
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 

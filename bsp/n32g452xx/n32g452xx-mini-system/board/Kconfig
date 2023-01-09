@@ -48,7 +48,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_GPIO
 
             menu "Remap JTAG Port"
-                choice 
+                choice
                     prompt "Remap JTAG Port"
                         default BSP_RMP_SW_JTAG_SW_ENABLE
                         config BSP_RMP_SW_JTAG_FULL_ENABLE
@@ -81,7 +81,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable USART1"
                 default y
                 if BSP_USING_UART1
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of USART1"
                         default BSP_USING_UART1_NO_RMP
                         config BSP_USING_UART1_PIN_RMP
@@ -95,7 +95,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable USART2"
                 default n
                 if BSP_USING_UART2
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of USART2"
                         default BSP_USING_UART2_NO_RMP
                         config BSP_USING_UART2_NO_RMP
@@ -109,12 +109,12 @@ menu "On-chip Peripheral Drivers"
 
                             endchoice
                 endif
-                
+
             config BSP_USING_UART3
                 bool "Enable USART3"
                 default n
                 if BSP_USING_UART3
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of USART3"
                         default BSP_USING_UART3_PIN_NO_RMP
                         config BSP_USING_UART3_PIN_NO_RMP
@@ -130,7 +130,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART4"
                 default n
                 if BSP_USING_UART4
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of UART4"
                         default BSP_USING_UART4_PIN_NORMP
                         config BSP_USING_UART4_PIN_NORMP
@@ -148,7 +148,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART5"
                 default n
                 if BSP_USING_UART5
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of UART5"
                         default BSP_USING_UART5_PIN_NORMP
                         config BSP_USING_UART5_PIN_NORMP
@@ -161,12 +161,12 @@ menu "On-chip Peripheral Drivers"
                             bool "UART5:TX:PB8, RX:PB9"
                     endchoice
                 endif
-            
+
             config BSP_USING_UART6
                 bool "Enable UART6"
                 default n
                 if BSP_USING_UART6
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of UART6"
                         default BSP_USING_UART6_PIN_NORMP
                         config BSP_USING_UART6_PIN_NORMP
@@ -177,12 +177,12 @@ menu "On-chip Peripheral Drivers"
                             bool "UART6:TX:PB0, RX:PB1"
                     endchoice
                 endif
-            
+
             config BSP_USING_UART7
                 bool "Enable UART7"
                 default n
                 if BSP_USING_UART7
-                    choice 
+                    choice
                         prompt "Select TX/RX Pin of UART7"
                         default BSP_USING_UART7_PIN_NORMP
                         config BSP_USING_UART7_PIN_NORMP

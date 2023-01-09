@@ -1,4 +1,4 @@
-﻿# RT-Thread building script for component
+# RT-Thread building script for component
 
 Import('RTT_ROOT')
 from building import *
@@ -21,3 +21,4 @@ else:
     group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
+')

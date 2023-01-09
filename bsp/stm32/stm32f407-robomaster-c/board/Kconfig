@@ -31,7 +31,7 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         default n
-        
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -91,7 +91,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
-            
+
             menuconfig BSP_USING_PWM1
                 bool "Enable timer1 output PWM"
                 default n
@@ -133,7 +133,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM5 channel3(LED_R)"
                         default n
                 endif
-                
+
             menuconfig BSP_USING_PWM8
                 bool "Enable timer8 output PWM"
                 default n
@@ -150,7 +150,7 @@ menu "On-chip Peripheral Drivers"
                 endif
 
         endif
-        
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
@@ -171,13 +171,13 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                        
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                        
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -201,13 +201,13 @@ menu "On-chip Peripheral Drivers"
                 default 80
         endif
 
-        
-    source "../libraries/HAL_Drivers/Kconfig"    
-    
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

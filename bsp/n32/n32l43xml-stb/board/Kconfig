@@ -3,14 +3,14 @@ menu "Hardware Drivers Config"
 config SOC_SERIES_N32L43X
     bool
     default y
-	
+
 config SOC_N32L43X
     bool
     select SOC_SERIES_N32L43X
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-	
+
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -46,7 +46,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
-				
+
         endif
 
     menuconfig BSP_USING_SPI
@@ -57,8 +57,8 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SPI1
                 bool "Enable SPI1 BUS"
                 default n
-				
-			config BSP_USING_SPI2
+
+            config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
                 default n
 
@@ -75,14 +75,14 @@ menu "On-chip Peripheral Drivers"
                 int "i2c1 scl pin number"
                 range 0 64
                 default 22
-				
+
             config BSP_I2C1_SDA_PIN
                 int "I2C1 sda pin number"
                 range 0 64
                 default 23
         endif
-		
-	menuconfig BSP_USING_RTC
+
+    menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         default n
@@ -93,11 +93,11 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_RTC_USING_LSE
                     bool "RTC USING LSE"
-					
-				config BSP_RTC_USING_HSE
+
+                config BSP_RTC_USING_HSE
                     bool "RTC USING HSE"
-					
-				config BSP_RTC_USING_LSI
+
+                config BSP_RTC_USING_LSI
                     bool "RTC USING LSI"
             endchoice
         endif
@@ -115,55 +115,55 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_HWTIMER1
                 bool "using hwtimer1"
                 default n
-				
+
             config BSP_USING_HWTIMER2
                 bool "using hwtimer2"
                 default n
-				
+
             config BSP_USING_HWTIMER3
                 bool "using hwtimer3"
                 default n
-				
+
             config BSP_USING_HWTIMER4
                 bool "using hwtimer4"
                 default n
-				
+
             config BSP_USING_HWTIMER5
                 bool "using hwtimer5"
                 default n
-				
+
             config BSP_USING_HWTIMER6
                 bool "using hwtimer6"
                 default n
-				
+
             config BSP_USING_HWTIMER7
                 bool "using hwtimer7"
                 default n
-				
-			config BSP_USING_HWTIMER8
+
+            config BSP_USING_HWTIMER8
                 bool "using hwtimer8"
                 default n
-				
-			config BSP_USING_HWTIMER9
+
+            config BSP_USING_HWTIMER9
                 bool "using hwtimer9"
                 default n
         endif
-		
+
     config BSP_USING_ADC
         bool "Enable ADC"
         select RT_USING_ADC
         default n
-		
+
     config BSP_USING_DAC
         bool "Enable DAC"
         select RT_USING_DAC
         default n
-		
+
     config BSP_USING_CAN
         bool "Enable CAN"
         select RT_USING_CAN
         default n
-		
+
     source "../libraries/n32_drivers/Kconfig"
 
 endmenu

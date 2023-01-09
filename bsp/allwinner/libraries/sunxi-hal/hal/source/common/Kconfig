@@ -2,6 +2,6 @@ menu "Common Option"
 
 config DRVIER_SYSCONFIG
     bool "enable sysconfig"
-	default y
+    default y
 
 endmenu

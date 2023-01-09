@@ -1,33 +1,33 @@
 
 menu "NAND Configuration"
     menu "FNAND ip config"
-		choice
-		prompt "choice fnand driver"
+        choice
+        prompt "choice fnand driver"
         config ENABLE_FNAND
             bool
             prompt "Use FNAND"
-            
-		if ENABLE_FNAND
-			config FNAND_COMMON_DEBUG_EN
-				bool
-            	prompt "Use FNAND common mode debug"
-			
-			config FNAND_DMA_DEBUG_EN
-				bool
-            	prompt "Use FNAND DMA mode debug"
-			
-			config FNAND_TOGGLE_DEBUG_EN
-				bool
-            	prompt "Use FNAND toggle mode debug"
 
-			config FNAND_ONFI_DEBUG_EN
-				bool
-            	prompt "Use FNAND onfi mode debug"
+        if ENABLE_FNAND
+            config FNAND_COMMON_DEBUG_EN
+                bool
+                prompt "Use FNAND common mode debug"
 
-		endif
+            config FNAND_DMA_DEBUG_EN
+                bool
+                prompt "Use FNAND DMA mode debug"
 
-		endchoice
-	endmenu 
+            config FNAND_TOGGLE_DEBUG_EN
+                bool
+                prompt "Use FNAND toggle mode debug"
+
+            config FNAND_ONFI_DEBUG_EN
+                bool
+                prompt "Use FNAND onfi mode debug"
+
+        endif
+
+        endchoice
+    endmenu
 
 endmenu
 

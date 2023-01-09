@@ -9,7 +9,7 @@ config RTT_DIR
     string
     option env="RTT_ROOT"
     default "../../.."
-    
+
 # you can change the RTT_ROOT default "../../.." to your rtthread_root,
 # example : default "F:/git_repositories/rt-thread"
 
@@ -19,7 +19,7 @@ config PKGS_DIR
     default "packages"
 
 config USE_MA35D1_AARCH32
-    bool 
+    bool
     default y
 
 source "$RTT_DIR/Kconfig"

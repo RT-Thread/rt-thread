@@ -20,7 +20,7 @@ HC32L196_StdPeriph_Driver/src/hc32l196_flash.c
 if GetDepend(['RT_USING_SERIAL']):
     src += ['HC32L196_StdPeriph_Driver/src/hc32l196_uart.c']
 
-#add for startup script 
+#add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     src = src + ['CMSIS/Device/HDSC/HC32L196/Source/GCC/startup_hc32l19x.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -28,8 +28,8 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src = src + ['CMSIS/Device/HDSC/HC32L196/Source/IAR/startup_hc32l19x.s']
 
-#add headfile script 
-path = [cwd + '/CMSIS/Include', 
+#add headfile script
+path = [cwd + '/CMSIS/Include',
     cwd + '/CMSIS/Device/HDSC/HC32L196/Include',
     cwd + '/HC32L196_StdPeriph_Driver/inc']
 

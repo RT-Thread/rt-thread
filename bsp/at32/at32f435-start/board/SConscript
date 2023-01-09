@@ -23,7 +23,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/AT32F435_437_Firmware_Library/cmsis/cm4/device_support/startup/mdk/startup_at32f435_437.s']
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/AT32F435_437_Firmware_Library/cmsis/cm4/device_support/startup/iar/startup_at32f435_437.s']
-    
+
 CPPDEFINES = ['AT32F435ZMT7']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 Return('group')

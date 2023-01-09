@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config SOC_LPC55S06
-    bool 
+    bool
     select SOC_LPC55S06_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -13,7 +13,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable DMA"
         select RT_USING_DMA
         default n
-    
+
     config BSP_USING_PIN
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -24,7 +24,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable UART"
             select RT_USING_UART
             default y
-            
+
             if BSP_USING_UART
                 config BSP_USING_UART0
                     bool "Enable Flexcomm0 as UART"
@@ -54,9 +54,9 @@ menu "On-chip Peripheral Drivers"
                                 bool "Badurate 9600"
 
                             config HW_UART2_BAUDRATE_115200
-                                bool "Badurate 115200"   
+                                bool "Badurate 115200"
                         endchoice
-                    endif 
+                    endif
             endif
 
 
@@ -105,7 +105,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable SPI"
             select RT_USING_SPI
             default y
-            
+
             if BSP_USING_SPI
                 config BSP_USING_SPI3
                     bool "Enable Flexcomm3 as SPI"
@@ -121,7 +121,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable ADC Channel"
             select RT_USING_ADC
             default y
-            
+
             if BSP_USING_ADC
                 config BSP_USING_ADC0_CH0
                     bool "Enable ADC0 Channel0"

@@ -13,10 +13,10 @@ n32g4fr_std_periph_driver/src/n32g4fr_rcc.c
 n32g4fr_std_periph_driver/src/n32g4fr_exti.c
 n32g4fr_std_periph_driver/src/misc.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['n32g4fr_std_periph_driver/src/n32g4fr_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['n32g4fr_std_periph_driver/src/n32g4fr_i2c.c']
 

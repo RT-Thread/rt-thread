@@ -6,7 +6,7 @@ config DRIVERS_GPIO
 
 config HAL_TEST_GPIO
     bool "enable gpio hal APIs test command"
-	depends on DRIVERS_GPIO
+    depends on DRIVERS_GPIO
         default n
 
 endmenu

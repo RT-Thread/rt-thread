@@ -1,6 +1,6 @@
 menu "BL808_M0 Hardware Drivers Config"
 config SOC_BL808
-    bool 
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select ARCH_RISCV_FPU_S
