@@ -39,6 +39,7 @@ jobs:
          - {RTT_BSP: "apm32/apm32f103xe-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f407ig-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f072vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f107vc-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm"}
