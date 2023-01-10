@@ -12,4 +12,3 @@ group = []
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
-')

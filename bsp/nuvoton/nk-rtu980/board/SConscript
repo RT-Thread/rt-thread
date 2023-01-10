@@ -12,4 +12,3 @@ CPPPATH = [ cwd ]
 
 group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
-')

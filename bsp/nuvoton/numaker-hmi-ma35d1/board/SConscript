@@ -16,4 +16,3 @@ CPPPATH = [cwd, cwd + '/nutool_pincfg']
 group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
-')

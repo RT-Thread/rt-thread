@@ -2,7 +2,6 @@
 
 from building import *
 
-
 Import('RTT_ROOT')
 from building import *
 
@@ -12,4 +11,3 @@ CPPPATH = [ cwd ]
 
 group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
-')
