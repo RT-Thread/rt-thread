@@ -91,6 +91,8 @@ src += Split("""
 """)
 
 path += [cwd + r'/platform/hosal/bl808_e907_hal']
+path += [cwd + r'/platform/soc/bl808/bl808_e907_std/common/device',
+		 cwd + r'/platform/soc/bl808/bl808_e907_std/common/list']
 
 libpath = []
 libs = []
