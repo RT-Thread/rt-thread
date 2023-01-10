@@ -1,18 +1,21 @@
 import os
 from building import *
 
-cwd  = GetCurrentDir()
-src = Glob('*.c') + Glob('*_gcc.S')
-CPPPATH = [cwd]
+objs = []
 
-group = DefineGroup('mm', src, depend = ['RT_USING_SMART', 'ARCH_MM_MMU'], CPPPATH = CPPPATH)
+if GetDepend('ARCH_MM_MMU'):
+    cwd  = GetCurrentDir()
+    src = Glob('*.c') + Glob('*_gcc.S')
+    CPPPATH = [cwd]
 
-objs = [group]
-list = os.listdir(cwd)
+    group = DefineGroup('mm', src, depend = [''], CPPPATH = CPPPATH)
 
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+    objs = [group]
+    list = os.listdir(cwd)
+
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
 Return('objs')
