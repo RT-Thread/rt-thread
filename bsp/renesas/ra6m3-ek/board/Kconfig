@@ -53,7 +53,6 @@ menu "Hardware Drivers Config"
         config BSP_USING_LCD
             bool "Enable LCD"
             select BSP_USING_GPIO
-            select BSP_USING_LCD
             default n
 
         config BSP_USING_LVGL
