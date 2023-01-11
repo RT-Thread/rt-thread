@@ -18,4 +18,3 @@ CPPPATH = [cwd, cwd + '/NuClockConfig', cwd + '/NuPinConfig']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
-')
