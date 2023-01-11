@@ -1,6 +1,6 @@
 # STM32F410 Nucleo开发板的Arduino生态兼容说明
 
-[English](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32f401-st-nucleo/applications/arduino_pinout/README.md) | **中文**
+[English](README.md) | **中文**
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
