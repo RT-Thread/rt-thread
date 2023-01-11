@@ -37,6 +37,7 @@ const pin_map_t pin_map_table[]=
     {D13, GET_PIN(A,5)},                /* LED_BUILTIN */
     {D14, GET_PIN(B,9), "i2c1"},        /* I2C-SDA (Wire) */
     {D15, GET_PIN(B,8), "i2c1"},        /* I2C-SCL (Wire) */
+    {D16, GET_PIN(C,13)},               /* USER KEY */
     {A0, GET_PIN(A,0), "adc1", 0},      /* ADC */
     {A1, GET_PIN(A,1), "adc1", 1},      /* ADC */
     {A2, GET_PIN(A,4), "adc1", 4},      /* ADC */
