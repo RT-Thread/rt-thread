@@ -29,7 +29,7 @@
 #endif
 
 struct lpc_spi
-{iteopuywqt[riouqwyyyyyyyyyyyy
+{
     SPI_Type *base;
     struct rt_spi_configuration *cfg;
     SYSCON_RSTn_t spi_rst;
