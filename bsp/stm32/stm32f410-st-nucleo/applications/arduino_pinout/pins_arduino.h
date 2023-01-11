@@ -28,6 +28,7 @@
 #define D13       (13)
 #define D14       (14)
 #define D15       (15)
+#define D16       (16)
 #define A0        (16)
 #define A1        (17)
 #define A2        (18)
