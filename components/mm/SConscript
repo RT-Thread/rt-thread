@@ -3,12 +3,12 @@ from building import *
 
 objs = []
 
-if GetDepend('ARCH_MM_MMU'):
+if GetDepend('ARCH_ARM_CORTEX_A') or GetDepend('ARCH_ARMV8') or GetDepend('ARCH_RISCV64'):
     cwd  = GetCurrentDir()
     src = Glob('*.c') + Glob('*_gcc.S')
     CPPPATH = [cwd]
 
-    group = DefineGroup('mm', src, depend = [''], CPPPATH = CPPPATH)
+    group = DefineGroup('mm', src, depend = ['ARCH_MM_MMU'], CPPPATH = CPPPATH)
 
     objs = [group]
     list = os.listdir(cwd)
