@@ -18,4 +18,3 @@ CPPPATH = [cwd, cwd + '/NuClockConfig', cwd + '/NuPinConfig']
 group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
-')
