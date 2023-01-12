@@ -52,7 +52,7 @@ This board complies with Arduino UNO pins layout. For more details, please take 
 
 > Notice:
 > 
-> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timer can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
+> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timers can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
 
 > References
 > 
