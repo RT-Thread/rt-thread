@@ -27,7 +27,7 @@ By reading the Quickly Get Started section developers can quickly get their hand
 - Network Port: 1, 10M PHY inside.
 - WCH-Link download debugging tools onboard.
 
-For more details about this board, please refer to: [CH32V307](https://www.wch.cn/products/CH32V307.html)
+For more details about this board, please refer to: [CH32V307](https://www.wch.cn/products/CH32V307.html) and [CH32V307 official document](https://github.com/openwch/ch32v307)
 
 ## 2 Compiling
 
@@ -76,7 +76,7 @@ In the terminal tool, open the onboard wch-link serial port (WCHDapLink SERIAL, 
 
 In the Env terminal, type command `scons --target=vsc` to generate the VSCode project. Then, type command `code .` in the Env terminal to open the VSCode.
 
-Use **VSCode terminal** to type command `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` to compile the project in VSCode.
+Use **VSCode terminal** to type command `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` to compile the project in VSCode.
 
 ![vscode-terminal](./figures/vscode-terminal.png)
 
