@@ -7,6 +7,10 @@ config SOC_CH32V208WBU6
     select RT_USING_USER_MAIN
     default y
 
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
@@ -565,10 +569,6 @@ menu "On-chip Peripheral Drivers"
                 endif
 
         endif
-
-endmenu
-
-menu "Onboard Peripheral Drivers"
 
 endmenu
 
