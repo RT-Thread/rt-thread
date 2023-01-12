@@ -18,31 +18,47 @@ extern uint32_t SystemCoreClock;
 
 static uint32_t _SysTick_Config(rt_uint32_t ticks)
 {
-    NVIC_SetPriority(SysTicK_IRQn,0xf0);
-    NVIC_SetPriority(Software_IRQn,0xf0);
+    NVIC_SetPriority(SysTicK_IRQn, 0xf0);
+    NVIC_SetPriority(Software_IRQn, 0xf0);
     NVIC_EnableIRQ(SysTicK_IRQn);
     NVIC_EnableIRQ(Software_IRQn);
-    SysTick->CTLR=0;
-    SysTick->SR=0;
-    SysTick->CNT=0;
-    SysTick->CMP=ticks-1;
-    SysTick->CTLR=0xF;
+    SysTick->CTLR = 0;
+    SysTick->SR = 0;
+    SysTick->CNT = 0;
+    SysTick->CMP = ticks - 1;
+    SysTick->CTLR = 0xF;
     return 0;
 }
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
+/* 堆分配最大化开关 1-开启 0-关闭*/
+#define USING_MAX_HEAP_SIZE 1
+
+#if  (USING_MAX_HEAP_SIZE == 0)
 #define RT_HEAP_SIZE (4096)
-static uint32_t rt_heap[RT_HEAP_SIZE];
-rt_weak void *rt_heap_begin_get(void)
+static uint32_t rt_heap[RT_HEAP_SIZE];     // heap default size: 16K(4096 * 4)
+RT_WEAK void* rt_heap_begin_get(void)
 {
     return rt_heap;
 }
 
-rt_weak void *rt_heap_end_get(void)
+RT_WEAK void* rt_heap_end_get(void)
 {
     return rt_heap + RT_HEAP_SIZE;
 }
-#endif
+#else
+RT_WEAK void* rt_heap_begin_get(void)
+{
+    return HEAP_BEGIN;
+}
+
+RT_WEAK void* rt_heap_end_get(void)
+{
+    return HEAP_END;
+}
+#endif /*USING_MAX_HEAP_SIZE*/
+
+#endif/* RT_USING_USER_MAIN && RT_USING_HEAP*/
 
 /**
  * This function will initial your board.
@@ -75,7 +91,7 @@ void SysTick_Handler(void)
     GET_INT_SP();
     /* enter interrupt */
     rt_interrupt_enter();
-    SysTick->SR=0;
+    SysTick->SR = 0;
     rt_tick_increase();
     /* leave interrupt */
     rt_interrupt_leave();
