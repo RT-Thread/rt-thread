@@ -10,7 +10,6 @@
  * 2021/02/02     lizhirui     Add userspace support
  */
 
-#define __ASSEMBLY__
 #include "cpuport.h"
 #include "stackframe.h"
 
