@@ -74,7 +74,7 @@ L_loop1:
 
     bl  SystemInit
     bl __libc_init_array
-  bl main
+  bl entry
   bx lr
 .size Reset_Handler, .-Reset_Handler
 
@@ -86,7 +86,7 @@ L_Loop_infinite:
   .size Default_Handler, .-Default_Handler
 
 // The minimal vector table for a Cortex M3.
-   .section .apm32_isr_vector,"a",%progbits
+   .section .isr_vector,"a",%progbits
   .type g_apm32_Vectors, %object
   .size g_apm32_Vectors, .-g_apm32_Vectors
 
@@ -150,7 +150,7 @@ g_apm32_Vectors:
   .word USART2_IRQHandler                   // USART2
   .word USART3_IRQHandler                   // USART3
   .word EINT15_10_IRQHandler                // EINT Line 15..10
-  .word RTC_Alarm_IRQHandler                 // RTC Alarm through EINT Line
+  .word RTCAlarm_IRQHandler                 // RTC Alarm through EINT Line
   .word OTG_FS_WKUP_IRQHandler              // USBD Wakeup from suspend
   .word 0                                   // Reserved
   .word 0                                   // Reserved
@@ -336,8 +336,8 @@ g_apm32_Vectors:
   .weak EINT15_10_IRQHandler
   .thumb_set EINT15_10_IRQHandler,Default_Handler
 
-  .weak RTC_Alarm_IRQHandler
-  .thumb_set RTC_Alarm_IRQHandler,Default_Handler
+  .weak RTCAlarm_IRQHandler
+  .thumb_set RTCAlarm_IRQHandler,Default_Handler
 
   .weak OTG_FS_WKUP_IRQHandler
   .thumb_set OTG_FS_WKUP_IRQHandler,Default_Handler

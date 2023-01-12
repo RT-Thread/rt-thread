@@ -18,24 +18,23 @@
 #include <lwip/icmp.h>
 #include "lwipopts.h"
 #include "lwip/ip.h"
+#include "drv_eth.h"
 
 /* debug option */
 //#define DRV_DEBUG
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
 #define LOG_TAG             "drv.emac"
-#include "drv_eth.h"
+#include <drv_log.h>
 
 /* Global pointers on Tx and Rx descriptor used to transmit and receive descriptors */
 extern ETH_DMADescConfig_T  *DMATxDescToSet, *DMARxDescToGet;
 
 /* Ethernet Rx & Tx DMA Descriptors */
-//static ETH_DMADescConfig_T  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
-/* Ethernet Receive and Transmit buffers */
-//static rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
-
 extern ETH_DMADescConfig_T  DMARxDscrTab[ETH_RXBUFNB];
 extern ETH_DMADescConfig_T  DMATxDscrTab[ETH_TXBUFNB];
+
+/* Ethernet Receive and Transmit buffers */
 extern uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
 extern uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
 
@@ -600,9 +599,9 @@ struct pbuf *rt_apm32_eth_rx(rt_device_t dev)
 }
 
 enum {
-    PHY_LINK_MASK        = (1 << 0),
-    PHY_100M_MASK        = (1 << 1),
-    PHY_DUPLEX_MASK      = (1 << 2),
+    PHY_LINK        = (1 << 0),
+    PHY_100M        = (1 << 1),
+    PHY_FULL_DUPLEX = (1 << 2),
 };
 
 static void phy_linkchange(void)
@@ -617,30 +616,30 @@ static void phy_linkchange(void)
     {
         uint16_t SR;
 
-        phy_speed_new |= PHY_LINK_MASK;
+        phy_speed_new |= PHY_LINK;
 
         SR = ETH_ReadPHYRegister(phy_addr, PHY_Status_REG);
         LOG_D("phy control status reg is 0x%X", SR);
 
         if (PHY_Status_SPEED_100M(SR))
         {
-            phy_speed_new |= PHY_100M_MASK;
+            phy_speed_new |= PHY_100M;
         }
 
         if (PHY_Status_FULL_DUPLEX(SR))
         {
-            phy_speed_new |= PHY_DUPLEX_MASK;
+            phy_speed_new |= PHY_FULL_DUPLEX;
         }
     }
 
     /* linkchange */
     if(phy_speed_new != phy_speed)
     {
-        if(phy_speed_new & PHY_LINK_MASK)
+        if(phy_speed_new & PHY_LINK)
         {
             LOG_D("link up ");
 
-            if(phy_speed_new & PHY_100M_MASK)
+            if(phy_speed_new & PHY_100M)
             {
                 LOG_D("100Mbps");
                 apm32_eth_device.ETH_Speed = ETH_SPEED_100M;
@@ -651,7 +650,7 @@ static void phy_linkchange(void)
                 LOG_D("10Mbps");
             }
 
-            if(phy_speed_new & PHY_DUPLEX_MASK)
+            if(phy_speed_new & PHY_FULL_DUPLEX)
             {
                 LOG_D("full-duplex\r\n");
                 apm32_eth_device.ETH_Mode = ETH_MODE_FULLDUPLEX;

@@ -15,7 +15,7 @@
 
 APM32F107 EVAL BOARD，采用标准JTAG/SWD调试接口，引出了大部分的IO。开发板外观如下图所示：
 
-
+![image-20230112142637973](figures/APM32F107VC-EVAL.png)
 
 - 有关开发板和芯片的详情可至极海官网查阅。[官网开发板链接 ](https://www.geehy.com/support/apm32?id=192)
 

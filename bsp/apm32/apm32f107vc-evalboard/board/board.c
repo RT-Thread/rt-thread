@@ -88,7 +88,7 @@ void apm32_msp_spi_init(void *Instance)
         GPIO_ConfigPinRemap(GPIO_REMAP_SWJ_JTAGDISABLE);
 
         /* Configure FLASH_SPI pins: SCK */
-        gpioConfig.pin =  GPIO_PIN_3 ;
+        gpioConfig.pin =  GPIO_PIN_3;
         gpioConfig.mode = GPIO_MODE_AF_PP;
         gpioConfig.speed = GPIO_SPEED_50MHz;
         GPIO_Config(GPIOB, &gpioConfig);

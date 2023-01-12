@@ -5,8 +5,7 @@
  *
  * Change Logs:
  * Date           Author         Notes
- * 2020-08-20     Abbcc          first version
- * 2022-03-04     stevetong459   Add head file of new driver
+ * 2022-12-28     luobeihai    first version
  */
 
 #ifndef __BOARD_H__
