@@ -445,7 +445,7 @@ void lwp_free(struct rt_lwp* lwp)
     }
 
     rt_hw_interrupt_enable(level);
-    if (!lwp->background)   
+    if (!lwp->background)
     {
         struct termios *old_stdin_termios = get_old_termios();
         struct rt_lwp *old_lwp = NULL;
