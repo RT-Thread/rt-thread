@@ -13,7 +13,7 @@
 #define RT_TICK_PER_SECOND  100
 // <o>Alignment size for CPU architecture data access
 //  <i>Default: 4
-#define RT_ALIGN_SIZE   4
+#define RT_ALIGN_SIZE   8
 // <o>the max length of object name<2-16>
 //  <i>Default: 8
 #define RT_NAME_MAX    8
