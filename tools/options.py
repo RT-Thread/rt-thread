@@ -85,6 +85,11 @@ def AddOptions():
                       dest = 'target',
                       type = 'string',
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+    AddOption('--strict',
+                dest='strict-compiling',
+                help='Compiling project with strict mode and ALL warning will be errors',
+                action='store_true',
+                default=False)
     AddOption('--cc-prefix', '--exec-prefix',
                 dest = 'exec-prefix',
                 type = 'string',
