@@ -37,8 +37,6 @@
 
 #define F_CPU          144000000L  /* CPU:144MHz */
 
-#define LED_BUILTIN     D5  /* Default Built-in LED */
-
 /* i2c1 : PB1-SDA PB10-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
