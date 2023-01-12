@@ -1,10 +1,10 @@
-# The Arduino Compatible for STM32F401 Nucleo Board
+# The Arduino Compatible for STM32F410 Nucleo Board
 
 **English** | [中文](README_zh.md)
 
 ## 1 RTduino - Arduino Ecosystem Compatibility Layer for RT-Thread
 
-STM32F401 Nucleo board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on the board.
+STM32F410 Nucleo board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on the board.
 
 ### 1.1 How to Enable RTduino
 
@@ -18,7 +18,7 @@ Hardware Drivers Config --->
 
 # 2 Arduino Pinout
 
-![nucleo-f401-pinout](nucleo-f401-pinout.png)
+![nucleo-f410-pinout](nucleo-f410-pinout.png)
 
 This board complies with Arduino UNO pins layout. For more details, please take a look at: [pins_arduino.c](pins_arduino.c) and [pins_arduino.h](pins_arduino.h).
 
@@ -26,15 +26,15 @@ This board complies with Arduino UNO pins layout. For more details, please take 
 | --------------------- | --------- | ----------- | --------------------------------------------------------------------------------------------- |
 | 0 (D0)                | PA3       | Yes         | Serial-Rx. Token over by RT-Thread UART device by default                                     |
 | 1 (D1)                | PA2       | Yes         | Serial-Tx. Token over by RT-Thread UART device by default                                     |
-| 2 (D2)                | PA10      | Yes         |                                                                                               |
-| 3 (D3)                | PB3       | Yes         | PWM2-CH2. Token over by RT-Thread PWM device by default                                       |
+| 2 (D2)                | PA10      | Yes         | PWM1-CH3. Token over by RT-Thread PWM device by default                                       |
+| 3 (D3)                | PB3       | Yes         |                                                                                               |
 | 4 (D4)                | PB5       | Yes         |                                                                                               |
-| 5 (D5)                | PB4       | Yes         | PWM3-CH1. Token over by RT-Thread PWM device by default                                       |
-| 6 (D6)                | PB10      | Yes         | PWM2-CH3. Token over by RT-Thread PWM device by default                                       |
+| 5 (D5)                | PB4       | Yes         |                                                                                               |
+| 6 (D6)                | PB10      | Yes         |                                                                                               |
 | 7 (D7)                | PA8       | Yes         |                                                                                               |
-| 8 (D8)                | PA9       | Yes         |                                                                                               |
-| 9 (D9)                | PC7       | Yes         | PWM3-CH2. Token over by RT-Thread PWM device by default                                       |
-| 10 (D10)              | PB6       | Yes         | PWM4-CH1. Token over by RT-Thread PWM device by default                                       |
+| 8 (D8)                | PA9       | Yes         | PWM1-CH2. Token over by RT-Thread PWM device by default                                       |
+| 9 (D9)                | PC7       | Yes         |                                                                                               |
+| 10 (D10)              | PB6       | Yes         |                                                                                               |
 | 11 (D11)              | PA7       | Yes         | PWM1-CH1N. Token over by RT-Thread PWM device by default                                      |
 | 12 (D12)              | PA6       | Yes         |                                                                                               |
 | 13 (D13, LED_BUILTIN) | PA5       | Yes         | USER LED                                                                                      |
