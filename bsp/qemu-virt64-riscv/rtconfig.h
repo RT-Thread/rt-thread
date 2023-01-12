@@ -116,6 +116,7 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
+#define CPUTIME_TIMER_FREQ 300000000
 #define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -223,6 +224,113 @@
 
 /* RT-Thread Utestcases */
 
+
+/* RT-Thread online packages */
+
+/* IoT - internet of things */
+
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+
+/* Wiced WiFi */
+
+
+/* IoT Cloud */
+
+
+/* security packages */
+
+
+/* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
+
+/* multimedia packages */
+
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
+/* tools packages */
+
+
+/* system packages */
+
+/* enhanced kernel services */
+
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
+/* peripheral libraries and drivers */
+
+
+/* Kendryte SDK */
+
+
+/* AI packages */
+
+
+/* miscellaneous packages */
+
+/* project laboratory */
+
+/* samples: kernel and components samples */
+
+
+/* entertainment: terminal games and other interesting software packages */
+
+
+/* Arduino libraries */
+
+
+/* Projects */
+
+
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 /* RISC-V QEMU virt64 configs */
 

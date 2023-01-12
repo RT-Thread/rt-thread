@@ -43,7 +43,14 @@ rt_region_t init_page_region =
 // 内核页表
 extern volatile rt_size_t MMUTable[__SIZE(VPN2_BIT)] __attribute__((aligned(4 * 1024)));
 
-#endif
+struct mem_desc platform_mem_desc[] = {
+    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x4000000 - 1, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM},
+    {0x1000, 0x3ffff000 - 1, 0x1000 + PV_OFFSET, DEVICE_MEM},
+};
+
+#define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
+
+#endif /* RT_USING_SMART */
 
 // 初始化BSS节区
 void init_bss(void)
@@ -69,9 +76,6 @@ void primary_cpu_entry(void)
 {
     extern void entry(void);
 
-    // 初始化BSS
-    init_bss();
-    sbi_init();
     // 关中断
     rt_hw_interrupt_disable();
     rt_assert_set_hook(__rt_assert_handler);
@@ -87,20 +91,15 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
     rt_page_init(init_page_region);
-    rt_hw_mmu_kernel_map_init(&rt_kernel_space, 0x00000000UL, USER_VADDR_START - 1);
-    // 将低1GB MMIO区域设置为无Cache与Strong Order访存模式
-    MMUTable[0] &= ~PTE_CACHE;
-    MMUTable[0] &= ~PTE_SHARE;
-    MMUTable[0] |= PTE_SO;
-    rt_hw_aspace_switch(&rt_kernel_space);
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, NUM_MEM_DESC);
 #endif
-    /* initalize interrupt */
-    rt_hw_interrupt_init();
 #ifdef RT_USING_HEAP
-    rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t)RT_HW_HEAP_BEGIN, (rt_ubase_t)RT_HW_HEAP_END);
     /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
+    /* initalize interrupt */
+    rt_hw_interrupt_init();
+
     /* init hal hardware */
     hal_clock_init();
     hal_gpio_init();

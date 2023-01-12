@@ -10,9 +10,11 @@
  * 2020/6/12      Xim          Port to QEMU and remove SMP support
  */
 
-#define __ASSEMBLY__
-#define SSTATUS_FS      0x00006000U /* initial state of FPU, clear to disable */
+#include <encoding.h>
 #include <cpuport.h>
+
+boot_hartid: .int
+  .global      boot_hartid
 
   .global	_start
   .section ".start", "ax"
@@ -25,8 +27,15 @@ _start:
       .dword 1
       .dword 0
 1:
+  # save hartid
+  la t0, boot_hartid                # global varible rt_boot_hartid
+  mv t1, a0                         # get hartid in S-mode frome a0 register
+  sw t1, (t0)                       # store t1 register low 4 bits in memory address which is stored in t0
+
+  # clear Interrupt Registers
   csrw sie, 0
   csrw sip, 0
+  # set Trap Vector Base Address Register
   la t0, trap_entry
   csrw stvec, t0
 
@@ -78,4 +87,7 @@ _start:
   li   t0, __STACKSIZE__
   add  sp, sp, t0
   csrw sscratch, sp
+
+  call init_bss
+  call sbi_init
   j primary_cpu_entry

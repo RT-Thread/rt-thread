@@ -27,7 +27,7 @@
 #endif
 
 #define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifndef RT_USING_SMART
@@ -257,6 +257,7 @@ static inline void _init_region(void *vaddr, size_t size)
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
+    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start, rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)

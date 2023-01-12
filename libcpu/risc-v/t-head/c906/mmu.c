@@ -6,9 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
+ * 2022-12-13     WangXiaoyao  Port to new mm
  */
 
-#include "rtconfig.h"
 #include <rtthread.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -26,8 +26,8 @@
 #include <tlb.h>
 #endif
 
-#define DBG_TAG "MMU"
-#define DBG_LVL DBG_LOG
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
 #ifndef RT_USING_SMART
@@ -37,19 +37,20 @@
 
 static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size);
 
+static void *current_mmu_table = RT_NULL;
+
+volatile __attribute__((aligned(4 * 1024)))
+rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
+
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
     uintptr_t page_table = (uintptr_t)_rt_kmem_v2p(aspace->page_table);
+    current_mmu_table = aspace->page_table;
 
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
     rt_hw_tlb_invalidate_all_local();
 }
-
-static void *current_mmu_table = RT_NULL;
-
-volatile __attribute__((aligned(4 * 1024)))
-rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
 void *rt_hw_mmu_tbl_get()
 {
@@ -256,7 +257,7 @@ static inline void _init_region(void *vaddr, size_t size)
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
-    rt_kprintf("rt_ioremap_start: %p, rt_mpr_start: %p\n", rt_ioremap_start, rt_mpr_start);
+    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start, rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)
@@ -382,7 +383,8 @@ void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr)
     }
     else
     {
-        paddr = 0;
+        LOG_I("%s: failed at %p", __func__, vaddr);
+        paddr = (uintptr_t)ARCH_MAP_FAILED;
     }
     return (void *)paddr;
 }
@@ -418,7 +420,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
         {
             uintptr_t *pte = _query(aspace, vaddr, &level);
             void *range_end = vaddr + _get_level_size(level);
-            RT_ASSERT(range_end < vend);
+            RT_ASSERT(range_end <= vend);
 
             if (pte)
             {
