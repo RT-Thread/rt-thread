@@ -11,13 +11,13 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 **基本特性：**
 
 - MCU：CH32V307VCT6，主频 144MHz，FLASH和RAM可配置
-- LED：2个，用户 LEDs， LED1（blue），LED2（blue）。
-- 按键：2个，Reset， User 。
+- LED：2个，用户 LEDs，LED1（blue），LED2（blue）。
+- 按键：2个，Reset，User 。
 - USB：2个，Tpye-C。
 - 网口：1个，内置 10M PHY。
 - 板载 WCH-Link 下载调试工具。
 
-更多信息和资源请访问[互联型RISC-V单片机 CH32V307](https://www.wch.cn/products/CH32V307.html)
+更多信息和资源请访问[互联型RISC-V单片机 CH32V307](https://www.wch.cn/products/CH32V307.html) 以及 [官网文档资料](https://github.com/openwch/ch32v307)
 
 ## 2 编译说明
 
