@@ -6,16 +6,16 @@
 #define IDLE_THREAD_STACK_SIZE 512
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	32
+#define RT_NAME_MAX 32
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   8
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	256
+#define RT_THREAD_PRIORITY_MAX  256
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	1000
+#define RT_TICK_PER_SECOND  1000
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -29,9 +29,9 @@
 
 /* Using Software Timer */
 //#define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO		8
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	1000
+#define RT_TIMER_THREAD_PRIO        8
+#define RT_TIMER_THREAD_STACK_SIZE  512
+#define RT_TIMER_TICK_PER_SECOND    1000
 
 /* SECTION: IPC */
 /* Using Semaphore */
@@ -73,7 +73,7 @@
 #define RT_USING_CONSOLE
 
 /* the buffer size of console */
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
@@ -96,25 +96,25 @@
 /* using DFS support */
 //#define RT_USING_DFS
 #define RT_USING_DFS_ELMFAT
-/* use long file name feature 			*/
-#define RT_DFS_ELM_USE_LFN			1
-/* the max number of file length 		*/
-#define RT_DFS_ELM_MAX_LFN		128
+/* use long file name feature           */
+#define RT_DFS_ELM_USE_LFN          1
+/* the max number of file length        */
+#define RT_DFS_ELM_MAX_LFN      128
 /* #define RT_USING_DFS_YAFFS2 */
 /* #define RT_USING_DFS_UFFS */
 #define RT_USING_DFS_DEVFS
 
 /* #define RT_USING_DFS_NFS */
-#define RT_NFS_HOST_EXPORT		"192.168.1.5:/"
+#define RT_NFS_HOST_EXPORT      "192.168.1.5:/"
 
 #define DFS_USING_WORKDIR
 
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX		4
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					16
-/* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		4
+#define DFS_FILESYSTEMS_MAX     4
+/* the max number of opened files       */
+#define DFS_FD_MAX                  16
+/* the max number of cached sector      */
+#define DFS_CACHE_MAX_NUM           4
 
 /* Enable freemodbus protocal stack*/
 /* #define RT_USING_MODBUS */
@@ -140,13 +140,13 @@
 #define RT_LWIP_TCP
 
 /* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+#define RT_LWIP_TCP_PCB_NUM 5
 
 /* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	1024*8
+#define RT_LWIP_TCP_SND_BUF 1024*8
 
 /* TCP receive window. */
-#define RT_LWIP_TCP_WND	1024*8
+#define RT_LWIP_TCP_WND 1024*8
 
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */
@@ -155,53 +155,53 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target */
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR0 192
+#define RT_LWIP_IPADDR1 168
+#define RT_LWIP_IPADDR2 1
+#define RT_LWIP_IPADDR3 30
 
 /* gateway address of target */
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR0 192
+#define RT_LWIP_GWADDR1 168
+#define RT_LWIP_GWADDR2 1
+#define RT_LWIP_GWADDR3 1
 
 /* mask address of target */
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR0    255
+#define RT_LWIP_MSKADDR1    255
+#define RT_LWIP_MSKADDR2    255
+#define RT_LWIP_MSKADDR3    0
 
 /* the number of blocks for pbuf */
-#define RT_LWIP_PBUF_NUM	16
+#define RT_LWIP_PBUF_NUM    16
 
 /* the number of simultaneously queued TCP */
 #define RT_LWIP_TCP_SEG_NUM    40
 
 /* thread priority of tcpip thread */
-#define RT_LWIP_TCPTHREAD_PRIORITY	128
+#define RT_LWIP_TCPTHREAD_PRIORITY  128
 
 /* mail box size of tcpip thread to wait for */
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	32
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 32
 
 /* thread stack size of tcpip thread */
-#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
 
 /* thread priority of ethnetif thread */
-#define RT_LWIP_ETHTHREAD_PRIORITY	144
+#define RT_LWIP_ETHTHREAD_PRIORITY  144
 
 /* mail box size of ethnetif thread to wait for */
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE	32
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 32
 
 /* thread stack size of ethnetif thread */
-#define RT_LWIP_ETHTHREAD_STACKSIZE	1024
+#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
 #define RT_USING_RTGUI
 
 /* name length of RTGUI object */
-#define RTGUI_NAME_MAX		16
+#define RTGUI_NAME_MAX      16
 /* support 16 weight font */
 #define RTGUI_USING_FONT16
 /* support 16 weight font */
@@ -236,7 +236,7 @@
  * #define DFS_USING_WORKDIR
  *
  * And the maximal length must great than 64
- * #define RT_DFS_ELM_MAX_LFN	128
+ * #define RT_DFS_ELM_MAX_LFN   128
  */
 
 #endif
