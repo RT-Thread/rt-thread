@@ -583,14 +583,19 @@ void rt_page_init(rt_region_t reg)
 
     pages_alloc_handler = _early_pages_alloc;
     /* doing the page table bushiness */
-    rt_aspace_load_page(&rt_kernel_space, (void *)init_mpr_align_start,
-                        init_mpr_npage);
+    if (rt_aspace_load_page(&rt_kernel_space, (void *)init_mpr_align_start, init_mpr_npage))
+    {
+        LOG_E("%s: failed to load pages", __func__);
+        while (1) ;
+    }
+
     if (rt_hw_mmu_tbl_get() == rt_kernel_space.page_table)
         rt_page_cleanup();
 }
 
-static void _load_mpr_area(void *head, void *tail)
+static int _load_mpr_area(void *head, void *tail)
 {
+    int err = 0;
     void *iter = (void *)((uintptr_t)head & ~ARCH_PAGE_MASK);
     tail = (void *)FLOOR(tail, ARCH_PAGE_SIZE);
 
@@ -599,7 +604,12 @@ static void _load_mpr_area(void *head, void *tail)
         void *paddr = rt_kmem_v2p(iter);
         if (paddr == ARCH_MAP_FAILED)
         {
-            rt_aspace_load_page(&rt_kernel_space, iter, 1);
+            err = rt_aspace_load_page(&rt_kernel_space, iter, 1);
+            if (err != RT_EOK)
+            {
+                LOG_E("%s: failed to load page", __func__);
+                break;
+            }
         }
         iter += ARCH_PAGE_SIZE;
     }
@@ -617,22 +627,24 @@ int rt_page_install(rt_region_t region)
 
         page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
 
-        _load_mpr_area(head, tail);
+        err = _load_mpr_area(head, tail);
 
-        while (region.start != region.end)
+        if (err == RT_EOK)
         {
-            struct rt_page *p;
-            int size_bits;
+            while (region.start != region.end)
+            {
+                struct rt_page *p;
+                int size_bits;
 
-            size_bits = RT_PAGE_MAX_ORDER - 1;
-            p = addr_to_page(page_start, (void *)region.start);
-            p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
-            p->ref_cnt = 1;
+                size_bits = RT_PAGE_MAX_ORDER - 1;
+                p = addr_to_page(page_start, (void *)region.start);
+                p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+                p->ref_cnt = 1;
 
-            _pages_free(p, size_bits);
-            region.start += (1UL << (size_bits + ARCH_PAGE_SHIFT));
+                _pages_free(p, size_bits);
+                region.start += (1UL << (size_bits + ARCH_PAGE_SHIFT));
+            }
         }
-        err = 0;
     }
     return err;
 }
