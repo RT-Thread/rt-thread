@@ -31,6 +31,7 @@ static uint32_t _SysTick_Config(rt_uint32_t ticks)
 }
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
+
 /* 堆分配最大化开关 1-开启 0-关闭*/
 #define USING_MAX_HEAP_SIZE 1
 
