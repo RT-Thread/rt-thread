@@ -71,7 +71,7 @@ In the terminal tool, open the onboard wch-link serial port (WCHDapLink SERIAL, 
 
 ![end](./figures/end.png)
 
-#### 3.1.5 If without result
+#### 3.1.5 If no running result
 
 Replace download tool with WCH-LinkUtility.
 [Details](https://club.rt-thread.org/ask/article/44e5b4bc129ff373.html)
