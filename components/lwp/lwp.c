@@ -1282,6 +1282,10 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
                 }
             }
+            else
+            {
+                lwp->background = RT_TRUE;
+            }
             thread->lwp = lwp;
 #ifndef ARCH_MM_MMU
             struct lwp_app_head *app_head = (struct lwp_app_head*)lwp->text_entry;
