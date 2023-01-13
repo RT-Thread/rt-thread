@@ -63,10 +63,9 @@ CH32V307V-R1 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 
 ![end](./figures/end.png)
 
-#### 3.1.5 如果无运行结果解决方案
+#### 3.1.5 无运行结果解决方案
 
-将 WCH RISC-V MCU ProgrammerTool 下载软件替换为 WCH-LinkUtility，详情可看这里:
-[RT-Thread Studio 烧录 ch32v307](https://club.rt-thread.org/ask/article/44e5b4bc129ff373.html)
+将 WCH RISC-V MCU ProgrammerTool 下载软件替换为 WCH-LinkUtility.[详情](https://club.rt-thread.org/ask/article/44e5b4bc129ff373.html)
 
 ### 3.2 使用 VSCode 编译工程
 
