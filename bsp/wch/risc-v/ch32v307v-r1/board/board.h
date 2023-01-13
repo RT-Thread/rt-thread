@@ -21,9 +21,9 @@
 #define SRAM_SIZE  96
 #define SRAM_END (0x20000000 + SRAM_SIZE * 1024)
 
-extern int _ebss, _heap_end;
+extern int _ebss, _susrstack;
 #define HEAP_BEGIN  ((void *)&_ebss)
-#define HEAP_END    ((void *)&_heap_end)
+#define HEAP_END    ((void *)&_susrstack)
 
 void rt_hw_board_init(void);
 
