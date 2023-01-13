@@ -490,6 +490,12 @@ void rt_page_init(rt_region_t reg)
     reg.start += ARCH_PAGE_MASK;
     reg.start &= ~ARCH_PAGE_MASK;
     reg.end &= ~ARCH_PAGE_MASK;
+    if (reg.end <= reg.start)
+    {
+        LOG_E("region end(%p) must greater than start(%p)", reg.start, reg.end);
+        while (1)
+            ;
+    }
     page_nr = ((reg.end - reg.start) >> ARCH_PAGE_SHIFT);
     shadow.start = reg.start & ~shadow_mask;
     shadow.end = FLOOR(reg.end, shadow_mask + 1);
@@ -586,7 +592,8 @@ void rt_page_init(rt_region_t reg)
     if (rt_aspace_load_page(&rt_kernel_space, (void *)init_mpr_align_start, init_mpr_npage))
     {
         LOG_E("%s: failed to load pages", __func__);
-        while (1) ;
+        while (1)
+            ;
     }
 
     if (rt_hw_mmu_tbl_get() == rt_kernel_space.page_table)
