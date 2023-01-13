@@ -8,7 +8,7 @@
  * 2022-08-23     liYony       first version
  */
 
- // <<< Use Configuration Wizard in Context Menu >>>
+/* <<< Use Configuration Wizard in Context Menu >>> */
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
