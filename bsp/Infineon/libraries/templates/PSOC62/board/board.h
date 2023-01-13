@@ -27,18 +27,6 @@
     #include "cycfg_usbdev.h"
 #endif
 
-/*FLASH CONFIG*/
-#define IFX_FLASH_START_ADRESS          ((uint32_t)0x10000000)
-#define IFX_FLASH_PAGE_SIZE             (256 * 1024)
-#define IFX_FLASH_SIZE                  (2 * 1024 * 1024)
-#define IFX_FLASH_END_ADDRESS           ((uint32_t)(IFX_FLASH_START_ADRESS + IFX_FLASH_SIZE))
-
-/*EFLASH CONFIG*/
-#define IFX_EFLASH_START_ADRESS         ((uint32_t)0x14000000)
-#define IFX_EFLASH_PAGE_SIZE            (32 * 1024)
-#define IFX_EFLASH_SIZE                 (32 * 1024)
-#define IFX_EFLASH_END_ADDRESS          ((uint32_t)(IFX_EFLASH_START_ADRESS + IFX_EFLASH_SIZE))
-
 /*SRAM CONFIG*/
 #define IFX_SRAM_SIZE                   (1014)
 #define IFX_SRAM_END                    (0x08002000 + IFX_SRAM_SIZE * 1024)
