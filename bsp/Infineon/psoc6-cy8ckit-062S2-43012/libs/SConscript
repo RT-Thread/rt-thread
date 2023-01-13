@@ -11,8 +11,8 @@ if rtconfig.PLATFORM in ['iccarm']:
     print("\nThe current project does not support IAR build\n")
     Return('group')
 elif rtconfig.PLATFORM in ['gcc', 'armclang']:
-    src += [cwd + '/TARGET_CY8CKIT-062S2-43012/cybsp.c']
-    src += [cwd + '/TARGET_CY8CKIT-062S2-43012/COMPONENT_CM4/system_psoc6_cm4.c']
+    src += Glob(cwd + '/TARGET_CY8CKIT-062S2-43012/*.c')
+    src += Glob(cwd + '/TARGET_CY8CKIT-062S2-43012/COMPONENT_CM4/*.c')
     src += Glob(cwd + '/TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/*.c')
 
     CPPPATH = [ cwd + '/TARGET_CY8CKIT-062S2-43012',
