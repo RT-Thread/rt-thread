@@ -613,6 +613,7 @@ static int _load_mpr_area(void *head, void *tail)
         }
         iter += ARCH_PAGE_SIZE;
     }
+    return err;
 }
 
 int rt_page_install(rt_region_t region)
