@@ -13,6 +13,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
+
 #include <cache.h>
 #include <mm_aspace.h>
 #include <mm_page.h>
@@ -23,12 +27,7 @@
 #ifdef RT_USING_SMART
 #include <ioremap.h>
 #include <lwp_user_mm.h>
-#include <tlb.h>
 #endif
-
-#define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_WARNING
-#include <rtdbg.h>
 
 #ifndef RT_USING_SMART
 #define PV_OFFSET 0

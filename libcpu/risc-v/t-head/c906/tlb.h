@@ -20,7 +20,7 @@
 
 #define HANDLE_FAULT(ret)                                                      \
     if (__builtin_expect((ret) != SBI_SUCCESS, 0))                             \
-        rt_kprintf("%s failed\n", __FUNCTION__);
+        LOG_W("%s failed\n", __FUNCTION__);
 
 static inline void rt_hw_tlb_invalidate_all(void)
 {

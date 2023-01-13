@@ -17,6 +17,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define DBG_TAG "mm.aspace"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #include "avl_adpt.h"
 #include "mm_aspace.h"
 #include "mm_fault.h"
@@ -30,10 +34,6 @@
 #ifndef RT_USING_SMART
 #define PV_OFFSET 0
 #endif
-
-#define DBG_TAG "mm.aspace"
-#define DBG_LVL DBG_INFO
-#include <rtdbg.h>
 
 static void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
