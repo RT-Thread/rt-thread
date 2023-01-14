@@ -12,6 +12,8 @@
 #define __DRV_SPI_H__
 
 #include "board.h"
+#include <rtthread.h>
+#include <drivers/spi.h>
 
 struct apm32_spi_config
 {
