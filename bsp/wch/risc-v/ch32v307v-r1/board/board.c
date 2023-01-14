@@ -30,37 +30,6 @@ static uint32_t _SysTick_Config(rt_uint32_t ticks)
     return 0;
 }
 
-#if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-
-/* 堆分配最大化开关 1-开启 0-关闭*/
-#define USING_MAX_HEAP_SIZE 1
-
-#if  (USING_MAX_HEAP_SIZE == 0)
-#define RT_HEAP_SIZE (4096)
-static uint32_t rt_heap[RT_HEAP_SIZE];     /* heap default size: 16K(4096 * 4) */
-rt_weak void* rt_heap_begin_get(void)
-{
-    return rt_heap;
-}
-
-rt_weak void* rt_heap_end_get(void)
-{
-    return rt_heap + RT_HEAP_SIZE;
-}
-#else
-rt_weak void* rt_heap_begin_get(void)
-{
-    return HEAP_BEGIN;
-}
-
-rt_weak void* rt_heap_end_get(void)
-{
-    return HEAP_END;
-}
-#endif /*USING_MAX_HEAP_SIZE*/
-
-#endif/* RT_USING_USER_MAIN && RT_USING_HEAP*/
-
 /**
  * This function will initial your board.
  */
@@ -70,7 +39,7 @@ void rt_hw_board_init()
     _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-    rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
+    rt_system_heap_init((void *) HEAP_BEGIN, (void *) HEAP_END);
 #endif
     /* USART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
