@@ -493,8 +493,7 @@ void rt_page_init(rt_region_t reg)
     if (reg.end <= reg.start)
     {
         LOG_E("region end(%p) must greater than start(%p)", reg.start, reg.end);
-        while (1)
-            ;
+        RT_ASSERT(0);
     }
     page_nr = ((reg.end - reg.start) >> ARCH_PAGE_SHIFT);
     shadow.start = reg.start & ~shadow_mask;
@@ -518,8 +517,7 @@ void rt_page_init(rt_region_t reg)
     if (err != RT_EOK)
     {
         LOG_E("MPR map failed with size %lx at %p", rt_mpr_size, rt_mpr_start);
-        while (1)
-            ;
+        RT_ASSERT(0);
     }
 
     /* calculate footprint */
@@ -592,8 +590,7 @@ void rt_page_init(rt_region_t reg)
     if (rt_aspace_load_page(&rt_kernel_space, (void *)init_mpr_align_start, init_mpr_npage))
     {
         LOG_E("%s: failed to load pages", __func__);
-        while (1)
-            ;
+        RT_ASSERT(0);
     }
 
     if (rt_hw_mmu_tbl_get() == rt_kernel_space.page_table)
