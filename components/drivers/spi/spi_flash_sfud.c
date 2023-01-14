@@ -427,6 +427,8 @@ error:
 rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name)
 {
     struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
+    cfg.cs_pin = ((struct rt_spi_device *)rt_device_find(spi_dev_name))->config.cs_pin;
+
 #ifndef SFUD_USING_QSPI
     return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, RT_NULL);
 #else

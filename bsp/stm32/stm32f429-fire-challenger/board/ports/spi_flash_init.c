@@ -16,8 +16,9 @@
 #if defined(BSP_USING_SPI_FLASH)
 static int rt_hw_spi_flash_init(void)
 {
-    __HAL_RCC_GPIOF_CLK_ENABLE();
-    rt_hw_spi_device_attach("spi5", "spi50", GPIOF, GPIO_PIN_6);
+    struct rt_spi_configuration cfg;
+    cfg.cs_pin = GET_PIN(F, 6);
+    rt_hw_spi_device_attach("spi5", "spi50", &cfg);
 
     if (RT_NULL == rt_sfud_flash_probe("W25Q128", "spi50"))
     {

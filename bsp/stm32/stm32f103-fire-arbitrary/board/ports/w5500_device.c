@@ -12,7 +12,8 @@
 
 int w5500_spi_device_init()
 {
-    __HAL_RCC_GPIOG_CLK_ENABLE();
-    return rt_hw_spi_device_attach("spi2","spi20",GPIOG,GPIO_PIN_9);
+    struct rt_spi_configuration cfg;
+    cfg.cs_pin = GET_PIN(G, 9);
+    return rt_hw_spi_device_attach("spi2", "spi20", &cfg);
 }
 INIT_DEVICE_EXPORT(w5500_spi_device_init);

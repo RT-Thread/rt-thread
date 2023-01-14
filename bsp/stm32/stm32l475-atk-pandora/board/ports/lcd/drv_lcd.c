@@ -128,9 +128,10 @@ static void lcd_gpio_init(void)
 
 static int rt_hw_lcd_init(void)
 {
-    __HAL_RCC_GPIOD_CLK_ENABLE();
+    struct rt_spi_configuration cfg;
+    cfg.cs_pin = GET_PIN(D, 7);
+    rt_hw_spi_device_attach("spi3", "spi30", &cfg);
 
-    rt_hw_spi_device_attach("spi3", "spi30", GPIOD, GPIO_PIN_7);
     lcd_gpio_init();
 
     /* Memory Data Access Control */
