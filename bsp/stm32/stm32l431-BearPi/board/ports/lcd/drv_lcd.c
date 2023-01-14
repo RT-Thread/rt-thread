@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -109,9 +109,9 @@ static int rt_hw_lcd_init(void)
     cfg.max_hz = 42 * 1000 * 1000; /* 42M,SPI max 42MHz,lcd 4-wire spi */
     cfg.cs_pin = GET_PIN(C, 3);
     rt_hw_spi_device_attach("spi2", "lcd", &cfg);
-	
-	spi_dev_lcd = (struct rt_spi_device *)rt_device_find("lcd");
-	
+
+    spi_dev_lcd = (struct rt_spi_device *)rt_device_find("lcd");
+
     lcd_gpio_init();
     /* Memory Data Access Control */
     lcd_write_cmd(0x36);
