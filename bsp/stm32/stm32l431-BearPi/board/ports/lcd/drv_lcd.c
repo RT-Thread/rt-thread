@@ -28,23 +28,6 @@ rt_uint16_t BACK_COLOR = WHITE, FORE_COLOR = BLACK;
 
 static struct rt_spi_device *spi_dev_lcd;
 
-static int rt_hw_lcd_config(void)
-{
-    spi_dev_lcd = (struct rt_spi_device *)rt_device_find("lcd");
-
-    /* config spi */
-    {
-        struct rt_spi_configuration cfg;
-        cfg.data_width = 8;
-        cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_3 | RT_SPI_MSB;
-        cfg.max_hz = 42 * 1000 * 1000; /* 42M,SPI max 42MHz,lcd 4-wire spi */
-
-        rt_spi_configure(spi_dev_lcd, &cfg);
-    }
-
-    return RT_EOK;
-}
-
 static rt_err_t lcd_write_cmd(const rt_uint8_t cmd)
 {
     rt_size_t len;
@@ -106,8 +89,6 @@ static rt_err_t lcd_write_half_word(const rt_uint16_t da)
 
 static void lcd_gpio_init(void)
 {
-    rt_hw_lcd_config();
-
     rt_pin_mode(LCD_DC_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(LCD_RES_PIN, PIN_MODE_OUTPUT);
 
@@ -122,7 +103,15 @@ static void lcd_gpio_init(void)
 
 static int rt_hw_lcd_init(void)
 {
-    rt_hw_spi_device_attach("spi2", "lcd", GPIOC, GPIO_PIN_3);
+    struct rt_spi_configuration cfg;
+    cfg.data_width = 8;
+    cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_3 | RT_SPI_MSB;
+    cfg.max_hz = 42 * 1000 * 1000; /* 42M,SPI max 42MHz,lcd 4-wire spi */
+    cfg.cs_pin = GET_PIN(C, 3);
+    rt_hw_spi_device_attach("spi2", "lcd", &cfg);
+	
+	spi_dev_lcd = (struct rt_spi_device *)rt_device_find("lcd");
+	
     lcd_gpio_init();
     /* Memory Data Access Control */
     lcd_write_cmd(0x36);
