@@ -72,8 +72,8 @@ L_loop1:
   cmp r2, r4
   bcc L_loop2
 
-    bl  SystemInit
-    bl __libc_init_array
+  bl  SystemInit
+  bl __libc_init_array
   bl entry
   bx lr
 .size Reset_Handler, .-Reset_Handler

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -320,7 +320,7 @@ static rt_err_t rt_apm32_eth_init(rt_device_t dev)
     RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_ETH_MAC | RCM_AHB1_PERIPH_ETH_MAC_Tx |
                               RCM_AHB1_PERIPH_ETH_MAC_Rx);
 #endif
-    
+
     /* Reset ETHERNET on AHB Bus */
     ETH_Reset();
 
