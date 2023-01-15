@@ -1133,7 +1133,7 @@ void WDT_IntMask(WDT_ID_Type wdtId, WDT_INT_Type intType, BL_Mask_Type intMask)
     WDT_ENABLE_ACCESS(TIMERx);
 
     /* Deal with watchdog match/interrupt enable register,
-	  WRIE:watchdog reset/interrupt enable */
+      WRIE:watchdog reset/interrupt enable */
     tmpVal = BL_RD_REG(TIMERx, TIMER_WMER);
 
     switch (intType) {
@@ -1141,12 +1141,12 @@ void WDT_IntMask(WDT_ID_Type wdtId, WDT_INT_Type intType, BL_Mask_Type intMask)
             if (intMask == UNMASK) {
                 /* Enable this interrupt */
                 /* 0 means generates a watchdog interrupt,
-				   a watchdog timer reset is not generated*/
+                   a watchdog timer reset is not generated*/
                 BL_WR_REG(TIMERx, TIMER_WMER, BL_CLR_REG_BIT(tmpVal, TIMER_WRIE));
             } else {
                 /* Disable this interrupt */
                 /* 1 means generates a watchdog timer reset,
-				   a watchdog  interrupt is not generated*/
+                   a watchdog  interrupt is not generated*/
                 BL_WR_REG(TIMERx, TIMER_WMER, BL_SET_REG_BIT(tmpVal, TIMER_WRIE));
             }
 

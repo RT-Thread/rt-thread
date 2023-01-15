@@ -37,7 +37,7 @@
 #endif
 //FIXME fix putchar
 extern int bl_putchar(int c);
- 
+
 void utils_hexdump(void *mem, unsigned int len)
 {
     unsigned int i, j;
@@ -74,4 +74,4 @@ void utils_hexdump(void *mem, unsigned int len)
         }
     }
 }
- 
+

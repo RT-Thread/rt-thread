@@ -66,7 +66,7 @@ typedef struct {
  *
  * @param[in]  pwm  the PWM device
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -77,9 +77,9 @@ int hosal_pwm_init(hosal_pwm_dev_t *pwm);
  *
  * @param[in]  pwm  the PWM device
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_pwm_start(hosal_pwm_dev_t *pwm);
 
@@ -88,7 +88,7 @@ int hosal_pwm_start(hosal_pwm_dev_t *pwm);
  *
  * @param[in]  pwm  the PWM device
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -100,7 +100,7 @@ int hosal_pwm_stop(hosal_pwm_dev_t *pwm);
  * @param[in]  pwm   the PWM device
  * @param[in]  para  the para of pwm
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -112,7 +112,7 @@ int hosal_pwm_para_chg(hosal_pwm_dev_t *pwm, hosal_pwm_config_t para);
  * @param[in]  pwm   the PWM device
  * @param[in]  freq  the PWM frequency (0~40M under limited duty)
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -124,7 +124,7 @@ int hosal_pwm_freq_set(hosal_pwm_dev_t *pwm, uint32_t freq);
  * @param[in]  pwm   the PWM device
  * @param[out] p_freq  the pointer to memory frequency
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -136,7 +136,7 @@ int hosal_pwm_freq_get(hosal_pwm_dev_t *pwm, uint32_t *p_freq);
  * @param[in]  pwm   the PWM device
  * @param[in]  duty        the PWM duty (original duty * 100)
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -148,7 +148,7 @@ int hosal_pwm_duty_set(hosal_pwm_dev_t *pwm, uint32_t duty);
  * @param[in]  pwm   the PWM device
  * @param[out] p_duty  the pointer to memory duty(original duty * 100)
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -159,7 +159,7 @@ int hosal_pwm_duty_get(hosal_pwm_dev_t *pwm, uint32_t *p_duty);
  *
  * @param[in]  pwm  the interface which should be de-initialised
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */

@@ -3,12 +3,12 @@
  * @file bflb_bsp_driver_glue.h
  * @version 0.1
  * @date 2020-07-08
- * @brief 
+ * @brief
  * *****************************************************************************
  * @attention
- * 
+ *
  *  <h2><center>&copy; COPYRIGHT(c) 2020 Bouffalo Lab</center></h2>
- * 
+ *
  *  Redistribution and use in source and binary forms, with or without modification,
  *  are permitted provided that the following conditions are met:
  *    1. Redistributions of source code must retain the above copyright notice,
@@ -19,7 +19,7 @@
  *    3. Neither the name of Bouffalo Lab nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,7 +30,7 @@
  *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * *****************************************************************************
  */
 #ifndef __bBFLB_BSP_DRIVER_GLUE_H__

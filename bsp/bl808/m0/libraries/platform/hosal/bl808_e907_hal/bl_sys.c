@@ -213,7 +213,7 @@ int bl_sys_early_init(void)
 
     extern void freertos_risc_v_trap_handler(void); //freertos_riscv_ram/portable/GCC/RISC-V/portASM.S
     write_csr(mtvec, &freertos_risc_v_trap_handler);
-    
+
     /* reset here for use wtd first then init hwtimer later*/
     GLB_AHB_Slave1_Reset(BL_AHB_SLAVE1_TMR);
     /*debuger may NOT ready don't print anything*/

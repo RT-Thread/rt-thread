@@ -83,7 +83,7 @@ static void uart_dev_setdef(uart_dev_t **pdev, uint8_t id)
 
     (*pdev)->port = id;
     (*pdev)->read_block_flag = UART_READ_CFG_NOBLOCK;
-    
+
     (*pdev)->config.baud_rate = 2000000;
     (*pdev)->config.data_width = DATA_WIDTH_8BIT;
     (*pdev)->config.parity = NO_PARITY;
@@ -231,7 +231,7 @@ int32_t hal_uart_send(uart_dev_t *uart, const void *data, uint32_t size, uint32_
 
 int32_t hal_uart_send_flush(uart_dev_t *uart, uint32_t timeout)
 {
-    bl_uart_flush(uart->port);                                                                                                                                                                 
+    bl_uart_flush(uart->port);
     return 0;
 }
 

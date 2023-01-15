@@ -161,7 +161,7 @@ void cmd_blog_info_dump(char *buf, int len, int argc, char **argv)
 {
     blog_info_t *info_c, *info_f, *info_p;
     char         name_buf[BLOG_NAMELEN_MAX] = {0};
-    
+
     extern char _ld_bl_static_blogcomponent_code_start;
     extern char _ld_bl_static_blogcomponent_code_end;
     extern char _ld_bl_static_blogfile_code_start;
@@ -183,14 +183,14 @@ void cmd_blog_info_dump(char *buf, int len, int argc, char **argv)
             if (0 == strcmp(name_buf, info_c->name)) {
 #if BLOG_DUMP_DEDUPLICATE
               continue;
-#endif              
+#endif
             } else {
                 memset(name_buf, 0, strlen(name_buf));
             }
         }
-        
+
         __blog_printf("[%-48s] = [%d]\r\n", info_c->name, *(info_c->level));
-        
+
         if ((name_buf[0] != 0) && (strcmp(info_c->name, name_buf) == 0)) {
             continue;
         }

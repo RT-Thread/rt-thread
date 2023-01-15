@@ -694,21 +694,21 @@ __STATIC_INLINE uint32_t csi_coret_config(uint32_t ticks, int32_t IRQn)
 
 #if 0
 
-	if(value)
-	{
-		value = value + (uint64_t)ticks;
-		CORET->MTIMECMPH0 = (uint32_t)(value >> 32);
-		CORET->MTIMECMPL0 = (uint32_t)value;
-	}
-	else
-	{
-		uint64_t result;
-		__ASM volatile("csrr %0, 0xc01" : "=r"(result));
+    if(value)
+    {
+        value = value + (uint64_t)ticks;
+        CORET->MTIMECMPH0 = (uint32_t)(value >> 32);
+        CORET->MTIMECMPL0 = (uint32_t)value;
+    }
+    else
+    {
+        uint64_t result;
+        __ASM volatile("csrr %0, 0xc01" : "=r"(result));
 
-		value = result + (uint64_t)ticks;
-		CORET->MTIMECMPH0 = (uint32_t)(value >> 32);
-		CORET->MTIMECMPL0 = (uint32_t)value;
-	}
+        value = result + (uint64_t)ticks;
+        CORET->MTIMECMPH0 = (uint32_t)(value >> 32);
+        CORET->MTIMECMPL0 = (uint32_t)value;
+    }
 
 #else
     value = value + (uint64_t)ticks;

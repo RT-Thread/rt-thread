@@ -332,9 +332,9 @@ void emac_irq_process(void)
     EMAC_ID_Type emacId = EMAC_USED_ID;
     uint32_t tmpVal;
     uint32_t EMACx = emacAddr[emacId];
-    
+
     tmpVal = BL_RD_REG(EMACx,EMAC_INT_MASK);
-    
+
     if (SET == EMAC_GetIntStatus(emacId,EMAC_INT_TX_DONE) && !BL_IS_REG_BIT_SET(tmpVal,EMAC_TXB_M)) {
         EMAC_ClrIntStatus(emacId,EMAC_INT_TX_DONE);
         EMAC_IntMask(emacId, EMAC_INT_TX_DONE, MASK);
@@ -499,7 +499,7 @@ int emac_bd_tx_enqueue(uint32_t flags, uint32_t len, const uint8_t *data_in)
         }
 
         /* following two lines is for cache test since tmpbuf is in cache range */
-        //ARCH_MemCpy_Fast(tmpbuf, data_in, len);        
+        //ARCH_MemCpy_Fast(tmpbuf, data_in, len);
         //DMADesc->Buffer = (uint32_t)tmpbuf;
 #ifdef EMAC_DO_FLUSH_DATA
         if(L1C_Is_DCache_Range((uintptr_t)DMADesc->Buffer)){

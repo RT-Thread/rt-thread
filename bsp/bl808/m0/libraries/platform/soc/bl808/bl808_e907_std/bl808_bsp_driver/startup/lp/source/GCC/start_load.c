@@ -74,13 +74,13 @@ void start_load(void)
 
 #ifdef __STARTUP_CLEAR_BSS
     /*  Single BSS section scheme.
-	 *
-	 *  The BSS section is specified by following symbols
-	 *    __bss_start__: start of the BSS section.
-	 *    __bss_end__: end of the BSS section.
-	 *
-	 *  Both addresses must be aligned to 4 bytes boundary.
-	 */
+     *
+     *  The BSS section is specified by following symbols
+     *    __bss_start__: start of the BSS section.
+     *    __bss_end__: end of the BSS section.
+     *
+     *  Both addresses must be aligned to 4 bytes boundary.
+     */
     pDest = &__bss_start__;
 
     for (; pDest < &__bss_end__;) {

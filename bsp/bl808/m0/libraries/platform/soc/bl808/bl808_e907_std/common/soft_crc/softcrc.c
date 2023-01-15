@@ -171,7 +171,7 @@ uint32_t ATTR_TCM_SECTION BFLB_Soft_CRC32_Ex(uint32_t initial, void *dataIn, uin
     uint8_t i;
     uint32_t crc = ~initial;        // Initial value
     uint8_t *data=(uint8_t *)dataIn;
-    
+
     while(len--){
         crc ^= *data++;                // crc ^= *data; data++;
         for (i = 0; i < 8; ++i){

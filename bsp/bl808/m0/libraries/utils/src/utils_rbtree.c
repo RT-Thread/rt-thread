@@ -33,12 +33,12 @@
 
 // rb_node
 
-struct rb_node * rb_node_alloc () 
+struct rb_node * rb_node_alloc ()
 {
     return pvPortMalloc(sizeof(struct rb_node));
 }
 
-struct rb_node * rb_node_init (struct rb_node *self, void *value) 
+struct rb_node * rb_node_init (struct rb_node *self, void *value)
 {
     if (self) {
         self->red = 1;
@@ -48,24 +48,24 @@ struct rb_node * rb_node_init (struct rb_node *self, void *value)
     return self;
 }
 
-struct rb_node * rb_node_create (void *value) 
+struct rb_node * rb_node_create (void *value)
 {
     return rb_node_init(rb_node_alloc(), value);
 }
 
-void rb_node_dealloc (struct rb_node *self) 
+void rb_node_dealloc (struct rb_node *self)
 {
     if (self) {
         vPortFree(self);
     }
 }
 
-static int rb_node_is_red (const struct rb_node *self) 
+static int rb_node_is_red (const struct rb_node *self)
 {
     return self ? self->red : 0;
 }
 
-static struct rb_node * rb_node_rotate (struct rb_node *self, int dir) 
+static struct rb_node * rb_node_rotate (struct rb_node *self, int dir)
 {
     struct rb_node *result = NULL;
 
@@ -79,7 +79,7 @@ static struct rb_node * rb_node_rotate (struct rb_node *self, int dir)
     return result;
 }
 
-static struct rb_node * rb_node_rotate2 (struct rb_node *self, int dir) 
+static struct rb_node * rb_node_rotate2 (struct rb_node *self, int dir)
 {
     struct rb_node *result = NULL;
 
@@ -91,12 +91,12 @@ static struct rb_node * rb_node_rotate2 (struct rb_node *self, int dir)
 }
 
 // rb_tree - default callbacks
-int rb_tree_node_cmp_ptr_cb (struct rb_tree *self, struct rb_node *a, struct rb_node *b) 
+int rb_tree_node_cmp_ptr_cb (struct rb_tree *self, struct rb_node *a, struct rb_node *b)
 {
     return (a->value > b->value) - (a->value < b->value);
 }
 
-void rb_tree_node_dealloc_cb (struct rb_tree *self, struct rb_node *node) 
+void rb_tree_node_dealloc_cb (struct rb_tree *self, struct rb_node *node)
 {
     if (self) {
         if (node) {
@@ -106,12 +106,12 @@ void rb_tree_node_dealloc_cb (struct rb_tree *self, struct rb_node *node)
 }
 
 // rb_tree
-struct rb_tree * rb_tree_alloc () 
+struct rb_tree * rb_tree_alloc ()
 {
     return pvPortMalloc(sizeof(struct rb_tree));
 }
 
-struct rb_tree * rb_tree_init (struct rb_tree *self, rb_tree_node_cmp_f node_cmp_cb) 
+struct rb_tree * rb_tree_init (struct rb_tree *self, rb_tree_node_cmp_f node_cmp_cb)
 {
     if (self) {
         self->root = NULL;
@@ -122,18 +122,18 @@ struct rb_tree * rb_tree_init (struct rb_tree *self, rb_tree_node_cmp_f node_cmp
     return self;
 }
 
-struct rb_tree * rb_tree_create (rb_tree_node_cmp_f node_cb) 
+struct rb_tree * rb_tree_create (rb_tree_node_cmp_f node_cb)
 {
     return rb_tree_init(rb_tree_alloc(), node_cb);
 }
 
-void rb_tree_dealloc(struct rb_tree *self, rb_tree_node_f node_cb) 
+void rb_tree_dealloc(struct rb_tree *self, rb_tree_node_f node_cb)
 {
     if (self) {
         if (node_cb) {
             struct rb_node *node = self->root;
             struct rb_node *save = NULL;
-            
+
             // Rotate away the left links so that
             // we can treat this like the destruction
             // of a linked list
@@ -145,7 +145,7 @@ void rb_tree_dealloc(struct rb_tree *self, rb_tree_node_f node_cb)
                     node_cb(self, node);
                     node = NULL;
                 } else {
-                    
+
                     // Rotate away the left link and check again
                     save = node->link[0];
                     node->link[0] = save->link[1];
@@ -158,16 +158,16 @@ void rb_tree_dealloc(struct rb_tree *self, rb_tree_node_f node_cb)
     }
 }
 
-int rb_tree_test(struct rb_tree *self, struct rb_node *root) 
+int rb_tree_test(struct rb_tree *self, struct rb_node *root)
 {
     int lh, rh;
-    
+
     if (NULL == root) {
         return 1;
     } else {
         struct rb_node *ln = root->link[0];
         struct rb_node *rn = root->link[1];
-        
+
         /* Consecutive red links */
         if (rb_node_is_red(root)) {
             if (rb_node_is_red(ln) || rb_node_is_red(rn)) {
@@ -175,10 +175,10 @@ int rb_tree_test(struct rb_tree *self, struct rb_node *root)
                 return 0;
             }
         }
-        
+
         lh = rb_tree_test(self, ln);
         rh = rb_tree_test(self, rn);
-        
+
         /* Invalid binary search tree */
         if ( ( ln != NULL && self->cmp(self, ln, root) >= 0 )
             || ( rn != NULL && self->cmp(self, rn, root) <= 0))
@@ -186,13 +186,13 @@ int rb_tree_test(struct rb_tree *self, struct rb_node *root)
             puts ( "Binary tree violation" );
             return 0;
         }
-        
+
         /* Black height mismatch */
         if ( lh != 0 && rh != 0 && lh != rh ) {
             puts ( "Black violation" );
             return 0;
         }
-        
+
         /* Only count black links */
         if ( lh != 0 && rh != 0 )
             return rb_node_is_red ( root ) ? lh : lh + 1;
@@ -201,7 +201,7 @@ int rb_tree_test(struct rb_tree *self, struct rb_node *root)
     }
 }
 
-void * rb_tree_find(struct rb_tree *self, void *value) 
+void * rb_tree_find(struct rb_tree *self, void *value)
 {
     void *result = NULL;
 
@@ -224,8 +224,8 @@ void * rb_tree_find(struct rb_tree *self, void *value)
     return result;
 }
 
-// Creates (malloc'ates) 
-int rb_tree_insert(struct rb_tree *self, void *value) 
+// Creates (malloc'ates)
+int rb_tree_insert(struct rb_tree *self, void *value)
 {
     struct rb_node *node;
 
@@ -243,7 +243,7 @@ int rb_tree_insert(struct rb_tree *self, void *value)
 }
 
 // Returns 1 on success, 0 otherwise.
-int rb_tree_insert_node (struct rb_tree *self, struct rb_node *node) 
+int rb_tree_insert_node (struct rb_tree *self, struct rb_node *node)
 {
     if (self && node) {
         if (self->root == NULL) {
@@ -266,7 +266,7 @@ int rb_tree_insert_node (struct rb_tree *self, struct rb_node *node)
                     // Insert node at the first null link.
                     p->link[dir] = q = node;
                 } else if (rb_node_is_red(q->link[0]) && rb_node_is_red(q->link[1])) {
-                
+
                     // Simple red violation: color flip
                     q->red = 1;
                     q->link[0]->red = 0;
@@ -283,7 +283,7 @@ int rb_tree_insert_node (struct rb_tree *self, struct rb_node *node)
                         t->link[dir2] = rb_node_rotate2(g, !last);
                     }
                 }
-          
+
                 // Stop working if we inserted a node. This
                 // check also disallows duplicates in the tree
                 if (self->cmp(self, q, node) == 0) {
@@ -312,14 +312,14 @@ int rb_tree_insert_node (struct rb_tree *self, struct rb_node *node)
     } else {
         return 0;
     }
-    
+
     return 1;
 }
 
 // Returns 1 if the value was removed, 0 otherwise. Optional node callback
 // can be provided to dealloc node and/or user data. Use rb_tree_node_dealloc
 // default callback to deallocate node created by rb_tree_insert(...).
-int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f node_cb) 
+int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f node_cb)
 {
     if (self->root != NULL) {
         struct rb_node head = {0}; // False tree root
@@ -332,7 +332,7 @@ int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f no
         q = &head;
         g = p = NULL;
         q->link[1] = self->root;
-    
+
         // Search and push a red node down
         // to fix red violations as we go
         while (q->link[dir] != NULL) {
@@ -342,7 +342,7 @@ int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f no
             g = p, p = q;
             q = q->link[dir];
             dir = self->cmp(self, q, &node) < 0;
-      
+
             // Save the node with matching value and keep
             // going; we'll do removal tasks at the end
             if (self->cmp(self, q, &node) == 0) {
@@ -369,7 +369,7 @@ int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f no
                             } else if (rb_node_is_red(s->link[!last])) {
                                 g->link[dir2] = rb_node_rotate(p, last);
                             }
-                            
+
                             // Ensure correct coloring
                             q->red = g->link[dir2]->red = 1;
                             g->link[dir2]->link[0]->red = 0;
@@ -385,9 +385,9 @@ int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f no
             void *tmp = f->value;
             f->value = q->value;
             q->value = tmp;
-            
+
             p->link[p->link[1] == q] = q->link[q->link[0] == NULL];
-            
+
             if (node_cb) {
                 node_cb(self, q);
             }
@@ -407,7 +407,7 @@ int rb_tree_remove_with_cb (struct rb_tree *self, void *value, rb_tree_node_f no
     return 1;
 }
 
-int rb_tree_remove (struct rb_tree *self, void *value) 
+int rb_tree_remove (struct rb_tree *self, void *value)
 {
     int result = 0;
 
@@ -417,7 +417,7 @@ int rb_tree_remove (struct rb_tree *self, void *value)
     return result;
 }
 
-size_t rb_tree_size (struct rb_tree *self) 
+size_t rb_tree_size (struct rb_tree *self)
 {
     size_t result = 0;
 
@@ -428,12 +428,12 @@ size_t rb_tree_size (struct rb_tree *self)
 }
 
 // rb_iter
-struct rb_iter * rb_iter_alloc () 
+struct rb_iter * rb_iter_alloc ()
 {
     return pvPortMalloc(sizeof(struct rb_iter));
 }
 
-struct rb_iter * rb_iter_init (struct rb_iter *self) 
+struct rb_iter * rb_iter_init (struct rb_iter *self)
 {
     if (self) {
         self->tree = NULL;
@@ -443,12 +443,12 @@ struct rb_iter * rb_iter_init (struct rb_iter *self)
     return self;
 }
 
-struct rb_iter * rb_iter_create () 
+struct rb_iter * rb_iter_create ()
 {
     return rb_iter_init(rb_iter_alloc());
 }
 
-void rb_iter_dealloc (struct rb_iter *self) 
+void rb_iter_dealloc (struct rb_iter *self)
 {
     if (self) {
         vPortFree(self);
@@ -457,7 +457,7 @@ void rb_iter_dealloc (struct rb_iter *self)
 
 // Internal function, init traversal object, dir determines whether
 // to begin traversal at the smallest or largest valued node.
-static void * rb_iter_start (struct rb_iter *self, struct rb_tree *tree, int dir) 
+static void * rb_iter_start (struct rb_iter *self, struct rb_tree *tree, int dir)
 {
     void *result = NULL;
 
@@ -480,7 +480,7 @@ static void * rb_iter_start (struct rb_iter *self, struct rb_tree *tree, int dir
 }
 
 // Traverse a red black tree in the user-specified direction (0 asc, 1 desc)
-static void * rb_iter_move(struct rb_iter *self, int dir) 
+static void * rb_iter_move(struct rb_iter *self, int dir)
 {
     if (self->node->link[dir] != NULL) {
         // Continue down this branch
@@ -505,12 +505,12 @@ static void * rb_iter_move(struct rb_iter *self, int dir)
     return self->node == NULL ? NULL : self->node->value;
 }
 
-void *rb_iter_first(struct rb_iter *self, struct rb_tree *tree) 
+void *rb_iter_first(struct rb_iter *self, struct rb_tree *tree)
 {
     return rb_iter_start(self, tree, 0);
 }
 
-void * rb_iter_last(struct rb_iter *self, struct rb_tree *tree) 
+void * rb_iter_last(struct rb_iter *self, struct rb_tree *tree)
 {
     return rb_iter_start(self, tree, 1);
 }

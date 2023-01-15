@@ -342,7 +342,7 @@ void Psram_UHS_Init(PSRAM_UHS_Cfg_Type *cfg)
         tmpVal |= 0x01000000;
     }
     BL_WR_REG(PSRAM_UHS_BASE, PSRAM_UHS_UHS_MANUAL, tmpVal); */
-	tmpVal = BL_RD_REG(PSRAM_UHS_BASE, PSRAM_UHS_UHS_MANUAL);
+    tmpVal = BL_RD_REG(PSRAM_UHS_BASE, PSRAM_UHS_UHS_MANUAL);
     tmpVal &= 0x00ffffff;
 
     if (cfg->pck_freq >= 2200) {

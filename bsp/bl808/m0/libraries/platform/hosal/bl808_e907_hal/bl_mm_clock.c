@@ -83,7 +83,7 @@ static void get_mm_cpu_pll_clk(uint32_t reg_val)
 static void dump_mm_cpu_clk(void)
 {
     uint32_t tmpVal = 0, cpu_root_clk = 0;
- 
+
     tmpVal = BL_RD_REG(CLKRST_CTRL_BASE, MM_GLB_MM_CLK_CTRL_CPU);
     cpu_root_clk = BL_GET_REG_BITS_VAL(tmpVal, MM_GLB_REG_CPU_ROOT_CLK_SEL);
     switch (cpu_root_clk) {

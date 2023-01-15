@@ -204,7 +204,7 @@ void IPC_M0_Clear_Int_By_Word(uint32_t src)
  * @brief  CPUx trigger IPC interrupt to M0
  *
  * @param  src: IPC interrupt source
- * 
+ *
  * @param  cpuxOffset: CPU interrupt offset
  *
  * @return None

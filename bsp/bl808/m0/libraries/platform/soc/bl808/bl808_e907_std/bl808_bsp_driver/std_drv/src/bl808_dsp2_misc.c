@@ -100,12 +100,12 @@ static intCallback_Type *dsp2MiscIntCbfArra[DSP2_MISC_INT_ALL] = {
 void DSP2_MISC_2X_Init(DSP2_MISC_2X_Cfg_Type *dvp2xCfg)
 {
     uint32_t tmpVal;
-    
+
     /* Check the parameters */
     CHECK_PARAM(IS_DSP2_MISC_ACTIVE_LEVEL_TYPE(dvp2xCfg->hSyncLevel));
     CHECK_PARAM(IS_DSP2_MISC_ACTIVE_LEVEL_TYPE(dvp2xCfg->vSyncLevel));
     CHECK_PARAM(IS_DSP2_MISC_2X_DATA_ORDER_TYPE(dvp2xCfg->dataOrder));
-    
+
     tmpVal = BL_RD_REG(DSP2_MISC_BASE, DSP2_MISC_CONFIG);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSP2_MISC_RG_DVPAS_HS_INV, dvp2xCfg->hSyncLevel);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSP2_MISC_RG_DVPAS_VS_INV, dvp2xCfg->vSyncLevel);
@@ -125,7 +125,7 @@ void DSP2_MISC_2X_Init(DSP2_MISC_2X_Cfg_Type *dvp2xCfg)
 void DSP2_MISC_2X_Enable(void)
 {
     uint32_t tmpVal;
-    
+
     tmpVal = BL_RD_REG(DSP2_MISC_BASE, DSP2_MISC_CONFIG);
     BL_WR_REG(DSP2_MISC_BASE, DSP2_MISC_CONFIG, BL_SET_REG_BIT(tmpVal, DSP2_MISC_RG_DVPAS_ENABLE));
 }
@@ -141,7 +141,7 @@ void DSP2_MISC_2X_Enable(void)
 void DSP2_MISC_2X_Disable(void)
 {
     uint32_t tmpVal;
-    
+
     tmpVal = BL_RD_REG(DSP2_MISC_BASE, DSP2_MISC_CONFIG);
     BL_WR_REG(DSP2_MISC_BASE, DSP2_MISC_CONFIG, BL_CLR_REG_BIT(tmpVal, DSP2_MISC_RG_DVPAS_ENABLE));
 }
@@ -516,10 +516,10 @@ void DSP2_MISC_Scaler_Shadow(DSP2_MISC_Scaler_ID_Type scalerId)
 {
     uint32_t tmpVal;
     uint32_t scalerAddr = DSP2_MISC_BASE + DSP2_MISC_SCALERA_I_SIZE_OFFSET + 8 * scalerId;
-    
+
     /* Check the parameters */
     CHECK_PARAM(IS_DSP2_MISC_SCALER_ID_TYPE(scalerId));
-    
+
     tmpVal = BL_RD_WORD(scalerAddr);
     BL_WR_WORD(scalerAddr, BL_SET_REG_BIT(tmpVal, DSP2_MISC_RG_SCLRA_SW_SH));
 }
@@ -1216,11 +1216,11 @@ void DSP2_MISC_SEOF_Set_Edge(DSP2_MISC_INT_Type intType, DSP2_MISC_SEOF_Edge_Typ
 void DSP2_MISC_Reshape_Init(DSP2_MISC_Reshape_Cfg_Type *reshapeCfg)
 {
     uint32_t tmpVal;
-    
+
     /* Check the parameters */
     CHECK_PARAM(IS_DSP2_MISC_ACTIVE_LEVEL_TYPE(reshapeCfg->hSyncLevel));
     CHECK_PARAM(IS_DSP2_MISC_ACTIVE_LEVEL_TYPE(reshapeCfg->vSyncLevel));
-    
+
     tmpVal = BL_RD_REG(DSP2_MISC_BASE, DSP2_MISC_DVP_RESHAPE);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSP2_MISC_REG_RSHP_TGL_COUNT, reshapeCfg->vsyncNumber & 0x1f);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSP2_MISC_REG_RSHP_HSYNC_INV, reshapeCfg->hSyncLevel);
@@ -1240,7 +1240,7 @@ void DSP2_MISC_Reshape_Init(DSP2_MISC_Reshape_Cfg_Type *reshapeCfg)
 void DSP2_MISC_Reshape_Counter_Clear(void)
 {
     uint32_t tmpVal;
-    
+
     tmpVal = BL_RD_REG(DSP2_MISC_BASE, DSP2_MISC_DVP_RESHAPE);
     BL_WR_REG(DSP2_MISC_BASE, DSP2_MISC_DVP_RESHAPE, BL_SET_REG_BIT(tmpVal, DSP2_MISC_REG_RSHP_CLR));
 }
@@ -1273,7 +1273,7 @@ void DSP2_MISC_DE_As_Hsync(BL_Fun_Type enable)
 void DSP2_MISC_TSRC_Source_Select(DSP2_MISC_TSRC_Source_Type sourceType)
 {
     uint32_t tmpVal;
-    
+
     tmpVal = BL_RD_REG(DSP2_MISC_BASE, DSP2_MISC_PIX_DATA_CTRL);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSP2_MISC_REG_DSP2_DTSRC_SRC, sourceType);
     BL_WR_REG(DSP2_MISC_BASE, DSP2_MISC_PIX_DATA_CTRL, tmpVal);

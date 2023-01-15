@@ -103,11 +103,11 @@ static void __uart_rx_dma_irq(void *p_arg, uint32_t flag)
     hosal_uart_dev_t *uart = (hosal_uart_dev_t *)p_arg;
 
     if (flag != HOSAL_DMA_INT_TRANS_COMPLETE) {
-    	blog_error("DMA RX TRANS ERROR\r\n");
+        blog_error("DMA RX TRANS ERROR\r\n");
     }
 
     if (uart->rxdma_cb) {
-    	uart->rxdma_cb(uart->p_rxdma_arg);
+        uart->rxdma_cb(uart->p_rxdma_arg);
     }
 }
 
@@ -116,34 +116,34 @@ static void __uart_tx_dma_irq(void *p_arg, uint32_t flag)
     hosal_uart_dev_t *uart = (hosal_uart_dev_t *)p_arg;
 
     if (flag != HOSAL_DMA_INT_TRANS_COMPLETE) {
-    	blog_error("DMA TX TRANS ERROR\r\n");
+        blog_error("DMA TX TRANS ERROR\r\n");
     }
 
     if (uart->txdma_cb) {
-    	uart->txdma_cb(uart->p_txdma_arg);
+        uart->txdma_cb(uart->p_txdma_arg);
     }
 }
 
 static int __uart_dma_txcfg(hosal_uart_dev_t *uart, hosal_uart_dma_cfg_t *dma_cfg)
 {
-	if (dma_cfg->dma_buf == NULL || dma_cfg->dma_buf_size == 0) {
-		return -1;
-	}
-	DMA_Channel_Cfg_Type txchCfg = {
-	    (uint32_t)dma_cfg->dma_buf,
-		g_uart_addr[uart->port] + UART_FIFO_WDATA_OFFSET,
-		dma_cfg->dma_buf_size,
-	    DMA_TRNS_M2P,
-		DMA_CH0,
-	    DMA_TRNS_WIDTH_8BITS,
-	    DMA_TRNS_WIDTH_8BITS,
-	    DMA_BURST_SIZE_4,
-	    DMA_BURST_SIZE_4,
-	    DMA_MINC_ENABLE,
-	    DMA_PINC_DISABLE,
-	    DMA_REQ_NONE,
-	    DMA_REQ_UART0_TX,
-	};
+    if (dma_cfg->dma_buf == NULL || dma_cfg->dma_buf_size == 0) {
+        return -1;
+    }
+    DMA_Channel_Cfg_Type txchCfg = {
+        (uint32_t)dma_cfg->dma_buf,
+        g_uart_addr[uart->port] + UART_FIFO_WDATA_OFFSET,
+        dma_cfg->dma_buf_size,
+        DMA_TRNS_M2P,
+        DMA_CH0,
+        DMA_TRNS_WIDTH_8BITS,
+        DMA_TRNS_WIDTH_8BITS,
+        DMA_BURST_SIZE_4,
+        DMA_BURST_SIZE_4,
+        DMA_MINC_ENABLE,
+        DMA_PINC_DISABLE,
+        DMA_REQ_NONE,
+        DMA_REQ_UART0_TX,
+    };
     UART_FifoCfg_Type fifoCfg =
     {
         .txFifoDmaThreshold     = 0x10,
@@ -153,52 +153,52 @@ static int __uart_dma_txcfg(hosal_uart_dev_t *uart, hosal_uart_dma_cfg_t *dma_cf
     };
 
     if (uart->dma_tx_chan >= 0) {
-    	DMA_Channel_Update_SrcMemcfg(uart->dma_tx_chan,
-    			(uint32_t)dma_cfg->dma_buf, dma_cfg->dma_buf_size);
-    	return 0;
+        DMA_Channel_Update_SrcMemcfg(uart->dma_tx_chan,
+                (uint32_t)dma_cfg->dma_buf, dma_cfg->dma_buf_size);
+        return 0;
     }
 
-	uart->dma_tx_chan = hosal_dma_chan_request(0);
-	if (uart->dma_tx_chan < 0) {
-		blog_error("dma_tx_chan request failed !\r\n");
-		return -1;
-	}
+    uart->dma_tx_chan = hosal_dma_chan_request(0);
+    if (uart->dma_tx_chan < 0) {
+        blog_error("dma_tx_chan request failed !\r\n");
+        return -1;
+    }
 
-	hosal_dma_chan_stop(uart->dma_tx_chan);
+    hosal_dma_chan_stop(uart->dma_tx_chan);
 
     /* FIFO Config*/
-	fifoCfg.rxFifoDmaEnable = (uart->dma_rx_chan < 0) ? DISABLE : ENABLE;
+    fifoCfg.rxFifoDmaEnable = (uart->dma_rx_chan < 0) ? DISABLE : ENABLE;
     UART_FifoConfig(uart->port, &fifoCfg);
 
-	txchCfg.ch = uart->dma_tx_chan;
-	txchCfg.dstPeriph = (uart->port == 0) ? DMA_REQ_UART0_TX : DMA_REQ_UART1_TX;
-	DMA_Channel_Init(&txchCfg);
-	hosal_dma_irq_callback_set(uart->dma_tx_chan, __uart_tx_dma_irq, (void *)uart);
+    txchCfg.ch = uart->dma_tx_chan;
+    txchCfg.dstPeriph = (uart->port == 0) ? DMA_REQ_UART0_TX : DMA_REQ_UART1_TX;
+    DMA_Channel_Init(&txchCfg);
+    hosal_dma_irq_callback_set(uart->dma_tx_chan, __uart_tx_dma_irq, (void *)uart);
 
-	return 0;
+    return 0;
 }
 
 static int __uart_dma_rxcfg(hosal_uart_dev_t *uart, hosal_uart_dma_cfg_t *dma_cfg)
 {
-	if (dma_cfg->dma_buf == NULL || dma_cfg->dma_buf_size == 0) {
-		return -1;
-	}
+    if (dma_cfg->dma_buf == NULL || dma_cfg->dma_buf_size == 0) {
+        return -1;
+    }
 
-	DMA_Channel_Cfg_Type rxchCfg = {
-		g_uart_addr[uart->port] + UART_FIFO_RDATA_OFFSET,
-		(uint32_t)dma_cfg->dma_buf,
-		dma_cfg->dma_buf_size,
-	    DMA_TRNS_P2M,
-		DMA_CH0,
-	    DMA_TRNS_WIDTH_8BITS,
-	    DMA_TRNS_WIDTH_8BITS,
-	    DMA_BURST_SIZE_16,
-	    DMA_BURST_SIZE_16,
-	    DMA_PINC_DISABLE,
-	    DMA_MINC_ENABLE,
-	    DMA_REQ_UART0_RX,
-	    DMA_REQ_NONE,
-	};
+    DMA_Channel_Cfg_Type rxchCfg = {
+        g_uart_addr[uart->port] + UART_FIFO_RDATA_OFFSET,
+        (uint32_t)dma_cfg->dma_buf,
+        dma_cfg->dma_buf_size,
+        DMA_TRNS_P2M,
+        DMA_CH0,
+        DMA_TRNS_WIDTH_8BITS,
+        DMA_TRNS_WIDTH_8BITS,
+        DMA_BURST_SIZE_16,
+        DMA_BURST_SIZE_16,
+        DMA_PINC_DISABLE,
+        DMA_MINC_ENABLE,
+        DMA_REQ_UART0_RX,
+        DMA_REQ_NONE,
+    };
     UART_FifoCfg_Type fifoCfg =
     {
         .txFifoDmaThreshold     = 0x10,
@@ -208,30 +208,30 @@ static int __uart_dma_rxcfg(hosal_uart_dev_t *uart, hosal_uart_dma_cfg_t *dma_cf
     };
 
     if (uart->dma_rx_chan >= 0) {
-    	DMA_Channel_Update_DstMemcfg(uart->dma_rx_chan,
-    			(uint32_t)dma_cfg->dma_buf, dma_cfg->dma_buf_size);
-    	return 0;
+        DMA_Channel_Update_DstMemcfg(uart->dma_rx_chan,
+                (uint32_t)dma_cfg->dma_buf, dma_cfg->dma_buf_size);
+        return 0;
     }
 
-	uart->dma_rx_chan = hosal_dma_chan_request(0);
-	if (uart->dma_rx_chan < 0) {
-		blog_error("dma_rx_chan request failed !\r\n");
-		return -1;
-	}
+    uart->dma_rx_chan = hosal_dma_chan_request(0);
+    if (uart->dma_rx_chan < 0) {
+        blog_error("dma_rx_chan request failed !\r\n");
+        return -1;
+    }
 
-	hosal_dma_chan_stop(uart->dma_rx_chan);
+    hosal_dma_chan_stop(uart->dma_rx_chan);
 
     /* FIFO Config*/
-	fifoCfg.txFifoDmaEnable = (uart->dma_tx_chan < 0) ? DISABLE : ENABLE;
+    fifoCfg.txFifoDmaEnable = (uart->dma_tx_chan < 0) ? DISABLE : ENABLE;
     UART_FifoConfig(uart->port, &fifoCfg);
 
-	rxchCfg.ch = uart->dma_rx_chan;
-	rxchCfg.srcPeriph = (uart->port == 0) ? DMA_REQ_UART0_RX : DMA_REQ_UART1_RX;
+    rxchCfg.ch = uart->dma_rx_chan;
+    rxchCfg.srcPeriph = (uart->port == 0) ? DMA_REQ_UART0_RX : DMA_REQ_UART1_RX;
 
-	DMA_Channel_Init(&rxchCfg);
-	hosal_dma_irq_callback_set(uart->dma_rx_chan, __uart_rx_dma_irq, (void *)uart);
+    DMA_Channel_Init(&rxchCfg);
+    hosal_dma_irq_callback_set(uart->dma_rx_chan, __uart_rx_dma_irq, (void *)uart);
 
-	return 0;
+    return 0;
 }
 #endif
 static void __uart_config_set(hosal_uart_dev_t *uart, const hosal_uart_config_t *cfg)
@@ -258,17 +258,17 @@ static void __uart_config_set(hosal_uart_dev_t *uart, const hosal_uart_config_t 
     uartCfg.parity = (UART_Parity_Type)cfg->parity;
 
     if (cfg->flow_control == HOSAL_FLOW_CONTROL_CTS) {
-    	uartCfg.ctsFlowControl = 1;
-    	uartCfg.rtsSoftwareControl = 0;
+        uartCfg.ctsFlowControl = 1;
+        uartCfg.rtsSoftwareControl = 0;
     } else if (cfg->flow_control == HOSAL_FLOW_CONTROL_RTS) {
-    	uartCfg.ctsFlowControl = 0;
-    	uartCfg.rtsSoftwareControl = 1;
+        uartCfg.ctsFlowControl = 0;
+        uartCfg.rtsSoftwareControl = 1;
     } else if (cfg->flow_control == HOSAL_FLOW_CONTROL_CTS_RTS) {
-    	uartCfg.ctsFlowControl = 1;
-    	uartCfg.rtsSoftwareControl = 1;
+        uartCfg.ctsFlowControl = 1;
+        uartCfg.rtsSoftwareControl = 1;
     } else {
-    	uartCfg.ctsFlowControl = 0;
-    	uartCfg.rtsSoftwareControl = 0;
+        uartCfg.ctsFlowControl = 0;
+        uartCfg.rtsSoftwareControl = 0;
     }
 
     //uartCfg.uartClk = (160 * 1000 * 1000) / (uart_div + 1);
@@ -280,12 +280,12 @@ static void __uart_config_set(hosal_uart_dev_t *uart, const hosal_uart_config_t 
     UART_Init(id, &uartCfg);
 #endif
     if (cfg->mode == HOSAL_UART_MODE_INT) {
-    	bl_uart_int_tx_notify_register(uart->port, __uart_tx_irq, uart);
-    	bl_uart_int_rx_notify_register(uart->port, __uart_rx_irq, uart);
-    	bl_uart_int_enable(uart->port);
-    	bl_uart_int_tx_disable(uart->port);
+        bl_uart_int_tx_notify_register(uart->port, __uart_tx_irq, uart);
+        bl_uart_int_rx_notify_register(uart->port, __uart_rx_irq, uart);
+        bl_uart_int_enable(uart->port);
+        bl_uart_int_tx_disable(uart->port);
     } else {
-    	bl_uart_int_disable(uart->port);
+        bl_uart_int_disable(uart->port);
     }
 
     /* Enable uart */
@@ -341,17 +341,17 @@ int hosal_uart_init(hosal_uart_dev_t *uart)
     uartCfg.parity = (UART_Parity_Type)cfg->parity;
 
     if (cfg->flow_control == HOSAL_FLOW_CONTROL_CTS) {
-    	uartCfg.ctsFlowControl = 1;
-    	uartCfg.rtsSoftwareControl = 0;
+        uartCfg.ctsFlowControl = 1;
+        uartCfg.rtsSoftwareControl = 0;
     } else if (cfg->flow_control == HOSAL_FLOW_CONTROL_RTS) {
-    	uartCfg.ctsFlowControl = 0;
-    	uartCfg.rtsSoftwareControl = 1;
+        uartCfg.ctsFlowControl = 0;
+        uartCfg.rtsSoftwareControl = 1;
     } else if (cfg->flow_control == HOSAL_FLOW_CONTROL_CTS_RTS) {
-    	uartCfg.ctsFlowControl = 1;
-    	uartCfg.rtsSoftwareControl = 1;
+        uartCfg.ctsFlowControl = 1;
+        uartCfg.rtsSoftwareControl = 1;
     } else {
-    	uartCfg.ctsFlowControl = 0;
-    	uartCfg.rtsSoftwareControl = 0;
+        uartCfg.ctsFlowControl = 0;
+        uartCfg.rtsSoftwareControl = 0;
     }
 
     //uartCfg.uartClk = (40 * 1000 * 1000) / (uart_div + 1);
@@ -376,12 +376,12 @@ int hosal_uart_init(hosal_uart_dev_t *uart)
     UART_FifoConfig(id, &fifoCfg);
 
     if (cfg->mode == HOSAL_UART_MODE_INT) {
-    	bl_uart_int_tx_notify_register(uart->port, __uart_tx_irq, uart);
-    	bl_uart_int_rx_notify_register(uart->port, __uart_rx_irq, uart);
-    	bl_uart_int_enable(uart->port);
-    	bl_uart_int_tx_disable(uart->port);
+        bl_uart_int_tx_notify_register(uart->port, __uart_tx_irq, uart);
+        bl_uart_int_rx_notify_register(uart->port, __uart_rx_irq, uart);
+        bl_uart_int_enable(uart->port);
+        bl_uart_int_tx_disable(uart->port);
     } else {
-    	bl_uart_int_disable(uart->port);
+        bl_uart_int_disable(uart->port);
     }
 
     /* Enable uart */
@@ -418,7 +418,7 @@ int hosal_uart_send(hosal_uart_dev_t *uart, const void *data, uint32_t size)
 int hosal_uart_ioctl(hosal_uart_dev_t *uart, int ctl, void *p_arg)
 {
 #if 0
-	hosal_uart_dma_cfg_t *dma_cfg;
+    hosal_uart_dma_cfg_t *dma_cfg;
 #endif
 
     switch (ctl) {
@@ -490,26 +490,26 @@ int hosal_uart_ioctl(hosal_uart_dev_t *uart, int ctl, void *p_arg)
         bl_uart_flush(uart->port);
         break;
     case HOSAL_UART_TX_TRIGGER_ON:
-    	bl_uart_int_tx_enable(uart->port);
-    	break;
+        bl_uart_int_tx_enable(uart->port);
+        break;
     case HOSAL_UART_TX_TRIGGER_OFF:
-    	bl_uart_int_tx_disable(uart->port);
-    	break;
+        bl_uart_int_tx_disable(uart->port);
+        break;
 #if 0
     case HOSAL_UART_DMA_TX_START:
-    	dma_cfg = (hosal_uart_dma_cfg_t *)p_arg;
-    	if (__uart_dma_txcfg(uart, dma_cfg) != 0) {
-    		return -1;
-    	}
-    	hosal_dma_chan_start(uart->dma_tx_chan);
-    	break;
+        dma_cfg = (hosal_uart_dma_cfg_t *)p_arg;
+        if (__uart_dma_txcfg(uart, dma_cfg) != 0) {
+            return -1;
+        }
+        hosal_dma_chan_start(uart->dma_tx_chan);
+        break;
     case HOSAL_UART_DMA_RX_START:
-    	dma_cfg = (hosal_uart_dma_cfg_t *)p_arg;
-    	if (__uart_dma_rxcfg(uart, dma_cfg) != 0) {
-    		return -1;
-    	}
-    	hosal_dma_chan_start(uart->dma_rx_chan);
-    	break;
+        dma_cfg = (hosal_uart_dma_cfg_t *)p_arg;
+        if (__uart_dma_rxcfg(uart, dma_cfg) != 0) {
+            return -1;
+        }
+        hosal_dma_chan_start(uart->dma_rx_chan);
+        break;
 #endif
     default :
         return -1;
@@ -547,10 +547,10 @@ int hosal_uart_finalize(hosal_uart_dev_t *uart)
     UART_Disable(uart->port, UART_TXRX);
 #if 0
     if (uart->dma_rx_chan > 0) {
-    	hosal_dma_chan_release(uart->dma_rx_chan);
+        hosal_dma_chan_release(uart->dma_rx_chan);
     }
     if (uart->dma_tx_chan > 0) {
-    	hosal_dma_chan_release(uart->dma_tx_chan);
+        hosal_dma_chan_release(uart->dma_tx_chan);
     }
 #endif
     return 0;

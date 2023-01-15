@@ -6,44 +6,44 @@
  */
 struct drm_panel {
     /**
-	 * @dev:
-	 *
-	 * Parent device of the panel.
-	 */
+     * @dev:
+     *
+     * Parent device of the panel.
+     */
     struct device *dev;
 
     /**
-	 * @backlight:
-	 *
-	 * Backlight device, used to turn on backlight after the call
-	 * to enable(), and to turn off backlight before the call to
-	 * disable().
-	 * backlight is set by drm_panel_of_backlight() and drivers
-	 * shall not assign it.
-	 */
+     * @backlight:
+     *
+     * Backlight device, used to turn on backlight after the call
+     * to enable(), and to turn off backlight before the call to
+     * disable().
+     * backlight is set by drm_panel_of_backlight() and drivers
+     * shall not assign it.
+     */
     struct backlight_device *backlight;
 
     /**
-	 * @funcs:
-	 *
-	 * Operations that can be performed on the panel.
-	 */
+     * @funcs:
+     *
+     * Operations that can be performed on the panel.
+     */
     const struct drm_panel_funcs *funcs;
 
     /**
-	 * @connector_type:
-	 *
-	 * Type of the panel as a DRM_MODE_CONNECTOR_* value. This is used to
-	 * initialise the drm_connector corresponding to the panel with the
-	 * correct connector type.
-	 */
+     * @connector_type:
+     *
+     * Type of the panel as a DRM_MODE_CONNECTOR_* value. This is used to
+     * initialise the drm_connector corresponding to the panel with the
+     * correct connector type.
+     */
     int connector_type;
 
     /**
-	 * @list:
-	 *
-	 * Panel entry in registry.
-	 */
+     * @list:
+     *
+     * Panel entry in registry.
+     */
     //struct list_head list;
 };
 

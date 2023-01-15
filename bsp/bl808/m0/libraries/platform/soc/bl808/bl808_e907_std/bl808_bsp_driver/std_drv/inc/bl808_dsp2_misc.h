@@ -333,7 +333,7 @@ typedef struct {
     DSP2_MISC_Active_Level_Type hSyncLevel; /*!< Input H-Sync active level */
     DSP2_MISC_Active_Level_Type vSyncLevel; /*!< Input V-Sync active level */
     DSP2_MISC_2X_Data_Order_Type dataOrder; /*!< Input data order */
-    uint16_t fifoThreshold;                /*!< Fifo threshold for each DVP line to start to 
+    uint16_t fifoThreshold;                /*!< Fifo threshold for each DVP line to start to
                                                 output,((Width-Fifo_th)*T_in*2)<(Width*T_out)<((Width-Fifo_th)*T_in*2+Blank*T_in) */
 }DSP2_MISC_2X_Cfg_Type;
 
