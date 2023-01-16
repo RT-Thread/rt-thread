@@ -1,5 +1,5 @@
 /*
- * linker script for APM32F10x with GNU ld
+ * linker script for APM32F40x with GNU ld
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
@@ -82,6 +82,7 @@ SECTIONS
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
+        _end_stack = .;
     } >DATA
 
     __bss_start = .;

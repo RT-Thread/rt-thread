@@ -78,7 +78,7 @@ L_loop1:
 
   bl  SystemInit
   bl __libc_init_array
-  bl main
+  bl entry
 
 L_loop3:
     b L_loop3
@@ -93,7 +93,7 @@ L_Loop_infinite:
   .size Default_Handler, .-Default_Handler
 
 // The minimal vector table for a Cortex M0 Plus.
-   .section .apm32_isr_vector,"a",%progbits
+   .section .isr_vector,"a",%progbits
   .type g_apm32_Vectors, %object
   .size g_apm32_Vectors, .-g_apm32_Vectors
 
