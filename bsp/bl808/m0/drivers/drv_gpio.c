@@ -17,9 +17,9 @@
 
 #ifdef RT_USING_PIN
 
-#define DBG_LEVEL   DBG_LOG
-// #include <rtdbg.h>
-#define LOG_TAG                "drv.gpio"
+#define DBG_TAG              "drv.gpio"
+#define DBG_LVL               DBG_INFO
+#include <rtdbg.h>
 
 static void GPIO0_IRQHandler(void);
 
