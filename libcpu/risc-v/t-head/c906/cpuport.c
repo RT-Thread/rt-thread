@@ -17,8 +17,9 @@
 #include "sbi.h"
 #include "stack.h"
 
+#ifdef RT_USING_SMART
 #include <lwp_arch.h>
-
+#endif
 
 /**
  * @brief from thread used interrupt context switch

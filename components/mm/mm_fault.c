@@ -10,6 +10,10 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_SMART
+#define DBG_TAG "mm.fault"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #include <lwp.h>
 #include <lwp_syscall.h>
 #include "mm_aspace.h"
@@ -18,10 +22,6 @@
 #include "mm_private.h"
 #include <mmu.h>
 #include <tlb.h>
-
-#define DBG_TAG "mm.fault"
-#define DBG_LVL DBG_INFO
-#include <rtdbg.h>
 
 #define UNRECOVERABLE 0
 #define RECOVERABLE   1

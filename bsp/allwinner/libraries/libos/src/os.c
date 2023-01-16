@@ -5,6 +5,8 @@
 #ifdef RT_USING_SMART
 #include <mmu.h>
 #include <lwp_arch.h>
+#else
+#define PV_OFFSET 0
 #endif
 #include <cache.h>
 

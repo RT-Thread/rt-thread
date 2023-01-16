@@ -17,6 +17,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define DBG_TAG "mm.aspace"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #include "avl_adpt.h"
 #include "mm_aspace.h"
 #include "mm_fault.h"
@@ -30,10 +34,6 @@
 #ifndef RT_USING_SMART
 #define PV_OFFSET 0
 #endif
-
-#define DBG_TAG "mm.aspace"
-#define DBG_LVL DBG_INFO
-#include <rtdbg.h>
 
 static void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
@@ -138,6 +138,7 @@ void rt_aspace_delete(rt_aspace_t aspace)
 static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
                          rt_size_t offset, rt_size_t attr)
 {
+    LOG_D("%s: va %p length %p", __func__, vaddr, length);
     int err = RT_EOK;
 
     /* it's ensured by caller that (void*)end will not overflow */
@@ -288,6 +289,7 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
 static inline int _not_in_range(void *start, rt_size_t length,
                                 void *limit_start, rt_size_t limit_size)
 {
+    LOG_D("%s: [%p : %p] [%p : %p]", __func__, start, length, limit_start, limit_size);
     /* assuming (base + length) will not overflow except (0) */
     return start != ARCH_MAP_FAILED
                ? ((length > (0ul - (uintptr_t)start)) || start < limit_start ||
@@ -336,6 +338,7 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
         }
         else
         {
+            LOG_W("%s: mm aspace map failed", __func__);
             err = -RT_ENOMEM;
         }
     }
@@ -393,14 +396,22 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
     int err;
     void *vaddr;
 
-    if (!aspace || !hint || !hint->limit_range_size || !hint->map_size ||
-        _not_align(hint->prefer, hint->map_size, ARCH_PAGE_MASK) ||
-        _not_in_range(hint->limit_start, hint->limit_range_size, aspace->start,
+    if (!aspace || !hint || !hint->limit_range_size || !hint->map_size)
+    {
+        LOG_W("%s: Invalid input", __func__);
+        err = -RT_EINVAL;
+    }
+    else if (_not_align(hint->prefer, hint->map_size, ARCH_PAGE_MASK))
+    {
+        LOG_W("%s: not aligned", __func__);
+        err = -RT_EINVAL;
+    }
+    else if (_not_in_range(hint->limit_start, hint->limit_range_size, aspace->start,
                       aspace->size) ||
         _not_in_range(hint->prefer, hint->map_size, aspace->start,
                       aspace->size))
     {
-        LOG_I("%s: Invalid input", __func__);
+        LOG_W("%s: not in range", __func__);
         err = -RT_EINVAL;
     }
     else
