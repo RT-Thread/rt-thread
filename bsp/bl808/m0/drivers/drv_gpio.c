@@ -100,28 +100,36 @@ static void bl808_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
             if (mode == GPIO_ASYNC_RISING_TRIGER_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_DOWN;
                 intCfg.trig = GLB_GPIO_INT_TRIG_ASYNC_RISING_EDGE;
-            } else if (mode == GPIO_ASYNC_FALLING_TRIGER_INT_MODE) {
+            }
+            else if (mode == GPIO_ASYNC_FALLING_TRIGER_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_UP;
                 intCfg.trig = GLB_GPIO_INT_TRIG_ASYNC_FALLING_EDGE;
-            } else if (mode == GPIO_ASYNC_HIGH_LEVEL_INT_MODE) {
+            }
+            else if (mode == GPIO_ASYNC_HIGH_LEVEL_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_DOWN;
                 intCfg.trig = GLB_GPIO_INT_TRIG_ASYNC_HIGH_LEVEL;
-            } else if (mode == GPIO_ASYNC_LOW_LEVEL_INT_MODE) {
+            }
+            else if (mode == GPIO_ASYNC_LOW_LEVEL_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_UP;
                 intCfg.trig = GLB_GPIO_INT_TRIG_ASYNC_LOW_LEVEL;
-            } else if (mode == GPIO_SYNC_RISING_TRIGER_INT_MODE) {
+            }
+            else if (mode == GPIO_SYNC_RISING_TRIGER_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_DOWN;
                 intCfg.trig = GLB_GPIO_INT_TRIG_SYNC_RISING_EDGE;
-            } else if (mode == GPIO_SYNC_FALLING_TRIGER_INT_MODE) {
+            }
+            else if (mode == GPIO_SYNC_FALLING_TRIGER_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_UP;
                 intCfg.trig = GLB_GPIO_INT_TRIG_SYNC_FALLING_EDGE;
-            } else if (mode == GPIO_SYNC_FALLING_TRIGER_INT_MODE) {
+            }
+            else if (mode == GPIO_SYNC_FALLING_TRIGER_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_NONE;
                 intCfg.trig = GLB_GPIO_INT_TRIG_SYNC_FALLING_RISING_EDGE;
-            } else if (mode == GPIO_SYNC_HIGH_LEVEL_INT_MODE) {
+            }
+            else if (mode == GPIO_SYNC_HIGH_LEVEL_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_DOWN;
                 intCfg.trig = GLB_GPIO_INT_TRIG_SYNC_HIGH_LEVEL;
-            } else if (mode == GPIO_SYNC_LOW_LEVEL_INT_MODE) {
+            }
+            else if (mode == GPIO_SYNC_LOW_LEVEL_INT_MODE) {
                 gpio_cfg.pullType = GPIO_PULL_UP;
                 intCfg.trig = GLB_GPIO_INT_TRIG_SYNC_LOW_LEVEL;
             }
@@ -171,12 +179,11 @@ const static struct rt_pin_ops _bl808_pin_ops =
 
 int rt_hw_pin_init(void)
 {
-
     return rt_device_pin_register("pin", &_bl808_pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-//irq handle
+/* irq handle */
 void GPIO0_IRQHandler(void)
 {
     rt_interrupt_enter();
