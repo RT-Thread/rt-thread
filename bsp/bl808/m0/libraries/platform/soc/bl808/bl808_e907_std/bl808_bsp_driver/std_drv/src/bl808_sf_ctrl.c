@@ -897,51 +897,51 @@ void ATTR_TCM_SECTION SF_Ctrl_AES_Set_Key(uint8_t region, uint8_t *key, SF_Ctrl_
         if (keyType == SF_CTRL_AES_128BITS) {
             i = 4;
             /*
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			*/
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            */
         } else if (keyType == SF_CTRL_AES_256BITS) {
             i = 8;
             /*
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			*/
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            */
         } else if (keyType == SF_CTRL_AES_192BITS) {
             i = 6;
             /*
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,__REV(BL_RDWD_FRM_BYTEP(key)));
-			key+=4;
-			*/
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,__REV(BL_RDWD_FRM_BYTEP(key)));
+            key+=4;
+            */
         }
 
         tmpVal = SF_CTRL_SF_AES_KEY_7_OFFSET;
@@ -1022,50 +1022,50 @@ void ATTR_TCM_SECTION SF_Ctrl_AES_Set_Key_BE(uint8_t region, uint8_t *key, SF_Ct
         if (keyType == SF_CTRL_AES_128BITS) {
             i = 4;
             /*
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			*/
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            */
         } else if (keyType == SF_CTRL_AES_256BITS) {
             i = 8;
             /*
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			*/
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_6,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_7,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            */
         } else if (keyType == SF_CTRL_AES_192BITS) {
             i = 6;
             /*
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,BL_RDWD_FRM_BYTEP(key));
-			key+=4;
-			BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,BL_RDWD_FRM_BYTEP(key));
-			*/
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_0,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_1,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_2,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_3,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_4,BL_RDWD_FRM_BYTEP(key));
+            key+=4;
+            BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_KEY_5,BL_RDWD_FRM_BYTEP(key));
+            */
         }
 
         tmpVal = SF_CTRL_SF_AES_KEY_0_OFFSET;
@@ -1145,13 +1145,13 @@ void ATTR_TCM_SECTION SF_Ctrl_AES_Set_IV(uint8_t region, uint8_t *iv, uint32_t a
         }
 
         /*
-		BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W3,__REV(BL_RDWD_FRM_BYTEP(iv)));
-		iv+=4;
-		BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W2,__REV(BL_RDWD_FRM_BYTEP(iv)));
-		iv+=4;
-		BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W1,__REV(BL_RDWD_FRM_BYTEP(iv)));
-		iv+=4;
-		*/
+        BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W3,__REV(BL_RDWD_FRM_BYTEP(iv)));
+        iv+=4;
+        BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W2,__REV(BL_RDWD_FRM_BYTEP(iv)));
+        iv+=4;
+        BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W1,__REV(BL_RDWD_FRM_BYTEP(iv)));
+        iv+=4;
+        */
         BL_WR_REG(regionRegBase, SF_CTRL_SF_AES_IV_W0, addrOffset);
         iv += 4;
     }
@@ -1219,13 +1219,13 @@ void ATTR_TCM_SECTION SF_Ctrl_AES_Set_IV_BE(uint8_t region, uint8_t *iv, uint32_
         }
 
         /*
-		BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W0,BL_RDWD_FRM_BYTEP(iv));
-		iv+=4;
-		BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W1,BL_RDWD_FRM_BYTEP(iv));
-		iv+=4;
-		BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W2,BL_RDWD_FRM_BYTEP(iv));
-		iv+=4;
-		*/
+        BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W0,BL_RDWD_FRM_BYTEP(iv));
+        iv+=4;
+        BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W1,BL_RDWD_FRM_BYTEP(iv));
+        iv+=4;
+        BL_WR_REG(regionRegBase,SF_CTRL_SF_AES_IV_W2,BL_RDWD_FRM_BYTEP(iv));
+        iv+=4;
+        */
         BL_WR_REG(regionRegBase, SF_CTRL_SF_AES_IV_W3, __REV(addrOffset));
         iv += 4;
     }

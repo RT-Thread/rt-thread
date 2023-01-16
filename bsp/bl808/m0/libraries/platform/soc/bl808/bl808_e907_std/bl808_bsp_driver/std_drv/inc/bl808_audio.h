@@ -450,8 +450,8 @@ typedef struct {
     Auido_VAD_IRQ_Source_Type vadIRQSource;                  /*!< select witch VAD output as final IRQ */
     BL_Fun_Type vadNoisyBufferMonitorEnable;                 /*!< enable or not noisy buffer monitor */
     Auido_VAD_NoisyBufferLen_Type vadNoisyBufferLen;         /*!< noise buffer length control */
-    Auido_VAD_NoisyBufferMonitor_Type vadNoisyBufferMonitor; /*!< this monit function is designed in case that VAD is locked into active state and noise buffer 
-                                                 no longer refreshes itself. this will happen when audio-background-noise suddenly changes from a 
+    Auido_VAD_NoisyBufferMonitor_Type vadNoisyBufferMonitor; /*!< this monit function is designed in case that VAD is locked into active state and noise buffer
+                                                 no longer refreshes itself. this will happen when audio-background-noise suddenly changes from a
                                                  relative low level to a much higher one */
     uint32_t noisyBufferThr;                                 /*!< vad_noise_th */
     uint8_t noisyBufferDiscardNumber;                        /*!< noise buffer discard number: */
@@ -461,9 +461,9 @@ typedef struct {
     BL_Fun_Type vadNoisyMaxLimitEnable;                      /*!< noise threshold max limitation enable signal */
     uint16_t vadNoisyMinLimit;                               /*!< noise threshold min limitation */
     BL_Fun_Type vadNoisyMinLimitEnable;                      /*!< noise threshold min limitation enable signal */
-    uint16_t vadSmoothRise;                                  /*!< VAD output debouce, remove the positive pulse whose width is smaller than Register Value, the 
+    uint16_t vadSmoothRise;                                  /*!< VAD output debouce, remove the positive pulse whose width is smaller than Register Value, the
                                                  real debouce time = Resister Vale * framing-shift */
-    uint16_t vadSmoothFall;                                  /*!< VAD output debouce, remove the negative pulse whose width is smaller than Register Value, the 
+    uint16_t vadSmoothFall;                                  /*!< VAD output debouce, remove the negative pulse whose width is smaller than Register Value, the
                                                  real debouce time = Resister Vale * framing-shift */
 } Audio_VAD_Cfg_Type;
 
@@ -491,7 +491,7 @@ typedef struct {
     uint8_t agc_noise_enter_time_ms;       /*!< agc noise enter time //default 0 NORMAL_SILENCE_DEBOUNCE_TIME_MS 0/1/2/4/8/16/32/64/96/128 */
     uint8_t agc_noise_exit_time_ms;        /*!< agc noise exit time(ms) //default 0 SILENCE_NORMAL_DEBOUNCE_TIME_MS 0/1/2/4/8/16/32/64/96/128 */
     uint8_t agc_dbv_settle_time;           /*!< agc dbv settle time */
-    Audio_AGC_Src_Type agc_src_select;     /*!< agc source select  0 ch0 absolute value, 1 ch1 absolute value, 2 ch2 absolute value, 3 maximum 
+    Audio_AGC_Src_Type agc_src_select;     /*!< agc source select  0 ch0 absolute value, 1 ch1 absolute value, 2 ch2 absolute value, 3 maximum
                                                  value of ch0/1/2 */
     Audio_AGC_Detect_Mode agc_detect_mode; /*!< 0 detect by peak, 1 detect by average */
     uint8_t agc_attack_time;               /*!< agc peak filter attack time */

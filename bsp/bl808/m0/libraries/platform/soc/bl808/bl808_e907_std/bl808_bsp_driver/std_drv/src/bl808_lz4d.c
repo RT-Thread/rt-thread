@@ -169,7 +169,7 @@ void LZ4D_Decompress(const void *in, void *out)
     LZ4DECOMPRESSOR->lz4_src_start.WORD = (uint32_t)(uintptr_t)in;
     /* TODO: the out region length must be 4-byte aligned:
      * e.g.: the decompressed length is 33, you have to allocate 36 bytes for it.
-     * or, the HW will overwrite the RAM space from offset 34 to 36. 
+     * or, the HW will overwrite the RAM space from offset 34 to 36.
      */
     LZ4DECOMPRESSOR->lz4_dst_start.WORD = (uint32_t)(uintptr_t)out;
 

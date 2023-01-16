@@ -97,7 +97,7 @@ typedef void (*hosal_adc_irq_t)(void *parg);
 typedef struct {
     uint8_t port;                    /**< @brief adc port */
     hosal_adc_config_t config;        /**< @brief adc config */
-    hosal_dma_chan_t dma_chan;        /**< @brief adc dma channel */ 
+    hosal_dma_chan_t dma_chan;        /**< @brief adc dma channel */
     hosal_adc_irq_t cb;               /**< @brief adc callback */
     void *p_arg;                      /**< @brief p_arg data */
     void *priv;                       /**< @brief priv data */
@@ -116,9 +116,9 @@ typedef void (*hosal_adc_cb_t)(hosal_adc_event_t event, void *data, uint32_t siz
  *
  * @param[in]  adc  the interface which should be initialised
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_init(hosal_adc_dev_t *adc);
 
@@ -128,9 +128,9 @@ int hosal_adc_init(hosal_adc_dev_t *adc);
  * @param[in]   adc      the interface which should be sampled
  * @param[in]   channel  adc channel
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_add_channel(hosal_adc_dev_t *adc, uint32_t channel);
 
@@ -140,18 +140,18 @@ int hosal_adc_add_channel(hosal_adc_dev_t *adc, uint32_t channel);
  * @param[in]   adc      the interface which should be sampled
  * @param[in]   channel  adc channel
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_remove_channel(hosal_adc_dev_t *adc, uint32_t channel);
 
 /**
  * @brief Takes adc device handle from an ADC interface
  *
- * @return  
- *	- other  get adc device success
- *	- NULL   if an error occurred with any step
+ * @return
+ *  - other  get adc device success
+ *  - NULL   if an error occurred with any step
  */
 hosal_adc_dev_t *hosal_adc_device_get(void);
 
@@ -162,9 +162,9 @@ hosal_adc_dev_t *hosal_adc_device_get(void);
  * @param[in]   channel  adc channel
  * @param[in]   timeout  ms timeout
  *
- * @return  
- *	- other  get adc data success
- *	- -1     if an error occurred with any step
+ * @return
+ *  - other  get adc data success
+ *  - -1     if an error occurred with any step
  */
 int hosal_adc_value_get(hosal_adc_dev_t *adc, uint32_t channel, uint32_t timeout);
 
@@ -173,9 +173,9 @@ int hosal_adc_value_get(hosal_adc_dev_t *adc, uint32_t channel, uint32_t timeout
  *
  * @param[in]   adc      the interface which should be sampled
  *
- * @return  
- *	- other  get adc data success
- *	- -1     if an error occurred with any step
+ * @return
+ *  - other  get adc data success
+ *  - -1     if an error occurred with any step
  */
 int hosal_adc_tsen_value_get(hosal_adc_dev_t *adc);
 
@@ -188,9 +188,9 @@ int hosal_adc_tsen_value_get(hosal_adc_dev_t *adc);
  *                            adc in cb must be the same pointer with adc pointer passed to hosal_adc_sample_cb_reg
  *                            driver must notify upper layer by calling cb if ADC data is ready in HW or memory(DMA)
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_sample_cb_reg(hosal_adc_dev_t *adc, hosal_adc_cb_t cb);
 
@@ -201,9 +201,9 @@ int hosal_adc_sample_cb_reg(hosal_adc_dev_t *adc, hosal_adc_cb_t cb);
  * @param[in]   data            adc data buffer
  * @param[in]   size            data buffer size aligned with resolution (until the next power of two)
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_start(hosal_adc_dev_t *adc, void *data, uint32_t size);
 
@@ -212,9 +212,9 @@ int hosal_adc_start(hosal_adc_dev_t *adc, void *data, uint32_t size);
  *
  * @param[in]   adc             the ADC interface
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_stop(hosal_adc_dev_t *adc);
 
@@ -223,9 +223,9 @@ int hosal_adc_stop(hosal_adc_dev_t *adc);
  *
  * @param[in]  adc  the interface which should be de-initialised
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_adc_finalize(hosal_adc_dev_t *adc);
 

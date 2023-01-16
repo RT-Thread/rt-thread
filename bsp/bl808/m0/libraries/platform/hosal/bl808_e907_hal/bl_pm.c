@@ -103,7 +103,7 @@ static int pm_env_init(void)
         INIT_UTILS_DLIST_HEAD(&(gp_pm_env->pm_list)[i]);
     }
 
-    gp_pm_env->state = PM_STATE_INITED; 
+    gp_pm_env->state = PM_STATE_INITED;
 
     ///for debug
     gp_pm_env->bt_capacity.cap = 0xffff;
@@ -136,13 +136,13 @@ static int pm_deinit(void)
 
     vPortFree(gp_pm_env->pm_list);
     gp_pm_env->pm_list = NULL;
-    
+
     vSemaphoreDelete(gp_pm_env->pm_mux);
     gp_pm_env->pm_mux = NULL;
-    
+
     vPortFree(gp_pm_env);
     gp_pm_env = NULL;
-    
+
     return 0;
 }
 
@@ -180,7 +180,7 @@ static void pm_node_add(struct pm_node *pnode, utils_dlist_t *queue)
             utils_dlist_add(&(pnode->dlist_item), pre_save);
             xSemaphoreGive(gp_pm_env->pm_mux);
             break;
-        } 
+        }
 
         pre_save = &(node->dlist_item);
     }
@@ -225,7 +225,7 @@ static int pm_pmlist_traverse(enum PM_EVEMT event, utils_dlist_t *queue, uint32_
     }
 
     utils_dlist_for_each_entry_safe(queue, tmp, node, struct pm_node, dlist_item) {
-        if ((node->enable) && (code == node->code) && (gp_pm_env->wlan_capacity.cap & node->cap_bit) && 
+        if ((node->enable) && (code == node->code) && (gp_pm_env->wlan_capacity.cap & node->cap_bit) &&
                 (gp_pm_env->bt_capacity.cap & node->cap_bit)) {
 
             if (pm_state_exec_func_check(event, code)) {
@@ -286,8 +286,8 @@ static int pm_internal_process_event(enum PM_EVEMT event, uint32_t code)
         {
 
         }
-    } 
-    
+    }
+
     return ret;
 }
 
@@ -296,7 +296,7 @@ int pm_post_event(enum PM_EVEMT event, uint32_t code, uint32_t *retval)
     if (!gp_pm_env) {
         return -1;
     }
-    
+
     pm_pmlist_traverse(event, &(gp_pm_env->pm_list)[event], code, retval);
     pm_internal_process_event(event, code);
 
@@ -322,9 +322,9 @@ int bl_pm_event_register(enum PM_EVEMT event, uint32_t code, uint32_t cap_bit, u
     p_node->ops = ops;
     p_node->ctx = arg;
     p_node->enable = enable;
-    
+
     pm_node_add(p_node, &(gp_pm_env->pm_list)[event]);
-    
+
     return 0;
 }
 
@@ -344,7 +344,7 @@ int bl_pm_event_switch(enum PM_EVEMT event, uint32_t code, enum PM_EVENT_ABLE en
     utils_dlist_for_each_entry_safe(queue, tmp, node, struct pm_node, dlist_item) {
         if (code == node->code) {
             node->enable = enable;
-            
+
             ret = 0;
         }
     }
@@ -396,8 +396,8 @@ int bl_pm_state_run(void)
         {
 
         }
-    } 
-    
+    }
+
     return ret;
 }
 
@@ -467,7 +467,7 @@ int bl_pm_capacity_set(enum PM_LEVEL level)
         {
             return -1;
         }
-    } 
+    }
 
     pm_set_wlan_capacity(capacity);
 

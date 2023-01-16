@@ -76,6 +76,11 @@ void rt_hw_board_init(void)
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
+    /* GPIO driver initialization is open by default */
+#ifdef RT_USING_PIN
+    rt_hw_pin_init();
+#endif
+
     /* UART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
     rt_hw_uart_init();

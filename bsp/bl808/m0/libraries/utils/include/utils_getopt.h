@@ -38,7 +38,7 @@ typedef struct getopt_env {
     int optind;      /*!< current index of argv*/
     int opterr;      /*!< non-zero enable error message output, while 0,no error message output*/
     int optopt;      /*!< contain unrecognized option character*/
-    int __optpos;    
+    int __optpos;
 } getopt_env_t;
 
 /**
@@ -47,7 +47,7 @@ typedef struct getopt_env {
  * @param env pointer to struct getopt_env
  * @param opterr set error message output method
  *
- * @return 
+ * @return
  *     -  0: success
  *     - -1: fail
  */
@@ -57,12 +57,12 @@ int utils_getopt_init(getopt_env_t *env, int opterr);
  * @brief Parses the command-line arguments
  *
  * @param env pointer to struct getopt_env
- * @param argc the argument count 
+ * @param argc the argument count
  * @param argv the argument array
  *
- * @return 
+ * @return
  *     -  option character : an option was successfully found
- *     - -1 : all command-line options have been parsed 
+ *     - -1 : all command-line options have been parsed
  *     - '?' : option character was not in optstring
  *     - ':' or '?' : If utils_getopt() encounters an option with a missing argument, then the return value depends on the first character in optstring: if it is ':', then ':' is returned; otherwise '?' is returned
  *

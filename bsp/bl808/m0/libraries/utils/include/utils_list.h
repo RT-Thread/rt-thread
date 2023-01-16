@@ -433,12 +433,12 @@ static inline int utils_dlist_empty(const utils_dlist_t *head)
  */
 static inline int utils_dlist_entry_number(utils_dlist_t *queue)
 {
-	int num;
-	utils_dlist_t *cur = queue;  
-	for (num=0;cur->next != queue;cur=cur->next, num++)
-		;
-	
-	return num; 
+    int num;
+    utils_dlist_t *cur = queue;
+    for (num=0;cur->next != queue;cur=cur->next, num++)
+        ;
+
+    return num;
 }
 
 
@@ -611,11 +611,11 @@ static inline utils_slist_t* utils_slist_next(utils_slist_t *l)
  */
 static inline int utils_slist_entry_number(utils_slist_t *queue)
 {
-	int num;
-    utils_slist_t *cur = queue;  
+    int num;
+    utils_slist_t *cur = queue;
     for (num=0;cur->next;cur=cur->next, num++)
-		;
-	
-    return num; 
+        ;
+
+    return num;
 }
 #endif

@@ -75,9 +75,9 @@ typedef struct {
  *
  * @param[in]  rtc  rtc device
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_rtc_init(hosal_rtc_dev_t *rtc);
 
@@ -87,9 +87,9 @@ int hosal_rtc_init(hosal_rtc_dev_t *rtc);
  * @param[in]   rtc   rtc device
  * @param[in]   time  pointer to a time structure
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_rtc_set_time(hosal_rtc_dev_t *rtc, const hosal_rtc_time_t *time);
 
@@ -99,9 +99,9 @@ int hosal_rtc_set_time(hosal_rtc_dev_t *rtc, const hosal_rtc_time_t *time);
  * @param[in]   rtc   rtc device
  * @param[out]  time  pointer to a time structure
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_rtc_get_time(hosal_rtc_dev_t *rtc, hosal_rtc_time_t *time);
 
@@ -111,9 +111,9 @@ int hosal_rtc_get_time(hosal_rtc_dev_t *rtc, hosal_rtc_time_t *time);
  * @param[in]   rtc   rtc device
  * @param[in]   time_stamp  new time value
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_rtc_set_count(hosal_rtc_dev_t *rtc, uint64_t *time_stamp);
 
@@ -121,11 +121,11 @@ int hosal_rtc_set_count(hosal_rtc_dev_t *rtc, uint64_t *time_stamp);
  * @brief This function will return the value of time read from the on board CPU real time clock.
  *
  * @param[in]   rtc   rtc device
- * @param[in]   time_stamp new time value 
+ * @param[in]   time_stamp new time value
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_rtc_get_count(hosal_rtc_dev_t *rtc, uint64_t *time_stamp);
 
@@ -134,9 +134,9 @@ int hosal_rtc_get_count(hosal_rtc_dev_t *rtc, uint64_t *time_stamp);
  *
  * @param[in]  RTC  the interface which should be de-initialised
  *
- * @return  
+ * @return
  *     - 0 : success
- *     - other : fail 
+ *     - other : fail
  */
 int hosal_rtc_finalize(hosal_rtc_dev_t *rtc);
 

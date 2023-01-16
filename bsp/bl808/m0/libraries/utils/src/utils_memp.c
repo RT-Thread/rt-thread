@@ -142,7 +142,7 @@ void *utils_memp_malloc(utils_memp_pool_t *pool)
         pat = (uint32_t *)&node->next;
         *pat = UTILS_MEMP_ALLOCED_NODE_PATTERN;
         return (void *)node + sizeof(struct utils_memp_node);
-    } else { 
+    } else {
         return NULL;
     }
 }

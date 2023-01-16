@@ -75,9 +75,9 @@ int bl_efuse_ctrl_program_R0(uint32_t index, uint32_t *data, uint32_t len)
     bdiv = BL_GET_REG_BITS_VAL(BL_RD_REG(GLB_BASE, GLB_SYS_CFG0), GLB_REG_BCLK_DIV);
 
     HBN_Set_MCU_Root_CLK_Sel(HBN_MCU_ROOT_CLK_XCLK);
-    
+
     EF_Ctrl_Program_Direct_R0(index, data, len);
-    
+
     GLB_Set_System_CLK_Div(hdiv, bdiv);
     HBN_Set_MCU_Root_CLK_Sel(rtClk);
 
@@ -96,9 +96,9 @@ int bl_efuse_ctrl_read_R0(uint32_t index, uint32_t *data, uint32_t len)
 
 
     HBN_Set_MCU_Root_CLK_Sel(HBN_MCU_ROOT_CLK_XCLK);
-    
+
     EF_Ctrl_Read_Direct_R0(index, data, len);
-    
+
     GLB_Set_System_CLK_Div(hdiv, bdiv);
     HBN_Set_MCU_Root_CLK_Sel(rtClk);
 
@@ -116,8 +116,8 @@ int bl_efuse_read_mac_opt(uint8_t slot, uint8_t mac[6], uint8_t reload)
     bdiv = BL_GET_REG_BITS_VAL(BL_RD_REG(GLB_BASE, GLB_SYS_CFG0), GLB_REG_BCLK_DIV);
 
     HBN_Set_MCU_Root_CLK_Sel(HBN_MCU_ROOT_CLK_XCLK);
-    
-//    EF_Ctrl_Read_MAC_Address_Opt(slot, mac, reload); 
+
+//    EF_Ctrl_Read_MAC_Address_Opt(slot, mac, reload);
     EF_Ctrl_Read_MAC_Address_Raw(mac);
 
     GLB_Set_System_CLK_Div(hdiv, bdiv);

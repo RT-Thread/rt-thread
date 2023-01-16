@@ -53,25 +53,25 @@ bool check_leap_year(uint16_t year)
 
 void cal_weekday(rtc_time *beijing_time)
 {
-	uint32_t y,m,d,w;
+    uint32_t y,m,d,w;
 
-	y=beijing_time->year;
-	m=beijing_time->month;
-	d=beijing_time->day;
+    y=beijing_time->year;
+    m=beijing_time->month;
+    d=beijing_time->day;
 
-	if((m==1)||(m==2))
-	{
-		m+=12;
-		y--;
-	}
-	/*
-	把一月和二月看成是上一年的十三月和十四月，例：如果是2004-1-10则换算成：2003-13-10来代入公式计算。
-	以公元元年为参考，公元元年1月1日为星期一</PRE><PRE>程序如下：
-	利用基姆拉尔森计算日期公式  w=(d+2*m+3*(m+1)/5+y+y/4-y/100+y/400)
-	*/
-	w=(d+2*m+3*(m+1)/5+y+y/4-y/100+y/400+1)%7;
+    if((m==1)||(m==2))
+    {
+        m+=12;
+        y--;
+    }
+    /*
+    把一月和二月看成是上一年的十三月和十四月，例：如果是2004-1-10则换算成：2003-13-10来代入公式计算。
+    以公元元年为参考，公元元年1月1日为星期一</PRE><PRE>程序如下：
+    利用基姆拉尔森计算日期公式  w=(d+2*m+3*(m+1)/5+y+y/4-y/100+y/400)
+    */
+    w=(d+2*m+3*(m+1)/5+y+y/4-y/100+y/400+1)%7;
 
-	beijing_time->week=(uint8_t)w;
+    beijing_time->week=(uint8_t)w;
 }
 
 void unixtime2bejingtime(uint32_t unixtime, rtc_time *beijing_time)
@@ -127,10 +127,10 @@ void unixtime2bejingtime(uint32_t unixtime, rtc_time *beijing_time)
 
 
 
-	/*利用基姆拉尔森计算日期公式  w=(d+2*m+3*(m+1)/5+y+y/4-y/100+y/400)*/
+    /*利用基姆拉尔森计算日期公式  w=(d+2*m+3*(m+1)/5+y+y/4-y/100+y/400)*/
 
-	beijing_time->week = beijing_time->day + 2*beijing_time->month + 3*(beijing_time->month+1)/5 + \
-	beijing_time->year + beijing_time->year/4 - beijing_time->year/100 +beijing_time->year/400 ;
+    beijing_time->week = beijing_time->day + 2*beijing_time->month + 3*(beijing_time->month+1)/5 + \
+    beijing_time->year + beijing_time->year/4 - beijing_time->year/100 +beijing_time->year/400 ;
 
-	cal_weekday(beijing_time);
+    cal_weekday(beijing_time);
 }

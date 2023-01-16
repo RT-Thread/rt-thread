@@ -261,7 +261,7 @@ void SDH_CMDTransferFinished_CallBack(SDH_Handle_Cfg_Type *handle, SDH_Stat_Type
 *******************************************************************************/
 static void SDH_INT_Init(void)
 {
-	System_NVIC_SetPriority(SDH_SDCARD_IRQn, 7, 1);
+    System_NVIC_SetPriority(SDH_SDCARD_IRQn, 7, 1);
     CPU_Interrupt_Enable(SDH_SDCARD_IRQn);
 
     SDH_EnableIntStatus(SDH_INT_ALL);
@@ -1272,10 +1272,10 @@ status_t SDH_Init(uint32_t bus_wide, sd_card_t *pOutCardInfo)
     /* gpio init */
     SDH_GPIO_Init(bus_wide);
 
-	/* config sdh clock */
-	GLB_PER_Clock_UnGate(GLB_AHB_CLOCK_SDH);
+    /* config sdh clock */
+    GLB_PER_Clock_UnGate(GLB_AHB_CLOCK_SDH);
     GLB_Set_SDH_CLK(1, GLB_SDH_CLK_WIFIPLL_96M, 0);
-	SDH_ClockSet(400000, 96000000, 96000000);
+    SDH_ClockSet(400000, 96000000, 96000000);
 
 #if SDIO_SDCARD_INT_MODE
     SDH_INT_Init();

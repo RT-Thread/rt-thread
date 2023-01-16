@@ -752,15 +752,15 @@ int tc_blfdtdump(void)
     int result;
 
     result = blfdtdump(tc_wifi_dtb, TC_WIFI_DTB_LEN, true, true);
- 
+
     if (result) {
         printf("dump failed\r\n");
     } else {
         printf("dump successed\r\n");
     }
-    
+
     return result;
-   
+
     // blfdtdump(tc_wifi_dtb, TC_WIFI_DTB_LEN, false, true);
     // blfdtdump(tc_wifi_dtb, TC_WIFI_DTB_LEN, false, false);
 }
