@@ -22,7 +22,7 @@ if rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/iar/startup_apm32f10x_hd.s']
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/gcc/startup_apm32f10x_hd.s']
+    src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/gcc/startup_apm32f10x_hd.S']
 
 # You can select chips from the list above
 CPPDEFINES = ['APM32F10X_HD']
