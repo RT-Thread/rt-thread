@@ -50,8 +50,6 @@ struct mem_desc
 #define COMBINEPTE(paddr, attr)                                                \
     ((((paddr) >> PAGE_OFFSET_BIT) << PTE_PPN_SHIFT) | (attr))
 
-#define ARCH_ADDRESS_WIDTH_BITS 64
-
 #define MMU_MAP_ERROR_VANOTALIGN -1
 #define MMU_MAP_ERROR_PANOTALIGN -2
 #define MMU_MAP_ERROR_NOPAGE     -3
