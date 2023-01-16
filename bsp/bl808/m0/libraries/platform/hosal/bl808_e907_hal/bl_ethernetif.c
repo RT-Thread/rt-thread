@@ -338,12 +338,12 @@ static struct pbuf *low_level_input(struct netif *netif)
     uint16_t max_len, min_len;
     struct pbuf *h = NULL;
     EMAC_BD_Desc_Type *bd;
-	  bd = &thiz->bd[thiz->rxIndexCPU];
-	  if(bd->C_S_L & EMAC_BD_FIELD_MSK(RX_E)){
+      bd = &thiz->bd[thiz->rxIndexCPU];
+      if(bd->C_S_L & EMAC_BD_FIELD_MSK(RX_E)){
         // MSG("RX BD is empty\r\n");
         h = NULL;
-	  } else {
-	      emac_get_fram_len(&max_len, &min_len);
+      } else {
+          emac_get_fram_len(&max_len, &min_len);
         pkt_len = (bd->C_S_L & EMAC_BD_FIELD_MSK(RX_LEN)) >> BD_RX_LEN_POS;
         //check length
         if (pkt_len > max_len) {

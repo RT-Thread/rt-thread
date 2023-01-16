@@ -166,7 +166,7 @@ static void _dump_flash_config()
     extern uint8_t __boot2_flashCfg_src;
 
     USER_UNUSED(__boot2_flashCfg_src);
-    
+
     blog_info("======= FlashCfg magiccode @%p=======\r\n", &__boot2_flashCfg_src);
     blog_info("mid \t\t0x%X\r\n", g_flash_cfg.mid);
     blog_info("clkDelay \t0x%X\r\n", g_flash_cfg.clkDelay);

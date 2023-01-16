@@ -144,16 +144,16 @@ static void hosal_spi_gpio_init(hosal_spi_dev_t *arg)
     GLB_GPIO_Func_Init(GPIO_FUN_SPI0, gpiopins, sizeof(gpiopins)/sizeof(gpiopins[0]));
 
     if (arg->config.mode == 0) {
-        if(arg->port == SPI0_ID) {       
-            GLB_Set_MCU_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_MASTER);  
-        } else {      
-            GLB_Set_DSP_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_MASTER);  
+        if(arg->port == SPI0_ID) {
+            GLB_Set_MCU_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_MASTER);
+        } else {
+            GLB_Set_DSP_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_MASTER);
         }
     } else {
-        if(arg->port == SPI0_ID) {       
-            GLB_Set_MCU_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_SLAVE);  
-        } else {      
-            GLB_Set_DSP_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_SLAVE);  
+        if(arg->port == SPI0_ID) {
+            GLB_Set_MCU_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_SLAVE);
+        } else {
+            GLB_Set_DSP_SPI_0_ACT_MOD_Sel(GLB_SPI_PAD_ACT_AS_SLAVE);
         }
     }
 

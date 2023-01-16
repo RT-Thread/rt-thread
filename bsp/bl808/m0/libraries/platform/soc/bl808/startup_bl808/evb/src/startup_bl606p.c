@@ -125,7 +125,7 @@ void system_init_bl606p(void)
     p = (uint32_t *)(&__bootrom_data_section_end);
     *p = 0x5A5AA5A5;
     /*diable BMX error incase Sbooten=0xf,while user send vector(core) reset and CPU read deadbeef,
-	if not disable this bit, CPU will also get hardfault at the same time*/
+    if not disable this bit, CPU will also get hardfault at the same time*/
     GLB_BMX_TO_Init(&bmxCfg);
     //GLB_BMX_Addr_Monitor_Disable();
 
@@ -150,21 +150,21 @@ void system_init_bl606p(void)
     /* Disable embedded flash power up*/
     //HBN_Set_Embedded_Flash_Pullup(DISABLE);
 #if 0
-	/* disable hardware_pullup_pull_down (reg_en_hw_pu_pd = 0) */
-	tmpVal = BL_RD_REG(HBN_BASE, HBN_IRQ_MODE);
-	tmpVal = BL_CLR_REG_BIT(tmpVal, HBN_REG_EN_HW_PU_PD);
-	BL_WR_REG(HBN_BASE, HBN_IRQ_MODE, tmpVal);
+    /* disable hardware_pullup_pull_down (reg_en_hw_pu_pd = 0) */
+    tmpVal = BL_RD_REG(HBN_BASE, HBN_IRQ_MODE);
+    tmpVal = BL_CLR_REG_BIT(tmpVal, HBN_REG_EN_HW_PU_PD);
+    BL_WR_REG(HBN_BASE, HBN_IRQ_MODE, tmpVal);
 
-	/* Restore default setting*/
-	GLB_UART_Sig_Swap_Set(UART_SIG_SWAP_NONE);
-	GLB_JTAG_Sig_Swap_Set(JTAG_SIG_SWAP_NONE);
+    /* Restore default setting*/
+    GLB_UART_Sig_Swap_Set(UART_SIG_SWAP_NONE);
+    GLB_JTAG_Sig_Swap_Set(JTAG_SIG_SWAP_NONE);
 
-	/*Power up soc 11 power domain,TODO: This should be optional */
-	//AON_Power_On_SOC_11();
-	/* Record LDO18 pu flag before power up. This maybe not neccessary but copy from 606*/
-	//BL_WR_WORD(BFLB_BOOTROM_AP_BOOT_LOG_ADDR,GLB->ldo18io.BF.pu_ldo18io);
-	/* Power up flash power*/
-	//GLB_Power_On_LDO18_IO();
+    /*Power up soc 11 power domain,TODO: This should be optional */
+    //AON_Power_On_SOC_11();
+    /* Record LDO18 pu flag before power up. This maybe not neccessary but copy from 606*/
+    //BL_WR_WORD(BFLB_BOOTROM_AP_BOOT_LOG_ADDR,GLB->ldo18io.BF.pu_ldo18io);
+    /* Power up flash power*/
+    //GLB_Power_On_LDO18_IO();
 
 #endif
 #endif

@@ -4038,7 +4038,7 @@ csi_status csi_sqrt_q15(
                    - \ref CSI_MATH_SUCCESS        : input value is positive
                    - \ref CSI_MATH_ARGUMENT_ERROR : input value is negative; *pOut is set to 0
  */
-#ifdef __riscv 
+#ifdef __riscv
 __STATIC_FORCEINLINE csi_status csi_sqrt_f32(
     float32_t in,
     float32_t * pOut)
@@ -4075,12 +4075,12 @@ csi_status csi_sqrt_f32(
 
 
 /**
-  @brief		 Q31 square root function.
-  @param[in]	 in    input value.  The range of the input value is [0 +1) or 0x00000000 to 0x7FFFFFFF
-  @param[out]	 pOut  points to square root of input value
-  @return		 execution status
-				   - \ref CSI_MATH_SUCCESS		: input value is positive
-				   - \ref CSI_MATH_ARGUMENT_ERROR : input value is negative; *pOut is set to 0
+  @brief         Q31 square root function.
+  @param[in]     in    input value.  The range of the input value is [0 +1) or 0x00000000 to 0x7FFFFFFF
+  @param[out]    pOut  points to square root of input value
+  @return        execution status
+                   - \ref CSI_MATH_SUCCESS      : input value is positive
+                   - \ref CSI_MATH_ARGUMENT_ERROR : input value is negative; *pOut is set to 0
  */
 csi_status csi_sqrt_q31(
     q31_t in,
@@ -4102,19 +4102,19 @@ void csi_vsqrt_f32(
     uint16_t len);
 
  void csi_vsqrt_q15(
-    q15_t * 	pIn,
-    q15_t * 	pOut,
-    uint16_t	len);
+    q15_t *     pIn,
+    q15_t *     pOut,
+    uint16_t    len);
 
 void csi_vsqrt_q31(
-    q31_t * 	pIn,
-    q31_t * 	pOut,
-    uint16_t	len);
+    q31_t *     pIn,
+    q31_t *     pOut,
+    uint16_t    len);
 
 void csi_vsqrt_q7(
-    q7_t * 	pIn,
-    q7_t * 	pOut,
-    uint16_t	len);
+    q7_t *  pIn,
+    q7_t *  pOut,
+    uint16_t    len);
 
 
 #else
@@ -4129,9 +4129,9 @@ __STATIC_FORCEINLINE void csi_vsqrt_f32(
 }
 
 __STATIC_FORCEINLINE void csi_vsqrt_q15(
-    q15_t * 	pIn,
-    q15_t * 	pOut,
-    uint16_t	len
+    q15_t *     pIn,
+    q15_t *     pOut,
+    uint16_t    len
 )
 {
     for (int i = 0; i < len; i++) {
@@ -4139,9 +4139,9 @@ __STATIC_FORCEINLINE void csi_vsqrt_q15(
     }
 }
 __STATIC_FORCEINLINE void csi_vsqrt_q31(
-    q31_t * 	pIn,
-    q31_t * 	pOut,
-    uint16_t	len
+    q31_t *     pIn,
+    q31_t *     pOut,
+    uint16_t    len
 )
 {
     for (int i = 0; i < len; i++) {

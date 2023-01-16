@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-/** @addtogroup hosal_wdg WATCHDOG 
+/** @addtogroup hosal_wdg WATCHDOG
  *  HOSAL WATCHDOG API
  *
  *  @{
@@ -65,7 +65,7 @@ typedef struct {
  *
  * @param[in]  wdg  the watch dog device
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -83,7 +83,7 @@ void hosal_wdg_reload(hosal_wdg_dev_t *wdg);
  *
  * @param[in]  wdg  the watch dog device
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */

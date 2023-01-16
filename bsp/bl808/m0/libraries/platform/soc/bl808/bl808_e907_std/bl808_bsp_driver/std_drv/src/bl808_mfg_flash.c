@@ -45,7 +45,7 @@ int8_t mfg_flash_init( SPI_Flash_Cfg_Type *flashCfg)
             return -1;
         }
     }
-#endif    
+#endif
     return -1;
 }
 
@@ -110,7 +110,7 @@ void mfg_flash_write_xtal_capcode(void)
 }
 
 int8_t mfg_flash_read_xtal_capcode(uint8_t *capcode,uint8_t reload)
-{  
+{
 #if 0
     if((reload!=0)&&(mfg_flash_read()!=0)){
         return -1;
@@ -123,7 +123,7 @@ int8_t mfg_flash_read_xtal_capcode(uint8_t *capcode,uint8_t reload)
             }
         }
     }
-#endif    
+#endif
     return -1;
 }
 
@@ -142,7 +142,7 @@ int8_t mfg_flash_write_poweroffset_pre(int8_t pwrOffset[14],uint8_t program)
     }else{
         return 0;
     }
-#endif 
+#endif
     return 0;
 }
 
@@ -193,9 +193,9 @@ int8_t mfg_flash_read_poweroffset(int8_t pwrOffset[14],uint8_t reload)
             }
         }
     }
-#endif    
+#endif
     return -1;
-    
+
 }
 
 int8_t mfg_flash_write_macaddr_pre(uint8_t mac[6],uint8_t program)
@@ -235,7 +235,7 @@ int8_t mfg_flash_read_macaddr(uint8_t mac[6],uint8_t reload)
             }
         }
     }
-#endif    
+#endif
     return -1;
 }
 

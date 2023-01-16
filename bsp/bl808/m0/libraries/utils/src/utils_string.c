@@ -34,47 +34,47 @@
 #include <utils_string.h>
 
 static int params_filter(char** params,uint32_t *r)
-{	
-	char *p ;
-	uint32_t result=0;
-	uint8_t base=0;
-	
-	p = *params;
-	
+{
+    char *p ;
+    uint32_t result=0;
+    uint8_t base=0;
+
+    p = *params;
+
     if((*p == '0') && ((*(p+1) == 'x') || (*(p+1) == 'X')) ){
-		p = p + 2;
-		base = 16;
-		
-	}else{
-		base = 10;
-	}
-	
-	while(*p){
-		result *= base;
-	    if(*p >= '0' && *p<='9')
-			result += *p-'0';
-		else if(base==10)
-			return -1;
-			
-		if(base==16){
-			if(*p >= 'a' && *p<='f')
-				result += *p-'a' + 10;
-			else if(*p >= 'A' && *p<='F')
-				result += *p-'A' + 10;
-		
-		}
-		p++;
-	}
-		
-	*r = result;
-	return 0;
-	
+        p = p + 2;
+        base = 16;
+
+    }else{
+        base = 10;
+    }
+
+    while(*p){
+        result *= base;
+        if(*p >= '0' && *p<='9')
+            result += *p-'0';
+        else if(base==10)
+            return -1;
+
+        if(base==16){
+            if(*p >= 'a' && *p<='f')
+                result += *p-'a' + 10;
+            else if(*p >= 'A' && *p<='F')
+                result += *p-'A' + 10;
+
+        }
+        p++;
+    }
+
+    *r = result;
+    return 0;
+
 }
 
 
 void get_bytearray_from_string(char** params, uint8_t *result,int array_size)
 {
-    
+
     int i = 0;
     char rand[3];
 
@@ -88,38 +88,38 @@ void get_bytearray_from_string(char** params, uint8_t *result,int array_size)
 
 void get_uint8_from_string(char** params, uint8_t *result)
 {
-	uint32_t p = 0;
-	int state=0;
-	
-	state = params_filter(params,&p);
-	if(!state){
-		*result = p & 0xff;
-	}else
-		*result = 0;
+    uint32_t p = 0;
+    int state=0;
+
+    state = params_filter(params,&p);
+    if(!state){
+        *result = p & 0xff;
+    }else
+        *result = 0;
 }
 
 void get_uint16_from_string(char** params, uint16_t *result)
 {
-	uint32_t p = 0;
-	int state=0;
-	
-	state = params_filter(params,&p);
-	if(!state){
-		*result = p & 0xffff;
-	}else
-		*result = 0;
+    uint32_t p = 0;
+    int state=0;
+
+    state = params_filter(params,&p);
+    if(!state){
+        *result = p & 0xffff;
+    }else
+        *result = 0;
 }
 
 void get_uint32_from_string(char** params, uint32_t *result)
 {
     uint32_t p = 0;
-	int state=0;
-	
-	state = params_filter(params,&p);
-	if(!state){
-		*result = p;
-	}else
-		*result = 0;
+    int state=0;
+
+    state = params_filter(params,&p);
+    if(!state){
+        *result = p;
+    }else
+        *result = 0;
 }
 
 void utils_parse_number(const char *str, char sep, uint8_t *buf, int buflen, int base)
@@ -323,7 +323,7 @@ void utils_memdrain16(void *src, size_t len)
     while (len--) {
         tmp = *s++;
     }
-    
+
     (void)tmp;
 }
 
@@ -337,7 +337,7 @@ void utils_memdrain32(void *src, size_t len)
     while (len--) {
         tmp = *s++;
     }
-    
+
     (void)tmp;
 }
 
@@ -351,7 +351,7 @@ void utils_memdrain64(void *src, size_t len)
     while (len--) {
         tmp = *s++;
     }
-    
+
     (void)tmp;
 }
 
@@ -369,7 +369,7 @@ void * utils_memdrain8_with_check(void *src, size_t len, uint8_t seq)
         }
     }
 
-    return NULL; 
+    return NULL;
 }
 
 void * utils_memdrain16_with_check(void *src, size_t len, uint16_t seq)
@@ -386,8 +386,8 @@ void * utils_memdrain16_with_check(void *src, size_t len, uint16_t seq)
             return (uint16_t *)s-1;
         }
     }
-    
-    return NULL; 
+
+    return NULL;
 }
 
 void * utils_memdrain32_with_check(void *src, size_t len, uint32_t seq)
@@ -404,8 +404,8 @@ void * utils_memdrain32_with_check(void *src, size_t len, uint32_t seq)
             return (uint32_t *)s-1;
         }
     }
-    
-    return NULL; 
+
+    return NULL;
 }
 
 void * utils_memdrain64_with_check(void *src, size_t len, uint64_t seq)
@@ -422,6 +422,6 @@ void * utils_memdrain64_with_check(void *src, size_t len, uint64_t seq)
             return (uint64_t *)s-1;
         }
     }
-    
-    return NULL; 
+
+    return NULL;
 }

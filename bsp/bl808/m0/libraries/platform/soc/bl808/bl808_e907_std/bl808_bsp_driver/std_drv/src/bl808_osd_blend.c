@@ -134,7 +134,7 @@ BL_Err_Type osd_blend_mem_access_line(osd_blend_reg_t *pblend, uint32_t req_hlen
 
 /******************************************************************************
  * @brief  OSD blend layer force shadow control:
- *         call this API before DSP2 streaming on to ensure the OSD layer 
+ *         call this API before DSP2 streaming on to ensure the OSD layer
  *         is activated even in frame 0.
  *         After calling this API, this OSD blending layer has to be enabled.
  *

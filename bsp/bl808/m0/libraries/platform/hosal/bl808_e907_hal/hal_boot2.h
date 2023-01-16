@@ -60,9 +60,9 @@ typedef enum {
 /**
  * @brief Error type definition
  */
-typedef enum 
+typedef enum
 {
-  HAL_SUCCESS  = 0, 
+  HAL_SUCCESS  = 0,
   HAL_ERROR   = 1,
 } HAL_Err_Type;
 

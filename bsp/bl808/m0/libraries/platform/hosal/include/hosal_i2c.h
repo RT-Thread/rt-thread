@@ -81,7 +81,7 @@ typedef struct {
  *
  * @param[in]  i2c  the device for which the i2c port should be initialised
  *
- * @return  
+ * @return
  *  - 0  on success
  *  - EIO  if an error occurred with any step
  */

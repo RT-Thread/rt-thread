@@ -38,8 +38,8 @@ enum {
     UHS_LATENCY_CODE_200 = 3, //"7"
 };
 
-// function call  
-void uhs_phy_init(uint32_t datarate);        
+// function call
+void uhs_phy_init(uint32_t datarate);
 void uhs_phy_pwr_down(void);
 void soft_reset(void);
 

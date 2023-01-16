@@ -12,7 +12,7 @@
 #define bl808_DBG_RF (0)
 #if bl808_DBG_RF
 #define uhs_phy_printf_debug printf  //  debug mode
-#define uhs_phy_printf printf 
+#define uhs_phy_printf printf
 #else
 #define uhs_phy_printf_debug(...)
 // #define uhs_phy_printf printf  // commit it out in release version
@@ -41,7 +41,7 @@ void power_up_mm(void)
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PDS_CR_PDS_FORCE_MM_GATE_CLK,0x0);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PDS_CR_PDS_FORCE_MM_MEM_STBY,0x0);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PDS_CR_PDS_FORCE_MM_PDS_RST,0x0);
-    BL_WR_REG(PDS_BASE,PDS_CTL2,tmpVal); 
+    BL_WR_REG(PDS_BASE,PDS_CTL2,tmpVal);
 }
 
 void power_up_uhspll(void)
@@ -53,12 +53,12 @@ void power_up_uhspll(void)
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,GLB_PU_UHSPLL,0x1);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,GLB_UHSPLL_FBDV_RSTB,0x0);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,GLB_UHSPLL_FBDV_RSTB,0x1);
-    BL_WR_REG(GLB_BASE,GLB_UHS_PLL_CFG0,tmpVal); 
+    BL_WR_REG(GLB_BASE,GLB_UHS_PLL_CFG0,tmpVal);
 }
 
 void power_up_ldo12uhs(void)
 {
-    // use internal LDO 
+    // use internal LDO
     uint32_t tmpVal = 0;
     tmpVal = BL_RD_REG(GLB_BASE,GLB_LDO12UHS);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,GLB_PU_LDO12UHS,0x1);
@@ -234,8 +234,8 @@ void set_or_uhs(void)
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS0N_DLY_RX,0x0);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_28,tmpVal);
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C);
-    tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1_DLY_RX,0x0); 
-    tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1N_DLY_RX,0x0);   
+    tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1_DLY_RX,0x0);
+    tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1N_DLY_RX,0x0);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C,tmpVal);
     uhs_phy_delay_us(300);
 }
@@ -281,7 +281,7 @@ void uhs_phy_pwr_down(void)
     tmpVal = BL_RD_REG(GLB_BASE,GLB_LDO12UHS);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,GLB_PU_UHSPLL_SFREG,0x0);
     BL_WR_REG(GLB_BASE,GLB_LDO12UHS,tmpVal);
-    uhs_phy_delay_us(1);  
+    uhs_phy_delay_us(1);
 }
 
 void psram_init(void)
@@ -296,7 +296,7 @@ void psram_init(void)
     uhs_phy_delay_us(1);
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_GLBR_PULSE,0x1);
-    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD,tmpVal);  
+    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD,tmpVal);
     uhs_phy_delay_us(10);   // wait for reg_config_gnt
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_BASIC);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_CONFIG_REQ,0x0);
@@ -385,7 +385,7 @@ void set_uhspll_freq(uint32_t datarate)
     tmpVal = BL_RD_REG(GLB_BASE,GLB_UHS_PLL_CFG0);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, GLB_UHSPLL_FBDV_RSTB, 1);
     BL_WR_REG(GLB_BASE,GLB_UHS_PLL_CFG0,tmpVal);
-        
+
     uhs_phy_delay_us(30);
 }
 
@@ -408,21 +408,21 @@ void set_uhs_phy_init(void)
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_44,0x060f050c);
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_50);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_WL_CEN_ANA,0x1);
-    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_50,tmpVal);     
-}  
+    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_50,tmpVal);
+}
 
 void set_uhs_phy(void)
 {
     // set phy & controller
     // latency code=3 (1066MHz)
-    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a1323);  // if fail than use 0x0f391323 
+    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a1323);  // if fail than use 0x0f391323
     // BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a0313);  //for 400Mbps
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_34,0x0b030404);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_38,0x050e0418);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_3C,0x0a6a1c1c);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_44,0x07110710);
-    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_50,0x01333333);    
-} 
+    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_50,0x01333333);
+}
 
 void uhs_reg_w(uint32_t uhs_latency,uint32_t uhs_drive,uint32_t ma,uint32_t BL_32)
 {
@@ -431,12 +431,12 @@ void uhs_reg_w(uint32_t uhs_latency,uint32_t uhs_drive,uint32_t ma,uint32_t BL_3
     {
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_LATENCY,uhs_latency);
-        tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_DRIVE_ST,uhs_drive); 
+        tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_DRIVE_ST,uhs_drive);
         BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE,tmpVal);
     }
     else if(ma == 2)
     {
-        tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE); 
+        tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_BL_64,0x0);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_BL_32,BL_32);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_BL_16,0x0);
@@ -453,7 +453,7 @@ void uhs_reg_w(uint32_t uhs_latency,uint32_t uhs_drive,uint32_t ma,uint32_t BL_3
         if (tmpVal == 1)
             break;
     }
-    
+
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_REGW_PULSE,0x1);  //reg_regw_pulse
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD,tmpVal);
@@ -486,7 +486,7 @@ void uhs_reg_r(uint32_t ma)
         if (tmpVal == 1)
             break;
     }
-    
+
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_REGR_PULSE,0x1);  //reg_regw_pulse
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD,tmpVal);
@@ -500,11 +500,11 @@ void uhs_reg_r(uint32_t ma)
         tmpVal = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_STS_REGR_DONE);
         if (tmpVal == 1 || tmpInd == 2){
             //debug
-			if (tmpInd == 2){
+            if (tmpInd == 2){
                 uhs_phy_printf_debug("tmpInd = %ld\r\n",tmpInd);
             }
             break;
-        }          
+        }
     }
 
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_BASIC);
@@ -546,7 +546,7 @@ void cfg_dq_rx(uint8_t dq){
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_08);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQ1_DLY_RX,dq);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQ0_DLY_RX,dq);
-    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_08,tmpVal); 
+    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_08,tmpVal);
 }
 
 void cfg_dqs_rx(uint8_t dqs){
@@ -556,7 +556,7 @@ void cfg_dqs_rx(uint8_t dqs){
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_28,tmpVal);
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1_DIFF_DLY_RX,dqs);
-    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C,tmpVal);    
+    BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C,tmpVal);
 }
 
 void cfg_ck_cen_drv(uint8_t array_ck_dly_drv,uint8_t array_cen_dly_drv){
@@ -569,27 +569,27 @@ void cfg_ck_cen_drv(uint8_t array_ck_dly_drv,uint8_t array_cen_dly_drv){
 
 void uhs_reset(uint32_t datarate)
 {
-	uint32_t tmpVal = 0;
-	
-	tmpVal = BL_RD_WORD(0x30007044);
-	tmpVal = tmpVal | 0x00008000;
-	BL_WR_WORD(0x30007044,tmpVal);
-	uhs_phy_delay_us(10);
-	tmpVal = tmpVal & 0xFFFF7FFF;
-	BL_WR_WORD(0x30007044,tmpVal);
-	
-	BL_WR_WORD(0x3000F030,0x18090610);
-	
-	PSRAM_UHS_Cfg_Type psramCfg = {
-		datarate,
-		PSRAM_MEM_SIZE_64MB,
-		PSRAM_PAGE_SIZE_2KB,
-		0,
+    uint32_t tmpVal = 0;
+
+    tmpVal = BL_RD_WORD(0x30007044);
+    tmpVal = tmpVal | 0x00008000;
+    BL_WR_WORD(0x30007044,tmpVal);
+    uhs_phy_delay_us(10);
+    tmpVal = tmpVal & 0xFFFF7FFF;
+    BL_WR_WORD(0x30007044,tmpVal);
+
+    BL_WR_WORD(0x3000F030,0x18090610);
+
+    PSRAM_UHS_Cfg_Type psramCfg = {
+        datarate,
+        PSRAM_MEM_SIZE_64MB,
+        PSRAM_PAGE_SIZE_2KB,
+        0,
     };
-	Psram_UHS_Init(&psramCfg); //controller init
-	
+    Psram_UHS_Init(&psramCfg); //controller init
+
     set_or_uhs();
-	set_uhs_phy();
+    set_uhs_phy();
 }
 
 void reg_read_cal(uint32_t datarate)
@@ -619,52 +619,52 @@ void reg_read_cal(uint32_t datarate)
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_DIG,uhs_latency/4);
         BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
-    
+
         // sweep dqs
         cfg_dq_rx(0);
         for(i = 15; i >= 0; i --)
         {
             cfg_dqs_rx(i);
 
-            uhs_reg_r(0); 
-			tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround 
+            uhs_reg_r(0);
+            tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround
             tmpVal_1 = BL_GET_REG_BITS_VAL(tmpVal_1,PSRAM_UHS_STS_REGR_DONE);
             tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
             if(tmpVal == ((2<<3)+uhs_latency_code)&& (tmpVal_1 == 1))
             {
-                uhs_phy_printf_debug("reg read pass by dqs=%ld\r\n",i); 
+                uhs_phy_printf_debug("reg read pass by dqs=%ld\r\n",i);
                 reg_dqs = i;
                 dqs_dq_flag = 1;
                 break;
-            }              
+            }
             else
             {
                 uhs_phy_printf_debug("reg read fail by dqs=%ld\r\n",i);
             }
-			
-			tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
-			tmpVal = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_STS_REGR_DONE);
-			if(tmpVal == 0)
-			{
-				uhs_phy_printf_debug("read done not found!!!");
-				uhs_reset(datarate);
-				tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
-				tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
-				tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_DIG,uhs_latency/4);
-				BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
-				cfg_dq_rx(0);
-			}
-                
+
+            tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
+            tmpVal = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_STS_REGR_DONE);
+            if(tmpVal == 0)
+            {
+                uhs_phy_printf_debug("read done not found!!!");
+                uhs_reset(datarate);
+                tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
+                tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
+                tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_DIG,uhs_latency/4);
+                BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
+                cfg_dq_rx(0);
+            }
+
         }
 
-        // sweep dq 
+        // sweep dq
         cfg_dqs_rx(0);
         for(i = 15; i >=0; i --)
         {
             cfg_dq_rx(i);
 
             uhs_reg_r(0);
-            tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround 
+            tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround
             tmpVal_1 = BL_GET_REG_BITS_VAL(tmpVal_1,PSRAM_UHS_STS_REGR_DONE);
             tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
             if(tmpVal == ((2<<3)+uhs_latency_code)&& (tmpVal_1 == 1))
@@ -672,27 +672,27 @@ void reg_read_cal(uint32_t datarate)
                 uhs_phy_printf_debug("reg read pass by dq=%ld\r\n",i);
                 reg_dq = i;
                 dqs_dq_flag = 1;
-                break; 
-            }  
+                break;
+            }
             else
             {
                 uhs_phy_printf_debug("reg read fail by dq=%ld\r\n",i);
             }
-            
-			tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
-			tmpVal = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_STS_REGR_DONE);
-			if(tmpVal == 0)
-			{
-				uhs_phy_printf_debug("read done not found!!!");
-				uhs_reset(datarate);
-				tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
-				tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
-				tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_DIG,uhs_latency/4);
-				BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
-				cfg_dqs_rx(0);
-			}
-			
-        }    
+
+            tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
+            tmpVal = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_STS_REGR_DONE);
+            if(tmpVal == 0)
+            {
+                uhs_phy_printf_debug("read done not found!!!");
+                uhs_reset(datarate);
+                tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
+                tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
+                tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_DIG,uhs_latency/4);
+                BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
+                cfg_dqs_rx(0);
+            }
+
+        }
 
         if (dqs_dq_flag == 1){
             uhs_latency = uhs_latency - 2;
@@ -705,29 +705,29 @@ void reg_read_cal(uint32_t datarate)
             for(i = 15; i >= 0; i --)
             {
                 cfg_dqs_rx(i);
-                uhs_reg_r(0); 
-                tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround 
+                uhs_reg_r(0);
+                tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround
                 tmpVal_1 = BL_GET_REG_BITS_VAL(tmpVal_1,PSRAM_UHS_STS_REGR_DONE);
                 tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
                 if(tmpVal == ((2<<3)+uhs_latency_code)&& (tmpVal_1 == 1))
                 {
-                    uhs_phy_printf_debug("reg read pass by dqs=%ld\r\n",i); 
+                    uhs_phy_printf_debug("reg read pass by dqs=%ld\r\n",i);
                     reg_dqs = i;
                     dqs_dq_flag = 1;
-                    break; 
-                }              
+                    break;
+                }
                 else{
                     uhs_phy_printf_debug("reg read fail by dqs=%ld\r\n",i);
                 }
             }
-            // sweep dq 
+            // sweep dq
             cfg_dqs_rx(0);
             for(i = 15; i >=0; i --)
             {
                 cfg_dq_rx(i);
 
                 uhs_reg_r(0);
-                tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround 
+                tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround
                 tmpVal_1 = BL_GET_REG_BITS_VAL(tmpVal_1,PSRAM_UHS_STS_REGR_DONE);
                 tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
                 if(tmpVal == ((2<<3)+uhs_latency_code)&& (tmpVal_1 == 1))
@@ -736,26 +736,26 @@ void reg_read_cal(uint32_t datarate)
                     reg_dq = i;
                     dqs_dq_flag = 1;
                     break;
-                }  
+                }
                 else{
                     uhs_phy_printf_debug("reg read fail by dq=%ld\r\n",i);
                 }
             }
-            
+
             if(reg_dqs > reg_dq)
             {
                 reg_dqs = (reg_dqs-reg_dq)/2;
                 reg_dq = 0;
-            }   
+            }
             else
             {
                 reg_dq = (reg_dq-reg_dqs)/2;
                 reg_dqs = 0;
-            }       
-            
-            // set dqs & dq by register read calibration result 
+            }
+
+            // set dqs & dq by register read calibration result
             cfg_dqs_rx(reg_dqs);
-            cfg_dq_rx(reg_dq);  
+            cfg_dq_rx(reg_dq);
             uhs_reg_r(0);
             uhs_phy_printf("reg read cal pass, latency=%ld, dqs=%ld, dq=%ld\r\n",uhs_latency,reg_dqs,reg_dq);
 
@@ -828,30 +828,30 @@ void reg_write_cal(void)  //only need sweep dqs
     // sweep1 dqs
     for(i = 15; i >=0; i --)
     {
-        cfg_dqs_drv(i); 
+        cfg_dqs_drv(i);
         uhs_reg_w(uhs_latency_code,2,2,1); //BL_32 == 1
         uhs_reg_r(2);
-        tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround 
+        tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround
         tmpVal_1 = BL_GET_REG_BITS_VAL(tmpVal_1,PSRAM_UHS_STS_REGR_DONE);
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
         if((tmpVal == 16) && (tmpVal_1 == 1))
             {
-                uhs_phy_printf("reg write pass by -- dqs1=%ld\r\n",i); 
+                uhs_phy_printf("reg write pass by -- dqs1=%ld\r\n",i);
                 reg_dqs1 = i;
                 dqs_dq_flag = 1;
-                break; 
-            }              
+                break;
+            }
         else{
             uhs_phy_printf_debug("reg write fail by -- dqs1=%ld\r\n",i);
         }
-    }        
-    // sweep2 dqs 
+    }
+    // sweep2 dqs
     for(i = 0; i <=15; i ++)
     {
         cfg_dqs_drv(i);
         uhs_reg_w(uhs_latency_code,2,2,1);  //BL_32 == 1
         uhs_reg_r(2);
-        tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround 
+        tmpVal_1 = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);  //high temp failure workaround
         tmpVal_1 = BL_GET_REG_BITS_VAL(tmpVal_1,PSRAM_UHS_STS_REGR_DONE);
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
         if((tmpVal == 16) && (tmpVal_1 == 1))
@@ -859,12 +859,12 @@ void reg_write_cal(void)  //only need sweep dqs
                 uhs_phy_printf("reg write pass by ++ dqs2=%ld\r\n",i);
                 reg_dqs2 = i;
                 dqs_dq_flag = 1;
-                break; 
-            }              
+                break;
+            }
         else{
             uhs_phy_printf_debug("reg write fail by ++ dqs2=%ld\r\n",i);
         }
-    }           
+    }
 
     if(dqs_dq_flag == 0)
     {
@@ -875,9 +875,9 @@ void reg_write_cal(void)  //only need sweep dqs
         };
         // break;
     }
-    
+
     reg_dqs = (reg_dqs1 + reg_dqs2) / 2 ;
-    // set dqs by register write cal result 
+    // set dqs by register write cal result
     cfg_dqs_drv(reg_dqs);
     uhs_reg_w(uhs_latency_code,2,2,0); //BL_32 == 0
     uhs_reg_r(2);
@@ -885,7 +885,7 @@ void reg_write_cal(void)  //only need sweep dqs
     if(tmpVal == 0)
     {
         uhs_phy_printf("reg write cal pass dqs=%ld, dq=%ld\r\n",reg_dqs,reg_dq);
-    }              
+    }
     else{
         uhs_phy_printf("reg write cal error 1\r\n");
         while(1){
@@ -894,7 +894,7 @@ void reg_write_cal(void)  //only need sweep dqs
         };
         // break;
     }
-    
+
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_08);
     reg_dq = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQ0_DLY_DRV);
     dqs_dq_delta = 16 + reg_dqs - reg_dq;
@@ -914,7 +914,7 @@ void array_write_fix(uint32_t addr,uint32_t len,uint32_t data0,uint32_t data1)
             data = data0 + i;
         else
             data = data1 + i;
-        BL_WR_WORD(addr_tmp,data); 
+        BL_WR_WORD(addr_tmp,data);
     }
 }
 uint32_t array_read_fix(uint32_t addr,uint32_t len,uint32_t data0,uint32_t data1)
@@ -924,7 +924,7 @@ uint32_t array_read_fix(uint32_t addr,uint32_t len,uint32_t data0,uint32_t data1
     uint32_t data = data0;
     uint32_t data_read = 0;
     int32_t i = 0;
-  
+
     for(i = 0; i < (len>>2); i ++)
     {
         addr_tmp = (i << 2) + addr;
@@ -1009,14 +1009,14 @@ void array_read_latency_cal(void)
 
         if(flag == 1)
         {
-            uhs_phy_printf_debug("array read pass by ck == 11\r\n"); 
+            uhs_phy_printf_debug("array read pass by ck == 11\r\n");
             tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
             tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
             tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_DIG,uhs_latency/4);
             BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
             uhs_phy_printf("array read latency cal pass, latency=%ld, ck=%ld\r\n",uhs_latency,array_ck_dly_drv);
             break;
-        }              
+        }
         else
         {
             uhs_phy_printf_debug("array read fail by ck == 11\r\n");
@@ -1025,7 +1025,7 @@ void array_read_latency_cal(void)
             flag = array_read_fix(0x50000000,128,0x12345678,0x87654321);
             if(flag == 1)
             {
-                uhs_phy_printf_debug("array read pass by ck == 4\r\n"); 
+                uhs_phy_printf_debug("array read pass by ck == 4\r\n");
                 // uhs_latency = uhs_latency - 2;
                 tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
                 tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PHY_RL_ANA,uhs_latency%4);
@@ -1033,15 +1033,15 @@ void array_read_latency_cal(void)
                 BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,tmpVal);
                 uhs_phy_printf("array read latency cal pass, latency=%ld, ck=%ld\r\n",uhs_latency,array_ck_dly_drv);
                 break;
-            }              
+            }
             else{
                 uhs_phy_printf_debug("array read fail by ck == 4\r\n");
             }
-        }   
+        }
     }
 }
 
-void array_write_ck_cal(void) 
+void array_write_ck_cal(void)
 {
     uint32_t array_ck_dly_drv = 0;
     uint32_t array_ck_dly_drv1 = 0;
@@ -1053,7 +1053,7 @@ void array_write_ck_cal(void)
     for(array_ck_dly_drv = 15; array_ck_dly_drv >= 4; array_ck_dly_drv --)
     {
         set_ck_dly_drv(array_ck_dly_drv);
-            
+
         flag = array_read_fix(0x50000000,1024,0x12345678,0x87654321);
         if(flag == 0){
             uhs_phy_printf_debug("array write ck cal fail by ck=%ld\r\n",array_ck_dly_drv);
@@ -1073,7 +1073,7 @@ void array_write_ck_cal(void)
     for(array_ck_dly_drv = 4; array_ck_dly_drv <= 15; array_ck_dly_drv ++)
     {
         set_ck_dly_drv(array_ck_dly_drv);
-            
+
         flag = array_read_fix(0x50000000,1024,0x12345678,0x87654321);
         if(flag == 0){
             uhs_phy_printf_debug("array write ck cal fail by ck=%ld\r\n",array_ck_dly_drv);
@@ -1098,10 +1098,10 @@ void array_write_ck_cal(void)
     else
     {
         array_ck_dly_drv = 4;
-    } 
-    
+    }
+
     set_ck_dly_drv(array_ck_dly_drv);
-    
+
     uhs_phy_printf("array write ck cal pass, ck=%ld\r\n",array_ck_dly_drv);
 
 }
@@ -1124,12 +1124,12 @@ void array_read_dqs_dq_cal(void)
         dqs_flag = array_read_fix(0x50000000,128,0x12345678,0x87654321);
         if(dqs_flag == 1)
         {
-            uhs_phy_printf_debug("array_read_dqs_dq_cal pass by dqs%ld\r\n",i); 
+            uhs_phy_printf_debug("array_read_dqs_dq_cal pass by dqs%ld\r\n",i);
             array_dqs = i;
-            break; 
+            break;
         }
     }
-    // sweep dq 
+    // sweep dq
     cfg_dqs_rx(0);
     for(i = 15; i >=0; i --)
     {
@@ -1137,10 +1137,10 @@ void array_read_dqs_dq_cal(void)
         dq_flag = array_read_fix(0x50000000,128,0x12345678,0x87654321);
         if(dq_flag == 1)
         {
-            uhs_phy_printf_debug("array_read_dqs_dq_cal pass by dq%ld\r\n",i);  
+            uhs_phy_printf_debug("array_read_dqs_dq_cal pass by dq%ld\r\n",i);
             array_dq = i;
-            break; 
-        }                  
+            break;
+        }
     }
     if(dqs_flag == 0 && dq_flag == 0)
     {
@@ -1176,16 +1176,16 @@ void array_write_dqs_dq_cal(void)
     uint32_t array_dqs_dly_drv2 = 0;
 
     for(i = 15; i >= 0; i --)
-    {  
-        cfg_dqs_drv(i);  
+    {
+        cfg_dqs_drv(i);
         array_write_fix(0x50000000,128,0x12345678,0x87654321);
         dqs_flag = array_read_fix(0x50000000,128,0x12345678,0x87654321);
         if(dqs_flag == 1)
         {
             uhs_phy_printf("array_write_dqs_dq_cal pass by -- dqs1=%ld\r\n",i);
             array_dqs_dly_drv1 = i;
-            break;  
-        }              
+            break;
+        }
         else
         {
             uhs_phy_printf_debug("array_write_dqs_dq_cal fail by -- dqs1=%ld\r\n",i);
@@ -1201,7 +1201,7 @@ void array_write_dqs_dq_cal(void)
             uhs_phy_printf("array_write_dqs_dq_cal pass by ++ dqs2=%ld\r\n",i);
             array_dqs_dly_drv2 = i;
             break;
-        }              
+        }
         else
         {
             uhs_phy_printf_debug("array_write_dqs_dq_cal fail by ++ dqs2=%ld\r\n",i);
@@ -1218,14 +1218,14 @@ void array_write_dqs_dq_cal(void)
     }
     array_dqs_dly_drv = (array_dqs_dly_drv1 + array_dqs_dly_drv2) / 2 ;
     // if ck_dly_drv = 4, fix dqsx_dly_drv to 0
-	tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_00);
-	tmpVal = (tmpVal >> 16) & 0xF;
-	if(tmpVal == 4)
-	{
-		array_dqs_dly_drv = 0;
-	}
+    tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_00);
+    tmpVal = (tmpVal >> 16) & 0xF;
+    if(tmpVal == 4)
+    {
+        array_dqs_dly_drv = 0;
+    }
     uhs_phy_printf("array_write_dqs_dq_cal pass by array_dqs_dly_drv=%ld\r\n",array_dqs_dly_drv);
-    // set dqs by register write cal result 
+    // set dqs by register write cal result
     cfg_dqs_drv(array_dqs_dly_drv);
 }
 
@@ -1320,22 +1320,22 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_UHS_PLL_Freq(GLB_XTAL_Type xtalType, u
     uhsPllCfg[GLB_XTAL_40M].clkpllSdmin = factor;
     uhsPllCfg[GLB_XTAL_26M].clkpllSdmin = factor;
     uhsPllCfg[GLB_XTAL_RC32M].clkpllSdmin = factor;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     GLB_Power_Off_MU_PLL(GLB_MU_PLL_UHSPLL);
     GLB_MU_PLL_Ref_Clk_Sel(GLB_MU_PLL_UHSPLL, refClk);
     GLB_Power_On_MU_PLL(GLB_MU_PLL_UHSPLL, &(uhsPllCfg[xtalType]), 1);
-    
+
     return SUCCESS;
 }
 
 void self_cal(uint32_t datarate)
-{   
+{
     // int32_t P1= 0;
     uint32_t tmpVal = 0;
     // uint32_t uhs_latency = 0;
@@ -1363,19 +1363,19 @@ void self_cal(uint32_t datarate)
         0,
     };
 
-	// set to 2000Mbps
+    // set to 2000Mbps
     uhs_reg_w(uhs_latency_code,2,0,0); // BL_32 == 0
     // set_uhspll_freq(datarate); // use SW function later
     GLB_Config_UHS_PLL_Freq(GLB_XTAL_40M,datarate);   //stuck
     Psram_UHS_Init(&psramCfg); //controller init
     set_uhs_phy();
-	
-    // check reg read 
+
+    // check reg read
     uhs_reg_r(0);
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
     if(tmpVal == ((2<<3)+uhs_latency_code)){
         uhs_phy_printf("register write pass at 1400Mbps and read pass at %ldMbps\r\n",datarate);
-    }    
+    }
     else{
         uhs_phy_printf("register write fail at 1400Mbps or read fail at %ldMbps\r\n",datarate);
     }
@@ -1386,7 +1386,7 @@ void self_cal(uint32_t datarate)
     reg_write_cal();
     uhs_reg_w(uhs_latency_code,2,2,0); // BL_32 == 0
     uhs_reg_r(2);
-    // array read latency calibration 
+    // array read latency calibration
     array_read_latency_cal();
     // array write ck calibration
     array_write_ck_cal();
@@ -1409,7 +1409,7 @@ void uhs_phy_init(uint32_t datarate)
     uhs_phy_printf_debug("uhs phy init\r\n");
     power_up_mm();
     power_up_uhspll();
-    
+
     power_up_ldo12uhs();
     set_cen_ck_ckn();
 
@@ -1440,11 +1440,11 @@ void uhs_phy_init(uint32_t datarate)
     if(tmpVal == ((2<<3)+1))    // 1400M --> default uhs_latency_code == 1
     {
         uhs_phy_printf_debug("register read pass at datarate at 1400Mbps\r\n");
-    }  
+    }
     else{
         uhs_phy_printf_debug("register read fail at datarate at 1400Mbps\r\n");
-    }  
-    
+    }
+
     //get dcache original state
     __DSB();
     __ISB();
@@ -1473,10 +1473,10 @@ void uhs_phy_init(uint32_t datarate)
     {
         uhs_phy_printf("dcache disable fail\r\n");
     }
-     
+
     if (dcache_original == (0x1<<1))
-    {     
-            csi_dcache_enable();       
+    {
+            csi_dcache_enable();
     }
 
     //get dcache end state

@@ -692,7 +692,7 @@ void DMA_LLI_PpBuf_Append(DMA_LLI_PP_Buf *dmaPpBuf, DMA_LLI_Ctrl_Type *dmaLliLis
 
     if (DMA_Channel_Is_Busy(dmaPpBuf->dmaId, dmaPpBuf->dmaChan) == RESET) {
         /* DMA stopped: maybe stop just a few minutes ago(not enter INT due to CPU_Interrupt_Disable)
-		   or has already stopped before this function is called */
+           or has already stopped before this function is called */
         if (dmaPpBuf->lliListHeader[!dmaPpBuf->idleIndex] == NULL) {
             /* DMA has already stopped before this function is called */
             DMA_LLI_PpBuf_Start_New_Transmit(dmaPpBuf);

@@ -220,7 +220,7 @@ static int tc_fdt_wifi_module(void)
         log_error("brd_rf NULL.\r\n");
         return -1;
     }
-    
+
     return 0;
 }
 
@@ -228,12 +228,12 @@ int tc_fdt_wifi(void)
 {
     int result;
     result = tc_fdt_wifi_module();
-    
+
     if (result) {
         printf("fdt wifi module failed\r\n");
     } else {
         printf("fdt wifi module successed\r\n");
     }
-    
+
     return result;
 }

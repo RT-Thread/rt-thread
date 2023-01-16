@@ -116,7 +116,7 @@ void PSram_Ctrl_Init(PSRAM_ID_Type PSRAM_ID, PSRAM_Ctrl_Cfg_Type *psramCtrlCfg)
 
     /* Set vendor and mode for psram controller */
     tmpVal = BL_RD_REG(psram_base, PSRAM_CONFIGURE);
-    //	tmpVal = BL_SET_REG_BITS_VAL(tmpVal, PSRAM_REG_PCK_S_DIV, 0x1);
+    //  tmpVal = BL_SET_REG_BITS_VAL(tmpVal, PSRAM_REG_PCK_S_DIV, 0x1);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, PSRAM_REG_VENDOR_SEL, psramCtrlCfg->vendor);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, PSRAM_REG_X16_MODE, psramCtrlCfg->ioMode);
     BL_WR_REG(psram_base, PSRAM_CONFIGURE, tmpVal);

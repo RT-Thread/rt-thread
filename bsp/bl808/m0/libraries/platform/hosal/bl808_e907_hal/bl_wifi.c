@@ -171,7 +171,7 @@ int bl_wifi_power_table_set(bl_tx_pwr_tbl_t* tx_pwr_tbl)
 }
 #endif
 
-int bl_wifi_ap_info_set(uint8_t* ssid, uint8_t ssid_len, 
+int bl_wifi_ap_info_set(uint8_t* ssid, uint8_t ssid_len,
                       uint8_t* psk, uint8_t psk_len,
                       uint8_t chan)
 {

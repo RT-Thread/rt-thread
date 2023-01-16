@@ -85,7 +85,7 @@ static int __hw_init(bl_audio_dev_t *p_dev)
         AUIDO_RAMP_RATE_2_FS,
         AUIDO_ZERO_CROSS_RATE_2_FS,
     };
- 
+
     GLB_Config_AUDIO_PLL(GLB_XTAL_40M, audioPllCfg_451P584M);
     /* ungate audio */
     GLB_PER_Clock_UnGate(GLB_AHB_CLOCK_AUDIO);
@@ -202,7 +202,7 @@ static int __hw_init(bl_audio_dev_t *p_dev)
 static void __audio_lli_init(bl_audio_dev_t *p_dev)
 {
     p_dev->lli_tx_buffer_size = p_dev->lli_tx_buffer_size / 2;
-    
+
     switch (p_dev->playBitWidth) {
         case AUDIO_BIT_WIDTH_16:
             dmaCtrlRegVal.SWidth = DMA_TRNS_WIDTH_16BITS;
@@ -230,7 +230,7 @@ static void __audio_lli_init(bl_audio_dev_t *p_dev)
             //private_bflb_platform_printf("BIT WIDTH Is Invaild\r\n");
             break;
     }
- 
+
     p_dev->lli_tx_list[0].srcDmaAddr = (uint32_t)p_dev->lli_tx_buffer;
     p_dev->lli_tx_list[0].destDmaAddr = AUDIO_TX_FIFO_ADDR;
     p_dev->lli_tx_list[0].nextLLI = (uint32_t)&p_dev->lli_tx_list[1];
@@ -246,7 +246,7 @@ static void __audio_lli_init(bl_audio_dev_t *p_dev)
 
     if (p_dev->rx_enable) {
         p_dev->lli_rx_buffer_size = p_dev->lli_rx_buffer_size / 2;
- 
+
         switch (p_dev->playBitWidth) {
             case AUDIO_BIT_WIDTH_16:
                 dmaCtrlRegVal.SWidth = DMA_TRNS_WIDTH_16BITS;

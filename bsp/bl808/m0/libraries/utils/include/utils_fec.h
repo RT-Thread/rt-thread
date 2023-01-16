@@ -38,14 +38,14 @@
 extern "C" {
 #endif
 
-#define FEC_MSG_LENGTH	128
-#define FEC_ECC_LENGTH	126
+#define FEC_MSG_LENGTH  128
+#define FEC_ECC_LENGTH  126
 
 #define bl_assert(expr)
 
 typedef struct
 {
-	int dummy[1120];
+    int dummy[1120];
 } fec_t;
 
 int  reedsolomon_getmemsize(void);

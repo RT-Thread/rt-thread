@@ -155,7 +155,7 @@ int8_t mfg_media_read_poweroffset_with_lock(int8_t pwrOffset[14],uint8_t reload)
     __disable_irq();
     ret=mfg_media_read_poweroffset_need_lock(pwrOffset,reload);
     __enable_irq();
-    
+
     return ret;
 }
 
@@ -187,9 +187,9 @@ int8_t mfg_media_write_macaddr_pre_with_lock(uint8_t mac[6],uint8_t program)
     int ret;
 
     __disable_irq();
-    ret=mfg_media_write_macaddr_pre_need_lock(mac,program);    
+    ret=mfg_media_write_macaddr_pre_need_lock(mac,program);
     __enable_irq();
-    
+
     return ret;
 }
 
@@ -205,7 +205,7 @@ void mfg_media_write_macaddr_need_lock(void)
 void mfg_media_write_macaddr_with_lock(void)
 {
     __disable_irq();
-    mfg_media_write_macaddr_need_lock();    
+    mfg_media_write_macaddr_need_lock();
     __enable_irq();
 }
 
@@ -223,7 +223,7 @@ int8_t mfg_media_read_macaddr_with_lock(uint8_t mac[6],uint8_t reload)
     int ret;
 
     __disable_irq();
-    ret=mfg_media_read_macaddr_need_lock(mac,reload);       
+    ret=mfg_media_read_macaddr_need_lock(mac,reload);
     __enable_irq();
 
     return ret;

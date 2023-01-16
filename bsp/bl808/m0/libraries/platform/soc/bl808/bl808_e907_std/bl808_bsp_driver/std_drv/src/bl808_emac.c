@@ -114,7 +114,7 @@ static void EMAC_SetMACAddress(EMAC_ID_Type emacId, uint8_t macAddr[6])
 void EMAC_Phy_SetAddress(EMAC_ID_Type emacId, uint16_t phyAddress)
 {
     uint32_t tmpVal;
-	uint32_t EMACx = emacAddr[emacId];
+    uint32_t EMACx = emacAddr[emacId];
 
     /* Set Phy Address */
     tmpVal = BL_RD_REG(EMACx, EMAC_MIIADDRESS);
@@ -134,7 +134,7 @@ void EMAC_Phy_SetAddress(EMAC_ID_Type emacId, uint16_t phyAddress)
 void EMAC_Phy_Set_Full_Duplex(EMAC_ID_Type emacId, uint8_t fullDuplex)
 {
     uint32_t tmpVal;
-	uint32_t EMACx = emacAddr[emacId];
+    uint32_t EMACx = emacAddr[emacId];
 
     /* Set MAC duplex config */
     tmpVal = BL_RD_REG(EMACx, EMAC_MODE);
@@ -773,7 +773,7 @@ BL_Err_Type EMAC_GetFramLen(EMAC_ID_Type emacId, uint16_t * max, uint16_t *min)
 BL_Err_Type EMAC_GetBD(EMAC_ID_Type emacId, uint32_t *bd)
 {
     uint32_t EMACx = emacAddr[emacId];
-    
+
     *bd = BL_RD_REG(EMACx, EMAC_TX_BD_NUM);
 
     return SUCCESS;

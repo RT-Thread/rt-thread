@@ -141,7 +141,7 @@ static int adc_get_channel_by_gpio(GLB_GPIO_Type pin)
         case GLB_GPIO_PIN_40:
             channel = 5;
             break;
-        
+
         default :
             channel = -1;
             break;
@@ -170,7 +170,7 @@ static void adc_freq_init(hosal_adc_sample_mode_t mode, uint32_t freq)
     }
 
     if (div > 64) {
-        div = 64; 
+        div = 64;
     }
 
     /*adc clk can not more than 2M*/
@@ -201,7 +201,7 @@ static void adc_dma_lli_init(DMA_LLI_Ctrl_Type *pstlli, uint32_t *buf, uint32_t 
 
     pstlli[0].srcDmaAddr = GPIP_BASE+GPIP_GPADC_DMA_RDATA_OFFSET;
     pstlli[0].destDmaAddr = (uint32_t)&buf[0];
-    pstlli[0].nextLLI = (uint32_t)&pstlli[1]; 
+    pstlli[0].nextLLI = (uint32_t)&pstlli[1];
     pstlli[0].dmaCtrl= dma_ctrl_reg;
 
     pstlli[1].srcDmaAddr = GPIP_BASE+GPIP_GPADC_DMA_RDATA_OFFSET;
@@ -219,7 +219,7 @@ static int adc_dma_init(hosal_adc_dev_t *adc, uint32_t data_num)
         .srcPeriph = DMA_REQ_GPADC_RX,
         .dstPeriph = DMA_REQ_NONE,
     };
-    
+
     hosal_adc_ctx_t *pstctx = (hosal_adc_ctx_t *)adc->priv;
 
     if (data_num < 1) {
@@ -262,7 +262,7 @@ static void adc_init(hosal_adc_dev_t *adc)
 {
     int i, chan;
     uint8_t channel_table[ADC_CHANNEL_MAX] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-    
+
     hosal_adc_sample_mode_t mode = adc->config.mode;
     GLB_GPIO_Type pin = adc->config.pin;
 
@@ -301,7 +301,7 @@ static void adc_init(hosal_adc_dev_t *adc)
     ADC_Reset();
 
     ADC_Init(&adccfg);
- 
+
     if (mode == HOSAL_ADC_ONE_SHOT) {
         for (i = 0; i < ADC_CHANNEL_MAX; i++) {
             pos_chlist_single[i] = channel_table[i];;
@@ -309,7 +309,7 @@ static void adc_init(hosal_adc_dev_t *adc)
         }
 
         ADC_Scan_Channel_Config(pos_chlist_single, neg_chlist_single, ADC_CHANNEL_MAX, ENABLE);
-    } 
+    }
     else {
         chan = adc_get_channel_by_gpio(pin);
         ADC_Channel_Config(chan, ADC_CHAN_GND, ENABLE);
@@ -340,7 +340,7 @@ static int adc_parse_data(uint32_t *parr, int data_size, int channel)
 
             return data;
         }
-    }   
+    }
     blog_error("error!\r\n");
     return -1;
 }
@@ -366,7 +366,7 @@ int hosal_adc_init(hosal_adc_dev_t *adc)
         blog_error("pin is error!\r\n");
         return -1;
     }
-    
+
     pstctx = (hosal_adc_ctx_t *)pvPortMalloc(sizeof(hosal_adc_ctx_t));
     if (NULL == pstctx) {
         blog_error("not have enough memory!\r\n");
@@ -381,7 +381,7 @@ int hosal_adc_init(hosal_adc_dev_t *adc)
             blog_error("illegal freq. for mode0, freq 20HZ ~ 1250HZ \r\n");
             return -1;
         }
-        /* init gpio */ 
+        /* init gpio */
         GLB_GPIO_Func_Init(GPIO_FUN_ANALOG, &pin, 1);
 
         /* init freq */
@@ -393,7 +393,7 @@ int hosal_adc_init(hosal_adc_dev_t *adc)
         blog_error("not support continue mode!\r\n");
         return -1;
     }
-    
+
     pgdevice = adc;
 
     return 0;
@@ -450,22 +450,22 @@ int hosal_adc_value_get(hosal_adc_dev_t *adc, uint32_t channel, uint32_t timeout
 {
     int val = -1;
     hosal_adc_ctx_t *pstctx = (hosal_adc_ctx_t *)adc->priv;
- 
+
     if (NULL == adc) {
         blog_error("parameter is error!\r\n");
         return -1;
     }
-    
+
     if (channel > 11) {
         blog_error("channel is error!\r\n");
         return -1;
     }
-    
+
     if (((1 << channel) & pstctx->chan_init_table) == 0) {
         blog_error("channel = %d  not init as adc \r\n", channel);
         return -1;
     }
-    
+
     if (pstctx->channel_data == NULL) {
         blog_error("adc sampling not finish. \r\n");
         return -1;
@@ -479,13 +479,13 @@ int hosal_adc_value_get(hosal_adc_dev_t *adc, uint32_t channel, uint32_t timeout
         }
         vTaskDelay(1);
     }
-    
+
     return val;
 }
 
 int hosal_adc_tsen_value_get(hosal_adc_dev_t *adc)
 {
-    blog_error("not support now!\r\n"); 
+    blog_error("not support now!\r\n");
     return -1;
 }
 
@@ -503,7 +503,7 @@ int hosal_adc_start(hosal_adc_dev_t *adc, void *data, uint32_t size)
 
 int hosal_adc_stop(hosal_adc_dev_t *adc)
 {
-    return 0; 
+    return 0;
 }
 
 int hosal_adc_finalize(hosal_adc_dev_t *adc)

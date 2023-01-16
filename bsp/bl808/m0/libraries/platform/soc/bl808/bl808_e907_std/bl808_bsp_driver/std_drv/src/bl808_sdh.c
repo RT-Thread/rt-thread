@@ -904,7 +904,7 @@ SDH_Stat_Type SDH_CreateADMA2Descriptor(SDH_ADMA2_Desc_Type *adma2Entries, uint3
     }
 
     /* Calculate the start entry for multiple descriptor mode, ADMA engine is not stop, so update the descriptor
-	data address and data size is enough */
+    data address and data size is enough */
     if (flag == SDH_ADMA_FLAG_MULTI_DESC) {
         for (i = 0U; i < maxEntries; i++) {
             if ((adma2Entries[i].attribute & SDH_ADMA2_DESC_FLAG_VALID) == 0U) {
@@ -944,7 +944,7 @@ SDH_Stat_Type SDH_CreateADMA2Descriptor(SDH_ADMA2_Desc_Type *adma2Entries, uint3
     }
 
     /* add a dummy valid ADMA descriptor for multiple descriptor mode, this is useful when transfer boot data, the ADMA
-	engine  will not stop at block gap */
+    engine  will not stop at block gap */
     if (flag == SDH_ADMA_FLAG_MULTI_DESC) {
         //adma2Entries[startEntries + 1U].attribute |= SDH_ADMA2_DESC_FLAG_TRANSFER;
         adma2Entries[i - 1U].attribute |= SDH_ADMA2_DESC_FLAG_TRANSFER;
@@ -977,7 +977,7 @@ SDH_Stat_Type SDH_SetInternalDmaConfig(SDH_DMA_Cfg_Type *dmaCfg, const uint32_t 
         }
 
         /* In simple DMA mode if use auto CMD23, address should load to ADMA addr,
-		     and block count should load to DS_ADDR*/
+             and block count should load to DS_ADDR*/
         if (enAutoCmd23) {
             BL_WR_REG(SDH_BASE, SDH_SD_ADMA_SYS_ADDR_1, (uintptr_t)data);
         } else {
@@ -1041,7 +1041,7 @@ SDH_Stat_Type SDH_CreateAdmaEntryConfig(SDH_DMA_Cfg_Type *dmaCfg, SDH_Data_Cfg_T
     }
 
     /* For internal dma, internal DMA configurations should not update the configurations when continous transfer the
-	 * boot data, only the DMA descriptor need update */
+     * boot data, only the DMA descriptor need update */
     if ((stat == SDH_STAT_SUCCESS) && (dataCfg->dataType != SDH_TRANS_DATA_BOOT_CONT)) {
         stat = SDH_SetInternalDmaConfig(dmaCfg, data, dataCfg->enableAutoCommand23);
     }
@@ -1109,10 +1109,10 @@ SDH_Stat_Type SDH_TransferBlocking(SDH_DMA_Cfg_Type *dmaCfg, SDH_Trans_Cfg_Type 
     }
 
     /*
-	tmp = BL_RD_REG16(SDH_BASE,SDH_SD_ADMA_ERROR_STATUS);
-	bflb_platform_printf("SDH_SD_ADMA_ERROR_STATUS->0x%x!\r\n",tmp);
-	tmp = BL_RD_REG16(SDH_BASE,SDH_SD_AUTO_CMD12_ERROR_STATUS);
-	*/
+    tmp = BL_RD_REG16(SDH_BASE,SDH_SD_ADMA_ERROR_STATUS);
+    bflb_platform_printf("SDH_SD_ADMA_ERROR_STATUS->0x%x!\r\n",tmp);
+    tmp = BL_RD_REG16(SDH_BASE,SDH_SD_AUTO_CMD12_ERROR_STATUS);
+    */
 
     /* Wait for transferring data finish */
     if ((dataCfg != NULL) && (stat == SDH_STAT_SUCCESS)) {
@@ -1173,14 +1173,14 @@ SDH_Stat_Type SDH_TransferNonBlocking(SDH_DMA_Cfg_Type *dmaCfg, SDH_Trans_Cfg_Ty
     }
 
 #if 0
-	SDH_SendCommand(cmdCfg);
+    SDH_SendCommand(cmdCfg);
 
 
-	/* Wait command done */
-	if((dataCfg == NULL) || (dataCfg->dataType == SDH_TRANS_DATA_NORMAL))
-	{
-		stat = SDH_WaitCommandDone(cmdCfg);
-	}
+    /* Wait command done */
+    if((dataCfg == NULL) || (dataCfg->dataType == SDH_TRANS_DATA_NORMAL))
+    {
+        stat = SDH_WaitCommandDone(cmdCfg);
+    }
 
 #endif
 

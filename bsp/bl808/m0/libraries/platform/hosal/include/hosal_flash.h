@@ -216,7 +216,7 @@ int hosal_flash_raw_write(void *buffer, uint32_t address, uint32_t length);
  *  - 0 On success
  *  - otherwise is error
  */
-int hosal_flash_raw_erase(uint32_t start_addr, uint32_t length); 
+int hosal_flash_raw_erase(uint32_t start_addr, uint32_t length);
 
 /** @} */
 

@@ -30,16 +30,16 @@
 #include <stdio.h>
 #include <platform_hal_device.h>
 
-extern "C" void* operator new(size_t size) 
+extern "C" void* operator new(size_t size)
 {
     /* printf("[C++] new %d\r\n", size); */
-    return pvPortMalloc(size); 
+    return pvPortMalloc(size);
 }
 
-extern "C" void* operator new[](size_t size) 
+extern "C" void* operator new[](size_t size)
 {
     /* printf("[C++] new[] %d\r\n", size); */
-    return pvPortMalloc(size); 
+    return pvPortMalloc(size);
 }
 
 extern "C" void operator delete(void* ptr) {
@@ -52,7 +52,7 @@ extern "C" void operator delete[](void* ptr) {
     vPortFree(ptr);
 }
 
-BLLinkedItem::BLLinkedItem() 
+BLLinkedItem::BLLinkedItem()
 {
     this->next = NULL;
 }
@@ -81,13 +81,13 @@ BLLinkedItem* BLLinkedItem::detach()
     return tmp;
 }
 
-BLLinkedList::BLLinkedList() 
+BLLinkedList::BLLinkedList()
 {
     this->head = NULL;
     this->tail = NULL;
 }
 
-BLLinkedList* BLLinkedList::push(class BLLinkedItem &item) 
+BLLinkedList* BLLinkedList::push(class BLLinkedItem &item)
 {
     printf("[BLLinkedList] push %p\r\n", &item);
 
@@ -107,7 +107,7 @@ BLLinkedList* BLLinkedList::push(class BLLinkedItem &item)
     return this;
 }
 
-BLLinkedItem* BLLinkedList::pop() 
+BLLinkedItem* BLLinkedList::pop()
 {
     BLLinkedItem *item;
 
@@ -173,7 +173,7 @@ int BLAesRequest::done_set()
 int BLAesRequest::done_set_auto()
 {
     this->done = 1;
-    //TODO 
+    //TODO
     printf("[C++] [%s] ongoing...\r\n", __PRETTY_FUNCTION__);
 
     return 0;

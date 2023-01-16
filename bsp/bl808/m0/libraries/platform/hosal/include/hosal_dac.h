@@ -78,9 +78,9 @@ typedef struct {
  *
  * @param[in]  dac  the interface which should be initialised
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_init(hosal_dac_dev_t *dac);
 
@@ -89,9 +89,9 @@ int hosal_dac_init(hosal_dac_dev_t *dac);
  *
  * @param[in]  dac  the interface which should be de-initialised
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_finalize(hosal_dac_dev_t *dac);
 
@@ -100,9 +100,9 @@ int hosal_dac_finalize(hosal_dac_dev_t *dac);
  *
  * @param[in]   dac      the interface which should be started
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_start(hosal_dac_dev_t *dac);
 
@@ -111,9 +111,9 @@ int hosal_dac_start(hosal_dac_dev_t *dac);
  *
  * @param[in]   dac      the interface which should be stopped
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_stop(hosal_dac_dev_t *dac);
 
@@ -122,11 +122,11 @@ int hosal_dac_stop(hosal_dac_dev_t *dac);
  *
  * @param[in]   dac      the interface to set value
  *
- * @param[in]   data     the value to output, output unit: μV 
+ * @param[in]   data     the value to output, output unit: μV
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_set_value(hosal_dac_dev_t *dac, uint32_t data);
 
@@ -145,23 +145,23 @@ int hosal_dac_get_value(hosal_dac_dev_t *dac);
  * @param [in]   dac          the DAC interface
  * @param [in]   callback     callback handler
  * @param [in]   arg          callback arg
- * 
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ *
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_dma_cb_reg(hosal_dac_dev_t *dac, hosal_dac_cb_t callback, void *arg);
 
 /**
  * @brief DAC use DMA mode
- *   
+ *
  * @param[in]   adc           the DAC interface
  * @param[in]   data          dac data buffer
  * @param[in]   size          data buffer size
- *        
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ *
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_dma_start(hosal_dac_dev_t *dac, uint32_t *data, uint32_t size);
 
@@ -170,9 +170,9 @@ int hosal_dac_dma_start(hosal_dac_dev_t *dac, uint32_t *data, uint32_t size);
  *
  * @param[in]   dac      the interface which should be stopped
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_dac_dma_stop(hosal_dac_dev_t *dac);
 
