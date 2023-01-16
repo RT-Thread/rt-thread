@@ -99,6 +99,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bl808目录中，�
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0，用于shell，默认波特率2000000 |
+| GPIO | 支持 |  |
 
 ## 5. 联系人信息
 
@@ -117,3 +118,10 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bl808目录中，�
 
   [1]: https://www.rt-thread.org/page/download.html
   [2]: https://github.com/bouffalolab/bl_docs
+
+## 8. FAQ
+
+- 在 windows 环境下，通过 UART 接口将开发板连接至电脑时，仅能识别到两个 USB converter 设备，但是识别不到对应的串口设备。
+  - 进入到设备管理器中，右击对应的 USB converter 设备，进入到属性中的高级设置，钩选 vcp 选项，刷新后即可看到对应的串口设备。
+  - 也可通过安装以下驱动解决问题： https://dl.sipeed.com/shareURL/MAIX/tools/ftdi_vcp_driver
+- 使用 TypeC 数据线将电脑与板子的 UART 口连接起来，此时电脑上会出现两个串口 （如果出现鼠标不能动的现象请拔掉 USB 并且查看 [更新板载 bl702 固件](https://wiki.sipeed.com/hardware/zh/maix/m1s/other/start.html#给板载-bl702-进行烧录) 相关内容来修复问题)。
