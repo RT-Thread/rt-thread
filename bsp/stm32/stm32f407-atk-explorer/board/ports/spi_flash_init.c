@@ -18,7 +18,7 @@
 static int rt_hw_spi_flash_init(void)
 {
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    rt_hw_spi_device_attach("spi1", "spi10", GPIOB, GPIO_PIN_14);
+    rt_hw_spi_device_attach("spi1", "spi10", GET_PIN(B, 14));
 
     if (RT_NULL == rt_sfud_flash_probe("W25Q128", "spi10"))
     {
