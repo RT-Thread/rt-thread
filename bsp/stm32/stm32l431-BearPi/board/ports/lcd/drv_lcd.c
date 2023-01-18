@@ -37,7 +37,7 @@ static int rt_hw_lcd_config(void)
         struct rt_spi_configuration cfg;
         cfg.data_width = 8;
         cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_3 | RT_SPI_MSB;
-        cfg.max_hz = 42 * 1000 * 1000; /* 42M,SPI max 42MHz,lcd 4-wire spi */
+        cfg.max_hz = 42 * 1000 * 1000; /* 42M, SPI max 42MHz, lcd 4-wire spi */
 
         rt_spi_configure(spi_dev_lcd, &cfg);
     }
@@ -122,7 +122,7 @@ static void lcd_gpio_init(void)
 
 static int rt_hw_lcd_init(void)
 {
-    rt_hw_spi_device_attach("spi2", "lcd", GPIOC, GPIO_PIN_3);
+    rt_hw_spi_device_attach("spi2", "lcd", GET_PIN(C, 3));
     lcd_gpio_init();
     /* Memory Data Access Control */
     lcd_write_cmd(0x36);

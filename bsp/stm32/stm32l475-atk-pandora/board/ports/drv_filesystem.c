@@ -32,7 +32,7 @@
 static int rt_hw_spi1_tfcard(void)
 {
     __HAL_RCC_GPIOC_CLK_ENABLE();
-    rt_hw_spi_device_attach("spi1", "spi10", GPIOC, GPIO_PIN_3);
+    rt_hw_spi_device_attach("spi1", "spi10", GET_PIN(C, 3));
     return msd_init("sd0", "spi10");
 }
 INIT_DEVICE_EXPORT(rt_hw_spi1_tfcard);
