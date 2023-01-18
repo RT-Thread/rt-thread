@@ -212,7 +212,7 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
 #ifdef BSP_QSPI_USING_SOFTCS
     if (message->cs_take && (device->parent.cs_pin != PIN_NONE))
     {
-        rt_pin_write(device->parent.cs_pin, 0);
+        rt_pin_write(device->parent.cs_pin, PIN_LOW);
     }
 #endif
 
@@ -264,7 +264,7 @@ __exit:
 #ifdef BSP_QSPI_USING_SOFTCS
     if (message->cs_release && (device->parent.cs_pin != PIN_NONE))
     {
-        rt_pin_write(device->parent.cs_pin, 1);
+        rt_pin_write(device->parent.cs_pin, PIN_HIGH);
     }
 #endif
     return len;
@@ -330,7 +330,7 @@ rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_n
     if(cs_pin != PIN_NONE)
     {
         rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin, 1);
+        rt_pin_write(cs_pin, PIN_HIGH);
     }
 #endif
 
