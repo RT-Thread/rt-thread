@@ -18,6 +18,9 @@ if GetDepend(['RT_USING_SERIAL']):
 if GetDepend('RT_USING_PIN'):
     src += ['drv_gpio.c']
 
+if GetDepend('RT_USING_I2C'):
+    src += ['drv_i2c.c']
+
 # if GetDepend('BSP_USING_LCD'):
 #     src += ['drv_lcd.c']
 #     src += ['drv_mpylcd.c']
@@ -27,9 +30,6 @@ if GetDepend('RT_USING_PIN'):
 
 # if GetDepend('RT_USING_CPUTIME'):
 #     src += ['drv_cputime.c']
-
-# if GetDepend('RT_USING_I2C'):
-#     src += ['drv_i2c.c']
 
 # if GetDepend('RT_USING_SPI'):
 #     src += ['drv_spi.c']
