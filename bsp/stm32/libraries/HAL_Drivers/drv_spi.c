@@ -296,7 +296,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
 
-    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
             rt_pin_write(device->cs_pin, PIN_HIGH);
@@ -430,7 +430,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 #endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
     }
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
             rt_pin_write(device->cs_pin, PIN_LOW);
@@ -580,10 +580,13 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
-    rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-    rt_pin_write(cs_pin, PIN_HIGH);
     spi_device->cs_pin = cs_pin;
-    
+    if(cs_pin != PIN_NONE)
+    {
+        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
+        rt_pin_write(cs_pin, PIN_HIGH);
+    }
+
     result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
 
     if (result != RT_EOK)
