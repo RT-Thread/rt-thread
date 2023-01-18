@@ -296,7 +296,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
 
-    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
             rt_pin_write(device->cs_pin, PIN_HIGH);
@@ -430,7 +430,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 #endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
     }
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
             rt_pin_write(device->cs_pin, PIN_LOW);
