@@ -30,23 +30,25 @@ static struct stm32_soft_spi_config soft_spi_config[] =
 /**
   * Attach the spi device to soft SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_soft_spi_device_attach(const char *bus_name, const char *device_name, const char *pin_name)
+rt_err_t rt_soft_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
 
     rt_err_t result;
     struct rt_spi_device *spi_device;
 
     /* initialize the cs pin && select the slave*/
-    rt_base_t cs_pin = rt_pin_get(pin_name);
-
-    rt_pin_mode(cs_pin,PIN_MODE_OUTPUT);
-    rt_pin_write(cs_pin,PIN_HIGH);
+    if(cs_pin != PIN_NONE)
+    {
+        rt_pin_mode(cs_pin,PIN_MODE_OUTPUT);
+        rt_pin_write(cs_pin,PIN_HIGH);
+    }
 
     /* attach the device to soft spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
+    spi_device->cs_pin = cs_pin;
 
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
     return result;
 }
 

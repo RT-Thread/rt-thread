@@ -50,7 +50,7 @@ struct stm32_soft_spi
     }
 #endif /* BSP_USING_SOFT_SPI2 */
 
-rt_err_t rt_hw_soft_spi_device_attach(const char *bus_name, const char *device_name, const char *pin_name);
+rt_err_t rt_soft_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
 int rt_soft_spi_init(void);
 
 #endif /* __DRV_SOFT_SPI__ */
