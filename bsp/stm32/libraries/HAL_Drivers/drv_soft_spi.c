@@ -30,7 +30,7 @@ static struct stm32_soft_spi_config soft_spi_config[] =
 /**
   * Attach the spi device to soft SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_soft_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
+rt_err_t rt_hw_softspi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
 
     rt_err_t result;
@@ -210,7 +210,7 @@ static struct rt_spi_bit_ops stm32_soft_spi_ops =
 static struct stm32_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
 
 /* Soft SPI initialization function */
-int rt_soft_spi_init(void)
+int rt_hw_softspi_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct stm32_soft_spi);
     rt_err_t result;
@@ -227,6 +227,6 @@ int rt_soft_spi_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_soft_spi_init);
+INIT_BOARD_EXPORT(rt_hw_softspi_init);
 
 #endif /* defined(RT_USING_SPI) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_PIN) */

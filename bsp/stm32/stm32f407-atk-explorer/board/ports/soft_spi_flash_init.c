@@ -18,7 +18,7 @@
 
 static int rt_soft_spi_flash_init(void)
 {
-    rt_soft_spi_device_attach("sspi2", "sspi20", GET_PIN(B, 14));
+    rt_hw_softspi_device_attach("sspi2", "sspi20", GET_PIN(B, 14));
 
     if (RT_NULL == rt_sfud_flash_probe("W25Q128", "sspi20"))
     {
