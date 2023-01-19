@@ -304,7 +304,7 @@ static int stm32_qspi_register_bus(struct stm32_qspi_bus *qspi_bus, const char *
   * @retval 0 : success
   *        -1 : failed
   */
-rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_base_t cs_pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
+rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
 {
     struct rt_qspi_device *qspi_device = RT_NULL;
     rt_err_t result = RT_EOK;
