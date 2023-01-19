@@ -48,7 +48,7 @@ static rt_uint64_t global_asid_generation;
 #define ASID_FIRST_GENERATION (1 << ASID_BITS)
 #define MAX_ASID ASID_FIRST_GENERATION
 
-static void rt_asid_init()
+static void _asid_init()
 {
     unsigned int satp_reg = read_csr(satp);
     satp_reg |= (((rt_uint64_t)0xffff) << PPN_BITS);
@@ -71,7 +71,7 @@ static void rt_asid_init()
     next_asid = 1;
 }
 
-rt_uint64_t asid_check_switch(rt_aspace_t aspace)
+static rt_uint64_t _asid_check_switch(rt_aspace_t aspace)
 {
     if ((aspace->asid ^ global_asid_generation) >> ASID_BITS) // not same generation
     {
@@ -100,7 +100,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     uintptr_t page_table = (uintptr_t)_rt_kmem_v2p(aspace->page_table);
     current_mmu_table = aspace->page_table;
 
-    rt_uint64_t asid = asid_check_switch(aspace);
+    rt_uint64_t asid = _asid_check_switch(aspace);
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) | 
                         (asid << PPN_BITS) | 
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
@@ -538,7 +538,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
 
-    rt_asid_init();
+    _asid_init();
 
     rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();
