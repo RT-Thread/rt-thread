@@ -166,7 +166,7 @@ void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* hqspi)
 
 static int rt_hw_qspi_flash_with_sfud_init(void)
 {
-    stm32_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, 4, RT_NULL, RT_NULL);
+    rt_hw_qspi_device_attach("qspi1", "qspi10", RT_NULL, 4, RT_NULL, RT_NULL);
     /* init MX25L51245G */
     if (RT_NULL == rt_sfud_flash_probe("MX25L51245G", "qspi10"))
     {
