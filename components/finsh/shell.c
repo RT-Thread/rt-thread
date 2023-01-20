@@ -137,7 +137,7 @@ rt_uint32_t finsh_get_prompt_mode(void)
  *
  * The parameter 0 disable prompt mode, other values enable prompt mode.
  *
- * @param prompt the prompt mode
+ * @param prompt_mode the prompt mode
  */
 void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
 {
