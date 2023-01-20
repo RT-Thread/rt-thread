@@ -22,7 +22,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
                       sizeof(uart->int_rx->rx_buffer));
             uart->int_rx->read_index = uart->int_rx->save_index = 0;
         }
-        
+
         if (dev->flag & RT_DEVICE_FLAG_INT_TX)
         {
             rt_memset(uart->int_tx->tx_buffer, 0,
@@ -243,16 +243,16 @@ rt_err_t rt_hw_uart_register(rt_device_t device, const char* name,
 {
     RT_ASSERT(device != RT_NULL);
 
-    device->type 		= RT_Device_Class_Char;
+    device->type        = RT_Device_Class_Char;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
-    device->init 		= rt_uart_init;
-    device->open		= rt_uart_open;
-    device->close		= rt_uart_close;
-    device->read 		= rt_uart_read;
-    device->write 		= rt_uart_write;
-    device->control 	= rt_uart_control;
-    device->user_data	= serial;
+    device->init        = rt_uart_init;
+    device->open        = rt_uart_open;
+    device->close       = rt_uart_close;
+    device->read        = rt_uart_read;
+    device->write       = rt_uart_write;
+    device->control     = rt_uart_control;
+    device->user_data   = serial;
 
     /* register a character device */
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
