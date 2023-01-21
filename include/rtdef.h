@@ -779,7 +779,7 @@ struct rt_thread
     rt_uint8_t  number;
     rt_uint8_t  high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-    rt_uint32_t number_mask;
+    rt_uint32_t number_mask;                            /**< priority number mask */
 
 #ifdef RT_USING_MUTEX
     /* object for IPC */
