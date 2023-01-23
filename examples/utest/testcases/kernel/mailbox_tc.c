@@ -46,7 +46,7 @@ static void test_mailbox_init(void)
 {
     rt_err_t result;
 
-    result = rt_mb_init(&test_static_mb, "mbt", &mb_pool[0], sizeof(mb_pool) / 4, RT_IPC_FLAG_FIFO);
+    result = rt_mb_init(&test_static_mb, "mbt", &mb_pool[0], sizeof(mb_pool) / 4, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         uassert_false(1);
@@ -76,7 +76,7 @@ static void test_mailbox_deatch(void)
 {
     rt_err_t result;
 
-    result = rt_mb_init(&test_static_mb, "mbt", &mb_pool[0], sizeof(mb_pool) / 4, RT_IPC_FLAG_FIFO);
+    result = rt_mb_init(&test_static_mb, "mbt", &mb_pool[0], sizeof(mb_pool) / 4, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         uassert_false(1);
@@ -105,7 +105,7 @@ static void test_mailbox_create(void)
 {
     rt_err_t result;
 
-    test_dynamic_mb = rt_mb_create("test_dynamic_mb", sizeof(mb_pool) / 4, RT_IPC_FLAG_FIFO);
+    test_dynamic_mb = rt_mb_create("test_dynamic_mb", sizeof(mb_pool) / 4, RT_IPC_FLAG_PRIO);
     if (test_dynamic_mb == RT_NULL)
     {
         uassert_false(1);
@@ -134,7 +134,7 @@ static void test_mailbox_delete(void)
 {
     rt_err_t result;
 
-    test_dynamic_mb = rt_mb_create("test_dynamic_mb", sizeof(mb_pool) / 4, RT_IPC_FLAG_FIFO);
+    test_dynamic_mb = rt_mb_create("test_dynamic_mb", sizeof(mb_pool) / 4, RT_IPC_FLAG_PRIO);
     if (test_dynamic_mb == RT_NULL)
     {
         uassert_false(1);
@@ -215,7 +215,7 @@ static void test_static_mailbox_send_recv(void)
 {
     rt_err_t result;
 
-    result = rt_mb_init(&test_static_mb, "mbt", &mb_pool[0], sizeof(mb_pool) / 4, RT_IPC_FLAG_FIFO);
+    result = rt_mb_init(&test_static_mb, "mbt", &mb_pool[0], sizeof(mb_pool) / 4, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         uassert_false(1);
@@ -306,7 +306,7 @@ static void thread3_recv_dynamic_mb(void *arg)
 
 static void test_dynamic_mailbox_send_recv(void)
 {
-    test_dynamic_mb = rt_mb_create("mbt", sizeof(mb_pool) / 4, RT_IPC_FLAG_FIFO);
+    test_dynamic_mb = rt_mb_create("mbt", sizeof(mb_pool) / 4, RT_IPC_FLAG_PRIO);
     if (test_dynamic_mb == RT_NULL)
     {
         uassert_false(1);

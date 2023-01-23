@@ -329,7 +329,7 @@ static int uart_sample(int argc, char *argv[])
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
 
     /* Initialization semaphore */
-    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_PRIO);
 
     /* Set the receive callback function */
     rt_device_set_rx_indicate(serial, uart_input);
@@ -486,7 +486,7 @@ static int uart_sample(int argc, char *argv[])
     }
 
     /* Initialize the semaphore */
-    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_PRIO);
     /* Open the uart device in interrupt receive and polling send mode */
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
     /* Set the receive callback function */
@@ -617,7 +617,7 @@ static int uart_dma_sample(int argc, char *argv[])
                msg_pool,                 /* a pool for storing messages */
                sizeof(struct rx_msg),    /* The maximum length of a message*/
                sizeof(msg_pool),         /* The size of the message pool */
-               RT_IPC_FLAG_FIFO);        /* If there are multiple threads waiting, assign messages according to the order. */
+               RT_IPC_FLAG_PRIO);        /* If there are multiple threads waiting, assign messages according to the order. */
 
     /* Open the uart device in DMA receive and polling send mode */
     rt_device_open(serial, RT_DEVICE_FLAG_DMA_RX);

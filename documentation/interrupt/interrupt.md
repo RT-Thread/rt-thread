@@ -213,7 +213,7 @@ void demo_nw_thread(void *param)
     /*.. other operations..*/
 
     /* create a semaphore to respond to Bottom Half events */
-    nw_bh_sem = rt_sem_create("bh_sem", 0, RT_IPC_FLAG_FIFO);
+    nw_bh_sem = rt_sem_create("bh_sem", 0, RT_IPC_FLAG_PRIO);
 
     while(1)
     {

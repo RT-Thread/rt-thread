@@ -58,7 +58,7 @@ static void test_event_init(void)
         uassert_false(1);
     }
 
-    result = rt_event_init(&static_event, "event", RT_IPC_FLAG_FIFO);
+    result = rt_event_init(&static_event, "event", RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         uassert_false(1);
@@ -189,7 +189,7 @@ static void test_event_create(void)
 {
     rt_err_t result = RT_EOK;
 
-    dynamic_event = rt_event_create("dynamic_event", RT_IPC_FLAG_FIFO);
+    dynamic_event = rt_event_create("dynamic_event", RT_IPC_FLAG_PRIO);
     if (dynamic_event == RT_NULL)
     {
         uassert_false(1);
@@ -208,7 +208,7 @@ static void test_event_delete(void)
 {
     rt_err_t result;
 
-    dynamic_event = rt_event_create("dynamic_event", RT_IPC_FLAG_FIFO);
+    dynamic_event = rt_event_create("dynamic_event", RT_IPC_FLAG_PRIO);
     if (dynamic_event == RT_NULL)
     {
         uassert_false(1);

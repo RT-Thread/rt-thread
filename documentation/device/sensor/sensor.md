@@ -247,7 +247,7 @@ static int sensor_sample(int argc, char *argv[])
     /* Open Sensor Device in Interrupt Receive and Poll Send Mode */
     rt_device_open(dev, RT_DEVICE_FLAG_INT_RX);
     /* init semphore */
-    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_PRIO);
 
     /* setting reveive callback function */
     rt_device_set_rx_indicate(dev, sensor_input);
@@ -334,7 +334,7 @@ int main(void)
     rt_device_t dev;
     struct rt_sensor_data data;
 
-    sensor_rx_sem = rt_sem_create("sen_rx_sem", 0, RT_IPC_FLAG_FIFO);
+    sensor_rx_sem = rt_sem_create("sen_rx_sem", 0, RT_IPC_FLAG_PRIO);
     tid1 = rt_thread_create("sen_rx_thread",
                             sensor_fifo_rx_entry, dev,
                             1024,

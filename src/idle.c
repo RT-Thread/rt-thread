@@ -337,7 +337,7 @@ void rt_thread_idle_init(void)
 #ifdef RT_USING_SMP
     RT_ASSERT(RT_THREAD_PRIORITY_MAX > 2);
 
-    rt_sem_init(&system_sem, "defunct", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&system_sem, "defunct", 1, RT_IPC_FLAG_PRIO);
 
     /* create defunct thread */
     rt_thread_init(&rt_system_thread,

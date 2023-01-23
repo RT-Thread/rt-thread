@@ -272,7 +272,7 @@ static void rt_thread2_entry(void *parameter)
 int semaphore_sample(void)
 {
     /* create a dynamic semaphore with an initial value of 0 */
-    dynamic_sem = rt_sem_create("dsem", 0, RT_IPC_FLAG_FIFO);
+    dynamic_sem = rt_sem_create("dsem", 0, RT_IPC_FLAG_PRIO);
     if (dynamic_sem == RT_NULL)
     {
         rt_kprintf("create dynamic semaphore failed.\n");
@@ -452,9 +452,9 @@ int producer_consumer(void)
     get = 0;
 
     /* Initialize 3 semaphores */
-    rt_sem_init(&sem_lock, "lock",     1,      RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_empty, "empty",   MAXSEM, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_full, "full",     0,      RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_lock, "lock",     1,      RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_empty, "empty",   MAXSEM, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_full, "full",     0,      RT_IPC_FLAG_PRIO);
 
     /* Create producer thread */
     producer_tid = rt_thread_create("producer",
@@ -803,7 +803,7 @@ static void rt_thread_entry2(void *parameter)
 int mutex_sample(void)
 {
     /* Create a dynamic mutex */
-    dynamic_mutex = rt_mutex_create("dmutex", RT_IPC_FLAG_FIFO);
+    dynamic_mutex = rt_mutex_create("dmutex", RT_IPC_FLAG_PRIO);
     if (dynamic_mutex == RT_NULL)
     {
         rt_kprintf("create dynamic mutex failed.\n");
@@ -943,7 +943,7 @@ static void thread3_entry(void *parameter)
 int pri_inversion(void)
 {
     /* Created a mutex lock */
-    mutex = rt_mutex_create("mutex", RT_IPC_FLAG_FIFO);
+    mutex = rt_mutex_create("mutex", RT_IPC_FLAG_PRIO);
     if (mutex == RT_NULL)
     {
         rt_kprintf("create dynamic mutex failed.\n");
@@ -1270,7 +1270,7 @@ int event_sample(void)
     rt_err_t result;
 
     /* Initialize event object */
-    result = rt_event_init(&event, "event", RT_IPC_FLAG_FIFO);
+    result = rt_event_init(&event, "event", RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         rt_kprintf("init event failed.\n");

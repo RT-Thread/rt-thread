@@ -306,7 +306,7 @@ rt_err_t wifi_connect(void)
     rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION);
     /* station connect */
     rt_kprintf("start to connect ap ...\n");
-    net_ready = rt_sem_create("net_ready", 0, RT_IPC_FLAG_FIFO);
+    net_ready = rt_sem_create("net_ready", 0, RT_IPC_FLAG_PRIO);
     rt_wlan_register_event_handler(RT_WLAN_EVT_READY,
             wifi_ready_callback, RT_NULL);
     rt_wlan_register_event_handler(RT_WLAN_EVT_STA_CONNECTED,

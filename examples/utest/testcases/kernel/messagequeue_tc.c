@@ -33,14 +33,14 @@ static rt_mq_t dynamic_mq;
 static void test_mq_init(void)
 {
     rt_err_t ret;
-    ret = rt_mq_init(&static_mq,"testmq1", mq_buf, MSG_SIZE, sizeof(mq_buf), RT_IPC_FLAG_FIFO);
+    ret = rt_mq_init(&static_mq,"testmq1", mq_buf, MSG_SIZE, sizeof(mq_buf), RT_IPC_FLAG_PRIO);
     uassert_true(ret == RT_EOK);
 }
 
 static void test_mq_create(void)
 {
 #ifdef RT_USING_HEAP
-    dynamic_mq = rt_mq_create("testmq2", MSG_SIZE, MAX_MSGS, RT_IPC_FLAG_FIFO);
+    dynamic_mq = rt_mq_create("testmq2", MSG_SIZE, MAX_MSGS, RT_IPC_FLAG_PRIO);
     uassert_true(dynamic_mq != RT_NULL);
 #endif /* RT_USING_HEAP */
 }
@@ -169,7 +169,7 @@ static rt_err_t utest_tc_init(void)
     if(ret != RT_EOK)
         return -RT_ERROR;
 
-    ret = rt_event_init(&finish_e, "finish", RT_IPC_FLAG_FIFO);
+    ret = rt_event_init(&finish_e, "finish", RT_IPC_FLAG_PRIO);
     if(ret != RT_EOK)
             return -RT_ERROR;
 

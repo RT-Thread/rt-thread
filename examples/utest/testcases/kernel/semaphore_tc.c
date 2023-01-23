@@ -32,7 +32,7 @@ static void test_static_semaphore_init(void)
         }
         rt_sem_detach(&static_semaphore);
 
-        result = rt_sem_init(&static_semaphore, "static_sem", i, RT_IPC_FLAG_FIFO);
+        result = rt_sem_init(&static_semaphore, "static_sem", i, RT_IPC_FLAG_PRIO);
         if (RT_EOK != result)
         {
             uassert_true(RT_FALSE);
@@ -64,7 +64,7 @@ static void test_static_semaphore_detach(void)
             break;
         }
 
-        result = rt_sem_init(&static_semaphore, "static_sem", i, RT_IPC_FLAG_FIFO);
+        result = rt_sem_init(&static_semaphore, "static_sem", i, RT_IPC_FLAG_PRIO);
         if (RT_EOK != result)
         {
             break;
@@ -281,7 +281,7 @@ static void test_dynamic_semaphore_create(void)
         }
         rt_sem_delete(dynamic_semaphore);
 
-        dynamic_semaphore = rt_sem_create("static_sem", i, RT_IPC_FLAG_FIFO);
+        dynamic_semaphore = rt_sem_create("static_sem", i, RT_IPC_FLAG_PRIO);
         if (RT_NULL == dynamic_semaphore)
         {
             uassert_true(RT_FALSE);
@@ -313,7 +313,7 @@ static void test_dynamic_semaphore_delete(void)
             break;
         }
 
-        dynamic_semaphore = rt_sem_create("static_sem", i, RT_IPC_FLAG_FIFO);
+        dynamic_semaphore = rt_sem_create("static_sem", i, RT_IPC_FLAG_PRIO);
         if (RT_NULL == dynamic_semaphore)
         {
             break;

@@ -287,7 +287,7 @@ int mailbox_sample(void)
                         "mbt",                      /* Name is mbt */
                         &mb_pool[0],                /* The memory pool used by the mailbox is mb_pool */
                         sizeof(mb_pool) / 4,        /* The number of messages in the mailbox because a message occupies 4 bytes */
-                        RT_IPC_FLAG_FIFO);          /* Thread waiting in FIFO approach */
+                        RT_IPC_FLAG_PRIO);          /* Thread waiting in FIFO approach */
     if (result != RT_EOK)
     {
         rt_kprintf("init mailbox failed.\n");
@@ -670,7 +670,7 @@ int msgq_sample(void)
                         &msg_pool[0],          /* Memory pool points to msg_pool */
                         1,                     /* The size of each message is 1 byte */
                         sizeof(msg_pool),      /* The size of the memory pool is the size of msg_pool */
-                        RT_IPC_FLAG_FIFO);     /* If there are multiple threads waiting, assign messages in first come first get mode. */
+                        RT_IPC_FLAG_PRIO);     /* If there are multiple threads waiting, assign messages in first come first get mode. */
 
     if (result != RT_EOK)
     {
