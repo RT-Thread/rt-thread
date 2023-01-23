@@ -707,8 +707,8 @@ void mmcsd_host_init(struct rt_mmcsd_host *host)
     host->max_blk_size = 512;
     host->max_blk_count = 4096;
 
-    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
-    rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_PRIO);
+    rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_PRIO);
 }
 
 struct rt_mmcsd_host *mmcsd_alloc_host(void)
@@ -759,12 +759,12 @@ int rt_mmcsd_core_init(void)
     /* initialize mailbox and create detect SD card thread */
     ret = rt_mb_init(&mmcsd_detect_mb, "mmcsdmb",
                      &mmcsd_detect_mb_pool[0], sizeof(mmcsd_detect_mb_pool) / sizeof(mmcsd_detect_mb_pool[0]),
-                     RT_IPC_FLAG_FIFO);
+                     RT_IPC_FLAG_PRIO);
     RT_ASSERT(ret == RT_EOK);
 
     ret = rt_mb_init(&mmcsd_hotpluge_mb, "mmcsdhotplugmb",
                      &mmcsd_hotpluge_mb_pool[0], sizeof(mmcsd_hotpluge_mb_pool) / sizeof(mmcsd_hotpluge_mb_pool[0]),
-                     RT_IPC_FLAG_FIFO);
+                     RT_IPC_FLAG_PRIO);
     RT_ASSERT(ret == RT_EOK);
     ret = rt_thread_init(&mmcsd_detect_thread, "mmcsd_detect", mmcsd_detect, RT_NULL,
                          &mmcsd_stack[0], RT_MMCSD_STACK_SIZE, RT_MMCSD_THREAD_PREORITY, 20);

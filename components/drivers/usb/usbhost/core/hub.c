@@ -708,7 +708,7 @@ void rt_usbh_hub_init(uhcd_t hcd)
     hcd->roothub->num_ports = hcd->num_ports;
     /* create usb message queue */
 
-    hcd->usb_mq = rt_mq_create(hcd->parent.parent.name, 32, 16, RT_IPC_FLAG_FIFO);
+    hcd->usb_mq = rt_mq_create(hcd->parent.parent.name, 32, 16, RT_IPC_FLAG_PRIO);
 
     /* create usb hub thread */
     thread = rt_thread_create(hcd->parent.parent.name, rt_usbh_hub_thread_entry, hcd,

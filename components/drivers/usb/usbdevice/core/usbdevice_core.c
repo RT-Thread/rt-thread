@@ -2250,7 +2250,7 @@ rt_err_t rt_usbd_core_init(void)
                "usbd",
                usb_mq_pool, USBD_MQ_MSG_SZ,
                sizeof(usb_mq_pool),
-               RT_IPC_FLAG_FIFO);
+               RT_IPC_FLAG_PRIO);
 
     /* init usb device thread */
     rt_thread_init(&usb_thread,

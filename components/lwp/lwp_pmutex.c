@@ -36,7 +36,7 @@ static struct rt_mutex _pmutex_lock;
 
 static int pmutex_system_init(void)
 {
-    rt_mutex_init(&_pmutex_lock, "pmtxLock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_pmutex_lock, "pmtxLock", RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_PREV_EXPORT(pmutex_system_init);

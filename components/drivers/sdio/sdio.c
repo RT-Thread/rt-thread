@@ -1064,7 +1064,7 @@ static rt_int32_t sdio_irq_thread_create(struct rt_mmcsd_card *card)
     if (!host->sdio_irq_num)
     {
         host->sdio_irq_num++;
-        host->sdio_irq_sem = rt_sem_create("sdio_irq", 0, RT_IPC_FLAG_FIFO);
+        host->sdio_irq_sem = rt_sem_create("sdio_irq", 0, RT_IPC_FLAG_PRIO);
         RT_ASSERT(host->sdio_irq_sem != RT_NULL);
 
         host->sdio_irq_thread = rt_thread_create("sdio_irq", sdio_irq_thread, host,

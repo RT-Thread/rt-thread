@@ -2496,7 +2496,7 @@ static struct rt_semaphore critical_lock;
 
 static int critical_init(void)
 {
-    rt_sem_init(&critical_lock, "ct_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&critical_lock, "ct_lock", 1, RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_DEVICE_EXPORT(critical_init);

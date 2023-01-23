@@ -780,7 +780,7 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
 
     rt_memset(&enc28j60_dev, 0, sizeof(enc28j60_dev));
 
-    rt_event_init(&tx_event, "eth_tx", RT_IPC_FLAG_FIFO);
+    rt_event_init(&tx_event, "eth_tx", RT_IPC_FLAG_PRIO);
     enc28j60_dev.spi_device = spi_device;
 
     /* detect device */

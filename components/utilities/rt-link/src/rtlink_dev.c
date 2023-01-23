@@ -393,6 +393,6 @@ rt_err_t rt_link_dev_register(struct rt_link_device *rtlink,
     device->fops        = &_rtlink_fops;
 #endif
 
-    rt_event_init(&recv_event, "rtlink_dev", RT_IPC_FLAG_FIFO);
+    rt_event_init(&recv_event, "rtlink_dev", RT_IPC_FLAG_PRIO);
     return ret;
 }

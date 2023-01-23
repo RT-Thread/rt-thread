@@ -626,7 +626,7 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
     /* add the cdc data interface to cdc class */
     rt_usbd_function_add_interface(cdc, intf_data);
 
-    rt_sem_init(&_ecm_eth->tx_buffer_free, "ue_tx", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_ecm_eth->tx_buffer_free, "ue_tx", 1, RT_IPC_FLAG_PRIO);
     /* OUI 00-00-00, only for test. */
     _ecm_eth->dev_addr[0] = 0x34;
     _ecm_eth->dev_addr[1] = 0x97;

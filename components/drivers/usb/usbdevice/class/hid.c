@@ -661,7 +661,7 @@ static void rt_usb_hid_init(struct ufunction *func)
 
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
-                            sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
+                            sizeof(hid_mq_pool), RT_IPC_FLAG_PRIO);
 
     rt_thread_init(&hid_thread, "hidd", hid_thread_entry, hiddev,
             hid_thread_stack, sizeof(hid_thread_stack), RT_USBD_THREAD_PRIO, 20);

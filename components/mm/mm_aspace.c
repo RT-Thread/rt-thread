@@ -72,7 +72,7 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
 int _init_lock(rt_aspace_t aspace)
 {
     MM_PGTBL_LOCK_INIT(aspace);
-    rt_mutex_init(&aspace->bst_lock, "", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&aspace->bst_lock, "", RT_IPC_FLAG_PRIO);
 
     return RT_EOK;
 }

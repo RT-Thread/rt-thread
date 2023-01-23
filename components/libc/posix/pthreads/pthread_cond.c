@@ -96,7 +96,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
         cond->attr = *attr;
     }
 
-    result = rt_sem_init(&cond->sem, cond_name, 0, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&cond->sem, cond_name, 0, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         return EINVAL;

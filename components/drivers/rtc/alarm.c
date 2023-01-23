@@ -774,7 +774,7 @@ int rt_alarm_system_init(void)
     rt_thread_t tid;
 
     rt_list_init(&_container.head);
-    rt_event_init(&_container.event, "alarmsvc", RT_IPC_FLAG_FIFO);
+    rt_event_init(&_container.event, "alarmsvc", RT_IPC_FLAG_PRIO);
     rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_PRIO);
 
     tid = rt_thread_create("alarmsvc",

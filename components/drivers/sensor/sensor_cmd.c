@@ -404,7 +404,7 @@ static void sensor_fifo(int argc, char **argv)
 
     if (sensor_rx_sem == RT_NULL)
     {
-        sensor_rx_sem = rt_sem_create("sen_rx_sem", 0, RT_IPC_FLAG_FIFO);
+        sensor_rx_sem = rt_sem_create("sen_rx_sem", 0, RT_IPC_FLAG_PRIO);
     }
     else
     {
@@ -459,7 +459,7 @@ static void sensor_int(int argc, char **argv)
 
     if (sensor_rx_sem == RT_NULL)
     {
-        sensor_rx_sem = rt_sem_create("sen_rx_sem", 0, RT_IPC_FLAG_FIFO);
+        sensor_rx_sem = rt_sem_create("sen_rx_sem", 0, RT_IPC_FLAG_PRIO);
     }
     else
     {

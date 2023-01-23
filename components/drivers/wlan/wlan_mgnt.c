@@ -597,7 +597,7 @@ static struct rt_wlan_complete_des *rt_wlan_complete_create(const char *name)
         MGNT_UNLOCK();
         return complete;
     }
-    rt_event_init(&complete->complete, name, RT_IPC_FLAG_FIFO);
+    rt_event_init(&complete->complete, name, RT_IPC_FLAG_PRIO);
     complete->event_flag = 0;
     //protect
     COMPLETE_LOCK();
@@ -1759,9 +1759,9 @@ int rt_wlan_init(void)
         rt_memset(&_sta_mgnt, 0, sizeof(struct rt_wlan_mgnt_des));
         rt_memset(&_ap_mgnt, 0, sizeof(struct rt_wlan_mgnt_des));
         rt_memset(&sta_info, 0, sizeof(struct rt_wlan_sta_des));
-        rt_mutex_init(&mgnt_mutex, "mgnt", RT_IPC_FLAG_FIFO);
-        rt_mutex_init(&sta_info_mutex, "sta", RT_IPC_FLAG_FIFO);
-        rt_mutex_init(&complete_mutex, "complete", RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&mgnt_mutex, "mgnt", RT_IPC_FLAG_PRIO);
+        rt_mutex_init(&sta_info_mutex, "sta", RT_IPC_FLAG_PRIO);
+        rt_mutex_init(&complete_mutex, "complete", RT_IPC_FLAG_PRIO);
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
         rt_timer_init(&reconnect_time, "wifi_tim", rt_wlan_cyclic_check, RT_NULL,
                       rt_tick_from_millisecond(AUTO_CONNECTION_PERIOD_MS),

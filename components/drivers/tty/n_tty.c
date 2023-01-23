@@ -1125,8 +1125,8 @@ static int n_tty_open(struct dfs_fd *fd)
         return -1;
     }
 
-    ldata->atomic_read_lock = rt_mutex_create("atomic_read_lock",RT_IPC_FLAG_FIFO);
-    ldata->output_lock = rt_mutex_create("output_lock",RT_IPC_FLAG_FIFO);
+    ldata->atomic_read_lock = rt_mutex_create("atomic_read_lock",RT_IPC_FLAG_PRIO);
+    ldata->output_lock = rt_mutex_create("output_lock",RT_IPC_FLAG_PRIO);
     tty->disc_data = ldata;
     reset_buffer_flags(ldata);
     ldata->column = 0;

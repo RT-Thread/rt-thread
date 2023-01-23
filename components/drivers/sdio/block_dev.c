@@ -436,7 +436,7 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
     blk_dev->part.offset = 0;
     blk_dev->part.size   = 0;
     rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, 0);
-    blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
+    blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_PRIO);
     /* register mmcsd device */
     blk_dev->dev.type  = RT_Device_Class_Block;
 #ifdef RT_USING_DEVICE_OPS
@@ -481,7 +481,7 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
         {
             rt_snprintf(dname, sizeof(dname) - 1, "%s%d", card->host->name, i);
             rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, i + 1);
-            blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
+            blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_PRIO);
 
             /* register mmcsd device */
             blk_dev->dev.type = RT_Device_Class_Block;
@@ -568,7 +568,7 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
         blk_dev->part.offset = 0;
         blk_dev->part.size   = 0;
         rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, 0);
-        blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
+        blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_PRIO);
         /* register mmcsd device */
         blk_dev->dev.type  = RT_Device_Class_Block;
 #ifdef RT_USING_DEVICE_OPS
@@ -612,7 +612,7 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
             {
                 rt_snprintf(dname, sizeof(dname) - 1, "%s%d", card->host->name, i);
                 rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, i + 1);
-                blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
+                blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_PRIO);
 
                 /* register mmcsd device */
                 blk_dev->dev.type = RT_Device_Class_Block;

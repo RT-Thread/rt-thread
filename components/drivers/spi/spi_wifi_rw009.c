@@ -696,7 +696,7 @@ rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
                &rw009_wifi_device.rw009_cmd_mb_pool[0],
                sizeof(rw009_wifi_device.rw009_cmd_mb_pool) / 4,
                RT_IPC_FLAG_PRIO);
-    rt_event_init(&spi_wifi_data_event, "wifi", RT_IPC_FLAG_FIFO);
+    rt_event_init(&spi_wifi_data_event, "wifi", RT_IPC_FLAG_PRIO);
 
     spi_wifi_hw_init();
 

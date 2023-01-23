@@ -20,7 +20,7 @@ static struct rt_semaphore posix_sem_lock;
 /* initialize posix semaphore */
 static int posix_sem_system_init(void)
 {
-    rt_sem_init(&posix_sem_lock, "psem", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&posix_sem_lock, "psem", 1, RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_COMPONENT_EXPORT(posix_sem_system_init);
@@ -191,7 +191,7 @@ int sem_init(sem_t *sem, int pshared, unsigned int value)
     }
 
     rt_snprintf(name, sizeof(name), "psem%02d", psem_number++);
-    sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
+    sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_PRIO);
     if (sem->sem == RT_NULL)
     {
         rt_set_errno(ENOMEM);
@@ -246,7 +246,7 @@ sem_t *sem_open(const char *name, int oflag, ...)
         }
 
         /* create RT-Thread semaphore */
-        sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
+        sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_PRIO);
         if (sem->sem == RT_NULL) /* create failed */
         {
             rt_set_errno(ENFILE);

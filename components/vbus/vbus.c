@@ -1018,8 +1018,8 @@ static unsigned int _total_data_sz;
 
 static void _bus_in_entry(void *param)
 {
-    rt_sem_init(&_bus_in_sem, "vbus", 0, RT_IPC_FLAG_FIFO);
-    rt_event_init(&_bus_in_event, "vbus", RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_bus_in_sem, "vbus", 0, RT_IPC_FLAG_PRIO);
+    rt_event_init(&_bus_in_event, "vbus", RT_IPC_FLAG_PRIO);
     rt_memset(_bus_in_action, 0, sizeof(_bus_in_action));
 
     while (rt_sem_take(&_bus_in_sem,

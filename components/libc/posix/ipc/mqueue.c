@@ -21,7 +21,7 @@ static struct rt_semaphore posix_mq_lock;
 /* initialize posix mqueue */
 static int posix_mq_system_init(void)
 {
-    rt_sem_init(&posix_mq_lock, "pmq", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&posix_mq_lock, "pmq", 1, RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_COMPONENT_EXPORT(posix_mq_system_init);
@@ -155,7 +155,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
         }
 
         /* create RT-Thread message queue */
-        mqdes->mq = rt_mq_create(name, attr->mq_msgsize, attr->mq_maxmsg, RT_IPC_FLAG_FIFO);
+        mqdes->mq = rt_mq_create(name, attr->mq_msgsize, attr->mq_maxmsg, RT_IPC_FLAG_PRIO);
         if (mqdes->mq == RT_NULL) /* create failed */
         {
             rt_set_errno(ENFILE);

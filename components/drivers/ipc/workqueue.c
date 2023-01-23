@@ -257,7 +257,7 @@ struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_siz
         rt_list_init(&(queue->work_list));
         rt_list_init(&(queue->delayed_list));
         queue->work_current = RT_NULL;
-        rt_sem_init(&(queue->sem), "wqueue", 0, RT_IPC_FLAG_FIFO);
+        rt_sem_init(&(queue->sem), "wqueue", 0, RT_IPC_FLAG_PRIO);
 
         /* create the work thread */
         queue->work_thread = rt_thread_create(name, _workqueue_thread_entry, queue, stack_size, priority, 10);

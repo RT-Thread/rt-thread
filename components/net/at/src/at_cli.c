@@ -62,7 +62,7 @@ void at_cli_init(void)
     rt_base_t level;
     rt_device_t console;
 
-    rt_sem_init(&console_rx_notice, "cli_c", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&console_rx_notice, "cli_c", 0, RT_IPC_FLAG_PRIO);
 
     /* create RX FIFO */
     console_rx_fifo = rt_ringbuffer_create(AT_CLI_FIFO_SIZE);
@@ -231,7 +231,7 @@ static void client_cli_parser(at_client_t  client)
             rt_hw_interrupt_enable(level);
         }
 
-        rt_sem_init(&client_rx_notice, "cli_r", 0, RT_IPC_FLAG_FIFO);
+        rt_sem_init(&client_rx_notice, "cli_r", 0, RT_IPC_FLAG_PRIO);
         client_rx_fifo = rt_ringbuffer_create(AT_CLI_FIFO_SIZE);
 
         at_client = rt_thread_create("at_cli", at_client_entry, RT_NULL, 512, 8, 8);

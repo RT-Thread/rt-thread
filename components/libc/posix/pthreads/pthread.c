@@ -235,7 +235,7 @@ int pthread_create(pthread_t            *pid,
 
     if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)
     {
-        ptd->joinable_sem = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO);
+        ptd->joinable_sem = rt_sem_create(name, 0, RT_IPC_FLAG_PRIO);
         if (ptd->joinable_sem == RT_NULL)
         {
             ret = ENOMEM;

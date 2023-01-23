@@ -553,7 +553,7 @@ ufunction_t rt_usbd_function_uac_speaker_create(udevice_t device)
 int audio_speaker_init(void)
 {
     rt_thread_t speaker_tid;
-    speaker.event = rt_event_create("speaker_event", RT_IPC_FLAG_FIFO);
+    speaker.event = rt_event_create("speaker_event", RT_IPC_FLAG_PRIO);
 
     speaker_tid = rt_thread_create("speaker_thread",
                                    speaker_entry, RT_NULL,

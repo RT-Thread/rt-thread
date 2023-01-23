@@ -517,7 +517,7 @@ static int dfs_cromfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, con
     ci->partition_size = ci->part_info.partition_size;
     fs->data = ci;
 
-    rt_mutex_init(&ci->lock, "crom", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&ci->lock, "crom", RT_IPC_FLAG_PRIO);
     ci->cromfs_avl_root = NULL;
 
     rt_list_init(&ci->cromfs_dirent_cache_head);

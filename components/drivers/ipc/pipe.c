@@ -597,7 +597,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
     pipe->pipeno = -1;
 #endif
-    rt_mutex_init(&pipe->lock, name, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&pipe->lock, name, RT_IPC_FLAG_PRIO);
     rt_wqueue_init(&pipe->reader_queue);
     rt_wqueue_init(&pipe->writer_queue);
     pipe->writer = 0;

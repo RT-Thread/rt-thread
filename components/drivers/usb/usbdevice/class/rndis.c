@@ -1390,7 +1390,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     rt_list_init(&_rndis->response_list);
     _rndis->need_notify = RT_TRUE;
 
-    rt_sem_init(&_rndis->tx_buffer_free, "ue_tx", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_rndis->tx_buffer_free, "ue_tx", 1, RT_IPC_FLAG_PRIO);
 
 #ifdef  RNDIS_DELAY_LINK_UP
     rt_timer_init(&_rndis->timer,

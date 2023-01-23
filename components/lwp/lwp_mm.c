@@ -19,7 +19,7 @@ void rt_mm_lock(void)
     {
         if (!mm_lock)
         {
-            mm_lock = rt_mutex_create("mm_lock", RT_IPC_FLAG_FIFO);
+            mm_lock = rt_mutex_create("mm_lock", RT_IPC_FLAG_PRIO);
         }
         if (mm_lock)
         {

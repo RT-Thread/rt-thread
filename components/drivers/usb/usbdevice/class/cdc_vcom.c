@@ -954,7 +954,7 @@ static void rt_usb_vcom_init(struct ufunction *func)
     rt_ringbuffer_init(&data->rx_ringbuffer, data->rx_rbp, CDC_RX_BUFSIZE);
     rt_ringbuffer_init(&data->tx_ringbuffer, data->tx_rbp, CDC_TX_BUFSIZE);
 
-    rt_event_init(&data->tx_event, "vcom", RT_IPC_FLAG_FIFO);
+    rt_event_init(&data->tx_event, "vcom", RT_IPC_FLAG_PRIO);
 
     config.baud_rate    = BAUD_RATE_115200;
     config.data_bits    = DATA_BITS_8;

@@ -669,7 +669,7 @@ rt_err_t rym_recv_on_device(
     ctx->on_data  = on_data;
     ctx->on_end   = on_end;
     ctx->dev      = dev;
-    rt_sem_init(&ctx->sem, "rymsem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&ctx->sem, "rymsem", 0, RT_IPC_FLAG_PRIO);
 
     odev_rx_ind = dev->rx_indicate;
     /* no data should be received before the device has been fully setted up.
@@ -726,7 +726,7 @@ rt_err_t rym_send_on_device(
     ctx->on_data  = on_data;
     ctx->on_end   = on_end;
     ctx->dev      = dev;
-    rt_sem_init(&ctx->sem, "rymsem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&ctx->sem, "rymsem", 0, RT_IPC_FLAG_PRIO);
 
     odev_rx_ind = dev->rx_indicate;
     /* no data should be received before the device has been fully setted up.

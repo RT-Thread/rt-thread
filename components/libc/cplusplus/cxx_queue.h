@@ -31,7 +31,7 @@ public:
     /** Create and initialise a message Queue. */
     Queue()
     {
-        rt_mq_init(&mID, "mq", mPool, sizeof(T), sizeof(mPool), RT_IPC_FLAG_FIFO);
+        rt_mq_init(&mID, "mq", mPool, sizeof(T), sizeof(mPool), RT_IPC_FLAG_PRIO);
     };
 
     ~Queue()

@@ -27,7 +27,7 @@ static struct rt_mutex _futex_lock;
 
 static int futex_system_init(void)
 {
-    rt_mutex_init(&_futex_lock, "futexList", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_futex_lock, "futexList", RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_PREV_EXPORT(futex_system_init);

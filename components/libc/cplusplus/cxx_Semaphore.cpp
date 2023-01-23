@@ -13,7 +13,7 @@ using namespace rtthread;
 
 Semaphore::Semaphore(const char *name, int32_t count)
 {
-    rt_sem_init(&mID, name, count, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&mID, name, count, RT_IPC_FLAG_PRIO);
 }
 
 bool Semaphore::wait(int32_t millisec)

@@ -327,7 +327,7 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             }
 
             rt_sprintf(tmpname, "%stl", dev->parent.name);
-            rt_sem_init(&(tx_fifo->sem), tmpname, can->config.sndboxnumber, RT_IPC_FLAG_FIFO);
+            rt_sem_init(&(tx_fifo->sem), tmpname, can->config.sndboxnumber, RT_IPC_FLAG_PRIO);
             can->can_tx = tx_fifo;
 
             dev->open_flag |= RT_DEVICE_FLAG_INT_TX;

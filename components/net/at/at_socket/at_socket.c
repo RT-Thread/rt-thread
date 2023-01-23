@@ -399,7 +399,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_skt", idx);
     /* create AT socket receive mailbox */
-    if ((sock->recv_notice = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO)) == RT_NULL)
+    if ((sock->recv_notice = rt_sem_create(name, 0, RT_IPC_FLAG_PRIO)) == RT_NULL)
     {
         LOG_E("No memory socket receive notic semaphore create.");
         goto __err;

@@ -1474,7 +1474,7 @@ int ulog_init(void)
         rt_mutex_detach(&ulog.output_locker);
         return -RT_ENOMEM;
     }
-    rt_sem_init(&ulog.async_notice, "ulog", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&ulog.async_notice, "ulog", 0, RT_IPC_FLAG_PRIO);
 #endif /* ULOG_USING_ASYNC_OUTPUT */
 
 #ifdef ULOG_USING_FILTER

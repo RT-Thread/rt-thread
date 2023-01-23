@@ -806,7 +806,7 @@ int eth_system_device_init_private(void)
     /* initialize mailbox and create Ethernet Rx thread */
     result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
                         &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/sizeof(rt_ubase_t),
-                        RT_IPC_FLAG_FIFO);
+                        RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     result = rt_thread_init(&eth_rx_thread, "erx", eth_rx_thread_entry, RT_NULL,
@@ -822,7 +822,7 @@ int eth_system_device_init_private(void)
     /* initialize mailbox and create Ethernet Tx thread */
     result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
                         &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/sizeof(rt_ubase_t),
-                        RT_IPC_FLAG_FIFO);
+                        RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     result = rt_thread_init(&eth_tx_thread, "etx", eth_tx_thread_entry, RT_NULL,

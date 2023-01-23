@@ -65,7 +65,7 @@ int lwip_system_init(void)
     /* set default netif to NULL */
     netif_default = RT_NULL;
 
-    rc = rt_sem_init(&done_sem, "done", 0, RT_IPC_FLAG_FIFO);
+    rc = rt_sem_init(&done_sem, "done", 0, RT_IPC_FLAG_PRIO);
     if (rc != RT_EOK)
     {
         LWIP_ASSERT("Failed to create semaphore", 0);
@@ -118,7 +118,7 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
     rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_SEM_NAME, counter);
     counter ++;
 
-    tmpsem = rt_sem_create(tname, count, RT_IPC_FLAG_FIFO);
+    tmpsem = rt_sem_create(tname, count, RT_IPC_FLAG_PRIO);
     if (tmpsem == RT_NULL)
     {
         return ERR_MEM;
@@ -322,7 +322,7 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
     rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MBOX_NAME, counter);
     counter ++;
 
-    tmpmbox = rt_mb_create(tname, size, RT_IPC_FLAG_FIFO);
+    tmpmbox = rt_mb_create(tname, size, RT_IPC_FLAG_PRIO);
     if (tmpmbox != RT_NULL)
     {
         *mbox = tmpmbox;

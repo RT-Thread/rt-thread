@@ -552,7 +552,7 @@ ufunction_t rt_usbd_function_uac_mic_create(udevice_t device)
 int audio_mic_init(void)
 {
     rt_thread_t mic_tid;
-    mic.event = rt_event_create("mic_event", RT_IPC_FLAG_FIFO);
+    mic.event = rt_event_create("mic_event", RT_IPC_FLAG_PRIO);
 
     mic_tid = rt_thread_create("mic_thread",
                                mic_entry, RT_NULL,

@@ -1217,10 +1217,10 @@ int rt_link_init(void)
     }
 
     rt_memset(rt_link_scb, 0, sizeof(struct rt_link_session));
-    rt_event_init(&rt_link_scb->event, "rtlink", RT_IPC_FLAG_FIFO);
+    rt_event_init(&rt_link_scb->event, "rtlink", RT_IPC_FLAG_PRIO);
     rt_event_control(&rt_link_scb->event, RT_IPC_CMD_RESET, RT_NULL);
 
-    rt_event_init(&rt_link_scb->sendevent, "send_rtlink", RT_IPC_FLAG_FIFO);
+    rt_event_init(&rt_link_scb->sendevent, "send_rtlink", RT_IPC_FLAG_PRIO);
     rt_event_control(&rt_link_scb->sendevent, RT_IPC_CMD_RESET, RT_NULL);
 
     rt_timer_init(&rt_link_scb->sendtimer, "tx_time", rt_link_sendtimer_callback,
