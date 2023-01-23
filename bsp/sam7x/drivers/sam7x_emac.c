@@ -340,7 +340,7 @@ rt_err_t sam7xether_init(rt_device_t dev)
 	     break;
 	}
 
-    for(i=0; i<0xfffff; i++);//* µÈ´ýÒ»¶ÎÖ¸¶¨µÄÊ±¼ä£¬Ê¹PHY¾ÍÐ÷
+    for(i=0; i<0xfffff; i++);//* ï¿½È´ï¿½Ò»ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬Ê¹PHYï¿½ï¿½ï¿½ï¿½
 
 	linksetup();
 
@@ -365,7 +365,7 @@ rt_err_t sam7xether_init(rt_device_t dev)
 
 	/* Configure EMAC operation mode. */
 	//AT91C_BASE_EMAC->EMAC_NCFGR |= (AT91C_EMAC_BIG | AT91C_EMAC_DRFCS);
- 	//                   ¸´ÖÆËùÓÐÓÐÐ§Ö¡µ½½ÓÊÕ»º³åÇø   *²»¸´ÖÆFCS×Ö¶Î       ²»½ÓÊÕ¹ã²¥Ö¡    ²»½ÓÊÕ1526×Ö½Ú³¤Ö¡                 
+ 	//                   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½   *ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½FCSï¿½Ö¶ï¿½       ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹ã²¥Ö¡    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1526ï¿½Ö½Ú³ï¿½Ö¡                 
 	AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_CAF |AT91C_EMAC_DRFCS | AT91C_EMAC_NBC | AT91C_EMAC_BIG;
 	AT91C_BASE_EMAC->EMAC_NCR   |= (AT91C_EMAC_TE  | AT91C_EMAC_RE | AT91C_EMAC_WESTAT);
 
@@ -651,7 +651,7 @@ int sam7xether_register(char *name)
 	/* update mac address */
 	update_mac_address(sam7x_dev);
 
-	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_PRIO);
 	
 	result = eth_device_init(&(sam7x_dev->parent), (char*)name);
 	RT_ASSERT(result == RT_EOK);

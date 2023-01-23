@@ -47,8 +47,8 @@ int rt_application_init()
 {
     rt_err_t result;
 
-    rt_sem_init(&sem1, "s1", 0, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem2, "s2", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem1, "s1", 0, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem2, "s2", 0, RT_IPC_FLAG_PRIO);
 
     result = rt_thread_init(&thread1, "t1", thread1_entry, RT_NULL,
         &thread1_stack[0], sizeof(thread1_stack), 10, 10);

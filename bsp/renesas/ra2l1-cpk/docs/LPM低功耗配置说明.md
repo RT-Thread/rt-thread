@@ -262,7 +262,7 @@ void wakeup_sample(void)
 
 static void wakeup_init(void)
 {
-    wakeup_event = rt_event_create("wakup", RT_IPC_FLAG_FIFO);
+    wakeup_event = rt_event_create("wakup", RT_IPC_FLAG_PRIO);
     RT_ASSERT(wakeup_event != RT_NULL);
     wakeup_sample();
 }

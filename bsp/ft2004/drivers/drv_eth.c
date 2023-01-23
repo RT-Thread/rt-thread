@@ -623,7 +623,7 @@ static int rt_hw_gmac_init(struct drv_gmac *pOsMac, const char *name)
     pOsMac->parent.eth_rx = rt_ft2004_gmac_rx;
     pOsMac->parent.eth_tx = rt_ft2004_gmac_tx;
     Ft_Gmac_UseDefaultMacAddr(&pOsMac->Gmac, pOsMac->dev_addr);
-    state = rt_event_init(&pOsMac->link_event, name, RT_IPC_FLAG_FIFO);
+    state = rt_event_init(&pOsMac->link_event, name, RT_IPC_FLAG_PRIO);
     LOG_I("rt_event_init is ok \r\n");
     if (RT_EOK != state)
     {

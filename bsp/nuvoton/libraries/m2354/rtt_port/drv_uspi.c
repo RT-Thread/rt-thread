@@ -393,7 +393,7 @@ static rt_err_t nu_hw_uspi_pdma_allocate(struct nu_uspi *uspi_bus)
         goto exit_nu_hw_uspi_pdma_allocate;
     }
 
-    uspi_bus->m_psSemBus = rt_sem_create("uspibus_sem", 0, RT_IPC_FLAG_FIFO);
+    uspi_bus->m_psSemBus = rt_sem_create("uspibus_sem", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(uspi_bus->m_psSemBus != RT_NULL);
 
     return RT_EOK;

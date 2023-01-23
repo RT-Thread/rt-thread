@@ -1473,7 +1473,7 @@ int rt_hw_tiva_eth_init(void)
 
     result = rt_mb_init(&eth_rx_pbuf_mb, "epbuf",
                         &rx_pbuf_mb_pool[0], sizeof(rx_pbuf_mb_pool)/4,
-                        RT_IPC_FLAG_FIFO);
+                        RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
     eth_dev->rx_pbuf_mb = &eth_rx_pbuf_mb;
 

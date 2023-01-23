@@ -91,7 +91,7 @@ static int rs485_init(void)
 
     RS485_IN;
 
-    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_PRIO);
     /* create rs485 thread */
     rt_thread_t thread = rt_thread_create("rs485", rs485_thread_entry, RT_NULL, 1024, 25, 10);
 

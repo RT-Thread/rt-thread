@@ -689,8 +689,8 @@ struct pbuf *rt_eth_rx(rt_device_t device)
 int rt_hw_eth_init(void)
 {
     rt_uint8_t mac_addr[6];
-    rt_sem_init(&send_finsh_sem_lock, "send_finsh_sem_lock", TX_DESCS, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&link_ack, "link_ack", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&send_finsh_sem_lock, "send_finsh_sem_lock", TX_DESCS, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&link_ack, "link_ack", 0, RT_IPC_FLAG_PRIO);
     memset(&eth_dev, 0, sizeof(eth_dev));
     memset((void *)SEND_DATA_NO_CACHE, 0, DMA_DISC_ADDR_SIZE);
     memset((void *)RECV_DATA_NO_CACHE, 0, DMA_DISC_ADDR_SIZE);

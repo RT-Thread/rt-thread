@@ -1457,7 +1457,7 @@ void rt_hw_usart_init(void)
         }
         /* Initialize lock for usart0 */
         usart->lock = &usart0_lock;
-        if (rt_sem_init(usart->lock, RT_USART0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(usart->lock, RT_USART0_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -1507,7 +1507,7 @@ void rt_hw_usart_init(void)
         }
         /* Initialize lock for usart1 */
         usart->lock = &usart1_lock;
-        if (rt_sem_init(usart->lock, RT_USART1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(usart->lock, RT_USART1_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -1558,7 +1558,7 @@ void rt_hw_usart_init(void)
         }
         /* Initialize lock for usart2 */
         usart->lock = &usart2_lock;
-        if (rt_sem_init(usart->lock, RT_USART2_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(usart->lock, RT_USART2_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -1597,7 +1597,7 @@ void rt_hw_usart_init(void)
         }
         /* Initialize lock for uart0 */
         usart->lock = &uart0_lock;
-        if (rt_sem_init(usart->lock, RT_UART0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(usart->lock, RT_UART0_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -1636,7 +1636,7 @@ void rt_hw_usart_init(void)
         }
         /* Initialize lock for uart1 */
         usart->lock = &uart1_lock;
-        if (rt_sem_init(usart->lock, RT_UART1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(usart->lock, RT_UART1_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }

@@ -44,7 +44,7 @@ OS_Status OS_QueueCreate(OS_Queue_t *queue, uint32_t queueLen, uint32_t itemSize
 {
 //  OS_HANDLE_ASSERT(!OS_QueueIsValid(queue), queue->handle);
 
-    queue->handle = rt_mq_create("os_mq", itemSize, queueLen, RT_IPC_FLAG_FIFO);
+    queue->handle = rt_mq_create("os_mq", itemSize, queueLen, RT_IPC_FLAG_PRIO);
 
     OS_DBG("%s(), handle %p\n", __func__, queue->handle);
 

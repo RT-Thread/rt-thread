@@ -753,7 +753,7 @@ static int rt_hw_apm32_eth_init(void)
     apm32_eth_device.parent.eth_tx     = rt_apm32_eth_tx;
 
     /* init tx semaphore */
-    rt_sem_init(&tx_wait, "tx_wait", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&tx_wait, "tx_wait", 0, RT_IPC_FLAG_PRIO);
 
     /* register eth device */
     eth_device_init(&(apm32_eth_device.parent), "e0");

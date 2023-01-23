@@ -207,7 +207,7 @@ static int _lcd_drv_init(lcd_device_t lcd_drv)
      * The event is used for the synchronization between updating the
      * framebuffer and flushing the screen.
      */
-    rt_event_init(&lcd_drv->lcd_evt, "lcd_evt", RT_IPC_FLAG_FIFO);
+    rt_event_init(&lcd_drv->lcd_evt, "lcd_evt", RT_IPC_FLAG_PRIO);
 
     /* the lcd device information defined by RT-Thread */
     arg[0] = lcd_drv->use_screen;

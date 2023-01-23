@@ -181,7 +181,7 @@ rt_err_t nu_adc_touch_sw_register(S_TOUCH_SW *psTouchSW)
     psTouchSW->adc = rt_device_find(psTouchSW->adc_name);
     RT_ASSERT(psTouchSW->adc);
 
-    g_pmqTouchXYZ = rt_mq_create("ADC_TOUCH_SW", sizeof(struct nu_adc_touch_data), TOUCH_MQ_LENGTH, RT_IPC_FLAG_FIFO);
+    g_pmqTouchXYZ = rt_mq_create("ADC_TOUCH_SW", sizeof(struct nu_adc_touch_data), TOUCH_MQ_LENGTH, RT_IPC_FLAG_PRIO);
     RT_ASSERT(g_pmqTouchXYZ);
 
     g_psRtTouchMenuTimer = rt_timer_create("TOUCH_SMPL_TIMER", nu_adc_touch_smpl, (void *)psTouchSW, DEF_ADC_TOUCH_SMPL_TICK, RT_TIMER_FLAG_PERIODIC);

@@ -6,7 +6,7 @@
 
 hal_mutex_t hal_mutex_create(void)
 {
-    return rt_mutex_create("hal_mutex", RT_IPC_FLAG_FIFO);
+    return rt_mutex_create("hal_mutex", RT_IPC_FLAG_PRIO);
 }
 
 int hal_mutex_delete(hal_mutex_t mutex)

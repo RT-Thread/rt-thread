@@ -186,7 +186,7 @@ void efm32_emu_init(void)
             &emu_task.em2,
             "EM2",
             EMU_TASK_EM2_TOKEN_NUMBER,
-            RT_IPC_FLAG_FIFO) != RT_EOK)
+            RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -194,7 +194,7 @@ void efm32_emu_init(void)
             &emu_task.em3,
             "EM3",
             EMU_TASK_EM3_TOKEN_NUMBER,
-            RT_IPC_FLAG_FIFO) != RT_EOK)
+            RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -202,7 +202,7 @@ void efm32_emu_init(void)
             &emu_task.em4,
             "EM4",
             EMU_TASK_EM4_TOKEN_NUMBER,
-            RT_IPC_FLAG_FIFO) != RT_EOK)
+            RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }

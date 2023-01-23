@@ -130,7 +130,7 @@ int rt_application_init(void)
 {
     rt_thread_t init_thread;
 
-    rt_mq_init(&mq, "mqt", &msg_pool[0], 128 - sizeof(void*), sizeof(msg_pool), RT_IPC_FLAG_FIFO);
+    rt_mq_init(&mq, "mqt", &msg_pool[0], 128 - sizeof(void*), sizeof(msg_pool), RT_IPC_FLAG_PRIO);
 
     init_thread = rt_thread_create("init", rt_init_thread_entry, RT_NULL, 1024, 21, 20);
     if(init_thread != RT_NULL)

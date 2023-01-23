@@ -376,17 +376,17 @@ out:
  */
 int clock_dev_init(void)
 {
-    if (rt_mutex_init(&(clk_lock), "clkLock", RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&(clk_lock), "clkLock", RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         RT_ASSERT(0);
     }
-    if (rt_mutex_init(&(gate_lock), "gateLock", RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&(gate_lock), "gateLock", RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         RT_ASSERT(0);
     }
     rt_slist_init(&clk_gate_list);
 #if defined(RT_USING_PMU)
-    if (rt_mutex_init(&(pd_lock), "pdLock", RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&(pd_lock), "pdLock", RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         RT_ASSERT(0);
     }

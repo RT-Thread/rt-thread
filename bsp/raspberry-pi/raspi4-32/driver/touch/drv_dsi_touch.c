@@ -107,7 +107,7 @@ static struct rt_touch_ops dsi_touch_ops =
 static int hw_dsi_touch_init(void)
 {
     //touch sem
-    rt_sem_init(&dsi_touch_ack, "dsi_touch_ack", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&dsi_touch_ack, "dsi_touch_ack", 0, RT_IPC_FLAG_PRIO);
 
     dsi_touch_tid = rt_thread_create("dsi_touch",
                             dsi_touch_thread_entry, RT_NULL,

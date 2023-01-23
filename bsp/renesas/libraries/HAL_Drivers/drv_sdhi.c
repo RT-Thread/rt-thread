@@ -466,8 +466,8 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
 
     rt_memcpy(&sdio->sdhi_des, sdhi_des, sizeof(struct ra_sdhi));
 
-    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_PRIO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
     /* set host defautl attributes */
     host->ops = &ra_sdhi_ops;

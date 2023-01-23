@@ -920,8 +920,8 @@ int rt_hw_eth_init(void)
     struct synopGMACNetworkAdapter *synopGMACadapter;
     static u8 mac_addr0[6] = DEFAULT_MAC_ADDRESS;
     int index;
-    rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_PRIO);
 
     memset(&eth_dev, 0, sizeof(eth_dev));
     synopGMACadapter = (struct synopGMACNetworkAdapter *)plat_alloc_memory(sizeof(struct synopGMACNetworkAdapter));

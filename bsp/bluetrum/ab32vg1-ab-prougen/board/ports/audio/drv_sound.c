@@ -494,7 +494,7 @@ static int rt_hw_sound_init(void)
 
     snd_dev.rx_fifo = rx_fifo;
 
-    snd_dev.semaphore = rt_sem_create("snd", 0, RT_IPC_FLAG_FIFO);
+    snd_dev.semaphore = rt_sem_create("snd", 0, RT_IPC_FLAG_PRIO);
     if (snd_dev.semaphore == RT_NULL)
     {
         return -RT_ENOMEM;

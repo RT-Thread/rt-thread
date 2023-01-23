@@ -591,11 +591,11 @@ int rt_hw_adc_init(void)
     result = _nu_adc_init(psDev);
     RT_ASSERT(result == RT_EOK);
 
-    g_sNuADC.m_psSem = rt_sem_create("adc_mst_sem", 0, RT_IPC_FLAG_FIFO);
+    g_sNuADC.m_psSem = rt_sem_create("adc_mst_sem", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(g_sNuADC.m_psSem);
 
 #if defined(BSP_USING_ADC_TOUCH)
-    g_sNuADC.m_pmqTouchXYZ = rt_mq_create("ADC_TOUCH_XYZ", sizeof(struct nu_adc_touch_data), TOUCH_MQ_LENGTH, RT_IPC_FLAG_FIFO);
+    g_sNuADC.m_pmqTouchXYZ = rt_mq_create("ADC_TOUCH_XYZ", sizeof(struct nu_adc_touch_data), TOUCH_MQ_LENGTH, RT_IPC_FLAG_PRIO);
     RT_ASSERT(g_sNuADC.m_pmqTouchXYZ);
 
     g_sNuADC.psRtTouchMenuTimer = rt_timer_create("TOUCH_SMPL_TIMER", nu_adc_touch_smpl, (void *)&g_sNuADC, DEF_ADC_TOUCH_SMPL_TICK, RT_TIMER_FLAG_PERIODIC);

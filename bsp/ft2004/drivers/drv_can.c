@@ -176,7 +176,7 @@ int rt_hw_can_init(void)
 {
 #ifdef BSP_USING_CAN0
     drv_can0.can_handle.Config.InstanceId = 0;
-    rt_sem_init(&drv_can0.recv_semaphore, "can0_recv", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&drv_can0.recv_semaphore, "can0_recv", 0, RT_IPC_FLAG_PRIO);
     drv_can0.device.config.ticks = 20000;
     drv_can0.device.config.baud_rate = 1000000;
     rt_hw_can_register(&drv_can0.device,
@@ -190,7 +190,7 @@ int rt_hw_can_init(void)
     drv_can1.can_handle.Config.InstanceId = 1;
     drv_can1.device.config.ticks = 20000;
     drv_can1.device.config.baud_rate = 1000000;
-    rt_sem_init(&drv_can1.recv_semaphore, "can1_recv", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&drv_can1.recv_semaphore, "can1_recv", 0, RT_IPC_FLAG_PRIO);
     rt_hw_can_register(&drv_can1.device,
                        drv_can1.name,
                        &_can_ops,
@@ -231,7 +231,7 @@ static void rt_can_test_loopback_thread_entry(void *param)
     _can_obj->candev = rt_device_find(_can_obj->name);
     RT_ASSERT(_can_obj->candev);
     drv_can = (struct ft2004_can *)_can_obj->candev->user_data;
-    rt_sem_init(&_can_obj->_sem, "canrx_wait", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_can_obj->_sem, "canrx_wait", 0, RT_IPC_FLAG_PRIO);
     rt_device_open(_can_obj->candev, RT_DEVICE_OFLAG_RDWR);
 
     while (1)

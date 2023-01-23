@@ -559,7 +559,7 @@ static rt_err_t rthw_sdctrl_create(ft_sdctrl_class_t *class_p)
     }
 
     class_p->ft_sdctrl.config = *(FSdCtrl_Config_t *)FSdCtrl_LookupConfig(0);
-    rt_event_init(&class_p->event, "sdctrl", RT_IPC_FLAG_FIFO);
+    rt_event_init(&class_p->event, "sdctrl", RT_IPC_FLAG_PRIO);
     rt_mutex_init(&class_p->mutex, "sdctrl", RT_IPC_FLAG_PRIO);
 
     class_p->host = host;

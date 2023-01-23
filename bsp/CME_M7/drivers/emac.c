@@ -412,7 +412,7 @@ int cme_m7_eth_init(void)
     rt_sem_init(&cme_eth_device.tx_buf_free,
                 "tx_buf",
                 ETH_TXBUFNB,
-                RT_IPC_FLAG_FIFO);
+                RT_IPC_FLAG_PRIO);
 
     /* register eth device */
     eth_device_init(&(cme_eth_device.parent), "e0");

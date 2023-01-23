@@ -733,7 +733,7 @@ int tina_sdio_init(void)
             goto err;
         }
 
-        if (rt_sem_init(&_sdio_drv.rt_sem, "sdio_sem", RT_NULL, RT_IPC_FLAG_FIFO))
+        if (rt_sem_init(&_sdio_drv.rt_sem, "sdio_sem", RT_NULL, RT_IPC_FLAG_PRIO))
         {
             LOG_E("sem init failed");
             goto err;

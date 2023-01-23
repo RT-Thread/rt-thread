@@ -55,7 +55,7 @@ void am_adc_start(rt_uint8_t channel)
             &am_adcbat_buffer_pool[0],
             32 - sizeof(void*),
             sizeof(am_adcbat_buffer_pool),
-            RT_IPC_FLAG_FIFO);
+            RT_IPC_FLAG_PRIO);
 
     /* Start the ctimer */
     am_hal_ctimer_start(ADC_CTIMER_NUM, AM_HAL_CTIMER_TIMERA);

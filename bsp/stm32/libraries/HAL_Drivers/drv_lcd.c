@@ -286,7 +286,7 @@ int drv_lcd_hw_init(void)
     memset(&_lcd, 0x00, sizeof(_lcd));
 
     /* init lcd_lock semaphore */
-    result = rt_sem_init(&_lcd.lcd_lock, "lcd_lock", 0, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&_lcd.lcd_lock, "lcd_lock", 0, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         LOG_E("init semaphore failed!\n");

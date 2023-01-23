@@ -598,7 +598,7 @@ int davinci_i2c_init(char *bus_name)
 
     rt_memset((void *)dev, 0, sizeof(struct davinci_i2c_dev));
 
-    rt_sem_init(&dev->completion, "i2c_ack", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&dev->completion, "i2c_ack", 0, RT_IPC_FLAG_PRIO);
 
     dev->irq = IRQ_I2C;
 

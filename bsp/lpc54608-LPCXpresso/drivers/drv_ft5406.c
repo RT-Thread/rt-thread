@@ -294,7 +294,7 @@ int ft5406_hw_init(void)
         GPIO_WritePinOutput(GPIO, 2, 27, 1);
     }
 
-    rt_sem_init(&_tp_sem, "touch", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_tp_sem, "touch", 0, RT_IPC_FLAG_PRIO);
     tid = rt_thread_create("touch", _touch, RT_NULL,
                            2048, 10, 20);
     if (!tid)

@@ -41,7 +41,7 @@ static void usb_thread_entry(void *parameter)
 
     rt_device_t device = (rt_device_t)parameter;
 
-    result = rt_sem_init(&tx_sem_complete, "tx_complete_sem_hid", 1, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&tx_sem_complete, "tx_complete_sem_hid", 1, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     result = rt_device_set_tx_complete(device, event_hid_in);

@@ -385,7 +385,7 @@ static int rt_hw_sdh_init(void)
     rt_err_t ret = RT_EOK;
     rt_uint32_t flags = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE;
 
-    rt_event_init(&sdh_event, "sdh_event", RT_IPC_FLAG_FIFO);
+    rt_event_init(&sdh_event, "sdh_event", RT_IPC_FLAG_PRIO);
 
     for (i = (SDH_START + 1); i < SDH_CNT; i++)
     {
@@ -401,7 +401,7 @@ static int rt_hw_sdh_init(void)
         /* Private */
         nu_sdh_arr[i].dev.user_data = (void *)&nu_sdh_arr[i];
 
-        ret = rt_sem_init(&nu_sdh_arr[i].lock, "sdhlock", 1, RT_IPC_FLAG_FIFO);
+        ret = rt_sem_init(&nu_sdh_arr[i].lock, "sdhlock", 1, RT_IPC_FLAG_PRIO);
         RT_ASSERT(ret == RT_EOK);
 
         SDH_Open(nu_sdh_arr[i].base, CardDetect_From_GPIO);

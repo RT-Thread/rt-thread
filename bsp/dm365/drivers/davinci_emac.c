@@ -1646,8 +1646,8 @@ int rt_hw_davinci_emac_init()
     davinci_emac_device.version = EMAC_VERSION_2;
     davinci_emac_device.rmii_en = 0;
     davinci_emac_device.phy_addr = 0x09;
-    rt_sem_init(&priv->tx_lock, "tx_lock", 1, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&priv->rx_lock, "rx_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&priv->tx_lock, "tx_lock", 1, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&priv->rx_lock, "rx_lock", 1, RT_IPC_FLAG_PRIO);
 
     davinci_emac_device.mac_addr[0] = 0x00;
     davinci_emac_device.mac_addr[1] = 0x60;

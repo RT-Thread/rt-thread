@@ -986,7 +986,7 @@ rt_err_t efm_hw_eth_init(void)
         USART_BaudrateSyncSet(usart->usart_device, 0, ETH_CLK_MAX);
 
         /* Initialize semaphore */
-        rt_sem_init(&ethLock, ETH_DEVICE_NAME, 1, RT_IPC_FLAG_FIFO);
+        rt_sem_init(&ethLock, ETH_DEVICE_NAME, 1, RT_IPC_FLAG_PRIO);
 
         /* Register Ethernet device */
         eth_dev.parent.init     = efm_eth_init;

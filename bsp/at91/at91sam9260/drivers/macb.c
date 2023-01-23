@@ -864,9 +864,9 @@ int rt_hw_macb_init(void)
         rt_kprintf("AT91 EMAC initialized failed\n");
         return -1;
     }
-    rt_sem_init(&macb_device.tx_ack, "tx_ack", 0, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&macb_device.tx_lock, "tx_lock", 1, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&macb_device.rx_lock, "rx_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&macb_device.tx_ack, "tx_ack", 0, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&macb_device.tx_lock, "tx_lock", 1, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&macb_device.rx_lock, "rx_lock", 1, RT_IPC_FLAG_PRIO);
 
     macb_device.dev_addr[0] = 0x00;
     macb_device.dev_addr[1] = 0x60;
@@ -886,7 +886,7 @@ int rt_hw_macb_init(void)
     macb_device.parent.eth_rx     = rt_macb_rx;
     macb_device.parent.eth_tx     = rt_macb_tx;
 
-    rt_sem_init(&macb_device.mdio_bus_lock, "mdio_bus_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&macb_device.mdio_bus_lock, "mdio_bus_lock", 1, RT_IPC_FLAG_PRIO);
 
     eth_device_init(&(macb_device.parent), "e0");
 

@@ -729,7 +729,7 @@ void nu_sdh_host_initial(nu_sdh_t sdh)
     host = mmcsd_alloc_host();
     RT_ASSERT(host != RT_NULL);
 
-    ret = rt_event_init(&sdh->event, "sdh_event", RT_IPC_FLAG_FIFO);
+    ret = rt_event_init(&sdh->event, "sdh_event", RT_IPC_FLAG_PRIO);
     RT_ASSERT(ret == RT_EOK);
 
     /* Reset sdh at first. */

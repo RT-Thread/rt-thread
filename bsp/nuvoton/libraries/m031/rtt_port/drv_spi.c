@@ -352,7 +352,7 @@ rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus)
         goto exit_nu_hw_spi_pdma_allocate;
     }
 
-    spi_bus->m_psSemBus = rt_sem_create("spibus_sem", 0, RT_IPC_FLAG_FIFO);
+    spi_bus->m_psSemBus = rt_sem_create("spibus_sem", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(spi_bus->m_psSemBus != RT_NULL);
 
     return RT_EOK;

@@ -66,7 +66,7 @@ static void drv_thread_entry(void *parameter)
 
 static int drv_thread_init(void)
 {
-    drv_mq = rt_mq_create("drv", 1, 128, RT_IPC_FLAG_FIFO);
+    drv_mq = rt_mq_create("drv", 1, 128, RT_IPC_FLAG_PRIO);
     drv_tid = rt_thread_create("drv",
             drv_thread_entry,
             RT_NULL,

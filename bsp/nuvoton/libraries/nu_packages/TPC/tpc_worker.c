@@ -55,7 +55,7 @@ static void tpc_entry(void *parameter)
     rt_device_control(dev, RT_TOUCH_CTRL_SET_X_RANGE, &x_range);  /* if possible you can set your x y coordinate*/
     rt_device_control(dev, RT_TOUCH_CTRL_SET_Y_RANGE, &y_range);
 
-    tpc_sem = rt_sem_create("dsem", 0, RT_IPC_FLAG_FIFO);
+    tpc_sem = rt_sem_create("dsem", 0, RT_IPC_FLAG_PRIO);
     if (tpc_sem == RT_NULL)
     {
         rt_kprintf("create dynamic semaphore failed.\n");

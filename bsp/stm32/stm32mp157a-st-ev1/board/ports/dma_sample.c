@@ -86,7 +86,7 @@ static int uart_dma_sample(int argc, char *argv[])
                msg_pool,
                sizeof(struct rx_msg),
                sizeof(msg_pool),
-               RT_IPC_FLAG_FIFO);
+               RT_IPC_FLAG_PRIO);
 
     ret = rt_device_open(serial, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
     if (ret != RT_EOK)

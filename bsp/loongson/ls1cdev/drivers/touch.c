@@ -566,7 +566,7 @@ rt_err_t rtgui_touch_hw_init(const char * spi_device_name)
     /* clear device structure */
     rt_memset(&(touch->parent), 0, sizeof(struct rt_device));
 
-    rt_event_init(&touch->event, "touch", RT_IPC_FLAG_FIFO);
+    rt_event_init(&touch->event, "touch", RT_IPC_FLAG_PRIO);
 
     touch->spi_device = (struct rt_spi_device *)spi_device;
     touch->calibrating = false;

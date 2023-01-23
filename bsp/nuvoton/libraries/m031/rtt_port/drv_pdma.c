@@ -853,7 +853,7 @@ static void nu_pdma_memfun_actor_init(void)
         rt_memset(&nu_pdma_memfun_actor_arr[i], 0, sizeof(struct nu_pdma_memfun_actor));
         if (-(RT_ERROR) != (nu_pdma_memfun_actor_arr[i].m_i32ChannID = nu_pdma_channel_allocate(PDMA_MEM)))
         {
-            nu_pdma_memfun_actor_arr[i].m_psSemMemFun = rt_sem_create("memactor_sem", 0, RT_IPC_FLAG_FIFO);
+            nu_pdma_memfun_actor_arr[i].m_psSemMemFun = rt_sem_create("memactor_sem", 0, RT_IPC_FLAG_PRIO);
             RT_ASSERT(nu_pdma_memfun_actor_arr[i].m_psSemMemFun != RT_NULL);
         }
         else
@@ -864,7 +864,7 @@ static void nu_pdma_memfun_actor_init(void)
         nu_pdma_memfun_actor_maxnum = i;
         nu_pdma_memfun_actor_mask = ~(((1 << i) - 1));
 
-        nu_pdma_memfun_actor_pool_sem = rt_sem_create("mempool_sem", nu_pdma_memfun_actor_maxnum, RT_IPC_FLAG_FIFO);
+        nu_pdma_memfun_actor_pool_sem = rt_sem_create("mempool_sem", nu_pdma_memfun_actor_maxnum, RT_IPC_FLAG_PRIO);
         RT_ASSERT(nu_pdma_memfun_actor_pool_sem != RT_NULL);
 
         nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_PRIO);

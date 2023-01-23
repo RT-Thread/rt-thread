@@ -143,7 +143,7 @@ static void gt9xx_init(struct rt_i2c_bus_device *i2c_bus)
     rt_uint8_t buf = 0;
     rt_uint8_t cmd[2];
 
-    gt9xx_driver.isr_sem = rt_sem_create("gt9xx", 0, RT_IPC_FLAG_FIFO);
+    gt9xx_driver.isr_sem = rt_sem_create("gt9xx", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(gt9xx_driver.isr_sem);
 
     cmd[0] = (rt_uint8_t)((gt9xx_CONFIG_VERSION_REG >> 8) & 0xFF);

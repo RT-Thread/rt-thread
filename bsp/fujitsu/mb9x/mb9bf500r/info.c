@@ -165,7 +165,7 @@ static void info_entry(void* parameter)
     struct rtgui_view* view;
     struct rtgui_workbench* workbench;
 
-    mq = rt_mq_create("qInfo", 256, 4, RT_IPC_FLAG_FIFO);
+    mq = rt_mq_create("qInfo", 256, 4, RT_IPC_FLAG_PRIO);
     rtgui_thread_register(rt_thread_self(), mq);
 
     workbench = rtgui_workbench_create("info", "workbench");

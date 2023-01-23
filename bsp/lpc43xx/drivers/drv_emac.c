@@ -484,8 +484,8 @@ int lpc_emac_hw_init(void)
 {
     uint32_t result[4];
 
-    rt_event_init(&tx_event, "tx_event", RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_event_init(&tx_event, "tx_event", RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_PRIO);
 
     /* set autonegotiation mode */
     lpc_emac_device.phy_mode = EMAC_PHY_AUTO;

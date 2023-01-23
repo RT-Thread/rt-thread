@@ -358,8 +358,8 @@ static int hw_ili9486_lcd_init(void)
     lcd_dev->config.max_hz = LCD_SPI_FREQ_MAX;//125M
     lcd_init();
 
-    rt_sem_init(&lcd_spi_lock, "lcd_spi_lock", 1, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&lcd_lock, "lcd_spi_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&lcd_spi_lock, "lcd_spi_lock", 1, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&lcd_lock, "lcd_spi_lock", 1, RT_IPC_FLAG_PRIO);
      /* set device type */
     device->type = RT_Device_Class_Graphic;
     /* initialize device interface */

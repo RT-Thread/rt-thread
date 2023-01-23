@@ -101,7 +101,7 @@ rt_err_t dma_memcpy(void *src, void *dst, unsigned int size, unsigned int dch, u
 
 void dma_init(unsigned char dch)
 {
-    rt_sem_init(&dma_sem, "dma_sem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&dma_sem, "dma_sem", 0, RT_IPC_FLAG_PRIO);
 
     ctr_blocks = (dma_lite_ctrl_block_t *)&dma_disc[0]; //rt_malloc(sizeof(DMA_Lite_Control_Block));
     //Make sure DMA channel is enabled by

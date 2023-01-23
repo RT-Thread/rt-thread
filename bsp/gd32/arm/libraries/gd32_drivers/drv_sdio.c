@@ -19,7 +19,7 @@
 #define LOG_TAG  "drv.sdio"
 #include "drv_log.h"
 
-#define SDIO_DMA_USE_IPC     0//1:使用ipc做同步
+#define SDIO_DMA_USE_IPC     0//1:使锟斤拷ipc锟斤拷同锟斤拷
 
 /* card status of R1 definitions */
 #define SD_R1_OUT_OF_RANGE                  BIT(31)                   /* command's argument was out of the allowed range */
@@ -185,14 +185,14 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
     sd_error_enum sd_error = SD_OK;
     uint16_t retry = 5;
 
-    ret = rt_mutex_init(&sd.sd_lock, "sd_lock", RT_IPC_FLAG_FIFO);
+    ret = rt_mutex_init(&sd.sd_lock, "sd_lock", RT_IPC_FLAG_PRIO);
 
     if (RT_EOK != ret) {
         LOG_E("init mutex failed\n");
         return ret;
     }
 
-    ret = rt_sem_init(&sd.sem, "sd_sem", 0, RT_IPC_FLAG_FIFO);
+    ret = rt_sem_init(&sd.sem, "sd_sem", 0, RT_IPC_FLAG_PRIO);
 
     if (RT_EOK != ret) {
         LOG_E("init semaphore failed\n");

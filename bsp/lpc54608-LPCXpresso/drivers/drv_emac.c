@@ -509,7 +509,7 @@ struct pbuf *lpc_emac_rx(rt_device_t dev)
 int lpc_emac_hw_init(void)
 {
     /* init tx semaphore */
-    rt_sem_init(&lpc_emac_device.tx_wait, "tx_wait", ENET_TXBD_NUM, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&lpc_emac_device.tx_wait, "tx_wait", ENET_TXBD_NUM, RT_IPC_FLAG_PRIO);
 
     lpc_emac_device.phyAddr = 0;
     lpc_emac_device.txIdx = 0;

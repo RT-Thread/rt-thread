@@ -165,7 +165,7 @@ static void ft_init(struct rt_i2c_bus_device *i2c_bus)
     {
         ft_i2c_bus = i2c_bus;
     }
-    ft_driver.isr_sem = rt_sem_create("ft", 0, RT_IPC_FLAG_FIFO);
+    ft_driver.isr_sem = rt_sem_create("ft", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(ft_driver.isr_sem);
 
     rt_pin_mode(BSP_TOUCH_INT_PIN, PIN_MODE_INPUT_PULLUP);

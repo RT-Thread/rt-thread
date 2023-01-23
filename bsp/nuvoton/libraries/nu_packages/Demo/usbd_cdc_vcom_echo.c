@@ -72,7 +72,7 @@ static int vcom_echo_init(void)
         return -1;
     }
 
-    result = rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     result = rt_device_set_rx_indicate(serial, uart_input);

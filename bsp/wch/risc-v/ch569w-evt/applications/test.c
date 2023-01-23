@@ -87,7 +87,7 @@ static void test_gpio_int(void)
     /* Enable all gpio interrupt with various modes.
      * LED0 or GND touching can be used to trigger pin interrupt.
     */
-    gpint_mb = rt_mb_create("pximb", 8, RT_IPC_FLAG_FIFO);
+    gpint_mb = rt_mb_create("pximb", 8, RT_IPC_FLAG_PRIO);
     if (gpint_mb == RT_NULL)
     {
         rt_kprintf("gpint mailbox create failed !\n");

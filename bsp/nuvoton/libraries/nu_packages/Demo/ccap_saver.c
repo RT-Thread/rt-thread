@@ -293,7 +293,7 @@ static void ccap_grabber(void *parameter)
 
     rt_memset((void *)&sGrabberContext, 0, sizeof(ccap_grabber_context));
 
-    sGrabberContext.semFrameEnd = rt_sem_create(psGrabberParam->devname_ccap, 0, RT_IPC_FLAG_FIFO);
+    sGrabberContext.semFrameEnd = rt_sem_create(psGrabberParam->devname_ccap, 0, RT_IPC_FLAG_PRIO);
     if (sGrabberContext.semFrameEnd == RT_NULL)
     {
         LOG_E("Can't allocate sem resource %s", psGrabberParam->devname_ccap);

@@ -1022,7 +1022,7 @@ void rt_hw_leuart_init(void)
         }
         /* Initialize lock for leuart0 */
         leuart->lock = &leuart0_lock;
-        if (rt_sem_init(leuart->lock, RT_LEUART0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(leuart->lock, RT_LEUART0_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }
@@ -1061,7 +1061,7 @@ void rt_hw_leuart_init(void)
         }
         /* Initialize lock for leuart1 */
         leuart->lock = &leuart1_lock;
-        if (rt_sem_init(leuart->lock, RT_LEUART1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(leuart->lock, RT_LEUART1_NAME, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }

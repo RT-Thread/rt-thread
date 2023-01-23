@@ -210,7 +210,7 @@ int can_sample(int argc, char *argv[])
     }
 
     /* 初始化 CAN 接收信号量 */
-    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_PRIO);
 
     /* 以中断接收及发送方式打开 CAN 设备 */
     res = rt_device_open(can_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);

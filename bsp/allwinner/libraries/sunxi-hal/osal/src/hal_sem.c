@@ -23,7 +23,7 @@
 
 hal_sem_t hal_sem_create(unsigned int cnt)
 {
-     return (hal_sem_t) rt_sem_create("hal_layer", cnt, RT_IPC_FLAG_FIFO);
+     return (hal_sem_t) rt_sem_create("hal_layer", cnt, RT_IPC_FLAG_PRIO);
 }
 
 int hal_sem_delete(hal_sem_t sem)

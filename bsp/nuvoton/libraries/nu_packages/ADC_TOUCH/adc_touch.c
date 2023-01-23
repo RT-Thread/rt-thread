@@ -629,7 +629,7 @@ static void adc_touch_entry(void *parameter)
     rt_device_t pdev;
     int max_range;
 
-    adc_touch_sem = rt_sem_create("adc_touch_sem", 0, RT_IPC_FLAG_FIFO);
+    adc_touch_sem = rt_sem_create("adc_touch_sem", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(adc_touch_sem != RT_NULL);
 
     pdev = rt_device_find("adc_touch");

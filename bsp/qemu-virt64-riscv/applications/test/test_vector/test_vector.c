@@ -157,7 +157,7 @@ static void test_no_vector()
 
 static rt_err_t utest_tc_init(void)
 {
-    sem = rt_sem_create("test_ctx", 0, RT_IPC_FLAG_FIFO);
+    sem = rt_sem_create("test_ctx", 0, RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
 

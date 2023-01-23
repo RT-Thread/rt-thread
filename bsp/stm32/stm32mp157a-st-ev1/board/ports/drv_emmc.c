@@ -502,7 +502,7 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 
     sdio->sdio_des.hw_sdio = (struct stm32_sdio *)EMMC_BASE_ADDRESS;
 
-    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
+    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_PRIO);
     rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
     /* set host default attributes */
     host->ops = &ops;

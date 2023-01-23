@@ -393,7 +393,7 @@ static void ccap_grabber(void *parameter)
     LOG_I("LCD frame buffer@0x%08x",   sGrabberContext.sLcdInfo.framebuffer);
     LOG_I("LCD frame buffer size:%d",   sGrabberContext.sLcdInfo.smem_len);
 
-    sGrabberContext.semFrameEnd = rt_sem_create(psGrabberParam->devname_ccap, 0, RT_IPC_FLAG_FIFO);
+    sGrabberContext.semFrameEnd = rt_sem_create(psGrabberParam->devname_ccap, 0, RT_IPC_FLAG_PRIO);
     if (sGrabberContext.semFrameEnd == RT_NULL)
     {
         LOG_E("Can't allocate sem resource %s", psGrabberParam->devname_ccap);

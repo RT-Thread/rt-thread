@@ -397,7 +397,7 @@ int drv_emac_hw_init(void)
     _emac.parent.eth_tx     = k64_emac_tx;
 
     /* init tx semaphore */
-    rt_sem_init(&_emac.tx_wait, "tx_wait", ENET_TX_RING_LEN - 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_emac.tx_wait, "tx_wait", ENET_TX_RING_LEN - 1, RT_IPC_FLAG_PRIO);
 
     /* register ETH device */
     eth_device_init(&(_emac.parent), "e0");

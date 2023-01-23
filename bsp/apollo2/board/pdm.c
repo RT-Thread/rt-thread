@@ -207,7 +207,7 @@ int rt_hw_pdm_init(void)
             &am_pdm_buffer_pool[0],
             340 - sizeof(void*),
             sizeof(am_pdm_buffer_pool),
-            RT_IPC_FLAG_FIFO);
+            RT_IPC_FLAG_PRIO);
 
     //rt_kprintf("pdm_init!\n");
 

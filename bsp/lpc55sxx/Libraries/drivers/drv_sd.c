@@ -234,7 +234,7 @@ int rt_hw_mci_init(void)
     /* initialize mutex lock */
     rt_mutex_init(&_mci_device->lock, "sdcard0", RT_IPC_FLAG_PRIO);
     /* create finish event */
-    _mci_device->finish_event = rt_event_create("sdcard0", RT_IPC_FLAG_FIFO);
+    _mci_device->finish_event = rt_event_create("sdcard0", RT_IPC_FLAG_PRIO);
 
     /* register sdcard device */
     _mci_device->parent.type    = RT_Device_Class_Block;

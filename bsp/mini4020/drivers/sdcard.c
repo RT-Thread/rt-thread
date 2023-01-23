@@ -720,7 +720,7 @@ rt_err_t rt_hw_sdcard_init()
         {
             rt_snprintf(dname, 4, "sd%d",  i);
             rt_snprintf(sname, 8, "sem_sd%d",  i);
-            ptr_sddev->part[i].lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
+            ptr_sddev->part[i].lock = rt_sem_create(sname, 1, RT_IPC_FLAG_PRIO);
 
             /* register sdcard device */
             ptr_sddev->device[i].init = rt_sdcard_init;
@@ -744,7 +744,7 @@ rt_err_t rt_hw_sdcard_init()
                 /* there is no partition table */
                 ptr_sddev->part[0].offset = 0;
                 ptr_sddev->part[0].size   = 0;
-                ptr_sddev->part[0].lock = rt_sem_create("sem_sd0", 1, RT_IPC_FLAG_FIFO);
+                ptr_sddev->part[0].lock = rt_sem_create("sem_sd0", 1, RT_IPC_FLAG_PRIO);
 
                 /* register sdcard device */
                 ptr_sddev->device[0].init = rt_sdcard_init;

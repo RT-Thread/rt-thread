@@ -657,8 +657,8 @@ struct pbuf *rt_dm9161_rx(rt_device_t dev)
 
 void rt_hw_dm9161_init()
 {
-    rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_PRIO);
 
     dm9161_device.type  = TYPE_DM9161;
     dm9161_device.mode  = DM9161_AUTO;

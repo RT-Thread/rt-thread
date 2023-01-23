@@ -615,7 +615,7 @@ rt_device_t bt_uart_init(const char *uartname)
     rt_device_t dev = RT_NULL;
     if (strcmp(uartname, BT_UART_NAME) == 0)
     {
-        bt_rx_sem = rt_sem_create("btbuf", 0, RT_IPC_FLAG_FIFO);
+        bt_rx_sem = rt_sem_create("btbuf", 0, RT_IPC_FLAG_PRIO);
         dev = rt_device_find(uartname);
         if (dev == RT_NULL)
         {

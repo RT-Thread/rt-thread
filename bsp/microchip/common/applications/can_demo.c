@@ -299,14 +299,14 @@ rt_err_t can_demo_run(void)
 {
     rt_err_t result;
 
-    can_rxdone = rt_sem_create("can_rx", 0, RT_IPC_FLAG_FIFO);
+    can_rxdone = rt_sem_create("can_rx", 0, RT_IPC_FLAG_PRIO);
     if (RT_NULL == can_rxdone)
     {
         rt_kprintf("can_rx semaphore create failed\r\n");
         return (-RT_ERROR);
     }
 
-    can_txdone = rt_sem_create("can_tx", 0, RT_IPC_FLAG_FIFO);
+    can_txdone = rt_sem_create("can_tx", 0, RT_IPC_FLAG_PRIO);
     if (RT_NULL == can_txdone)
     {
         rt_kprintf("can_tx semaphore create failed\r\n");

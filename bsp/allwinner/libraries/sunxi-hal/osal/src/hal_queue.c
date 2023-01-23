@@ -24,7 +24,7 @@
 
 hal_mailbox_t hal_mailbox_create(const char *name, unsigned int size)
 {
-    return rt_mb_create("hal_layer", size, RT_IPC_FLAG_FIFO);
+    return rt_mb_create("hal_layer", size, RT_IPC_FLAG_PRIO);
 }
 
 int hal_mailbox_delete(hal_mailbox_t mailbox)
@@ -131,7 +131,7 @@ int hal_workqueue_dowork(hal_workqueue *queue, hal_work *work)
 
 hal_queue_t hal_queue_create(const char *name, unsigned int item_size, unsigned int queue_size)
 {
-    return rt_mq_create("hal_layer", item_size, queue_size, RT_IPC_FLAG_FIFO);
+    return rt_mq_create("hal_layer", item_size, queue_size, RT_IPC_FLAG_PRIO);
 }
 
 int hal_queue_delete(hal_queue_t queue)

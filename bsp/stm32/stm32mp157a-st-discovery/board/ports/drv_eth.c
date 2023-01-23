@@ -853,7 +853,7 @@ static int rt_hw_stm32_eth_init(void)
     stm32_eth_device.parent.eth_rx = rt_stm32_eth_rx;
     stm32_eth_device.parent.eth_tx = rt_stm32_eth_tx;
 
-    rt_event_init(&rx_event, "eth_rx", RT_IPC_FLAG_FIFO);
+    rt_event_init(&rx_event, "eth_rx", RT_IPC_FLAG_PRIO);
 
     /* register eth device */
     state = eth_device_init(&(stm32_eth_device.parent), "e0");

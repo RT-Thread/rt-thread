@@ -326,7 +326,7 @@ static rt_err_t nu_emac_init(rt_device_t dev)
 
     snprintf(szTmp, sizeof(szTmp), "%sphy", psNuEmac->name);
 
-    ret = rt_sem_init(&psNuEmac->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    ret = rt_sem_init(&psNuEmac->eth_sem, "eth_sem", 0, RT_IPC_FLAG_PRIO);
     RT_ASSERT(ret == RT_EOK);
 
     EMAC_Reset(EMAC);

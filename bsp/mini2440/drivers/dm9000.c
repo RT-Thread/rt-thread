@@ -606,8 +606,8 @@ int rt_hw_dm9000_init()
 	BWSCON = BWSCON & (~(0x7<<16)) | (0x5<<16);
 	BANKCON4 = (1<<13) | (1<<11) | (0x6<<8) | (1<<6) | (1<<4) | (0<<2) | (0);
 
-	rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
-	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_PRIO);
+	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_PRIO);
 
 	dm9000_device.type  = TYPE_DM9000A;
 	dm9000_device.mode	= DM9000_AUTO;

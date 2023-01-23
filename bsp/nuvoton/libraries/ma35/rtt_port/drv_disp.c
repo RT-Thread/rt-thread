@@ -351,7 +351,7 @@ int rt_hw_disp_init(void)
 
 #if defined(DISP_USING_OVERLAY)
     /* Initial display lock */
-    disp_lock = rt_mutex_create("displock", RT_IPC_FLAG_FIFO);
+    disp_lock = rt_mutex_create("displock", RT_IPC_FLAG_PRIO);
     RT_ASSERT(disp_lock);
 #endif
 

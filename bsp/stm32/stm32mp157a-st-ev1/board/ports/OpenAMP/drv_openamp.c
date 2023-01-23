@@ -107,7 +107,7 @@ static rt_err_t _init(struct rt_device *dev)
     device->serial.rbuf        = rx_buffer;
     device->serial.tbuf        = tx_buffer;
 
-    if (rt_sem_init(&device->sema, "openamplock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_sem_init(&device->sema, "openamplock", 1, RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         return RT_ERROR;
     }

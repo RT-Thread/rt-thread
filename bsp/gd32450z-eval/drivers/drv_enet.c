@@ -646,7 +646,7 @@ int rt_hw_gd32_eth_init(void)
     gd32_emac_device0.parent.eth_tx          = gd32_emac_tx;
 
     /* init tx buffer free semaphore */
-    rt_sem_init(&gd32_emac_device0.tx_buf_free, "tx_buf0", EMAC_TXBUFNB, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&gd32_emac_device0.tx_buf_free, "tx_buf0", EMAC_TXBUFNB, RT_IPC_FLAG_PRIO);
     eth_device_init(&(gd32_emac_device0.parent), "e0");
 
     /* change device link status */

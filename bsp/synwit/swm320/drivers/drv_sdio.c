@@ -531,8 +531,8 @@ struct rt_mmcsd_host *swm_sdio_host_create(struct swm_sdio_des *sdio_des)
 
     rt_memcpy(&sdio->sdio_des, sdio_des, sizeof(struct swm_sdio_des));
 
-    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_PRIO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
     /* set host defautl attributes */
     host->ops = &swm_sdio_ops;

@@ -472,14 +472,14 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
     if(sdio_des->hsd.Instance == SDMMC1)
     {
         sdio->sdio_des.hw_sdio = (struct stm32_sdio *)SDIO1_BASE_ADDRESS;
-        rt_event_init(&sdio->event, "sdio1", RT_IPC_FLAG_FIFO);
+        rt_event_init(&sdio->event, "sdio1", RT_IPC_FLAG_PRIO);
         rt_mutex_init(&sdio->mutex, "sdio1", RT_IPC_FLAG_PRIO);
     }
 
     if(sdio_des->hsd.Instance == SDMMC2)
     {
         sdio->sdio_des.hw_sdio = (struct stm32_sdio *)SDIO2_BASE_ADDRESS;
-        rt_event_init(&sdio->event, "sdio2", RT_IPC_FLAG_FIFO);
+        rt_event_init(&sdio->event, "sdio2", RT_IPC_FLAG_PRIO);
         rt_mutex_init(&sdio->mutex, "sdio2", RT_IPC_FLAG_PRIO);
     }
 

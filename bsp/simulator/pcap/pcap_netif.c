@@ -129,7 +129,7 @@ static rt_err_t pcap_netif_init(rt_device_t dev)
 
     {
         rt_kprintf("Select (%s) as network interface\n", d->description);
-        packet_mb = rt_mb_create("pcap", 64, RT_IPC_FLAG_FIFO);
+        packet_mb = rt_mb_create("pcap", 64, RT_IPC_FLAG_PRIO);
         tid = rt_thread_create("pcap", pcap_thread_entry, d,
             2048, RT_THREAD_PRIORITY_MAX - 1, 10);
         if (tid != RT_NULL)
@@ -240,7 +240,7 @@ struct pbuf *pcap_netif_rx(rt_device_t dev)
 
 void pcap_netif_hw_init(void)
 {
-    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_PRIO);
 
     pcap_netif_device.dev_addr[0] = 0x00;
     pcap_netif_device.dev_addr[1] = 0x60;

@@ -802,7 +802,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 
         /* Initialize lock */
         iic->lock = &block->lock;
-        if (rt_sem_init(iic->lock, name, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        if (rt_sem_init(iic->lock, name, 1, RT_IPC_FLAG_PRIO) != RT_EOK)
         {
             break;
         }

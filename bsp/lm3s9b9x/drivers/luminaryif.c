@@ -485,7 +485,7 @@ int rt_hw_luminaryif_init(void)
 	/* Program the hardware with it's MAC address (for filtering). */
 	EthernetMACAddrSet(ETH_BASE, luminaryif_dev_entry.dev_addr);
 
-	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_PRIO);
 
 	result = eth_device_init(&(luminaryif_dev->parent), "E0");
 

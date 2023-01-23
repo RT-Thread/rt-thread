@@ -875,7 +875,7 @@ int at91_mci_init(void)
 
     //rt_timer_start(&mci->timer);
 
-    //rt_sem_init(&mci->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
+    //rt_sem_init(&mci->sem_ack, "sd_ack", 0, RT_IPC_FLAG_PRIO);
 
     host->private_data = mci;
 

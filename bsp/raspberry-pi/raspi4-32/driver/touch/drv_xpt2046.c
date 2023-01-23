@@ -221,7 +221,7 @@ static struct rt_touch_ops touch_ops =
 static int hw_xpt2046_touch_init(void)
 {
     //touch sem
-    rt_sem_init(&touch_ack, "touch_ack", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&touch_ack, "touch_ack", 0, RT_IPC_FLAG_PRIO);
 
     touch_tid = rt_thread_create("touch",
                             touch_thread_entry, RT_NULL,

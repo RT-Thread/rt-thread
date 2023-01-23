@@ -1210,11 +1210,11 @@ static int rt_hw_imxrt_eth_init(void)
 
     dbg_log(DBG_LOG, "sem init: tx_wait\r\n");
     /* init tx semaphore */
-    rt_sem_init(&imxrt_eth_device.tx_wait, "tx_wait", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&imxrt_eth_device.tx_wait, "tx_wait", 0, RT_IPC_FLAG_PRIO);
 
     dbg_log(DBG_LOG, "sem init: buff_wait\r\n");
     /* init tx semaphore */
-    rt_sem_init(&imxrt_eth_device.buff_wait, "buff_wait", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&imxrt_eth_device.buff_wait, "buff_wait", 1, RT_IPC_FLAG_PRIO);
 
     /* register eth device */
     dbg_log(DBG_LOG, "eth_device_init start\r\n");

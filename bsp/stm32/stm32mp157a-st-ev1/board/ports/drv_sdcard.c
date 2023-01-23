@@ -174,7 +174,7 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
     RT_ASSERT(dev != RT_NULL);
     struct stm32_sd *sd = (struct stm32_sd *)dev;
 
-    if (rt_sem_init(&sd->sd_lock, "sdlock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_sem_init(&sd->sd_lock, "sdlock", 1, RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         LOG_E("init sd lock semaphore failed\n");
     }
