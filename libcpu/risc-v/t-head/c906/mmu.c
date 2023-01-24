@@ -56,8 +56,8 @@ static void _asid_init()
     unsigned short valid_asid_bit = ((read_csr(satp) >> PPN_BITS) & 0xffff);
 
     // The maximal value of ASIDLEN, is 9 for Sv32 or 16 for Sv39, Sv48, and Sv57
-    for (unsigned i = 0; i < 16; i++) 
-    {   
+    for (unsigned i = 0; i < 16; i++)
+    {
         if (!(valid_asid_bit & 0x1))
         {
             break;
@@ -101,10 +101,10 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     current_mmu_table = aspace->page_table;
 
     rt_uint64_t asid = _asid_check_switch(aspace);
-    write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) | 
-                        (asid << PPN_BITS) | 
+    write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
+                        (asid << PPN_BITS) |
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
-    asm volatile("sfence.vma x0,%0"::"r"(asid):"memory");                
+    asm volatile("sfence.vma x0,%0"::"r"(asid):"memory");
 }
 
 void *rt_hw_mmu_tbl_get()
