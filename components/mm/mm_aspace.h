@@ -53,6 +53,8 @@ typedef struct rt_aspace
 
     struct _aspace_tree tree;
     struct rt_mutex bst_lock;
+
+    rt_uint64_t asid;
 } *rt_aspace_t;
 
 typedef struct rt_varea
