@@ -41,14 +41,70 @@ static void *current_mmu_table = RT_NULL;
 volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
+static rt_uint8_t ASID_BITS = 0;
+static rt_uint16_t next_asid;
+static rt_uint64_t global_asid_generation;
+#define ASID_MASK ((1 << ASID_BITS) - 1)
+#define ASID_FIRST_GENERATION (1 << ASID_BITS)
+#define MAX_ASID ASID_FIRST_GENERATION
+
+static void _asid_init()
+{
+    unsigned int satp_reg = read_csr(satp);
+    satp_reg |= (((rt_uint64_t)0xffff) << PPN_BITS);
+    write_csr(satp, satp_reg);
+    unsigned short valid_asid_bit = ((read_csr(satp) >> PPN_BITS) & 0xffff);
+
+    // The maximal value of ASIDLEN, is 9 for Sv32 or 16 for Sv39, Sv48, and Sv57
+    for (unsigned i = 0; i < 16; i++)
+    {
+        if (!(valid_asid_bit & 0x1))
+        {
+            break;
+        }
+
+        valid_asid_bit >>= 1;
+        ASID_BITS++;
+    }
+
+    global_asid_generation = ASID_FIRST_GENERATION;
+    next_asid = 1;
+}
+
+static rt_uint64_t _asid_check_switch(rt_aspace_t aspace)
+{
+    if ((aspace->asid ^ global_asid_generation) >> ASID_BITS) // not same generation
+    {
+        if (next_asid != MAX_ASID)
+        {
+            aspace->asid = global_asid_generation | next_asid;
+            next_asid++;
+        }
+        else
+        {
+            // scroll to next generation
+            global_asid_generation += ASID_FIRST_GENERATION;
+            next_asid = 1;
+            rt_hw_tlb_invalidate_all_local();
+
+            aspace->asid = global_asid_generation | next_asid;
+            next_asid++;
+        }
+    }
+
+    return aspace->asid & ASID_MASK;
+}
+
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
     uintptr_t page_table = (uintptr_t)_rt_kmem_v2p(aspace->page_table);
     current_mmu_table = aspace->page_table;
 
+    rt_uint64_t asid = _asid_check_switch(aspace);
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
+                        (asid << PPN_BITS) |
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
-    rt_hw_tlb_invalidate_all_local();
+    asm volatile("sfence.vma x0,%0"::"r"(asid):"memory");
 }
 
 void *rt_hw_mmu_tbl_get()
@@ -481,6 +537,8 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
         mdesc++;
     }
+
+    _asid_init();
 
     rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();
