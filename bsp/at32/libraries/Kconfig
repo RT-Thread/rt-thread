@@ -26,6 +26,11 @@ config SOC_SERIES_AT32F415
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_AT32
 
+config SOC_SERIES_AT32F421
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
 config SOC_SERIES_AT32F425
     bool
     select ARCH_ARM_CORTEX_M4
