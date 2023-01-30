@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -342,7 +342,6 @@ int dfs_elm_open(struct dfs_fd *file)
             return -ENOENT;
         }
         file->pos = 0;
-        return 0;
     }
 
     if (fs == NULL)
