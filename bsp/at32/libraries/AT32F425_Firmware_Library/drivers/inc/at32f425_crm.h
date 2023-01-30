@@ -143,7 +143,7 @@ typedef enum
 typedef enum
 {
   /* ahb periph */
-	CRM_OTGFS1_PERIPH_RESET                = MAKE_VALUE(0x28, 12), /*!< otgfs1 periph reset */
+  CRM_OTGFS1_PERIPH_RESET                = MAKE_VALUE(0x28, 12), /*!< otgfs1 periph reset */
   CRM_GPIOA_PERIPH_RESET                 = MAKE_VALUE(0x28, 17), /*!< gpioa periph reset */
   CRM_GPIOB_PERIPH_RESET                 = MAKE_VALUE(0x28, 18), /*!< gpiob periph reset */
   CRM_GPIOC_PERIPH_RESET                 = MAKE_VALUE(0x28, 19), /*!< gpioc periph reset */
