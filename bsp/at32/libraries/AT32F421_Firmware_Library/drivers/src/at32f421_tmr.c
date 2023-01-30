@@ -770,7 +770,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
   switch(channel)
   {
     case TMR_SELECT_CHANNEL_1:
-	  tmr_x->cctrl_bit.c1en       = FALSE;
+      tmr_x->cctrl_bit.c1en       = FALSE;
       tmr_x->cctrl_bit.c1p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c1cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm1_input_bit.c1c    = input_struct->input_mapped_select;
@@ -780,7 +780,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_2:
-	  tmr_x->cctrl_bit.c2en       = FALSE;
+      tmr_x->cctrl_bit.c2en       = FALSE;
       tmr_x->cctrl_bit.c2p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c2cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm1_input_bit.c2c    = input_struct->input_mapped_select;
@@ -790,7 +790,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_3:
-	  tmr_x->cctrl_bit.c3en       = FALSE;
+      tmr_x->cctrl_bit.c3en       = FALSE;
       tmr_x->cctrl_bit.c3p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c3cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm2_input_bit.c3c    = input_struct->input_mapped_select;
@@ -800,7 +800,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_4:
-	  tmr_x->cctrl_bit.c4en       = FALSE;
+      tmr_x->cctrl_bit.c4en       = FALSE;
       tmr_x->cctrl_bit.c4p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cm2_input_bit.c4c    = input_struct->input_mapped_select;
       tmr_x->cm2_input_bit.c4df   = input_struct->input_filter_value;

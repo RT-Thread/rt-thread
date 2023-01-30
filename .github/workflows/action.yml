@@ -213,6 +213,8 @@ jobs:
          - {RTT_BSP: "at32/at32f407-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f413-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f415-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f421-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f425-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f435-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f437-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"}
