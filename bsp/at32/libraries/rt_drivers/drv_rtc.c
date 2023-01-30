@@ -24,7 +24,8 @@
 static time_t get_rtc_timestamp(void)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F415)
+    defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
+    defined (SOC_SERIES_AT32F425)
     struct tm tm_new;
     ertc_time_type ertc_time_struct;
 
@@ -48,7 +49,8 @@ static time_t get_rtc_timestamp(void)
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F415)
+    defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
+    defined (SOC_SERIES_AT32F425)
     struct tm now;
 
     gmtime_r(&time_stamp, &now);
@@ -92,7 +94,8 @@ static rt_err_t rt_rtc_config(void)
     pwc_battery_powered_domain_access(TRUE);
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F415)
+    defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
+    defined (SOC_SERIES_AT32F425)
 
     /* select rtc clock source */
 #ifdef BSP_RTC_USING_LICK
@@ -171,7 +174,7 @@ static rt_err_t _rtc_init(void)
     return RT_EOK;
 }
 
-static rt_err_t _rtc_get_secs(void *args)
+static rt_err_t _rtc_get_secs(time_t *args)
 {
     *(rt_uint32_t *)args = get_rtc_timestamp();
     LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
@@ -179,7 +182,7 @@ static rt_err_t _rtc_get_secs(void *args)
     return RT_EOK;
 }
 
-static rt_err_t _rtc_set_secs(void *args)
+static rt_err_t _rtc_set_secs(time_t *args)
 {
     rt_err_t result = RT_EOK;
 
