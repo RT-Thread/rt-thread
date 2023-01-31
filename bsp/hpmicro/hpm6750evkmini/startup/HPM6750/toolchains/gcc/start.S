@@ -45,7 +45,7 @@ _start:
     /* Disable Vector mode */
     csrci CSR_MMISC_CTL, 2
     /* Initialize trap_entry base */
-    la t0, irq_handler_trap
+    la t0, SW_handler
     csrw mtvec, t0
 
 	la t0, _stack
