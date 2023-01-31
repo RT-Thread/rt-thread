@@ -11,7 +11,11 @@
 #include "cpuport.h"
 
     .section .text.entry, "ax"
+#if defined(SOC_SERIES_GD32VF103V)
+    .align  6
+#else
     .align  2
+#endif 
     .global SW_handler
 
 SW_handler:
