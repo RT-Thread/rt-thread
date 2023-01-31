@@ -11,7 +11,7 @@
 * CapSense Configurator 4.0.0.6195
 *
 ********************************************************************************
-* Copyright 2022, Cypress Semiconductor Corporation (an Infineon company)
+* Copyright 2023, Cypress Semiconductor Corporation (an Infineon company)
 * or an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -34,13 +34,13 @@
 #include <stddef.h>
 
 /* General */
-#define CY_CAPSENSE_WIDGET_COUNT                                                 (3u)
-#define CY_CAPSENSE_SENSOR_COUNT                                                 (7u)
-#define CY_CAPSENSE_ELTD_COUNT                                                   (9u)
+#define CY_CAPSENSE_WIDGET_COUNT                                                 (1u)
+#define CY_CAPSENSE_SENSOR_COUNT                                                 (5u)
+#define CY_CAPSENSE_ELTD_COUNT                                                   (5u)
 #define CY_CAPSENSE_PIN_COUNT                                                    (5u)
 #define CY_CAPSENSE_SHIELD_PIN_COUNT                                             (0u)
 #define CY_CAPSENSE_POSITION_SIZE                                                (1u)
-#define CY_CAPSENSE_DEBOUNCE_SIZE                                                (3u)
+#define CY_CAPSENSE_DEBOUNCE_SIZE                                                (1u)
 #define CY_CAPSENSE_NOISE_ENVELOPE_SIZE                                          (5u)
 #define CY_CAPSENSE_MFS_CH_NUMBER                                                (1u)
 #define CY_CAPSENSE_RAW_HISTORY_SIZE                                             (0u)
@@ -56,9 +56,9 @@
 
 /* Sensing Methods */
 #define CY_CAPSENSE_CSD_EN                                                       (1u)
-#define CY_CAPSENSE_CSX_EN                                                       (1u)
+#define CY_CAPSENSE_CSX_EN                                                       (0u)
 #define CY_CAPSENSE_CSD_CALIBRATION_EN                                           (1u)
-#define CY_CAPSENSE_CSX_CALIBRATION_EN                                           (1u)
+#define CY_CAPSENSE_CSX_CALIBRATION_EN                                           (0u)
 #define CY_CAPSENSE_SMARTSENSE_FULL_EN                                           (1u)
 #define CY_CAPSENSE_SMARTSENSE_HW_EN                                             (0u)
 #define CY_CAPSENSE_SMARTSENSE_DISABLED                                          (0u)

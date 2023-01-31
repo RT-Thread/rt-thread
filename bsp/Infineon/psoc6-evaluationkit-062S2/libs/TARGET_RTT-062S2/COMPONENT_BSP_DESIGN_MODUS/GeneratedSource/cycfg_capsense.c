@@ -7,7 +7,7 @@
 * CapSense Configurator 4.0.0.6195
 *
 ********************************************************************************
-* Copyright 2022, Cypress Semiconductor Corporation (an Infineon company)
+* Copyright 2023, Cypress Semiconductor Corporation (an Infineon company)
 * or an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -132,7 +132,7 @@ static const cy_stc_capsense_common_config_t cy_capsense_commonConfig =
     .numSns = CY_CAPSENSE_SENSOR_COUNT,
     .numWd = CY_CAPSENSE_WIDGET_COUNT,
     .csdEn = CY_CAPSENSE_ENABLE,
-    .csxEn = CY_CAPSENSE_ENABLE,
+    .csxEn = CY_CAPSENSE_DISABLE,
     #if (CY_CAPSENSE_MW_VERSION < 300)
         .mfsEn = CY_CAPSENSE_DISABLE,
     #endif
@@ -168,13 +168,13 @@ static const cy_stc_capsense_common_config_t cy_capsense_commonConfig =
     .ptrCsdContext = &cy_csd_0_context,
     .portCmod = Cmod_PORT,
     .portCsh = NULL,
-    .portCintA = CintA_PORT,
-    .portCintB = CintB_PORT,
+    .portCintA = NULL,
+    .portCintB = NULL,
     .pinCmod = Cmod_PIN,
     .portCshNum = 0u,
     .pinCsh = 0u,
-    .pinCintA = CintA_PIN,
-    .pinCintB = CintB_PIN,
+    .pinCintA = 0u,
+    .pinCintB = 0u,
     .csdShieldEn = CY_CAPSENSE_DISABLE,
     .csdInactiveSnsConnection = CY_CAPSENSE_SNS_CONNECTION_GROUND,
     #if (CY_CAPSENSE_MW_VERSION >= 300)
@@ -202,7 +202,7 @@ static const cy_stc_capsense_common_config_t cy_capsense_commonConfig =
     .csdMfsDividerOffsetF2 = 2u,
     .csxRawTarget = 40u,
     .csxIdacGainInitIndex = 2u,
-    .csxIdacAutocalEn = CY_CAPSENSE_ENABLE,
+    .csxIdacAutocalEn = CY_CAPSENSE_DISABLE,
     .csxCalibrationError = 20u,
     .csxFineInitTime = 10u,
     .csxInitSwRes = CY_CAPSENSE_INIT_SW_RES_MEDIUM,
@@ -409,48 +409,28 @@ static const cy_stc_capsense_pin_config_t cy_capsense_pinConfig[CY_CAPSENSE_PIN_
 #if (CY_CAPSENSE_ELTD_COUNT > 0)
     static const cy_stc_capsense_electrode_config_t cy_capsense_electrodeConfig[CY_CAPSENSE_ELTD_COUNT] =
     {
-        { /* Button0_Rx0 */
-            .ptrPin = &cy_capsense_pinConfig[0u],
-            .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_MUT_RX_E,
-            .numPins = 1u,
-        },
-        { /* Button0_Tx */
-            .ptrPin = &cy_capsense_pinConfig[1u],
-            .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_MUT_TX_E,
-            .numPins = 1u,
-        },
-        { /* Button1_Rx0 */
-            .ptrPin = &cy_capsense_pinConfig[2u],
-            .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_MUT_RX_E,
-            .numPins = 1u,
-        },
-        { /* Button1_Tx */
-            .ptrPin = &cy_capsense_pinConfig[3u],
-            .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_MUT_TX_E,
-            .numPins = 1u,
-        },
         { /* LinearSlider0_Sns0 */
-            .ptrPin = &cy_capsense_pinConfig[4u],
+            .ptrPin = &cy_capsense_pinConfig[0u],
             .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_SELF_E,
             .numPins = 1u,
         },
         { /* LinearSlider0_Sns1 */
-            .ptrPin = &cy_capsense_pinConfig[5u],
+            .ptrPin = &cy_capsense_pinConfig[1u],
             .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_SELF_E,
             .numPins = 1u,
         },
         { /* LinearSlider0_Sns2 */
-            .ptrPin = &cy_capsense_pinConfig[6u],
+            .ptrPin = &cy_capsense_pinConfig[2u],
             .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_SELF_E,
             .numPins = 1u,
         },
         { /* LinearSlider0_Sns3 */
-            .ptrPin = &cy_capsense_pinConfig[7u],
+            .ptrPin = &cy_capsense_pinConfig[3u],
             .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_SELF_E,
             .numPins = 1u,
         },
         { /* LinearSlider0_Sns4 */
-            .ptrPin = &cy_capsense_pinConfig[8u],
+            .ptrPin = &cy_capsense_pinConfig[4u],
             .type = (uint8_t)CY_CAPSENSE_ELTD_TYPE_SELF_E,
             .numPins = 1u,
         },
@@ -459,122 +439,10 @@ static const cy_stc_capsense_pin_config_t cy_capsense_pinConfig[CY_CAPSENSE_PIN_
 
 static const cy_stc_capsense_widget_config_t cy_capsense_widgetConfig[CY_CAPSENSE_WIDGET_COUNT] =
 {
-    { /* Button0 */
+    { /* LinearSlider0 */
         .ptrWdContext = &cy_capsense_tuner.widgetContext[0u],
         .ptrSnsContext = &cy_capsense_tuner.sensorContext[0u],
         .ptrEltdConfig = &cy_capsense_electrodeConfig[0u],
-#if (CY_CAPSENSE_BIST_SUPPORTED)
-        .ptrEltdCapacitance = NULL,
-        .ptrBslnInv = NULL,
-#endif
-        .ptrNoiseEnvelope = NULL,
-        .ptrRawFilterHistory = NULL,
-        .ptrRawFilterHistoryLow = NULL,
-        .iirCoeff = 128u,
-        .ptrDebounceArr = &cy_capsense_debounce[0u],
-        .ptrDiplexTable = NULL,
-        .centroidConfig = 0u,
-        .xResolution = 0u,
-        .yResolution = 0u,
-        .numSns = 1u,
-        .numCols = 1u,
-        .numRows = 1u,
-        .ptrPosFilterHistory = NULL,
-        .ptrCsxTouchHistory = NULL,
-        .ptrCsxTouchBuffer = NULL,
-        .ptrCsdTouchBuffer = NULL,
-        .ptrGestureConfig = NULL,
-        .ptrGestureContext = NULL,
-        .ballisticConfig = {
-            .accelCoeff = 9u,
-            .speedCoeff = 2u,
-            .divisorValue = 4u,
-            .speedThresholdX = 3u,
-            .speedThresholdY = 4u,
-        },
-        .ptrBallisticContext = NULL,
-        .aiirConfig = {
-            .maxK = 60u,
-            .minK = 1u,
-            .noMovTh = 3u,
-            .littleMovTh = 7u,
-            .largeMovTh = 12u,
-            .divVal = 64u,
-        },
-        .advConfig = {
-            .penultimateTh = 100u,
-            .virtualSnsTh = 100u,
-            .crossCouplingTh = 5u,
-        },
-        .posFilterConfig = 0u,
-        .rawFilterConfig = 0u,
-        #if (CY_CAPSENSE_MW_VERSION >= 300)
-            .senseMethod = CY_CAPSENSE_CSX_GROUP,
-        #else
-            .senseMethod = CY_CAPSENSE_SENSE_METHOD_CSX_E,
-        #endif
-        .wdType = (uint8_t)CY_CAPSENSE_WD_BUTTON_E,
-    },
-    { /* Button1 */
-        .ptrWdContext = &cy_capsense_tuner.widgetContext[1u],
-        .ptrSnsContext = &cy_capsense_tuner.sensorContext[1u],
-        .ptrEltdConfig = &cy_capsense_electrodeConfig[2u],
-#if (CY_CAPSENSE_BIST_SUPPORTED)
-        .ptrEltdCapacitance = NULL,
-        .ptrBslnInv = NULL,
-#endif
-        .ptrNoiseEnvelope = NULL,
-        .ptrRawFilterHistory = NULL,
-        .ptrRawFilterHistoryLow = NULL,
-        .iirCoeff = 128u,
-        .ptrDebounceArr = &cy_capsense_debounce[1u],
-        .ptrDiplexTable = NULL,
-        .centroidConfig = 0u,
-        .xResolution = 0u,
-        .yResolution = 0u,
-        .numSns = 1u,
-        .numCols = 1u,
-        .numRows = 1u,
-        .ptrPosFilterHistory = NULL,
-        .ptrCsxTouchHistory = NULL,
-        .ptrCsxTouchBuffer = NULL,
-        .ptrCsdTouchBuffer = NULL,
-        .ptrGestureConfig = NULL,
-        .ptrGestureContext = NULL,
-        .ballisticConfig = {
-            .accelCoeff = 9u,
-            .speedCoeff = 2u,
-            .divisorValue = 4u,
-            .speedThresholdX = 3u,
-            .speedThresholdY = 4u,
-        },
-        .ptrBallisticContext = NULL,
-        .aiirConfig = {
-            .maxK = 60u,
-            .minK = 1u,
-            .noMovTh = 3u,
-            .littleMovTh = 7u,
-            .largeMovTh = 12u,
-            .divVal = 64u,
-        },
-        .advConfig = {
-            .penultimateTh = 100u,
-            .virtualSnsTh = 100u,
-            .crossCouplingTh = 5u,
-        },
-        .posFilterConfig = 0u,
-        .rawFilterConfig = 0u,
-        #if (CY_CAPSENSE_MW_VERSION >= 300)
-            .senseMethod = CY_CAPSENSE_CSX_GROUP,
-        #else
-            .senseMethod = CY_CAPSENSE_SENSE_METHOD_CSX_E,
-        #endif
-        .wdType = (uint8_t)CY_CAPSENSE_WD_BUTTON_E,
-    },
-    { /* LinearSlider0 */
-        .ptrWdContext = &cy_capsense_tuner.widgetContext[2u],
-        .ptrSnsContext = &cy_capsense_tuner.sensorContext[2u],
-        .ptrEltdConfig = &cy_capsense_electrodeConfig[4u],
 #if (CY_CAPSENSE_BIST_SUPPORTED)
         .ptrEltdCapacitance = NULL,
         .ptrBslnInv = NULL,
@@ -583,7 +451,7 @@ static const cy_stc_capsense_widget_config_t cy_capsense_widgetConfig[CY_CAPSENS
         .ptrRawFilterHistory = NULL,
         .ptrRawFilterHistoryLow = NULL,
         .iirCoeff = 128u,
-        .ptrDebounceArr = &cy_capsense_debounce[2u],
+        .ptrDebounceArr = &cy_capsense_debounce[0u],
         .ptrDiplexTable = NULL,
         .centroidConfig = 1u,
         .xResolution = 300u,
@@ -633,9 +501,9 @@ cy_stc_capsense_tuner_t cy_capsense_tuner =
 {
     .commonContext = {
         #if (CY_CAPSENSE_MW_VERSION < 300)
-            .configId = 0x0990,
+            .configId = 0xcb38,
         #else
-            .configId = 0x0991,
+            .configId = 0xcb39,
         #endif
 
         .tunerCmd = 0u,
@@ -656,70 +524,6 @@ cy_stc_capsense_tuner_t cy_capsense_tuner =
         .tunerCnt = 0u,
     },
     .widgetContext = {
-        { /* Button0 */
-            .fingerCap = 160u,
-            .sigPFC = 0u,
-            .resolution = 100u,
-            .maxRawCount = 0u,
-            #if (CY_CAPSENSE_MW_VERSION >= 300)
-                .maxRawCountRow = 0u,
-            #endif
-            .fingerTh = 100u,
-            .proxTh = 200u,
-            .lowBslnRst = 30u,
-            .snsClk = 32u,
-            .rowSnsClk = 16u,
-            .gestureDetected = 0u,
-            .gestureDirection = 0u,
-            .xDelta = 0,
-            .yDelta = 0,
-            .noiseTh = 40u,
-            .nNoiseTh = 40u,
-            .hysteresis = 10u,
-            .onDebounce = 3u,
-            .snsClkSource = CY_CAPSENSE_CLK_SOURCE_AUTO_MASK,
-            .idacMod = { 32u, 32u, 32u, },
-            .idacGainIndex = 2u,
-            .rowIdacMod = { 32u, 32u, 32u, },
-            .bslnCoeff = 1u,
-            .status = 0u,
-            .wdTouch = {
-                .ptrPosition = NULL,
-                .numPosition = 0,
-            },
-        },
-        { /* Button1 */
-            .fingerCap = 160u,
-            .sigPFC = 0u,
-            .resolution = 100u,
-            .maxRawCount = 0u,
-            #if (CY_CAPSENSE_MW_VERSION >= 300)
-                .maxRawCountRow = 0u,
-            #endif
-            .fingerTh = 100u,
-            .proxTh = 200u,
-            .lowBslnRst = 30u,
-            .snsClk = 32u,
-            .rowSnsClk = 16u,
-            .gestureDetected = 0u,
-            .gestureDirection = 0u,
-            .xDelta = 0,
-            .yDelta = 0,
-            .noiseTh = 40u,
-            .nNoiseTh = 40u,
-            .hysteresis = 10u,
-            .onDebounce = 3u,
-            .snsClkSource = CY_CAPSENSE_CLK_SOURCE_AUTO_MASK,
-            .idacMod = { 32u, 32u, 32u, },
-            .idacGainIndex = 2u,
-            .rowIdacMod = { 32u, 32u, 32u, },
-            .bslnCoeff = 1u,
-            .status = 0u,
-            .wdTouch = {
-                .ptrPosition = NULL,
-                .numPosition = 0,
-            },
-        },
         { /* LinearSlider0 */
             .fingerCap = 160u,
             .sigPFC = 0u,
@@ -754,24 +558,6 @@ cy_stc_capsense_tuner_t cy_capsense_tuner =
         },
     },
     .sensorContext = {
-        { /* Button0_Rx0 */
-            .raw = 0u,
-            .bsln = 0u,
-            .diff = 0u,
-            .status = 0u,
-            .negBslnRstCnt = 0u,
-            .idacComp = 32u,
-            .bslnExt = 0u,
-        },
-        { /* Button1_Rx0 */
-            .raw = 0u,
-            .bsln = 0u,
-            .diff = 0u,
-            .status = 0u,
-            .negBslnRstCnt = 0u,
-            .idacComp = 32u,
-            .bslnExt = 0u,
-        },
         { /* LinearSlider0_Sns0 */
             .raw = 0u,
             .bsln = 0u,

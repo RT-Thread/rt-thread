@@ -214,4 +214,7 @@
 #define BSP_USING_UART
 #define BSP_USING_UART0
 
+/* Board extended module Drivers */
+
+
 #endif
