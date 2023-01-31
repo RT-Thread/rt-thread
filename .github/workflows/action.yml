@@ -199,6 +199,8 @@ jobs:
         #  - {RTT_BSP: "stm32/stm32wl55-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32/stm32wle5-yizhilian-lm401", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32/stm32wle5-yizhilian-lm402", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "renesas/ra6m3-ek", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "renesas/ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "wch/arm/ch32f103c8-core", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "wch/arm/ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "synwit/swm320", RTT_TOOL_CHAIN: "sourcery-arm"}

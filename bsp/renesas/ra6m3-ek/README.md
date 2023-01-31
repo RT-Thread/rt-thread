@@ -35,19 +35,9 @@
 | :----------------- | :----------------- | :------------- |
 | UART               | 支持               | UART7 为默认日志输出端口 |
 | GPIO               | 支持               |                |
-| GPIO         | 支持         |                          |
-| IIC          | 支持         | 软件                     |
-| WDT          | 支持         |                          |
-| RTC          | 支持         |                          |
-| ADC          | 支持         |                          |
-| DAC          | 支持         |                          |
-| SPI          | 支持         |                          |
-| FLASH        | 支持         |                |
-| PWM          | 支持         |                |
 | LCD          | 支持         |                          |
-| G2D  | 支持 |                |
-| JPEG         | 支持         |                          |
 
+* 注意：仓库刚拉下来是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 
 ## 使用说明
 
