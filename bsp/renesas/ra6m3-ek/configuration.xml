@@ -165,10 +165,6 @@
       <description>SCI UART</description>
       <originalPack>Renesas.RA.3.5.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_ether_phy" variant="" vendor="Renesas" version="3.5.0">
-      <description>Ethernet PHY</description>
-      <originalPack>Renesas.RA.3.5.0.pack</originalPack>
-    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -207,27 +203,12 @@
       <property id="module.driver.uart.tei_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.uart.eri_ipl" value="board.icu.common.irq.priority12"/>
     </module>
-    <module id="module.driver.ether_phy_on_ether_phy.1137705372">
-      <property id="module.driver.ether_phy.name" value="g_ether_phy0"/>
-      <property id="module.driver.ether_phy.channel" value="module.driver.ether_phy.channel.0"/>
-      <property id="module.driver.ether_phy.phy_lsi_address" value="0"/>
-      <property id="module.driver.ether_phy.phy_reset_wait_time" value="0x00020000"/>
-      <property id="module.driver.ether_phy.mii_type" value="module.driver.mii_type.rmii"/>
-      <property id="module.driver.ether_phy.mii_bit_access_wait_time" value="8"/>
-      <property id="module.driver.ether_phy.flow_control" value="module.driver.ether_phy.flow_control.0"/>
-    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_uart.136564520"/>
-      <stack module="module.driver.ether_phy_on_ether_phy.1137705372"/>
     </context>
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
-    </config>
-    <config id="config.driver.ether_phy">
-      <property id="config.driver.ether_phy.param_checking_enable" value="config.driver.ether_phy.param_checking_enable.bsp"/>
-      <property id="config.driver.ether_phy.use_phy" value="config.driver.ether_phy.use_phy.default"/>
-      <property id="config.driver.ether_phy.use_reference_clock" value="config.driver.ether_phy.use_reference_clock.default"/>
     </config>
     <config id="config.driver.sci_uart">
       <property id="config.driver.sci_uart.param_checking_enable" value="config.driver.sci_uart.param_checking_enable.bsp"/>

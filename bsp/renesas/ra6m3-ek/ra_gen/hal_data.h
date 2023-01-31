@@ -4,17 +4,9 @@
 #include <stdint.h>
 #include "bsp_api.h"
 #include "common_data.h"
-#include "r_ether_phy.h"
-#include "r_ether_phy_api.h"
 #include "r_sci_uart.h"
             #include "r_uart_api.h"
 FSP_HEADER
-/** ether_phy on ether_phy Instance. */
-extern const ether_phy_instance_t g_ether_phy0;
-
-/** Access the Ethernet PHY instance using these structures when calling API functions directly (::p_api is not used). */
-extern ether_phy_instance_ctrl_t g_ether_phy0_ctrl;
-extern const ether_phy_cfg_t g_ether_phy0_cfg;
 /** UART on SCI Instance. */
             extern const uart_instance_t      g_uart7;
 

@@ -71,6 +71,7 @@
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"/>
         <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.o"/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c"/>
+        <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_arm_exceptions.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.h" path=""/>
@@ -100,6 +101,7 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.h" path=""/>
         <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.c"/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.c"/>
         <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_security.c"/>
@@ -109,6 +111,7 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m3/bsp_elc.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m3/bsp_feature.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m3/bsp_mcu_info.h" path=""/>
+        <file category="other" name="ra/fsp/src/r_ether_phy/r_ether_phy.o"/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
         <file category="other" name="ra/fsp/src/r_ioport/r_ioport.o"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
