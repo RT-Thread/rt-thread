@@ -143,10 +143,10 @@ int rt_hw_i2c_init(void)
     for(i=0; i<ARRAY_SIZE(lpc_obj); i++)
     {
         CLOCK_AttachClk(lpc_obj[i].i2c_clock_id);
-        
+
         I2C_MasterGetDefaultConfig(&masterConfig);
         masterConfig.baudRate_Bps = lpc_obj[i].baud;
-        
+
         /* Initialize the I2C master peripheral */
         I2C_MasterInit(lpc_obj[i].I2C, &masterConfig, CLOCK_GetFlexCommClkFreq(lpc_obj[i].instance));
 
