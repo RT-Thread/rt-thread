@@ -5,12 +5,12 @@
 * Clock configuration
 * This file was automatically generated and should not be modified.
 * Tools Package 2.4.0.5972
-* mtb-pdl-cat1 2.4.0.13881
+* mtb-pdl-cat1 2.4.0.14850
 * personalities 6.0.0.0
-* udd 3.0.0.1974
+* udd 3.0.0.2024
 *
 ********************************************************************************
-* Copyright 2022 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -39,10 +39,6 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-#define CLK_PWM_ENABLED 1U
-#define CLK_PWM_HW CY_SYSCLK_DIV_16_BIT
-#define CLK_PWM_NUM 0U
 
 #define CYBSP_CSD_CLK_DIV_ENABLED 1U
 #define CYBSP_CS_CLK_DIV_ENABLED CYBSP_CSD_CLK_DIV_ENABLED

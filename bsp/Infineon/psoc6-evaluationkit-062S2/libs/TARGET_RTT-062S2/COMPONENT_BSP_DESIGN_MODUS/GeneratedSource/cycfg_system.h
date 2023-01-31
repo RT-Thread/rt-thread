@@ -5,12 +5,12 @@
 * System configuration
 * This file was automatically generated and should not be modified.
 * Tools Package 2.4.0.5972
-* mtb-pdl-cat1 2.4.0.13881
+* mtb-pdl-cat1 2.4.0.14850
 * personalities 6.0.0.0
-* udd 3.0.0.1974
+* udd 3.0.0.2024
 *
 ********************************************************************************
-* Copyright 2022 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -34,11 +34,9 @@
 #include "cy_sysclk.h"
 #include "cy_pra.h"
 #include "cy_pra_cfg.h"
-#include "cy_systick.h"
 #if defined (CY_USING_HAL)
     #include "cyhal_hwmgr.h"
 #endif //defined (CY_USING_HAL)
-#include "cy_gpio.h"
 #include "cy_syspm.h"
 
 #if defined(__cplusplus)
@@ -47,8 +45,6 @@ extern "C" {
 
 #define cpuss_0_dap_0_ENABLED 1U
 #define srss_0_clock_0_ENABLED 1U
-#define srss_0_clock_0_altsystickclk_0_ENABLED 1U
-#define srss_0_clock_0_bakclk_0_ENABLED 1U
 #define srss_0_clock_0_fastclk_0_ENABLED 1U
 #define srss_0_clock_0_fll_0_ENABLED 1U
 #define srss_0_clock_0_hfclk_0_ENABLED 1U
@@ -56,9 +52,6 @@ extern "C" {
 #define CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM 0UL
 #define srss_0_clock_0_ilo_0_ENABLED 1U
 #define srss_0_clock_0_imo_0_ENABLED 1U
-#define srss_0_clock_0_lfclk_0_ENABLED 1U
-#define CY_CFG_SYSCLK_CLKLF_FREQ_HZ 32768
-#define CY_CFG_SYSCLK_CLKLF_SOURCE CY_SYSCLK_CLKLF_IN_WCO
 #define srss_0_clock_0_pathmux_0_ENABLED 1U
 #define srss_0_clock_0_pathmux_1_ENABLED 1U
 #define srss_0_clock_0_pathmux_2_ENABLED 1U
@@ -69,7 +62,6 @@ extern "C" {
 #define srss_0_clock_0_pll_0_ENABLED 1U
 #define srss_0_clock_0_slowclk_0_ENABLED 1U
 #define srss_0_clock_0_timerclk_0_ENABLED 1U
-#define srss_0_clock_0_wco_0_ENABLED 1U
 #define srss_0_power_0_ENABLED 1U
 #define CY_CFG_PWR_MODE_LP 0x01UL
 #define CY_CFG_PWR_MODE_ULP 0x02UL
