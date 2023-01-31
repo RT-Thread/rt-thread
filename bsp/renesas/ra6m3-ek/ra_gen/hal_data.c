@@ -1,27 +1,5 @@
 /* generated HAL source file - do not edit */
 #include "hal_data.h"
-ether_phy_instance_ctrl_t g_ether_phy0_ctrl;
-
-const ether_phy_cfg_t g_ether_phy0_cfg =
-{
-
-    .channel                   = 0,
-    .phy_lsi_address           = 0,
-    .phy_reset_wait_time       = 0x00020000,
-    .mii_bit_access_wait_time  = 8,
-    .flow_control              = ETHER_PHY_FLOW_CONTROL_DISABLE,
-    .mii_type                  = ETHER_PHY_MII_TYPE_RMII,
-    .p_context                 = NULL,
-    .p_extend                  = NULL,
-
-};
-/* Instance structure to use this module. */
-const ether_phy_instance_t g_ether_phy0 =
-{
-    .p_ctrl        = &g_ether_phy0_ctrl,
-    .p_cfg         = &g_ether_phy0_cfg,
-    .p_api         = &g_ether_phy_on_ether_phy
-};
 sci_uart_instance_ctrl_t     g_uart7_ctrl;
 
             baud_setting_t               g_uart7_baud_setting =
