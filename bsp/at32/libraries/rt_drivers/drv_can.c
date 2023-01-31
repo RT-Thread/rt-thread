@@ -589,12 +589,17 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     pmsg->data[7] = rx_message.data[7];
 
     pmsg->len = rx_message.dlc;
-    pmsg->id = rx_message.id_type;
 
     if (rx_message.id_type == CAN_ID_STANDARD)
+    {
         pmsg->id = rx_message.standard_id;
+        pmsg->ide = RT_CAN_STDID;
+    }
     else
-        pmsg->ide = rx_message.extended_id;
+    {
+        pmsg->id = rx_message.extended_id;
+        pmsg->ide = RT_CAN_EXTID;
+    }
 
     pmsg->rtr = rx_message.frame_type;
     pmsg->hdr_index = rx_message.filter_index;
