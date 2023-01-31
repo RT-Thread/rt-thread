@@ -76,6 +76,9 @@ _start:
 	sd ra, 8(sp)
 #endif
 
+    la t0, _sp
+    csrw mscratch,t0
+
 	/* argc = argv = 0 */
 	li a0, 0
 	li a1, 0
@@ -87,7 +90,7 @@ _start:
 
 #if defined(ENABLE_SMP)
 2:
-	la t0, trap_entry
+	la t0, SW_handler
 	csrw mtvec, t0
 
 	csrr a0, mhartid
