@@ -1,29 +1,31 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018/10/02     Bernard      The first version
+ * 2023/01/17     WangShun    The first version
  */
-
+ 
 #include "cpuport.h"
 
-  .section      .text.entry
-  .align 2
-  .global IRQ_Handler
-IRQ_Handler:
+    .section .text.entry, "ax"
+    .align  2
+    .global SW_handler
+
+SW_handler:
+	li   t0,    0x08
+	csrc mstatus, t0
 
     /* save all from thread context */
     addi sp, sp, -32 * REGBYTES
-
+    STORE x5,   5 * REGBYTES(sp)
     STORE x1,   1 * REGBYTES(sp)
+    /* Mandatory set the MPIE of mstatus */
     li    t0,   0x80
     STORE t0,   2 * REGBYTES(sp)
-
     STORE x4,   4 * REGBYTES(sp)
-    STORE x5,   5 * REGBYTES(sp)
     STORE x6,   6 * REGBYTES(sp)
     STORE x7,   7 * REGBYTES(sp)
     STORE x8,   8 * REGBYTES(sp)
@@ -51,27 +53,22 @@ IRQ_Handler:
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
 
-    move  s0, sp
-
     /* switch to interrupt stack */
-    la    sp, __freertos_irq_stack_top
-
+    csrrw sp,mscratch,sp
     /* interrupt handle */
     call  rt_interrupt_enter
-    csrr  a0, mcause
-    csrr  a1, mepc
-    mv    a2, sp
-    call  vSystemIrqHandler
+    /* Do the work after saving the above */
+    jal   rt_hw_do_after_save_above
+
     call  rt_interrupt_leave
-
     /* switch to from thread stack */
-    move  sp, s0
+    csrrw sp,mscratch,sp
 
-    /* need to switch new thread */
+    /* Determine whether to trigger scheduling at the interrupt function */
     la    s0, rt_thread_switch_interrupt_flag
     lw    s2, 0(s0)
-    beqz  s2, spurious_interrupt
-    /* clear switch interrupt flag */
+    beqz  s2, 1f
+    /* clear the flag of rt_thread_switch_interrupt_flag */
     sw    zero, 0(s0)
 
     csrr  a0, mepc
@@ -88,11 +85,11 @@ IRQ_Handler:
     LOAD  a0,  0 * REGBYTES(sp)
     csrw  mepc, a0
 
-spurious_interrupt:
+1:
     LOAD  x1,   1 * REGBYTES(sp)
 
-    /* Remain in M-mode after mret */
-    li    t0, 0x00001800
+    /* Set the mode after MRET */
+    li    t0, 0x1800
     csrs  mstatus, t0
     LOAD  t0,   2 * REGBYTES(sp)
     csrs  mstatus, t0

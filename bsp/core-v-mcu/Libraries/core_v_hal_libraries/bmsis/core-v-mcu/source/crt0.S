@@ -71,6 +71,9 @@ _start:
 	call __libc_init_array
 #endif
 
+    la t0, __stack_top
+    csrw mscratch,t0
+
 /* call main */
 	lw a0, 0(sp)                    /* a0 = argc */
 	addi a1, sp, __SIZEOF_POINTER__ /* a1 = argv */

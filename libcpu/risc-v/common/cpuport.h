@@ -14,11 +14,6 @@
 #define CPUPORT_H__
 
 #include <rtconfig.h>
-#if !defined(__ASSEMBLY__)
-#if defined(SOC_RISCV_FAMILY_CH32)
-#include "interrupt.h"
-#endif
-#endif
 
 #ifndef __ASSEMBLY__
 #ifdef RT_USING_SMP

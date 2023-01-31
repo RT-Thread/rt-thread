@@ -48,6 +48,8 @@ _start:
     la t0, irq_handler_trap
     csrw mtvec, t0
 
+	la t0, _stack
+    csrw mscratch,t0
 
     /* System reset handler */
     call reset_handler

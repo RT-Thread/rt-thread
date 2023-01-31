@@ -187,7 +187,7 @@ _start0800:
     csrw CSR_MTVT, t0
 
 	/* Intial the mtvt2 and enable it*/
-    la t0, irq_entry
+    la t0, SW_handler
     csrw CSR_MTVT2, t0
     csrs CSR_MTVT2, 0x1
 
@@ -236,6 +236,8 @@ _start0800:
 	call atexit
 	call __libc_init_array
 
+	la t0, _sp
+    csrw mscratch,t0
 
 	/* argc = argv = 0 */
 	li a0, 0

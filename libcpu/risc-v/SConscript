@@ -19,7 +19,7 @@ elif rtconfig.CPU == "c906" :
 elif rtconfig.CPU == "hpmicro":
     group = group
 else :
-    group = group + SConscript(os.path.join('common', 'SConscript'))
+    group = group + SConscript(os.path.join('common', 'SConscript'))+ SConscript(os.path.join('common_trap', 'SConscript'))
 
 # cpu porting code files
 if  rtconfig.CPU == "e9xx" or rtconfig.CPU == "c906":

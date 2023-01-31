@@ -21,6 +21,7 @@ volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
 volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
 #endif
 
+
 struct rt_hw_stack_frame
 {
     rt_ubase_t epc;        /* epc - epc    - program counter                     */
@@ -135,6 +136,21 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     return stk;
 }
 
+rt_weak void rt_trigger_software_interrupt(void)
+{
+    while (1);
+}
+
+rt_weak void rt_hw_do_before_save_above(void)
+{
+    while (1);
+}
+
+rt_weak void rt_hw_do_after_save_above(void)
+{
+    while (1);
+}
+
 /*
  * #ifdef RT_USING_SMP
  * void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread);
@@ -150,9 +166,9 @@ rt_weak void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_t
 
     rt_interrupt_to_thread = to;
     rt_thread_switch_interrupt_flag = 1;
-#if defined(SOC_RISCV_FAMILY_CH32)
-    sw_setpend();
-#endif
+
+    rt_trigger_software_interrupt();
+    
     return ;
 }
 #endif /* end of RT_USING_SMP */
