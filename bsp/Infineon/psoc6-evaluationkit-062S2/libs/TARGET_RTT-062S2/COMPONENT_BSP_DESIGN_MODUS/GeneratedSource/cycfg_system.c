@@ -10,7 +10,7 @@
 * udd 3.0.0.2024
 *
 ********************************************************************************
-* Copyright 2022 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -34,13 +34,6 @@
 #define CY_CFG_SYSCLK_PLL_ERROR 3
 #define CY_CFG_SYSCLK_FLL_ERROR 4
 #define CY_CFG_SYSCLK_WCO_ERROR 5
-#define CY_CFG_SYSCLK_CLKALTSYSTICK_ENABLED 1
-#define CY_CFG_SYSCLK_CLKALTSYSTICK_SOURCE CY_SYSTICK_CLOCK_SOURCE_CLK_LF
-#define CY_CFG_SYSCLK_CLKALTSYSTICK_INTERVAL 0
-#define CY_CFG_SYSCLK_CLKALTSYSTICK_FREQUENCY 32768
-#define CY_CFG_SYSCLK_CLKALTSYSTICK_TICKS ((0)/1000000.0)*32768
-#define CY_CFG_SYSCLK_CLKBAK_ENABLED 1
-#define CY_CFG_SYSCLK_CLKBAK_SOURCE CY_SYSCLK_BAK_IN_CLKLF
 #define CY_CFG_SYSCLK_CLKFAST_ENABLED 1
 #define CY_CFG_SYSCLK_CLKFAST_DIVIDER 0
 #define CY_CFG_SYSCLK_FLL_ENABLED 1
@@ -62,7 +55,6 @@
 #define CY_CFG_SYSCLK_ILO_ENABLED 1
 #define CY_CFG_SYSCLK_ILO_HIBERNATE true
 #define CY_CFG_SYSCLK_IMO_ENABLED 1
-#define CY_CFG_SYSCLK_CLKLF_ENABLED 1
 #define CY_CFG_SYSCLK_CLKPATH0_ENABLED 1
 #define CY_CFG_SYSCLK_CLKPATH0_SOURCE CY_SYSCLK_CLKPATH_IN_IMO
 #define CY_CFG_SYSCLK_CLKPATH0_SOURCE_NUM 0UL
@@ -95,12 +87,6 @@
 #define CY_CFG_SYSCLK_CLKTIMER_ENABLED 1
 #define CY_CFG_SYSCLK_CLKTIMER_SOURCE CY_SYSCLK_CLKTIMER_IN_IMO
 #define CY_CFG_SYSCLK_CLKTIMER_DIVIDER 0U
-//#define CY_CFG_SYSCLK_WCO_ENABLED 0
-//#define CY_CFG_SYSCLK_WCO_IN_PRT GPIO_PRT0
-//#define CY_CFG_SYSCLK_WCO_IN_PIN 0U
-//#define CY_CFG_SYSCLK_WCO_OUT_PRT GPIO_PRT0
-//#define CY_CFG_SYSCLK_WCO_OUT_PIN 1U
-//#define CY_CFG_SYSCLK_WCO_BYPASS CY_SYSCLK_WCO_NOT_BYPASSED
 #define CY_CFG_PWR_ENABLED 1
 #define CY_CFG_PWR_INIT 1
 #define CY_CFG_PWR_USING_PMIC 0
@@ -664,16 +650,6 @@ __WEAK void __NO_RETURN cycfg_ClockStartupError(uint32_t error)
         #endif /* CY_CFG_SYSCLK_ALTHF_BLE_ECO_VOL_REGULATOR */
     }
 #endif //defined (CY_DEVICE_SECURE)
-__STATIC_INLINE void Cy_SysClk_ClkAltSysTickInit()
-{
- Cy_SysTick_Init(CY_CFG_SYSCLK_CLKALTSYSTICK_SOURCE, CY_CFG_SYSCLK_CLKALTSYSTICK_TICKS);
-}
-#if (!defined(CY_DEVICE_SECURE))
-    __STATIC_INLINE void Cy_SysClk_ClkBakInit()
-    {
-        Cy_SysClk_ClkBakSetSource(CY_SYSCLK_BAK_IN_CLKLF);
-    }
-#endif //(!defined(CY_DEVICE_SECURE))
 #if (!defined(CY_DEVICE_SECURE))
     __STATIC_INLINE void Cy_SysClk_ClkFastInit()
     {
@@ -706,13 +682,6 @@ __STATIC_INLINE void Cy_SysClk_ClkAltSysTickInit()
         /* The WDT is unlocked in the default startup code */
         Cy_SysClk_IloEnable();
         Cy_SysClk_IloHibernateOn(true);
-    }
-#endif //(!defined(CY_DEVICE_SECURE))
-#if (!defined(CY_DEVICE_SECURE))
-    __STATIC_INLINE void Cy_SysClk_ClkLfInit()
-    {
-        /* The WDT is unlocked in the default startup code */
-        Cy_SysClk_ClkLfSetSource(CY_SYSCLK_CLKLF_IN_WCO);
     }
 #endif //(!defined(CY_DEVICE_SECURE))
 #if (!defined(CY_DEVICE_SECURE))
@@ -783,17 +752,6 @@ __STATIC_INLINE void Cy_SysClk_ClkAltSysTickInit()
         Cy_SysClk_ClkTimerSetSource(CY_SYSCLK_CLKTIMER_IN_IMO);
         Cy_SysClk_ClkTimerSetDivider(0U);
         Cy_SysClk_ClkTimerEnable();
-    }
-#endif //(!defined(CY_DEVICE_SECURE))
-#if (!defined(CY_DEVICE_SECURE))
-    __STATIC_INLINE void Cy_SysClk_WcoInit()
-    {
-        (void)Cy_GPIO_Pin_FastInit(GPIO_PRT0, 0U, 0x00U, 0x00U, HSIOM_SEL_GPIO);
-        (void)Cy_GPIO_Pin_FastInit(GPIO_PRT0, 1U, 0x00U, 0x00U, HSIOM_SEL_GPIO);
-        if (CY_SYSCLK_SUCCESS != Cy_SysClk_WcoEnable(1000000UL))
-        {
-            cycfg_ClockStartupError(CY_CFG_SYSCLK_WCO_ERROR);
-        }
     }
 #endif //(!defined(CY_DEVICE_SECURE))
 #if (!defined(CY_DEVICE_SECURE))

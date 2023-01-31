@@ -250,4 +250,11 @@ menu "On-chip Peripheral Drivers"
         endif
 endmenu
 
+menu "Board extended module Drivers"
+
+    config BSP_USING_SLIDER
+        bool "Enable Slider Demo"
+        default n
+endmenu
+
 endmenu

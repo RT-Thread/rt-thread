@@ -5,12 +5,12 @@
 * Establishes all necessary connections between hardware elements.
 * This file was automatically generated and should not be modified.
 * Tools Package 2.4.0.5972
-* mtb-pdl-cat1 2.4.0.13881
+* mtb-pdl-cat1 2.4.0.14850
 * personalities 6.0.0.0
-* udd 3.0.0.1974
+* udd 3.0.0.2024
 *
 ********************************************************************************
-* Copyright 2022 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -33,11 +33,11 @@
 
 void init_cycfg_routing(void)
 {
-    HSIOM->AMUX_SPLIT_CTL[2] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
+    HSIOM->AMUX_SPLIT_CTL[4] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
         HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SR_Msk |
         HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SL_Msk |
         HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SR_Msk;
-    HSIOM->AMUX_SPLIT_CTL[4] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
+    HSIOM->AMUX_SPLIT_CTL[5] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
         HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SR_Msk |
         HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SL_Msk |
         HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SR_Msk;

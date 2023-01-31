@@ -38,6 +38,7 @@ typedef struct
 } led_data_t;
 
 static rt_sem_t trans_done_semphr = RT_NULL;
+static rt_thread_t sld_thread = RT_NULL;
 
 #ifndef RT_USING_PWM
     #error You need enable PWM to use this sample
@@ -222,15 +223,15 @@ int Slider_ctrl_sample(void)
 {
     rt_err_t ret = RT_EOK;
 
-    rt_thread_t thread = rt_thread_create("slider_th",
-                                          Slider_thread_entry,
-                                          RT_NULL,
-                                          1024,
-                                          25,
-                                          10);
-    if (thread != RT_NULL)
+    sld_thread = rt_thread_create("slider_th",
+                                  Slider_thread_entry,
+                                  RT_NULL,
+                                  1024,
+                                  25,
+                                  10);
+    if (sld_thread != RT_NULL)
     {
-        rt_thread_startup(thread);
+        rt_thread_startup(sld_thread);
     }
     else
     {

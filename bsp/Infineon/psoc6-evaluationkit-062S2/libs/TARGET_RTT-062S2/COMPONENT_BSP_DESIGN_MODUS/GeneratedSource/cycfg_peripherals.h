@@ -5,12 +5,12 @@
 * Peripheral Hardware Block configuration
 * This file was automatically generated and should not be modified.
 * Tools Package 2.4.0.5972
-* mtb-pdl-cat1 2.4.0.13881
+* mtb-pdl-cat1 2.4.0.14850
 * personalities 6.0.0.0
-* udd 3.0.0.1974
+* udd 3.0.0.2024
 *
 ********************************************************************************
-* Copyright 2022 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -46,24 +46,18 @@ extern "C" {
 #define CY_CAPSENSE_PERI_DIV_TYPE CY_SYSCLK_DIV_8_BIT
 #define CY_CAPSENSE_PERI_DIV_INDEX 0u
 #define Cmod_PORT GPIO_PRT7
-#define CintA_PORT GPIO_PRT7
-#define CintB_PORT GPIO_PRT7
 #define LinearSlider0_Sns0_PORT GPIO_PRT7
 #define LinearSlider0_Sns1_PORT GPIO_PRT8
 #define LinearSlider0_Sns2_PORT GPIO_PRT8
 #define LinearSlider0_Sns3_PORT GPIO_PRT9
 #define LinearSlider0_Sns4_PORT GPIO_PRT9
 #define Cmod_PIN 7u
-#define CintA_PIN 1u
-#define CintB_PIN 2u
 #define LinearSlider0_Sns0_PIN 3u
 #define LinearSlider0_Sns1_PIN 0u
 #define LinearSlider0_Sns2_PIN 1u
 #define LinearSlider0_Sns3_PIN 2u
 #define LinearSlider0_Sns4_PIN 3u
 #define Cmod_PORT_NUM 7u
-#define CintA_PORT_NUM 7u
-#define CintB_PORT_NUM 7u
 #define CYBSP_CSD_HW CSD0
 #define CYBSP_CSD_IRQ csd_interrupt_IRQn
 
