@@ -918,6 +918,66 @@ static void rtthread_timer_wrapper(void *timerobj)
 #endif
 }
 
+#define TIMER_ID_MAX 50
+static struct timer_obj *_g_timerid[TIMER_ID_MAX];
+static int timerid_idx = 0;
+
+void timer_id_init(void)
+{
+    for (int i = 0; i < TIMER_ID_MAX; i++)
+    {
+        _g_timerid[i] = NULL;
+    }
+    timerid_idx = 0;
+}
+
+int timer_id_alloc(void)
+{
+    for (int i = 0; i < timerid_idx; i++)
+    {
+        if (_g_timerid[i] == NULL)
+            return i;
+    }
+    if (timerid_idx < TIMER_ID_MAX)
+    {
+        timerid_idx++;
+        return timerid_idx; /* todo */
+    }
+
+    return -1;
+}
+
+struct timer_obj *timer_id_get(int timerid)
+{
+    struct timer_obj *timer;
+    timer_id_lock();
+    if (_g_timerid[timerid] == NULL)
+    {
+        LOG_E("can not find timer!");
+        timer_id_unlock();
+        return NULL;
+    }
+    timer = _g_timerid[timerid];
+    timer_id_unlock();
+    return timer;
+}
+
+int timer_id_put(int id)
+{
+    if (_g_timerid[id] == NULL)
+        return -1;
+    _g_timerid[id] = NULL;
+    return 0;
+}
+int timer_id_lock()
+{
+/* todo */
+}
+
+int timer_id_unlock()
+{
+    /* todo */
+}
 /**
  * @brief Create a per-process timer.
  *
@@ -929,6 +989,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 {
     static int num = 0;
+    int _timerid = 0;
     struct timer_obj *timer;
     char timername[RT_NAME_MAX] = {0};
 
@@ -969,7 +1030,18 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         rt_timer_init(&timer->timer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
     }
 
-    *timerid = (timer_t)((uintptr_t)timer >> 1);
+    timer_id_lock();
+    _timerid = timer_id_alloc();
+    if (_timerid < 0)
+    {
+        LOG_E("_timerid overflow!");
+        return -1; /* todo:memory leak */
+    }
+    _g_timerid[_timerid] = timer;
+    *timerid = _timerid;
+    timer_id_unlock();
+    rt_kprintf("_timerid %d\r\n", _timerid);
+        // *timerid = (timer_t)((uintptr_t)timer >> 1);
 
     return 0;
 }
@@ -982,7 +1054,19 @@ RTM_EXPORT(timer_create);
  */
 int timer_delete(timer_t timerid)
 {
-    struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
+    // struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
+    struct timer_obj *timer;
+    timer_id_lock();
+    if (_g_timerid[(int)timerid] == NULL)
+    {
+        LOG_E("can not find timer!");
+        rt_set_errno(EINVAL);
+        timer_id_unlock();
+        return -1;
+    }
+    timer = _g_timerid[(int)timerid];
+    timer_id_put(timerid);
+    timer_id_unlock();
 
     if (timer == RT_NULL || rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer)
     {
@@ -1020,7 +1104,8 @@ int timer_getoverrun(timer_t timerid)
  */
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
-    struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
+    // struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
+    struct timer_obj *timer = timer_id_get(timerid);
     rt_tick_t remaining;
     rt_uint32_t seconds, nanoseconds;
 
@@ -1087,7 +1172,10 @@ RTM_EXPORT(timer_gettime);
 int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
                   struct itimerspec *ovalue)
 {
-    struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
+    // struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
+
+    rt_kprintf("timerid %d\r\n", timerid);
+    struct timer_obj *timer = timer_id_get(timerid);
     if (timer == NULL ||
         rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer ||
         value->it_interval.tv_nsec < 0 ||
