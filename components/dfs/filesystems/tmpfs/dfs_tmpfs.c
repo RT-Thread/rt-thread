@@ -383,7 +383,8 @@ int dfs_tmpfs_open(struct dfs_fd *file)
     /* Creates a new file. */
     if (file->flags & O_CREAT)
     {
-        if (d_file == NULL) {
+        if (d_file == NULL)
+        {
             /* find parent file */
             _path_separate(file->vnode->path, parent_path, file_name);
             if (file_name[0] == '\0') /* it's root dir */
@@ -396,7 +397,8 @@ int dfs_tmpfs_open(struct dfs_fd *file)
 
             /* create a file entry */
             d_file = (struct tmpfs_file *)rt_calloc(1, sizeof(struct tmpfs_file));
-            if (d_file == NULL) {
+            if (d_file == NULL)
+            {
                 return -ENOMEM;
             }
             superblock->df_size += sizeof(struct tmpfs_file);
@@ -408,10 +410,12 @@ int dfs_tmpfs_open(struct dfs_fd *file)
             d_file->data = NULL;
             d_file->size = 0;
             d_file->sb   = superblock;
-            if (file->flags & O_DIRECTORY) {
+            if (file->flags & O_DIRECTORY)
+            {
                 d_file->type = TMPFS_TYPE_DIR;
             }
-            else {
+            else
+            {
                 d_file->type = TMPFS_TYPE_FILE;
             }
             rt_hw_spin_lock(&lock);
