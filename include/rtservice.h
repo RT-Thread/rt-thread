@@ -128,17 +128,17 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 
 /**
  * rt_list_for_each - iterate over a list
- * @pos:    the rt_list_t * to use as a loop cursor.
- * @head:   the head for your list.
+ * @param pos the rt_list_t * to use as a loop cursor.
+ * @param head the head for your list.
  */
 #define rt_list_for_each(pos, head) \
     for (pos = (head)->next; pos != (head); pos = pos->next)
 
 /**
  * rt_list_for_each_safe - iterate over a list safe against removal of list entry
- * @pos:    the rt_list_t * to use as a loop cursor.
- * @n:      another rt_list_t * to use as temporary storage
- * @head:   the head for your list.
+ * @param pos the rt_list_t * to use as a loop cursor.
+ * @param n another rt_list_t * to use as temporary storage
+ * @param head the head for your list.
  */
 #define rt_list_for_each_safe(pos, n, head) \
     for (pos = (head)->next, n = pos->next; pos != (head); \
@@ -146,9 +146,9 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 
 /**
  * rt_list_for_each_entry  -   iterate over list of given type
- * @pos:    the type * to use as a loop cursor.
- * @head:   the head for your list.
- * @member: the name of the list_struct within the struct.
+ * @param pos the type * to use as a loop cursor.
+ * @param head the head for your list.
+ * @param member the name of the list_struct within the struct.
  */
 #define rt_list_for_each_entry(pos, head, member) \
     for (pos = rt_list_entry((head)->next, typeof(*pos), member); \
@@ -157,10 +157,10 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 
 /**
  * rt_list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
- * @pos:    the type * to use as a loop cursor.
- * @n:      another type * to use as temporary storage
- * @head:   the head for your list.
- * @member: the name of the list_struct within the struct.
+ * @param pos the type * to use as a loop cursor.
+ * @param n another type * to use as temporary storage
+ * @param head the head for your list.
+ * @param member the name of the list_struct within the struct.
  */
 #define rt_list_for_each_entry_safe(pos, n, head, member) \
     for (pos = rt_list_entry((head)->next, typeof(*pos), member), \
@@ -170,9 +170,9 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 
 /**
  * rt_list_first_entry - get the first element from a list
- * @ptr:    the list head to take the element from.
- * @type:   the type of the struct this is embedded in.
- * @member: the name of the list_struct within the struct.
+ * @param ptr the list head to take the element from.
+ * @param type the type of the struct this is embedded in.
+ * @param member the name of the list_struct within the struct.
  *
  * Note, that list is expected to be not empty.
  */
@@ -267,17 +267,17 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 
 /**
  * rt_slist_for_each - iterate over a single list
- * @pos:    the rt_slist_t * to use as a loop cursor.
- * @head:   the head for your single list.
+ * @param pos the rt_slist_t * to use as a loop cursor.
+ * @param head the head for your single list.
  */
 #define rt_slist_for_each(pos, head) \
     for (pos = (head)->next; pos != RT_NULL; pos = pos->next)
 
 /**
  * rt_slist_for_each_entry  -   iterate over single list of given type
- * @pos:    the type * to use as a loop cursor.
- * @head:   the head for your single list.
- * @member: the name of the list_struct within the struct.
+ * @param pos the type * to use as a loop cursor.
+ * @param head the head for your single list.
+ * @param member the name of the list_struct within the struct.
  */
 #define rt_slist_for_each_entry(pos, head, member) \
     for (pos = rt_slist_entry((head)->next, typeof(*pos), member); \
@@ -286,9 +286,9 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 
 /**
  * rt_slist_first_entry - get the first element from a slist
- * @ptr:    the slist head to take the element from.
- * @type:   the type of the struct this is embedded in.
- * @member: the name of the slist_struct within the struct.
+ * @param ptr the slist head to take the element from.
+ * @param type the type of the struct this is embedded in.
+ * @param member the name of the slist_struct within the struct.
  *
  * Note, that slist is expected to be not empty.
  */
@@ -297,9 +297,9 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 
 /**
  * rt_slist_tail_entry - get the tail element from a slist
- * @ptr:    the slist head to take the element from.
- * @type:   the type of the struct this is embedded in.
- * @member: the name of the slist_struct within the struct.
+ * @param ptr the slist head to take the element from.
+ * @param type the type of the struct this is embedded in.
+ * @param member the name of the slist_struct within the struct.
  *
  * Note, that slist is expected to be not empty.
  */
