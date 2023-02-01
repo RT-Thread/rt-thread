@@ -21,10 +21,10 @@ Source/mxc_pins.c
 Source/mxc_sys.c
 Source/nvic_table.c
 ''')
-  
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['Source/uart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['Source/i2c.c']
 

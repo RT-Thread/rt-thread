@@ -40,6 +40,8 @@ extern "C" {
 #define DST_TUR     9   /* Turkey */
 #define DST_AUSTALT 10  /* Australian style with shift in 1986 */
 
+struct itimerspec;
+
 struct timezone
 {
     int tz_minuteswest;   /* minutes west of Greenwich */
@@ -99,8 +101,6 @@ time_t time(time_t* t);
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #endif /* RT_USING_POSIX_DELAY */
 
-#if defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER)
-/* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
 #define NANOSECOND_PER_SECOND   1000000000UL
@@ -108,6 +108,9 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #define MILLISECOND_PER_TICK    (MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
 #define MICROSECOND_PER_TICK    (MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
 #define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
+
+#if defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER)
+/* POSIX clock and timer */
 
 #ifndef CLOCK_REALTIME
 #define CLOCK_REALTIME      1
@@ -126,6 +129,12 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #ifndef CLOCK_MONOTONIC
 #define CLOCK_MONOTONIC     4
 #endif /* CLOCK_MONOTONIC */
+
+#ifdef CLOCK_TAI
+#define CLOCK_ID_MAX CLOCK_TAI
+#else
+#define CLOCK_ID_MAX CLOCK_MONOTONIC
+#endif
 #endif /* defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER) */
 
 #ifdef RT_USING_POSIX_CLOCK
@@ -137,7 +146,7 @@ int rt_timespec_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX_CLOCK */
 
 #ifdef RT_USING_POSIX_TIMER
-#include "signal.h"
+#include <sys/signal.h>
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
 int timer_delete(timer_t timerid);
 int timer_getoverrun(timer_t timerid);

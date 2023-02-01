@@ -4,6 +4,6 @@ menu "Pcie Configuration"
         bool
         prompt "Use F_PCIE"
         default n
-        
+
 endmenu
 

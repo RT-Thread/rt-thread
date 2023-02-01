@@ -38,7 +38,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 
     spi_periph = (SPI_Module*)device->bus->parent.user_data;
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     if (spi_periph != SPI1 && spi_periph != SPI2 && spi_periph != SPI3)
     {
         return RT_EIO;
@@ -273,7 +273,7 @@ int rt_hw_spi_init(void)
 
     result = rt_spi_bus_register(&spi_bus1, "spi1", &spi_ops);
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA | RCC_APB2_PERIPH_SPI1, ENABLE);
 
     GPIO_InitStruct(&GPIO_InitStructure);
@@ -307,7 +307,7 @@ int rt_hw_spi_init(void)
 
     result = rt_spi_bus_register(&spi_bus2, "spi2", &spi_ops);
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_SPI2, ENABLE);
 

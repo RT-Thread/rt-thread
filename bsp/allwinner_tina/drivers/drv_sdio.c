@@ -62,7 +62,7 @@ struct sdio_drv
 
 #ifdef CONFIG_MMC_USE_DMA
 #ifdef TINA_USING_SDIO0
-ALIGN(32) static rt_uint8_t dma_buffer[64 * 1024];
+rt_align(32) static rt_uint8_t dma_buffer[64 * 1024];
 #endif
 #endif
 
@@ -125,7 +125,7 @@ static int mmc_update_clk(tina_mmc_t mmc)
 
 static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
 {
-    ALIGN(32) static struct mmc_des_v4p1 pdes[128];  // mast ALIGN(32)
+    rt_align(32) static struct mmc_des_v4p1 pdes[128];
     unsigned i, rval;
     unsigned des_idx;
     unsigned length = xfe->size * xfe->num;

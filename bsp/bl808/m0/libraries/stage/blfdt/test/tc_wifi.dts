@@ -1,0 +1,310 @@
+
+/*
+    echo "tc_wifi.  dts -> dtb"
+    dtc -I dts -O dtb -o tc_wifi.dtb tc_wifi.dts
+
+    echo "tc_wifi.  dtb -> c"
+    xxd -i tc_wifi.dtb tc_wifi.c
+*/
+
+/dts-v1/;
+
+/ {
+    model = "bl bl60x AVB board";
+    compatible = "bl,bl60x-sample", "bl,bl60x-common";
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    ipc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ipc@4001C000 {
+            status = "disable";
+            reg = <0x4001C000 0x100>;
+        };
+    };
+    i2s {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        i2s@40017000 {
+            status = "okay";
+            compatible = "bl60x_i2s";
+            reg = <0x40017000 0x100>;
+            mclk_only = "okay";
+            pin {
+                mclk = <11>;
+            };
+        };
+        i2s@40017100 {
+            status = "okay";
+            compatible = "bl60x_i2s";
+            reg = <0x40017100 0x100>;
+            mclk_only = "disable";
+            pin {
+                bclk = <12>;
+                fs = <29>;
+                do = <30>;
+                di = <31>;
+            };
+        };
+    };
+    i2c {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        i2c@40011000 {
+            status = "okay";
+            compatible = "bl60x_i2c";
+            reg = <0x40011000 0x100>;
+            pin {
+                scl = <32>;
+                sda = <13>;
+            };
+            devices {
+                list_addr = <0x18 0x21>;
+                list_driver = "i2c_es8311", "i2c_gc0308>";
+            };
+        };
+        i2c@40011100 {
+            status = "disable";
+            compatible = "bl60x_i2c";
+            reg = <0x40011100 0x100>;
+            pin {
+                /*empty here*/
+            };
+        };
+    };
+    mjpeg {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        mjpeg@40016000 {
+            status = "okay";
+            compatible = "bl60x_mjpeg";
+            reg = <0x40016000 0x100>;
+        };
+    };
+    timer {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        timer@40014000 {
+            status = "disable";
+            compatible = "bl60x_timer";
+            reg = <0x40014000 0x100>;
+        };
+        timer@40014100 {
+            status = "disable";
+            compatible = "bl60x_timer";
+            reg = <0x40014100 0x100>;
+        };
+    };
+    pwm {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        pwm@40012000 {
+            status = "disable";
+            compatible = "bl60x_pwm";
+            reg = <0x40012000 0x100>;
+            pin {
+                /*empty here*/
+            };
+        };
+    };
+    uart {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        uart@40010000 {
+            status = "disable";
+            id = <0>;
+            compatible = "bl60x_uart";
+            path = "/dev/ttyS0";
+            reg = <0x40010000 0x100>;
+            baudrate = <115200>;
+            pin {
+                /*empty here*/
+            };
+            feature {
+                rts = "disable";
+                cts = "disable";
+                rx = "disable";
+                tx = "disable";
+            };
+        };
+        uart@40010100 {
+            status = "disable";
+            id = <1>;
+            compatible = "bl60x_uart";
+            path = "/dev/ttyS1";
+            reg = <0x40010100 0x100>;
+            baudrate = <115200>;
+            pin {
+                /*empty here*/
+            };
+            feature {
+                rts = "disable";
+                cts = "disable";
+                rx = "disable";
+                tx = "disable";
+            };
+        };
+        uart@40010200 {
+            status = "okay";
+            id = <2>;
+            compatible = "bl60x_uart";
+            path = "/dev/ttyS2";
+            reg = <0x40010200 0x100>;
+            baudrate = <5000000>;
+            pin {
+                tx = <14>;
+                rx = <7>;
+            };
+            feature {
+                tx = "okay";
+                rx = "okay";
+                cts = "disable";
+                rts = "disable";
+            };
+        };
+    };
+    spi {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        spi@4000F000 {
+            status = "disable";
+            reg = <0x4000F000 0x100>;/* 4KB */
+        };
+    };
+    gpip {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        adc_key {
+            status = "okay";
+            pin = <9>;
+            interrupt  = <3>;
+            key_vol = <0 100 400 300 500>;
+            key_pcb = "SW1", "SW2", "SW3", "SW4","SW5";
+            key_event = "Usr1", "Usr2", "Start", "Up", "Down";
+            key_raw = <1 2 3 4 5>;
+        };
+    };
+    pdm {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        pdm@4000C000 {
+            status = "disable";
+            reg = <0x4000C000 0x100>;/* 256B */
+        };
+    };
+    cam {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        cam@4000B000 {
+            status = "okay";
+            compatible = "bl60x_cam";
+            reg = <0x4000B000 0x1000>;/* 4KB */
+            pin {
+                PIX_CLK = <0>;
+                FRAME_VLD = <1>;
+                LINE_VLD = <2>;
+                PIX_DAT0 = <3>;
+                PIX_DAT1 = <4>;
+                PIX_DAT2 = <5>;
+                PIX_DAT3 = <6>;
+                PIX_DAT4 = <25>;
+                PIX_DAT5 = <26>;
+                PIX_DAT6 = <27>;
+                PIX_DAT7 = <28>;
+                CAM_PWDN = <15>;
+                CAM_REF_CLK = <24>;
+            };
+            feature {
+                mode = "HARDWARE";
+            };
+            conf {
+                sensor = "auto";
+            };
+        };
+    };
+    qspi {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        qspi@4000A000 {
+            status = "disable";
+            reg = <0x4000A000 0x1000>;/* 4KB */
+        };
+    };
+    sdh {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        sdh@40003000 {
+            status = "okay";
+            compatible = "bl60x_sdh";
+            reg = <0x40003000 0x1000>;/* 4KB */
+            pin {
+                clk = <16>;
+                cmd = <17>;
+                dat0 = <18>;
+                dat1 = <19>;
+                dat2 = <20>;
+                dat3 = <21>;
+            };
+        };
+    };
+    wifi {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        region {
+            country_code = <86>;
+        };
+        mac {
+            sta_mac_addr = [C8 43 57 82 73 40];
+            ap_mac_addr = [C8 43 57 82 73 02];
+        };
+        ap {
+            ssid = "BL60x_Camera03";
+            pwd = "1234567890a";
+            ap_channel = <11>;
+            auto_chan_detect = "disable";
+        };
+        brd_rf {
+            xtal = <41 41 0 63 63>;
+            pwr_table = <4 3 3 186>,
+                        <4 3 4 176>,
+                        <4 3 5 167>,
+                        <3 3 0 159>,
+                        <3 3 1 149>,
+                        <3 3 2 140>,
+                        <3 3 3 129>,
+                        <3 3 4 119>,
+                        <3 3 5 110>,
+                        <2 3 0 101>,
+                        <2 3 1 91>,
+                        <2 3 2 82>,
+                        <2 3 3 72>,
+                        <2 3 4 62>,
+                        <2 3 5 52>,
+                        <1 3 3 10>;
+            channel_div_table = <0x14F00000
+                                 0x14FB1C71
+                                 0x150638E3
+                                 0x15115555
+                                 0x151C71C7
+                                 0x15278E38
+                                 0x1532AAAA
+                                 0x153DC71C
+                                 0x1548E38E
+                                 0x15540000
+                                 0x155F1C71
+                                 0x156A38E3
+                                 0x15755555
+                                 0x15900000
+                                 0x15C00000>;
+            channel_cnt_table = <0xa780 0xa7d8
+                                 0xa831 0xa88a
+                                 0xa8e3 0xa93c
+                                 0xa995 0xa9ee
+                                 0xaa47 0xaaa0
+                                 0xaaf8 0xab51
+                                 0xabaa 0xac80>;
+            lo_fcal_div = <0x800>;
+        };
+    };
+};

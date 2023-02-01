@@ -235,7 +235,7 @@ static void thread1_entry(void *parameter)
         if (rt_mb_recv(&mb, (rt_uint32_t *)&str, RT_WAITING_FOREVER) == RT_EOK)
         {
             rt_kprintf("thread1: get a mail from mailbox, the content:%s\n", str);
-            if (str == mb_str3)
+            if(!strcmp(str, mb_str3))
                 break;
 
             /* Delay 100ms */

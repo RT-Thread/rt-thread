@@ -1,20 +1,45 @@
 Import('rtconfig')
 from building import *
+import os
 
 cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-support_arch  = {"arm": ["cortex-m3", "cortex-m4", "cortex-m7", "arm926", "cortex-a"]}
-platform_file = {'armcc': 'rvds.S', 'gcc': 'gcc.S', 'iccarm': 'iar.S'}
+support_arch  = {"arm": ["cortex-m3", "cortex-m4", "cortex-m7", "arm926", "cortex-a"],
+                 "aarch64":["cortex-a"],
+                 "risc-v": ["rv64"],
+                 "x86": ["i386"]}
+platform_file = {'armcc': 'rvds.S', 'gcc': 'gcc.S', 'iar': 'iar.S'}
 
-if rtconfig.PLATFORM in platform_file.keys():	# support platforms
-    if rtconfig.ARCH in support_arch.keys() and rtconfig.CPU in support_arch[rtconfig.ARCH]:
-        # arch/arm/cortex-m7/lwp_gcc.S
-        asm_path = 'arch/' + rtconfig.ARCH + '/' + rtconfig.CPU + '/*_' + platform_file[rtconfig.PLATFORM]
-        src = Glob('*.c') + Glob(asm_path)
+platform = rtconfig.PLATFORM
+arch     = rtconfig.ARCH
+cpu      = rtconfig.CPU
+
+# fix the cpu for risc-v
+if arch == 'risc-v':
+    rv64 = ['virt64', 'c906']
+    if cpu in rv64:
+        cpu = 'rv64'
+
+if GetDepend('LWP_UNIX98_PTY'):
+    # print("LWP_UNIX98_PTY")
+    src += Glob('unix98pty/*.c')
+    CPPPATH += ['unix98pty/']
+
+if platform in platform_file.keys(): # support platforms
+    if arch in support_arch.keys() and cpu in support_arch[arch]:
+        asm_path = 'arch/' + arch + '/' + cpu + '/*_' + platform_file[platform]
+        arch_common = 'arch/' + arch + '/' + 'common/*.c'
+        if not GetDepend('ARCH_MM_MMU'):
+            excluded_files = ['ioremap.c', 'lwp_futex.c', 'lwp_mm_area.c', 'lwp_pmutex.c', 'lwp_shm.c', 'lwp_user_mm.c']
+            src += [f for f in Glob('*.c') if os.path.basename(str(f)) not in excluded_files] + Glob(asm_path) + Glob(arch_common)
+        else:
+            src += Glob('*.c') + Glob(asm_path) + Glob(arch_common)
+        src += Glob('arch/' + arch + '/' + cpu + '/*.c')
         CPPPATH = [cwd]
+        CPPPATH += [cwd + '/arch/' + arch + '/' + cpu]
 
-group = DefineGroup('lwP', src, depend = ['RT_USING_LWP'], CPPPATH = CPPPATH)
+group = DefineGroup('lwP', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
 Return('group')

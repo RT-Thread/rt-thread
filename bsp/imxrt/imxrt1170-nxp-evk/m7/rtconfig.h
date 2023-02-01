@@ -7,7 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
@@ -71,10 +71,10 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CPUTIME
 #define RT_USING_PHY
 #define RT_USING_PIN
 
@@ -220,11 +220,11 @@
 
 /* Device Control */
 
+/* Privated Packages of RealThread */
 
 /* Other */
 
 /* Signal IO */
-
 
 /* Uncategorized */
 

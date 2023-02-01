@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -112,6 +112,39 @@ const static struct rt_device_ops rtc_ops =
 };
 #endif
 
+#if defined(SOC_NRF5340)
+static rt_err_t rt_hw_rtc_register_5340(rt_device_t device, const char *name, rt_uint32_t flag)
+{
+    struct tm time_new = ONCHIP_RTC_TIME_DEFAULT;
+
+    RT_ASSERT(device != RT_NULL);
+
+    init_time = timegm(&time_new);
+    if (rt_rtc_config(device) != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &rtc_ops;
+#else
+    device->init        = RT_NULL;
+    device->open        = RT_NULL;
+    device->close       = RT_NULL;
+    device->read        = RT_NULL;
+    device->write       = RT_NULL;
+    device->control     = rt_rtc_control;
+#endif
+    device->type        = RT_Device_Class_RTC;
+    device->rx_indicate = RT_NULL;
+    device->tx_complete = RT_NULL;
+    device->user_data   = RT_NULL;
+
+    /* register a character device */
+    rt_device_register(device, name, flag);
+
+    return RT_EOK;
+}
+#else
 static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint32_t flag)
 {
     struct tm time_new = ONCHIP_RTC_TIME_DEFAULT;
@@ -143,11 +176,15 @@ static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint
 
     return RT_EOK;
 }
-
+#endif
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
+#if defined(SOC_NRF5340)
+        result = rt_hw_rtc_register_5340(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+#else
     result = rt_hw_rtc_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+#endif
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);

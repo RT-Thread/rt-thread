@@ -1,0 +1,29 @@
+menu "GMAC Devices"
+
+config DRIVERS_GMAC
+    bool "enable GMAC driver"
+    default n
+    if DRIVERS_GMAC
+        choice
+            prompt "GMAC media independent interface"
+            default GMAC_USING_RMII if BOARD_allwinnerd1s
+            default GMAC_USING_RGMII if BOARD_allwinnerd1
+
+            config GMAC_USING_RGMII
+                bool "RGMII"
+            config GMAC_USING_RMII
+                bool "RMII"
+        endchoice
+        choice
+            prompt "GMAC GPIO GROUP"
+            default GMAC_USING_GPIOG if BOARD_allwinnerd1s
+            default GMAC_USING_GPIOE if BOARD_allwinnerd1
+
+            config GMAC_USING_GPIOE
+                bool "GPIOE GROUP"
+
+            config GMAC_USING_GPIOG
+                bool "GPIOG GROUP"
+        endchoice
+    endif
+endmenu

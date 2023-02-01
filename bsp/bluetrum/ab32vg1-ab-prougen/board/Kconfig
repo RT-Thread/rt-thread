@@ -195,7 +195,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TIM4
                 bool "Enable TIM4"
                 default n
-                
+
             config BSP_USING_TIM5
                 bool "Enable TIM5"
                 default n

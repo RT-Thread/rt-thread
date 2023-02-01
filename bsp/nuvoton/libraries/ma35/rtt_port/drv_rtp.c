@@ -11,12 +11,11 @@
 
 #include <rtconfig.h>
 
-#if !defined(USE_MA35D1_SUBM)
+#if defined(BSP_USING_RTP) && defined(RT_USING_DFS)
 
 #define LOG_TAG    "drv.rtp"
-#undef  DBG_ENABLE
 #define DBG_SECTION_NAME   LOG_TAG
-#define DBG_LEVEL      LOG_LVL_DBG
+#define DBG_LEVEL      LOG_LVL_INFO
 #define DBG_COLOR
 #include <rtdbg.h>
 
@@ -28,17 +27,12 @@
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
-#define RTP_USING_AT_STARTUP
+#include "drv_sspcc.h"
 
 /* Link to rtthread.bin in ma35-rtp folder. */
 #define PATH_RTP_INCBIN          "..//ma35-rtp//rtthread.bin"
 
 #define READ_BLOCK_SIZE       128
-#define REGION_ADDR_SRAM0     0x24000000
-#define REGION_ADDR_DDR       (0x80020000|UNCACHEABLE)
-#define REGION_MAXSIZE_SRAM0  (128*1024)
-#define REGION_MAXSIZE_DDR    (4*1024*1024-REGION_MAXSIZE_SRAM0)
-#define REGION_MAXSIZE_LIMIT  (REGION_MAXSIZE_SRAM0+REGION_MAXSIZE_DDR)
 
 #if !defined(PATH_RTP_FW_FILE)
     #define PATH_RTP_FW_FILE "/mnt/sd1p0/rtp.bin"
@@ -106,7 +100,7 @@ exit_nu_rtp_load_from_memory:
 }
 #endif
 
-RT_WEAK void nu_rtp_sspcc_setup(void)
+rt_weak void nu_rtp_sspcc_setup(void)
 {
     SSPCC_SET_REALM(SSPCC_UART16, SSPCC_SSET_SUBM);
 
@@ -216,7 +210,7 @@ int nu_rtp_load_run(int argc, char *argv[])
     if (!szFilePath || nu_rtp_load_from_file(szFilePath) < 0)
         return -1;
 
-    rt_kprintf("Loaded %s, then run...\n", szFilePath);
+    LOG_I("Loaded %s, then run...", szFilePath);
 
     nu_rtp_start();
 
@@ -227,11 +221,11 @@ MSH_CMD_EXPORT(nu_rtp_load_run, load rtp code then run);
 
 int rt_hw_rtp_init(void)
 {
-    int fw_size;
-
-    fw_size = (int)((char *)&incbin_rtp_end - (char *)&incbin_rtp_start);
-    rt_kprintf("INCBIN RTP Start = %p\n", &incbin_rtp_start);
-    rt_kprintf("INCBIN RTP Size = %p\n", fw_size);
+#if defined(RTP_USING_AT_STARTUP)
+    int fw_size = (int)((char *)&incbin_rtp_end - (char *)&incbin_rtp_start);
+    LOG_I("INCBIN RTP Start = %p", &incbin_rtp_start);
+    LOG_I("INCBIN RTP Size = %p", fw_size);
+#endif
 
     /* Enable RTP and reset M4 reset */
     nu_rtp_init();
@@ -247,4 +241,4 @@ int rt_hw_rtp_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_rtp_init);
 
-#endif //#if defined(USE_MA35D1_SUBM)
+#endif //#if defined(BSP_USING_RTP)

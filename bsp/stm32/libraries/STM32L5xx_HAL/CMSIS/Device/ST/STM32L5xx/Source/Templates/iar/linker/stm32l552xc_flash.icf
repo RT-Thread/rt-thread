@@ -38,4 +38,4 @@ place in RAM_region   { readwrite,
                         block CSTACK, block HEAP };
 place in SRAM1_region { };
 place in SRAM2_region { };
-                        
+

@@ -73,7 +73,7 @@ rt_hw_context_switch:
 
     stmfd sp!, {r4}         @ push cpsr
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd sp, {r13, r14}^   @ push usr_sp usr_lr
     sub sp, #8
 #endif
@@ -173,7 +173,7 @@ rt_hw_context_switch_exit:
 
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd   sp, {r13, r14}^ /* usr_sp, usr_lr */
     add     sp, #8
 #endif

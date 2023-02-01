@@ -14,6 +14,8 @@
 #include <rtdevice.h>
 #include "drv_gpio.h"
 #include "drv_sys.h"
+#include "drv_sspcc.h"
+
 #include "board.h"
 
 
@@ -149,7 +151,7 @@ static int rt_hw_spiflash_init(void)
 #endif
     return 0;
 }
-INIT_COMPONENT_EXPORT(rt_hw_spiflash_init);
+INIT_DEVICE_EXPORT(rt_hw_spiflash_init);
 #endif /* BOARD_USING_STORAGE_SPIFLASH */
 
 #if defined(BOARD_USING_STORAGE_SPINAND) && defined(NU_PKG_USING_SPINAND)
@@ -193,7 +195,52 @@ static int rt_hw_spinand_init(void)
     return 0;
 }
 
-INIT_COMPONENT_EXPORT(rt_hw_spinand_init);
+INIT_DEVICE_EXPORT(rt_hw_spinand_init);
+#endif
+
+#if defined(BOARD_USING_MPU6500) && defined(PKG_USING_MPU6XXX)
+
+#include "sensor_inven_mpu6xxx.h"
+
+int rt_hw_mpu6xxx_port(void)
+{
+    struct rt_sensor_config cfg;
+    rt_base_t mpu_int = NU_GET_PININDEX(NU_PL, 8);
+
+    cfg.intf.dev_name = "i2c1";
+    cfg.intf.arg = (void *)MPU6XXX_ADDR_DEFAULT;
+    cfg.irq_pin.pin = mpu_int;
+
+    return rt_hw_mpu6xxx_init("mpu", &cfg);
+}
+INIT_APP_EXPORT(rt_hw_mpu6xxx_port);
+#endif /* BOARD_USING_MPU6500 */
+
+#if defined(BOARD_USING_STORAGE_RAWNAND) && defined(BSP_USING_NFI)
+struct rt_mtd_nand_device mtd_partitions_nfi[MTD_NFI_PARTITION_NUM] =
+{
+    [0] =
+    {
+        /*nand0:  rtthread*/
+        .block_start = 0,
+        .block_end   = 63,
+        .block_total = 64,
+    },
+    [1] =
+    {
+        /*nand1: for filesystem mounting*/
+        .block_start = 64,
+        .block_end   = 8191,
+        .block_total = 8128,
+    },
+    [2] =
+    {
+        /*nand2: Whole blocks size, overlay*/
+        .block_start = 0,
+        .block_end   = 8191,
+        .block_total = 8192,
+    }
+};
 #endif
 
 #if defined(BOARD_USING_NAU8822) && defined(NU_PKG_USING_NAU8822)

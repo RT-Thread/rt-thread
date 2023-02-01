@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -61,6 +61,33 @@ extern "C" {
        .channel                 = RT_NULL       \
     }
 #endif /* BSP_USING_PWM5 */
+
+#ifdef BSP_USING_PWM15
+#define PWM15_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM15,        \
+       .name                    = "pwm15",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM15 */
+
+#ifdef BSP_USING_PWM16
+#define PWM16_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM16,        \
+       .name                    = "pwm16",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM16 */
+
+#ifdef BSP_USING_PWM17
+#define PWM17_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM17,        \
+       .name                    = "pwm17",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM17 */
 
 #ifdef __cplusplus
 }

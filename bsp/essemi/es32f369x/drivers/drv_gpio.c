@@ -77,7 +77,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 
 #ifdef ES_CONF_EXTI_IRQ_0
 
-RT_WEAK void irq_pin0_callback(void* arg)
+rt_weak void irq_pin0_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 0\r\n");
 }
@@ -85,7 +85,7 @@ RT_WEAK void irq_pin0_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_1
 
-RT_WEAK void irq_pin1_callback(void* arg)
+rt_weak void irq_pin1_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 1\r\n");
 }
@@ -94,7 +94,7 @@ RT_WEAK void irq_pin1_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_2
 
-   RT_WEAK void irq_pin2_callback(void* arg)
+   rt_weak void irq_pin2_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 2\r\n");
 }
@@ -103,7 +103,7 @@ RT_WEAK void irq_pin1_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_3
 
-RT_WEAK void irq_pin3_callback(void* arg)
+rt_weak void irq_pin3_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 3\r\n");
 }
@@ -112,7 +112,7 @@ RT_WEAK void irq_pin3_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_4
 
-RT_WEAK void irq_pin4_callback(void* arg)
+rt_weak void irq_pin4_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 4\r\n");
 }
@@ -121,7 +121,7 @@ RT_WEAK void irq_pin4_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_5
 
-RT_WEAK void irq_pin5_callback(void* arg)
+rt_weak void irq_pin5_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 5\r\n");
 }
@@ -130,7 +130,7 @@ RT_WEAK void irq_pin5_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_6
 
-RT_WEAK void irq_pin6_callback(void* arg)
+rt_weak void irq_pin6_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 6\r\n");
 }
@@ -139,7 +139,7 @@ RT_WEAK void irq_pin6_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_7
 
-RT_WEAK void irq_pin7_callback(void* arg)
+rt_weak void irq_pin7_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 7\r\n");
 }
@@ -148,7 +148,7 @@ RT_WEAK void irq_pin7_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_8
 
-RT_WEAK void irq_pin8_callback(void* arg)
+rt_weak void irq_pin8_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 8\r\n");
 }
@@ -157,7 +157,7 @@ RT_WEAK void irq_pin8_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_9
 
-RT_WEAK void irq_pin9_callback(void* arg)
+rt_weak void irq_pin9_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 9\r\n");
 }
@@ -166,7 +166,7 @@ RT_WEAK void irq_pin9_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_10
 
-RT_WEAK void irq_pin10_callback(void* arg)
+rt_weak void irq_pin10_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 10\r\n");
 }
@@ -175,7 +175,7 @@ RT_WEAK void irq_pin10_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_11
 
-RT_WEAK void irq_pin11_callback(void* arg)
+rt_weak void irq_pin11_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 11\r\n");
 }
@@ -184,7 +184,7 @@ RT_WEAK void irq_pin11_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_12
 
-RT_WEAK void irq_pin12_callback(void* arg)
+rt_weak void irq_pin12_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 12\r\n");
 }
@@ -193,7 +193,7 @@ RT_WEAK void irq_pin12_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_13
 
-RT_WEAK void irq_pin13_callback(void* arg)
+rt_weak void irq_pin13_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 13\r\n");
 }
@@ -202,7 +202,7 @@ RT_WEAK void irq_pin13_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_14
 
-RT_WEAK void irq_pin14_callback(void* arg)
+rt_weak void irq_pin14_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 14\r\n");
 }
@@ -211,7 +211,7 @@ RT_WEAK void irq_pin14_callback(void* arg)
 
 #ifdef ES_CONF_EXTI_IRQ_15
 
-RT_WEAK void irq_pin15_callback(void* arg)
+rt_weak void irq_pin15_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 15\r\n");
 }

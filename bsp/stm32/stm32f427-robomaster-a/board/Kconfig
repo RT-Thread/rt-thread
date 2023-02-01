@@ -14,6 +14,43 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
+
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH1
+        select BSP_USING_PWM2_CH2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM2_CH4
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM4_CH2
+        select BSP_USING_PWM4_CH3
+        select BSP_USING_PWM4_CH4
+        select BSP_USING_PWM5
+        select BSP_USING_PWM5_CH1
+        select BSP_USING_PWM5_CH2
+        select BSP_USING_PWM5_CH3
+        select BSP_USING_PWM5_CH4
+        select BSP_USING_PWM8
+        select BSP_USING_PWM8_CH1
+        select BSP_USING_PWM8_CH2
+        select BSP_USING_PWM8_CH3
+        select BSP_USING_PWM8_CH4
+        select BSP_USING_PWM12
+        select BSP_USING_PWM12_CH1
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -88,6 +125,40 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus (User I2C)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PE4 --> 68; PE5 --> 69"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 1 176
+                        default 68
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 1 176
+                        default 69
+                endif
+        endif
+
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
@@ -137,9 +208,45 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM5 channel4"
                         default n
                 endif
+
+            menuconfig BSP_USING_PWM2
+                bool "Enable timer2 output PWM"
+                default n
+                if BSP_USING_PWM2
+                    config BSP_USING_PWM2_CH1
+                        bool "Enable PWM2 channel1"
+                        default n
+                    config BSP_USING_PWM2_CH2
+                        bool "Enable PWM2 channel2"
+                        default n
+                    config BSP_USING_PWM2_CH3
+                        bool "Enable PWM2 channel3"
+                        default n
+                    config BSP_USING_PWM2_CH4
+                        bool "Enable PWM2 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM8
+                bool "Enable timer8 output PWM"
+                default n
+                if BSP_USING_PWM8
+                    config BSP_USING_PWM8_CH1
+                        bool "Enable PWM8 channel1"
+                        default n
+                    config BSP_USING_PWM8_CH2
+                        bool "Enable PWM8 channel2"
+                        default n
+                    config BSP_USING_PWM8_CH3
+                        bool "Enable PWM8 channel3"
+                        default n
+                    config BSP_USING_PWM8_CH4
+                        bool "Enable PWM8 channel4"
+                        default n
+                endif
         endif
 
-    source "../libraries/HAL_Drivers/Kconfig"    
+    source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
 

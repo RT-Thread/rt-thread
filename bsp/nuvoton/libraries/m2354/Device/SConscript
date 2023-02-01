@@ -10,7 +10,7 @@ src = Split("""
 Nuvoton/M2354/Source/system_M2354.c
 """)
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     src = src + ['Nuvoton/M2354/Source/GCC/startup_M2354.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:

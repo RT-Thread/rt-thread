@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2023, Real-Thread Information Technology Ltd
  * All rights reserved
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -362,6 +362,7 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
     _rym_putchar(ctx, RYM_CODE_ACK);
     _rym_putchar(ctx, RYM_CODE_C);
     ctx->stage = RYM_STAGE_ESTABLISHED;
+    rt_size_t errors = 0;
 
     while (1)
     {
@@ -373,36 +374,61 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
                               RYM_WAIT_PKG_TICK);
         switch (code)
         {
-        case RYM_CODE_SOH:
-            data_sz = 128;
-            break;
-        case RYM_CODE_STX:
-            data_sz = 1024;
-            break;
-        case RYM_CODE_EOT:
-            return RT_EOK;
-        default:
-            return -RYM_ERR_CODE;
+            case RYM_CODE_SOH:
+                data_sz = 128;
+                break;
+            case RYM_CODE_STX:
+                data_sz = 1024;
+                break;
+            case RYM_CODE_EOT:
+                return RT_EOK;
+            default:
+                errors++;
+                if(errors > RYM_MAX_ERRORS)
+                {
+                    return -RYM_ERR_CODE;/* Abort communication */
+                }
+                else
+                {
+                    _rym_putchar(ctx, RYM_CODE_NAK);/* Ask for a packet */
+                    continue;
+                }
         };
 
         err = _rym_trans_data(ctx, data_sz, &code);
         if (err != RT_EOK)
-            return err;
+        {
+            errors++;
+            if(errors > RYM_MAX_ERRORS)
+            {
+                return err;/* Abort communication */
+            }
+            else
+            {
+                _rym_putchar(ctx, RYM_CODE_NAK);/* Ask for a packet */
+                continue;
+            }
+        }
+        else
+        {
+            errors = 0;
+        }
+
         switch (code)
         {
-        case RYM_CODE_CAN:
-            /* the spec require multiple CAN */
-            for (i = 0; i < RYM_END_SESSION_SEND_CAN_NUM; i++)
-            {
-                _rym_putchar(ctx, RYM_CODE_CAN);
-            }
-            return -RYM_ERR_CAN;
-        case RYM_CODE_ACK:
-            _rym_putchar(ctx, RYM_CODE_ACK);
-            break;
-        default:
-            // wrong code
-            break;
+            case RYM_CODE_CAN:
+                /* the spec require multiple CAN */
+                for (i = 0; i < RYM_END_SESSION_SEND_CAN_NUM; i++)
+                {
+                    _rym_putchar(ctx, RYM_CODE_CAN);
+                }
+                return -RYM_ERR_CAN;
+            case RYM_CODE_ACK:
+                _rym_putchar(ctx, RYM_CODE_ACK);
+                break;
+            default:
+                // wrong code
+                break;
         };
     }
 }
@@ -570,11 +596,6 @@ static rt_err_t _rym_do_recv(
     while (1)
     {
         err = _rym_do_trans(ctx);
-        if (err != RT_EOK)
-        {
-            rt_free(ctx->buf);
-            return err;
-        }
 
         err = _rym_do_fin(ctx);
         if (err != RT_EOK)

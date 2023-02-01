@@ -3,7 +3,7 @@ menu "FSATA Configuration"
         bool
         prompt "Use FSATA"
         default n
-        
+
 endmenu
 
 

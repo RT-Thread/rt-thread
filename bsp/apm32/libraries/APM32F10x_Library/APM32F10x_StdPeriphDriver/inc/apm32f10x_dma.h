@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions prototypes for the DMA firmware library
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,13 +26,14 @@
 #ifndef __APM32F10X_DMA_H
 #define __APM32F10X_DMA_H
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
-
+/* Includes */
 #include "apm32f10x.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -40,7 +41,7 @@
   @{
 */
 
-/** @addtogroup DMA_Enumerations Enumerations
+/** @defgroup DMA_Enumerations Enumerations
   @{
 */
 
@@ -245,7 +246,7 @@ typedef enum
 /**@} end of group DMA_Enumerations*/
 
 
-/** @addtogroup DMA_Structure Data Structure
+/** @defgroup DMA_Structures Structures
   @{
 */
 
@@ -267,35 +268,35 @@ typedef struct
     DMA_M2MEN_T                M2M;
 } DMA_Config_T;
 
-/**@} end of group DMA_Structure*/
+/**@} end of group DMA_Structures*/
 
 
-/** @addtogroup DMA_Fuctions Fuctions
+/** @defgroup DMA_Functions Functions
   @{
 */
 
-/** Reset and configuration */
-void DMA_Reset(DMA_Channel_T *channel);
+/* Reset and configuration */
+void DMA_Reset(DMA_Channel_T* channel);
 void DMA_Config(DMA_Channel_T* channel, DMA_Config_T* dmaConfig);
-void DMA_ConfigStructInit( DMA_Config_T* dmaConfig);
-void DMA_Enable(DMA_Channel_T *channel);
-void DMA_Disable(DMA_Channel_T *channel);
+void DMA_ConfigStructInit(DMA_Config_T* dmaConfig);
+void DMA_Enable(DMA_Channel_T* channel);
+void DMA_Disable(DMA_Channel_T* channel);
 
-/** Data number */
-void DMA_ConfigDataNumber(DMA_Channel_T *channel, uint16_t dataNumber);
-uint16_t DMA_ReadDataNumber(DMA_Channel_T *channel);
+/* Data number */
+void DMA_ConfigDataNumber(DMA_Channel_T* channel, uint16_t dataNumber);
+uint16_t DMA_ReadDataNumber(DMA_Channel_T* channel);
 
-/** Interrupt and flag */
-void DMA_EnableInterrupt(DMA_Channel_T *channel, uint32_t interrupt);
-void DMA_DisableInterrupt(DMA_Channel_T *channel, uint32_t interrupt);
+/* Interrupt and flag */
+void DMA_EnableInterrupt(DMA_Channel_T* channel, uint32_t interrupt);
+void DMA_DisableInterrupt(DMA_Channel_T* channel, uint32_t interrupt);
 uint8_t DMA_ReadStatusFlag(DMA_FLAG_T flag);
 void DMA_ClearStatusFlag(uint32_t flag);
 uint8_t DMA_ReadIntFlag(DMA_INT_FLAG_T flag);
 void DMA_ClearIntFlag(uint32_t flag);
 
-/**@} end of group DMA_Fuctions*/
-/**@} end of group DMA_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group DMA_Functions*/
+/**@} end of group DMA_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver */
 
 #ifdef __cplusplus
 }

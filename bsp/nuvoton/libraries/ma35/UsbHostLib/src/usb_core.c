@@ -103,6 +103,7 @@ int  usbh_polling_root_hubs(void)
     int   ret, change = 0;
 
 #ifdef ENABLE_EHCI0
+    //_ehci0->UPSCR[1] = HSUSBH_UPSCR_PP_Msk | HSUSBH_UPSCR_PO_Msk;     /* set port 2 owner to OHCI              */
     do
     {
         ret = ehci0_driver.rthub_polling();
@@ -114,6 +115,7 @@ int  usbh_polling_root_hubs(void)
 #endif
 
 #ifdef ENABLE_EHCI1
+    //_ehci1->UPSCR[1] = HSUSBH_UPSCR_PP_Msk | HSUSBH_UPSCR_PO_Msk;     /* set port 2 owner to OHCI              */
     do
     {
         ret = ehci1_driver.rthub_polling();

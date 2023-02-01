@@ -44,7 +44,7 @@ typedef nu_adc_touch *nu_adc_touch_t;
 static nu_adc_touch s_NuAdcTouch = {0};
 
 /* User can define ADC touch calibration matrix in board_dev.c. */
-RT_WEAK S_CALIBRATION_MATRIX g_sCalMat = { 1, 0, 0, 0, 1, 0, 1 };
+rt_weak S_CALIBRATION_MATRIX g_sCalMat = { 1, 0, 0, 0, 1, 0, 1 };
 static volatile uint32_t g_u32Calibrated = 0;
 
 static int nu_adc_touch_readfile(void);
@@ -327,7 +327,7 @@ static rt_err_t adc_request_point(rt_device_t pdev, struct rt_touch_data *psTouc
     return ret;
 }
 
-RT_WEAK void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t event)
+rt_weak void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t event)
 {
 }
 

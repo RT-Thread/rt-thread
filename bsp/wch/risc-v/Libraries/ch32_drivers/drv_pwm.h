@@ -18,10 +18,6 @@
 #include <drivers/hwtimer.h>
 #include <board.h>
 
-#ifndef ITEM_NUM
-#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
-#endif
-
 #define MAX_COUNTER     65535
 #define MIN_COUNTER     2
 #define MIN_PULSE       2

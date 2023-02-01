@@ -47,7 +47,7 @@ menu "Onboard Peripheral Drivers"
                 bool "Enable lcd fill test"
                 default y
         endif
-        
+
     menuconfig BSP_USING_TOUCH
         bool "Use LCD TOUCH (Default Res)"
         default n
@@ -318,7 +318,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 91
                 endif
-            
+
             menuconfig BSP_USING_SOFT_SPI2
                 bool "Enable soft SPI2 BUS (software simulation)"
                 default n

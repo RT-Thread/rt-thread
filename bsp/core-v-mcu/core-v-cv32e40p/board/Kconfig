@@ -1,0 +1,45 @@
+menu "Hardware Drivers Config"
+
+config SOC_Core_V_MCU
+    bool
+    select SOC_RISCV_SERIES_Core_V
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+           config BSP_USING_UART1
+               bool "Enable UART1"
+               default y
+        endif
+
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+menu "Onboard System Settings"
+    config DEFAULT_SYSTEM_CLOCK
+        int "IDEFAULT_SYSTEM_CLOCK"
+        range 1 10000000
+        default 5000000u
+
+endmenu
+
+endmenu

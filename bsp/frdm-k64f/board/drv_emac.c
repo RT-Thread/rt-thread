@@ -52,10 +52,10 @@ struct emac_device
     /* inherit from Ethernet device */
     struct eth_device parent;
 
-    ALIGN(64) enet_rx_bd_struct_t RxBuffDescrip[ENET_RX_RING_LEN];
-    ALIGN(64) enet_tx_bd_struct_t TxBuffDescrip[ENET_TX_RING_LEN];
-    ALIGN(64) uint8_t RxDataBuff[ENET_RX_RING_LEN * ENET_ALIGN(ENET_RXBUFF_SIZE)];
-    ALIGN(64) uint8_t TxDataBuff[ENET_TX_RING_LEN * ENET_ALIGN(ENET_TXBUFF_SIZE)];
+    rt_align(64) enet_rx_bd_struct_t RxBuffDescrip[ENET_RX_RING_LEN];
+    rt_align(64) enet_tx_bd_struct_t TxBuffDescrip[ENET_TX_RING_LEN];
+    rt_align(64) uint8_t RxDataBuff[ENET_RX_RING_LEN * ENET_ALIGN(ENET_RXBUFF_SIZE)];
+    rt_align(64) uint8_t TxDataBuff[ENET_TX_RING_LEN * ENET_ALIGN(ENET_TXBUFF_SIZE)];
 
     enet_handle_t enet_handle;
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];         /* MAC address  */

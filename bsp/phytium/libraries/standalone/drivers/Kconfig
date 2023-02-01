@@ -27,7 +27,7 @@ config USE_GIC
     default y
     help
         Include Generic Interrupt Controllor
-    
+
     if USE_GIC
         source "$STANDALONE_DIR/drivers/gic/Kconfig"
     endif
@@ -38,7 +38,7 @@ config USE_SERIAL
     default n
     help
         Include serial modules and enable serial
-    
+
     if USE_SERIAL
         source "$STANDALONE_DIR/drivers/serial/Kconfig"
     endif
@@ -150,18 +150,18 @@ config USE_DMA
     prompt "Use DMA"
     default n
     help
-        Include DMA 
+        Include DMA
 
     if USE_DMA
         source "$STANDALONE_DIR/drivers/dma/Kconfig"
     endif
-    
+
 config USE_NAND
     bool
     prompt "Use NAND"
     help
         Include NAND
-    
+
     if USE_NAND
         source "$STANDALONE_DIR/drivers/nand/Kconfig"
     endif
@@ -187,7 +187,7 @@ config USE_SATA
     if USE_SATA
         source "$STANDALONE_DIR/drivers/sata/Kconfig"
     endif
-       
+
 config USE_USB
     bool
     prompt "Use USB"
@@ -197,8 +197,8 @@ config USE_USB
 
     if USE_USB
         source "$STANDALONE_DIR/drivers/usb/Kconfig"
-    endif   
-    
+    endif
+
 config USE_ADC
     bool
     prompt "Use ADC"
@@ -209,7 +209,7 @@ config USE_ADC
     if USE_ADC
         source "$STANDALONE_DIR/drivers/adc/Kconfig"
     endif
-    
+
 config USE_PWM
     bool
     prompt "Use PWM"

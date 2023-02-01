@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -167,26 +167,19 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
 
     stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
-    if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    if (0)
-#else
-#error "This driver has not supported this series yet!"
-#endif
+/* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
+    tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    if ((rt_uint32_t)htim->Instance >= APB2PERIPH_BASE)
     {
-#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) /* don't have HAL_RCC_GetPCLK2Freq */
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
-#endif
     }
     else
     {
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
     }
+#endif
 
     return tim_clock;
 }
@@ -278,9 +271,10 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     {
         pulse = MIN_PULSE;
     }
-    else if (pulse > period)
+    /*To determine user input, output high level is required*/
+    else if (pulse >= period)
     {
-        pulse = period;
+        pulse = period + 1;
     }
     __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
 
@@ -408,13 +402,16 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
         goto __exit;
     }
 
-    master_config.MasterOutputTrigger = TIM_TRGO_RESET;
-    master_config.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    if (HAL_TIMEx_MasterConfigSynchronization(tim, &master_config) != HAL_OK)
+    if(IS_TIM_MASTER_INSTANCE(tim->Instance))
     {
-        LOG_E("%s master config failed", device->name);
-        result = -RT_ERROR;
-        goto __exit;
+        master_config.MasterOutputTrigger = TIM_TRGO_RESET;
+        master_config.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+        if (HAL_TIMEx_MasterConfigSynchronization(tim, &master_config) != HAL_OK)
+        {
+            LOG_E("%s master config failed", device->name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
 
     oc_config.OCMode = TIM_OCMODE_PWM1;

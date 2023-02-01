@@ -29,11 +29,11 @@ menu "Onboard Peripheral Drivers"
         bool "Enable potentiometer"
         select BSP_USING_ADC
         select BSP_USING_ADC1
-        default n  
-        
-	config BSP_USING_SPI_FLASH
+        default n
+
+    config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q64 spi1)"
-	    select BSP_USING_SPI
+        select BSP_USING_SPI
         select BSP_USING_SPI1
         select RT_USING_SFUD
         select RT_SFUD_USING_SFDP
@@ -99,7 +99,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                        
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -114,7 +114,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                        
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -202,14 +202,14 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
         endif
-    
+
     config BSP_USING_CAN
         bool "Enable CAN"
         select RT_USING_CAN
         default n
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

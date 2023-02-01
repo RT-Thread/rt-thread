@@ -20,12 +20,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART2
         default n
-        
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         select BSP_USING_FMC
         default n
-        
+
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q128 spi5)"
         select BSP_USING_SPI
@@ -39,16 +39,16 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_LTDC
         select BSP_USING_SDRAM
         default n
-        
+
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
         default n
-    
+
     config PHY_USING_LAN8720A
         bool
-    
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -120,21 +120,21 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SPI BUS"
         default n
         select RT_USING_SPI
-        if BSP_USING_SPI  
+        if BSP_USING_SPI
             config BSP_USING_SPI5
                 bool "Enable SPI5 BUS"
-                default n        
+                default n
 
             config BSP_SPI5_TX_USING_DMA
                 bool "Enable SPI5 TX DMA"
                 depends on BSP_USING_SPI5
                 default n
-                
+
             config BSP_SPI5_RX_USING_DMA
                 bool "Enable SPI5 RX DMA"
                 depends on BSP_USING_SPI5
                 select BSP_SPI5_TX_USING_DMA
-                default n  
+                default n
         endif
 
     menuconfig BSP_USING_TIM
@@ -195,7 +195,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
-            comment "Notice: PB6 --> 22; PB7 --> 23" 
+            comment "Notice: PB6 --> 22; PB7 --> 23"
             config BSP_I2C1_SCL_PIN
                 int "I2C1 scl pin number"
                 range 1 176
@@ -242,7 +242,7 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

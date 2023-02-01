@@ -50,17 +50,27 @@ ESP-IDF can be installed in two ways
 ```
 pkgs --update
 ```
-- Go to ESP-IDF package directory and install IDF tools. This command only needs to be run once after the package is downloaded for the first time.
+- Install IDF tools. If you are using Linux or MacOS, go to ESP-IDF package directory and install IDF tools by running
 ```
 cd packages/ESP-IDF-latest
 ./install.sh
-# Use install.bat in Windows environment
 ```
+If you are using Windows, open Command Prompt. Note that you cannot use any other terminals, such as the Env command line or PowerShell. Enter the BSP directory and run
+```
+install.bat
+```
+No matter what operating system you are using, this step only needs to be done once after the package is downloaded for the first time.
 - Under the ESP-IDF package directory, export IDF environment variables. This commands need to be run every time when the BSP is built in a new terminal.
+If you are using Linux or MacOS, run
 ```
 . export.sh
-# Use export.bat in Windows environment
 ```
+If you are using Windows, run
+```
+export.bat
+```
+Same as the previous step, you can only use Command Prompt.
+
 2. Apply patch to a local installation of ESP-IDF
 - Select the below option with `SCons --menuconfig`
 ```
@@ -72,6 +82,10 @@ And deselect ESP-IDF package
 RT-Thread online packages
     peripheral libraries and drivers
         [ ] ESP-IDF: Espressif IoT Development Framework
+```
+- Install FreeRTOS wrapper
+```
+pkgs --update
 ```
 - Any convenient method to install ESP-IDF can be used, such as [VSCode plugin](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md). Make sure to install the master version of ESP-IDF.
 - Enter the local ESP-IDF directory and run the following commands
@@ -90,7 +104,7 @@ scons --menuconfig
 ```
 scons --target=esp-idf
 ```
-- If ESP-IDf is installed using Env, use `idf.py` to compile and upload the program. Refer to [Espressif official documents](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project) for reference. Otherwise follow the appropriate steps depending on how ESP-IDF was installed, such as using [VSCode plugin](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md). 
+- If ESP-IDf is installed using Env, use `idf.py` to compile and upload the program. Refer to [Espressif official documents](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project) for reference. Note if you are using Windows, you can only use `idf.py` commands in Windows Command Prompt. Otherwise follow the appropriate steps depending on how ESP-IDF was installed, such as using [VSCode plugin](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md). 
 - Once the project is successfully downloaded, the system runs automatically, the red LED will blink in 1s on cycles.
 
 ## Notes

@@ -61,7 +61,7 @@ void xpt2046_init_hw(void)
 
     /* Mount the spi device to the spi bus, here is the soft spi,
      * if you use other spi, please modify the following */
-    rt_hw_soft_spi_device_attach(BSP_XPT2046_SPI_BUS, dev_name, BSP_XPT2046_CS_PIN);
+    rt_hw_softspi_device_attach(BSP_XPT2046_SPI_BUS, dev_name, rt_pin_get(BSP_XPT2046_CS_PIN));
 
     /* configure spi device */
     rt_xpt2046_t tc = (rt_xpt2046_t)touch;

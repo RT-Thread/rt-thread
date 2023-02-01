@@ -421,12 +421,12 @@ void mmu_invalidate_dcache_all()
 #endif
 
 /* level1 page table */
-static volatile unsigned int _pgd_table[4*1024] ALIGN(16*1024);
+static volatile unsigned int _pgd_table[4*1024] rt_align(16*1024);
 /*
  * level2 page table
  * RT_MMU_PTE_SIZE must be 1024*n
  */
-static volatile unsigned int _pte_table[RT_MMU_PTE_SIZE] ALIGN(1*1024);
+static volatile unsigned int _pte_table[RT_MMU_PTE_SIZE] rt_align(1*1024);
 
 void mmu_create_pgd(struct mem_desc *mdesc)
 {

@@ -56,7 +56,7 @@ static void n32_dac_init(struct n32_dac_config *config)
     DAC_InitStructure.LfsrUnMaskTriAmp = DAC_UNMASK_LFSRBIT0;
     DAC_InitStructure.BufferOutput     = DAC_BUFFOUTPUT_ENABLE;
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     DAC_Init(config->dac_periph, &DAC_InitStructure);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     DAC_Init(&DAC_InitStructure);
@@ -73,7 +73,7 @@ static rt_err_t n32_dac_enabled(struct rt_dac_device *device, rt_uint32_t channe
 {
     RT_ASSERT(device != RT_NULL);
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     DAC_Enable(channel, ENABLE);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     DAC_Enable(ENABLE);
@@ -86,7 +86,7 @@ static rt_err_t n32_dac_disabled(struct rt_dac_device *device, rt_uint32_t chann
 {
     RT_ASSERT(device != RT_NULL);
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     DAC_Enable(channel, DISABLE);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     DAC_Enable(DISABLE);
@@ -111,7 +111,7 @@ static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t chan
         set_value = 4096;
     }
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     /* Start DAC Channel conversion by software */
     if (channel == DAC_CHANNEL_1)
     {

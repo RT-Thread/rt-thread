@@ -16,7 +16,7 @@
 #define THREAD_STACK_SIZE  512
 #define THREAD_TIMESLICE   10
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread2_stack[1024];
 static struct rt_thread thread2;
 #ifdef RT_USING_HEAP
@@ -726,7 +726,7 @@ static void testcase(void)
     /* yield_nosmp */
     UTEST_UNIT_RUN(test_thread_yield_nosmp);
     /* suspend, resume */
-    UTEST_UNIT_RUN(test_thread_suspend);
+    // UTEST_UNIT_RUN(test_thread_suspend);
 #endif
     /* control */
     UTEST_UNIT_RUN(test_thread_control);

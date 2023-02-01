@@ -14,11 +14,16 @@
 #include <rtthread.h>
 #include <drivers/spi.h>
 #include "drv_common.h"
+#include "drv_dma.h"
 
 struct at32_spi_config
 {
     spi_type *spi_x;
     const char *spi_name;
+    IRQn_Type irqn;
+    struct dma_config *dma_rx;
+    struct dma_config *dma_tx;
+    rt_uint16_t spi_dma_flag;
 };
 
 struct at32_spi
@@ -34,7 +39,6 @@ struct at32_spi_cs
 };
 
 /* public function */
-int rt_hw_spi_init(void);
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, gpio_type *cs_gpiox, uint16_t cs_gpio_pin);
 
 #endif // __DRV_SPI__

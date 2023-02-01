@@ -13,7 +13,7 @@
 #ifndef __SENSOR_NCT7717U_H__
 #define __SENSOR_NCT7717U_H__
 
-#include "sensor.h"
+#include "rtdevice.h"
 
 int rt_hw_nct7717u_init(const char *name, struct rt_sensor_config *cfg);
 

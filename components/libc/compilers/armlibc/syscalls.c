@@ -310,7 +310,7 @@ void _ttywrch(int ch)
 }
 
 /* for exit() and abort() */
-RT_WEAK void _sys_exit(int return_code)
+rt_weak void _sys_exit(int return_code)
 {
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(return_code);

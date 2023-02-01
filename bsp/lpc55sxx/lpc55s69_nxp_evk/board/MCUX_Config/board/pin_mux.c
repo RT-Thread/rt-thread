@@ -259,30 +259,6 @@ void BOARD_InitPins(void)
                          * : Digital mode, digital input is enabled. */
                         | IOCON_PIO_DIGIMODE(PIO1_2_DIGIMODE_DIGITAL));
 
-    IOCON->PIO[1][20] = ((IOCON->PIO[1][20] &
-                          /* Mask bits to zero which are setting */
-                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
-
-                         /* Selects pin function.
-                          * : PORT120 (pin 4) is configured as FC4_TXD_SCL_MISO_WS. */
-                         | IOCON_PIO_FUNC(PIO1_20_FUNC_ALT5)
-
-                         /* Select Digital mode.
-                          * : Digital mode, digital input is enabled. */
-                         | IOCON_PIO_DIGIMODE(PIO1_20_DIGIMODE_DIGITAL));
-
-    IOCON->PIO[1][21] = ((IOCON->PIO[1][21] &
-                          /* Mask bits to zero which are setting */
-                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
-
-                         /* Selects pin function.
-                          * : PORT121 (pin 30) is configured as FC4_RXD_SDA_MOSI_DATA. */
-                         | IOCON_PIO_FUNC(PIO1_21_FUNC_ALT5)
-
-                         /* Select Digital mode.
-                          * : Digital mode, digital input is enabled. */
-                         | IOCON_PIO_DIGIMODE(PIO1_21_DIGIMODE_DIGITAL));
-
     IOCON->PIO[1][24] = ((IOCON->PIO[1][24] &
                           /* Mask bits to zero which are setting */
                           (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
@@ -342,6 +318,12 @@ void BOARD_InitPins(void)
                         /* Select Digital mode.
                          * : Digital mode, digital input is enabled. */
                         | IOCON_PIO_DIGIMODE(PIO1_7_DIGIMODE_DIGITAL));
+                        
+              
+    /* I2C4 */
+    IOCON_PinMuxSet(IOCON, 1U, 20, 5 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI);
+    IOCON_PinMuxSet(IOCON, 1U, 21, 5 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI);
+                        
 }
 /***********************************************************************************************************************
  * EOF

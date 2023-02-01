@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'ch32v3'
+CPU      = 'ch32'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 
@@ -47,7 +47,7 @@ if PLATFORM == 'gcc':
     LFLAGS = DEVICE
     LFLAGS += ' -Wl,--gc-sections,-cref,-Map=' + MAP_FILE
     LFLAGS += ' -T ' + LINK_FILE
-
+    AFLAGS += ' -I.'
     CPATH = ''
     LPATH = ''
 

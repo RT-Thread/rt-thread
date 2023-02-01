@@ -22,37 +22,37 @@ Hardware Drivers Config --->
 
 该BSP遵照Arduino UNO板的引脚排列方式，详见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
-| Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                            |
-| ----------- | --------- | ---- | --------------------------------------------- |
-| 0 (D0)      | PG9       | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart3接管        |
-| 1 (D1)      | PG14      | 是    | Serial-Tx，默认被RT-Thread的UART设备框架uart3接管        |
-| 2 (D2)      | PG13      | 是    |                                               |
-| 3 (D3)      | PA1       | 是    | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管           |
-| 4 (D4)      | PG12      | 是    |                                               |
-| 5 (D5)      | PA2       | 是    | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管           |
-| 6 (D6)      | PA6       | 是    | PWM3-CH1，默认被RT-Thread的PWM设备框架pwm3接管           |
-| 7 (D7)      | PG11      | 是    |                                               |
-| 8 (D8)      | PG10      | 是    |                                               |
-| 9 (D9)      | PA7       | 是    | PWM3-CH2，默认被RT-Thread的PWM设备框架pwm3接管           |
-| 10 (D10)    | PH6       | 是    | PWM12-CH1，默认被RT-Thread的PWM设备框架pwm12接管         |
-| 11 (D11)    | PB15      | 是    | PWM12-CH2，默认被RT-Thread的PWM设备框架pwm12接管         |
-| 12 (D12)    | PB14      | 是    |                                               |
-| 13 (D13, )  | PD3       | 是    | 板载用户LED1                                      |
-| 14 (D14)    | PB9       | 是    | I2C-SDA，被RT-Thread的I2C设备框架i2c1总线接管            |
-| 15 (D15)    | PB8       | 是    | I2C-SCL，被RT-Thread的I2C设备框架i2c1总线接管            |
-| 16 (D16)    | PA0       | 是    | 板载用户按键                                        |
-| 17（D17）     | PG6       | 是    | 板载用户LED2                                      |
-| 18（D18）     | PD4       | 是    | 板载用户LED3                                      |
-| 19（D19）     | PD5       | 是    | 板载用户LED4                                      |
-| 20（D20）     | PK3       | 是    | 板载用户LED5                                      |
-| A0          | PB1       | 是    | ADC1-CH9，默认被RT-Thread的ADC设备框架adc1接管           |
-| A1          | PC2       | 是    | ADC1-CH12，默认被RT-Thread的ADC设备框架adc1接管          |
-| A2          | PC3       | 是    | ADC1-CH13，默认被RT-Thread的ADC设备框架adc1接管          |
-| A3          | PC4       | 是    | ADC1-CH14，默认被RT-Thread的ADC设备框架adc1接管          |
-| A4          | PC5       | 是    | ADC1-CH15，默认被RT-Thread的ADC设备框架adc1接管          |
-| A5          | PA4       | 是    | ADC1-CH4，默认被RT-Thread的ADC设备框架adc1接管           |
-| A6          | --        |      | 芯片内部参考电压 ADC1-CH17，默认被RT-Thread的ADC设备框架adc1接管 |
-| A7          | --        |      | 芯片内部温度 ADC1-CH16，默认被RT-Thread的ADC设备框架adc1接管   |
+| Arduino引脚编号           | STM32引脚编号 | 5V容忍 | 备注                                            |
+| --------------------- | --------- | ---- | --------------------------------------------- |
+| 0 (D0)                | PG9       | 是    | Serial-Rx，默认被RT-Thread的UART设备框架uart3接管        |
+| 1 (D1)                | PG14      | 是    | Serial-Tx，默认被RT-Thread的UART设备框架uart3接管        |
+| 2 (D2)                | PG13      | 是    |                                               |
+| 3 (D3)                | PA1       | 是    | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管           |
+| 4 (D4)                | PG12      | 是    |                                               |
+| 5 (D5)                | PA2       | 是    | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管           |
+| 6 (D6)                | PA6       | 是    | PWM3-CH1，默认被RT-Thread的PWM设备框架pwm3接管           |
+| 7 (D7)                | PG11      | 是    |                                               |
+| 8 (D8)                | PG10      | 是    |                                               |
+| 9 (D9)                | PA7       | 是    | PWM3-CH2，默认被RT-Thread的PWM设备框架pwm3接管           |
+| 10 (D10)              | PH6       | 是    | PWM12-CH1，默认被RT-Thread的PWM设备框架pwm12接管         |
+| 11 (D11)              | PB15      | 是    | PWM12-CH2，默认被RT-Thread的PWM设备框架pwm12接管         |
+| 12 (D12)              | PB14      | 是    |                                               |
+| 13 (D13, LED_BUILTIN) | PD3       | 是    | 板载用户LED1                                      |
+| 14 (D14)              | PB9       | 是    | I2C-SDA，被RT-Thread的I2C设备框架i2c1总线接管            |
+| 15 (D15)              | PB8       | 是    | I2C-SCL，被RT-Thread的I2C设备框架i2c1总线接管            |
+| 16 (D16)              | PA0       | 是    | 板载用户按键                                        |
+| 17（D17）               | PG6       | 是    | 板载用户LED2                                      |
+| 18（D18）               | PD4       | 是    | 板载用户LED3                                      |
+| 19（D19）               | PD5       | 是    | 板载用户LED4                                      |
+| 20（D20）               | PK3       | 是    | 板载用户LED5                                      |
+| A0                    | PB1       | 是    | ADC1-CH9，默认被RT-Thread的ADC设备框架adc1接管           |
+| A1                    | PC2       | 是    | ADC1-CH12，默认被RT-Thread的ADC设备框架adc1接管          |
+| A2                    | PC3       | 是    | ADC1-CH13，默认被RT-Thread的ADC设备框架adc1接管          |
+| A3                    | PC4       | 是    | ADC1-CH14，默认被RT-Thread的ADC设备框架adc1接管          |
+| A4                    | PC5       | 是    | ADC1-CH15，默认被RT-Thread的ADC设备框架adc1接管          |
+| A5                    | PA4       | 是    | ADC1-CH4，默认被RT-Thread的ADC设备框架adc1接管           |
+| A6                    | --        |      | 芯片内部参考电压 ADC1-CH17，默认被RT-Thread的ADC设备框架adc1接管 |
+| A7                    | --        |      | 芯片内部温度 ADC1-CH16，默认被RT-Thread的ADC设备框架adc1接管   |
 
 > 注意：
 > 

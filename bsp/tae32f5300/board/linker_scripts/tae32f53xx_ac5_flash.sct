@@ -16,7 +16,7 @@
 
 /*--------------------- RAMCODE Section Configuration ------------------------
 ; <h> RAMCODE Configuration
-;   <o0.27..28> RAMCODE in which MCU 
+;   <o0.27..28> RAMCODE in which MCU
 ;               <3=> TAE32F5300
 ;               <2=> TAE32F5600
 ;               <i> RAMCODE Base Address is different in different MCUs
@@ -96,7 +96,7 @@ LR_ROM __RO_BASE __RO_SIZE  {                       ; load region size_region
     .ANY (+RO)
     .ANY (+XO)
   }
-  
+
 #if __RW_CODE_SIZE > 0
   RW_CODE __RW_CODE_BASE __RW_CODE_SIZE {
     *.o (RAMCODE)
@@ -115,7 +115,7 @@ LR_ROM __RO_BASE __RO_SIZE  {                       ; load region size_region
 
   ARM_LIB_STACK __STACK_TOP EMPTY -__STACK_SIZE {   ; Reserve empty region for stack
   }
-  
+
   RW_RAMB __RAMB_BASE __RAMB_SIZE  {                    ; RWB region
     *.o (SECTION_RAMB)
   }

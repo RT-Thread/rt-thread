@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,15 +14,57 @@
 #include "fsl_iocon.h"
 #include "fsl_gpio.h"
 #include "fsl_i2c.h"
+#include "fsl_i2c_dma.h"
 
 #ifdef RT_USING_I2C
 
+enum
+{
+#ifdef BSP_USING_I2C4
+    I2C4_INDEX,
+#endif
+};
+
+
+#define i2c_dbg                 rt_kprintf
+
 struct lpc_i2c_bus
 {
-    struct rt_i2c_bus_device parent;
-    I2C_Type *I2C;
-    char *device_name;
+    struct rt_i2c_bus_device    parent;
+    I2C_Type                    *I2C;
+    DMA_Type                    *DMA;
+    i2c_master_dma_handle_t     i2c_mst_dma_handle;
+    dma_handle_t                dmaHandle;
+    rt_sem_t                    sem;
+    clock_attach_id_t           i2c_clock_id;
+    uint32_t                    dma_chl;
+    uint32_t                    instance;
+    uint32_t                    baud;
+    char                        *device_name;
 };
+
+
+struct lpc_i2c_bus lpc_obj[] =
+{
+#ifdef BSP_USING_I2C4
+        {
+            .I2C = I2C4,
+            .DMA = DMA0,
+            .dma_chl = 13,
+            .device_name = "i2c4",
+            .baud = 400000U,
+            .instance = 4U,
+            .i2c_clock_id = kFRO12M_to_FLEXCOMM4,
+        },
+#endif
+};
+
+
+static void i2c_mst_dma_callback(I2C_Type *base, i2c_master_dma_handle_t *handle, status_t status, void *userData)
+{
+    struct lpc_i2c_bus *lpc_i2c = (struct lpc_i2c_bus*)userData;
+    rt_sem_release(lpc_i2c->sem);
+}
 
 static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
                               struct rt_i2c_msg msgs[], rt_uint32_t num)
@@ -51,11 +93,13 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
             else
                 xfer.flags = kI2C_TransferDefaultFlag;
 
-            if (I2C_MasterTransferBlocking(lpc_i2c->I2C, &xfer) != kStatus_Success)
+          //  if (I2C_MasterTransferBlocking(lpc_i2c->I2C, &xfer) != kStatus_Success)
+            if(I2C_MasterTransferDMA(lpc_i2c->I2C, &lpc_i2c->i2c_mst_dma_handle, &xfer) != kStatus_Success)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
-                goto out;
+                i2c_dbg("i2c bus read failed!\n");
+                return i;
             }
+            rt_sem_take(lpc_i2c->sem, RT_WAITING_FOREVER);
         }
         else
         {
@@ -70,24 +114,22 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
             else
                 xfer.flags = kI2C_TransferDefaultFlag;
 
-            if (I2C_MasterTransferBlocking(lpc_i2c->I2C, &xfer) != kStatus_Success)
+            //if (I2C_MasterTransferBlocking(lpc_i2c->I2C, &xfer) != kStatus_Success)
+            if(I2C_MasterTransferDMA(lpc_i2c->I2C, &lpc_i2c->i2c_mst_dma_handle, &xfer) != kStatus_Success)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
-                goto out;
+                i2c_dbg("i2c bus write failed!\n");
+                return i;
             }
+            rt_sem_take(lpc_i2c->sem, RT_WAITING_FOREVER);
         }
     }
     ret = i;
-
-out:
-    i2c_dbg("send stop condition\n");
 
     return ret;
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
 {
-
     lpc_i2c_xfer,
     RT_NULL,
     RT_NULL
@@ -95,47 +137,28 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
 
 int rt_hw_i2c_init(void)
 {
+    int i;
     i2c_master_config_t masterConfig;
-#ifdef BSP_USING_I2C1
-    static struct lpc_i2c_bus lpc_i2c1;
-    /* attach 12 MHz clock to FLEXCOMM2 (I2C master for touch controller) */
-    CLOCK_AttachClk(kFRO12M_to_FLEXCOMM1);
 
-    I2C_MasterGetDefaultConfig(&masterConfig);
+    for(i=0; i<ARRAY_SIZE(lpc_obj); i++)
+    {
+        CLOCK_AttachClk(lpc_obj[i].i2c_clock_id);
 
-    /* Change the default baudrate configuration */
-    masterConfig.baudRate_Bps = 100000U;
+        I2C_MasterGetDefaultConfig(&masterConfig);
+        masterConfig.baudRate_Bps = lpc_obj[i].baud;
 
-    /* Initialize the I2C master peripheral */
-    I2C_MasterInit(I2C1, &masterConfig, 12000000);
+        /* Initialize the I2C master peripheral */
+        I2C_MasterInit(lpc_obj[i].I2C, &masterConfig, CLOCK_GetFlexCommClkFreq(lpc_obj[i].instance));
 
-    rt_memset((void *)&lpc_i2c1, 0, sizeof(struct lpc_i2c_bus));
-    lpc_i2c1.parent.ops = &i2c_ops;
-    lpc_i2c1.I2C = I2C1;
-    lpc_i2c1.device_name = "LPC Flexcomm1 as I2C";
-    rt_i2c_bus_device_register(&lpc_i2c1.parent, "i2c1");
-#endif /* BSP_USING_I2C1 */
+        lpc_obj[i].parent.ops = &i2c_ops;
+        lpc_obj[i].sem = rt_sem_create("sem_i2c", 0, RT_IPC_FLAG_FIFO);
 
-#ifdef BSP_USING_I2C4
-    static struct lpc_i2c_bus lpc_i2c4;
-    /* attach 12 MHz clock to FLEXCOMM2 (I2C master for touch controller) */
-    CLOCK_AttachClk(kFRO12M_to_FLEXCOMM4);
+        DMA_Init(lpc_obj[i].DMA);
+        DMA_CreateHandle(&lpc_obj[i].dmaHandle, lpc_obj[i].DMA, lpc_obj[i].dma_chl);
+        I2C_MasterTransferCreateHandleDMA(lpc_obj[i].I2C, &lpc_obj[i].i2c_mst_dma_handle, i2c_mst_dma_callback, &lpc_obj[i], &lpc_obj[i].dmaHandle);
 
-    I2C_MasterGetDefaultConfig(&masterConfig);
-
-    /* Change the default baudrate configuration */
-    masterConfig.baudRate_Bps = 100000U;
-
-    /* Initialize the I2C master peripheral */
-    I2C_MasterInit(I2C4, &masterConfig, 12000000);
-
-    rt_memset((void *)&lpc_i2c4, 0, sizeof(struct lpc_i2c_bus));
-    lpc_i2c4.parent.ops = &i2c_ops;
-    lpc_i2c4.I2C = I2C4;
-    lpc_i2c4.device_name = "LPC Flexcomm4 as I2C";
-    rt_i2c_bus_device_register(&lpc_i2c4.parent, BSP_USING_MMA8562I2C);
-
-#endif /* BSP_USING_I2C4 */
+        rt_i2c_bus_device_register(&lpc_obj[i].parent, lpc_obj[i].device_name);
+    }
 
     return 0;
 }

@@ -22,7 +22,7 @@
 /**
  * This function will initial.
  */
-RT_WEAK void rt_hw_board_init(void)
+rt_weak void rt_hw_board_init(void)
 {
     /* Init System/modules clock */
     nutool_modclkcfg_init();

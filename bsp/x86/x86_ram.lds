@@ -21,7 +21,7 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
-        . = ALIGN(4);	
+        . = ALIGN(4);
         __rtmsymtab_start = .;
         KEEP(*(RTMSymTab));
         __rtmsymtab_end = .;
@@ -32,7 +32,7 @@ SECTIONS
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
       }
-    
+
     . = ALIGN(4);
     .rodata : { *(.rodata*) }
 
@@ -57,6 +57,6 @@ SECTIONS
     .debug_line 0 : { *(.debug_line) }
     .debug_pubnames 0 : { *(.debug_pubnames) }
     .debug_aranges 0 : { *(.debug_aranges) }
-    
+
     _end = .;
 }

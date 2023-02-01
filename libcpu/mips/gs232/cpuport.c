@@ -23,7 +23,7 @@
  * this function will reset CPU
  *
  */
-RT_WEAK void rt_hw_cpu_reset(void)
+rt_weak void rt_hw_cpu_reset(void)
 {
     /* open the watch-dog */
     WDT_EN = 0x01;      /* watch dog enable */
@@ -38,7 +38,7 @@ RT_WEAK void rt_hw_cpu_reset(void)
  * this function will shutdown CPU
  *
  */
-RT_WEAK void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 

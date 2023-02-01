@@ -349,7 +349,7 @@ void RTC_SetDateAndTime(S_RTC_TIME_DATA_T *sPt)
 {
     uint32_t u32RegCAL, u32RegTIME;
 
-    if (sPt == 0ul)
+    if (sPt == NULL)
     {
     }
     else

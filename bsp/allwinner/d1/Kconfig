@@ -1,0 +1,43 @@
+mainmenu "RT-Thread Project Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config BOARD_allwinnerd1
+    bool
+    select ARCH_RISCV64
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    select ARCH_MM_MMU
+    default y
+
+config ENABLE_FPU
+    bool "Enable FPU"
+    default y
+
+config RT_USING_USERSPACE_32BIT_LIMIT
+    bool "Enable userspace 32bit limit"
+    default n
+
+config __STACKSIZE__
+    int "stack size for interrupt"
+    default 4096
+
+source "../libraries/drivers/Kconfig"
+source "../libraries/Kconfig"

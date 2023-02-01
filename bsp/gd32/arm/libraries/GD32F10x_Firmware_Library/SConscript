@@ -13,10 +13,10 @@ GD32F10x_standard_peripheral/Source/gd32f10x_rcu.c
 GD32F10x_standard_peripheral/Source/gd32f10x_exti.c
 GD32F10x_standard_peripheral/Source/gd32f10x_misc.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['GD32F10x_standard_peripheral/Source/gd32f10x_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['GD32F10x_standard_peripheral/Source/gd32f10x_i2c.c']
 

@@ -51,7 +51,7 @@ define region RAM_region       =   mem:[from __ICFEDIT_region_IRAM1_start__   to
                                  | mem:[from __ICFEDIT_region_IRAM3_start__   to __ICFEDIT_region_IRAM3_end__]
                                  | mem:[from __ICFEDIT_region_IRAM4_start__   to __ICFEDIT_region_IRAM4_end__]
                                  | mem:[from __ICFEDIT_region_IRAM5_start__   to __ICFEDIT_region_IRAM5_end__]
-								 | mem:[from __ICFEDIT_region_IRAM6_start__   to __ICFEDIT_region_IRAM6_end__];
+                                 | mem:[from __ICFEDIT_region_IRAM6_start__   to __ICFEDIT_region_IRAM6_end__];
 
 define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
 define block HEAP      with alignment = 8, size = __ICFEDIT_size_heap__     { };

@@ -33,8 +33,10 @@ PLATFORM    = 'gcc'
 EXEC_PATH   = os.getenv('RTT_EXEC_PATH') or r'/usr/bin'
 BUILD       = 'debug'
 
+# LINK_SCRIPT = 'link-lwp.lds'
+LINK_SCRIPT = 'link.lds'
+
 if PLATFORM == 'gcc':
-    # toolchains
     PREFIX  = os.getenv('RTT_CC_PREFIX') or 'arm-none-eabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
@@ -51,9 +53,9 @@ if PLATFORM == 'gcc':
     DEVICE   = ' -march=armv7-a -mtune=cortex-a7 -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
 
     CXXFLAGS= DEVICE + CFPFLAGS + ' -Wall'
-    CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -std=gnu99'
-    AFLAGS  = DEVICE + ' -c' + AFPFLAGS + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds' + ' -lsupc++ -lgcc -static'
+    CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99 -D_POSIX_SOURCE '
+    AFLAGS  = DEVICE + ' -c' + AFPFLAGS + ' -x assembler-with-cpp'    
+    LFLAGS  = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T '+ LINK_SCRIPT + ' -lsupc++ -lgcc -static'
     CPATH   = ''
     LPATH   = ''
 
@@ -64,7 +66,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS   += ' -Os'
         CXXFLAGS += ' -Os'
-    CXXFLAGS += ' -Woverloaded-virtual -fno-exceptions -fno-rtti'
+    CXXFLAGS += ' -Woverloaded-virtual -fno-rtti'
 
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
@@ -73,5 +75,4 @@ if PLATFORM == 'gcc':
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
     DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
-                  SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

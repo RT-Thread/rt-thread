@@ -31,8 +31,8 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32F7xx_HAL/CMSIS/Device/ST/STM32F7xx/Source/Templates/iar/startup_stm32f746xx.s']
 
-# STM32F756xx || STM32F746xx || STM32F745xx || STM32F767xx  || 
-# STM32F769xx || STM32F777xx || STM32F779xx || STM32F722xx  || 
+# STM32F756xx || STM32F746xx || STM32F745xx || STM32F767xx  ||
+# STM32F769xx || STM32F777xx || STM32F779xx || STM32F722xx  ||
 # STM32F723xx || STM32F732xx || STM32F733xx || STM32F730xx  || STM32F750xx
 # You can select chips from the list above
 CPPDEFINES = ['STM32F746xx']

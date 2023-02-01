@@ -25,8 +25,6 @@
 #define HCLK_MHZ               700          /* used for loop-delay. must be larger than
                                                true HCLK clock MHz                        */
 
-#define NON_CACHE_MASK         (0xC0000000)
-
 static __inline void ENABLE_OHCI_IRQ(void)
 {
     rt_hw_interrupt_umask(USBH0_IRQn);
@@ -87,7 +85,7 @@ static __inline void DISABLE_EHCI_IRQ(void)
                                           limited.  */
 
 #define MAX_UDEV_DRIVER        8       /*!< Maximum number of registered drivers                      */
-#define MAX_ALT_PER_IFACE      8       /*!< maximum number of alternative interfaces per interface    */
+#define MAX_ALT_PER_IFACE     32       /*!< maximum number of alternative interfaces per interface    */
 #define MAX_EP_PER_IFACE       6       /*!< maximum number of endpoints per interface                 */
 #define MAX_HUB_DEVICE         8       /*!< Maximum number of hub devices                             */
 
@@ -95,8 +93,8 @@ static __inline void DISABLE_EHCI_IRQ(void)
    are all allocated from this pool. Allocated unit size is determined by MEM_POOL_UNIT_SIZE.
    May allocate one or more units depend on hardware descriptor type.                                 */
 
-#define MEM_POOL_UNIT_SIZE     64      /*!< A fixed hard coding setting. Do not change it!            */
-#define MEM_POOL_UNIT_NUM     256      /*!< Increase this or heap size if memory allocate failed.     */
+#define MEM_POOL_UNIT_SIZE    256      /*!< A fixed hard coding setting. Do not change it!            */
+#define MEM_POOL_UNIT_NUM     64      /*!< Increase this or heap size if memory allocate failed.     */
 
 /*----------------------------------------------------------------------------------------*/
 /*   Re-defined staff for various compiler                                                */

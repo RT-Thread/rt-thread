@@ -16,15 +16,15 @@ if os.getenv('RTT_ROOT'):
 if  CROSS_TOOL == 'gcc':
 	PLATFORM = 'gcc'
 	EXEC_PATH = r'C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q1-update\bin'
-elif CROSS_TOOL == 'keil':
+if CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= r'C:\Keil_v5'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
-#BUILD = ''
+#BUILD = 'debug'
+BUILD = ''
 
 CORE = 'arm926ej-s'
 MAP_FILE = 'rtthread_nuc980.map'

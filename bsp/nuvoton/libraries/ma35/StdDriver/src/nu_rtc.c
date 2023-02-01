@@ -65,12 +65,12 @@ static volatile uint32_t g_u32hiHour, g_u32loHour, g_u32hiMin, g_u32loMin, g_u32
 int32_t RTC_Open(S_RTC_TIME_DATA_T *sPt)
 {
     RTC->INIT = RTC_INIT_KEY;
-    if (RTC->INIT != RTC_INIT_ACTIVE_Msk)
+    if ((RTC->INIT & RTC_INIT_ACTIVE_Msk) != RTC_INIT_ACTIVE_Msk)
     {
-        uint32_t u32Timeout = 10000000ul;
+        uint32_t volatile u32Timeout = 10000000ul;
 
         RTC->INIT = RTC_INIT_KEY;
-        while ((u32Timeout > 0) && (RTC->INIT != RTC_INIT_ACTIVE_Msk))
+        while ((u32Timeout > 0) && ((RTC->INIT & RTC_INIT_ACTIVE_Msk) != RTC_INIT_ACTIVE_Msk))
         {
             u32Timeout--;
         }
@@ -317,7 +317,7 @@ void RTC_SetDateAndTime(S_RTC_TIME_DATA_T *sPt)
 {
     uint32_t u32RegCAL, u32RegTIME;
 
-    if (sPt == 0ul)
+    if (sPt == NULL)
     {
     }
     else
@@ -396,7 +396,7 @@ void RTC_SetAlarmDateAndTime(S_RTC_TIME_DATA_T *sPt)
 {
     uint32_t u32RegCALM, u32RegTALM;
 
-    if (sPt == 0)
+    if (sPt == NULL)
     {
     }
     else

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,17 +22,11 @@
 extern "C" {
 #endif
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, uint16_t cs_gpio_pin);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
 
 #ifdef __cplusplus
 }
 #endif
-
-struct stm32_hw_spi_cs
-{
-    GPIO_TypeDef* GPIOx;
-    uint16_t GPIO_Pin;
-};
 
 struct stm32_spi_config
 {

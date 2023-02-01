@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -140,74 +140,55 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     spi_handle->Init.NSS = SPI_NSS_SOFT;
 
-    uint32_t SPI_APB_CLOCK;
+    uint32_t SPI_CLOCK;
 
-    /* special series */
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-    SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
-
-    /* normal series */
+/* Some series may only have APBPERIPH_BASE, but don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
+    SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    /* The SPI clock for H7 cannot be configured with a peripheral bus clock, so it needs to be written separately */
+#if defined(SOC_SERIES_STM32H7)
+    /* When the configuration is generated using CUBEMX, the configuration for the SPI clock is placed in the HAL_SPI_Init function.
+    Therefore, it is necessary to initialize and configure the SPI clock to automatically configure the frequency division */
+    HAL_SPI_Init(spi_handle);
+    SPI_CLOCK = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI123);
 #else
-    /* SPI1, SPI4 and SPI5 on APB2 */
-    if(spi_drv->config->Instance == SPI1
-    #ifdef SPI4
-    || spi_drv->config->Instance == SPI4
-    #endif
-    #ifdef SPI5
-    || spi_drv->config->Instance == SPI5
-    #endif
-    )
+    if ((rt_uint32_t)spi_drv->config->Instance >= APB2PERIPH_BASE)
     {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
+        SPI_CLOCK = HAL_RCC_GetPCLK2Freq();
     }
-
-    /* SPI2 and SPI3 on APB1 */
-    #ifdef SPI2
-    else if(spi_drv->config->Instance == SPI2
-    #ifdef SPI3
-    || spi_drv->config->Instance == SPI3
-    #endif
-    )
-    {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
-    }
-    #endif
-
-    /* SPI6 get the input clk from APB4(such as on STM32H7). However, there is no HAL_RCC_GetPCLK4Freq api provided.
-    APB4 has same prescale factor as APB1 from HPRE Clock by default in CubeMx, so we assign APB1 to it.
-    if you change the default prescale factor of APB4, please modify SPI_APB_CLOCK accordingly.
-    */
     else
     {
-        SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
+        SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
     }
-#endif
+#endif /* SOC_SERIES_STM32H7) */
+#endif /* APBPERIPH_BASE */
 
-    if (cfg->max_hz >= SPI_APB_CLOCK / 2)
+    if (cfg->max_hz >= SPI_CLOCK / 2)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 4)
+    else if (cfg->max_hz >= SPI_CLOCK / 4)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 8)
+    else if (cfg->max_hz >= SPI_CLOCK / 8)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 16)
+    else if (cfg->max_hz >= SPI_CLOCK / 16)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 32)
+    else if (cfg->max_hz >= SPI_CLOCK / 32)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 64)
+    else if (cfg->max_hz >= SPI_CLOCK / 64)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
     }
-    else if (cfg->max_hz >= SPI_APB_CLOCK / 128)
+    else if (cfg->max_hz >= SPI_CLOCK / 128)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
     }
@@ -217,15 +198,15 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
     }
 
-    LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
+    LOG_D("sys freq: %d, pclk freq: %d, SPI limiting freq: %d, SPI usage freq: %d",
 #if defined(SOC_SERIES_STM32MP1)
           HAL_RCC_GetSystemCoreClockFreq(),
 #else
           HAL_RCC_GetSysClockFreq(),
 #endif
-          SPI_APB_CLOCK,
+          SPI_CLOCK,
           cfg->max_hz,
-          spi_handle->Init.BaudRatePrescaler);
+          SPI_CLOCK / (rt_size_t)pow(2,(spi_handle->Init.BaudRatePrescaler >> 28) + 1));
 
     if (cfg->mode & RT_SPI_MSB)
     {
@@ -286,7 +267,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         __HAL_LINKDMA(&spi_drv->handle, hdmatx, spi_drv->dma.handle_tx);
 
         /* NVIC configuration for DMA transfer complete interrupt */
-        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 0, 1);
+        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 1, 0);
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
 
@@ -310,19 +291,17 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
-    RT_ASSERT(device->bus->parent.user_data != RT_NULL);
     RT_ASSERT(message != RT_NULL);
 
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
-    struct stm32_hw_spi_cs *cs = device->parent.user_data;
 
-    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-            HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
+            rt_pin_write(device->cs_pin, PIN_HIGH);
         else
-            HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_RESET);
+            rt_pin_write(device->cs_pin, PIN_LOW);
     }
 
     LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
@@ -353,6 +332,24 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
         recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
 
+#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+        rt_uint32_t* dma_buf = RT_NULL;
+        if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
+        {
+            dma_buf = (rt_uint32_t *)rt_malloc_align(send_length,32);
+            if(send_buf)
+            {
+                rt_memcpy(dma_buf, send_buf, send_length);
+            }
+            else
+            {
+                rt_memset(dma_buf, 0xFF, send_length);
+            }
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_buf, send_length);
+            state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)dma_buf, (uint8_t *)dma_buf, send_length);
+        }
+        else
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
@@ -420,14 +417,25 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
         }
+#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+        if(dma_buf)
+        {
+            if(recv_buf)
+            {
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, dma_buf, send_length);
+                rt_memcpy(recv_buf, dma_buf,send_length);
+            }
+            rt_free_align(dma_buf);
+        }
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
     }
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-            HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_RESET);
+            rt_pin_write(device->cs_pin, PIN_LOW);
         else
-            HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
+            rt_pin_write(device->cs_pin, PIN_HIGH);
     }
 
     return message->length;
@@ -560,32 +568,26 @@ static int rt_hw_spi_bus_init(void)
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef *cs_gpiox, uint16_t cs_gpio_pin)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
 
     rt_err_t result;
     struct rt_spi_device *spi_device;
-    struct stm32_hw_spi_cs *cs_pin;
-
-    /* initialize the cs pin && select the slave*/
-    GPIO_InitTypeDef GPIO_Initure;
-    GPIO_Initure.Pin = cs_gpio_pin;
-    GPIO_Initure.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(cs_gpiox, &GPIO_Initure);
-    HAL_GPIO_WritePin(cs_gpiox, cs_gpio_pin, GPIO_PIN_SET);
 
     /* attach the device to spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
-    cs_pin = (struct stm32_hw_spi_cs *)rt_malloc(sizeof(struct stm32_hw_spi_cs));
-    RT_ASSERT(cs_pin != RT_NULL);
-    cs_pin->GPIOx = cs_gpiox;
-    cs_pin->GPIO_Pin = cs_gpio_pin;
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+
+    spi_device->cs_pin = cs_pin;
+    if(cs_pin != PIN_NONE)
+    {
+        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
+        rt_pin_write(cs_pin, PIN_HIGH);
+    }
+
+    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
 
     if (result != RT_EOK)
     {

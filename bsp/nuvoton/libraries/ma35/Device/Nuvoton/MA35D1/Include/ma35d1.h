@@ -239,9 +239,9 @@ typedef enum IRQn
     /******  Platform Exceptions Numbers ***************************************************/
     LVD_IRQn          =   32,         /*!< Low Voltage detection Interrupt           */
     A35PMU_IRQn       =   33,         /*!< A35 PMU Interrupt                          */
-    HSEM_IRQn         =   34,         /*!< Hardware Semaphore Interrupt               */
+    HWSEM0_IRQn       =   34,         /*!< Hardware Semaphore Interrupt               */
     CKFAIL_IRQn       =   35,         /*!< Clock failed Interrupt                     */
-    WRHO_IRQn         =   36,         /*!< Wormhole Interrupt                         */
+    WHC0_IRQn         =   36,         /*!< Wormhole Interrupt                         */
     RTC_IRQn          =   37,         /*!< Real Time Clock Interrupt                  */
     TAMPER_IRQn       =   38,         /*!< Tamper detection Interrupt                 */
     WDT0_IRQn         =   39,         /*!< Watchdog timer 0 Interrupt                 */
@@ -266,7 +266,7 @@ typedef enum IRQn
     SSPCC_IRQn        =   58,         /*!< SSPCC Interrupt                            */
     GFX_IRQn          =   59,         /*!< GFX GC520L Interrupt (Graphic Engine)      */
     VDE_IRQn          =   60,         /*!< Video Decoder (VC8000) Interrupt           */
-    WRHO1_IRQn        =   61,         /*!< WRHO 1 Interrupt                           */
+    WHC1_IRQn         =   61,         /*!< WRHO 1 Interrupt                           */
     SDH0_IRQn         =   62,         /*!< SDH 0 Interrupt                            */
     SDH1_IRQn         =   63,         /*!< SDH 1 Interrupt                            */
     HSUSBD_IRQn       =   64,         /*!< USB 2.0 High-Speed Device Interrupt        */
@@ -468,6 +468,7 @@ typedef enum IRQn
 
 #include "sdh_reg.h"
 #include "ccap_reg.h"
+#include "nfi_reg.h"
 
 /** @addtogroup PERIPHERAL_MEM_MAP Peripheral Memory Base
   Memory Mapped Structure for Peripherals
@@ -781,6 +782,7 @@ typedef enum IRQn
 #define CCAP0                    ((CCAP_T*)   CCAP0_BASE)
 #define CCAP1                    ((CCAP_T*)   CCAP1_BASE)
 
+#define NFI                      ((NFI_T*)    NAND_BASE)
 /*@}*/ /* end of group ERIPHERAL_DECLARATION */
 
 /** @addtogroup IO_ROUTINE I/O Routines

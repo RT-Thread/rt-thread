@@ -15,8 +15,8 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-config SOC_LPC55S6x
-    bool 
+config SOC_LPC55S69
+    bool
     select ARCH_ARM_CORTEX_M33
     select ARCH_ARM_CORTEX_SECURE
     default y

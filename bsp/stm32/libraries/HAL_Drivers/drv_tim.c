@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -208,28 +208,19 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
         /* time init */
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-        if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4)
-        if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32WB)
-        if (tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32MP1)
-       if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
-        if (0)
-#else
-#error "This driver has not supported this series yet!"
-#endif
+        /* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
+#if defined(APBPERIPH_BASE)
+        prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler / 10000) - 1;
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+        if ((rt_uint32_t)tim->Instance >= APB2PERIPH_BASE)
         {
-#if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0))
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler / 10000) - 1;
-#endif
         }
         else
         {
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler / 10000) - 1;
         }
+#endif
         tim->Init.Period            = 10000 - 1;
         tim->Init.Prescaler         = prescaler_value;
         tim->Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;

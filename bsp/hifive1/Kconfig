@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config SOC_FE310
-    bool 
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

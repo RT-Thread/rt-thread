@@ -5,34 +5,47 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09-10     GuEe-GUI     first version
  */
 
-#ifndef __CPUPORT_H__
-#define __CPUPORT_H__
+#ifndef  CPUPORT_H__
+#define  CPUPORT_H__
 
+#include <armv8.h>
 #include <rtdef.h>
 
-#define __WFI() __asm__ volatile ("wfi":::"memory")
-#define __WFE() __asm__ volatile ("wfe":::"memory")
-#define __SEV() __asm__ volatile ("sev")
-#define __ISB() __asm__ volatile ("isb 0xf":::"memory")
-#define __DSB() __asm__ volatile ("dsb 0xf":::"memory")
-#define __DMB() __asm__ volatile ("dmb 0xf":::"memory")
+#ifdef RT_USING_SMP
+typedef union {
+    unsigned long slock;
+    struct __arch_tickets {
+        unsigned short owner;
+        unsigned short next;
+    } tickets;
+} rt_hw_spinlock_t;
+#endif
 
 rt_inline void rt_hw_isb(void)
 {
-    __asm__ volatile ("isb":::"memory");
+    asm volatile ("isb":::"memory");
 }
 
 rt_inline void rt_hw_dmb(void)
 {
-    __asm__ volatile ("dmb sy":::"memory");
+    asm volatile ("dmb ish":::"memory");
+}
+
+rt_inline void rt_hw_wmb(void)
+{
+    asm volatile ("dmb ishst":::"memory");
+}
+
+rt_inline void rt_hw_rmb(void)
+{
+    asm volatile ("dmb ishld":::"memory");
 }
 
 rt_inline void rt_hw_dsb(void)
 {
-    __asm__ volatile ("dsb sy":::"memory");
+    asm volatile ("dsb ish":::"memory");
 }
 
-#endif /* __CPUPORT_H__ */
+#endif  /*CPUPORT_H__*/

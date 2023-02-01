@@ -20,4 +20,4 @@ config SOC_ARM_SERIES_CH32F207
     bool
     select ARCH_ARM_CORTEX_M3
     select SOC_ARM_FAMILY_CH32
-    
+

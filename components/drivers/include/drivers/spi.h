@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <rtthread.h>
+#include <drivers/pin.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -111,6 +112,7 @@ struct rt_spi_device
     struct rt_spi_bus *bus;
 
     struct rt_spi_configuration config;
+    rt_base_t cs_pin;
     void   *user_data;
 };
 

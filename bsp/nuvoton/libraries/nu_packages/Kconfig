@@ -7,10 +7,6 @@ menu "Nuvoton Packages Config"
         bool "Enable demos"
         default y
 
-    config NU_PKG_USING_LVGL
-        bool "Enable LVGL demos"
-        default n
-
     config NU_PKG_USING_BMX055
         bool "BMX055 9-axis sensor."
         select RT_USING_I2C
@@ -220,13 +216,13 @@ menu "Nuvoton Packages Config"
     config NU_PKG_USING_ADC_TOUCH
         bool "ADC touch function"
         default n
-    
+
 
     if NU_PKG_USING_ADC_TOUCH
         config NU_PKG_USING_ADC_TOUCH_SW
             bool "Using SW ADC touch"
             select RT_USING_ADC
-            default n     
+            default n
     endif
 
     config NU_PKG_USING_SPINAND

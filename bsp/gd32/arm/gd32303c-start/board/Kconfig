@@ -3,14 +3,14 @@ menu "Hardware Drivers Config"
 config SOC_SERIES_GD32F30x
     bool
     default y
-	
+
 config SOC_GD32303C
     bool
     select SOC_SERIES_GD32F30x
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-	
+
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -27,25 +27,25 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-		
+
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
 
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 
+                depends on BSP_USING_UART1
                 select RT_SERIAL_USING_DMA
                 default n
-				
+
         endif
 
     source "../libraries/gd32_drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

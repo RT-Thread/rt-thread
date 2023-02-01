@@ -127,7 +127,7 @@ menu "Hardware Drivers Config"
             endchoice
 
         endif
-    
+
     endmenu
 
     source "$BSP_DIR/../libraries/nu_packages/Kconfig"

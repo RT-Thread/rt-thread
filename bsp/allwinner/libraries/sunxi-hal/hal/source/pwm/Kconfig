@@ -1,0 +1,12 @@
+menu "PWM Devices"
+
+config DRIVERS_PWM
+    bool "enable pwm driver"
+        default y
+
+config HAL_TEST_PWM
+    bool "enable pwm hal APIs test command"
+    depends on DRIVERS_PWM
+        default n
+
+endmenu

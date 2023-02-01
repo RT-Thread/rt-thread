@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -49,7 +49,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     rt_uint16_t flags = 0;
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
     switch (fd->flags & O_ACCMODE)
@@ -83,7 +83,7 @@ static int serial_fops_close(struct dfs_fd *fd)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
 
     rt_device_set_rx_indicate(device, RT_NULL);
     rt_device_close(device);
@@ -97,7 +97,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     int flags = (int)(rt_base_t)args;
     int mask  = O_NONBLOCK | O_APPEND;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     switch (cmd)
     {
     case FIONREAD:
@@ -119,7 +119,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     int size = 0;
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
 
     do
     {
@@ -143,7 +143,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     return rt_device_write(device, -1, buf, count);
 }
 
@@ -154,7 +154,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     rt_device_t device;
     struct rt_serial_device *serial;
 
-    device = (rt_device_t)fd->data;
+    device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
     serial = (struct rt_serial_device *)device;
@@ -694,6 +694,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
 
         tx_fifo->activated = RT_FALSE;
         tx_fifo->put_size = 0;
+        rt_memset(&tx_fifo->rb, RT_NULL, sizeof(tx_fifo->rb));
         rt_completion_init(&(tx_fifo->tx_cpt));
         dev->open_flag |= RT_SERIAL_TX_BLOCKING;
 
@@ -889,6 +890,8 @@ static rt_err_t rt_serial_tx_disable(struct rt_device        *dev,
     rt_free(tx_fifo);
     serial->serial_tx = RT_NULL;
 
+    rt_memset(&serial->rx_notify, 0, sizeof(struct rt_device_notify));
+
     return RT_EOK;
 }
 
@@ -1021,6 +1024,7 @@ const static struct speed_baudrate_item _tbl[] =
     {B115200, BAUD_RATE_115200},
     {B230400, BAUD_RATE_230400},
     {B460800, BAUD_RATE_460800},
+    {B500000, BAUD_RATE_500000},
     {B921600, BAUD_RATE_921600},
     {B2000000, BAUD_RATE_2000000},
     {B3000000, BAUD_RATE_3000000},
@@ -1138,7 +1142,19 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 serial->config = *pconfig;
                 serial->ops->configure(serial, (struct serial_configure *) args);
             }
+            break;
+        case RT_DEVICE_CTRL_NOTIFY_SET:
+            if (args)
+            {
+                rt_memcpy(&serial->rx_notify, args, sizeof(struct rt_device_notify));
+            }
+            break;
 
+        case RT_DEVICE_CTRL_CONSOLE_OFLAG:
+            if (args)
+            {
+                *(rt_uint16_t*)args = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM;
+            }
             break;
 #ifdef RT_USING_POSIX_STDIO
 #ifdef RT_USING_POSIX_TERMIOS
@@ -1512,6 +1528,11 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             /* Trigger the receiving completion callback */
             if (serial->parent.rx_indicate != RT_NULL)
                 serial->parent.rx_indicate(&(serial->parent), rx_length);
+
+            if (serial->rx_notify.notify)
+            {
+                serial->rx_notify.notify(serial->rx_notify.dev);
+            }
             break;
         }
 

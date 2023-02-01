@@ -14,10 +14,10 @@ n32l43x_std_periph_driver/src/n32l43x_rcc.c
 n32l43x_std_periph_driver/src/n32l43x_exti.c
 n32l43x_std_periph_driver/src/misc.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['n32l43x_std_periph_driver/src/n32l43x_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['n32l43x_std_periph_driver/src/n32l43x_i2c.c']
 
@@ -44,7 +44,7 @@ if GetDepend(['RT_USING_RTC']):
 if GetDepend(['RT_USING_WDT']):
     src += ['n32l43x_std_periph_driver/src/n32l43x_iwdg.c']
     src += ['n32l43x_std_periph_driver/src/n32l43x_wwdg.c']
-    
+
 if GetDepend(['RT_USING_BSP_USB']):
     path += [cwd + '/n32l43x_usbfs_driver/inc']
     src  += [cwd + '/n32l43x_usbfs_driver/src']

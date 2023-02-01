@@ -1,0 +1,61 @@
+#
+
+menu "Board Select"
+
+config V459_PERF1
+    bool "board v459 perf1"
+    default n
+    ---help---
+      board v459 perf1
+
+config F133_FPGA
+    bool "board fpga f133"
+    default n
+    ---help---
+      board f133 fpga
+
+config VVX07H005A10_MIPI
+    bool "board, disp with VVX07H005A10_mipi"
+    default n
+    ---help---
+      board, disp with VVX07H005A10_mipi
+config TFT08006_MIPI
+    bool "board, disp with TFT08006_mipi"
+    default n
+    ---help---
+      board, disp with TFT08006_mipi
+
+config TFT_RGB
+    bool "board, disp with TFT RGB"
+    default n
+    ---help---
+      board, disp with TFT RGB
+
+config HE0801A068_MIPI
+    bool "EVB board, disp with HE0801A068_MIPI"
+    default n
+    ---help---
+      EVB board, disp with HE0801A068_MIPI
+config DEFAULT_LVDS
+    bool "board, disp with lvds"
+    default n
+    ---help---
+      board, disp with lvds
+
+endmenu
+
+menu "Soc Select"
+
+config ARCH_SUN8IW19
+    bool "soc sun8iw19 "
+    default n
+    ---help---
+      soc sun8iw19
+
+config ARCH_SUN20IW1
+    bool "soc sun20iw1 "
+    default n
+    ---help---
+      soc sun20iw1
+
+endmenu

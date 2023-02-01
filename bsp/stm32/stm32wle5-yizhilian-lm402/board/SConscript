@@ -25,7 +25,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32WLxx_HAL/CMSIS/Device/ST/STM32WLxx/Source/Templates/iar/startup_stm32wle5xx.s']
 
-CPPDEFINES = ['STM32WLxx'] 
+CPPDEFINES = ['STM32WLxx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

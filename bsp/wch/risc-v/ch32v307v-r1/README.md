@@ -4,7 +4,7 @@
 
 ## 1 Introduction
 
-CH32V307V-R1 is a RISC-V core-based development board with a maximum main frequency of 144Mhz. It delivers the best value for developers to try and get started with RISC-V architecture. 
+CH32V307V-R1 is a RISC-V core-based development board with a maximum main frequency of 144Mhz. It delivers the best value for developers to try and get started with RISC-V architecture.
 
 This document records the execution instruction of the BSP (board support package) provided by the RT-Thread community for the CH32V307V-R1 development board.
 
@@ -14,7 +14,7 @@ The document is covered in three parts:
 - Compiling
 - Quickly Get Started
 
-By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. 
+By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board.
 
 ![board](./figures/ch32v307.jpg)
 
@@ -27,7 +27,7 @@ By reading the Quickly Get Started section developers can quickly get their hand
 - Network Port: 1, 10M PHY inside.
 - WCH-Link download debugging tools onboard.
 
-For more details about this board, please refer to: [CH32V307](https://www.wch.cn/products/CH32V307.html)
+For more details about this board, please refer to: [CH32V307](https://www.wch.cn/products/CH32V307.html) and [CH32V307 official document](https://github.com/openwch/ch32v307)
 
 ## 2 Compiling
 
@@ -59,11 +59,11 @@ Use a data cable to connect the onboard wch-link to the PC, and turn on the powe
 
 #### 3.1.3 Download
 
-Open the WCH RISC-V MCU ProgrammerTool, select the **rtthread.bin** file  that we just generated, and download it.
+Open the WCH RISC-V MCU ProgrammerTool, select the **rtthread.bin** file that we just generated, and download it.
 
 ![tool](./figures/tool.png)
 
-> Note that Chip Mem here is set to 224K ROM + 96K RAM. 
+> Note that Chip Mem here is set to 224K ROM + 96K RAM.
 
 #### 3.1.4 Running Result
 
@@ -71,12 +71,16 @@ In the terminal tool, open the onboard wch-link serial port (WCHDapLink SERIAL, 
 
 ![end](./figures/end.png)
 
+#### 3.1.5 If no running result
+
+Replace download tool with WCH-LinkUtility.
+[Details](https://club.rt-thread.org/ask/article/44e5b4bc129ff373.html)
 
 ### 3.2 Use VSCode to edit and compile the project
 
 In the Env terminal, type command `scons --target=vsc` to generate the VSCode project. Then, type command `code .` in the Env terminal to open the VSCode.
 
-Use **VSCode terminal** to type command `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` to compile the project in VSCode.
+Use **VSCode terminal** to type command `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` to compile the project in VSCode.
 
 ![vscode-terminal](./figures/vscode-terminal.png)
 
@@ -114,7 +118,7 @@ Copy the compilation chain path into the Toolchain path:
 
 ![toolchain](./figures/toolchain.png)
 
-Change Prefix: 
+Change Prefix:
 
 ![prefix](./figures/prefix.png)
 
@@ -122,7 +126,7 @@ Set the tool:
 
 ![toolset](./figures/toolset.png)
 
-#### 3.3.3 Compiling 
+#### 3.3.3 Compiling
 
 The result is shown as below:
 

@@ -1,0 +1,748 @@
+menu "Hardware Drivers Config"
+
+config SOC_NRF5340
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config SOC_NORDIC
+    bool
+    default y
+
+choice
+    prompt "Select BSP board "
+    default BSP_BOARD_PCA_10095
+
+    config BSP_BOARD_PCA_10095
+        select BSP_USING_UART
+        select BSP_USING_UART0
+        bool "NRF5340 pca10095 "
+
+    config BSP_BOARD_ARDUINO_NANO_33_BLE
+        bool "Arduino Nano 33 BLE (Sense)"
+endchoice
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_JLINK_TO_USART
+        bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
+        default y
+        depends on BSP_BOARD_PCA_10095
+
+    config RT_BSP_LED_PIN
+        int
+        default 28 if BSP_BOARD_PCA_10095
+        default 16 if BSP_BOARD_ARDUINO_NANO_33_BLE
+        depends on BSP_USING_GPIO
+
+
+    menuconfig BSP_USING_QSPI_FLASH
+        select PKG_USING_FAL
+        bool "Enable QSPI FLASH(MX25R64 8MB)"
+        default n
+        depends on BSP_BOARD_PCA_10095
+
+        if BSP_USING_QSPI_FLASH
+            config NRFX_QSPI_ENABLED
+            int
+            default 1
+            config BSP_QSPI_SCK_PIN
+                int "QSPI SCK pin number"
+                range 0 31
+                default 17
+            config BSP_QSPI_CSN_PIN
+                int "QSPI CSN pin number"
+                range 0 31
+                default 18
+            config BSP_QSPI_IO0_PIN
+                int "QSPI IO0 pin number"
+                range 0 31
+                default 13
+            config BSP_QSPI_IO1_PIN
+                int "QSPI IO1 pin number"
+                range 0 31
+                default 14
+            config BSP_QSPI_IO2_PIN
+                int "QSPI IO2 pin number"
+                range 0 31
+                default 15
+            config BSP_QSPI_IO3_PIN
+                int "QSPI IO3 pin number"
+                range 0 31
+                default 16
+            config QSPI_FLASH_SIZE_KB
+                int "QSPI FLASH SIZE, DEFAULT size 8192 KB"
+                default 8192
+        endif
+endmenu
+
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_UART
+        bool "Enable UART"
+        default n
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+        choice
+        prompt "UART or UARTE"
+        default NRFX_USING_UARTE
+        help
+            Select the UART or UARTE
+        config NRFX_USING_UART
+            bool "UART"
+
+        config NRFX_USING_UARTE
+            bool "UARTE"
+        endchoice
+        endif
+        if BSP_USING_UART&&NRFX_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_PIN
+                        int "uart0 rx pin number"
+                        range 0 64
+                        default 8 if BSP_BOARD_PCA_10095
+                        default 42 if BSP_BOARD_ARDUINO_NANO_33_BLE
+                    config BSP_UART0_TX_PIN
+                        int "uart0 tx pin number"
+                        range 0 64
+                        default 6 if BSP_BOARD_PCA_10095
+                        default 35 if BSP_BOARD_ARDUINO_NANO_33_BLE
+                endif
+        endif
+        if BSP_USING_UART&&NRFX_USING_UARTE
+            config NRFX_UARTE_ENABLED
+            int
+            default 1
+
+            config BSP_USING_UART0
+                bool "Enable UARTE0"
+                default n
+                if BSP_USING_UART0
+                    config NRFX_UARTE0_ENABLED
+                    int
+                    default 1
+                    config BSP_UART0_RX_PIN
+                        int "uarte0 rx pin number"
+                        range 0 64
+                        default 8
+                    config BSP_UART0_TX_PIN
+                        int "uarte0 tx pin number"
+                        range 0 64
+                        default 6
+                endif
+            config BSP_USING_UART1
+                bool "Enable UARTE1"
+                default n
+                if BSP_USING_UART1
+                    config NRFX_UARTE1_ENABLED
+                    int
+                    default 1
+                    config BSP_UART1_RX_PIN
+                        int "uarte1 rx pin number"
+                        range 0 64
+                        default 7
+                    config BSP_UART1_TX_PIN
+                        int "uarte1 tx pin number"
+                        range 0 64
+                        default 5
+                endif
+             config BSP_USING_UART2
+                bool "Enable UARTE2"
+                default n
+                if BSP_USING_UART2
+                    config NRFX_UARTE2_ENABLED
+                    int
+                    default 1
+                    config BSP_UART2_RX_PIN
+                        int "uarte2 rx pin number"
+                        range 0 64
+                        default 7
+                    config BSP_UART2_TX_PIN
+                        int "uarte2 tx pin number"
+                        range 0 64
+                        default 5
+                endif
+            config BSP_USING_UART3
+                bool "Enable UARTE3"
+                default n
+                if BSP_USING_UART3
+                    config NRFX_UARTE3_ENABLED
+                    int
+                    default 1
+                    config BSP_UART3_RX_PIN
+                        int "uarte3 rx pin number"
+                        range 0 64
+                        default 7
+                    config BSP_UART3_TX_PIN
+                        int "uarte3 tx pin number"
+                        range 0 64
+                        default 5
+                endif
+        endif
+
+    config BSP_USING_SAADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
+    config BSP_USING_IPC
+        bool "Enable IPC"
+        select RT_USING_IPC
+        default n
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0 bus"
+                default y
+            if BSP_USING_I2C0
+                config BSP_I2C0_SCL_PIN
+                    int "i2c0 scl pin number"
+                    range 0 31
+                    default 27
+                config BSP_I2C0_SDA_PIN
+                    int "I2C0 sda pin number"
+                    range 0 31
+                    default 26
+            endif
+            config BSP_USING_I2C1
+                bool "Enable I2C1 bus"
+                default n
+            if BSP_USING_I2C1
+                config BSP_I2C1_SCL_PIN
+                    int "i2c1 scl pin number"
+                    range 0 31
+                    default 26
+                config BSP_I2C1_SDA_PIN
+                    int "I2C1 sda pin number"
+                    range 0 31
+                    default 25
+            endif
+            config BSP_USING_I2C2
+                bool "Enable I2C2 bus"
+                default n
+            if BSP_USING_I2C2
+                config BSP_I2C2_SCL_PIN
+                    int "i2c2 scl pin number"
+                    range 0 31
+                    default 3
+                config BSP_I2C2_SDA_PIN
+                    int "I2C2 sda pin number"
+                    range 0 31
+                    default 2
+            endif
+            config BSP_USING_I2C3
+                bool "Enable I2C3 bus"
+                default n
+            if BSP_USING_I2C3
+                config BSP_I2C3_SCL_PIN
+                    int "i2c3 scl pin number"
+                    range 0 31
+                    default 5
+                config BSP_I2C3_SDA_PIN
+                    int "I2C3 sda pin number"
+                    range 0 31
+                    default 4
+            endif
+        endif
+
+   menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 bus"
+                default y
+            if BSP_USING_SPI0
+                config NRFX_SPIM0_ENABLED
+                    int "Enable SPI0 instance"
+                    default 1
+                config BSP_SPI0_SCK_PIN
+                    int "SPI0 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI0_MOSI_PIN
+                    int "SPI0 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI0_MISO_PIN
+                    int "SPI0 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI0_SS_PIN
+                    int "SPI0 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1 bus"
+                default n
+            if BSP_USING_SPI1
+                config BSP_SPI1_SCK_PIN
+                    int "SPI1 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI1_MOSI_PIN
+                    int "SPI1 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI1_MISO_PIN
+                    int "SPI1 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI1_SS_PIN
+                    int "SPI1 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 bus"
+                default n
+            if BSP_USING_SPI2
+                config BSP_SPI2_SCK_PIN
+                    int "SPI2 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI2_MOSI_PIN
+                    int "SPI2 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI2_MISO_PIN
+                    int "SPI2 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI2_SS_PIN
+                    int "SPI2 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+            config BSP_USING_SPI3
+                bool "Enable SPI3 bus"
+                default n
+            if BSP_USING_SPI3
+                config BSP_SPI3_SCK_PIN
+                    int "SPI3 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI3_MOSI_PIN
+                    int "SPI3 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI2_MISO_PIN
+                    int "SPI3 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI3_SS_PIN
+                    int "SPI3 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+            config BSP_USING_SPI4
+                bool "Enable SPI4 bus"
+                default n
+            if BSP_USING_SPI4
+                config BSP_SPI4_SCK_PIN
+                    int "SPI4 sck pin number set"
+                    range 0 47
+                    default 8
+                config BSP_SPI4_MOSI_PIN
+                    int "SPI4 mosi pin number set"
+                    range 0 47
+                    default 9
+                config BSP_SPI4_MISO_PIN
+                    int "SPI4 miso pin number set"
+                    range 0 47
+                    default 10
+                config BSP_SPI4_SS_PIN
+                    int "SPI4 ss pin number set"
+                    range 0 47
+                    default 11
+            endif
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        select RT_USING_PWM
+        default n
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0 bus"
+                default y
+            if BSP_USING_PWM0
+                config BSP_USING_PWM0_CH0
+                    int "PWM0 channel 0 pin number set"
+                    range 0 47
+                    default 28
+                config BSP_USING_PWM0_CH1
+                    int "PWM0 channel 1 pin number set"
+                    range 0 47
+                    default 29
+                config BSP_USING_PWM0_CH2
+                    int "PWM0 channel 2 pin number set"
+                    range 0 47
+                    default 30
+                config BSP_USING_PWM0_CH3
+                    int "PWM0 channel 3 pin number set"
+                    range 0 47
+                    default 31
+            endif
+            config BSP_USING_PWM1
+                bool "Enable PWM1 bus"
+                default n
+            if BSP_USING_PWM1
+                config NRFX_PWM1_ENABLED
+                int
+                default 1
+                config BSP_USING_PWM1_CH0
+                    int "PWM1 channel 0 pin number set"
+                    range 0 47
+                    default 13
+                config BSP_USING_PWM1_CH1
+                    int "PWM1 channel 1 pin number set"
+                    range 0 47
+                    default 14
+                config BSP_USING_PWM1_CH2
+                    int "PWM1 channel 2 pin number set"
+                    range 0 47
+                    default 15
+                config BSP_USING_PWM1_CH3
+                    int "PWM1 channel 3 pin number set"
+                    range 0 47
+                    default 16
+            endif
+            config BSP_USING_PWM2
+                bool "Enable PWM2 bus"
+                default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH0
+                    int "PWM2 channel 0 pin number set"
+                    range 0 47
+                    default 13
+                config BSP_USING_PWM2_CH1
+                    int "PWM2 channel 1 pin number set"
+                    range 0 47
+                    default 14
+                config BSP_USING_PWM2_CH2
+                    int "PWM2 channel 2 pin number set"
+                    range 0 47
+                    default 15
+                config BSP_USING_PWM2_CH3
+                    int "PWM2 channel 3 pin number set"
+                    range 0 47
+                    default 16
+            endif
+            config BSP_USING_PWM3
+                bool "Enable PWM3 bus"
+                default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH0
+                    int "PWM3 channel 0 pin number set"
+                    range 0 47
+                    default 13
+                config BSP_USING_PWM3_CH1
+                    int "PWM3 channel 1 pin number set"
+                    range 0 47
+                    default 14
+                config BSP_USING_PWM3_CH2
+                    int "PWM3 channel 2 pin number set"
+                    range 0 47
+                    default 15
+                config BSP_USING_PWM3_CH3
+                    int "PWM3 channel 3 pin number set"
+                    range 0 47
+                    default 16
+            endif
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_ONCHIP_RTC
+    bool "Enable RTC"
+    select RT_USING_RTC
+    default n
+
+
+    config BSP_USING_ON_CHIP_FLASH
+        select PKG_USING_FAL
+        bool "Enable on-chip FLASH"
+        default n
+
+    menu "MCU flash config"
+
+        config MCU_FLASH_START_ADDRESS
+            hex "MCU FLASH START ADDRESS"
+            default 0x00000000
+
+        config MCU_FLASH_SIZE_KB
+            int "MCU FLASH SIZE, MAX size 1024 KB"
+            default 1024
+
+        config MCU_SRAM_START_ADDRESS
+            hex "MCU RAM START ADDRESS"
+            default 0x20000000
+
+        config MCU_SRAM_SIZE_KB
+            int "MCU RAM SIZE"
+            default 256
+
+        config MCU_FLASH_PAGE_SIZE
+            hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
+            default 0x1000
+    endmenu
+
+    config BSP_USING_TIM
+        bool "Enable TIMER"
+        select RT_USING_HWTIMER
+        default n
+        if BSP_USING_TIM
+            config NRFX_TIMER_ENABLED
+            int
+            default 1
+            config BSP_USING_TIM1
+                bool "Enable TIMER1"
+                default n
+            if BSP_USING_TIM1
+                config NRFX_TIMER1_ENABLED
+                int
+                default 1
+            endif
+            config BSP_USING_TIM2
+                bool "Enable TIMER2"
+                default n
+            if BSP_USING_TIM2
+                config NRFX_TIMER2_ENABLED
+                int
+                default 1
+            endif
+        endif
+
+
+    if PKG_USING_TINYUSB
+        config NRFX_POWER_ENABLED
+        int
+        default 1
+    endif
+
+endmenu
+
+choice
+prompt "BLE STACK"
+default BLE_STACK_USING_NULL
+help
+    Select the ble stack
+
+config BLE_STACK_USING_NULL
+    bool "not use the ble stack"
+
+config  BSP_USING_SOFTDEVICE
+    select PKG_USING_NRF5X_SDK
+    bool "Nordic softdevice(perpheral)"
+
+config BSP_USING_NIMBLE
+    select PKG_USING_NIMBLE
+    select PKG_NIMBLE_BSP_NRF52840
+    bool "use nimble stack(iot)"
+endchoice
+
+if SOC_NORDIC
+    config NRFX_CLOCK_ENABLED
+    int
+    default 1
+    config    NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+    int
+    default 7
+    config NRFX_CLOCK_CONFIG_LF_SRC
+    int
+    default 1
+endif
+
+if BSP_USING_UART
+    config NRFX_USING_UART
+    bool
+    default y
+
+    config NRFX_UART_ENABLED
+    int
+    default 1
+if BSP_USING_UART0
+    config NRFX_UART0_ENABLED
+    int
+    default 1
+endif
+
+if NRFX_USING_UART
+    config NRFX_UART_ENABLED
+    int
+    default 1
+endif
+
+if NRFX_USING_UARTE
+    config NRFX_UARTE0_ENABLED
+    int
+    default 1
+endif
+
+
+endif
+
+if BSP_USING_GPIO
+    config NRFX_GPIOTE_ENABLED
+    int
+    default 1
+endif
+
+if BSP_USING_SAADC
+    config NRFX_SAADC_ENABLED
+    int
+    default 1
+endif
+
+if BSP_USING_I2C
+    config NRFX_TWIM_ENABLED
+    int
+    default 1
+    if BSP_USING_I2C0
+        config NRFX_TWIM0_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_I2C1
+        config NRFX_TWIM1_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_I2C2
+        config NRFX_TWIM2_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_I2C3
+        config NRFX_TWIM3_ENABLED
+        int
+        default 1
+    endif
+endif
+
+if BSP_USING_SPI
+    config NRFX_SPIM_ENABLED
+    int
+    default 1
+
+    if BSP_USING_SPI0
+        config NRFX_SPIM0_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_SPI1
+        config NRFX_SPIM1_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_SPI2
+        config NRFX_SPIM2_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_SPI3
+        config NRFX_SPIM3_ENABLED
+        int
+        default 1
+    endif
+
+    if BSP_USING_SPI4
+        config NRFX_SPIM4_ENABLED
+        int
+        default 1
+    endif
+endif
+
+if BSP_USING_PWM
+    config NRFX_PWM_ENABLED
+    int
+    default 1
+    if BSP_USING_PWM0
+        config NRFX_PWM0_ENABLED
+        int
+        default 1
+    endif
+    if BSP_USING_PWM1
+    config NRFX_PWM1_ENABLED
+    int
+    default 1
+    endif
+    if BSP_USING_PWM2
+        config NRFX_PWM2_ENABLED
+        int
+        default 1
+    endif
+    if BSP_USING_PWM3
+        config NRFX_PWM3_ENABLED
+        int
+        default 1
+    endif
+
+endif
+
+if BSP_USING_WDT
+    config NRFX_WDT_ENABLED
+    int
+    default 1
+    config NRFX_WDT0_ENABLED
+    int
+    default 1
+    config NRFX_WDT_CONFIG_NO_IRQ
+    int
+    default 1
+endif
+
+if BSP_USING_ONCHIP_RTC
+    config NRFX_CLOCK_ENABLED
+    int
+    default 1
+    config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+    int
+    default 7
+    config NRFX_RTC_ENABLED
+    int
+    default 1
+    config NRFX_RTC1_ENABLED
+    int
+    default 1
+    config NRFX_RTC2_ENABLED
+    int
+    default 0
+    config RTC_INSTANCE_ID
+    int
+    default 1
+endif
+
+
+
+endmenu
+
+

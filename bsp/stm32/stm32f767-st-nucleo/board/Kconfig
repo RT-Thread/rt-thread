@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F767ZI 
+config SOC_STM32F767ZI
     bool
     select SOC_SERIES_STM32F7
     select RT_USING_COMPONENTS_INIT
@@ -9,11 +9,11 @@ config SOC_STM32F767ZI
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_USB_TO_USART 
+    config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart3)"
         select BSP_USING_UART3
         default y
-        
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         select RT_USING_LWIP
@@ -32,7 +32,7 @@ menu "Onboard Peripheral Drivers"
 
             endchoice
         endif
- 
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -57,11 +57,11 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

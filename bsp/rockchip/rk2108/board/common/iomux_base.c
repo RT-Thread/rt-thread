@@ -15,7 +15,7 @@
 /**
  * @brief  Config iomux for M4 JTAG
  */
-RT_WEAK void m4_jtag_iomux_config(void)
+rt_weak void m4_jtag_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK0,
                          GPIO_PIN_C7 |  // M4_JTAG_TCK
@@ -26,7 +26,7 @@ RT_WEAK void m4_jtag_iomux_config(void)
 /**
  * @brief  Config iomux for UART0
  */
-RT_WEAK void uart0_iomux_config(void)
+rt_weak void uart0_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK0,
                          GPIO_PIN_C7 |  // UART0_RX
@@ -37,7 +37,7 @@ RT_WEAK void uart0_iomux_config(void)
 /**
  * @brief  Config iomux for UART1
  */
-RT_WEAK void uart1_m0_iomux_config(void)
+rt_weak void uart1_m0_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK0,
                          GPIO_PIN_D1 |  // UART1_RX_M0
@@ -49,7 +49,7 @@ RT_WEAK void uart1_m0_iomux_config(void)
                       (0 << GRF_SOC_CON5_GRF_CON_UART1_IOMUX_SEL_SHIFT));
 }
 
-RT_WEAK void uart1_m1_iomux_config(void)
+rt_weak void uart1_m1_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK0,
                          GPIO_PIN_A5 |  // UART1_RX_M1
@@ -61,7 +61,7 @@ RT_WEAK void uart1_m1_iomux_config(void)
                       (1 << GRF_SOC_CON5_GRF_CON_UART1_IOMUX_SEL_SHIFT));
 }
 
-RT_WEAK void uart1_m2_iomux_config(void)
+rt_weak void uart1_m2_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK1,
                          GPIO_PIN_B1 |  // UART1_RX_M2
@@ -73,7 +73,7 @@ RT_WEAK void uart1_m2_iomux_config(void)
                       (2 << GRF_SOC_CON5_GRF_CON_UART1_IOMUX_SEL_SHIFT));
 }
 
-RT_WEAK void uart1_m3_iomux_config(void)
+rt_weak void uart1_m3_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK0,
                          GPIO_PIN_A5,   // UART1_RX_M3
@@ -91,7 +91,7 @@ RT_WEAK void uart1_m3_iomux_config(void)
 /**
  * @brief  Config iomux for UART2
  */
-RT_WEAK void uart2_iomux_config(void)
+rt_weak void uart2_iomux_config(void)
 {
     HAL_PINCTRL_SetIOMUX(GPIO_BANK1,
                          GPIO_PIN_A0 |  // UART2_RX
@@ -104,7 +104,7 @@ RT_WEAK void uart2_iomux_config(void)
 /**
  * @brief  Config iomux for RK2108
  */
-RT_WEAK void rt_hw_iomux_config(void)
+rt_weak void rt_hw_iomux_config(void)
 {
     uart2_iomux_config();
 

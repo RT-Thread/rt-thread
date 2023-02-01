@@ -176,7 +176,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     return old_handler;
 }
 
-RT_WEAK
+rt_weak
 void plic_irq_handle(plic_irq_t irq)
 {
     rt_kprintf("UN-handled interrupt %d occurred!!!\n", irq);

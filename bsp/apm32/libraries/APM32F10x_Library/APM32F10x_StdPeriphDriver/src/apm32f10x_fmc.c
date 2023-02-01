@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the FMC firmware functions
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +23,11 @@
  *  and limitations under the License.
  */
 
+/* Includes */
 #include "apm32f10x_fmc.h"
 #include "apm32f10x_rcm.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -34,7 +35,7 @@
   @{
 */
 
-/** @addtogroup FMC_Fuctions Fuctions
+/** @defgroup FMC_Functions Functions
   @{
 */
 
@@ -257,7 +258,7 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
     {
         FMC->CTRL2_B.PG = BIT_SET;
 
-        *(__IOM uint16_t *)address = data;
+        *(__IOM uint16_t*)address = data;
 
         status = FMC_WaitForLastOperation(0x000B0000);
 
@@ -265,7 +266,7 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
         {
             temp = address + 2;
 
-            *(__IOM uint16_t *) temp = data >> 16;
+            *(__IOM uint16_t*) temp = data >> 16;
 
             status = FMC_WaitForLastOperation(0x000B0000);
             FMC->CTRL2_B.PG = BIT_RESET;
@@ -309,7 +310,7 @@ FMC_STATUS_T FMC_ProgramHalfWord(uint32_t address, uint16_t data)
     if (status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.PG = BIT_SET;
-        *(__IOM uint16_t *)address = data;
+        *(__IOM uint16_t*)address = data;
         status = FMC_WaitForLastOperation(0x000B0000);
         FMC->CTRL2_B.PG = BIT_RESET;
     }
@@ -346,7 +347,7 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
         FMC->OBKEY = 0xCDEF89AB;
 
         FMC->CTRL2_B.OBP = BIT_SET;
-        *(__IOM uint16_t *)address = data;
+        *(__IOM uint16_t*)address = data;
         status = FMC_WaitForLastOperation(0x000B0000);
         if (status == FMC_STATUS_TIMEOUT)
         {
@@ -361,11 +362,11 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
  *
  * @param     page:the address of the pages to be write protection
  *                This parameter can be any combination of the following values:
- *                 for APM32F10X_LD £º
+ *                 for APM32F10X_LD :
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_28_31
- *                 for APM32F10X_MD £º
+ *                 for APM32F10X_MD :
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_124_127
- *                 for APM32F10X_HD £º
+ *                 for APM32F10X_HD :
  *                    @arg FLASH_WRP_PAGE_0_1 to FLASH_WRP_PAGE_60_61 or FLASH_WRP_PAGE_62_127
  *                 @arg FMC_WRP_PAGE_ALL
  *
@@ -454,7 +455,7 @@ FMC_STATUS_T FMC_EnableReadOutProtection(void)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
-            OB->RDP = 0x0000;
+            OB->RDP = 0x00;
 
             status = FMC_WaitForLastOperation(0x000B0000);
 
@@ -501,7 +502,7 @@ FMC_STATUS_T FMC_DisableReadOutProtection(void)
         {
             FMC->CTRL2_B.OBE = BIT_RESET;
             FMC->CTRL2_B.OBP = BIT_SET;
-            OB->RDP = 0x00A5;
+            OB->RDP = 0xA5;
 
             status = FMC_WaitForLastOperation(0x000B0000);
 
@@ -529,7 +530,7 @@ FMC_STATUS_T FMC_DisableReadOutProtection(void)
  *                 @arg FMC_STATUS_COMPLETE
  *                 @arg FMC_STATUS_TIMEOUT
  */
-FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T *userConfig)
+FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T* userConfig)
 {
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
@@ -763,6 +764,6 @@ FMC_STATUS_T FMC_WaitForLastOperation(uint32_t timeOut)
     return status;
 }
 
-/**@} end of group FMC_Fuctions*/
+/**@} end of group FMC_Functions*/
 /**@} end of group FMC_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group APM32F10x_StdPeriphDriver*/

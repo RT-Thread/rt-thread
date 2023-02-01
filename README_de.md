@@ -72,7 +72,7 @@ RT-Thread unterstützt viele Architekturen und hat die wichtigsten Architekturen
 
 - **ARM Cortex-M0/M0+**：manufacturers like ST
 - **ARM Cortex-M3**：manufacturers like ST、Winner Micro、MindMotion, ect.
-- **ARM Cortex-M4**：manufacturers like ST、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro, ect.
+- **ARM Cortex-M4**：manufacturers like ST、Infineon、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro, ect.
 - **ARM Cortex-M7**：manufacturers like ST、NXP
 - **ARM Cortex-M23**：manufacturers like GigaDevice
 - **ARM Cortex-M33**：manufacturers like ST
