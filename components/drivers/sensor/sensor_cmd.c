@@ -205,7 +205,7 @@ static const char* sensor_get_accuracy_mode_name(rt_sensor_info_t info)
         case RT_SENSOR_MODE_ACCURACY_NOTRUST:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_MODE_ACCURACY_NOTRUST);
         default:
-            rt_kprintf("accuracy mode illegal!");
+            rt_kprintf("accuracy mode illegal!\n");
             return "";
     }
 }
@@ -227,7 +227,7 @@ static const char* sensor_get_power_mode_name(rt_sensor_info_t info)
         case RT_SENSOR_MODE_POWER_DOWN:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_MODE_POWER_DOWN);
         default:
-            rt_kprintf("power mode illegal!");
+            rt_kprintf("power mode illegal!\n");
             return "";
     }
 }
@@ -243,7 +243,7 @@ static const char* sensor_get_fetch_mode_name(rt_sensor_info_t info)
         case RT_SENSOR_MODE_FETCH_FIFO:
             return RT_SENSOR_MACRO_GET_NAME(RT_SENSOR_MODE_FETCH_FIFO);
         default:
-            rt_kprintf("fetch data mode illegal!");
+            rt_kprintf("fetch data mode illegal!\n");
             return "";
     }
 }
@@ -254,66 +254,66 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     switch (sensor->info.type)
     {
     case RT_SENSOR_TYPE_ACCE:
-        rt_kprintf("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u\n", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_GYRO:
-        rt_kprintf("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u\n", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_MAG:
-        rt_kprintf("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, x:%f, y:%f, z:%f %s, timestamp:%u\n", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_GNSS:
-        rt_kprintf("num:%d, lon:%f, lat:%f %s, timestamp:%u", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, lon:%f, lat:%f %s, timestamp:%u\n", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_TEMP:
-        rt_kprintf("num:%d, temp:%f%s, timestamp:%u", num, sensor_data->data.temp, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, temp:%f%s, timestamp:%u\n", num, sensor_data->data.temp, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_HUMI:
-        rt_kprintf("num:%d, humi:%f%s, timestamp:%u", num, sensor_data->data.humi, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, humi:%f%s, timestamp:%u\n", num, sensor_data->data.humi, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_BARO:
-        rt_kprintf("num:%d, press:%f%s, timestamp:%u", num, sensor_data->data.baro, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, press:%f%s, timestamp:%u\n", num, sensor_data->data.baro, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_LIGHT:
-        rt_kprintf("num:%d, light:%f%s, timestamp:%u", num, sensor_data->data.light, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, light:%f%s, timestamp:%u\n", num, sensor_data->data.light, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_PROXIMITY:
     case RT_SENSOR_TYPE_TOF:
-        rt_kprintf("num:%d, distance:%f%s, timestamp:%u", num, sensor_data->data.proximity, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, distance:%f%s, timestamp:%u\n", num, sensor_data->data.proximity, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_HR:
-        rt_kprintf("num:%d, heart rate:%f%s, timestamp:%u", num, sensor_data->data.hr, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, heart rate:%f%s, timestamp:%u\n", num, sensor_data->data.hr, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_TVOC:
-        rt_kprintf("num:%d, tvoc:%f%s, timestamp:%u", num, sensor_data->data.tvoc, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, tvoc:%f%s, timestamp:%u\n", num, sensor_data->data.tvoc, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_NOISE:
-        rt_kprintf("num:%d, noise:%f%s, timestamp:%u", num, sensor_data->data.noise, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, noise:%f%s, timestamp:%u\n", num, sensor_data->data.noise, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_STEP:
-        rt_kprintf("num:%d, step:%f%s, timestamp:%u", num, sensor_data->data.step, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, step:%f%s, timestamp:%u\n", num, sensor_data->data.step, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_FORCE:
-        rt_kprintf("num:%d, force:%f%s, timestamp:%u", num, sensor_data->data.force, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, force:%f%s, timestamp:%u\n", num, sensor_data->data.force, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_DUST:
-        rt_kprintf("num:%d, dust:%f%s, timestamp:%u", num, sensor_data->data.dust, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, dust:%f%s, timestamp:%u\n", num, sensor_data->data.dust, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_ECO2:
-        rt_kprintf("num:%d, eco2:%f%s, timestamp:%u", num, sensor_data->data.eco2, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, eco2:%f%s, timestamp:%u\n", num, sensor_data->data.eco2, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_IAQ:
-        rt_kprintf("num:%d, IAQ:%f%s, timestamp:%u", num, sensor_data->data.iaq, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, IAQ:%f%s, timestamp:%u\n", num, sensor_data->data.iaq, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_ETOH:
-        rt_kprintf("num:%d, EtOH:%f%s, timestamp:%u", num, sensor_data->data.etoh, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, EtOH:%f%s, timestamp:%u\n", num, sensor_data->data.etoh, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_BP:
-        rt_kprintf("num:%d, bp.sbp:%f, bp.dbp:%f %s, timestamp:%u", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, unit_name, sensor_data->timestamp);
+        rt_kprintf("num:%d, bp.sbp:%f, bp.dbp:%f %s, timestamp:%u\n", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, unit_name, sensor_data->timestamp);
         break;
     case RT_SENSOR_TYPE_NONE:
     default:
-        rt_kprintf("Unknown type of sensor!");
+        rt_kprintf("Unknown type of sensor!\n");
         break;
     }
 }
@@ -687,7 +687,7 @@ static void sensor(int argc, char **argv)
         }
         if (rt_device_control(new_dev, RT_SENSOR_CTRL_GET_ID, &reg) == RT_EOK)
         {
-            rt_kprintf("Sensor Chip ID: %#x", reg);
+            rt_kprintf("Sensor Chip ID: %#x\n", reg);
         }
         if (dev)
         {
