@@ -11,8 +11,6 @@ if rtconfig.PLATFORM in ['gcc']:
 else:
     CPPDEFINES = []
 
-if  GetDepend('BSP_USING_SDIO'):
-    src += ['mnt.c']
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
