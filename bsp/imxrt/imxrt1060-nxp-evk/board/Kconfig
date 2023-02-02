@@ -37,7 +37,7 @@ menu "Onboard Peripheral Drivers"
 
         if BSP_USING_PHY
             config PHY_USING_KSZ8081
-                bool "i.MX RT1176EVK uses ksz8081 phy"
+                bool "i.MX RT1060EVK uses ksz8081 phy"
                 default y
 
             if PHY_USING_KSZ8081
