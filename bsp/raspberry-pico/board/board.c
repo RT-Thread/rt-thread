@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author         Notes
  * 2021-01-28     flybreak       first version
+ * 2023-01-22     rose_man       add RT_USING_SMP
  */
 
 #include <rthw.h>
@@ -21,12 +22,16 @@
 void isr_systick(void)
 {
     /* enter interrupt */
+#ifndef RT_USING_SMP
     rt_interrupt_enter();
+#endif
 
     rt_tick_increase();
 
     /* leave interrupt */
+#ifndef RT_USING_SMP
     rt_interrupt_leave();
+#endif
 }
 
 uint32_t systick_config(uint32_t ticks)
@@ -47,7 +52,14 @@ void rt_hw_board_init()
 {
     set_sys_clock_khz(PLL_SYS_KHZ, true);
 
+#ifdef RT_USING_HEAP
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+#endif
+
+#ifdef RT_USING_SMP
+    extern rt_hw_spinlock_t _cpus_lock;
+    rt_hw_spin_lock_init(&_cpus_lock);
+#endif
 
     alarm_pool_init_default();
 
@@ -64,10 +76,16 @@ void rt_hw_board_init()
     }
 
     /* Configure the SysTick */
-    systick_config(frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY) * 1000 / RT_TICK_PER_SECOND);
+    systick_config(frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC)*10000/RT_TICK_PER_SECOND);
 
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
+
+#ifdef RT_USING_SERIAL
     stdio_init_all();
     rt_hw_uart_init();
+#endif
 
 #ifdef RT_USING_CONSOLE
    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
