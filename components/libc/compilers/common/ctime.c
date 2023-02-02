@@ -921,6 +921,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 #define TIMER_ID_MAX 50
 static struct timer_obj *_g_timerid[TIMER_ID_MAX];
 static int timerid_idx = 0;
+RT_DEFINE_SPINLOCK(_timer_id_lock);
 
 void timer_id_init(void)
 {
@@ -969,14 +970,14 @@ int timer_id_put(int id)
     _g_timerid[id] = NULL;
     return 0;
 }
-int timer_id_lock()
+void timer_id_lock()
 {
-/* todo */
+    rt_hw_spin_lock(&_timer_id_lock);
 }
 
-int timer_id_unlock()
+void timer_id_unlock()
 {
-    /* todo */
+    rt_hw_spin_unlock(&_timer_id_lock);
 }
 /**
  * @brief Create a per-process timer.
