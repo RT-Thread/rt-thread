@@ -111,6 +111,8 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
  *               RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
  *               the first-in-first-out principle, and you clearly understand that all threads involved in
  *               this semaphore will become non-real-time threads.
+ * 
+ * @param    suspend_flag status flag of the thread to be suspended.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
  *           When the return value is any other values, it means the initialization failed.
@@ -2101,6 +2103,8 @@ RTM_EXPORT(rt_event_control);
  *           It is assumed that storage for the mailbox will be allocated in your application.
  *
  * @param    name is a pointer to the name that given to the mailbox.
+ * 
+ * @param    msgpool the begin address of buffer to save received mail.
  *
  * @param    size is the maximum number of mails in the mailbox.
  *           For example, when the mailbox buffer capacity is N, size is N/4.
