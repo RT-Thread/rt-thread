@@ -3,7 +3,7 @@ import sys
 
 # toolchains options
 ARCH='arm'
-CPU='cortex-m0'
+CPU='cortex-m0-dual'
 CROSS_TOOL='gcc'
 
 # bsp lib config
