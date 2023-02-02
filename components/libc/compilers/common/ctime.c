@@ -954,8 +954,8 @@ struct timer_obj *timer_id_get(int timerid)
     timer_id_lock();
     if (_g_timerid[timerid] == NULL)
     {
-        LOG_E("can not find timer!");
         timer_id_unlock();
+        LOG_E("can not find timer!");
         return NULL;
     }
     timer = _g_timerid[timerid];
@@ -1035,14 +1035,13 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     _timerid = timer_id_alloc();
     if (_timerid < 0)
     {
+        timer_id_unlock();
         LOG_E("_timerid overflow!");
         return -1; /* todo:memory leak */
     }
     _g_timerid[_timerid] = timer;
     *timerid = _timerid;
     timer_id_unlock();
-    rt_kprintf("_timerid %d\r\n", _timerid);
-        // *timerid = (timer_t)((uintptr_t)timer >> 1);
 
     return 0;
 }
@@ -1055,14 +1054,13 @@ RTM_EXPORT(timer_create);
  */
 int timer_delete(timer_t timerid)
 {
-    // struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
     struct timer_obj *timer;
     timer_id_lock();
     if (_g_timerid[(int)timerid] == NULL)
     {
-        LOG_E("can not find timer!");
-        rt_set_errno(EINVAL);
         timer_id_unlock();
+        rt_set_errno(EINVAL);
+        LOG_E("can not find timer!");
         return -1;
     }
     timer = _g_timerid[(int)timerid];
@@ -1105,7 +1103,6 @@ int timer_getoverrun(timer_t timerid)
  */
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
-    // struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
     struct timer_obj *timer = timer_id_get(timerid);
     rt_tick_t remaining;
     rt_uint32_t seconds, nanoseconds;
@@ -1173,9 +1170,6 @@ RTM_EXPORT(timer_gettime);
 int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
                   struct itimerspec *ovalue)
 {
-    // struct timer_obj *timer = (struct timer_obj *)((uintptr_t)timerid << 1);
-
-    rt_kprintf("timerid %d\r\n", timerid);
     struct timer_obj *timer = timer_id_get(timerid);
     if (timer == NULL ||
         rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer ||
