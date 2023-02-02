@@ -67,9 +67,8 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
 
 /**
  * @addtogroup IPC
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief    This function will initialize an IPC object, such as semaphore, mutex, messagequeue and mailbox.
@@ -111,7 +110,7 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
  *               RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
  *               the first-in-first-out principle, and you clearly understand that all threads involved in
  *               this semaphore will become non-real-time threads.
- * 
+ *
  * @param    suspend_flag status flag of the thread to be suspended.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
@@ -259,14 +258,12 @@ rt_inline rt_err_t _ipc_list_resume_all(rt_list_t *list)
     return RT_EOK;
 }
 
-/**@}*/
-
 #ifdef RT_USING_SEMAPHORE
 /**
  * @addtogroup semaphore
+ * @{
  */
 
-/**@{*/
 /**
  * @brief    This function will initialize a static semaphore object.
  *
@@ -779,7 +776,7 @@ rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
 }
 
 rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t priority, int suspend_flag)
-{   
+{
     rt_err_t ret;
     RT_DEBUG_LOG(RT_DEBUG_IPC,
             ("thread:%s priority -> %d\n", thread->name, priority));
@@ -830,9 +827,8 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
 
 /**
  * @addtogroup mutex
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief    Initialize a static mutex object.
@@ -1540,9 +1536,8 @@ RTM_EXPORT(rt_mutex_control);
 #ifdef RT_USING_EVENT
 /**
  * @addtogroup event
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief    The function will initialize a static event object.
@@ -2086,9 +2081,8 @@ RTM_EXPORT(rt_event_control);
 #ifdef RT_USING_MAILBOX
 /**
  * @addtogroup mailbox
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief    Initialize a static mailbox object.
@@ -2103,7 +2097,7 @@ RTM_EXPORT(rt_event_control);
  *           It is assumed that storage for the mailbox will be allocated in your application.
  *
  * @param    name is a pointer to the name that given to the mailbox.
- * 
+ *
  * @param    msgpool the begin address of buffer to save received mail.
  *
  * @param    size is the maximum number of mails in the mailbox.
@@ -2846,9 +2840,8 @@ RTM_EXPORT(rt_mb_control);
 #ifdef RT_USING_MESSAGEQUEUE
 /**
  * @addtogroup messagequeue
+ * @{
  */
-
-/**@{*/
 
 struct rt_mq_message
 {
@@ -3782,5 +3775,4 @@ RTM_EXPORT(rt_mq_control);
 
 /**@}*/
 #endif /* RT_USING_MESSAGEQUEUE */
-
 /**@}*/
