@@ -138,12 +138,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 
 rt_weak void rt_trigger_software_interrupt(void)
 {
-    while (1);
-}
-
-rt_weak void rt_hw_do_before_save_above(void)
-{
-    while (1);
+    while (0);
 }
 
 rt_weak void rt_hw_do_after_save_above(void)

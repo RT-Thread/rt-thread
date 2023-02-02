@@ -227,7 +227,10 @@ void system_init(void)
 	}
 	isr_table[0x7] = timer_irq_handler;
 	isr_table[0xb] = (void (*)(uint32_t))fc_soc_event_handler1; // 11 for cv32
-
+     
+    rt_hw_interrupt_init();
+	rt_hw_interrupt_install(0x7, timer_irq_handler, RT_NULL, "timerirq");
+	rt_hw_interrupt_install(0xb, fc_soc_event_handler1, RT_NULL, "eventirq");
 	/* mtvec is set in crt0.S */
 
 	/* deactivate all soc events as they are enabled by default */

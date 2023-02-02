@@ -9,7 +9,7 @@ rt_hw_do_after_save_above:
     csrr  a0, mcause
     csrr  a1, mepc
     mv    a2, sp
-    call  vSystemIrqHandler
+    call  rt_rv32_system_irq_handler
 
     LOAD  ra,  0 * REGBYTES(sp)
     addi  sp, sp,  4
