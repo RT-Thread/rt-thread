@@ -1,0 +1,3 @@
+
+
+*.elf: $(wildcard ../board/linker_scripts/link.ld)
