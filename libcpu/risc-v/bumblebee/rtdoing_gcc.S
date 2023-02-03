@@ -12,4 +12,3 @@ rt_hw_do_after_save_above:
     LOAD  ra,  0 * REGBYTES(sp)
     addi  sp, sp,  4
     ret
-z
