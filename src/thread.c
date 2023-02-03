@@ -967,7 +967,8 @@ static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_fl
  *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with
  *          other threads and occupying this resouce, starvation can occur very easily.
  *
- * @param   thread is the thread to be suspended.
+ * @param   thread the thread to be suspended.
+ * @param   suspend_flag status flag of the thread to be suspended.
  *
  * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
  *          If the return value is any other values, it means this operation failed.

@@ -44,9 +44,8 @@
 
 /**
  * @addtogroup KernelService
+ * @{
  */
-
-/**@{*/
 
 /* global errno in RT-Thread */
 static volatile int __rt_errno;
@@ -1390,9 +1389,8 @@ static void (*rt_free_hook)(void *ptr);
 
 /**
  * @addtogroup Hook
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will set a hook function, which will be invoked when a memory

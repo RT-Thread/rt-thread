@@ -570,6 +570,8 @@ typedef struct rt_timer *rt_timer_t;
 /**
  * @addtogroup Signal
  */
+/**@{*/
+
 #ifdef RT_USING_SIGNALS
 #include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
