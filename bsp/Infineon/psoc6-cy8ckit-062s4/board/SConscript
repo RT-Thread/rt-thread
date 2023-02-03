@@ -1,0 +1,40 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+objs = []
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+if GetDepend(['BSP_USING_SPI3_SAMPLE']):
+    src += Glob('ports/spi_sample.c')
+
+if GetDepend(['BSP_USING_RW007']):
+    src += Glob('ports/drv_rw007.c')
+
+if GetDepend(['BSP_USING_SLIDER']):
+    src += Glob('ports/slider_sample.c')
+
+path = [cwd]
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix +
+            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_GCC_ARM/cy_syslib_gcc.S']
+elif rtconfig.PLATFORM in ['armclang']:
+    src += [startup_path_prefix +
+            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_mdk.S']
+
+CPPDEFINES = ['CY8C6244LQI_S4D92', 'CY_USING_HAL', 'COMPONENT_CAT1A', 'COMPONENT_CAT1', 'COMPONENT_BSP_DESIGN_MODUS']
+group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path, CPPDEFINES=CPPDEFINES)
+
+Return('group')
