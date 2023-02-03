@@ -255,7 +255,7 @@ static void n32_gpio_clock_enable(GPIO_Module* GPIOx)
     {
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     else if (GPIOx == GPIOE)
     {
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
@@ -296,7 +296,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     /* Configure GPIO_InitStructure */
     GPIO_InitStructure.Pin = index->pin;
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 #endif
 
@@ -308,7 +308,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
         GPIO_InitStructure.GPIO_Pull = GPIO_No_Pull;
@@ -318,7 +318,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
         GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Up;
@@ -328,7 +328,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT_PULLDOWN)
     {
         /* input setting: pull down. */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
         GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Down;
@@ -340,7 +340,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* output setting: od. */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
@@ -379,7 +379,7 @@ rt_inline rt_int32_t port2portsource(GPIO_Module* module)
     {
         return GPIOD_PORT_SOURCE;
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     else if (module == GPIOE)
     {
         return GPIOE_PORT_SOURCE;

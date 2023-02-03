@@ -11,7 +11,6 @@
  * 2021/12/24     JasonHu      Add user setting save/restore
  */
 
-#define __ASSEMBLY__
 #include "cpuport.h"
 #include "encoding.h"
 #include "stackframe.h"
@@ -31,10 +30,12 @@ trap_entry:
     
     RESTORE_SYS_GP
 
+#ifdef RT_USING_SMART
     //check syscall
     csrr t0, scause
     li t1, 8//environment call from u-mode
     beq t0, t1, syscall_entry
+#endif
 
     csrr a0, scause
     csrrc a1, stval, zero
@@ -53,21 +54,25 @@ trap_entry:
 .global rt_hw_context_switch_interrupt_do
 rt_hw_context_switch_interrupt_do:
 
+#ifdef RT_USING_SMART
 //swap to thread kernel stack
     csrr t0, sstatus
     andi t0, t0, 0x100
     beqz t0, __restore_sp_from_tcb_interrupt
+#endif
 
 __restore_sp_from_sscratch_interrupt:
     csrr t0, sscratch
     j __move_stack_context_interrupt
 
+#ifdef RT_USING_SMART
 __restore_sp_from_tcb_interrupt:
     la    s0, rt_interrupt_from_thread
     LOAD  a0, 0(s0)
     jal rt_thread_sp_to_thread
     jal get_thread_kernel_stack_top
     mv t0, a0
+#endif
 
 __move_stack_context_interrupt:
     mv t1, sp//src
@@ -96,7 +101,7 @@ copy_context_loop_interrupt:
     #ifdef RT_USING_SMART
         mv a0, s1
         jal rt_thread_sp_to_thread
-        jal lwp_mmu_switch
+        jal lwp_aspace_switch
     #endif
 
 spurious_interrupt:

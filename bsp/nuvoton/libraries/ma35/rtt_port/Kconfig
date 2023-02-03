@@ -978,7 +978,7 @@
 
     menuconfig BSP_USING_ECAP
         bool "Enable Enhanced Input Capture Timer(ECAP)"
-	select RT_USING_INPUT_CAPTURE
+    select RT_USING_INPUT_CAPTURE
 
         if BSP_USING_ECAP
 

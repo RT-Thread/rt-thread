@@ -15,5 +15,5 @@ config ENABLE_FSDIO
     depends on TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q
     help
         Select FSdio driver component
-	
-	
+
+

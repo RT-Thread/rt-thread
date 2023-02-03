@@ -23,12 +23,12 @@ STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c
 STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rng.c
 STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c
 ''')
- 
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart_ex.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_i2c.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_i2c_ex.c']
@@ -39,7 +39,7 @@ if GetDepend(['RT_USING_SPI']):
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_qspi.c']
 
 if GetDepend(['RT_USING_USB']):
-    src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_hcd.c'] 
+    src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_hcd.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_pcd.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_pcd_ex.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usb.c']

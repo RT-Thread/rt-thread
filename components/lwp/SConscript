@@ -24,7 +24,7 @@ if arch == 'risc-v':
 
 if GetDepend('LWP_UNIX98_PTY'):
     # print("LWP_UNIX98_PTY")
-    src += Glob('unix98pty/*.c') 
+    src += Glob('unix98pty/*.c')
     CPPPATH += ['unix98pty/']
 
 if platform in platform_file.keys(): # support platforms

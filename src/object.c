@@ -641,7 +641,6 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
  * container.
  *
  * @param name the specified name of object.
- * @param type the type of object
  * @param data the custom data
  * @param data_destroy the custom object destroy callback
  *

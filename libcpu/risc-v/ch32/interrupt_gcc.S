@@ -9,6 +9,7 @@
  * 2022-12-27     WangShun   Merge WCH series mcu port files
  */
  
+#define __ASSEMBLY__
 #include "cpuport.h"
 
 .global SW_handler
@@ -59,10 +60,10 @@ SW_handler:
     STORE t0,   2 * REGBYTES(sp)
 
 	/* Temporarily disable HPE  */
-	#if defined (SOC_RISCV_SERIES_CH32V3)
+#if defined (SOC_RISCV_SERIES_CH32V3)
 	li   t0,    0x20
 	csrs 0x804, t0
-	#endif
+#endif
 
     STORE x1,   1 * REGBYTES(sp)
     STORE x4,   4 * REGBYTES(sp)
@@ -123,13 +124,13 @@ SW_handler:
     csrw  mepc, a0
 
 1:  LOAD  x1,   1 * REGBYTES(sp)
-	#if defined (SOC_RISCV_SERIES_CH32V3)
+#if defined (SOC_RISCV_SERIES_CH32V3)
 	li t0,0x7800
 	csrs mstatus, t0
-	#else
+#else
 	li t0,0x1800
 	csrs mstatus, t0	
-	#endif
+#endif
 	LOAD t0, 2*REGBYTES(sp)
 	csrs mstatus, t0
 

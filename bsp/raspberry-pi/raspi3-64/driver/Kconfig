@@ -14,7 +14,7 @@ menu "Hardware Drivers Config"
                     bool "Enabel UART 1"
                     default n
             endif
-         
+
         config BSP_USING_PIN
             bool "Using PIN"
             select RT_USING_PIN
@@ -57,8 +57,8 @@ menu "Hardware Drivers Config"
             bool "Enable SPI"
             select RT_USING_SPI
             default n
-        
-        if BSP_USING_SPI   
+
+        if BSP_USING_SPI
             config BSP_USING_SPI0_BUS
                 bool "Enable SPI0 BUS"
                 default n
@@ -88,7 +88,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_ALARM
                 default n
         endif
-        
+
         menuconfig BSP_USING_SDIO
             bool "Enable SDIO"
             select RT_USING_SDIO

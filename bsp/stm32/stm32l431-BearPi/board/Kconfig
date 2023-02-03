@@ -14,7 +14,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
-	menuconfig BSP_USING_UART
+    menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
         select RT_USING_SERIAL
@@ -145,7 +145,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Onboard Peripheral Drivers"
@@ -154,7 +154,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI2
         default n
-        
+
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO

@@ -19,9 +19,9 @@
 #endif
 
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
-static float cortexm_cputime_getres(void)
+static double cortexm_cputime_getres(void)
 {
-    float ret = 1000 * 1000 * 1000;
+    double ret = 1000UL * 1000 * 1000;
 
     ret = ret / SystemCoreClock;
     return ret;

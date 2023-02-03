@@ -356,7 +356,9 @@ typedef int (*init_fn_t)(void);
 #define RT_EIO                          8               /**< IO error */
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
-#define RT_ETRAP                        11              /**< trap event */
+#define RT_ETRAP                        11              /**< Trap event */
+#define RT_ENOENT                       12              /**< No entry */
+#define RT_ENOSPC                       13              /**< No space left */
 
 /**@}*/
 
@@ -568,6 +570,8 @@ typedef struct rt_timer *rt_timer_t;
 /**
  * @addtogroup Signal
  */
+/**@{*/
+
 #ifdef RT_USING_SIGNALS
 #include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
@@ -777,7 +781,7 @@ struct rt_thread
     rt_uint8_t  number;
     rt_uint8_t  high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-    rt_uint32_t number_mask;
+    rt_uint32_t number_mask;                            /**< priority number mask */
 
 #ifdef RT_USING_MUTEX
     /* object for IPC */

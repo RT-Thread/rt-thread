@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -694,6 +694,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
 
         tx_fifo->activated = RT_FALSE;
         tx_fifo->put_size = 0;
+        rt_memset(&tx_fifo->rb, RT_NULL, sizeof(tx_fifo->rb));
         rt_completion_init(&(tx_fifo->tx_cpt));
         dev->open_flag |= RT_SERIAL_TX_BLOCKING;
 
@@ -1023,6 +1024,7 @@ const static struct speed_baudrate_item _tbl[] =
     {B115200, BAUD_RATE_115200},
     {B230400, BAUD_RATE_230400},
     {B460800, BAUD_RATE_460800},
+    {B500000, BAUD_RATE_500000},
     {B921600, BAUD_RATE_921600},
     {B2000000, BAUD_RATE_2000000},
     {B3000000, BAUD_RATE_3000000},

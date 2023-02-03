@@ -37,7 +37,7 @@ ESSEMI_ROOT = os.path.abspath('./')
 
 es32f36xx_lib_path_prefix = os.path.dirname(ESSEMI_ROOT) + '/es32f369x'
 
-ES32F36XX_DRV_ROOT = es32f36xx_lib_path_prefix + '/drivers' 
+ES32F36XX_DRV_ROOT = es32f36xx_lib_path_prefix + '/drivers'
 
 Export('ES32F36XX_DRV_ROOT')
 

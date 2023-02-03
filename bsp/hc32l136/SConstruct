@@ -22,23 +22,23 @@ TARGET = 'hc32L136.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 if rtconfig.PLATFORM in ['iccarm']:
-	env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
-	env.Replace(ARFLAGS = [''])
-	env.Replace(LINKCOM = env["LINKCOM"]  + ' --map project.map')
+    env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
+    env.Replace(ARFLAGS = [''])
+    env.Replace(LINKCOM = env["LINKCOM"]  + ' --map project.map')
 
 Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
 print "######################env:"
-print env 
+print env
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # make a building

@@ -1,7 +1,7 @@
-﻿# RT-Thread building script for component
+# RT-Thread building script for component
 
-Import('RTT_ROOT')
 from building import *
+Import('RTT_ROOT')
 
 cwd     = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')

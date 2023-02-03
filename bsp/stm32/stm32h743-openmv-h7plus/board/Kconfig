@@ -6,7 +6,7 @@ menu "Hardware Drivers Config"
         select RT_USING_COMPONENTS_INIT
         select RT_USING_USER_MAIN
         default y
-    
+
     menu "On-chip Peripheral Drivers"
 
         config BSP_USING_GPIO
@@ -37,7 +37,7 @@ menu "Hardware Drivers Config"
                     bool "Enable UART2 RX DMA"
                     depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                     default n
-                    
+
                 config BSP_USING_LPUART1
                     bool "Enable LPUART1"
                     default n
@@ -47,7 +47,7 @@ menu "Hardware Drivers Config"
                     depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
                     default n
             endif
-            
+
             config BSP_USING_QSPI
                 bool "Enable QSPI BUS"
                 select RT_USING_QSPI
@@ -60,7 +60,7 @@ menu "Hardware Drivers Config"
                 default n
 
         source "../libraries/HAL_Drivers/Kconfig"
-            
+
     endmenu
 
     menu "Onboard Peripheral Drivers"
@@ -86,7 +86,7 @@ menu "Hardware Drivers Config"
         config BSP_USING_USBD
             bool "Enable OTGFS as USB device"
             select RT_USING_USB_DEVICE
-            default n 
+            default n
 
         config BSP_USING_OV5640
             bool "Enable camera (ov5640)"
@@ -101,7 +101,7 @@ menu "Hardware Drivers Config"
         config BSP_USING_DCMI
             bool "Enable DCMI"
             default n
-        
+
         menuconfig BSP_USING_I2C
             bool "Enable I2C BUS (software simulation)"
             select RT_USING_I2C

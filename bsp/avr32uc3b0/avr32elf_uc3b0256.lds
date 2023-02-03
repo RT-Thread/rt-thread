@@ -1,6 +1,6 @@
 /* Default linker script, for normal executables */
 OUTPUT_FORMAT("elf32-avr32", "elf32-avr32",
-	      "elf32-avr32")
+          "elf32-avr32")
 OUTPUT_ARCH(avr32:uc)
 ENTRY(_start)
 SEARCH_DIR("/home/mingwbuild/mingwavr32/avr32/lib");
@@ -37,10 +37,10 @@ SECTIONS
   .rela.data.rel.ro   : { *(.rel.data.rel.ro*) } >FLASH AT>FLASH
   .rel.data       : { *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*) } >FLASH AT>FLASH
   .rela.data      : { *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*) } >FLASH AT>FLASH
-  .rel.tdata	  : { *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*) } >FLASH AT>FLASH
-  .rela.tdata	  : { *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*) } >FLASH AT>FLASH
-  .rel.tbss	  : { *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*) } >FLASH AT>FLASH
-  .rela.tbss	  : { *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*) } >FLASH AT>FLASH
+  .rel.tdata      : { *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*) } >FLASH AT>FLASH
+  .rela.tdata     : { *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*) } >FLASH AT>FLASH
+  .rel.tbss   : { *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*) } >FLASH AT>FLASH
+  .rela.tbss      : { *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*) } >FLASH AT>FLASH
   .rel.ctors      : { *(.rel.ctors) } >FLASH AT>FLASH
   .rela.ctors     : { *(.rela.ctors) } >FLASH AT>FLASH
   .rel.dtors      : { *(.rel.dtors) } >FLASH AT>FLASH
@@ -85,15 +85,15 @@ SECTIONS
   .eh_frame_hdr : { *(.eh_frame_hdr) } >FLASH AT>FLASH
   .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } >FLASH AT>FLASH
   .gcc_except_table   : ONLY_IF_RO { KEEP (*(.gcc_except_table)) *(.gcc_except_table.*) } >FLASH AT>FLASH
-  .dalign	: { . = ALIGN(8); PROVIDE(_data_lma = .); } >FLASH AT>FLASH
+  .dalign   : { . = ALIGN(8); PROVIDE(_data_lma = .); } >FLASH AT>FLASH
   PROVIDE (_data = ORIGIN(CPUSRAM));
   . = ORIGIN(CPUSRAM);
   /* Exception handling  */
   .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) } >CPUSRAM AT>FLASH
   .gcc_except_table   : ONLY_IF_RW { KEEP (*(.gcc_except_table)) *(.gcc_except_table.*) } >CPUSRAM AT>FLASH
   /* Thread Local Storage sections  */
-  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) } >CPUSRAM AT>FLASH
-  .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) } >CPUSRAM
+  .tdata      : { *(.tdata .tdata.* .gnu.linkonce.td.*) } >CPUSRAM AT>FLASH
+  .tbss       : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) } >CPUSRAM
   /* Ensure the __preinit_array_start label is properly aligned.  We
      could instead move the label definition inside the section, but
      the linker would then create the section even if it turns out to
@@ -145,7 +145,7 @@ SECTIONS
     SORT(CONSTRUCTORS)
   } >CPUSRAM AT>FLASH
   .data1          : { *(.data1) } >CPUSRAM AT>FLASH
-  .balign	: { . = ALIGN(8); _edata = .; } >CPUSRAM AT>FLASH
+  .balign   : { . = ALIGN(8); _edata = .; } >CPUSRAM AT>FLASH
   _edata = .;
   PROVIDE (edata = .);
   __bss_start = .;

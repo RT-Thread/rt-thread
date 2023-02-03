@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -67,23 +67,44 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
 /* ADC channel number is up to 17 */
 #if !defined(ADC_CHANNEL_18)
-        if (channel <= 17 || \
-           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
-            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
-            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
+        if (channel <= 17 || (
+#ifdef ADC_CHANNEL_VREFINT
+               channel != (ADC_CHANNEL_VREFINT - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_VREFINT */
+#ifdef ADC_CHANNEL_TEMPSENSOR
+           ||  channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_TEMPSENSOR */
+#ifdef ADC_CHANNEL_VBAT
+           ||  channel != (ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_VBAT */
+))
 /* ADC channel number is up to 19 */
 #elif defined(ADC_CHANNEL_19)
-        if (channel <= 19 || \
-           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
-            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
-            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
+        if (channel <= 19 || (
+#ifdef ADC_CHANNEL_VREFINT
+               channel != (ADC_CHANNEL_VREFINT - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_VREFINT */
+#ifndef ADC_CHANNEL_TEMPSENSOR
+            || channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_TEMPSENSOR */
+#ifdef ADC_CHANNEL_VBAT
+            || channel != (=ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_VBAT */
+))
 /* ADC channel number is up to 18 */
 #else
-        if (channel <= 18 || \
-           (channel != (ADC_CHANNEL_VREFINT    - ADC_CHANNEL_0) || \
-            channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0) || \
-            channel != (ADC_CHANNEL_VBAT       - ADC_CHANNEL_0)))
-#endif
+        if (channel <= 18 || (
+#ifdef ADC_CHANNEL_VREFINT
+               channel != (ADC_CHANNEL_VREFINT - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_VREFINT */
+#ifdef ADC_CHANNEL_TEMPSENSOR
+            || channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_TEMPSENSOR */
+#ifdef ADC_CHANNEL_VBAT
+            || channel != (ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
+#endif /* ADC_CHANNEL_VBAT */
+))
+#endif /* !defined(ADC_CHANNEL_18) */
         {
             /* set stm32 ADC channel */
             ADC_ChanConf.Channel =  stm32_adc_get_channel(channel);
@@ -96,7 +117,7 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
             LOG_E("ADC channel must be between 0 and 19.");
 #else
             LOG_E("ADC channel must be between 0 and 18.");
-#endif
+#endif /* !defined(ADC_CHANNEL_18) */
             return -RT_ERROR;
         }
 
@@ -273,15 +294,21 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
     default:
         switch (channel)
         {
+#ifdef ADC_CHANNEL_VREFINT
           case ADC_CHANNEL_VREFINT - ADC_CHANNEL_0:
             stm32_channel = ADC_CHANNEL_VREFINT;
             break;
+#endif /* ADC_CHANNEL_VREFINT */
+#ifdef ADC_CHANNEL_VBAT
           case ADC_CHANNEL_VBAT - ADC_CHANNEL_0:
             stm32_channel = ADC_CHANNEL_VBAT;
             break;
+#endif /* ADC_CHANNEL_VBAT */
+#ifdef ADC_CHANNEL_TEMPSENSOR
           case ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0:
             stm32_channel = ADC_CHANNEL_TEMPSENSOR;
             break;
+#endif /* ADC_CHANNEL_TEMPSENSOR */
         }
         break;
     }

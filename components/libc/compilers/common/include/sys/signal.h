@@ -16,6 +16,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifdef RT_USING_MUSLLIBC
+#include <signal.h>
+#else
+
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -211,11 +215,9 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define NSIG    32      /* signal 0 implied */
 #endif /* __ARMCC_VERSION */
 
-#ifndef RT_USING_MUSLLIBC
 /* Some applications take advantage of the fact that <sys/signal.h>
  * and <signal.h> are equivalent in glibc.  Allow for that here.  */
 #include <signal.h>
-#endif /* RT_USING_MUSLLIBC */
 
 #ifndef SIG_ERR
 #define SIG_ERR  ((void (*)(int))-1)
@@ -228,6 +230,8 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #ifndef SIG_IGN
 #define SIG_IGN  ((void (*)(int)) 1)
 #endif
+
+#endif /* RT_USING_MUSLLIBC */
 
 #ifdef __cplusplus
 }

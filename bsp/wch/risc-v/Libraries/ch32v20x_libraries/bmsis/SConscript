@@ -1,7 +1,7 @@
 #-*- encoding: utf-8 -*-
 
 import os
-from building import * 
+from building import *
 Import('RTT_ROOT')
 Import('rtconfig')
 
@@ -14,22 +14,22 @@ DEPENDS = [""]
 #DEPENDS = ["PKG_USING_RW007"]
 
 #---------------------------------------------------------------------------------
-# Compile the configuration 
+# Compile the configuration
 #
 # SOURCES: Need to compile c and c++ source, auto search when SOURCES is empty
-# 
+#
 # LOCAL_CPPPATH: Local file path (.h/.c/.cpp)
-# LOCAL_CCFLAGS: Local compilation parameter 
+# LOCAL_CCFLAGS: Local compilation parameter
 # LOCAL_ASFLAGS: Local assembly parameters
-# 
-# CPPPATH: Global file path (.h/.c/.cpp), auto search when LOCAL_CPPPATH/CPPPATH 
+#
+# CPPPATH: Global file path (.h/.c/.cpp), auto search when LOCAL_CPPPATH/CPPPATH
 #          is empty # no pass!!!
-# CCFLAGS: Global compilation parameter 
+# CCFLAGS: Global compilation parameter
 # ASFLAGS: Global assembly parameters
 #
 # CPPDEFINES: Global macro definition
-# LOCAL_CPPDEFINES: Local macro definition 
-# 
+# LOCAL_CPPDEFINES: Local macro definition
+#
 # LIBS: Specify the static library that need to be linked
 # LIBPATH: Specify the search directory for the library file (.lib/.a)
 #
@@ -38,21 +38,21 @@ DEPENDS = [""]
 SOURCES          = Glob("./source/*.c")
 SOURCES          += Glob("./source/startup_ch32v20x_D8W.S")
 
-LOCAL_CPPPATH    = [] 
-LOCAL_CCFLAGS    = "" 
+LOCAL_CPPPATH    = []
+LOCAL_CCFLAGS    = ""
 LOCAL_ASFLAGS    = ""
 
-CPPPATH          = [GetCurrentDir(), os.path.join(GetCurrentDir(), 'include')] 
-CCFLAGS          = "" 
+CPPPATH          = [GetCurrentDir(), os.path.join(GetCurrentDir(), 'include')]
+CCFLAGS          = ""
 ASFLAGS          = ""
 
 CPPDEFINES       = []
 LOCAL_CPPDEFINES = []
 
-LIBS             = [] 
-LIBPATH          = [] 
+LIBS             = []
+LIBPATH          = []
 
-LINKFLAGS        = "" 
+LINKFLAGS        = ""
 
 SOURCES_IGNORE   = []
 CPPPATH_IGNORE   = []
@@ -60,20 +60,20 @@ CPPPATH_IGNORE   = []
 #---------------------------------------------------------------------------------
 # Main target
 #---------------------------------------------------------------------------------
-objs = DefineGroup(name = PKGNAME, src = SOURCES, depend = DEPENDS, 
-                   CPPPATH          = CPPPATH, 
-                   CCFLAGS          = CCFLAGS, 
-                   ASFLAGS          = ASFLAGS, 
-                   LOCAL_CPPPATH    = LOCAL_CPPPATH, 
-                   LOCAL_CCFLAGS    = LOCAL_CCFLAGS, 
-                   LOCAL_ASFLAGS    = LOCAL_ASFLAGS, 
-                   CPPDEFINES       = CPPDEFINES, 
-                   LOCAL_CPPDEFINES = LOCAL_CPPDEFINES, 
-                   LIBS             = LIBS, 
+objs = DefineGroup(name = PKGNAME, src = SOURCES, depend = DEPENDS,
+                   CPPPATH          = CPPPATH,
+                   CCFLAGS          = CCFLAGS,
+                   ASFLAGS          = ASFLAGS,
+                   LOCAL_CPPPATH    = LOCAL_CPPPATH,
+                   LOCAL_CCFLAGS    = LOCAL_CCFLAGS,
+                   LOCAL_ASFLAGS    = LOCAL_ASFLAGS,
+                   CPPDEFINES       = CPPDEFINES,
+                   LOCAL_CPPDEFINES = LOCAL_CPPDEFINES,
+                   LIBS             = LIBS,
                    LIBPATH          = LIBPATH,
-                   LINKFLAGS        = LINKFLAGS)  
+                   LINKFLAGS        = LINKFLAGS)
 
-Return("objs") 
+Return("objs")
 #---------------------------------------------------------------------------------
 # End
 #---------------------------------------------------------------------------------

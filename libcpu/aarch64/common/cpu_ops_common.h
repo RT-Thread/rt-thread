@@ -8,7 +8,7 @@
 
 static inline rt_uint64_t get_secondary_entry_pa(void)
 {
-    rt_uint64_t secondary_entry_pa = (rt_uint64_t)rt_hw_mmu_v2p(&mmu_info, _secondary_cpu_entry);
+    rt_uint64_t secondary_entry_pa = (rt_uint64_t)rt_kmem_v2p(_secondary_cpu_entry);
 
     if (!secondary_entry_pa)
     {

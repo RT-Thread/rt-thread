@@ -7,7 +7,7 @@ MEMORY
 {
     ROM  (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
     RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  96k /* 96K sram */
-    
+
     RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =  32k /* 32K sram */
 }
 ENTRY(Reset_Handler)
@@ -55,7 +55,7 @@ SECTIONS
         PROVIDE(__ctors_end__ = .);
 
         . = ALIGN(4);
-            
+
         _etext = .;
     } > ROM = 0
 
@@ -92,7 +92,7 @@ SECTIONS
         _edata = . ;
     } > RAM2
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -115,7 +115,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM2
     __bss_end = .;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -108,7 +108,7 @@ SECTIONS
         PROVIDE(__heap_start = .);
         . = ALIGN(8);
         PROVIDE(end = .);
-    } 
+    }
 
     _end = .;
 

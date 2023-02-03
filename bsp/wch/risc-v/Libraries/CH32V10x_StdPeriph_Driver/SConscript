@@ -30,7 +30,7 @@ CMSIS/WCH/CH32V10x/Source/GCC/startup_ch32v10x.S
 """)
 
 path = [
-	cwd + '/CMSIS',
+    cwd + '/CMSIS',
     cwd + '/CMSIS/WCH/CH32V10x/Include',
     cwd + '/StdPeriph_Driver/inc']
 

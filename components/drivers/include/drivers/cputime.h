@@ -15,11 +15,11 @@
 
 struct rt_clock_cputime_ops
 {
-    float    (*cputime_getres) (void);
+    double (*cputime_getres)(void);
     uint64_t (*cputime_gettime)(void);
 };
 
-float    clock_cpu_getres(void);
+double clock_cpu_getres(void);
 uint64_t clock_cpu_gettime(void);
 
 uint64_t clock_cpu_microsecond(uint64_t cpu_tick);

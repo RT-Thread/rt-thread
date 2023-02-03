@@ -95,7 +95,7 @@ static rt_err_t rt_rtc_config(void)
 static rt_err_t n32_rtc_init(void)
 {
     /* Enable the PWR clock */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_PWR | RCC_APB1_PERIPH_BKP, ENABLE);
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
@@ -121,7 +121,7 @@ static rt_err_t n32_rtc_init(void)
     while (RCC_WaitHseStable() == ERROR)
     {
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     rt_kprintf("rtc clock source is set hse/128!\n");
     RCC_ConfigRtcClk(RCC_RTCCLK_SRC_HSE_DIV128);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
@@ -129,7 +129,7 @@ static rt_err_t n32_rtc_init(void)
     RCC_ConfigRtcClk(RCC_RTCCLK_SRC_HSE_DIV32);
 #endif
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     SynchPrediv  = 0x1E8;  // 8M/128 = 62.5KHz
     AsynchPrediv = 0x7F;   // value range: 0-7F
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
@@ -143,7 +143,7 @@ static rt_err_t n32_rtc_init(void)
     /* Enable the LSE OSC32_IN PC14 */
     RCC_EnableLsi(DISABLE); // LSI is turned off here to ensure that only one clock is turned on
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     RCC_ConfigLse(RCC_LSE_ENABLE);
     while (RCC_GetFlagStatus(RCC_FLAG_LSERD) == RESET)
     {
@@ -164,7 +164,7 @@ static rt_err_t n32_rtc_init(void)
     rt_kprintf("rtc clock source is set lsi!\n");
     /* Enable the LSI OSC */
     RCC_EnableLsi(ENABLE);
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET)
     {
     }
@@ -175,7 +175,7 @@ static rt_err_t n32_rtc_init(void)
 #endif
     RCC_ConfigRtcClk(RCC_RTCCLK_SRC_LSI);
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     SynchPrediv  = 0x136; // 39.64928KHz
     AsynchPrediv = 0x7F;  // value range: 0-7F
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)

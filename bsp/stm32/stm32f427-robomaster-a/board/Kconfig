@@ -14,7 +14,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
-    
+
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
@@ -50,7 +50,7 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         default n
-        
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -147,7 +147,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 Bus (User I2C)"
                 default n
                 if BSP_USING_I2C1
-                    comment "Notice: PE4 --> 68; PE5 --> 69" 
+                    comment "Notice: PE4 --> 68; PE5 --> 69"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 SCL pin number"
                         range 1 176
@@ -226,7 +226,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM2 channel4"
                         default n
                 endif
-            
+
             menuconfig BSP_USING_PWM8
                 bool "Enable timer8 output PWM"
                 default n
@@ -246,7 +246,7 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    source "../libraries/HAL_Drivers/Kconfig"    
+    source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
 

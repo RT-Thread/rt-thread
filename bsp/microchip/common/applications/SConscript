@@ -17,7 +17,7 @@ if GetDepend('SAM_ADC_EXAMPLE') == False:
 
 if GetDepend('SAM_LWIP_EXAMPLE') == False:
     SrcRemove(src, ['lwip_demo.c'])
- 
+
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

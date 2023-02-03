@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_IFX_PSOC6_43012
+config SOC_CY8C624ABZI_S2D44
     bool
-    select SOC_SERIES_IFX_PSOC6
+    select SOC_SERIES_IFX_PSOC62
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -45,7 +45,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_UART5
                 bool "Enable UART5"
-                default y                
+                default y
         endif
 
     menuconfig BSP_USING_PWM
@@ -112,7 +112,7 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_SPI3
                     config BSP_USING_SPI3_SAMPLE
                         bool "Enable SPI3 BUS Sample"
-                        default n                
+                        default n
                 endif
         endif
 
@@ -137,13 +137,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SDIO1 (sd card)"
                 default n
         endif
-
-    config BSP_USING_QSPI_FLASH
-        bool "Enable QSPI BUS"
-        select RT_USING_QSPI
-        select RT_USING_SFUD
-        select RT_SFUD_USING_QSPI
-        default n
 
     menuconfig BSP_USING_HW_I2C
         bool "Enable Hardware I2C Bus"
@@ -178,7 +171,7 @@ menu "On-chip Peripheral Drivers"
                         int "i2c6 SDA pin number"
                         range 1 113
                         default 105
-                endif                
+                endif
         endif
 
     menuconfig BSP_USING_I2C
@@ -203,11 +196,6 @@ menu "On-chip Peripheral Drivers"
                         default 106
                 endif
         endif
-
-    config BSP_USING_USBD
-        bool "Enable USB Device"
-        select RT_USING_USB_DEVICE
-        default n
 
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
@@ -234,7 +222,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-    
+
     menuconfig BSP_USING_DAC
         bool "Enable DAC"
         default n
@@ -259,64 +247,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TIM2
                 bool "Enable TIM2"
                 default n
-        endif
-endmenu
-
-menu "Board extended module Drivers"
-
-    config BSP_USING_SLIDER
-        bool "Enable Slider Demo"
-        select BSP_USING_PWM
-        select BSP_USING_PWM0
-        select BSP_USING_PWM0_CH3
-        select BSP_USING_PWM0_PORT13
-        default n
-
-        menuconfig BSP_USING_RW007
-            bool "Enable RW007"
-            default n
-            select PKG_USING_RW007
-            select BSP_USING_SPI
-            select RW007_NOT_USE_EXAMPLE_DRIVERS
-            
-        if BSP_USING_RW007
-            comment "Notice: P5_7 --> 47; P6_2 -->50; P6_5 --> 53; P12_0 --> 96"
-            config IFX_RW007_SPI_BUS_NAME
-                string "RW007 BUS NAME"
-                default "spi3"
-
-            config IFX_RW007_WIFI_SSID
-                string "Wi-Fi SSID"
-                default "realthread_VIP"
-
-            config IFX_RW007_WIFI_PASSWORD
-                string "Wi-Fi Password"
-                default "your wifi password"
-
-            config IFX_RW007_CS_PIN
-                int "(INT)CS pin index"
-                range 1 113
-                default 96
-
-            config IFX_RW007_BOOT0_PIN
-                int "(INT)BOOT0 pin index (same as spi clk pin)"
-                range 1 113
-                default 50
-
-            config IFX_RW007_BOOT1_PIN
-                int "(INT)BOOT1 pin index (same as spi cs pin)"
-                range 1 113
-                default 96
-
-            config IFX_RW007_INT_BUSY_PIN
-                int "(INT)INT/BUSY pin index"
-                range 1 113
-                default 47
-
-            config IFX_RW007_RST_PIN
-                int "(INT)RESET pin index"
-                range 1 113
-                default 53
         endif
 endmenu
 

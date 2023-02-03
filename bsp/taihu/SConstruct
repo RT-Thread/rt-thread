@@ -18,10 +18,10 @@ rtconfig.CFLAGS = rtconfig.CFLAGS + ' -I' + RTT_ROOT + '/libcpu/ppc/ppc405/inclu
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 Export('RTT_ROOT')
@@ -30,5 +30,5 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-# build program 
+# build program
 DoBuilding(TARGET, objs)

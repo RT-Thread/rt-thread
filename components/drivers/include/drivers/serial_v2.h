@@ -22,6 +22,7 @@
 #define BAUD_RATE_115200                115200
 #define BAUD_RATE_230400                230400
 #define BAUD_RATE_460800                460800
+#define BAUD_RATE_500000                500000
 #define BAUD_RATE_921600                921600
 #define BAUD_RATE_2000000               2000000
 #define BAUD_RATE_2500000               2500000

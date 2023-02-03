@@ -7,7 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_256
 #define RT_THREAD_PRIORITY_MAX 256
 #define RT_TICK_PER_SECOND 100
@@ -36,6 +36,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_MEMHEAP
@@ -115,6 +116,7 @@
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -179,130 +181,6 @@
 
 
 /* RT-Thread Utestcases */
-
-
-/* RT-Thread online packages */
-
-/* IoT - internet of things */
-
-
-/* Wi-Fi */
-
-/* Marvell WiFi */
-
-
-/* Wiced WiFi */
-
-
-/* IoT Cloud */
-
-
-/* security packages */
-
-
-/* language packages */
-
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
-
-/* multimedia packages */
-
-/* LVGL: powerful and easy-to-use embedded GUI library */
-
-
-/* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
-/* tools packages */
-
-
-/* system packages */
-
-/* enhanced kernel services */
-
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
-
-/* peripheral libraries and drivers */
-
-/* sensors drivers */
-
-
-/* touch drivers */
-
-
-/* Kendryte SDK */
-
-
-/* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
-
-
-/* miscellaneous packages */
-
-/* project laboratory */
-
-/* samples: kernel and components samples */
-
-
-/* entertainment: terminal games and other interesting software packages */
-
-
-/* Arduino libraries */
-
-
-/* Projects */
-
-
-/* Sensors */
-
-
-/* Display */
-
-
-/* Timing */
-
-
-/* Data Processing */
-
-
-/* Data Storage */
-
-/* Communication */
-
-
-/* Device Control */
-
-
-/* Other */
-
-/* Signal IO */
-
-
-/* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
 
 
 /* Hardware Drivers Config */

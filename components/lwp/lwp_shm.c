@@ -15,12 +15,15 @@
 #include <lwp_shm.h>
 #include <lwp_mm.h>
 
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
+#include <mmu.h>
+#include <mm_aspace.h>
+#include <mm_flag.h>
 
 /* the kernel structure to represent a share-memory */
 struct lwp_shm_struct
 {
+    struct rt_mem_obj mem_obj;
     size_t addr;    /* point to the next item in the free list when not used */
     size_t size;
     int    ref;
@@ -33,6 +36,35 @@ static struct lwp_avl_struct *shm_tree_pa;
 static int shm_free_list = -1;  /* the single-direct list of freed items */
 static int shm_id_used = 0;     /* the latest allocated item in the array */
 static struct lwp_shm_struct _shm_ary[RT_LWP_SHM_MAX_NR];
+
+static const char *get_shm_name(rt_varea_t varea)
+{
+    return "user.shm";
+}
+
+static void on_shm_varea_open(struct rt_varea *varea)
+{
+    struct lwp_shm_struct *shm;
+    shm = rt_container_of(varea->mem_obj, struct lwp_shm_struct, mem_obj);
+    shm->ref += 1;
+}
+
+static void on_shm_varea_close(struct rt_varea *varea)
+{
+    struct lwp_shm_struct *shm;
+    shm = rt_container_of(varea->mem_obj, struct lwp_shm_struct, mem_obj);
+    shm->ref -= 1;
+}
+
+static void on_shm_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+{
+    struct lwp_shm_struct *shm;
+    shm = rt_container_of(varea->mem_obj, struct lwp_shm_struct, mem_obj);
+    msg->response.status = MM_FAULT_STATUS_OK;
+    msg->response.vaddr = (void *)shm->addr;
+    msg->response.size = shm->size;
+    return ;
+}
 
 /*
  * Try to allocate an structure 'lwp_shm_struct' from the freed list or the
@@ -110,6 +142,12 @@ static int _lwp_shmget(size_t key, size_t size, int create)
         p->size = (1UL << (bit + ARCH_PAGE_SHIFT));
         p->ref = 0;
         p->key = key;
+        p->mem_obj.get_name = get_shm_name;
+        p->mem_obj.on_page_fault = on_shm_page_fault;
+        p->mem_obj.on_varea_open = on_shm_varea_open;
+        p->mem_obj.on_varea_close = on_shm_varea_close;
+        p->mem_obj.hint_free = NULL;
+        p->mem_obj.on_page_offload = NULL;
 
         /* then insert it into the balancing binary tree */
         node_key = (struct lwp_avl_struct *)rt_malloc(sizeof(struct lwp_avl_struct) * 2);
@@ -212,15 +250,15 @@ int lwp_shmrm(int id)
 {
     int ret = 0;
 
-    rt_mm_lock();
     ret = _lwp_shmrm(id);
-    rt_mm_unlock();
+
     return ret;
 }
 
 /* Map the shared memory specified by 'id' to the specified virtual address. */
 static void *_lwp_shmat(int id, void *shm_vaddr)
 {
+    int err;
     struct rt_lwp *lwp  = RT_NULL;
     struct lwp_avl_struct *node_key = RT_NULL;
     struct lwp_shm_struct *p = RT_NULL;
@@ -244,10 +282,16 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     {
         return RT_NULL;
     }
-    va = lwp_map_user_type(lwp, shm_vaddr, (void *)p->addr, p->size, 1, MM_AREA_TYPE_SHM);
-    if (va)
+    if (shm_vaddr == 0)
+        va = ARCH_MAP_FAILED;
+    else
+        va = shm_vaddr;
+
+    err = rt_aspace_map(lwp->aspace, &va, p->size, MMU_MAP_U_RWCB, MMF_PREFETCH,
+                        &p->mem_obj, 0);
+    if (err != RT_EOK)
     {
-        p->ref++;
+        va = 0;
     }
     return va;
 }
@@ -261,9 +305,9 @@ void *lwp_shmat(int id, void *shm_vaddr)
     {
         return RT_NULL;
     }
-    rt_mm_lock();
+
     ret = _lwp_shmat(id, shm_vaddr);
-    rt_mm_unlock();
+
     return ret;
 }
 
@@ -276,7 +320,7 @@ static struct lwp_shm_struct *_lwp_shm_struct_get(struct rt_lwp *lwp, void *shm_
     {
         return RT_NULL;
     }
-    pa = rt_hw_mmu_v2p(&lwp->mmu_info, shm_vaddr);  /* physical memory */
+    pa = lwp_v2p(lwp, shm_vaddr);  /* physical memory */
 
     node_pa = lwp_avl_find((size_t)pa, shm_tree_pa);
     if (!node_pa)
@@ -343,14 +387,15 @@ int _lwp_shmdt(void *shm_vaddr)
     {
         return -1;
     }
-    ret = _lwp_shm_ref_dec(lwp, shm_vaddr);
-    if (ret >= 0)
+
+    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr, 1);
+    if (ret != RT_EOK)
     {
-        lwp_unmap_user_phy(lwp, shm_vaddr);
-        return 0;
+        ret = -1;
     }
-    return -1;
+    return ret;
 }
+
 /* A wrapping function: detach the mapped shared memory. */
 int lwp_shmdt(void *shm_vaddr)
 {

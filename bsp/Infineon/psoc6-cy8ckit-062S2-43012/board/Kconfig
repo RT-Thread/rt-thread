@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_IFX_PSOC6_43012
+config SOC_CY8C624ABZI_S2D44
     bool
-    select SOC_SERIES_IFX_PSOC6
+    select SOC_SERIES_IFX_PSOC62
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -45,7 +45,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_UART5
                 bool "Enable UART5"
-                default y                
+                default y
         endif
 
     menuconfig BSP_USING_PWM
@@ -112,7 +112,7 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_SPI3
                     config BSP_USING_SPI3_SAMPLE
                         bool "Enable SPI3 BUS Sample"
-                        default n                
+                        default n
                 endif
         endif
 
@@ -178,7 +178,7 @@ menu "On-chip Peripheral Drivers"
                         int "i2c6 SDA pin number"
                         range 1 113
                         default 105
-                endif                
+                endif
         endif
 
     menuconfig BSP_USING_I2C
@@ -234,7 +234,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-    
+
     menuconfig BSP_USING_DAC
         bool "Enable DAC"
         default n
@@ -278,7 +278,7 @@ menu "Board extended module Drivers"
             select PKG_USING_RW007
             select BSP_USING_SPI
             select RW007_NOT_USE_EXAMPLE_DRIVERS
-            
+
         if BSP_USING_RW007
             comment "Notice: P5_7 --> 47; P6_2 -->50; P6_5 --> 53; P12_0 --> 96"
             config IFX_RW007_SPI_BUS_NAME

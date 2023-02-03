@@ -2,11 +2,11 @@ from building import *
 import rtconfig
 
 cwd = GetCurrentDir()
-src	= Glob('*.c')
+src = Glob('*.c')
 
 if rtconfig.PLATFORM in ['gcc']:
     src += ['startup_gcc/startup_m2sxxx.S']
-    
+
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['startup_arm/startup_m2sxxx.s']
 

@@ -14,10 +14,12 @@
 #include <rtthread.h>
 
 #include "cpuport.h"
+#include "sbi.h"
 #include "stack.h"
 
+#ifdef RT_USING_SMART
 #include <lwp_arch.h>
-
+#endif
 
 /**
  * @brief from thread used interrupt context switch
@@ -110,10 +112,8 @@ void rt_hw_cpu_shutdown()
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
+    sbi_shutdown();
+    while (1);
 }
 
 int rt_hw_cpu_id(void)

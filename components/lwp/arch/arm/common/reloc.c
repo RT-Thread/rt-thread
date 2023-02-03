@@ -1,3 +1,4 @@
+#include "mm_aspace.h"
 #include <rtthread.h>
 #include <stdint.h>
 #include <string.h>
@@ -18,7 +19,7 @@ typedef struct
 } Elf32_sym;
 
 #ifdef ARCH_MM_MMU
-void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
+void arch_elf_reloc(rt_aspace_t aspace, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
 {
     size_t rel_off;
     void* addr;
@@ -36,14 +37,14 @@ void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, 
         memcpy(&v2, rel_dyn_start + rel_off + 4, 4);
         */
 
-        addr = rt_hw_mmu_v2p(m_info, (void*)((char*)rel_dyn_start + rel_off));
+        addr = rt_hw_mmu_v2p(aspace, (void*)((char*)rel_dyn_start + rel_off));
         addr = (void*)((char*)addr - PV_OFFSET);
         memcpy(&v1, addr, 4);
-        addr = rt_hw_mmu_v2p(m_info, (void*)((char*)rel_dyn_start + rel_off + 4));
+        addr = rt_hw_mmu_v2p(aspace, (void*)((char*)rel_dyn_start + rel_off + 4));
         addr = (void*)((char*)addr - PV_OFFSET);
         memcpy(&v2, addr, 4);
 
-        addr = rt_hw_mmu_v2p(m_info, (void*)((char*)text_start + v1));
+        addr = rt_hw_mmu_v2p(aspace, (void*)((char*)text_start + v1));
         addr = (void*)((char*)addr - PV_OFFSET);
         if ((v2 & 0xff) == R_ARM_RELATIVE)
         {
@@ -69,7 +70,7 @@ void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, 
         for (rel_off = 0; rel_off < got_size; rel_off += 4, got_item++)
         {
             //*got_item += (uint32_t)text_start;
-            addr = rt_hw_mmu_v2p(m_info, got_item);
+            addr = rt_hw_mmu_v2p(aspace, got_item);
             addr = (void*)((char*)addr - PV_OFFSET);
             *(uint32_t *)addr += (uint32_t)text_start;
         }

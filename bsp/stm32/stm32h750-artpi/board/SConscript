@@ -29,7 +29,7 @@ if GetDepend(['BSP_USING_SDIO_ARTPI']):
 
 if GetDepend(['BSP_USING_WIFI']):
     src += Glob('port/wifi_config.c')
-    src += Glob('port/drv_wlan.c')    
+    src += Glob('port/drv_wlan.c')
 
 if GetDepend(['BSP_USING_ETH_H750']):
     src += Glob('port/drv_eth.c')
@@ -53,7 +53,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h750xx.s']
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h750xx.s']
-    
+
 # STM32H743xx || STM32H750xx || STM32F753xx
 # You can select chips from the list above
 CPPDEFINES = ['STM32H750xx']

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-05-16     shelton      first version
+ * 2023-01-31     shelton      add support f425
  */
 
 #include "drv_can.h"
@@ -79,6 +80,22 @@ static const struct at32_baud_rate can_baud_rate_tab[] =
     {CAN10kBaud,  {600, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}}
 };
 #endif
+#ifdef SOC_SERIES_AT32F425
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 96 / ((1 + 8 + 3) * 8) = 1MHz*/
+/* attention !!! default apbclk 96 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   {8 ,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN800kBaud, {10 , CAN_RSAW_2TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN500kBaud, {16 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN250kBaud, {32 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN125kBaud, {64 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN100kBaud, {80 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN50kBaud,  {160, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN20kBaud,  {400, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN10kBaud,  {800, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}}
+};
+#endif
 #ifdef SOC_SERIES_AT32F435
 /* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 144 / ((1 + 8 + 3) * 12) = 1MHz*/
 /* attention !!! default apbclk 144 mhz */
@@ -112,21 +129,30 @@ static const struct at32_baud_rate can_baud_rate_tab[] =
 };
 #endif
 
-#if defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F435) || \
-    defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F425)
+#define CAN1_RX0_IRQ_NUM        CAN1_IRQn
+#define CAN1_RX1_IRQ_NUM        CAN1_IRQn
+#define CAN1_TX_IRQ_NUM         CAN1_IRQn
+#define CAN1_SE_IRQ_NUM         CAN1_IRQn
+#elif defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F435) || \
+      defined (SOC_SERIES_AT32F437)
 #define CAN1_RX0_IRQ_NUM        CAN1_RX0_IRQn
 #define CAN1_RX1_IRQ_NUM        CAN1_RX1_IRQn
 #define CAN1_TX_IRQ_NUM         CAN1_TX_IRQn
+#define CAN1_SE_IRQ_NUM         CAN1_SE_IRQn
 #define CAN1_RX0_IRQ_HANDLER    CAN1_RX0_IRQHandler
 #define CAN1_RX1_IRQ_HANDLER    CAN1_RX1_IRQHandler
 #define CAN1_TX_IRQ_HANDLER     CAN1_TX_IRQHandler
+#define CAN1_SE_IRQ_HANDLER     CAN1_SE_IRQHandler
 #else
 #define CAN1_RX0_IRQ_NUM        USBFS_L_CAN1_RX0_IRQn
 #define CAN1_RX1_IRQ_NUM        CAN1_RX1_IRQn
 #define CAN1_TX_IRQ_NUM         USBFS_H_CAN1_TX_IRQn
+#define CAN1_SE_IRQ_NUM         CAN1_SE_IRQn
 #define CAN1_RX0_IRQ_HANDLER    USBFS_L_CAN1_RX0_IRQHandler
 #define CAN1_RX1_IRQ_HANDLER    CAN1_RX1_IRQHandler
 #define CAN1_TX_IRQ_HANDLER     USBFS_H_CAN1_TX_IRQHandler
+#define CAN1_SE_IRQ_HANDLER     CAN1_SE_IRQHandler
 #endif
 
 #ifdef BSP_USING_CAN1
@@ -274,7 +300,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             if (CAN1 == can_instance->config.can_x)
             {
-                nvic_irq_disable(CAN1_SE_IRQn);
+                nvic_irq_disable(CAN1_SE_IRQ_NUM);
             }
 #if defined (CAN2)
             if (CAN2 == can_instance->config.can_x)
@@ -339,7 +365,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 
             if (CAN1 == can_instance->config.can_x)
             {
-                nvic_irq_enable(CAN1_SE_IRQn, 1, 0);
+                nvic_irq_enable(CAN1_SE_IRQ_NUM, 1, 0);
             }
 #if defined (CAN2)
             if (CAN2 == can_instance->config.can_x)
@@ -589,12 +615,17 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     pmsg->data[7] = rx_message.data[7];
 
     pmsg->len = rx_message.dlc;
-    pmsg->id = rx_message.id_type;
 
     if (rx_message.id_type == CAN_ID_STANDARD)
+    {
         pmsg->id = rx_message.standard_id;
+        pmsg->ide = RT_CAN_STDID;
+    }
     else
-        pmsg->ide = rx_message.extended_id;
+    {
+        pmsg->id = rx_message.extended_id;
+        pmsg->ide = RT_CAN_EXTID;
+    }
 
     pmsg->rtr = rx_message.frame_type;
     pmsg->hdr_index = rx_message.filter_index;
@@ -739,7 +770,7 @@ void CAN1_RX1_IRQ_HANDLER(void)
 /**
  * @brief this function handles can1 sce interrupts.
  */
-void CAN1_SE_IRQHandler(void)
+void CAN1_SE_IRQ_HANDLER(void)
 {
     rt_uint32_t errtype;
     struct can_config *hcan;
@@ -782,6 +813,16 @@ void CAN1_SE_IRQHandler(void)
     /* clear error flags */
     can_flag_clear(hcan->can_x, CAN_ETR_FLAG);
     rt_interrupt_leave();
+}
+#endif
+
+#if defined (SOC_SERIES_AT32F425)
+void CAN1_IRQHandler(void)
+{
+    CAN1_TX_IRQ_HANDLER();
+    CAN1_RX0_IRQ_HANDLER();
+    CAN1_RX1_IRQ_HANDLER();
+    CAN1_SE_IRQ_HANDLER();
 }
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,11 +19,6 @@
 #include <drv_log.h>
 
 #if defined(BSP_USING_QSPI)
-
-struct stm32_hw_spi_cs
-{
-    uint16_t pin;
-};
 
 struct stm32_qspi_bus
 {
@@ -209,18 +204,15 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
 
     struct rt_qspi_message *qspi_message = (struct rt_qspi_message *)message;
     struct stm32_qspi_bus *qspi_bus = device->bus->parent.user_data;
-#ifdef BSP_QSPI_USING_SOFTCS
-    struct stm32_hw_spi_cs *cs = device->parent.user_data;
-#endif
 
     const rt_uint8_t *sndb = message->send_buf;
     rt_uint8_t *rcvb = message->recv_buf;
     rt_int32_t length = message->length;
 
 #ifdef BSP_QSPI_USING_SOFTCS
-    if (message->cs_take)
+    if (message->cs_take && (device->parent.cs_pin != PIN_NONE))
     {
-        rt_pin_write(cs->pin, 0);
+        rt_pin_write(device->parent.cs_pin, PIN_LOW);
     }
 #endif
 
@@ -270,9 +262,9 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
 
 __exit:
 #ifdef BSP_QSPI_USING_SOFTCS
-    if (message->cs_release)
+    if (message->cs_release && (device->parent.cs_pin != PIN_NONE))
     {
-        rt_pin_write(cs->pin, 1);
+        rt_pin_write(device->parent.cs_pin, PIN_HIGH);
     }
 #endif
     return len;
@@ -305,17 +297,16 @@ static int stm32_qspi_register_bus(struct stm32_qspi_bus *qspi_bus, const char *
 /**
   * @brief  This function attach device to QSPI bus.
   * @param  device_name      QSPI device name
-  * @param  pin              QSPI cs pin number
+  * @param  cs_pin           QSPI cs pin number
   * @param  data_line_width  QSPI data lines width, such as 1, 2, 4
   * @param  enter_qspi_mode  Callback function that lets FLASH enter QSPI mode
   * @param  exit_qspi_mode   Callback function that lets FLASH exit QSPI mode
   * @retval 0 : success
   *        -1 : failed
   */
-rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_uint32_t pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
+rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
 {
     struct rt_qspi_device *qspi_device = RT_NULL;
-    struct stm32_hw_spi_cs *cs_pin = RT_NULL;
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(bus_name != RT_NULL);
@@ -329,25 +320,21 @@ rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_n
         result = RT_ENOMEM;
         goto __exit;
     }
-    cs_pin = (struct stm32_hw_spi_cs *)rt_malloc(sizeof(struct stm32_hw_spi_cs));
-    if (qspi_device == RT_NULL)
-    {
-        LOG_E("no memory, qspi bus attach device failed!");
-        result = RT_ENOMEM;
-        goto __exit;
-    }
 
     qspi_device->enter_qspi_mode = enter_qspi_mode;
     qspi_device->exit_qspi_mode = exit_qspi_mode;
     qspi_device->config.qspi_dl_width = data_line_width;
+    qspi_device->parent.cs_pin = cs_pin;
 
-    cs_pin->pin = pin;
 #ifdef BSP_QSPI_USING_SOFTCS
-    rt_pin_mode(pin, PIN_MODE_OUTPUT);
-    rt_pin_write(pin, 1);
+    if(cs_pin != PIN_NONE)
+    {
+        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
+        rt_pin_write(cs_pin, PIN_HIGH);
+    }
 #endif
 
-    result = rt_spi_bus_attach_device(&qspi_device->parent, device_name, bus_name, (void *)cs_pin);
+    result = rt_spi_bus_attach_device(&qspi_device->parent, device_name, bus_name, RT_NULL);
 
 __exit:
     if (result != RT_EOK)
@@ -355,11 +342,6 @@ __exit:
         if (qspi_device)
         {
             rt_free(qspi_device);
-        }
-
-        if (cs_pin)
-        {
-            rt_free(cs_pin);
         }
     }
 

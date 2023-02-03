@@ -53,7 +53,7 @@ rt_hw_context_switch_to:
 #ifdef RT_USING_SMART
     bl      rt_thread_self
     mov     r4, r0
-    bl      lwp_mmu_switch
+    bl      lwp_aspace_switch
     mov     r0, r4
     bl      lwp_user_setting_restore
 #endif
@@ -116,7 +116,7 @@ rt_hw_context_switch:
 #ifdef RT_USING_SMART
     bl      rt_thread_self
     mov     r4, r0
-    bl      lwp_mmu_switch
+    bl      lwp_aspace_switch
     mov     r0, r4
     bl      lwp_user_setting_restore
 #endif

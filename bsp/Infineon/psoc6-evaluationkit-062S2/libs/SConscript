@@ -1,0 +1,26 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+
+if rtconfig.PLATFORM in ['iccarm']:
+    print("\nThe current project does not support IAR build\n")
+    Return('group')
+elif rtconfig.PLATFORM in ['gcc', 'armclang']:
+    src += [cwd + '/TARGET_RTT-062S2/cybsp.c']
+    src += [cwd + '/TARGET_RTT-062S2/COMPONENT_CM4/system_psoc6_cm4.c']
+    src += Glob(cwd + '/TARGET_RTT-062S2/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/*.c')
+
+    CPPPATH = [ cwd + '/TARGET_RTT-062S2',
+                cwd + '/TARGET_RTT-062S2/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource']
+    if rtconfig.PLATFORM in ['gcc']:
+        src += [cwd + '/TARGET_RTT-062S2/COMPONENT_CM4/TOOLCHAIN_GCC_ARM/startup_psoc6_02_cm4.S']
+    elif rtconfig.PLATFORM in ['armclang']:
+        src += [cwd + '/TARGET_RTT-062S2/COMPONENT_CM4/TOOLCHAIN_ARM/startup_psoc6_02_cm4.S']
+
+group = DefineGroup('libs', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

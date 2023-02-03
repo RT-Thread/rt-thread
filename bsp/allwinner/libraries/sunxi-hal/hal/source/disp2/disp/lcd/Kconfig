@@ -1,181 +1,181 @@
 config LCD_SUPPORT_GG1P4062UTSW
-	bool "LCD support cpu_gg1p4062utsw panel"
-	default n
-	---help---
-		If you want to support cpu_gg1p4062utsw panel for display driver, select it.
+    bool "LCD support cpu_gg1p4062utsw panel"
+    default n
+    ---help---
+        If you want to support cpu_gg1p4062utsw panel for display driver, select it.
 
 config LCD_SUPPORT_DX0960BE40A1
-	bool "LCD support dx0960be40a1 panel"
-	default n
-	---help---
-		If you want to support dx0960be40a1 panel for display driver, select it.
+    bool "LCD support dx0960be40a1 panel"
+    default n
+    ---help---
+        If you want to support dx0960be40a1 panel for display driver, select it.
 
 config LCD_SUPPORT_TFT720X1280
-	bool "LCD support dx0960be40a1 panel"
-	default n
-	---help---
-		If you want to support dx0960be40a1 panel for display driver, select it.
+    bool "LCD support dx0960be40a1 panel"
+    default n
+    ---help---
+        If you want to support dx0960be40a1 panel for display driver, select it.
 
 config LCD_SUPPORT_FD055HD003S
-	bool "LCD support fd055hd003s panel"
-	default n
-	---help---
-		If you want to support fd055hd003s panel for display driver, select it.
+    bool "LCD support fd055hd003s panel"
+    default n
+    ---help---
+        If you want to support fd055hd003s panel for display driver, select it.
 
 config LCD_SUPPORT_HE0801A068
-	bool "LCD support he0801a068 panel"
-	default y
-	---help---
-		If you want to support he0801a068 panel for display driver, select it.
+    bool "LCD support he0801a068 panel"
+    default y
+    ---help---
+        If you want to support he0801a068 panel for display driver, select it.
 
 config LCD_SUPPORT_ILI9341
-	bool "LCD support ili9341 panel"
-	default n
-	---help---
-		If you want to support ili9341 panel for display driver, select it.
+    bool "LCD support ili9341 panel"
+    default n
+    ---help---
+        If you want to support ili9341 panel for display driver, select it.
 
 config LCD_SUPPORT_LH219WQ1
-	bool "LCD support LH219WQ1 panel"
-	default n
-	---help---
-		If you want to support LH219WQ1 panel for display driver, select it.
+    bool "LCD support LH219WQ1 panel"
+    default n
+    ---help---
+        If you want to support LH219WQ1 panel for display driver, select it.
 
 config LCD_SUPPORT_LS029B3SX02
-	bool "LCD support ls029b3sx02 panel"
-	default n
-	---help---
-		If you want to support ls029b3sx02 panel for display driver, select it.
+    bool "LCD support ls029b3sx02 panel"
+    default n
+    ---help---
+        If you want to support ls029b3sx02 panel for display driver, select it.
 
 config LCD_SUPPORT_LT070ME05000
-	bool "LCD support lt070me05000 panel"
-	default n
-	---help---
-		If you want to support lt070me05000 panel for display driver, select it.
+    bool "LCD support lt070me05000 panel"
+    default n
+    ---help---
+        If you want to support lt070me05000 panel for display driver, select it.
 
 
 config LCD_SUPPORT_S6D7AA0X01
-	bool "LCD support S6D7AA0X01 panel"
-	default n
-	---help---
-		If you want to support S6D7AA0X01 panel for display driver, select it.
+    bool "LCD support S6D7AA0X01 panel"
+    default n
+    ---help---
+        If you want to support S6D7AA0X01 panel for display driver, select it.
 
 
 config LCD_SUPPORT_T27P06
-	bool "LCD support t27p06 panel"
-	default n
-	---help---
-		If you want to support t27p06 panel for display driver, select it.
+    bool "LCD support t27p06 panel"
+    default n
+    ---help---
+        If you want to support t27p06 panel for display driver, select it.
 
 config LCD_SUPPORT_TFT720_1280
-	bool "LCD support tft720_1280 panel"
-	default n
-	---help---
-		If you want to support tft720_1280 panel for display driver, select it.
+    bool "LCD support tft720_1280 panel"
+    default n
+    ---help---
+        If you want to support tft720_1280 panel for display driver, select it.
 
 config LCD_SUPPORT_TFT08006
-	bool "LCD support tft08006 panel"
-	default n
-	---help---
-		If you want to support tft08006 panel for display driver, select it.
+    bool "LCD support tft08006 panel"
+    default n
+    ---help---
+        If you want to support tft08006 panel for display driver, select it.
 
 config LCD_SUPPORT_TFTRGB
-	bool "LCD support tft-RGB panel"
-	default n
-	---help---
-		If you want to support tft-rgb panel for display driver, select it.
+    bool "LCD support tft-RGB panel"
+    default n
+    ---help---
+        If you want to support tft-rgb panel for display driver, select it.
 
 config LCD_SUPPORT_WTQ05027D01
-	bool "LCD support wtq05027d01 panel"
-	default n
-	---help---
-		If you want to support wtq05027d01 panel for display driver, select it.
+    bool "LCD support wtq05027d01 panel"
+    default n
+    ---help---
+        If you want to support wtq05027d01 panel for display driver, select it.
 
 config LCD_SUPPORT_H245QBN02
-	bool "LCD support H245QBN02 panel"
-	default n
-	---help---
-		If you want to support H245QBN02 panel for display driver, select it.
+    bool "LCD support H245QBN02 panel"
+    default n
+    ---help---
+        If you want to support H245QBN02 panel for display driver, select it.
 
 config LCD_SUPPORT_ST7789V
-	bool "LCD support ST7789V panel"
-	default n
-	---help---
-		If you want to support ST7789V panel for display driver, select it.
+    bool "LCD support ST7789V panel"
+    default n
+    ---help---
+        If you want to support ST7789V panel for display driver, select it.
 
 config LCD_SUPPORT_ST7796S
-	bool "LCD support ST7796S panel"
-	default n
-	---help---
-		If you want to support ST7796S panel for display driver, select it.
+    bool "LCD support ST7796S panel"
+    default n
+    ---help---
+        If you want to support ST7796S panel for display driver, select it.
 
 config LCD_SUPPORT_ST7701S
-	bool "LCD support ST7701S panel"
-	default n
-	---help---
-		If you want to support ST7701S panel for display driver, select it.
+    bool "LCD support ST7701S panel"
+    default n
+    ---help---
+        If you want to support ST7701S panel for display driver, select it.
 
 config LCD_SUPPORT_T30P106
-	bool "LCD support T30P106 panel"
-	default n
-	---help---
-		If you want to support T30P106 panel for display driver, select it.
+    bool "LCD support T30P106 panel"
+    default n
+    ---help---
+        If you want to support T30P106 panel for display driver, select it.
 
 config LCD_SUPPORT_TO20T20000
-	bool "LCD support TO20T20000 panel"
-	default n
-	---help---
-		If you want to support TO20T20000 panel for display driver, select it.
+    bool "LCD support TO20T20000 panel"
+    default n
+    ---help---
+        If you want to support TO20T20000 panel for display driver, select it.
 
 config LCD_SUPPORT_FRD450H40014
-	bool "LCD support FRD450H40014 panel"
-	default n
-	---help---
-		If you want to support FRD450H40014 panel for display driver, select it.
+    bool "LCD support FRD450H40014 panel"
+    default n
+    ---help---
+        If you want to support FRD450H40014 panel for display driver, select it.
 
 config LCD_SUPPORT_S2003T46G
-	bool "LCD support S2003T46G panel"
-	default n
-	---help---
-		If you want to support S2003T46G panel for display driver, select it.
+    bool "LCD support S2003T46G panel"
+    default n
+    ---help---
+        If you want to support S2003T46G panel for display driver, select it.
 
 config LCD_SUPPORT_WILLIAMLCD
-	bool "LCD support WilliamLcd panel"
-	default y
-	---help---
-		If you want to support WilliamLcd panel for display driver, select it.
+    bool "LCD support WilliamLcd panel"
+    default y
+    ---help---
+        If you want to support WilliamLcd panel for display driver, select it.
 
 config LCD_SUPPORT_LQ101R1SX03
-	bool "LCD support lq101r1sx03 panel"
-	default y
-	---help---
-		If you want to support lq101r1sx03 panel for display driver, select it.
+    bool "LCD support lq101r1sx03 panel"
+    default y
+    ---help---
+        If you want to support lq101r1sx03 panel for display driver, select it.
 
 config LCD_SUPPORT_INET_DSI_PANEL
-	bool "LCD support inet_dsi_panel panel"
-	default y
-	---help---
-		If you want to support inet_dsi_panel panel for display driver, select it.
+    bool "LCD support inet_dsi_panel panel"
+    default y
+    ---help---
+        If you want to support inet_dsi_panel panel for display driver, select it.
 
 config LCD_SUPPORT_WTL096601G03
-	bool "LCD support WTL096601G03 panel"
-	default n
-	---help---
-		If you want to support WTL096601G03 panel for display driver, select it.
+    bool "LCD support WTL096601G03 panel"
+    default n
+    ---help---
+        If you want to support WTL096601G03 panel for display driver, select it.
 
 config LCD_SUPPORT_RT13QV005D
-	bool "LCD support rt13qv005d panel"
-	default n
-	---help---
-		If you want to support rt13qv005d panel for display driver, select it.
+    bool "LCD support rt13qv005d panel"
+    default n
+    ---help---
+        If you want to support rt13qv005d panel for display driver, select it.
 config LCD_SUPPORT_ST7789V_CPU
-	bool "LCD support st7789v_cpu panel"
-	default n
-	---help---
-		If you want to support st7789v_cpu panel for display driver, select it.
+    bool "LCD support st7789v_cpu panel"
+    default n
+    ---help---
+        If you want to support st7789v_cpu panel for display driver, select it.
 
 config LCD_SUPPORT_VVX07H005A10
-	bool "LCD support VVX07H005A10 panel"
-	default n
-	---help---
-		If you want to support VVX07H005A10 panel for display driver, select it.
+    bool "LCD support VVX07H005A10 panel"
+    default n
+    ---help---
+        If you want to support VVX07H005A10 panel for display driver, select it.
 

@@ -107,6 +107,9 @@ if RT_USING_CPUTIME
         depends on ARCH_RISCV64
         help
             Some RISCV64 MCU Use rdtime instructions read CPU time.
+    config CPUTIME_TIMER_FREQ
+        int "CPUTIME timer freq"
+        default 0
 endif
 
 config RT_USING_I2C
@@ -225,9 +228,9 @@ config RT_USING_FDT
         config FDT_USING_DEBUG
             bool "Using fdt debug function "
             default n
-            
+
     endif
-    
+
 config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
@@ -310,7 +313,7 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
@@ -346,7 +349,7 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
-    
+
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memory pool block size"

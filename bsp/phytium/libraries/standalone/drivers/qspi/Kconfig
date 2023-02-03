@@ -2,7 +2,7 @@ menu "Qspi Configuration"
     config USE_FQSPI
         bool
         prompt "Use FQSPI"
-        default n  
-    
+        default n
+
 endmenu
 

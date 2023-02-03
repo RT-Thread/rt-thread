@@ -49,7 +49,7 @@ menu "Board extended module"
                 select PKG_USING_FT6236
                 bool "Enable Touch"
                 default y
-            
+
             config MEDIA_IO_USING_AUDIO
                 select RT_USING_AUDIO
                 select RT_USING_I2C
@@ -76,7 +76,7 @@ menu "Board extended module"
                 bool "Enable Ethernet"
                 default y
         endif
-        
+
 endmenu
 
 menu "Onboard Peripheral Drivers"
@@ -95,7 +95,7 @@ menu "Onboard Peripheral Drivers"
         select FAL_USING_SFUD_PORT
         select RT_USING_SFUD
         default n
-        
+
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (w25q64 qspi)"
         select BSP_USING_QSPI
@@ -115,7 +115,7 @@ menu "Onboard Peripheral Drivers"
                 select BSP_USING_SDIO_ARTPI
                 select BSP_USING_SDIO1
                 select RT_USING_DFS_ELMFAT
-                default n        
+                default n
             config BSP_USING_SPI_FLASH_FS
                 bool "Enable SPI FLASH filesystem"
                 select BSP_USING_SPI_FLASH
@@ -160,15 +160,15 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 TX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
-                
+
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default n
-                
+
             config BSP_USING_UART6
                 bool "Enable UART6"
                 default n
@@ -192,7 +192,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI4"
                 default n
         endif
-        
+
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
@@ -218,7 +218,7 @@ menu "On-chip Peripheral Drivers"
                 select RT_USING_I2C_BITOPS
                 select RT_USING_PIN
                 if BSP_USING_I2C1
-                    comment "Notice: PB6 --> 22; PB7 --> 23" 
+                    comment "Notice: PB6 --> 22; PB7 --> 23"
                     config BSP_I2C1_SCL_PIN
                         int "I2C1 scl pin number"
                         range 0 175
@@ -309,10 +309,10 @@ menu "On-chip Peripheral Drivers"
                         default "/"
                 endif
         endif
-        
+
     menuconfig BSP_USING_ETH_H750
         bool "Enable Ethernet"
-        default n        
+        default n
         select RT_USING_LWIP
         if BSP_USING_ETH_H750
             config ETH_RESET_PIN
@@ -331,7 +331,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_LTDC
         bool
-        default n        
+        default n
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
@@ -340,7 +340,7 @@ menu "External Libraries"
 
     config ART_PI_USING_WIFI_6212_LIB
         bool "Using Wifi(AP6212) Library"
-        select PKG_USING_EASYFLASH        
+        select PKG_USING_EASYFLASH
         select BSP_USING_SDIO_ARTPI
         select BSP_USING_SDIO2
         select RT_USING_LWIP

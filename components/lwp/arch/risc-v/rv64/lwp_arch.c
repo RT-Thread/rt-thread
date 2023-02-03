@@ -15,41 +15,23 @@
  * 2021-11-22     JasonHu      add lwp_set_thread_context
  * 2021-11-30     JasonHu      add clone/fork support
  */
-
 #include <rthw.h>
+#include <rtthread.h>
+
 #include <stddef.h>
 
 #ifdef ARCH_MM_MMU
 
-#include <mmu.h>
-#include <page.h>
-#include <lwp_mm_area.h>
-#include <lwp_user_mm.h>
+#include <lwp.h>
 #include <lwp_arch.h>
+#include <lwp_user_mm.h>
+#include <page.h>
 
-#include <stack.h>
 #include <cpuport.h>
 #include <encoding.h>
+#include <stack.h>
 
 extern rt_ubase_t MMUTable[];
-
-int arch_expand_user_stack(void *addr)
-{
-    int ret = 0;
-    rt_ubase_t stack_addr = (rt_ubase_t)addr;
-
-    stack_addr &= ~PAGE_OFFSET_MASK;
-    if ((stack_addr >= (rt_ubase_t)USER_STACK_VSTART) && (stack_addr < (rt_ubase_t)USER_STACK_VEND))
-    {
-        void *map = lwp_map_user(lwp_self(), (void *)stack_addr, PAGE_SIZE, RT_FALSE);
-
-        if (map || lwp_user_accessable(addr, 1))
-        {
-            ret = 1;
-        }
-    }
-    return ret;
-}
 
 void *lwp_copy_return_code_to_user_stack()
 {
@@ -66,13 +48,6 @@ void *lwp_copy_return_code_to_user_stack()
     }
 
     return RT_NULL;
-}
-
-rt_mmu_info *arch_kernel_get_mmu_info(void)
-{
-    extern rt_mmu_info *mmu_info;
-
-    return mmu_info;
 }
 
 rt_ubase_t lwp_fix_sp(rt_ubase_t cursp)
@@ -120,9 +95,14 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
     lwp->end_heap = USER_HEAP_VADDR;
 
-    rt_memcpy(mmu_table, MMUTable, PAGE_SIZE);
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * PAGE_SIZE);
-    rt_hw_mmu_map_init(&lwp->mmu_info, (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, (rt_size_t *)mmu_table, 0);
+    rt_memcpy(mmu_table, MMUTable, ARCH_PAGE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
+    lwp->aspace = rt_aspace_create(
+        (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
+    if (!lwp->aspace)
+    {
+        return -1;
+    }
 
     return 0;
 }
@@ -134,9 +114,10 @@ void *arch_kernel_mmu_table_get(void)
 
 void arch_user_space_vtable_free(struct rt_lwp *lwp)
 {
-    if (lwp && lwp->mmu_info.vtable)
+    if (lwp && lwp->aspace->page_table)
     {
-        rt_pages_free(lwp->mmu_info.vtable, 0);
+        rt_pages_free(lwp->aspace->page_table, 0);
+        lwp->aspace->page_table = NULL;
     }
 }
 
@@ -253,7 +234,7 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
  */
 void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
 {
-    arch_start_umode(args, user_entry, (void*)USER_STACK_VEND, kernel_stack);
+    arch_start_umode(args, user_entry, (void *)USER_STACK_VEND, kernel_stack);
 }
 
 void *arch_get_usp_from_uctx(struct rt_user_context *uctx)

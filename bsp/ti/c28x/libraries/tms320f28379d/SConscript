@@ -47,8 +47,8 @@ if GetDepend(['BSP_USING_SPI']):
 if GetDepend(['BSP_USING_UART']):
     src += ['common/source/F2837xD_Sci.c']
     src += ['common/source/F2837xD_sci_io.c']
-    
-path = [cwd + '/headers/include', 
+
+path = [cwd + '/headers/include',
     cwd + '/headers/include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']

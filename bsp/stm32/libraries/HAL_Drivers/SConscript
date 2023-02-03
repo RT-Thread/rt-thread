@@ -39,10 +39,10 @@ if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
     src += ['drv_eth.c']
 
 if GetDepend(['RT_USING_ADC']):
-    src += Glob('drv_adc.c')
+    src += ['drv_adc.c']
 
 if GetDepend(['RT_USING_DAC']):
-    src += Glob('drv_dac.c')
+    src += ['drv_dac.c']
 
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']

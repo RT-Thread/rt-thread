@@ -35,10 +35,10 @@ if GetDepend(['BSP_USING_WDG']):
     src += ['drivers/src/hpm_wdg_drv.c']
 
 if GetDepend(['BSP_USING_ADC']):
-	if GetDepend(['BSP_USING_ADC12']):
-    	    src += ['drivers/src/hpm_adc12_drv.c']
-	if GetDepend(['BSP_USING_ADC16']):
-    	    src += ['drivers/src/hpm_adc16_drv.c']
+    if GetDepend(['BSP_USING_ADC12']):
+            src += ['drivers/src/hpm_adc12_drv.c']
+    if GetDepend(['BSP_USING_ADC16']):
+            src += ['drivers/src/hpm_adc16_drv.c']
 
 if GetDepend(['BSP_USING_CAN']):
     src += ['drivers/src/hpm_can_drv.c']

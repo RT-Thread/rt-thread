@@ -11,7 +11,7 @@
 ;* The main purpose of the linker script is to describe how the sections in the
 ;* input files should be mapped into the output file, and to control the memory
 ;* layout of the output file.
-;* 
+;*
 ;* This linker script is modified from cy8c6xx7_cm4_dual.sct for CM0P_BLESS image.
 ;*
 ;* \note The entry point location is fixed and starts at 0x10000000. The valid
@@ -151,7 +151,7 @@ LR_IROM1 (FLASH_START + FLASH_CM0P_SIZE) (FLASH_SIZE - FLASH_CM0P_SIZE)
 
     ; Application heap area (HEAP)
     ARM_LIB_HEAP  +0 EMPTY ((RAM_START+RAM_SIZE)-AlignExpr(ImageLimit(RW_IRAM1), 8)-STACK_SIZE)
-    { 
+    {
     }
 
     ; Stack region growing down

@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the TMR firmware functions.
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,32 +26,33 @@
 #include "apm32f10x_tmr.h"
 #include "apm32f10x_rcm.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
-/** @addtogroup TMR_Driver  TMR Driver
+/** @addtogroup TMR_Driver TMR Driver
+  * @brief TMR driver modules
   @{
 */
 
-/** @addtogroup  TMR_Fuctions Fuctions
+/** @defgroup  TMR_Functions Functions
   @{
 */
 
-static void TI1Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
-static void TI2Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
-static void TI3Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
-static void TI4Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI1Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI2Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI3Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
+static void TI4Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter);
 
 /*!
- * @brief     Deinitializes the TMRx peripheral registers to their default reset values.
+ * @brief     Deinitialize the TMRx peripheral registers to their default reset values.
  *
- * @param     tmr: Select TMRx peripheral, The x can be 1 to 8
+ * @param     tmr: Clear TMRx peripheral, The x can be 1 to 8
  *
  * @retval    None
  *
  */
-void TMR_Reset(TMR_T *tmr)
+void TMR_Reset(TMR_T* tmr)
 {
     if (tmr == TMR1)
     {
@@ -96,15 +97,15 @@ void TMR_Reset(TMR_T *tmr)
 }
 
 /*!
- * @brief     Initializes the base timer through the structure
+ * @brief     Initialize the base timer through the structure
  *
- * @param     tmr: Select TMRx peripheral, The x can be 1 to 8
+ * @param     tmr: Clear TMRx peripheral, The x can be 1 to 8
  *
  * @param     baseConfig: Pointer to a TMR_BaseConfig_T structure
  *
  * @retval    None
  */
-void TMR_ConfigTimeBase(TMR_T *tmr, TMR_BaseConfig_T *baseConfig)
+void TMR_ConfigTimeBase(TMR_T* tmr, TMR_BaseConfig_T* baseConfig)
 {
     uint16_t temp;
 
@@ -133,7 +134,7 @@ void TMR_ConfigTimeBase(TMR_T *tmr, TMR_BaseConfig_T *baseConfig)
 }
 
 /*!
- * @brief     Configure channel 1 according to parameters
+ * @brief     Configures channel 1 according to parameters
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -141,7 +142,7 @@ void TMR_ConfigTimeBase(TMR_T *tmr, TMR_BaseConfig_T *baseConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC1(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
+void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC1EN = BIT_RESET;
 
@@ -165,7 +166,7 @@ void TMR_ConfigOC1(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 }
 
 /*!
- * @brief     Configure channel 2 according to parameters
+ * @brief     Configures channel 2 according to parameters
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -173,7 +174,7 @@ void TMR_ConfigOC1(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC2(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
+void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC2EN = BIT_RESET;
 
@@ -202,7 +203,7 @@ void TMR_ConfigOC2(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 }
 
 /*!
- * @brief     Configure channel 3 according to parameters
+ * @brief     Configures channel 3 according to parameters
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -210,7 +211,7 @@ void TMR_ConfigOC2(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC3(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
+void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC3EN = BIT_RESET;
 
@@ -238,7 +239,7 @@ void TMR_ConfigOC3(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 }
 
 /*!
- * @brief     Configure channel 4 according to parameters
+ * @brief     Configures channel 4 according to parameters
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -246,7 +247,7 @@ void TMR_ConfigOC3(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOC4(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
+void TMR_ConfigOC4(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC4EN = BIT_RESET;
 
@@ -267,7 +268,7 @@ void TMR_ConfigOC4(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
 }
 
 /*!
- * @brief     Configure Peripheral equipment
+ * @brief     Configures Peripheral equipment
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -275,7 +276,7 @@ void TMR_ConfigOC4(TMR_T *tmr, TMR_OCConfig_T *OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigIC(TMR_T *tmr, TMR_ICConfig_T *ICConfig)
+void TMR_ConfigIC(TMR_T* tmr, TMR_ICConfig_T* ICConfig)
 {
     if (ICConfig->channel == TMR_CHANNEL_1)
     {
@@ -308,7 +309,7 @@ void TMR_ConfigIC(TMR_T *tmr, TMR_ICConfig_T *ICConfig)
  *
  * @retval    None
  */
-void TMR_ConfigBDT(TMR_T *tmr, TMR_BDTConfig_T *BDTConfig)
+void TMR_ConfigBDT(TMR_T* tmr, TMR_BDTConfig_T* BDTConfig)
 {
     tmr->BDT = (BDTConfig->IMOS) << 10 | \
                (BDTConfig->RMOS) << 11 | \
@@ -326,7 +327,7 @@ void TMR_ConfigBDT(TMR_T *tmr, TMR_BDTConfig_T *BDTConfig)
  *
  * @retval    None
  */
-void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T *baseConfig)
+void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T* baseConfig)
 {
     baseConfig->period = 0xFFFF;
     baseConfig->division = 0x0000;
@@ -342,7 +343,7 @@ void TMR_ConfigTimeBaseStructInit(TMR_BaseConfig_T *baseConfig)
  *
  * @retval    None
  */
-void TMR_ConfigOCStructInit(TMR_OCConfig_T *OCConfig)
+void TMR_ConfigOCStructInit(TMR_OCConfig_T* OCConfig)
 {
     OCConfig->mode = TMR_OC_MODE_TMRING;
     OCConfig->outputState = TMR_OC_STATE_DISABLE;
@@ -361,7 +362,7 @@ void TMR_ConfigOCStructInit(TMR_OCConfig_T *OCConfig)
  *
  * @retval    None
  */
-void TMR_ConfigICStructInit(TMR_ICConfig_T *ICConfig)
+void TMR_ConfigICStructInit(TMR_ICConfig_T* ICConfig)
 {
     ICConfig->channel = TMR_CHANNEL_1;
     ICConfig->polarity = TMR_IC_POLARITY_RISING;
@@ -377,7 +378,7 @@ void TMR_ConfigICStructInit(TMR_ICConfig_T *ICConfig)
  *
  * @retval    None
  */
-void TMR_ConfigBDTStructInit(TMR_BDTConfig_T *BDTConfig)
+void TMR_ConfigBDTStructInit(TMR_BDTConfig_T* BDTConfig)
 {
     BDTConfig->RMOS = TMR_RMOS_STATE_DISABLE;
     BDTConfig->IMOS = TMR_IMOS_STATE_DISABLE;
@@ -389,13 +390,30 @@ void TMR_ConfigBDTStructInit(TMR_BDTConfig_T *BDTConfig)
 }
 
 /*!
+ * @brief     Configures the Sing pulse Mode.
+ *
+ * @param     tmr: The TMRx can be 1 to 8
+ *
+ * @param     singlePulseMode: specifies the Single Pulse Mode
+ *                     The parameter can be one of following values:
+ *                     @arg TMR_SPM_REPETITIVE
+ *                     @arg TMR_SPM_SINGLE
+ * @retval    None
+ */
+
+void TMR_ConfigSinglePulseMode(TMR_T* tmr, TMR_SPM_T singlePulseMode)
+{
+    tmr->CTRL1_B.SPMEN = singlePulseMode;
+}
+
+/*!
  * @brief     Enable the specified TMR peripheral
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
  * @retval    None
  */
-void TMR_Enable(TMR_T *tmr)
+void TMR_Enable(TMR_T* tmr)
 {
     tmr->CTRL1_B.CNTEN = ENABLE;
 }
@@ -407,13 +425,13 @@ void TMR_Enable(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_Disable(TMR_T *tmr)
+void TMR_Disable(TMR_T* tmr)
 {
     tmr->CTRL1_B.CNTEN = DISABLE;
 }
 
 /*!
- * @brief     Config of TMR to PWM
+ * @brief     Configures of TMR to PWM input
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -421,7 +439,7 @@ void TMR_Disable(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_ConfigPWM(TMR_T *tmr, TMR_ICConfig_T *PWMConfig)
+void TMR_ConfigPWM(TMR_T* tmr, TMR_ICConfig_T* PWMConfig)
 {
     uint16_t icpolarity = TMR_IC_POLARITY_RISING;
     uint16_t icselection = TMR_IC_SELECTION_DIRECT_TI;
@@ -467,7 +485,7 @@ void TMR_ConfigPWM(TMR_T *tmr, TMR_ICConfig_T *PWMConfig)
  *
  * @retval    None
  */
-void TMR_EnablePWMOutputs(TMR_T *tmr)
+void TMR_EnablePWMOutputs(TMR_T* tmr)
 {
     tmr->BDT_B.MOEN = ENABLE;
 }
@@ -479,7 +497,7 @@ void TMR_EnablePWMOutputs(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisablePWMOutputs(TMR_T *tmr)
+void TMR_DisablePWMOutputs(TMR_T* tmr)
 {
     tmr->BDT_B.MOEN = DISABLE;
 }
@@ -495,7 +513,7 @@ void TMR_DisablePWMOutputs(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_ConfigDMA(TMR_T *tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength)
+void TMR_ConfigDMA(TMR_T* tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength)
 {
     tmr->DCTRL = (uint32_t)baseAddress | (uint32_t)burstLength;
 }
@@ -506,18 +524,18 @@ void TMR_ConfigDMA(TMR_T *tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T
  * @param     tmr: The TMRx can be 1 to 8
  *
  * @param     souces: specifies the TMR DMA souces
- *                    The parameter can be any combination of following values:
- *                    @arg TMR_DMA_SOURCE_UPDATE: TMR update DMA souces
- *                    @arg TMR_DMA_SOURCE_CC1:    TMR Capture Compare 1 DMA souces
- *                    @arg TMR_DMA_SOURCE_CC2:    TMR Capture Compare 2 DMA souces
- *                    @arg TMR_DMA_SOURCE_CC3:    TMR Capture Compare 3 DMA souces
- *                    @arg TMR_DMA_SOURCE_CC4:    TMR Capture Compare 4 DMA souces
- *                    @arg TMR_DMA_SOURCE_COM:    TMR Commutation DMA souces
- *                    @arg TMR_DMA_SOURCE_TRG:    TMR Trigger DMA souces
+ *                     The parameter can be any combination of following values:
+ *                     @arg TMR_DMA_SOURCE_UPDATE: TMR update DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC1:    TMR Capture Compare 1 DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC2:    TMR Capture Compare 2 DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC3:    TMR Capture Compare 3 DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC4:    TMR Capture Compare 4 DMA souces
+ *                     @arg TMR_DMA_SOURCE_COM:    TMR Commutation DMA souces
+ *                     @arg TMR_DMA_SOURCE_TRG:    TMR Trigger DMA souces
  * @retval    None
  *
  */
-void TMR_EnableDMASoure(TMR_T *tmr, uint16_t dmaSource)
+void TMR_EnableDMASoure(TMR_T* tmr, uint16_t dmaSource)
 {
     tmr->DIEN |= dmaSource;
 }
@@ -528,18 +546,18 @@ void TMR_EnableDMASoure(TMR_T *tmr, uint16_t dmaSource)
  * @param     tmr: The TMRx can be 1 to 8
  *
  * @param     souces: specifies the TMR DMA souces
- *                    The parameter can be any combination of following values:
- *                    @arg TMR_DMA_SOURCE_UPDATE: TMR update DMA souces
- *                    @arg TMR_DMA_SOURCE_CC1:    TMR Capture Compare 1 DMA souces
- *                    @arg TMR_DMA_SOURCE_CC2:    TMR Capture Compare 2 DMA souces
- *                    @arg TMR_DMA_SOURCE_CC3:    TMR Capture Compare 3 DMA souces
- *                    @arg TMR_DMA_SOURCE_CC4:    TMR Capture Compare 4 DMA souces
- *                    @arg TMR_DMA_SOURCE_COM:    TMR Commutation DMA souces
- *                    @arg TMR_DMA_SOURCE_TRG:    TMR Trigger DMA souces
+ *                     The parameter can be any combination of following values:
+ *                     @arg TMR_DMA_SOURCE_UPDATE: TMR update DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC1:    TMR Capture Compare 1 DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC2:    TMR Capture Compare 2 DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC3:    TMR Capture Compare 3 DMA souces
+ *                     @arg TMR_DMA_SOURCE_CC4:    TMR Capture Compare 4 DMA souces
+ *                     @arg TMR_DMA_SOURCE_COM:    TMR Commutation DMA souces
+ *                     @arg TMR_DMA_SOURCE_TRG:    TMR Trigger DMA souces
  * @retval    None
  *
  */
-void TMR_DisableDMASoure(TMR_T *tmr, uint16_t dmaSource)
+void TMR_DisableDMASoure(TMR_T* tmr, uint16_t dmaSource)
 {
     tmr->DIEN &= ~dmaSource;
 }
@@ -551,7 +569,7 @@ void TMR_DisableDMASoure(TMR_T *tmr, uint16_t dmaSource)
  *
  * @retval    None
  */
-void TMR_ConfigInternalClock(TMR_T *tmr)
+void TMR_ConfigInternalClock(TMR_T* tmr)
 {
     tmr->SMCTRL_B.SMFSEL = DISABLE;
 }
@@ -562,21 +580,21 @@ void TMR_ConfigInternalClock(TMR_T *tmr)
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
  * @param     triggerSource: specifies the TMR trigger souces
- *                   The parameter can be one of following values:
- *                   @arg TMR_TRIGGER_SOURCE_ITR0: TMR Internal Trigger 0
- *                   @arg TMR_TRIGGER_SOURCE_ITR1: TMR Internal Trigger 1
- *                   @arg TMR_TRIGGER_SOURCE_ITR2: TMR Internal Trigger 2
- *                   @arg TMR_TRIGGER_SOURCE_ITR3: TMR Internal Trigger 3
+ *                     The parameter can be one of following values:
+ *                     @arg TMR_TRIGGER_SOURCE_ITR0: TMR Internal Trigger 0
+ *                     @arg TMR_TRIGGER_SOURCE_ITR1: TMR Internal Trigger 1
+ *                     @arg TMR_TRIGGER_SOURCE_ITR2: TMR Internal Trigger 2
+ *                     @arg TMR_TRIGGER_SOURCE_ITR3: TMR Internal Trigger 3
  * @retval    None
  */
-void TMR_ConfigIntTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource)
+void TMR_ConfigIntTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource)
 {
     TMR_SelectInputTrigger(tmr, triggerSource);
     tmr->SMCTRL_B.SMFSEL = 0x07;
 }
 
 /*!
- * @brief     Configures the TMRx  Trigger as External Clock
+ * @brief     Configures the TMRx Trigger as External Clock
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -595,7 +613,7 @@ void TMR_ConfigIntTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSour
  *
  * @retval    None
  */
-void TMR_ConfigTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource,
+void TMR_ConfigTrigExternalClock(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource,
                                  TMR_IC_POLARITY_T ICpolarity, uint16_t ICfilter)
 {
     if (triggerSource == 0x06)
@@ -624,7 +642,7 @@ void TMR_ConfigTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource,
  *                     @arg TMR_EXTTRG_PSC_DIV8: ETRP frequency divided by 8
  *
  * @param     polarity: specifies the TMR IC polarity
- *                     The parameter can be one of following values:
+ *                      The parameter can be one of following values:
  *                     @arg TMR_EXTTRG_POL_INVERTED:  Active low or falling edge active
  *                     @arg TMR_EXTTGR_POL_NONINVERTED: Active high or rising edge active
  *
@@ -632,7 +650,7 @@ void TMR_ConfigTrigExternalClock(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource,
  *
  * @retval    None
  */
-void TMR_ConfigETRClockMode1(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETRClockMode1(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
                              TMR_EXTTRG_POL_T polarity, uint16_t filter)
 {
     TMR_ConfigETR(tmr, prescaler, polarity, filter);
@@ -662,7 +680,7 @@ void TMR_ConfigETRClockMode1(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
  *
  * @retval    None
  */
-void TMR_ConfigETRClockMode2(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETRClockMode2(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
                              TMR_EXTTRG_POL_T polarity, uint16_t filter)
 {
     TMR_ConfigETR(tmr, prescaler, polarity, filter);
@@ -689,7 +707,7 @@ void TMR_ConfigETRClockMode2(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
  *
  * @retval    None
  */
-void TMR_ConfigETR(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
+void TMR_ConfigETR(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
                    TMR_EXTTRG_POL_T polarity, uint16_t filter)
 {
     tmr->SMCTRL &= 0x00FF;
@@ -711,18 +729,18 @@ void TMR_ConfigETR(TMR_T *tmr, TMR_EXTTRG_PSC_T prescaler,
  *                     @arg TMR_PSC_RELOAD_IMMEDIATE: The Prescaler is loaded immediately
  * @retval    None
  */
-void TMR_ConfigPrescaler(TMR_T *tmr, uint16_t prescaler, TMR_PSC_RELOAD_T pscReloadMode)
+void TMR_ConfigPrescaler(TMR_T* tmr, uint16_t prescaler, TMR_PSC_RELOAD_T pscReloadMode)
 {
     tmr->PSC = prescaler;
     tmr->CEG_B.UEG = pscReloadMode;
 }
 
 /*!
- * @brief     Config counter mode
+ * @brief     Configures counter mode
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
- * @param     countMode:specifies the Counter Mode to be used
+ * @param     countMode: specifies the Counter Mode to be used
  *                     The parameter can be one of following values:
  *                     @arg TMR_COUNTER_MODE_UP:   Timer Up Counting Mode
  *                     @arg TMR_COUNTER_MODE_DOWN: Timer Down Counting Mode
@@ -731,7 +749,7 @@ void TMR_ConfigPrescaler(TMR_T *tmr, uint16_t prescaler, TMR_PSC_RELOAD_T pscRel
  *                     @arg TMR_COUNTER_MODE_CENTERALIGNED3: Timer Center Aligned Mode3
  * @retval   None
  */
-void TMR_ConfigCounterMode(TMR_T *tmr, TMR_COUNTER_MODE_T countMode)
+void TMR_ConfigCounterMode(TMR_T* tmr, TMR_COUNTER_MODE_T countMode)
 {
     tmr->CTRL1_B.CNTDIR = BIT_RESET;
     tmr->CTRL1_B.CAMSEL = BIT_RESET;
@@ -756,7 +774,7 @@ void TMR_ConfigCounterMode(TMR_T *tmr, TMR_COUNTER_MODE_T countMode)
  *
  * @retval    None
  */
-void TMR_SelectInputTrigger(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource)
+void TMR_SelectInputTrigger(TMR_T* tmr, TMR_TRIGGER_SOURCE_T triggerSource)
 {
     tmr->SMCTRL_B.TRGSEL = BIT_RESET;
     tmr->SMCTRL_B.TRGSEL = triggerSource;
@@ -785,7 +803,7 @@ void TMR_SelectInputTrigger(TMR_T *tmr, TMR_TRIGGER_SOURCE_T triggerSource)
  *                     @arg TMR_IC_POLARITY_FALLING: TMR IC polarity falling
  * @retval    None
  */
-void TMR_ConfigEncodeInterface(TMR_T *tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC_POLARITY_T IC1Polarity,
+void TMR_ConfigEncodeInterface(TMR_T* tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC_POLARITY_T IC1Polarity,
                                TMR_IC_POLARITY_T IC2Polarity)
 {
     tmr->SMCTRL_B.SMFSEL = BIT_RESET;
@@ -812,7 +830,7 @@ void TMR_ConfigEncodeInterface(TMR_T *tmr, TMR_ENCODER_MODE_T encodeMode, TMR_IC
  *                     @arg TMR_FORCED_ACTION_INACTIVE: Force inactive level on OC1REF
  * @retval    None
  */
-void TMR_ConfigForcedOC1(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC1(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM1_COMPARE_B.OC1MOD = BIT_RESET;
     tmr->CCM1_COMPARE_B.OC1MOD = forcesAction;
@@ -829,7 +847,7 @@ void TMR_ConfigForcedOC1(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
  *                     @arg TMR_FORCED_ACTION_INACTIVE: Force inactive level on OC1REF
  * @retval    None
  */
-void TMR_ConfigForcedOC2(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC2(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM1_COMPARE_B.OC2MOD = BIT_RESET;
     tmr->CCM1_COMPARE_B.OC2MOD = forcesAction;
@@ -847,7 +865,7 @@ void TMR_ConfigForcedOC2(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_ConfigForcedOC3(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC3(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM2_COMPARE_B.OC3MOD = BIT_RESET;
     tmr->CCM2_COMPARE_B.OC3MOD = forcesAction;
@@ -865,20 +883,20 @@ void TMR_ConfigForcedOC3(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_ConfigForcedOC4(TMR_T *tmr, TMR_FORCED_ACTION_T forcesAction)
+void TMR_ConfigForcedOC4(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
 {
     tmr->CCM2_COMPARE_B.OC4MOD = BIT_RESET;
     tmr->CCM2_COMPARE_B.OC4MOD = forcesAction;
 }
 
 /*!
- * @brief     Enables peripheral Preload register on AUTORLD.
+ * @brief     Enable peripheral Preload register on AUTORLD.
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
  * @retval    None
  */
-void TMR_EnableAutoReload(TMR_T *tmr)
+void TMR_EnableAutoReload(TMR_T* tmr)
 {
     tmr->CTRL1_B.ARPEN = ENABLE;
 }
@@ -890,30 +908,30 @@ void TMR_EnableAutoReload(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisableAutoReload(TMR_T *tmr)
+void TMR_DisableAutoReload(TMR_T* tmr)
 {
     tmr->CTRL1_B.ARPEN = DISABLE;
 }
 
 /*!
- * @brief     Enable Selects the TMR peripheral Commutation event.
+ * @brief     Enable Clear the TMR peripheral Commutation event.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
  * @retval    None
  */
-void TMR_EnableSelectCOM(TMR_T *tmr)
+void TMR_EnableSelectCOM(TMR_T* tmr)
 {
     tmr->CTRL2_B.CCUSEL = ENABLE;
 }
 /*!
- * @brief     Disable Selects the TMR peripheral Commutation event.
+ * @brief     Disable Clear the TMR peripheral Commutation event.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
  * @retval    None
  */
-void TMR_DisableSelectCOM(TMR_T *tmr)
+void TMR_DisableSelectCOM(TMR_T* tmr)
 {
     tmr->CTRL2_B.CCUSEL = DISABLE;
 }
@@ -925,7 +943,7 @@ void TMR_DisableSelectCOM(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_EnableCCDMA(TMR_T *tmr)
+void TMR_EnableCCDMA(TMR_T* tmr)
 {
     tmr->CTRL2_B.CCDSEL = ENABLE;
 }
@@ -937,7 +955,7 @@ void TMR_EnableCCDMA(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisableCCDMA(TMR_T *tmr)
+void TMR_DisableCCDMA(TMR_T* tmr)
 {
     tmr->CTRL2_B.CCDSEL = DISABLE;
 }
@@ -949,7 +967,7 @@ void TMR_DisableCCDMA(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_EnableCCPreload(TMR_T *tmr)
+void TMR_EnableCCPreload(TMR_T* tmr)
 {
     tmr->CTRL2_B.CCPEN = ENABLE;
 }
@@ -961,13 +979,13 @@ void TMR_EnableCCPreload(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisableCCPreload(TMR_T *tmr)
+void TMR_DisableCCPreload(TMR_T* tmr)
 {
     tmr->CTRL2_B.CCPEN = DISABLE;
 }
 
 /*!
- * @brief     Enables or disables the peripheral Preload register on CCM1.
+ * @brief     Enable or disable the peripheral Preload register on CCM1.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -977,13 +995,13 @@ void TMR_DisableCCPreload(TMR_T *tmr)
  *                     @arg TMR_OC_PRELOAD_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC1Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC1Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM1_COMPARE_B.OC1PEN = OCPreload;
 }
 
 /*!
- * @brief     Enables or disables the peripheral Preload register on CCM2.
+ * @brief     Enable or disable the peripheral Preload register on CCM2.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -993,13 +1011,13 @@ void TMR_ConfigOC1Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
  *                     @arg TMR_OC_PRELOAD_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC2Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC2Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM1_COMPARE_B.OC2PEN = OCPreload;
 }
 
 /*!
- * @brief     Enables or disables the peripheral Preload register on CCM3.
+ * @brief     Enable or disable the peripheral Preload register on CCM3.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1009,13 +1027,13 @@ void TMR_ConfigOC2Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
  *                     @arg TMR_OC_PRELOAD_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC3Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC3Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM2_COMPARE_B.OC3PEN = OCPreload;
 }
 
 /*!
- * @brief     Enables or disables the peripheral Preload register on CCM4.
+ * @brief     Enable or disable the peripheral Preload register on CCM4.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1025,7 +1043,7 @@ void TMR_ConfigOC3Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
  *                     @arg TMR_OC_PRELOAD_ENABLE
  * @retval    Nonee
  */
-void TMR_ConfigOC4Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
+void TMR_ConfigOC4Preload(TMR_T* tmr, TMR_OC_PRELOAD_T OCPreload)
 {
     tmr->CCM2_COMPARE_B.OC4PEN = OCPreload;
 }
@@ -1041,7 +1059,7 @@ void TMR_ConfigOC4Preload(TMR_T *tmr, TMR_OC_PRELOAD_T OCPreload)
  *                     @arg TMR_OC_FAST_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC1Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC1Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM1_COMPARE_B.OC1FEN = OCFast;
 }
@@ -1057,7 +1075,7 @@ void TMR_ConfigOC1Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
  *                     @arg TMR_OC_FAST_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC2Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC2Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM1_COMPARE_B.OC2FEN = OCFast;
 }
@@ -1073,7 +1091,7 @@ void TMR_ConfigOC2Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
  *                     @arg TMR_OC_FAST_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC3Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC3Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM2_COMPARE_B.OC3FEN = OCFast;
 }
@@ -1089,13 +1107,13 @@ void TMR_ConfigOC3Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
  *                     @arg TMR_OC_FAST_ENABLE
  * @retval    None
  */
-void TMR_ConfigOC4Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
+void TMR_ConfigOC4Fast(TMR_T* tmr, TMR_OC_FAST_T OCFast)
 {
     tmr->CCM2_COMPARE_B.OC4FEN = OCFast;
 }
 
 /*!
- * @brief     Clears or safeguards the OCREF1 signal on an external event
+ * @brief     Clear or safeguards the OCREF1 signal on an external event
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1105,13 +1123,13 @@ void TMR_ConfigOC4Fast(TMR_T *tmr, TMR_OC_FAST_T OCFast)
  *                     @arg TMR_OC_CLEAR_ENABLE
  * @retval    None
  */
-void TMR_ClearOC1Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC1Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM1_COMPARE_B.OC1CEN = OCClear;
 }
 
 /*!
- * @brief     Clears or safeguards the OCREF2 signal on an external event
+ * @brief     Clear or safeguards the OCREF2 signal on an external event
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1121,13 +1139,13 @@ void TMR_ClearOC1Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
  *                     @arg TMR_OC_CLEAR_ENABLE
  * @retval    None
  */
-void TMR_ClearOC2Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC2Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM1_COMPARE_B.OC2CEN = OCClear;
 }
 
 /*!
- * @brief     Clears or safeguards the OCREF3 signal on an external event
+ * @brief     Clear or safeguards the OCREF3 signal on an external event
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1137,13 +1155,13 @@ void TMR_ClearOC2Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
  *                     @arg TMR_OC_CLEAR_ENABLE
  * @retval    None
  */
-void TMR_ClearOC3Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC3Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM2_COMPARE_B.OC3CEN = OCClear;
 }
 
 /*!
- * @brief     Clears or safeguards the OCREF4 signal on an external event
+ * @brief     Clear or safeguards the OCREF4 signal on an external event
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1153,7 +1171,7 @@ void TMR_ClearOC3Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
  *                     @arg TMR_OC_CLEAR_ENABLE
  * @retval    None
  */
-void TMR_ClearOC4Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
+void TMR_ClearOC4Ref(TMR_T* tmr, TMR_OC_CLEAR_T OCClear)
 {
     tmr->CCM2_COMPARE_B.OC4CEN = OCClear;
 }
@@ -1169,13 +1187,13 @@ void TMR_ClearOC4Ref(TMR_T *tmr, TMR_OC_CLEAR_T OCClear)
  *                     @arg TMR_OC_POLARITY_LOW: Output Compare active low
  * @retval    Nonee
  */
-void TMR_ConfigOC1Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC1Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC1POL = polarity;
 }
 
 /*!
- * @brief     Configures the  channel 1 nPolarity.
+ * @brief     Configures the channel 1 nPolarity.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
@@ -1185,7 +1203,7 @@ void TMR_ConfigOC1Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
  *                     @arg TMR_OC_NPOLARITY_LOW: Output Compare active low
  * @retval    None
  */
-void TMR_ConfigOC1NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
+void TMR_ConfigOC1NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
 {
     tmr->CCEN_B.CC1NPOL = nPolarity;
 }
@@ -1201,13 +1219,13 @@ void TMR_ConfigOC1NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
  *                     @arg TMR_OC_POLARITY_LOW: Output Compare active low
  * @retval    None
  */
-void TMR_ConfigOC2Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC2Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC2POL = polarity;
 }
 
 /*!
- * @brief     Configures the  channel 2 nPolarity.
+ * @brief     Configures the channel 2 nPolarity.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
@@ -1217,7 +1235,7 @@ void TMR_ConfigOC2Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
  *                     @arg TMR_OC_NPOLARITY_LOW: Output Compare active low
  * @retval    None
  */
-void TMR_ConfigOC2NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
+void TMR_ConfigOC2NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
 {
     tmr->CCEN_B.CC2NPOL = nPolarity;
 }
@@ -1233,13 +1251,13 @@ void TMR_ConfigOC2NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
  *                     @arg TMR_OC_POLARITY_LOW: Output Compare active low
  * @retval    None
  */
-void TMR_ConfigOC3Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC3Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC3POL = polarity;
 }
 
 /*!
- * @brief     Configures the  channel 3 nPolarity.
+ * @brief     Configures the channel 3 nPolarity.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
@@ -1249,7 +1267,7 @@ void TMR_ConfigOC3Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
  *                     @arg TMR_OC_NPOLARITY_LOW: Output Compare active low
  * @retval    None
  */
-void TMR_ConfigOC3NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
+void TMR_ConfigOC3NPolarity(TMR_T* tmr, TMR_OC_NPOLARITY_T nPolarity)
 {
     tmr->CCEN_B.CC3NPOL = nPolarity;
 }
@@ -1265,13 +1283,13 @@ void TMR_ConfigOC3NPolarity(TMR_T *tmr, TMR_OC_NPOLARITY_T nPolarity)
  *                     @arg TMR_OC_POLARITY_LOW: Output Compare active low
  * @retval    None
  */
-void TMR_ConfigOC4Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
+void TMR_ConfigOC4Polarity(TMR_T* tmr, TMR_OC_POLARITY_T polarity)
 {
     tmr->CCEN_B.CC4POL = polarity;
 }
 
 /*!
- * @brief     Enables the Capture Compare Channel x.
+ * @brief     Enable the Capture Compare Channel x.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1283,13 +1301,13 @@ void TMR_ConfigOC4Polarity(TMR_T *tmr, TMR_OC_POLARITY_T polarity)
  *                     @arg TMR_CHANNEL_4: Timer Channel 4
  * @retval    None
  */
-void TMR_EnableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
+void TMR_EnableCCxChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
 {
     tmr->CCEN |= BIT_SET << channel;
 }
 
 /*!
- * @brief     Disables the Capture Compare Channel x.
+ * @brief     Disable the Capture Compare Channel x.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1301,13 +1319,13 @@ void TMR_EnableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
  *                     @arg TMR_CHANNEL_4: Timer Channel 4
  * @retval    None
  */
-void TMR_DisableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
+void TMR_DisableCCxChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
 {
-    tmr->CCEN &= BIT_RESET << channel;
+    tmr->CCEN &= ~(BIT_SET << channel);
 }
 
 /*!
- * @brief     Enables the Capture Compare Channelx N.
+ * @brief     Enable the Capture Compare Channelx N.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
@@ -1318,13 +1336,13 @@ void TMR_DisableCCxChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
  *                     @arg TMR_CHANNEL_3: Timer Channel 3
  * @retval    None
  */
-void TMR_EnableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
+void TMR_EnableCCxNChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
 {
-    tmr->CCEN |= 0x04 << channel;
+    tmr->CCEN |= 0x04 << (channel);
 }
 
 /*!
- * @brief     Disables the Capture Compare Channelx N.
+ * @brief     Disable the Capture Compare Channelx N.
  *
  * @param     tmr: The TMRx it can be TMR1 and TMR8
  *
@@ -1335,9 +1353,9 @@ void TMR_EnableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
  *                     @arg TMR_CHANNEL_3: Timer Channel 3
  * @retval    None
  */
-void TMR_DisableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
+void TMR_DisableCCxNChannel(TMR_T* tmr, TMR_CHANNEL_T channel)
 {
-    tmr->CCEN &= BIT_RESET << channel;
+    tmr->CCEN &= ~(0x04 << (channel));
 }
 
 /*!
@@ -1364,7 +1382,7 @@ void TMR_DisableCCxNChannel(TMR_T *tmr, TMR_CHANNEL_T channel)
  *                     @arg TMR_OC_MODE_PWM2
  * @retval    None
  */
-void TMR_SelectOCxMode(TMR_T *tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
+void TMR_SelectOCxMode(TMR_T* tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
 {
     tmr->CCEN &= BIT_RESET << channel;
 
@@ -1393,7 +1411,7 @@ void TMR_SelectOCxMode(TMR_T *tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
  *
  * @retval    None
  */
-void TMR_EnableUpdate(TMR_T *tmr)
+void TMR_EnableUpdate(TMR_T* tmr)
 {
     tmr->CTRL1_B.UD = DISABLE;
 }
@@ -1405,7 +1423,7 @@ void TMR_EnableUpdate(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisableUpdate(TMR_T *tmr)
+void TMR_DisableUpdate(TMR_T* tmr)
 {
     tmr->CTRL1_B.UD = ENABLE;
 }
@@ -1421,7 +1439,7 @@ void TMR_DisableUpdate(TMR_T *tmr)
  *                     @arg TMR_UPDATE_SOURCE_REGULAR
  * @retval    None
  */
-void TMR_ConfigUpdateRequest(TMR_T *tmr, TMR_UPDATE_SOURCE_T updateSource)
+void TMR_ConfigUpdateRequest(TMR_T* tmr, TMR_UPDATE_SOURCE_T updateSource)
 {
     if (updateSource != TMR_UPDATE_SOURCE_GLOBAL)
     {
@@ -1434,13 +1452,13 @@ void TMR_ConfigUpdateRequest(TMR_T *tmr, TMR_UPDATE_SOURCE_T updateSource)
 }
 
 /*!
- * @brief     Enables Hall sensor interface.
+ * @brief     Enable Hall sensor interface.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
  * @retval    None
  */
-void TMR_EnableHallSensor(TMR_T *tmr)
+void TMR_EnableHallSensor(TMR_T* tmr)
 {
     tmr->CTRL2_B.TI1SEL = ENABLE;
 }
@@ -1452,25 +1470,9 @@ void TMR_EnableHallSensor(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisableHallSensor(TMR_T *tmr)
+void TMR_DisableHallSensor(TMR_T* tmr)
 {
     tmr->CTRL2_B.TI1SEL = DISABLE;
-}
-
-/*!
- * @brief     Config the Sing pulse Mode.
- *
- * @param     tmr: The TMRx can be 1 to 8
- *
- * @param     singlePulseMode: specifies the Single Pulse Mode
- *                     The parameter can be one of following values:
- *                     @arg TMR_SPM_REPETITIVE
- *                     @arg TMR_SPM_SINGLE
- * @retval    None
- */
-void TMR_ConfigSinglePulseMode(TMR_T *tmr, TMR_SPM_T singlePulseMode)
-{
-    tmr->CTRL1_B.SPMEN = singlePulseMode;
 }
 
 /*!
@@ -1491,7 +1493,7 @@ void TMR_ConfigSinglePulseMode(TMR_T *tmr, TMR_SPM_T singlePulseMode)
  *                     @arg TMR_TRGO_SOURCE_OC4REF
  * @retval    None
  */
-void TMR_SelectOutputTrigger(TMR_T *tmr, TMR_TRGO_SOURCE_T TRGOSource)
+void TMR_SelectOutputTrigger(TMR_T* tmr, TMR_TRGO_SOURCE_T TRGOSource)
 {
     tmr->CTRL2_B.MMSEL = TRGOSource;
 }
@@ -1509,7 +1511,7 @@ void TMR_SelectOutputTrigger(TMR_T *tmr, TMR_TRGO_SOURCE_T TRGOSource)
  *                     @arg TMR_SLAVE_MODE_EXTERNAL1
  * @retval    None
  */
-void TMR_SelectSlaveMode(TMR_T *tmr, TMR_SLAVE_MODE_T slaveMode)
+void TMR_SelectSlaveMode(TMR_T* tmr, TMR_SLAVE_MODE_T slaveMode)
 {
     tmr->SMCTRL_B.SMFSEL = slaveMode;
 }
@@ -1521,7 +1523,7 @@ void TMR_SelectSlaveMode(TMR_T *tmr, TMR_SLAVE_MODE_T slaveMode)
  *
  * @retval    None
  */
-void TMR_EnableMasterSlaveMode(TMR_T *tmr)
+void TMR_EnableMasterSlaveMode(TMR_T* tmr)
 {
     tmr->SMCTRL_B.MSMEN = ENABLE;
 }
@@ -1533,13 +1535,13 @@ void TMR_EnableMasterSlaveMode(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_DisableMasterSlaveMode(TMR_T *tmr)
+void TMR_DisableMasterSlaveMode(TMR_T* tmr)
 {
     tmr->SMCTRL_B.MSMEN = DISABLE;
 }
 
 /*!
- * @brief     Configs the Counter Register value
+ * @brief     Configures the Counter Register value
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
@@ -1547,13 +1549,13 @@ void TMR_DisableMasterSlaveMode(TMR_T *tmr)
  *
  * @retval    None
  */
-void TMR_ConfigCounter(TMR_T *tmr, uint16_t counter)
+void TMR_ConfigCounter(TMR_T* tmr, uint16_t counter)
 {
     tmr->CNT = counter;
 }
 
 /*!
- * @brief     Configs the AutoReload Register value
+ * @brief     Configures the AutoReload Register value
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
@@ -1561,13 +1563,13 @@ void TMR_ConfigCounter(TMR_T *tmr, uint16_t counter)
  *
  * @retval    None
  */
-void TMR_ConfigAutoreload(TMR_T *tmr, uint16_t autoReload)
+void TMR_ConfigAutoreload(TMR_T* tmr, uint16_t autoReload)
 {
     tmr->AUTORLD = autoReload;
 }
 
 /*!
- * @brief     Configs the Capture Compare1 Register value
+ * @brief     Configures the Capture Compare1 Register value
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1575,13 +1577,13 @@ void TMR_ConfigAutoreload(TMR_T *tmr, uint16_t autoReload)
  *
  * @retval    None
  */
-void TMR_ConfigCompare1(TMR_T *tmr, uint16_t compare1)
+void TMR_ConfigCompare1(TMR_T* tmr, uint16_t compare1)
 {
     tmr->CC1 = compare1;
 }
 
 /*!
- * @brief     Configs the Capture Compare2 Register value
+ * @brief     Configures the Capture Compare2 Register value
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1589,13 +1591,13 @@ void TMR_ConfigCompare1(TMR_T *tmr, uint16_t compare1)
  *
  * @retval    None
  */
-void TMR_ConfigCompare2(TMR_T *tmr, uint16_t compare2)
+void TMR_ConfigCompare2(TMR_T* tmr, uint16_t compare2)
 {
     tmr->CC2 = compare2;
 }
 
 /*!
- * @brief     Configs the Capture Compare3 Register value
+ * @brief     Configures the Capture Compare3 Register value
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1603,13 +1605,13 @@ void TMR_ConfigCompare2(TMR_T *tmr, uint16_t compare2)
  *
  * @retval    None
  */
-void TMR_ConfigCompare3(TMR_T *tmr, uint16_t compare3)
+void TMR_ConfigCompare3(TMR_T* tmr, uint16_t compare3)
 {
     tmr->CC3 = compare3;
 }
 
 /*!
- * @brief     Configs the Capture Compare4 Register value
+ * @brief     Configures the Capture Compare4 Register value
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1617,13 +1619,13 @@ void TMR_ConfigCompare3(TMR_T *tmr, uint16_t compare3)
  *
  * @retval    None
  */
-void TMR_ConfigCompare4(TMR_T *tmr, uint16_t compare4)
+void TMR_ConfigCompare4(TMR_T* tmr, uint16_t compare4)
 {
     tmr->CC4 = compare4;
 }
 
 /*!
- * @brief     Configs the TMRx Input Capture 1 prescaler.
+ * @brief     Configures the TMRx Input Capture 1 prescaler.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1635,7 +1637,7 @@ void TMR_ConfigCompare4(TMR_T *tmr, uint16_t compare4)
  *                     @arg TMR_IC_PSC_8: capture is done once every 8 events
  * @retval    None
  */
-void TMR_ConfigIC1Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC1Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM1_CAPTURE_B.IC1PSC = BIT_RESET;
     tmr->CCM1_CAPTURE_B.IC1PSC = prescaler;
@@ -1653,14 +1655,14 @@ void TMR_ConfigIC1Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
  *                     @arg TMR_IC_PSC_8: capture is done once every 8 events
  * @retval    None
  */
-void TMR_ConfigIC2Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC2Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM1_CAPTURE_B.IC2PSC = BIT_RESET;
     tmr->CCM1_CAPTURE_B.IC2PSC = prescaler;
 }
 
 /*!
- * @brief     Configs the TMRx Input Capture 3 prescaler.
+ * @brief     Configures the TMRx Input Capture 3 prescaler.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1672,14 +1674,14 @@ void TMR_ConfigIC2Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
  *                     @arg TMR_IC_PSC_8: capture is done once every 8 events
  * @retval    None
  */
-void TMR_ConfigIC3Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC3Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM2_CAPTURE_B.IC3PSC = BIT_RESET;
     tmr->CCM2_CAPTURE_B.IC3PSC = prescaler;
 }
 
 /*!
- * @brief     Configs the TMRx Input Capture 4 prescaler.
+ * @brief     Configures the TMRx Input Capture 4 prescaler.
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1691,14 +1693,14 @@ void TMR_ConfigIC3Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
  *                     @arg TMR_IC_PSC_8: capture is done once every 8 events
  * @retval    None
  */
-void TMR_ConfigIC4Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
+void TMR_ConfigIC4Prescal(TMR_T* tmr, TMR_IC_PSC_T prescaler)
 {
     tmr->CCM2_CAPTURE_B.IC4PSC = BIT_RESET;
     tmr->CCM2_CAPTURE_B.IC4PSC = prescaler;
 }
 
 /*!
- * @brief     Configs the Clock Division value
+ * @brief     Configures the Clock Division value
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1709,7 +1711,7 @@ void TMR_ConfigIC4Prescal(TMR_T *tmr, TMR_IC_PSC_T prescaler)
  *                     @arg TMR_CLOCK_DIV_4: TDTS = 4*Tck_tim
  * @retval    None
  */
-void TMR_ConfigClockDivision(TMR_T *tmr, TMR_CLOCK_DIV_T clockDivision)
+void TMR_ConfigClockDivision(TMR_T* tmr, TMR_CLOCK_DIV_T clockDivision)
 {
     tmr->CTRL1_B.CLKDIV = clockDivision;
 }
@@ -1721,7 +1723,7 @@ void TMR_ConfigClockDivision(TMR_T *tmr, TMR_CLOCK_DIV_T clockDivision)
  *
  * @retval    Capture Compare 1 Register value.
  */
-uint16_t TMR_ReadCaputer1(TMR_T *tmr)
+uint16_t TMR_ReadCaputer1(TMR_T* tmr)
 {
     return tmr->CC1;
 }
@@ -1733,7 +1735,7 @@ uint16_t TMR_ReadCaputer1(TMR_T *tmr)
  *
  * @retval    Capture Compare 2 Register value.
  */
-uint16_t TMR_ReadCaputer2(TMR_T *tmr)
+uint16_t TMR_ReadCaputer2(TMR_T* tmr)
 {
     return tmr->CC2;
 }
@@ -1745,7 +1747,7 @@ uint16_t TMR_ReadCaputer2(TMR_T *tmr)
  *
  * @retval    Capture Compare 3 Register value.
  */
-uint16_t TMR_ReadCaputer3(TMR_T *tmr)
+uint16_t TMR_ReadCaputer3(TMR_T* tmr)
 {
     return tmr->CC3;
 }
@@ -1757,7 +1759,7 @@ uint16_t TMR_ReadCaputer3(TMR_T *tmr)
  *
  * @retval    Capture Compare 4 Register value.
  */
-uint16_t TMR_ReadCaputer4(TMR_T *tmr)
+uint16_t TMR_ReadCaputer4(TMR_T* tmr)
 {
     return tmr->CC4;
 }
@@ -1769,19 +1771,19 @@ uint16_t TMR_ReadCaputer4(TMR_T *tmr)
  *
  * @retval    Counter Register value.
  */
-uint16_t TMR_ReadCounter(TMR_T *tmr)
+uint16_t TMR_ReadCounter(TMR_T* tmr)
 {
     return tmr->CNT;
 }
 
 /*!
- * @brief     Read the TMRx  Prescaler value.
+ * @brief     Read the TMRx Prescaler value.
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
  * @retval    Prescaler Register value.
  */
-uint16_t TMR_ReadPrescaler(TMR_T *tmr)
+uint16_t TMR_ReadPrescaler(TMR_T* tmr)
 {
     return tmr->PSC;
 }
@@ -1795,7 +1797,7 @@ uint16_t TMR_ReadPrescaler(TMR_T *tmr)
  *                     The parameter can be any combination of following values:
  *                     @arg TMR_INT_UPDATE: Timer update Interrupt source
  *                     @arg TMR_INT_CC1: Timer Capture Compare 1 Interrupt source
- *                     @arg TMR_INT_CC2: Timer Capture Compare 1 Interrupt source
+ *                     @arg TMR_INT_CC2: Timer Capture Compare 2 Interrupt source
  *                     @arg TMR_INT_CC3: Timer Capture Compare 3 Interrupt source
  *                     @arg TMR_INT_CC4: Timer Capture Compare 4 Interrupt source
  *                     @arg TMR_INT_COM: Timer Commutation Interrupt source (Only for TMR1 and TMR8)
@@ -1805,7 +1807,7 @@ uint16_t TMR_ReadPrescaler(TMR_T *tmr)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-void TMR_EnableInterrupt(TMR_T *tmr, uint16_t interrupt)
+void TMR_EnableInterrupt(TMR_T* tmr, uint16_t interrupt)
 {
     tmr->DIEN |= interrupt;
 }
@@ -1819,7 +1821,7 @@ void TMR_EnableInterrupt(TMR_T *tmr, uint16_t interrupt)
  *                     The parameter can be any combination of following values:
  *                     @arg TMR_INT_UPDATE: Timer update Interrupt source
  *                     @arg TMR_INT_CC1: Timer Capture Compare 1 Interrupt source
- *                     @arg TMR_INT_CC2: Timer Capture Compare 1 Interrupt source
+ *                     @arg TMR_INT_CC2: Timer Capture Compare 2 Interrupt source
  *                     @arg TMR_INT_CC3: Timer Capture Compare 3 Interrupt source
  *                     @arg TMR_INT_CC4: Timer Capture Compare 4 Interrupt source
  *                     @arg TMR_INT_COM: Timer Commutation Interrupt source (Only for TMR1 and TMR8)
@@ -1829,7 +1831,7 @@ void TMR_EnableInterrupt(TMR_T *tmr, uint16_t interrupt)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-void TMR_DisableInterrupt(TMR_T *tmr, uint16_t interrupt)
+void TMR_DisableInterrupt(TMR_T* tmr, uint16_t interrupt)
 {
     tmr->DIEN &= ~interrupt;
 }
@@ -1843,7 +1845,7 @@ void TMR_DisableInterrupt(TMR_T *tmr, uint16_t interrupt)
  *                     The parameter can be any combination of following values:
  *                     @arg TMR_EVENT_UPDATE: Timer update Interrupt source
  *                     @arg TMR_EVENT_CC1: Timer Capture Compare 1 Event source
- *                     @arg TMR_EVENT_CC2: Timer Capture Compare 1 Event source
+ *                     @arg TMR_EVENT_CC2: Timer Capture Compare 2 Event source
  *                     @arg TMR_EVENT_CC3: Timer Capture Compare 3 Event source
  *                     @arg TMR_EVENT_CC4: Timer Capture Compare 4 Event source
  *                     @arg TMR_EVENT_COM: Timer Commutation Event source (Only for TMR1 and TMR8)
@@ -1853,7 +1855,7 @@ void TMR_DisableInterrupt(TMR_T *tmr, uint16_t interrupt)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_EVENT_UPDATE.
  */
-void TMR_GenerateEvent(TMR_T *tmr, uint16_t eventSources)
+void TMR_GenerateEvent(TMR_T* tmr, uint16_t eventSources)
 {
     tmr->CEG = eventSources;
 }
@@ -1881,13 +1883,13 @@ void TMR_GenerateEvent(TMR_T *tmr, uint16_t eventSources)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_FLAG_UPDATE.
  */
-uint16_t TMR_ReadStatusFlag(TMR_T *tmr, TMR_FLAG_T flag)
+uint16_t TMR_ReadStatusFlag(TMR_T* tmr, TMR_FLAG_T flag)
 {
     return (tmr->STS & flag) ? SET : RESET;
 }
 
 /*!
- * @brief     Clears the TMR's pending flags.
+ * @brief     Clear the TMR's pending flags.
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
@@ -1909,7 +1911,7 @@ uint16_t TMR_ReadStatusFlag(TMR_T *tmr, TMR_FLAG_T flag)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_FLAG_UPDATE.
  */
-void TMR_ClearStatusFlag(TMR_T *tmr, uint16_t flag)
+void TMR_ClearStatusFlag(TMR_T* tmr, uint16_t flag)
 {
     tmr->STS = ~flag;
 }
@@ -1923,7 +1925,7 @@ void TMR_ClearStatusFlag(TMR_T *tmr, uint16_t flag)
  *                     The parameter can be one of following values:
  *                     @arg TMR_INT_UPDATE: Timer update Interrupt source
  *                     @arg TMR_INT_CC1: Timer Capture Compare 1 Interrupt source
- *                     @arg TMR_INT_CC2: Timer Capture Compare 1 Interrupt source
+ *                     @arg TMR_INT_CC2: Timer Capture Compare 2 Interrupt source
  *                     @arg TMR_INT_CC3: Timer Capture Compare 3 Interrupt source
  *                     @arg TMR_INT_CC4: Timer Capture Compare 4 Interrupt source
  *                     @arg TMR_INT_COM: Timer Commutation Interrupt source (Only for TMR1 and TMR8)
@@ -1933,7 +1935,7 @@ void TMR_ClearStatusFlag(TMR_T *tmr, uint16_t flag)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-uint16_t TMR_ReadIntFlag(TMR_T *tmr, TMR_INT_T flag)
+uint16_t TMR_ReadIntFlag(TMR_T* tmr, TMR_INT_T flag)
 {
     if (((tmr->STS & flag) != RESET) && ((tmr->DIEN & flag) != RESET))
     {
@@ -1946,7 +1948,7 @@ uint16_t TMR_ReadIntFlag(TMR_T *tmr, TMR_INT_T flag)
 }
 
 /*!
- * @brief     Clears the TMR's interrupt pending bits.
+ * @brief     Clear the TMR's interrupt pending bits.
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
@@ -1954,7 +1956,7 @@ uint16_t TMR_ReadIntFlag(TMR_T *tmr, TMR_INT_T flag)
  *                     The parameter can be any combination following values:
  *                     @arg TMR_INT_UPDATE: Timer update Interrupt source
  *                     @arg TMR_INT_CC1: Timer Capture Compare 1 Interrupt source
- *                     @arg TMR_INT_CC2: Timer Capture Compare 1 Interrupt source
+ *                     @arg TMR_INT_CC2: Timer Capture Compare 2 Interrupt source
  *                     @arg TMR_INT_CC3: Timer Capture Compare 3 Interrupt source
  *                     @arg TMR_INT_CC4: Timer Capture Compare 4 Interrupt source
  *                     @arg TMR_INT_COM: Timer Commutation Interrupt source (Only for TMR1 and TMR8)
@@ -1964,13 +1966,13 @@ uint16_t TMR_ReadIntFlag(TMR_T *tmr, TMR_INT_T flag)
  *
  * @note      TMR6 and TMR7 can only generate an TMR_INT_UPDATE.
  */
-void TMR_ClearIntFlag(TMR_T *tmr,  uint16_t flag)
+void TMR_ClearIntFlag(TMR_T* tmr,  uint16_t flag)
 {
     tmr->STS = ~flag;
 }
 
 /*!
- * @brief     Configure the TI1 as Input
+ * @brief     Configures the TI1 as Input
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -1982,7 +1984,7 @@ void TMR_ClearIntFlag(TMR_T *tmr,  uint16_t flag)
  *
  * @retval    None
  */
-static void TI1Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI1Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2014,7 +2016,7 @@ static void TI1Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
 }
 
 /*!
- * @brief     Configure the TI2 as Input
+ * @brief     Configures the TI2 as Input
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -2026,7 +2028,7 @@ static void TI1Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  */
-static void TI2Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI2Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2058,7 +2060,7 @@ static void TI2Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
 }
 
 /*!
- * @brief     Configure the TI3 as Input
+ * @brief     Configures the TI3 as Input
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -2070,7 +2072,7 @@ static void TI2Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  */
-static void TI3Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI3Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2102,7 +2104,7 @@ static void TI3Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
 }
 
 /*!
- * @brief     Configure the TI4 as Input
+ * @brief     Configures the TI4 as Input
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
@@ -2114,7 +2116,7 @@ static void TI3Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  */
-static void TI4Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
+static void TI4Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uint16_t ICfilter)
 {
     uint16_t tmpchctrl = 0;
 
@@ -2132,6 +2134,6 @@ static void TI4Config(TMR_T *tmr, uint16_t ICpolarity, uint16_t ICselection, uin
     tmr->CCEN = tmpchctrl;
 }
 
-/**@} end of group TMR_Fuctions*/
-/**@} end of group TMR_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group TMR_Functions */
+/**@} end of group TMR_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver */

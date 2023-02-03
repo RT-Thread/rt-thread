@@ -14,7 +14,7 @@ CubeMX_Config/Src/stm32f4xx_hal_msp.c
 
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('ports/phy_reset.c')
-    
+
 if GetDepend(['BSP_USING_SPI_FLASH']):
     src += Glob('ports/spi_flash_init.c')
 
@@ -27,7 +27,7 @@ if GetDepend(['BSP_USING_EXT_FMC_IO']):
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
-    
+
 startup_path_prefix = SDK_LIB
 
 if rtconfig.PLATFORM in ['gcc']:

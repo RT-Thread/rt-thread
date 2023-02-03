@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,8 +13,11 @@
  */
 #define _GNU_SOURCE
 /* RT-Thread System call */
+#include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
+#include <mm_aspace.h>
+#include <string.h>
 
 #include <lwp.h>
 #ifdef ARCH_MM_MMU
@@ -35,6 +38,7 @@
 #endif
 
 #include "syscall_data.h"
+#include "mqueue.h"
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
@@ -67,11 +71,11 @@
 #include "lwp_ipc_internal.h"
 #include <sched.h>
 #ifndef GRND_NONBLOCK
-#define GRND_NONBLOCK	0x0001
+#define GRND_NONBLOCK   0x0001
 #endif /* GRND_NONBLOCK */
 
 #ifndef GRND_RANDOM
-#define GRND_RANDOM	0x0002
+#define GRND_RANDOM 0x0002
 #endif /*GRND_RANDOM */
 
 #define SET_ERRNO(no) rt_set_errno(-(no))
@@ -1281,7 +1285,7 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
 #ifdef ARCH_MM_MMU
     struct sigevent sevp_k;
     timer_t timerid_k;
-    struct sigevent evp_default;
+
     if (sevp == NULL)
     {
         sevp_k.sigev_notify = SIGEV_SIGNAL;
@@ -1361,7 +1365,7 @@ rt_thread_t sys_thread_create(void *arg[])
     lwp = rt_thread_self()->lwp;
     lwp_ref_inc(lwp);
 #ifdef ARCH_MM_MMU
-    user_stack  = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
+    user_stack = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
     if (!user_stack)
     {
         goto fail;
@@ -1604,11 +1608,15 @@ rt_weak long sys_clone(void *arg[])
     return _sys_clone(arg);
 }
 
-int lwp_dup_user(struct lwp_avl_struct* ptree, void *arg);
+int lwp_dup_user(rt_varea_t varea, void *arg);
 
 static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
 {
-    return lwp_avl_traversal(src_lwp->map_area, lwp_dup_user, dest_lwp);
+    int err;
+    dest_lwp->lwp_obj->source = src_lwp->aspace;
+    err = rt_aspace_traversal(src_lwp->aspace, lwp_dup_user, dest_lwp);
+    dest_lwp->lwp_obj->source = NULL;
+    return err;
 }
 
 static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
@@ -1693,7 +1701,7 @@ int _sys_fork(void)
     }
 
     /* user space init */
-    if (lwp_user_space_init(lwp) != 0)
+    if (lwp_user_space_init(lwp, 1) != 0)
     {
         SET_ERRNO(ENOMEM);
         goto fail;
@@ -2301,7 +2309,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     rt_memset(new_lwp, 0, sizeof(struct rt_lwp));
     new_lwp->ref = 1;
     lwp_user_object_lock_init(new_lwp);
-    ret = arch_user_space_init(new_lwp);
+    ret = lwp_user_space_init(new_lwp, 0);
     if (ret != 0)
     {
         SET_ERRNO(ENOMEM);
@@ -2370,8 +2378,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         rt_pages_free(page, 0);
 
 #ifdef ARCH_MM_MMU
-        _swap_lwp_data(lwp, new_lwp, rt_mmu_info, mmu_info);
-        _swap_lwp_data(lwp, new_lwp, struct lwp_avl_struct *, map_area);
+        _swap_lwp_data(lwp, new_lwp, struct rt_aspace *, aspace);
+        _swap_lwp_data(lwp, new_lwp, struct rt_lwp_objs *, lwp_obj);
+
         _swap_lwp_data(lwp, new_lwp, size_t, end_heap);
 #endif
         _swap_lwp_data(lwp, new_lwp, uint8_t, lwp_type);
@@ -2391,7 +2400,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
 
         /* to do: clsoe files with flag CLOEXEC */
 
-        lwp_mmu_switch(thread);
+        lwp_aspace_switch(thread);
 
         rt_hw_interrupt_enable(level);
 
@@ -4195,6 +4204,180 @@ int sys_fsync(int fd)
     return res;
 }
 
+mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr)
+{
+    mqd_t mqdes;
+#ifdef ARCH_MM_MMU
+    char *kname = RT_NULL;
+    int a_err = 0;
+    rt_size_t len = 0;
+    struct mq_attr attr_k;
+
+    lwp_user_strlen(name, &a_err);
+    if (a_err)
+        return (mqd_t)-EFAULT;
+    len = rt_strlen(name);
+    if (!len)
+        return (mqd_t)-EINVAL;
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+        return (mqd_t)-ENOMEM;
+
+    lwp_get_from_user(&attr_k, (void *)attr, sizeof(struct mq_attr));
+    lwp_get_from_user(kname, (void *)name, len + 1);
+    mqdes = mq_open(kname, flags, mode, &attr_k);
+    lwp_put_to_user(attr, &attr_k, sizeof(struct mq_attr));
+    kmem_put(kname);
+#else
+    mqdes = mq_open(name, flags, mode, attr);
+#endif
+    if (mqdes == RT_NULL)
+        return (mqd_t)GET_ERRNO();
+    else
+        return mqdes;
+}
+
+int sys_mq_unlink(const char *name)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    char *kname = RT_NULL;
+    int a_err = 0;
+    rt_size_t len = 0;
+
+    lwp_user_strlen(name, &a_err);
+    if (a_err)
+        return -EFAULT;
+    len = rt_strlen(name);
+    if (!len)
+        return -EINVAL;
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+        return -ENOMEM;
+
+    lwp_get_from_user(kname, (void *)name, len + 1);
+    ret = mq_unlink(kname);
+    kmem_put(kname);
+#else
+    ret = mq_unlink(name);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_timedsend(mqd_t mqd, const char *msg, size_t len, unsigned prio, const struct timespec *at)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    char *kmsg = RT_NULL;
+    int a_err = 0;
+    struct timespec at_k;
+
+    lwp_user_strlen(msg, &a_err);
+    if (a_err)
+        return -EFAULT;
+    kmsg = (char *)kmem_get(len + 1);
+    if (!kmsg)
+        return -ENOMEM;
+
+    lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
+    lwp_get_from_user(kmsg, (void *)msg, len + 1);
+    ret = mq_timedsend(mqd, kmsg, len, prio, &at_k);
+    kmem_put(kmsg);
+#else
+    ret = mq_timedsend(mqd, msg, len, prio, at);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_timedreceive(mqd_t mqd, char *restrict msg, size_t len, unsigned *restrict prio, const struct timespec *restrict at)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    char *restrict kmsg = RT_NULL;
+    int a_err = 0;
+
+    struct timespec at_k;
+
+    lwp_user_strlen(msg, &a_err);
+    if (a_err)
+        return -EFAULT;
+    kmsg = (char *restrict)kmem_get(len + 1);
+    if (!kmsg)
+        return -ENOMEM;
+
+    lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
+    lwp_get_from_user(kmsg, (void *)msg, len + 1);
+    ret = mq_timedreceive(mqd, kmsg, len, prio, &at_k);
+    if (ret > 0)
+        lwp_put_to_user(msg, kmsg, len + 1);
+    kmem_put(kmsg);
+#else
+    ret = mq_timedreceive(mqd, msg, len, prio, at);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_notify(mqd_t mqd, const struct sigevent *sev)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    struct sigevent sev_k;
+    lwp_get_from_user(&sev_k, (void *)sev, sizeof(struct timespec));
+    ret = mq_notify(mqd, &sev_k);
+#else
+    ret = mq_notify(mqd, sev);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_getsetattr(mqd_t mqd, const struct mq_attr *restrict new, struct mq_attr *restrict old)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    size_t size = sizeof(struct mq_attr);
+    struct mq_attr *restrict knew = NULL;
+    struct mq_attr *restrict kold = NULL;
+
+    if (new != RT_NULL)
+    {
+        if (!lwp_user_accessable((void *)new, size))
+            return -EFAULT;
+        knew = kmem_get(size);
+        if (!knew)
+            return -ENOMEM;
+        lwp_get_from_user(knew, (void *)new, size);
+    }
+
+    if (!lwp_user_accessable((void *)old, size))
+        return -EFAULT;
+    kold = kmem_get(size);
+    if (!kold)
+        return -ENOMEM;
+
+    lwp_get_from_user(kold, (void *)old, size);
+    ret = mq_setattr(mqd, knew, kold);
+    if (ret != -1)
+        lwp_put_to_user(old, kold, size);
+    kmem_put(kold);
+    if (new != RT_NULL)
+        kmem_put(knew);
+#else
+    ret = mq_setattr(mqd, new, old);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+int sys_mq_close(mqd_t mqd)
+{
+    int ret = 0;
+#ifdef ARCH_MM_MMU
+    ret = mq_close(mqd);
+#else
+    ret = mq_close(mqd);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 const static void* func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -4385,18 +4568,25 @@ const static void* func_table[] =
     SYSCALL_USPACE(SYSCALL_SIGN(sys_madvise)),
     SYSCALL_SIGN(sys_sched_setparam),
     SYSCALL_SIGN(sys_sched_getparam),
-    SYSCALL_SIGN(sys_sched_get_priority_max),
+    SYSCALL_SIGN(sys_sched_get_priority_max),           /* 150 */
     SYSCALL_SIGN(sys_sched_get_priority_min),
     SYSCALL_SIGN(sys_sched_setscheduler),
     SYSCALL_SIGN(sys_sched_getscheduler),
     SYSCALL_SIGN(sys_setaffinity),
-    SYSCALL_SIGN(sys_fsync),
+    SYSCALL_SIGN(sys_fsync),                            /* 155 */
     SYSCALL_SIGN(sys_clock_nanosleep),
     SYSCALL_SIGN(sys_timer_create),
     SYSCALL_SIGN(sys_timer_delete),
     SYSCALL_SIGN(sys_timer_settime),
-    SYSCALL_SIGN(sys_timer_gettime),
+    SYSCALL_SIGN(sys_timer_gettime),                    /* 160 */
     SYSCALL_SIGN(sys_timer_getoverrun),
+    SYSCALL_SIGN(sys_mq_open),
+    SYSCALL_SIGN(sys_mq_unlink),
+    SYSCALL_SIGN(sys_mq_timedsend),
+    SYSCALL_SIGN(sys_mq_timedreceive),
+    SYSCALL_SIGN(sys_mq_notify),
+    SYSCALL_SIGN(sys_mq_getsetattr),
+    SYSCALL_SIGN(sys_mq_close),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
