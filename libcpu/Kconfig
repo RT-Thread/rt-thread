@@ -112,6 +112,7 @@ config ARCH_ARM_ARM11
 config ARCH_ARM_CORTEX_A
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
 
     if ARCH_ARM_CORTEX_A

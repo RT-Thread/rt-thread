@@ -3,6 +3,6 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = [cwd]
-group   = DefineGroup('resource', src, depend = ['RT_USING_POSIX_PIPE'], CPPPATH = CPPPATH)
+group   = DefineGroup('Utilities', src, depend = ['RT_USING_POSIX_PIPE'], CPPPATH = CPPPATH)
 
 Return('group')
