@@ -102,7 +102,10 @@ continue:
     isb
 
 #ifdef RT_USING_SMART
-    ldr r5, =PV_OFFSET
+    /* load r5 with PV_OFFSET */
+    ldr r7, =_reset
+    adr r5, _reset
+    sub r5, r5, r7
 
     mov r7, #0x100000
     sub r7, #1
@@ -172,6 +175,10 @@ bss_loop:
     orr r1, r0
     mcr p15, 0, r1, c1, c0, 1   /* enable smp */
 #endif
+
+    ldr r8, =rt_pv_offset
+    add r8, r8, r5
+    str r5, [r8]
 
     /* initialize the mmu table and enable mmu */
     ldr r0, =platform_mem_desc
@@ -595,16 +602,18 @@ vector_resv:
     bl      rt_hw_trap_resv
     b       .
 
-#ifdef RT_USING_SMP
 .global rt_hw_clz
 rt_hw_clz:
     clz r0, r0
     bx lr
 
+#ifdef RT_USING_SMP
+
 .global rt_secondary_cpu_entry
 rt_secondary_cpu_entry:
 #ifdef RT_USING_SMART
-    ldr     r5, =PV_OFFSET
+    ldr     r0, =rt_pv_offset
+    ldr     r5, [r0]
 
     ldr     lr, =after_enable_mmu_n
     ldr     r0, =init_mtbl

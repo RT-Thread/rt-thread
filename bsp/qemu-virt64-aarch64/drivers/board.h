@@ -26,7 +26,6 @@ extern unsigned char __bss_end;
 #else
 #define HEAP_END    ((void *)HEAP_BEGIN + 64 * 1024 * 1024)
 #define KERNEL_VADDR_START 0x40000000
-#define PV_OFFSET 0
 #endif
 
 void rt_hw_board_init(void);

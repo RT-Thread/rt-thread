@@ -35,7 +35,7 @@ rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PA
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x10000000 - 1, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM},
+    {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
@@ -58,7 +58,7 @@ void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
     /* init data structure */
-    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(0UL - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
 
     /* init page allocator */
     rt_page_init(init_page_region);

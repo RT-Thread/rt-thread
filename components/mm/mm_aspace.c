@@ -31,16 +31,13 @@
 #include <mmu.h>
 #include <tlb.h>
 
-#ifndef RT_USING_SMART
-#define PV_OFFSET 0
-#endif
-
 static void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         void *limit_start, rt_size_t limit_size,
                         mm_flag_t flags);
 
 struct rt_aspace rt_kernel_space;
+rt_ubase_t rt_pv_offset;
 
 rt_varea_t _varea_create(void *start, rt_size_t size)
 {
@@ -488,6 +485,7 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
         varea->start = hint->prefer;
         varea->size = hint->map_size;
         hint->flags |= MMF_MAP_FIXED;
+        LOG_D("%s: start %p size %p phy at %p", __func__, varea->start, varea->size, pa_off << MM_PAGE_SHIFT);
         err = _mm_aspace_map_phy(aspace, varea, hint, attr, pa_off, ret_va);
     }
     else
@@ -743,8 +741,16 @@ int rt_aspace_traversal(rt_aspace_t aspace,
 
 static int _dump(rt_varea_t varea, void *arg)
 {
-    rt_kprintf("%s[%p - %p]\n", varea->mem_obj->get_name(varea), varea->start,
-               varea->start + varea->size);
+    if (varea->mem_obj && varea->mem_obj->get_name)
+    {
+        rt_kprintf("%s[%p - %p]\n", varea->mem_obj->get_name(varea), varea->start,
+                varea->start + varea->size);
+    }
+    else
+    {
+        rt_kprintf("phy-map[%p - %p]\n",  varea->start, varea->start + varea->size);
+        rt_kprintf(" \\_ paddr = %p\n",  varea->offset << MM_PAGE_SHIFT);
+    }
     return 0;
 }
 

@@ -20,6 +20,7 @@
 
 #define MM_PAGE_SHIFT    12
 #define MM_PA_TO_OFF(pa) ((uintptr_t)(pa) >> MM_PAGE_SHIFT)
+#define PV_OFFSET        (rt_pv_offset)
 
 #ifndef RT_USING_SMP
 typedef rt_spinlock_t mm_spinlock;
@@ -42,6 +43,7 @@ struct rt_varea;
 struct rt_mem_obj;
 
 extern struct rt_aspace rt_kernel_space;
+extern rt_ubase_t rt_pv_offset;
 
 typedef struct rt_aspace
 {
