@@ -199,13 +199,6 @@ config ARCH_RISCV64
     select ARCH_CPU_64BIT
     bool
 
-if ARCH_RISCV64
-    config ARCH_KERNEL_ADDR_ISOLATION
-        bool
-        help
-            Isolate kernel space in high address
-endif
-
 config ARCH_IA32
     bool
 
