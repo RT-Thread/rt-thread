@@ -120,7 +120,7 @@ rt_err_t  rt_nand_control(rt_device_t dev, int cmd, void *args)
 }
 
 /*pos: sector offset   size: page count*/
-rt_size_t rt_nand_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+rt_ssize_t rt_nand_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     uint32_t page_cnt = size;
     NAND_AddressTypeDef ReadAddr;
@@ -131,7 +131,7 @@ rt_size_t rt_nand_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t si
     return RT_EOK;
 }
 
-rt_size_t rt_nand_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+rt_ssize_t rt_nand_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     uint32_t page_cnt = size;
     NAND_AddressTypeDef WriteAddr;

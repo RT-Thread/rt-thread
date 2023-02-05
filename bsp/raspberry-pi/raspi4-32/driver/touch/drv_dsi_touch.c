@@ -77,7 +77,7 @@ static void dsi_touch_thread_entry(void *param)
     }
 }
 
-static rt_size_t dsi_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t dsi_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
     rt_uint16_t* touchxy = (rt_uint16_t *)buf;
     if((read_num != 0) && (touch_state == 1))

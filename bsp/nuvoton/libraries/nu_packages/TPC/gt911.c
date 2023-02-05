@@ -200,7 +200,7 @@ static void gt911_touch_down(void *buf, rt_int8_t id, rt_int16_t x, rt_int16_t y
 static rt_int8_t pre_id[GT911_MAX_TOUCH];
 static rt_uint8_t pre_touch = 0;
 
-static rt_size_t gt911_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t gt911_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
     rt_uint8_t point_status = 0;
     rt_uint8_t touch_num = 0;

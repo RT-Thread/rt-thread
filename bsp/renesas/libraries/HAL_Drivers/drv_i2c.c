@@ -69,7 +69,7 @@ static fsp_err_t validate_i2c_event(void)
     return FSP_ERR_TRANSFER_ABORTED;
 }
 
-static rt_size_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                 struct rt_i2c_msg msgs[],
                                 rt_uint32_t num)
 {

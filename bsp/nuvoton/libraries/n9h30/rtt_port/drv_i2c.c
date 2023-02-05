@@ -459,7 +459,7 @@ static int32_t nu_i2c_ioctl(nu_i2c_dev_t psNuI2cDev, uint32_t cmd, uint32_t arg0
     return (0);
 }
 
-static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num)
 {
