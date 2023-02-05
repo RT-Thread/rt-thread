@@ -3,6 +3,6 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = [cwd]
-group   = DefineGroup('ADT', src, depend = [], CPPPATH = CPPPATH)
+group   = DefineGroup('Utilities', src, depend = ['RT_USING_ADT'], CPPPATH = CPPPATH)
 
 Return('group')
