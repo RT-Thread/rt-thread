@@ -54,11 +54,17 @@ void primary_cpu_entry(void)
 
 #define IOREMAP_SIZE (1ul << 30)
 
+#ifndef ARCH_KERNEL_IN_HIGH_VA
+#define IOREMAP_VEND USER_VADDR_START
+#else
+#define IOREMAP_VEND 0ul
+#endif
+
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
     /* init data structure */
-    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(0UL - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(IOREMAP_VEND - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
 
     /* init page allocator */
     rt_page_init(init_page_region);
