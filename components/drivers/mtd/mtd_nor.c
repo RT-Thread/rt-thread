@@ -30,7 +30,7 @@ static rt_err_t _mtd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t _mtd_read(rt_device_t dev,
+static rt_ssize_t _mtd_read(rt_device_t dev,
                            rt_off_t    pos,
                            void       *buffer,
                            rt_size_t   size)
@@ -38,7 +38,7 @@ static rt_size_t _mtd_read(rt_device_t dev,
     return size;
 }
 
-static rt_size_t _mtd_write(rt_device_t dev,
+static rt_ssize_t _mtd_write(rt_device_t dev,
                             rt_off_t    pos,
                             const void *buffer,
                             rt_size_t   size)

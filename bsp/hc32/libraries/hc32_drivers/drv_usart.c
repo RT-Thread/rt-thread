@@ -374,7 +374,7 @@ static int hc32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t hc32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t hc32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
 #ifdef RT_SERIAL_USING_DMA
     struct hc32_uart *uart;

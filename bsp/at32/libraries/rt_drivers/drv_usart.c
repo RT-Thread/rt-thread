@@ -333,7 +333,7 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     nvic_irq_enable(instance->irqn, 1, 0);
 }
 
-static rt_size_t at32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t at32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct at32_uart *instance;
     instance = (struct at32_uart *) serial->parent.user_data;

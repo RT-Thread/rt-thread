@@ -864,7 +864,7 @@ static int hpm_uart_getc(struct rt_serial_device *serial)
     return result;
 }
 
-static rt_size_t hpm_uart_transmit(struct rt_serial_device *serial,
+static rt_ssize_t hpm_uart_transmit(struct rt_serial_device *serial,
                                     rt_uint8_t *buf,
                                     rt_size_t size,
                                     rt_uint32_t tx_flag)

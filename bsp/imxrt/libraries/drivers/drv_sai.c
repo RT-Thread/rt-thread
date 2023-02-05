@@ -504,7 +504,7 @@ static rt_err_t imxrt_payer_stop(struct rt_audio_device* audio, int stream)
     return RT_EOK;
 
 }
-static rt_size_t imxrt_payer_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size)
+static rt_ssize_t imxrt_payer_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size)
 {
     RT_ASSERT(audio != RT_NULL);
 #if defined (BSP_USING_AUDIO_RECORD)

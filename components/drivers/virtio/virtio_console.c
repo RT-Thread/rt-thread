@@ -78,8 +78,8 @@ static void virtio_console_send_ctrl(struct virtio_console_device *virtio_consol
 static rt_err_t virtio_console_port_init(rt_device_t dev);
 static rt_err_t virtio_console_port_open(rt_device_t dev, rt_uint16_t oflag);
 static rt_err_t virtio_console_port_close(rt_device_t dev);
-static rt_size_t virtio_console_port_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-static rt_size_t virtio_console_port_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_ssize_t virtio_console_port_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_ssize_t virtio_console_port_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 static rt_err_t virtio_console_port_control(rt_device_t dev, int cmd, void *args);
 
 #ifdef RT_USING_DEVICE_OPS
@@ -295,7 +295,7 @@ static rt_err_t virtio_console_port_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t virtio_console_port_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t virtio_console_port_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_off_t i = 0;
     rt_uint16_t id;
@@ -346,7 +346,7 @@ static rt_size_t virtio_console_port_read(rt_device_t dev, rt_off_t pos, void *b
     return size;
 }
 
-static rt_size_t virtio_console_port_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t virtio_console_port_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     char ch = 0;
     rt_off_t i = 0;

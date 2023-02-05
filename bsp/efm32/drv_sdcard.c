@@ -136,7 +136,7 @@ static void efm_spiSd_speed(rt_uint8_t level)
  * @return
  *   Number of read bytes
  ******************************************************************************/
-static rt_size_t efm_spiSd_read(void *buffer, rt_size_t size)
+static rt_ssize_t efm_spiSd_read(void *buffer, rt_size_t size)
 {
     RT_ASSERT(spi != RT_NULL);
 
@@ -807,7 +807,7 @@ static rt_err_t rt_spiSd_close(rt_device_t dev)
  * @return
  *   Number of read sectors
  ******************************************************************************/
-static rt_size_t rt_spiSd_read(
+static rt_ssize_t rt_spiSd_read(
     rt_device_t     dev,
     rt_off_t        sector,
     void            *buffer,
@@ -897,7 +897,7 @@ static rt_size_t rt_spiSd_read(
  * @return
  *   Number of written sectors
  ******************************************************************************/
-static rt_size_t rt_spiSd_write (
+static rt_ssize_t rt_spiSd_write (
     rt_device_t     dev,
     rt_off_t        sector,
     const void      *buffer,

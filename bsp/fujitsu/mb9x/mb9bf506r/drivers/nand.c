@@ -358,7 +358,7 @@ static rt_err_t rt_nand_close(rt_device_t dev)
 }
 
 /* nand device read */
-static rt_size_t rt_nand_read (rt_device_t dev, rt_off_t pos, void* buffer,
+static rt_ssize_t rt_nand_read (rt_device_t dev, rt_off_t pos, void* buffer,
                                rt_size_t size)
 {
     rt_ubase_t block;           /* block of position */
@@ -456,7 +456,7 @@ static int rt_nand_eraseblock_writepage(struct rt_device_nand* nand,
 }
 
 /* nand device write */
-static rt_size_t rt_nand_write (rt_device_t dev, rt_off_t pos,
+static rt_ssize_t rt_nand_write (rt_device_t dev, rt_off_t pos,
                                 const void* buffer, rt_size_t size)
 {
     rt_ubase_t block, page;

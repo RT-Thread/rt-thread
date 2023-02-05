@@ -14,10 +14,10 @@
 #ifdef BSP_USING_I2C
 
 static struct rt_i2c_bus_device prv_air105_i2c;
-static rt_size_t air105_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t air105_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num);
-static rt_size_t air105_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t air105_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num);
 static rt_err_t air105_i2c_bus_control(struct rt_i2c_bus_device *bus,
@@ -32,7 +32,7 @@ static const struct rt_i2c_bus_device_ops air105_i2c_ops =
 };
 
 
-static rt_size_t air105_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t air105_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num)
 {
@@ -81,7 +81,7 @@ static rt_size_t air105_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     }
     return i;
 }
-static rt_size_t air105_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t air105_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num)
 {

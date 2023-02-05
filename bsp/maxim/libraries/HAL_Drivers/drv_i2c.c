@@ -66,7 +66,7 @@ static struct mxc_i2c_config i2c_config[] =
 static struct mxc_i2c i2c_obj[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
 
 
-static rt_size_t mxc_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t mxc_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                   struct rt_i2c_msg msgs[],
                                   rt_uint32_t num)
 {
