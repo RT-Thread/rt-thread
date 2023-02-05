@@ -169,16 +169,6 @@ after_mmu_enable:
 
     b  rtthread_startup
 
-#ifdef RT_USING_SMART
-_calc_pv_offset:
-    ldr     x2, =__start
-    GET_PHY x3, __start
-    sub     x3, x3, x2
-    GET_PHY x1, rt_pv_offset
-    str     x3, [x1]
-    ret
-#endif
-
 #ifdef RT_USING_SMP
 /**
  *  secondary cpu

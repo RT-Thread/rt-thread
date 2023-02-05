@@ -612,8 +612,9 @@ rt_hw_clz:
 .global rt_secondary_cpu_entry
 rt_secondary_cpu_entry:
 #ifdef RT_USING_SMART
-    ldr     r0, =rt_pv_offset
-    ldr     r5, [r0]
+    ldr     r0, =_reset
+    adr     r5, _reset
+    sub     r5, r5, r0
 
     ldr     lr, =after_enable_mmu_n
     ldr     r0, =init_mtbl
