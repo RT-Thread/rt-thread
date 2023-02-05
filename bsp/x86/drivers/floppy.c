@@ -264,7 +264,7 @@ static rt_err_t rt_floppy_close(rt_device_t dev)
  * buffer:
  * size  : how many blocks
  */
-static rt_size_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buffer, rt_size_t size)
+static rt_ssize_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buffer, rt_size_t size)
 {
     rt_size_t doSize = size;
 
@@ -300,7 +300,7 @@ static rt_size_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buf
  * buffer:
  * size  : how many blocks
  */
-static rt_size_t rt_floppy_write(rt_device_t device, rt_off_t position, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_floppy_write(rt_device_t device, rt_off_t position, const void *buffer, rt_size_t size)
 {
     rt_mutex_take(&lock, RT_WAITING_FOREVER);
     panic("FIXME:I don't know how!\n");

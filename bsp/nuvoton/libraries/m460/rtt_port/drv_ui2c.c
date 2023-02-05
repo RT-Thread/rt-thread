@@ -56,7 +56,7 @@ static struct nu_ui2c_bus nu_ui2c_arr [ ] =
 #endif
 };
 /* Private functions ------------------------------------------------------------*/
-static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                   struct rt_i2c_msg msgs[],
                                   rt_uint32_t num);
 
@@ -208,7 +208,7 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_bus_t nu_ui2c,
     return RT_EOK;
 }
 
-static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                   struct rt_i2c_msg msgs[],
                                   rt_uint32_t num)
 {

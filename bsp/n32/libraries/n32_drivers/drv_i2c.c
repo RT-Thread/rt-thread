@@ -336,7 +336,7 @@ static int rt_i2c_write(rt_uint32_t i2c_periph, uint16_t slave_address, uint8_t*
 
 
 
-static rt_size_t rt_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t rt_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;

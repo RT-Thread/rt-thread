@@ -232,7 +232,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
 }
 
 static uint32_t dma_buffer[SECTOR_SIZE/sizeof(uint32_t)];
-static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
 
@@ -283,7 +283,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
     }
 }
 
-static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 #define WR_RETRY_TIMES 2
 

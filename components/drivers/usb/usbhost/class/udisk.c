@@ -64,7 +64,7 @@ static rt_err_t rt_udisk_init(rt_device_t dev)
  *
  * @return the actually read size on successful, otherwise negative returned.
  */
-static rt_size_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void* buffer,
+static rt_ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void* buffer,
     rt_size_t size)
 {
     rt_err_t ret;
@@ -102,7 +102,7 @@ static rt_size_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void* buffer,
  *
  * @return the actually written size on successful, otherwise negative returned.
  */
-static rt_size_t rt_udisk_write (rt_device_t dev, rt_off_t pos, const void* buffer,
+static rt_ssize_t rt_udisk_write (rt_device_t dev, rt_off_t pos, const void* buffer,
     rt_size_t size)
 {
     rt_err_t ret;
