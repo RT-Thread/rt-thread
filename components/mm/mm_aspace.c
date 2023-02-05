@@ -743,13 +743,13 @@ static int _dump(rt_varea_t varea, void *arg)
 {
     if (varea->mem_obj && varea->mem_obj->get_name)
     {
-        rt_kprintf("%s[%p - %p]\n", varea->mem_obj->get_name(varea), varea->start,
-                varea->start + varea->size);
+        rt_kprintf("[%p - %p] %s\n", varea->start, varea->start + varea->size,
+                   varea->mem_obj->get_name(varea));
     }
     else
     {
-        rt_kprintf("phy-map[%p - %p]\n",  varea->start, varea->start + varea->size);
-        rt_kprintf(" \\_ paddr = %p\n",  varea->offset << MM_PAGE_SHIFT);
+        rt_kprintf("[%p - %p] phy-map\n", varea->start, varea->start + varea->size);
+        rt_kprintf("\t\\_ paddr = %p\n",  varea->offset << MM_PAGE_SHIFT);
     }
     return 0;
 }
