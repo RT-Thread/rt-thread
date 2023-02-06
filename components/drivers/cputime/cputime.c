@@ -44,6 +44,24 @@ uint64_t clock_cpu_gettime(void)
 }
 
 /**
+ * The clock_cpu_settimeout() fucntion set timeout time and timeout callback function
+ * The timeout callback function will be called when the timeout time is reached
+ *
+ * @param tick the Timeout tick
+ * @param timeout the Timeout function
+ * @param parameter the Parameters of timeout function
+ *
+ */
+void clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param)
+{
+    if (_cputime_ops)
+        return _cputime_ops->cputime_settimeout(tick, timeout, param);
+
+    rt_set_errno(ENOSYS);
+    return 0;
+}
+
+/**
  * The clock_cpu_microsecond() fucntion shall return the microsecond according to
  * cpu_tick parameter.
  *
