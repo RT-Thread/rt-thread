@@ -15,8 +15,6 @@ static void list_kernel_space(void)
 {
     rt_aspace_print_all(&rt_kernel_space);
 }
-#ifdef RT_USING_FINSH
 MSH_CMD_EXPORT(list_kernel_space, List varea in kernel space);
-#endif
 
 void rt_kmem_list_varea(void) __attribute__((alias("list_kernel_space")));

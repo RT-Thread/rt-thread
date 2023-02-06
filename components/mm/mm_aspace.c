@@ -758,3 +758,8 @@ void rt_aspace_print_all(rt_aspace_t aspace)
 {
     rt_aspace_traversal(aspace, _dump, NULL);
 }
+
+rt_ubase_t rt_get_pvoff(void)
+{
+    return rt_pv_offset;
+}
