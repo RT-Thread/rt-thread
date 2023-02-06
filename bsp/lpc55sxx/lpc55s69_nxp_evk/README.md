@@ -92,7 +92,6 @@ On the menuconfig page, configure and select the corresponding chip model, if th
 `Note: Because some versions of Keil5 have issues with AC6 compiler support, it is recommended to upgrade keil to the latest version`
 
 > [Download the latest version of Keil here](https://www.keil.com/update/check.asp?P=MDK&V=5.38.0.0&S=)
-> [Keil Registry download address](https://github.com/kurisaW/my_tools/tree/main/Keil%E6%B3%A8%E5%86%8C%E6%9C%BA)
 
 Some error messages are as follows:
 
