@@ -1,3 +1,12 @@
+menu "RT-Thread Components"
+
+    config PKG_USING_MICROPYTHON
+        bool "Support legacy version for compatibility"
+        depends on PKG_USING_MICROPYTHON
+        select RT_USING_LEGACY
+        default n
+endmenu
+
 menu "Hardware Drivers Config"
 
 config SOC_LPC55S6X
