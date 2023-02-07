@@ -99,7 +99,7 @@ LPC55S69 是由恩智浦NXP半导体推出的基于Cortex-M33内核的高性能�
 
 ![](./figures/bug.png)
 
-`或参考此论坛博文：[AC6编译报错unsupported option '--c99'解决办法](https://club.rt-thread.org/ask/question/4c744e41ded5efb0.html)`
+或参考此论坛博文：[AC6编译报错unsupported option '--c99'解决办法](https://club.rt-thread.org/ask/question/4c744e41ded5efb0.html)
 
 5) 编译
 
