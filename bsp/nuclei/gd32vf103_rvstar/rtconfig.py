@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH='risc-v'
-CPU='nuclei'
+CPU='bumblebee'
 CROSS_TOOL='gcc'
 
 # bsp lib config
@@ -13,7 +13,7 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM  = 'gcc'
-    EXEC_PATH = 'D:/Software/Nuclei/gcc/bin'
+    EXEC_PATH = r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\NUCLEI\RISC-V-GCC-NUCLEI\2022.05\bin'
 else:
     print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
 
@@ -50,6 +50,7 @@ if PLATFORM == 'gcc':
     CPATH   = ''
     LPATH   = ''
     LIBS = ['stdc++']
+    AFLAGS += ' -I. '
 
     if BUILD == 'debug':
         CFLAGS += ' -O2 -Os -ggdb'

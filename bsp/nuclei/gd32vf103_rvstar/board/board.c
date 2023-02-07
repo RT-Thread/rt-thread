@@ -13,6 +13,8 @@
 #include <rtdevice.h>
 #include "board.h"
 #include "cpuport.h"
+#define SYSTICK_TICK_CONST                      (SOC_TIMER_FREQ / RT_TICK_PER_SECOND)
+#define RT_KERNEL_INTERRUPT_LEVEL               1
 
 #ifdef RT_USING_SERIAL
     #include <drv_usart.h>
@@ -120,6 +122,24 @@ void rt_hw_drivers_init(void)
 #ifdef BSP_USING_PWM
     rt_hw_pwm_drvinit();
 #endif
+}
+
+rt_weak void rt_hw_ticksetup(void)
+{
+    uint64_t ticks = SYSTICK_TICK_CONST;
+
+    /* Make SWI and SysTick the lowest priority interrupts. */
+    /* Stop and clear the SysTimer. SysTimer as Non-Vector Interrupt */
+    SysTick_Config(ticks);
+    ECLIC_DisableIRQ(SysTimer_IRQn);
+    ECLIC_SetLevelIRQ(SysTimer_IRQn, RT_KERNEL_INTERRUPT_LEVEL);
+    ECLIC_SetShvIRQ(SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT);
+    ECLIC_EnableIRQ(SysTimer_IRQn);
+
+    /* Set SWI interrupt level to lowest level/priority, SysTimerSW as Vector Interrupt */
+    ECLIC_SetShvIRQ(SysTimerSW_IRQn, ECLIC_VECTOR_INTERRUPT);
+    ECLIC_SetLevelIRQ(SysTimerSW_IRQn, RT_KERNEL_INTERRUPT_LEVEL);
+    ECLIC_EnableIRQ(SysTimerSW_IRQn);
 }
 
 /**

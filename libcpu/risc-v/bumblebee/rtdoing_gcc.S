@@ -9,6 +9,10 @@ rt_hw_do_after_save_above:
     csrr  a1, mepc
     mv    a2, sp
     csrrw ra, 0x07ED, ra
+
+	li   t0,    0x08
+	csrc mstatus, t0
+
     LOAD  ra,  0 * REGBYTES(sp)
     addi  sp, sp,  4
     ret

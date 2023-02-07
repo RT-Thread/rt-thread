@@ -23,10 +23,10 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
-#define RT_DEBUG_INIT_CONFIG
-#define RT_DEBUG_INIT 1
+// #define RT_DEBUG
+// #define RT_DEBUG_COLOR
+// #define RT_DEBUG_INIT_CONFIG
+// #define RT_DEBUG_INIT 1
 
 /* Inter-Thread communication */
 
@@ -48,7 +48,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart4"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40101
 #define ARCH_RISCV
 #define ARCH_RISCV32
@@ -208,7 +208,7 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_UART
-#define BSP_USING_UART4
+#define BSP_USING_UART0
 
 /* Board extended module Drivers */
 

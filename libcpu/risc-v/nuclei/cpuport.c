@@ -125,7 +125,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  * @param from thread sp of from thread
  * @param to thread sp of to thread
  */
-void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
 {
     if (rt_thread_switch_interrupt_flag == 0)
         rt_interrupt_from_thread = from;
@@ -143,7 +143,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
  */
 void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to)
 {
-    rt_hw_context_switch_interrupt(from, to);
+    rt_hw_context_switch_interrupt(from, to,0,0);
 }
 
 /**
