@@ -60,13 +60,13 @@
 #if (defined(__stack_size__))
   #define Stack_Size                   __stack_size__
 #else
-  #define Stack_Size                   0x0400
+  #define Stack_Size                   0x2000
 #endif
 
 #if (defined(__heap_size__))
   #define Heap_Size                    __heap_size__
 #else
-  #define Heap_Size                    0x0400
+  #define Heap_Size                    0x2000
 #endif
 
 #define RTT_HEAP_SIZE (m_data_size-ImageLength(RW_m_data)-ImageLength(ARM_LIB_HEAP)-ImageLength(ARM_LIB_STACK))

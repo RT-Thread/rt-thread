@@ -105,13 +105,8 @@ typedef struct _usb_host_process_descriptor_param
     uint8_t descriptorIndex;   /*!< The descriptor index is used to select a specific descriptor (only for configuration
                                   and string descriptors) when several descriptors of the same type are implemented in a
                                   device */
-#ifdef SOC_IMXRT1170_SERIES
     uint16_t languageId;        /*!< It specifies the language ID for string descriptors or is reset to zero for other
                                   descriptors */
-#else
-    uint8_t languageId;        /*!< It specifies the language ID for string descriptors or is reset to zero for other
-                                  descriptors */
-#endif
     uint8_t *descriptorBuffer; /*!< Buffer pointer */
     uint16_t descriptorLength; /*!< Buffer data length */
 } usb_host_process_descriptor_param_t;
@@ -724,7 +719,7 @@ extern usb_status_t USB_HostResumeDeviceResquest(usb_host_handle hostHandle, usb
  */
 extern usb_status_t USB_HostL1SleepDeviceResquest(usb_host_handle hostHandle,
                                                   usb_device_handle deviceHandle,
-                                                  uint8_t sleeptype);
+                                                  uint8_t sleepType);
 
 /*!
  * @brief Send a bus or device resume request.

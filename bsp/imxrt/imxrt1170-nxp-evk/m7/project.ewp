@@ -10,9 +10,13 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>31</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
+        <option>
+          <name>BrowseInfoPath</name>
+          <state>rtthread\BrowseInfo</state>
+        </option>
         <option>
           <name>ExePath</name>
           <state>build\iar\Exe</state>
@@ -57,7 +61,7 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
+          <state>A compact configuration of the C/C++14 runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -65,15 +69,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>8.32.1.18618</state>
-        </option>
-        <option>
-          <name>GeneralEnableMisra</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GeneralMisraVerbose</name>
-          <state>0</state>
+          <state>9.30.1.50052</state>
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
@@ -96,26 +92,12 @@
           <state>0</state>
         </option>
         <option>
-          <name>GeneralMisraRules98</name>
-          <version>0</version>
-          <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-        </option>
-        <option>
-          <name>GeneralMisraVer</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GeneralMisraRules04</name>
-          <version>0</version>
-          <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
-        </option>
-        <option>
           <name>RTConfigPath2</name>
           <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>26</version>
+          <version>32</version>
           <state>41</state>
         </option>
         <option>
@@ -132,7 +114,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>26</version>
+          <version>32</version>
           <state>41</state>
         </option>
         <option>
@@ -155,7 +137,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>26</version>
+          <version>32</version>
           <state>41</state>
         </option>
         <option>
@@ -208,13 +190,33 @@
           <version>0</version>
           <state>0</state>
         </option>
+        <option>
+          <name>OGAarch64Abi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OG_32_64Device</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>BuildFilesPath</name>
+          <state>rtthread</state>
+        </option>
+        <option>
+          <name>PointerAuthentication</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>FPU64</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>35</version>
+        <version>37</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -236,6 +238,8 @@
           <state>ARM_MATH_CM7</state>
           <state>USE_SDRAM</state>
           <state>SOC_IMXRT1170_SERIES</state>
+          <state>ENDIANNESS</state>
+          <state>USE_RTOS</state>
           <state>__RTTHREAD__</state>
         </option>
         <option>
@@ -356,35 +360,35 @@
           <state />
         </option>
         <option>
-          <name>CompilerMisraOverride</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\board\MCUX_Config</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176</state>
-          <state>$PROJ_DIR$\xip</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\libraries\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176</state>
+          <state>$PROJ_DIR$\..\..\libraries\MIMXRT1170\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7</state>
+          <state>$PROJ_DIR$\..\..\libraries\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers</state>
+          <state>$PROJ_DIR$\xip</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\net\netdev\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\core</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\board\MCUX_Config</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\class</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1170\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\netdev\include</state>
-          <state>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -410,16 +414,6 @@
         <option>
           <name>CCOptLevelSlave</name>
           <state>1</state>
-        </option>
-        <option>
-          <name>CompilerMisraRules98</name>
-          <version>0</version>
-          <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-        </option>
-        <option>
-          <name>CompilerMisraRules04</name>
-          <version>0</version>
-          <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
         <option>
           <name>CCPosIndRopi</name>
@@ -502,13 +496,17 @@
           <name>OICompilerExtraOption</name>
           <state>1</state>
         </option>
+        <option>
+          <name>CCStackProtection</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>AARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>10</version>
+        <version>11</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -664,6 +662,10 @@
           <name>AsmNoLiteralPool</name>
           <state>0</state>
         </option>
+        <option>
+          <name>PreInclude</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -702,13 +704,9 @@
       <data>
         <extensions />
         <cmdline />
-        <hasPrio>0</hasPrio>
+        <hasPrio>208</hasPrio>
+        <buildSequence>inputOutputBased</buildSequence>
       </data>
-    </settings>
-    <settings>
-      <name>BICOMP</name>
-      <archiveVersion>0</archiveVersion>
-      <data />
     </settings>
     <settings>
       <name>BUILDACTION</name>
@@ -722,16 +720,12 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>22</version>
+        <version>27</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
           <name>IlinkLibIOConfig</name>
           <state>1</state>
-        </option>
-        <option>
-          <name>XLinkMisraHandler</name>
-          <state>0</state>
         </option>
         <option>
           <name>IlinkInputFileSlave</name>
@@ -1042,6 +1036,58 @@
           <name>OILinkExtraOption</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkLogCrtRoutineSelection</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogFragmentInfo</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogInlining</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogMerging</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkDemangle</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkWrapperFileEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkWrapperFile</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkProcessor</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkFpuProcessor</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -1065,11 +1111,6 @@
         </option>
       </data>
     </settings>
-    <settings>
-      <name>BILINK</name>
-      <archiveVersion>0</archiveVersion>
-      <data />
-    </settings>
   </configuration>
   <group>
     <name>Applications</name>
@@ -1083,106 +1124,106 @@
   <group>
     <name>Compiler</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cstdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstring.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\ctime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cwchar.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
     </file>
   </group>
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\cputime\cputime.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\cputime\cputime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\ringbuffer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\waitqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\phy\phy.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\phy\phy.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\serial\serial.c</name>
     </file>
   </group>
   <group>
@@ -1200,124 +1241,166 @@
       <name>$PROJ_DIR$\board\dcd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\drivers\drv_gpio.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\drv_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\drv_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\drv_usbh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\usb\host\usb_host_devices.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\usb\host\usb_host_ehci.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\usb\host\usb_host_framework.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\usb\host\usb_host_hci.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\drivers\usb\phy\usb_phy.c</name>
     </file>
   </group>
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\finsh\cmd.c</name>
     </file>
   </group>
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\memheap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\timer.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_pmu.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_pmu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\system_MIMXRT1176_cm7.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\system_MIMXRT1176_cm7.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_lpuart.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_lpuart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_gpio.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\iar\startup_MIMXRT1176_cm7.s</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_os_abstraction_rtthread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_anatop_ai.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\iar\startup_MIMXRT1176_cm7.s</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_dcdc.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_anatop_ai.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7\fsl_cache.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_dcdc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common_arm.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7\fsl_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common_arm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_clock.c</name>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_common.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\generic_list.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\fsl_clock.c</name>
     </file>
   </group>
   <group>
     <name>POSIX</name>
   </group>
   <group>
-    <name>SAL</name>
+    <name>rt_usbh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\core\hub.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\core\usbhost.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\core\usbhost_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\core\driver.c</name>
+    </file>
+  </group>
+  <group>
+    <name>SAL</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
     </file>
   </group>
   <group>
     <name>xip</name>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+      <name>$PROJ_DIR$\xip\evkmimxrt1170_flexspi_nor_config.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\xip\evkmimxrt1170_flexspi_nor_config.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
   </group>
 </project>

@@ -1,12 +1,12 @@
 /*
- * Copyright 2021 NXP
+ * Copyright 2018-2020 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __EVKBMIMXRT1060_FLEXSPI_NOR_CONFIG__
-#define __EVKBMIMXRT1060_FLEXSPI_NOR_CONFIG__
+#ifndef __EVKMIMXRT1060_FLEXSPI_NOR_CONFIG__
+#define __EVKMIMXRT1060_FLEXSPI_NOR_CONFIG__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -265,4 +265,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-#endif /* __EVKBMIMXRT1060_FLEXSPI_NOR_CONFIG__ */
+#endif /* __EVKMIMXRT1060_FLEXSPI_NOR_CONFIG__ */
