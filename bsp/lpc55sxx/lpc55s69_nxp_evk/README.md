@@ -97,6 +97,10 @@ Some error messages are as follows:
 
 ![](./figures/bug.png)
 
+`Or you can choose to refer to this forum post:[AC6 compiler error unsupported option '--c99' solution](https://club.rt-thread.org/ask/question/4c744e41ded5efb0.html)`
+
+![](./figures/club_blog.png)
+
 ---
 
 5) Compile
