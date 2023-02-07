@@ -730,7 +730,9 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         rt_tick_t tick, tick_old = rt_tick_get();
         if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
         {
-            tick = (rqtp->tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND + (rqtp->tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
+            rt_int64_t ts = ((rqtp->tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND);
+            rt_int64_t tns = (rqtp->tv_nsec - _timevalue.tv_usec * 1000) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
+            tick = ts + tns;
             rt_tick_t rt_tick = rt_tick_get();
             tick = tick < rt_tick ? 0 : tick - rt_tick;
         }
@@ -1216,7 +1218,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     return -1;
 #else
         rt_int64_t ts = ((value->it_value.tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND);
-        rt_int64_t tns = (value->it_value.tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
+        rt_int64_t tns = (value->it_value.tv_nsec - _timevalue.tv_usec * 1000) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
         rt_int64_t reload = ts + tns;
         rt_tick_t rt_tick = rt_tick_get();
         timer->reload = reload < rt_tick ? 0 : reload - rt_tick;
