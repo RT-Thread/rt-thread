@@ -103,8 +103,8 @@ src += ['MIMXRT1060/drivers/fsl_xbara.c']
 src += ['MIMXRT1060/drivers/fsl_xbarb.c']
 
 # #fsl os abstract files
-# src += ['MIMXRT1060/drivers/fsl_os_abstraction_rtthread.c']
-# src += ['MIMXRT1060/drivers/generic_list.c']
+src += ['MIMXRT1060/drivers/fsl_os_abstraction_rtthread.c']
+src += ['MIMXRT1060/drivers/generic_list.c']
 
 if rtconfig.PLATFORM in ['gcc']:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
