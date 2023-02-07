@@ -87,7 +87,19 @@ On the menuconfig page, configure and select the corresponding chip model, if th
 
 **MDK and IAR must manually select the chip signal once in the project after the project is built, otherwise a serious compilation error will be generated.**
 
+---
 
+Note: Because some versions of Keil5 have issues with AC6 compiler support, it is recommended to upgrade keil to the latest version
+
+> [Download the latest version of Keil here](https://www.keil.com/update/check.asp?P=MDK&V=5.38.0.0&S=)
+
+Some error messages are as follows:
+
+![](./figures/bug.png)
+
+Or you can choose to refer to this forum post:[AC6 compiler error unsupported option '--c99' solution](https://club.rt-thread.org/ask/question/4c744e41ded5efb0.html)
+
+---
 
 5) Compile
 
