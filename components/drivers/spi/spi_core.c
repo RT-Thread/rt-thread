@@ -69,6 +69,29 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
     return -RT_ERROR;
 }
 
+rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
+                                  const char           *name,
+                                  const char           *bus_name,
+                                  void                 *user_data,
+                                  rt_base_t            cs_pin)
+{
+    rt_err_t result;
+
+    result = rt_spi_bus_attach_device(device, name, bus_name, user_data);
+    if(result != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
+    device->cs_pin = cs_pin;
+    if(cs_pin != PIN_NONE)
+    {
+        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
+        rt_pin_write(cs_pin, PIN_HIGH);
+    }
+    return RT_EOK;
+}
+
 rt_err_t rt_spi_configure(struct rt_spi_device        *device,
                           struct rt_spi_configuration *cfg)
 {
