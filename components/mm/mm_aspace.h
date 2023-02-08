@@ -43,6 +43,7 @@ struct rt_varea;
 struct rt_mem_obj;
 
 extern struct rt_aspace rt_kernel_space;
+extern const rt_ubase_t rt_pv_offset;
 
 typedef struct rt_aspace
 {

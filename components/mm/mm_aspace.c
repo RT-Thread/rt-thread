@@ -37,7 +37,7 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         mm_flag_t flags);
 
 struct rt_aspace rt_kernel_space;
-rt_ubase_t rt_pv_offset;
+const rt_ubase_t rt_pv_offset;
 
 rt_varea_t _varea_create(void *start, rt_size_t size)
 {
