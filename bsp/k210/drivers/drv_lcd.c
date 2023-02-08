@@ -443,7 +443,7 @@ static rt_err_t drv_lcd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
 
     /* Not need */
@@ -451,7 +451,7 @@ static rt_size_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
     return 0;
 }
 
-static rt_size_t drv_lcd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t drv_lcd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
 
     /* Not need */

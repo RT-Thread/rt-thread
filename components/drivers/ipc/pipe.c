@@ -462,7 +462,7 @@ rt_err_t rt_pipe_close(rt_device_t device)
  * @return   Return the length of data read.
  *           When the return value is 0, it means the pipe device handle is empty or the count is 0.
  */
-rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
+rt_ssize_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t read_bytes = 0;
@@ -510,7 +510,7 @@ rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t
  * @return   Return the length of data written.
  *           When the return value is 0, it means the pipe device handle is empty or the count is 0.
  */
-rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
+rt_ssize_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t write_bytes = 0;

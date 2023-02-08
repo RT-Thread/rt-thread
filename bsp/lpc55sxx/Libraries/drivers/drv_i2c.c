@@ -66,7 +66,7 @@ static void i2c_mst_dma_callback(I2C_Type *base, i2c_master_dma_handle_t *handle
     rt_sem_release(lpc_i2c->sem);
 }
 
-static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
                               struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;

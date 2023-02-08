@@ -71,8 +71,8 @@ static rt_err_t nu_emac_init(rt_device_t dev);
 
 static rt_err_t nu_emac_open(rt_device_t dev, rt_uint16_t oflag);
 static rt_err_t nu_emac_close(rt_device_t dev);
-static rt_size_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-static rt_size_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_ssize_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_ssize_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 static rt_err_t nu_emac_control(rt_device_t dev, int cmd, void *args);
 static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p);
 static struct pbuf *nu_emac_rx(rt_device_t dev);
@@ -281,13 +281,13 @@ static rt_err_t nu_emac_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;

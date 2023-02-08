@@ -845,7 +845,7 @@ void rt_pm_default_set(rt_uint8_t sleep_mode)
 /**
  * RT-Thread device interface for PM device
  */
-static rt_size_t _rt_pm_device_read(rt_device_t dev,
+static rt_ssize_t _rt_pm_device_read(rt_device_t dev,
                                     rt_off_t    pos,
                                     void       *buffer,
                                     rt_size_t   size)
@@ -868,7 +868,7 @@ static rt_size_t _rt_pm_device_read(rt_device_t dev,
     return length;
 }
 
-static rt_size_t _rt_pm_device_write(rt_device_t dev,
+static rt_ssize_t _rt_pm_device_write(rt_device_t dev,
                                      rt_off_t    pos,
                                      const void *buffer,
                                      rt_size_t   size)

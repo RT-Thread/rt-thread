@@ -208,7 +208,7 @@ static void rt_link_service_send_finish(rt_link_err_e err)
     }
 }
 
-static rt_size_t frame_send(struct rt_link_frame *frame)
+static rt_ssize_t frame_send(struct rt_link_frame *frame)
 {
     rt_size_t length = 0;
     rt_uint8_t *data = RT_NULL;

@@ -560,11 +560,11 @@ rt_device_set_tx_complete(rt_device_t dev,
 rt_err_t  rt_device_init (rt_device_t dev);
 rt_err_t  rt_device_open (rt_device_t dev, rt_uint16_t oflag);
 rt_err_t  rt_device_close(rt_device_t dev);
-rt_size_t rt_device_read (rt_device_t dev,
+rt_ssize_t rt_device_read(rt_device_t dev,
                           rt_off_t    pos,
                           void       *buffer,
                           rt_size_t   size);
-rt_size_t rt_device_write(rt_device_t dev,
+rt_ssize_t rt_device_write(rt_device_t dev,
                           rt_off_t    pos,
                           const void *buffer,
                           rt_size_t   size);

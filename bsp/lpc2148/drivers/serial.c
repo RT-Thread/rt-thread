@@ -190,7 +190,7 @@ static rt_err_t rt_serial_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_serial_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     rt_uint8_t* ptr;
     struct rt_lpcserial *lpc_serial = (struct rt_lpcserial*)dev;
@@ -252,7 +252,7 @@ static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
     return (rt_size_t)ptr - (rt_size_t)buffer;
 }
 
-static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     struct rt_lpcserial* lpc_serial;
     char *ptr;

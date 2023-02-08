@@ -403,13 +403,13 @@ static rt_err_t eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;

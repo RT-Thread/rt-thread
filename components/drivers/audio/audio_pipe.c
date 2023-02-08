@@ -32,7 +32,7 @@ static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)
     }
 }
 
-static rt_size_t rt_pipe_read(rt_device_t dev,
+static rt_ssize_t rt_pipe_read(rt_device_t dev,
                               rt_off_t    pos,
                               void       *buffer,
                               rt_size_t   size)
@@ -114,7 +114,7 @@ static void _rt_pipe_resume_reader(struct rt_audio_pipe *pipe)
     }
 }
 
-static rt_size_t rt_pipe_write(rt_device_t dev,
+static rt_ssize_t rt_pipe_write(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
                                rt_size_t   size)

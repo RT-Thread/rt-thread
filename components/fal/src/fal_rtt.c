@@ -75,7 +75,7 @@ static rt_err_t blk_dev_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t blk_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t blk_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_blk_device *part = (struct fal_blk_device*) dev;
@@ -96,7 +96,7 @@ static rt_size_t blk_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
     return ret;
 }
 
-static rt_size_t blk_dev_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t blk_dev_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_blk_device *part;
@@ -212,7 +212,7 @@ struct fal_mtd_nor_device
     const struct fal_partition     *fal_part;
 };
 
-static rt_size_t mtd_nor_dev_read(struct rt_mtd_nor_device* device, rt_off_t offset, rt_uint8_t* data, rt_uint32_t length)
+static rt_ssize_t mtd_nor_dev_read(struct rt_mtd_nor_device* device, rt_off_t offset, rt_uint8_t* data, rt_uint32_t length)
 {
     int ret = 0;
     struct fal_mtd_nor_device *part = (struct fal_mtd_nor_device*) device;
@@ -233,7 +233,7 @@ static rt_size_t mtd_nor_dev_read(struct rt_mtd_nor_device* device, rt_off_t off
     return ret;
 }
 
-static rt_size_t mtd_nor_dev_write(struct rt_mtd_nor_device* device, rt_off_t offset, const rt_uint8_t* data, rt_uint32_t length)
+static rt_ssize_t mtd_nor_dev_write(struct rt_mtd_nor_device* device, rt_off_t offset, const rt_uint8_t* data, rt_uint32_t length)
 {
     int ret = 0;
     struct fal_mtd_nor_device *part;
@@ -343,7 +343,7 @@ struct fal_char_device
 };
 
 /* RT-Thread device interface */
-static rt_size_t char_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t char_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) dev;
@@ -361,7 +361,7 @@ static rt_size_t char_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_s
     return ret;
 }
 
-static rt_size_t char_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t char_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_char_device *part;

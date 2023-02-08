@@ -152,7 +152,7 @@ int rt_touch_write(rt_uint16_t addr, void *data_buf, size_t data_len)
         return -1;
 }
 
-static rt_size_t touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
+static rt_ssize_t touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
 {
     rt_device_t device;
     struct rt_touch_data *data = (struct rt_touch_data *)buf;
