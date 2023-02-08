@@ -33,6 +33,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
@@ -90,6 +91,7 @@
 
 /* Socket is in the 'Network' category */
 
+#define RT_USING_CPLUSPLUS
 
 /* Network */
 
@@ -184,6 +186,10 @@
 
 /* Arduino libraries */
 
+#define PKG_USING_RTDUINO
+#define RTDUINO_THREAD_SIZE 1536
+#define RTDUINO_THREAD_PRIO 30
+#define PKG_USING_RTDUINO_LATEST_VERSION
 
 /* Projects */
 
@@ -222,14 +228,16 @@
 
 #define SOC_CH32V208WBU6
 
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_ARDUINO
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
 #define LSI_VALUE 40000
-
-/* Onboard Peripheral Drivers */
 
 /* Board extended module Drivers */
 

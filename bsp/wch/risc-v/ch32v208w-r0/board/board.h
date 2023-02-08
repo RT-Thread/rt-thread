@@ -12,7 +12,10 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <rtthread.h>
 #include "ch32v20x.h"
+#include "drv_gpio.h"
+#include "drv_pwm.h"
 
 #define ch32v20x_PIN_NUMBERS   64
 /* board configuration */

@@ -8,6 +8,13 @@ config SOC_CH32V208WBU6
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_UART1
+        select BSP_USING_GPIO
+        default n
 
 endmenu
 
