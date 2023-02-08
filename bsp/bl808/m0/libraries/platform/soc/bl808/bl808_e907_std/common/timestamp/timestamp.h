@@ -29,13 +29,13 @@
 
 typedef struct _rtc_time_t
 {
-	uint16_t year;
-	uint8_t month;
-	uint8_t day;
-	uint8_t week;
-	uint8_t hour;
-	uint8_t minute;
-	uint8_t second;
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t week;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t second;
 }rtc_time;
 
 void unixtime2bejingtime(uint32_t unixtime,rtc_time* beijing_time);

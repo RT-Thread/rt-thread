@@ -105,7 +105,6 @@ extern void USB_EhciPhyDeinit(uint8_t controllerId);
  *            0U - disable;
  */
 extern void USB_EhcihostPhyDisconnectDetectCmd(uint8_t controllerId, uint8_t enable);
-#ifdef SOC_IMXRT1170_SERIES
 #if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
 #if ((defined FSL_FEATURE_USBHSD_HAS_EXIT_HS_ISSUE) && (FSL_FEATURE_USBHSD_HAS_EXIT_HS_ISSUE > 0U))
 /*!
@@ -119,7 +118,6 @@ extern void USB_EhcihostPhyDisconnectDetectCmd(uint8_t controllerId, uint8_t ena
  *            0U - disable;
  */
 extern void USB_PhyDeviceForceEnterFSMode(uint8_t controllerId, uint8_t enable);
-#endif
 #endif
 #endif
 #if defined(__cplusplus)

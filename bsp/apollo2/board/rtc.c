@@ -29,7 +29,7 @@ static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
     return RT_EOK;
 }
 
-static rt_size_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     return 0;
 }

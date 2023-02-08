@@ -23,6 +23,7 @@
  * 2022-06-04     Meco Man     remove strnlen
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
+ * 2023-02-02     Bernard      add Smart ID for logo version show
  */
 
 #include <rtthread.h>
@@ -43,9 +44,8 @@
 
 /**
  * @addtogroup KernelService
+ * @{
  */
-
-/**@{*/
 
 /* global errno in RT-Thread */
 static volatile int __rt_errno;
@@ -664,7 +664,11 @@ RTM_EXPORT(rt_strdup);
 void rt_show_version(void)
 {
     rt_kprintf("\n \\ | /\n");
+#ifdef RT_USING_SMART
+    rt_kprintf("- RT -     Thread Smart Operating System\n");
+#else
     rt_kprintf("- RT -     Thread Operating System\n");
+#endif
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                (rt_int32_t)RT_VERSION_MAJOR, (rt_int32_t)RT_VERSION_MINOR, (rt_int32_t)RT_VERSION_PATCH, __DATE__, __TIME__);
     rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
@@ -1385,9 +1389,8 @@ static void (*rt_free_hook)(void *ptr);
 
 /**
  * @addtogroup Hook
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will set a hook function, which will be invoked when a memory

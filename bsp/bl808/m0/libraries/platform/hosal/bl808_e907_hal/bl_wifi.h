@@ -42,7 +42,7 @@ int bl_wifi_sta_mac_addr_set(uint8_t mac[6]);
 int bl_wifi_ap_mac_addr_set(uint8_t mac[6]);
 int bl_wifi_mac_addr_set(uint8_t mac[6]);
 int bl_wifi_country_code_set(uint8_t country_code);
-int bl_wifi_ap_info_set(uint8_t* ssid, uint8_t ssid_len, 
+int bl_wifi_ap_info_set(uint8_t* ssid, uint8_t ssid_len,
                       uint8_t* psk, uint8_t psk_len,
                       uint8_t chan);
 int bl_wifi_mac_addr_get(uint8_t mac[6]);

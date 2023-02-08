@@ -930,7 +930,7 @@ int sec_ecdsa_deinit(sec_ecdsa_handle_t *handle)
 
 __WEAK void sec_ecdsa_verify_suss_callback(uint32_t    state, uint8_t is_en)
 {
-    
+
 }
 
 int sec_ecdsa_verify(sec_ecdsa_handle_t *handle, const uint32_t *hash, uint32_t hashLenInWord, const uint32_t *r, const uint32_t *s)
@@ -1240,7 +1240,7 @@ int sec_ecdsa_verify(sec_ecdsa_handle_t *handle, const uint32_t *hash, uint32_t 
 #endif
 
     sec_ecdsa_verify_suss_callback(SEC_CODEPATH_STATE_SIGN, 1);
-    
+
     return 0;
 }
 

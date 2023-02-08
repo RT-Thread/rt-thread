@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-/** @addtogroup hosal_spi SPI 
+/** @addtogroup hosal_spi SPI
  *  HOSAL SPI API
  *
  *  @{
@@ -50,8 +50,8 @@ extern "C" {
 
 typedef void (*hosal_spi_irq_t)(void *parg); /**< spi irq callback function */
 
-/** 
- * @brief Define spi config args 
+/**
+ * @brief Define spi config args
  */
 typedef struct {
     uint8_t mode;           /**< spi communication mode */
@@ -63,7 +63,7 @@ typedef struct {
     uint8_t pin_miso;       /**< spi miso pin */
 } hosal_spi_config_t;
 
-/** 
+/**
  * @brief Define spi dev handle
  */
 typedef struct {
@@ -79,8 +79,8 @@ typedef struct {
  *
  * @param[in]  spi  the spi device
  *
- * @return  
- *       - 0 : on success 
+ * @return
+ *       - 0 : on success
  *       - other : error
  */
 int hosal_spi_init(hosal_spi_dev_t *spi);
@@ -94,8 +94,8 @@ int hosal_spi_init(hosal_spi_dev_t *spi);
  * @param[in]  timeout  timeout in milisecond, set this value to HAL_WAIT_FOREVER
  *                      if you want to wait forever
  *
- * @return  
- *       - 0 : on success  
+ * @return
+ *       - 0 : on success
  *       - other : error
  */
 int hosal_spi_send(hosal_spi_dev_t *spi, const uint8_t *data, uint32_t size, uint32_t timeout);
@@ -109,7 +109,7 @@ int hosal_spi_send(hosal_spi_dev_t *spi, const uint8_t *data, uint32_t size, uin
  * @param[in]   timeout  timeout in milisecond, set this value to HAL_WAIT_FOREVER
  *                       if you want to wait forever
  *
- * @return  
+ * @return
  *       - 0 : success
  *       - other : error
  */
@@ -125,8 +125,8 @@ int hosal_spi_recv(hosal_spi_dev_t *spi, uint8_t *data, uint16_t size, uint32_t 
  * @param[in]  timeout  timeout in milisecond, set this value to HAL_WAIT_FOREVER
  *                      if you want to wait forever
  *
- * @return  
- *        - 0 : success 
+ * @return
+ *        - 0 : success
  *        - other : error
  */
 int hosal_spi_send_recv(hosal_spi_dev_t *spi, uint8_t *tx_data, uint8_t *rx_data, uint16_t size, uint32_t timeout);
@@ -138,7 +138,7 @@ int hosal_spi_send_recv(hosal_spi_dev_t *spi, uint8_t *tx_data, uint8_t *rx_data
  * @param pfn callback function
  * @param p_arg callback function parameter
  *
- * @return 
+ * @return
  *       - 0 : success
  *       - othe : error
  */
@@ -150,7 +150,7 @@ int hosal_spi_irq_callback_set(hosal_spi_dev_t *spi, hosal_spi_irq_t pfn, void *
  * @param[in] pin    cs pin
  * @param[in] value  0 or 1
  *
- * @return  
+ * @return
  *       - 0 : success
  *       - other : error
  */
@@ -162,8 +162,8 @@ int hosal_spi_set_cs(uint8_t pin, uint8_t value);
  *
  * @param[in]  spi  the SPI device to be de-initialised
  *
- * @return 
- *       - 0 : success 
+ * @return
+ *       - 0 : success
  *       - other : error
  */
 int hosal_spi_finalize(hosal_spi_dev_t *spi);

@@ -2377,17 +2377,17 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Clr_EMI_Reset_Gate(void)
 BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_WIFI_PLL(GLB_XTAL_Type xtalType, const GLB_WAC_PLL_Cfg_Type * pllCfgList)
 {
     GLB_PLL_REF_CLK_Type refClk;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     GLB_Power_Off_WAC_PLL(GLB_WAC_PLL_WIFIPLL);
     GLB_WAC_PLL_Ref_Clk_Sel(GLB_WAC_PLL_WIFIPLL, refClk);
     GLB_Power_On_WAC_PLL(GLB_WAC_PLL_WIFIPLL, &(pllCfgList[xtalType]), 0);
-    
+
     return SUCCESS;
 }
 
@@ -2403,17 +2403,17 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_WIFI_PLL(GLB_XTAL_Type xtalType, const
 BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_AUDIO_PLL(GLB_XTAL_Type xtalType, const GLB_WAC_PLL_Cfg_Type * pllCfgList)
 {
     GLB_PLL_REF_CLK_Type refClk;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     GLB_Power_Off_WAC_PLL(GLB_WAC_PLL_AUPLL);
     GLB_WAC_PLL_Ref_Clk_Sel(GLB_WAC_PLL_AUPLL, refClk);
     GLB_Power_On_WAC_PLL(GLB_WAC_PLL_AUPLL, &(pllCfgList[xtalType]), 0);
-    
+
     return SUCCESS;
 }
 
@@ -2429,17 +2429,17 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_AUDIO_PLL(GLB_XTAL_Type xtalType, cons
 BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_CPU_PLL(GLB_XTAL_Type xtalType, const GLB_WAC_PLL_Cfg_Type * pllCfgList)
 {
     GLB_PLL_REF_CLK_Type refClk;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     GLB_Power_Off_WAC_PLL(GLB_WAC_PLL_CPUPLL);
     GLB_WAC_PLL_Ref_Clk_Sel(GLB_WAC_PLL_CPUPLL, refClk);
     GLB_Power_On_WAC_PLL(GLB_WAC_PLL_CPUPLL, &(pllCfgList[xtalType]), 0);
-    
+
     return SUCCESS;
 }
 
@@ -2455,17 +2455,17 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_CPU_PLL(GLB_XTAL_Type xtalType, const 
 BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_MIPI_PLL(GLB_XTAL_Type xtalType, const GLB_MU_PLL_Cfg_Type * pllCfgList)
 {
     GLB_PLL_REF_CLK_Type refClk;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     GLB_Power_Off_MU_PLL(GLB_MU_PLL_MIPIPLL);
     GLB_MU_PLL_Ref_Clk_Sel(GLB_MU_PLL_MIPIPLL, refClk);
     GLB_Power_On_MU_PLL(GLB_MU_PLL_MIPIPLL, &(pllCfgList[xtalType]), 0);
-    
+
     return SUCCESS;
 }
 
@@ -2482,14 +2482,14 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_MIPI_PLL_Div(uint8_t divEn, uint8_t di
 {
     uint32_t REG_PLL_BASE_ADDRESS = 0;
     uint32_t tmpVal = 0;
-    
+
     REG_PLL_BASE_ADDRESS = GLB_BASE + GLB_MIPI_PLL_CFG0_OFFSET;
-    
+
     tmpVal = BL_RD_WORD(REG_PLL_BASE_ADDRESS + 4 * 1);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, GLB_MIPIPLL_EVEN_DIV_EN, divEn);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, GLB_MIPIPLL_EVEN_DIV_RATIO, divRatio);
     BL_WR_WORD(REG_PLL_BASE_ADDRESS + 4 * 1, tmpVal);
-    
+
     return SUCCESS;
 }
 
@@ -2505,17 +2505,17 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_MIPI_PLL_Div(uint8_t divEn, uint8_t di
 BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_UHS_PLL(GLB_XTAL_Type xtalType, const GLB_MU_PLL_Cfg_Type * pllCfgList)
 {
     GLB_PLL_REF_CLK_Type refClk;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     GLB_Power_Off_MU_PLL(GLB_MU_PLL_UHSPLL);
     GLB_MU_PLL_Ref_Clk_Sel(GLB_MU_PLL_UHSPLL, refClk);
     GLB_Power_On_MU_PLL(GLB_MU_PLL_UHSPLL, &(pllCfgList[xtalType]), 0);
-    
+
     return SUCCESS;
 }
 

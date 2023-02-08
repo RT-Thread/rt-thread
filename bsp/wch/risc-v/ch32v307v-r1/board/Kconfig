@@ -7,6 +7,38 @@ config SOC_CH32V307VC
     select RT_USING_USER_MAIN
     default y
 
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_TIM
+        select BSP_USING_PWM
+        select BSP_USING_TIM1
+        select BSP_USING_TIM1_PWM
+        select BSP_USING_TIM1_PWM_CH1
+        select BSP_USING_TIM3
+        select BSP_USING_TIM3_PWM
+        select BSP_USING_TIM3_PWM_CH1
+        select BSP_USING_TIM3_PWM_CH2
+        select BSP_USING_TIM3_PWM_CH3
+        select BSP_USING_TIM3_PWM_CH4
+        select BSP_USING_TIM4
+        select BSP_USING_TIM4_PWM
+        select BSP_USING_TIM4_PWM_CH3
+        select BSP_USING_TIM4_PWM_CH4
+        select BSP_USING_TIM6
+        select BSP_USING_TIM6_HWTIMER
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
+
+endmenu
+
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
@@ -551,38 +583,6 @@ menu "On-chip Peripheral Drivers"
                 endif
 
         endif
-
-endmenu
-
-menu "Onboard Peripheral Drivers"
-    config BSP_USING_ARDUINO
-        bool "Compatible with Arduino Ecosystem (RTduino)"
-        select PKG_USING_RTDUINO
-        select BSP_USING_GPIO
-        select BSP_USING_ADC
-        select BSP_USING_ADC1
-        select BSP_USING_TIM
-        select BSP_USING_PWM
-        select BSP_USING_TIM1
-        select BSP_USING_TIM1_PWM
-        select BSP_USING_TIM1_PWM_CH1
-        select BSP_USING_TIM3
-        select BSP_USING_TIM3_PWM
-        select BSP_USING_TIM3_PWM_CH1
-        select BSP_USING_TIM3_PWM_CH2
-        select BSP_USING_TIM3_PWM_CH3
-        select BSP_USING_TIM3_PWM_CH4
-        select BSP_USING_TIM4
-        select BSP_USING_TIM4_PWM
-        select BSP_USING_TIM4_PWM_CH3
-        select BSP_USING_TIM4_PWM_CH4
-        select BSP_USING_TIM6
-        select BSP_USING_TIM6_HWTIMER
-        select BSP_USING_SOFT_I2C
-        select BSP_USING_I2C1
-        imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
-        default n
 
 endmenu
 

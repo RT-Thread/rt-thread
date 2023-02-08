@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022/12/25     flyingcys    first version
+ * 2023/01/17     chushicheng  add pin and i2c
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -74,6 +75,16 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_HEAP
     /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+#endif
+
+    /* GPIO driver initialization is open by default */
+#ifdef RT_USING_PIN
+    rt_hw_pin_init();
+#endif
+
+    /* I2C driver initialization is open by default */
+#ifdef RT_USING_I2C
+    rt_hw_i2c_init();
 #endif
 
     /* UART driver initialization is open by default */

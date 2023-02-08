@@ -372,12 +372,12 @@ void DSP2_Set_TG_Cfg(const DSP2_TG_Cfg_Type *cfg)
     dsp2_tg_reg->dvp_mode.BF.fhblk_line_on_w = DSP2_FHBLK_LINE_OFF;
 
     /* note: if vsync invert, vcnt reset mode set 0, means falling
-	    else if vsync not invert,  vcont reset mode set 1, also means falling
-	    this value will not open to user now.
-	*/
+        else if vsync not invert,  vcont reset mode set 1, also means falling
+        this value will not open to user now.
+    */
     if (DSP2_SYNC_MODE_INPUT_VBLANK_NO_TOGGLE == cfg->sync_mode_value) {
         /* hcnt reset in rising edge, so H blanking is put after valid line
-		    vcnt reset mode must be 0, to make sure vcnt is reset to 4095 instead of 0. */
+            vcnt reset mode must be 0, to make sure vcnt is reset to 4095 instead of 0. */
         dsp2_tg_reg->dvp_mode.BF.hcnt_rst_mode_w = DSP2_HCNT_RST_RISING;
         dsp2_tg_reg->dvp_mode.BF.vcnt_rst_mode_w = DSP2_VCNT_RST_RISING;
     } else {

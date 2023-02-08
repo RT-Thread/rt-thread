@@ -36,7 +36,7 @@ struct iovec {
     size_t iov_len;  // [XSI] Size of region iov_base points to
 };
 
-static int my_cmp_cb(struct rb_tree *self, struct rb_node *node_a, struct rb_node *node_b) 
+static int my_cmp_cb(struct rb_tree *self, struct rb_node *node_a, struct rb_node *node_b)
 {
     struct iovec *a = (struct iovec *) node_a->value;
     struct iovec *b = (struct iovec *) node_b->value;

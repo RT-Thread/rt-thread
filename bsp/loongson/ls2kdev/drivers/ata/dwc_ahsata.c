@@ -1197,13 +1197,13 @@ int dwc_ahsata_probe(struct rt_device *dev)
     return dwc_ahci_start_ports(uc_priv);
 }
 
-rt_size_t dwc_ahsata_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+rt_ssize_t dwc_ahsata_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct blk_device *blk = (struct blk_device *)dev;
     return sata_read_common(blk->ahci_device, blk, pos, size, buffer);
 }
 
-rt_size_t dwc_ahsata_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+rt_ssize_t dwc_ahsata_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct blk_device *blk = (struct blk_device *)dev;
     return sata_write_common(blk->ahci_device, blk, pos, size, buffer);

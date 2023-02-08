@@ -10,17 +10,17 @@
 #ifndef __TLB_H__
 #define __TLB_H__
 
-#include "mm_aspace.h"
-#include "riscv_mmu.h"
-#include "rtdbg.h"
-#include "rtthread.h"
-#include <sbi.h>
 #include <stddef.h>
 #include <stdint.h>
 
+#include <rtthread.h>
+#include <mm_aspace.h>
+#include "sbi.h"
+#include "riscv_mmu.h"
+
 #define HANDLE_FAULT(ret)                                                      \
     if (__builtin_expect((ret) != SBI_SUCCESS, 0))                             \
-        LOG_W("%s failed", __FUNCTION__);
+        LOG_W("%s failed\n", __FUNCTION__);
 
 static inline void rt_hw_tlb_invalidate_all(void)
 {

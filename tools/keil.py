@@ -273,6 +273,18 @@ def MDK45Project(tree, target, script):
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
     Define.text = ', '.join(set(CPPDEFINES))
 
+    if ('CCFLAGS' in group and 'c99' in group['CCFLAGS']) or \
+       ('CFLAGS' in group and 'c99' in group['CFLAGS']) or \
+       ('CXXFLAGS' in group and 'c99' in group['CXXFLAGS']):
+        uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
+        uC99.text = '1'
+
+    if ('CCFLAGS' in group and '--gnu' in group['CCFLAGS']) or \
+       ('CFLAGS' in group and '--gnu' in group['CFLAGS']) or \
+       ('CXXFLAGS' in group and '--gnu' in group['CXXFLAGS']):
+        uGnu = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uGnu')
+        uGnu.text = '1'
+
     Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
     Misc.text = LINKFLAGS
 

@@ -332,7 +332,7 @@ void I2C_Init(I2C_ID_Type i2cNo, I2C_Direction_Type direct, I2C_Transfer_Cfg *cf
         GLB_PER_Clock_UnGate(GLB_AHB_CLOCK_I2C);
     } else if (I2C1_ID == i2cNo) {
         GLB_PER_Clock_UnGate(GLB_AHB_CLOCK_I2C1);
-    } 
+    }
 
     /* I2C write config */
     tmpVal = BL_RD_REG(I2Cx, I2C_CONFIG);

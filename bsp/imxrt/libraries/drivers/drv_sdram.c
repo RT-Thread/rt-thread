@@ -13,9 +13,16 @@
 #include "fsl_semc.h"
 #include "drv_sdram.h"
 
-#define DRV_DEBUG
-#define LOG_TAG             "drv.sdram"
-#include <drv_log.h>
+//#define DBG_COLOR
+//#define DRV_DEBUG
+//#define LOG_TAG             "drv.sdram"
+//#include <drv_log.h>
+
+#define DBG_ENABLE
+#define DBG_SECTION_NAME "[drv.sdram]"
+#define DBG_COLOR
+#define DBG_LEVEL DBG_INFO
+#include <rtdbg.h>
 
 #ifdef RT_USING_MEMHEAP
 static struct rt_memheap system_heap;
@@ -71,7 +78,7 @@ int rt_hw_sdram_init(void)
     }
     else
     {
-        LOG_D("sdram init success, mapped at 0x%X, size is %d Kbytes.", SDRAM_BANK_ADDR, SDRAM_SIZE);
+        LOG_I("sdram init success, mapped at 0x%X, size is %d Kbytes.", SDRAM_BANK_ADDR, SDRAM_SIZE);
 #ifdef RT_USING_MEMHEAP
     /*
      * If RT_USING_MEMHEAP is enabled, SDRAM is initialized to the heap.
@@ -89,7 +96,7 @@ int rt_hw_sdram_init(void)
 }
 INIT_PREV_EXPORT(rt_hw_sdram_init);
 
-#ifdef DRV_DEBUG
+#ifdef DBG_ENABLE
 #ifdef FINSH_USING_MSH
 
 #define SEMC_DATALEN                (0x1000U)
@@ -119,7 +126,7 @@ static void sdram_test(void)
         sdram_readBuffer[index] = sdram[index];
     }
 
-    LOG_D("SEMC SDRAM 32 bit Data Write and Read Compare Start!");
+    LOG_I("SEMC SDRAM 32 bit Data Write and Read Compare Start!");
     /* Compare the two buffers. */
     while (datalen--)
     {
@@ -136,7 +143,7 @@ static void sdram_test(void)
     }
     else
     {
-        LOG_D("SEMC SDRAM 32 bit Data Write and Read Compare Succeed!");
+        LOG_I("SEMC SDRAM 32 bit Data Write and Read Compare Succeed!");
     }
 }
 MSH_CMD_EXPORT(sdram_test, sdram test)

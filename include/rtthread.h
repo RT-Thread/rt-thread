@@ -37,9 +37,8 @@ extern "C" {
 
 /**
  * @addtogroup KernelObject
+ * @{
  */
-
-/**@{*/
 
 /*
  * kernel object interface
@@ -80,9 +79,8 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 
 /**
  * @addtogroup Clock
+ * @{
  */
-
-/**@{*/
 
 /*
  * clock & timer interface
@@ -130,9 +128,8 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 
 /**
  * @addtogroup Thread
+ * @{
  */
-
-/**@{*/
 
 /*
  * thread interface
@@ -232,13 +229,12 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
 
 int rt_system_signal_init(void);
 #endif
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup MM
+ * @{
  */
-
-/**@{*/
 
 /*
  * memory management interface
@@ -347,9 +343,8 @@ void rt_slab_free(rt_slab_t m, void *ptr);
 
 /**
  * @addtogroup IPC
+ * @{
  */
-
-/**@{*/
 
 #ifdef RT_USING_SEMAPHORE
 /*
@@ -537,9 +532,8 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #ifdef RT_USING_DEVICE
 /**
  * @addtogroup Device
+ * @{
  */
-
-/**@{*/
 
 /*
  * device (I/O) system interface
@@ -566,11 +560,11 @@ rt_device_set_tx_complete(rt_device_t dev,
 rt_err_t  rt_device_init (rt_device_t dev);
 rt_err_t  rt_device_open (rt_device_t dev, rt_uint16_t oflag);
 rt_err_t  rt_device_close(rt_device_t dev);
-rt_size_t rt_device_read (rt_device_t dev,
+rt_ssize_t rt_device_read(rt_device_t dev,
                           rt_off_t    pos,
                           void       *buffer,
                           rt_size_t   size);
-rt_size_t rt_device_write(rt_device_t dev,
+rt_ssize_t rt_device_write(rt_device_t dev,
                           rt_off_t    pos,
                           const void *buffer,
                           rt_size_t   size);
@@ -627,9 +621,8 @@ void rt_components_board_init(void);
 
 /**
  * @addtogroup KernelService
+ * @{
  */
-
-/**@{*/
 
 /*
  * general kernel service

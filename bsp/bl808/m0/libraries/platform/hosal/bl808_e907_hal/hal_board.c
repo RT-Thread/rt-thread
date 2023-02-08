@@ -337,7 +337,7 @@ static void update_xtal_config_rftv(uint32_t tlv_addr)
     uint8_t buffer[20] = {0};
     uint32_t capcode[5] = {0};
     char xtal_mode[3] = {0};
-    
+
     if (rftlv_get(tlv_addr, RFTLV_API_TYPE_XTAL_MODE, 3, xtal_mode) > 0) {
         xtal_mode[sizeof(xtal_mode) - 1] = '\0';
         blog_info("xtal_mode is %s\r\n", xtal_mode);
@@ -505,7 +505,7 @@ break_scan:
     log_buf_int8(poweroffset, sizeof(poweroffset));
 #ifdef CFG_BLE_ENABLE
     extern void ble_rf_set_pwr_offset_table(int8_t *poweroffset_table);
-	ble_rf_set_pwr_offset_table(poweroffset);
+    ble_rf_set_pwr_offset_table(poweroffset);
 #endif
    //zys phy_powroffset_set(poweroffset);
 }
@@ -608,7 +608,7 @@ break_scan:
     log_buf_int8(poweroffset, sizeof(poweroffset));
 #ifdef CFG_BLE_ENABLE
     extern void ble_rf_set_pwr_offset_table(int8_t *poweroffset_table);
-	ble_rf_set_pwr_offset_table(poweroffset);
+    ble_rf_set_pwr_offset_table(poweroffset);
 #endif
   //zys phy_powroffset_set(poweroffset);
 }
@@ -671,7 +671,7 @@ static int update_ap_field(const void *fdt, int wifi_offset, const char *name)
     int countindex = 0, lentmp = 0;
     const char *result = 0;
     const uint8_t *addr_prop = 0;
-     
+
     /* set ssid pwd */
     uint8_t ap_ssid[32];
     uint8_t ap_ssid_len = 0;
@@ -764,8 +764,8 @@ static int update_rf_temp_field(const void *fdt, int wifi_offset, const char *na
         }
 
         addr_prop = fdt_getprop(fdt, offset1, "Tchannels", &lentmp);
-        if (lentmp == TCAL_PARA_CHANNELS*4) {            
-            memcpy(tmp, addr_prop, TCAL_PARA_CHANNELS*4);         
+        if (lentmp == TCAL_PARA_CHANNELS*4) {
+            memcpy(tmp, addr_prop, TCAL_PARA_CHANNELS*4);
             blog_info_user(dts, "Tchannels:");
             for (i = 0; i < TCAL_PARA_CHANNELS; i++){
                 tcal_param_tmp.Tchannels[i]=fdt32_to_cpu(tmp[i]);
@@ -778,8 +778,8 @@ static int update_rf_temp_field(const void *fdt, int wifi_offset, const char *na
         }
 
         addr_prop = fdt_getprop(fdt, offset1, "Tchannel_os", &lentmp);
-        if (lentmp == TCAL_PARA_CHANNELS*4) {            
-            memcpy(tmp, addr_prop, TCAL_PARA_CHANNELS*4);         
+        if (lentmp == TCAL_PARA_CHANNELS*4) {
+            memcpy(tmp, addr_prop, TCAL_PARA_CHANNELS*4);
             blog_info_user(dts, "Tchannel_os:");
             for (i = 0; i < TCAL_PARA_CHANNELS; i++){
                 tcal_param_tmp.Tchannel_os[i]=fdt32_to_cpu(tmp[i]);
@@ -792,8 +792,8 @@ static int update_rf_temp_field(const void *fdt, int wifi_offset, const char *na
         }
 
         addr_prop = fdt_getprop(fdt, offset1, "Tchannel_os_low", &lentmp);
-        if (lentmp == TCAL_PARA_CHANNELS*4) {            
-            memcpy(tmp, addr_prop, TCAL_PARA_CHANNELS*4);         
+        if (lentmp == TCAL_PARA_CHANNELS*4) {
+            memcpy(tmp, addr_prop, TCAL_PARA_CHANNELS*4);
             blog_info_user(dts, "Tchannel_os_low:");
             for (i = 0; i < TCAL_PARA_CHANNELS; i++){
                 tcal_param_tmp.Tchannel_os_low[i]=fdt32_to_cpu(tmp[i]);
@@ -828,7 +828,7 @@ static int hal_board_load_rftv_info(uint32_t rftlv_addr)
     int8_t pwr_table[24];
 
     int pwr_table_ble = 0;
- 
+
     if (!rftlv_valid(rftlv_addr)) {
         return -2;
     }
@@ -910,7 +910,7 @@ static int hal_board_load_rftv_info(uint32_t rftlv_addr)
 #endif
 
     vPortFree(p_buffer);
-    
+
     return 0;
 }
 #endif

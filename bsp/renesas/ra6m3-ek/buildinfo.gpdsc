@@ -58,11 +58,13 @@
         <file category="header" name="ra/board/ra6m3/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
+        <file category="header" name="ra/fsp/inc/api/r_timer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
+        <file category="header" name="ra/fsp/inc/instances/r_gpt.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
@@ -71,6 +73,7 @@
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"/>
         <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.o"/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c"/>
+        <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_arm_exceptions.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.h" path=""/>
@@ -100,6 +103,7 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.h" path=""/>
         <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.c"/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.c"/>
         <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_security.c"/>

@@ -13,6 +13,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #include <cache.h>
 #include <mm_aspace.h>
 #include <mm_page.h>
@@ -23,12 +27,7 @@
 #ifdef RT_USING_SMART
 #include <ioremap.h>
 #include <lwp_user_mm.h>
-#include <tlb.h>
 #endif
-
-#define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
 
 #ifndef RT_USING_SMART
 #define PV_OFFSET 0
@@ -257,6 +256,7 @@ static inline void _init_region(void *vaddr, size_t size)
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
+    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start, rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)

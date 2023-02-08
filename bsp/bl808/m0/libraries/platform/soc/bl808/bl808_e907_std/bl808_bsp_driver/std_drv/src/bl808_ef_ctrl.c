@@ -178,7 +178,7 @@ void ATTR_TCM_SECTION EF_Ctrl_Sw_AHB_Clk_1(void)
     }
 
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	   so we select it(them) in ef_if_ctrl_0 */
+       so we select it(them) in ef_if_ctrl_0 */
     tmpVal = (EF_CTRL_EFUSE_CTRL_PROTECT) |
              (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
              (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -267,7 +267,7 @@ void ATTR_TCM_SECTION EF_Ctrl_Program_Efuse_1(void)
 
     /* Select auto mode and select ef clock */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	   so we select it(them) in ef_if_ctrl_0 */
+       so we select it(them) in ef_if_ctrl_0 */
     tmpVal = (EF_CTRL_EFUSE_CTRL_PROTECT) |
              (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
              (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -288,7 +288,7 @@ void ATTR_TCM_SECTION EF_Ctrl_Program_Efuse_1(void)
 
     /* Program */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	so we select it(them) in ef_if_ctrl_0 */
+    so we select it(them) in ef_if_ctrl_0 */
     tmpVal = (EF_CTRL_EFUSE_CTRL_PROTECT) |
              (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
              (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -403,7 +403,7 @@ void EF_Ctrl_Load_Efuse_R1(void)
 
     /* Trigger read */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	so we select it(them) in ef_if_ctrl_0 */
+    so we select it(them) in ef_if_ctrl_0 */
     tmpVal = (EF_CTRL_EFUSE_CTRL_PROTECT) |
              (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
              (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -443,7 +443,7 @@ void EF_Ctrl_Load_Efuse_R1(void)
 
     /* Switch to AHB clock since often read efuse data after load */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	   so we select it(them) in ef_if_ctrl_0 */
+       so we select it(them) in ef_if_ctrl_0 */
     tmpVal = (EF_CTRL_EFUSE_CTRL_PROTECT) |
              (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
              (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -1328,7 +1328,7 @@ void EF_Ctrl_Write_AES_Key(uint8_t index, uint32_t *keyData, uint32_t len, uint8
     uint32_t *pAESKeyStart0 = (uint32_t *)(EF_DATA_BASE + 0x1C);
     uint32_t *pAESKeyStart1 = (uint32_t *)(EF_DATA_BASE + 0x80);
 
-    /* slot_w0~slot_w3,slot_w11 in ef_data0 
+    /* slot_w0~slot_w3,slot_w11 in ef_data0
        slot_w4~slot_w10,in ef_data1 */
 
     if ((index <= 3) || (index == 11)) {

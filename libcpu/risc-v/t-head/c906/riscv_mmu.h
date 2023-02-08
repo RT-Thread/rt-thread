@@ -51,20 +51,25 @@
 
 #define PHYSICAL_ADDRESS_WIDTH_BITS 56
 
-#define PAGE_ATTR_NEXT_LEVEL (0)
-#define PAGE_ATTR_RWX (PTE_X | PTE_W | PTE_R)
-#define PAGE_ATTR_READONLY (PTE_R)
-#define PAGE_ATTR_READEXECUTE (PTE_X | PTE_R)
+#define PAGE_ATTR_NEXT_LEVEL    (0)
+#define PAGE_ATTR_RWX           (PTE_X | PTE_W | PTE_R)
+#define PAGE_ATTR_READONLY      (PTE_R)
+#define PAGE_ATTR_XN            (PTE_W | PTE_R)
+#define PAGE_ATTR_READEXECUTE   (PTE_X | PTE_R)
 
 #define PAGE_ATTR_USER (PTE_U)
 #define PAGE_ATTR_SYSTEM (0)
 
-#define PAGE_DEFAULT_ATTR_LEAF (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G)
-#define PAGE_DEFAULT_ATTR_NEXT (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G)
+#define PAGE_ATTR_CB    (PTE_BUF | PTE_CACHE)
+#define PAGE_ATTR_DEV   (PTE_SO)
+
+#define PAGE_DEFAULT_ATTR_LEAF (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define PAGE_DEFAULT_ATTR_NEXT (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_V)
 
 #define PAGE_IS_LEAF(pte) __MASKVALUE(pte, PAGE_ATTR_RWX)
 
 #define PTE_USED(pte) __MASKVALUE(pte, PTE_V)
+#define PTE_WRAP(attr) (attr | PTE_A | PTE_D)
 
 /**
  * encoding of SATP (Supervisor Address Translation and Protection register)
@@ -76,14 +81,16 @@
 #define SATP_MODE_SV57      10
 #define SATP_MODE_SV64      11
 
+#define PPN_BITS            44
+
 #define ARCH_VADDR_WIDTH        39
 #define SATP_MODE               SATP_MODE_SV39
 
-#define MMU_MAP_K_DEVICE        (PTE_G | PTE_W | PTE_R | PTE_V)
-#define MMU_MAP_K_RWCB          (PTE_G | PTE_X | PTE_W | PTE_R | PTE_V)
-#define MMU_MAP_U_RWCB          (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-#define MMU_MAP_U_RWCB_XN       (PTE_U | PTE_W | PTE_R | PTE_V)
-#define MMU_MAP_U_RW            (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+#define MMU_MAP_K_DEVICE        PTE_WRAP(PAGE_ATTR_DEV | PTE_G | PAGE_ATTR_XN | PTE_V)
+#define MMU_MAP_K_RWCB          PTE_WRAP(PAGE_ATTR_CB | PTE_G | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_U_RWCB          PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_U_RWCB_XN       PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_XN | PTE_V)
+#define MMU_MAP_U_RW            PTE_WRAP(PTE_U | PAGE_ATTR_RWX | PTE_V)
 
 #define PTE_XWR_MASK            0xe
 

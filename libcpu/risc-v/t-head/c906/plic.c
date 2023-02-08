@@ -19,6 +19,7 @@
 #include "encoding.h"
 
 static void *c906_plic_regs = RT_NULL;
+extern struct rt_irq_desc isr_table[];
 
 struct plic_handler
 {
@@ -42,6 +43,32 @@ rt_inline void plic_irq_toggle(int hwirq, int enable)
     {
         plic_toggle(handler, hwirq, enable);
     }
+}
+
+static void generic_handle_irq(int irq)
+{
+    rt_isr_handler_t isr;
+    void *param;
+
+    if (irq < 0 || irq >= IRQ_MAX_NR)
+    {
+        LOG_E("bad irq number %d!\n", irq);
+        return;
+    }
+
+    if (!irq)   // irq = 0 => no irq
+    {
+        LOG_W("no irq!\n");
+        return;
+    }
+    isr = isr_table[IRQ_OFFSET + irq].handler;
+    param = isr_table[IRQ_OFFSET + irq].param;
+    if (isr != RT_NULL)
+    {
+        isr(irq, param);
+    }
+    /* complete irq. */
+    plic_complete(irq);
 }
 
 void plic_complete(int irqno)

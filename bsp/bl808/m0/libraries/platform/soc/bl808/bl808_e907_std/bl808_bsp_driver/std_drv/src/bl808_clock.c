@@ -102,11 +102,11 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_WIFI_PLL_Output(uint32_t
             case GLB_XTAL_24M:
                 /* 960000000 */
                 vcoFreq = tmpVal / calculationDiv * 24 * 1000 * 1000;
-                break; 
+                break;
             case GLB_XTAL_32M:
                 /* 960000000 */
                 vcoFreq = tmpVal / calculationDiv * 32 * 1000 * (1000 / 2);
-                break; 
+                break;
             case GLB_XTAL_38P4M:
                 /* 960000000 */
                 vcoFreq = tmpVal / calculationDiv * 384 * 100 * (1000 / 2);
@@ -122,7 +122,7 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_WIFI_PLL_Output(uint32_t
             case GLB_XTAL_RC32M:
                 /* 960000000 */
                 vcoFreq = tmpVal / calculationDiv * 32 * 1000 * (1000 / 2);
-                break;            
+                break;
             default:
                 return (0);
         }
@@ -156,14 +156,14 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_CPU_PLL_Output(uint32_t 
             case GLB_XTAL_24M:
                 /* 480000000;399996000;379998000 */
                 vcoFreq = 24 * 1000 * tmpVal / calculationDiv * (1000 / 2);
-                break; 
+                break;
             case GLB_XTAL_32M:
                 /* 480000000;400000000;380000000 */
                 vcoFreq = 32 * 1000 * tmpVal / calculationDiv * (1000  / 4);
-                break; 
+                break;
             case GLB_XTAL_38P4M:
                 /* 480000000;399998250;379996750 */
-                vcoFreq = 384 * 100 * tmpVal / calculationDiv * (1000  / 4); 
+                vcoFreq = 384 * 100 * tmpVal / calculationDiv * (1000  / 4);
                 break;
             case GLB_XTAL_40M:
                 /* 480000000;400000000;380000000 */
@@ -176,7 +176,7 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_CPU_PLL_Output(uint32_t 
             case GLB_XTAL_RC32M:
                 /* 480000000;400000000;380000000 */
                 vcoFreq = 32 * 1000 * tmpVal / calculationDiv * (1000  / 4);
-                break;            
+                break;
             default:
                 return (0);
         }
@@ -216,14 +216,14 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_AUPLL_Output(CLOCK_AUPLL
             case GLB_XTAL_24M:
                 /* 442365000;451582000 */
                 vcoFreq = 24 * 1000 * tmpVal / calculationDiv * (1000 / 2);
-                break; 
+                break;
             case GLB_XTAL_32M:
                 /* 442367000;451582000 */
                 vcoFreq = 32 * 1000 * tmpVal / calculationDiv * (1000  / 4);
-                break; 
+                break;
             case GLB_XTAL_38P4M:
                 /* 442364000;451579500; */
-                vcoFreq = 384 * 100 * tmpVal / calculationDiv * (1000  / 4); 
+                vcoFreq = 384 * 100 * tmpVal / calculationDiv * (1000  / 4);
                 break;
             case GLB_XTAL_40M:
                 /* 442368000;451582000 */
@@ -236,7 +236,7 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_AUPLL_Output(CLOCK_AUPLL
             case GLB_XTAL_RC32M:
                 /* 442367000;451582000 */
                 vcoFreq = 32 * 1000 * tmpVal / calculationDiv * (1000  / 4);
-                break;            
+                break;
             default:
                 return (0);
         }
@@ -285,7 +285,7 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_Audio_PLL_Output()
     tmpVal = BL_GET_REG_BITS_VAL(BL_RD_REG(CCI_BASE, CCI_AUDIO_PLL_CFG1), CCI_AUPLL_POSTDIV);
 
     return Clock_Get_AUPLL_Output(CLOCK_AUPLL_DIV1) / tmpVal;
-    
+
 }
 
 __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_MIPI_PLL_Output()
@@ -306,14 +306,14 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_MIPI_PLL_Output()
             case GLB_XTAL_24M:
                 /* 1500000000 */
                 vcoFreq = 24 * 1000 * tmpVal / calculationDiv * 1000;
-                break; 
+                break;
             case GLB_XTAL_32M:
                 /* 1500000000 */
                 vcoFreq = 32 * 500 * tmpVal / calculationDiv * (2000  / 2);
-                break; 
+                break;
             case GLB_XTAL_38P4M:
                 /* 1500000000 */
-                vcoFreq = 384 * 50 * tmpVal / calculationDiv * (2000  / 2); 
+                vcoFreq = 384 * 50 * tmpVal / calculationDiv * (2000  / 2);
                 break;
             case GLB_XTAL_40M:
                 /* 1500000000 */
@@ -326,7 +326,7 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_MIPI_PLL_Output()
             case GLB_XTAL_RC32M:
                 /* 1500000000 */
                 vcoFreq = 32 * 500 * tmpVal / calculationDiv * (2000  / 2);
-                break;            
+                break;
             default:
                 return (0);
         }
@@ -360,14 +360,14 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_UHS_PLL_Output()
             case GLB_XTAL_24M:
                 /* 2299992000;2199996000;2100000000;1999992000;1599996000;1500000000;1399992000;1065996000;799992000;666996000;399996000 */
                 vcoFreq = 24 * 500 * tmpVal / calculationDiv * 2000;
-                break; 
+                break;
             case GLB_XTAL_32M:
                 /* 2300000000;2200000000;2100000000;2000000000;1600000000;1500000000;1400000000;1066000000;800000000;667000000;400000000 */
                 vcoFreq = 32 * 250 * tmpVal / calculationDiv * (4000  / 2);
-                break; 
+                break;
             case GLB_XTAL_38P4M:
                 /* 2299996000;2199992000;2100000000;1999996000;1599992000;1500000000;1399996000;1065992000;799996000;666992000;399992000 */
-                vcoFreq = 384 * 25 * tmpVal / calculationDiv * (4000  / 2); 
+                vcoFreq = 384 * 25 * tmpVal / calculationDiv * (4000  / 2);
                 break;
             case GLB_XTAL_40M:
                 /* 2300000000;2200000000;2100000000;2000000000;1600000000;1500000000;1400000000;1065996000;800000000;666992000;400000000 */
@@ -380,7 +380,7 @@ __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_Get_UHS_PLL_Output()
             case GLB_XTAL_RC32M:
                 /* 2300000000;2200000000;2100000000;2000000000;1600000000;1500000000;1400000000;1066000000;800000000;667000000;400000000 */
                 vcoFreq = 32 * 250 * tmpVal / calculationDiv * (4000  / 2);
-                break;            
+                break;
             default:
                 return (0);
         }
@@ -1146,7 +1146,7 @@ __UNUSED__ static uint8_t ATTR_CLOCK_SECTION Clock_Get_MIPI_Div_Val(void)
 }
 
 __UNUSED__ static uint32_t ATTR_CLOCK_SECTION Clock_MIPI_Clk_Mux_Output(void)
-{   
+{
     return Clock_Get_MIPI_PLL_Output();
 }
 
@@ -1809,7 +1809,7 @@ uint32_t ATTR_CLOCK_SECTION Clock_Peripheral_Clock_Get(BL_Peripheral_Type type)
 
         /*!< PSRAMA clock */
         case BL_PERIPHERAL_CLOCK_PSRAMA:
-            return Clock_Get_UHS_PLL_Output();    
+            return Clock_Get_UHS_PLL_Output();
 
         /*!< PSRAMB clock */
         case BL_PERIPHERAL_CLOCK_PSRAMB:

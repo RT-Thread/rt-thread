@@ -151,7 +151,7 @@ rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
     return RT_EOK;
 }
 
-static rt_size_t xpt2046_touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
+static rt_ssize_t xpt2046_touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
 {
     if (touch_num != 0)
     {

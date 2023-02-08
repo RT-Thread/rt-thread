@@ -91,7 +91,7 @@ void ISO11898_Mode_Set(ISO11898_MODE_Type type, ISO11898_MODE_VALUE_Type value)
     /* Set mode value */
     tmpVal = BL_RD_REG(ISO11898_BASE, ISO11898_MODE);
     tmpVal &= ~(1 << type);
-    tmpVal |= (value << type);    
+    tmpVal |= (value << type);
 
     /* Write back */
     BL_WR_REG(ISO11898_BASE, ISO11898_MODE, tmpVal);
@@ -244,7 +244,7 @@ BL_Err_Type ISO11898_Transmit(const ISO11898_CFG_Type *cfg)
     uint32_t tmpVal;
     uint32_t i;
     volatile uint32_t *pData;
-    
+
     /* Check the parameters */
     CHECK_PARAM(IS_ISO11898_FRAME_FORMAT_TYPE(cfg->dataAddr));
     CHECK_PARAM(IS_ISO11898_FRAME_TYPE(cfg->frameType));

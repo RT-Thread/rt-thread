@@ -483,7 +483,7 @@ void DSI_Set_VSA_VFP(DSI_ID_Type dsiId, uint8_t vsa, uint8_t vfp)
 
     /* Check the parameters */
     CHECK_PARAM(IS_DSI_ID_TYPE(dsiId));
-    
+
     tmpVal = BL_RD_REG(DSIx, DSI_CONFIG);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSI_CR_HSTX_VFP, vfp);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal, DSI_CR_HSTX_VSA, vsa);
@@ -860,7 +860,7 @@ void DSI_PHY_Set_Clock_Lane(DSI_ID_Type dsiId, DSI_Clock_Lane_Opt_Type opt)
     if (opt & DSI_CLOCK_LANE_OPT_HS_REQ) {
         tmpVal = BL_SET_REG_BIT(tmpVal, DSI_CL_TXREQUESTHS);
     }
-    
+
     if (opt & DSI_CLOCK_LANE_OPT_HS_EXIT) {
         tmpVal = BL_CLR_REG_BIT(tmpVal, DSI_CL_TXREQUESTHS);
     }
@@ -914,7 +914,7 @@ void DSI_PHY_HS_Mode_Stop(DSI_ID_Type dsiId)
     uint32_t tmpVal;
     uint32_t DSIx = dsiAddr[dsiId];
     DSI_Lane_State_Type state = 0;
-    
+
     /* Check the parameters */
     CHECK_PARAM(IS_DSI_ID_TYPE(dsiId));
 
@@ -1015,14 +1015,14 @@ BL_Err_Type DSI_LPDT_Start_Tx(DSI_ID_Type dsiId)
 
 /****************************************************************************//**
  * @brief  DSI wait for send done
- * 
+ *
  * @param  dsiId: DSI ID type
- * 
+ *
  * @return SUCCESS
  *
 *******************************************************************************/
 BL_Err_Type DSI_Wait_For_Esc_Tx_Done(DSI_ID_Type dsiId)
-{        
+{
     DSI_INT_Type intStatus;
 
     /* wait for Tx finished */

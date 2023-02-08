@@ -91,7 +91,7 @@ void CAN_Mode_Set(CAN_MODE_Type type, CAN_MODE_VALUE_Type value)
     /* Set mode value */
     tmpVal = BL_RD_REG(CAN_BASE, CAN_MODE);
     tmpVal &= ~(1 << type);
-    tmpVal |= (value << type);    
+    tmpVal |= (value << type);
 
     /* Write back */
     BL_WR_REG(CAN_BASE, CAN_MODE, tmpVal);
@@ -244,7 +244,7 @@ BL_Err_Type CAN_Transmit(const CAN_CFG_Type *cfg)
     uint32_t tmpVal;
     uint32_t i;
     volatile uint32_t *pData;
-    
+
     /* Check the parameters */
     CHECK_PARAM(IS_CAN_FRAME_FORMAT_TYPE(cfg->dataAddr));
     CHECK_PARAM(IS_CAN_FRAME_TYPE(cfg->frameType));

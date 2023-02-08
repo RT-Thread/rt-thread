@@ -79,7 +79,7 @@ static void __dma_irq_process(void *p_arg)
                 pfn = gp_hosal_dma_dev->used_chan[ch].callback;
                 parg = gp_hosal_dma_dev->used_chan[ch].p_arg;
                 if (pfn) {
-                	pfn(parg, HOSAL_DMA_INT_TRANS_COMPLETE);
+                    pfn(parg, HOSAL_DMA_INT_TRANS_COMPLETE);
                 }
             }
 
@@ -94,7 +94,7 @@ static void __dma_irq_process(void *p_arg)
                 pfn = gp_hosal_dma_dev->used_chan[ch].callback;
                 parg = gp_hosal_dma_dev->used_chan[ch].p_arg;
                 if (pfn) {
-                	pfn(parg, HOSAL_DMA_INT_TRANS_ERROR);
+                    pfn(parg, HOSAL_DMA_INT_TRANS_ERROR);
                 }
             }
         }

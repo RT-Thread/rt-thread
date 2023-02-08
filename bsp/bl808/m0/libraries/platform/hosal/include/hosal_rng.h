@@ -45,7 +45,7 @@ extern "C" {
 /**
  * @brief init rng
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */
@@ -58,7 +58,7 @@ int hosal_rng_init(void);
  *                           in this memory with random numbers after executed
  * @param[in]   bytes        Length of the memory buffer (bytes)
  *
- * @return  
+ * @return
  *     -  0 : success
  *     - other: fail
  */

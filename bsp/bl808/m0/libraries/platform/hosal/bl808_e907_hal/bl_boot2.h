@@ -184,8 +184,8 @@ PtTable_ID_Type targetTableID,
                                         PtTable_Stuff_Config *ptStuff,
 PtTable_Entry_Config *ptEntry);
 PtTable_Error_Type PtTable_Create(const SPI_Flash_Cfg_Type *pFlashCfg,PtTable_ID_Type ptID);
-PtTable_Error_Type PtTable_Get_Active_Entries_By_Name(PtTable_Stuff_Config *ptStuff,                                                             
-                                                    uint8_t *name,                                                     
+PtTable_Error_Type PtTable_Get_Active_Entries_By_Name(PtTable_Stuff_Config *ptStuff,
+                                                    uint8_t *name,
                                                     PtTable_Entry_Config *ptEntry);
 
 /*@} end of group PARTITION_Public_Functions */

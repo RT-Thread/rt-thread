@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 NXP
+ * Copyright 2017-2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -9,13 +9,15 @@
 #define __FLEXSPI_NOR_BOOT_H__
 
 #include <stdint.h>
-#include "board.h"
 #include "fsl_common.h"
+#ifndef BOARD_FLASH_SIZE
+#include "board.h"
+#endif
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief XIP_DEVICE driver version 2.0.2. */
-#define FSL_XIP_DEVICE_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
+/*! @brief XIP_DEVICE driver version 2.0.3. */
+#define FSL_XIP_DEVICE_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
 /*@}*/
 
 /*************************************
@@ -75,8 +77,8 @@ extern uint32_t __Vectors[];
 extern uint32_t __VECTOR_TABLE[];
 #define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)
 #elif defined(__GNUC__)
-extern uint32_t __isr_vector[];
-#define IMAGE_ENTRY_ADDRESS ((uint32_t)__isr_vector)
+extern uint32_t __VECTOR_TABLE[];
+#define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)
 #endif
 
 #if defined(XIP_BOOT_HEADER_DCD_ENABLE) && (1 == XIP_BOOT_HEADER_DCD_ENABLE)
@@ -100,7 +102,12 @@ typedef struct _boot_data_
     uint32_t placeholder; /* placehoder to make even 0x10 size */
 } BOOT_DATA_T;
 
+#ifdef FlexSPI1_AMBA_BASE
+#define FLASH_BASE FlexSPI1_AMBA_BASE
+#else
 #define FLASH_BASE FlexSPI_AMBA_BASE
+#endif
+
 #if defined(BOARD_FLASH_SIZE)
 #define FLASH_SIZE BOARD_FLASH_SIZE
 #else

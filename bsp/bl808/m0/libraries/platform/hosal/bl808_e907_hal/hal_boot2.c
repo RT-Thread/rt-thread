@@ -102,7 +102,7 @@ uint32_t hal_boot2_get_flash_addr(void)
 {
     extern uint8_t __boot2_flashCfg_src;
 
-    return  (uint32_t)(&__boot2_flashCfg_src + 
+    return  (uint32_t)(&__boot2_flashCfg_src +
             (sizeof(boot2_partition_table.table.ptEntries[0]) * boot2_partition_table.table.ptTable.entryCnt));
 }
 
@@ -247,12 +247,12 @@ uint8_t hal_boot2_get_active_partition(void)
     return boot2_partition_table.partition_active_idx;
 }
 
-int hal_boot2_get_active_entries_byname(uint8_t *name, HALPartition_Entry_Config *ptEntry_hal) 
+int hal_boot2_get_active_entries_byname(uint8_t *name, HALPartition_Entry_Config *ptEntry_hal)
 {
     PtTable_Entry_Config *ptEntry = (PtTable_Entry_Config*)ptEntry_hal;
     if (PtTable_Get_Active_Entries_By_Name(&boot2_partition_table.table, name, ptEntry)) {
-        return -1; 
-    }   
+        return -1;
+    }
     return 0;
 }
 
@@ -286,7 +286,7 @@ int hal_boot2_init(void)
 }
 
 #if 0
-#define     PT_OTA_TYPE_NAME         "FW" 
+#define     PT_OTA_TYPE_NAME         "FW"
 #define     PT_MEDIA_TYPE_NAME       "mfg"
 void hal_update_mfg_ptable(void)
 {
@@ -298,14 +298,14 @@ void hal_update_mfg_ptable(void)
     if (0 == hal_boot2_get_active_entries_byname((uint8_t *)PT_OTA_TYPE_NAME, (HALPartition_Entry_Config *)(&ptEntry_fw))) {       // ota
         if (0 == hal_boot2_get_active_entries_byname((uint8_t *)PT_MEDIA_TYPE_NAME, (HALPartition_Entry_Config *)(&ptEntry_media))) { // media
             if (ptEntry_fw.Address[1] == ptEntry_media.Address[0]) {
-                
+
                 memset(ptEntry_media.name, 0, sizeof(ptEntry_media.name));
                 PtTable_Update_Entry(NULL, !boot2_partition_table.partition_active_idx, &boot2_partition_table.table, &ptEntry_media);
-                
+
                 printf("===== update mfg partition =====\r\n");
-            }   
-        }   
-    }   
+            }
+        }
+    }
 
     printf("====================\r\n");
     printf("update mfg table.\r\n");

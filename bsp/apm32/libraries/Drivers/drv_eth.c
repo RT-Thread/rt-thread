@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-10-20     luobeihai    first version
+ * 2023-01-10     luobeihai    fix Eanble HARDWARE_CHECKSUM bug
  */
 
 #include <board.h>
@@ -16,21 +17,27 @@
 #include <netif/etharp.h>
 #include <lwip/icmp.h>
 #include "lwipopts.h"
+#include "lwip/ip.h"
+#include "drv_eth.h"
 
 /* debug option */
 //#define DRV_DEBUG
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
 #define LOG_TAG             "drv.emac"
-#include "drv_eth.h"
+#include <drv_log.h>
 
 /* Global pointers on Tx and Rx descriptor used to transmit and receive descriptors */
 extern ETH_DMADescConfig_T  *DMATxDescToSet, *DMARxDescToGet;
 
 /* Ethernet Rx & Tx DMA Descriptors */
-static ETH_DMADescConfig_T  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
+extern ETH_DMADescConfig_T  DMARxDscrTab[ETH_RXBUFNB];
+extern ETH_DMADescConfig_T  DMATxDscrTab[ETH_TXBUFNB];
+
 /* Ethernet Receive and Transmit buffers */
-static rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
+extern uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
+extern uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
+
 /* phy address */
 static uint8_t phy_addr = 0xFF;
 
@@ -306,8 +313,13 @@ static rt_err_t rt_apm32_eth_init(rt_device_t dev)
     ETH_Config_T ETH_InitStructure;
 
     /* Enable ETHERNET clock  */
+#if defined(SOC_SERIES_APM32F1)
+    RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_ETH_MAC | RCM_AHB_PERIPH_ETH_MAC_TX |
+                             RCM_AHB_PERIPH_ETH_MAC_RX);
+#elif defined(SOC_SERIES_APM32F4)
     RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_ETH_MAC | RCM_AHB1_PERIPH_ETH_MAC_Tx |
-                                  RCM_AHB1_PERIPH_ETH_MAC_Rx);
+                              RCM_AHB1_PERIPH_ETH_MAC_Rx);
+#endif
 
     /* Reset ETHERNET on AHB Bus */
     ETH_Reset();
@@ -338,7 +350,7 @@ static rt_err_t rt_apm32_eth_init(rt_device_t dev)
     ETH_InitStructure.hashTableHigh = apm32_eth->ETH_HashTableHigh;
     ETH_InitStructure.hashTableLow  = apm32_eth->ETH_HashTableLow;
     ETH_InitStructure.unicastFramesFilter = ETH_UNICASTFRAMESFILTER_PERFECT;
-#ifdef HARDWARE_CHECKSUM
+#ifdef RT_LWIP_USING_HW_CHECKSUM
     ETH_InitStructure.checksumOffload = ETH_CHECKSUMOFFLAOD_ENABLE;
 #endif
 
@@ -400,13 +412,13 @@ static rt_err_t rt_apm32_eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_apm32_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_apm32_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t rt_apm32_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_apm32_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
@@ -473,8 +485,8 @@ rt_err_t rt_apm32_eth_tx( rt_device_t dev, struct pbuf* p)
     DMATxDescToSet->Status |= ETH_DMATXDESC_LS | ETH_DMATXDESC_FS;
     /* Enable TX Completion Interrupt */
     DMATxDescToSet->Status |= ETH_DMATXDESC_INTC;
-#ifdef CHECKSUM_BY_HARDWARE
-    DMATxDescToSet->Status |= ETH_DMATxDesc_ChecksumTCPUDPICMPFull;
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+    DMATxDescToSet->Status |= ETH_DMATXDESC_CHECKSUMTCPUDPICMPFULL;
     /* clean ICMP checksum APM32F need */
     {
         struct eth_hdr *ethhdr = (struct eth_hdr *)(DMATxDescToSet->Buffer1Addr);
@@ -587,9 +599,9 @@ struct pbuf *rt_apm32_eth_rx(rt_device_t dev)
 }
 
 enum {
-    PHY_LINK_MASK        = (1 << 0),
-    PHY_100M_MASK        = (1 << 1),
-    PHY_DUPLEX_MASK = (1 << 2),
+    PHY_LINK        = (1 << 0),
+    PHY_100M        = (1 << 1),
+    PHY_FULL_DUPLEX = (1 << 2),
 };
 
 static void phy_linkchange(void)
@@ -604,30 +616,30 @@ static void phy_linkchange(void)
     {
         uint16_t SR;
 
-        phy_speed_new |= PHY_LINK_MASK;
+        phy_speed_new |= PHY_LINK;
 
         SR = ETH_ReadPHYRegister(phy_addr, PHY_Status_REG);
         LOG_D("phy control status reg is 0x%X", SR);
 
         if (PHY_Status_SPEED_100M(SR))
         {
-            phy_speed_new |= PHY_100M_MASK;
+            phy_speed_new |= PHY_100M;
         }
 
         if (PHY_Status_FULL_DUPLEX(SR))
         {
-            phy_speed_new |= PHY_DUPLEX_MASK;
+            phy_speed_new |= PHY_FULL_DUPLEX;
         }
     }
 
     /* linkchange */
     if(phy_speed_new != phy_speed)
     {
-        if(phy_speed_new & PHY_LINK_MASK)
+        if(phy_speed_new & PHY_LINK)
         {
             LOG_D("link up ");
 
-            if(phy_speed_new & PHY_100M_MASK)
+            if(phy_speed_new & PHY_100M)
             {
                 LOG_D("100Mbps");
                 apm32_eth_device.ETH_Speed = ETH_SPEED_100M;
@@ -638,7 +650,7 @@ static void phy_linkchange(void)
                 LOG_D("10Mbps");
             }
 
-            if(phy_speed_new & PHY_DUPLEX_MASK)
+            if(phy_speed_new & PHY_FULL_DUPLEX)
             {
                 LOG_D("full-duplex\r\n");
                 apm32_eth_device.ETH_Mode = ETH_MODE_FULLDUPLEX;

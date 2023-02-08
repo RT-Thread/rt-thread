@@ -79,7 +79,7 @@ int bl_sha_finish(bl_sha_ctx_t *ctx, uint8_t *hash);
 int bl_sec_ccm_encrypt_and_tag(const uint8_t *key, unsigned int key_bytelen, size_t length, const unsigned char *iv, size_t iv_len, const unsigned char *add, size_t add_len,
                          const unsigned char *input, unsigned char *output, unsigned char *tag, size_t tag_len);
 int bl_sec_ccm_auth_decrypt(const uint8_t *key, unsigned int key_bytelen, size_t length,const unsigned char *iv, size_t iv_len, const unsigned char *add,
-							 size_t add_len, const unsigned char *input, unsigned char *output, const unsigned char *tag, size_t tag_len);
+                             size_t add_len, const unsigned char *input, unsigned char *output, const unsigned char *tag, size_t tag_len);
 int bl_sec_aes_ecb_encrypt(const uint8_t *key, unsigned int key_bytelen, size_t length, const unsigned char *input, unsigned char *output);
 int bl_sec_aes_ecb_decrypt(const uint8_t *key, unsigned int key_bytelen, size_t length, const unsigned char *input, unsigned char *output);
 #endif

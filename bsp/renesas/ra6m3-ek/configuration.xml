@@ -224,6 +224,7 @@
       <configSetting altId="debug0.tdi.p110" configurationId="debug0.tdi"/>
       <configSetting altId="debug0.tdo.p109" configurationId="debug0.tdo"/>
       <configSetting altId="debug0.tms.p108" configurationId="debug0.tms"/>
+      <configSetting altId="etherc0.rmii.pairing.free" configurationId="etherc0.rmii.pairing"/>
       <configSetting altId="p108.debug0.tms" configurationId="p108"/>
       <configSetting altId="p108.gpio_mode.gpio_mode_peripheral" configurationId="p108.gpio_mode"/>
       <configSetting altId="p109.debug0.tdo" configurationId="p109"/>

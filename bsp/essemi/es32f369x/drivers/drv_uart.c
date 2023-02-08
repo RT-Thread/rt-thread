@@ -721,7 +721,7 @@ static int es32f3x_getc(struct rt_serial_device *serial)
 /**
  * DMA transmit
  */
-static rt_size_t es32f3x_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t es32f3x_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct es32_uart *uart;
 

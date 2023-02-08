@@ -25,6 +25,7 @@
 #define BAUD_RATE_115200                115200
 #define BAUD_RATE_230400                230400
 #define BAUD_RATE_460800                460800
+#define BAUD_RATE_500000                500000
 #define BAUD_RATE_921600                921600
 #define BAUD_RATE_2000000               2000000
 #define BAUD_RATE_2500000               2500000
@@ -166,7 +167,7 @@ struct rt_uart_ops
     int (*putc)(struct rt_serial_device *serial, char c);
     int (*getc)(struct rt_serial_device *serial);
 
-    rt_size_t (*dma_transmit)(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
+    rt_ssize_t (*dma_transmit)(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
 };
 
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);

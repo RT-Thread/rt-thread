@@ -40,11 +40,11 @@ extern "C" {
  *
  * @param[in]   addr     efuse address
  * @param[in]   data     store data
- * @param[in]   len      data length 
+ * @param[in]   len      data length
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_efuse_read(uint32_t addr, uint32_t *data, uint32_t len);
 
@@ -53,11 +53,11 @@ int hosal_efuse_read(uint32_t addr, uint32_t *data, uint32_t len);
  *
  * @param[in]   addr     efuse address
  * @param[in]   data     store data
- * @param[in]   len      data length 
+ * @param[in]   len      data length
  *
- * @return  
- *	- 0    on success
- *	- EIO  if an error occurred with any step
+ * @return
+ *  - 0    on success
+ *  - EIO  if an error occurred with any step
  */
 int hosal_efuse_write(uint32_t addr, uint32_t *data, uint32_t len);
 

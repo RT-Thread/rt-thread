@@ -48,7 +48,7 @@ extern "C" {
 typedef void (*hosal_timer_cb_t)(void *arg); /**< Define timer handle function type */
 
 /**
- * Define timer config args 
+ * Define timer config args
  */
 typedef struct {
     uint32_t          period;         /**< timer period, us */
@@ -57,8 +57,8 @@ typedef struct {
     void              *arg;           /**< timer handle args */
 } hosal_timer_config_t;
 
-/** 
- * Define timer dev handle 
+/**
+ * Define timer dev handle
  */
 typedef struct {
     int8_t                port;   /**< timer port */
@@ -71,8 +71,8 @@ typedef struct {
  *
  * @param[in]  tim  timer device
  *
- * @return  
- *       - 0 : success 
+ * @return
+ *       - 0 : success
  *       - other :error
  */
 int hosal_timer_init(hosal_timer_dev_t *tim);
@@ -83,7 +83,7 @@ int hosal_timer_init(hosal_timer_dev_t *tim);
  * @param[in]  tim  timer device
  *
  * @return
- *       - 0 : success 
+ *       - 0 : success
  *       - other : error
  */
 int hosal_timer_start(hosal_timer_dev_t *tim);
@@ -102,7 +102,7 @@ void hosal_timer_stop(hosal_timer_dev_t *tim);
  *
  * @param[in]  tim  timer device
  *
- * @return  
+ * @return
  *       - 0 : success
  *       - other : error
  */

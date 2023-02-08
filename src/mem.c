@@ -165,8 +165,6 @@ static void plug_holes(struct rt_small_mem *m, struct rt_small_mem_item *mem)
 /**
  * @brief This function will initialize small memory management algorithm.
  *
- * @param m the small memory management object.
- *
  * @param name is the name of the small memory management object.
  *
  * @param begin_addr the beginning address of memory.

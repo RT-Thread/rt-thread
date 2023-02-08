@@ -116,7 +116,7 @@ void bl_irq_default(void)
 }
 
 static void (*handler_list[2][16 + 64])(void) = {
-    
+
 };
 
 
@@ -139,7 +139,7 @@ void bl_irq_register_with_ctx(int irqnum, void *handler, void *ctx)
              handler_list[0][irqnum]
         );
     }
-   
+
     if (handler == NULL) {
         blog_error("handler is NULL pointer! \r\n");
         return;
@@ -155,7 +155,7 @@ void bl_irq_register_with_ctx(int irqnum, void *handler, void *ctx)
     }
 
     return;
-    
+
 }
 
 void bl_irq_ctx_get(int irqnum, void **ctx)
@@ -177,8 +177,8 @@ void bl_irq_ctx_count_cost(int irqnum, uint64_t cost)
     struct irq_ctx *ctx;
     _irq_num_check(irqnum);
     if(handler_list[0][irqnum] != NULL) {
-	ctx = (struct irq_ctx *)(handler_list[1][irqnum]);
-	ctx->irq_run_time += cost;
+    ctx = (struct irq_ctx *)(handler_list[1][irqnum]);
+    ctx->irq_run_time += cost;
     }
 }
 
@@ -206,7 +206,7 @@ void bl_irq_unregister(int irqnum, void *handler)
 #endif
 }
 
-void interrupt_entry(uint32_t mcause) 
+void interrupt_entry(uint32_t mcause)
 {
     void *handler = NULL;
     mcause &= 0x7FFFFFF;
@@ -342,9 +342,9 @@ extern void misaligned_store_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t m
 
 #ifdef DBG_RECORD_EXCEP_VAL
 struct{
-	uint32_t mcause;
-	uint32_t mepc;
-	uint32_t mtval;
+    uint32_t mcause;
+    uint32_t mepc;
+    uint32_t mtval;
 }rval[4];
 int rval_idx;
 #endif /* DBG_RECORD_EXCEP_VAL */
@@ -358,24 +358,24 @@ void exception_entry(uint32_t mcause, uint32_t mepc, uint32_t mtval, uintptr_t *
     rval_idx++;
 #endif /* DBG_RECORD_EXCEP_VAL */
     if ((mcause & 0x3ff) == EXCPT_LOAD_MISALIGNED) {
-	//misaligned_load_trap(regs, mcause, mepc);
+    //misaligned_load_trap(regs, mcause, mepc);
     } else if ((mcause & 0x3ff) == EXCPT_STORE_MISALIGNED){
-	//misaligned_store_trap(regs, mcause, mepc);
+    //misaligned_store_trap(regs, mcause, mepc);
     }
     {
-	//registerdump(tasksp);
-	puts("Exception Entry--->>>\r\n");
-	blog_info("mcause %08lx, mepc %08lx, mtval %08lx\r\n",
-		  mcause,
-		  mepc,
-		  mtval
-		  );
+    //registerdump(tasksp);
+    puts("Exception Entry--->>>\r\n");
+    blog_info("mcause %08lx, mepc %08lx, mtval %08lx\r\n",
+          mcause,
+          mepc,
+          mtval
+          );
         __dump_exception_code_str(mcause & 0xFFFF);
-	//backtrace_now_task((int (*)(const char *s))puts, regs);
+    //backtrace_now_task((int (*)(const char *s))puts, regs);
         while (1) {
-	    /*Deap loop now*/
+        /*Deap loop now*/
 #ifdef SYS_ENABLE_COREDUMP
-	    /* For stack check */
+        /* For stack check */
             extern uintptr_t _sp_main, _sp_base;
 
             /* XXX change sp to irq stack base */

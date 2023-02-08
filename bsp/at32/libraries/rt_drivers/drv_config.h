@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-11-09     shelton      first version
+ * 2023-01-31     shelton      add support f421/f425
  */
 
 #ifndef __DRV_CONFIG_H__
@@ -30,6 +31,14 @@ extern "C" {
 #include "f415/dma_config.h"
 #include "f415/uart_config.h"
 #include "f415/spi_config.h"
+#elif defined(SOC_SERIES_AT32F421)
+#include "f421/dma_config.h"
+#include "f421/uart_config.h"
+#include "f421/spi_config.h"
+#elif defined(SOC_SERIES_AT32F425)
+#include "f425/dma_config.h"
+#include "f425/uart_config.h"
+#include "f425/spi_config.h"
 #elif defined(SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
 #include "f435_437/dma_config.h"
 #include "f435_437/uart_config.h"

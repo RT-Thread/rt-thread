@@ -52,7 +52,7 @@ config RT_CPUS_NR
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
-    default 4
+    default 8
     help
         Alignment size for CPU architecture data access
 

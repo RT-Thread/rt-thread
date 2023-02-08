@@ -265,7 +265,7 @@ rt_err_t  rt_link_dev_close(rt_device_t dev)
     return rt_link_service_detach(&rtlink->service);
 }
 
-rt_size_t rt_link_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+rt_ssize_t rt_link_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
@@ -305,7 +305,7 @@ rt_size_t rt_link_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_
     return read_len;
 }
 
-rt_size_t rt_link_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+rt_ssize_t rt_link_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);

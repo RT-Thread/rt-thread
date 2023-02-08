@@ -39,6 +39,12 @@ jobs:
          - {RTT_BSP: "apm32/apm32f103xe-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f407ig-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f072vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f107vc-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f030r8-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f051r8-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f091vc-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f103vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f407zg-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -46,6 +52,11 @@ jobs:
          - {RTT_BSP: "at91/at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "Infineon/psoc6-cy8ckit-062S2-43012", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062-BLE", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062s4", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062-WIFI-BT", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8cproto-062S3-4343W", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-evaluationkit-062S2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ft32/ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "n32/n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -193,6 +204,8 @@ jobs:
         #  - {RTT_BSP: "stm32/stm32wl55-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32/stm32wle5-yizhilian-lm401", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32/stm32wle5-yizhilian-lm402", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "renesas/ra6m3-ek", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "renesas/ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "wch/arm/ch32f103c8-core", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "wch/arm/ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "synwit/swm320", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -205,6 +218,8 @@ jobs:
          - {RTT_BSP: "at32/at32f407-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f413-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f415-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f421-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f425-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f435-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f437-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"}

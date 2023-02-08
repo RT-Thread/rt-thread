@@ -135,7 +135,7 @@ void MJDEC_Init(MJDEC_CFG_Type *cfg)
     /* align buffer to 16 bytes boundary */
     BL_WR_REG(MJDEC_BASE, MJDEC_JDEC_YY_FRAME_ADDR, (cfg->bufferFrameYY + 0xF) & (~0xF));
     BL_WR_REG(MJDEC_BASE, MJDEC_JDEC_UV_FRAME_ADDR, (cfg->bufferFrameUV + 0xF) & (~0xF));
-    
+
     tmpVal = BL_RD_REG(MJDEC_BASE, MJDEC_JDEC_FRAME_SIZE);
     switch(cfg->yuv)
     {
@@ -291,7 +291,7 @@ void MJDEC_Pop_Frame(void)
 void MJDEC_Set_Frame_Threshold(uint8_t count)
 {
     uint32_t tmpVal;
-    
+
     tmpVal = BL_RD_REG(MJDEC_BASE, MJDEC_JDEC_CONTROL_3);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,MJDEC_REG_FRAME_CNT_TRGR_INT,count);
     BL_WR_REG(MJDEC_BASE,MJDEC_JDEC_CONTROL_3,tmpVal);
@@ -388,9 +388,9 @@ void MJDEC_IntMask(MJDEC_INT_Type intType, BL_Mask_Type intMask)
 void MJDEC_IntClr(MJDEC_INT_Type intType)
 {
     uint32_t tmpVal;
-    
+
     CHECK_PARAM(IS_MJDEC_INT_TYPE(intType));
-    
+
     tmpVal = BL_RD_REG(MJDEC_BASE,MJDEC_JDEC_INT_CLR);
     switch(intType)
     {
@@ -439,7 +439,7 @@ void MJDEC_Int_Callback_Install(MJDEC_INT_Type intType,intCallback_Type* cbFun)
 void MJDEC_IRQHandler(void)
 {
     uint32_t tmpVal;
-    
+
     tmpVal = BL_RD_REG(MJDEC_BASE,MJDEC_JDEC_CONTROL_3);
     BL_WR_REG(MJDEC_BASE,MJDEC_JDEC_INT_CLR, 0x1);
     if( BL_IS_REG_BIT_SET(tmpVal, MJDEC_STS_NORMAL_INT) ){

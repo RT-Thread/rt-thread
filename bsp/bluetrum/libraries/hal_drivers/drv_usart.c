@@ -209,7 +209,7 @@ static int ab32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     return -1;
 }

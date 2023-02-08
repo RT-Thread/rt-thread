@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -363,7 +363,7 @@ static void SAI_GetCommonConfig(sai_transceiver_t *config,
     /* frame sync default configurations */
     config->frameSync.frameSyncWidth = (uint8_t)bitWidth;
     config->frameSync.frameSyncEarly = true;
-#if defined(FSL_FEATURE_SAI_HAS_FRAME_SYNC_ON_DEMAND) && FSL_FEATURE_SAI_HAS_FRAME_SYNC_ON_DEMAND
+#if defined(FSL_FEATURE_SAI_HAS_ON_DEMAND_MODE) && FSL_FEATURE_SAI_HAS_ON_DEMAND_MODE
     config->frameSync.frameSyncGenerateOnDemand = false;
 #endif
     config->frameSync.frameSyncPolarity = kSAI_PolarityActiveLow;
@@ -865,11 +865,11 @@ void SAI_RxEnable(I2S_Type *base, bool enable)
  * This function will also clear all the error flags such as FIFO error, sync error etc.
  *
  * param base SAI base pointer
- * param type Reset type, FIFO reset or software reset
+ * param resetType Reset type, FIFO reset or software reset
  */
-void SAI_TxSoftwareReset(I2S_Type *base, sai_reset_type_t type)
+void SAI_TxSoftwareReset(I2S_Type *base, sai_reset_type_t resetType)
 {
-    base->TCSR |= (uint32_t)type;
+    base->TCSR |= (uint32_t)resetType;
 
     /* Clear the software reset */
     base->TCSR &= ~I2S_TCSR_SR_MASK;
@@ -884,11 +884,11 @@ void SAI_TxSoftwareReset(I2S_Type *base, sai_reset_type_t type)
  * This function will also clear all the error flags such as FIFO error, sync error etc.
  *
  * param base SAI base pointer
- * param type Reset type, FIFO reset or software reset
+ * param resetType Reset type, FIFO reset or software reset
  */
-void SAI_RxSoftwareReset(I2S_Type *base, sai_reset_type_t type)
+void SAI_RxSoftwareReset(I2S_Type *base, sai_reset_type_t resetType)
 {
-    base->RCSR |= (uint32_t)type;
+    base->RCSR |= (uint32_t)resetType;
 
     /* Clear the software reset */
     base->RCSR &= ~I2S_RCSR_SR_MASK;
@@ -1318,7 +1318,7 @@ void SAI_TxSetFrameSyncConfig(I2S_Type *base, sai_master_slave_t masterSlave, sa
 
     tcr4 &= ~(I2S_TCR4_FSE_MASK | I2S_TCR4_FSP_MASK | I2S_TCR4_FSD_MASK | I2S_TCR4_SYWD_MASK);
 
-#if defined(FSL_FEATURE_SAI_HAS_FRAME_SYNC_ON_DEMAND) && FSL_FEATURE_SAI_HAS_FRAME_SYNC_ON_DEMAND
+#if defined(FSL_FEATURE_SAI_HAS_ON_DEMAND_MODE) && FSL_FEATURE_SAI_HAS_ON_DEMAND_MODE
     tcr4 &= ~I2S_TCR4_ONDEM_MASK;
     tcr4 |= I2S_TCR4_ONDEM(config->frameSyncGenerateOnDemand);
 #endif
@@ -1347,7 +1347,7 @@ void SAI_RxSetFrameSyncConfig(I2S_Type *base, sai_master_slave_t masterSlave, sa
 
     rcr4 &= ~(I2S_RCR4_FSE_MASK | I2S_RCR4_FSP_MASK | I2S_RCR4_FSD_MASK | I2S_RCR4_SYWD_MASK);
 
-#if defined(FSL_FEATURE_SAI_HAS_FRAME_SYNC_ON_DEMAND) && FSL_FEATURE_SAI_HAS_FRAME_SYNC_ON_DEMAND
+#if defined(FSL_FEATURE_SAI_HAS_ON_DEMAND_MODE) && FSL_FEATURE_SAI_HAS_ON_DEMAND_MODE
     rcr4 &= ~I2S_RCR4_ONDEM_MASK;
     rcr4 |= I2S_RCR4_ONDEM(config->frameSyncGenerateOnDemand);
 #endif
@@ -2133,7 +2133,7 @@ void SAI_WriteBlocking(I2S_Type *base, uint32_t channel, uint32_t bitWidth, uint
         }
 
         SAI_WriteNonBlocking(base, channel, 1UL << channel, channel, (uint8_t)bitWidth, buffer, bytesPerWord);
-        buffer = (uint8_t *)((uint32_t)buffer + bytesPerWord);
+        buffer = (uint8_t *)((uintptr_t)buffer + bytesPerWord);
         i += bytesPerWord;
     }
 
@@ -2188,7 +2188,7 @@ void SAI_WriteMultiChannelBlocking(
 
         SAI_WriteNonBlocking(base, channel, channelMask, endChannel, (uint8_t)bitWidth, buffer,
                              bytesPerWord * channelNums);
-        buffer = (uint8_t *)((uint32_t)buffer + bytesPerWord * channelNums);
+        buffer = (uint8_t *)((uintptr_t)buffer + bytesPerWord * channelNums);
         j += bytesPerWord * channelNums;
     }
 
@@ -2241,7 +2241,7 @@ void SAI_ReadMultiChannelBlocking(
 
         SAI_ReadNonBlocking(base, channel, channelMask, endChannel, (uint8_t)bitWidth, buffer,
                             bytesPerWord * channelNums);
-        buffer = (uint8_t *)((uint32_t)buffer + bytesPerWord * channelNums);
+        buffer = (uint8_t *)((uintptr_t)buffer + bytesPerWord * channelNums);
         j += bytesPerWord * channelNums;
     }
 }
@@ -2273,7 +2273,7 @@ void SAI_ReadBlocking(I2S_Type *base, uint32_t channel, uint32_t bitWidth, uint8
         }
 
         SAI_ReadNonBlocking(base, channel, 1UL << channel, channel, (uint8_t)bitWidth, buffer, bytesPerWord);
-        buffer = (uint8_t *)((uint32_t)buffer + bytesPerWord);
+        buffer = (uint8_t *)((uintptr_t)buffer + bytesPerWord);
         i += bytesPerWord;
     }
 }
@@ -2745,7 +2745,7 @@ void SAI_TransferTxHandleIRQ(I2S_Type *base, sai_handle_t *handle)
 
         /* Update the internal counter */
         handle->saiQueue[handle->queueDriver].dataSize -= size;
-        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uint32_t)buffer + size);
+        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uintptr_t)buffer + size);
     }
 #else
     if (IS_SAI_FLAG_SET(base->TCSR, I2S_TCSR_FWF_MASK))
@@ -2757,7 +2757,7 @@ void SAI_TransferTxHandleIRQ(I2S_Type *base, sai_handle_t *handle)
 
         /* Update internal counter */
         handle->saiQueue[handle->queueDriver].dataSize -= size;
-        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uint32_t)buffer + size);
+        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uintptr_t)buffer + size);
     }
 #endif /* FSL_FEATURE_SAI_FIFO_COUNT */
 
@@ -2821,7 +2821,7 @@ void SAI_TransferRxHandleIRQ(I2S_Type *base, sai_handle_t *handle)
 
         /* Update the internal counter */
         handle->saiQueue[handle->queueDriver].dataSize -= size;
-        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uint32_t)buffer + size);
+        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uintptr_t)buffer + size);
     }
 #else
     if (IS_SAI_FLAG_SET(base->RCSR, I2S_RCSR_FWF_MASK))
@@ -2833,7 +2833,7 @@ void SAI_TransferRxHandleIRQ(I2S_Type *base, sai_handle_t *handle)
 
         /* Update internal state */
         handle->saiQueue[handle->queueDriver].dataSize -= size;
-        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uint32_t)buffer + size);
+        handle->saiQueue[handle->queueDriver].data = (uint8_t *)((uintptr_t)buffer + size);
     }
 #endif /* FSL_FEATURE_SAI_FIFO_COUNT */
 

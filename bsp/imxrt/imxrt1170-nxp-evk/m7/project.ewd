@@ -76,7 +76,7 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
@@ -84,15 +84,15 @@
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>CMSISDAP_ID</state>
+                    <state>JLINK_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>9.20.4.46976</state>
+                    <state>9.30.1.50052</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CLowLevel</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\NXP\FlashIMXRT1170_FlexSPI.board</state>
+                    <state>$TOOLKIT_DIR$/config/flashloader/NXP/FlashIMXRT1170_FlexSPI.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -429,7 +429,7 @@
                 </option>
                 <option>
                     <name>OCProbeConfig</name>
-                    <state>$TOOLKIT_DIR$\config\debugger\NXP\IMXRT1170.ProbeConfig</state>
+                    <state>$TOOLKIT_DIR$/config/debugger/NXP/IMXRT1170.ProbeConfig</state>
                 </option>
                 <option>
                     <name>CMSISDAPProbeConfigRadio</name>
@@ -1417,7 +1417,7 @@
                 </option>
                 <option>
                     <name>CCXds100ResetList</name>
-                    <version>1</version>
+                    <version>0</version>
                     <state>0</state>
                 </option>
                 <option>

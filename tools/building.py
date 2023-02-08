@@ -223,7 +223,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
 
-    # some env variables have loaded in SConsctruct Environment() before re-load rtconfig.py;
+    # some env variables have loaded in Environment() of SConstruct before re-load rtconfig.py;
     # after update rtconfig.py's variables, those env variables need to synchronize
     if exec_prefix:
         env['CC'] = rtconfig.CC
@@ -233,6 +233,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+    if GetOption('strict-compiling'):
+        STRICT_FLAGS = ''
+        if rtconfig.PLATFORM in ['gcc']:
+            STRICT_FLAGS += ' -Werror' #-Wextra
+            env.Append(CFLAGS=STRICT_FLAGS, CXXFLAGS=STRICT_FLAGS)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:

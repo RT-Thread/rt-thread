@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,10 +22,14 @@
 static const struct pin_irq_map pin_irq_map[] =
 {
     {CYHAL_PORT_0,  ioss_interrupts_gpio_0_IRQn},
+#if !defined(SOC_CY8C6245LQI_S3D72) && !defined(SOC_CY8C6244LQI_S4D92)
     {CYHAL_PORT_1,  ioss_interrupts_gpio_1_IRQn},
+#endif
     {CYHAL_PORT_2,  ioss_interrupts_gpio_2_IRQn},
     {CYHAL_PORT_3,  ioss_interrupts_gpio_3_IRQn},
+#if !defined(SOC_CY8C6245LQI_S3D72) && !defined(SOC_CY8C6244LQI_S4D92)
     {CYHAL_PORT_4,  ioss_interrupts_gpio_4_IRQn},
+#endif
     {CYHAL_PORT_5,  ioss_interrupts_gpio_5_IRQn},
     {CYHAL_PORT_6,  ioss_interrupts_gpio_6_IRQn},
     {CYHAL_PORT_7,  ioss_interrupts_gpio_7_IRQn},
@@ -34,7 +38,9 @@ static const struct pin_irq_map pin_irq_map[] =
     {CYHAL_PORT_10,  ioss_interrupts_gpio_10_IRQn},
     {CYHAL_PORT_11,  ioss_interrupts_gpio_11_IRQn},
     {CYHAL_PORT_12,  ioss_interrupts_gpio_12_IRQn},
+#if !defined(SOC_CY8C6245LQI_S3D72) && !defined(SOC_CY8C6244LQI_S4D92)
     {CYHAL_PORT_13,  ioss_interrupts_gpio_13_IRQn},
+#endif
     {CYHAL_PORT_14,  ioss_interrupts_gpio_14_IRQn},
 };
 
