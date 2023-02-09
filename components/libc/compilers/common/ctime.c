@@ -950,6 +950,16 @@ int timer_id_alloc(void)
     return -1;
 }
 
+void timer_id_lock()
+{
+    rt_hw_spin_lock(&_timer_id_lock);
+}
+
+void timer_id_unlock()
+{
+    rt_hw_spin_unlock(&_timer_id_lock);
+}
+
 struct timer_obj *timer_id_get(int timerid)
 {
     struct timer_obj *timer;
@@ -971,15 +981,6 @@ int timer_id_put(int id)
         return -1;
     _g_timerid[id] = NULL;
     return 0;
-}
-void timer_id_lock()
-{
-    rt_hw_spin_lock(&_timer_id_lock);
-}
-
-void timer_id_unlock()
-{
-    rt_hw_spin_unlock(&_timer_id_lock);
 }
 /**
  * @brief Create a per-process timer.
@@ -1042,7 +1043,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         return -1; /* todo:memory leak */
     }
     _g_timerid[_timerid] = timer;
-    *timerid = _timerid;
+    *timerid = (timer_t *)(rt_ubase_t)_timerid;
     timer_id_unlock();
 
     return 0;
@@ -1058,15 +1059,15 @@ int timer_delete(timer_t timerid)
 {
     struct timer_obj *timer;
     timer_id_lock();
-    if (_g_timerid[(int)timerid] == NULL)
+    if (_g_timerid[(rt_ubase_t)timerid] == NULL)
     {
         timer_id_unlock();
         rt_set_errno(EINVAL);
         LOG_E("can not find timer!");
         return -1;
     }
-    timer = _g_timerid[(int)timerid];
-    timer_id_put(timerid);
+    timer = _g_timerid[(rt_ubase_t)timerid];
+    timer_id_put((rt_ubase_t)timerid);
     timer_id_unlock();
 
     if (timer == RT_NULL || rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer)
@@ -1105,7 +1106,7 @@ int timer_getoverrun(timer_t timerid)
  */
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
-    struct timer_obj *timer = timer_id_get(timerid);
+    struct timer_obj *timer = timer_id_get((rt_ubase_t)timerid);
     rt_tick_t remaining;
     rt_uint32_t seconds, nanoseconds;
 
@@ -1172,7 +1173,7 @@ RTM_EXPORT(timer_gettime);
 int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
                   struct itimerspec *ovalue)
 {
-    struct timer_obj *timer = timer_id_get(timerid);
+    struct timer_obj *timer = timer_id_get((rt_ubase_t)timerid);
     if (timer == NULL ||
         rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer ||
         value->it_interval.tv_nsec < 0 ||
