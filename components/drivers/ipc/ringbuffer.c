@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,7 +37,7 @@ rt_inline enum rt_ringbuffer_state rt_ringbuffer_status(struct rt_ringbuffer *rb
  */
 void rt_ringbuffer_init(struct rt_ringbuffer *rb,
                         rt_uint8_t           *pool,
-                        rt_int16_t            size)
+                        rt_int32_t            size)
 {
     RT_ASSERT(rb != RT_NULL);
     RT_ASSERT(size > 0);
@@ -63,9 +63,9 @@ RTM_EXPORT(rt_ringbuffer_init);
  */
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
                             const rt_uint8_t     *ptr,
-                            rt_uint16_t           length)
+                            rt_uint32_t           length)
 {
-    rt_uint16_t size;
+    rt_uint32_t size;
 
     RT_ASSERT(rb != RT_NULL);
 
@@ -116,9 +116,9 @@ RTM_EXPORT(rt_ringbuffer_put);
  */
 rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
                                   const rt_uint8_t     *ptr,
-                                  rt_uint16_t           length)
+                                  rt_uint32_t           length)
 {
-    rt_uint16_t space_length;
+    rt_uint32_t space_length;
 
     RT_ASSERT(rb != RT_NULL);
 
@@ -177,7 +177,7 @@ RTM_EXPORT(rt_ringbuffer_put_force);
  */
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
                             rt_uint8_t           *ptr,
-                            rt_uint16_t           length)
+                            rt_uint32_t           length)
 {
     rt_size_t size;
 
@@ -192,7 +192,7 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
 
     /* less data */
     if (size < length)
-        length = (rt_uint16_t)size;
+        length = size;
 
     if (rb->buffer_size - rb->read_index > length)
     {
@@ -248,7 +248,7 @@ rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 
     if ((rt_size_t)(rb->buffer_size - rb->read_index) > size)
     {
-        rb->read_index += (rt_uint16_t)size;
+        rb->read_index += size;
         return size;
     }
 
@@ -423,7 +423,7 @@ RTM_EXPORT(rt_ringbuffer_reset);
  *
  * @return Return a pointer to ring buffer object. When the return value is RT_NULL, it means this creation failed.
  */
-struct rt_ringbuffer *rt_ringbuffer_create(rt_uint16_t size)
+struct rt_ringbuffer *rt_ringbuffer_create(rt_uint32_t size)
 {
     struct rt_ringbuffer *rb;
     rt_uint8_t *pool;
