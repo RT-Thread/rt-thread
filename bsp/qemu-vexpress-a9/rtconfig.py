@@ -33,7 +33,6 @@ PLATFORM    = 'gcc'
 EXEC_PATH   = os.getenv('RTT_EXEC_PATH') or r'/usr/bin'
 BUILD       = 'debug'
 
-# LINK_SCRIPT = 'link-lwp.lds'
 LINK_SCRIPT = 'link.lds'
 
 if PLATFORM == 'gcc':
