@@ -157,7 +157,8 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
 
     if (length > space_length)
     {
-        rb->read_mirror = ~rb->read_mirror;
+        if (rb->write_index <= rb->read_index)
+            rb->read_mirror = ~rb->read_mirror;
         rb->read_index = rb->write_index;
     }
 
