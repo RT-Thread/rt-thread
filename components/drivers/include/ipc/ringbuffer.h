@@ -38,10 +38,6 @@ struct rt_ringbuffer
      * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
      * read_idx-^ ^-write_idx
      *
-     * The tradeoff is we could only use 64KiB of buffer for 32 bit of index.
-     * But it should be enough for most of the cases.
-     *
-     * Ref: http://en.wikipedia.org/wiki/Circular_buffer#Mirroring */
     rt_uint32_t read_mirror : 1;
     rt_uint32_t read_index : 31;
     rt_uint32_t write_mirror : 1;
