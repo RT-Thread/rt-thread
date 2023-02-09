@@ -117,7 +117,7 @@ void RNG_ClearFlag(uint8_t RNG_FLAG)
  *            RNG_IT_CEI - Clock Error Interrupt.
  *            RNG_IT_SEI - Seed Error Interrupt.
  *
- * @return  bitstatus£ºSET or RESET.
+ * @return  bitstatusÂ£:SET or RESET.
  */
 ITStatus RNG_GetITStatus(uint8_t RNG_IT)
 {
