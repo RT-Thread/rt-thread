@@ -37,7 +37,8 @@ struct rt_ringbuffer
      * | 0 | 1 | 2 | 3 | 4 | 5 | 6 ||| 0 | 1 | 2 | 3 | 4 | 5 | 6 | Empty
      * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
      * read_idx-^ ^-write_idx
-     *
+     */
+
     rt_uint32_t read_mirror : 1;
     rt_uint32_t read_index : 31;
     rt_uint32_t write_mirror : 1;
