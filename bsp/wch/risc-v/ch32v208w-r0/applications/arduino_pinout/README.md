@@ -21,28 +21,28 @@ Hardware Drivers Config --->
 ![ch32v208w-pinout](ch32v208w-pinout.png)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
-| 0 (D0) | PA9 | 是/否 | Serial2-TX，默认被RT-Thread的UART设备框架uart1接管 |
-| 1 (D1) | PB0 | 是/否 | Serial2-RX，默认被RT-Thread的UART设备框架uart1接管 |
-| 2 (D2) | PB4 | 是/否 |  |
-| 3 (D3) | PB6 | 是/否 | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管 |
-| 4 (D4) | PB7 | 是/否 | PWM4-CH2，默认被RT-Thread的PWM设备框架pwm4接管 |
-| 5 (D5) | PB8 | 是/否 | PWM4-CH3，默认被RT-Thread的PWM设备框架pwm4接管 |
-| 6 (D6) | PB9 | 是/否 | PWM4-CH4，默认被RT-Thread的PWM设备框架pwm4接管 |
-| 7 (D7) | PA8 | 是/否 | PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管 |
-| 8 (D8) | PB1 | 是/否 | PWM3-CH4，默认被RT-Thread的PWM设备框架pwm3接管 |
-| 9 (D9) | PB0 | 是/否 | PWM3-CH3，默认被RT-Thread的PWM设备框架pwm3接管 |
-| 10 (D10) | PB12 | 是/否 |  |
-| 11 (D11) | PB15 | 是/否 |  |
-| 12 (D12) | PB14 | 是/否 |  |
-| 13 (D13) | PB13 | 是/否 |  |
-| 14 (D14) | PB11 | 是/否 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
-| 15 (D15) | PB10 | 是/否 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
-| 16 (A0) | PA0 | 是/否 | ADC1-CH0，默认被RT-Thread的ADC设备框架adc1接管 |
-| 17 (A1) | PA1 | 是/否 | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管 |
-| 18 (A2) | PA2 | 是/否 | ADC1-CH2，默认被RT-Thread的ADC设备框架adc1接管 |
-| 19 (A3) | PA3 | 是/否 | ADC1-CH3，默认被RT-Thread的ADC设备框架adc1接管 |
-| 20 (A4) | PA4 | 是/否 | ADC1-CH4，默认被RT-Thread的ADC设备框架adc1接管 |
-| 21 (A5) | PA5 | 是/否 | ADC1-CH5，默认被RT-Thread的ADC设备框架adc1接管 |
+| 0 (D0) | PA9 | 是 | Serial2-TX，默认被RT-Thread的UART设备框架uart1接管 |
+| 1 (D1) | PB0 | 是 | Serial2-RX，默认被RT-Thread的UART设备框架uart1接管 |
+| 2 (D2) | PB4 | 是 |  |
+| 3 (D3) | PB6 | 是 | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 4 (D4) | PB7 | 是 | PWM4-CH2，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 5 (D5) | PB8 | 是 | PWM4-CH3，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 6 (D6) | PB9 | 是 | PWM4-CH4，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 7 (D7) | PA8 | 否 | PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 8 (D8) | PB1 | 否 | PWM3-CH4，默认被RT-Thread的PWM设备框架pwm3接管 |
+| 9 (D9) | PB0 | 否 | PWM3-CH3，默认被RT-Thread的PWM设备框架pwm3接管 |
+| 10 (D10) | PB12 | 是 |  |
+| 11 (D11) | PB15 | 是 |  |
+| 12 (D12) | PB14 | 是 |  |
+| 13 (D13) | PB13 | 是 |  |
+| 14 (D14) | PB11 | 是 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 15 (D15) | PB10 | 是 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 16 (A0) | PA0 | 否 | ADC1-CH0，默认被RT-Thread的ADC设备框架adc1接管 |
+| 17 (A1) | PA1 | 否 | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管 |
+| 18 (A2) | PA2 | 否 | ADC1-CH2，默认被RT-Thread的ADC设备框架adc1接管 |
+| 19 (A3) | PA3 | 否 | ADC1-CH3，默认被RT-Thread的ADC设备框架adc1接管 |
+| 20 (A4) | PA4 | 否 | ADC1-CH4，默认被RT-Thread的ADC设备框架adc1接管 |
+| 21 (A5) | PA5 | 否 | ADC1-CH5，默认被RT-Thread的ADC设备框架adc1接管 |
 
 > 注意：
 >

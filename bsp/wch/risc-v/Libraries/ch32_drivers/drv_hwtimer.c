@@ -150,7 +150,7 @@ static void ch32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state
         if(tim->instance == TIM1 || tim->instance == TIM8 ||
                 tim->instance == TIM9 || tim->instance == TIM10)
 #else
-#error " SOC_RISCV_SERIES_CH32V2 SOC_RISCV_SERIES_CH32V3 "
+#error " unsupported CH32 series! "
         if(RT_NULL)
 #endif
         {
@@ -279,7 +279,7 @@ static rt_err_t ch32_hwtimer_control(struct rt_hwtimer_device *timer, rt_uint32_
         if(tim->instance == TIM1 || tim->instance == TIM8 ||
                 tim->instance == TIM9 || tim->instance == TIM10)
 #else
-#error " SOC_RISCV_SERIES_CH32V2 SOC_RISCV_SERIES_CH32V3 "
+#error " unsupported CH32 series! "
         if(RT_NULL)
 #endif
         {
