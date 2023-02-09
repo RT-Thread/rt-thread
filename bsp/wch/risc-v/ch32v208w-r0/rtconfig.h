@@ -74,7 +74,12 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
+#define RT_USING_PWM
 
 /* Using USB */
 
@@ -230,14 +235,30 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_ARDUINO
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_ADC
+#define BSP_USING_ADC1
+#define BSP_USING_SOFT_I2C
+#define BSP_USING_I2C1
+
+/* Notice: PC7 --> 39; PC6 --> 38 */
+
+#define BSP_I2C1_SCL_PIN 38
+#define BSP_I2C1_SDA_PIN 39
 #define LSI_VALUE 40000
+#define BSP_USING_TIM
+#define BSP_USING_HWTIMER
+#define BSP_USING_TIM1
+#define BSP_USING_TIM1_HWTIMER
+#define BSP_USING_TIM3
+#define BSP_USING_TIM3_HWTIMER
+#define BSP_USING_TIM4
+#define BSP_USING_TIM4_HWTIMER
 
 /* Board extended module Drivers */
 
