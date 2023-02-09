@@ -78,7 +78,7 @@ static nu_i2c_bus_t nu_i2c2 =
 /* Private functions ------------------------------------------------------------*/
 #if (defined(BSP_USING_I2C0) || defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2))
 
-static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num);
 static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus,
@@ -226,7 +226,7 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t *nu_i2c,
     return RT_EOK;
 }
 
-static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num)
 {

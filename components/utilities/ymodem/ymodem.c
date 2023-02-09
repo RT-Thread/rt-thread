@@ -121,7 +121,7 @@ static enum rym_code _rym_read_code(
 }
 
 /* the caller should at least alloc _RYM_STX_PKG_SZ buffer */
-static rt_size_t _rym_read_data(
+static rt_ssize_t _rym_read_data(
     struct rym_ctx *ctx,
     rt_size_t len)
 {
@@ -180,13 +180,13 @@ static rt_err_t _rym_send_packet(
     return RT_EOK;
 }
 
-static rt_size_t _rym_putchar(struct rym_ctx *ctx, rt_uint8_t code)
+static rt_ssize_t _rym_putchar(struct rym_ctx *ctx, rt_uint8_t code)
 {
     rt_device_write(ctx->dev, 0, &code, sizeof(code));
     return 1;
 }
 
-static rt_size_t _rym_getchar(struct rym_ctx *ctx)
+static rt_ssize_t _rym_getchar(struct rym_ctx *ctx)
 {
     rt_uint8_t getc_ack;
 

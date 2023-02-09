@@ -52,7 +52,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
  * buffer:
  * size  : how many blocks
  */
-static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buffer, rt_size_t size)
 {
     struct sdcard_device *sd;
     int result = 0;
@@ -80,7 +80,7 @@ _err:
  * buffer:
  * size  : how many blocks
  */
-static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_write(rt_device_t device, rt_off_t position, const void *buffer, rt_size_t size)
 {
     struct sdcard_device *sd;
     int result = 0;

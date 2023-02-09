@@ -89,7 +89,7 @@ static int twi_master_init(struct rt_i2c_bus_device *bus)
     return 0;
 }
 
-static rt_size_t _master_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t _master_xfer(struct rt_i2c_bus_device *bus,
                               struct rt_i2c_msg msgs[],
                               rt_uint32_t num)
 {

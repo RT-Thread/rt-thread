@@ -357,7 +357,7 @@ static rt_err_t _audio_dev_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t _audio_dev_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _audio_dev_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct rt_audio_device *audio;
     RT_ASSERT(dev != RT_NULL);
@@ -369,7 +369,7 @@ static rt_size_t _audio_dev_read(struct rt_device *dev, rt_off_t pos, void *buff
     return rt_device_read(RT_DEVICE(&audio->record->pipe), pos, buffer, size);
 }
 
-static rt_size_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
 
     struct rt_audio_device *audio;

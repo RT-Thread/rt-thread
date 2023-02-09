@@ -43,10 +43,10 @@ static rt_err_t _wait_ready(struct rt_spi_device *device);
 static rt_err_t  rt_msd_init(rt_device_t dev);
 static rt_err_t  rt_msd_open(rt_device_t dev, rt_uint16_t oflag);
 static rt_err_t  rt_msd_close(rt_device_t dev);
-static rt_size_t rt_msd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-static rt_size_t rt_msd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-static rt_size_t rt_msd_sdhc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-static rt_size_t rt_msd_sdhc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_ssize_t rt_msd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_ssize_t rt_msd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_ssize_t rt_msd_sdhc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_ssize_t rt_msd_sdhc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 static rt_err_t rt_msd_control(rt_device_t dev, int cmd, void *args);
 
 static rt_err_t MSD_take_owner(struct rt_spi_device *spi_device)
@@ -1209,7 +1209,7 @@ static rt_err_t rt_msd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_msd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_msd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct msd_device *msd = (struct msd_device *)dev;
     uint8_t response[MSD_RESPONSE_MAX_LEN];
@@ -1285,7 +1285,7 @@ _exit:
     return size;
 }
 
-static rt_size_t rt_msd_sdhc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_msd_sdhc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct msd_device *msd = (struct msd_device *)dev;
     uint8_t response[MSD_RESPONSE_MAX_LEN];
@@ -1361,7 +1361,7 @@ _exit:
     return size;
 }
 
-static rt_size_t rt_msd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_msd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct msd_device *msd = (struct msd_device *)dev;
     uint8_t response[MSD_RESPONSE_MAX_LEN];
@@ -1481,7 +1481,7 @@ _exit:
     return size;
 }
 
-static rt_size_t rt_msd_sdhc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_msd_sdhc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct msd_device *msd = (struct msd_device *)dev;
     uint8_t response[MSD_RESPONSE_MAX_LEN];

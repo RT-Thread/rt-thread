@@ -381,14 +381,14 @@ static rt_err_t enc28j60_close(rt_device_t dev)
 }
 
 /* Read */
-static rt_size_t enc28j60_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t enc28j60_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return RT_EOK;
 }
 
 /* Write */
-static rt_size_t enc28j60_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t enc28j60_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
