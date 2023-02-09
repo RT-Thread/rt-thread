@@ -4338,7 +4338,7 @@ int sys_mq_unlink(const char *name)
 
     lwp_get_from_user(kname, (void *)name, len + 1);
     ret = mq_unlink(kname);
-    if (err < 0)
+    if (ret < 0)
     {
         ret = GET_ERRNO();
     }
