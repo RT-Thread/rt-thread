@@ -66,6 +66,14 @@ SECTIONS
     __rtmsymtab_end = .;
         . = ALIGN(4);
 
+    PROVIDE(__ctors_start__ = .);
+    KEEP (*(SORT(.init_array.*)))
+    KEEP (*(.init_array))
+    PROVIDE(__ctors_end__ = .);
+    . = ALIGN(4);
+
+    _etext = .;
+
     } >FLASH AT>FLASH
 
     .fini :

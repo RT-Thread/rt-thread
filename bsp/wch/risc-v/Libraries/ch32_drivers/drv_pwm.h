@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,12 @@
 
 #include <rtthread.h>
 #ifdef BSP_USING_PWM
+#if defined(SOC_RISCV_SERIES_CH32V3)
 #include "ch32v30x_tim.h"
+#endif
+#if defined(SOC_RISCV_SERIES_CH32V2)
+#include "ch32v20x_tim.h"
+#endif
 #include <drivers/rt_drv_pwm.h>
 #include <drivers/hwtimer.h>
 #include <board.h>
