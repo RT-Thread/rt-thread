@@ -3,8 +3,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#define _GNU_SOURCE
-
 #include "libfdt.h"
 #include "dtb_node.h"
 

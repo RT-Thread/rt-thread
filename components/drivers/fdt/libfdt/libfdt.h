@@ -139,6 +139,13 @@
 
 #define FDT_ERR_MAX		17
 
+/* string.h for POSIX compatibility */
+#include <string.h>
+typedef unsigned int uint;
+size_t strnlen (const char *, size_t);
+char *strdup (const char *);
+char *strchrnul (const char *, int);
+
 /**********************************************************************/
 /* Low-level functions (you probably don't need these)                */
 /**********************************************************************/

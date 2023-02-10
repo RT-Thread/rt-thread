@@ -189,7 +189,7 @@ const char *dtb_node_get_name(const struct dtb_node *node)
 
 }
 
-struct dtb_node *dtb_node_get_by_phandle(uint phandle)
+struct dtb_node *dtb_node_get_by_phandle(uint32_t phandle)
 {
     if (dtb_node_active())
         return dtb_node_find_node_by_phandle(phandle);
