@@ -856,6 +856,10 @@ void rt_system_timer_init(void)
     {
         rt_list_init(_timer_list + i);
     }
+
+#ifdef RT_USING_CPUTIME
+    rt_cputime_timer_init();
+#endif
 }
 
 /**

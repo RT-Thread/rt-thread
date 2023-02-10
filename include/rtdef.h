@@ -565,6 +565,22 @@ struct rt_timer
 };
 typedef struct rt_timer *rt_timer_t;
 
+/**
+ * cputimer structure
+ */
+
+#ifdef RT_USING_CPUTIME
+struct rt_cputime_timer
+{
+    struct rt_object parent; /**< inherit from rt_object */
+    rt_list_t row;
+    void (*timeout_func)(void *parameter);
+    void *parameter;
+    rt_uint64_t init_tick;
+    rt_uint64_t timeout_tick;
+};
+typedef struct rt_cputime_timer *rt_cputime_timer_t;
+#endif /* RT_USING_CPUTIME */
 /**@}*/
 
 /**

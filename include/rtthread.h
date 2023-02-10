@@ -124,6 +124,23 @@ void rt_timer_enter_sethook(void (*hook)(struct rt_timer *timer));
 void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 #endif
 
+#ifdef RT_USING_CPUTIME
+void rt_cputime_timer_init(void);
+rt_err_t rt_cputime_timer_detach(rt_cputime_timer_t timer);
+#ifdef RT_USING_HEAP
+
+void rt_cputime_timer_create(rt_cputime_timer_t timer,
+                             const char *name,
+                             void (*timeout)(void *parameter),
+                             void *parameter,
+                             rt_uint64_t time,
+                             rt_uint8_t flag);
+rt_err_t rt_cputime_timer_delete(rt_cputime_timer_t timer);
+#endif
+rt_err_t rt_cputime_timer_start(rt_cputime_timer_t timer);
+rt_err_t rt_cputime_timer_stop(rt_cputime_timer_t timer);
+rt_err_t rt_cputime_timer_control(rt_cputime_timer_t timer, int cmd, void *arg);
+#endif /* RT_USING_CPUTIME */
 /**@}*/
 
 /**
