@@ -14,7 +14,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-/* To make full use of CM7 hardware FPU, use double instead of uint64_t in clock driver to 
+/* To make full use of CM7 hardware FPU, use double instead of uint64_t in clock driver to
 achieve better performance, it is depend on the IDE Floating point settings, if double precision is selected
 in IDE, clock_64b_t will switch to double type automatically. only support IAR and MDK here */
 #if __FPU_USED
@@ -447,7 +447,7 @@ bool CLOCK_EnableUsbhs0PhyPllClock(clock_usb_phy_src_t src, uint32_t freq)
     const clock_usb_pll_config_t g_ccmConfigUsbPll = {.loopDivider = 0U};
     if (CCM_ANALOG->PLL_USB1 & CCM_ANALOG_PLL_USB1_ENABLE_MASK)
     {
-        CCM_ANALOG->PLL_USB1 |= CCM_ANALOG_PLL_USB1_EN_USB_CLKS_MASK; 
+        CCM_ANALOG->PLL_USB1 |= CCM_ANALOG_PLL_USB1_EN_USB_CLKS_MASK;
     }
     else
     {
@@ -468,7 +468,7 @@ bool CLOCK_EnableUsbhs0PhyPllClock(clock_usb_phy_src_t src, uint32_t freq)
  */
 void CLOCK_DisableUsbhs0PhyPllClock(void)
 {
-    CCM_ANALOG->PLL_USB1 &= ~CCM_ANALOG_PLL_USB1_EN_USB_CLKS_MASK; 
+    CCM_ANALOG->PLL_USB1 &= ~CCM_ANALOG_PLL_USB1_EN_USB_CLKS_MASK;
     USBPHY1->CTRL |= USBPHY_CTRL_CLKGATE_MASK; /* Set to 1U to gate clocks */
 }
 
@@ -1212,6 +1212,6 @@ bool CLOCK_EnableUsbhs1PhyPllClock(clock_usb_phy_src_t src, uint32_t freq)
  */
 void CLOCK_DisableUsbhs1PhyPllClock(void)
 {
-    CCM_ANALOG->PLL_USB2 &= ~CCM_ANALOG_PLL_USB2_EN_USB_CLKS_MASK; 
+    CCM_ANALOG->PLL_USB2 &= ~CCM_ANALOG_PLL_USB2_EN_USB_CLKS_MASK;
     USBPHY2->CTRL |= USBPHY_CTRL_CLKGATE_MASK; /* Set to 1U to gate clocks */
 }
