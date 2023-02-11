@@ -2,7 +2,7 @@
  * Copyright (c) 2017, NXP Semiconductors, Inc.
  * All rights reserved.
  *
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 

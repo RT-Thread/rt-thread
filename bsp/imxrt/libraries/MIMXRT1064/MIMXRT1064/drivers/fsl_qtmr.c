@@ -1,7 +1,7 @@
 /*
  * Copyright 2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -65,7 +65,7 @@ void QTMR_Init(TMR_Type *base, qtmr_channel_selection_t channel, const qtmr_conf
     /* Enable the module clock */
     CLOCK_EnableClock(s_qtmrClocks[QTMR_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
-    
+
     /* Setup the counter sources */
     base->CHANNEL[channel].CTRL = (TMR_CTRL_PCS(config->primarySource) | TMR_CTRL_SCS(config->secondarySource));
 
@@ -74,7 +74,7 @@ void QTMR_Init(TMR_Type *base, qtmr_channel_selection_t channel, const qtmr_conf
 
     /* Setup debug mode */
     base->CHANNEL[channel].CSCTRL = TMR_CSCTRL_DBG_EN(config->debugMode);
-    
+
     base->CHANNEL[channel].FILT &= ~( TMR_FILT_FILT_CNT_MASK | TMR_FILT_FILT_PER_MASK);
     /* Setup input filter */
     base->CHANNEL[channel].FILT = (TMR_FILT_FILT_CNT(config->faultFilterCount) | TMR_FILT_FILT_PER(config->faultFilterPeriod));
@@ -164,7 +164,7 @@ status_t QTMR_SetupPwm(
      */
     reg |= (TMR_CTRL_LENGTH_MASK | TMR_CTRL_OUTMODE(kQTMR_ToggleOnAltCompareReg));
     base->CHANNEL[channel].CTRL = reg;
-   
+
     return kStatus_Success;
 }
 

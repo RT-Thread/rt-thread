@@ -2,7 +2,7 @@
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -126,7 +126,7 @@ void XBARA_SetOutputSignalConfig(XBARA_Type *base,
     /* Set active edge for edge detection, set interrupt or DMA function. */
     switch ((uint16_t)output)
     {
-#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_30) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_30 
+#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_30) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_30
         case kXBARA1_OutputDmaChMuxReq30:
 #else
         case kXBARA_OutputDmamux18:
@@ -142,7 +142,7 @@ void XBARA_SetOutputSignalConfig(XBARA_Type *base,
             /* Write regVal value into CTRL0 register */
             base->CTRL0 = regVal;
             break;
-#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_31) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_31 
+#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_31) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_31
         case kXBARA1_OutputDmaChMuxReq31:
 #else
         case kXBARA_OutputDmamux19:
@@ -158,7 +158,7 @@ void XBARA_SetOutputSignalConfig(XBARA_Type *base,
             /* Write regVal value into CTRL0 register */
             base->CTRL0 = regVal;
             break;
-#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_94) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_94 
+#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_94) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_94
         case kXBARA1_OutputDmaChMuxReq94:
 #else
         case kXBARA_OutputDmamux20:
@@ -174,7 +174,7 @@ void XBARA_SetOutputSignalConfig(XBARA_Type *base,
             /* Write regVal value into CTRL1 register */
             base->CTRL1 = regVal;
             break;
-#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_95) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_95 
+#if defined(FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_95) && FSL_FEATURE_XBARA_OUTPUT_DMA_CH_MUX_REQ_95
         case kXBARA1_OutputDmaChMuxReq95:
 #else
              case kXBARA_OutputDmamux21:
