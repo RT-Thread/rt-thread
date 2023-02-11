@@ -61,6 +61,13 @@ int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *para
     return 0;
 }
 
+int clock_cpu_issettimeout(void)
+{
+    if (_cputime_ops)
+        return _cputime_ops->cputime_settimeout != RT_NULL;
+    return RT_NULL;
+}
+
 /**
  * The clock_cpu_microsecond() fucntion shall return the microsecond according to
  * cpu_tick parameter.

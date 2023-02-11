@@ -664,6 +664,11 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
 #ifdef RT_USING_CPUTIME
 rt_err_t rt_cputime_sleep(rt_uint64_t tick)
 {
+    if (!clock_cpu_issettimeout());
+    {
+        rt_int32_t ms = tick * clock_cpu_getres() / 1000000;
+        return rt_thread_sleep(rt_tick_from_millisecond(ms));
+    }
     rt_base_t level;
     struct rt_thread *thread;
     struct rt_cputime_timer cputimer;

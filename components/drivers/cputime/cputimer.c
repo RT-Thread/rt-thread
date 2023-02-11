@@ -46,7 +46,7 @@ void rt_cputime_timer_create(rt_cputime_timer_t timer,
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(timeout != RT_NULL);
-    RT_ASSERT(time < RT_TICK_MAX / 2);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
 
     /* timer object initialization */
     rt_object_init(&(timer->parent), RT_Object_Class_Timer, name);
@@ -85,7 +85,8 @@ rt_err_t rt_cputime_timer_delete(rt_cputime_timer_t timer)
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
     RT_ASSERT(rt_object_is_systemobject(&timer->parent) == RT_FALSE);
-
+    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
@@ -110,6 +111,7 @@ rt_err_t rt_cputime_timer_start(rt_cputime_timer_t timer)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
 
     /* stop timer firstly */
     level = rt_hw_interrupt_disable();
@@ -162,7 +164,8 @@ rt_err_t rt_cputime_timer_stop(rt_cputime_timer_t timer)
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-
+    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    
     if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
     {
         rt_hw_interrupt_enable(level);
@@ -187,7 +190,8 @@ rt_err_t rt_cputime_timer_control(rt_cputime_timer_t timer, int cmd, void *arg)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-
+    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    
     level = rt_hw_interrupt_disable();
     switch (cmd)
     {
@@ -256,7 +260,8 @@ rt_err_t rt_cputime_timer_detach(rt_cputime_timer_t timer)
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
     RT_ASSERT(rt_object_is_systemobject(&timer->parent));
-
+    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 

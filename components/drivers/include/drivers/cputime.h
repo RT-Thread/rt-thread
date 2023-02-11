@@ -23,6 +23,7 @@ struct rt_clock_cputime_ops
 double clock_cpu_getres(void);
 uint64_t clock_cpu_gettime(void);
 int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param);
+int clock_cpu_issettimeout(void);
 
 uint64_t clock_cpu_microsecond(uint64_t cpu_tick);
 uint64_t clock_cpu_millisecond(uint64_t cpu_tick);
