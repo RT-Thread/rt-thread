@@ -180,6 +180,12 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag);
 rt_err_t rt_thread_resume(rt_thread_t thread);
+#ifdef RT_USING_CPUTIME
+rt_err_t rt_cputime_sleep(rt_uint64_t tick);
+rt_err_t rt_cputime_ndelay(rt_uint64_t ns);
+rt_err_t rt_cputime_udelay(rt_uint64_t us);
+rt_err_t rt_cputime_mdelay(rt_uint64_t ms);
+#endif /* RT_USING_CPUTIME */
 #ifdef RT_USING_SMART
 rt_err_t rt_thread_wakeup(rt_thread_t thread);
 void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data);

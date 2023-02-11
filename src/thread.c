@@ -38,6 +38,10 @@
 #include <rtthread.h>
 #include <stddef.h>
 
+#ifdef RT_USING_CPUTIME
+#include <rtdevice.h>
+#endif /* RT_USING_CPUTIME */
+
 #ifndef __on_rt_thread_inited_hook
     #define __on_rt_thread_inited_hook(thread)      __ON_HOOK_ARGS(rt_thread_inited_hook, (thread))
 #endif
@@ -656,6 +660,78 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
 
     return err;
 }
+
+#ifdef RT_USING_CPUTIME
+rt_err_t rt_cputime_sleep(rt_uint64_t tick)
+{
+    rt_base_t level;
+    struct rt_thread *thread;
+    struct rt_cputime_timer cputimer;
+    int err;
+
+    if (tick == 0)
+    {
+        return -RT_EINVAL;
+    }
+
+    /* set to current thread */
+    thread = rt_thread_self();
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* reset thread error */
+    thread->error = RT_EOK;
+
+    /* suspend thread */
+    err = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
+
+    /* reset the timeout of thread timer and start it */
+    if (err == RT_EOK)
+    {		
+		rt_cputime_timer_create(&cputimer, "cputime_sleep", _thread_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_cputime_timer_control(&cputimer, RT_TIMER_CTRL_SET_TIME, &tick);
+        rt_cputime_timer_start(&cputimer);
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        thread->error = -RT_EINTR;
+
+        rt_schedule();
+		rt_cputime_timer_detach(&cputimer);
+        if (thread->error == -RT_ETIMEOUT)
+            thread->error = RT_EOK;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
+
+    return err;
+}
+
+rt_err_t rt_cputime_ndelay(rt_uint64_t ns)
+{
+    double unit = clock_cpu_getres();
+		return rt_cputime_sleep(ns / unit);
+}
+
+rt_err_t rt_cputime_udelay(rt_uint64_t us)
+{
+        return rt_cputime_ndelay(us * 1000);
+}
+
+rt_err_t rt_cputime_mdelay(rt_uint64_t ms)
+{
+    return rt_cputime_ndelay(ms * 1000000);
+}
+#endif /* RT_USING_CPUTIME */
 
 /**
  * @brief   This function will let current thread delay for some ticks.
