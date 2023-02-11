@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -22,7 +22,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief FlexCAN driver version. */
-#define FSL_FLEXCAN_DRIVER_VERSION (MAKE_VERSION(2, 8, 2))
+#define FSL_FLEXCAN_DRIVER_VERSION (MAKE_VERSION(2, 8, 6))
 /*@}*/
 
 #if !(defined(FLEXCAN_WAIT_TIMEOUT) && FLEXCAN_WAIT_TIMEOUT)
@@ -396,7 +396,7 @@ enum _flexcan_interrupt_enable
     kFLEXCAN_ErrorInterruptEnable     = CAN_CTRL1_ERRMSK_MASK,  /*!< CAN Error interrupt, use bit 14. */
     kFLEXCAN_TxWarningInterruptEnable = CAN_CTRL1_TWRNMSK_MASK, /*!< Tx Warning interrupt, use bit 11. */
     kFLEXCAN_RxWarningInterruptEnable = CAN_CTRL1_RWRNMSK_MASK, /*!< Rx Warning interrupt, use bit 10. */
-    kFLEXCAN_WakeUpInterruptEnable    = CAN_MCR_WAKMSK_MASK,    /*!< Self Wake Up interrupt, use bit 22. */
+    kFLEXCAN_WakeUpInterruptEnable    = CAN_MCR_WAKMSK_MASK,    /*!< Self Wake Up interrupt, use bit 26. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE) && FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE)
     kFLEXCAN_FDErrorInterruptEnable = CAN_CTRL2_ERRMSK_FAST_MASK, /*!< CAN FD Error interrupt, use bit 31. */
 #endif
@@ -1607,8 +1607,7 @@ static inline void FLEXCAN_EnableInterrupts(CAN_Type *base, uint32_t mask)
     /* Solve interrupt enable bits in CTRL1 register. */
     base->CTRL1 |=
         (uint32_t)(mask & ((uint32_t)kFLEXCAN_BusOffInterruptEnable | (uint32_t)kFLEXCAN_ErrorInterruptEnable |
-                           (uint32_t)kFLEXCAN_RxWarningInterruptEnable | (uint32_t)kFLEXCAN_TxWarningInterruptEnable |
-                           (uint32_t)kFLEXCAN_WakeUpInterruptEnable));
+                           (uint32_t)kFLEXCAN_RxWarningInterruptEnable | (uint32_t)kFLEXCAN_TxWarningInterruptEnable));
 }
 
 /*!
@@ -1656,8 +1655,7 @@ static inline void FLEXCAN_DisableInterrupts(CAN_Type *base, uint32_t mask)
     /* Solve interrupt enable bits in CTRL1 register. */
     base->CTRL1 &=
         ~(uint32_t)(mask & ((uint32_t)kFLEXCAN_BusOffInterruptEnable | (uint32_t)kFLEXCAN_ErrorInterruptEnable |
-                            (uint32_t)kFLEXCAN_RxWarningInterruptEnable | (uint32_t)kFLEXCAN_TxWarningInterruptEnable |
-                            (uint32_t)kFLEXCAN_WakeUpInterruptEnable));
+                            (uint32_t)kFLEXCAN_RxWarningInterruptEnable | (uint32_t)kFLEXCAN_TxWarningInterruptEnable));
 }
 
 /*!
@@ -1730,9 +1728,9 @@ void FLEXCAN_EnableRxFifoDMA(CAN_Type *base, bool enable);
  * @param base FlexCAN peripheral base address.
  * @return FlexCAN Rx FIFO Head address.
  */
-static inline uint32_t FLEXCAN_GetRxFifoHeadAddr(CAN_Type *base)
+static inline uintptr_t FLEXCAN_GetRxFifoHeadAddr(CAN_Type *base)
 {
-    return (uint32_t) & (base->MB[0].CS);
+    return (uintptr_t) & (base->MB[0].CS);
 }
 
 /* @} */

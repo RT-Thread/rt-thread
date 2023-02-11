@@ -297,7 +297,7 @@ static rt_err_t lpc_audio_configure(struct rt_audio_device *audio, struct rt_aud
     return result;
 }
 
-static rt_size_t lpc_audio_transmit(struct rt_audio_device *audio, const void *writeBuf, void *readBuf, rt_size_t size)
+static rt_ssize_t lpc_audio_transmit(struct rt_audio_device *audio, const void *writeBuf, void *readBuf, rt_size_t size)
 {
     RT_ASSERT(audio != RT_NULL);
     i2s_transfer_t transfer;

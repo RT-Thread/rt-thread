@@ -24,7 +24,7 @@ static void _set_bit(rt_uint32_t nr, volatile rt_ubase_t *addr)
     *p  |= mask;
 }
 
-static rt_size_t virtio_input_cfg_select(struct virtio_input_device *virtio_input_dev,
+static rt_ssize_t virtio_input_cfg_select(struct virtio_input_device *virtio_input_dev,
         rt_uint8_t select, rt_uint8_t subsel)
 {
     struct virtio_input_config *config = virtio_input_dev->config;
@@ -139,7 +139,7 @@ static rt_err_t virtio_input_init(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t virtio_input_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t virtio_input_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct virtio_input_device *virtio_input_dev = (struct virtio_input_device *)dev;
 
@@ -157,7 +157,7 @@ static rt_size_t virtio_input_read(rt_device_t dev, rt_off_t pos, void *buffer, 
     return size;
 }
 
-static rt_size_t virtio_input_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t virtio_input_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct virtio_input_device *virtio_input_dev = (struct virtio_input_device *)dev;
 

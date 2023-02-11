@@ -123,7 +123,7 @@ static rt_err_t pty_device_close(struct rt_device *dev)
     return result;
 }
 
-static rt_size_t pty_device_read(struct rt_device *dev,
+static rt_ssize_t pty_device_read(struct rt_device *dev,
         rt_off_t          pos,
         void             *buffer,
         rt_size_t         size)
@@ -133,7 +133,7 @@ static rt_size_t pty_device_read(struct rt_device *dev,
     return len;
 }
 
-static rt_size_t pty_device_write(struct rt_device *dev,
+static rt_ssize_t pty_device_write(struct rt_device *dev,
         rt_off_t          pos,
         const void       *buffer,
         rt_size_t         size)

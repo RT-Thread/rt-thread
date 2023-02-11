@@ -131,7 +131,7 @@ rt_uint8_t i2c_read_or_write(volatile rt_uint32_t base, rt_uint8_t* buf, rt_uint
     return reason;
 }
 
-static rt_size_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {
@@ -154,7 +154,7 @@ static rt_size_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     return (reason == 0)? i : 0;
 }
 
-static rt_size_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {

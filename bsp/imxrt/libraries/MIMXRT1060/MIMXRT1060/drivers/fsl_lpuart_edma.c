@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2020 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -38,6 +38,18 @@ enum
  ******************************************************************************/
 
 /* Array of LPUART handle. */
+#if (defined(LPUART12))
+#define LPUART_HANDLE_ARRAY_SIZE 13
+#else /* LPUART12 */
+#if (defined(LPUART11))
+#define LPUART_HANDLE_ARRAY_SIZE 12
+#else /* LPUART11 */
+#if (defined(LPUART10))
+#define LPUART_HANDLE_ARRAY_SIZE 11
+#else /* LPUART10 */
+#if (defined(LPUART9))
+#define LPUART_HANDLE_ARRAY_SIZE 10
+#else /* LPUART9 */
 #if (defined(LPUART8))
 #define LPUART_HANDLE_ARRAY_SIZE 9
 #else /* LPUART8 */
@@ -75,6 +87,10 @@ enum
 #endif /* LPUART 6 */
 #endif /* LPUART 7 */
 #endif /* LPUART 8 */
+#endif /* LPUART 9 */
+#endif /* LPUART 10 */
+#endif /* LPUART 11 */
+#endif /* LPUART 12 */
 
 /*<! Private handle only used for internally. */
 static lpuart_edma_private_handle_t s_lpuartEdmaPrivateHandle[LPUART_HANDLE_ARRAY_SIZE];

@@ -119,7 +119,7 @@ static void gd32_i2c_configure(struct gd32_i2c_config *i2c_cfg)
 }
 
 
-static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *device, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t gd32_i2c_xfer(struct rt_i2c_bus_device *device, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;

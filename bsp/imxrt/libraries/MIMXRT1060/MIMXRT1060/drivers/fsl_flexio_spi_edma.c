@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2020 NXP
+ * Copyright 2016-2020, 2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -50,17 +50,19 @@ static void FLEXIO_SPI_RxEDMACallback(edma_handle_t *handle, void *param, bool t
  * @param base pointer to FLEXIO_SPI_Type structure.
  * @param handle pointer to flexio_spi_master_edma_handle_t structure to store the transfer state.
  * @param xfer Pointer to flexio spi transfer structure.
+ * @retval kStatus_Success Successfully create the handle.
+ * @retval kStatus_InvalidArgument The transfer size is not supported.
  */
-static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
-                                  flexio_spi_master_edma_handle_t *handle,
-                                  flexio_spi_transfer_t *xfer);
+static status_t FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
+                                      flexio_spi_master_edma_handle_t *handle,
+                                      flexio_spi_transfer_t *xfer);
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
 /* Dummy data used to send */
-static const uint16_t s_dummyData = FLEXIO_SPI_DUMMYDATA;
+static const uint32_t s_dummyData = FLEXIO_SPI_DUMMYDATA;
 
 /*< @brief user configurable flexio spi handle count. */
 #define FLEXIO_SPI_HANDLE_COUNT 2
@@ -122,16 +124,17 @@ static void FLEXIO_SPI_RxEDMACallback(edma_handle_t *handle, void *param, bool t
     }
 }
 
-static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
-                                  flexio_spi_master_edma_handle_t *handle,
-                                  flexio_spi_transfer_t *xfer)
+static status_t FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
+                                      flexio_spi_master_edma_handle_t *handle,
+                                      flexio_spi_transfer_t *xfer)
 {
     edma_transfer_config_t xferConfig      = {0};
     flexio_spi_shift_direction_t direction = kFLEXIO_SPI_MsbFirst;
     uint8_t bytesPerFrame;
+    uint8_t dataFormat = FLEXIO_SPI_XFER_DATA_FORMAT(xfer->flags);
 
     /* Configure the values in handle. */
-    switch (xfer->flags)
+    switch (dataFormat)
     {
         case (uint8_t)kFLEXIO_SPI_8bitMsb:
             bytesPerFrame = 1U;
@@ -149,11 +152,25 @@ static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
             bytesPerFrame = 2U;
             direction     = kFLEXIO_SPI_LsbFirst;
             break;
+        case (uint8_t)kFLEXIO_SPI_32bitMsb:
+            bytesPerFrame = 4U;
+            direction     = kFLEXIO_SPI_MsbFirst;
+            break;
+        case (uint8_t)kFLEXIO_SPI_32bitLsb:
+            bytesPerFrame = 4U;
+            direction     = kFLEXIO_SPI_LsbFirst;
+            break;
         default:
             bytesPerFrame = 1U;
             direction     = kFLEXIO_SPI_MsbFirst;
             assert(true);
             break;
+    }
+
+    /* Transfer size should be bytesPerFrame divisible. */
+    if ((xfer->dataSize % bytesPerFrame) != 0U)
+    {
+        return kStatus_InvalidArgument;
     }
 
     /* Save total transfer size. */
@@ -168,7 +185,7 @@ static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
         xferConfig.destTransferSize = kEDMA_TransferSize1Bytes;
         xferConfig.minorLoopBytes   = 1U;
     }
-    else
+    else if (bytesPerFrame == 2U)
     {
         if (direction == kFLEXIO_SPI_MsbFirst)
         {
@@ -177,6 +194,16 @@ static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
         xferConfig.srcTransferSize  = kEDMA_TransferSize2Bytes;
         xferConfig.destTransferSize = kEDMA_TransferSize2Bytes;
         xferConfig.minorLoopBytes   = 2U;
+    }
+    else
+    {
+        if (direction == kFLEXIO_SPI_MsbFirst)
+        {
+            xferConfig.destAddr -= 3U;
+        }
+        xferConfig.srcTransferSize  = kEDMA_TransferSize4Bytes;
+        xferConfig.destTransferSize = kEDMA_TransferSize4Bytes;
+        xferConfig.minorLoopBytes   = 4U;
     }
 
     /* Configure DMA channel. */
@@ -213,6 +240,16 @@ static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
                 xferConfig.srcAddr -= 1U;
             }
         }
+        else if (bytesPerFrame == 4U)
+        {
+            if (direction == kFLEXIO_SPI_LsbFirst)
+            {
+                xferConfig.srcAddr -= 3U;
+            }
+        }
+        else
+        {
+        }
         xferConfig.srcOffset  = 0;
         xferConfig.destAddr   = (uint32_t)(xfer->rxData);
         xferConfig.destOffset = (int16_t)bytesPerFrame;
@@ -229,6 +266,8 @@ static void FLEXIO_SPI_EDMAConfig(FLEXIO_SPI_Type *base,
         FLEXIO_SPI_EnableDMA(base, (uint32_t)kFLEXIO_SPI_TxDmaEnable, true);
         EDMA_StartTransfer(handle->txHandle);
     }
+
+    return kStatus_Success;
 }
 
 /*!
@@ -321,8 +360,9 @@ status_t FLEXIO_SPI_MasterTransferEDMA(FLEXIO_SPI_Type *base,
     assert(handle != NULL);
     assert(xfer != NULL);
 
-    uint32_t dataMode = 0;
-    uint16_t timerCmp = (uint16_t)base->flexioBase->TIMCMP[base->timerIndex[0]];
+    uint32_t dataMode  = 0;
+    uint16_t timerCmp  = (uint16_t)base->flexioBase->TIMCMP[base->timerIndex[0]];
+    uint8_t dataFormat = FLEXIO_SPI_XFER_DATA_FORMAT(xfer->flags);
 
     timerCmp &= 0x00FFU;
 
@@ -338,27 +378,48 @@ status_t FLEXIO_SPI_MasterTransferEDMA(FLEXIO_SPI_Type *base,
         return kStatus_InvalidArgument;
     }
 
-    /* configure data mode. */
-    if ((xfer->flags == (uint8_t)kFLEXIO_SPI_8bitMsb) || (xfer->flags == (uint8_t)kFLEXIO_SPI_8bitLsb))
+    /* Timer1 controls the CS signal which enables/disables(asserts/deasserts) when timer0 enable/disable. Timer0
+       enables when tx shifter is written and disables when timer compare. The timer compare event causes the
+       transmit shift registers to load which generates a tx register empty event. Since when timer stop bit is
+       disabled, a timer enable condition can be detected in the same cycle as a timer disable condition, so if
+       software writes the tx register upon the detection of tx register empty event, the timer enable condition
+       is triggered again, then the CS signal can remain low until software no longer writes the tx register. */
+    if ((xfer->flags & (uint8_t)kFLEXIO_SPI_csContinuous) != 0U)
     {
-        dataMode = (8UL * 2UL - 1UL) << 8U;
-    }
-    else if ((xfer->flags == (uint8_t)kFLEXIO_SPI_16bitMsb) || (xfer->flags == (uint8_t)kFLEXIO_SPI_16bitLsb))
-    {
-        dataMode = (16UL * 2UL - 1UL) << 8U;
+        base->flexioBase->TIMCFG[base->timerIndex[0]] =
+            (base->flexioBase->TIMCFG[base->timerIndex[0]] & ~FLEXIO_TIMCFG_TSTOP_MASK) |
+            FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitDisabled);
     }
     else
     {
-        dataMode = 8UL * 2UL - 1UL;
+        base->flexioBase->TIMCFG[base->timerIndex[0]] =
+            (base->flexioBase->TIMCFG[base->timerIndex[0]] & ~FLEXIO_TIMCFG_TSTOP_MASK) |
+            FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitEnableOnTimerDisable);
+    }
+
+    /* configure data mode. */
+    if ((dataFormat == (uint8_t)kFLEXIO_SPI_8bitMsb) || (dataFormat == (uint8_t)kFLEXIO_SPI_8bitLsb))
+    {
+        dataMode = (8UL * 2UL - 1UL) << 8U;
+    }
+    else if ((dataFormat == (uint8_t)kFLEXIO_SPI_16bitMsb) || (dataFormat == (uint8_t)kFLEXIO_SPI_16bitLsb))
+    {
+        dataMode = (16UL * 2UL - 1UL) << 8U;
+    }
+    else if ((dataFormat == (uint8_t)kFLEXIO_SPI_32bitMsb) || (dataFormat == (uint8_t)kFLEXIO_SPI_32bitLsb))
+    {
+        dataMode = (32UL * 2UL - 1UL) << 8U;
+    }
+    else
+    {
+        dataMode = (8UL * 2UL - 1UL) << 8U;
     }
 
     dataMode |= timerCmp;
 
     base->flexioBase->TIMCMP[base->timerIndex[0]] = dataMode;
 
-    FLEXIO_SPI_EDMAConfig(base, handle, xfer);
-
-    return kStatus_Success;
+    return FLEXIO_SPI_EDMAConfig(base, handle, xfer);
 }
 
 /*!
@@ -438,12 +499,40 @@ status_t FLEXIO_SPI_SlaveTransferEDMA(FLEXIO_SPI_Type *base,
     assert(handle != NULL);
     assert(xfer != NULL);
 
-    uint32_t dataMode = 0U;
+    uint32_t dataMode  = 0U;
+    uint8_t dataFormat = FLEXIO_SPI_XFER_DATA_FORMAT(xfer->flags);
 
     /* Check if the device is busy. */
     if ((handle->txInProgress) || (handle->rxInProgress))
     {
         return kStatus_FLEXIO_SPI_Busy;
+    }
+
+    /* SCK timer use CS pin as inverted trigger so timer should be disbaled on trigger falling edge(CS re-asserts). */
+    /* However if CPHA is first edge mode, timer will restart each time right after timer compare event occur and
+       before CS pin re-asserts, which triggers another shifter load. To avoid this, when in CS dis-continuous mode,
+       timer should disable in timer compare rather than trigger falling edge(CS re-asserts), and in CS continuous mode,
+       tx/rx shifters should be flushed after transfer finishes and before next transfer starts. */
+    FLEXIO_SPI_FlushShifters(base);
+    if ((xfer->flags & (uint8_t)kFLEXIO_SPI_csContinuous) != 0U)
+    {
+        base->flexioBase->TIMCFG[base->timerIndex[0]] |= FLEXIO_TIMCFG_TIMDIS(kFLEXIO_TimerDisableOnTriggerFallingEdge);
+    }
+    else
+    {
+        if ((base->flexioBase->SHIFTCTL[base->shifterIndex[0]] & FLEXIO_SHIFTCTL_TIMPOL_MASK) ==
+            FLEXIO_SHIFTCTL_TIMPOL(kFLEXIO_ShifterTimerPolarityOnNegitive))
+        {
+            base->flexioBase->TIMCFG[base->timerIndex[0]] =
+                (base->flexioBase->TIMCFG[base->timerIndex[0]] & ~FLEXIO_TIMCFG_TIMDIS_MASK) |
+                FLEXIO_TIMCFG_TIMDIS(kFLEXIO_TimerDisableOnTimerCompare);
+        }
+        else
+        {
+            base->flexioBase->TIMCFG[base->timerIndex[0]] =
+                (base->flexioBase->TIMCFG[base->timerIndex[0]] & ~FLEXIO_TIMCFG_TIMDIS_MASK) |
+                FLEXIO_TIMCFG_TIMDIS(kFLEXIO_TimerDisableOnTriggerFallingEdge);
+        }
     }
 
     /* Check if input parameter invalid. */
@@ -453,13 +542,17 @@ status_t FLEXIO_SPI_SlaveTransferEDMA(FLEXIO_SPI_Type *base,
     }
 
     /* configure data mode. */
-    if ((xfer->flags == (uint8_t)kFLEXIO_SPI_8bitMsb) || (xfer->flags == (uint8_t)kFLEXIO_SPI_8bitLsb))
+    if ((dataFormat == (uint8_t)kFLEXIO_SPI_8bitMsb) || (dataFormat == (uint8_t)kFLEXIO_SPI_8bitLsb))
     {
         dataMode = 8U * 2U - 1U;
     }
-    else if ((xfer->flags == (uint8_t)kFLEXIO_SPI_16bitMsb) || (xfer->flags == (uint8_t)kFLEXIO_SPI_16bitLsb))
+    else if ((dataFormat == (uint8_t)kFLEXIO_SPI_16bitMsb) || (dataFormat == (uint8_t)kFLEXIO_SPI_16bitLsb))
     {
         dataMode = 16U * 2U - 1U;
+    }
+    else if ((dataFormat == (uint8_t)kFLEXIO_SPI_32bitMsb) || (dataFormat == (uint8_t)kFLEXIO_SPI_32bitLsb))
+    {
+        dataMode = 32UL * 2UL - 1UL;
     }
     else
     {
@@ -468,7 +561,5 @@ status_t FLEXIO_SPI_SlaveTransferEDMA(FLEXIO_SPI_Type *base,
 
     base->flexioBase->TIMCMP[base->timerIndex[0]] = dataMode;
 
-    FLEXIO_SPI_EDMAConfig(base, handle, xfer);
-
-    return kStatus_Success;
+    return FLEXIO_SPI_EDMAConfig(base, handle, xfer);
 }

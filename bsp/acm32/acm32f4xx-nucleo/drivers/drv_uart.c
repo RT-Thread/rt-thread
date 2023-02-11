@@ -274,7 +274,7 @@ static void dma_rx_done_isr(struct rt_serial_device *serial)
     HAL_UART_Receive_DMA(&(uart->handle), &rx_fifo->buffer[rx_fifo->put_index], serial->config.bufsz);
 }
 
-static rt_size_t _uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t _uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct acm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);

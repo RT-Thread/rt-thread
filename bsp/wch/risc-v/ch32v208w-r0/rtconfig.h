@@ -33,6 +33,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
@@ -74,6 +75,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+
 
 /* Using USB */
 
@@ -222,14 +224,15 @@
 
 #define SOC_CH32V208WBU6
 
+/* Onboard Peripheral Drivers */
+
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
 #define LSI_VALUE 40000
-
-/* Onboard Peripheral Drivers */
 
 /* Board extended module Drivers */
 

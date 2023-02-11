@@ -2,13 +2,13 @@
 ;  @file:    startup_MIMXRT1062.s
 ;  @purpose: CMSIS Cortex-M7 Core Device Startup File
 ;            MIMXRT1062
-;  @version: 1.2
-;  @date:    2019-4-29
-;  @build:   b200319
+;  @version: 1.4
+;  @date:    2022-3-25
+;  @build:   b220425
 ; -------------------------------------------------------------------------
 ;
 ; Copyright 1997-2016 Freescale Semiconductor, Inc.
-; Copyright 2016-2020 NXP
+; Copyright 2016-2022 NXP
 ; All rights reserved.
 ;
 ; SPDX-License-Identifier: BSD-3-Clause
@@ -140,7 +140,7 @@ __vector_table_0x1c
         DCD     ADC2_IRQHandler                               ;ADC2 interrupt
         DCD     DCDC_IRQHandler                               ;DCDC interrupt
         DCD     Reserved86_IRQHandler                         ;Reserved interrupt
-        DCD     Reserved87_IRQHandler                         ;Reserved interrupt
+        DCD     GPIO10_Combined_0_31_IRQHandler               ;Combined interrupt indication for GPIO10 signal 0 throughout 31
         DCD     GPIO1_INT0_IRQHandler                         ;Active HIGH Interrupt from INT0 from GPIO
         DCD     GPIO1_INT1_IRQHandler                         ;Active HIGH Interrupt from INT1 from GPIO
         DCD     GPIO1_INT2_IRQHandler                         ;Active HIGH Interrupt from INT2 from GPIO
@@ -178,7 +178,7 @@ __vector_table_0x1c
         DCD     PWM1_FAULT_IRQHandler                         ;PWM1 fault or reload error interrupt
         DCD     FLEXSPI2_IRQHandler                           ;FlexSPI2 interrupt
         DCD     FLEXSPI_IRQHandler                            ;FlexSPI0 interrupt
-        DCD     SEMC_IRQHandler                               ;Reserved interrupt
+        DCD     SEMC_IRQHandler                               ;SEMC interrupt
         DCD     USDHC1_IRQHandler                             ;USDHC1 interrupt
         DCD     USDHC2_IRQHandler                             ;USDHC2 interrupt
         DCD     USB_OTG2_IRQHandler                           ;USBO2 USB OTG2
@@ -692,7 +692,7 @@ SPDIF_IRQHandler
         PUBWEAK ADC2_IRQHandler
         PUBWEAK DCDC_IRQHandler
         PUBWEAK Reserved86_IRQHandler
-        PUBWEAK Reserved87_IRQHandler
+        PUBWEAK GPIO10_Combined_0_31_IRQHandler
         PUBWEAK GPIO1_INT0_IRQHandler
         PUBWEAK GPIO1_INT1_IRQHandler
         PUBWEAK GPIO1_INT2_IRQHandler
@@ -924,7 +924,7 @@ ADC1_IRQHandler
 ADC2_IRQHandler
 DCDC_IRQHandler
 Reserved86_IRQHandler
-Reserved87_IRQHandler
+GPIO10_Combined_0_31_IRQHandler
 GPIO1_INT0_IRQHandler
 GPIO1_INT1_IRQHandler
 GPIO1_INT2_IRQHandler

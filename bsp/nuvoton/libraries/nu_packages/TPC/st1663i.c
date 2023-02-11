@@ -132,7 +132,7 @@ static int8_t pre_id[ST_MAX_TOUCH];
 static S_ST_REGMAP sStRegMap;
 static rt_uint8_t pre_touch = 0;
 
-static rt_size_t st1663i_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t st1663i_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
     int i;
 

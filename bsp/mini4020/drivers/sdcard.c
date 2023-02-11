@@ -524,7 +524,7 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
  *
  * @param hook the hook function
  */
-static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_uint32_t retry = 3;
     rt_uint8_t  status;
@@ -582,7 +582,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_
  *
  * @param hook the hook function
  */
-static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     int i;
     rt_uint8_t status;

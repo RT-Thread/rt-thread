@@ -186,7 +186,7 @@ static rt_int32_t i2c_readb(struct rt_i2c_bus_device *bus)
     return data;
 }
 
-static rt_size_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
+static rt_ssize_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
                                 struct rt_i2c_msg        *msg)
 {
     rt_int32_t ret;
@@ -240,7 +240,7 @@ static rt_err_t i2c_send_ack_or_nack(struct rt_i2c_bus_device *bus, int ack)
     return RT_EOK;
 }
 
-static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus,
+static rt_ssize_t i2c_recv_bytes(struct rt_i2c_bus_device *bus,
                                 struct rt_i2c_msg        *msg)
 {
     rt_int32_t val;
@@ -366,7 +366,7 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus,
     return RT_EOK;
 }
 
-static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
                               struct rt_i2c_msg         msgs[],
                               rt_uint32_t               num)
 {

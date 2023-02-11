@@ -199,6 +199,7 @@
 
 #define RT_USING_RYM
 #define YMODEM_USING_FILE_TRANSFER
+#define RT_USING_ADT
 
 /* RT-Thread Utestcases */
 
@@ -260,11 +261,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -309,6 +318,14 @@
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 #define BCM2711_SOC
 

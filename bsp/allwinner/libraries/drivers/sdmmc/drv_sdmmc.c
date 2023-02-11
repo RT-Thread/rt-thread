@@ -232,7 +232,7 @@ rt_err_t sdmmc_deinit(rt_device_t dev)
     return 0;
 }
 
-static rt_size_t sdmmc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t sdmmc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     ssize_t ret, rsz, trsz, msz = 0;
     struct rt_device_blk_geometry *geometry;
@@ -309,7 +309,7 @@ static rt_err_t sdmmc_close(rt_device_t dev)
     return 0;
 }
 
-static rt_size_t sdmmc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t sdmmc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     int err = -1;
     ssize_t ret, wsz, twsz, msz = 0;

@@ -262,7 +262,7 @@ static int air105_getc(struct rt_serial_device *serial)
     }
 }
 
-static rt_size_t air105_transmit(struct rt_serial_device     *serial,
+static rt_ssize_t air105_transmit(struct rt_serial_device     *serial,
                                        rt_uint8_t           *buf,
                                        rt_size_t             size,
                                        rt_uint32_t           tx_flag)

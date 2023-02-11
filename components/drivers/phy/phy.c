@@ -18,13 +18,13 @@
 #include <rtdbg.h>
 
 
-static rt_size_t phy_device_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t count)
+static rt_ssize_t phy_device_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t count)
 {
     struct rt_phy_device *phy = (struct rt_phy_device *)dev->user_data;
     struct rt_phy_msg *msg = (struct rt_phy_msg *)buffer;
     return phy->bus->ops->read(phy->bus, phy->addr, msg->reg, &(msg->value), 4);
 }
-static rt_size_t phy_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t count)
+static rt_ssize_t phy_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     struct rt_phy_device *phy = (struct rt_phy_device *)dev->user_data;
     struct rt_phy_msg *msg = (struct rt_phy_msg *)buffer;
