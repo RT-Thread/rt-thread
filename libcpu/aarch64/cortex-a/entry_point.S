@@ -127,11 +127,9 @@ __start:
     ldr     x2, =__start
     GET_PHY x3, __start
     sub     x3, x3, x2
-    GET_PHY x5, rt_pv_offset
-    str     x3, [x5]
 #endif
     ldr x2, =0x40000000     /* map 1G memory for kernel space */
-    bl rt_hw_mmu_setup_early
+    bl rt_hw_mem_setup_early
 
     ldr x30, =after_mmu_enable  /* set LR to after_mmu_enable function, it's a v_addr */
 
@@ -242,7 +240,7 @@ _secondary_cpu_entry:
 
     bl mmu_tcr_init
 
-    adr x1, __start
+    adr x1, __start             /* GET & setup early page table */
     ldr x0, =~0x1fffff
     and x0, x1, x0
     add x1, x0, #0x1000

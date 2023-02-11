@@ -659,10 +659,14 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
     return err;
 }
 
-void rt_hw_mmu_setup_early(unsigned long *tbl0, unsigned long *tbl1,
+void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off)
 {
     int ret;
+
+    /* setup pv off */
+    rt_kmem_pvoff_set(pv_off);
+
     unsigned long va = KERNEL_VADDR_START;
     unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
     unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);

@@ -37,7 +37,6 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         mm_flag_t flags);
 
 struct rt_aspace rt_kernel_space;
-const rt_ubase_t rt_pv_offset;
 
 rt_varea_t _varea_create(void *start, rt_size_t size)
 {
@@ -757,9 +756,4 @@ static int _dump(rt_varea_t varea, void *arg)
 void rt_aspace_print_all(rt_aspace_t aspace)
 {
     rt_aspace_traversal(aspace, _dump, NULL);
-}
-
-rt_ubase_t rt_get_pvoff(void)
-{
-    return rt_pv_offset;
 }
