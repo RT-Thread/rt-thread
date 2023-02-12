@@ -580,15 +580,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
-    spi_device->cs_pin = cs_pin;
-    if(cs_pin != PIN_NONE)
-    {
-        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin, PIN_HIGH);
-    }
-
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
-
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d\n", device_name, bus_name, result);

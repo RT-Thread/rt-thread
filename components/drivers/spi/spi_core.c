@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,10 +40,11 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     return RT_EOK;
 }
 
-rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
-                                  const char           *name,
-                                  const char           *bus_name,
-                                  void                 *user_data)
+rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
+                                        const char           *name,
+                                        const char           *bus_name,
+                                        rt_base_t            cs_pin,
+                                        void                 *user_data)
 {
     rt_err_t result;
     rt_device_t bus;
@@ -59,9 +60,15 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
         if (result != RT_EOK)
             return result;
 
+        if(cs_pin != PIN_NONE)
+        {
+            rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
+            rt_pin_write(cs_pin, PIN_HIGH);
+        }
+
         rt_memset(&device->config, 0, sizeof(device->config));
         device->parent.user_data = user_data;
-
+        device->cs_pin = cs_pin;
         return RT_EOK;
     }
 
@@ -69,27 +76,12 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
     return -RT_ERROR;
 }
 
-rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
+rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *name,
                                   const char           *bus_name,
-                                  void                 *user_data,
-                                  rt_base_t            cs_pin)
+                                  void                 *user_data)
 {
-    rt_err_t result;
-
-    result = rt_spi_bus_attach_device(device, name, bus_name, user_data);
-    if(result != RT_EOK)
-    {
-        return -RT_ERROR;
-    }
-
-    device->cs_pin = cs_pin;
-    if(cs_pin != PIN_NONE)
-    {
-        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin, PIN_HIGH);
-    }
-    return RT_EOK;
+    return rt_spi_bus_attach_device_cspin(device, name, bus_name, PIN_NONE, user_data);
 }
 
 rt_err_t rt_spi_configure(struct rt_spi_device        *device,

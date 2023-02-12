@@ -36,19 +36,11 @@ rt_err_t rt_hw_softspi_device_attach(const char *bus_name, const char *device_na
     rt_err_t result;
     struct rt_spi_device *spi_device;
 
-    /* initialize the cs pin && select the slave*/
-    if(cs_pin != PIN_NONE)
-    {
-        rt_pin_mode(cs_pin,PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin,PIN_HIGH);
-    }
-
     /* attach the device to soft spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
-    spi_device->cs_pin = cs_pin;
 
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, RT_NULL);
     return result;
 }
 
