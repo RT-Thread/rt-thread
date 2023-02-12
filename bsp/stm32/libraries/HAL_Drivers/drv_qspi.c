@@ -324,17 +324,12 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
     qspi_device->enter_qspi_mode = enter_qspi_mode;
     qspi_device->exit_qspi_mode = exit_qspi_mode;
     qspi_device->config.qspi_dl_width = data_line_width;
-    qspi_device->parent.cs_pin = cs_pin;
 
 #ifdef BSP_QSPI_USING_SOFTCS
-    if(cs_pin != PIN_NONE)
-    {
-        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin, PIN_HIGH);
-    }
-#endif
-
-    result = rt_spi_bus_attach_device(&qspi_device->parent, device_name, bus_name, RT_NULL);
+    result = rt_spi_bus_attach_device_cspin(&qspi_device->parent, device_name, bus_name, cs_pin, RT_NULL);
+#else
+    result = rt_spi_bus_attach_device_cspin(&qspi_device->parent, device_name, bus_name, PIN_NONE, RT_NULL);
+#endif /* BSP_QSPI_USING_SOFTCS */
 
 __exit:
     if (result != RT_EOK)
