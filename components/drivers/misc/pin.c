@@ -15,33 +15,33 @@
 static struct rt_device_pin _hw_pin;
 static rt_ssize_t _pin_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    struct rt_device_pin_status *status;
+    struct rt_device_pin_value *value;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;
 
     /* check parameters */
     RT_ASSERT(pin != RT_NULL);
 
-    status = (struct rt_device_pin_status *)buffer;
-    if (status == RT_NULL || size != sizeof(*status))
+    value = (struct rt_device_pin_value *)buffer;
+    if (value == RT_NULL || size != sizeof(*value))
         return 0;
 
-    status->status = pin->ops->pin_read(dev, status->pin);
+    value->value = pin->ops->pin_read(dev, value->pin);
     return size;
 }
 
 static rt_ssize_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    struct rt_device_pin_status *status;
+    struct rt_device_pin_value *value;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;
 
     /* check parameters */
     RT_ASSERT(pin != RT_NULL);
 
-    status = (struct rt_device_pin_status *)buffer;
-    if (status == RT_NULL || size != sizeof(*status))
+    value = (struct rt_device_pin_value *)buffer;
+    if (value == RT_NULL || size != sizeof(*value))
         return 0;
 
-    pin->ops->pin_write(dev, (rt_base_t)status->pin, (rt_base_t)status->status);
+    pin->ops->pin_write(dev, value->pin, value->value);
 
     return size;
 }
@@ -151,7 +151,7 @@ int rt_pin_read(rt_base_t pin)
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);
 }
 
-
+/* get pin number by name,such as PA.0, P0.12 */
 rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
