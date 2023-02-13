@@ -1043,7 +1043,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         return -1; /* todo:memory leak */
     }
     _g_timerid[_timerid] = timer;
-    *timerid = (timer_t *)(rt_ubase_t)_timerid;
+    *timerid = (timer_t)(rt_ubase_t)_timerid;
     timer_id_unlock();
 
     return 0;
