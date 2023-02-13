@@ -14,7 +14,7 @@ struct rt_cputime_timer
 };
 typedef struct rt_cputime_timer *rt_cputime_timer_t;
 
-void rt_cputime_timer_init(void);
+int rt_cputime_timer_init(void);
 rt_err_t rt_cputime_timer_detach(rt_cputime_timer_t timer);
 
 #ifdef RT_USING_HEAP

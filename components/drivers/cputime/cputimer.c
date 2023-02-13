@@ -31,10 +31,13 @@ static void _cputime_timeout(void *parameter)
     }
 }
 
-void rt_cputime_timer_init(void)
+int rt_cputime_timer_init(void)
 {
     rt_list_init(&_cputime_timer_list);
+    return 0;
 }
+
+INIT_PREV_EXPORT(rt_cputime_timer_init);
 
 void rt_cputime_timer_create(rt_cputime_timer_t timer,
                              const char *name,
@@ -46,7 +49,7 @@ void rt_cputime_timer_create(rt_cputime_timer_t timer,
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(timeout != RT_NULL);
-    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_FALSE);
 
     /* timer object initialization */
     rt_object_init(&(timer->parent), RT_Object_Class_Timer, name);
@@ -85,7 +88,7 @@ rt_err_t rt_cputime_timer_delete(rt_cputime_timer_t timer)
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
     RT_ASSERT(rt_object_is_systemobject(&timer->parent) == RT_FALSE);
-    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_FALSE);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -111,7 +114,7 @@ rt_err_t rt_cputime_timer_start(rt_cputime_timer_t timer)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_FALSE);
 
     /* stop timer firstly */
     level = rt_hw_interrupt_disable();
@@ -164,7 +167,7 @@ rt_err_t rt_cputime_timer_stop(rt_cputime_timer_t timer)
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_FALSE);
 
     if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
     {
@@ -190,7 +193,7 @@ rt_err_t rt_cputime_timer_control(rt_cputime_timer_t timer, int cmd, void *arg)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_FALSE);
 
     level = rt_hw_interrupt_disable();
     switch (cmd)
@@ -260,7 +263,7 @@ rt_err_t rt_cputime_timer_detach(rt_cputime_timer_t timer)
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
     RT_ASSERT(rt_object_is_systemobject(&timer->parent));
-    RT_ASSERT(clock_cpu_issettimeout() != RT_NULL);
+    RT_ASSERT(clock_cpu_issettimeout() != RT_FALSE);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -315,6 +318,12 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
     struct rt_thread *thread;
     struct rt_cputime_timer cputimer;
     int err;
+
+    if (!clock_cpu_issettimeout())
+    {
+        rt_int32_t ms = tick * clock_cpu_getres() / 1000000;
+        return rt_thread_delay(rt_tick_from_millisecond(ms));
+    }
 
     if (tick == 0)
     {

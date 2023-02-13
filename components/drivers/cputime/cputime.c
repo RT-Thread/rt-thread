@@ -65,7 +65,7 @@ int clock_cpu_issettimeout(void)
 {
     if (_cputime_ops)
         return _cputime_ops->cputime_settimeout != RT_NULL;
-    return RT_NULL;
+    return RT_FALSE;
 }
 
 /**

@@ -24,10 +24,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_CPUTIME
-#include <rtdevice.h>
-#endif
-
 /* hard timer list */
 static rt_list_t _timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 
@@ -860,10 +856,6 @@ void rt_system_timer_init(void)
     {
         rt_list_init(_timer_list + i);
     }
-
-#ifdef RT_USING_CPUTIME
-    rt_cputime_timer_init();
-#endif
 }
 
 /**
