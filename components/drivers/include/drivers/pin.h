@@ -82,7 +82,7 @@ struct rt_pin_ops
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data);
 void rt_pin_mode(rt_int16_t pin, rt_uint8_t mode);
 void rt_pin_write(rt_int16_t pin, rt_uint8_t value);
-int  rt_pin_read(rt_int16_t pin);
+rt_uint8_t rt_pin_read(rt_int16_t pin);
 rt_err_t rt_pin_attach_irq(rt_int16_t pin, rt_uint8_t mode, void (*hdr)(void *args), void  *args);
 rt_err_t rt_pin_detach_irq(rt_int16_t pin);
 rt_err_t rt_pin_irq_enable(rt_int16_t pin, rt_uint8_t enabled);
