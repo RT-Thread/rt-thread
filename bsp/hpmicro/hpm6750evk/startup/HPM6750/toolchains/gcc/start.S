@@ -48,6 +48,8 @@ _start:
     la t0, SW_handler
     csrw mtvec, t0
 
+	la t0, _stack
+    csrw mscratch,t0
 
     /* System reset handler */
     call reset_handler
