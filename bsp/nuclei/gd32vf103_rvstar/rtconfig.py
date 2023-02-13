@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH='risc-v'
-CPU='bumblebee'
+CPU='nuclei'
 CROSS_TOOL='gcc'
 
 # bsp lib config

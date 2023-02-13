@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
-#include "cpuport.h"
+// 、#include "cpuport.h"
 #define SYSTICK_TICK_CONST                      (SOC_TIMER_FREQ / RT_TICK_PER_SECOND)
 #define RT_KERNEL_INTERRUPT_LEVEL               1
 
@@ -140,6 +140,27 @@ rt_weak void rt_hw_ticksetup(void)
     ECLIC_SetShvIRQ(SysTimerSW_IRQn, ECLIC_VECTOR_INTERRUPT);
     ECLIC_SetLevelIRQ(SysTimerSW_IRQn, RT_KERNEL_INTERRUPT_LEVEL);
     ECLIC_EnableIRQ(SysTimerSW_IRQn);
+}
+
+#define SysTick_Handler     eclic_mtip_handler
+
+/**
+ * @brief This is the timer interrupt service routine.
+ * 
+ */
+void SysTick_Handler(void)
+{
+    /* Reload systimer */
+    SysTick_Reload(SYSTICK_TICK_CONST);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* tick increase */
+    rt_tick_increase();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /**

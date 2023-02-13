@@ -8,7 +8,7 @@ int main(void)
 {
     int count = 1;
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
-
+    rt_pin_write(LED1_PIN, PIN_LOW);    
     while (count++)
     {
         rt_pin_write(LED1_PIN, PIN_HIGH);
