@@ -12,6 +12,7 @@
 #define CPUTIME_H__
 
 #include <stdint.h>
+#include "cputimer.h"
 
 struct rt_clock_cputime_ops
 {

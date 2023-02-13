@@ -277,3 +277,104 @@ rt_err_t rt_cputime_timer_detach(rt_cputime_timer_t timer)
 
     return RT_EOK;
 }
+
+static void _cputime_sleep_timeout(void *parameter)
+{
+    struct rt_thread *thread;
+    rt_base_t level;
+
+    thread = (struct rt_thread *)parameter;
+
+    /* parameter check */
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* set error number */
+    thread->error = -RT_ETIMEOUT;
+
+    /* remove from suspend list */
+    rt_list_remove(&(thread->tlist));
+
+    /* insert to schedule ready list */
+    rt_schedule_insert_thread(thread);
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    /* do schedule */
+    rt_schedule();
+}
+
+rt_err_t rt_cputime_sleep(rt_uint64_t tick)
+{
+    rt_base_t level;
+    struct rt_thread *thread;
+    struct rt_cputime_timer cputimer;
+    int err;
+
+    if (tick == 0)
+    {
+        return -RT_EINVAL;
+    }
+
+    /* set to current thread */
+    thread = rt_thread_self();
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* reset thread error */
+    thread->error = RT_EOK;
+
+    /* suspend thread */
+    err = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
+
+    /* reset the timeout of thread timer and start it */
+    if (err == RT_EOK)
+    {
+        rt_cputime_timer_create(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_cputime_timer_control(&cputimer, RT_TIMER_CTRL_SET_TIME, &tick);
+        rt_cputime_timer_start(&cputimer);
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        thread->error = -RT_EINTR;
+
+        rt_schedule();
+        rt_cputime_timer_detach(&cputimer);
+        if (thread->error == -RT_ETIMEOUT)
+            thread->error = RT_EOK;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
+
+    return err;
+}
+
+rt_err_t rt_cputime_ndelay(rt_uint64_t ns)
+{
+    double unit = clock_cpu_getres();
+    return rt_cputime_sleep(ns / unit);
+}
+
+rt_err_t rt_cputime_udelay(rt_uint64_t us)
+{
+    return rt_cputime_ndelay(us * 1000);
+}
+
+rt_err_t rt_cputime_mdelay(rt_uint64_t ms)
+{
+    return rt_cputime_ndelay(ms * 1000000);
+}

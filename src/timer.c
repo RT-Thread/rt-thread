@@ -24,6 +24,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#ifdef RT_USING_CPUTIME
+#include <rtdevice.h>
+#endif
+
 /* hard timer list */
 static rt_list_t _timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 
