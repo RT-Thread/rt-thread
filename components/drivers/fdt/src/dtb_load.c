@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "libfdt.h"
+#include <stdio.h>
 #include <unistd.h>
 #include "dtb_node.h"
 
