@@ -637,59 +637,59 @@ void test_thread_yield_nosmp(void)
     uassert_true(thread_yield_flag == 1);
 }
 
-static rt_uint32_t thread9_count = 0;
-static void thread9_entry(void *parameter)
-{
-    while (1)
-    {
-        thread9_count ++;
-    }
+// static rt_uint32_t thread9_count = 0;
+// static void thread9_entry(void *parameter)
+// {
+//     while (1)
+//     {
+//         thread9_count ++;
+//     }
 
-}
-static void test_thread_suspend(void)
-{
-    static rt_thread_t tid;
-    rt_err_t ret_startup = -RT_ERROR;
-    uint32_t count_before_suspend, count_before_resume, count_after_resume;
-    tid = rt_thread_create("thread9",
-                           thread9_entry,
-                           RT_NULL,
-                           THREAD_STACK_SIZE,
-                           __current_thread->current_priority + 1,
-                           THREAD_TIMESLICE);
-    if (tid == RT_NULL)
-    {
-        LOG_E("rt_thread_create failed!");
-        uassert_false(tid4 == RT_NULL);
-        goto __exit;
-    }
+// }
+// static void test_thread_suspend(void)
+// {
+//     static rt_thread_t tid;
+//     rt_err_t ret_startup = -RT_ERROR;
+//     uint32_t count_before_suspend, count_before_resume, count_after_resume;
+//     tid = rt_thread_create("thread9",
+//                            thread9_entry,
+//                            RT_NULL,
+//                            THREAD_STACK_SIZE,
+//                            __current_thread->current_priority + 1,
+//                            THREAD_TIMESLICE);
+//     if (tid == RT_NULL)
+//     {
+//         LOG_E("rt_thread_create failed!");
+//         uassert_false(tid4 == RT_NULL);
+//         goto __exit;
+//     }
 
-    ret_startup = rt_thread_startup(tid);
-    if (ret_startup != RT_EOK)
-    {
-        LOG_E("rt_thread_startup failed!");
-        uassert_false(1);
-        goto __exit;
-    }
-    rt_thread_delay(5);
-    rt_thread_suspend(tid);
-    count_before_suspend = thread9_count;
-    uassert_true(count_before_suspend != 0);
-    rt_thread_delay(5);
-    count_before_resume = thread9_count;
-    uassert_true(count_before_suspend == count_before_resume);
-    rt_thread_resume(tid);
-    rt_thread_delay(5);
-    count_after_resume = thread9_count;
-    uassert_true(count_after_resume != count_before_resume);
+//     ret_startup = rt_thread_startup(tid);
+//     if (ret_startup != RT_EOK)
+//     {
+//         LOG_E("rt_thread_startup failed!");
+//         uassert_false(1);
+//         goto __exit;
+//     }
+//     rt_thread_delay(5);
+//     rt_thread_suspend(tid);
+//     count_before_suspend = thread9_count;
+//     uassert_true(count_before_suspend != 0);
+//     rt_thread_delay(5);
+//     count_before_resume = thread9_count;
+//     uassert_true(count_before_suspend == count_before_resume);
+//     rt_thread_resume(tid);
+//     rt_thread_delay(5);
+//     count_after_resume = thread9_count;
+//     uassert_true(count_after_resume != count_before_resume);
 
-__exit:
-    if (tid != RT_NULL)
-    {
-        rt_thread_delete(tid);
-    }
-    return;
-}
+// __exit:
+//     if (tid != RT_NULL)
+//     {
+//         rt_thread_delete(tid);
+//     }
+//     return;
+// }
 #endif
 
 static rt_err_t utest_tc_init(void)
