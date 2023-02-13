@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -762,7 +762,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
             tick -= cpu_tick_old;
         rt_cputime_sleep(tick);
-        
+
         if (rt_get_errno() == -RT_EINTR)
         {
             if (rmtp)
@@ -874,7 +874,9 @@ struct timer_obj
     union
     {
         struct rt_timer timer;
+#ifdef RT_USING_CPUTIME
         struct rt_cputime_timer cputimer;
+#endif
     };
     void (*sigev_notify_function)(union sigval val);
     union sigval val;
