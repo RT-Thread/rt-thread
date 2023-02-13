@@ -1133,7 +1133,6 @@ int timer_getoverrun(timer_t timerid)
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
     struct timer_obj *timer = timer_id_get((rt_ubase_t)timerid);
-    rt_tick_t remaining;
     rt_uint32_t seconds, nanoseconds;
 
     if (timer == NULL)
