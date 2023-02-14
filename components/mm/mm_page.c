@@ -40,8 +40,6 @@ CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
 CT_ASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
 #endif /* ARCH_CPU_64BIT */
 
-#else
-#define PV_OFFSET 0
 #endif /* RT_USING_SMART */
 
 static rt_size_t init_mpr_align_start;
