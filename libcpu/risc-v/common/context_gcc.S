@@ -214,9 +214,9 @@ rt_hw_context_switch_exit:
 
     LOAD x1,   1 * REGBYTES(sp)
 #ifdef ARCH_RISCV_FPU
-    li    t0, 0x00007800
+    li    t0, 0x7800
 #else
-    li    t0, 0x00001800
+    li    t0, 0x1800
 #endif
     csrw  mstatus, t0
     LOAD a0,   2 * REGBYTES(sp)

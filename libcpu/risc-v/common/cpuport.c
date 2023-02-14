@@ -128,9 +128,9 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 
     /* force to machine mode(MPP=11) and set MPIE to 1 */
 #ifdef ARCH_RISCV_FPU
-    frame->mstatus = 0x00007880;
+    frame->mstatus = 0x7880;
 #else
-    frame->mstatus = 0x00001880;
+    frame->mstatus = 0x1880;
 #endif
 
     return stk;
