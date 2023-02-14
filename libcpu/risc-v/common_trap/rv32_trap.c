@@ -1,5 +1,6 @@
 #include <rthw.h>
 #include <rtthread.h>
+#include "riscv-ops.h" 
 
 #define ISR_NUMBER    32 
 static struct rt_irq_desc rv32irq_table[ISR_NUMBER];
@@ -53,8 +54,9 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
  */
 rt_weak void rt_rv32_system_irq_handler(rt_uint32_t mcause)
 {
-    int irq_id = (mcause & 0x1F);
-    int exception = !(mcause & 0x80000000);
+    rt_uint32_t mscratch = read_csr(0x340);
+    rt_uint32_t irq_id = (mcause & 0x1F);
+    rt_uint32_t exception = !(mcause & 0x80000000);
     if(exception)
     {
         rt_kprintf("Trigger exception mcause = %d\r\n",mcause);

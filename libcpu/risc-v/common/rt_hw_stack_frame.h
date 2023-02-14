@@ -13,7 +13,7 @@
 
 #include "cpuport.h"
 
-typedef struct hpm_hw_stack_frame
+typedef struct rt_hw_stack_frame
 {
     rt_ubase_t epc;        /* epc - epc    - program counter                     */
     rt_ubase_t ra;         /* x1  - ra     - return address for jumps            */
@@ -82,6 +82,5 @@ typedef struct hpm_hw_stack_frame
     rv_floatreg_t f31;     /* f31 */
 #endif
 }rt_hw_stack_frame_t;
-
 
 #endif /* RISCV_STACKFRAME_H */
