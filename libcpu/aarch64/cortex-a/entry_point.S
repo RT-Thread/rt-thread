@@ -78,12 +78,12 @@ __start:
 
     eret                            /* exception return. from EL2. continue from .L__in_el1 */
 
+.macro GET_PHY reg, symbol
+    adrp    \reg, \symbol
+    add     \reg, \reg, #:lo12:\symbol
+.endm
+
 .L__in_el1:
-#ifdef RT_USING_LWP
-    ldr     x9, =PV_OFFSET
-#else
-    mov     x9, #0
-#endif
     mov     sp, x1                  /* in EL1. Set sp to _start */
 
     /* Set CPACR_EL1 (Architecture Feature Access Control Register) to avoid trap from SIMD or float point instruction */
@@ -91,15 +91,13 @@ __start:
     msr     cpacr_el1, x1
 
     /* clear bss */
-    adrp    x1, __bss_start     /* get bss start address */
-    add	    x1, x1, #:lo12:__bss_start
-    adrp    x2, __bss_end
-    add	    x1, x1, #:lo12:__bss_end
-    sub     x2, x2, x1            /* get bss size          */
+    GET_PHY x1, __bss_start
+    GET_PHY x2, __bss_end
+    sub     x2, x2, x1              /* get bss size */
 
-    and     x3, x2, #7           /* x3 is < 7 */
+    and     x3, x2, #7              /* x3 is < 7 */
     ldr     x4, =~0x7
-    and     x2, x2, x4            /* mask ~7 */
+    and     x2, x2, x4              /* mask ~7 */
 
 .L__clean_bss_loop:
     cbz     x2, .L__clean_bss_loop_1
@@ -116,7 +114,7 @@ __start:
 .L__jump_to_entry:          /* jump to C code, should not return */        
     bl mmu_tcr_init
 
-    adr x1, __start
+    adr x1, __start         /* install early page table */
     ldr x0, =~0x1fffff
     and x0, x1, x0
     add x1, x0, #0x1000
@@ -125,11 +123,13 @@ __start:
     msr ttbr1_el1, x1
     dsb sy
 
-    ldr x2, =0x40000000      /* map 1G memory for kernel space */
-#ifdef RT_USING_LWP
-    ldr x3, =PV_OFFSET
+#ifdef RT_USING_SMART
+    ldr     x2, =__start
+    GET_PHY x3, __start
+    sub     x3, x3, x2
 #endif
-    bl rt_hw_mmu_setup_early
+    ldr x2, =0x40000000     /* map 1G memory for kernel space */
+    bl rt_hw_mem_setup_early
 
     ldr x30, =after_mmu_enable  /* set LR to after_mmu_enable function, it's a v_addr */
 
@@ -152,7 +152,7 @@ __start:
     ret
 
 after_mmu_enable:
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     mrs x0, tcr_el1          /* disable ttbr0, only using kernel space */
     orr x0, x0, #(1 << 7)
     msr tcr_el1, x0
@@ -172,7 +172,7 @@ after_mmu_enable:
  *  secondary cpu
  */
 
-.globl _secondary_cpu_entry
+.global _secondary_cpu_entry
 _secondary_cpu_entry:
     bl      rt_hw_cpu_id_set
     adr     x1, __start
@@ -225,10 +225,6 @@ _secondary_cpu_entry:
     eret                            /* exception return. from EL2. continue from .L__in_el1 */
 
 .L__in_el1_cpux:
-    adr     x19, .L__in_el1_cpux
-    ldr     x8, =.L__in_el1_cpux
-    sub     x19, x19, x8            /* get PV_OFFSET            */
-
     mrs     x0, tpidr_el1
     /* each cpu init stack is 8k */
     sub     x1, x1, x0, lsl #13
@@ -244,7 +240,7 @@ _secondary_cpu_entry:
 
     bl mmu_tcr_init
 
-    adr x1, __start
+    adr x1, __start             /* GET & setup early page table */
     ldr x0, =~0x1fffff
     and x0, x1, x0
     add x1, x0, #0x1000

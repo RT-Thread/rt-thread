@@ -30,7 +30,6 @@
 #endif
 
 #ifndef RT_USING_SMART
-#define PV_OFFSET 0
 #define USER_VADDR_START 0
 #endif
 
@@ -532,6 +531,9 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                     .map_size = mdesc->vaddr_end -
                                                 mdesc->vaddr_start + 1,
                                     .prefer = (void *)mdesc->vaddr_start};
+
+        if (mdesc->paddr_start == (rt_size_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
 
         rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
