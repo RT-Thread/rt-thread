@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -201,11 +201,11 @@ int dtb_node_property_read_string_helper(const struct dtb_node *dn,
 /**
  * of_property_read_string_index() - Find and read a string from a multiple
  * strings property.
- * @np:		device node from which the property value is to be read.
- * @propname:	name of the property to be searched.
- * @index:	index of the string in the list of strings
- * @out_string:	pointer to null terminated return string, modified only if
- *		return value is 0.
+ * @np:     device node from which the property value is to be read.
+ * @propname:   name of the property to be searched.
+ * @index:  index of the string in the list of strings
+ * @out_string: pointer to null terminated return string, modified only if
+ *      return value is 0.
  *
  * Search for a property in a device tree node and retrieve a null
  * terminated string value (pointer to data, not a copy) in the list of strings
@@ -227,8 +227,8 @@ static inline int dtb_node_property_read_string_index(const struct dtb_node *dn,
 /**
  * of_property_count_strings() - Find and return the number of strings from a
  * multiple strings property.
- * @np:		device node from which the property value is to be read.
- * @propname:	name of the property to be searched.
+ * @np:     device node from which the property value is to be read.
+ * @propname:   name of the property to be searched.
  *
  * Search for a property in a device tree node and retrieve the number of null
  * terminated string contain in it. Returns the number of strings on
