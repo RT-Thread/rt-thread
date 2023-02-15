@@ -10,10 +10,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-
-#ifdef RT_USING_CPUTIME
 #include <rtdevice.h>
-#endif
 
 static rt_list_t _cputimer_list = RT_LIST_OBJECT_INIT(_cputimer_list);
 
@@ -70,7 +67,7 @@ void rt_cputimer_init(rt_cputimer_t timer,
     rt_list_init(&(timer->row));
 }
 
-void set_next_timeout()
+static void _set_next_timeout()
 {
     struct rt_cputimer *t;
     if (&_cputimer_list != _cputimer_list.prev)
@@ -103,7 +100,7 @@ rt_err_t rt_cputimer_delete(rt_cputimer_t timer)
     rt_hw_interrupt_enable(level);
 
     rt_object_delete(&(timer->parent));
-    set_next_timeout();
+    _set_next_timeout();
 
     return RT_EOK;
 }
@@ -152,7 +149,7 @@ rt_err_t rt_cputimer_start(rt_cputimer_t timer)
 
     timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
 
-    set_next_timeout();
+    _set_next_timeout();
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
@@ -181,7 +178,7 @@ rt_err_t rt_cputimer_stop(rt_cputimer_t timer)
     /* change status */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
-    set_next_timeout();
+    _set_next_timeout();
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
@@ -274,7 +271,7 @@ rt_err_t rt_cputimer_detach(rt_cputimer_t timer)
     /* stop timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
-    set_next_timeout();
+    _set_next_timeout();
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
