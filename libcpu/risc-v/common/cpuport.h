@@ -27,6 +27,15 @@ typedef union {
 #endif
 #endif
 
+/* Preprocessor Definition */
+#if __riscv_flen == 32
+#define ARCH_RISCV_FPU_S
+#endif
+
+#if __riscv_flen == 64
+#define ARCH_RISCV_FPU_D
+#endif
+
 /* bytes of register width  */
 #ifdef ARCH_CPU_64BIT
 #define STORE                   sd
@@ -38,20 +47,7 @@ typedef union {
 #define REGBYTES                4
 #endif
 
-#if defined(SOC_HPM6000)
-#ifdef __riscv_flen
-#define ARCH_RISCV_FPU
-
-#if __riscv_flen == 32
-#define ARCH_RISCV_FPU_S
-#endif
-
-#if __riscv_flen == 64
-#define ARCH_RISCV_FPU_D
-#endif
-#endif
-#endif
-
+/* Preprocessor Definition */
 #ifdef ARCH_RISCV_FPU
 #ifdef ARCH_RISCV_FPU_D
 #define FSTORE                  fsd
