@@ -33,7 +33,7 @@ static rt_device_t device;
 static struct rt_device_graphic_info info;
 static rt_sem_t trans_done_semphr = RT_NULL;
 
-void _rm_guix_port_display_callback(display_callback_args_t *p_args)
+void _ra_port_display_callback(display_callback_args_t *p_args)
 {
     if (lvgl_ready_done != RT_EOK)
         return;
