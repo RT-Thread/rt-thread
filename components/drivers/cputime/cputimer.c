@@ -15,7 +15,7 @@
 #include <rtdevice.h>
 #endif
 
-static rt_list_t _cputimer_list;
+static rt_list_t _cputimer_list = RT_LIST_OBJECT_INIT(_cputimer_list);
 
 static void _cputime_timeout(void *parameter)
 {
@@ -40,14 +40,6 @@ static void _cputime_timeout(void *parameter)
         rt_cputimer_start(timer);
     }
 }
-
-int rt_cputimer_init(void)
-{
-    rt_list_init(&_cputimer_list);
-    return 0;
-}
-
-INIT_PREV_EXPORT(rt_cputimer_init);
 
 void rt_cputimer_create(rt_cputimer_t timer,
                              const char *name,

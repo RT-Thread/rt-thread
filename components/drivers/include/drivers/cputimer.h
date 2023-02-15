@@ -24,7 +24,6 @@ struct rt_cputimer
 };
 typedef struct rt_cputimer *rt_cputimer_t;
 
-int rt_cputimer_init(void);
 rt_err_t rt_cputimer_detach(rt_cputimer_t timer);
 
 #ifdef RT_USING_HEAP
