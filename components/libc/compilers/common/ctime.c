@@ -1036,7 +1036,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 #ifdef RT_USING_CPUTIME
     if (timer->clockid == CLOCK_CPUTIME_ID && clock_cpu_issettimeout())
     {
-        rt_cputimer_create(&timer->cputimer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_cputimer_init(&timer->cputimer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
     }
     else
 #endif /* RT_USING_CPUTIME */

@@ -27,12 +27,12 @@ typedef struct rt_cputimer *rt_cputimer_t;
 rt_err_t rt_cputimer_detach(rt_cputimer_t timer);
 
 #ifdef RT_USING_HEAP
-void rt_cputimer_create(rt_cputimer_t timer,
-                             const char *name,
-                             void (*timeout)(void *parameter),
-                             void *parameter,
-                             rt_uint64_t time,
-                             rt_uint8_t flag);
+void rt_cputimer_init(rt_cputimer_t timer,
+                      const char *name,
+                      void (*timeout)(void *parameter),
+                      void *parameter,
+                      rt_uint64_t tick,
+                      rt_uint8_t flag);
 rt_err_t rt_cputimer_delete(rt_cputimer_t timer);
 #endif
 

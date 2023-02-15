@@ -41,12 +41,12 @@ static void _cputime_timeout(void *parameter)
     }
 }
 
-void rt_cputimer_create(rt_cputimer_t timer,
-                             const char *name,
-                             void (*timeout)(void *parameter),
-                             void *parameter,
-                             rt_uint64_t time,
-                             rt_uint8_t flag)
+void rt_cputimer_init(rt_cputimer_t timer,
+                      const char *name,
+                      void (*timeout)(void *parameter),
+                      void *parameter,
+                      rt_uint64_t tick,
+                      rt_uint8_t flag)
 {
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -66,7 +66,7 @@ void rt_cputimer_create(rt_cputimer_t timer,
     timer->parameter = parameter;
 
     timer->timeout_tick = 0;
-    timer->init_tick = time;
+    timer->init_tick = tick;
     rt_list_init(&(timer->row));
 }
 
@@ -352,7 +352,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
     /* reset the timeout of thread timer and start it */
     if (err == RT_EOK)
     {
-        rt_cputimer_create(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_cputimer_init(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
         rt_cputimer_control(&cputimer, RT_TIMER_CTRL_SET_TIME, &tick);
         rt_cputimer_start(&cputimer);
 
