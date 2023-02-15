@@ -15,19 +15,19 @@
 #include <rtdevice.h>
 #endif
 
-static rt_list_t _cputime_timer_list;
+static rt_list_t _cputimer_list;
 
 static void _cputime_timeout(void *parameter)
 {
-    struct rt_cputime_timer *timer;
-    timer = (struct rt_cputime_timer *)parameter;
+    struct rt_cputimer *timer;
+    timer = (struct rt_cputimer *)parameter;
     timer->timeout_func(timer->parameter);
     rt_list_remove(&timer->row);
 
-    if (&_cputime_timer_list != _cputime_timer_list.prev)
+    if (&_cputimer_list != _cputimer_list.prev)
     {
-        struct rt_cputime_timer *t;
-        t = rt_list_entry(_cputime_timer_list.next, struct rt_cputime_timer, row);
+        struct rt_cputimer *t;
+        t = rt_list_entry(_cputimer_list.next, struct rt_cputimer, row);
         clock_cpu_settimeout(t->timeout_tick, _cputime_timeout, t);
     }
     else
@@ -37,19 +37,19 @@ static void _cputime_timeout(void *parameter)
     {
         /* start it */
         timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-        rt_cputime_timer_start(timer);
+        rt_cputimer_start(timer);
     }
 }
 
-int rt_cputime_timer_init(void)
+int rt_cputimer_init(void)
 {
-    rt_list_init(&_cputime_timer_list);
+    rt_list_init(&_cputimer_list);
     return 0;
 }
 
-INIT_PREV_EXPORT(rt_cputime_timer_init);
+INIT_PREV_EXPORT(rt_cputimer_init);
 
-void rt_cputime_timer_create(rt_cputime_timer_t timer,
+void rt_cputimer_create(rt_cputimer_t timer,
                              const char *name,
                              void (*timeout)(void *parameter),
                              void *parameter,
@@ -80,17 +80,17 @@ void rt_cputime_timer_create(rt_cputime_timer_t timer,
 
 void set_next_timeout()
 {
-    struct rt_cputime_timer *t;
-    if (&_cputime_timer_list != _cputime_timer_list.prev)
+    struct rt_cputimer *t;
+    if (&_cputimer_list != _cputimer_list.prev)
     {
-        t = rt_list_entry((&_cputime_timer_list)->next, struct rt_cputime_timer, row);
+        t = rt_list_entry((&_cputimer_list)->next, struct rt_cputimer, row);
         clock_cpu_settimeout(t->timeout_tick, _cputime_timeout, t);
     }
     else
         clock_cpu_settimeout(RT_NULL, RT_NULL, RT_NULL);
 }
 
-rt_err_t rt_cputime_timer_delete(rt_cputime_timer_t timer)
+rt_err_t rt_cputimer_delete(rt_cputimer_t timer)
 {
     rt_base_t level;
 
@@ -116,7 +116,7 @@ rt_err_t rt_cputime_timer_delete(rt_cputime_timer_t timer)
     return RT_EOK;
 }
 
-rt_err_t rt_cputime_timer_start(rt_cputime_timer_t timer)
+rt_err_t rt_cputimer_start(rt_cputimer_t timer)
 {
     rt_list_t *timer_list;
     rt_base_t level;
@@ -136,15 +136,15 @@ rt_err_t rt_cputime_timer_start(rt_cputime_timer_t timer)
 
     timer->timeout_tick = clock_cpu_gettime() + timer->init_tick;
 
-    timer_list = &_cputime_timer_list;
+    timer_list = &_cputimer_list;
 
-    for (; timer_list != _cputime_timer_list.prev;
+    for (; timer_list != _cputimer_list.prev;
          timer_list = timer_list->next)
     {
-        struct rt_cputime_timer *t;
+        struct rt_cputimer *t;
         rt_list_t *p = timer_list->next;
 
-        t = rt_list_entry(p, struct rt_cputime_timer, row);
+        t = rt_list_entry(p, struct rt_cputimer, row);
 
         if ((t->timeout_tick - timer->timeout_tick) == 0)
         {
@@ -167,7 +167,7 @@ rt_err_t rt_cputime_timer_start(rt_cputime_timer_t timer)
     return RT_EOK;
 }
 
-rt_err_t rt_cputime_timer_stop(rt_cputime_timer_t timer)
+rt_err_t rt_cputimer_stop(rt_cputimer_t timer)
 {
     rt_base_t level;
 
@@ -196,7 +196,7 @@ rt_err_t rt_cputime_timer_stop(rt_cputime_timer_t timer)
     return RT_EOK;
 }
 
-rt_err_t rt_cputime_timer_control(rt_cputime_timer_t timer, int cmd, void *arg)
+rt_err_t rt_cputimer_control(rt_cputimer_t timer, int cmd, void *arg)
 {
     rt_base_t level;
 
@@ -265,7 +265,7 @@ rt_err_t rt_cputime_timer_control(rt_cputime_timer_t timer, int cmd, void *arg)
     return RT_EOK;
 }
 
-rt_err_t rt_cputime_timer_detach(rt_cputime_timer_t timer)
+rt_err_t rt_cputimer_detach(rt_cputimer_t timer)
 {
     rt_base_t level;
 
@@ -326,7 +326,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
 {
     rt_base_t level;
     struct rt_thread *thread;
-    struct rt_cputime_timer cputimer;
+    struct rt_cputimer cputimer;
     int err;
 
     if (!clock_cpu_issettimeout())
@@ -360,9 +360,9 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
     /* reset the timeout of thread timer and start it */
     if (err == RT_EOK)
     {
-        rt_cputime_timer_create(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
-        rt_cputime_timer_control(&cputimer, RT_TIMER_CTRL_SET_TIME, &tick);
-        rt_cputime_timer_start(&cputimer);
+        rt_cputimer_create(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_cputimer_control(&cputimer, RT_TIMER_CTRL_SET_TIME, &tick);
+        rt_cputimer_start(&cputimer);
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
@@ -370,7 +370,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
         thread->error = -RT_EINTR;
 
         rt_schedule();
-        rt_cputime_timer_detach(&cputimer);
+        rt_cputimer_detach(&cputimer);
         if (thread->error == -RT_ETIMEOUT)
             thread->error = RT_EOK;
     }

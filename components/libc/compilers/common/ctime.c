@@ -755,7 +755,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     case CLOCK_MONOTONIC:
     case CLOCK_CPUTIME_ID:
     {
-        uint64_t cpu_tick_old = clock_cpu_gettime();
+        rt_uint64_t cpu_tick_old = clock_cpu_gettime();
         double unit = clock_cpu_getres();
         rt_uint64_t ns = rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec;
         rt_uint64_t tick = ns / unit;
@@ -875,7 +875,7 @@ struct timer_obj
     {
         struct rt_timer timer;
 #ifdef RT_USING_CPUTIME
-        struct rt_cputime_timer cputimer;
+        struct rt_cputimer cputimer;
 #endif
     };
     void (*sigev_notify_function)(union sigval val);
@@ -907,7 +907,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     {
         timer->reload = (timer->interval.tv_sec * NANOSECOND_PER_SECOND + timer->interval.tv_nsec) / clock_cpu_getres();
         if (timer->reload)
-            rt_cputime_timer_control(&timer->cputimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
+            rt_cputimer_control(&timer->cputimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
     }
     else
 #endif /* RT_USING_CPUTIME */
@@ -1036,7 +1036,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 #ifdef RT_USING_CPUTIME
     if (timer->clockid == CLOCK_CPUTIME_ID && clock_cpu_issettimeout())
     {
-        rt_cputime_timer_create(&timer->cputimer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_cputimer_create(&timer->cputimer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
     }
     else
 #endif /* RT_USING_CPUTIME */
@@ -1094,9 +1094,9 @@ int timer_delete(timer_t timerid)
         if (timer->status == ACTIVE)
         {
             timer->status = NOT_ACTIVE;
-            rt_cputime_timer_stop(&timer->cputimer);
+            rt_cputimer_stop(&timer->cputimer);
         }
-        rt_cputime_timer_detach(&timer->cputimer);
+        rt_cputimer_detach(&timer->cputimer);
     }
     else
 #endif /* RT_USING_CPUTIME */
@@ -1154,7 +1154,7 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
         {
             rt_uint64_t remain_tick;
             rt_uint64_t remaining;
-            rt_cputime_timer_control(&timer->cputimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_tick);
+            rt_cputimer_control(&timer->cputimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_tick);
             remaining = (remain_tick - clock_cpu_gettime()) / clock_cpu_getres();
             seconds = remaining / NANOSECOND_PER_SECOND;
             nanoseconds = remaining % NANOSECOND_PER_SECOND;
@@ -1186,7 +1186,7 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
             *                         RT_TICK_PER_SECOND                                                           RT_TICK_PER_SECOND
             *
             */
-            nanoseconds = (((remaining % RT_TICK_PER_SECOND) * MILLISECOND_PER_SECOND) * MICROSECOND_PER_SECOND) / RT_TICK_PER_SECOND ;
+            nanoseconds = (((remaining % RT_TICK_PER_SECOND) * MILLISECOND_PER_SECOND) * MICROSECOND_PER_SECOND) / RT_TICK_PER_SECOND;
         }
         its->it_value.tv_sec = (rt_int32_t)seconds;
         its->it_value.tv_nsec = (rt_int32_t)nanoseconds;
@@ -1238,7 +1238,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         {
 #ifdef RT_USING_CPUTIME
             if (timer->clockid == CLOCK_CPUTIME_ID && clock_cpu_issettimeout())
-                rt_cputime_timer_stop(&timer->cputimer);
+                rt_cputimer_stop(&timer->cputimer);
             else
 #endif /* RT_USING_CPUTIME */
                 rt_timer_stop(&timer->timer);
@@ -1297,7 +1297,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     {
 #ifdef RT_USING_CPUTIME
         if (timer->clockid == CLOCK_CPUTIME_ID && clock_cpu_issettimeout())
-            rt_cputime_timer_stop(&timer->cputimer);
+            rt_cputimer_stop(&timer->cputimer);
         else
 #endif /* RT_USING_CPUTIME */
             rt_timer_stop(&timer->timer);
@@ -1309,12 +1309,12 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     if (timer->clockid == CLOCK_CPUTIME_ID && clock_cpu_issettimeout())
     {
         if ((value->it_interval.tv_sec == 0) && (value->it_interval.tv_nsec == 0))
-            rt_cputime_timer_control(&timer->cputimer, RT_TIMER_CTRL_SET_ONESHOT, RT_NULL);
+            rt_cputimer_control(&timer->cputimer, RT_TIMER_CTRL_SET_ONESHOT, RT_NULL);
         else
-            rt_cputime_timer_control(&timer->cputimer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
+            rt_cputimer_control(&timer->cputimer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
 
-        rt_cputime_timer_control(&timer->cputimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
-        rt_cputime_timer_start(&timer->cputimer);
+        rt_cputimer_control(&timer->cputimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
+        rt_cputimer_start(&timer->cputimer);
     }
     else
 #endif /* RT_USING_CPUTIME */
