@@ -24,6 +24,7 @@
 
 #include <rtconfig.h>
 #include <rtdebug.h>
+#include <stdatomic.h>
 #include <rtdef.h>
 #include <rtservice.h>
 #include <rtm.h>

@@ -43,6 +43,7 @@ jobs:
          - {UTEST: "rtsmart/arm",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
          - {UTEST: "rtsmart/aarch64", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
          - {UTEST: "rtsmart/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv",   QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "None", RUN: "yes"}
+	 - {UTEST: "kernel/atomic",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic.conf",  SD_FILE: "sd.bin", RUN: "yes"}
     env:
       TEST_QEMU_ARCH: ${{ matrix.legs.QEMU_ARCH }}
       TEST_QEMU_MACHINE: ${{ matrix.legs.QEMU_MACHINE }}
