@@ -63,7 +63,6 @@ rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
         if(cs_pin != PIN_NONE)
         {
             rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-            rt_pin_write(cs_pin, PIN_HIGH);
         }
 
         rt_memset(&device->config, 0, sizeof(device->config));
