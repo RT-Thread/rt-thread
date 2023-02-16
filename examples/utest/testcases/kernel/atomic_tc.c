@@ -35,7 +35,7 @@ static void test_atomic_api(void)
     /* atomic_store/load */
     atomic_store(&base, 10);
     uassert_true(atomic_load(&base) == 10);
-    
+
     /* atomic_fetch_add */
     base = 0;
     atomic_fetch_add(&base, 10);
