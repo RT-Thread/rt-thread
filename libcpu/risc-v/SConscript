@@ -15,7 +15,7 @@ if   rtconfig.CPU == "virt64" :
 elif rtconfig.CPU == "c906" :
     group = group
 else :
-    group = group + SConscript(os.path.join('common', 'SConscript'))+ SConscript(os.path.join('common_trap', 'SConscript'))
+    group = group + SConscript(os.path.join('common', 'SConscript'))
 
 # cpu porting code files
 if  rtconfig.CPU == "e9xx" or rtconfig.CPU == "c906":
