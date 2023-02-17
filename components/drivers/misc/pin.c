@@ -101,7 +101,7 @@ int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void 
     return 0;
 }
 
-rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
+rt_err_t rt_pin_attach_irq(rt_base_t pin, rt_uint8_t mode,
                            void (*hdr)(void *args), void *args)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
@@ -112,7 +112,7 @@ rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
     return -RT_ENOSYS;
 }
 
-rt_err_t rt_pin_detach_irq(rt_int32_t pin)
+rt_err_t rt_pin_detach_irq(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     if (_hw_pin.ops->pin_detach_irq)
@@ -133,13 +133,13 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
 }
 
 /* RT-Thread Hardware PIN APIs */
-void rt_pin_mode(rt_base_t pin, rt_base_t mode)
+void rt_pin_mode(rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
 }
 
-void rt_pin_write(rt_base_t pin, rt_base_t value)
+void rt_pin_write(rt_base_t pin, rt_uint8_t value)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
