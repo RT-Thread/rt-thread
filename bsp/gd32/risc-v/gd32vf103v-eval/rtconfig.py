@@ -17,7 +17,7 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = EXEC_PATH   = r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\NUCLEI\RISC-V-GCC-NUCLEI\2022.05\bin'
+    EXEC_PATH   = EXEC_PATH   = r'D:/gcc/xpack-riscv-none-embed-gcc-10.2.0-1.2/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)

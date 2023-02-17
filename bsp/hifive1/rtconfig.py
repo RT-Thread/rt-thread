@@ -10,7 +10,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\RISC-V\RISC-V-GCC-RV32\2022-04-12\bin'
+    EXEC_PATH   = r'D:/opt/unknown-gcc/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)

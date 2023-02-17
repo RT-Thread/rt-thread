@@ -13,7 +13,7 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM  = 'gcc'
-    EXEC_PATH = r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\NUCLEI\RISC-V-GCC-NUCLEI\2022.05\bin'
+    EXEC_PATH = r'D:/Software/Nuclei/gcc/bin'
 else:
     print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
 

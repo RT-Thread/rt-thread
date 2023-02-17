@@ -12,17 +12,17 @@ if os.getenv('RTT_CC'):
 if CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
     if platform.system().lower() == "windows":
-        EXEC_PATH 	= r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\NUCLEI\RISC-V-GCC-NUCLEI\2022.05\bin'
+        EXEC_PATH 	= r'/NucleiStudio/toolchain/gcc/bin'
     else:
-        EXEC_PATH 	= r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\NUCLEI\RISC-V-GCC-NUCLEI\2022.05\bin'
+        EXEC_PATH 	= r'~/NucleiStudio/toolchain/gcc/bin'
     if os.path.exists(EXEC_PATH) == False:
         print("Warning: Toolchain path %s doesn't exist, assume it is already in PATH" % EXEC_PATH)
         EXEC_PATH = '' # Don't set path if not exist
 else:
     print("CROSS_TOOL = %s not yet supported" % CROSS_TOOL)
 
-# if os.getenv('RTT_EXEC_PATH'):
-# 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 # Fixed configurations below
