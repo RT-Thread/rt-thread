@@ -20,6 +20,7 @@
 
 #define MM_PAGE_SHIFT    12
 #define MM_PA_TO_OFF(pa) ((uintptr_t)(pa) >> MM_PAGE_SHIFT)
+#define PV_OFFSET        (rt_kmem_pvoff())
 
 #ifndef RT_USING_SMP
 typedef rt_spinlock_t mm_spinlock;
@@ -200,5 +201,9 @@ void rt_varea_insert_page(rt_varea_t varea, void *page_addr);
 void rt_varea_free_pages(rt_varea_t varea);
 
 void rt_varea_offload_page(rt_varea_t varea, void *vaddr, rt_size_t size);
+
+rt_ubase_t rt_kmem_pvoff(void);
+
+void rt_kmem_pvoff_set(rt_ubase_t pvoff);
 
 #endif /* __MM_ASPACE_H__ */

@@ -1,10 +1,8 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#define _GNU_SOURCE
-
 #include "libfdt.h"
 #include "dtb_node.h"
 
@@ -324,7 +322,7 @@ void *dtb_node_get_dtb_node_property_value(const struct dtb_node *dtb_node, cons
 
     if (property_size != NULL)
     {
-        *property_size = dtb_property->size;        
+        *property_size = dtb_property->size;
     }
 
     return dtb_property->value;
@@ -450,11 +448,11 @@ int dtb_node_property_match_string(const struct dtb_node *dn, const char *propna
 
 /**
  * of_property_read_string_helper() - Utility helper for parsing string properties
- * @np:		device node from which the property value is to be read.
- * @propname:	name of the property to be searched.
- * @out_strs:	output array of string pointers.
- * @sz:		number of array elements to read.
- * @skip:	Number of strings to skip over at beginning of list.
+ * @np:     device node from which the property value is to be read.
+ * @propname:   name of the property to be searched.
+ * @out_strs:   output array of string pointers.
+ * @sz:     number of array elements to read.
+ * @skip:   Number of strings to skip over at beginning of list.
  *
  * Don't call this function directly. It is a utility helper for the
  * of_property_read_string*() family of functions.

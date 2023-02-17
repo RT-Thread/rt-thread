@@ -74,7 +74,7 @@ struct mem_desc
 struct rt_aspace;
 
 void rt_hw_mmu_ktbl_set(unsigned long tbl);
-void rt_hw_mmu_setup_early(unsigned long *tbl0, unsigned long *tbl1,
+void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off);
 void rt_hw_mmu_setup(struct rt_aspace *aspace, struct mem_desc *mdesc,
                      int desc_nr);

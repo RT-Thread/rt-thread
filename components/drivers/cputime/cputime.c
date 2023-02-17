@@ -52,13 +52,20 @@ uint64_t clock_cpu_gettime(void)
  * @param parameter the Parameters of timeout function
  *
  */
-void clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param)
+int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param)
 {
     if (_cputime_ops)
         return _cputime_ops->cputime_settimeout(tick, timeout, param);
 
     rt_set_errno(ENOSYS);
     return 0;
+}
+
+int clock_cpu_issettimeout(void)
+{
+    if (_cputime_ops)
+        return _cputime_ops->cputime_settimeout != RT_NULL;
+    return RT_FALSE;
 }
 
 /**

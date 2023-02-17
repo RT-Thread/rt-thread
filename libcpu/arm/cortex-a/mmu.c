@@ -24,7 +24,6 @@
 #include "ioremap.h"
 #else
 #define KERNEL_VADDR_START 0
-#define PV_OFFSET 0
 #endif
 
 /* level1 page table, each entry for 1MB memory. */
@@ -59,6 +58,8 @@ void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
     /* set page table */
     for(; size > 0; size--)
     {
+        if (mdesc->paddr_start == (rt_uint32_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
         rt_hw_mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end,
                 mdesc->paddr_start, mdesc->attr);
         mdesc++;
