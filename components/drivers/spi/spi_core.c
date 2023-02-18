@@ -365,13 +365,8 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
-        rt_set_errno(-RT_EBUSY);
-
         return index;
     }
-
-    /* reset errno */
-    rt_set_errno(RT_EOK);
 
     /* configure SPI bus */
     if (device->bus->owner != device)
@@ -386,7 +381,6 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
         else
         {
             /* configure SPI bus failed */
-            rt_set_errno(-RT_EIO);
             goto __exit;
         }
     }
@@ -398,7 +392,6 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
         result = device->bus->ops->xfer(device, index);
         if (result == 0)
         {
-            rt_set_errno(-RT_EIO);
             break;
         }
 
