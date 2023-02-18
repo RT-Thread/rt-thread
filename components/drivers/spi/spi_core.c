@@ -264,9 +264,9 @@ __exit:
 }
 
 rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
-                          const void           *send_buf,
-                          void                 *recv_buf,
-                          rt_size_t             length)
+                           const void           *send_buf,
+                           void                 *recv_buf,
+                           rt_size_t             length)
 {
     rt_ssize_t result;
     struct rt_spi_message message;
