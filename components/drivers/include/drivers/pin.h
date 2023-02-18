@@ -50,7 +50,7 @@ struct rt_device_pin
 struct rt_device_pin_mode
 {
     rt_base_t pin;
-    rt_uint8_t mode;
+    rt_uint8_t mode; /* e.g. PIN_MODE_OUTPUT */
 };
 struct rt_device_pin_status
 {
@@ -60,7 +60,7 @@ struct rt_device_pin_status
 struct rt_pin_irq_hdr
 {
     rt_base_t        pin;
-    rt_uint8_t       mode;
+    rt_uint8_t       mode; /* e.g. PIN_IRQ_MODE_RISING */
     void (*hdr)(void *args);
     void             *args;
 };
@@ -72,7 +72,7 @@ struct rt_pin_ops
     rt_err_t (*pin_attach_irq)(struct rt_device *device, rt_base_t pin,
             rt_uint8_t mode, void (*hdr)(void *args), void *args);
     rt_err_t (*pin_detach_irq)(struct rt_device *device, rt_base_t pin);
-    rt_err_t (*pin_irq_enable)(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled);
+    rt_err_t (*pin_irq_enable)(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled);
     rt_base_t (*pin_get)(const char *name);
 };
 
@@ -84,7 +84,8 @@ int  rt_pin_read(rt_base_t pin);
 rt_err_t rt_pin_attach_irq(rt_base_t pin, rt_uint8_t mode,
                              void (*hdr)(void *args), void  *args);
 rt_err_t rt_pin_detach_irq(rt_base_t pin);
-rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled);
+rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint8_t enabled);
+
 /* Get pin number by name,such as PA.0,P0.12 */
 rt_base_t rt_pin_get(const char *name);
 

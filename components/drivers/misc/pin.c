@@ -122,7 +122,7 @@ rt_err_t rt_pin_detach_irq(rt_base_t pin)
     return -RT_ENOSYS;
 }
 
-rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
+rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint8_t enabled)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     if (_hw_pin.ops->pin_irq_enable)
