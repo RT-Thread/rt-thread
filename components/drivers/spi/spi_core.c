@@ -321,8 +321,8 @@ __exit:
     return result;
 }
 
-rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device, 
-                           rt_uint16_t senddata, 
+rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                           rt_uint16_t senddata,
                            rt_uint16_t *recvdata)
 {
     rt_err_t result;

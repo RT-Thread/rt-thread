@@ -437,7 +437,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         else
             rt_pin_write(device->cs_pin, PIN_HIGH);
     }
-    
+
     if(state != HAL_OK)
     {
         return -RT_ERROR;

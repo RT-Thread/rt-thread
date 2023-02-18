@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -237,8 +237,8 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
                                const void           *send_buf2,
                                rt_size_t             send_length2);
 
-rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device, 
-                           rt_uint16_t senddata, 
+rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                           rt_uint16_t senddata,
                            rt_uint16_t *recvdata);
 
 /**
