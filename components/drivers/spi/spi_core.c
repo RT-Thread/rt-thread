@@ -422,13 +422,8 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
-        rt_set_errno(-RT_EBUSY);
-
         return -RT_EBUSY;
     }
-
-    /* reset errno */
-    rt_set_errno(RT_EOK);
 
     /* configure SPI bus */
     if (device->bus->owner != device)
@@ -443,8 +438,6 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
         else
         {
             /* configure SPI bus failed */
-            rt_set_errno(-RT_EIO);
-            /* release lock */
             rt_mutex_release(&(device->bus->lock));
 
             return -RT_EIO;
@@ -461,9 +454,7 @@ rt_err_t rt_spi_release_bus(struct rt_spi_device *device)
     RT_ASSERT(device->bus->owner == device);
 
     /* release lock */
-    rt_mutex_release(&(device->bus->lock));
-
-    return RT_EOK;
+    return rt_mutex_release(&(device->bus->lock));
 }
 
 rt_err_t rt_spi_take(struct rt_spi_device *device)
