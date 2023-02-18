@@ -263,12 +263,12 @@ __exit:
     return result;
 }
 
-rt_size_t rt_spi_transfer(struct rt_spi_device *device,
+rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
                           const void           *send_buf,
                           void                 *recv_buf,
                           rt_size_t             length)
 {
-    rt_err_t result;
+    rt_ssize_t result;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
@@ -289,8 +289,7 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                rt_set_errno(-RT_EIO);
-                result = 0;
+                result = -RT_EIO;
                 goto __exit;
             }
         }
@@ -305,16 +304,15 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
 
         /* transfer message */
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
-            rt_set_errno(-RT_EIO);
+            result = -RT_EIO;
             goto __exit;
         }
     }
     else
     {
-        rt_set_errno(-RT_EIO);
-        return 0;
+        return -RT_EIO;
     }
 
 __exit:

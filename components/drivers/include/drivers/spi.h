@@ -250,7 +250,7 @@ rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
  *
  * @return the actual length of transmitted.
  */
-rt_size_t rt_spi_transfer(struct rt_spi_device *device,
+rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
                           const void           *send_buf,
                           void                 *recv_buf,
                           rt_size_t             length);
