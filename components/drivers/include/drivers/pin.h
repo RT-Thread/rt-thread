@@ -57,6 +57,11 @@ struct rt_device_pin_status
     rt_base_t pin;
     rt_uint16_t status;
 };
+struct rt_device_pin_value
+{
+    rt_base_t pin;
+    rt_uint8_t value; /* PIN_LOW or PIN_HIGH */
+};
 struct rt_pin_irq_hdr
 {
     rt_base_t        pin;
