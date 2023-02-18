@@ -337,7 +337,7 @@ rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
     result = rt_spi_send_then_recv(device, &senddata, 2, recvdata, 2);
     if(result != RT_EOK)
     {
-        return -RT_ERROR;
+        return result;
     }
 
     if (device->config.mode & RT_SPI_MSB)
