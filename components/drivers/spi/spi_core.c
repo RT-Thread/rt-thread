@@ -484,7 +484,7 @@ rt_err_t rt_spi_release(struct rt_spi_device *device)
     result = device->bus->ops->xfer(device, &message);
     if(result < 0)
     {
-        return -RT_ERROR;
+        return (rt_err_t)result;
     }
 
     return RT_EOK;
