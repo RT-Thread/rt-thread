@@ -239,7 +239,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
 
 rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device, 
                            rt_uint16_t senddata, 
-                           rt_uint16_t *recvdata)
+                           rt_uint16_t *recvdata);
 
 /**
  * This function transmits data to SPI device.
