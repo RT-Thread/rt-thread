@@ -459,7 +459,7 @@ rt_err_t rt_spi_release_bus(struct rt_spi_device *device)
 
 rt_err_t rt_spi_take(struct rt_spi_device *device)
 {
-    rt_err_t result;
+    rt_ssize_t result;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
@@ -469,13 +469,17 @@ rt_err_t rt_spi_take(struct rt_spi_device *device)
     message.cs_take = 1;
 
     result = device->bus->ops->xfer(device, &message);
+    if(result < 0)
+    {
+        return -RT_ERROR;
+    }
 
-    return result;
+    return RT_EOK;
 }
 
 rt_err_t rt_spi_release(struct rt_spi_device *device)
 {
-    rt_err_t result;
+    rt_ssize_t result;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
@@ -485,6 +489,10 @@ rt_err_t rt_spi_release(struct rt_spi_device *device)
     message.cs_release = 1;
 
     result = device->bus->ops->xfer(device, &message);
+    if(result < 0)
+    {
+        return -RT_ERROR;
+    }
 
-    return result;
+    return RT_EOK;
 }
