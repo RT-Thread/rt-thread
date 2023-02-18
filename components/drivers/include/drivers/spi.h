@@ -100,7 +100,7 @@ struct rt_spi_bus
 struct rt_spi_ops
 {
     rt_err_t (*configure)(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-    rt_uint32_t (*xfer)(struct rt_spi_device *device, struct rt_spi_message *message);
+    rt_ssize_t (*xfer)(struct rt_spi_device *device, struct rt_spi_message *message);
 };
 
 /**

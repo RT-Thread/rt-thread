@@ -195,7 +195,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     HAL_QSPI_Command(&qspi_bus->QSPI_Handler, &Cmdhandler, 5000);
 }
 
-static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t qspixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     rt_size_t len = 0;
 

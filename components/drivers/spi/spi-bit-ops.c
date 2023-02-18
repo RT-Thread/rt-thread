@@ -412,7 +412,7 @@ rt_err_t spi_bit_configure(struct rt_spi_device *device, struct rt_spi_configura
     return RT_EOK;
 }
 
-rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct rt_spi_bit_obj *obj = rt_container_of(device->bus, struct rt_spi_bit_obj, bus);
     struct rt_spi_bit_ops *ops = obj->ops;
