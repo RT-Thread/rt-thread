@@ -154,7 +154,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
             result = -RT_EIO;
             goto __exit;
@@ -169,7 +169,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
             result = -RT_EIO;
             goto __exit;
@@ -229,7 +229,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
             result = -RT_EIO;
             goto __exit;
@@ -244,7 +244,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
             result = -RT_EIO;
             goto __exit;
