@@ -145,13 +145,13 @@ void rt_pin_write(rt_base_t pin, rt_uint8_t value)
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
 }
 
-int rt_pin_read(rt_base_t pin)
+rt_int8_t rt_pin_read(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);
 }
 
-
+/* Get pin number by name, such as PA.0, P0.12 */
 rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
