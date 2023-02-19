@@ -284,7 +284,7 @@ static void _pin_cmd_mode(int argc, char *argv[])
 static void _pin_cmd_read(int argc, char *argv[])
 {
     rt_base_t pin;
-    rt_base_t value;
+    rt_uint8_t value;
     if (argc < 3)
     {
         _pin_cmd_print_usage();
@@ -319,7 +319,7 @@ static void _pin_cmd_read(int argc, char *argv[])
 static void _pin_cmd_write(int argc, char *argv[])
 {
     rt_base_t pin;
-    rt_base_t value;
+    rt_uint8_t value;
     if (argc < 4)
     {
         _pin_cmd_print_usage();
