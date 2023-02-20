@@ -207,6 +207,7 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
                 MM_PGTBL_LOCK(aspace);
                 _kenrel_unmap_4K(aspace->page_table, (void *)unmap_va);
                 MM_PGTBL_UNLOCK(aspace);
+                unmap_va += ARCH_PAGE_SIZE;
             }
             break;
         }
