@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
-// 、#include "cpuport.h"
+
 #define SYSTICK_TICK_CONST                      (SOC_TIMER_FREQ / RT_TICK_PER_SECOND)
 #define RT_KERNEL_INTERRUPT_LEVEL               1
 
@@ -146,7 +146,7 @@ rt_weak void rt_hw_ticksetup(void)
 
 /**
  * @brief This is the timer interrupt service routine.
- * 
+ *
  */
 void SysTick_Handler(void)
 {
@@ -199,4 +199,3 @@ void rt_hw_board_init(void)
 }
 
 /******************** end of file *******************/
-

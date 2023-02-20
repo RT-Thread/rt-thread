@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -58,7 +58,7 @@ rt_weak void rt_hw_ticksetup(void)
 
 /**
  * @brief This is the timer interrupt service routine.
- * 
+ *
  */
 void SysTick_Handler(void)
 {

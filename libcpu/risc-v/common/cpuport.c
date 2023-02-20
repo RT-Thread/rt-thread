@@ -93,7 +93,7 @@ rt_weak void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_t
     rt_thread_switch_interrupt_flag = 1;
 
     rt_trigger_software_interrupt();
-    
+
     return ;
 }
 #endif /* end of RT_USING_SMP */
