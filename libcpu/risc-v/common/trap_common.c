@@ -7,9 +7,12 @@
 static volatile rt_hw_stack_frame_t *s_stack_frame;
 static struct rt_irq_desc rv32irq_table[ISR_NUMBER];
 void rt_show_stack_frame(void);
+
 /**
- * 预设中断入口函数
- * @param mcause 中断异常ID
+ * Temporary interrupt entry function
+ *
+ * @param mcause Machine Cause Register
+ * @return RT_NULL
  */
 static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t mcause)
 {
@@ -18,7 +21,7 @@ static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t mcause)
 }
 
 /**
- * 中断函数表初始化
+ * Interrupt entry function initialization
  */
 void rt_hw_interrupt_init(void)
 {
@@ -32,9 +35,13 @@ void rt_hw_interrupt_init(void)
 }
 
 /**
- * 预装载中断入口函数
- * @param vector  中断号
- * @param handler 中断入口函数
+ * Break Entry Function Binding
+ *
+ * @param vector  interrupt number
+ * @param handler Break-in function requiring binding
+ * @param param   NULL
+ * @param name    NULL
+ * @return NULL
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
@@ -52,8 +59,9 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 }
 
 /**
- * 统一中断入口函数
- * @param mcause 中断异常ID
+ * Query and Distribution Entry for Exception and Interrupt Sources
+ *
+ * @param mcause Machine Cause Register
  */
 rt_weak void rt_rv32_system_irq_handler(rt_uint32_t mcause)
 {
@@ -69,9 +77,11 @@ rt_weak void rt_rv32_system_irq_handler(rt_uint32_t mcause)
     {
         rv32irq_table[irq_id].handler(irq_id, rv32irq_table[irq_id].param);
     }
-
 }
 
+/**
+ * Register Print on Exception
+ */
 rt_weak void rt_show_stack_frame(void)
 {
     rt_kprintf("Stack frame:\r\n----------------------------------------\r\n");
