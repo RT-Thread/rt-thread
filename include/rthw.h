@@ -55,7 +55,7 @@ enum RT_HW_CACHE_OPS
  */
 #ifdef RT_USING_CACHE
 
-#ifdef ARCH_RISCV64
+#ifdef RT_USING_SMART
 #include <cache.h>
 #endif
 
