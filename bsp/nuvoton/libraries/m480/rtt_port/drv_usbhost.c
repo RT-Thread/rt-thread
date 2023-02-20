@@ -806,7 +806,7 @@ static int usbhost_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
     case PM_SLEEP_MODE_DEEP:
 
         pNuUSBHDev->polling_thread->stat = RT_THREAD_READY;
-        result = rt_thread_suspend(pNuUSBHDev->polling_thread);
+        result = rt_thread_suspend_with_flag(pNuUSBHDev->polling_thread, RT_UNINTERRUPTIBLE);
         RT_ASSERT(result == RT_EOK);
 
         break;

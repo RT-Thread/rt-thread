@@ -91,7 +91,7 @@ int kthread_suspend(void *thread)
 
     thr = (rt_thread_t)thread;
 
-    err = rt_thread_suspend(thr);
+    err = rt_thread_suspend_with_flag(thr, RT_UNINTERRUPTIBLE);
     if (err)
     {
         return -1;

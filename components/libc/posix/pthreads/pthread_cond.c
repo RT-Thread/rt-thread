@@ -282,7 +282,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
                 thread->error = RT_EOK;
 
                 /* suspend thread */
-                rt_thread_suspend(thread);
+                rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
 
                 /* Only support FIFO */
                 rt_list_insert_before(&(sem->parent.suspend_thread), &(thread->tlist));
