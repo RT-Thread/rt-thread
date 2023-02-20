@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2023/01/17     WangShun    The first version
  */
- 
+#define __ASSEMBLY__
 #include "cpuport.h"
 
     .section .text.entry, "ax"

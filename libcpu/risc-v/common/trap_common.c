@@ -14,7 +14,7 @@ void rt_show_stack_frame(void);
  * @param mcause Machine Cause Register
  * @return RT_NULL
  */
-static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t mcause)
+rt_weak rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t mcause)
 {
     rt_kprintf("UN-handled interrupt %d occurred!!!\n", mcause);
     return RT_NULL;
@@ -23,7 +23,7 @@ static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t mcause)
 /**
  * Interrupt entry function initialization
  */
-void rt_hw_interrupt_init(void)
+rt_weak void rt_hw_interrupt_init(void)
 {
     int idx = 0;
 
@@ -43,7 +43,7 @@ void rt_hw_interrupt_init(void)
  * @param name    NULL
  * @return NULL
  */
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
+rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
     void *user_param = param;
