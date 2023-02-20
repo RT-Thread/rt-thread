@@ -50,7 +50,7 @@ static inline void rt_hw_tlb_invalidate_all_local(void)
 
 static inline void rt_hw_tlb_invalidate_aspace(rt_aspace_t aspace)
 {
-    rt_hw_tlb_invalidate_all_local();
+    rt_hw_tlb_invalidate_all();
 }
 
 static inline void rt_hw_tlb_invalidate_page(rt_aspace_t aspace, void *start)
