@@ -10,13 +10,16 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#include <mmu.h>
+#include <mm_aspace.h>
 #include <ioremap.h>
 
-#ifdef RT_USING_SMART
-#include <mmu.h>
-#include <lwp_mm.h>
-#include <mm_aspace.h>
+void *rt_ioremap_start;
+size_t rt_ioremap_size;
 
+#ifdef RT_USING_SMART
+
+#include <lwp_mm.h>
 #define DBG_TAG "mm.ioremap"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -26,9 +29,6 @@ enum ioremap_type
     MM_AREA_TYPE_PHY,
     MM_AREA_TYPE_PHY_CACHED
 };
-
-void *rt_ioremap_start;
-size_t rt_ioremap_size;
 
 static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 {
@@ -40,7 +40,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     lo_off = (uintptr_t)paddr & ARCH_PAGE_MASK;
 
     struct rt_mm_va_hint hint = {
-        .prefer = ARCH_MAP_FAILED,
+        .prefer = RT_NULL,
         .map_size = RT_ALIGN(size + lo_off, ARCH_PAGE_SIZE),
         .flags = 0,
         .limit_start = rt_ioremap_start,

@@ -262,7 +262,7 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     struct rt_lwp *lwp  = RT_NULL;
     struct lwp_avl_struct *node_key = RT_NULL;
     struct lwp_shm_struct *p = RT_NULL;
-    void *va = RT_NULL;
+    void *va = shm_vaddr;
 
     /* The id is used to locate the node_key in the binary tree, and then get the
      * shared-memory structure linked to the node_key. We don't use the id to refer
@@ -282,16 +282,12 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     {
         return RT_NULL;
     }
-    if (shm_vaddr == 0)
-        va = ARCH_MAP_FAILED;
-    else
-        va = shm_vaddr;
 
     err = rt_aspace_map(lwp->aspace, &va, p->size, MMU_MAP_U_RWCB, MMF_PREFETCH,
                         &p->mem_obj, 0);
     if (err != RT_EOK)
     {
-        va = 0;
+        va = RT_NULL;
     }
     return va;
 }
