@@ -292,7 +292,11 @@ static void rt_thread_system_entry(void *parameter)
 {
     while (1)
     {
-        rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        int ret= rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        if (ret != RT_EOK)
+        {
+            RT_ASSERT(0);
+        }
         rt_defunct_execute();
     }
 }
