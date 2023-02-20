@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-07-15     Magicoe      The first version for LPC55S6x
+ * 2023-02-17     Vandoul      Add status to lpc_i2c_bus.
  */
 
 #include <rtthread.h>
@@ -41,6 +42,7 @@ struct lpc_i2c_bus
     uint32_t                    instance;
     uint32_t                    baud;
     char                        *device_name;
+    uint32_t                    status;
 };
 
 
@@ -63,6 +65,7 @@ struct lpc_i2c_bus lpc_obj[] =
 static void i2c_mst_dma_callback(I2C_Type *base, i2c_master_dma_handle_t *handle, status_t status, void *userData)
 {
     struct lpc_i2c_bus *lpc_i2c = (struct lpc_i2c_bus*)userData;
+    lpc_i2c->status = status;
     rt_sem_release(lpc_i2c->sem);
 }
 
@@ -121,6 +124,10 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
                 return i;
             }
             rt_sem_take(lpc_i2c->sem, RT_WAITING_FOREVER);
+            if(lpc_i2c->status != kStatus_Success)
+            {
+                break;
+            }
         }
     }
     ret = i;
