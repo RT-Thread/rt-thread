@@ -17,7 +17,17 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifdef RT_USING_MUSLLIBC
+/* this is require for musl <signal.h> */
+#ifndef _POSIX_SOURCE
+#define _POSIX_SOURCE
 #include <signal.h>
+/* limit influenced of _POSIX_SOURCE */
+#undef _POSIX_SOURCE
+
+#else /* ndef _POSIX_SOURCE */
+#include <signal.h>
+#endif
+
 #else
 
 #include <stdint.h>
