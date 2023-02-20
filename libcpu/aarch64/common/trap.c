@@ -45,6 +45,7 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 #ifdef LWP_USING_CORE_DUMP
         lwp_core_dump(regs, pc_adj);
 #endif
+        backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
         sys_exit(-1);
     }
 }
