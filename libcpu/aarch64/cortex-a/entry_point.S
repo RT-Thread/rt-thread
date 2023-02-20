@@ -89,6 +89,9 @@ __start:
     /* Set CPACR_EL1 (Architecture Feature Access Control Register) to avoid trap from SIMD or float point instruction */
     mov     x1, #0x00300000         /* Don't trap any SIMD/FP instructions in both EL0 and EL1 */
     msr     cpacr_el1, x1
+    /* applying context change */
+    dsb     ish
+    isb
 
     /* clear bss */
     GET_PHY x1, __bss_start
@@ -270,11 +273,13 @@ _secondary_cpu_entry:
     ret
 
 after_mmu_enable_cpux:
+#ifdef RT_USING_SMART
     mrs x0, tcr_el1          /* disable ttbr0, only using kernel space */
     orr x0, x0, #(1 << 7)
     msr tcr_el1, x0
     msr ttbr0_el1, xzr
     dsb sy
+#endif
 
     mov     x0, #1
     msr     spsel, x0

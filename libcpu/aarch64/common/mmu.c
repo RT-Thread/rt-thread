@@ -148,11 +148,9 @@ static int _kenrel_map_4K(unsigned long *lv0_tbl, void *vaddr, void *paddr,
                 goto err;
             }
             rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)page,
-                                 ARCH_PAGE_SIZE);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)page, ARCH_PAGE_SIZE);
             cur_lv_tbl[off] = (page + PV_OFFSET) | MMU_TYPE_TABLE;
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off,
-                                 sizeof(void *));
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
         }
         else
         {
@@ -197,14 +195,18 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
     // TODO trying with HUGEPAGE here
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         ret = _kenrel_map_4K(aspace->page_table, v_addr, p_addr, attr);
+        MM_PGTBL_UNLOCK(aspace);
+
         if (ret != 0)
         {
             /* error, undo map */
             while (unmap_va != v_addr)
             {
+                MM_PGTBL_LOCK(aspace);
                 _kenrel_unmap_4K(aspace->page_table, (void *)unmap_va);
-                unmap_va += ARCH_PAGE_SIZE;
+                MM_PGTBL_UNLOCK(aspace);
             }
             break;
         }
@@ -232,7 +234,9 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
 
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         _kenrel_unmap_4K(aspace->page_table, v_addr);
+        MM_PGTBL_UNLOCK(aspace);
         v_addr += ARCH_PAGE_SIZE;
     }
 }
@@ -242,7 +246,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     if (aspace != &rt_kernel_space)
     {
         void *pgtbl = aspace->page_table;
-        pgtbl = _rt_kmem_v2p(pgtbl);
+        pgtbl = rt_kmem_v2p(pgtbl);
         uintptr_t tcr;
 
         __asm__ volatile("msr ttbr0_el1, %0" ::"r"(pgtbl) : "memory");
@@ -311,9 +315,14 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
 
         if (mdesc->paddr_start == (rt_size_t)ARCH_MAP_FAILED)
             mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
-
-        rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
+        int retval;
+        retval = rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
+        if (retval)
+        {
+            LOG_E("%s: map failed with code %d", retval);
+            RT_ASSERT(0);
+        }
         mdesc++;
     }
 
