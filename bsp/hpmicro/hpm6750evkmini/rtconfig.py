@@ -25,7 +25,7 @@ if  CROSS_TOOL == 'gcc':
     if os.getenv('RTT_RISCV_TOOLCHAIN'):
         EXEC_PATH = os.getenv('RTT_RISCV_TOOLCHAIN')
     else:
-        EXEC_PATH   = r'D:/opt/riscv-gnu-gcc/bin'
+        EXEC_PATH   = r'/opt/riscv-gnu-gcc/bin'
 else:
     print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
 

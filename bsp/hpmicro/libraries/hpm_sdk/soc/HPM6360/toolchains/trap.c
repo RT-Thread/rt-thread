@@ -102,7 +102,7 @@ __attribute__((weak)) void mchtmr_s_isr(void)
 #ifndef CONFIG_FREERTOS
 void SW_handler(void) __attribute__ ((section(".isr_vector"), interrupt("machine"), aligned(4)));
 #else
-void irq_handlSW_handlerer_trap(void) __attribute__ ((section(".isr_vector")));
+void SW_handler(void) __attribute__ ((section(".isr_vector")));
 #endif
 void SW_handler(void)
 {
