@@ -140,7 +140,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                result = -RT_EIO;
+                LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 goto __exit;
             }
         }
@@ -156,7 +156,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         result = device->bus->ops->xfer(device, &message);
         if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -171,7 +171,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         result = device->bus->ops->xfer(device, &message);
         if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -215,7 +215,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                result = -RT_EIO;
+                LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 goto __exit;
             }
         }
@@ -231,7 +231,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         result = device->bus->ops->xfer(device, &message);
         if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -246,7 +246,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         result = device->bus->ops->xfer(device, &message);
         if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -289,7 +289,7 @@ rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                result = -RT_EIO;
+                LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 goto __exit;
             }
         }
@@ -306,7 +306,7 @@ rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
         result = device->bus->ops->xfer(device, &message);
         if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
     }
@@ -390,7 +390,7 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
     {
         /* transmit SPI message */
         result = device->bus->ops->xfer(device, index);
-        if (result == 0)
+        if (result < 0)
         {
             break;
         }
@@ -433,7 +433,7 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
             /* configure SPI bus failed */
             rt_mutex_release(&(device->bus->lock));
 
-            return -RT_EIO;
+            return result;
         }
     }
 
