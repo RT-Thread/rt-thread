@@ -15,6 +15,10 @@
 
 #include <drivers/spi.h>
 
+#define DBG_TAG    "spi.core"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 extern rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name);
 extern rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name);
 
