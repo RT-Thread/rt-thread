@@ -38,6 +38,10 @@ menuconfig RT_USING_SERIAL
                 bool "RT_USING_SERIAL_V1"
             config RT_USING_SERIAL_V2
                 bool "RT_USING_SERIAL_V2"
+            config RT_USING_SERIAL_X
+                bool "RT_USING_SERIAL_X"
+                help
+                    A serial driver that supporting True NonBlock.
         endchoice
         config RT_SERIAL_USING_DMA
             bool "Enable serial DMA mode"
@@ -45,8 +49,36 @@ menuconfig RT_USING_SERIAL
 
         config RT_SERIAL_RB_BUFSZ
             int "Set RX buffer size"
-            depends on !RT_USING_SERIAL_V2
+            depends on RT_USING_SERIAL_V1
             default 64
+
+        if RT_USING_SERIAL_X
+            config RT_SERIAL_FIFO_BUFSZ
+                int "Set SerialX FIFO buffer size"
+                default 128
+                help
+                    suggestion: RT_SERIAL_FIFO_BUFSZ == 2^N
+                    and RT_SERIAL_FIFO_BUFSZ >= 2*RT_SERIAL_DMA_BUFSZ
+
+            config RT_SERIAL_DMA_BUFSZ
+                int "Set SerialX DMA buffer size"
+                depends on RT_SERIAL_USING_DMA
+                default 64
+                help
+                    suggestion: RT_SERIAL_DMA_BUFSZ == 2^N
+                    and RT_SERIAL_FIFO_BUFSZ >= 2*RT_SERIAL_DMA_BUFSZ
+
+            config RT_SERIAL_HARD_FIFO
+                bool "Set Hard FIFO buffer size"
+                default n
+                help
+                    Useful only if the chip supported
+                    eg: NUC970 N9H30 serial chips
+                        The UART1/2/4/6/8/10 is built-in with a 64-byte transmitter FIFO (TX_FIFO)
+                        and a 64-byte receiver FIFO (RX_FIFO),
+                        and the UART0/3/5/7/9 are equipped 16-byte transmitter FIFO (TX_FIFO)
+                        and 16-byte receiver FIFO (RX_FIFO).
+        endif
     endif
 
 config RT_USING_TTY

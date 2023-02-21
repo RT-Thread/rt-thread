@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2012-01-08     bernard      first version.
  * 2014-07-12     bernard      Add workqueue implementation.
+ * 2022-04-10     THEWON       add serialX
  */
 
 #ifndef __RT_DEVICE_H__
@@ -57,7 +58,9 @@ extern "C" {
 #endif /* RT_USING_USB_HOST */
 
 #ifdef RT_USING_SERIAL
-#ifdef RT_USING_SERIAL_V2
+#ifdef RT_USING_SERIAL_X
+#include "drivers/serialX.h"
+#elif defined RT_USING_SERIAL_V2
 #include "drivers/serial_v2.h"
 #else
 #include "drivers/serial.h"

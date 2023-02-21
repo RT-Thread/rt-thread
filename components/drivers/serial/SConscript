@@ -7,6 +7,9 @@ if GetDepend(['RT_USING_SERIAL']):
     if GetDepend(['RT_USING_SERIAL_V2']):
         src = Glob('serial_v2.c')
         group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL_V2'], CPPPATH = CPPPATH)
+    elif  GetDepend(['RT_USING_SERIAL_X']):
+        src = Glob('serialX.c')
+        group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL_X'], CPPPATH = CPPPATH)
     else:
         src = Glob('serial.c')
         group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL'], CPPPATH = CPPPATH)
