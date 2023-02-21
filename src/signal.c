@@ -56,6 +56,7 @@ static void _signal_entry(void *parameter)
     {
         struct rt_cpu* pcpu = rt_cpu_self();
 
+        RT_ASSERT(pcpu->current_thread->cpus_lock_nest > 0);
         pcpu->current_thread->cpus_lock_nest--;
         if (pcpu->current_thread->cpus_lock_nest == 0)
         {

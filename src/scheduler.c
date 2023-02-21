@@ -666,6 +666,7 @@ void rt_scheduler_do_irq_switch(void *context)
 #endif /* RT_USING_OVERFLOW_CHECK */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
+                RT_ASSERT(current_thread->cpus_lock_nest > 0);
                 current_thread->cpus_lock_nest--;
                 current_thread->scheduler_lock_nest--;
 
@@ -941,6 +942,7 @@ void rt_enter_critical(void)
     {
         rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
         current_thread->cpus_lock_nest++;
+        RT_ASSERT(current_thread->cpus_lock_nest != 0);
         if (lock_nest == 0)
         {
             current_thread->scheduler_lock_nest ++;
@@ -999,6 +1001,7 @@ void rt_exit_critical(void)
 
     current_thread->critical_lock_nest --;
 
+    RT_ASSERT(current_thread->cpus_lock_nest > 0);
     current_thread->cpus_lock_nest--;
     if (current_thread->cpus_lock_nest == 0)
     {

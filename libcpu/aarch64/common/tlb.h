@@ -50,7 +50,7 @@ static inline void rt_hw_tlb_invalidate_all_local(void)
 
 static inline void rt_hw_tlb_invalidate_aspace(rt_aspace_t aspace)
 {
-    rt_hw_tlb_invalidate_all_local();
+    rt_hw_tlb_invalidate_all();
 }
 
 static inline void rt_hw_tlb_invalidate_page(rt_aspace_t aspace, void *start)
@@ -67,7 +67,7 @@ static inline void rt_hw_tlb_invalidate_page(rt_aspace_t aspace, void *start)
 static inline void rt_hw_tlb_invalidate_range(rt_aspace_t aspace, void *start,
                                               size_t size, size_t stride)
 {
-    if (size < ARCH_PAGE_SIZE)
+    if (size <= ARCH_PAGE_SIZE)
     {
         rt_hw_tlb_invalidate_page(aspace, start);
     }

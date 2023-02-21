@@ -206,6 +206,43 @@ int dtb_node_read_size(const struct dtb_node *node, const char *propname)
     return -EINVAL;
 }
 
+int dtb_node_get_addr_and_size_by_index(const struct dtb_node *node, int index, size_t *addr, size_t *size)
+{
+    const uint32_t *prop;
+    int psize;
+    int onesize, na, ns;
+
+    na = dtb_node_n_addr_cells(node);
+	ns = dtb_node_n_size_cells(node);
+
+    prop = dtb_node_get_dtb_node_property_value(node, "reg", &psize);
+	if (prop == NULL)
+    {
+		return -1;
+    }
+
+	psize /= 4;
+	onesize = na + ns;
+
+    if (psize >= (index + 1) * onesize)
+    {
+        prop += index * onesize;
+
+        if (addr)
+        {
+            *addr = dtb_node_read_number(prop, na);
+        }
+        if (size)
+        {
+            *size = dtb_node_read_number(prop + na, ns);
+        }
+
+        return 0;
+    }
+
+    return -1;
+}
+
 size_t dtb_node_get_addr_index(const struct dtb_node *node, int index)
 {
     int na;

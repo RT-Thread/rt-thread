@@ -160,6 +160,7 @@
 
 /* Utilities */
 
+#define RT_USING_ADT
 
 /* RT-Thread Utestcases */
 

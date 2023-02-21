@@ -30,11 +30,11 @@ typedef rt_spinlock_t mm_spinlock;
 #define MM_PGTBL_UNLOCK(aspace)    (rt_hw_spin_unlock(&((aspace)->pgtbl_lock)))
 
 #else
-typedef rt_hw_spinlock_t mm_spinlock;
+typedef struct rt_spinlock mm_spinlock;
 
-#define MM_PGTBL_LOCK_INIT(aspace) (rt_hw_spin_lock_init(&((aspace)->pgtbl_lock)))
-#define MM_PGTBL_LOCK(aspace)      (rt_hw_spin_lock(&((aspace)->pgtbl_lock)))
-#define MM_PGTBL_UNLOCK(aspace)    (rt_hw_spin_unlock(&((aspace)->pgtbl_lock)))
+#define MM_PGTBL_LOCK_INIT(aspace) (rt_spin_lock_init(&((aspace)->pgtbl_lock)))
+#define MM_PGTBL_LOCK(aspace)      (rt_spin_lock(&((aspace)->pgtbl_lock)))
+#define MM_PGTBL_UNLOCK(aspace)    (rt_spin_unlock(&((aspace)->pgtbl_lock)))
 
 #endif /* RT_USING_SMP */
 
@@ -108,6 +108,8 @@ enum rt_mmu_cntl
 {
     MMU_CNTL_NONCACHE,
     MMU_CNTL_CACHE,
+    MMU_CNTL_READONLY,
+    MMU_CNTL_READWRITE,
     MMU_CNTL_DUMMY_END,
 };
 
@@ -135,7 +137,7 @@ void rt_aspace_detach(rt_aspace_t aspace);
 /**
  * @brief Memory Map on Virtual Address Space to Mappable Object
  * *INFO There is no restriction to use NULL address(physical/virtual).
- * Vaddr passing in addr must be page aligned. If vaddr is MM_MAP_FAILED,
+ * Vaddr passing in addr must be page aligned. If vaddr is RT_NULL,
  * a suitable address will be chose automatically.
  *
  * @param aspace target virtual address space
@@ -205,5 +207,9 @@ void rt_varea_offload_page(rt_varea_t varea, void *vaddr, rt_size_t size);
 rt_ubase_t rt_kmem_pvoff(void);
 
 void rt_kmem_pvoff_set(rt_ubase_t pvoff);
+
+int rt_kmem_map_phy(void *va, void *pa, rt_size_t length, rt_size_t attr);
+
+void *rt_kmem_v2p(void *vaddr);
 
 #endif /* __MM_ASPACE_H__ */
