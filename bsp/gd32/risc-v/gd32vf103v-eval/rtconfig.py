@@ -32,7 +32,7 @@ LINK_FILE = '../libraries/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'riscv-nuclei-elf-'
+    PREFIX = 'riscv-none-embed-'
     CC = PREFIX + 'gcc'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'

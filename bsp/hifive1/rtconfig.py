@@ -29,7 +29,7 @@ TARGET_NAME = 'rtthread.bin'
 #------- GCC settings ----------------------------------------------------------
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'riscv32-unknown-elf-'
+    PREFIX = 'riscv-none-embed-'
     CC = PREFIX + 'gcc'
     CXX= PREFIX + 'g++'
     AS = PREFIX + 'gcc'
