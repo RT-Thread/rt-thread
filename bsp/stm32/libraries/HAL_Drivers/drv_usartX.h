@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-04-10     THEWON       first version
+ * 2022-04-10     THEWON       first version for serialX
  */
 
 #ifndef __DRV_USARTX_H__
@@ -49,12 +49,12 @@ struct stm32_uart_config
 #endif
 };
 
-/* stm32 uart dirver class */
+/* stm32 uart driver class */
 struct stm32_uart
 {
     UART_HandleTypeDef handle;
     struct rt_serial_device serial;
-    struct stm32_uart_config *config;
+    struct stm32_uart_config *uart_config;
 
 #ifdef RT_SERIAL_USING_DMA
     rt_bool_t dmaTxing;
@@ -71,4 +71,3 @@ struct stm32_uart
 };
 
 #endif  /* __DRV_USART_H__ */
-
