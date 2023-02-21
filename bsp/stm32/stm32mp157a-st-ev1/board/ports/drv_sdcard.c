@@ -203,7 +203,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
   * @retval DRESULT: Operation result
   */
 
-static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t sector, void *buffer, rt_size_t count)
+static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t sector, void *buffer, rt_size_t count)
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_sd *sd = (struct stm32_sd *)dev;
@@ -269,7 +269,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t sector, void *buffer, 
   * @param  count      Number of SD blocks to write
   * @retval BSP status
   */
-static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t sector, const void *buffer, rt_size_t count)
+static rt_ssize_t rt_sdcard_write(rt_device_t dev, rt_off_t sector, const void *buffer, rt_size_t count)
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_sd *sd = (struct stm32_sd *)dev;

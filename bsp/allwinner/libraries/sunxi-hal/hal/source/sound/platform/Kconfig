@@ -1,0 +1,82 @@
+menu "Platform(Audio Interface) drivers"
+
+config SND_PLATFORM_SUNXI_PCM
+    bool
+    default n
+
+config SND_PLATFORM_SUNXI_CPUDAI
+    bool "Allwinner internal cpudai"
+    select SND_PLATFORM_SUNXI_PCM
+    default n
+    help
+      Only support for the Codec embedded in the Allwinner SoCs.
+
+config SND_PLATFORM_SUNXI_DAUDIO
+    bool "Allwinner Digital Audio Support"
+    select SND_PLATFORM_SUNXI_PCM
+    depends on (!ARCH_SUN8IW19)
+    default n
+    help
+      Select Y to add support for I2S/PCM/TDM module in Allwinner SoCs.
+
+config SND_PLATFORM_SUN8IW19_DAUDIO
+    bool "Allwinner Digital Audio Support"
+    select SND_PLATFORM_SUNXI_PCM
+    depends on (ARCH_SUN8IW19P1 || ARCH_SUN8IW19)
+    default n
+    help
+      Select Y to add support for I2S/PCM/TDM module in Allwinner SoCs.
+
+if SND_PLATFORM_SUNXI_DAUDIO || SND_PLATFORM_SUN8IW19_DAUDIO
+menu "Allwinner Digital Audio Choose"
+config SND_PLATFORM_SUNXI_DAUDIO0
+    bool "Allwinner Daudio0 Support"
+    default n
+    help
+      Select Y to add support for Daudio0.
+
+config SND_PLATFORM_SUNXI_DAUDIO1
+    bool "Allwinner Daudio1 Support"
+    default n
+    help
+      Select Y to add support for Daudio1.
+
+config SND_PLATFORM_SUNXI_DAUDIO2
+    bool "Allwinner Daudio2 Support"
+    depends on (!SND_PLATFORM_SUN8IW19_DAUDIO)
+    default n
+    help
+      Select Y to add support for Daudio2.
+
+config SND_PLATFORM_SUNXI_DAUDIO3
+    bool "Allwinner Daudio3 Support"
+    depends on (!SND_PLATFORM_SUN8IW19_DAUDIO)
+    default n
+    help
+      Select Y to add support for Daudio3.
+endmenu
+endif
+
+config SND_PLATFORM_SUNXI_DMIC
+    bool "Allwinner DMIC Support"
+    select SND_PLATFORM_SUNXI_PCM
+    select SND_CODEC_DUMMY
+    default n
+    help
+      Select Y to add support for DMIC module in Allwinner SoCs.
+
+config SND_PLATFORM_SUNXI_SPDIF
+    bool "Allwinner SPDIF Support"
+    select SND_PLATFORM_SUNXI_PCM
+    select SND_CODEC_DUMMY
+    default n
+    help
+      Select Y to add support for SPDIF module in Allwinner SoCs.
+
+config SND_SUNXI_DEBUG
+    bool "Allwinner Audio Debug Support"
+    default n
+    help
+      Select Y to add support for audio debug in Allwinner SoCs.
+
+endmenu

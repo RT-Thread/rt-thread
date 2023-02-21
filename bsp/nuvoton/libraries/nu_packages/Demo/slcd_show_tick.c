@@ -118,7 +118,7 @@ void slcd_demo_hook(void)
     /* Show RTT version. */
     {
         LCDLIB_SetSymbol(SYMBOL_VERSION, 1);
-        rt_snprintf(au8Str, sizeof(au8Str), "%d%02d%03d", RT_VERSION, RT_SUBVERSION, RT_REVISION);
+        rt_snprintf(au8Str, sizeof(au8Str), "%d%02d%03d", RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH);
         LCDLIB_Printf(ZONE_VER_DIGIT, &au8Str[0]);
         LCDLIB_SetSymbol(SYMBOL_VER_DIG_P1, 1);
         LCDLIB_SetSymbol(SYMBOL_VER_DIG_P2, 1);

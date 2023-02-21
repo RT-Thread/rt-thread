@@ -47,13 +47,21 @@ rt_err_t rt_usb_host_init(const char *name)
     rt_usbh_class_driver_register(drv);
 #endif
 #ifdef RT_USBH_HID
+    extern ucd_t rt_usbh_class_driver_hid(void);
     /* register mass storage class driver */
     drv = rt_usbh_class_driver_hid();
     rt_usbh_class_driver_register(drv);
 #ifdef RT_USBH_HID_MOUSE
-    uprotocal_t protocal;
-    protocal = rt_usbh_hid_protocal_mouse();
-    rt_usbh_hid_protocal_register(protocal);
+    {
+        extern uprotocal_t rt_usbh_hid_protocal_mouse(void);
+        rt_usbh_hid_protocal_register(rt_usbh_hid_protocal_mouse());
+    }
+#endif
+#ifdef RT_USBH_HID_KEYBOARD
+    {
+        extern uprotocal_t rt_usbh_hid_protocal_kbd(void);
+        rt_usbh_hid_protocal_register(rt_usbh_hid_protocal_kbd());
+    }
 #endif
 #endif
 

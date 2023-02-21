@@ -102,7 +102,7 @@ static rt_err_t nu_slcd_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t nu_slcd_write(struct rt_device *dev,
+static rt_ssize_t nu_slcd_write(struct rt_device *dev,
                                rt_off_t          pos,
                                const void       *buffer,
                                rt_size_t         size)

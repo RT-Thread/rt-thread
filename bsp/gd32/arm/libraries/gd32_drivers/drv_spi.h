@@ -42,7 +42,7 @@ struct gd32_spi
     uint16_t mosi_pin;
 };
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint32_t cs_gpiox, uint16_t cs_gpio_pin);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
 
 #ifdef __cplusplus
 }

@@ -6,7 +6,7 @@
 #define RT_NAME_MAX	8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	8
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
@@ -70,8 +70,6 @@
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
-
-//#define RT_USING_NEWLIB
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH

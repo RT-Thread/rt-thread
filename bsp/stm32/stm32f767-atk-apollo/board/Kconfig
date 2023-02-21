@@ -112,13 +112,13 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -179,7 +179,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25" 
+            comment "Notice: PB8 --> 24; PB9 --> 25"
             config BSP_I2C1_SCL_PIN
                 int "I2C1 scl pin number"
                 range 1 176
@@ -256,7 +256,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
  source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

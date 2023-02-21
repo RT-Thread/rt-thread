@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,6 +11,7 @@
  * 2018-11-22     Jesven       rt_interrupt_get_nest function add disable irq
  * 2021-08-15     Supperthomas fix the comment
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to irq.c
+ * 2022-07-04     Yunjie       fix RT_DEBUG_LOG
  */
 
 #include <rthw.h>
@@ -77,7 +78,7 @@ volatile rt_uint8_t rt_interrupt_nest = 0;
  *
  * @see rt_interrupt_leave
  */
-void rt_interrupt_enter(void)
+rt_weak void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
@@ -87,7 +88,7 @@ void rt_interrupt_enter(void)
     rt_hw_interrupt_enable(level);
 
     RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
-                                rt_interrupt_nest));
+                                (rt_int32_t)rt_interrupt_nest));
 }
 RTM_EXPORT(rt_interrupt_enter);
 
@@ -99,12 +100,12 @@ RTM_EXPORT(rt_interrupt_enter);
  *
  * @see rt_interrupt_enter
  */
-void rt_interrupt_leave(void)
+rt_weak void rt_interrupt_leave(void)
 {
     rt_base_t level;
 
     RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
-                                rt_interrupt_nest));
+                                (rt_int32_t)rt_interrupt_nest));
 
     level = rt_hw_interrupt_disable();
     RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
@@ -122,7 +123,7 @@ RTM_EXPORT(rt_interrupt_leave);
  *
  * @return the number of nested interrupts.
  */
-RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
+rt_weak rt_uint8_t rt_interrupt_get_nest(void)
 {
     rt_uint8_t ret;
     rt_base_t level;

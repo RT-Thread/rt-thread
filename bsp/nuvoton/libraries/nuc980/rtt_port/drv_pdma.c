@@ -75,7 +75,7 @@ static void nu_pdma_channel_disable(int i32ChannID);
 static void nu_pdma_channel_reset(int i32ChannID);
 static rt_err_t nu_pdma_timeout_set(int i32ChannID, int i32Timeout_us);
 static void nu_pdma_periph_ctrl_fill(int i32ChannID, int i32CtlPoolIdx);
-static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl);
+static rt_ssize_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl);
 static void nu_pdma_memfun_cb(void *pvUserData, uint32_t u32Events);
 static void nu_pdma_memfun_actor_init(void);
 static int nu_pdma_memfun_employ(void);
@@ -615,7 +615,7 @@ rt_err_t nu_pdma_sgtbls_allocate(nu_pdma_desc_t *ppsSgtbls, int num)
     RT_ASSERT(ppsSgtbls != NULL);
     RT_ASSERT(num > 0);
 
-    psSgTblHead = (nu_pdma_desc_t) rt_malloc_align(sizeof(DSCT_T) * num, 32);
+    psSgTblHead = (nu_pdma_desc_t) rt_malloc_align(RT_ALIGN(sizeof(DSCT_T) * num, 32), 32);
     RT_ASSERT(psSgTblHead != RT_NULL);
 
     rt_memset((void *)psSgTblHead, 0, sizeof(DSCT_T) * num);
@@ -642,19 +642,6 @@ static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_de
     PDMA_T *PDMA = NU_PDMA_GET_BASE(i32ChannID);
     nu_pdma_chn_t *psPdmaChann = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos];
 
-    PDMA_DisableTimeout(PDMA,  1 << NU_PDMA_GET_MOD_CHIDX(i32ChannID));
-
-    PDMA_EnableInt(PDMA, NU_PDMA_GET_MOD_CHIDX(i32ChannID), PDMA_INT_TRANS_DONE);
-
-    nu_pdma_timeout_set(i32ChannID, u32IdleTimeout_us);
-
-    /* Set scatter-gather mode and head */
-    PDMA_SetTransferMode(PDMA,
-                         NU_PDMA_GET_MOD_CHIDX(i32ChannID),
-                         u32Peripheral,
-                         (head->NEXT != 0) ? 1 : 0,
-                         (uint32_t)head);
-
 #if defined(BSP_USING_MMU)
     /* Writeback data in dcache to memory before transferring. */
     {
@@ -667,6 +654,16 @@ static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_de
             uint32_t u32SrcCtl    = (next->CTL & PDMA_DSCT_CTL_SAINC_Msk);
             uint32_t u32DstCtl    = (next->CTL & PDMA_DSCT_CTL_DAINC_Msk);
             uint32_t u32FlushLen  = u32TxCnt * u32DataWidth;
+
+#if 0
+            rt_kprintf("[%s] i32ChannID=%d\n", __func__, i32ChannID);
+            rt_kprintf("[%s] PDMA=0x%08x\n", __func__, (uint32_t)PDMA);
+            rt_kprintf("[%s] u32TxCnt=%d\n", __func__, u32TxCnt);
+            rt_kprintf("[%s] u32DataWidth=%d\n", __func__, u32DataWidth);
+            rt_kprintf("[%s] u32SrcCtl=0x%08x\n", __func__, u32SrcCtl);
+            rt_kprintf("[%s] u32DstCtl=0x%08x\n", __func__, u32DstCtl);
+            rt_kprintf("[%s] u32FlushLen=%d\n", __func__, u32FlushLen);
+#endif
 
             /* Flush Src buffer into memory. */
             if ((u32SrcCtl == PDMA_SAR_INC)) // for M2P, M2M
@@ -702,6 +699,20 @@ static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_de
         }
     }
 #endif
+
+    PDMA_DisableTimeout(PDMA,  1 << NU_PDMA_GET_MOD_CHIDX(i32ChannID));
+
+    PDMA_EnableInt(PDMA, NU_PDMA_GET_MOD_CHIDX(i32ChannID), PDMA_INT_TRANS_DONE);
+
+    nu_pdma_timeout_set(i32ChannID, u32IdleTimeout_us);
+
+    /* Set scatter-gather mode and head */
+    /* Take care the head structure, you should make sure cache-coherence. */
+    PDMA_SetTransferMode(PDMA,
+                         NU_PDMA_GET_MOD_CHIDX(i32ChannID),
+                         u32Peripheral,
+                         (head->NEXT != 0) ? 1 : 0,
+                         (uint32_t)head);
 
     /* If peripheral is M2M, trigger it. */
     if (u32Peripheral == PDMA_MEM)
@@ -1017,7 +1028,7 @@ static int nu_pdma_memfun_employ(void)
     return idx;
 }
 
-static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl)
+static rt_ssize_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl)
 {
     nu_pdma_memfun_actor_t psMemFunActor = NULL;
     struct nu_pdma_chn_cb sChnCB;

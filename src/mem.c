@@ -165,8 +165,6 @@ static void plug_holes(struct rt_small_mem *m, struct rt_small_mem_item *mem)
 /**
  * @brief This function will initialize small memory management algorithm.
  *
- * @param m the small memory management object.
- *
  * @param name is the name of the small memory management object.
  *
  * @param begin_addr the beginning address of memory.
@@ -525,12 +523,6 @@ void rt_smem_free(void *rmem)
 
     /* Get the corresponding struct rt_small_mem_item ... */
     mem = (struct rt_small_mem_item *)((rt_uint8_t *)rmem - SIZEOF_STRUCT_MEM);
-
-    RT_DEBUG_LOG(RT_DEBUG_MEM,
-                 ("release memory 0x%x, size: %d\n",
-                  (rt_ubase_t)rmem,
-                  (rt_ubase_t)(mem->next - ((rt_uint8_t *)mem - small_mem->heap_ptr))));
-
     /* ... which has to be in a used state ... */
     small_mem = MEM_POOL(mem);
     RT_ASSERT(small_mem != RT_NULL);
@@ -540,6 +532,11 @@ void rt_smem_free(void *rmem)
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)small_mem->heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)small_mem->heap_end);
     RT_ASSERT(MEM_POOL(&small_mem->heap_ptr[mem->next]) == small_mem);
+
+    RT_DEBUG_LOG(RT_DEBUG_MEM,
+                 ("release memory 0x%x, size: %d\n",
+                  (rt_ubase_t)rmem,
+                  (rt_ubase_t)(mem->next - ((rt_uint8_t *)mem - small_mem->heap_ptr))));
 
     /* ... and is now unused. */
     mem->pool_ptr = MEM_FREED();

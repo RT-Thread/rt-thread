@@ -17,7 +17,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-static rt_size_t _dac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _dac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_err_t result = RT_EOK;
     rt_size_t i;

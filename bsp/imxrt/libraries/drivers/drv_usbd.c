@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -152,7 +152,7 @@ static rt_err_t _ehci0_ep_disable(uep_t ep)
     return RT_EOK;
 }
 
-static rt_size_t _ehci0_ep_read(rt_uint8_t address, void *buffer)
+static rt_ssize_t _ehci0_ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size = 0;
 
@@ -161,13 +161,13 @@ static rt_size_t _ehci0_ep_read(rt_uint8_t address, void *buffer)
     return size;
 }
 
-static rt_size_t _ehci0_ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ehci0_ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     USB_DeviceRecvRequest(ehci0_handle, address, buffer, size);
     return size;
 }
 
-static rt_size_t _ehci0_ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ehci0_ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     USB_DeviceSendRequest(ehci0_handle, address, buffer, size);
     return size;

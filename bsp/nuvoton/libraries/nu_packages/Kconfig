@@ -7,10 +7,6 @@ menu "Nuvoton Packages Config"
         bool "Enable demos"
         default y
 
-    config NU_PKG_USING_LVGL
-        bool "Enable LVGL demos"
-        default n
-
     config NU_PKG_USING_BMX055
         bool "BMX055 9-axis sensor."
         select RT_USING_I2C
@@ -19,6 +15,12 @@ menu "Nuvoton Packages Config"
 
     config NU_PKG_USING_MAX31875
         bool "MAX31875 Temperature sensor."
+        select RT_USING_I2C
+        select RT_USING_SENSOR
+        default n
+
+    config NU_PKG_USING_NCT7717U
+        bool "NCT7717U Temperature sensor."
         select RT_USING_I2C
         select RT_USING_SENSOR
         default n
@@ -193,19 +195,15 @@ menu "Nuvoton Packages Config"
             prompt "Select TPC drivers"
             config NU_PKG_USING_TPC_ILI
                 bool "ILI Series TPC"
-                default n
 
             config NU_PKG_USING_TPC_GT911
                 bool "GT911 TPC"
-                default n
 
             config NU_PKG_USING_TPC_FT5446
                 bool "FT5446 TPC"
-                default n
 
             config NU_PKG_USING_TPC_ST1663I
                 bool "ST1663I TPC"
-                default n
 
         endchoice
 
@@ -218,13 +216,13 @@ menu "Nuvoton Packages Config"
     config NU_PKG_USING_ADC_TOUCH
         bool "ADC touch function"
         default n
-    
+
 
     if NU_PKG_USING_ADC_TOUCH
         config NU_PKG_USING_ADC_TOUCH_SW
             bool "Using SW ADC touch"
             select RT_USING_ADC
-            default n     
+            default n
     endif
 
     config NU_PKG_USING_SPINAND

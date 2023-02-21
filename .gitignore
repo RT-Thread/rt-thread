@@ -13,6 +13,8 @@
 *.crf
 build
 Debug
+rtthread
+settings
 documentation/html
 *~
 *.o
@@ -30,7 +32,7 @@ documentation/html
 tools/kconfig-frontends/kconfig-mconf
 packages
 dist
-dist_ide_project
+rt-studio-project
 cconfig.h
 GPUCache
 
@@ -46,3 +48,4 @@ tags
 .history
 CMakeLists.txt
 cmake-build-debug
+*.mk

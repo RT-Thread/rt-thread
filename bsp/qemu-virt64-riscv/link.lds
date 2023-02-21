@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,23 +14,22 @@ OUTPUT_ARCH( "riscv" )
 
 /*
  * Memory layout:
- * 0x10200000 - 0x10201000: Bootloader
- * 0x10201000 - 0x10A00000: Kernel
- * 0x10A00000 - 0x11200000: Heap
+ * 0x80000000 - 0x80200000: SBI
+ * 0x80200000 - 0x81200000: Kernel
  */
 
 MEMORY
 {
-   SRAM : ORIGIN = __START_ADDR__, LENGTH = 0x7FF000
+   SRAM : ORIGIN = 0x80200000, LENGTH = 0x1000000
 }
 
 ENTRY(_start)
 SECTIONS
 {
-    . = __START_ADDR__ ;
+    . = 0x80200000 ;
 
     /* __STACKSIZE__ = 4096; */
-
+    __text_start = .;
     .start :
     {
         *(.start);
@@ -38,7 +37,7 @@ SECTIONS
 
     . = ALIGN(8);
 
-    .text : 
+    .text :
     {
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
@@ -47,7 +46,7 @@ SECTIONS
         *(.glue_7)
         *(.glue_7t)
         *(.gnu.linkonce.t*)
-     
+
         /* section information for finsh shell */
         . = ALIGN(8);
         __fsymtab_start = .;
@@ -74,20 +73,22 @@ SECTIONS
         _etext = .;
     } > SRAM
 
-    .eh_frame_hdr : 
-    { 
-         *(.eh_frame_hdr) 
+    .eh_frame_hdr :
+    {
+         *(.eh_frame_hdr)
          *(.eh_frame_entry)
     } > SRAM
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) } > SRAM
 
     . = ALIGN(8);
+    __text_end = .;
+    __text_size = __text_end - __text_start;
 
-    .data : 
+    .data :
     {
         *(.data)
         *(.data.*)
-    
+
         *(.data1)
         *(.data1.*)
 
@@ -96,6 +97,23 @@ SECTIONS
 
         *(.sdata)
         *(.sdata.*)
+    } > SRAM
+
+    . = ALIGN(8);
+    .ctors :
+    {
+        PROVIDE(__ctors_start__ = .);
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+    } > SRAM
+
+    .dtors :
+    {
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
+        PROVIDE(__dtors_end__ = .);
     } > SRAM
 
     /* stack for dual core */
@@ -111,7 +129,7 @@ SECTIONS
         __stack_cpu1 = .;
     } > SRAM
 
-    .sbss : 
+    .sbss :
     {
     __bss_start = .;
         *(.sbss)

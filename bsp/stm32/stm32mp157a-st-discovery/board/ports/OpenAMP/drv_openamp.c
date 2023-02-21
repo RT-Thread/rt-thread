@@ -115,7 +115,7 @@ static rt_err_t _init(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_size_t count, rbsize, offset;
     rt_uint8_t *buf     = RT_NULL; 
@@ -162,7 +162,7 @@ static rt_size_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_siz
     return count;
 }
  
-static rt_size_t _write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_err_t result = VIRT_UART_OK;
     
@@ -236,7 +236,7 @@ int rt_hw_openamp_init(void)
     
     rt_hw_openamp_register(&dev_openamp, "openamp", 0, NULL);
     
-    if (RT_CONSOLE_DEVICE_NAME == "openamp")
+    if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "openamp") == 0)
     {
         rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
     }

@@ -57,10 +57,10 @@ if GetDepend(['BSP_USING_CAN']):
 
 if GetDepend(['BSP_USING_SDIO']):
     src += ['drv_sdio.c']
-    
+
 if GetDepend(['RT_USING_HWCRYPTO']):
     src += ['drv_crypto.c']
-    
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

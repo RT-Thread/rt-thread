@@ -1,0 +1,162 @@
+#! armclang -E --target=arm-arm-none-eabi -x c -mcpu=cortex-m4
+; The first line specifies a preprocessor command that the linker invokes
+; to pass a scatter file through a C preprocessor.
+
+;*******************************************************************************
+;* \file cyb06xx7_cm4_dual.sct
+;* \version 2.91
+;*
+;* Linker file for the ARMCC.
+;*
+;* The main purpose of the linker script is to describe how the sections in the
+;* input files should be mapped into the output file, and to control the memory
+;* layout of the output file.
+;*
+;* \note The entry point location is fixed and starts at 0x10000000. The valid
+;* application image should be placed there.
+;*
+;* \note The linker files included with the PDL template projects must be
+;* generic and handle all common use cases. Your project may not use every
+;* section defined in the linker files. In that case you may see the warnings
+;* during the build process: L6314W (no section matches pattern) and/or L6329W
+;* (pattern only matches removed unused sections). In your project, you can
+;* suppress the warning by passing the "--diag_suppress=L6314W,L6329W" option to
+;* the linker, simply comment out or remove the relevant code in the linker
+;* file.
+;*
+;*******************************************************************************
+;* \copyright
+;* Copyright 2016-2021 Cypress Semiconductor Corporation
+;* SPDX-License-Identifier: Apache-2.0
+;*
+;* Licensed under the Apache License, Version 2.0 (the "License");
+;* you may not use this file except in compliance with the License.
+;* You may obtain a copy of the License at
+;*
+;*     http://www.apache.org/licenses/LICENSE-2.0
+;*
+;* Unless required by applicable law or agreed to in writing, software
+;* distributed under the License is distributed on an "AS IS" BASIS,
+;* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;* See the License for the specific language governing permissions and
+;* limitations under the License.
+;******************************************************************************/
+
+; The defines below describe the location and size of blocks of memory in the target.
+; Use these defines to specify the memory regions available for allocation.
+
+; The following defines control RAM and flash memory allocation for the CM4 core.
+; You can change the memory allocation by editing RAM and Flash defines.
+; Your changes must be aligned with the corresponding defines for CM0+ core in 'xx_cm0plus.scat',
+; where 'xx' is the device group; for example, 'cyb06xx7_cm0plus.scat'.
+; RAM
+#define RAM_START               0x08000800
+#define RAM_SIZE                0x0001F800
+; Flash
+#define FLASH_START             0x10000000
+#define FLASH_SIZE              0x00068000
+
+; The size of the stack section at the end of CM4 SRAM
+#define STACK_SIZE              0x00001000
+
+; The size of the MCU boot header area at the start of FLASH
+#define BOOT_HEADER_SIZE        0x00000400
+
+; The size of the Cortex-M0+ application image (including MCU boot header area)
+#define FLASH_CM0P_SIZE         0x10000
+
+; The following defines describe a 32K flash region used for EEPROM emulation.
+; This region can also be used as the general purpose flash.
+; You can assign sections to this memory region for only one of the cores.
+; Note some middleware (e.g. BLE, Emulated EEPROM) can place their data into this memory region.
+; Therefore, repurposing this memory region will prevent such middleware from operation.
+#define EM_EEPROM_START         0x14000000
+#define EM_EEPROM_SIZE          0x8000
+
+; The following defines describe device specific memory regions and must not be changed.
+; External memory
+#define XIP_START               0x18000000
+#define XIP_SIZE                0x08000000
+
+
+; Cortex-M0+ application flash image area
+LR_IROM (FLASH_START + BOOT_HEADER_SIZE) (FLASH_CM0P_SIZE - BOOT_HEADER_SIZE)
+{
+    .cy_m0p_image +0
+    {
+        * (.cy_m0p_image)
+    }
+}
+
+; Cortex-M4 application flash area
+LR_IROM1 (FLASH_START + FLASH_CM0P_SIZE) (FLASH_SIZE - FLASH_CM0P_SIZE)
+{
+    ER_FLASH_VECTORS +0
+    {
+        * (RESET, +FIRST)
+    }
+
+    ER_FLASH_CODE +0 FIXED
+    {
+        * (InRoot$$Sections)
+        * (+RO)
+    }
+
+    ER_RAM_VECTORS RAM_START UNINIT
+    {
+        * (RESET_RAM, +FIRST)
+    }
+
+    RW_RAM_DATA +0
+    {
+        * (.cy_ramfunc)
+        * (+RW, +ZI)
+    }
+
+    ; Place variables in the section that should not be initialized during the
+    ; device startup.
+    RW_IRAM1 +0 UNINIT
+    {
+        * (.noinit)
+    }
+
+    ; Application heap area (HEAP)
+    ARM_LIB_HEAP  +0 EMPTY ((RAM_START+RAM_SIZE)-AlignExpr(ImageLimit(RW_IRAM1), 8)-STACK_SIZE)
+    {
+    }
+
+    ; Stack region growing down
+    ARM_LIB_STACK (RAM_START+RAM_SIZE) EMPTY -STACK_SIZE
+    {
+    }
+
+    ; Used for the digital signature of the secure application and the
+    ; Bootloader SDK application. The size of the section depends on the required
+    ; data size.
+    .cy_app_signature (FLASH_START + FLASH_SIZE - 256) 256
+    {
+        * (.cy_app_signature)
+    }
+}
+
+
+; Emulated EEPROM Flash area
+LR_EM_EEPROM EM_EEPROM_START EM_EEPROM_SIZE
+{
+    .cy_em_eeprom +0
+    {
+        * (.cy_em_eeprom)
+    }
+}
+
+; Places the code in the Execute in Place (XIP) section. See the smif driver documentation for details.
+LR_EROM XIP_START XIP_SIZE
+{
+    cy_xip +0
+    {
+        * (.cy_xip)
+    }
+}
+
+
+/* [] END OF FILE */

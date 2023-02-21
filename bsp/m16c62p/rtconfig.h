@@ -6,7 +6,7 @@
 #define RT_NAME_MAX	8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	8
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
@@ -75,7 +75,5 @@
 /* Using symbol table */
 ///#define FINSH_USING_SYMTAB
 ///#define FINSH_USING_DESCRIPTION
-
-//#define RT_USING_NEWLIB
 
 #endif

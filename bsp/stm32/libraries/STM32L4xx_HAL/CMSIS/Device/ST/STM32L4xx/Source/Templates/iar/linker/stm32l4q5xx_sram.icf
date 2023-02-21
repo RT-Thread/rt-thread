@@ -42,4 +42,4 @@ place in RAM_region   { readwrite,
 place in SRAM1_region { };
 place in SRAM2_region { };
 place in SRAM3_region { };
-                        
+

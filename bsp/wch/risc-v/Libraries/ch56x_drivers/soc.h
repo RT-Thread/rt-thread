@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,6 +21,10 @@
 #define SOC_SERIES_CH569
 #endif
 
+#ifndef __packed
+#define __packed    __attribute__((packed))
+#endif
+
 #define CHECK_STRUCT_SIZE(s, size) \
         static_assert(sizeof(s) == size, #s " has wrong size")
 
@@ -29,10 +33,10 @@
 
 #define FLASH_BASE_ADDRESS  0x00000000
 #define RAMS_BASE_ADDRESS   0x20000000
-#define RAMX_BASE_ADDRESS   0x20020000
 #define BUS8_BASE_ADDRESS   0x80000000
 
 #ifdef SOC_SERIES_CH569
+#define RAMX_BASE_ADDRESS   0x20020000
 #define RAMS_SIZE           16
 #else
 #define RAMS_SIZE           32

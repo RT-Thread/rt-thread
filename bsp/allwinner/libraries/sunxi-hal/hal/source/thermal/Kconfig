@@ -1,0 +1,14 @@
+menu "THERMAL Devices"
+
+config DRIVERS_THERMAL
+    bool "enable thermal driver"
+    select DRIVERS_EFUSE
+        default y
+
+config HAL_TEST_THERMAL
+    bool "enable thermal hal APIs test command"
+    depends on DRIVERS_THERMAL
+        default n
+
+
+endmenu

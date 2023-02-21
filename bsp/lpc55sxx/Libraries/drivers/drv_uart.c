@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -132,7 +132,7 @@ static const struct lpc_uart uarts[] =
     {
         USART0,
         FLEXCOMM0_IRQn,
-        kCLOCK_Flexcomm0,
+        kCLOCK_Fro12M,
 
         &serial0,
         "uart0",
@@ -142,7 +142,7 @@ static const struct lpc_uart uarts[] =
     {
         USART1,
         FLEXCOMM1_IRQn,
-        kCLOCK_Flexcomm1,
+        kCLOCK_Fro12M,
 
         &serial1,
         "uart1",
@@ -152,7 +152,7 @@ static const struct lpc_uart uarts[] =
     {
         USART2,
         FLEXCOMM2_IRQn,
-        kCLOCK_Flexcomm2,
+        kCLOCK_Fro12M,
 
         &serial2,
         "uart2",
@@ -162,7 +162,7 @@ static const struct lpc_uart uarts[] =
     {
         USART3,
         FLEXCOMM3_IRQn,
-        kCLOCK_Flexcomm3,
+        kCLOCK_Fro12M,
 
         &serial3,
         "uart3",
@@ -172,7 +172,7 @@ static const struct lpc_uart uarts[] =
     {
         USART4,
         FLEXCOMM4_IRQn,
-        kCLOCK_Flexcomm4,
+        kCLOCK_Fro12M,
 
         &serial4,
         "uart4",
@@ -182,7 +182,7 @@ static const struct lpc_uart uarts[] =
     {
         USART5,
         FLEXCOMM5_IRQn,
-        kCLOCK_Flexcomm5,
+        kCLOCK_Fro12M,
 
         &serial5,
         "uart5",
@@ -192,7 +192,7 @@ static const struct lpc_uart uarts[] =
     {
         USART6,
         FLEXCOMM6_IRQn,
-        kCLOCK_Flexcomm6,
+        kCLOCK_Fro12M,
 
         &serial6,
         "uart6",
@@ -202,7 +202,7 @@ static const struct lpc_uart uarts[] =
     {
         USART7,
         FLEXCOMM7_IRQn,
-        kCLOCK_Flexcomm7,
+        kCLOCK_Fro12M,
 
         &serial7,
         "uart7",

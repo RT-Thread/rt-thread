@@ -1,3 +1,516 @@
+# RT-Thread v4.1.1 released
+
+Change log since v4.1.0 released
+
+## Kernel
+
+* rtdef.h
+    * Add BGR888 pixel format
+    * be friendly to macro expansion
+* add 64bit default value for stack size
+* set tick HZ as 1000 by default
+* enhanced rt_kprintf to support "long long" type
+* use RT_KSERVICE_USING_STDLIB_MEMXXX to replace RT_KSERVICE_USING_STDLIB_MEMCP/MEMSET
+* RT_KSERVICE_USING_STDLIB is open by default
+* ipc
+    * Add descriptions for rt_mq_recv and rt_sem_take timeout parameters
+    * fix parameter name
+* enable RT_DEBUG_DEVICE by default and move weak rt_hw_dealy_us in kservice.c
+* Updated the Cortex-A of linker scripts for the new version of GCC, Removed C++ global constructor initialization, this method is not used in GCC4.7 and later versions
+* remove the register keyword
+* rename _rt_scheduler_stack_check as _scheduler_stack_check
+* update comments for rt_thread_suspend
+* fix comment for rt_container_of
+* fixed bug of timer
+* remove the executable permission of thread.c
+* remove strnlen function
+* add NULL check for rt_free and rt_free_align
+* suuport perf_counter
+* tighten size before check with mem_size_aligned
+* Add string information for error
+* fix a problem about finsh_set_prompt redefined msh command
+* Unify the data type and macro definition of kernel built-in and standard LIBC library
+* add macro RT_VERSION_CHECK  to implement version check
+* fix the style for "rt_hw_us_delay" function
+* fix the time slice logic for schedule.c
+
+## Components
+
+* driver
+    * Detailed classification of devices types 
+    * Update device type definition and command definition
+    * ioctl add F_SETFL cmd
+    * fix a problem that eliminate recursion
+    * fix som compilation warning
+* driver/serial_v2
+    * add support for "termios"
+    * add hardware flow control  support
+    * fixed bug for RT_SERIAL_TX_BLOCKING model
+    * add rt_assert for serial_v2
+* driver/sensor
+    * Add blood pressure sensor type
+    * Add RT_SENSOR_VENDOR_MELEXIS in sensor.h
+    * Add RT_SENSOR_VENDOR_MELEXIS in sensor_cmd.c
+* driver/spi
+    * remove _spi_bus_device_control
+    * Fix rt_qspi_send symbol extension BUG
+    * fix issue report #6008 rt_spi_sendrecv8
+* driver/rtc
+    * Adjust ops function input parameters
+    * Optimize execution efficiency
+    * Add get/set timestamp function
+    * Enhanced date command
+    * fix the parameter check about "time"
+    * use gmtime_r to replace gmtime
+* driver/alarm
+    * Fix week alarm bug
+    * Compact alarm output
+    * fix a typo
+* driver/inputcapture
+    * add DBG_TAG for rt_inputcapure.c
+* driver/hwtimer
+    * add disable interrupt protection for hwtimer_isr function
+* driver/hwcrypto
+    * Optimize memory usage
+* driver/sdio
+    * Support DDR mode
+    * modify the address offset problem for sdio read and write
+* driver/dac
+    * fix return value of rt_dac_write function
+    * add get resolution method
+* driver/adc
+    * add a interface to get sampling resolution
+    * add finsh voltage conversion command
+    * implement adc_get_vref
+* driver/pwm
+    * clean the useless code
+    * add finsh pwm function
+* driver/usb
+    * fix build error
+    * fix stall bug on control transfers
+    * add interface to get information about virtual uart connect state
+    * fix usbhost hid issues
+* driver/wlan
+    * Modify wlan framework
+* driver/phy
+    * fix the PHY_FULL_DUPLEX conflicts
+* driver/can
+    * Add CANFD support and correct typos
+    * Fix can infinite loop when can driver send error
+* driver/hwcrypto
+    * Correct function return value definition
+* driver/pin
+    * add pin operate command in MSH
+* driver/touch
+    * adjust the header file for touch.h
+* libc
+    * fix c/c++ compilation warnings and errors
+    * improve sconscript
+    * fix the sys/select.h problem
+    * fix that some function cannot be found in unistd.h
+    * Remove definitions that "posix/io" are not in use
+    * fix the time bug
+    * optimize the handle logic on armcc/armclang
+    * fix the compiler error on iar
+    * fix dlmodule compile 'SEEK_END' undeclared eror
+    * the recycle logic about resource of pthread
+    * fix the function pthread_barrier_init return "EINVAL" if "count" is zero.
+    * solve the conflicts between libc data types and rtdef data types
+    * remove strdup from rtthread.h
+    * Fix clock_gettime for CLOCK_CPUTIME_ID
+    * solve the libc/timer problem which the os tick can be calculated wrongly because the local variable was not initialized
+    * implement extension standard C functions
+    * fix the error return
+    * modify the complier error in iar
+    * use atomic operation to protect pthread conditional variable
+    * memory leak when the value of posix semaphore is zero
+    * fix a problem that function difftime() compile error in iar environment
+    * pthread_mutex_destroy can't work
+    * the risk for function exit() when open pthread support
+    * supplement the case that exit() haven't been impletement
+    * try to fix the problem about "fflush" functions in armlibc
+    * use  ```__clang__``` to replace  ```__CLANG_ARM``` 
+    * solve the compiling error for```_sys_ensure```
+* ulog
+    * Add file backend
+    * Optimize unnecessary refresh
+* sfud
+    * support NM25Q128EVB, GD25Q32C, SST25VF080B, W25Q32BV, W25X16AV, W25X40CL
+    * modify the opeated way to handle a situation that flash blocks protected 
+    * keep macros in order
+* sal 
+    *  add draft for docking winsock
+    *  rearrange sal dependencies
+    *  rename sal.h as sal_low_lvl.h
+* at
+    * use pointer that memory had freed
+    * implement about "AT server"
+* lwip
+    * Support windows simulator
+    * add list command
+* finish
+    * fix list_device crash
+    * Enhance system robustness
+    * add available memory information for free cmd
+    * add binary search algorithm
+    * add new functions to get length of finish cmd 
+* fal
+    * support fal api for c++
+    * modify PKG_USING_FAL to RT_USING_FAL
+* utest
+    * add cpp11 base testcase
+    * enhance strength about cpp testcase
+    * add posix testcase frame
+    * add timeslice test
+* ymodem
+    * move error codes to rym_code to silence warnings
+* Fix compilation warning
+
+## BSP
+
+* Attention, the list of new bsp we have added ：
+    * at32f413, at32f415-start, at32f435-start, at32f437-start
+    * cypress-psoc6-cy8cproto-4343w
+    * ESP32_C3
+    * gd32vf103r-start, gd32vf103v-eval
+    * hc32f4a0
+    * imxrt1021-nxp-evk, imxrt1170-nxp-evk
+    * microchip, samc21, same54, same70, saml10
+    * n32g45xvl-stb
+    * ch32v103r-evt, ch569w-evt, ch32f103c8, ch32f203r-evt
+    * rockchip-rk3568
+    * stm32f103-100ask-mini, stm32f103-100ask-pro, stm32wle5-yizhilian-lm402
+
+* lpc55sxx
+    * fix issue that dist cannot specify a directory
+    * fix building error
+
+* stm32
+    * use weak reference to handle Macro of RTDINO_xxxx
+    * add new bsp for STM32WLE5JCI6
+    * fix some can and pwm bug
+    * select the input clk of spi based on SPI instances
+    * fix the bug of can filter conflict
+    * add rtc for openmv
+    * add ov5640、dcmi、i2c for openmv
+    * update ov5640 configuration of openmv
+    * update  arduino related
+    * stm32f072 support Arduino I2C and update readme
+    * judge the SPI instances before operating
+    * fix the io confict about SDIO and UART6(TX) DMA
+    * fix the problem if use uart DMA to receive 
+    * remove hardware NSS
+    * Enable RNG Clock
+    * avoid conflict between cmsis5 and bsp cmsis
+    * add tim7 support
+    * f072, f401 support TIM7/TIM11 hardware timer
+    * l475, remove meaningless header file
+    * stm32f407, stm32f469 optimize lvgl folder structure about simulator
+    * stm32f746, cancel choose lwip and dfs by default
+    * remove CMSIS/RTOS folders
+    * add RTDUINO_NO_SETUP_LOOP
+    * add F_CPU to indicate the frequency of CPU
+    * suuport MsTimer2 library
+    * add correct the command description for adc, pwm
+    * add support for STM32L0 series
+    * move CMSIS hearder files to common folder
+    * add bootloader.bin, add the description of the bootloader in README.md for stm32h750-art-pi
+    * Modify the content of flash algorithms in README.md for stm32h750-art-pi
+    * fix stm32f767-st-nucleo console device name
+    * create two new bsp for 100ask stm32f103 boards
+    * add stm32l496zg feature, add on-chip flash
+    * change the bsp name of 100ask to be consistent with other bsp and commit a bug for drv_adc.c
+    * add h7 timer support
+    * implement soft spi
+    * use perf_counter to instead of hwtimer
+    * support wireless module pinout for stm32l475
+    * Add lvgl adaptation of touch screen xpt2046 for stm32f407-atk 
+    * Docking lvgl for stm32f469-st-disco bsp using ft6336 touch chip
+    * adapt the rtc alarm function
+    * optimize pwm functions
+    * Adapt RTduino package for stm32f469-st-disco BSP
+    * Docking lvgl touch driver using package for stm32f469-st-disco BSP
+    * Adapt lvgl for using ft6206 model touch screen for stm32f469-st-disco BSP
+    * Fix the configuration of stm32f401's PWM in CubeMX
+    * fix the network I/O is confict for stm32f429-atk-apollo
+    * fix PWM complementary problem and function description
+    * Improve the connection of RTdunio PWM for stm32f401-st-nucleo
+    * add a new board f407-robomaster-c and supprot stm32 timer8
+    * avoid the "recv_len" will be negative if happend accident
+    * add RTdunio for stm32f103-blue-pill
+    * stm32l475-atk-pandora update readme, .gitignore
+    * update the Kconfig for stm32f407atk
+    * remove libraries dependencies for rtduino function
+
+* wch
+    * add ch32v103r-evt bsp
+    * add WCH CH569W-R0-1v0 evt board bsp port
+    * ch569w-evt : add spi master driver, SPI0 tested
+    * add pwm driver and spi_xfer bug fix
+
+* gd32
+    * Add gd32450i-eval board bsp
+    * Complete the pins device define
+    * firx adc driver
+    * bug fixed gpio_mode_set miss gd32_spi->mosi_pin,gd32_spi->sck_pin
+    * fix compile error in rtc: "pmu_backup_write_enable" was not found
+    * Optimize GD32 bsp architecture
+    * fix a bug about interrupt vetor table lost cause system exception
+    * add driver of sdio
+    * correct pin number in drv_gpio.c
+    * fix compile error if use rtc in gd32 f1~f4
+    * fix the defined error that uart I/O
+
+* simulator
+    * improve libc time and MSVC simulator
+    * slove the problem of simulator can't attach SD card
+    * upgrade SDL2.0 to 2.0.20
+    * remove meaningless debug file
+    * create new fcntl.h file for vs
+    * optimize lvgl folder structure about simulator
+    * avoid conflicts between winsock.h and sys/time.h
+    * improve Kconfig structure add Onboard Peripheral Drivers menu
+    * enable BSD socket by default
+    * add RTC menuconfig
+    * clean the compiler warning under windows
+    * optimize the SD mount logic
+    * remove LV_DISP_DEF_REFR_PERIOD which are defined manually
+    * winsock implement on windows simulator
+    * improve init process
+    * sync lvgl win32 driver
+    * fix some warnings
+    * fix the problem of path cannot be find and cause failure
+    * change "exit()" to "exit(1)"
+
+* qemu
+    * add compiler option "-Werror" for qemu-vexpress-a9 and qemu-virt64-aarch64
+    * Add quick start guide for QEMU on macOS
+    * chmod u+x shell script for qemu-risc-virt64
+    * remove LV_DISP_DEF_REFR_PERIOD which are defined manually
+    * rename qemu-riscv-virt64 to qemu-virt64-riscv
+    * add remount operation to avoid dfs_mout fail for qemu-vexpress-a9
+    * don't use sbi in m-mode for qemu-virt64-riscv
+    * Add more VirtIO drivers for qemu-virt64-aarch64
+    * Fixup VirtIO queue align size  for qemu-virt64-aarch64
+    * improve qemu readme
+    * update qemu project
+    * Add VirtIO-Console and GPIO driver for qemu-virt64-aarch64
+    * Update drivers' code for qemu-virt64-aarch64
+
+* airm2m
+
+    * fix the exception for i2c
+
+* n32g452xx
+    * add spi3
+    * avoid system pause when timeout check
+    * add hardware CRC support
+    * update the driver about "can"
+
+* microchip
+    * Add Microchip SAM series MCU support
+    * add ethernet, ADC, IIC support
+    * update the serial driver for samc21/same54/same70
+    * add SAML10 series
+
+* nuvoton
+    * Disable TRNG function in default configuration
+    * Update nuc980iot configuration
+    * remove LV_DISP_DEF_REFR_PERIOD which are defined manually
+    * Add private data pointer for MTD-NAND
+
+* at32
+    * add at32f435_437 board 
+    * update at32f435_437 adc driver
+    * add at32f413 and at32f415 series
+    * modify the folder structure
+    * optimize code to improve network throughput performance
+
+* NXP
+    * rt1052 add RT-Thread studio entrance
+    * imxrt1060 exchange On-chip Peripheral Drivers and Onboard Peripheral Drivers menu in Kconfig
+    * prepare to support squareline studio
+    * imxrt1060 optimize lvgl folder structure about simulator
+    * imxrt1060 support NXP GUiGuider
+    * imxrt1060 support keil armclang compiler
+    * support touchpad
+    * add rt1170/rt1020 bsp
+    * update rt1170n menuconfig
+    * Implement api docking of rt_pin_get
+    * Fixed Touch pannel for imxrt1060-nxp-evk
+    * mimxrt1170 Qspi flash bootup problems
+    * optimize the "sconsript" under floder "applications"
+    * Added LCD Touch Int pin to ioconfig
+    * During testing GT911 would not come out of reset because INT pin could not be driven low or high.
+    * upgrade the SDK of RT1170-EVK to 2.12
+    * fix a tiny problme this is report in slack group for imxrt1060
+    * remove suareline studio specific support for imxrt1060
+    * update enet for rt1170
+    * fix gpio interrupt bug in drv_gpio.c
+    * format issue report in slack group
+    * move phy driver into drivers folder
+    * add double network interface and driver for phy8211F
+    * add sdram driver for rt1170
+    * fix the compiler error bettwen "rtc.c/rtc.h"
+    * format files for rt1170
+
+* Nuclei
+
+    * add null CCFLAGS for Nuclei bsps
+
+* renesas
+    * add BSP doc
+    * add RA2L1-CPK bsp
+    * refreash the driver about flash, gpio and head file
+    * add introduction of captouch
+    * fix the error on drv_wdt.c
+    * Add hardware i2c driver.
+
+* essemi
+    * update es32f36xx libraries
+    * Adapt es32f369x for RTduino
+    * Fix a bug of I2C and edit some documents 
+    * remove libraries dependencies for rtduino function
+
+* esp
+    * add the bsp of esp32c3
+    * Add the gpio driver and readme.md for esp32c3
+    * add Kconfig esp32c3
+    * add ESP32 UART driver
+
+* k210
+    * use new SDK packages
+    * modify the folder structure of Kconfig
+
+* HC32
+    * Add the BSP of HC32 series
+    * add rtc driver
+    * Unified management interrupt vector table
+    * configuration file revise
+    * add usart1/2/3 configure for hc32f460
+    * add can support
+    * Fixed a problem where the descriptor for multiple serial ports was overwritten
+    * add virtual iic driver
+    * add adc support
+    * fix bugs of hc32 driver adc and can
+    * add rtc driver for hc32f460
+    * support MDK AC6 compiler
+    * fix the system crash if can bus is under bus off state
+    * fix a problem that configure can filter is useless
+    * fix a problem that error interrupt isn't work
+    * modify precompile waring for uart,spi driver
+    * add the driver about timerA
+    * change RT_CONSOLE_DEVICE_NAME from "uart" to "uart1"
+    * add startup file for apm32f4xx
+    * add the driver of WDT
+
+* raspberry-pico
+    * optimize lvgl folder structure
+    * Fix the issue of inaccurate system tick.
+
+* nuc980
+
+    * Fix bug when restarting and getting interrupts that are not processed
+
+* rockchip
+
+    * add rk2108 base support
+
+* nrf5x
+
+    * add doc for development on rtt-studio
+
+* adapt lvgl 8.3.0
+
+* n32
+    * add n32 bsp
+    * modify i2c and rtc drivers
+
+* fm33lc026
+    * add gpio support
+    * refreash FM33LC0xx_FL_Driver to FL_xxx_v2.3.1
+
+* apm32
+    * add apm32f407ig-minibroard
+    * add the F1xxx library of APM32 for APM32F10x_SDK_V1.6
+    * add the F4xxx library of APM32 for APM32F4xx_SDK_V1.2
+
+* ifx
+    * add cypress board of  CY8CKIT-062S2-43012 
+    * add hwtimer device
+
+* raspi3-32
+
+    * fix some bug of funtion '__rt_ffs'
+
+* synwit
+
+    * add swm341 bsp
+
+* tms320f28379d
+
+    * update .config: select FINSH_USING_SYMTAB
+    * fix finsh problems of using sym table
+
+## CPU
+
+* arm
+    * add dsb and isb instructions in the end of rt_hw_context_switch_to
+    * fix compilation warning
+    * Add exception install function
+    * optimize the complier error
+    * fix armclang error when enable LTO
+    * fix rt_hw_cpu_dcache_ops clean invalid bug
+* arm/Cortex-M33
+    * Add Cortex M33
+    * add macro ARCH_ARM_CORTEX_SECURE to makesure rtos system can run in the cpu safe mode
+* arm/Cortex-R4
+    * fix "prefethc abort"
+    * add RT_USING_CPU_FFS to avoid redefined error about "__rt_ffs()"
+* risc-v/virt64
+    * fix parameter for call handle_trap
+
+## Document
+
+* Fixed the description of logging usage in the Contributing code Guide
+* Update English coding style for more idiomatic use
+* Overhaul of document, fixing multiple grammar mistakes and editing for clarity
+* Further edits of documentation for clarity
+* correct the license description
+* Fix the doxygen file
+* update env document append some information about menuconfig -s
+* handle the grammar and wording fixes in memory.md
+* update at/adc/hwtimer/i2c/pin/rtc/sensor docs
+
+## Tools
+
+* Fix bugs for processing command line parameters
+* CI
+    * update action use python@v3
+    * add nxp check
+    * update stm32 ci checking list
+    * restrict rt-thread organization
+* Copyright
+    * improve copyright for old files
+* Scons
+    * sort the source file path
+    * Add Python 3 compatibility patch
+    * rtconfig.CROSS_TOOL->rtconfig.PLATFORM
+    * Decouple the addition of command line arguments
+    * support command: scons --target=xmake
+    * Add CMAKE_EXPORT_COMPILE_COMMANDS ON for cmake
+    * add new option for building library
+* Readme.md add Deutsche and Spanish version
+* update readme for languages choices
+* append path for scons env
+* Update the libs import for eclipse project
+* modify the reorder problem for "include path"
+* allow setting optional url for packages via envvar
+* format python code
+* remove .sconsign.dblite when scons clean
+
+
+
 # RT-Thread v4.1.0 released
 
 Change log since v4.1.0 Beta released

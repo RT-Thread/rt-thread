@@ -56,7 +56,7 @@ static rt_err_t rt_uart_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     rt_uint8_t* ptr;
     struct rt_uart_pic32 *uart_device = (struct rt_uart_pic32*)dev;
@@ -103,7 +103,7 @@ static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
     return 0;
 }
 
-static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     struct rt_uart_pic32 *uart_device = (struct rt_uart_pic32*)dev;
     char *ptr;

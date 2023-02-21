@@ -14,7 +14,7 @@
 #include "drv_spi.h"
 static int rt_hw_nrf24l01_init(void)
 {
-    rt_hw_spi_device_attach("spi2", "spi20", GPIOD, GPIO_PIN_5);
+    rt_hw_spi_device_attach("spi2", "spi20", GET_PIN(D, 5));
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_hw_nrf24l01_init);

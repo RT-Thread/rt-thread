@@ -8,9 +8,12 @@
  * 2018-09-01     xuzhuoyi     the first version.
  * 2019-07-03     zhaoxiaowei  add support for __rt_ffs.
  * 2019-12-05     xiaolifan    add support for hardware fpu32
+ * 2022-10-17     guyunjie     add support for hardware fpu64 and vcrc
  */
 
-#include <rtthread.h>
+#include <rthw.h>
+
+extern volatile rt_uint8_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread;
@@ -64,6 +67,24 @@ struct stack_frame
     rt_uint32_t r7h;
 #endif
 
+#ifdef __TMS320C28XX_FPU64__
+    rt_uint32_t r0l;
+    rt_uint32_t r1l;
+    rt_uint32_t r2l;
+    rt_uint32_t r3l;
+    rt_uint32_t r4l;
+    rt_uint32_t r5l;
+    rt_uint32_t r6l;
+    rt_uint32_t r7l;
+#endif
+
+#ifdef __TMS320C28XX_VCRC__
+    rt_uint32_t vcrc;
+    rt_uint32_t vstatus;
+    rt_uint32_t vcrcpoly;
+    rt_uint32_t vcrcsize;
+#endif
+
 };
 
 rt_uint8_t *rt_hw_stack_init(void       *tentry,
@@ -76,26 +97,22 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     unsigned long       i;
 
     stk  = stack_addr;
-    stk  = (rt_uint8_t *)RT_ALIGN((rt_uint32_t)stk, 8);
-    //stk -= sizeof(struct stack_frame);
-    stk += 1;
+    stk  = (rt_uint8_t *)RT_ALIGN((rt_uint32_t)stk, 2);
+    stk += 1; /*to work around the stack alignment*/
 
     stack_frame = (struct stack_frame *)stk;
 
-    /* init all register */
+    /* zero all registers */
     for (i = 0; i < sizeof(struct stack_frame) / sizeof(rt_uint32_t); i ++)
     {
-        ((rt_uint32_t *)stack_frame)[i] = 0xdeadbeef;
+        ((rt_uint32_t *)stack_frame)[i] = 0;
     }
 
-    stack_frame->exception_stack_frame.t_st0   = 0x11110000 | rt_hw_get_st0();
-    stack_frame->exception_stack_frame.acc     = 0x33332222;
-    stack_frame->exception_stack_frame.ar1_ar0 = 0x00001111 & (unsigned long)parameter; /* ar0 : argument */
-    stack_frame->exception_stack_frame.p       = 0x55554444;                            /* p */
-    stack_frame->exception_stack_frame.dp_st1  = (0x00000000) | rt_hw_get_st1() & 0xFFFFFFFE;        /* dp_st1 */
-    stack_frame->exception_stack_frame.dbgstat_ier    = 0;                              /* dbgstat_ier */
-    stack_frame->exception_stack_frame.return_address = (unsigned long)tentry;          /* return_address */
-    stack_frame->rpc = (unsigned long)texit;
+    /* configure special registers*/
+    stack_frame->exception_stack_frame.dp_st1  = 0x00000A08;
+    stack_frame->xar4 = (rt_uint32_t)parameter;
+    stack_frame->exception_stack_frame.return_address = (rt_uint32_t)tentry;
+    stack_frame->rpc = (rt_uint32_t)texit;
 
 #ifdef __TMS320C28XX_FPU32__
     stack_frame->stf = 0x00000200;
@@ -140,9 +157,38 @@ int __rt_ffs(int value)
 /**
  * shutdown CPU
  */
-RT_WEAK void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 
     RT_ASSERT(0);
+}
+
+void rt_interrupt_enter(void)
+{
+    rt_base_t level;
+
+    __asm("  EINT");
+    level = rt_hw_interrupt_disable();
+    rt_interrupt_nest ++;
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+    rt_hw_interrupt_enable(level);
+
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
+                                (rt_int32_t)rt_interrupt_nest));
+}
+
+void rt_interrupt_leave(void)
+{
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
+                                (rt_int32_t)rt_interrupt_nest));
+
+    rt_hw_interrupt_disable();
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+    rt_interrupt_nest --;
+    if(rt_thread_switch_interrupt_flag && !rt_interrupt_nest)
+    {
+        __asm("  OR IFR, #0x8000"); /* trigger rtos int */
+    }
+    /* rt_hw_interrupt_enable auto done by hardware on IRET */
 }

@@ -41,9 +41,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <drv_common.h>
 /* USER CODE BEGIN Includes */
-
+#include <drv_common.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

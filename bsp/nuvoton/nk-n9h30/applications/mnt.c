@@ -10,9 +10,9 @@
 *
 ******************************************************************************/
 
-#include "rtconfig.h"
-
 #include <rtthread.h>
+
+#if defined(RT_USING_DFS)
 
 #define LOG_TAG         "mnt"
 #define DBG_ENABLE
@@ -162,9 +162,10 @@ exit_mkdir_p:
 
 #if defined(PKG_USING_DFS_YAFFS) && defined(RT_USING_DFS_MNTTABLE)
 #include "yaffs_guts.h"
-void yaffs_dev_init(void)
+int yaffs_dev_init(void)
 {
     int i;
+
     for (i = 0; i < sizeof(mount_table) / sizeof(struct dfs_mount_tbl); i++)
     {
         if (mount_table[i].filesystemtype && !rt_strcmp(mount_table[i].filesystemtype, "yaffs"))
@@ -172,11 +173,26 @@ void yaffs_dev_init(void)
             struct rt_mtd_nand_device *psMtdNandDev = RT_MTD_NAND_DEVICE(rt_device_find(mount_table[i].device_name));
             if (psMtdNandDev)
             {
+                LOG_I("yaffs start [%s].", mount_table[i].device_name);
+
                 yaffs_start_up(psMtdNandDev, (const char *)mount_table[i].path);
+
+                LOG_I("dfs mount [%s].", mount_table[i].device_name);
+                if (dfs_mount(mount_table[i].device_name,
+                              mount_table[i].path,
+                              mount_table[i].filesystemtype,
+                              mount_table[i].rwflag,
+                              mount_table[i].data) != 0)
+                {
+                    LOG_E("mount fs[%s] on %s failed.", mount_table[i].filesystemtype, mount_table[i].path);
+                }
             }
         }
     }
+
+    return 0;
 }
+INIT_APP_EXPORT(yaffs_dev_init);
 #endif
 
 /* Initialize the filesystem */
@@ -248,13 +264,10 @@ int filesystem_init(void)
     }
 #endif
 
-#if defined(PKG_USING_DFS_YAFFS) && defined(RT_USING_DFS_MNTTABLE)
-    yaffs_dev_init();
-#endif
-
 exit_filesystem_init:
 
     return -result;
 }
 INIT_ENV_EXPORT(filesystem_init);
+#endif
 #endif

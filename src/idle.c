@@ -47,16 +47,16 @@
 
 static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
 
-static struct rt_thread idle[_CPUS_NR];
-ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t rt_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
+static struct rt_thread idle_thread[_CPUS_NR];
+rt_align(RT_ALIGN_SIZE)
+static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
 #ifdef RT_USING_SMP
 #ifndef SYSTEM_THREAD_STACK_SIZE
 #define SYSTEM_THREAD_STACK_SIZE IDLE_THREAD_STACK_SIZE
 #endif
 static struct rt_thread rt_system_thread;
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t rt_system_stack[SYSTEM_THREAD_STACK_SIZE];
 static struct rt_semaphore system_sem;
 #endif
@@ -248,7 +248,7 @@ static void rt_defunct_execute(void)
     }
 }
 
-static void rt_thread_idle_entry(void *parameter)
+static void idle_thread_entry(void *parameter)
 {
 #ifdef RT_USING_SMP
     if (rt_hw_cpu_id() != 0)
@@ -292,7 +292,11 @@ static void rt_thread_system_entry(void *parameter)
 {
     while (1)
     {
-        rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        int ret= rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        if (ret != RT_EOK)
+        {
+            RT_ASSERT(0);
+        }
         rt_defunct_execute();
     }
 }
@@ -306,24 +310,32 @@ static void rt_thread_system_entry(void *parameter)
 void rt_thread_idle_init(void)
 {
     rt_ubase_t i;
-    char tidle_name[RT_NAME_MAX];
+#if RT_NAME_MAX > 0
+    char idle_thread_name[RT_NAME_MAX];
+#endif /* RT_NAME_MAX > 0 */
 
     for (i = 0; i < _CPUS_NR; i++)
     {
-        rt_sprintf(tidle_name, "tidle%d", i);
-        rt_thread_init(&idle[i],
-                tidle_name,
-                rt_thread_idle_entry,
+#if RT_NAME_MAX > 0
+        rt_snprintf(idle_thread_name, RT_NAME_MAX, "tidle%d", i);
+#endif /* RT_NAME_MAX > 0 */
+        rt_thread_init(&idle_thread[i],
+#if RT_NAME_MAX > 0
+                idle_thread_name,
+#else
+                "tidle",
+#endif /* RT_NAME_MAX > 0 */
+                idle_thread_entry,
                 RT_NULL,
-                &rt_thread_stack[i][0],
-                sizeof(rt_thread_stack[i]),
+                &idle_thread_stack[i][0],
+                sizeof(idle_thread_stack[i]),
                 RT_THREAD_PRIORITY_MAX - 1,
                 32);
 #ifdef RT_USING_SMP
-        rt_thread_control(&idle[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
+        rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
 #endif /* RT_USING_SMP */
         /* startup */
-        rt_thread_startup(&idle[i]);
+        rt_thread_startup(&idle_thread[i]);
     }
 
 #ifdef RT_USING_SMP
@@ -356,5 +368,5 @@ rt_thread_t rt_thread_idle_gethandler(void)
     int id = 0;
 #endif /* RT_USING_SMP */
 
-    return (rt_thread_t)(&idle[id]);
+    return (rt_thread_t)(&idle_thread[id]);
 }

@@ -30,10 +30,10 @@ static struct sam_i2c_bus sam_i2c0 =
     .device_name = I2CBUS_NAME,
 };
 
-static rt_size_t sam_i2c_master_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t sam_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                      struct rt_i2c_msg msgs[],
                                      rt_uint32_t num);
-static rt_size_t sam_i2c_slave_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t sam_i2c_slave_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num);
 static rt_err_t sam_i2c_bus_control(struct rt_i2c_bus_device *bus,
@@ -62,7 +62,7 @@ static inline void sam_i2c_update_control(struct rt_i2c_msg *src,
         dest->flags |= I2C_M_SEVEN;
 }
 
-static rt_size_t sam_i2c_master_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t sam_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                      struct rt_i2c_msg msgs[],
                                      rt_uint32_t num)
 {
@@ -82,7 +82,7 @@ static rt_size_t sam_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     return i;
 }
 
-static rt_size_t sam_i2c_slave_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t sam_i2c_slave_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {

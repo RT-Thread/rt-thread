@@ -1,0 +1,1137 @@
+config SOC_SERIES_M460
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_NUMICRO
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+    config BSP_USE_STDDRIVER_SOURCE
+        bool "Build StdDriver source"
+        default n
+
+    menuconfig BSP_USING_PDMA
+        bool "Enable Peripheral Direct Memory Access Controller(PDMA)"
+        default y
+
+        if BSP_USING_PDMA
+            config  NU_PDMA_MEMFUN_ACTOR_MAX
+            int "Specify maximum mem actor for memfun"
+            range 1 4
+            default 2
+
+            config  NU_PDMA_SGTBL_POOL_SIZE
+            int "Specify maximum scatter-gather pool size"
+            range 1 64
+            default 32
+        endif
+
+    config BSP_USING_FMC
+        bool "Enable Flash Memory Controller(FMC)"
+        select RT_USING_FAL
+        default n
+
+    config BSP_USING_GPIO
+        bool "Enable General Purpose I/O(GPIO)"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_EMAC
+        bool "Enable Ethernet MAC Controller(EMAC)"
+        select RT_USING_LWIP
+        select RT_USING_NETDEV
+
+    menuconfig BSP_USING_RTC
+        bool "Enable Real Time Clock(RTC)"
+        select RT_USING_RTC
+
+        config NU_RTC_SUPPORT_IO_RW
+            bool "Support device RW entry"
+            depends on BSP_USING_RTC && RT_USING_RTC
+
+        config NU_RTC_SUPPORT_MSH_CMD
+            bool "Support module shell command"
+            depends on BSP_USING_RTC && RT_USING_RTC
+
+    menuconfig BSP_USING_CCAP
+        bool "Enable Camera Capture Interface Controller(CCAP)"
+        select RT_USING_PIN
+
+        if BSP_USING_CCAP
+            config BSP_USING_CCAP0
+                bool "Enable CCAP0"
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable Digital-to-Analog Converter(DAC)"
+        select RT_USING_DAC
+
+        if BSP_USING_DAC
+            config BSP_USING_DAC0
+                bool "Enable DAC0"
+
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+        endif
+
+    menuconfig BSP_USING_EADC
+        bool "Enable Enhanced Analog-to-Digital Converter(EADC)"
+        select RT_USING_ADC
+
+        if BSP_USING_EADC
+            config BSP_USING_EADC0
+                bool "Enable EADC0"
+
+            config BSP_USING_EADC1
+                bool "Enable EADC1"
+
+            config BSP_USING_EADC2
+                bool "Enable EADC2"
+        endif
+
+    menuconfig BSP_USING_TMR
+        bool "Enable Timer Controller(TIMER)"
+
+        if BSP_USING_TMR
+
+        config BSP_USING_TIMER
+            bool
+
+        config BSP_USING_TPWM
+            bool
+
+        config BSP_USING_TIMER_CAPTURE
+            bool
+
+            config BSP_USING_TMR0
+                bool "Enable TIMER0"
+
+            if BSP_USING_TMR0
+                choice
+                    prompt "Select TIMER0 function mode"
+
+                    config BSP_USING_TIMER0
+                        select BSP_USING_TIMER
+                        select RT_USING_HWTIMER
+                        bool "TIMER"
+                    help
+                        Choose this option if you need TIMER function mode.
+
+                    config BSP_USING_TPWM0
+                        select BSP_USING_TPWM
+                        select RT_USING_PWM
+                        bool "TIMER PWM"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                    config BSP_USING_TIMER0_CAPTURE
+                        select BSP_USING_TIMER_CAPTURE
+                        select RT_USING_INPUT_CAPTURE
+                        bool "TIMER CAPTURE"
+                    help
+                        Choose this option if you need CAPTURE function mode.
+
+                endchoice
+            endif
+
+            config BSP_USING_TMR1
+                bool "Enable TIMER1"
+
+            if BSP_USING_TMR1
+                choice
+                    prompt "Select TIMER1 function mode"
+
+                    config BSP_USING_TIMER1
+                        select BSP_USING_TIMER
+                        select RT_USING_HWTIMER
+                        bool "TIMER"
+                        help
+                        Choose this option if you need TIMER function mode.
+
+                    config BSP_USING_TPWM1
+                        select BSP_USING_TPWM
+                        select RT_USING_PWM
+                        bool "TIMER PWM"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                    config BSP_USING_TIMER1_CAPTURE
+                        select BSP_USING_TIMER_CAPTURE
+                        select RT_USING_INPUT_CAPTURE
+                        bool "TIMER CAPTURE"
+                    help
+                        Choose this option if you need CAPTURE function mode.
+                endchoice
+             endif
+
+            config BSP_USING_TMR2
+                bool "Enable TIMER2"
+
+             if BSP_USING_TMR2
+                choice
+                    prompt "Select TIMER2 function mode"
+
+                    config BSP_USING_TIMER2
+                        select BSP_USING_TIMER
+                        select RT_USING_HWTIMER
+                        bool "TIMER"
+                    help
+                        Choose this option if you need TIMER function mode.
+
+                    config BSP_USING_TPWM2
+                        select BSP_USING_TPWM
+                        select RT_USING_PWM
+                        bool "TIMER PWM"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                    config BSP_USING_TIMER2_CAPTURE
+                        select BSP_USING_TIMER_CAPTURE
+                        select RT_USING_INPUT_CAPTURE
+                        bool "TIMER CAPTURE"
+                    help
+                        Choose this option if you need CAPTURE function mode.
+                endchoice
+            endif
+
+            config BSP_USING_TMR3
+                bool "Enable TIMER3"
+
+            if BSP_USING_TMR3
+                choice
+                    prompt "Select TIMER3 function mode"
+
+                    config BSP_USING_TIMER3
+                        select BSP_USING_TIMER
+                        select RT_USING_HWTIMER
+                        bool "TIMER"
+                        help
+                            Choose this option if you need TIMER function mode.
+
+                    config BSP_USING_TPWM3
+                        select BSP_USING_TPWM
+                        select RT_USING_PWM
+                        bool "TIMER PWM"
+                        help
+                            Choose this option if you need PWM function mode.
+
+                    config BSP_USING_TIMER3_CAPTURE
+                        select BSP_USING_TIMER_CAPTURE
+                        select RT_USING_INPUT_CAPTURE
+                        bool "TIMER CAPTURE"
+                    help
+                        Choose this option if you need CAPTURE function mode.
+                endchoice
+            endif
+        endif
+
+    menuconfig BSP_USING_UART
+        bool "Enable Universal Asynchronous Receiver/Transmitters(UART)"
+        select RT_USING_SERIAL
+
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+
+            config BSP_USING_UART0_TX_DMA
+                bool "Enable UART0 TX DMA"
+                depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART0_RX_DMA
+                bool "Enable UART0 RX DMA"
+                depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+
+            config BSP_USING_UART1_TX_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART1_RX_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+
+            config BSP_USING_UART2_TX_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART2_RX_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+
+            config BSP_USING_UART3_TX_DMA
+                bool "Enable UART3 TX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART3_RX_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+
+            config BSP_USING_UART4_TX_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART4_RX_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+
+            config BSP_USING_UART5_TX_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART5_RX_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+
+            config BSP_USING_UART6_TX_DMA
+                bool "Enable UART6 TX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART6_RX_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+
+            config BSP_USING_UART7_TX_DMA
+                bool "Enable UART7 TX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART7_RX_DMA
+                bool "Enable UART7 RX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+
+            config BSP_USING_UART8_TX_DMA
+                bool "Enable UART8 TX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART8_RX_DMA
+                bool "Enable UART8 RX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART9
+                bool "Enable UART9"
+
+            config BSP_USING_UART9_TX_DMA
+                bool "Enable UART9 TX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UART9_RX_DMA
+                bool "Enable UART9 RX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+
+       endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C Serial Interface Controller(I2C)"
+        select RT_USING_I2C
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+
+            config BSP_USING_I2C4
+                bool "Enable I2C4"
+
+        endif
+
+    menuconfig BSP_USING_USCI
+        bool "Enable Universal Serial Control Interface Controller(USCI)"
+
+    if BSP_USING_USCI
+
+        config BSP_USING_UUART
+            bool
+
+        config BSP_USING_USPI
+            bool
+
+        config BSP_USING_USPI_PDMA
+            bool
+            default n
+
+        config BSP_USING_UI2C
+            bool
+
+        config BSP_USING_USCI0
+            bool "Enable USCI0"
+
+        if BSP_USING_USCI0
+            choice
+                prompt "Select USCI0 function mode"
+
+                config BSP_USING_UUART0
+                    select RT_USING_SERIAL
+                    select BSP_USING_UUART
+                    bool "UUART0"
+                    help
+                        Choose this option if you need UART function mode.
+
+                config BSP_USING_UI2C0
+                    select RT_USING_I2C
+                    select BSP_USING_UI2C
+                    bool "UI2C0"
+                    help
+                        Choose this option if you need I2C function mode.
+
+                config BSP_USING_USPI0
+                    select RT_USING_SPI
+                    select BSP_USING_USPI
+                    bool "USPI0"
+                    help
+                        Choose this option if you need SPI function mode.
+            endchoice
+
+            config BSP_USING_UUART0_TX_DMA
+                bool "Enable UUART0 TX DMA"
+                depends on BSP_USING_UUART0 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_UUART0_RX_DMA
+                bool "Enable UUART0 RX DMA"
+                depends on BSP_USING_UUART0 && RT_SERIAL_USING_DMA
+
+            config BSP_USING_USPI0_PDMA
+                bool "Use PDMA for data transferring"
+                select BSP_USING_USPI_PDMA
+                depends on BSP_USING_USPI0
+        endif
+
+    endif
+
+    menuconfig BSP_USING_SDH
+        bool "Enable Secure Digital Host Controller(SDH)"
+        select RT_USING_DFS
+        select RT_USING_SDIO
+
+        if BSP_USING_SDH
+            config BSP_USING_SDH0
+                bool "Enable SDH0"
+
+            config BSP_USING_SDH1
+                bool "Enable SDH1"
+        endif
+
+    menuconfig BSP_USING_CANFD
+        bool "Enable CAN with Flexible Data-rate(CAN FD)"
+        select RT_USING_CAN
+
+        if BSP_USING_CANFD
+            config BSP_USING_CANFD0
+                bool "Enable CANFD0"
+
+            config BSP_USING_CANFD1
+                bool "Enable CANFD1"
+
+            config BSP_USING_CANFD2
+                bool "Enable CANFD2"
+
+            config BSP_USING_CANFD3
+                bool "Enable CANFD3"
+        endif
+
+    menuconfig BSP_USING_BPWM
+        bool "Enable Basic PWM Generator and Capture Timer(BPWM)"
+        select RT_USING_PWM
+
+        if BSP_USING_BPWM
+
+            config BSP_USING_BPWM_CAPTURE
+                bool
+
+            choice
+                prompt "Select BPWM0 function mode"
+                config BSP_USING_BPWM0_NONE
+                    bool "Disable BPWM0"
+                    help
+                        Choose this option if you need not any function mode.
+
+                config BSP_USING_BPWM0
+                    select RT_USING_PWM
+                    bool "Enable BPWM0"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                config BSP_USING_BPWM0_CAPTURE
+                    select RT_USING_INPUT_CAPTURE
+                    select BSP_USING_BPWM_CAPTURE
+                    bool "Enable BPWM0_CAPTURE"
+                    help
+                        Choose this option if you need PWM capture function mode.
+            endchoice
+
+            choice
+                prompt "Select BPWM1 function mode"
+                config BSP_USING_BPWM1_NONE
+                    bool "Disable BPWM1"
+                    help
+                        Choose this option if you need not any function mode.
+
+                config BSP_USING_BPWM1
+                    select RT_USING_PWM
+                    bool "Enable BPWM1"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                config BSP_USING_BPWM1_CAPTURE
+                    select RT_USING_INPUT_CAPTURE
+                    select BSP_USING_BPWM_CAPTURE
+                    bool "Enable BPWM1_CAPTURE"
+                    help
+                        Choose this option if you need PWM capture function mode.
+            endchoice
+
+        endif
+
+    menuconfig BSP_USING_EPWM
+        bool "Enable EPWM Generator and Capture Timer(EPWM)"
+
+        if BSP_USING_EPWM
+
+            config BSP_USING_EPWM_CAPTURE
+                bool
+
+            choice
+                prompt "Select EPWM0 function mode"
+                config BSP_USING_EPWM0_NONE
+                    bool "Disable EPWM0"
+                    help
+                        Choose this option if you need not any function mode.
+
+                config BSP_USING_EPWM0
+                    select RT_USING_PWM
+                    bool "Enable EPWM0"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                config BSP_USING_EPWM0_CAPTURE
+                    select RT_USING_INPUT_CAPTURE
+                    select BSP_USING_EPWM_CAPTURE
+                    bool "Enable EPWM0_CAPTURE"
+                    help
+                        Choose this option if you need PWM capture function mode.
+            endchoice
+
+            choice
+                prompt "Select EPWM1 function mode"
+                config BSP_USING_EPWM1_NONE
+                    bool "Disable EPWM1"
+                    help
+                        Choose this option if you need not any function mode.
+
+                config BSP_USING_EPWM1
+                    select RT_USING_PWM
+                    bool "Enable EPWM1"
+                    help
+                        Choose this option if you need PWM function mode.
+
+                config BSP_USING_EPWM1_CAPTURE
+                    select RT_USING_INPUT_CAPTURE
+                    select BSP_USING_EPWM_CAPTURE
+                    bool "Enable EPWM1_CAPTURE"
+                    help
+                        Choose this option if you need PWM capture function mode.
+            endchoice
+
+       endif
+
+    menuconfig BSP_USING_SPI
+       bool "Enable Serial Peripheral Interface(SPI)"
+       select RT_USING_SPI
+
+       if BSP_USING_SPI
+            config BSP_USING_SPI_PDMA
+            bool
+            default n
+
+            config BSP_USING_SPII2S
+            bool
+            default n
+
+            choice
+                prompt "Select SPI0 function mode"
+                config BSP_USING_SPI0_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI0.
+
+                config BSP_USING_SPI0
+                bool "Enable SPI0"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S0
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S0"
+                    help
+                      Choose this option if you need SPII2S function mode.
+            endchoice
+
+            if BSP_USING_SPI0
+                config BSP_USING_SPI0_PDMA
+                    bool "Enable PDMA for SPI0"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI0
+            endif
+
+            choice
+                prompt "Select SPI1 function mode"
+                config BSP_USING_SPI1_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI1.
+
+                config BSP_USING_SPI1
+                bool "Enable SPI1"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S1
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S1"
+                help
+                    Choose this option if you need SPII2S function mode.
+            endchoice
+
+            if BSP_USING_SPI1
+                config BSP_USING_SPI1_PDMA
+                    bool "Enable PDMA for SPI1"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI1
+            endif
+
+            choice
+                prompt "Select SPI2 function mode"
+                config BSP_USING_SPI2_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI2.
+
+                config BSP_USING_SPI2
+                bool "Enable SPI2"
+                   help
+                      Choose this option if you need SPI function mode.
+
+                 config BSP_USING_SPII2S2
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S2"
+                    help
+                      Choose this option if you need SPII2S function mode.
+            endchoice
+
+            if BSP_USING_SPI2
+                config BSP_USING_SPI2_PDMA
+                    bool "Enable PDMA for SPI2"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI2
+            endif
+
+            choice
+                prompt "Select SPI3 function mode"
+                config BSP_USING_SPI3_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI3.
+
+                config BSP_USING_SPI3
+                bool "Enable SPI3"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S3
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S3"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI3
+                config BSP_USING_SPI3_PDMA
+                    bool "Enable PDMA for SPI3"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI3
+            endif
+
+            choice
+                prompt "Select SPI4 function mode"
+                config BSP_USING_SPI4_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI4.
+
+                config BSP_USING_SPI4
+                bool "Enable SPI4"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S4
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S4"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI4
+                config BSP_USING_SPI4_PDMA
+                    bool "Enable PDMA for SPI4"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI4
+            endif
+
+            choice
+                prompt "Select SPI5 function mode"
+                config BSP_USING_SPI5_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI5.
+
+                config BSP_USING_SPI5
+                bool "Enable SPI5"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S5
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S5"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI5
+                config BSP_USING_SPI5_PDMA
+                    bool "Enable PDMA for SPI5"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI5
+            endif
+
+            choice
+                prompt "Select SPI6 function mode"
+                config BSP_USING_SPI6_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI6.
+
+                config BSP_USING_SPI6
+                bool "Enable SPI6"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S6
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S6"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI6
+                config BSP_USING_SPI6_PDMA
+                    bool "Enable PDMA for SPI6"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI6
+            endif
+
+            choice
+                prompt "Select SPI7 function mode"
+                config BSP_USING_SPI7_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI7.
+
+                config BSP_USING_SPI7
+                bool "Enable SPI7"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S7
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S7"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI7
+                config BSP_USING_SPI7_PDMA
+                    bool "Enable PDMA for SPI7"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI7
+            endif
+
+            choice
+                prompt "Select SPI8 function mode"
+                config BSP_USING_SPI8_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI8.
+
+                config BSP_USING_SPI8
+                bool "Enable SPI8"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S8
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S8"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI8
+                config BSP_USING_SPI8_PDMA
+                    bool "Enable PDMA for SPI8"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI8
+            endif
+
+
+            choice
+                prompt "Select SPI9 function mode"
+                config BSP_USING_SPI9_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI9.
+
+                config BSP_USING_SPI9
+                bool "Enable SPI9"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S9
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S9"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI9
+                config BSP_USING_SPI9_PDMA
+                    bool "Enable PDMA for SPI9"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI9
+            endif
+
+            choice
+                prompt "Select SPI10 function mode"
+                config BSP_USING_SPI10_NONE
+                bool "NONE"
+                help
+                    Choose this option if you need not SPI10.
+
+                config BSP_USING_SPI10
+                bool "Enable SPI10"
+                help
+                    Choose this option if you need SPI function mode.
+
+                config BSP_USING_SPII2S10
+                    select RT_USING_AUDIO
+                    select BSP_USING_SPII2S
+                    bool "Enable SPII2S10"
+                    help
+                      Choose this option if you need SPII2S function mode.
+              endchoice
+
+            if BSP_USING_SPI10
+                config BSP_USING_SPI10_PDMA
+                    bool "Enable PDMA for SPI10"
+                    select BSP_USING_SPI_PDMA
+                    depends on BSP_USING_SPI10
+            endif
+
+         endif
+
+    menuconfig BSP_USING_I2S
+        bool "Enable I2S Controller(I2S)"
+        select RT_USING_AUDIO
+        select BSP_USING_PDMA
+
+        if BSP_USING_I2S
+
+           config BSP_USING_I2S0
+               bool "Enable I2S0"
+
+           config BSP_USING_I2S1
+                bool "Enable I2S1"
+
+        endif
+
+
+    if BSP_USING_I2S || BSP_USING_SPII2S
+        config NU_I2S_DMA_FIFO_SIZE
+        int "DMA Buffer size of capture and playback"
+        range 2048 4096
+        default 2048
+    endif
+
+    menuconfig BSP_USING_QSPI
+        bool "Enable Quad Serial Peripheral Interface(QSPI)"
+        select RT_USING_SPI
+        select RT_USING_QSPI
+        select BSP_USING_SPI
+
+        if BSP_USING_QSPI
+           config BSP_USING_QSPI0
+               bool "Enable QSPI0"
+
+           config BSP_USING_QSPI0_PDMA
+                bool "Enable PDMA for QSPI0"
+                select BSP_USING_SPI_PDMA
+                depends on BSP_USING_QSPI0
+
+           config BSP_USING_QSPI1
+                bool "Enable QSPI1"
+
+           config BSP_USING_QSPI1_PDMA
+                bool "Enable PDMA for QSPI1"
+                select BSP_USING_SPI_PDMA
+                depends on BSP_USING_QSPI1
+        endif
+
+    menuconfig BSP_USING_SCUART
+        bool "Enable Smart Card Host Interface - UART(SCUART)"
+
+           if BSP_USING_SCUART
+           config BSP_USING_SCUART0
+               bool "Enable SCUART0"
+
+           config BSP_USING_SCUART1
+               bool "Enable SCUART1"
+
+           config BSP_USING_SCUART2
+               bool "Enable SCUART2"
+        endif
+
+    menuconfig BSP_USING_ECAP
+        bool "Enable Enhanced Input Capture Timer(ECAP)"
+
+        if BSP_USING_ECAP
+
+            config BSP_USING_ECAP0
+                select RT_USING_INPUT_CAPTURE
+                bool "Enable ECAP0"
+                help
+                    Choose this option if you need ECAP0.
+
+            config BSP_USING_ECAP1
+                select RT_USING_INPUT_CAPTURE
+                bool "Enable ECAP1"
+                help
+                    Choose this option if you need ECAP1.
+
+            config BSP_USING_ECAP2
+                select RT_USING_INPUT_CAPTURE
+                bool "Enable ECAP2"
+                help
+                    Choose this option if you need ECAP2.
+
+            config BSP_USING_ECAP3
+                select RT_USING_INPUT_CAPTURE
+                bool "Enable ECAP3"
+                help
+                    Choose this option if you need ECAP3.
+
+        endif
+
+    menuconfig BSP_USING_EQEI
+        bool "Enable Adve Quadrature Encoder Interface(EQEI)"
+
+        if BSP_USING_EQEI
+            config BSP_USING_EQEI0
+            bool "Enable EQEI0"
+            select RT_USING_PULSE_ENCODER
+
+            config BSP_USING_EQEI1
+            bool "Enable EQEI1"
+            select RT_USING_PULSE_ENCODER
+
+            config BSP_USING_EQEI2
+            bool "Enable EQEI2"
+            select RT_USING_PULSE_ENCODER
+
+            config BSP_USING_EQEI3
+            bool "Enable EQEI3"
+            select RT_USING_PULSE_ENCODER
+
+        endif
+
+    menuconfig BSP_USING_CRYPTO
+        bool "Enable Cryptographic Accelerator(CRYPTO)"
+        select RT_USING_HWCRYPTO
+        select RT_HWCRYPTO_USING_AES
+        select RT_HWCRYPTO_USING_AES_ECB
+        select RT_HWCRYPTO_USING_AES_CBC
+        select RT_HWCRYPTO_USING_AES_CFB
+        select RT_HWCRYPTO_USING_AES_CTR
+        select RT_HWCRYPTO_USING_AES_CFB
+        select RT_HWCRYPTO_USING_AES_OFB
+        select RT_HWCRYPTO_USING_DES
+        select RT_HWCRYPTO_USING_DES_ECB
+        select RT_HWCRYPTO_USING_DES_CBC
+        select RT_HWCRYPTO_USING_3DES
+        select RT_HWCRYPTO_USING_3DES_ECB
+        select RT_HWCRYPTO_USING_3DES_CBC
+        select RT_HWCRYPTO_USING_SHA1
+        select RT_HWCRYPTO_USING_SHA2
+        select RT_HWCRYPTO_USING_SHA2_224
+        select RT_HWCRYPTO_USING_SHA2_256
+        select RT_HWCRYPTO_USING_SHA2_384
+        select RT_HWCRYPTO_USING_SHA2_512
+        select RT_HWCRYPTO_USING_RNG
+
+        if BSP_USING_CRYPTO
+            config NU_PRNG_USE_SEED
+                bool "Use specified seed value."
+                help
+                   Specify the seed value to PRNG.
+
+            if NU_PRNG_USE_SEED
+                config NU_PRNG_SEED_VALUE
+                    hex "Enter seed value"
+                    range 0 0xFFFFFFFF
+                    default 0
+            endif
+        endif
+
+        config BSP_USING_TRNG
+            bool "Enable True Random Number Generator(TRNG)"
+            select BSP_USING_CRYPTO
+            select RT_USING_HWCRYPTO
+            select RT_HWCRYPTO_USING_RNG
+
+        menuconfig BSP_USING_CRC
+            bool "Enable Cyclic Redundancy Check Generator(CRC)"
+            select BSP_USING_CRYPTO
+            select RT_USING_HWCRYPTO
+            select RT_HWCRYPTO_USING_CRC
+            select RT_HWCRYPTO_USING_CRC_07
+            select RT_HWCRYPTO_USING_CRC_8005
+            select RT_HWCRYPTO_USING_CRC_1021
+            select RT_HWCRYPTO_USING_CRC_04C11DB7
+
+            if BSP_USING_CRC
+                config NU_CRC_USE_PDMA
+                bool "Use PDMA for data transferring."
+                select BSP_USING_PDMA
+                default y
+            endif
+
+
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable SOFT I2C"
+
+        if BSP_USING_SOFT_I2C
+            config BSP_USING_SOFT_I2C0
+            bool "Enable SOFT I2C0"
+            select RT_USING_I2C
+            select RT_USING_I2C_BITOPS
+            default n
+
+            if BSP_USING_SOFT_I2C0
+                config BSP_SOFT_I2C0_SCL_PIN
+                hex "Specify the pin index of SCL of SOFT I2C0"
+                range 0 0x7F
+                default 0x18
+
+                config BSP_SOFT_I2C0_SDA_PIN
+                hex "Specify the pin index of SDA of SOFT I2C0"
+                range 0 0x7F
+                default 0x17
+            endif
+
+            config BSP_USING_SOFT_I2C1
+            bool "Enable SOFT I2C1"
+            select RT_USING_I2C
+            select RT_USING_I2C_BITOPS
+            default n
+
+            if BSP_USING_SOFT_I2C1
+                config BSP_SOFT_I2C1_SCL_PIN
+                hex "Specify the pin index of SCL of SOFT I2C1"
+                range 0 0x7F
+                default 0x0B
+
+                config BSP_SOFT_I2C1_SDA_PIN
+                hex "Specify the pin index of SDA of SOFT I2C1"
+                range 0 0x7F
+                default 0x0A
+            endif
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer(WDT)"
+        select RT_USING_WDT
+        default y
+
+    config BSP_USING_EBI
+        bool "Enable External Bus Interface(EBI)"
+        default n
+
+    config BSP_USING_HBI
+        bool "Enable HyperBus Interface(HBI)"
+        default y
+
+    config BSP_USING_USBD
+        bool "Enable Full-Speed USB Device Controller(USBD)"
+        select RT_USING_USB_DEVICE
+
+    config BSP_USING_HSUSBD
+        bool "Enable High-Speed USB Device Controller(HSUSBD)"
+        select RT_USING_USB_DEVICE
+
+    config BSP_USING_USBH
+        bool "Enable Full-Speed USB Host Controller(USBH)"
+        select RT_USING_USB_HOST
+        select RT_USBH_MSTORAGE
+
+    config BSP_USING_HSUSBH
+        bool "Enable High-Speed USB Host Controller(HSUSBH)"
+        select RT_USING_USB_HOST
+        select RT_USBH_MSTORAGE
+
+    if BSP_USING_USBH || BSP_USING_HSUSBH
+        config NU_USBHOST_HUB_POLLING_INTERVAL
+            int "USB Root Hub Polling Interval(in Mili-seconds)"
+            range 100 2000
+            default 100
+    endif
+
+    config BSP_USING_HSOTG
+        bool "Enable High-Speed USB On-The-Go(HSOTG)"
+        select BSP_USING_HSUSBH
+        select BSP_USING_HSUSBD

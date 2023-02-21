@@ -23,8 +23,8 @@ elif CROSS_TOOL == 'keil':
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
-#BUILD = ''
+#BUILD = 'debug'
+BUILD = ''
 
 CORE = 'arm926ej-s'
 MAP_FILE = 'rtthread_nuc980.map'

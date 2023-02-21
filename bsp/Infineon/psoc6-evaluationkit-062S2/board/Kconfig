@@ -1,0 +1,260 @@
+menu "Hardware Drivers Config"
+
+config SOC_CY8C624ALQI_S2D42
+    bool
+    select SOC_SERIES_IFX_PSOC62
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart0)"
+        select BSP_USING_UART
+        select BSP_USING_UART0
+        default y
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM0
+            bool "Enable timer0 output pwm"
+            default n
+            if BSP_USING_PWM0
+                menuconfig BSP_USING_PWM0_CH3
+                    bool "Enable PWM0 channel3"
+                    default n
+                    if BSP_USING_PWM0_CH3
+                        config BSP_USING_PWM0_PORT13
+                        bool "Enable PWM0-PORT13 output pwm"
+                        default n
+                    endif
+                menuconfig BSP_USING_PWM0_CH7
+                    bool "Enable PWM0 channel7"
+                    default n
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT2
+                        bool "Enable PWM0-PORT2 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT5
+                        bool "Enable PWM0-PORT5 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT7
+                        bool "Enable PWM0-PORT7 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT9
+                        bool "Enable PWM0-PORT9 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT10
+                        bool "Enable PWM0-PORT10 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_PORT12
+                        bool "Enable PWM0-PORT12 output pwm"
+                        default n
+                    endif
+            endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        select RT_USING_SPI
+        default n
+        if BSP_USING_SPI
+            menuconfig BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+                if BSP_USING_SPI3
+                    config BSP_USING_SPI3_SAMPLE
+                        bool "Enable SPI3 BUS Sample"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    config BSP_USING_SDMMC
+        bool "Enable SDMMC (sd card)"
+        default n
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        if BSP_USING_SDMMC
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1 (sd card)"
+                default n
+        endif
+
+    menuconfig BSP_USING_HW_I2C
+        bool "Enable Hardware I2C Bus"
+        default n
+        select RT_USING_I2C
+        select RT_USING_PIN
+        if BSP_USING_HW_I2C
+            config BSP_USING_HW_I2C3
+                bool "Enable I2C3 Bus (User I2C)"
+                default n
+                if BSP_USING_HW_I2C3
+                    comment "Notice: P6_0 --> 48; P6_1 --> 49"
+                    config BSP_I2C3_SCL_PIN
+                        int "i2c3 SCL pin number"
+                        range 1 113
+                        default 48
+                    config BSP_I2C3_SDA_PIN
+                        int "i2c3 SDA pin number"
+                        range 1 113
+                        default 49
+                endif
+            config BSP_USING_HW_I2C6
+                bool "Enable I2C6 Bus (User I2C)"
+                default n
+                if BSP_USING_HW_I2C6
+                    comment "Notice: P13_0 --> 48; P13_1 --> 49"
+                    config BSP_I2C6_SCL_PIN
+                        int "i2c6 SCL pin number"
+                        range 1 113
+                        default 104
+                    config BSP_I2C6_SDA_PIN
+                        int "i2c6 SDA pin number"
+                        range 1 113
+                        default 105
+                endif
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable Software I2C Bus"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus (User I2C)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: P13_1 --> 105; P13_2 --> 106"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 1 113
+                        default 105
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 1 113
+                        default 106
+                endif
+        endif
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+            config BSP_USING_DAC2
+                bool "Enable DAC2"
+                default n
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+        endif
+endmenu
+
+menu "Board extended module Drivers"
+
+    config BSP_USING_SLIDER
+        bool "Enable Slider Demo"
+        default n
+endmenu
+
+endmenu

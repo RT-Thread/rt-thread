@@ -14,6 +14,7 @@
 #include "mbox.h"
 #include "drv_fb.h"
 #include "mmu.h"
+#include "cache.h"
 
 #define LCD_WIDTH     (800)
 #define LCD_HEIGHT    (480)
@@ -299,9 +300,9 @@ int hdmi_fb_init(void)
     _hdmi.pitch = 0;
     _hdmi.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB888;
 
-    rt_hw_mmu_map((unsigned long)_hdmi.fb, 0x200000, DEVICE_MEM);
+    // rt_hw_mmu_map(&mmu_info, (unsigned long)_hdmi.fb, (void *)0x200000, DEVICE_MEM);
 
-    rt_hw_dcache_invalidate_range((unsigned long)_hdmi.fb,LCD_WIDTH * LCD_HEIGHT * 3);
+    rt_hw_cpu_dcache_invalidate((unsigned long)_hdmi.fb,LCD_WIDTH * LCD_HEIGHT * 3);
 
     //rt_kprintf("_hdmi.fb is %p\n", _hdmi.fb);
     rt_hdmi_fb_device_init(&_hdmi, "lcd");

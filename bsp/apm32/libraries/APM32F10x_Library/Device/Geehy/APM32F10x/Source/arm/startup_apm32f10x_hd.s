@@ -3,9 +3,9 @@
 ; *
 ; * @brief       CMSIS Cortex-M3 based Core Device Startup File for Device startup_apm32f10x_hd
 ; *
-; * @version     V1.0.2
+; * @version     V1.0.3
 ; *
-; * @date        2022-01-05
+; * @date        2022-07-25
 ; *
 ; * @attention
 ; *
@@ -15,7 +15,7 @@
 ; *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
 ; *
 ; *  The program is only for reference, which is distributed in the hope
-; *  that it will be usefull and instructional for customers to develop
+; *  that it will be useful and instructional for customers to develop
 ; *  their software. Unless required by applicable law or agreed to in
 ; *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
 ; *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.

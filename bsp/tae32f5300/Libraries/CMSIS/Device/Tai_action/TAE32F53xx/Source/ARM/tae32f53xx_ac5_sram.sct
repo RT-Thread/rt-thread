@@ -80,16 +80,16 @@ LR_ROM __RO_BASE __RO_SIZE  {                       ; load region size_region
     .ANY (+XO)
   }
 
-  RW_RAMA __RW_BASE __RW_SIZE  {                  	; RWA data
+  RW_RAMA __RW_BASE __RW_SIZE  {                    ; RWA data
     *.o (SECTION_RAMA)
     .ANY (+RW +ZI)
   }
 
-  RW_RAMB __RAMB_BASE __RAMB_SIZE  {             	; RWB region
+  RW_RAMB __RAMB_BASE __RAMB_SIZE  {                ; RWB region
     *.o (SECTION_RAMB)
   }
 
-  RW_RAMC __RAMC_BASE __RAMC_SIZE  {              	; RWC region
+  RW_RAMC __RAMC_BASE __RAMC_SIZE  {                ; RWC region
     *.o (SECTION_RAMC)
   }
 

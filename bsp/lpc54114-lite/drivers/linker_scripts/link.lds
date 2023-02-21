@@ -14,7 +14,7 @@
 **     Copyright 2016 Freescale Semiconductor, Inc.
 **     Copyright 2016-2017 NXP
 **     All rights reserved.
-**     
+**
 **     Redistribution and use in source and binary forms, with or without modification,
 **     are permitted (subject to the limitations in the disclaimer below) provided
 **      that the following conditions are met:
@@ -243,7 +243,7 @@ SECTIONS
   } > m_data
 
   PROVIDE(heap_end = ORIGIN(m_data) + LENGTH(m_data));
-  
+
   /* Initializes stack on the end of block */
   __StackTop   = ORIGIN(m_data) + LENGTH(m_data);
   __StackLimit = __StackTop - STACK_SIZE;

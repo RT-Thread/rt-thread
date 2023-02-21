@@ -6,7 +6,7 @@ config BSP_USING_HYPERFLASH
 
 config SOC_MIMXRT1052DVL6B
     bool
-    select SOC_MIMXRT1050_SERIES
+    select SOC_IMXRT1050_SERIES
     select BSP_USING_HYPERFLASH
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -132,7 +132,7 @@ menu "Onboard Peripheral Drivers"
                 default 2
 
             config PHY_USING_KSZ8081
-                bool "i.MX RT1064EVK uses ksz8081 phy"
+                bool "i.MX RT1052EVK uses ksz8081 phy"
                 default y
 
             if PHY_USING_KSZ8081

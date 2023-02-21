@@ -22,7 +22,7 @@
  *        - if 0, host ehci driver is disable.
  *        - if greater than 0, host ehci driver is enable.
  */
-#define USB_HOST_CONFIG_EHCI (2U)
+#define USB_HOST_CONFIG_EHCI (1U)
 
 /*!
  * @brief host ohci instance count, meantime it indicates ohci enable or disable.
@@ -100,7 +100,9 @@
 #define USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE (0U)
 #endif
 /*! @brief if 1, enable usb compliance test codes; if 0, disable usb compliance test codes. */
+#ifndef USB_HOST_CONFIG_COMPLIANCE_TEST
 #define USB_HOST_CONFIG_COMPLIANCE_TEST (0U)
+#endif
 
 /*! @brief if 1, class driver clear stall automatically; if 0, class driver don't clear stall. */
 #define USB_HOST_CONFIG_CLASS_AUTO_CLEAR_STALL (0U)
@@ -152,12 +154,12 @@
 /*!
  * @brief ohci ED max count.
  */
-#define USB_HOST_CONFIG_OHCI_MAX_ED (8U)
+#define USB_HOST_CONFIG_OHCI_MAX_ED (16U)
 
 /*!
  * @brief ohci GTD max count.
  */
-#define USB_HOST_CONFIG_OHCI_MAX_GTD (8U)
+#define USB_HOST_CONFIG_OHCI_MAX_GTD (16U)
 
 /*!
  * @brief ohci ITD max count.
@@ -243,5 +245,4 @@
  *        - if greater than 0, host charger detect is enable.
  */
 #define USB_HOST_CONFIG_BATTERY_CHARGER (0U)
-
 #endif /* _USB_HOST_CONFIG_H_ */

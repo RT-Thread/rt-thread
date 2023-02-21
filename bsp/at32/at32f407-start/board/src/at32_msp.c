@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-03-08     shelton      first version
+ * 2022-12-05     shelton      uart2 pins change to pd5/pd6
  */
 
 #include <rtthread.h>
@@ -41,17 +42,18 @@ void at32_msp_usart_init(void *instance)
     if(USART2 == usart_x)
     {
         crm_periph_clock_enable(CRM_USART2_PERIPH_CLOCK, TRUE);
-        crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_GPIOD_PERIPH_CLOCK, TRUE);
 
         gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
         gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
         gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-        gpio_init_struct.gpio_pins = GPIO_PINS_2;
-        gpio_init(GPIOA, &gpio_init_struct);
+        gpio_init_struct.gpio_pins = GPIO_PINS_5;
+        gpio_init(GPIOD, &gpio_init_struct);
 
         gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
-        gpio_init_struct.gpio_pins = GPIO_PINS_3;
-        gpio_init(GPIOA, &gpio_init_struct);
+        gpio_init_struct.gpio_pins = GPIO_PINS_6;
+        gpio_init(GPIOD, &gpio_init_struct);
+        gpio_pin_remap_config(USART2_MUX, TRUE);
     }
 #endif
 #ifdef BSP_USING_UART3

@@ -1,4 +1,4 @@
-﻿# RT-Thread building script for component
+# RT-Thread building script for component
 
 Import('RTT_ROOT')
 from building import *

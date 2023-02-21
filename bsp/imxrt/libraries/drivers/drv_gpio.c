@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -522,8 +522,11 @@ void GPIO13_Combined_0_31_IRQHandler(void)
 static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     gpio_pin_config_t gpio;
-    rt_uint32_t config_value = 0;
     rt_int8_t port, pin_num;
+
+#ifndef SOC_IMXRT1170_SERIES
+    rt_uint32_t config_value = 0;
+#endif
 
     port = pin >> 5;
     pin_num = pin & 31;
@@ -542,35 +545,45 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     case PIN_MODE_OUTPUT:
     {
         gpio.direction = kGPIO_DigitalOutput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0030U;    /* Drive Strength R0/6 */
+#endif
     }
     break;
 
     case PIN_MODE_INPUT:
     {
         gpio.direction = kGPIO_DigitalInput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0830U;    /* Open Drain Enable */
+#endif
     }
     break;
 
     case PIN_MODE_INPUT_PULLDOWN:
     {
         gpio.direction = kGPIO_DigitalInput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x3030U;    /* 100K Ohm Pull Down */
+#endif
     }
     break;
 
     case PIN_MODE_INPUT_PULLUP:
     {
         gpio.direction = kGPIO_DigitalInput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0xB030U;    /* 100K Ohm Pull Up */
+#endif
     }
     break;
 
     case PIN_MODE_OUTPUT_OD:
     {
         gpio.direction = kGPIO_DigitalOutput;
+#ifndef SOC_IMXRT1170_SERIES
         config_value = 0x0830U;    /* Open Drain Enable */
+#endif
     }
     break;
     }

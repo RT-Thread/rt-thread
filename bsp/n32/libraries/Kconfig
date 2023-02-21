@@ -15,3 +15,8 @@ config SOC_SERIES_N32WB452
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_N32
+
+config SOC_SERIES_N32G4FR
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_N32

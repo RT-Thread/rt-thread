@@ -1,6 +1,5 @@
-# The following lines of boilerplate have to be in your project's
-# CMakeLists in this exact order for cmake to work correctly
-cmake_minimum_required(VERSION 3.5)
-
+cmake_minimum_required(VERSION 3.16)
+set(COMPONENTS esptool_py main)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+set(freertos_root /Users/tangyi/rt-thread/bsp/ESP32_C3/packages/FreeRTOS_Wrapper-latest/FreeRTOS)
 project(rtthread)

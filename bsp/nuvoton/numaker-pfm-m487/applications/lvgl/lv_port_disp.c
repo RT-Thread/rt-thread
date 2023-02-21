@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,6 +15,10 @@
 #define DBG_LEVEL DBG_ERROR
 #define DBG_COLOR
 #include <rtdbg.h>
+
+#if !defined(NU_PKG_LVGL_RENDERING_LAYER)
+    #define NU_PKG_LVGL_RENDERING_LAYER "lcd"
+#endif
 
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
@@ -47,7 +51,7 @@ void lv_port_disp_init(void)
     rt_err_t result;
     void *buf1 = RT_NULL;
 
-    lcd_device = rt_device_find("lcd");
+    lcd_device = rt_device_find(NU_PKG_LVGL_RENDERING_LAYER);
     if (lcd_device == 0)
     {
         LOG_E("error!");
@@ -70,7 +74,7 @@ void lv_port_disp_init(void)
     rt_kprintf("LVGL: Use one buffers - buf1@%08x, size: %d bytes\n", buf1, info.smem_len);
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, buf1, RT_NULL, info.smem_len/(info.bits_per_pixel/8));
+    lv_disp_draw_buf_init(&disp_buf, buf1, RT_NULL, info.smem_len / (info.bits_per_pixel / 8));
 
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)

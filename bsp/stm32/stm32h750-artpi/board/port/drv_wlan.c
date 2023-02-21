@@ -36,7 +36,7 @@ extern int wifi_hw_init(void);
 static rt_bool_t init_flag = 0;
 static const struct fal_partition *partition = RT_NULL;
 
-ALIGN(64)
+rt_align(64)
 static const char wifi_nvram_image[] =
     // # The following parameter values are just placeholders, need to be updated.
     "manfid=0x2d0"                                                       "\x00"

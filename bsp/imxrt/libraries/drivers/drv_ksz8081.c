@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-14     wangqiang    the first version
+ * 2022-08-29     xjy198903    add rt1170 support
  */
 
 #include <rtthread.h>
@@ -71,7 +72,7 @@
 #define PHY_TIMEOUT_COUNT 0x3FFFFFFU
 
 /* defined the Reset pin, PORT and PIN config by menuconfig */
-#define RESET_PIN GET_PIN(PHY_RESET_PORT, PHY_RESET_PIN)
+#define RESET_PIN GET_PIN(PHY_RESET_KSZ8081_PORT, PHY_RESET_KSZ8081_PIN)
 
 /*******************************************************************************
  * Prototypes

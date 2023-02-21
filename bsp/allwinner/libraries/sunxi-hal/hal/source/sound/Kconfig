@@ -1,0 +1,9 @@
+menuconfig DRIVERS_SOUND
+    bool "Sound card support"
+    default y
+
+if DRIVERS_SOUND
+source "drivers/hal/source/sound/codecs/Kconfig"
+source "drivers/hal/source/sound/platform/Kconfig"
+source "drivers/hal/source/sound/component/Kconfig"
+endif # SOUND

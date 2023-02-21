@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,10 +40,11 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     return RT_EOK;
 }
 
-rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
-                                  const char           *name,
-                                  const char           *bus_name,
-                                  void                 *user_data)
+rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
+                                        const char           *name,
+                                        const char           *bus_name,
+                                        rt_base_t            cs_pin,
+                                        void                 *user_data)
 {
     rt_err_t result;
     rt_device_t bus;
@@ -59,14 +60,27 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
         if (result != RT_EOK)
             return result;
 
+        if(cs_pin != PIN_NONE)
+        {
+            rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
+        }
+
         rt_memset(&device->config, 0, sizeof(device->config));
         device->parent.user_data = user_data;
-
+        device->cs_pin = cs_pin;
         return RT_EOK;
     }
 
     /* not found the host bus */
     return -RT_ERROR;
+}
+
+rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
+                                  const char           *name,
+                                  const char           *bus_name,
+                                  void                 *user_data)
+{
+    return rt_spi_bus_attach_device_cspin(device, name, bus_name, PIN_NONE, user_data);
 }
 
 rt_err_t rt_spi_configure(struct rt_spi_device        *device,
@@ -307,6 +321,29 @@ __exit:
     rt_mutex_release(&(device->bus->lock));
 
     return result;
+}
+
+rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                              rt_uint16_t           data)
+{
+    rt_uint16_t value = 0;
+    rt_uint16_t tmp;
+
+    if (device->config.mode & RT_SPI_MSB)
+    {
+        tmp = ((data & 0xff00) >> 8) | ((data & 0x00ff) << 8);
+        data = tmp;
+    }
+
+    rt_spi_send_then_recv(device, &data, 2, &value, 2);
+
+    if (device->config.mode & RT_SPI_MSB)
+    {
+        tmp = ((value & 0xff00) >> 8) | ((value & 0x00ff) << 8);
+        value = tmp;
+    }
+
+    return value;
 }
 
 struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,

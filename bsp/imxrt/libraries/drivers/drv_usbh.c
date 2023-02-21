@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,7 +24,11 @@
 
 /* USB PHY configuration */
 #ifndef BOARD_USB_PHY_D_CAL
+#ifdef SOC_IMXRT1170_SERIES
+#define BOARD_USB_PHY_D_CAL (0x07U)
+#else
 #define BOARD_USB_PHY_D_CAL (0x0CU)
+#endif
 #endif
 #ifndef BOARD_USB_PHY_TXCAL45DP
 #define BOARD_USB_PHY_TXCAL45DP (0x06U)
@@ -33,7 +37,12 @@
 #define BOARD_USB_PHY_TXCAL45DM (0x06U)
 #endif
 
-#define USB_HOST_INTERRUPT_PRIORITY 3
+#define USB_HOST_INTERRUPT_PRIORITY 6
+
+/* Allocate the memory for the heap. */
+#if defined(configAPPLICATION_ALLOCATED_HEAP) && (configAPPLICATION_ALLOCATED_HEAP)
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+#endif
 
 enum
 {
@@ -91,20 +100,22 @@ static void _imxrt_usb_host_send_callback(void *param, usb_host_transfer_t *tran
  */
 static void USB_HostClockInit(usb_controller_index_t controller_id)
 {
+    uint32_t usbClockFreq;
     usb_phy_config_struct_t phyConfig = {
         BOARD_USB_PHY_D_CAL, BOARD_USB_PHY_TXCAL45DP, BOARD_USB_PHY_TXCAL45DM,
     };
-    uint32_t notUsed = 0;
+
+    usbClockFreq = 24000000;
 
     if (controller_id == kUSB_ControllerEhci0)
     {
-        CLOCK_EnableUsbhs0PhyPllClock(kCLOCK_Usbphy480M, 480000000U);
-        CLOCK_EnableUsbhs0Clock(kCLOCK_Usb480M, 480000000U);
+        CLOCK_EnableUsbhs0PhyPllClock(kCLOCK_Usbphy480M, usbClockFreq);
+        CLOCK_EnableUsbhs0Clock(kCLOCK_Usb480M, usbClockFreq);
     }
     else
     {
-        CLOCK_EnableUsbhs1PhyPllClock(kCLOCK_Usbphy480M, 480000000U);
-        CLOCK_EnableUsbhs1Clock(kCLOCK_Usb480M, 480000000U);
+        CLOCK_EnableUsbhs1PhyPllClock(kCLOCK_Usbphy480M, usbClockFreq);
+        CLOCK_EnableUsbhs1Clock(kCLOCK_Usb480M, usbClockFreq);
     }
 
     USB_EhciPhyInit(controller_id, 24000000U, &phyConfig);
@@ -151,7 +162,7 @@ static uint8_t _ehci0_pipe_idx;
 
 static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int timeouts)
 {
-    int timeout = timeouts;
+//    int timeout = timeouts;
 
     if (!imxrt_usb_host_obj[USBH0_INDEX].connect_status)
     {

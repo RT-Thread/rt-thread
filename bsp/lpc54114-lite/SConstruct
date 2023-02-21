@@ -23,7 +23,7 @@ env = Environment(tools = ['mingw'],
 if rtconfig.PLATFORM == 'armcc':
     # overwrite cflags, because cflags has '--C99'
     env['CXXCOM'] = env['$CXX -o $TARGET --cpp -c $CXXFLAGS $_CCCOMCOM $SOURCES']
-    
+
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 if rtconfig.PLATFORM in ['iccarm']:

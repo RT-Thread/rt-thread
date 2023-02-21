@@ -568,19 +568,17 @@ typedef struct
 #define TIM_DMABASE_CAPCMPDAT4 ((uint16_t)0x0010)
 #define TIM_DMABASE_BKDT       ((uint16_t)0x0011)
 #define TIM_DMABASE_DMACTRL    ((uint16_t)0x0012)
-#define TIM_DMABASE_CAPCMPMOD3 ((uint16_t)0x0013)
-#define TIM_DMABASE_CAPCMPDAT5 ((uint16_t)0x0014)
-#define TIM_DMABASE_CAPCMPDAT6 ((uint16_t)0x0015)
+
+
 
 #define IsTimDmaBase(BASE)                                                                                             \
     (((BASE) == TIM_DMABASE_CTRL1) || ((BASE) == TIM_DMABASE_CTRL2) || ((BASE) == TIM_DMABASE_SMCTRL)                  \
      || ((BASE) == TIM_DMABASE_DMAINTEN) || ((BASE) == TIM_DMABASE_STS) || ((BASE) == TIM_DMABASE_EVTGEN)              \
-     || ((BASE) == TIM_DMABASE_CAPCMPMOD1) || ((BASE) == TIM_DMABASE_CAPCMPMOD2) || ((BASE) == TIM_DMABASE_CAPCMPMOD3) \
+     || ((BASE) == TIM_DMABASE_CAPCMPMOD1) || ((BASE) == TIM_DMABASE_CAPCMPMOD2)                                       \
      || ((BASE) == TIM_DMABASE_CAPCMPEN) || ((BASE) == TIM_DMABASE_CNT) || ((BASE) == TIM_DMABASE_PSC)                 \
      || ((BASE) == TIM_DMABASE_AR) || ((BASE) == TIM_DMABASE_REPCNT) || ((BASE) == TIM_DMABASE_CAPCMPDAT1)             \
      || ((BASE) == TIM_DMABASE_CAPCMPDAT2) || ((BASE) == TIM_DMABASE_CAPCMPDAT3) || ((BASE) == TIM_DMABASE_CAPCMPDAT4) \
-     || ((BASE) == TIM_DMABASE_CAPCMPDAT5) || ((BASE) == TIM_DMABASE_CAPCMPDAT6) || ((BASE) == TIM_DMABASE_BKDT)       \
-     || ((BASE) == TIM_DMABASE_DMACTRL))
+     || ((BASE) == TIM_DMABASE_BKDT)|| ((BASE) == TIM_DMABASE_DMACTRL))
 /**
  * @}
  */
@@ -828,14 +826,14 @@ typedef struct
  * @}
  */
 
-/** @defgroup ETR selection 
+/** @defgroup ETR selection
   * @{
   */
 #define TIM_ETR_Seletct_ExtGpio                 ((uint16_t)0x0000)
 #define TIM_ETR_Seletct_innerTsc                ((uint16_t)0x0100)
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup TIM_Slave_Mode
  * @{
@@ -926,11 +924,11 @@ typedef struct
 #define IsAdvancedTimCCENFlag(FLAG)                                                                                             \
     (((FLAG) == TIM_CC1EN) || ((FLAG) == TIM_CC1NEN) || ((FLAG) == TIM_CC2EN) || ((FLAG) == TIM_CC2NEN)   \
      || ((FLAG) == TIM_CC3EN) || ((FLAG) == TIM_CC3NEN)                              \
-     || ((FLAG) == TIM_CC4EN) || ((FLAG) == TIM_CC5EN) || ((FLAG) == TIM_CC6EN)   )                      
+     || ((FLAG) == TIM_CC4EN) || ((FLAG) == TIM_CC5EN) || ((FLAG) == TIM_CC6EN)   )
 #define IsGeneralTimCCENFlag(FLAG)                                                                                             \
     (((FLAG) == TIM_CC1EN) ||  ((FLAG) == TIM_CC2EN)    \
      || ((FLAG) == TIM_CC3EN)                             \
-     || ((FLAG) == TIM_CC4EN)      )               
+     || ((FLAG) == TIM_CC4EN)      )
 
 /** @addtogroup TIM_Legacy
  * @{

@@ -1,5 +1,5 @@
 /*
- * linker script for APM32F10x with GNU ld
+ * linker script for APM32F40x with GNU ld
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
@@ -77,11 +77,12 @@ SECTIONS
         _edata = . ;
     } >DATA
 
-    .stack : 
+    .stack :
     {
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
+        _end_stack = .;
     } >DATA
 
     __bss_start = .;
@@ -98,7 +99,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > DATA
     __bss_end = .;

@@ -64,6 +64,8 @@ set RTT_EXEC_PATH=C:\FreedomStudio-2019-08-1-win64\SiFive\riscv64-unknown-elf-gc
 set path=%path%;C:\FreedomStudio-2019-08-1-win64\SiFive\riscv64-unknown-elf-gcc-8.3.0-2019.08.0\bin
 ```
 
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
+
 ### 2.4 从 Env 工具打开 IDE
 
 在 Env 中使用 cd 命令切换到 FreedomStudio 解压后的目录中，再执行 `FreedomStudio.exe` 文件启动 IDE。例如：

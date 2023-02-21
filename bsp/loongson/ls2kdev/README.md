@@ -35,7 +35,11 @@ if  CROSS_TOOL == 'gcc':
 
 安装好工具链后，假设工具链安装在`D:\mgc\embedded\codebench`目录下。使用env工具，打开console后，进入到命令行环境中，需要手动设置工具链的环境变量`RTT_EXEC_PATH`：
 
+```
     set RTT_EXEC_PATH=D:\mgc\embedded\codebench\bin
+```
+
+或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
 
 使用env工具，可以在console下进入到`bsp/ls2kdev`目录中，然后在控制台输入`scons`即可，可以生成`rtthread.elf`、`rtthread.bin`文件，其中`rtthread.elf`是下载到开发板上的程序。
 

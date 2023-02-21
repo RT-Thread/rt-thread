@@ -1,62 +1,89 @@
-# STM32F103 Blue-Pill开发板的Arduino生态兼容说明
+# The Arduino Compatible for STM32F103 Blue Pill Board
 
-## 1 RTduino - RT-Thread的Arduino生态兼容层
+**English** | [中文](README_zh.md)
 
-STM32F103 Blue-Pill开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
+## 1 RTduino - Arduino Ecosystem Compatibility Layer for RT-Thread
 
-### 1.1 如何开启针对本BSP的Arduino生态兼容层
+STM32 Blue Pill board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on the board.
 
-Env 工具下敲入 menuconfig 命令，或者 RT-Thread Studio IDE 下选择 RT-Thread Settings：
+### 1.1 How to Enable RTduino
+
+Please go to the [RTduino repository](https://github.com/RTduino/RTduino) to see the details.
 
 ```Kconfig
 Hardware Drivers Config --->
     Onboard Peripheral Drivers --->
-        [*] Support Arduino
+        [*] Compatible with Arduino Ecosystem (RTduino)
 ```
 
-## 2 Arduino引脚排布
+## 2 Arduino Pinout
 
-![blue-pill-f103-pinout](blue-pill-f103-pinout.png)
+For more information, please see [pins_arduino.c](pins_arduino.c) and [pins_arduino.h](pins_arduino.h).
 
-该BSP遵照Arduino UNO板的引脚排列方式，并扩展增加了Blue-pill自身的板载资源功能引脚。详见 `pins_arduino.c`
+![blue-pill-f103-pinout](blue-pill-f103-pinout.jpg)
 
-| Arduino引脚编号 | STM32引脚编号 | 5V容忍 | 备注                                           |
-| ----------- | --------- | ---- | -------------------------------------------- |
-| 0 (D0)      | PB7       | 是    |                                              |
-| 1 (D1)      | PB6       | 是    |                                              |
-| 2 (D2)      | PB5       | 否    | PWM3-CH2（定时器3发生）                             |
-| 3 (D3)      | PB4       | 是    | PWM3-CH1（定时器3发生）                             |
-| 4 (D4)      | PB3       | 是    | PWM2-CH2（定时器2发生）                             |
-| 5 (D5)      | PA15      | 是    | PWM2-CH1（定时器2发生）                             |
-| 6 (D6)      | PA8       | 是    |                                              |
-| 7 (D7)      | PB12      | 是    |                                              |
-| 8 (D8)      | PC13      | 否    |                                              |
-| 9 (D9)      | PC14      | 否    |                                              |
-| 10 (D10)    | PC15      | 否    |                                              |
-| 11 (D11)    | PA0       | 否    |                                              |
-| 12 (D12)    | PB0       | 否    | PWM3-CH3（定时器3发生）                             |
-| 13 (D13)    | PB1       | 否    | PWM3-CH4（定时器3发生）                             |
-| A0          | PA1       | 否    | ADC1-CH1                                     |
-| A1          | PA4       | 否    | ADC1-CH4                                     |
-| A2          | PA5       | 否    | ADC1-CH5                                     |
-| A3          | PA6       | 否    | ADC1-CH6                                     |
-| A4          | PA7       | 否    | ADC1-CH7                                     |
-| A5          | --        |      | 芯片内部参考电压 ADC                                 |
-| A6          | --        |      | 芯片内部温度 ADC                                   |
-| --          | PB9       | 是    | I2C-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
-| --          | PB8       | 是    | I2C-SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO  |
-| --          | PA12      | 是    | USB-DP，被TinyUSB接管，不可当做普通IO                   |
-| --          | PA11      | 是    | USB-DM，被TinyUSB接管，不可当做普通IO                   |
-| --          | PA10      | 是    | UART1-RX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO |
-| --          | PA9       | 是    | UART1-TX，被RT-Thread的UART设备框架uart1接管，不可当做普通IO |
-| --          | PA2       | 否    | UART2-TX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO |
-| --          | PA3       | 否    | UART2-RX，被RT-Thread的UART设备框架uart2接管，不可当做普通IO |
-| --          | PB10      | 是    | UART3-TX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO |
-| --          | PB11      | 是    | UART3-RX，被RT-Thread的UART设备框架uart3接管，不可当做普通IO |
-| --          | PB15      | 是    | SPI-MOSI，SPI功能尚未完全实现                         |
-| --          | PB14      | 是    | SPI-MISO，SPI功能尚未完全实现                         |
-| --          | PB13      | 是    | SPI-SCK ，SPI功能尚未完全实现                         |
+| Arduino Pin         | STM32 Pin | 5V Tolerate | Note                                                                                                        |
+| ------------------- | --------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| 0 (D0)              | PB7       | Yes         |                                                                                                             |
+| 1 (D1)              | PB6       | Yes         |                                                                                                             |
+| 2 (D2)              | PB5       | No          | PWM3-CH2. Token over by RT-Thread PWM device by default                                                     |
+| 3 (D3)              | PB4       | Yes         | PWM3-CH1. Token over by RT-Thread PWM device by default                                                     |
+| 4 (D4)              | PB3       | Yes         | PWM2-CH2. Token over by RT-Thread PWM device by default                                                     |
+| 5 (D5)              | PA15      | Yes         | PWM2-CH1. Token over by RT-Thread PWM device by default                                                     |
+| 6 (D6)              | PA8       | Yes         |                                                                                                             |
+| 7 (D7, SS)          | PB12      | Yes         | SPI chip select by default                                                                                  |
+| 8 (D8, LED_BUILTIN) | PC13      | No          | USER LED                                                                                                    |
+| 9 (D9)              | PC14      | No          |                                                                                                             |
+| 10 (D10)            | PC15      | No          |                                                                                                             |
+| 11 (D11)            | PA0       | No          |                                                                                                             |
+| 12 (D12)            | PB0       | No          | PWM3-CH3. Token over by RT-Thread PWM device by default                                                     |
+| 13 (D13)            | PB1       | No          | PWM3-CH4. Token over by RT-Thread PWM device by default                                                     |
+| 14 (D14)            | PB9       | Yes         | I2C-SDA. Token over by RT-Thread I2C device by default                                                      |
+| 15 (D15)            | PB8       | Yes         | I2C-SCL. Token over by RT-Thread I2C device by default                                                      |
+| 16 (D16)            | PA12      | Yes         | USB-DP. Token over by [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) software package by default. |
+| 17 (D17)            | PA11      | Yes         | USB-DM. Token over by [TinyUSB](https://github.com/RT-Thread-packages/tinyusb) software package by default. |
+| 18 (D18)            | PA10      | Yes         | Serial-Rx. Token over by RT-Thread UART device by default                                                   |
+| 19 (D19)            | PA9       | Yes         | Serial-Tx. Token over by RT-Thread UART device by default                                                   |
+| 20 (D20)            | PA2       | No          | Serial2-Tx. Token over by RT-Thread UART device by default                                                  |
+| 21 (D21)            | PA3       | No          | Serial2-Rx. Token over by RT-Thread UART device by default                                                  |
+| 22 (D22)            | PB10      | Yes         | Serial3-Tx. Token over by RT-Thread UART device by default                                                  |
+| 23 (D23)            | PB11      | Yes         | Serial3-Rx. Token over by RT-Thread UART device by default                                                  |
+| 24 (D24)            | PB15      | Yes         | SPI-MOSI. Token over by RT-Thread SPI device by default                                                     |
+| 25 (D25)            | PB14      | Yes         | SPI-MISO. Token over by RT-Thread SPI device by default                                                     |
+| 26 (D26)            | PB13      | Yes         | SPI-SCK. Token over by RT-Thread SPI device by default                                                      |
+| 27 (A0)             | PA1       | No          | ADC1-CH1. Token over by RT-Thread ADC device by default                                                     |
+| 28 (A1)             | PA4       | No          | ADC1-CH4. Token over by RT-Thread ADC device by default                                                     |
+| 29 (A2)             | PA5       | No          | ADC1-CH5. Token over by RT-Thread ADC device by default                                                     |
+| 30 (A3)             | PA6       | No          | ADC1-CH6. Token over by RT-Thread ADC device by default                                                     |
+| 31 (A4)             | PA7       | No          | ADC1-CH7. Token over by RT-Thread ADC device by default                                                     |
+| 32 (A5)             | --        |             | ADC of chip internal reference voltage. Token over by RT-Thread ADC device by default                       |
+| 33 (A6)             | --        |             | ADC of chip internal temperature. Token over by RT-Thread ADC device by default                             |
 
-> 注意：
+> Notice:
 > 
-> 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
+> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timers can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
+
+## 3 Communication
+
+### 3.1 I2C Bus
+
+I2C bus is `D14` and `D15` pins. Users can directly include the `#include <Wire.h>`, which is the Arduino official I2C header file, to use the I2C bus.
+
+### 3.2 SPI Bus
+
+SPI bus is `D24`, `D25` and `D26` pins. Users can directly include the `#include <SPI.h>`, which is the Arduino official SPI header file, to use the SPI bus. In addition, chip select pin (SS) also is used, which is `D7` by default.
+
+### 3.3 Serial
+
+This board supports to use `Serial.` method to operate `uart1` device; use `Serial2.` method to use `uart2` device; use `Serial3.` method to use `uart3` device. See [example](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp).
+
+### 3.4 USB Virtual Serial
+
+This board supports USB virtual serial. See [example](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial). You may enable it if is needed.
+
+```Kconfig
+RT-Thread online packages --->
+    Arduino libraries --->
+        [*] RTduino: Arduino Ecological Compatibility Layer
+            [*] Enable USB Serial
+```

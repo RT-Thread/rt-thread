@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -45,8 +45,13 @@ static struct serial_device serial_device_0 =
 {
     .reg_base = (struct uart_registers *)UART0_REG_BASE,
     .irqn = UART0_IRQn,
+#ifndef BSP_USING_UART0_PIN_ALT
     .rxd_pin = UART_RXD0_PIN,
     .txd_pin = UART_TXD0_PIN,
+#else
+    .rxd_pin = UART_RXD0_ALT,
+    .txd_pin = UART_TXD0_ALT,
+#endif
     .name = "uart0",
 };
 #endif
@@ -250,22 +255,13 @@ int rt_hw_uart_init(void)
 
     while (--n >= 0)
     {
-        uint32_t flag, txd_pin, rxd_pin;
+        uint32_t flag;
         struct serial_device *serial = devices[n];
         serial->parent.ops = &uart_ops;
         serial->parent.config = config;
 
-        txd_pin = serial->txd_pin;
-        rxd_pin = serial->rxd_pin;
-#ifdef BSP_USING_UART0_PIN_ALT
-        if (serial->irqn == UART0_IRQn)
-        {
-            txd_pin = UART_TXD0_ALT;
-            rxd_pin = UART_RXD0_ALT;
-        }
-#endif
-        rt_pin_mode(txd_pin, PIN_MODE_OUTPUT);
-        rt_pin_mode(rxd_pin, PIN_MODE_INPUT_PULLUP);
+        rt_pin_mode(serial->txd_pin, PIN_MODE_OUTPUT);
+        rt_pin_mode(serial->rxd_pin, PIN_MODE_INPUT_PULLUP);
 
         sys_clk_off_by_irqn(serial->irqn, SYS_SLP_CLK_ON);
 

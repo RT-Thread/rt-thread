@@ -26,39 +26,64 @@ int dfs_net_getsocket(int fd)
     _dfs_fd = fd_get(fd);
     if (_dfs_fd == NULL) return -1;
 
-    if (_dfs_fd->type != FT_SOCKET) socket = -1;
-    else socket = (int)_dfs_fd->data;
+    if (_dfs_fd->vnode->type != FT_SOCKET) socket = -1;
+    else socket = (int)(size_t)_dfs_fd->vnode->data;
 
-    fd_put(_dfs_fd); /* put this dfs fd */
     return socket;
 }
 
 static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
 {
-    int socket = (int) file->data;
+    int ret;
+    int socket = (int)(size_t)file->vnode->data;
 
-    return sal_ioctlsocket(socket, cmd, args);
+    ret = sal_ioctlsocket(socket, cmd, args);
+    if (ret < 0)
+    {
+        ret = rt_get_errno();
+        return (ret > 0) ? (-ret) : ret;
+    }
+    return ret;
 }
 
 static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)
 {
-    int socket = (int) file->data;
+    int ret;
+    int socket = (int)(size_t)file->vnode->data;
 
-    return sal_recvfrom(socket, buf, count, 0, NULL, NULL);
+    ret = sal_recvfrom(socket, buf, count, 0, NULL, NULL);
+    if (ret < 0)
+    {
+        ret = rt_get_errno();
+        return (ret > 0) ? (-ret) : ret;
+    }
+    return ret;
 }
 
 static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
 {
-    int socket = (int) file->data;
-
-    return sal_sendto(socket, buf, count, 0, NULL, 0);
+    int ret;
+    int socket = (int)(size_t)file->vnode->data;
+    
+    ret = sal_sendto(socket, buf, count, 0, NULL, 0);
+    if (ret < 0)
+    {
+        ret = rt_get_errno();
+        return (ret > 0) ? (-ret) : ret;
+    }
+    return ret;
 }
-
 static int dfs_net_close(struct dfs_fd* file)
 {
-    int socket = (int) file->data;
+    int socket;
+    int ret = 0;
 
-    return sal_closesocket(socket);
+    if (file->vnode->ref_count == 1)
+    {
+        socket = (int)(size_t)file->vnode->data;
+        ret = sal_closesocket(socket);
+    }
+    return ret;
 }
 
 static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)

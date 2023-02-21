@@ -182,7 +182,7 @@ char *strndup(const char *s, size_t size)
     return news;
 }
 
-char *strtok_r(char *str, const char *delim, char **saveptr)
+rt_weak char *strtok_r(char *str, const char *delim, char **saveptr)
 {
     char *pbegin;
     char *pend = NULL;

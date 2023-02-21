@@ -1,0 +1,33 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+mm32f3277g8p_msp.c
+''')
+
+if GetDepend(['BSP_USING_USER_KEY']):
+    src += Glob("ports/user_key.c")
+
+path =  [cwd]
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM == 'gcc':
+    src += [startup_path_prefix + '/MM32F3270_HAL/CMSIS/Device/MM32/MM32F3277/Source/Templates/gcc/startup_mm32f3270.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/MM32F3270_HAL/CMSIS/Device/MM32/MM32F3277/Source/Templates/arm/startup_mm32f3270.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/MM32F3270_HAL/CMSIS/Device/MM32/MM32F3277/Source/Templates/iar/startup_mm32f3270.s']
+
+# You can select chips from the list above
+CPPDEFINES = ['MM32F3277G']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

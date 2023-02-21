@@ -1,0 +1,57 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+common/source/F2837xD_PieCtrl.c
+common/source/F2837xD_PieVect.c
+common/source/F2837xD_SysCtrl.c
+common/source/F2837xD_CpuTimers.c
+headers/source/F2837xD_GlobalVariableDefs.c
+common/source/F2837xD_DefaultISR.c
+common/source/F2837xD_Gpio.c
+common/source/F2837xD_usDelay.asm
+headers/cmd/F2837xD_Headers_BIOS_cpu1.cmd
+""")
+
+if GetDepend(['BSP_USING_ADC']):
+    src += ['common/source/F2837xD_Adc.c']
+
+if GetDepend(['BSP_USING_CAN']):
+    src += ['common/source/F2837xD_can.c']
+
+    src += ['common/source/F2837xD_CpuTimers.c']
+
+if GetDepend(['BSP_USING_DMA']):
+    src += ['common/source/F2837xD_Dma.c']
+
+if GetDepend(['BSP_USING_ECAP']):
+    src += ['common/source/F2837xD_ECap.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['common/source/F2837xD_Epwm.c']
+
+if GetDepend(['BSP_USING_QEP']):
+    src += ['common/source/F2837xD_EQep.c']
+
+if GetDepend(['BSP_USING_I2C']):
+    src += ['common/source/F2837xD_I2C.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['common/source/F2837xD_Spi.c']
+
+if GetDepend(['BSP_USING_UART']):
+    src += ['common/source/F2837xD_Sci.c']
+    src += ['common/source/F2837xD_sci_io.c']
+
+path = [cwd + '/headers/include',
+    cwd + '/headers/include']
+
+CPPDEFINES = ['USE_HAL_DRIVER']
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

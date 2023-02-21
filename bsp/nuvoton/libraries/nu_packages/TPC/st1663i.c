@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -132,7 +132,7 @@ static int8_t pre_id[ST_MAX_TOUCH];
 static S_ST_REGMAP sStRegMap;
 static rt_uint8_t pre_touch = 0;
 
-static rt_size_t st1663i_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t st1663i_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
     int i;
 
@@ -313,11 +313,11 @@ int rt_hw_st1663i_init(const char *name, struct rt_touch_config *cfg)
 
     st1663i_init(&st1663i_client);
 
-    rt_memset(&pre_x[0], 0xff,  ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_y[0], 0xff,  ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_w[0], 0xff,  ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&s_tp_dowm[0], 0, ST_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_id[0], 0xff,  ST_MAX_TOUCH * sizeof(int8_t));
+    rt_memset(&pre_x[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_y[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_w[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, ST_MAX_TOUCH * sizeof(rt_int8_t));
+    rt_memset(&pre_id[0], 0xff,  ST_MAX_TOUCH * sizeof(rt_int8_t));
 
     /* register touch device */
     touch_device->info.type = RT_TOUCH_TYPE_CAPACITANCE;

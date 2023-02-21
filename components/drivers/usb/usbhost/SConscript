@@ -10,24 +10,24 @@ core/hub.c
 """)
 
 if GetDepend('RT_USBH_ADK'):
-	src += Glob('class/adk.c')
-	src += Glob('class/adkapp.c')
+    src += Glob('class/adk.c')
+    src += Glob('class/adkapp.c')
 
 if GetDepend('RT_USBH_MSTORAGE'):
-	src += Glob('class/mass.c')
-	src += Glob('class/udisk.c')
+    src += Glob('class/mass.c')
+    src += Glob('class/udisk.c')
 
 if GetDepend('RT_USBH_HID'):
-	src += Glob('class/hid.c')
+    src += Glob('class/hid.c')
 
 if GetDepend('RT_USBH_HID_MOUSE'):
-	src += Glob('class/umouse.c')
+    src += Glob('class/umouse.c')
 
 if GetDepend('RT_USBH_HID_KEYBOARD'):
-	src += Glob('class/ukbd.c')
+    src += Glob('class/ukbd.c')
 
 CPPPATH = [cwd, cwd + '/class', cwd + '/core', \
-	cwd + '/include', cwd + '../../../include']
+    cwd + '/include', cwd + '../../../include']
 
 group = DefineGroup('rt_usbh', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
 

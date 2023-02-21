@@ -1,0 +1,256 @@
+menu "Hardware Drivers Config"
+
+config SOC_APM32F407ZG
+    bool
+    select SOC_SERIES_APM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (W25Q16 spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        default n
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
+
+    config PHY_USING_LAN8720A
+        bool
+        depends on BSP_USING_ETH
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 BUS"
+                if BSP_USING_I2C1
+                    comment "Notice: PB6 --> 22; PB7 --> 23"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 scl pin number"
+                        range 0 63
+                        default 22
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 0 63
+                        default 23
+                endif
+            config BSP_USING_I2C2
+                bool "Enable I2C2 BUS"
+                if BSP_USING_I2C2
+                    comment "Notice: PA0 --> 0; PA1 --> 1"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 0 63
+                        default 0
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 0 63
+                        default 1
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+        endif
+
+    menuconfig BSP_USING_TMR
+        bool "Enable Timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TMR
+            config BSP_USING_TMR1
+                bool "Enable TMR1"
+                default n
+
+            config BSP_USING_TMR2
+                bool "Enable TMR2"
+                default n
+
+            config BSP_USING_TMR3
+                bool "Enable TMR3"
+                default n
+
+            config BSP_USING_TMR4
+                bool "Enable TMR4"
+                default n
+
+            config BSP_USING_TMR5
+                bool "Enable TMR5"
+                default n
+
+            config BSP_USING_TMR6
+                bool "Enable TMR6"
+                default n
+
+            config BSP_USING_TMR7
+                bool "Enable TMR7"
+                default n
+
+            config BSP_USING_TMR8
+                bool "Enable TMR8"
+                default n
+
+            config BSP_USING_TMR9
+                bool "Enable TMR9"
+                default n
+
+            config BSP_USING_TMR10
+                bool "Enable TMR10"
+                default n
+
+            config BSP_USING_TMR11
+                bool "Enable TMR11"
+                default n
+
+            config BSP_USING_TMR12
+                bool "Enable TMR12"
+                default n
+
+            config BSP_USING_TMR13
+                bool "Enable TMR13"
+                default n
+
+            config BSP_USING_TMR14
+                bool "Enable TMR14"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output PWM"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH1
+                    bool "Enable PWM3 channel1"
+                    default n
+
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
+                    default n
+
+                config BSP_USING_PWM3_CH3
+                    bool "Enable PWM3 channel3"
+                    default n
+
+                config BSP_USING_PWM3_CH4
+                    bool "Enable PWM3 channel4"
+                    default n
+            endif
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

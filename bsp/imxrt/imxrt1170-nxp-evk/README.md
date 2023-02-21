@@ -38,7 +38,7 @@ Each peripheral supporting condition for this BSP is as follows:
 | SDIO                     | √           |                                       |
 | RTC                      | √           |                                       |
 | PWM                      | √           |                                       |
-
+| CAN                      | √           |                                       |
 
 ## Execution Instruction
 

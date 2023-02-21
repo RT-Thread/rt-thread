@@ -16,7 +16,7 @@ menu "Onboard Peripheral Drivers"
         default y
 
     config BSP_USING_ARDUINO
-        bool "Support Arduino"
+        bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_UART2
@@ -35,10 +35,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM3_CH4
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_ADAFRUIT
-        imply RTDUINO_USING_MSTIMER2
+        imply RTDUINO_USING_SPI
         default n
 
 endmenu
@@ -82,7 +83,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
         endif
-        
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -156,7 +157,7 @@ menu "On-chip Peripheral Drivers"
                     bool "RTC USING LSI"
             endchoice
         endif
-        
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -170,7 +171,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                        
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -195,7 +196,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

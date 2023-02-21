@@ -9,6 +9,29 @@ config SOC_STM32F407IG
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_PWM1_CH2
+        select BSP_USING_PWM1_CH3
+        select BSP_USING_PWM1_CH4
+        select BSP_USING_PWM8
+        select BSP_USING_PWM8_CH1
+        select BSP_USING_PWM8_CH2
+        select BSP_USING_PWM8_CH3
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -68,7 +91,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
-            
+
             menuconfig BSP_USING_PWM1
                 bool "Enable timer1 output PWM"
                 default n
@@ -96,6 +119,21 @@ menu "On-chip Peripheral Drivers"
                         default n
                 endif
 
+            menuconfig BSP_USING_PWM5
+                bool "Enable timer5 output PWM"
+                default n
+                if BSP_USING_PWM5
+                    config BSP_USING_PWM5_CH1
+                        bool "Enable PWM5 channel1(LED_B)"
+                        default n
+                    config BSP_USING_PWM5_CH2
+                        bool "Enable PWM5 channel2(LED_G)"
+                        default n
+                    config BSP_USING_PWM5_CH3
+                        bool "Enable PWM5 channel3(LED_R)"
+                        default n
+                endif
+
             menuconfig BSP_USING_PWM8
                 bool "Enable timer8 output PWM"
                 default n
@@ -112,12 +150,15 @@ menu "On-chip Peripheral Drivers"
                 endif
 
         endif
-        
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
         select RT_USING_ADC
         if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
             config BSP_USING_ADC3
                 bool "Enable ADC3"
                 default n
@@ -130,13 +171,13 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                        
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                        
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -151,6 +192,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
+            comment "Notice: PF0 --> 80; PF1 --> 81"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 default 81
@@ -159,13 +201,13 @@ menu "On-chip Peripheral Drivers"
                 default 80
         endif
 
-        
-    source "../libraries/HAL_Drivers/Kconfig"    
-    
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

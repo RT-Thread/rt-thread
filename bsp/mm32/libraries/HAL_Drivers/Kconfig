@@ -1,0 +1,25 @@
+if BSP_USING_USBD
+    config BSP_USBD_TYPE_FS
+        bool
+        # "USB Full Speed (FS) Core"
+    config BSP_USBD_TYPE_HS
+        bool
+        # "USB High Speed (HS) Core"
+
+    config BSP_USBD_SPEED_HS
+        bool
+        # "USB High Speed (HS) Mode"
+    config BSP_USBD_SPEED_HSINFS
+        bool
+        # "USB High Speed (HS) Core in FS mode"
+
+    config BSP_USBD_PHY_EMBEDDED
+        bool
+        # "Using Embedded phy interface"
+    config BSP_USBD_PHY_UTMI
+        bool
+        # "UTMI: USB 2.0 Transceiver Macrocell Interace"
+    config BSP_USBD_PHY_ULPI
+        bool
+        # "ULPI: UTMI+ Low Pin Interface"
+endif

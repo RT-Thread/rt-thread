@@ -16,13 +16,13 @@ tm4c123_driverlib/src/gpio.c
 """)
 
 #if GetDepend(['RT_USING_PIN']):
-   
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['tm4c123_driverlib/src/uart.c']
 
 #if GetDepend(['RT_USING_I2C']):
 
-    
+
 if GetDepend(['RT_USING_SPI']):
     src += ['tm4c123_driverlib/src/ssi.c']
 
@@ -32,10 +32,10 @@ if GetDepend(['RT_USING_SPI']):
 #if GetDepend(['RT_USING_CAN']):
 
 
-#if GetDepend(['RT_USING_HWTIMER']) 
+#if GetDepend(['RT_USING_HWTIMER'])
 
 if GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
-    src += ['tm4c123_driverlib/src/pwm.c']    
+    src += ['tm4c123_driverlib/src/pwm.c']
 
 #if GetDepend(['BSP_USING_ETH']):
 
@@ -64,7 +64,7 @@ if GetDepend(['RT_USING_ADC']):
 #if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
 
 
-path = [cwd + '/tm4c123_driverlib', 
+path = [cwd + '/tm4c123_driverlib',
     cwd + '/tm4c123_driverlib/driverlib',
     cwd + '/tm4c123_driverlib/driverlib/inc']
 

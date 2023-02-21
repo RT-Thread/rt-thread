@@ -20,7 +20,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-static rt_size_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_err_t result = RT_EOK;
     rt_size_t i;
@@ -228,7 +228,7 @@ static int adc(int argc, char **argv)
                 {
                     result = rt_adc_enable(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
-                    rt_kprintf("%s channel %d enables %s \n", adc_device->parent.parent.name, atoi(argv[2]), result_str);
+                    rt_kprintf("%s channel %d enables %s \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), result_str);
                 }
                 else
                 {
@@ -240,7 +240,7 @@ static int adc(int argc, char **argv)
                 if (argc == 3)
                 {
                     value = rt_adc_read(adc_device, atoi(argv[2]));
-                    rt_kprintf("%s channel %d  read value is 0x%08X \n", adc_device->parent.parent.name, atoi(argv[2]), value);
+                    rt_kprintf("%s channel %d  read value is 0x%08X \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), value);
                 }
                 else
                 {
@@ -253,7 +253,7 @@ static int adc(int argc, char **argv)
                 {
                     result = rt_adc_disable(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
-                    rt_kprintf("%s channel %d disable %s \n", adc_device->parent.parent.name, atoi(argv[2]), result_str);
+                    rt_kprintf("%s channel %d disable %s \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), result_str);
                 }
                 else
                 {
@@ -266,7 +266,7 @@ static int adc(int argc, char **argv)
                 {
                     voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
-                    rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, atoi(argv[2]), voltage / 1000, voltage % 1000);
+                    rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), voltage / 1000, voltage % 1000);
                 }
                 else
                 {

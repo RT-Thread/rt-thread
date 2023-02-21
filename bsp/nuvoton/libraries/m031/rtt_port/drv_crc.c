@@ -45,8 +45,10 @@ static rt_uint32_t nu_crc_run(
 {
     uint32_t u32CalChecksum = 0;
     uint32_t i = 0;
+    rt_err_t result;
 
-    rt_mutex_take(&s_CRC_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_CRC_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     /* Configure CRC controller  */
     CRC_Open(u32OpMode, u32Attr, u32Seed, CRC_WDATA_8);
@@ -86,7 +88,9 @@ static rt_uint32_t nu_crc_run(
 
     /* Get checksum value */
     u32CalChecksum = CRC_GetChecksum();
-    rt_mutex_release(&s_CRC_mutex);
+
+    result = rt_mutex_release(&s_CRC_mutex);
+    RT_ASSERT(result == RT_EOK);
 
     return u32CalChecksum;
 }
@@ -94,9 +98,7 @@ static rt_uint32_t nu_crc_run(
 rt_err_t nu_crc_init(void)
 {
     SYS_ResetModule(CRC_RST);
-
-    rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_PRIO);
-    return RT_EOK;
+    return rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_PRIO);
 }
 
 rt_uint32_t nu_crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, rt_size_t length)

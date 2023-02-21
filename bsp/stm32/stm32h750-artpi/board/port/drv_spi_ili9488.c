@@ -149,7 +149,7 @@ static void lcd_gpio_init(void)
 int rt_hw_spi_lcd_init(void)
 {
     __HAL_RCC_GPIOI_CLK_ENABLE();
-    rt_hw_spi_device_attach("spi2", "spi20", GPIOI, GPIO_PIN_0);
+    rt_hw_spi_device_attach("spi2", "spi20", GET_PIN(I, 0));
     lcd_gpio_init();
 
     rt_pin_write(LCD_RES_PIN, PIN_HIGH);

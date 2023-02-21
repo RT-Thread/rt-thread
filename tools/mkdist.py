@@ -166,31 +166,6 @@ def bsp_update_kconfig_library(dist_dir):
                 line = line[0:position] + 'libraries/HAL_Drivers/Kconfig"\n'
             f.write(line)
 
-def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
-    import subprocess
-    # default update the projects which have template file
-
-    if rttide == None:
-        tgt_dict = {'mdk4':('keil', 'armcc'),
-                    'mdk5':('keil', 'armcc'),
-                    'iar':('iar', 'iccarm'),
-                    'vs':('msvc', 'cl'),
-                    'vs2012':('msvc', 'cl'),
-                    'cdk':('gcc', 'gcc'),
-                    'eclipse':('eclipse', 'gcc')}
-    else:
-        item = 'eclipse --project-name=' + rttide['project_name']
-        tgt_dict = {item:('gcc', 'gcc')}
-
-    scons_env = os.environ.copy()
-    scons_env['RTT_ROOT'] = rtt_root
-
-    for item in tgt_dict:
-        child = subprocess.Popen('scons --target=' + item, cwd=bsp_root, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = child.communicate()
-        if child.returncode == 0:
-            print('update %s project' % item)
-
 def zip_dist(dist_dir, dist_name):
     import zipfile
 
@@ -328,23 +303,18 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     bsp_update_kconfig_library(dist_dir)
     # delete testcases in Kconfig
     bsp_update_kconfig_testcases(dist_dir)
-    # update all project files
-    bs_update_ide_project(dist_dir, target_path)
-
     # make zip package
     zip_dist(dist_dir, dist_name)
 
     print('done!')
 
-def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
+def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     print('make distribution....')
 
-    dist_name = os.path.basename(BSP_ROOT)
-
-    if rttide == None:
-        dist_dir = os.path.join(BSP_ROOT, 'dist', dist_name)
+    if project_path == None:
+        dist_dir = os.path.join(BSP_ROOT, 'dist', project_name)
     else:
-        dist_dir = rttide['project_path']
+        dist_dir = project_path
 
     target_path = os.path.join(dist_dir, 'rt-thread')
 
@@ -398,15 +368,10 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     bsp_update_kconfig_library(dist_dir)
     # delete testcases in Kconfig
     bsp_update_kconfig_testcases(dist_dir)
-    # update all project files
-    if rttide == None:
-        bs_update_ide_project(dist_dir, target_path)
-    else:
-        bs_update_ide_project(dist_dir, target_path, rttide)
 
     # make zip package
-    if rttide == None:
-        zip_dist(dist_dir, dist_name)
+    if project_path == None:
+        zip_dist(dist_dir, project_name)
 
     print('done!')
 

@@ -268,10 +268,22 @@ def MDK45Project(tree, target, script):
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
+    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
 
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
     Define.text = ', '.join(set(CPPDEFINES))
+
+    if ('CCFLAGS' in group and 'c99' in group['CCFLAGS']) or \
+       ('CFLAGS' in group and 'c99' in group['CFLAGS']) or \
+       ('CXXFLAGS' in group and 'c99' in group['CXXFLAGS']):
+        uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
+        uC99.text = '1'
+
+    if ('CCFLAGS' in group and '--gnu' in group['CCFLAGS']) or \
+       ('CFLAGS' in group and '--gnu' in group['CFLAGS']) or \
+       ('CXXFLAGS' in group and '--gnu' in group['CXXFLAGS']):
+        uGnu = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uGnu')
+        uGnu.text = '1'
 
     Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
     Misc.text = LINKFLAGS
@@ -319,7 +331,7 @@ def MDK5Project(target, script):
         import shutil
         shutil.copy2('template.uvoptx', 'project.uvoptx')
 
-def MDKProject(target, script):
+def MDK2Project(target, script):
     template = open('template.Uv2', "r")
     lines = template.readlines()
 
@@ -425,12 +437,14 @@ def ARMCC_Version():
     import re
 
     path = rtconfig.EXEC_PATH
-    path = os.path.join(path, 'armcc.exe')
+    if(rtconfig.PLATFORM == 'armcc'):
+        path = os.path.join(path, 'armcc.exe')
+    elif(rtconfig.PLATFORM == 'armclang'):
+        path = os.path.join(path, 'armlink.exe')
 
     if os.path.exists(path):
         cmd = path
     else:
-        print('Error: get armcc version failed. Please update the KEIL MDK installation path in rtconfig.py!')
         return "0.0"
 
     child = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -444,7 +458,8 @@ def ARMCC_Version():
 
     return version: MDK Plus 5.24/ARM Compiler 5.06 update 5 (build 528)/armcc [4d3621]
     '''
-
+    if not isinstance(stdout, str):
+        stdout = str(stdout, 'utf8') # Patch for Python 3
     version_Product = re.search(r'Product: (.+)', stdout).group(1)
     version_Product = version_Product[:-1]
     version_Component = re.search(r'Component: (.*)', stdout).group(1)
@@ -453,5 +468,4 @@ def ARMCC_Version():
     version_Tool = version_Tool[:-1]
     version_str_format = '%s/%s/%s'
     version_str = version_str_format % (version_Product, version_Component, version_Tool)
-    #print('version_str:' + version_str)
     return version_str

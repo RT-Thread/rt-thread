@@ -417,7 +417,7 @@ rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *me
     struct rt_spi_bit_obj *obj = rt_container_of(device->bus, struct rt_spi_bit_obj, bus);
     struct rt_spi_bit_ops *ops = obj->ops;
     struct rt_spi_configuration *config = &obj->config;
-    rt_base_t cs_pin = (rt_base_t)device->parent.user_data;
+    rt_base_t cs_pin = device->cs_pin;
 
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
@@ -438,7 +438,7 @@ rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *me
 #endif
 
     /* take CS */
-    if (message->cs_take)
+    if (message->cs_take && (cs_pin != PIN_NONE))
     {
         LOG_I("spi take cs\n");
         rt_pin_write(cs_pin, PIN_LOW);
@@ -492,7 +492,7 @@ rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *me
     }
 
     /* release CS */
-    if (message->cs_release)
+    if (message->cs_release && (cs_pin != PIN_NONE))
     {
         spi_delay(ops);
         rt_pin_write(cs_pin, PIN_HIGH);

@@ -3475,12 +3475,11 @@ void FLEXCAN_TransferCreateHandle(CAN_Type *base,
     /* Get instance from peripheral base address. */
     instance = (uint8_t)FLEXCAN_GetInstance(base);
 
-    /* Save the context in global variables to support the double weak mechanism. */
-    s_flexcanHandle[instance] = handle;
-
     /* Register Callback function. */
     handle->callback = callback;
     handle->userData = userData;
+    /* Save the context in global variables to support the double weak mechanism. */
+    s_flexcanHandle[instance] = handle;
 
     s_flexcanIsr = FLEXCAN_TransferHandleIRQ;
 

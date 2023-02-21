@@ -1,0 +1,187 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32H750VBT6
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (W25Q64 spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select RT_USING_DFS
+        select PKG_USING_LITTLEFS
+        select RT_USING_MTD_NOR
+        select RT_USING_FAL
+        select FAL_USING_SFUD_PORT
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        default n
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q64)"
+        select BSP_USING_QSPI
+        select FAL_USING_SFUD_PORT
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
+    config BSP_USING_LCD_SPI
+        bool "Enable 0.96' TFT-LCD(ST7735S)"
+        select BSP_USING_GPIO
+        select BSP_USING_SPI
+        select BSP_USING_SPI4
+        # select BSP_SPI4_TX_USING_DMA
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH2
+        default n
+
+        if BSP_USING_LCD_SPI
+            choice
+                prompt "choice back light"
+                default LCD_BACKLIGHT_USING_GPIO
+                config LCD_BACKLIGHT_USING_PWM
+                    bool "LCD_BACKLIGHT_USING_PWM(tim1_ch2 pwm1)"
+                config LCD_BACKLIGHT_USING_GPIO
+                    bool "LCD_BACKLIGHT_USING_GPIO(PE10)"
+            endchoice
+        endif
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 1 216
+                default 135
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 216
+                default 95
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM1
+            bool "Enable timer1 output pwm"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1_CH1
+                    bool "Enable PWM1 channel1"
+                    default n
+
+                config BSP_USING_PWM1_CH2
+                    bool "Enable PWM1 channel2"
+                    default n
+
+                config BSP_USING_PWM1_CH3
+                    bool "Enable PWM1 channel3"
+                    default n
+
+                config BSP_USING_PWM1_CH4
+                    bool "Enable PWM1 channel4"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    config BSP_USING_USBD
+        bool "Enable OTGHS as USB device"
+        select RT_USING_USB_DEVICE
+        select BSP_USBD_TYPE_HS
+        select BSP_USBD_SPEED_HS
+        select BSP_USBD_PHY_ULPI
+        default n
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

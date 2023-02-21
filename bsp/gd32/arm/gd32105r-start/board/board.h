@@ -29,7 +29,7 @@ extern char __ICFEDIT_region_RAM_end__;
 #define GD32_SRAM_END          (0x20000000 + GD32_SRAM_SIZE * 1024)
 #endif
 
-#ifdef __CC_ARM
+#ifdef __ARMCC_VERSION
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

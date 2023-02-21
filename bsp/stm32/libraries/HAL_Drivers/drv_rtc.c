@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,12 +43,12 @@ static RTC_AlarmTypeDef Alarm_InitStruct = { 0 };
 static struct rtc_device_object rtc_device;
 static RTC_HandleTypeDef RTC_Handler;
 
-RT_WEAK uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
+rt_weak uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
 {
     return (~BKUP_REG_DATA);
 }
 
-RT_WEAK void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data)
+rt_weak void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data)
 {
     return;
 }
@@ -128,7 +128,6 @@ static void rt_rtc_f1_bkp_update(void)
     RTC_DateTypeDef RTC_DateStruct = {0};
 
     HAL_PWR_EnableBkUpAccess();
-    __HAL_RCC_BKP_CLK_ENABLE();
 
     RTC_DateStruct.Year    = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR2);
     RTC_DateStruct.Month   = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR3);
@@ -232,6 +231,9 @@ static rt_err_t stm32_rtc_init(void)
 {
 #if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32WB)
     __HAL_RCC_PWR_CLK_ENABLE();
+#ifdef SOC_SERIES_STM32F1
+    __HAL_RCC_BKP_CLK_ENABLE();
+#endif
 #endif
 
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -366,14 +368,16 @@ static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
     if (p_dev->wkalarm.enable)
     {
         Alarm_InitStruct.Alarm = RTC_ALARM_A;
+        Alarm_InitStruct.AlarmTime.Hours = p_dev->wkalarm.tm_hour;
+        Alarm_InitStruct.AlarmTime.Minutes = p_dev->wkalarm.tm_min;
+        Alarm_InitStruct.AlarmTime.Seconds = p_dev->wkalarm.tm_sec;
+#ifndef SOC_SERIES_STM32F1
         Alarm_InitStruct.AlarmDateWeekDay = RTC_WEEKDAY_MONDAY;
         Alarm_InitStruct.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
         Alarm_InitStruct.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
         Alarm_InitStruct.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_NONE;
         Alarm_InitStruct.AlarmTime.TimeFormat = RTC_HOURFORMAT12_AM;
-        Alarm_InitStruct.AlarmTime.Hours = p_dev->wkalarm.tm_hour;
-        Alarm_InitStruct.AlarmTime.Minutes = p_dev->wkalarm.tm_min;
-        Alarm_InitStruct.AlarmTime.Seconds = p_dev->wkalarm.tm_sec;
+#endif  /* SOC_SERIES_STM32F1 */
         LOG_D("alarm set:%d:%d:%d", Alarm_InitStruct.AlarmTime.Hours,
             Alarm_InitStruct.AlarmTime.Minutes,
             Alarm_InitStruct.AlarmTime.Seconds);

@@ -7,7 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
@@ -157,7 +157,7 @@
 /* peripheral libraries and drivers */
 
 
-/* Kendryte SDK */
+/* kendryte-sdk: Kendryte SDK */
 
 
 /* AI packages */
@@ -172,17 +172,8 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
-
 #define SOC_RISCV_FAMILY_CH32
-#define SOC_RISCV_SERIES_CH32V103
+#define SOC_RISCV_SERIES_CH32V1
 
 /* Hardware Drivers Config */
 

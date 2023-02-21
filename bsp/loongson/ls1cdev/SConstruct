@@ -40,8 +40,5 @@ if GetDepend('RT_USING_FPU'):
     env['CXXFLAGS']  = env['CXXFLAGS'].replace('-msoft-float', '-mhard-float')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-msoft-float', '-mhard-float')
 
-if GetDepend('RT_USING_RTGUI'):
-    objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
-
 # make a building
 DoBuilding(TARGET, objs)

@@ -34,7 +34,7 @@ static rt_err_t _mtd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t _mtd_read(rt_device_t dev,
+static rt_ssize_t _mtd_read(rt_device_t dev,
                            rt_off_t    pos,
                            void       *buffer,
                            rt_size_t   size)
@@ -42,7 +42,7 @@ static rt_size_t _mtd_read(rt_device_t dev,
     return size;
 }
 
-static rt_size_t _mtd_write(rt_device_t dev,
+static rt_ssize_t _mtd_write(rt_device_t dev,
                             rt_off_t    pos,
                             const void *buffer,
                             rt_size_t   size)
@@ -162,7 +162,7 @@ rt_err_t rt_mtd_nand_mark_badblock(struct rt_mtd_nand_device *device, rt_uint32_
 #include <finsh.h>
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
 
-static void mtd_dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
+static void mtd_dump_hex(const rt_uint8_t *ptr, int buflen)
 {
     unsigned char *buf = (unsigned char *)ptr;
     int i, j;

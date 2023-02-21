@@ -500,7 +500,7 @@ enum EP_BUF_NUM
         wNBlocks = wCount >> 5;                                                                                        \
         if ((wCount & 0x1f) == 0)                                                                                      \
             wNBlocks--;                                                                                                \
-        *pdwReg = (uint32_t)((wNBlocks << 11) | 0x8000);                                                               \
+        *pdwReg = (uint32_t)((wNBlocks << 10) | 0x8000);                                                               \
     } /* _BlocksOf32 */
 
 #define _BlocksOf2(dwReg, wCount, wNBlocks)                                                                            \

@@ -108,10 +108,10 @@ struct raspi_i2c_hw_config
 
 #if (defined(BSP_USING_I2C0) || defined(BSP_USING_I2C1))
 
-static rt_size_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num);
-static rt_size_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num);
 static rt_err_t raspi_i2c_bus_control(struct rt_i2c_bus_device *bus,
@@ -119,7 +119,7 @@ static rt_err_t raspi_i2c_bus_control(struct rt_i2c_bus_device *bus,
                                       rt_uint32_t);
 
 static rt_uint32_t i2c_byte_wait_us = 0;
-static rt_size_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {
@@ -146,7 +146,7 @@ static rt_size_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     return (reason == 0)? i : 0;
 }
 
-static rt_size_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {

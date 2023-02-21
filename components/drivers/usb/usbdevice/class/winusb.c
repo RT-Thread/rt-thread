@@ -22,7 +22,7 @@ struct winusb_device
 #define WINUSB_INTF_STR_INDEX 13
 typedef struct winusb_device * winusb_device_t;
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -42,7 +42,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
-ALIGN(4)
+rt_align(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -56,7 +56,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
     0,
 };
 
-ALIGN(4)
+rt_align(4)
 struct winusb_descriptor _winusb_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -108,7 +108,7 @@ struct winusb_descriptor _winusb_desc =
     },
 };
 
-ALIGN(4)
+rt_align(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -120,13 +120,13 @@ const static char* _ustring[] =
     USB_STRING_OS//must be
 };
 
-ALIGN(4)
+rt_align(4)
 struct usb_os_proerty winusb_proerty[] =
 {
     USB_OS_PROPERTY_DESC(USB_OS_PROPERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
 };
 
-ALIGN(4)
+rt_align(4)
 struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc =
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
@@ -227,7 +227,7 @@ static rt_err_t _winusb_descriptor_config(winusb_desc_t winusb, rt_uint8_t cintf
     return RT_EOK;
 }
 
-static rt_size_t win_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t win_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     if(((ufunction_t)dev->user_data)->device->state != USB_STATE_CONFIGURED)
     {
@@ -241,7 +241,7 @@ static rt_size_t win_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
     rt_usbd_io_request(((ufunction_t)dev->user_data)->device,winusb_device->ep_out,&winusb_device->ep_out->request);
     return size;
 }
-static rt_size_t win_usb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t win_usb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     if(((ufunction_t)dev->user_data)->device->state != USB_STATE_CONFIGURED)
     {

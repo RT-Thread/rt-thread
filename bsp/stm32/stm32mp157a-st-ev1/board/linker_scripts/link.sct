@@ -17,8 +17,8 @@ LR_IROM1 0x10000000 0x00030000  {      ; load region size_region
   RW_IRAM1 0x10030000 0x00010000  {    ; RW data
     .ANY (+RW +ZI)
   }
-  
-  
+
+
 ; *****   Create region for OPENAMP                               *****
 ; ***     These 4 lines can be commented if OPENAMP is not used     *****
   .resource_table +0 ALIGN 4 {         ; resource table

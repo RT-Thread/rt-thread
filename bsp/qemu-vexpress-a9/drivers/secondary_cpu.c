@@ -19,6 +19,10 @@
 #ifdef RT_USING_SMP
 #include <interrupt.h>
 
+#ifdef RT_USING_SMART
+#include <mmu.h>
+#endif
+
 static void rt_hw_timer2_isr(int vector, void *param)
 {
     rt_tick_increase();
@@ -26,28 +30,34 @@ static void rt_hw_timer2_isr(int vector, void *param)
     timer_clear_pending(0);
 }
 
-void set_secondary_cpu_boot_address(void)
-{
-    extern void secondary_cpu_start(void);
-    uint32_t *boot_address = (uint32_t *)0x10000030;
-    *(boot_address + 1) = ~0ul;
-    *boot_address = (uint32_t )&secondary_cpu_start;
-}
-
 void rt_hw_secondary_cpu_up(void)
 {
-    set_secondary_cpu_boot_address();
-    __asm__ volatile ("dsb":::"memory");
+    volatile void **plat_boot_reg = (volatile void **)0x10000034;
+    char *entry = (char *)rt_secondary_cpu_entry;
+
+#ifdef RT_USING_SMART
+    plat_boot_reg = (volatile void **)rt_hw_mmu_map(&mmu_info, 0, (void *)plat_boot_reg, 0x1000, MMU_MAP_K_RW);
+    if (!plat_boot_reg)
+    {
+        /* failed */
+        return;
+    }
+    entry += PV_OFFSET;
+#endif
+    *plat_boot_reg-- = (void *)(size_t)-1;
+    *plat_boot_reg = (void *)entry;
+    rt_hw_dsb();
     rt_hw_ipi_send(0, 1 << 1);
 }
 
-void secondary_cpu_c_start(void)
+/* Interface */
+void rt_hw_secondary_cpu_bsp_start(void)
 {
     rt_hw_vector_init();
 
     rt_hw_spin_lock(&_cpus_lock);
 
-    arm_gic_cpu_init(0, REALVIEW_GIC_CPU_BASE);
+    arm_gic_cpu_init(0, 0);
     arm_gic_set_cpu(0, IRQ_PBA8_TIMER0_1, 0x2);
 
     timer_init(0, 10000);
