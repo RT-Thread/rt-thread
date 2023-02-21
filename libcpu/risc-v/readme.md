@@ -31,18 +31,30 @@
 
       - 方法:将**SW_handler**的地址加载到保存统一中断入口地址的寄存器
 
-- 步骤二：在系统启动前，将中断栈加载至**mscratch**寄存器
+- 步骤二：修改链接脚本,在中断栈顶名称后添加示例代码
 
-  - 一般情况可将该部分代码添加至启动文件中
-
-  - 示例代码:
+  - 一般情况可将下述代码放置于链接脚本中中断栈顶名之后即可,示例代码如下:
 
     ```assembly
-        la t0, _sp
-        csrw mscratch,t0
+    PROVIDE( __rt_rvstack = . );
     ```
 
-  > _sp为中断栈顶地址 不同内核的中断栈顶地址名称位于链接脚本中 
+  - core-v-mcu链接脚本中示例代码:
+
+    ```assembly
+      .stack : ALIGN(16)
+      {
+        stack_start = .;
+        __stack_bottom = .;
+        . += __stack_size;
+        __stack_top = .;
+        PROVIDE( __rt_rvstack = . );//移植时添加 
+        __freertos_irq_stack_top = .; 
+        stack = .;
+      } > L2
+    ```
+
+  > **__stack_top**为core-v-mcu工程的中断栈顶名  不同工程此处的名称一般不一致 按上述方法将给出的代码放到具体工程链接脚本中断栈顶名称之后即可
 
 - 步骤三：实现在中断上下文切换的函数接口
 
