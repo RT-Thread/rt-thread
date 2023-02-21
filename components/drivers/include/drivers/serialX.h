@@ -5,7 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-04-10     THEWON       first version
+ * 2022-04-10     THEWON       serialX first version
+ * 2022-06-08     THEWON       add No TX Empty interrupt support
+ * 2023-02-15     THEWON       add init ops
  */
 
 #ifndef __SERIALX_H__
@@ -124,7 +126,7 @@ struct serial_configure
     rt_uint32_t parity                  :2;
     rt_uint32_t bit_order               :1;
     rt_uint32_t invert                  :1;
-    rt_uint32_t bufsz                   :16;
+    rt_uint32_t bufsz                   :16;        // unused, move it to struct rt_serial_device
     rt_uint32_t flowcontrol             :1;
     rt_uint32_t reserved                :5;
 };
@@ -149,6 +151,7 @@ struct rt_serial_device
 
     const struct rt_uart_ops *ops;
     struct serial_configure   config;
+    rt_uint32_t bufsz;
 
     void *serial_rx;
     void *serial_tx;
@@ -176,6 +179,8 @@ typedef struct rt_serial_device rt_serial_t;
  */
 struct rt_uart_ops
 {
+    int (*init)(struct rt_serial_device *serial);
+
     rt_err_t (*configure)(struct rt_serial_device *serial, struct serial_configure *cfg);
     rt_err_t (*control)(struct rt_serial_device *serial, int cmd, void *arg);
 
@@ -183,7 +188,12 @@ struct rt_uart_ops
     int (*getc)(struct rt_serial_device *serial);
     int (*flush)(struct rt_serial_device *serial);
 
+#if defined (RT_SERIAL_NO_TXEIT)
+    rt_bool_t (*is_int_txing)(struct rt_serial_device *serial);
+    void (*start_tx)(struct rt_serial_device *serial, rt_uint8_t ch);
+#else
     void (*start_tx)(struct rt_serial_device *serial);
+#endif
     void (*stop_tx)(struct rt_serial_device *serial);
 
 #ifdef RT_SERIAL_USING_DMA
@@ -204,4 +214,3 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                void                    *data);
 
 #endif
-

@@ -69,7 +69,7 @@ menuconfig RT_USING_SERIAL
                     and RT_SERIAL_FIFO_BUFSZ >= 2*RT_SERIAL_DMA_BUFSZ
 
             config RT_SERIAL_HARD_FIFO
-                bool "Set Hard FIFO buffer size"
+                bool "Using Hard FIFO"
                 default n
                 help
                     Useful only if the chip supported
