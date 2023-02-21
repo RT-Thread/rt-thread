@@ -403,8 +403,7 @@ rt_err_t rt_device_flush(rt_device_t dev)
 
     if (dev->ref_count == 0)
     {
-        rt_set_errno(-RT_ERROR);
-        return 0;
+        return -RT_ERROR;
     }
 
     /* call device_write interface */
@@ -413,10 +412,7 @@ rt_err_t rt_device_flush(rt_device_t dev)
         return device_flush(dev);
     }
 
-    /* set error code */
-    rt_set_errno(-RT_ENOSYS);
-
-    return 0;
+    return -RT_ENOSYS;
 }
 RTM_EXPORT(rt_device_flush);
 

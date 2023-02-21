@@ -569,6 +569,7 @@ rt_ssize_t rt_device_write(rt_device_t dev,
                           const void *buffer,
                           rt_size_t   size);
 rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
+rt_err_t rt_device_flush(rt_device_t dev);
 #ifdef RT_USING_DM
 rt_err_t rt_device_bind_driver(rt_device_t device, rt_driver_t driver, void *node);
 rt_device_t rt_device_create_since_driver(rt_driver_t drv,int device_id);
