@@ -76,9 +76,6 @@ _start:
 	sd ra, 8(sp)
 #endif
 
-    la t0, _sp
-    csrw mscratch,t0
-
 	/* argc = argv = 0 */
 	li a0, 0
 	li a1, 0

@@ -46,6 +46,9 @@ rt_hw_interrupt_enable:
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+    la t0, __rt_rvstack
+    csrw mscratch,t0
+
     LOAD sp, (a0)
 
 #ifdef RT_USING_SMP

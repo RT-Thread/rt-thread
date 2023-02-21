@@ -236,9 +236,6 @@ _start0800:
 	call atexit
 	call __libc_init_array
 
-	la t0, _sp
-    csrw mscratch,t0
-
 	/* argc = argv = 0 */
 	li a0, 0
 	li a1, 0
